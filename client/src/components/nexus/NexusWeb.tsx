@@ -1,31 +1,30 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react'
 import { useReducedMotion } from 'motion/react'
-import { BRAND, BUCKETS, buildWeb, mix3, pathFromOrigin, SP, treePath, type RGB, type Web } from './lattice'
-import type { WebCluster } from './types'
+import { BRAND, BUCKETS, HitGrid, mix3, pathFromOrigin, retention, SP, treePath, type RGB, type Web } from './lattice'
 
 /*
- * The Nexus web: the teaser's lattice web, with every subject living inside
- * it (see ./lattice.ts for how it is built), floating in space.
+ * The Nexus web: the teaser's lattice web with every subject living inside
+ * it, floating in space (see ./lattice.ts for how it is built).
  *
  * Depth, in three layers:
  *   far   a softer, dimmer lattice drifting slower than the web,
  *   mid   the web itself (lattice + spanning tree), drawn flat into a canvas
- *         that lies on a tilted plane in true CSS perspective; the far edge
- *         recedes into fog,
+ *         on a tilted plane in true CSS perspective; the far edge fades,
  *   near  everything you touch, projected from the plane with the same
  *         maths and drawn crisp on top: concepts floating above the plane
- *         with soft contact shadows, lit paths arcing off it, YOU, and all
- *         the type.
- * The plane bobs slowly and leans toward the pointer; panning glides to a
- * stop. Reduced motion keeps the tilt and drops bob, lean and glide.
+ *         with contact shadows, lit paths arcing off it, YOU and all type.
  *
- *  • On load the web draws itself outward from YOU, depth by depth (0.11 s
- *    per depth, 0.22 s per edge), like the teaser.
- *  • Hover a concept: the path from YOU lights teal with a light travelling
- *    along it; what it unlocks lights violet; the rest dims.
- *  • Click a concept: its name, place and numbers appear as type beside it,
- *    with "Open details". Click a subject name to dive into its path.
- *  • The only glow is the soft violet halo around YOU.
+ * One requestAnimationFrame loop, everything in refs — React never renders
+ * per frame. Hit-testing uses a grid of the positions drawn this frame, so
+ * hover and click answer the same frame; while the pointer rests on a
+ * concept the plane stops leaning and bobbing, so the target never moves.
+ *
+ * Concept states differ by shape as well as colour:
+ *   mastered  solid disc, white core, full ring
+ *   open      hollow ring with a dot (you can learn it now)
+ *   locked    dashed ring, no core, dim
+ *   fading    an amber dashed halo (memory), keystone a small diamond,
+ *   recent    a soft teal pulse, next best step a breathing beacon.
  */
 
 export interface Camera {
@@ -35,6 +34,9 @@ export interface Camera {
 }
 export interface NexusWebHandle {
   flyToNode: (key: string, instant?: boolean) => void
+  flyToSubject: (id: string) => void
+  /** Fly along a chain of concepts, one after another. */
+  trace: (keys: string[]) => void
   camera: () => Camera
 }
 /** Tier shown under a subject's name (from the server). */
@@ -42,127 +44,142 @@ export interface RegionRank {
   tier: string
   title: string
 }
+export type WebAction = 'open' | 'trace' | 'copy' | 'revise'
+export interface WebFilter {
+  mode: 'all' | 'reachable' | 'fading' | 'mastered'
+  domain: string | null
+}
 
-const DT = 0.11
+const DT = 0.075
 const EDGE = 0.22
-const T0 = 0.35
+const T0 = 0.05
 const MAX_K = 3
-const LABEL_K = 1.15 // concept names from this zoom (collision-culled)
-const HOME_K = 0.62 // the teaser's density
+const LABEL_K = 1.15
+const HOME_K = 0.62
 const HOME_K_PHONE = 0.5
-const TILT = 26 // degrees: the web plane leans back
+const TILT = 26
 const PERSPECTIVE = 1000
-const PLANE_W = 1.42 // the plane is larger than the window so the tilt never shows an edge
+const PLANE_W = 1.42
 const PLANE_H = 1.62
+const MINI = 132 // minimap size
 const { C1, C2, C3 } = BRAND
+const AMBER: RGB = [245, 196, 81]
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v))
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 const rgba = (c: RGB, a: number) => `rgba(${c[0]},${c[1]},${c[2]},${a.toFixed(3)})`
 const WHITE: RGB = [255, 255, 255]
-const DIM: RGB = [150, 160, 255]
+const DIM: RGB = [168, 176, 255]
 const BG: RGB = [9, 11, 24]
 const RAD = Math.PI / 180
 
 export const NexusWeb = forwardRef<
   NexusWebHandle,
   {
-    clusters: WebCluster[]
+    web: Web
     selected: string | null
     onSelect: (key: string | null) => void
     onOpenSubject: (id: string, cam: Camera) => void
-    /** "Open details" on the selected concept's floating text. */
-    onOpenDetails?: (key: string) => void
-    /** First pointer / wheel / key interaction (the hint fades out). */
+    onAction?: (action: WebAction, key: string) => void
     onInteract?: () => void
     initialCamera?: Camera | null
+    ranks?: Record<string, RegionRank>
     /** The details sheet is open: the selection's floating text steps aside. */
     quiet?: boolean
-    ranks?: Record<string, RegionRank>
+    filter?: WebFilter
+    /** Memory preview: days ahead (0 = now). */
+    ahead?: number
+    route?: { next: string[]; order: string[] } | null
+    beacon?: string | null
+    keystones?: Set<string>
+    /** A tiny web while loading: no interaction, no minimap. */
+    loading?: boolean
   }
->(function NexusWeb({ clusters, selected, onSelect, onOpenSubject, onOpenDetails, onInteract, initialCamera, ranks, quiet = false }, ref) {
+>(function NexusWeb(props, ref) {
+  const { web, initialCamera, loading = false } = props
   const wrapRef = useRef<HTMLDivElement>(null)
   const planeRef = useRef<HTMLDivElement>(null)
   const midRef = useRef<HTMLCanvasElement>(null)
   const farRef = useRef<HTMLCanvasElement>(null)
   const nearRef = useRef<HTMLCanvasElement>(null)
+  const miniRef = useRef<HTMLCanvasElement>(null)
   const reduce = !!useReducedMotion()
-  const web = useMemo<Web>(() => buildWeb(clusters), [clusters])
 
-  // Static paths, built once per web: the tree by colour bucket, and the
-  // branches that lead to mastered concepts.
-  const paths = useMemo(() => {
+  // The tree by colour bucket: depends on the layout only.
+  const tree = useMemo(() => {
     const { xy, parent, bucket } = web
-    const tree: Path2D[] = Array.from({ length: BUCKETS }, () => new Path2D())
+    const paths: Path2D[] = Array.from({ length: BUCKETS }, () => new Path2D())
     for (let i = 0; i < parent.length; i++) {
       const p = parent[i]
       if (p < 0) continue
-      tree[bucket[i]].moveTo(xy[2 * p], xy[2 * p + 1])
-      tree[bucket[i]].lineTo(xy[2 * i], xy[2 * i + 1])
+      paths[bucket[i]].moveTo(xy[2 * p], xy[2 * p + 1])
+      paths[bucket[i]].lineTo(xy[2 * i], xy[2 * i + 1])
     }
+    return { paths, colors: Array.from({ length: BUCKETS }, (_, b) => mix3((b + 0.5) / BUCKETS)) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [web.xy])
+  // Branches that lead to mastered concepts: depends on the reader's state.
+  const bright = useMemo(() => {
+    const { xy, parent, bucket } = web
     const lit = new Uint8Array(parent.length)
     for (const c of web.concepts.values()) {
       if (c.node.s !== 2) continue
       for (let x = c.pt; x >= 0 && !lit[x]; x = parent[x]) lit[x] = 1
     }
-    const bright: Path2D[] = Array.from({ length: BUCKETS }, () => new Path2D())
+    const paths: Path2D[] = Array.from({ length: BUCKETS }, () => new Path2D())
     for (let i = 0; i < parent.length; i++) {
       const p = parent[i]
       if (!lit[i] || p < 0) continue
-      bright[bucket[i]].moveTo(xy[2 * p], xy[2 * p + 1])
-      bright[bucket[i]].lineTo(xy[2 * i], xy[2 * i + 1])
+      paths[bucket[i]].moveTo(xy[2 * p], xy[2 * p + 1])
+      paths[bucket[i]].lineTo(xy[2 * i], xy[2 * i + 1])
     }
-    const colors = Array.from({ length: BUCKETS }, (_, b) => mix3((b + 0.5) / BUCKETS))
-    return { tree, bright, colors, lit }
+    return { paths, lit }
   }, [web])
 
   const ox = web.xy[2 * web.origin]
   const oy = web.xy[2 * web.origin + 1]
   const cam = useRef<Camera>(initialCamera ?? { x: ox, y: oy, k: HOME_K })
   const view = useRef({ w: 1, h: 1, dpr: 1, pw: 1, ph: 1, pdpr: 1 })
-  /** Current plane rotation (degrees), shared by CSS and the projection. */
   const pose = useRef({ tx: TILT, ty: 0 })
   const hovered = useRef<string | null>(null)
   const hoverEase = useRef(0)
   const lean = useRef({ x: 0, y: 0, tx: 0, ty: 0 })
+  const bobClock = useRef(0)
   const inertia = useRef<{ vx: number; vy: number } | null>(null)
-  const selectedRef = useRef(selected)
-  selectedRef.current = selected
   const fly = useRef<{ from: Camera; to: Camera; t0: number; dur: number; done?: () => void } | null>(null)
+  const tour = useRef<string[]>([])
   const rise = useRef<number | null>(null)
   const born = useRef<number | null>(null)
   const settled = useRef(0)
   const dirtyStatic = useRef(true)
+  const dirtyMini = useRef(true)
+  const grid = useRef(new HitGrid(28))
   const labelHits = useRef<{ x: number; y: number; w: number; h: number; id: string }[]>([])
-  const projected = useRef<{ key: string; x: number; y: number }[]>([])
-  const openHit = useRef<{ x: number; y: number; w: number; h: number; key: string } | null>(null)
+  const actionHits = useRef<{ x: number; y: number; w: number; h: number; action: WebAction; key: string }[]>([])
   const interacted = useRef(false)
-  const cbs = useRef({ onSelect, onOpenSubject, onOpenDetails, onInteract })
-  cbs.current = { onSelect, onOpenSubject, onOpenDetails, onInteract }
-  const ranksRef = useRef(ranks)
-  const quietRef = useRef(quiet)
-  quietRef.current = quiet
-  ranksRef.current = ranks
+  // Latest props for the loop (no re-render per frame).
+  const P = useRef(props)
+  P.current = props
   useEffect(() => {
     dirtyStatic.current = true
-  }, [paths])
+    dirtyMini.current = true
+  }, [tree, bright])
 
   /* ── projection: plane point (world x, y, height above the plane) → screen ── */
   const project = (x: number, y: number, hgt = 0, c: Camera = cam.current) => {
-    const { w, h } = view.current
+    const { w, h, dpr } = view.current
     const u = (x - c.x) * c.k
     const v = (y - c.y) * c.k
     const ty = pose.current.ty * RAD
     const tx = pose.current.tx * RAD
-    // rotateY, then rotateX (CSS applies the right-most first); z toward you.
     const x1 = u * Math.cos(ty) + hgt * Math.sin(ty)
     const z1 = -u * Math.sin(ty) + hgt * Math.cos(ty)
     const y2 = v * Math.cos(tx) - z1 * Math.sin(tx)
     const z2 = v * Math.sin(tx) + z1 * Math.cos(tx)
     const q = PERSPECTIVE / (PERSPECTIVE - z2)
-    return { x: w / 2 + x1 * q, y: h / 2 + y2 * q, s: q }
+    // Snapped to device pixels after the transform: no shimmer.
+    return { x: Math.round((w / 2 + x1 * q) * dpr) / dpr, y: Math.round((h / 2 + y2 * q) * dpr) / dpr, s: q }
   }
-  /** Screen → world on the plane (a few fixed-point steps; exact enough). */
   const unproject = (sxp: number, syp: number, c: Camera = cam.current) => {
     const { w, h } = view.current
     const dx = sxp - w / 2
@@ -175,18 +192,13 @@ export const NexusWeb = forwardRef<
       const z1 = -u * Math.sin(ty)
       const z2 = v * Math.sin(tx) + z1 * Math.cos(tx)
       const q = PERSPECTIVE / (PERSPECTIVE - z2)
-      const x1 = dx / q
-      const y2 = dy / q
-      u = x1 / Math.cos(ty)
-      v = (y2 + -u * Math.sin(ty) * Math.sin(tx)) / Math.cos(tx)
+      u = dx / q / Math.cos(ty)
+      v = (dy / q + -u * Math.sin(ty) * Math.sin(tx)) / Math.cos(tx)
     }
     return { x: c.x + u / c.k, y: c.y + v / c.k }
   }
 
-  const minK = () => {
-    const { w, h } = view.current
-    return (Math.min(w, h) / (web.extent * 2)) * 1.1
-  }
+  const minK = () => (Math.min(view.current.w, view.current.h) / (web.extent * 2)) * 1.1
   const startFly = (to: Camera, done?: () => void, dur = 900) => {
     const target = { ...to, k: clamp(to.k, minK(), MAX_K) }
     if (reduce) {
@@ -196,20 +208,44 @@ export const NexusWeb = forwardRef<
       done?.()
     } else fly.current = { from: { ...cam.current }, to: target, t0: performance.now(), dur, done }
   }
-  const handle = useRef<NexusWebHandle>({ flyToNode: () => {}, camera: () => cam.current })
+  const nodeCam = (key: string, k?: number) => {
+    const c = web.concepts.get(key)
+    return c ? { x: web.xy[2 * c.pt], y: web.xy[2 * c.pt + 1] + 60, k: k ?? Math.max(cam.current.k, 1.1) } : null
+  }
+  const handle = useRef<NexusWebHandle>(null as unknown as NexusWebHandle)
   handle.current = {
     flyToNode: (key, instant) => {
-      const c = web.concepts.get(key)
-      if (!c) return
-      const to = { x: web.xy[2 * c.pt], y: web.xy[2 * c.pt + 1] + 60, k: Math.max(cam.current.k, 1.1) }
+      const to = nodeCam(key)
+      if (!to) return
       if (instant) {
         cam.current = to
         dirtyStatic.current = true
       } else startFly(to)
     },
+    flyToSubject: (id) => {
+      const rg = web.regions.find((r) => r.cluster.id === id)
+      if (rg) startFly({ x: rg.x, y: rg.y, k: Math.max(cam.current.k, 0.9) })
+    },
+    trace: (keys) => {
+      // A slow, cinematic flight from YOU along the chain.
+      tour.current = [...keys]
+      const step = () => {
+        const k = tour.current.shift()
+        if (!k) return
+        const to = nodeCam(k, 1.15)
+        if (to) startFly(to, () => window.setTimeout(step, reduce ? 0 : 260), 820)
+        else step()
+      }
+      startFly({ x: ox, y: oy, k: 1 }, step, 700)
+    },
     camera: () => ({ ...cam.current }),
   }
-  useImperativeHandle(ref, () => ({ flyToNode: (k, i) => handle.current.flyToNode(k, i), camera: () => handle.current.camera() }))
+  useImperativeHandle(ref, () => ({
+    flyToNode: (k, i) => handle.current.flyToNode(k, i),
+    flyToSubject: (id) => handle.current.flyToSubject(id),
+    trace: (keys) => handle.current.trace(keys),
+    camera: () => handle.current.camera(),
+  }))
 
   /* ── rendering ── */
   useEffect(() => {
@@ -218,14 +254,20 @@ export const NexusWeb = forwardRef<
     const mid = midRef.current!
     const far = farRef.current!
     const near = nearRef.current!
+    const mini = miniRef.current
     const mctx = mid.getContext('2d')!
     const fctx = far.getContext('2d')!
     const ctx = near.getContext('2d')!
+    const nctx = mini?.getContext('2d') ?? null
     const off = document.createElement('canvas')
     const octx = off.getContext('2d')!
+    const miniBase = document.createElement('canvas')
     let offCam: Camera | null = null
     let labelsFrom = 0
     let raf = 0
+    let markedWeb = false
+    let markedConcepts = false
+    let frameNo = 0
     const font = getComputedStyle(wrap).fontFamily || 'system-ui, sans-serif'
     if (born.current === null) born.current = reduce || initialCamera ? -1 : performance.now()
     const lowPower = (navigator.hardwareConcurrency || 8) <= 4
@@ -235,8 +277,6 @@ export const NexusWeb = forwardRef<
       const w = Math.max(1, r.width)
       const h = Math.max(1, r.height)
       const dpr = Math.min(2, window.devicePixelRatio || 1)
-      // The plane canvases are resampled by the 3D transform anyway: 1.5x is
-      // plenty and keeps phones light.
       const pdpr = Math.min(1.5, dpr)
       const pw = Math.round(w * PLANE_W)
       const ph = Math.round(h * PLANE_H)
@@ -251,19 +291,22 @@ export const NexusWeb = forwardRef<
       }
       near.width = Math.round(w * dpr)
       near.height = Math.round(h * dpr)
+      if (mini) {
+        mini.width = mini.height = Math.round(MINI * dpr)
+        miniBase.width = miniBase.height = Math.round(MINI * dpr)
+      }
       if (!initialCamera && cam.current.k === HOME_K && w < 640) cam.current = { ...cam.current, k: HOME_K_PHONE }
       offCam = null
       dirtyStatic.current = true
+      dirtyMini.current = true
     }
     const ro = new ResizeObserver(resize)
     ro.observe(wrap)
     resize()
 
-    // Flat plane coordinates (the mid layer is drawn flat; CSS tilts it).
     const fx = (c: Camera, x: number) => (x - c.x) * c.k + view.current.pw / 2
     const fy = (c: Camera, y: number) => (y - c.y) * c.k + view.current.ph / 2
 
-    /** The web (lattice + tree) for camera c into g; growT while drawing in. */
     const drawStatic = (g: CanvasRenderingContext2D, c: Camera, growT: number | null) => {
       const { pw, ph, pdpr } = view.current
       g.setTransform(pdpr, 0, 0, pdpr, 0, 0)
@@ -286,13 +329,13 @@ export const NexusWeb = forwardRef<
         g.setTransform(pdpr * c.k, 0, 0, pdpr * c.k, pdpr * (pw / 2 - c.x * c.k), pdpr * (ph / 2 - c.y * c.k))
         g.lineWidth = 1.3 / c.k
         for (let b = 0; b < BUCKETS; b++) {
-          g.strokeStyle = rgba(paths.colors[b], c.k < 0.3 ? 0.32 : 0.46)
-          g.stroke(paths.tree[b])
+          g.strokeStyle = rgba(tree.colors[b], c.k < 0.3 ? 0.32 : 0.46)
+          g.stroke(tree.paths[b])
         }
         g.lineWidth = 1.8 / c.k
         for (let b = 0; b < BUCKETS; b++) {
-          g.strokeStyle = rgba(paths.colors[b], 0.92)
-          g.stroke(paths.bright[b])
+          g.strokeStyle = rgba(tree.colors[b], 0.92)
+          g.stroke(bright.paths[b])
         }
         g.setTransform(pdpr, 0, 0, pdpr, 0, 0)
         g.fillStyle = rgba(DIM, 0.24)
@@ -308,8 +351,8 @@ export const NexusWeb = forwardRef<
           const grow = clamp((growT - start) / EDGE)
           if (grow <= 0) continue
           const fresh = Math.exp(-Math.max(0, growT - start) * 1.8)
-          const col = paths.colors[bucket[i]]
-          const lit = paths.lit[i]
+          const col = tree.colors[bucket[i]]
+          const lit = bright.lit[i]
           g.strokeStyle = rgba(col, lit ? 0.92 : 0.3 + 0.55 * fresh)
           g.lineWidth = (lit ? 1.8 : 1.2) + 0.9 * fresh
           const ax = fx(c, xy[2 * p])
@@ -328,7 +371,6 @@ export const NexusWeb = forwardRef<
       }
     }
 
-    /** The far layer: a dimmer, softer lattice drifting slower than the web. */
     const drawFar = (c: Camera) => {
       const { pw, ph, pdpr } = view.current
       fctx.setTransform(pdpr, 0, 0, pdpr, 0, 0)
@@ -349,7 +391,46 @@ export const NexusWeb = forwardRef<
       }
     }
 
-    /** Spaced capitals, letter by letter, with a soft dark halo. */
+    /** The minimap: every concept as a dot, the view as a quadrilateral. */
+    const miniScale = () => MINI / (web.extent * 2)
+    const drawMiniBase = () => {
+      if (!mini) return
+      const g = miniBase.getContext('2d')!
+      const { dpr } = view.current
+      g.setTransform(dpr, 0, 0, dpr, 0, 0)
+      g.clearRect(0, 0, MINI, MINI)
+      const s = miniScale()
+      for (const cn of web.concepts.values()) {
+        const x = MINI / 2 + (web.xy[2 * cn.pt] - ox) * s
+        const y = MINI / 2 + (web.xy[2 * cn.pt + 1] - oy) * s
+        g.fillStyle = cn.node.s === 2 ? 'rgba(255,255,255,0.95)' : cn.node.s === 1 ? rgba(tree.colors[web.bucket[cn.pt]], 0.85) : 'rgba(168,176,255,0.28)'
+        g.fillRect(x - 0.8, y - 0.8, cn.node.s === 0 ? 1.2 : 1.8, cn.node.s === 0 ? 1.2 : 1.8)
+      }
+      g.fillStyle = 'rgba(255,255,255,0.95)'
+      g.fillRect(MINI / 2 - 1.5, MINI / 2 - 1.5, 3, 3)
+    }
+    const drawMini = () => {
+      if (!mini || !nctx) return
+      const { dpr, w, h } = view.current
+      nctx.setTransform(1, 0, 0, 1, 0, 0)
+      nctx.clearRect(0, 0, mini.width, mini.height)
+      nctx.drawImage(miniBase, 0, 0)
+      nctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      const s = miniScale()
+      const corners = [unproject(0, 0), unproject(w, 0), unproject(w, h), unproject(0, h)]
+      nctx.strokeStyle = 'rgba(45,212,191,0.9)'
+      nctx.lineWidth = 1
+      nctx.beginPath()
+      corners.forEach((p, i) => {
+        const x = clamp(MINI / 2 + (p.x - ox) * s, 0, MINI)
+        const y = clamp(MINI / 2 + (p.y - oy) * s, 0, MINI)
+        if (i) nctx.lineTo(x, y)
+        else nctx.moveTo(x, y)
+      })
+      nctx.closePath()
+      nctx.stroke()
+    }
+
     const spaced = (text: string, x: number, y: number, size: number, spacing: number, fill: string, align: 'center' | 'left' = 'center') => {
       ctx.font = `600 ${size}px ${font}`
       const chars = [...text]
@@ -360,7 +441,7 @@ export const NexusWeb = forwardRef<
       ctx.textAlign = 'left'
       ctx.lineWidth = 3
       ctx.lineJoin = 'round'
-      ctx.strokeStyle = 'rgba(9,11,24,0.7)'
+      ctx.strokeStyle = 'rgba(9,11,24,0.72)'
       chars.forEach((ch, i) => {
         ctx.strokeText(ch, cx, y)
         ctx.fillText(ch, cx, y)
@@ -369,17 +450,15 @@ export const NexusWeb = forwardRef<
       return total
     }
     const overlaps = (list: number[][], b: number[]) => list.some((o) => o[0] < b[2] && o[2] > b[0] && o[1] < b[3] && o[3] > b[1])
-    const style = (s: 0 | 1 | 2, col: RGB) =>
-      s === 2 ? { dot: col, a: 1, ring: 0.95 } : s === 1 ? { dot: col, a: 0.88, ring: 0.6 } : { dot: DIM, a: 0.4, ring: 0.24 }
 
     let last = performance.now()
     const frame = (now: number) => {
       raf = requestAnimationFrame(frame)
+      frameNo++
+      const props2 = P.current
       const { w, h, dpr } = view.current
       const dtMs = Math.min(64, now - last)
       last = now
-
-      // Camera: flights ease in and out; swipes glide to a stop.
       if (fly.current) {
         const f = fly.current
         const t = clamp((now - f.t0) / f.dur)
@@ -401,16 +480,21 @@ export const NexusWeb = forwardRef<
         settled.current = now
         if (Math.hypot(iv.vx, iv.vy) * cam.current.k < 0.01) inertia.current = null
       }
-      // The plane: tilted back, bobbing slowly, leaning toward the pointer;
-      // diving into a subject tilts it further down into the region.
+      // The plane: tilted back, bobbing slowly, leaning toward the pointer —
+      // and holding perfectly still while the pointer rests on a concept.
+      const still = !!hovered.current || reduce
       const L = lean.current
-      L.x += (L.tx - L.x) * 0.06
-      L.y += (L.ty - L.y) * 0.06
-      hoverEase.current += ((hovered.current ? 1 : 0) - hoverEase.current) * 0.18
-      const bob = reduce ? 0 : Math.sin((now / 10000) * Math.PI * 2) * 0.4
-      const sway = reduce ? 0 : Math.cos((now / 12500) * Math.PI * 2) * 0.35
+      if (!still) {
+        L.x += (L.tx - L.x) * 0.05
+        L.y += (L.ty - L.y) * 0.05
+        bobClock.current += dtMs
+      }
+      hoverEase.current += ((hovered.current ? 1 : 0) - hoverEase.current) * 0.35
+      const bt = bobClock.current
+      const bob = reduce ? 0 : Math.sin((bt / 10000) * Math.PI * 2) * 0.3
+      const sway = reduce ? 0 : Math.cos((bt / 12500) * Math.PI * 2) * 0.3
       const r = rise.current !== null ? easeInOut(clamp((now - rise.current) / 520)) : 0
-      pose.current = { tx: TILT + bob - (reduce ? 0 : L.y * 3) + r * 14, ty: sway + (reduce ? 0 : L.x * 4) }
+      pose.current = { tx: TILT + bob - (reduce ? 0 : L.y * 2) + r * 14, ty: sway + (reduce ? 0 : L.x * 2.5) }
       plane.style.transform = `rotateX(${pose.current.tx.toFixed(3)}deg) rotateY(${pose.current.ty.toFixed(3)}deg)`
 
       const c = cam.current
@@ -418,25 +502,22 @@ export const NexusWeb = forwardRef<
       const elapsed = growing ? (now - born.current!) / 1000 : 0
       if (growing) {
         const reach = Math.hypot(view.current.pw, view.current.ph) / 2 / c.k / (SP * 0.7)
-        if (elapsed > T0 + reach * DT + EDGE + 0.5) {
+        if (elapsed > T0 + reach * DT + EDGE + 0.4) {
           born.current = -1
           dirtyStatic.current = true
         }
       }
-      if (!growing && labelsFrom === 0) labelsFrom = now
+      // Subject names fade in shortly after the web starts drawing.
+      if (labelsFrom === 0) labelsFrom = growing ? born.current! + 450 : now
       const moving = !!fly.current || now - settled.current < 110
 
-      // Far and mid layers (on the tilted plane).
       if (!(lowPower && w < 640)) drawFar(c)
       if (growing) drawStatic(mctx, c, elapsed)
       else {
-        if ((dirtyStatic.current || !offCam) && !moving) {
+        if (((dirtyStatic.current || !offCam) && !moving) || !offCam) {
           drawStatic(octx, c, null)
           offCam = { ...c }
           dirtyStatic.current = false
-        } else if (!offCam) {
-          drawStatic(octx, c, null)
-          offCam = { ...c }
         }
         const o = offCam
         const s = c.k / o.k
@@ -448,14 +529,13 @@ export const NexusWeb = forwardRef<
         if (moving) dirtyStatic.current = true
       }
 
-      // Near layer: crisp, projected from the plane.
       ctx.setTransform(1, 0, 0, 1, 0, 0)
       ctx.clearRect(0, 0, near.width, near.height)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      const P = (i: number, hgt = 0) => project(web.xy[2 * i], web.xy[2 * i + 1], hgt, c)
+      const PP = (i: number, hgt = 0) => project(web.xy[2 * i], web.xy[2 * i + 1], hgt, c)
 
       // YOU: a white point in a soft violet halo (the only glow).
-      const you = P(web.origin, 0)
+      const you = PP(web.origin, 0)
       const halo = ctx.createRadialGradient(you.x, you.y, 0, you.x, you.y, 110 * you.s)
       halo.addColorStop(0, 'rgba(255,255,255,0.5)')
       halo.addColorStop(0.12, rgba(C2, 0.36))
@@ -469,92 +549,216 @@ export const NexusWeb = forwardRef<
       ctx.arc(you.x, you.y, 3.6, 0, Math.PI * 2)
       ctx.fill()
       ctx.textBaseline = 'top'
-      spaced('YOU', you.x, you.y + 14, 9.5, 3.5, 'rgba(232,235,255,0.75)')
+      spaced('YOU', you.x, you.y + 14, 10, 3.5, 'rgba(232,235,255,0.85)')
 
-      const focusKey = hovered.current ?? selectedRef.current
+      if (loading) {
+        if (!markedWeb) {
+          markedWeb = true
+          performance.mark('nexus:first-web-paint')
+        }
+        return
+      }
+      const sel = props2.selected ? web.concepts.get(props2.selected) : null
+      const focusKey = hovered.current ?? props2.selected
       const focus = focusKey ? web.concepts.get(focusKey) : null
       const lineage = focus ? new Set([focus.key, ...focus.prereqs, ...focus.unlocks]) : null
+      const filter = props2.filter ?? { mode: 'all', domain: null }
+      const ahead = props2.ahead ?? 0
+      const route = props2.route
+      const routeSet = route ? new Set(route.order) : null
+      const matches = (k: string) => {
+        const cn = web.concepts.get(k)!
+        if (filter.domain && cn.cluster.domain !== filter.domain) return false
+        if (filter.mode === 'reachable') return cn.node.s === 1
+        if (filter.mode === 'mastered') return cn.node.s === 2
+        if (filter.mode === 'fading') return cn.node.s === 2 && retention(cn.node, ahead) < 0.5
+        return true
+      }
+      const pulse = reduce ? 0.5 : (Math.sin(now / 420) + 1) / 2
 
-      // Concepts float above the plane with soft contact shadows; mastered
-      // ones a little higher; the hovered one lifts further.
-      const list: { key: string; x: number; y: number }[] = []
-      if (!growing || elapsed > 0) {
-        const farZ = c.k < 0.32
-        for (const cn of web.concepts.values()) {
-          const i = cn.pt
-          if (growing && elapsed < T0 + web.depth[i] * DT + EDGE) continue
-          const base = P(i, 0)
-          if (base.x < -30 || base.x > w + 30 || base.y < -30 || base.y > h + 30) continue
-          const hov = cn.key === hovered.current ? hoverEase.current : 0
-          const lift = farZ ? 0 : (cn.node.s === 2 ? 16 : 10) + 12 * hov
-          const top = lift ? P(i, lift * (reduce ? 0.6 : 1)) : base
-          list.push({ key: cn.key, x: top.x, y: top.y })
-          const st = style(cn.node.s, paths.colors[web.bucket[i]])
-          const dim = lineage && !lineage.has(cn.key) ? 0.3 : 1
+      // Route: through the web from YOU via the next waypoints.
+      const arc = (pts: number[], col: RGB, a: number, width: number, rise2 = 22) => {
+        ctx.strokeStyle = rgba(col, a)
+        ctx.lineWidth = width
+        ctx.lineCap = 'round'
+        ctx.lineJoin = 'round'
+        ctx.beginPath()
+        pts.forEach((p, i) => {
+          const t = pts.length > 1 ? i / (pts.length - 1) : 0
+          const q = PP(p, Math.sin(t * Math.PI) * rise2)
+          if (i) ctx.lineTo(q.x, q.y)
+          else ctx.moveTo(q.x, q.y)
+        })
+        ctx.stroke()
+      }
+      if (route && route.next.length) {
+        let from = web.origin
+        route.next.forEach((k) => {
+          const cn = web.concepts.get(k)
+          if (!cn) return
+          arc(treePath(web, from, cn.pt), [255, 214, 120], 0.85, 1.6, 10)
+          from = cn.pt
+        })
+      }
+
+      // Concepts float above the plane, with contact shadows.
+      const g2 = grid.current
+      g2.clear()
+      const farZ = c.k < 0.32
+      const drawn: { key: string; x: number; y: number; r: number }[] = []
+      let hovEntry: (() => void) | null = null
+      for (const cn of web.concepts.values()) {
+        const i = cn.pt
+        // Concepts appear almost at once (a slight stagger outward); the
+        // lattice keeps drawing itself in underneath.
+        const appear = growing ? clamp((elapsed - 0.06 - cn.level * 0.012) / 0.22) : 1
+        if (appear <= 0) continue
+        const base = PP(i, 0)
+        if (base.x < -30 || base.x > w + 30 || base.y < -30 || base.y > h + 30) continue
+        const isHov = cn.key === hovered.current
+        const hov = isHov ? hoverEase.current : 0
+        const lift = farZ ? 0 : (cn.node.s === 2 ? 16 : 10) + 12 * hov
+        const top = lift ? PP(i, lift * (reduce ? 0.6 : 1)) : base
+        g2.add(cn.key, top.x, top.y)
+        const col = tree.colors[web.bucket[i]]
+        const ret = retention(cn.node, ahead)
+        const fadingNow = cn.node.s === 2 && ret < 0.5
+        let a = appear
+        if (lineage && !lineage.has(cn.key)) a *= 0.3
+        if (!matches(cn.key)) a *= 0.14
+        if (routeSet && !routeSet.has(cn.key)) a *= 0.45
+        const paint = () => {
           if (farZ) {
-            ctx.fillStyle = rgba(cn.node.s === 2 ? WHITE : st.dot, st.a * dim)
-            ctx.fillRect(base.x - 1.3, base.y - 1.3, 2.6, 2.6)
-            continue
+            // Distinct by shape even when tiny: square / ring / dot.
+            if (cn.node.s === 2) {
+              ctx.fillStyle = rgba(WHITE, (0.55 + 0.45 * ret) * a)
+              ctx.fillRect(top.x - 1.9, top.y - 1.9, 3.8, 3.8)
+            } else if (cn.node.s === 1) {
+              ctx.strokeStyle = rgba(col, 0.95 * a)
+              ctx.lineWidth = 1.2
+              ctx.beginPath()
+              ctx.arc(top.x, top.y, 2.4, 0, Math.PI * 2)
+              ctx.stroke()
+            } else {
+              ctx.fillStyle = rgba(DIM, 0.5 * a)
+              ctx.fillRect(top.x - 0.9, top.y - 0.9, 1.8, 1.8)
+            }
+            return
           }
-          const rr = clamp(5.2 * Math.sqrt(c.k) * top.s, 3.2, 8) * (1 + 0.08 * hov)
-          // Contact shadow on the plane: wider and softer as the node lifts.
-          const sw = rr * (1.5 + 0.5 * hov) * base.s
-          const sh = ctx.createRadialGradient(base.x, base.y, 0, base.x, base.y, sw)
-          sh.addColorStop(0, `rgba(0,0,0,${((0.5 - 0.15 * hov) * dim).toFixed(3)})`)
-          sh.addColorStop(1, 'rgba(0,0,0,0)')
-          ctx.fillStyle = sh
-          ctx.beginPath()
-          ctx.ellipse(base.x, base.y, sw, sw * Math.cos(pose.current.tx * RAD) * 0.5, 0, 0, Math.PI * 2)
-          ctx.fill()
-          // A hairline tether from the plane to the node.
-          ctx.strokeStyle = rgba(st.dot, 0.18 * dim)
-          ctx.lineWidth = 1
-          ctx.beginPath()
-          ctx.moveTo(base.x, base.y)
-          ctx.lineTo(top.x, top.y + rr)
-          ctx.stroke()
-          ctx.fillStyle = rgba(BG, 0.94)
+          const rr = clamp(5.4 * Math.sqrt(c.k) * top.s, 4, 8.5) * (1 + 0.08 * hov)
+          if (lift > 0) {
+            const sw = rr * (1.5 + 0.5 * hov) * base.s
+            const sh = ctx.createRadialGradient(base.x, base.y, 0, base.x, base.y, sw)
+            sh.addColorStop(0, `rgba(0,0,0,${((0.5 - 0.15 * hov) * a).toFixed(3)})`)
+            sh.addColorStop(1, 'rgba(0,0,0,0)')
+            ctx.fillStyle = sh
+            ctx.beginPath()
+            ctx.ellipse(base.x, base.y, sw, sw * Math.cos(pose.current.tx * RAD) * 0.5, 0, 0, Math.PI * 2)
+            ctx.fill()
+            ctx.strokeStyle = rgba(col, 0.18 * a)
+            ctx.lineWidth = 1
+            ctx.beginPath()
+            ctx.moveTo(base.x, base.y)
+            ctx.lineTo(top.x, top.y + rr)
+            ctx.stroke()
+          }
+          ctx.fillStyle = rgba(BG, 0.95 * Math.max(a, 0.5))
           ctx.beginPath()
           ctx.arc(top.x, top.y, rr + 1, 0, Math.PI * 2)
           ctx.fill()
-          ctx.lineWidth = 1
-          ctx.strokeStyle = rgba(st.dot, st.ring * 0.55 * dim)
-          ctx.beginPath()
-          ctx.arc(top.x, top.y, rr, 0, Math.PI * 2)
-          ctx.stroke()
-          const pct = cn.node.s === 2 ? 100 : cn.node.p
-          if (pct > 0) {
-            ctx.lineWidth = 1.5
-            ctx.strokeStyle = rgba(st.dot, dim)
+          if (cn.node.s === 2) {
+            const m = 0.45 + 0.55 * ret
+            ctx.fillStyle = rgba(col, 0.9 * a * m)
             ctx.beginPath()
-            ctx.arc(top.x, top.y, rr, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * pct) / 100)
+            ctx.arc(top.x, top.y, rr, 0, Math.PI * 2)
+            ctx.fill()
+            ctx.fillStyle = rgba(WHITE, a * m)
+            ctx.beginPath()
+            ctx.arc(top.x, top.y, rr * 0.38, 0, Math.PI * 2)
+            ctx.fill()
+          } else if (cn.node.s === 1) {
+            ctx.strokeStyle = rgba(col, 0.55 * a)
+            ctx.lineWidth = 1.2
+            ctx.beginPath()
+            ctx.arc(top.x, top.y, rr, 0, Math.PI * 2)
+            ctx.stroke()
+            if (cn.node.p > 0) {
+              ctx.strokeStyle = rgba(col, a)
+              ctx.lineWidth = 1.8
+              ctx.beginPath()
+              ctx.arc(top.x, top.y, rr, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * cn.node.p) / 100)
+              ctx.stroke()
+            }
+            ctx.fillStyle = rgba(col, a)
+            ctx.beginPath()
+            ctx.arc(top.x, top.y, rr * 0.3, 0, Math.PI * 2)
+            ctx.fill()
+          } else {
+            ctx.setLineDash([2, 2.5])
+            ctx.strokeStyle = rgba(DIM, 0.55 * a)
+            ctx.lineWidth = 1
+            ctx.beginPath()
+            ctx.arc(top.x, top.y, rr * 0.8, 0, Math.PI * 2)
+            ctx.stroke()
+            ctx.setLineDash([])
+          }
+          if (fadingNow) {
+            ctx.setLineDash([3, 3])
+            ctx.strokeStyle = rgba(AMBER, 0.9 * a)
+            ctx.lineWidth = 1.2
+            ctx.beginPath()
+            ctx.arc(top.x, top.y, rr + 4, 0, Math.PI * 2)
+            ctx.stroke()
+            ctx.setLineDash([])
+          }
+          if (props2.keystones?.has(cn.key)) {
+            const d = 3.2
+            const ky = top.y - rr - 7
+            ctx.fillStyle = rgba(WHITE, 0.95 * a)
+            ctx.beginPath()
+            ctx.moveTo(top.x, ky - d)
+            ctx.lineTo(top.x + d, ky)
+            ctx.lineTo(top.x, ky + d)
+            ctx.lineTo(top.x - d, ky)
+            ctx.closePath()
+            ctx.fill()
+          }
+          if (cn.node.rc) {
+            ctx.strokeStyle = rgba(C3, (0.25 + 0.5 * pulse) * a)
+            ctx.lineWidth = 1
+            ctx.beginPath()
+            ctx.arc(top.x, top.y, rr + 2 + 4 * pulse, 0, Math.PI * 2)
             ctx.stroke()
           }
-          ctx.fillStyle = rgba(cn.node.s === 2 ? WHITE : st.dot, st.a * dim)
-          ctx.beginPath()
-          ctx.arc(top.x, top.y, cn.node.s === 2 ? rr * 0.45 : rr * 0.32, 0, Math.PI * 2)
-          ctx.fill()
+          if (props2.beacon === cn.key) {
+            for (const ph2 of [0, 0.5]) {
+              const t = reduce ? 0.4 : ((now / 1600 + ph2) % 1)
+              ctx.strokeStyle = rgba(WHITE, (1 - t) * 0.9)
+              ctx.lineWidth = 1.3
+              ctx.beginPath()
+              ctx.arc(top.x, top.y, rr + 3 + 16 * t, 0, Math.PI * 2)
+              ctx.stroke()
+            }
+          }
         }
+        if (isHov) hovEntry = paint
+        else paint()
+        drawn.push({ key: cn.key, x: top.x, y: top.y, r: farZ ? 3 : clamp(5.4 * Math.sqrt(c.k) * top.s, 4, 8.5) })
       }
-      projected.current = list
+      // The hovered concept is drawn last: always on top, never flickering.
+      ;(hovEntry as (() => void) | null)?.()
 
-      // Focus: the path from YOU (teal) and what it unlocks (violet), arcing
-      // softly off the plane.
-      if (focus && !growing) {
-        const arc = (pts: number[], col: RGB, a: number, width: number, rise2 = 22) => {
-          ctx.strokeStyle = rgba(col, a)
-          ctx.lineWidth = width
-          ctx.lineCap = 'round'
-          ctx.lineJoin = 'round'
-          ctx.beginPath()
-          pts.forEach((p, i) => {
-            const t = pts.length > 1 ? i / (pts.length - 1) : 0
-            const q = P(p, Math.sin(t * Math.PI) * rise2)
-            if (i) ctx.lineTo(q.x, q.y)
-            else ctx.moveTo(q.x, q.y)
-          })
-          ctx.stroke()
-        }
+      if (!markedWeb) {
+        markedWeb = true
+        performance.mark('nexus:first-web-paint')
+      }
+      if (!markedConcepts && drawn.length) {
+        markedConcepts = true
+        performance.mark('nexus:first-concepts-paint')
+      }
+
+      // Focus: the path from YOU (teal) and what it unlocks (violet).
+      if (focus) {
         for (const r2 of focus.prereqs) {
           const pc = web.concepts.get(r2)
           if (pc) arc(treePath(web, pc.pt, focus.pt), C3, 0.55, 1.2, 14)
@@ -566,106 +770,137 @@ export const NexusWeb = forwardRef<
         const home = pathFromOrigin(web, focus.pt)
         arc(home, C3, 1, 1.9, 26)
         if (!reduce && home.length > 1) {
-          // A small light travelling out from YOU along the path.
           const period = 900 + home.length * 90
           const f = ((now % period) / period) * (home.length - 1)
           const i = Math.floor(f)
           const t0 = i / (home.length - 1)
           const t1 = Math.min(1, (i + 1) / (home.length - 1))
-          const a = P(home[i], Math.sin(t0 * Math.PI) * 26)
-          const b = P(home[Math.min(home.length - 1, i + 1)], Math.sin(t1 * Math.PI) * 26)
+          const a = PP(home[i], Math.sin(t0 * Math.PI) * 26)
+          const b = PP(home[Math.min(home.length - 1, i + 1)], Math.sin(t1 * Math.PI) * 26)
           ctx.fillStyle = 'rgba(255,255,255,0.95)'
           ctx.beginPath()
           ctx.arc(a.x + (b.x - a.x) * (f - i), a.y + (b.y - a.y) * (f - i), 2.3, 0, Math.PI * 2)
           ctx.fill()
         }
       }
-      if (selectedRef.current) {
-        const sp = list.find((x) => x.key === selectedRef.current)
-        if (sp) {
-          ctx.strokeStyle = 'rgba(255,255,255,0.9)'
-          ctx.lineWidth = 1.2
-          ctx.beginPath()
-          ctx.arc(sp.x, sp.y, 11.5, 0, Math.PI * 2)
-          ctx.stroke()
-        }
+      const selDrawn = sel ? drawn.find((d) => d.key === sel.key) : null
+      if (selDrawn) {
+        ctx.strokeStyle = 'rgba(255,255,255,0.95)'
+        ctx.lineWidth = 1.3
+        ctx.beginPath()
+        ctx.arc(selDrawn.x, selDrawn.y, selDrawn.r + 6, 0, Math.PI * 2)
+        ctx.stroke()
       }
 
-      // Type: subject names (spaced capitals), the selected concept's details,
-      // and concept names when they fit.
+      // Type.
       labelHits.current = []
+      actionHits.current = []
       const phone = w < 640
       const taken: number[][] = [
-        [0, 0, phone ? w : Math.min(w, 430), phone ? 96 : 92],
-        [w - 240, 0, w, 64],
+        [0, 0, phone ? w : Math.min(w, 440), phone ? 100 : 96],
+        [w - (phone ? 200 : 300), 0, w, phone ? 100 : 70],
         [w - 110, h - 190, w, h],
-        [0, h - 128, Math.min(w, 620), h - 84],
+        [w - MINI - 40, h - MINI - 130, w, h],
+        [0, h - 210, Math.min(w, 640), h],
       ]
-      const fc = focus?.cluster.id
-      const sel = selectedRef.current ? web.concepts.get(selectedRef.current) : null
-      const selP = sel ? list.find((x) => x.key === sel.key) : null
-      let selBox: { bx: number; by: number; blockW: number } | null = null
-      if (sel && selP && !growing && !quietRef.current) {
-        ctx.font = `600 17px ${font}`
-        const blockW = Math.max(ctx.measureText(sel.node.n).width, 220)
-        const right = selP.x + 24 + blockW < w - 16
-        const bx = right ? selP.x + 24 : selP.x - 24 - blockW
-        const by = clamp(selP.y - 32, 100, h - 200)
-        selBox = { bx, by, blockW }
-        taken.push([bx - 12, by - 10, bx + blockW + 12, by + 104])
+      // Numbered route waypoints.
+      if (route) {
+        route.next.forEach((k, idx) => {
+          const d = drawn.find((x) => x.key === k)
+          if (!d) return
+          const t = String(idx + 1)
+          ctx.font = `700 11px ${font}`
+          ctx.textAlign = 'center'
+          ctx.textBaseline = 'middle'
+          ctx.fillStyle = 'rgba(255,214,120,0.95)'
+          ctx.strokeStyle = 'rgba(9,11,24,0.9)'
+          ctx.lineWidth = 3
+          ctx.strokeText(t, d.x - d.r - 9, d.y - d.r - 6)
+          ctx.fillText(t, d.x - d.r - 9, d.y - d.r - 6)
+          taken.push([d.x - d.r - 16, d.y - d.r - 13, d.x - d.r - 2, d.y - d.r + 1])
+        })
       }
-      const fade = growing ? 0 : clamp((now - labelsFrom) / 900)
+      // The selected concept's own type: reserved before subject names.
+      let selBox: { bx: number; by: number } | null = null
+      if (sel && selDrawn && !props2.quiet) {
+        ctx.font = `600 17px ${font}`
+        const blockW = Math.max(ctx.measureText(sel.node.n).width, 240)
+        const right = selDrawn.x + 26 + blockW < w - 16
+        const bx = right ? selDrawn.x + 26 : selDrawn.x - 26 - blockW
+        const by = clamp(selDrawn.y - 32, 104, h - 230)
+        selBox = { bx, by }
+        taken.push([bx - 12, by - 10, bx + blockW + 12, by + 112])
+      }
+      const fc = focus?.cluster.id
+      const fade = clamp((now - labelsFrom) / 700)
       if (fade > 0) {
         const regions = [...web.regions].sort((a, b) => b.cluster.nodes.length - a.cluster.nodes.length)
         for (const rg of regions) {
+          if (filter.domain && rg.cluster.domain !== filter.domain) continue
           const small = c.k < 0.22
           const full = rg.cluster.name.toUpperCase()
           const name = small || (phone && full.length > 22) ? rg.cluster.short.toUpperCase() : full
           const pr = project(rg.x, rg.y, 0, c)
-          // Names recede with the plane: smaller and fainter in the distance.
-          const size = clamp((small ? 9 : 10.5) * Math.sqrt(pr.s), 8, 11.5)
-          const spacing = (small ? 2 : 3.2) * pr.s
+          const size = clamp((small ? 9.5 : 10.5) * Math.sqrt(pr.s), 10, 12)
+          const spacing = (small ? 2 : 3.2) * Math.min(1, pr.s)
           ctx.font = `600 ${size}px ${font}`
           const tw = ctx.measureText(name).width + spacing * (name.length - 1)
           if (pr.x < -tw / 3 || pr.x > w + tw / 3 || pr.y < -20 || pr.y > h + 20) continue
-          const X = clamp(pr.x, tw / 2 + 12, w - tw / 2 - 12)
-          const Y = clamp(pr.y, 12, h - size - 112)
-          const box = [X - tw / 2 - 6, Y - 4, X + tw / 2 + 6, Y + size + 17]
+          const X = clamp(pr.x, tw / 2 + 24, w - tw / 2 - 12)
+          const Y = clamp(pr.y, 14, h - size - 112)
+          const box = [X - tw / 2 - 20, Y - 5, X + tw / 2 + 6, Y + size + 18]
           if (overlaps(taken, box)) continue
           taken.push(box)
-          const depthFade = clamp(0.35 + (pr.s - 0.7) * 1.6, 0.35, 1)
-          const a = (fc ? (fc === rg.cluster.id ? 0.95 : 0.3) : 0.82) * fade * depthFade
+          const depthFade = clamp(0.62 + (pr.s - 0.75) * 1.4, 0.62, 1)
+          const a = (fc ? (fc === rg.cluster.id ? 1 : 0.4) : 0.92) * fade * depthFade
           ctx.textBaseline = 'top'
-          spaced(name, X, Y, size, spacing, `rgba(232,235,255,${a.toFixed(3)})`)
-          const rank = ranksRef.current?.[rg.cluster.id]
-          if (rg.progress > 0) spaced(`${rank ? `${rank.tier} · ` : ''}${rg.progress}%`.toUpperCase(), X, Y + size + 6, size - 1.5, 2.2, rgba(C3, a * 0.9))
+          spaced(name, X, Y, size, spacing, `rgba(236,239,255,${a.toFixed(3)})`)
+          // Subject progress: a thin arc before the name.
+          const cx0 = X - tw / 2 - 11
+          const cy0 = Y + size / 2
+          ctx.lineWidth = 1
+          ctx.strokeStyle = `rgba(168,176,255,${(0.35 * a).toFixed(3)})`
+          ctx.beginPath()
+          ctx.arc(cx0, cy0, 5, 0, Math.PI * 2)
+          ctx.stroke()
+          if (rg.progress > 0) {
+            ctx.strokeStyle = rgba(C3, a)
+            ctx.lineWidth = 1.6
+            ctx.beginPath()
+            ctx.arc(cx0, cy0, 5, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * rg.progress) / 100)
+            ctx.stroke()
+          }
+          const rank = props2.ranks?.[rg.cluster.id]
+          if (rg.progress > 0) spaced(`${rank ? `${rank.tier} · ` : ''}${rg.progress}%`.toUpperCase(), X, Y + size + 6, 9.5, 2.2, rgba(C3, a * 0.95))
           labelHits.current.push({ x: box[0], y: box[1], w: box[2] - box[0], h: box[3] - box[1], id: rg.cluster.id })
         }
       }
 
-      openHit.current = null
       if (sel && selBox) {
         const { bx, by } = selBox
-        ctx.font = `600 17px ${font}`
         ctx.textAlign = 'left'
         ctx.textBaseline = 'top'
         ctx.lineWidth = 4
         ctx.lineJoin = 'round'
         ctx.strokeStyle = 'rgba(9,11,24,0.85)'
         ctx.fillStyle = 'rgba(255,255,255,0.98)'
+        ctx.font = `600 17px ${font}`
         ctx.strokeText(sel.node.n, bx, by)
         ctx.fillText(sel.node.n, bx, by)
-        const status = sel.node.s === 2 ? 'mastered' : sel.node.s === 1 ? 'open' : 'locked'
-        const meta = `${sel.cluster.short} · ${sel.node.k ?? 'concept'} · ${status}`.toUpperCase()
-        spaced(meta, bx, by + 26, 9.5, 2.4, sel.node.s === 2 ? rgba(C3, 0.95) : sel.node.s === 1 ? rgba(C2, 0.95) : 'rgba(200,206,240,0.7)', 'left')
+        const ret = retention(sel.node, ahead)
+        const fading = sel.node.s === 2 && ret < 0.5
+        const status = fading ? 'fading' : sel.node.s === 2 ? 'mastered' : sel.node.s === 1 ? 'open' : 'locked'
+        const extra = props2.keystones?.has(sel.key) ? ' · keystone' : ''
+        spaced(`${sel.cluster.short} · ${sel.node.k ?? 'concept'} · ${status}${extra}`.toUpperCase(), bx, by + 26, 10, 2.4, fading ? rgba(AMBER, 1) : sel.node.s === 2 ? rgba(C3, 1) : sel.node.s === 1 ? rgba([190, 160, 255], 1) : 'rgba(210,214,245,0.85)', 'left')
         ctx.font = `500 11.5px ui-monospace, SFMono-Regular, Menlo, monospace`
         ctx.textAlign = 'left'
-        const stats = `${sel.node.p}% mastery   ${sel.node.c}   ${sel.node.xp} XP`
-        ctx.fillStyle = 'rgba(220,224,250,0.85)'
+        const mem = sel.node.s === 2 && (sel.node.ag ?? -1) >= 0 ? `   ${Math.round(ret * 100)}% fresh` : ''
+        const stats = `${sel.node.p}% mastery   ${sel.node.c}   ${sel.node.xp} XP${mem}`
+        ctx.fillStyle = 'rgba(226,230,255,0.92)'
         ctx.lineWidth = 3
         ctx.strokeText(stats, bx, by + 44)
         ctx.fillText(stats, bx, by + 44)
-        ctx.fillStyle = 'rgba(150,160,255,0.18)'
+        ctx.fillStyle = 'rgba(168,176,255,0.22)'
         ctx.fillRect(bx, by + 64, 160, 1)
         const pg = ctx.createLinearGradient(bx, 0, bx + 160, 0)
         pg.addColorStop(0, rgba(C1, 1))
@@ -673,47 +908,75 @@ export const NexusWeb = forwardRef<
         pg.addColorStop(1, rgba(C3, 1))
         ctx.fillStyle = pg
         ctx.fillRect(bx, by + 64, (160 * sel.node.p) / 100, 1)
+        // Actions, as underlined words.
+        const acts: [WebAction, string][] = [['open', 'Open details →'], ['trace', 'Trace lineage'], ['copy', 'Copy link']]
+        if (fading) acts.splice(1, 0, ['revise', 'Revise'])
+        let ax = bx
         ctx.font = `600 12px ${font}`
-        const open = 'Open details  →'
-        const ow = ctx.measureText(open).width
-        ctx.fillStyle = rgba(C3, 1)
-        ctx.strokeText(open, bx, by + 76)
-        ctx.fillText(open, bx, by + 76)
-        ctx.fillRect(bx, by + 92, ow, 1)
-        openHit.current = { x: bx - 4, y: by + 70, w: ow + 8, h: 28, key: sel.key }
+        for (const [act, text] of acts) {
+          const tw = ctx.measureText(text).width
+          const col: RGB = act === 'revise' ? AMBER : act === 'open' ? C3 : [214, 220, 255]
+          ctx.fillStyle = rgba(col, 1)
+          ctx.strokeStyle = 'rgba(9,11,24,0.85)'
+          ctx.lineWidth = 3
+          ctx.strokeText(text, ax, by + 78)
+          ctx.fillText(text, ax, by + 78)
+          ctx.fillRect(ax, by + 94, tw, 1)
+          actionHits.current.push({ x: ax - 4, y: by + 72, w: tw + 8, h: 28, action: act, key: sel.key })
+          ax += tw + 18
+        }
       }
 
       ctx.textAlign = 'center'
       ctx.textBaseline = 'top'
-      ctx.lineWidth = 3
-      ctx.strokeStyle = 'rgba(9,11,24,0.9)'
       const nameAt = (key: string, strong: boolean) => {
-        const sp = list.find((x) => x.key === key)
+        const d = drawn.find((x) => x.key === key)
         const cn = web.concepts.get(key)
-        if (!sp || !cn) return
-        const X = sp.x
-        const Y = sp.y + 13
-        ctx.font = `${strong ? 600 : 500} ${strong ? 12 : 11}px ${font}`
+        if (!d || !cn) return
+        if (!strong && !matches(key)) return
+        const X = d.x
+        const Y = d.y + d.r + 5
+        ctx.font = `${strong ? 600 : 500} ${strong ? 12.5 : 11}px ${font}`
         const tw = ctx.measureText(cn.node.n).width
-        const box = [X - tw / 2 - 4, Y - 2, X + tw / 2 + 4, Y + (strong ? 30 : 14)]
+        const box = [X - tw / 2 - 4, Y - 2, X + tw / 2 + 4, Y + (strong ? 32 : 15)]
         if (!strong && (box[0] < 6 || box[2] > w - 6 || box[3] > h - 96 || overlaps(taken, box))) return
         taken.push(box)
+        const tx2 = clamp(X, tw / 2 + 8, w - tw / 2 - 8)
         ctx.textAlign = 'center'
         ctx.lineWidth = 3
         ctx.strokeStyle = 'rgba(9,11,24,0.9)'
-        ctx.fillStyle = strong ? 'rgba(255,255,255,0.98)' : `rgba(220,224,250,${cn.node.s === 0 ? 0.55 : 0.85})`
-        ctx.strokeText(cn.node.n, X, Y)
-        ctx.fillText(cn.node.n, X, Y)
+        ctx.fillStyle = strong ? 'rgba(255,255,255,1)' : `rgba(226,230,255,${cn.node.s === 0 ? 0.7 : 0.92})`
+        ctx.strokeText(cn.node.n, tx2, Y)
+        ctx.fillText(cn.node.n, tx2, Y)
         if (strong) {
-          ctx.font = `500 10px ${font}`
-          const sub = `${cn.cluster.short} · ${cn.node.s === 2 ? 'mastered' : cn.node.s === 0 ? 'locked' : cn.node.c}`
-          ctx.fillStyle = rgba(C3, 0.95)
-          ctx.strokeText(sub, X, Y + 15)
-          ctx.fillText(sub, X, Y + 15)
+          ctx.font = `500 10.5px ${font}`
+          const keystone = props2.keystones?.has(key) ? ' · keystone' : ''
+          const sub = `${cn.cluster.short} · ${cn.node.s === 2 ? 'mastered' : cn.node.s === 0 ? 'locked' : cn.node.c}${keystone}`
+          ctx.fillStyle = rgba(C3, 1)
+          ctx.strokeText(sub, tx2, Y + 16)
+          ctx.fillText(sub, tx2, Y + 16)
         }
       }
       if (focus && focus.key !== sel?.key) nameAt(focus.key, true)
-      if (c.k >= LABEL_K && !growing) for (const sp of list) if (sp.key !== focus?.key && sp.key !== sel?.key) nameAt(sp.key, false)
+      if (props2.beacon && props2.beacon !== focus?.key && props2.beacon !== sel?.key) {
+        const d = drawn.find((x) => x.key === props2.beacon)
+        if (d) {
+          ctx.textBaseline = 'bottom'
+          spaced('NEXT', d.x, d.y - d.r - 22, 9.5, 2.6, 'rgba(255,255,255,0.95)')
+          ctx.textBaseline = 'top'
+          nameAt(props2.beacon, false)
+        }
+      }
+      if (c.k >= LABEL_K) for (const d of drawn) if (d.key !== focus?.key && d.key !== sel?.key) nameAt(d.key, false)
+
+      // Minimap (cheap: a cached dot layer + the view outline).
+      if (mini) {
+        if (dirtyMini.current) {
+          drawMiniBase()
+          dirtyMini.current = false
+        }
+        if (frameNo % 3 === 0) drawMini()
+      }
     }
     raf = requestAnimationFrame(frame)
     return () => {
@@ -721,41 +984,50 @@ export const NexusWeb = forwardRef<
       ro.disconnect()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [web, paths, reduce])
+  }, [web, tree, bright, reduce, loading])
 
-  // Dev builds only: where concepts and subject names are on screen, so the
-  // browser checks can hover and click real targets.
+  // Dev builds only: where concepts, names and actions are on screen.
   useEffect(() => {
     if (!import.meta.env.DEV) return
     const w = window as unknown as Record<string, unknown>
+    const rect = () => nearRef.current?.getBoundingClientRect()
     w.__nexusWeb = {
       concept: (key: string) => {
-        const sp = projected.current.find((x) => x.key === key)
-        const r = nearRef.current?.getBoundingClientRect()
-        return sp && r ? { x: r.left + sp.x, y: r.top + sp.y } : null
+        const p = grid.current.position(key)
+        const r = rect()
+        return p && r ? { x: r.left + p.x, y: r.top + p.y } : null
       },
       label: (id: string) => {
         const l = labelHits.current.find((x) => x.id === id)
-        const r = nearRef.current?.getBoundingClientRect()
-        return l && r ? { x: r.left + l.x + l.w / 2, y: r.top + l.y + 6 } : null
+        const r = rect()
+        return l && r ? { x: r.left + l.x + l.w / 2, y: r.top + l.y + 8 } : null
       },
-      open: () => {
-        const o = openHit.current
-        const r = nearRef.current?.getBoundingClientRect()
+      action: (a: WebAction) => {
+        const o = actionHits.current.find((x) => x.action === a)
+        const r = rect()
         return o && r ? { x: r.left + o.x + o.w / 2, y: r.top + o.y + o.h / 2 } : null
       },
+      open: () => {
+        const o = actionHits.current.find((x) => x.action === 'open')
+        const r = rect()
+        return o && r ? { x: r.left + o.x + o.w / 2, y: r.top + o.y + o.h / 2 } : null
+      },
+      hovered: () => hovered.current,
     }
     return () => {
       delete w.__nexusWeb
     }
   }, [web])
 
-  /* ── pointer, wheel and keyboard ── */
+  /* ── pointer, wheel, keyboard and the minimap ── */
   useEffect(() => {
+    if (loading) return
     const canvas = nearRef.current!
+    const mini = miniRef.current
     const pts = new Map<number, { x: number; y: number }>()
     let drag: { x: number; y: number; moved: boolean; anchor: { x: number; y: number }; vx: number; vy: number; lt: number } | null = null
     let pinch: { d: number; k: number; anchor: { x: number; y: number } } | null = null
+    const cb = () => P.current
     const local = (e: { clientX: number; clientY: number }) => {
       const r = canvas.getBoundingClientRect()
       return { x: e.clientX - r.left, y: e.clientY - r.top }
@@ -763,17 +1035,17 @@ export const NexusWeb = forwardRef<
     const first = () => {
       if (interacted.current) return
       interacted.current = true
-      cbs.current.onInteract?.()
+      cb().onInteract?.()
     }
     const moved = () => {
       settled.current = performance.now()
       fly.current = null
+      tour.current = []
       if (born.current && born.current > 0) {
         born.current = -1
         dirtyStatic.current = true
       }
     }
-    /** Move the camera so the world point `anchor` sits under screen point p. */
     const pin = (anchor: { x: number; y: number }, p: { x: number; y: number }) => {
       for (let i = 0; i < 2; i++) {
         const now = unproject(p.x, p.y)
@@ -786,25 +1058,22 @@ export const NexusWeb = forwardRef<
       pin(anchor, p)
       moved()
     }
+    const radius = () => Math.max(14, 9 * Math.sqrt(cam.current.k))
     const hitConcept = (x: number, y: number) => {
-      let best: string | null = null
-      let bd = Math.max(12, 8 * Math.sqrt(cam.current.k))
-      for (const sp of projected.current) {
-        const d = Math.hypot(sp.x - x, sp.y - y)
-        if (d < bd) {
-          bd = d
-          best = sp.key
-        }
-      }
-      return best
+      // Hysteresis: the hovered concept keeps the pointer a little longer.
+      const cur = hovered.current ? grid.current.position(hovered.current) : null
+      if (cur && Math.hypot(cur.x - x, cur.y - y) < radius() + 8) return hovered.current
+      return grid.current.nearest(x, y, radius())
     }
-    const onLabel = (x: number, y: number) => labelHits.current.find((l) => x >= l.x && x <= l.x + l.w && y >= l.y && y <= l.y + l.h)?.id ?? null
+    const inBox = (b: { x: number; y: number; w: number; h: number }, p: { x: number; y: number }) => p.x >= b.x && p.x <= b.x + b.w && p.y >= b.y && p.y <= b.y + b.h
+    const onLabel = (x: number, y: number) => labelHits.current.find((l) => inBox(l, { x, y }))?.id ?? null
+    const onAction = (x: number, y: number) => actionHits.current.find((a) => inBox(a, { x, y })) ?? null
     const hitRegion = (x: number, y: number) => {
       const lab = onLabel(x, y)
       if (lab) return lab
       const p = unproject(x, y)
-      const dx = p.x - web.xy[2 * web.origin]
-      const dy = p.y - web.xy[2 * web.origin + 1]
+      const dx = p.x - ox
+      const dy = p.y - oy
       const r = Math.hypot(dx, dy)
       const a = Math.atan2(dy, dx)
       for (const rg of web.regions) {
@@ -820,11 +1089,10 @@ export const NexusWeb = forwardRef<
       if (!rg) return
       const back = { ...cam.current }
       startFly({ x: rg.x, y: rg.y, k: Math.min(MAX_K, Math.max(cam.current.k * 2.2, 1.6)) }, () => {
-        // The camera tilts down into the region as the path emerges.
-        if (reduce) return cbs.current.onOpenSubject(id, back)
+        if (reduce) return cb().onOpenSubject(id, back)
         rise.current = performance.now()
         wrapRef.current?.classList.add('nx-rise')
-        window.setTimeout(() => cbs.current.onOpenSubject(id, back), 420)
+        window.setTimeout(() => cb().onOpenSubject(id, back), 420)
       })
     }
     const down = (e: PointerEvent) => {
@@ -844,7 +1112,6 @@ export const NexusWeb = forwardRef<
     const move = (e: PointerEvent) => {
       const p = local(e)
       const { w, h } = view.current
-      if (e.pointerType === 'mouse') lean.current = { ...lean.current, tx: p.x / w - 0.5, ty: p.y / h - 0.5 }
       if (pts.has(e.pointerId)) pts.set(e.pointerId, p)
       if (pinch && pts.size >= 2) {
         const [a, b] = [...pts.values()]
@@ -861,7 +1128,6 @@ export const NexusWeb = forwardRef<
           pin(drag.anchor, p)
           const t = performance.now()
           const dt = Math.max(1, t - drag.lt)
-          // Velocity in world units / ms, for the glide on release.
           drag.vx = drag.vx * 0.6 + ((before.x - cam.current.x) / dt) * 0.4
           drag.vy = drag.vy * 0.6 + ((before.y - cam.current.y) / dt) * 0.4
           drag.lt = t
@@ -870,11 +1136,12 @@ export const NexusWeb = forwardRef<
         return
       }
       if (e.pointerType === 'mouse') {
-        const key = onLabel(p.x, p.y) ? null : hitConcept(p.x, p.y)
-        if (key !== hovered.current) hovered.current = key
-        const oh = openHit.current
-        const onOpen = oh && p.x >= oh.x && p.x <= oh.x + oh.w && p.y >= oh.y && p.y <= oh.y + oh.h
-        if (key || onOpen || hitRegion(p.x, p.y)) canvas.dataset.hover = ''
+        const act = onAction(p.x, p.y)
+        const key = act || onLabel(p.x, p.y) ? null : hitConcept(p.x, p.y)
+        hovered.current = key
+        // The plane leans toward the pointer only while it is not on a concept.
+        if (!key) lean.current = { ...lean.current, tx: p.x / w - 0.5, ty: p.y / h - 0.5 }
+        if (key || act || hitRegion(p.x, p.y)) canvas.dataset.hover = ''
         else delete canvas.dataset.hover
       }
     }
@@ -888,17 +1155,17 @@ export const NexusWeb = forwardRef<
       if (pts.size === 0) {
         if (tap) {
           const p = local(e)
-          const oh = openHit.current
-          if (oh && p.x >= oh.x && p.x <= oh.x + oh.w && p.y >= oh.y && p.y <= oh.y + oh.h) cbs.current.onOpenDetails?.(oh.key)
+          const act = onAction(p.x, p.y)
+          if (act) cb().onAction?.(act.action, act.key)
           else {
             const label = onLabel(p.x, p.y)
-            const key = label ? null : hitConcept(p.x, p.y)
+            const key = label ? null : grid.current.nearest(p.x, p.y, radius())
             if (label) openSubject(label)
-            else if (key) cbs.current.onSelect(selectedRef.current === key ? null : key)
+            else if (key) cb().onSelect(cb().selected === key ? null : key)
             else {
               const id = hitRegion(p.x, p.y)
               if (id && cam.current.k < 0.9) openSubject(id)
-              else cbs.current.onSelect(null)
+              else cb().onSelect(null)
             }
           }
         }
@@ -919,22 +1186,66 @@ export const NexusWeb = forwardRef<
       inertia.current = null
       zoomAt(local(e), cam.current.k * Math.exp(-e.deltaY * (e.ctrlKey ? 0.012 : 0.0016)))
     }
+    // Keyboard: with a concept selected, arrows move along its links
+    // (up: a prerequisite, down: what it unlocks, left/right: siblings);
+    // Enter opens it, Esc steps back. Otherwise arrows pan.
+    const siblings = (key: string) => {
+      const cn = web.concepts.get(key)
+      if (!cn) return []
+      const parentKey = cn.prereqs[0]
+      const pool = parentKey ? web.concepts.get(parentKey)?.unlocks ?? [] : [...web.concepts.values()].filter((x) => x.cluster.id === cn.cluster.id && x.level === cn.level).map((x) => x.key)
+      const ang = (k: string) => {
+        const c2 = web.concepts.get(k)!
+        return Math.atan2(web.xy[2 * c2.pt + 1] - oy, web.xy[2 * c2.pt] - ox)
+      }
+      return [...new Set(pool)].sort((a, b) => ang(a) - ang(b))
+    }
     const key = (e: KeyboardEvent) => {
       const c = cam.current
-      const step = 120 / c.k
       const { w, h } = view.current
+      const sel = cb().selected
       first()
+      const go = (k: string | undefined) => {
+        if (!k) return
+        cb().onSelect(k)
+        handle.current.flyToNode(k)
+      }
+      if (sel && web.concepts.has(sel)) {
+        const cn = web.concepts.get(sel)!
+        if (e.key === 'ArrowUp') go([...cn.prereqs].sort((a, b) => (web.concepts.get(b)?.level ?? 0) - (web.concepts.get(a)?.level ?? 0))[0])
+        else if (e.key === 'ArrowDown') go(cn.unlocks[0])
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          const list = siblings(sel)
+          const i = list.indexOf(sel)
+          if (list.length > 1) go(list[(i + (e.key === 'ArrowRight' ? 1 : list.length - 1)) % list.length])
+        } else if (e.key === 'Enter') cb().onAction?.('open', sel)
+        else if (e.key === 'Escape') cb().onSelect(null)
+        else if (e.key === '+' || e.key === '=') zoomAt({ x: w / 2, y: h / 2 }, c.k * 1.25)
+        else if (e.key === '-') zoomAt({ x: w / 2, y: h / 2 }, c.k / 1.25)
+        else return
+        e.preventDefault()
+        return
+      }
+      const step = 120 / c.k
       if (e.key === 'ArrowLeft') startFly({ ...c, x: c.x - step }, undefined, 260)
       else if (e.key === 'ArrowRight') startFly({ ...c, x: c.x + step }, undefined, 260)
       else if (e.key === 'ArrowUp') startFly({ ...c, y: c.y - step }, undefined, 260)
       else if (e.key === 'ArrowDown') startFly({ ...c, y: c.y + step }, undefined, 260)
       else if (e.key === '+' || e.key === '=') zoomAt({ x: w / 2, y: h / 2 }, c.k * 1.25)
       else if (e.key === '-') zoomAt({ x: w / 2, y: h / 2 }, c.k / 1.25)
-      else if (e.key === 'Escape' || e.key === '0') {
-        cbs.current.onSelect(null)
-        startFly({ x: web.xy[2 * web.origin], y: web.xy[2 * web.origin + 1], k: w < 640 ? HOME_K_PHONE : HOME_K })
-      } else return
+      else if (e.key === 'Enter' && cb().beacon) go(cb().beacon!)
+      else if (e.key === 'Escape' || e.key === '0') startFly({ x: ox, y: oy, k: w < 640 ? HOME_K_PHONE : HOME_K })
+      else return
       e.preventDefault()
+    }
+    const miniClick = (e: MouseEvent) => {
+      if (!mini) return
+      const r = mini.getBoundingClientRect()
+      const s = MINI / (web.extent * 2)
+      const x = ox + (e.clientX - r.left - MINI / 2) / s
+      const y = oy + (e.clientY - r.top - MINI / 2) / s
+      first()
+      startFly({ x, y, k: Math.max(cam.current.k, 0.62) })
     }
     canvas.addEventListener('pointerdown', down)
     canvas.addEventListener('pointermove', move)
@@ -943,6 +1254,7 @@ export const NexusWeb = forwardRef<
     canvas.addEventListener('pointerleave', leave)
     canvas.addEventListener('wheel', wheel, { passive: false })
     canvas.addEventListener('keydown', key)
+    mini?.addEventListener('click', miniClick)
     return () => {
       canvas.removeEventListener('pointerdown', down)
       canvas.removeEventListener('pointermove', move)
@@ -951,9 +1263,10 @@ export const NexusWeb = forwardRef<
       canvas.removeEventListener('pointerleave', leave)
       canvas.removeEventListener('wheel', wheel)
       canvas.removeEventListener('keydown', key)
+      mini?.removeEventListener('click', miniClick)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [web])
+  }, [web, loading])
 
   return (
     <div ref={wrapRef} className="nx-lat">
@@ -964,10 +1277,16 @@ export const NexusWeb = forwardRef<
       <canvas
         ref={nearRef}
         className="nx-near"
-        tabIndex={0}
+        tabIndex={loading ? -1 : 0}
         role="application"
-        aria-label={`The Nexus web: ${clusters.length} subjects, ${web.concepts.size} concepts around you. Drag to pan, scroll or pinch to zoom, click a concept to see it or a subject to open its path. Arrow keys pan, plus and minus zoom, Escape returns to you.`}
+        aria-busy={loading || undefined}
+        aria-label={
+          loading
+            ? 'The Nexus web is loading'
+            : `The Nexus web: ${web.regions.length} subjects, ${web.concepts.size} concepts around you. Drag to pan, scroll or pinch to zoom, click a concept to see it or a subject name to open its path. Arrow keys pan, or move along links when a concept is selected; Enter opens, Escape steps back.`
+        }
       />
+      {!loading && <canvas ref={miniRef} className="nx-mini" style={{ width: MINI, height: MINI }} aria-label="Minimap: click to fly there" role="img" />}
     </div>
   )
 })

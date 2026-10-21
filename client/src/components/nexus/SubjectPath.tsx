@@ -92,23 +92,18 @@ export function SubjectPath({
         <Button variant="outline" size="sm" onClick={onBack} aria-label="Back to the web">
           <ArrowLeft className="size-3.5" /> Web
         </Button>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 basis-[14rem]">
           <h2 className="mb-0 font-display text-lg font-semibold text-text-primary">{nexus.subject?.name}</h2>
-          <p className="mb-0 text-xs text-foreground-dim">{nexus.subject?.description}</p>
+          <p className="mb-0 line-clamp-2 text-xs text-foreground-dim">{nexus.subject?.description}</p>
         </div>
         {rank && (
-          <div className="nx-rank flex items-center gap-2.5 rounded-full border px-3 py-1.5" title={rank.next ? `Next: ${rank.next}` : 'Top tier'}>
-            <span className="nx-rank-pips flex gap-0.5" aria-hidden="true">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <span key={i} className="size-1.5 rounded-full" data-on={i <= rank.tierIndex || undefined} />
-              ))}
-            </span>
-            <span className="text-[12px] font-semibold text-text-primary">{rank.tier}</span>
-            <span className="text-[11px] text-foreground-dim">· {rank.title}</span>
+          <p className="nx-rank-line mb-0 basis-full sm:basis-auto" title={rank.next ? `Next: ${rank.next}` : 'Top tier'}>
+            <span className="nx-rank-tier">{rank.tier}</span>
+            <span className="text-foreground-dim"> · {rank.title} · </span>
             <span className="font-mono text-[10.5px] text-foreground-faint tabular-nums">
               {done}/{nodes.length} · {rank.progress}%
             </span>
-          </div>
+          </p>
         )}
       </div>
 
