@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
-import { Badge, Button, Card, CardContent, EmptyState, ErrorState, LoadingBlock, Tabs } from '@/components/ui'
+import { Button, ErrorState, LoadingBlock, Tabs } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
-import { cn } from '@/lib/utils'
 import { Icon } from '@/components/icon/Icon'
 import { SkillGraph } from './SkillGraph'
 import { NodePanel } from './NodePanel'
@@ -89,7 +88,7 @@ export function SubjectPath({
 
   return (
     <div className="nx-path-enter" key={subject}>
-      <div className="nx-glass nx-path-head flex flex-wrap items-center gap-x-4 gap-y-2">
+      <div className="nx-path-head flex flex-wrap items-center gap-x-4 gap-y-2">
         <Button variant="outline" size="sm" onClick={onBack} aria-label="Back to the web">
           <ArrowLeft className="size-3.5" /> Web
         </Button>
@@ -129,24 +128,23 @@ export function SubjectPath({
       ) : (
         <>
           {/* Zone rail */}
-          <div className="mb-4 flex gap-1.5 overflow-x-auto pb-1" role="navigation" aria-label="Zones">
+          <div className="nx-subjects mb-5 flex gap-6 overflow-x-auto pb-1" role="navigation" aria-label="Zones">
             {zones.map((z) => (
               <button
                 key={z.level}
                 type="button"
                 onClick={() => scrollToZone(z.level)}
                 aria-label={`${isDsa ? 'Zone' : 'Chapter'} ${z.level}: ${z.name}${z.locked ? ' (locked)' : ''}`}
-                className={cn(
-                  'flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold tracking-wide whitespace-nowrap transition-all duration-200',
-                  z.level === activeZone
-                    ? 'border-primary bg-primary/15 text-foreground'
-                    : 'border-border bg-surface text-foreground-dim hover:border-primary/60 hover:text-foreground',
-                )}
+                className="nx-zone-link"
+                data-on={z.level === activeZone || undefined}
               >
-                {z.locked && <Icon name="lock" className="size-3 text-foreground-faint" aria-hidden="true" />}
-                <span className="size-1.5 rounded-full" style={{ backgroundColor: z.color }} aria-hidden="true" />
+                <span className="font-mono text-[10px] opacity-60 tabular-nums">{String(z.level).padStart(2, '0')}</span>
                 {z.name}
-                <span className="font-mono text-[10px] text-foreground-faint tabular-nums">{z.zoneProgress}%</span>
+                {z.locked ? (
+                  <Icon name="lock" className="size-3 opacity-50" aria-hidden="true" />
+                ) : (
+                  <span className="font-mono text-[10px] opacity-60 tabular-nums">{z.zoneProgress}%</span>
+                )}
               </button>
             ))}
           </div>
@@ -167,11 +165,7 @@ export function SubjectPath({
                 ) : roadmapApi.error ? (
                   <ErrorState message={roadmapApi.error} onRetry={roadmapApi.refetch} />
                 ) : (
-                  <Card>
-                    <CardContent>
-                      <LoadingBlock rows={4} />
-                    </CardContent>
-                  </Card>
+                  <LoadingBlock rows={4} />
                 ))}
             </div>
 
@@ -189,37 +183,13 @@ export function SubjectPath({
                   onSelect={(id) => onSelect(id)}
                 />
               ) : (
-                <Card className="nx-glass sticky top-36">
-                  <CardContent>
-                    <EmptyState
-                      icon="map"
-                      title="Select a skill node"
-                      description={
-                        isDsa
-                          ? 'Click any node in the rift web to inspect prerequisites, resources, and recommended problems.'
-                          : 'Click any node to see its prerequisites, links to other subjects, lessons and PYQs.'
-                      }
-                      className="py-8"
-                    />
-                    <div className="mt-2 space-y-2 border-t border-border pt-3">
-                      <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
-                        <Icon name="sparkles" className="size-3" aria-hidden="true" /> Legend
-                      </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        <Badge variant="success">mastered</Badge>
-                        <Badge variant="primary">unlocked</Badge>
-                        <Badge variant="default">
-                          <Icon name="lock" className="size-3" aria-hidden="true" /> locked
-                        </Badge>
-                      </div>
-                      <p className="text-[11px] text-foreground-faint">
-                        Hover a skill to trace its chain: what it needs lights teal, what it unlocks lights violet. Stars are mastered, rings fill as you
-                        progress, and a dot travels along each open path. &ldquo;Needs&rdquo; chips are prerequisites in another subject; click one to open
-                        that path. {isDsa ? 'The weekly pool reshuffles every 7 days.' : ''}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <div className="nx-side sticky top-36 space-y-2">
+                  <p className="mb-0 text-[10px] font-semibold tracking-[0.28em] text-text-muted uppercase">Select a skill</p>
+                  <p className="mb-0 max-w-[30ch] text-[13px] leading-relaxed text-foreground-dim">
+                    Hover a skill to trace its chain — what it needs lights teal, what it unlocks violet. Click one for its details
+                    {isDsa ? ', resources and problems.' : ', lessons and PYQs.'}
+                  </p>
+                </div>
               )}
             </div>
           </div>

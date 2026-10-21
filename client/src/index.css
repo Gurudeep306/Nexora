@@ -1144,14 +1144,29 @@ input[type='search']::-webkit-search-results-decoration {
 }
 /* Gentle perspective: the plane tilts back a few degrees (lower tiers recede)
    and leans toward the pointer (--ry / --rx-lean set from SkillGraph). */
+@property --nx-bob {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
 .nx-web-stage { perspective: 2400px; perspective-origin: 50% 0; }
+/* The path floats on the same kind of plane as the web: tilted so the lower
+   tiers recede, bobbing slowly, leaning toward the pointer. */
 .nx-web-plane {
   --ry: 0deg;
   --rx-lean: 0deg;
   transform-origin: 50% 0;
-  transform: rotateX(calc(3.5deg + var(--rx-lean))) rotateY(var(--ry));
+  transform: rotateX(calc(-5deg + var(--rx-lean) + var(--nx-bob))) rotateY(var(--ry));
   transform-style: preserve-3d;
   transition: transform 600ms var(--ease-smooth);
+  animation: nx-bob 10s ease-in-out infinite alternate;
+}
+@keyframes nx-bob {
+  from { --nx-bob: -0.4deg; }
+  to { --nx-bob: 0.4deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nx-web-plane { animation: none; }
 }
 .nx-web-floor { color: var(--color-text-primary); transform: translateZ(-24px); }
 .nx-lattice { opacity: 0.09; }
@@ -1252,17 +1267,32 @@ input[type='search']::-webkit-search-results-decoration {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: linear-gradient(160deg, #141834 0%, #0b0d1c 60%, #06070d 100%);
+  background:
+    radial-gradient(70% 55% at 50% 58%, rgb(155 107 255 / 0.10), transparent 70%),
+    linear-gradient(160deg, #141834 0%, #0b0d1c 60%, #06070d 100%);
   isolation: isolate;
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
 }
-/* Depth layers: the far lattice is softer and dimmer than the web. */
-.nx-lat canvas.nx-far { filter: blur(0.6px); opacity: 0.85; pointer-events: none; }
-/* Diving into a subject: its region rises toward you, then the path takes over. */
-.nx-lat > canvas:not(.nx-far) { transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 260ms ease; transform-origin: 50% 50%; }
-.nx-lat.nx-rise > canvas:not(.nx-far) { transform: scale(1.08) translateY(-8px); opacity: 0; }
-.nx-lat.nx-rise > canvas.nx-far { transition: opacity 260ms ease; opacity: 0; }
+/* The web plane, tilted back in true perspective (NexusWeb sets the angle
+   every frame); its far edge fades into fog. */
+.nx-plane {
+  position: absolute;
+  transform-origin: 50% 50%;
+  pointer-events: none;
+  will-change: transform;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.25) 14%, #000 42%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.25) 14%, #000 42%, #000 100%);
+}
+.nx-plane canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* Depth of field: the far lattice is softer and dimmer. */
+.nx-plane .nx-far { filter: blur(0.7px); opacity: 0.8; }
+/* Diving into a subject: the near layer and the web fade as the camera
+   tilts down into the region, then the path takes over. */
+.nx-lat .nx-near, .nx-plane { transition: opacity 420ms ease; }
+.nx-lat.nx-rise .nx-near, .nx-lat.nx-rise .nx-plane { opacity: 0; }
 @media (prefers-reduced-motion: reduce) {
-  .nx-lat > canvas { transition: none !important; }
+  .nx-lat .nx-near, .nx-plane { transition: none !important; }
 }
 
 /* Floating glass chrome: detached from the edges, layered soft shadow,
@@ -1290,31 +1320,14 @@ input[type='search']::-webkit-search-results-decoration {
 .nx-press { transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1), background-color 150ms, color 150ms; }
 .nx-press:hover { transform: translateY(-1px); }
 .nx-press:active { transform: translateY(0) scale(0.97); }
-.nx-player {
-  top: 60px;
-  left: max(16px, calc(50vw - 640px));
-  width: min(340px, calc(100vw - 32px));
-  padding: 12px 14px;
-}
-@media (max-width: 640px) {
-  .nx-player { top: 58px; width: calc(100vw - 32px); padding: 10px 12px; }
-}
-.nx-hint.nx-glass { padding: 9px 12px; opacity: 0.92; }
-/* In a path the tree sits straight on the page — no boxed card. */
-.card.nx-web-card {
-  border-color: transparent;
-  box-shadow: none;
-  background:
-    radial-gradient(70% 45% at 50% 0%, color-mix(in oklab, var(--nx-b2) 7%, transparent), transparent 75%),
-    transparent;
-}
 /* The path header floats too. */
 .nx-path-head {
   position: sticky;
-  top: 72px;
+  top: 64px;
   z-index: 5;
-  padding: 10px 12px;
-  margin-bottom: 14px;
+  padding: 12px 0;
+  margin-bottom: 10px;
+  background: linear-gradient(to bottom, var(--color-bg-app) 70%, transparent);
 }
 /* Orbs in a path levitate: a soft contact shadow under each, spreading as
    the orb lifts on hover. */
@@ -1348,63 +1361,10 @@ input[type='search']::-webkit-search-results-decoration {
   min-height: 520px;
   overflow: hidden;
 }
-/* Overlays on the web: quiet, translucent, never a frame. */
-.nx-over {
-  position: absolute;
-  z-index: 2;
-  color: rgb(214 220 255 / 0.72);
-}
-.nx-over-tabs {
-  top: 14px;
-  left: max(16px, calc(50vw - 640px));
-  display: flex;
-  gap: 4px;
-  padding: 3px;
-  border-radius: 9999px;
-  background: rgb(9 11 24 / 0.55);
-  border: 1px solid rgb(150 160 255 / 0.14);
-  backdrop-filter: blur(6px);
-}
-.nx-over-tabs button {
-  border-radius: 9999px;
-  padding: 4px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: rgb(214 220 255 / 0.65);
-  cursor: pointer;
-  transition: color 150ms, background-color 150ms;
-}
-.nx-over-tabs button[data-on] { color: #fff; background: rgb(155 107 255 / 0.22); }
-.nx-over-tabs button:hover { color: #fff; }
-.nx-hint {
-  left: max(16px, calc(50vw - 640px));
-  bottom: 84px;
-  max-width: 420px;
-  font-size: 10.5px;
-  line-height: 1.5;
-  opacity: 0.7;
-  pointer-events: none;
-}
-.nx-hint i { display: inline-block; width: 6px; height: 6px; border-radius: 9999px; margin: 0 4px 0 8px; vertical-align: 1px; }
-.nx-slide {
-  top: 14px;
-  right: max(16px, calc(50vw - 640px));
-  width: min(380px, calc(100vw - 32px));
-  max-height: calc(100% - 110px);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  border-radius: 16px;
-  box-shadow: 0 18px 48px -18px rgb(0 0 0 / 0.6);
-}
-.nx-slide .sticky { position: static; }
-@media (max-width: 640px) {
-  .nx-slide { top: auto; bottom: 84px; right: 8px; left: 8px; width: auto; max-height: 62%; }
-  .nx-hint { display: none; }
-}
-.nx-lat canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; outline: none; }
-.nx-lat canvas:active { cursor: grabbing; }
-.nx-lat canvas[data-hover] { cursor: pointer; }
-.nx-lat canvas:focus-visible { box-shadow: inset 0 0 0 2px var(--color-focus); }
+.nx-lat .nx-near { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; outline: none; z-index: 1; }
+.nx-lat .nx-near:active { cursor: grabbing; }
+.nx-lat .nx-near[data-hover] { cursor: pointer; }
+.nx-lat .nx-near:focus-visible { box-shadow: inset 0 0 0 1px rgb(155 107 255 / 0.6); }
 .nx-lat::after {
   content: '';
   position: absolute;
@@ -1412,6 +1372,110 @@ input[type='search']::-webkit-search-results-decoration {
   pointer-events: none;
   background: radial-gradient(120% 95% at 50% 50%, transparent 55%, rgb(3 4 10 / 0.55) 100%);
 }
+/* Type floating on the web — no boxes. Everything here sits on the night
+   web in both themes, so it is light type with a soft dark halo. */
+.nx-over { position: absolute; z-index: 2; color: rgb(226 230 255); text-shadow: 0 1px 2px rgb(5 6 14 / 0.8), 0 0 12px rgb(5 6 14 / 0.6); }
+.nx-caps { font-size: 9.5px; font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase; color: rgb(214 220 255 / 0.62); }
+.nx-me {
+  top: 22px;
+  left: max(20px, calc(50vw - 660px));
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  max-width: min(360px, calc(100vw - 40px));
+}
+.nx-hair { position: relative; width: 168px; height: 1px; background: rgb(150 160 255 / 0.2); }
+.nx-hair > span { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #5b8cff, #9b6bff 55%, #2dd4bf); transition: width 700ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.nx-views {
+  top: 22px;
+  right: max(20px, calc(50vw - 660px));
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+.nx-link {
+  position: relative;
+  padding: 2px 0 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgb(214 220 255 / 0.6);
+  cursor: pointer;
+  transition: color 160ms, transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.nx-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, #5b8cff, #9b6bff 55%, #2dd4bf);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.nx-link:hover { color: #fff; transform: translateY(-1px); }
+.nx-link:active { transform: translateY(0) scale(0.97); }
+.nx-link[data-on] { color: #fff; }
+.nx-link[data-on]::after, .nx-link:hover::after { transform: scaleX(1); }
+.nx-link:focus-visible { outline: 1px solid rgb(155 107 255 / 0.8); outline-offset: 4px; border-radius: 2px; }
+.nx-hint {
+  left: max(20px, calc(50vw - 660px));
+  bottom: 96px;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: rgb(214 220 255 / 0.5);
+  pointer-events: none;
+  transition: opacity 900ms ease, transform 900ms ease;
+}
+.nx-hint[data-gone] { opacity: 0; transform: translateY(4px); }
+/* Details: an edge-anchored sheet, only on "Open details". Minimal: a
+   quiet surface, generous spacing, refined type. */
+.nx-sheet {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(440px, 100vw);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: color-mix(in oklab, var(--color-bg-surface) 90%, transparent);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  border-left: 1px solid color-mix(in oklab, var(--color-text-primary) 9%, transparent);
+  box-shadow: -40px 0 80px -40px rgb(0 0 0 / 0.55);
+}
+.nx-sheet-body { padding: 30px 28px 120px; }
+.nx-sheet-body h2 { font-size: 22px; letter-spacing: -0.01em; }
+@media (max-width: 640px) {
+  .nx-me { top: 16px; left: 16px; }
+  .nx-views { top: 18px; right: 16px; gap: 14px; }
+  .nx-hint { display: none; }
+  .nx-sheet { top: auto; left: 0; width: 100%; height: 80%; border-left: 0; border-top: 1px solid color-mix(in oklab, var(--color-text-primary) 9%, transparent); border-radius: 18px 18px 0 0; }
+  .nx-sheet-body { padding: 24px 20px 110px; }
+}
+/* The path view's side details: type with a hairline, no card. */
+.nx-side { padding: 4px 0 4px 22px; border-left: 1px solid color-mix(in oklab, var(--color-text-primary) 10%, transparent); }
+/* Path zones as type: an underline marks the zone in view. */
+.nx-zone-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0 7px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 160ms;
+}
+.nx-zone-link::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: linear-gradient(90deg, var(--nx-b1, #2f5bea), var(--nx-b2, #7c3aed) 55%, var(--nx-b3, #0d9488)); transform: scaleX(0); transform-origin: left; transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.nx-zone-link:hover { color: var(--color-text-primary); }
+.nx-zone-link[data-on] { color: var(--color-text-primary); }
+.nx-zone-link[data-on]::after, .nx-zone-link:hover::after { transform: scaleX(1); }
 /* Subject rank pill in a path's header: five tier pips + title. */
 .nx-rank {
   border-color: color-mix(in oklab, var(--nx-b2, #7c3aed) 40%, var(--color-border));
