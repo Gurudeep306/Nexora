@@ -64,10 +64,12 @@ export const NexusWeb = forwardRef<
     selected: string | null
     onSelect: (key: string | null) => void
     onOpenSubject: (id: string, cam: Camera) => void
+    /** "Open details" on the selected concept's floating text. */
+    onOpenDetails?: (key: string) => void
     initialCamera?: Camera | null
     ranks?: Record<string, RegionRank>
   }
->(function NexusWeb({ clusters, selected, onSelect, onOpenSubject, initialCamera, ranks }, ref) {
+>(function NexusWeb({ clusters, selected, onSelect, onOpenSubject, onOpenDetails, initialCamera, ranks }, ref) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const reduce = !!useReducedMotion()
@@ -118,8 +120,9 @@ export const NexusWeb = forwardRef<
   const dirtyStatic = useRef(true)
   const dirty = useRef(true)
   const labelHits = useRef<{ x: number; y: number; w: number; h: number; id: string }[]>([])
-  const cbs = useRef({ onSelect, onOpenSubject })
-  cbs.current = { onSelect, onOpenSubject }
+  const cbs = useRef({ onSelect, onOpenSubject, onOpenDetails })
+  cbs.current = { onSelect, onOpenSubject, onOpenDetails }
+  const openHit = useRef<{ x: number; y: number; w: number; h: number; key: string } | null>(null)
   const ranksRef = useRef(ranks)
   ranksRef.current = ranks
   useEffect(() => {
@@ -364,7 +367,11 @@ export const NexusWeb = forwardRef<
       let cx = x - total / 2
       ctx.fillStyle = fill
       ctx.textAlign = 'left'
+      ctx.lineWidth = 3
+      ctx.lineJoin = 'round'
+      ctx.strokeStyle = 'rgba(9,11,24,0.7)'
       chars.forEach((ch, i) => {
+        ctx.strokeText(ch, cx, y)
         ctx.fillText(ch, cx, y)
         cx += widths[i] + spacing
       })
@@ -563,14 +570,14 @@ export const NexusWeb = forwardRef<
 
       // Subject names: small, widely spaced capitals on their regions.
       labelHits.current = []
-      // The hint overlay (bottom-left) is kept clear of names.
-      // Names keep clear of the floating chrome: the tabs and web-rank card
-      // (top-left), the hint (bottom-left) and the assistant button (bottom-right).
+      // Names keep clear of the floating type: the web-rank line (top-left),
+      // the view links (top-right), the hint line and the assistant button.
       const phone = w < 640
       const taken: number[][] = [
-        [0, 0, phone ? w : Math.min(w, 400), phone ? 200 : 205],
+        [0, 0, phone ? w : Math.min(w, 430), phone ? 96 : 92],
+        [w - 240, 0, w, 64],
         [w - 110, h - 190, w, h],
-        ...(phone ? [] : [[0, h - 160, Math.min(470, w), h]]),
+        [0, h - 128, Math.min(w, 620), h - 84],
       ]
       const fc = focus?.cluster.id
       const regions = [...web.regions].sort((a, b) => b.cluster.nodes.length - a.cluster.nodes.length)
@@ -598,15 +605,12 @@ export const NexusWeb = forwardRef<
         if (fade <= 0) continue
         const a = (fc ? (fc === rg.cluster.id ? 0.95 : 0.3) : 0.8) * fade
         ctx.textBaseline = 'top'
-        ctx.fillStyle = 'rgba(9,11,24,0.55)'
-        ctx.fillRect(X - tw / 2 - 4, Y - 3, tw + 8, size + 6)
         spaced(name, X, Y, size, spacing, `rgba(232,235,255,${a})`)
         const rank = ranksRef.current?.[rg.cluster.id]
         ctx.font = `500 ${size - 0.5}px ${font}`
         ctx.textAlign = 'center'
-        ctx.fillStyle = rgba(C3, a * 0.9)
-        // The subject rank, only once there is something to show.
-        if (rg.progress > 0) ctx.fillText(rank ? `${rank.tier} · ${rg.progress}%` : `${rg.progress}%`, X, Y + size + 5)
+        // The subject rank, as type, only once there is something to show.
+        if (rg.progress > 0) spaced(`${rank ? `${rank.tier} · ` : ''}${rg.progress}%`.toUpperCase(), X, Y + size + 6, size - 1.5, 2.2, rgba(C3, a * 0.9))
         labelHits.current.push({ x: box[0], y: box[1], w: box[2] - box[0], h: box[3] - box[1], id: rg.cluster.id })
       }
 
@@ -636,7 +640,67 @@ export const NexusWeb = forwardRef<
           ctx.fillText(sub, X, Y + 15)
         }
       }
-      if (focus) nameAt(focus.key, true)
+      // The selected concept speaks for itself in type beside the node:
+      // name, where it lives, its numbers, and a way into the details.
+      openHit.current = null
+      const sel = selectedRef.current ? web.concepts.get(selectedRef.current) : null
+      if (sel && !growing) {
+        const NX = px(sel.pt) + nearOff.x - midOff.x
+        const NY = py(sel.pt) + nearOff.y - midOff.y
+        ctx.font = `600 16px ${font}`
+        const nameW = ctx.measureText(sel.node.n).width
+        const blockW = Math.max(nameW, 210)
+        const right = NX + 22 + blockW < w - 16
+        const bx = right ? NX + 22 : NX - 22 - blockW
+        const by = clamp(NY - 30, 70, h - 170)
+        ctx.textAlign = 'left'
+        ctx.textBaseline = 'top'
+        ctx.lineWidth = 4
+        ctx.lineJoin = 'round'
+        ctx.strokeStyle = 'rgba(9,11,24,0.85)'
+        ctx.fillStyle = 'rgba(255,255,255,0.98)'
+        ctx.strokeText(sel.node.n, bx, by)
+        ctx.fillText(sel.node.n, bx, by)
+        const status = sel.node.s === 2 ? 'mastered' : sel.node.s === 1 ? 'open' : 'locked'
+        const kind = sel.node.k ?? 'concept'
+        ctx.textAlign = 'left'
+        const meta = `${sel.cluster.short} · ${kind} · ${status}`.toUpperCase()
+        ctx.font = `600 9.5px ${font}`
+        // left-aligned spaced capitals
+        let mx = bx
+        ctx.lineWidth = 3
+        for (const ch of meta) {
+          ctx.fillStyle = sel.node.s === 2 ? rgba(C3, 0.95) : sel.node.s === 1 ? rgba(C2, 0.95) : 'rgba(200,206,240,0.7)'
+          ctx.strokeText(ch, mx, by + 24)
+          ctx.fillText(ch, mx, by + 24)
+          mx += ctx.measureText(ch).width + 2.4
+        }
+        ctx.font = `500 11.5px ui-monospace, SFMono-Regular, Menlo, monospace`
+        const stats = `${String(sel.node.p).padStart(3, ' ')}% mastery   ${sel.node.c}   ${sel.node.xp} XP`
+        ctx.fillStyle = 'rgba(220,224,250,0.85)'
+        ctx.strokeText(stats, bx, by + 42)
+        ctx.fillText(stats, bx, by + 42)
+        // A hairline of progress under the numbers.
+        ctx.fillStyle = 'rgba(150,160,255,0.18)'
+        ctx.fillRect(bx, by + 62, 160, 1)
+        const pg = ctx.createLinearGradient(bx, 0, bx + 160, 0)
+        pg.addColorStop(0, rgba(C1, 1))
+        pg.addColorStop(0.55, rgba(C2, 1))
+        pg.addColorStop(1, rgba(C3, 1))
+        ctx.fillStyle = pg
+        ctx.fillRect(bx, by + 62, (160 * sel.node.p) / 100, 1)
+        ctx.font = `600 12px ${font}`
+        const open = 'Open details  →'
+        const ow = ctx.measureText(open).width
+        ctx.fillStyle = rgba(C3, 1)
+        ctx.strokeText(open, bx, by + 72)
+        ctx.fillText(open, bx, by + 72)
+        ctx.fillRect(bx, by + 88, ow, 1)
+        openHit.current = { x: bx - 4 + midOff.x, y: by + 66 + midOff.y, w: ow + 8, h: 28, key: sel.key }
+        taken.push([bx - 8, by - 6, bx + blockW + 8, by + 96])
+        ctx.textAlign = 'center'
+      }
+      if (focus && focus.key !== sel?.key) nameAt(focus.key, true)
       if (c.k >= LABEL_K && !growing) {
         for (const cn of web.concepts.values()) {
           if (cn.key === focus?.key) continue
@@ -820,6 +884,12 @@ export const NexusWeb = forwardRef<
       if (pts.size === 0) {
         if (tap) {
           const p = local(e)
+          const oh = openHit.current
+          if (oh && p.x >= oh.x && p.x <= oh.x + oh.w && p.y >= oh.y && p.y <= oh.y + oh.h) {
+            cbs.current.onOpenDetails?.(oh.key)
+            drag = null
+            return
+          }
           // Subject names sit on top of the web, so they win.
           const label = labelHits.current.find((l) => p.x >= l.x && p.x <= l.x + l.w && p.y >= l.y && p.y <= l.y + l.h)
           const key = label ? null : hitConcept(p.x, p.y)
