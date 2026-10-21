@@ -65,23 +65,22 @@ function jitter(id: string, salt = 0): number {
 }
 
 function linkPath(a: Placed, b: Placed, key: string): string {
-  // Same row: a low roof between the dots' sides.
+  // Same row: a shallow arc between the dots' sides.
   if (Math.abs(a.y - b.y) < 24) {
     const dir = b.x > a.x ? 1 : -1
     const x1 = a.x + dir * (R + 3)
     const x2 = b.x - dir * (R + 3)
-    const mx = (x1 + x2) / 2 + jitter(key, 3) * 18
-    return `M${x1},${a.y} L${mx},${Math.min(a.y, b.y) - 20} L${x2},${b.y}`
+    const mx = (x1 + x2) / 2 + jitter(key, 3) * 10
+    return `M${x1},${a.y} Q${mx},${Math.min(a.y, b.y) - 30} ${x2},${b.y}`
   }
-  // Downward: leave from under the label (a node reads as one block: dot,
-  // name, count), bend once like a branch, land on the top of the ring.
+  // Downward: an S-curve from under the prerequisite's label (a node reads
+  // as one block: dot, name, count) to the top of the skill it unlocks.
   const down = b.y > a.y
   // A "Needs" chip sits under the label; strands leave from below it.
   const y1 = down ? a.y + LABEL_BOTTOM + (a.node.crossRequires?.length ? 20 : 0) : a.y - R - 3
   const y2 = down ? b.y - R - 4 : b.y + LABEL_BOTTOM
-  const kx = a.x + (b.x - a.x) * (0.45 + jitter(key, 1) * 0.2)
-  const ky = y1 + (y2 - y1) * (0.5 + jitter(key, 2) * 0.25)
-  return `M${a.x},${y1} L${kx},${ky} L${b.x},${y2}`
+  const dy = (y2 - y1) * 0.5
+  return `M${a.x},${y1} C${a.x},${y1 + dy} ${b.x},${y2 - dy} ${b.x},${y2}`
 }
 
 /* A four-point star for mastered skills. */
@@ -320,7 +319,7 @@ export function SkillGraph({
   }, [nodes, zones, rail, W, tierOf, depthOf])
 
   const edges = useMemo(() => {
-    const out: { key: string; a: Placed; b: Placed; state: 'done' | 'open' | 'locked'; d: string; sx: number; sy: number }[] = []
+    const out: { key: string; a: Placed; b: Placed; state: 'done' | 'open' | 'locked'; d: string; sx: number; sy: number; long: boolean }[] = []
     for (const n of nodes) {
       const b = placed.get(n.id)
       if (!b) continue
@@ -332,13 +331,16 @@ export function SkillGraph({
         const d = linkPath(a, b, key)
         // The strand's start gets a small knot, like the lattice's nodes.
         const [sx, sy] = d.slice(1, d.indexOf(' ')).split(',').map(Number)
-        out.push({ key, a, b, state, d, sx, sy })
+        // Links that cross several rows or most of the width are drawn only
+        // while one of their ends is in focus, so the path stays readable.
+        const long = !rankEmblems && (Math.abs(b.y - a.y) > ROW_H * 2.3 || Math.abs(b.x - a.x) > (W - rail) * 0.55)
+        out.push({ key, a, b, state, d, sx, sy, long })
       }
     }
     // Locked first, then open, then mastered, so the lit strands sit on top.
     const rank = { locked: 0, open: 1, done: 2 }
     return out.sort((x, y) => rank[x.state] - rank[y.state])
-  }, [nodes, placed])
+  }, [nodes, placed, rankEmblems, W, rail])
 
   // Focus: the hovered (or selected) skill's prerequisites (up) and what it unlocks (down).
   const focus = (hovered && placed.has(hovered) ? hovered : null) ?? (selectedId && placed.has(selectedId) ? selectedId : null)
@@ -379,8 +381,8 @@ export function SkillGraph({
     const box = e.currentTarget.getBoundingClientRect()
     const px = (e.clientX - box.left) / box.width - 0.5
     const py = Math.max(-0.5, Math.min(0.5, (e.clientY - Math.max(box.top, 0)) / Math.min(box.height, window.innerHeight) - 0.5))
-    planeRef.current.style.setProperty('--ry', `${(px * 2.2).toFixed(2)}deg`)
-    planeRef.current.style.setProperty('--rx-lean', `${(-py * 1.4).toFixed(2)}deg`)
+    planeRef.current.style.setProperty('--ry', `${(px * 0.8).toFixed(2)}deg`)
+    planeRef.current.style.setProperty('--rx-lean', `${(-py * 0.8).toFixed(2)}deg`)
   }
   const onPointerLeave = () => {
     planeRef.current?.style.setProperty('--ry', '0deg')
@@ -418,6 +420,7 @@ export function SkillGraph({
                 const toward = ends && lit ? (ends[1] === 'self' || ends[1] === 'up' ? 'up' : 'down') : null
                 const color = toward === 'up' ? 'var(--nx-b3)' : toward === 'down' ? 'var(--nx-b2)' : rampColor((e.a.u + e.b.u) / 2)
                 const w = e.state === 'done' ? 1.6 : e.state === 'open' ? 1.25 : 0.8
+                if (e.long && !toward) return null
                 return (
                   <g key={e.key} className="nx-strand" data-state={e.state} data-lit={toward ? '' : undefined} data-dim={!lit || undefined}>
                     <path

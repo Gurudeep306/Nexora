@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { AnimatePresence, motion } from 'motion/react'
 import { RefreshCw } from 'lucide-react'
 import {
-  Badge,
   Button,
   Card,
   CardContent,
-  EmptyState,
   ErrorState,
   LoadingBlock,
   PageHeader,
@@ -15,6 +14,7 @@ import {
   XpBar,
 } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
+import { Avatar } from '@/components/ui/Avatar'
 import { api } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 import { useAgentPageContext } from '@/context/AgentContext'
@@ -27,6 +27,9 @@ import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
 import type { CrossLink, NexusNode, NexusNodeResponse, NexusResponse, NexusStatsResponse, RiftLevel, RiftPlayer, WebCluster, WebNode } from '@/components/nexus/types'
 import { fetchNexusWeb, NEXUS_WEB_KEY } from '@/components/nexus/data'
 import { Icon } from '@/components/icon/Icon'
+
+/** The web while it loads: the lattice alone, drawing itself in. */
+const NO_CLUSTERS: WebCluster[] = []
 
 /** Where the web's camera was when you dived into a subject (restored on the way back). */
 let lastWebCamera: Camera | null = null
@@ -91,6 +94,8 @@ export default function NexusPage() {
   const fresh = useRef(false)
   const webRef = useRef<NexusWebHandle>(null)
   const [pathData, setPathData] = useState<NexusResponse | null>(null)
+  const [hintGone, setHintGone] = useState(false)
+  const [detailsOpen, setDetailsOpen] = useState(false)
 
   // The web: every subject and the unified web rank (the player card).
   const { data: web, loading, error, refetch } = useApi(
@@ -226,6 +231,14 @@ export default function NexusPage() {
 
   const subtitle = 'One web of everything you learn — follow the paths out from you, master concepts, and climb the web rank.'
   if (loading && !web) {
+    // Loading is the web drawing itself in around you — never a spinner.
+    if (!subject && tab === 'map') {
+      return (
+        <section className="nx-bleed" aria-label="The Nexus web" aria-busy="true">
+          <NexusWeb clusters={NO_CLUSTERS} selected={null} onSelect={() => {}} onOpenSubject={() => {}} />
+        </section>
+      )
+    }
     return (
       <div>
         <PageHeader icon="nexus" title="The Nexus" subtitle={subtitle} />
@@ -247,8 +260,19 @@ export default function NexusPage() {
   const allDone = web.clusters.reduce((a, c) => a + c.nodes.filter((n) => n.s === 2).length, 0)
   const selZone = webSel?.c.zones.find((z) => z.level === webSel.n.z)
 
+  const refresh = () => {
+    fresh.current = true
+    refetch()
+    statsApi.refetch()
+    detailApi.refetch()
+  }
+  const webMode = tab === 'map' && !subject
+  const springIn = { initial: { opacity: 0, y: -8, scale: 0.98 }, animate: { opacity: 1, y: 0, scale: 1 }, transition: { type: 'spring' as const, stiffness: 320, damping: 28 } }
+
   return (
     <div>
+      {!webMode && (
+      <>
       <PageHeader
         icon="nexus"
         title="The Nexus"
@@ -257,12 +281,7 @@ export default function NexusPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => {
-              fresh.current = true
-              refetch()
-              statsApi.refetch()
-              detailApi.refetch()
-            }}
+            onClick={refresh}
             aria-label="Refresh nexus data"
           >
             <RefreshCw className={cn('size-3.5', (loading || statsApi.loading) && 'animate-spin')} />
@@ -272,7 +291,7 @@ export default function NexusPage() {
       />
 
       {/* Player card: the unified web rank */}
-      <Card glow className="mb-4">
+      <Card glow className="nx-glass mb-4">
         <CardContent className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
@@ -331,22 +350,29 @@ export default function NexusPage() {
           </div>
         </CardContent>
       </Card>
+      </>
+      )}
 
-      <Tabs
-        variant="pills"
-        className="mb-4"
-        items={[
-          { id: 'map', label: '/web', icon: <Icon name="nexus" className="size-3.5" aria-hidden="true" /> },
-          {
-            id: 'ranks',
-            label: '/ranks',
-            icon: <Icon name="trophy" className="size-3.5" aria-hidden="true" />,
-            badge: statsApi.data ? statsApi.data.allTitles.length : undefined,
-          },
-        ]}
-        active={tab}
-        onChange={(id) => setTab(id as 'map' | 'ranks')}
-      />
+      {tab === 'ranks' || subject ? (
+        <Tabs
+          variant="pills"
+          className="mb-4"
+          items={[
+            { id: 'map', label: '/web', icon: <Icon name="nexus" className="size-3.5" aria-hidden="true" /> },
+            {
+              id: 'ranks',
+              label: '/ranks',
+              icon: <Icon name="trophy" className="size-3.5" aria-hidden="true" />,
+              badge: statsApi.data ? statsApi.data.allTitles.length : undefined,
+            },
+          ]}
+          active={subject && tab === 'map' ? 'map' : tab}
+          onChange={(id) => {
+            setTab(id as 'map' | 'ranks')
+            if (id === 'map' && subject) backToWeb()
+          }}
+        />
+      ) : null}
 
       {tab === 'ranks' ? (
         <div className="space-y-4">
@@ -369,69 +395,92 @@ export default function NexusPage() {
           onData={setPathData}
         />
       ) : (
-        <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
+        /* The web: full-bleed, edge to edge; everything else floats on it. */
+        <section className="nx-bleed" aria-label="The Nexus web">
           <NexusWeb
             ref={webRef}
             clusters={web.clusters}
             selected={webSel ? node : null}
-            onSelect={setNode}
+            onSelect={(k) => {
+              setNode(k)
+              setDetailsOpen(false)
+            }}
             onOpenSubject={(id, cam) => openSubject(id, cam)}
+            onOpenDetails={() => setDetailsOpen(true)}
+            onInteract={() => setHintGone(true)}
+            quiet={detailsOpen}
             initialCamera={lastWebCamera}
             ranks={ranks}
           />
-          <div>
-            {selectedNode && webSel ? (
-              <NodePanel
+          {/* You, as type: no box. */}
+          <motion.div className="nx-over nx-me" {...springIn}>
+            <Avatar src={typeof user?.avatar_url === "string" ? user.avatar_url : null} avatar={user?.avatar} name={typeof user?.display_name === "string" ? user.display_name : username} seed={username} size="sm" ring={false} />
+            <div className="min-w-0">
+              <p className="nx-caps mb-0">Web rank</p>
+              <p className="mb-0 truncate font-display text-[15px] leading-tight font-semibold text-white">
+                {player.name} <span className="font-normal text-white/55">· LVL {player.level}</span>
+              </p>
+              <div className="nx-hair mt-1.5" aria-hidden="true">
+                <span style={{ width: `${Math.round((Math.max(0, player.xpInLevel) / Math.max(1, player.xpForNext)) * 100)}%` }} />
+              </div>
+              <p className="mt-1 mb-0 font-mono text-[10.5px] text-white/55 tabular-nums">
+                {formatNumber(player.xp)} XP · {allDone}/{allNodes} concepts · {statsApi.data?.streak.current ?? 0}d streak
+              </p>
+            </div>
+          </motion.div>
+          {/* Views, as plain links with an underline. */}
+          <motion.nav className="nx-over nx-views" aria-label="Nexus views" {...springIn}>
+            <button type="button" aria-current="page" className="nx-link" data-on="">
+              /web
+            </button>
+            <button type="button" className="nx-link" onClick={() => setTab('ranks')}>
+              /ranks
+            </button>
+            <button type="button" className="nx-link" onClick={refresh} aria-label="Refresh nexus data">
+              <RefreshCw className={cn('size-3', (loading || statsApi.loading) && 'animate-spin')} />
+            </button>
+          </motion.nav>
+          {/* One faint line of help, gone after the first touch. */}
+          <p className="nx-over nx-hint mb-0" data-gone={hintGone || undefined}>
+            Drag to move · scroll to zoom · hover a concept · click a subject to open its path
+          </p>
+          {/* Details: only on "Open details", in an edge-anchored sheet. */}
+          <AnimatePresence>
+            {detailsOpen && selectedNode && webSel && (
+              <motion.aside
                 key={node!}
-                node={selectedNode}
-                nodes={clusterNodes}
-                zoneColor={selZone?.color ?? 'var(--color-primary)'}
-                zoneName={`${webSel.c.short} · ${selZone?.name ?? `Zone ${selectedNode.zone}`}`}
-                detailLoading={detailApi.loading && !detailApi.data}
-                engine={webSel.c.engine}
-                onClose={() => setNode(null)}
-                onJump={(l) => {
-                  const key = `${l.subject}:${l.id}`
-                  setNode(key)
-                  webRef.current?.flyToNode(key)
-                }}
-                onSelect={(id) => {
-                  const key = `${webSel.c.id}:${id}`
-                  setNode(key)
-                  webRef.current?.flyToNode(key)
-                }}
-                onOpenPath={() => openSubject(webSel.c.id, webRef.current?.camera(), webSel.n.id)}
-              />
-            ) : (
-              <Card className="sticky top-4">
-                <CardContent>
-                  <EmptyState
-                    icon="nexus"
-                    title="The web around you"
-                    description="Every subject lives in this web. Hover a concept to light its path from you; click it to inspect it, or click a subject's name to open its path."
-                    className="py-8"
-                  />
-                  <div className="mt-2 space-y-2 border-t border-border pt-3">
-                    <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
-                      <Icon name="sparkles" className="size-3" aria-hidden="true" /> Legend
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      <Badge variant="success">mastered</Badge>
-                      <Badge variant="primary">unlocked</Badge>
-                      <Badge variant="default">
-                        <Icon name="lock" className="size-3" aria-hidden="true" /> locked
-                      </Badge>
-                    </div>
-                    <p className="text-[11px] text-foreground-faint">
-                      Drag to pan, scroll or pinch to zoom, Esc to return to you. Bright branches lead to what you have mastered. On hover, the path from you
-                      lights teal and what a concept unlocks lights violet. Concepts sit further out the more they build on.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+                className="nx-sheet"
+                aria-label={`${selectedNode.name} details`}
+                initial={{ x: '100%', opacity: 0.6 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: '100%', opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 32 }}
+              >
+                <NodePanel
+                  bare
+                  node={selectedNode}
+                  nodes={clusterNodes}
+                  zoneColor={selZone?.color ?? 'var(--color-primary)'}
+                  zoneName={`${webSel.c.short} · ${selZone?.name ?? `Zone ${selectedNode.zone}`}`}
+                  detailLoading={detailApi.loading && !detailApi.data}
+                  engine={webSel.c.engine}
+                  onClose={() => setDetailsOpen(false)}
+                  onJump={(l) => {
+                    const key = `${l.subject}:${l.id}`
+                    setNode(key)
+                    webRef.current?.flyToNode(key)
+                  }}
+                  onSelect={(id) => {
+                    const key = `${webSel.c.id}:${id}`
+                    setNode(key)
+                    webRef.current?.flyToNode(key)
+                  }}
+                  onOpenPath={() => openSubject(webSel.c.id, webRef.current?.camera(), webSel.n.id)}
+                />
+              </motion.aside>
             )}
-          </div>
-        </div>
+          </AnimatePresence>
+        </section>
       )}
     </div>
   )
