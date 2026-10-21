@@ -235,7 +235,64 @@ function layoutSubject(doc) {
     }
     if (pending) place([pending], r++);
   }
+  untangle(doc, out);
   return out;
+}
+
+/**
+ * Barycentre sweeps over the whole subject (Sugiyama-style): each layer
+ * (zone, row) is re-ordered by the mean x of its neighbours, downward using
+ * prerequisites and upward using what each node unlocks, nearer layers
+ * weighing more. Rows keep their members; only the order and spacing change,
+ * so links run short and cross as little as possible.
+ */
+function untangle(doc, pos) {
+  const zoneIndex = new Map(doc.zones.map((z, i) => [z.level, i]));
+  const layerOf = (n) => zoneIndex.get(n.zone) * 100 + pos.get(n.id).row;
+  const layers = new Map();
+  for (const n of doc.nodes) {
+    const k = layerOf(n);
+    if (!layers.has(k)) layers.set(k, []);
+    layers.get(k).push(n);
+  }
+  const keys = [...layers.keys()].sort((a, b) => a - b);
+  const rank = new Map(keys.map((k, i) => [k, i]));
+  const ids = new Set(doc.nodes.map((n) => n.id));
+  const parents = new Map(doc.nodes.map((n) => [n.id, (n.requires || []).filter((r) => ids.has(r))]));
+  const children = new Map(doc.nodes.map((n) => [n.id, []]));
+  for (const n of doc.nodes) for (const r of parents.get(n.id)) children.get(r).push(n.id);
+  const L = new Map(doc.nodes.map((n) => [n.id, rank.get(layerOf(n))]));
+  const spread = (list) => {
+    if (list.length === 1) return; // a lone node keeps its place under its parents
+    const step = 84 / list.length;
+    const shift = list.length < MAX_PER_ROW && L.get(list[0].id) % 2 === 1 ? step / 4 : 0;
+    list.forEach((n, i) => {
+      pos.get(n.id).x = Math.round((8 + step * (i + 0.5) + shift) * 10) / 10;
+    });
+  };
+  const bary = (id, nbrs) => {
+    let s = 0;
+    let w = 0;
+    for (const m of nbrs) {
+      const wt = 1 / Math.max(1, Math.abs(L.get(m) - L.get(id)));
+      s += pos.get(m).x * wt;
+      w += wt;
+    }
+    return w ? s / w : pos.get(id).x;
+  };
+  for (let sweep = 0; sweep < 6; sweep++) {
+    const down = sweep % 2 === 0;
+    const order = down ? keys : [...keys].reverse();
+    for (const k of order) {
+      const list = layers.get(k);
+      const b = new Map(list.map((n) => [n.id, bary(n.id, down ? parents.get(n.id) : children.get(n.id))]));
+      list.sort((a, c) => b.get(a.id) - b.get(c.id) || pos.get(a.id).x - pos.get(c.id).x);
+      if (list.length === 1) {
+        const p = parents.get(list[0].id);
+        if (p.length) pos.get(list[0].id).x = Math.round(Math.max(10, Math.min(90, bary(list[0].id, p))) * 10) / 10;
+      } else spread(list);
+    }
+  }
 }
 
 let registry = null;
