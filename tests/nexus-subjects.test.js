@@ -311,6 +311,33 @@ test('week keys follow ISO weeks', () => {
   assert.equal(ranks.weekKey(Date.UTC(2025, 11, 29)), '2026-W01');
 });
 
+test('a subject view holds only its own skills and internal links', async () => {
+  for (const id of ['dl', 'dsa', 'ml', 'web']) {
+    const { status, body } = await call('GET', `/api/nexus?subject=${id}`);
+    assert.equal(status, 200, id);
+    const ids = new Set(body.nodes.map((n) => n.id));
+    for (const n of body.nodes) {
+      assert.ok(!n.subject || n.subject === id, `${id}: ${n.id} belongs to ${n.subject}`);
+      for (const r of n.requires) assert.ok(ids.has(r), `${id}: ${n.id} requires ${r} inside the subject`);
+    }
+  }
+});
+
+test('courses: the structure names GATE material, course files are served (or null)', async () => {
+  const { body } = await call('GET', '/api/nexus/structure');
+  const dl = body.clusters.find((c) => c.id === 'dl');
+  assert.deepEqual(dl.gate, { pyq: 'dl', notes: 'dl' });
+  assert.ok(dl.nodes.some((n) => Array.isArray(n.ls) && n.ls.length), 'DL nodes carry their notes lessons');
+  const os = body.clusters.find((c) => c.id === 'os');
+  assert.equal(os.gate.notes, null);
+  assert.ok(!body.clusters.find((c) => c.id === 'rust').gate, 'a non-GATE subject has no gate material');
+  assert.ok(body.clusters.flatMap((c) => c.nodes).some((n) => n.o === 1), 'optional nodes are marked');
+  const missing = await call('GET', '/api/courses/rust/ownership');
+  assert.equal(missing.status, 200);
+  assert.equal(missing.body.body, null);
+  assert.equal((await call('GET', '/api/courses/..%2Fsecrets/x')).status, 400);
+});
+
 test('GET /api/nexus/structure: versioned, immutable with ?v=, 304 on a matching ETag', async () => {
   const { status, body } = await call('GET', '/api/nexus/structure');
   assert.equal(status, 200);

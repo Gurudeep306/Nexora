@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowLeft, RefreshCw } from 'lucide-react'
+import { motion } from 'motion/react'
+import { ArrowLeft, ChevronRight, RefreshCw } from 'lucide-react'
 import {
   Badge,
   Button,
@@ -26,6 +27,7 @@ import { TitleTrack } from '@/components/nexus/TitleTrack'
 import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
 import { RadialWeb, type Camera } from '@/components/nexus/RadialWeb'
 import { getLayout, layoutNow } from '@/components/nexus/layoutCache'
+import { courseHref } from '@/components/nexus/course'
 import type { RadialLayout } from '@/components/nexus/radial'
 import type {
   CrossLink,
@@ -145,9 +147,16 @@ function SubjectTree({ subject }: { subject: string }) {
   const { user } = useAuth()
   const username = user?.username ?? ''
   const { data: raw, loading, error, refetch } = useApi(() => fetchNexusPath(subject), [subject], { cacheKey: nexusPathKey(subject) })
-  const nexus = raw && raw.subject?.id === subject ? raw : null
+  // Only this subject's own skills and links: other subjects stay as "Needs · X" chips.
+  const nexus = useMemo(() => {
+    if (!raw || raw.subject?.id !== subject) return null
+    const own = raw.nodes.filter((n) => !n.subject || n.subject === subject)
+    const ids = new Set(own.map((n) => n.id))
+    return { ...raw, nodes: own.map((n) => ({ ...n, requires: n.requires.filter((r) => ids.has(r)) })) }
+  }, [raw, subject])
   const isDsa = (nexus?.subject?.engine ?? (isDsaUrl ? 'dsa' : null)) === 'dsa'
   const roadmapApi = useApi(fetchRoadmap, [], { cacheKey: ROADMAP_KEY, skip: !isDsa })
+  const structureStreams = cachedStructure()?.streams
   const statsApi = useApi<NexusStatsResponse>(
     () => api.get<NexusStatsResponse>('/api/stats', { query: { username: username || undefined } }),
     [username],
@@ -292,8 +301,19 @@ function SubjectTree({ subject }: { subject: string }) {
     document.getElementById(`zone-${level}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
+  const stream = structureStreams?.find((x) => x.id === cachedStructure()?.clusters.find((c) => c.id === subject)?.stream)
   return (
-    <div>
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28, ease: 'easeOut' }}>
+      {/* Stream › Subject › Zone */}
+      <nav aria-label="Where you are" className="mb-2 flex flex-wrap items-center gap-1 text-[12px] text-text-muted">
+        <button type="button" className="cursor-pointer font-semibold hover:underline" style={stream ? { color: stream.hue } : undefined} onClick={back}>
+          {stream?.name ?? 'Nexus'}
+        </button>
+        <ChevronRight className="size-3" aria-hidden="true" />
+        <span className="text-text-primary">{nexus.subject?.name}</span>
+        <ChevronRight className="size-3" aria-hidden="true" />
+        <span>{zone?.name ?? `Zone ${activeZone}`}</span>
+      </nav>
       {header}
 
       {/* Player status */}
@@ -338,7 +358,17 @@ function SubjectTree({ subject }: { subject: string }) {
                 </div>
               </div>
               <XpBar xp={rank?.progress ?? 0} nextLevelXp={100} levelName={`${nexus.subject?.short ?? ''} rank`} />
-              {rank?.next && <p className="text-xs text-foreground-dim">Next: <span className="font-mono text-primary-bright">{rank.next}</span></p>}
+              {rank?.toNext ? (
+                <p className="text-xs text-foreground-dim">
+                  Next: <span className="font-mono text-primary-bright">{rank.toNext.tier}</span> at {rank.toNext.at}% —{' '}
+                  <span className="font-mono text-cyan tabular-nums">
+                    about {rank.toNext.concepts} concept{rank.toNext.concepts === 1 ? '' : 's'}
+                  </span>
+                  {rank.coreLeft ? <span className="text-foreground-faint"> · or master the {rank.coreLeft} core skill{rank.coreLeft === 1 ? '' : 's'} left</span> : null}
+                </p>
+              ) : rank ? (
+                <p className="text-xs text-foreground-dim">{rank.coreDone ? 'Every core skill mastered — the optional ones are yours to explore.' : 'Top rank reached.'}</p>
+              ) : null}
             </div>
           )}
           <div className="flex items-center gap-4">
@@ -463,6 +493,7 @@ function SubjectTree({ subject }: { subject: string }) {
                   onClose={() => setSelectedId(null)}
                   onJump={onJump}
                   onSelect={(id) => setSelectedId(id)}
+                  studyHref={courseHref({ id: subject, engine: isDsa ? 'dsa' : null }, selectedNode.id)}
                 />
               ) : (
                 <SelectHint
@@ -477,7 +508,7 @@ function SubjectTree({ subject }: { subject: string }) {
           </div>
         </>
       )}
-    </div>
+    </motion.div>
   )
 }
 
@@ -650,6 +681,14 @@ function RadialOverview() {
               </div>
             </div>
             <XpBar xp={player.xpInLevel} nextLevelXp={player.xpForNext} levelName={`Web ${player.name}`} />
+            {player.xpToNext ? (
+              <p className="text-xs text-foreground-dim">
+                Next rank in <span className="font-mono text-cyan tabular-nums">about {player.conceptsToNext} concept{player.conceptsToNext === 1 ? '' : 's'}</span> ·{' '}
+                <span className="font-mono text-primary-bright tabular-nums">{formatNumber(player.xpToNext)} XP</span>
+              </p>
+            ) : (
+              <p className="text-xs text-foreground-dim">Top web rank reached.</p>
+            )}
           </div>
           <div className="flex items-center gap-4">
             <div className="text-center">
@@ -743,6 +782,7 @@ function RadialOverview() {
                 onJump={(l) => setSel(`${l.subject}:${l.id}`)}
                 onSelect={(id) => setSel(`${sel.c.id}:${id}`)}
                 onOpenPath={() => openSubject(sel.c.id, sel.n.id)}
+                studyHref={courseHref(sel.c, sel.n.id)}
               />
             ) : (
               <SelectHint text="Every subject is a sector, its zones are rings outward from you. Click a subject's name to open its own tree, or any skill to inspect it." />

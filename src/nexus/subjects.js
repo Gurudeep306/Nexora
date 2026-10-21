@@ -619,9 +619,13 @@ function webStructure(reg, dsa) {
           if (cross.length) out.cx = cross;
           if (n.kind && n.kind !== "concept") out.k = n.kind;
           if (n.icon) out.i = n.icon;
+          // Course links: the GATE notes lessons this node teaches.
+          if (s.meta.notesSubject && n.lessons?.length) out.ls = n.lessons;
+          if (n.optional === true || (n.optional !== false && n.kind === "project")) out.o = 1;
           return out;
         });
-    clusters.push({ id: sid, name: s.meta.name, short: s.meta.short, domain: s.meta.domain, stream: s.meta.stream, order: s.meta.order ?? 99, engine: s.engine || null, zones, nodes });
+    const gate = s.meta.pyqSubject || s.meta.notesSubject ? { pyq: s.meta.pyqSubject || null, notes: s.meta.notesSubject || null } : null;
+    clusters.push({ id: sid, name: s.meta.name, short: s.meta.short, domain: s.meta.domain, stream: s.meta.stream, order: s.meta.order ?? 99, engine: s.engine || null, ...(gate ? { gate } : {}), description: s.meta.description || "", zones, nodes });
   }
   const routes = readRoutes(reg);
   const streams = readStreams();
