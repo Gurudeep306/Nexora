@@ -112,6 +112,8 @@ export function idlePrefetchCommonRoutes(): void {
     const to = queue.shift()
     if (!to) return
     prefetchRoute(to)
+    // The Nexus also warms its data and computes its layout off-thread.
+    if (to === '/nexus') DATA_BY_SEGMENT.nexus?.()
     idle(next)
   }
   window.setTimeout(() => idle(next), 1200)

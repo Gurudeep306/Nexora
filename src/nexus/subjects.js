@@ -22,6 +22,7 @@
  * per-user reads are two small queries, cached in ./user-cache.
  */
 const fs = require("fs");
+const crypto = require("crypto");
 const path = require("path");
 
 const DIR = path.join(__dirname, "..", "..", "content", "nexus");
@@ -432,13 +433,25 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
       let attempted = 0;
       let attempts = 0;
       let rights = 0;
+      // Memory: when this node's PYQs were last answered right, and the
+      // spaced-repetition interval they have reached (for fading).
+      let lastAt = 0;
+      let ivSum = 0;
+      let ivN = 0;
+      let touched = 0;
       for (const q of pool) {
         const st = state.qstate.get(q);
         if (!st || !st.attempts) continue;
         attempted++;
         attempts += st.attempts;
         rights += st.correct;
-        if (st.correct > 0) correct++;
+        if (st.lastAt) touched = Math.max(touched, st.lastAt);
+        if (st.correct > 0) {
+          correct++;
+          if (st.lastAt) lastAt = Math.max(lastAt, st.lastAt);
+          ivSum += st.interval || 0;
+          ivN++;
+        }
       }
       const target = pool.length ? Math.min(pool.length, n.target || DEFAULT_TARGET) : 0;
       // Lessons count only where the reader can open them (a notes subject
@@ -446,6 +459,7 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
       const notesOk = s.meta.notesSubject && (!state.notesVisible || state.notesVisible.has(s.meta.notesSubject));
       const lessons = notesOk ? n.lessons || [] : [];
       const lessonsDone = lessons.filter((l) => state.lessons.has(`${s.meta.notesSubject}/${l}`)).length;
+      for (const l of lessons) touched = Math.max(touched, state.lessonsAt?.get(`${s.meta.notesSubject}/${l}`) || 0);
       const parts = [];
       if (target) parts.push(Math.min(1, correct / target));
       if (lessons.length) parts.push(lessonsDone / lessons.length);
@@ -474,6 +488,8 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
           lessons: lessons.length ? { done: lessonsDone, total: lessons.length, subject: s.meta.notesSubject, ids: lessons } : null,
         },
         completed: progress >= 100,
+        memory: lastAt ? { lastAt, interval: ivN ? ivSum / ivN : 0 } : null,
+        touchedAt: touched || 0,
         _cross: (n.requires || []).filter((r) => r.includes(":")),
       };
       status.set(key, node);
@@ -575,58 +591,74 @@ function subjectSummaries(reg, dsa, computed) {
 }
 
 /**
- * The whole Nexus as one web, light enough to send in one response: every
- * subject (with its domain, so the client can group them) and per node only
- * what the web draws: name, zone, state, progress and prerequisite links.
- * Where things sit is computed by the client (the lattice is deterministic);
- * descriptions, PYQ pools and the rest load per node from
- * /api/nexus/node/:subject/:id.
+ * The web is split in two so it opens instantly:
  *
- * Node state `s`: 0 locked, 1 open, 2 mastered.
+ *  structure  everything that only changes when the subject files change:
+ *             subjects, zones, nodes, links, goal routes. Versioned by a
+ *             content hash and cached forever (browser + device storage).
+ *  state      the reader's numbers for that structure, in the same order:
+ *             per zone [done, count, progress%, flags] and per node
+ *             [progress%, state, count label, days since last review,
+ *             review interval days, studied in the last 24 h].
  */
-function webPayload(reg, dsa, computed) {
+function webStructure(reg, dsa) {
+  if (reg.structure) return reg.structure;
   const clusters = [];
+  for (const [sid, s] of reg.subjects) {
+    const zones = s.engine === "dsa" ? dsa.zones.map((z) => ({ level: z.level, name: z.name, color: z.color })) : s.doc.zones.map((z) => ({ level: z.level, name: z.name, color: s.zoneColor.get(z.level) }));
+    const nodes = s.engine === "dsa"
+      ? reg.dsaNodes.map((n) => ({ id: n.id, n: n.name, z: n.zone, req: n.requires, xp: n.xpReward }))
+      : s.doc.nodes.map((n) => {
+          const out = { id: n.id, n: n.name, z: n.zone, req: (n.requires || []).filter((r) => !r.includes(":")), xp: n.xpReward || 50 };
+          const cross = (n.requires || []).filter((r) => r.includes(":") && reg.names.has(r));
+          if (cross.length) out.cx = cross;
+          if (n.kind && n.kind !== "concept") out.k = n.kind;
+          return out;
+        });
+    clusters.push({ id: sid, name: s.meta.name, short: s.meta.short, domain: s.meta.domain, order: s.meta.order ?? 99, engine: s.engine || null, zones, nodes });
+  }
+  const routes = readRoutes(reg);
+  const body = { clusters, routes };
+  const version = crypto.createHash("sha1").update(JSON.stringify(body)).digest("hex").slice(0, 12);
+  reg.structure = { version, ...body };
+  return reg.structure;
+}
+
+/** Goal routes (content/nexus/_routes.json): named sets of subjects. */
+function readRoutes(reg) {
+  let raw = [];
+  try {
+    raw = JSON.parse(fs.readFileSync(path.join(DIR, "_routes.json"), "utf8")).routes || [];
+  } catch {
+    return [];
+  }
+  return raw
+    .map((r) => {
+      const subjects = r.group
+        ? [...reg.subjects.values()].filter((s) => s.meta.group === r.group).map((s) => s.meta.id)
+        : (r.subjects || []).filter((id) => reg.subjects.has(id));
+      return { id: r.id, name: r.name, description: r.description || "", subjects };
+    })
+    .filter((r) => r.subjects.length);
+}
+
+function webState(reg, dsa, computed, now = Date.now()) {
+  const day = 86400000;
+  const subjects = {};
   for (const [sid, s] of reg.subjects) {
     const data = s.engine === "dsa" ? dsa : computed.get(sid);
     if (!data) continue;
-    const crossOf = new Map((s.doc?.nodes || []).map((d) => [d.id, (d.requires || []).filter((r) => r.includes(":") && reg.names.has(r))]));
-    clusters.push({
-      id: sid,
-      name: s.meta.name,
-      short: s.meta.short,
-      domain: s.meta.domain,
-      order: s.meta.order ?? 99,
-      engine: s.engine || null,
-      zones: data.zones.map((z) => ({
-        level: z.level,
-        name: z.name,
-        color: z.color,
-        locked: z.locked,
-        current: z.current,
-        completed: z.completed,
-        nodeCount: z.nodeCount,
-        nodesCompleted: z.nodesCompleted,
-        zoneProgress: z.zoneProgress,
-      })),
-      nodes: data.nodes.map((n) => {
-        const out = {
-          id: n.id,
-          n: n.name,
-          z: n.zone,
-          p: n.progress,
-          s: n.completed ? 2 : n.unlocked ? 1 : 0,
-          req: n.requires,
-          xp: n.xpReward,
-          c: s.engine === "dsa" ? `${n.solved}/${n.target}` : countLabel(n),
-        };
-        const cross = crossOf.get(n.id) || [];
-        if (cross.length) out.cx = cross;
-        if (n.kind && n.kind !== "concept") out.k = n.kind;
-        return out;
-      }),
+    const zones = data.zones.map((z) => [z.nodesCompleted, z.nodeCount, z.zoneProgress, (z.locked ? 1 : 0) | (z.current ? 2 : 0) | (z.completed ? 4 : 0)]);
+    const nodes = data.nodes.map((n) => {
+      const c = s.engine === "dsa" ? `${n.solved}/${n.target}` : countLabel(n);
+      const ag = n.memory?.lastAt ? Math.round(((now - n.memory.lastAt) / day) * 10) / 10 : -1;
+      const iv = n.memory ? Math.round(n.memory.interval * 10) / 10 : 0;
+      const rc = n.touchedAt && now - n.touchedAt < day ? 1 : 0;
+      return [n.progress, n.completed ? 2 : n.unlocked ? 1 : 0, c, ag, iv, rc];
     });
+    subjects[sid] = { zones, nodes };
   }
-  return { clusters };
+  return { version: webStructure(reg, dsa).version, subjects };
 }
 
 /** The short count under a node (mirrors the client's nodeCountLabel). */
@@ -638,7 +670,9 @@ function countLabel(n) {
 }
 
 module.exports = {
-  webPayload,
+  webStructure,
+  webState,
+  readRoutes,
   subjectMeta,
   readOutlines,
   validateOutlines,
