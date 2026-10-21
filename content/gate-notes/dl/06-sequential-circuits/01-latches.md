@@ -8,8 +8,8 @@ prerequisites: [gate-circuit-analysis]
 pyq_topics: [dl/sequential]
 est_minutes: 45
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every stable state, latch output, oscillation, waveform and practice answer is produced by simulation in content/gate-notes/_checks/dl/l6_01_latches.py (seqlib: fixed points of each loop, gate-delay simulation of the latches)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 76–78, set B pp. 134–135, set C pp. 326–333, set E p. 406."

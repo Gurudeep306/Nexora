@@ -8,8 +8,8 @@ prerequisites: [finite-state-machines]
 pyq_topics: [dl/sequential]
 est_minutes: 60
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every partition, implication-table pass, merged table, state count and practice answer is computed in content/gate-notes/_checks/dl/l6_08_minimisation.py (seqlib FSM: partitions, implication, minimal_states, equivalent, reachable)."
   - "Coverage checklist only (internal digests, never copied): set E p. 409 (implication table)."

@@ -8,8 +8,8 @@ prerequisites: [flip-flops]
 pyq_topics: [dl/sequential]
 est_minutes: 45
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every count, state sequence, transient state, settling time, frequency, clear gate and practice answer is produced by simulation in content/gate-notes/_checks/dl/l6_04_ripple.py (seqlib ripple_events, settled_states, ff_count, pulses_between)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 87–92 and 101, set B pp. 157–158, set C pp. 342–353, set D p. 400."

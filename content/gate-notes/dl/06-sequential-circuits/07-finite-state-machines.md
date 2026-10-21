@@ -8,8 +8,8 @@ prerequisites: [synchronous-counter-design]
 pyq_topics: [dl/sequential]
 est_minutes: 75
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every state table, run, output string, Moore conversion, detector, shortest input and input equation is produced in content/gate-notes/_checks/dl/l6_07_fsm.py (seqlib FSM, run, shortest, detector, detects_ref, to_moore, Sync, excitation)."
   - "Coverage checklist only (internal digests, never copied): set E pp. 405 and 407."
