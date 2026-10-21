@@ -4,6 +4,7 @@
   "short": "LA",
   "group": "gate",
   "domain": "math",
+  "stream": "math",
   "order": 11,
   "icon": "grid",
   "color": "#ec4899",

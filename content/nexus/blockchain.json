@@ -4,6 +4,7 @@
   "short": "BC",
   "group": "beyond",
   "domain": "security",
+  "stream": "security",
   "order": 62,
   "icon": "coins",
   "color": "#ca8a04",

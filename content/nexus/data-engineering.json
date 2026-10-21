@@ -4,6 +4,7 @@
   "short": "DE",
   "group": "beyond",
   "domain": "data",
+  "stream": "ai-data",
   "order": 42,
   "icon": "database",
   "color": "#0d9488",

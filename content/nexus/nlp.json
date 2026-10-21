@@ -4,6 +4,7 @@
   "short": "NLP",
   "group": "beyond",
   "domain": "ai",
+  "stream": "ai-data",
   "order": 43,
   "icon": "chat",
   "color": "#7c3aed",

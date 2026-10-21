@@ -4,6 +4,7 @@
   "short": "RL",
   "group": "beyond",
   "domain": "ai",
+  "stream": "ai-data",
   "order": 45,
   "icon": "target",
   "color": "#9333ea",

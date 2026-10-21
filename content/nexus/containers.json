@@ -4,6 +4,7 @@
   "short": "K8S",
   "group": "beyond",
   "domain": "systems",
+  "stream": "systems-cloud",
   "order": 54,
   "icon": "layers",
   "color": "#2496ed",

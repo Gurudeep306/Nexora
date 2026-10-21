@@ -4,6 +4,7 @@
   "short": "FE",
   "group": "beyond",
   "domain": "web-mobile",
+  "stream": "web-app",
   "order": 58,
   "icon": "layers",
   "color": "#06b6d4",

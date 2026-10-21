@@ -4,6 +4,7 @@
   "short": "CMPLX",
   "group": "beyond",
   "domain": "theory",
+  "stream": "theory-frontier",
   "order": 52,
   "icon": "puzzle",
   "color": "#ca8a04",

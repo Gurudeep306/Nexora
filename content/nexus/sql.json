@@ -4,6 +4,7 @@
   "short": "SQL",
   "group": "beyond",
   "domain": "languages",
+  "stream": "languages",
   "order": 27,
   "icon": "database",
   "color": "#336791",

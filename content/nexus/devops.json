@@ -4,6 +4,7 @@
   "short": "OPS",
   "group": "beyond",
   "domain": "systems",
+  "stream": "systems-cloud",
   "order": 53,
   "icon": "rocket",
   "color": "#16a34a",

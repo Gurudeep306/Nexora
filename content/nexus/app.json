@@ -4,6 +4,7 @@
   "short": "APP",
   "group": "beyond",
   "domain": "web-mobile",
+  "stream": "web-app",
   "order": 18,
   "icon": "monitor",
   "color": "#10b981",

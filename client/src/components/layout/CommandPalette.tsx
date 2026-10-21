@@ -64,6 +64,8 @@ export function CommandPalette() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      // A page with its own ⌘K / "/" (the Nexus search) handles it first.
+      if (e.defaultPrevented) return
       const typing = /^(INPUT|TEXTAREA|SELECT)$/.test((e.target as HTMLElement)?.tagName) ||
         (e.target as HTMLElement)?.isContentEditable
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {

@@ -4,6 +4,7 @@
   "short": "DS",
   "group": "beyond",
   "domain": "data",
+  "stream": "ai-data",
   "order": 40,
   "icon": "chart",
   "color": "#0891b2",

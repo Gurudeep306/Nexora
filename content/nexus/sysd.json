@@ -4,6 +4,7 @@
   "short": "SYS",
   "group": "beyond",
   "domain": "systems",
+  "stream": "software-engineering",
   "order": 19,
   "icon": "system-design",
   "color": "#64748b",

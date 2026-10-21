@@ -4,6 +4,7 @@
   "short": "BE",
   "group": "beyond",
   "domain": "web-mobile",
+  "stream": "web-app",
   "order": 59,
   "icon": "server",
   "color": "#059669",

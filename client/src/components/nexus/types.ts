@@ -118,6 +118,8 @@ export interface WebNode {
   cx?: string[]
   /** kind when not a concept (lesson / project) */
   k?: string
+  /** icon (semantic name or legacy DSA string) */
+  i?: string
   xp: number
   /** count label ("3/10 PYQs", "4/8") */
   c: string
@@ -150,11 +152,20 @@ export interface SubjectRank {
   next: string | null
 }
 
+export interface WebStream {
+  id: string
+  name: string
+  hue: string
+  order: number
+}
+
 export interface WebCluster {
   id: string
   name: string
   short: string
   domain: string
+  /** the stream it belongs to on the radial overview */
+  stream: string
   order: number
   engine: string | null
   zones: WebZone[]
@@ -192,15 +203,18 @@ export interface NexusWebStructure {
   ok: boolean
   version: string
   routes: WebRoute[]
+  /** streams in their order around the radial overview */
+  streams?: WebStream[]
   clusters: {
     id: string
     name: string
     short: string
     domain: string
+    stream?: string
     order: number
     engine: string | null
     zones: { level: number; name: string; color: string }[]
-    nodes: { id: string; n: string; z: number; req: string[]; cx?: string[]; k?: string; xp: number }[]
+    nodes: { id: string; n: string; z: number; req: string[]; cx?: string[]; k?: string; i?: string; xp: number }[]
   }[]
 }
 
