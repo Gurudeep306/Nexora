@@ -81,6 +81,9 @@ function NodeOrb({
   available,
   onSelect,
   onHover,
+  step,
+  due,
+  index,
 }: {
   p: Placed
   selected: boolean
@@ -88,6 +91,12 @@ function NodeOrb({
   available: boolean
   onSelect: (id: string) => void
   onHover: (id: string | null) => void
+  /** its number on the active goal path */
+  step?: number
+  /** due for spaced review */
+  due?: boolean
+  /** reveal order (a gentle stagger on load) */
+  index?: number
 }) {
   const { node, color } = p
   const ringR = R - 2
@@ -99,10 +108,10 @@ function NodeOrb({
     <div
       id={`nx-node-${node.id}`}
       className={cn(
-        'absolute flex w-[128px] -translate-x-1/2 flex-col items-center transition-opacity duration-300',
+        'nx-orb-wrap absolute flex w-[128px] -translate-x-1/2 flex-col items-center transition-opacity duration-300',
         dimmed && 'opacity-30',
       )}
-      style={{ left: p.x, top: p.y - R, ['--zc' as string]: color }}
+      style={{ left: p.x, top: p.y - R, ['--zc' as string]: color, ['--i' as string]: index ?? 0 }}
     >
       <button
         type="button"
@@ -114,7 +123,7 @@ function NodeOrb({
         aria-pressed={selected}
         aria-label={`${node.name}: ${
           node.completed ? 'mastered' : node.unlocked ? `${node.solved} of ${node.target} solved` : 'locked'
-        }`}
+        }${due ? ', due for review' : ''}${step !== undefined ? `, step ${step} of your goal` : ''}`}
         className={cn(
           'nx-orb group relative flex cursor-pointer items-center justify-center rounded-full hover:!scale-100',
           'transition-transform duration-200 ease-[var(--ease-smooth)] hover:-translate-y-0.5',
@@ -124,10 +133,16 @@ function NodeOrb({
         data-selected={selected || undefined}
       >
         {available && <span className="nx-orb-pulse" aria-hidden="true" />}
+        {step !== undefined && (
+          <span className="nx-step absolute -top-1 -left-1 z-[1] flex size-[20px] items-center justify-center rounded-full text-[10.5px] font-bold tabular-nums" aria-hidden="true">
+            {step}
+          </span>
+        )}
 
         {/* progress ring */}
         <svg className="absolute inset-0 -rotate-90" width={NODE} height={NODE} aria-hidden="true">
           <circle cx={R} cy={R} r={ringR} fill="none" className="nx-orb-track" strokeWidth="3" />
+          {due && <circle cx={R} cy={R} r={R - 0.75} fill="none" className="nx-due-ring" strokeWidth="1.5" strokeDasharray="3 3" />}
           {pct > 0 && (
             <circle
               cx={R}
@@ -138,7 +153,7 @@ function NodeOrb({
               strokeWidth="3"
               strokeLinecap="round"
               strokeDasharray={`${(circ * pct) / 100} ${circ}`}
-              className="transition-[stroke-dasharray] duration-700"
+              className="nx-ring-in transition-[stroke-dasharray] duration-700"
             />
           )}
         </svg>
@@ -188,6 +203,9 @@ export function SkillGraph({
   selectedId,
   onSelect,
   zoneWord = 'Zone',
+  steps,
+  highlight,
+  due,
 }: {
   nodes: NexusNode[]
   zones: NexusZone[]
@@ -195,6 +213,12 @@ export function SkillGraph({
   onSelect: (id: string) => void
   /** "Zone" for the DSA rift, "Chapter" for a subject. */
   zoneWord?: string
+  /** the active goal's next steps here, in order (numbered) */
+  steps?: string[]
+  /** the active goal's skills here (the rest steps back a little) */
+  highlight?: Set<string>
+  /** skills due for spaced review */
+  due?: Set<string>
 }) {
   const [ref, width] = useWidth<HTMLDivElement>()
   const [hovered, setHovered] = useState<string | null>(null)
@@ -387,15 +411,18 @@ export function SkillGraph({
             ))}
 
             {/* nodes */}
-            {[...placed.values()].map((p) => (
+            {[...placed.values()].map((p, i) => (
               <NodeOrb
                 key={p.node.id}
                 p={p}
+                index={i}
                 selected={selectedId === p.node.id}
-                dimmed={!!related && !related.has(p.node.id)}
+                dimmed={related ? !related.has(p.node.id) : !!highlight && !highlight.has(p.node.id)}
                 available={p.node.unlocked && !p.node.completed}
                 onSelect={onSelect}
                 onHover={setHovered}
+                step={steps && steps.includes(p.node.id) ? steps.indexOf(p.node.id) + 1 : undefined}
+                due={due?.has(p.node.id)}
               />
             ))}
           </>

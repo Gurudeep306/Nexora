@@ -119,3 +119,59 @@ test('focus chain: every prerequisite and everything it leads to, nothing else',
   assert.deepEqual([...L.lineage(pre, 's:b')].sort(), ['s:a', 's:b', 's:c', 't:e']);
   assert.deepEqual([...L.lineage(pre, 's:d')], ['s:d']);
 });
+
+/* ── insights.ts: goal routes, next step, continue, review, celebration ── */
+let I = null;
+test.before(async () => {
+  try {
+    I = await import(path.join(__dirname, '..', 'client', 'src', 'components', 'nexus', 'insights.ts'));
+  } catch (e) {
+    I = { error: e };
+  }
+});
+const subj = () => [
+  { id: 'a', name: 'Alpha', short: 'A', order: 1, nodes: [
+    { id: 'x', n: 'X', z: 1, p: 100, s: 2, req: [], ag: 5, iv: 2, td: 4 },
+    { id: 'y', n: 'Y', z: 1, p: 40, s: 1, req: ['x'], ag: -1, iv: 0, td: 0.2 },
+    { id: 'z', n: 'Z', z: 2, p: 0, s: 0, req: ['y'], td: -1 },
+  ] },
+  { id: 'b', name: 'Beta', short: 'B', order: 2, nodes: [
+    { id: 'q', n: 'Q', z: 1, p: 0, s: 0, req: [], cx: ['a:z'], td: -1 },
+    { id: 'r', n: 'R', z: 1, p: 0, s: 1, req: [], td: -1 },
+  ] },
+];
+
+test('goal route: prerequisites first, across subjects, next steps open first', (t) => {
+  if (I?.error) return t.skip('no TS loader');
+  const plan = I.routePlan(subj(), ['b']);
+  assert.deepEqual([...plan.keys].sort(), ['a:x', 'a:y', 'a:z', 'b:q', 'b:r']);
+  const pos = new Map(plan.order.map((k, i) => [k, i]));
+  assert.ok(pos.get('a:x') < pos.get('a:y') && pos.get('a:y') < pos.get('a:z') && pos.get('a:z') < pos.get('b:q'));
+  assert.deepEqual(plan.next, ['a:y', 'b:r', 'a:z', 'b:q'], 'open steps before locked ones; mastered skipped');
+});
+
+test('next step, continue where you left off, spaced review, celebration', (t) => {
+  if (I?.error) return t.skip('no TS loader');
+  assert.equal(I.nextStep(subj()), 'a:y', 'the open skill you are furthest into');
+  assert.deepEqual(I.continueFrom(subj()), { key: 'a:y', name: 'Y', subject: 'a', subjectName: 'Alpha' });
+  assert.equal(I.isDue({ s: 2, ag: 5, iv: 2 }), true, 'past its interval (min 3 days)');
+  assert.equal(I.isDue({ s: 2, ag: 2, iv: 2 }), false);
+  assert.equal(I.isDue({ s: 2, ag: 6, iv: 7 }), false, 'within a longer interval');
+  assert.equal(I.isDue({ s: 1, ag: 9, iv: 1 }), false, 'only mastered concepts are reviewed');
+  assert.equal(I.isDue({ s: 2, ag: -1, iv: 0 }), false, 'no review data');
+  assert.deepEqual(I.newlyMastered(null, subj()), [], 'first visit: nothing to celebrate');
+  assert.deepEqual(I.newlyMastered(new Set(), subj()), ['a:x']);
+  assert.deepEqual(I.newlyMastered(new Set(I.masteredKeys(subj())), subj()), []);
+});
+
+test('goal routes on the real data reach every route subject, in learning order', (t) => {
+  if (I?.error) return t.skip('no TS loader');
+  const st = structure();
+  const subjectsData = st.clusters.map((c) => ({ ...c, nodes: c.nodes.map((n) => ({ ...n, p: 0, s: n.req.length ? 0 : 1 })) }));
+  for (const r of st.routes) {
+    const plan = I.routePlan(subjectsData, r.subjects);
+    assert.ok(plan.order.length >= r.subjects.length * 10, r.id);
+    for (const sid of r.subjects) assert.ok(plan.order.some((k) => k.startsWith(`${sid}:`)), `${r.id} covers ${sid}`);
+    assert.equal(plan.next.length, 5);
+  }
+});

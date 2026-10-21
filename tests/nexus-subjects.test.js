@@ -305,6 +305,27 @@ test('web score: concept XP plus lessons, PYQs and a quarter of DSA problem XP',
   assert.ok(s.subjects.dl > 0);
 });
 
+test('weekly summary: XP since the week baseline, concepts mastered since Monday', () => {
+  const now = Date.UTC(2026, 9, 22, 12); // a Thursday
+  const monday = ranks.weekStart(now);
+  assert.equal(new Date(monday).getUTCDay(), 1);
+  const row = { week: ranks.weekKey(now), week_base_xp: 400 };
+  const nodes = [
+    { completed: true, touchedAt: monday + 3600e3 },
+    { completed: true, touchedAt: monday - 3600e3 },
+    { completed: false, touchedAt: now },
+  ];
+  assert.deepEqual(ranks.weekSummary(row, { xp: 650 }, nodes, now), { xp: 250, concepts: 1, since: monday });
+  assert.equal(ranks.weekSummary({ week: '2020-W01', week_base_xp: 0 }, { xp: 650 }, nodes, now).xp, 0, 'a stale week counts nothing yet');
+});
+
+test('web state carries "last studied" per node (continue where you left off)', async () => {
+  const { body } = await call('GET', '/api/nexus/web');
+  const dl = body.state.subjects.dl.nodes;
+  assert.ok(dl.every((t) => t.length === 7 && typeof t[6] === 'number'));
+  assert.ok(body.week && typeof body.week.xp === 'number' && typeof body.week.concepts === 'number');
+});
+
 test('week keys follow ISO weeks', () => {
   assert.equal(ranks.weekKey(Date.UTC(2026, 9, 21)), '2026-W43');
   assert.equal(ranks.weekKey(Date.UTC(2027, 0, 1)), '2026-W53');
@@ -366,7 +387,7 @@ test('GET /api/nexus/web: the reader state in structure order, the web rank and 
     const sc = body.state.subjects[c.id];
     assert.equal(sc.nodes.length, c.nodes.length, c.id);
     assert.equal(sc.zones.length, c.zones.length, c.id);
-    for (const t of sc.nodes) assert.ok([0, 1, 2].includes(t[1]) && typeof t[2] === 'string' && t.length === 6);
+    for (const t of sc.nodes) assert.ok([0, 1, 2].includes(t[1]) && typeof t[2] === 'string' && t.length === 7);
     assert.ok(ranks.TIERS.includes(body.ranks[c.id].tier), c.id);
   }
   // Memory and recency come from the review data: the PYQ answered in an

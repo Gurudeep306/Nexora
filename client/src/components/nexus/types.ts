@@ -135,6 +135,8 @@ export interface WebNode {
   iv?: number
   /** studied in the last 24 h */
   rc?: number
+  /** days since it was last studied (-1: never) */
+  td?: number
 }
 
 export interface WebZone {
@@ -244,6 +246,8 @@ export interface NexusWebState {
   dsaPlayer?: RiftPlayer
   riftLevels: RiftLevel[]
   ranks: Record<string, SubjectRank>
+  /** this week so far */
+  week?: { xp: number; concepts: number; since: number }
   state: {
     version: string
     subjects: Record<
@@ -252,7 +256,7 @@ export interface NexusWebState {
         /** [done, count, progress %, flags: 1 locked | 2 current | 4 completed] */
         zones: [number, number, number, number][]
         /** [progress %, state, count label, days since review, interval, recent] */
-        nodes: [number, 0 | 1 | 2, string, number, number, number][]
+        nodes: [number, 0 | 1 | 2, string, number, number, number, number?][]
       }
     >
   }

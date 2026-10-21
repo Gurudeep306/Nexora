@@ -678,7 +678,9 @@ function webState(reg, dsa, computed, now = Date.now()) {
       const ag = n.memory?.lastAt ? Math.round(((now - n.memory.lastAt) / day) * 10) / 10 : -1;
       const iv = n.memory ? Math.round(n.memory.interval * 10) / 10 : 0;
       const rc = n.touchedAt && now - n.touchedAt < day ? 1 : 0;
-      return [n.progress, n.completed ? 2 : n.unlocked ? 1 : 0, c, ag, iv, rc];
+      // Days since it was last studied (-1: never): "continue where you left off".
+      const td = n.touchedAt ? Math.round(((now - n.touchedAt) / day) * 100) / 100 : -1;
+      return [n.progress, n.completed ? 2 : n.unlocked ? 1 : 0, c, ag, iv, rc, td];
     });
     subjects[sid] = { zones, nodes };
   }
