@@ -3606,7 +3606,7 @@
         "Word to FSM",
         "Sequence detection"
       ],
-      "given": "A stream of bits; the circuit copies its input until two consecutive 0s appear, then outputs the complement until two consecutive 1s appear, and repeats. Example: input 101100 01001011 011, output 101100 10110100 011. S-K (JK) master–slave flip-flops are to be used.",
+      "given": "A stream of bits; the circuit copies its input until two consecutive 0s appear, then outputs the complement until two consecutive 1s appear, and repeats. Example: input 101100 01001011 011, output 101100 10110100 011. 'S-K' master–slave flip-flops (read as J-K) are to be used.",
       "steps": [
         {
           "title": "What must be remembered",
@@ -3636,7 +3636,7 @@
       "pitfalls": [
         "Switching mode before processing the completing bit (complementing the second 0 of 00): the example shows it is still copied.",
         "Using only two states (copy, complement): the machine must also remember the previous bit to recognise 00 and 11.",
-        "Letting the 11 that ends complement mode start with a 0 → 1 pair from copy mode: after a mode change the 'last bit' memory starts afresh (states C and A)."
+        "Carrying the flag across a mode change: the bit that completes 00 also enters C ('complement, last bit 0'), so the next 1 is only the first of a possible 11, not the second."
       ],
       "verification": "Simulated on every input up to 10 bits, the machine equals a direct reading of the words (copy until 00, complement until 11, repeat), and it is minimal (4 states, partition refinement merges nothing). An equivalent Moore machine needs 6 states.",
       "animation": {
@@ -3675,7 +3675,7 @@
       }
     },
     "cse-2001-b-59-b": {
-      "approach": "Concept tested: **implementing a Mealy machine with JK flip-flops**. Assign codes to the four states, write the encoded state table, read the J and K columns from the JK excitation table (J only where Q = 0, K only where Q = 1) and minimise. 'S-K master–slave' is a JK flip-flop (set/reset, toggle on 11).",
+      "approach": "Concept tested: **implementing a Mealy machine with JK flip-flops**. Assign codes to the four states, write the encoded state table, read the J and K columns from the JK excitation table (J only where Q = 0, K only where Q = 1) and minimise. No standard flip-flop is called 'S-K'; it is read as J-K (set/reset, toggle on 11), and $Q_1$'s answer is the same under an SR reading.",
       "concepts": [
         "State assignment",
         "JK flip-flop",
@@ -3715,7 +3715,7 @@
       },
       "shortcut": "Choose codes whose bits mean something (mode, flag): $J_1$ = 'flag set and another 0 arrives', $K_1$ = 'flag set and another 1 arrives', and the flag is always cleared at the next clock ($K_0 = 1$).",
       "pitfalls": [
-        "Reading 'S-K' as an SR flip-flop and forbidding S = R = 1: the question's flip-flop is the JK type.",
+        "'S-K' is read as J-K; under an SR reading, $Q_1$'s answer is the same ($S_1 = Q_0\\bar x$, $R_1 = Q_0x$), so give that flip-flop's equations.",
         "Writing J or K values in rows where they do not matter instead of don't-cares, which gives larger equations.",
         "Using D-flip-flop equations ($D = Q^+$) for J: J is $Q^+$ only in rows with $Q = 0$."
       ],

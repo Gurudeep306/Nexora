@@ -243,11 +243,11 @@ def serial_twos_complement(L):
             if pk != ei:
                 pats += light_edge(g, pk, "muted")
         if a == "Q0" and b == 0:
-            cap = f"Bit {k + 1} (weight {2 ** k}) = 0 in Q0: copied, z = 0. Trailing zeros of a number are trailing zeros of its 2's complement."
+            cap = f"Bit {k} (weight {2 ** k}) = 0 in Q0: copied, z = 0. Trailing zeros of a number are trailing zeros of its 2's complement."
         elif a == "Q0":
-            cap = f"Bit {k + 1} = 1, the first 1: copied (z = 1) and the machine moves to Q1. Every later bit will be inverted."
+            cap = f"Bit {k} (weight {2 ** k}) = 1, the first 1: copied (z = 1) and the machine moves to Q1. Every later bit will be inverted."
         else:
-            cap = f"Bit {k + 1} = {b} in Q1: complemented, z = {z}."
+            cap = f"Bit {k} = {b} in Q1: complemented, z = {z}."
         assert len(cap) <= 140, (len(cap), cap)
         pats.append(("st", {"text": f"z so far: {''.join(map(str, reversed(r['outs'][:k + 1])))}", "tone": "accent"}))
         s.step(cap, *pats)

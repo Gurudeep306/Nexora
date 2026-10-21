@@ -193,6 +193,11 @@ assert dg["inputs"]["D2"][0] == [2, 5, 6, 7] and dg["inputs"]["D1"][0] == [1, 2,
 k92 = bank["cse-1992-b-4-c"]["answer"]
 assert "D_2 = Q_1\\overline{Q_0} + Q_2Q_0" in k92 and "D_1 = \\overline{Q_2}Q_0 + Q_1\\overline{Q_0}" in k92 and "\\overline{Q_2 \\oplus Q_1}" in k92
 assert all(bin(gray[k]).count("1") % 2 != bin(gray[(k + 1) % 8]).count("1") % 2 for k in range(8))  # parity alternates
+# the LSB flips exactly on the even-parity states, so Q0+ = Q0 xor not(Q2 xor Q1 xor Q0) = not(Q2 xor Q1)
+for k in range(8):
+    g, h = gray[k], gray[(k + 1) % 8]
+    assert ((g ^ h) & 1) == (bin(g).count("1") % 2 == 0) and (h & 1) == 1 - (((g >> 2) ^ (g >> 1)) & 1)
+has("in the reflected Gray order the LSB flips exactly on the even-parity states", "$Q_0^+ = Q_0 \\oplus \\overline{Q_2 \\oplus Q_1 \\oplus Q_0} = \\overline{Q_2 \\oplus Q_1}$")
 djg = sq.design_counter(gray, "JK", 3)["sop"]
 assert djg["J2"] == ["Q1Q0′"] and djg["K2"] == ["Q1′Q0′"] and djg["J1"] == ["Q2′Q0"] and djg["K1"] == ["Q2Q0"]
 assert same(djg["J0"][0], "Q2′Q1′ + Q2Q1") and same(djg["K0"][0], "Q2′Q1 + Q2Q1′")
@@ -285,7 +290,7 @@ for nstates in range(1, 5):
             seq = [outs[s] for s in cyc]
             assert sq.counter_states_needed(seq) <= len(cyc) <= nstates
 
-# ── Lock-out: the 0 → 3 → 5 → 6 counter (erratum C 371) ───────────────────
+# ── Lock-out: the 0 → 3 → 5 → 6 counter ────────────────────────────────────
 main = [0, 3, 5, 6]
 c371 = sq.Sync([("A", "JK", {"J": lambda e: e["B"], "K": lambda e: e["B"]}), ("B", "JK", {"J": lambda e: 1, "K": lambda e: 1}),
                 ("C", "JK", {"J": lambda e: neg(e["B"]), "K": lambda e: neg(e["B"])})])
@@ -300,7 +305,7 @@ assert dD["sop"] == {"D2": ["Q0"], "D1": ["Q1′"], "D0": ["Q2′"]}
 assert sq.autonomous_cycles(sq.designed_step(dD, "D"), range(8)) == [[0, 3, 5, 6], [1, 7, 4, 2]]
 dJ = sq.design_counter(main, "JK", 3)
 assert dJ["sop"] == {"J2": ["Q0", "Q1"], "K2": ["Q0′", "Q1"], "J1": ["1"], "K1": ["1"], "J0": ["Q1′", "Q2′"], "K0": ["Q1′", "Q2"]}
-# the C 371 wiring picks J2 = K2 = Q1 and J0 = K0 = Q1′: both minimal choices
+# the locking wiring picks J2 = K2 = Q1 and J0 = K0 = Q1′: both minimal choices
 assert "Q1" in dJ["sop"]["J2"] and "Q1" in dJ["sop"]["K2"] and "Q1′" in dJ["sop"]["J0"] and "Q1′" in dJ["sop"]["K0"]
 # the trace of the unused states, with the toggle reasons of the lesson
 assert [B(sq.bits(v, 3)) for v in (1, n371[1], n371[2], n371[4], n371[7])] == ["001", "010", "100", "111", "001"]
@@ -313,7 +318,7 @@ assert dF["sop"] == {"J2": ["Q1Q0"], "K2": ["Q0′ + Q1"], "J1": ["Q2′Q0′ + 
 nF = nxt_map(sq.designed_step(dF, "JK"), 3)
 assert all(nF[u] == 0 for u in (1, 2, 4, 7)) and [nF[v] for v in main] == [3, 5, 6, 0]
 has("$J_A = Q_BQ_C$, $K_A = \\overline{Q_C} + Q_B$, $J_B = \\overline{Q_A}\\,\\overline{Q_C} + Q_AQ_C$, $K_B = 1$, $J_C = \\overline{Q_A}\\,\\overline{Q_B}$, $K_C = \\overline{Q_B} + Q_A$")
-# cure 2: J_A = Q_C, K_A = Q_C′ (seqlib's first minimal JK cover)
+# cure 3: J_A = Q_C, K_A = Q_C′ (seqlib's first minimal JK cover)
 calt = sq.Sync([("A", "JK", {"J": lambda e: e["C"], "K": lambda e: neg(e["C"])}), ("B", "JK", {"J": lambda e: 1, "K": lambda e: 1}),
                 ("C", "JK", {"J": lambda e: neg(e["B"]), "K": lambda e: neg(e["B"])})])
 nA = sync_map(calt)
@@ -324,10 +329,26 @@ has("001 → 110, 010 → 000, 100 → 011, 111 → 101")
 one = dict(n371)
 one[7] = 0
 assert sq.self_starting(lambda v: one[v], range(8), main)
+# ... but re-minimising after forcing one row can create a new cycle: D design, force only 001 -> 000
+assert sq.autonomous_cycles(sq.designed_step(dD, "D"), range(8))[1] == [1, 7, 4, 2]
+f1 = design_map({0: 3, 3: 5, 5: 6, 6: 0, 1: 0}, 3, "D", ["Q2", "Q1", "Q0"])
+assert all(len(f1[k]) == 4 for k in f1)
+assert any(same(x, "Q1Q0 + Q2Q0") for x in f1["D2"]) and any(same(x, "Q1′Q0′ + Q2Q0") for x in f1["D1"]) and any(same(x, "Q1′Q0′ + Q1Q0") for x in f1["D0"])
+cf1 = sq.Sync([("Q2", "D", {"D": lambda e: (e["Q1"] & e["Q0"]) | (e["Q2"] & e["Q0"])}),
+               ("Q1", "D", {"D": lambda e: (neg(e["Q1"]) & neg(e["Q0"])) | (e["Q2"] & e["Q0"])}),
+               ("Q0", "D", {"D": lambda e: (neg(e["Q1"]) & neg(e["Q0"])) | (e["Q1"] & e["Q0"])})])
+nf1 = sync_map(cf1)
+assert [nf1[v] for v in main] == [3, 5, 6, 0] and nf1[1] == 0 and nf1[7] == 7 and not sq.self_starting(lambda v: nf1[v], range(8), main)
+has("locks out on 001 → 111 → 100 → 010", "$D_2 = Q_1Q_0 + Q_2Q_0$, $D_1 = \\overline{Q_1}\\,\\overline{Q_0} + Q_2Q_0$", "a brand-new **self-loop**",
+    "**Then re-run the self-start check**")
 # the lab example: T flip-flops, don't-cares → lock-out; forced to 0 → self-starting
 assert not sq.self_starting(sq.designed_step(dT, "T"), range(8), main)
 assert sq.self_starting(sq.designed_step(sq.design_counter(main, "T", 3, unused=0), "T"), range(8), main)
-has("$T_2 = Q_1$, $T_1 = 1$, $T_0 = \\overline{Q_1}$ (the erratum circuit)")
+# with the default JK the first minimal cover is J2 = Q0, K2 = Q0′ (cure 3): self-starting
+assert dJ["sop"]["J2"][0] == "Q0" and dJ["sop"]["K2"][0] == "Q0′" and sq.self_starting(sq.designed_step(dJ, "JK"), range(8), main)
+assert not sq.self_starting(sq.designed_step(dD, "D"), range(8), main)
+has("$T_2 = Q_1$, $T_1 = 1$,\n$T_0 = \\overline{Q_1}$ (the $J_A = K_A = Q_B$ counter of this lesson)", "first minimal cover for 0, 3, 5, 6 happens to be $J_2 = Q_0$, $K_2 = \\overline{Q_0}$ (cure 3 above)",
+    "With **D** it locks out too,\non 001 → 111 → 100 → 010", "in the **Circuit** menu")
 # theorem lockout (2): self-starting ⇔ the main cycle is the only cycle, over every 3-bit design in seqlib's designer
 import itertools  # noqa: E402
 for seq in itertools.permutations(range(8), 4):
@@ -338,7 +359,7 @@ for seq in itertools.permutations(range(8), 4):
         cyc = sq.autonomous_cycles(st, range(8))
         assert sq.self_starting(st, range(8), list(seq)) == (len(cyc) == 1)
         assert any(set(c) == set(seq) for c in cyc)
-# free-running: binary and Gray use all states
+# full-length: binary and Gray use all states
 for seq in (list(range(8)), gray):
     assert sorted(seq) == list(range(8))
 
@@ -398,11 +419,11 @@ def opts(q):
 
 # q01: 0 → 1 → 3 → 2 with T
 assert sq.design_counter([0, 1, 3, 2], "T", 2)["sop"] == {"T1": ["Q1′Q0 + Q1Q0′"], "T0": ["Q1′Q0′ + Q1Q0"]}
-q1 = {"A": (lambda e: e["Q1"] ^ e["Q0"], lambda e: neg(e["Q1"] ^ e["Q0"])), "B": (lambda e: e["Q0"], lambda e: neg(e["Q1"])),
+q1 = {"B": (lambda e: e["Q1"] ^ e["Q0"], lambda e: neg(e["Q1"] ^ e["Q0"])), "A": (lambda e: e["Q0"], lambda e: neg(e["Q1"])),
       "C": (lambda e: neg(e["Q1"] ^ e["Q0"]), lambda e: e["Q1"] ^ e["Q0"]), "D": (lambda e: e["Q0"], lambda e: 1)}
 good = [k for k, (t1, t0) in q1.items() if [sq.val(x) for x in sq.Sync([("Q1", "T", {"T": t1}), ("Q0", "T", {"T": t0})]).trace((0, 0), 4)] == [0, 1, 3, 2, 0]]
 bl.assert_mcq(P["nx-dl-06-05-q01"], good[0])
-assert good == ["A"] and sq.design_counter([0, 1, 3, 2], "D", 2)["sop"] == {"D1": ["Q0"], "D0": ["Q1′"]}
+assert good == ["B"] and sq.design_counter([0, 1, 3, 2], "D", 2)["sop"] == {"D1": ["Q0"], "D0": ["Q1′"]}
 # q02: 0 → 1 → 3 → 7 → 6 → 4 with D
 d02 = sq.design_counter([0, 1, 3, 7, 6, 4], "D", 3)
 assert d02["sop"] == {"D2": ["Q1"], "D1": ["Q0"], "D0": ["Q2′"]}
@@ -416,6 +437,8 @@ for k, (f2, f1, f0) in q2.items():
         good.append(k)
 assert good == ["D"]
 bl.assert_mcq(P["nx-dl-06-05-q02"], "D")
+cB = sq.Sync([("Q2", "D", {"D": q2["B"][0]}), ("Q1", "D", {"D": q2["B"][1]}), ("Q0", "D", {"D": q2["B"][2]})])
+assert [B(x) for x in cB.trace((0, 0, 0), 3)] == ["000", "110", "011", "000"]  # common_wrong B of q02
 # q03
 s03 = [0, 3, 0, 3, 1, 0, 3, 0, 3, 1]
 assert sq.counter_states_needed(s03) == 5 and sq.ff_count(len(s03)) == 4 and sq.ff_count(len(set(s03))) == 2
@@ -428,6 +451,9 @@ for _ in range(4):
 assert [b3(v) for v in path] == ["001", "111", "100", "010", "001"]
 assert opts("nx-dl-06-05-q04")["D"] == "It cycles " + " → ".join(b3(v) for v in path) + " and never reaches the main cycle."
 bl.assert_mcq(P["nx-dl-06-05-q04"], "D")
+assert not {1, 7, 4, 2} & {0, 3, 5, 6} and [path[1], path[2]] == [7, 4]  # common_wrong B of q04: 111 and 100 are unused
+# q05 common_wrong [A, B]: every unused state reaches the cycle in one clock; q09 common_wrong 8 = all states on a cycle
+assert all(s98[u] in (1, 4, 2, 3) for u in (0, 5, 6, 7))
 # q05: 1998 counter
 q5 = {"A": s98[0] == 2, "B": s98[5] == 4, "C": s98[7] == 7, "D": sq.self_starting(lambda v: s98[v], range(8), [1, 4, 2, 3])}
 assert s98[7] == 1 and s98[6] == 3
@@ -471,6 +497,7 @@ assert d09["sop"] == {"T2": ["Q1"], "T1": ["1"], "T0": ["Q1"]}
 cyc09 = sq.autonomous_cycles(sq.designed_step(d09, "T"), range(8))
 assert cyc09 == [[0, 2, 5, 7], [1, 3, 4, 6]]
 bl.assert_nat(P["nx-dl-06-05-q09"], sum(len(c) for c in cyc09 if set(c) != {0, 2, 5, 7}))
+assert [w["answer"] for w in P["nx-dl-06-05-q09"]["common_wrong"]] == [0, 8] and sum(len(c) for c in cyc09) == 8
 # q10
 q10 = {"A": all(sq.excitation("D", q, qn)["D"] == qn for q in (0, 1) for qn in (0, 1)),
        "B": all(sq.self_starting(sq.designed_step(sq.design_counter(main, k, 3), k), range(8), main) for k in ("D", "T", "JK")),
@@ -483,7 +510,7 @@ for qid in [f"nx-dl-06-05-q{k:02d}" for k in range(1, 11)]:
     for blk in P[qid]["blocks"]:
         assert f"#{blk} " in L or f"#{blk}}}" in L, (qid, blk)
 keys = [P[f"nx-dl-06-05-q{k:02d}"]["answer"] for k in range(1, 11) if P[f"nx-dl-06-05-q{k:02d}"]["type"] == "MCQ"]
-assert keys.count("A") >= 2 and keys.count("D") >= 2 and max(keys.count(x) for x in "ABCD") <= 2
+assert keys == ["B", "D", "D", "A"] and max(keys.count(x) for x in "ABCD") <= 2  # 05-q01 keyed B for the chapter spread
 assert len([k for k in P if k.startswith("nx-dl-06-05-")]) == 10
 
 print("l6_05_sync_design: excitation columns, binary T counters (up/down, 2–5 bits), f_max with serial and parallel gating, "

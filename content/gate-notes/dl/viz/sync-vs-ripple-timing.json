@@ -536,7 +536,7 @@
      110
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -572,7 +572,7 @@
      94
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -616,7 +616,7 @@
      110
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -660,7 +660,7 @@
      94
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -704,7 +704,7 @@
      110
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -748,7 +748,7 @@
      94
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -792,7 +792,7 @@
      110
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -836,7 +836,7 @@
      94
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -880,7 +880,7 @@
      110
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -932,7 +932,7 @@
      144
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -960,7 +960,7 @@
      144
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -996,7 +996,7 @@
      128
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1032,7 +1032,7 @@
      128
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1068,7 +1068,7 @@
      144
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1104,7 +1104,7 @@
      144
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1140,7 +1140,7 @@
      128
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1176,7 +1176,7 @@
      128
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1212,7 +1212,7 @@
      144
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1264,7 +1264,7 @@
      178
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1292,7 +1292,7 @@
      178
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1320,7 +1320,7 @@
      178
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1348,7 +1348,7 @@
      178
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1384,7 +1384,7 @@
      162
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1420,7 +1420,7 @@
      162
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1448,7 +1448,7 @@
      162
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1476,7 +1476,7 @@
      162
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -1512,7 +1512,7 @@
      178
     ]
    ],
-   "tone": "success",
+   "tone": "ink",
    "hidden": true,
    "narrow": {
     "points": [
@@ -3175,7 +3175,7 @@
      "id": "rs",
      "set": {
       "text": "ripple: 001 → 000 → 010",
-      "tone": "accent"
+      "tone": "danger"
      }
     }
    ]
@@ -3523,7 +3523,7 @@
      "id": "rs",
      "set": {
       "text": "ripple: 101 → 100 → 110",
-      "tone": "accent"
+      "tone": "danger"
      }
     }
    ]

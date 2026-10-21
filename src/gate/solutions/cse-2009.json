@@ -1556,23 +1556,23 @@
         {
           "option": "B",
           "correct": false,
-          "reason": "4 is longer than the shortest string 101."
+          "reason": "0101 also ends with the arc 10 –1/1→ 01, but 101 is shorter."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "5 comes from reading the table's columns in the wrong order or from a search that is not breadth-first."
+          "reason": "00101 works too, but it is not minimal."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "6 is twice the shortest length; a string of length 6 that meets the target exists, but 101 already does at length 3."
+          "reason": "Any 6-bit string that first reaches 10 and then ends with 1 (for example 000101) works; the question asks for the minimum, and 101 already does it in 3."
         }
       ],
       "shortcut": "Look at the target arc first: only 10 –1/1 → 01 works. Reaching 10 from 00 takes 2 inputs (1, 0), so the answer is 2 + 1 = 3.",
       "pitfalls": [
         "Answering 1: input 1 from 00 does reach 01, but with output 0.",
-        "Mixing up the present-state and next-state columns of the long table.",
+        "Mixing up the present-state and next-state columns of the long table: the result has two arcs for some (state, input) and none for others, so count one arc per (state, input) before searching.",
         "Checking the output of the state reached instead of the output of the arc (this is a Mealy table)."
       ],
       "verification": "seqlib's breadth-first search with the target 'next state 01 and output 1' returns 101; the run visits 00, 01, 10, 01 with outputs 0, 0, 1. (State 11 is not reachable from 00 at all.)",

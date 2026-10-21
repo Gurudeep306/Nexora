@@ -163,6 +163,62 @@ has("A: 0/0 → B, 1/1 → A; B: 0/0 → C,\n1/1 → A; C: 0/1 → C, 1/0 → D;
 a59 = bank["cse-2001-b-59-a"]["answer"]
 assert "A: 0/0→B, 1/1→A; B: 0/0→C, 1/1→A; C: 0/1→C, 1/0→D; D: 0/1→C, 1/0→A" in a59
 assert len(ex_in) == 17 and "101100 | 01001011 | 011" in bank["cse-2001-b-59-a"]["text"].replace("01001011 |", "01001011 |")
+r = F01.run(X(ex_in))
+assert "".join(r["states"]) == "AABAABCCDCCDCDABAA"
+has("visits A A B A A B C C D C C D C D A B A A and outputs 10110010110100011")
+
+
+def switch_on_completing(xs):
+    """The wrong turn: the bit that completes 00 / 11 is already treated in the new mode."""
+    mode, prev, out = 0, None, []
+    for x in xs:
+        if mode == 0 and prev == 0 and x == 0:
+            mode, prev = 1, None
+        elif mode == 1 and prev == 1 and x == 1:
+            mode, prev = 0, None
+        else:
+            prev = x
+        out.append(x ^ mode)
+    return out
+
+
+wt = S(switch_on_completing(X(ex_in)))
+assert [k + 1 for k in range(17) if wt[k] != ex_out[k]][0] == 6
+has("disagrees with the example in its sixth output bit", "it equals a direct reading of the words on every input up to 10 bits")
+
+# ── Worked examples: from words to a diagram ──────────────────────────────
+VEND = sq.FSM(["0", "5", "10"], ["N", "5", "10"],
+              {(s, c): ("0" if int(s) + (0 if c == "N" else int(c)) >= 15 else str(int(s) + (0 if c == "N" else int(c))))
+               for s in ("0", "5", "10") for c in ("N", "5", "10")},
+              {(s, c): int(int(s) + (0 if c == "N" else int(c)) >= 15) for s in ("0", "5", "10") for c in ("N", "5", "10")}, False, "0")
+assert len(VEND.delta) == 9 and sum(VEND.out.values()) == 3 and VEND.minimal_states() == 3
+for ins, st, ou in ((["5", "5", "5"], ["0", "5", "10", "0"], [0, 0, 1]), (["10", "10"], ["0", "10", "0"], [0, 1]),
+                    (["10", "N", "5"], ["0", "10", "10", "0"], [0, 0, 1])):
+    rv = VEND.run(ins)
+    assert rv["states"] == st and rv["outs"] == ou
+assert len(VEND.to_moore().states) == 4
+has("State 0: N/0 → 0, 5/0 → 5, 10/0 → 10. State 5: N/0 → 5, 5/0 → 10, 10/**1** → 0", "nine arcs, three of them with output 1",
+    "Run 10, 10: states 0 → 10 → 0, outputs 0, 1", "**10 + 10 vends on the second coin and returns to state 0**",
+    "A Moore version needs a fourth state")
+MOD3 = sq.FSM.from_table({"R0": ("R0", "R1", 1), "R1": ("R1", "R2", 0), "R2": ("R2", "R0", 0)}, moore=True)
+rm3 = MOD3.run(X("1101110"))
+assert rm3["states"][1:] == ["R1", "R2", "R2", "R0", "R1", "R2", "R2"] and str(rm3["first"]) + S(rm3["outs"]) == "10001000"
+assert MOD3.minimal_states() == 3 and MOD3.shortest(lambda t, y: y == 1, s0="R1") == (1, 1) and MOD3.shortest(lambda t, y: y == 1, s0="R2") == (1,)
+for xs in strings(8):
+    assert MOD3.run(xs)["outs"] == [int(sum(xs[:k + 1]) % 3 == 0) for k in range(len(xs))]
+has("1101110: states R1, R2, R2, R0, R1, R2, R2", "the full output string **10001000**")
+FIRST = sq.FSM.from_table({"S": ("F0", "F1", 1, 1), "F0": ("F0", "F0", 1, 0), "F1": ("F1", "F1", 0, 1)})
+for xs in strings(8):
+    assert FIRST.run(xs)["outs"] == [int(x == xs[0]) for x in xs]
+assert FIRST.minimal_states() == 3 and S(FIRST.run(X("0110100"))["outs"]) == "1001011" and S(FIRST.run(X("1101"))["outs"]) == "1101"
+assert S(FIRST.run(X("1101"), s0="F0")["outs"]) == "0010"
+has("Runs: 0110100 gives **1001011**; 1101 gives **1101**", "(1101 would give 0010)")
+
+# ── 2001 as SR: Q1's inputs coincide with J1, K1 ──────────────────────────
+eSR = encoded(F01, {"A": (0, 0), "B": (0, 1), "C": (1, 0), "D": (1, 1)}, "SR", 2)
+assert eSR["S1"] == ["Q0x′"] and eSR["R1"] == ["Q0x"] and eSR["R0"] == ["Q0"]
+assert eSR["S0"] in (["Q1′Q0′x′ + Q1Q0′x"],), eSR["S0"]
+has("its\nSR inputs are $S_1 = Q_0\\bar x$, $R_1 = Q_0x$, never both 1", "$S_0 = \\bar Q_0(\\bar Q_1\\bar x + Q_1 x)$, $R_0 = Q_0$")
 
 # ── Detectors ──────────────────────────────────────────────────────────────
 d101, d101n, d101m = sq.detector("101"), sq.detector("101", False), sq.detector("101", moore=True)
@@ -299,6 +355,16 @@ for (a, b_), (x, (na, nb), o) in [((0, 0), (0, (0, 0), 1)), ((0, 1), (0, (1, 0),
     assert F09.delta[((a, b_), x)] == (na, nb) and F09.o((a, b_), x) == o
 assert [l for l, t in bl.option_values(bank["cse-2009-cs-27"]).items() if t == str(len(w))] == bl.key_letters(bank["cse-2009-cs-27"]["answer"]) == ["A"]
 has("00 –1→ 01 –0→ 10 –1→ 01 with output 1: input **101**", "Length **3** (GATE 2009, option A)")
+# options 4, 5, 6: longer strings that also hit the target; the swapped-column "table" is not a machine
+for w_ in ("0101", "00101", "000101"):
+    rr = F09.run(X(w_))
+    assert rr["states"][-1] == (0, 1) and rr["outs"][-1] == 1
+swapped = {}
+for (s_, x), t in F09.delta.items():
+    swapped.setdefault((t, x), set()).add(s_)
+assert len(swapped) == 5 and any(len(v) > 1 for v in swapped.values())
+has("Options 4, 5 and 6 are lengths of strings\nthat also reach 01 with output 1 (for example 0101 and 00101)",
+    "Swapping the present-state and next-state columns gives a \"table\" with two\narcs for some (state, input) and none for others")
 # unreachable target 11 and the BFS bound
 assert F09.reachable() == {(0, 0), (0, 1), (1, 0)} and F09.shortest(lambda t, y: t == (1, 1)) is None
 assert [sq.bstr(F09.delta[(s, x)]) for x in (0, 1) for s in [(0, 0), (0, 1), (1, 0), (1, 1)]] == ["00", "10", "01", "10", "01", "00", "01", "00"]
@@ -407,8 +473,8 @@ assert len(sq.detector("10110", False, True).states) == 6
 PM = sq.FSM.from_table({"E": ("E", "O", 0, 1), "O": ("O", "E", 1, 0)})
 for xs in strings(8):
     assert PM.run(xs)["outs"] == [sum(xs[:k + 1]) % 2 for k in range(len(xs))]
-claims = {"A": lambda xs: [0] + xs[:-1], "B": lambda xs: [1 - x for x in xs],
-          "C": lambda xs: [sum(xs[:k + 1]) % 2 for k in range(len(xs))], "D": lambda xs: [int(k > 0 and xs[k - 1] == xs[k] == 1) for k in range(len(xs))]}
+claims = {"C": lambda xs: [0] + xs[:-1], "B": lambda xs: [1 - x for x in xs],
+          "A": lambda xs: [sum(xs[:k + 1]) % 2 for k in range(len(xs))], "D": lambda xs: [int(k > 0 and xs[k - 1] == xs[k] == 1) for k in range(len(xs))]}
 bl.assert_mcq(P["nx-dl-06-07-q04"], [k for k, f in claims.items() if all(PM.run(xs)["outs"] == f(xs) for xs in strings(8))][0])
 assert PM.run([1])["outs"] == [1] and PM.run([0])["outs"] == [0] and PM.run([1, 1])["outs"] == [1, 0]
 Q5 = sq.FSM.from_table({"S0": ("S1", "S0", 0, 0), "S1": ("S1", "S2", 0, 0), "S2": ("S3", "S0", 0, 0), "S3": ("S1", "S2", 0, 1)})
@@ -443,10 +509,10 @@ q10 = P["nx-dl-06-07-q10"]
 bl.assert_mcq(q10, by_value(q10, full)[0])
 assert full == "000101" and by_value(q10, S(r10["outs"])) == ["A"]
 rn = sq.detector("101", False, True).run(X("10101"))
-assert by_value(q10, str(rn["first"]) + S(rn["outs"])) == ["B"] and by_value(q10, S(r10["outs"]) + "0") == ["D"]
+assert by_value(q10, str(rn["first"]) + S(rn["outs"])) == ["B"] and by_value(q10, S(r10["outs"]) + "0") == ["C"]
 assert len([k for k in P if k.startswith("nx-dl-06-07-")]) == 10
 keys = [P[f"nx-dl-06-07-q{k:02d}"]["answer"] for k in range(1, 11) if P[f"nx-dl-06-07-q{k:02d}"]["type"] == "MCQ"]
-assert keys.count("B") >= 2 and keys.count("C") >= 2 and max(keys.count(x) for x in "ABCD") <= 2
+assert keys == ["B", "A", "B", "D"], keys
 for k in range(1, 11):
     q = P[f"nx-dl-06-07-q{k:02d}"]
     for blk in q["blocks"]:

@@ -770,7 +770,20 @@ test('sequential labs: flip-flop tables, scope waveforms, registers, ripple, cou
     const all = Array.from({ length: 2 ** c.n }, (_, s) => s);
     assert.deepEqual(sq.autonomousCycles(st, all), c.cycles, `${at}: cycles`);
     assert.equal(sq.selfStarting(st, all, c.cycle), c.selfStart, `${at}: self-start`);
+    if (c.kind === 'ring' || c.kind === 'johnson') {
+      // The lab's main cycle is the cycle of the standard start, whatever the initial state.
+      const start = sq.val(sq.standardStart(c.kind, c.n));
+      assert.equal(start, c.start, `${at}: standard start`);
+      const main = sq.cycleFrom(st, start).cycle;
+      assert.deepEqual(main, c.main, `${at}: main cycle`);
+      assert.equal(sq.selfStarting(st, all, main), c.mainSelfStart, `${at}: self-start against the main cycle`);
+      assert.equal(sq.cycleFrom(st, c.init).cycle.every((s) => main.includes(s)), c.initOnMain, `${at}: initial state on the main cycle`);
+    }
   }
+  // LFSRs fed a serial bit string, one bit per clock (IT 2007: 101101 into 0110 ends at 0110).
+  assert.deepEqual(vec.feeds[0].states.at(-1), 6);
+  for (const c of vec.feeds)
+    assert.deepEqual(sq.lfsrFeed(sq.bits(c.init, c.n), c.taps, c.xs).map(sq.val), c.states, `feed n ${c.n} taps ${c.taps} init ${c.init} xs ${c.xs}`);
   // Ripple counters: every event and the settled states.
   for (const c of vec.ripple) {
     const clear = c.clear === null ? null : (q) => q === c.clear;

@@ -1801,11 +1801,11 @@
   "options": [
    {
     "l": "A",
-    "t": "$T_1 = Q_1 \\oplus Q_0$, $T_0 = \\overline{Q_1 \\oplus Q_0}$"
+    "t": "$T_1 = Q_0$, $T_0 = \\overline{Q_1}$"
    },
    {
     "l": "B",
-    "t": "$T_1 = Q_0$, $T_0 = \\overline{Q_1}$"
+    "t": "$T_1 = Q_1 \\oplus Q_0$, $T_0 = \\overline{Q_1 \\oplus Q_0}$"
    },
    {
     "l": "C",
@@ -1816,7 +1816,7 @@
     "t": "$T_1 = Q_0$, $T_0 = 1$"
    }
   ],
-  "answer": "A",
+  "answer": "B",
   "solution": [
    "In bits the sequence is 00 → 01 → 11 → 10 → 00. With T flip-flops, $T = Q \\oplus Q^+$: mark the bits that change in each row.",
    "00 → 01: $T_1T_0 = 01$. 01 → 11: 10. 11 → 10: 01. 10 → 00: 10.",
@@ -1825,7 +1825,7 @@
   "concept": "T = Q ⊕ Q⁺: the T column marks the bits that change.",
   "common_wrong": [
    {
-    "answer": "B",
+    "answer": "A",
     "why": "These are the D inputs ($D_1 = Q_0$, $D_0 = \\overline{Q_1}$): the next values, not the changes. As T inputs they give 00 → 01 → 10 → …"
    },
    {
@@ -1880,6 +1880,10 @@
     "why": "$D_2 = Q_1Q_0$ misses row 110 → 100, where $Q_2^+ = 1$ but $Q_0 = 0$."
    },
    {
+    "answer": "B",
+    "why": "Every equation is complemented: from 000 it gives $D_2D_1D_0 = 110$, not 001 (it runs 000 → 110 → 011 → 000)."
+   },
+   {
     "answer": "C",
     "why": "$D_2 = Q_0$ sends 001 to 101 instead of 011."
    }
@@ -1899,7 +1903,7 @@
   "answer": 3,
   "solution": [
    "The ten values shown are two copies of the block 0, 3, 0, 3, 1, so the minimal period is 5.",
-   "Each position of the period needs its own state (the value 0 is followed by 3 and the value 3 by 0 or 1 at different positions), so the counter needs 5 states.",
+   "An autonomous counter on a cycle of $k$ states repeats its output every $k$ clocks, so $k$ must be a multiple of the minimal period 5: at least 5 states, and 5 states with output logic are enough.",
    "$\\lceil \\log_2 5 \\rceil = 3$ flip-flops, plus output logic."
   ],
   "concept": "States = positions of the minimal period; ⌈log₂ L⌉ flip-flops.",
@@ -1956,6 +1960,10 @@
     "why": "Assumes unused states reset themselves; the D inputs in 001 are all 1, so the next state is 111."
    },
    {
+    "answer": "B",
+    "why": "From 001 the next two states are 111 and 100, both unused; the trace 001 → 111 → 100 → 010 → 001 never meets 000, 011, 101 or 110."
+   },
+   {
     "answer": "C",
     "why": "001 is not a self-loop: in 001 the D inputs are 1, 1, 1, so $Q_2$ and $Q_1$ change."
    }
@@ -2007,7 +2015,7 @@
      "A",
      "B"
     ],
-    "why": "Forgetting that all unused states reach the cycle makes the circuit self-starting."
+    "why": "Misses D: every unused state (000, 101, 110, 111) reaches the cycle in one clock, so the circuit is self-starting."
    },
    {
     "answer": [
@@ -2186,8 +2194,8 @@
     "why": "Assuming unused states taken as don't-cares fall back into the cycle by themselves."
    },
    {
-    "answer": 2,
-    "why": "Stopping after one clock from each unused state instead of following it until it repeats."
+    "answer": 8,
+    "why": "Counting the four main-cycle states as well; the question asks only for states on cycles other than the main one."
    }
   ],
   "blocks": [
@@ -2350,14 +2358,14 @@
    },
    {
     "l": "C",
-    "t": "00011"
+    "t": "00111"
    },
    {
     "l": "D",
-    "t": "00111"
+    "t": "00011"
    }
   ],
-  "answer": "D",
+  "answer": "C",
   "solution": [
    "From 00000 the counter fills with 1s from the left: 10000, 11000, 11100, 11110, 11111 after clocks 1 to 5.",
    "Now $\\overline{Q_5} = 0$, so 0s enter: 01111 after clock 6 and 00111 after clock 7.",
@@ -2370,12 +2378,12 @@
     "why": "Off by one: 01111 is the state after 6 clocks."
    },
    {
-    "answer": "C",
-    "why": "Off by one the other way: 00011 is the state after 8 clocks."
-   },
-   {
     "answer": "B",
     "why": "Treating it as a 3-clock question (11100 is the state after 3 clocks)."
+   },
+   {
+    "answer": "D",
+    "why": "Off by one the other way: 00011 is the state after 8 clocks."
    }
   ],
   "blocks": [
@@ -2565,7 +2573,7 @@
   ],
   "blocks": [
    "ring-counter",
-   "erratum-x2",
+   "trap-ring-sync",
    "trap-johnson-count",
    "trick-johnson-decode"
   ],
@@ -2800,7 +2808,7 @@
   "options": [
    {
     "l": "A",
-    "t": "The input delayed by one clock period"
+    "t": "1 exactly when the number of 1s received so far, including the present bit, is odd"
    },
    {
     "l": "B",
@@ -2808,32 +2816,32 @@
    },
    {
     "l": "C",
-    "t": "1 exactly when the number of 1s received so far, including the present bit, is odd"
+    "t": "The input delayed by one clock period"
    },
    {
     "l": "D",
     "t": "1 exactly when the last two input bits are 11"
    }
   ],
-  "answer": "C",
+  "answer": "A",
   "solution": [
    "E is entered after an even number of 1s and O after an odd number: input 1 swaps the states, input 0 keeps them.",
    "Each arc's output is 1 exactly when the arc ends in O, i.e. when the count of 1s including the present bit is odd: running parity.",
-   "Input 1 alone gives output 1, which kills A (a delay would output 0) and D; input 0 alone gives 0, which kills B."
+   "Input 1 alone gives output 1, which kills C (a delay would output 0) and D; input 0 alone gives 0, which kills B."
   ],
   "concept": "Give each state a meaning, check it on every arc, and kill the other options with one short string each.",
   "common_wrong": [
    {
-    "answer": "A",
+    "answer": "B",
+    "why": "Input 0 from E gives 0, not 1."
+   },
+   {
+    "answer": "C",
     "why": "On input 1 the machine outputs 1 at once; a one-clock delay would output 0 first."
    },
    {
     "answer": "D",
     "why": "A single 1 already gives output 1, and 11 gives 10, not 01."
-   },
-   {
-    "answer": "B",
-    "why": "Input 0 from E gives 0, not 1."
    }
   ],
   "blocks": [
@@ -3084,14 +3092,14 @@
    },
    {
     "l": "C",
-    "t": "000101"
+    "t": "001010"
    },
    {
     "l": "D",
-    "t": "001010"
+    "t": "000101"
    }
   ],
-  "answer": "C",
+  "answer": "D",
   "solution": [
    "Before any input the machine is in A and shows 0.",
    "1 → B (0), 0 → C (0), 1 → D (1), 0 → C (0), 1 → D (1).",
@@ -3108,7 +3116,7 @@
     "why": "Sending D on input 0 back to A (non-overlapping detection), which misses the second 101."
    },
    {
-    "answer": "D",
+    "answer": "C",
     "why": "Shifting the outputs one place early, as if the output belonged to the arc."
    }
   ],
@@ -3156,23 +3164,23 @@
   "id": "nx-dl-06-08-q02",
   "type": "MSQ",
   "marks": 2,
-  "text": "A Mealy machine has the state table below (next state, output for $x = 0$; next state, output for $x = 1$). Which of the following pairs of states are equivalent?\n\n| PS | $x = 0$ | $x = 1$ |\n|:--:|:--:|:--:|\n| A | B, 0 | A, 1 |\n| B | D, 0 | C, 0 |\n| C | D, 0 | B, 0 |\n| D | E, 0 | E, 1 |\n| E | F, 0 | B, 1 |\n| F | E, 0 | E, 1 |",
+  "text": "A Mealy machine has the state table below (next state, output for $x = 0$; next state, output for $x = 1$). Which of the following pairs of states are equivalent?\n\n| PS | $x = 0$ | $x = 1$ |\n|:--:|:--:|:--:|\n| $S_1$ | $S_2$, 0 | $S_1$, 1 |\n| $S_2$ | $S_4$, 0 | $S_3$, 0 |\n| $S_3$ | $S_4$, 0 | $S_2$, 0 |\n| $S_4$ | $S_5$, 0 | $S_5$, 1 |\n| $S_5$ | $S_6$, 0 | $S_2$, 1 |\n| $S_6$ | $S_5$, 0 | $S_5$, 1 |",
   "options": [
    {
     "l": "A",
-    "t": "A and E"
+    "t": "$S_1$ and $S_5$"
    },
    {
     "l": "B",
-    "t": "B and C"
+    "t": "$S_2$ and $S_3$"
    },
    {
     "l": "C",
-    "t": "D and F"
+    "t": "$S_4$ and $S_6$"
    },
    {
     "l": "D",
-    "t": "A and D"
+    "t": "$S_1$ and $S_4$"
    }
   ],
   "answer": [
@@ -3180,10 +3188,10 @@
    "C"
   ],
   "solution": [
-   "$P_0$ by output rows: $A, D, E, F$ have 01; $B, C$ have 00.",
-   "Round 1: $A \\to (B, A)$ and $E \\to (F, B)$ each reach $\\{B, C\\}$, but on different inputs, while $D \\to (E, E)$ and $F \\to (E, E)$ stay in the first block. $P_1 = \\{A\\}, \\{B, C\\}, \\{D, F\\}, \\{E\\}$; $B \\to (D, C)$ and $C \\to (D, B)$ have the same labels.",
-   "Round 2 splits nothing: $B$ and $C$ differ only by the pair $(C, B)$ itself, and $D, F$ have identical rows. So $B \\equiv C$ and $D \\equiv F$.",
-   "$A$ and $E$: the string 0 1 gives outputs 0, 0 from $A$ (through $B$) and 0, 1 from $E$ (through $F$). $A$ and $D$: the same string gives 0, 0 from $A$ and 0, 1 from $D$ (through $E$)."
+   "$P_0$ by output rows: $S_1, S_4, S_5, S_6$ have 01; $S_2, S_3$ have 00.",
+   "Round 1: $S_1 \\to (S_2, S_1)$ and $S_5 \\to (S_6, S_2)$ each reach $\\{S_2, S_3\\}$, but on different inputs, while $S_4 \\to (S_5, S_5)$ and $S_6 \\to (S_5, S_5)$ stay in the first block. $P_1 = \\{S_1\\}, \\{S_2, S_3\\}, \\{S_4, S_6\\}, \\{S_5\\}$; $S_2 \\to (S_4, S_3)$ and $S_3 \\to (S_4, S_2)$ have the same labels.",
+   "Round 2 splits nothing: $S_2$ and $S_3$ differ only by the pair $(S_3, S_2)$ itself, and $S_4, S_6$ have identical rows. So $S_2 \\equiv S_3$ and $S_4 \\equiv S_6$.",
+   "$S_1$ and $S_5$: the string 0 1 gives outputs 0, 0 from $S_1$ (through $S_2$) and 0, 1 from $S_5$ (through $S_6$). $S_1$ and $S_4$: the same string gives 0, 0 from $S_1$ and 0, 1 from $S_4$ (through $S_5$)."
   ],
   "concept": "Equivalent states need next states in the same class, not equal next states; a pair that implies only itself is equivalent.",
   "common_wrong": [
@@ -3191,7 +3199,7 @@
     "answer": [
      "C"
     ],
-    "why": "Accepting only identical rows ($D$, $F$) and rejecting $B$, $C$ because their next states differ."
+    "why": "Accepting only identical rows ($S_4$, $S_6$) and rejecting $S_2$, $S_3$ because their next states differ."
    },
    {
     "answer": [
@@ -3199,7 +3207,7 @@
      "B",
      "C"
     ],
-    "why": "Merging $A$ with $E$ because both have the output row 01; the second round separates them (the string 0 1)."
+    "why": "Merging $S_1$ with $S_5$ because both have the output row 01; the second round separates them (the string 0 1)."
    }
   ],
   "blocks": [
@@ -3417,18 +3425,18 @@
    },
    {
     "l": "C",
-    "t": "for every input sequence, the machine produces the same output sequence starting in $p$ as starting in $q$"
+    "t": "$p$ can be reached from $q$ and $q$ can be reached from $p$"
    },
    {
     "l": "D",
-    "t": "$p$ can be reached from $q$ and $q$ can be reached from $p$"
+    "t": "for every input sequence, the machine produces the same output sequence starting in $p$ as starting in $q$"
    }
   ],
-  "answer": "C",
+  "answer": "D",
   "solution": [
-   "Equivalence is defined by behaviour: the same output sequence for every input sequence (option C).",
+   "Equivalence is defined by behaviour: the same output sequence for every input sequence (option D).",
    "Equal next states with equal outputs is sufficient but not necessary (GATE 1996: $B \\equiv C$ with different next states), so A is wrong.",
-   "Equal outputs for single inputs is only 0-equivalence, the first partition $P_0$; B is too weak. Mutual reachability says nothing about outputs (D)."
+   "Equal outputs for single inputs is only 0-equivalence, the first partition $P_0$; B is too weak. Mutual reachability says nothing about outputs (C)."
   ],
   "concept": "State equivalence means indistinguishable by every input sequence; equal rows and equal one-step outputs are not the definition.",
   "common_wrong": [
@@ -3455,11 +3463,11 @@
   "options": [
    {
     "l": "A",
-    "t": "4"
+    "t": "3"
    },
    {
     "l": "B",
-    "t": "3"
+    "t": "4"
    },
    {
     "l": "C",
@@ -3470,7 +3478,7 @@
     "t": "6"
    }
   ],
-  "answer": "B",
+  "answer": "A",
   "solution": [
    "Search from $A$: $A \\to F, E$; $F \\to C, E$; $C \\to A$; $E \\to F, A$. The reachable states are $A, C, E, F$; $B$ and $D$ can never be entered, so their rows are dropped.",
    "Refine the four reachable states: $P_0 = \\{A, E, F\\}$ (01), $\\{C\\}$ (00). $F \\to (C, E)$ reaches $\\{C\\}$, $A \\to (F, E)$ and $E \\to (F, A)$ do not: $P_1 = \\{A, E\\}, \\{C\\}, \\{F\\}$. The next round splits nothing.",
@@ -3479,7 +3487,7 @@
   "concept": "Drop the states unreachable from the start, then merge equivalent states.",
   "common_wrong": [
    {
-    "answer": "A",
+    "answer": "B",
     "why": "Dropping $B$ and $D$ but not merging $A$ with $E$."
    },
    {

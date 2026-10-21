@@ -46,7 +46,7 @@ def partition_refinement(L):
     s.head("Partition refinement on the GATE 2025 table", "Refining the GATE 2025 table", W, NW)
     cw, ch = s.v(68, 56), s.v(26, 23)
     tx, ty = s.v(16, 12), s.v(52, 46)
-    hdr = ["PS", "next", "f", "P0", "label", "P1"]
+    hdr = ["PS", "next", "f", "P0", "lbl P0", "P1"]
     rows = [hdr] + [[x, f"{m.delta[(x, 0)]} {m.delta[(x, 1)]}", f"{m.out[(x, 0)]}{m.out[(x, 1)]}", "", "", ""] for x in st]
     s.table("tt", tx, ty, cw, ch, rows)
     px = s.v(tx + 6 * cw + 26, NW / 2)
@@ -103,11 +103,12 @@ def partition_refinement(L):
            ("p1", {"text": pstr(P1), "tone": "accent"}))
     # round 2: labels with P1's numbers; nothing splits
     lab2 = {x: tuple(num1[m.delta[(x, a)]] for a in (0, 1)) for x in st}
+    cur[0][4] = "lbl P1"
     for x in st:
         cur[st.index(x) + 1][4] = f"({lab2[x][0]},{lab2[x][1]})"
     for b in P1:
         assert len({lab2[x] for x in b}) == 1
-    s.step(cap("Round 2 relabels with P1's blocks: A and C get the same label, so do B and E, and D and H. Nothing splits."),
+    s.step(cap("Round 2 labels by P1's blocks (lbl P1). Labels are compared only inside a block: A, C agree, B, E agree, D, H agree."),
            tbl([[k + 1, 4] for k in range(8)]), ("p1h", {"tone": "ink"}), ("p1", {"tone": "ink"}),
            ("p2h", {"text": "P2 = P1: stop", "tone": "accent"}))
     assert sq.ff_count(8) == sq.ff_count(len(P1)) == 3

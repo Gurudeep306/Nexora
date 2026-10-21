@@ -660,6 +660,22 @@ def lfsr_step(reg, taps, din=0):
     return (fb,) + tuple(reg[:-1])
 
 
+def lfsr_feed(reg, taps, xs):
+    """An LFSR fed the serial input bits xs, one per clock (first bit first): the register before the
+    first clock and after every clock."""
+    out = [tuple(reg)]
+    for x in xs:
+        out.append(lfsr_step(out[-1], taps, x))
+    return out
+
+
+def standard_start(kind, n):
+    """The intended start of an n-bit ring counter (a single 1 at the left) or Johnson counter (all 0s);
+    its cycle is the counter's main cycle, whatever state the register actually starts in."""
+    assert kind in ("ring", "johnson")
+    return (1,) + (0,) * (n - 1) if kind == "ring" else (0,) * n
+
+
 def universal(reg, mode, sin_r=0, sin_l=0, par=None):
     """A 4-mode universal shift register: mode 0 hold, 1 shift right (sin_r enters on the left),
     2 shift left (sin_l enters on the right), 3 parallel load."""

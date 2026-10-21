@@ -449,7 +449,7 @@
    ]
   },
   {
-   "caption": "Power up in 001. B = 0: A holds, B toggles, C toggles: next 010.",
+   "caption": "Power up in 001 (B = 0): A holds, B toggles, C toggles, so next 010.",
    "patches": [
     {
      "id": "ge4",
@@ -481,7 +481,7 @@
    ]
   },
   {
-   "caption": "From 010: B = 1: A toggles, B toggles, C holds, so 100.",
+   "caption": "From 010 (B = 1): A toggles, B toggles, C holds, so 100.",
    "patches": [
     {
      "id": "ge5",
@@ -513,7 +513,7 @@
    ]
   },
   {
-   "caption": "From 100: B = 0: A holds, B toggles, C toggles, so 111.",
+   "caption": "From 100 (B = 0): A holds, B toggles, C toggles, so 111.",
    "patches": [
     {
      "id": "ge6",
@@ -545,7 +545,7 @@
    ]
   },
   {
-   "caption": "From 111: B = 1: A toggles, B toggles, C holds, so 001. Back to 001: a lock-out cycle.",
+   "caption": "From 111 (B = 1): A toggles, B toggles, C holds, so 001. Back to 001: a lock-out cycle.",
    "patches": [
     {
      "id": "ge7",
@@ -676,7 +676,7 @@
    ]
   },
   {
-   "caption": "Cure 2, same cost: choose J_A = Q_C, K_A = Q_C′ (also minimal). The unused states go 001 → 110, 010 → 000, 100 → 011, 111 → 101.",
+   "caption": "Cure 3 (another minimal cover), same cost: choose J_A = Q_C, K_A = Q_C′. Unused states: 001 → 110, 010 → 000, 100 → 011, 111 → 101.",
    "patches": [
     {
      "id": "ge8",

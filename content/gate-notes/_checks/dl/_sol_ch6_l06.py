@@ -53,7 +53,7 @@ SOLUTIONS["cse-1991-b-6-b"] = {
     "steps": [
         {"title": "Addressing", "body": "A 10-bit binary counter (mod-1024, since $2^{10} = 1024$) drives the address lines, so the shift clocks visit the locations 0, 1, …, 1023, 0, … in turn."},
         {"title": "One shift = read, write, increment", "body": "At each shift clock a small sequencer (or the two clock phases) does: READ/$\\overline{\\text{WRITE}} = 1$ and clock $M[\\text{ctr}]$ into a D flip-flop whose $Q$ is the serial output; READ/$\\overline{\\text{WRITE}} = 0$ to write $D_{in}$ into $M[\\text{ctr}]$; then increment the counter.", "scene": {"reveal": 3}},
-        {"title": "Why the delay is 1024", "body": "A bit written at shift $j$ into address $a = j \\bmod 1024$ is not touched while the counter visits the other 1023 addresses. At shift $j + 1024$ the counter is back at $a$, and the read, which comes before the write, hands that bit to the output."},
+        {"title": "Why the delay is 1024", "body": "A bit written at shift $j$ into address $a = j \\bmod 1024$ is not touched while the counter visits the other 1023 addresses. At shift $j + 1024$ the counter is back at $a$, and the read, which comes before the write, hands that bit to the output. (Strictly, the output flip-flop holds the bit that has just **left** a 1024-stage chain, one clock behind that chain's last stage $Q_{1024}$; taking $D_{out}$ directly, with the RAM reading the next address between shifts, gives $Q_{1024}$ itself. Either is accepted as a 1024-bit register.)"},
         {"title": "Why the order matters", "body": "If the write came first, the location would be overwritten before it was read and the output would equal the input: no delay at all."},
     ],
     "answer": {"value": "Mod-1024 (10-bit) counter on the address lines; per shift: read $M[\\text{ctr}]$ into the output flip-flop, write $D_{in}$ into $M[\\text{ctr}]$, increment; output = input delayed by 1024 shifts", "matchesKey": True},
@@ -192,7 +192,7 @@ SOLUTIONS["cse-2014-2-cs-7"] = {
     "answer": {"value": "(C) $k$-bit ring counter", "choice": ["C"], "matchesKey": True},
     "optionAnalysis": [
         opt("A", False, "A $k$-bit binary up counter has $2^k$ states; the decoder outputs have only $k$ patterns, each with a single 1."),
-        opt("B", False, "Same count problem as A, and the 1 moves upwards, not downwards."),
+        opt("B", False, "A $k$-bit down counter has $2^k$ states, not $k$; the decoder lines show only $k$ one-hot patterns, and the inner counter counts up."),
         opt("C", True, "One 1 circulating through $k$ lines, one step per clock: the $k$-bit ring counter's sequence."),
         opt("D", False, "A $k$-bit Johnson counter has $2k$ states with runs of 1s (1000, 1100, …), not a single 1."),
     ],

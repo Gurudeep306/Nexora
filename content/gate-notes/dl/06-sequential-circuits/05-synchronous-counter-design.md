@@ -485,8 +485,8 @@ $D_0 = \overline{Q_2}\,\overline{Q_1} + Q_2Q_1 = \overline{Q_2 \oplus Q_1}$.
 
 :::answer
 $D_2 = Q_1\overline{Q_0} + Q_2Q_0$, $D_1 = \overline{Q_2}Q_0 + Q_1\overline{Q_0}$, $D_0 = \overline{Q_2 \oplus Q_1}$ (GATE 1992). All 8 states are used, so
-there is nothing to lock out. The key observation for $D_0$: in a Gray sequence the parity $Q_2 \oplus Q_1 \oplus Q_0$ alternates every step, which is
-what the XNOR encodes. The JK version is smaller per input ($J_2 = Q_1\overline{Q_0}$, $K_2 = \overline{Q_1}\,\overline{Q_0}$, $J_1 = \overline{Q_2}Q_0$,
+there is nothing to lock out. The key observation for $D_0$: in the reflected Gray order the LSB flips exactly on the even-parity states
+($Q_2 \oplus Q_1 \oplus Q_0 = 0$), so $Q_0^+ = Q_0 \oplus \overline{Q_2 \oplus Q_1 \oplus Q_0} = \overline{Q_2 \oplus Q_1}$. The JK version is smaller per input ($J_2 = Q_1\overline{Q_0}$, $K_2 = \overline{Q_1}\,\overline{Q_0}$, $J_1 = \overline{Q_2}Q_0$,
 $K_1 = Q_2Q_0$, $J_0 = \overline{Q_2 \oplus Q_1}$, $K_0 = Q_2 \oplus Q_1$) but needs six inputs instead of three.
 :::
 ::::
@@ -674,16 +674,17 @@ A counter that is switched on, or hit by noise, can wake up in an **unused** sta
 in the K-maps, which we chose for cheapness, not for safety.
 :::
 
-:::definition{#self-start term="Self-starting, free-running and lock-out" depth="standard"}
+:::definition{#self-start term="Self-starting, full-length and lock-out" depth="standard"}
 Let a counter be designed for a main cycle $M$ of states.
 
 - It is **self-starting** if from **every** state, used or unused, it reaches $M$ after finitely many clocks (and then stays on it).
-- It is **free-running** (or uses all its states) if $M$ contains every one of the $2^n$ states: then there are no unused states and self-starting is
-  automatic. A 3-bit binary or Gray counter is free-running.
+- It is **full-length** (no unused states) if $M$ contains every one of the $2^n$ states: then there are no unused states and self-starting is
+  automatic. A 3-bit binary or Gray counter is full-length. (Do not confuse this with "free-running", which means counting continuously with no
+  enable or stop.)
 - It has a **lock-out** if some state never reaches $M$: the circuit started there circulates for ever among unused states (a **lock-out cycle**, possibly a
   single state with a self-loop).
 
-Free-running implies self-starting; the converse is false (the 1998 counter has unused states, but all of them lead into the cycle).
+Full-length implies self-starting; the converse is false (the 1998 counter has unused states, but all of them lead into the cycle).
 :::
 
 :::theorem{#lockout name="Self-starting is a property of the built circuit" depth="standard"}
@@ -713,7 +714,7 @@ unused state into $M$ in one clock. ∎
 every design in this lesson.
 :::
 
-The classic example is a counter that several textbooks and revision notes present as finished.
+The classic example is a counter that is easy to present as finished, and at least one set of revision notes does.
 
 :::definition{#lockout-example term="The 0 → 3 → 5 → 6 JK counter" depth="standard"}
 Design a counter for 0 → 3 → 5 → 6 → 0 with JK flip-flops $A$, $B$, $C$ ($A$ the MSB). The used states are 000, 011, 101, 110; the unused states 001, 010,
@@ -726,11 +727,12 @@ $$001 \to 010 \to 100 \to 111 \to 001,$$
 which never touches the main cycle. A counter powered up in any of these four states is **locked out** for ever.
 :::
 
-:::note{#erratum-c371 title="This counter is printed as working, but it locks out" depth="standard"}
-At least one popular set of notes designs exactly this 0 → 3 → 5 → 6 counter with JK flip-flops ($J_A = K_A = Q_B$, $J_B = K_B = 1$, $J_C = K_C = \overline{Q_B}$), takes
-all unused states as don't-cares, and presents the circuit as finished. It is a correct design of the **main cycle**, but it is not self-starting: the four unused
-states run round 001 → 010 → 100 → 111 → 001 for ever. Taking all unused states as don't-cares is legitimate only if you **then check** where the built circuit
-sends them; the same notes' own advice a page later (give the unused states an explicit next state) is the cure, and it must actually be applied to this circuit.
+:::trap{#trap-looks-finished title="This counter looks finished, but it locks out" depth="standard"}
+The expected wrong answer is "self-starting", or no answer at all because the question was never asked. It is easy to design exactly this 0 → 3 → 5 → 6
+counter with JK flip-flops ($J_A = K_A = Q_B$, $J_B = K_B = 1$, $J_C = K_C = \overline{Q_B}$), take all unused states as don't-cares, and present the circuit as
+finished. It is a correct design of the **main cycle**, but it is not self-starting: the four unused states run round 001 → 010 → 100 → 111 → 001 for ever.
+Taking all unused states as don't-cares is legitimate only if you **then check** where the built circuit sends them; giving the unused states an explicit next
+state is the cure, and it must actually be applied to this circuit.
 :::
 
 The animation draws all eight states of that circuit, simulates the unused ones, and then applies two cures.
@@ -746,7 +748,11 @@ Three standard cures, from the most to the least expensive:
    $J_A = Q_BQ_C$, $K_A = \overline{Q_C} + Q_B$, $J_B = \overline{Q_A}\,\overline{Q_C} + Q_AQ_C$, $K_B = 1$, $J_C = \overline{Q_A}\,\overline{Q_B}$, $K_C = \overline{Q_B} + Q_A$:
    safe, but no longer gate-free.
 2. **Force only what breaks the cycle.** One redirected arc is enough to open a lock-out cycle; redirect one unused state into the main cycle and keep the other
-   don't-cares free.
+   don't-cares free. **Then re-run the self-start check**: forcing one row changes the K-maps, the new minimal covers can move the other
+   unused arcs, so one redirected arc opens the old cycle but does not by itself guarantee there is no new one. Example: the D design of
+   0 → 3 → 5 → 6 ($D_2 = Q_0$, $D_1 = \overline{Q_1}$, $D_0 = \overline{Q_2}$) locks out on 001 → 111 → 100 → 010. Force only 001 → 000 and re-minimise: the
+   three maps now have four minimal covers each, and one equally cheap choice is $D_2 = Q_1Q_0 + Q_2Q_0$, $D_1 = \overline{Q_1}\,\overline{Q_0} + Q_2Q_0$,
+   $D_0 = \overline{Q_1}\,\overline{Q_0} + Q_1Q_0$. The old cycle is gone, but now 111 gives $D_2D_1D_0 = 111$: a brand-new **self-loop**.
 3. **Choose a different minimal cover.** Often an equally cheap grouping is self-starting. Here $J_A = Q_C$, $K_A = \overline{Q_C}$ (the stage $A$ simply copies $C$) is
    just as minimal as $J_A = K_A = Q_B$, and it sends 001 → 110, 010 → 000, 100 → 011, 111 → 101: self-starting at **zero** extra cost.
 
@@ -803,8 +809,8 @@ $z_1 = Q_1Q_0 + Q_2Q_0$ and $z_0 = \overline{Q_1}Q_0$.
 :::
 
 :::answer
-**3** flip-flops (GATE 2016), plus a little output logic: $z_1 = Q_0(Q_1 + Q_2)$, $z_0 = \overline{Q_1}Q_0$. Neither 2 (distinct values) nor 4 (an off-by-one in
-some notes) is right: six positions fit exactly in three bits with two codes to spare.
+**3** flip-flops (GATE 2016), plus a little output logic: $z_1 = Q_0(Q_1 + Q_2)$, $z_0 = \overline{Q_1}Q_0$. Neither 2 (distinct values) nor 4 (2 output bits plus 2 bits to count
+the three visits to 0) is right: the six positions need only 3 bits **jointly**, because 6 ≤ 2³, with two codes to spare.
 :::
 ::::
 
@@ -824,7 +830,7 @@ Lock-out cycle 001 → 010 → 100 → 111 → 001, of length 4.
 :::
 
 :::answer
-**Not self-starting:** all four unused states lie on a lock-out cycle. This is the counter of the erratum above; seqlib's `autonomous_cycles` finds exactly two
+**Not self-starting:** all four unused states lie on a lock-out cycle. This is the counter of the trap above; seqlib's `autonomous_cycles` finds exactly two
 cycles, [000, 011, 101, 110] and [001, 010, 100, 111].
 :::
 ::::
@@ -878,8 +884,8 @@ its own column (a free consistency check that your bit order is right), and then
 equation as a trap.
 :::
 
-:::note{#note-t-qbar-counter title="Correction: a T stage with T = Q̄ does not toggle" depth="standard"}
-A planning slip that also appears in student solutions: writing $T = \overline{Q}$ for a counter stage that should toggle every clock. $Q^+ = T \oplus Q =
+:::trap{#trap-t-qbar title="A T stage with T = Q̄ does not toggle" depth="standard"}
+A common slip in student solutions: writing $T = \overline{Q}$ for a counter stage that should toggle every clock. $Q^+ = T \oplus Q =
 \overline{Q} \oplus Q = 1$: from 0 the stage sets once, and from then on it stays at 1. A stage that toggles every clock has $T = 1$ (or $J = K = 1$, or
 $D = \overline{Q}$); "$\overline{Q}$" belongs on the **D** input, not the T input. [Lesson 3](lesson:sequential-analysis) proves the same fact for analysis.
 :::
@@ -977,12 +983,15 @@ the smallest lock-out there is, and the easiest to miss.
 
 ## Try it: design a counter in the simulator
 
-The counter tab of the Counter & FSM Simulator has a **Synchronous, designed from a sequence** mode that runs this lesson's procedure. Type a sequence of distinct
-states (it opens with `0, 3, 5, 6`), choose D, T or JK flip-flops, and choose whether the unused states are **don't-cares** or **forced to 0**. The lab shows the minimal
+The counter tab of the Counter & FSM Simulator has a **Synchronous, designed from a sequence** mode that runs this lesson's procedure. The tab opens on the ring
+counter, so first choose **Synchronous, designed from a sequence** in the **Circuit** menu (the sequence box opens with `0, 3, 5, 6`). Type a sequence of distinct
+states, choose D, T or JK flip-flops, and choose whether the unused states are **don't-cares** or **forced to 0**. The lab shows the minimal
 input equations (built from the first minimal cover of each input, with the other minimal covers listed), a table of the wanted and the built next state of every
-state, the waveforms as you clock it, and the full state graph of all $2^n$ states with the self-start checker naming every lock-out cycle. Try 0, 3, 5, 6 with
-**T** flip-flops: the lab's equations are $T_2 = Q_1$, $T_1 = 1$, $T_0 = \overline{Q_1}$ (the erratum circuit) and the checker reports the lock-out cycle 001 → 010 → 100 → 111.
-Switch the unused states to **forced to 0** and it disappears. Then try 1, 4, 2, 3 with D, and 0, 1, 3, 2, 6, 7, 5, 4 (the Gray code).
+state, the waveforms as you clock it, and the full state graph of all $2^n$ states with the self-start checker naming every lock-out cycle. With the default **JK**
+flip-flops the lab's first minimal cover for 0, 3, 5, 6 happens to be $J_2 = Q_0$, $K_2 = \overline{Q_0}$ (cure 3 above), and the checker says **self-starting**;
+the locking cover appears only in the "also minimal" list. Switch to **T** flip-flops to see the locking circuit: the lab's equations are $T_2 = Q_1$, $T_1 = 1$,
+$T_0 = \overline{Q_1}$ (the $J_A = K_A = Q_B$ counter of this lesson) and the checker reports the lock-out cycle 001 → 010 → 100 → 111. With **D** it locks out too,
+on 001 → 111 → 100 → 010. Switch the unused states to **forced to 0** and the lock-out disappears. Then try 1, 4, 2, 3 with D, and 0, 1, 3, 2, 6, 7, 5, 4 (the Gray code).
 
 :::lab{#lab-design lab="counter-fsm" tab="counter" depth="standard"}
 :::

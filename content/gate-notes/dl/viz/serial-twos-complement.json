@@ -758,7 +758,7 @@
    ]
   },
   {
-   "caption": "Bit 1 (weight 1) = 0 in Q0: copied, z = 0. Trailing zeros of a number are trailing zeros of its 2's complement.",
+   "caption": "Bit 0 (weight 1) = 0 in Q0: copied, z = 0. Trailing zeros of a number are trailing zeros of its 2's complement.",
    "patches": [
     {
      "id": "ge0",
@@ -807,7 +807,7 @@
    ]
   },
   {
-   "caption": "Bit 2 (weight 2) = 0 in Q0: copied, z = 0. Trailing zeros of a number are trailing zeros of its 2's complement.",
+   "caption": "Bit 1 (weight 2) = 0 in Q0: copied, z = 0. Trailing zeros of a number are trailing zeros of its 2's complement.",
    "patches": [
     {
      "id": "ge0",
@@ -862,7 +862,7 @@
    ]
   },
   {
-   "caption": "Bit 3 = 1, the first 1: copied (z = 1) and the machine moves to Q1. Every later bit will be inverted.",
+   "caption": "Bit 2 (weight 4) = 1, the first 1: copied (z = 1) and the machine moves to Q1. Every later bit will be inverted.",
    "patches": [
     {
      "id": "ge1",
@@ -935,7 +935,7 @@
    ]
   },
   {
-   "caption": "Bit 4 = 0 in Q1: complemented, z = 1.",
+   "caption": "Bit 3 = 0 in Q1: complemented, z = 1.",
    "patches": [
     {
      "id": "ge2",
@@ -1002,7 +1002,7 @@
    ]
   },
   {
-   "caption": "Bit 5 = 1 in Q1: complemented, z = 0.",
+   "caption": "Bit 4 = 1 in Q1: complemented, z = 0.",
    "patches": [
     {
      "id": "ge2",
@@ -1057,7 +1057,7 @@
    ]
   },
   {
-   "caption": "Bit 6 = 1 in Q1: complemented, z = 0.",
+   "caption": "Bit 5 = 1 in Q1: complemented, z = 0.",
    "patches": [
     {
      "id": "ge2",
@@ -1112,7 +1112,7 @@
    ]
   },
   {
-   "caption": "Bit 7 = 0 in Q1: complemented, z = 1.",
+   "caption": "Bit 6 = 0 in Q1: complemented, z = 1.",
    "patches": [
     {
      "id": "ge2",

@@ -63,10 +63,10 @@ carrying an `#id` and a `depth`. Lessons are written to Chapter 5 depth (7–11k
 | 5 | `dl-06-05-synchronous-counter-design` | Synchronous counter design | 10 | 65 min |
 | 6 | `dl-06-06-shift-registers` | Shift registers, ring and Johnson counters, LFSRs | 10 | 50 min |
 | | **State machines** | | | |
-| 7 | `dl-06-07-finite-state-machines` | Finite state machines: Mealy and Moore | 6 | 55 min |
-| 8 | `dl-06-08-state-minimisation` | State minimisation | 3 | 35 min |
+| 7 | `dl-06-07-finite-state-machines` | Finite state machines: Mealy and Moore | 6 | 75 min |
+| 8 | `dl-06-08-state-minimisation` | State minimisation | 3 | 60 min |
 
-Chapter total: 59 PYQs (all `dl/sequential`), about 6 h 55 min.
+Chapter total: 59 PYQs (all `dl/sequential`), about 7 h 40 min.
 
 Lesson files and frontmatter ids: `01-latches.md` (`latches`), `02-flip-flops.md` (`flip-flops`),
 `03-sequential-analysis.md` (`sequential-analysis`), `04-ripple-counters.md` (`ripple-counters`),

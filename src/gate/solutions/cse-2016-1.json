@@ -774,7 +774,7 @@
       "shortcut": "Six positions fit in $2^3 = 8$: 3 flip-flops.",
       "pitfalls": [
         "Answering 2 (four distinct values 0–3).",
-        "Answering 4 (an off-by-one printed in some notes; 6 ≤ 8 needs only 3 bits)."
+        "Answering 4 by giving the output 2 bits and the 'which visit of 0' count another $\\lceil \\log_2 3 \\rceil = 2$; the 6 positions fit in 3 bits together."
       ],
       "verification": "seqlib.counter_states_needed([0, 1, 0, 2, 0, 3]) = 6 and ff_count(6) = 3; the output functions were minimised with states 6 and 7 as don't-cares."
     },

@@ -385,7 +385,10 @@ assert len(set(rows1m.values())) == 6 and Q1.minimal_states() == 4
 Q2 = F({"A": ("B", "A", 0, 1), "B": ("D", "C", 0, 0), "C": ("D", "B", 0, 0), "D": ("E", "E", 0, 1), "E": ("F", "B", 0, 1), "F": ("E", "E", 0, 1)})
 assert len(Q2.reachable()) == 6 and fmt(Q2.partitions()[1]) == "{A}, {B, C}, {D, F}, {E}" and len(Q2.partitions()) == 2
 pairs2 = {"A": ("A", "E"), "B": ("B", "C"), "C": ("D", "F"), "D": ("A", "D")}
-assert {l: bl.option_values(P["nx-dl-06-08-q02"])[l] for l in "ABCD"} == {l: f"{a} and {b}" for l, (a, b) in pairs2.items()}
+sn2 = {c: f"$S_{i + 1}$" for i, c in enumerate("ABCDEF")}  # the question names the states S_1 … S_6
+assert {l: bl.option_values(P["nx-dl-06-08-q02"])[l] for l in "ABCD"} == {l: f"{sn2[a]} and {sn2[b]}" for l, (a, b) in pairs2.items()}
+for c, (n0, n1, o0, o1) in {c: (Q2.delta[(c, 0)], Q2.delta[(c, 1)], Q2.out[(c, 0)], Q2.out[(c, 1)]) for c in "ABCDEF"}.items():
+    assert f"| {sn2[c]} | {sn2[n0]}, {o0} | {sn2[n1]}, {o1} |" in P["nx-dl-06-08-q02"]["text"]
 bl.assert_msq(P["nx-dl-06-08-q02"], [l for l, (a, b) in pairs2.items() if Q2.equivalent(Q2, a, b)])
 assert outseq(Q2, "A", (0, 1)) == [0, 0] and outseq(Q2, "E", (0, 1)) == [0, 1] and outseq(Q2, "D", (0, 1)) == [0, 1]
 
@@ -424,7 +427,7 @@ assert [fmt(p) for p in Q7.partitions()] == ["{A, E, G}, {B, C, D, F}", "{A, E, 
 bl.assert_nat(P["nx-dl-06-08-q07"], sq.ff_count(Q7.minimal_states()))
 assert sq.ff_count(7) == 3
 
-bl.assert_mcq(P["nx-dl-06-08-q08"], "C")  # the definition (equivalent-states block)
+bl.assert_mcq(P["nx-dl-06-08-q08"], "D")  # the definition (equivalent-states block)
 assert M96.equivalent(M96, "B", "C") and M96.delta[("B", 1)] != M96.delta[("C", 1)]  # A is not necessary
 assert M2.signature("B") == M2.signature("D") and not M2.equivalent(M2, "B", "D")  # B is too weak
 
@@ -432,7 +435,7 @@ Q9 = F({"A": ("F", "E", 0, 1), "B": ("B", "A", 0, 1), "C": ("A", "A", 0, 0), "D"
 assert sorted(Q9.reachable()) == ["A", "C", "E", "F"] and Q9.minimal_states(False) == 5
 q9 = P["nx-dl-06-08-q09"]
 bl.assert_mcq(q9, mcq_by_value(q9, str(Q9.minimal_states()))[0])
-assert mcq_by_value(q9, "4") == ["A"] and mcq_by_value(q9, "5") == ["C"] and mcq_by_value(q9, "6") == ["D"]
+assert mcq_by_value(q9, "3") == ["A"] and mcq_by_value(q9, "4") == ["B"] and mcq_by_value(q9, "5") == ["C"] and mcq_by_value(q9, "6") == ["D"]
 assert Q9.equivalent(Q9, "A", "E")
 
 Q10 = F({"A": ("B", "C", 0, 0), "B": ("A", "D", 0, 1), "C": ("D", "A", 1, 1), "D": ("C", "B", 1, 0)})
@@ -452,7 +455,7 @@ assert mcq_by_value(q10, group(lambda s: Q10.out[(s, 0)] + Q10.out[(s, 1)])) == 
 
 assert len([k for k in P if k.startswith("nx-dl-06-08-")]) == 10
 keys = [P[f"nx-dl-06-08-q{k:02d}"]["answer"] for k in range(1, 11) if P[f"nx-dl-06-08-q{k:02d}"]["type"] == "MCQ"]
-assert keys.count("B") >= 2 and keys.count("C") >= 2 and max(keys.count(x) for x in "ABCD") <= 2
+assert keys == ["B", "D", "A", "C"], keys
 for k in range(1, 11):
     q = P[f"nx-dl-06-08-q{k:02d}"]
     for blk in q["blocks"]:

@@ -439,6 +439,17 @@
    }
   },
   {
+   "id": "tapj",
+   "type": "circle",
+   "cx": 340.0,
+   "cy": 170.0,
+   "r": 3.5,
+   "fill": "ink",
+   "narrow": {
+    "cx": 193.0
+   }
+  },
+  {
    "id": "fb",
    "type": "line",
    "points": [

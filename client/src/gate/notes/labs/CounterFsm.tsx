@@ -9,7 +9,11 @@
              to 0). Step, run and reset; the state readout, the Q waveforms
              over the clocks so far, the full graph of all 2ⁿ states with the
              main cycle highlighted, and the self-start checker naming every
-             lock-out cycle.
+             lock-out cycle. For ring and Johnson counters the main cycle is
+             the one through the standard start (a single 1 at the left, all
+             0s) whatever the initial state, and the checker says which cycle
+             the initial state is on. An LFSR's serial input is a bit string
+             fed one bit per clock, then 0s.
     fsm      an editable Mealy or Moore state table (or a preset: the
              overlapping 101 detector, the serial 2's complementer, the GATE
              1996 and 2025 tables, or any sequence detector); feed an input
@@ -31,6 +35,7 @@ import {
   MAX_TAPS,
   autonomousCycles,
   binText,
+  bits,
   cycleFrom,
   designCounter,
   designedStep,
@@ -48,8 +53,10 @@ import {
   ringStep,
   run,
   selfStarting,
+  standardStart,
   sx,
   tableOf,
+  val,
   type CounterDesign,
   type Fsm,
   type FsmRow,
@@ -146,13 +153,17 @@ function parseSeq(text: string): { seq: number[] | null; error: string } {
 const rippleOf = (n: number, tpd: number, down: boolean, clear: number | null, s: number) =>
   rippleEvents(n, tpd, [0], { start: s, down, clear: clear === null ? null : (q) => q === clear })
 
-function buildMachine(kind: CKind, width: number, tapsKey: string, din: number, tpd: number, clear: number | null, seqKey: string, ff: FfKind, unused: 'dc' | '0'): Machine {
+/** The machine's own next-state map; for an LFSR this is the map with serial input 0 (the input after the entered bits). */
+function buildMachine(kind: CKind, width: number, tapsKey: string, tpd: number, clear: number | null, seqKey: string, ff: FfKind, unused: 'dc' | '0'): Machine {
   const n = width
-  if (kind === 'ring') return { n, step: intStep(n, ringStep), main: [] }
-  if (kind === 'johnson') return { n, step: intStep(n, johnsonStep), main: [] }
+  // Ring and Johnson: the main cycle is the cycle of the standard start, whatever the initial state.
+  if (kind === 'ring' || kind === 'johnson') {
+    const step = intStep(n, kind === 'ring' ? ringStep : johnsonStep)
+    return { n, step, main: cycleFrom(step, val(standardStart(kind, n))).cycle }
+  }
   if (kind === 'lfsr') {
     const t = tapsKey ? tapsKey.split(',').map(Number) : []
-    return { n, step: intStep(n, (r) => lfsrStep(r, t, din)), main: [] }
+    return { n, step: intStep(n, (r) => lfsrStep(r, t, 0)), main: [] }
   }
   if (kind === 'up' || kind === 'down') {
     const down = kind === 'down'
@@ -171,7 +182,7 @@ function CounterTool() {
   const [width, setWidth] = useState(4)
   const [initRaw, setInit] = useState<number | null>(null)
   const [taps, setTaps] = useState<number[]>(MAX_TAPS[4]!)
-  const [din, setDin] = useState(0)
+  const [serialText, setSerial] = useState('')
   const [tpd, setTpd] = useState(1)
   const [clear, setClear] = useState<number | null>(null)
   const [seqText, setSeqText] = useState('0, 3, 5, 6')
@@ -182,29 +193,39 @@ function CounterTool() {
   const parsed = useMemo(() => parseSeq(seqText), [seqText])
   const seqKey = parsed.seq ? parsed.seq.join(',') : ''
   const tapsKey = taps.join(',')
-  const machine = useMemo(() => buildMachine(kind, width, tapsKey, din, tpd, clear, seqKey, ff, unused), [kind, width, tapsKey, din, tpd, clear, seqKey, ff, unused])
+  const machine = useMemo(() => buildMachine(kind, width, tapsKey, tpd, clear, seqKey, ff, unused), [kind, width, tapsKey, tpd, clear, seqKey, ff, unused])
+  const serial = kind === 'lfsr' ? serialText : ''
 
   const n = machine.n
   const size = 1 << n
   const defaultInit = kind === 'ring' ? 1 << (n - 1) : kind === 'lfsr' ? 1 << (n - 1) : kind === 'design' && parsed.seq ? parsed.seq[0]! : 0
   const init = initRaw !== null && initRaw < size ? initRaw : defaultInit
-  const main = machine.design ? machine.main : cycleFrom(machine.step, init).cycle
+  const fixedMain = machine.design || kind === 'ring' || kind === 'johnson'
+  const main = fixedMain ? machine.main : cycleFrom(machine.step, init).cycle
   const all = useMemo(() => Array.from({ length: size }, (_, s) => s), [size])
   const cycles = useMemo(() => autonomousCycles(machine.step, all), [machine, all])
   const selfStart = selfStarting(machine.step, all, main)
   const mainSet = new Set(main)
   const lockouts = cycles.filter((c) => !c.every((s) => mainSet.has(s)))
+  // Where the chosen initial state ends up (ring and Johnson: its cycle need not be the main one).
+  const initRun = cycleFrom(machine.step, init)
+  const initLock = lockouts.findIndex((c) => c.includes(initRun.cycle[0]!))
 
   // History of states, reset whenever the circuit or the initial state changes.
-  const key = `${kind}|${n}|${tapsKey}|${din}|${tpd}|${clear}|${seqKey}|${ff}|${unused}|${init}`
-  const [hist, setHist] = useState<{ key: string; states: number[] }>({ key, states: [init] })
+  const key = `${kind}|${n}|${tapsKey}|${serial}|${tpd}|${clear}|${seqKey}|${ff}|${unused}|${init}`
+  const [hist, setHist] = useState<{ key: string; states: number[]; clocks: number }>({ key, states: [init], clocks: 0 })
   const states = hist.key === key ? hist.states : [init]
+  const clocks = hist.key === key ? hist.clocks : 0
   const cur = states[states.length - 1]!
   const running = runKey === key
+  // The serial input of clock k (0-based): the k-th entered bit, then 0s.
+  const serialBit = (k: number) => (k < serial.length ? Number(serial[k]) : 0)
+  const stepAt = (s: number, k: number) => (kind === 'lfsr' && k < serial.length ? val(lfsrStep(bits(s, n), taps, serialBit(k))) : machine.step(s))
   const advance = () =>
     setHist((h) => {
       const st = h.key === key ? h.states : [init]
-      return { key, states: [...st, machine.step(st[st.length - 1]!)].slice(-200) }
+      const k = h.key === key ? h.clocks : 0
+      return { key, states: [...st, stepAt(st[st.length - 1]!, k)].slice(-200), clocks: k + 1 }
     })
   const advanceRef = useRef(advance)
   useEffect(() => {
@@ -286,10 +307,20 @@ function CounterTool() {
             ))}
           </fieldset>
           <label htmlFor={`${u}-din`}>Serial input</label>
-          <select id={`${u}-din`} className="lab-select" value={din} onChange={(e) => setDin(Number(e.target.value))}>
-            <option value={0}>0</option>
-            <option value={1}>1</option>
-          </select>
+          <input
+            id={`${u}-din`}
+            className="lab-input cf-serial"
+            value={serialText}
+            onChange={(e) => setSerial(e.target.value.replace(/[^01]/g, '').slice(0, 32))}
+            aria-describedby={`${u}-dinhint`}
+            inputMode="numeric"
+            autoComplete="off"
+            spellCheck={false}
+            placeholder="0"
+          />
+          <span id={`${u}-dinhint`} className="lab-hint">
+            bits fed one per clock, first bit first, then 0s
+          </span>
           <button type="button" className="lab-btn" onClick={() => setTaps(MAX_TAPS[n]!)}>
             Maximal-length taps
           </button>
@@ -364,7 +395,7 @@ function CounterTool() {
         </button>
         <button type="button" className="lab-btn" onClick={() => {
             setRunKey(null)
-            setHist({ key, states: [init] })
+            setHist({ key, states: [init], clocks: 0 })
           }}>
           Reset
         </button>
@@ -373,7 +404,8 @@ function CounterTool() {
       {!machine.error && (
         <>
           <p className="cf-readout" aria-live="polite">
-            After {states.length - 1} clock{states.length === 2 ? '' : 's'}: <b>{fmt(cur)}</b> ({cur})
+            After {clocks} clock{clocks === 1 ? '' : 's'}: <b>{fmt(cur)}</b> ({cur})
+            {kind === 'lfsr' && clocks > 0 && <span className="cf-trans"> — serial input at that clock: {serialBit(clocks - 1)}</span>}
             {lastTrans && lastTrans.length > 2 && (
               <span className="cf-trans">
                 {' '}
@@ -390,16 +422,27 @@ function CounterTool() {
               <p className={cn('lab-result', selfStart ? 'is-good' : 'is-bad')}>
                 {selfStart ? 'Self-starting: every state reaches the main cycle.' : `Not self-starting: ${lockouts.length} lock-out cycle${lockouts.length === 1 ? '' : 's'}.`}
               </p>
+              {(kind === 'ring' || kind === 'johnson') && (
+                <p className="lab-hint">
+                  The main cycle is the one through the standard start, {fmt(machine.main[0]!)} ({kind === 'ring' ? 'a single 1 at the left' : 'all 0s'}). Your
+                  initial state {fmt(init)}{' '}
+                  {initRun.prefix.length > 0 ? `leads in ${initRun.prefix.length} clock${initRun.prefix.length === 1 ? '' : 's'} into ` : 'is on '}
+                  {initLock < 0 ? 'the main cycle.' : `${lockouts.length > 1 ? `lock-out cycle ${initLock + 1}` : 'the lock-out cycle'}, so it never reaches the main cycle.`}
+                </p>
+              )}
               <ul className="cf-cycles">
                 <li>
                   <b>Main cycle</b> ({main.length} state{main.length === 1 ? '' : 's'}): {cycleText(main)}
                 </li>
-                {lockouts.map((c) => (
+                {lockouts.map((c, i) => (
                   <li key={c[0]} className="is-lock">
-                    <b>Lock-out cycle</b> ({c.length}): {cycleText(c)}
+                    <b>Lock-out cycle{lockouts.length > 1 ? ` ${i + 1}` : ''}</b> ({c.length}): {cycleText(c)}
                   </li>
                 ))}
               </ul>
+              {kind === 'lfsr' && serial && (
+                <p className="lab-hint">The graph and the cycles are those of the register with serial input 0, the input after your {serial.length} bit{serial.length === 1 ? '' : 's'}.</p>
+              )}
               <p className="lab-hint">
                 {size - main.length - lockouts.reduce((s, c) => s + c.length, 0)} of the {size} states lie on no cycle and lead into one. Every state’s
                 next state: {all.map((s) => `${fmt(s)}→${fmt(machine.step(s))}`).join(', ')}.
@@ -603,25 +646,37 @@ function StateGraph({
 
 /* ── State machine ────────────────────────────────────────────────────── */
 
+/** One row of the editable table. Next states refer to rows by their stable id, so renaming a state (keystroke by keystroke,
+    even through another state's name) never rewires an arc; names are used only for display and for fromTable. */
 interface Row {
+  id: number
   name: string
-  n0: string
-  n1: string
+  n0: number
+  n1: number
   o0: number
   o1: number
 }
 
-const rowsOf = (rows: [string, FsmRow][], moore: boolean): Row[] =>
-  rows.map(([name, r]) => ({ name, n0: String(r[0]), n1: String(r[1]), o0: Number(r[2]), o1: moore ? 0 : Number(r[3]) }))
+let rowIds = 0
 
-const tableRows = (rows: Row[], moore: boolean): [string, FsmRow][] => rows.map((r) => [r.name, moore ? [r.n0, r.n1, r.o0] : [r.n0, r.n1, r.o0, r.o1]])
+function rowsOf(rows: [string, FsmRow][], moore: boolean): Row[] {
+  const ids = rows.map(() => rowIds++)
+  const idOf = (name: string | number) => ids[rows.findIndex(([nm]) => nm === String(name))] ?? ids[0]!
+  return rows.map(([name, r], i) => ({ id: ids[i]!, name, n0: idOf(r[0]!), n1: idOf(r[1]!), o0: Number(r[2]), o1: moore ? 0 : Number(r[3]) }))
+}
+
+function tableRows(rows: Row[], moore: boolean): [string, FsmRow][] {
+  const nameOf = (id: number) => rows.find((r) => r.id === id)!.name
+  return rows.map((r) => [r.name, moore ? [nameOf(r.n0), nameOf(r.n1), r.o0] : [nameOf(r.n0), nameOf(r.n1), r.o0, r.o1]])
+}
 
 function FsmTool() {
   const u = useId()
   const first = FSM_PRESETS[0]!
   const [moore, setMoore] = useState(first.moore)
-  const [rows, setRows] = useState<Row[]>(rowsOf(first.rows, first.moore))
-  const [start, setStart] = useState(first.start)
+  const [rows, setRows] = useState<Row[]>(() => rowsOf(first.rows, first.moore))
+  const [startId, setStartId] = useState<number | null>(null)
+  const [removed, setRemoved] = useState('')
   const [text, setText] = useState('0110101101')
   const [pos, setPos] = useState(0)
   const [showMin, setShowMin] = useState(false)
@@ -630,11 +685,12 @@ function FsmTool() {
   const [detMoore, setDetMoore] = useState(false)
 
   const names = rows.map((r) => r.name)
+  const startRow = rows.find((r) => r.id === startId) ?? rows[0]!
   const nameError = names.some((s) => !s.trim()) ? 'Every state needs a name.' : new Set(names).size !== names.length ? 'State names must be distinct.' : ''
   let f: Fsm | null = null
   if (!nameError) {
     try {
-      f = fromTable(tableRows(rows, moore), [0, 1], moore, names.includes(start) ? start : names[0])
+      f = fromTable(tableRows(rows, moore), [0, 1], moore, startRow.name)
     } catch {
       f = null
     }
@@ -648,38 +704,41 @@ function FsmTool() {
   const outText = r ? (moore ? `${r.first}${r.outs.join('')}` : r.outs.join('')) : ''
 
   const load = (rs: [string, FsmRow][], mo: boolean, st: string) => {
+    const nr = rowsOf(rs, mo)
     setMoore(mo)
-    setRows(rowsOf(rs, mo))
-    setStart(st)
+    setRows(nr)
+    setStartId(nr.find((r) => r.name === st)?.id ?? nr[0]!.id)
     setPos(0)
     setShowMin(false)
+    setRemoved('')
   }
-  const edit = (i: number, patch: Partial<Row>) => {
+  const edit = (id: number, patch: Partial<Row>) => {
     setPos(0)
-    setRows((rs) => rs.map((row, k) => (k === i ? { ...row, ...patch } : row)))
+    setRows((rs) => rs.map((row) => (row.id === id ? { ...row, ...patch } : row)))
   }
-  const rename = (i: number, name: string) => {
-    const old = rows[i]!.name
-    setPos(0)
-    setRows((rs) => rs.map((row, k) => ({ ...row, name: k === i ? name : row.name, n0: row.n0 === old ? name : row.n0, n1: row.n1 === old ? name : row.n1 })))
-    if (start === old) setStart(name)
-  }
-  const remove = (i: number) => {
+  const remove = (id: number) => {
     if (rows.length <= 1) return
-    const gone = rows[i]!.name
-    const rest = rows.filter((_, k) => k !== i)
-    const to = rest[0]!.name
+    const gone = rows.find((r) => r.id === id)!
+    const rest = rows.filter((r) => r.id !== id)
+    const to = rest[0]!
+    const redirected = rest.some((r) => r.n0 === id || r.n1 === id)
     setPos(0)
-    setRows(rest.map((row) => ({ ...row, n0: row.n0 === gone ? to : row.n0, n1: row.n1 === gone ? to : row.n1 })))
-    if (start === gone) setStart(to)
+    setRows(rest.map((row) => ({ ...row, n0: row.n0 === id ? to.id : row.n0, n1: row.n1 === id ? to.id : row.n1 })))
+    if (startRow.id === id) setStartId(to.id)
+    setRemoved(
+      `Removed ${gone.name || 'the unnamed state'}.` +
+        (redirected ? ` Arcs into ${gone.name || 'it'} now go to ${to.name}.` : '') +
+        (startRow.id === id ? ` ${to.name} is the new start state.` : ''),
+    )
   }
   const add = () => {
     if (rows.length >= 10) return
     let k = rows.length
     let name = String.fromCharCode(65 + (k % 26))
     while (names.includes(name)) name = `S${k++}`
+    const id = rowIds++
     setPos(0)
-    setRows((rs) => [...rs, { name, n0: name, n1: name, o0: 0, o1: 0 }])
+    setRows((rs) => [...rs, { id, name, n0: id, n1: id, o0: 0, o1: 0 }])
   }
   const patOk = /^[01]{1,6}$/.test(pat)
 
@@ -694,7 +753,20 @@ function FsmTool() {
       </div>
       <div className="lab-row">
         <label htmlFor={`${u}-pat`}>Detector for</label>
-        <input id={`${u}-pat`} className="lab-input cf-pat" value={pat} onChange={(e) => setPat(e.target.value.trim())} aria-invalid={!patOk} inputMode="numeric" autoComplete="off" spellCheck={false} />
+        <input
+          id={`${u}-pat`}
+          className="lab-input cf-pat"
+          value={pat}
+          onChange={(e) => setPat(e.target.value.trim())}
+          aria-invalid={!patOk}
+          aria-describedby={`${u}-pathint`}
+          inputMode="numeric"
+          autoComplete="off"
+          spellCheck={false}
+        />
+        <span id={`${u}-pathint`} className={cn('lab-hint', !patOk && 'cf-bad')}>
+          1 to 6 bits, 0s and 1s only
+        </span>
         <label className="cf-check">
           <input type="checkbox" checked={overlap} onChange={(e) => setOverlap(e.target.checked)} /> overlapping
         </label>
@@ -717,10 +789,10 @@ function FsmTool() {
           </button>
         </div>
         <label htmlFor={`${u}-start`}>Start state</label>
-        <select id={`${u}-start`} className="lab-select" value={names.includes(start) ? start : names[0]} onChange={(e) => (setStart(e.target.value), setPos(0))}>
-          {names.map((s, i) => (
-            <option key={i} value={s}>
-              {s}
+        <select id={`${u}-start`} className="lab-select" value={startRow.id} onChange={(e) => (setStartId(Number(e.target.value)), setPos(0))}>
+          {rows.map((row) => (
+            <option key={row.id} value={row.id}>
+              {row.name || '(unnamed)'}
             </option>
           ))}
         </select>
@@ -749,16 +821,16 @@ function FsmTool() {
           </thead>
           <tbody>
             {rows.map((row, i) => (
-              <tr key={i} className={cn(f && row.name === cur && 'is-current')}>
+              <tr key={row.id} className={cn(f && row.name === cur && 'is-current')}>
                 <td>
-                  <input className="lab-input cf-name" value={row.name} maxLength={6} aria-label={`Name of state ${i + 1}`} onChange={(e) => rename(i, e.target.value.trim())} />
+                  <input className="lab-input cf-name" value={row.name} maxLength={6} aria-label={`Name of state ${i + 1}`} onChange={(e) => edit(row.id, { name: e.target.value.trim() })} />
                 </td>
                 {(['n0', 'n1'] as const).map((k, x) => (
                   <td key={k}>
-                    <select className="lab-select" value={row[k]} aria-label={`Next state of ${row.name} for X = ${x}`} onChange={(e) => edit(i, { [k]: e.target.value })}>
-                      {names.map((s, j) => (
-                        <option key={j} value={s}>
-                          {s}
+                    <select className="lab-select" value={row[k]} aria-label={`Next state of ${row.name} for X = ${x}`} onChange={(e) => edit(row.id, { [k]: Number(e.target.value) })}>
+                      {rows.map((t) => (
+                        <option key={t.id} value={t.id}>
+                          {t.name || '(unnamed)'}
                         </option>
                       ))}
                     </select>
@@ -770,7 +842,7 @@ function FsmTool() {
                       className="lab-select"
                       value={row[k]}
                       aria-label={moore ? `Output of ${row.name}` : `Output of ${row.name} for X = ${x}`}
-                      onChange={(e) => edit(i, { [k]: Number(e.target.value) })}
+                      onChange={(e) => edit(row.id, { [k]: Number(e.target.value) })}
                     >
                       <option value={0}>0</option>
                       <option value={1}>1</option>
@@ -778,7 +850,7 @@ function FsmTool() {
                   </td>
                 ))}
                 <td>
-                  <button type="button" className="lab-x" aria-label={`Remove state ${row.name}`} disabled={rows.length <= 1} onClick={() => remove(i)}>
+                  <button type="button" className="lab-x" aria-label={`Remove state ${row.name}`} disabled={rows.length <= 1} onClick={() => remove(row.id)}>
                     ×
                   </button>
                 </td>
@@ -792,6 +864,9 @@ function FsmTool() {
           Add state
         </button>
       </div>
+      <p className="lab-hint" role="status">
+        {removed}
+      </p>
       <p className="lab-warn" role="alert">
         {nameError}
       </p>
@@ -927,12 +1002,15 @@ function Minimise({ f, onLoad }: { f: Fsm; onLoad: (rows: [string, FsmRow][], st
 
 function FsmGraph({ f, current, last }: { f: Fsm; current: string; last: { from: string; x: number } | null }) {
   const k = f.states.length
-  const W = 400
-  const H = 330
   const R = k <= 2 ? 90 : k <= 4 ? 110 : 125
   const r = 20
+  // The canvas is sized from the ring radius: a self-loop label sits r + 38 beyond its node (baseline + 4, about 9 above
+  // and 3 below it), and a side label like "0/1, 1/0" is about 53 wide, so pad = r + 54 vertically and 20 more on each side.
+  const pad = r + 54
+  const W = 2 * (R + pad) + 40
+  const H = 2 * (R + pad)
   const cx = W / 2
-  const cy = H / 2 + 4
+  const cy = H / 2
   const pos = new Map<string, [number, number]>()
   f.states.forEach((s, i) => {
     const a = (2 * Math.PI * i) / k - Math.PI / 2

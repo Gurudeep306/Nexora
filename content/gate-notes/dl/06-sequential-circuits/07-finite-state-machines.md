@@ -6,7 +6,7 @@ title: "Finite state machines: Mealy and Moore"
 order: 7
 prerequisites: [synchronous-counter-design]
 pyq_topics: [dl/sequential]
-est_minutes: 55
+est_minutes: 75
 difficulty: core
 status: draft
 needs_review: true
@@ -24,7 +24,7 @@ the disguise. A **finite state machine** (FSM) is a synchronous circuit describe
 behaviour: a finite set of **states** (what it must remember), an **input** that arrives once per clock, a rule that
 gives the **next state**, and a rule that gives the **output**. There are exactly two ways to attach the output: to
 the state alone (a **Moore** machine) or to the state and the present input together (a **Mealy** machine), and the
-difference decides **when** the output appears, which is the first thing GATE asks about. We will learn to turn a
+difference decides **when** the output appears, the first thing a designer must get right. We will learn to turn a
 sentence of English into a state diagram, to build the most famous kind of FSM, the **sequence detector**, to read off
 what a given machine computes (a 2's complementer, an adder of consecutive bits, a run editor), to find the shortest
 input that drives a machine to a target, and finally to turn a state diagram into flip-flops and gates, choosing the
@@ -110,8 +110,8 @@ The two kinds of machine are not rivals: each can imitate the other, at a price.
    $\lambda'(s, x) = \lambda(\delta(s, x))$: it produces, during the period of each input, the output $M$ produces in the period
    after it (one clock **earlier** than $M$).
 2. Every Mealy machine $M$ with state set $S$ and output set $Z$ has a Moore machine $M''$ with at most $|S| \cdot |Z|$ states
-   (one for each pair (state, output on the arc that entered it) that actually occurs, plus the start state) such that, after
-   every input string, the Moore output in the following period equals the Mealy output for the last input: $M''$ produces the
+   (one for each pair (state, output of the arc that entered it) that actually occurs; the start state is the pair $(s_0, z_0)$
+   for any $z_0$, so it is one of these pairs) such that, after every input string, the Moore output in the following period equals the Mealy output for the last input: $M''$ produces the
    same output sequence **one clock later**.
 :::
 
@@ -136,8 +136,9 @@ version, run on all input strings up to length 8, lists the same outputs as the 
 Moore-to-Mealy direction is checked the same way on the Moore detectors.
 :::
 
-Statement (2) also explains the price list. A Mealy machine never needs **more** states than the equivalent Moore machine, and
-usually needs fewer: a Moore machine must spend extra states to "hold" an output that the Mealy machine simply writes on an arc.
+Statement (1) shows that a Mealy machine never needs **more** states than the equivalent Moore machine (keep the states, move the
+outputs onto the arcs). Statement (2) shows why it usually needs fewer: a Moore machine must spend extra states to "hold" an output that
+the Mealy machine simply writes on an arc.
 The 101 detector below has 3 Mealy states and 4 Moore states; the 2001 copy/complement machine has 4 Mealy states and 6 Moore
 states.
 
@@ -183,8 +184,8 @@ Given the same input, a Moore machine's reaction to input $k$ is visible in peri
 question shows a timing diagram, or asks "in which clock period does the output go high", the Moore answer is one period later than
 the Mealy answer, and the expected wrong answer is the other machine's period. In an output **string**, the convention matters too: a
 Moore machine produces one output **before** any input (its start state's output), so $n$ inputs give $n + 1$ Moore outputs but
-$n$ Mealy outputs. Writing the Moore string without its first symbol is the usual way to compare the two (and is how the lab and the
-check scripts list them), but say which convention you use.
+$n$ Mealy outputs. Writing the Moore string without its first symbol is the usual way to compare the two, and is how the check scripts
+list them. The lab shows the full $n + 1$-symbol Moore string, start output first. Either way, say which convention you use.
 :::
 
 :::note{#recap-mealy-moore title="Recap" depth="quick"}
@@ -302,21 +303,8 @@ states that behave identically (the next lesson removes those).
 5. **Test on the given example** and on small strings; an example stream in the question is a free test case.
 :::
 
-The 2001 question is the classic exercise. In words: the circuit **copies** its input until it sees two consecutive 0s; from then on it
-outputs the **complement** of the input until it sees two consecutive 1s; then the process repeats. The example given is the input
-101100 01001011 011 with output 101100 10110100 011. What must be remembered? The **mode** (copying or complementing) and, inside each
-mode, whether the last bit was the one that would end the mode if it came again (a 0 in copy mode, a 1 in complement mode). That makes
-four states:
-
-- **A**: copy mode, last bit not 0 (also the start state);
-- **B**: copy mode, last bit 0;
-- **C**: complement mode, last bit not 1;
-- **D**: complement mode, last bit 1.
-
-In copy mode the output is the input; in complement mode it is the inverted input. The bit that **completes** a 00 or a 11 is still
-treated in the old mode (the example shows this: the second 0 of the first 00 is copied as 0). So A: 0/0 → B, 1/1 → A; B: 0/0 → C,
-1/1 → A; C: 0/1 → C, 1/0 → D; D: 0/1 → C, 1/0 → A. Running this machine on the 17 example bits gives exactly the example output. That is
-the whole of the 2001 part (a) answer; part (b) builds it with flip-flops at the end of the lesson.
+The 2001 question (copy until 00, complement until 11) is the classic exercise of this procedure; it is worked step by step in
+[the examples below](#ex-words-2001), after a gentler warm-up.
 
 :::definition{#interpret-machine term="Interpreting a given machine" depth="standard"}
 The reverse task, "what does this machine compute?", is answered by **giving each state a meaning** and checking that every arc respects it:
@@ -346,6 +334,124 @@ re-teach that theory here.
 State = what must be remembered. Name each state by its meaning, draw an arc for every (state, input) pair ($2n$ arcs for $n$ states and a
 binary input), test on the example. To interpret a machine, run tiny inputs, guess the meaning of each state, check every arc.
 :::
+
+### Worked examples: from words to a diagram
+
+::::example{#ex-words-vend level="easy" title="The 15-rupee vending machine" depth="standard"}
+Build the vending machine of the opening intuition as a Mealy machine. A drink costs 15 rupees; in each clock period the input is N (no
+coin), 5 (a 5-rupee coin) or 10 (a 10-rupee coin), and the output "vend" is 1 in the period in which the drink is released. What happens
+when a customer pays 10 + 10?
+
+:::step{why="The only fact about the past that changes the future is how much has been paid towards the current drink."}
+Amounts 0, 5 and 10 are all different situations (each needs a different amount to complete the price), and 15 or more means "vend now
+and start again". So there are **three** states, named by the amount: 0 (the start), 5 and 10.
+:::
+
+:::step{why="Every state needs an arc for every input: here 3 states × 3 inputs = 9 arcs."}
+State 0: N/0 → 0, 5/0 → 5, 10/0 → 10. State 5: N/0 → 5, 5/0 → 10, 10/**1** → 0 (exactly 15). State 10: N/0 → 10, 5/**1** → 0 (exactly
+15), 10/**1** → 0 (20, at least 15). Count them: nine arcs, three of them with output 1.
+:::
+
+:::step{why="The output belongs to the arc, because the drink must fall in the same period as the coin that completes the price (Mealy)."}
+Run 5, 5, 5: states 0 → 5 → 10 → 0, outputs 0, 0, 1. Run 10, 10: states 0 → 10 → 0, outputs 0, 1. Run 10, N, 5: 0 → 10 → 10 → 0,
+outputs 0, 0, 1 (waiting does not lose the credit).
+:::
+
+:::answer
+Three states and nine arcs. **10 + 10 vends on the second coin and returns to state 0**: the machine has no output for change, so the
+extra 5 rupees are simply **ignored** (kept by the machine). Notice what that design decision costs in states: none, because "20 paid"
+behaves exactly like "15 paid" from then on. A machine that returns change would need a second output ("return 5") on the arc 10 –10→ 0,
+still with three states. A Moore version needs a fourth state, "vend", whose output is 1, so the drink falls one period later.
+:::
+::::
+
+::::example{#ex-words-mod3 level="medium" title="Output 1 when the number of 1s so far is a multiple of 3" depth="standard"}
+Design a Moore machine whose output is 1 exactly when the number of 1s received so far is a multiple of 3 (zero 1s counts as a multiple
+of 3). Run it on 1101110.
+
+:::step{why="The future depends on the count of 1s only through its remainder mod 3: adding more 1s changes the remainder, nothing else matters."}
+Three states: R0 (count ≡ 0, the start), R1 (count ≡ 1), R2 (count ≡ 2). Keeping the exact count would need infinitely many states, and
+states such as "3 ones" and "6 ones" would behave identically.
+:::
+
+:::step{why="The output depends only on the remainder, so it belongs to the state (Moore)."}
+R0/1, R1/0, R2/0. An input 1 moves R0 → R1 → R2 → R0; an input 0 keeps every state. That is $2 \times 3 = 6$ arcs.
+:::
+
+:::step{why="A Moore machine shows the start state's output first, then one output per input."}
+1101110: states R1, R2, R2, R0, R1, R2, R2, so the outputs are 1 (initial) followed by 0, 0, 0, 1, 0, 0, 0.
+:::
+
+:::answer
+**3 states** (R0/1 as the start, R1/0, R2/0) and the full output string **10001000**: the single 1 after the input appears after the
+fourth bit, when the third 1 has arrived. Sanity check: no two states can merge, because from R1 the input 11 reaches R0 while from R2 the
+single input 1 does; the shortest way to an output 1 is 2 bits from R1 and 1 bit from R2 (the argument of the detector theorem below).
+:::
+::::
+
+::::example{#ex-words-2001 level="gate" title="Copy until 00, complement until 11 (GATE 2001, part a)" depth="standard"}
+A circuit **copies** its input until it sees two consecutive 0s; from then on it outputs the **complement** of the input until it sees two
+consecutive 1s; then the process repeats. The example given is the input 101100 01001011 011 with output 101100 10110100 011. Draw the
+state diagram.
+
+:::step{why="What to remember: list every fact about the past that can change a future output."}
+The **mode** (copying or complementing) obviously matters. Inside each mode the machine must also know whether the last bit was the one
+that would end the mode if it came again: a 0 in copy mode (a second 0 completes 00), a 1 in complement mode (a second 1 completes 11).
+Two yes/no facts: at most four states.
+:::
+
+:::step{why="Name the states by their meaning, so that every arc can be checked against the words."}
+- **A**: copy mode, last bit not 0 (also the start state);
+- **B**: copy mode, last bit 0;
+- **C**: complement mode, last bit not 1;
+- **D**: complement mode, last bit 1.
+
+In copy mode the output is the input; in complement mode it is the inverted input, so the output depends on the input: a **Mealy** machine.
+:::
+
+:::step{why="Draw all 8 arcs (4 states × 2 inputs). The key observation: the bit that completes 00 or 11 is still treated in the old mode."}
+The example shows this: the second 0 of the first 00 is copied as 0, not complemented. So A: 0/0 → B, 1/1 → A; B: 0/0 → C,
+1/1 → A; C: 0/1 → C, 1/0 → D; D: 0/1 → C, 1/0 → A. Notice that the arc that ends a mode (B –0→ C, D –1→ A) lands in the "last bit not
+…" state of the new mode: after a mode change, the memory of the last bit starts afresh.
+:::
+
+:::step{why="Test on the 17-bit example: the question hands you a free test case."}
+From A, the input 10110001001011011 visits A A B A A B C C D C C D C D A B A A and outputs 10110010110100011. Running this machine on the
+17 example bits gives exactly the example output.
+:::
+
+:::answer
+A **4-state Mealy machine** (A, B, C, D as above), with 8 arcs; that is the whole of the 2001 part (a) answer. It is minimal (partition
+refinement merges nothing), and it equals a direct reading of the words on every input up to 10 bits. Part (b) builds it with flip-flops in
+[From a state machine to a circuit](#jk-implementation). The usual wrong turn is to switch mode **on** the completing bit, which complements
+the second 0 of 00 and disagrees with the example in its sixth output bit.
+:::
+::::
+
+::::example{#ex-words-first level="gate" title="Edge case: output 1 if the current bit equals the first bit" depth="standard"}
+Design a Mealy machine whose output is 1 exactly when the present input bit equals the **first** bit of the whole input (so the first bit
+itself always gives 1). How many states does it need, and can the start state be merged with another?
+
+:::step{why="What to remember: the first bit, for ever; nothing later can change it."}
+After the first bit the only useful fact is its value: F0 ("the first bit was 0") or F1 ("the first bit was 1"). These states never leave
+themselves: F0: 0/1 → F0, 1/0 → F0; F1: 0/0 → F1, 1/1 → F1.
+:::
+
+:::step{why="Before the first bit nothing is known yet, which is a third situation, not one of the other two."}
+The start state S has no first bit to compare with; the bit it reads becomes the first bit, so S: 0/1 → F0, 1/1 → F1.
+:::
+
+:::step{why="Check whether S could be merged, by comparing output rows."}
+S has the output row (1, 1), F0 has (1, 0), F1 has (0, 1): three different rows, so no two states agree even on one input, and all three
+are needed.
+:::
+
+:::answer
+**3 states** (S, F0, F1), and the start state cannot be merged. Runs: 0110100 gives **1001011**; 1101 gives **1101**. The edge-case lesson:
+when the words refer to "the first bit" (or anything before the first input), the start state means "nothing seen yet" and is usually a
+state of its own. A designer who starts in F0 to save a state answers wrongly for every input that begins with 1 (1101 would give 0010).
+:::
+::::
 
 ## Sequence detectors
 
@@ -379,7 +485,8 @@ remains is a prefix of the pattern (possibly empty). For 1011 in state $S_3$ ("1
 $S_2$. On a 1 from $S_3$ the pattern completes; for overlapping detection 1011 → 011 → 11 → **1**, so the next state is $S_1$. **Why it
 works:** the state must hold the longest tail of the input that could still grow into the pattern, and any longer tail would already be a
 longer prefix. **When it fails:** never, as long as you strike from the left only; striking from the right (keeping the oldest bits)
-gives the classic wrong arc back to $S_0$.
+gives the classic wrong arc back to $S_0$. The same failure arcs are the failure function of string matching; the automaton view is in the
+Theory of Computation subject.
 :::
 
 :::theorem{#detector-states name="A detector for a k-bit pattern needs exactly k Mealy states and k + 1 Moore states" depth="standard"}
@@ -706,8 +813,10 @@ implements exactly this search and is used for every shortest input in this less
 
 :::trap{#trap-table-columns title="Reading the wrong columns of a long state table" depth="standard"}
 The 2009 table lists, in order, the present state $A, B$, the input, the next state $A, B$ and the output. Reading the last three columns as "present state,
-input, output" (or the first two as the next state) reverses arcs and leads to answers such as 4 or 5. Before searching, rewrite the table as arcs: "00 –0/1→ 00,
-00 –1/0→ 01, 01 –0/0→ 10, …", and only then start the ripples.
+input, output" (or the first two as the next state) reverses arcs. Swapping the present-state and next-state columns gives a "table" with two
+arcs for some (state, input) and none for others; if your arcs are not exactly one per (state, input), you have misread the columns. Before
+searching, rewrite the table as arcs: "00 –0/1→ 00, 00 –1/0→ 01, 01 –0/0→ 10, …", count them (eight, one per row), and only then start the
+ripples.
 :::
 
 :::note{#recap-shortest title="Recap" depth="quick"}
@@ -770,8 +879,8 @@ Level 1: input 1 gives 01 (input 0 stays in 00). Level 2: from 01, input 0 gives
 :::
 
 :::answer
-Length **3** (GATE 2009, option A). The tempting length 1 (input 1 from 00 does reach 01) has output 0; 4, 5 and 6 come from reading the table's columns in
-the wrong order or from a depth-first search that wanders before it finds the target.
+Length **3** (GATE 2009, option A). The tempting length 1 (input 1 from 00 does reach 01) has output 0. Options 4, 5 and 6 are lengths of strings
+that also reach 01 with output 1 (for example 0101 and 00101) but are not the shortest; breadth-first search rules them out at once.
 :::
 ::::
 
@@ -843,8 +952,11 @@ adds a reset into the start state, the same self-start concern as [Lesson 5](les
 :::
 
 :::definition{#jk-implementation term="The 2001 machine with JK (S-K) flip-flops" depth="standard"}
-The 2001 paper asks for "S-K master-slave flip-flops": a master–slave flip-flop with set and reset inputs that toggles when both are 1, i.e. a **JK** flip-flop
-(the master–slave construction avoids race-around, [Lesson 2](lesson:flip-flops)). With the assignment A = 00, B = 01, C = 10, D = 11, bit $Q_1$ is the **mode**
+The 2001 paper asks for "S-K master-slave flip-flops". No standard flip-flop has that name; it is almost certainly J-K, and we design with
+**JK** (the master–slave construction avoids race-around, [Lesson 2](lesson:flip-flops)). If it was meant as SR, nothing changes for $Q_1$: its
+SR inputs are $S_1 = Q_0\bar x$, $R_1 = Q_0x$, never both 1, the same expressions as $J_1, K_1$. (For $Q_0$ the SR reading gives
+$S_0 = \bar Q_0(\bar Q_1\bar x + Q_1 x)$, $R_0 = Q_0$: every row with $Q_0 = 1$ clears the flag, and there $S_0$ must be 0, not a don't-care as
+$J_0$ was.) With the assignment A = 00, B = 01, C = 10, D = 11, bit $Q_1$ is the **mode**
 (0 copy, 1 complement) and bit $Q_0$ is the **flag** ("one more of the same bit ends the mode"). The encoded table and the JK excitation give
 $$J_1 = Q_0\bar x, \quad K_1 = Q_0 x, \quad J_0 = Q_1 x + \bar Q_1 \bar x, \quad K_0 = 1, \quad z = x \oplus Q_1.$$
 They read like the words: the mode flips to complement ($J_1$) when the flag is set and another 0 arrives, and back to copy ($K_1$) when the flag is set and
@@ -951,7 +1063,8 @@ The **State machine** tab of the Counter & FSM Simulator runs this lesson's mach
 row has a next state and, for Mealy, an output for $X = 0$ and for $X = 1$), pick the start state, type an input string and press **Step** to feed one bit at a time
 (or **Run the rest**): the current state is highlighted in the table and the output string grows, with the Moore string starting with the start state's output. The
 presets load the overlapping 101 detector and the serial 2's complementer of this lesson; **Build detector** makes the detector for any pattern of up to 6 bits,
-overlapping or not, Mealy or Moore. Try 101 overlapping and not on 10101, then the same as Moore, and count the states; then enter the 2001 machine (four states)
+overlapping or not, Mealy or Moore. Renaming a state never rewires an arc; removing one sends the arcs that entered it to the first
+state of the table, and the lab says so. Try 101 overlapping and not on 10101, then the same as Moore, and count the states; then enter the 2001 machine (four states)
 and feed it 10110001001011011. The **Minimise** button belongs to [the next lesson](lesson:state-minimisation).
 
 :::lab{#lab-fsm lab="counter-fsm" tab="fsm" depth="standard"}
@@ -971,7 +1084,7 @@ and feed it 10110001001011011. The **Minimise** button belongs to [the next less
 :::pyq{id="cse-2005-cs-63" tests="serial-twos-complement,interpret-machine" depth="standard"}
 :::
 
-:::pyq{id="cse-2009-cs-27" tests="shortest-input,state-table-fsm" depth="standard"}
+:::pyq{id="cse-2009-cs-27" tests="shortest-input,state-table-fsm,trap-table-columns" depth="standard"}
 :::
 
 :::pyq{id="cse-2021-2-cs-28" tests="two-state-mealy,fsm-from-words" depth="standard"}
