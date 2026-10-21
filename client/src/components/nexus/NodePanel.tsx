@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { ArrowUpRight, BookOpen, ExternalLink, Lock, Play, Swords, X, Zap } from 'lucide-react'
-import { Badge, Card, CardContent, LoadingBlock, Progress } from '@/components/ui'
+import { Badge, LoadingBlock, Progress } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
@@ -145,6 +145,7 @@ export function NodePanel({
   detailLoading = false,
   engine = null,
   onOpenPath,
+  bare = false,
 }: {
   node: NexusNode
   nodes: NexusNode[]
@@ -161,6 +162,8 @@ export function NodePanel({
   engine?: string | null
   /** Open this subject's path (from the web view). */
   onOpenPath?: () => void
+  /** No card chrome (inside the details sheet). */
+  bare?: boolean
 }) {
   // The solve-count engine (the competitive-programming tree) shows rated problems.
   const isDsa = engine === 'dsa'
@@ -169,10 +172,8 @@ export function NodePanel({
   const m = node.metric
   const kind = isDsa ? 'Skill Node' : node.kind === 'project' ? 'Project' : node.kind === 'lesson' ? 'Lesson' : 'Concept'
 
-  return (
-    <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2, ease: 'easeOut' }}>
-      <Card glow className="nx-panel sticky top-4">
-        <CardContent className="space-y-4">
+  const body = (
+    <>
           <div className="flex items-start justify-between gap-2">
             <div className="flex min-w-0 gap-2.5">
               <span
@@ -348,8 +349,15 @@ export function NodePanel({
           )}
 
           {isDsa ? <DsaProblems node={node} /> : <SubjectPyqs node={node} />}
-        </CardContent>
-      </Card>
+    </>
+  )
+  if (bare) {
+    // No card chrome: the content alone, for the edge-anchored sheet.
+    return <div className="nx-panel nx-sheet-body space-y-5">{body}</div>
+  }
+  return (
+    <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 320, damping: 30 }}>
+      <div className="nx-panel nx-side sticky top-36 space-y-4">{body}</div>
     </motion.div>
   )
 }

@@ -1137,21 +1137,37 @@ input[type='search']::-webkit-search-results-decoration {
   --nx-b2: #9b6bff;
   --nx-b3: #2dd4bf;
 }
-.nx-web-card {
-  background:
-    radial-gradient(120% 60% at 50% 0%, color-mix(in oklab, var(--nx-b2) 6%, transparent), transparent 70%),
-    var(--color-bg-surface);
+/* In a path the tree floats straight on the page — no boxed card. */
+.card.nx-web-card {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  background: radial-gradient(70% 40% at 50% 0%, color-mix(in oklab, var(--nx-b2) 7%, transparent), transparent 75%);
 }
 /* Gentle perspective: the plane tilts back a few degrees (lower tiers recede)
    and leans toward the pointer (--ry / --rx-lean set from SkillGraph). */
+@property --nx-bob {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
 .nx-web-stage { perspective: 2400px; perspective-origin: 50% 0; }
+/* The path floats on the same kind of plane as the web: tilted so the lower
+   tiers recede, bobbing slowly, leaning toward the pointer. */
 .nx-web-plane {
   --ry: 0deg;
   --rx-lean: 0deg;
   transform-origin: 50% 0;
-  transform: rotateX(calc(3.5deg + var(--rx-lean))) rotateY(var(--ry));
+  transform: rotateX(calc(-5deg + var(--rx-lean) + var(--nx-bob))) rotateY(var(--ry));
   transform-style: preserve-3d;
   transition: transform 600ms var(--ease-smooth);
+  animation: nx-bob 10s ease-in-out infinite alternate;
+}
+@keyframes nx-bob {
+  from { --nx-bob: -0.4deg; }
+  to { --nx-bob: 0.4deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nx-web-plane { animation: none; }
 }
 .nx-web-floor { color: var(--color-text-primary); transform: translateZ(-24px); }
 .nx-lattice { opacity: 0.09; }
@@ -1249,17 +1265,111 @@ input[type='search']::-webkit-search-results-decoration {
 /* The teaser's night sky in both themes: navy gradient + vignette; the
    canvas draws the lattice web on top. */
 .nx-lat {
-  position: relative;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  height: min(78vh, 880px);
-  min-height: 480px;
-  background: linear-gradient(160deg, #141834 0%, #0b0d1c 60%, #06070d 100%);
+  background:
+    radial-gradient(70% 55% at 50% 58%, rgb(155 107 255 / 0.10), transparent 70%),
+    linear-gradient(160deg, #141834 0%, #0b0d1c 60%, #06070d 100%);
   isolation: isolate;
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
 }
-.nx-lat canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; outline: none; }
-.nx-lat canvas:active { cursor: grabbing; }
-.nx-lat canvas[data-hover] { cursor: pointer; }
-.nx-lat canvas:focus-visible { box-shadow: inset 0 0 0 2px var(--color-focus); }
+/* The web plane, tilted back in true perspective (NexusWeb sets the angle
+   every frame); its far edge fades into fog. */
+.nx-plane {
+  position: absolute;
+  transform-origin: 50% 50%;
+  pointer-events: none;
+  will-change: transform;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.25) 14%, #000 42%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.25) 14%, #000 42%, #000 100%);
+}
+.nx-plane canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* Depth of field: the far lattice is softer and dimmer. */
+.nx-plane .nx-far { filter: blur(0.7px); opacity: 0.8; }
+/* Diving into a subject: the near layer and the web fade as the camera
+   tilts down into the region, then the path takes over. */
+.nx-lat .nx-near, .nx-plane { transition: opacity 420ms ease; }
+.nx-lat.nx-rise .nx-near, .nx-lat.nx-rise .nx-plane { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .nx-lat .nx-near, .nx-plane { transition: none !important; }
+}
+
+/* Floating glass chrome: detached from the edges, layered soft shadow,
+   hairline border, glass backdrop from the site's tokens. */
+.nx-glass {
+  border-radius: 16px;
+  border: 1px solid color-mix(in oklab, var(--color-text-primary) 10%, transparent);
+  background: color-mix(in oklab, var(--color-bg-surface) 74%, transparent);
+  backdrop-filter: blur(16px) saturate(1.25);
+  -webkit-backdrop-filter: blur(16px) saturate(1.25);
+  box-shadow:
+    0 28px 64px -28px rgb(0 0 0 / 0.5),
+    0 2px 6px -2px rgb(0 0 0 / 0.22),
+    inset 0 1px 0 color-mix(in oklab, white 8%, transparent);
+}
+.nx-lat ~ .nx-glass,
+.nx-bleed .nx-glass {
+  /* On the night web the glass is always dark, in both themes. */
+  color: rgb(226 230 255);
+  border-color: rgb(150 160 255 / 0.16);
+  background: rgb(14 16 34 / 0.62);
+}
+.nx-bleed .nx-glass .text-foreground-faint,
+.nx-bleed .nx-glass .text-foreground-dim { color: rgb(200 206 240 / 0.7); }
+.nx-press { transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1), background-color 150ms, color 150ms; }
+.nx-press:hover { transform: translateY(-1px); }
+.nx-press:active { transform: translateY(0) scale(0.97); }
+/* The path header floats too. */
+.nx-path-head {
+  position: sticky;
+  top: 64px;
+  z-index: 5;
+  padding: 12px 0;
+  margin-bottom: 10px;
+  background: linear-gradient(to bottom, var(--color-bg-app) 70%, transparent);
+}
+/* Orbs in a path levitate: a soft contact shadow under each, spreading as
+   the orb lifts on hover. */
+.nx-dot::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 26px;
+  height: 7px;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.32), transparent);
+  transition: width 220ms var(--ease-smooth), opacity 220ms;
+  pointer-events: none;
+  z-index: -1;
+}
+.nx-dot:hover::after, .nx-dot:focus-visible::after { width: 32px; opacity: 0.7; }
+.nx-dot { transform: translateY(-2px); }
+.nx-dot:hover, .nx-dot:focus-visible { transform: translateY(-5px) scale(1.08); }
+@media (prefers-reduced-motion: reduce) {
+  .nx-dot, .nx-dot:hover { transform: none; }
+}
+
+/* The web is full-bleed: edge to edge of the window, a screen tall. */
+.nx-bleed {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  height: calc(100svh - 64px);
+  min-height: 520px;
+  /* Flush under the top bar and down to the window edge (the page keeps
+     its own padding elsewhere). */
+  margin-top: -24px;
+  margin-bottom: -96px;
+  overflow: hidden;
+}
+.nx-lat .nx-near { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; outline: none; z-index: 1; }
+.nx-lat .nx-near:active { cursor: grabbing; }
+.nx-lat .nx-near[data-hover] { cursor: pointer; }
+.nx-lat .nx-near:focus-visible { box-shadow: inset 0 0 0 1px rgb(155 107 255 / 0.6); }
 .nx-lat::after {
   content: '';
   position: absolute;
@@ -1267,6 +1377,110 @@ input[type='search']::-webkit-search-results-decoration {
   pointer-events: none;
   background: radial-gradient(120% 95% at 50% 50%, transparent 55%, rgb(3 4 10 / 0.55) 100%);
 }
+/* Type floating on the web — no boxes. Everything here sits on the night
+   web in both themes, so it is light type with a soft dark halo. */
+.nx-over { position: absolute; z-index: 2; color: rgb(226 230 255); text-shadow: 0 1px 2px rgb(5 6 14 / 0.8), 0 0 12px rgb(5 6 14 / 0.6); }
+.nx-caps { font-size: 9.5px; font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase; color: rgb(214 220 255 / 0.62); }
+.nx-me {
+  top: 22px;
+  left: max(20px, calc(50vw - 660px));
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  max-width: min(360px, calc(100vw - 40px));
+}
+.nx-hair { position: relative; width: 168px; height: 1px; background: rgb(150 160 255 / 0.2); }
+.nx-hair > span { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #5b8cff, #9b6bff 55%, #2dd4bf); transition: width 700ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.nx-views {
+  top: 22px;
+  right: max(20px, calc(50vw - 660px));
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+.nx-link {
+  position: relative;
+  padding: 2px 0 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgb(214 220 255 / 0.6);
+  cursor: pointer;
+  transition: color 160ms, transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.nx-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, #5b8cff, #9b6bff 55%, #2dd4bf);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.nx-link:hover { color: #fff; transform: translateY(-1px); }
+.nx-link:active { transform: translateY(0) scale(0.97); }
+.nx-link[data-on] { color: #fff; }
+.nx-link[data-on]::after, .nx-link:hover::after { transform: scaleX(1); }
+.nx-link:focus-visible { outline: 1px solid rgb(155 107 255 / 0.8); outline-offset: 4px; border-radius: 2px; }
+.nx-hint {
+  left: max(20px, calc(50vw - 660px));
+  bottom: 96px;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: rgb(214 220 255 / 0.5);
+  pointer-events: none;
+  transition: opacity 900ms ease, transform 900ms ease;
+}
+.nx-hint[data-gone] { opacity: 0; transform: translateY(4px); }
+/* Details: an edge-anchored sheet, only on "Open details". Minimal: a
+   quiet surface, generous spacing, refined type. */
+.nx-sheet {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(440px, 100vw);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: color-mix(in oklab, var(--color-bg-surface) 90%, transparent);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  border-left: 1px solid color-mix(in oklab, var(--color-text-primary) 9%, transparent);
+  box-shadow: -40px 0 80px -40px rgb(0 0 0 / 0.55);
+}
+.nx-sheet-body { padding: 30px 28px 120px; }
+.nx-sheet-body h2 { font-size: 22px; letter-spacing: -0.01em; }
+@media (max-width: 640px) {
+  .nx-me { top: 16px; left: 16px; }
+  .nx-views { top: 18px; right: 16px; gap: 14px; }
+  .nx-hint { display: none; }
+  .nx-sheet { top: auto; left: 0; width: 100%; height: 80%; border-left: 0; border-top: 1px solid color-mix(in oklab, var(--color-text-primary) 9%, transparent); border-radius: 18px 18px 0 0; }
+  .nx-sheet-body { padding: 24px 20px 110px; }
+}
+/* The path view's side details: type with a hairline, no card. */
+.nx-side { padding: 4px 0 4px 22px; border-left: 1px solid color-mix(in oklab, var(--color-text-primary) 10%, transparent); }
+/* Path zones as type: an underline marks the zone in view. */
+.nx-zone-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0 7px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 160ms;
+}
+.nx-zone-link::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: linear-gradient(90deg, var(--nx-b1, #2f5bea), var(--nx-b2, #7c3aed) 55%, var(--nx-b3, #0d9488)); transform: scaleX(0); transform-origin: left; transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.nx-zone-link:hover { color: var(--color-text-primary); }
+.nx-zone-link[data-on] { color: var(--color-text-primary); }
+.nx-zone-link[data-on]::after, .nx-zone-link:hover::after { transform: scaleX(1); }
 /* Subject rank pill in a path's header: five tier pips + title. */
 .nx-rank {
   border-color: color-mix(in oklab, var(--nx-b2, #7c3aed) 40%, var(--color-border));
