@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { RefreshCw } from 'lucide-react'
+import { ArrowLeft, RefreshCw } from 'lucide-react'
 import { ErrorState, LoadingBlock, Tabs } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
@@ -10,19 +10,29 @@ import { useAgentPageContext } from '@/context/AgentContext'
 import { cn } from '@/lib/utils'
 import { NexusWeb, type Camera, type NexusWebHandle, type RegionRank, type WebAction, type WebFilter } from '@/components/nexus/NexusWeb'
 import { NodePanel } from '@/components/nexus/NodePanel'
-import { SubjectPath } from '@/components/nexus/SubjectPath'
 import { TitleTrack } from '@/components/nexus/TitleTrack'
 import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
+import { WeeklyPool } from '@/components/nexus/WeeklyPool'
 import { WebControls, WebRankLine, WebSearch } from '@/components/nexus/WebOverlays'
-import { assemble, computeLayout, keystones as findKeystones, longestChain, nextBestStep, routePlan, type LayoutData, type Web } from '@/components/nexus/lattice'
-import { getLayout, layoutNow } from '@/components/nexus/layoutCache'
-import { cachedState, cachedStructure, loadWeb, mergeWeb } from '@/components/nexus/data'
+import {
+  assemble,
+  computeLayout,
+  conceptGraph,
+  keystones as findKeystones,
+  longestChain,
+  nextBestStep,
+  overviewData,
+  routePlan,
+  type LayoutData,
+  type Web,
+} from '@/components/nexus/lattice'
+import { getTreeLayout, getWebLayout, layoutNow, treeKey, webKey } from '@/components/nexus/layoutCache'
+import { cachedState, cachedStructure, fetchRoadmap, loadWeb, mergeWeb, ROADMAP_KEY } from '@/components/nexus/data'
 import type {
   CrossLink,
   NexusNode,
   NexusNodeResponse,
   NexusPyqsResponse,
-  NexusResponse,
   NexusStatsResponse,
   NexusWebState,
   NexusWebStructure,
@@ -31,6 +41,17 @@ import type {
   WebCluster,
   WebNode,
 } from '@/components/nexus/types'
+
+/*
+ * The Nexus, in two levels:
+ *   the web      every subject as one node in the teaser web, streams as
+ *                quiet regions; YOU at the centre. Nothing else.
+ *   a subject    its OWN tree, built only from its concepts (zones as
+ *                regions), with every tool: lineage, the next step, routes,
+ *                memory, keystones, filters and the details sheet.
+ * Both open on the first frame from the device's copy, layouts computed in
+ * a worker and cached per structure version.
+ */
 
 /** The tiny web shown before anything else (the lattice drawing in). */
 let emptyWeb: Web | null = null
@@ -94,14 +115,13 @@ export default function NexusPage() {
   const subject = params.get('subject')
   const node = params.get('node')
   const routeId = params.get('route')
+  const view = params.get('view') // inside a subject: 'board' | 'week'
   const [tab, setTab] = useState<'map' | 'ranks'>('map')
   const { user } = useAuth()
   const username = user?.username ?? ''
   const webRef = useRef<NexusWebHandle>(null)
-  const [pathData, setPathData] = useState<NexusResponse | null>(null)
-  const [hintGone, setHintGone] = useState(false)
   const [detailsOpen, setDetailsOpen] = useState(false)
-  const [searchOpen, setSearchOpen] = useState<false | 'any' | 'subject'>(false)
+  const [searchOpen, setSearchOpen] = useState(false)
   const [filter, setFilter] = useState<WebFilter>({ mode: 'all', domain: null })
   const [ahead, setAhead] = useState(0)
   const [toast, setToast] = useState<string | null>(null)
@@ -111,57 +131,70 @@ export default function NexusPage() {
   const [state, setState] = useState<NexusWebState | null>(() => cachedState(username))
   const [error, setError] = useState<string | null>(null)
   const [refreshing, setRefreshing] = useState(false)
-  const refresh = useCallback(
-    (fresh = false) => {
-      setRefreshing(true)
-      loadWeb(fresh)
-        .then(({ structure: s, state: st }) => {
-          setStructure(s)
-          setState(st)
-          setError(null)
-        })
-        .catch((e: unknown) => setError(e instanceof Error ? e.message : 'Failed to load the nexus'))
-        .finally(() => setRefreshing(false))
-    },
-    [],
-  )
+  const refresh = useCallback((fresh = false) => {
+    setRefreshing(true)
+    loadWeb(fresh)
+      .then(({ structure: s, state: st }) => {
+        setStructure(s)
+        setState(st)
+        setError(null)
+      })
+      .catch((e: unknown) => setError(e instanceof Error ? e.message : 'Failed to load the nexus'))
+      .finally(() => setRefreshing(false))
+  }, [])
   useEffect(() => {
     refresh(false)
   }, [refresh])
-  // The layout: in memory already (instant), else from IndexedDB / the worker.
-  const [asyncLayout, setAsyncLayout] = useState<LayoutData | null>(null)
-  const layout = (structure && layoutNow(structure.version)) || (asyncLayout?.version === structure?.version ? asyncLayout : null)
+  const clusters = useMemo(() => (structure ? mergeWeb(structure, state) : null), [structure, state])
+
+  /* ── layouts: in memory already (instant), else IndexedDB / the worker ── */
+  const layoutKey = structure ? (subject ? treeKey(structure.version, subject) : webKey(structure.version)) : null
+  const [loaded, setLoaded] = useState<Record<string, LayoutData>>({})
+  const layout = layoutKey ? (layoutNow(layoutKey) ?? loaded[layoutKey] ?? null) : null
   useEffect(() => {
-    if (!structure || layoutNow(structure.version)) return
+    if (!structure || !layoutKey || layoutNow(layoutKey)) return
     let live = true
-    getLayout(structure).then((l) => {
-      if (live) setAsyncLayout(l)
+    const p = subject ? getTreeLayout(structure, subject) : getWebLayout(structure)
+    p?.then((l) => {
+      if (live) setLoaded((m) => ({ ...m, [layoutKey]: l }))
     })
     return () => {
       live = false
     }
-  }, [structure])
-  const clusters = useMemo(() => (structure ? mergeWeb(structure, state) : null), [structure, state])
-  const web = useMemo(() => (layout && clusters && layout.version === structure?.version ? assemble(layout, clusters) : null), [layout, clusters, structure])
+  }, [structure, subject, layoutKey])
+  const overviewClusters = useMemo(() => (clusters && !subject ? overviewData(clusters).clusters : null), [clusters, subject])
+  const treeCluster = useMemo(() => (subject ? (clusters?.find((c) => c.id === subject) ?? null) : null), [clusters, subject])
+  const web = useMemo(() => {
+    if (!layout || layout.version !== layoutKey) return null
+    if (subject) return treeCluster ? assemble(layout, [treeCluster]) : null
+    return overviewClusters ? assemble(layout, overviewClusters) : null
+  }, [layout, layoutKey, subject, treeCluster, overviewClusters])
+  // Every concept of every subject (routes and search cross subjects).
+  const graph = useMemo(() => (clusters ? conceptGraph(clusters) : null), [clusters])
+  const searchGraph = useMemo(() => (clusters && graph ? { subjects: clusters, concepts: graph.concepts } : null), [clusters, graph])
 
   const statsApi = useApi<NexusStatsResponse>(
     () => api.get<NexusStatsResponse>('/api/stats', { query: { username: username || undefined } }),
     [username],
     { cacheKey: `stats:${username}` },
   )
+  const isDsa = treeCluster?.engine === 'dsa'
+  const roadmapApi = useApi(fetchRoadmap, [], { cacheKey: ROADMAP_KEY, skip: !(isDsa && view === 'week') })
 
-  /* ── navigation: web ⇄ subject path, all in the URL ── */
+  /* ── navigation: web ⇄ a subject's tree, all in the URL ── */
   const openSubject = useCallback(
     (id: string, cam?: Camera, nodeId?: string) => {
       if (cam) lastWebCamera = cam
       const next = new URLSearchParams()
       next.set('subject', id)
       if (nodeId) next.set('node', nodeId)
+      setDetailsOpen(false)
       navigate({ search: `?${next}` }, { state: { fromWeb: !subject } })
     },
     [navigate, subject],
   )
   const backToWeb = useCallback(() => {
+    setDetailsOpen(false)
     if ((location.state as { fromWeb?: boolean } | null)?.fromWeb) navigate(-1)
     else navigate({ search: '' })
   }, [location.state, navigate])
@@ -180,45 +213,62 @@ export default function NexusPage() {
     [setParams, location.state],
   )
   const setNode = useCallback((id: string | null) => setParam('node', id), [setParam])
+  // Old deep links (?node=subject:id on the web) open that subject's tree.
+  useEffect(() => {
+    if (subject || !node || !node.includes(':')) return
+    const [s, ...rest] = node.split(':')
+    navigate({ search: `?subject=${encodeURIComponent(s)}&node=${encodeURIComponent(rest.join(':'))}` }, { replace: true })
+  }, [subject, node, navigate])
+  // Esc: close the sheet, then the selection, then back to the web.
   useEffect(() => {
     if (!subject) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) backToWeb()
+      if (e.key !== 'Escape' || e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+      if (detailsOpen) setDetailsOpen(false)
+      else if (node) setNode(null)
+      else if (view) setParam('view', null)
+      else backToWeb()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [subject, backToWeb])
-  // ⌘K or "/" opens search on the web.
+  }, [subject, node, view, detailsOpen, backToWeb, setNode, setParam])
+  // ⌘K or "/": search (invisible until asked for).
   useEffect(() => {
-    if (subject || tab !== 'map') return
+    if (tab !== 'map' || view) return
     const onKey = (e: KeyboardEvent) => {
       const typing = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement
       if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !typing)) {
         e.preventDefault()
-        setSearchOpen('any')
+        setSearchOpen(true)
       }
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [subject, tab])
+    // Capture phase: before the app's command palette, which then stands aside.
+    window.addEventListener('keydown', onKey, true)
+    return () => window.removeEventListener('keydown', onKey, true)
+  }, [tab, view])
 
-  /* ── web analysis: route, beacon, keystones ── */
-  const route = useMemo(() => {
-    if (!web || !routeId || !structure) return null
+  /* ── inside a subject: route, beacon, keystones ── */
+  const plan = useMemo(() => {
+    if (!subject || !routeId || !graph || !structure) return null
     const subjects = routeId.startsWith('subject:') ? [routeId.slice(8)] : structure.routes.find((r) => r.id === routeId)?.subjects
-    return subjects ? routePlan(web, subjects) : null
-  }, [web, routeId, structure])
-  const beacon = useMemo(() => (web ? nextBestStep(web, route) : null), [web, route])
-  const keystoneSet = useMemo(() => (web ? findKeystones(web) : new Set<string>()), [web])
-  const domains = useMemo(() => [...new Set((structure?.clusters ?? []).map((c) => c.domain))], [structure])
+    return subjects ? routePlan(graph, subjects, 8) : null
+  }, [subject, routeId, graph, structure])
+  const route = useMemo(() => {
+    if (!plan || !web || !subject) return null
+    const order = plan.order.filter((k) => web.concepts.has(k))
+    return { order, next: order.filter((k) => web.concepts.get(k)?.node.s !== 2).slice(0, 5) }
+  }, [plan, web, subject])
+  const beacon = useMemo(() => (web && subject ? nextBestStep(web, route) : null), [web, subject, route])
+  const keystoneSet = useMemo(() => (web && subject ? findKeystones(web, 0.08, 4) : new Set<string>()), [web, subject])
 
-  /* ── the selected concept ("subject:id") and its lazily loaded details ── */
+  /* ── the selected concept and its lazily loaded details ── */
   const byKey = useMemo(() => {
     const m = new Map<string, { c: WebCluster; n: WebNode }>()
     for (const c of clusters ?? []) for (const n of c.nodes) m.set(`${c.id}:${n.id}`, { c, n })
     return m
   }, [clusters])
-  const webSel = !subject && node ? byKey.get(node) : undefined
+  const selKey = subject && node ? `${subject}:${node}` : null
+  const webSel = selKey ? byKey.get(selKey) : undefined
   const [selSubject, selId] = webSel ? [webSel.c.id, webSel.n.id] : [null, null]
   const detailApi = useApi<NexusNodeResponse>(
     () => api.get<NexusNodeResponse>(`/api/nexus/node/${selSubject}/${selId}`),
@@ -251,16 +301,16 @@ export default function NexusPage() {
     return m
   }, [clusters])
 
-  // A deep link to a concept lands the camera on it.
-  const landed = useRef(false)
+  // A link to a concept (deep link, search, "Needs" chip) lands the camera on it.
+  const landed = useRef<string | null>(null)
   useEffect(() => {
-    if (!web || subject || landed.current) return
-    landed.current = true
-    if (node && web.concepts.has(node) && !lastWebCamera) {
-      const id = node
-      requestAnimationFrame(() => webRef.current?.flyToNode(id, true))
+    if (!web || !subject || !selKey || landed.current === selKey) return
+    landed.current = selKey
+    if (web.concepts.has(selKey)) {
+      const k = selKey
+      requestAnimationFrame(() => webRef.current?.flyToNode(k))
     }
-  }, [web, subject, node])
+  }, [web, subject, selKey])
 
   const say = (text: string) => {
     setToast(text)
@@ -269,10 +319,11 @@ export default function NexusPage() {
   const onAction = useCallback(
     async (action: WebAction, key: string) => {
       if (!web) return
+      const [s, id] = [key.split(':')[0], key.split(':').slice(1).join(':')]
       if (action === 'open') setDetailsOpen(true)
       else if (action === 'trace') webRef.current?.trace(longestChain(web, key))
       else if (action === 'copy') {
-        const url = `${window.location.origin}/nexus?node=${encodeURIComponent(key)}`
+        const url = `${window.location.origin}/nexus?subject=${encodeURIComponent(s)}&node=${encodeURIComponent(id)}`
         try {
           await navigator.clipboard.writeText(url)
           say('Link copied')
@@ -280,7 +331,6 @@ export default function NexusPage() {
           say(url)
         }
       } else if (action === 'revise') {
-        const [s, id] = [key.split(':')[0], key.split(':').slice(1).join(':')]
         try {
           const r = await api.get<NexusPyqsResponse>(`/api/nexus/pyqs/${s}/${id}`)
           const ids = r.questions.map((q) => q.id).slice(0, 60)
@@ -295,38 +345,32 @@ export default function NexusPage() {
   )
 
   /* ── the assistant sees what is on screen ── */
+  const allNodes = useMemo(() => (clusters ?? []).flatMap((c) => c.nodes), [clusters])
+  const mastered = allNodes.filter((n) => n.s === 2).length
   const brief = useMemo(() => {
-    if (!web || !state) return undefined
+    if (!state || !clusters) return undefined
     const p = state.player
-    const all = web.concepts.size
-    const done = [...web.concepts.values()].filter((c) => c.node.s === 2).length
     const lines = [
       `Web rank: level ${p.level} (${p.name}), ${p.xp} web XP across every subject; ${p.xpInLevel}/${p.xpForNext} XP toward the next level.`,
-      `The Nexus web: ${web.regions.length} subjects, ${done}/${all} concepts mastered.`,
+      `The Nexus web: ${clusters.length} subjects, ${mastered}/${allNodes.length} concepts mastered.`,
     ]
-    if (beacon) lines.push(`Suggested next step: ${web.concepts.get(beacon)?.node.n} (${web.concepts.get(beacon)?.cluster.name}).`)
-    if (route) lines.push(`Active route next: ${route.next.map((k) => web.concepts.get(k)?.node.n).join(', ')}.`)
-    if (subject && pathData) {
-      lines.push(
-        `Subject path open: ${pathData.subject?.name}${pathData.subjectRank ? ` — subject rank ${pathData.subjectRank.tier} (${pathData.subjectRank.title}), ${pathData.subjectRank.progress}%` : ''}.`,
-        `Zones: ${pathData.zones.map((z) => `${z.level}. ${z.name} ${z.zoneProgress}%${z.locked ? ' (locked)' : ''}${z.current ? ' (current)' : ''}`).join('; ')}`,
-      )
-      const sel = node ? pathData.nodes.find((n) => n.id === node) : null
-      if (sel) lines.push(`Selected node: ${sel.name} — ${sel.desc} Progress ${sel.progress}%; ${sel.completed ? 'mastered' : sel.unlocked ? 'unlocked' : 'locked'}.`)
-    } else if (selectedNode) {
-      lines.push(`Selected concept: ${selectedNode.name} (${webSel?.c.name}) — progress ${selectedNode.progress}%; ${selectedNode.completed ? 'mastered' : selectedNode.unlocked ? 'unlocked' : 'locked'}.`)
+    if (treeCluster) {
+      const done = treeCluster.nodes.filter((n) => n.s === 2).length
+      const r = treeCluster.rank
+      lines.push(`Subject tree open: ${treeCluster.name}${r ? ` — subject rank ${r.tier} (${r.title}), ${r.progress}%` : ''}; ${done}/${treeCluster.nodes.length} concepts mastered.`)
+      lines.push(`Zones: ${treeCluster.zones.map((z) => `${z.level}. ${z.name} ${z.zoneProgress}%${z.locked ? ' (locked)' : ''}`).join('; ')}`)
+      if (beacon && web) lines.push(`Suggested next step: ${web.concepts.get(beacon)?.node.n}.`)
+      if (route && web) lines.push(`Active route next here: ${route.next.map((k) => web.concepts.get(k)?.node.n).join(', ')}.`)
+      if (selectedNode) lines.push(`Selected concept: ${selectedNode.name} — progress ${selectedNode.progress}%; ${selectedNode.completed ? 'mastered' : selectedNode.unlocked ? 'unlocked' : 'locked'}.`)
     }
     return lines.join('\n')
-  }, [web, state, subject, pathData, node, selectedNode, webSel, beacon, route])
+  }, [state, clusters, mastered, allNodes.length, treeCluster, beacon, route, web, selectedNode])
   useAgentPageContext({
-    label: subject ? `Nexus · ${pathData?.subject?.short ?? subject}` : selectedNode ? `Nexus · ${selectedNode.name}` : 'Nexus',
+    label: treeCluster ? `Nexus · ${treeCluster.short}` : 'Nexus',
     visibleText: brief,
   })
 
-  const webMode = tab === 'map' && !subject
   const player = state?.player
-  const mastered = web ? [...web.concepts.values()].filter((c) => c.node.s === 2).length : 0
-  const total = web?.concepts.size ?? 0
   const rankLine = (onWeb: boolean) =>
     player ? (
       <WebRankLine
@@ -336,58 +380,70 @@ export default function NexusPage() {
         avatar={user?.avatar}
         displayName={typeof user?.display_name === 'string' ? user.display_name : undefined}
         mastered={mastered}
-        total={total}
+        total={allNodes.length}
         streak={statsApi.data?.streak.current}
         onWeb={onWeb}
       />
     ) : null
+  const search = searchGraph && (
+    <WebSearch
+      graph={searchGraph}
+      open={searchOpen}
+      onOpenChange={setSearchOpen}
+      onPick={(p) => {
+        if (p.kind === 'subject') {
+          if (p.id !== subject) openSubject(p.id, subject ? undefined : webRef.current?.camera())
+          return
+        }
+        const [s, ...rest] = p.id.split(':')
+        const id = rest.join(':')
+        if (s === subject) {
+          setNode(id)
+          webRef.current?.flyToNode(p.id)
+        } else openSubject(s, subject ? undefined : webRef.current?.camera(), id)
+      }}
+    />
+  )
+  const toastEl = (
+    <AnimatePresence>
+      {toast && (
+        <motion.p className="nx-over nx-toast mb-0" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} role="status">
+          {toast}
+        </motion.p>
+      )}
+    </AnimatePresence>
+  )
+  const loadingWeb = (label: string) => (
+    <section className="nx-bleed" aria-label={label} aria-busy="true">
+      <NexusWeb web={getEmptyWeb()} selected={null} onSelect={() => {}} onOpenSubject={() => {}} loading />
+      {error && (
+        <p className="nx-over nx-hint mb-0" role="alert">
+          {error} ·{' '}
+          <button type="button" className="nx-link nx-link-sm" onClick={() => refresh(true)}>
+            try again
+          </button>
+        </p>
+      )}
+    </section>
+  )
 
-  /* ── the web: full-bleed, card-free, opens on the first frame ── */
-  if (webMode) {
-    if (!web || !state) {
-      return (
-        <section className="nx-bleed" aria-label="The Nexus web" aria-busy="true">
-          <NexusWeb web={getEmptyWeb()} selected={null} onSelect={() => {}} onOpenSubject={() => {}} loading />
-          {error && (
-            <p className="nx-over nx-hint mb-0" role="alert">
-              {error} ·{' '}
-              <button type="button" className="nx-link nx-link-sm" onClick={() => refresh(true)}>
-                try again
-              </button>
-            </p>
-          )}
-        </section>
-      )
-    }
-    const selZone = webSel?.c.zones.find((z) => z.level === webSel.n.z)
-    const customName = routeId?.startsWith('subject:') ? (structure?.clusters.find((c) => c.id === routeId.slice(8))?.short ?? null) : null
+  /* ── the main web: subjects only, full-bleed, card-free ── */
+  if (tab === 'map' && !subject) {
+    if (!web || !state) return loadingWeb('The Nexus web')
     return (
       <section className="nx-bleed" aria-label="The Nexus web">
         <NexusWeb
           ref={webRef}
+          mode="overview"
           web={web}
-          selected={webSel ? node : null}
-          onSelect={(k) => {
-            setNode(k)
-            setDetailsOpen(false)
-          }}
+          selected={null}
+          onSelect={() => {}}
           onOpenSubject={(id, cam) => openSubject(id, cam)}
-          onAction={onAction}
-          onInteract={() => setHintGone(true)}
-          quiet={detailsOpen}
           initialCamera={lastWebCamera}
           ranks={ranks}
-          filter={filter}
-          ahead={ahead}
-          route={route}
-          beacon={beacon}
-          keystones={keystoneSet}
         />
         {rankLine(true)}
         <nav className="nx-over nx-views" aria-label="Nexus views">
-          <button type="button" className="nx-link nx-link-sm nx-kbd" onClick={() => setSearchOpen('any')} aria-label="Search (⌘K)">
-            Search <kbd>⌘K</kbd>
-          </button>
           <button type="button" aria-current="page" className="nx-link" data-on="">
             /web
           </button>
@@ -398,47 +454,89 @@ export default function NexusPage() {
             <RefreshCw className={cn('size-3', refreshing && 'animate-spin')} />
           </button>
         </nav>
-        <WebSearch
+        {search}
+      </section>
+    )
+  }
+
+  /* ── a subject's own tree, with every tool ── */
+  if (tab === 'map' && subject && !view) {
+    if (clusters && !treeCluster) {
+      return <ErrorState message={`There is no subject “${subject}”.`} onRetry={backToWeb} />
+    }
+    if (!web || !state || !treeCluster) return loadingWeb('A subject tree')
+    const rank = treeCluster.rank
+    const done = treeCluster.nodes.filter((n) => n.s === 2).length
+    const selZone = webSel?.c.zones.find((z) => z.level === webSel.n.z)
+    const nextLine = (plan?.next ?? []).slice(0, 4).map((k) => {
+      const g = graph?.concepts.get(k)
+      return g ? (g.cluster.id === subject ? g.node.n : `${g.node.n} (${g.cluster.short})`) : ''
+    })
+    return (
+      <section className="nx-bleed" aria-label={`${treeCluster.name}: its tree`}>
+        <NexusWeb
+          key={subject}
+          ref={webRef}
+          mode="tree"
           web={web}
-          open={!!searchOpen}
-          subjectsOnly={searchOpen === 'subject'}
-          onOpenChange={(o) => setSearchOpen(o ? 'any' : false)}
-          onPick={(p) => {
-            if (searchOpen === 'subject') setParam('route', `subject:${p.id}`)
-            else if (p.kind === 'subject') webRef.current?.flyToSubject(p.id)
-            else {
-              setNode(p.id)
-              webRef.current?.flyToNode(p.id)
-            }
+          selected={webSel ? selKey : null}
+          onSelect={(k) => {
+            setNode(k ? k.slice(subject.length + 1) : null)
+            setDetailsOpen(false)
           }}
+          onOpenSubject={() => {}}
+          onAction={onAction}
+          quiet={detailsOpen}
+          filter={filter}
+          ahead={ahead}
+          route={route}
+          beacon={beacon}
+          keystones={keystoneSet}
         />
+        <header className="nx-over nx-tree-head">
+          <button type="button" className="nx-link nx-link-sm nx-back" onClick={backToWeb} aria-label="Back to the web">
+            <ArrowLeft className="size-3.5" aria-hidden="true" /> Web
+          </button>
+          <h1 className="nx-tree-name mb-0">{treeCluster.name}</h1>
+          <p className="nx-rank-line nx-tree-rank mb-0" title={rank?.next ? `Next: ${rank.next}` : undefined}>
+            {rank && <span className="nx-rank-tier">{rank.tier}</span>}
+            {rank && <span className="nx-me-dim"> · {rank.title} · </span>}
+            <span className="nx-me-dim font-mono text-[10.5px] tabular-nums">
+              {done}/{treeCluster.nodes.length} · {rank?.progress ?? 0}%
+            </span>
+          </p>
+        </header>
+        <nav className="nx-over nx-views" aria-label="Subject views">
+          <button type="button" aria-current="page" className="nx-link" data-on="">
+            /tree
+          </button>
+          <button type="button" className="nx-link" onClick={() => setParam('view', 'board')}>
+            /leaderboard
+          </button>
+          {isDsa && (
+            <button type="button" className="nx-link" onClick={() => setParam('view', 'week')}>
+              /week
+            </button>
+          )}
+        </nav>
+        {search}
         <WebControls
           routes={structure?.routes ?? []}
           route={routeId}
           onRoute={(id) => setParam('route', id)}
-          onCustomRoute={() => setSearchOpen('subject')}
-          customName={customName}
+          own={{ id: `subject:${subject}`, label: 'this subject' }}
           filter={filter}
           onFilter={setFilter}
-          domains={domains}
+          domains={[]}
           ahead={ahead}
           onAhead={setAhead}
-          routeNext={(route?.next ?? []).slice(0, 3).map((k) => web.concepts.get(k)?.node.n ?? '')}
+          routeNext={nextLine}
         />
-        <p className="nx-over nx-hint mb-0" data-gone={hintGone || undefined}>
-          Drag to move · scroll to zoom · hover a concept · click a subject to open its path
-        </p>
-        <AnimatePresence>
-          {toast && (
-            <motion.p className="nx-over nx-toast mb-0" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} role="status">
-              {toast}
-            </motion.p>
-          )}
-        </AnimatePresence>
+        {toastEl}
         <AnimatePresence>
           {detailsOpen && selectedNode && webSel && (
             <motion.aside
-              key={node!}
+              key={selKey!}
               className="nx-sheet"
               aria-label={`${selectedNode.name} details`}
               initial={{ x: '100%', opacity: 0.6 }}
@@ -456,16 +554,16 @@ export default function NexusPage() {
                 engine={webSel.c.engine}
                 onClose={() => setDetailsOpen(false)}
                 onJump={(l) => {
-                  const key = `${l.subject}:${l.id}`
-                  setNode(key)
-                  webRef.current?.flyToNode(key)
+                  // "Needs · X": that subject's own tree, on that concept.
+                  if (l.subject === subject) {
+                    setNode(l.id)
+                    webRef.current?.flyToNode(`${l.subject}:${l.id}`)
+                  } else openSubject(l.subject, undefined, l.id)
                 }}
                 onSelect={(id) => {
-                  const key = `${webSel.c.id}:${id}`
-                  setNode(key)
-                  webRef.current?.flyToNode(key)
+                  setNode(id)
+                  webRef.current?.flyToNode(`${subject}:${id}`)
                 }}
-                onOpenPath={() => openSubject(webSel.c.id, webRef.current?.camera(), webSel.n.id)}
               />
             </motion.aside>
           )}
@@ -474,9 +572,35 @@ export default function NexusPage() {
     )
   }
 
-  /* ── paths and ranks: type on the page, no stacked cards ── */
+  /* ── ranks, a subject's leaderboard and DSA's week: type on the page ── */
   if (!state) {
     return error ? <ErrorState message={error} onRetry={() => refresh(true)} /> : <LoadingBlock rows={8} />
+  }
+  if (subject && view && treeCluster) {
+    const level = state.dsaPlayer?.level ?? 1
+    return (
+      <div className="nx-path-enter">
+        <div className="nx-path-head flex flex-wrap items-center gap-x-4 gap-y-2">
+          <button type="button" className="nx-link-page inline-flex items-center gap-1.5 text-[13px] font-semibold" onClick={() => setParam('view', null)}>
+            <ArrowLeft className="size-3.5" aria-hidden="true" /> {treeCluster.short} tree
+          </button>
+          <h2 className="mb-0 font-display text-lg font-semibold text-text-primary">
+            {treeCluster.name} · {view === 'week' ? 'this week' : 'leaderboard'}
+          </h2>
+        </div>
+        {view === 'week' && isDsa ? (
+          roadmapApi.data ? (
+            <WeeklyPool level={roadmapApi.data.levels.find((l) => l.level === level)} weekSeed={roadmapApi.data.weekSeed} accentColor="var(--color-primary)" />
+          ) : roadmapApi.error ? (
+            <ErrorState message={roadmapApi.error} onRetry={roadmapApi.refetch} />
+          ) : (
+            <LoadingBlock rows={4} />
+          )
+        ) : (
+          <WebLeaderboard subject={subject} subjectName={treeCluster.name} />
+        )}
+      </div>
+    )
   }
   return (
     <div>
@@ -493,33 +617,22 @@ export default function NexusPage() {
           { id: 'map', label: '/web', icon: undefined },
           { id: 'ranks', label: '/ranks', icon: undefined, badge: statsApi.data ? statsApi.data.allTitles.length : undefined },
         ]}
-        active={subject && tab === 'map' ? 'map' : tab}
+        active={tab}
         onChange={(id) => {
           setTab(id as 'map' | 'ranks')
           if (id === 'map' && subject) backToWeb()
         }}
       />
-      {tab === 'ranks' ? (
-        <div className="space-y-4">
-          <WebLeaderboard />
-          {statsApi.loading && !statsApi.data ? (
-            <LoadingBlock rows={5} />
-          ) : statsApi.error && !statsApi.data ? (
-            <ErrorState message={statsApi.error} onRetry={statsApi.refetch} />
-          ) : (
-            <TitleTrack stats={webTitles(statsApi.data, state.player, state.riftLevels)} />
-          )}
-        </div>
-      ) : subject ? (
-        <SubjectPath
-          subject={subject}
-          selectedId={node}
-          onSelect={setNode}
-          onJump={(l) => openSubject(l.subject, undefined, l.id)}
-          onBack={backToWeb}
-          onData={setPathData}
-        />
-      ) : null}
+      <div className="space-y-4">
+        <WebLeaderboard />
+        {statsApi.loading && !statsApi.data ? (
+          <LoadingBlock rows={5} />
+        ) : statsApi.error && !statsApi.data ? (
+          <ErrorState message={statsApi.error} onRetry={statsApi.refetch} />
+        ) : (
+          <TitleTrack stats={webTitles(statsApi.data, state.player, state.riftLevels)} />
+        )}
+      </div>
     </div>
   )
 }

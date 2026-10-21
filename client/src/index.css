@@ -1389,6 +1389,23 @@ input[type='search']::-webkit-search-results-decoration {
   align-items: flex-start;
   max-width: min(360px, calc(100vw - 40px));
 }
+/* A subject's tree: its name and rank as floating type, top left. */
+.nx-tree-head {
+  top: 18px;
+  left: max(20px, calc(50vw - 660px));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  max-width: min(460px, calc(100vw - 40px));
+}
+.nx-back { display: inline-flex; align-items: center; gap: 6px; }
+.nx-tree-name { font-family: var(--font-display, inherit); font-size: 26px; line-height: 1.15; font-weight: 600; color: #fff; letter-spacing: -0.01em; }
+.nx-tree-rank { color: rgb(214 220 255 / 0.75); }
+@media (max-width: 639px) {
+  .nx-tree-head { top: 14px; left: 16px; max-width: calc(100vw - 150px); }
+  .nx-tree-name { font-size: 20px; }
+}
 /* A subject's rank as one line of type in its path header. */
 .nx-rank-line { font-size: 12px; letter-spacing: 0.02em; }
 .nx-rank-tier { font-size: 10.5px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; background: linear-gradient(90deg, var(--nx-b1, #2f5bea), var(--nx-b2, #7c3aed) 55%, var(--nx-b3, #0d9488)); -webkit-background-clip: text; background-clip: text; color: transparent; }

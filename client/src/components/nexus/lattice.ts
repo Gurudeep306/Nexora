@@ -26,9 +26,13 @@ import type { WebCluster, WebNode } from './types'
 
 export const SP = 76 // lattice spacing
 const JITTER = 30 // ±15
-const STEP = 118 // radial distance per prerequisite level
-const R0 = 300 // radius of the first concept level
-const MARGIN = 1500 // lattice beyond the outermost concepts
+const STEP_WEB = 118 // radial distance per prerequisite level
+const R0_WEB = 300 // radius of the first concept level
+const MARGIN_WEB = 1500 // lattice beyond the outermost concepts
+/** The main web: one node per subject, streams as regions. */
+export const OVERVIEW_LAYOUT: LayoutOptions = { r0: 430, step: 170, margin: 1300 }
+/** A subject's own tree: its concepts, its zones as regions. */
+export const TREE_LAYOUT: LayoutOptions = { r0: 150, step: 90, margin: 1000, regionBy: 'zone' }
 export const BUCKETS = 48
 
 export function rng(seed: number) {
@@ -53,7 +57,35 @@ export interface LayoutInput {
   id: string
   domain: string
   order: number
-  nodes: { id: string; req: string[]; cx?: string[] }[]
+  nodes: { id: string; req: string[]; cx?: string[]; z?: number }[]
+  /** zone names (for `regionBy: 'zone'`) */
+  zones?: { level: number; name: string }[]
+}
+
+/**
+ * How a web is laid out. The main web (subjects as nodes, streams as
+ * regions) and a subject's own tree (concepts, zones as regions) use the
+ * same construction with different spacing.
+ */
+export interface LayoutOptions {
+  r0?: number
+  step?: number
+  margin?: number
+  /** One region per cluster (default) or per zone of each cluster. */
+  regionBy?: 'cluster' | 'zone'
+}
+
+export interface LayoutRegion {
+  id: string
+  cluster: string
+  label?: string
+  zone?: number
+  x: number
+  y: number
+  a0: number
+  a1: number
+  rMin: number
+  rMax: number
 }
 
 /** The computed layout: transferable, cacheable, version-keyed. */
@@ -70,7 +102,7 @@ export interface LayoutData {
   keys: string[]
   pins: Int32Array
   levels: Int32Array
-  regions: { id: string; x: number; y: number; a0: number; a1: number; rMin: number; rMax: number }[]
+  regions: LayoutRegion[]
 }
 
 export interface Concept {
@@ -84,7 +116,11 @@ export interface Concept {
 }
 
 export interface Region {
+  id: string
   cluster: WebCluster
+  /** the region's own name (a zone), else the cluster's */
+  label?: string
+  zone?: number
   x: number
   y: number
   a0: number
@@ -100,7 +136,10 @@ export interface Web extends Omit<LayoutData, 'regions' | 'keys' | 'pins' | 'lev
   regions: Region[]
 }
 
-export function computeLayout(clusters: LayoutInput[], version = ''): LayoutData {
+export function computeLayout(clusters: LayoutInput[], version = '', opts: LayoutOptions = {}): LayoutData {
+  const R0 = opts.r0 ?? R0_WEB
+  const STEP = opts.step ?? STEP_WEB
+  const MARGIN = opts.margin ?? MARGIN_WEB
   // ── concepts and their depth across the web ──
   const keyOf = (c: LayoutInput, id: string) => `${c.id}:${id}`
   const reqs = new Map<string, string[]>()
@@ -217,26 +256,52 @@ export function computeLayout(clusters: LayoutInput[], version = ''): LayoutData
     bucket[i] = Math.min(BUCKETS - 1, Math.floor(ang * BUCKETS))
   }
 
-  // ── subject wedges, grouped by domain ──
-  const domainOrder = [...new Set(clusters.map((c) => c.domain))].sort((a, b) => {
-    const oa = Math.min(...clusters.filter((c) => c.domain === a).map((c) => c.order))
-    const ob = Math.min(...clusters.filter((c) => c.domain === b).map((c) => c.order))
+  // ── wedges: one per region (a cluster, or a zone of one), grouped ──
+  interface Unit {
+    id: string
+    cluster: string
+    group: string
+    label?: string
+    zone?: number
+    order: number
+    nodes: { k: string; index: number }[]
+  }
+  const units: Unit[] = []
+  for (const c of clusters) {
+    if (opts.regionBy === 'zone') {
+      const zs = [...new Set(c.nodes.map((n2) => n2.z ?? 0))].sort((x, y) => x - y)
+      for (const z of zs) {
+        units.push({
+          id: `${c.id}#${z}`,
+          cluster: c.id,
+          group: `${c.id}#${z}`,
+          label: c.zones?.find((zz) => zz.level === z)?.name,
+          zone: z,
+          order: c.order * 1000 + z,
+          nodes: c.nodes.filter((n2) => (n2.z ?? 0) === z).map((n2) => ({ k: keyOf(c, n2.id), index: index.get(keyOf(c, n2.id))! })),
+        })
+      }
+    } else {
+      units.push({ id: c.id, cluster: c.id, group: c.domain, order: c.order, nodes: c.nodes.map((n2) => ({ k: keyOf(c, n2.id), index: index.get(keyOf(c, n2.id))! })) })
+    }
+  }
+  const groupOrder = [...new Set(units.map((u) => u.group))].sort((a, b) => {
+    const oa = Math.min(...units.filter((u) => u.group === a).map((u) => u.order))
+    const ob = Math.min(...units.filter((u) => u.group === b).map((u) => u.order))
     return oa - ob || a.localeCompare(b)
   })
-  const ordered = [...clusters].sort(
-    (a, b) => domainOrder.indexOf(a.domain) - domainOrder.indexOf(b.domain) || a.order - b.order || a.id.localeCompare(b.id),
-  )
-  const total = ordered.reduce((s, c) => s + c.nodes.length, 0) || 1
-  const GAP = 0.035
-  const usable = Math.PI * 2 - GAP * domainOrder.length
+  const ordered = [...units].sort((a, b) => groupOrder.indexOf(a.group) - groupOrder.indexOf(b.group) || a.order - b.order || a.id.localeCompare(b.id))
+  const total = ordered.reduce((s, u) => s + u.nodes.length, 0) || 1
+  const GAP = groupOrder.length > 1 ? 0.035 : 0
+  const usable = Math.PI * 2 - GAP * groupOrder.length
   let a = -Math.PI / 2
-  let prevDomain: string | null = null
+  let prevGroup: string | null = null
   const wedge = new Map<string, [number, number]>()
-  for (const c of ordered) {
-    if (prevDomain !== null && c.domain !== prevDomain) a += GAP
-    prevDomain = c.domain
-    const span = (usable * c.nodes.length) / total
-    wedge.set(c.id, [a, a + span])
+  for (const u of ordered) {
+    if (prevGroup !== null && u.group !== prevGroup) a += GAP
+    prevGroup = u.group
+    const span = (usable * u.nodes.length) / total
+    wedge.set(u.id, [a, a + span])
     a += span
   }
 
@@ -258,15 +323,14 @@ export function computeLayout(clusters: LayoutInput[], version = ''): LayoutData
     }
     return pick
   }
-  const regions: LayoutData['regions'] = []
-  for (const c of ordered) {
-    const [a0, a1] = wedge.get(c.id)!
+  const regions: LayoutRegion[] = []
+  for (const u of ordered) {
+    const [a0, a1] = wedge.get(u.id)!
     const byLevel = new Map<number, { k: string; index: number }[]>()
-    for (const n2 of c.nodes) {
-      const k = keyOf(c, n2.id)
-      const l = level.get(k)!
+    for (const item of u.nodes) {
+      const l = level.get(item.k)!
       const list = byLevel.get(l) ?? []
-      list.push({ k, index: index.get(k)! })
+      list.push(item)
       byLevel.set(l, list)
     }
     let rMin = Infinity
@@ -288,7 +352,7 @@ export function computeLayout(clusters: LayoutInput[], version = ''): LayoutData
     }
     const mid = (a0 + a1) / 2
     const rl = rMin === Infinity ? R0 : rMin + (rMax - rMin) * 0.35
-    regions.push({ id: c.id, x: Math.cos(mid) * rl + ox, y: Math.sin(mid) * rl + oy, a0, a1, rMin: rMin === Infinity ? R0 : rMin, rMax })
+    regions.push({ id: u.id, cluster: u.cluster, label: u.label, zone: u.zone, x: Math.cos(mid) * rl + ox, y: Math.sin(mid) * rl + oy, a0, a1, rMin: rMin === Infinity ? R0 : rMin, rMax })
   }
   const keys: string[] = []
   for (const c of clusters) for (const n2 of c.nodes) keys.push(keyOf(c, n2.id))
@@ -315,10 +379,11 @@ export function assemble(layout: LayoutData, clusters: WebCluster[]): Web {
   const byId = new Map(clusters.map((c) => [c.id, c]))
   const regions: Region[] = []
   for (const r of layout.regions) {
-    const c = byId.get(r.id)
+    const c = byId.get(r.cluster ?? r.id)
     if (!c) continue
-    const progress = c.nodes.length ? Math.round(c.nodes.reduce((s, x) => s + x.p, 0) / c.nodes.length) : 0
-    regions.push({ cluster: c, x: r.x, y: r.y, a0: r.a0, a1: r.a1, rMin: r.rMin, rMax: r.rMax, progress })
+    const own = r.zone === undefined ? c.nodes : c.nodes.filter((x) => x.z === r.zone)
+    const progress = own.length ? Math.round(own.reduce((s, x) => s + x.p, 0) / own.length) : 0
+    regions.push({ id: r.id, cluster: c, label: r.label, zone: r.zone, x: r.x, y: r.y, a0: r.a0, a1: r.a1, rMin: r.rMin, rMax: r.rMax, progress })
   }
   const { xy, parent, depth, bucket, origin, maxDepth, extent, version } = layout
   return { version, xy, parent, depth, bucket, origin, maxDepth, extent, concepts, conceptAt, regions }
@@ -327,6 +392,128 @@ export function assemble(layout: LayoutData, clusters: WebCluster[]): Web {
 /** The whole pipeline in one call (tests, and the tiny loading web). */
 export function buildWeb(clusters: WebCluster[], version = ''): Web {
   return assemble(computeLayout(clusters, version), clusters)
+}
+
+/**
+ * Every concept of every subject as one graph, without a layout (pt = -1):
+ * what goal routes and search work on, across subjects.
+ */
+export function conceptGraph(clusters: WebCluster[]): Pick<Web, 'concepts'> {
+  const concepts = new Map<string, Concept>()
+  for (const c of clusters) {
+    for (const n of c.nodes) {
+      const key = `${c.id}:${n.id}`
+      concepts.set(key, { key, cluster: c, node: n, pt: -1, level: 0, prereqs: [...n.req.map((r) => `${c.id}:${r}`), ...(n.cx ?? [])], unlocks: [] })
+    }
+  }
+  for (const v of concepts.values()) {
+    v.prereqs = v.prereqs.filter((k) => concepts.has(k))
+    for (const r of v.prereqs) concepts.get(r)!.unlocks.push(v.key)
+  }
+  const seen = new Map<string, number>()
+  const lv = (k: string, guard = 0): number => {
+    const hit = seen.get(k)
+    if (hit !== undefined) return hit
+    seen.set(k, 0) // a cycle ends here
+    const c = concepts.get(k)!
+    const v = guard > 300 || !c.prereqs.length ? 0 : 1 + Math.max(...c.prereqs.map((r) => lv(r, guard + 1)))
+    seen.set(k, v)
+    c.level = v
+    return v
+  }
+  for (const k of concepts.keys()) lv(k)
+  return { concepts }
+}
+
+const STREAM_NAMES: Record<string, string> = {
+  'core-cs': 'Core CS',
+  math: 'Maths',
+  ai: 'AI',
+  'web-mobile': 'Web & mobile',
+  'visual-product': 'Visual & product',
+  'software-engineering': 'Software engineering',
+}
+/** A stream's display name from its domain id ("web-mobile" → "Web & mobile"). */
+export function streamName(domain: string): string {
+  return STREAM_NAMES[domain] ?? domain.replace(/-/g, ' ').replace(/^./, (ch) => ch.toUpperCase())
+}
+
+/**
+ * The main web's data: every subject becomes ONE node; subjects of a
+ * stream (domain) share a region. Branches between subjects aggregate the
+ * cross-subject prerequisites of their concepts (strongest first, cycles
+ * dropped), so a subject sits further out than the subjects it builds on.
+ * Keys are "stream:subject"; a node's id is the subject id.
+ */
+export function overviewData(clusters: WebCluster[]): { inputs: LayoutInput[]; clusters: WebCluster[] } {
+  const subjectOf = new Map(clusters.map((c) => [c.id, c]))
+  const weight = new Map<string, number>()
+  for (const c of clusters) {
+    for (const n of c.nodes) {
+      for (const x of n.cx ?? []) {
+        const s = x.split(':')[0]
+        if (s === c.id || !subjectOf.has(s)) continue
+        const k = `${s}>${c.id}`
+        weight.set(k, (weight.get(k) ?? 0) + 1)
+      }
+    }
+  }
+  // Keep the strongest links that do not close a cycle.
+  const needs = new Map<string, Set<string>>(clusters.map((c) => [c.id, new Set<string>()]))
+  const reaches = (from: string, to: string) => {
+    const stack = [from]
+    const seen = new Set<string>()
+    while (stack.length) {
+      const x = stack.pop()!
+      if (x === to) return true
+      if (seen.has(x)) continue
+      seen.add(x)
+      for (const y of needs.get(x) ?? []) stack.push(y)
+    }
+    return false
+  }
+  for (const [k] of [...weight].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))) {
+    const [from, to] = k.split('>')
+    // "to needs from" closes a cycle when from already needs to.
+    if (!reaches(from, to)) needs.get(to)!.add(from)
+  }
+  const keyOf = (id: string) => `${subjectOf.get(id)!.domain}:${id}`
+  const byStream = new Map<string, WebCluster[]>()
+  for (const c of clusters) byStream.set(c.domain, [...(byStream.get(c.domain) ?? []), c])
+  const streams: WebCluster[] = []
+  const inputs: LayoutInput[] = []
+  for (const [domain, list] of byStream) {
+    const order = Math.min(...list.map((c) => c.order))
+    const nodes: WebNode[] = list.map((c) => {
+      const done = c.nodes.filter((n) => n.s === 2).length
+      const p = c.nodes.length ? Math.round(c.nodes.reduce((s, n) => s + n.p, 0) / c.nodes.length) : 0
+      const deps = [...(needs.get(c.id) ?? [])]
+      return {
+        id: c.id,
+        n: c.name,
+        z: 0,
+        p,
+        s: done === c.nodes.length && c.nodes.length ? 2 : p > 0 ? 1 : 0,
+        req: deps.filter((d) => subjectOf.get(d)!.domain === domain),
+        cx: deps.filter((d) => subjectOf.get(d)!.domain !== domain).map(keyOf),
+        k: 'subject',
+        xp: c.nodes.reduce((s, n) => s + n.xp, 0),
+        c: `${done}/${c.nodes.length}`,
+        ag: -1,
+        iv: 0,
+        rc: c.nodes.some((n) => n.rc) ? 1 : 0,
+      }
+    })
+    const name = streamName(domain)
+    streams.push({ id: domain, name, short: name, domain, order, engine: null, zones: [], nodes })
+    inputs.push({ id: domain, domain, order, nodes: nodes.map((n) => ({ id: n.id, req: n.req, cx: n.cx })) })
+  }
+  return { inputs, clusters: streams }
+}
+
+/** The layout input for one subject's own tree (zones as regions). */
+export function treeInput(c: Pick<WebCluster, 'id' | 'domain' | 'order' | 'nodes'> & { zones: { level: number; name: string }[] }): LayoutInput[] {
+  return [{ id: c.id, domain: c.domain, order: c.order, zones: c.zones.map((z) => ({ level: z.level, name: z.name })), nodes: c.nodes.map((n) => ({ id: n.id, req: n.req, z: n.z })) }]
 }
 
 /** Points on the tree path from a to b (a … branch point … b). */
