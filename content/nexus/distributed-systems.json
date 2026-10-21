@@ -275,6 +275,7 @@
       "icon": "server",
       "desc": "Implement Raft and build a replicated, fault-tolerant key-value store on it.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "raft",
         "partitioning"

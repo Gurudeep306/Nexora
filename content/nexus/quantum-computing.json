@@ -288,6 +288,7 @@
       "icon": "trophy",
       "desc": "Implement Grover and a small Shor instance and compare simulator and device results.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "quantum-programming",
         "grover",

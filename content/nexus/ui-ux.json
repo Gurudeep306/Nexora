@@ -184,6 +184,7 @@
       "icon": "rocket",
       "desc": "Research and redesign a flow in an existing app as a tested prototype.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "prototyping",
         "personas-journeys"
@@ -303,6 +304,7 @@
       "icon": "trophy",
       "desc": "Take a product problem from research to a tested, accessible design and document it.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "usability-testing",
         "design-to-code",

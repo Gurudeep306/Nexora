@@ -270,6 +270,7 @@
       "icon": "check",
       "desc": "Build a small library test-first with high branch coverage and CI.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "tdd",
         "coverage-mutation",
@@ -284,6 +285,7 @@
       "icon": "users",
       "desc": "Run a short team project with sprints, reviews and a tagged release.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "agile",
         "code-review",

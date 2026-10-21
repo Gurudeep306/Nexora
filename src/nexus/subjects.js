@@ -477,6 +477,7 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
         icon: n.icon || "target",
         desc: n.desc || "",
         kind: n.kind || "concept",
+        optional: n.optional === true || (n.optional !== false && n.kind === "project"),
         tags: n.pyqTopics || [],
         requires: (n.requires || []).filter((r) => !r.includes(":")),
         target: target || (lessons.length ? lessons.length : 0),

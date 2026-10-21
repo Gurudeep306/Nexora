@@ -267,6 +267,7 @@
       "icon": "terminal",
       "desc": "Build a fast grep-like command-line tool with tests.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "iterators-closures",
         "result-errors",
@@ -281,6 +282,7 @@
       "icon": "rocket",
       "desc": "Build an async JSON web service with a database pool and graceful error handling.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "async-rust",
         "rust-testing",

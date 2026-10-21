@@ -186,6 +186,7 @@
       "icon": "wrench",
       "desc": "Implement and test solvers, fitting and quadrature, comparing accuracy against known results.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "root-finding",
         "least-squares",
@@ -288,6 +289,7 @@
       "icon": "play",
       "desc": "Simulate a physical system such as orbits or heat flow and check energy and error behaviour.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "runge-kutta",
         "finite-differences"

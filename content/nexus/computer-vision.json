@@ -126,6 +126,7 @@
       "icon": "image",
       "desc": "Stitch overlapping photos into a panorama using features and homographies.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "feature-matching"
       ],
@@ -223,6 +224,7 @@
       "icon": "rocket",
       "desc": "Collect or adapt a labelled dataset and train and evaluate an object detector.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "object-detection",
         "vision-metrics",

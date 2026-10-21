@@ -182,6 +182,7 @@
       "icon": "rocket",
       "desc": "Build a multi-page React app with shared state and a live API.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "global-state",
         "data-fetching",
@@ -238,6 +239,7 @@
       "icon": "rocket",
       "desc": "Rebuild a small app in Vue and compare the approaches with React.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "vue-router-pinia"
       ],
@@ -288,6 +290,7 @@
       "icon": "trophy",
       "desc": "Ship a tested, accessible, fast app built on a meta-framework.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "ssr-frameworks",
         "testing-uis",
