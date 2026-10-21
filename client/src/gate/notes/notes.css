@@ -3091,6 +3091,12 @@ h4.notes-h {
 .lab .cf-pat {
   width: 6em;
 }
+.lab .cf-serial {
+  width: 10em;
+}
+.lab .cf-bad {
+  color: var(--notes-red-ink, var(--color-state-error));
+}
 .lab .cf-name {
   width: 4.5em;
 }

@@ -3902,6 +3902,14 @@
       "after": "6 to 6",
       "reason": "Official GATE 2026 CS1 answer key gives Q.65 = 6. The stored 1 was a placeholder; re-derived by counting supersets of AB or AC.",
       "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-27",
+      "field": "solution",
+      "before": "**Step 1: Problem Formulation & Exam Context**\nTargeting **DL** (Sequential) from **CSE-2026-1 Q27** (2 Marks) (MCQ).\n- Evaluation Target: Official verified examination outcome **D**.\n\n**Step 2: Governing Principles & Formal Rules**\n- IEEE 754 Floating Point Representation: $V = (-1)^s \\times 2^{E - 127} \\times (1.M)$ for normalized single precision ($1 \\le E \\le 254$). Smallest normalized positive value has $E = 1$ and $M = 0$.\n- Mealy machine state transitions: Next state $t = \\delta(s, b)$ and output $y = \\lambda(s, b)$ depend directly on present state and input.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{D}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **D**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
+      "after": "Check each option against the 8 rows of the table. Row P = 0, Q1Q0 = 00 needs D1 D0 = 01: options A, C and D give D0 = 0 or D1 = 1 there. Option B, D1 = P′Q1 + P′Q0 + Q1Q0 and D0 = P′Q0′ + P′Q1 + Q1Q0′, matches all 8 rows. Answer: (B).",
+      "reason": "The legacy free-text solution contradicts the key or the circuit; replaced with a short correct solution (the full teacher-style v2 solution is in src/gate/solutions).",
+      "source": "Re-derived by seqlib simulation in content/gate-notes/_checks/dl/l6_*.py (Chapter 6 key audit)"
     }
   ]
 }

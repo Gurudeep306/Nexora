@@ -128,6 +128,22 @@
       "after": null,
       "reason": "Resolved (see needsReview fix).",
       "source": "GATE1991.pdf p.8"
+    },
+    {
+      "id": "cse-1991-b-6-a",
+      "field": "solution",
+      "before": "**Step 1: Problem Formulation & Exam Context**\nTargeting **DL** (Sequential) from **CSE-1991 Q6(a)** (5 Marks) (DESC).\n- Evaluation Target: Official verified examination outcome **4 D flip-flops with steering gates (D_i = Shift' * In_i + Shift * Q_{i-1})**.\n\n**Step 2: Governing Principles & Formal Rules**\n- IEEE 754 Floating Point Representation: $V = (-1)^s \\times 2^{E - 127} \\times (1.M)$ for normalized single precision ($1 \\le E \\le 254$). Smallest normalized positive value has $E = 1$ and $M = 0$.\n- Mealy machine state transitions: Next state $t = \\delta(s, b)$ and output $y = \\lambda(s, b)$ depend directly on present state and input.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{4 D flip-flops with steering gates (D_i = Shift' * In_i + Shift * Q_{i-1})}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **4 D flip-flops with steering gates (D_i = Shift' * In_i + Shift * Q_{i-1})**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
+      "after": "Three D flip-flops Q_A, Q_B, Q_C (one per data bit), each with a 2:1 AND-OR steering gate controlled by L = LOAD/SHIFT′: D_A = L·A + L′·S, D_B = L·B + L′·Q_A, D_C = L·C + L′·Q_B. L = 1 loads A, B, C in parallel on the clock; L = 0 shifts right with S entering on the left. The serial output is Q_C.",
+      "reason": "The legacy free-text solution contradicts the key or the circuit; replaced with a short correct solution (the full teacher-style v2 solution is in src/gate/solutions).",
+      "source": "Re-derived by seqlib simulation in content/gate-notes/_checks/dl/l6_*.py (Chapter 6 key audit)"
+    },
+    {
+      "id": "cse-1991-b-6-b",
+      "field": "solution",
+      "before": "**Step 1: Problem Formulation & Exam Context**\nTargeting **DL** (Sequential) from **CSE-1991 Q6(b)** (5 Marks) (DESC).\n- Evaluation Target: Official verified examination outcome **Cascade of 1024 1-bit D flip-flop stages with common shift clock**.\n\n**Step 2: Governing Principles & Formal Rules**\n- IEEE 754 Floating Point Representation: $V = (-1)^s \\times 2^{E - 127} \\times (1.M)$ for normalized single precision ($1 \\le E \\le 254$). Smallest normalized positive value has $E = 1$ and $M = 0$.\n- Mealy machine state transitions: Next state $t = \\delta(s, b)$ and output $y = \\lambda(s, b)$ depend directly on present state and input.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{Cascade of 1024 1-bit D flip-flop stages with common shift clock}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **Cascade of 1024 1-bit D flip-flop stages with common shift clock**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
+      "after": "Address the 1K × 1 RAM with a 10-bit (mod-1024) counter. On each shift clock: read M[ctr] into an output D flip-flop (D_out), write D_in into M[ctr] (READ/WRITE′ = 0), then increment the counter. A bit written at address k is read when the counter returns to k, 1024 clocks later, so the output is the input delayed by 1024 shifts: a 1024-bit serial-in/serial-out shift register built from one RAM.",
+      "reason": "The legacy free-text solution contradicts the key or the circuit; replaced with a short correct solution (the full teacher-style v2 solution is in src/gate/solutions).",
+      "source": "Re-derived by seqlib simulation in content/gate-notes/_checks/dl/l6_*.py (Chapter 6 key audit)"
     }
   ]
 }

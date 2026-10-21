@@ -55,7 +55,7 @@ SOLUTIONS["cse-1992-b-4-c"] = {
         {"title": "D0 = next LSB", "body": "$Q_0^+ = 1$ for 000, 001, 110, 111: $Q_0$ is irrelevant and $Q_2 = Q_1$ is needed: $D_0 = \\overline{Q_2}\\,\\overline{Q_1} + Q_2Q_1 = \\overline{Q_2 \\oplus Q_1}$.", "scene": {"reveal": 4}},
     ],
     "answer": {"value": "Gray sequence 000→001→011→010→110→111→101→100→000 with $D_2 = Q_1\\overline{Q_0} + Q_2Q_0$, $D_1 = \\overline{Q_2}Q_0 + Q_1\\overline{Q_0}$, $D_0 = \\overline{Q_2 \\oplus Q_1}$", "matchesKey": True},
-    "shortcut": "In a Gray sequence the parity of the state alternates every step; that is why $D_0$ comes out as the XNOR of the other two bits.",
+    "shortcut": "The key observation for $D_0$: in the reflected Gray order the LSB flips exactly on the even-parity states ($Q_2 \\oplus Q_1 \\oplus Q_0 = 0$), so $Q_0^+ = Q_0 \\oplus \\overline{Q_2 \\oplus Q_1 \\oplus Q_0} = \\overline{Q_2 \\oplus Q_1}$.",
     "pitfalls": [
         "Writing T-style 'change' columns for D flip-flops: a D input is the new value, not the change.",
         "Using a non-cyclic Gray order: the last state 100 must return to 000 with one bit change too.",
@@ -171,7 +171,7 @@ SOLUTIONS["cse-2016-1-cs-8"] = {
     "shortcut": "Six positions fit in $2^3 = 8$: 3 flip-flops.",
     "pitfalls": [
         "Answering 2 (four distinct values 0–3).",
-        "Answering 4 (an off-by-one printed in some notes; 6 ≤ 8 needs only 3 bits).",
+        "Answering 4 by giving the output 2 bits and the 'which visit of 0' count another $\\lceil \\log_2 3 \\rceil = 2$; the 6 positions fit in 3 bits together.",
     ],
     "verification": "seqlib.counter_states_needed([0, 1, 0, 2, 0, 3]) = 6 and ff_count(6) = 3; the output functions were minimised with states 6 and 7 as don't-cares.",
 }

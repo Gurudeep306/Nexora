@@ -3988,6 +3988,14 @@
       ],
       "reason": "The question depends on its figure, which the bank was missing. Redrawn as an SVG from the paper.",
       "source": "pdf p.64 (Q.64)"
+    },
+    {
+      "id": "cse-2025-1-cs-50",
+      "field": "solution",
+      "before": "**Step 1: Problem Formulation & Exam Context**\nTargeting **COA** (Isa) from **CSE-2025-1 Q50** (2 Marks) (NAT).\n- Evaluation Target: Official verified examination outcome **7 to 8**.\n\n**Step 2: Governing Principles & Formal Rules**\n- IEEE 754 Floating Point Representation: $V = (-1)^s \\times 2^{E - 127} \\times (1.M)$ for normalized single precision ($1 \\le E \\le 254$). Smallest normalized positive value has $E = 1$ and $M = 0$.\n- Mealy machine state transitions: Next state $t = \\delta(s, b)$ and output $y = \\lambda(s, b)$ depend directly on present state and input.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{7 to 8}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **7 to 8**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
+      "after": "The circuit is a 4-bit Johnson (twisted-ring) counter: Q3′ is fed back into D0. From 0000 it visits 0000, 0001, 0011, 0111, 1111, 1110, 1100, 1000 and returns: 8 states in the cycle counting the initial one (7 others). The other 8 patterns form a second 8-state cycle, so any initial value gives 8. Answer: 7 to 8.",
+      "reason": "The legacy free-text solution contradicts the key or the circuit; replaced with a short correct solution (the full teacher-style v2 solution is in src/gate/solutions).",
+      "source": "Re-derived by seqlib simulation in content/gate-notes/_checks/dl/l6_*.py (Chapter 6 key audit)"
     }
   ]
 }

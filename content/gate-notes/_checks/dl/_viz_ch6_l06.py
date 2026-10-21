@@ -112,7 +112,7 @@ def shift_register_march(L):
                ("so", {"tone": "accent" if 4 <= k <= 7 else "muted"}))
     assert [so[k - 1] for k in range(4, 8)] == word
     s.step("Load: 4 clocks. First bit at SO: clock 4. Last bit at SO: clock 7. Word gone: clock 8. Every bit is delayed by n = 4 clocks.",
-           ("t4", {"text": "n = 4: 4, 7 and 8 clocks", "tone": "accent"}), ("so", {"tone": "muted"}))
+           ("t4", {"text": "load 4 · first out 4 · last out 7 · empty 8", "tone": "accent"}), ("so", {"tone": "muted"}))
     return s.done("A 4-bit shift register receiving 1011", (W, ty + 3 * lh + 24), (NW, ty + 3 * lh + 24),
                   "Four D flip-flops Q1 to Q4 share one clock; the serial input SI enters Q1 and Q4 is the serial output SO. "
                   "Each step is one clock edge; the stage holding the word's first bit is highlighted.")
@@ -223,14 +223,21 @@ def piso_load_shift(L):
 
 # ── ring-johnson-cycles ────────────────────────────────────────────────────
 
-def cells(s, pid, x0, y, cw, ch, title, fb_label, sz):
+def cells(s, pid, x0, y, cw, ch, title, fb_label, sz, invert=False):
     for i in range(4):
         s.box(f"{pid}c{i}", x0 + i * cw, y, cw, ch, tone="ink")
         s.text(f"{pid}v{i}", x0 + i * cw + cw / 2, y + ch / 2, "0", s.v(16, 15), anchor="middle", mono=True, weight="bold", tone="muted")
         s.text(f"{pid}q{i}", x0 + i * cw + cw / 2, y + ch + 12, f"Q{i + 1}", sz, anchor="middle", mono=True)
     xr, xl, ym = x0 + 4 * cw, x0, y + ch / 2
     yt = y - 14
-    s.line(f"{pid}fb", [[xr, ym], [xr + 10, ym], [xr + 10, yt], [xl - 10, yt], [xl - 10, ym], [xl, ym]], tone="accent")
+    x_start = xr
+    if invert:  # the Johnson loop starts at an inversion bubble on Q4's output: one inverter
+        rb = 4
+        s.node(f"{pid}inv", xr + rb, ym, rb, tone="accent")
+        x_start = xr + 2 * rb
+    xo = xr + (14 if invert else 10)
+    s.line(f"{pid}fb", [[x_start, ym], [xo, ym], [xo, yt], [xl - 12, yt], [xl - 12, ym]], tone="accent")
+    s.add(id=f"{pid}fbh", type="arrow", **{"from": [xl - 12, ym]}, to=[xl, ym], tone="accent")  # arrowhead into D1
     s.text(f"{pid}fl", x0 + 2 * cw, yt - 12, fb_label, sz, anchor="middle", mono=True, weight="bold", tone="accent")
     s.text(f"{pid}tt", x0 + 2 * cw, yt - 34, title, s.v(15, 13), anchor="middle", weight="bold")
 
@@ -257,11 +264,11 @@ def ring_johnson_cycles(L):
         r = 22
     else:
         rx, ry = 112, 94
-        jx, jy = 112, 400
-        rc, rR, jc, jR = (180, 250), 62, (180, 580), 108
+        jx, jy = 112, 430
+        rc, rR, jc, jR = (180, 250), 62, (180, 640), 108
         r = 21
     cells(s, "r", rx, ry, cw, ch, "Ring: D1 = Q4", "Q4 → D1", sz)
-    cells(s, "j", jx, jy, cw, ch, "Johnson: D1 = Q̄4", "Q̄4 → D1", sz)
+    cells(s, "j", jx, jy, cw, ch, "Johnson: D1 = Q̄4", "Q̄4 → D1", sz, invert=True)
 
     def ring_nodes(states, c, R):
         nd = {}
@@ -345,6 +352,7 @@ def lfsr_feedback(L):
     xt = round(pins[1]["Q"][0] + gap / 2, 2)
     ytap = y - s.v(46, 42)
     s.line("t1", [[xt, yp], [xt, ytap], [in1[0] - 8, ytap], [in1[0] - 8, in1[1]], list(in1)], tone="muted")
+    s.node("tapj", xt, yp, 3.5, fill="ink")  # junction dot: the tap leaves the Q1 → D2 wire
     # XOR output back to D0 over everything
     ytop = ytap - s.v(30, 28)
     xo = gout[0] + 10

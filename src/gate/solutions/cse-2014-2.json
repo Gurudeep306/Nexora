@@ -736,7 +736,7 @@
         {
           "option": "B",
           "correct": false,
-          "reason": "Same count problem as A, and the 1 moves upwards, not downwards."
+          "reason": "A $k$-bit down counter has $2^k$ states, not $k$; the decoder lines show only $k$ one-hot patterns, and the inner counter counts up."
         },
         {
           "option": "C",

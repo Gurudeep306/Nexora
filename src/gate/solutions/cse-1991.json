@@ -2307,7 +2307,7 @@
         },
         {
           "title": "Why the delay is 1024",
-          "body": "A bit written at shift $j$ into address $a = j \\bmod 1024$ is not touched while the counter visits the other 1023 addresses. At shift $j + 1024$ the counter is back at $a$, and the read, which comes before the write, hands that bit to the output."
+          "body": "A bit written at shift $j$ into address $a = j \\bmod 1024$ is not touched while the counter visits the other 1023 addresses. At shift $j + 1024$ the counter is back at $a$, and the read, which comes before the write, hands that bit to the output. (Strictly, the output flip-flop holds the bit that has just **left** a 1024-stage chain, one clock behind that chain's last stage $Q_{1024}$; taking $D_{out}$ directly, with the RAM reading the next address between shifts, gives $Q_{1024}$ itself. Either is accepted as a 1024-bit register.)"
         },
         {
           "title": "Why the order matters",

@@ -188,6 +188,29 @@ for n in (1, 2, 3, 8, 16):
 assert ram_run(1024, din, "wr") == din  # write before read: a wire
 assert sq.ff_count(1024) == 10
 has("on a random stream of 3000 bits", "the output is the input delayed by **1024 shifts**", "equals its input stream")
+# the output flip-flop is one stage beyond the chain's last stage Q_1024: it holds the bit that has just left the chain
+def ram_ff(n, din):
+    mem, ctr, ff, out = [0] * n, 0, 0, []
+    for d in din:
+        ff = mem[ctr]
+        mem[ctr] = d
+        ctr = (ctr + 1) % n
+        out.append(ff)
+    return out
+
+
+def chain_last(n, din):
+    reg, out = (0,) * n, []
+    for d in din:
+        reg, _ = sq.shift_right(reg, d)
+        out.append(reg[-1])
+    return out
+
+
+for n in (4, 1024):
+    assert ram_ff(n, din) == chain_run(n, din) == [0] + chain_last(n, din)[:-1] and chain_last(n + 1, din) == ram_ff(n, din)
+has("the output flip-flop holds the bit that has just\n**left** a 1024-stage chain, one clock behind that chain's last stage $Q_{1024}$",
+    "Either is accepted as a 1024-bit register.")
 
 # ── Ring counters ──────────────────────────────────────────────────────────
 assert cyc(sq.ring_step, "1000") == ["1000", "0100", "0010", "0001"] and cyc(sq.ring_step, "1100") == ["1100", "0110", "0011", "1001"]
@@ -267,6 +290,8 @@ has("0100 → 1010 → 1101 → 0110 → 1011 → 0101 → 0010 → 1001 → 010
 fix = lambda q: (1 - q[3], q[0], q[1] & (q[0] | q[2]), q[2])  # noqa: E731
 assert all(fix(s) == sq.johnson_step(s) for s in map(bs, J4)) and sq.self_starting(fix, allst(4), [bs(s) for s in J4])
 has("$D_3 = Q_2(Q_1 + Q_3)$ in place of $D_3 = Q_2$")
+assert max(len(sq.cycle_from(fix, s)[0]) for s in allst(4)) == 5  # the worst stray state needs 5 clocks
+has("the worst stray state needs 5 clocks")
 # flip-flops for a mod-N Johnson counter: N/2; mod-10 needs 5
 assert len(sq.register_cycle(sq.johnson_step, (0,) * 5)) == 10
 # GATE 2015
@@ -373,6 +398,14 @@ assert tr07 == ["1011", "1101", "0110", "1011", "1101", "0110"] and "101101" == 
 opts07 = bl.option_values(bank["it-2007-cs-40"])
 assert [l for l, t in opts07.items() if t == tr07[-1]] == bl.key_letters(bank["it-2007-cs-40"]["answer"]) == ["A"]
 has("0110, in 1: $1 \\oplus 0 = 1$ → 1011. In 0: $0 \\oplus 1 = 1$ → 1101. In 1: $1 \\oplus 1 = 0$ → 0110.", "**0110** (GATE IT 2007, option A)")
+# the lab paragraph: the lab names cell i (from the left) Q_{n-1-i}; this lesson's Q3, Q4 (indices 2, 3) are the lab's Q1, Q0
+labname = lambda n, i: f"Q{n - 1 - i}"  # noqa: E731
+assert [labname(4, i) for i in (2, 3)] == ["Q1", "Q0"] and labname(4, 3) == "Q0"
+has("this lesson's $Q_3, Q_4$ (the maximal taps) are the lab's **Q1, Q0**", "serial input 101101, six clocks, and the register ends at\n0110",
+    "a CRC divider uses the\nsame parts, but puts the XORs **inside** the chain", "a CRC divider is the same idea with the XORs inside the chain")
+# the lab keeps the cycle of the standard start as the main cycle: from 0100 the run is on the other 8-cycle
+assert not set(cyc(sq.johnson_step, "0100")) & set(cyc(sq.johnson_step, "0000"))
+has("the second run moves round the red lock-out cycle 0100 → 1010 → 1101 → …")
 # sequence generator: 1011100
 seqg = [1, 0, 1, 1, 1, 0, 0]
 win = lambda n: [tuple(seqg[(i + k) % 7] for k in range(n)) for i in range(7)]  # noqa: E731
@@ -436,7 +469,7 @@ assert B(r) == "0011"
 # q07: statements (A true: 4-bit ring 4 states; B false: mod-10 Johnson needs 5; C false: synchronous; D true: 2-input AND)
 truth7 = {"A": len(sq.register_cycle(sq.ring_step, bs("1000"))) == 4,
           "B": len(sq.register_cycle(sq.johnson_step, (0,) * 10)) == 10,
-          "C": False,  # ring counters share one clock (erratum X2): never asynchronous
+          "C": False,  # ring counters share one clock (trap-ring-sync): never asynchronous
           "D": all(len([s for s in map(bs, J4) if f(s)]) == 1 for f in G.values())}
 bl.assert_msq(P["nx-dl-06-06-q07"], [k for k, v in truth7.items() if v])
 # q08: states with no self-loop in a 4-bit serial-in register's graph
@@ -459,7 +492,7 @@ bl.assert_msq(P["nx-dl-06-06-q10"], [k for k, v in is_j.items() if v])
 assert all(q10["B"].step(s) == sq.ring_step(s) for s in allst(4)) and all(q10["D"].step(s) == sq.ring_step(s) for s in allst(4))
 assert len([k for k in P if k.startswith("nx-dl-06-06-")]) == 10
 keys = [P[f"nx-dl-06-06-q{k:02d}"]["answer"] for k in range(1, 11) if P[f"nx-dl-06-06-q{k:02d}"]["type"] == "MCQ"]
-assert keys.count("A") >= 2 and keys.count("D") >= 2 and max(keys.count(x) for x in "ABCD") <= 2
+assert keys == ["A", "C", "A", "D"] and max(keys.count(x) for x in "ABCD") <= 2  # 06-q03 keyed C for the chapter spread
 for k in range(1, 11):
     q = P[f"nx-dl-06-06-q{k:02d}"]
     for blk in q["blocks"]:

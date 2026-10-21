@@ -25,7 +25,7 @@ def table(title, cols, rows, labels=None, reveal=None, caption=None):
 SOLUTIONS["cse-2001-b-59-a"] = {
     "approach": "Concept tested: **building a state machine from a word description**. Decide what must be remembered (the mode, and whether the last bit was the one that would end the mode), make each combination a state, put the output on the arcs (Mealy, since the output is the input or its complement), and test on the given example.",
     "concepts": ["Mealy machine", "State diagram", "Word to FSM", "Sequence detection"],
-    "given": "A stream of bits; the circuit copies its input until two consecutive 0s appear, then outputs the complement until two consecutive 1s appear, and repeats. Example: input 101100 01001011 011, output 101100 10110100 011. S-K (JK) master–slave flip-flops are to be used.",
+    "given": "A stream of bits; the circuit copies its input until two consecutive 0s appear, then outputs the complement until two consecutive 1s appear, and repeats. Example: input 101100 01001011 011, output 101100 10110100 011. 'S-K' master–slave flip-flops (read as J-K) are to be used.",
     "steps": [
         {"title": "What must be remembered", "body": "The **mode** (copy or complement) and, inside each mode, whether the last bit was the one that would end the mode if it came again: a 0 in copy mode, a 1 in complement mode. Two facts of one bit each: four states."},
         {"title": "Name the states", "body": "A: copy, last bit not 0 (also the start). B: copy, last bit 0. C: complement, last bit not 1. D: complement, last bit 1. The output is $x$ in A, B and $\\bar x$ in C, D, so it depends on the input: a Mealy machine with outputs on the arcs."},
@@ -37,7 +37,7 @@ SOLUTIONS["cse-2001-b-59-a"] = {
     "pitfalls": [
         "Switching mode before processing the completing bit (complementing the second 0 of 00): the example shows it is still copied.",
         "Using only two states (copy, complement): the machine must also remember the previous bit to recognise 00 and 11.",
-        "Letting the 11 that ends complement mode start with a 0 → 1 pair from copy mode: after a mode change the 'last bit' memory starts afresh (states C and A).",
+        "Carrying the flag across a mode change: the bit that completes 00 also enters C ('complement, last bit 0'), so the next 1 is only the first of a possible 11, not the second.",
     ],
     "verification": "Simulated on every input up to 10 bits, the machine equals a direct reading of the words (copy until 00, complement until 11, repeat), and it is minimal (4 states, partition refinement merges nothing). An equivalent Moore machine needs 6 states.",
     "animation": table("State table (next state / output)", ["x = 0", "x = 1"],
@@ -46,7 +46,7 @@ SOLUTIONS["cse-2001-b-59-a"] = {
 }
 
 SOLUTIONS["cse-2001-b-59-b"] = {
-    "approach": "Concept tested: **implementing a Mealy machine with JK flip-flops**. Assign codes to the four states, write the encoded state table, read the J and K columns from the JK excitation table (J only where Q = 0, K only where Q = 1) and minimise. 'S-K master–slave' is a JK flip-flop (set/reset, toggle on 11).",
+    "approach": "Concept tested: **implementing a Mealy machine with JK flip-flops**. Assign codes to the four states, write the encoded state table, read the J and K columns from the JK excitation table (J only where Q = 0, K only where Q = 1) and minimise. No standard flip-flop is called 'S-K'; it is read as J-K (set/reset, toggle on 11), and $Q_1$'s answer is the same under an SR reading.",
     "concepts": ["State assignment", "JK flip-flop", "Excitation table", "K-map minimisation"],
     "given": "The 4-state machine of part (a): A: 0/0 → B, 1/1 → A; B: 0/0 → C, 1/1 → A; C: 0/1 → C, 1/0 → D; D: 0/1 → C, 1/0 → A. Two master–slave JK flip-flops $Q_1Q_0$; input $x$, output $z$.",
     "steps": [
@@ -60,7 +60,7 @@ SOLUTIONS["cse-2001-b-59-b"] = {
                "keyNote": "Any state assignment followed consistently is a correct answer; it changes the equations, not the behaviour. With A=00, B=01, C=11, D=10 the same procedure gives $J_1 = Q_0\\bar x$, $K_1 = \\bar Q_0x$, $J_0 = \\bar x$, $K_0 = x$."},
     "shortcut": "Choose codes whose bits mean something (mode, flag): $J_1$ = 'flag set and another 0 arrives', $K_1$ = 'flag set and another 1 arrives', and the flag is always cleared at the next clock ($K_0 = 1$).",
     "pitfalls": [
-        "Reading 'S-K' as an SR flip-flop and forbidding S = R = 1: the question's flip-flop is the JK type.",
+        "'S-K' is read as J-K; under an SR reading, $Q_1$'s answer is the same ($S_1 = Q_0\\bar x$, $R_1 = Q_0x$), so give that flip-flop's equations.",
         "Writing J or K values in rows where they do not matter instead of don't-cares, which gives larger equations.",
         "Using D-flip-flop equations ($D = Q^+$) for J: J is $Q^+$ only in rows with $Q = 0$.",
     ],
@@ -139,14 +139,14 @@ SOLUTIONS["cse-2009-cs-27"] = {
     "answer": {"value": "(A) 3 (input 101)", "choice": ["A"], "matchesKey": True},
     "optionAnalysis": [
         opt("A", True, "101 reaches 01 with output 1, and breadth-first search shows that 10 (the only source of a suitable arc) needs two inputs."),
-        opt("B", False, "4 is longer than the shortest string 101."),
-        opt("C", False, "5 comes from reading the table's columns in the wrong order or from a search that is not breadth-first."),
-        opt("D", False, "6 is twice the shortest length; a string of length 6 that meets the target exists, but 101 already does at length 3."),
+        opt("B", False, "0101 also ends with the arc 10 –1/1→ 01, but 101 is shorter."),
+        opt("C", False, "00101 works too, but it is not minimal."),
+        opt("D", False, "Any 6-bit string that first reaches 10 and then ends with 1 (for example 000101) works; the question asks for the minimum, and 101 already does it in 3."),
     ],
     "shortcut": "Look at the target arc first: only 10 –1/1 → 01 works. Reaching 10 from 00 takes 2 inputs (1, 0), so the answer is 2 + 1 = 3.",
     "pitfalls": [
         "Answering 1: input 1 from 00 does reach 01, but with output 0.",
-        "Mixing up the present-state and next-state columns of the long table.",
+        "Mixing up the present-state and next-state columns of the long table: the result has two arcs for some (state, input) and none for others, so count one arc per (state, input) before searching.",
         "Checking the output of the state reached instead of the output of the arc (this is a Mealy table).",
     ],
     "verification": "seqlib's breadth-first search with the target 'next state 01 and output 1' returns 101; the run visits 00, 01, 10, 01 with outputs 0, 0, 1. (State 11 is not reachable from 00 at all.)",

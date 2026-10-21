@@ -300,6 +300,17 @@ export function lfsrStep(reg: number[], taps: number[], din = 0): number[] {
   return [fb, ...reg.slice(0, -1)]
 }
 
+/** An LFSR fed the serial input bits xs, one per clock (first bit first): the register before the first clock and after every clock. */
+export function lfsrFeed(reg: number[], taps: number[], xs: number[]): number[][] {
+  const out = [reg]
+  for (const x of xs) out.push(lfsrStep(out[out.length - 1]!, taps, x))
+  return out
+}
+
+/** The intended start of an n-bit ring counter (a single 1 at the left) or Johnson counter (all 0s); its cycle is the main cycle. */
+export const standardStart = (kind: 'ring' | 'johnson', n: number): number[] =>
+  Array.from({ length: n }, (_, i) => (kind === 'ring' && i === 0 ? 1 : 0))
+
 /** Run an autonomous machine from s0: the tail before the loop and the loop itself. */
 export function cycleFrom<T>(step: (s: T) => T, s0: T, key: (s: T) => string = String, limit = 10000): { prefix: T[]; cycle: T[] } {
   const seq: T[] = []

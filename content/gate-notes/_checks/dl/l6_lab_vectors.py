@@ -11,6 +11,9 @@ the TypeScript against the same file:
   random clocks, random inputs, setup and hold 0–3, t_pd 1–2, Q₀ = 0, 1 or X) and the lab presets;
 - ring, Johnson and LFSR registers for n = 2 … 5 (several tap sets, serial inputs and initial
   states): the cycle from the initial state, every cycle of the 2ⁿ states and the self-start verdict;
+  for ring and Johnson counters also the main cycle (the cycle of the standard start: a single 1 at
+  the left, all 0s) and whether the initial state lies on it; LFSRs fed a serial bit string one bit
+  per clock (seqlib.lfsr_feed), including IT 2007's 101101 into 0110;
 - ripple counters (up and down, negative or positive edge, several n and t_pd, overlapping clocks,
   asynchronous clear): every event and the settled states;
 - synchronous counter design (seqlib.design_counter) for seeded random sequences × D / T / JK ×
@@ -193,11 +196,33 @@ def register_vectors():
             cyc = [sq.val(s) for s in sq.register_cycle(f, sq.bits(init, n))]
             st = int_step(n, f)
             cycles = sq.autonomous_cycles(st, range(2 ** n))
-            out.append({"kind": kind, "n": n, "taps": taps, "din": din, "init": init, "step": [st(s) for s in range(2 ** n)],
-                        "cycle": cyc, "cycles": cycles, "selfStart": sq.self_starting(st, range(2 ** n), cyc)})
+            row = {"kind": kind, "n": n, "taps": taps, "din": din, "init": init, "step": [st(s) for s in range(2 ** n)],
+                   "cycle": cyc, "cycles": cycles, "selfStart": sq.self_starting(st, range(2 ** n), cyc)}
+            if kind in ("ring", "johnson"):
+                # the lab's main cycle: the cycle of the standard start, whatever the initial state
+                main = [sq.val(s) for s in sq.register_cycle(f, sq.standard_start(kind, n))]
+                row.update({"start": sq.val(sq.standard_start(kind, n)), "main": main,
+                            "mainSelfStart": sq.self_starting(st, range(2 ** n), main), "initOnMain": set(cyc) <= set(main)})
+            out.append(row)
     by = {(r["kind"], r["n"], tuple(r["taps"]), r["din"], r["init"]): r for r in out}
     assert len(by[("lfsr", 4, (2, 3), 0, 8)]["cycle"]) == 15 and len(by[("johnson", 4, (), 0, 0)]["cycle"]) == 8
     assert not by[("ring", 4, (), 0, 8)]["selfStart"]
+    assert by[("ring", 4, (), 0, 0)]["main"] == [8, 4, 2, 1] and not by[("ring", 4, (), 0, 0)]["initOnMain"]
+    assert by[("johnson", 4, (), 0, 15)]["main"] == by[("johnson", 4, (), 0, 0)]["cycle"] and by[("johnson", 4, (), 0, 15)]["initOnMain"]
+    return out
+
+
+def feed_vectors():
+    """LFSRs fed a serial bit string, one bit per clock (the lab then feeds 0s), including IT 2007."""
+    rnd = random.Random(67)
+    out = [{"n": 4, "taps": [3], "init": 6, "xs": [1, 0, 1, 1, 0, 1]}]
+    for n in (2, 3, 4, 5):
+        for taps in (MAX_TAPS[n], [n - 1], []):
+            for _ in range(3):
+                out.append({"n": n, "taps": taps, "init": rnd.randrange(2 ** n), "xs": [rnd.randint(0, 1) for _ in range(rnd.randint(1, 10))]})
+    for c in out:
+        c["states"] = [sq.val(r) for r in sq.lfsr_feed(sq.bits(c["init"], c["n"]), c["taps"], c["xs"])]
+    assert out[0]["states"] == [0b0110, 0b1011, 0b1101, 0b0110, 0b1011, 0b1101, 0b0110]  # GATE IT 2007: ends at 0110
     return out
 
 
@@ -350,7 +375,7 @@ def build():
     return {"tables": tab, "convert": conv, "scope": scope_vectors(),
             "scopePresets": [{**p, "clk": wave(clock(32, p["period"]))} for p in SCOPE_PRESETS],
             "clocks": {str(p): wave(clock(32, p)) for p in (4, 6, 8)},
-            "registers": register_vectors(), "ripple": ripple_vectors(), "design": design_vectors(), "fsm": fsm, "fsmPresets": fpre}
+            "registers": register_vectors(), "feeds": feed_vectors(), "ripple": ripple_vectors(), "design": design_vectors(), "fsm": fsm, "fsmPresets": fpre}
 
 
 data = build()
@@ -360,5 +385,5 @@ if "--write" in sys.argv:
     print(f"wrote {OUT.name}")
 assert OUT.exists() and OUT.read_text() == text, "lab_vectors_ch6.json is stale: run with --write"
 print(f"l6_lab_vectors: 4 flip-flop tables, {len(data['convert'])} conversions, {len(data['scope'])} scope runs, "
-      f"{len(data['registers'])} registers, {len(data['ripple'])} ripple runs, {len(data['design'])} counter designs, "
+      f"{len(data['registers'])} registers, {len(data['feeds'])} serial feeds, {len(data['ripple'])} ripple runs, {len(data['design'])} counter designs, "
       f"{len(data['fsm'])} state machines")

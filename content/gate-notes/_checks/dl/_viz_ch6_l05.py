@@ -82,11 +82,11 @@ def sync_counter_design(L):
     ones2 = [[1 + (x >> 1), 1 + (x & 1)] for x in seq if tcol[x][0]]
     ones1 = [[1 + (x >> 1), 1 + (x & 1)] for x in seq if tcol[x][1]]
     assert ones2 == [[1, 1], [2, 2]] and ones1 == [[2, 1], [1, 2]]
-    s.step("Copy the T2 column into a K-map: 1s at 00 and 11, on a diagonal. No two 1s are adjacent, so the map is the XNOR: T2 = (Q2 ⊕ Q1)′.",
+    s.step("Copy the T2 column into a K-map: 1s at 00 and 11, exactly where Q2 = Q1, so T2 = (Q2 ⊕ Q1)′.",
            ("tt", {"highlight": [[r, 2] for r in range(1, 5)]}), ("k2", {"hidden": False, "rows": kmap_rows(0), "highlight": ones2}),
-           ("k2t", {"hidden": False}), ("e2", {"hidden": False}), ("st", {"text": "diagonal 1s = XNOR", "tone": "accent"}))
+           ("k2t", {"hidden": False}), ("e2", {"hidden": False}), ("st", {"text": "1 where Q2 = Q1: XNOR", "tone": "accent"}))
     s.step("The T1 column has 1s at 10 and 01, the other diagonal: T1 = Q2 ⊕ Q1. That is the missing input X of GATE 2004, option D.",
-           ("tt", {"highlight": [[r, 3] for r in range(1, 5)]}), ("k1", {"hidden": False, "rows": kmap_rows(1), "highlight": ones1}),
+           ("tt", {"highlight": [[r, 3] for r in range(1, 5)]}), ("k2", {"highlight": []}), ("k1", {"hidden": False, "rows": kmap_rows(1), "highlight": ones1}),
            ("k1t", {"hidden": False}), ("e1", {"hidden": False}), ("st", {"text": "X = T1 = Q2 ⊕ Q1", "tone": "accent"}))
     s.step("Check by simulation: with these two gates the circuit steps 00 → 10 → 11 → 01 → 00. All 4 states are used, so nothing can lock out.",
            ("tt", {"highlight": []}), ("k2", {"highlight": []}), ("k1", {"highlight": []}),
@@ -97,7 +97,7 @@ def sync_counter_design(L):
                   "bit (T = Q ⊕ Q⁺), each column goes into a K-map, and the maps give the two input equations.")
 
 
-# ── lockout-graph: the 0 → 3 → 5 → 6 JK counter (erratum C 371) ───────────
+# ── lockout-graph: the 0 → 3 → 5 → 6 JK counter ────────────────────────────
 
 C371 = sq.Sync([("A", "JK", {"J": lambda e: e["B"], "K": lambda e: e["B"]}),
                 ("B", "JK", {"J": lambda e: 1, "K": lambda e: 1}),
@@ -117,7 +117,7 @@ def lockout_graph(L):
     nxt = {sq.val(x): sq.val(C371.step(x)) for x in C371.states()}
     cyc = sq.autonomous_cycles(lambda v: nxt[v], range(8))
     assert cyc == [[0, 3, 5, 6], [1, 2, 4, 7]] and not sq.self_starting(lambda v: nxt[v], range(8), main)
-    # The C 371 wiring is one of the minimal choices that the don't-cares allow (T design: T2 = Q1, T1 = 1, T0 = Q1′).
+    # The locking wiring is one of the minimal choices that the don't-cares allow (T design: T2 = Q1, T1 = 1, T0 = Q1′).
     dT = sq.design_counter(main, "T", 3)
     assert dT["sop"] == {"T2": ["Q1"], "T1": ["1"], "T0": ["Q1′"]} and all(sq.designed_step(dT, "T")(v) == nxt[v] for v in range(8))
     # Fix 1: unused next states forced to 000 (seqlib design with unused = 0).
@@ -126,7 +126,7 @@ def lockout_graph(L):
     fix = {v: fstep(v) for v in range(8)}
     assert all(fix[v] == nxt[v] for v in main) and all(fix[v] == 0 for v in (1, 2, 4, 7))
     assert sq.self_starting(fstep, range(8), main)
-    # Fix 2: the same zero-gate budget, J_A = C, K_A = C′ (A copies C): every unused state enters the cycle in one clock.
+    # Cure 3 of the lesson: the same zero-gate budget, J_A = C, K_A = C′ (A copies C): every unused state enters the cycle in one clock.
     alt = {sq.val(x): sq.val(ALT.step(x)) for x in ALT.states()}
     assert all(alt[v] == nxt[v] for v in main) and {v: alt[v] for v in (1, 2, 4, 7)} == {1: 6, 2: 0, 4: 3, 7: 5}
     assert sq.self_starting(lambda v: alt[v], range(8), main)
@@ -173,8 +173,10 @@ def lockout_graph(L):
         w = nxt[v]
         e = C371.excite(sq.bits(v, 3))
         bq = sq.bits(v, 3)[1]
-        what = f"B = {bq}: A {'toggles' if e['A']['J'] else 'holds'}, B toggles, C {'toggles' if e['C']['J'] else 'holds'}"
-        cap = f"Power up in {B(sq.bits(v, 3))}. {what}: next {B(sq.bits(w, 3))}." if k == 0 else f"From {B(sq.bits(v, 3))}: {what}, so {B(sq.bits(w, 3))}."
+        what = f"A {'toggles' if e['A']['J'] else 'holds'}, B toggles, C {'toggles' if e['C']['J'] else 'holds'}"
+        cap = (f"Power up in {B(sq.bits(v, 3))} (B = {bq}): {what}, so next {B(sq.bits(w, 3))}." if k == 0
+               else f"From {B(sq.bits(v, 3))} (B = {bq}): {what}, so {B(sq.bits(w, 3))}.")
+        assert cap.count(":") == 1, cap
         if k == 3:
             cap += " Back to 001: a lock-out cycle."
         assert len(cap) <= 140, cap
@@ -186,7 +188,7 @@ def lockout_graph(L):
     s.step("Cure 1 (forced next states): redesign with every unused state's next state set to 000. Each one now joins the cycle in one clock.",
            *arcs("l", on=False), *arcs("f", tone="success"), *[node(k, "success") for k in bot],
            ("st", {"text": "001, 010, 100, 111 → 000", "tone": "success"}), ("sub", {"text": "self-starting; costs gates (fewer don't-cares)", "tone": "muted"}))
-    s.step("Cure 2, same cost: choose J_A = Q_C, K_A = Q_C′ (also minimal). The unused states go 001 → 110, 010 → 000, 100 → 011, 111 → 101.",
+    s.step("Cure 3 (another minimal cover), same cost: choose J_A = Q_C, K_A = Q_C′. Unused states: 001 → 110, 010 → 000, 100 → 011, 111 → 101.",
            *arcs("f", on=False), *arcs("a", tone="success"),
            ("st", {"text": "every unused state enters the cycle", "tone": "success"}), ("sub", {"text": "same main cycle, no extra gate", "tone": "muted"}))
     s.step("The lesson: don't-cares decide where unused states go. Always simulate all 2ⁿ states of the circuit you actually built.",
@@ -226,7 +228,7 @@ def sync_vs_ripple_timing(L):
     y0 = 60
     groups = [(0, falls[0])] + [(falls[k], falls[k + 1] if k + 1 < len(falls) else T) for k in range(len(falls))]
     rows = [("c", "CLK", clk, "ink")]
-    rows += [(f"s{i}", f"S·Q{i}", [(x >> i) & 1 for x in sst], "success") for i in range(n)]
+    rows += [(f"s{i}", f"S·Q{i}", [(x >> i) & 1 for x in sst], "ink") for i in range(n)]
     rows += [(f"r{i}", f"R·Q{i}", [(x >> i) & 1 for x in rst], "accent") for i in range(n)]
     ids, ys = rows_panel(s, "w", rows, x0, y0, dx, h, rgap, groups, s.v(14, 12))
     ytop, ybot = y0 - 6, ys[f"r{n - 1}"] + h + 6
@@ -250,7 +252,7 @@ def sync_vs_ripple_timing(L):
         if k:
             pats += [(f"m{k - 1}", {"tone": "muted"}), (f"mt{k - 1}", {"tone": "muted"})]
         pats += [("ss", {"text": f"synchronous: {format(tr[k], '03b')} → {format(tr[k + 1], '03b')} (1 t_pd)", "tone": "success"}),
-                 ("rs", {"text": f"ripple: {path}" if m > 1 else f"ripple: {path} (1 t_pd)", "tone": "danger" if m > 2 else "accent" if m == 2 else "ink"})]
+                 ("rs", {"text": f"ripple: {path}" if m > 1 else f"ripple: {path} (1 t_pd)", "tone": "danger" if m >= 2 else "ink"})]  # m ≥ 2: the ripple passes through a false state
         s.step(cap, *pats)
     worst = max(len(c) - 1 for c in chains)
     assert worst == n

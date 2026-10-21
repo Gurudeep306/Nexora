@@ -24,8 +24,8 @@ updated: "2026-10-20"
 bit moves one place along. That one idea does a surprising amount of work: it turns a serial stream of
 bits into a parallel word and back again, it delays a signal by an exact number of clocks, and, once the
 end of the chain is fed back to its beginning, it becomes a counter. This lesson builds the shift register
-from D flip-flops, counts exactly how many clocks it takes to load and to empty one (the count most notes
-get wrong), adds parallel load and the four-mode **universal** register, and shows how a RAM with a counter
+from D flip-flops, counts exactly how many clocks it takes to load and to empty one (a count that is easy
+to get wrong), adds parallel load and the four-mode **universal** register, and shows how a RAM with a counter
 can pretend to be a 1024-stage shift register. Then it closes the loop three ways: the **ring counter** (the
 last output fed straight back), the **Johnson counter** (the last output fed back inverted) and the
 **linear feedback shift register**, or **LFSR** (an XOR of some stages fed back), and studies the state
@@ -170,8 +170,7 @@ examiners write the options so that each wrong reading finds its number.
   appeared at $Q_4$.
 - **8** $= 2n$ is the clock at which the last bit is **shifted out** of the register, leaving none of the word inside.
 
-One set of revision notes says only that a 4-bit SISO "needs more than 4 clock pulses" to get the data out: true,
-but the exact counts are the theorem's. After a **parallel** load the first bit is at the output at once and the
+A vague answer such as "more than 4 clocks" is true but scores nothing; the exact counts are the theorem's. After a **parallel** load the first bit is at the output at once and the
 other three need 3 shifts. Always ask: did the word enter serially, and does "out" mean "seen at the output" or
 "gone from the register"?
 :::
@@ -280,8 +279,8 @@ State $Q_1Q_2$; next state $Q_1^+Q_2^+ = (in)(Q_1)$.
 :::
 
 :::step{why="A self-loop needs the next state to equal the present one."}
-00 → 00 with in = 0 and 11 → 11 with in = 1 are self-loops; 01 and 10 never map to themselves (their next state always
-has $Q_2 = Q_1$, which they do not).
+00 → 00 with in = 0 and 11 → 11 with in = 1 are self-loops. 01 and 10 never map to themselves: the next $Q_2$ is the present
+$Q_1$, so a self-loop needs $Q_1 = Q_2$, which 01 and 10 do not have.
 :::
 
 :::answer
@@ -309,7 +308,7 @@ Parallel load: bit 1 is at $Q_4$ right after the load; bits 2, 3, 4 need 1, 2, 3
 :::
 
 :::answer
-**4, 7 and 8** clocks for the serial case (erratum C 361: "more than 4" is true, and the exact counts are these); 0, 3 and 4
+**4, 7 and 8** clocks for the serial case ("more than 4" is true, and the exact counts are these); 0, 3 and 4
 shifts after a parallel load. The expected wrong answer to (b) is 8, which mixes up "seen at the output" with "shifted out".
 :::
 ::::
@@ -411,7 +410,10 @@ shift clock:
 
 The three sub-steps are produced from the shift clock by a small control circuit (for example a 2-bit sequencer, or the two
 phases of the clock). The serial input bit written at shift $j$ is read out at shift $j + 1024$, the next time the counter
-returns to that address, so the circuit is a SISO register of 1024 bits.
+returns to that address, so the circuit is a SISO register of 1024 bits. (Strictly, the output flip-flop holds the bit that has
+just **left** a 1024-stage chain, one clock behind that chain's last stage $Q_{1024}$; by the delay theorem that makes it a 1025-stage
+chain if you count the output flip-flop as a stage. Taking $D_{out}$ directly, with the RAM reading the next address between shifts,
+gives $Q_{1024}$ itself. Either is accepted as a 1024-bit register.)
 :::
 
 Why does this work, and why must the order be read **then** write? The counter visits each address once every 1024 shifts.
@@ -515,7 +517,8 @@ read at shift $j + 1024$, when the counter is back at $a$, just before being ove
 
 :::answer
 Counter-addressed RAM, **read, then write, then increment** at every shift: the output is the input delayed by **1024 shifts**. The
-simulation agrees with a 1024-flip-flop chain bit for bit. The design uses 1 RAM, 1 counter, 1 output flip-flop and a little control,
+simulation agrees, bit for bit, with the bit that **leaves** a 1024-flip-flop chain at each clock (the output flip-flop is the one
+extra stage, as the definition explains). The design uses 1 RAM, 1 counter, 1 output flip-flop and a little control,
 instead of 1024 flip-flops.
 :::
 ::::
@@ -563,9 +566,9 @@ $$1000 \to 0100 \to 0010 \to 0001 \to 1000 \quad (n = 4).$$
   self-starting**: it must be initialised.
 :::
 
-:::note{#erratum-x2 title="Ring and Johnson counters are synchronous counters" depth="standard"}
-Some notes list the ring and Johnson counters right after a heading on asynchronous counters, as if they were ripple counters. They
-are **synchronous**: every flip-flop receives the **same clock**, and the stages are linked only through their $D$ (or $J$/$K$) inputs.
+:::trap{#trap-ring-sync title="Ring and Johnson counters are synchronous counters" depth="standard"}
+The expected wrong answer is "asynchronous": ring and Johnson counters are easy to file next to ripple counters, because the data
+visibly passes from one flip-flop to the next. They are **synchronous**: every flip-flop receives the **same clock**, and the stages are linked only through their $D$ (or $J$/$K$) inputs.
 The data passes from stage to stage, but the clock does not. Compare [Lesson 4](lesson:ripple-counters), where the output of one
 stage **is** the clock of the next. As a consequence a ring counter changes all its outputs one $t_{pd}$ after the edge, with no
 transient states, which is exactly why its outputs can be used as glitch-free timing signals.
@@ -594,7 +597,7 @@ price of the decoder (and of decoding glitches if the counter is a ripple counte
 
 :::note{#recap-ring title="Recap" depth="quick"}
 Ring counter: $D_1 = Q_n$, one 1 circulating; $n$ flip-flops, $n$ states (one-hot), duty $1/n$, no decoding. Synchronous (one clock).
-Not self-starting unless the feedback is a NOR of the first $n - 1$ outputs. Counter + decoder: $n$ flip-flops behave like a $2^n$-bit ring.
+Not self-starting; a NOR of the first $n - 1$ outputs as feedback (or a preset) cures it. Counter + decoder: $n$ flip-flops behave like a $2^n$-bit ring.
 :::
 
 ## Johnson (twisted-ring) counters
@@ -627,7 +630,7 @@ between the two ends). A 2-input AND of the two bits that sit on either side of 
 |:--|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
 | Gate | $\overline{Q_1}\,\overline{Q_4}$ | $Q_1\overline{Q_2}$ | $Q_2\overline{Q_3}$ | $Q_3\overline{Q_4}$ | $Q_1Q_4$ | $\overline{Q_1}Q_2$ | $\overline{Q_2}Q_3$ | $\overline{Q_3}Q_4$ |
 
-Each of these eight gates is 1 in exactly one of the eight cycle states (the check script tries all 64 pairs). **Why it works:**
+Each of these eight gates is 1 in exactly one of the eight cycle states (the check script evaluates all eight gates on all eight cycle states). **Why it works:**
 the cycle states are "1s then 0s" or "0s then 1s", and the boundary position plus its direction identifies the state; two adjacent
 bits are enough to see both. **When it fails:** on the unused states: $Q_1\overline{Q_2}$ is also 1 in 1001, 1010 and 1011, so if the
 counter ever strays off its cycle, several gates fire at once. A binary counter needs an $n$-input gate per state instead.
@@ -674,8 +677,7 @@ counter has only just filled with 1s. For $n = 4$ the Johnson counter's unused s
 Two different slips cost marks on Johnson counters.
 
 1. **The size.** An $N$-flip-flop Johnson counter has **2N** states, so a mod-$2N$ counter needs $N$ flip-flops (and a mod-10 Johnson
-   counter needs 5, not 10). One set of notes boxes a Johnson counter with the ring counter's count; the ring counter is the one with $N$
-   states. The expected wrong answers are $N$ (ring), $2^N$ (binary) and $2^N - 1$ (LFSR).
+   counter needs 5, not 10). It is easy to give a Johnson counter the ring counter's count; the ring counter is the one with $N$ states. The expected wrong answers are $N$ (ring), $2^N$ (binary) and $2^N - 1$ (LFSR).
 2. **"How many states before returning?"** GATE 2025 asked for the number of distinct states a 4-bit Johnson counter "will go through
    before returning back to the initial state". The cycle has 8 states. If you count the initial state as one of those it goes through,
    the answer is **8**; if you count only the states after it, **7**. The official key accepts **7 to 8** for exactly this reason.
@@ -840,7 +842,7 @@ In 1010: $Q_1\overline{Q_2} = 1$ (decodes "1000"), $Q_3\overline{Q_4} = 1$ (deco
 It cycles through the 8 **unused** states forever and never reaches 0000; the decoding gates misfire, several at a time. A Johnson counter
 must be cleared at power-up, or given a correcting feedback: for 4 bits, $D_3 = Q_2(Q_1 + Q_3)$ in place of $D_3 = Q_2$ agrees with
 $Q_2$ on all eight cycle states and steers every stray state into the main cycle (the self-start check of
-[Lesson 5](lesson:synchronous-counter-design), run on all 16 states, confirms it).
+[Lesson 5](lesson:synchronous-counter-design), run on all 16 states, confirms it; the worst stray state needs 5 clocks).
 :::
 ::::
 
@@ -890,7 +892,7 @@ $Q_1^+ \oplus (\text{XOR of the other taps})$. So each state has exactly one pre
 maps to 0…0. Every non-zero state therefore lies on a cycle made only of non-zero states, and there are $2^n - 1$ of those. ∎
 
 **Check by simulation.** For 4 bits, the taps $\{Q_3, Q_4\}$ and $\{Q_1, Q_4\}$ give one cycle of 15 plus the fixed point 0000; $\{Q_2, Q_4\}$ gives
-cycles of 6, 6 and 3; all four taps give 5, 5, 5. The bound is always met or undercut, never exceeded.
+cycles of 6, 6 and 3; all four taps give 5, 5, 5 (each plus the fixed point 0000). The bound is always met or undercut, never exceeded.
 :::
 
 The animation runs the GATE 2001 circuit: three D flip-flops in a chain $Q_0 \to Q_1 \to Q_2$ with $D_0 = Q_1 \oplus Q_2$, which is the
@@ -909,8 +911,10 @@ met the same self-loop in the 1996 circuit.)
 
 :::definition{#lfsr-input term="An LFSR with a serial input" depth="standard"}
 If an external input $x$ is XORed into the feedback, $D_1 = x \oplus (\text{taps})$, the register no longer runs on its own: its state after
-a string of inputs depends on the string. This is exactly the circuit that computes a **CRC** (the remainder of the message divided by
-the feedback polynomial): after the whole message has been shifted in, the register holds the check bits. In GATE IT 2007 the register holds
+a string of inputs depends on the whole string. This is a close relative of the circuit that computes a **CRC**: a CRC divider uses the
+same parts, but puts the XORs **inside** the chain, at the generator polynomial's taps, and after the message has been shifted in that register
+holds the remainder (the check bits). The plain version here, with the input XORed into the feedback at the front, is the scrambler form: its
+register holds the last $n$ bits of the fed-back stream, not the remainder. In GATE IT 2007 the register holds
 0110, the single tap is the last stage, and each clock does $Q_1^+ = x \oplus Q_4$ and shifts right. The trace is the same slide as before,
 with one XOR computed from the old row first.
 :::
@@ -926,8 +930,8 @@ LFSR with $D_1 = Q_2 \oplus Q_3$, seeded with 101, emits exactly 1011100 at its 
 
 :::note{#recap-feedback title="Recap" depth="quick"}
 Feedback shift register: $D_1 = f(\text{state}, x)$, everything else shifts; compute $f$ from the old state. LFSR: $f$ is an XOR of taps;
-0…0 is a fixed point; at most $2^n - 1$ states per cycle, exactly that for maximal taps. Seed it non-zero. With a serial input XORed in it
-computes a CRC.
+0…0 is a fixed point; at most $2^n - 1$ states per cycle, exactly that for maximal taps. Seed it non-zero. With a serial input XORed in, its
+state depends on the whole input string (a CRC divider is the same idea with the XORs inside the chain).
 :::
 
 ### Worked examples: feedback registers
@@ -1038,12 +1042,21 @@ circuit visits all eight states, 0 → 1 → 2 → 5 → 3 → 7 → 6 → 4 →
 
 ## Try it: the register simulator
 
-The counter tab of the Counter & FSM Simulator runs the same register models as this lesson's checks. Choose **Ring counter**,
-**Johnson (twisted ring)** or **LFSR**, a width of 2 to 5 flip-flops and any initial state, then step the clock: the readout shows each state,
-and the full state graph of all $2^n$ states highlights the cycle the counter is on, so the unwanted cycles of a ring or Johnson counter are
-visible at a glance. For the LFSR, tick the taps (the cells XORed into the new leftmost bit) or press **Maximal-length taps**, and set the serial
-input to 0 or 1. Try a 4-bit Johnson counter from 0000 and then from 0100, and a 3-bit LFSR with maximal taps from 000; the GATE 2001 sequence
-appears with the bits written in the opposite order (the lab's leftmost cell is its most significant bit).
+The counter tab of the Counter & FSM Simulator runs the same register models as this lesson's checks. In the **Circuit** menu choose
+**Ring counter** (the tab opens on it), **Johnson (twisted ring)** or **LFSR**, then a width of 2 to 5 flip-flops and any initial state, and step
+the clock: the readout shows each state, and the full state graph of all $2^n$ states shows every cycle. For the ring and Johnson counters the
+**main cycle** is always the intended one, the cycle through the standard start (a single 1 for the ring, all 0s for Johnson), whatever initial
+state you pick; every other cycle is listed as a lock-out cycle, so the unwanted cycles are visible at a glance.
+
+Try a 4-bit Johnson counter from 0000, and then from 0100: the second run moves round the red lock-out cycle 0100 → 1010 → 1101 → …, exactly the
+edge case above, while the main cycle through 0000 stays highlighted and is never reached. Then try a 4-bit ring counter from 1100.
+
+The lab names the cells $Q_{n-1} \dots Q_0$ from the left, while this lesson numbers them $Q_1 \dots Q_n$ from the left, so translate the taps:
+for 4 bits this lesson's $Q_3, Q_4$ (the maximal taps) are the lab's **Q1, Q0**. For the LFSR, tick the taps (the cells XORed into the new leftmost
+bit) or press **Maximal-length taps**. The **Serial input** takes a bit string that is fed one bit per clock, first character first, so IT 2007 can be
+run as it is: 4 bits, initial state 0110, only the rightmost cell (the lab's Q0) as a tap, serial input 101101, six clocks, and the register ends at
+0110. A 3-bit LFSR with maximal taps from 000 shows the stuck state; from 100 it runs the GATE 2001 sequence with the bits written in the opposite
+order (the lab's leftmost cell is its most significant bit, whereas GATE 2001 reads $Q_2$, the far end of the chain, as the most significant bit).
 
 :::lab{#lab-registers lab="counter-fsm" tab="counter" depth="standard"}
 :::
@@ -1126,7 +1139,7 @@ graphs and wirings that need care.
 | Parallel load | $D_i = L\,I_i + \overline{L}\,Q_{i-1}$ (1991: $D_A = LA + \overline{L}S$, …, output $Q_C$) |
 | Universal | 4:1 MUX per stage: 00 hold, 01 right, 10 left, 11 load |
 | JK as D | $J = x$, $K = \overline{x}$ gives $Q^+ = x$ |
-| RAM register | counter-addressed RAM, read then write then increment: delay $2^k$ shifts (1991: 1024) |
+| RAM register | counter-addressed RAM, read then write then increment: delay $2^k$ shifts (1991: 1024; strictly the output flip-flop is one extra stage) |
 | State graph | self-loops only at 0…0 and 1…1 (2018: 2) |
 | Ring | $D_1 = Q_n$; $n$ states, one-hot; counter + decoder = $2^n$-bit ring (2014) |
 | Johnson | $D_1 = \overline{Q_n}$; $2n$ states (2015: 0, 8, 12, 14, 15, 7, 3, 1); other cycles; 2-input decode |

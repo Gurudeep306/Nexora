@@ -1296,7 +1296,7 @@
     {
      "id": "t4",
      "set": {
-      "text": "n = 4: 4, 7 and 8 clocks",
+      "text": "load 4 · first out 4 · last out 7 · empty 8",
       "tone": "accent"
      }
     },

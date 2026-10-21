@@ -44,7 +44,7 @@
      "next",
      "f",
      "P0",
-     "label",
+     "lbl P0",
      "P1"
     ],
     [
@@ -239,7 +239,7 @@
         "next",
         "f",
         "P0",
-        "label",
+        "lbl P0",
         "P1"
        ],
        [
@@ -401,7 +401,7 @@
         "next",
         "f",
         "P0",
-        "label",
+        "lbl P0",
         "P1"
        ],
        [
@@ -495,7 +495,7 @@
         "next",
         "f",
         "P0",
-        "label",
+        "lbl P0",
         "P1"
        ],
        [
@@ -589,7 +589,7 @@
         "next",
         "f",
         "P0",
-        "label",
+        "lbl P0",
         "P1"
        ],
        [
@@ -683,7 +683,7 @@
         "next",
         "f",
         "P0",
-        "label",
+        "lbl P0",
         "P1"
        ],
        [
@@ -777,7 +777,7 @@
         "next",
         "f",
         "P0",
-        "label",
+        "lbl P0",
         "P1"
        ],
        [
@@ -879,7 +879,7 @@
         "next",
         "f",
         "P0",
-        "label",
+        "lbl P0",
         "P1"
        ],
        [
@@ -1000,7 +1000,7 @@
    ]
   },
   {
-   "caption": "Round 2 relabels with P1's blocks: A and C get the same label, so do B and E, and D and H. Nothing splits.",
+   "caption": "Round 2 labels by P1's blocks (lbl P1). Labels are compared only inside a block: A, C agree, B, E agree, D, H agree.",
    "patches": [
     {
      "id": "tt",
@@ -1011,7 +1011,7 @@
         "next",
         "f",
         "P0",
-        "label",
+        "lbl P1",
         "P1"
        ],
        [
@@ -1148,7 +1148,7 @@
         "next",
         "f",
         "P0",
-        "label",
+        "lbl P1",
         "P1"
        ],
        [

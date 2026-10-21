@@ -564,7 +564,7 @@
    ]
   },
   {
-   "caption": "Copy the T2 column into a K-map: 1s at 00 and 11, on a diagonal. No two 1s are adjacent, so the map is the XNOR: T2 = (Q2 ⊕ Q1)′.",
+   "caption": "Copy the T2 column into a K-map: 1s at 00 and 11, exactly where Q2 = Q1, so T2 = (Q2 ⊕ Q1)′.",
    "patches": [
     {
      "id": "tt",
@@ -637,7 +637,7 @@
     {
      "id": "st",
      "set": {
-      "text": "diagonal 1s = XNOR",
+      "text": "1 where Q2 = Q1: XNOR",
       "tone": "accent"
      }
     }
@@ -667,6 +667,12 @@
         3
        ]
       ]
+     }
+    },
+    {
+     "id": "k2",
+     "set": {
+      "highlight": []
      }
     },
     {

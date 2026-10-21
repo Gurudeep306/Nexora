@@ -6,7 +6,7 @@ title: "State minimisation"
 order: 8
 prerequisites: [finite-state-machines]
 pyq_topics: [dl/sequential]
-est_minutes: 35
+est_minutes: 60
 difficulty: core
 status: draft
 needs_review: true
@@ -35,10 +35,10 @@ diagrams, and the procedure from a table to a circuit: assign codes, write the e
 input equations. Minimising the number of states comes **before** state assignment: fewer states means fewer
 codes to assign, often fewer flip-flops (an $n$-state machine needs $\lceil \log_2 n \rceil$ of them, as in
 [Lesson 4](lesson:ripple-counters)), and more unused codes that become don't-cares in the K-maps of
-[Lesson 5](lesson:synchronous-counter-design). The same mathematics, for automata that accept or reject strings,
-is the minimisation of DFAs and the Myhill–Nerode theorem; that general theory and its proofs belong to the
-Theory of Computation subject, and this lesson does not re-teach it. Here we prove exactly what GATE uses on a
-digital-logic table. The sentence to keep: **two states are equivalent when no input sequence can ever tell
+[Lesson 5](lesson:synchronous-counter-design). The same refinement algorithm minimises DFAs. The
+language-theoretic side (Myhill–Nerode, uniqueness of the minimal DFA, regular languages) belongs to the Theory of
+Computation subject and is not re-taught here. We prove the algorithm only for Mealy and Moore output machines, as
+GATE asks it on state tables. The sentence to keep: **two states are equivalent when no input sequence can ever tell
 them apart by the outputs, and a minimal machine keeps one state per class of equivalent states.**
 
 :::table{#radar title="GATE radar: state minimisation" depth="quick"}
@@ -96,7 +96,7 @@ For any completely specified machine:
 2. **Closure:** if $p \equiv q$ then for every input $x$ the outputs agree, $\lambda(p, x) = \lambda(q, x)$ (Mealy) or
    $\lambda(p) = \lambda(q)$ (Moore), and the next states are equivalent: $\delta(p, x) \equiv \delta(q, x)$.
 3. **Merging:** build $M'$ with one state $[p]$ per class, $\delta'([p], x) = [\delta(p, x)]$ and
-   $\lambda'([p], x) = \lambda(p, x)$. This is well defined (it does not depend on which member $p$ we pick), and
+   $\lambda'([p], x) = \lambda(p, x)$ (Moore: $\lambda'([p]) = \lambda(p)$). This is well defined (it does not depend on which member $p$ we pick), and
    $M'$ started in $[p]$ produces the same output sequence as $M$ started in $p$, for every string.
 :::
 
@@ -112,7 +112,8 @@ for every $w$, then $\lambda(p, w) = \lambda(r, w)$ for every $w$. A relation wi
 into disjoint classes.
 
 *Part 2.* Take the one-symbol string $w = x$: the outputs must agree. Now take any string $v$. The output sequence
-of $xv$ from $p$ is the output for $x$ followed by the output sequence of $v$ from $\delta(p, x)$, and the same for
+of $xv$ from $p$ is the outputs read before and during the first input ($\lambda(p, x)$ for Mealy, $\lambda(p)$ for
+Moore) followed by the output sequence of $v$ from $\delta(p, x)$, and the same for
 $q$. Since $\lambda(p, xv) = \lambda(q, xv)$ and the first parts agree, the remaining parts agree:
 $\lambda(\delta(p, x), v) = \lambda(\delta(q, x), v)$ for every $v$, which is $\delta(p, x) \equiv \delta(q, x)$.
 
@@ -519,8 +520,7 @@ nothing.
 :::
 
 :::answer
-Only **$B$–$C$** survives, so $B \equiv C$ and the machine has **3** states, the same result as partition refinement (and
-the same reduction as the classic textbook example of this table). A cell that implies only itself is never crossed:
+Only **$B$–$C$** survives, so $B \equiv C$ and the machine has **3** states, the same result as partition refinement. A cell that implies only itself is never crossed:
 nothing outside the pair can ever separate it.
 :::
 ::::
@@ -618,8 +618,9 @@ with its row, before minimising, without changing the behaviour from $s_0$. Mini
 only. The minimal machine for a start state is: drop the unreachable states, then merge equivalent states.
 :::
 
-Order matters only in one direction. Merging first and dropping later gives the same result **only if** you remember to drop
-afterwards; forgetting the drop leaves an unreachable state that may sit alone in its block and inflate the count. The
+The order does not matter, as long as the drop happens. Merging first and then deleting the classes that are unreachable from the
+start gives the same machine. What goes wrong is skipping the drop altogether: an unreachable state that matches no reachable one keeps
+a block of its own and inflates the count. The
 Live Lab's Minimise button drops unreachable states first and says which ones it dropped.
 
 :::trap{#trap-unreachable title="Minimising the whole table when part of it is unreachable" depth="standard"}
