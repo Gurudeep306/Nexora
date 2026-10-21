@@ -560,7 +560,7 @@ Let the input clock have period $T$ and frequency $f = 1/T$, and let stage 0 rea
 2. Stage $i$ is clocked by stage $i - 1$, which has exactly one active edge (one fall, or one rise) per cycle of its own
    output. So stage $i$ toggles once per period of stage $i - 1$ and, by the same argument, has twice its period.
 3. By induction, stage $i$ (counting from 0) has period $2^{i+1}\,T$ and frequency
-   $$f_i = \frac{f}{2^{\,i+1}}, \qquad\text{and the last stage of an } n\text{-bit counter runs at } \frac{f}{2^n}.$$
+   $$f_i = \frac{f}{2^{\,i+1}}, \qquad f_{n-1} = \frac{f}{2^n}.$$
 
 **Sanity check.** A 3-bit counter: $f/2$, $f/4$, $f/8$. In the counting table of the easy example, $Q_0$ repeats every
 2 pulses, $Q_1$ every 4, $Q_2$ every 8. The same holds for a down counter (each stage still toggles once per cycle of its
