@@ -521,6 +521,31 @@ export const NexusWeb = forwardRef<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [web, paths, reduce])
 
+  // Dev builds only: where concepts and subject labels are on screen, so the
+  // browser checks can hover and click real targets.
+  useEffect(() => {
+    if (!import.meta.env.DEV) return
+    const w = window as unknown as Record<string, unknown>
+    w.__nexusWeb = {
+      concept: (key: string) => {
+        const cn = web.concepts.get(key)
+        const canvas = canvasRef.current
+        if (!cn || !canvas) return null
+        const r = canvas.getBoundingClientRect()
+        const c = cam.current
+        return { x: r.left + (web.xy[2 * cn.pt] - c.x) * c.k + view.current.w / 2, y: r.top + (web.xy[2 * cn.pt + 1] - c.y) * c.k + view.current.h / 2 }
+      },
+      label: (id: string) => {
+        const l = labelHits.current.find((x) => x.id === id)
+        const r = canvasRef.current?.getBoundingClientRect()
+        return l && r ? { x: r.left + l.x + l.w / 2, y: r.top + l.y + 6 } : null
+      },
+    }
+    return () => {
+      delete w.__nexusWeb
+    }
+  }, [web])
+
   /* ── pointer, wheel and keyboard ── */
   useEffect(() => {
     const canvas = canvasRef.current!
@@ -623,7 +648,8 @@ export const NexusWeb = forwardRef<
         return
       }
       if (e.pointerType === 'mouse') {
-        const key = hitConcept(p.x, p.y)
+        const onLabel = labelHits.current.some((l) => p.x >= l.x && p.x <= l.x + l.w && p.y >= l.y && p.y <= l.y + l.h)
+        const key = onLabel ? null : hitConcept(p.x, p.y)
         if (key !== hovered.current) {
           hovered.current = key
           dirty.current = true
@@ -639,8 +665,11 @@ export const NexusWeb = forwardRef<
       if (pts.size === 0) {
         if (tap) {
           const p = local(e)
-          const key = hitConcept(p.x, p.y)
-          if (key) cbs.current.onSelect(selectedRef.current === key ? null : key)
+          // Subject names sit on top of the web, so they win.
+          const label = labelHits.current.find((l) => p.x >= l.x && p.x <= l.x + l.w && p.y >= l.y && p.y <= l.y + l.h)
+          const key = label ? null : hitConcept(p.x, p.y)
+          if (label) openSubject(label.id)
+          else if (key) cbs.current.onSelect(selectedRef.current === key ? null : key)
           else {
             const id = hitRegion(p.x, p.y)
             if (id) openSubject(id)
