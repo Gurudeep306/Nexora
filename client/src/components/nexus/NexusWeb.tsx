@@ -45,6 +45,9 @@ const T0 = 0.35
 const MAX_K = 3
 const DPR_CAP = 2
 const LABEL_K = 1.15 // concept names from this zoom (collision-culled)
+const HOME_K = 0.62 // the teaser's density: ~47 px between lattice points
+const HOME_K_PHONE = 0.5
+const CONCEPT_K = 0.95 // concepts get their full ring from this zoom
 const { C1, C2, C3 } = BRAND
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v))
@@ -99,7 +102,7 @@ export const NexusWeb = forwardRef<
 
   const ox = web.xy[2 * web.origin]
   const oy = web.xy[2 * web.origin + 1]
-  const cam = useRef<Camera>(initialCamera ?? { x: ox, y: oy, k: 1 })
+  const cam = useRef<Camera>(initialCamera ?? { x: ox, y: oy, k: HOME_K })
   const view = useRef({ w: 1, h: 1, dpr: 1 })
   const hovered = useRef<string | null>(null)
   const selectedRef = useRef(selected)
@@ -159,6 +162,7 @@ export const NexusWeb = forwardRef<
     const off = document.createElement('canvas')
     const octx = off.getContext('2d')!
     let offCam: Camera | null = null
+    let labelsFrom = 0 // subject names fade in once the web has drawn itself
     let raf = 0
     const font = getComputedStyle(wrap).fontFamily || 'system-ui, sans-serif'
     if (born.current === null) born.current = reduce || initialCamera ? -1 : performance.now()
@@ -171,7 +175,7 @@ export const NexusWeb = forwardRef<
       canvas.height = Math.round(r.height * dpr)
       off.width = canvas.width
       off.height = canvas.height
-      if (!initialCamera && cam.current.k === 1 && r.width < 640) cam.current = { ...cam.current, k: 0.8 }
+      if (!initialCamera && cam.current.k === HOME_K && r.width < 640) cam.current = { ...cam.current, k: HOME_K_PHONE }
       offCam = null
       dirtyStatic.current = true
       dirty.current = true
@@ -207,9 +211,9 @@ export const NexusWeb = forwardRef<
       if (growT === null) {
         // The whole tree as crisp hairlines, then the bright mastered branches.
         g.setTransform(dpr * c.k, 0, 0, dpr * c.k, dpr * (w / 2 - c.x * c.k), dpr * (h / 2 - c.y * c.k))
-        g.lineWidth = 1 / c.k
+        g.lineWidth = 1.1 / c.k
         for (let b = 0; b < BUCKETS; b++) {
-          g.strokeStyle = rgba(paths.colors[b], c.k < 0.3 ? 0.22 : 0.26)
+          g.strokeStyle = rgba(paths.colors[b], c.k < 0.3 ? 0.26 : 0.36)
           g.stroke(paths.tree[b])
         }
         g.lineWidth = 1.6 / c.k
@@ -265,7 +269,23 @@ export const NexusWeb = forwardRef<
           g.fillRect(X - 1.4, Y - 1.4, 2.8, 2.8)
           continue
         }
-        const rr = clamp(5.5 * Math.sqrt(c.k), 3.5, 7.5)
+        const rr = clamp(5.5 * Math.sqrt(c.k), 3.2, 7.5)
+        if (c.k < CONCEPT_K) {
+          // At the web's density a concept is a slightly larger dot with a
+          // crisp progress ring, no disc.
+          g.fillStyle = rgba(cn.node.s === 2 ? WHITE : st.dot, st.a)
+          g.beginPath()
+          g.arc(X, Y, cn.node.s === 2 ? 2.3 : 1.9, 0, Math.PI * 2)
+          g.fill()
+          const pct = cn.node.s === 2 ? 100 : cn.node.p
+          g.lineWidth = 1
+          g.strokeStyle = rgba(st.dot, pct > 0 ? 0.95 : st.ring * 0.6)
+          g.beginPath()
+          if (pct > 0) g.arc(X, Y, 4.6, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * pct) / 100)
+          else g.arc(X, Y, 4.6, 0, Math.PI * 2)
+          g.stroke()
+          continue
+        }
         g.fillStyle = rgba(BG, 0.92)
         g.beginPath()
         g.arc(X, Y, rr + 1, 0, Math.PI * 2)
@@ -333,7 +353,8 @@ export const NexusWeb = forwardRef<
           dirtyStatic.current = true
         }
       }
-      const live = !reduce && (hovered.current || selectedRef.current)
+      if (!growing && labelsFrom === 0) labelsFrom = now
+      const live = (!reduce && (hovered.current || selectedRef.current)) || (labelsFrom > 0 && now - labelsFrom < 950)
       const moving = !!fly.current || now - settled.current < 110
       const needStatic = !growing && (dirtyStatic.current || !offCam) && !moving
       if (!growing && !dirty.current && !needStatic && !live && !moving) return
@@ -450,19 +471,25 @@ export const NexusWeb = forwardRef<
       const fc = focus?.cluster.id
       const regions = [...web.regions].sort((a, b) => b.cluster.nodes.length - a.cluster.nodes.length)
       for (const rg of regions) {
-        const X = sx(c, rg.x)
-        const Y = sy(c, rg.y)
-        if (X < -200 || X > w + 200 || Y < -40 || Y > h + 40) continue
         const small = c.k < 0.22
         const name = (small ? rg.cluster.short : rg.cluster.name).toUpperCase()
         const size = small ? 9 : 10
         const spacing = small ? 2 : 3.2
         ctx.font = `600 ${size}px ${font}`
         const tw = ctx.measureText(name).width + spacing * (name.length - 1)
+        const X0 = sx(c, rg.x)
+        const Y0 = sy(c, rg.y)
+        // Only regions on screen get a name; it is nudged inside the frame
+        // (never cut), at most a little way from its region.
+        if (X0 < -tw / 3 || X0 > w + tw / 3 || Y0 < -20 || Y0 > h + 20) continue
+        const X = clamp(X0, tw / 2 + 12, w - tw / 2 - 12)
+        const Y = clamp(Y0, 12, h - size - 24)
         const box = [X - tw / 2 - 6, Y - 4, X + tw / 2 + 6, Y + size + 17]
         if (overlaps(taken, box)) continue
         taken.push(box)
-        const a = fc ? (fc === rg.cluster.id ? 0.95 : 0.3) : 0.8
+        const fade = growing ? 0 : clamp((now - labelsFrom) / 900)
+        if (fade <= 0) continue
+        const a = (fc ? (fc === rg.cluster.id ? 0.95 : 0.3) : 0.8) * fade
         ctx.textBaseline = 'top'
         ctx.fillStyle = 'rgba(9,11,24,0.55)'
         ctx.fillRect(X - tw / 2 - 4, Y - 3, tw + 8, size + 6)
@@ -710,7 +737,7 @@ export const NexusWeb = forwardRef<
         return
       } else if (e.key === 'Escape' || e.key === '0') {
         cbs.current.onSelect(null)
-        startFly({ x: web.xy[2 * web.origin], y: web.xy[2 * web.origin + 1], k: 1 })
+        startFly({ x: web.xy[2 * web.origin], y: web.xy[2 * web.origin + 1], k: view.current.w < 640 ? HOME_K_PHONE : HOME_K })
         e.preventDefault()
         return
       } else return
@@ -737,7 +764,7 @@ export const NexusWeb = forwardRef<
   }, [web])
 
   return (
-    <div ref={wrapRef} className="card nx-lat p-0">
+    <div ref={wrapRef} className="nx-lat">
       <canvas
         ref={canvasRef}
         tabIndex={0}

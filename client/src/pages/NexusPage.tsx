@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { RefreshCw } from 'lucide-react'
 import {
-  Badge,
   Button,
   Card,
   CardContent,
-  EmptyState,
   ErrorState,
   LoadingBlock,
   PageHeader,
@@ -332,21 +331,26 @@ export default function NexusPage() {
         </CardContent>
       </Card>
 
-      <Tabs
-        variant="pills"
-        className="mb-4"
-        items={[
-          { id: 'map', label: '/web', icon: <Icon name="nexus" className="size-3.5" aria-hidden="true" /> },
-          {
-            id: 'ranks',
-            label: '/ranks',
-            icon: <Icon name="trophy" className="size-3.5" aria-hidden="true" />,
-            badge: statsApi.data ? statsApi.data.allTitles.length : undefined,
-          },
-        ]}
-        active={tab}
-        onChange={(id) => setTab(id as 'map' | 'ranks')}
-      />
+      {tab === 'ranks' || subject ? (
+        <Tabs
+          variant="pills"
+          className="mb-4"
+          items={[
+            { id: 'map', label: '/web', icon: <Icon name="nexus" className="size-3.5" aria-hidden="true" /> },
+            {
+              id: 'ranks',
+              label: '/ranks',
+              icon: <Icon name="trophy" className="size-3.5" aria-hidden="true" />,
+              badge: statsApi.data ? statsApi.data.allTitles.length : undefined,
+            },
+          ]}
+          active={subject && tab === 'map' ? 'map' : tab}
+          onChange={(id) => {
+            setTab(id as 'map' | 'ranks')
+            if (id === 'map' && subject) backToWeb()
+          }}
+        />
+      ) : null}
 
       {tab === 'ranks' ? (
         <div className="space-y-4">
@@ -369,7 +373,8 @@ export default function NexusPage() {
           onData={setPathData}
         />
       ) : (
-        <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
+        /* The web: full-bleed, edge to edge; everything else floats on it. */
+        <section className="nx-bleed" aria-label="The Nexus web">
           <NexusWeb
             ref={webRef}
             clusters={web.clusters}
@@ -379,10 +384,33 @@ export default function NexusPage() {
             initialCamera={lastWebCamera}
             ranks={ranks}
           />
-          <div>
-            {selectedNode && webSel ? (
+          <div className="nx-over nx-over-tabs" role="tablist" aria-label="Nexus views">
+            <button type="button" role="tab" aria-selected data-on="">
+              /web
+            </button>
+            <button type="button" role="tab" aria-selected={false} onClick={() => setTab('ranks')}>
+              /ranks
+            </button>
+          </div>
+          <p className="nx-over nx-hint mb-0">
+            Drag to pan, scroll or pinch to zoom, Esc to return to you. Hover a concept to light its path from you; click a subject&apos;s name to open its path.
+            <br />
+            <i style={{ background: '#fff' }} />
+            mastered
+            <i style={{ background: '#9b6bff' }} />
+            open
+            <i style={{ background: 'rgb(150 160 255 / 0.4)' }} />
+            locked
+          </p>
+          {selectedNode && webSel && (
+            <motion.div
+              key={node!}
+              className="nx-over nx-slide"
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+            >
               <NodePanel
-                key={node!}
                 node={selectedNode}
                 nodes={clusterNodes}
                 zoneColor={selZone?.color ?? 'var(--color-primary)'}
@@ -402,36 +430,9 @@ export default function NexusPage() {
                 }}
                 onOpenPath={() => openSubject(webSel.c.id, webRef.current?.camera(), webSel.n.id)}
               />
-            ) : (
-              <Card className="sticky top-4">
-                <CardContent>
-                  <EmptyState
-                    icon="nexus"
-                    title="The web around you"
-                    description="Every subject lives in this web. Hover a concept to light its path from you; click it to inspect it, or click a subject's name to open its path."
-                    className="py-8"
-                  />
-                  <div className="mt-2 space-y-2 border-t border-border pt-3">
-                    <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
-                      <Icon name="sparkles" className="size-3" aria-hidden="true" /> Legend
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      <Badge variant="success">mastered</Badge>
-                      <Badge variant="primary">unlocked</Badge>
-                      <Badge variant="default">
-                        <Icon name="lock" className="size-3" aria-hidden="true" /> locked
-                      </Badge>
-                    </div>
-                    <p className="text-[11px] text-foreground-faint">
-                      Drag to pan, scroll or pinch to zoom, Esc to return to you. Bright branches lead to what you have mastered. On hover, the path from you
-                      lights teal and what a concept unlocks lights violet. Concepts sit further out the more they build on.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </div>
+            </motion.div>
+          )}
+        </section>
       )}
     </div>
   )
