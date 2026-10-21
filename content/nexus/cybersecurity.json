@@ -253,6 +253,7 @@
       "icon": "flag",
       "desc": "Solve a set of capture-the-flag challenges across web, crypto and binary categories.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "pentesting",
         "xss-csrf",
@@ -267,6 +268,7 @@
       "icon": "wrench",
       "desc": "Attack a deliberately vulnerable app in a lab, then patch every finding.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "pentesting",
         "secure-sdlc"

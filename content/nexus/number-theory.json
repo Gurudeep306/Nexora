@@ -213,6 +213,7 @@
       "icon": "wrench",
       "desc": "Write a tested number theory library: gcd, inverses, CRT, sieves and primality.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "sieves",
         "crt",
@@ -313,6 +314,7 @@
       "icon": "trophy",
       "desc": "Implement textbook RSA and Diffie-Hellman and attack weak parameter choices.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "rsa-maths",
         "diffie-hellman"

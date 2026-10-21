@@ -26,6 +26,8 @@ export interface NexusNode {
   subject?: string
   /** concept | lesson | project (subjects only). */
   kind?: string
+  /** Not needed for a subject's Master rank (projects by default). */
+  optional?: boolean
   /** Row inside the zone tier (subjects lay out in several rows). */
   row?: number
   metric?: NodeMetric
@@ -120,6 +122,10 @@ export interface WebNode {
   k?: string
   /** icon (semantic name or legacy DSA string) */
   i?: string
+  /** GATE notes lessons it teaches (its course) */
+  ls?: string[]
+  /** 1: optional (projects by default) — not needed for Master */
+  o?: number
   xp: number
   /** count label ("3/10 PYQs", "4/8") */
   c: string
@@ -150,6 +156,11 @@ export interface SubjectRank {
   title: string
   progress: number
   next: string | null
+  /** the next tier, its threshold and about how many concepts away */
+  toNext?: { tier: string; at: number; concepts: number | null } | null
+  /** every core node mastered (Master, optional nodes skipped) */
+  coreDone?: boolean
+  coreLeft?: number | null
 }
 
 export interface WebStream {
@@ -166,6 +177,8 @@ export interface WebCluster {
   domain: string
   /** the stream it belongs to on the radial overview */
   stream: string
+  gate?: { pyq: string | null; notes: string | null }
+  description?: string
   order: number
   engine: string | null
   zones: WebZone[]
@@ -213,8 +226,11 @@ export interface NexusWebStructure {
     stream?: string
     order: number
     engine: string | null
+    /** the GATE subject behind it (PYQ bank id, notes id) */
+    gate?: { pyq: string | null; notes: string | null }
+    description?: string
     zones: { level: number; name: string; color: string }[]
-    nodes: { id: string; n: string; z: number; req: string[]; cx?: string[]; k?: string; i?: string; xp: number }[]
+    nodes: { id: string; n: string; z: number; req: string[]; cx?: string[]; k?: string; i?: string; ls?: string[]; o?: number; xp: number }[]
   }[]
 }
 
@@ -268,6 +284,9 @@ export interface RiftPlayer {
   xp: number
   name: string
   badge: string
+  /** web rank only: XP and about how many concepts to the next level */
+  xpToNext?: number
+  conceptsToNext?: number
   color: string
   glow: string
   xpInLevel: number

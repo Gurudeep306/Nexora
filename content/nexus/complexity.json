@@ -128,6 +128,7 @@
       "icon": "edit",
       "desc": "Write and check a set of polynomial-time reductions between classic NP-complete problems.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "np-complete-problems",
         "cook-levin"
@@ -239,6 +240,7 @@
       "icon": "rocket",
       "desc": "Implement a DPLL solver with unit propagation and use it on encoded puzzles.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "np-complete-problems"
       ],

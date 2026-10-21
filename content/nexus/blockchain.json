@@ -198,6 +198,7 @@
       "icon": "coins",
       "desc": "Write, test and deploy your own token contract to a test network.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "tokens",
         "contract-security"
@@ -261,6 +262,7 @@
       "icon": "rocket",
       "desc": "Build a full dApp: contract, tests and a web frontend on a test network.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "dapps",
         "contract-security"

@@ -263,6 +263,7 @@
       "icon": "upload",
       "desc": "Host a static website on object storage behind a CDN with a custom domain.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "object-storage",
         "cloud-load-balancing"
@@ -276,6 +277,7 @@
       "icon": "building",
       "desc": "Deploy a web app, API and database with infrastructure as code, autoscaling and alarms.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "infra-as-code",
         "managed-databases",

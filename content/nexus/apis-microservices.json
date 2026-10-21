@@ -261,6 +261,7 @@
       "icon": "rocket",
       "desc": "Build and document a versioned, authenticated public REST API.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "openapi",
         "api-auth",
@@ -275,6 +276,7 @@
       "icon": "building",
       "desc": "Build a small shop as several containerised services with messaging and tracing.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "resilience",
         "data-ownership",
