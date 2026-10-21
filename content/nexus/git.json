@@ -1,0 +1,248 @@
+{
+  "id": "git",
+  "name": "Git",
+  "short": "GIT",
+  "group": "beyond",
+  "domain": "tools",
+  "order": 30,
+  "icon": "git-branch",
+  "color": "#f05032",
+  "description": "Version control with Git: commits, branches, merging and rebasing, collaboration on GitHub-style platforms, and Git internals.",
+  "rankTitle": "Branch Keeper",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Git basics"
+    },
+    {
+      "level": 2,
+      "name": "Branching"
+    },
+    {
+      "level": 3,
+      "name": "Collaboration"
+    },
+    {
+      "level": 4,
+      "name": "Advanced Git"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "version-control",
+      "zone": 1,
+      "name": "Why version control",
+      "icon": "clock",
+      "desc": "What version control solves, snapshots, and centralised vs distributed systems.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 40
+    },
+    {
+      "id": "git-basics",
+      "zone": 1,
+      "name": "Git basics",
+      "icon": "git-branch",
+      "desc": "init, add, commit, status and the working tree, index and repository.",
+      "kind": "concept",
+      "requires": [
+        "version-control",
+        "linux-shell:shell-basics"
+      ],
+      "xpReward": 40,
+      "resources": [
+        {
+          "title": "Pro Git book",
+          "url": "https://git-scm.com/book/en/v2"
+        }
+      ]
+    },
+    {
+      "id": "git-history",
+      "zone": 1,
+      "name": "History & undo",
+      "icon": "clock",
+      "desc": "log, diff, show, restore, reset and revert.",
+      "kind": "concept",
+      "requires": [
+        "git-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "gitignore",
+      "zone": 1,
+      "name": "Ignoring & config",
+      "icon": "settings",
+      "desc": ".gitignore, git config and aliases.",
+      "kind": "lesson",
+      "requires": [
+        "git-basics"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "branches",
+      "zone": 2,
+      "name": "Branches",
+      "icon": "git-branch",
+      "desc": "Creating and switching branches and what a branch really is.",
+      "kind": "concept",
+      "requires": [
+        "git-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "merging",
+      "zone": 2,
+      "name": "Merging",
+      "icon": "route",
+      "desc": "Fast-forward and three-way merges.",
+      "kind": "concept",
+      "requires": [
+        "branches"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "merge-conflicts",
+      "zone": 2,
+      "name": "Merge conflicts",
+      "icon": "warning",
+      "desc": "Reading and resolving conflicts and using merge tools.",
+      "kind": "concept",
+      "requires": [
+        "merging"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "rebasing",
+      "zone": 2,
+      "name": "Rebasing",
+      "icon": "sort",
+      "desc": "Rebase, interactive rebase and when not to rewrite history.",
+      "kind": "concept",
+      "requires": [
+        "merging",
+        "git-history"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "remotes",
+      "zone": 3,
+      "name": "Remotes",
+      "icon": "globe",
+      "desc": "clone, fetch, pull, push and tracking branches.",
+      "kind": "concept",
+      "requires": [
+        "branches"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "pull-requests",
+      "zone": 3,
+      "name": "Pull requests",
+      "icon": "users",
+      "desc": "Forks, pull requests, code review and keeping a branch up to date.",
+      "kind": "concept",
+      "requires": [
+        "remotes",
+        "merge-conflicts"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "branching-workflows",
+      "zone": 3,
+      "name": "Branching workflows",
+      "icon": "map",
+      "desc": "Trunk-based development, feature branches and release branches.",
+      "kind": "concept",
+      "requires": [
+        "pull-requests",
+        "rebasing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "first-pr",
+      "zone": 3,
+      "name": "Open-source PR project",
+      "icon": "heart",
+      "desc": "Find an open-source project, fork it and land a real pull request.",
+      "kind": "project",
+      "requires": [
+        "pull-requests",
+        "branching-workflows"
+      ],
+      "xpReward": 230
+    },
+    {
+      "id": "git-internals",
+      "zone": 4,
+      "name": "Objects & refs",
+      "icon": "database",
+      "desc": "Blobs, trees, commits and refs: the commit graph as a content-addressed DAG.",
+      "kind": "concept",
+      "requires": [
+        "branches",
+        "cryptography:crypto-hashing",
+        "graph-theory:graph-basics"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "reflog-bisect",
+      "zone": 4,
+      "name": "Bisect & reflog",
+      "icon": "search",
+      "desc": "Recovering lost work with reflog and finding regressions with bisect.",
+      "kind": "concept",
+      "requires": [
+        "git-history",
+        "git-internals"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "stash-cherry",
+      "zone": 4,
+      "name": "Stash & cherry-pick",
+      "icon": "copy",
+      "desc": "Stashing work in progress, cherry-picking and worktrees.",
+      "kind": "lesson",
+      "requires": [
+        "rebasing"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "git-hooks",
+      "zone": 4,
+      "name": "Hooks",
+      "icon": "bolt",
+      "desc": "Client-side hooks for linting and tests before commit.",
+      "kind": "lesson",
+      "requires": [
+        "git-basics"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "monorepos",
+      "zone": 4,
+      "name": "Submodules & monorepos",
+      "icon": "layers",
+      "desc": "Submodules, subtrees and large repositories.",
+      "kind": "lesson",
+      "requires": [
+        "remotes"
+      ],
+      "xpReward": 110
+    }
+  ]
+}

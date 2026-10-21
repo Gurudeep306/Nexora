@@ -1,0 +1,274 @@
+{
+  "id": "sql",
+  "name": "SQL",
+  "short": "SQL",
+  "group": "beyond",
+  "domain": "languages",
+  "order": 27,
+  "icon": "database",
+  "color": "#336791",
+  "description": "Writing SQL for real: queries, joins, aggregation, schema design, window functions, transactions and indexes.",
+  "rankTitle": "Join Master",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Querying"
+    },
+    {
+      "level": 2,
+      "name": "Combining data"
+    },
+    {
+      "level": 3,
+      "name": "Modifying & designing"
+    },
+    {
+      "level": 4,
+      "name": "Advanced SQL"
+    },
+    {
+      "level": 5,
+      "name": "Performance & projects"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "tables-keys",
+      "zone": 1,
+      "name": "Tables & keys",
+      "icon": "grid",
+      "desc": "Tables, rows, columns, primary and foreign keys and NULL.",
+      "kind": "concept",
+      "requires": [
+        "dbms:relational-model"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "select-queries",
+      "zone": 1,
+      "name": "SELECT queries",
+      "icon": "search",
+      "desc": "SELECT, FROM, WHERE, ORDER BY, LIMIT and expressions.",
+      "kind": "concept",
+      "requires": [
+        "tables-keys"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "filtering",
+      "zone": 1,
+      "name": "Filtering & NULLs",
+      "icon": "filter",
+      "desc": "LIKE, IN, BETWEEN, CASE expressions and three-valued logic with NULL.",
+      "kind": "concept",
+      "requires": [
+        "select-queries"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "aggregation",
+      "zone": 2,
+      "name": "Aggregation",
+      "icon": "chart",
+      "desc": "COUNT, SUM, AVG, GROUP BY and HAVING.",
+      "kind": "concept",
+      "requires": [
+        "filtering"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "joins",
+      "zone": 2,
+      "name": "Joins",
+      "icon": "link",
+      "desc": "Inner, left, right, full and self joins and how they combine rows.",
+      "kind": "concept",
+      "requires": [
+        "select-queries",
+        "dbms:relational-algebra"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "subqueries",
+      "zone": 2,
+      "name": "Subqueries",
+      "icon": "layers",
+      "desc": "Scalar, IN and EXISTS subqueries and correlated subqueries.",
+      "kind": "concept",
+      "requires": [
+        "joins",
+        "aggregation"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "set-operations",
+      "zone": 2,
+      "name": "Set operations",
+      "icon": "shapes",
+      "desc": "UNION, INTERSECT and EXCEPT.",
+      "kind": "concept",
+      "requires": [
+        "select-queries"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "dml",
+      "zone": 3,
+      "name": "Insert, update, delete",
+      "icon": "edit",
+      "desc": "Changing data safely with INSERT, UPDATE, DELETE and upserts.",
+      "kind": "concept",
+      "requires": [
+        "select-queries"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "ddl-constraints",
+      "zone": 3,
+      "name": "DDL & constraints",
+      "icon": "lock",
+      "desc": "CREATE and ALTER TABLE, data types, NOT NULL, UNIQUE, CHECK and foreign keys.",
+      "kind": "concept",
+      "requires": [
+        "tables-keys"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "views",
+      "zone": 3,
+      "name": "Views",
+      "icon": "eye",
+      "desc": "Views and materialised views for reuse and access control.",
+      "kind": "concept",
+      "requires": [
+        "subqueries"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "schema-design",
+      "zone": 3,
+      "name": "Schema design",
+      "icon": "building",
+      "desc": "Turning requirements into normalised tables and knowing when to denormalise.",
+      "kind": "concept",
+      "requires": [
+        "ddl-constraints",
+        "dbms:normalization"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "window-functions",
+      "zone": 4,
+      "name": "Window functions",
+      "icon": "sliders",
+      "desc": "OVER, PARTITION BY, ROW_NUMBER, RANK, LAG and running totals.",
+      "kind": "concept",
+      "requires": [
+        "aggregation"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "ctes",
+      "zone": 4,
+      "name": "CTEs & recursion",
+      "icon": "route",
+      "desc": "WITH clauses and recursive queries over hierarchies.",
+      "kind": "concept",
+      "requires": [
+        "subqueries"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "sql-transactions",
+      "zone": 4,
+      "name": "Transactions",
+      "icon": "shield",
+      "desc": "BEGIN, COMMIT, ROLLBACK and isolation levels in practice.",
+      "kind": "concept",
+      "requires": [
+        "dml",
+        "dbms:transactions"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "procedures-triggers",
+      "zone": 4,
+      "name": "Procedures & triggers",
+      "icon": "bolt",
+      "desc": "Stored procedures, functions and triggers.",
+      "kind": "lesson",
+      "requires": [
+        "dml"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "indexes",
+      "zone": 5,
+      "name": "Indexes",
+      "icon": "bookmark",
+      "desc": "How indexes work, composite indexes and when an index helps.",
+      "kind": "concept",
+      "requires": [
+        "schema-design",
+        "dbms:bplus-trees"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "query-plans",
+      "zone": 5,
+      "name": "EXPLAIN & tuning",
+      "icon": "timer",
+      "desc": "Reading query plans and rewriting slow queries.",
+      "kind": "concept",
+      "requires": [
+        "indexes",
+        "joins"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "library-db",
+      "zone": 5,
+      "name": "Library DB project",
+      "icon": "book",
+      "desc": "Design and build a library database with constraints, sample data and reporting queries.",
+      "kind": "project",
+      "requires": [
+        "schema-design",
+        "sql-transactions",
+        "indexes"
+      ],
+      "xpReward": 300
+    },
+    {
+      "id": "analytics-queries",
+      "zone": 5,
+      "name": "Analytics project",
+      "icon": "analytics",
+      "desc": "Answer business questions over a sales dataset with window functions and CTEs.",
+      "kind": "project",
+      "requires": [
+        "window-functions",
+        "ctes",
+        "query-plans"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

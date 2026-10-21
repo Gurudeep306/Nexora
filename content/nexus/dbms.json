@@ -3,10 +3,12 @@
   "name": "Databases",
   "short": "DBMS",
   "group": "gate",
+  "domain": "core-cs",
   "order": 5,
   "icon": "database",
   "color": "#22c55e",
   "description": "ER modelling, the relational model, relational algebra and SQL, normalisation, transactions and indexing.",
+  "rankTitle": "Query Sage",
   "gate": {
     "pyqSubject": "db",
     "notesSubject": null

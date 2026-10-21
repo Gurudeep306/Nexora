@@ -3,10 +3,12 @@
   "name": "Computer Networks",
   "short": "CN",
   "group": "gate",
+  "domain": "core-cs",
   "order": 6,
   "icon": "globe",
   "color": "#84cc16",
   "description": "Layering, the data link layer, IP addressing and routing, TCP and UDP, application protocols and network security.",
+  "rankTitle": "Packet Navigator",
   "gate": {
     "pyqSubject": "cn",
     "notesSubject": null

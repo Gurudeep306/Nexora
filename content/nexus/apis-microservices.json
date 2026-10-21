@@ -1,0 +1,286 @@
+{
+  "id": "apis-microservices",
+  "name": "APIs & Microservices",
+  "short": "API",
+  "group": "beyond",
+  "domain": "software-engineering",
+  "order": 42,
+  "icon": "link",
+  "color": "#14b8a6",
+  "description": "Designing HTTP APIs, REST, GraphQL and gRPC, and building, connecting and operating microservices.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "API basics"
+    },
+    {
+      "level": 2,
+      "name": "REST design"
+    },
+    {
+      "level": 3,
+      "name": "Beyond REST"
+    },
+    {
+      "level": 4,
+      "name": "Microservices"
+    },
+    {
+      "level": 5,
+      "name": "Operating services"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "http-for-apis",
+      "zone": 1,
+      "name": "HTTP for APIs",
+      "icon": "globe",
+      "desc": "Methods, status codes, headers, caching and idempotency from an API designer's view.",
+      "kind": "concept",
+      "requires": [
+        "web:http-basics",
+        "cn:application-layer"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "api-styles",
+      "zone": 1,
+      "name": "API styles",
+      "icon": "compass",
+      "desc": "REST, RPC, GraphQL and event-based APIs compared.",
+      "kind": "concept",
+      "requires": [
+        "http-for-apis"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "data-formats",
+      "zone": 1,
+      "name": "Data formats",
+      "icon": "code",
+      "desc": "JSON, schemas, Protocol Buffers and serialisation trade-offs.",
+      "kind": "concept",
+      "requires": [
+        "http-for-apis"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "rest-design",
+      "zone": 2,
+      "name": "REST design",
+      "icon": "route",
+      "desc": "Resources, URIs, verbs, status codes and consistent error responses.",
+      "kind": "concept",
+      "requires": [
+        "api-styles",
+        "web:rest-apis"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "pagination-versioning",
+      "zone": 2,
+      "name": "Paging & versioning",
+      "icon": "list",
+      "desc": "Pagination, filtering, sorting and evolving an API without breaking clients.",
+      "kind": "concept",
+      "requires": [
+        "rest-design"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "openapi",
+      "zone": 2,
+      "name": "OpenAPI",
+      "icon": "book",
+      "desc": "Describing APIs with OpenAPI and generating docs and clients.",
+      "kind": "lesson",
+      "requires": [
+        "rest-design",
+        "data-formats"
+      ],
+      "xpReward": 70
+    },
+    {
+      "id": "api-auth",
+      "zone": 2,
+      "name": "API auth",
+      "icon": "key",
+      "desc": "API keys, OAuth 2.0, JWTs and scopes.",
+      "kind": "concept",
+      "requires": [
+        "rest-design"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "graphql",
+      "zone": 3,
+      "name": "GraphQL",
+      "icon": "graph",
+      "desc": "Schemas, queries, mutations, resolvers and the N+1 problem.",
+      "kind": "concept",
+      "requires": [
+        "api-styles"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "grpc",
+      "zone": 3,
+      "name": "gRPC",
+      "icon": "bolt",
+      "desc": "Protobuf services, streaming RPCs and when gRPC fits.",
+      "kind": "concept",
+      "requires": [
+        "data-formats"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "webhooks-realtime",
+      "zone": 3,
+      "name": "Webhooks & WebSockets",
+      "icon": "bell",
+      "desc": "Push-based APIs with webhooks, WebSockets and server-sent events.",
+      "kind": "concept",
+      "requires": [
+        "http-for-apis"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "microservices-intro",
+      "zone": 4,
+      "name": "Microservices",
+      "icon": "grid",
+      "desc": "What microservices are, their benefits and costs versus a monolith.",
+      "kind": "concept",
+      "requires": [
+        "rest-design",
+        "sysd:scalability-basics"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "service-boundaries",
+      "zone": 4,
+      "name": "Service boundaries",
+      "icon": "map",
+      "desc": "Domain-driven design, bounded contexts and splitting a monolith.",
+      "kind": "concept",
+      "requires": [
+        "microservices-intro"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "service-communication",
+      "zone": 4,
+      "name": "Service communication",
+      "icon": "messages",
+      "desc": "Synchronous calls versus asynchronous messaging and events.",
+      "kind": "concept",
+      "requires": [
+        "microservices-intro",
+        "sysd:message-queues"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "api-gateway",
+      "zone": 4,
+      "name": "Gateways & discovery",
+      "icon": "compass",
+      "desc": "API gateways, service discovery and service meshes.",
+      "kind": "concept",
+      "requires": [
+        "service-communication"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "data-ownership",
+      "zone": 4,
+      "name": "Data per service",
+      "icon": "database",
+      "desc": "Database per service, sagas and eventual consistency between services.",
+      "kind": "concept",
+      "requires": [
+        "service-boundaries"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "resilience",
+      "zone": 5,
+      "name": "Resilience",
+      "icon": "shield",
+      "desc": "Timeouts, retries with backoff, circuit breakers and bulkheads.",
+      "kind": "concept",
+      "requires": [
+        "service-communication"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "tracing-metrics",
+      "zone": 5,
+      "name": "Tracing & metrics",
+      "icon": "activity",
+      "desc": "Distributed tracing, correlation IDs, metrics and structured logs.",
+      "kind": "concept",
+      "requires": [
+        "api-gateway"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "contract-testing",
+      "zone": 5,
+      "name": "Contract testing",
+      "icon": "check-circle",
+      "desc": "Consumer-driven contracts and testing services in isolation.",
+      "kind": "lesson",
+      "requires": [
+        "openapi",
+        "service-communication"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "public-api",
+      "zone": 5,
+      "name": "Public API project",
+      "icon": "rocket",
+      "desc": "Build and document a versioned, authenticated public REST API.",
+      "kind": "project",
+      "requires": [
+        "openapi",
+        "api-auth",
+        "pagination-versioning"
+      ],
+      "xpReward": 300
+    },
+    {
+      "id": "microservice-shop",
+      "zone": 5,
+      "name": "Microservice shop",
+      "icon": "building",
+      "desc": "Build a small shop as several containerised services with messaging and tracing.",
+      "kind": "project",
+      "requires": [
+        "resilience",
+        "data-ownership",
+        "tracing-metrics",
+        "containers:docker-basics"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

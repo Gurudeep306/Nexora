@@ -1,0 +1,300 @@
+{
+  "id": "graph-theory",
+  "name": "Graph Theory",
+  "short": "GT",
+  "group": "beyond",
+  "domain": "theory",
+  "order": 49,
+  "icon": "graph",
+  "color": "#16a34a",
+  "description": "Graphs as mathematical objects: paths, connectivity, trees, matchings, flows, colouring, planarity and networks.",
+  "rankTitle": "Vertex Voyager",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Graph basics"
+    },
+    {
+      "level": 2,
+      "name": "Paths & connectivity"
+    },
+    {
+      "level": 3,
+      "name": "Trees, matchings & flows"
+    },
+    {
+      "level": 4,
+      "name": "Colouring & planarity"
+    },
+    {
+      "level": 5,
+      "name": "Advanced topics"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "graph-basics",
+      "zone": 1,
+      "name": "Graph basics",
+      "icon": "graph",
+      "desc": "Vertices, edges, degrees, the handshake lemma, subgraphs and directed versus undirected graphs.",
+      "kind": "concept",
+      "requires": [
+        "dm:sets-relations"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "graph-representations",
+      "zone": 1,
+      "name": "Representations",
+      "icon": "grid",
+      "desc": "Adjacency matrices, adjacency lists and incidence matrices and their trade-offs.",
+      "kind": "lesson",
+      "requires": [
+        "graph-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "special-graphs",
+      "zone": 1,
+      "name": "Special graphs",
+      "icon": "shapes",
+      "desc": "Complete, bipartite, regular, cycle, path, wheel and hypercube graphs.",
+      "kind": "concept",
+      "requires": [
+        "graph-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "isomorphism",
+      "zone": 1,
+      "name": "Isomorphism",
+      "icon": "copy",
+      "desc": "When two graphs are the same, graph invariants and automorphisms.",
+      "kind": "concept",
+      "requires": [
+        "special-graphs"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "walks-paths",
+      "zone": 2,
+      "name": "Walks & paths",
+      "icon": "route",
+      "desc": "Walks, trails, paths, cycles, distance and diameter.",
+      "kind": "concept",
+      "requires": [
+        "graph-basics"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "connectivity",
+      "zone": 2,
+      "name": "Connectivity",
+      "icon": "link",
+      "desc": "Components, cut vertices, bridges, k-connectivity and Menger's theorem.",
+      "kind": "concept",
+      "requires": [
+        "walks-paths"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "euler-hamilton",
+      "zone": 2,
+      "name": "Euler & Hamilton",
+      "icon": "map",
+      "desc": "Eulerian circuits, Hamiltonian cycles and conditions such as Dirac's and Ore's.",
+      "kind": "concept",
+      "requires": [
+        "walks-paths"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "bfs-dfs",
+      "zone": 2,
+      "name": "BFS & DFS",
+      "icon": "search",
+      "desc": "Breadth-first and depth-first search and what their trees reveal about structure.",
+      "kind": "lesson",
+      "requires": [
+        "graph-representations",
+        "connectivity"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "directed-graphs",
+      "zone": 2,
+      "name": "Directed graphs",
+      "icon": "share",
+      "desc": "Strong connectivity, condensation, DAGs and topological orderings.",
+      "kind": "concept",
+      "requires": [
+        "connectivity"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "trees",
+      "zone": 3,
+      "name": "Trees",
+      "icon": "tree",
+      "desc": "Equivalent characterisations of trees, rooted trees and Cayley's formula.",
+      "kind": "concept",
+      "requires": [
+        "connectivity"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "spanning-trees",
+      "zone": 3,
+      "name": "Spanning trees",
+      "icon": "git-branch",
+      "desc": "Minimum spanning trees and counting spanning trees with the matrix-tree theorem.",
+      "kind": "lesson",
+      "requires": [
+        "trees",
+        "la:determinants"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "matchings",
+      "zone": 3,
+      "name": "Matchings",
+      "icon": "users",
+      "desc": "Matchings and covers, Hall's marriage theorem and König's theorem.",
+      "kind": "lesson",
+      "requires": [
+        "special-graphs",
+        "trees"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "network-flows",
+      "zone": 3,
+      "name": "Network flows",
+      "icon": "droplet",
+      "desc": "Max-flow min-cut, augmenting paths and applications to matching.",
+      "kind": "lesson",
+      "requires": [
+        "directed-graphs",
+        "matchings"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "graph-colouring",
+      "zone": 4,
+      "name": "Graph colouring",
+      "icon": "palette",
+      "desc": "Chromatic number, greedy colouring, Brooks' theorem and edge colouring.",
+      "kind": "concept",
+      "requires": [
+        "special-graphs",
+        "matchings"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "planar-graphs",
+      "zone": 4,
+      "name": "Planar graphs",
+      "icon": "map",
+      "desc": "Euler's formula, Kuratowski's theorem and the four colour theorem.",
+      "kind": "concept",
+      "requires": [
+        "euler-hamilton"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "graph-toolkit",
+      "zone": 4,
+      "name": "Graph toolkit",
+      "icon": "wrench",
+      "desc": "Implement a graph library with traversal, flow and colouring algorithms and tests.",
+      "kind": "project",
+      "requires": [
+        "bfs-dfs",
+        "network-flows",
+        "graph-colouring"
+      ],
+      "xpReward": 280
+    },
+    {
+      "id": "spectral-graphs",
+      "zone": 5,
+      "name": "Spectral graphs",
+      "icon": "chart",
+      "desc": "Adjacency and Laplacian eigenvalues and what they say about a graph.",
+      "kind": "concept",
+      "requires": [
+        "graph-representations",
+        "la:eigenvalues"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "random-graphs",
+      "zone": 5,
+      "name": "Random graphs",
+      "icon": "random",
+      "desc": "Erdos-Renyi graphs, thresholds and the giant component.",
+      "kind": "concept",
+      "requires": [
+        "connectivity",
+        "prob:random-variables"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "ramsey-extremal",
+      "zone": 5,
+      "name": "Ramsey & extremal",
+      "icon": "sparkles",
+      "desc": "Ramsey numbers, Turan's theorem and extremal questions.",
+      "kind": "concept",
+      "requires": [
+        "graph-colouring",
+        "dm:combinatorics"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "network-analysis",
+      "zone": 5,
+      "name": "Network analysis",
+      "icon": "users",
+      "desc": "Centrality, PageRank and community detection in real networks.",
+      "kind": "lesson",
+      "requires": [
+        "spectral-graphs",
+        "directed-graphs"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "network-study",
+      "zone": 5,
+      "name": "Network study",
+      "icon": "trophy",
+      "desc": "Analyse a real social or transport network and compare it with random models.",
+      "kind": "project",
+      "requires": [
+        "network-analysis",
+        "random-graphs"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

@@ -1,0 +1,334 @@
+{
+  "id": "ios",
+  "name": "iOS Development",
+  "short": "IOS",
+  "group": "beyond",
+  "domain": "web-mobile",
+  "order": 61,
+  "icon": "gem",
+  "color": "#3b82f6",
+  "description": "Native iOS apps with Swift and SwiftUI, data and networking, platform features and App Store release.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Swift language"
+    },
+    {
+      "level": 2,
+      "name": "SwiftUI"
+    },
+    {
+      "level": 3,
+      "name": "Data & architecture"
+    },
+    {
+      "level": 4,
+      "name": "Platform features"
+    },
+    {
+      "level": 5,
+      "name": "Testing & release"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "swift-basics",
+      "zone": 1,
+      "name": "Swift basics",
+      "icon": "code",
+      "desc": "Constants, variables, control flow, functions, closures and collections.",
+      "kind": "lesson",
+      "requires": [
+        "app:mobile-platforms"
+      ],
+      "xpReward": 60,
+      "resources": [
+        {
+          "title": "Swift",
+          "url": "https://developer.apple.com/swift/"
+        }
+      ]
+    },
+    {
+      "id": "swift-types",
+      "zone": 1,
+      "name": "Swift type system",
+      "icon": "shapes",
+      "desc": "Structs, classes, enums, optionals and value versus reference semantics.",
+      "kind": "lesson",
+      "requires": [
+        "swift-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "protocols-generics",
+      "zone": 1,
+      "name": "Protocols & generics",
+      "icon": "puzzle",
+      "desc": "Protocol-oriented design, extensions and generic code.",
+      "kind": "lesson",
+      "requires": [
+        "swift-types"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "swift-concurrency",
+      "zone": 1,
+      "name": "Swift concurrency",
+      "icon": "clock",
+      "desc": "async/await, tasks, actors and the main actor.",
+      "kind": "lesson",
+      "requires": [
+        "protocols-generics",
+        "parallel-programming:threads-locks"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "xcode",
+      "zone": 1,
+      "name": "Xcode",
+      "icon": "wrench",
+      "desc": "Projects, targets, simulators, previews and the debugger.",
+      "kind": "lesson",
+      "requires": [
+        "swift-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "swiftui-views",
+      "zone": 2,
+      "name": "SwiftUI views",
+      "icon": "layers",
+      "desc": "Views, modifiers and composing interfaces.",
+      "kind": "lesson",
+      "requires": [
+        "xcode",
+        "app:mobile-ui"
+      ],
+      "xpReward": 80,
+      "resources": [
+        {
+          "title": "SwiftUI documentation",
+          "url": "https://developer.apple.com/documentation/swiftui"
+        }
+      ]
+    },
+    {
+      "id": "state-bindings",
+      "zone": 2,
+      "name": "State & bindings",
+      "icon": "sliders",
+      "desc": "@State, @Binding and how SwiftUI updates views.",
+      "kind": "lesson",
+      "requires": [
+        "swiftui-views",
+        "app:app-state"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "lists-navigation-ios",
+      "zone": 2,
+      "name": "Lists & navigation",
+      "icon": "list",
+      "desc": "Lists, NavigationStack and sheets.",
+      "kind": "lesson",
+      "requires": [
+        "state-bindings"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "layout-modifiers",
+      "zone": 2,
+      "name": "Layout & modifiers",
+      "icon": "grid",
+      "desc": "Stacks, grids, spacing, adaptive layout and styling.",
+      "kind": "lesson",
+      "requires": [
+        "swiftui-views"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "first-swiftui-app",
+      "zone": 2,
+      "name": "First SwiftUI app",
+      "icon": "rocket",
+      "desc": "Build a multi-screen SwiftUI app with lists and navigation.",
+      "kind": "project",
+      "requires": [
+        "lists-navigation-ios",
+        "layout-modifiers"
+      ],
+      "xpReward": 220
+    },
+    {
+      "id": "observable-mvvm",
+      "zone": 3,
+      "name": "Observable & MVVM",
+      "icon": "share",
+      "desc": "The Observation framework, view models and app architecture.",
+      "kind": "lesson",
+      "requires": [
+        "state-bindings",
+        "swift-concurrency"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "swiftdata",
+      "zone": 3,
+      "name": "SwiftData",
+      "icon": "database",
+      "desc": "Persisting models, queries and relationships with SwiftData.",
+      "kind": "lesson",
+      "requires": [
+        "observable-mvvm"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "networking-ios",
+      "zone": 3,
+      "name": "URLSession & Codable",
+      "icon": "globe",
+      "desc": "Fetching JSON with URLSession and decoding it with Codable.",
+      "kind": "lesson",
+      "requires": [
+        "observable-mvvm",
+        "swift-concurrency"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "uikit-basics",
+      "zone": 3,
+      "name": "UIKit basics",
+      "icon": "monitor",
+      "desc": "UIKit view controllers and bridging UIKit and SwiftUI.",
+      "kind": "concept",
+      "requires": [
+        "swiftui-views"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "journal-app",
+      "zone": 3,
+      "name": "Journal app",
+      "icon": "rocket",
+      "desc": "Build a journal app with local storage and data from a web API.",
+      "kind": "project",
+      "requires": [
+        "swiftdata",
+        "networking-ios"
+      ],
+      "xpReward": 250
+    },
+    {
+      "id": "privacy-permissions",
+      "zone": 4,
+      "name": "Privacy & permissions",
+      "icon": "lock",
+      "desc": "Permission prompts, privacy manifests and camera, photos and location.",
+      "kind": "lesson",
+      "requires": [
+        "xcode"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "background-tasks",
+      "zone": 4,
+      "name": "Background tasks",
+      "icon": "clock",
+      "desc": "Background refresh, processing tasks and app lifecycle.",
+      "kind": "lesson",
+      "requires": [
+        "swift-concurrency"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "notifications-ios",
+      "zone": 4,
+      "name": "Notifications",
+      "icon": "bell",
+      "desc": "Local and push notifications.",
+      "kind": "lesson",
+      "requires": [
+        "background-tasks"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "widgets-extensions",
+      "zone": 4,
+      "name": "Widgets & extensions",
+      "icon": "star",
+      "desc": "Home screen widgets and app extensions sharing data.",
+      "kind": "lesson",
+      "requires": [
+        "swiftui-views",
+        "swiftdata"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "testing-ios",
+      "zone": 5,
+      "name": "Testing iOS apps",
+      "icon": "check-circle",
+      "desc": "Unit tests, UI tests and testing async code.",
+      "kind": "lesson",
+      "requires": [
+        "observable-mvvm"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "instruments",
+      "zone": 5,
+      "name": "Instruments",
+      "icon": "activity",
+      "desc": "Profiling time, memory and energy with Instruments.",
+      "kind": "lesson",
+      "requires": [
+        "lists-navigation-ios"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "app-store-release",
+      "zone": 5,
+      "name": "App Store release",
+      "icon": "upload",
+      "desc": "Signing, TestFlight, App Store Connect and review guidelines.",
+      "kind": "lesson",
+      "requires": [
+        "testing-ios"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "ios-capstone",
+      "zone": 5,
+      "name": "iOS capstone",
+      "icon": "trophy",
+      "desc": "Ship a polished app with persistence, notifications and a widget through TestFlight.",
+      "kind": "project",
+      "requires": [
+        "journal-app",
+        "notifications-ios",
+        "widgets-extensions",
+        "app-store-release"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

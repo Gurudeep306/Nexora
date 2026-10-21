@@ -28,16 +28,10 @@ const DIR = path.join(__dirname, "..", "..", "content", "nexus");
 const MAX_PER_ROW = 5;
 const DEFAULT_TARGET = 10;
 
-const DSA_META = {
-  id: "dsa",
-  name: "Data Structures & Algorithms",
-  short: "DSA",
-  group: "core",
-  order: 1,
-  icon: "nexus",
-  color: "#5b8cff",
-  description: "The competitive-programming rift: master skills by solving rated problems, zone by zone.",
-};
+/* Subjects whose nodes come from code instead of their file: the file then
+ * carries only the metadata plus "engine". DSA's tree and its solve-count
+ * progress live in ./dsa-nodes.js and server.js. */
+const ENGINES = new Set(["dsa"]);
 
 /* Brand gradient (#5b8cff → #9b6bff → #2dd4bf), sampled by depth. */
 const C1 = [91, 140, 255];
@@ -74,8 +68,10 @@ function refKey(subject, ref) {
  */
 function validateOutlines(docs, dsaNodes, opts = {}) {
   const errors = [];
-  const ids = new Set(["dsa"]);
+  const ids = new Set();
   const keys = new Map(); // global key → requires (global keys)
+  // Engine subjects (DSA) bring their nodes from code; a test may pass
+  // outlines without the dsa file, so its nodes are always known.
   for (const n of dsaNodes) keys.set(`dsa:${n.id}`, n.requires.map((r) => `dsa:${r}`));
   for (const d of docs) {
     const where = d._file || d.id;
@@ -84,10 +80,15 @@ function validateOutlines(docs, dsaNodes, opts = {}) {
     if (d._file && d._file !== `${d.id}.json`) errors.push(`${where}: file name must be ${d.id}.json`);
     ids.add(d.id);
     for (const k of ["name", "short", "group", "icon", "color"]) if (!d[k]) errors.push(`${where}: missing ${k}`);
+    if (opts.strict && !d.domain) errors.push(`${where}: missing domain`);
+    if (d.engine) {
+      if (!ENGINES.has(d.engine) || d.engine !== d.id) errors.push(`${where}: unknown engine ${d.engine}`);
+      continue;
+    }
     const zones = Array.isArray(d.zones) ? d.zones : [];
     const nodes = Array.isArray(d.nodes) ? d.nodes : [];
     if (zones.length < 3 || zones.length > 8) errors.push(`${where}: ${zones.length} zones (want 4–7)`);
-    if (nodes.length < 12 || nodes.length > 45) errors.push(`${where}: ${nodes.length} nodes (want 15–40)`);
+    if (nodes.length < 12 || nodes.length > 45) errors.push(`${where}: ${nodes.length} nodes (want 12–40)`);
     zones.forEach((z, i) => {
       if (z.level !== i + 1) errors.push(`${where}: zone levels must be 1..N in order`);
     });
@@ -249,24 +250,41 @@ function loadRegistry(dsaNodes) {
   const errors = validateOutlines(docs, dsaNodes);
   if (errors.length) console.error(`[nexus] outline problems:\n  ${errors.slice(0, 20).join("\n  ")}`);
   const subjects = new Map();
-  subjects.set("dsa", { meta: DSA_META, doc: null });
-  for (const d of docs.sort((a, b) => (a.order || 99) - (b.order || 99))) {
+  for (const d of docs.sort((a, b) => (a.order || 99) - (b.order || 99) || a.id.localeCompare(b.id))) {
+    const meta = {
+      id: d.id,
+      name: d.name,
+      short: d.short,
+      group: d.group,
+      domain: d.domain || d.group || "other",
+      order: d.order,
+      icon: d.icon,
+      color: d.color,
+      description: d.description || "",
+      pyqSubject: d.gate?.pyqSubject || null,
+      notesSubject: d.gate?.notesSubject || null,
+      engine: d.engine || null,
+      rankTitle: d.rankTitle || null,
+    };
+    if (d.engine === "dsa") {
+      // Nodes from code; their x is already 0–100, one row per Rift zone.
+      const zonesUsed = [...new Set(dsaNodes.map((n) => n.zone))].sort((x, y) => x - y);
+      subjects.set(d.id, {
+        meta,
+        doc: null,
+        engine: "dsa",
+        shape: { zones: zonesUsed.map((level) => ({ level })), nodes: dsaNodes.map((n) => ({ id: n.id, zone: n.zone, requires: n.requires })) },
+        layout: new Map(dsaNodes.map((n) => [n.id, { x: n.x, row: 0 }])),
+      });
+      continue;
+    }
+    if (d.engine) continue;
     const layout = layoutSubject(d);
     const zc = d.zones.length;
     subjects.set(d.id, {
-      meta: {
-        id: d.id,
-        name: d.name,
-        short: d.short,
-        group: d.group,
-        order: d.order,
-        icon: d.icon,
-        color: d.color,
-        description: d.description || "",
-        pyqSubject: d.gate?.pyqSubject || null,
-        notesSubject: d.gate?.notesSubject || null,
-      },
+      meta,
       doc: d,
+      shape: d,
       zoneColor: new Map(d.zones.map((z, i) => [z.level, gradientHex(zc > 1 ? i / (zc - 1) : 0)])),
       layout,
     });
@@ -410,7 +428,7 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
   const chip = (k) => {
     const nm = reg.names.get(k);
     const st = status.get(k);
-    const sm = reg.subjects.get(nm.subject).meta;
+    const sm = subjectMeta(reg, nm.subject);
     return { subject: nm.subject, subjectShort: sm.short, subjectName: sm.name, id: nm.id, name: nm.name, completed: !!st?.completed, progress: st?.progress || 0 };
   };
   const out = new Map();
@@ -457,11 +475,16 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
   return out;
 }
 
+/** A subject's metadata (DSA works even without its file). */
+function subjectMeta(reg, id) {
+  return reg.subjects.get(id)?.meta || { id, name: id.toUpperCase(), short: id.toUpperCase(), engine: id === "dsa" ? "dsa" : null };
+}
+
 /** Cross-subject chips for DSA nodes (DSA itself has no cross requires). */
 function dsaCrossUnlocks(reg, dsaNodeId, computed) {
   return (reg.crossUnlocks.get(`dsa:${dsaNodeId}`) || []).map((k) => {
     const nm = reg.names.get(k);
-    const sm = reg.subjects.get(nm.subject).meta;
+    const sm = subjectMeta(reg, nm.subject);
     const st = computed.get(nm.subject)?.nodes.find((n) => n.id === nm.id);
     return { subject: nm.subject, subjectShort: sm.short, subjectName: sm.name, id: nm.id, name: nm.name, completed: !!st?.completed, progress: st?.progress || 0 };
   });
@@ -471,13 +494,13 @@ function dsaCrossUnlocks(reg, dsaNodeId, computed) {
 function subjectSummaries(reg, dsa, computed) {
   const rows = [];
   for (const [sid, s] of reg.subjects) {
-    const data = sid === "dsa" ? dsa : computed.get(sid);
+    const data = s.engine === "dsa" ? dsa : computed.get(sid);
     if (!data) continue;
     const nodes = data.nodes;
     const done = nodes.filter((n) => n.completed).length;
     // Which subjects this one builds on, and how many skills link them.
     const needs = {};
-    if (sid !== "dsa") for (const n of nodes) for (const c of n.crossRequires) needs[c.subject] = (needs[c.subject] || 0) + 1;
+    if (!s.engine) for (const n of nodes) for (const c of n.crossRequires) needs[c.subject] = (needs[c.subject] || 0) + 1;
     rows.push({
       needs,
       ...s.meta,
@@ -488,14 +511,78 @@ function subjectSummaries(reg, dsa, computed) {
       progress: nodes.length ? Math.round(nodes.reduce((a, n) => a + n.progress, 0) / nodes.length) : 0,
       xpEarned: nodes.filter((n) => n.completed).reduce((a, n) => a + (n.xpReward || 0), 0),
       xpTotal: nodes.reduce((a, n) => a + (n.xpReward || 0), 0),
-      crossLinks: sid === "dsa" ? 0 : nodes.reduce((a, n) => a + n.crossRequires.length, 0),
+      crossLinks: s.engine ? 0 : nodes.reduce((a, n) => a + n.crossRequires.length, 0),
     });
   }
   return rows.sort((a, b) => a.order - b.order);
 }
 
+/**
+ * The whole Nexus as one web, light enough to send in one response: every
+ * subject (with its domain, so the client can group them) and per node only
+ * what the web draws: name, zone, state, progress and prerequisite links.
+ * Where things sit is computed by the client (the lattice is deterministic);
+ * descriptions, PYQ pools and the rest load per node from
+ * /api/nexus/node/:subject/:id.
+ *
+ * Node state `s`: 0 locked, 1 open, 2 mastered.
+ */
+function webPayload(reg, dsa, computed) {
+  const clusters = [];
+  for (const [sid, s] of reg.subjects) {
+    const data = s.engine === "dsa" ? dsa : computed.get(sid);
+    if (!data) continue;
+    const crossOf = new Map((s.doc?.nodes || []).map((d) => [d.id, (d.requires || []).filter((r) => r.includes(":") && reg.names.has(r))]));
+    clusters.push({
+      id: sid,
+      name: s.meta.name,
+      short: s.meta.short,
+      domain: s.meta.domain,
+      order: s.meta.order ?? 99,
+      engine: s.engine || null,
+      zones: data.zones.map((z) => ({
+        level: z.level,
+        name: z.name,
+        color: z.color,
+        locked: z.locked,
+        current: z.current,
+        completed: z.completed,
+        nodeCount: z.nodeCount,
+        nodesCompleted: z.nodesCompleted,
+        zoneProgress: z.zoneProgress,
+      })),
+      nodes: data.nodes.map((n) => {
+        const out = {
+          id: n.id,
+          n: n.name,
+          z: n.zone,
+          p: n.progress,
+          s: n.completed ? 2 : n.unlocked ? 1 : 0,
+          req: n.requires,
+          xp: n.xpReward,
+          c: s.engine === "dsa" ? `${n.solved}/${n.target}` : countLabel(n),
+        };
+        const cross = crossOf.get(n.id) || [];
+        if (cross.length) out.cx = cross;
+        if (n.kind && n.kind !== "concept") out.k = n.kind;
+        return out;
+      }),
+    });
+  }
+  return { clusters };
+}
+
+/** The short count under a node (mirrors the client's nodeCountLabel). */
+function countLabel(n) {
+  const m = n.metric;
+  if (m?.pyq) return `${Math.min(m.pyq.correct, m.pyq.target)}/${m.pyq.target} PYQs`;
+  if (m?.lessons) return `${m.lessons.done}/${m.lessons.total} lesson${m.lessons.total === 1 ? "" : "s"}`;
+  return n.kind === "project" ? "project" : `${n.progress}%`;
+}
+
 module.exports = {
-  DSA_META,
+  webPayload,
+  subjectMeta,
   readOutlines,
   validateOutlines,
   layoutSubject,

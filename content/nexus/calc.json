@@ -3,10 +3,12 @@
   "name": "Calculus",
   "short": "CALC",
   "group": "gate",
+  "domain": "math",
   "order": 13,
   "icon": "function",
   "color": "#a855f7",
   "description": "Limits, continuity, differentiation, maxima and minima, mean value theorems and integration for GATE.",
+  "rankTitle": "Limit Breaker",
   "gate": {
     "pyqSubject": "calc",
     "notesSubject": null

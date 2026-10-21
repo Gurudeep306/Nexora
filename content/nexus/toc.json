@@ -3,10 +3,12 @@
   "name": "Theory of Computation",
   "short": "TOC",
   "group": "gate",
+  "domain": "core-cs",
   "order": 7,
   "icon": "shapes",
   "color": "#eab308",
   "description": "Finite automata and regular languages, context-free grammars and pushdown automata, Turing machines and decidability.",
+  "rankTitle": "Automata Tamer",
   "gate": {
     "pyqSubject": "toc",
     "notesSubject": null

@@ -1,0 +1,297 @@
+{
+  "id": "numerical-methods",
+  "name": "Numerical Methods",
+  "short": "NUM",
+  "group": "beyond",
+  "domain": "theory",
+  "order": 51,
+  "icon": "calculator",
+  "color": "#0284c7",
+  "description": "Computing with real numbers on real machines: error, root finding, linear systems, interpolation, integration and ODEs.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Errors & floating point"
+    },
+    {
+      "level": 2,
+      "name": "Equations & systems"
+    },
+    {
+      "level": 3,
+      "name": "Interpolation & calculus"
+    },
+    {
+      "level": 4,
+      "name": "Differential equations"
+    },
+    {
+      "level": 5,
+      "name": "Optimisation & simulation"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "floating-point",
+      "zone": 1,
+      "name": "Floating point",
+      "icon": "binary",
+      "desc": "How IEEE 754 numbers are stored, machine epsilon and rounding.",
+      "kind": "concept",
+      "requires": [
+        "dl:ieee-754"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "error-analysis",
+      "zone": 1,
+      "name": "Error analysis",
+      "icon": "warning",
+      "desc": "Truncation versus rounding error, error propagation and cancellation.",
+      "kind": "concept",
+      "requires": [
+        "floating-point",
+        "calc:taylor-series"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "conditioning",
+      "zone": 1,
+      "name": "Conditioning",
+      "icon": "activity",
+      "desc": "Condition numbers and the difference between a hard problem and an unstable algorithm.",
+      "kind": "concept",
+      "requires": [
+        "error-analysis"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "root-finding",
+      "zone": 2,
+      "name": "Root finding",
+      "icon": "crosshair",
+      "desc": "Bisection, Newton's method, the secant method and convergence rates.",
+      "kind": "lesson",
+      "requires": [
+        "error-analysis"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "direct-solvers",
+      "zone": 2,
+      "name": "Direct solvers",
+      "icon": "grid",
+      "desc": "LU factorisation with pivoting and Cholesky for linear systems.",
+      "kind": "lesson",
+      "requires": [
+        "conditioning",
+        "la:gaussian-elimination"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "iterative-solvers",
+      "zone": 2,
+      "name": "Iterative solvers",
+      "icon": "route",
+      "desc": "Jacobi, Gauss-Seidel and conjugate gradient methods.",
+      "kind": "lesson",
+      "requires": [
+        "direct-solvers"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "least-squares",
+      "zone": 2,
+      "name": "Least squares",
+      "icon": "trending-up",
+      "desc": "Normal equations, QR factorisation and fitting data.",
+      "kind": "lesson",
+      "requires": [
+        "direct-solvers"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "eigen-methods",
+      "zone": 2,
+      "name": "Eigenvalue methods",
+      "icon": "function",
+      "desc": "Power iteration, inverse iteration and the QR algorithm.",
+      "kind": "lesson",
+      "requires": [
+        "iterative-solvers",
+        "la:eigenvalues"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "interpolation",
+      "zone": 3,
+      "name": "Interpolation",
+      "icon": "chart",
+      "desc": "Lagrange and Newton polynomials and Runge's phenomenon.",
+      "kind": "lesson",
+      "requires": [
+        "error-analysis"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "splines",
+      "zone": 3,
+      "name": "Splines",
+      "icon": "shapes",
+      "desc": "Piecewise polynomial and cubic spline interpolation.",
+      "kind": "lesson",
+      "requires": [
+        "interpolation"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "numerical-derivatives",
+      "zone": 3,
+      "name": "Numerical derivatives",
+      "icon": "function",
+      "desc": "Finite difference formulas and choosing the step size.",
+      "kind": "lesson",
+      "requires": [
+        "interpolation"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "numerical-integration",
+      "zone": 3,
+      "name": "Numerical integration",
+      "icon": "layers",
+      "desc": "Trapezoidal, Simpson's and Gaussian quadrature rules.",
+      "kind": "lesson",
+      "requires": [
+        "interpolation"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "numerics-toolkit",
+      "zone": 3,
+      "name": "Numerics toolkit",
+      "icon": "wrench",
+      "desc": "Implement and test solvers, fitting and quadrature, comparing accuracy against known results.",
+      "kind": "project",
+      "requires": [
+        "root-finding",
+        "least-squares",
+        "numerical-integration"
+      ],
+      "xpReward": 250
+    },
+    {
+      "id": "eulers-method",
+      "zone": 4,
+      "name": "Euler's method",
+      "icon": "route",
+      "desc": "Explicit and implicit Euler for initial value problems.",
+      "kind": "lesson",
+      "requires": [
+        "numerical-derivatives",
+        "calc:differential-equations"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "runge-kutta",
+      "zone": 4,
+      "name": "Runge-Kutta",
+      "icon": "trending-up",
+      "desc": "RK4, adaptive step sizes and error control.",
+      "kind": "lesson",
+      "requires": [
+        "eulers-method"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "stiff-equations",
+      "zone": 4,
+      "name": "Stiff equations",
+      "icon": "warning",
+      "desc": "Why some ODEs need implicit methods and stability regions.",
+      "kind": "concept",
+      "requires": [
+        "runge-kutta"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "finite-differences",
+      "zone": 4,
+      "name": "Finite differences",
+      "icon": "grid",
+      "desc": "Discretising PDEs such as the heat equation on a grid.",
+      "kind": "lesson",
+      "requires": [
+        "runge-kutta",
+        "iterative-solvers"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "optimisation-methods",
+      "zone": 5,
+      "name": "Optimisation methods",
+      "icon": "target",
+      "desc": "Gradient descent, Newton and quasi-Newton methods for minimisation.",
+      "kind": "lesson",
+      "requires": [
+        "root-finding",
+        "least-squares"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "sparse-matrices",
+      "zone": 5,
+      "name": "Sparse matrices",
+      "icon": "grid",
+      "desc": "Sparse storage formats and solving large sparse systems.",
+      "kind": "concept",
+      "requires": [
+        "iterative-solvers"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "monte-carlo",
+      "zone": 5,
+      "name": "Monte Carlo methods",
+      "icon": "random",
+      "desc": "Random sampling for integration and simulation, and variance reduction.",
+      "kind": "lesson",
+      "requires": [
+        "numerical-integration",
+        "prob:expectation-variance"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "physics-simulation",
+      "zone": 5,
+      "name": "Physics simulation",
+      "icon": "play",
+      "desc": "Simulate a physical system such as orbits or heat flow and check energy and error behaviour.",
+      "kind": "project",
+      "requires": [
+        "runge-kutta",
+        "finite-differences"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

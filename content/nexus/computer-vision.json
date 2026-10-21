@@ -1,0 +1,285 @@
+{
+  "id": "computer-vision",
+  "name": "Computer Vision",
+  "short": "CV",
+  "group": "beyond",
+  "domain": "ai",
+  "order": 44,
+  "icon": "eye",
+  "color": "#2563eb",
+  "description": "Images as data, classical features and geometry, CNN-based recognition, detection, segmentation and 3D vision.",
+  "rankTitle": "Pixel Seer",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Images & pixels"
+    },
+    {
+      "level": 2,
+      "name": "Classical vision"
+    },
+    {
+      "level": 3,
+      "name": "Deep vision"
+    },
+    {
+      "level": 4,
+      "name": "Detection & segmentation"
+    },
+    {
+      "level": 5,
+      "name": "3D, video & generation"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "digital-images",
+      "zone": 1,
+      "name": "Digital images",
+      "icon": "image",
+      "desc": "Pixels, channels and colour spaces, and images as arrays you can compute on.",
+      "kind": "concept",
+      "requires": [
+        "la:matrices"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "image-filtering",
+      "zone": 1,
+      "name": "Image filtering",
+      "icon": "sliders",
+      "desc": "Convolution, blurring, sharpening and denoising filters.",
+      "kind": "lesson",
+      "requires": [
+        "digital-images"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "edges-gradients",
+      "zone": 1,
+      "name": "Edges & gradients",
+      "icon": "shapes",
+      "desc": "Image gradients, Sobel and Canny edge detection.",
+      "kind": "lesson",
+      "requires": [
+        "image-filtering",
+        "calc:derivatives"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "geometric-transforms",
+      "zone": 1,
+      "name": "Geometric transforms",
+      "icon": "crosshair",
+      "desc": "Affine transforms, homographies and image warping.",
+      "kind": "lesson",
+      "requires": [
+        "digital-images"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "keypoints-features",
+      "zone": 2,
+      "name": "Keypoints & features",
+      "icon": "target",
+      "desc": "Corner detection and descriptors such as Harris, SIFT and ORB.",
+      "kind": "lesson",
+      "requires": [
+        "edges-gradients"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "feature-matching",
+      "zone": 2,
+      "name": "Feature matching",
+      "icon": "link",
+      "desc": "Matching descriptors and fitting models robustly with RANSAC.",
+      "kind": "lesson",
+      "requires": [
+        "keypoints-features",
+        "geometric-transforms"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "camera-model",
+      "zone": 2,
+      "name": "Camera model",
+      "icon": "eye",
+      "desc": "The pinhole camera, intrinsics and extrinsics, and calibration.",
+      "kind": "concept",
+      "requires": [
+        "geometric-transforms"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "panorama-stitcher",
+      "zone": 2,
+      "name": "Panorama stitcher",
+      "icon": "image",
+      "desc": "Stitch overlapping photos into a panorama using features and homographies.",
+      "kind": "project",
+      "requires": [
+        "feature-matching"
+      ],
+      "xpReward": 220
+    },
+    {
+      "id": "cnn-vision",
+      "zone": 3,
+      "name": "CNNs for images",
+      "icon": "layers",
+      "desc": "Convolutional networks for image classification and what their filters learn.",
+      "kind": "lesson",
+      "requires": [
+        "image-filtering",
+        "deep:cnn"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "modern-backbones",
+      "zone": 3,
+      "name": "Modern backbones",
+      "icon": "building",
+      "desc": "ResNet, EfficientNet and Vision Transformers as feature extractors.",
+      "kind": "lesson",
+      "requires": [
+        "cnn-vision"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "data-augmentation",
+      "zone": 3,
+      "name": "Augmentation",
+      "icon": "random",
+      "desc": "Flips, crops, colour jitter and mixing strategies to improve generalisation.",
+      "kind": "lesson",
+      "requires": [
+        "cnn-vision"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "transfer-learning-cv",
+      "zone": 3,
+      "name": "Transfer learning",
+      "icon": "share",
+      "desc": "Fine-tuning pretrained backbones on small datasets.",
+      "kind": "lesson",
+      "requires": [
+        "modern-backbones"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "object-detection",
+      "zone": 4,
+      "name": "Object detection",
+      "icon": "crosshair",
+      "desc": "Bounding boxes, anchors, one-stage and two-stage detectors, IoU and NMS.",
+      "kind": "lesson",
+      "requires": [
+        "transfer-learning-cv"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "segmentation",
+      "zone": 4,
+      "name": "Segmentation",
+      "icon": "grid",
+      "desc": "Semantic and instance segmentation with U-Net and Mask R-CNN style models.",
+      "kind": "lesson",
+      "requires": [
+        "transfer-learning-cv"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "vision-metrics",
+      "zone": 4,
+      "name": "Vision metrics",
+      "icon": "chart",
+      "desc": "Precision-recall, mAP and mIoU for detection and segmentation.",
+      "kind": "concept",
+      "requires": [
+        "object-detection"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "detector-project",
+      "zone": 4,
+      "name": "Train a detector",
+      "icon": "rocket",
+      "desc": "Collect or adapt a labelled dataset and train and evaluate an object detector.",
+      "kind": "project",
+      "requires": [
+        "object-detection",
+        "vision-metrics",
+        "data-augmentation"
+      ],
+      "xpReward": 280
+    },
+    {
+      "id": "stereo-depth",
+      "zone": 5,
+      "name": "Stereo & depth",
+      "icon": "layers",
+      "desc": "Epipolar geometry, stereo matching and monocular depth estimation.",
+      "kind": "lesson",
+      "requires": [
+        "camera-model",
+        "feature-matching"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "motion-video",
+      "zone": 5,
+      "name": "Motion & video",
+      "icon": "play",
+      "desc": "Optical flow, object tracking and video models.",
+      "kind": "lesson",
+      "requires": [
+        "edges-gradients",
+        "cnn-vision"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "vision-transformers",
+      "zone": 5,
+      "name": "Vision-language models",
+      "icon": "sparkles",
+      "desc": "Vision transformers and joint image-text models such as CLIP.",
+      "kind": "lesson",
+      "requires": [
+        "modern-backbones",
+        "deep:transformers"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "image-generation",
+      "zone": 5,
+      "name": "Image generation",
+      "icon": "wand",
+      "desc": "Generative models for images, image editing and conditioning.",
+      "kind": "concept",
+      "requires": [
+        "cnn-vision",
+        "deep:diffusion-models"
+      ],
+      "xpReward": 140
+    }
+  ]
+}

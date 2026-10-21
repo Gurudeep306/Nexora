@@ -1,0 +1,270 @@
+{
+  "id": "devops",
+  "name": "DevOps",
+  "short": "OPS",
+  "group": "beyond",
+  "domain": "systems",
+  "order": 53,
+  "icon": "rocket",
+  "color": "#16a34a",
+  "description": "Shipping software continuously: automation, CI/CD, deployment strategies, infrastructure as code and observability.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "DevOps culture"
+    },
+    {
+      "level": 2,
+      "name": "Build & integrate"
+    },
+    {
+      "level": 3,
+      "name": "Deliver"
+    },
+    {
+      "level": 4,
+      "name": "Infrastructure"
+    },
+    {
+      "level": 5,
+      "name": "Observe & respond"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "devops-culture",
+      "zone": 1,
+      "name": "DevOps culture",
+      "icon": "users",
+      "desc": "Breaking down silos, shared ownership, DORA metrics and fast feedback.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 40
+    },
+    {
+      "id": "git-flow-ops",
+      "zone": 1,
+      "name": "Everything in Git",
+      "icon": "git-branch",
+      "desc": "Everything in version control: code, config and infrastructure.",
+      "kind": "concept",
+      "requires": [
+        "devops-culture",
+        "git:git-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "automation-scripts",
+      "zone": 1,
+      "name": "Automation scripting",
+      "icon": "terminal",
+      "desc": "Automating repetitive tasks with shell and Python scripts.",
+      "kind": "concept",
+      "requires": [
+        "devops-culture",
+        "linux-shell:shell-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "build-automation",
+      "zone": 2,
+      "name": "Build automation",
+      "icon": "wrench",
+      "desc": "Reproducible builds, dependency management and build caching.",
+      "kind": "concept",
+      "requires": [
+        "automation-scripts"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "ci-cd",
+      "zone": 2,
+      "name": "CI/CD",
+      "icon": "run",
+      "desc": "Continuous integration and delivery pipelines from commit to deploy.",
+      "kind": "concept",
+      "requires": [
+        "build-automation",
+        "git-flow-ops"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "tests-in-ci",
+      "zone": 2,
+      "name": "Tests in the pipeline",
+      "icon": "check-circle",
+      "desc": "Unit, integration and security scans as pipeline stages and quality gates.",
+      "kind": "lesson",
+      "requires": [
+        "ci-cd"
+      ],
+      "xpReward": 70
+    },
+    {
+      "id": "artifacts",
+      "zone": 2,
+      "name": "Artifacts & registries",
+      "icon": "inbox",
+      "desc": "Versioned build artifacts, container registries and promotion between environments.",
+      "kind": "concept",
+      "requires": [
+        "build-automation"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "deploy-strategies",
+      "zone": 3,
+      "name": "Blue-green & canary",
+      "icon": "route",
+      "desc": "Rolling, blue-green and canary deployments and rollbacks.",
+      "kind": "concept",
+      "requires": [
+        "ci-cd"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "feature-flags",
+      "zone": 3,
+      "name": "Feature flags",
+      "icon": "flag",
+      "desc": "Decoupling deploy from release with feature flags.",
+      "kind": "concept",
+      "requires": [
+        "deploy-strategies"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "gitops",
+      "zone": 3,
+      "name": "GitOps",
+      "icon": "git-branch",
+      "desc": "Declarative deployments reconciled from a Git repository.",
+      "kind": "concept",
+      "requires": [
+        "deploy-strategies",
+        "containers:kubernetes"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "infra-as-code-ops",
+      "zone": 4,
+      "name": "Infrastructure as code",
+      "icon": "code",
+      "desc": "Provisioning infrastructure declaratively, plans, state and modules.",
+      "kind": "concept",
+      "requires": [
+        "git-flow-ops",
+        "cloud:cloud-basics"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "config-management",
+      "zone": 4,
+      "name": "Config management",
+      "icon": "settings",
+      "desc": "Configuring servers with tools like Ansible and immutable infrastructure.",
+      "kind": "concept",
+      "requires": [
+        "infra-as-code-ops"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "secrets",
+      "zone": 4,
+      "name": "Secrets management",
+      "icon": "key",
+      "desc": "Storing and injecting secrets safely in pipelines and runtime.",
+      "kind": "concept",
+      "requires": [
+        "infra-as-code-ops"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "monitoring",
+      "zone": 5,
+      "name": "Monitoring & metrics",
+      "icon": "activity",
+      "desc": "Metrics, dashboards, SLIs and SLOs.",
+      "kind": "concept",
+      "requires": [
+        "deploy-strategies"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "logging",
+      "zone": 5,
+      "name": "Logging",
+      "icon": "list",
+      "desc": "Structured logs, aggregation and search.",
+      "kind": "concept",
+      "requires": [
+        "monitoring"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "alerting",
+      "zone": 5,
+      "name": "Alerting & on-call",
+      "icon": "bell",
+      "desc": "Actionable alerts, on-call rotations and runbooks.",
+      "kind": "concept",
+      "requires": [
+        "monitoring"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "incident-response",
+      "zone": 5,
+      "name": "Incidents & SRE",
+      "icon": "flame",
+      "desc": "Incident handling, blameless postmortems and error budgets.",
+      "kind": "concept",
+      "requires": [
+        "alerting",
+        "logging"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "pipeline-project",
+      "zone": 5,
+      "name": "CI/CD pipeline project",
+      "icon": "rocket",
+      "desc": "Build a full pipeline that tests, packages and deploys an app with automatic rollback.",
+      "kind": "project",
+      "requires": [
+        "tests-in-ci",
+        "artifacts",
+        "deploy-strategies"
+      ],
+      "xpReward": 300
+    },
+    {
+      "id": "observable-deploy",
+      "zone": 5,
+      "name": "Observable service",
+      "icon": "analytics",
+      "desc": "Provision a service with code, add dashboards and alerts, and run an incident drill.",
+      "kind": "project",
+      "requires": [
+        "incident-response",
+        "infra-as-code-ops"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

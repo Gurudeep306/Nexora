@@ -1,0 +1,296 @@
+{
+  "id": "information-retrieval",
+  "name": "Information Retrieval",
+  "short": "IR",
+  "group": "beyond",
+  "domain": "theory",
+  "order": 53,
+  "icon": "search",
+  "color": "#0f766e",
+  "description": "How search engines work: indexing, ranking models, evaluation, web search, recommenders and neural retrieval.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Indexing"
+    },
+    {
+      "level": 2,
+      "name": "Ranking models"
+    },
+    {
+      "level": 3,
+      "name": "Evaluation"
+    },
+    {
+      "level": 4,
+      "name": "Web search & recs"
+    },
+    {
+      "level": 5,
+      "name": "Neural IR"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ir-basics",
+      "zone": 1,
+      "name": "IR basics",
+      "icon": "search",
+      "desc": "Documents, queries, relevance and Boolean retrieval.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 60
+    },
+    {
+      "id": "inverted-index",
+      "zone": 1,
+      "name": "Inverted index",
+      "icon": "list",
+      "desc": "Building posting lists and answering queries by merging them.",
+      "kind": "lesson",
+      "requires": [
+        "ir-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "text-processing-ir",
+      "zone": 1,
+      "name": "Text processing",
+      "icon": "filter",
+      "desc": "Tokenisation, normalisation and stemming choices for indexing.",
+      "kind": "lesson",
+      "requires": [
+        "ir-basics",
+        "nlp:text-preprocessing"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "index-compression",
+      "zone": 1,
+      "name": "Index compression",
+      "icon": "binary",
+      "desc": "Gap encoding, variable-byte and other posting list compression.",
+      "kind": "lesson",
+      "requires": [
+        "inverted-index"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "query-processing",
+      "zone": 2,
+      "name": "Query processing",
+      "icon": "terminal",
+      "desc": "Boolean, phrase, positional and wildcard queries.",
+      "kind": "lesson",
+      "requires": [
+        "inverted-index",
+        "text-processing-ir"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "vector-space-model",
+      "zone": 2,
+      "name": "Vector space model",
+      "icon": "grid",
+      "desc": "TF-IDF weighting and cosine similarity ranking.",
+      "kind": "lesson",
+      "requires": [
+        "inverted-index",
+        "la:vectors"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "bm25",
+      "zone": 2,
+      "name": "BM25",
+      "icon": "chart",
+      "desc": "The probabilistic relevance framework and the BM25 scoring function.",
+      "kind": "lesson",
+      "requires": [
+        "vector-space-model",
+        "prob:conditional-probability"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "query-likelihood",
+      "zone": 2,
+      "name": "Query likelihood",
+      "icon": "function",
+      "desc": "Language-model retrieval with smoothing.",
+      "kind": "concept",
+      "requires": [
+        "bm25"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "mini-search-engine",
+      "zone": 2,
+      "name": "Mini search engine",
+      "icon": "rocket",
+      "desc": "Build a search engine over a document collection with BM25 ranking.",
+      "kind": "project",
+      "requires": [
+        "query-processing",
+        "bm25",
+        "index-compression"
+      ],
+      "xpReward": 220
+    },
+    {
+      "id": "ir-evaluation",
+      "zone": 3,
+      "name": "IR evaluation",
+      "icon": "check-circle",
+      "desc": "Precision, recall, MAP and nDCG.",
+      "kind": "lesson",
+      "requires": [
+        "vector-space-model"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "relevance-feedback",
+      "zone": 3,
+      "name": "Relevance feedback",
+      "icon": "route",
+      "desc": "Rocchio, pseudo-relevance feedback and query expansion.",
+      "kind": "lesson",
+      "requires": [
+        "vector-space-model"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "test-collections",
+      "zone": 3,
+      "name": "Test collections",
+      "icon": "bookmarks",
+      "desc": "TREC-style collections, pooling, online A/B tests and interleaving.",
+      "kind": "concept",
+      "requires": [
+        "ir-evaluation"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "web-crawling",
+      "zone": 4,
+      "name": "Web crawling",
+      "icon": "globe",
+      "desc": "Crawler design, politeness, freshness and duplicate detection.",
+      "kind": "lesson",
+      "requires": [
+        "inverted-index"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "link-analysis",
+      "zone": 4,
+      "name": "Link analysis",
+      "icon": "link",
+      "desc": "PageRank and HITS for ranking pages by link structure.",
+      "kind": "lesson",
+      "requires": [
+        "web-crawling",
+        "graph-theory:graph-basics"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "learning-to-rank",
+      "zone": 4,
+      "name": "Learning to rank",
+      "icon": "sort",
+      "desc": "Pointwise, pairwise and listwise ranking models.",
+      "kind": "lesson",
+      "requires": [
+        "ir-evaluation",
+        "ml:logistic-regression"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "distributed-indexing",
+      "zone": 4,
+      "name": "Distributed indexing",
+      "icon": "server",
+      "desc": "Sharding and replicating indexes and query fan-out.",
+      "kind": "concept",
+      "requires": [
+        "index-compression"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "recommenders",
+      "zone": 4,
+      "name": "Recommenders",
+      "icon": "star",
+      "desc": "Collaborative filtering and matrix factorisation for recommendations.",
+      "kind": "lesson",
+      "requires": [
+        "vector-space-model"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "dense-retrieval",
+      "zone": 5,
+      "name": "Dense retrieval",
+      "icon": "layers",
+      "desc": "Dual-encoder models that embed queries and documents.",
+      "kind": "lesson",
+      "requires": [
+        "learning-to-rank",
+        "deep:embeddings"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "vector-search",
+      "zone": 5,
+      "name": "Vector search",
+      "icon": "crosshair",
+      "desc": "Approximate nearest neighbour search with HNSW and product quantisation.",
+      "kind": "lesson",
+      "requires": [
+        "dense-retrieval"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "neural-reranking",
+      "zone": 5,
+      "name": "Neural re-ranking",
+      "icon": "sort",
+      "desc": "Cross-encoder re-rankers and retrieve-then-rerank pipelines.",
+      "kind": "lesson",
+      "requires": [
+        "dense-retrieval"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "hybrid-search",
+      "zone": 5,
+      "name": "Hybrid search",
+      "icon": "trophy",
+      "desc": "Combine BM25 and dense retrieval with re-ranking and evaluate the gains.",
+      "kind": "project",
+      "requires": [
+        "vector-search",
+        "neural-reranking",
+        "mini-search-engine"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

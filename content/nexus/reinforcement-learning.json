@@ -1,0 +1,283 @@
+{
+  "id": "reinforcement-learning",
+  "name": "Reinforcement Learning",
+  "short": "RL",
+  "group": "beyond",
+  "domain": "ai",
+  "order": 45,
+  "icon": "target",
+  "color": "#9333ea",
+  "description": "Learning by trial and error: MDPs, tabular methods, deep Q-learning, policy gradients and modern RL.",
+  "rankTitle": "Reward Seeker",
+  "zones": [
+    {
+      "level": 1,
+      "name": "RL foundations"
+    },
+    {
+      "level": 2,
+      "name": "Tabular methods"
+    },
+    {
+      "level": 3,
+      "name": "Function approximation"
+    },
+    {
+      "level": 4,
+      "name": "Policy gradients"
+    },
+    {
+      "level": 5,
+      "name": "Advanced RL"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "rl-problem",
+      "zone": 1,
+      "name": "The RL problem",
+      "icon": "compass",
+      "desc": "Agents, environments, states, actions, rewards and returns.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 60
+    },
+    {
+      "id": "bandits",
+      "zone": 1,
+      "name": "Multi-armed bandits",
+      "icon": "random",
+      "desc": "Exploration versus exploitation with epsilon-greedy, UCB and Thompson sampling.",
+      "kind": "lesson",
+      "requires": [
+        "rl-problem",
+        "prob:expectation-variance"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "mdps",
+      "zone": 1,
+      "name": "MDPs",
+      "icon": "graph",
+      "desc": "Markov decision processes, policies, discounting and value functions.",
+      "kind": "concept",
+      "requires": [
+        "rl-problem",
+        "prob:markov-chains"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "bellman-equations",
+      "zone": 1,
+      "name": "Bellman equations",
+      "icon": "function",
+      "desc": "Bellman expectation and optimality equations for state and action values.",
+      "kind": "concept",
+      "requires": [
+        "mdps"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "value-iteration",
+      "zone": 2,
+      "name": "Value iteration",
+      "icon": "route",
+      "desc": "Policy evaluation, policy iteration and value iteration when the model is known.",
+      "kind": "lesson",
+      "requires": [
+        "bellman-equations",
+        "algo:dynamic-programming"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "monte-carlo-rl",
+      "zone": 2,
+      "name": "Monte Carlo methods",
+      "icon": "random",
+      "desc": "Learning values from complete episodes without a model.",
+      "kind": "lesson",
+      "requires": [
+        "bellman-equations"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "td-learning",
+      "zone": 2,
+      "name": "TD learning",
+      "icon": "clock",
+      "desc": "Temporal-difference updates, TD(0) and SARSA.",
+      "kind": "lesson",
+      "requires": [
+        "monte-carlo-rl"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "q-learning",
+      "zone": 2,
+      "name": "Q-learning",
+      "icon": "grid",
+      "desc": "Off-policy control with Q-learning and its convergence intuition.",
+      "kind": "lesson",
+      "requires": [
+        "td-learning"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "gridworld-agent",
+      "zone": 2,
+      "name": "Gridworld agent",
+      "icon": "gamepad",
+      "desc": "Implement and compare value iteration, SARSA and Q-learning on gridworlds.",
+      "kind": "project",
+      "requires": [
+        "q-learning",
+        "value-iteration"
+      ],
+      "xpReward": 220
+    },
+    {
+      "id": "function-approximation",
+      "zone": 3,
+      "name": "Function approximation",
+      "icon": "function",
+      "desc": "Linear and neural value functions and the deadly triad.",
+      "kind": "concept",
+      "requires": [
+        "q-learning",
+        "ml:gradient-descent"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "dqn",
+      "zone": 3,
+      "name": "Deep Q-networks",
+      "icon": "layers",
+      "desc": "DQN with experience replay and target networks, and later improvements.",
+      "kind": "lesson",
+      "requires": [
+        "function-approximation",
+        "deep:neural-networks"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "exploration",
+      "zone": 3,
+      "name": "Exploration",
+      "icon": "compass",
+      "desc": "Exploration strategies for large state spaces, including count-based and curiosity methods.",
+      "kind": "concept",
+      "requires": [
+        "bandits",
+        "dqn"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "policy-gradient",
+      "zone": 4,
+      "name": "Policy gradients",
+      "icon": "trending-up",
+      "desc": "The policy gradient theorem, REINFORCE and baselines.",
+      "kind": "lesson",
+      "requires": [
+        "function-approximation"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "actor-critic",
+      "zone": 4,
+      "name": "Actor-critic",
+      "icon": "users",
+      "desc": "Combining a learned policy and value function, A2C and advantage estimation.",
+      "kind": "lesson",
+      "requires": [
+        "policy-gradient",
+        "td-learning"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "ppo",
+      "zone": 4,
+      "name": "PPO",
+      "icon": "shield",
+      "desc": "Trust regions and clipped objectives for stable policy optimisation.",
+      "kind": "lesson",
+      "requires": [
+        "actor-critic"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "control-agent",
+      "zone": 4,
+      "name": "Control agent",
+      "icon": "rocket",
+      "desc": "Train agents on classic control and Atari-style tasks and analyse learning curves.",
+      "kind": "project",
+      "requires": [
+        "ppo",
+        "dqn"
+      ],
+      "xpReward": 280
+    },
+    {
+      "id": "model-based-rl",
+      "zone": 5,
+      "name": "Model-based RL",
+      "icon": "brain",
+      "desc": "Learning environment models, planning and Monte Carlo tree search.",
+      "kind": "lesson",
+      "requires": [
+        "actor-critic"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "offline-rl",
+      "zone": 5,
+      "name": "Offline RL",
+      "icon": "database",
+      "desc": "Learning policies from fixed datasets and the distribution shift problem.",
+      "kind": "concept",
+      "requires": [
+        "dqn"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "multi-agent-rl",
+      "zone": 5,
+      "name": "Multi-agent RL",
+      "icon": "users",
+      "desc": "Cooperative and competitive settings, self-play and non-stationarity.",
+      "kind": "concept",
+      "requires": [
+        "actor-critic"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "rlhf",
+      "zone": 5,
+      "name": "RL from human feedback",
+      "icon": "chat",
+      "desc": "Reward models from human preferences and RL fine-tuning of language models.",
+      "kind": "concept",
+      "requires": [
+        "ppo"
+      ],
+      "xpReward": 140
+    }
+  ]
+}

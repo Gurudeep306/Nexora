@@ -1,0 +1,302 @@
+{
+  "id": "data-science",
+  "name": "Data Science",
+  "short": "DS",
+  "group": "beyond",
+  "domain": "data",
+  "order": 40,
+  "icon": "chart",
+  "color": "#0891b2",
+  "description": "Turning raw data into answers: wrangling with pandas, exploration and visualisation, modelling and communicating results.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Python for data"
+    },
+    {
+      "level": 2,
+      "name": "Data wrangling"
+    },
+    {
+      "level": 3,
+      "name": "Exploration & features"
+    },
+    {
+      "level": 4,
+      "name": "Modelling"
+    },
+    {
+      "level": 5,
+      "name": "Communicating results"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ds-workflow",
+      "zone": 1,
+      "name": "Data science workflow",
+      "icon": "compass",
+      "desc": "The iterative loop of asking a question, collecting and cleaning data, exploring, modelling and communicating.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 60
+    },
+    {
+      "id": "jupyter-notebooks",
+      "zone": 1,
+      "name": "Notebooks",
+      "icon": "book",
+      "desc": "Working in Jupyter notebooks: cells, kernels, inline plots and keeping analysis readable.",
+      "kind": "lesson",
+      "requires": [
+        "python:python-basics",
+        "ds-workflow"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "numpy-arrays",
+      "zone": 1,
+      "name": "NumPy arrays",
+      "icon": "array",
+      "desc": "Vectorised computation with ndarrays: shapes, broadcasting, indexing and aggregation.",
+      "kind": "lesson",
+      "requires": [
+        "jupyter-notebooks"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "pandas-dataframes",
+      "zone": 1,
+      "name": "pandas DataFrames",
+      "icon": "grid",
+      "desc": "Series and DataFrames, selecting rows and columns, dtypes and basic summaries.",
+      "kind": "lesson",
+      "requires": [
+        "numpy-arrays"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "data-sources",
+      "zone": 2,
+      "name": "Getting data",
+      "icon": "download",
+      "desc": "Loading data from CSV, JSON, Excel, web APIs and SQL databases into DataFrames.",
+      "kind": "lesson",
+      "requires": [
+        "pandas-dataframes",
+        "sql:select-queries"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "data-cleaning",
+      "zone": 2,
+      "name": "Data cleaning",
+      "icon": "filter",
+      "desc": "Handling missing values, wrong types, duplicates, inconsistent categories and outliers.",
+      "kind": "lesson",
+      "requires": [
+        "pandas-dataframes"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "reshaping-merging",
+      "zone": 2,
+      "name": "Reshape & merge",
+      "icon": "layers",
+      "desc": "groupby and aggregation, pivot and melt, and joining tables on keys.",
+      "kind": "lesson",
+      "requires": [
+        "data-cleaning"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "time-series-data",
+      "zone": 2,
+      "name": "Time series data",
+      "icon": "clock",
+      "desc": "Datetime indexes, resampling, rolling windows and handling time zones.",
+      "kind": "lesson",
+      "requires": [
+        "reshaping-merging"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "eda",
+      "zone": 3,
+      "name": "Exploratory analysis",
+      "icon": "search",
+      "desc": "Profiling a dataset: distributions, relationships, group comparisons and sanity checks.",
+      "kind": "lesson",
+      "requires": [
+        "reshaping-merging",
+        "statistics:descriptive-stats"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "visualization",
+      "zone": 3,
+      "name": "Visualisation",
+      "icon": "chart",
+      "desc": "Plotting with matplotlib and seaborn and choosing the right chart for the question.",
+      "kind": "lesson",
+      "requires": [
+        "eda"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "feature-engineering-ds",
+      "zone": 3,
+      "name": "Feature engineering",
+      "icon": "wrench",
+      "desc": "Encoding categories, scaling, binning, date parts and building informative derived features.",
+      "kind": "lesson",
+      "requires": [
+        "eda"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "eda-report",
+      "zone": 3,
+      "name": "EDA report",
+      "icon": "analytics",
+      "desc": "Clean and explore a messy public dataset and write up the main findings with charts.",
+      "kind": "project",
+      "requires": [
+        "visualization",
+        "data-cleaning",
+        "time-series-data"
+      ],
+      "xpReward": 250
+    },
+    {
+      "id": "sklearn-models",
+      "zone": 4,
+      "name": "scikit-learn models",
+      "icon": "brain",
+      "desc": "Fitting, validating and comparing models with scikit-learn pipelines and cross-validation.",
+      "kind": "lesson",
+      "requires": [
+        "feature-engineering-ds",
+        "ml:model-evaluation"
+      ],
+      "xpReward": 120,
+      "resources": [
+        {
+          "title": "scikit-learn user guide",
+          "url": "https://scikit-learn.org/stable/user_guide.html"
+        }
+      ]
+    },
+    {
+      "id": "experiment-design",
+      "zone": 4,
+      "name": "A/B experiments",
+      "icon": "sliders",
+      "desc": "Designing controlled experiments, choosing metrics and sample sizes, and reading the results.",
+      "kind": "lesson",
+      "requires": [
+        "statistics:hypothesis-testing",
+        "eda"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "model-interpretation",
+      "zone": 4,
+      "name": "Interpreting models",
+      "icon": "eye",
+      "desc": "Feature importance, partial dependence and SHAP values to explain what a model learned.",
+      "kind": "lesson",
+      "requires": [
+        "sklearn-models"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "prediction-project",
+      "zone": 4,
+      "name": "Prediction project",
+      "icon": "target",
+      "desc": "Build, tune and explain a predictive model for a real dataset such as churn or prices.",
+      "kind": "project",
+      "requires": [
+        "sklearn-models",
+        "model-interpretation"
+      ],
+      "xpReward": 280
+    },
+    {
+      "id": "storytelling",
+      "zone": 5,
+      "name": "Data storytelling",
+      "icon": "chat",
+      "desc": "Structuring an analysis as a narrative for a non-technical audience.",
+      "kind": "lesson",
+      "requires": [
+        "visualization"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "dashboards",
+      "zone": 5,
+      "name": "Dashboards",
+      "icon": "monitor",
+      "desc": "Building interactive dashboards that track key metrics for stakeholders.",
+      "kind": "lesson",
+      "requires": [
+        "storytelling"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "reproducibility",
+      "zone": 5,
+      "name": "Reproducible analysis",
+      "icon": "git-branch",
+      "desc": "Version control, environments, parameterised notebooks and scripts others can rerun.",
+      "kind": "lesson",
+      "requires": [
+        "jupyter-notebooks",
+        "git:git-basics"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "data-ethics",
+      "zone": 5,
+      "name": "Data ethics",
+      "icon": "shield",
+      "desc": "Privacy, consent, bias in data and models, and responsible reporting.",
+      "kind": "concept",
+      "requires": [
+        "data-sources"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "ds-capstone",
+      "zone": 5,
+      "name": "Data science capstone",
+      "icon": "trophy",
+      "desc": "An end-to-end project from question to data to model to a published, reproducible report.",
+      "kind": "project",
+      "requires": [
+        "prediction-project",
+        "dashboards",
+        "reproducibility"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

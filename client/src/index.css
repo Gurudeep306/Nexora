@@ -1124,13 +1124,15 @@ input[type='search']::-webkit-search-results-decoration {
 /* ── The Rift Web (components/nexus/SkillGraph.tsx) ──────────────────────── */
 /* The brand ramp (blue → violet → teal), deeper in light mode for contrast. */
 .nx-web-card,
-.nx-subjects {
+.nx-lat,
+.nx-panel {
   --nx-b1: #2f5bea;
   --nx-b2: #7c3aed;
   --nx-b3: #0d9488;
 }
 [data-mode='dark'] .nx-web-card,
-[data-mode='dark'] .nx-subjects {
+[data-mode='dark'] .nx-lat,
+[data-mode='dark'] .nx-panel {
   --nx-b1: #5b8cff;
   --nx-b2: #9b6bff;
   --nx-b3: #2dd4bf;
@@ -1220,39 +1222,6 @@ input[type='search']::-webkit-search-results-decoration {
 .nx-need.nx-unlock:hover { background: color-mix(in oklab, var(--nx-b2) 18%, var(--color-bg-surface)); border-color: var(--nx-b2); }
 .nx-need { border-radius: 9999px; border-width: 1px; }
 
-/* Subject switcher pills. */
-.nx-pill {
-  border-color: var(--color-border);
-  background: var(--color-bg-surface);
-  color: var(--color-text-secondary);
-  transition: border-color 160ms, background-color 160ms, color 160ms, transform 160ms var(--ease-smooth);
-}
-.nx-pill:hover { border-color: var(--color-border-hover); color: var(--color-text-primary); transform: translateY(-1px); }
-.nx-pill[data-active] {
-  color: var(--color-text-primary);
-  border-color: color-mix(in oklab, var(--nx-b2) 55%, var(--color-border));
-  background:
-    linear-gradient(var(--color-bg-surface), var(--color-bg-surface)) padding-box,
-    linear-gradient(95deg, var(--nx-b1), var(--nx-b2) 55%, var(--nx-b3)) border-box;
-  border-color: transparent;
-  box-shadow: 0 1px 0 color-mix(in oklab, var(--nx-b2) 18%, transparent);
-}
-
-/* The all-subjects map. */
-.nx-map-pill {
-  border-color: color-mix(in oklab, var(--zc) 40%, var(--color-border));
-  background: var(--color-bg-surface);
-  color: var(--color-text-primary);
-  transition: opacity 220ms, border-color 160ms, transform 160ms var(--ease-smooth);
-}
-.nx-map-pill:hover, .nx-map-pill:focus-visible { transform: translateY(-1px); border-color: var(--zc); }
-.nx-map-pill[data-tone='dim'] { opacity: 0.3; }
-.nx-map-pill[data-tone='up'] { border-color: var(--nx-b3); }
-.nx-map-pill[data-tone='down'] { border-color: var(--nx-b2); }
-.nx-map-pill[data-tone='self'] { border-color: var(--color-accent-brand); }
-.nx-map-strand { transition: opacity 220ms; }
-.nx-map-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: nx-draw 520ms var(--delay, 0s) cubic-bezier(0.3, 0.7, 0.4, 1) forwards; }
-
 /* Draw-in: the web spreads from its roots, breadth-first (delays from SkillGraph). */
 .nx-web-plane[data-animate] .nx-strand-line {
   stroke-dasharray: 1;
@@ -1274,6 +1243,40 @@ input[type='search']::-webkit-search-results-decoration {
   .nx-web-plane { transform: none; transition: none; }
   .nx-web-floor { transform: none; }
 }
+
+
+/* ── The Nexus web overview (components/nexus/NexusWeb.tsx) ──────────────── */
+/* The teaser's night sky in both themes: navy gradient + vignette; the
+   canvas draws the lattice web on top. */
+.nx-lat {
+  position: relative;
+  overflow: hidden;
+  height: min(78vh, 880px);
+  min-height: 480px;
+  background: linear-gradient(160deg, #141834 0%, #0b0d1c 60%, #06070d 100%);
+  isolation: isolate;
+}
+.nx-lat canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; outline: none; }
+.nx-lat canvas:active { cursor: grabbing; }
+.nx-lat canvas[data-hover] { cursor: pointer; }
+.nx-lat canvas:focus-visible { box-shadow: inset 0 0 0 2px var(--color-focus); }
+.nx-lat::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 95% at 50% 50%, transparent 55%, rgb(3 4 10 / 0.55) 100%);
+}
+/* Subject rank pill in a path's header: five tier pips + title. */
+.nx-rank {
+  border-color: color-mix(in oklab, var(--nx-b2, #7c3aed) 40%, var(--color-border));
+  background: color-mix(in oklab, var(--nx-b2, #7c3aed) 7%, var(--color-bg-surface));
+}
+.nx-rank-pips > span { background: var(--color-border-strong); }
+.nx-rank-pips > span[data-on] { background: linear-gradient(90deg, #5b8cff, #9b6bff, #2dd4bf); }
+/* Path view entrance after the camera dives into a subject. */
+.nx-path-enter { animation: nx-depth-in 520ms var(--ease-smooth) both; }
+@media (prefers-reduced-motion: reduce) { .nx-path-enter { animation: none; } }
 
 /* ── The Dock (components/layout/Deck.tsx) ───────────────────────────────── */
 /* Destination tiles (DockBadge.tsx) are IconBadges tinted with each item's

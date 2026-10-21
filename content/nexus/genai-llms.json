@@ -1,0 +1,299 @@
+{
+  "id": "genai-llms",
+  "name": "Generative AI & LLMs",
+  "short": "LLM",
+  "group": "beyond",
+  "domain": "ai",
+  "order": 46,
+  "icon": "sparkles",
+  "color": "#db2777",
+  "description": "How large language models work and how to build with them: prompting, RAG, agents, fine-tuning and safe deployment.",
+  "rankTitle": "Prompt Alchemist",
+  "zones": [
+    {
+      "level": 1,
+      "name": "LLM foundations"
+    },
+    {
+      "level": 2,
+      "name": "Prompting & APIs"
+    },
+    {
+      "level": 3,
+      "name": "Retrieval & tools"
+    },
+    {
+      "level": 4,
+      "name": "Training & adaptation"
+    },
+    {
+      "level": 5,
+      "name": "Production & safety"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "llm-basics",
+      "zone": 1,
+      "name": "How LLMs work",
+      "icon": "brain",
+      "desc": "Next-token prediction with decoder-only transformers, and what models can and cannot do.",
+      "kind": "concept",
+      "requires": [
+        "deep:transformers"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "tokens-context",
+      "zone": 1,
+      "name": "Tokens & context",
+      "icon": "hash",
+      "desc": "Tokenisers, context windows and how token counts drive cost and limits.",
+      "kind": "concept",
+      "requires": [
+        "llm-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "sampling-decoding",
+      "zone": 1,
+      "name": "Sampling & decoding",
+      "icon": "random",
+      "desc": "Greedy decoding, temperature, top-k and top-p sampling.",
+      "kind": "concept",
+      "requires": [
+        "llm-basics",
+        "prob:distributions"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "pretraining",
+      "zone": 1,
+      "name": "Pretraining at scale",
+      "icon": "server",
+      "desc": "Training data, scaling laws and the compute behind foundation models.",
+      "kind": "concept",
+      "requires": [
+        "llm-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "prompting",
+      "zone": 2,
+      "name": "Prompt engineering",
+      "icon": "edit",
+      "desc": "Clear instructions, examples, roles and step-by-step reasoning prompts.",
+      "kind": "lesson",
+      "requires": [
+        "llm-basics"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "llm-apis",
+      "zone": 2,
+      "name": "LLM APIs",
+      "icon": "code",
+      "desc": "Calling models over an API: messages, parameters, streaming and error handling.",
+      "kind": "lesson",
+      "requires": [
+        "prompting",
+        "python:python-functions"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "structured-output",
+      "zone": 2,
+      "name": "Structured output",
+      "icon": "list",
+      "desc": "Getting reliable JSON and schema-conforming output from a model.",
+      "kind": "lesson",
+      "requires": [
+        "llm-apis"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "chat-assistant",
+      "zone": 2,
+      "name": "Chat assistant",
+      "icon": "chat",
+      "desc": "Build a chat assistant with conversation memory and a structured action output.",
+      "kind": "project",
+      "requires": [
+        "llm-apis",
+        "structured-output"
+      ],
+      "xpReward": 220
+    },
+    {
+      "id": "text-embeddings",
+      "zone": 3,
+      "name": "Text embeddings",
+      "icon": "grid",
+      "desc": "Embedding models for similarity, clustering and retrieval.",
+      "kind": "lesson",
+      "requires": [
+        "llm-basics"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "vector-databases",
+      "zone": 3,
+      "name": "Vector databases",
+      "icon": "database",
+      "desc": "Storing embeddings and querying them with approximate nearest-neighbour indexes.",
+      "kind": "lesson",
+      "requires": [
+        "text-embeddings",
+        "information-retrieval:vector-search"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "rag",
+      "zone": 3,
+      "name": "RAG",
+      "icon": "search",
+      "desc": "Retrieval-augmented generation: chunking, retrieval, re-ranking and grounded answers.",
+      "kind": "lesson",
+      "requires": [
+        "vector-databases",
+        "prompting"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "tools-agents",
+      "zone": 3,
+      "name": "Tools & agents",
+      "icon": "bot",
+      "desc": "Tool calling, agent loops, planning and giving models access to external systems.",
+      "kind": "lesson",
+      "requires": [
+        "structured-output"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "rag-app",
+      "zone": 3,
+      "name": "RAG app",
+      "icon": "rocket",
+      "desc": "Build a question-answering app over your own documents with citations.",
+      "kind": "project",
+      "requires": [
+        "rag"
+      ],
+      "xpReward": 250
+    },
+    {
+      "id": "fine-tuning-llm",
+      "zone": 4,
+      "name": "Fine-tuning",
+      "icon": "wrench",
+      "desc": "Supervised fine-tuning on instruction data and when it beats prompting.",
+      "kind": "lesson",
+      "requires": [
+        "pretraining"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "peft",
+      "zone": 4,
+      "name": "LoRA & PEFT",
+      "icon": "sliders",
+      "desc": "Parameter-efficient fine-tuning with adapters, LoRA and quantised training.",
+      "kind": "lesson",
+      "requires": [
+        "fine-tuning-llm"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "alignment",
+      "zone": 4,
+      "name": "Alignment",
+      "icon": "heart",
+      "desc": "Preference tuning with RLHF and DPO and the goals of alignment.",
+      "kind": "concept",
+      "requires": [
+        "fine-tuning-llm",
+        "reinforcement-learning:rlhf"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "multimodal",
+      "zone": 4,
+      "name": "Multimodal models",
+      "icon": "image",
+      "desc": "Models that read and generate images, audio and text together.",
+      "kind": "concept",
+      "requires": [
+        "llm-basics",
+        "computer-vision:vision-transformers"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "llm-evaluation",
+      "zone": 5,
+      "name": "Evaluating LLMs",
+      "icon": "check-circle",
+      "desc": "Benchmarks, task-specific evals, LLM-as-judge and regression testing prompts.",
+      "kind": "lesson",
+      "requires": [
+        "rag",
+        "structured-output"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "inference-serving",
+      "zone": 5,
+      "name": "Inference & serving",
+      "icon": "server",
+      "desc": "Quantisation, KV caching, batching, latency and cost control.",
+      "kind": "lesson",
+      "requires": [
+        "sampling-decoding",
+        "peft"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "llm-safety",
+      "zone": 5,
+      "name": "Safety & security",
+      "icon": "shield",
+      "desc": "Prompt injection, jailbreaks, data leakage and guardrails.",
+      "kind": "concept",
+      "requires": [
+        "tools-agents"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "agent-capstone",
+      "zone": 5,
+      "name": "Agent capstone",
+      "icon": "trophy",
+      "desc": "Ship a tool-using agent with evaluations and safety checks.",
+      "kind": "project",
+      "requires": [
+        "tools-agents",
+        "llm-evaluation",
+        "llm-safety"
+      ],
+      "xpReward": 300
+    }
+  ]
+}
