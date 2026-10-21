@@ -3692,6 +3692,23 @@ const nexusWebCache = sharedCache({
  * web rank, subject ranks, and per zone / node numbers in structure order
  * (see webState). Small; the structure comes from /api/nexus/structure.
  */
+/**
+ * A course page's content: content/courses/<subject>/<concept>.md (or
+ * <subject>/index.md for the subject page), written by hand. Missing file:
+ * body null and the page shows "Course coming soon".
+ */
+app.get("/api/courses/:subject/:concept?", (req, res) => {
+  const id = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
+  const subject = String(req.params.subject || "");
+  const concept = String(req.params.concept || "index");
+  if (!id.test(subject) || !id.test(concept)) return res.status(400).json({ ok: false, error: "Bad course id" });
+  const file = path.join(__dirname, "..", "content", "courses", subject, `${concept}.md`);
+  fs.readFile(file, "utf8", (err, body) => {
+    res.set("Cache-Control", "private, max-age=60");
+    res.json({ ok: true, subject, concept, body: err ? null : body });
+  });
+});
+
 app.get("/api/nexus/web", async (req, res) => {
   try {
     const fresh = req.query.fresh === "1";
