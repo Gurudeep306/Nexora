@@ -1,0 +1,631 @@
+{
+  "id": "dm",
+  "name": "Discrete Mathematics",
+  "short": "DM",
+  "group": "gate",
+  "order": 10,
+  "icon": "puzzle",
+  "color": "#ef4444",
+  "description": "Logic, sets and relations, algebraic structures, counting, recurrences and graph theory for GATE.",
+  "gate": {
+    "pyqSubject": "dm",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Mathematical logic"
+    },
+    {
+      "level": 2,
+      "name": "Sets, relations, functions"
+    },
+    {
+      "level": 3,
+      "name": "Posets and groups"
+    },
+    {
+      "level": 4,
+      "name": "Counting"
+    },
+    {
+      "level": 5,
+      "name": "Recurrences"
+    },
+    {
+      "level": 6,
+      "name": "Graph theory"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "propositional-logic",
+      "zone": 1,
+      "name": "Propositional logic",
+      "icon": "binary",
+      "desc": "Connectives, truth tables, implication and its variants; tautologies, contradictions and satisfiability.",
+      "kind": "lesson",
+      "requires": [],
+      "pyqTopics": [
+        "dm/logic"
+      ],
+      "pyqTags": [
+        "propositional",
+        "tautology",
+        "truth-table",
+        "satisfiab",
+        "implication",
+        "contrapositive",
+        "negation",
+        "connectives",
+        "functional",
+        "truth-teller"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "logical-equivalence",
+      "zone": 1,
+      "name": "Equivalence & forms",
+      "icon": "shapes",
+      "desc": "Logical equivalence laws, De Morgan, CNF and DNF, and checking whether two formulas say the same thing.",
+      "kind": "lesson",
+      "requires": [
+        "propositional-logic"
+      ],
+      "pyqTopics": [
+        "dm/logic"
+      ],
+      "pyqTags": [
+        "equivalence",
+        "cnf",
+        "canonical",
+        "de-morgan",
+        "contradiction"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "inference-rules",
+      "zone": 1,
+      "name": "Inference & validity",
+      "icon": "check-circle",
+      "desc": "Valid arguments, modus ponens and friends, resolution, and logical consequence.",
+      "kind": "lesson",
+      "requires": [
+        "logical-equivalence"
+      ],
+      "pyqTopics": [
+        "dm/logic"
+      ],
+      "pyqTags": [
+        "validity",
+        "inference",
+        "resolution",
+        "modus",
+        "consequence",
+        "consisten",
+        "horn"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "predicate-logic",
+      "zone": 1,
+      "name": "Predicate logic",
+      "icon": "function",
+      "desc": "Predicates, universal and existential quantifiers, nested quantifiers, negation and translating English to first-order logic.",
+      "kind": "lesson",
+      "requires": [
+        "propositional-logic"
+      ],
+      "pyqTopics": [
+        "dm/logic"
+      ],
+      "pyqTags": [
+        "first-order",
+        "first order",
+        "quantifier",
+        "predicate",
+        "translation",
+        "Bernays"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "proof-techniques",
+      "zone": 1,
+      "name": "Proof techniques",
+      "icon": "lightbulb",
+      "desc": "Direct proof, contradiction, contrapositive and mathematical induction.",
+      "kind": "concept",
+      "requires": [
+        "inference-rules",
+        "predicate-logic"
+      ],
+      "pyqTopics": [
+        "dm/sets",
+        "dm/groups",
+        "dm/recurrences"
+      ],
+      "pyqTags": [
+        "proof",
+        "induction"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "sets-relations",
+      "zone": 2,
+      "name": "Sets & relations",
+      "icon": "shapes",
+      "desc": "Set operations and identities, power sets, Cartesian products, relations and their reflexive, symmetric and transitive properties.",
+      "kind": "lesson",
+      "requires": [
+        "propositional-logic"
+      ],
+      "pyqTopics": [
+        "dm/sets"
+      ],
+      "pyqTags": [
+        "set-",
+        "power",
+        "cartesian",
+        "union",
+        "intersection",
+        "relation",
+        "reflexive",
+        "symmetric",
+        "transitive",
+        "complement",
+        "closure",
+        "set identities"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "equivalence-relations",
+      "zone": 2,
+      "name": "Equivalence relations",
+      "icon": "layers",
+      "desc": "Equivalence classes, partitions, closures, and counting relations with given properties.",
+      "kind": "lesson",
+      "requires": [
+        "sets-relations"
+      ],
+      "pyqTopics": [
+        "dm/sets"
+      ],
+      "pyqTags": [
+        "equivalence",
+        "partition",
+        "bell",
+        "congruence"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "functions",
+      "zone": 2,
+      "name": "Functions",
+      "icon": "function",
+      "desc": "Injective, surjective and bijective functions, composition, inverses, images and preimages.",
+      "kind": "lesson",
+      "requires": [
+        "sets-relations"
+      ],
+      "pyqTopics": [
+        "dm/sets"
+      ],
+      "pyqTags": [
+        "function",
+        "bijection",
+        "onto",
+        "surjection",
+        "injective",
+        "image",
+        "composition",
+        "inverse"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "countability",
+      "zone": 2,
+      "name": "Countability",
+      "icon": "hash",
+      "desc": "Finite, countable and uncountable sets, cardinality, and diagonalisation.",
+      "kind": "concept",
+      "requires": [
+        "functions"
+      ],
+      "pyqTopics": [
+        "dm/sets"
+      ],
+      "pyqTags": [
+        "countab",
+        "infinite",
+        "cardinality"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "posets-lattices",
+      "zone": 3,
+      "name": "Posets & lattices",
+      "icon": "git-branch",
+      "desc": "Partial orders, Hasse diagrams, chains and antichains, lub and glb, lattices, distributive and complemented lattices.",
+      "kind": "lesson",
+      "requires": [
+        "equivalence-relations"
+      ],
+      "pyqTopics": [
+        "dm/posets"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "boolean-algebra",
+      "zone": 3,
+      "name": "Boolean algebra",
+      "icon": "binary",
+      "desc": "Boolean algebra as a complemented distributive lattice; the link between posets and logic circuits.",
+      "kind": "concept",
+      "requires": [
+        "posets-lattices",
+        "dl:boolean-laws"
+      ],
+      "pyqTopics": [
+        "dm/posets"
+      ],
+      "pyqTags": [
+        "boolean",
+        "complement",
+        "distributive"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "groups",
+      "zone": 3,
+      "name": "Groups",
+      "icon": "puzzle",
+      "desc": "Binary operations, closure, associativity, identity and inverses; groups and abelian groups, often over modular arithmetic.",
+      "kind": "lesson",
+      "requires": [
+        "functions",
+        "dsa:mb_ntheory"
+      ],
+      "pyqTopics": [
+        "dm/groups"
+      ],
+      "pyqTags": [
+        "group",
+        "abelian",
+        "associativ",
+        "binary-operation",
+        "binary operation",
+        "inverse",
+        "modular",
+        "ring",
+        "field",
+        "conjugacy"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "semigroups-monoids",
+      "zone": 3,
+      "name": "Semigroups & monoids",
+      "icon": "layers",
+      "desc": "The algebraic ladder: groupoid, semigroup, monoid, group; checking each axiom on a given operation.",
+      "kind": "lesson",
+      "requires": [
+        "groups"
+      ],
+      "pyqTopics": [
+        "dm/groups"
+      ],
+      "pyqTags": [
+        "semigroup",
+        "monoid"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "subgroups-lagrange",
+      "zone": 3,
+      "name": "Subgroups & Lagrange",
+      "icon": "grid",
+      "desc": "Subgroups, cosets, Lagrange's theorem, cyclic groups and generators, element orders.",
+      "kind": "lesson",
+      "requires": [
+        "groups"
+      ],
+      "pyqTopics": [
+        "dm/groups"
+      ],
+      "pyqTags": [
+        "subgroup",
+        "lagrange",
+        "Lagrange",
+        "coset",
+        "cyclic",
+        "generator"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "counting-basics",
+      "zone": 4,
+      "name": "Counting principles",
+      "icon": "calculator",
+      "desc": "Sum and product rules, permutations, counting strings and subsets.",
+      "kind": "lesson",
+      "requires": [
+        "sets-relations"
+      ],
+      "pyqTopics": [
+        "dm/combinatorics"
+      ],
+      "pyqTags": [
+        "counting",
+        "permutation",
+        "strings",
+        "subsets",
+        "binary"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "combinatorics",
+      "zone": 4,
+      "name": "Combinations",
+      "icon": "coins",
+      "desc": "Binomial coefficients, multisets and stars and bars, distributions of identical and distinct objects, lattice paths.",
+      "kind": "lesson",
+      "requires": [
+        "counting-basics"
+      ],
+      "pyqTopics": [
+        "dm/combinatorics"
+      ],
+      "pyqTags": [
+        "binomial",
+        "stars",
+        "multiset",
+        "distribution",
+        "compositions",
+        "identical",
+        "lattice"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "inclusion-exclusion",
+      "zone": 4,
+      "name": "Inclusion–exclusion",
+      "icon": "filter",
+      "desc": "Inclusion–exclusion, counting onto functions and derangements, and the pigeonhole principle.",
+      "kind": "lesson",
+      "requires": [
+        "combinatorics"
+      ],
+      "pyqTopics": [
+        "dm/combinatorics"
+      ],
+      "pyqTags": [
+        "inclusion-exclusion",
+        "pigeonhole",
+        "surjective",
+        "injective",
+        "functions",
+        "derangement",
+        "factorial",
+        "Legendre"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "catalan-advanced",
+      "zone": 4,
+      "name": "Catalan & identities",
+      "icon": "sparkles",
+      "desc": "Catalan numbers, the ballot problem, double counting and summation identities.",
+      "kind": "concept",
+      "requires": [
+        "combinatorics"
+      ],
+      "pyqTopics": [
+        "dm/combinatorics"
+      ],
+      "pyqTags": [
+        "catalan",
+        "ballot",
+        "double-counting",
+        "summation",
+        "divisors"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "recurrence-relations",
+      "zone": 5,
+      "name": "Recurrence relations",
+      "icon": "activity",
+      "desc": "Setting up recurrences for counting problems; solving linear homogeneous and non-homogeneous recurrences via the characteristic equation.",
+      "kind": "lesson",
+      "requires": [
+        "combinatorics",
+        "proof-techniques"
+      ],
+      "pyqTopics": [
+        "dm/recurrences"
+      ],
+      "pyqTags": [
+        "recurrence",
+        "fibonacci",
+        "Fibonacci",
+        "characteristic",
+        "closed-form",
+        "strings",
+        "lucas"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "generating-functions",
+      "zone": 5,
+      "name": "Generating functions",
+      "icon": "function",
+      "desc": "Ordinary generating functions for sequences and counting, and solving recurrences with them.",
+      "kind": "lesson",
+      "requires": [
+        "recurrence-relations"
+      ],
+      "pyqTopics": [
+        "dm/recurrences"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "graph-theory",
+      "zone": 6,
+      "name": "Graph basics",
+      "icon": "graph",
+      "desc": "Graph types, degree and the handshaking lemma, complete and bipartite graphs, adjacency representations.",
+      "kind": "lesson",
+      "requires": [
+        "sets-relations",
+        "counting-basics"
+      ],
+      "pyqTopics": [
+        "dm/graphs"
+      ],
+      "pyqTags": [
+        "degree",
+        "handshak",
+        "edges",
+        "complete",
+        "adjacency",
+        "graph-theory",
+        "dm"
+      ],
+      "xpReward": 160
+    },
+    {
+      "id": "connectivity",
+      "zone": 6,
+      "name": "Paths & connectivity",
+      "icon": "route",
+      "desc": "Walks, paths and cycles, connected components, cut vertices and edges, diameter, Euler and Hamiltonian paths.",
+      "kind": "lesson",
+      "requires": [
+        "graph-theory"
+      ],
+      "pyqTopics": [
+        "dm/graphs"
+      ],
+      "pyqTags": [
+        "connect",
+        "cycle",
+        "diameter",
+        "cut",
+        "articulation",
+        "isolated",
+        "hamilton"
+      ],
+      "xpReward": 160
+    },
+    {
+      "id": "trees-forests",
+      "zone": 6,
+      "name": "Trees & spanning trees",
+      "icon": "tree",
+      "desc": "Properties of trees and forests, counting spanning trees and Cayley's formula.",
+      "kind": "lesson",
+      "requires": [
+        "connectivity"
+      ],
+      "pyqTopics": [
+        "dm/graphs"
+      ],
+      "pyqTags": [
+        "tree",
+        "forest",
+        "spanning",
+        "cayley"
+      ],
+      "xpReward": 160
+    },
+    {
+      "id": "planarity",
+      "zone": 6,
+      "name": "Planar graphs",
+      "icon": "map",
+      "desc": "Euler's formula, face counting, K5 and K3,3, and Kuratowski's theorem.",
+      "kind": "lesson",
+      "requires": [
+        "connectivity"
+      ],
+      "pyqTopics": [
+        "dm/graphs"
+      ],
+      "pyqTags": [
+        "planar",
+        "euler",
+        "Euler",
+        "kuratowski",
+        "k33",
+        "k5"
+      ],
+      "xpReward": 160
+    },
+    {
+      "id": "graph-coloring",
+      "zone": 6,
+      "name": "Colouring & covers",
+      "icon": "palette",
+      "desc": "Chromatic number, independent sets, vertex covers, cliques and matchings.",
+      "kind": "lesson",
+      "requires": [
+        "graph-theory"
+      ],
+      "pyqTopics": [
+        "dm/graphs"
+      ],
+      "pyqTags": [
+        "chromatic",
+        "color",
+        "colour",
+        "independent",
+        "vertex-cover",
+        "bipartite",
+        "clique",
+        "matching"
+      ],
+      "xpReward": 160
+    },
+    {
+      "id": "graph-isomorphism",
+      "zone": 6,
+      "name": "Isomorphism",
+      "icon": "copy",
+      "desc": "Graph isomorphism and invariants, complements and self-complementary graphs, counting graphs.",
+      "kind": "concept",
+      "requires": [
+        "graph-theory"
+      ],
+      "pyqTopics": [
+        "dm/graphs"
+      ],
+      "pyqTags": [
+        "isomorph",
+        "self-complementary",
+        "complement",
+        "counting"
+      ],
+      "xpReward": 160
+    }
+  ]
+}

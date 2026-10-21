@@ -1,0 +1,495 @@
+{
+  "id": "dbms",
+  "name": "Databases",
+  "short": "DBMS",
+  "group": "gate",
+  "order": 5,
+  "icon": "database",
+  "color": "#22c55e",
+  "description": "ER modelling, the relational model, relational algebra and SQL, normalisation, transactions and indexing.",
+  "gate": {
+    "pyqSubject": "db",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Data models"
+    },
+    {
+      "level": 2,
+      "name": "Query languages"
+    },
+    {
+      "level": 3,
+      "name": "Design theory"
+    },
+    {
+      "level": 4,
+      "name": "Transactions"
+    },
+    {
+      "level": 5,
+      "name": "Storage & indexing"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "er-model",
+      "zone": 1,
+      "name": "ER model",
+      "icon": "shapes",
+      "desc": "Entities, attributes, relationships, cardinality and participation constraints.",
+      "kind": "concept",
+      "requires": [],
+      "pyqTopics": [
+        "db/er"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "er-to-relational",
+      "zone": 1,
+      "name": "ER to tables",
+      "icon": "grid",
+      "desc": "Mapping entities, weak entities, relationships and multivalued attributes to the fewest relations.",
+      "kind": "concept",
+      "requires": [
+        "er-model"
+      ],
+      "pyqTopics": [
+        "db/er"
+      ],
+      "pyqTags": [
+        "er-to",
+        "ER to",
+        "relationship-mapping",
+        "weak",
+        "many-to-many",
+        "multivalued"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "relational-model",
+      "zone": 1,
+      "name": "Relational model",
+      "icon": "database",
+      "desc": "Relations as sets of tuples, schemas, and referential integrity through foreign keys.",
+      "kind": "concept",
+      "requires": [
+        "er-model",
+        "dm:sets-relations"
+      ],
+      "pyqTopics": [
+        "db/er",
+        "db/ra"
+      ],
+      "pyqTags": [
+        "relational-model",
+        "foreign",
+        "referential",
+        "schema"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "keys",
+      "zone": 1,
+      "name": "Keys",
+      "icon": "key",
+      "desc": "Superkeys, candidate keys and primary keys, and counting the superkeys of a relation.",
+      "kind": "concept",
+      "requires": [
+        "relational-model"
+      ],
+      "pyqTopics": [
+        "db/normalization"
+      ],
+      "pyqTags": [
+        "candidate",
+        "superkey",
+        "keys"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "relational-algebra",
+      "zone": 2,
+      "name": "Relational algebra",
+      "icon": "function",
+      "desc": "Selection, projection, product, union, difference and rename, and what queries they express.",
+      "kind": "concept",
+      "requires": [
+        "relational-model"
+      ],
+      "pyqTopics": [
+        "db/ra"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "joins-division",
+      "zone": 2,
+      "name": "Joins & division",
+      "icon": "link",
+      "desc": "Natural, theta and outer joins, division for 'for all' queries, and result cardinalities.",
+      "kind": "concept",
+      "requires": [
+        "relational-algebra"
+      ],
+      "pyqTopics": [
+        "db/ra"
+      ],
+      "pyqTags": [
+        "join",
+        "division",
+        "cardinality"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "relational-calculus",
+      "zone": 2,
+      "name": "Relational calculus",
+      "icon": "type",
+      "desc": "Tuple relational calculus, safe expressions and equivalence with relational algebra.",
+      "kind": "concept",
+      "requires": [
+        "relational-algebra",
+        "dm:predicate-logic"
+      ],
+      "pyqTopics": [
+        "db/ra"
+      ],
+      "pyqTags": [
+        "calculus",
+        "expressive"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "sql",
+      "zone": 2,
+      "name": "SQL",
+      "icon": "terminal",
+      "desc": "SELECT–FROM–WHERE, joins, set operations, NULLs, duplicates and constraints in SQL.",
+      "kind": "concept",
+      "requires": [
+        "relational-algebra"
+      ],
+      "pyqTopics": [
+        "db/sql"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "sql-aggregation",
+      "zone": 2,
+      "name": "Aggregation & grouping",
+      "icon": "chart",
+      "desc": "Aggregate functions, GROUP BY and HAVING, and how NULLs affect them.",
+      "kind": "concept",
+      "requires": [
+        "sql"
+      ],
+      "pyqTopics": [
+        "db/sql"
+      ],
+      "pyqTags": [
+        "aggregate",
+        "group",
+        "having"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "nested-queries",
+      "zone": 2,
+      "name": "Nested queries",
+      "icon": "layers",
+      "desc": "Subqueries with IN, EXISTS, ANY and ALL, correlated subqueries and views.",
+      "kind": "concept",
+      "requires": [
+        "sql"
+      ],
+      "pyqTopics": [
+        "db/sql"
+      ],
+      "pyqTags": [
+        "subquery",
+        "nested",
+        "exists",
+        "all-any",
+        "correlated",
+        "view"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "functional-dependencies",
+      "zone": 3,
+      "name": "Functional deps",
+      "icon": "function",
+      "desc": "FDs, Armstrong's axioms, attribute closure, and equivalence and minimal covers of FD sets.",
+      "kind": "concept",
+      "requires": [
+        "keys"
+      ],
+      "pyqTopics": [
+        "db/normalization"
+      ],
+      "pyqTags": [
+        "functional",
+        "armstrong",
+        "closure"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "candidate-keys",
+      "zone": 3,
+      "name": "Finding keys",
+      "icon": "search",
+      "desc": "Finding all candidate keys from a set of FDs using attribute closure.",
+      "kind": "concept",
+      "requires": [
+        "functional-dependencies"
+      ],
+      "pyqTopics": [
+        "db/normalization"
+      ],
+      "pyqTags": [
+        "candidate",
+        "superkey",
+        "attribute-closure"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "normalization",
+      "zone": 3,
+      "name": "Normalisation",
+      "icon": "layers",
+      "desc": "Redundancy and anomalies, and why we decompose relations.",
+      "kind": "concept",
+      "requires": [
+        "candidate-keys"
+      ],
+      "pyqTopics": [
+        "db/normalization"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "normal-forms",
+      "zone": 3,
+      "name": "Normal forms",
+      "icon": "check-circle",
+      "desc": "1NF, 2NF, 3NF and BCNF: testing a relation and identifying its highest normal form.",
+      "kind": "concept",
+      "requires": [
+        "normalization"
+      ],
+      "pyqTopics": [
+        "db/normalization"
+      ],
+      "pyqTags": [
+        "bcnf",
+        "BCNF",
+        "3nf",
+        "3NF",
+        "2nf",
+        "1nf",
+        "normal"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "decomposition",
+      "zone": 3,
+      "name": "Decomposition",
+      "icon": "share",
+      "desc": "Lossless-join and dependency-preserving decompositions.",
+      "kind": "concept",
+      "requires": [
+        "normal-forms"
+      ],
+      "pyqTopics": [
+        "db/normalization"
+      ],
+      "pyqTags": [
+        "lossless",
+        "dependency-preservation"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "transactions",
+      "zone": 4,
+      "name": "Transactions",
+      "icon": "check",
+      "desc": "ACID properties, transaction states and schedules.",
+      "kind": "concept",
+      "requires": [
+        "sql"
+      ],
+      "pyqTopics": [
+        "db/transactions"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "serializability",
+      "zone": 4,
+      "name": "Serializability",
+      "icon": "sort",
+      "desc": "Conflict and view serializability, and testing with a precedence graph.",
+      "kind": "concept",
+      "requires": [
+        "transactions"
+      ],
+      "pyqTopics": [
+        "db/transactions"
+      ],
+      "pyqTags": [
+        "serializab",
+        "precedence",
+        "schedule"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "recoverability",
+      "zone": 4,
+      "name": "Recoverable schedules",
+      "icon": "warning",
+      "desc": "Recoverable, cascadeless and strict schedules.",
+      "kind": "concept",
+      "requires": [
+        "serializability"
+      ],
+      "pyqTopics": [
+        "db/transactions"
+      ],
+      "pyqTags": [
+        "recoverab",
+        "dirty",
+        "cascad",
+        "strict"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "concurrency-control",
+      "zone": 4,
+      "name": "Concurrency control",
+      "icon": "lock",
+      "desc": "Two-phase locking and its variants, timestamp ordering and deadlock handling in databases.",
+      "kind": "concept",
+      "requires": [
+        "serializability",
+        "os:synchronization",
+        "os:deadlock"
+      ],
+      "pyqTopics": [
+        "db/transactions"
+      ],
+      "pyqTags": [
+        "2pl",
+        "2PL",
+        "locking",
+        "timestamp",
+        "wound",
+        "deadlock"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "recovery",
+      "zone": 4,
+      "name": "Logging & recovery",
+      "icon": "save",
+      "desc": "Write-ahead logging, undo and redo, checkpoints and crash recovery.",
+      "kind": "concept",
+      "requires": [
+        "transactions"
+      ],
+      "pyqTopics": [
+        "db/transactions"
+      ],
+      "pyqTags": [
+        "log",
+        "undo",
+        "checkpoint",
+        "durability",
+        "recovery"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "file-organization",
+      "zone": 5,
+      "name": "File organisation",
+      "icon": "server",
+      "desc": "Records and blocks, blocking factor, primary, clustering and secondary indexes, multilevel indexes.",
+      "kind": "concept",
+      "requires": [
+        "relational-model"
+      ],
+      "pyqTopics": [
+        "db/indexing"
+      ],
+      "pyqTags": [
+        "blocking",
+        "dense",
+        "index",
+        "isam",
+        "multilevel",
+        "disk"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "b-trees",
+      "zone": 5,
+      "name": "B-trees",
+      "icon": "tree",
+      "desc": "B-tree order, node capacity, height, insertion and splitting.",
+      "kind": "concept",
+      "requires": [
+        "file-organization",
+        "c:bst"
+      ],
+      "pyqTopics": [
+        "db/indexing"
+      ],
+      "pyqTags": [
+        "b-tree",
+        "B-tree"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "bplus-trees",
+      "zone": 5,
+      "name": "B+ trees",
+      "icon": "tree",
+      "desc": "B+ tree indexes: order from block size, insertion with splits, deletion, height and range queries.",
+      "kind": "concept",
+      "requires": [
+        "b-trees",
+        "dsa:gb_trees"
+      ],
+      "pyqTopics": [
+        "db/indexing"
+      ],
+      "pyqTags": [
+        "b-plus",
+        "B+",
+        "b+"
+      ],
+      "xpReward": 170
+    }
+  ]
+}

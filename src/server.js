@@ -44,9 +44,9 @@ const {
 const { createAuthRouter } = require("./routes/auth");
 const { createLearningRouter } = require("./routes/learning");
 const { createLearnRouter } = require("./routes/learn");
-const { createGateRouter } = require("./routes/gate");
+const { createGateRouter, loadGateBank } = require("./routes/gate");
 const { createGateMeRouter } = require("./routes/gate-me");
-const { createGateNotesRouter } = require("./routes/gate-notes");
+const { createGateNotesRouter, loadGateNotes } = require("./routes/gate-notes");
 const { createStudioRouter } = require("./routes/studio");
 const { createAgentRouter } = require("./routes/agent");
 const { weaknessAnalysis } = require("./ai/data");
@@ -3464,548 +3464,9 @@ app.delete("/api/custom-problems/:id", async (req, res) => {
  one large DAG — "The Nexus". Completing skill branches within a zone
  + meeting XP/problem-count gates unlocks the next zone.
 */
-const NEXUS_NODES = [
-  // ── Zone 1: Bit (Rating 0-800) ──
-  {
-    id: "bit_basics",
-    zone: 1,
-    name: "Fundamentals",
-    icon: '<i class="icon-book"></i>',
-    desc: "Implementation, simulation, basic I/O",
-    tags: ["implementation", "math"],
-    requires: [],
-    target: 8,
-    x: 50,
-    y: 0,
-    difficulty: [800, 1000],
-    xpReward: 50,
-    resources: [
-      {
-        title: "USACO Guide: Intro",
-        url: "https://usaco.guide/general/intro-cp",
-      },
-      {
-        title: "CF: Way to Practice",
-        url: "https://codeforces.com/blog/entry/66909",
-      },
-    ],
-  },
-
-  // ── Zone 2: Byte (Rating 800-1000) ──
-  {
-    id: "byte_sorting",
-    zone: 2,
-    name: "Sorting",
-    icon: '<i class="icon-chart"></i>',
-    desc: "Comparison sorts, counting sort, custom comparators",
-    tags: ["sortings"],
-    requires: ["bit_basics"],
-    target: 6,
-    x: 20,
-    y: 1,
-    difficulty: [800, 1200],
-    xpReward: 60,
-    resources: [
-      {
-        title: "Sorting Algorithms",
-        url: "https://usaco.guide/bronze/intro-sorting",
-      },
-    ],
-  },
-  {
-    id: "byte_strings",
-    zone: 2,
-    name: "Strings",
-    icon: '<i class="icon-abc"></i>',
-    desc: "String manipulation, pattern matching, palindromes",
-    tags: ["strings"],
-    requires: ["bit_basics"],
-    target: 6,
-    x: 50,
-    y: 1,
-    difficulty: [800, 1200],
-    xpReward: 60,
-    resources: [
-      {
-        title: "String Basics",
-        url: "https://usaco.guide/bronze/intro-complete",
-      },
-    ],
-  },
-  {
-    id: "byte_brute",
-    zone: 2,
-    name: "Complete Search",
-    icon: '<i class="icon-search"></i>',
-    desc: "Enumeration, recursion, backtracking, pruning",
-    tags: ["brute force", "constructive algorithms"],
-    requires: ["bit_basics"],
-    target: 6,
-    x: 80,
-    y: 1,
-    difficulty: [800, 1200],
-    xpReward: 60,
-    resources: [
-      {
-        title: "Complete Search",
-        url: "https://usaco.guide/bronze/intro-complete",
-      },
-    ],
-  },
-
-  // ── Zone 3: Kilobyte (Rating 1000-1200) ──
-  {
-    id: "kb_bsearch",
-    zone: 3,
-    name: "Binary Search",
-    icon: '<i class="icon-search"></i>',
-    desc: "Binary search on answers, two pointers, ternary search",
-    tags: ["binary search", "two pointers"],
-    requires: ["byte_sorting"],
-    target: 6,
-    x: 25,
-    y: 2,
-    difficulty: [1000, 1400],
-    xpReward: 70,
-    resources: [
-      {
-        title: "Binary Search Guide",
-        url: "https://usaco.guide/silver/binary-search",
-      },
-    ],
-  },
-  {
-    id: "kb_greedy",
-    zone: 3,
-    name: "Greedy",
-    icon: '<i class="icon-coins"></i>',
-    desc: "Exchange arguments, scheduling, interval problems",
-    tags: ["greedy"],
-    requires: ["byte_sorting"],
-    target: 8,
-    x: 50,
-    y: 2,
-    difficulty: [1000, 1400],
-    xpReward: 80,
-    resources: [
-      {
-        title: "Greedy Algorithms",
-        url: "https://usaco.guide/bronze/intro-greedy",
-      },
-    ],
-  },
-  {
-    id: "kb_prefix",
-    zone: 3,
-    name: "Prefix Sums",
-    icon: '<i class="icon-trending"></i>',
-    desc: "1D/2D prefix sums, difference arrays",
-    tags: ["data structures", "math"],
-    requires: ["bit_basics"],
-    target: 6,
-    x: 75,
-    y: 2,
-    difficulty: [1000, 1400],
-    xpReward: 70,
-    resources: [
-      { title: "Prefix Sums", url: "https://usaco.guide/silver/prefix-sums" },
-    ],
-  },
-
-  // ── Zone 4: Megabyte (Rating 1200-1400) ──
-  {
-    id: "mb_ntheory",
-    zone: 4,
-    name: "Number Theory",
-    icon: '<i class="icon-hash"></i>',
-    desc: "Primes, GCD, modular arithmetic, sieve",
-    tags: ["number theory"],
-    requires: ["bit_basics"],
-    target: 6,
-    x: 10,
-    y: 3,
-    difficulty: [1000, 1600],
-    xpReward: 80,
-    resources: [
-      { title: "Number Theory", url: "https://usaco.guide/gold/divisibility" },
-    ],
-  },
-  {
-    id: "mb_dp",
-    zone: 4,
-    name: "DP Foundations",
-    icon: '<i class="icon-puzzle"></i>',
-    desc: "Fibonacci, knapsack, LIS, LCS, coin change",
-    tags: ["dp"],
-    requires: ["kb_bsearch", "byte_brute"],
-    target: 10,
-    x: 35,
-    y: 3,
-    difficulty: [1200, 1600],
-    xpReward: 100,
-    resources: [
-      { title: "Intro to DP", url: "https://usaco.guide/gold/intro-dp" },
-    ],
-  },
-  {
-    id: "mb_graphs",
-    zone: 4,
-    name: "Graph Basics",
-    icon: '<i class="icon-graph"></i>',
-    desc: "BFS, DFS, connected components, bipartite check",
-    tags: ["graphs", "dfs and similar", "bfs"],
-    requires: ["byte_brute"],
-    target: 8,
-    x: 60,
-    y: 3,
-    difficulty: [1200, 1600],
-    xpReward: 90,
-    resources: [
-      {
-        title: "Graph Traversal",
-        url: "https://usaco.guide/silver/graph-traversal",
-      },
-    ],
-  },
-  {
-    id: "mb_dsu",
-    zone: 4,
-    name: "Disjoint Sets",
-    icon: '<i class="icon-link"></i>',
-    desc: "Union-Find, path compression, weighted DSU",
-    tags: ["dsu"],
-    requires: ["mb_graphs"],
-    target: 6,
-    x: 85,
-    y: 3,
-    difficulty: [1200, 1600],
-    xpReward: 90,
-    resources: [{ title: "DSU Guide", url: "https://usaco.guide/gold/dsu" }],
-  },
-
-  // ── Zone 5: Gigabyte (Rating 1400-1600) ──
-  {
-    id: "gb_adv_dp",
-    zone: 5,
-    name: "Advanced DP",
-    icon: '<i class="icon-brain"></i>',
-    desc: "Bitmask DP, digit DP, tree DP, DP on DAGs",
-    tags: ["dp", "bitmasks"],
-    requires: ["mb_dp", "mb_graphs"],
-    target: 12,
-    x: 15,
-    y: 4,
-    difficulty: [1400, 2000],
-    xpReward: 150,
-    resources: [
-      { title: "Bitmask DP", url: "https://usaco.guide/gold/dp-bitmasks" },
-    ],
-  },
-  {
-    id: "gb_ds",
-    zone: 5,
-    name: "Data Structures",
-    icon: '<i class="icon-building"></i>',
-    desc: "Stacks, queues, sets, maps, priority queues, BIT",
-    tags: ["data structures"],
-    requires: ["kb_prefix", "byte_sorting"],
-    target: 10,
-    x: 40,
-    y: 4,
-    difficulty: [1400, 1800],
-    xpReward: 120,
-    resources: [{ title: "PURS Guide", url: "https://usaco.guide/gold/PURS" }],
-  },
-  {
-    id: "gb_trees",
-    zone: 5,
-    name: "Trees",
-    icon: '<i class="icon-tree"></i>',
-    desc: "Tree traversal, LCA, diameter, Euler tour",
-    tags: ["trees"],
-    requires: ["mb_graphs"],
-    target: 8,
-    x: 65,
-    y: 4,
-    difficulty: [1400, 1800],
-    xpReward: 110,
-    resources: [
-      { title: "Tree Algorithms", url: "https://usaco.guide/gold/tree-euler" },
-    ],
-  },
-  {
-    id: "gb_spaths",
-    zone: 5,
-    name: "Shortest Paths",
-    icon: '<i class="icon-path"></i>',
-    desc: "Dijkstra, Bellman-Ford, Floyd-Warshall, 0-1 BFS",
-    tags: ["shortest paths", "graphs"],
-    requires: ["mb_graphs", "mb_dp"],
-    target: 8,
-    x: 90,
-    y: 4,
-    difficulty: [1400, 2000],
-    xpReward: 140,
-    resources: [
-      {
-        title: "Shortest Paths",
-        url: "https://usaco.guide/gold/shortest-paths",
-      },
-    ],
-  },
-
-  // ── Zone 6: Terabyte (Rating 1600-1800) ──
-  {
-    id: "tb_segtree",
-    zone: 6,
-    name: "Segment Tree",
-    icon: '<i class="icon-pine"></i>',
-    desc: "Range queries, lazy propagation, persistent seg tree",
-    tags: ["data structures"],
-    requires: ["gb_ds"],
-    target: 10,
-    x: 20,
-    y: 5,
-    difficulty: [1600, 2200],
-    xpReward: 160,
-    resources: [{ title: "PURS", url: "https://usaco.guide/plat/RURQ" }],
-  },
-  {
-    id: "tb_combo",
-    zone: 6,
-    name: "Combinatorics",
-    icon: '<i class="icon-dice"></i>',
-    desc: "Permutations, binomial coefficients, inclusion-exclusion",
-    tags: ["combinatorics", "math"],
-    requires: ["mb_ntheory", "mb_dp"],
-    target: 8,
-    x: 50,
-    y: 5,
-    difficulty: [1600, 1800],
-    xpReward: 110,
-    resources: [
-      { title: "Combinatorics", url: "https://usaco.guide/gold/combo" },
-    ],
-  },
-  {
-    id: "tb_stralgo",
-    zone: 6,
-    name: "String Algorithms",
-    icon: '<i class="icon-abc"></i>',
-    desc: "KMP, Z-function, hashing, suffix array basics",
-    tags: ["string suffix structures", "hashing", "strings"],
-    requires: ["byte_strings", "mb_dp"],
-    target: 6,
-    x: 80,
-    y: 5,
-    difficulty: [1600, 2200],
-    xpReward: 150,
-    resources: [
-      {
-        title: "String Hashing",
-        url: "https://usaco.guide/gold/string-hashing",
-      },
-    ],
-  },
-
-  // ── Zone 7: Petabyte (Rating 1800-2000) ──
-  {
-    id: "pb_flows",
-    zone: 7,
-    name: "Network Flow",
-    icon: '<i class="icon-water"></i>',
-    desc: "Max flow, min cut, bipartite matching, Hungarian",
-    tags: ["flows", "graph matchings"],
-    requires: ["gb_spaths"],
-    target: 6,
-    x: 15,
-    y: 6,
-    difficulty: [1800, 2400],
-    xpReward: 180,
-    resources: [{ title: "Max Flow", url: "https://usaco.guide/adv/max-flow" }],
-  },
-  {
-    id: "pb_game",
-    zone: 7,
-    name: "Game Theory",
-    icon: '<i class="icon-gamepad"></i>',
-    desc: "Sprague-Grundy, nim, minimax with alpha-beta",
-    tags: ["games"],
-    requires: ["mb_dp", "mb_ntheory"],
-    target: 5,
-    x: 45,
-    y: 6,
-    difficulty: [1800, 2200],
-    xpReward: 140,
-    resources: [
-      { title: "Game Theory", url: "https://codeforces.com/blog/entry/66040" },
-    ],
-  },
-  {
-    id: "pb_adv_trees",
-    zone: 7,
-    name: "Advanced Trees",
-    icon: '<i class="icon-leaf"></i>',
-    desc: "HLD, centroid decomposition, link-cut trees",
-    tags: ["trees", "data structures"],
-    requires: ["gb_trees", "tb_segtree"],
-    target: 8,
-    x: 75,
-    y: 6,
-    difficulty: [2000, 2600],
-    xpReward: 200,
-    resources: [{ title: "HLD", url: "https://usaco.guide/plat/hld" }],
-  },
-  {
-    id: "pb_geometry",
-    zone: 7,
-    name: "Geometry",
-    icon: '<i class="icon-geometry"></i>',
-    desc: "Convex hull, line intersection, polygon area",
-    tags: ["geometry"],
-    requires: ["byte_sorting", "mb_ntheory"],
-    target: 6,
-    x: 95,
-    y: 6,
-    difficulty: [1800, 2200],
-    xpReward: 150,
-    resources: [
-      { title: "Geometry Guide", url: "https://usaco.guide/plat/geo-pri" },
-    ],
-  },
-
-  // ── Zone 8: Exabyte (Rating 2000-2200) ──
-  {
-    id: "eb_fft",
-    zone: 8,
-    name: "FFT / NTT",
-    icon: '<i class="icon-wave-line"></i>',
-    desc: "Fast Fourier transform, polynomial multiplication",
-    tags: ["fft", "math"],
-    requires: ["mb_ntheory", "gb_adv_dp"],
-    target: 5,
-    x: 25,
-    y: 7,
-    difficulty: [2000, 2600],
-    xpReward: 200,
-    resources: [
-      { title: "Convolutions", url: "https://usaco.guide/adv/convolutions" },
-    ],
-  },
-  {
-    id: "eb_dp_opt",
-    zone: 8,
-    name: "DP Optimization",
-    icon: '<i class="icon-bolt"></i>',
-    desc: "Divide & conquer DP, Knuth, CHT, aliens trick",
-    tags: ["dp"],
-    requires: ["gb_adv_dp", "tb_segtree"],
-    target: 8,
-    x: 55,
-    y: 7,
-    difficulty: [2200, 2800],
-    xpReward: 220,
-    resources: [
-      { title: "DP Optimizations", url: "https://usaco.guide/adv/dp-more" },
-    ],
-  },
-  {
-    id: "eb_adv_graphs",
-    zone: 8,
-    name: "Advanced Graphs",
-    icon: '<i class="icon-graph"></i>',
-    desc: "2-SAT, block-cut tree, SCC, Euler paths",
-    tags: ["graphs", "dfs and similar"],
-    requires: ["mb_graphs", "gb_spaths"],
-    target: 6,
-    x: 85,
-    y: 7,
-    difficulty: [2000, 2600],
-    xpReward: 180,
-    resources: [],
-  },
-
-  // ── Zone 9: Zettabyte (Rating 2200-2500) ──
-  {
-    id: "zb_expert_ds",
-    zone: 9,
-    name: "Expert Structures",
-    icon: '<i class="icon-building"></i>',
-    desc: "Treap, splay, persistent structures, wavelet tree",
-    tags: ["data structures"],
-    requires: ["tb_segtree", "eb_dp_opt"],
-    target: 8,
-    x: 30,
-    y: 8,
-    difficulty: [2200, 2800],
-    xpReward: 250,
-    resources: [],
-  },
-  {
-    id: "zb_expert_combo",
-    zone: 9,
-    name: "Expert Combinatorics",
-    icon: '<i class="icon-dice"></i>',
-    desc: "Generating functions, Burnside, Polya, formal power series",
-    tags: ["combinatorics", "math"],
-    requires: ["tb_combo", "eb_fft"],
-    target: 6,
-    x: 70,
-    y: 8,
-    difficulty: [2200, 2800],
-    xpReward: 220,
-    resources: [],
-  },
-
-  // ── Zone 10: Yottabyte (Rating 2500-2800) ──
-  {
-    id: "yb_expert_trees",
-    zone: 10,
-    name: "Expert Trees",
-    icon: '<i class="icon-tree"></i>',
-    desc: "Top tree, Euler tour tree, LCT applications",
-    tags: ["trees", "data structures"],
-    requires: ["pb_adv_trees", "zb_expert_ds"],
-    target: 8,
-    x: 30,
-    y: 9,
-    difficulty: [2500, 3000],
-    xpReward: 300,
-    resources: [],
-  },
-  {
-    id: "yb_expert_math",
-    zone: 10,
-    name: "Expert Math",
-    icon: '<i class="icon-hash"></i>',
-    desc: "Elliptic curves, matroid intersection, multivariate polynomials",
-    tags: ["math", "number theory"],
-    requires: ["zb_expert_combo"],
-    target: 6,
-    x: 70,
-    y: 9,
-    difficulty: [2500, 3000],
-    xpReward: 280,
-    resources: [],
-  },
-
-  // ── Zone 11: ∞ Overflow (Rating 2800-3500) ──
-  {
-    id: "overflow_ascension",
-    zone: 11,
-    name: "Ascension",
-    icon: '<i class="icon-crown"></i>',
-    desc: "Solve elite problems across all domains — prove you have overflowed",
-    tags: [],
-    requires: ["pb_flows", "eb_fft", "eb_dp_opt", "yb_expert_trees"],
-    target: 30,
-    x: 50,
-    y: 10,
-    difficulty: [2800, 3500],
-    xpReward: 500,
-    resources: [],
-  },
-];
+const { NEXUS_NODES } = require("./nexus/dsa-nodes");
+const nexusSubjects = require("./nexus/subjects");
+const nexusCache = require("./nexus/user-cache");
 
 const ZONE_NAMES = [
   "",
@@ -4022,86 +3483,180 @@ const ZONE_NAMES = [
   "∞ Overflow",
 ];
 
-/* unified /api/nexus — replaces both /api/roadmap and /api/skill-tree */
+/** The DSA rift tree with progress — the original /api/nexus logic, unchanged. */
+function buildDsaNexus(totals, solvedProblems) {
+  const rawTotalSolved = totals.rawSolved;
+  const playerLevel = calcLevel(totals.xp, totals.solved);
+  const solvedTagList = (solvedProblems || []).map((p) => (p.tags || "").toLowerCase());
+
+  // Build skill nodes with progress
+  const nodes = [];
+  for (const skill of NEXUS_NODES) {
+    let solvedCount = 0;
+    if (skill.tags.length > 0) {
+      const lowerTags = skill.tags.map((t) => t.toLowerCase());
+      solvedCount = solvedTagList.filter((tags) =>
+        lowerTags.some((t) => tags.includes(t))
+      ).length;
+    } else {
+      solvedCount = rawTotalSolved || 0;
+    }
+    const prereqsMet =
+      skill.requires.length === 0 ||
+      skill.requires.every((rid) => {
+        const req = nodes.find((n) => n.id === rid);
+        return req && req.progress >= 100;
+      });
+    const zoneUnlocked = playerLevel.level >= skill.zone;
+    // Zone 11 (∞ Overflow) unlocks all its nodes once the player reaches level 11
+    const overflowUnlock = skill.zone === 11 && zoneUnlocked;
+    const progress = Math.min(
+      100,
+      Math.round((solvedCount / skill.target) * 100),
+    );
+    nodes.push({
+      ...skill,
+      subject: "dsa",
+      solved: Math.min(solvedCount, skill.target),
+      progress,
+      unlocked:
+        overflowUnlock || (prereqsMet && zoneUnlocked) || progress > 0,
+      completed: progress >= 100,
+    });
+  }
+
+  // Build zones from RIFT_LEVELS
+  const zones = RIFT_LEVELS.map((rl) => {
+    const zoneNodes = nodes.filter((n) => n.zone === rl.level);
+    const completedNodes = zoneNodes.filter((n) => n.completed).length;
+    const totalNodes = zoneNodes.length;
+    const zoneProgress =
+      totalNodes > 0 ? Math.round((completedNodes / totalNodes) * 100) : 0;
+    return {
+      level: rl.level,
+      name: rl.name,
+      color: rl.color,
+      glow: rl.glow,
+      xpRequired: rl.xp,
+      probsRequired: rl.minProblems,
+      minR: rl.minR,
+      maxR: rl.maxR,
+      unlocked: true, // all zones are always browsable
+      locked: playerLevel.level < rl.level, // true = not yet reached (shows requirement banner)
+      completed: playerLevel.level > rl.level && zoneProgress === 100,
+      current: playerLevel.level === rl.level,
+      nodeCount: totalNodes,
+      nodesCompleted: completedNodes,
+      zoneProgress,
+      rows: 1,
+    };
+  });
+  return { nodes, zones, player: playerLevel };
+}
+
+/**
+ * The signed-in user's GATE study state for the Nexus: PYQs attempted /
+ * answered correctly, and GATE-notes lessons finished. Two narrow queries,
+ * cached per user and dropped on every write to either table.
+ */
+async function nexusGateState(fresh) {
+  const username = me();
+  const empty = { qstate: new Map(), lessons: new Set() };
+  if (!username) return empty;
+  if (!fresh) {
+    const hit = nexusCache.getCached(username);
+    if (hit) return hit;
+  }
+  const [qrows, lrows] = await Promise.all([
+    all("SELECT question_id, attempts, correct FROM gate_qstate WHERE username=? AND attempts>0", [username]),
+    all("SELECT subject, lesson FROM gate_notes_progress WHERE username=? AND completed=1", [username]),
+  ]);
+  const state = {
+    qstate: new Map((qrows || []).map((r) => [r.question_id, { attempts: r.attempts || 0, correct: r.correct || 0 }])),
+    lessons: new Set((lrows || []).map((r) => `${r.subject}/${r.lesson}`)),
+  };
+  nexusCache.setCached(username, state);
+  return state;
+}
+
+/**
+ * GET /api/nexus[?subject=<id>][&fresh=1]
+ *
+ * Without `subject` (or with subject=dsa) the response is exactly the old
+ * DSA rift tree, plus `subject` and `subjects` (one summary card per
+ * subject for the switcher and overview). Any other subject id returns that
+ * subject's tree in the same shape: zones are its chapters, nodes carry
+ * `metric`, `crossRequires` and `crossUnlocks`. The player (XP, Rift level)
+ * is the same everywhere.
+ */
 app.get("/api/nexus", async (req, res) => {
   try {
-    // Totals, overrides and solved tags are independent: one parallel round trip.
-    const [totals, solvedProblems] = await Promise.all([
+    const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+    const want = typeof req.query.subject === "string" && req.query.subject ? req.query.subject : "dsa";
+    if (!reg.subjects.has(want)) return res.status(404).json({ ok: false, error: "Unknown subject" });
+    const fresh = req.query.fresh === "1";
+    // Totals, overrides, solved tags and GATE state are independent: one parallel round trip.
+    const [totals, solvedProblems, gateState] = await Promise.all([
       myTotals(),
       all(solvedTagsSql()),
+      nexusGateState(fresh),
     ]);
-    const rawTotalSolved = totals.rawSolved;
-    const playerLevel = calcLevel(totals.xp, totals.solved);
-    const solvedTagList = (solvedProblems || []).map((p) => (p.tags || "").toLowerCase());
-
-    // Build skill nodes with progress
-    const nodes = [];
-    for (const skill of NEXUS_NODES) {
-      let solvedCount = 0;
-      if (skill.tags.length > 0) {
-        const lowerTags = skill.tags.map((t) => t.toLowerCase());
-        solvedCount = solvedTagList.filter((tags) =>
-          lowerTags.some((t) => tags.includes(t))
-        ).length;
-      } else {
-        solvedCount = rawTotalSolved || 0;
-      }
-      const prereqsMet =
-        skill.requires.length === 0 ||
-        skill.requires.every((rid) => {
-          const req = nodes.find((n) => n.id === rid);
-          return req && req.progress >= 100;
-        });
-      const zoneUnlocked = playerLevel.level >= skill.zone;
-      // Zone 11 (∞ Overflow) unlocks all its nodes once the player reaches level 11
-      const overflowUnlock = skill.zone === 11 && zoneUnlocked;
-      const progress = Math.min(
-        100,
-        Math.round((solvedCount / skill.target) * 100),
-      );
-      nodes.push({
-        ...skill,
-        solved: Math.min(solvedCount, skill.target),
-        progress,
-        unlocked:
-          overflowUnlock || (prereqsMet && zoneUnlocked) || progress > 0,
-        completed: progress >= 100,
-      });
+    const dsa = buildDsaNexus(totals, solvedProblems);
+    const notes = loadGateNotes();
+    const staff = hasAnyAdminPerm(req);
+    const notesVisible = new Set([...notes.subjects].filter(([, s]) => staff || !s.card.hidden).map(([id]) => id));
+    const computed = nexusSubjects.computeSubjects(reg, dsa.nodes, { ...gateState, notesVisible }, loadGateBank(), notes);
+    for (const n of dsa.nodes) {
+      n.crossRequires = [];
+      n.crossUnlocks = nexusSubjects.dsaCrossUnlocks(reg, n.id, computed);
     }
-
-    // Build zones from RIFT_LEVELS
-    const zones = RIFT_LEVELS.map((rl) => {
-      const zoneNodes = nodes.filter((n) => n.zone === rl.level);
-      const completedNodes = zoneNodes.filter((n) => n.completed).length;
-      const totalNodes = zoneNodes.length;
-      const zoneProgress =
-        totalNodes > 0 ? Math.round((completedNodes / totalNodes) * 100) : 0;
-      return {
-        level: rl.level,
-        name: rl.name,
-        color: rl.color,
-        glow: rl.glow,
-        xpRequired: rl.xp,
-        probsRequired: rl.minProblems,
-        minR: rl.minR,
-        maxR: rl.maxR,
-        unlocked: true, // all zones are always browsable
-        locked: playerLevel.level < rl.level, // true = not yet reached (shows requirement banner)
-        completed: playerLevel.level > rl.level && zoneProgress === 100,
-        current: playerLevel.level === rl.level,
-        nodeCount: totalNodes,
-        nodesCompleted: completedNodes,
-        zoneProgress,
-      };
-    });
-
+    const view = want === "dsa" ? dsa : computed.get(want);
     res.json({
       ok: true,
-      nodes,
-      zones,
-      player: playerLevel,
+      nodes: view.nodes,
+      zones: view.zones,
+      player: dsa.player,
       riftLevels: RIFT_LEVELS,
+      subject: reg.subjects.get(want).meta,
+      subjects: nexusSubjects.subjectSummaries(reg, dsa, computed),
     });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
+/**
+ * GET /api/nexus/pyqs/:subject/:node — the PYQs behind one subject node, with
+ * the user's status on each (for the node panel's practice list).
+ */
+app.get("/api/nexus/pyqs/:subject/:node", async (req, res) => {
+  try {
+    const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+    const s = reg.subjects.get(req.params.subject);
+    if (!s || !s.doc || !s.doc.nodes.some((n) => n.id === req.params.node)) {
+      return res.status(404).json({ ok: false, error: "Unknown node" });
+    }
+    const bank = loadGateBank();
+    const pools = nexusSubjects.nodePools(reg, bank, loadGateNotes());
+    const ids = pools.get(`${req.params.subject}:${req.params.node}`) || [];
+    const state = await nexusGateState(false);
+    const questions = ids
+      .map((id) => bank.byId.get(id))
+      .filter(Boolean)
+      .map((q) => {
+        const st = state.qstate.get(q.id);
+        return {
+          id: q.id,
+          paper: q.paper,
+          year: Number(q.year) || null,
+          marks: Number(q.marks) || null,
+          type: q.type,
+          topic: `${q.subject}/${q.topic}`,
+          status: !st ? "new" : st.correct > 0 ? "solved" : "attempted",
+        };
+      })
+      .sort((a, b) => (b.year || 0) - (a.year || 0));
+    res.json({ ok: true, total: questions.length, questions });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }

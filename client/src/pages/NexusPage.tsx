@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { RefreshCw } from 'lucide-react'
 import {
   Badge,
@@ -22,64 +23,156 @@ import { SkillGraph } from '@/components/nexus/SkillGraph'
 import { NodePanel } from '@/components/nexus/NodePanel'
 import { WeeklyPool } from '@/components/nexus/WeeklyPool'
 import { TitleTrack } from '@/components/nexus/TitleTrack'
-import type { NexusStatsResponse } from '@/components/nexus/types'
-import { fetchNexus, fetchRoadmap, NEXUS_KEY, ROADMAP_KEY } from '@/components/nexus/data'
+import { SubjectSwitcher } from '@/components/nexus/SubjectSwitcher'
+import { SubjectsOverview } from '@/components/nexus/SubjectsOverview'
+import { nodeCountLabel } from '@/components/nexus/format'
+import type { CrossLink, NexusStatsResponse } from '@/components/nexus/types'
+import {
+  ALL_SUBJECTS,
+  DEFAULT_SUBJECT,
+  fetchNexus,
+  fetchRoadmap,
+  nexusKey,
+  rememberedSubject,
+  rememberSubject,
+  ROADMAP_KEY,
+} from '@/components/nexus/data'
 import { Icon } from '@/components/icon/Icon'
 
 export default function NexusPage() {
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [params, setParams] = useSearchParams()
+  // Subject: the URL wins (shareable /nexus?subject=dl), then the last one used.
+  const subject = params.get('subject') || rememberedSubject() || DEFAULT_SUBJECT
+  const overview = subject === ALL_SUBJECTS
+  const apiSubject = overview ? DEFAULT_SUBJECT : subject
+  const selectedId = overview ? null : params.get('node')
   const [tab, setTab] = useState<'map' | 'ranks'>('map')
   const { user } = useAuth()
   const username = user?.username ?? ''
+  const fresh = useRef(false)
+
+  useEffect(() => rememberSubject(subject), [subject])
+
+  const setSubject = useCallback(
+    (id: string, node?: string) => {
+      setParams(
+        (p) => {
+          const next = new URLSearchParams(p)
+          next.set('subject', id)
+          if (node) next.set('node', node)
+          else next.delete('node')
+          return next
+        },
+        { replace: false },
+      )
+    },
+    [setParams],
+  )
+  const setSelectedId = useCallback(
+    (id: string | null) => {
+      setParams(
+        (p) => {
+          const next = new URLSearchParams(p)
+          next.set('subject', apiSubject)
+          if (id) next.set('node', id)
+          else next.delete('node')
+          return next
+        },
+        { replace: true },
+      )
+    },
+    [setParams, apiSubject],
+  )
+
   // The tree and the weekly pool load in parallel and independently: the
   // skill map renders as soon as /api/nexus answers, the (heavier) weekly
   // pool fills in when it arrives. Both are cached, so revisits are instant.
-  const { data: nexus, loading, error, refetch } = useApi(fetchNexus, [], { cacheKey: NEXUS_KEY })
-  const roadmapApi = useApi(fetchRoadmap, [], { cacheKey: ROADMAP_KEY })
+  const { data: raw, loading, error, refetch } = useApi(
+    () => {
+      const f = fresh.current
+      fresh.current = false
+      return fetchNexus(apiSubject, f)
+    },
+    [apiSubject],
+    { cacheKey: nexusKey(apiSubject) },
+  )
+  // While a switch is in flight the hook still holds the previous subject.
+  const nexus = raw && (raw.subject?.id ?? DEFAULT_SUBJECT) === apiSubject ? raw : null
+  const subjects = useMemo(() => raw?.subjects ?? [], [raw])
+  const isDsa = apiSubject === DEFAULT_SUBJECT
+  const roadmapApi = useApi(fetchRoadmap, [], { cacheKey: ROADMAP_KEY, skip: !isDsa })
   const statsApi = useApi<NexusStatsResponse>(
     () => api.get<NexusStatsResponse>('/api/stats', { query: { username: username || undefined } }),
     [username],
     { cacheKey: `stats:${username}` },
   )
 
-  const selectedNode = useMemo(
-    () => nexus?.nodes.find((n) => n.id === selectedId) ?? null,
-    [nexus, selectedId],
+  const selectedNode = useMemo(() => nexus?.nodes.find((n) => n.id === selectedId) ?? null, [nexus, selectedId])
+
+  // A cross-subject jump lands on its node: bring it into view.
+  const jumped = useRef<string | null>(null)
+  useEffect(() => {
+    if (!selectedNode || jumped.current !== `${apiSubject}:${selectedNode.id}`) return
+    jumped.current = null
+    const t = window.setTimeout(() => {
+      document.getElementById(`nx-node-${selectedNode.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 350)
+    return () => window.clearTimeout(t)
+  }, [selectedNode, apiSubject])
+  const onJump = useCallback(
+    (link: CrossLink) => {
+      jumped.current = `${link.subject}:${link.id}`
+      setSubject(link.subject, link.id)
+    },
+    [setSubject],
   )
 
-  // The floating assistant sees the player's zone and the node in focus.
+  // The floating assistant sees the subject, the player's zone and the node in focus.
   const nexusBrief = useMemo(() => {
-    if (!nexus) return undefined
+    if (!raw) return undefined
+    if (overview || !nexus) {
+      return `Nexus overview: ${subjects.map((s) => `${s.name} ${s.progress}% (${s.completed}/${s.nodeCount})`).join('; ')}`
+    }
     const { player, zones, nodes } = nexus
-    const zoneNow = zones.find((z) => z.level === (selectedNode?.zone ?? player.level))
+    const zoneNow = zones.find((z) => z.level === (selectedNode?.zone ?? (isDsa ? player.level : zones.find((x) => x.current)?.level)))
     const next = nodes.filter((n) => n.unlocked && !n.completed).slice(0, 8)
     return [
+      `Subject: ${nexus.subject?.name ?? 'Data Structures & Algorithms'}.`,
       `Player: level ${player.level} (${player.name}), ${player.xp} XP; ${player.xpInLevel}/${player.xpForNext} XP and ${player.probsInLevel}/${player.probsForNext} problems toward the next level.`,
       `Zones: ${zones.map((z) => `${z.level}. ${z.name} ${z.zoneProgress}%${z.locked ? ' (locked)' : ''}${z.current ? ' (current)' : ''}`).join('; ')}`,
-      zoneNow ? `Zone in view: ${zoneNow.name} — ratings ${zoneNow.minR}-${zoneNow.maxR}, ${zoneNow.nodesCompleted}/${zoneNow.nodeCount} nodes done.` : '',
-      selectedNode
-        ? `Selected node: ${selectedNode.name} — ${selectedNode.desc} Tags: ${selectedNode.tags.join(', ')}. Progress ${selectedNode.solved}/${selectedNode.target}; difficulty ${selectedNode.difficulty.join('-')}; ${selectedNode.completed ? 'completed' : selectedNode.unlocked ? 'unlocked' : `locked (requires ${selectedNode.requires.join(', ')})`}.`
+      zoneNow
+        ? `Zone in view: ${zoneNow.name}${isDsa ? ` — ratings ${zoneNow.minR}-${zoneNow.maxR}` : ''}, ${zoneNow.nodesCompleted}/${zoneNow.nodeCount} nodes done.`
         : '',
-      next.length ? `Open nodes to work on: ${next.map((n) => `${n.name} (${n.solved}/${n.target})`).join(', ')}` : '',
+      selectedNode
+        ? `Selected node: ${selectedNode.name} — ${selectedNode.desc} Tags: ${selectedNode.tags.join(', ')}. Progress ${nodeCountLabel(selectedNode)} (${selectedNode.progress}%)${isDsa ? `; difficulty ${selectedNode.difficulty.join('-')}` : ''}; ${selectedNode.completed ? 'completed' : selectedNode.unlocked ? 'unlocked' : `locked (requires ${selectedNode.requires.join(', ')})`}.${
+            selectedNode.crossRequires?.length ? ` Needs from other subjects: ${selectedNode.crossRequires.map((c) => `${c.name} (${c.subjectShort})`).join(', ')}.` : ''
+          }`
+        : '',
+      next.length ? `Open nodes to work on: ${next.map((n) => `${n.name} (${nodeCountLabel(n)})`).join(', ')}` : '',
     ]
       .filter(Boolean)
       .join('\n')
-  }, [nexus, selectedNode])
-  useAgentPageContext({ label: selectedNode ? `Nexus · ${selectedNode.name}` : 'Nexus', visibleText: nexusBrief })
+  }, [raw, nexus, overview, subjects, selectedNode, isDsa])
+  useAgentPageContext({
+    label: selectedNode ? `Nexus · ${selectedNode.name}` : overview ? 'Nexus · All subjects' : `Nexus · ${nexus?.subject?.short ?? 'DSA'}`,
+    visibleText: nexusBrief,
+  })
 
-  if (loading && !nexus) {
+  const subtitle = 'Climb the rift — master skill nodes across every subject, unlock zones, and grind the weekly problem pool.'
+
+  if (loading && !raw) {
     return (
       <div>
-        <PageHeader icon="nexus" title="The Nexus" subtitle="Your competitive programming skill tree" />
+        <PageHeader icon="nexus" title="The Nexus" subtitle={subtitle} />
         <LoadingBlock rows={8} />
       </div>
     )
   }
 
-  if (error || !nexus) {
+  if ((error && !raw) || !raw) {
     return (
       <div>
-        <PageHeader icon="nexus" title="The Nexus" subtitle="Your competitive programming skill tree" />
+        <PageHeader icon="nexus" title="The Nexus" subtitle={subtitle} />
         <ErrorState message={error ?? 'Failed to load the nexus'} onRetry={refetch} />
       </div>
     )
@@ -88,12 +181,17 @@ export default function NexusPage() {
   const roadmap = roadmapApi.data
   // Same formula as the server; shown before the roadmap response arrives.
   const weekSeed = roadmap?.weekSeed ?? Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000))
-  const { player, zones, nodes } = nexus
-  const activeZone = selectedNode?.zone ?? player.level
+  const player = raw.player
+  const zones = nexus?.zones ?? []
+  const nodes = nexus?.nodes ?? []
+  const currentZone = isDsa ? player.level : (zones.find((z) => z.current)?.level ?? 1)
+  const activeZone = selectedNode?.zone ?? currentZone
   const zone = zones.find((z) => z.level === activeZone)
   const zoneColor = zone?.color ?? 'var(--color-primary)'
   const roadmapLevel = roadmap?.levels.find((l) => l.level === activeZone)
-  const completedNodes = nodes.filter((n) => n.completed).length
+  const allNodes = subjects.reduce((a, s) => a + s.nodeCount, 0)
+  const allDone = subjects.reduce((a, s) => a + s.completed, 0)
+  const subjectName = nexus?.subject?.name ?? 'Data Structures & Algorithms'
 
   const scrollToZone = (level: number) => {
     document.getElementById(`zone-${level}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -104,14 +202,15 @@ export default function NexusPage() {
       <PageHeader
         icon="nexus"
         title="The Nexus"
-        subtitle="Climb the rift — master skill nodes, unlock zones, and grind the weekly problem pool."
+        subtitle={subtitle}
         actions={
           <Button
             variant="outline"
             size="sm"
             onClick={() => {
+              fresh.current = true
               refetch()
-              roadmapApi.refetch()
+              if (isDsa) roadmapApi.refetch()
               statsApi.refetch()
             }}
             aria-label="Refresh nexus data"
@@ -122,7 +221,7 @@ export default function NexusPage() {
         }
       />
 
-      {/* Player status */}
+      {/* Player status: one Rift level and XP across every subject */}
       <Card glow className="mb-4">
         <CardContent className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
           <div className="space-y-2">
@@ -133,7 +232,7 @@ export default function NexusPage() {
                   LVL {player.level} · {player.name}
                 </p>
                 <p className="text-[11px] tracking-wider text-foreground-faint uppercase">
-                  {completedNodes}/{nodes.length} skill nodes mastered · {formatNumber(player.xp)} total XP
+                  {allDone}/{allNodes} skill nodes mastered across {subjects.length} subjects · {formatNumber(player.xp)} total XP
                 </p>
               </div>
             </div>
@@ -210,88 +309,127 @@ export default function NexusPage() {
         )
       ) : (
         <>
-      {/* Zone rail */}
-      <div className="mb-4 flex gap-1.5 overflow-x-auto pb-1" role="navigation" aria-label="Zones">
-        {zones.map((z) => (
-          <button
-            key={z.level}
-            type="button"
-            onClick={() => scrollToZone(z.level)}
-            aria-label={`Zone ${z.level}: ${z.name}${z.locked ? ' (locked)' : ''}`}
-            className={cn(
-              'flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold tracking-wide whitespace-nowrap transition-all duration-200',
-              z.level === activeZone
-                ? 'border-primary bg-primary/15 text-foreground glow-box'
-                : 'border-border bg-surface text-foreground-dim hover:border-primary/60 hover:text-foreground',
-            )}
-          >
-            {z.locked && <Icon name="lock" className="size-3 text-foreground-faint" aria-hidden="true" />}
-            <span className="size-1.5 rounded-full" style={{ backgroundColor: z.color }} aria-hidden="true" />
-            {z.name}
-            <span className="font-mono text-[10px] text-foreground-faint tabular-nums">{z.zoneProgress}%</span>
-          </button>
-        ))}
-      </div>
+          <SubjectSwitcher subjects={subjects} active={overview ? ALL_SUBJECTS : apiSubject} onChange={(id) => setSubject(id)} />
 
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
-        <div className="space-y-4">
-          <SkillGraph
-            nodes={nodes}
-            zones={zones}
-            selectedId={selectedId}
-            onSelect={(id) => setSelectedId((cur) => (cur === id ? null : id))}
-          />
-          {roadmap ? (
-            <WeeklyPool level={roadmapLevel} weekSeed={roadmap.weekSeed} accentColor={zoneColor} />
-          ) : roadmapApi.error ? (
-            <ErrorState message={roadmapApi.error} onRetry={roadmapApi.refetch} />
+          {overview ? (
+            <div className="nx-subject-enter" key="all">
+              <SubjectsOverview subjects={subjects} onOpen={(id) => setSubject(id)} />
+            </div>
+          ) : !nexus ? (
+            error ? (
+              <ErrorState message={error} onRetry={refetch} />
+            ) : (
+              <Card>
+                <CardContent>
+                  <LoadingBlock rows={6} />
+                </CardContent>
+              </Card>
+            )
           ) : (
-            <Card>
-              <CardContent>
-                <LoadingBlock rows={4} />
-              </CardContent>
-            </Card>
-          )}
-        </div>
+            <div className="nx-subject-enter" key={apiSubject}>
+              <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <h2 className="mb-0 font-display text-lg font-semibold text-text-primary">{subjectName}</h2>
+                <p className="mb-0 text-xs text-foreground-dim">
+                  {nexus.subject?.description}
+                </p>
+              </div>
 
-        <div>
-          {selectedNode ? (
-            <NodePanel
-              node={selectedNode}
-              nodes={nodes}
-              zoneColor={zoneColor}
-              zoneName={zone?.name ?? `Zone ${selectedNode.zone}`}
-              onClose={() => setSelectedId(null)}
-            />
-          ) : (
-            <Card className="sticky top-4">
-              <CardContent>
-                <EmptyState
-                  icon="map"
-                  title="Select a skill node"
-                  description="Click any node in the rift map to inspect prerequisites, resources, and recommended problems."
-                  className="py-8"
-                />
-                <div className="mt-2 space-y-2 border-t border-border pt-3">
-                  <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
-                    <Icon name="sparkles" className="size-3" aria-hidden="true" /> Legend
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    <Badge variant="success">mastered</Badge>
-                    <Badge variant="primary">unlocked</Badge>
-                    <Badge variant="default">
-                      <Icon name="lock" className="size-3" aria-hidden="true" /> locked
-                    </Badge>
-                  </div>
-                  <p className="text-[11px] text-foreground-faint">
-                    Hover a skill to trace everything it needs and everything it unlocks. Pulsing skills are open to you now; flowing links lead to them. The weekly pool reshuffles every 7 days.
-                  </p>
+              {/* Zone rail */}
+              <div className="mb-4 flex gap-1.5 overflow-x-auto pb-1" role="navigation" aria-label="Zones">
+                {zones.map((z) => (
+                  <button
+                    key={z.level}
+                    type="button"
+                    onClick={() => scrollToZone(z.level)}
+                    aria-label={`${isDsa ? 'Zone' : 'Chapter'} ${z.level}: ${z.name}${z.locked ? ' (locked)' : ''}`}
+                    className={cn(
+                      'flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold tracking-wide whitespace-nowrap transition-all duration-200',
+                      z.level === activeZone
+                        ? 'border-primary bg-primary/15 text-foreground'
+                        : 'border-border bg-surface text-foreground-dim hover:border-primary/60 hover:text-foreground',
+                    )}
+                  >
+                    {z.locked && <Icon name="lock" className="size-3 text-foreground-faint" aria-hidden="true" />}
+                    <span className="size-1.5 rounded-full" style={{ backgroundColor: z.color }} aria-hidden="true" />
+                    {z.name}
+                    <span className="font-mono text-[10px] text-foreground-faint tabular-nums">{z.zoneProgress}%</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
+                <div className="space-y-4">
+                  <SkillGraph
+                    nodes={nodes}
+                    zones={zones}
+                    selectedId={selectedId}
+                    onSelect={(id) => setSelectedId(selectedId === id ? null : id)}
+                    onJump={onJump}
+                    rankEmblems={isDsa}
+                  />
+                  {isDsa &&
+                    (roadmap ? (
+                      <WeeklyPool level={roadmapLevel} weekSeed={roadmap.weekSeed} accentColor={zoneColor} />
+                    ) : roadmapApi.error ? (
+                      <ErrorState message={roadmapApi.error} onRetry={roadmapApi.refetch} />
+                    ) : (
+                      <Card>
+                        <CardContent>
+                          <LoadingBlock rows={4} />
+                        </CardContent>
+                      </Card>
+                    ))}
                 </div>
-              </CardContent>
-            </Card>
+
+                <div>
+                  {selectedNode ? (
+                    <NodePanel
+                      key={`${apiSubject}:${selectedNode.id}`}
+                      node={selectedNode}
+                      nodes={nodes}
+                      zoneColor={zoneColor}
+                      zoneName={zone?.name ?? `Zone ${selectedNode.zone}`}
+                      onClose={() => setSelectedId(null)}
+                      onJump={onJump}
+                      onSelect={(id) => setSelectedId(id)}
+                    />
+                  ) : (
+                    <Card className="sticky top-4">
+                      <CardContent>
+                        <EmptyState
+                          icon="map"
+                          title="Select a skill node"
+                          description={
+                            isDsa
+                              ? 'Click any node in the rift web to inspect prerequisites, resources, and recommended problems.'
+                              : 'Click any node in the web to see its prerequisites, links to other subjects, lessons and PYQs.'
+                          }
+                          className="py-8"
+                        />
+                        <div className="mt-2 space-y-2 border-t border-border pt-3">
+                          <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
+                            <Icon name="sparkles" className="size-3" aria-hidden="true" /> Legend
+                          </p>
+                          <div className="flex flex-wrap gap-1.5">
+                            <Badge variant="success">mastered</Badge>
+                            <Badge variant="primary">unlocked</Badge>
+                            <Badge variant="default">
+                              <Icon name="lock" className="size-3" aria-hidden="true" /> locked
+                            </Badge>
+                          </div>
+                          <p className="text-[11px] text-foreground-faint">
+                            Hover a skill to trace its chain: what it needs lights teal, what it unlocks lights violet. Stars are mastered, rings fill as you
+                            progress, and a dot travels along each open path. &ldquo;Needs&rdquo; chips are prerequisites in another subject; click one to jump there.
+                            {isDsa ? ' The weekly pool reshuffles every 7 days.' : ''}
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              </div>
+            </div>
           )}
-        </div>
-      </div>
         </>
       )}
     </div>
