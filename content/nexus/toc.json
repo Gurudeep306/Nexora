@@ -1,0 +1,508 @@
+{
+  "id": "toc",
+  "name": "Theory of Computation",
+  "short": "TOC",
+  "group": "gate",
+  "order": 7,
+  "icon": "shapes",
+  "color": "#eab308",
+  "description": "Finite automata and regular languages, context-free grammars and pushdown automata, Turing machines and decidability.",
+  "gate": {
+    "pyqSubject": "toc",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Finite automata"
+    },
+    {
+      "level": 2,
+      "name": "Regular languages"
+    },
+    {
+      "level": 3,
+      "name": "Context-free grammars"
+    },
+    {
+      "level": 4,
+      "name": "Pushdown automata"
+    },
+    {
+      "level": 5,
+      "name": "Turing machines"
+    },
+    {
+      "level": 6,
+      "name": "Decidability"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "finite-automata",
+      "zone": 1,
+      "name": "Finite automata",
+      "icon": "shapes",
+      "desc": "Alphabets, strings and languages; DFAs and designing a DFA for a language.",
+      "kind": "concept",
+      "requires": [
+        "dm:sets-relations",
+        "dl:finite-state-machines"
+      ],
+      "pyqTopics": [
+        "toc/regular"
+      ],
+      "pyqTags": [
+        "dfa",
+        "DFA",
+        "finite"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "nfa",
+      "zone": 1,
+      "name": "NFAs",
+      "icon": "git-branch",
+      "desc": "Nondeterminism, epsilon moves and converting an NFA to a DFA with the subset construction.",
+      "kind": "concept",
+      "requires": [
+        "finite-automata"
+      ],
+      "pyqTopics": [
+        "toc/regular"
+      ],
+      "pyqTags": [
+        "nfa",
+        "NFA",
+        "subset",
+        "epsilon"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "dfa-minimization",
+      "zone": 1,
+      "name": "DFA minimisation",
+      "icon": "filter",
+      "desc": "Minimising DFAs, distinguishable states and the Myhill–Nerode theorem.",
+      "kind": "concept",
+      "requires": [
+        "finite-automata"
+      ],
+      "pyqTopics": [
+        "toc/regular"
+      ],
+      "pyqTags": [
+        "minim",
+        "myhill",
+        "equivalence"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "product-automata",
+      "zone": 1,
+      "name": "Product automata",
+      "icon": "grid",
+      "desc": "Combining DFAs for intersection and union, and counting strings or states.",
+      "kind": "concept",
+      "requires": [
+        "finite-automata"
+      ],
+      "pyqTopics": [
+        "toc/regular"
+      ],
+      "pyqTags": [
+        "product",
+        "counting"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "regular-expressions",
+      "zone": 2,
+      "name": "Regular expressions",
+      "icon": "code",
+      "desc": "Regular expressions, equivalence with finite automata and state elimination.",
+      "kind": "concept",
+      "requires": [
+        "nfa"
+      ],
+      "pyqTopics": [
+        "toc/regular"
+      ],
+      "pyqTags": [
+        "regular-expression",
+        "regular expression",
+        "state-elimination"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "regular-languages",
+      "zone": 2,
+      "name": "Regular languages",
+      "icon": "check-circle",
+      "desc": "Recognising regular languages and reasoning about which languages are regular.",
+      "kind": "concept",
+      "requires": [
+        "regular-expressions",
+        "dfa-minimization"
+      ],
+      "pyqTopics": [
+        "toc/regular"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "regular-closure",
+      "zone": 2,
+      "name": "Closure properties",
+      "icon": "shield",
+      "desc": "Closure of regular languages under union, intersection, complement, reversal, homomorphism and quotient.",
+      "kind": "concept",
+      "requires": [
+        "regular-languages",
+        "product-automata"
+      ],
+      "pyqTopics": [
+        "toc/regular"
+      ],
+      "pyqTags": [
+        "closure",
+        "complement"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "pumping-lemma-regular",
+      "zone": 2,
+      "name": "Pumping lemma",
+      "icon": "warning",
+      "desc": "Proving languages non-regular with the pumping lemma.",
+      "kind": "concept",
+      "requires": [
+        "regular-languages"
+      ],
+      "pyqTopics": [
+        "toc/pumping"
+      ],
+      "pyqTags": [
+        "regular",
+        "pumping",
+        "prime"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "string-operations",
+      "zone": 2,
+      "name": "Language operations",
+      "icon": "random",
+      "desc": "Prefix, suffix, substring, reversal, quotient and homomorphism applied to regular languages.",
+      "kind": "concept",
+      "requires": [
+        "regular-closure"
+      ],
+      "pyqTopics": [
+        "toc/regular"
+      ],
+      "pyqTags": [
+        "prefix",
+        "suffix",
+        "substring",
+        "reversal",
+        "quotient",
+        "homomorph"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "cfg",
+      "zone": 3,
+      "name": "Context-free grammars",
+      "icon": "list",
+      "desc": "Grammars, derivations and parse trees; working out the language a grammar generates.",
+      "kind": "concept",
+      "requires": [
+        "regular-languages"
+      ],
+      "pyqTopics": [
+        "toc/cfg"
+      ],
+      "pyqTags": [
+        "grammar",
+        "cfg",
+        "CFG",
+        "language-of"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "regular-grammars",
+      "zone": 3,
+      "name": "Regular grammars",
+      "icon": "list",
+      "desc": "Left- and right-linear grammars and converting between them and finite automata.",
+      "kind": "concept",
+      "requires": [
+        "cfg"
+      ],
+      "pyqTopics": [
+        "toc/regular",
+        "toc/cfg"
+      ],
+      "pyqTags": [
+        "regular grammar",
+        "regular-grammar",
+        "dfa-to-grammar",
+        "linear"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "ambiguity",
+      "zone": 3,
+      "name": "Ambiguity",
+      "icon": "warning",
+      "desc": "Ambiguous grammars and inherently ambiguous languages.",
+      "kind": "concept",
+      "requires": [
+        "cfg"
+      ],
+      "pyqTopics": [
+        "toc/cfg"
+      ],
+      "pyqTags": [
+        "ambig"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "normal-forms",
+      "zone": 3,
+      "name": "Normal forms",
+      "icon": "sliders",
+      "desc": "Chomsky and Greibach normal forms and derivation lengths in CNF.",
+      "kind": "concept",
+      "requires": [
+        "cfg"
+      ],
+      "pyqTopics": [
+        "toc/cfg"
+      ],
+      "pyqTags": [
+        "cnf",
+        "gnf",
+        "derivation"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "pushdown-automata",
+      "zone": 4,
+      "name": "Pushdown automata",
+      "icon": "layers",
+      "desc": "PDAs, acceptance by final state and empty stack, and equivalence with CFGs.",
+      "kind": "concept",
+      "requires": [
+        "cfg",
+        "c:stacks-queues"
+      ],
+      "pyqTopics": [
+        "toc/cfg"
+      ],
+      "pyqTags": [
+        "pda",
+        "PDA"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "dpda-dcfl",
+      "zone": 4,
+      "name": "DPDAs & DCFLs",
+      "icon": "layers",
+      "desc": "Deterministic PDAs and deterministic context-free languages.",
+      "kind": "concept",
+      "requires": [
+        "pushdown-automata"
+      ],
+      "pyqTopics": [
+        "toc/cfg"
+      ],
+      "pyqTags": [
+        "dpda",
+        "DPDA",
+        "dcfl"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "cfl-closure",
+      "zone": 4,
+      "name": "CFL closure",
+      "icon": "shield",
+      "desc": "Closure and non-closure of CFLs and DCFLs, including intersection with regular languages.",
+      "kind": "concept",
+      "requires": [
+        "pushdown-automata"
+      ],
+      "pyqTopics": [
+        "toc/cfg"
+      ],
+      "pyqTags": [
+        "closure",
+        "intersection"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "pumping-lemma-cfl",
+      "zone": 4,
+      "name": "Pumping for CFLs",
+      "icon": "warning",
+      "desc": "Proving languages not context-free with the CFL pumping lemma.",
+      "kind": "concept",
+      "requires": [
+        "cfl-closure",
+        "pumping-lemma-regular"
+      ],
+      "pyqTopics": [
+        "toc/pumping"
+      ],
+      "pyqTags": [
+        "cfl",
+        "context",
+        "CFL"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "turing-machines",
+      "zone": 5,
+      "name": "Turing machines",
+      "icon": "cpu",
+      "desc": "Turing machines, variants and their equivalence, enumerators and the Church–Turing thesis.",
+      "kind": "concept",
+      "requires": [
+        "pushdown-automata"
+      ],
+      "pyqTopics": [
+        "toc/tm",
+        "toc/turing"
+      ],
+      "pyqTags": [
+        "turing",
+        "ntm",
+        "enumerat",
+        "machine"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "recursive-re",
+      "zone": 5,
+      "name": "Recursive & RE sets",
+      "icon": "layers",
+      "desc": "Recursive and recursively enumerable languages and their closure properties.",
+      "kind": "concept",
+      "requires": [
+        "turing-machines"
+      ],
+      "pyqTopics": [
+        "toc/tm"
+      ],
+      "pyqTags": [
+        "recursive",
+        "enumerable",
+        "RE",
+        "complement",
+        "closure"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "chomsky-hierarchy",
+      "zone": 5,
+      "name": "Chomsky hierarchy",
+      "icon": "layers",
+      "desc": "Regular, context-free, context-sensitive and RE languages, and placing a language in the hierarchy.",
+      "kind": "concept",
+      "requires": [
+        "recursive-re",
+        "cfl-closure"
+      ],
+      "pyqTopics": [
+        "toc/cfg"
+      ],
+      "pyqTags": [
+        "chomsky",
+        "language classes",
+        "hierarchy"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "decidability",
+      "zone": 6,
+      "name": "Decidability",
+      "icon": "check-circle",
+      "desc": "Decidable and undecidable problems about automata, grammars and Turing machines.",
+      "kind": "concept",
+      "requires": [
+        "recursive-re"
+      ],
+      "pyqTopics": [
+        "toc/tm",
+        "toc/turing"
+      ],
+      "pyqTags": [
+        "decidab"
+      ],
+      "xpReward": 200
+    },
+    {
+      "id": "halting-reductions",
+      "zone": 6,
+      "name": "Halting & reductions",
+      "icon": "lock",
+      "desc": "The halting problem, reductions and Rice's theorem.",
+      "kind": "concept",
+      "requires": [
+        "decidability"
+      ],
+      "pyqTopics": [
+        "toc/tm"
+      ],
+      "pyqTags": [
+        "halting",
+        "reduction",
+        "rice",
+        "undecidab"
+      ],
+      "xpReward": 200
+    },
+    {
+      "id": "countability",
+      "zone": 6,
+      "name": "Countability",
+      "icon": "hash",
+      "desc": "Countable and uncountable sets and diagonalisation: why some languages are not RE.",
+      "kind": "concept",
+      "requires": [
+        "turing-machines",
+        "dm:functions"
+      ],
+      "pyqTopics": [
+        "toc/tm"
+      ],
+      "pyqTags": [
+        "countab",
+        "diagonal"
+      ],
+      "xpReward": 200
+    }
+  ]
+}

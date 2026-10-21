@@ -1,0 +1,528 @@
+{
+  "id": "c",
+  "name": "Programming & Data Structures (C)",
+  "short": "C",
+  "group": "gate",
+  "order": 14,
+  "icon": "terminal",
+  "color": "#8b5cf6",
+  "description": "C programming, recursion and the classic data structures GATE tests: arrays, lists, stacks, queues, trees, heaps and hashing.",
+  "gate": {
+    "pyqSubject": "pds",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "C language basics"
+    },
+    {
+      "level": 2,
+      "name": "Pointers & recursion"
+    },
+    {
+      "level": 3,
+      "name": "Linear structures"
+    },
+    {
+      "level": 4,
+      "name": "Trees"
+    },
+    {
+      "level": 5,
+      "name": "Heaps, hashing & graphs"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "c-basics",
+      "zone": 1,
+      "name": "C basics",
+      "icon": "terminal",
+      "desc": "Types, integer representation, operators, precedence and expression evaluation in C (and the Pascal-style snippets older papers use).",
+      "kind": "concept",
+      "requires": [
+        "dl:signed-numbers"
+      ],
+      "pyqTopics": [
+        "pds/c"
+      ],
+      "pyqTags": [
+        "operator",
+        "expression",
+        "c-programming",
+        "pascal"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "control-flow",
+      "zone": 1,
+      "name": "Loops & control flow",
+      "icon": "terminal",
+      "desc": "if/switch, for/while/do-while, break and continue; tracing loops and reasoning with loop invariants.",
+      "kind": "concept",
+      "requires": [
+        "c-basics"
+      ],
+      "pyqTopics": [
+        "pds/c"
+      ],
+      "pyqTags": [
+        "loop",
+        "gcd"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "functions-scope",
+      "zone": 1,
+      "name": "Functions & scope",
+      "icon": "function",
+      "desc": "Function calls, block and file scope, lifetime, and static variables that keep their value between calls.",
+      "kind": "concept",
+      "requires": [
+        "control-flow"
+      ],
+      "pyqTopics": [
+        "pds/c"
+      ],
+      "pyqTags": [
+        "scope",
+        "static"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "parameter-passing",
+      "zone": 1,
+      "name": "Parameter passing",
+      "icon": "function",
+      "desc": "Call by value versus simulated call by reference through pointers; why swap(a, b) does not work.",
+      "kind": "concept",
+      "requires": [
+        "functions-scope"
+      ],
+      "pyqTopics": [
+        "pds/c",
+        "pds/c-prog"
+      ],
+      "pyqTags": [
+        "call",
+        "parameter",
+        "pass-by",
+        "swap"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "linking-macros",
+      "zone": 1,
+      "name": "Macros & linking",
+      "icon": "wrench",
+      "desc": "The preprocessor and macros, compilation units, linkers, loaders, relocation and external symbols.",
+      "kind": "concept",
+      "requires": [
+        "functions-scope"
+      ],
+      "pyqTopics": [
+        "pds/c-prog"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "pointers",
+      "zone": 2,
+      "name": "Pointers",
+      "icon": "link",
+      "desc": "Addresses, dereferencing, pointers to pointers, aliasing and how pointers make C functions modify caller data.",
+      "kind": "concept",
+      "requires": [
+        "parameter-passing"
+      ],
+      "pyqTopics": [
+        "pds/c"
+      ],
+      "pyqTags": [
+        "pointer",
+        "aliasing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "pointer-arithmetic",
+      "zone": 2,
+      "name": "Pointer arithmetic",
+      "icon": "link",
+      "desc": "Pointer arithmetic, the array–pointer relationship, and indexing multi-dimensional arrays through pointers.",
+      "kind": "concept",
+      "requires": [
+        "pointers"
+      ],
+      "pyqTopics": [
+        "pds/c",
+        "pds/c-prog"
+      ],
+      "pyqTags": [
+        "pointer-arithmetic",
+        "arrays",
+        "multidimensional"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "strings-structs",
+      "zone": 2,
+      "name": "Strings & structs",
+      "icon": "type",
+      "desc": "Null-terminated strings, character arrays versus string literals, structs and pointers to structs.",
+      "kind": "concept",
+      "requires": [
+        "pointer-arithmetic"
+      ],
+      "pyqTopics": [
+        "pds/c"
+      ],
+      "pyqTags": [
+        "string",
+        "struct"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "dynamic-memory",
+      "zone": 2,
+      "name": "Dynamic memory",
+      "icon": "database",
+      "desc": "malloc and free, heap versus stack storage, dangling pointers and memory leaks.",
+      "kind": "concept",
+      "requires": [
+        "pointers"
+      ],
+      "pyqTopics": [
+        "pds/c"
+      ],
+      "pyqTags": [
+        "memory-leak",
+        "dangling",
+        "malloc"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "recursion",
+      "zone": 2,
+      "name": "Recursion",
+      "icon": "git-branch",
+      "desc": "Recursive functions in C: base cases, tracing output, and counting calls.",
+      "kind": "concept",
+      "requires": [
+        "functions-scope"
+      ],
+      "pyqTopics": [
+        "pds/recursion"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "recursion-tracing",
+      "zone": 2,
+      "name": "Recursion trees",
+      "icon": "git-branch",
+      "desc": "Drawing recursion trees, counting calls and stack depth, and mixing recursion with pointer or static parameters.",
+      "kind": "concept",
+      "requires": [
+        "recursion",
+        "parameter-passing"
+      ],
+      "pyqTopics": [
+        "pds/recursion"
+      ],
+      "pyqTags": [
+        "recursion-tree",
+        "recursion-count",
+        "activation",
+        "stack-depth",
+        "call-by"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "arrays",
+      "zone": 3,
+      "name": "Arrays",
+      "icon": "array",
+      "desc": "One- and two-dimensional arrays, in-place algorithms on arrays and their loop invariants.",
+      "kind": "concept",
+      "requires": [
+        "pointer-arithmetic"
+      ],
+      "pyqTopics": [
+        "pds/arrays"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "array-addressing",
+      "zone": 3,
+      "name": "Array addressing",
+      "icon": "grid",
+      "desc": "Row-major and column-major layout, address formulas, and triangular or sparse matrix storage.",
+      "kind": "concept",
+      "requires": [
+        "arrays"
+      ],
+      "pyqTopics": [
+        "pds/arrays"
+      ],
+      "pyqTags": [
+        "row-major",
+        "address",
+        "2d",
+        "2D",
+        "transpose",
+        "triangular"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "linked-lists",
+      "zone": 3,
+      "name": "Linked lists",
+      "icon": "link",
+      "desc": "Singly, doubly and circular linked lists: insertion, deletion, reversal and pointer manipulation.",
+      "kind": "concept",
+      "requires": [
+        "pointers",
+        "strings-structs"
+      ],
+      "pyqTopics": [
+        "pds/linked-lists"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "stacks-queues",
+      "zone": 3,
+      "name": "Stacks & queues",
+      "icon": "layers",
+      "desc": "Stack and queue ADTs on arrays and lists, circular queues, queues from stacks and stack permutations.",
+      "kind": "concept",
+      "requires": [
+        "arrays",
+        "linked-lists"
+      ],
+      "pyqTopics": [
+        "pds/stacks-queues"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "expression-evaluation",
+      "zone": 3,
+      "name": "Expression evaluation",
+      "icon": "calculator",
+      "desc": "Infix to postfix conversion, postfix evaluation and parenthesis matching with a stack.",
+      "kind": "concept",
+      "requires": [
+        "stacks-queues"
+      ],
+      "pyqTopics": [
+        "pds/stacks-queues"
+      ],
+      "pyqTags": [
+        "postfix",
+        "expression",
+        "infix",
+        "parenthesis"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "trees",
+      "zone": 4,
+      "name": "Binary trees",
+      "icon": "tree",
+      "desc": "Binary and n-ary trees: representation, recursive algorithms on trees, and their properties.",
+      "kind": "concept",
+      "requires": [
+        "recursion",
+        "linked-lists"
+      ],
+      "pyqTopics": [
+        "pds/trees"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "tree-traversals",
+      "zone": 4,
+      "name": "Tree traversals",
+      "icon": "tree",
+      "desc": "Preorder, inorder, postorder and level order traversals, and rebuilding a tree from two traversals.",
+      "kind": "concept",
+      "requires": [
+        "trees"
+      ],
+      "pyqTopics": [
+        "pds/trees"
+      ],
+      "pyqTags": [
+        "traversal",
+        "order",
+        "reconstruction"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "tree-counting",
+      "zone": 4,
+      "name": "Tree properties",
+      "icon": "tree",
+      "desc": "Counting nodes, leaves and heights in full, complete and n-ary trees; proofs by induction.",
+      "kind": "concept",
+      "requires": [
+        "trees"
+      ],
+      "pyqTopics": [
+        "pds/trees"
+      ],
+      "pyqTags": [
+        "leaves",
+        "leaf",
+        "height",
+        "full-binary",
+        "induction",
+        "n-ary"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "bst",
+      "zone": 4,
+      "name": "Binary search trees",
+      "icon": "tree",
+      "desc": "BST search, insertion and deletion, traversal orders of a BST and counting BSTs.",
+      "kind": "concept",
+      "requires": [
+        "tree-traversals"
+      ],
+      "pyqTopics": [
+        "pds/bst"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "avl-trees",
+      "zone": 4,
+      "name": "Balanced BSTs",
+      "icon": "tree",
+      "desc": "AVL trees, rotations and height bounds of balanced search trees.",
+      "kind": "concept",
+      "requires": [
+        "bst"
+      ],
+      "pyqTopics": [
+        "pds/bst"
+      ],
+      "pyqTags": [
+        "avl",
+        "balanced",
+        "height"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "heaps",
+      "zone": 5,
+      "name": "Heaps",
+      "icon": "layers",
+      "desc": "Binary min- and max-heaps stored in arrays; the heap property and priority queues.",
+      "kind": "concept",
+      "requires": [
+        "trees",
+        "array-addressing"
+      ],
+      "pyqTopics": [
+        "pds/heaps"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "heap-operations",
+      "zone": 5,
+      "name": "Heap operations",
+      "icon": "layers",
+      "desc": "Insert, delete, heapify and linear-time build-heap, d-ary heaps and their costs.",
+      "kind": "concept",
+      "requires": [
+        "heaps"
+      ],
+      "pyqTopics": [
+        "pds/heaps"
+      ],
+      "pyqTags": [
+        "build-heap",
+        "heapify",
+        "insertion",
+        "delet",
+        "3-ary"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "hashing",
+      "zone": 5,
+      "name": "Hashing",
+      "icon": "hash",
+      "desc": "Hash functions, hash tables and load factor.",
+      "kind": "concept",
+      "requires": [
+        "arrays"
+      ],
+      "pyqTopics": [
+        "pds/hashing-ds"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "collision-resolution",
+      "zone": 5,
+      "name": "Collision resolution",
+      "icon": "hash",
+      "desc": "Chaining, linear probing and double hashing: tracing insertions and probe sequences.",
+      "kind": "concept",
+      "requires": [
+        "hashing",
+        "linked-lists"
+      ],
+      "pyqTopics": [
+        "pds/hashing-ds"
+      ],
+      "pyqTags": [
+        "probing",
+        "open-addressing",
+        "double-hashing",
+        "chaining"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "graph-representation",
+      "zone": 5,
+      "name": "Graph representation",
+      "icon": "graph",
+      "desc": "Adjacency matrices and adjacency lists, their space costs and simple queries on them.",
+      "kind": "concept",
+      "requires": [
+        "linked-lists",
+        "array-addressing",
+        "dm:graph-theory"
+      ],
+      "pyqTopics": [
+        "pds/graphs-ds"
+      ],
+      "xpReward": 170
+    }
+  ]
+}
