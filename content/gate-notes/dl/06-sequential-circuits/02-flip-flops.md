@@ -986,8 +986,8 @@ sample.
 :::
 
 :::note{#recap-timing title="Recap" depth="quick"}
-Data must be stable $t_{su}$ before and $t_h$ after the edge; the output moves $t_{cq}$ after it. Setup: $T \ge t_{cq} + t_{logic,max}
-+ t_{su}$. Hold: $t_{cq,min} + t_{logic,min} \ge t_h$, independent of the clock. A change exactly at the edge with $t_h = 0$ is
+Data must be stable $t_{su}$ before and $t_h$ after the edge; the output moves $t_{cq}$ after it. Setup:
+$T \ge t_{cq} + t_{logic,max} + t_{su}$. Hold: $t_{cq,min} + t_{logic,min} \ge t_h$, independent of the clock. A change exactly at the edge with $t_h = 0$ is
 read as the old value.
 :::
 

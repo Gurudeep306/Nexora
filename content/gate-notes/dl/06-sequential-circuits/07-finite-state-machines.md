@@ -646,8 +646,8 @@ complement of every input.
 :::proof{#proof-twos-complement-rule of="the copy-then-complement rule" depth="standard"}
 **Idea first:** 2's complement is "invert and add 1", and the added 1 ripples exactly through the inverted trailing zeros.
 
-Write $v = u \cdot 2^{j+1} + 2^j$ with $u$ the number formed by bits $j + 1, \dots, n - 1$. Inverting all $n$ bits gives $\bar v = \bar u \cdot 2^{j+1} + 0 \cdot 2^j
-+ (2^j - 1)$, since bit $j$ becomes 0 and the $j$ trailing zeros become 1s. Adding 1: the low part $2^j - 1 + 1 = 2^j$, which carries into nothing beyond bit
+Write $v = u \cdot 2^{j+1} + 2^j$ with $u$ the number formed by bits $j + 1, \dots, n - 1$. Inverting all $n$ bits gives $\bar v = \bar u \cdot 2^{j+1} + 0 \cdot 2^j +
+(2^j - 1)$, since bit $j$ becomes 0 and the $j$ trailing zeros become 1s. Adding 1: the low part $2^j - 1 + 1 = 2^j$, which carries into nothing beyond bit
 $j$. So $\bar v + 1 = \bar u \cdot 2^{j+1} + 2^j$: bits $0, \dots, j - 1$ are 0 (as in $v$), bit $j$ is 1 (as in $v$), and the bits above are $\bar u$, the complement.
 Since $\bar v + 1 = 2^n - v$, this is the 2's complement. For $v = 0$ the machine never leaves Q0 and outputs 0, and $2^n - 0 \equiv 0$. ∎
 
