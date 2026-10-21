@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
-import { Maximize2, Minus, Plus } from 'lucide-react'
+import { ChevronRight, Crosshair, Expand, Maximize2, Minus, Plus, Shrink } from 'lucide-react'
 import { Avatar, Button, RankGlyph } from '@/components/ui'
 import { LogoMark } from '@/components/brand/Logo'
 import { formatNumber } from '@/lib/utils'
@@ -48,6 +48,9 @@ export interface Camera {
   x: number
   y: number
   k: number
+  /** the view size it was taken at (a stale size means: fit again) */
+  w?: number
+  h?: number
 }
 
 const MAX_K = 1.6
@@ -178,9 +181,21 @@ export function RadialWeb({
 
   /* ── state the loop reads (refs: React never renders per frame) ── */
   // Everything in view, the stream names on the rim included.
-  const fit = (w: number, h: number): Camera => ({ x: 0, y: 0, k: Math.min(w, h) / (2 * (layout.extent + 320)) })
+  // Fit: the whole disc with its stream names, a little below the toolbar.
+  const fit = (w: number, h: number): Camera => {
+    const k = Math.min(w, h - 56) / (2 * (layout.extent + (w < 640 ? 170 : 320)))
+    return { x: 0, y: -28 / k, k }
+  }
   const cam = useRef<Camera>(initialCamera ?? { x: 0, y: 0, k: 0.05 })
-  const framed = useRef(!!initialCamera)
+  // Fit to the view on load and on every resize until the user pans or zooms.
+  const userMoved = useRef(false)
+  const initial = useRef(initialCamera ?? null)
+  const hoverStream = useRef<string | null>(null)
+  const streamHits = useRef<{ id: string; x: number; y: number; w: number; h: number }[]>([])
+  const tiltRef = useRef<HTMLDivElement>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [fullscreen, setFullscreen] = useState<'off' | 'native' | 'css'>('off')
+  const mountedAt = useRef(0)
   const view = useRef({ w: 1, h: 1, dpr: 1 })
   const hovered = useRef<string | null>(null)
   const hoverSector = useRef<string | null>(null)
@@ -189,11 +204,42 @@ export function RadialWeb({
   const grid = useRef(new HitGrid(40))
   const P = useRef({ selected, onSelect, onOpenSubject, onCamera })
   P.current = { selected, onSelect, onOpenSubject, onCamera }
+  // Skills that opened since your last visit pulse gently (this visit only):
+  // the open set from the last visit is read once, the new one saved after.
+  const [before] = useState<Set<string> | null>(() => {
+    try {
+      const raw = localStorage.getItem('nexus:open:v1')
+      return raw ? new Set(JSON.parse(raw) as string[]) : null
+    } catch {
+      return null
+    }
+  })
+  const fresh = useMemo(() => {
+    if (!before) return new Set<string>()
+    return new Set([...items.values()].filter((it) => it.node.s >= 1 && !before.has(it.key)).map((it) => it.key))
+  }, [items, before])
+  useEffect(() => {
+    try {
+      localStorage.setItem('nexus:open:v1', JSON.stringify([...items.values()].filter((it) => it.node.s >= 1).map((it) => it.key)))
+    } catch {
+      /* storage blocked: no pulse, nothing else changes */
+    }
+  }, [items])
+  // The next step: the open skill you are furthest into, nearest the centre.
+  const nextStep = useMemo(() => {
+    let best: Item | null = null
+    for (const it of items.values()) {
+      if (it.node.s !== 1) continue
+      if (!best || it.node.p > best.node.p || (it.node.p === best.node.p && (it.node.z < best.node.z || (it.node.z === best.node.z && it.cluster.order < best.cluster.order)))) best = it
+    }
+    return best?.key ?? null
+  }, [items])
   useEffect(() => {
     dirty.current = true
   }, [selected, items])
 
-  const flyTo = (to: Camera, dur = 650) => {
+  const flyTo = (to: Camera, dur = 650, byUser = true) => {
+    if (byUser) userMoved.current = true
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const target = { ...to, k: Math.max(fit(view.current.w, view.current.h).k * 0.8, Math.min(MAX_K, to.k)) }
     if (reduce) {
@@ -202,6 +248,47 @@ export function RadialWeb({
     } else fly.current = { from: { ...cam.current }, to: target, t0: performance.now(), dur }
   }
   const zoomBy = (f: number) => flyTo({ ...cam.current, k: cam.current.k * f }, 260)
+  const fitNow = () => {
+    flyTo(fit(view.current.w, view.current.h), 500, false)
+    userMoved.current = false
+  }
+  const flyToStream = (id: string) => {
+    const st = layout.streams.find((x) => x.id === id)
+    if (!st) return
+    const mid = (st.a0 + st.a1) / 2
+    const rm = (layout.inner * 0.75 + layout.extent) / 2
+    const span = Math.min(Math.PI, st.a1 - st.a0)
+    const size = Math.max(layout.extent - layout.inner * 0.6, 2 * Math.sin(span / 2) * layout.extent) + 400
+    flyTo({ x: Math.cos(mid) * rm, y: Math.sin(mid) * rm, k: Math.min(view.current.w, view.current.h) / size }, 700)
+  }
+  const toggleFullscreen = () => {
+    const el = cardRef.current
+    if (!el) return
+    if (fullscreen === 'css') return setFullscreen('off')
+    if (document.fullscreenElement) {
+      void document.exitFullscreen()
+      return
+    }
+    if (el.requestFullscreen) {
+      el.requestFullscreen().catch(() => setFullscreen('css'))
+    } else setFullscreen('css')
+  }
+  useEffect(() => {
+    const onChange = () => setFullscreen(document.fullscreenElement === cardRef.current ? 'native' : 'off')
+    document.addEventListener('fullscreenchange', onChange)
+    return () => document.removeEventListener('fullscreenchange', onChange)
+  }, [])
+  useEffect(() => {
+    if (fullscreen !== 'css') return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation()
+        setFullscreen('off')
+      }
+    }
+    window.addEventListener('keydown', onKey, true)
+    return () => window.removeEventListener('keydown', onKey, true)
+  }, [fullscreen])
   const flyToRing = (level: number) => {
     const g = layout.rings.find((r) => r.level === level)
     if (!g) return
@@ -268,15 +355,25 @@ export function RadialWeb({
 
     const resize = () => {
       const r = wrap.getBoundingClientRect()
-      const w = Math.max(1, r.width)
-      const h = Math.max(1, r.height)
+      // Not laid out yet (or collapsed): wait for a real size.
+      if (r.width < 40 || r.height < 40) return
+      const w = r.width
+      const h = r.height
       const dpr = Math.min(2, window.devicePixelRatio || 1)
       view.current = { w, h, dpr }
       canvas.width = Math.round(w * dpr)
       canvas.height = Math.round(h * dpr)
-      if (!framed.current) {
-        framed.current = true
-        cam.current = fit(w, h)
+      if (!userMoved.current) {
+        const ic = initial.current
+        initial.current = null
+        // Back from a subject at the same size: the same spot. Otherwise fit.
+        if (ic && ic.w && ic.h && Math.abs(ic.w - w) < 2 && Math.abs(ic.h - h) < 2) {
+          cam.current = { x: ic.x, y: ic.y, k: ic.k }
+          userMoved.current = true
+        } else {
+          cam.current = fit(w, h)
+          fly.current = null
+        }
       }
       setCompact(window.innerWidth < 640)
       dirty.current = true
@@ -293,6 +390,8 @@ export function RadialWeb({
     let related: Set<string> | null = null
     let raf = 0
     let lastCam = ''
+    if (!mountedAt.current) mountedAt.current = performance.now()
+    const dark = () => document.documentElement.dataset.mode === 'dark' || document.documentElement.classList.contains('dark')
 
     const frame = (now: number) => {
       raf = requestAnimationFrame(frame)
@@ -315,12 +414,16 @@ export function RadialWeb({
         related = fk ? lineage(prereqs, fk) : null
         dirty.current = true
       }
-      if (!dirty.current && !animate) return
+      // Progress arcs fill in on load.
+      const intro = reduce ? 1 : Math.min(1, (now - mountedAt.current) / 900)
+      const introE = 1 - Math.pow(1 - intro, 3)
+      if (intro < 1) dirty.current = true
+      if (!dirty.current && !animate && !fresh.size) return
       dirty.current = false
       const camKey = `${c.x.toFixed(1)},${c.y.toFixed(1)},${c.k.toFixed(4)}`
       if (camKey !== lastCam) {
         lastCam = camKey
-        p.onCamera?.({ ...c })
+        p.onCamera?.({ ...c, w: view.current.w, h: view.current.h })
       }
 
       const { w, h, dpr } = view.current
@@ -342,7 +445,7 @@ export function RadialWeb({
       for (const st of layout.streams) {
         const hue = streamOf.get(st.id)?.hue
         if (!hue) continue
-        ctx.globalAlpha = hs && sectorOf.get(hs)?.stream === st.id ? 0.07 : 0.035
+        ctx.globalAlpha = (hs && sectorOf.get(hs)?.stream === st.id) || hoverStream.current === st.id ? 0.075 : 0.035
         ctx.fillStyle = hue
         ctx.beginPath()
         ctx.arc(0, 0, layout.extent + 60, st.a0, st.a1)
@@ -596,6 +699,28 @@ export function RadialWeb({
         const s = sel ? 1.08 : 1
         const ringR = (R - 2) * s
         const coreR = 21 * s
+        // A soft shadow under each orb; the hovered one lifts a little.
+        if (rr >= 5) {
+          ctx.globalAlpha = (dim ? 0.3 : 1) * (hov ? 0.16 : 0.24) * (dark() ? 1.4 : 1)
+          ctx.fillStyle = '#000'
+          ctx.beginPath()
+          ctx.ellipse(it.x, it.y + R * (hov ? 0.95 : 0.82), R * (hov ? 1.0 : 0.86), R * 0.3, 0, 0, Math.PI * 2)
+          ctx.fill()
+          ctx.globalAlpha = dim ? 0.3 : 1
+        }
+        const lift = hov && !reduce ? 4 : 0
+        if (lift) ctx.translate(0, -lift)
+        if (fresh.has(it.key)) {
+          // Newly unlocked: a gentle accent pulse (this visit).
+          const t = reduce ? 0.5 : (now % 1800) / 1800
+          ctx.globalAlpha = 0.55 * (1 - t)
+          ctx.strokeStyle = C.accent
+          ctx.lineWidth = Math.max(2, 2 / c.k)
+          ctx.beginPath()
+          ctx.arc(it.x, it.y, (R + 6) * (1 + 0.5 * t), 0, Math.PI * 2)
+          ctx.stroke()
+          ctx.globalAlpha = dim ? 0.3 : 1
+        }
         if (state === 'open' && pulseT >= 0) {
           const t = Math.min(1, pulseT / 0.8)
           ctx.globalAlpha = (dim ? 0.3 : 1) * 0.7 * (1 - t)
@@ -616,7 +741,7 @@ export function RadialWeb({
         ctx.strokeStyle = it.color
         ctx.stroke()
         ctx.globalAlpha = dim ? 0.3 : 1
-        const pct = n.s === 2 ? 100 : n.p
+        const pct = (n.s === 2 ? 100 : n.p) * introE
         if (pct > 0) {
           ctx.lineCap = 'round'
           ctx.beginPath()
@@ -714,6 +839,7 @@ export function RadialWeb({
           ctx.arc(it.x, it.y, R * s + 6, 0, Math.PI * 2)
           ctx.stroke()
         }
+        if (lift) ctx.translate(0, lift)
       }
       ctx.globalAlpha = 1
 
@@ -748,7 +874,20 @@ export function RadialWeb({
 
       // Screen-space type: subject names along their branches, and YOU.
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      // A faint inner shading toward the rim: the disc reads as a surface.
+      {
+        const R0 = (layout.extent + 70) * c.k
+        const vg = ctx.createRadialGradient(X(0), Y(0), R0 * 0.55, X(0), Y(0), R0)
+        vg.addColorStop(0, 'rgba(0,0,0,0)')
+        vg.addColorStop(1, dark() ? 'rgba(0,0,0,0.22)' : 'rgba(30,40,80,0.06)')
+        ctx.fillStyle = vg
+        ctx.beginPath()
+        ctx.arc(X(0), Y(0), R0, 0, Math.PI * 2)
+        ctx.fill()
+      }
       const lane = (s: (typeof sectors)[number]) => (s.a1 - s.a0) * layout.inner * 0.9 * c.k
+      const hst = hoverStream.current ?? (hs ? (sectorOf.get(hs)?.stream ?? null) : null)
+      const fitK = fit(w, h).k
       ctx.textBaseline = 'middle'
       for (const s of sectors) {
         const cl = sectorOf.get(s.id)
@@ -759,7 +898,9 @@ export function RadialWeb({
         const sy = Y(Math.sin(mid) * r1)
         if (sx < -300 || sx > w + 300 || sy < -300 || sy > h + 300) continue
         const size = Math.max(10, Math.min(13, lane(s) * 0.5))
-        if (lane(s) < 9) continue
+        // Zoomed out the names would crowd: only the hovered stream's show
+        // (the rest are dots and the nine stream names on the rim).
+        if ((lane(s) < 15 || c.k < fitK * 1.6) && hst !== cl.stream) continue
         const flip = Math.cos(mid) < 0
         ctx.save()
         ctx.translate(sx, sy)
@@ -799,6 +940,7 @@ export function RadialWeb({
       // Stream names on the outer rim, in their hue.
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
+      streamHits.current = []
       for (const st of layout.streams) {
         const info = streamOf.get(st.id)
         if (!info) continue
@@ -807,9 +949,22 @@ export function RadialWeb({
         const sx = X(Math.cos(mid) * rr2)
         const sy = Y(Math.sin(mid) * rr2)
         if (sx < -200 || sx > w + 200 || sy < -40 || sy > h + 40) continue
-        // Only where the rim has room for the letters (not on a tiny disc).
-        if (rr2 * c.k < 230) continue
         const label = info.name.toUpperCase()
+        if (rr2 * c.k < 230) {
+          // A small disc: straight, compact labels instead of curved ones.
+          ctx.font = `700 9.5px ${font}`
+          const short = info.name.replace('Programming ', '').replace(' & ', ' & ').toUpperCase()
+          const tw2 = ctx.measureText(short).width
+          const lx = Math.max(tw2 / 2 + 4, Math.min(w - tw2 / 2 - 4, sx))
+          const ly = Math.max(10, Math.min(h - 10, sy))
+          ctx.globalAlpha = hoverStream.current && hoverStream.current !== st.id ? 0.5 : 1
+          ctx.fillStyle = info.hue
+          ctx.fillText(short, lx, ly)
+          ctx.globalAlpha = 1
+          streamHits.current.push({ id: st.id, x: lx - tw2 / 2 - 4, y: ly - 9, w: tw2 + 8, h: 18 })
+          continue
+        }
+        streamHits.current.push({ id: st.id, x: sx - 70, y: sy - 18, w: 140, h: 36 })
         ctx.font = `700 ${c.k < 0.05 ? 10.5 : 12}px ${font}`
         const chars = [...label]
         const sp = 2.2
@@ -820,6 +975,7 @@ export function RadialWeb({
         const rad = rr2 * c.k
         let ang = mid + ((bottom ? 1 : -1) * tw) / 2 / rad
         ctx.fillStyle = info.hue
+        ctx.globalAlpha = hoverStream.current && hoverStream.current !== st.id ? 0.55 : 1
         chars.forEach((ch, i) => {
           const step = (widths[i] + sp) / rad
           const a3 = ang + ((bottom ? -1 : 1) * widths[i]) / 2 / rad
@@ -830,6 +986,7 @@ export function RadialWeb({
           ctx.restore()
           ang += (bottom ? -1 : 1) * step
         })
+        ctx.globalAlpha = 1
       }
       // Hovering a subject: what it needs and what it leads to, as labels.
       if (hs) {
@@ -839,7 +996,9 @@ export function RadialWeb({
           const needs = subjectLinks.filter((l) => l.to === hs).sort((p2, q2) => q2.n - p2.n).map((l) => sectorOf.get(l.from)?.name ?? l.from)
           const leads = subjectLinks.filter((l) => l.from === hs).sort((p2, q2) => q2.n - p2.n).map((l) => sectorOf.get(l.to)?.name ?? l.to)
           const short = (list: string[]) => (list.length > 3 ? `${list.slice(0, 3).join(' · ')} +${list.length - 3}` : list.join(' · '))
-          const lines: [string, string][] = [[cl.name, C.text]]
+          const done2 = cl.nodes.filter((n) => n.s === 2).length
+          const prog = cl.nodes.length ? Math.round(cl.nodes.reduce((a2, n) => a2 + n.p, 0) / cl.nodes.length) : 0
+          const lines: [string, string][] = [[`${cl.name} · ${prog}% mastered`, C.text], [`${done2}/${cl.nodes.length} skills · ${streamOf.get(cl.stream)?.name ?? ''}`, C.muted]]
           if (needs.length) lines.push([`needs ${short(needs)}`, C.muted])
           if (leads.length) lines.push([`leads to ${short(leads)}`, C.muted])
           if (!needs.length && !leads.length) lines.push(['stands on its own', C.muted])
@@ -883,7 +1042,7 @@ export function RadialWeb({
       probe.remove()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items, layout, prereqs, sectorOf, iconNames, subjectLinks, streamOf])
+  }, [items, layout, prereqs, sectorOf, iconNames, subjectLinks, streamOf, fresh])
 
   /* ── pointer, wheel and keyboard ── */
   useEffect(() => {
@@ -903,6 +1062,7 @@ export function RadialWeb({
     const minK = () => fit(view.current.w, view.current.h).k * 0.8
     const zoomAt = (p: { x: number; y: number }, k2: number) => {
       const before = toWorld(p)
+      userMoved.current = true
       cam.current = { ...cam.current, k: Math.max(minK(), Math.min(MAX_K, k2)) }
       const after = toWorld(p)
       cam.current = { ...cam.current, x: cam.current.x + before.x - after.x, y: cam.current.y + before.y - after.y }
@@ -938,6 +1098,7 @@ export function RadialWeb({
         const d = Math.hypot(a.x - b.x, a.y - b.y) || 1
         const m = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }
         const k = Math.max(minK(), Math.min(MAX_K, (pinch.k * d) / pinch.d))
+        userMoved.current = true
         const { w, h } = view.current
         cam.current = { k, x: pinch.wx - (m.x - w / 2) / k, y: pinch.wy - (m.y - h / 2) / k }
         fly.current = null
@@ -947,6 +1108,7 @@ export function RadialWeb({
       if (drag && pts.size === 1) {
         if (!drag.moved && Math.hypot(p.x - drag.x, p.y - drag.y) > 5) drag.moved = true
         if (drag.moved) {
+          userMoved.current = true
           cam.current = { ...cam.current, x: drag.cx - (p.x - drag.x) / cam.current.k, y: drag.cy - (p.y - drag.y) / cam.current.k }
           fly.current = null
           dirty.current = true
@@ -954,13 +1116,23 @@ export function RadialWeb({
         return
       }
       if (e.pointerType === 'mouse') {
-        const key = hitNode(p)
-        const hs = key ? null : hitSector(p)
+        const sh = streamHits.current.find((b) => p.x >= b.x && p.x <= b.x + b.w && p.y >= b.y && p.y <= b.y + b.h)?.id ?? null
+        if (sh !== hoverStream.current) {
+          hoverStream.current = sh
+          dirty.current = true
+        }
+        const key = sh ? null : hitNode(p)
+        const tilt = tiltRef.current
+        if (tilt && !key && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          const { w, h } = view.current
+          tilt.style.transform = `rotateX(${((0.5 - p.y / h) * 3).toFixed(2)}deg) rotateY(${((p.x / w - 0.5) * 3).toFixed(2)}deg)`
+        }
+        const hs = key || sh ? null : hitSector(p)
         const sec = hs ? hs.s.id : null
         if (key !== hovered.current || sec !== hoverSector.current) dirty.current = true
         hovered.current = key
         hoverSector.current = sec
-        canvas.style.cursor = key || hs?.onName ? 'pointer' : 'grab'
+        canvas.style.cursor = key || sh || hs?.onName ? 'pointer' : 'grab'
       }
     }
     const up = (e: PointerEvent) => {
@@ -970,12 +1142,23 @@ export function RadialWeb({
       if (pts.size === 0) {
         if (tap) {
           const p = local(e)
-          const key = hitNode(p)
+          const sh = streamHits.current.find((b) => p.x >= b.x && p.x <= b.x + b.w && p.y >= b.y && p.y <= b.y + b.h)?.id ?? null
+          const key = sh ? null : hitNode(p)
           const cb = P.current
-          if (key) cb.onSelect(cb.selected === key ? null : key)
+          if (sh) flyToStream(sh)
+          else if (key) cb.onSelect(cb.selected === key ? null : key)
           else {
             const hs = hitSector(p)
-            if (hs?.onName) cb.onOpenSubject(hs.s.id)
+            if (hs?.onName) {
+              // A short zoom toward the subject, then its own tree.
+              const id = hs.s.id
+              if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) cb.onOpenSubject(id)
+              else {
+                const mid = (hs.s.a0 + hs.s.a1) / 2
+                flyTo({ x: Math.cos(mid) * layout.inner, y: Math.sin(mid) * layout.inner, k: cam.current.k * 2.2 }, 340)
+                window.setTimeout(() => cb.onOpenSubject(id), 320)
+              }
+            }
             else if (hs && !hs.beyond) {
               // Zoom into the sector.
               const mid = (hs.s.a0 + hs.s.a1) / 2
@@ -997,6 +1180,8 @@ export function RadialWeb({
     const leave = () => {
       hovered.current = null
       hoverSector.current = null
+      hoverStream.current = null
+      if (tiltRef.current) tiltRef.current.style.transform = ''
       dirty.current = true
     }
     const wheel = (e: WheelEvent) => {
@@ -1012,7 +1197,8 @@ export function RadialWeb({
       else if (e.key === 'ArrowDown') flyTo({ ...c, y: c.y + step }, 220)
       else if (e.key === '+' || e.key === '=') zoomBy(1.3)
       else if (e.key === '-') zoomBy(1 / 1.3)
-      else if (e.key === '0') flyTo(fit(view.current.w, view.current.h))
+      else if (e.key === '0') fitNow()
+      else if (e.key === 'f' || e.key === 'F') toggleFullscreen()
       else return
       e.preventDefault()
     }
@@ -1059,15 +1245,23 @@ export function RadialWeb({
         return { x: r.left + (Math.cos(mid) * rr - c.x) * c.k + vw / 2, y: r.top + (Math.sin(mid) * rr - c.y) * c.k + vh / 2 }
       },
       zoom: (k: number, x = 0, y = 0) => {
+        userMoved.current = true
         cam.current = { x, y, k }
         dirty.current = true
       },
+      stream: (id: string) => {
+        const b = streamHits.current.find((x) => x.id === id)
+        const r = canvasRef.current?.getBoundingClientRect()
+        return b && r ? { x: r.left + b.x + b.w / 2, y: r.top + b.y + b.h / 2 } : null
+      },
+      camera: () => ({ ...cam.current, ...view.current }),
     }
     return () => {
       delete w.__nexusRadial
     }
   }, [items, layout])
 
+  const selectedItem = selected ? (items.get(selected) ?? null) : null
   // The zone rail: the rings, outward, with their rank emblems.
   const rail = useMemo(() => {
     return layout.rings.map((g) => {
@@ -1086,7 +1280,12 @@ export function RadialWeb({
   }, [layout, clusters])
 
   return (
-    <div className="card relative flex overflow-hidden p-0" style={{ height: 'min(720px, calc(100vh - 220px))', minHeight: 440 }}>
+    <div
+      ref={cardRef}
+      className={cn('card relative flex overflow-hidden p-0', fullscreen === 'css' && 'fixed inset-0 z-[60] rounded-none', fullscreen !== 'off' && 'bg-bg-app')}
+      style={fullscreen !== 'off' ? { height: '100vh', width: '100vw' } : { height: 'min(720px, max(440px, calc(100vh - 220px)))' }}
+      data-fullscreen={fullscreen !== 'off' || undefined}
+    >
       <nav
         className={cn('shrink-0 flex-col overflow-y-auto border-r border-border py-2', compact ? 'hidden' : 'flex w-[184px]')}
         aria-label="Zones (rings, outward)"
@@ -1118,7 +1317,8 @@ export function RadialWeb({
           </button>
         ))}
       </nav>
-      <div ref={wrapRef} className="relative min-w-0 flex-1">
+      <div ref={wrapRef} className="relative min-w-0 flex-1" style={{ perspective: 1800 }}>
+        <div ref={tiltRef} className="absolute inset-0 transition-transform duration-500 ease-out will-change-transform">
         <canvas
           ref={canvasRef}
           className="absolute inset-0 block size-full touch-none outline-none"
@@ -1128,20 +1328,39 @@ export function RadialWeb({
           aria-label={`The Nexus: ${clusters.length} subjects grown outward from you, zones as rings. Drag to pan, scroll or pinch to zoom; click a subject's name to open its tree, a sector to zoom in, a skill to see it. Arrow keys pan, plus and minus zoom, 0 fits.`}
         />
         <CoreEmblem ref={coreRef} me={me} />
+        </div>
         <div className="absolute top-3 right-3 flex gap-1.5">
+          {nextStep && (
+            <Button variant="outline" size="sm" onClick={() => P.current.onSelect(nextStep)} aria-label="Jump to my next step" title="Jump to my next step">
+              <Crosshair className="size-3.5" /> <span className="hidden sm:inline">Next step</span>
+            </Button>
+          )}
           <Button variant="outline" size="sm" onClick={() => zoomBy(1.4)} aria-label="Zoom in">
             <Plus className="size-3.5" />
           </Button>
           <Button variant="outline" size="sm" onClick={() => zoomBy(1 / 1.4)} aria-label="Zoom out">
             <Minus className="size-3.5" />
           </Button>
-          <Button variant="outline" size="sm" onClick={() => flyTo(fit(view.current.w, view.current.h))} aria-label="Fit everything">
+          <Button variant="outline" size="sm" onClick={fitNow} aria-label="Fit to view (0)" title="Fit to view (0)">
             <Maximize2 className="size-3.5" />
           </Button>
+          <Button variant="outline" size="sm" onClick={toggleFullscreen} aria-label={fullscreen !== 'off' ? 'Exit fullscreen (F)' : 'Fullscreen (F)'} title={fullscreen !== 'off' ? 'Exit fullscreen (F)' : 'Fullscreen (F)'} aria-pressed={fullscreen !== 'off'}>
+            {fullscreen !== 'off' ? <Shrink className="size-3.5" /> : <Expand className="size-3.5" />}
+          </Button>
         </div>
-        <p className="pointer-events-none absolute bottom-3 left-3 mb-0 hidden text-[11px] text-text-muted sm:block">
-          Click a subject's name to open its tree · a sector to zoom in · a skill to inspect it
-        </p>
+        {selectedItem ? (
+          <nav aria-label="Selected skill" className="absolute bottom-3 left-3 flex items-center gap-1 text-[11.5px] text-text-muted">
+            <button type="button" className="cursor-pointer font-semibold hover:underline" style={{ color: streamOf.get(selectedItem.cluster.stream)?.hue }} onClick={() => flyToStream(selectedItem.cluster.stream)}>
+              {streamOf.get(selectedItem.cluster.stream)?.name ?? 'Stream'}
+            </button>
+            <ChevronRight className="size-3" aria-hidden="true" />
+            <button type="button" className="cursor-pointer text-text-primary hover:underline" onClick={() => onOpenSubject(selectedItem.cluster.id)}>
+              {selectedItem.cluster.name}
+            </button>
+            <ChevronRight className="size-3" aria-hidden="true" />
+            <span>{selectedItem.cluster.zones.find((z) => z.level === selectedItem.node.z)?.name ?? `Zone ${selectedItem.node.z}`}</span>
+          </nav>
+        ) : null}
         {/* The node icons, drawn into the canvas as images. */}
         <div ref={iconsRef} hidden aria-hidden="true">
           {iconNames.map((n) => (

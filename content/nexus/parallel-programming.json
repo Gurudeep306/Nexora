@@ -222,6 +222,7 @@
       "icon": "image",
       "desc": "Parallelise an image-processing pipeline and measure speedup across core counts.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "openmp",
         "parallel-patterns",
@@ -273,6 +274,7 @@
       "icon": "rocket",
       "desc": "Implement an N-body simulation on the GPU and compare it against a multicore CPU version.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "gpu-memory",
         "work-span"

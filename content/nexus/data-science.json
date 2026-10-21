@@ -172,6 +172,7 @@
       "icon": "analytics",
       "desc": "Clean and explore a messy public dataset and write up the main findings with charts.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "visualization",
         "data-cleaning",
@@ -230,6 +231,7 @@
       "icon": "target",
       "desc": "Build, tune and explain a predictive model for a real dataset such as churn or prices.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "sklearn-models",
         "model-interpretation"
@@ -292,6 +294,7 @@
       "icon": "trophy",
       "desc": "An end-to-end project from question to data to model to a published, reproducible report.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "prediction-project",
         "dashboards",

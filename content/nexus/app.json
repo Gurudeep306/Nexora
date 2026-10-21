@@ -133,6 +133,7 @@
       "icon": "check",
       "desc": "Build a multi-screen todo app with lists, navigation and a polished theme.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "lists-layouts",
         "navigation"
@@ -197,6 +198,7 @@
       "icon": "edit",
       "desc": "Build a notes app with search and on-device persistence that survives restarts.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "local-persistence",
         "app-lifecycle"
@@ -248,6 +250,7 @@
       "icon": "sun",
       "desc": "Build a weather app that fetches forecasts from a public API, caches them for offline use, and handles errors gracefully.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "offline-sync"
       ],
@@ -308,6 +311,7 @@
       "icon": "trophy",
       "desc": "Design, build and publish (to a test track) an app with sign-in, a backend API, offline support and notifications.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "weather-app",
         "auth-mobile",

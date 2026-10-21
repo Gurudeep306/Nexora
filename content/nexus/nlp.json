@@ -137,6 +137,7 @@
       "icon": "heart",
       "desc": "Build and evaluate a sentiment classifier for product or movie reviews.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "text-classification"
       ],
@@ -238,6 +239,7 @@
       "icon": "target",
       "desc": "Fine-tune a transformer to extract entities from domain text and measure F1.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "fine-tuning-nlp",
         "sequence-labeling"

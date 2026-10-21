@@ -130,6 +130,7 @@
       "icon": "rocket",
       "desc": "Containerise a web app with a database and cache and run it with Compose.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "docker-compose",
         "images-registries"
@@ -258,6 +259,7 @@
       "icon": "rocket",
       "desc": "Deploy a multi-service app to a cluster with a Helm chart, autoscaling and monitoring.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "helm",
         "k8s-autoscaling",

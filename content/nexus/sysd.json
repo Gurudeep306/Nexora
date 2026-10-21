@@ -288,6 +288,7 @@
       "icon": "link",
       "desc": "Design a URL shortener end to end: estimates, API, ID generation, storage, caching and analytics.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "estimation",
         "caching",
@@ -302,6 +303,7 @@
       "icon": "timer",
       "desc": "Design and prototype a distributed rate limiter backed by a shared cache, and load-test it.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "rate-limiting",
         "caching"
@@ -315,6 +317,7 @@
       "icon": "chat",
       "desc": "Design a chat service: persistent connections, message fan-out, ordering, storage and presence.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "message-queues",
         "load-balancing",
@@ -329,6 +332,7 @@
       "icon": "list",
       "desc": "Design a social news feed: fan-out on write versus read, ranking, caching and hot users.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "event-driven",
         "caching",

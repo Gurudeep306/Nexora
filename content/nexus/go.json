@@ -178,6 +178,7 @@
       "icon": "users",
       "desc": "Build a concurrent worker pool that processes jobs with cancellation and error reporting.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "select-context",
         "sync-package",
@@ -268,6 +269,7 @@
       "icon": "rocket",
       "desc": "Build a tested REST service in Go with a database, graceful shutdown and a container image.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "net-http",
         "json-encoding",

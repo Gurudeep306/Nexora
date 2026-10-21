@@ -219,31 +219,88 @@ test('study writes show up at once (the per-user cache is dropped)', async () =>
 
 /* ── ranks ────────────────────────────────────────────────────────────── */
 
-test('subject rank: five tiers by mastery, the title from the data file (or a default)', () => {
-  assert.deepEqual([0, 19, 20, 39, 40, 60, 79, 80, 100].map(ranks.tierFor), [0, 0, 1, 1, 2, 3, 3, 4, 4]);
+test('subject rank: fair tiers (Master at 80%), the title from the data file (or a default)', () => {
+  assert.deepEqual([0, 14, 15, 34, 35, 59, 60, 79, 80, 100].map(ranks.tierFor), [0, 0, 1, 1, 2, 2, 3, 3, 4, 4]);
+  // Every new threshold is at or below the old 20/40/60/80 one: no tier drops.
+  for (let p = 0; p <= 100; p++) assert.ok(ranks.tierFor(p) >= Math.min(4, Math.floor(p / 20)), `no drop at ${p}%`);
   const dl = subjects.loadRegistry(NEXUS_NODES).subjects.get('dl').meta;
   assert.equal(ranks.subjectRank(dl, 45).tier, 'Adept');
   assert.equal(ranks.subjectRank(dl, 45).title, 'Logic Architect');
   assert.equal(ranks.subjectRank(dl, 45).next, 'Expert at 60%');
+  assert.equal(ranks.subjectRank(dl, 82).tier, 'Master');
   assert.equal(ranks.subjectRank({ short: 'XYZ' }, 100).title, 'XYZ Pathfinder');
   assert.equal(ranks.subjectRank({ short: 'XYZ' }, 100).next, null);
 });
 
-test('web rank: DSA XP is the floor and every subject adds on top (no rank can drop)', () => {
+test('subject rank: Master once every core node is done (optional ones may be skipped); next rank in N concepts', () => {
+  const mk = (n, opt) => Array.from({ length: n }, (_, i) => ({ id: `n${i}`, kind: i < opt ? 'project' : 'concept', progress: i < opt ? 0 : 100, completed: i >= opt }));
+  const nodes = mk(20, 4); // 16 core mastered, 4 optional projects untouched: 80%
+  const r = ranks.subjectRank({ short: 'T' }, ranks.subjectProgress(nodes), nodes);
+  assert.equal(r.tier, 'Master');
+  assert.ok(r.coreDone);
+  const fewer = mk(20, 8).map((n, i) => (i === 19 ? { ...n, progress: 0, completed: false } : n)); // a core node left
+  const r2 = ranks.subjectRank({ short: 'T' }, ranks.subjectProgress(fewer), fewer);
+  assert.ok(!r2.coreDone);
+  assert.equal(r2.tier, 'Adept'); // 55%
+  assert.deepEqual(r2.toNext, { tier: 'Expert', at: 60, concepts: 1 });
+  assert.equal(r2.coreLeft, 1);
+  // Data: projects are optional, explicitly.
+  const reg = subjects.loadRegistry(NEXUS_NODES);
+  const projects = [...reg.subjects.values()].flatMap((s) => s.doc?.nodes || []).filter((n) => n.kind === 'project');
+  assert.ok(projects.length > 50 && projects.every((n) => n.optional === true));
+});
+
+test('web rank: a fair curve — quick first levels, the top at about a quarter of the web', () => {
+  const names = Array.from({ length: 11 }, (_, i) => ({ name: `L${i + 1}` }));
+  const W = ranks.WEB_XP;
+  assert.equal(W.length, 11);
+  for (let i = 2; i < W.length; i++) {
+    const ratio = W[i] / W[i - 1];
+    assert.ok(ratio > 1.4 && ratio < 2.8, `smooth step to level ${i + 1} (x${ratio.toFixed(2)})`);
+  }
+  // First rank-up within two or three concepts (one study session).
+  assert.ok(W[1] <= 3 * ranks.CONCEPT_XP);
+  assert.equal(ranks.webLevel(2 * ranks.CONCEPT_XP, names).level, 2);
+  // The top: one stream plus breadth, about 25-30% of every concept's XP.
+  const reg = subjects.loadRegistry(NEXUS_NODES);
+  const all = [...reg.subjects.values()].flatMap((s) => s.doc?.nodes || []).reduce((a, n) => a + (n.xpReward || 50), 0);
+  const share = W.at(-1) / all;
+  assert.ok(share > 0.18 && share < 0.32, `top rank at ${(share * 100).toFixed(1)}% of the web's concept XP`);
+  assert.ok(W.at(-1) / ranks.CONCEPT_XP >= 300 && W.at(-1) / ranks.CONCEPT_XP <= 400, 'about 300-400 concepts');
+  const top = ranks.webLevel(W.at(-1), names);
+  assert.equal(top.level, 11);
+  assert.equal(top.xpToNext, 0);
+  const mid = ranks.webLevel(1000, names);
+  assert.equal(mid.level, 4);
+  assert.equal(mid.xpToNext, 800);
+  assert.equal(mid.conceptsToNext, 8);
+});
+
+test('web rank migration: never below the best level stored (no rank drops)', () => {
+  const names = Array.from({ length: 11 }, (_, i) => ({ name: `L${i + 1}` }));
+  const kept = ranks.webLevel(0, names, 6);
+  assert.equal(kept.level, 6);
+  assert.ok(kept.kept);
+  assert.equal(kept.xpInLevel, 0);
+  assert.equal(ranks.webLevel(50000, names, 3).level, 11, 'the floor never caps a higher level');
+  assert.equal(ranks.webLevel(500, names, 99).level, 11, 'a bad floor is clamped to the ladder');
+});
+
+test('web score: concept XP plus lessons, PYQs and a quarter of DSA problem XP', () => {
   const reg = subjects.loadRegistry(NEXUS_NODES);
   const bank = loadGateBank();
   const notes = require('../src/routes/gate-notes').loadGateNotes();
   const dsa = NEXUS_NODES.map((n) => ({ ...n, progress: 0, completed: false }));
   const empty = subjects.computeSubjects(reg, dsa, { qstate: new Map(), lessons: new Set() }, bank, notes);
   for (const totals of [{ xp: 0, solved: 0 }, { xp: 2500, solved: 230 }, { xp: 90000, solved: 2000 }]) {
-    const s = ranks.webScore(totals, empty);
-    assert.equal(s.xp, totals.xp, 'nothing studied: web XP equals DSA XP');
+    const s = ranks.webScore(totals, empty, dsa);
+    assert.equal(s.xp, Math.round(totals.xp * ranks.DSA_XP_SHARE), 'nothing studied: a quarter of the DSA XP');
     assert.equal(s.solved, totals.solved);
   }
   const pool = subjects.nodePools(reg, bank, notes).get('dl:place-value');
   const studied = subjects.computeSubjects(reg, dsa, { qstate: new Map(pool.map((id) => [id, { attempts: 1, correct: 1 }])), lessons: new Set() }, bank, notes);
-  const s = ranks.webScore({ xp: 2500, solved: 230 }, studied);
-  assert.ok(s.xp > 2500, 'studying adds web XP');
+  const s = ranks.webScore({ xp: 2500, solved: 230 }, studied, dsa);
+  assert.ok(s.xp > 625, 'studying adds web XP');
   assert.ok(s.solved > 230, 'correct PYQs count as solves');
   assert.ok(s.subjects.dl > 0);
 });
@@ -252,6 +309,33 @@ test('week keys follow ISO weeks', () => {
   assert.equal(ranks.weekKey(Date.UTC(2026, 9, 21)), '2026-W43');
   assert.equal(ranks.weekKey(Date.UTC(2027, 0, 1)), '2026-W53');
   assert.equal(ranks.weekKey(Date.UTC(2025, 11, 29)), '2026-W01');
+});
+
+test('a subject view holds only its own skills and internal links', async () => {
+  for (const id of ['dl', 'dsa', 'ml', 'web']) {
+    const { status, body } = await call('GET', `/api/nexus?subject=${id}`);
+    assert.equal(status, 200, id);
+    const ids = new Set(body.nodes.map((n) => n.id));
+    for (const n of body.nodes) {
+      assert.ok(!n.subject || n.subject === id, `${id}: ${n.id} belongs to ${n.subject}`);
+      for (const r of n.requires) assert.ok(ids.has(r), `${id}: ${n.id} requires ${r} inside the subject`);
+    }
+  }
+});
+
+test('courses: the structure names GATE material, course files are served (or null)', async () => {
+  const { body } = await call('GET', '/api/nexus/structure');
+  const dl = body.clusters.find((c) => c.id === 'dl');
+  assert.deepEqual(dl.gate, { pyq: 'dl', notes: 'dl' });
+  assert.ok(dl.nodes.some((n) => Array.isArray(n.ls) && n.ls.length), 'DL nodes carry their notes lessons');
+  const os = body.clusters.find((c) => c.id === 'os');
+  assert.equal(os.gate.notes, null);
+  assert.ok(!body.clusters.find((c) => c.id === 'rust').gate, 'a non-GATE subject has no gate material');
+  assert.ok(body.clusters.flatMap((c) => c.nodes).some((n) => n.o === 1), 'optional nodes are marked');
+  const missing = await call('GET', '/api/courses/rust/ownership');
+  assert.equal(missing.status, 200);
+  assert.equal(missing.body.body, null);
+  assert.equal((await call('GET', '/api/courses/..%2Fsecrets/x')).status, 400);
 });
 
 test('GET /api/nexus/structure: versioned, immutable with ?v=, 304 on a matching ETag', async () => {

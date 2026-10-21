@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { ArrowUpRight, BookOpen, ExternalLink, Lock, Play, Swords, X, Zap } from 'lucide-react'
-import { Badge, Card, CardContent, LoadingBlock, Progress } from '@/components/ui'
+import { Badge, Button, Card, CardContent, LoadingBlock, Progress } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
@@ -145,6 +145,7 @@ export function NodePanel({
   engine = null,
   onOpenPath,
   bare = false,
+  studyHref,
 }: {
   node: NexusNode
   nodes: NexusNode[]
@@ -163,6 +164,8 @@ export function NodePanel({
   onOpenPath?: () => void
   /** No card chrome (inside the details sheet). */
   bare?: boolean
+  /** Where its course is (the primary action). */
+  studyHref?: string
 }) {
   // The solve-count engine (the competitive-programming tree) shows rated problems.
   const isDsa = engine === 'dsa'
@@ -191,6 +194,13 @@ export function NodePanel({
           </div>
 
           {detailLoading ? <LoadingBlock rows={2} /> : <p className="text-sm text-foreground-dim">{node.desc}</p>}
+          {studyHref && (
+            <Link to={studyHref} className="block">
+              <Button variant="primary" size="sm" className="w-full justify-center">
+                <BookOpen className="size-3.5" aria-hidden="true" /> Study this
+              </Button>
+            </Link>
+          )}
           {onOpenPath && (
             <button type="button" onClick={onOpenPath} className="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-accent-brand hover:underline">
               Open this subject's tree <ArrowUpRight className="size-3" aria-hidden="true" />
@@ -208,6 +218,7 @@ export function NodePanel({
                 {node.difficulty[0]}–{node.difficulty[1]} rating
               </Badge>
             )}
+            {node.optional && <Badge variant="default">optional</Badge>}
             <Badge variant="gold">
               <Zap className="size-3" aria-hidden="true" />
               {node.xpReward} XP
