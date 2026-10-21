@@ -507,7 +507,8 @@ export const NexusWeb = forwardRef<
           dirtyStatic.current = true
         }
       }
-      if (!growing && labelsFrom === 0) labelsFrom = now
+      // Subject names fade in shortly after the web starts drawing.
+      if (labelsFrom === 0) labelsFrom = growing ? born.current! + 450 : now
       const moving = !!fly.current || now - settled.current < 110
 
       if (!(lowPower && w < 640)) drawFar(c)
@@ -590,7 +591,7 @@ export const NexusWeb = forwardRef<
         })
         ctx.stroke()
       }
-      if (route && route.next.length && !growing) {
+      if (route && route.next.length) {
         let from = web.origin
         route.next.forEach((k) => {
           const cn = web.concepts.get(k)
@@ -608,7 +609,10 @@ export const NexusWeb = forwardRef<
       let hovEntry: (() => void) | null = null
       for (const cn of web.concepts.values()) {
         const i = cn.pt
-        if (growing && elapsed < T0 + web.depth[i] * DT + EDGE) continue
+        // Concepts appear almost at once (a slight stagger outward); the
+        // lattice keeps drawing itself in underneath.
+        const appear = growing ? clamp((elapsed - 0.06 - cn.level * 0.012) / 0.22) : 1
+        if (appear <= 0) continue
         const base = PP(i, 0)
         if (base.x < -30 || base.x > w + 30 || base.y < -30 || base.y > h + 30) continue
         const isHov = cn.key === hovered.current
@@ -619,7 +623,7 @@ export const NexusWeb = forwardRef<
         const col = tree.colors[web.bucket[i]]
         const ret = retention(cn.node, ahead)
         const fadingNow = cn.node.s === 2 && ret < 0.5
-        let a = 1
+        let a = appear
         if (lineage && !lineage.has(cn.key)) a *= 0.3
         if (!matches(cn.key)) a *= 0.14
         if (routeSet && !routeSet.has(cn.key)) a *= 0.45
@@ -754,7 +758,7 @@ export const NexusWeb = forwardRef<
       }
 
       // Focus: the path from YOU (teal) and what it unlocks (violet).
-      if (focus && !growing) {
+      if (focus) {
         for (const r2 of focus.prereqs) {
           const pc = web.concepts.get(r2)
           if (pc) arc(treePath(web, pc.pt, focus.pt), C3, 0.55, 1.2, 14)
@@ -800,7 +804,7 @@ export const NexusWeb = forwardRef<
         [0, h - 210, Math.min(w, 640), h],
       ]
       // Numbered route waypoints.
-      if (route && !growing) {
+      if (route) {
         route.next.forEach((k, idx) => {
           const d = drawn.find((x) => x.key === k)
           if (!d) return
@@ -818,7 +822,7 @@ export const NexusWeb = forwardRef<
       }
       // The selected concept's own type: reserved before subject names.
       let selBox: { bx: number; by: number } | null = null
-      if (sel && selDrawn && !growing && !props2.quiet) {
+      if (sel && selDrawn && !props2.quiet) {
         ctx.font = `600 17px ${font}`
         const blockW = Math.max(ctx.measureText(sel.node.n).width, 240)
         const right = selDrawn.x + 26 + blockW < w - 16
@@ -828,7 +832,7 @@ export const NexusWeb = forwardRef<
         taken.push([bx - 12, by - 10, bx + blockW + 12, by + 112])
       }
       const fc = focus?.cluster.id
-      const fade = growing ? 0 : clamp((now - labelsFrom) / 700)
+      const fade = clamp((now - labelsFrom) / 700)
       if (fade > 0) {
         const regions = [...web.regions].sort((a, b) => b.cluster.nodes.length - a.cluster.nodes.length)
         for (const rg of regions) {
@@ -963,7 +967,7 @@ export const NexusWeb = forwardRef<
           nameAt(props2.beacon, false)
         }
       }
-      if (c.k >= LABEL_K && !growing) for (const d of drawn) if (d.key !== focus?.key && d.key !== sel?.key) nameAt(d.key, false)
+      if (c.k >= LABEL_K) for (const d of drawn) if (d.key !== focus?.key && d.key !== sel?.key) nameAt(d.key, false)
 
       // Minimap (cheap: a cached dot layer + the view outline).
       if (mini) {
