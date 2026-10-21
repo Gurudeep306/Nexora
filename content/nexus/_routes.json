@@ -1,0 +1,28 @@
+{
+  "routes": [
+    {
+      "id": "gate-2027",
+      "name": "GATE 2027",
+      "description": "Every GATE CSE subject, foundations first.",
+      "group": "gate"
+    },
+    {
+      "id": "ml-engineer",
+      "name": "ML Engineer",
+      "description": "From Python and the maths to models, deep learning and shipping them.",
+      "subjects": ["python", "la", "prob", "statistics", "calc", "ml", "deep", "data-science", "mlops", "genai-llms"]
+    },
+    {
+      "id": "full-stack",
+      "name": "Full-stack",
+      "description": "The web platform, both sides of an app, data and delivery.",
+      "subjects": ["javascript", "typescript", "web", "frontend-frameworks", "backend-frameworks", "sql", "apis-microservices", "git", "devops"]
+    },
+    {
+      "id": "interviews",
+      "name": "Interviews",
+      "description": "Data structures, algorithms, contests, design and OOP.",
+      "subjects": ["dsa", "algo", "cp", "oop-patterns", "sysd"]
+    }
+  ]
+}

@@ -15,6 +15,11 @@ import type { WebCluster, WebNode } from './types'
  *  4. Links between concepts are routes along the tree: up from one to their
  *     common branch point and down to the other.
  *
+ * Split in two so the heavy part never blocks the page:
+ *   computeLayout(structure) → LayoutData   pure data (typed arrays), runs in
+ *                                            a Web Worker, cached by version
+ *   assemble(layout, clusters) → Web        cheap, on the main thread, binds
+ *                                            the reader's live node data
  * Everything is deterministic (seeded), so the web is the same on every
  * visit and every device. Nothing knows a subject by name.
  */
@@ -24,31 +29,55 @@ const JITTER = 30 // ±15
 const STEP = 118 // radial distance per prerequisite level
 const R0 = 300 // radius of the first concept level
 const MARGIN = 1500 // lattice beyond the outermost concepts
+export const BUCKETS = 48
 
 export function rng(seed: number) {
   let s = seed >>> 0
   return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296
 }
 
+export type RGB = [number, number, number]
 const C1: RGB = [91, 140, 255]
 const C2: RGB = [155, 107, 255]
 const C3: RGB = [45, 212, 191]
-export type RGB = [number, number, number]
+export const BRAND = { C1, C2, C3 }
 /** The teaser's ramp: blue → violet → teal. */
 export function mix3(u: number): RGB {
   const t = Math.max(0, Math.min(1, u))
   const [a, b, k] = t < 0.55 ? [C1, C2, t / 0.55] : [C2, C3, (t - 0.55) / 0.45]
   return [Math.round(a[0] + (b[0] - a[0]) * k), Math.round(a[1] + (b[1] - a[1]) * k), Math.round(a[2] + (b[2] - a[2]) * k)]
 }
-export const BRAND = { C1, C2, C3 }
+
+/** What the layout needs from the structure (no per-user data). */
+export interface LayoutInput {
+  id: string
+  domain: string
+  order: number
+  nodes: { id: string; req: string[]; cx?: string[] }[]
+}
+
+/** The computed layout: transferable, cacheable, version-keyed. */
+export interface LayoutData {
+  version: string
+  xy: Float32Array
+  parent: Int32Array
+  depth: Int32Array
+  bucket: Uint8Array
+  origin: number
+  maxDepth: number
+  extent: number
+  /** concept keys in structure order, and the lattice point / level of each */
+  keys: string[]
+  pins: Int32Array
+  levels: Int32Array
+  regions: { id: string; x: number; y: number; a0: number; a1: number; rMin: number; rMax: number }[]
+}
 
 export interface Concept {
   key: string
   cluster: WebCluster
   node: WebNode
-  /** lattice point it is pinned to */
   pt: number
-  /** prerequisite depth across the web */
   level: number
   prereqs: string[]
   unlocks: string[]
@@ -56,7 +85,6 @@ export interface Concept {
 
 export interface Region {
   cluster: WebCluster
-  /** label position */
   x: number
   y: number
   a0: number
@@ -66,43 +94,32 @@ export interface Region {
   progress: number
 }
 
-export interface Web {
-  /** lattice point coordinates (x0, y0, x1, y1, …) */
-  xy: Float32Array
-  /** BFS parent of each point (-1 for the origin and unreached points) */
-  parent: Int32Array
-  /** BFS depth (-1 when unreached) */
-  depth: Int32Array
-  maxDepth: number
-  origin: number
-  /** colour bucket (0…BUCKETS-1) of the edge into each point */
-  bucket: Uint8Array
+export interface Web extends Omit<LayoutData, 'regions' | 'keys' | 'pins' | 'levels'> {
   concepts: Map<string, Concept>
   conceptAt: Map<number, string>
   regions: Region[]
-  extent: number
 }
 
-export const BUCKETS = 48
-
-export function buildWeb(clusters: WebCluster[]): Web {
+export function computeLayout(clusters: LayoutInput[], version = ''): LayoutData {
   // ── concepts and their depth across the web ──
-  const keyOf = (c: WebCluster, id: string) => `${c.id}:${id}`
-  const all = new Map<string, { c: WebCluster; n: WebNode; reqs: string[]; index: number }>()
-  for (const c of clusters) c.nodes.forEach((n, index) => all.set(keyOf(c, n.id), { c, n, index, reqs: [] }))
-  for (const v of all.values()) {
-    v.reqs = [...v.n.req.map((r) => keyOf(v.c, r)), ...(v.n.cx ?? [])].filter((k) => all.has(k))
+  const keyOf = (c: LayoutInput, id: string) => `${c.id}:${id}`
+  const reqs = new Map<string, string[]>()
+  const index = new Map<string, number>()
+  for (const c of clusters) c.nodes.forEach((n, i) => index.set(keyOf(c, n.id), i))
+  for (const c of clusters) {
+    for (const n of c.nodes) reqs.set(keyOf(c, n.id), [...n.req.map((r) => keyOf(c, r)), ...(n.cx ?? [])].filter((k) => index.has(k)))
   }
   const level = new Map<string, number>()
   const lv = (k: string, guard = 0): number => {
-    if (level.has(k)) return level.get(k)!
+    const known = level.get(k)
+    if (known !== undefined) return known
     if (guard > 200) return 0
-    const reqs = all.get(k)!.reqs
-    const v = reqs.length ? 1 + Math.max(...reqs.map((r) => lv(r, guard + 1))) : 0
+    const rs = reqs.get(k)!
+    const v = rs.length ? 1 + Math.max(...rs.map((r) => lv(r, guard + 1))) : 0
     level.set(k, v)
     return v
   }
-  for (const k of all.keys()) lv(k)
+  for (const k of reqs.keys()) lv(k)
   const maxLevel = Math.max(0, ...level.values())
   const radiusOf = (l: number) => R0 + l * STEP
   const extent = radiusOf(maxLevel) + MARGIN
@@ -121,11 +138,11 @@ export function buildWeb(clusters: WebCluster[]): Web {
   }
   const xy = new Float32Array(pts)
   const count = xy.length / 2
-  // Spatial hash for neighbours.
   const cell = (v: number) => Math.floor(v / SP)
-  const grid = new Map<string, number[]>()
+  const grid = new Map<number, number[]>()
+  const gkey = (cx: number, cy: number) => cx * 100003 + cy
   for (let i = 0; i < count; i++) {
-    const k = `${cell(xy[2 * i])},${cell(xy[2 * i + 1])}`
+    const k = gkey(cell(xy[2 * i]), cell(xy[2 * i + 1]))
     const list = grid.get(k)
     if (list) list.push(i)
     else grid.set(k, [i])
@@ -134,7 +151,7 @@ export function buildWeb(clusters: WebCluster[]): Web {
     const r = Math.ceil(rad / SP)
     const cx = cell(x)
     const cy = cell(y)
-    for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) for (const i of grid.get(`${cx + dx},${cy + dy}`) ?? []) fn(i)
+    for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) for (const i of grid.get(gkey(cx + dx, cy + dy)) ?? []) fn(i)
   }
   const nb: number[][] = new Array(count)
   const lim = SP * 1.25
@@ -178,8 +195,7 @@ export function buildWeb(clusters: WebCluster[]): Web {
     }
     q = nq
   }
-  // Points the tree never reached join it through any reached neighbour,
-  // so the web covers everything.
+  // Points the tree never reached join it through a reached neighbour.
   for (let pass = 0; pass < 6; pass++) {
     for (let i = 0; i < count; i++) {
       if (depth[i] >= 0) continue
@@ -193,7 +209,6 @@ export function buildWeb(clusters: WebCluster[]): Web {
   }
   let maxDepth = 0
   for (let i = 0; i < count; i++) maxDepth = Math.max(maxDepth, depth[i])
-  // Colour by angle and depth, as the teaser does.
   const bucket = new Uint8Array(count)
   const ox = xy[2 * origin]
   const oy = xy[2 * origin + 1]
@@ -212,7 +227,7 @@ export function buildWeb(clusters: WebCluster[]): Web {
     (a, b) => domainOrder.indexOf(a.domain) - domainOrder.indexOf(b.domain) || a.order - b.order || a.id.localeCompare(b.id),
   )
   const total = ordered.reduce((s, c) => s + c.nodes.length, 0) || 1
-  const GAP = 0.035 // between domains
+  const GAP = 0.035
   const usable = Math.PI * 2 - GAP * domainOrder.length
   let a = -Math.PI / 2
   let prevDomain: string | null = null
@@ -227,8 +242,7 @@ export function buildWeb(clusters: WebCluster[]): Web {
 
   // ── pin concepts to lattice points ──
   const taken = new Set<number>([origin])
-  const conceptAt = new Map<number, string>()
-  const concepts = new Map<string, Concept>()
+  const pinOf = new Map<string, number>()
   const pin = (tx: number, ty: number) => {
     let pick = -1
     let bd = Infinity
@@ -244,7 +258,7 @@ export function buildWeb(clusters: WebCluster[]): Web {
     }
     return pick
   }
-  const regions: Region[] = []
+  const regions: LayoutData['regions'] = []
   for (const c of ordered) {
     const [a0, a1] = wedge.get(c.id)!
     const byLevel = new Map<number, { k: string; index: number }[]>()
@@ -252,7 +266,7 @@ export function buildWeb(clusters: WebCluster[]): Web {
       const k = keyOf(c, n2.id)
       const l = level.get(k)!
       const list = byLevel.get(l) ?? []
-      list.push({ k, index: all.get(k)!.index })
+      list.push({ k, index: index.get(k)! })
       byLevel.set(l, list)
     }
     let rMin = Infinity
@@ -267,24 +281,56 @@ export function buildWeb(clusters: WebCluster[]): Web {
         const pt = pin(Math.cos(ang) * rr + ox, Math.sin(ang) * rr + oy)
         if (pt < 0) return
         taken.add(pt)
-        conceptAt.set(pt, item.k)
-        const v = all.get(item.k)!
-        concepts.set(item.k, { key: item.k, cluster: c, node: v.n, pt, level: l, prereqs: v.reqs, unlocks: [] })
+        pinOf.set(item.k, pt)
         rMin = Math.min(rMin, rr)
         rMax = Math.max(rMax, rr)
       })
     }
     const mid = (a0 + a1) / 2
     const rl = rMin === Infinity ? R0 : rMin + (rMax - rMin) * 0.35
-    const progress = c.nodes.length ? Math.round(c.nodes.reduce((s, x) => s + x.p, 0) / c.nodes.length) : 0
-    regions.push({ cluster: c, x: Math.cos(mid) * rl + ox, y: Math.sin(mid) * rl + oy, a0, a1, rMin: rMin === Infinity ? R0 : rMin, rMax, progress })
+    regions.push({ id: c.id, x: Math.cos(mid) * rl + ox, y: Math.sin(mid) * rl + oy, a0, a1, rMin: rMin === Infinity ? R0 : rMin, rMax })
   }
+  const keys: string[] = []
+  for (const c of clusters) for (const n2 of c.nodes) keys.push(keyOf(c, n2.id))
+  const pins = Int32Array.from(keys.map((k) => pinOf.get(k) ?? -1))
+  const levels = Int32Array.from(keys.map((k) => level.get(k) ?? 0))
+  return { version, xy, parent, depth, bucket, origin, maxDepth, extent, keys, pins, levels, regions }
+}
+
+/** Bind a layout to the clusters with the reader's live data (cheap). */
+export function assemble(layout: LayoutData, clusters: WebCluster[]): Web {
+  const byKey = new Map<string, { c: WebCluster; n: WebNode }>()
+  for (const c of clusters) for (const n of c.nodes) byKey.set(`${c.id}:${n.id}`, { c, n })
+  const concepts = new Map<string, Concept>()
+  const conceptAt = new Map<number, string>()
+  layout.keys.forEach((key, i) => {
+    const hit = byKey.get(key)
+    const pt = layout.pins[i]
+    if (!hit || pt < 0) return
+    const prereqs = [...hit.n.req.map((r) => `${hit.c.id}:${r}`), ...(hit.n.cx ?? [])].filter((k) => byKey.has(k))
+    concepts.set(key, { key, cluster: hit.c, node: hit.n, pt, level: layout.levels[i], prereqs, unlocks: [] })
+    conceptAt.set(pt, key)
+  })
   for (const v of concepts.values()) for (const r of v.prereqs) concepts.get(r)?.unlocks.push(v.key)
-  return { xy, parent, depth, maxDepth, origin, bucket, concepts, conceptAt, regions, extent }
+  const byId = new Map(clusters.map((c) => [c.id, c]))
+  const regions: Region[] = []
+  for (const r of layout.regions) {
+    const c = byId.get(r.id)
+    if (!c) continue
+    const progress = c.nodes.length ? Math.round(c.nodes.reduce((s, x) => s + x.p, 0) / c.nodes.length) : 0
+    regions.push({ cluster: c, x: r.x, y: r.y, a0: r.a0, a1: r.a1, rMin: r.rMin, rMax: r.rMax, progress })
+  }
+  const { xy, parent, depth, bucket, origin, maxDepth, extent, version } = layout
+  return { version, xy, parent, depth, bucket, origin, maxDepth, extent, concepts, conceptAt, regions }
+}
+
+/** The whole pipeline in one call (tests, and the tiny loading web). */
+export function buildWeb(clusters: WebCluster[], version = ''): Web {
+  return assemble(computeLayout(clusters, version), clusters)
 }
 
 /** Points on the tree path from a to b (a … branch point … b). */
-export function treePath(web: Web, a: number, b: number): number[] {
+export function treePath(web: Pick<Web, 'parent' | 'depth'>, a: number, b: number): number[] {
   const up: number[] = []
   const down: number[] = []
   let x = a
@@ -308,8 +354,182 @@ export function treePath(web: Web, a: number, b: number): number[] {
 }
 
 /** Points from the origin out to p. */
-export function pathFromOrigin(web: Web, p: number): number[] {
+export function pathFromOrigin(web: Pick<Web, 'parent'>, p: number): number[] {
   const out: number[] = []
   for (let x = p; x >= 0; x = web.parent[x]) out.push(x)
   return out.reverse()
+}
+
+/* ── analysis on the web (pure; unit-tested) ── */
+
+/** How many concepts each concept eventually unlocks (transitively). */
+export function unlockCounts(web: Pick<Web, 'concepts'>): Map<string, number> {
+  const memo = new Map<string, Set<string>>()
+  const below = (k: string, guard = 0): Set<string> => {
+    const hit = memo.get(k)
+    if (hit) return hit
+    const set = new Set<string>()
+    memo.set(k, set)
+    if (guard > 300) return set
+    for (const u of web.concepts.get(k)?.unlocks ?? []) {
+      set.add(u)
+      for (const x of below(u, guard + 1)) set.add(x)
+    }
+    return set
+  }
+  const out = new Map<string, number>()
+  for (const k of web.concepts.keys()) out.set(k, below(k).size)
+  return out
+}
+
+/** Keystones: the concepts that unlock the most (top share, at least `min`). */
+export function keystones(web: Pick<Web, 'concepts'>, share = 0.025, min = 8): Set<string> {
+  const counts = [...unlockCounts(web)].filter(([, n]) => n >= min).sort((a, b) => b[1] - a[1])
+  return new Set(counts.slice(0, Math.max(1, Math.round(web.concepts.size * share))).map(([k]) => k))
+}
+
+/** The longest chain of prerequisites that ends at `key` (roots first). */
+export function longestChain(web: Pick<Web, 'concepts'>, key: string): string[] {
+  const memo = new Map<string, string[]>()
+  const chain = (k: string, guard = 0): string[] => {
+    const hit = memo.get(k)
+    if (hit) return hit
+    let bestChain: string[] = []
+    if (guard < 300) {
+      for (const r of web.concepts.get(k)?.prereqs ?? []) {
+        const c = chain(r, guard + 1)
+        if (c.length > bestChain.length) bestChain = c
+      }
+    }
+    const out = [...bestChain, k]
+    memo.set(k, out)
+    return out
+  }
+  return web.concepts.has(key) ? chain(key) : []
+}
+
+/**
+ * A goal route through the web: every concept of the route's subjects plus
+ * the prerequisites they need, in learning order (prerequisites first,
+ * nearer YOU first). `next` are the first steps not yet mastered.
+ */
+export function routePlan(web: Pick<Web, 'concepts'>, subjects: string[], nextCount = 5): { order: string[]; next: string[] } {
+  const want = new Set<string>()
+  const add = (k: string, guard = 0) => {
+    if (want.has(k) || guard > 300) return
+    want.add(k)
+    for (const r of web.concepts.get(k)?.prereqs ?? []) add(r, guard + 1)
+  }
+  const subj = new Set(subjects)
+  for (const [k, c] of web.concepts) if (subj.has(c.cluster.id)) add(k)
+  // Topological order (Kahn), ties by level then key, so it is stable.
+  const indeg = new Map<string, number>()
+  for (const k of want) indeg.set(k, (web.concepts.get(k)?.prereqs ?? []).filter((r) => want.has(r)).length)
+  const ready = [...want].filter((k) => indeg.get(k) === 0)
+  const lvl = (k: string) => web.concepts.get(k)?.level ?? 0
+  const order: string[] = []
+  while (ready.length) {
+    ready.sort((a, b) => lvl(a) - lvl(b) || a.localeCompare(b))
+    const k = ready.shift()!
+    order.push(k)
+    for (const u of web.concepts.get(k)?.unlocks ?? []) {
+      if (!want.has(u)) continue
+      const d = (indeg.get(u) ?? 1) - 1
+      indeg.set(u, d)
+      if (d === 0) ready.push(u)
+    }
+  }
+  const next = order.filter((k) => web.concepts.get(k)?.node.s !== 2).slice(0, nextCount)
+  return { order, next }
+}
+
+/**
+ * The next best step: an open concept you have started (most progress),
+ * else the open concept nearest YOU that unlocks the most — preferring the
+ * active route's next waypoint.
+ */
+export function nextBestStep(web: Pick<Web, 'concepts'>, route?: { next: string[] } | null): string | null {
+  if (route?.next.length) {
+    const first = route.next.find((k) => web.concepts.get(k)?.node.s === 1)
+    if (first) return first
+  }
+  const counts = unlockCounts(web)
+  let best: string | null = null
+  let score = -Infinity
+  for (const [k, c] of web.concepts) {
+    if (c.node.s !== 1) continue
+    const s = (c.node.p > 0 ? 1000 + c.node.p : 0) - c.level * 10 + Math.min(50, counts.get(k) ?? 0)
+    if (s > score) {
+      score = s
+      best = k
+    }
+  }
+  return best
+}
+
+/**
+ * Memory: how much of a mastered concept is still fresh after `aheadDays`
+ * more days, from the last time its PYQs were answered right and the
+ * spaced-repetition interval reached (forgetting curve, half-life ≈ 2 × the
+ * interval, at least 3 days). 1 when there is no review data.
+ */
+export function retention(node: Pick<WebNode, 's' | 'ag' | 'iv'>, aheadDays = 0): number {
+  if (node.s !== 2 || node.ag === undefined || node.ag < 0) return 1
+  const half = Math.max(3, (node.iv ?? 0) * 2)
+  return Math.pow(0.5, (node.ag + aheadDays) / half)
+}
+
+/* ── hit-testing: a uniform grid over screen points (same-frame, O(1)) ── */
+export class HitGrid {
+  private cells = new Map<number, number[]>()
+  private xs: number[] = []
+  private ys: number[] = []
+  private ids: string[] = []
+  private size: number
+  constructor(size = 32) {
+    this.size = size
+  }
+  clear() {
+    this.cells.clear()
+    this.xs.length = 0
+    this.ys.length = 0
+    this.ids.length = 0
+  }
+  add(id: string, x: number, y: number) {
+    const i = this.ids.length
+    this.ids.push(id)
+    this.xs.push(x)
+    this.ys.push(y)
+    const k = Math.floor(x / this.size) * 65536 + Math.floor(y / this.size)
+    const list = this.cells.get(k)
+    if (list) list.push(i)
+    else this.cells.set(k, [i])
+  }
+  /** Nearest id within `radius` of (x, y), or null. */
+  nearest(x: number, y: number, radius: number): string | null {
+    const r = Math.ceil(radius / this.size)
+    const cx = Math.floor(x / this.size)
+    const cy = Math.floor(y / this.size)
+    let best: string | null = null
+    let bd = radius
+    for (let dx = -r; dx <= r; dx++) {
+      for (let dy = -r; dy <= r; dy++) {
+        for (const i of this.cells.get((cx + dx) * 65536 + (cy + dy)) ?? []) {
+          const d = Math.hypot(this.xs[i] - x, this.ys[i] - y)
+          if (d <= bd) {
+            bd = d
+            best = this.ids[i]
+          }
+        }
+      }
+    }
+    return best
+  }
+  position(id: string): { x: number; y: number } | null {
+    const i = this.ids.indexOf(id)
+    return i < 0 ? null : { x: this.xs[i], y: this.ys[i] }
+  }
+  get count(): number {
+    return this.ids.length
+  }
 }

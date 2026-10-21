@@ -123,6 +123,12 @@ export interface WebNode {
   xp: number
   /** count label ("3/10 PYQs", "4/8") */
   c: string
+  /** days since its PYQs were last answered right (-1: never) */
+  ag?: number
+  /** spaced-repetition interval reached, days */
+  iv?: number
+  /** studied in the last 24 h */
+  rc?: number
 }
 
 export interface WebZone {
@@ -175,14 +181,53 @@ export interface WebBoardResponse {
   subject?: NexusSubjectMeta
 }
 
-export interface NexusWebResponse {
+/** A goal route: a named set of subjects (content/nexus/_routes.json). */
+export interface WebRoute {
+  id: string
+  name: string
+  description: string
+  subjects: string[]
+}
+
+/** GET /api/nexus/structure — static, versioned, cached on the device. */
+export interface NexusWebStructure {
   ok: boolean
+  version: string
+  routes: WebRoute[]
+  clusters: {
+    id: string
+    name: string
+    short: string
+    domain: string
+    order: number
+    engine: string | null
+    zones: { level: number; name: string; color: string }[]
+    nodes: { id: string; n: string; z: number; req: string[]; cx?: string[]; k?: string; xp: number }[]
+  }[]
+}
+
+/** GET /api/nexus/web — the reader's numbers, in structure order. */
+export interface NexusWebState {
+  ok: boolean
+  user?: string
   /** The unified web rank. */
   player: RiftPlayer
   /** The DSA-only Rift level (the DSA path's zone unlocks). */
   dsaPlayer?: RiftPlayer
   riftLevels: RiftLevel[]
-  clusters: WebCluster[]
+  ranks: Record<string, SubjectRank>
+  state: {
+    version: string
+    subjects: Record<
+      string,
+      {
+        /** [done, count, progress %, flags: 1 locked | 2 current | 4 completed] */
+        zones: [number, number, number, number][]
+        /** [progress %, state, count label, days since review, interval, recent] */
+        nodes: [number, 0 | 1 | 2, string, number, number, number][]
+      }
+    >
+  }
 }
 
 export interface NexusNodeResponse {
