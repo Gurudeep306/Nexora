@@ -408,6 +408,7 @@ export default function NexusPage() {
             onOpenSubject={(id, cam) => openSubject(id, cam)}
             onOpenDetails={() => setDetailsOpen(true)}
             onInteract={() => setHintGone(true)}
+            quiet={detailsOpen}
             initialCamera={lastWebCamera}
             ranks={ranks}
           />
