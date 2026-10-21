@@ -246,8 +246,19 @@ export default function NexusPage() {
   const allDone = web.clusters.reduce((a, c) => a + c.nodes.filter((n) => n.s === 2).length, 0)
   const selZone = webSel?.c.zones.find((z) => z.level === webSel.n.z)
 
+  const refresh = () => {
+    fresh.current = true
+    refetch()
+    statsApi.refetch()
+    detailApi.refetch()
+  }
+  const webMode = tab === 'map' && !subject
+  const springIn = { initial: { opacity: 0, y: -8, scale: 0.98 }, animate: { opacity: 1, y: 0, scale: 1 }, transition: { type: 'spring' as const, stiffness: 320, damping: 28 } }
+
   return (
     <div>
+      {!webMode && (
+      <>
       <PageHeader
         icon="nexus"
         title="The Nexus"
@@ -256,12 +267,7 @@ export default function NexusPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => {
-              fresh.current = true
-              refetch()
-              statsApi.refetch()
-              detailApi.refetch()
-            }}
+            onClick={refresh}
             aria-label="Refresh nexus data"
           >
             <RefreshCw className={cn('size-3.5', (loading || statsApi.loading) && 'animate-spin')} />
@@ -271,7 +277,7 @@ export default function NexusPage() {
       />
 
       {/* Player card: the unified web rank */}
-      <Card glow className="mb-4">
+      <Card glow className="nx-glass mb-4">
         <CardContent className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
@@ -330,6 +336,8 @@ export default function NexusPage() {
           </div>
         </CardContent>
       </Card>
+      </>
+      )}
 
       {tab === 'ranks' || subject ? (
         <Tabs
@@ -384,15 +392,49 @@ export default function NexusPage() {
             initialCamera={lastWebCamera}
             ranks={ranks}
           />
-          <div className="nx-over nx-over-tabs" role="tablist" aria-label="Nexus views">
-            <button type="button" role="tab" aria-selected data-on="">
+          <motion.div className="nx-over nx-over-tabs nx-glass" role="tablist" aria-label="Nexus views" {...springIn}>
+            <button type="button" role="tab" aria-selected data-on="" className="nx-press">
               /web
             </button>
-            <button type="button" role="tab" aria-selected={false} onClick={() => setTab('ranks')}>
+            <button type="button" role="tab" aria-selected={false} onClick={() => setTab('ranks')} className="nx-press">
               /ranks
             </button>
-          </div>
-          <p className="nx-over nx-hint mb-0">
+            <button type="button" onClick={refresh} aria-label="Refresh nexus data" className="nx-press">
+              <RefreshCw className={cn('size-3', (loading || statsApi.loading) && 'animate-spin')} />
+            </button>
+          </motion.div>
+          {/* The web rank, floating */}
+          <motion.div className="nx-over nx-player nx-glass" {...springIn} transition={{ ...springIn.transition, delay: 0.06 }}>
+            <div className="flex items-center gap-2.5">
+              <RankGlyph level={player.level} size={30} />
+              <div className="min-w-0 flex-1">
+                <p className="mb-0 text-[10px] font-semibold tracking-[0.18em] uppercase opacity-70">Web rank</p>
+                <p className="mb-0 truncate font-display text-[15px] font-semibold tracking-wide text-white">
+                  LVL {player.level} · {player.name}
+                </p>
+              </div>
+              <div className="text-right font-mono text-[11px] tabular-nums opacity-80">
+                <div>{formatNumber(player.xp)} XP</div>
+                <div className="flex items-center justify-end gap-1">
+                  <Icon name="flame" className="size-3 text-streak" aria-hidden="true" />
+                  {statsApi.data?.streak.current ?? '—'}
+                </div>
+              </div>
+            </div>
+            <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/10">
+              <div
+                className="h-full rounded-full"
+                style={{ width: `${Math.round((Math.max(0, player.xpInLevel) / Math.max(1, player.xpForNext)) * 100)}%`, background: 'linear-gradient(90deg,#5b8cff,#9b6bff,#2dd4bf)' }}
+              />
+            </div>
+            <p className="mt-1.5 mb-0 flex justify-between font-mono text-[10px] tabular-nums opacity-70">
+              <span>
+                {allDone}/{allNodes} concepts · {web.clusters.length} subjects
+              </span>
+              <span>{webTitles(statsApi.data, player, web.riftLevels)?.title.current.title ?? player.name}</span>
+            </p>
+          </motion.div>
+          <motion.p className="nx-over nx-hint nx-glass mb-0" {...springIn} transition={{ ...springIn.transition, delay: 0.12 }}>
             Drag to pan, scroll or pinch to zoom, Esc to return to you. Hover a concept to light its path from you; click a subject&apos;s name to open its path.
             <br />
             <i style={{ background: '#fff' }} />
@@ -401,14 +443,14 @@ export default function NexusPage() {
             open
             <i style={{ background: 'rgb(150 160 255 / 0.4)' }} />
             locked
-          </p>
+          </motion.p>
           {selectedNode && webSel && (
             <motion.div
               key={node!}
               className="nx-over nx-slide"
-              initial={{ opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.22, ease: 'easeOut' }}
+              initial={{ opacity: 0, x: 28, scale: 0.98 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             >
               <NodePanel
                 node={selectedNode}

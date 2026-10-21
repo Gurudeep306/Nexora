@@ -1255,6 +1255,90 @@ input[type='search']::-webkit-search-results-decoration {
   background: linear-gradient(160deg, #141834 0%, #0b0d1c 60%, #06070d 100%);
   isolation: isolate;
 }
+/* Depth layers: the far lattice is softer and dimmer than the web. */
+.nx-lat canvas.nx-far { filter: blur(0.6px); opacity: 0.85; pointer-events: none; }
+/* Diving into a subject: its region rises toward you, then the path takes over. */
+.nx-lat > canvas:not(.nx-far) { transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 260ms ease; transform-origin: 50% 50%; }
+.nx-lat.nx-rise > canvas:not(.nx-far) { transform: scale(1.08) translateY(-8px); opacity: 0; }
+.nx-lat.nx-rise > canvas.nx-far { transition: opacity 260ms ease; opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .nx-lat > canvas { transition: none !important; }
+}
+
+/* Floating glass chrome: detached from the edges, layered soft shadow,
+   hairline border, glass backdrop from the site's tokens. */
+.nx-glass {
+  border-radius: 16px;
+  border: 1px solid color-mix(in oklab, var(--color-text-primary) 10%, transparent);
+  background: color-mix(in oklab, var(--color-bg-surface) 74%, transparent);
+  backdrop-filter: blur(16px) saturate(1.25);
+  -webkit-backdrop-filter: blur(16px) saturate(1.25);
+  box-shadow:
+    0 28px 64px -28px rgb(0 0 0 / 0.5),
+    0 2px 6px -2px rgb(0 0 0 / 0.22),
+    inset 0 1px 0 color-mix(in oklab, white 8%, transparent);
+}
+.nx-lat ~ .nx-glass,
+.nx-bleed .nx-glass {
+  /* On the night web the glass is always dark, in both themes. */
+  color: rgb(226 230 255);
+  border-color: rgb(150 160 255 / 0.16);
+  background: rgb(14 16 34 / 0.62);
+}
+.nx-bleed .nx-glass .text-foreground-faint,
+.nx-bleed .nx-glass .text-foreground-dim { color: rgb(200 206 240 / 0.7); }
+.nx-press { transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1), background-color 150ms, color 150ms; }
+.nx-press:hover { transform: translateY(-1px); }
+.nx-press:active { transform: translateY(0) scale(0.97); }
+.nx-player {
+  top: 60px;
+  left: max(16px, calc(50vw - 640px));
+  width: min(340px, calc(100vw - 32px));
+  padding: 12px 14px;
+}
+@media (max-width: 640px) {
+  .nx-player { top: 58px; width: calc(100vw - 32px); padding: 10px 12px; }
+}
+.nx-hint.nx-glass { padding: 9px 12px; opacity: 0.92; }
+/* In a path the tree sits straight on the page — no boxed card. */
+.card.nx-web-card {
+  border-color: transparent;
+  box-shadow: none;
+  background:
+    radial-gradient(70% 45% at 50% 0%, color-mix(in oklab, var(--nx-b2) 7%, transparent), transparent 75%),
+    transparent;
+}
+/* The path header floats too. */
+.nx-path-head {
+  position: sticky;
+  top: 72px;
+  z-index: 5;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+/* Orbs in a path levitate: a soft contact shadow under each, spreading as
+   the orb lifts on hover. */
+.nx-dot::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 26px;
+  height: 7px;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.32), transparent);
+  transition: width 220ms var(--ease-smooth), opacity 220ms;
+  pointer-events: none;
+  z-index: -1;
+}
+.nx-dot:hover::after, .nx-dot:focus-visible::after { width: 32px; opacity: 0.7; }
+.nx-dot { transform: translateY(-2px); }
+.nx-dot:hover, .nx-dot:focus-visible { transform: translateY(-5px) scale(1.08); }
+@media (prefers-reduced-motion: reduce) {
+  .nx-dot, .nx-dot:hover { transform: none; }
+}
+
 /* The web is full-bleed: edge to edge of the window, a screen tall. */
 .nx-bleed {
   position: relative;

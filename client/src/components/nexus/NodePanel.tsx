@@ -171,7 +171,7 @@ export function NodePanel({
 
   return (
     <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2, ease: 'easeOut' }}>
-      <Card glow className="nx-panel sticky top-4">
+      <Card glow className="nx-panel nx-glass sticky top-36">
         <CardContent className="space-y-4">
           <div className="flex items-start justify-between gap-2">
             <div className="flex min-w-0 gap-2.5">

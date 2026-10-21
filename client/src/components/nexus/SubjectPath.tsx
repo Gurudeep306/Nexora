@@ -89,7 +89,7 @@ export function SubjectPath({
 
   return (
     <div className="nx-path-enter" key={subject}>
-      <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+      <div className="nx-glass nx-path-head flex flex-wrap items-center gap-x-4 gap-y-2">
         <Button variant="outline" size="sm" onClick={onBack} aria-label="Back to the web">
           <ArrowLeft className="size-3.5" /> Web
         </Button>
@@ -189,7 +189,7 @@ export function SubjectPath({
                   onSelect={(id) => onSelect(id)}
                 />
               ) : (
-                <Card className="sticky top-4">
+                <Card className="nx-glass sticky top-36">
                   <CardContent>
                     <EmptyState
                       icon="map"
