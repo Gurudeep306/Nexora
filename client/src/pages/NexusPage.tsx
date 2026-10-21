@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { RefreshCw } from 'lucide-react'
 import {
   Button,
@@ -14,6 +14,7 @@ import {
   XpBar,
 } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
+import { Avatar } from '@/components/ui/Avatar'
 import { api } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 import { useAgentPageContext } from '@/context/AgentContext'
@@ -26,6 +27,9 @@ import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
 import type { CrossLink, NexusNode, NexusNodeResponse, NexusResponse, NexusStatsResponse, RiftLevel, RiftPlayer, WebCluster, WebNode } from '@/components/nexus/types'
 import { fetchNexusWeb, NEXUS_WEB_KEY } from '@/components/nexus/data'
 import { Icon } from '@/components/icon/Icon'
+
+/** The web while it loads: the lattice alone, drawing itself in. */
+const NO_CLUSTERS: WebCluster[] = []
 
 /** Where the web's camera was when you dived into a subject (restored on the way back). */
 let lastWebCamera: Camera | null = null
@@ -90,6 +94,8 @@ export default function NexusPage() {
   const fresh = useRef(false)
   const webRef = useRef<NexusWebHandle>(null)
   const [pathData, setPathData] = useState<NexusResponse | null>(null)
+  const [hintGone, setHintGone] = useState(false)
+  const [detailsOpen, setDetailsOpen] = useState(false)
 
   // The web: every subject and the unified web rank (the player card).
   const { data: web, loading, error, refetch } = useApi(
@@ -225,6 +231,14 @@ export default function NexusPage() {
 
   const subtitle = 'One web of everything you learn — follow the paths out from you, master concepts, and climb the web rank.'
   if (loading && !web) {
+    // Loading is the web drawing itself in around you — never a spinner.
+    if (!subject && tab === 'map') {
+      return (
+        <section className="nx-bleed" aria-label="The Nexus web" aria-busy="true">
+          <NexusWeb clusters={NO_CLUSTERS} selected={null} onSelect={() => {}} onOpenSubject={() => {}} />
+        </section>
+      )
+    }
     return (
       <div>
         <PageHeader icon="nexus" title="The Nexus" subtitle={subtitle} />
@@ -387,93 +401,84 @@ export default function NexusPage() {
             ref={webRef}
             clusters={web.clusters}
             selected={webSel ? node : null}
-            onSelect={setNode}
+            onSelect={(k) => {
+              setNode(k)
+              setDetailsOpen(false)
+            }}
             onOpenSubject={(id, cam) => openSubject(id, cam)}
+            onOpenDetails={() => setDetailsOpen(true)}
+            onInteract={() => setHintGone(true)}
             initialCamera={lastWebCamera}
             ranks={ranks}
           />
-          <motion.div className="nx-over nx-over-tabs nx-glass" role="tablist" aria-label="Nexus views" {...springIn}>
-            <button type="button" role="tab" aria-selected data-on="" className="nx-press">
+          {/* You, as type: no box. */}
+          <motion.div className="nx-over nx-me" {...springIn}>
+            <Avatar src={typeof user?.avatar_url === "string" ? user.avatar_url : null} avatar={user?.avatar} name={typeof user?.display_name === "string" ? user.display_name : username} seed={username} size="sm" ring={false} />
+            <div className="min-w-0">
+              <p className="nx-caps mb-0">Web rank</p>
+              <p className="mb-0 truncate font-display text-[15px] leading-tight font-semibold text-white">
+                {player.name} <span className="font-normal text-white/55">· LVL {player.level}</span>
+              </p>
+              <div className="nx-hair mt-1.5" aria-hidden="true">
+                <span style={{ width: `${Math.round((Math.max(0, player.xpInLevel) / Math.max(1, player.xpForNext)) * 100)}%` }} />
+              </div>
+              <p className="mt-1 mb-0 font-mono text-[10.5px] text-white/55 tabular-nums">
+                {formatNumber(player.xp)} XP · {allDone}/{allNodes} concepts · {statsApi.data?.streak.current ?? 0}d streak
+              </p>
+            </div>
+          </motion.div>
+          {/* Views, as plain links with an underline. */}
+          <motion.nav className="nx-over nx-views" aria-label="Nexus views" {...springIn}>
+            <button type="button" aria-current="page" className="nx-link" data-on="">
               /web
             </button>
-            <button type="button" role="tab" aria-selected={false} onClick={() => setTab('ranks')} className="nx-press">
+            <button type="button" className="nx-link" onClick={() => setTab('ranks')}>
               /ranks
             </button>
-            <button type="button" onClick={refresh} aria-label="Refresh nexus data" className="nx-press">
+            <button type="button" className="nx-link" onClick={refresh} aria-label="Refresh nexus data">
               <RefreshCw className={cn('size-3', (loading || statsApi.loading) && 'animate-spin')} />
             </button>
-          </motion.div>
-          {/* The web rank, floating */}
-          <motion.div className="nx-over nx-player nx-glass" {...springIn} transition={{ ...springIn.transition, delay: 0.06 }}>
-            <div className="flex items-center gap-2.5">
-              <RankGlyph level={player.level} size={30} />
-              <div className="min-w-0 flex-1">
-                <p className="mb-0 text-[10px] font-semibold tracking-[0.18em] uppercase opacity-70">Web rank</p>
-                <p className="mb-0 truncate font-display text-[15px] font-semibold tracking-wide text-white">
-                  LVL {player.level} · {player.name}
-                </p>
-              </div>
-              <div className="text-right font-mono text-[11px] tabular-nums opacity-80">
-                <div>{formatNumber(player.xp)} XP</div>
-                <div className="flex items-center justify-end gap-1">
-                  <Icon name="flame" className="size-3 text-streak" aria-hidden="true" />
-                  {statsApi.data?.streak.current ?? '—'}
-                </div>
-              </div>
-            </div>
-            <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/10">
-              <div
-                className="h-full rounded-full"
-                style={{ width: `${Math.round((Math.max(0, player.xpInLevel) / Math.max(1, player.xpForNext)) * 100)}%`, background: 'linear-gradient(90deg,#5b8cff,#9b6bff,#2dd4bf)' }}
-              />
-            </div>
-            <p className="mt-1.5 mb-0 flex justify-between font-mono text-[10px] tabular-nums opacity-70">
-              <span>
-                {allDone}/{allNodes} concepts · {web.clusters.length} subjects
-              </span>
-              <span>{webTitles(statsApi.data, player, web.riftLevels)?.title.current.title ?? player.name}</span>
-            </p>
-          </motion.div>
-          <motion.p className="nx-over nx-hint nx-glass mb-0" {...springIn} transition={{ ...springIn.transition, delay: 0.12 }}>
-            Drag to pan, scroll or pinch to zoom, Esc to return to you. Hover a concept to light its path from you; click a subject&apos;s name to open its path.
-            <br />
-            <i style={{ background: '#fff' }} />
-            mastered
-            <i style={{ background: '#9b6bff' }} />
-            open
-            <i style={{ background: 'rgb(150 160 255 / 0.4)' }} />
-            locked
-          </motion.p>
-          {selectedNode && webSel && (
-            <motion.div
-              key={node!}
-              className="nx-over nx-slide"
-              initial={{ opacity: 0, x: 28, scale: 0.98 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            >
-              <NodePanel
-                node={selectedNode}
-                nodes={clusterNodes}
-                zoneColor={selZone?.color ?? 'var(--color-primary)'}
-                zoneName={`${webSel.c.short} · ${selZone?.name ?? `Zone ${selectedNode.zone}`}`}
-                detailLoading={detailApi.loading && !detailApi.data}
-                engine={webSel.c.engine}
-                onClose={() => setNode(null)}
-                onJump={(l) => {
-                  const key = `${l.subject}:${l.id}`
-                  setNode(key)
-                  webRef.current?.flyToNode(key)
-                }}
-                onSelect={(id) => {
-                  const key = `${webSel.c.id}:${id}`
-                  setNode(key)
-                  webRef.current?.flyToNode(key)
-                }}
-                onOpenPath={() => openSubject(webSel.c.id, webRef.current?.camera(), webSel.n.id)}
-              />
-            </motion.div>
-          )}
+          </motion.nav>
+          {/* One faint line of help, gone after the first touch. */}
+          <p className="nx-over nx-hint mb-0" data-gone={hintGone || undefined}>
+            Drag to move · scroll to zoom · hover a concept · click a subject to open its path
+          </p>
+          {/* Details: only on "Open details", in an edge-anchored sheet. */}
+          <AnimatePresence>
+            {detailsOpen && selectedNode && webSel && (
+              <motion.aside
+                key={node!}
+                className="nx-sheet"
+                aria-label={`${selectedNode.name} details`}
+                initial={{ x: '100%', opacity: 0.6 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: '100%', opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 32 }}
+              >
+                <NodePanel
+                  bare
+                  node={selectedNode}
+                  nodes={clusterNodes}
+                  zoneColor={selZone?.color ?? 'var(--color-primary)'}
+                  zoneName={`${webSel.c.short} · ${selZone?.name ?? `Zone ${selectedNode.zone}`}`}
+                  detailLoading={detailApi.loading && !detailApi.data}
+                  engine={webSel.c.engine}
+                  onClose={() => setDetailsOpen(false)}
+                  onJump={(l) => {
+                    const key = `${l.subject}:${l.id}`
+                    setNode(key)
+                    webRef.current?.flyToNode(key)
+                  }}
+                  onSelect={(id) => {
+                    const key = `${webSel.c.id}:${id}`
+                    setNode(key)
+                    webRef.current?.flyToNode(key)
+                  }}
+                  onOpenPath={() => openSubject(webSel.c.id, webRef.current?.camera(), webSel.n.id)}
+                />
+              </motion.aside>
+            )}
+          </AnimatePresence>
         </section>
       )}
     </div>
