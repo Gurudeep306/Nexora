@@ -254,16 +254,45 @@ test('week keys follow ISO weeks', () => {
   assert.equal(ranks.weekKey(Date.UTC(2025, 11, 29)), '2026-W01');
 });
 
-test('GET /api/nexus/web: every subject, the web rank, subject ranks; node details load lazily', async () => {
+test('GET /api/nexus/structure: versioned, immutable with ?v=, 304 on a matching ETag', async () => {
+  const { status, body } = await call('GET', '/api/nexus/structure');
+  assert.equal(status, 200);
+  assert.match(body.version, /^[0-9a-f]{12}$/);
+  assert.deepEqual(body.clusters.map((c) => c.id).sort(), [...ALL_IDS].sort());
+  for (const c of body.clusters) {
+    assert.ok(c.domain && c.zones.length && c.nodes.length, c.id);
+    for (const n of c.nodes) assert.ok(n.id && n.n && Array.isArray(n.req) && !('p' in n) && !('s' in n), `${c.id}:${n.id}`);
+  }
+  assert.ok(body.routes.length >= 4 && body.routes.every((r) => r.subjects.every((id) => ALL_IDS.includes(id))));
+  const pinned = await fetch(`${base}/api/nexus/structure?v=${body.version}`, { headers: { Cookie: cookie } });
+  assert.match(pinned.headers.get('cache-control'), /immutable/);
+  const again = await fetch(`${base}/api/nexus/structure`, { headers: { Cookie: cookie, 'If-None-Match': `"nx-${body.version}"` } });
+  assert.equal(again.status, 304);
+});
+
+test('GET /api/nexus/web: the reader state in structure order, the web rank and subject ranks', async () => {
+  const st = (await call('GET', '/api/nexus/structure')).body
   const { status, body } = await call('GET', '/api/nexus/web');
   assert.equal(status, 200);
-  assert.deepEqual(body.clusters.map((c) => c.id).sort(), [...ALL_IDS].sort());
+  assert.equal(body.user, ME);
+  assert.equal(body.state.version, st.version);
   assert.ok(body.player.level >= body.dsaPlayer.level, 'web rank never below the DSA rank');
   assert.ok(body.player.xp >= body.dsaPlayer.xp);
-  for (const c of body.clusters) {
-    assert.ok(c.domain && c.rank && ranks.TIERS.includes(c.rank.tier), c.id);
-    for (const n of c.nodes) assert.ok(n.n && [0, 1, 2].includes(n.s) && !('x' in n) && !('desc' in n));
+  for (const c of st.clusters) {
+    const sc = body.state.subjects[c.id];
+    assert.equal(sc.nodes.length, c.nodes.length, c.id);
+    assert.equal(sc.zones.length, c.zones.length, c.id);
+    for (const t of sc.nodes) assert.ok([0, 1, 2].includes(t[1]) && typeof t[2] === 'string' && t.length === 6);
+    assert.ok(ranks.TIERS.includes(body.ranks[c.id].tier), c.id);
   }
+  // Memory and recency come from the review data: the PYQ answered in an
+  // earlier test was answered right just now.
+  const dl = st.clusters.find((c) => c.id === 'dl');
+  const pv = body.state.subjects.dl.nodes[dl.nodes.findIndex((n) => n.id === 'place-value')];
+  assert.ok(pv[3] >= 0 && pv[3] < 1, 'days since review');
+  assert.equal(pv[5], 1, 'studied in the last 24 h');
+  // Small: the state is a fraction of the structure.
+  assert.ok(JSON.stringify(body).length < JSON.stringify(st).length / 2);
   const node = await call('GET', '/api/nexus/node/dbms/bplus-trees');
   assert.equal(node.status, 200);
   assert.ok(node.body.node.desc && node.body.node.crossRequires.some((c) => c.id === 'gb_trees'));

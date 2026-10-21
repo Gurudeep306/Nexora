@@ -3669,8 +3669,8 @@ app.get("/api/nexus/structure", (req, res) => {
   try {
     const st = nexusStructure();
     res.set("ETag", `"nx-${st.version}"`);
-    res.set("Cache-Control", req.query.v === st.version ? "public, max-age=31536000, immutable" : "public, max-age=60");
-    if (req.fresh) return res.status(304).end();
+    res.set("Cache-Control", req.query.v === st.version ? "private, max-age=31536000, immutable" : "private, max-age=60");
+    if (String(req.headers["if-none-match"] || "").includes(`"nx-${st.version}"`)) return res.status(304).end();
     res.json({ ok: true, ...st });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
