@@ -109,8 +109,6 @@ export interface WebNode {
   n: string
   /** zone level */
   z: number
-  x: number
-  y: number
   /** progress 0–100 */
   p: number
   s: 0 | 1 | 2

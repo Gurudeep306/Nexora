@@ -1389,6 +1389,79 @@ input[type='search']::-webkit-search-results-decoration {
   align-items: flex-start;
   max-width: min(360px, calc(100vw - 40px));
 }
+/* A subject's rank as one line of type in its path header. */
+.nx-rank-line { font-size: 12px; letter-spacing: 0.02em; }
+.nx-rank-tier { font-size: 10.5px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; background: linear-gradient(90deg, var(--nx-b1, #2f5bea), var(--nx-b2, #7c3aed) 55%, var(--nx-b3, #0d9488)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.nx-me-name { color: #fff; }
+.nx-me-dim { color: rgb(214 220 255 / 0.62); }
+/* The same rank line on the page (paths, ranks): theme type, in flow. */
+.nx-me.nx-me-page { position: static; text-shadow: none; }
+.nx-me-page .nx-caps { color: var(--color-text-muted); }
+.nx-me-page .nx-me-name { color: var(--color-text-primary); }
+.nx-me-page .nx-me-dim { color: var(--color-text-muted); }
+.nx-link-page { padding: 6px; color: var(--color-text-muted); cursor: pointer; border-radius: 6px; transition: color 150ms; }
+.nx-link-page:hover { color: var(--color-text-primary); }
+.nx-link-sm { font-size: 11.5px; padding: 2px 0 5px; letter-spacing: 0.02em; }
+.nx-kbd kbd { margin-left: 6px; font: 600 10px ui-monospace, SFMono-Regular, Menlo, monospace; opacity: 0.7; }
+/* Search: an underlined line of type and its results — no box. */
+.nx-search {
+  top: 72px;
+  left: 50%;
+  width: min(460px, calc(100vw - 40px));
+  translate: -50% 0;
+  z-index: 4;
+}
+.nx-search-input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgb(155 107 255 / 0.7);
+  padding: 6px 2px 8px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #fff;
+  outline: none;
+  text-shadow: inherit;
+}
+.nx-search-input::placeholder { color: rgb(214 220 255 / 0.45); }
+.nx-search-list { margin: 10px 0 0; padding: 0; list-style: none; }
+.nx-search-item { display: flex; width: 100%; align-items: baseline; justify-content: space-between; gap: 12px; padding: 5px 2px; text-align: left; cursor: pointer; color: rgb(226 230 255 / 0.78); transition: color 120ms, transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.nx-search-item[data-on] { color: #fff; transform: translateX(4px); }
+.nx-search-label { font-size: 14px; font-weight: 600; }
+.nx-search-meta { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgb(45 212 191 / 0.85); }
+/* Route / show / memory: three lines of type, bottom-left. */
+.nx-controls {
+  left: max(20px, calc(50vw - 660px));
+  bottom: 124px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: min(640px, calc(100vw - 200px));
+}
+.nx-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.nx-row > .nx-row { gap: 4px 14px; }
+.nx-row-label { min-width: 64px; }
+.nx-route-next { margin-left: 78px; font-size: 11px; color: rgb(255 214 120 / 0.9); }
+.nx-domains { margin-left: 78px; }
+.nx-toast { left: 50%; bottom: 120px; translate: -50% 0; font-size: 12px; letter-spacing: 0.04em; color: #fff; }
+/* The minimap: transparent, no frame — dots and the view outline. */
+.nx-mini {
+  position: absolute;
+  z-index: 2;
+  right: max(24px, calc(50vw - 660px));
+  bottom: 104px;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 200ms;
+}
+.nx-mini:hover { opacity: 1; }
+@media (max-width: 640px) {
+  .nx-controls { bottom: 104px; left: 16px; max-width: calc(100vw - 32px); }
+  .nx-controls .nx-row:nth-child(n + 3) { display: none; }
+  .nx-mini { display: none; }
+  .nx-search { top: 96px; }
+  .nx-kbd { display: none; }
+}
 .nx-hair { position: relative; width: 168px; height: 1px; background: rgb(150 160 255 / 0.2); }
 .nx-hair > span { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #5b8cff, #9b6bff 55%, #2dd4bf); transition: width 700ms cubic-bezier(0.2, 0.8, 0.2, 1); }
 .nx-views {

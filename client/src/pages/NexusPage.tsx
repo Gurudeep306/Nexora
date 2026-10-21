@@ -2,34 +2,39 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { RefreshCw } from 'lucide-react'
-import {
-  Button,
-  Card,
-  CardContent,
-  ErrorState,
-  LoadingBlock,
-  PageHeader,
-  RankGlyph,
-  Tabs,
-  XpBar,
-} from '@/components/ui'
+import { ErrorState, LoadingBlock, Tabs } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
-import { Avatar } from '@/components/ui/Avatar'
 import { api } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 import { useAgentPageContext } from '@/context/AgentContext'
-import { cn, formatNumber } from '@/lib/utils'
-import { NexusWeb, type Camera, type NexusWebHandle, type RegionRank } from '@/components/nexus/NexusWeb'
+import { cn } from '@/lib/utils'
+import { NexusWeb, type Camera, type NexusWebHandle, type RegionRank, type WebAction, type WebFilter } from '@/components/nexus/NexusWeb'
 import { NodePanel } from '@/components/nexus/NodePanel'
 import { SubjectPath } from '@/components/nexus/SubjectPath'
 import { TitleTrack } from '@/components/nexus/TitleTrack'
 import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
-import type { CrossLink, NexusNode, NexusNodeResponse, NexusResponse, NexusStatsResponse, RiftLevel, RiftPlayer, WebCluster, WebNode } from '@/components/nexus/types'
-import { fetchNexusWeb, NEXUS_WEB_KEY } from '@/components/nexus/data'
-import { Icon } from '@/components/icon/Icon'
+import { WebControls, WebRankLine, WebSearch } from '@/components/nexus/WebOverlays'
+import { assemble, computeLayout, keystones as findKeystones, longestChain, nextBestStep, routePlan, type LayoutData, type Web } from '@/components/nexus/lattice'
+import { getLayout, layoutNow } from '@/components/nexus/layoutCache'
+import { cachedState, cachedStructure, loadWeb, mergeWeb } from '@/components/nexus/data'
+import type {
+  CrossLink,
+  NexusNode,
+  NexusNodeResponse,
+  NexusPyqsResponse,
+  NexusResponse,
+  NexusStatsResponse,
+  NexusWebState,
+  NexusWebStructure,
+  RiftLevel,
+  RiftPlayer,
+  WebCluster,
+  WebNode,
+} from '@/components/nexus/types'
 
-/** The web while it loads: the lattice alone, drawing itself in. */
-const NO_CLUSTERS: WebCluster[] = []
+/** The tiny web shown before anything else (the lattice drawing in). */
+let emptyWeb: Web | null = null
+const getEmptyWeb = () => (emptyWeb ??= assemble(computeLayout([], 'empty'), []))
 
 /** Where the web's camera was when you dived into a subject (restored on the way back). */
 let lastWebCamera: Camera | null = null
@@ -88,25 +93,57 @@ export default function NexusPage() {
   const location = useLocation()
   const subject = params.get('subject')
   const node = params.get('node')
+  const routeId = params.get('route')
   const [tab, setTab] = useState<'map' | 'ranks'>('map')
   const { user } = useAuth()
   const username = user?.username ?? ''
-  const fresh = useRef(false)
   const webRef = useRef<NexusWebHandle>(null)
   const [pathData, setPathData] = useState<NexusResponse | null>(null)
   const [hintGone, setHintGone] = useState(false)
   const [detailsOpen, setDetailsOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState<false | 'any' | 'subject'>(false)
+  const [filter, setFilter] = useState<WebFilter>({ mode: 'all', domain: null })
+  const [ahead, setAhead] = useState(0)
+  const [toast, setToast] = useState<string | null>(null)
 
-  // The web: every subject and the unified web rank (the player card).
-  const { data: web, loading, error, refetch } = useApi(
-    () => {
-      const f = fresh.current
-      fresh.current = false
-      return fetchNexusWeb(f)
+  /* ── data: from the device at once, then fresh in the background ── */
+  const [structure, setStructure] = useState<NexusWebStructure | null>(() => cachedStructure())
+  const [state, setState] = useState<NexusWebState | null>(() => cachedState(username))
+  const [error, setError] = useState<string | null>(null)
+  const [refreshing, setRefreshing] = useState(false)
+  const refresh = useCallback(
+    (fresh = false) => {
+      setRefreshing(true)
+      loadWeb(fresh)
+        .then(({ structure: s, state: st }) => {
+          setStructure(s)
+          setState(st)
+          setError(null)
+        })
+        .catch((e: unknown) => setError(e instanceof Error ? e.message : 'Failed to load the nexus'))
+        .finally(() => setRefreshing(false))
     },
     [],
-    { cacheKey: NEXUS_WEB_KEY },
   )
+  useEffect(() => {
+    refresh(false)
+  }, [refresh])
+  // The layout: in memory already (instant), else from IndexedDB / the worker.
+  const [asyncLayout, setAsyncLayout] = useState<LayoutData | null>(null)
+  const layout = (structure && layoutNow(structure.version)) || (asyncLayout?.version === structure?.version ? asyncLayout : null)
+  useEffect(() => {
+    if (!structure || layoutNow(structure.version)) return
+    let live = true
+    getLayout(structure).then((l) => {
+      if (live) setAsyncLayout(l)
+    })
+    return () => {
+      live = false
+    }
+  }, [structure])
+  const clusters = useMemo(() => (structure ? mergeWeb(structure, state) : null), [structure, state])
+  const web = useMemo(() => (layout && clusters && layout.version === structure?.version ? assemble(layout, clusters) : null), [layout, clusters, structure])
+
   const statsApi = useApi<NexusStatsResponse>(
     () => api.get<NexusStatsResponse>('/api/stats', { query: { username: username || undefined } }),
     [username],
@@ -128,13 +165,13 @@ export default function NexusPage() {
     if ((location.state as { fromWeb?: boolean } | null)?.fromWeb) navigate(-1)
     else navigate({ search: '' })
   }, [location.state, navigate])
-  const setNode = useCallback(
-    (id: string | null) => {
+  const setParam = useCallback(
+    (key: string, value: string | null) => {
       setParams(
         (p) => {
           const next = new URLSearchParams(p)
-          if (id) next.set('node', id)
-          else next.delete('node')
+          if (value) next.set(key, value)
+          else next.delete(key)
           return next
         },
         { replace: true, state: location.state },
@@ -142,7 +179,7 @@ export default function NexusPage() {
     },
     [setParams, location.state],
   )
-  // Esc in a path returns to the web.
+  const setNode = useCallback((id: string | null) => setParam('node', id), [setParam])
   useEffect(() => {
     if (!subject) return
     const onKey = (e: KeyboardEvent) => {
@@ -151,13 +188,36 @@ export default function NexusPage() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [subject, backToWeb])
+  // ⌘K or "/" opens search on the web.
+  useEffect(() => {
+    if (subject || tab !== 'map') return
+    const onKey = (e: KeyboardEvent) => {
+      const typing = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement
+      if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !typing)) {
+        e.preventDefault()
+        setSearchOpen('any')
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [subject, tab])
 
-  /* ── the web view's selected concept ("subject:id") ── */
+  /* ── web analysis: route, beacon, keystones ── */
+  const route = useMemo(() => {
+    if (!web || !routeId || !structure) return null
+    const subjects = routeId.startsWith('subject:') ? [routeId.slice(8)] : structure.routes.find((r) => r.id === routeId)?.subjects
+    return subjects ? routePlan(web, subjects) : null
+  }, [web, routeId, structure])
+  const beacon = useMemo(() => (web ? nextBestStep(web, route) : null), [web, route])
+  const keystoneSet = useMemo(() => (web ? findKeystones(web) : new Set<string>()), [web])
+  const domains = useMemo(() => [...new Set((structure?.clusters ?? []).map((c) => c.domain))], [structure])
+
+  /* ── the selected concept ("subject:id") and its lazily loaded details ── */
   const byKey = useMemo(() => {
     const m = new Map<string, { c: WebCluster; n: WebNode }>()
-    for (const c of web?.clusters ?? []) for (const n of c.nodes) m.set(`${c.id}:${n.id}`, { c, n })
+    for (const c of clusters ?? []) for (const n of c.nodes) m.set(`${c.id}:${n.id}`, { c, n })
     return m
-  }, [web])
+  }, [clusters])
   const webSel = !subject && node ? byKey.get(node) : undefined
   const [selSubject, selId] = webSel ? [webSel.c.id, webSel.n.id] : [null, null]
   const detailApi = useApi<NexusNodeResponse>(
@@ -187,31 +247,65 @@ export default function NexusPage() {
   const clusterNodes = useMemo(() => (webSel ? webSel.c.nodes.map((n) => asNexusNode(webSel.c, n)) : []), [webSel])
   const ranks = useMemo(() => {
     const m: Record<string, RegionRank> = {}
-    for (const c of web?.clusters ?? []) if (c.rank) m[c.id] = { tier: c.rank.tier, title: c.rank.title }
+    for (const c of clusters ?? []) if (c.rank) m[c.id] = { tier: c.rank.tier, title: c.rank.title }
     return m
-  }, [web])
+  }, [clusters])
 
   // A deep link to a concept lands the camera on it.
   const landed = useRef(false)
   useEffect(() => {
     if (!web || subject || landed.current) return
     landed.current = true
-    if (node && byKey.has(node) && !lastWebCamera) {
+    if (node && web.concepts.has(node) && !lastWebCamera) {
       const id = node
       requestAnimationFrame(() => webRef.current?.flyToNode(id, true))
     }
-  }, [web, subject, node, byKey])
+  }, [web, subject, node])
+
+  const say = (text: string) => {
+    setToast(text)
+    window.setTimeout(() => setToast((t) => (t === text ? null : t)), 1800)
+  }
+  const onAction = useCallback(
+    async (action: WebAction, key: string) => {
+      if (!web) return
+      if (action === 'open') setDetailsOpen(true)
+      else if (action === 'trace') webRef.current?.trace(longestChain(web, key))
+      else if (action === 'copy') {
+        const url = `${window.location.origin}/nexus?node=${encodeURIComponent(key)}`
+        try {
+          await navigator.clipboard.writeText(url)
+          say('Link copied')
+        } catch {
+          say(url)
+        }
+      } else if (action === 'revise') {
+        const [s, id] = [key.split(':')[0], key.split(':').slice(1).join(':')]
+        try {
+          const r = await api.get<NexusPyqsResponse>(`/api/nexus/pyqs/${s}/${id}`)
+          const ids = r.questions.map((q) => q.id).slice(0, 60)
+          if (ids.length) navigate(`/gate/practice?ids=${ids.join(',')}`)
+          else say('Nothing to revise here yet')
+        } catch {
+          say('Could not load the questions')
+        }
+      }
+    },
+    [web, navigate],
+  )
 
   /* ── the assistant sees what is on screen ── */
   const brief = useMemo(() => {
-    if (!web) return undefined
-    const p = web.player
-    const all = web.clusters.reduce((a, c) => a + c.nodes.length, 0)
-    const done = web.clusters.reduce((a, c) => a + c.nodes.filter((n) => n.s === 2).length, 0)
+    if (!web || !state) return undefined
+    const p = state.player
+    const all = web.concepts.size
+    const done = [...web.concepts.values()].filter((c) => c.node.s === 2).length
     const lines = [
       `Web rank: level ${p.level} (${p.name}), ${p.xp} web XP across every subject; ${p.xpInLevel}/${p.xpForNext} XP toward the next level.`,
-      `The Nexus web: ${web.clusters.length} subjects, ${done}/${all} concepts mastered.`,
+      `The Nexus web: ${web.regions.length} subjects, ${done}/${all} concepts mastered.`,
     ]
+    if (beacon) lines.push(`Suggested next step: ${web.concepts.get(beacon)?.node.n} (${web.concepts.get(beacon)?.cluster.name}).`)
+    if (route) lines.push(`Active route next: ${route.next.map((k) => web.concepts.get(k)?.node.n).join(', ')}.`)
     if (subject && pathData) {
       lines.push(
         `Subject path open: ${pathData.subject?.name}${pathData.subjectRank ? ` — subject rank ${pathData.subjectRank.tier} (${pathData.subjectRank.title}), ${pathData.subjectRank.progress}%` : ''}.`,
@@ -223,157 +317,188 @@ export default function NexusPage() {
       lines.push(`Selected concept: ${selectedNode.name} (${webSel?.c.name}) — progress ${selectedNode.progress}%; ${selectedNode.completed ? 'mastered' : selectedNode.unlocked ? 'unlocked' : 'locked'}.`)
     }
     return lines.join('\n')
-  }, [web, subject, pathData, node, selectedNode, webSel])
+  }, [web, state, subject, pathData, node, selectedNode, webSel, beacon, route])
   useAgentPageContext({
     label: subject ? `Nexus · ${pathData?.subject?.short ?? subject}` : selectedNode ? `Nexus · ${selectedNode.name}` : 'Nexus',
     visibleText: brief,
   })
 
-  const subtitle = 'One web of everything you learn — follow the paths out from you, master concepts, and climb the web rank.'
-  if (loading && !web) {
-    // Loading is the web drawing itself in around you — never a spinner.
-    if (!subject && tab === 'map') {
+  const webMode = tab === 'map' && !subject
+  const player = state?.player
+  const mastered = web ? [...web.concepts.values()].filter((c) => c.node.s === 2).length : 0
+  const total = web?.concepts.size ?? 0
+  const rankLine = (onWeb: boolean) =>
+    player ? (
+      <WebRankLine
+        player={player}
+        username={username}
+        avatarUrl={typeof user?.avatar_url === 'string' ? user.avatar_url : null}
+        avatar={user?.avatar}
+        displayName={typeof user?.display_name === 'string' ? user.display_name : undefined}
+        mastered={mastered}
+        total={total}
+        streak={statsApi.data?.streak.current}
+        onWeb={onWeb}
+      />
+    ) : null
+
+  /* ── the web: full-bleed, card-free, opens on the first frame ── */
+  if (webMode) {
+    if (!web || !state) {
       return (
         <section className="nx-bleed" aria-label="The Nexus web" aria-busy="true">
-          <NexusWeb clusters={NO_CLUSTERS} selected={null} onSelect={() => {}} onOpenSubject={() => {}} />
+          <NexusWeb web={getEmptyWeb()} selected={null} onSelect={() => {}} onOpenSubject={() => {}} loading />
+          {error && (
+            <p className="nx-over nx-hint mb-0" role="alert">
+              {error} ·{' '}
+              <button type="button" className="nx-link nx-link-sm" onClick={() => refresh(true)}>
+                try again
+              </button>
+            </p>
+          )}
         </section>
       )
     }
+    const selZone = webSel?.c.zones.find((z) => z.level === webSel.n.z)
+    const customName = routeId?.startsWith('subject:') ? (structure?.clusters.find((c) => c.id === routeId.slice(8))?.short ?? null) : null
     return (
-      <div>
-        <PageHeader icon="nexus" title="The Nexus" subtitle={subtitle} />
-        <LoadingBlock rows={8} />
-      </div>
-    )
-  }
-  if (error || !web) {
-    return (
-      <div>
-        <PageHeader icon="nexus" title="The Nexus" subtitle={subtitle} />
-        <ErrorState message={error ?? 'Failed to load the nexus'} onRetry={refetch} />
-      </div>
-    )
-  }
-
-  const player = web.player
-  const allNodes = web.clusters.reduce((a, c) => a + c.nodes.length, 0)
-  const allDone = web.clusters.reduce((a, c) => a + c.nodes.filter((n) => n.s === 2).length, 0)
-  const selZone = webSel?.c.zones.find((z) => z.level === webSel.n.z)
-
-  const refresh = () => {
-    fresh.current = true
-    refetch()
-    statsApi.refetch()
-    detailApi.refetch()
-  }
-  const webMode = tab === 'map' && !subject
-  const springIn = { initial: { opacity: 0, y: -8, scale: 0.98 }, animate: { opacity: 1, y: 0, scale: 1 }, transition: { type: 'spring' as const, stiffness: 320, damping: 28 } }
-
-  return (
-    <div>
-      {!webMode && (
-      <>
-      <PageHeader
-        icon="nexus"
-        title="The Nexus"
-        subtitle={subtitle}
-        actions={
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={refresh}
-            aria-label="Refresh nexus data"
-          >
-            <RefreshCw className={cn('size-3.5', (loading || statsApi.loading) && 'animate-spin')} />
-            Refresh
-          </Button>
-        }
-      />
-
-      {/* Player card: the unified web rank */}
-      <Card glow className="nx-glass mb-4">
-        <CardContent className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <RankGlyph level={player.level} size={40} />
-              <div>
-                <p className="font-display text-base tracking-wider text-foreground">
-                  Web rank · LVL {player.level} · {player.name}
-                </p>
-                <p className="text-[11px] tracking-wider text-foreground-faint uppercase">
-                  {allDone}/{allNodes} concepts mastered across {web.clusters.length} subjects · {formatNumber(player.xp)} web XP
-                </p>
-              </div>
-            </div>
-            <XpBar xp={player.xpInLevel} nextLevelXp={player.xpForNext} levelName={`Web rank ${player.name}`} />
-            {(player.xpGated || player.probGated) && (
-              <p className="text-xs text-foreground-dim">
-                Next rank needs{' '}
-                {player.xpGated && (
-                  <span className="font-mono text-primary-bright tabular-nums">{formatNumber(Math.max(0, player.xpForNext - player.xpInLevel))} more XP</span>
-                )}
-                {player.xpGated && player.probGated && ' and '}
-                {player.probGated && (
-                  <span className="font-mono text-cyan tabular-nums">{Math.max(0, player.probsForNext - player.probsInLevel)} more solves</span>
-                )}
-                <span className="text-foreground-faint"> · problems, PYQs and lessons all count</span>
-              </p>
-            )}
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-center">
-              <p className="font-display text-2xl text-primary-bright tabular-nums">{player.level}</p>
-              <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Web Rank</p>
-            </div>
-            <div className="text-center">
-              <p className="flex items-center justify-center gap-1 font-display text-2xl text-warning tabular-nums">
-                <Icon name="flame" className="size-4 text-streak" aria-hidden="true" />
-                {statsApi.data?.streak.current ?? '—'}
-              </p>
-              <p className="text-[10px] tracking-wider text-foreground-faint uppercase">
-                Day Streak{statsApi.data ? ` · best ${statsApi.data.streak.best}` : ''}
-              </p>
-            </div>
-            <div className="hidden text-center sm:block">
-              <p className="flex items-center justify-center gap-1 font-display text-sm text-gold">
-                <Icon name="trophy" className="size-4" aria-hidden="true" />
-                {webTitles(statsApi.data, player, web.riftLevels)?.title.current.title ?? '—'}
-              </p>
-              <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Title</p>
-            </div>
-            {web.dsaPlayer && (
-              <div className="text-center">
-                <p className="font-display text-2xl text-cyan tabular-nums">{web.dsaPlayer.level}</p>
-                <p className="text-[10px] tracking-wider text-foreground-faint uppercase">DSA Rift</p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-      </>
-      )}
-
-      {tab === 'ranks' || subject ? (
-        <Tabs
-          variant="pills"
-          className="mb-4"
-          items={[
-            { id: 'map', label: '/web', icon: <Icon name="nexus" className="size-3.5" aria-hidden="true" /> },
-            {
-              id: 'ranks',
-              label: '/ranks',
-              icon: <Icon name="trophy" className="size-3.5" aria-hidden="true" />,
-              badge: statsApi.data ? statsApi.data.allTitles.length : undefined,
-            },
-          ]}
-          active={subject && tab === 'map' ? 'map' : tab}
-          onChange={(id) => {
-            setTab(id as 'map' | 'ranks')
-            if (id === 'map' && subject) backToWeb()
+      <section className="nx-bleed" aria-label="The Nexus web">
+        <NexusWeb
+          ref={webRef}
+          web={web}
+          selected={webSel ? node : null}
+          onSelect={(k) => {
+            setNode(k)
+            setDetailsOpen(false)
+          }}
+          onOpenSubject={(id, cam) => openSubject(id, cam)}
+          onAction={onAction}
+          onInteract={() => setHintGone(true)}
+          quiet={detailsOpen}
+          initialCamera={lastWebCamera}
+          ranks={ranks}
+          filter={filter}
+          ahead={ahead}
+          route={route}
+          beacon={beacon}
+          keystones={keystoneSet}
+        />
+        {rankLine(true)}
+        <nav className="nx-over nx-views" aria-label="Nexus views">
+          <button type="button" className="nx-link nx-link-sm nx-kbd" onClick={() => setSearchOpen('any')} aria-label="Search (⌘K)">
+            Search <kbd>⌘K</kbd>
+          </button>
+          <button type="button" aria-current="page" className="nx-link" data-on="">
+            /web
+          </button>
+          <button type="button" className="nx-link" onClick={() => setTab('ranks')}>
+            /ranks
+          </button>
+          <button type="button" className="nx-link" onClick={() => refresh(true)} aria-label="Refresh nexus data">
+            <RefreshCw className={cn('size-3', refreshing && 'animate-spin')} />
+          </button>
+        </nav>
+        <WebSearch
+          web={web}
+          open={!!searchOpen}
+          subjectsOnly={searchOpen === 'subject'}
+          onOpenChange={(o) => setSearchOpen(o ? 'any' : false)}
+          onPick={(p) => {
+            if (searchOpen === 'subject') setParam('route', `subject:${p.id}`)
+            else if (p.kind === 'subject') webRef.current?.flyToSubject(p.id)
+            else {
+              setNode(p.id)
+              webRef.current?.flyToNode(p.id)
+            }
           }}
         />
-      ) : null}
+        <WebControls
+          routes={structure?.routes ?? []}
+          route={routeId}
+          onRoute={(id) => setParam('route', id)}
+          onCustomRoute={() => setSearchOpen('subject')}
+          customName={customName}
+          filter={filter}
+          onFilter={setFilter}
+          domains={domains}
+          ahead={ahead}
+          onAhead={setAhead}
+          routeNext={(route?.next ?? []).slice(0, 3).map((k) => web.concepts.get(k)?.node.n ?? '')}
+        />
+        <p className="nx-over nx-hint mb-0" data-gone={hintGone || undefined}>
+          Drag to move · scroll to zoom · hover a concept · click a subject to open its path
+        </p>
+        <AnimatePresence>
+          {toast && (
+            <motion.p className="nx-over nx-toast mb-0" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} role="status">
+              {toast}
+            </motion.p>
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {detailsOpen && selectedNode && webSel && (
+            <motion.aside
+              key={node!}
+              className="nx-sheet"
+              aria-label={`${selectedNode.name} details`}
+              initial={{ x: '100%', opacity: 0.6 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: '100%', opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 32 }}
+            >
+              <NodePanel
+                bare
+                node={selectedNode}
+                nodes={clusterNodes}
+                zoneColor={selZone?.color ?? 'var(--color-primary)'}
+                zoneName={`${webSel.c.short} · ${selZone?.name ?? `Zone ${selectedNode.zone}`}`}
+                detailLoading={detailApi.loading && !detailApi.data}
+                engine={webSel.c.engine}
+                onClose={() => setDetailsOpen(false)}
+                onJump={(l) => {
+                  const key = `${l.subject}:${l.id}`
+                  setNode(key)
+                  webRef.current?.flyToNode(key)
+                }}
+                onSelect={(id) => {
+                  const key = `${webSel.c.id}:${id}`
+                  setNode(key)
+                  webRef.current?.flyToNode(key)
+                }}
+                onOpenPath={() => openSubject(webSel.c.id, webRef.current?.camera(), webSel.n.id)}
+              />
+            </motion.aside>
+          )}
+        </AnimatePresence>
+      </section>
+    )
+  }
 
+  /* ── paths and ranks: type on the page, no stacked cards ── */
+  if (!state) {
+    return error ? <ErrorState message={error} onRetry={() => refresh(true)} /> : <LoadingBlock rows={8} />
+  }
+  return (
+    <div>
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
+        {rankLine(false)}
+        <button type="button" className="nx-link-page" onClick={() => refresh(true)} aria-label="Refresh nexus data">
+          <RefreshCw className={cn('size-3.5', refreshing && 'animate-spin')} />
+        </button>
+      </div>
+      <Tabs
+        variant="pills"
+        className="mb-4"
+        items={[
+          { id: 'map', label: '/web', icon: undefined },
+          { id: 'ranks', label: '/ranks', icon: undefined, badge: statsApi.data ? statsApi.data.allTitles.length : undefined },
+        ]}
+        active={subject && tab === 'map' ? 'map' : tab}
+        onChange={(id) => {
+          setTab(id as 'map' | 'ranks')
+          if (id === 'map' && subject) backToWeb()
+        }}
+      />
       {tab === 'ranks' ? (
         <div className="space-y-4">
           <WebLeaderboard />
@@ -382,7 +507,7 @@ export default function NexusPage() {
           ) : statsApi.error && !statsApi.data ? (
             <ErrorState message={statsApi.error} onRetry={statsApi.refetch} />
           ) : (
-            <TitleTrack stats={webTitles(statsApi.data, web.player, web.riftLevels)} />
+            <TitleTrack stats={webTitles(statsApi.data, state.player, state.riftLevels)} />
           )}
         </div>
       ) : subject ? (
@@ -394,94 +519,7 @@ export default function NexusPage() {
           onBack={backToWeb}
           onData={setPathData}
         />
-      ) : (
-        /* The web: full-bleed, edge to edge; everything else floats on it. */
-        <section className="nx-bleed" aria-label="The Nexus web">
-          <NexusWeb
-            ref={webRef}
-            clusters={web.clusters}
-            selected={webSel ? node : null}
-            onSelect={(k) => {
-              setNode(k)
-              setDetailsOpen(false)
-            }}
-            onOpenSubject={(id, cam) => openSubject(id, cam)}
-            onOpenDetails={() => setDetailsOpen(true)}
-            onInteract={() => setHintGone(true)}
-            quiet={detailsOpen}
-            initialCamera={lastWebCamera}
-            ranks={ranks}
-          />
-          {/* You, as type: no box. */}
-          <motion.div className="nx-over nx-me" {...springIn}>
-            <Avatar src={typeof user?.avatar_url === "string" ? user.avatar_url : null} avatar={user?.avatar} name={typeof user?.display_name === "string" ? user.display_name : username} seed={username} size="sm" ring={false} />
-            <div className="min-w-0">
-              <p className="nx-caps mb-0">Web rank</p>
-              <p className="mb-0 truncate font-display text-[15px] leading-tight font-semibold text-white">
-                {player.name} <span className="font-normal text-white/55">· LVL {player.level}</span>
-              </p>
-              <div className="nx-hair mt-1.5" aria-hidden="true">
-                <span style={{ width: `${Math.round((Math.max(0, player.xpInLevel) / Math.max(1, player.xpForNext)) * 100)}%` }} />
-              </div>
-              <p className="mt-1 mb-0 font-mono text-[10.5px] text-white/55 tabular-nums">
-                {formatNumber(player.xp)} XP · {allDone}/{allNodes} concepts · {statsApi.data?.streak.current ?? 0}d streak
-              </p>
-            </div>
-          </motion.div>
-          {/* Views, as plain links with an underline. */}
-          <motion.nav className="nx-over nx-views" aria-label="Nexus views" {...springIn}>
-            <button type="button" aria-current="page" className="nx-link" data-on="">
-              /web
-            </button>
-            <button type="button" className="nx-link" onClick={() => setTab('ranks')}>
-              /ranks
-            </button>
-            <button type="button" className="nx-link" onClick={refresh} aria-label="Refresh nexus data">
-              <RefreshCw className={cn('size-3', (loading || statsApi.loading) && 'animate-spin')} />
-            </button>
-          </motion.nav>
-          {/* One faint line of help, gone after the first touch. */}
-          <p className="nx-over nx-hint mb-0" data-gone={hintGone || undefined}>
-            Drag to move · scroll to zoom · hover a concept · click a subject to open its path
-          </p>
-          {/* Details: only on "Open details", in an edge-anchored sheet. */}
-          <AnimatePresence>
-            {detailsOpen && selectedNode && webSel && (
-              <motion.aside
-                key={node!}
-                className="nx-sheet"
-                aria-label={`${selectedNode.name} details`}
-                initial={{ x: '100%', opacity: 0.6 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: '100%', opacity: 0 }}
-                transition={{ type: 'spring', stiffness: 260, damping: 32 }}
-              >
-                <NodePanel
-                  bare
-                  node={selectedNode}
-                  nodes={clusterNodes}
-                  zoneColor={selZone?.color ?? 'var(--color-primary)'}
-                  zoneName={`${webSel.c.short} · ${selZone?.name ?? `Zone ${selectedNode.zone}`}`}
-                  detailLoading={detailApi.loading && !detailApi.data}
-                  engine={webSel.c.engine}
-                  onClose={() => setDetailsOpen(false)}
-                  onJump={(l) => {
-                    const key = `${l.subject}:${l.id}`
-                    setNode(key)
-                    webRef.current?.flyToNode(key)
-                  }}
-                  onSelect={(id) => {
-                    const key = `${webSel.c.id}:${id}`
-                    setNode(key)
-                    webRef.current?.flyToNode(key)
-                  }}
-                  onOpenPath={() => openSubject(webSel.c.id, webRef.current?.camera(), webSel.n.id)}
-                />
-              </motion.aside>
-            )}
-          </AnimatePresence>
-        </section>
-      )}
+      ) : null}
     </div>
   )
 }
