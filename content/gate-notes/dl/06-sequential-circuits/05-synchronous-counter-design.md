@@ -8,8 +8,8 @@ prerequisites: [ripple-counters, flip-flops, prime-implicants]
 pyq_topics: [dl/sequential]
 est_minutes: 65
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every input equation, next state, trace, lock-out cycle, clock period and practice answer is produced in content/gate-notes/_checks/dl/l6_05_sync_design.py (seqlib design_counter, designed_step, Sync, autonomous_cycles, self_starting)."
   - "Coverage checklist only (internal digests, never copied): set A p. 87, set B pp. 156–157 and 159, set C pp. 353–356 and 371–372."

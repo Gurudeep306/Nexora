@@ -8,8 +8,8 @@ prerequisites: [latches]
 pyq_topics: [dl/sequential]
 est_minutes: 65
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every next state, excitation entry, conversion, waveform, timing figure and practice answer is produced by simulation in content/gate-notes/_checks/dl/l6_02_flip_flops.py (seqlib tables, conversions and the scope waveform model)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 79–86 and 99, set B pp. 135–138, set C pp. 333–342, set D p. 400, set E pp. 406–407."

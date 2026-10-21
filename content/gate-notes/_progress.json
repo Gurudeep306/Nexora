@@ -116,7 +116,7 @@
           "title": "Sequential circuits",
           "lessons": 8,
           "pyqs": 59,
-          "status": "planned",
+          "status": "reviewed",
           "parts": [
             "storage elements (latches, flip-flops, sequential analysis)",
             "counters and registers (ripple counters, synchronous counter design, shift registers and ring/Johnson)",
@@ -126,7 +126,19 @@
             "Flip-flop Scope",
             "Counter & FSM Simulator"
           ],
-          "note": "2026-10-19: merged from the old Chapters 6 (latches, flip-flops and sequential analysis) and 7 (counters, registers and FSMs). FSM lessons are hardware-focused and link to TOC for DFA theory."
+          "note": "2026-10-19: merged from the old Chapters 6 (latches, flip-flops and sequential analysis) and 7 (counters, registers and FSMs). FSM lessons are hardware-focused and link to TOC for DFA theory.",
+          "lessons_status": {
+            "latches": "published+reviewed",
+            "flip-flops": "published+reviewed",
+            "sequential-analysis": "published+reviewed",
+            "ripple-counters": "published+reviewed",
+            "synchronous-counter-design": "published+reviewed",
+            "shift-registers": "published+reviewed",
+            "finite-state-machines": "published+reviewed",
+            "state-minimisation": "published+reviewed"
+          },
+          "live_lab": "Flip-flop Scope (:::lab flipflop-scope: scope, tables); Counter & FSM Simulator (:::lab counter-fsm: counter, fsm)",
+          "review": "2026-10-21: four independent examiner reviews (lesson pairs 1-2, 3-4, 5-6, 7-8, plus both Live Labs): 100 findings (8 errors, 24 misleading, 12 style gaps, 56 minor) all applied and re-checked; 59/59 keys re-derived by seqlib simulation; cse-2000-a-2-12 fixed D -> A (text 'After three clock cycles'); coverage 59/59."
         },
         {
           "id": "07-beyond-syllabus",

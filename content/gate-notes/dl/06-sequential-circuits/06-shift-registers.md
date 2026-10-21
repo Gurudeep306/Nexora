@@ -8,8 +8,8 @@ prerequisites: [sequential-analysis]
 pyq_topics: [dl/sequential]
 est_minutes: 50
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every register content, clock count, state sequence, cycle, self-loop and practice answer is produced by simulation in content/gate-notes/_checks/dl/l6_06_registers.py (seqlib Sync, shift_right, ring_step, johnson_step, lfsr_step, universal)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 88–90, set B pp. 155–156 and 158–159, set C pp. 357–372, set D p. 402, set E p. 408."

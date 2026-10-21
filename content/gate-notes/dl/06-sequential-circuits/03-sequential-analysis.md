@@ -8,8 +8,8 @@ prerequisites: [flip-flops]
 pyq_topics: [dl/sequential]
 est_minutes: 55
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every next state, state table, trace, reachable set, cycle, output value and practice answer is produced by simulation in content/gate-notes/_checks/dl/l6_03_analysis.py (seqlib.Sync, cycle_from, autonomous_cycles)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 76–77, set B pp. 154–155 and 183, set C pp. 326–328. Analysis of given circuits is thin in every set, so the procedure was written from the textbook."
