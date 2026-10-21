@@ -141,6 +141,24 @@ function webLevel(xp, names, floor = 1) {
   };
 }
 
+/** Monday 00:00 UTC of the week holding `ms`. */
+function weekStart(ms = Date.now()) {
+  const d = new Date(ms);
+  const day = (d.getUTCDay() + 6) % 7;
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day);
+}
+
+/**
+ * This week so far: web XP gained (from the stored week baseline) and the
+ * concepts mastered (completed and last studied since Monday).
+ */
+function weekSummary(row, score, nodes, now = Date.now()) {
+  const start = weekStart(now);
+  const xp = row && row.week === weekKey(now) ? Math.max(0, score.xp - (row.week_base_xp || 0)) : 0;
+  const concepts = nodes.filter((n) => n.completed && (n.touchedAt || 0) >= start).length;
+  return { xp, concepts, since: start };
+}
+
 /** The web ladder in the shape the ranks UI reads (RiftLevel-like). */
 function webLevels(names) {
   return WEB_XP.map((xp, i) => ({ ...(names[i] || {}), level: i + 1, xp, minProblems: 0 }));
@@ -238,4 +256,4 @@ async function leaderboard({ all }, { scope, subject, viewer, limit = 50, now = 
   }));
 }
 
-module.exports = { TIERS, TIER_AT, WEB_XP, CONCEPT_XP, XP_PER_LESSON, XP_PER_PYQ, DSA_XP_SHARE, tierFor, isCore, subjectRank, subjectProgress, webScore, webLevel, webLevels, weekKey, saveScore, leaderboard };
+module.exports = { TIERS, TIER_AT, WEB_XP, CONCEPT_XP, XP_PER_LESSON, XP_PER_PYQ, DSA_XP_SHARE, tierFor, isCore, subjectRank, subjectProgress, webScore, webLevel, webLevels, weekKey, weekStart, weekSummary, saveScore, leaderboard };

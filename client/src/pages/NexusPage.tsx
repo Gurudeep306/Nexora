@@ -28,6 +28,10 @@ import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
 import { RadialWeb, type Camera } from '@/components/nexus/RadialWeb'
 import { getLayout, layoutNow } from '@/components/nexus/layoutCache'
 import { courseHref } from '@/components/nexus/course'
+import { continueFrom, isDue, nextStep as findNextStep } from '@/components/nexus/insights'
+import { NexusPalette, type PaletteCommand } from '@/components/nexus/NexusPalette'
+import { ContinueChip, GoalMenu, RadialSkeleton, RankCardSkeleton, ResponsivePanel, startReview, useCelebration, useGoal, usePaletteHotkey } from '@/components/nexus/extras'
+import { Crosshair, Expand, Maximize2 } from 'lucide-react'
 import type { RadialLayout } from '@/components/nexus/radial'
 import type {
   CrossLink,
@@ -202,6 +206,32 @@ function SubjectTree({ subject }: { subject: string }) {
   )
 
   const selectedNode = useMemo(() => nexus?.nodes.find((n) => n.id === selectedId) ?? null, [nexus, selectedId])
+  // The goal path inside this tree, review hints, ⌘K.
+  const webClusters = useMemo(() => {
+    const st = cachedStructure()
+    return st ? mergeWeb(st, cachedState(username)) : null
+  }, [username])
+  const { goal, plan, setGoal } = useGoal(cachedStructure()?.routes ?? [], webClusters)
+  const own = (k: string) => (k.startsWith(`${subject}:`) ? k.slice(subject.length + 1) : null)
+  const steps = useMemo(() => (plan ? plan.next.map(own).filter((x): x is string => !!x) : undefined), [plan])
+  const highlight = useMemo(() => (plan ? new Set([...plan.keys].map(own).filter((x): x is string => !!x)) : undefined), [plan])
+  const due = useMemo(() => {
+    const out = new Set<string>()
+    const day = 86400000
+    for (const n of nexus?.nodes ?? []) {
+      const m = (n as { memory?: { lastAt: number; interval: number } | null }).memory
+      if (n.completed && m?.lastAt && (Date.now() - m.lastAt) / day >= Math.max(3, m.interval || 0)) out.add(n.id)
+    }
+    return out
+  }, [nexus])
+  const hueOf = useMemo(() => {
+    const st = cachedStructure()
+    const hue = new Map((st?.streams ?? []).map((x) => [x.id, x.hue]))
+    const of = new Map((st?.clusters ?? []).map((c) => [c.id, hue.get(c.stream ?? c.domain)]))
+    return (id: string) => of.get(id)
+  }, [])
+  const [paletteOpen, setPaletteOpen] = useState(false)
+  usePaletteHotkey(() => setPaletteOpen(true))
   // A jump lands on its node: bring it into view.
   useEffect(() => {
     if (!selectedNode) return
@@ -435,6 +465,51 @@ function SubjectTree({ subject }: { subject: string }) {
         <WebLeaderboard subject={subject} subjectName={nexus.subject?.name} />
       ) : (
         <>
+          <NexusPalette
+            open={paletteOpen}
+            onClose={() => setPaletteOpen(false)}
+            clusters={webClusters ?? []}
+            streams={cachedStructure()?.streams ?? []}
+            commands={[
+              ...(cachedStructure()?.routes ?? []).map((r) => ({ id: `goal:${r.id}`, label: `Goal path: ${r.name}`, hint: goal === r.id ? 'active' : 'goal', run: () => setGoal(r.id) })),
+              ...(goal ? [{ id: 'goal:none', label: 'Clear the goal path', hint: 'goal', run: () => setGoal(null) }] : []),
+              { id: 'back', label: 'Back to every subject', hint: 'Esc', run: back },
+            ]}
+            onSubject={(id) => navigate({ search: `?subject=${encodeURIComponent(id)}` }, { state: location.state })}
+            onConcept={(k) => {
+              const [s2, ...rest] = k.split(':')
+              if (s2 === subject) setSelectedId(rest.join(':'))
+              else navigate({ search: `?subject=${encodeURIComponent(s2)}&node=${encodeURIComponent(rest.join(':'))}` }, { state: location.state })
+            }}
+          />
+          {(plan || (cachedStructure()?.routes ?? []).length > 0) && (
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <p className="mb-0 text-[12px] text-foreground-dim" role="status">
+                {plan && steps ? (
+                  steps.length ? (
+                    <>
+                      <span className="font-semibold text-warning">Goal path</span> · next here:{' '}
+                      {steps.slice(0, 3).map((id, i) => (
+                        <span key={id}>
+                          {i ? ' → ' : ''}
+                          <button type="button" className="cursor-pointer text-text-primary hover:underline" onClick={() => setSelectedId(id)}>
+                            {i + 1}. {nexus.nodes.find((n) => n.id === id)?.name}
+                          </button>
+                        </span>
+                      ))}
+                    </>
+                  ) : (
+                    <>
+                      <span className="font-semibold text-warning">Goal path</span> · nothing left here — the next steps are in other subjects.
+                    </>
+                  )
+                ) : (
+                  <span className="text-foreground-faint">Press ⌘K to search, or pick a goal path.</span>
+                )}
+              </p>
+              <GoalMenu routes={cachedStructure()?.routes ?? []} goal={goal} onGoal={setGoal} />
+            </div>
+          )}
           {/* Zone rail */}
           <div className="mb-4 flex gap-1.5 overflow-x-auto pb-1" role="navigation" aria-label="Zones">
             {zones.map((z) => (
@@ -466,6 +541,9 @@ function SubjectTree({ subject }: { subject: string }) {
                 selectedId={selectedId}
                 onSelect={(id) => setSelectedId(selectedId === id ? null : id)}
                 zoneWord={isDsa ? 'Zone' : 'Chapter'}
+                steps={steps}
+                highlight={highlight}
+                due={due}
               />
               {isDsa &&
                 (roadmap ? (
@@ -483,18 +561,24 @@ function SubjectTree({ subject }: { subject: string }) {
 
             <div>
               {selectedNode ? (
-                <NodePanel
-                  key={selectedNode.id}
-                  node={selectedNode}
-                  nodes={nodes}
-                  zoneColor={zoneColor}
-                  zoneName={zone?.name ?? `Zone ${selectedNode.zone}`}
-                  engine={isDsa ? 'dsa' : null}
-                  onClose={() => setSelectedId(null)}
-                  onJump={onJump}
-                  onSelect={(id) => setSelectedId(id)}
-                  studyHref={courseHref({ id: subject, engine: isDsa ? 'dsa' : null }, selectedNode.id)}
-                />
+                <ResponsivePanel open onClose={() => setSelectedId(null)} label={`${selectedNode.name} details`}>
+                  <NodePanel
+                    key={selectedNode.id}
+                    node={selectedNode}
+                    nodes={nodes}
+                    zoneColor={zoneColor}
+                    zoneName={zone?.name ?? `Zone ${selectedNode.zone}`}
+                    engine={isDsa ? 'dsa' : null}
+                    onClose={() => setSelectedId(null)}
+                    onJump={onJump}
+                    onSelect={(id) => setSelectedId(id)}
+                    studyHref={courseHref({ id: subject, engine: isDsa ? 'dsa' : null }, selectedNode.id)}
+                    due={due.has(selectedNode.id)}
+                    onReview={due.has(selectedNode.id) ? () => void startReview(subject, selectedNode.id, navigate) : undefined}
+                    shareHref={`/nexus?subject=${encodeURIComponent(subject)}&node=${encodeURIComponent(selectedNode.id)}`}
+                    hueOf={hueOf}
+                  />
+                </ResponsivePanel>
               ) : (
                 <SelectHint
                   text={
@@ -623,6 +707,33 @@ function RadialOverview() {
   }, [sel, detailApi.data, byKey])
   const selNodes = useMemo(() => (sel ? sel.c.nodes.map((n) => asNexusNode(sel.c, n)) : []), [sel])
 
+  // Goal path, review hints, the next step, where you left off, celebrations.
+  const { goal, plan, setGoal } = useGoal(structure?.routes ?? [], clusters)
+  const due = useMemo(() => {
+    const out = new Set<string>()
+    for (const c of clusters ?? []) for (const n of c.nodes) if (isDue(n)) out.add(`${c.id}:${n.id}`)
+    return out
+  }, [clusters])
+  const next = useMemo(() => (clusters ? findNextStep(clusters) : null), [clusters])
+  const resume = useMemo(() => (clusters ? continueFrom(clusters) : null), [clusters])
+  const celebrate = useCelebration(clusters, !refreshing && !!state)
+  const hueOf = useMemo(() => {
+    const hue = new Map((structure?.streams ?? []).map((x) => [x.id, x.hue]))
+    const of = new Map((clusters ?? []).map((c) => [c.id, hue.get(c.stream)]))
+    return (id: string) => of.get(id)
+  }, [structure, clusters])
+  const [paletteOpen, setPaletteOpen] = useState(false)
+  usePaletteHotkey(() => setPaletteOpen(true))
+  const run = (cmd: string) => window.dispatchEvent(new CustomEvent('nexus:command', { detail: cmd }))
+  const commands: PaletteCommand[] = [
+    { id: 'next', label: 'Jump to my next step', hint: 'command', icon: <Crosshair className="size-4" />, run: () => run('next') },
+    { id: 'fit', label: 'Fit the view', hint: '0', icon: <Maximize2 className="size-4" />, run: () => run('fit') },
+    { id: 'fullscreen', label: 'Toggle fullscreen', hint: 'F', icon: <Expand className="size-4" />, run: () => run('fullscreen') },
+    ...(structure?.routes ?? []).map((r) => ({ id: `goal:${r.id}`, label: `Goal path: ${r.name}`, hint: goal === r.id ? 'active' : 'goal', icon: <Icon name="flag" className="size-4" />, run: () => setGoal(r.id) })),
+    ...(goal ? [{ id: 'goal:none', label: 'Clear the goal path', hint: 'goal', icon: <Icon name="x" className="size-4" />, run: () => setGoal(null) }] : []),
+    ...(structure?.streams ?? []).map((st) => ({ id: `stream:${st.id}`, label: `Zoom to ${st.name}`, hint: 'stream', icon: <span className="block size-2.5 rounded-full" style={{ background: st.hue }} />, run: () => run(`stream:${st.id}`) })),
+  ]
+
   const allNodes = useMemo(() => (clusters ?? []).flatMap((c) => c.nodes), [clusters])
   const mastered = allNodes.filter((n) => n.s === 2).length
   const brief = useMemo(() => {
@@ -655,12 +766,23 @@ function RadialOverview() {
     return (
       <div>
         {header}
-        {error ? <ErrorState message={error} onRetry={() => refresh(true)} /> : <LoadingBlock rows={8} />}
+        {error ? (
+          <ErrorState message={error} onRetry={() => refresh(true)} />
+        ) : (
+          <>
+            <RankCardSkeleton />
+            <div className="mb-4 h-9" />
+            <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
+              <RadialSkeleton />
+            </div>
+          </>
+        )}
       </div>
     )
   }
   const player = state.player
   const selZone = sel?.c.zones.find((z) => z.level === sel.n.z)
+  const week = state.week
 
   return (
     <div>
@@ -689,6 +811,22 @@ function RadialOverview() {
             ) : (
               <p className="text-xs text-foreground-dim">Top web rank reached.</p>
             )}
+            {week && (
+              <p className="mb-0 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px] text-foreground-dim" aria-label="This week">
+                <span className="text-[10px] font-semibold tracking-wider text-foreground-faint uppercase">This week</span>
+                <span>
+                  <span className="font-mono text-foreground tabular-nums">{week.concepts}</span> concept{week.concepts === 1 ? '' : 's'} mastered
+                </span>
+                <span>
+                  <span className="font-mono text-foreground tabular-nums">+{formatNumber(week.xp)}</span> XP
+                </span>
+                {statsApi.data && (
+                  <span>
+                    <span className="font-mono text-foreground tabular-nums">{statsApi.data.streak.current}</span>-day streak
+                  </span>
+                )}
+              </p>
+            )}
           </div>
           <div className="flex items-center gap-4">
             <div className="text-center">
@@ -712,15 +850,49 @@ function RadialOverview() {
         </CardContent>
       </Card>
 
-      <Tabs
-        variant="pills"
-        className="mb-4"
-        items={[
-          { id: 'map', label: '/web', icon: <Icon name="map" className="size-3.5" aria-hidden="true" /> },
-          { id: 'ranks', label: '/ranks', icon: <Icon name="trophy" className="size-3.5" aria-hidden="true" />, badge: statsApi.data ? statsApi.data.allTitles.length : undefined },
-        ]}
-        active={tab}
-        onChange={(id) => setTab(id as 'map' | 'ranks')}
+      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <Tabs
+          variant="pills"
+          items={[
+            { id: 'map', label: '/web', icon: <Icon name="map" className="size-3.5" aria-hidden="true" /> },
+            { id: 'ranks', label: '/ranks', icon: <Icon name="trophy" className="size-3.5" aria-hidden="true" />, badge: statsApi.data ? statsApi.data.allTitles.length : undefined },
+          ]}
+          active={tab}
+          onChange={(id) => setTab(id as 'map' | 'ranks')}
+        />
+        {tab === 'map' && (
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            {resume && <ContinueChip name={resume.name} subjectName={resume.subjectName} onClick={() => openSubject(resume.subject, resume.key.split(':').slice(1).join(':'))} />}
+            <GoalMenu routes={structure?.routes ?? []} goal={goal} onGoal={setGoal} />
+            <Button variant="ghost" size="sm" className="nx-press hidden sm:inline-flex" onClick={() => setPaletteOpen(true)} aria-label="Search the Nexus (⌘K)">
+              <Icon name="search" className="size-3.5" aria-hidden="true" />
+              <kbd className="font-mono text-[10.5px] text-text-muted">⌘K</kbd>
+            </Button>
+          </div>
+        )}
+      </div>
+      {tab === 'map' && plan && (
+        <p className="-mt-2 mb-3 text-[12px] text-foreground-dim" role="status">
+          <span className="font-semibold text-warning">Goal path</span> · {plan.order.length} concepts ·{' '}
+          {plan.order.filter((k) => byKey.get(k)?.n.s === 2).length} mastered · next:{' '}
+          {plan.next.slice(0, 3).map((k, i) => (
+            <span key={k}>
+              {i ? ' → ' : ''}
+              <button type="button" className="cursor-pointer text-text-primary hover:underline" onClick={() => setSel(k)}>
+                {i + 1}. {byKey.get(k)?.n.n}
+              </button>
+            </span>
+          ))}
+        </p>
+      )}
+      <NexusPalette
+        open={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        clusters={clusters}
+        streams={structure?.streams ?? []}
+        commands={commands}
+        onSubject={(id) => openSubject(id)}
+        onConcept={(k) => setSel(k)}
       />
 
       {tab === 'ranks' ? (
@@ -759,31 +931,37 @@ function RadialOverview() {
                   total: allNodes.length,
                   streak: statsApi.data?.streak.current,
                 }}
+                route={plan}
+                due={due}
+                celebrate={celebrate}
+                nextStep={next}
               />
             ) : (
-              <Card>
-                <CardContent>
-                  <LoadingBlock rows={8} />
-                </CardContent>
-              </Card>
+              <RadialSkeleton />
             )}
           </div>
           <div>
             {selectedNode && sel ? (
-              <NodePanel
-                key={selKey!}
-                node={selectedNode}
-                nodes={selNodes}
-                zoneColor={selZone?.color ?? 'var(--color-primary)'}
-                zoneName={`${sel.c.short} · ${selZone?.name ?? `Zone ${selectedNode.zone}`}`}
-                detailLoading={detailApi.loading && !detailApi.data}
-                engine={sel.c.engine}
-                onClose={() => setSel(null)}
-                onJump={(l) => setSel(`${l.subject}:${l.id}`)}
-                onSelect={(id) => setSel(`${sel.c.id}:${id}`)}
-                onOpenPath={() => openSubject(sel.c.id, sel.n.id)}
-                studyHref={courseHref(sel.c, sel.n.id)}
-              />
+              <ResponsivePanel open onClose={() => setSel(null)} label={`${selectedNode.name} details`}>
+                <NodePanel
+                  key={selKey!}
+                  node={selectedNode}
+                  nodes={selNodes}
+                  zoneColor={selZone?.color ?? 'var(--color-primary)'}
+                  zoneName={`${sel.c.short} · ${selZone?.name ?? `Zone ${selectedNode.zone}`}`}
+                  detailLoading={detailApi.loading && !detailApi.data}
+                  engine={sel.c.engine}
+                  onClose={() => setSel(null)}
+                  onJump={(l) => setSel(`${l.subject}:${l.id}`)}
+                  onSelect={(id) => setSel(`${sel.c.id}:${id}`)}
+                  onOpenPath={() => openSubject(sel.c.id, sel.n.id)}
+                  studyHref={courseHref(sel.c, sel.n.id)}
+                  due={due.has(selKey!)}
+                  onReview={due.has(selKey!) ? () => void startReview(sel.c.id, sel.n.id, navigate) : undefined}
+                  shareHref={`/nexus?subject=${encodeURIComponent(sel.c.id)}&node=${encodeURIComponent(sel.n.id)}`}
+                  hueOf={hueOf}
+                />
+              </ResponsivePanel>
             ) : (
               <SelectHint text="Every subject is a sector, its zones are rings outward from you. Click a subject's name to open its own tree, or any skill to inspect it." />
             )}
