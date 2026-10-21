@@ -4,6 +4,7 @@
   "short": "STAT",
   "group": "beyond",
   "domain": "data",
+  "stream": "math",
   "order": 41,
   "icon": "trending-up",
   "color": "#c026d3",

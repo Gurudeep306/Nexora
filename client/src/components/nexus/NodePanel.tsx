@@ -1,13 +1,12 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { ArrowUpRight, BookOpen, ExternalLink, Lock, Play, Swords, X, Zap } from 'lucide-react'
-import { Badge, LoadingBlock, Progress } from '@/components/ui'
+import { Badge, Card, CardContent, LoadingBlock, Progress } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
 import { Icon } from '@/components/icon/Icon'
-import { nodeIcon } from './icons'
 import type { CrossLink, NexusNode, NexusPyqsResponse, SkillProblemsResponse } from './types'
 
 function statusBadge(status: string) {
@@ -175,20 +174,11 @@ export function NodePanel({
   const body = (
     <>
           <div className="flex items-start justify-between gap-2">
-            <div className="flex min-w-0 gap-2.5">
-              <span
-                className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full border"
-                style={{ borderColor: zoneColor, color: zoneColor }}
-                aria-hidden="true"
-              >
-                <Icon name={nodeIcon(node.icon)} className="size-4" />
-              </span>
-              <div className="min-w-0">
-                <p className="text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
-                  {zoneName} · {kind}
-                </p>
-                <h2 className="mt-1 font-display text-lg tracking-wide text-foreground">{node.name}</h2>
-              </div>
+            <div>
+              <p className="text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
+                {zoneName} · {kind}
+              </p>
+              <h2 className="mt-1 font-display text-lg tracking-wide text-foreground">{node.name}</h2>
             </div>
             <button
               type="button"
@@ -203,7 +193,7 @@ export function NodePanel({
           {detailLoading ? <LoadingBlock rows={2} /> : <p className="text-sm text-foreground-dim">{node.desc}</p>}
           {onOpenPath && (
             <button type="button" onClick={onOpenPath} className="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-accent-brand hover:underline">
-              Open the full path <ArrowUpRight className="size-3" aria-hidden="true" />
+              Open this subject's tree <ArrowUpRight className="size-3" aria-hidden="true" />
             </button>
           )}
 
@@ -356,8 +346,10 @@ export function NodePanel({
     return <div className="nx-panel nx-sheet-body space-y-5">{body}</div>
   }
   return (
-    <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 320, damping: 30 }}>
-      <div className="nx-panel nx-side sticky top-36 space-y-4">{body}</div>
+    <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2, ease: 'easeOut' }}>
+      <Card glow className="sticky top-4">
+        <CardContent className="space-y-4">{body}</CardContent>
+      </Card>
     </motion.div>
   )
 }

@@ -1,0 +1,59 @@
+{
+  "_doc": "Streams group subjects on the radial Nexus overview. Order is the order around the circle (related streams adjacent). Each subject file names its stream.",
+  "streams": [
+    {
+      "id": "core-cs",
+      "name": "GATE Core CS",
+      "hue": "#5b8cff",
+      "order": 1
+    },
+    {
+      "id": "math",
+      "name": "Mathematics",
+      "hue": "#8b5cf6",
+      "order": 2
+    },
+    {
+      "id": "ai-data",
+      "name": "AI & Data",
+      "hue": "#ec4899",
+      "order": 3
+    },
+    {
+      "id": "languages",
+      "name": "Programming Languages",
+      "hue": "#f59e0b",
+      "order": 4
+    },
+    {
+      "id": "web-app",
+      "name": "Web & App",
+      "hue": "#10b981",
+      "order": 5
+    },
+    {
+      "id": "software-engineering",
+      "name": "Software Engineering",
+      "hue": "#14b8a6",
+      "order": 6
+    },
+    {
+      "id": "systems-cloud",
+      "name": "Systems & Cloud",
+      "hue": "#06b6d4",
+      "order": 7
+    },
+    {
+      "id": "security",
+      "name": "Security",
+      "hue": "#ef4444",
+      "order": 8
+    },
+    {
+      "id": "theory-frontier",
+      "name": "Theory & Frontier",
+      "hue": "#a78bfa",
+      "order": 9
+    }
+  ]
+}

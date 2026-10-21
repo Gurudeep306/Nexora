@@ -4,6 +4,7 @@
   "short": "PAR",
   "group": "beyond",
   "domain": "systems",
+  "stream": "systems-cloud",
   "order": 51,
   "icon": "cpu",
   "color": "#f97316",

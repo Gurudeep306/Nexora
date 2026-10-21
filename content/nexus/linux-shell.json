@@ -4,6 +4,7 @@
   "short": "SH",
   "group": "beyond",
   "domain": "tools",
+  "stream": "systems-cloud",
   "order": 31,
   "icon": "terminal",
   "color": "#4b5563",

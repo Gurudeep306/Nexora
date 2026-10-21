@@ -69,3 +69,11 @@ solve-count progress come from code (`src/nexus/dsa-nodes.js`).
   - The subject rank is the mean node mastery, shown as Novice, Apprentice, Adept, Expert
     or Master, plus `rankTitle`.
   - The web rank adds every subject's concept XP on top of DSA XP.
+
+## Streams
+
+Every subject names its `stream` (for example `"stream": "math"`). Streams are
+listed in `_streams.json` with a display name, an accent hue and their order
+around the radial overview; related streams sit next to each other so the
+connections between subjects stay short. `npm run nexus:check` rejects a
+subject without a stream or with one that `_streams.json` does not list.

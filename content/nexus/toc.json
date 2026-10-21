@@ -4,6 +4,7 @@
   "short": "TOC",
   "group": "gate",
   "domain": "core-cs",
+  "stream": "core-cs",
   "order": 7,
   "icon": "shapes",
   "color": "#eab308",

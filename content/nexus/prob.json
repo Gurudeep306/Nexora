@@ -4,6 +4,7 @@
   "short": "P&S",
   "group": "gate",
   "domain": "math",
+  "stream": "math",
   "order": 12,
   "icon": "chart",
   "color": "#d946ef",

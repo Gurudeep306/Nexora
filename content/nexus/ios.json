@@ -4,6 +4,7 @@
   "short": "IOS",
   "group": "beyond",
   "domain": "web-mobile",
+  "stream": "web-app",
   "order": 61,
   "icon": "gem",
   "color": "#3b82f6",
