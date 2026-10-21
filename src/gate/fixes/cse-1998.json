@@ -398,6 +398,22 @@
       "after": null,
       "reason": "Question resolved; see needsReview fix.",
       "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-a-15",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Scan checked and the key reasoned out (see reviewNote).",
+      "source": "GATE 1998 paper (GATE_PYQ/GATE1998.pdf p. 2, Q1.15) matches the bank text; key D also on GATE Overflow (gateoverflow.in/1652)."
+    },
+    {
+      "id": "cse-1998-a-15",
+      "field": "reviewNote",
+      "before": "None of the options matches the standard TTL V_IH = 2.0 V; answer not verified (gateoverflow page could not be fetched).",
+      "after": "Standard TTL has V_IH = 2.0 V, so no option states the threshold itself. Key D is the only option whose voltages (2.8 V up to V_CC) are all valid logic 1s: A is unbounded above V_CC, B and C include logic-0 and undefined levels.",
+      "reason": "Explain the key.",
+      "source": "GATE 1998 paper (GATE_PYQ/GATE1998.pdf p. 2, Q1.15) matches the bank text; key D also on GATE Overflow (gateoverflow.in/1652)."
     }
   ]
 }
