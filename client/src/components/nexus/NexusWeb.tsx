@@ -50,10 +50,10 @@ const MAX_K = 3
 const LABEL_K = 1.15 // concept names from this zoom (collision-culled)
 const HOME_K = 0.62 // the teaser's density
 const HOME_K_PHONE = 0.5
-const TILT = 22 // degrees: the web plane leans back
+const TILT = 26 // degrees: the web plane leans back
 const PERSPECTIVE = 1000
-const PLANE_W = 1.36 // the plane is larger than the window so the tilt never shows an edge
-const PLANE_H = 1.45
+const PLANE_W = 1.42 // the plane is larger than the window so the tilt never shows an edge
+const PLANE_H = 1.62
 const { C1, C2, C3 } = BRAND
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v))
@@ -76,9 +76,11 @@ export const NexusWeb = forwardRef<
     /** First pointer / wheel / key interaction (the hint fades out). */
     onInteract?: () => void
     initialCamera?: Camera | null
+    /** The details sheet is open: the selection's floating text steps aside. */
+    quiet?: boolean
     ranks?: Record<string, RegionRank>
   }
->(function NexusWeb({ clusters, selected, onSelect, onOpenSubject, onOpenDetails, onInteract, initialCamera, ranks }, ref) {
+>(function NexusWeb({ clusters, selected, onSelect, onOpenSubject, onOpenDetails, onInteract, initialCamera, ranks, quiet = false }, ref) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const planeRef = useRef<HTMLDivElement>(null)
   const midRef = useRef<HTMLCanvasElement>(null)
@@ -138,6 +140,8 @@ export const NexusWeb = forwardRef<
   const cbs = useRef({ onSelect, onOpenSubject, onOpenDetails, onInteract })
   cbs.current = { onSelect, onOpenSubject, onOpenDetails, onInteract }
   const ranksRef = useRef(ranks)
+  const quietRef = useRef(quiet)
+  quietRef.current = quiet
   ranksRef.current = ranks
   useEffect(() => {
     dirtyStatic.current = true
@@ -482,7 +486,7 @@ export const NexusWeb = forwardRef<
           const base = P(i, 0)
           if (base.x < -30 || base.x > w + 30 || base.y < -30 || base.y > h + 30) continue
           const hov = cn.key === hovered.current ? hoverEase.current : 0
-          const lift = farZ ? 0 : (cn.node.s === 2 ? 11 : 7) + 10 * hov
+          const lift = farZ ? 0 : (cn.node.s === 2 ? 16 : 10) + 12 * hov
           const top = lift ? P(i, lift * (reduce ? 0.6 : 1)) : base
           list.push({ key: cn.key, x: top.x, y: top.y })
           const st = style(cn.node.s, paths.colors[web.bucket[i]])
@@ -598,6 +602,18 @@ export const NexusWeb = forwardRef<
         [0, h - 128, Math.min(w, 620), h - 84],
       ]
       const fc = focus?.cluster.id
+      const sel = selectedRef.current ? web.concepts.get(selectedRef.current) : null
+      const selP = sel ? list.find((x) => x.key === sel.key) : null
+      let selBox: { bx: number; by: number; blockW: number } | null = null
+      if (sel && selP && !growing && !quietRef.current) {
+        ctx.font = `600 17px ${font}`
+        const blockW = Math.max(ctx.measureText(sel.node.n).width, 220)
+        const right = selP.x + 24 + blockW < w - 16
+        const bx = right ? selP.x + 24 : selP.x - 24 - blockW
+        const by = clamp(selP.y - 32, 100, h - 200)
+        selBox = { bx, by, blockW }
+        taken.push([bx - 12, by - 10, bx + blockW + 12, by + 104])
+      }
       const fade = growing ? 0 : clamp((now - labelsFrom) / 900)
       if (fade > 0) {
         const regions = [...web.regions].sort((a, b) => b.cluster.nodes.length - a.cluster.nodes.length)
@@ -628,15 +644,9 @@ export const NexusWeb = forwardRef<
       }
 
       openHit.current = null
-      const sel = selectedRef.current ? web.concepts.get(selectedRef.current) : null
-      const selP = sel ? list.find((x) => x.key === sel.key) : null
-      if (sel && selP && !growing) {
+      if (sel && selBox) {
+        const { bx, by } = selBox
         ctx.font = `600 17px ${font}`
-        const nameW = ctx.measureText(sel.node.n).width
-        const blockW = Math.max(nameW, 220)
-        const right = selP.x + 24 + blockW < w - 16
-        const bx = right ? selP.x + 24 : selP.x - 24 - blockW
-        const by = clamp(selP.y - 32, 100, h - 200)
         ctx.textAlign = 'left'
         ctx.textBaseline = 'top'
         ctx.lineWidth = 4
@@ -671,7 +681,6 @@ export const NexusWeb = forwardRef<
         ctx.fillText(open, bx, by + 76)
         ctx.fillRect(bx, by + 92, ow, 1)
         openHit.current = { x: bx - 4, y: by + 70, w: ow + 8, h: 28, key: sel.key }
-        taken.push([bx - 8, by - 6, bx + blockW + 8, by + 100])
       }
 
       ctx.textAlign = 'center'
