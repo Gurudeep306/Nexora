@@ -225,6 +225,8 @@ export const NexusWeb = forwardRef<
     const octx = off.getContext('2d')!
     let offCam: Camera | null = null
     let labelsFrom = 0
+    let markedWeb = false
+    let markedConcepts = false
     let raf = 0
     const font = getComputedStyle(wrap).fontFamily || 'system-ui, sans-serif'
     if (born.current === null) born.current = reduce || initialCamera ? -1 : performance.now()
@@ -537,6 +539,15 @@ export const NexusWeb = forwardRef<
         }
       }
       projected.current = list
+      // Performance marks: the first frame with the web, and with its concepts.
+      if (!markedWeb) {
+        markedWeb = true
+        performance.mark("nexus:first-web-paint")
+      }
+      if (!markedConcepts && list.length) {
+        markedConcepts = true
+        performance.mark("nexus:first-concepts-paint")
+      }
 
       // Focus: the path from YOU (teal) and what it unlocks (violet), arcing
       // softly off the plane.
