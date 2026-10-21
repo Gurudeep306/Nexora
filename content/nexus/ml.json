@@ -4,6 +4,7 @@
   "short": "ML",
   "group": "beyond",
   "domain": "ai",
+  "stream": "ai-data",
   "order": 15,
   "icon": "brain",
   "color": "#6366f1",

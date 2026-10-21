@@ -4,6 +4,7 @@
   "short": "CV",
   "group": "beyond",
   "domain": "ai",
+  "stream": "ai-data",
   "order": 44,
   "icon": "eye",
   "color": "#2563eb",

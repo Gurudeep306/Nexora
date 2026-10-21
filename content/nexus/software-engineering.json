@@ -4,6 +4,7 @@
   "short": "SE",
   "group": "beyond",
   "domain": "software-engineering",
+  "stream": "software-engineering",
   "order": 41,
   "icon": "wrench",
   "color": "#0ea5e9",

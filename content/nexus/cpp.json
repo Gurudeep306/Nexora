@@ -4,6 +4,7 @@
   "short": "C++",
   "group": "beyond",
   "domain": "languages",
+  "stream": "languages",
   "order": 22,
   "icon": "code",
   "color": "#00599c",

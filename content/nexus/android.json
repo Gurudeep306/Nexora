@@ -4,6 +4,7 @@
   "short": "ANDR",
   "group": "beyond",
   "domain": "web-mobile",
+  "stream": "web-app",
   "order": 60,
   "icon": "monitor",
   "color": "#22c55e",

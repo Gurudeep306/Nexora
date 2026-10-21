@@ -4,6 +4,7 @@
   "short": "ROBO",
   "group": "beyond",
   "domain": "ai",
+  "stream": "ai-data",
   "order": 48,
   "icon": "bot",
   "color": "#ea580c",

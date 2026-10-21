@@ -4,6 +4,7 @@
   "short": "EMB",
   "group": "beyond",
   "domain": "systems",
+  "stream": "systems-cloud",
   "order": 55,
   "icon": "bolt",
   "color": "#65a30d",

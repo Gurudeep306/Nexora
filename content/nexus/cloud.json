@@ -4,6 +4,7 @@
   "short": "CLD",
   "group": "beyond",
   "domain": "systems",
+  "stream": "systems-cloud",
   "order": 52,
   "icon": "globe",
   "color": "#0284c7",

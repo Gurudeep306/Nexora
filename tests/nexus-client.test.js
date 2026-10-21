@@ -1,6 +1,7 @@
-// The Nexus web's client logic (client/src/components/nexus/lattice.ts):
-// layout determinism (what the version-keyed layout cache relies on),
-// hit-testing, goal routes, lineage, keystones, next step and memory.
+// The radial Nexus layout (client/src/components/nexus/radial.ts): one
+// tree of every subject — sectors per subject, zones as concentric rings —
+// deterministic (what the version-keyed layout cache relies on), plus
+// hit-testing and the focus chain.
 // Node strips the TypeScript types itself (22.18+ / 23.6+).
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -11,7 +12,7 @@ const { NEXUS_NODES } = require('../src/nexus/dsa-nodes');
 let L = null;
 test.before(async () => {
   try {
-    L = await import(path.join(__dirname, '..', 'client', 'src', 'components', 'nexus', 'lattice.ts'));
+    L = await import(path.join(__dirname, '..', 'client', 'src', 'components', 'nexus', 'radial.ts'));
   } catch (e) {
     L = { error: e };
   }
@@ -28,53 +29,67 @@ const need = (t) => {
 function structure() {
   const reg = subjects.loadRegistry(NEXUS_NODES);
   const dsaZones = [...new Set(NEXUS_NODES.map((n) => n.zone))].map((level) => ({ level, nodesCompleted: 0, nodeCount: 0, zoneProgress: 0, name: `Z${level}`, color: '#fff' }));
-  return subjects.webStructure(reg, { zones: dsaZones });
-}
-// Clusters with a given state per node: (clusterId, node) => s.
-function clustersFrom(st, stateOf = () => 0) {
-  return st.clusters.map((c) => ({
-    ...c,
-    zones: c.zones.map((z) => ({ ...z, nodesCompleted: 0, nodeCount: 0, zoneProgress: 0, locked: false, current: false, completed: false })),
-    nodes: c.nodes.map((n) => ({ ...n, p: 0, s: stateOf(c.id, n), c: '', ag: -1, iv: 0, rc: 0 })),
-  }));
+  const st = subjects.webStructure(reg, { zones: dsaZones });
+  // The layout's input, as layoutCache.ts builds it.
+  const rank = new Map(st.streams.map((x) => [x.id, x.order]));
+  return { ...st, clusters: st.clusters.map((c) => ({ ...c, streamOrder: rank.get(c.stream) ?? 99 })) };
 }
 
-test('the layout is deterministic for a structure version, and prerequisites sit nearer YOU', (t) => {
+test('radial layout: deterministic, every skill placed once, zones as rings outward', (t) => {
   if (!need(t)) return;
   const st = structure();
-  const a = L.computeLayout(st.clusters, st.version);
-  const b = L.computeLayout(st.clusters, st.version);
-  assert.equal(a.version, st.version);
-  assert.deepEqual(Array.from(a.pins), Array.from(b.pins), 'same structure → same layout (safe to cache by version)');
-  assert.deepEqual(Array.from(a.xy.slice(0, 200)), Array.from(b.xy.slice(0, 200)));
-  assert.equal(a.keys.length, st.clusters.reduce((n, c) => n + c.nodes.length, 0));
-  assert.ok(Array.from(a.pins).every((p) => p >= 0), 'every concept is pinned');
-  assert.equal(new Set(a.pins).size, a.pins.length, 'one concept per lattice point');
-  // Every reached lattice point hangs off the tree.
-  let orphans = 0;
-  for (let i = 0; i < a.parent.length; i++) if (i !== a.origin && a.parent[i] < 0) orphans++;
-  assert.ok(orphans / a.parent.length < 0.01);
-  const web = L.assemble(a, clustersFrom(st));
-  const r = (k) => {
-    const c = web.concepts.get(k);
-    return Math.hypot(web.xy[2 * c.pt] - web.xy[2 * web.origin], web.xy[2 * c.pt + 1] - web.xy[2 * web.origin + 1]);
-  };
-  let closer = 0;
-  let pairs = 0;
-  for (const c of web.concepts.values()) {
-    for (const p of c.prereqs) {
-      pairs++;
-      if (r(p) < r(c.key)) closer++;
+  const a = L.computeRadial(st.clusters, st.version);
+  const b = L.computeRadial(st.clusters, st.version);
+  assert.deepEqual(Array.from(a.xy), Array.from(b.xy), 'same structure → same layout (safe to cache by version)');
+  const total = st.clusters.reduce((n, c) => n + c.nodes.length, 0);
+  assert.equal(a.keys.length, total);
+  assert.equal(a.sectors.length, st.clusters.length, 'one sector per subject');
+  // Streams are contiguous sectors, in their order, holding exactly their subjects.
+  assert.deepEqual(a.streams.map((x) => x.id), st.streams.map((x) => x.id));
+  for (const sct of a.sectors) {
+    const stream = st.clusters.find((c) => c.id === sct.id).stream;
+    const arc = a.streams.find((x) => x.id === stream);
+    assert.ok(sct.a0 >= arc.a0 - 1e-9 && sct.a1 <= arc.a1 + 1e-9, `${sct.id} inside ${stream}`);
+  }
+  // Rings are concentric, in zone order, and each skill sits inside its zone's ring.
+  for (let i = 1; i < a.rings.length; i++) {
+    assert.ok(a.rings[i].level > a.rings[i - 1].level);
+    assert.equal(a.rings[i].r0, a.rings[i - 1].r1);
+  }
+  const ring = new Map(a.rings.map((g) => [g.level, g]));
+  const zoneOf = new Map();
+  for (const c of st.clusters) for (const n of c.nodes) zoneOf.set(`${c.id}:${n.id}`, n.z);
+  a.keys.forEach((k, i) => {
+    const r = Math.hypot(a.xy[2 * i], a.xy[2 * i + 1]);
+    const g = ring.get(zoneOf.get(k));
+    assert.ok(r > g.r0 && r < g.r1, `${k} inside ring ${g.level}`);
+  });
+  // Each skill sits in its own subject's sector.
+  a.keys.forEach((k, i) => {
+    const s = L.sectorAt(a, a.xy[2 * i], a.xy[2 * i + 1]);
+    assert.equal(s && s.id, k.split(':')[0], `${k} in its sector`);
+  });
+  // Orbs never overlap (an orb with its name needs more than its diameter).
+  let minD = Infinity;
+  for (let i = 0; i < a.keys.length; i++) {
+    for (let j = i + 1; j < a.keys.length; j++) minD = Math.min(minD, Math.hypot(a.xy[2 * i] - a.xy[2 * j], a.xy[2 * i + 1] - a.xy[2 * j + 1]));
+  }
+  assert.ok(minD >= L.NODE * 2, `closest orbs ${Math.round(minD)} apart`);
+  // Prerequisites in an earlier zone sit nearer the centre.
+  const at = new Map(a.keys.map((k, i) => [k, Math.hypot(a.xy[2 * i], a.xy[2 * i + 1])]));
+  for (const c of st.clusters) {
+    for (const n of c.nodes) {
+      for (const r of n.req) {
+        const p = c.nodes.find((x) => x.id === r);
+        if (p && p.z < n.z) assert.ok(at.get(`${c.id}:${r}`) < at.get(`${c.id}:${n.id}`));
+      }
     }
   }
-  assert.ok(closer / pairs > 0.97, `prerequisites nearer the origin: ${closer}/${pairs}`);
   // A changed structure gets a different layout.
-  const st2 = { ...st, clusters: st.clusters.slice(1) };
-  const c2 = L.computeLayout(st2.clusters, 'other');
-  assert.notEqual(c2.keys.length, a.keys.length);
+  assert.notEqual(L.computeRadial(st.clusters.slice(1), 'other').keys.length, a.keys.length);
 });
 
-test('hit-testing: the grid finds the nearest point within the radius, in O(1) cells', (t) => {
+test('hit-testing: the grid finds the nearest point within the radius', (t) => {
   if (!need(t)) return;
   const g = new L.HitGrid(28);
   g.add('a', 100, 100);
@@ -87,45 +102,20 @@ test('hit-testing: the grid finds the nearest point within the radius, in O(1) c
   assert.deepEqual(g.position('c'), { x: 400, y: 300 });
   g.clear();
   assert.equal(g.nearest(100, 100, 14), null);
-  // Many points: still exact.
   for (let i = 0; i < 2000; i++) g.add(`p${i}`, (i * 37) % 1400, (i * 53) % 900);
   const target = g.position('p777');
   assert.equal(g.nearest(target.x + 1, target.y - 1, 6), 'p777');
 });
 
-test('goal routes: prerequisites first, nothing missing, next steps skip what is mastered', (t) => {
+test('focus chain: every prerequisite and everything it leads to, nothing else', (t) => {
   if (!need(t)) return;
-  const st = structure();
-  const mastered = new Set(['dsa:bit_basics']);
-  const web = L.assemble(L.computeLayout(st.clusters, st.version), clustersFrom(st, (c, n) => (mastered.has(`${c}:${n.id}`) ? 2 : n.req.length ? 0 : 1)));
-  const plan = L.routePlan(web, ['dbms']);
-  const pos = new Map(plan.order.map((k, i) => [k, i]));
-  for (const k of plan.order) for (const p of web.concepts.get(k).prereqs) assert.ok(pos.get(p) < pos.get(k), `${p} before ${k}`);
-  assert.ok(plan.order.includes('dsa:gb_trees'), 'cross-subject prerequisites are on the route');
-  assert.ok(plan.order.includes('dbms:bplus-trees'));
-  assert.equal(plan.next.length, 5);
-  assert.ok(!plan.next.includes('dsa:bit_basics'), 'mastered steps are skipped');
-  const routes = st.routes;
-  for (const r of routes) assert.ok(L.routePlan(web, r.subjects).order.length > 10, r.id);
-});
-
-test('lineage, keystones, next best step and memory', (t) => {
-  if (!need(t)) return;
-  const st = structure();
-  const web = L.assemble(L.computeLayout(st.clusters, st.version), clustersFrom(st, (c, n) => (n.req.length ? 0 : 1)));
-  const chain = L.longestChain(web, 'dbms:bplus-trees');
-  assert.equal(chain.at(-1), 'dbms:bplus-trees');
-  for (let i = 1; i < chain.length; i++) assert.ok(web.concepts.get(chain[i]).prereqs.includes(chain[i - 1]), 'each step is a real prerequisite');
-  assert.ok(web.concepts.get(chain[0]).prereqs.length === 0, 'starts at a root');
-  const ks = L.keystones(web);
-  const counts = L.unlockCounts(web);
-  const top = Math.max(...counts.values());
-  assert.ok(ks.size >= 1 && [...ks].some((k) => counts.get(k) === top));
-  const next = L.nextBestStep(web, null);
-  assert.equal(web.concepts.get(next).node.s, 1, 'the next step is open');
-  // Memory: fresh right after review, half-life ≈ 2 × the interval (≥ 3 days).
-  assert.equal(L.retention({ s: 1, ag: 5, iv: 2 }), 1, 'only mastered concepts fade');
-  assert.equal(L.retention({ s: 2, ag: -1, iv: 0 }), 1, 'no review data: no fading');
-  assert.ok(Math.abs(L.retention({ s: 2, ag: 4, iv: 2 }) - 0.5) < 1e-9);
-  assert.ok(L.retention({ s: 2, ag: 0, iv: 2 }, 90) < L.retention({ s: 2, ag: 0, iv: 2 }, 7));
+  const pre = new Map([
+    ['s:a', []],
+    ['s:b', ['s:a']],
+    ['s:c', ['s:b']],
+    ['s:d', []],
+    ['t:e', ['s:c']],
+  ]);
+  assert.deepEqual([...L.lineage(pre, 's:b')].sort(), ['s:a', 's:b', 's:c', 't:e']);
+  assert.deepEqual([...L.lineage(pre, 's:d')], ['s:d']);
 });

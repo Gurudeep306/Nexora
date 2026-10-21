@@ -4,6 +4,7 @@
   "short": "DM",
   "group": "gate",
   "domain": "math",
+  "stream": "math",
   "order": 10,
   "icon": "puzzle",
   "color": "#ef4444",

@@ -4,6 +4,7 @@
   "short": "PY",
   "group": "beyond",
   "domain": "languages",
+  "stream": "languages",
   "order": 20,
   "icon": "code",
   "color": "#3776ab",
