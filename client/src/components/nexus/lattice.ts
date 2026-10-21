@@ -383,7 +383,7 @@ export function unlockCounts(web: Pick<Web, 'concepts'>): Map<string, number> {
 }
 
 /** Keystones: the concepts that unlock the most (top share, at least `min`). */
-export function keystones(web: Pick<Web, 'concepts'>, share = 0.025, min = 8): Set<string> {
+export function keystones(web: Pick<Web, 'concepts'>, share = 0.012, min = 10): Set<string> {
   const counts = [...unlockCounts(web)].filter(([, n]) => n >= min).sort((a, b) => b[1] - a[1])
   return new Set(counts.slice(0, Math.max(1, Math.round(web.concepts.size * share))).map(([k]) => k))
 }
