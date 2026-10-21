@@ -296,23 +296,33 @@
       "verification": "For n instructions: 12n vs (6+n−1)·6 ≈ 6n, ratio → 2."
     },
     "it-2007-cs-7": {
-      "approach": "In a NAND S̄R̄ latch, input 00 forces both outputs to 1; switching both inputs to 11 simultaneously creates a race and can make the latch oscillate.",
+      "approach": "Concept tested: **the release race of a NAND latch**. Oscillation needs the symmetric forbidden state ($Q = \\overline{Q} = 1$ for inputs 00) followed by **both** inputs releasing together (to 11), so the two gates switch in step.",
       "concepts": [
-        "NAND SR latch",
-        "Race condition"
+        "NAND latch",
+        "Forbidden input",
+        "Race",
+        "Oscillation"
       ],
+      "given": "A cross-coupled NAND SR latch receives two input pairs in succession.",
       "steps": [
         {
-          "title": "Invalid state",
-          "body": "With NAND gates the inputs are active-low: $S\\!R=00$ gives $Q=\\bar Q=1$."
+          "title": "Only 00 gives a symmetric state",
+          "body": "With 00 both gates see a controlling 0: $Q = \\overline{Q} = 1$. Every other input pair gives complementary outputs or holds them."
         },
         {
-          "title": "Release both",
-          "body": "Changing to $11$ (hold) at the same instant: both NANDs see 1,1 and try to go to 0 together, then both back to 1… With identical delays this repeats — oscillation (metastability)."
+          "title": "Release 00 → 11",
+          "body": "Now each gate sees 1, 1 and outputs 0: both outputs fall together. One delay later each sees a 0 and outputs 1: both rise together. With equal gate delays the pair alternates 11, 00, 11, … for ever.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "The other sequences settle",
+          "body": "11 → 00: hold, then the forbidden state, which is stable while held. 01 → 10 and 10 → 01: a set followed by a reset (or the reverse), each ending in a stable complementary state."
         }
       ],
       "answer": {
-        "value": "00, 11",
+        "value": "(D) 00, 11",
         "choice": [
           "D"
         ],
@@ -322,25 +332,63 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "11 (hold) then 00 just forces both outputs to 1 — no race yet."
+          "reason": "11 then 00 goes **into** the forbidden state, which is stable while held ($Q = \\overline{Q} = 1$)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "01 then 10: a clean set/reset — stable."
+          "reason": "Set then reset: each step ends in a stable state."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "10 then 01: a clean reset/set — stable."
+          "reason": "Reset then set: each step ends in a stable state."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "00 followed by 11 releases the forbidden state simultaneously — may oscillate."
+          "reason": "Leaving the forbidden 00 with both inputs at once makes both gates switch together and race."
         }
       ],
-      "verification": "Same reasoning as the NOR latch where 11 → 00 causes the race; for NAND the roles of 0 and 1 swap."
+      "pitfalls": [
+        "Picking 11, 00 because 00 is \"the forbidden input\": the oscillation comes from leaving it, not entering it.",
+        "Using the NOR latch's sequence (11 → 00) for a NAND latch."
+      ],
+      "verification": "Gate-delay simulation of the NAND latch with equal delays: after 00 → 11 the outputs alternate 00, 11 and never settle; the other three sequences settle within two gate delays.",
+      "animation": {
+        "kind": "table",
+        "title": "NAND latch after 00 → 11 (equal delays)",
+        "cols": [
+          "Q",
+          "Q̄"
+        ],
+        "rows": [
+          [
+            1,
+            1
+          ],
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "held 00",
+          "+1 delay",
+          "+2 delays",
+          "+3 delays"
+        ],
+        "reveal": 1
+      }
     },
     "it-2007-cs-8": {
       "approach": "Concept tested: **an AND gate from two cascaded 2:1 MUXes**. Try each option's wiring: evaluate MUX 1, then MUX 2, and compare with $ab$.",
@@ -2715,110 +2763,36 @@
       "verification": "Checked final values of R2 and Loc for all four rewrites."
     },
     "it-2007-cs-40": {
-      "approach": "Each clock: new left bit = input XOR rightmost bit, and the register shifts right. Simulate six clocks from 0110; the input 101101 is a palindrome, so the feed order does not matter.",
+      "approach": "Concept tested: **an LFSR with a serial input**. At each clock the leftmost cell takes input ⊕ rightmost cell and the register shifts right; compute the XOR from the old contents, then slide.",
       "concepts": [
-        "Linear feedback shift register",
-        "XOR",
+        "LFSR",
+        "Serial input",
+        "XOR feedback",
         "Shift register"
       ],
+      "given": "A 4-cell register holding 0110; the XOR of the serial input and the rightmost cell feeds the leftmost cell; input 101101.",
       "steps": [
         {
-          "title": "Rule per clock",
-          "body": "Let the register be $r_1r_2r_3r_4$ (left to right). On each clock: $r_1 \\leftarrow x \\oplus r_4$, and $r_2r_3r_4 \\leftarrow r_1r_2r_3$."
-        },
-        {
-          "title": "Clocks 1–3",
-          "body": "$1\\oplus0=1$: 0110 → **1011**. $0\\oplus1=1$: → **1101**. $1\\oplus1=0$: → **0110**. After 3 bits the register is back to its start.",
+          "title": "First three inputs",
+          "body": "0110, in 1: $1 \\oplus 0 = 1$ → 1011. In 0: $0 \\oplus 1 = 1$ → 1101. In 1: $1 \\oplus 1 = 0$ → 0110.",
           "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "r": 3,
-                "tone": "warning"
-              }
-            ]
+            "reveal": 4
           }
         },
         {
-          "title": "Clocks 4–6",
-          "body": "The remaining input bits 1, 0, 1 are the same as the first three, so the same cycle repeats: 1011 → 1101 → **0110**. Final value: 0110 (option A).",
+          "title": "Last three inputs",
+          "body": "They are again 1, 0, 1 and the register is again 0110, so the same three steps repeat: 1011, 1101, 0110.",
           "scene": {
-            "reveal": 35,
-            "hl": [
-              {
-                "r": 6,
-                "tone": "success"
-              }
-            ]
+            "reveal": 7
           }
+        },
+        {
+          "title": "Input order",
+          "body": "101101 reads the same in both directions, so whichever end of the string enters first, the result is the same."
         }
       ],
-      "animation": {
-        "kind": "table",
-        "title": "LFSR state per clock",
-        "cols": [
-          "clock",
-          "input x",
-          "r4 (fed back)",
-          "x ⊕ r4 → r1",
-          "register r1 r2 r3 r4"
-        ],
-        "rows": [
-          [
-            "0",
-            "—",
-            "—",
-            "—",
-            "0 1 1 0"
-          ],
-          [
-            "1",
-            "1",
-            "0",
-            "1",
-            "1 0 1 1"
-          ],
-          [
-            "2",
-            "0",
-            "1",
-            "1",
-            "1 1 0 1"
-          ],
-          [
-            "3",
-            "1",
-            "1",
-            "0",
-            "0 1 1 0"
-          ],
-          [
-            "4",
-            "1",
-            "0",
-            "1",
-            "1 0 1 1"
-          ],
-          [
-            "5",
-            "0",
-            "1",
-            "1",
-            "1 1 0 1"
-          ],
-          [
-            "6",
-            "1",
-            "1",
-            "0",
-            "0 1 1 0"
-          ]
-        ],
-        "reveal": 5,
-        "mono": true
-      },
       "answer": {
-        "value": "0110",
+        "value": "(A) 0110",
         "choice": [
           "A"
         ],
@@ -2828,28 +2802,87 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: the state returns to 0110 after every 3 input bits 1, 0, 1."
+          "reason": "The simulated final contents."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "1011 is the state after clock 1 (and 4), not the final one."
+          "reason": "1011 is the contents after the 1st (and the 4th) input, one clock too early in the cycle."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "1101 is the state after clock 2 (and 5)."
+          "reason": "1101 is the contents after the 2nd (and the 5th) input."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "1111 never occurs in this sequence."
+          "reason": "1111 never appears: the register only visits 1011, 1101 and 0110 for this input."
         }
       ],
+      "shortcut": "Notice the period: after 1, 0, 1 the register is back at 0110, and the input is that pattern twice.",
       "pitfalls": [
-        "Shifting in the wrong direction — the XOR output enters the left cell and the right cell is fed back."
+        "Shifting the register left, or XORing with the leftmost cell.",
+        "Shifting first and computing the XOR from the new rightmost cell."
       ],
-      "verification": "Clocks 1–3 and 4–6 use identical input bits (1, 0, 1) and both start from 0110, so the final state equals the state after clock 3: 0110."
+      "verification": "seqlib.lfsr_step with the single tap on the last cell and the input XORed in gives 1011, 1101, 0110, 1011, 1101, 0110.",
+      "animation": {
+        "kind": "table",
+        "title": "Six clocks",
+        "cols": [
+          "in",
+          "in ⊕ right",
+          "register"
+        ],
+        "rows": [
+          [
+            "–",
+            "–",
+            "0110"
+          ],
+          [
+            "1",
+            "1",
+            "1011"
+          ],
+          [
+            "0",
+            "1",
+            "1101"
+          ],
+          [
+            "1",
+            "0",
+            "0110"
+          ],
+          [
+            "1",
+            "1",
+            "1011"
+          ],
+          [
+            "0",
+            "1",
+            "1101"
+          ],
+          [
+            "1",
+            "0",
+            "0110"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "start",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "reveal": 1
+      }
     },
     "it-2007-cs-41": {
       "approach": "Issue one instruction per cycle in order; latency L between a producer and its consumer means L idle cycles must separate them. Insert stalls only as needed and count cycles.",

@@ -237,6 +237,22 @@ PYQ pipeline, not a set error).
     proved independently: it equals $G_2 + P_2G_1 + P_2P_1G_0$ with $P_i = a_i + b_i$ (carry in 0), and B–D as
     transcribed are not equal to it.
   - `cse-2016-2-cs-7`: B = −1 is the unique slowest operand with A = 1 (transport simulation over all 256 B).
+- **Chapter 6 key audit (2026-10-20):** all 59 `dl/sequential` keys are re-derived in `_checks/dl/l6_01 … l6_08`
+  with `seqlib.py` (fixed points of feedback loops, gate-delay simulation of latches, the tick waveform model with
+  setup/hold windows, synchronous traces and full state graphs, ripple-counter event simulation, excitation-table
+  counter design with the self-start check, Mealy/Moore runs, BFS shortest inputs, partition refinement
+  cross-checked against the implication table). Findings:
+  - `cse-2000-a-2-12` (**fixed D → A and text repaired**, `src/gate/fixes/cse-2000.json`): the bank text read
+    "After the clock cycles"; the question as reproduced by GATE Overflow (gateoverflow.in/659) reads "After
+    **three** clock cycles" (the 2000 paper is not in `GATE_PYQ/`). With J = K = 1 the JK stage toggles and the D
+    stage copies the old P, so (P, Q) alternates (0, 1) → (1, 0) → (0, 1) → (1, 0): after three cycles (1, 0),
+    option A. The stored key D is the two-cycle state.
+  - Flags kept, with the reading stated in the lesson and solution: `cse-1993-ii-a-6-2` (figure missing from the
+    scan; the key B holds for the circuit the bank's review note describes), `it-2005-cs-43` (z read during cycle
+    3; scan checked, figure matches), `cse-1993-ii-a-6-3` (MSQ A, C: a twisted-ring shift register is both).
+  - `cse-2006-cs-8`: the 2006 scan (pp. 1–2) matches the option drawings; C delays f by one clock period, 180° of
+    the fastest f (period 2T). `cse-2025-1-cs-50`: a 4-bit Johnson counter's cycle has 8 states counting the
+    start (7 others), matching the key range 7 to 8.
 
 ## 4. Set C, sequential, memory and converters (pp. 326–398)
 - **C 371 (important, a lesson-worthy trap):** the 0 → 3 → 5 → 6 JK counter (J_A = K_A = Q_B,

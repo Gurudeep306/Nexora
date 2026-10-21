@@ -1109,20 +1109,25 @@
       "verification": "Keys returned: 7, 9, 11, 13 — they lie in exactly three consecutive leaves; plus root and one internal node on the path = 5."
     },
     "cse-2015-2-cs-7": {
-      "approach": "A synchronous counter needs one distinct state per position in its cycle. The sequence 0,0,1,1,2,2,3,3 has period 8, and the two 0s must be different states (one goes to 0, the other to 1).",
+      "approach": "Concept tested: **states versus outputs**. A value that repeats with different successors needs a separate state per position; the counter needs one state per position of the minimal period, then $\\lceil \\log_2 L \\rceil$ flip-flops.",
       "concepts": [
-        "Synchronous counter",
-        "State count",
-        "Flip-flops needed $\\lceil\\log_2 N\\rceil$"
+        "Counter states",
+        "Minimal period",
+        "Flip-flop count"
       ],
+      "given": "A synchronous counter (JK flip-flops) with count sequence 0, 0, 1, 1, 2, 2, 3, 3, 0, 0, …",
       "steps": [
         {
-          "title": "Count the states",
-          "body": "The repeating cycle is 0, 0, 1, 1, 2, 2, 3, 3 — 8 positions. The first 0 is followed by 0, the second by 1, so they cannot be one state; same for each value. Hence 8 distinct states."
+          "title": "Positions, not values",
+          "body": "The first 0 is followed by 0 and the second 0 by 1, so the two 0s must be different states; the same holds for every value. The minimal period is 8."
         },
         {
           "title": "Flip-flops",
-          "body": "$n$ flip-flops give $2^n$ states: $2^2 = 4 < 8 \\le 2^3 = 8$, so $n = \\lceil\\log_2 8\\rceil = 3$.\n\n(For example, use a mod-8 counter and output its upper two bits.)"
+          "body": "8 states need $\\lceil \\log_2 8 \\rceil = 3$ flip-flops."
+        },
+        {
+          "title": "A realisation",
+          "body": "A mod-8 binary counter $Q_2Q_1Q_0$: its top two bits $Q_2Q_1$ read 0, 0, 1, 1, 2, 2, 3, 3, so no output logic is needed."
         }
       ],
       "answer": {
@@ -1130,10 +1135,12 @@
         "number": 3,
         "matchesKey": true
       },
+      "shortcut": "Drop the LSB of a mod-8 count: 0..7 → 0,0,1,1,2,2,3,3. Three flip-flops.",
       "pitfalls": [
-        "Answering 2 because only the values 0–3 appear — a value repeats with different successors, so extra state is needed."
+        "Counting the 4 distinct values and answering 2.",
+        "Answering 8 (one flip-flop per state, one-hot)."
       ],
-      "verification": "A 3-bit binary counter 000…111 with outputs $Q_2Q_1$ gives 00,00,01,01,10,10,11,11 — exactly the required sequence."
+      "verification": "seqlib.counter_states_needed gives 8 for this sequence, and ff_count(8) = 3."
     },
     "cse-2015-2-cs-8": {
       "approach": "Stop-and-wait efficiency $\\eta = \\dfrac{T_t}{T_t + 2T_p}$ (ACK transmission time negligible). Compute $T_t$, then solve for $T_p$.",

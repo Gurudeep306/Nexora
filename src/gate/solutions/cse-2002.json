@@ -1609,63 +1609,32 @@
       "verification": "Binary: 0101 1101 + 0110 1011 = 1100 1000 (C8H); nibble sum 1101+1011 = 1 1000 → carry into bit 4 ✓."
     },
     "cse-2002-a-30": {
-      "approach": "Interpret each state as \"previous input bit\" (A = 0/start, B and C = 1) and check that every output equals previous bit + current bit as a 2-bit number.",
+      "approach": "Concept tested: **interpreting a Mealy machine**. Give each state a meaning from the arcs that enter it (A: previous bit 0; B and C: previous bit 1), read the 2-bit outputs as numbers, and kill the false options with one short input each.",
       "concepts": [
         "Mealy machine",
-        "State meaning",
-        "Binary addition"
+        "Interpreting an FSM",
+        "Serial arithmetic"
       ],
+      "given": "States A (start), B, C; arcs input/2-bit output: A: 0/00 → A, 1/01 → B; B: 0/01 → A, 1/10 → C; C: 0/01 → A, 1/10 → C.",
       "steps": [
         {
           "title": "Meaning of the states",
-          "body": "Every 0-input goes to A and every 1-input goes to B or C. So A ⇔ previous bit 0 (also the start, previous bit taken as 0), B/C ⇔ previous bit 1.",
+          "body": "A is entered only on input 0 (and is the start); B and C are entered only on input 1. So A = 'previous bit 0' and B, C = 'previous bit 1'."
+        },
+        {
+          "title": "Read the outputs as numbers",
+          "body": "From A: input 0 → 00 = 0 + 0, input 1 → 01 = 0 + 1. From B or C: input 0 → 01 = 1 + 0, input 1 → 10 = 1 + 1. Each output is the 2-bit sum of the previous and the present bit.",
           "scene": {
-            "current": [
-              "A"
-            ],
-            "caption": "Start in A (previous bit = 0)"
+            "reveal": 4
           }
         },
         {
-          "title": "Check all six arcs",
-          "body": "| From (prev) | Input | Output | prev + input |\n|---|---|---|---|\n| A (0) | 0 | 00 | 0 |\n| A (0) | 1 | 01 | 1 |\n| B (1) | 0 | 01 | 1 |\n| B (1) | 1 | 10 | 2 |\n| C (1) | 0 | 01 | 1 |\n| C (1) | 1 | 10 | 2 |\n\nEvery output is the 2-bit sum.",
-          "scene": {
-            "edgeTones": {
-              "A>B": "success",
-              "B>C": "success",
-              "C>C": "success",
-              "B>A": "success",
-              "C>A": "success",
-              "A>A": "success"
-            },
-            "caption": "All arcs agree with prev + current"
-          }
-        },
-        {
-          "title": "Trace input 1101",
-          "body": "A –1/01→ B –1/10→ C –0/01→ A –1/01→ B: outputs 01, 10, 01, 01 = $0{+}1,\\,1{+}1,\\,1{+}0,\\,0{+}1$ ✓.",
-          "scene": {
-            "current": [
-              "B"
-            ],
-            "tape": {
-              "cells": [
-                "1",
-                "1",
-                "0",
-                "1"
-              ],
-              "head": 4
-            },
-            "vars": {
-              "outputs": "01 10 01 01"
-            },
-            "caption": "Trace of 1101"
-          }
+          "title": "Eliminate B and C",
+          "body": "Input 11: the second output is 10, not 01, so (B) is false. Input 10: the second output is 01, not 00, so (C) is false. Since (A) holds, (D) is false."
         }
       ],
       "answer": {
-        "value": "It outputs the sum of the present and previous input bits — option (A)",
+        "value": "(A) Outputs the sum of the present and the previous bits of the input",
         "choice": [
           "A"
         ],
@@ -1675,84 +1644,93 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Verified on all six transitions."
+          "reason": "Every arc's output is (previous bit) + (present bit) in 2-bit binary, with the bit before the first taken as 0; checked on every input up to 8 bits."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "For input 11 the second output is 10, not 01."
+          "reason": "After 11 the machine outputs 10 (= 1 + 1), not 01."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "For input 10 the output on the 0 is 01, not 00."
+          "reason": "After 10 the machine outputs 01 (= 1 + 0), not 00."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Option (A) is correct."
+          "reason": "Option A is true."
         }
       ],
+      "shortcut": "Notice that B and C have identical rows: the machine only remembers the previous bit. With a 1-bit memory and a 2-bit output that counts 0, 1, 2, 'sum of the last two bits' is the natural reading.",
       "pitfalls": [
-        "Reading outputs as \"pattern detected\" flags instead of numeric sums."
+        "Reading the 2-bit output 10 as 'ten' or as two separate signals instead of the binary number 2.",
+        "Thinking B and C mean different things: they are equivalent states (same outputs, same next states)."
       ],
-      "verification": "Re-traced 1101 and 0110 (outputs 00, 01, 10, 01) — both match prev + current.",
+      "verification": "Simulation on input 0110111 gives 00, 01, 10, 01, 01, 10, 10, each the sum of a bit and its predecessor; partition refinement merges B and C, leaving 2 states.",
       "animation": {
-        "kind": "automaton",
-        "title": "FSM from the figure",
-        "states": [
-          {
-            "id": "A",
-            "start": true,
-            "x": 0,
-            "y": 0
-          },
-          {
-            "id": "B",
-            "x": 1,
-            "y": 0
-          },
-          {
-            "id": "C",
-            "x": 2,
-            "y": 0
-          }
+        "kind": "table",
+        "title": "Input 0110111",
+        "cols": [
+          "prev",
+          "x",
+          "state",
+          "output",
+          "prev + x"
         ],
-        "edges": [
-          {
-            "from": "A",
-            "to": "A",
-            "label": "0/00"
-          },
-          {
-            "from": "A",
-            "to": "B",
-            "label": "1/01"
-          },
-          {
-            "from": "B",
-            "to": "A",
-            "label": "0/01"
-          },
-          {
-            "from": "B",
-            "to": "C",
-            "label": "1/10"
-          },
-          {
-            "from": "C",
-            "to": "C",
-            "label": "1/10"
-          },
-          {
-            "from": "C",
-            "to": "A",
-            "label": "0/01"
-          }
+        "rows": [
+          [
+            "0",
+            "0",
+            "A",
+            "00",
+            "0"
+          ],
+          [
+            "0",
+            "1",
+            "A",
+            "01",
+            "1"
+          ],
+          [
+            "1",
+            "1",
+            "B",
+            "10",
+            "2"
+          ],
+          [
+            "1",
+            "0",
+            "C",
+            "01",
+            "1"
+          ],
+          [
+            "0",
+            "1",
+            "A",
+            "01",
+            "1"
+          ],
+          [
+            "1",
+            "1",
+            "B",
+            "10",
+            "2"
+          ],
+          [
+            "1",
+            "1",
+            "C",
+            "10",
+            "2"
+          ]
         ],
-        "current": [
-          "A"
-        ]
+        "mono": true,
+        "reveal": 1
       }
     },
     "cse-2002-a-31": {

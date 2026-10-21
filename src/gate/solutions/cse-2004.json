@@ -995,28 +995,29 @@
       "verification": "Row 10: original $0 + 0 + 0 = 0$, $x' + y = 0$; the other three rows give 1 in both."
     },
     "cse-2004-cs-18": {
-      "approach": "A NAND gate outputs 1 whenever any input is 0. In a NAND (active-low) SR latch, S and R both 0 feed a 0 into both gates, so both outputs are forced to 1.",
+      "approach": "Concept tested: **the NAND latch's forbidden input**. A NAND latch has active-low inputs; 0 is the controlling value of NAND, so $S = R = 0$ forces **both** outputs to 1.",
       "concepts": [
-        "SR latch",
-        "NAND gate",
-        "Active-low inputs"
+        "NAND latch",
+        "Active-low inputs",
+        "Forbidden input"
       ],
+      "given": "Two cross-coupled NAND gates; both inputs $S$ and $R$ are 0.",
       "steps": [
         {
-          "title": "Latch equations",
-          "body": "Cross-coupled NAND: $Q = (S\\cdot Q')'$ and $Q' = (R\\cdot Q)'$ (inputs are active-low)."
+          "title": "Evaluate each gate",
+          "body": "$Q = \\overline{S \\cdot \\overline{Q}} = \\overline{0 \\cdot \\overline{Q}} = 1$ and $\\overline{Q}' = \\overline{R \\cdot Q} = \\overline{0 \\cdot Q} = 1$, whatever the fed-back values are."
         },
         {
-          "title": "Apply S = R = 0",
-          "body": "$Q = (0\\cdot Q')' = 1$ and $Q' = (0\\cdot Q)' = 1$. Both outputs are 1 — the \"forbidden\" state, since $Q$ and $Q'$ are no longer complements."
+          "title": "Is it stable?",
+          "body": "Feeding $Q = Q' = 1$ back changes nothing: each gate still has a 0 input. The state is stable while 00 is held, so it is **not** indeterminate; it is forbidden because $Q$ and $Q'$ are no longer complements."
         },
         {
-          "title": "Not indeterminate while held",
-          "body": "The outputs are definite (1, 1) as long as S = R = 0. The state becomes unpredictable only if both inputs then return to 1 simultaneously (a race)."
+          "title": "Where the unpredictability really is",
+          "body": "If both inputs later return to 1 together, each NAND sees 1, 1 and both outputs fall at once, then rise at once: the latch races, and its final state depends on which gate is faster. That is a statement about the **release** 00 → 11, which this question does not ask about."
         }
       ],
       "answer": {
-        "value": "Q = 1, Q' = 1",
+        "value": "(C) $Q = 1$, $Q' = 1$",
         "choice": [
           "C"
         ],
@@ -1026,25 +1027,72 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Q = 0, Q' = 1 is the reset state, produced by S = 1, R = 0 (active-low R)."
+          "reason": "That is the reset state, reached with $S = 1$, $R = 0$ (active low)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Q = 1, Q' = 0 is the set state, produced by S = 0, R = 1."
+          "reason": "That is the set state, reached with $S = 0$, $R = 1$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: a 0 on any NAND input forces its output to 1, so both outputs are 1."
+          "reason": "Both NANDs see a 0 and output 1."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "The outputs are well defined (both 1); indeterminacy arises only on releasing both inputs together."
+          "reason": "The outputs are fully determined while the inputs are 00; unpredictability arises only when 00 is released to 11."
         }
       ],
-      "verification": "For a NOR latch the forbidden input S = R = 1 gives Q = Q' = 0; the NAND version is the dual, giving 1, 1."
+      "pitfalls": [
+        "Using the NOR table: for a NOR latch the forbidden input is 11 and gives $Q = Q' = 0$.",
+        "Answering \"indeterminate\": that describes the release, not the held input."
+      ],
+      "verification": "The only fixed point of the NAND latch netlist for inputs 00 is $Q = Q' = 1$.",
+      "animation": {
+        "kind": "table",
+        "title": "NAND latch, active-low inputs",
+        "cols": [
+          "S",
+          "R",
+          "Q",
+          "Q′"
+        ],
+        "rows": [
+          [
+            1,
+            1,
+            "hold",
+            "hold"
+          ],
+          [
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            1
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "hold",
+          "set",
+          "reset",
+          "forbidden"
+        ]
+      }
     },
     "cse-2004-cs-19": {
       "approach": "Concept tested: an equation between numerals in two unknown bases, with the digit limit as a filter. Expand each numeral as a polynomial in its own base, then test the option pairs; each base must also exceed the digits written in it.",
@@ -3875,28 +3923,33 @@
       "verification": "Rows $(T, R)$: 00 → $X = R = 0$; 01 → $X = 1$; 10 → $Y = 1$; 11 → $Y = 1$. Output 0, 1, 1, 1 = OR."
     },
     "cse-2004-cs-61": {
-      "approach": "For each transition of the sequence 0→2→3→1→0, a T flip-flop needs T = 1 exactly when its bit changes. Derive $T_1$ (= X) from the table.",
+      "approach": "Concept tested: **T flip-flop counter design**. For T flip-flops $T = Q \\oplus Q^+$: the T column marks the rows in which the bit changes. Build the T1 column for 0 → 2 → 3 → 1 and match it.",
       "concepts": [
-        "T flip-flop excitation",
-        "Counter design"
+        "T flip-flop",
+        "Excitation table",
+        "Counter design",
+        "XOR"
       ],
-      "given": "Sequence (Q2 Q1): 00 → 10 → 11 → 01 → 00",
+      "given": "A 2-bit counter with T flip-flops ($Q_2$ = MSB, $Q_1$ = LSB) for 0 → 2 → 3 → 1 → 0; $T_2$ is driven by an XNOR of $Q_2$ and $Q_1$; $X = T_1$ is missing.",
       "steps": [
         {
-          "title": "Excitation table",
-          "body": "| $Q_2Q_1$ | next | $T_2$ | $T_1 = X$ |\n|---|---|---|---|\n| 00 | 10 | 1 | 0 |\n| 10 | 11 | 0 | 1 |\n| 11 | 01 | 1 | 0 |\n| 01 | 00 | 0 | 1 |"
+          "title": "Sequence in bits",
+          "body": "00 → 10 → 11 → 01 → 00."
         },
         {
-          "title": "Check the given gate",
-          "body": "$T_2 = 1$ for 00 and 11 ⇒ $T_2 = (Q_1 \\oplus Q_2)'$ — the XNOR in the figure ✓."
+          "title": "T columns",
+          "body": "Mark the bits that change: rows 00, 10, 11, 01 give $T_2$ = 1, 0, 1, 0 and $T_1$ = 0, 1, 0, 1.",
+          "scene": {
+            "reveal": 4
+          }
         },
         {
-          "title": "Derive X",
-          "body": "$T_1 = 1$ for 10 and 01 ⇒ $X = Q_1 \\oplus Q_2$."
+          "title": "Read the functions",
+          "body": "$T_2$ is 1 in 00 and 11: $\\overline{Q_2 \\oplus Q_1}$, which is the XNOR in the figure (a consistency check). $T_1$ is 1 in 10 and 01: $T_1 = Q_1 \\oplus Q_2$."
         }
       ],
       "answer": {
-        "value": "$Q_1 \\oplus Q_2$",
+        "value": "(D) $X = Q_1 \\oplus Q_2$",
         "choice": [
           "D"
         ],
@@ -3906,28 +3959,68 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$Q_2'$ is 1 at state 00, where Q1 must not toggle."
+          "reason": "$\\overline{Q_2}$ gives $T_1 = 1$ in state 00, so 00 would go to 11 instead of 10."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "OR is 1 at state 11, where Q1 must stay 1."
+          "reason": "$Q_2 + Q_1$ gives $T_1 = 1$ in state 11, so 11 would go to 00 instead of 01."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "XNOR is the T2 input, not T1 (it would toggle Q1 at 00 and 11)."
+          "reason": "The XNOR is $T_2$'s equation; with it both stages get the same input and 00 → 11."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Matches the T1 column: 0,1,0,1."
+          "reason": "$T_1$ = 0, 1, 0, 1 in rows 00, 10, 11, 01 is exactly $Q_1 \\oplus Q_2$; the circuit then steps 00 → 10 → 11 → 01 → 00."
         }
       ],
+      "shortcut": "On 00 → 10 only the MSB changes, so $T_1 = 0$ in state 00: that rules out A ($\\overline{Q_2} = 1$) and C (XNOR = 1) at once; B gives $T_1 = 1$ in state 11, where the LSB must stay 1.",
       "pitfalls": [
-        "Reading the sequence states as Q1Q2 instead of Q2Q1 (Q2 is the MSB)."
+        "Writing the next-state bit instead of the change (the D answer $D_1 = Q_2$).",
+        "Mixing up which flip-flop is the MSB: the figure's $Q_2$ is the MSB."
       ],
-      "verification": "Simulate from 00 with T2 = XNOR, T1 = XOR: 00→10→11→01→00 ✓."
+      "verification": "Simulating the two T flip-flops with $T_2 = \\overline{Q_2 \\oplus Q_1}$ and each option as $T_1$: only option D gives 0, 2, 3, 1, 0.",
+      "animation": {
+        "kind": "table",
+        "title": "T = Q ⊕ Q⁺ for 0 → 2 → 3 → 1",
+        "cols": [
+          "Q2Q1",
+          "Q2⁺Q1⁺",
+          "T2",
+          "T1"
+        ],
+        "rows": [
+          [
+            "00",
+            "10",
+            1,
+            0
+          ],
+          [
+            "10",
+            "11",
+            0,
+            1
+          ],
+          [
+            "11",
+            "01",
+            1,
+            0
+          ],
+          [
+            "01",
+            "00",
+            0,
+            1
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
+      }
     },
     "cse-2004-cs-62": {
       "approach": "Concept tested: **the exact delay of a 4-bit CLA when no XOR gate is allowed**. With only AND, OR, NOT, NAND, NOR (complements free), each XOR (the propagate and the sum) is a two-level circuit; the carry network is two-level AND-OR.",

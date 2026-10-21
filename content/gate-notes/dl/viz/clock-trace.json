@@ -1,0 +1,1645 @@
+{
+ "version": 1,
+ "title": "Tracing a JK, a D and a T flip-flop on one clock",
+ "width": 680,
+ "height": 416,
+ "narrow": {
+  "width": 360,
+  "height": 370
+ },
+ "intro": "A JK flip-flop (J = Q̄0, K = 1, output Q2), a D flip-flop (D = Q2, output Q1) and a T flip-flop (T = Q1, output Q0) share one clock and start at 000. Four clocks, each in two steps.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "Clocking a JK, a D and a T together (GATE 1994 circuit)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Tracing GATE 1994's chain",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "ff2",
+   "type": "box",
+   "x": 40,
+   "y": 84,
+   "w": 130,
+   "h": 72,
+   "narrow": {
+    "x": 14,
+    "y": 80,
+    "w": 96,
+    "h": 66
+   }
+  },
+  {
+   "id": "ff2-l0",
+   "type": "text",
+   "x": 45,
+   "y": 96.0,
+   "text": "J",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 19,
+    "y": 91.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff2-l1",
+   "type": "text",
+   "x": 45,
+   "y": 120.0,
+   "text": "K",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 19,
+    "y": 113.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff2-l2",
+   "type": "text",
+   "x": 45,
+   "y": 144.0,
+   "text": ">",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 19,
+    "y": 135.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff2-r0",
+   "type": "text",
+   "x": 165,
+   "y": 120.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 105,
+    "y": 113.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff2t",
+   "type": "text",
+   "x": 105.0,
+   "y": 72,
+   "text": "JK → Q2",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 62.0,
+    "y": 68,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff2e",
+   "type": "text",
+   "x": 105.0,
+   "y": 174,
+   "text": "J = Q̄0, K = 1",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 62.0,
+    "y": 162,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff2i",
+   "type": "text",
+   "x": 105.0,
+   "y": 194,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 62.0,
+    "y": 180,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff2q",
+   "type": "text",
+   "x": 105.0,
+   "y": 214,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 62.0,
+    "y": 198,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff1",
+   "type": "box",
+   "x": 275,
+   "y": 84,
+   "w": 130,
+   "h": 72,
+   "narrow": {
+    "x": 132,
+    "y": 80,
+    "w": 96,
+    "h": 66
+   }
+  },
+  {
+   "id": "ff1-l0",
+   "type": "text",
+   "x": 280,
+   "y": 102.0,
+   "text": "D",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 137,
+    "y": 96.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff1-l1",
+   "type": "text",
+   "x": 280,
+   "y": 138.0,
+   "text": ">",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 137,
+    "y": 129.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff1-r0",
+   "type": "text",
+   "x": 400,
+   "y": 120.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 223,
+    "y": 113.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff1t",
+   "type": "text",
+   "x": 340.0,
+   "y": 72,
+   "text": "D → Q1",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 68,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff1e",
+   "type": "text",
+   "x": 340.0,
+   "y": 174,
+   "text": "D = Q2",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "y": 162,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff1i",
+   "type": "text",
+   "x": 340.0,
+   "y": 194,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 180,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff1q",
+   "type": "text",
+   "x": 340.0,
+   "y": 214,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 198,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff0",
+   "type": "box",
+   "x": 510,
+   "y": 84,
+   "w": 130,
+   "h": 72,
+   "narrow": {
+    "x": 250,
+    "y": 80,
+    "w": 96,
+    "h": 66
+   }
+  },
+  {
+   "id": "ff0-l0",
+   "type": "text",
+   "x": 515,
+   "y": 102.0,
+   "text": "T",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 255,
+    "y": 96.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff0-l1",
+   "type": "text",
+   "x": 515,
+   "y": 138.0,
+   "text": ">",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 255,
+    "y": 129.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff0-r0",
+   "type": "text",
+   "x": 635,
+   "y": 102.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 341,
+    "y": 96.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff0-r1",
+   "type": "text",
+   "x": 635,
+   "y": 138.0,
+   "text": "Q̄",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 341,
+    "y": 129.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff0t",
+   "type": "text",
+   "x": 575.0,
+   "y": 72,
+   "text": "T → Q0",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 298.0,
+    "y": 68,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff0e",
+   "type": "text",
+   "x": 575.0,
+   "y": 174,
+   "text": "T = Q1",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 298.0,
+    "y": 162,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff0i",
+   "type": "text",
+   "x": 575.0,
+   "y": 194,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 298.0,
+    "y": 180,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff0q",
+   "type": "text",
+   "x": 575.0,
+   "y": 214,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 298.0,
+    "y": 198,
+    "size": 12
+   }
+  },
+  {
+   "id": "w0",
+   "type": "line",
+   "points": [
+    [
+     170,
+     120.0
+    ],
+    [
+     222.5,
+     120.0
+    ],
+    [
+     222.5,
+     102.0
+    ],
+    [
+     275,
+     102.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      110,
+      113.0
+     ],
+     [
+      121.0,
+      113.0
+     ],
+     [
+      121.0,
+      96.5
+     ],
+     [
+      132,
+      96.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "w1",
+   "type": "line",
+   "points": [
+    [
+     405,
+     120.0
+    ],
+    [
+     457.5,
+     120.0
+    ],
+    [
+     457.5,
+     102.0
+    ],
+    [
+     510,
+     102.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      228,
+      113.0
+     ],
+     [
+      239.0,
+      113.0
+     ],
+     [
+      239.0,
+      96.5
+     ],
+     [
+      250,
+      96.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wfb",
+   "type": "line",
+   "points": [
+    [
+     640,
+     138.0
+    ],
+    [
+     656,
+     138.0
+    ],
+    [
+     656,
+     54
+    ],
+    [
+     24,
+     54
+    ],
+    [
+     24,
+     96.0
+    ],
+    [
+     40,
+     96.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      346,
+      129.5
+     ],
+     [
+      352,
+      129.5
+     ],
+     [
+      352,
+      52
+     ],
+     [
+      6,
+      52
+     ],
+     [
+      6,
+      91.0
+     ],
+     [
+      14,
+      91.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wfbt",
+   "type": "text",
+   "x": 340.0,
+   "y": 43,
+   "text": "feedback Q̄0 → J",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "y": 41,
+    "size": 12
+   }
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 115.0,
+   "y": 236,
+   "cellW": 90,
+   "cellH": 26,
+   "rows": [
+    [
+     "clock",
+     "J K",
+     "D",
+     "T",
+     "Q2Q1Q0"
+    ],
+    [
+     "start",
+     "–",
+     "–",
+     "–",
+     "000"
+    ],
+    [
+     "1",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "2",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "3",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "4",
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 10.0,
+    "y": 218,
+    "cellW": 68,
+    "cellH": 22
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start at Q2Q1Q0 = 000. Each clock takes two steps: inputs from the old state, then all three outputs at once.",
+   "patches": [
+    {
+     "id": "ff2q",
+     "set": {
+      "text": "Q2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff1q",
+     "set": {
+      "text": "Q1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff0q",
+     "set": {
+      "text": "Q0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        1,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 1, before the edge, from 000: J = Q̄0 = 1, K = 1, D = Q2 = 0, T = Q1 = 0. Nothing has moved yet.",
+   "patches": [
+    {
+     "id": "ff2i",
+     "set": {
+      "text": "J=1 K=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff1i",
+     "set": {
+      "text": "D=0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff0i",
+     "set": {
+      "text": "T=0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wfbt",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 1: the JK toggles (Q2 = 1), the D loads 0, the T holds (Q0 = 0): 000 → 100.",
+   "patches": [
+    {
+     "id": "ff2q",
+     "set": {
+      "text": "Q2 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff1q",
+     "set": {
+      "text": "Q1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff0q",
+     "set": {
+      "text": "Q0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ff2i",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff1i",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff0i",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wfbt",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "clock",
+        "J K",
+        "D",
+        "T",
+        "Q2Q1Q0"
+       ],
+       [
+        "start",
+        "–",
+        "–",
+        "–",
+        "000"
+       ],
+       [
+        "1",
+        "1 1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "2",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "3",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "4",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        2,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 2, before the edge, from 100: J = Q̄0 = 1, K = 1, D = Q2 = 1, T = Q1 = 0. Nothing has moved yet.",
+   "patches": [
+    {
+     "id": "ff2i",
+     "set": {
+      "text": "J=1 K=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff1i",
+     "set": {
+      "text": "D=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff0i",
+     "set": {
+      "text": "T=0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wfbt",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 2: the JK toggles (Q2 = 0), the D loads 1, the T holds (Q0 = 0): 100 → 010.",
+   "patches": [
+    {
+     "id": "ff2q",
+     "set": {
+      "text": "Q2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff1q",
+     "set": {
+      "text": "Q1 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff0q",
+     "set": {
+      "text": "Q0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ff2i",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff1i",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff0i",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wfbt",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "clock",
+        "J K",
+        "D",
+        "T",
+        "Q2Q1Q0"
+       ],
+       [
+        "start",
+        "–",
+        "–",
+        "–",
+        "000"
+       ],
+       [
+        "1",
+        "1 1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "2",
+        "1 1",
+        "1",
+        "0",
+        "010"
+       ],
+       [
+        "3",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "4",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ],
+       [
+        3,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 3, before the edge, from 010: J = Q̄0 = 1, K = 1, D = Q2 = 0, T = Q1 = 1. Nothing has moved yet.",
+   "patches": [
+    {
+     "id": "ff2i",
+     "set": {
+      "text": "J=1 K=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff1i",
+     "set": {
+      "text": "D=0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff0i",
+     "set": {
+      "text": "T=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wfbt",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 3: the JK toggles (Q2 = 1), the D loads 0, the T toggles (Q0 = 1): 010 → 101.",
+   "patches": [
+    {
+     "id": "ff2q",
+     "set": {
+      "text": "Q2 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff1q",
+     "set": {
+      "text": "Q1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff0q",
+     "set": {
+      "text": "Q0 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ff2i",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff1i",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff0i",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wfbt",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "clock",
+        "J K",
+        "D",
+        "T",
+        "Q2Q1Q0"
+       ],
+       [
+        "start",
+        "–",
+        "–",
+        "–",
+        "000"
+       ],
+       [
+        "1",
+        "1 1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "2",
+        "1 1",
+        "1",
+        "0",
+        "010"
+       ],
+       [
+        "3",
+        "1 1",
+        "0",
+        "1",
+        "101"
+       ],
+       [
+        "4",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        4,
+        3
+       ],
+       [
+        4,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 4, before the edge, from 101: J = Q̄0 = 0, K = 1, D = Q2 = 1, T = Q1 = 0. Nothing has moved yet.",
+   "patches": [
+    {
+     "id": "ff2i",
+     "set": {
+      "text": "J=0 K=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff1i",
+     "set": {
+      "text": "D=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff0i",
+     "set": {
+      "text": "T=0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wfbt",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 4: the JK resets (Q2 = 0), the D loads 1, the T holds (Q0 = 1): 101 → 011.",
+   "patches": [
+    {
+     "id": "ff2q",
+     "set": {
+      "text": "Q2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff1q",
+     "set": {
+      "text": "Q1 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff0q",
+     "set": {
+      "text": "Q0 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ff2i",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff1i",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff0i",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wfbt",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "clock",
+        "J K",
+        "D",
+        "T",
+        "Q2Q1Q0"
+       ],
+       [
+        "start",
+        "–",
+        "–",
+        "–",
+        "000"
+       ],
+       [
+        "1",
+        "1 1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "2",
+        "1 1",
+        "1",
+        "0",
+        "010"
+       ],
+       [
+        "3",
+        "1 1",
+        "0",
+        "1",
+        "101"
+       ],
+       [
+        "4",
+        "0 1",
+        "1",
+        "0",
+        "011"
+       ]
+      ],
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        5,
+        3
+       ],
+       [
+        5,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "After four clocks Q2Q1Q0 = 011 (GATE 1994). A fifth clock gives 000: a 5-state cycle.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        5,
+        3
+       ],
+       [
+        5,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

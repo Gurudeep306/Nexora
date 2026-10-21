@@ -2042,25 +2042,40 @@
       "verification": "\"101\": M1 q0→q1→q0→q1 reject; M2 cannot read two consecutive 1's → reject. \"0110\": both accept."
     },
     "it-2008-it-37": {
-      "approach": "Read off when the state toggles vs holds, then use the JK rules: hold ⇔ $J=K=0$, toggle ⇔ $J=K=1$.",
+      "approach": "Concept tested: **realising a state diagram with a JK flip-flop**. Read when the state changes, then use the JK excitation table: a change from 0 needs $J = 1$, a change from 1 needs $K = 1$, staying needs $J = 0$ (from 0) or $K = 0$ (from 1).",
       "concepts": [
         "JK flip-flop",
         "Excitation table",
+        "State diagram",
         "XOR"
       ],
-      "given": "| $xy$ | next state |\n|---|---|\n| 00, 11 | $Q$ (hold) |\n| 01, 10 | $\\overline{Q}$ (toggle) |",
+      "given": "States 0 and 1. In each state, inputs $xy$ = 00 or 11 keep the state and 01 or 10 move to the other state. J and K are functions of $x$, $y$ and $Q$.",
       "steps": [
         {
-          "title": "Transitions",
-          "body": "From the diagram, both states keep their value on $xy\\in\\{00,11\\}$ and flip on $xy\\in\\{01,10\\}$. So $Q^+=Q\\oplus(x\\oplus y)$ — a toggle when $x\\oplus y=1$."
+          "title": "When does the state change?",
+          "body": "Exactly for $xy$ = 01 or 10, i.e. when $x \\oplus y = 1$; it holds when $x \\oplus y = 0$, in both states."
         },
         {
-          "title": "Choose J and K",
-          "body": "A JK flip-flop holds with $J=K=0$ and toggles with $J=K=1$. Hence $J=K=x\\oplus y$ (independent of $Q$)."
+          "title": "From state 0",
+          "body": "Change ($0 \\to 1$) needs $(J, K) = (1, x)$; stay ($0 \\to 0$) needs $(0, x)$. So $J = x \\oplus y$ and $K$ is free.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "From state 1",
+          "body": "Change ($1 \\to 0$) needs $(x, 1)$; stay ($1 \\to 1$) needs $(x, 0)$. So $K = x \\oplus y$ and $J$ is free.",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "One choice for both states",
+          "body": "$J = K = x \\oplus y$ satisfies both halves: the JK toggles when $x \\oplus y = 1$ and holds when it is 0 (option D)."
         }
       ],
       "answer": {
-        "value": "$J=x\\oplus y$, $K=x\\oplus y$ — option **(D)**",
+        "value": "(D) $J = x \\oplus y$, $K = x \\oplus y$",
         "choice": [
           "D"
         ],
@@ -2070,28 +2085,67 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "XNOR would toggle on $00,11$ — the opposite behaviour."
+          "reason": "$J = K = \\overline{x \\oplus y}$ toggles on 00 and 11 and holds on 01 and 10: the opposite of the diagram."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$J\\ne K$ makes it set/reset, not toggle; e.g. $xy=00$, $Q=0$ gives $J=1,K=0\\Rightarrow Q^+=1$, wrong."
+          "reason": "From state 0 with $xy = 00$ it gives $J = 1$: the flip-flop would leave state 0."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$xy=01$, $Q=1$: $J=1,K=0\\Rightarrow Q^+=1$, but it should toggle to 0."
+          "reason": "From state 0 with $xy = 01$ it gives $J = 1, K = 0$ (set, correct), but from state 1 with $xy = 01$ it gives $K = 0$: it stays in 1 instead of moving to 0."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Toggles exactly when $x\\ne y$."
+          "reason": "Toggle exactly when $x \\oplus y = 1$."
         }
       ],
+      "shortcut": "A diagram that says \"change\" or \"stay\" independently of the state is a T flip-flop with T = the change condition; a JK does it with $J = K = T$.",
       "pitfalls": [
-        "Using a different J/K for each state is allowed (don't-cares), but the given options must work in both states."
+        "Mixing up which input matters in which state: from 0 only J matters, from 1 only K."
       ],
-      "verification": "Check $J=K=x\\oplus y$ via $Q^+=J\\overline Q+\\overline K Q$: if $x\\oplus y=1$, $Q^+=\\overline Q$; if 0, $Q^+=Q$. ✓"
+      "verification": "Checking all 8 combinations of $Q$, $x$, $y$: only option D gives the next state of the diagram every time.",
+      "animation": {
+        "kind": "table",
+        "title": "JK excitation for each arc",
+        "cols": [
+          "xy",
+          "Q → Q⁺",
+          "J",
+          "K"
+        ],
+        "rows": [
+          [
+            "00/11",
+            "0 → 0",
+            0,
+            "x"
+          ],
+          [
+            "01/10",
+            "0 → 1",
+            1,
+            "x"
+          ],
+          [
+            "00/11",
+            "1 → 1",
+            "x",
+            0
+          ],
+          [
+            "01/10",
+            "1 → 0",
+            "x",
+            1
+          ]
+        ],
+        "mono": true,
+        "reveal": 0
+      }
     },
     "it-2008-it-38": {
       "approach": "With X pointing at the top element of an upward-growing stack, the source should read the top and then move X down (post-decrement), so the destination is the second element, which receives the sum.",

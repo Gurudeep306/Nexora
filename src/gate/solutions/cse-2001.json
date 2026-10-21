@@ -1632,33 +1632,44 @@
       "verification": "Same structure as the state-entry problem in standard texts."
     },
     "cse-2001-a-33": {
-      "approach": "Y = Q1 latches $X\\cdot\\overline{Q_0}$, so Y is a one-clock pulse after X is first sampled high. Since X rises exactly at an edge, the 20 ns setup time means that edge sees X = 0.",
+      "approach": "Concept tested: **what an edge samples**. With hold time 0, an input that changes exactly at an edge is read as its **old** value (it was stable through the setup window before the edge). Read every flip-flop input just before each rising edge and update both flip-flops together.",
       "concepts": [
         "D flip-flop",
-        "Setup time",
+        "Setup and hold",
+        "Timing diagram",
         "Edge detector"
       ],
-      "given": "| Signal | Meaning |\n|---|---|\n| $D_0 = X$ | $Q_0$ is X delayed by one clock |\n| $D_1 = X\\cdot\\overline{Q_0}$ | $Y = Q_1$ |\n| Setup | 20 ns, hold 0 |",
+      "given": "Positive-edge D flip-flops, $t_{su} = 20$ ns, $t_h = 0$, $Q_0 = Q_1 = 0$ initially. $D_0 = X$, $D_1 = X\\,\\overline{Q_0}$, $Y = Q_1$. X rises exactly at rising edge 1 and falls just before edge 6; the clock period is at least 40 ns.",
       "steps": [
         {
-          "title": "Edge 1 (X rises here)",
-          "body": "X changes at the edge itself, so it was not stable 20 ns before → both flip-flops sample $X = 0$. $Q_0 = 0$, $Y = 0$."
+          "title": "Edge 1: X changes at the edge",
+          "body": "The setup window is the 20 ns before the edge, during which X was 0; with $t_h = 0$ nothing after the edge counts. Both flip-flops read X = 0: $Q_0 = 0$, $D_1 = 0$, so $Y = 0$."
         },
         {
-          "title": "Edge 2",
-          "body": "Before this edge $X = 1$, $\\overline{Q_0} = 1$ → $D_1 = 1$. So $Y \\to 1$ and $Q_0 \\to 1$."
+          "title": "Edge 2: Y rises",
+          "body": "Now X = 1 and $\\overline{Q_0} = 1$ (the old $Q_0$), so $D_1 = 1$ and Y becomes 1. At the same edge $Q_0$ becomes 1.",
+          "scene": {
+            "reveal": 2
+          }
         },
         {
-          "title": "Edge 3 onwards",
-          "body": "Now $\\overline{Q_0} = 0$ → $D_1 = 0$ → $Y \\to 0$, and stays 0 while X stays high (and after X falls, $D_1 = X\\overline{Q_0} = 0$ anyway)."
+          "title": "Edges 3 to 5: Y falls and stays low",
+          "body": "$\\overline{Q_0} = 0$ makes $D_1 = 0$: Y falls at edge 3 and stays 0 at edges 4 and 5.",
+          "scene": {
+            "reveal": 3
+          }
         },
         {
-          "title": "Plot",
-          "body": "Y is high only between the 2nd and 3rd marked edges — the waveform in option (a)."
+          "title": "Edge 6: a setup violation that does not matter",
+          "body": "X falls just before edge 6, inside the 20 ns setup window, so flip-flop 0 may capture either value (a setup violation). Y does not care: $D_1 = X\\,\\overline{Q_0}$ is 0 before edge 6 ($\\overline{Q_0} = 0$) and after it ($X = 0$), so Y stays 0."
+        },
+        {
+          "title": "Match the plots",
+          "body": "Y is high for exactly one clock period, from edge 2 to edge 3: option A. The circuit is a rising-edge detector for X."
         }
       ],
       "answer": {
-        "value": "Y is high for one clock period, from the 2nd to the 3rd marked edge — option (A)",
+        "value": "(A) Y high from the 2nd to the 3rd marked edge",
         "choice": [
           "A"
         ],
@@ -1668,29 +1679,74 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Pulse from edge 2 to edge 3, as derived."
+          "reason": "Y = 1 only between edges 2 and 3."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Starts at edge 1 — ignores the setup-time violation, and also lasts two periods instead of one."
+          "reason": "Starting Y at edge 1 reads X as 1 at the edge where it changes; with $t_h = 0$ the old 0 is sampled."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Starts at edge 1 — ignores the 20 ns setup time."
+          "reason": "C rises at edge 1 (the same misreading as B) and falls between two edges, which no flip-flop output can do."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Y cannot stay high while $Q_0 = 1$."
+          "reason": "High from edge 3 to 6 ignores $\\overline{Q_0}$: once $Q_0 = 1$, $D_1 = 0$."
         }
       ],
+      "shortcut": "$D_1 = X\\,\\overline{Q_0}$ with $Q_0$ = X delayed one clock is \"X now and not X a clock ago\": a one-period pulse at the first edge that sees X = 1.",
       "pitfalls": [
-        "Treating X as sampled high at the edge where it rises.",
-        "Forgetting that $\\overline{Q_0}$ kills the AND one clock later."
+        "Treating an input that changes exactly at the edge as already new at that edge.",
+        "Letting flip-flop 1 see flip-flop 0's new output at the same edge."
       ],
-      "verification": "Circuit is a rising-edge detector: output pulse width is exactly one clock."
+      "verification": "A tick-by-tick simulation (10 ns ticks, 40 ns clock, setup 2 ticks, hold 0) gives Y = 1 only between edges 2 and 3 and flags a setup violation on $D_0$ at edge 6 only, which does not reach Y.",
+      "animation": {
+        "kind": "table",
+        "title": "Sampled just before each rising edge",
+        "cols": [
+          "X",
+          "Q̄₀",
+          "D₁",
+          "Y after"
+        ],
+        "rows": [
+          [
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "edge 1",
+          "edge 2",
+          "edge 3",
+          "edge 4"
+        ],
+        "reveal": 0
+      }
     },
     "cse-2001-a-34": {
       "approach": "Match each addressing mode to its classic use.",
@@ -1905,128 +1961,36 @@
       }
     },
     "cse-2001-a-37": {
-      "approach": "Read the next-state equations off the figure — $D_0 = Q_1 \\oplus Q_2$, $D_1 = Q_0$, $D_2 = Q_1$ — and step from state 1.",
+      "approach": "Concept tested: **a shift register with XOR feedback (an LFSR)**. Write the next-state equations, then trace from the given state; as a number the register doubles and adds the feedback bit.",
       "concepts": [
+        "LFSR",
         "Shift register",
-        "LFSR"
+        "XOR feedback",
+        "State sequence"
       ],
+      "given": "Three D flip-flops: $D_1 = Q_0$, $D_2 = Q_1$, $D_0 = Q_1 \\oplus Q_2$; initially $Q_0 = 1$, $Q_1 = Q_2 = 0$; state $= 4Q_2 + 2Q_1 + Q_0$.",
       "steps": [
         {
-          "title": "Next-state rules",
-          "body": "$Q_0^+ = Q_1 \\oplus Q_2$, $Q_1^+ = Q_0$, $Q_2^+ = Q_1$. Start: $Q_2Q_1Q_0 = 001$ (state 1).",
+          "title": "Next-state equations",
+          "body": "$Q_0^+ = Q_1 \\oplus Q_2$, $Q_1^+ = Q_0$, $Q_2^+ = Q_1$. As a number $v$: $v^+ = (2v \\bmod 8) + (Q_1 \\oplus Q_2)$."
+        },
+        {
+          "title": "Trace",
+          "body": "1 (001): $0 \\oplus 0 = 0$ → 2. 2 (010): $1 \\oplus 0 = 1$ → 5. 5 (101): $0 \\oplus 1 = 1$ → 3. 3 (011): $1 \\oplus 0 = 1$ → 7.",
           "scene": {
-            "reveal": 3,
-            "hl": [
-              {
-                "r": 0,
-                "tone": "accent"
-              }
-            ],
-            "caption": "Start in state 1"
+            "reveal": 5
           }
         },
         {
-          "title": "Clocks 1–3",
-          "body": "$001 \\to (Q_2,Q_1,Q_0) = (0,1,0\\oplus0) = 010 = 2$\n\n$010 \\to (1,0,1\\oplus0) = 101 = 5$\n\n$101 \\to (0,1,0\\oplus1) = 011 = 3$",
+          "title": "Finish the cycle",
+          "body": "7 (111): $1 \\oplus 1 = 0$ → 6. 6 (110): $1 \\oplus 1 = 0$ → 4. 4 (100): $0 \\oplus 1 = 1$ → 1. All seven non-zero states: a maximal-length LFSR.",
           "scene": {
-            "reveal": 15,
-            "hl": [
-              {
-                "r": 3,
-                "tone": "accent"
-              }
-            ],
-            "caption": "1 → 2 → 5 → 3"
-          }
-        },
-        {
-          "title": "Clocks 4–7",
-          "body": "$011 \\to (1,1,1\\oplus0) = 111 = 7$\n\n$111 \\to (1,1,1\\oplus1) = 110 = 6$\n\n$110 \\to (1,0,1\\oplus1) = 100 = 4$\n\n$100 \\to (0,0,0\\oplus1) = 001 = 1$ (back to start).",
-          "scene": {
-            "reveal": 32,
-            "hl": [
-              {
-                "r": 7,
-                "tone": "success"
-              }
-            ],
-            "caption": "3 → 7 → 6 → 4 → 1"
+            "reveal": 8
           }
         }
       ],
-      "animation": {
-        "kind": "table",
-        "cols": [
-          "Q2",
-          "Q1",
-          "Q0",
-          "state"
-        ],
-        "rowLabels": [
-          "t0",
-          "t1",
-          "t2",
-          "t3",
-          "t4",
-          "t5",
-          "t6",
-          "t7"
-        ],
-        "rows": [
-          [
-            0,
-            0,
-            1,
-            1
-          ],
-          [
-            0,
-            1,
-            0,
-            2
-          ],
-          [
-            1,
-            0,
-            1,
-            5
-          ],
-          [
-            0,
-            1,
-            1,
-            3
-          ],
-          [
-            1,
-            1,
-            1,
-            7
-          ],
-          [
-            1,
-            1,
-            0,
-            6
-          ],
-          [
-            1,
-            0,
-            0,
-            4
-          ],
-          [
-            0,
-            0,
-            1,
-            1
-          ]
-        ],
-        "reveal": 4,
-        "mono": true
-      },
       "answer": {
-        "value": "Sequence 1, 2, 5, 3, 7, 6, 4 — option (B)",
+        "value": "(B) 1, 2, 5, 3, 7, 6, 4",
         "choice": [
           "B"
         ],
@@ -2036,29 +2000,83 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "From 1 the next state is 2, not 3."
+          "reason": "1 → 3 is possible, but 3 → 4 is not: from 3 the register can only reach $2 \\cdot 3 = 6$ or 7."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Matches the trace."
+          "reason": "The simulated sequence 1, 2, 5, 3, 7, 6, 4 (then 1 again)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "After 2 comes 5, not 7."
+          "reason": "2 → 7 is impossible: from 2 only 4 or 5 can follow."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "From 1 the next state is 2, not 6."
+          "reason": "1 → 6 is impossible: from 1 only 2 or 3 can follow."
         }
       ],
+      "shortcut": "Each next state is $2v \\bmod 8$ or one more; only option B obeys that at every step, so no XOR needs to be computed at all.",
       "pitfalls": [
-        "Feeding the XOR from $Q_0$ instead of $Q_1$ and $Q_2$.",
-        "Reading the state with $Q_0$ as the MSB."
+        "Shifting in the wrong direction (reading $Q_0$ as the most significant bit).",
+        "Updating $Q_1$ first and then using the new $Q_1$ in the XOR (every flip-flop uses the old state)."
       ],
-      "verification": "Maximal-length 3-bit LFSR: all 7 non-zero states appear once before returning to 1."
+      "verification": "Simulation from 001 gives 1, 2, 5, 3, 7, 6, 4, 1; 000 maps to itself, the only state off the cycle.",
+      "animation": {
+        "kind": "table",
+        "title": "State sequence",
+        "cols": [
+          "Q2Q1Q0",
+          "Q1 ⊕ Q2",
+          "value"
+        ],
+        "rows": [
+          [
+            "001",
+            "0",
+            "1"
+          ],
+          [
+            "010",
+            "1",
+            "2"
+          ],
+          [
+            "101",
+            "1",
+            "5"
+          ],
+          [
+            "011",
+            "1",
+            "3"
+          ],
+          [
+            "111",
+            "0",
+            "7"
+          ],
+          [
+            "110",
+            "0",
+            "6"
+          ],
+          [
+            "100",
+            "1",
+            "4"
+          ],
+          [
+            "001",
+            "",
+            "1"
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
+      }
     },
     "cse-2001-a-38": {
       "approach": "Count bus transfers (one per cycle on the single 8-bit bus) plus the 2-cycle memory write; the SP decrement is local and overlaps.",
@@ -3581,150 +3599,216 @@
       }
     },
     "cse-2001-b-59-a": {
-      "approach": "Mealy machine with two modes (copy / complement), each split by whether the last input already starts the switching pair. The bit that completes \"00\" is still copied; the bit that completes \"11\" is still complemented.",
+      "approach": "Concept tested: **building a state machine from a word description**. Decide what must be remembered (the mode, and whether the last bit was the one that would end the mode), make each combination a state, put the output on the arcs (Mealy, since the output is the input or its complement), and test on the given example.",
       "concepts": [
         "Mealy machine",
         "State diagram",
+        "Word to FSM",
         "Sequence detection"
       ],
+      "given": "A stream of bits; the circuit copies its input until two consecutive 0s appear, then outputs the complement until two consecutive 1s appear, and repeats. Example: input 101100 01001011 011, output 101100 10110100 011. 'S-K' master–slave flip-flops (read as J-K) are to be used.",
       "steps": [
         {
-          "title": "States",
-          "body": "| state | mode | remembers |\n|---|---|---|\n| A | copy | last input not 0 (or start) |\n| B | copy | last input 0 |\n| C | complement | last input not 1 |\n| D | complement | last input 1 |"
+          "title": "What must be remembered",
+          "body": "The **mode** (copy or complement) and, inside each mode, whether the last bit was the one that would end the mode if it came again: a 0 in copy mode, a 1 in complement mode. Two facts of one bit each: four states."
         },
         {
-          "title": "Transitions (input/output)",
-          "body": "- A: 1/1 → A, 0/0 → B\n- B: 1/1 → A, 0/0 → C (second 0: copied, then switch)\n- C: 0/1 → C, 1/0 → D\n- D: 0/1 → C, 1/0 → A (second 1: complemented, then switch back)",
+          "title": "Name the states",
+          "body": "A: copy, last bit not 0 (also the start). B: copy, last bit 0. C: complement, last bit not 1. D: complement, last bit 1. The output is $x$ in A, B and $\\bar x$ in C, D, so it depends on the input: a Mealy machine with outputs on the arcs."
+        },
+        {
+          "title": "Draw every arc",
+          "body": "The bit that completes 00 or 11 is still processed in the old mode (the example copies the second 0 of the first 00). A: 0/0 → B, 1/1 → A. B: 0/0 → C, 1/1 → A. C: 0/1 → C, 1/0 → D. D: 0/1 → C, 1/0 → A. Eight arcs for four states, one per (state, input).",
           "scene": {
-            "edgeTones": {
-              "B>C": "warning",
-              "D>A": "warning"
-            },
-            "caption": "Mode switches on 00 and 11"
+            "reveal": 4
           }
         },
         {
-          "title": "Check against the example",
-          "body": "Input 101100: A→A→B→A→A→B→C, output 101100. Input 01001011 from C: C→C→D→C→C→D→C→D→A, output 10110100. Input 011 from A: output 011. All match the given streams.",
-          "scene": {
-            "current": [
-              "A"
-            ],
-            "caption": "Example reproduced"
-          }
+          "title": "Test on the example",
+          "body": "Running the machine on the 17 bits 10110001001011011 from A gives 10110010110100011, the example output (101100 10110100 011), with states A A B A A B C C D C C D C D A B A A."
         }
       ],
       "answer": {
-        "value": "4-state Mealy machine: A (copy), B (copy, last 0), C (complement), D (complement, last 1). A: 0/0→B, 1/1→A; B: 0/0→C, 1/1→A; C: 0/1→C, 1/0→D; D: 0/1→C, 1/0→A.",
+        "value": "4-state Mealy machine: A (copy, last≠0), B (copy, last=0), C (complement, last≠1), D (complement, last=1); A: 0/0→B, 1/1→A; B: 0/0→C, 1/1→A; C: 0/1→C, 1/0→D; D: 0/1→C, 1/0→A",
         "matchesKey": true
       },
+      "shortcut": "State = (mode, 'one more of the same bit ends the mode'). Output = input XOR mode. Only the 'ending' bit moves you between modes.",
       "pitfalls": [
-        "The second 0 is output as 0 (copied); complementing starts with the next bit — check this against the example stream."
+        "Switching mode before processing the completing bit (complementing the second 0 of 00): the example shows it is still copied.",
+        "Using only two states (copy, complement): the machine must also remember the previous bit to recognise 00 and 11.",
+        "Carrying the flag across a mode change: the bit that completes 00 also enters C ('complement, last bit 0'), so the next 1 is only the first of a possible 11, not the second."
       ],
-      "verification": "Replayed the full 17-bit example stream through the diagram; every output bit matches.",
+      "verification": "Simulated on every input up to 10 bits, the machine equals a direct reading of the words (copy until 00, complement until 11, repeat), and it is minimal (4 states, partition refinement merges nothing). An equivalent Moore machine needs 6 states.",
       "animation": {
-        "kind": "automaton",
-        "layout": "manual",
-        "states": [
-          {
-            "id": "A",
-            "start": true,
-            "x": 0,
-            "y": 0
-          },
-          {
-            "id": "B",
-            "x": 1,
-            "y": 0
-          },
-          {
-            "id": "C",
-            "x": 1,
-            "y": 1
-          },
-          {
-            "id": "D",
-            "x": 0,
-            "y": 1
-          }
+        "kind": "table",
+        "title": "State table (next state / output)",
+        "cols": [
+          "x = 0",
+          "x = 1"
         ],
-        "edges": [
-          {
-            "from": "A",
-            "to": "A",
-            "label": "1/1"
-          },
-          {
-            "from": "A",
-            "to": "B",
-            "label": "0/0"
-          },
-          {
-            "from": "B",
-            "to": "A",
-            "label": "1/1"
-          },
-          {
-            "from": "B",
-            "to": "C",
-            "label": "0/0"
-          },
-          {
-            "from": "C",
-            "to": "C",
-            "label": "0/1"
-          },
-          {
-            "from": "C",
-            "to": "D",
-            "label": "1/0"
-          },
-          {
-            "from": "D",
-            "to": "C",
-            "label": "0/1"
-          },
-          {
-            "from": "D",
-            "to": "A",
-            "label": "1/0"
-          }
+        "rows": [
+          [
+            "B/0",
+            "A/1"
+          ],
+          [
+            "C/0",
+            "A/1"
+          ],
+          [
+            "C/1",
+            "D/0"
+          ],
+          [
+            "C/1",
+            "A/0"
+          ]
         ],
-        "current": [
-          "A"
-        ]
+        "mono": true,
+        "rowLabels": [
+          "A copy, last≠0",
+          "B copy, last=0",
+          "C comp, last≠1",
+          "D comp, last=1"
+        ],
+        "reveal": 1
       }
     },
     "cse-2001-b-59-b": {
-      "approach": "Encode A=00, B=01, C=10, D=11 ($Q_1$ = mode, $Q_0$ = \"last bit could start the switch\"), build the next-state table, then read J/K from the JK excitation table.",
+      "approach": "Concept tested: **implementing a Mealy machine with JK flip-flops**. Assign codes to the four states, write the encoded state table, read the J and K columns from the JK excitation table (J only where Q = 0, K only where Q = 1) and minimise. No standard flip-flop is called 'S-K'; it is read as J-K (set/reset, toggle on 11), and $Q_1$'s answer is the same under an SR reading.",
       "concepts": [
-        "JK flip-flop excitation",
         "State assignment",
+        "JK flip-flop",
+        "Excitation table",
         "K-map minimisation"
       ],
+      "given": "The 4-state machine of part (a): A: 0/0 → B, 1/1 → A; B: 0/0 → C, 1/1 → A; C: 0/1 → C, 1/0 → D; D: 0/1 → C, 1/0 → A. Two master–slave JK flip-flops $Q_1Q_0$; input $x$, output $z$.",
       "steps": [
         {
-          "title": "State table",
-          "body": "| $Q_1Q_0$ | $x$ | $Q_1^+Q_0^+$ | $z$ |\n|---|---|---|---|\n| 00 | 0 | 01 | 0 |\n| 00 | 1 | 00 | 1 |\n| 01 | 0 | 10 | 0 |\n| 01 | 1 | 00 | 1 |\n| 10 | 0 | 10 | 1 |\n| 10 | 1 | 11 | 0 |\n| 11 | 0 | 10 | 1 |\n| 11 | 1 | 00 | 0 |"
+          "title": "State assignment",
+          "body": "A = 00, B = 01, C = 10, D = 11. Then $Q_1$ is the mode (0 copy, 1 complement) and $Q_0$ the flag 'one more of the same bit ends the mode'. All four codes are used: no don't-cares from unused states."
         },
         {
-          "title": "Flip-flop Q1",
-          "body": "JK excitation: $0\\to0$: J=0,K=x; $0\\to1$: J=1,K=x; $1\\to0$: J=x,K=1; $1\\to1$: J=x,K=0.\n\n$Q_1=0$ rows: $Q_1^+=1$ only at $Q_0=1,x=0$ ⇒ $J_1 = Q_0\\bar x$.\n\n$Q_1=1$ rows: $Q_1^+=0$ only at $Q_0=1,x=1$ ⇒ $K_1 = Q_0 x$."
+          "title": "Encoded table",
+          "body": "00: $x = 0$ → 01, $z = 0$; $x = 1$ → 00, 1. 01: 0 → 10, 0; 1 → 00, 1. 10: 0 → 10, 1; 1 → 11, 0. 11: 0 → 10, 1; 1 → 00, 0.",
+          "scene": {
+            "reveal": 8
+          }
         },
         {
-          "title": "Flip-flop Q0 and output",
-          "body": "$Q_0=0$ rows (00, 10): $Q_0^+=1$ at $(Q_1,x)=(0,0)$ and $(1,1)$ ⇒ $J_0 = \\bar Q_1 \\bar x + Q_1 x$.\n\n$Q_0=1$ rows (01, 11): $Q_0^+ = 0$ always ⇒ $K_0 = 1$.\n\nOutput: $z = x$ in copy mode, $\\bar x$ in complement mode ⇒ $z = x \\oplus Q_1$."
+          "title": "J1 and K1",
+          "body": "$J_1$ matters in rows with $Q_1 = 0$: it is 1 only in row (01, $x = 0$), so $J_1 = Q_0\\bar x$. $K_1$ matters in rows with $Q_1 = 1$: it is 1 only in row (11, $x = 1$), so $K_1 = Q_0 x$."
+        },
+        {
+          "title": "J0 and K0",
+          "body": "$J_0$ (rows with $Q_0 = 0$) is 1 in rows (00, 0) and (10, 1) and 0 in (00, 1), (10, 0): $J_0 = Q_1x + \\bar Q_1\\bar x$. Every row with $Q_0 = 1$ goes to $Q_0^+ = 0$: $K_0 = 1$."
+        },
+        {
+          "title": "Output",
+          "body": "$z = x$ in copy mode and $\\bar x$ in complement mode: $z = x \\oplus Q_1$."
         }
       ],
       "answer": {
-        "value": "With A=00, B=01, C=10, D=11 ($Q_1$ = mode): $J_1 = Q_0\\bar x$, $K_1 = Q_0 x$; $J_0 = Q_1 x + \\bar Q_1 \\bar x$, $K_0 = 1$; output $z = x \\oplus Q_1$.",
-        "matchesKey": true
+        "value": "With A=00, B=01, C=10, D=11: $J_1 = Q_0\\bar x$, $K_1 = Q_0 x$, $J_0 = Q_1x + \\bar Q_1\\bar x$, $K_0 = 1$, $z = x \\oplus Q_1$",
+        "matchesKey": true,
+        "keyNote": "Any state assignment followed consistently is a correct answer; it changes the equations, not the behaviour. With A=00, B=01, C=11, D=10 the same procedure gives $J_1 = Q_0\\bar x$, $K_1 = \\bar Q_0x$, $J_0 = \\bar x$, $K_0 = x$."
       },
+      "shortcut": "Choose codes whose bits mean something (mode, flag): $J_1$ = 'flag set and another 0 arrives', $K_1$ = 'flag set and another 1 arrives', and the flag is always cleared at the next clock ($K_0 = 1$).",
       "pitfalls": [
-        "The expressions depend on the state assignment; any consistent assignment is acceptable, but the J/K must match its own table.",
-        "\"S-K\" in the question is the J-K master-slave flip-flop."
+        "'S-K' is read as J-K; under an SR reading, $Q_1$'s answer is the same ($S_1 = Q_0\\bar x$, $R_1 = Q_0x$), so give that flip-flop's equations.",
+        "Writing J or K values in rows where they do not matter instead of don't-cares, which gives larger equations.",
+        "Using D-flip-flop equations ($D = Q^+$) for J: J is $Q^+$ only in rows with $Q = 0$."
       ],
-      "verification": "Checked $Q^+ = J\\bar Q + \\bar K Q$ on all 8 rows, e.g. state 11, $x=1$: $Q_1^+ = 0\\cdot 0 + \\overline{1}\\cdot 1 = 0$, $Q_0^+ = J_0\\cdot 0 + \\bar 1 \\cdot 1 = 0$ → 00 ✓."
+      "verification": "The circuit with these equations, simulated on every input up to 9 bits, produces the same outputs as the state machine, and on the example 101100 01001011 011 it outputs 101100 10110100 011. The D design ($D_1 = Q_0\\bar x + Q_1\\bar Q_0$, $D_0 = \\bar Q_1\\bar Q_0\\bar x + Q_1\\bar Q_0 x$) and a one-hot design agree too.",
+      "animation": {
+        "kind": "table",
+        "title": "Encoded table and JK columns (× = don't care)",
+        "cols": [
+          "Q1Q0 x",
+          "Q1⁺Q0⁺",
+          "z",
+          "J1",
+          "K1",
+          "J0",
+          "K0"
+        ],
+        "rows": [
+          [
+            "00 0",
+            "01",
+            "0",
+            "0",
+            "×",
+            "1",
+            "×"
+          ],
+          [
+            "00 1",
+            "00",
+            "1",
+            "0",
+            "×",
+            "0",
+            "×"
+          ],
+          [
+            "01 0",
+            "10",
+            "0",
+            "1",
+            "×",
+            "×",
+            "1"
+          ],
+          [
+            "01 1",
+            "00",
+            "1",
+            "0",
+            "×",
+            "×",
+            "1"
+          ],
+          [
+            "10 0",
+            "10",
+            "1",
+            "×",
+            "0",
+            "0",
+            "×"
+          ],
+          [
+            "10 1",
+            "11",
+            "0",
+            "×",
+            "0",
+            "1",
+            "×"
+          ],
+          [
+            "11 0",
+            "10",
+            "1",
+            "×",
+            "0",
+            "×",
+            "1"
+          ],
+          [
+            "11 1",
+            "00",
+            "0",
+            "×",
+            "1",
+            "×",
+            "1"
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
+      }
     },
     "cse-2001-b-60-a": {
       "approach": "List each instruction's destination and sources, then check every earlier→later pair for RAW (write then read), WAR (read then write) and WAW (write then write) on the same register.",

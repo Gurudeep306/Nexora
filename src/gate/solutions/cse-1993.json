@@ -784,28 +784,38 @@
       }
     },
     "cse-1993-ii-a-6-2": {
-      "approach": "The figure is missing from this paper copy. In the commonly reproduced version the \"state machine\" is a NOR gate whose output is fed back to one of its own inputs, the other inputs being $a$ and $b$: $Q^+=\\overline{a+b+Q}$. A stable state exists only when the feedback is masked, i.e. $a+b=1$.",
+      "approach": "Concept tested: **a loop that inverts itself has no stable state**. The figure is missing from the paper scan; as usually reproduced (GATE Overflow, the source the question bank's review note cites), the \"state machine\" has two states and inputs $a$, $b$: it leaves state 1 when $a = 0$ and leaves state 2 when $b = 0$. A state is stable when no arc leaves it for the present input, so ask for which inputs at least one state keeps itself.",
       "concepts": [
-        "Feedback / asynchronous circuits",
+        "Feedback loop",
         "Stable state",
-        "Oscillation in a NOR loop"
+        "State machine",
+        "Oscillation"
       ],
+      "given": "A two-state machine with inputs $a$ and $b$: state 1 → state 2 when $a = 0$, state 2 → state 1 when $b = 0$ (figure as usually reproduced, per the bank's review note; the scan of the 1993 paper shows only the text). An equivalent gate-level model, used in the lesson as our own illustration, is a NOR gate with inputs $a$, $b$ and its own output $Q$ fed back: $Q^+ = \\overline{a + b + Q}$, which also oscillates exactly when $a = b = 0$.",
       "steps": [
         {
-          "title": "Loop equation",
-          "body": "With feedback, the next output is $Q^+=\\overline{a+b+Q}$. A state is stable when $Q^+=Q$."
+          "title": "When is a state stable?",
+          "body": "A state is stable for an input when the machine has no arc out of it for that input: it then stays there as long as the input is held. State 1 is stable iff $a = 1$; state 2 is stable iff $b = 1$."
         },
         {
-          "title": "Case $a+b=1$",
-          "body": "$Q^+=\\overline{1}=0$ regardless of $Q$; $Q=0$ then reproduces itself — stable."
+          "title": "Case a = b = 0",
+          "body": "Both states have an arc out: the machine goes 1, 2, 1, 2, … for ever. This is an oscillation, and there is no stable state."
         },
         {
-          "title": "Case $a+b=0$",
-          "body": "$Q^+=\\bar Q$: the output keeps toggling (oscillates) — no stable state. Hence the restriction is $a+b=1$."
+          "title": "Case a + b = 1",
+          "body": "If $a = 1$, state 1 is stable (from state 2 the machine reaches it when $b = 0$, or state 2 is stable too when $b = 1$). If $b = 1$, state 2 is stable. So a stable state exists whenever at least one input is 1."
+        },
+        {
+          "title": "Same answer for the gate model",
+          "body": "The NOR loop $Q^+ = \\overline{a + b + Q}$ is the constant 0 when $a + b = 1$ (stable $Q = 0$) and an inverter of its own output, an odd ring of length one, when $a = b = 0$. Both readings oscillate only for $a = b = 0$."
+        },
+        {
+          "title": "Restriction on the inputs",
+          "body": "A stable state exists exactly when $a + b = 1$ (option B). Options A and C ($ab = 1$; $\\bar a + \\bar b = 0$, which is again $ab = 1$) are sufficient but exclude 01 and 10, which also work; D and E include the oscillating case."
         }
       ],
       "answer": {
-        "value": "(b) $a+b=1$",
+        "value": "(b) $a + b = 1$",
         "choice": [
           "B"
         ],
@@ -815,85 +825,106 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$a\\cdot b=1$ is sufficient but too strong — $a=1,b=0$ is also stable, so it is not the required restriction."
+          "reason": "$ab = 1$ does give a stable state, but it is not the restriction: $ab = 01$ and $10$ have a stable state too."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Exactly the condition that masks the feedback."
+          "reason": "Stable exactly when at least one input is 1, i.e. $a + b = 1$; only $a = b = 0$ oscillates."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\bar a+\\bar b=0\\iff a\\cdot b=1$ — same as (a), too strong."
+          "reason": "$\\bar a + \\bar b = 0$ means $a = b = 1$, the same as A: too narrow."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$\\overline{a\\cdot b}=1$ allows $a=b=0$, where the loop oscillates."
+          "reason": "$\\overline{ab} = 1$ includes $a = b = 0$, the oscillating case."
         },
         {
           "option": "E",
           "correct": false,
-          "reason": "$\\overline{a+b}=1$ means $a=b=0$ — precisely the oscillating case."
+          "reason": "$\\overline{a + b} = 1$ is exactly the oscillating case $a = b = 0$."
         }
       ],
+      "shortcut": "Find the input for which the machine can never rest (every state has an arc out); the restriction is \"not that input\". Here that input is $a = b = 0$, so the answer is $a + b = 1$.",
       "pitfalls": [
-        "Choosing (a)/(c): they guarantee stability but are not the general restriction."
+        "Answering $\\overline{a + b} = 1$ because \"both inputs 0 means nothing is happening\": with both inputs 0 the machine has an arc out of every state and never rests.",
+        "Choosing $a \\cdot b = 1$: it is sufficient but not necessary."
       ],
-      "verification": "Checked all four input combinations of the assumed NOR-feedback loop; the figure is missing, so the item stays flagged for review."
+      "verification": "Stable states of the two-state machine: none for $ab = 00$, {2} for 01, {1} for 10, {1, 2} for 11; a walk from state 1 with $ab = 00$ visits 2, 1, 2, 1, … The NOR model has fixed points exactly for $ab \\ne 00$ and toggles every gate delay for $ab = 00$.",
+      "animation": {
+        "kind": "table",
+        "title": "Two-state machine: stable states per input",
+        "cols": [
+          "state 1",
+          "state 2",
+          "stable?"
+        ],
+        "rows": [
+          [
+            "→ 2",
+            "→ 1",
+            "no (oscillates)"
+          ],
+          [
+            "→ 2",
+            "stays",
+            "state 2"
+          ],
+          [
+            "stays",
+            "→ 1",
+            "state 1"
+          ],
+          [
+            "stays",
+            "stays",
+            "both"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "ab = 00",
+          "ab = 01",
+          "ab = 10",
+          "ab = 11"
+        ]
+      }
     },
     "cse-1993-ii-a-6-3": {
-      "approach": "Each J-K stage with $J=Q_{prev}$, $K=\\bar Q_{prev}$ acts as a D flip-flop, so the chain is a shift register; the last stage feeds $\\bar Q_3$ back to $J_1$ (twisted ring), giving a Johnson counter with $2n=6$ states.",
+      "approach": "Concept tested: **a JK shift register with twisted feedback (Johnson counter)**. Each JK stage has $K = \\overline{J}$, so it copies $J$ like a D stage; the first stage takes $\\overline{Q_3}$. Trace from 000.",
       "concepts": [
-        "J-K flip-flop as D flip-flop",
-        "Johnson (twisted-ring) counter",
-        "Shift register"
+        "Johnson counter",
+        "JK flip-flop",
+        "Shift register",
+        "Mod-6 counter"
       ],
+      "given": "Three JK flip-flops on a common clock: $J_2 = Q_1$, $K_2 = \\overline{Q_1}$; $J_3 = Q_2$, $K_3 = \\overline{Q_2}$; $J_1 = \\overline{Q_3}$, $K_1 = Q_3$. Initial state 000. Options: shift register, mod-3, mod-6, mod-2 counter, none.",
       "steps": [
         {
-          "title": "Next-state equations",
-          "body": "With $J=D$, $K=\\bar D$ a J-K flip-flop gives $Q^+=D$. Here $Q_1^+=\\bar Q_3$, $Q_2^+=Q_1$, $Q_3^+=Q_2$ — a shift register with inverted feedback.",
+          "title": "Each stage is a D stage",
+          "body": "$Q^+ = J\\overline{Q} + \\overline{K}Q$ with $K = \\overline{J}$ gives $Q^+ = J\\overline{Q} + JQ = J$. So $Q_2^+ = Q_1$, $Q_3^+ = Q_2$, $Q_1^+ = \\overline{Q_3}$: a shift register with the complement of the last stage fed back."
+        },
+        {
+          "title": "Trace from 000",
+          "body": "000 → 100 → 110 → 111 → 011 → 001 → 000: six states.",
           "scene": {
-            "reveal": 5,
-            "caption": "Start in 000"
+            "reveal": 7
           }
         },
         {
-          "title": "Fill phase",
-          "body": "$000\\to100\\to110\\to111$: ones shift in while $\\bar Q_3=1$.",
-          "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "r": 3,
-                "tone": "accent"
-              }
-            ],
-            "caption": "Ones enter from the left"
-          }
+          "title": "Name the function",
+          "body": "Six states in the cycle: a mod-6 (Johnson) counter. The structure is a shift register (every stage copies the previous one) whose twisted feedback makes it count."
         },
         {
-          "title": "Empty phase",
-          "body": "Now $\\bar Q_3=0$: $111\\to011\\to001\\to000$.",
-          "scene": {
-            "reveal": 35,
-            "hl": [
-              {
-                "r": 6,
-                "tone": "success"
-              }
-            ],
-            "caption": "Back to 000 after 6 clocks"
-          }
-        },
-        {
-          "title": "Conclusion",
-          "body": "Six distinct states repeat — a mod-6 (Johnson) counter, built as a shift register with twisted feedback."
+          "title": "Why (a) is accepted too",
+          "body": "The arrangement is literally a shift register: data moves one stage per clock. The key (a) and (c) reads 'function performed' as both what the circuit is (a twisted-ring shift register) and what it does from 000 (count mod 6)."
         }
       ],
       "answer": {
-        "value": "(c) Mod-6 counter (a twisted-ring shift register, so (a) is also marked)",
+        "value": "(a) shift register and (c) mod-6 counter",
         "choice": [
           "A",
           "C"
@@ -904,95 +935,84 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Structurally the circuit is a shift register (data moves one stage per clock); accepted alongside (c)."
+          "reason": "Every stage copies the previous one at the clock: it is a shift register (with twisted feedback)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "There are 6 states, not 3."
+          "reason": "Mod-3 would be a 3-stage ring counter ($J_1 = Q_3$); the inverted feedback doubles the cycle to 6."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Sequence 000→100→110→111→011→001→000 has 6 states."
+          "reason": "From 000 the circuit cycles through 6 states: 000, 100, 110, 111, 011, 001."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Each flip-flop output has period 6, not 2."
+          "reason": "The 2-cycle 010 ↔ 101 exists, but only from those start states, not from 000."
         },
         {
           "option": "E",
           "correct": false,
-          "reason": "(c) (and (a)) apply."
+          "reason": "A and C apply."
         }
       ],
+      "shortcut": "Q̄ of the last stage into the first = Johnson counter: $2n = 6$ states for 3 flip-flops.",
       "pitfalls": [
-        "Treating it as a plain ring counter: with the inverted feedback, 000 does not get stuck — it counts 6 states."
+        "Treating the JK stages as toggling (J = K = 1) stages; here $K = \\overline{J}$ always.",
+        "Counting the ring-counter modulus (3) instead of the Johnson modulus (6).",
+        "Choosing mod-2 because the 010 ↔ 101 cycle exists; the start is 000."
       ],
-      "verification": "A Johnson counter with $n$ flip-flops has $2n$ states; $n=3\\Rightarrow6$.",
+      "verification": "Simulating the three JK stages gives the same next state as a 3-bit Johnson step in all 8 states; from 000 the cycle has 6 states and the leftovers form 010 ↔ 101.",
       "animation": {
         "kind": "table",
+        "title": "Trace from 000",
         "cols": [
-          "Clock",
-          "Q1",
-          "Q2",
-          "Q3",
-          "J1 = Q̄3, K1 = Q3"
+          "Q1 Q2 Q3",
+          "J1 = Q̄3"
         ],
         "rows": [
           [
-            0,
-            0,
-            0,
-            0,
-            "J1=1, K1=0"
+            "000",
+            "1"
           ],
           [
-            1,
-            1,
-            0,
-            0,
-            "J1=1, K1=0"
+            "100",
+            "1"
           ],
           [
-            2,
-            1,
-            1,
-            0,
-            "J1=1, K1=0"
+            "110",
+            "1"
           ],
           [
-            3,
-            1,
-            1,
-            1,
-            "J1=0, K1=1"
+            "111",
+            "0"
           ],
           [
-            4,
-            0,
-            1,
-            1,
-            "J1=0, K1=1"
+            "011",
+            "0"
           ],
           [
-            5,
-            0,
-            0,
-            1,
-            "J1=0, K1=1"
+            "001",
+            "0"
           ],
           [
-            6,
-            0,
-            0,
-            0,
-            "back to start"
+            "000",
+            "1"
           ]
         ],
-        "reveal": 5,
-        "mono": true
+        "mono": true,
+        "rowLabels": [
+          "start",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "reveal": 1
       }
     },
     "cse-1993-ii-a-6-4": {
@@ -2786,112 +2806,85 @@
       "verification": "Resolution check: from A and B→¬A get ¬B; from A and A→(B∨C) get B∨C; with ¬B, C."
     },
     "cse-1993-ii-c-19": {
-      "approach": "A two-level NAND–NAND network is a sum of products. Read the product terms off the first-level gates to get $D_A$ and $D_B$; for D flip-flops $A^+=D_A$, $B^+=D_B$, then tabulate all 8 combinations of $A,B,P$.",
+      "approach": "Concept tested: **the analysis procedure**. Turn the NAND network into input equations (a NAND of NANDs is an AND–OR), use $Q^+ = D$ for both flip-flops, and evaluate every state for both values of $P$.",
       "concepts": [
-        "NAND–NAND = SOP",
+        "State table",
         "D flip-flop",
-        "State transition table"
+        "NAND-NAND logic",
+        "Analysis procedure"
       ],
+      "given": "Two D flip-flops with state bits $A$, $B$ and a control input $P$. From the figure, $D_A = \\overline{\\overline{B\\overline{A}}\\cdot\\overline{\\overline{A}\\,\\overline{P}}}$ and $D_B = \\overline{\\overline{P\\overline{B}}\\cdot\\overline{\\overline{P}A}}$.",
       "steps": [
         {
-          "title": "Read the circuit",
-          "body": "First-level gate inputs: $(\\overline{A},B)$ and $(\\overline{A},\\overline{P})$ feed the $D_A$ gate; $(P,\\overline{B})$ and $(\\overline{P},A)$ feed the $D_B$ gate."
+          "title": "Input equations",
+          "body": "By De Morgan a two-level NAND–NAND network is AND–OR: $D_A = \\overline{A}B + \\overline{A}\\,\\overline{P}$ and $D_B = P\\overline{B} + \\overline{P}A$."
         },
         {
-          "title": "Next-state equations",
-          "body": "$$D_A=\\overline{\\overline{\\overline{A}B}\\cdot\\overline{\\overline{A}\\,\\overline{P}}}=\\overline{A}B+\\overline{A}\\,\\overline{P}=\\overline{A}(B+\\overline{P})$$ $$D_B=\\overline{\\overline{P\\overline{B}}\\cdot\\overline{\\overline{P}A}}=P\\overline{B}+\\overline{P}A$$ With D flip-flops, $A^+=D_A$ and $B^+=D_B$."
-        },
-        {
-          "title": "Evaluate each row",
-          "body": "$A^+=1$ only when $A=0$ and ($B=1$ or $P=0$). $B^+=1$ when ($P=1,B=0$) or ($P=0,A=1$).",
+          "title": "State equations",
+          "body": "D flip-flops load their inputs: $A^+ = \\overline{A}(B + \\overline{P})$, $B^+ = P\\overline{B} + \\overline{P}A$.",
           "scene": {
-            "kind": "table",
-            "cols": [
-              "AB",
-              "P",
-              "D_A = A⁺",
-              "D_B = B⁺",
-              "A⁺B⁺"
-            ],
-            "rows": [
-              [
-                "00",
-                "0",
-                "1",
-                "0",
-                "10"
-              ],
-              [
-                "00",
-                "1",
-                "0",
-                "1",
-                "01"
-              ],
-              [
-                "01",
-                "0",
-                "1",
-                "0",
-                "10"
-              ],
-              [
-                "01",
-                "1",
-                "1",
-                "0",
-                "10"
-              ],
-              [
-                "10",
-                "0",
-                "0",
-                "1",
-                "01"
-              ],
-              [
-                "10",
-                "1",
-                "0",
-                "1",
-                "01"
-              ],
-              [
-                "11",
-                "0",
-                "0",
-                "1",
-                "01"
-              ],
-              [
-                "11",
-                "1",
-                "0",
-                "0",
-                "00"
-              ]
-            ],
-            "reveal": 0,
-            "mono": true
+            "reveal": 1
           }
         },
         {
-          "title": "State transition table",
-          "body": "Present state $AB$, input $P$ → next state:\\n\\n| AB | P = 0 | P = 1 |\\n|---|---|---|\\n| 00 | 10 | 01 |\\n| 01 | 10 | 10 |\\n| 10 | 01 | 01 |\\n| 11 | 01 | 00 |",
+          "title": "Rows with A = 0",
+          "body": "$AB = 00$: $P = 0$ → 10, $P = 1$ → 01. $AB = 01$: $P = 0$ → 10, $P = 1$ → 10.",
           "scene": {
-            "reveal": 40
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Rows with A = 1",
+          "body": "$A^+ = 0$ always. $AB = 10$: $B^+ = \\overline{P} + P = 1$, so 01 for both $P$. $AB = 11$: $P = 0$ → 01, $P = 1$ → 00.",
+          "scene": {
+            "reveal": 4
           }
         }
       ],
       "answer": {
-        "value": "$D_A=\\overline{A}B+\\overline{A}\\,\\overline{P}$, $D_B=P\\overline{B}+\\overline{P}A$. AB → A⁺B⁺ for P = 0 / P = 1: 00 → 10 / 01; 01 → 10 / 10; 10 → 01 / 01; 11 → 01 / 00.",
+        "value": "AB, P → A⁺B⁺: 00,0→10; 00,1→01; 01,0→10; 01,1→10; 10,0→01; 10,1→01; 11,0→01; 11,1→00 (D_A = A'B + A'P', D_B = PB' + P'A)",
         "matchesKey": true
       },
+      "shortcut": "Read $A^+ = \\overline{A}(B + \\overline{P})$ first: every state with $A = 1$ goes to $A^+ = 0$, which fills half the table at once.",
       "pitfalls": [
-        "Treating the gates as AND–OR without the double inversion — NAND–NAND equals AND–OR, not NOR.",
-        "Mixing up which feedback line is $A$ and which is $\\overline{A}$."
+        "Converting NAND–NAND to OR–AND instead of AND–OR.",
+        "Mixing up which inverter output ($\\overline{A}$ or $A$) feeds which first-level gate."
       ],
-      "verification": "Row 11, P = 1: $D_A=0\\cdot(1+0)=0$, $D_B=1\\cdot0+0\\cdot1=0$ → 00. Row 00, P = 0: $D_A=1\\cdot(0+1)=1$, $D_B=0+1\\cdot0=0$ → 10."
+      "verification": "Simulating the two flip-flops for all 4 states and both values of P reproduces the eight rows; the NAND-of-NANDs and the AND–OR forms agree on all 8 input rows.",
+      "animation": {
+        "kind": "table",
+        "title": "Next state A⁺B⁺",
+        "cols": [
+          "P = 0",
+          "P = 1"
+        ],
+        "rows": [
+          [
+            "10",
+            "01"
+          ],
+          [
+            "10",
+            "10"
+          ],
+          [
+            "01",
+            "01"
+          ],
+          [
+            "01",
+            "00"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "AB = 00",
+          "AB = 01",
+          "AB = 10",
+          "AB = 11"
+        ],
+        "reveal": 0
+      }
     },
     "cse-1993-ii-c-20": {
       "approach": "Trace the loop: HL is a pointer loaded indirectly from 5000H, B is a down-counter of 5, and each iteration reads input port 20H into A and stores it at the pointer.",

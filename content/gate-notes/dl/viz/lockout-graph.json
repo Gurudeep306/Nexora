@@ -1,0 +1,773 @@
+{
+ "version": 1,
+ "title": "Lock-out in the 0 → 3 → 5 → 6 JK counter",
+ "width": 680,
+ "height": 394,
+ "narrow": {
+  "width": 360,
+  "height": 368
+ },
+ "intro": "State graph of a 3-bit JK counter designed for 0 → 3 → 5 → 6 with the unused states as don't-cares. The main cycle is on the top row, the four unused states below; arcs appear as the circuit is simulated.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "The 0 → 3 → 5 → 6 JK counter: a lock-out and two cures",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "0 → 3 → 5 → 6: lock-out",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "gn000",
+   "type": "circle",
+   "cx": 130,
+   "cy": 110,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "000",
+   "size": 14,
+   "narrow": {
+    "cx": 50,
+    "cy": 112,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gn011",
+   "type": "circle",
+   "cx": 270,
+   "cy": 110,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "011",
+   "size": 14,
+   "narrow": {
+    "cx": 130,
+    "cy": 112,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gn101",
+   "type": "circle",
+   "cx": 410,
+   "cy": 110,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "101",
+   "size": 14,
+   "narrow": {
+    "cx": 210,
+    "cy": 112,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gn110",
+   "type": "circle",
+   "cx": 550,
+   "cy": 110,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "110",
+   "size": 14,
+   "narrow": {
+    "cx": 290,
+    "cy": 112,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gn010",
+   "type": "circle",
+   "cx": 130,
+   "cy": 270,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "010",
+   "size": 14,
+   "narrow": {
+    "cx": 50,
+    "cy": 252,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gn100",
+   "type": "circle",
+   "cx": 270,
+   "cy": 270,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "100",
+   "size": 14,
+   "narrow": {
+    "cx": 130,
+    "cy": 252,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gn111",
+   "type": "circle",
+   "cx": 410,
+   "cy": 270,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "111",
+   "size": 14,
+   "narrow": {
+    "cx": 210,
+    "cy": 252,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gn001",
+   "type": "circle",
+   "cx": 550,
+   "cy": 270,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "001",
+   "size": 14,
+   "narrow": {
+    "cx": 290,
+    "cy": 252,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "ge0",
+   "type": "arrow",
+   "from": "gn000",
+   "to": "gn011",
+   "curve": 0,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge1",
+   "type": "arrow",
+   "from": "gn011",
+   "to": "gn101",
+   "curve": 0,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge2",
+   "type": "arrow",
+   "from": "gn101",
+   "to": "gn110",
+   "curve": 0,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge3",
+   "type": "arrow",
+   "from": "gn110",
+   "to": "gn000",
+   "curve": 0.35,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge4",
+   "type": "arrow",
+   "from": "gn001",
+   "to": "gn010",
+   "curve": 0.35,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge5",
+   "type": "arrow",
+   "from": "gn010",
+   "to": "gn100",
+   "curve": 0,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge6",
+   "type": "arrow",
+   "from": "gn100",
+   "to": "gn111",
+   "curve": 0,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge7",
+   "type": "arrow",
+   "from": "gn111",
+   "to": "gn001",
+   "curve": 0,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge8",
+   "type": "arrow",
+   "from": "gn010",
+   "to": "gn000",
+   "curve": 0,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge9",
+   "type": "arrow",
+   "from": "gn100",
+   "to": "gn000",
+   "curve": 0,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge10",
+   "type": "arrow",
+   "from": "gn111",
+   "to": "gn000",
+   "curve": 0,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge11",
+   "type": "arrow",
+   "from": "gn001",
+   "to": "gn000",
+   "curve": 0,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge12",
+   "type": "arrow",
+   "from": "gn010",
+   "to": "gn000",
+   "curve": 0,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge13",
+   "type": "arrow",
+   "from": "gn100",
+   "to": "gn011",
+   "curve": 0,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge14",
+   "type": "arrow",
+   "from": "gn111",
+   "to": "gn101",
+   "curve": 0,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "ge15",
+   "type": "arrow",
+   "from": "gn001",
+   "to": "gn110",
+   "curve": 0,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "lm",
+   "type": "text",
+   "x": 340.0,
+   "y": 42,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "y": 52,
+    "size": 12
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 350,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 326,
+    "size": 13
+   }
+  },
+  {
+   "id": "sub",
+   "type": "text",
+   "x": 340.0,
+   "y": 374,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "y": 348,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The 8 states ABC (A = MSB) of the counter built with J_A = K_A = Q_B, J_B = K_B = 1, J_C = K_C = Q_B′. Top row: the wanted cycle.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "wanted: 000 → 011 → 101 → 110 → 000",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "001, 010, 100, 111 are unused",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Simulating the circuit from 000 gives 000 → 011 → 101 → 110 → 000: the main cycle works exactly as designed.",
+   "patches": [
+    {
+     "id": "ge0",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn000",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn011",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn101",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn110",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "main cycle ✓",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lm",
+     "set": {
+      "text": "main cycle",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Power up in 001 (B = 0): A holds, B toggles, C toggles, so next 010.",
+   "patches": [
+    {
+     "id": "ge4",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "gn001",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "001 → 010",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "still outside the main cycle",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "From 010 (B = 1): A toggles, B toggles, C holds, so 100.",
+   "patches": [
+    {
+     "id": "ge5",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "gn010",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "001 → 010 → 100",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "still outside the main cycle",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "From 100 (B = 0): A holds, B toggles, C toggles, so 111.",
+   "patches": [
+    {
+     "id": "ge6",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "gn100",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "001 → 010 → 100 → 111",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "still outside the main cycle",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "From 111 (B = 1): A toggles, B toggles, C holds, so 001. Back to 001: a lock-out cycle.",
+   "patches": [
+    {
+     "id": "ge7",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "gn111",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "001 → 010 → 100 → 111 → 001",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "never reaches the main cycle",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cure 1 (forced next states): redesign with every unused state's next state set to 000. Each one now joins the cycle in one clock.",
+   "patches": [
+    {
+     "id": "ge4",
+     "set": {
+      "hidden": true,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge5",
+     "set": {
+      "hidden": true,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge6",
+     "set": {
+      "hidden": true,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge7",
+     "set": {
+      "hidden": true,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge8",
+     "set": {
+      "hidden": false,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ge9",
+     "set": {
+      "hidden": false,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ge10",
+     "set": {
+      "hidden": false,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ge11",
+     "set": {
+      "hidden": false,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "gn010",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "gn100",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "gn111",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "gn001",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "001, 010, 100, 111 → 000",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "self-starting; costs gates (fewer don't-cares)",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cure 3 (another minimal cover), same cost: choose J_A = Q_C, K_A = Q_C′. Unused states: 001 → 110, 010 → 000, 100 → 011, 111 → 101.",
+   "patches": [
+    {
+     "id": "ge8",
+     "set": {
+      "hidden": true,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge9",
+     "set": {
+      "hidden": true,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge10",
+     "set": {
+      "hidden": true,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge11",
+     "set": {
+      "hidden": true,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge12",
+     "set": {
+      "hidden": false,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ge13",
+     "set": {
+      "hidden": false,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ge14",
+     "set": {
+      "hidden": false,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ge15",
+     "set": {
+      "hidden": false,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "every unused state enters the cycle",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "same main cycle, no extra gate",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The lesson: don't-cares decide where unused states go. Always simulate all 2ⁿ states of the circuit you actually built.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "check all 8 states, not just the 4 you wanted",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "",
+      "tone": "muted"
+     }
+    }
+   ]
+  }
+ ]
+}

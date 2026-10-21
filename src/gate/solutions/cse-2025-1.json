@@ -6956,322 +6956,165 @@
       }
     },
     "cse-2025-1-cs-49": {
-      "approach": "Partition refinement (Moore's algorithm) for a Mealy machine: first group states by their output pair $(f_{X=0}, f_{X=1})$, then repeatedly split a group whenever its members go, on some input, to different groups. Stop when nothing splits; the number of groups is the minimum number of states.",
+      "approach": "Concept tested: **partition refinement of a Mealy state table**. $P_0$ groups the states by their whole output row; each round splits a block whose members send some input into different blocks; stop when a round splits nothing. The blocks are the states of the minimal machine.",
       "concepts": [
-        "State minimisation",
-        "Equivalent states",
         "Partition refinement",
+        "Equivalent states",
+        "Implication table",
         "Mealy machine"
       ],
+      "given": "Eight states $A$–$H$ (next state for $X = 0, 1$; output $f$ for $X = 0, 1$): $A$: $F, B$ / 0, 0; $B$: $D, C$ / 0, 0; $C$: $F, E$ / 0, 0; $D$: $G, A$ / 1, 0; $E$: $D, C$ / 0, 0; $F$: $F, B$ / 1, 1; $G$: $G, H$ / 0, 1; $H$: $G, A$ / 1, 0.",
       "steps": [
         {
-          "title": "P0: group by outputs",
-          "body": "Output pairs $(f_0, f_1)$: A, B, C, E $\\to (0,0)$; D, H $\\to (1,0)$; F $\\to (1,1)$; G $\\to (0,1)$.\n\n$$P_0 = \\{A,B,C,E\\},\\ \\{D,H\\},\\ \\{F\\},\\ \\{G\\}$$",
+          "title": "Reachability",
+          "body": "From $A$ every state is reachable ($A \\to F, B$; $B \\to D, C$; $C \\to E$; $D \\to G$; $G \\to H$), so no row is dropped."
+        },
+        {
+          "title": "P0 by output rows",
+          "body": "00: $A, B, C, E$; 10: $D, H$; 11: $F$; 01: $G$. $P_0 = \\{A, B, C, E\\}, \\{D, H\\}, \\{F\\}, \\{G\\}$ (blocks 1–4).",
           "scene": {
-            "hl": [
-              {
-                "c": 4,
-                "tone": "accent"
-              }
-            ]
+            "reveal": 1
           }
         },
         {
-          "title": "Split {A, B, C, E}",
-          "body": "Look at the $X = 0$ successors: A $\\to$ F, C $\\to$ F (group $\\{F\\}$) but B $\\to$ D, E $\\to$ D (group $\\{D,H\\}$). So the block splits into $\\{A, C\\}$ and $\\{B, E\\}$.\n\nThe $X = 1$ successors (B, C, E, C) all lie in $\\{A,B,C,E\\}$, so they cause no further split here.",
+          "title": "Round 1",
+          "body": "Labels (block of the next state for $X = 0$, for $X = 1$): $A \\to (F, B)$ = (3, 1), $C \\to (F, E)$ = (3, 1), $B \\to (D, C)$ = (2, 1), $E \\to (D, C)$ = (2, 1); $D$ and $H \\to (G, A)$ = (4, 1). So $P_1 = \\{A, C\\}, \\{B, E\\}, \\{D, H\\}, \\{F\\}, \\{G\\}$.",
           "scene": {
-            "hl": [
-              {
-                "r": 0,
-                "tone": "warning"
-              },
-              {
-                "r": 2,
-                "tone": "warning"
-              },
-              {
-                "r": 1,
-                "tone": "info"
-              },
-              {
-                "r": 4,
-                "tone": "info"
-              }
-            ]
+            "reveal": 2
           }
         },
         {
-          "title": "{D, H} stays together",
-          "body": "D and H have identical rows: next states (G, A), outputs (1, 0). They are equivalent.\n\n$$P_1 = \\{A,C\\},\\ \\{B,E\\},\\ \\{D,H\\},\\ \\{F\\},\\ \\{G\\}$$",
+          "title": "Round 2",
+          "body": "$A$ and $C$ go to $F$ and to $B$ or $E$ (one block); $B$ and $E$ both go to $(D, C)$; $D$ and $H$ both go to $(G, A)$. Nothing splits: $P_2 = P_1$, 5 classes.",
           "scene": {
-            "hl": [
-              {
-                "r": 3,
-                "tone": "success"
-              },
-              {
-                "r": 7,
-                "tone": "success"
-              }
-            ]
+            "reveal": 3
           }
         },
         {
-          "title": "Check P1 is stable",
-          "body": "- $\\{A,C\\}$: $X=0$: F, F (same); $X=1$: B, E — both in $\\{B,E\\}$. Stable.\n- $\\{B,E\\}$: identical rows (D, C). Stable.\n- $\\{D,H\\}$: identical rows. Stable.\n\nNo block splits, so $P_2 = P_1$ and the minimum number of states is **5**: $\\{A,C\\}, \\{B,E\\}, \\{D,H\\}, F, G$.",
-          "scene": {
-            "hl": [
-              {
-                "r": 0,
-                "tone": "info"
-              },
-              {
-                "r": 2,
-                "tone": "info"
-              },
-              {
-                "r": 1,
-                "tone": "warning"
-              },
-              {
-                "r": 4,
-                "tone": "warning"
-              },
-              {
-                "r": 3,
-                "tone": "success"
-              },
-              {
-                "r": 7,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Cross-check with the implication table",
+          "body": "Of the 28 pairs, 21 are crossed in pass 0 (different output rows). Pass 1 crosses $A$–$B$, $A$–$E$, $B$–$C$, $C$–$E$ (each implies $D$–$F$, whose output rows 10 and 11 differ). $A$–$C$ (implies $B$–$E$), $B$–$E$ and $D$–$H$ (identical rows) survive: the same 5 classes."
         }
       ],
       "answer": {
-        "value": "Minimum number of states $=$ **5**",
+        "value": "5",
         "number": 5,
         "matchesKey": true
       },
-      "shortcut": "Spot identical rows first: B ≡ E (same next states and outputs) and D ≡ H. Replacing E by B and H by D makes rows A and C identical (F, B / 0, 0), so A ≡ C. $8 - 3 = 5$ states.",
+      "shortcut": "Merge the identical rows first ($B = E$, $D = H$); then $A \\to (F, B)$ and $C \\to (F, E = B)$ are identical too. Five rows remain, and their output rows plus one round of refinement show no further merge: 5. (Identical-row merging happens to finish this table; it is not a complete method in general.)",
       "pitfalls": [
-        "Merging A, B, C, E because they have the same outputs — equal outputs are only the starting partition; B and E go to D on $X = 0$ while A and C go to F.",
-        "Treating the outputs as Moore outputs (one per state) — here the output depends on the input too, so compare the whole pair $(f_0, f_1)$.",
-        "Missing A ≡ C because their $X = 1$ successors (B and E) are different letters — they are in the same block, which is all that matters."
+        "Counting the blocks of $P_0$ (4): two of those states are not equivalent ($A$ and $B$ differ on the input string 0 1: outputs 0, 1 from $A$ and 0, 0 from $B$).",
+        "Merging $B = E$ and $D = H$ and stopping (6): after those merges $A$ and $C$ have identical rows as well.",
+        "Grouping by the $X = 0$ output column only: $P_0$ of a Mealy machine uses both output columns."
       ],
-      "verification": "The reduced machine is consistent: with classes $a = \\{A,C\\}$, $b = \\{B,E\\}$, $d = \\{D,H\\}$: $a: (F, b)$, $b: (d, a)$, $d: (G, a)$, $F: (F, b)$, $G: (G, d)$ — every original row maps to exactly one reduced row, and F, G, $d$, $a$/$b$ have pairwise different output pairs or successors.",
+      "verification": "Partition refinement, the implication table and a product-machine equivalence check of the merged 5-state machine ($A$: $F, B$ / 00; $B$: $D, A$ / 00; $D$: $G, A$ / 10; $F$: $F, B$ / 11; $G$: $G, D$ / 01) against the original all agree. The machine still needs 3 flip-flops, as 8 states did.",
       "animation": {
         "kind": "table",
-        "title": "State table (next state / output)",
+        "title": "Refinement rounds",
         "cols": [
-          "X=0",
-          "X=1",
-          "f (X=0)",
-          "f (X=1)",
-          "P0 block"
+          "partition",
+          "blocks"
         ],
-        "rowLabels": [
-          "A",
-          "B",
-          "C",
-          "D",
-          "E",
-          "F",
-          "G",
-          "H"
-        ],
-        "corner": "state",
         "rows": [
           [
-            "F",
-            "B",
-            0,
-            0,
-            "00"
+            "P0 (output rows)",
+            "{A,B,C,E} {D,H} {F} {G}"
           ],
           [
-            "D",
-            "C",
-            0,
-            0,
-            "00"
+            "P1",
+            "{A,C} {B,E} {D,H} {F} {G}"
           ],
           [
-            "F",
-            "E",
-            0,
-            0,
-            "00"
-          ],
-          [
-            "G",
-            "A",
-            1,
-            0,
-            "10"
-          ],
-          [
-            "D",
-            "C",
-            0,
-            0,
-            "00"
-          ],
-          [
-            "F",
-            "B",
-            1,
-            1,
-            "11"
-          ],
-          [
-            "G",
-            "H",
-            0,
-            1,
-            "01"
-          ],
-          [
-            "G",
-            "A",
-            1,
-            0,
-            "10"
+            "P2 = P1",
+            "5 states"
           ]
-        ]
+        ],
+        "mono": true,
+        "reveal": 1
       }
     },
     "cse-2025-1-cs-50": {
-      "approach": "Read the wiring: $D_1 = Q_0$, $D_2 = Q_1$, $D_3 = Q_2$ and $D_0 = \\overline{Q_3}$. That is a 4-bit twisted-ring (Johnson) counter, which cycles through $2n = 8$ states. Tracing from any start state confirms the cycle length.",
+      "approach": "Concept tested: **the cycles of a Johnson counter, counted once**. The wiring ($\\overline{Q_3} \\to D_0$, each $Q$ into the next $D$) is a 4-bit Johnson counter; from any start it returns after 8 clocks, so it passes through 8 distinct states counting the start (7 not counting it).",
       "concepts": [
-        "D flip-flop",
-        "Johnson (twisted-ring) counter",
-        "State sequence"
+        "Johnson counter",
+        "State cycles",
+        "Counting states"
       ],
+      "given": "Four D flip-flops on one clock: $Q_0 \\to D_1$, $Q_1 \\to D_2$, $Q_2 \\to D_3$, $\\overline{Q_3} \\to D_0$; initialised with some value. Number of distinct states before returning to the initial state.",
       "steps": [
         {
-          "title": "Next-state equations",
-          "body": "On each clock edge every D flip-flop copies its D input:\n\n$$Q_0^+ = \\overline{Q_3},\\quad Q_1^+ = Q_0,\\quad Q_2^+ = Q_1,\\quad Q_3^+ = Q_2$$\n\nThe register shifts right and feeds the complement of the last bit back in.",
+          "title": "Recognise the circuit",
+          "body": "A shift register with the complement of the last stage fed back: a 4-bit Johnson counter."
+        },
+        {
+          "title": "The main cycle",
+          "body": "From 0000: 0000 → 1000 → 1100 → 1110 → 1111 → 0111 → 0011 → 0001 → 0000, 8 states ($2n$).",
           "scene": {
-            "reveal": 4
+            "reveal": 8
           }
         },
         {
-          "title": "Trace from 0000",
-          "body": "Writing states as $Q_0Q_1Q_2Q_3$: $0000 \\to 1000 \\to 1100 \\to 1110 \\to 1111 \\to 0111 \\to 0011 \\to 0001 \\to 0000$.\n\nThe ones fill in from the left, then the zeros do.",
-          "scene": {
-            "reveal": 36
-          }
+          "title": "The other start states",
+          "body": "The Johnson step is a permutation, so the other 8 states form their own cycles; here exactly one: 0010 → 1001 → 0100 → 1010 → 1101 → 0110 → 1011 → 0101 → 0010, also 8. Every start returns after 8 clocks."
         },
         {
-          "title": "Count the states",
-          "body": "The cycle contains **8** distinct states ($2n$ for $n = 4$). Starting from the initial state, the circuit goes through 8 distinct states (the initial one included) before it is back where it started — 7 others besides the initial state, which is why the official key accepts 7 to 8.",
-          "scene": {
-            "hl": [
-              {
-                "r": 8,
-                "tone": "success"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Any initial value gives 8",
-          "body": "The 8 states not in the main cycle form a second cycle of the same length: $0100 \\to 1010 \\to 1101 \\to 0110 \\to 1011 \\to 0101 \\to 0010 \\to 1001 \\to 0100$. So the answer does not depend on the (unspecified) initial value."
+          "title": "Count once",
+          "body": "Distinct states gone through including the initial one: 8; excluding it: 7. The official key accepts 7 to 8."
         }
       ],
       "answer": {
-        "value": "The counter cycles through **8** distinct states (key accepts 7 to 8)",
+        "value": "8 (7 if the initial state is not counted); key 7 to 8",
         "number": 8,
         "matchesKey": true
       },
-      "shortcut": "Shift register with inverted feedback from the last stage to the first = Johnson counter: $2n = 2 \\times 4 = 8$ states.",
+      "shortcut": "$n$-bit Johnson counter: $2n$ states; for $n = 4$ both cycles have 8, so 'some value' does not matter.",
       "pitfalls": [
-        "Taking the feedback from $Q_3$ instead of $\\overline{Q_3}$: that is a ring counter, whose cycle length depends on the initial value (e.g. 4 for 1000, 1 for 0000).",
-        "Answering $2^4 = 16$ — a Johnson counter uses only $2n$ of the $2^n$ states.",
-        "Assuming an unused (lock-out) start state gives a different count: here the other 8 states also form an 8-cycle."
+        "Answering 4 (the ring-counter count) or 16 (all states).",
+        "Assuming the unused states drain into the main cycle; they form a separate cycle (which, for n = 4, happens to have the same length)."
       ],
-      "verification": "Both cycles together cover $8 + 8 = 16 = 2^4$ states, each exactly once, so every start value returns after exactly 8 clocks.",
+      "verification": "Simulating all 16 start states, each returns to itself after exactly 8 clocks (two disjoint 8-cycles).",
       "animation": {
         "kind": "table",
-        "title": "States Q0 Q1 Q2 Q3 (D0 = Q3′)",
+        "title": "Both cycles of the 4-bit Johnson counter",
         "cols": [
-          "Q0",
-          "Q1",
-          "Q2",
-          "Q3"
+          "main",
+          "other"
         ],
-        "rowLabels": [
-          "init",
-          "1",
-          "2",
-          "3",
-          "4",
-          "5",
-          "6",
-          "7",
-          "8"
-        ],
-        "corner": "clock",
         "rows": [
           [
-            0,
-            0,
-            0,
-            0
+            "0000",
+            "0010"
           ],
           [
-            1,
-            0,
-            0,
-            0
+            "1000",
+            "1001"
           ],
           [
-            1,
-            1,
-            0,
-            0
+            "1100",
+            "0100"
           ],
           [
-            1,
-            1,
-            1,
-            0
+            "1110",
+            "1010"
           ],
           [
-            1,
-            1,
-            1,
-            1
+            "1111",
+            "1101"
           ],
           [
-            0,
-            1,
-            1,
-            1
+            "0111",
+            "0110"
           ],
           [
-            0,
-            0,
-            1,
-            1
+            "0011",
+            "1011"
           ],
           [
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0
+            "0001",
+            "0101"
           ]
         ],
-        "reveal": 0,
-        "mono": true
+        "mono": true,
+        "reveal": 1
       }
     },
     "cse-2025-1-cs-51": {

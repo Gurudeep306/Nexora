@@ -128,6 +128,14 @@
       "after": "Printed data do not fix a unique value: at least two dishes ranges from 5 to 10 (5 if no one eats exactly two). If all 21 eat at least one dish, the counts are contradictory (exactly-two total would be −5).",
       "reason": "Precise note matching the corrected answer.",
       "source": "solved"
+    },
+    {
+      "id": "cse-1993-ii-a-6-3",
+      "field": "reviewNote",
+      "before": "Whether 'shift register' (a) is also accepted is debatable; GATE Overflow gives (a) and (c).",
+      "after": "Some keys give (c) only; (a) is accepted because the circuit is a twisted-ring shift register (JK stages wired as D stages with Q̄ of the last fed back), which counts mod 6.",
+      "reason": "Record why both (a) and (c) are keyed.",
+      "source": "Re-derived by seqlib simulation in content/gate-notes/_checks/dl/l6_*.py (Chapter 6 key audit)"
     }
   ]
 }

@@ -1,0 +1,4 @@
+{
+  "title": "Sequential circuits",
+  "summary": "Storage elements (feedback and latches, flip-flops with edge triggering and timing, analysing synchronous circuits), then counters and registers (ripple counters, synchronous counter design and lock-out, shift registers, ring, Johnson and LFSR counters), then state machines (Mealy and Moore FSMs in hardware, state minimisation)."
+}

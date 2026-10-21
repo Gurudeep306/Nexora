@@ -101,30 +101,38 @@
       "verification": "With the matrices of step 2: $(AB)^t=\\begin{bmatrix}0&0\\\\1&0\\end{bmatrix}=BA$ ✓."
     },
     "cse-1994-a-2-1": {
-      "approach": "A mod-$N$ counter needs $N$ distinct states, and $k$ flip-flops give $2^k$ states, so take the smallest $k$ with $2^k \\ge N$.",
+      "approach": "Concept tested: **the number of flip-flops of a mod-N counter**. A mod-N counter must be in N different states, and k flip-flops hold at most $2^k$ patterns, so k is the smallest integer with $2^k \\ge N$.",
       "concepts": [
-        "Counters",
-        "Flip-flop states"
+        "Counter modulus",
+        "Flip-flop count",
+        "Binary state code"
       ],
+      "given": "A binary modulo-N counter (N distinct states, binary-coded).",
       "steps": [
         {
-          "title": "States needed",
-          "body": "A modulo-$N$ counter cycles through $N$ distinct states $0,1,\\dots,N-1$."
+          "title": "A mod-N counter needs N distinct states",
+          "body": "After $0, 1, \\dots, N - 1$ pulses the counter must be in $N$ different states; if two were equal it would repeat with a shorter period and would not be mod-N."
         },
         {
-          "title": "Smallest k",
-          "body": "$k$ flip-flops encode $2^k$ states, so we need $2^k \\ge N \\Rightarrow k \\ge \\log_2 N$. The minimum integer is $k=\\lceil \\log_2 N \\rceil$.\n\nExample: mod-10 needs $\\lceil \\log_2 10 \\rceil = \\lceil 3.32 \\rceil = 4$ flip-flops."
+          "title": "k flip-flops give 2^k states",
+          "body": "So we need $2^k \\ge N$, i.e. $k \\ge \\log_2 N$. Since $k$ is an integer, $k \\ge \\lceil \\log_2 N \\rceil$."
+        },
+        {
+          "title": "That many are enough",
+          "body": "With $k = \\lceil \\log_2 N \\rceil$ the patterns $0 \\dots N - 1$ exist, and a binary counter that returns to 0 after $N - 1$ (for example by clearing at $N$) realises the cycle."
         }
       ],
       "answer": {
         "value": "$\\lceil \\log_2 N \\rceil$",
         "matchesKey": true
       },
+      "shortcut": "Find the powers of two around N: mod-10 lies between 8 and 16, so 4 flip-flops; mod-258 between 256 and 512, so 9.",
       "pitfalls": [
-        "Writing $\\log_2 N$ without the ceiling, which fails for non-powers of two.",
-        "Answering $N$ (that is a ring counter, not a binary counter)."
+        "Rounding $\\log_2 N$ down or to the nearest integer (mod-10 would get 3).",
+        "Using $\\lfloor \\log_2 N \\rfloor + 1$, which is one too many when N is a power of two.",
+        "Answering N (that is a one-hot design, not the minimum)."
       ],
-      "verification": "Mod-8: $\\lceil\\log_2 8\\rceil=3$ (states 000–111); mod-5: $\\lceil 2.32\\rceil = 3$."
+      "verification": "seqlib.ff_count agrees with the smallest k having $2^k \\ge N$ for every N from 2 to 1999."
     },
     "cse-1994-a-2-10": {
       "approach": "C is a dead (trap) state, so accepted strings are those that never take the $B \\xrightarrow{0} C$ edge: some 0s at A, then (optionally) 1s at B.",
@@ -2471,134 +2479,101 @@
       "verification": "Traced $0958+0047=1005$ through both DAA steps."
     },
     "cse-1994-b-34": {
-      "approach": "Read the excitation of each flip-flop from Fig. 5 ($J_2=\\overline{Q_0}$, $K_2=1$, $D_1=Q_2$, $T_0=Q_1$) and step the state table four clocks, using the present-state values for every input.",
+      "approach": "Concept tested: **tracing a mixed JK/D/T circuit**. Write each flip-flop's own state equation, then clock all three together, always computing from the old state.",
       "concepts": [
         "JK flip-flop",
         "D flip-flop",
         "T flip-flop",
-        "Synchronous state table"
+        "Clock-by-clock trace"
       ],
-      "given": "| FF | Input(s) | Next state |\n|---|---|---|\n| JK ($Q_2$) | $J=\\overline{Q_0},\\ K=1$ | $Q_2^+=J\\overline{Q_2}=\\overline{Q_0}\\,\\overline{Q_2}$ |\n| D ($Q_1$) | $D=Q_2$ | $Q_1^+=Q_2$ |\n| T ($Q_0$) | $T=Q_1$ | $Q_0^+=Q_0\\oplus Q_1$ |",
+      "given": "JK flip-flop $Q_2$ with $J = \\overline{Q_0}$, $K = 1$; D flip-flop $Q_1$ with $D = Q_2$; T flip-flop $Q_0$ with $T = Q_1$; common clock; $Q_2Q_1Q_0 = 000$ initially; four clock pulses.",
       "steps": [
         {
-          "title": "Next-state equations",
-          "body": "With $K=1$ the JK flip-flop gives $Q_2^+ = J\\overline{Q_2}+\\overline{K}Q_2 = \\overline{Q_0}\\,\\overline{Q_2}$. Also $Q_1^+=Q_2$ and $Q_0^+=Q_0\\oplus Q_1$.",
+          "title": "State equations",
+          "body": "JK with $K = 1$: $Q_2^+ = J\\overline{Q_2} = \\overline{Q_0}\\,\\overline{Q_2}$. D: $Q_1^+ = Q_2$. T: $Q_0^+ = Q_1 \\oplus Q_0$."
+        },
+        {
+          "title": "Pulses 1 and 2",
+          "body": "000 → ($1$, $0$, $0$) **100** → ($0$, $1$, $0$) **010**.",
           "scene": {
-            "reveal": 6
+            "reveal": 2
           }
         },
         {
-          "title": "Pulse 1 (from 000)",
-          "body": "$Q_2^+=\\overline{0}\\cdot\\overline{0}=1$, $Q_1^+=0$, $Q_0^+=0\\oplus0=0$ → **100**.",
+          "title": "Pulse 3",
+          "body": "From 010: $Q_2^+ = 1 \\cdot 1 = 1$, $Q_1^+ = 0$, $Q_0^+ = 1 \\oplus 0 = 1$: **101**.",
           "scene": {
-            "reveal": 12,
-            "hl": [
-              {
-                "r": 1
-              }
-            ]
+            "reveal": 3
           }
         },
         {
-          "title": "Pulse 2 (from 100)",
-          "body": "$Q_2^+=\\overline{0}\\cdot\\overline{1}=0$, $Q_1^+=1$, $Q_0^+=0\\oplus0=0$ → **010**.",
+          "title": "Pulse 4",
+          "body": "From 101: $Q_2^+ = 0 \\cdot 0 = 0$, $Q_1^+ = 1$, $Q_0^+ = 0 \\oplus 1 = 1$: **011**.",
           "scene": {
-            "reveal": 18,
-            "hl": [
-              {
-                "r": 2
-              }
-            ]
-          }
-        },
-        {
-          "title": "Pulse 3 (from 010)",
-          "body": "$Q_2^+=1\\cdot1=1$, $Q_1^+=0$, $Q_0^+=0\\oplus1=1$ → **101**.",
-          "scene": {
-            "reveal": 24,
-            "hl": [
-              {
-                "r": 3
-              }
-            ]
-          }
-        },
-        {
-          "title": "Pulse 4 (from 101)",
-          "body": "$Q_2^+=\\overline{1}\\cdot\\overline{1}=0$, $Q_1^+=1$, $Q_0^+=1\\oplus0=1$ → **011**.",
-          "scene": {
-            "reveal": 30,
-            "hl": [
-              {
-                "r": 4,
-                "tone": "success"
-              }
-            ]
+            "reveal": 4
           }
         }
       ],
       "answer": {
-        "value": "After four clock pulses $Q_2Q_1Q_0 = 011$.",
+        "value": "$Q_2Q_1Q_0 = 011$ after four pulses",
         "matchesKey": true
       },
+      "shortcut": "With $K = 1$ the JK can only reset or toggle, so $Q_2^+ = \\overline{Q_0}\\,\\overline{Q_2}$; build the 8-row table once and follow it four times.",
       "pitfalls": [
-        "Using an already-updated value of $Q_2$ when computing $Q_1$ in the same clock — all flip-flops sample simultaneously."
+        "Treating the T flip-flop as a D ($Q_0^+ = Q_1$), which gives 010 after four pulses.",
+        "Letting the D or T flip-flop see the JK's new output at the same edge."
       ],
-      "verification": "Recomputed each pulse directly from JK/D/T behaviour (J=K=1 toggles, J=0,K=1 resets) — same sequence 000→100→010→101→011.",
+      "verification": "Simulation gives 000 → 100 → 010 → 101 → 011 → 000: a 5-state cycle, with 011 after the fourth pulse.",
       "animation": {
         "kind": "table",
+        "title": "Q2Q1Q0 pulse by pulse",
         "cols": [
-          "clock",
-          "J2 = Q0'",
-          "K2",
-          "Q2",
-          "Q1",
-          "Q0"
+          "J K",
+          "D",
+          "T",
+          "Q2Q1Q0"
         ],
         "rows": [
           [
-            "0",
-            "1",
-            "1",
-            "0",
-            "0",
-            "0"
+            "–",
+            "–",
+            "–",
+            "000"
           ],
           [
-            "1",
-            "1",
-            "1",
-            "1",
+            "1 1",
             "0",
-            "0"
+            "0",
+            "100"
           ],
           [
-            "2",
-            "1",
+            "1 1",
             "1",
             "0",
-            "1",
-            "0"
+            "010"
           ],
           [
-            "3",
+            "1 1",
             "0",
             "1",
-            "1",
-            "0",
-            "1"
+            "101"
           ],
           [
-            "4",
-            "0",
+            "0 1",
             "1",
             "0",
-            "1",
-            "1"
+            "011"
           ]
         ],
-        "reveal": 6,
-        "mono": true
+        "mono": true,
+        "rowLabels": [
+          "start",
+          "pulse 1",
+          "pulse 2",
+          "pulse 3",
+          "pulse 4"
+        ],
+        "reveal": 0
       }
     },
     "cse-1994-b-35-a": {

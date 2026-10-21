@@ -1,0 +1,483 @@
+{
+ "version": 1,
+ "title": "The implication table of the GATE 1996 machine",
+ "width": 680,
+ "height": 310,
+ "narrow": {
+  "width": 360,
+  "height": 405
+ },
+ "intro": "A four-state Mealy machine. Each cell of the staircase is a pair of states; cells with different output rows are crossed first, then every cell that implies a crossed cell, until a pass crosses nothing.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "The implication table of the GATE 1996 machine",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Implication table, GATE 1996",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 20,
+   "y": 64,
+   "cellW": 64,
+   "cellH": 26,
+   "rows": [
+    [
+     "PS",
+     "x = 0",
+     "x = 1"
+    ],
+    [
+     "A",
+     "D, 0",
+     "B, 1"
+    ],
+    [
+     "B",
+     "A, 0",
+     "C, 1"
+    ],
+    [
+     "C",
+     "A, 0",
+     "B, 1"
+    ],
+    [
+     "D",
+     "A, 1",
+     "C, 1"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 96.0,
+    "y": 50,
+    "cellW": 56,
+    "cellH": 23
+   }
+  },
+  {
+   "id": "rlB",
+   "type": "text",
+   "x": 288,
+   "y": 96.0,
+   "text": "B",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 45.0,
+    "y": 221.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "cAB",
+   "type": "box",
+   "x": 300,
+   "y": 70,
+   "w": 98,
+   "h": 52,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 57.0,
+    "y": 199,
+    "w": 86,
+    "h": 44,
+    "size": 12
+   }
+  },
+  {
+   "id": "rlC",
+   "type": "text",
+   "x": 288,
+   "y": 154.0,
+   "text": "C",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 45.0,
+    "y": 271.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "cAC",
+   "type": "box",
+   "x": 300,
+   "y": 128,
+   "w": 98,
+   "h": 52,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 57.0,
+    "y": 249,
+    "w": 86,
+    "h": 44,
+    "size": 12
+   }
+  },
+  {
+   "id": "cBC",
+   "type": "box",
+   "x": 404,
+   "y": 128,
+   "w": 98,
+   "h": 52,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 149.0,
+    "y": 249,
+    "w": 86,
+    "h": 44,
+    "size": 12
+   }
+  },
+  {
+   "id": "rlD",
+   "type": "text",
+   "x": 288,
+   "y": 212.0,
+   "text": "D",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 45.0,
+    "y": 321.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "cAD",
+   "type": "box",
+   "x": 300,
+   "y": 186,
+   "w": 98,
+   "h": 52,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 57.0,
+    "y": 299,
+    "w": 86,
+    "h": 44,
+    "size": 12
+   }
+  },
+  {
+   "id": "cBD",
+   "type": "box",
+   "x": 404,
+   "y": 186,
+   "w": 98,
+   "h": 52,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 149.0,
+    "y": 299,
+    "w": 86,
+    "h": 44,
+    "size": 12
+   }
+  },
+  {
+   "id": "cCD",
+   "type": "box",
+   "x": 508,
+   "y": 186,
+   "w": 98,
+   "h": 52,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 241.0,
+    "y": 299,
+    "w": 86,
+    "h": 44,
+    "size": 12
+   }
+  },
+  {
+   "id": "clA",
+   "type": "text",
+   "x": 349.0,
+   "y": 252,
+   "text": "A",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 100.0,
+    "y": 357,
+    "size": 12
+   }
+  },
+  {
+   "id": "clB",
+   "type": "text",
+   "x": 453.0,
+   "y": 252,
+   "text": "B",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 192.0,
+    "y": 357,
+    "size": 12
+   }
+  },
+  {
+   "id": "clC",
+   "type": "text",
+   "x": 557.0,
+   "y": 252,
+   "text": "C",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 284.0,
+    "y": 357,
+    "size": 12
+   }
+  },
+  {
+   "id": "res",
+   "type": "text",
+   "x": 300,
+   "y": 284,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 383,
+    "size": 12,
+    "anchor": "middle"
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "One cell per pair of states: 4 states give 6 cells. A pair stays uncrossed until something proves it different.",
+   "patches": []
+  },
+  {
+   "caption": "Pass 0: D's output row is 11, the others' is 01, so the three cells of row D are crossed at once.",
+   "patches": [
+    {
+     "id": "cAD",
+     "set": {
+      "label": "✗ out",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "cBD",
+     "set": {
+      "label": "✗ out",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "cCD",
+     "set": {
+      "label": "✗ out",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Fill the other cells with implied pairs: A–B needs AD and BC, A–C needs AD, B–C needs only BC, itself.",
+   "patches": [
+    {
+     "id": "cAB",
+     "set": {
+      "label": "AD BC",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "cAC",
+     "set": {
+      "label": "AD",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "cBC",
+     "set": {
+      "label": "BC",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": []
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 1: A–B lists AD, which is crossed, so A–B is crossed: if A ≡ B then A ≡ D, which is false.",
+   "patches": [
+    {
+     "id": "cAB",
+     "set": {
+      "label": "✗ AD BC",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        1
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 1: A–C lists AD, which is crossed, so A–C is crossed: if A ≡ C then A ≡ D, which is false.",
+   "patches": [
+    {
+     "id": "cAC",
+     "set": {
+      "label": "✗ AD",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        3,
+        1
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "B–C lists only itself, which is not crossed. Pass 2 crosses nothing more, so the table is finished.",
+   "patches": [
+    {
+     "id": "cBC",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Survivor B–C: B ≡ C. Classes {A} {B,C} {D}: 3 states (GATE 1996), as partition refinement found.",
+   "patches": [
+    {
+     "id": "res",
+     "set": {
+      "text": "B ≡ C: 3 states",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": []
+     }
+    }
+   ]
+  }
+ ]
+}

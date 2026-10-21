@@ -1,0 +1,2709 @@
+{
+ "version": 1,
+ "title": "A master–slave D flip-flop: the master follows, the slave copies at the falling edge",
+ "width": 680,
+ "height": 388,
+ "narrow": {
+  "width": 360,
+  "height": 362
+ },
+ "intro": "Two D latches in series. The master is enabled by CLK, the slave by CLK through an inverter. Waveforms of CLK, D, the master M and Q grow half a period per step (delays ignored).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "Master–slave: two latches on opposite clock phases",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Master–slave D flip-flop",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "mas",
+   "type": "box",
+   "x": 170,
+   "y": 56,
+   "w": 96,
+   "h": 64,
+   "narrow": {
+    "x": 56,
+    "w": 72,
+    "h": 60
+   }
+  },
+  {
+   "id": "mas-l0",
+   "type": "text",
+   "x": 175,
+   "y": 72.0,
+   "text": "D",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 61,
+    "y": 71.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "mas-l1",
+   "type": "text",
+   "x": 175,
+   "y": 104.0,
+   "text": "C",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 61,
+    "y": 101.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "mas-r0",
+   "type": "text",
+   "x": 261,
+   "y": 88.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 123,
+    "y": 86.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "sla",
+   "type": "box",
+   "x": 390,
+   "y": 56,
+   "w": 96,
+   "h": 64,
+   "narrow": {
+    "x": 196,
+    "w": 72,
+    "h": 60
+   }
+  },
+  {
+   "id": "sla-l0",
+   "type": "text",
+   "x": 395,
+   "y": 72.0,
+   "text": "D",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 201,
+    "y": 71.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "sla-l1",
+   "type": "text",
+   "x": 395,
+   "y": 104.0,
+   "text": "C",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 201,
+    "y": 101.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "sla-r0",
+   "type": "text",
+   "x": 481,
+   "y": 88.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 263,
+    "y": 86.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "mast",
+   "type": "text",
+   "x": 218.0,
+   "y": 133,
+   "text": "master",
+   "size": 13,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 92.0,
+    "y": 129,
+    "size": 12
+   }
+  },
+  {
+   "id": "slat",
+   "type": "text",
+   "x": 438.0,
+   "y": 133,
+   "text": "slave",
+   "size": 13,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 232.0,
+    "y": 129,
+    "size": 12
+   }
+  },
+  {
+   "id": "wd",
+   "type": "line",
+   "points": [
+    [
+     110,
+     72.0
+    ],
+    [
+     170,
+     72.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      30,
+      71.0
+     ],
+     [
+      56,
+      71.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ld",
+   "type": "text",
+   "x": 104,
+   "y": 72.0,
+   "text": "D",
+   "size": 15,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 24,
+    "y": 71.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "wm",
+   "type": "line",
+   "points": [
+    [
+     266,
+     88.0
+    ],
+    [
+     328.0,
+     88.0
+    ],
+    [
+     328.0,
+     72.0
+    ],
+    [
+     390,
+     72.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      128,
+      86.0
+     ],
+     [
+      162.0,
+      86.0
+     ],
+     [
+      162.0,
+      71.0
+     ],
+     [
+      196,
+      71.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lm",
+   "type": "text",
+   "x": 328.0,
+   "y": 46,
+   "text": "M",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 162.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq",
+   "type": "line",
+   "points": [
+    [
+     486,
+     88.0
+    ],
+    [
+     546,
+     88.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      268,
+      86.0
+     ],
+     [
+      298,
+      86.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lq",
+   "type": "text",
+   "x": 552,
+   "y": 88.0,
+   "text": "Q",
+   "size": 15,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 304,
+    "y": 86.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "wc1",
+   "type": "line",
+   "points": [
+    [
+     110,
+     160
+    ],
+    [
+     146,
+     160
+    ],
+    [
+     146,
+     104.0
+    ],
+    [
+     170,
+     104.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      30,
+      152
+     ],
+     [
+      42,
+      152
+     ],
+     [
+      42,
+      101.0
+     ],
+     [
+      56,
+      101.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lc",
+   "type": "text",
+   "x": 104,
+   "y": 160,
+   "text": "CLK",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 24,
+    "y": 152,
+    "size": 12
+   }
+  },
+  {
+   "id": "inv",
+   "type": "gate",
+   "x": 308.0,
+   "y": 148.0,
+   "w": 40,
+   "h": 24,
+   "kind": "not",
+   "narrow": {
+    "x": 147.0,
+    "y": 140.0,
+    "w": 30
+   }
+  },
+  {
+   "id": "wc2",
+   "type": "line",
+   "points": [
+    [
+     146,
+     160
+    ],
+    [
+     308.0,
+     160.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      42,
+      152
+     ],
+     [
+      147.0,
+      152.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wc3",
+   "type": "line",
+   "points": [
+    [
+     348.0,
+     160.0
+    ],
+    [
+     370,
+     160.0
+    ],
+    [
+     370,
+     104.0
+    ],
+    [
+     390,
+     104.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      177.0,
+      152.0
+     ],
+     [
+      182,
+      152.0
+     ],
+     [
+      182,
+      101.0
+     ],
+     [
+      196,
+      101.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlc",
+   "type": "text",
+   "x": 102,
+   "y": 213.0,
+   "text": "CLK",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 42,
+    "y": 200.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wcg0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     110,
+     222
+    ],
+    [
+     132,
+     222
+    ],
+    [
+     132,
+     204
+    ],
+    [
+     198,
+     204
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      50,
+      208
+     ],
+     [
+      62,
+      208
+     ],
+     [
+      62,
+      192
+     ],
+     [
+      98,
+      192
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg1r4g0s0",
+   "type": "line",
+   "points": [
+    [
+     198,
+     204
+    ],
+    [
+     198,
+     222
+    ],
+    [
+     264,
+     222
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      98,
+      192
+     ],
+     [
+      98,
+      208
+     ],
+     [
+      134,
+      208
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg2r7g0s0",
+   "type": "line",
+   "points": [
+    [
+     264,
+     222
+    ],
+    [
+     264,
+     204
+    ],
+    [
+     330,
+     204
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      134,
+      208
+     ],
+     [
+      134,
+      192
+     ],
+     [
+      170,
+      192
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg3r10g0s0",
+   "type": "line",
+   "points": [
+    [
+     330,
+     204
+    ],
+    [
+     330,
+     222
+    ],
+    [
+     396,
+     222
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      170,
+      192
+     ],
+     [
+      170,
+      208
+     ],
+     [
+      206,
+      208
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg4r13g0s0",
+   "type": "line",
+   "points": [
+    [
+     396,
+     222
+    ],
+    [
+     396,
+     204
+    ],
+    [
+     462,
+     204
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      206,
+      208
+     ],
+     [
+      206,
+      192
+     ],
+     [
+      242,
+      192
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg5r16g0s0",
+   "type": "line",
+   "points": [
+    [
+     462,
+     204
+    ],
+    [
+     462,
+     222
+    ],
+    [
+     528,
+     222
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      242,
+      192
+     ],
+     [
+      242,
+      208
+     ],
+     [
+      278,
+      208
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg6r19g0s0",
+   "type": "line",
+   "points": [
+    [
+     528,
+     222
+    ],
+    [
+     528,
+     204
+    ],
+    [
+     594,
+     204
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      278,
+      208
+     ],
+     [
+      278,
+      192
+     ],
+     [
+      314,
+      192
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg7r22g0s0",
+   "type": "line",
+   "points": [
+    [
+     594,
+     204
+    ],
+    [
+     594,
+     222
+    ],
+    [
+     660,
+     222
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      314,
+      192
+     ],
+     [
+      314,
+      208
+     ],
+     [
+      350,
+      208
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wld",
+   "type": "text",
+   "x": 102,
+   "y": 253.0,
+   "text": "D",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 42,
+    "y": 236.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wdg0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     110,
+     262
+    ],
+    [
+     154,
+     262
+    ],
+    [
+     154,
+     244
+    ],
+    [
+     198,
+     244
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      50,
+      244
+     ],
+     [
+      74,
+      244
+     ],
+     [
+      74,
+      228
+     ],
+     [
+      98,
+      228
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wdg1r4g0s0",
+   "type": "line",
+   "points": [
+    [
+     198,
+     244
+    ],
+    [
+     220,
+     244
+    ],
+    [
+     220,
+     262
+    ],
+    [
+     264,
+     262
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      98,
+      228
+     ],
+     [
+      110,
+      228
+     ],
+     [
+      110,
+      244
+     ],
+     [
+      134,
+      244
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wdg2r7g0s0",
+   "type": "line",
+   "points": [
+    [
+     264,
+     262
+    ],
+    [
+     286,
+     262
+    ],
+    [
+     286,
+     244
+    ],
+    [
+     308,
+     244
+    ],
+    [
+     308,
+     262
+    ],
+    [
+     330,
+     262
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      134,
+      244
+     ],
+     [
+      146,
+      244
+     ],
+     [
+      146,
+      228
+     ],
+     [
+      158,
+      228
+     ],
+     [
+      158,
+      244
+     ],
+     [
+      170,
+      244
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wdg3r10g0s0",
+   "type": "line",
+   "points": [
+    [
+     330,
+     262
+    ],
+    [
+     352,
+     262
+    ],
+    [
+     352,
+     244
+    ],
+    [
+     396,
+     244
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      170,
+      244
+     ],
+     [
+      182,
+      244
+     ],
+     [
+      182,
+      228
+     ],
+     [
+      206,
+      228
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wdg4r13g0s0",
+   "type": "line",
+   "points": [
+    [
+     396,
+     244
+    ],
+    [
+     462,
+     244
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      206,
+      228
+     ],
+     [
+      242,
+      228
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wdg5r16g0s0",
+   "type": "line",
+   "points": [
+    [
+     462,
+     244
+    ],
+    [
+     484,
+     244
+    ],
+    [
+     484,
+     262
+    ],
+    [
+     528,
+     262
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      242,
+      228
+     ],
+     [
+      254,
+      228
+     ],
+     [
+      254,
+      244
+     ],
+     [
+      278,
+      244
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wdg6r19g0s0",
+   "type": "line",
+   "points": [
+    [
+     528,
+     262
+    ],
+    [
+     572,
+     262
+    ],
+    [
+     572,
+     244
+    ],
+    [
+     594,
+     244
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      278,
+      244
+     ],
+     [
+      302,
+      244
+     ],
+     [
+      302,
+      228
+     ],
+     [
+      314,
+      228
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wdg7r22g0s0",
+   "type": "line",
+   "points": [
+    [
+     594,
+     244
+    ],
+    [
+     616,
+     244
+    ],
+    [
+     616,
+     262
+    ],
+    [
+     660,
+     262
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      314,
+      228
+     ],
+     [
+      326,
+      228
+     ],
+     [
+      326,
+      244
+     ],
+     [
+      350,
+      244
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlm",
+   "type": "text",
+   "x": 102,
+   "y": 293.0,
+   "text": "M",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 42,
+    "y": 272.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wmg0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     110,
+     302
+    ],
+    [
+     154,
+     302
+    ],
+    [
+     154,
+     284
+    ],
+    [
+     198,
+     284
+    ]
+   ],
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      50,
+      280
+     ],
+     [
+      74,
+      280
+     ],
+     [
+      74,
+      264
+     ],
+     [
+      98,
+      264
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmg1r4g0s0",
+   "type": "line",
+   "points": [
+    [
+     198,
+     284
+    ],
+    [
+     264,
+     284
+    ]
+   ],
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      98,
+      264
+     ],
+     [
+      134,
+      264
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmg2r7g0s0",
+   "type": "line",
+   "points": [
+    [
+     264,
+     284
+    ],
+    [
+     264,
+     302
+    ],
+    [
+     286,
+     302
+    ],
+    [
+     286,
+     284
+    ],
+    [
+     308,
+     284
+    ],
+    [
+     308,
+     302
+    ],
+    [
+     330,
+     302
+    ]
+   ],
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      134,
+      264
+     ],
+     [
+      134,
+      280
+     ],
+     [
+      146,
+      280
+     ],
+     [
+      146,
+      264
+     ],
+     [
+      158,
+      264
+     ],
+     [
+      158,
+      280
+     ],
+     [
+      170,
+      280
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmg3r10g0s0",
+   "type": "line",
+   "points": [
+    [
+     330,
+     302
+    ],
+    [
+     396,
+     302
+    ]
+   ],
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      170,
+      280
+     ],
+     [
+      206,
+      280
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmg4r13g0s0",
+   "type": "line",
+   "points": [
+    [
+     396,
+     302
+    ],
+    [
+     396,
+     284
+    ],
+    [
+     462,
+     284
+    ]
+   ],
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      206,
+      280
+     ],
+     [
+      206,
+      264
+     ],
+     [
+      242,
+      264
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmg5r16g0s0",
+   "type": "line",
+   "points": [
+    [
+     462,
+     284
+    ],
+    [
+     528,
+     284
+    ]
+   ],
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      242,
+      264
+     ],
+     [
+      278,
+      264
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmg6r19g0s0",
+   "type": "line",
+   "points": [
+    [
+     528,
+     284
+    ],
+    [
+     528,
+     302
+    ],
+    [
+     572,
+     302
+    ],
+    [
+     572,
+     284
+    ],
+    [
+     594,
+     284
+    ]
+   ],
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      278,
+      264
+     ],
+     [
+      278,
+      280
+     ],
+     [
+      302,
+      280
+     ],
+     [
+      302,
+      264
+     ],
+     [
+      314,
+      264
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmg7r22g0s0",
+   "type": "line",
+   "points": [
+    [
+     594,
+     284
+    ],
+    [
+     660,
+     284
+    ]
+   ],
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      314,
+      264
+     ],
+     [
+      350,
+      264
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlq",
+   "type": "text",
+   "x": 102,
+   "y": 333.0,
+   "text": "Q",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 42,
+    "y": 308.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wqg0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     110,
+     342
+    ],
+    [
+     198,
+     342
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      50,
+      316
+     ],
+     [
+      98,
+      316
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wqg1r4g0s0",
+   "type": "line",
+   "points": [
+    [
+     198,
+     342
+    ],
+    [
+     198,
+     324
+    ],
+    [
+     264,
+     324
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      98,
+      316
+     ],
+     [
+      98,
+      300
+     ],
+     [
+      134,
+      300
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wqg2r7g0s0",
+   "type": "line",
+   "points": [
+    [
+     264,
+     324
+    ],
+    [
+     330,
+     324
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      134,
+      300
+     ],
+     [
+      170,
+      300
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wqg3r10g0s0",
+   "type": "line",
+   "points": [
+    [
+     330,
+     324
+    ],
+    [
+     330,
+     342
+    ],
+    [
+     396,
+     342
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      170,
+      300
+     ],
+     [
+      170,
+      316
+     ],
+     [
+      206,
+      316
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wqg4r13g0s0",
+   "type": "line",
+   "points": [
+    [
+     396,
+     342
+    ],
+    [
+     462,
+     342
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      206,
+      316
+     ],
+     [
+      242,
+      316
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wqg5r16g0s0",
+   "type": "line",
+   "points": [
+    [
+     462,
+     342
+    ],
+    [
+     462,
+     324
+    ],
+    [
+     528,
+     324
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      242,
+      316
+     ],
+     [
+      242,
+      300
+     ],
+     [
+      278,
+      300
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wqg6r19g0s0",
+   "type": "line",
+   "points": [
+    [
+     528,
+     324
+    ],
+    [
+     594,
+     324
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      278,
+      300
+     ],
+     [
+      314,
+      300
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wqg7r22g0s0",
+   "type": "line",
+   "points": [
+    [
+     594,
+     324
+    ],
+    [
+     660,
+     324
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      314,
+      300
+     ],
+     [
+      350,
+      300
+     ]
+    ]
+   }
+  },
+  {
+   "id": "m0",
+   "type": "line",
+   "points": [
+    [
+     198,
+     198
+    ],
+    [
+     198,
+     348
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      98,
+      186
+     ],
+     [
+      98,
+      322
+     ]
+    ]
+   }
+  },
+  {
+   "id": "m1",
+   "type": "line",
+   "points": [
+    [
+     330,
+     198
+    ],
+    [
+     330,
+     348
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      170,
+      186
+     ],
+     [
+      170,
+      322
+     ]
+    ]
+   }
+  },
+  {
+   "id": "m2",
+   "type": "line",
+   "points": [
+    [
+     462,
+     198
+    ],
+    [
+     462,
+     348
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      242,
+      186
+     ],
+     [
+      242,
+      322
+     ]
+    ]
+   }
+  },
+  {
+   "id": "m3",
+   "type": "line",
+   "points": [
+    [
+     594,
+     198
+    ],
+    [
+     594,
+     348
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      314,
+      186
+     ],
+     [
+      314,
+      322
+     ]
+    ]
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 370,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 344,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "CLK = 1: the master is open and follows D (M = 0 then 1); the slave is closed, so Q stays 0.",
+   "patches": [
+    {
+     "id": "wcg0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wdg0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmg0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wqg0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "mas",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sla",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wc1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wc2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wc3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lm",
+     "set": {
+      "text": "M = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "master open, slave closed",
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "CLK falls: the master closes holding M = 1; the slave opens and copies it, so Q = 1. D changes now, but the master is shut.",
+   "patches": [
+    {
+     "id": "wcg1r4g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wdg1r4g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmg1r4g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wqg1r4g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "mas",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "sla",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wc1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wc2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wc3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lm",
+     "set": {
+      "text": "M = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "m0",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "falling edge 1: Q ← 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "CLK = 1: the master is open and follows D (M = 0 then 1 then 0); the slave is closed, so Q stays 1.",
+   "patches": [
+    {
+     "id": "wcg2r7g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wdg2r7g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmg2r7g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wqg2r7g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "mas",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sla",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wc1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wc2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wc3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lm",
+     "set": {
+      "text": "M = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "master open, slave closed",
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "CLK falls: the master closes holding M = 0; the slave opens and copies it, so Q = 0. D changes now, but the master is shut.",
+   "patches": [
+    {
+     "id": "wcg3r10g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wdg3r10g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmg3r10g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wqg3r10g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "mas",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "sla",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wc1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wc2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wc3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lm",
+     "set": {
+      "text": "M = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "m1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "falling edge 2: Q ← 0",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "CLK = 1: the master is open and follows D (M = 1); the slave is closed, so Q stays 0.",
+   "patches": [
+    {
+     "id": "wcg4r13g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wdg4r13g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmg4r13g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wqg4r13g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "mas",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sla",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wc1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wc2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wc3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lm",
+     "set": {
+      "text": "M = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "master open, slave closed",
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "CLK falls: the master closes holding M = 1; the slave opens and copies it, so Q = 1. D changes now, but the master is shut.",
+   "patches": [
+    {
+     "id": "wcg5r16g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wdg5r16g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmg5r16g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wqg5r16g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "mas",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "sla",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wc1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wc2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wc3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lm",
+     "set": {
+      "text": "M = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "m2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "falling edge 3: Q ← 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "CLK = 1: the master is open and follows D (M = 0 then 1); the slave is closed, so Q stays 1.",
+   "patches": [
+    {
+     "id": "wcg6r19g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wdg6r19g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmg6r19g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wqg6r19g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "mas",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sla",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wc1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wc2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wc3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lm",
+     "set": {
+      "text": "M = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "master open, slave closed",
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "CLK falls: the master closes holding M = 1; the slave opens and copies it, so Q = 1. D changes now, but the master is shut.",
+   "patches": [
+    {
+     "id": "wcg7r22g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wdg7r22g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmg7r22g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wqg7r22g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "mas",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "sla",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wc1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wc2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wc3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lm",
+     "set": {
+      "text": "M = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "m3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "falling edge 4: Q ← 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Q moved only at the falling edges, each time to the value D had just before CLK fell: 1, 0, 1, 1.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "never both open: an edge from two latches",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m3",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  }
+ ]
+}

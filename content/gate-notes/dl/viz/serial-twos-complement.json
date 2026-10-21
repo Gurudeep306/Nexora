@@ -1,0 +1,1182 @@
+{
+ "version": 1,
+ "title": "A serial 2's complementer converting 0110100",
+ "width": 680,
+ "height": 352,
+ "narrow": {
+  "width": 360,
+  "height": 342
+ },
+ "intro": "The two-state Mealy machine of GATE 2005 (arcs input/output): Q0 copies, Q1 complements. Below, a 7-bit number entering least significant bit first and the output bits as they are produced.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "Serial 2's complement, LSB first (GATE 2005)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Serial 2's complement (2005)",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "gnQ0",
+   "type": "circle",
+   "cx": 220,
+   "cy": 150,
+   "r": 30,
+   "mono": true,
+   "tone": "ink",
+   "label": "Q0",
+   "size": 15,
+   "narrow": {
+    "cx": 90,
+    "cy": 140,
+    "r": 26,
+    "size": 13
+   }
+  },
+  {
+   "id": "gnQ1",
+   "type": "circle",
+   "cx": 460,
+   "cy": 150,
+   "r": 30,
+   "mono": true,
+   "tone": "ink",
+   "label": "Q1",
+   "size": 15,
+   "narrow": {
+    "cx": 270,
+    "cy": 140,
+    "r": 26,
+    "size": 13
+   }
+  },
+  {
+   "id": "ge0",
+   "type": "line",
+   "points": [
+    [
+     208.04,
+     95.52
+    ],
+    [
+     213.64,
+     92.29
+    ],
+    [
+     220.0,
+     91.17
+    ],
+    [
+     226.36,
+     92.29
+    ],
+    [
+     231.96,
+     95.52
+    ],
+    [
+     236.11,
+     100.47
+    ],
+    [
+     238.32,
+     106.54
+    ],
+    [
+     238.32,
+     113.0
+    ],
+    [
+     236.11,
+     119.07
+    ],
+    [
+     231.96,
+     124.02
+    ],
+    [
+     226.36,
+     127.25
+    ],
+    [
+     220.0,
+     128.37
+    ],
+    [
+     213.64,
+     127.25
+    ],
+    [
+     208.04,
+     124.02
+    ],
+    [
+     203.89,
+     119.07
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      79.64,
+      92.79
+     ],
+     [
+      84.49,
+      89.99
+     ],
+     [
+      90.0,
+      89.01
+     ],
+     [
+      95.51,
+      89.99
+     ],
+     [
+      100.36,
+      92.79
+     ],
+     [
+      103.96,
+      97.07
+     ],
+     [
+      105.88,
+      102.33
+     ],
+     [
+      105.88,
+      107.93
+     ],
+     [
+      103.96,
+      113.19
+     ],
+     [
+      100.36,
+      117.48
+     ],
+     [
+      95.51,
+      120.28
+     ],
+     [
+      90.0,
+      121.25
+     ],
+     [
+      84.49,
+      120.28
+     ],
+     [
+      79.64,
+      117.48
+     ],
+     [
+      76.04,
+      113.19
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge0h",
+   "type": "arrow",
+   "from": [
+    203.89,
+    119.07
+   ],
+   "to": "gnQ0",
+   "tone": "muted",
+   "narrow": {
+    "from": [
+     76.04,
+     113.19
+    ]
+   }
+  },
+  {
+   "id": "gt0",
+   "type": "text",
+   "x": 220,
+   "y": 80,
+   "text": "0/0",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 90,
+    "y": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "ge1",
+   "type": "arrow",
+   "from": "gnQ0",
+   "to": "gnQ1",
+   "curve": 0,
+   "tone": "muted"
+  },
+  {
+   "id": "gt1",
+   "type": "text",
+   "x": 340.0,
+   "y": 136,
+   "text": "1/1",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "y": 126,
+    "size": 13
+   }
+  },
+  {
+   "id": "ge2",
+   "type": "line",
+   "points": [
+    [
+     448.04,
+     95.52
+    ],
+    [
+     453.64,
+     92.29
+    ],
+    [
+     460.0,
+     91.17
+    ],
+    [
+     466.36,
+     92.29
+    ],
+    [
+     471.96,
+     95.52
+    ],
+    [
+     476.11,
+     100.47
+    ],
+    [
+     478.32,
+     106.54
+    ],
+    [
+     478.32,
+     113.0
+    ],
+    [
+     476.11,
+     119.07
+    ],
+    [
+     471.96,
+     124.02
+    ],
+    [
+     466.36,
+     127.25
+    ],
+    [
+     460.0,
+     128.37
+    ],
+    [
+     453.64,
+     127.25
+    ],
+    [
+     448.04,
+     124.02
+    ],
+    [
+     443.89,
+     119.07
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      259.64,
+      92.79
+     ],
+     [
+      264.49,
+      89.99
+     ],
+     [
+      270.0,
+      89.01
+     ],
+     [
+      275.51,
+      89.99
+     ],
+     [
+      280.36,
+      92.79
+     ],
+     [
+      283.96,
+      97.07
+     ],
+     [
+      285.88,
+      102.33
+     ],
+     [
+      285.88,
+      107.93
+     ],
+     [
+      283.96,
+      113.19
+     ],
+     [
+      280.36,
+      117.48
+     ],
+     [
+      275.51,
+      120.28
+     ],
+     [
+      270.0,
+      121.25
+     ],
+     [
+      264.49,
+      120.28
+     ],
+     [
+      259.64,
+      117.48
+     ],
+     [
+      256.04,
+      113.19
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge2h",
+   "type": "arrow",
+   "from": [
+    443.89,
+    119.07
+   ],
+   "to": "gnQ1",
+   "tone": "muted",
+   "narrow": {
+    "from": [
+     256.04,
+     113.19
+    ]
+   }
+  },
+  {
+   "id": "gt2",
+   "type": "text",
+   "x": 460,
+   "y": 80,
+   "text": "0/1, 1/0",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 270,
+    "y": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "q0m",
+   "type": "text",
+   "x": 220,
+   "y": 198,
+   "text": "copy",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 90,
+    "y": 184,
+    "size": 12
+   }
+  },
+  {
+   "id": "q1m",
+   "type": "text",
+   "x": 460,
+   "y": 198,
+   "text": "complement",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 270,
+    "y": 184,
+    "size": 12
+   }
+  },
+  {
+   "id": "lin",
+   "type": "text",
+   "x": 212.0,
+   "y": 260,
+   "text": "x",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 71.0,
+    "y": 250,
+    "size": 12
+   }
+  },
+  {
+   "id": "lout",
+   "type": "text",
+   "x": 212.0,
+   "y": 292,
+   "text": "z",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 71.0,
+    "y": 282,
+    "size": 12
+   }
+  },
+  {
+   "id": "i0",
+   "type": "text",
+   "x": 240.0,
+   "y": 260,
+   "text": "0",
+   "size": 17,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 96.0,
+    "y": 250,
+    "size": 15
+   }
+  },
+  {
+   "id": "o0",
+   "type": "text",
+   "x": 240.0,
+   "y": 292,
+   "text": "·",
+   "size": 17,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 96.0,
+    "y": 282,
+    "size": 15
+   }
+  },
+  {
+   "id": "i1",
+   "type": "text",
+   "x": 280.0,
+   "y": 260,
+   "text": "1",
+   "size": 17,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 130.0,
+    "y": 250,
+    "size": 15
+   }
+  },
+  {
+   "id": "o1",
+   "type": "text",
+   "x": 280.0,
+   "y": 292,
+   "text": "·",
+   "size": 17,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 130.0,
+    "y": 282,
+    "size": 15
+   }
+  },
+  {
+   "id": "i2",
+   "type": "text",
+   "x": 320.0,
+   "y": 260,
+   "text": "1",
+   "size": 17,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 164.0,
+    "y": 250,
+    "size": 15
+   }
+  },
+  {
+   "id": "o2",
+   "type": "text",
+   "x": 320.0,
+   "y": 292,
+   "text": "·",
+   "size": 17,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 164.0,
+    "y": 282,
+    "size": 15
+   }
+  },
+  {
+   "id": "i3",
+   "type": "text",
+   "x": 360.0,
+   "y": 260,
+   "text": "0",
+   "size": 17,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 198.0,
+    "y": 250,
+    "size": 15
+   }
+  },
+  {
+   "id": "o3",
+   "type": "text",
+   "x": 360.0,
+   "y": 292,
+   "text": "·",
+   "size": 17,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 198.0,
+    "y": 282,
+    "size": 15
+   }
+  },
+  {
+   "id": "i4",
+   "type": "text",
+   "x": 400.0,
+   "y": 260,
+   "text": "1",
+   "size": 17,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 232.0,
+    "y": 250,
+    "size": 15
+   }
+  },
+  {
+   "id": "o4",
+   "type": "text",
+   "x": 400.0,
+   "y": 292,
+   "text": "·",
+   "size": 17,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 232.0,
+    "y": 282,
+    "size": 15
+   }
+  },
+  {
+   "id": "i5",
+   "type": "text",
+   "x": 440.0,
+   "y": 260,
+   "text": "0",
+   "size": 17,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 266.0,
+    "y": 250,
+    "size": 15
+   }
+  },
+  {
+   "id": "o5",
+   "type": "text",
+   "x": 440.0,
+   "y": 292,
+   "text": "·",
+   "size": 17,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 266.0,
+    "y": 282,
+    "size": 15
+   }
+  },
+  {
+   "id": "i6",
+   "type": "text",
+   "x": 480.0,
+   "y": 260,
+   "text": "0",
+   "size": 17,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 300.0,
+    "y": 250,
+    "size": 15
+   }
+  },
+  {
+   "id": "o6",
+   "type": "text",
+   "x": 480.0,
+   "y": 292,
+   "text": "·",
+   "size": 17,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 300.0,
+    "y": 282,
+    "size": 15
+   }
+  },
+  {
+   "id": "arr",
+   "type": "text",
+   "x": 360.0,
+   "y": 234,
+   "text": "bits enter from the right (LSB first) ←",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 198.0,
+    "y": 226,
+    "size": 12
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 330,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 320,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The number 0110100 = 52 is fed LSB first. Q0 copies bits; the first 1 is copied too and moves the machine to Q1, which complements.",
+   "patches": [
+    {
+     "id": "gnQ0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "start in Q0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 0 (weight 1) = 0 in Q0: copied, z = 0. Trailing zeros of a number are trailing zeros of its 2's complement.",
+   "patches": [
+    {
+     "id": "ge0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge0h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gt0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gnQ0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "i6",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o6",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "z so far: 0",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 1 (weight 2) = 0 in Q0: copied, z = 0. Trailing zeros of a number are trailing zeros of its 2's complement.",
+   "patches": [
+    {
+     "id": "ge0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge0h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gt0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gnQ0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "i5",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o5",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "i6",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "z so far: 00",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 2 (weight 4) = 1, the first 1: copied (z = 1) and the machine moves to Q1. Every later bit will be inverted.",
+   "patches": [
+    {
+     "id": "ge1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gt1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gnQ0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gnQ1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "i4",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o4",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "i5",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ge0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge0h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gt0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "z so far: 100",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 3 = 0 in Q1: complemented, z = 1.",
+   "patches": [
+    {
+     "id": "ge2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge2h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gt2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gnQ1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "i3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "i4",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ge1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gt1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "z so far: 1100",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 4 = 1 in Q1: complemented, z = 0.",
+   "patches": [
+    {
+     "id": "ge2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge2h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gt2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gnQ1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "i2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "i3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "z so far: 01100",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 5 = 1 in Q1: complemented, z = 0.",
+   "patches": [
+    {
+     "id": "ge2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge2h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gt2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gnQ1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "i1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "i2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "z so far: 001100",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 6 = 0 in Q1: complemented, z = 1.",
+   "patches": [
+    {
+     "id": "ge2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge2h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gt2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gnQ1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "i0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "i1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "z so far: 1001100",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Result 1001100 = 76 = 128 − 52: the 7-bit 2's complement of 52. Copy up to the first 1, then complement: that is −x.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "0110100 (52) → 1001100 (76 = 2⁷ − 52)",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}
