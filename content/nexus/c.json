@@ -8,6 +8,7 @@
   "icon": "terminal",
   "color": "#8b5cf6",
   "description": "C programming, recursion and the classic data structures GATE tests: arrays, lists, stacks, queues, trees, heaps and hashing.",
+  "rankTitle": "Pointer Wrangler",
   "gate": {
     "pyqSubject": "pds",
     "notesSubject": null

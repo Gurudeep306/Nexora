@@ -8,6 +8,7 @@
   "icon": "chart",
   "color": "#d946ef",
   "description": "Probability axioms, conditional probability, random variables, standard distributions and basic statistics for GATE.",
+  "rankTitle": "Odds Oracle",
   "gate": {
     "pyqSubject": "prob",
     "notesSubject": null

@@ -8,6 +8,7 @@
   "icon": "git-branch",
   "color": "#f05032",
   "description": "Version control with Git: commits, branches, merging and rebasing, collaboration on GitHub-style platforms, and Git internals.",
+  "rankTitle": "Branch Keeper",
   "zones": [
     {
       "level": 1,

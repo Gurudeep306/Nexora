@@ -8,6 +8,7 @@
   "icon": "database",
   "color": "#336791",
   "description": "Writing SQL for real: queries, joins, aggregation, schema design, window functions, transactions and indexes.",
+  "rankTitle": "Join Master",
   "zones": [
     {
       "level": 1,

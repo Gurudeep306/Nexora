@@ -8,6 +8,7 @@
   "icon": "code",
   "color": "#3776ab",
   "description": "Python from syntax and data structures through OOP, idiomatic tools, testing and the NumPy/pandas data stack.",
+  "rankTitle": "Pythonista",
   "zones": [
     {
       "level": 1,

@@ -8,6 +8,7 @@
   "icon": "code",
   "color": "#ce422b",
   "description": "Rust's ownership model, traits, error handling, fearless concurrency and building real tools and services.",
+  "rankTitle": "Borrow Keeper",
   "zones": [
     {
       "level": 1,

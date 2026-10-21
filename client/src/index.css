@@ -1267,6 +1267,13 @@ input[type='search']::-webkit-search-results-decoration {
   pointer-events: none;
   background: radial-gradient(120% 95% at 50% 50%, transparent 55%, rgb(3 4 10 / 0.55) 100%);
 }
+/* Subject rank pill in a path's header: five tier pips + title. */
+.nx-rank {
+  border-color: color-mix(in oklab, var(--nx-b2, #7c3aed) 40%, var(--color-border));
+  background: color-mix(in oklab, var(--nx-b2, #7c3aed) 7%, var(--color-bg-surface));
+}
+.nx-rank-pips > span { background: var(--color-border-strong); }
+.nx-rank-pips > span[data-on] { background: linear-gradient(90deg, #5b8cff, #9b6bff, #2dd4bf); }
 /* Path view entrance after the camera dives into a subject. */
 .nx-path-enter { animation: nx-depth-in 520ms var(--ease-smooth) both; }
 @media (prefers-reduced-motion: reduce) { .nx-path-enter { animation: none; } }

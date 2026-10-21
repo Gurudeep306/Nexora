@@ -8,6 +8,7 @@
   "icon": "trophy",
   "color": "#f59e0b",
   "description": "Contest craft on top of DSA: fast I/O, templates, stress testing, constructive and interactive problems, and contest strategy.",
+  "rankTitle": "Contest Climber",
   "zones": [
     {
       "level": 1,

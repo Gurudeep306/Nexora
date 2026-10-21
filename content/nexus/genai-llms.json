@@ -8,6 +8,7 @@
   "icon": "sparkles",
   "color": "#db2777",
   "description": "How large language models work and how to build with them: prompting, RAG, agents, fine-tuning and safe deployment.",
+  "rankTitle": "Prompt Alchemist",
   "zones": [
     {
       "level": 1,

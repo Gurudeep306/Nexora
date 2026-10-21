@@ -8,6 +8,7 @@
   "icon": "hash",
   "color": "#e11d48",
   "description": "Divisibility, congruences, primes and the group structure of the integers mod n, through to the maths of public-key cryptography.",
+  "rankTitle": "Prime Hunter",
   "zones": [
     {
       "level": 1,

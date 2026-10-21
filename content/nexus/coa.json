@@ -8,6 +8,7 @@
   "icon": "cpu",
   "color": "#0ea5e9",
   "description": "Instruction sets, datapath and control, pipelining, the memory hierarchy and I/O as they appear in GATE.",
+  "rankTitle": "Datapath Engineer",
   "gate": {
     "pyqSubject": "coa",
     "notesSubject": null

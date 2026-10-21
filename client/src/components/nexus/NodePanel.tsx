@@ -144,6 +144,7 @@ export function NodePanel({
   onSelect,
   detailLoading = false,
   engine = null,
+  onOpenPath,
 }: {
   node: NexusNode
   nodes: NexusNode[]
@@ -158,6 +159,8 @@ export function NodePanel({
   detailLoading?: boolean
   /** The subject's progress engine ("dsa" counts solved problems), or null. */
   engine?: string | null
+  /** Open this subject's path (from the web view). */
+  onOpenPath?: () => void
 }) {
   // The solve-count engine (the competitive-programming tree) shows rated problems.
   const isDsa = engine === 'dsa'
@@ -197,6 +200,11 @@ export function NodePanel({
           </div>
 
           {detailLoading ? <LoadingBlock rows={2} /> : <p className="text-sm text-foreground-dim">{node.desc}</p>}
+          {onOpenPath && (
+            <button type="button" onClick={onOpenPath} className="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-accent-brand hover:underline">
+              Open the full path <ArrowUpRight className="size-3" aria-hidden="true" />
+            </button>
+          )}
 
           <div className="flex flex-wrap gap-1.5">
             {node.tags.map((t) => (

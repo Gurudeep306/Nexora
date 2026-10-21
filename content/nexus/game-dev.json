@@ -8,6 +8,7 @@
   "icon": "gamepad",
   "color": "#f97316",
   "description": "Designing and building games: engines, gameplay systems, physics, AI, rendering, audio and shipping.",
+  "rankTitle": "World Builder",
   "zones": [
     {
       "level": 1,

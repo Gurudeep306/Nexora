@@ -8,6 +8,7 @@
   "icon": "code",
   "color": "#3178c6",
   "description": "Static types for JavaScript: the type system, generics, advanced type-level tools and TypeScript in real projects.",
+  "rankTitle": "Type Keeper",
   "zones": [
     {
       "level": 1,

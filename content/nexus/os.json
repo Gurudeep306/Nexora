@@ -8,6 +8,7 @@
   "icon": "server",
   "color": "#14b8a6",
   "description": "Processes and threads, CPU scheduling, synchronisation, deadlock, memory management, virtual memory and file systems.",
+  "rankTitle": "Kernel Whisperer",
   "gate": {
     "pyqSubject": "os",
     "notesSubject": null

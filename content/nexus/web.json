@@ -8,6 +8,7 @@
   "icon": "globe",
   "color": "#06b6d4",
   "description": "HTML, CSS and JavaScript through React, backend APIs and deploying a full-stack app.",
+  "rankTitle": "Web Weaver",
   "zones": [
     {
       "level": 1,

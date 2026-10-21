@@ -8,6 +8,7 @@
   "icon": "brain",
   "color": "#6366f1",
   "description": "Classical machine learning from regression to clustering, with the maths behind it and real projects.",
+  "rankTitle": "Model Trainer",
   "gate": {
     "pyqSubject": "ml",
     "notesSubject": null

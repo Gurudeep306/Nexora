@@ -8,6 +8,7 @@
   "icon": "binary",
   "color": "#3b82f6",
   "description": "Number systems, Boolean algebra, minimisation, combinational and sequential circuits, lesson by lesson from the GATE notes.",
+  "rankTitle": "Logic Architect",
   "gate": {
     "pyqSubject": "dl",
     "notesSubject": "dl"

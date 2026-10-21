@@ -8,6 +8,7 @@
   "icon": "code",
   "color": "#e76f00",
   "description": "Java syntax, object-oriented design, collections, concurrency, the JVM and building services with Spring Boot.",
+  "rankTitle": "JVM Journeyer",
   "zones": [
     {
       "level": 1,

@@ -8,6 +8,7 @@
   "icon": "code",
   "color": "#d4b106",
   "description": "The JavaScript language in depth: closures, prototypes, async code, the DOM and tooling with npm and Node.js.",
+  "rankTitle": "Event Looper",
   "zones": [
     {
       "level": 1,
