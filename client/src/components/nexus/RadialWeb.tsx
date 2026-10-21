@@ -181,7 +181,11 @@ export function RadialWeb({
 
   /* ── state the loop reads (refs: React never renders per frame) ── */
   // Everything in view, the stream names on the rim included.
-  const fit = (w: number, h: number): Camera => ({ x: 0, y: 0, k: Math.min(w, h) / (2 * (layout.extent + (w < 640 ? 170 : 320))) })
+  // Fit: the whole disc with its stream names, a little below the toolbar.
+  const fit = (w: number, h: number): Camera => {
+    const k = Math.min(w, h - 56) / (2 * (layout.extent + (w < 640 ? 170 : 320)))
+    return { x: 0, y: -28 / k, k }
+  }
   const cam = useRef<Camera>(initialCamera ?? { x: 0, y: 0, k: 0.05 })
   // Fit to the view on load and on every resize until the user pans or zooms.
   const userMoved = useRef(false)
@@ -883,6 +887,7 @@ export function RadialWeb({
       }
       const lane = (s: (typeof sectors)[number]) => (s.a1 - s.a0) * layout.inner * 0.9 * c.k
       const hst = hoverStream.current ?? (hs ? (sectorOf.get(hs)?.stream ?? null) : null)
+      const fitK = fit(w, h).k
       ctx.textBaseline = 'middle'
       for (const s of sectors) {
         const cl = sectorOf.get(s.id)
@@ -895,7 +900,7 @@ export function RadialWeb({
         const size = Math.max(10, Math.min(13, lane(s) * 0.5))
         // Zoomed out the names would crowd: only the hovered stream's show
         // (the rest are dots and the nine stream names on the rim).
-        if (lane(s) < 15 && hst !== cl.stream) continue
+        if ((lane(s) < 15 || c.k < fitK * 1.6) && hst !== cl.stream) continue
         const flip = Math.cos(mid) < 0
         ctx.save()
         ctx.translate(sx, sy)
@@ -1355,11 +1360,7 @@ export function RadialWeb({
             <ChevronRight className="size-3" aria-hidden="true" />
             <span>{selectedItem.cluster.zones.find((z) => z.level === selectedItem.node.z)?.name ?? `Zone ${selectedItem.node.z}`}</span>
           </nav>
-        ) : (
-          <p className="pointer-events-none absolute bottom-3 left-3 mb-0 hidden text-[11px] text-text-muted sm:block">
-            Click a stream to zoom in · a subject's name to open its tree · a skill to inspect it · F fullscreen · 0 fit
-          </p>
-        )}
+        ) : null}
         {/* The node icons, drawn into the canvas as images. */}
         <div ref={iconsRef} hidden aria-hidden="true">
           {iconNames.map((n) => (
