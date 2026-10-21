@@ -1,6 +1,6 @@
 import { api } from '@/lib/api'
 import { prefetchApi } from '@/hooks/useApi'
-import type { NexusWebResponse, RoadmapResponse } from './types'
+import type { NexusResponse, NexusWebResponse, RoadmapResponse } from './types'
 
 /*
  * The Nexus page's requests, shared with the nav-link prefetcher so hovering
@@ -11,7 +11,11 @@ export const ROADMAP_KEY = 'nexus:roadmap'
 
 export const fetchNexusWeb = (fresh = false) =>
   api.get<NexusWebResponse>('/api/nexus/web', { query: { fresh: fresh ? '1' : undefined } })
-export const fetchRoadmap = () => api.get<RoadmapResponse>('/api/level-roadmap')
+/** One subject's path (the Rift-tree view); DSA is the default subject. */
+export const nexusPathKey = (subject: string) => `nexus:path:${subject}`
+export const fetchNexusPath = (subject: string, fresh = false) =>
+  api.get<NexusResponse>('/api/nexus', { query: { subject, fresh: fresh ? '1' : undefined } })
+export const fetchRoadmap =() => api.get<RoadmapResponse>('/api/level-roadmap')
 
 export function prefetchNexusData() {
   prefetchApi(NEXUS_WEB_KEY, () => fetchNexusWeb())

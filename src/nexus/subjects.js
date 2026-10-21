@@ -22,7 +22,6 @@
  * per-user reads are two small queries, cached in ./user-cache.
  */
 const fs = require("fs");
-const { webLayout } = require("./web-layout");
 const path = require("path");
 
 const DIR = path.join(__dirname, "..", "..", "content", "nexus");
@@ -307,7 +306,6 @@ function loadRegistry(dsaNodes) {
     }
   }
   registry = { dsaNodes, subjects, names, crossUnlocks, errors, pools: null, poolsBank: null };
-  registry.web = webLayout(registry);
   return registry;
 }
 
@@ -518,72 +516,58 @@ function subjectSummaries(reg, dsa, computed) {
 }
 
 /**
- * The whole Nexus as one web, light enough to send in one response: per
- * cluster its place, rings and zone progress; per node only what the canvas
- * draws (position, name, state, progress, links). Descriptions, PYQ pools
- * and the rest load per node from /api/nexus/node/:subject/:id.
+ * The whole Nexus as one web, light enough to send in one response: every
+ * subject (with its domain, so the client can group them) and per node only
+ * what the web draws: name, zone, state, progress and prerequisite links.
+ * Where things sit is computed by the client (the lattice is deterministic);
+ * descriptions, PYQ pools and the rest load per node from
+ * /api/nexus/node/:subject/:id.
  *
  * Node state `s`: 0 locked, 1 open, 2 mastered.
  */
 function webPayload(reg, dsa, computed) {
-  const web = reg.web;
   const clusters = [];
   for (const [sid, s] of reg.subjects) {
-    const c = web.clusters.get(sid);
-    if (!c) continue;
     const data = s.engine === "dsa" ? dsa : computed.get(sid);
     if (!data) continue;
+    const crossOf = new Map((s.doc?.nodes || []).map((d) => [d.id, (d.requires || []).filter((r) => r.includes(":") && reg.names.has(r))]));
     clusters.push({
       id: sid,
       name: s.meta.name,
       short: s.meta.short,
       domain: s.meta.domain,
+      order: s.meta.order ?? 99,
       engine: s.engine || null,
-      x: c.x,
-      y: c.y,
-      r: c.r,
-      zones: data.zones
-        .filter((z) => c.rings.has(z.level))
-        .map((z) => ({
-          level: z.level,
-          name: z.name,
-          rings: c.rings.get(z.level),
-          color: z.color,
-          locked: z.locked,
-          current: z.current,
-          completed: z.completed,
-          nodeCount: z.nodeCount,
-          nodesCompleted: z.nodesCompleted,
-          zoneProgress: z.zoneProgress,
-          xpRequired: z.xpRequired,
-          probsRequired: z.probsRequired,
-          minR: z.minR,
-          maxR: z.maxR,
-        })),
-      nodes: data.nodes
-        .filter((n) => c.abs.has(n.id))
-        .map((n) => {
-          const p = c.abs.get(n.id);
-          const out = {
-            id: n.id,
-            n: n.name,
-            z: n.zone,
-            x: p.x,
-            y: p.y,
-            p: n.progress,
-            s: n.completed ? 2 : n.unlocked ? 1 : 0,
-            req: n.requires,
-            xp: n.xpReward,
-            c: s.engine === "dsa" ? `${n.solved}/${n.target}` : countLabel(n),
-          };
-          const cross = s.engine ? [] : (s.doc.nodes.find((d) => d.id === n.id)?.requires || []).filter((r) => r.includes(":") && reg.names.has(r));
-          if (cross.length) out.cx = cross;
-          if (n.kind && n.kind !== "concept") out.k = n.kind;
-          return out;
-        }),
+      zones: data.zones.map((z) => ({
+        level: z.level,
+        name: z.name,
+        color: z.color,
+        locked: z.locked,
+        current: z.current,
+        completed: z.completed,
+        nodeCount: z.nodeCount,
+        nodesCompleted: z.nodesCompleted,
+        zoneProgress: z.zoneProgress,
+      })),
+      nodes: data.nodes.map((n) => {
+        const out = {
+          id: n.id,
+          n: n.name,
+          z: n.zone,
+          p: n.progress,
+          s: n.completed ? 2 : n.unlocked ? 1 : 0,
+          req: n.requires,
+          xp: n.xpReward,
+          c: s.engine === "dsa" ? `${n.solved}/${n.target}` : countLabel(n),
+        };
+        const cross = crossOf.get(n.id) || [];
+        if (cross.length) out.cx = cross;
+        if (n.kind && n.kind !== "concept") out.k = n.kind;
+        return out;
+      }),
     });
   }
-  return { width: web.width, height: web.height, clusters };
+  return { clusters };
 }
 
 /** The short count under a node (mirrors the client's nodeCountLabel). */

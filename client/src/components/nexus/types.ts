@@ -125,7 +125,6 @@ export interface WebNode {
 export interface WebZone {
   level: number
   name: string
-  rings: number[]
   color: string
   locked: boolean
   current: boolean
@@ -133,10 +132,15 @@ export interface WebZone {
   nodeCount: number
   nodesCompleted: number
   zoneProgress: number
-  xpRequired: number
-  probsRequired: number
-  minR: number
-  maxR: number
+}
+
+/** A subject's rank: a tier from its mastery and its own title. */
+export interface SubjectRank {
+  tier: string
+  tierIndex: number
+  title: string
+  progress: number
+  next: string | null
 }
 
 export interface WebCluster {
@@ -144,20 +148,17 @@ export interface WebCluster {
   name: string
   short: string
   domain: string
+  order: number
   engine: string | null
-  x: number
-  y: number
-  r: number
   zones: WebZone[]
   nodes: WebNode[]
+  rank?: SubjectRank
 }
 
 export interface NexusWebResponse {
   ok: boolean
   player: RiftPlayer
   riftLevels: RiftLevel[]
-  width: number
-  height: number
   clusters: WebCluster[]
 }
 
@@ -217,6 +218,7 @@ export interface NexusResponse {
   riftLevels: RiftLevel[]
   subject?: NexusSubjectMeta
   subjects?: NexusSubjectSummary[]
+  subjectRank?: SubjectRank
 }
 
 export interface RoadmapProblem {
