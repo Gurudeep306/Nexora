@@ -1,0 +1,3430 @@
+{
+ "version": 1,
+ "title": "A 3-bit ripple up counter and its transient states",
+ "width": 680,
+ "height": 392,
+ "narrow": {
+  "width": 360,
+  "height": 374
+ },
+ "intro": "Three T flip-flops with T = 1 toggle on the falling edge of their clock pin; CLK drives Q0, Q0 clocks Q1 and Q1 clocks Q2 (the bubble on each clock pin marks a falling-edge input). Each stage has a delay of two ticks. The waveforms grow one clock period per step.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "A 3-bit ripple up counter: each stage clocks the next",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "3-bit ripple up counter",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "ff0",
+   "type": "box",
+   "x": 170,
+   "y": 76,
+   "w": 84,
+   "h": 52,
+   "narrow": {
+    "x": 74,
+    "w": 60
+   }
+  },
+  {
+   "id": "ff0-l0",
+   "type": "text",
+   "x": 175,
+   "y": 89.0,
+   "text": "T=1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 79,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff0-l1",
+   "type": "text",
+   "x": 175,
+   "y": 115.0,
+   "text": ">",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 79,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff0-r0",
+   "type": "text",
+   "x": 249,
+   "y": 102.0,
+   "text": "Q0",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 129,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff0-bub",
+   "type": "circle",
+   "cx": 165,
+   "cy": 115.0,
+   "r": 5,
+   "tone": "ink",
+   "narrow": {
+    "cx": 70,
+    "r": 4
+   }
+  },
+  {
+   "id": "ff1",
+   "type": "box",
+   "x": 324,
+   "y": 76,
+   "w": 84,
+   "h": 52,
+   "narrow": {
+    "x": 172,
+    "w": 60
+   }
+  },
+  {
+   "id": "ff1-l0",
+   "type": "text",
+   "x": 329,
+   "y": 89.0,
+   "text": "T=1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 177,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff1-l1",
+   "type": "text",
+   "x": 329,
+   "y": 115.0,
+   "text": ">",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 177,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff1-r0",
+   "type": "text",
+   "x": 403,
+   "y": 102.0,
+   "text": "Q1",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 227,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff1-bub",
+   "type": "circle",
+   "cx": 319,
+   "cy": 115.0,
+   "r": 5,
+   "tone": "ink",
+   "narrow": {
+    "cx": 168,
+    "r": 4
+   }
+  },
+  {
+   "id": "ff2",
+   "type": "box",
+   "x": 478,
+   "y": 76,
+   "w": 84,
+   "h": 52,
+   "narrow": {
+    "x": 270,
+    "w": 60
+   }
+  },
+  {
+   "id": "ff2-l0",
+   "type": "text",
+   "x": 483,
+   "y": 89.0,
+   "text": "T=1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 275,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff2-l1",
+   "type": "text",
+   "x": 483,
+   "y": 115.0,
+   "text": ">",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 275,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff2-r0",
+   "type": "text",
+   "x": 557,
+   "y": 102.0,
+   "text": "Q2",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 325,
+    "size": 12
+   }
+  },
+  {
+   "id": "ff2-bub",
+   "type": "circle",
+   "cx": 473,
+   "cy": 115.0,
+   "r": 5,
+   "tone": "ink",
+   "narrow": {
+    "cx": 266,
+    "r": 4
+   }
+  },
+  {
+   "id": "ffw0",
+   "type": "line",
+   "points": [
+    [
+     254,
+     102.0
+    ],
+    [
+     289.0,
+     102.0
+    ],
+    [
+     289.0,
+     115.0
+    ],
+    [
+     314,
+     115.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      134,
+      102.0
+     ],
+     [
+      153.0,
+      102.0
+     ],
+     [
+      153.0,
+      115.0
+     ],
+     [
+      164,
+      115.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ffw1",
+   "type": "line",
+   "points": [
+    [
+     408,
+     102.0
+    ],
+    [
+     443.0,
+     102.0
+    ],
+    [
+     443.0,
+     115.0
+    ],
+    [
+     468,
+     115.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      232,
+      102.0
+     ],
+     [
+      251.0,
+      102.0
+     ],
+     [
+      251.0,
+      115.0
+     ],
+     [
+      262,
+      115.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wclk",
+   "type": "line",
+   "points": [
+    [
+     110,
+     115.0
+    ],
+    [
+     160,
+     115.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      44,
+      115.0
+     ],
+     [
+      66,
+      115.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lclk",
+   "type": "text",
+   "x": 104,
+   "y": 115.0,
+   "text": "CLK",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 38,
+    "size": 12
+   }
+  },
+  {
+   "id": "v0",
+   "type": "text",
+   "x": 212.0,
+   "y": 64,
+   "text": "Q0 = 0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 104.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "v1",
+   "type": "text",
+   "x": 366.0,
+   "y": 64,
+   "text": "Q1 = 0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 202.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "v2",
+   "type": "text",
+   "x": 520.0,
+   "y": 64,
+   "text": "Q2 = 0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 300.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "leg",
+   "type": "text",
+   "x": 340.0,
+   "y": 44,
+   "text": "○ = falling-edge clock",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wlc",
+   "type": "text",
+   "x": 102,
+   "y": 193.0,
+   "text": "CLK",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 44,
+    "y": 188.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wcg0s0",
+   "type": "line",
+   "points": [
+    [
+     110.0,
+     202
+    ],
+    [
+     119.0,
+     202
+    ],
+    [
+     119.0,
+     184
+    ],
+    [
+     146.0,
+     184
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      52.0,
+      196
+     ],
+     [
+      56.9,
+      196
+     ],
+     [
+      56.9,
+      180
+     ],
+     [
+      71.6,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg1s0",
+   "type": "line",
+   "points": [
+    [
+     146.0,
+     184
+    ],
+    [
+     146.0,
+     202
+    ],
+    [
+     182.0,
+     202
+    ],
+    [
+     182.0,
+     184
+    ],
+    [
+     209.0,
+     184
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      71.6,
+      180
+     ],
+     [
+      71.6,
+      196
+     ],
+     [
+      91.2,
+      196
+     ],
+     [
+      91.2,
+      180
+     ],
+     [
+      105.9,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg2s0",
+   "type": "line",
+   "points": [
+    [
+     209.0,
+     184
+    ],
+    [
+     209.0,
+     202
+    ],
+    [
+     245.0,
+     202
+    ],
+    [
+     245.0,
+     184
+    ],
+    [
+     272.0,
+     184
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      105.9,
+      180
+     ],
+     [
+      105.9,
+      196
+     ],
+     [
+      125.5,
+      196
+     ],
+     [
+      125.5,
+      180
+     ],
+     [
+      140.2,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg3s0",
+   "type": "line",
+   "points": [
+    [
+     272.0,
+     184
+    ],
+    [
+     272.0,
+     202
+    ],
+    [
+     308.0,
+     202
+    ],
+    [
+     308.0,
+     184
+    ],
+    [
+     335.0,
+     184
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      140.2,
+      180
+     ],
+     [
+      140.2,
+      196
+     ],
+     [
+      159.8,
+      196
+     ],
+     [
+      159.8,
+      180
+     ],
+     [
+      174.5,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg4s0",
+   "type": "line",
+   "points": [
+    [
+     335.0,
+     184
+    ],
+    [
+     335.0,
+     202
+    ],
+    [
+     371.0,
+     202
+    ],
+    [
+     371.0,
+     184
+    ],
+    [
+     398.0,
+     184
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      174.5,
+      180
+     ],
+     [
+      174.5,
+      196
+     ],
+     [
+      194.1,
+      196
+     ],
+     [
+      194.1,
+      180
+     ],
+     [
+      208.8,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg5s0",
+   "type": "line",
+   "points": [
+    [
+     398.0,
+     184
+    ],
+    [
+     398.0,
+     202
+    ],
+    [
+     434.0,
+     202
+    ],
+    [
+     434.0,
+     184
+    ],
+    [
+     461.0,
+     184
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      208.8,
+      180
+     ],
+     [
+      208.8,
+      196
+     ],
+     [
+      228.4,
+      196
+     ],
+     [
+      228.4,
+      180
+     ],
+     [
+      243.1,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg6s0",
+   "type": "line",
+   "points": [
+    [
+     461.0,
+     184
+    ],
+    [
+     461.0,
+     202
+    ],
+    [
+     497.0,
+     202
+    ],
+    [
+     497.0,
+     184
+    ],
+    [
+     524.0,
+     184
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      243.1,
+      180
+     ],
+     [
+      243.1,
+      196
+     ],
+     [
+      262.7,
+      196
+     ],
+     [
+      262.7,
+      180
+     ],
+     [
+      277.4,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg7s0",
+   "type": "line",
+   "points": [
+    [
+     524.0,
+     184
+    ],
+    [
+     524.0,
+     202
+    ],
+    [
+     560.0,
+     202
+    ],
+    [
+     560.0,
+     184
+    ],
+    [
+     587.0,
+     184
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      277.4,
+      180
+     ],
+     [
+      277.4,
+      196
+     ],
+     [
+      297.0,
+      196
+     ],
+     [
+      297.0,
+      180
+     ],
+     [
+      311.7,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg8s0",
+   "type": "line",
+   "points": [
+    [
+     587.0,
+     184
+    ],
+    [
+     587.0,
+     202
+    ],
+    [
+     623.0,
+     202
+    ],
+    [
+     623.0,
+     184
+    ],
+    [
+     650.0,
+     184
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      311.7,
+      180
+     ],
+     [
+      311.7,
+      196
+     ],
+     [
+      331.3,
+      196
+     ],
+     [
+      331.3,
+      180
+     ],
+     [
+      346.0,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlq0",
+   "type": "text",
+   "x": 102,
+   "y": 233.0,
+   "text": "Q0",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 44,
+    "y": 224.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq0g0s0",
+   "type": "line",
+   "points": [
+    [
+     110.0,
+     242
+    ],
+    [
+     146.0,
+     242
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      52.0,
+      232
+     ],
+     [
+      71.6,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g1s0",
+   "type": "line",
+   "points": [
+    [
+     146.0,
+     242
+    ],
+    [
+     164.0,
+     242
+    ],
+    [
+     164.0,
+     224
+    ],
+    [
+     209.0,
+     224
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      71.6,
+      232
+     ],
+     [
+      81.4,
+      232
+     ],
+     [
+      81.4,
+      216
+     ],
+     [
+      105.9,
+      216
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g2s0",
+   "type": "line",
+   "points": [
+    [
+     209.0,
+     224
+    ],
+    [
+     227.0,
+     224
+    ],
+    [
+     227.0,
+     242
+    ],
+    [
+     272.0,
+     242
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      105.9,
+      216
+     ],
+     [
+      115.7,
+      216
+     ],
+     [
+      115.7,
+      232
+     ],
+     [
+      140.2,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g3s0",
+   "type": "line",
+   "points": [
+    [
+     272.0,
+     242
+    ],
+    [
+     290.0,
+     242
+    ],
+    [
+     290.0,
+     224
+    ],
+    [
+     335.0,
+     224
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      140.2,
+      232
+     ],
+     [
+      150.0,
+      232
+     ],
+     [
+      150.0,
+      216
+     ],
+     [
+      174.5,
+      216
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g4s0",
+   "type": "line",
+   "points": [
+    [
+     335.0,
+     224
+    ],
+    [
+     353.0,
+     224
+    ],
+    [
+     353.0,
+     242
+    ],
+    [
+     398.0,
+     242
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      174.5,
+      216
+     ],
+     [
+      184.3,
+      216
+     ],
+     [
+      184.3,
+      232
+     ],
+     [
+      208.8,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g5s0",
+   "type": "line",
+   "points": [
+    [
+     398.0,
+     242
+    ],
+    [
+     416.0,
+     242
+    ],
+    [
+     416.0,
+     224
+    ],
+    [
+     461.0,
+     224
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      208.8,
+      232
+     ],
+     [
+      218.6,
+      232
+     ],
+     [
+      218.6,
+      216
+     ],
+     [
+      243.1,
+      216
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g6s0",
+   "type": "line",
+   "points": [
+    [
+     461.0,
+     224
+    ],
+    [
+     479.0,
+     224
+    ],
+    [
+     479.0,
+     242
+    ],
+    [
+     524.0,
+     242
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      243.1,
+      216
+     ],
+     [
+      252.9,
+      216
+     ],
+     [
+      252.9,
+      232
+     ],
+     [
+      277.4,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g7s0",
+   "type": "line",
+   "points": [
+    [
+     524.0,
+     242
+    ],
+    [
+     542.0,
+     242
+    ],
+    [
+     542.0,
+     224
+    ],
+    [
+     587.0,
+     224
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      277.4,
+      232
+     ],
+     [
+      287.2,
+      232
+     ],
+     [
+      287.2,
+      216
+     ],
+     [
+      311.7,
+      216
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g8s0",
+   "type": "line",
+   "points": [
+    [
+     587.0,
+     224
+    ],
+    [
+     605.0,
+     224
+    ],
+    [
+     605.0,
+     242
+    ],
+    [
+     650.0,
+     242
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      311.7,
+      216
+     ],
+     [
+      321.5,
+      216
+     ],
+     [
+      321.5,
+      232
+     ],
+     [
+      346.0,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlq1",
+   "type": "text",
+   "x": 102,
+   "y": 273.0,
+   "text": "Q1",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 44,
+    "y": 260.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq1g0s0",
+   "type": "line",
+   "points": [
+    [
+     110.0,
+     282
+    ],
+    [
+     146.0,
+     282
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      52.0,
+      268
+     ],
+     [
+      71.6,
+      268
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g1s0",
+   "type": "line",
+   "points": [
+    [
+     146.0,
+     282
+    ],
+    [
+     209.0,
+     282
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      71.6,
+      268
+     ],
+     [
+      105.9,
+      268
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g2s0",
+   "type": "line",
+   "points": [
+    [
+     209.0,
+     282
+    ],
+    [
+     245.0,
+     282
+    ],
+    [
+     245.0,
+     264
+    ],
+    [
+     272.0,
+     264
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      105.9,
+      268
+     ],
+     [
+      125.5,
+      268
+     ],
+     [
+      125.5,
+      252
+     ],
+     [
+      140.2,
+      252
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g3s0",
+   "type": "line",
+   "points": [
+    [
+     272.0,
+     264
+    ],
+    [
+     335.0,
+     264
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      140.2,
+      252
+     ],
+     [
+      174.5,
+      252
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g4s0",
+   "type": "line",
+   "points": [
+    [
+     335.0,
+     264
+    ],
+    [
+     371.0,
+     264
+    ],
+    [
+     371.0,
+     282
+    ],
+    [
+     398.0,
+     282
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      174.5,
+      252
+     ],
+     [
+      194.1,
+      252
+     ],
+     [
+      194.1,
+      268
+     ],
+     [
+      208.8,
+      268
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g5s0",
+   "type": "line",
+   "points": [
+    [
+     398.0,
+     282
+    ],
+    [
+     461.0,
+     282
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      208.8,
+      268
+     ],
+     [
+      243.1,
+      268
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g6s0",
+   "type": "line",
+   "points": [
+    [
+     461.0,
+     282
+    ],
+    [
+     497.0,
+     282
+    ],
+    [
+     497.0,
+     264
+    ],
+    [
+     524.0,
+     264
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      243.1,
+      268
+     ],
+     [
+      262.7,
+      268
+     ],
+     [
+      262.7,
+      252
+     ],
+     [
+      277.4,
+      252
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g7s0",
+   "type": "line",
+   "points": [
+    [
+     524.0,
+     264
+    ],
+    [
+     587.0,
+     264
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      277.4,
+      252
+     ],
+     [
+      311.7,
+      252
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g8s0",
+   "type": "line",
+   "points": [
+    [
+     587.0,
+     264
+    ],
+    [
+     623.0,
+     264
+    ],
+    [
+     623.0,
+     282
+    ],
+    [
+     650.0,
+     282
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      311.7,
+      252
+     ],
+     [
+      331.3,
+      252
+     ],
+     [
+      331.3,
+      268
+     ],
+     [
+      346.0,
+      268
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlq2",
+   "type": "text",
+   "x": 102,
+   "y": 313.0,
+   "text": "Q2",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 44,
+    "y": 296.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq2g0s0",
+   "type": "line",
+   "points": [
+    [
+     110.0,
+     322
+    ],
+    [
+     146.0,
+     322
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      52.0,
+      304
+     ],
+     [
+      71.6,
+      304
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g1s0",
+   "type": "line",
+   "points": [
+    [
+     146.0,
+     322
+    ],
+    [
+     209.0,
+     322
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      71.6,
+      304
+     ],
+     [
+      105.9,
+      304
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g2s0",
+   "type": "line",
+   "points": [
+    [
+     209.0,
+     322
+    ],
+    [
+     272.0,
+     322
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      105.9,
+      304
+     ],
+     [
+      140.2,
+      304
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g3s0",
+   "type": "line",
+   "points": [
+    [
+     272.0,
+     322
+    ],
+    [
+     335.0,
+     322
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      140.2,
+      304
+     ],
+     [
+      174.5,
+      304
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g4s0",
+   "type": "line",
+   "points": [
+    [
+     335.0,
+     322
+    ],
+    [
+     389.0,
+     322
+    ],
+    [
+     389.0,
+     304
+    ],
+    [
+     398.0,
+     304
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      174.5,
+      304
+     ],
+     [
+      203.9,
+      304
+     ],
+     [
+      203.9,
+      288
+     ],
+     [
+      208.8,
+      288
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g5s0",
+   "type": "line",
+   "points": [
+    [
+     398.0,
+     304
+    ],
+    [
+     461.0,
+     304
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      208.8,
+      288
+     ],
+     [
+      243.1,
+      288
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g6s0",
+   "type": "line",
+   "points": [
+    [
+     461.0,
+     304
+    ],
+    [
+     524.0,
+     304
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      243.1,
+      288
+     ],
+     [
+      277.4,
+      288
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g7s0",
+   "type": "line",
+   "points": [
+    [
+     524.0,
+     304
+    ],
+    [
+     587.0,
+     304
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      277.4,
+      288
+     ],
+     [
+      311.7,
+      288
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g8s0",
+   "type": "line",
+   "points": [
+    [
+     587.0,
+     304
+    ],
+    [
+     641.0,
+     304
+    ],
+    [
+     641.0,
+     322
+    ],
+    [
+     650.0,
+     322
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      311.7,
+      288
+     ],
+     [
+      341.1,
+      288
+     ],
+     [
+      341.1,
+      304
+     ],
+     [
+      346.0,
+      304
+     ]
+    ]
+   }
+  },
+  {
+   "id": "m0",
+   "type": "line",
+   "points": [
+    [
+     146.0,
+     178
+    ],
+    [
+     146.0,
+     328
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      71.6,
+      174
+     ],
+     [
+      71.6,
+      310
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt0",
+   "type": "text",
+   "x": 146.0,
+   "y": 168,
+   "text": "↓1",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 71.6,
+    "y": 164,
+    "size": 12
+   }
+  },
+  {
+   "id": "m1",
+   "type": "line",
+   "points": [
+    [
+     209.0,
+     178
+    ],
+    [
+     209.0,
+     328
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      105.9,
+      174
+     ],
+     [
+      105.9,
+      310
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt1",
+   "type": "text",
+   "x": 209.0,
+   "y": 168,
+   "text": "↓2",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 105.9,
+    "y": 164,
+    "size": 12
+   }
+  },
+  {
+   "id": "m2",
+   "type": "line",
+   "points": [
+    [
+     272.0,
+     178
+    ],
+    [
+     272.0,
+     328
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      140.2,
+      174
+     ],
+     [
+      140.2,
+      310
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt2",
+   "type": "text",
+   "x": 272.0,
+   "y": 168,
+   "text": "↓3",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 140.2,
+    "y": 164,
+    "size": 12
+   }
+  },
+  {
+   "id": "m3",
+   "type": "line",
+   "points": [
+    [
+     335.0,
+     178
+    ],
+    [
+     335.0,
+     328
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      174.5,
+      174
+     ],
+     [
+      174.5,
+      310
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt3",
+   "type": "text",
+   "x": 335.0,
+   "y": 168,
+   "text": "↓4",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 174.5,
+    "y": 164,
+    "size": 12
+   }
+  },
+  {
+   "id": "m4",
+   "type": "line",
+   "points": [
+    [
+     398.0,
+     178
+    ],
+    [
+     398.0,
+     328
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      208.8,
+      174
+     ],
+     [
+      208.8,
+      310
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt4",
+   "type": "text",
+   "x": 398.0,
+   "y": 168,
+   "text": "↓5",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 208.8,
+    "y": 164,
+    "size": 12
+   }
+  },
+  {
+   "id": "m5",
+   "type": "line",
+   "points": [
+    [
+     461.0,
+     178
+    ],
+    [
+     461.0,
+     328
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      243.1,
+      174
+     ],
+     [
+      243.1,
+      310
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt5",
+   "type": "text",
+   "x": 461.0,
+   "y": 168,
+   "text": "↓6",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 243.10000000000002,
+    "y": 164,
+    "size": 12
+   }
+  },
+  {
+   "id": "m6",
+   "type": "line",
+   "points": [
+    [
+     524.0,
+     178
+    ],
+    [
+     524.0,
+     328
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      277.4,
+      174
+     ],
+     [
+      277.4,
+      310
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt6",
+   "type": "text",
+   "x": 524.0,
+   "y": 168,
+   "text": "↓7",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 277.4,
+    "y": 164,
+    "size": 12
+   }
+  },
+  {
+   "id": "m7",
+   "type": "line",
+   "points": [
+    [
+     587.0,
+     178
+    ],
+    [
+     587.0,
+     328
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      311.7,
+      174
+     ],
+     [
+      311.7,
+      310
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt7",
+   "type": "text",
+   "x": 587.0,
+   "y": 168,
+   "text": "↓8",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 311.70000000000005,
+    "y": 164,
+    "size": 12
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 352,
+   "text": "state Q2Q1Q0 = 000",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 334,
+    "size": 13
+   }
+  },
+  {
+   "id": "sub",
+   "type": "text",
+   "x": 340.0,
+   "y": 376,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "y": 358,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "All three start at 0. Each is a T flip-flop with T = 1 that toggles on a falling edge at its clock pin (the bubble); t_pd = 2 ticks.",
+   "patches": [
+    {
+     "id": "wcg0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "text": "Q0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "Q1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "Q2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ffw0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ffw1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "only Q0 sees the real clock",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 1: Q0 toggles 0 → 1. A rising Q0 is not a falling edge, so Q1 is not clocked: 000 → 001.",
+   "patches": [
+    {
+     "id": "wcg1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "text": "Q0 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "Q1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "Q2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ffw0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ffw1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "m0",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt0",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "state = 001 (1)",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "count 1",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 2: each falling Q clocks the next stage one t_pd later: 001 → 000 → 010, settled 2 t_pd after the edge.",
+   "patches": [
+    {
+     "id": "wcg2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "text": "Q0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "Q1 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "Q2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ffw0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ffw1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "m1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "001 → 000 → 010",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "count 2; 1 false state on the way",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 3: Q0 toggles 0 → 1. A rising Q0 is not a falling edge, so Q1 is not clocked: 010 → 011.",
+   "patches": [
+    {
+     "id": "wcg3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "text": "Q0 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "Q1 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "Q2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ffw0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ffw1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "m2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "state = 011 (3)",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "count 3",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 4: each falling Q clocks the next stage one t_pd later: 011 → 010 → 000 → 100, settled 3 t_pd after the edge.",
+   "patches": [
+    {
+     "id": "wcg4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "text": "Q0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "Q1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "Q2 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ffw0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ffw1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "011 → 010 → 000 → 100",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "count 4; 2 false states on the way",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 5: Q0 toggles 0 → 1. A rising Q0 is not a falling edge, so Q1 is not clocked: 100 → 101.",
+   "patches": [
+    {
+     "id": "wcg5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "text": "Q0 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "Q1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "Q2 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ffw0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ffw1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "m4",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt4",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "state = 101 (5)",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "count 5",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 6: each falling Q clocks the next stage one t_pd later: 101 → 100 → 110, settled 2 t_pd after the edge.",
+   "patches": [
+    {
+     "id": "wcg6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "text": "Q0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "Q1 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "Q2 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ffw0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ffw1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "m5",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt5",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "101 → 100 → 110",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "count 6; 1 false state on the way",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 7: Q0 toggles 0 → 1. A rising Q0 is not a falling edge, so Q1 is not clocked: 110 → 111.",
+   "patches": [
+    {
+     "id": "wcg7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "text": "Q0 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "Q1 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "Q2 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ffw0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ffw1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "m6",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt6",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "state = 111 (7)",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "count 7",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 8: each falling Q clocks the next stage one t_pd later: 111 → 110 → 100 → 000, settled 3 t_pd after the edge.",
+   "patches": [
+    {
+     "id": "wcg8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "text": "Q0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "Q1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "Q2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ffw0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ffw1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m7",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt7",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "111 → 110 → 100 → 000",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "count 0; 2 false states on the way",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Eight edges count 0 … 7 and wrap to 0. Edges 4 and 8 ripple through all 3 stages: two false states, settled after 3 t_pd.",
+   "patches": [
+    {
+     "id": "v0",
+     "set": {
+      "text": "Q0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "Q1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "Q2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ff2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ffw0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ffw1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "m7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "settle time = n · t_pd (worst case)",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sub",
+     "set": {
+      "text": "the carry ripples like a wave",
+      "tone": "muted"
+     }
+    }
+   ]
+  }
+ ]
+}

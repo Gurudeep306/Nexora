@@ -1436,60 +1436,82 @@
       }
     },
     "cse-2000-a-2-12": {
-      "approach": "J = K = 1 makes the JK flip-flop toggle; the D flip-flop copies P as it was before the shared clock edge (master-slave). Trace one clock cycle from (P, Q) = (0, 1).",
+      "approach": "Concept tested: **two flip-flops on one clock edge**. Both sample the values from just before the edge: the JK with $J = K = 1$ toggles $P$, and the D flip-flop loads the **old** $P$. Step the pair $(P, Q)$ edge by edge from $(0, 1)$, notice that it repeats with period 2, and reduce the three cycles modulo 2.",
       "concepts": [
-        "JK flip-flop (toggle)",
+        "JK flip-flop",
         "D flip-flop",
-        "Master-slave timing"
+        "Master–slave",
+        "Same-edge sampling"
       ],
+      "given": "A master–slave JK flip-flop with $J = K = 1$ and output $P$; a master–slave D flip-flop with $D = P$ and output $Q$; a common clock; initial $(P, Q) = (0, 1)$. Find $(P, Q)$ after three clock cycles.",
       "steps": [
         {
-          "title": "Read the circuit",
-          "body": "First FF: $J=K=1$ ⇒ $P^+=\\bar P$ (toggle). Second FF: $D=P$ ⇒ $Q^+=P$ (old value — both are master-slave on the same clock, so the D input is sampled before $P$ changes).",
+          "title": "Next-state equations",
+          "body": "JK with $J = K = 1$: $P^+ = \\overline{P}$ (toggle). D: $Q^+ = D = P$, where $P$ is the value **before** the edge (both flip-flops sample at the same instant, and $P$'s new value appears only after it)."
+        },
+        {
+          "title": "First clock cycle",
+          "body": "From $(0, 1)$: $P^+ = 1$ and $Q^+ = $ old $P = 0$. After one cycle $(P, Q) = (1, 0)$.",
           "scene": {
-            "reveal": 2,
-            "caption": "Start: P = 0, Q = 1"
+            "reveal": 1
           }
         },
         {
-          "title": "One clock cycle",
-          "body": "$P^+=\\bar 0=1$, $Q^+=P=0$. So after the clock cycle $(P,Q)=(1,0)$.",
+          "title": "Second clock cycle",
+          "body": "From $(1, 0)$: $P^+ = 0$ and $Q^+ = $ old $P = 1$. After two cycles $(P, Q) = (0, 1)$, the initial state: the sequence has period 2.",
           "scene": {
-            "reveal": 4,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "success"
-              }
-            ],
-            "caption": "After 1 clock: P = 1, Q = 0"
+            "reveal": 2
           }
         },
         {
-          "title": "If two cycles were meant",
-          "body": "A second clock gives $P^+=\\bar1=0$, $Q^+=1$ ⇒ $(0,1)$, the starting state again. The printed wording “After the clock cycles” is ambiguous; the single-cycle reading gives (A), the two-cycle reading gives (D).",
+          "title": "Third clock cycle",
+          "body": "The third edge repeats the first: from $(0, 1)$ to $(1, 0)$. After three clock cycles (an odd number) the pair is $(1, 0)$: option A.",
           "scene": {
-            "reveal": 6,
-            "hl": [
-              {
-                "r": 2,
-                "tone": "warning"
-              }
-            ],
-            "caption": "After 2 clocks: back to (0, 1)"
+            "reveal": 3
           }
         }
       ],
+      "answer": {
+        "value": "(A) 1, 0",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "After three cycles (odd) the pair is $(1, 0)$; it alternates $(0, 1) \\to (1, 0)$ with period 2."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$(1, 1)$ would need the D flip-flop to see the JK's **new** output at the same edge, which it cannot."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$(0, 0)$ never occurs: $Q$ is always the complement of the current $P$ after the first edge."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$(0, 1)$ is the state after an even number of cycles (two, four, …), not after three."
+        }
+      ],
+      "shortcut": "J = K = 1 makes $P$ a divide-by-two; $Q$ is $P$ delayed by one clock, so the pair has period 2. Three is odd, so the answer is the state after one cycle: $(1, 0)$.",
+      "pitfalls": [
+        "Letting the D flip-flop take the JK's new value at the same edge, giving $(1, 1)$.",
+        "Miscounting the cycles: two (or any even number) give $(0, 1)$, option D. Find the period first, then reduce the count modulo it."
+      ],
+      "verification": "A cycle-by-cycle simulation of the two flip-flops gives $(0, 1), (1, 0), (0, 1), (1, 0), \\dots$; entry 3 is $(1, 0)$ = option A, the bank key.",
       "animation": {
         "kind": "table",
+        "title": "(P, Q) edge by edge",
         "cols": [
           "P",
           "Q"
-        ],
-        "rowLabels": [
-          "start",
-          "clock 1",
-          "clock 2"
         ],
         "rows": [
           [
@@ -1503,45 +1525,21 @@
           [
             0,
             1
+          ],
+          [
+            1,
+            0
           ]
         ],
-        "reveal": 2,
-        "mono": true
-      },
-      "answer": {
-        "value": "(P, Q) = (1, 0) after one clock cycle",
-        "choice": [
-          "A"
+        "mono": true,
+        "rowLabels": [
+          "start",
+          "after 1 cycle",
+          "after 2 cycles",
+          "after 3 cycles"
         ],
-        "matchesKey": false,
-        "keyNote": "Stored key D corresponds to two clock cycles; for the single clock cycle the question (as usually reproduced, “After the clock cycle”) describes, the state is (1, 0). Flagged for review."
-      },
-      "optionAnalysis": [
-        {
-          "option": "A",
-          "correct": true,
-          "reason": "Correct for one clock: P toggles to 1, Q takes old P = 0."
-        },
-        {
-          "option": "B",
-          "correct": false,
-          "reason": "Q cannot be 1 after one clock because D = P = 0 was sampled."
-        },
-        {
-          "option": "C",
-          "correct": false,
-          "reason": "P toggles, so it cannot stay 0 after one clock."
-        },
-        {
-          "option": "D",
-          "correct": false,
-          "reason": "This is the state after two clocks (back to the start), not one."
-        }
-      ],
-      "pitfalls": [
-        "Letting Q take the new P (1): with master-slave FFs on a common clock, D sees P before it changes."
-      ],
-      "verification": "The pair cycles with period 2: (0,1) → (1,0) → (0,1)."
+        "reveal": 0
+      }
     },
     "cse-2000-a-2-13": {
       "approach": "Frame-buffer size = pixels × bytes per pixel; compare with $1\\text{ MB}=1{,}048{,}576$ bytes. 256 colours need 1 byte, 16 million colours need 3 bytes; monitor size is irrelevant.",

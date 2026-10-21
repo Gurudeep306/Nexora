@@ -1,0 +1,2194 @@
+{
+ "version": 1,
+ "title": "The 2011 circuit: state equations, state table and state diagram",
+ "width": 680,
+ "height": 344,
+ "narrow": {
+  "width": 360,
+  "height": 528
+ },
+ "intro": "Three D flip-flops P, Q, R share a clock. The state equations fill the next-state table one present state per step; each row is drawn as an arc of the state diagram, and the cycle from 000 is lit at the end.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "From equations to a state table and diagram (GATE 2011 circuit)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Equations → table → diagram",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "eq",
+   "type": "text",
+   "x": 340.0,
+   "y": 52,
+   "text": "D flip-flops: P⁺ = R, Q⁺ = (P + R)′, R⁺ = Q·R′",
+   "size": 14,
+   "anchor": "middle",
+   "mono": false,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 48,
+    "size": 12
+   }
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 24,
+   "y": 76,
+   "cellW": 52,
+   "cellH": 24,
+   "rows": [
+    [
+     "PQR",
+     "P⁺",
+     "Q⁺",
+     "R⁺",
+     "next"
+    ],
+    [
+     "000",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "001",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "010",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "011",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "100",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "101",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "110",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "111",
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 65,
+    "y": 66,
+    "cellW": 46,
+    "cellH": 22
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 24,
+   "y": 314,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 282,
+    "size": 12,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "gn000",
+   "type": "circle",
+   "cx": 450,
+   "cy": 92,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "000",
+   "size": 14,
+   "narrow": {
+    "cx": 133,
+    "cy": 322,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gn010",
+   "type": "circle",
+   "cx": 650,
+   "cy": 92,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "010",
+   "size": 14,
+   "narrow": {
+    "cx": 319,
+    "cy": 322,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gn011",
+   "type": "circle",
+   "cx": 650,
+   "cy": 197,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "011",
+   "size": 14,
+   "narrow": {
+    "cx": 319,
+    "cy": 407,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gn100",
+   "type": "circle",
+   "cx": 450,
+   "cy": 197,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "100",
+   "size": 14,
+   "narrow": {
+    "cx": 133,
+    "cy": 407,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gn001",
+   "type": "circle",
+   "cx": 350,
+   "cy": 197,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "001",
+   "size": 14,
+   "narrow": {
+    "cx": 40,
+    "cy": 407,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gn110",
+   "type": "circle",
+   "cx": 350,
+   "cy": 302,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "110",
+   "size": 14,
+   "narrow": {
+    "cx": 40,
+    "cy": 492,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gn101",
+   "type": "circle",
+   "cx": 530.0,
+   "cy": 302,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "101",
+   "size": 14,
+   "narrow": {
+    "cx": 207.4,
+    "cy": 492,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gn111",
+   "type": "circle",
+   "cx": 650,
+   "cy": 302,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "111",
+   "size": 14,
+   "narrow": {
+    "cx": 319,
+    "cy": 492,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "ge0",
+   "type": "line",
+   "points": [
+    [
+     472.0,
+     92.0
+    ],
+    [
+     627.0,
+     92.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      153.0,
+      322.0
+     ],
+     [
+      298.0,
+      322.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge0h",
+   "type": "line",
+   "points": [
+    [
+     618.0,
+     96.95
+    ],
+    [
+     627.0,
+     92.0
+    ],
+    [
+     618.0,
+     87.05
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      289.0,
+      326.95
+     ],
+     [
+      298.0,
+      322.0
+     ],
+     [
+      289.0,
+      317.05
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge1",
+   "type": "line",
+   "points": [
+    [
+     372.0,
+     197.0
+    ],
+    [
+     427.0,
+     197.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      60.0,
+      407.0
+     ],
+     [
+      112.0,
+      407.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge1h",
+   "type": "line",
+   "points": [
+    [
+     418.0,
+     201.95
+    ],
+    [
+     427.0,
+     197.0
+    ],
+    [
+     418.0,
+     192.05
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      103.0,
+      411.95
+     ],
+     [
+      112.0,
+      407.0
+     ],
+     [
+      103.0,
+      402.05
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge2",
+   "type": "line",
+   "points": [
+    [
+     650.0,
+     114.0
+    ],
+    [
+     650.0,
+     174.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      319.0,
+      342.0
+     ],
+     [
+      319.0,
+      386.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge2h",
+   "type": "line",
+   "points": [
+    [
+     645.05,
+     165.0
+    ],
+    [
+     650.0,
+     174.0
+    ],
+    [
+     654.95,
+     165.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      314.05,
+      377.0
+     ],
+     [
+      319.0,
+      386.0
+     ],
+     [
+      323.95,
+      377.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge3",
+   "type": "line",
+   "points": [
+    [
+     628.0,
+     197.0
+    ],
+    [
+     473.0,
+     197.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      299.0,
+      407.0
+     ],
+     [
+      154.0,
+      407.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge3h",
+   "type": "line",
+   "points": [
+    [
+     482.0,
+     192.05
+    ],
+    [
+     473.0,
+     197.0
+    ],
+    [
+     482.0,
+     201.95
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      163.0,
+      402.05
+     ],
+     [
+      154.0,
+      407.0
+     ],
+     [
+      163.0,
+      411.95
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge4",
+   "type": "line",
+   "points": [
+    [
+     450.0,
+     175.0
+    ],
+    [
+     450.0,
+     115.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      133.0,
+      387.0
+     ],
+     [
+      133.0,
+      343.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge4h",
+   "type": "line",
+   "points": [
+    [
+     454.95,
+     124.0
+    ],
+    [
+     450.0,
+     115.0
+    ],
+    [
+     445.05,
+     124.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      137.95,
+      352.0
+     ],
+     [
+      133.0,
+      343.0
+     ],
+     [
+      128.05,
+      352.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge5",
+   "type": "line",
+   "points": [
+    [
+     516.67,
+     284.5
+    ],
+    [
+     463.94,
+     215.29
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      194.23,
+      476.95
+     ],
+     [
+      146.83,
+      422.8
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge5h",
+   "type": "line",
+   "points": [
+    [
+     473.33,
+     219.45
+    ],
+    [
+     463.94,
+     215.29
+    ],
+    [
+     465.46,
+     225.45
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      156.48,
+      426.31
+     ],
+     [
+      146.83,
+      422.8
+     ],
+     [
+      149.03,
+      432.83
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge6",
+   "type": "line",
+   "points": [
+    [
+     350.0,
+     280.0
+    ],
+    [
+     350.0,
+     220.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      40.0,
+      472.0
+     ],
+     [
+      40.0,
+      428.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge6h",
+   "type": "line",
+   "points": [
+    [
+     354.95,
+     229.0
+    ],
+    [
+     350.0,
+     220.0
+    ],
+    [
+     345.05,
+     229.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      44.95,
+      437.0
+     ],
+     [
+      40.0,
+      428.0
+     ],
+     [
+      35.05,
+      437.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge7",
+   "type": "line",
+   "points": [
+    [
+     630.52,
+     291.77
+    ],
+    [
+     470.36,
+     207.69
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      300.81,
+      483.69
+     ],
+     [
+      152.1,
+      415.73
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge7h",
+   "type": "line",
+   "points": [
+    [
+     480.63,
+     207.49
+    ],
+    [
+     470.36,
+     207.69
+    ],
+    [
+     476.03,
+     216.26
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      162.34,
+      414.97
+     ],
+     [
+      152.1,
+      415.73
+     ],
+     [
+      158.23,
+      423.97
+     ]
+    ]
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Steps 2–3: D flip-flops, so each input equation is already a state equation. Now fill one row per present state.",
+   "patches": [
+    {
+     "id": "eq",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "PQR = 000: P⁺ = R = 0, Q⁺ = (P + R)′ = 1, R⁺ = Q·R′ = 0, so 000 → 010; one row is one arc.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "PQR",
+        "P⁺",
+        "Q⁺",
+        "R⁺",
+        "next"
+       ],
+       [
+        "000",
+        "0",
+        "1",
+        "0",
+        "010"
+       ],
+       [
+        "001",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "010",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "011",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "100",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "101",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "110",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "111",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        1,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ge0",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge0h",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn000",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "row 1 of 8: 000 → 010",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "PQR = 001: P⁺ = R = 1, Q⁺ = (P + R)′ = 0, R⁺ = Q·R′ = 0, so 001 → 100; one row is one arc.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "PQR",
+        "P⁺",
+        "Q⁺",
+        "R⁺",
+        "next"
+       ],
+       [
+        "000",
+        "0",
+        "1",
+        "0",
+        "010"
+       ],
+       [
+        "001",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "010",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "011",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "100",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "101",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "110",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "111",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        2,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ge1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge1h",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge0h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gn001",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn000",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "row 2 of 8: 001 → 100",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "PQR = 010: P⁺ = R = 0, Q⁺ = (P + R)′ = 1, R⁺ = Q·R′ = 1, so 010 → 011; one row is one arc.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "PQR",
+        "P⁺",
+        "Q⁺",
+        "R⁺",
+        "next"
+       ],
+       [
+        "000",
+        "0",
+        "1",
+        "0",
+        "010"
+       ],
+       [
+        "001",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "010",
+        "0",
+        "1",
+        "1",
+        "011"
+       ],
+       [
+        "011",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "100",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "101",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "110",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "111",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ],
+       [
+        3,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ge2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge2h",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge1h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gn010",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn001",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "row 3 of 8: 010 → 011",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "PQR = 011: P⁺ = R = 1, Q⁺ = (P + R)′ = 0, R⁺ = Q·R′ = 0, so 011 → 100; one row is one arc.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "PQR",
+        "P⁺",
+        "Q⁺",
+        "R⁺",
+        "next"
+       ],
+       [
+        "000",
+        "0",
+        "1",
+        "0",
+        "010"
+       ],
+       [
+        "001",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "010",
+        "0",
+        "1",
+        "1",
+        "011"
+       ],
+       [
+        "011",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "100",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "101",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "110",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "111",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        4,
+        3
+       ],
+       [
+        4,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ge3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge3h",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge2h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gn011",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn010",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "row 4 of 8: 011 → 100",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "PQR = 100: P⁺ = R = 0, Q⁺ = (P + R)′ = 0, R⁺ = Q·R′ = 0, so 100 → 000; one row is one arc.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "PQR",
+        "P⁺",
+        "Q⁺",
+        "R⁺",
+        "next"
+       ],
+       [
+        "000",
+        "0",
+        "1",
+        "0",
+        "010"
+       ],
+       [
+        "001",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "010",
+        "0",
+        "1",
+        "1",
+        "011"
+       ],
+       [
+        "011",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "100",
+        "0",
+        "0",
+        "0",
+        "000"
+       ],
+       [
+        "101",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "110",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "111",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        5,
+        3
+       ],
+       [
+        5,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ge4",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge4h",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge3h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gn100",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn011",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "row 5 of 8: 100 → 000",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "PQR = 101: P⁺ = R = 1, Q⁺ = (P + R)′ = 0, R⁺ = Q·R′ = 0, so 101 → 100; one row is one arc.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "PQR",
+        "P⁺",
+        "Q⁺",
+        "R⁺",
+        "next"
+       ],
+       [
+        "000",
+        "0",
+        "1",
+        "0",
+        "010"
+       ],
+       [
+        "001",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "010",
+        "0",
+        "1",
+        "1",
+        "011"
+       ],
+       [
+        "011",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "100",
+        "0",
+        "0",
+        "0",
+        "000"
+       ],
+       [
+        "101",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "110",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "111",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        6,
+        0
+       ],
+       [
+        6,
+        1
+       ],
+       [
+        6,
+        2
+       ],
+       [
+        6,
+        3
+       ],
+       [
+        6,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ge5",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge5h",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge4h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gn101",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn100",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "row 6 of 8: 101 → 100",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "PQR = 110: P⁺ = R = 0, Q⁺ = (P + R)′ = 0, R⁺ = Q·R′ = 1, so 110 → 001; one row is one arc.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "PQR",
+        "P⁺",
+        "Q⁺",
+        "R⁺",
+        "next"
+       ],
+       [
+        "000",
+        "0",
+        "1",
+        "0",
+        "010"
+       ],
+       [
+        "001",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "010",
+        "0",
+        "1",
+        "1",
+        "011"
+       ],
+       [
+        "011",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "100",
+        "0",
+        "0",
+        "0",
+        "000"
+       ],
+       [
+        "101",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "110",
+        "0",
+        "0",
+        "1",
+        "001"
+       ],
+       [
+        "111",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        7,
+        0
+       ],
+       [
+        7,
+        1
+       ],
+       [
+        7,
+        2
+       ],
+       [
+        7,
+        3
+       ],
+       [
+        7,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ge6",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge6h",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge5h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gn110",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn101",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "row 7 of 8: 110 → 001",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "PQR = 111: P⁺ = R = 1, Q⁺ = (P + R)′ = 0, R⁺ = Q·R′ = 0, so 111 → 100; one row is one arc.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "PQR",
+        "P⁺",
+        "Q⁺",
+        "R⁺",
+        "next"
+       ],
+       [
+        "000",
+        "0",
+        "1",
+        "0",
+        "010"
+       ],
+       [
+        "001",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "010",
+        "0",
+        "1",
+        "1",
+        "011"
+       ],
+       [
+        "011",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "100",
+        "0",
+        "0",
+        "0",
+        "000"
+       ],
+       [
+        "101",
+        "1",
+        "0",
+        "0",
+        "100"
+       ],
+       [
+        "110",
+        "0",
+        "0",
+        "1",
+        "001"
+       ],
+       [
+        "111",
+        "1",
+        "0",
+        "0",
+        "100"
+       ]
+      ],
+      "highlight": [
+       [
+        8,
+        0
+       ],
+       [
+        8,
+        1
+       ],
+       [
+        8,
+        2
+       ],
+       [
+        8,
+        3
+       ],
+       [
+        8,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ge7",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge7h",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge6h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gn111",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn110",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "row 8 of 8: 111 → 100",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "All 8 rows are done: the table is the circuit. Every state has exactly one arc out, because there is no input.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "gn111",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ge7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge7h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "8 states, 8 arcs",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "From 000 (the power-on reset): 000 → 010 → 011 → 100 → 000, a cycle of 4 states.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        1,
+        4
+       ],
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ],
+       [
+        3,
+        4
+       ],
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        4,
+        3
+       ],
+       [
+        4,
+        4
+       ],
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        5,
+        3
+       ],
+       [
+        5,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "cycle of 4 from 000",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge0h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn000",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge2h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn010",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge3h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn011",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge4",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge4h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn100",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The other 4 states (001, 101, 110, 111) are never produced from 000, but each one reaches the cycle (the counter is self-starting).",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "tails lead into the cycle",
+      "tone": "ink"
+     }
+    }
+   ]
+  }
+ ]
+}

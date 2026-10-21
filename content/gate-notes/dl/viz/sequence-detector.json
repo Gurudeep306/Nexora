@@ -1,0 +1,1289 @@
+{
+ "version": 1,
+ "title": "A 101 sequence detector reading 1101011",
+ "width": 680,
+ "height": 396,
+ "narrow": {
+  "width": 360,
+  "height": 446
+ },
+ "intro": "State graph of the overlapping 101 detector as a Mealy machine: arcs are labelled input/output. Below, the input string and the output produced so far. Each step feeds one bit; the arc taken is highlighted.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "The overlapping 101 detector (Mealy) reading 1101011",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "101 detector reading 1101011",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "gn0",
+   "type": "circle",
+   "cx": 150,
+   "cy": 170,
+   "r": 30,
+   "mono": true,
+   "tone": "ink",
+   "label": "S0",
+   "size": 15,
+   "narrow": {
+    "cx": 80,
+    "cy": 128,
+    "r": 26,
+    "size": 13
+   }
+  },
+  {
+   "id": "gn1",
+   "type": "circle",
+   "cx": 340,
+   "cy": 170,
+   "r": 30,
+   "mono": true,
+   "tone": "ink",
+   "label": "S1",
+   "size": 15,
+   "narrow": {
+    "cx": 280,
+    "cy": 128,
+    "r": 26,
+    "size": 13
+   }
+  },
+  {
+   "id": "gn2",
+   "type": "circle",
+   "cx": 530,
+   "cy": 170,
+   "r": 30,
+   "mono": true,
+   "tone": "ink",
+   "label": "S2",
+   "size": 15,
+   "narrow": {
+    "cx": 180,
+    "cy": 276,
+    "r": 26,
+    "size": 13
+   }
+  },
+  {
+   "id": "ge0",
+   "type": "line",
+   "points": [
+    [
+     138.04,
+     115.52
+    ],
+    [
+     143.64,
+     112.29
+    ],
+    [
+     150.0,
+     111.17
+    ],
+    [
+     156.36,
+     112.29
+    ],
+    [
+     161.96,
+     115.52
+    ],
+    [
+     166.11,
+     120.47
+    ],
+    [
+     168.32,
+     126.54
+    ],
+    [
+     168.32,
+     133.0
+    ],
+    [
+     166.11,
+     139.07
+    ],
+    [
+     161.96,
+     144.02
+    ],
+    [
+     156.36,
+     147.25
+    ],
+    [
+     150.0,
+     148.37
+    ],
+    [
+     143.64,
+     147.25
+    ],
+    [
+     138.04,
+     144.02
+    ],
+    [
+     133.89,
+     139.07
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      69.64,
+      80.79
+     ],
+     [
+      74.49,
+      77.99
+     ],
+     [
+      80.0,
+      77.01
+     ],
+     [
+      85.51,
+      77.99
+     ],
+     [
+      90.36,
+      80.79
+     ],
+     [
+      93.96,
+      85.07
+     ],
+     [
+      95.88,
+      90.33
+     ],
+     [
+      95.88,
+      95.93
+     ],
+     [
+      93.96,
+      101.19
+     ],
+     [
+      90.36,
+      105.48
+     ],
+     [
+      85.51,
+      108.28
+     ],
+     [
+      80.0,
+      109.25
+     ],
+     [
+      74.49,
+      108.28
+     ],
+     [
+      69.64,
+      105.48
+     ],
+     [
+      66.04,
+      101.19
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge0h",
+   "type": "arrow",
+   "from": [
+    133.89,
+    139.07
+   ],
+   "to": "gn0",
+   "tone": "muted",
+   "narrow": {
+    "from": [
+     66.04,
+     101.19
+    ]
+   }
+  },
+  {
+   "id": "gt0",
+   "type": "text",
+   "x": 150,
+   "y": 102,
+   "text": "0/0",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 80,
+    "y": 66,
+    "size": 13
+   }
+  },
+  {
+   "id": "ge1",
+   "type": "arrow",
+   "from": "gn0",
+   "to": "gn1",
+   "curve": 0,
+   "tone": "muted"
+  },
+  {
+   "id": "gt1",
+   "type": "text",
+   "x": 245,
+   "y": 156,
+   "text": "1/0",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 114,
+    "size": 13
+   }
+  },
+  {
+   "id": "ge2",
+   "type": "line",
+   "points": [
+    [
+     328.04,
+     115.52
+    ],
+    [
+     333.64,
+     112.29
+    ],
+    [
+     340.0,
+     111.17
+    ],
+    [
+     346.36,
+     112.29
+    ],
+    [
+     351.96,
+     115.52
+    ],
+    [
+     356.11,
+     120.47
+    ],
+    [
+     358.32,
+     126.54
+    ],
+    [
+     358.32,
+     133.0
+    ],
+    [
+     356.11,
+     139.07
+    ],
+    [
+     351.96,
+     144.02
+    ],
+    [
+     346.36,
+     147.25
+    ],
+    [
+     340.0,
+     148.37
+    ],
+    [
+     333.64,
+     147.25
+    ],
+    [
+     328.04,
+     144.02
+    ],
+    [
+     323.89,
+     139.07
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      269.64,
+      80.79
+     ],
+     [
+      274.49,
+      77.99
+     ],
+     [
+      280.0,
+      77.01
+     ],
+     [
+      285.51,
+      77.99
+     ],
+     [
+      290.36,
+      80.79
+     ],
+     [
+      293.96,
+      85.07
+     ],
+     [
+      295.88,
+      90.33
+     ],
+     [
+      295.88,
+      95.93
+     ],
+     [
+      293.96,
+      101.19
+     ],
+     [
+      290.36,
+      105.48
+     ],
+     [
+      285.51,
+      108.28
+     ],
+     [
+      280.0,
+      109.25
+     ],
+     [
+      274.49,
+      108.28
+     ],
+     [
+      269.64,
+      105.48
+     ],
+     [
+      266.04,
+      101.19
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge2h",
+   "type": "arrow",
+   "from": [
+    323.89,
+    139.07
+   ],
+   "to": "gn1",
+   "tone": "muted",
+   "narrow": {
+    "from": [
+     266.04,
+     101.19
+    ]
+   }
+  },
+  {
+   "id": "gt2",
+   "type": "text",
+   "x": 340,
+   "y": 102,
+   "text": "1/0",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 280,
+    "y": 66,
+    "size": 13
+   }
+  },
+  {
+   "id": "ge3",
+   "type": "arrow",
+   "from": "gn1",
+   "to": "gn2",
+   "curve": -0.3,
+   "tone": "muted",
+   "narrow": {
+    "curve": 0.3
+   }
+  },
+  {
+   "id": "gt3",
+   "type": "text",
+   "x": 435,
+   "y": 136,
+   "text": "0/0",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 194,
+    "y": 180,
+    "size": 13
+   }
+  },
+  {
+   "id": "ge4",
+   "type": "arrow",
+   "from": "gn2",
+   "to": "gn1",
+   "curve": -0.3,
+   "tone": "muted",
+   "narrow": {
+    "curve": 0.3
+   }
+  },
+  {
+   "id": "gt4",
+   "type": "text",
+   "x": 435,
+   "y": 206,
+   "text": "1/1",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 268,
+    "y": 224,
+    "size": 13
+   }
+  },
+  {
+   "id": "ge5",
+   "type": "arrow",
+   "from": "gn2",
+   "to": "gn0",
+   "curve": -0.6,
+   "tone": "muted",
+   "narrow": {
+    "curve": 0
+   }
+  },
+  {
+   "id": "gt5",
+   "type": "text",
+   "x": 340,
+   "y": 258,
+   "text": "0/0",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 106,
+    "y": 214,
+    "size": 13
+   }
+  },
+  {
+   "id": "tin",
+   "type": "text",
+   "x": 230.0,
+   "y": 310,
+   "text": "in",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 70.0,
+    "y": 360,
+    "size": 12
+   }
+  },
+  {
+   "id": "tout",
+   "type": "text",
+   "x": 230.0,
+   "y": 340,
+   "text": "out",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 70.0,
+    "y": 390,
+    "size": 12
+   }
+  },
+  {
+   "id": "i0",
+   "type": "text",
+   "x": 260.0,
+   "y": 310,
+   "text": "1",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 98.0,
+    "y": 360,
+    "size": 14
+   }
+  },
+  {
+   "id": "o0",
+   "type": "text",
+   "x": 260.0,
+   "y": 340,
+   "text": "·",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 98.0,
+    "y": 390,
+    "size": 14
+   }
+  },
+  {
+   "id": "i1",
+   "type": "text",
+   "x": 300.0,
+   "y": 310,
+   "text": "1",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 134.0,
+    "y": 360,
+    "size": 14
+   }
+  },
+  {
+   "id": "o1",
+   "type": "text",
+   "x": 300.0,
+   "y": 340,
+   "text": "·",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 134.0,
+    "y": 390,
+    "size": 14
+   }
+  },
+  {
+   "id": "i2",
+   "type": "text",
+   "x": 340.0,
+   "y": 310,
+   "text": "0",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 170.0,
+    "y": 360,
+    "size": 14
+   }
+  },
+  {
+   "id": "o2",
+   "type": "text",
+   "x": 340.0,
+   "y": 340,
+   "text": "·",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 170.0,
+    "y": 390,
+    "size": 14
+   }
+  },
+  {
+   "id": "i3",
+   "type": "text",
+   "x": 380.0,
+   "y": 310,
+   "text": "1",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 206.0,
+    "y": 360,
+    "size": 14
+   }
+  },
+  {
+   "id": "o3",
+   "type": "text",
+   "x": 380.0,
+   "y": 340,
+   "text": "·",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 206.0,
+    "y": 390,
+    "size": 14
+   }
+  },
+  {
+   "id": "i4",
+   "type": "text",
+   "x": 420.0,
+   "y": 310,
+   "text": "0",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 242.0,
+    "y": 360,
+    "size": 14
+   }
+  },
+  {
+   "id": "o4",
+   "type": "text",
+   "x": 420.0,
+   "y": 340,
+   "text": "·",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 242.0,
+    "y": 390,
+    "size": 14
+   }
+  },
+  {
+   "id": "i5",
+   "type": "text",
+   "x": 460.0,
+   "y": 310,
+   "text": "1",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 278.0,
+    "y": 360,
+    "size": 14
+   }
+  },
+  {
+   "id": "o5",
+   "type": "text",
+   "x": 460.0,
+   "y": 340,
+   "text": "·",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 278.0,
+    "y": 390,
+    "size": 14
+   }
+  },
+  {
+   "id": "i6",
+   "type": "text",
+   "x": 500.0,
+   "y": 310,
+   "text": "1",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 314.0,
+    "y": 360,
+    "size": 14
+   }
+  },
+  {
+   "id": "o6",
+   "type": "text",
+   "x": 500.0,
+   "y": 340,
+   "text": "·",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 314.0,
+    "y": 390,
+    "size": 14
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 376,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 426,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "S0: no useful prefix seen. S1: the input ends in 1. S2: it ends in 10. A 1 from S2 completes 101 and outputs 1.",
+   "patches": [
+    {
+     "id": "gn0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "start in S0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 1 = 1: S0 → S1, output 0. The input now ends in 1.",
+   "patches": [
+    {
+     "id": "ge1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gt1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gn1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "i0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "after 1: S1, output 0",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 2 = 1 from S1: 11 still ends in 1, so stay in S1 (the longest suffix that is a prefix of 101 is 1). Output 0.",
+   "patches": [
+    {
+     "id": "ge2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge2h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gt2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gt1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "i1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "i0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "after 11: S1, output 0",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 3 = 0: S1 → S2, output 0. The input now ends in 10.",
+   "patches": [
+    {
+     "id": "ge3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gt3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gn2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ge2h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gt2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "i2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "i1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "after 110: S2, output 0",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 4 = 1 from S2: 101 is complete, output 1. Go to S1: the final 1 can start the next 101 (overlap).",
+   "patches": [
+    {
+     "id": "ge4",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "gt4",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "gn2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gn1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gt3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "i3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "i2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "after 1101: S1, output 1",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 5 = 0: S1 → S2, output 0. The input now ends in 10.",
+   "patches": [
+    {
+     "id": "ge3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gt3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gn2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gt4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "i4",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o4",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "i3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "after 11010: S2, output 0",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 6 = 1 from S2: 101 is complete, output 1. Go to S1: the final 1 can start the next 101 (overlap).",
+   "patches": [
+    {
+     "id": "ge4",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "gt4",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "gn2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gn1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gt3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "i5",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o5",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "i4",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "after 110101: S1, output 1",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 7 = 1 from S1: 11 still ends in 1, so stay in S1 (the longest suffix that is a prefix of 101 is 1). Output 0.",
+   "patches": [
+    {
+     "id": "ge2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge2h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gt2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gn1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gt4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "i6",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o6",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "i5",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "after 1101011: S1, output 0",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Output 0001010: a 1 at bits 4 and 6, the two (overlapping) places where 101 ends. Three states were enough for a 3-bit pattern.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "1101011 → 0001010",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "i6",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  }
+ ]
+}

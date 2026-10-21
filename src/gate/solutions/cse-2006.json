@@ -420,28 +420,34 @@
       "verification": "Built the three relevant item sets explicitly; none contains two of the given items."
     },
     "cse-2006-cs-8": {
-      "approach": "Assume positive-edge D flip-flops. Since $f$ changes only at negative edges, the fastest $f$ toggles once per clock period, i.e. $f$'s period is at least $2T$; a delay of exactly one clock period $T$ is therefore a $180^\\circ$ phase shift of $f$. Find the circuit that delays $f$ by exactly $T$ without inversion and without race.",
+      "approach": "Concept tested: **using both clock edges to delay a signal**. f changes only at falling edges, so its fastest form has period $2T$ and a 180° delay is one clock period $T$, with no inversion. Sample f at the rising edge (half a period after it changed), then at the falling edge.",
       "concepts": [
-        "D flip-flop timing",
+        "D flip-flop",
+        "Clock edges",
         "Phase delay",
-        "Setup/hold race"
+        "Setup and hold"
       ],
+      "given": "A 50% duty-cycle clock of period $T$; f changes only at the clock's negative edges; positive-edge D flip-flops, some clocked through an inverter (which makes the falling edge active). Option drawings as in the 2006 paper: (A) $\\overline{f}$ → FF on $\\overline{clk}$ → $\\overline{Q}$ → FF on clk; (B) $\\overline{f}$ → FF on clk → Q → FF on $\\overline{clk}$; (C) f → FF on clk → Q → FF on $\\overline{clk}$; (D) f → FF on $\\overline{clk}$ → $\\overline{Q}$ → FF on clk.",
       "steps": [
         {
           "title": "What 180° means here",
-          "body": "$f$ changes only at negative edges, spaced $T$ apart, so $f$ toggles at most once per $T$ and its period is $2T$ (fastest case). Delaying $f$ by $T$ = half of $f$'s period = $180^\\circ$."
+          "body": "The fastest f is high one clock period and low the next: period $2T$. Half of that is $T$, so the circuit must output f (not $\\overline{f}$) delayed by exactly one clock period."
         },
         {
-          "title": "Circuit C",
-          "body": "FF1 (clk) samples $f$ at the positive edge, half a period after $f$ changed — data is stable, so $Q_1=f$ delayed by $T/2$. FF2 (inverted clk) samples $Q_1$ at the next negative edge, another $T/2$ later. Output $=f(t-T)$: a clean $T$ delay, i.e. $180^\\circ$."
+          "title": "Polarity",
+          "body": "B inverts f once: it outputs $\\overline{f}$. D inverts once (the $\\overline{Q}$): $\\overline{f}$. A inverts twice and C not at all: only these keep the polarity."
         },
         {
-          "title": "Why the others fail",
-          "body": "**A** and **D**: FF1 is clocked by $\\overline{clk}$, i.e. at the negative edge — exactly when $f$ changes, a setup/hold race, so the output is unreliable; they also pass the data through $\\overline Q$.\n\n**B**: same timing as C but with $\\bar f$ fed in, giving $\\overline{f(t-T)}$. For the fastest $f$, $\\overline{f(t-T)}=f(t-2T)=f(t)$, i.e. $0^\\circ/360^\\circ$, and in general it is an inversion, not a delay."
+          "title": "Timing of A",
+          "body": "A's first flip-flop is clocked at the falling edge, the very instant f changes: a hold problem. With zero hold it reads the old value and the total delay is $1.5T$ (270°); with any hold time the sample is unreliable. Either way, not 180°."
+        },
+        {
+          "title": "Timing of C",
+          "body": "The first flip-flop samples f at the rising edge, half a period after f last changed; the second samples that at the next falling edge, half a period later. Every change of f reappears exactly $T$ later: 180° of the fastest f, with no setup or hold risk."
         }
       ],
       "answer": {
-        "value": "Circuit C",
+        "value": "(C) f → D flip-flop on clk → D flip-flop on inverted clk",
         "choice": [
           "C"
         ],
@@ -451,29 +457,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "FF1 samples on the negative edge when $f$ itself changes (race) and the result is inverted twice in an unreliable way."
+          "reason": "Samples f at the falling edge exactly when f changes (a hold/race problem); with the old value it delays by $1.5T$ = 270°."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Delays by $T$ but outputs $\\bar f$; that is an inversion, not a $180^\\circ$ delay of $f$."
+          "reason": "Delays by $T$ but outputs $\\overline{f}$: an inversion, not a 180° delay of f."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: posedge then negedge sampling gives a clean delay of one clock period = $180^\\circ$ of $f$."
+          "reason": "Rising-edge stage then falling-edge stage: delay exactly $T$, half the $2T$ period of the fastest f."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "FF1 clocked on the negative edge with $f$ changing at that same edge — race; output also inverted via $\\overline Q$."
+          "reason": "Samples at the changing edge like A and outputs $\\overline{f}$ through the $\\overline{Q}$."
         }
       ],
+      "shortcut": "Never sample a signal on the edge at which it changes; sample it on the other edge first. Then count half periods: two half periods = one clock = 180° of a signal with period 2T.",
       "pitfalls": [
-        "Reading 180° as half a clock period — the phase refers to $f$, whose period is at least two clock periods.",
-        "Ignoring the race when a flip-flop samples on the same edge at which its input changes."
+        "Confusing a 180° phase delay with an inversion: for a square wave they look alike, but option B inverts every f, not only the fastest one.",
+        "Picking A because its two inversions cancel, without checking when its first flip-flop samples."
       ],
-      "verification": "Timing diagram for $f$ toggling each negative edge: C's output is $f$ shifted by one clock period, which is the complement of $f$, i.e. $180^\\circ$ out of phase."
+      "verification": "Tick-by-tick simulation with a 4-tick clock: C's output equals f shifted by one clock period (plus the clock-to-Q delay); A's equals f shifted by 1.5 periods; B and D give $\\overline{f}$. With a hold time of 1 tick, the first flip-flop of A and of D flags a violation at every change of f; C's flip-flops flag none."
     },
     "cse-2006-cs-9": {
       "approach": "Instructions are 3 bytes long, so starting at 300 the PC can only take values $300+3k$.",
@@ -2121,49 +2128,36 @@
       "verification": "l4_02_cla.py evaluates each option on all 64 rows of $(a, b)$ and compares with the carry out of $a + b$: A matches, B, C and D (as transcribed) do not."
     },
     "cse-2006-cs-37": {
-      "approach": "Read the next-state equations off the circuit and clock the 9 data bits through, one row per clock edge.",
+      "approach": "Concept tested: **tracing a shift register with an XOR inside the chain and a serial data input**. Fix the time order of the data first (first character first), then apply $q_0^+ = data$, $q_1^+ = q_0 \\oplus q_2$, $q_2^+ = q_1$ from the old state at every clock.",
       "concepts": [
-        "D flip-flop",
-        "Shift register with XOR feedback"
+        "Shift register",
+        "XOR feedback",
+        "Serial input",
+        "Clock-by-clock trace"
       ],
+      "given": "Three cleared D flip-flops: $q_0$ takes $data$, $q_1$ takes $q_0 \\oplus q_2$, $q_2$ takes $q_1$. The data 100110000 is supplied in nine clock cycles. Find $q_2q_1q_0$.",
       "steps": [
         {
-          "title": "Next-state equations",
-          "body": "From the diagram: $q_0^+ = \\text{data}$, $q_1^+ = q_0 \\oplus q_2$, $q_2^+ = q_1$. Start: $q_2q_1q_0 = 000$. Bits enter left to right: $1,0,0,1,1,0,0,0,0$.",
+          "title": "Time order",
+          "body": "The string is supplied in nine cycles in the order written: 1, 0, 0, 1, 1, 0, 0, 0, 0."
+        },
+        {
+          "title": "First five clocks",
+          "body": "000 → 001 → 010 → 100 → 011 → 111.",
           "scene": {
-            "reveal": 0
+            "reveal": 6
           }
         },
         {
-          "title": "Clocks 1–4",
-          "body": "1: data 1 → $q_2 = 0$, $q_1 = 0\\oplus0 = 0$, $q_0 = 1$ → $001$\n\n2: data 0 → $q_2 = 0$, $q_1 = 1\\oplus0 = 1$, $q_0 = 0$ → $010$\n\n3: data 0 → $q_2 = 1$, $q_1 = 0\\oplus0 = 0$, $q_0 = 0$ → $100$\n\n4: data 1 → $q_2 = 0$, $q_1 = 0\\oplus1 = 1$, $q_0 = 1$ → $011$",
+          "title": "The four zeros",
+          "body": "111 → 100 → 010 → 100 → 010. With $data = 0$ the states 100 and 010 swap at every clock.",
           "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "r": 3,
-                "tone": "accent"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Clocks 5–9",
-          "body": "5: data 1 → $q_2 = 1$, $q_1 = 1\\oplus0 = 1$, $q_0 = 1$ → $111$\n\n6: data 0 → $q_2 = 1$, $q_1 = 1\\oplus1 = 0$, $q_0 = 0$ → $100$\n\n7: data 0 → $q_2 = 0$, $q_1 = 0\\oplus1 = 1$, $q_0 = 0$ → $010$\n\n8: data 0 → $q_2 = 1$, $q_1 = 0\\oplus0 = 0$, $q_0 = 0$ → $100$\n\n9: data 0 → $q_2 = 0$, $q_1 = 0\\oplus1 = 1$, $q_0 = 0$ → $010$",
-          "scene": {
-            "reveal": 45,
-            "hl": [
-              {
-                "r": 8,
-                "tone": "success"
-              }
-            ],
-            "caption": "After 9 clocks: q2q1q0 = 010"
+            "reveal": 10
           }
         }
       ],
       "answer": {
-        "value": "010",
+        "value": "(C) 010",
         "choice": [
           "C"
         ],
@@ -2173,106 +2167,94 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Wrong: the register is not cleared — after clock 9 it holds $010$."
+          "reason": "000 would need the register to flush to zero, but with $data = 0$ the bit circulates 100 ↔ 010 through the XOR instead of leaving."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong: $001$ is the state after clock 1 only."
+          "reason": "001 needs $q_0 = 1$, i.e. a 1 at the last clock; the last data bit is 0."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: simulation ends in $010$."
+          "reason": "The simulated final state."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Wrong: $101$ never appears in this run; it would need $q_0 = 1$ after a trailing data 0."
+          "reason": "101 needs $q_0 = 1$ at the end too; the last data bit is 0."
         }
       ],
+      "shortcut": "The last data bit is 0, so $q_0 = 0$: only 000 and 010 survive. 000 is impossible because once a 1 is inside, $q_1^+ = q_2$ (with $q_0 = 0$) keeps it circulating.",
       "pitfalls": [
-        "Feeding the data bits right to left (that gives 111, not an option).",
-        "Updating flip-flops one after another instead of simultaneously on the clock edge."
+        "Feeding the string last character first (that ends at 111, not an option).",
+        "Treating $q_1$ as a plain copy of $q_0$ and forgetting the XOR with $q_2$.",
+        "Updating the flip-flops one after another instead of from the old state."
       ],
-      "verification": "Re-simulated programmatically with simultaneous updates: final $q_2q_1q_0 = 010$.",
+      "verification": "Simulation with the data in written order: 000, 001, 010, 100, 011, 111, 100, 010, 100, 010.",
       "animation": {
         "kind": "table",
-        "title": "Clock-by-clock state",
+        "title": "Nine clocks",
         "cols": [
-          "clock",
           "data",
-          "q2",
-          "q1",
-          "q0"
+          "q2q1q0"
         ],
         "rows": [
           [
-            1,
-            1,
-            0,
-            0,
-            1
+            "–",
+            "000"
           ],
           [
-            2,
-            0,
-            0,
-            1,
-            0
+            "1",
+            "001"
           ],
           [
-            3,
-            0,
-            1,
-            0,
-            0
+            "0",
+            "010"
           ],
           [
-            4,
-            1,
-            0,
-            1,
-            1
+            "0",
+            "100"
           ],
           [
-            5,
-            1,
-            1,
-            1,
-            1
+            "1",
+            "011"
           ],
           [
-            6,
-            0,
-            1,
-            0,
-            0
+            "1",
+            "111"
           ],
           [
-            7,
-            0,
-            0,
-            1,
-            0
+            "0",
+            "100"
           ],
           [
-            8,
-            0,
-            1,
-            0,
-            0
+            "0",
+            "010"
           ],
           [
-            9,
-            0,
-            0,
-            1,
-            0
+            "0",
+            "100"
+          ],
+          [
+            "0",
+            "010"
           ]
         ],
-        "reveal": 0,
-        "mono": true
+        "mono": true,
+        "rowLabels": [
+          "start",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ],
+        "reveal": 1
       }
     },
     "cse-2006-cs-38": {

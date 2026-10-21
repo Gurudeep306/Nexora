@@ -2253,50 +2253,32 @@
       }
     },
     "cse-2017-1-cs-33": {
-      "approach": "Read the wiring as next-state equations — T input is Q0, D input is Q1 — and step the state four times from 11.",
+      "approach": "Concept tested: **a mixed T/D circuit traced clock by clock**. Substitute each flip-flop into its own equation and trace from 11.",
       "concepts": [
         "T flip-flop",
         "D flip-flop",
-        "state sequence"
+        "Clock-by-clock trace"
       ],
+      "given": "T flip-flop $Q_1$ with $T = Q_0$; D flip-flop $Q_0$ with $D = Q_1$; common clock; initially $Q_1Q_0 = 11$.",
       "steps": [
         {
-          "title": "Next-state equations",
-          "body": "T = $Q_0$ ⇒ $Q_1^+=Q_1\\oplus Q_0$. D = $Q_1$ ⇒ $Q_0^+=Q_1$ (both use values before the edge).",
+          "title": "State equations",
+          "body": "$Q_1^+ = Q_0 \\oplus Q_1$, $Q_0^+ = Q_1$."
+        },
+        {
+          "title": "Trace",
+          "body": "11 → 01 → 10 → 11 → 01: the state after cycles 1, 2, 3, 4.",
           "scene": {
-            "reveal": 4,
-            "caption": "Start: Q1Q0 = 11."
+            "reveal": 4
           }
         },
         {
-          "title": "Cycles 1–2",
-          "body": "11 → $Q_1^+=1\\oplus1=0,\\ Q_0^+=1$ → **01** → $Q_1^+=0\\oplus1=1,\\ Q_0^+=0$ → **10**.",
-          "scene": {
-            "reveal": 12,
-            "caption": "11 → 01 → 10"
-          }
-        },
-        {
-          "title": "Cycles 3–4",
-          "body": "10 → $Q_1^+=1\\oplus0=1,\\ Q_0^+=1$ → **11** → $Q_1^+=0,\\ Q_0^+=1$ → **01**.",
-          "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "r": 3,
-                "tone": "success"
-              },
-              {
-                "r": 4,
-                "tone": "success"
-              }
-            ],
-            "caption": "After 3rd: 11, after 4th: 01."
-          }
+          "title": "Answer",
+          "body": "After the 3rd cycle 11, after the 4th 01: option B."
         }
       ],
       "answer": {
-        "value": "11 after the 3rd cycle, 01 after the 4th",
+        "value": "(B) 11 after the 3rd cycle, 01 after the 4th",
         "choice": [
           "B"
         ],
@@ -2306,72 +2288,74 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "After the 4th cycle Q0 = Q1(old) = 1, so it is 01, not 00."
+          "reason": "00 never occurs from 11 (it is a self-loop of this circuit)."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Sequence 11 → 01 → 10 → 11 → 01."
+          "reason": "Matches the trace."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "The state never reaches 00 from 11 (00 is a separate fixed point)."
+          "reason": "00 never occurs from 11: (0, 0) is a self-loop of this circuit that the trace 11 → 01 → 10 → 11 never enters. (The update-order mistake gives 00, 00, which is not option C either.)"
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "After the 3rd cycle the state is 11."
+          "reason": "01 after the 3rd cycle is the state after the 1st (or 4th) cycle."
         }
       ],
+      "shortcut": "The circuit has period 3 from 11 (11, 01, 10), so cycle 3 is back at 11 and cycle 4 equals cycle 1: 01.",
       "pitfalls": [
-        "Updating Q0 with the new Q1 instead of the pre-edge value.",
-        "Swapping which flip-flop feeds which."
+        "Treating the T flip-flop as a D: then 11 stays 11 for ever.",
+        "Updating $Q_1$ first and feeding its new value to the D flip-flop."
       ],
-      "verification": "The sequence cycles with period 3 (11, 01, 10), so cycle 3 returns to 11 and cycle 4 equals cycle 1 = 01.",
+      "verification": "Simulation from 11 gives 01, 10, 11, 01.",
       "animation": {
         "kind": "table",
+        "title": "Q1Q0 after each cycle",
         "cols": [
-          "After cycle",
-          "T = Q0",
-          "Q1",
-          "Q0"
+          "T",
+          "D",
+          "Q1Q0"
         ],
-        "mono": true,
         "rows": [
           [
-            "0 (initial)",
             "–",
-            "1",
-            "1"
+            "–",
+            "11"
           ],
           [
-            "1",
-            "1",
-            "0",
-            "1"
+            1,
+            1,
+            "01"
           ],
           [
-            "2",
-            "1",
-            "1",
-            "0"
+            1,
+            0,
+            "10"
           ],
           [
-            "3",
-            "0",
-            "1",
-            "1"
+            0,
+            1,
+            "11"
           ],
           [
-            "4",
-            "1",
-            "0",
-            "1"
+            1,
+            1,
+            "01"
           ]
         ],
-        "reveal": 0,
-        "caption": "Q1+ = Q1 ⊕ Q0, Q0+ = Q1"
+        "mono": true,
+        "rowLabels": [
+          "start",
+          "cycle 1",
+          "cycle 2",
+          "cycle 3",
+          "cycle 4"
+        ],
+        "reveal": 0
       }
     },
     "cse-2017-1-cs-34": {

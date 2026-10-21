@@ -1,0 +1,3558 @@
+[
+ {
+  "id": "nx-dl-06-01-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A two-input NAND gate has its output $Y$ wired back to one of its own inputs; the other input is $A$, so $Y = \\overline{A\\,Y}$. For which values of $A$ does the circuit have a stable state?",
+  "options": [
+   {
+    "l": "A",
+    "t": "For both $A = 0$ and $A = 1$"
+   },
+   {
+    "l": "B",
+    "t": "Only for $A = 0$, where $Y = 1$"
+   },
+   {
+    "l": "C",
+    "t": "Only for $A = 1$, where $Y = 0$"
+   },
+   {
+    "l": "D",
+    "t": "For neither value: it always oscillates"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Cut the loop: the gate computes $f(A, Y) = \\overline{A\\,Y}$ from the fed-back $Y$. A value of $Y$ is stable when $f(A, Y) = Y$.",
+   "$A = 0$: $f = \\overline{0} = 1$ whatever $Y$ is, so only $Y = 1$ reproduces itself. One stable state, $Y = 1$.",
+   "$A = 1$: $f = \\overline{Y}$. Neither $Y = 0$ (gives 1) nor $Y = 1$ (gives 0) reproduces itself: the output flips every gate delay. No stable state."
+  ],
+  "concept": "A single loop is stable at the values Q with f(x, Q) = Q; f = Q̄ (an odd number of inversions) has none.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "For A = 1 the loop is a NOT gate feeding itself, which has no stable value."
+   },
+   {
+    "answer": "C",
+    "why": "Y = 0 with A = 1 gives NAND(1, 0) = 1, not 0, so it does not last."
+   }
+  ],
+  "blocks": [
+   "stable-state",
+   "stable-theorem",
+   "trap-odd-ring"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q02",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A NOR-gate SR latch (S and R active high) is driven by the input pairs $SR$ = 01, 10, 00, 01, 00, in that order, each held long enough to settle. What are $Q$ and $\\overline{Q}$ at the end?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$Q = 1$, $\\overline{Q} = 0$"
+   },
+   {
+    "l": "B",
+    "t": "$Q = \\overline{Q} = 0$"
+   },
+   {
+    "l": "C",
+    "t": "$Q = 0$, $\\overline{Q} = 1$"
+   },
+   {
+    "l": "D",
+    "t": "The latch oscillates"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "01 resets ($Q = 0$), 10 sets ($Q = 1$), 00 holds ($Q = 1$).",
+   "01 resets again ($Q = 0$) and the final 00 holds that: $Q = 0$, $\\overline{Q} = 1$.",
+   "The forbidden pair 11 never occurs, so the outputs stay complementary and nothing oscillates."
+  ],
+  "concept": "SR latch: 10 sets, 01 resets, 00 holds the last value written.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is the state after the 10 and the first 00; the later 01 resets it."
+   },
+   {
+    "answer": "D",
+    "why": "Oscillation needs S = R = 1 released together; that pair never appears here."
+   }
+  ],
+  "blocks": [
+   "sr-nor",
+   "sr-table"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "In an SR latch built from two cross-coupled **NOR** gates, both $S$ and $R$ are held at 1. The outputs are",
+  "options": [
+   {
+    "l": "A",
+    "t": "$Q = 1$, $\\overline{Q} = 0$"
+   },
+   {
+    "l": "B",
+    "t": "$Q = 0$, $\\overline{Q} = 1$"
+   },
+   {
+    "l": "C",
+    "t": "$Q = \\overline{Q} = 1$"
+   },
+   {
+    "l": "D",
+    "t": "$Q = \\overline{Q} = 0$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Each NOR gate has one input tied to 1 (R for the $Q$ gate, S for the $\\overline{Q}$ gate).",
+   "A 1 is the controlling value of NOR: the output is 0 whatever the other input is. So both outputs are 0.",
+   "The state is stable while S = R = 1, but the outputs are not complements; that is why 11 is called forbidden."
+  ],
+  "concept": "S = R = 1 forces both NOR outputs to 0; the NAND latch's forbidden 00 forces both to 1.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "Q = Q̄ = 1 is the NAND latch with S̄ = R̄ = 0."
+   },
+   {
+    "answer": "A",
+    "why": "Neither input wins in a NOR latch: both gates are forced to 0."
+   }
+  ],
+  "blocks": [
+   "forbidden",
+   "sr-nor",
+   "nor-vs-nand"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q04",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Each circuit below is a single gate with its output $Q$ fed back to one input; the other input is $x$. Which of them can **store a bit**, that is, have two stable values of $Q$ for some value of $x$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$Q = x + Q$ (OR)"
+   },
+   {
+    "l": "B",
+    "t": "$Q = \\overline{x}\\,Q$ (AND with $\\overline{x}$)"
+   },
+   {
+    "l": "C",
+    "t": "$Q = x \\oplus Q$ (XOR)"
+   },
+   {
+    "l": "D",
+    "t": "$Q = \\overline{x\\,Q}$ (NAND)"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "C"
+  ],
+  "solution": [
+   "A loop stores a bit for input $x$ exactly when $f(x, Q) = Q$ for both $Q = 0$ and $Q = 1$, i.e. when $f(x, \\cdot)$ is the identity.",
+   "OR: $x = 0$ gives $f = Q$, so both values hold (once it becomes 1 it stays 1). AND with $\\overline{x}$: $x = 0$ gives $f = Q$. XOR: $x = 0$ gives $f = Q$ as well (and $x = 1$ makes it oscillate).",
+   "NAND: $x = 0$ forces $Q = 1$ (one stable value) and $x = 1$ gives $f = \\overline{Q}$ (none). It never stores a bit."
+  ],
+  "concept": "For each input value, f(x, ·) is 0, 1, Q or Q̄: constant, constant, memory, oscillator.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "XOR with x = 0 passes Q unchanged, so it too has two stable states (it oscillates only for x = 1)."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "NAND has at most one stable value for each x."
+   }
+  ],
+  "blocks": [
+   "stable-theorem",
+   "feedback-analysis"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q05",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Two cross-coupled gates with **equal** delays form a latch. Which of these input changes can leave the latch oscillating?",
+  "options": [
+   {
+    "l": "A",
+    "t": "NOR latch: $SR$ changes from 11 to 00 (both at once)"
+   },
+   {
+    "l": "B",
+    "t": "NOR latch: $SR$ changes from 10 to 01"
+   },
+   {
+    "l": "C",
+    "t": "NAND latch: $\\overline{S}\\,\\overline{R}$ changes from 00 to 11 (both at once)"
+   },
+   {
+    "l": "D",
+    "t": "NAND latch: $\\overline{S}\\,\\overline{R}$ changes from 11 to 00"
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "Oscillation needs both outputs equal (the forbidden state) and then both inputs releasing together, so that the two gates switch in step.",
+   "A: from 11 both NOR outputs are 0; after 00 each gate sees 0, 0 and rises, then each sees a 1 and falls, and so on. C is the same for NAND: 00 gives Q = Q̄ = 1, then 11 makes both fall, then rise.",
+   "B is an ordinary reset: Q̄ rises, Q falls, the latch settles at Q = 0. D goes into the forbidden state (Q = Q̄ = 1), which is stable while the inputs stay 00; the trouble comes only on the release."
+  ],
+  "concept": "The race happens on leaving the forbidden input, with both inputs changing together.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "Entering 00 on a NAND latch gives a stable (if forbidden) Q = Q̄ = 1; it is leaving it that races."
+   },
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "The NAND latch has the same race with every level inverted: 00 → 11."
+   }
+  ],
+  "blocks": [
+   "race-theorem",
+   "forbidden",
+   "nand-latch"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q06",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A gated D latch starts with $Q = 0$. Over six equal intervals its enable is $C$ = 1, 1, 0, 0, 1, 0 and its data input is $D$ = 1, 0, 1, 1, 1, 0. What is $Q$ in the six intervals (ignore gate delays)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "1, 0, 1, 1, 1, 0"
+   },
+   {
+    "l": "B",
+    "t": "1, 0, 0, 0, 1, 1"
+   },
+   {
+    "l": "C",
+    "t": "1, 1, 1, 1, 1, 1"
+   },
+   {
+    "l": "D",
+    "t": "0, 1, 0, 0, 0, 1"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "While $C = 1$ the latch is transparent: $Q = D$. While $C = 0$ it holds the last value.",
+   "Intervals 1–2 ($C = 1$): $Q$ = 1, then 0. Intervals 3–4 ($C = 0$): hold 0, 0. Interval 5 ($C = 1$): $Q = 1$. Interval 6 ($C = 0$): hold 1.",
+   "So $Q$ = 1, 0, 0, 0, 1, 1."
+  ],
+  "concept": "D latch: Q⁺ = C·D + C̄·Q (transparent while enabled).",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That copies D in every interval, as if C were always 1."
+   },
+   {
+    "answer": "C",
+    "why": "That is a rising-edge flip-flop (D sampled only when C rises: 1 and 1); a latch also follows D while C stays 1."
+   }
+  ],
+  "blocks": [
+   "d-latch",
+   "d-latch-theorem",
+   "latch-vs-ff"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q07",
+  "type": "NAT",
+  "marks": 1,
+  "text": "The loop $Q = aQ + ab + bQ$ (the output fed back into a majority gate) is examined for all four input pairs $(a, b)$. How many pairs (input pair, value of $Q$) are stable in total?",
+  "answer": 6,
+  "solution": [
+   "For each input pair, test $Q = 0$ and $Q = 1$: $Q$ is stable when $f(a, b, Q) = Q$.",
+   "00: only $Q = 0$ (1 stable). 01 and 10: $f = Q$, so both values (2 + 2). 11: only $Q = 1$ (1).",
+   "Total $1 + 2 + 2 + 1 = 6$."
+  ],
+  "concept": "Count the fixed points of the loop function for every input row.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "Counting one stable state per input pair misses that 01 and 10 each have two."
+   },
+   {
+    "answer": 8,
+    "why": "Not every (input, Q) pair is stable: 00 with Q = 1 and 11 with Q = 0 change."
+   }
+  ],
+  "blocks": [
+   "feedback-analysis",
+   "stable-state"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which statements about gated (clocked) latches are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "A gated D latch has no forbidden input combination."
+   },
+   {
+    "l": "B",
+    "t": "While its enable is 0, a gated SR latch ignores S and R and holds its state."
+   },
+   {
+    "l": "C",
+    "t": "A gated D latch's output can change only at the rising edge of the enable."
+   },
+   {
+    "l": "D",
+    "t": "In a gated SR latch, S = R = 1 while the enable is 1 makes Q and Q̄ equal."
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "A: the D latch drives the inner SR latch with $S = D$, $R = \\overline{D}$, which are never both 1. True.",
+   "B: the enable gates S and R, so with enable 0 the inner latch sees 'hold'. True.",
+   "C: false. A latch is transparent: while the enable is 1, every change of D passes to Q. Only a flip-flop restricts changes to an edge.",
+   "D: true. With the enable at 1, S = R = 1 reaches the inner latch as its forbidden input, which drives both outputs to the same value (both 0 in a NOR latch, both 1 in a NAND one)."
+  ],
+  "concept": "Latch = level-sensitive (transparent while enabled); the D latch removes the forbidden input.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "C describes an edge-triggered flip-flop, not a latch."
+   },
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "Gating does not remove the forbidden input of an SR latch: with the enable high, S = R = 1 still reaches it."
+   }
+  ],
+  "blocks": [
+   "gated-latch",
+   "d-latch",
+   "latch-vs-ff"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "Five inverters, each with a propagation delay of 2 ns, are connected in a ring (the output of the last drives the first). The ring oscillates. What is its frequency in MHz?",
+  "answer": 50,
+  "solution": [
+   "A change starts at one node and travels round the ring, one inverter delay per gate: it comes back after $5 \\times 2 = 10$ ns, now inverted (an odd number of inversions).",
+   "So a node changes every 10 ns, and two changes make one period: $T = 2 \\times 5 \\times 2 = 20$ ns.",
+   "$f = 1 / 20\\ \\text{ns} = 50$ MHz."
+  ],
+  "concept": "A ring of k (odd) inverters has period 2·k·t_pd.",
+  "common_wrong": [
+   {
+    "answer": 100,
+    "why": "Taking one trip round the ring (10 ns) as the period; a full period needs two trips."
+   },
+   {
+    "answer": 500,
+    "why": "Using one inverter delay (2 ns) as the period."
+   }
+  ],
+  "blocks": [
+   "trap-odd-ring",
+   "stable-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q10",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 2:1 multiplexer computes $Y = \\overline{S}\\,I_0 + S\\,I_1$. It is to act as a D latch that is **transparent while $S = 0$** and holds while $S = 1$. How should it be wired?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$D \\to I_0$ and $Y \\to I_1$ (fed back)"
+   },
+   {
+    "l": "B",
+    "t": "$Y \\to I_0$ (fed back) and $D \\to I_1$"
+   },
+   {
+    "l": "C",
+    "t": "$D \\to I_0$ and $D \\to I_1$"
+   },
+   {
+    "l": "D",
+    "t": "$Y \\to S$ (fed back) and $D \\to I_0$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "With $D$ on $I_0$ and $Y$ on $I_1$: $Y^+ = \\overline{S}\\,D + S\\,Y$.",
+   "$S = 0$ passes $D$ (transparent); $S = 1$ passes the output back to itself (hold). That is a D latch enabled by $\\overline{S}$.",
+   "Option B is the GATE 2023 circuit: transparent while $S = 1$. Option C is just a wire for $D$; option D feeds the output into the select line, which is not a latch on D."
+  ],
+  "concept": "MUX latch: the selected input is D during the transparent phase and Y itself during the hold phase.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "That latch is transparent while S = 1, the opposite of what is asked."
+   },
+   {
+    "answer": "C",
+    "why": "With D on both inputs the output is always D: no feedback, no memory."
+   }
+  ],
+  "blocks": [
+   "mux-latch",
+   "d-latch"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A positive-edge JK flip-flop has $Q = 1$. Just before the first rising edge $J = K = 1$; just before the second rising edge $J = 1$, $K = 0$. What is $Q$ after the first edge and after the second edge?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0, then 1"
+   },
+   {
+    "l": "B",
+    "t": "0, then 0"
+   },
+   {
+    "l": "C",
+    "t": "1, then 1"
+   },
+   {
+    "l": "D",
+    "t": "1, then 0"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Use $Q^+ = J\\overline{Q} + \\overline{K}Q$ edge by edge, always with the present state.",
+   "Edge 1: $J = K = 1$ toggles: $Q^+ = 1 \\cdot 0 + 0 \\cdot 1 = 0$.",
+   "Edge 2: $J = 1, K = 0$ sets: $Q^+ = 1 \\cdot 1 + 1 \\cdot 0 = 1$. So $Q$ = 0, then 1."
+  ],
+  "concept": "JK: 00 hold, 01 reset, 10 set, 11 toggle; Q⁺ = JQ̄ + K̄Q.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "Treating J = K = 1 as 'no change' (or as forbidden, as for SR): for a JK it toggles."
+   },
+   {
+    "answer": "B",
+    "why": "J = 1, K = 0 is a set, not a hold or a reset, so Q returns to 1 at the second edge."
+   }
+  ],
+  "blocks": [
+   "char-equations",
+   "ff-types"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q02",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following excitation-table entries are correct? (x means don't care.)",
+  "options": [
+   {
+    "l": "A",
+    "t": "JK flip-flop, transition $0 \\to 1$: $J = 1$, $K = x$"
+   },
+   {
+    "l": "B",
+    "t": "SR flip-flop, transition $1 \\to 1$: $S = x$, $R = 0$"
+   },
+   {
+    "l": "C",
+    "t": "T flip-flop, transition $1 \\to 0$: $T = 0$"
+   },
+   {
+    "l": "D",
+    "t": "JK flip-flop, transition $1 \\to 1$: $J = 1$, $K = 0$ (and no other input pair works)"
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "solution": [
+   "JK $0 \\to 1$: set (10) and toggle (11) both work, so $J = 1$, $K = x$. A is correct.",
+   "SR $1 \\to 1$: hold (00) and set (10) both work, so $S = x$, $R = 0$. B is correct.",
+   "T $1 \\to 0$: the bit must change, so $T = 1$, not 0. C is wrong.",
+   "JK $1 \\to 1$: hold (00) works as well as set (10), so the entry is $J = x$, $K = 0$; the claim that only 10 works is wrong. D is wrong."
+  ],
+  "concept": "Excitation = the characteristic table read backwards; an input is x when both of its values give the transition.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "J = 1, K = 0 does give 1 → 1, but so does J = K = 0, so J is a don't-care."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "A T flip-flop must toggle (T = 1) to go from 1 to 0."
+   }
+  ],
+  "blocks": [
+   "excitation",
+   "excitation-table",
+   "trick-excitation"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q03",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A JK flip-flop is to be built from a T flip-flop and combinational logic whose inputs are $J$, $K$ and the flip-flop's output $Q$. Which expression must drive $T$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$J\\overline{Q} + \\overline{K}Q$"
+   },
+   {
+    "l": "B",
+    "t": "$J \\oplus K$"
+   },
+   {
+    "l": "C",
+    "t": "$J + K$"
+   },
+   {
+    "l": "D",
+    "t": "$J\\overline{Q} + KQ$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "The T flip-flop must toggle exactly when the JK's next state differs from $Q$: $T = Q \\oplus Q^+$.",
+   "With $Q = 0$ a JK goes to 1 iff $J = 1$; with $Q = 1$ it goes to 0 iff $K = 1$.",
+   "So $T = J\\overline{Q} + KQ$. Check: $J = K = 1$ gives $T = 1$ (toggle); $J = K = 0$ gives $T = 0$ (hold)."
+  ],
+  "concept": "Conversion: target's characteristic table → Q⁺; available flip-flop's excitation (T = Q ⊕ Q⁺) → its input.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is the JK characteristic equation, the right input for a D flip-flop; in front of a T it toggles on J = K = 0 with Q = 1."
+   },
+   {
+    "answer": "B",
+    "why": "With J = K = 1 it gives T = 0, so the flip-flop holds instead of toggling."
+   },
+   {
+    "answer": "C",
+    "why": "With J = 1, K = 0 and Q = 1 it toggles to 0, but a set must keep Q = 1."
+   }
+  ],
+  "blocks": [
+   "jk-from-t",
+   "conversion"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q04",
+  "type": "NAT",
+  "marks": 2,
+  "text": "In a synchronous circuit the slowest register-to-register path has a clock-to-Q delay of 6 ns, combinational logic of 15 ns, and a setup time of 4 ns at the capturing flip-flop. There is no clock skew. What is the maximum clock frequency in MHz?",
+  "answer": 40,
+  "solution": [
+   "The data launched at one edge must reach the next flip-flop $t_{su}$ before the next edge: $T \\ge t_{cq} + t_{logic,max} + t_{su}$.",
+   "$T_{min} = 6 + 15 + 4 = 25$ ns.",
+   "$f_{max} = 1 / 25\\ \\text{ns} = 40$ MHz."
+  ],
+  "concept": "T ≥ t_cq + t_logic,max + t_su.",
+  "common_wrong": [
+   {
+    "answer": 47.6,
+    "why": "Leaving out the setup time (21 ns)."
+   },
+   {
+    "answer": 52.6,
+    "why": "Leaving out the clock-to-Q delay (19 ns)."
+   }
+  ],
+  "blocks": [
+   "max-frequency",
+   "timing-params"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q05",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A level-triggered JK latch has $J = K = 1$ and a propagation delay of 10 ns. It receives one clock pulse 35 ns wide. Counting every toggle that starts while the clock is high, how many times does $Q$ toggle in response to this pulse?",
+  "options": [
+   {
+    "l": "A",
+    "t": "1"
+   },
+   {
+    "l": "B",
+    "t": "4"
+   },
+   {
+    "l": "C",
+    "t": "2"
+   },
+   {
+    "l": "D",
+    "t": "3"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "While the clock is high the latch keeps toggling: a toggle starts at 0 ns and then every $t_{pd} = 10$ ns while the clock is still high.",
+   "Start times 0, 10, 20 and 30 ns are all before the clock falls at 35 ns; 40 ns is not.",
+   "So $\\lceil 35 / 10 \\rceil = 4$ toggles: race-around, because $t_w = 35 > t_{pd} = 10$."
+  ],
+  "concept": "A level JK with J = K = 1 toggles ⌈t_w / t_pd⌉ times per pulse; race-around iff t_w > t_pd.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Once per pulse is what a master–slave or edge-triggered JK does; a level latch keeps toggling while the clock is high."
+   },
+   {
+    "answer": "D",
+    "why": "Taking ⌊35 / 10⌋ = 3 misses the toggle that starts at 30 ns, before the clock falls."
+   }
+  ],
+  "blocks": [
+   "race-around-theorem",
+   "race-around"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q06",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Two positive-edge D flip-flops share a clock: $D_1 = x$ and $D_2 = Q_1$. Initially $Q_1 = Q_2 = 0$. Just before the first four rising edges, $x$ = 1, 1, 0, 1. What is $Q_2$ after edges 1, 2, 3 and 4?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0, 0, 1, 1"
+   },
+   {
+    "l": "B",
+    "t": "1, 1, 0, 1"
+   },
+   {
+    "l": "C",
+    "t": "0, 1, 1, 0"
+   },
+   {
+    "l": "D",
+    "t": "1, 1, 1, 0"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Both flip-flops sample at the same edge, so flip-flop 2 always takes the **old** $Q_1$.",
+   "Edge 1: $Q_2 = 0$ (old $Q_1$), $Q_1 = 1$. Edge 2: $Q_2 = 1$, $Q_1 = 1$. Edge 3: $Q_2 = 1$, $Q_1 = 0$. Edge 4: $Q_2 = 0$, $Q_1 = 1$.",
+   "$Q_2$ = 0, 1, 1, 0: the input sequence delayed by one more clock (a 2-bit shift register)."
+  ],
+  "concept": "Flip-flops on the same edge all see each other's old values.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Letting flip-flop 2 see flip-flop 1's new output at the same edge, so Q2 would equal x."
+   },
+   {
+    "answer": "A",
+    "why": "Delaying x by two edges after the first, as if flip-flop 1 only loaded at edge 2."
+   }
+  ],
+  "blocks": [
+   "trap-same-edge",
+   "timing-diagram-method"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q07",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A T flip-flop starts at $Q = 0$. Just before each of 12 rising clock edges its input $T$ is 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1 (in that order). After how many of the 12 edges is $Q = 1$?",
+  "answer": 9,
+  "solution": [
+   "Use $Q^+ = T \\oplus Q$: $T = 1$ flips the bit, $T = 0$ keeps it.",
+   "Q after each edge: 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0.",
+   "$Q = 1$ after 9 of the 12 edges."
+  ],
+  "concept": "T flip-flop: Q⁺ = T ⊕ Q (not Q⁺ = T).",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "Using Q⁺ = T, which counts the edges with T = 1 instead of following the toggles."
+   },
+   {
+    "answer": 2,
+    "why": "Counting only the edges at which Q changes from 0 to 1, not every edge after which it is 1."
+   }
+  ],
+  "blocks": [
+   "char-equations",
+   "trap-t-next"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A D flip-flop has active-low asynchronous inputs $\\overline{PRE}$ and $\\overline{CLR}$. Which statements are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "With $\\overline{PRE} = 0$ and $\\overline{CLR} = 1$, $Q$ becomes 1 immediately, without waiting for a clock edge."
+   },
+   {
+    "l": "B",
+    "t": "Preset forces $Q = 0$; clear forces $Q = 1$."
+   },
+   {
+    "l": "C",
+    "t": "While $\\overline{CLR} = 0$ and $\\overline{PRE} = 1$, clock edges have no effect on $Q$."
+   },
+   {
+    "l": "D",
+    "t": "$\\overline{PRE} = \\overline{CLR} = 1$ is the combination that must not be applied."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "Preset and clear are asynchronous overrides: a 0 on an active-low pin forces the output at once, regardless of the clock. A is true.",
+   "Preset forces 1 and clear forces 0, not the reverse. B is false.",
+   "While clear is held active, the output is forced to 0 and clock edges cannot change it. C is true.",
+   "$\\overline{PRE} = \\overline{CLR} = 1$ means neither is active: normal operation. The forbidden combination is both active, 00. D is false."
+  ],
+  "concept": "Asynchronous preset → 1, clear → 0, overriding the clock; active low; both active is not allowed.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Preset puts a 1 in the flip-flop; clear puts a 0."
+   },
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "For active-low pins, 11 is the idle (normal) combination; 00 is the forbidden one."
+   }
+  ],
+  "blocks": [
+   "preset-clear",
+   "preset-table",
+   "erratum-c345"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A positive-edge D flip-flop has $t_{su} = 3$ ns and $t_h = 1$ ns. Its clock rises at 10, 20, 30, 40, 50, 60, 70 and 80 ns. Its D input changes at 8, 14, 21.5, 27.5, 39, 50.5, 62 and 78.5 ns. At how many of the eight edges is the setup or the hold requirement violated?",
+  "answer": 5,
+  "solution": [
+   "Edge $t_e$ is violated if D changes in $(t_e - 3, t_e)$ (setup) or in $[t_e, t_e + 1)$ (hold).",
+   "Setup violations: 8 ns before the 10 ns edge, 27.5 before 30, 39 before 40, 78.5 before 80. Hold violation: 50.5 after the 50 ns edge.",
+   "The changes at 14, 21.5 and 62 ns are clear of every window (21.5 ns comes half a nanosecond after the 20 ns edge's hold window has closed at 21 ns). Total: 5 edges."
+  ],
+  "concept": "The sampling window of an edge at t_e is (t_e − t_su, t_e + t_h).",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "Checking only setup and missing the hold violation at 50.5 ns."
+   },
+   {
+    "answer": 7,
+    "why": "Using a window of t_su + t_h = 4 ns on both sides of every edge, which wrongly flags the changes at 21.5 and 62 ns."
+   }
+  ],
+  "blocks": [
+   "setup-hold-window",
+   "timing-params"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q10",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A master–slave JK flip-flop has its master enabled while $CLK = 1$ and its slave while $CLK = 0$. Which statements are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "The master responds to the inputs while $CLK = 1$, and the slave copies the master when $CLK$ falls."
+   },
+   {
+    "l": "B",
+    "t": "$Q$ can change at any time while $CLK = 1$."
+   },
+   {
+    "l": "C",
+    "t": "With $J = K = 1$ it toggles exactly once per clock pulse, whatever the pulse width."
+   },
+   {
+    "l": "D",
+    "t": "If $Q = 0$, $K = 0$ and $J$ is 1 only briefly in the middle of the high phase, $Q$ is still 0 after the clock falls."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "While $CLK = 1$ the master is enabled and the slave holds $Q$; at the falling edge the slave copies the master. A is true, and B is false: $Q$ cannot change while the slave is closed.",
+   "The master's inputs are gated by the slave's unchanging $Q$, so with $J = K = 1$ it moves once (to $\\overline{Q}$) and stays; $Q$ toggles once, at the falling edge. C is true.",
+   "1s-catching: the brief $J = 1$ sets the master, nothing can reset it while $Q = 0$ holds $K$'s path closed, and the slave copies the 1 at the falling edge. D is false."
+  ],
+  "concept": "Master–slave: master open while CLK = 1, slave copies at the falling edge; a pulse-triggered JK catches 1s.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "A pulse-triggered master–slave JK catches a brief 1 on J during the high phase (1s-catching)."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "While CLK = 1 the slave is closed, so Q cannot change until the falling edge."
+   }
+  ],
+  "blocks": [
+   "master-slave",
+   "ms-theorem",
+   "ones-catching"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Three D flip-flops $A$, $B$, $C$ share a clock, with $D_A = B \\oplus C$, $D_B = \\overline{A}\\,C$ and $D_C = A + \\overline{B}$. The present state is $ABC = 100$. What is $ABC$ after the next clock edge?",
+  "options": [
+   {
+    "l": "A",
+    "t": "100"
+   },
+   {
+    "l": "B",
+    "t": "011"
+   },
+   {
+    "l": "C",
+    "t": "001"
+   },
+   {
+    "l": "D",
+    "t": "101"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "For D flip-flops the next state is the input: $A^+ = B \\oplus C$, $B^+ = \\overline{A}C$, $C^+ = A + \\overline{B}$.",
+   "Substitute the present values $A = 1$, $B = 0$, $C = 0$: $A^+ = 0 \\oplus 0 = 0$, $B^+ = 0 \\cdot 0 = 0$, $C^+ = 1 + 1 = 1$.",
+   "So $ABC = 001$."
+  ],
+  "concept": "D flip-flops: next state = input equation, evaluated on the old state.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is 001 written in the order CBA (and also the unchanged present state); keep the order ABC the question uses."
+   },
+   {
+    "answer": "B",
+    "why": "Reading $D_B$ as $A\\overline{C}$ instead of $\\overline{A}C$ gives $B^+ = 1$."
+   },
+   {
+    "answer": "D",
+    "why": "Using XNOR instead of XOR for $D_A$ gives $A^+ = 1$."
+   }
+  ],
+  "blocks": [
+   "state-equations",
+   "excitation-equations",
+   "analysis-procedure"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q02",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A T flip-flop $A$ has $T_A = B$, and a D flip-flop $B$ has $D_B = \\overline{A}$. Both share a clock and start at $AB = 00$. What is $AB$ after the fifth clock edge?",
+  "options": [
+   {
+    "l": "A",
+    "t": "00"
+   },
+   {
+    "l": "B",
+    "t": "11"
+   },
+   {
+    "l": "C",
+    "t": "01"
+   },
+   {
+    "l": "D",
+    "t": "10"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "State equations: $A^+ = B \\oplus A$ (T stage) and $B^+ = \\overline{A}$ (D stage).",
+   "Trace with both bits from the old state: 00 → 01 → 11 → 00 → 01 → 11.",
+   "The cycle has length 3; after 5 edges the state is 11."
+  ],
+  "concept": "Mixed circuits: each flip-flop uses its own characteristic equation, all from the old state.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "Treating the T stage as a D ($A^+ = B$) gives 00 → 01 → 11 → 10 → 00 → 01."
+   },
+   {
+    "answer": "D",
+    "why": "Updating $A$ first and letting $B$ use the new $A$ gives 00 → 01 → 10 → 10 → 10 → 10."
+   },
+   {
+    "answer": "A",
+    "why": "00 is the state after 3 (or 6) edges, not 5."
+   }
+  ],
+  "blocks": [
+   "mixed-ff",
+   "clock-trace",
+   "trap-update-order"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q03",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Three D flip-flops have $D_A = B$, $D_B = C$ and $D_C = \\overline{A}\\,\\overline{B}$, and the circuit starts at $ABC = 100$. Which of the following states can never appear?",
+  "options": [
+   {
+    "l": "A",
+    "t": "010"
+   },
+   {
+    "l": "B",
+    "t": "011"
+   },
+   {
+    "l": "C",
+    "t": "101"
+   },
+   {
+    "l": "D",
+    "t": "111"
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "State equations: $A^+ = B$, $B^+ = C$, $C^+ = \\overline{A}\\,\\overline{B}$.",
+   "Trace from 100: 100 → 000 → 001 → 011 → 110 → 100. The trace has repeated, so these five states are the whole reachable set.",
+   "010, 101 and 111 never appear (they lead into the cycle but are never entered from 100); 011 appears at clock 3."
+  ],
+  "concept": "Reachable set = the trace from the given start until a state repeats.",
+  "common_wrong": [
+   {
+    "answer": [
+     "C",
+     "D"
+    ],
+    "why": "010 is the successor of 101, but 101 is itself never reached, so 010 is never reached either."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "011 is reached at the third clock: 100 → 000 → 001 → 011."
+   }
+  ],
+  "blocks": [
+   "reachability",
+   "cycle-theorem",
+   "trap-never"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q04",
+  "type": "NAT",
+  "marks": 2,
+  "text": "Three D flip-flops have $D_A = B + C$, $D_B = A\\,C$ and $D_C = \\overline{B}$, and start at $ABC = 000$. After many clock edges the circuit repeats a fixed cycle of states. How many states are in that cycle?",
+  "answer": 5,
+  "solution": [
+   "Trace: 000 → 001 → 101 → 111 → 110 → 100 → 001.",
+   "The first repeated state is 001, so 000 is a one-state tail and the cycle is 001 → 101 → 111 → 110 → 100.",
+   "The cycle has 5 states."
+  ],
+  "concept": "Cycle theorem: a tail of μ states, then a cycle of λ states repeated for ever.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "6 counts the tail state 000 as well; 000 is never seen again."
+   },
+   {
+    "answer": 8,
+    "why": "Not every state is visited: 010 and 011 are never reached from 000."
+   }
+  ],
+  "blocks": [
+   "cycle-theorem",
+   "reachability",
+   "clock-trace"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q05",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A JK flip-flop $A$ has $J_A = B$ and $K_A = \\overline{x}$, where $B$ is another flip-flop's output and $x$ is an input. Which is the state equation of $A$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A^+ = B\\overline{A} + \\overline{x}A$"
+   },
+   {
+    "l": "B",
+    "t": "$A^+ = B + xA$"
+   },
+   {
+    "l": "C",
+    "t": "$A^+ = BA + x\\overline{A}$"
+   },
+   {
+    "l": "D",
+    "t": "$A^+ = B\\overline{A} + xA$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Substitute into $A^+ = J\\overline{A} + \\overline{K}A$.",
+   "$J = B$ and $\\overline{K} = \\overline{\\overline{x}} = x$, so $A^+ = B\\overline{A} + xA$."
+  ],
+  "concept": "JK state equation: Q⁺ = JQ̄ + K̄Q; complement K, not J.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Forgets to complement $K$: it uses $K$ itself in the hold term."
+   },
+   {
+    "answer": "B",
+    "why": "With $A = 1$, $B = 1$, $x = 0$ the stage sees $J = K = 1$ and toggles to 0, but $B + xA = 1$."
+   },
+   {
+    "answer": "C",
+    "why": "Swaps the roles of $J$ and $K$: it puts $J$ on the $A$ term."
+   }
+  ],
+  "blocks": [
+   "state-equations",
+   "excitation-equations",
+   "trick-jk-as-t"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A circuit has a JK flip-flop $A$ with $J_A = B$, $K_A = C$, a D flip-flop $B$ with $D_B = A$, and a T flip-flop $C$ with $T_C = A \\oplus B$, all on one clock. How many of the 8 states are self-loops (the next state equals the present state)?",
+  "answer": 3,
+  "solution": [
+   "State equations: $A^+ = B\\overline{A} + \\overline{C}A$, $B^+ = A$, $C^+ = C \\oplus A \\oplus B$.",
+   "A self-loop needs $B^+ = B$, so $A = B$; then $T_C = A \\oplus B = 0$ keeps $C$. With $A = B = 0$: $A^+ = 0$, so 000 and 001 are self-loops.",
+   "With $A = B = 1$: $A^+ = \\overline{C}$, which equals 1 only for $C = 0$: 110 is a self-loop, 111 is not (it goes to 011). Total: 3."
+  ],
+  "concept": "Build the whole next-state table, then count the rows whose next state equals the present state.",
+  "common_wrong": [
+   {
+    "answer": 1,
+    "why": "000 is not the only one: 001 and 110 also map to themselves."
+   },
+   {
+    "answer": 2,
+    "why": "110 is easy to miss: there J = B = 1 and K = C = 0 set A, which is already 1; B⁺ = A = 1 and T_C = 0, so 110 stays."
+   }
+  ],
+  "blocks": [
+   "state-table",
+   "state-diagram",
+   "mixed-ff"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q07",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following statements about synchronous sequential circuits are correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "If the clock period is at least the clock-to-Q delay plus the longest logic delay plus the setup time, a glitch in the next-state logic between edges cannot change the stored state."
+   },
+   {
+    "l": "B",
+    "t": "They are faster than asynchronous circuits because every flip-flop changes as soon as its input changes."
+   },
+   {
+    "l": "C",
+    "t": "At an active edge, every flip-flop computes its next state from the values present just before that edge."
+   },
+   {
+    "l": "D",
+    "t": "They need fewer gates than an equivalent asynchronous circuit, because the clock replaces the feedback logic."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "A: the synchronous discipline theorem; the glitch is over before the setup window opens.",
+   "B: false; flip-flops change only at edges, and the clock must allow for the slowest path every cycle.",
+   "C: true; all flip-flops sample before any output moves (the same-edge rule).",
+   "D: false; every state bit needs a flip-flop and the clock must be distributed, so synchronous circuits are usually larger."
+  ],
+  "concept": "Synchronous design trades speed and hardware for immunity to hazards and races.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Speed is not the advantage: the clock waits for the worst-case path."
+   },
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "Flip-flops and the clock network cost hardware; asynchronous circuits are usually smaller."
+   }
+  ],
+  "blocks": [
+   "sync-discipline",
+   "sync-vs-async",
+   "trap-sync-faster"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q08",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Two D flip-flops have $D_1 = x$ and $D_2 = Q_1$, output $z = Q_1 \\oplus Q_2$, and start at $Q_1Q_2 = 00$. The input is $x = 1, 1, 0, 0$ in clock cycles 1, 2, 3, 4 (each cycle ends with an active edge, which samples that cycle's $x$). What is $z$ during cycles 1, 2, 3 and 4?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0, 1, 0, 1"
+   },
+   {
+    "l": "B",
+    "t": "0, 0, 0, 0"
+   },
+   {
+    "l": "C",
+    "t": "1, 0, 1, 0"
+   },
+   {
+    "l": "D",
+    "t": "1, 1, 0, 0"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "During cycle $k$ the state is the one after $k - 1$ edges: 00, 10, 11, 01 for cycles 1 to 4.",
+   "$z = Q_1 \\oplus Q_2$ gives 0, 1, 0, 1.",
+   "The circuit flags each change of x one cycle after it is sampled."
+  ],
+  "concept": "A state-only output during cycle k is z(s_{k−1}), computed after k − 1 edges.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Letting $Q_2$ copy the new $Q_1$ at the same edge makes $Q_1 = Q_2$ always, so $z = 0$."
+   },
+   {
+    "answer": "C",
+    "why": "Reads z one edge too late (after edges 1 to 4 instead of during cycles 1 to 4)."
+   },
+   {
+    "answer": "D",
+    "why": "Copies the input x instead of computing the output from the state."
+   }
+  ],
+  "blocks": [
+   "output-timing",
+   "clock-trace",
+   "trap-output-edge"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q09",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A one-bit state machine $S$ with inputs $x$ and $y$: in state 0 it moves to 1 when $x = 1$ and stays when $x = 0$; in state 1 it moves to 0 when $y = 1$ and stays when $y = 0$. Which is $S^+$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\overline{S}x + Sy$"
+   },
+   {
+    "l": "B",
+    "t": "$x + \\overline{y}$"
+   },
+   {
+    "l": "C",
+    "t": "$\\overline{S}x + S\\overline{y}$"
+   },
+   {
+    "l": "D",
+    "t": "$S\\overline{x} + \\overline{S}y$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "In state 0 the next state is 1 exactly when $x = 1$: $S^+ = x$ there.",
+   "In state 1 the next state is 1 exactly when $y = 0$: $S^+ = \\overline{y}$ there.",
+   "Combine with $S$ as the selector: $S^+ = \\overline{S}x + S\\overline{y}$."
+  ],
+  "concept": "Diagram → equation: next-state truth table from the arcs, then a Shannon expansion on S.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "In state 1 it gives S⁺ = y, so it would leave state 1 when y = 0 instead of y = 1."
+   },
+   {
+    "answer": "B",
+    "why": "Ignores the state: in state 0 with x = 0, y = 0 it gives 1, but the machine stays at 0."
+   },
+   {
+    "answer": "D",
+    "why": "Swaps the arcs of every state."
+   }
+  ],
+  "blocks": [
+   "diagram-to-equation",
+   "state-diagram"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q10",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A JK flip-flop $A$ has $J_A = B$, $K_A = C$; a D flip-flop $B$ has $D_B = C$; a T flip-flop $C$ has $T_C = A$. The circuit starts at $ABC = 001$. How many distinct states (including the initial one) does it ever show?",
+  "answer": 6,
+  "solution": [
+   "State equations: $A^+ = B\\overline{A} + \\overline{C}A$, $B^+ = C$, $C^+ = C \\oplus A$.",
+   "Trace: 001 → 011 → 111 → 010 → 100 → 101 → 010.",
+   "The first repeat is 010: a tail of 3 states (001, 011, 111) and a cycle of 3 (010, 100, 101), so 6 distinct states."
+  ],
+  "concept": "Distinct states from a start = tail + cycle (the cycle theorem).",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "3 counts only the final cycle; the tail states 001, 011, 111 are shown once each."
+   },
+   {
+    "answer": 8,
+    "why": "000 and 110 are never reached from 001 (000 is a self-loop)."
+   }
+  ],
+  "blocks": [
+   "cycle-theorem",
+   "reachability",
+   "mixed-ff"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q01",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A binary counter must count from 0 up to 1000 (both included) and then return to 0. What is the minimum number of flip-flops it needs?",
+  "answer": 10,
+  "solution": [
+   "The states are 0, 1, …, 1000: that is 1001 states, not 1000.",
+   "We need the smallest $k$ with $2^k \\ge 1001$: $2^9 = 512 < 1001 \\le 1024 = 2^{10}$.",
+   "So $k = \\lceil \\log_2 1001 \\rceil = 10$ flip-flops."
+  ],
+  "concept": "A mod-N counter needs ⌈log₂ N⌉ flip-flops; count the states first (0 to 1000 is 1001 states).",
+  "common_wrong": [
+   {
+    "answer": 9,
+    "why": "Rounding log₂ 1000 ≈ 9.97 down: nine flip-flops hold only 512 states."
+   },
+   {
+    "answer": 1001,
+    "why": "One flip-flop per state is a one-hot design, not the minimum."
+   }
+  ],
+  "blocks": [
+   "ff-count",
+   "counter-def",
+   "trap-ff-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A 6-bit up counter holds 110010 (rightmost bit = LSB). How many clock pulses are needed until it first reads 001011?",
+  "answer": 25,
+  "solution": [
+   "In decimal the counter goes from $110010_2 = 50$ to $001011_2 = 11$.",
+   "The target is smaller, so the counter wraps through 63 → 0: pulses $= (11 - 50) \\bmod 64 = 64 - 50 + 11 = 25$.",
+   "Check: $50 + 25 = 75 = 64 + 11$."
+  ],
+  "concept": "An n-bit up counter needs (b − a) mod 2ⁿ pulses to go from a to b.",
+  "common_wrong": [
+   {
+    "answer": 39,
+    "why": "50 − 11 = 39 is the count for a down counter (or subtracting the wrong way round)."
+   },
+   {
+    "answer": 26,
+    "why": "Off by one: counting the starting state as a pulse."
+   }
+  ],
+  "blocks": [
+   "pulse-count",
+   "trap-wrap"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q03",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 3-bit ripple counter is built from positive-edge-triggered T flip-flops with $T = 1$. The clock drives the first flip-flop (output $Q_0$); each later flip-flop is clocked by the $\\overline{Q}$ output of the one before it. Starting from $Q_2Q_1Q_0 = 000$, what are the next three states?",
+  "options": [
+   {
+    "l": "A",
+    "t": "001, 010, 011"
+   },
+   {
+    "l": "B",
+    "t": "111, 110, 101"
+   },
+   {
+    "l": "C",
+    "t": "001, 000, 001"
+   },
+   {
+    "l": "D",
+    "t": "100, 010, 110"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "A positive-edge stage clocked by $\\overline{Q_{i-1}}$ toggles when $\\overline{Q_{i-1}}$ rises, i.e. when $Q_{i-1}$ falls: that is the carry of binary counting.",
+   "Pulse 1: $Q_0$ 0 → 1 ($\\overline{Q_0}$ falls, no edge for stage 1): 001. Pulse 2: $Q_0$ 1 → 0, $\\overline{Q_0}$ rises, $Q_1$ toggles: 010. Pulse 3: 011.",
+   "One inversion (the $\\overline{Q}$) with a positive edge: an up counter."
+  ],
+  "concept": "Negative edge + Q or positive edge + Q̄: up; negative edge + Q̄ or positive edge + Q: down.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Positive edge is the down rule only with Q; with Q̄ the second inversion turns it back into an up counter."
+   },
+   {
+    "answer": "C",
+    "why": "Forgetting that stage 1 is clocked at all: only Q0 toggles."
+   },
+   {
+    "answer": "D",
+    "why": "That is the up count 1, 2, 3 written with the bits reversed ($Q_0Q_1Q_2$); the question orders them $Q_2Q_1Q_0$."
+   }
+  ],
+  "blocks": [
+   "ripple-rule",
+   "trick-trigger-table",
+   "ripple-up"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q04",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A 1.6 MHz clock drives a 5-bit ripple up counter. What is the frequency, in kHz, of the output of the third flip-flop counted from the clock input?",
+  "answer": 200,
+  "solution": [
+   "Each toggling stage halves the frequency of the signal that clocks it.",
+   "First flip-flop: 800 kHz; second: 400 kHz; third: 200 kHz, i.e. $f / 2^3$.",
+   "The third flip-flop is $Q_2$, at $f/8 = 1600/8 = 200$ kHz; the other two flip-flops do not affect it."
+  ],
+  "concept": "Stage i (from 0) of a ripple counter runs at f/2^(i+1); the third stage divides by 8.",
+  "common_wrong": [
+   {
+    "answer": 400,
+    "why": "Dividing by 4: stopping one stage early (labelling the third output Q1)."
+   },
+   {
+    "answer": 50,
+    "why": "Using the last stage (f/32) instead of the third."
+   }
+  ],
+  "blocks": [
+   "frequency-division",
+   "divide-by-two",
+   "note-third-stage"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q05",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 5-bit ripple counter uses flip-flops with a propagation delay of 12 ns. Its outputs drive a decoder whose delay is 20 ns, and every count must be decoded before the next clock edge. What is the maximum clock frequency in MHz?",
+  "answer": 12.5,
+  "solution": [
+   "The worst clock edge toggles all 5 stages one after another: $5 \\times 12 = 60$ ns.",
+   "The decoder starts after the count settles: $T_{\\min} = 60 + 20 = 80$ ns.",
+   "$f_{\\max} = 1 / 80\\ \\text{ns} = 12.5$ MHz."
+  ],
+  "concept": "f_max of a ripple counter = 1 / (n·t_pd + t_decode).",
+  "common_wrong": [
+   {
+    "answer": 31.25,
+    "why": "Using one flip-flop delay (12 + 20 = 32 ns), the synchronous answer."
+   },
+   {
+    "answer": 16.67,
+    "why": "Forgetting the decoder: 1 / 60 ns."
+   }
+  ],
+  "blocks": [
+   "ripple-fmax",
+   "ripple-delay",
+   "trap-ripple-fmax"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q06",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 4-bit ripple up counter (outputs $Q_3Q_2Q_1Q_0$, $Q_0$ the LSB) starts at 0. Its flip-flops have active-high asynchronous clear inputs driven by one AND gate. Which inputs must the AND gate have to make a mod-12 counter?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$Q_3$, $Q_1$, $Q_0$"
+   },
+   {
+    "l": "B",
+    "t": "$Q_3$, $Q_2$, $Q_0$"
+   },
+   {
+    "l": "C",
+    "t": "$Q_3$, $Q_2$"
+   },
+   {
+    "l": "D",
+    "t": "$Q_2$, $Q_1$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "With an asynchronous clear the state to detect is $N = 12 = 1100_2$: it is wiped the moment it appears, so 0 … 11 survive.",
+   "AND only the bits that are 1 in 12: $Q_3$ and $Q_2$. No earlier state (settled or transient) has both.",
+   "A detects 11 (mod-11), B detects 13 (mod-13), D detects 6 (mod-6)."
+  ],
+  "concept": "Asynchronous clear: detect N with the AND of the outputs that are 1 in N.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Detecting N − 1 = 1011: with an asynchronous clear, 11 is wiped at once and the counter is mod-11."
+   },
+   {
+    "answer": "D",
+    "why": "Q2·Q1 is 6 = 0110, which clears the counter at 6."
+   }
+  ],
+  "blocks": [
+   "mod-n-clear",
+   "clear-detect",
+   "trick-clear-ones",
+   "trap-clear-n-minus-1"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q07",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 4-bit ripple up counter starts at 0000. An AND gate on $Q_3$ and $Q_0$ drives the asynchronous clear of all four flip-flops. Which states does the counter cycle through (ignoring states that last only for the clear delay)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0, 1, 2, …, 9"
+   },
+   {
+    "l": "B",
+    "t": "0, 1, 2, …, 8"
+   },
+   {
+    "l": "C",
+    "t": "0, 1, 2, …, 7"
+   },
+   {
+    "l": "D",
+    "t": "0, 1, 2, …, 15 (the clear never fires)"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "The gate fires first in a state with $Q_3 = Q_0 = 1$; counting up from 0, that is $1001_2 = 9$.",
+   "The clear is asynchronous, so 9 is wiped at once: the stable states are 0 to 8.",
+   "No transient state on the way has $Q_3 = Q_0 = 1$ (e.g. 0111 → 0110 → 0100 → 0000 → 1000), so the counter is mod-9."
+  ],
+  "concept": "Read a clear gate backwards: the AND of the bits that are 1 in N clears at N, leaving 0 … N − 1.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Treating the clear as synchronous: then 9 would last a full period."
+   },
+   {
+    "answer": "C",
+    "why": "Assuming the gate fires at 8 = 1000; it needs Q0 = 1 as well."
+   }
+  ],
+  "blocks": [
+   "mod-n-clear",
+   "clear-detect",
+   "trick-clear-ones"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A 4-bit negative-edge ripple up counter (stage $i$ clocked by $Q_{i-1}$, equal delays $t_{pd}$) holds $Q_3Q_2Q_1Q_0 = 1011$. Which of these states appear at its outputs, even if only for a moment, between the next clock edge and the moment it has settled (include the settled state)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "1010"
+   },
+   {
+    "l": "B",
+    "t": "1000"
+   },
+   {
+    "l": "C",
+    "t": "1001"
+   },
+   {
+    "l": "D",
+    "t": "1100"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "$t_{pd}$ after the edge $Q_0$ falls: 1010. Its fall clocks stage 1.",
+   "$2t_{pd}$: $Q_1$ falls: 1000. Its fall clocks stage 2. $3t_{pd}$: $Q_2$ rises: 1100, settled (a rise of $Q_2$ does not clock stage 3).",
+   "1001 never appears: $Q_0$ only goes from 1 to 0 at this edge."
+  ],
+  "concept": "Toggling m stages takes m·t_pd and shows m − 1 false states: the trailing 1s clear one by one, then one bit sets.",
+  "common_wrong": [
+   {
+    "answer": [
+     "D"
+    ],
+    "why": "Only the settled state; a ripple counter passes through 1010 and 1000 first."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "1001 would need Q0 to rise, but at this edge it falls."
+   }
+  ],
+  "blocks": [
+   "ripple-delay",
+   "glitch-states"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q09",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following statements about ripple counters are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "An $n$-bit ripple counter whose flip-flops have delay $t_{pd}$ can take $n\\,t_{pd}$ to settle after a clock edge."
+   },
+   {
+    "l": "B",
+    "t": "Negative-edge-triggered T flip-flops ($T = 1$), each clocked by the $Q$ output of the previous one, form a down counter."
+   },
+   {
+    "l": "C",
+    "t": "A decoder driven by a ripple counter's outputs can produce short false pulses (glitches)."
+   },
+   {
+    "l": "D",
+    "t": "To make a mod-$N$ counter with an asynchronous clear, the clear gate must detect the state $N - 1$."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "A: true. At the edge where every stage toggles (011…1 → 100…0), stage $i$ changes $(i + 1)t_{pd}$ after the edge, the last at $n\\,t_{pd}$.",
+   "B: false. Negative edge with $Q$ toggles stage $i$ when $Q_{i-1}$ falls: an up counter.",
+   "C: true. Transient states are real for a moment, so the decoder output for such a state pulses.",
+   "D: false. An asynchronous clear wipes the detected state at once; detecting $N - 1$ gives mod-$(N - 1)$. Detect $N$."
+  ],
+  "concept": "Ripple delay n·t_pd, the up/down wiring table, decoding glitches and the asynchronous clear at N.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "Detecting N − 1 is right for a synchronous clear, not an asynchronous one."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Q into the next clock counts up with negative-edge stages, not down."
+   }
+  ],
+  "blocks": [
+   "ripple-fmax",
+   "ripple-rule",
+   "glitch-states",
+   "trap-clear-n-minus-1"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q10",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 3-bit ripple counter uses negative-edge T flip-flops with $T = 1$; each flip-flop after the first is clocked by the $\\overline{Q}$ output of the one before. It holds $Q_2Q_1Q_0 = 010$. What are the next four states?",
+  "options": [
+   {
+    "l": "A",
+    "t": "011, 100, 101, 110"
+   },
+   {
+    "l": "B",
+    "t": "110, 101, 100, 011"
+   },
+   {
+    "l": "C",
+    "t": "001, 000, 001, 010"
+   },
+   {
+    "l": "D",
+    "t": "001, 000, 111, 110"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Negative edge with $\\overline{Q}$: stage $i$ toggles when $Q_{i-1}$ rises, a down counter.",
+   "From 2 the count goes 1, 0, then wraps to the largest state, 7, then 6.",
+   "In binary: 001, 000, 111, 110."
+  ],
+  "concept": "Down counting: from 0 the next state is all 1s (0 → 7 for 3 bits).",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is the up count; negative edge with Q̄ counts down."
+   },
+   {
+    "answer": "C",
+    "why": "A down counter does not bounce back up at 0; it wraps to 111."
+   }
+  ],
+  "blocks": [
+   "ripple-down",
+   "note-down-order",
+   "ripple-rule"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q01",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 2-bit synchronous counter with T flip-flops ($Q_1$ the MSB, $Q_0$ the LSB) must step through 0 → 1 → 3 → 2 → 0. Which input equations realise it?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$T_1 = Q_0$, $T_0 = \\overline{Q_1}$"
+   },
+   {
+    "l": "B",
+    "t": "$T_1 = Q_1 \\oplus Q_0$, $T_0 = \\overline{Q_1 \\oplus Q_0}$"
+   },
+   {
+    "l": "C",
+    "t": "$T_1 = \\overline{Q_1 \\oplus Q_0}$, $T_0 = Q_1 \\oplus Q_0$"
+   },
+   {
+    "l": "D",
+    "t": "$T_1 = Q_0$, $T_0 = 1$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "In bits the sequence is 00 → 01 → 11 → 10 → 00. With T flip-flops, $T = Q \\oplus Q^+$: mark the bits that change in each row.",
+   "00 → 01: $T_1T_0 = 01$. 01 → 11: 10. 11 → 10: 01. 10 → 00: 10.",
+   "$T_1$ is 1 in rows 01 and 10: $T_1 = Q_1 \\oplus Q_0$. $T_0$ is 1 in rows 00 and 11: $T_0 = \\overline{Q_1 \\oplus Q_0}$."
+  ],
+  "concept": "T = Q ⊕ Q⁺: the T column marks the bits that change.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "These are the D inputs ($D_1 = Q_0$, $D_0 = \\overline{Q_1}$): the next values, not the changes. As T inputs they give 00 → 01 → 10 → …"
+   },
+   {
+    "answer": "C",
+    "why": "The two equations swapped between the flip-flops."
+   },
+   {
+    "answer": "D",
+    "why": "That is the binary counter 0, 1, 2, 3, not the Gray order 0, 1, 3, 2."
+   }
+  ],
+  "blocks": [
+   "t-design",
+   "trick-t-column",
+   "d-from-next"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q02",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 3-bit synchronous counter $Q_2Q_1Q_0$ with D flip-flops must step through 0 → 1 → 3 → 7 → 6 → 4 → 0. The unused states 2 and 5 are taken as don't-cares. Which minimal input equations realise it?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$D_2 = Q_1Q_0$, $D_1 = Q_0$, $D_0 = \\overline{Q_2}$"
+   },
+   {
+    "l": "B",
+    "t": "$D_2 = \\overline{Q_1}$, $D_1 = \\overline{Q_0}$, $D_0 = Q_2$"
+   },
+   {
+    "l": "C",
+    "t": "$D_2 = Q_0$, $D_1 = Q_1$, $D_0 = \\overline{Q_2}$"
+   },
+   {
+    "l": "D",
+    "t": "$D_2 = Q_1$, $D_1 = Q_0$, $D_0 = \\overline{Q_2}$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "With D flip-flops each D input is the next-state bit. The rows are 000 → 001, 001 → 011, 011 → 111, 111 → 110, 110 → 100, 100 → 000.",
+   "$Q_2^+$ is 1 exactly in the rows 011, 111, 110, where $Q_1 = 1$ (and the don't-care 010 also has $Q_1 = 1$): $D_2 = Q_1$. $Q_1^+$ is 1 in 001, 011, 111, where $Q_0 = 1$: $D_1 = Q_0$. $Q_0^+$ is 1 in 000, 001, 011, where $Q_2 = 0$: $D_0 = \\overline{Q_2}$.",
+   "The circuit is a 3-bit Johnson (twisted-ring) counter. Its unused states 010 and 101 swap with each other, so it is not self-starting, but the question only asks for the design."
+  ],
+  "concept": "D design: the D column is the next-state column; minimise with the unused states as don't-cares.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "$D_2 = Q_1Q_0$ misses row 110 → 100, where $Q_2^+ = 1$ but $Q_0 = 0$."
+   },
+   {
+    "answer": "B",
+    "why": "Every equation is complemented: from 000 it gives $D_2D_1D_0 = 110$, not 001 (it runs 000 → 110 → 011 → 000)."
+   },
+   {
+    "answer": "C",
+    "why": "$D_2 = Q_0$ sends 001 to 101 instead of 011."
+   }
+  ],
+  "blocks": [
+   "d-design",
+   "arbitrary-sequence",
+   "design-procedure"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q03",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A synchronous counter must produce the output sequence 0, 3, 0, 3, 1, 0, 3, 0, 3, 1, … (the ten values shown then repeat). What is the minimum number of flip-flops it needs?",
+  "answer": 3,
+  "solution": [
+   "The ten values shown are two copies of the block 0, 3, 0, 3, 1, so the minimal period is 5.",
+   "An autonomous counter on a cycle of $k$ states repeats its output every $k$ clocks, so $k$ must be a multiple of the minimal period 5: at least 5 states, and 5 states with output logic are enough.",
+   "$\\lceil \\log_2 5 \\rceil = 3$ flip-flops, plus output logic."
+  ],
+  "concept": "States = positions of the minimal period; ⌈log₂ L⌉ flip-flops.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "Using the ten printed positions ($\\lceil \\log_2 10 \\rceil = 4$) instead of the minimal period 5."
+   },
+   {
+    "answer": 2,
+    "why": "Counting the three distinct values 0, 1, 3."
+   }
+  ],
+  "blocks": [
+   "repeated-values",
+   "states-vs-outputs",
+   "trap-distinct-values"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q04",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A counter for 0 → 3 → 5 → 6 → 0 is built from D flip-flops $Q_2Q_1Q_0$ with the minimal equations $D_2 = Q_0$, $D_1 = \\overline{Q_1}$, $D_0 = \\overline{Q_2}$ (unused states taken as don't-cares). It powers up in 001. What happens?",
+  "options": [
+   {
+    "l": "A",
+    "t": "It goes to 000 at the next clock and then follows the main cycle."
+   },
+   {
+    "l": "B",
+    "t": "It enters the main cycle after exactly two clocks."
+   },
+   {
+    "l": "C",
+    "t": "It stays in 001 for ever."
+   },
+   {
+    "l": "D",
+    "t": "It cycles 001 → 111 → 100 → 010 → 001 and never reaches the main cycle."
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "From 001: $D_2 = Q_0 = 1$, $D_1 = \\overline{Q_1} = 1$, $D_0 = \\overline{Q_2} = 1$: 111.",
+   "From 111: $D = 1, 0, 0$: 100. From 100: $D = 0, 1, 0$: 010. From 010: $D = 0, 0, 1$: 001, the start again.",
+   "None of 001, 111, 100, 010 is on the main cycle 000, 011, 101, 110: a lock-out cycle of length 4. The don't-care choices decided it."
+  ],
+  "concept": "Self-starting is a property of the built circuit: simulate every unused state until it repeats or reaches the main cycle.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Assumes unused states reset themselves; the D inputs in 001 are all 1, so the next state is 111."
+   },
+   {
+    "answer": "B",
+    "why": "From 001 the next two states are 111 and 100, both unused; the trace 001 → 111 → 100 → 010 → 001 never meets 000, 011, 101 or 110."
+   },
+   {
+    "answer": "C",
+    "why": "001 is not a self-loop: in 001 the D inputs are 1, 1, 1, so $Q_2$ and $Q_1$ change."
+   }
+  ],
+  "blocks": [
+   "self-start",
+   "lockout",
+   "trap-lockout"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q05",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "The counter for 1 → 4 → 2 → 3 → 1 is built with D flip-flops $Q_2Q_1Q_0$ as $D_2 = \\overline{Q_1}Q_0$, $D_1 = \\overline{Q_0}$, $D_0 = Q_1$. Which statements are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "From 000 the next state is 010."
+   },
+   {
+    "l": "B",
+    "t": "From 101 the next state is 100."
+   },
+   {
+    "l": "C",
+    "t": "111 is a self-loop."
+   },
+   {
+    "l": "D",
+    "t": "The counter is self-starting."
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "000: $D_2 = 0$, $D_1 = 1$, $D_0 = 0$: 010 (A true). 101: $D_2 = 1$, $D_1 = 0$, $D_0 = 0$: 100 (B true).",
+   "111: $D_2 = 0$, $D_1 = 0$, $D_0 = 1$: 001, not 111 (C false). 110 goes to 011.",
+   "Every unused state (000, 101, 110, 111) lands on the cycle 1, 4, 2, 3 after one clock, so the counter is self-starting (D true)."
+  ],
+  "concept": "Evaluate the built equations in every unused state; self-starting means each reaches the main cycle.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "Misses D: every unused state (000, 101, 110, 111) reaches the cycle in one clock, so the circuit is self-starting."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "111 goes to 001; a self-loop would need all three D inputs to equal the present bits."
+   }
+  ],
+  "blocks": [
+   "arbitrary-sequence",
+   "self-start",
+   "d-design"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 5-bit synchronous binary counter uses JK flip-flops with $J_0 = K_0 = 1$ and a serial AND chain: AND$_1 = 1 \\cdot Q_0$ drives $J_1 = K_1$, and AND$_k$ = AND$_{k-1} \\cdot Q_{k-1}$ drives $J_k = K_k$ for $k = 2, 3, 4$; a fifth gate AND$_5$ = AND$_4 \\cdot Q_4$ is only the carry out. The flip-flops have a clock-to-output delay of 6 ns and a setup time of 2 ns; each AND gate has a delay of 3 ns. What is the maximum clock frequency in MHz?",
+  "answer": 50,
+  "solution": [
+   "The longest path that ends at a flip-flop input runs from $Q_0$ through AND$_1$ … AND$_4$ to $J_4K_4$: four gates.",
+   "$T_{\\text{clk}} \\ge 6 + 4 \\times 3 + 2 = 20$ ns.",
+   "$f_{\\max} = 1 / 20\\ \\text{ns} = 50$ MHz. AND$_5$ feeds no flip-flop of this counter, so it is not on the path."
+  ],
+  "concept": "f_max = 1/(t_cq + t_logic + t_su), counting only gates on paths that end at a flip-flop input.",
+  "common_wrong": [
+   {
+    "answer": 43.48,
+    "why": "Counting the carry-out gate too: 23 ns."
+   },
+   {
+    "answer": 55.56,
+    "why": "Forgetting the setup time: 18 ns."
+   },
+   {
+    "answer": 90.91,
+    "why": "Treating the gating as parallel (one gate): 11 ns."
+   }
+  ],
+  "blocks": [
+   "sync-max-freq",
+   "trap-sync-fmax",
+   "sync-binary"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q07",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A 2-bit counter $Q_1Q_0$ for 0 → 2 → 3 → 1 → 0 (that is 00 → 10 → 11 → 01 → 00) is designed with JK flip-flops. Which statements about the inputs of the $Q_0$ flip-flop are correct ($\\times$ = don't-care)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "In state 10, $J_0 = 1$ and $K_0 = \\times$."
+   },
+   {
+    "l": "B",
+    "t": "In state 11, $J_0 = \\times$ and $K_0 = 0$."
+   },
+   {
+    "l": "C",
+    "t": "In state 01, $J_0 = \\times$ and $K_0 = 1$."
+   },
+   {
+    "l": "D",
+    "t": "$K_0 = Q_1$ is a valid realisation of the $K_0$ column."
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "C"
+  ],
+  "solution": [
+   "JK excitation: when $Q = 0$, $J = Q^+$ and $K = \\times$; when $Q = 1$, $K = \\overline{Q^+}$ and $J = \\times$.",
+   "10 → 11: $Q_0$ goes 0 → 1: $J_0 = 1$, $K_0 = \\times$ (A). 11 → 01: $Q_0$ stays 1: $J_0 = \\times$, $K_0 = 0$ (B). 01 → 00: $Q_0$ goes 1 → 0: $J_0 = \\times$, $K_0 = 1$ (C).",
+   "$K_0$ must be 1 in state 01 (where $Q_1 = 0$) and 0 in state 11 (where $Q_1 = 1$): $K_0 = \\overline{Q_1}$, so $K_0 = Q_1$ is wrong (D). The minimal design is $J_0 = Q_1$, $K_0 = \\overline{Q_1}$."
+  ],
+  "concept": "JK columns: J only on Q = 0 rows (J = Q⁺), K only on Q = 1 rows (K = Q̄⁺); the rest are don't-cares.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "In state 01 the J entry is a don't-care because $Q_0 = 1$; it is not 0."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "$K_0 = Q_1$ gives $K_0 = 0$ in state 01, so $Q_0$ would stay 1."
+   }
+  ],
+  "blocks": [
+   "jk-design",
+   "trick-jk-half",
+   "d-from-next"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q08",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Three JK flip-flops $Q_2Q_1Q_0$ share a clock, with $J_2 = Q_1$, $K_2 = Q_0$, $J_1 = \\overline{Q_0}$, $K_1 = Q_2$, $J_0 = Q_2$, $K_0 = Q_1$. Starting from 000, what are the next three states?",
+  "options": [
+   {
+    "l": "A",
+    "t": "010, 110, 101"
+   },
+   {
+    "l": "B",
+    "t": "010, 110, 111"
+   },
+   {
+    "l": "C",
+    "t": "010, 101, 001"
+   },
+   {
+    "l": "D",
+    "t": "001, 010, 011"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "000: $J_2K_2 = 00$ (hold 0), $J_1K_1 = 10$ (set), $J_0K_0 = 00$ (hold 0): 010.",
+   "010: $J_2K_2 = 10$ (set), $J_1K_1 = 10$ (stays 1), $J_0K_0 = 01$ (reset, stays 0): 110.",
+   "110: $J_2K_2 = 10$ (stays 1), $J_1K_1 = 11$ (toggle to 0), $J_0K_0 = 11$ (toggle to 1): 101. (It then goes to 001 and stays there: 001 is a self-loop.)"
+  ],
+  "concept": "Trace a counter: compute every J and K from the old state, then update all flip-flops together.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Treating each J as a D input and ignoring K: the third state would be 111."
+   },
+   {
+    "answer": "C",
+    "why": "Updating the flip-flops one after another (Q2, then Q1, then Q0) with the new values."
+   },
+   {
+    "answer": "D",
+    "why": "Assuming three JK flip-flops on one clock form a binary counter."
+   }
+  ],
+  "blocks": [
+   "counter-trace",
+   "jk-design"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A counter for 0 → 2 → 5 → 7 → 0 is designed with T flip-flops $Q_2Q_1Q_0$, taking the unused states 1, 3, 4, 6 as don't-cares. The minimal equations are $T_2 = Q_1$, $T_1 = 1$, $T_0 = Q_1$. How many of the 8 states lie on a lock-out cycle (a cycle other than the main one)?",
+  "answer": 4,
+  "solution": [
+   "Check the main cycle: 000 → 010 → 101 → 111 → 000 (in 010 and 111 all three bits flip; in 000 and 101 only $Q_1$ flips).",
+   "Unused states: 001 ($Q_1 = 0$: only $Q_1$ flips) → 011 (all flip) → 100 (only $Q_1$) → 110 (all flip) → 001.",
+   "All four unused states form one lock-out cycle: 4 states."
+  ],
+  "concept": "Don't-care choices fix where unused states go; self-starting iff the main cycle is the only cycle.",
+  "common_wrong": [
+   {
+    "answer": 0,
+    "why": "Assuming unused states taken as don't-cares fall back into the cycle by themselves."
+   },
+   {
+    "answer": 8,
+    "why": "Counting the four main-cycle states as well; the question asks only for states on cycles other than the main one."
+   }
+  ],
+  "blocks": [
+   "lockout",
+   "lockout-example",
+   "self-start"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q10",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which statements about synchronous counter design are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "With D flip-flops, each D input equals the corresponding bit of the next state."
+   },
+   {
+    "l": "B",
+    "t": "Taking every unused state as a don't-care always gives a self-starting counter."
+   },
+   {
+    "l": "C",
+    "t": "An autonomous counter whose output repeats 0, 1, 0, 2 needs at least 4 states."
+   },
+   {
+    "l": "D",
+    "t": "With parallel AND gating, the maximum clock frequency of a synchronous binary counter falls as $1/n$ with the number of bits $n$, like a ripple counter's."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "A: $Q^+ = D$, so $D = Q^+$. True.",
+   "B: the K-map groups give every unused state a definite next state, which may lie on a lock-out cycle (0 → 3 → 5 → 6 with JK or D). False.",
+   "C: the minimal period is 4 (the value 0 has two different successors), so at least 4 states. True. D: parallel gating keeps one gate between flip-flops whatever $n$ is, so $f_{\\max}$ does not fall as $1/n$. False."
+  ],
+  "concept": "D = Q⁺; don't-cares can lock out; states = positions; parallel gating keeps f_max independent of n.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Don't-cares minimise logic; they do not guarantee self-starting."
+   },
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "0, 1, 0, 2 has period 4 even though only three values occur."
+   }
+  ],
+  "blocks": [
+   "d-from-next",
+   "lockout",
+   "states-vs-outputs",
+   "sync-max-freq"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 4-bit shift register shifts right: the serial input enters $Q_1$ and the bits move towards $Q_4$. It holds $Q_1Q_2Q_3Q_4 = 1101$. The serial input receives 1, then 0, then 0 at the next three clock edges. What does the register hold after the third edge?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0011"
+   },
+   {
+    "l": "B",
+    "t": "1100"
+   },
+   {
+    "l": "C",
+    "t": "1001"
+   },
+   {
+    "l": "D",
+    "t": "0111"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Each edge slides the row one place right: the new bit enters $Q_1$ and the old $Q_4$ drops out.",
+   "1101 → (input 1) 1110 → (input 0) 0111 → (input 0) 0011.",
+   "The bits shifted out are 1, 0, 1, the old $Q_4$, $Q_3$, $Q_2$."
+  ],
+  "concept": "A shift register slides its contents one place per clock; fix the direction and the time order of the inputs first.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Shifting left (input entering at $Q_4$) instead of right."
+   },
+   {
+    "answer": "C",
+    "why": "Feeding the inputs in the reverse order (0, 0, 1)."
+   },
+   {
+    "answer": "D",
+    "why": "Stopping one clock early: 0111 is the contents after the second edge."
+   }
+  ],
+  "blocks": [
+   "shift-def",
+   "trick-shift-table",
+   "trap-shift-direction"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A 6-bit serial-in/serial-out shift register is cleared. A 6-bit word is entered serially, one bit per clock, at clocks 1 to 6, followed by zeros. After how many clocks has the last bit of the word appeared at the serial output $Q_6$?",
+  "answer": 11,
+  "solution": [
+   "After clock $k$ the output $Q_6$ holds the bit that entered at clock $k - 6 + 1 = k - 5$.",
+   "The last bit of the word entered at clock 6, so it is at $Q_6$ when $k - 5 = 6$, i.e. after clock 11.",
+   "In general an $n$-bit word needs $n$ clocks to load and $n - 1$ more for its last bit to reach the output: $2n - 1 = 11$."
+  ],
+  "concept": "An n-stage SISO delays by n clocks: first bit out after n clocks, last after 2n − 1, all gone after 2n.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "6 clocks load the word; only its first bit is at the output then."
+   },
+   {
+    "answer": 12,
+    "why": "After 12 clocks the last bit has already been shifted out of the register."
+   }
+  ],
+  "blocks": [
+   "shift-delay",
+   "trap-shift-count",
+   "shift-modes"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 5-bit Johnson counter ($D_1 = \\overline{Q_5}$, $D_i = Q_{i-1}$) starts at $Q_1Q_2Q_3Q_4Q_5 = 00000$. What does it hold after 7 clock pulses?",
+  "options": [
+   {
+    "l": "A",
+    "t": "01111"
+   },
+   {
+    "l": "B",
+    "t": "11100"
+   },
+   {
+    "l": "C",
+    "t": "00111"
+   },
+   {
+    "l": "D",
+    "t": "00011"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "From 00000 the counter fills with 1s from the left: 10000, 11000, 11100, 11110, 11111 after clocks 1 to 5.",
+   "Now $\\overline{Q_5} = 0$, so 0s enter: 01111 after clock 6 and 00111 after clock 7.",
+   "The full cycle has $2 \\times 5 = 10$ states; clock 7 is the second state of the emptying half."
+  ],
+  "concept": "A Johnson counter fills with 1s for n clocks, then with 0s for n clocks: 2n states.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Off by one: 01111 is the state after 6 clocks."
+   },
+   {
+    "answer": "B",
+    "why": "Treating it as a 3-clock question (11100 is the state after 3 clocks)."
+   },
+   {
+    "answer": "D",
+    "why": "Off by one the other way: 00011 is the state after 8 clocks."
+   }
+  ],
+  "blocks": [
+   "johnson",
+   "johnson-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q04",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 5-bit Johnson counter is cleared to 00000 and clocked. How many of its 32 possible states can it never reach from 00000?",
+  "answer": 22,
+  "solution": [
+   "From 00000 a Johnson counter of $n = 5$ flip-flops visits exactly $2n = 10$ states (fill with 1s, then with 0s).",
+   "The Johnson step is a permutation, so the other states lie on separate cycles and can never be entered from the main one.",
+   "Unreachable: $2^5 - 10 = 22$ (they form three more cycles, of lengths 10, 10 and 2)."
+  ],
+  "concept": "A Johnson counter of n flip-flops uses 2n of its 2ⁿ states; the rest form other cycles.",
+  "common_wrong": [
+   {
+    "answer": 27,
+    "why": "Using the ring counter's n states instead of 2n: 32 − 5."
+   },
+   {
+    "answer": 0,
+    "why": "Assuming every state is visited, as in a binary counter."
+   }
+  ],
+  "blocks": [
+   "johnson-theorem",
+   "trap-johnson-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q05",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 4-bit LFSR shifts right ($Q_1 \\to Q_2 \\to Q_3 \\to Q_4$) with feedback $D_1 = Q_3 \\oplus Q_4$. It holds $Q_1Q_2Q_3Q_4 = 1001$. What are its next three states?",
+  "options": [
+   {
+    "l": "A",
+    "t": "1100, 0110, 1011"
+   },
+   {
+    "l": "B",
+    "t": "0100, 0010, 0001"
+   },
+   {
+    "l": "C",
+    "t": "1100, 1110, 1111"
+   },
+   {
+    "l": "D",
+    "t": "0011, 0110, 1101"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "1001: $Q_3 \\oplus Q_4 = 0 \\oplus 1 = 1$, so 1 enters and the row shifts: 1100.",
+   "1100: $0 \\oplus 0 = 0$ → 0110.",
+   "0110: $1 \\oplus 0 = 1$ → 1011."
+  ],
+  "concept": "Compute the XOR feedback from the old state, then shift.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Shifting in 0s and ignoring the feedback."
+   },
+   {
+    "answer": "C",
+    "why": "Feeding in 1 at every clock instead of recomputing the XOR."
+   },
+   {
+    "answer": "D",
+    "why": "Shifting left instead of right."
+   }
+  ],
+  "blocks": [
+   "lfsr",
+   "feedback-shift"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q06",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 4-bit universal shift register has the modes $S_1S_0$ = 00 hold, 01 shift right (serial input $SI_R$ enters $Q_1$), 10 shift left ($SI_L$ enters $Q_4$), 11 parallel load. It holds $Q_1Q_2Q_3Q_4 = 1010$. Four clocks apply, in order: 01 with $SI_R = 1$; 10 with $SI_L = 0$; 11 with the data inputs 0110; 01 with $SI_R = 0$. What does it hold at the end?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0110"
+   },
+   {
+    "l": "B",
+    "t": "1100"
+   },
+   {
+    "l": "C",
+    "t": "1011"
+   },
+   {
+    "l": "D",
+    "t": "0011"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "01, $SI_R = 1$: 1010 → 1101. 10, $SI_L = 0$: 1101 → 1010.",
+   "11: load 0110.",
+   "01, $SI_R = 0$: 0110 → 0011."
+  ],
+  "concept": "Universal register: 00 hold, 01 right, 10 left, 11 load; apply one mode per clock.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Stopping at the load and ignoring the last shift."
+   },
+   {
+    "answer": "B",
+    "why": "Doing the last operation as a shift left."
+   },
+   {
+    "answer": "C",
+    "why": "Shifting right with 1 entering instead of $SI_R = 0$."
+   }
+  ],
+  "blocks": [
+   "universal-register"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q07",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following statements are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "A 4-bit ring counter preset to 1000 returns to 1000 after 4 clock pulses."
+   },
+   {
+    "l": "B",
+    "t": "A mod-10 Johnson counter needs 10 flip-flops."
+   },
+   {
+    "l": "C",
+    "t": "A ring counter is an asynchronous counter, because each flip-flop's output drives the next flip-flop."
+   },
+   {
+    "l": "D",
+    "t": "Each state on the main cycle of a 4-bit Johnson counter can be recognised by a single 2-input AND gate on its outputs (some inputs complemented)."
+   }
+  ],
+  "answer": [
+   "A",
+   "D"
+  ],
+  "solution": [
+   "A: true. The single 1 circulates 1000 → 0100 → 0010 → 0001 → 1000: 4 states.",
+   "B: false. $n$ Johnson flip-flops give $2n$ states, so mod-10 needs 5.",
+   "C: false. All flip-flops of a ring counter share one clock; the outputs drive the next $D$ input, not its clock. It is synchronous.",
+   "D: true. Each state is identified by the two bits on either side of its 1/0 boundary, e.g. 1100 by $Q_2\\overline{Q_3}$."
+  ],
+  "concept": "Ring: n states; Johnson: 2n states and 2-input decoding; both are synchronous.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "Confusing the Johnson count (2n states from n flip-flops) with the ring count."
+   },
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "Passing data from stage to stage is not the same as passing the clock: ring counters are synchronous."
+   }
+  ],
+  "blocks": [
+   "ring-counter",
+   "trap-ring-sync",
+   "trap-johnson-count",
+   "trick-johnson-decode"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q08",
+  "type": "NAT",
+  "marks": 1,
+  "text": "Four positive-edge D flip-flops form a serial-in shift register: $D_1 = in$, $D_2 = Q_1$, $D_3 = Q_2$, $D_4 = Q_3$. In its state transition diagram (16 states), how many states have **no** transition back to themselves for either value of $in$?",
+  "answer": 14,
+  "solution": [
+   "From $Q_1Q_2Q_3Q_4$ the input leads to $(in)Q_1Q_2Q_3$.",
+   "A self-loop needs $(in)Q_1Q_2Q_3 = Q_1Q_2Q_3Q_4$, i.e. $in = Q_1 = Q_2 = Q_3 = Q_4$: only 0000 (with in = 0) and 1111 (with in = 1).",
+   "So $16 - 2 = 14$ states have no self-loop."
+  ],
+  "concept": "A shift register can stay put only if every bit equals its neighbour: self-loops only at 0…0 and 1…1.",
+  "common_wrong": [
+   {
+    "answer": 2,
+    "why": "That is the number of states that do have a self-loop."
+   },
+   {
+    "answer": 16,
+    "why": "Forgetting that 0000 and 1111 map to themselves for the matching input."
+   }
+  ],
+  "blocks": [
+   "shift-state-graph"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 4-bit register shifts right ($Q_1 \\to Q_2 \\to Q_3 \\to Q_4$) with feedback $D_1 = Q_2 \\oplus Q_4$. Starting from $Q_1Q_2Q_3Q_4 = 1000$, after how many clock pulses does it first return to 1000?",
+  "answer": 6,
+  "solution": [
+   "Compute the feedback from the old $Q_2$ and $Q_4$, then shift: 1000 → 0100 → 1010 → 0101 → 0010 → 0001 → 1000.",
+   "1000 recurs after 6 pulses.",
+   "These taps are not maximal: the 15 non-zero states split into cycles of 6, 6 and 3 (plus the fixed point 0000)."
+  ],
+  "concept": "An LFSR's cycle is at most 2ⁿ − 1 long; only maximal taps reach it.",
+  "common_wrong": [
+   {
+    "answer": 15,
+    "why": "Assuming every XOR feedback gives the maximal length 2⁴ − 1."
+   },
+   {
+    "answer": 16,
+    "why": "Counting 0000, which is a separate fixed point of every LFSR."
+   }
+  ],
+  "blocks": [
+   "lfsr-max",
+   "feedback-shift"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q10",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Four flip-flops share one clock. Stages 2 to 4 copy the previous stage (for D flip-flops $D_i = Q_{i-1}$; for JK flip-flops $J_i = Q_{i-1}$, $K_i = \\overline{Q_{i-1}}$). Which choices for the first stage make the circuit a 4-bit Johnson counter?",
+  "options": [
+   {
+    "l": "A",
+    "t": "D flip-flops with $D_1 = \\overline{Q_4}$"
+   },
+   {
+    "l": "B",
+    "t": "D flip-flops with $D_1 = Q_4$"
+   },
+   {
+    "l": "C",
+    "t": "JK flip-flops with $J_1 = \\overline{Q_4}$, $K_1 = Q_4$"
+   },
+   {
+    "l": "D",
+    "t": "JK flip-flops with $J_1 = Q_4$, $K_1 = \\overline{Q_4}$"
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "A JK stage with $K = \\overline{J}$ copies $J$, so every option is a shift register with $Q_1^+$ equal to the signal on $D_1$ (or $J_1$).",
+   "A and C feed back $\\overline{Q_4}$: Johnson counters (8 states from 0000).",
+   "B and D feed back $Q_4$: ring counters."
+  ],
+  "concept": "Johnson = complement of the last stage into the first; a JK stage with K = J′ is a D stage.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "Missing that a JK stage with $J = x$, $K = \\overline{x}$ behaves exactly like a D stage."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "Every option is a shift-register counter, but only the twisted (complemented) feedback is Johnson."
+   }
+  ],
+  "blocks": [
+   "johnson",
+   "johnson-jk",
+   "jk-as-d",
+   "ring-counter"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A Mealy machine has states A (start), B and C. Its table (next state/output) is: A: $x = 0$ → A/0, $x = 1$ → B/0; B: $x = 0$ → C/0, $x = 1$ → B/1; C: $x = 0$ → A/1, $x = 1$ → B/0. What output string does it produce for the input 0110110?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0001001"
+   },
+   {
+    "l": "B",
+    "t": "0010010"
+   },
+   {
+    "l": "C",
+    "t": "0111111"
+   },
+   {
+    "l": "D",
+    "t": "0110110"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Read each output from the present state's row and the present input's column, then move to the next state.",
+   "A, 0: 0 (stay A). A, 1: 0 (to B). B, 1: 1 (stay B). B, 0: 0 (to C). C, 1: 0 (to B). B, 1: 1 (stay B). B, 0: 0 (to C).",
+   "Output 0010010; the states visited are A, A, B, B, C, B, B, C."
+  ],
+  "concept": "A Mealy output belongs to the arc taken: present state and present input.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Shifting every output one clock later, as a Moore machine would show it."
+   },
+   {
+    "answer": "C",
+    "why": "Reading each output from the row of the state just entered instead of the present state."
+   },
+   {
+    "answer": "D",
+    "why": "Copying the input: the outputs are not the input bits."
+   }
+  ],
+  "blocks": [
+   "mealy-moore",
+   "state-table-fsm"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "What is the minimum number of states of a Moore machine that outputs 1 exactly when the input received so far ends with 1101 (overlapping occurrences allowed)?",
+  "answer": 5,
+  "solution": [
+   "One state per prefix matched so far: none, 1, 11, 110 (all with output 0).",
+   "A Moore machine needs one more state, 'just received 1101', whose output is 1.",
+   "The prefix states are pairwise distinguishable (they need 4, 3, 2, 1 more bits to produce a 1), so 4 + 1 = 5 is minimal."
+  ],
+  "concept": "A k-bit pattern needs k Mealy states and k + 1 Moore states.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "That is the Mealy count; a Moore machine needs an extra state to hold the output 1."
+   },
+   {
+    "answer": 3,
+    "why": "Counting flip-flops (⌈log₂ 5⌉) instead of states."
+   }
+  ],
+  "blocks": [
+   "sequence-detector",
+   "detector-states",
+   "trap-moore-lag"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q03",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A Mealy machine must output 1 at the end of every non-overlapping occurrence of 10110 in its input. What is the minimum number of states?",
+  "answer": 5,
+  "solution": [
+   "States are the prefixes matched so far: none, 1, 10, 101, 1011.",
+   "The arc that completes the pattern carries output 1 and, for non-overlapping detection, returns to the 'none' state: no extra state is needed.",
+   "The five prefix states need 5, 4, 3, 2, 1 more bits to produce a 1, so they are pairwise distinguishable: 5 is minimal."
+  ],
+  "concept": "Overlapping or not, a k-bit pattern needs exactly k Mealy states; only the completing arc changes.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "Adding a 'detected' state: that is the Moore count."
+   },
+   {
+    "answer": 3,
+    "why": "Counting flip-flops (⌈log₂ 5⌉) instead of states."
+   }
+  ],
+  "blocks": [
+   "sequence-detector",
+   "detector-states",
+   "trap-overlap"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q04",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A Mealy machine has states E (start) and O. E: $x = 0$ → E/0, $x = 1$ → O/1. O: $x = 0$ → O/1, $x = 1$ → E/0. Which statement describes its output?",
+  "options": [
+   {
+    "l": "A",
+    "t": "1 exactly when the number of 1s received so far, including the present bit, is odd"
+   },
+   {
+    "l": "B",
+    "t": "The complement of the present input"
+   },
+   {
+    "l": "C",
+    "t": "The input delayed by one clock period"
+   },
+   {
+    "l": "D",
+    "t": "1 exactly when the last two input bits are 11"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "E is entered after an even number of 1s and O after an odd number: input 1 swaps the states, input 0 keeps them.",
+   "Each arc's output is 1 exactly when the arc ends in O, i.e. when the count of 1s including the present bit is odd: running parity.",
+   "Input 1 alone gives output 1, which kills C (a delay would output 0) and D; input 0 alone gives 0, which kills B."
+  ],
+  "concept": "Give each state a meaning, check it on every arc, and kill the other options with one short string each.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Input 0 from E gives 0, not 1."
+   },
+   {
+    "answer": "C",
+    "why": "On input 1 the machine outputs 1 at once; a one-clock delay would output 0 first."
+   },
+   {
+    "answer": "D",
+    "why": "A single 1 already gives output 1, and 11 gives 10, not 01."
+   }
+  ],
+  "blocks": [
+   "interpret-machine",
+   "trick-run-small"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q05",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A Mealy machine has states S0 (start) to S3: S0: $x = 0$ → S1/0, $x = 1$ → S0/0; S1: $x = 0$ → S1/0, $x = 1$ → S2/0; S2: $x = 0$ → S3/0, $x = 1$ → S0/0; S3: $x = 0$ → S1/0, $x = 1$ → S2/1. What is the length of the shortest input string that produces an output 1?",
+  "answer": 4,
+  "solution": [
+   "The only arc with output 1 is S3 on input 1, so the machine must first reach S3.",
+   "Breadth-first from S0: level 1 adds S1 (input 0); level 2 adds S2 (01); level 3 adds S3 (010).",
+   "Then the input 1 takes the output-1 arc: 0101, length 4."
+  ],
+  "concept": "Breadth-first search to the source of the target arc, then add the arc itself.",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "Stopping when S3 is reached: the output 1 needs one more input."
+   },
+   {
+    "answer": 5,
+    "why": "A valid but not shortest input, such as 10101, which first loops in S0."
+   }
+  ],
+  "blocks": [
+   "shortest-input",
+   "bfs-bound"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q06",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following statements about synchronous Mealy and Moore machines are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "A Moore machine's output can change only just after an active clock edge."
+   },
+   {
+    "l": "B",
+    "t": "For any bit pattern, a Mealy sequence detector needs at least as many states as a Moore detector for the same pattern."
+   },
+   {
+    "l": "C",
+    "t": "A Mealy machine's output can change in the middle of a clock period if its input changes."
+   },
+   {
+    "l": "D",
+    "t": "Every Moore machine with n states has a Mealy machine with the same n states that produces the same output sequence one clock earlier."
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "A: a Moore output is a function of the flip-flops only, which change only at edges. True.",
+   "B: a k-bit pattern needs k Mealy states but k + 1 Moore states (101: 3 against 4). False.",
+   "C: a Mealy output is computed from the live input wires, so it follows input changes (and glitches) within the period. True.",
+   "D: give each arc the output of the state it enters, λ′(s, x) = λ(δ(s, x)). True."
+  ],
+  "concept": "Moore: output in the state, steady between edges. Mealy: output on the arc, one clock earlier, fewer or equal states.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "B is backwards: Moore never needs fewer states than Mealy."
+   },
+   {
+    "answer": [
+     "A",
+     "D"
+    ],
+    "why": "Missing C: Mealy outputs pass input glitches through."
+   }
+  ],
+  "blocks": [
+   "mealy-moore",
+   "mealy-moore-equivalence",
+   "output-timing-fsm",
+   "trap-mealy-glitch"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q07",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "The serial 2's complementer (Q0: 0/0 stay, 1/1 to Q1; Q1: 0/1 and 1/0, stay) is built with one D flip-flop, coding Q0 as $Q = 0$ and Q1 as $Q = 1$; $x$ is the input bit and $z$ the output. Which equations are correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$D = x$, $z = Q \\oplus x$"
+   },
+   {
+    "l": "B",
+    "t": "$D = Q + x$, $z = Q \\oplus x$"
+   },
+   {
+    "l": "C",
+    "t": "$D = Qx$, $z = Q \\oplus x$"
+   },
+   {
+    "l": "D",
+    "t": "$D = Q + x$, $z = \\overline{Q}\\,x$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Once a 1 has been seen the machine stays in Q1; from Q0 it moves to Q1 exactly on x = 1. So $Q^+ = Q + x$ and $D = Q + x$.",
+   "In Q0 the output copies x; in Q1 it complements x: $z = \\overline{Q}x + Q\\overline{x} = Q \\oplus x$.",
+   "Simulated LSB first on all 256 eight-bit numbers, only B gives the 2's complement every time."
+  ],
+  "concept": "Encode the states, then read each D input from the next-state column and the output from the arcs.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "D = x forgets the first 1 as soon as a 0 arrives (that is 'state = previous bit')."
+   },
+   {
+    "answer": "C",
+    "why": "D = Qx can never leave Q0."
+   },
+   {
+    "answer": "D",
+    "why": "The output must be 1 for x = 0 in Q1; $\\overline{Q}x$ is 0 there."
+   }
+  ],
+  "blocks": [
+   "fsm-to-circuit",
+   "serial-twos-complement"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "In the minimal overlapping Mealy detector for 1011, state $S_i$ means 'the longest suffix of the input that is a prefix of 1011 has length $i$' ($i = 0, 1, 2, 3$). Which arcs are correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$S_3$ on input 1 goes to $S_1$ with output 1"
+   },
+   {
+    "l": "B",
+    "t": "$S_2$ on input 0 goes to $S_0$ with output 0"
+   },
+   {
+    "l": "C",
+    "t": "$S_1$ on input 1 goes to $S_0$ with output 0"
+   },
+   {
+    "l": "D",
+    "t": "$S_3$ on input 0 goes to $S_2$ with output 0"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "A: 101 + 1 = 1011 completes the pattern (output 1); its longest proper suffix that is a prefix is 1, so $S_1$. Correct.",
+   "B: 10 + 0 = 100; no non-empty suffix of 100 is a prefix of 1011, so $S_0$. Correct.",
+   "C: 1 + 1 = 11, whose suffix 1 is a prefix: the arc goes to $S_1$, not $S_0$. Wrong.",
+   "D: 101 + 0 = 1010, whose suffix 10 is a prefix: $S_2$. Correct."
+  ],
+  "concept": "Failure arc = longest suffix of (matched prefix + new bit) that is a prefix of the pattern.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "C resets on a repeated 1, which loses the 1 that may start the pattern."
+   },
+   {
+    "answer": [
+     "B",
+     "D"
+    ],
+    "why": "A is the overlapping completion arc: the final 1 can start the next 1011."
+   }
+  ],
+  "blocks": [
+   "sequence-detector",
+   "trick-suffix"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q09",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A controller has 12 states. A binary state assignment uses $b$ flip-flops (the minimum possible) and a one-hot assignment uses $h$ flip-flops. What is $h - b$?",
+  "answer": 8,
+  "solution": [
+   "Binary: $b = \\lceil \\log_2 12 \\rceil = 4$, since $2^3 = 8 < 12 \\le 16 = 2^4$.",
+   "One-hot: one flip-flop per state, $h = 12$.",
+   "$h - b = 8$."
+  ],
+  "concept": "Binary assignment needs ⌈log₂ n⌉ flip-flops, one-hot needs n.",
+  "common_wrong": [
+   {
+    "answer": 9,
+    "why": "Taking ⌊log₂ 12⌋ = 3 flip-flops, which hold only 8 states."
+   },
+   {
+    "answer": 12,
+    "why": "That is h alone; the question asks for the difference h − b."
+   }
+  ],
+  "blocks": [
+   "state-assignment",
+   "one-hot-equations"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q10",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A Moore machine has states A (start, output 0), B (0), C (0) and D (1), with next states A: $x = 0$ → A, $x = 1$ → B; B: 0 → C, 1 → B; C: 0 → A, 1 → D; D: 0 → C, 1 → B. Its full output string for the input 10101, starting with the output shown before the first input, is:",
+  "options": [
+   {
+    "l": "A",
+    "t": "00101"
+   },
+   {
+    "l": "B",
+    "t": "000100"
+   },
+   {
+    "l": "C",
+    "t": "001010"
+   },
+   {
+    "l": "D",
+    "t": "000101"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Before any input the machine is in A and shows 0.",
+   "1 → B (0), 0 → C (0), 1 → D (1), 0 → C (0), 1 → D (1).",
+   "Full string 0 00101 = 000101: the machine is the overlapping 101 detector, so it reports both occurrences, one clock after each."
+  ],
+  "concept": "A Moore machine shows its start state's output first: n inputs give n + 1 outputs.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Dropping the initial output: that is the Mealy-length string."
+   },
+   {
+    "answer": "B",
+    "why": "Sending D on input 0 back to A (non-overlapping detection), which misses the second 101."
+   },
+   {
+    "answer": "C",
+    "why": "Shifting the outputs one place early, as if the output belonged to the arc."
+   }
+  ],
+  "blocks": [
+   "mealy-moore",
+   "trap-moore-lag"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q01",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A Mealy machine has the state table below (next state, output for $x = 0$; next state, output for $x = 1$). Every state is reachable from $A$. What is the number of states of the minimal equivalent machine?\n\n| PS | $x = 0$ | $x = 1$ |\n|:--:|:--:|:--:|\n| A | F, 1 | B, 1 |\n| B | D, 1 | B, 1 |\n| C | A, 1 | E, 1 |\n| D | B, 1 | E, 1 |\n| E | A, 1 | G, 0 |\n| F | A, 1 | E, 1 |\n| G | G, 1 | C, 1 |",
+  "answer": 4,
+  "solution": [
+   "$P_0$ by whole output rows: $E$ has 10, every other state 11. $P_0 = \\{A, B, C, D, F, G\\}, \\{E\\}$.",
+   "Round 1: $C \\to (A, E)$, $D \\to (B, E)$ and $F \\to (A, E)$ reach $\\{E\\}$ on input 1; $A \\to (F, B)$, $B \\to (D, B)$ and $G \\to (G, C)$ do not. $P_1 = \\{A, B, G\\}, \\{C, D, F\\}, \\{E\\}$.",
+   "Round 2: $A \\to (F, B)$ and $B \\to (D, B)$ go to ($\\{C, D, F\\}$, $\\{A, B, G\\}$), but $G \\to (G, C)$ goes to ($\\{A, B, G\\}$, $\\{C, D, F\\}$): $G$ splits. $C, D, F$ all go to ($\\{A, B, G\\}$, $\\{E\\}$). $P_2 = \\{A, B\\}, \\{C, D, F\\}, \\{E\\}, \\{G\\}$.",
+   "Round 3 splits nothing, so the classes are $\\{A, B\\}$, $\\{C, D, F\\}$, $\\{E\\}$, $\\{G\\}$: 4 states."
+  ],
+  "concept": "Partition refinement: P0 by output rows, then split by the blocks of the next states until a round splits nothing.",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "Stopping at $P_1$ (3 blocks) without checking that a further round splits $G$ off."
+   },
+   {
+    "answer": 2,
+    "why": "Stopping at $P_0$: two output-row groups are not yet the equivalence classes."
+   },
+   {
+    "answer": 6,
+    "why": "Merging only the identical rows $C$ and $F$; $D$ also belongs to their class although its row differs, and $A \\equiv B$ as well."
+   }
+  ],
+  "blocks": [
+   "partition-refinement",
+   "refinement-correct",
+   "trap-same-next"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q02",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A Mealy machine has the state table below (next state, output for $x = 0$; next state, output for $x = 1$). Which of the following pairs of states are equivalent?\n\n| PS | $x = 0$ | $x = 1$ |\n|:--:|:--:|:--:|\n| $S_1$ | $S_2$, 0 | $S_1$, 1 |\n| $S_2$ | $S_4$, 0 | $S_3$, 0 |\n| $S_3$ | $S_4$, 0 | $S_2$, 0 |\n| $S_4$ | $S_5$, 0 | $S_5$, 1 |\n| $S_5$ | $S_6$, 0 | $S_2$, 1 |\n| $S_6$ | $S_5$, 0 | $S_5$, 1 |",
+  "options": [
+   {
+    "l": "A",
+    "t": "$S_1$ and $S_5$"
+   },
+   {
+    "l": "B",
+    "t": "$S_2$ and $S_3$"
+   },
+   {
+    "l": "C",
+    "t": "$S_4$ and $S_6$"
+   },
+   {
+    "l": "D",
+    "t": "$S_1$ and $S_4$"
+   }
+  ],
+  "answer": [
+   "B",
+   "C"
+  ],
+  "solution": [
+   "$P_0$ by output rows: $S_1, S_4, S_5, S_6$ have 01; $S_2, S_3$ have 00.",
+   "Round 1: $S_1 \\to (S_2, S_1)$ and $S_5 \\to (S_6, S_2)$ each reach $\\{S_2, S_3\\}$, but on different inputs, while $S_4 \\to (S_5, S_5)$ and $S_6 \\to (S_5, S_5)$ stay in the first block. $P_1 = \\{S_1\\}, \\{S_2, S_3\\}, \\{S_4, S_6\\}, \\{S_5\\}$; $S_2 \\to (S_4, S_3)$ and $S_3 \\to (S_4, S_2)$ have the same labels.",
+   "Round 2 splits nothing: $S_2$ and $S_3$ differ only by the pair $(S_3, S_2)$ itself, and $S_4, S_6$ have identical rows. So $S_2 \\equiv S_3$ and $S_4 \\equiv S_6$.",
+   "$S_1$ and $S_5$: the string 0 1 gives outputs 0, 0 from $S_1$ (through $S_2$) and 0, 1 from $S_5$ (through $S_6$). $S_1$ and $S_4$: the same string gives 0, 0 from $S_1$ and 0, 1 from $S_4$ (through $S_5$)."
+  ],
+  "concept": "Equivalent states need next states in the same class, not equal next states; a pair that implies only itself is equivalent.",
+  "common_wrong": [
+   {
+    "answer": [
+     "C"
+    ],
+    "why": "Accepting only identical rows ($S_4$, $S_6$) and rejecting $S_2$, $S_3$ because their next states differ."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Merging $S_1$ with $S_5$ because both have the output row 01; the second round separates them (the string 0 1)."
+   }
+  ],
+  "blocks": [
+   "equivalent-states",
+   "trap-same-next",
+   "trick-distinguish"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Partition refinement is applied to the Mealy machine below (next state, output for $x = 0$; next state, output for $x = 1$). Which of the following is $P_1$, the partition after the first round of splitting?\n\n| PS | $x = 0$ | $x = 1$ |\n|:--:|:--:|:--:|\n| A | D, 1 | B, 1 |\n| B | D, 1 | A, 1 |\n| C | B, 1 | C, 0 |\n| D | A, 1 | E, 0 |\n| E | C, 1 | E, 0 |",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\{A, B\\}, \\{C, D, E\\}$"
+   },
+   {
+    "l": "B",
+    "t": "$\\{A, B\\}, \\{C, D\\}, \\{E\\}$"
+   },
+   {
+    "l": "C",
+    "t": "$\\{A, B\\}, \\{C\\}, \\{D\\}, \\{E\\}$"
+   },
+   {
+    "l": "D",
+    "t": "$\\{A\\}, \\{B\\}, \\{C, D\\}, \\{E\\}$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "$P_0$ by output rows: $A, B$ have 11; $C, D, E$ have 10. $P_0 = \\{A, B\\}, \\{C, D, E\\}$.",
+   "Round 1: $A \\to (D, B)$ and $B \\to (D, A)$ both go to ($\\{C, D, E\\}$, $\\{A, B\\}$). $C \\to (B, C)$ and $D \\to (A, E)$ go to ($\\{A, B\\}$, $\\{C, D, E\\}$), but $E \\to (C, E)$ goes to ($\\{C, D, E\\}$, $\\{C, D, E\\}$).",
+   "So $E$ splits off: $P_1 = \\{A, B\\}, \\{C, D\\}, \\{E\\}$. (Round 2 then separates $C$ from $D$, giving 4 states in the end.)"
+  ],
+  "concept": "Each round of refinement uses the blocks of the previous partition, so P1 is not yet the final answer.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is $P_0$, the grouping by output rows before any round."
+   },
+   {
+    "answer": "C",
+    "why": "That is $P_2$, the final partition: it needs a second round."
+   },
+   {
+    "answer": "D",
+    "why": "Splitting $A$ from $B$ because their next states differ; they go to the same blocks."
+   }
+  ],
+  "blocks": [
+   "partition-refinement",
+   "trick-output-rows"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q04",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 1-input, 2-output synchronous sequential circuit outputs 00 until, after some number of input bits, the number of 0s read exceeds the number of 1s read by 3 (from that tick on the output is 10 for ever) or the number of 1s read exceeds the number of 0s read by 3 (from that tick on the output is 01 for ever). What is the minimum number of states in its state transition graph?",
+  "answer": 7,
+  "solution": [
+   "Before a verdict only the difference $d$ = (number of 0s) − (number of 1s) matters, and it stays in $\\{-2, -1, 0, 1, 2\\}$: reaching $\\pm 3$ ends the counting. That is 5 counting states.",
+   "After a verdict only the verdict matters: two absorbing states (10 for ever, 01 for ever). Total 7, an upper bound.",
+   "Lower bound: the histories ε, 0, 00, 1, 11, 000, 111 are pairwise distinguishable. The two verdict states differ at once; a counting state differs from the 10 state on input 1 and from the 01 state on input 0; and two counting states $d < d'$ are separated by the suffix of $3 - d'$ zeros, which gives the verdict 10 after $d'$ but not yet after $d$."
+  ],
+  "concept": "Count what the machine must remember, and prove the lower bound with pairwise distinguishable histories.",
+  "common_wrong": [
+   {
+    "answer": 5,
+    "why": "Copying the GATE 2003 answer: with a threshold of 3 the difference ranges over five values, not three."
+   },
+   {
+    "answer": 9,
+    "why": "Keeping $d = \\pm 3$ as counting states besides the two verdict states."
+   }
+  ],
+  "blocks": [
+   "min-states-from-words",
+   "distinguishing-strings"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q05",
+  "type": "NAT",
+  "marks": 1,
+  "text": "The Moore machine below has output 1 only in state $S_4$ (next states for $x = 0$ and $x = 1$): $S_0$: $S_1$, $S_0$; $S_1$: $S_1$, $S_2$; $S_2$: $S_1$, $S_3$; $S_3$: $S_4$, $S_0$; $S_4$: $S_1$, $S_2$. Partition refinement computes $P_0, P_1, P_2, \\dots$ What is the smallest $k$ for which $P_{k+1} = P_k$?",
+  "answer": 3,
+  "solution": [
+   "$P_0 = \\{S_0, S_1, S_2, S_3\\}, \\{S_4\\}$ (Moore: by the state output).",
+   "Only $S_3$ reaches $S_4$ (on 0): $P_1 = \\{S_0, S_1, S_2\\}, \\{S_3\\}, \\{S_4\\}$. Only $S_2$ reaches $S_3$ (on 1): $P_2 = \\{S_0, S_1\\}, \\{S_2\\}, \\{S_3\\}, \\{S_4\\}$.",
+   "$S_1$ reaches $S_2$ on 1 and $S_0$ does not: $P_3$ is all singletons, and $P_4 = P_3$. So $k = 3$, the maximum $n - b = 5 - 2$ allowed by the theorem: the machine (the overlapping 0110 Moore detector) is already minimal."
+  ],
+  "concept": "Each splitting round adds at least one block, so with n states and b blocks in P0 refinement stabilises by P_(n−b).",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "Quoting the general bound $n - 1 = 4$ instead of running the rounds."
+   },
+   {
+    "answer": 2,
+    "why": "Stopping one round early, before $S_0$ and $S_1$ are separated."
+   }
+  ],
+  "blocks": [
+   "refinement-correct",
+   "partition-refinement"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q06",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following statements about the implication table of a completely specified Mealy machine with $n$ states are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "In the first pass, a cell is crossed exactly when the two states' outputs differ for at least one input value."
+   },
+   {
+    "l": "B",
+    "t": "A cell whose only implied pair is the cell itself (for instance $B$–$C$ with $B \\to A, C$ and $C \\to A, B$ and equal output rows) is never crossed, so the two states are equivalent."
+   },
+   {
+    "l": "C",
+    "t": "A cell must be crossed whenever the two states have different next states for some input."
+   },
+   {
+    "l": "D",
+    "t": "The number of states of the minimal machine always equals $n$ minus the number of uncrossed cells."
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "solution": [
+   "A: true. Pass 0 compares output signatures, which for a Mealy machine is the whole output row.",
+   "B: true. A cell is crossed only through an implied pair that is already crossed; a cell that implies only itself can never be crossed, and the theorem says uncrossed cells are equivalent pairs (this is $B$–$C$ of GATE 1996).",
+   "C: false. Different next states are written into the cell as implied pairs; they cross it only if one of those pairs is crossed (GATE 1996: $B \\equiv C$ with different rows).",
+   "D: false. A class of three equivalent states has three uncrossed cells but saves only two states. In a 6-state machine where $C \\equiv E \\equiv F$ and nothing else merges there are 3 uncrossed cells, and the minimal machine has 4 states, not 3."
+  ],
+  "concept": "The implication table crosses output mismatches, then pairs implying crossed pairs; survivors are the equivalent pairs, which must then be grouped into classes.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "Counting merged states as one per uncrossed cell; that only works when every class has at most two states."
+   },
+   {
+    "answer": [
+     "A",
+     "C"
+    ],
+    "why": "Treating different next states as proof of difference; equivalence only needs next states in the same class."
+   }
+  ],
+  "blocks": [
+   "implication-table",
+   "implication-agrees",
+   "trap-same-next"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q07",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A Mealy machine has seven states (next state, output for $x = 0$; next state, output for $x = 1$): $A$: $F$/1, $A$/0; $B$: $D$/1, $G$/1; $C$: $B$/1, $E$/1; $D$: $C$/1, $E$/1; $E$: $D$/1, $E$/0; $F$: $G$/1, $B$/1; $G$: $C$/1, $G$/0. Every state is reachable from $A$. How many flip-flops does a binary-coded realisation of the minimal equivalent machine need?",
+  "answer": 2,
+  "solution": [
+   "$P_0$ by output rows: $\\{A, E, G\\}$ (10) and $\\{B, C, D, F\\}$ (11).",
+   "Round 1: $F \\to (G, B)$ goes to (first block, second block) while $B, C, D$ go to (second, first): $F$ splits. Round 2: $A \\to (F, A)$ now reaches $\\{F\\}$ while $E \\to (D, E)$ and $G \\to (C, G)$ reach $\\{B, C, D\\}$: $A$ splits. Round 3 splits nothing.",
+   "Classes $\\{A\\}, \\{B, C, D\\}, \\{E, G\\}, \\{F\\}$: 4 states, so $\\lceil \\log_2 4 \\rceil = 2$ flip-flops (7 states would need 3)."
+  ],
+  "concept": "Minimise first, then a k-state machine needs ceil(log2 k) flip-flops; a saving needs the count to cross a power of 2.",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "Coding the seven states without minimising."
+   },
+   {
+    "answer": 4,
+    "why": "Giving the number of states instead of the number of flip-flops."
+   }
+  ],
+  "blocks": [
+   "why-minimise",
+   "partition-refinement"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q08",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Two states $p$ and $q$ of a completely specified sequential machine are equivalent exactly when:",
+  "options": [
+   {
+    "l": "A",
+    "t": "for every input, $p$ and $q$ have the same next state"
+   },
+   {
+    "l": "B",
+    "t": "for every single input, $p$ and $q$ produce the same output"
+   },
+   {
+    "l": "C",
+    "t": "$p$ can be reached from $q$ and $q$ can be reached from $p$"
+   },
+   {
+    "l": "D",
+    "t": "for every input sequence, the machine produces the same output sequence starting in $p$ as starting in $q$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Equivalence is defined by behaviour: the same output sequence for every input sequence (option D).",
+   "Equal next states with equal outputs is sufficient but not necessary (GATE 1996: $B \\equiv C$ with different next states), so A is wrong.",
+   "Equal outputs for single inputs is only 0-equivalence, the first partition $P_0$; B is too weak. Mutual reachability says nothing about outputs (C)."
+  ],
+  "concept": "State equivalence means indistinguishable by every input sequence; equal rows and equal one-step outputs are not the definition.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Identical rows are one way to be equivalent, not the only way."
+   },
+   {
+    "answer": "B",
+    "why": "Agreement on one input step is 0-equivalence; later inputs can still separate the states."
+   }
+  ],
+  "blocks": [
+   "equivalent-states",
+   "k-equivalence"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q09",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A Mealy machine starts in state $A$ (next state, output for $x = 0$; next state, output for $x = 1$): $A$: $F$/0, $E$/1; $B$: $B$/0, $A$/1; $C$: $A$/0, $A$/0; $D$: $A$/0, $D$/1; $E$: $F$/0, $A$/1; $F$: $C$/0, $E$/1. How many states does the minimal machine with the same behaviour from $A$ have?",
+  "options": [
+   {
+    "l": "A",
+    "t": "3"
+   },
+   {
+    "l": "B",
+    "t": "4"
+   },
+   {
+    "l": "C",
+    "t": "5"
+   },
+   {
+    "l": "D",
+    "t": "6"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Search from $A$: $A \\to F, E$; $F \\to C, E$; $C \\to A$; $E \\to F, A$. The reachable states are $A, C, E, F$; $B$ and $D$ can never be entered, so their rows are dropped.",
+   "Refine the four reachable states: $P_0 = \\{A, E, F\\}$ (01), $\\{C\\}$ (00). $F \\to (C, E)$ reaches $\\{C\\}$, $A \\to (F, E)$ and $E \\to (F, A)$ do not: $P_1 = \\{A, E\\}, \\{C\\}, \\{F\\}$. The next round splits nothing.",
+   "So $A \\equiv E$ and the minimal machine has 3 states."
+  ],
+  "concept": "Drop the states unreachable from the start, then merge equivalent states.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Dropping $B$ and $D$ but not merging $A$ with $E$."
+   },
+   {
+    "answer": "C",
+    "why": "Minimising the whole table: the unreachable $B$ and $D$ stay as blocks of their own."
+   },
+   {
+    "answer": "D",
+    "why": "Counting the rows of the table without dropping or merging anything."
+   }
+  ],
+  "blocks": [
+   "unreachable",
+   "trap-unreachable"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q10",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A Mealy machine has the table below (next state, output for $x = 0$; next state, output for $x = 1$). What is the initial partition $P_0$ of partition refinement?\n\n| PS | $x = 0$ | $x = 1$ |\n|:--:|:--:|:--:|\n| A | B, 0 | C, 0 |\n| B | A, 0 | D, 1 |\n| C | D, 1 | A, 1 |\n| D | C, 1 | B, 0 |",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\{A, B\\}, \\{C, D\\}$"
+   },
+   {
+    "l": "B",
+    "t": "$\\{A, D\\}, \\{B, C\\}$"
+   },
+   {
+    "l": "C",
+    "t": "$\\{A\\}, \\{B\\}, \\{C\\}, \\{D\\}$"
+   },
+   {
+    "l": "D",
+    "t": "$\\{A\\}, \\{B, D\\}, \\{C\\}$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "For a Mealy machine $P_0$ groups states by the whole output row: $A$ 00, $B$ 01, $C$ 11, $D$ 10.",
+   "All four rows differ, so $P_0$ consists of four singletons and the machine is already minimal.",
+   "Grouping by one column is the Moore habit applied to a Mealy table: the $x = 0$ column gives option A, the $x = 1$ column option B."
+  ],
+  "concept": "P0 of a Mealy machine uses the whole output row; of a Moore machine, the state output.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Grouping by the output for $x = 0$ only."
+   },
+   {
+    "answer": "B",
+    "why": "Grouping by the output for $x = 1$ only."
+   },
+   {
+    "answer": "D",
+    "why": "Grouping by the number of 1s in the row: 01 and 10 are different rows."
+   }
+  ],
+  "blocks": [
+   "trap-moore-p0",
+   "partition-refinement"
+  ],
+  "source": "nexora"
+ }
+]

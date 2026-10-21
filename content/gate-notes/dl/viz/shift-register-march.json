@@ -1,0 +1,1312 @@
+{
+ "version": 1,
+ "title": "A 4-bit shift register receiving 1011",
+ "width": 680,
+ "height": 296,
+ "narrow": {
+  "width": 360,
+  "height": 288
+ },
+ "intro": "Four D flip-flops Q1 to Q4 share one clock; the serial input SI enters Q1 and Q4 is the serial output SO. Each step is one clock edge; the stage holding the word's first bit is highlighted.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "A 4-bit shift register: the word 1011 enters LSB first",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "4-bit shift register (SISO / SIPO)",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "f0",
+   "type": "box",
+   "x": 125.0,
+   "y": 74,
+   "w": 70,
+   "h": 56,
+   "narrow": {
+    "x": 32.0,
+    "w": 56
+   }
+  },
+  {
+   "id": "f0-l0",
+   "type": "text",
+   "x": 130.0,
+   "y": 94.0,
+   "text": "D",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 37.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f0-r0",
+   "type": "text",
+   "x": 190.0,
+   "y": 94.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 83.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f0-b0",
+   "type": "text",
+   "x": 160.0,
+   "y": 120,
+   "text": ">",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 60.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fn0",
+   "type": "text",
+   "x": 160.0,
+   "y": 62,
+   "text": "Q1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 60.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fv0",
+   "type": "text",
+   "x": 160.0,
+   "y": 94.0,
+   "text": "0",
+   "size": 18,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 60.0,
+    "size": 16
+   }
+  },
+  {
+   "id": "f1",
+   "type": "box",
+   "x": 245.0,
+   "y": 74,
+   "w": 70,
+   "h": 56,
+   "narrow": {
+    "x": 112.0,
+    "w": 56
+   }
+  },
+  {
+   "id": "f1-l0",
+   "type": "text",
+   "x": 250.0,
+   "y": 94.0,
+   "text": "D",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 117.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f1-r0",
+   "type": "text",
+   "x": 310.0,
+   "y": 94.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 163.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f1-b0",
+   "type": "text",
+   "x": 280.0,
+   "y": 120,
+   "text": ">",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 140.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fn1",
+   "type": "text",
+   "x": 280.0,
+   "y": 62,
+   "text": "Q2",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 140.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fv1",
+   "type": "text",
+   "x": 280.0,
+   "y": 94.0,
+   "text": "0",
+   "size": 18,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 140.0,
+    "size": 16
+   }
+  },
+  {
+   "id": "f2",
+   "type": "box",
+   "x": 365.0,
+   "y": 74,
+   "w": 70,
+   "h": 56,
+   "narrow": {
+    "x": 192.0,
+    "w": 56
+   }
+  },
+  {
+   "id": "f2-l0",
+   "type": "text",
+   "x": 370.0,
+   "y": 94.0,
+   "text": "D",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 197.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f2-r0",
+   "type": "text",
+   "x": 430.0,
+   "y": 94.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 243.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f2-b0",
+   "type": "text",
+   "x": 400.0,
+   "y": 120,
+   "text": ">",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 220.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fn2",
+   "type": "text",
+   "x": 400.0,
+   "y": 62,
+   "text": "Q3",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 220.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fv2",
+   "type": "text",
+   "x": 400.0,
+   "y": 94.0,
+   "text": "0",
+   "size": 18,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 220.0,
+    "size": 16
+   }
+  },
+  {
+   "id": "f3",
+   "type": "box",
+   "x": 485.0,
+   "y": 74,
+   "w": 70,
+   "h": 56,
+   "narrow": {
+    "x": 272.0,
+    "w": 56
+   }
+  },
+  {
+   "id": "f3-l0",
+   "type": "text",
+   "x": 490.0,
+   "y": 94.0,
+   "text": "D",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 277.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f3-r0",
+   "type": "text",
+   "x": 550.0,
+   "y": 94.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 323.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f3-b0",
+   "type": "text",
+   "x": 520.0,
+   "y": 120,
+   "text": ">",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 300.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fn3",
+   "type": "text",
+   "x": 520.0,
+   "y": 62,
+   "text": "Q4",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 300.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fv3",
+   "type": "text",
+   "x": 520.0,
+   "y": 94.0,
+   "text": "0",
+   "size": 18,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 300.0,
+    "size": 16
+   }
+  },
+  {
+   "id": "w0",
+   "type": "line",
+   "points": [
+    [
+     195.0,
+     94.0
+    ],
+    [
+     245.0,
+     94.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      88.0,
+      94.0
+     ],
+     [
+      112.0,
+      94.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "w1",
+   "type": "line",
+   "points": [
+    [
+     315.0,
+     94.0
+    ],
+    [
+     365.0,
+     94.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      168.0,
+      94.0
+     ],
+     [
+      192.0,
+      94.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "w2",
+   "type": "line",
+   "points": [
+    [
+     435.0,
+     94.0
+    ],
+    [
+     485.0,
+     94.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      248.0,
+      94.0
+     ],
+     [
+      272.0,
+      94.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "si",
+   "type": "line",
+   "points": [
+    [
+     101.0,
+     94.0
+    ],
+    [
+     125.0,
+     94.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      8.0,
+      94.0
+     ],
+     [
+      32.0,
+      94.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "so",
+   "type": "line",
+   "points": [
+    [
+     555.0,
+     94.0
+    ],
+    [
+     579.0,
+     94.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      328.0,
+      94.0
+     ],
+     [
+      352.0,
+      94.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "sil",
+   "type": "text",
+   "x": 113.0,
+   "y": 62,
+   "text": "SI",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 20.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "sol",
+   "type": "text",
+   "x": 567.0,
+   "y": 62,
+   "text": "SO",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 340.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "cbus",
+   "type": "line",
+   "points": [
+    [
+     101.0,
+     146
+    ],
+    [
+     520.0,
+     146
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      8.0,
+      146
+     ],
+     [
+      300.0,
+      146
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cdrop0",
+   "type": "line",
+   "points": [
+    [
+     160.0,
+     146
+    ],
+    [
+     160.0,
+     130
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      60.0,
+      146
+     ],
+     [
+      60.0,
+      130
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cdrop1",
+   "type": "line",
+   "points": [
+    [
+     280.0,
+     146
+    ],
+    [
+     280.0,
+     130
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      140.0,
+      146
+     ],
+     [
+      140.0,
+      130
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cdrop2",
+   "type": "line",
+   "points": [
+    [
+     400.0,
+     146
+    ],
+    [
+     400.0,
+     130
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      220.0,
+      146
+     ],
+     [
+      220.0,
+      130
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cdrop3",
+   "type": "line",
+   "points": [
+    [
+     520.0,
+     146
+    ],
+    [
+     520.0,
+     130
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      300.0,
+      146
+     ],
+     [
+      300.0,
+      130
+     ]
+    ]
+   }
+  },
+  {
+   "id": "clbl",
+   "type": "text",
+   "x": 101.0,
+   "y": 160,
+   "text": "CLK (common)",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 8.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "t1",
+   "type": "text",
+   "x": 340.0,
+   "y": 194,
+   "text": "serial in, next bit first: 1 1 0 1",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 192,
+    "size": 12
+   }
+  },
+  {
+   "id": "t2",
+   "type": "text",
+   "x": 340.0,
+   "y": 220,
+   "text": "parallel out Q1Q2Q3Q4 = 0000",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 216,
+    "size": 12
+   }
+  },
+  {
+   "id": "t3",
+   "type": "text",
+   "x": 340.0,
+   "y": 246,
+   "text": "seen at SO: (nothing yet)",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 240,
+    "size": 12
+   }
+  },
+  {
+   "id": "t4",
+   "type": "text",
+   "x": 340.0,
+   "y": 272,
+   "text": "clock 0",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "y": 264,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A cleared 4-bit shift register on one clock. The word 1011 will be sent LSB first, so the bits enter in the time order 1, 1, 0, 1.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 1: the first bit, 1, enters Q1; the zeros move one place right and a 0 leaves at SO. Register 1000.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "text": "serial in, next bit first: 1 0 1"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "text": "parallel out Q1Q2Q3Q4 = 1000",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "seen at SO: (nothing yet)",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t4",
+     "set": {
+      "text": "clock 1"
+     }
+    },
+    {
+     "id": "so",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 2: 1 enters Q1, every bit moves one stage right and 0 drops out of Q4. Register 1100.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "text": "serial in, next bit first: 0 1"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "text": "parallel out Q1Q2Q3Q4 = 1100",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "seen at SO: (nothing yet)",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t4",
+     "set": {
+      "text": "clock 2"
+     }
+    },
+    {
+     "id": "so",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 3: 0 enters Q1, every bit moves one stage right and 0 drops out of Q4. Register 0110.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "fv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "text": "serial in, next bit first: 1"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "text": "parallel out Q1Q2Q3Q4 = 0110",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "seen at SO: (nothing yet)",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t4",
+     "set": {
+      "text": "clock 3"
+     }
+    },
+    {
+     "id": "so",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 4: the parallel outputs read the whole word 1011, and its first bit is already at the serial output Q4.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv3",
+     "set": {
+      "text": "1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "text": "serial in, next bit first: zeros"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "text": "parallel out Q1Q2Q3Q4 = 1011",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "seen at SO: 1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t4",
+     "set": {
+      "text": "clock 4"
+     }
+    },
+    {
+     "id": "so",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 5: 0 enters Q1, every bit moves one stage right and 1 drops out of Q4. Register 0101.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "text": "serial in, next bit first: zeros"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "text": "parallel out Q1Q2Q3Q4 = 0101",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "seen at SO: 1 1",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t4",
+     "set": {
+      "text": "clock 5"
+     }
+    },
+    {
+     "id": "so",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 6: 0 enters Q1, every bit moves one stage right and 1 drops out of Q4. Register 0010.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "text": "serial in, next bit first: zeros"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "text": "parallel out Q1Q2Q3Q4 = 0010",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "seen at SO: 1 1 0",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t4",
+     "set": {
+      "text": "clock 6"
+     }
+    },
+    {
+     "id": "so",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 7: the last bit of the word reaches Q4. All four bits have now been seen at SO: 2n − 1 = 7 clocks.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "text": "serial in, next bit first: zeros"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "text": "parallel out Q1Q2Q3Q4 = 0001",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "seen at SO: 1 1 0 1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t4",
+     "set": {
+      "text": "clock 7"
+     }
+    },
+    {
+     "id": "so",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 8: the last bit is shifted out. No bit of the word is left in the register: 2n = 8 clocks.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "text": "serial in, next bit first: zeros"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "text": "parallel out Q1Q2Q3Q4 = 0000",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "seen at SO: 1 1 0 1",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t4",
+     "set": {
+      "text": "clock 8"
+     }
+    },
+    {
+     "id": "so",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Load: 4 clocks. First bit at SO: clock 4. Last bit at SO: clock 7. Word gone: clock 8. Every bit is delayed by n = 4 clocks.",
+   "patches": [
+    {
+     "id": "t4",
+     "set": {
+      "text": "load 4 · first out 4 · last out 7 · empty 8",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "so",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  }
+ ]
+}

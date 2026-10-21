@@ -3200,73 +3200,30 @@
       "verification": "Sanity bound: with $k > m$ some collisions are forced even for a perfect random function (pigeonhole), and universal hashing matches that random-function behaviour, $\\mathbb{E}[\\text{chain}] \\le 1 + \\frac{k-1}{m}$."
     },
     "cse-2023-cs-11": {
-      "approach": "Write the MUX equation $Q = \\bar S\\, I_0 + S\\, I_1$ and substitute the feedback $I_0 = Q$: $Q^+ = \\bar S\\,Q + S\\,D$. That is \"follow $D$ while $S = 1$, hold while $S = 0$\" — a level-sensitive D latch with enable $S$.",
+      "approach": "Concept tested: **a multiplexer with feedback is a D latch**. Substitute the feedback into the MUX equation and read the behaviour for each select value: transparent while selected, holding otherwise, i.e. level-sensitive.",
       "concepts": [
-        "2:1 multiplexer",
-        "Feedback / storage",
-        "D latch vs D flip-flop"
+        "Multiplexer",
+        "D latch",
+        "Latch vs flip-flop",
+        "Feedback"
       ],
-      "given": "2-input MUX: data input 0 is driven by its own output $Q$; data input 1 (call it $D$) and select $S$ are external.",
+      "given": "A 2-input MUX with output $Q$ wired back to data input 0; data input 1 and select $S$ are external.",
       "steps": [
         {
-          "title": "MUX equation with feedback",
-          "body": "A 2:1 MUX outputs $Q = \\bar S\\, I_0 + S\\, I_1$. Here $I_0 = Q$ (fed back) and $I_1 = D$, so the next output is\n\n$$Q^+ = \\bar S\\, Q + S\\, D.$$",
-          "scene": {
-            "reveal": 0
-          }
+          "title": "Loop function",
+          "body": "$Q^+ = \\overline{S}\\cdot Q + S \\cdot I_1$."
         },
         {
-          "title": "$S = 1$: the output follows $D$",
-          "body": "$Q^+ = 0 \\cdot Q + 1 \\cdot D = D$. While $S$ stays 1, every change of $D$ passes straight to $Q$ — the circuit is **transparent**.",
-          "scene": {
-            "reveal": 30,
-            "hl": [
-              {
-                "r": 4,
-                "tone": "accent"
-              },
-              {
-                "r": 5,
-                "tone": "accent"
-              }
-            ]
-          }
-        },
-        {
-          "title": "$S = 0$: the output holds",
-          "body": "$Q^+ = 1 \\cdot Q + 0 \\cdot D = Q$. Input 0 just recirculates the present value, so $Q$ keeps its last value whatever $D$ does — the circuit **stores** one bit.",
-          "scene": {
-            "reveal": 30,
-            "hl": [
-              {
-                "r": 0,
-                "tone": "info"
-              },
-              {
-                "r": 1,
-                "tone": "info"
-              },
-              {
-                "r": 2,
-                "tone": "info"
-              },
-              {
-                "r": 3,
-                "tone": "info"
-              }
-            ]
-          }
+          "title": "Behaviour for each S",
+          "body": "$S = 1$: $Q^+ = I_1$, the output follows the data input. $S = 0$: $Q^+ = Q$, both values stable, the output holds."
         },
         {
           "title": "Latch, not flip-flop",
-          "body": "Transparent on a **level** ($S = 1$) and holding on the other level is the definition of a **D latch** with enable $S$ ($Q^+ = \\bar E Q + E D$). A D flip-flop samples $D$ only at a clock **edge**; that needs two such latches in master–slave form, so one MUX with feedback is a latch. It has a memory, so it is not a combinational half-adder or demultiplexer.",
-          "scene": {
-            "hl": []
-          }
+          "body": "During the **whole** interval $S = 1$, any change of $I_1$ passes to $Q$: the circuit is level-sensitive (transparent). That is a D latch with $D = I_1$ and enable $S$; a flip-flop would change only at an edge."
         }
       ],
       "answer": {
-        "value": "**D latch** (enable $= S$, data $=$ input 1) — option **(B)**",
+        "value": "(B) D Latch",
         "choice": [
           "B"
         ],
@@ -3276,87 +3233,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "A flip-flop is edge-triggered; this circuit passes $D$ for the **whole** time $S = 1$ (level-sensitive). Two of these latches in series (master–slave) would make a D flip-flop."
+          "reason": "A flip-flop samples only at a clock edge; this circuit is transparent for as long as $S = 1$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$Q^+ = \\bar S Q + S D$ is exactly the characteristic equation of a gated D latch with enable $S$."
+          "reason": "$Q^+ = S\\,D + \\overline{S}\\,Q$ is the D-latch equation."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "A half-adder is combinational with two outputs (sum $= A \\oplus B$, carry $= AB$); this circuit has one output and memory."
+          "reason": "A half adder is combinational (no feedback, two outputs S and C)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "A demultiplexer routes one input to one of several outputs; here there is a single output fed back as an input."
+          "reason": "A demultiplexer routes one input to one of several outputs; it has no memory."
         }
       ],
-      "shortcut": "MUX + output fed back to the \"0\" input = \"hold when select is 0, load when select is 1\" = gated D latch.",
+      "shortcut": "A circuit with feedback that copies its input while a control is active and holds otherwise is a latch; edge behaviour needs two latches.",
       "pitfalls": [
-        "Calling it a D flip-flop — nothing here detects a clock edge.",
-        "Treating it as combinational because a MUX is combinational; the feedback loop creates state."
+        "Choosing \"D flip-flop\" because the circuit stores a bit: storing a bit is common to both; the edge is what makes a flip-flop."
       ],
-      "verification": "Truth table of $Q^+ = \\bar S Q + S D$ (rows of the frame): $S = 0$ rows copy $Q$, $S = 1$ rows copy $D$ — identical to the gated D latch table.",
-      "animation": {
-        "kind": "table",
-        "title": "Characteristic table: Q⁺ = S̄·Q + S·D",
-        "cols": [
-          "S",
-          "D (input 1)",
-          "Q",
-          "Q⁺",
-          "behaviour"
-        ],
-        "rows": [
-          [
-            "0",
-            "0",
-            "0",
-            "0",
-            "hold"
-          ],
-          [
-            "0",
-            "0",
-            "1",
-            "1",
-            "hold"
-          ],
-          [
-            "0",
-            "1",
-            "0",
-            "0",
-            "hold"
-          ],
-          [
-            "0",
-            "1",
-            "1",
-            "1",
-            "hold"
-          ],
-          [
-            "1",
-            "0",
-            "x",
-            "0",
-            "Q = D"
-          ],
-          [
-            "1",
-            "1",
-            "x",
-            "1",
-            "Q = D"
-          ]
-        ],
-        "reveal": 0,
-        "mono": true
-      }
+      "verification": "The netlist's fixed points are $\\{D\\}$ for $S = 1$ and $\\{0, 1\\}$ for $S = 0$; a delay simulation shows $Q$ following every change of $D$ while $S = 1$."
     },
     "cse-2023-cs-12": {
       "approach": "Split the CPU state into what each thread owns and what the whole process shares. Threads of one process share the address space (so the page table and its base register stay put) but each has its own execution context: PC, stack pointer and registers.",
@@ -6132,77 +6031,33 @@
       }
     },
     "cse-2023-cs-33": {
-      "approach": "Read each flip-flop's input from the figure, write next-state equations, and step from $(0,1,1)$ until a state repeats. The states on that cycle are the only ones that can ever appear.",
+      "approach": "Concept tested: **reachability from a given start**. 'Can never be obtained' means 'not in the reachable set of 011'. Trace from 011 until it repeats and see which option is missing.",
       "concepts": [
-        "T flip-flop: $Q^+ = Q \\oplus T$",
-        "D flip-flop: $Q^+ = D$",
-        "Synchronous state sequence"
+        "Reachability",
+        "T flip-flop",
+        "D flip-flop",
+        "Self-loop"
       ],
-      "given": "All three flip-flops share CLKIN. Inputs: $T_1 = \\overline{Q_3}$, $D_2 = Q_1$, $T_3 = Q_2$. Start $(Q_1, Q_2, Q_3) = (0, 1, 1)$.",
+      "given": "T flip-flop $Q_1$ with $T = \\overline{Q_3}$; D flip-flop $Q_2$ with $D = Q_1$; T flip-flop $Q_3$ with $T = Q_2$; initially $(Q_1, Q_2, Q_3) = (0, 1, 1)$.",
       "steps": [
         {
-          "title": "Next-state equations",
-          "body": "$$Q_1^+ = Q_1 \\oplus \\overline{Q_3}, \\qquad Q_2^+ = Q_1, \\qquad Q_3^+ = Q_3 \\oplus Q_2$$\n\nAll flip-flops are clocked together, so every right-hand side uses the values **before** the clock edge.",
+          "title": "State equations",
+          "body": "$Q_1^+ = Q_1 \\oplus \\overline{Q_3}$, $Q_2^+ = Q_1$, $Q_3^+ = Q_3 \\oplus Q_2$."
+        },
+        {
+          "title": "Trace from 011",
+          "body": "011 → 000 → 100 → 010 → 101 → 111 → 110 → 011.",
           "scene": {
-            "reveal": 6,
-            "hl": [
-              {
-                "r": 0,
-                "tone": "accent"
-              }
-            ]
+            "reveal": 7
           }
         },
         {
-          "title": "Clocks 1 to 3",
-          "body": "- $(0,1,1)$: $Q_1^+ = 0 \\oplus \\overline{1} = 0 \\oplus 0 = 0$, $Q_2^+ = 0$, $Q_3^+ = 1 \\oplus 1 = 0$ → $(0,0,0)$\n- $(0,0,0)$: $Q_1^+ = 0 \\oplus 1 = 1$, $Q_2^+ = 0$, $Q_3^+ = 0 \\oplus 0 = 0$ → $(1,0,0)$\n- $(1,0,0)$: $Q_1^+ = 1 \\oplus 1 = 0$, $Q_2^+ = 1$, $Q_3^+ = 0 \\oplus 0 = 0$ → $(0,1,0)$",
-          "scene": {
-            "reveal": 24,
-            "hl": [
-              {
-                "r": 3,
-                "tone": "accent"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Clocks 4 to 7: back to the start",
-          "body": "- $(0,1,0)$: $Q_1^+ = 0 \\oplus 1 = 1$, $Q_2^+ = 0$, $Q_3^+ = 0 \\oplus 1 = 1$ → $(1,0,1)$\n- $(1,0,1)$: $Q_1^+ = 1 \\oplus 0 = 1$, $Q_2^+ = 1$, $Q_3^+ = 1 \\oplus 0 = 1$ → $(1,1,1)$\n- $(1,1,1)$: $Q_1^+ = 1 \\oplus 0 = 1$, $Q_2^+ = 1$, $Q_3^+ = 1 \\oplus 1 = 0$ → $(1,1,0)$\n- $(1,1,0)$: $Q_1^+ = 1 \\oplus 1 = 0$, $Q_2^+ = 1$, $Q_3^+ = 0 \\oplus 1 = 1$ → $(0,1,1)$, the start.\n\nThe circuit cycles through 7 states.",
-          "scene": {
-            "reveal": 48,
-            "hl": [
-              {
-                "r": 7,
-                "tone": "accent"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Find the state that never appears",
-          "body": "Visited: $011, 000, 100, 010, 101, 111, 110$: seven of the eight 3-bit values. The missing one is $(0, 0, 1)$.\n\nOptions B $(1,0,0)$, C $(1,0,1)$ and D $(1,1,1)$ occur after clocks 2, 4 and 5. **Option (A)** can never be obtained.",
-          "scene": {
-            "hl": [
-              {
-                "r": 2,
-                "tone": "info"
-              },
-              {
-                "r": 4,
-                "tone": "info"
-              },
-              {
-                "r": 5,
-                "tone": "info"
-              }
-            ],
-            "caption": "$(0,0,1)$ is the only value missing from the cycle."
-          }
+          "title": "Reachable set",
+          "body": "Seven states appear; 001 does not. Its own row is $001 \\to 001$ ($Q_1^+ = 0 \\oplus 0$, $Q_2^+ = 0$, $Q_3^+ = 1 \\oplus 0$): a self-loop that no other state enters."
         }
       ],
       "answer": {
-        "value": "$(Q_1, Q_2, Q_3) = (0, 0, 1)$ never occurs — option (A)",
+        "value": "(A) (0, 0, 1)",
         "choice": [
           "A"
         ],
@@ -6212,119 +6067,74 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "$001$ is not on the 7-state cycle starting at $011$; it is a separate fixed point ($001 \\to 001$)."
+          "reason": "001 is a self-loop off the 7-state cycle through 011."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$(1,0,0)$ is reached after the 2nd clock."
+          "reason": "(1, 0, 0) appears at clock 2."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$(1,0,1)$ is reached after the 4th clock."
+          "reason": "(1, 0, 1) appears at clock 4."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$(1,1,1)$ is reached after the 5th clock."
+          "reason": "(1, 1, 1) appears at clock 5."
         }
       ],
-      "shortcut": "Apply the equations to $001$: $Q_1^+ = 0 \\oplus 0 = 0$, $Q_2^+ = 0$, $Q_3^+ = 1 \\oplus 0 = 1$, so $001 \\to 001$. Its only predecessor is itself, so starting from $011$ the circuit can never enter it.",
+      "shortcut": "Look for a self-loop first: a state that maps to itself can only be seen if the circuit starts there.",
       "pitfalls": [
-        "Missing the inverter: $T_1 = \\overline{Q_3}$, not $Q_3$.",
-        "Updating the flip-flops one after another (using the new $Q_1$ to compute $Q_2^+$); they are clocked together.",
-        "Treating the D flip-flop like a T flip-flop: $Q_2^+ = Q_1$, not $Q_2 \\oplus Q_1$."
+        "Starting the trace from 000 instead of the given 011.",
+        "Treating the T stages as D stages."
       ],
-      "verification": "The 8 states split into the 7-cycle $011 \\to 000 \\to 100 \\to 010 \\to 101 \\to 111 \\to 110 \\to 011$ plus the self-loop $001$. Each of the 8 states has exactly one successor, which accounts for all of them.",
+      "verification": "A search of the simulated state graph from 011 reaches every state except 001.",
       "animation": {
         "kind": "table",
-        "title": "State after each clock",
+        "title": "Trace from 011",
         "cols": [
-          "Q1",
-          "Q2",
-          "Q3",
-          "T1 = ¬Q3",
-          "D2 = Q1",
-          "T3 = Q2"
-        ],
-        "rowLabels": [
-          "start",
-          "clk 1",
-          "clk 2",
-          "clk 3",
-          "clk 4",
-          "clk 5",
-          "clk 6",
-          "clk 7"
+          "Q1Q2Q3"
         ],
         "rows": [
           [
-            0,
-            1,
-            1,
-            0,
-            0,
-            1
+            "011"
           ],
           [
-            0,
-            0,
-            0,
-            1,
-            0,
-            0
+            "000"
           ],
           [
-            1,
-            0,
-            0,
-            1,
-            1,
-            0
+            "100"
           ],
           [
-            0,
-            1,
-            0,
-            1,
-            0,
-            1
+            "010"
           ],
           [
-            1,
-            0,
-            1,
-            0,
-            1,
-            0
+            "101"
           ],
           [
-            1,
-            1,
-            1,
-            0,
-            1,
-            1
+            "111"
           ],
           [
-            1,
-            1,
-            0,
-            1,
-            1,
-            1
+            "110"
           ],
           [
-            0,
-            1,
-            1,
-            0,
-            0,
-            1
+            "011"
           ]
         ],
-        "mono": true
+        "mono": true,
+        "rowLabels": [
+          "start",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ],
+        "reveal": 0
       }
     },
     "cse-2023-cs-34": {

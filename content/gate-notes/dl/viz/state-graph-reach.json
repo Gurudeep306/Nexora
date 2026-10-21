@@ -1,0 +1,1583 @@
+{
+ "version": 1,
+ "title": "Reachability in the GATE 1996 circuit from S4",
+ "width": 680,
+ "height": 368,
+ "narrow": {
+  "width": 360,
+  "height": 594
+ },
+ "intro": "Three D flip-flops with D1 = Q2 ⊕ Q3, D2 = Q1, D3 = Q2; state Sk is Q1Q2Q3 = k in binary. Starting at S4, each step lights the state reached by one more clock.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "Which states can the 1996 circuit reach from S4?",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Reachable states from S4",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "gnS1",
+   "type": "circle",
+   "cx": 205.0,
+   "cy": 75.0,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "S1",
+   "size": 14,
+   "narrow": {
+    "cx": 180.0,
+    "cy": 74.0,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gnS4",
+   "type": "circle",
+   "cx": 314.46,
+   "cy": 127.71,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "S4",
+   "size": 14,
+   "narrow": {
+    "cx": 272.26,
+    "cy": 118.43,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gnS2",
+   "type": "circle",
+   "cx": 341.49,
+   "cy": 246.15,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "S2",
+   "size": 14,
+   "narrow": {
+    "cx": 295.04,
+    "cy": 218.26,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gnS5",
+   "type": "circle",
+   "cx": 265.74,
+   "cy": 341.14,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "S5",
+   "size": 14,
+   "narrow": {
+    "cx": 231.2,
+    "cy": 298.31,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gnS6",
+   "type": "circle",
+   "cx": 144.26,
+   "cy": 341.14,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "S6",
+   "size": 14,
+   "narrow": {
+    "cx": 128.8,
+    "cy": 298.31,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gnS7",
+   "type": "circle",
+   "cx": 68.51,
+   "cy": 246.15,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "S7",
+   "size": 14,
+   "narrow": {
+    "cx": 64.96,
+    "cy": 218.26,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gnS3",
+   "type": "circle",
+   "cx": 95.54,
+   "cy": 127.71,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "S3",
+   "size": 14,
+   "narrow": {
+    "cx": 87.74,
+    "cy": 118.43,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "gnS0",
+   "type": "circle",
+   "cx": 205,
+   "cy": 233,
+   "r": 24,
+   "mono": true,
+   "tone": "ink",
+   "label": "S0",
+   "size": 14,
+   "narrow": {
+    "cx": 180,
+    "cy": 208,
+    "r": 20,
+    "size": 12
+   }
+  },
+  {
+   "id": "ge0",
+   "type": "line",
+   "points": [
+    [
+     226.62,
+     85.41
+    ],
+    [
+     291.94,
+     116.86
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      198.02,
+      82.68
+     ],
+     [
+      253.34,
+      109.32
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge0h",
+   "type": "line",
+   "points": [
+    [
+     281.68,
+     117.42
+    ],
+    [
+     291.94,
+     116.86
+    ],
+    [
+     285.97,
+     108.5
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      243.08,
+      109.87
+     ],
+     [
+      253.34,
+      109.32
+     ],
+     [
+      247.38,
+      100.95
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge1",
+   "type": "line",
+   "points": [
+    [
+     319.8,
+     151.11
+    ],
+    [
+     335.93,
+     221.78
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      276.71,
+      137.93
+     ],
+     [
+      290.37,
+      197.79
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge1h",
+   "type": "line",
+   "points": [
+    [
+     329.1,
+     214.1
+    ],
+    [
+     335.93,
+     221.78
+    ],
+    [
+     338.75,
+     211.9
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      283.54,
+      190.11
+     ],
+     [
+      290.37,
+      197.79
+     ],
+     [
+      293.19,
+      187.91
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge2",
+   "type": "line",
+   "points": [
+    [
+     326.53,
+     264.91
+    ],
+    [
+     281.33,
+     321.59
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      282.57,
+      233.9
+     ],
+     [
+      244.29,
+      281.89
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge2h",
+   "type": "line",
+   "points": [
+    [
+     283.07,
+     311.47
+    ],
+    [
+     281.33,
+     321.59
+    ],
+    [
+     290.81,
+     317.64
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      246.04,
+      271.77
+     ],
+     [
+      244.29,
+      281.89
+     ],
+     [
+      253.78,
+      277.94
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge3",
+   "type": "line",
+   "points": [
+    [
+     241.74,
+     341.14
+    ],
+    [
+     169.26,
+     341.14
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      211.2,
+      298.31
+     ],
+     [
+      149.8,
+      298.31
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge3h",
+   "type": "line",
+   "points": [
+    [
+     178.26,
+     336.19
+    ],
+    [
+     169.26,
+     341.14
+    ],
+    [
+     178.26,
+     346.09
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      158.8,
+      293.36
+     ],
+     [
+      149.8,
+      298.31
+     ],
+     [
+      158.8,
+      303.26
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge4",
+   "type": "line",
+   "points": [
+    [
+     129.3,
+     322.38
+    ],
+    [
+     84.1,
+     265.7
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      116.33,
+      282.67
+     ],
+     [
+      78.05,
+      234.68
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge4h",
+   "type": "line",
+   "points": [
+    [
+     93.58,
+     269.65
+    ],
+    [
+     84.1,
+     265.7
+    ],
+    [
+     85.84,
+     275.82
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      87.54,
+      238.63
+     ],
+     [
+      78.05,
+      234.68
+     ],
+     [
+      79.8,
+      244.8
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge5",
+   "type": "line",
+   "points": [
+    [
+     73.85,
+     222.75
+    ],
+    [
+     89.98,
+     152.08
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      69.41,
+      198.76
+     ],
+     [
+      83.07,
+      138.9
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge5h",
+   "type": "line",
+   "points": [
+    [
+     92.8,
+     161.96
+    ],
+    [
+     89.98,
+     152.08
+    ],
+    [
+     83.15,
+     159.76
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      85.89,
+      148.78
+     ],
+     [
+      83.07,
+      138.9
+     ],
+     [
+      76.24,
+      146.58
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge6",
+   "type": "line",
+   "points": [
+    [
+     117.16,
+     117.3
+    ],
+    [
+     182.48,
+     85.85
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      105.76,
+      109.75
+     ],
+     [
+      161.08,
+      83.11
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge6h",
+   "type": "line",
+   "points": [
+    [
+     176.51,
+     94.21
+    ],
+    [
+     182.48,
+     85.85
+    ],
+    [
+     172.22,
+     85.29
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      155.12,
+      91.48
+     ],
+     [
+      161.08,
+      83.11
+     ],
+     [
+      150.82,
+      82.56
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge7",
+   "type": "line",
+   "points": [
+    [
+     192.13,
+     210.56
+    ],
+    [
+     189.36,
+     205.9
+    ],
+    [
+     188.22,
+     200.6
+    ],
+    [
+     188.83,
+     195.21
+    ],
+    [
+     191.12,
+     190.3
+    ],
+    [
+     194.86,
+     186.37
+    ],
+    [
+     199.65,
+     183.83
+    ],
+    [
+     205.0,
+     182.96
+    ],
+    [
+     210.35,
+     183.83
+    ],
+    [
+     215.14,
+     186.37
+    ],
+    [
+     218.88,
+     190.3
+    ],
+    [
+     221.17,
+     195.21
+    ],
+    [
+     221.78,
+     200.6
+    ],
+    [
+     220.64,
+     205.9
+    ],
+    [
+     217.87,
+     210.56
+    ],
+    [
+     216.94,
+     212.18
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      169.28,
+      189.3
+     ],
+     [
+      166.97,
+      185.41
+     ],
+     [
+      166.02,
+      181.0
+     ],
+     [
+      166.52,
+      176.51
+     ],
+     [
+      168.43,
+      172.41
+     ],
+     [
+      171.55,
+      169.14
+     ],
+     [
+      175.54,
+      167.03
+     ],
+     [
+      180.0,
+      166.3
+     ],
+     [
+      184.46,
+      167.03
+     ],
+     [
+      188.45,
+      169.14
+     ],
+     [
+      191.57,
+      172.41
+     ],
+     [
+      193.48,
+      176.51
+     ],
+     [
+      193.98,
+      181.0
+     ],
+     [
+      193.03,
+      185.41
+     ],
+     [
+      190.72,
+      189.3
+     ],
+     [
+      189.95,
+      190.65
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ge7h",
+   "type": "line",
+   "points": [
+    [
+     217.12,
+     201.91
+    ],
+    [
+     216.94,
+     212.18
+    ],
+    [
+     225.71,
+     206.84
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      190.13,
+      180.38
+     ],
+     [
+      189.95,
+      190.65
+     ],
+     [
+      198.72,
+      185.3
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 410,
+   "y": 70,
+   "cellW": 80,
+   "cellH": 26,
+   "rows": [
+    [
+     "state",
+     "Q1Q2Q3",
+     "next"
+    ],
+    [
+     "S0",
+     "000",
+     "S0"
+    ],
+    [
+     "S1",
+     "001",
+     "S4"
+    ],
+    [
+     "S2",
+     "010",
+     "S5"
+    ],
+    [
+     "S3",
+     "011",
+     "S1"
+    ],
+    [
+     "S4",
+     "100",
+     "S2"
+    ],
+    [
+     "S5",
+     "101",
+     "S6"
+    ],
+    [
+     "S6",
+     "110",
+     "S7"
+    ],
+    [
+     "S7",
+     "111",
+     "S3"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 66.0,
+    "y": 340,
+    "cellW": 76,
+    "cellH": 22
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 410,
+   "y": 328,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 558,
+    "size": 12,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "st2",
+   "type": "text",
+   "x": 410,
+   "y": 350,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 578,
+    "size": 12,
+    "anchor": "middle"
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The table (Q1⁺ = Q2 ⊕ Q3, Q2⁺ = Q1, Q3⁺ = Q2) drawn as a graph: S0 → S0 is a self-loop; the other seven arcs make one cycle.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "the whole graph",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Start at S4 = 100: it is reached after 0 clocks.",
+   "patches": [
+    {
+     "id": "gnS4",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "reached: 1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "S4"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 1: S4 → S2 (100 → 010). Reached so far: 2 states.",
+   "patches": [
+    {
+     "id": "gnS2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge1h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "reached: 2",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "S4 S2"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 2: S2 → S5 (010 → 101). Reached so far: 3 states.",
+   "patches": [
+    {
+     "id": "gnS5",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge2h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        6,
+        0
+       ],
+       [
+        6,
+        1
+       ],
+       [
+        6,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "reached: 3",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "S4 S2 S5"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 3: S5 → S6 (101 → 110). Reached so far: 4 states.",
+   "patches": [
+    {
+     "id": "gnS6",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge3h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        6,
+        0
+       ],
+       [
+        6,
+        1
+       ],
+       [
+        6,
+        2
+       ],
+       [
+        7,
+        0
+       ],
+       [
+        7,
+        1
+       ],
+       [
+        7,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "reached: 4",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "S4 S2 S5 S6"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 4: S6 → S7 (110 → 111). Reached so far: 5 states.",
+   "patches": [
+    {
+     "id": "gnS7",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge4",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge4h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        6,
+        0
+       ],
+       [
+        6,
+        1
+       ],
+       [
+        6,
+        2
+       ],
+       [
+        7,
+        0
+       ],
+       [
+        7,
+        1
+       ],
+       [
+        7,
+        2
+       ],
+       [
+        8,
+        0
+       ],
+       [
+        8,
+        1
+       ],
+       [
+        8,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "reached: 5",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "S4 S2 S5 S6 S7"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 5: S7 → S3 (111 → 011). Reached so far: 6 states.",
+   "patches": [
+    {
+     "id": "gnS3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge5",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge5h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        6,
+        0
+       ],
+       [
+        6,
+        1
+       ],
+       [
+        6,
+        2
+       ],
+       [
+        7,
+        0
+       ],
+       [
+        7,
+        1
+       ],
+       [
+        7,
+        2
+       ],
+       [
+        8,
+        0
+       ],
+       [
+        8,
+        1
+       ],
+       [
+        8,
+        2
+       ],
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "reached: 6",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "S4 S2 S5 S6 S7 S3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 6: S3 → S1 (011 → 001). Reached so far: 7 states.",
+   "patches": [
+    {
+     "id": "gnS1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge6",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge6h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        6,
+        0
+       ],
+       [
+        6,
+        1
+       ],
+       [
+        6,
+        2
+       ],
+       [
+        7,
+        0
+       ],
+       [
+        7,
+        1
+       ],
+       [
+        7,
+        2
+       ],
+       [
+        8,
+        0
+       ],
+       [
+        8,
+        1
+       ],
+       [
+        8,
+        2
+       ],
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "reached: 7",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "S4 S2 S5 S6 S7 S3 S1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 7: S1 → S4, back to the start. The trace has repeated, so nothing new can ever appear.",
+   "patches": [
+    {
+     "id": "ge0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ge0h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "cycle of 7: closed",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S0 never lit: its only arc is its own self-loop, so no other state leads into it. Unreachable from S4: {S0}.",
+   "patches": [
+    {
+     "id": "gnS0",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "ge7",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "ge7h",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "unreachable: {S0}",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

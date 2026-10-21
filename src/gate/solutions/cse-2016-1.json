@@ -745,19 +745,25 @@
       "verification": "$+11 = 0000\\,0000\\,0000\\,1011$; invert $\\to 1111\\,1111\\,1111\\,0100$; add 1 $\\to 1111\\,1111\\,1111\\,0101$ ✓."
     },
     "cse-2016-1-cs-8": {
-      "approach": "The output 0 occurs three times with three different successors (1, 2, 3), so the counter needs 6 distinct internal states.",
+      "approach": "Concept tested: **states versus outputs**. The value 0 appears three times with three different successors (1, 2, 3), so each occurrence is its own state; count the positions of the minimal period.",
       "concepts": [
-        "Synchronous counter design",
-        "State count"
+        "Counter states",
+        "Minimal period",
+        "Flip-flop count"
       ],
+      "given": "A synchronous counter for 0-1-0-2-0-3, repeating, with J-K flip-flops; minimum number of flip-flops.",
       "steps": [
         {
-          "title": "Count states",
-          "body": "Sequence 0 → 1 → 0 → 2 → 0 → 3 → (repeat). Each 0 must \"remember\" what comes next, so all 6 positions are distinct states."
+          "title": "Why values are not enough",
+          "body": "With only the values as states, state 0 would have to go to 1, to 2 and to 3; a next-state function gives one successor per state."
+        },
+        {
+          "title": "Count the positions",
+          "body": "The minimal period is 6 (0, 1, 0, 2, 0, 3), so 6 states."
         },
         {
           "title": "Flip-flops",
-          "body": "$n$ flip-flops give $2^n$ states: $2^2 = 4 < 6 \\le 8 = 2^3$, so **3** J-K flip-flops; the 2-bit output 0–3 is produced by combinational logic from the state."
+          "body": "$\\lceil \\log_2 6 \\rceil = 3$. A mod-6 counter plus output logic, e.g. with states 0 … 5: $z_1 = Q_1Q_0 + Q_2Q_0$, $z_0 = \\overline{Q_1}Q_0$."
         }
       ],
       "answer": {
@@ -765,10 +771,12 @@
         "number": 3,
         "matchesKey": true
       },
+      "shortcut": "Six positions fit in $2^3 = 8$: 3 flip-flops.",
       "pitfalls": [
-        "Answering 2 because the largest output value is 3 — a 2-bit state cannot tell the three 0s apart."
+        "Answering 2 (four distinct values 0–3).",
+        "Answering 4 by giving the output 2 bits and the 'which visit of 0' count another $\\lceil \\log_2 3 \\rceil = 2$; the 6 positions fit in 3 bits together."
       ],
-      "verification": "Example encoding: states 000,001,010,011,100,101 mapped to outputs 0,1,0,2,0,3 works with 3 flip-flops."
+      "verification": "seqlib.counter_states_needed([0, 1, 0, 2, 0, 3]) = 6 and ff_count(6) = 3; the output functions were minimised with states 6 and 7 as don't-cares."
     },
     "cse-2016-1-cs-9": {
       "approach": "Address bits = $\\log_2$(number of addressable units); with 2-byte words, count words, not bytes.",

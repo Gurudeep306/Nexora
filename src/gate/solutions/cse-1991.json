@@ -1058,23 +1058,34 @@
       "verification": "Standard VLSI texts (Weste–Eshraghian) list near-zero static power as the key CMOS advantage ✓."
     },
     "cse-1991-a-3-ii": {
-      "approach": "A clock makes state change only at defined instants after signals settle, so transient glitches (hazards) and races do not matter — the main design advantage. Speed and hardware economy favour asynchronous circuits.",
+      "approach": "Concept tested: **the synchronous design discipline**. With one clock and a period longer than the slowest path, every flip-flop samples settled values, so hazards and races inside the logic are over before any edge looks. Judge each option against that one fact.",
       "concepts": [
-        "synchronous sequential circuits",
-        "hazards and races"
+        "Synchronous circuits",
+        "Asynchronous circuits",
+        "Hazards",
+        "Clock period"
       ],
+      "given": "An MSQ: which is an advantage of synchronous sequential circuits over asynchronous ones: faster operation, ease of avoiding problems due to hazards, lower hardware requirement, better noise immunity, none of these.",
       "steps": [
         {
-          "title": "Why hazards are easy to avoid",
-          "body": "Flip-flops sample inputs only at the clock edge. As long as the clock period exceeds the worst combinational delay, glitches in the next-state logic die out before sampling — no hazard-free covers or race analysis needed."
+          "title": "What the clock buys",
+          "body": "If $T \\ge t_{cq} + t_{logic,max} + t_{su}$, every flip-flop input has settled before its setup window opens. A glitch (hazard) or a race between two state bits happens between edges, while no flip-flop is sampling, so it cannot be stored. That is option B."
         },
         {
-          "title": "Check the rest",
-          "body": "Asynchronous circuits are not slowed by a worst-case clock (faster) and need no clock distribution or flip-flops (less hardware). Noise immunity is a property of the logic family, not of clocking."
+          "title": "Speed",
+          "body": "The clock period must cover the **worst-case** path in every cycle, while an asynchronous circuit reacts as soon as its gates switch. Synchronous design is not faster: A is wrong."
+        },
+        {
+          "title": "Hardware",
+          "body": "Every state bit needs a clocked flip-flop and the clock must be distributed to all of them. Synchronous circuits are not smaller: C is wrong."
+        },
+        {
+          "title": "Noise",
+          "body": "Noise immunity (option D) means voltage noise margins, a property of the logic family. The timing style only filters **timing** glitches that are over before the setup window. Noise on the clock line is worse in a synchronous circuit, because a spike there creates a false edge in every flip-flop at once. So D is not the advantage; B is, and since B holds, E is wrong."
         }
       ],
       "answer": {
-        "value": "B — ease of avoiding problems due to hazards",
+        "value": "(B) ease of avoiding problems due to hazards",
         "choice": [
           "B"
         ],
@@ -1084,33 +1095,35 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Clocking forces worst-case timing; asynchronous circuits are potentially faster."
+          "reason": "The clock waits for the slowest path every cycle; asynchronous circuits are, if anything, faster."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Edge-triggered sampling ignores glitches and races, avoiding hazard problems."
+          "reason": "Glitches and races settle between edges, when no flip-flop samples, so they cause no errors."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Synchronous designs add flip-flops and clock circuitry — more hardware."
+          "reason": "Flip-flops and the clock network cost hardware; asynchronous designs are usually smaller."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Noise margins depend on the logic family (TTL, CMOS), not on synchronous vs asynchronous design."
+          "reason": "Noise immunity means voltage noise margins, set by the logic family; the clock filters only timing glitches that end before the setup window, and a spike on the clock line is worse in a synchronous circuit (a false edge in every flip-flop at once)."
         },
         {
           "option": "E",
           "correct": false,
-          "reason": "B is a real advantage."
+          "reason": "B is a genuine advantage."
         }
       ],
+      "shortcut": "Synchronous design trades speed and hardware for correctness: the only advantage on the list is the hazard/race immunity.",
       "pitfalls": [
-        "Choosing \"faster\" — that is the classic advantage of asynchronous circuits."
+        "Picking 'faster': the period is set by the worst-case path.",
+        "Picking 'lower hardware': flip-flops plus clock distribution are extra hardware."
       ],
-      "verification": "Textbooks (Mano, Kohavi) cite hazard/race-free operation and easier design as the reason synchronous circuits dominate ✓."
+      "verification": "Edge sampling with a 20 ns clock and 3 ns setup: an input that glitches at 6 and 9 ns and settles at 12 ns is sampled cleanly; only a change inside the setup window (18 ns) is flagged."
     },
     "cse-1991-a-3-iii": {
       "approach": "The size of the virtual address space is $2^{k}$ where $k$ is the width of the address the CPU generates (held in the MAR in the textbook model). Main memory only limits how much is resident at once.",
@@ -1930,32 +1943,87 @@
       "verification": "Extreme case: the empty axiom set is consistent but cannot decide any non-logical sentence."
     },
     "cse-1991-b-5-a": {
-      "approach": "Read the logic: $Q = aQ + ab + bQ$, the majority of $a$, $b$ and the fed-back $Q$. With $a=b$ the output is forced; with $a\\ne b$ it holds its old value — a Muller C-element.",
+      "approach": "Concept tested: **stable states of a feedback loop**. Cut the feedback wire, write the loop function $Q^+ = f(a, b, Q)$, and for each input pair keep the values of $Q$ that reproduce themselves ($f = Q$).",
       "concepts": [
-        "feedback (latch) circuits",
-        "majority function",
-        "C-element"
+        "Feedback loop",
+        "Stable state",
+        "Majority function",
+        "Latch"
       ],
+      "given": "Three 2-input AND gates compute $aQ$, $ab$, $bQ$; a 3-input OR combines them; its output $Q$ is fed back into the first and third AND gates.",
       "steps": [
         {
-          "title": "Next-state equation",
-          "body": "Three AND gates feed the OR: $Q_n = a\\,Q + a\\,b + b\\,Q$ where $Q$ is the present output fed back."
+          "title": "Cut the loop and write the loop function",
+          "body": "With the feedback wire cut, the circuit is an ordinary AND–OR network: $Q^+ = aQ + ab + bQ$. This is the **majority** of $a$, $b$ and $Q$ (1 when at least two of them are 1)."
         },
         {
-          "title": "Evaluate each row",
-          "body": "- $a=0,b=0$: $Q_n = 0+0+0 = 0$\n- $a=0,b=1$: $Q_n = 0 + 0 + Q = Q$\n- $a=1,b=0$: $Q_n = Q + 0 + 0 = Q$\n- $a=1,b=1$: $Q_n = Q + 1 + Q = 1$"
+          "title": "Inputs that force a value",
+          "body": "$ab = 00$: every product is 0, so $Q^+ = 0$ whether $Q$ is 0 or 1. Only $Q = 0$ is stable: $Q_n = 0$. $ab = 11$: the term $ab = 1$ forces $Q^+ = 1$: $Q_n = 1$.",
+          "scene": {
+            "reveal": 2
+          }
         },
         {
-          "title": "Completed table",
-          "body": "| a | b | $Q_n$ |\n|---|---|---|\n| 0 | 0 | 0 |\n| 0 | 1 | $Q$ (no change) |\n| 1 | 0 | $Q$ (no change) |\n| 1 | 1 | 1 |"
+          "title": "Inputs that leave the decision to Q",
+          "body": "$ab = 01$: $Q^+ = bQ = Q$. Both $Q = 0$ and $Q = 1$ reproduce themselves, so the loop **holds** its previous value: $Q_n = Q$. The same for $ab = 10$, where $Q^+ = aQ = Q$.",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Name the circuit",
+          "body": "Set by 11, reset by 00, hold on 01 and 10: the circuit is a one-bit memory (a latch) whose hold condition is $a \\ne b$."
         }
       ],
       "answer": {
-        "value": "00 → 0; 01 → Q (unchanged); 10 → Q (unchanged); 11 → 1",
+        "value": "ab = 00 → 0; 01 → Q (unchanged); 10 → Q (unchanged); 11 → 1",
         "matchesKey": true
       },
-      "shortcut": "Majority of $(a,b,Q)$: when the inputs agree they win; when they disagree $Q$ breaks the tie, so it holds.",
-      "verification": "Stable: in rows 01/10, substituting $Q=0$ gives 0 and $Q=1$ gives 1, so both are self-consistent."
+      "shortcut": "Majority of $(a, b, Q)$: when $a = b$ they outvote $Q$; when $a \\ne b$, $Q$ casts the deciding vote and so keeps itself.",
+      "pitfalls": [
+        "Writing $Q_n = 1$ for 01 or 10 because \"one AND gate has a 1\": the AND gates there are $bQ$ or $aQ$, which need $Q = 1$ as well.",
+        "Treating the circuit as combinational and leaving the 01 and 10 rows undefined: the feedback makes them memory rows."
+      ],
+      "verification": "The fixed points of the netlist for each input row are {0}, {0, 1}, {0, 1}, {1}, and a gate-delay simulation started from either value settles to these.",
+      "animation": {
+        "kind": "table",
+        "title": "Stable values of Q = aQ + ab + bQ",
+        "cols": [
+          "f if Q = 0",
+          "f if Q = 1",
+          "Qₙ"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            "0"
+          ],
+          [
+            0,
+            1,
+            "Q"
+          ],
+          [
+            0,
+            1,
+            "Q"
+          ],
+          [
+            1,
+            1,
+            "1"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "ab = 00",
+          "ab = 01",
+          "ab = 10",
+          "ab = 11"
+        ],
+        "reveal": 0
+      }
     },
     "cse-1991-b-5-b": {
       "approach": "Concept tested: **minimal SOP with don't-cares**. Use an X only when it enlarges a loop: the four corners give one quad, and $m_{15}$ joins three Xs in a second quad.",
@@ -2058,93 +2126,233 @@
       }
     },
     "cse-1991-b-5-c": {
-      "approach": "All flip-flops share the clock, so the period must cover the longest path from a clock edge to a J/K input: clock-to-$Q_0$, then the two AND gates in the carry chain that drive $J_2K_2$.",
+      "approach": "Concept tested: **the maximum clock frequency of a synchronous counter**. The period must cover the slowest path from a flip-flop output, through the gates, to a flip-flop input: $T \\ge t_{FF} + t_{\\text{gates}} + t_{su}$. Only gates on such paths count.",
       "concepts": [
-        "synchronous counter",
-        "critical path",
-        "maximum clock frequency"
+        "Synchronous counter",
+        "AND-chain gating",
+        "Critical path",
+        "Maximum clock frequency"
       ],
-      "given": "| Quantity | Value |\n|---|---|\n| FF propagation delay $t_{pd,FF}$ | 10 ns |\n| AND gate delay $t_{AND}$ | 10 ns |\n| Setup time | ≈ 0 |",
+      "given": "Three JK flip-flops on one clock. $J_0 = K_0 = 1$; AND$_1 = 1 \\cdot Q_0$ drives $J_1 = K_1$; AND$_2$ = AND$_1 \\cdot Q_1$ drives $J_2 = K_2$; AND$_3$ = AND$_2 \\cdot Q_2$ is the carry output. Every flip-flop and AND gate: 10 ns; setup time negligible.",
       "steps": [
         {
-          "title": "Trace the paths",
-          "body": "$J_0K_0 = 1$ (constant). $J_1K_1 = 1\\cdot Q_0$ (gate 1). $J_2K_2 = (1\\cdot Q_0)\\cdot Q_1$ (gate 1 then gate 2). The third AND only produces the carry output and feeds no flip-flop of this counter."
+          "title": "What the circuit is",
+          "body": "Each stage has $J = K$, so it is a T stage: $T_1 = Q_0$, $T_2 = Q_1Q_0$. It is a 3-bit synchronous binary up counter whose AND terms are built as a serial chain."
         },
         {
-          "title": "Longest path",
-          "body": "Clock → $Q_0$ → AND$_1$ → AND$_2$ → $J_2K_2$: $$T_{min} = t_{pd,FF} + 2t_{AND} + t_{setup} = 10 + 10 + 10 + 0 = 30\\ \\text{ns}$$"
+          "title": "List the paths that end at a flip-flop input",
+          "body": "To $J_1K_1$: flip-flop + AND$_1$ = 20 ns. To $J_2K_2$: flip-flop + AND$_1$ + AND$_2$ = 30 ns. AND$_3$ feeds no flip-flop, so no path through it ends inside the counter.",
+          "scene": {
+            "reveal": 2
+          }
         },
         {
-          "title": "Frequency",
-          "body": "$$f_{max} = \\frac{1}{30\\times10^{-9}} \\approx 33.3\\ \\text{MHz}$$"
+          "title": "The period",
+          "body": "$T \\ge 30$ ns (setup negligible), so $f_{\\max} = 1/30\\ \\text{ns} \\approx 33.3$ MHz.",
+          "scene": {
+            "reveal": 3
+          }
         }
       ],
       "answer": {
-        "value": "≈ 33.3 MHz (period 30 ns)",
+        "value": "≈ 33.3 MHz (minimum period 30 ns)",
         "matchesKey": true
       },
+      "shortcut": "Count the gates between a flip-flop and the **last** J/K input: two here. $10 + 2 \\times 10 = 30$ ns.",
       "pitfalls": [
-        "Counting the carry-out gate (giving 40 ns / 25 MHz) — its output drives no flip-flop in Fig. 5.",
-        "Treating it like a ripple counter (adding all FF delays)."
+        "Adding the carry-out gate AND$_3$ (40 ns, 25 MHz): it drives no flip-flop of this counter.",
+        "Counting only one gate (20 ns, 50 MHz), as if the gating were parallel.",
+        "Ignoring the first AND gate because one of its inputs is the constant 1: it is still a real gate with a real delay."
       ],
-      "verification": "Path to $J_1K_1$ is only 20 ns; the 30 ns path to $J_2K_2$ is the critical one."
+      "verification": "Simulated as a Sync machine with J = K inputs, the circuit counts 0, 1, …, 7, 0; the path delays 20 ns and 30 ns give the 30 ns bound.",
+      "animation": {
+        "kind": "table",
+        "title": "Paths that end at a flip-flop input",
+        "cols": [
+          "path",
+          "delay (ns)"
+        ],
+        "rows": [
+          [
+            "FF0 → AND1 → J1K1",
+            20
+          ],
+          [
+            "FF0 → AND1 → AND2 → J2K2",
+            30
+          ],
+          [
+            "… → AND3 → carry out (no FF)",
+            "not a FF path"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "stage 1",
+          "stage 2",
+          "carry"
+        ],
+        "reveal": 1
+      }
     },
     "cse-1991-b-6-a": {
-      "approach": "Three parallel inputs ⇒ three D flip-flops. In front of each D input put a 2-to-1 multiplexer (AND–OR) controlled by LOAD/$\\overline{\\text{SHIFT}}$: LOAD selects the parallel bit, SHIFT selects the left neighbour (S for the leftmost stage).",
+      "approach": "Concept tested: **a parallel-in/serial-out register with a load path**. Every D input needs two sources, its data bit (load) and its left neighbour (shift), and a 2-to-1 AND-OR steering network driven by LOAD/SHIFT′ chooses between them; the clock stays common.",
       "concepts": [
-        "PISO shift register",
+        "Shift register",
+        "PISO",
         "D flip-flop",
         "2-to-1 multiplexer"
       ],
+      "given": "D flip-flops and gates; inputs CLK, parallel data A, B, C, serial input S and control LOAD/$\\overline{\\text{SHIFT}}$; the register shifts from left to right.",
       "steps": [
         {
-          "title": "Structure",
-          "body": "Stages $Q_A$ (left), $Q_B$, $Q_C$ (right, the serial output), all clocked by CLK. Let $L$ = LOAD/$\\overline{\\text{SHIFT}}$ ($L=1$ load, $L=0$ shift right)."
+          "title": "Three stages on one clock",
+          "body": "Three bits need three D flip-flops $Q_A, Q_B, Q_C$, all clocked by CLK. Shifting left to right means $Q_A$ feeds $Q_B$, $Q_B$ feeds $Q_C$, and $S$ enters $Q_A$; the serial output is $Q_C$."
         },
         {
-          "title": "Input equations",
-          "body": "$$D_A = L\\,A + \\overline L\\,S$$ $$D_B = L\\,B + \\overline L\\,Q_A$$ $$D_C = L\\,C + \\overline L\\,Q_B$$ Each is two AND gates, one OR gate and a shared inverter for $\\overline L$."
+          "title": "Steering each D input",
+          "body": "Let $L = $ LOAD/$\\overline{\\text{SHIFT}}$. With one inverter for $\\overline{L}$: $D_A = L\\,A + \\overline{L}\\,S$, $D_B = L\\,B + \\overline{L}\\,Q_A$, $D_C = L\\,C + \\overline{L}\\,Q_B$, i.e. two ANDs and an OR (a 2-to-1 MUX) per stage: 6 ANDs, 3 ORs, 1 inverter."
         },
         {
-          "title": "Operation",
-          "body": "| $L$ | After clock edge | Meaning |\n|---|---|---|\n| 1 | $Q_AQ_BQ_C \\leftarrow ABC$ | parallel load |\n| 0 | $Q_AQ_BQ_C \\leftarrow S\\,Q_A\\,Q_B$ | shift right; $Q_C$ is the serial out |"
+          "title": "Check the two modes",
+          "body": "$L = 1$: $D_A D_B D_C = ABC$, one edge loads the word. $L = 0$: $D_A D_B D_C = S\\,Q_A\\,Q_B$, each edge shifts one place towards $Q_C$.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Trace a word",
+          "body": "Load $ABC = 101$, then shift with $S = 0, 1, 1$: $Q_AQ_BQ_C$ = 101, 010, 101, 110, and the serial output $Q_C$ shows C, B, A = 1, 0, 1, followed by the first S bit.",
+          "scene": {
+            "reveal": 4
+          }
         }
       ],
       "answer": {
-        "value": "3 D flip-flops Q_A, Q_B, Q_C with 2-to-1 AND-OR steering: D_A = L·A + L′·S, D_B = L·B + L′·Q_A, D_C = L·C + L′·Q_B (L = LOAD/SHIFT′); serial output Q_C",
+        "value": "3 D flip-flops on CLK with $D_A = L A + \\overline{L} S$, $D_B = L B + \\overline{L} Q_A$, $D_C = L C + \\overline{L} Q_B$ ($L$ = LOAD/$\\overline{\\text{SHIFT}}$); serial output $Q_C$",
         "matchesKey": true
       },
-      "verification": "Load ABC = 101, then two shifts with S = 0 give serial outputs 1, 0, 1 at $Q_C$ (before, after 1st, after 2nd shift)."
+      "shortcut": "A PISO is a universal shift register that only uses two of its four modes: write $D_i = L\\,I_i + \\overline{L}\\,Q_{i-1}$ for every stage and you are done.",
+      "pitfalls": [
+        "Gating the clock with LOAD instead of steering the D inputs: that breaks the synchronous discipline and creates glitches.",
+        "Feeding $S$ into $Q_C$ (shifting the wrong way) or taking the output from $Q_A$.",
+        "Forgetting the inverter: both terms of a steering pair need opposite enables."
+      ],
+      "verification": "Simulating the three steering equations for every state and every input combination gives exactly the universal register's 'load' (L = 1) and 'shift right' (L = 0) modes; the trace above is the simulated one.",
+      "animation": {
+        "kind": "table",
+        "title": "Load 101, then shift with S = 0, 1, 1",
+        "cols": [
+          "L",
+          "S",
+          "QA QB QC",
+          "out QC"
+        ],
+        "rows": [
+          [
+            "1",
+            "–",
+            "101",
+            "1"
+          ],
+          [
+            "0",
+            "0",
+            "010",
+            "0"
+          ],
+          [
+            "0",
+            "1",
+            "101",
+            "1"
+          ],
+          [
+            "0",
+            "1",
+            "110",
+            "0"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "load",
+          "shift 1",
+          "shift 2",
+          "shift 3"
+        ],
+        "reveal": 1
+      }
     },
     "cse-1991-b-6-b": {
-      "approach": "Use a 10-bit binary counter as the RAM address. For each shift pulse: read the bit stored at the current address (it was written exactly 1024 shifts ago) into an output flip-flop, write $D_{in}$ into the same location, then advance the counter modulo 1024.",
+      "approach": "Concept tested: **a shift register as a delay line made from a RAM**. A counter walks round all 1024 addresses; at each shift the old bit at the current address is read out before the new bit is written there, so every bit comes back out exactly 1024 shifts later.",
       "concepts": [
-        "RAM-based shift register",
-        "circular buffer",
-        "mod-1024 counter"
+        "Shift register",
+        "RAM",
+        "Counter",
+        "Delay line"
       ],
+      "given": "A $1\\text{K} \\times 1$ RAM with $D_{in}$, $D_{out}$ and READ/$\\overline{\\text{WRITE}}$; standard SSI/MSI parts (gates, registers, counters). Build a 1024-bit serial-in/serial-out unidirectional shift register.",
       "steps": [
         {
-          "title": "Components",
-          "body": "- 1K × 1 RAM: address $A_9..A_0$, $D_{in}$, $D_{out}$, READ/$\\overline{\\text{WRITE}}$.\n- 10-bit binary counter (mod 1024) driving the address lines.\n- One D flip-flop to hold the output bit.\n- A two-phase control derived from the shift clock (e.g. clock high = read phase, clock low = write phase)."
+          "title": "Addressing",
+          "body": "A 10-bit binary counter (mod-1024, since $2^{10} = 1024$) drives the address lines, so the shift clocks visit the locations 0, 1, …, 1023, 0, … in turn."
         },
         {
-          "title": "One shift cycle",
-          "body": "1. **Read** ($R/\\overline W = 1$): $D_{out} \\leftarrow M[\\text{ctr}]$; latch it into the output flip-flop.\n2. **Write** ($R/\\overline W = 0$): $M[\\text{ctr}] \\leftarrow D_{in}$.\n3. **Increment**: $\\text{ctr} \\leftarrow (\\text{ctr}+1) \\bmod 1024$ on the trailing edge."
+          "title": "One shift = read, write, increment",
+          "body": "At each shift clock a small sequencer (or the two clock phases) does: READ/$\\overline{\\text{WRITE}} = 1$ and clock $M[\\text{ctr}]$ into a D flip-flop whose $Q$ is the serial output; READ/$\\overline{\\text{WRITE}} = 0$ to write $D_{in}$ into $M[\\text{ctr}]$; then increment the counter.",
+          "scene": {
+            "reveal": 3
+          }
         },
         {
-          "title": "Why it is a 1024-bit shift register",
-          "body": "A bit written at address $k$ is read again only when the counter returns to $k$, i.e. after exactly 1024 shift pulses. Thus the output stream equals the input stream delayed by 1024 clocks — the behaviour of a 1024-stage serial-in/serial-out register, using one RAM chip instead of 1024 flip-flops."
+          "title": "Why the delay is 1024",
+          "body": "A bit written at shift $j$ into address $a = j \\bmod 1024$ is not touched while the counter visits the other 1023 addresses. At shift $j + 1024$ the counter is back at $a$, and the read, which comes before the write, hands that bit to the output. (Strictly, the output flip-flop holds the bit that has just **left** a 1024-stage chain, one clock behind that chain's last stage $Q_{1024}$; taking $D_{out}$ directly, with the RAM reading the next address between shifts, gives $Q_{1024}$ itself. Either is accepted as a 1024-bit register.)"
+        },
+        {
+          "title": "Why the order matters",
+          "body": "If the write came first, the location would be overwritten before it was read and the output would equal the input: no delay at all."
         }
       ],
       "answer": {
-        "value": "Mod-1024 (10-bit) counter drives the RAM address; on each shift pulse read M[ctr] into an output D flip-flop (D_out), then write D_in into M[ctr] (READ/WRITE′ = 0), then increment the counter — the output is the input delayed by 1024 shifts",
+        "value": "Mod-1024 (10-bit) counter on the address lines; per shift: read $M[\\text{ctr}]$ into the output flip-flop, write $D_{in}$ into $M[\\text{ctr}]$, increment; output = input delayed by 1024 shifts",
         "matchesKey": true
       },
+      "shortcut": "Think of a circular buffer: the data stays put and the pointer moves. Read-before-write at the pointer gives a delay equal to the buffer length.",
       "pitfalls": [
-        "Writing before reading at the same address would make $D_{out}$ equal the current $D_{in}$ (zero delay)."
+        "Writing before reading at the same address (the register collapses to a wire).",
+        "Using a counter with fewer than 10 bits (some locations never used, a shorter delay) or more (addresses beyond 1K).",
+        "Trying to move the bits inside the RAM: a RAM has no path between locations."
       ],
-      "verification": "Bit written at $t$ to address $k$ is next read when ctr = $k$ again, at $t+1024$."
+      "verification": "A simulation of the RAM design on a random 3000-bit stream produces exactly the bits that leave a 1024-stage chain of D flip-flops (seqlib.shift_right), clock for clock; with write-before-read the output equals the input.",
+      "animation": {
+        "kind": "table",
+        "title": "One shift clock",
+        "cols": [
+          "sub-step",
+          "READ/WRITE′",
+          "action"
+        ],
+        "rows": [
+          [
+            "1",
+            "1",
+            "Dout FF ← M[ctr]"
+          ],
+          [
+            "2",
+            "0",
+            "M[ctr] ← Din"
+          ],
+          [
+            "3",
+            "–",
+            "ctr ← ctr + 1 (mod 1024)"
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
+      }
     },
     "cse-1991-b-7-a": {
       "approach": "Fetch the 16-bit instruction in one memory access, then — still within the fetch cycle — form the effective address from the 8-bit operand field, adding the index register when the instruction is indexed.",

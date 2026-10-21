@@ -1689,38 +1689,29 @@
       "verification": "$81 = 3^4$, so there are 4 calls (b = 3^4, 3^3, 3^2, 3^1)."
     },
     "cse-2018-cs-22": {
-      "approach": "The two D flip-flops form a 2-bit shift register. With state $(Q_1Q_2)$ the next state is $(\\text{in}, Q_1)$. A self-loop needs $\\text{in} = Q_1$ and $Q_1 = Q_2$.",
+      "approach": "Concept tested: **the state graph of a shift register**. Two D flip-flops in series are a 2-bit shift register: from $Q_1Q_2$ the input leads to $(in)Q_1$. A self-loop needs the shifted state to equal the old one.",
       "concepts": [
-        "D flip-flop",
         "Shift register",
-        "State transition diagram"
+        "State diagram",
+        "Self-loop",
+        "D flip-flop"
       ],
+      "given": "Two positive-edge D flip-flops in series: $D_1 = in$, $D_2 = Q_1$, output $Q_2$.",
       "steps": [
         {
-          "title": "Next-state equations",
-          "body": "$Q_1^+ = \\text{in}$, $Q_2^+ = Q_1$. So $(Q_1Q_2) \\xrightarrow{\\text{in}} (\\text{in}\\,Q_1)$."
+          "title": "Next state",
+          "body": "$Q_1^+Q_2^+ = (in)\\,Q_1$."
         },
         {
-          "title": "Transition table",
-          "body": "| State $Q_1Q_2$ | in = 0 | in = 1 |\n|---|---|---|\n| 00 | **00** | 10 |\n| 01 | 00 | 10 |\n| 10 | 01 | 11 |\n| 11 | 01 | **11** |",
+          "title": "All transitions",
+          "body": "00 → 00 (in = 0), 10 (in = 1); 01 → 00, 10; 10 → 01, 11; 11 → 01 (in = 0), 11 (in = 1).",
           "scene": {
-            "caption": "Full state diagram"
+            "reveal": 4
           }
         },
         {
           "title": "Self-loops",
-          "body": "Next = current needs $\\text{in}\\,Q_1 = Q_1Q_2$, so $Q_1 = Q_2$ (and $\\text{in} = Q_1$). Only states **00** (in = 0) and **11** (in = 1) qualify. The answer is **2**.",
-          "scene": {
-            "current": [
-              "00",
-              "11"
-            ],
-            "edgeTones": {
-              "00>00": "success",
-              "11>11": "success"
-            },
-            "caption": "Self-loops at 00 and 11"
-          }
+          "body": "$(in)Q_1 = Q_1Q_2$ needs $in = Q_1 = Q_2$: only 00 (with in = 0) and 11 (with in = 1)."
         }
       ],
       "answer": {
@@ -1728,72 +1719,46 @@
         "number": 2,
         "matchesKey": true
       },
-      "animation": {
-        "kind": "automaton",
-        "layout": "circle",
-        "states": [
-          {
-            "id": "00",
-            "start": true
-          },
-          {
-            "id": "01"
-          },
-          {
-            "id": "10"
-          },
-          {
-            "id": "11"
-          }
-        ],
-        "edges": [
-          {
-            "from": "00",
-            "to": "00",
-            "label": "0"
-          },
-          {
-            "from": "00",
-            "to": "10",
-            "label": "1"
-          },
-          {
-            "from": "01",
-            "to": "00",
-            "label": "0"
-          },
-          {
-            "from": "01",
-            "to": "10",
-            "label": "1"
-          },
-          {
-            "from": "10",
-            "to": "01",
-            "label": "0"
-          },
-          {
-            "from": "10",
-            "to": "11",
-            "label": "1"
-          },
-          {
-            "from": "11",
-            "to": "01",
-            "label": "0"
-          },
-          {
-            "from": "11",
-            "to": "11",
-            "label": "1"
-          }
-        ],
-        "caption": "States Q1Q2 (start arrow marks the reset state 00); edges labelled by in"
-      },
+      "shortcut": "A shift register stays put only when every bit equals its neighbour: all 0s or all 1s, so always 2 states, for any length.",
       "pitfalls": [
-        "Writing the next state as $(Q_1, \\text{in})$: FF2 takes FF1’s old output."
+        "Counting 01 and 10 because they return to themselves after two clocks (01 → 10 → 01); that is a cycle, not a self-loop.",
+        "Counting arcs or (state, input) pairs instead of states."
       ],
-      "verification": "01 → {00, 10} and 10 → {01, 11}: neither can stay put, because the bits shift."
+      "verification": "The simulated state graph has self-loops exactly at 00 and 11; for shift registers of 1 to 5 stages the self-loop states are always just 0…0 and 1…1.",
+      "animation": {
+        "kind": "table",
+        "title": "Next state Q1Q2",
+        "cols": [
+          "in = 0",
+          "in = 1"
+        ],
+        "rows": [
+          [
+            "00 ✓",
+            "10"
+          ],
+          [
+            "00",
+            "10"
+          ],
+          [
+            "01",
+            "11"
+          ],
+          [
+            "01",
+            "11 ✓"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "00",
+          "01",
+          "10",
+          "11"
+        ],
+        "reveal": 1
+      }
     },
     "cse-2018-cs-23": {
       "approach": "All chips are refreshed in parallel. One refresh period needs (rows × time per row-refresh). That fraction of 2 ms is lost; the remainder is available.",

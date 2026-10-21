@@ -1,0 +1,849 @@
+{
+ "version": 1,
+ "title": "Setup and hold: when an edge reads its input reliably",
+ "width": 680,
+ "height": 362,
+ "narrow": {
+  "width": 360,
+  "height": 332
+ },
+ "intro": "A positive-edge D flip-flop with setup time 2 ticks and hold time 2 ticks. One clock edge, and three versions of D that rise early, inside the window and late, each with its Q.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "One rising edge and its sampling window",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Setup and hold window",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "wlc",
+   "type": "text",
+   "x": 142,
+   "y": 79.0,
+   "text": "CLK",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 68,
+    "y": 74.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wcg0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     150,
+     88
+    ],
+    [
+     346,
+     88
+    ],
+    [
+     346,
+     70
+    ],
+    [
+     542,
+     70
+    ],
+    [
+     542,
+     88
+    ],
+    [
+     654,
+     88
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      76,
+      82
+     ],
+     [
+      181,
+      82
+     ],
+     [
+      181,
+      66
+     ],
+     [
+      286,
+      66
+     ],
+     [
+      286,
+      82
+     ],
+     [
+      346,
+      82
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wld0",
+   "type": "text",
+   "x": 142,
+   "y": 117.0,
+   "text": "D early",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 68,
+    "y": 108.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wd0g0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     150,
+     126
+    ],
+    [
+     234,
+     126
+    ],
+    [
+     234,
+     108
+    ],
+    [
+     654,
+     108
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      76,
+      116
+     ],
+     [
+      121,
+      116
+     ],
+     [
+      121,
+      100
+     ],
+     [
+      346,
+      100
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlq0",
+   "type": "text",
+   "x": 142,
+   "y": 155.0,
+   "text": "Q",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 68,
+    "y": 142.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq0g0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     150,
+     164
+    ],
+    [
+     374,
+     164
+    ],
+    [
+     374,
+     146
+    ],
+    [
+     654,
+     146
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      76,
+      150
+     ],
+     [
+      196,
+      150
+     ],
+     [
+      196,
+      134
+     ],
+     [
+      346,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wld1",
+   "type": "text",
+   "x": 142,
+   "y": 193.0,
+   "text": "D inside",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 68,
+    "y": 176.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wd1g0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     150,
+     202
+    ],
+    [
+     318,
+     202
+    ],
+    [
+     318,
+     184
+    ],
+    [
+     654,
+     184
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      76,
+      184
+     ],
+     [
+      166,
+      184
+     ],
+     [
+      166,
+      168
+     ],
+     [
+      346,
+      168
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlq1",
+   "type": "text",
+   "x": 142,
+   "y": 231.0,
+   "text": "Q",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 68,
+    "y": 210.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq1g0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     150,
+     240
+    ],
+    [
+     374,
+     240
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      76,
+      218
+     ],
+     [
+      196,
+      218
+     ]
+    ]
+   }
+  },
+  {
+   "id": "hlwq1g0x8",
+   "type": "box",
+   "x": 374,
+   "y": 222,
+   "w": 280,
+   "h": 18,
+   "fill": "danger",
+   "tone": "danger",
+   "hidden": true,
+   "opacity": 0.9,
+   "narrow": {
+    "x": 196,
+    "y": 202,
+    "w": 150,
+    "h": 16
+   }
+  },
+  {
+   "id": "hlwq1g0x8t",
+   "type": "text",
+   "x": 514.0,
+   "y": 231.0,
+   "text": "X",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "danger",
+   "hidden": true,
+   "narrow": {
+    "x": 271.0,
+    "y": 210.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wld2",
+   "type": "text",
+   "x": 142,
+   "y": 269.0,
+   "text": "D late",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 68,
+    "y": 244.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wd2g0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     150,
+     278
+    ],
+    [
+     430,
+     278
+    ],
+    [
+     430,
+     260
+    ],
+    [
+     654,
+     260
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      76,
+      252
+     ],
+     [
+      226,
+      252
+     ],
+     [
+      226,
+      236
+     ],
+     [
+      346,
+      236
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlq2",
+   "type": "text",
+   "x": 142,
+   "y": 307.0,
+   "text": "Q",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 68,
+    "y": 278.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq2g0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     150,
+     316
+    ],
+    [
+     654,
+     316
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      76,
+      286
+     ],
+     [
+      346,
+      286
+     ]
+    ]
+   }
+  },
+  {
+   "id": "hlwin",
+   "type": "box",
+   "x": 290,
+   "y": 62,
+   "w": 112,
+   "h": 260,
+   "fill": "warning",
+   "tone": "warning",
+   "opacity": 0.6,
+   "hidden": true,
+   "narrow": {
+    "x": 151,
+    "y": 58,
+    "w": 60,
+    "h": 234
+   }
+  },
+  {
+   "id": "edge",
+   "type": "line",
+   "points": [
+    [
+     346,
+     62
+    ],
+    [
+     346,
+     322
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      181,
+      58
+     ],
+     [
+      181,
+      292
+     ]
+    ]
+   }
+  },
+  {
+   "id": "bsu",
+   "type": "line",
+   "points": [
+    [
+     292,
+     59
+    ],
+    [
+     292,
+     54
+    ],
+    [
+     344,
+     54
+    ],
+    [
+     344,
+     59
+    ]
+   ],
+   "tone": "warning",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      153,
+      55
+     ],
+     [
+      153,
+      50
+     ],
+     [
+      179,
+      50
+     ],
+     [
+      179,
+      55
+     ]
+    ]
+   }
+  },
+  {
+   "id": "bh",
+   "type": "line",
+   "points": [
+    [
+     348,
+     59
+    ],
+    [
+     348,
+     54
+    ],
+    [
+     400,
+     54
+    ],
+    [
+     400,
+     59
+    ]
+   ],
+   "tone": "warning",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      183,
+      55
+     ],
+     [
+      183,
+      50
+     ],
+     [
+      209,
+      50
+     ],
+     [
+      209,
+      55
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lsu",
+   "type": "text",
+   "x": 318.0,
+   "y": 45,
+   "text": "t_su",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "warning",
+   "hidden": true,
+   "narrow": {
+    "x": 148,
+    "y": 52,
+    "size": 12,
+    "anchor": "end"
+   }
+  },
+  {
+   "id": "lh",
+   "type": "text",
+   "x": 374.0,
+   "y": 45,
+   "text": "t_h",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "warning",
+   "hidden": true,
+   "narrow": {
+    "x": 214,
+    "y": 52,
+    "size": 12,
+    "anchor": "start"
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 344,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 314,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A rising edge at tick 7. D must be stable from t_su = 2 ticks before it to t_h = 2 ticks after it: the shaded window.",
+   "patches": [
+    {
+     "id": "wcg0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hlwin",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "edge",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lsu",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lh",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bsu",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bh",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "window: ticks 5 to 9",
+      "tone": "warning"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "D rises at tick 3, before the window opens: a clean sample.",
+   "patches": [
+    {
+     "id": "wd0g0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "D early: changes at tick 3",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Q becomes 1 one tick after the edge: the new value was set up in time.",
+   "patches": [
+    {
+     "id": "wq0g0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "Q = 1",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "D rises at tick 6, inside the setup window: the edge may catch 0, 1 or a metastable level.",
+   "patches": [
+    {
+     "id": "wd1g0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "D inside: changes at tick 6",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Setup violated: the model marks Q unknown (X) until a later clean edge forces a value.",
+   "patches": [
+    {
+     "id": "wq1g0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hlwq1g0x8",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hlwq1g0x8t",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "Q = X",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "D rises at tick 10, after the hold time has passed: the edge saw the old value.",
+   "patches": [
+    {
+     "id": "wd2g0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "D late: changes at tick 10",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Q stays 0: the 1 arrives after the hold time and will be taken only at the next rising edge.",
+   "patches": [
+    {
+     "id": "wq2g0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "Q = 0",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Keep every input still from t_su before to t_h after each active edge; then the edge reads the value just before it.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "outside the window: reliable; inside: X",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -3368,99 +3368,38 @@
       }
     },
     "cse-2025-2-cs-24": {
-      "approach": "Each flip-flop of a ripple counter divides the frequency by 2, so the last of 4 stages runs at $f_{clk}/2^4$. Convert the given period to frequency and multiply by 16.",
+      "approach": "Concept tested: **a ripple counter as a frequency divider**. Each toggling stage doubles the period, so the last stage of an n-bit ripple counter has period $2^n$ times the input clock period.",
       "concepts": [
-        "Ripple (asynchronous) counter",
-        "Frequency division by 2 per T flip-flop"
+        "Ripple counter",
+        "Frequency division",
+        "Clock period"
       ],
-      "given": "4-bit ripple counter; period at the last flip-flop output $= 64\\ \\mu s$.",
+      "given": "A 4-bit ripple counter; the waveform at the last flip-flop has period 64 µs. Find the counter's (input) frequency in kHz.",
       "steps": [
         {
-          "title": "Each stage divides by 2",
-          "body": "In a ripple counter every flip-flop is in toggle mode and is clocked by the previous stage's output, so it changes state once per full cycle of its input: its output frequency is half its input frequency. After 4 stages: $f_{Q_3} = f_{clk} / 2^4 = f_{clk}/16$, i.e. $T_{Q_3} = 16\\,T_{clk}$.",
-          "scene": {
-            "hl": [
-              {
-                "r": 0,
-                "tone": "accent"
-              }
-            ]
-          }
+          "title": "Period of the last stage",
+          "body": "Stage $i$ has period $2^{i+1}T$; the last of 4 stages has period $2^4 T = 16T$."
         },
         {
-          "title": "Frequency at the last flip-flop",
-          "body": "$$f_{Q_3} = \\frac{1}{64\\ \\mu s} = \\frac{10^6}{64}\\ \\text{Hz} = 15625\\ \\text{Hz} = 15.625\\ \\text{kHz}$$",
-          "scene": {
-            "hl": [
-              {
-                "r": 4,
-                "tone": "accent"
-              }
-            ]
-          }
+          "title": "Solve for the clock period",
+          "body": "$16T = 64\\ \\mu\\text{s}$, so $T = 4\\ \\mu\\text{s}$."
         },
         {
-          "title": "Undo four divide-by-2 stages",
-          "body": "$$f_{clk} = 2^4 \\times f_{Q_3} = 16 \\times 15.625 = 250\\ \\text{kHz}$$\n\nEquivalently the clock period is $64 / 16 = 4\\ \\mu s$, and $1 / 4\\ \\mu s = 250\\ \\text{kHz}$.",
-          "scene": {
-            "hl": [
-              {
-                "r": 0,
-                "tone": "success"
-              }
-            ],
-            "reveal": 15
-          }
+          "title": "Invert",
+          "body": "$f = 1 / 4\\ \\mu\\text{s} = 0.25$ MHz $= 250$ kHz."
         }
       ],
       "answer": {
-        "value": "Counter (clock) frequency $=$ **250 kHz**",
+        "value": "250 kHz",
         "number": 250,
         "matchesKey": true
       },
-      "shortcut": "$T_{clk} = 64 / 2^4 = 4\\ \\mu s$ ⇒ $250$ kHz.",
+      "shortcut": "Last-stage frequency $1/64\\ \\mu\\text{s} = 15.625$ kHz, times $2^4 = 16$: 250 kHz.",
       "pitfalls": [
-        "Answering 15.625 kHz (the last stage itself) or dividing instead of multiplying.",
-        "Using $2^3$ instead of $2^4$ — each of the 4 flip-flops halves the frequency."
+        "Answering the last stage's own frequency, 15.625 kHz.",
+        "Dividing by n = 4 instead of $2^n = 16$ (62.5 kHz)."
       ],
-      "verification": "Going down the chain: 250 → 125 → 62.5 → 31.25 → 15.625 kHz, and $1/15.625\\ \\text{kHz} = 64\\ \\mu s$ ✓.",
-      "animation": {
-        "kind": "table",
-        "title": "Divide-by-2 chain",
-        "cols": [
-          "signal",
-          "frequency (kHz)",
-          "period (µs)"
-        ],
-        "rows": [
-          [
-            "clock",
-            "250",
-            "4"
-          ],
-          [
-            "Q₀",
-            "125",
-            "8"
-          ],
-          [
-            "Q₁",
-            "62.5",
-            "16"
-          ],
-          [
-            "Q₂",
-            "31.25",
-            "32"
-          ],
-          [
-            "Q₃ (last)",
-            "15.625",
-            "64"
-          ]
-        ],
-        "reveal": 15
-      }
+      "verification": "In an event simulation of 3-, 4- and 5-bit ripple counters, stage $i$'s rising edges are exactly $2^{i+1}$ clock periods apart, delays included."
     },
     "cse-2025-2-cs-25": {
       "approach": "Insert the keys one by one (each new key walks down from the root, left if smaller, right if larger) and count the comparisons made for 19: the number of nodes it passes equals its depth = number of edges to the root.",

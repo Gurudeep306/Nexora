@@ -2314,40 +2314,33 @@
       "verification": "Dirty bits exist only in write-back caches; real write-through caches exist with both allocation policies."
     },
     "cse-2021-2-cs-28": {
-      "approach": "An output 1 appears exactly when the current bit is 1 and the previous bit was 1. So the state only needs to remember the previous bit: $t = b$, and $y = s\\,b$.",
+      "approach": "Concept tested: **a two-state Mealy machine whose state is the previous input bit**. A 1 is replaced by 0 exactly when it is the first of its run, i.e. when the previous bit was 0, so the machine must remember the previous bit: $t = b$; and it passes a 1 only when the previous bit was 1: $y = sb$.",
       "concepts": [
         "Mealy machine",
-        "Next-state and output equations"
+        "Two-state machine",
+        "Next-state equation",
+        "Output equation"
       ],
+      "given": "Replace the first 1 of every run of consecutive 1s by 0; input 00100011000011100 → output 00000001000001100. States 0 and 1 (initial 0); present state $s$, next state $t$, input bit $b$, output $y$.",
       "steps": [
         {
           "title": "What to remember",
-          "body": "A 1 is copied to the output unless it is the **first** 1 of a run, i.e. unless the previous bit was 0. Let state $s$ = previous input bit (initially 0)."
+          "body": "Whether the present 1 is the first of its run depends only on the previous bit. So the state is the previous bit (0 at the start): $t = b$."
         },
         {
-          "title": "Next state",
-          "body": "After reading $b$, the previous bit becomes $b$: $t = b$."
+          "title": "The output",
+          "body": "Output 1 only for a 1 whose predecessor was 1: $y = s \\cdot b$. A 0 always outputs 0, and a 1 after a 0 outputs 0."
         },
         {
-          "title": "Output",
-          "body": "$y = 1$ iff $b = 1$ and previous bit $s = 1$: $y = s\\,b$.",
+          "title": "Check the options on the example",
+          "body": "(B) $t = b$, $y = sb$ reproduces 00000001000001100. (A) $t = s + b$ never forgets a 1 and gives 00000011000011100. (C) gives 00010000100000010 and (D) 00011100111100011.",
           "scene": {
-            "reveal": 16,
-            "hl": [
-              {
-                "r": 3,
-                "tone": "success"
-              }
-            ]
+            "reveal": 4
           }
-        },
-        {
-          "title": "Check on the example",
-          "body": "Input `00100011000011100`: the runs `1`, `11`, `111` give outputs `0`, `01`, `011` → `00000001000001100` ✓. Answer **(B)**."
         }
       ],
       "answer": {
-        "value": "$t = b,\\ y = sb$ — option (B)",
+        "value": "(B) $t = b$, $y = sb$",
         "choice": [
           "B"
         ],
@@ -2357,62 +2350,70 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$t = s + b$ never returns to state 0 after the first 1, so every later 1 (even the first of a new run) would be output."
+          "reason": "$t = s + b$ stays in state 1 after the first 1 for ever, so every later 1 is passed: the example gives 00000011000011100."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: state = previous bit, output = previous AND current."
+          "reason": "State = previous bit and output = previous AND present: exactly 'drop the first 1 of each run'; matches the example and every input up to 10 bits."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$y = s\\bar b$ outputs 1 on a 0 that follows a 1 — wrong."
+          "reason": "$y = s\\bar b$ outputs 1 on the 0 that ends a run of 1s: 00010000100000010."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Both equations wrong (state sticks at 1; output on 0s)."
+          "reason": "Both equations are wrong: 00011100111100011."
         }
       ],
+      "shortcut": "'First 1 of a run' = 'a 1 whose previous bit is 0'. So remember the previous bit ($t = b$) and output previous AND present ($y = sb$). This is also the overlapping 11 detector.",
+      "pitfalls": [
+        "Choosing $t = s + b$ ('a 1 has been seen'): that is the 2's complementer's memory, not the previous bit.",
+        "Using $\\bar b$ in the output: the output must be 0 whenever the input is 0."
+      ],
+      "verification": "Simulated on every input up to 10 bits, the machine $t = b$, $y = sb$ equals a direct implementation of 'replace the first 1 of each run by 0'; with one D flip-flop it is $D = b$, $y = Qb$.",
       "animation": {
         "kind": "table",
+        "title": "The four options on the example",
         "cols": [
-          "s",
-          "b",
           "t",
-          "y"
+          "y",
+          "output"
         ],
         "rows": [
           [
-            0,
-            0,
-            0,
-            0
+            "s + b",
+            "sb",
+            "00000011000011100"
           ],
           [
-            0,
-            1,
-            1,
-            0
+            "b",
+            "sb",
+            "00000001000001100"
           ],
           [
-            1,
-            0,
-            0,
-            0
+            "b",
+            "sb̄",
+            "00010000100000010"
           ],
           [
-            1,
-            1,
-            1,
-            1
+            "s + b",
+            "sb̄",
+            "00011100111100011"
           ]
         ],
+        "mono": true,
+        "rowLabels": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
         "reveal": 0,
-        "mono": true
-      },
-      "verification": "Traced the given example sequence through t = b, y = sb and obtained the stated output."
+        "caption": "Wanted: 00000001000001100"
+      }
     },
     "cse-2021-2-cs-29": {
       "approach": "Compute the expected marks for both orders: E = P(first right)·(marks₁ + P(second right)·marks₂).",

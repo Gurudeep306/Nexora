@@ -4284,99 +4284,33 @@
       }
     },
     "cse-2026-1-cs-27": {
-      "approach": "For a D flip-flop $D = Q^+$, so $D_1$ and $D_0$ are just the $Q_1^+$ and $Q_0^+$ columns read as functions of $(P, Q_1, Q_0)$. Minimise each with a 3-variable K-map, then match the options.",
+      "approach": "Concept tested: **D flip-flop design of a counter with an input**. With D flip-flops $D_i = Q_i^+$; list the rows $(P, Q_1, Q_0)$ where each next bit is 1 and minimise on a 3-variable map. A single carefully chosen row is enough to eliminate wrong options.",
       "concepts": [
-        "D flip-flop excitation: $D = Q^+$",
-        "3-variable K-map",
-        "Saturating counter"
+        "Saturating up/down counter",
+        "D flip-flop",
+        "K-map"
       ],
-      "given": "Minterm index $= 4P + 2Q_1 + Q_0$. From the table: $Q_1^+ = 1$ at $m_1, m_2, m_3, m_7$; $Q_0^+ = 1$ at $m_0, m_2, m_3, m_6$.",
+      "given": "A 2-bit saturating counter: up when $P = 0$ (00→01→10→11→11), down when $P = 1$ (11→10→01→00→00); D flip-flops; the 8-row next-state table.",
       "steps": [
         {
-          "title": "Read off the D inputs",
-          "body": "Since $D = Q^+$:\n\n$$D_1 = \\Sigma m(1, 2, 3, 7), \\qquad D_0 = \\Sigma m(0, 2, 3, 6).$$\n\n(e.g. row $P Q_1 Q_0 = 001 \\to Q_1^+Q_0^+ = 10$: $m_1$ is in $D_1$ only.)"
+          "title": "Minterms of D1",
+          "body": "$Q_1^+ = 1$ in rows 001, 010, 011 (P = 0) and 111 (P = 1)."
         },
         {
-          "title": "Minimise $D_1$",
-          "body": "Groups of two: $\\{m_1, m_3\\}$ ($P=0, Q_0=1$) $\\to \\bar{P}Q_0$; $\\{m_2, m_3\\}$ ($P=0, Q_1=1$) $\\to \\bar{P}Q_1$; $\\{m_3, m_7\\}$ ($Q_1=Q_0=1$) $\\to Q_1Q_0$. All three are needed ($m_1$, $m_2$, $m_7$ each lie in only one group):\n\n$$D_1 = \\bar{P}Q_1 + \\bar{P}Q_0 + Q_1Q_0.$$",
-          "scene": {
-            "panels": [
-              {
-                "groups": [
-                  {
-                    "cells": [
-                      1,
-                      3
-                    ],
-                    "label": "P̄Q0",
-                    "tone": "cat1"
-                  },
-                  {
-                    "cells": [
-                      2,
-                      3
-                    ],
-                    "label": "P̄Q1",
-                    "tone": "cat2"
-                  },
-                  {
-                    "cells": [
-                      3,
-                      7
-                    ],
-                    "label": "Q1Q0",
-                    "tone": "cat3"
-                  }
-                ]
-              },
-              null
-            ]
-          }
+          "title": "Minimise D1",
+          "body": "Pairs 010/011 ($\\overline{P}Q_1$), 001/011 ($\\overline{P}Q_0$), 011/111 ($Q_1Q_0$): $D_1 = \\overline{P}Q_1 + \\overline{P}Q_0 + Q_1Q_0$."
         },
         {
-          "title": "Minimise $D_0$",
-          "body": "Groups: $\\{m_0, m_2\\}$ ($P=0, Q_0=0$, wrap-around) $\\to \\bar{P}\\,\\overline{Q_0}$; $\\{m_2, m_3\\} \\to \\bar{P}Q_1$; $\\{m_2, m_6\\}$ ($Q_1=1, Q_0=0$) $\\to Q_1\\overline{Q_0}$. $m_0$, $m_3$, $m_6$ each need their own group:\n\n$$D_0 = \\bar{P}\\,\\overline{Q_0} + \\bar{P}Q_1 + Q_1\\overline{Q_0}.$$",
-          "scene": {
-            "panels": [
-              null,
-              {
-                "groups": [
-                  {
-                    "cells": [
-                      0,
-                      2
-                    ],
-                    "label": "P̄Q̄0",
-                    "tone": "cat1"
-                  },
-                  {
-                    "cells": [
-                      2,
-                      3
-                    ],
-                    "label": "P̄Q1",
-                    "tone": "cat2"
-                  },
-                  {
-                    "cells": [
-                      2,
-                      6
-                    ],
-                    "label": "Q1Q̄0",
-                    "tone": "cat3"
-                  }
-                ]
-              }
-            ]
-          }
+          "title": "Minterms and cover of D0",
+          "body": "$Q_0^+ = 1$ in rows 000, 010, 011 and 110. Pairs 000/010 ($\\overline{P}\\,\\overline{Q_0}$), 010/011 ($\\overline{P}Q_1$), 010/110 ($Q_1\\overline{Q_0}$): $D_0 = \\overline{P}\\,\\overline{Q_0} + \\overline{P}Q_1 + Q_1\\overline{Q_0}$."
         },
         {
-          "title": "Match the options",
-          "body": "Option (B) is exactly $D_1 = \\bar{P}Q_1 + \\bar{P}Q_0 + Q_1Q_0$, $D_0 = \\bar{P}\\,\\overline{Q_0} + \\bar{P}Q_1 + Q_1\\overline{Q_0}$."
+          "title": "Match",
+          "body": "Both equations are option B term for term."
         }
       ],
       "answer": {
-        "value": "**(B)**: $D_1 = \\bar{P}Q_1 + \\bar{P}Q_0 + Q_1Q_0$, $D_0 = \\bar{P}\\,\\overline{Q_0} + \\bar{P}Q_1 + Q_1\\overline{Q_0}$",
+        "value": "(B) $D_1 = \\bar{P}Q_1 + \\bar{P}Q_0 + Q_1Q_0$, $D_0 = \\bar{P}\\,\\overline{Q_0} + \\bar{P}Q_1 + Q_1\\overline{Q_0}$",
         "choice": [
           "B"
         ],
@@ -4386,65 +4320,82 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "At $PQ_1Q_0 = 110$ (count down from 2 to 1): $D_1 = PQ_1 = 1$, but $Q_1^+ = 0$. Its $D_0$ term $PQ_0$ also wrongly gives 1 at $101$."
+          "reason": "Row P = 0, 00 must give 01, but A gives $D_1 = 0$, $D_0 = 0$ (00); it also fails rows 010, 101, 110, 111."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Matches both minimised K-maps: $D_1 = \\Sigma m(1,2,3,7)$, $D_0 = \\Sigma m(0,2,3,6)$."
+          "reason": "Equals the table on all 8 rows; both equations are the minimal SOPs."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "At $000$: $D_1 = \\bar{P}\\,\\overline{Q_1} = 1$, but $Q_1^+ = 0$ (0 counts up to 1, not 2). Its $D_0$ has $\\bar{P}Q_0$, which gives 1 at $001$ where $Q_0^+ = 0$."
+          "reason": "Row P = 0, 00: $D_1 = \\bar P \\bar Q_1 = 1$ and $D_0 = 0$, giving 10 instead of 01; it also fails rows 001 and 010."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "At $100$ (saturated at 0, counting down): $D_1 = P\\,\\overline{Q_1} = 1$, but $Q_1^+ = 0$; and $D_0 = P\\,\\overline{Q_0} = 1$ where $Q_0^+ = 0$."
+          "reason": "Row P = 0, 00 gives 00 instead of 01; it also fails 010, 100 and 101."
         }
       ],
-      "shortcut": "Test one row: $P Q_1 Q_0 = 000 \\to 01$ needs $D_1 = 0$, $D_0 = 1$. (A): $D_0 = 0$ ✗; (C): $D_1 = 1$ ✗; (D): $D_0 = P\\overline{Q_0} = 0$ ✗; (B): $D_1 = 0$, $D_0 = \\bar{P}\\,\\overline{Q_0} = 1$ ✓.",
+      "shortcut": "Test the row P = 0, $Q_1Q_0 = 00$ (next 01): A → 00, B → 01, C → 10, D → 00. One row, one survivor.",
       "pitfalls": [
-        "Using the JK or T excitation logic instead of $D = Q^+$.",
-        "Missing the wrap-around pair $m_0, m_2$ in the $D_0$ map."
+        "Writing T-style change columns for D flip-flops.",
+        "Swapping the roles of P = 0 (up) and P = 1 (down)."
       ],
-      "verification": "Evaluate (B) on all 8 rows: $D_1$ = 0,1,1,1,0,0,0,1 and $D_0$ = 1,0,1,1,0,0,1,0 for rows $000 \\dots 111$ — identical to the $Q_1^+$ and $Q_0^+$ columns.",
+      "verification": "Each option was simulated as two D flip-flops with input P over all 8 rows; only B matches every row, and minlib's minimal SOPs of the two D columns are exactly B's terms.",
       "animation": {
-        "kind": "panels",
-        "title": "K-maps of the next-state functions (rows P, columns Q1Q0)",
-        "panels": [
-          {
-            "kind": "kmap",
-            "title": "D1 = Q1⁺",
-            "variables": [
-              "P",
-              "Q1",
-              "Q0"
-            ],
-            "ones": [
-              1,
-              2,
-              3,
-              7
-            ]
-          },
-          {
-            "kind": "kmap",
-            "title": "D0 = Q0⁺",
-            "variables": [
-              "P",
-              "Q1",
-              "Q0"
-            ],
-            "ones": [
-              0,
-              2,
-              3,
-              6
-            ]
-          }
-        ]
+        "kind": "table",
+        "title": "Next-state table (P Q1 Q0 → Q1⁺Q0⁺)",
+        "cols": [
+          "P Q1 Q0",
+          "Q1⁺Q0⁺",
+          "option B"
+        ],
+        "rows": [
+          [
+            "0 0 0",
+            "01",
+            "01"
+          ],
+          [
+            "0 0 1",
+            "10",
+            "10"
+          ],
+          [
+            "0 1 0",
+            "11",
+            "11"
+          ],
+          [
+            "0 1 1",
+            "11",
+            "11"
+          ],
+          [
+            "1 0 0",
+            "00",
+            "00"
+          ],
+          [
+            "1 0 1",
+            "00",
+            "00"
+          ],
+          [
+            "1 1 0",
+            "01",
+            "01"
+          ],
+          [
+            "1 1 1",
+            "10",
+            "10"
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
       }
     },
     "cse-2026-1-cs-28": {

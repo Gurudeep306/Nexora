@@ -1,0 +1,2984 @@
+{
+ "version": 1,
+ "title": "Mealy and Moore output timing",
+ "width": 680,
+ "height": 335,
+ "narrow": {
+  "width": 360,
+  "height": 326
+ },
+ "intro": "The overlapping 101 detector built twice, as a 3-state Mealy machine and a 4-state Moore machine, on one clock and one input x. Each step reveals one clock period; dashed lines are the rising edges; the state in each period is printed under its output.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "Mealy and Moore 101 detectors on the same input",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Mealy vs Moore output timing",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "wlc",
+   "type": "text",
+   "x": 110,
+   "y": 101.0,
+   "text": "CLK",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 60,
+    "y": 100.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wcg0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     118.0,
+     110
+    ],
+    [
+     178.8,
+     110
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      68.0,
+      108
+     ],
+     [
+      98.4,
+      108
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg1r4g0s0",
+   "type": "line",
+   "points": [
+    [
+     178.8,
+     110
+    ],
+    [
+     178.8,
+     92
+    ],
+    [
+     209.2,
+     92
+    ],
+    [
+     209.2,
+     110
+    ],
+    [
+     239.6,
+     110
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      98.4,
+      108
+     ],
+     [
+      98.4,
+      92
+     ],
+     [
+      113.6,
+      92
+     ],
+     [
+      113.6,
+      108
+     ],
+     [
+      128.8,
+      108
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg2r8g0s0",
+   "type": "line",
+   "points": [
+    [
+     239.6,
+     110
+    ],
+    [
+     239.6,
+     92
+    ],
+    [
+     270.0,
+     92
+    ],
+    [
+     270.0,
+     110
+    ],
+    [
+     300.4,
+     110
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      128.8,
+      108
+     ],
+     [
+      128.8,
+      92
+     ],
+     [
+      144.0,
+      92
+     ],
+     [
+      144.0,
+      108
+     ],
+     [
+      159.2,
+      108
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg3r12g0s0",
+   "type": "line",
+   "points": [
+    [
+     300.4,
+     110
+    ],
+    [
+     300.4,
+     92
+    ],
+    [
+     330.8,
+     92
+    ],
+    [
+     330.8,
+     110
+    ],
+    [
+     361.2,
+     110
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      159.2,
+      108
+     ],
+     [
+      159.2,
+      92
+     ],
+     [
+      174.4,
+      92
+     ],
+     [
+      174.4,
+      108
+     ],
+     [
+      189.6,
+      108
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg4r16g0s0",
+   "type": "line",
+   "points": [
+    [
+     361.2,
+     110
+    ],
+    [
+     361.2,
+     92
+    ],
+    [
+     391.6,
+     92
+    ],
+    [
+     391.6,
+     110
+    ],
+    [
+     422.0,
+     110
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      189.6,
+      108
+     ],
+     [
+      189.6,
+      92
+     ],
+     [
+      204.8,
+      92
+     ],
+     [
+      204.8,
+      108
+     ],
+     [
+      220.0,
+      108
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg5r20g0s0",
+   "type": "line",
+   "points": [
+    [
+     422.0,
+     110
+    ],
+    [
+     422.0,
+     92
+    ],
+    [
+     452.4,
+     92
+    ],
+    [
+     452.4,
+     110
+    ],
+    [
+     482.8,
+     110
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      220.0,
+      108
+     ],
+     [
+      220.0,
+      92
+     ],
+     [
+      235.2,
+      92
+     ],
+     [
+      235.2,
+      108
+     ],
+     [
+      250.4,
+      108
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg6r24g0s0",
+   "type": "line",
+   "points": [
+    [
+     482.8,
+     110
+    ],
+    [
+     482.8,
+     92
+    ],
+    [
+     513.2,
+     92
+    ],
+    [
+     513.2,
+     110
+    ],
+    [
+     543.6,
+     110
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      250.4,
+      108
+     ],
+     [
+      250.4,
+      92
+     ],
+     [
+      265.6,
+      92
+     ],
+     [
+      265.6,
+      108
+     ],
+     [
+      280.8,
+      108
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg7r28g0s0",
+   "type": "line",
+   "points": [
+    [
+     543.6,
+     110
+    ],
+    [
+     543.6,
+     92
+    ],
+    [
+     574.0,
+     92
+    ],
+    [
+     574.0,
+     110
+    ],
+    [
+     604.4,
+     110
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      280.8,
+      108
+     ],
+     [
+      280.8,
+      92
+     ],
+     [
+      296.0,
+      92
+     ],
+     [
+      296.0,
+      108
+     ],
+     [
+      311.2,
+      108
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg8r32g0s0",
+   "type": "line",
+   "points": [
+    [
+     604.4,
+     110
+    ],
+    [
+     604.4,
+     92
+    ],
+    [
+     634.8,
+     92
+    ],
+    [
+     634.8,
+     110
+    ],
+    [
+     665.2,
+     110
+    ],
+    [
+     665.2,
+     92
+    ],
+    [
+     680.4,
+     92
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      311.2,
+      108
+     ],
+     [
+      311.2,
+      92
+     ],
+     [
+      326.4,
+      92
+     ],
+     [
+      326.4,
+      108
+     ],
+     [
+      341.6,
+      108
+     ],
+     [
+      341.6,
+      92
+     ],
+     [
+      349.2,
+      92
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlx",
+   "type": "text",
+   "x": 110,
+   "y": 147.0,
+   "text": "x",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 60,
+    "y": 144.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wxg0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     118.0,
+     138
+    ],
+    [
+     178.8,
+     138
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      68.0,
+      136
+     ],
+     [
+      98.4,
+      136
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wxg1r4g0s0",
+   "type": "line",
+   "points": [
+    [
+     178.8,
+     138
+    ],
+    [
+     194.0,
+     138
+    ],
+    [
+     194.0,
+     156
+    ],
+    [
+     239.6,
+     156
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      98.4,
+      136
+     ],
+     [
+      106.0,
+      136
+     ],
+     [
+      106.0,
+      152
+     ],
+     [
+      128.8,
+      152
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wxg2r8g0s0",
+   "type": "line",
+   "points": [
+    [
+     239.6,
+     156
+    ],
+    [
+     254.8,
+     156
+    ],
+    [
+     254.8,
+     138
+    ],
+    [
+     300.4,
+     138
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      128.8,
+      152
+     ],
+     [
+      136.4,
+      152
+     ],
+     [
+      136.4,
+      136
+     ],
+     [
+      159.2,
+      136
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wxg3r12g0s0",
+   "type": "line",
+   "points": [
+    [
+     300.4,
+     138
+    ],
+    [
+     361.2,
+     138
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      159.2,
+      136
+     ],
+     [
+      189.6,
+      136
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wxg4r16g0s0",
+   "type": "line",
+   "points": [
+    [
+     361.2,
+     138
+    ],
+    [
+     376.4,
+     138
+    ],
+    [
+     376.4,
+     156
+    ],
+    [
+     422.0,
+     156
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      189.6,
+      136
+     ],
+     [
+      197.2,
+      136
+     ],
+     [
+      197.2,
+      152
+     ],
+     [
+      220.0,
+      152
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wxg5r20g0s0",
+   "type": "line",
+   "points": [
+    [
+     422.0,
+     156
+    ],
+    [
+     437.2,
+     156
+    ],
+    [
+     437.2,
+     138
+    ],
+    [
+     482.8,
+     138
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      220.0,
+      152
+     ],
+     [
+      227.6,
+      152
+     ],
+     [
+      227.6,
+      136
+     ],
+     [
+      250.4,
+      136
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wxg6r24g0s0",
+   "type": "line",
+   "points": [
+    [
+     482.8,
+     138
+    ],
+    [
+     498.0,
+     138
+    ],
+    [
+     498.0,
+     156
+    ],
+    [
+     543.6,
+     156
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      250.4,
+      136
+     ],
+     [
+      258.0,
+      136
+     ],
+     [
+      258.0,
+      152
+     ],
+     [
+      280.8,
+      152
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wxg7r28g0s0",
+   "type": "line",
+   "points": [
+    [
+     543.6,
+     156
+    ],
+    [
+     574.0,
+     156
+    ],
+    [
+     574.0,
+     138
+    ],
+    [
+     589.2,
+     138
+    ],
+    [
+     589.2,
+     156
+    ],
+    [
+     604.4,
+     156
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      280.8,
+      152
+     ],
+     [
+      296.0,
+      152
+     ],
+     [
+      296.0,
+      136
+     ],
+     [
+      303.6,
+      136
+     ],
+     [
+      303.6,
+      152
+     ],
+     [
+      311.2,
+      152
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wxg8r32g0s0",
+   "type": "line",
+   "points": [
+    [
+     604.4,
+     156
+    ],
+    [
+     680.4,
+     156
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      311.2,
+      152
+     ],
+     [
+      349.2,
+      152
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlme",
+   "type": "text",
+   "x": 110,
+   "y": 193.0,
+   "text": "z Mealy",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 60,
+    "y": 188.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wmeg0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     118.0,
+     202
+    ],
+    [
+     178.8,
+     202
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      68.0,
+      196
+     ],
+     [
+      98.4,
+      196
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmeg1r4g0s0",
+   "type": "line",
+   "points": [
+    [
+     178.8,
+     202
+    ],
+    [
+     239.6,
+     202
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      98.4,
+      196
+     ],
+     [
+      128.8,
+      196
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmeg2r8g0s0",
+   "type": "line",
+   "points": [
+    [
+     239.6,
+     202
+    ],
+    [
+     254.8,
+     202
+    ],
+    [
+     254.8,
+     184
+    ],
+    [
+     300.4,
+     184
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      128.8,
+      196
+     ],
+     [
+      136.4,
+      196
+     ],
+     [
+      136.4,
+      180
+     ],
+     [
+      159.2,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmeg3r12g0s0",
+   "type": "line",
+   "points": [
+    [
+     300.4,
+     184
+    ],
+    [
+     300.4,
+     202
+    ],
+    [
+     361.2,
+     202
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      159.2,
+      180
+     ],
+     [
+      159.2,
+      196
+     ],
+     [
+      189.6,
+      196
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmeg4r16g0s0",
+   "type": "line",
+   "points": [
+    [
+     361.2,
+     202
+    ],
+    [
+     422.0,
+     202
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      189.6,
+      196
+     ],
+     [
+      220.0,
+      196
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmeg5r20g0s0",
+   "type": "line",
+   "points": [
+    [
+     422.0,
+     202
+    ],
+    [
+     437.2,
+     202
+    ],
+    [
+     437.2,
+     184
+    ],
+    [
+     482.8,
+     184
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      220.0,
+      196
+     ],
+     [
+      227.6,
+      196
+     ],
+     [
+      227.6,
+      180
+     ],
+     [
+      250.4,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmeg6r24g0s0",
+   "type": "line",
+   "points": [
+    [
+     482.8,
+     184
+    ],
+    [
+     482.8,
+     202
+    ],
+    [
+     543.6,
+     202
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      250.4,
+      180
+     ],
+     [
+      250.4,
+      196
+     ],
+     [
+      280.8,
+      196
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmeg7r28g0s0",
+   "type": "line",
+   "points": [
+    [
+     543.6,
+     202
+    ],
+    [
+     574.0,
+     202
+    ],
+    [
+     574.0,
+     184
+    ],
+    [
+     589.2,
+     184
+    ],
+    [
+     589.2,
+     202
+    ],
+    [
+     604.4,
+     202
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      280.8,
+      196
+     ],
+     [
+      296.0,
+      196
+     ],
+     [
+      296.0,
+      180
+     ],
+     [
+      303.6,
+      180
+     ],
+     [
+      303.6,
+      196
+     ],
+     [
+      311.2,
+      196
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmeg8r32g0s0",
+   "type": "line",
+   "points": [
+    [
+     604.4,
+     202
+    ],
+    [
+     680.4,
+     202
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      311.2,
+      196
+     ],
+     [
+      349.2,
+      196
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlmo",
+   "type": "text",
+   "x": 110,
+   "y": 239.0,
+   "text": "z Moore",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 60,
+    "y": 232.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wmog0r0g0s0",
+   "type": "line",
+   "points": [
+    [
+     118.0,
+     248
+    ],
+    [
+     178.8,
+     248
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      68.0,
+      240
+     ],
+     [
+      98.4,
+      240
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmog1r4g0s0",
+   "type": "line",
+   "points": [
+    [
+     178.8,
+     248
+    ],
+    [
+     239.6,
+     248
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      98.4,
+      240
+     ],
+     [
+      128.8,
+      240
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmog2r8g0s0",
+   "type": "line",
+   "points": [
+    [
+     239.6,
+     248
+    ],
+    [
+     300.4,
+     248
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      128.8,
+      240
+     ],
+     [
+      159.2,
+      240
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmog3r12g0s0",
+   "type": "line",
+   "points": [
+    [
+     300.4,
+     248
+    ],
+    [
+     300.4,
+     230
+    ],
+    [
+     361.2,
+     230
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      159.2,
+      240
+     ],
+     [
+      159.2,
+      224
+     ],
+     [
+      189.6,
+      224
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmog4r16g0s0",
+   "type": "line",
+   "points": [
+    [
+     361.2,
+     230
+    ],
+    [
+     361.2,
+     248
+    ],
+    [
+     422.0,
+     248
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      189.6,
+      224
+     ],
+     [
+      189.6,
+      240
+     ],
+     [
+      220.0,
+      240
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmog5r20g0s0",
+   "type": "line",
+   "points": [
+    [
+     422.0,
+     248
+    ],
+    [
+     482.8,
+     248
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      220.0,
+      240
+     ],
+     [
+      250.4,
+      240
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmog6r24g0s0",
+   "type": "line",
+   "points": [
+    [
+     482.8,
+     248
+    ],
+    [
+     482.8,
+     230
+    ],
+    [
+     543.6,
+     230
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      250.4,
+      240
+     ],
+     [
+      250.4,
+      224
+     ],
+     [
+      280.8,
+      224
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmog7r28g0s0",
+   "type": "line",
+   "points": [
+    [
+     543.6,
+     230
+    ],
+    [
+     543.6,
+     248
+    ],
+    [
+     604.4,
+     248
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      280.8,
+      224
+     ],
+     [
+      280.8,
+      240
+     ],
+     [
+      311.2,
+      240
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wmog8r32g0s0",
+   "type": "line",
+   "points": [
+    [
+     604.4,
+     248
+    ],
+    [
+     680.4,
+     248
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      311.2,
+      240
+     ],
+     [
+      349.2,
+      240
+     ]
+    ]
+   }
+  },
+  {
+   "id": "sme1",
+   "type": "text",
+   "x": 156.0,
+   "y": 215,
+   "text": "S0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 87.0,
+    "y": 208,
+    "size": 12
+   }
+  },
+  {
+   "id": "smo1",
+   "type": "text",
+   "x": 156.0,
+   "y": 261,
+   "text": "S0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 87.0,
+    "y": 252,
+    "size": 12
+   }
+  },
+  {
+   "id": "xb1",
+   "type": "text",
+   "x": 156.0,
+   "y": 127,
+   "text": "1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 87.0,
+    "y": 126,
+    "size": 12
+   }
+  },
+  {
+   "id": "sme2",
+   "type": "text",
+   "x": 216.8,
+   "y": 215,
+   "text": "S1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 117.4,
+    "y": 208,
+    "size": 12
+   }
+  },
+  {
+   "id": "smo2",
+   "type": "text",
+   "x": 216.8,
+   "y": 261,
+   "text": "S1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 117.4,
+    "y": 252,
+    "size": 12
+   }
+  },
+  {
+   "id": "xb2",
+   "type": "text",
+   "x": 216.8,
+   "y": 127,
+   "text": "0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 117.4,
+    "y": 126,
+    "size": 12
+   }
+  },
+  {
+   "id": "sme3",
+   "type": "text",
+   "x": 277.6,
+   "y": 215,
+   "text": "S2",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 147.8,
+    "y": 208,
+    "size": 12
+   }
+  },
+  {
+   "id": "smo3",
+   "type": "text",
+   "x": 277.6,
+   "y": 261,
+   "text": "S2",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 147.8,
+    "y": 252,
+    "size": 12
+   }
+  },
+  {
+   "id": "xb3",
+   "type": "text",
+   "x": 277.6,
+   "y": 127,
+   "text": "1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 147.8,
+    "y": 126,
+    "size": 12
+   }
+  },
+  {
+   "id": "sme4",
+   "type": "text",
+   "x": 338.4,
+   "y": 215,
+   "text": "S1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 178.2,
+    "y": 208,
+    "size": 12
+   }
+  },
+  {
+   "id": "smo4",
+   "type": "text",
+   "x": 338.4,
+   "y": 261,
+   "text": "S3",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 178.2,
+    "y": 252,
+    "size": 12
+   }
+  },
+  {
+   "id": "xb4",
+   "type": "text",
+   "x": 338.4,
+   "y": 127,
+   "text": "1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 178.2,
+    "y": 126,
+    "size": 12
+   }
+  },
+  {
+   "id": "sme5",
+   "type": "text",
+   "x": 399.2,
+   "y": 215,
+   "text": "S1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 208.6,
+    "y": 208,
+    "size": 12
+   }
+  },
+  {
+   "id": "smo5",
+   "type": "text",
+   "x": 399.2,
+   "y": 261,
+   "text": "S1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 208.6,
+    "y": 252,
+    "size": 12
+   }
+  },
+  {
+   "id": "xb5",
+   "type": "text",
+   "x": 399.2,
+   "y": 127,
+   "text": "0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 208.6,
+    "y": 126,
+    "size": 12
+   }
+  },
+  {
+   "id": "sme6",
+   "type": "text",
+   "x": 460.0,
+   "y": 215,
+   "text": "S2",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 239.0,
+    "y": 208,
+    "size": 12
+   }
+  },
+  {
+   "id": "smo6",
+   "type": "text",
+   "x": 460.0,
+   "y": 261,
+   "text": "S2",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 239.0,
+    "y": 252,
+    "size": 12
+   }
+  },
+  {
+   "id": "xb6",
+   "type": "text",
+   "x": 460.0,
+   "y": 127,
+   "text": "1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 239.0,
+    "y": 126,
+    "size": 12
+   }
+  },
+  {
+   "id": "sme7",
+   "type": "text",
+   "x": 520.8,
+   "y": 215,
+   "text": "S1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 269.4,
+    "y": 208,
+    "size": 12
+   }
+  },
+  {
+   "id": "smo7",
+   "type": "text",
+   "x": 520.8,
+   "y": 261,
+   "text": "S3",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 269.4,
+    "y": 252,
+    "size": 12
+   }
+  },
+  {
+   "id": "xb7",
+   "type": "text",
+   "x": 520.8,
+   "y": 127,
+   "text": "0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 269.4,
+    "y": 126,
+    "size": 12
+   }
+  },
+  {
+   "id": "sme8",
+   "type": "text",
+   "x": 581.5999999999999,
+   "y": 215,
+   "text": "S2",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 299.79999999999995,
+    "y": 208,
+    "size": 12
+   }
+  },
+  {
+   "id": "smo8",
+   "type": "text",
+   "x": 581.5999999999999,
+   "y": 261,
+   "text": "S2",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 299.79999999999995,
+    "y": 252,
+    "size": 12
+   }
+  },
+  {
+   "id": "xb8",
+   "type": "text",
+   "x": 581.5999999999999,
+   "y": 127,
+   "text": "0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 299.79999999999995,
+    "y": 126,
+    "size": 12
+   }
+  },
+  {
+   "id": "sme9",
+   "type": "text",
+   "x": 642.4,
+   "y": 215,
+   "text": "S0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 330.2,
+    "y": 208,
+    "size": 12
+   }
+  },
+  {
+   "id": "smo9",
+   "type": "text",
+   "x": 642.4,
+   "y": 261,
+   "text": "S0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 330.2,
+    "y": 252,
+    "size": 12
+   }
+  },
+  {
+   "id": "xb9",
+   "type": "text",
+   "x": 642.4,
+   "y": 127,
+   "text": "0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 330.2,
+    "y": 126,
+    "size": 12
+   }
+  },
+  {
+   "id": "e1",
+   "type": "line",
+   "points": [
+    [
+     178.8,
+     84
+    ],
+    [
+     178.8,
+     271
+    ]
+   ],
+   "dashed": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      98.4,
+      84
+     ],
+     [
+      98.4,
+      262
+     ]
+    ]
+   }
+  },
+  {
+   "id": "e2",
+   "type": "line",
+   "points": [
+    [
+     239.6,
+     84
+    ],
+    [
+     239.6,
+     271
+    ]
+   ],
+   "dashed": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      128.8,
+      84
+     ],
+     [
+      128.8,
+      262
+     ]
+    ]
+   }
+  },
+  {
+   "id": "e3",
+   "type": "line",
+   "points": [
+    [
+     300.4,
+     84
+    ],
+    [
+     300.4,
+     271
+    ]
+   ],
+   "dashed": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      159.2,
+      84
+     ],
+     [
+      159.2,
+      262
+     ]
+    ]
+   }
+  },
+  {
+   "id": "e4",
+   "type": "line",
+   "points": [
+    [
+     361.2,
+     84
+    ],
+    [
+     361.2,
+     271
+    ]
+   ],
+   "dashed": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      189.6,
+      84
+     ],
+     [
+      189.6,
+      262
+     ]
+    ]
+   }
+  },
+  {
+   "id": "e5",
+   "type": "line",
+   "points": [
+    [
+     422.0,
+     84
+    ],
+    [
+     422.0,
+     271
+    ]
+   ],
+   "dashed": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      220.0,
+      84
+     ],
+     [
+      220.0,
+      262
+     ]
+    ]
+   }
+  },
+  {
+   "id": "e6",
+   "type": "line",
+   "points": [
+    [
+     482.8,
+     84
+    ],
+    [
+     482.8,
+     271
+    ]
+   ],
+   "dashed": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      250.4,
+      84
+     ],
+     [
+      250.4,
+      262
+     ]
+    ]
+   }
+  },
+  {
+   "id": "e7",
+   "type": "line",
+   "points": [
+    [
+     543.6,
+     84
+    ],
+    [
+     543.6,
+     271
+    ]
+   ],
+   "dashed": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      280.8,
+      84
+     ],
+     [
+      280.8,
+      262
+     ]
+    ]
+   }
+  },
+  {
+   "id": "e8",
+   "type": "line",
+   "points": [
+    [
+     604.4,
+     84
+    ],
+    [
+     604.4,
+     271
+    ]
+   ],
+   "dashed": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      311.2,
+      84
+     ],
+     [
+      311.2,
+      262
+     ]
+    ]
+   }
+  },
+  {
+   "id": "e9",
+   "type": "line",
+   "points": [
+    [
+     665.2,
+     84
+    ],
+    [
+     665.2,
+     271
+    ]
+   ],
+   "dashed": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      341.6,
+      84
+     ],
+     [
+      341.6,
+      262
+     ]
+    ]
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 295,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 286,
+    "size": 12
+   }
+  },
+  {
+   "id": "st2",
+   "type": "text",
+   "x": 340.0,
+   "y": 317,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "y": 308,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "One clock, one input x (applied just after each rising edge). Above: the Mealy 101 detector (3 states); below: the Moore one (4 states).",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "input 1 0 1 1 0 1 0 0, then 0"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "both start in S0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Period 1: x = 1. Mealy in S0, Moore in S0; no 101 has just ended, so both outputs are 0.",
+   "patches": [
+    {
+     "id": "wcg0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wxg0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmeg0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmog0r0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "sme1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "smo1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "xb1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "period 1: x = 1, z Mealy = 0, z Moore = 0",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "Mealy S0, Moore S0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Period 2: x = 0. Mealy in S1, Moore in S1; no 101 has just ended, so both outputs are 0.",
+   "patches": [
+    {
+     "id": "wcg1r4g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wxg1r4g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmeg1r4g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmog1r4g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "sme2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "smo2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "xb2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "e1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "period 2: x = 0, z Mealy = 0, z Moore = 0",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "Mealy S1, Moore S1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Period 3: in S2 the input 1 completes 101. The Mealy output goes high now, inside this period, before edge 3.",
+   "patches": [
+    {
+     "id": "wcg2r8g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wxg2r8g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmeg2r8g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmog2r8g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "sme3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "smo3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "xb3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "e2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "period 3: x = 1, z Mealy = 1, z Moore = 0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "Mealy S2, Moore S2"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Period 4: the Moore machine entered S3 at edge 3, so its output is high for this whole period: one clock after the Mealy output.",
+   "patches": [
+    {
+     "id": "wcg3r12g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wxg3r12g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmeg3r12g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmog3r12g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "sme4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "smo4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "xb4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e4",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "e3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "period 4: x = 1, z Mealy = 0, z Moore = 1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "Mealy S1, Moore S3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Period 5: x = 0. Mealy in S1, Moore in S1; no 101 has just ended, so both outputs are 0.",
+   "patches": [
+    {
+     "id": "wcg4r16g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wxg4r16g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmeg4r16g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmog4r16g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "sme5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "smo5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "xb5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e5",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "e4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "period 5: x = 0, z Mealy = 0, z Moore = 0",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "Mealy S1, Moore S1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Period 6: in S2 the input 1 completes 101. The Mealy output goes high now, inside this period, before edge 6.",
+   "patches": [
+    {
+     "id": "wcg5r20g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wxg5r20g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmeg5r20g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmog5r20g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "sme6",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "smo6",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "xb6",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e6",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "e5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "period 6: x = 1, z Mealy = 1, z Moore = 0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "Mealy S2, Moore S2"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Period 7: the Moore machine entered S3 at edge 6, so its output is high for this whole period: one clock after the Mealy output.",
+   "patches": [
+    {
+     "id": "wcg6r24g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wxg6r24g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmeg6r24g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmog6r24g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "sme7",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "smo7",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "xb7",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e7",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "e6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "period 7: x = 0, z Mealy = 0, z Moore = 1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "Mealy S1, Moore S3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Period 8, in S2: a spike on x makes the Mealy output pulse. Edge 8 samples x = 0, so the state ignores it; the Moore output stays 0.",
+   "patches": [
+    {
+     "id": "wcg7r28g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wxg7r28g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmeg7r28g0s0",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wmog7r28g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "sme8",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "smo8",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "xb8",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e8",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "e7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "period 8: x = 0, z Mealy = 0, z Moore = 0",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "Mealy S2, Moore S2"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Period 9: x = 0. Mealy in S0, Moore in S0; no 101 has just ended, so both outputs are 0.",
+   "patches": [
+    {
+     "id": "wcg8r32g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wxg8r32g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmeg8r32g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wmog8r32g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "sme9",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "smo9",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "xb9",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e9",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "e8",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "period 9: x = 0, z Mealy = 0, z Moore = 0",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "Mealy S0, Moore S0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Same sequence, two timings: the Mealy output marks the period in which the last 1 arrives; the Moore output, the period after it.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "Mealy: periods 3, 6. Moore: periods 4, 7",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "Mealy: 3 states, Moore: 4 states"
+     }
+    },
+    {
+     "id": "e9",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  }
+ ]
+}
