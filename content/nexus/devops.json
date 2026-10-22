@@ -4,6 +4,7 @@
   "short": "OPS",
   "group": "beyond",
   "domain": "systems",
+  "stream": "systems-cloud",
   "order": 53,
   "icon": "rocket",
   "color": "#16a34a",
@@ -246,6 +247,7 @@
       "icon": "rocket",
       "desc": "Build a full pipeline that tests, packages and deploys an app with automatic rollback.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "tests-in-ci",
         "artifacts",
@@ -260,6 +262,7 @@
       "icon": "analytics",
       "desc": "Provision a service with code, add dashboards and alerts, and run an incident drill.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "incident-response",
         "infra-as-code-ops"

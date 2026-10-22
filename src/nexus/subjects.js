@@ -22,6 +22,7 @@
  * per-user reads are two small queries, cached in ./user-cache.
  */
 const fs = require("fs");
+const crypto = require("crypto");
 const path = require("path");
 
 const DIR = path.join(__dirname, "..", "..", "content", "nexus");
@@ -67,6 +68,7 @@ function refKey(subject, ref) {
  * test suite, and at server start). Returns a list of error strings.
  */
 function validateOutlines(docs, dsaNodes, opts = {}) {
+  if (opts.strict && !opts.streams) opts = { ...opts, streams: new Set(readStreams().map((x) => x.id)) };
   const errors = [];
   const ids = new Set();
   const keys = new Map(); // global key → requires (global keys)
@@ -81,6 +83,8 @@ function validateOutlines(docs, dsaNodes, opts = {}) {
     ids.add(d.id);
     for (const k of ["name", "short", "group", "icon", "color"]) if (!d[k]) errors.push(`${where}: missing ${k}`);
     if (opts.strict && !d.domain) errors.push(`${where}: missing domain`);
+    if (opts.strict && !d.stream) errors.push(`${where}: missing stream`);
+    if (d.stream && opts.streams && !opts.streams.has(d.stream)) errors.push(`${where}: unknown stream ${d.stream} (see _streams.json)`);
     if (d.engine) {
       if (!ENGINES.has(d.engine) || d.engine !== d.id) errors.push(`${where}: unknown engine ${d.engine}`);
       continue;
@@ -235,7 +239,64 @@ function layoutSubject(doc) {
     }
     if (pending) place([pending], r++);
   }
+  untangle(doc, out);
   return out;
+}
+
+/**
+ * Barycentre sweeps over the whole subject (Sugiyama-style): each layer
+ * (zone, row) is re-ordered by the mean x of its neighbours, downward using
+ * prerequisites and upward using what each node unlocks, nearer layers
+ * weighing more. Rows keep their members; only the order and spacing change,
+ * so links run short and cross as little as possible.
+ */
+function untangle(doc, pos) {
+  const zoneIndex = new Map(doc.zones.map((z, i) => [z.level, i]));
+  const layerOf = (n) => zoneIndex.get(n.zone) * 100 + pos.get(n.id).row;
+  const layers = new Map();
+  for (const n of doc.nodes) {
+    const k = layerOf(n);
+    if (!layers.has(k)) layers.set(k, []);
+    layers.get(k).push(n);
+  }
+  const keys = [...layers.keys()].sort((a, b) => a - b);
+  const rank = new Map(keys.map((k, i) => [k, i]));
+  const ids = new Set(doc.nodes.map((n) => n.id));
+  const parents = new Map(doc.nodes.map((n) => [n.id, (n.requires || []).filter((r) => ids.has(r))]));
+  const children = new Map(doc.nodes.map((n) => [n.id, []]));
+  for (const n of doc.nodes) for (const r of parents.get(n.id)) children.get(r).push(n.id);
+  const L = new Map(doc.nodes.map((n) => [n.id, rank.get(layerOf(n))]));
+  const spread = (list) => {
+    if (list.length === 1) return; // a lone node keeps its place under its parents
+    const step = 84 / list.length;
+    const shift = list.length < MAX_PER_ROW && L.get(list[0].id) % 2 === 1 ? step / 4 : 0;
+    list.forEach((n, i) => {
+      pos.get(n.id).x = Math.round((8 + step * (i + 0.5) + shift) * 10) / 10;
+    });
+  };
+  const bary = (id, nbrs) => {
+    let s = 0;
+    let w = 0;
+    for (const m of nbrs) {
+      const wt = 1 / Math.max(1, Math.abs(L.get(m) - L.get(id)));
+      s += pos.get(m).x * wt;
+      w += wt;
+    }
+    return w ? s / w : pos.get(id).x;
+  };
+  for (let sweep = 0; sweep < 6; sweep++) {
+    const down = sweep % 2 === 0;
+    const order = down ? keys : [...keys].reverse();
+    for (const k of order) {
+      const list = layers.get(k);
+      const b = new Map(list.map((n) => [n.id, bary(n.id, down ? parents.get(n.id) : children.get(n.id))]));
+      list.sort((a, c) => b.get(a.id) - b.get(c.id) || pos.get(a.id).x - pos.get(c.id).x);
+      if (list.length === 1) {
+        const p = parents.get(list[0].id);
+        if (p.length) pos.get(list[0].id).x = Math.round(Math.max(10, Math.min(90, bary(list[0].id, p))) * 10) / 10;
+      } else spread(list);
+    }
+  }
 }
 
 let registry = null;
@@ -257,6 +318,7 @@ function loadRegistry(dsaNodes) {
       short: d.short,
       group: d.group,
       domain: d.domain || d.group || "other",
+      stream: d.stream || d.domain || d.group || "other",
       order: d.order,
       icon: d.icon,
       color: d.color,
@@ -375,13 +437,25 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
       let attempted = 0;
       let attempts = 0;
       let rights = 0;
+      // Memory: when this node's PYQs were last answered right, and the
+      // spaced-repetition interval they have reached (for fading).
+      let lastAt = 0;
+      let ivSum = 0;
+      let ivN = 0;
+      let touched = 0;
       for (const q of pool) {
         const st = state.qstate.get(q);
         if (!st || !st.attempts) continue;
         attempted++;
         attempts += st.attempts;
         rights += st.correct;
-        if (st.correct > 0) correct++;
+        if (st.lastAt) touched = Math.max(touched, st.lastAt);
+        if (st.correct > 0) {
+          correct++;
+          if (st.lastAt) lastAt = Math.max(lastAt, st.lastAt);
+          ivSum += st.interval || 0;
+          ivN++;
+        }
       }
       const target = pool.length ? Math.min(pool.length, n.target || DEFAULT_TARGET) : 0;
       // Lessons count only where the reader can open them (a notes subject
@@ -389,6 +463,7 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
       const notesOk = s.meta.notesSubject && (!state.notesVisible || state.notesVisible.has(s.meta.notesSubject));
       const lessons = notesOk ? n.lessons || [] : [];
       const lessonsDone = lessons.filter((l) => state.lessons.has(`${s.meta.notesSubject}/${l}`)).length;
+      for (const l of lessons) touched = Math.max(touched, state.lessonsAt?.get(`${s.meta.notesSubject}/${l}`) || 0);
       const parts = [];
       if (target) parts.push(Math.min(1, correct / target));
       if (lessons.length) parts.push(lessonsDone / lessons.length);
@@ -402,6 +477,7 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
         icon: n.icon || "target",
         desc: n.desc || "",
         kind: n.kind || "concept",
+        optional: n.optional === true || (n.optional !== false && n.kind === "project"),
         tags: n.pyqTopics || [],
         requires: (n.requires || []).filter((r) => !r.includes(":")),
         target: target || (lessons.length ? lessons.length : 0),
@@ -417,6 +493,8 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
           lessons: lessons.length ? { done: lessonsDone, total: lessons.length, subject: s.meta.notesSubject, ids: lessons } : null,
         },
         completed: progress >= 100,
+        memory: lastAt ? { lastAt, interval: ivN ? ivSum / ivN : 0 } : null,
+        touchedAt: touched || 0,
         _cross: (n.requires || []).filter((r) => r.includes(":")),
       };
       status.set(key, node);
@@ -518,58 +596,95 @@ function subjectSummaries(reg, dsa, computed) {
 }
 
 /**
- * The whole Nexus as one web, light enough to send in one response: every
- * subject (with its domain, so the client can group them) and per node only
- * what the web draws: name, zone, state, progress and prerequisite links.
- * Where things sit is computed by the client (the lattice is deterministic);
- * descriptions, PYQ pools and the rest load per node from
- * /api/nexus/node/:subject/:id.
+ * The web is split in two so it opens instantly:
  *
- * Node state `s`: 0 locked, 1 open, 2 mastered.
+ *  structure  everything that only changes when the subject files change:
+ *             subjects, zones, nodes, links, goal routes. Versioned by a
+ *             content hash and cached forever (browser + device storage).
+ *  state      the reader's numbers for that structure, in the same order:
+ *             per zone [done, count, progress%, flags] and per node
+ *             [progress%, state, count label, days since last review,
+ *             review interval days, studied in the last 24 h].
  */
-function webPayload(reg, dsa, computed) {
+function webStructure(reg, dsa) {
+  if (reg.structure) return reg.structure;
   const clusters = [];
+  for (const [sid, s] of reg.subjects) {
+    const zones = s.engine === "dsa" ? dsa.zones.map((z) => ({ level: z.level, name: z.name, color: z.color })) : s.doc.zones.map((z) => ({ level: z.level, name: z.name, color: s.zoneColor.get(z.level) }));
+    const nodes = s.engine === "dsa"
+      ? reg.dsaNodes.map((n) => ({ id: n.id, n: n.name, z: n.zone, req: n.requires, xp: n.xpReward, ...(n.icon ? { i: n.icon } : {}) }))
+      : s.doc.nodes.map((n) => {
+          const out = { id: n.id, n: n.name, z: n.zone, req: (n.requires || []).filter((r) => !r.includes(":")), xp: n.xpReward || 50 };
+          const cross = (n.requires || []).filter((r) => r.includes(":") && reg.names.has(r));
+          if (cross.length) out.cx = cross;
+          if (n.kind && n.kind !== "concept") out.k = n.kind;
+          if (n.icon) out.i = n.icon;
+          // Course links: the GATE notes lessons this node teaches.
+          if (s.meta.notesSubject && n.lessons?.length) out.ls = n.lessons;
+          if (n.optional === true || (n.optional !== false && n.kind === "project")) out.o = 1;
+          return out;
+        });
+    const gate = s.meta.pyqSubject || s.meta.notesSubject ? { pyq: s.meta.pyqSubject || null, notes: s.meta.notesSubject || null } : null;
+    clusters.push({ id: sid, name: s.meta.name, short: s.meta.short, domain: s.meta.domain, stream: s.meta.stream, order: s.meta.order ?? 99, engine: s.engine || null, ...(gate ? { gate } : {}), description: s.meta.description || "", zones, nodes });
+  }
+  const routes = readRoutes(reg);
+  const streams = readStreams();
+  const body = { clusters, routes, streams };
+  const version = crypto.createHash("sha1").update(JSON.stringify(body)).digest("hex").slice(0, 12);
+  reg.structure = { version, ...body };
+  return reg.structure;
+}
+
+/**
+ * Streams (content/nexus/_streams.json): how subjects group on the radial
+ * overview, in their order around the circle, each with its accent hue.
+ */
+function readStreams(dir = DIR) {
+  try {
+    const raw = JSON.parse(fs.readFileSync(path.join(dir, "_streams.json"), "utf8")).streams || [];
+    return raw.map((x, i) => ({ id: x.id, name: x.name, hue: x.hue || "#6366f1", order: x.order ?? i + 1 })).sort((a, b) => a.order - b.order);
+  } catch {
+    return [];
+  }
+}
+
+/** Goal routes (content/nexus/_routes.json): named sets of subjects. */
+function readRoutes(reg) {
+  let raw = [];
+  try {
+    raw = JSON.parse(fs.readFileSync(path.join(DIR, "_routes.json"), "utf8")).routes || [];
+  } catch {
+    return [];
+  }
+  return raw
+    .map((r) => {
+      const subjects = r.group
+        ? [...reg.subjects.values()].filter((s) => s.meta.group === r.group).map((s) => s.meta.id)
+        : (r.subjects || []).filter((id) => reg.subjects.has(id));
+      return { id: r.id, name: r.name, description: r.description || "", subjects };
+    })
+    .filter((r) => r.subjects.length);
+}
+
+function webState(reg, dsa, computed, now = Date.now()) {
+  const day = 86400000;
+  const subjects = {};
   for (const [sid, s] of reg.subjects) {
     const data = s.engine === "dsa" ? dsa : computed.get(sid);
     if (!data) continue;
-    const crossOf = new Map((s.doc?.nodes || []).map((d) => [d.id, (d.requires || []).filter((r) => r.includes(":") && reg.names.has(r))]));
-    clusters.push({
-      id: sid,
-      name: s.meta.name,
-      short: s.meta.short,
-      domain: s.meta.domain,
-      order: s.meta.order ?? 99,
-      engine: s.engine || null,
-      zones: data.zones.map((z) => ({
-        level: z.level,
-        name: z.name,
-        color: z.color,
-        locked: z.locked,
-        current: z.current,
-        completed: z.completed,
-        nodeCount: z.nodeCount,
-        nodesCompleted: z.nodesCompleted,
-        zoneProgress: z.zoneProgress,
-      })),
-      nodes: data.nodes.map((n) => {
-        const out = {
-          id: n.id,
-          n: n.name,
-          z: n.zone,
-          p: n.progress,
-          s: n.completed ? 2 : n.unlocked ? 1 : 0,
-          req: n.requires,
-          xp: n.xpReward,
-          c: s.engine === "dsa" ? `${n.solved}/${n.target}` : countLabel(n),
-        };
-        const cross = crossOf.get(n.id) || [];
-        if (cross.length) out.cx = cross;
-        if (n.kind && n.kind !== "concept") out.k = n.kind;
-        return out;
-      }),
+    const zones = data.zones.map((z) => [z.nodesCompleted, z.nodeCount, z.zoneProgress, (z.locked ? 1 : 0) | (z.current ? 2 : 0) | (z.completed ? 4 : 0)]);
+    const nodes = data.nodes.map((n) => {
+      const c = s.engine === "dsa" ? `${n.solved}/${n.target}` : countLabel(n);
+      const ag = n.memory?.lastAt ? Math.round(((now - n.memory.lastAt) / day) * 10) / 10 : -1;
+      const iv = n.memory ? Math.round(n.memory.interval * 10) / 10 : 0;
+      const rc = n.touchedAt && now - n.touchedAt < day ? 1 : 0;
+      // Days since it was last studied (-1: never): "continue where you left off".
+      const td = n.touchedAt ? Math.round(((now - n.touchedAt) / day) * 100) / 100 : -1;
+      return [n.progress, n.completed ? 2 : n.unlocked ? 1 : 0, c, ag, iv, rc, td];
     });
+    subjects[sid] = { zones, nodes };
   }
-  return { clusters };
+  return { version: webStructure(reg, dsa).version, subjects };
 }
 
 /** The short count under a node (mirrors the client's nodeCountLabel). */
@@ -581,7 +696,10 @@ function countLabel(n) {
 }
 
 module.exports = {
-  webPayload,
+  readStreams,
+  webStructure,
+  webState,
+  readRoutes,
   subjectMeta,
   readOutlines,
   validateOutlines,

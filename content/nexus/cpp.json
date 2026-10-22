@@ -4,6 +4,7 @@
   "short": "C++",
   "group": "beyond",
   "domain": "languages",
+  "stream": "languages",
   "order": 22,
   "icon": "code",
   "color": "#00599c",
@@ -161,6 +162,7 @@
       "icon": "search",
       "desc": "Build a word index over a set of files with STL containers and fast lookups.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "stl-algorithms",
         "raii"
@@ -262,6 +264,7 @@
       "icon": "calculator",
       "desc": "Write a generic matrix class with operators, move semantics and benchmarks.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "templates",
         "operator-overloading",

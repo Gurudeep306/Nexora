@@ -4,6 +4,7 @@
   "short": "DSA",
   "group": "core",
   "domain": "core-cs",
+  "stream": "core-cs",
   "order": 1,
   "icon": "nexus",
   "color": "#5b8cff",

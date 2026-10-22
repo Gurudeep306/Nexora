@@ -4,6 +4,7 @@
   "short": "CALC",
   "group": "gate",
   "domain": "math",
+  "stream": "math",
   "order": 13,
   "icon": "function",
   "color": "#a855f7",

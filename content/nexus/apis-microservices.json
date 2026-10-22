@@ -4,6 +4,7 @@
   "short": "API",
   "group": "beyond",
   "domain": "software-engineering",
+  "stream": "software-engineering",
   "order": 42,
   "icon": "link",
   "color": "#14b8a6",
@@ -260,6 +261,7 @@
       "icon": "rocket",
       "desc": "Build and document a versioned, authenticated public REST API.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "openapi",
         "api-auth",
@@ -274,6 +276,7 @@
       "icon": "building",
       "desc": "Build a small shop as several containerised services with messaging and tracing.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "resilience",
         "data-ownership",

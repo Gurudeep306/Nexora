@@ -4,6 +4,7 @@
   "short": "CG",
   "group": "beyond",
   "domain": "visual-product",
+  "stream": "theory-frontier",
   "order": 55,
   "icon": "shapes",
   "color": "#f43f5e",
@@ -198,6 +199,7 @@
       "icon": "rocket",
       "desc": "Build a renderer that loads meshes and draws lit, textured, shadowed scenes.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "texture-mapping",
         "shadows"
@@ -261,6 +263,7 @@
       "icon": "trophy",
       "desc": "Write a path tracer that renders global illumination scenes.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "path-tracing",
         "bvh"

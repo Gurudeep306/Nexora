@@ -4,6 +4,7 @@
   "short": "RL",
   "group": "beyond",
   "domain": "ai",
+  "stream": "ai-data",
   "order": 45,
   "icon": "target",
   "color": "#9333ea",
@@ -136,6 +137,7 @@
       "icon": "gamepad",
       "desc": "Implement and compare value iteration, SARSA and Q-learning on gridworlds.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "q-learning",
         "value-iteration"
@@ -225,6 +227,7 @@
       "icon": "rocket",
       "desc": "Train agents on classic control and Atari-style tasks and analyse learning curves.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "ppo",
         "dqn"

@@ -4,6 +4,7 @@
   "short": "SE",
   "group": "beyond",
   "domain": "software-engineering",
+  "stream": "software-engineering",
   "order": 41,
   "icon": "wrench",
   "color": "#0ea5e9",
@@ -269,6 +270,7 @@
       "icon": "check",
       "desc": "Build a small library test-first with high branch coverage and CI.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "tdd",
         "coverage-mutation",
@@ -283,6 +285,7 @@
       "icon": "users",
       "desc": "Run a short team project with sprints, reviews and a tagged release.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "agile",
         "code-review",

@@ -4,6 +4,7 @@
   "short": "PY",
   "group": "beyond",
   "domain": "languages",
+  "stream": "languages",
   "order": 20,
   "icon": "code",
   "color": "#3776ab",
@@ -165,6 +166,7 @@
       "icon": "terminal",
       "desc": "Build a command-line tool with argparse that reads files, handles errors and is split into modules.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "files-modules",
         "exceptions",
@@ -280,6 +282,7 @@
       "icon": "analytics",
       "desc": "Clean a real dataset, summarise it and present findings with charts in a notebook.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "numpy-pandas",
         "plotting",

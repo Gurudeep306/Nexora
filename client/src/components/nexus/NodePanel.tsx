@@ -1,13 +1,15 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { ArrowUpRight, BookOpen, ExternalLink, Lock, Play, Swords, X, Zap } from 'lucide-react'
-import { Badge, Card, CardContent, LoadingBlock, Progress } from '@/components/ui'
+import { useState } from 'react'
+import { ArrowUpRight, BookOpen, Check, ExternalLink, GitBranch, Link2, Lock, Play, RotateCcw, Swords, X, Zap } from 'lucide-react'
+import { Badge, Button, Card, CardContent, LoadingBlock, Progress } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
 import { Icon } from '@/components/icon/Icon'
 import { nodeIcon } from './icons'
+import type React from 'react'
 import type { CrossLink, NexusNode, NexusPyqsResponse, SkillProblemsResponse } from './types'
 
 function statusBadge(status: string) {
@@ -19,7 +21,7 @@ function statusBadge(status: string) {
 const label = 'mb-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase'
 
 /** "Needs · Trees (DSA)" / "Unlocks · B+ trees (DBMS)" chips; click jumps there. */
-function CrossChips({ title, links, kind, onJump }: { title: string; links: CrossLink[]; kind: 'needs' | 'unlocks'; onJump?: (l: CrossLink) => void }) {
+function CrossChips({ title, links, kind, onJump, hueOf }: { title: string; links: CrossLink[]; kind: 'needs' | 'unlocks'; onJump?: (l: CrossLink) => void; hueOf?: (subject: string) => string | undefined }) {
   if (!links.length) return null
   return (
     <div>
@@ -32,6 +34,8 @@ function CrossChips({ title, links, kind, onJump }: { title: string; links: Cros
             onClick={() => onJump?.(c)}
             className={cn('nx-need inline-flex cursor-pointer items-center gap-1 px-2 py-0.5 text-[11px]', kind === 'unlocks' && 'nx-unlock')}
             data-done={c.completed || undefined}
+            style={hueOf?.(c.subject) ? ({ '--nx-chip': hueOf(c.subject) } as React.CSSProperties) : undefined}
+            data-hue={hueOf?.(c.subject) ? '' : undefined}
             title={`${c.name} in ${c.subjectName}${c.completed ? ' (mastered)' : ` (${c.progress}%)`}`}
           >
             {c.completed ? <Icon name="check" className="size-3" aria-hidden="true" /> : kind === 'needs' ? <Lock className="size-3" aria-hidden="true" /> : null}
@@ -145,6 +149,12 @@ export function NodePanel({
   detailLoading = false,
   engine = null,
   onOpenPath,
+  bare = false,
+  studyHref,
+  due = false,
+  onReview,
+  shareHref,
+  hueOf,
 }: {
   node: NexusNode
   nodes: NexusNode[]
@@ -161,7 +171,19 @@ export function NodePanel({
   engine?: string | null
   /** Open this subject's path (from the web view). */
   onOpenPath?: () => void
+  /** No card chrome (inside the details sheet). */
+  bare?: boolean
+  /** Where its course is (the primary action). */
+  studyHref?: string
+  /** Due for spaced review (amber), and the action that starts one. */
+  due?: boolean
+  onReview?: () => void
+  /** A link to this concept (copied by "Copy link"). */
+  shareHref?: string
+  /** A subject's stream colour (for the chips). */
+  hueOf?: (subject: string) => string | undefined
 }) {
+  const [copied, setCopied] = useState(false)
   // The solve-count engine (the competitive-programming tree) shows rated problems.
   const isDsa = engine === 'dsa'
   const prereqs = node.requires.map((id) => nodes.find((n) => n.id === id)).filter((n): n is NexusNode => Boolean(n))
@@ -169,42 +191,83 @@ export function NodePanel({
   const m = node.metric
   const kind = isDsa ? 'Skill Node' : node.kind === 'project' ? 'Project' : node.kind === 'lesson' ? 'Lesson' : 'Concept'
 
-  return (
-    <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2, ease: 'easeOut' }}>
-      <Card glow className="nx-panel sticky top-4">
-        <CardContent className="space-y-4">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex min-w-0 gap-2.5">
-              <span
-                className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full border"
-                style={{ borderColor: zoneColor, color: zoneColor }}
-                aria-hidden="true"
-              >
-                <Icon name={nodeIcon(node.icon)} className="size-4" />
-              </span>
-              <div className="min-w-0">
-                <p className="text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
-                  {zoneName} · {kind}
-                </p>
-                <h2 className="mt-1 font-display text-lg tracking-wide text-foreground">{node.name}</h2>
-              </div>
+  const body = (
+    <>
+          <div className="flex items-start gap-3">
+            <MasteryRing value={node.completed ? 100 : node.progress} color={zoneColor} state={node.completed ? 'done' : node.unlocked ? 'open' : 'locked'} icon={node.icon} due={due} />
+            <div className="min-w-0 flex-1">
+              <p className="mb-0 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
+                {zoneName} · {kind}
+              </p>
+              <h2 className="mt-1 mb-0 font-display text-lg leading-snug tracking-wide text-foreground">{node.name}</h2>
             </div>
             <button
               type="button"
               onClick={onClose}
               aria-label="Close node details"
-              className="cursor-pointer rounded-md p-1.5 text-foreground-dim transition-colors hover:bg-surface-2 hover:text-foreground"
+              className="-mt-1 -mr-1 cursor-pointer rounded-md p-1.5 text-foreground-dim transition-colors hover:bg-surface-2 hover:text-foreground focus-visible:ring-2 focus-visible:ring-accent-brand focus-visible:outline-none"
             >
               <X className="size-4" />
             </button>
           </div>
 
-          {detailLoading ? <LoadingBlock rows={2} /> : <p className="text-sm text-foreground-dim">{node.desc}</p>}
-          {onOpenPath && (
-            <button type="button" onClick={onOpenPath} className="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-accent-brand hover:underline">
-              Open the full path <ArrowUpRight className="size-3" aria-hidden="true" />
-            </button>
+          {detailLoading ? (
+            <div className="space-y-2" aria-hidden="true">
+              <div className="nx-skel h-3.5 w-full rounded" />
+              <div className="nx-skel h-3.5 w-4/5 rounded" />
+            </div>
+          ) : (
+            <p className="mb-0 text-sm leading-relaxed text-foreground-dim">{node.desc}</p>
           )}
+          {due && (
+            <div className="nx-due-note flex items-center gap-2 rounded-lg px-3 py-2 text-xs">
+              <RotateCcw className="size-3.5 shrink-0" aria-hidden="true" />
+              Due for review — a quick round keeps it fresh.
+            </div>
+          )}
+          <div className="space-y-2">
+            {studyHref && (
+              <Link to={studyHref} className="block rounded-lg focus-visible:ring-2 focus-visible:ring-accent-brand focus-visible:outline-none" tabIndex={-1}>
+                <Button variant="primary" size="sm" className="nx-press w-full justify-center">
+                  <BookOpen className="size-3.5" aria-hidden="true" /> Study this
+                </Button>
+              </Link>
+            )}
+            {(onOpenPath || onReview || shareHref) && (
+              <div className="flex flex-wrap gap-1.5">
+                {onReview && (
+                  <Button variant="outline" size="sm" className="nx-press" onClick={onReview}>
+                    <RotateCcw className="size-3.5" aria-hidden="true" /> Review
+                  </Button>
+                )}
+                {onOpenPath && (
+                  <Button variant="outline" size="sm" className="nx-press" onClick={onOpenPath}>
+                    <GitBranch className="size-3.5" aria-hidden="true" /> Open its tree
+                  </Button>
+                )}
+                {shareHref && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="nx-press"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(new URL(shareHref, window.location.origin).toString())
+                        setCopied(true)
+                        window.setTimeout(() => setCopied(false), 1600)
+                      } catch {
+                        /* clipboard blocked */
+                      }
+                    }}
+                    aria-label="Copy a link to this concept"
+                  >
+                    {copied ? <Check className="size-3.5" aria-hidden="true" /> : <Link2 className="size-3.5" aria-hidden="true" />}
+                    {copied ? 'Copied' : 'Copy link'}
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
 
           <div className="flex flex-wrap gap-1.5">
             {node.tags.map((t) => (
@@ -217,6 +280,7 @@ export function NodePanel({
                 {node.difficulty[0]}–{node.difficulty[1]} rating
               </Badge>
             )}
+            {node.optional && <Badge variant="default">optional</Badge>}
             <Badge variant="gold">
               <Zap className="size-3" aria-hidden="true" />
               {node.xpReward} XP
@@ -290,7 +354,7 @@ export function NodePanel({
               </div>
             </div>
           )}
-          <CrossChips title="Needs from other subjects" links={node.crossRequires ?? []} kind="needs" onJump={onJump} />
+          <CrossChips title="Needs from other subjects" links={node.crossRequires ?? []} kind="needs" onJump={onJump} hueOf={hueOf} />
           {unlocks.length > 0 && (
             <div>
               <p className={label}>Unlocks</p>
@@ -303,7 +367,7 @@ export function NodePanel({
               </div>
             </div>
           )}
-          <CrossChips title="Unlocks in other subjects" links={node.crossUnlocks ?? []} kind="unlocks" onJump={onJump} />
+          <CrossChips title="Unlocks in other subjects" links={node.crossUnlocks ?? []} kind="unlocks" onJump={onJump} hueOf={hueOf} />
 
           {/* GATE notes lessons */}
           {m?.lessons && (
@@ -348,8 +412,39 @@ export function NodePanel({
           )}
 
           {isDsa ? <DsaProblems node={node} /> : <SubjectPyqs node={node} />}
-        </CardContent>
+    </>
+  )
+  if (bare) {
+    // No card chrome: the content alone, for the bottom sheet.
+    return <div className="nx-panel space-y-4">{body}</div>
+  }
+  return (
+    <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 32 }}>
+      <Card glow className="nx-panel sticky top-4">
+        <CardContent className="space-y-4">{body}</CardContent>
       </Card>
     </motion.div>
+  )
+}
+
+/** The skill's mastery as a ring in its zone colour, its icon inside, % beneath. */
+function MasteryRing({ value, color, state, icon, due }: { value: number; color: string; state: 'done' | 'open' | 'locked'; icon?: string; due?: boolean }) {
+  const S = 56
+  const r = S / 2 - 3
+  const c = 2 * Math.PI * r
+  return (
+    <div className="flex shrink-0 flex-col items-center gap-1" aria-label={`${Math.round(value)}% mastered`} role="img">
+      <div className="nx-orb relative flex items-center justify-center rounded-full" data-state={state} style={{ width: S, height: S, ['--zc' as string]: color }}>
+        <svg className="absolute inset-0 -rotate-90" width={S} height={S} aria-hidden="true">
+          <circle cx={S / 2} cy={S / 2} r={r} fill="none" className="nx-orb-track" strokeWidth="3" />
+          <circle cx={S / 2} cy={S / 2} r={r} fill="none" stroke="var(--zc)" strokeWidth="3" strokeLinecap="round" strokeDasharray={`${(c * value) / 100} ${c}`} className="nx-ring-in" />
+          {due && <circle cx={S / 2} cy={S / 2} r={r + 2.5} fill="none" stroke="var(--color-warning, #f59e0b)" strokeWidth="1.5" strokeDasharray="3 3" />}
+        </svg>
+        <span className="nx-orb-core relative flex size-[42px] items-center justify-center rounded-full">
+          <Icon name={nodeIcon(icon)} className="size-[19px]" />
+        </span>
+      </div>
+      <span className="font-mono text-[10.5px] text-foreground-dim tabular-nums">{Math.round(value)}%</span>
+    </div>
   )
 }

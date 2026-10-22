@@ -4,6 +4,7 @@
   "short": "IR",
   "group": "beyond",
   "domain": "theory",
+  "stream": "ai-data",
   "order": 53,
   "icon": "search",
   "color": "#0f766e",
@@ -136,6 +137,7 @@
       "icon": "rocket",
       "desc": "Build a search engine over a document collection with BM25 ranking.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "query-processing",
         "bm25",
@@ -285,6 +287,7 @@
       "icon": "trophy",
       "desc": "Combine BM25 and dense retrieval with re-ranking and evaluate the gains.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "vector-search",
         "neural-reranking",

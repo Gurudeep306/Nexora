@@ -4,6 +4,7 @@
   "short": "DEEP",
   "group": "beyond",
   "domain": "ai",
+  "stream": "ai-data",
   "order": 16,
   "icon": "layers",
   "color": "#7c3aed",
@@ -148,6 +149,7 @@
       "icon": "play",
       "desc": "Train an MLP on MNIST in PyTorch, plot training curves, and tune the optimiser and regularisation.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "optimizers",
         "regularization-dropout"
@@ -198,6 +200,7 @@
       "icon": "image",
       "desc": "Fine-tune a pretrained CNN on your own small image dataset and analyse its mistakes.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "transfer-learning",
         "regularization-dropout"
@@ -247,6 +250,7 @@
       "icon": "keyboard",
       "desc": "Train a character-level LSTM language model and sample text from it.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "lstm-gru",
         "embeddings"
@@ -299,6 +303,7 @@
       "icon": "wand",
       "desc": "Fine-tune a small pretrained transformer for text classification and compare it with your LSTM.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "pretrained-models"
       ],

@@ -4,6 +4,7 @@
   "short": "EMB",
   "group": "beyond",
   "domain": "systems",
+  "stream": "systems-cloud",
   "order": 55,
   "icon": "bolt",
   "color": "#65a30d",
@@ -248,6 +249,7 @@
       "icon": "sun",
       "desc": "Build a sensor node that samples the weather, sleeps between readings and publishes over MQTT.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "adc-sensors",
         "rtos",
@@ -262,6 +264,7 @@
       "icon": "home",
       "desc": "Build a secure smart-home controller with devices, a gateway and a dashboard.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "wireless",
         "iot-security",
