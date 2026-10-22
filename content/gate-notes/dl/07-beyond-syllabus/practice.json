@@ -99,14 +99,14 @@
    },
    {
     "l": "C",
-    "t": "A $2 : 4$ decoder on $A_{16}A_{15}$"
+    "t": "A $2 : 4$ decoder on $A_1A_0$"
    },
    {
     "l": "D",
-    "t": "A $2 : 4$ decoder on $A_1A_0$"
+    "t": "A $2 : 4$ decoder on $A_{16}A_{15}$"
    }
   ],
-  "answer": "C",
+  "answer": "D",
   "solution": [
    "System: $128\\text{K} = 2^{17}$ words, so 17 address lines $A_{16} \\dots A_0$. Chip: $32\\text{K} = 2^{15}$, so $A_{14} \\dots A_0$ go to every chip.",
    "Chips: $128\\text{K} / 32\\text{K} = 4$, one per decoder output, so 2 high bits.",
@@ -115,7 +115,7 @@
   "concept": "Capacity expansion: the low log₂ w bits go to every chip, the high bits feed a decoder with one output per chip.",
   "common_wrong": [
    {
-    "answer": "D",
+    "answer": "C",
     "why": "Decoding the lowest bits spreads consecutive addresses over the chips (interleaving), not consecutive blocks."
    },
    {
@@ -150,7 +150,7 @@
    },
    {
     "l": "C",
-    "t": "An SRAM must also be refreshed, but less often than a DRAM."
+    "t": "Reading a DRAM cell destroys its stored charge, so the value is written back after every read."
    },
    {
     "l": "D",
@@ -160,30 +160,32 @@
   "answer": [
    "A",
    "B",
+   "C",
    "D"
   ],
   "solution": [
    "A: the SRAM cell is a latch (two inverters in a loop, 4 transistors) plus 2 access transistors: correct.",
    "B: a DRAM bit is charge on a tiny capacitor, which leaks in milliseconds, so every row is periodically read and rewritten: correct.",
-   "C: the latch restores its own value as long as power is on, so SRAM never needs refresh: wrong. D: both are volatile: correct."
+   "C: a read shares the cell's charge with the much larger bit line, so the charge is gone; the sense amplifier restores it: correct.",
+   "D: both are volatile; SRAM needs power (but no refresh) to keep its latch: correct. All four statements hold."
   ],
-  "concept": "SRAM = latch, no refresh; DRAM = 1 transistor + 1 capacitor, refresh; both volatile.",
+  "concept": "SRAM = latch, no refresh; DRAM = 1 transistor + 1 capacitor, destructive read, refresh; both volatile.",
   "common_wrong": [
    {
     "answer": [
      "A",
-     "B"
+     "B",
+     "D"
     ],
-    "why": "D is also true: SRAM keeps data only while powered."
+    "why": "C is true as well: a DRAM read is destructive and is followed by a write-back."
    },
    {
     "answer": [
      "A",
      "B",
-     "C",
-     "D"
+     "C"
     ],
-    "why": "SRAM needs no refresh at all; C is false."
+    "why": "D is also true: SRAM keeps data only while powered (it needs no refresh, but it does need power)."
    }
   ],
   "blocks": [
@@ -195,52 +197,33 @@
  },
  {
   "id": "nx-dl-07-01-q05",
-  "type": "MCQ",
-  "marks": 1,
-  "text": "A $64\\text{K} \\times 16$ memory is made of four rows of $16\\text{K} \\times 8$ chips, row 0 starting at address `0000`. Which row and which offset inside the chips does address `B123` (hexadecimal) reach?",
-  "options": [
-   {
-    "l": "A",
-    "t": "Row 2, offset `3123`"
-   },
-   {
-    "l": "B",
-    "t": "Row 3, offset `3123`"
-   },
-   {
-    "l": "C",
-    "t": "Row 2, offset `B123`"
-   },
-   {
-    "l": "D",
-    "t": "Row 1, offset `3123`"
-   }
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 64-bit-wide main memory is built from eight $1\\text{G} \\times 8$ DRAM chips. Each chip has $2^{15}$ rows, one row refresh takes 60 ns, and every row must be refreshed once every 64 ms. What percentage of the time is the memory available for reads and writes? (Give the answer to one decimal place.)",
+  "answer": [
+   96.9,
+   97.0
   ],
-  "answer": "A",
   "solution": [
-   "Each row holds $16\\text{K} = 2^{14}$ words, `4000` in hex: row 2 covers `8000–BFFF`.",
-   "`B123` $= 1011\\,0001\\,0010\\,0011_2$: the top two bits are 10, so row 2.",
-   "Offset $=$ `B123` $-$ `8000` $=$ `3123` (the low 14 bits)."
+   "All eight chips receive the same refresh command and refresh their own row at the same moment, so the busy time per period is the rows of **one** chip times the row refresh time.",
+   "Busy per period: $2^{15} \\times 60\\ \\text{ns} = 32\\,768 \\times 60\\ \\text{ns} = 1.96608$ ms.",
+   "Overhead: $1.96608 / 64 = 3.072\\%$; available $100 - 3.072 = 96.928\\% \\approx 96.9\\%$."
   ],
-  "concept": "Top address bits = row, low bits = offset.",
+  "concept": "Chips of a memory refresh in parallel: overhead = (rows per chip) · t_RC / T, available = 1 − overhead.",
   "common_wrong": [
    {
-    "answer": "B",
-    "why": "Reading the top hex digit B as 'row 3'; the row is the top two bits (10), not the top digit."
+    "answer": 3.072,
+    "why": "That is the percentage spent refreshing; the question asks for the time available."
    },
    {
-    "answer": "C",
-    "why": "The chips see only the low 14 bits, so the offset cannot exceed 3FFF."
-   },
-   {
-    "answer": "D",
-    "why": "Row 1 covers 4000–7FFF."
+    "answer": 75.424,
+    "why": "Multiplies the busy time by the 8 chips (24.576 % overhead); the chips refresh in parallel, not one after another."
    }
   ],
   "blocks": [
-   "address-map",
-   "map-intuition",
-   "expansion-theorem"
+   "refresh-derivation",
+   "sram-dram",
+   "ex-org-refresh-chips"
   ],
   "source": "nexora"
  },
@@ -276,48 +259,49 @@
   "id": "nx-dl-07-01-q07",
   "type": "MCQ",
   "marks": 2,
-  "text": "A $2\\text{K} \\times 8$ ROM sits on a 16-bit address bus. Its chip select is active when $A_{15} = 1$ and $A_{14} = 0$; bits $A_{13}$, $A_{12}$ and $A_{11}$ are not decoded. At how many different bus addresses can the ROM's first word be read?",
+  "text": "A $2\\text{K} \\times 8$ ROM sits on a 16-bit address bus. Its chip select is active when $A_{15} = 1$ and $A_{14} = 0$; bits $A_{13}$, $A_{12}$ and $A_{11}$ are not decoded. At which addresses (hexadecimal) does the ROM respond?",
   "options": [
    {
     "l": "A",
-    "t": "1"
+    "t": "`8000–87FF` only"
    },
    {
     "l": "B",
-    "t": "4"
+    "t": "`8000–87FF`, `9000–97FF`, `A000–A7FF`, `B000–B7FF` (four blocks)"
    },
    {
     "l": "C",
-    "t": "8"
+    "t": "`8000–87FF`, `8800–8FFF`, …, `B800–BFFF` (eight blocks, all of `8000–BFFF`)"
    },
    {
     "l": "D",
-    "t": "32"
+    "t": "`8000–FFFF` (every address with $A_{15} = 1$)"
    }
   ],
   "answer": "C",
   "solution": [
-   "The ROM uses $m = 11$ address bits ($2\\text{K} = 2^{11}$); the bus has $n = 16$.",
-   "The chip select checks $d = 2$ of the $16 - 11 = 5$ high bits; 3 are free.",
-   "Aliases $= 2^{16 - 11 - 2} = 2^3 = 8$."
+   "The ROM uses $m = 11$ address bits $A_{10} \\dots A_0$ ($2\\text{K} = 2^{11}$), so each copy is a block of `800` hex addresses.",
+   "The chip select fixes $A_{15}A_{14} = 10$; the $16 - 11 - 2 = 3$ bits $A_{13}A_{12}A_{11}$ are free, giving $2^3 = 8$ blocks.",
+   "With $A_{15}A_{14} = 10$ the address runs from $1000\\,0000\\,0000\\,0000_2 =$ `8000` to $1011\\,1111\\,1111\\,1111_2 =$ `BFFF`: the eight blocks `8000–87FF`, `8800–8FFF`, …, `B800–BFFF` tile it exactly."
   ],
-  "concept": "Each ignored address bit doubles the number of addresses of every word: 2^(n − m − d).",
+  "concept": "Fixed high bits set the region, free high bits repeat the chip in it: 2^(n − m − d) blocks of 2^m addresses.",
   "common_wrong": [
    {
     "answer": "A",
-    "why": "That would need full decoding of all five high bits."
-   },
-   {
-    "answer": "D",
-    "why": "2^5 ignores that two of the high bits are decoded."
+    "why": "That would need full decoding: A13, A12 and A11 would also have to be checked as 0."
    },
    {
     "answer": "B",
-    "why": "2^2 counts the decoded bits instead of the ignored ones."
+    "why": "Lets only A13 and A12 run free; A11 is not decoded either, so the blocks are 800 apart, not 1000."
+   },
+   {
+    "answer": "D",
+    "why": "Ignores A14, which the chip select does check: A14 = 1 (C000–FFFF) deselects the ROM."
    }
   ],
   "blocks": [
    "alias-theorem",
+   "alias-intuition",
    "address-map",
    "trap-alias"
   ],
@@ -331,46 +315,47 @@
   "options": [
    {
     "l": "A",
-    "t": "Five chips are needed."
+    "t": "A $2 : 4$ decoder is enough to select the chips."
    },
    {
     "l": "B",
-    "t": "The memory needs 16 address lines."
+    "t": "Five chips are needed."
    },
    {
     "l": "C",
-    "t": "A $3 : 8$ decoder on the top three address lines selects the chips, and three of its outputs are unused."
+    "t": "The memory needs 16 address lines."
    },
    {
     "l": "D",
-    "t": "A $2 : 4$ decoder is enough to select the chips."
+    "t": "A $3 : 8$ decoder on the top three address lines selects the chips, and three of its outputs are unused."
    }
   ],
   "answer": [
-   "A",
    "B",
-   "C"
+   "C",
+   "D"
   ],
   "solution": [
-   "Chips: $40\\text{K} / 8\\text{K} = 5$ (A).",
-   "$40\\text{K} = 40\\,960$ words; $2^{15} = 32\\,768 < 40\\,960 \\le 65\\,536 = 2^{16}$, so 16 address lines (B).",
-   "The chips use 13 bits; $16 - 13 = 3$ high bits give a $3 : 8$ decoder; five outputs are used and three are spare (C). A $2 : 4$ decoder has only 4 outputs for 5 chips (D is wrong)."
+   "A: a $2 : 4$ decoder has only 4 outputs for 5 chips: wrong.",
+   "B: chips $= 40\\text{K} / 8\\text{K} = 5$: correct.",
+   "C: $40\\text{K} = 40\\,960$ words; $2^{15} = 32\\,768 < 40\\,960 \\le 65\\,536 = 2^{16}$, so 16 address lines: correct.",
+   "D: the chips use 13 bits; $16 - 13 = 3$ high bits give a $3 : 8$ decoder; five outputs are used and three are spare: correct."
   ],
   "concept": "For a non-power-of-two size, take the ceiling for the address lines; the decoder then has spare outputs.",
   "common_wrong": [
    {
     "answer": [
      "A",
-     "D"
+     "B"
     ],
     "why": "Four outputs cannot select five chips."
    },
    {
     "answer": [
-     "A",
-     "C"
+     "B",
+     "D"
     ],
-    "why": "B is also true: 15 lines reach only 32K words."
+    "why": "C is also true: 15 lines reach only 32K words."
    }
   ],
   "blocks": [
@@ -450,7 +435,7 @@
    },
    {
     "answer": 6,
-    "why": "One comparator per bit is the SAR, which uses one comparator n times, not a flash ADC."
+    "why": "6 = n confuses the number of bits with the number of thresholds; a flash ADC needs one comparator per threshold, $2^n - 1$ (a SAR uses a single comparator n times)."
    }
   ],
   "blocks": [
@@ -518,15 +503,15 @@
   "options": [
    {
     "l": "A",
-    "t": "The reference supplies 8 mA, whatever the code."
+    "t": "The current into the summing node is the same for every code."
    },
    {
     "l": "B",
-    "t": "The voltage of the LSB node $A_0$ is 1 V."
+    "t": "The reference supplies 8 mA, whatever the code."
    },
    {
     "l": "C",
-    "t": "The current into the summing node is the same for every code."
+    "t": "The voltage of the LSB node $A_0$ is 1 V."
    },
    {
     "l": "D",
@@ -534,15 +519,15 @@
    }
   ],
   "answer": [
-   "A",
    "B",
+   "C",
    "D"
   ],
   "solution": [
-   "Every node sees $R$ looking away from the source, and both switch positions are at 0 V, so $I = V_{ref}/R = 8/1 = 8$ mA for every code: A is correct.",
-   "The node voltages halve from the source: $8, 4, 2, 1$ V, so $A_0 = 1$ V: B is correct.",
-   "The leg currents are $4, 2, 1, 0.5$ mA (MSB first); only the legs whose bit is 1 reach the summing node, so $I_{out}$ depends on the code: C is wrong.",
-   "Code $1010$: $I_{out} = 4 + 1 = 5$ mA, $V_o = -1 \\times 5 = -5$ V $= -8 \\times 10/16$: D is correct."
+   "A: the leg currents are $4, 2, 1, 0.5$ mA (MSB first); only the legs whose bit is 1 reach the summing node, so $I_{out}$ depends on the code: wrong.",
+   "B: every node sees $R$ looking away from the source, and both switch positions are at 0 V, so $I = V_{ref}/R = 8/1 = 8$ mA for every code: correct.",
+   "C: the node voltages halve from the source: $8, 4, 2, 1$ V, so $A_0 = 1$ V: correct.",
+   "D: code $1010$: $I_{out} = 4 + 1 = 5$ mA, $V_o = -1 \\times 5 = -5$ V $= -8 \\times 10/16$: correct."
   ],
   "concept": "The R-2R ladder draws V_ref/R for every code; the code only decides which halving currents reach OUT.",
   "common_wrong": [
@@ -557,10 +542,10 @@
    },
    {
     "answer": [
-     "A",
+     "B",
      "D"
     ],
-    "why": "B is true as well: the node voltages are V_ref, V_ref/2, V_ref/4, V_ref/8 = 1 V."
+    "why": "C is true as well: the node voltages are V_ref, V_ref/2, V_ref/4, V_ref/8 = 1 V."
    }
   ],
   "blocks": [
@@ -578,11 +563,11 @@
   "options": [
    {
     "l": "A",
-    "t": "Trials 1000, 1100, 1110, 1111; result 1010"
+    "t": "Trials 1000, 1100, 1010, 1011; result 1010"
    },
    {
     "l": "B",
-    "t": "Trials 1000, 1100, 1010, 1011; result 1010"
+    "t": "Trials 1000, 1100, 1110, 1111; result 1010"
    },
    {
     "l": "C",
@@ -593,7 +578,7 @@
     "t": "Trials 1000, 1100, 1010, 1011; result 1011"
    }
   ],
-  "answer": "B",
+  "answer": "A",
   "solution": [
    "The LSB is $8/16 = 0.5$ V, so trial code $t$ gives $0.5t$ volts.",
    "Clock 1: $1000 \\to 4$ V, $5.3 \\ge 4$, keep. Clock 2: $1100 \\to 6$ V, $5.3 < 6$, clear.",
@@ -603,7 +588,7 @@
   "concept": "Each SAR trial is the decided bits plus the next bit set; it is the midpoint of the codes still possible.",
   "common_wrong": [
    {
-    "answer": "A",
+    "answer": "B",
     "why": "Sets the next bit without clearing the rejected one: after 1100 fails, bit 2 must go back to 0."
    },
    {
@@ -667,14 +652,14 @@
    },
    {
     "l": "C",
-    "t": "256 kΩ; ratio 128"
+    "t": "128 kΩ; ratio 64"
    },
    {
     "l": "D",
-    "t": "128 kΩ; ratio 64"
+    "t": "256 kΩ; ratio 128"
    }
   ],
-  "answer": "C",
+  "answer": "D",
   "solution": [
    "Bit $i$ has $2^{n-1-i}R$: the MSB has $R = 2$ kΩ, the LSB $2^7 R$.",
    "$2^7 \\times 2 = 256$ kΩ.",
@@ -691,7 +676,7 @@
     "why": "Multiplies by n = 8 instead of doubling seven times."
    },
    {
-    "answer": "D",
+    "answer": "C",
     "why": "Stops one doubling short (2^6 instead of 2^7): eight resistors need seven doublings."
    }
   ],
@@ -721,35 +706,40 @@
    },
    {
     "l": "D",
-    "t": "A dual-slope ADC that integrates the input for 1000 clocks, with $V_{ref} = 2$ V, counts 500 clocks of de-integration for $V_{in} = 1$ V."
+    "t": "A dual-slope ADC that integrates the input for 1000 clocks, with $V_{ref} = 2$ V, completes the conversion of $V_{in} = 1$ V in 500 clocks."
    }
   ],
   "answer": [
    "A",
-   "C",
-   "D"
+   "C"
   ],
   "solution": [
    "A: $2^8 - 1 = 255$ comparators: correct.",
    "B: the counter climbs one step per clock, so code $D$ costs $D$ clocks: wrong (that property belongs to the SAR, which always takes $n$).",
    "C: without the offset the SAR returns $\\lfloor V_{in}/\\Delta \\rfloor$, and a floor gives $0 \\le e < \\Delta$: correct.",
-   "D: $N_2 = N_1 V_{in}/V_{ref} = 1000 \\times 1/2 = 500$: correct."
+   "D: the de-integration count is $N_2 = N_1 V_{in}/V_{ref} = 1000 \\times 1/2 = 500$, but the conversion also includes the fixed first phase: $N_1 + N_2 = 1500$ clocks: wrong."
   ],
-  "concept": "Flash 2^n − 1 comparators; counter time grows with the code; truncating error in [0, 1) LSB; dual slope N2 = N1·V_in/V_ref.",
+  "concept": "Flash 2^n − 1 comparators; counter time grows with the code; truncating error in [0, 1) LSB; dual slope N2 = N1·V_in/V_ref, total N1 + N2.",
   "common_wrong": [
    {
     "answer": [
      "A",
-     "B",
      "C",
      "D"
+    ],
+    "why": "500 clocks is only the second ramp; the conversion takes N1 + N2 = 1500 clocks."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
     ],
     "why": "B confuses the counter ADC with the SAR: the counter's time depends on the input."
    },
    {
     "answer": [
-     "A",
-     "D"
+     "A"
     ],
     "why": "C is true: ±½ LSB is the rounding converter; a truncating one errs on one side, below 1 LSB."
    }
@@ -958,11 +948,11 @@
   "options": [
    {
     "l": "A",
-    "t": "0.7 V and 0.7 V"
+    "t": "0.7 V and 0.3 V"
    },
    {
     "l": "B",
-    "t": "0.7 V and 0.3 V"
+    "t": "0.7 V and 0.7 V"
    },
    {
     "l": "C",
@@ -973,7 +963,7 @@
     "t": "0.4 V and 0.4 V"
    }
   ],
-  "answer": "B",
+  "answer": "A",
   "solution": [
    "$NM_H = V_{OH} - V_{IH} = 2.7 - 2.0 = 0.7$ V.",
    "$NM_L = V_{IL} - V_{OL} = 0.8 - 0.5 = 0.3$ V.",
@@ -981,6 +971,10 @@
   ],
   "concept": "NM_H = V_OH − V_IH, NM_L = V_IL − V_OL.",
   "common_wrong": [
+   {
+    "answer": "B",
+    "why": "0.7 V is only the high margin; the low margin is 0.8 − 0.5 = 0.3 V."
+   },
    {
     "answer": "C",
     "why": "The two margins are swapped."
@@ -1081,11 +1075,11 @@
   "id": "nx-dl-07-03-q08",
   "type": "MSQ",
   "marks": 2,
-  "text": "Input $x$ reaches node $f$ through one NMOS gated by $s$, and input $y$ reaches $f$ through one PMOS gated by $s$. Which statements are correct?",
+  "text": "Input $x$ reaches node $f$ through one **PMOS** gated by $s$, and input $y$ reaches $f$ through one **NMOS** gated by $s$. Take $V_{DD} = 5$ V and thresholds of 0.7 V. Which statements are correct?",
   "options": [
    {
     "l": "A",
-    "t": "$f = s\\,x + \\overline{s}\\,y$"
+    "t": "$f = \\overline{s}\\,x + s\\,y$"
    },
    {
     "l": "B",
@@ -1093,11 +1087,11 @@
    },
    {
     "l": "C",
-    "t": "When $s = 1$ and $x = 1$, $f$ reaches the full $V_{DD}$."
+    "t": "When $s = 0$ and $x = 0$, $f$ falls to the full 0 V."
    },
    {
     "l": "D",
-    "t": "When $s = 0$ and $y = 1$, $f$ reaches the full $V_{DD}$."
+    "t": "When $s = 1$ and $y = 0$, $f$ falls to the full 0 V."
    }
   ],
   "answer": [
@@ -1106,11 +1100,11 @@
    "D"
   ],
   "solution": [
-   "The NMOS conducts for $s = 1$ and the PMOS for $s = 0$: exactly one path for every $s$, so $f = sx + \\overline{s}y$ and $f$ never floats (A, B).",
-   "C: a 1 through an NMOS stops at $V_{DD} - V_t$: degraded, so C is wrong.",
-   "D: a 1 through a PMOS passes at full strength: correct."
+   "The PMOS conducts for $s = 0$ and the NMOS for $s = 1$: exactly one path is on for every $s$, so $f = \\overline{s}x + sy$ and $f$ is never left floating (A and B are correct).",
+   "C: for $s = 0$ the 0 on $x$ must cross the PMOS. A PMOS conducts only while its gate is more than $\\lvert V_{tp} \\rvert$ below its higher terminal, which is now $f$ itself, so it switches itself off as $f$ falls: $f$ stops at 0.7 V, a degraded 0. C is wrong.",
+   "D: for $s = 1$ the 0 on $y$ crosses the NMOS, whose source stays at 0 V, so nothing stops the fall: $f$ reaches 0 V. D is correct."
   ],
-  "concept": "Pass-transistor MUX: correct logic, never floating, but NMOS degrades a 1 and PMOS degrades a 0.",
+  "concept": "Pass-transistor MUX: correct logic and never floating, but each value is strong only through the right device: NMOS passes a strong 0, PMOS a strong 1.",
   "common_wrong": [
    {
     "answer": [
@@ -1119,7 +1113,15 @@
      "C",
      "D"
     ],
-    "why": "The NMOS cannot pass a full 1."
+    "why": "A PMOS cannot pass a full 0; it stops one threshold above ground."
+   },
+   {
+    "answer": [
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "With the device types swapped, $x$ is selected by $s = 0$, so $f = \\overline{s}x + sy$, not $sx + \\overline{s}y$."
    },
    {
     "answer": [

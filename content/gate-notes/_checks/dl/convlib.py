@@ -10,13 +10,15 @@ Units: volts, kilo-ohms and milliamperes (V / kΩ = mA), so the numbers stay sma
 
 - `frac`: an exact Fraction from an int, a Fraction or a decimal string ("3.37").
 - `solve_nodes`: exact nodal analysis (Kirchhoff's current law at every unknown node, Gaussian
-  elimination over the rationals). The DACs below are solved with it, never by their formula,
-  so the formulas can be checked against the circuit.
+  elimination over the rationals). The R-2R ladders are solved with it, never by their formula,
+  so the formulas can be checked against the circuit; the weighted DAC has no unknown node (its
+  summing node is a virtual ground), so it is computed resistor by resistor with Ohm's law.
 - DACs: `ladder` (current-switched R-2R ladder into an inverting summing amplifier),
   `ladder_voltage_mode` (voltage-switched R-2R ladder, output at the MSB node), `weighted`
   (binary-weighted resistors into a summing amplifier); `dac_ideal`, `step_size`, `full_scale`,
   `resolution_percent`, `staircase`.
-- ADCs: `lsb`, `ideal_code` (floor, or round to nearest with the 1/2-LSB offset), `sar` (the
+- ADCs: `lsb`, `ideal_code` (floor, or round to nearest with the 1/2-LSB offset), `over_range`
+  (V_in at or above V_ref, or V_ref - LSB/2 with the offset), `sar` (the
   successive-approximation search, step by step), `flash` (thermometer code from 2^n - 1
   comparators), `counter_adc` (the counter / ramp type), `dual_slope`, `conversion_clocks`.
 
@@ -201,6 +203,14 @@ def ideal_code(n, vref, vin, offset=False):
     return max(0, min(2 ** n - 1, floor(q)))
 
 
+def over_range(n, vref, vin, offset=False):
+    """True when V_in is beyond the converter's range, so the code saturates at 2^n - 1 and the error
+    bound fails: V_in >= V_ref - LSB/2 with the 1/2-LSB offset (rounding), V_in >= V_ref without it."""
+    vref = frac(vref)
+    limit = vref - lsb(n, vref) / 2 if offset else vref
+    return frac(vin) >= limit
+
+
 def sar(n, vref, vin, offset=False):
     """Successive approximation. The register starts at 0; for bit k = n-1 down to 0 the logic sets bit
     k (the trial code), the DAC produces trial * LSB (minus 1/2 LSB with the offset) and the comparator
@@ -299,10 +309,10 @@ def _selftest():
                     s = sar(n, vref, vin, off)
                     assert s["code"] == ideal_code(n, vref, vin, off) == flash(n, vref, vin, off)["code"]
                     assert len(s["steps"]) == n
-                    if not off and vin < frac(vref):
-                        assert 0 <= s["err"] < q
-                    if off and vin < frac(vref) - q / 2:
-                        assert -q / 2 <= s["err"] < q / 2
+                    if not over_range(n, vref, vin, off):
+                        assert (0 <= s["err"] < q) if not off else (-q / 2 <= s["err"] < q / 2)
+                    else:
+                        assert s["code"] == 2 ** n - 1 and s["err"] >= (q / 2 if off else q)
                 c = counter_adc(n, vref, vin)
                 assert c["code"] == ideal_code(n, vref, vin) and c["clocks"] == c["code"] <= 2 ** n - 1
     assert dual_slope(1000, 2, "0.75")["count"] == 375

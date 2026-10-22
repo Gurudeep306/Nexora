@@ -11,7 +11,7 @@ difficulty: basic
 status: draft
 needs_review: true
 sources:
-  - "Nexora's own text, examples and diagrams; every DAC output, node voltage, leg current, ADC code, SAR trace, comparator count and conversion time is computed in content/gate-notes/_checks/dl/l7_02_converters.py with convlib (exact nodal analysis of each circuit in fractions)."
+  - "Nexora's own text, examples and diagrams; every DAC output, node voltage, leg current, ADC code, SAR trace and conversion time is computed in content/gate-notes/_checks/dl/l7_02_converters.py with convlib, in exact fractions (ladders by nodal analysis, the weighted DAC resistor by resistor)."
   - "Coverage checklist only (internal digests, never copied): set C pp. 394–397 (binary-weighted DAC, voltage- and current-switched R-2R ladders; ADC types only named). The current example of C 397 (2.5 mA, −0.625 V) and its MSB/LSB labelling are corrected in the lesson."
   - "Facts checked against: A. S. Sedra and K. C. Smith, Microelectronic Circuits (data converters: weighted-resistor and R-2R DACs, flash, counting, successive-approximation and dual-slope ADCs, quantisation error)."
   - "PYQs: none. No question in src/gate/questions.json tests data converters (outline: 0); the topic is optional enrichment."
@@ -35,7 +35,9 @@ The number a DAC reads is a binary fraction in disguise: the code $b_{n-1}\dots 
 voltage $V_{ref} \times 0.b_{n-1}\dots b_0$, which is the fixed-point reading of
 [Chapter 1, Lesson 3](lesson:fractions-fixed-point). The flash ADC ends in a priority encoder, the
 circuit of [Chapter 5, Lesson 3](lesson:decoders-encoders), and the successive-approximation ADC is a
-register driven by a small sequential controller (Chapter 6). The other two lessons of this optional
+register driven by a small sequential controller (the registers of
+[Chapter 6, Lesson 6](lesson:shift-registers) and the state machines of
+[Lesson 7](lesson:finite-state-machines)). The other two lessons of this optional
 chapter are [memory organisation](lesson:memory-devices) and [logic families](lesson:logic-families).
 Analog details (operational amplifiers, settling time, noise) belong to an electronics course; here we
 keep to what the digital side has to know: the arithmetic of the codes.
@@ -46,7 +48,7 @@ keep to what the digital side has to know: the arithmetic of the codes.
 | PYQs mapped to this lesson | 0: the current GATE CSE syllabus does not list data converters, and no question in the bank tests them |
 | Why it still matters | Converters appear in embedded-systems and computer-organisation courses and in other GATE papers (EC, EE, IN); the arithmetic (step size, binary fractions, binary search, $2^n - 1$ comparators) reuses this subject's core ideas |
 | Likely question shapes | The output voltage for a code; step size, full scale and resolution; the currents of an R-2R ladder; the code an ADC gives for a voltage; the SAR trial sequence; comparators in a flash ADC; conversion times of flash, SAR and counter ADCs |
-| What examiners would test | Full scale is one step short of $V_{ref}$; resolution as $1/(2^n - 1)$ of full scale; that the ladder's reference current does not depend on the code; $2^n - 1$ (not $2^n$) comparators; SAR takes $n$ clocks for every input, a counter ADC up to $2^n - 1$ |
+| What examiners would test | Full scale is one step short of $V_{ref}$; resolution as $1/(2^n - 1)$ of full scale (or $1/2^n$ when a book quotes it against $V_{ref}$: read which one is meant); that the ladder's reference current does not depend on the code; $2^n - 1$ (not $2^n$) comparators; SAR takes $n$ clocks for every input, a counter ADC up to $2^n - 1$ |
 :::
 
 ## Two converters, one staircase
@@ -76,7 +78,8 @@ $$
 - The **step size** (one LSB of output) is $\Delta = V_{ref}/2^n$: the change in $V_o$ when $D$ grows by 1.
 - The **full-scale output** is the largest output, all bits 1: $V_{FS} = (2^n - 1)\,\Delta = V_{ref}(1 - 2^{-n})$.
 - The **resolution** is the step size, given either in volts ($\Delta$) or as a fraction of full scale:
-  $\Delta / V_{FS} = 1/(2^n - 1)$, that is $100/(2^n - 1)$ percent. More bits mean finer steps.
+  $\Delta / V_{FS} = 1/(2^n - 1)$, that is $100/(2^n - 1)$ percent. Some books quote it against $V_{ref}$
+  instead, $\Delta / V_{ref} = 1/2^n$; both shrink by half with every extra bit. More bits mean finer steps.
 
 Real DACs often have an inverting amplifier at the output, so the circuits below give $V_o = -V_{ref}D/2^n$
 (times a gain set by resistors); the magnitude is what the code controls, and we always say which sign a
@@ -103,8 +106,10 @@ For a 4-bit DAC with $V_{ref} = 10$ V the tempting answer for "the output for 11
 $9.375$ V: the top step is one step short of the ceiling. The same off-by-one hides in the resolution.
 Given the **full-scale output**, the step is $V_{FS}/(2^n - 1)$ (an 8-bit DAC with $V_{FS} = 2.55$ V has
 10 mV steps); given the **reference**, it is $V_{ref}/2^n$ ($V_{ref} = 2.56$ V for the same DAC). Dividing
-2.55 V by 256 instead of 255 is the expected wrong answer. As a percentage, the resolution of an $n$-bit DAC
-is $100/(2^n - 1)$: $6.67\%$ for 4 bits, $0.392\%$ for 8 bits, not $100/2^n$.
+2.55 V by 256 instead of 255 is the expected wrong answer. As a percentage **of full scale** the resolution
+is $100/(2^n - 1)$: $6.67\%$ for 4 bits, $0.392\%$ for 8 bits. Some books quote it relative to $V_{ref}$
+instead, $100/2^n$ ($6.25\%$, $0.391\%$); read which one the question means. The real error is to mix them,
+for example dividing $V_{FS}$ by $2^n$.
 :::
 
 ## The weighted-resistor DAC
@@ -128,6 +133,11 @@ $$
 I_{out} = \sum_i b_i \frac{V_{ref}}{2^{n-1-i}R}, \qquad V_o = -R_f\,I_{out} = -V_{ref}\,\frac{R_f}{R}\,\frac{2D}{2^n} .
 $$
 With $R_f = R/2$ this is exactly $V_o = -V_{ref}D/2^n$, the ideal DAC with a minus sign.
+
+Many books number the resistors from $2R$ (MSB) to $2^nR$ (LSB) with $R_f = R$ instead. That is the same
+circuit with every resistor doubled, and it gives $V_o = -V_{ref}D/2^n$ directly: doubling every input
+resistor halves every current, which is exactly what halving $R_f$ did here. When you meet a weighted DAC,
+check which resistor the MSB has before using either formula.
 :::
 
 :::derivation{#weighted-derivation of="the weighted-resistor DAC output" depth="standard"}
@@ -140,8 +150,8 @@ All of $I_{out}$ flows through $R_f$ (the amplifier's input draws nothing), so $
 
 **Sanity check.** 4 bits, $R = 10$ kΩ, $R_f = 5$ kΩ, $V_{ref} = 5$ V, code $1000$: only the MSB resistor
 (10 kΩ) conducts, $I_{out} = 0.5$ mA, $V_o = -2.5$ V $= -5 \times 1/2$. Code $0001$: only the 80 kΩ resistor,
-$I_{out} = 0.0625$ mA, $V_o = -0.3125$ V $= -5/16$, one step. Every number here is checked by solving the
-circuit's node equations exactly, not by the formula.
+$I_{out} = 0.0625$ mA, $V_o = -0.3125$ V $= -5/16$, one step. Every number here is recomputed in the check
+script from each resistor's current (the summing node held at 0 V), not from the formula.
 :::
 
 :::note{#weighted-spread title="Why the resistor spread is a problem" depth="standard"}
@@ -200,10 +210,10 @@ the currents in the ladder therefore do not depend on the code at all; the code 
 each leg's current is delivered (to OUT, where it is counted, or to ground, where it is not).
 
 *Every node sees $R$ (induction from the end).* At $A_0$, looking away from $V_{ref}$, there are two $2R$
-resistors to 0 V in parallel: $2R \parallel 2R = R$. Suppose the network beyond the series resistor that
-leads to node $A_{k}$ looks like $R$ from $A_{k}$. Seen from $A_{k+1}$, the onward path is that series $R$ plus
-the $R$ beyond it, which is $2R$, in parallel with $A_{k+1}$'s own $2R$ leg: $2R \parallel 2R = R$ again. So
-every node, including $A_{n-1}$, sees $R$, and $V_{ref}$ supplies $I = V_{ref}/R$.
+resistors to 0 V in parallel: $2R \parallel 2R = R$. Suppose that from $A_k$, looking away from $V_{ref}$,
+the network (the leg of $A_k$ and everything beyond it) looks like $R$. From $A_{k+1}$ the onward path is
+the series $R$ into $A_k$ plus that $R$, i.e. $2R$, in parallel with $A_{k+1}$'s own $2R$ leg:
+$2R \parallel 2R = R$. So every node, including $A_{n-1}$, sees $R$, and $V_{ref}$ supplies $I = V_{ref}/R$.
 
 *Equal splits.* At $A_{n-1}$ the current $I$ meets two paths of $2R$ each (its leg, and the series $R$ plus
 the $R$ beyond), so each takes $I/2$. The node voltage is $V_{ref}$ and the leg current is $V_{ref}/2R = I/2$.
@@ -239,8 +249,9 @@ next to the terminator carries $I/2^n$ and is the LSB. Check: code 001 is one st
 The ladder can also be used the other way round. Put the 2R terminator at the LSB end, switch each 2R leg
 between $V_{ref}$ (bit 1) and ground (bit 0), and take the output at the MSB node (buffered, so no current is
 drawn). Superposition gives the same binary fraction: with $V_{ref} = 8$ V, code 100 gives 4 V and code 010
-gives 2 V, and in general $V_{out} = V_{ref}\,D/2^n$. Each switched source sees the rest of the ladder as $R$
-at its node, and its contribution is halved at each node on the way to the output. The difference is
+gives 2 V, and in general $V_{out} = V_{ref}\,D/2^n$. Looking from any node towards the LSB end (its own leg
+included, sources shorted), the ladder's Thévenin resistance is $R$, by the same induction as in the
+theorem; so each switched leg's contribution is halved at every node on its way to the output. The difference is
 practical: in the voltage-switched form the node voltages change with the code (stray capacitances must
 charge), while in the current-switched form every node stays at a fixed voltage and only the destination
 of each current changes, which is faster. The check script solves this ladder too.
@@ -388,7 +399,7 @@ never counted. The source current stays 2.5 mA for all eight codes.
 
 :::note{#recap-dac title="Recap" depth="quick"}
 $V_o = V_{ref}D/2^n = V_{ref} \times 0.b_{n-1}\dots b_0$ (times the gain, with the sign of the circuit); step
-$V_{ref}/2^n$; full scale one step short of $V_{ref}$; resolution $1/(2^n - 1)$. The weighted DAC needs a
+$V_{ref}/2^n$; full scale one step short of $V_{ref}$; resolution $1/(2^n - 1)$ of full scale ($1/2^n$ against $V_{ref}$). The weighted DAC needs a
 $2^{n-1}$ resistor spread; the R-2R ladder uses $R$ and $2R$ only, sees $R$ from every node, halves its current at
 each node and draws $V_{ref}/R$ for every code.
 :::
@@ -458,11 +469,12 @@ an encoder delay, whatever the input. The price is the number of guards.
 :::
 
 :::definition{#flash-adc term="Flash (parallel) ADC" depth="standard"}
-A string of $2^n$ equal resistors divides $V_{ref}$ into the thresholds $k\Delta$ for $k = 1, \dots, 2^n - 1$ (each
-shifted down by $\Delta/2$ with the offset). Comparator $k$ outputs $c_k = 1$ when $V_{in} \ge k\Delta$. The outputs
-form a **thermometer code** ($c_k = 1$ implies $c_j = 1$ for every $j < k$), and a $2^n$-to-$n$ priority encoder
-([Chapter 5, Lesson 3](lesson:decoders-encoders)) outputs the index of the highest comparator that is 1,
-which equals the number of 1s: the code $\lfloor V_{in}/\Delta \rfloor$. Cost: $2^n - 1$ comparators and $2^n$
+A string of $2^n$ equal resistors divides $V_{ref}$ into the thresholds $k\Delta$ for
+$k = 1, \dots, 2^n - 1$ (with the offset, the bottom resistor is $R/2$ and the top one $3R/2$, which
+shifts every threshold down by $\Delta/2$). Comparator $k$ outputs $c_k = 1$ when $V_{in} \ge k\Delta$.
+The outputs form a **thermometer code** ($c_k = 1$ implies $c_j = 1$ for every $j < k$), and a priority
+encoder with $2^n - 1$ inputs and $n$ outputs ([Chapter 5, Lesson 3](lesson:decoders-encoders))
+outputs the index of the highest comparator that is 1, which equals the number of 1s: the code $\lfloor V_{in}/\Delta \rfloor$. Cost: $2^n - 1$ comparators and $2^n$
 resistors, so every extra bit **doubles** the hardware; speed: one conversion per clock.
 :::
 
@@ -697,7 +709,8 @@ that a 2 MHz clock period is $0.5\ \mu$s).
 The SAR tab of the Converter Bench runs this search for 3 to 8 bits with any $V_{ref}$ and input, with or
 without the ½-LSB offset. Step one clock at a time and predict each decision before you press: the table
 records the trial code, the DAC voltage and the comparator's answer, and the chart shows the interval
-halving. The example buttons load the traces of the worked examples below.
+halving. The example buttons load the worked examples of this lesson: the five SAR examples below (the
+tie included) and the over-range input of the ADC edge case with the ½-LSB offset on.
 
 :::lab{#lab-sar lab="converter-bench" tab="sar" depth="standard"}
 :::
@@ -762,7 +775,8 @@ $1010\,1000 \to 3.36$ keep; $1010\,1100 \to 3.44$ clear; $1010\,1010 \to 3.40$ c
 
 :::answer
 Code $1010\,1000 = 168$ ($3.36$ V, error $+10$ mV) in $8\ \mu$s, the truncating code of the earlier example. The
-last trial (3.38 V) is the only one that the rounding converter would decide differently.
+last trial (3.38 V) is the only one that the rounding converter would decide differently (with the offset its
+DAC level drops to 3.37 V, a tie with the input, which keeps the bit: code 169).
 :::
 ::::
 
@@ -851,8 +865,8 @@ Our own questions in GATE formats: two warm-ups, then exam-level questions on th
 |:--|:--|
 | DAC output | $V_o = V_{ref}D/2^n = V_{ref} \times 0.b_{n-1}\dots b_0$ (times the gain, with the circuit's sign) |
 | Step, full scale | $\Delta = V_{ref}/2^n$; $V_{FS} = (2^n - 1)\Delta$, one step short of $V_{ref}$ |
-| Resolution | $\Delta$, or $100/(2^n - 1)$ % of full scale (8 bits: 0.392 %) |
-| Weighted DAC | resistors $R, 2R, \dots, 2^{n-1}R$; spread $2^{n-1}$; $V_o = -V_{ref}(R_f/R)\,2D/2^n$ |
+| Resolution | $\Delta$, or $100/(2^n - 1)$ % of full scale (8 bits: 0.392 %); $100/2^n$ % if quoted against $V_{ref}$ |
+| Weighted DAC | resistors $R, 2R, \dots, 2^{n-1}R$; spread $2^{n-1}$; $V_o = -V_{ref}(R_f/R)\,2D/2^n$ (books with MSB $2R$ and $R_f = R$: $-V_{ref}D/2^n$) |
 | R-2R ladder | every node sees $R$; $I = V_{ref}/R$ for every code; legs $I/2, I/4, \dots, I/2^n$; $V_o = -V_{ref}(R_f/R)D/2^n$ |
 | Erratum | 5 V / 2 kΩ = 2.5 mA; the $I/8$ leg gives $-0.625$ V |
 | ADC code | truncating $\lfloor V_{in}/\Delta \rfloor$, error $[0, \Delta)$; ½-LSB offset rounds, error $[-\Delta/2, \Delta/2)$; in range only |

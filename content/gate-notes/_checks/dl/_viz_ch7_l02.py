@@ -170,7 +170,8 @@ def r2r_ladder_currents(L):
            ("rr", {"text": "right of A2: R, so I = V_ref / R"}), ("iref", {"text": f"I{' = ' if s.wd else '='}{d(base['iref'])} mA", "tone": "accent"}))
     legs = [d(x) for x in base["legs"]]
     s.step(f"Each node splits its current equally (2R down, 2R to the right): legs carry {legs[0]}, {legs[1]}, {legs[2]} mA; the terminator {d(base['term'])} mA.",
-           ("rl0", {"fill": "none"}), ("rs0", {"fill": "none"}), ("rr", {"text": ""}),
+           ("rl0", {"fill": "none"}), ("rs0", {"fill": "none"}),
+           ("rr", {"text": s.v("", "currents in mA"), "tone": "muted"}),          # the narrow layout drops the unit
            *[(f"nv{k}", {"text": f"{d(base['volts'][k])} V"}) for k in range(n)],
            *[(f"il{k}", {"text": legs[k] + s.v(" mA", "")}) for k in range(n)], ("it", {"text": d(base["term"]) + s.v(" mA", "")}))
     for code, cap in ((0b001, "Code 001 sends only the LSB leg to OUT: I_out = {i} mA and V_o = {v} V (the corrected numbers: not 25 mA, not −0.3125 V)."),

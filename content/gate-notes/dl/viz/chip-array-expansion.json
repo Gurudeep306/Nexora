@@ -2,12 +2,12 @@
  "version": 1,
  "title": "Building a 64K × 16 memory from 16K × 8 chips",
  "width": 680,
- "height": 382,
+ "height": 415,
  "narrow": {
   "width": 360,
-  "height": 406
+  "height": 439
  },
- "intro": "Eight 16K × 8 chips in four rows of two. The two chips of a row give the high and low byte; a 2:4 decoder on the top address bits A15 A14 enables one row, and A13–A0 go to every chip.",
+ "intro": "Eight 16K × 8 chips in four rows of two: the left chip of a row gives the low byte, the right one the high byte. A 2:4 decoder on A15 A14 selects both chips of one row; the bus A13–A0 goes to every chip.",
  "elements": [
   {
    "id": "head",
@@ -32,10 +32,25 @@
    "only": "narrow"
   },
   {
-   "id": "hd1",
+   "id": "hd0",
    "type": "text",
    "x": 310.0,
-   "y": 68,
+   "y": 64,
+   "text": "D7–D0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 162.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "hd1",
+   "type": "text",
+   "x": 470.0,
+   "y": 64,
    "text": "D15–D8",
    "size": 13,
    "anchor": "middle",
@@ -43,22 +58,7 @@
    "tone": "muted",
    "hidden": true,
    "narrow": {
-    "x": 162.0,
-    "size": 12
-   }
-  },
-  {
-   "id": "hd0",
-   "type": "text",
-   "x": 450.0,
-   "y": 68,
-   "text": "D7–D0",
-   "size": 13,
-   "anchor": "middle",
-   "mono": true,
-   "tone": "muted",
-   "narrow": {
-    "x": 276.0,
+    "x": 286.0,
     "size": 12
    }
   },
@@ -70,7 +70,7 @@
    "w": 120,
    "h": 40,
    "mono": true,
-   "hidden": true,
+   "hidden": false,
    "label": "16K × 8",
    "size": 14,
    "narrow": {
@@ -83,16 +83,16 @@
   {
    "id": "c01",
    "type": "box",
-   "x": 390,
+   "x": 410,
    "y": 84.0,
    "w": 120,
    "h": 40,
    "mono": true,
-   "hidden": false,
+   "hidden": true,
    "label": "16K × 8",
    "size": 14,
    "narrow": {
-    "x": 226,
+    "x": 236,
     "w": 100,
     "h": 36,
     "size": 12
@@ -120,7 +120,7 @@
   {
    "id": "c11",
    "type": "box",
-   "x": 390,
+   "x": 410,
    "y": 146.0,
    "w": 120,
    "h": 40,
@@ -129,7 +129,7 @@
    "label": "16K × 8",
    "size": 14,
    "narrow": {
-    "x": 226,
+    "x": 236,
     "y": 154.0,
     "w": 100,
     "h": 36,
@@ -158,7 +158,7 @@
   {
    "id": "c21",
    "type": "box",
-   "x": 390,
+   "x": 410,
    "y": 208.0,
    "w": 120,
    "h": 40,
@@ -167,7 +167,7 @@
    "label": "16K × 8",
    "size": 14,
    "narrow": {
-    "x": 226,
+    "x": 236,
     "y": 224.0,
     "w": 100,
     "h": 36,
@@ -196,7 +196,7 @@
   {
    "id": "c31",
    "type": "box",
-   "x": 390,
+   "x": 410,
    "y": 270.0,
    "w": 120,
    "h": 40,
@@ -205,7 +205,7 @@
    "label": "16K × 8",
    "size": 14,
    "narrow": {
-    "x": 226,
+    "x": 236,
     "y": 294.0,
     "w": 100,
     "h": 36,
@@ -215,7 +215,7 @@
   {
    "id": "rg0",
    "type": "text",
-   "x": 524,
+   "x": 544,
    "y": 104.0,
    "text": "0000–3FFF",
    "size": 13,
@@ -224,16 +224,15 @@
    "tone": "muted",
    "hidden": true,
    "narrow": {
-    "x": 219.0,
+    "x": 112,
     "y": 131.0,
-    "size": 12,
-    "anchor": "middle"
+    "size": 12
    }
   },
   {
    "id": "rg1",
    "type": "text",
-   "x": 524,
+   "x": 544,
    "y": 166.0,
    "text": "4000–7FFF",
    "size": 13,
@@ -242,16 +241,15 @@
    "tone": "muted",
    "hidden": true,
    "narrow": {
-    "x": 219.0,
+    "x": 112,
     "y": 201.0,
-    "size": 12,
-    "anchor": "middle"
+    "size": 12
    }
   },
   {
    "id": "rg2",
    "type": "text",
-   "x": 524,
+   "x": 544,
    "y": 228.0,
    "text": "8000–BFFF",
    "size": 13,
@@ -260,16 +258,15 @@
    "tone": "muted",
    "hidden": true,
    "narrow": {
-    "x": 219.0,
+    "x": 112,
     "y": 271.0,
-    "size": 12,
-    "anchor": "middle"
+    "size": 12
    }
   },
   {
    "id": "rg3",
    "type": "text",
-   "x": 524,
+   "x": 544,
    "y": 290.0,
    "text": "C000–FFFF",
    "size": 13,
@@ -278,122 +275,9 @@
    "tone": "muted",
    "hidden": true,
    "narrow": {
-    "x": 219.0,
+    "x": 112,
     "y": 341.0,
-    "size": 12,
-    "anchor": "middle"
-   }
-  },
-  {
-   "id": "lk0",
-   "type": "line",
-   "points": [
-    [
-     370,
-     104.0
-    ],
-    [
-     390,
-     104.0
-    ]
-   ],
-   "tone": "muted",
-   "hidden": true,
-   "narrow": {
-    "points": [
-     [
-      212,
-      102.0
-     ],
-     [
-      226,
-      102.0
-     ]
-    ]
-   }
-  },
-  {
-   "id": "lk1",
-   "type": "line",
-   "points": [
-    [
-     370,
-     166.0
-    ],
-    [
-     390,
-     166.0
-    ]
-   ],
-   "tone": "muted",
-   "hidden": true,
-   "narrow": {
-    "points": [
-     [
-      212,
-      172.0
-     ],
-     [
-      226,
-      172.0
-     ]
-    ]
-   }
-  },
-  {
-   "id": "lk2",
-   "type": "line",
-   "points": [
-    [
-     370,
-     228.0
-    ],
-    [
-     390,
-     228.0
-    ]
-   ],
-   "tone": "muted",
-   "hidden": true,
-   "narrow": {
-    "points": [
-     [
-      212,
-      242.0
-     ],
-     [
-      226,
-      242.0
-     ]
-    ]
-   }
-  },
-  {
-   "id": "lk3",
-   "type": "line",
-   "points": [
-    [
-     370,
-     290.0
-    ],
-    [
-     390,
-     290.0
-    ]
-   ],
-   "tone": "muted",
-   "hidden": true,
-   "narrow": {
-    "points": [
-     [
-      212,
-      312.0
-     ],
-     [
-      226,
-      312.0
-     ]
-    ]
+    "size": 12
    }
   },
   {
@@ -518,6 +402,382 @@
    }
   },
   {
+   "id": "bus",
+   "type": "line",
+   "points": [
+    [
+     74,
+     331.0
+    ],
+    [
+     390.0,
+     331.0
+    ],
+    [
+     390.0,
+     90.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      22,
+      357.0
+     ],
+     [
+      224.0,
+      357.0
+     ],
+     [
+      224.0,
+      90.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "busl",
+   "type": "text",
+   "x": 74,
+   "y": 344.0,
+   "text": "A13–A0",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 22,
+    "y": 370.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "stub",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     90.0
+    ],
+    [
+     390.0,
+     138.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      90.0
+     ],
+     [
+      224.0,
+      134.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "stubl",
+   "type": "text",
+   "x": 390.0,
+   "y": 151.0,
+   "text": "A13–A0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 224.0,
+    "y": 147.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "la0",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     104.0
+    ],
+    [
+     370,
+     104.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      102.0
+     ],
+     [
+      212,
+      102.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lb0",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     104.0
+    ],
+    [
+     410,
+     104.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      102.0
+     ],
+     [
+      236,
+      102.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "jd0",
+   "type": "circle",
+   "cx": 390.0,
+   "cy": 104.0,
+   "r": 2.5,
+   "fill": "muted",
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "cx": 224.0,
+    "cy": 102.0
+   }
+  },
+  {
+   "id": "la1",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     166.0
+    ],
+    [
+     370,
+     166.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      172.0
+     ],
+     [
+      212,
+      172.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lb1",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     166.0
+    ],
+    [
+     410,
+     166.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      172.0
+     ],
+     [
+      236,
+      172.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "jd1",
+   "type": "circle",
+   "cx": 390.0,
+   "cy": 166.0,
+   "r": 2.5,
+   "fill": "muted",
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "cx": 224.0,
+    "cy": 172.0
+   }
+  },
+  {
+   "id": "la2",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     228.0
+    ],
+    [
+     370,
+     228.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      242.0
+     ],
+     [
+      212,
+      242.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lb2",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     228.0
+    ],
+    [
+     410,
+     228.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      242.0
+     ],
+     [
+      236,
+      242.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "jd2",
+   "type": "circle",
+   "cx": 390.0,
+   "cy": 228.0,
+   "r": 2.5,
+   "fill": "muted",
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "cx": 224.0,
+    "cy": 242.0
+   }
+  },
+  {
+   "id": "la3",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     290.0
+    ],
+    [
+     370,
+     290.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      312.0
+     ],
+     [
+      212,
+      312.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lb3",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     290.0
+    ],
+    [
+     410,
+     290.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      312.0
+     ],
+     [
+      236,
+      312.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "jd3",
+   "type": "circle",
+   "cx": 390.0,
+   "cy": 290.0,
+   "r": 2.5,
+   "fill": "muted",
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "cx": 224.0,
+    "cy": 312.0
+   }
+  },
+  {
    "id": "cs0",
    "type": "line",
    "points": [
@@ -526,8 +786,20 @@
      104.0
     ],
     [
-     250,
+     240,
      104.0
+    ],
+    [
+     240,
+     77.0
+    ],
+    [
+     470.0,
+     77.0
+    ],
+    [
+     470.0,
+     84.0
     ]
    ],
    "tone": "muted",
@@ -539,8 +811,48 @@
       102.0
      ],
      [
-      112,
+      104,
       102.0
+     ],
+     [
+      104,
+      77.0
+     ],
+     [
+      286.0,
+      77.0
+     ],
+     [
+      286.0,
+      84.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ct0",
+   "type": "line",
+   "points": [
+    [
+     310.0,
+     77.0
+    ],
+    [
+     310.0,
+     84.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      162.0,
+      77.0
+     ],
+     [
+      162.0,
+      84.0
      ]
     ]
    }
@@ -554,8 +866,20 @@
      166.0
     ],
     [
-     250,
+     240,
      166.0
+    ],
+    [
+     240,
+     139.0
+    ],
+    [
+     470.0,
+     139.0
+    ],
+    [
+     470.0,
+     146.0
     ]
    ],
    "tone": "muted",
@@ -567,8 +891,48 @@
       172.0
      ],
      [
-      112,
+      104,
       172.0
+     ],
+     [
+      104,
+      147.0
+     ],
+     [
+      286.0,
+      147.0
+     ],
+     [
+      286.0,
+      154.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ct1",
+   "type": "line",
+   "points": [
+    [
+     310.0,
+     139.0
+    ],
+    [
+     310.0,
+     146.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      162.0,
+      147.0
+     ],
+     [
+      162.0,
+      154.0
      ]
     ]
    }
@@ -582,8 +946,20 @@
      228.0
     ],
     [
-     250,
+     240,
      228.0
+    ],
+    [
+     240,
+     201.0
+    ],
+    [
+     470.0,
+     201.0
+    ],
+    [
+     470.0,
+     208.0
     ]
    ],
    "tone": "muted",
@@ -595,8 +971,48 @@
       242.0
      ],
      [
-      112,
+      104,
       242.0
+     ],
+     [
+      104,
+      217.0
+     ],
+     [
+      286.0,
+      217.0
+     ],
+     [
+      286.0,
+      224.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ct2",
+   "type": "line",
+   "points": [
+    [
+     310.0,
+     201.0
+    ],
+    [
+     310.0,
+     208.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      162.0,
+      217.0
+     ],
+     [
+      162.0,
+      224.0
      ]
     ]
    }
@@ -610,8 +1026,20 @@
      290.0
     ],
     [
-     250,
+     240,
      290.0
+    ],
+    [
+     240,
+     263.0
+    ],
+    [
+     470.0,
+     263.0
+    ],
+    [
+     470.0,
+     270.0
     ]
    ],
    "tone": "muted",
@@ -623,8 +1051,48 @@
       312.0
      ],
      [
-      112,
+      104,
       312.0
+     ],
+     [
+      104,
+      287.0
+     ],
+     [
+      286.0,
+      287.0
+     ],
+     [
+      286.0,
+      294.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ct3",
+   "type": "line",
+   "points": [
+    [
+     310.0,
+     263.0
+    ],
+    [
+     310.0,
+     270.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      162.0,
+      287.0
+     ],
+     [
+      162.0,
+      294.0
      ]
     ]
    }
@@ -719,13 +1187,13 @@
    "id": "low",
    "type": "text",
    "x": 340.0,
-   "y": 338.0,
+   "y": 371.0,
    "text": "",
    "size": 14,
    "anchor": "middle",
    "narrow": {
     "x": 180.0,
-    "y": 364.0,
+    "y": 397.0,
     "size": 12
    }
   },
@@ -733,14 +1201,14 @@
    "id": "st",
    "type": "text",
    "x": 340.0,
-   "y": 362.0,
+   "y": 395.0,
    "text": "",
    "size": 15,
    "anchor": "middle",
    "weight": "bold",
    "narrow": {
     "x": 180.0,
-    "y": 386.0,
+    "y": 419.0,
     "size": 13
    }
   }
@@ -758,10 +1226,10 @@
    ]
   },
   {
-   "caption": "Width first: a second chip side by side, same address lines, gives 16-bit words. 2 chips per row, no decoder.",
+   "caption": "Width first: a second chip side by side on the same address bus gives 16-bit words; chip 0 the low byte, chip 1 the high.",
    "patches": [
     {
-     "id": "c00",
+     "id": "c01",
      "set": {
       "hidden": false
      }
@@ -773,7 +1241,13 @@
      }
     },
     {
-     "id": "lk0",
+     "id": "lb0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "jd0",
      "set": {
       "hidden": false
      }
@@ -826,19 +1300,55 @@
      }
     },
     {
-     "id": "lk1",
+     "id": "la1",
      "set": {
       "hidden": false
      }
     },
     {
-     "id": "lk2",
+     "id": "lb1",
      "set": {
       "hidden": false
      }
     },
     {
-     "id": "lk3",
+     "id": "jd1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "la2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lb2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "jd2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "la3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lb3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "jd3",
      "set": {
       "hidden": false
      }
@@ -866,11 +1376,41 @@
      "set": {
       "hidden": false
      }
+    },
+    {
+     "id": "bus",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "busl",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "stub",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "stubl",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "low",
+     "set": {
+      "text": "A13–A0 → all 8 chips (offset inside a chip)"
+     }
     }
    ]
   },
   {
-   "caption": "64K words need 16 address lines. The low 14 go to every chip; the top 2, A15 A14, drive a 2:4 decoder, one output per row.",
+   "caption": "16 address lines: the low 14 go to every chip; A15 A14 drive a 2:4 decoder, output r selecting both chips of row r.",
    "patches": [
     {
      "id": "dec",
@@ -927,7 +1467,19 @@
      }
     },
     {
+     "id": "ct0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
      "id": "cs1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ct1",
      "set": {
       "hidden": false
      }
@@ -939,7 +1491,19 @@
      }
     },
     {
+     "id": "ct2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
      "id": "cs3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ct3",
      "set": {
       "hidden": false
      }
@@ -954,12 +1518,6 @@
      "id": "in1",
      "set": {
       "hidden": false
-     }
-    },
-    {
-     "id": "low",
-     "set": {
-      "text": "A13–A0 → all 8 chips (offset inside a chip)"
      }
     }
    ]
@@ -988,7 +1546,7 @@
      }
     },
     {
-     "id": "lk0",
+     "id": "ct0",
      "set": {
       "tone": "muted"
      }
@@ -1026,7 +1584,7 @@
      }
     },
     {
-     "id": "lk1",
+     "id": "ct1",
      "set": {
       "tone": "muted"
      }
@@ -1064,7 +1622,7 @@
      }
     },
     {
-     "id": "lk2",
+     "id": "ct2",
      "set": {
       "tone": "accent"
      }
@@ -1102,7 +1660,7 @@
      }
     },
     {
-     "id": "lk3",
+     "id": "ct3",
      "set": {
       "tone": "muted"
      }
@@ -1166,7 +1724,7 @@
      }
     },
     {
-     "id": "lk0",
+     "id": "ct0",
      "set": {
       "tone": "accent"
      }
@@ -1204,7 +1762,7 @@
      }
     },
     {
-     "id": "lk1",
+     "id": "ct1",
      "set": {
       "tone": "muted"
      }
@@ -1242,7 +1800,7 @@
      }
     },
     {
-     "id": "lk2",
+     "id": "ct2",
      "set": {
       "tone": "muted"
      }
@@ -1280,7 +1838,7 @@
      }
     },
     {
-     "id": "lk3",
+     "id": "ct3",
      "set": {
       "tone": "muted"
      }
@@ -1393,7 +1951,7 @@
      }
     },
     {
-     "id": "lk0",
+     "id": "ct0",
      "set": {
       "tone": "muted"
      }
@@ -1411,7 +1969,7 @@
      }
     },
     {
-     "id": "lk1",
+     "id": "ct1",
      "set": {
       "tone": "muted"
      }
@@ -1429,7 +1987,7 @@
      }
     },
     {
-     "id": "lk2",
+     "id": "ct2",
      "set": {
       "tone": "muted"
      }
@@ -1447,7 +2005,7 @@
      }
     },
     {
-     "id": "lk3",
+     "id": "ct3",
      "set": {
       "tone": "muted"
      }

@@ -232,6 +232,12 @@ export function idealCode(n: number, vref: Q, vin: Q, offset = false): number {
   return Math.max(0, Math.min(2 ** n - 1, floorQ(x)))
 }
 
+/** Over range: V_in ≥ V_ref − LSB/2 with the ½-LSB offset (rounding), V_in ≥ V_ref without it; the code saturates at 2^n − 1. */
+export function overRange(n: number, vref: Q, vin: Q, offset = false): boolean {
+  const limit = offset ? sub(vref, div(lsb(n, vref), q(2))) : vref
+  return cmp(vin, limit) >= 0
+}
+
 export interface SarStep {
   bit: number
   trial: number
@@ -319,11 +325,12 @@ export interface SarPreset {
   offset: boolean
 }
 export const SAR_PRESETS: SarPreset[] = [
+  { id: 'easy', label: '3 bits, 8 V, V_in = 5.3 V', n: 3, vref: '8', vin: '5.3', offset: false },
   { id: 'lesson', label: '4 bits, 10 V, V_in = 6.4 V', n: 4, vref: '10', vin: '6.4', offset: false },
   { id: 'byte', label: '8 bits, 5.12 V, V_in = 3.37 V', n: 8, vref: '5.12', vin: '3.37', offset: false },
   { id: 'tie', label: 'Tie: 4 bits, 16 V, V_in = 10 V', n: 4, vref: '16', vin: '10', offset: false },
   { id: 'round', label: '½-LSB offset: 4 bits, 10 V, 6.6 V', n: 4, vref: '10', vin: '6.6', offset: true },
-  { id: 'over', label: 'Over range: 4 bits, 8 V, 7.9 V', n: 4, vref: '8', vin: '7.9', offset: false },
+  { id: 'over', label: 'Over range with the ½-LSB offset: 4 bits, 8 V, 7.9 V', n: 4, vref: '8', vin: '7.9', offset: true },
 ]
 
 export interface DacPreset {

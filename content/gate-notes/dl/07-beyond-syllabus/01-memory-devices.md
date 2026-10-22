@@ -25,8 +25,8 @@ How many address lines does a chip need? How many chips make a bigger memory, an
 chip answers address `9A3C`? Why does main memory need refreshing while a cache does not? These are
 questions about how a memory is *organised*, and the answers are short once you see a memory as a grid of
 cells, a decoder that picks one row, and a few rules for stacking chips. This lesson builds those rules
-from scratch, proves the two counting facts you will use most, and works twelve examples, three of them
-traps that cost marks in COA papers.
+from scratch, proves the two counting facts you will use most, and works fourteen examples, four of them
+edge cases that cost marks in COA papers.
 
 ## Where this fits
 
@@ -34,8 +34,8 @@ traps that cost marks in COA papers.
 decoder feeding an OR array. It also showed how to build a bigger ROM from small chips. Here we widen the
 view to every kind of semiconductor memory, writable ones included, look inside the chip (cell array,
 row and column decoders), and make the expansion recipe precise for both directions (wider words, more
-words). The decoders themselves come from [Chapter 5, Lesson 3](lesson:decoders-encoders), whose last
-section introduced address decoding; the static RAM cell is the latch of
+words). The decoders themselves come from [Chapter 5, Lesson 3](lesson:decoders-encoders), whose section
+on address decoding for memory introduced the chip-select decoder; the static RAM cell is the latch of
 [Chapter 6, Lesson 1](lesson:latches). The tri-state ("floating") outputs that let many chips share one
 data bus reappear at transistor level in [Lesson 3](lesson:logic-families). Memory hierarchies, caches
 and interleaving belong to the Computer Organisation subject; we stop at the chip and the board.
@@ -45,8 +45,9 @@ and interleaving belong to the Computer Organisation subject; we stop at the chi
 |:--|:--|
 | PYQs mapped to this lesson | 0: the Digital Logic papers have not asked about memory chips directly |
 | Why it still matters | Computer Organisation questions on memory design (chips needed, decoder size, address ranges, which module holds an address, DRAM refresh) use exactly the arithmetic of this lesson |
+| Related COA PYQs (taught in Computer Organisation) | cse-2010-cs-7 and cse-2018-cs-23 (refreshing a many-chip DRAM unit), it-2005-cs-9 (refresh percentage), cse-2019-cs-2 (address range from chip-select logic) |
 | Related lessons | ROM as a truth table and ROM expansion: [Chapter 5, Lesson 5](lesson:rom-pla-pal); address decoding: [Chapter 5, Lesson 3](lesson:decoders-encoders); the SRAM cell is a latch: [Chapter 6, Lesson 1](lesson:latches) |
-| Likely question shapes | Address and data lines of a chip; chips needed for a $W \times B$ memory; the size of the chip-select decoder; the address range of a chip; which chip holds an address; aliases under incomplete decoding; refresh interval of a DRAM |
+| Likely question shapes | Address and data lines of a chip; chips needed for a $W \times B$ memory; the size of the chip-select decoder; the address range of a chip; which chip holds an address; aliases and the address range under incomplete decoding; refresh interval and refresh overhead of a many-chip DRAM |
 | What examiners would test | $1\text{K} = 1024$; address lines depend on the number of **words**, not on the word width; width expansion needs no decoder; capacity expansion uses the **high** address bits; SRAM needs no refresh; an ignored address bit doubles the number of aliases |
 :::
 
@@ -168,13 +169,15 @@ even $k$ and $3 \cdot 2^{(k-1)/2}$ for odd $k$, against $2^k$ for a single decod
 the smallest sum when they are as close together as possible.
 
 Write $u = 2^r$ and $v = 2^{k-r}$, so $uv = 2^k$. Then $(u + v)^2 = (u - v)^2 + 4uv = (u - v)^2 + 4 \cdot 2^k$,
-so $u + v$ is smallest exactly when $|u - v|$ is smallest. Moving $r$ one step towards $k/2$ always brings
-$u$ and $v$ closer (one doubles, the other halves, and the larger one shrinks), so the minimum is at the
-balanced split. For even $k$, $u = v = 2^{k/2}$ and the sum is $2 \cdot 2^{k/2}$. For odd $k$ the two
-closest choices are $2^{(k-1)/2}$ and $2^{(k+1)/2}$, summing to $3 \cdot 2^{(k-1)/2}$.
+so $u + v$ is smallest exactly when $|u - v|$ is smallest. While $|r - k/2| \ge 1$, moving $r$ one step
+towards $k/2$ brings $u$ and $v$ closer (one doubles, the other halves, and the larger one shrinks); the
+closest pair is reached at $r = \lfloor k/2 \rfloor$ or $\lceil k/2 \rceil$, which give the same sum. For
+even $k$, $u = v = 2^{k/2}$ and the sum is $2 \cdot 2^{k/2}$. For odd $k$ the two closest choices are
+$2^{(k-1)/2}$ and $2^{(k+1)/2}$, summing to $3 \cdot 2^{(k-1)/2}$.
 
-**Sanity check:** $k = 10$: $32 + 32 = 64$ lines instead of 1024; $k = 11$: $32 + 64 = 96$; and the
-unbalanced split $r = 2$ for $k = 10$ gives $4 + 256 = 260$, worse than 64.
+**Sanity check:** $k = 12$: $64 + 64 = 128$ lines instead of 4096; $k = 11$: $32 + 64 = 96$; and for
+$k = 10$ the unbalanced split $r = 2$ gives $4 + 256 = 260$, against the balanced $32 + 32 = 64$ already met
+in the coincident-decoding aside of [Chapter 5, Lesson 3](lesson:decoders-encoders).
 :::
 
 :::intuition{#cell-intuition title="A bit kept by a tug of war, or by a leaking bucket" depth="standard"}
@@ -219,16 +222,31 @@ $$
 and the overhead is $8192 \times 50\ \text{ns} / 64\ \text{ms} = 0.0064$, i.e. $0.64\%$. Refreshing all rows in one
 burst instead ("burst refresh") takes the same total time but blocks the memory for
 $8192 \times 50\ \text{ns} \approx 0.41$ ms at a stretch.
+
+**Many chips refresh in parallel.** In a memory built from many DRAM chips, every chip receives the same
+refresh command and refreshes its own row $r$ at the same moment, so the busy time per period is
+(rows per chip) $\times\, t_{RC}$, **not** multiplied by the number of chips. The fraction of time
+**available** for reads and writes is
+$$
+1 - \frac{R\,t_{RC}}{T}.
+$$
+Why parallel: the chips of a row of the chip grid are separate pieces of silicon, each with its own
+sense amplifiers, so nothing forces them to take turns; the controller simply drives all their row
+addresses together. Computer Organisation questions (for example cse-2010-cs-7 and cse-2018-cs-23)
+build a large unit from many chips precisely to test this point: the naive product "chips × rows ×
+$t_{RC}$" is their favourite distractor.
 :::
 
 :::note{#erratum-sram title="A loose claim to avoid (what SRAM needs)" depth="standard"}
 Some printed notes describe SRAM as having "high power consumption" because its "transistors do not
-require power to prevent leakage". Both halves are muddled. SRAM **must stay powered** to keep its data
-(it is volatile, like DRAM); what it does not need is **refresh**, because the latch restores its own
-value continuously. Its standby power is usually *lower* than a DRAM's, which keeps spending energy on
-refresh; its cost is area (6 transistors against 1 transistor and a capacitor), not power. The correct
-one-line comparison: SRAM is faster, needs no refresh, and is larger per bit; DRAM is denser and
-cheaper, needs refresh, and has a destructive read.
+require power to prevent leakage". The reason given is muddled. SRAM **must stay powered** to keep its
+data (it is volatile, like DRAM); what it does not need is **refresh**, because the latch restores its
+own value continuously. The power comparison depends on what is measured: a CMOS SRAM cell that merely
+holds its value draws almost no current (a small battery can keep an SRAM alive), but per bit stored,
+and at full speed, SRAM is usually the more power-hungry of the two, and comparison tables in textbooks
+and exams list "SRAM: higher power, DRAM: lower power". Give that table answer when asked, with the
+correct reason. The correct one-line comparison: SRAM is faster, needs no refresh, and is larger and
+costlier per bit; DRAM is denser and cheaper, needs refresh, and has a destructive read.
 :::
 
 ### Worked examples: chips, arrays and cells
@@ -320,27 +338,73 @@ address lines: every factor of 2 moved from words into width removes one address
 :::
 ::::
 
+::::example{#ex-org-refresh-chips level="gate" title="Edge case: refreshing a memory of sixteen DRAM chips" depth="standard"}
+A 1 GB main memory, 32 bits wide, is built from $64\text{M} \times 8$ DRAM chips. Each chip has 8192 rows;
+one row refresh takes 40 ns and every row must be refreshed every 4 ms. What percentage of the time is
+available for reads and writes?
+
+:::step{why="The chip-count rule: words over chip words, times width over chip width."}
+Words: $2^{30}/4 = 256\text{M}$; rows of chips $256\text{M}/64\text{M} = 4$; chips per row $32/8 = 4$: 16 chips.
+:::
+
+:::step{why="Every chip refreshes its own row at the same time, so the chip count does not multiply the time."}
+Busy per period: $8192 \times 40\ \text{ns} = 327.68\ \mu\text{s}$.
+:::
+
+:::step{why="Overhead is busy time over the period; what remains is available."}
+$327.68\ \mu\text{s} / 4\ \text{ms} = 8.192\%$; available $91.808\% \approx 92\%$.
+:::
+
+:::answer
+About 92 %. The tempting $16 \times 327.68\ \mu\text{s} = 5.24$ ms is longer than the 4 ms period itself, so it
+cannot be right. Notice that the 16 chips mattered only to show that the trap is there: the answer uses
+the rows of **one** chip.
+:::
+::::
+
 :::note{#recap-organisation title="Recap" depth="quick"}
 A $W \times B$ memory has $\lceil \log_2 W \rceil$ address lines and $B$ data lines; $1\text{K} = 1024$. Chips fold
 their cells into a near-square array with row and column decoders ($2^r + 2^{k-r}$ lines, smallest at the
 balanced split). SRAM = latch, 6 transistors, no refresh; DRAM = 1 transistor + 1 capacitor, refresh
-every $T / R$. Both are volatile.
+every $T / R$, and all chips of a memory refresh in parallel. Both are volatile.
 :::
 
 ## Building bigger memories from chips
 
-:::intuition{#expansion-intuition title="Side by side for wider words, taking turns for more words" depth="standard"}
-Suppose your shelves are too narrow: each holds 8 books and you want 16. Put two bookcases side by side
-and give their shelves the **same** numbers: shelf 5 of the left case and shelf 5 of the right case
-together form one wide shelf of 16 slots. Every request goes to both cases at once.
+:::intuition{#expansion-intuition title="A meeting with one microphone, and a minute-taker who only listens when named" depth="standard"}
+[Chapter 5, Lesson 5](lesson:rom-pla-pal) already built big ROMs from small ones: chips stand **side by
+side** for wider words and **take turns** for more words, with a decoder on the high address bits picking
+the row. Everything there carries over to RAM; what is new is that a RAM is also **written**, and its data
+pins are both inputs and outputs on one shared bus.
 
-Now suppose you have too few shelves: each case has 16K shelves and you need 64K. Stand four cases in a
-row and let them **take turns**. The shelf number gets two extra leading digits that say *which case*,
-and a receptionist (the **decoder**) reads those two digits and sends the request to exactly one case.
-The rest of the number picks the shelf inside that case, and every case understands it the same way.
+Think of a meeting with one microphone. Many people sit at the table (the chips), but only the one who
+has been handed the microphone may speak (only the selected chip drives the data bus); everyone else is
+silent, not shouting "nothing" (their outputs are **high-impedance**, neither 0 nor 1). When the chair
+says "write this down" (the **write enable**), the instruction is heard by the whole room, yet only the
+people whose name was called (the selected row's chip select) pick up their pens. And while the chair is
+dictating, nobody else may talk at the same time: during a write the chips' **output enables** must be
+off, or a chip and the processor would drive the same wire to opposite values.
+:::
 
-Real memories do both at once: rows of cases that take turns, each row made of cases standing side by
-side.
+:::note{#ram-control title="What changes for RAM: chip select, write enable, output enable" depth="standard"}
+In a chip grid built from RAM chips:
+
+- **Chip select ($\overline{CS}$)** comes from the decoder, one output per row of chips, so it is the only
+  control line that differs from row to row. A deselected chip ignores everything else: it neither
+  stores what is on the bus nor drives it.
+- **Write enable ($\overline{WE}$)** and **output enable ($\overline{OE}$)** are **bused**: one wire each, from
+  the processor to every chip. They need no decoding of their own, because a chip acts on them only while
+  its $\overline{CS}$ is active; the chip select "gates" them.
+- **The data bus is shared by all rows.** In a read, the selected row drives it and every other row is
+  high-impedance. In a write, the processor drives it, $\overline{OE}$ is inactive on every chip, and
+  only the selected row latches the value when $\overline{WE}$ goes active.
+
+**Why the decoder must raise exactly one output:** if two rows were selected together, both would drive
+the bus in a read (**bus contention**: one chip pulling a wire to 0 while another pulls it to 1, which
+gives a garbage value and wastes current) and both would store the value in a write. With no row
+selected the bus floats and a read returns garbage. That is why a chip-select decoder has one output
+active for every address it decodes, and why the unused outputs of a partly used decoder are dangerous
+addresses, not harmless ones.
 :::
 
 :::definition{#word-expansion term="Word-size (width) expansion" depth="standard"}
@@ -374,8 +438,8 @@ N_{\text{chips}} = \left\lceil \frac{W}{w} \right\rceil \cdot \left\lceil \frac{
 $$
 The system needs $\lceil \log_2 W \rceil$ address lines; the chips use the low $\log_2 w$ of them, and the
 other $h = \lceil \log_2 W \rceil - \log_2 w$ high lines feed an $h : 2^h$ decoder (none when there is a single
-row). **Sanity check:** the chip count can never be below the capacity ratio $\frac{W B}{w b}$, because each
-chip holds $w b$ bits; for $64\text{K} \times 16$ from $16\text{K} \times 8$ the ratio is
+row). **Sanity check** (the capacity test of [Chapter 5, Lesson 5](lesson:rom-pla-pal)): for
+$64\text{K} \times 16$ from $16\text{K} \times 8$ the capacity ratio is
 $\frac{65\,536 \cdot 16}{16\,384 \cdot 8} = 8$ and the formula gives $4 \times 2 = 8$ chips with a $2 : 4$ decoder.
 :::
 
@@ -416,19 +480,26 @@ say otherwise.
 
 ### Worked examples: expansion
 
-::::example{#ex-exp-easy level="easy" title="1K × 8 from 1K × 4 chips" depth="quick"}
-Build a $1\text{K} \times 8$ memory from $1\text{K} \times 4$ chips.
+::::example{#ex-exp-easy level="easy" title="2K × 16 from 2K × 4 RAM chips" depth="quick"}
+Build a $2\text{K} \times 16$ RAM from $2\text{K} \times 4$ chips. How many chips, which lines do they share,
+and is a decoder needed?
 
 :::step{why="The chips already have enough words; only the width is short."}
-Width ratio $8 / 4 = 2$: two chips side by side.
+Width ratio $16 / 4 = 4$: four chips side by side, one row.
 :::
 
-:::step{why="Both chips must see the same word on every access, so they share the address and control lines."}
-Both chips get $A_9 \dots A_0$ (10 lines), the same $\overline{CS}$ and $\overline{WE}$. Chip 0 drives $D_3 \dots D_0$, chip 1 drives $D_7 \dots D_4$.
+:::step{why="All four chips must work on the same word in every access, so they share the address lines."}
+$2\text{K} = 2^{11}$: $A_{10} \dots A_0$ (11 lines) go to all four chips.
+:::
+
+:::step{why="Every access uses every chip, so the control lines are shared too and nothing needs choosing."}
+One $\overline{CS}$, one $\overline{WE}$ and one $\overline{OE}$ wire reach all four chips. Chip $j$ connects to
+$D_{4j+3} \dots D_{4j}$: chip 0 to $D_3 \dots D_0$, …, chip 3 to $D_{15} \dots D_{12}$.
 :::
 
 :::answer
-2 chips, 10 shared address lines, no decoder.
+4 chips, 11 shared address lines, shared control lines, no decoder. A write of a 16-bit word stores
+4 bits in each chip at the same moment.
 :::
 ::::
 
@@ -474,9 +545,47 @@ exactly this array.
 :::
 ::::
 
+::::example{#ex-exp-byte level="gate" title="A byte-addressable memory with 32-bit words" depth="standard"}
+A byte-addressable 16 KB memory with 32-bit words is built from $2\text{K} \times 8$ chips. How many chips,
+how are the address lines used, and which chip holds byte address `2A47`?
+
+:::step{why="Byte addressing names every byte, but the chips are organised by 32-bit words, so count both."}
+Bytes: $16\text{K} = 2^{14}$, so the processor puts out 14 address lines $A_{13} \dots A_0$. Words:
+$16\text{K}/4 = 4\text{K}$ words of 32 bits.
+:::
+
+:::step{why="The chip-count rule on words and widths."}
+$(4\text{K}/2\text{K}) \cdot (32/8) = 2 \cdot 4 = 8$ chips, in 2 rows of 4 side by side.
+:::
+
+:::step{why="The two lowest bits number the byte inside a 32-bit word; each byte of a word lives in a different chip of the row, so these bits never reach the chips."}
+$A_1A_0$ select the **byte lane** (which of the four chips of a row supplies or accepts the byte); for a
+whole-word access all four lanes are used and $A_1A_0 = 00$.
+:::
+
+:::step{why="The next 11 bits number the word inside a chip, and every chip of the grid needs them."}
+$A_{12} \dots A_2$ (11 lines, $2\text{K} = 2^{11}$) go to all 8 chips. The one bit left, $A_{13}$, picks the
+row: a $1 : 2$ decoder, which is just an inverter ($\overline{A_{13}}$ selects row 0, $A_{13}$ row 1).
+:::
+
+:::step{why="Split the byte address into row bit, word offset and byte lane."}
+`2A47` $= 10\,1010\,0100\,0111_2$: $A_{13} = 1$ (row 1); $A_{12} \dots A_2 = 010\,1001\,0001_2 =$ `291`
+(word 657 inside the chips); $A_1A_0 = 11$ (lane 3).
+:::
+
+:::answer
+8 chips in 2 rows of 4; $A_1A_0$ choose the byte lane, $A_{12} \dots A_2$ go to every chip, $A_{13}$ selects
+the row through an inverter. Byte `2A47` is word `291` of the lane-3 chip in row 1. The trap is to give
+the chips the **low** 11 bits $A_{10} \dots A_0$: that treats the memory as word-addressable and puts the
+four bytes of one word into one chip.
+:::
+::::
+
 ::::example{#ex-exp-edge level="gate" title="Edge case: 24K × 8 from 8K × 8, a partly used decoder" depth="standard"}
 Build a $24\text{K} \times 8$ memory from $8\text{K} \times 8$ chips. How many address lines and what decoder?
-What happens at addresses the memory does not have?
+What happens at addresses the memory does not have? (The decoder layout is the one of
+[Chapter 5, Lesson 3](lesson:decoders-encoders)'s three-chip edge case; what is new here is the ceiling
+in the address count and what the floating bus means for a RAM.)
 
 :::step{why="24K is not a power of 2, so the address-lines theorem needs the ceiling."}
 $24\text{K} = 24\,576$; $2^{14} = 16\,384 < 24\,576 \le 32\,768 = 2^{15}$, so 15 address lines.
@@ -493,13 +602,15 @@ left unconnected.
 
 :::answer
 15 address lines, 3 chips, a $2 : 4$ decoder with **one unused output**. A read of `6000–7FFF` selects no
-chip, the data bus floats, and the value read is undefined: the system must never use those addresses.
+chip, the data bus floats, and the value read is undefined; a write there is silently lost, because no
+chip sees its chip select while $\overline{WE}$ is active. The system must never use those addresses.
 :::
 ::::
 
 :::note{#recap-expansion title="Recap" depth="quick"}
 Width: chips side by side, shared address, no decoder. Capacity: low $\log_2 w$ bits to every chip, high
-bits to a decoder that enables one row. Chips $= \lceil W/w \rceil \cdot \lceil B/b \rceil$; a non-power-of-2 count
+bits to a decoder that enables one row; $\overline{WE}$ and $\overline{OE}$ are bused and act only on the selected
+row. Byte addressing: the lowest bits pick the byte lane and skip the chips. Chips $= \lceil W/w \rceil \cdot \lceil B/b \rceil$; a non-power-of-2 count
 leaves decoder outputs unused.
 :::
 
@@ -526,6 +637,18 @@ select: then every ignored bit doubles the number of addresses at which the same
 extra copies are called **aliases** (or images, or fold-back addresses).
 :::
 
+:::intuition{#alias-intuition title="A receptionist who ignores part of the number" depth="standard"}
+Suppose shelf numbers have four digits: the first says which bookcase, the last two which shelf in it,
+and the second digit should say which wing of the library. A lazy receptionist reads only the first
+digit and skips the second. Requests for 8023, 8123, 8223, …, 8923 all go to bookcase 8, and bookcase 8
+only ever looks at the last two digits, "23". One shelf now answers to ten different numbers, and a book
+put there under 8123 can be fetched again under 8923.
+
+Every digit the receptionist ignores multiplies the numbers that reach one shelf by the number of values
+that digit can take; in binary, by 2. That is all partial decoding is: the chip-select logic does not
+look at some high address bits, so each word of the chip has one address for every combination of them.
+:::
+
 :::theorem{#alias-theorem name="Each ignored address bit doubles the aliases" depth="standard"}
 On an $n$-bit address bus, a chip of $2^m$ words whose chip select checks only $d$ of the $n - m$ high
 address bits answers at $2^{\,n - m - d}$ different blocks of addresses, and every word of the chip has
@@ -547,6 +670,11 @@ A $4\text{K}$ chip on a 16-bit bus whose chip select is just $A_{15}$ looks as i
 It also answers at `9000`, `A000`, …, `F000`: bits $A_{14}A_{13}A_{12}$ are ignored, so there are $2^3 = 8$
 copies. The expected wrong answer to "how many addresses access the first word?" is 1; the right one is 8.
 Partial decoding is cheaper (fewer gates) and harmless only if the software never uses the aliases.
+
+Computer Organisation also asks the reverse question (cse-2019-cs-2, for example): given the gates that
+drive a chip select, what range of addresses enables the chip? Read off the high bits the gates force
+to 0 or 1, let every bit the gates do not see run through all its values, and let the chip's own address
+bits run from all 0s to all 1s.
 :::
 
 ### Worked examples: address maps
@@ -669,11 +797,11 @@ Our own questions in GATE formats: two warm-ups, four exam-level questions, then
 | Organisation | $W \times B$: $W$ words of $B$ bits; capacity $W B$ bits; $1\text{K} = 1024$ |
 | Address lines | $\lceil \log_2 W \rceil$, independent of the width $B$; data lines $= B$ |
 | Kinds | ROM, PROM, EPROM (UV erase), EEPROM (word erase), flash (block erase): non-volatile; SRAM, DRAM: volatile |
-| SRAM vs DRAM | SRAM: latch, 6 transistors, no refresh, fast; DRAM: 1 transistor + 1 capacitor, destructive read, refresh |
-| Refresh | one row every $T / R$; overhead $R\,t_{RC} / T$ |
+| SRAM vs DRAM | SRAM: latch, 6 transistors, no refresh, fast, costlier per bit (tables list it as higher power); DRAM: 1 transistor + 1 capacitor, destructive read, refresh, denser |
+| Refresh | one row every $T / R$; overhead $R\,t_{RC} / T$ with $R$ the rows of **one** chip (all chips refresh in parallel); available $1 - R\,t_{RC}/T$ |
 | 2-D decoding | $2^r + 2^{k-r}$ decoder lines, smallest at $r = \lfloor k/2 \rfloor$ ($k = 10$: 64 instead of 1024) |
 | Width expansion | chips side by side, same address lines, no decoder |
-| Capacity expansion | low $\log_2 w$ bits to every chip, high bits to a decoder enabling one row |
+| Capacity expansion | low $\log_2 w$ bits to every chip, high bits to a decoder enabling one row; $\overline{WE}$, $\overline{OE}$ bused; byte-addressable: lowest bits = byte lane |
 | Chips | $\lceil W/w \rceil \cdot \lceil B/b \rceil$; spare decoder outputs when $W/w$ is not a power of 2 |
 | Address map | row $q$: $q w$ to $(q + 1) w - 1$; top bits = row, low bits = offset |
 | Partial decoding | $2^{\,n - m - d}$ aliases per word |

@@ -10,6 +10,7 @@ stale; tests/gate-notes.test.js then checks the TypeScript against the same file
   every code for n ≤ 3): node voltages, leg, terminator and series currents, I_ref, I_out, I_gnd, V_o;
   the voltage-switched ladder and the binary-weighted DAC on the same cases; the staircase of every code;
 - step size, full scale and resolution for n = 1 … 8;
+- the over-range test (V_in >= V_ref, or >= V_ref - LSB/2 with the offset), including the top half-step;
 - the SAR search step by step (seeded random n = 3 … 8, V_ref, V_in up to 110 % of V_ref, with and
   without the 1/2-LSB offset, plus ties on exact levels and the lab presets), the ideal code, the flash
   thermometer code, the counter ADC and the dual-slope count;
@@ -21,6 +22,7 @@ import json
 import pathlib
 import random
 import sys
+from fractions import Fraction as F
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import convlib as cv  # noqa: E402
@@ -29,11 +31,12 @@ OUT = pathlib.Path(__file__).parent / "lab_vectors_ch7.json"
 S = str
 
 SAR_PRESETS = [
+    {"id": "easy", "label": "3 bits, 8 V, V_in = 5.3 V", "n": 3, "vref": "8", "vin": "5.3", "offset": False},
     {"id": "lesson", "label": "4 bits, 10 V, V_in = 6.4 V", "n": 4, "vref": "10", "vin": "6.4", "offset": False},
     {"id": "byte", "label": "8 bits, 5.12 V, V_in = 3.37 V", "n": 8, "vref": "5.12", "vin": "3.37", "offset": False},
     {"id": "tie", "label": "Tie: 4 bits, 16 V, V_in = 10 V", "n": 4, "vref": "16", "vin": "10", "offset": False},
     {"id": "round", "label": "½-LSB offset: 4 bits, 10 V, 6.6 V", "n": 4, "vref": "10", "vin": "6.6", "offset": True},
-    {"id": "over", "label": "Over range: 4 bits, 8 V, 7.9 V", "n": 4, "vref": "8", "vin": "7.9", "offset": False},
+    {"id": "over", "label": "Over range with the ½-LSB offset: 4 bits, 8 V, 7.9 V", "n": 4, "vref": "8", "vin": "7.9", "offset": True},
 ]
 DAC_PRESETS = [
     {"id": "c397", "label": "3 bits, 5 V, R = R_f = 2 kΩ, code 001", "n": 3, "vref": "5", "r": "2", "rf": "2", "code": 1},
@@ -42,7 +45,10 @@ DAC_PRESETS = [
     {"id": "byte", "label": "8 bits, 2.56 V, R = R_f = 10 kΩ, code 10000000", "n": 8, "vref": "2.56", "r": "10", "rf": "10", "code": 128},
 ]
 # The presets show the lesson's numbers.
-assert [cv.sar(p["n"], p["vref"], p["vin"], p["offset"])["code"] for p in SAR_PRESETS] == [10, 168, 10, 11, 15]
+assert [cv.sar(p["n"], p["vref"], p["vin"], p["offset"])["code"] for p in SAR_PRESETS] == [5, 10, 168, 10, 11, 15]
+# The "over" preset is over range only because of the offset (7.75 V <= 7.9 V < 8 V).
+assert [cv.over_range(p["n"], p["vref"], p["vin"], p["offset"]) for p in SAR_PRESETS] == [False] * 5 + [True]
+assert not cv.over_range(4, "8", "7.9", False)
 assert [S(cv.ladder(p["n"], p["code"], p["vref"], p["r"], p["rf"])["vo"]) for p in DAC_PRESETS] == ["-5/8", "-35/8", "-25/8", "-32/25"]
 
 
@@ -85,7 +91,8 @@ def sar_case(n, vref, vin, offset):
     c = cv.counter_adc(n, vref, vin) if not offset else None
     row = {"n": n, "vref": vref, "vin": vin, "offset": offset, "lsb": S(s["lsb"]),
            "steps": [{"bit": t["bit"], "trial": t["trial"], "v": S(t["v"]), "keep": t["keep"], "code": t["code"], "range": list(t["range"])} for t in s["steps"]],
-           "code": s["code"], "vq": S(s["vq"]), "err": S(s["err"]), "errLsb": S(s["errLsb"]), "ideal": cv.ideal_code(n, vref, vin, offset)}
+           "code": s["code"], "vq": S(s["vq"]), "err": S(s["err"]), "errLsb": S(s["errLsb"]), "ideal": cv.ideal_code(n, vref, vin, offset),
+           "over": cv.over_range(n, vref, vin, offset)}
     assert row["code"] == row["ideal"]
     if f:
         row["flash"] = {"thresholds": strs(f["thresholds"]), "outputs": f["outputs"], "code": f["code"]}
@@ -114,6 +121,13 @@ def adc_vectors():
             v = cv.dec(cv.lsb(n, "8") * k)
             out.append(sar_case(n, "8", v, False))
             out.append(sar_case(n, "8", cv.dec(cv.lsb(n, "8") * k - cv.lsb(n, "8") / 2), True))
+    for n, vref in ((4, "8"), (5, "10"), (8, "2.56")):          # the top half-step: over range only with the offset
+        q, top = cv.lsb(n, vref), cv.frac(vref)
+        for v in (top - q / 2, top - q / 5, top - q / 2 - F(1, 1000), top):
+            for off in (False, True):
+                out.append(sar_case(n, vref, cv.dec(v), off))
+    assert any(r["over"] and r["offset"] and cv.frac(r["vin"]) < cv.frac(r["vref"]) for r in out)
+    assert any(not r["over"] and not r["offset"] and cv.frac(r["vin"]) >= cv.frac(r["vref"]) - F(r["lsb"]) / 2 for r in out)
     assert any(r["vin"] == "0" for r in out) and any(cv.frac(r["vin"]) > cv.frac(r["vref"]) for r in out)
     duals = [{"n1": n1, "vref": vref, "vin": vin, **{k: (S(v) if k == "exact" else v) for k, v in cv.dual_slope(n1, vref, vin).items()}}
              for n1 in (100, 1000, 4096) for vref, vin in (("2", "0.75"), ("1", "0.3333"), ("5", "4.999"), ("2.5", "0"))]
