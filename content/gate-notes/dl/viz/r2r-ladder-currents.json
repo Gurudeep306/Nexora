@@ -1134,10 +1134,18 @@
    "size": 13,
    "anchor": "middle",
    "tone": "accent",
-   "narrow": {
-    "x": 180.0,
-    "size": 12
-   }
+   "only": "wide"
+  },
+  {
+   "id": "rr-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 50,
+   "text": "",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "accent",
+   "only": "narrow"
   }
  ],
  "steps": [
@@ -1146,6 +1154,12 @@
    "patches": [
     {
      "id": "rr",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "rr-n",
      "set": {
       "text": ""
      }
@@ -1169,6 +1183,12 @@
     },
     {
      "id": "rr",
+     "set": {
+      "text": "right of A0: 2R || 2R = R"
+     }
+    },
+    {
+     "id": "rr-n",
      "set": {
       "text": "right of A0: 2R || 2R = R"
      }
@@ -1204,6 +1224,12 @@
     },
     {
      "id": "rr",
+     "set": {
+      "text": "right of A1: 2R || (R + R) = R"
+     }
+    },
+    {
+     "id": "rr-n",
      "set": {
       "text": "right of A1: 2R || (R + R) = R"
      }
@@ -1251,6 +1277,12 @@
      }
     },
     {
+     "id": "rr-n",
+     "set": {
+      "text": "right of A2: R, so I = V_ref / R"
+     }
+    },
+    {
      "id": "iref-n",
      "set": {
       "text": "I=2.5 mA",
@@ -1277,7 +1309,8 @@
     {
      "id": "rr",
      "set": {
-      "text": ""
+      "text": "",
+      "tone": "muted"
      }
     },
     {
@@ -1320,6 +1353,13 @@
      "id": "it",
      "set": {
       "text": "0.3125 mA"
+     }
+    },
+    {
+     "id": "rr-n",
+     "set": {
+      "text": "currents in mA",
+      "tone": "muted"
      }
     },
     {

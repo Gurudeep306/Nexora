@@ -34,6 +34,7 @@ import {
   ladder,
   lsb,
   mul,
+  overRange,
   parseQ,
   q,
   qNum,
@@ -154,7 +155,7 @@ function SarTool() {
       `V_in ${fmt(vin!)} V ${st.keep ? '≥' : '<'} ${fmt(st.v)} V, so bit ${st.bit} is ${st.keep ? 'kept' : 'cleared'}; register ${bstr(st.code, n)}.`
     )
   }
-  const over = res && vin && vref ? cmp(vin, vref) >= 0 : false
+  const over = res && vin && vref ? overRange(n, vref, vin, offset) : false
   const done = !!res && k >= n
 
   return (
@@ -282,7 +283,7 @@ function SarTool() {
               </span>
             </div>
           </div>
-          <p className="cb-now">{last ? sentence(k - 1) : `Register cleared. Step 1 will set the MSB, bit ${n - 1}: the DAC then gives half of V_ref.`}</p>
+          <p className="cb-now">{last ? sentence(k - 1) : `Register cleared. Step 1 will set the MSB, bit ${n - 1}: the DAC then gives half of V_ref${offset ? ' minus half an LSB' : ''}.`}</p>
           <SarChart res={res} k={k} vin={vin!} vref={vref!} />
           <div className="lab-tt-wrap">
             <table className="lab-tt cb-table">
@@ -318,7 +319,7 @@ function SarTool() {
               ? `Code ${bstr(res.code, n)} = ${res.code} after ${n} clocks: ${res.code} × ${fmt(res.lsb, 6)} = ${fmt(res.vq)} V. Error V_in − V_q = ${fmt(res.err)} V = ${fmt(
                   res.errLsb,
                   3,
-                )} LSB${over ? ` (over range: V_in ≥ V_ref, so the code saturates at ${2 ** n - 1} and the error exceeds the usual bound)` : offset ? ' (rounded: within ±½ LSB)' : ' (truncated: 0 ≤ error < 1 LSB)'}. Ideal ${offset ? 'rounded' : 'floor'} code: ${idealCode(n, vref!, vin!, offset)}.`
+                )} LSB${over ? ` (over range: V_in ≥ ${offset ? 'V_ref − ½ LSB' : 'V_ref'}, so the code saturates at ${2 ** n - 1} and the error exceeds the usual bound)` : offset ? ' (rounded: within ±½ LSB)' : ' (truncated: 0 ≤ error < 1 LSB)'}. Ideal ${offset ? 'rounded' : 'floor'} code: ${idealCode(n, vref!, vin!, offset)}.`
               : `${n - k} clock${n - k === 1 ? '' : 's'} to go. A SAR always needs exactly n = ${n} clocks, whatever V_in is.`}
           </p>
         </>

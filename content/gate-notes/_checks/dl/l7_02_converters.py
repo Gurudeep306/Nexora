@@ -1,7 +1,7 @@
 """Checks for dl/07-beyond-syllabus/02-data-converters: every DAC output, step, full scale, resolution,
 node voltage, leg current, weighted-DAC current, ADC code, quantisation error, comparator count,
 conversion time, dual-slope count and SAR trace of the lesson is recomputed with convlib (the DACs by
-exact nodal analysis of the circuit, never by their formula), and every practice answer, MSQ option and
+exact nodal analysis for the ladders, Ohm's law per resistor for the weighted DAC, never by their formula), and every practice answer, MSQ option and
 MCQ distractor is re-derived. (No PYQs: outline 0.)"""
 import pathlib
 import re
@@ -42,13 +42,23 @@ assert fr("2.55") / 255 == fr("0.01") and 256 * fr("0.01") == fr("2.56") and cv.
 assert cv.dec(cv.resolution_percent(4), 2) == "6.67" and cv.dec(cv.resolution_percent(8), 3) == "0.392"
 assert cv.dec(F(100, 256), 3) != "0.392"
 has("10 mV steps); given the **reference**", "$V_{ref} = 2.56$ V for the same DAC", "$6.67\\%$ for 4 bits, $0.392\\%$ for 8 bits")
+# the two percentage conventions: of full scale 100/(2^n - 1), against V_ref 100/2^n
+assert cv.dec(F(100, 16), 2) == "6.25" and cv.dec(F(100, 256), 3) == "0.391"
+has("instead, $100/2^n$ ($6.25\\%$, $0.391\\%$); read which one the question means", "$100/2^n$ % if quoted against $V_{ref}$")
+assert "not $100/2^n$" not in L
 
 # ── Weighted-resistor DAC ──────────────────────────────────────────────────
 W = cv.weighted(4, 0b1000, 5, 10, 5)
 assert W["resistors"] == [10, 20, 40, 80] and W["iout"] == F(1, 2) and W["vo"] == F(-5, 2)
 W = cv.weighted(4, 0b0001, 5, 10, 5)
 assert W["iout"] == F(1, 16) and W["vo"] == F(-5, 16) == -cv.step_size(4, 5)
-has("$I_{out} = 0.5$ mA, $V_o = -2.5$ V $= -5 \\times 1/2$", "$I_{out} = 0.0625$ mA, $V_o = -0.3125$ V $= -5/16$")
+has("$I_{out} = 0.5$ mA, $V_o = -2.5$ V $= -5 \\times 1/2$", "$I_{out} = 0.0625$ mA, $V_o = -0.3125$ V $= -5/16$",
+    "from each resistor's current (the summing node held at 0 V), not from the formula")
+# the other convention: MSB 2R ... LSB 2^n R with R_f = R gives -V_ref D / 2^n directly (every resistor doubled)
+for n in range(1, 9):
+    for code in range(2 ** n):
+        assert cv.weighted(n, code, 5, 20, 10)["vo"] == -cv.dac_ideal(n, code, 5)   # MSB 2R = 20 kΩ, R_f = R = 10 kΩ
+has("number the resistors from $2R$ (MSB) to $2^nR$ (LSB) with $R_f = R$ instead")
 for n in range(1, 9):  # R_f = R/2 is the ideal DAC; the general formula -V_ref (R_f/R) 2D/2^n
     for code in range(2 ** n):
         assert cv.weighted(n, code, 5, 10, 5)["vo"] == -cv.dac_ideal(n, code, 5)
@@ -84,7 +94,8 @@ has("$I_{out} = 1.25 + 0.625 + 0.3125 = 2.1875$ mA.", "$V_o = -2 \\times 2.1875 
     "Into ground: $0.3125$ mA; $2.1875 + 0.3125 = 2.5$ mA")
 # voltage-switched ladder: V_ref = 8 V, codes 100 and 010
 assert cv.ladder_voltage_mode(3, 0b100, 8, 1)["vout"] == 4 and cv.ladder_voltage_mode(3, 0b010, 8, 1)["vout"] == 2
-has("with $V_{ref} = 8$ V, code 100 gives 4 V and code 010\ngives 2 V")
+has("with $V_{ref} = 8$ V, code 100 gives 4 V and code 010\ngives 2 V", "the ladder's Thévenin resistance is $R$")
+assert "Each switched source sees the rest of the ladder as $R$" not in L
 # trick: 10 V, 1011 → 6.875 V (unity gain ladder)
 assert lad(4, 0b1011, 10, 1, 1)["vo"] == -F(55, 8) and cv.dac_ideal(4, 11, 10) == F(55, 8)
 assert cv.dac_ideal(4, 11, 10) == 10 * F(0b1011, 16)
@@ -107,6 +118,14 @@ has("the truncating code is 168 ($V_q = 3.36$ V, error $+10$ mV $= +0.5$ LSB), w
 f = cv.flash(3, 8, "5.3")
 assert f["comparators"] == 7 and f["resistors"] == 8 and f["thresholds"] == list(range(1, 8))
 assert "".join(map(str, f["outputs"])) == "0011111" and f["code"] == 5 and cv.bstr(5, 3) == "101"
+has("the bottom resistor is $R/2$ and the top one $3R/2$", "a priority encoder with $2^n - 1$ inputs and $n$ outputs",
+    "(lesson:shift-registers)", "(lesson:finite-state-machines)", "the series $R$ into $A_k$ plus that $R$, i.e. $2R$")
+# offset string R/2, R, …, R, 3R/2: thresholds k·Δ − Δ/2
+for n in (1, 2, 3, 4):
+    rs = [F(1, 2)] + [F(1)] * (2 ** n - 2) + [F(3, 2)]
+    assert sum(rs) == 2 ** n
+    taps = [sum(rs[:k]) / sum(rs) * 8 for k in range(1, 2 ** n)]
+    assert taps == cv.flash(n, 8, 0, True)["thresholds"]
 has("thresholds 1, 2, …, 7 V: 7 comparators, 8 resistors", "From the top (7 V) down: $0\\,0\\,1\\,1\\,1\\,1\\,1$",
     "7 comparators, 8 resistors, outputs $0011111$, code $101$ ($V_q = 5$ V, error 0.3 V)")
 # dual slope
@@ -160,6 +179,8 @@ assert r["code"] == 168 and cv.conversion_clocks("sar", 8) == 8
 r2 = cv.sar(8, "5.12", "3.37", True)
 diff = [k for k, (a, b) in enumerate(zip(r["steps"], r2["steps"])) if a["keep"] != b["keep"]]
 assert diff == [7] and r2["code"] == 169                                    # only the last decision differs
+assert r2["steps"][7]["v"] == fr("3.37") and r2["steps"][7]["keep"]          # … and it is a tie, kept
+has("(with the offset its DAC level drops to 3.37 V, a tie with the input, which keeps the bit: code 169)")
 has("$1000\\,0000 \\to 2.56$ keep; $1100\\,0000 \\to 3.84$ clear; $1010\\,0000 \\to 3.20$ keep; $1011\\,0000 \\to 3.52$ clear.",
     "$1010\\,1000 \\to 3.36$ keep; $1010\\,1100 \\to 3.44$ clear; $1010\\,1010 \\to 3.40$ clear; $1010\\,1001 \\to 3.38$ clear.",
     "8 clocks $\\times 1\\ \\mu$s $= 8\\ \\mu$s.")
@@ -215,8 +236,8 @@ bl.assert_mcq(q3, bl.which(ov(q3), lambda t: fr(t.split()[0]) == cv.conversion_c
 
 X = lad(4, 0b1010, 8, 1, 1)
 outs = {lad(4, c, 8, 1, 1)["iout"] for c in range(16)}
-st4 = {"A": all(lad(4, c, 8, 1, 1)["iref"] == 8 for c in range(16)), "B": X["volts"][-1] == 1,
-       "C": len(outs) == 1, "D": X["vo"] == -5}
+st4 = {"A": len(outs) == 1, "B": all(lad(4, c, 8, 1, 1)["iref"] == 8 for c in range(16)), "C": X["volts"][-1] == 1,
+       "D": X["vo"] == -5}
 assert X["legs"] == [4, 2, 1, F(1, 2)] and X["iout"] == 5
 bl.assert_msq(P["nx-dl-07-02-q04"], [k for k, v in st4.items() if v])
 
@@ -225,6 +246,7 @@ r5 = cv.sar(4, 8, "5.3")
 want = f"Trials {', '.join(cv.bstr(s['trial'], 4) for s in r5['steps'])}; result {cv.bstr(r5['code'], 4)}"
 assert want == "Trials 1000, 1100, 1010, 1011; result 1010"
 bl.assert_mcq(q5, bl.which(ov(q5), lambda t: t == want)[0])
+assert q5["answer"] == "A"
 assert cv.sar(4, 8, "3.9")["steps"][0]["keep"] is False                     # C is the trace of an input below 4 V
 assert [cv.bstr(s["trial"], 4) for s in cv.sar(4, 8, "2.6")["steps"]] == ["1000", "0100", "0110", "0101"]
 
@@ -236,16 +258,20 @@ assert cv.sar(8, "2.56", "1.237", True)["errLsb"] == fr("-0.3")
 q7 = P["nx-dl-07-02-q07"]
 w7 = cv.weighted(8, 1, 1, 2, 1)
 bl.assert_mcq(q7, bl.which(ov(q7), lambda t: t == f"{w7['resistors'][-1]} kΩ; ratio {w7['spread']}")[0])
-assert ov(q7)["A"] == "512 kΩ; ratio 256" and ov(q7)["D"] == "128 kΩ; ratio 64"
+assert ov(q7)["A"] == "512 kΩ; ratio 256" and ov(q7)["C"] == "128 kΩ; ratio 64" and q7["answer"] == "D"
 
 st8 = {"A": cv.flash(8, 1, 0)["comparators"] == 255,
        "B": len({cv.counter_adc(4, 8, v)["clocks"] for v in (0, 3, 7)}) == 1,
        "C": all(0 <= cv.sar(6, 8, cv.lsb(6, 8) * F(t, 3))["errLsb"] < 1 for t in range(3 * 64)),
-       "D": cv.dual_slope(1000, 2, 1)["count"] == 500}
+       "D": cv.dual_slope(1000, 2, 1)["total"] == 500}
+assert cv.dual_slope(1000, 2, 1)["count"] == 500 and cv.dual_slope(1000, 2, 1)["total"] == 1500
 bl.assert_msq(P["nx-dl-07-02-q08"], [k for k, v in st8.items() if v])
 
 mcq = [P[k]["answer"] for k in sorted(P) if k.startswith("nx-dl-07-02-") and P[k]["type"] == "MCQ"]
-assert sorted(set(mcq)) == ["B", "C"] and max(mcq.count(x) for x in mcq) <= 2
+assert sorted(mcq) == ["A", "B", "C", "D"]
+msq = [P[k]["answer"] for k in sorted(P) if k.startswith("nx-dl-07-02-") and P[k]["type"] == "MSQ"]
+assert any("A" not in a for a in msq) and any(len(a) != 3 for a in msq)
+assert "SAR, which uses one comparator n times" not in str(P["nx-dl-07-02-q02"])
 ids = set(re.findall(r"\{#([a-z0-9-]+)", L))
 mine = [k for k in P if k.startswith("nx-dl-07-02-")]
 assert len(mine) == 8 and {P[k]["type"] for k in mine} == {"MCQ", "MSQ", "NAT"}

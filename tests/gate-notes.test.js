@@ -877,6 +877,7 @@ test('converter bench: R-2R and weighted DACs by nodal analysis, SAR, flash, cou
   }
   // ADCs: the SAR search step by step, the ideal code, flash, counter.
   assert.ok(vec.adc.length >= 250);
+  assert.ok(vec.adc.some((c) => c.over && c.offset && cv.cmp(P(c.vin), P(c.vref)) < 0), 'an input in the top half-step with the offset');
   for (const c of vec.adc) {
     const at = `n ${c.n} vref ${c.vref} vin ${c.vin} offset ${c.offset}`;
     const [vref, vin] = [P(c.vref), P(c.vin)];
@@ -888,6 +889,7 @@ test('converter bench: R-2R and weighted DACs by nodal analysis, SAR, flash, cou
     );
     assert.deepEqual([s.code, cv.qStr(s.lsb), cv.qStr(s.vq), cv.qStr(s.err), cv.qStr(s.errLsb)], [c.code, c.lsb, c.vq, c.err, c.errLsb], `${at}: SAR result`);
     assert.equal(cv.idealCode(c.n, vref, vin, c.offset), c.ideal, `${at}: ideal code`);
+    assert.equal(cv.overRange(c.n, vref, vin, c.offset), c.over, `${at}: over range`);
     if (c.flash) {
       const f = cv.flash(c.n, vref, vin, c.offset);
       assert.deepEqual({ thresholds: S(f.thresholds), outputs: f.outputs, code: f.code }, c.flash, `${at}: flash`);
