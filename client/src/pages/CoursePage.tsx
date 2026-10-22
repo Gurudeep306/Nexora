@@ -6,7 +6,7 @@ import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 import { cachedState, cachedStructure, loadWeb, mergeWeb } from '@/components/nexus/data'
-import { courseHref, gateTarget } from '@/components/nexus/course'
+import { courseHref, gateTarget, subjectHref } from '@/components/nexus/course'
 import type { NexusPyqsResponse, NexusWebState, NexusWebStructure, WebCluster, WebNode } from '@/components/nexus/types'
 
 /*
@@ -127,7 +127,7 @@ export default function CoursePage() {
   if (!clusters) return error ? <ErrorState message={error} /> : <LoadingBlock rows={8} />
   if (!cluster) return <Navigate to="/learn" replace />
   if (cluster.engine === 'dsa') return <Navigate to="/learn" replace />
-  if (concept && !node) return <Navigate to={courseHref(cluster)} replace />
+  if (!concept || !node) return <Navigate to={subjectHref(cluster)} replace />
   const gate = gateTarget(cluster, node)
   if (gate?.kind === 'notes') return <Navigate to={gate.href} replace />
   if (gate?.kind === 'pyq') return <PyqRedirect subject={subject} concept={concept} pyq={gate.subject} />
@@ -151,7 +151,7 @@ export default function CoursePage() {
           {stream?.name ?? 'Nexus'}
         </Link>
         <ChevronRight className="size-3" aria-hidden="true" />
-        <Link to={courseHref(cluster)} className="hover:text-text-primary">
+        <Link to={subjectHref(cluster)} className="hover:text-text-primary">
           {cluster.name}
         </Link>
         {zone && (

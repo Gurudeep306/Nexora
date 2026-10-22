@@ -175,3 +175,21 @@ test('goal routes on the real data reach every route subject, in learning order'
     assert.equal(plan.next.length, 5);
   }
 });
+
+test('subject pages: DSA, GATE subjects and the rest each have their own page; a node is #node', async (t) => {
+  let C;
+  try {
+    C = await import(path.join(__dirname, '..', 'client', 'src', 'components', 'nexus', 'course.ts'));
+  } catch {
+    return t.skip('no TS loader');
+  }
+  assert.equal(C.subjectHref({ id: 'dsa', engine: 'dsa' }), '/learn/dsa');
+  assert.equal(C.subjectHref({ id: 'dl', engine: null, gate: { pyq: 'dl', notes: 'dl' } }, 'place-value'), '/gate/subjects/dl#place-value');
+  assert.equal(C.subjectHref({ id: 'os', engine: null, gate: { pyq: 'os', notes: null } }), '/gate/subjects/os');
+  assert.equal(C.subjectHref({ id: 'rust', engine: null }, 'ownership'), '/learn/rust#ownership');
+  const st = structure();
+  for (const c of st.clusters) {
+    const href = C.subjectHref(c);
+    assert.ok(c.engine === 'dsa' ? href === '/learn/dsa' : c.gate ? href === `/gate/subjects/${c.id}` : href === `/learn/${c.id}`, c.id);
+  }
+});
