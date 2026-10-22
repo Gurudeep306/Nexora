@@ -8,8 +8,8 @@ prerequisites: [logic-gates]
 pyq_topics: [dl/gates]
 est_minutes: 30
 difficulty: basic
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every switch-network value, CMOS gate, transistor count, noise margin, fan-out, power figure and sizing number is computed in content/gate-notes/_checks/dl/l7_03_families.py with beyondlib (a switch-level MOS simulator)."
   - "Coverage checklist only (internal digests, never copied): set A p. 95 (NAND vs NOR in CMOS), set C pp. 224–226 (unused TTL and ECL inputs) and p. 398 (logic families, fan-in and fan-out). The slips A 95 and C 398 are corrected in the lesson."

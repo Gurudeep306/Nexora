@@ -8,8 +8,8 @@ prerequisites: [rom-pla-pal]
 pyq_topics: []
 est_minutes: 25
 difficulty: basic
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every address-line count, chip plan, decoder size, address range, alias list and refresh figure is computed in content/gate-notes/_checks/dl/l7_01_memory.py with beyondlib (a bit-true simulation of each chip array)."
   - "Coverage checklist only (internal digests, never copied): set C pp. 373–377 and 390–393 (memory arrays, RAM internals, SRAM vs DRAM). The loose SRAM claims of C 392 are corrected in the lesson."

@@ -8,8 +8,8 @@ prerequisites: [fractions-fixed-point]
 pyq_topics: []
 est_minutes: 25
 difficulty: basic
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every DAC output, node voltage, leg current, ADC code, SAR trace and conversion time is computed in content/gate-notes/_checks/dl/l7_02_converters.py with convlib, in exact fractions (ladders by nodal analysis, the weighted DAC resistor by resistor)."
   - "Coverage checklist only (internal digests, never copied): set C pp. 394–397 (binary-weighted DAC, voltage- and current-switched R-2R ladders; ADC types only named). The current example of C 397 (2.5 mA, −0.625 V) and its MSB/LSB labelling are corrected in the lesson."
