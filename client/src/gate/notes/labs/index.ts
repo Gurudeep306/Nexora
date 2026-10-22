@@ -12,6 +12,7 @@ export const LABS = {
   'adder-race': lazy(() => import('./AdderRace')),
   'flipflop-scope': lazy(() => import('./FlipflopScope')),
   'counter-fsm': lazy(() => import('./CounterFsm')),
+  'converter-bench': lazy(() => import('./ConverterBench')),
 } as const
 
 export type LabName = keyof typeof LABS

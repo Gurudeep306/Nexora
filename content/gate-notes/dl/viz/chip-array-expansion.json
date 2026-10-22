@@ -1,0 +1,2058 @@
+{
+ "version": 1,
+ "title": "Building a 64K × 16 memory from 16K × 8 chips",
+ "width": 680,
+ "height": 415,
+ "narrow": {
+  "width": 360,
+  "height": 439
+ },
+ "intro": "Eight 16K × 8 chips in four rows of two: the left chip of a row gives the low byte, the right one the high byte. A 2:4 decoder on A15 A14 selects both chips of one row; the bus A13–A0 goes to every chip.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "64K × 16 from 16K × 8 chips: width, then capacity",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "64K × 16 from 16K × 8 chips",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "hd0",
+   "type": "text",
+   "x": 310.0,
+   "y": 64,
+   "text": "D7–D0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 162.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "hd1",
+   "type": "text",
+   "x": 470.0,
+   "y": 64,
+   "text": "D15–D8",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 286.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "c00",
+   "type": "box",
+   "x": 250,
+   "y": 84.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": false,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 112,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "c01",
+   "type": "box",
+   "x": 410,
+   "y": 84.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": true,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 236,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "c10",
+   "type": "box",
+   "x": 250,
+   "y": 146.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": true,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 112,
+    "y": 154.0,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "c11",
+   "type": "box",
+   "x": 410,
+   "y": 146.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": true,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 236,
+    "y": 154.0,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "c20",
+   "type": "box",
+   "x": 250,
+   "y": 208.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": true,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 112,
+    "y": 224.0,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "c21",
+   "type": "box",
+   "x": 410,
+   "y": 208.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": true,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 236,
+    "y": 224.0,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "c30",
+   "type": "box",
+   "x": 250,
+   "y": 270.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": true,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 112,
+    "y": 294.0,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "c31",
+   "type": "box",
+   "x": 410,
+   "y": 270.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": true,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 236,
+    "y": 294.0,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "rg0",
+   "type": "text",
+   "x": 544,
+   "y": 104.0,
+   "text": "0000–3FFF",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 112,
+    "y": 131.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "rg1",
+   "type": "text",
+   "x": 544,
+   "y": 166.0,
+   "text": "4000–7FFF",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 112,
+    "y": 201.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "rg2",
+   "type": "text",
+   "x": 544,
+   "y": 228.0,
+   "text": "8000–BFFF",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 112,
+    "y": 271.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "rg3",
+   "type": "text",
+   "x": 544,
+   "y": 290.0,
+   "text": "C000–FFFF",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 112,
+    "y": 341.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec",
+   "type": "box",
+   "x": 110,
+   "y": 73.0,
+   "w": 90,
+   "h": 248,
+   "hidden": true,
+   "narrow": {
+    "x": 40,
+    "y": 67.0,
+    "w": 56,
+    "h": 280
+   }
+  },
+  {
+   "id": "dec-l0",
+   "type": "text",
+   "x": 115,
+   "y": 135.0,
+   "text": "A15",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 45,
+    "y": 137.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-l1",
+   "type": "text",
+   "x": 115,
+   "y": 259.0,
+   "text": "A14",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 45,
+    "y": 277.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r0",
+   "type": "text",
+   "x": 195,
+   "y": 104.0,
+   "text": "0",
+   "size": 13,
+   "anchor": "end",
+   "hidden": true,
+   "narrow": {
+    "x": 91,
+    "y": 102.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r1",
+   "type": "text",
+   "x": 195,
+   "y": 166.0,
+   "text": "1",
+   "size": 13,
+   "anchor": "end",
+   "hidden": true,
+   "narrow": {
+    "x": 91,
+    "y": 172.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r2",
+   "type": "text",
+   "x": 195,
+   "y": 228.0,
+   "text": "2",
+   "size": 13,
+   "anchor": "end",
+   "hidden": true,
+   "narrow": {
+    "x": 91,
+    "y": 242.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r3",
+   "type": "text",
+   "x": 195,
+   "y": 290.0,
+   "text": "3",
+   "size": 13,
+   "anchor": "end",
+   "hidden": true,
+   "narrow": {
+    "x": 91,
+    "y": 312.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-n",
+   "type": "text",
+   "x": 155.0,
+   "y": 197.0,
+   "text": "2:4",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 68.0,
+    "y": 207.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "bus",
+   "type": "line",
+   "points": [
+    [
+     74,
+     331.0
+    ],
+    [
+     390.0,
+     331.0
+    ],
+    [
+     390.0,
+     90.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      22,
+      357.0
+     ],
+     [
+      224.0,
+      357.0
+     ],
+     [
+      224.0,
+      90.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "busl",
+   "type": "text",
+   "x": 74,
+   "y": 344.0,
+   "text": "A13–A0",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 22,
+    "y": 370.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "stub",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     90.0
+    ],
+    [
+     390.0,
+     138.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      90.0
+     ],
+     [
+      224.0,
+      134.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "stubl",
+   "type": "text",
+   "x": 390.0,
+   "y": 151.0,
+   "text": "A13–A0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 224.0,
+    "y": 147.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "la0",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     104.0
+    ],
+    [
+     370,
+     104.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      102.0
+     ],
+     [
+      212,
+      102.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lb0",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     104.0
+    ],
+    [
+     410,
+     104.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      102.0
+     ],
+     [
+      236,
+      102.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "jd0",
+   "type": "circle",
+   "cx": 390.0,
+   "cy": 104.0,
+   "r": 2.5,
+   "fill": "muted",
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "cx": 224.0,
+    "cy": 102.0
+   }
+  },
+  {
+   "id": "la1",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     166.0
+    ],
+    [
+     370,
+     166.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      172.0
+     ],
+     [
+      212,
+      172.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lb1",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     166.0
+    ],
+    [
+     410,
+     166.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      172.0
+     ],
+     [
+      236,
+      172.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "jd1",
+   "type": "circle",
+   "cx": 390.0,
+   "cy": 166.0,
+   "r": 2.5,
+   "fill": "muted",
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "cx": 224.0,
+    "cy": 172.0
+   }
+  },
+  {
+   "id": "la2",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     228.0
+    ],
+    [
+     370,
+     228.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      242.0
+     ],
+     [
+      212,
+      242.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lb2",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     228.0
+    ],
+    [
+     410,
+     228.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      242.0
+     ],
+     [
+      236,
+      242.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "jd2",
+   "type": "circle",
+   "cx": 390.0,
+   "cy": 228.0,
+   "r": 2.5,
+   "fill": "muted",
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "cx": 224.0,
+    "cy": 242.0
+   }
+  },
+  {
+   "id": "la3",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     290.0
+    ],
+    [
+     370,
+     290.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      312.0
+     ],
+     [
+      212,
+      312.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lb3",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     290.0
+    ],
+    [
+     410,
+     290.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      224.0,
+      312.0
+     ],
+     [
+      236,
+      312.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "jd3",
+   "type": "circle",
+   "cx": 390.0,
+   "cy": 290.0,
+   "r": 2.5,
+   "fill": "muted",
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "cx": 224.0,
+    "cy": 312.0
+   }
+  },
+  {
+   "id": "cs0",
+   "type": "line",
+   "points": [
+    [
+     200,
+     104.0
+    ],
+    [
+     240,
+     104.0
+    ],
+    [
+     240,
+     77.0
+    ],
+    [
+     470.0,
+     77.0
+    ],
+    [
+     470.0,
+     84.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      96,
+      102.0
+     ],
+     [
+      104,
+      102.0
+     ],
+     [
+      104,
+      77.0
+     ],
+     [
+      286.0,
+      77.0
+     ],
+     [
+      286.0,
+      84.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ct0",
+   "type": "line",
+   "points": [
+    [
+     310.0,
+     77.0
+    ],
+    [
+     310.0,
+     84.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      162.0,
+      77.0
+     ],
+     [
+      162.0,
+      84.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cs1",
+   "type": "line",
+   "points": [
+    [
+     200,
+     166.0
+    ],
+    [
+     240,
+     166.0
+    ],
+    [
+     240,
+     139.0
+    ],
+    [
+     470.0,
+     139.0
+    ],
+    [
+     470.0,
+     146.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      96,
+      172.0
+     ],
+     [
+      104,
+      172.0
+     ],
+     [
+      104,
+      147.0
+     ],
+     [
+      286.0,
+      147.0
+     ],
+     [
+      286.0,
+      154.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ct1",
+   "type": "line",
+   "points": [
+    [
+     310.0,
+     139.0
+    ],
+    [
+     310.0,
+     146.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      162.0,
+      147.0
+     ],
+     [
+      162.0,
+      154.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cs2",
+   "type": "line",
+   "points": [
+    [
+     200,
+     228.0
+    ],
+    [
+     240,
+     228.0
+    ],
+    [
+     240,
+     201.0
+    ],
+    [
+     470.0,
+     201.0
+    ],
+    [
+     470.0,
+     208.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      96,
+      242.0
+     ],
+     [
+      104,
+      242.0
+     ],
+     [
+      104,
+      217.0
+     ],
+     [
+      286.0,
+      217.0
+     ],
+     [
+      286.0,
+      224.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ct2",
+   "type": "line",
+   "points": [
+    [
+     310.0,
+     201.0
+    ],
+    [
+     310.0,
+     208.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      162.0,
+      217.0
+     ],
+     [
+      162.0,
+      224.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cs3",
+   "type": "line",
+   "points": [
+    [
+     200,
+     290.0
+    ],
+    [
+     240,
+     290.0
+    ],
+    [
+     240,
+     263.0
+    ],
+    [
+     470.0,
+     263.0
+    ],
+    [
+     470.0,
+     270.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      96,
+      312.0
+     ],
+     [
+      104,
+      312.0
+     ],
+     [
+      104,
+      287.0
+     ],
+     [
+      286.0,
+      287.0
+     ],
+     [
+      286.0,
+      294.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ct3",
+   "type": "line",
+   "points": [
+    [
+     310.0,
+     263.0
+    ],
+    [
+     310.0,
+     270.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      162.0,
+      287.0
+     ],
+     [
+      162.0,
+      294.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "in0",
+   "type": "line",
+   "points": [
+    [
+     74,
+     135.0
+    ],
+    [
+     110,
+     135.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      22,
+      137.0
+     ],
+     [
+      40,
+      137.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "iv0",
+   "type": "text",
+   "x": 69,
+   "y": 135.0,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 17,
+    "y": 137.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "in1",
+   "type": "line",
+   "points": [
+    [
+     74,
+     259.0
+    ],
+    [
+     110,
+     259.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      22,
+      277.0
+     ],
+     [
+      40,
+      277.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "iv1",
+   "type": "text",
+   "x": 69,
+   "y": 259.0,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 17,
+    "y": 277.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "low",
+   "type": "text",
+   "x": 340.0,
+   "y": 371.0,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "narrow": {
+    "x": 180.0,
+    "y": 397.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 395.0,
+   "text": "",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 419.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "One 16K × 8 chip: 14 address lines (16K = 2^14 words) and 8 data lines. We need 64K words of 16 bits.",
+   "patches": [
+    {
+     "id": "low",
+     "set": {
+      "text": "chip: A13–A0 in, 8 bits out"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Width first: a second chip side by side on the same address bus gives 16-bit words; chip 0 the low byte, chip 1 the high.",
+   "patches": [
+    {
+     "id": "c01",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hd1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lb0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "jd0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "low",
+     "set": {
+      "text": "both chips see the same A13–A0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Capacity: 64K / 16K = 4 rows of 2 chips, 8 chips in all. Each row owns a block of 16K consecutive addresses.",
+   "patches": [
+    {
+     "id": "c10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c11",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c20",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c21",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c30",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c31",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "la1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lb1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "jd1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "la2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lb2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "jd2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "la3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lb3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "jd3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "rg0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "rg1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "rg2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "rg3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bus",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "busl",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "stub",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "stubl",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "low",
+     "set": {
+      "text": "A13–A0 → all 8 chips (offset inside a chip)"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "16 address lines: the low 14 go to every chip; A15 A14 drive a 2:4 decoder, output r selecting both chips of row r.",
+   "patches": [
+    {
+     "id": "dec",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dec-l0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dec-l1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dec-r0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dec-r1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dec-r2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dec-r3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dec-n",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "cs0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ct0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "cs1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ct1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "cs2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ct2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "cs3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ct3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "in0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "in1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address 9A3C: A15 A14 = 10, so decoder output 2 enables row 2 (8000–BFFF); both its chips read word 1A3C.",
+   "patches": [
+    {
+     "id": "iv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ct0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dec-r0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "c00",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c01",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "cs1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ct1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dec-r1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "c10",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c11",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "cs2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ct2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rg2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "dec-r2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "c20",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "c21",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "cs3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ct3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dec-r3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "c30",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c31",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "9A3C → row 2, offset 1A3C",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address 2F00: A15 A14 = 00, so decoder output 0 enables row 0 (0000–3FFF); both its chips read word 2F00.",
+   "patches": [
+    {
+     "id": "iv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "iv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ct0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rg0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "dec-r0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "c00",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "c01",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "cs1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ct1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dec-r1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "c10",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c11",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "cs2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ct2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dec-r2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "c20",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c21",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "cs3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ct3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dec-r3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "c30",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c31",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "2F00 → row 0, offset 2F00",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Result: 8 chips, a 2:4 decoder on A15 A14, A13–A0 shared. Chips = (64K/16K)·(16/8) = 8.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "8 chips · 2:4 decoder · 14 shared lines",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "c00",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c01",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c10",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c11",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c20",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c21",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c30",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c31",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "cs0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ct0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ct1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ct2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ct3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dec-r0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "dec-r1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "dec-r2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "dec-r3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "iv0",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "iv1",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -115,7 +115,7 @@ test(':::lab embeds a known Live Lab; unknown labs, tabs and content are reporte
   const body = JSON.parse(r.outputs.get('tst.json')).lessons.alpha.body;
   const lab = body.find((n) => n.t === 'block' && n.name === 'lab');
   assert.deepEqual([lab.id, lab.attrs], ['lab-bench', { lab: 'gate-bench', tab: 'sets' }]);
-  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="truth-table"}\n:::\n`), /lab must be gate-bench \| kmap-solver \| comb-workbench \| adder-race \| flipflop-scope \| counter-fsm/);
+  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="truth-table"}\n:::\n`), /lab must be gate-bench \| kmap-solver \| comb-workbench \| adder-race \| flipflop-scope \| counter-fsm \| converter-bench/);
   assert.match(await errorsFor(`${LESSON}\n:::lab{lab="gate-bench" tab="draw"}\n:::\n`), /tab must be bench \| challenge \| sets/);
   // Each lab has its own tabs: the K-map Solver takes map | qm, and not Gate Bench's tabs.
   const km = await build({ content: scratch(`${LESSON}\n:::lab{#lab-km lab="kmap-solver" tab="qm" depth="standard"}\n:::\n`) });
@@ -835,4 +835,82 @@ test('sequential labs: flip-flop tables, scope waveforms, registers, ripple, cou
   assert.deepEqual(sq.bits(6, 3), [1, 1, 0]);
   assert.equal(sq.ffCount(5), 3);
   assert.equal(sq.ffNext('SR', 0, { S: 1, R: 1 }), null);
+});
+
+/* ── Live Lab: Converter Bench logic against the Python-verified vectors ── */
+
+test('converter bench: R-2R and weighted DACs by nodal analysis, SAR, flash, counter and dual-slope ADCs match convlib', async () => {
+  const { pathToFileURL } = require('node:url');
+  const cv = await import(pathToFileURL(path.join(ROOT, 'client', 'src', 'gate', 'notes', 'labs', 'convLogic.ts')).href);
+  const vec = JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'gate-notes', '_checks', 'dl', 'lab_vectors_ch7.json'), 'utf8'));
+  const P = (t) => {
+    const v = cv.parseQ(t);
+    assert.ok(v, `parse ${t}`);
+    return v;
+  };
+  const S = (xs) => xs.map(cv.qStr);
+  for (const c of vec.parse) assert.equal(cv.qStr(P(c.text)), c.value, `parse ${c.text}`);
+  assert.equal(cv.parseQ('abc'), null);
+  // DACs: every node voltage and current of the ladder, the voltage-mode ladder and the weighted DAC.
+  assert.ok(vec.dac.length >= 200);
+  for (const c of vec.dac) {
+    const at = `n ${c.n} code ${c.code} vref ${c.vref} R ${c.r} Rf ${c.rf}`;
+    const [vref, r, rf] = [P(c.vref), P(c.r), P(c.rf)];
+    const L = cv.ladder(c.n, c.code, vref, r, rf);
+    assert.deepEqual(L.bits, c.bits, `${at}: bits`);
+    assert.deepEqual([S(L.volts), S(L.legs), cv.qStr(L.term), S(L.series)], [c.volts, c.legs, c.term, c.series], `${at}: ladder nodes and currents`);
+    assert.deepEqual([L.iref, L.iout, L.ignd, L.vo].map(cv.qStr), [c.iref, c.iout, c.ignd, c.vo], `${at}: I_ref, I_out, I_gnd, V_o`);
+    const V = cv.ladderVoltageMode(c.n, c.code, vref, r);
+    assert.deepEqual({ volts: S(V.volts), vout: cv.qStr(V.vout) }, c.vm, `${at}: voltage-mode ladder`);
+    const W = cv.weighted(c.n, c.code, vref, r, rf);
+    assert.deepEqual(
+      { resistors: S(W.resistors), currents: S(W.currents), iout: cv.qStr(W.iout), vo: cv.qStr(W.vo), spread: cv.qStr(W.spread) },
+      c.w,
+      `${at}: weighted DAC`,
+    );
+    assert.equal(cv.qStr(cv.dacIdeal(c.n, c.code, vref)), c.ideal, `${at}: ideal output`);
+  }
+  for (const c of vec.stairs) assert.deepEqual(S(cv.staircase(c.n, P(c.vref), P(c.r), P(c.rf))), c.vo, `staircase n ${c.n} vref ${c.vref}`);
+  for (const c of vec.sizes) {
+    const v = P(c.vref);
+    assert.deepEqual([cv.stepSize(c.n, v), cv.fullScale(c.n, v), cv.resolutionPercent(c.n)].map(cv.qStr), [c.step, c.full, c.res], `sizes n ${c.n} vref ${c.vref}`);
+  }
+  // ADCs: the SAR search step by step, the ideal code, flash, counter.
+  assert.ok(vec.adc.length >= 250);
+  assert.ok(vec.adc.some((c) => c.over && c.offset && cv.cmp(P(c.vin), P(c.vref)) < 0), 'an input in the top half-step with the offset');
+  for (const c of vec.adc) {
+    const at = `n ${c.n} vref ${c.vref} vin ${c.vin} offset ${c.offset}`;
+    const [vref, vin] = [P(c.vref), P(c.vin)];
+    const s = cv.sar(c.n, vref, vin, c.offset);
+    assert.deepEqual(
+      s.steps.map((t) => ({ ...t, v: cv.qStr(t.v) })),
+      c.steps,
+      `${at}: SAR steps`,
+    );
+    assert.deepEqual([s.code, cv.qStr(s.lsb), cv.qStr(s.vq), cv.qStr(s.err), cv.qStr(s.errLsb)], [c.code, c.lsb, c.vq, c.err, c.errLsb], `${at}: SAR result`);
+    assert.equal(cv.idealCode(c.n, vref, vin, c.offset), c.ideal, `${at}: ideal code`);
+    assert.equal(cv.overRange(c.n, vref, vin, c.offset), c.over, `${at}: over range`);
+    if (c.flash) {
+      const f = cv.flash(c.n, vref, vin, c.offset);
+      assert.deepEqual({ thresholds: S(f.thresholds), outputs: f.outputs, code: f.code }, c.flash, `${at}: flash`);
+      assert.equal(f.comparators, 2 ** c.n - 1);
+    }
+    if (c.counter) {
+      const k = cv.counterAdc(c.n, vref, vin);
+      assert.deepEqual([k.code, k.clocks], [c.counter.code, c.counter.clocks], `${at}: counter ADC`);
+      if (c.counter.levels) assert.deepEqual(S(k.levels), c.counter.levels, `${at}: counter staircase`);
+    }
+  }
+  for (const c of vec.dual) {
+    const r = cv.dualSlope(c.n1, P(c.vref), P(c.vin));
+    assert.deepEqual([cv.qStr(r.exact), r.count, r.total], [c.exact, c.count, c.total], `dual slope ${c.n1} ${c.vref} ${c.vin}`);
+  }
+  // The lab presets show the lesson's numbers.
+  assert.deepEqual(cv.SAR_PRESETS, vec.sarPresets, 'SAR presets');
+  assert.deepEqual(cv.DAC_PRESETS, vec.dacPresets, 'DAC presets');
+  // Helpers.
+  assert.equal(cv.bstr(5, 4), '0101');
+  assert.equal(cv.conversionClocks('sar', 8), 8);
+  assert.equal(cv.conversionClocks('counter', 8), 255);
+  assert.equal(cv.dec(cv.q(-5, 8)), '-0.625');
 });

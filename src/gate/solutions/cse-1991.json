@@ -3,35 +3,95 @@
   "version": 2,
   "solutions": {
     "cse-1991-a-1-i": {
-      "approach": "Treat every MOS transistor as a switch: an nMOS conducts when its gate is 1, a pMOS (bubble) when its gate is 0. A series chain passes its input only when all its switches are on, and the two chains are wired together at $f$.",
+      "approach": "Concept tested: **pass-transistor networks in the switch model**. An NMOS conducts when its gate is 1 and a PMOS (drawn with a bubble) when its gate is 0; transistors in series conduct only together (AND). Find the condition under which each input reaches $f$.",
       "concepts": [
-        "pass-transistor logic",
-        "nMOS / pMOS switch",
-        "series switches = AND"
+        "Pass transistor",
+        "NMOS and PMOS switches",
+        "Series = AND",
+        "Floating output"
       ],
+      "given": "Input $x$ reaches $f$ through a PMOS gated by $a$ and then an NMOS gated by $b$. Input $y$ reaches $f$ through an NMOS gated by $a$ and then a PMOS gated by $b$. The two paths meet at $f$.",
       "steps": [
         {
-          "title": "Upper path (from x)",
-          "body": "pMOS with gate $a$ conducts when $a=0$; nMOS with gate $b$ conducts when $b=1$. In series both must be on, so $x$ reaches $f$ when $\\overline{a}\\,b = 1$: contribution $\\overline{a}\\,b\\,x$."
+          "title": "Condition for the top path",
+          "body": "PMOS($a$) is on when $a = 0$, NMOS($b$) when $b = 1$. In series both must be on: the top path conducts when $\\overline{a}\\,b = 1$, and then $f = x$.",
+          "scene": {
+            "reveal": 6
+          }
         },
         {
-          "title": "Lower path (from y)",
-          "body": "nMOS with gate $a$ conducts when $a=1$; pMOS with gate $b$ conducts when $b=0$. So $y$ reaches $f$ when $a\\,\\overline{b}=1$: contribution $a\\,\\overline{b}\\,y$."
+          "title": "Condition for the bottom path",
+          "body": "NMOS($a$) is on when $a = 1$, PMOS($b$) when $b = 0$: the bottom path conducts when $a\\,\\overline{b} = 1$, and then $f = y$.",
+          "scene": {
+            "reveal": 9
+          }
         },
         {
-          "title": "Combine at f",
-          "body": "The two conditions $\\overline{a}b$ and $a\\overline{b}$ are mutually exclusive, so at most one path drives $f$ (no conflict):\n\n$$f = \\overline{a}\\,b\\,x + a\\,\\overline{b}\\,y$$\n\n(When $a=b$ neither path conducts and $f$ floats.)"
+          "title": "The paths never fight",
+          "body": "$\\overline{a}b$ and $a\\overline{b}$ cannot both be 1, so $x$ and $y$ are never connected to $f$ at the same time."
+        },
+        {
+          "title": "Combine",
+          "body": "$f = \\overline{a}\\,b\\,x + a\\,\\overline{b}\\,y$."
+        },
+        {
+          "title": "What the expression does not say",
+          "body": "For $a = b$ (00 or 11) neither path conducts: $f$ is connected to nothing and **floats**. Where $f$ is driven, the value passes one transistor of each type, so its level is degraded (with $V_{DD} = 5$ V and 0.7 V thresholds, a 1 arrives as 4.3 V and a 0 as 0.7 V).",
+          "scene": {
+            "reveal": 12
+          }
         }
       ],
       "answer": {
-        "value": "$f = \\overline{a}\\,b\\,x + a\\,\\overline{b}\\,y$",
+        "value": "$f = \\overline{a}bx + a\\overline{b}y$ (and $f$ floats when $a = b$)",
         "matchesKey": true
       },
+      "shortcut": "Write one product per path: the gate variable for each NMOS, its complement for each PMOS, times the path's input. OR the products.",
       "pitfalls": [
-        "Reading the bubble as a NOT on the data path — it marks a pMOS gate (on at logic 0).",
-        "Writing an XOR of $a,b$ only: the data inputs $x$ and $y$ must appear."
+        "Reading the bubble the wrong way round (PMOS on at 1, NMOS on at 0) gives $f = a\\overline{b}x + \\overline{a}by$, with $x$ and $y$ swapped; ignoring the bubbles altogether (every device read as NMOS) gives $f = ab(x + y)$, which conducts both paths at once for $ab = 11$.",
+        "Calling the circuit a multiplexer that always gives an output: for $a = b$ the output floats.",
+        "Treating the series transistors as OR: a path needs every transistor on it to conduct."
       ],
-      "verification": "Check $a=0,b=1$: upper chain on, lower off ⇒ $f=x$; formula gives $1\\cdot x+0=x$. $a=1,b=0$: $f=y$. ✓"
+      "verification": "A switch-level simulation of the four transistors for all 16 values of $(a, b, x, y)$ gives $f = x$ for $ab = 01$, $f = y$ for $ab = 10$, and no conducting path (Z) for $ab = 00$ and $11$.",
+      "animation": {
+        "kind": "table",
+        "title": "1991 network: which path conducts",
+        "cols": [
+          "top: ā·b",
+          "bottom: a·b̄",
+          "f"
+        ],
+        "rows": [
+          [
+            "off",
+            "off",
+            "Z (floats)"
+          ],
+          [
+            "on",
+            "off",
+            "x"
+          ],
+          [
+            "off",
+            "on",
+            "y"
+          ],
+          [
+            "off",
+            "off",
+            "Z (floats)"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "a b = 00",
+          "a b = 01",
+          "a b = 10",
+          "a b = 11"
+        ],
+        "reveal": 3
+      }
     },
     "cse-1991-a-1-ii": {
       "approach": "Look at which address bits select the module. If the low-order bits pick the module, consecutive addresses land in consecutive modules; if the high-order bits pick it, a whole block of consecutive addresses lives in one module.",
@@ -1002,24 +1062,38 @@
       "verification": "$n=2$: binary trees with 2 nodes = 2 = $\\frac13\\binom42$ ✓; strings 0011-type = $\\binom42 = 6$ ✓; even perms of 2 objects = 1 = $2!/2$ ✓."
     },
     "cse-1991-a-3-i": {
-      "approach": "In static CMOS either the pull-up or the pull-down network is off in steady state, so no DC current flows — its decisive advantage. It costs more transistors, area and masks.",
+      "approach": "Concept tested: **why CMOS replaced nMOS**. Compare the two ways of building the same gate: CMOS uses a PMOS pull-up network complementary to the NMOS pull-down, nMOS uses a single always-on load. Check each claimed advantage against that structure.",
       "concepts": [
         "CMOS",
         "nMOS",
-        "static power dissipation"
+        "Static power",
+        "Logic families"
       ],
+      "given": "Options: (A) lower power dissipation, (B) greater speed, (C) smaller chip size, (D) fewer masks for fabrication, (E) none of the above. More than one may be correct.",
       "steps": [
         {
           "title": "Power",
-          "body": "nMOS logic uses a depletion load: when the output is LOW a DC path exists from $V_{DD}$ to ground. CMOS has complementary networks, only one conducting in steady state, so static power ≈ 0 ⇒ **lower power dissipation**."
+          "body": "In CMOS exactly one of the pull-up and pull-down networks conducts for every input, so in steady state no path joins $V_{DD}$ to ground: static power is (ideally) zero. In nMOS the load is always on, so whenever the output is low the load and the pull-down conduct together and current flows continuously. **A is correct.**"
         },
         {
-          "title": "Other claims",
-          "body": "CMOS needs a pMOS for every nMOS (2 transistors per input) plus an n-well, so chips are larger and need **more** masks. Speed was not CMOS's classic advantage — pMOS devices are slower (lower hole mobility) and gates have more input capacitance."
+          "title": "Size",
+          "body": "A CMOS gate needs two transistors per input (a NAND2 has 4), an nMOS gate one per input plus the load (a NAND2 has 3); the PMOS devices also need their own wells. CMOS is **larger**, so C is wrong."
+        },
+        {
+          "title": "Masks",
+          "body": "The wells and the extra p-type implants of CMOS add fabrication steps: CMOS needs **more** masks, so D is wrong."
+        },
+        {
+          "title": "Speed",
+          "body": "Each CMOS input drives two gates (twice the input capacitance) and the cells are larger, so wires are longer; the PMOS devices must also be widened to keep up with the NMOS. nMOS has its own slow edge (its load is deliberately weak so that $V_{OL}$ stays low), so neither family wins on speed outright. Speed was not an advantage of CMOS over nMOS, so B is not counted."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only A holds, so E (none) is wrong too."
         }
       ],
       "answer": {
-        "value": "A — lower power dissipation",
+        "value": "(A) lower power dissipation",
         "choice": [
           "A"
         ],
@@ -1029,33 +1103,68 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Complementary networks ⇒ no static current path ⇒ far lower power."
+          "reason": "Complementary networks: no static current; nMOS draws current whenever its output is low."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Not the defining advantage: pMOS pull-ups and doubled gate capacitance offset gains; 1991-era nMOS was comparable or faster."
+          "reason": "Not an advantage: each input drives two gates (twice the input capacitance) and the cells are larger."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "CMOS needs about twice the transistors plus wells ⇒ larger area."
+          "reason": "CMOS needs 2n transistors for an n-input gate against n + 1, plus wells: it is larger."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Wells and dual implants need extra masks, not fewer."
+          "reason": "CMOS needs more masks (wells, extra implants), not fewer."
         },
         {
           "option": "E",
           "correct": false,
-          "reason": "A is a genuine advantage."
+          "reason": "A is a genuine advantage, so 'none' is wrong."
         }
       ],
+      "shortcut": "CMOS's one decisive advantage is near-zero static power; it pays for it with area and process steps.",
       "pitfalls": [
-        "Assuming CMOS is smaller because modern chips are CMOS — density comes from scaling, not from CMOS vs nMOS."
+        "Ticking B and C because CMOS is 'the modern technology': per gate it is larger and needs more masks.",
+        "Confusing static power (CMOS ≈ 0) with dynamic power, which every family has."
       ],
-      "verification": "Standard VLSI texts (Weste–Eshraghian) list near-zero static power as the key CMOS advantage ✓."
+      "verification": "Switch-level simulation of a NAND2 in both styles: the nMOS version has a conducting $V_{DD}$–ground path on input 11 (output low); the CMOS version has none on any input. Transistor counts 4 (CMOS) and 3 (nMOS).",
+      "animation": {
+        "kind": "table",
+        "title": "CMOS vs nMOS (NAND2)",
+        "cols": [
+          "CMOS",
+          "nMOS"
+        ],
+        "rows": [
+          [
+            4,
+            3
+          ],
+          [
+            "none",
+            "when Y = 0"
+          ],
+          [
+            "more (wells)",
+            "fewer"
+          ],
+          [
+            "2 gates per input",
+            "weak pull-up"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "transistors",
+          "static current",
+          "masks",
+          "speed limited by"
+        ]
+      }
     },
     "cse-1991-a-3-ii": {
       "approach": "Concept tested: **the synchronous design discipline**. With one clock and a period longer than the slowest path, every flip-flop samples settled values, so hazards and races inside the logic are over before any edge looks. Judge each option against that one fact.",

@@ -1,0 +1,1638 @@
+{
+ "version": 1,
+ "title": "The R-2R ladder halves the current at every node",
+ "width": 680,
+ "height": 320,
+ "narrow": {
+  "width": 360,
+  "height": 298
+ },
+ "intro": "A current-switched 3-bit R-2R ladder: V_ref = 5 V, R = 2 kΩ, 2R legs switched to ground or to the summing node OUT of an inverting amplifier with R_f = R.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "Current-switched R-2R ladder: the current halves at every node",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "R-2R ladder: currents halve",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "src",
+   "type": "text",
+   "x": 40,
+   "y": 76,
+   "text": "V_ref = 5 V",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "src-n",
+   "type": "text",
+   "x": 8,
+   "y": 76,
+   "text": "V_ref",
+   "size": 12,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "wsrc",
+   "type": "line",
+   "points": [
+    [
+     44,
+     96
+    ],
+    [
+     170,
+     96
+    ]
+   ],
+   "tone": "ink",
+   "narrow": {
+    "points": [
+     [
+      12,
+      96
+     ],
+     [
+      88,
+      96
+     ]
+    ]
+   }
+  },
+  {
+   "id": "iref",
+   "type": "text",
+   "x": 40,
+   "y": 118,
+   "text": "I = ?",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "iref-n",
+   "type": "text",
+   "x": 8,
+   "y": 118,
+   "text": "I = ?",
+   "size": 12,
+   "anchor": "start",
+   "mono": true,
+   "only": "narrow"
+  },
+  {
+   "id": "nd0",
+   "type": "circle",
+   "cx": 170,
+   "cy": 96,
+   "r": 4,
+   "fill": "ink",
+   "tone": "ink",
+   "narrow": {
+    "cx": 88
+   }
+  },
+  {
+   "id": "nl0",
+   "type": "text",
+   "x": 178,
+   "y": 82,
+   "text": "A2",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 96,
+    "size": 12
+   }
+  },
+  {
+   "id": "nv0",
+   "type": "text",
+   "x": 170,
+   "y": 64,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 88,
+    "size": 12
+   }
+  },
+  {
+   "id": "ws0a",
+   "type": "line",
+   "points": [
+    [
+     170,
+     96
+    ],
+    [
+     227.0,
+     96
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      88,
+      96
+     ],
+     [
+      113.0,
+      96
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rs0",
+   "type": "box",
+   "x": 227.0,
+   "y": 85.0,
+   "w": 46,
+   "h": 22,
+   "mono": true,
+   "label": "R",
+   "size": 13,
+   "narrow": {
+    "x": 113.0,
+    "w": 34,
+    "size": 12
+   }
+  },
+  {
+   "id": "ws0b",
+   "type": "line",
+   "points": [
+    [
+     273.0,
+     96
+    ],
+    [
+     330,
+     96
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      147.0,
+      96
+     ],
+     [
+      172,
+      96
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wl0a",
+   "type": "line",
+   "points": [
+    [
+     170,
+     96
+    ],
+    [
+     170,
+     122
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      88,
+      96
+     ],
+     [
+      88,
+      122
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rl0",
+   "type": "box",
+   "x": 158.0,
+   "y": 122,
+   "w": 24,
+   "h": 46,
+   "mono": true,
+   "label": "2R",
+   "size": 13,
+   "narrow": {
+    "x": 76.0,
+    "h": 40,
+    "size": 12
+   }
+  },
+  {
+   "id": "wl0b",
+   "type": "line",
+   "points": [
+    [
+     170,
+     168
+    ],
+    [
+     170,
+     194
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      88,
+      162
+     ],
+     [
+      88,
+      184
+     ]
+    ]
+   }
+  },
+  {
+   "id": "il0",
+   "type": "text",
+   "x": 187.0,
+   "y": 145.0,
+   "text": "",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "accent",
+   "only": "wide"
+  },
+  {
+   "id": "il0-n",
+   "type": "text",
+   "x": 105.0,
+   "y": 142.0,
+   "text": "",
+   "size": 12,
+   "anchor": "start",
+   "mono": true,
+   "tone": "accent",
+   "only": "narrow"
+  },
+  {
+   "id": "go0",
+   "type": "line",
+   "points": [
+    [
+     170,
+     194
+    ],
+    [
+     170,
+     250
+    ]
+   ],
+   "tone": "muted",
+   "dashed": true,
+   "narrow": {
+    "points": [
+     [
+      88,
+      184
+     ],
+     [
+      88,
+      234
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gg0",
+   "type": "line",
+   "points": [
+    [
+     170,
+     194
+    ],
+    [
+     192,
+     194
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      88,
+      184
+     ],
+     [
+      104,
+      184
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gl0",
+   "type": "text",
+   "x": 196,
+   "y": 194,
+   "text": "gnd",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 108,
+    "y": 184,
+    "size": 12
+   }
+  },
+  {
+   "id": "bl0",
+   "type": "text",
+   "x": 164,
+   "y": 214,
+   "text": "b2=0",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 82,
+    "y": 202,
+    "size": 12
+   }
+  },
+  {
+   "id": "nd1",
+   "type": "circle",
+   "cx": 330,
+   "cy": 96,
+   "r": 4,
+   "fill": "ink",
+   "tone": "ink",
+   "narrow": {
+    "cx": 172
+   }
+  },
+  {
+   "id": "nl1",
+   "type": "text",
+   "x": 338,
+   "y": 82,
+   "text": "A1",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180,
+    "size": 12
+   }
+  },
+  {
+   "id": "nv1",
+   "type": "text",
+   "x": 330,
+   "y": 64,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 172,
+    "size": 12
+   }
+  },
+  {
+   "id": "ws1a",
+   "type": "line",
+   "points": [
+    [
+     330,
+     96
+    ],
+    [
+     387.0,
+     96
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      172,
+      96
+     ],
+     [
+      197.0,
+      96
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rs1",
+   "type": "box",
+   "x": 387.0,
+   "y": 85.0,
+   "w": 46,
+   "h": 22,
+   "mono": true,
+   "label": "R",
+   "size": 13,
+   "narrow": {
+    "x": 197.0,
+    "w": 34,
+    "size": 12
+   }
+  },
+  {
+   "id": "ws1b",
+   "type": "line",
+   "points": [
+    [
+     433.0,
+     96
+    ],
+    [
+     490,
+     96
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      231.0,
+      96
+     ],
+     [
+      256,
+      96
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wl1a",
+   "type": "line",
+   "points": [
+    [
+     330,
+     96
+    ],
+    [
+     330,
+     122
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      172,
+      96
+     ],
+     [
+      172,
+      122
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rl1",
+   "type": "box",
+   "x": 318.0,
+   "y": 122,
+   "w": 24,
+   "h": 46,
+   "mono": true,
+   "label": "2R",
+   "size": 13,
+   "narrow": {
+    "x": 160.0,
+    "h": 40,
+    "size": 12
+   }
+  },
+  {
+   "id": "wl1b",
+   "type": "line",
+   "points": [
+    [
+     330,
+     168
+    ],
+    [
+     330,
+     194
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      172,
+      162
+     ],
+     [
+      172,
+      184
+     ]
+    ]
+   }
+  },
+  {
+   "id": "il1",
+   "type": "text",
+   "x": 347.0,
+   "y": 145.0,
+   "text": "",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "accent",
+   "only": "wide"
+  },
+  {
+   "id": "il1-n",
+   "type": "text",
+   "x": 189.0,
+   "y": 142.0,
+   "text": "",
+   "size": 12,
+   "anchor": "start",
+   "mono": true,
+   "tone": "accent",
+   "only": "narrow"
+  },
+  {
+   "id": "go1",
+   "type": "line",
+   "points": [
+    [
+     330,
+     194
+    ],
+    [
+     330,
+     250
+    ]
+   ],
+   "tone": "muted",
+   "dashed": true,
+   "narrow": {
+    "points": [
+     [
+      172,
+      184
+     ],
+     [
+      172,
+      234
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gg1",
+   "type": "line",
+   "points": [
+    [
+     330,
+     194
+    ],
+    [
+     352,
+     194
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      172,
+      184
+     ],
+     [
+      188,
+      184
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gl1",
+   "type": "text",
+   "x": 356,
+   "y": 194,
+   "text": "gnd",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 192,
+    "y": 184,
+    "size": 12
+   }
+  },
+  {
+   "id": "bl1",
+   "type": "text",
+   "x": 324,
+   "y": 214,
+   "text": "b1=0",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 166,
+    "y": 202,
+    "size": 12
+   }
+  },
+  {
+   "id": "nd2",
+   "type": "circle",
+   "cx": 490,
+   "cy": 96,
+   "r": 4,
+   "fill": "ink",
+   "tone": "ink",
+   "narrow": {
+    "cx": 256
+   }
+  },
+  {
+   "id": "nl2",
+   "type": "text",
+   "x": 498,
+   "y": 82,
+   "text": "A0",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 264,
+    "size": 12
+   }
+  },
+  {
+   "id": "nv2",
+   "type": "text",
+   "x": 490,
+   "y": 64,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 256,
+    "size": 12
+   }
+  },
+  {
+   "id": "wl2a",
+   "type": "line",
+   "points": [
+    [
+     490,
+     96
+    ],
+    [
+     490,
+     122
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      256,
+      96
+     ],
+     [
+      256,
+      122
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rl2",
+   "type": "box",
+   "x": 478.0,
+   "y": 122,
+   "w": 24,
+   "h": 46,
+   "mono": true,
+   "label": "2R",
+   "size": 13,
+   "narrow": {
+    "x": 244.0,
+    "h": 40,
+    "size": 12
+   }
+  },
+  {
+   "id": "wl2b",
+   "type": "line",
+   "points": [
+    [
+     490,
+     168
+    ],
+    [
+     490,
+     194
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      256,
+      162
+     ],
+     [
+      256,
+      184
+     ]
+    ]
+   }
+  },
+  {
+   "id": "il2",
+   "type": "text",
+   "x": 507.0,
+   "y": 145.0,
+   "text": "",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "accent",
+   "only": "wide"
+  },
+  {
+   "id": "il2-n",
+   "type": "text",
+   "x": 273.0,
+   "y": 142.0,
+   "text": "",
+   "size": 12,
+   "anchor": "start",
+   "mono": true,
+   "tone": "accent",
+   "only": "narrow"
+  },
+  {
+   "id": "go2",
+   "type": "line",
+   "points": [
+    [
+     490,
+     194
+    ],
+    [
+     490,
+     250
+    ]
+   ],
+   "tone": "muted",
+   "dashed": true,
+   "narrow": {
+    "points": [
+     [
+      256,
+      184
+     ],
+     [
+      256,
+      234
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gg2",
+   "type": "line",
+   "points": [
+    [
+     490,
+     194
+    ],
+    [
+     512,
+     194
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      256,
+      184
+     ],
+     [
+      272,
+      184
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gl2",
+   "type": "text",
+   "x": 516,
+   "y": 194,
+   "text": "gnd",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 276,
+    "y": 184,
+    "size": 12
+   }
+  },
+  {
+   "id": "bl2",
+   "type": "text",
+   "x": 484,
+   "y": 214,
+   "text": "b0=0",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 250,
+    "y": 202,
+    "size": 12
+   }
+  },
+  {
+   "id": "wt",
+   "type": "line",
+   "points": [
+    [
+     490,
+     96
+    ],
+    [
+     600,
+     96
+    ],
+    [
+     600,
+     122
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      256,
+      96
+     ],
+     [
+      336,
+      96
+     ],
+     [
+      336,
+      122
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rt",
+   "type": "box",
+   "x": 588.0,
+   "y": 122,
+   "w": 24,
+   "h": 46,
+   "mono": true,
+   "label": "2R",
+   "size": 13,
+   "narrow": {
+    "x": 324.0,
+    "h": 40,
+    "size": 12
+   }
+  },
+  {
+   "id": "wtb",
+   "type": "line",
+   "points": [
+    [
+     600,
+     168
+    ],
+    [
+     600,
+     194
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      336,
+      162
+     ],
+     [
+      336,
+      184
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tg",
+   "type": "text",
+   "x": 600,
+   "y": 208,
+   "text": "gnd",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 336,
+    "y": 198,
+    "size": 12
+   }
+  },
+  {
+   "id": "it",
+   "type": "text",
+   "x": 596,
+   "y": 110,
+   "text": "",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "tone": "accent",
+   "only": "wide"
+  },
+  {
+   "id": "it-n",
+   "type": "text",
+   "x": 332,
+   "y": 110,
+   "text": "",
+   "size": 12,
+   "anchor": "end",
+   "mono": true,
+   "tone": "accent",
+   "only": "narrow"
+  },
+  {
+   "id": "bus",
+   "type": "line",
+   "points": [
+    [
+     490,
+     250
+    ],
+    [
+     158,
+     250
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      256,
+      234
+     ],
+     [
+      86,
+      234
+     ]
+    ]
+   }
+  },
+  {
+   "id": "outl",
+   "type": "text",
+   "x": 180,
+   "y": 238,
+   "text": "OUT = 0 V",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "only": "wide"
+  },
+  {
+   "id": "outl-n",
+   "type": "text",
+   "x": 98,
+   "y": 222,
+   "text": "OUT=0 V",
+   "size": 12,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "only": "narrow"
+  },
+  {
+   "id": "amp",
+   "type": "box",
+   "x": 40,
+   "y": 230,
+   "w": 118,
+   "h": 40,
+   "mono": true,
+   "label": "Σ, R_f = R",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "amp-n",
+   "type": "box",
+   "x": 10,
+   "y": 214,
+   "w": 76,
+   "h": 40,
+   "mono": true,
+   "label": "R_f = R",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "iout",
+   "type": "text",
+   "x": 178,
+   "y": 266,
+   "text": "I_out = 0",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 96,
+    "y": 250,
+    "size": 12
+   }
+  },
+  {
+   "id": "vo",
+   "type": "text",
+   "x": 340.0,
+   "y": 298,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 278,
+    "size": 12
+   }
+  },
+  {
+   "id": "rr",
+   "type": "text",
+   "x": 340.0,
+   "y": 50,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "only": "wide"
+  },
+  {
+   "id": "rr-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 50,
+   "text": "",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "accent",
+   "only": "narrow"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Every switch is at ground. Both switch positions are at 0 V (OUT is a virtual ground), so the ladder's currents never depend on the code.",
+   "patches": [
+    {
+     "id": "rr",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "rr-n",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Looking right from A0: the 2R leg in parallel with the 2R terminator is R.",
+   "patches": [
+    {
+     "id": "rl2",
+     "set": {
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "rt",
+     "set": {
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "rr",
+     "set": {
+      "text": "right of A0: 2R || 2R = R"
+     }
+    },
+    {
+     "id": "rr-n",
+     "set": {
+      "text": "right of A0: 2R || 2R = R"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Looking right from A1: R in series with that R is 2R, in parallel with A1's 2R leg: R again.",
+   "patches": [
+    {
+     "id": "rl2",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rt",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rs1",
+     "set": {
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "rl1",
+     "set": {
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "rr",
+     "set": {
+      "text": "right of A1: 2R || (R + R) = R"
+     }
+    },
+    {
+     "id": "rr-n",
+     "set": {
+      "text": "right of A1: 2R || (R + R) = R"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The same holds at A2, so V_ref sees R: I = V_ref / R = 5 V / 2 kΩ = 2.5 mA, for every code.",
+   "patches": [
+    {
+     "id": "rs1",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rl1",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rl0",
+     "set": {
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "rs0",
+     "set": {
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "rr",
+     "set": {
+      "text": "right of A2: R, so I = V_ref / R"
+     }
+    },
+    {
+     "id": "iref",
+     "set": {
+      "text": "I = 2.5 mA",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rr-n",
+     "set": {
+      "text": "right of A2: R, so I = V_ref / R"
+     }
+    },
+    {
+     "id": "iref-n",
+     "set": {
+      "text": "I=2.5 mA",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Each node splits its current equally (2R down, 2R to the right): legs carry 1.25, 0.625, 0.3125 mA; the terminator 0.3125 mA.",
+   "patches": [
+    {
+     "id": "rl0",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rs0",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rr",
+     "set": {
+      "text": "",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "nv0",
+     "set": {
+      "text": "5 V"
+     }
+    },
+    {
+     "id": "nv1",
+     "set": {
+      "text": "2.5 V"
+     }
+    },
+    {
+     "id": "nv2",
+     "set": {
+      "text": "1.25 V"
+     }
+    },
+    {
+     "id": "il0",
+     "set": {
+      "text": "1.25 mA"
+     }
+    },
+    {
+     "id": "il1",
+     "set": {
+      "text": "0.625 mA"
+     }
+    },
+    {
+     "id": "il2",
+     "set": {
+      "text": "0.3125 mA"
+     }
+    },
+    {
+     "id": "it",
+     "set": {
+      "text": "0.3125 mA"
+     }
+    },
+    {
+     "id": "rr-n",
+     "set": {
+      "text": "currents in mA",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "il0-n",
+     "set": {
+      "text": "1.25"
+     }
+    },
+    {
+     "id": "il1-n",
+     "set": {
+      "text": "0.625"
+     }
+    },
+    {
+     "id": "il2-n",
+     "set": {
+      "text": "0.3125"
+     }
+    },
+    {
+     "id": "it-n",
+     "set": {
+      "text": "0.3125"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Code 001 sends only the LSB leg to OUT: I_out = 0.3125 mA and V_o = −0.625 V (the corrected numbers: not 25 mA, not −0.3125 V).",
+   "patches": [
+    {
+     "id": "go0",
+     "set": {
+      "tone": "muted",
+      "dashed": true
+     }
+    },
+    {
+     "id": "gg0",
+     "set": {
+      "tone": "success",
+      "dashed": false
+     }
+    },
+    {
+     "id": "bl0",
+     "set": {
+      "text": "b2=0",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "go1",
+     "set": {
+      "tone": "muted",
+      "dashed": true
+     }
+    },
+    {
+     "id": "gg1",
+     "set": {
+      "tone": "success",
+      "dashed": false
+     }
+    },
+    {
+     "id": "bl1",
+     "set": {
+      "text": "b1=0",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "go2",
+     "set": {
+      "tone": "accent",
+      "dashed": false
+     }
+    },
+    {
+     "id": "gg2",
+     "set": {
+      "tone": "muted",
+      "dashed": true
+     }
+    },
+    {
+     "id": "bl2",
+     "set": {
+      "text": "b0=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "iout",
+     "set": {
+      "text": "I_out = 0.3125 mA",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "vo",
+     "set": {
+      "text": "code 001: V_o = −R_f · I_out = −0.625 V",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Code 101: I_out = 1.5625 mA, V_o = −3.125 V = −5 × 5/8. The reference current is still 2.5 mA; the rest goes to ground.",
+   "patches": [
+    {
+     "id": "go0",
+     "set": {
+      "tone": "accent",
+      "dashed": false
+     }
+    },
+    {
+     "id": "gg0",
+     "set": {
+      "tone": "muted",
+      "dashed": true
+     }
+    },
+    {
+     "id": "bl0",
+     "set": {
+      "text": "b2=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "go1",
+     "set": {
+      "tone": "muted",
+      "dashed": true
+     }
+    },
+    {
+     "id": "gg1",
+     "set": {
+      "tone": "success",
+      "dashed": false
+     }
+    },
+    {
+     "id": "bl1",
+     "set": {
+      "text": "b1=0",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "go2",
+     "set": {
+      "tone": "accent",
+      "dashed": false
+     }
+    },
+    {
+     "id": "gg2",
+     "set": {
+      "tone": "muted",
+      "dashed": true
+     }
+    },
+    {
+     "id": "bl2",
+     "set": {
+      "text": "b0=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "iout",
+     "set": {
+      "text": "I_out = 1.5625 mA",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "vo",
+     "set": {
+      "text": "code 101: V_o = −R_f · I_out = −3.125 V",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Code 111: I_out = 2.1875 mA, V_o = −4.375 V = 7/8 of −V_ref. Full scale is one step short of V_ref: the terminator keeps 0.3125 mA.",
+   "patches": [
+    {
+     "id": "go0",
+     "set": {
+      "tone": "accent",
+      "dashed": false
+     }
+    },
+    {
+     "id": "gg0",
+     "set": {
+      "tone": "muted",
+      "dashed": true
+     }
+    },
+    {
+     "id": "bl0",
+     "set": {
+      "text": "b2=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "go1",
+     "set": {
+      "tone": "accent",
+      "dashed": false
+     }
+    },
+    {
+     "id": "gg1",
+     "set": {
+      "tone": "muted",
+      "dashed": true
+     }
+    },
+    {
+     "id": "bl1",
+     "set": {
+      "text": "b1=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "go2",
+     "set": {
+      "tone": "accent",
+      "dashed": false
+     }
+    },
+    {
+     "id": "gg2",
+     "set": {
+      "tone": "muted",
+      "dashed": true
+     }
+    },
+    {
+     "id": "bl2",
+     "set": {
+      "text": "b0=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "iout",
+     "set": {
+      "text": "I_out = 2.1875 mA",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "vo",
+     "set": {
+      "text": "code 111: V_o = −R_f · I_out = −4.375 V",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -18,10 +18,10 @@
       "stages": {
         "digests": "done",
         "outline": "review",
-        "lessons": "written",
+        "lessons": "written (all 7 chapters)",
         "viz": "done",
         "questions": "done",
-        "review": "ch1-ch3-reviewed, arithmetic circuits (ch4) reviewed, combinational (ch5) reviewed",
+        "review": "ch1-ch3-reviewed, arithmetic circuits (ch4) reviewed, combinational (ch5) reviewed, sequential (ch6) reviewed, beyond-syllabus (ch7) reviewed",
         "wrapup": "pending"
       },
       "chapters": [
@@ -145,8 +145,15 @@
           "title": "Beyond the core syllabus",
           "lessons": 3,
           "pyqs": 4,
-          "status": "planned",
-          "optional": true
+          "status": "reviewed",
+          "optional": true,
+          "lessons_status": {
+            "memory-devices": "published+reviewed",
+            "data-converters": "published+reviewed",
+            "logic-families": "published+reviewed"
+          },
+          "live_lab": "Converter Bench (:::lab converter-bench: sar, dac)",
+          "review": "2026-10-22: two independent examiner reviews (lessons 1-2 with the Converter Bench; lesson 3): 42 findings (2 errors, 8 misleading, 8 style gaps, 24 minor) all applied; 4/4 keys re-derived; cse-1998-a-15 flag cleared with the stated reading; Digital Logic coverage 304/304."
         }
       ]
     },
