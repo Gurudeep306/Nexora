@@ -123,6 +123,7 @@ export function mergeWeb(structure: NexusWebStructure, state: NexusWebState | nu
           ag: t?.[3] ?? -1,
           iv: t?.[4] ?? 0,
           rc: t?.[5] ?? 0,
+          td: t?.[6] ?? -1,
         }
       }),
     }
