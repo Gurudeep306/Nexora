@@ -1456,3 +1456,41 @@ input[type='search']::-webkit-search-results-decoration {
   .nx-just-unlocked { animation: none; }
   .nx-read-bar > span { transition: none; }
 }
+
+/* The rail on phones and tablets: a progress strip that opens the path. */
+.nx-rail-strip { display: none; }
+@media (max-width: 1023px) {
+  .nx-rail-strip {
+    position: sticky;
+    top: 0.5rem;
+    z-index: 6;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 0.85rem 0.8rem;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-bg-surface);
+    box-shadow: 0 8px 24px -16px rgb(0 0 0 / 0.5);
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .nx-rail-strip-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--color-border);
+  }
+  .nx-rail-strip-bar > span {
+    display: block;
+    height: 100%;
+    transform-origin: left center;
+    transition: transform 160ms linear;
+  }
+  .nx-rail-body { display: none; padding: 0.75rem 0.25rem 0.25rem; }
+  .nx-rail-body.is-open { display: block; }
+  .nx-read-bar { display: none; }
+}

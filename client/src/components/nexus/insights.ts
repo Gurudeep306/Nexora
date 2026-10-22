@@ -280,3 +280,60 @@ export function fmtMinutes(m: number) {
   const r = Math.round(m % 60)
   return h ? (r ? `${h}h ${r}m` : `${h}h`) : `${r}m`
 }
+
+export interface LessonNode {
+  id: string
+  requires: string[]
+  completed: boolean
+  unlocked: boolean
+  zone: number
+}
+
+/** The course's learning order: prerequisites first (ties by zone, then as listed). */
+export function learningOrder(nodes: LessonNode[]): string[] {
+  const ids = new Set(nodes.map((n) => n.id))
+  const indeg = new Map(nodes.map((n) => [n.id, n.requires.filter((r) => ids.has(r)).length]))
+  const pos = new Map(nodes.map((n, i) => [n.id, i]))
+  const byId = new Map(nodes.map((n) => [n.id, n]))
+  const kids = new Map<string, string[]>()
+  for (const n of nodes) for (const r of n.requires) if (ids.has(r)) kids.set(r, [...(kids.get(r) ?? []), n.id])
+  const cmp = (a: string, b: string) => byId.get(a)!.zone - byId.get(b)!.zone || pos.get(a)! - pos.get(b)!
+  const ready = nodes.filter((n) => indeg.get(n.id) === 0).map((n) => n.id)
+  const out: string[] = []
+  const seen = new Set<string>()
+  while (ready.length) {
+    ready.sort(cmp)
+    const id = ready.shift()!
+    out.push(id)
+    seen.add(id)
+    for (const k of kids.get(id) ?? []) {
+      indeg.set(k, indeg.get(k)! - 1)
+      if (indeg.get(k) === 0) ready.push(k)
+    }
+  }
+  // A cycle (never in valid data): whatever is left, in zone order.
+  for (const n of [...nodes].sort((a, b) => cmp(a.id, b.id))) if (!seen.has(n.id)) out.push(n.id)
+  return out
+}
+
+/**
+ * "Next lesson" after `current`: your goal path's next step here first, then
+ * what this lesson opens, then the next open lesson in learning order, then
+ * the next unfinished one at all. Null when the course is done.
+ */
+export function nextLesson(nodes: LessonNode[], current: string, goalSteps: string[] = []): string | null {
+  const byId = new Map(nodes.map((n) => [n.id, n]))
+  const left = (id: string) => id !== current && byId.has(id) && !byId.get(id)!.completed
+  const goal = goalSteps.find((id) => left(id) && byId.get(id)!.unlocked)
+  if (goal) return goal
+  const full = learningOrder(nodes)
+  const order = full.filter(left)
+  // Treat the current lesson as done: what it opens is next.
+  const opens = order.find((id) => {
+    const n = byId.get(id)!
+    return n.requires.includes(current) && n.requires.every((r) => r === current || byId.get(r)?.completed)
+  })
+  if (opens) return opens
+  const after = full.indexOf(current)
+  return order.find((id) => byId.get(id)!.unlocked && full.indexOf(id) > after) ?? order.find((id) => byId.get(id)!.unlocked) ?? order[0] ?? null
+}

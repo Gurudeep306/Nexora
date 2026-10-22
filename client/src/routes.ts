@@ -23,7 +23,6 @@ export const pageLoaders = {
   AnalyticsPage: () => import('@/pages/AnalyticsPage'),
   AchievementsPage: () => import('@/pages/AchievementsPage'),
   LearnPage: () => import('@/pages/LearnPage'),
-  CoursePage: () => import('@/pages/CoursePage'),
   SubjectPage: () => import('@/pages/SubjectPage'),
   LearnTopicPage: () => import('@/learn/ui/TopicPage'),
   LearnPracticePage: () => import('@/learn/ui/PracticePage'),
