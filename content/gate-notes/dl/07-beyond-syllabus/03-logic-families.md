@@ -15,7 +15,7 @@ sources:
   - "Coverage checklist only (internal digests, never copied): set A p. 95 (NAND vs NOR in CMOS), set C pp. 224–226 (unused TTL and ECL inputs) and p. 398 (logic families, fan-in and fan-out). The slips A 95 and C 398 are corrected in the lesson."
   - "Facts checked against: J. M. Rabaey, A. Chandrakasan and B. Nikolić, Digital Integrated Circuits (CMOS gates, pass transistors, power); A. S. Sedra and K. C. Smith, Microelectronic Circuits (TTL, ECL, CMOS levels and margins)."
   - "PYQs: src/gate/questions.json (cse-1991-a-1-i, cse-1991-a-3-i, cse-1994-a-3-10, cse-1998-a-15); every key is re-derived by switch-level simulation or from the family data in the check."
-  - "cse-1998-a-15: the scan of GATE 1998 (p. 2, Q15) matches the bank. Standard TTL has V_IH = 2.0 V, so no option states the threshold itself; key D is read as the only option whose voltages are all valid logic 1s (see the trap block)."
+  - "cse-1998-a-15: the scan of GATE 1998 (p. 2, Q15) matches the bank. TTL has V_IH = 2.0 V, which no option states; key D is the best-supported reading (the only range of valid 1s within the supply), not an official TTL figure or an officially confirmed key (see the trap)."
 updated: "2026-10-22"
 ---
 
@@ -33,8 +33,8 @@ nMOS and GaAs (the 1994 and 1991 questions).
 
 [Chapter 2, Lesson 1](lesson:logic-gates) defined the gates by their truth tables and showed the
 "switches and a lamp" picture: switches in series behave as AND, in parallel as OR. Here those switches
-become transistors. The latch of [Chapter 6, Lesson 1](lesson:latches) reappears as the SRAM cell, and
-the high-impedance outputs of memory chips in [Lesson 1](lesson:memory-devices) are exactly the
+become transistors. The latch of [Chapter 6, Lesson 1](lesson:latches) reappeared as the SRAM cell in
+[Lesson 1](lesson:memory-devices) of this chapter, whose high-impedance memory outputs are exactly the
 floating node we meet in pass-transistor networks. [Lesson 2](lesson:data-converters) of this chapter
 deals with the other border between digital and analog, the converters. Device physics (how a transistor
 actually conducts) belongs to an electronics course; we use only what a switch model and a few data-sheet
@@ -89,8 +89,10 @@ An NMOS transistor with its gate at $V_{DD}$ pulls a node all the way to 0 V whe
 :::
 
 :::proof{#proof-threshold of="the strong/degraded rule" depth="standard"}
-**Idea first:** a transistor conducts only while its gate is more than one threshold away from the
-**lower** of its two ends (for NMOS), and the end being charged is that lower end.
+**Idea first:** an NMOS conducts only while its gate is more than one threshold above its **lower**
+terminal (the source). When it passes a 1, the output itself is that lower terminal, so the transistor
+switches itself off as the output rises; when it passes a 0, the source is the grounded input and nothing
+stops the fall.
 
 An NMOS conducts while $V_{GS} > V_{tn}$, where $V_{GS}$ is measured to the source, the terminal at the lower
 voltage. Passing a 0: the source is the input at 0 V and $V_{GS} = V_{DD} > V_{tn}$ for as long as charge flows,
@@ -311,15 +313,16 @@ rails. Our check confirms this by switch-level simulation of every gate in this 
 :::
 
 :::theorem{#inverting-theorem name="A single CMOS stage is always inverting" depth="standard"}
-The function computed by one static CMOS stage is **monotone decreasing** in every input: changing an input
-from 0 to 1 can only change the output from 1 to 0, never from 0 to 1. So AND, OR and every other
-non-inverting function need at least two stages (for example AND2 = NAND2 + inverter = 6 transistors).
+With each input available only in true form, the function computed by one static CMOS stage is
+**monotone decreasing** in every input: changing an input from 0 to 1 can only change the output from 1
+to 0, never from 0 to 1. So AND, OR and every other non-inverting function of true-form inputs need at
+least two stages (for example AND2 = NAND2 + inverter = 6 transistors).
 :::
 
 :::proof{#proof-inverting of="the inverting-stage theorem" depth="standard"}
 **Idea first:** raising a gate voltage can only turn NMOS on and PMOS off.
 
-Raise one input from 0 to 1. Every NMOS it drives may turn on, and every PMOS it drives turns off. So the PDN
+Raise one input from 0 to 1. Since it drives its transistors directly (true form), every NMOS it drives may turn on, and every PMOS it drives turns off. So the PDN
 gains switches and can only gain paths, and the PUN loses switches and can only lose paths. If the output
 was 0 (PDN conducting), the PDN still conducts and the output stays 0. If it was 1, it either stays 1 or
 falls to 0. It can never rise. A non-inverting function such as AND rises when an input rises, so it cannot
@@ -365,11 +368,11 @@ $n = 3$: NAND 15, NOR 21. The gap $A_{\text{NOR}} - A_{\text{NAND}} = n^2 - n$ g
 :::
 
 :::note{#erratum-nand-nor title="A misprint to avoid (NAND versus NOR)" depth="standard"}
-Some printed notes say that "NOR gates are faster than NAND gates and consume less energy". In CMOS the
+Some printed notes claim that NOR gates are faster and more energy-efficient than NAND gates. In CMOS the
 opposite holds: NOR puts its series stack on the slow PMOS side, so for equal size it is slower, and for
 equal speed it is larger (more capacitance, so more switching energy). The same notes conclude, correctly,
-that NAND is the preferred universal gate; the claim about speed is the slip. (A remark about "higher
-capacity" refers to NAND flash memory, a different matter.)
+that NAND is the preferred universal gate; the claim about speed is the slip. (Any remark on capacity
+concerns NAND flash, a different matter.)
 :::
 
 ### Worked examples: CMOS gates
@@ -407,8 +410,8 @@ PUN: PMOS $A$ and $B$ in parallel, that pair in series with PMOS $C$.
 :::
 
 :::step{why="Check one row in each direction: the simulation must give Y = NOT(AB + C)."}
-$ABC = 110$: PDN path through $A$, $B$ conducts; PUN needs $C$'s PMOS (on) and one of $A$, $B$ off (no): open,
-$Y = 0$. $ABC = 100$: PDN open; PUN: $B$'s PMOS on, $C$'s on, so $Y = 1$.
+$ABC = 110$: PDN path through $A$, $B$ conducts. PUN: $C$'s PMOS is on ($C = 0$), but the parallel pair
+needs $A = 0$ or $B = 0$ and both are 1, so the PUN is open: $Y = 0$. $ABC = 100$: PDN open; PUN: $B$'s PMOS on, $C$'s on, so $Y = 1$.
 :::
 
 :::answer
@@ -444,6 +447,8 @@ PMOS. The simulation over all 16 inputs gives $Y = \overline{(A + B)(C + D)}$ wi
 
 :::step{why="By the inverting-stage theorem a single stage can only fall when an input rises; AB rises from 0 to 1 when B rises with A = 1."}
 (a) No. $AB$ needs a NAND2 followed by an inverter: $4 + 2 = 6$ transistors, and two gate delays.
+(If $\overline{A}$ and $\overline{B}$ were already available, a NOR2 of them would give $AB$ in one stage, since
+$\overline{\overline{A} + \overline{B}} = AB$; the theorem is about true-form inputs.)
 :::
 
 :::step{why="NAND3: series NMOS sized 3 each, parallel PMOS sized 2 each."}
@@ -462,7 +467,7 @@ bigger for the same drive, which is the quantitative reason NAND is preferred.
 
 :::note{#recap-cmos title="Recap" depth="quick"}
 CMOS gate $= \overline{e}$: NMOS PDN of $e$ (AND series, OR parallel), dual PMOS PUN. Exactly one network
-conducts, so outputs are full-strength and static current is zero. One stage is always inverting. NAND
+conducts, so outputs are full-strength and static current is zero. One stage (true-form inputs) is always inverting. NAND
 beats NOR because its series stack is on the faster NMOS side: area $n^2 + 2n$ against $n + 2n^2$.
 :::
 
@@ -520,9 +525,11 @@ treats as logic 1?". Check every voltage in each range against the levels above:
 - "below 5.0 V" includes 0 V, a logic 0;
 - "below $V_{CC}$ but above 2.8 V" lies entirely inside 2.0 V to $V_{CC}$: every voltage in it is a valid logic 1.
 
-So the key is the last option (D), and the expected wrong answer is A, chosen because 2.5 V "looks like the
-middle of 0 to 5 V". The lesson to keep is the numbers: input 1 from **2.0 V**, input 0 up to **0.8 V**,
-outputs 2.4 V and 0.4 V.
+So the accepted key is D, chosen because it is the only option whose every voltage is a valid logic 1
+*and* stays within the supply. A comes closest (every voltage from 2.5 V up to $V_{CC}$ is also a valid 1) and
+fails only because it has no upper end. Treat D as the best-supported reading of a loosely worded question,
+not as an official TTL figure: 2.8 V is in no data sheet, and the key could not be checked against an
+official answer. Keep the numbers: input 1 from **2.0 V**, input 0 up to **0.8 V**, outputs 2.4 V and 0.4 V.
 :::
 
 :::intuition{#fanout-intuition title="How many listeners one speaker can serve" depth="standard"}
@@ -698,19 +705,26 @@ question about these trade-offs.
 
 :::definition{#families term="The classic logic families" depth="standard"}
 Families split first by the transistor: **bipolar** (BJT: current carried by both electrons and holes) or
-**unipolar** (FET: one kind of carrier, as in MOS and in GaAs MESFETs).
+**unipolar** (FET: one kind of carrier, as in MOS and in GaAs MESFETs). CMOS is still unipolar: each of
+its transistors uses one carrier (electrons in NMOS, holes in PMOS); "bipolar" means both carriers in the
+same device.
 
 | Family | Device | Speed (typical $t_{pd}$) | Power per gate | Density, cost | Notes |
 |:--|:--|:--|:--|:--|:--|
 | TTL (standard) | bipolar | about 10 ns | about 10 mW | modest density, inexpensive | 5 V; open input reads 1; 74LS: about 9.5 ns at 2 mW |
 | ECL | bipolar, non-saturating | about 1 ns or less: fastest silicon family | about 25 mW, static | low density | negative supply, small voltage swing; open input reads 0 |
 | nMOS | unipolar (n-channel only) | moderate | static current whenever an output is low | high density, few transistors ($n + 1$ for an $n$-input gate) | ratioed logic: $V_{OL}$ depends on transistor sizes |
-| CMOS | unipolar (complementary) | moderate in early series (tens of ns), fast in modern processes | near zero static; dynamic $\alpha C V^2 f$ | highest integration | wide supply range, large noise margins; inputs must not float |
+| CMOS | unipolar (complementary) | slow in the 4000 series (around 100 ns at 5 V), about 10 ns in 74HC, fast in modern processes | near zero static; dynamic $\alpha C V^2 f$ | highest integration today (modest in the SSI/MSI era) | wide supply range, large noise margins; inputs must not float |
 | GaAs | unipolar (MESFET) | very high | moderate | low density, difficult and expensive to fabricate | good resistance to radiation |
 
 **Power-delay products** (from the typical figures): standard TTL $10\ \text{mW} \times 10\ \text{ns} = 100$ pJ; 74LS
 $2\ \text{mW} \times 9.5\ \text{ns} = 19$ pJ; ECL $25\ \text{mW} \times 1\ \text{ns} = 25$ pJ. These are order-of-magnitude
 data-sheet values, enough for comparisons, not for design.
+
+Older comparisons, including GATE 1994, describe CMOS as "low power; modest speed and packing density":
+in the SSI/MSI era of the 4000 series that was true, and low power was CMOS's signature. Read such
+questions with that era in mind: bipolar or unipolar first, then ECL is the fastest bipolar family, GaAs
+the very-fast unipolar one, TTL the cheap bipolar one and CMOS the low-power unipolar one.
 :::
 
 :::definition{#cmos-vs-nmos term="CMOS versus nMOS" depth="standard"}
@@ -722,9 +736,11 @@ to ground continuously.
 
 So, compared with nMOS, CMOS has **lower power dissipation** (near zero static power) as its decisive
 advantage. It is **not** smaller (twice the transistors per input, plus wells), it needs **more** masks
-(well and extra implant steps), and it is **not** clearly faster: each CMOS input drives two transistor gates,
-and its PMOS pull-up is slow because holes are less mobile than electrons. Speed is not counted as an
-advantage of CMOS over nMOS.
+(well and extra implant steps), and it is **not** clearly faster: each CMOS input drives two transistor gates
+(twice the input capacitance), its cells are larger so wires are longer, and its
+PMOS devices must be made wider to keep up with the NMOS. nMOS, for its part, has a slow, weak pull-up (the
+load must be weak so that $V_{OL}$ stays low), so neither family wins on speed outright. Speed is not
+counted as an advantage of CMOS over nMOS.
 :::
 
 :::theorem{#nmos-static-theorem name="An nMOS gate draws static current exactly when its output is low" depth="standard"}
@@ -750,6 +766,33 @@ is larger than nMOS ($2n$ transistors against $n + 1$, and PMOS devices need the
 masks, and its speed was not superior. Only A is correct.
 :::
 
+::::example{#ex-fam-match level="gate" title="Match four families to their signatures" depth="standard"}
+Match ECL, GaAs, TTL and CMOS to: (P) bipolar, cheap, moderate speed; (Q) unipolar, very fast,
+radiation-hard, costly to make; (R) unipolar, near-zero static power; (S) bipolar, non-saturating, fastest
+silicon, power-hungry. Then say which is the better design point by energy per switch, 74LS or ECL.
+
+:::step{why="The device type halves the problem: each description names bipolar or unipolar, and so does each family."}
+Bipolar: ECL and TTL take P and S. Unipolar: GaAs and CMOS take Q and R.
+:::
+
+:::step{why="Within each pair, the fastest family is the easy one to spot."}
+ECL is the fastest silicon family because it never saturates: ECL–S. GaAs is the very fast unipolar
+family: GaAs–Q.
+:::
+
+:::step{why="The family left in each pair is identified by cost or power."}
+TTL is the cheap bipolar workhorse: TTL–P. CMOS is the low-power unipolar family: CMOS–R.
+:::
+
+:::step{why="The power-delay product is the energy per switching event, so the smaller one wastes less."}
+74LS: $2\ \text{mW} \times 9.5\ \text{ns} = 19$ pJ; ECL: $25\ \text{mW} \times 1\ \text{ns} = 25$ pJ.
+:::
+
+:::answer
+ECL–S, GaAs–Q, TTL–P, CMOS–R. By PDP, 74LS (19 pJ) beats ECL (25 pJ); ECL wins only on raw speed.
+:::
+::::
+
 :::note{#recap-families title="Recap" depth="quick"}
 Bipolar: TTL (cheap, modest), ECL (fastest silicon, power-hungry, low density). Unipolar: nMOS (dense,
 static power when low), CMOS (near-zero static power, densest integration), GaAs (very fast,
@@ -764,7 +807,7 @@ radiation-hard, hard to make). PDP $= P \cdot t_{pd}$. CMOS's advantage over nMO
 :::pyq{id="cse-1991-a-3-i" tests="cmos-vs-nmos,power-speed,trap-cmos-speed" depth="standard"}
 :::
 
-:::pyq{id="cse-1994-a-3-10" tests="families" depth="standard"}
+:::pyq{id="cse-1994-a-3-10" tests="families,ex-fam-match" depth="standard"}
 :::
 
 :::pyq{id="cse-1998-a-15" tests="noise-margins,trap-ttl-threshold" depth="standard"}
@@ -808,10 +851,10 @@ Our own questions in GATE formats: two warm-ups, four exam-level questions, then
 | GATE 1991 network | $f = \overline{a}bx + a\overline{b}y$, floating when $a = b$ |
 | Transmission gate | NMOS ($c$) ∥ PMOS ($\overline{c}$): passes both values at full strength |
 | CMOS gate | $Y = \overline{e}$: NMOS PDN of $e$, dual PMOS PUN; $2n$ transistors; exactly one network on; no static current |
-| One stage | always inverting; AND = NAND + inverter (6 transistors) |
+| One stage | always inverting (true-form inputs); AND = NAND + inverter (6 transistors) |
 | NAND vs NOR | NAND preferred: series stack on fast NMOS; sized area $n^2 + 2n$ vs $n + 2n^2$ |
 | Noise margins | $NM_H = V_{OH} - V_{IH}$, $NM_L = V_{IL} - V_{OL}$; TTL 2.4 / 0.4 / 2.0 / 0.8 → 0.4 V each |
-| GATE 1998 | TTL input logic 1 from 2.0 V; only option D lies wholly in the logic-1 band |
+| GATE 1998 | TTL input logic 1 from 2.0 V; no option states it; D is the best-supported reading (the only range wholly valid 1s), not an official figure |
 | Fan-out / fan-in | $\min(\lfloor I_{OL}/I_{IL} \rfloor, \lfloor I_{OH}/I_{IH} \rfloor)$ (TTL 10); fan-in = number of inputs |
 | Power | static (TTL, ECL, nMOS when low) vs dynamic $\alpha C V^2 f$; PDP $= P \cdot t_{pd}$ |
 | GATE 1994 | ECL – bipolar, fastest silicon; GaAs – unipolar, very fast, radiation-hard; TTL – bipolar, inexpensive; CMOS – unipolar, low power |

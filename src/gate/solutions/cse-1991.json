@@ -16,12 +16,15 @@
           "title": "Condition for the top path",
           "body": "PMOS($a$) is on when $a = 0$, NMOS($b$) when $b = 1$. In series both must be on: the top path conducts when $\\overline{a}\\,b = 1$, and then $f = x$.",
           "scene": {
-            "reveal": 9
+            "reveal": 6
           }
         },
         {
           "title": "Condition for the bottom path",
-          "body": "NMOS($a$) is on when $a = 1$, PMOS($b$) when $b = 0$: the bottom path conducts when $a\\,\\overline{b} = 1$, and then $f = y$."
+          "body": "NMOS($a$) is on when $a = 1$, PMOS($b$) when $b = 0$: the bottom path conducts when $a\\,\\overline{b} = 1$, and then $f = y$.",
+          "scene": {
+            "reveal": 9
+          }
         },
         {
           "title": "The paths never fight",
@@ -45,7 +48,7 @@
       },
       "shortcut": "Write one product per path: the gate variable for each NMOS, its complement for each PMOS, times the path's input. OR the products.",
       "pitfalls": [
-        "Reading the PMOS as on for gate 1 and getting $f = a\\overline{b}x + \\overline{a}by$, with the two inputs swapped.",
+        "Reading the bubble the wrong way round (PMOS on at 1, NMOS on at 0) gives $f = a\\overline{b}x + \\overline{a}by$, with $x$ and $y$ swapped; ignoring the bubbles altogether (every device read as NMOS) gives $f = ab(x + y)$, which conducts both paths at once for $ab = 11$.",
         "Calling the circuit a multiplexer that always gives an output: for $a = b$ the output floats.",
         "Treating the series transistors as OR: a path needs every transistor on it to conduct."
       ],
@@ -87,7 +90,7 @@
           "a b = 10",
           "a b = 11"
         ],
-        "reveal": 6
+        "reveal": 3
       }
     },
     "cse-1991-a-1-ii": {
@@ -1082,7 +1085,7 @@
         },
         {
           "title": "Speed",
-          "body": "Each CMOS input drives two transistor gates (more capacitance), and the PMOS pull-up is slow because holes are less mobile than electrons. Speed was not an advantage of CMOS over nMOS, so B is not counted."
+          "body": "Each CMOS input drives two gates (twice the input capacitance) and the cells are larger, so wires are longer; the PMOS devices must also be widened to keep up with the NMOS. nMOS has its own slow edge (its load is deliberately weak so that $V_{OL}$ stays low), so neither family wins on speed outright. Speed was not an advantage of CMOS over nMOS, so B is not counted."
         },
         {
           "title": "Conclusion",
@@ -1105,7 +1108,7 @@
         {
           "option": "B",
           "correct": false,
-          "reason": "Not an advantage: each input loads two transistors and the PMOS pull-up is slow."
+          "reason": "Not an advantage: each input drives two gates (twice the input capacitance) and the cells are larger."
         },
         {
           "option": "C",
@@ -1150,8 +1153,8 @@
             "fewer"
           ],
           [
-            "not faster",
-            "comparable"
+            "2 gates per input",
+            "weak pull-up"
           ]
         ],
         "mono": true,
@@ -1159,7 +1162,7 @@
           "transistors",
           "static current",
           "masks",
-          "speed"
+          "speed limited by"
         ]
       }
     },

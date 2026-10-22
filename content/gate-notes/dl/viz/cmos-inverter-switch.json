@@ -87,12 +87,38 @@
    }
   },
   {
-   "id": "mid",
+   "id": "midp",
    "type": "line",
    "points": [
     [
      300,
      124
+    ],
+    [
+     300,
+     160.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      150,
+      124
+     ],
+     [
+      150,
+      160.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "midn",
+   "type": "line",
+   "points": [
+    [
+     300,
+     160.0
     ],
     [
      300,
@@ -103,7 +129,7 @@
     "points": [
      [
       150,
-      124
+      160.0
      ],
      [
       150,
@@ -455,9 +481,15 @@
      }
     },
     {
-     "id": "mid",
+     "id": "midp",
      "set": {
       "tone": "success"
+     }
+    },
+    {
+     "id": "midn",
+     "set": {
+      "tone": "muted"
      }
     },
     {
@@ -532,7 +564,13 @@
      }
     },
     {
-     "id": "mid",
+     "id": "midp",
+     "set": {
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "midn",
      "set": {
       "tone": "warning"
      }
@@ -615,15 +653,21 @@
      }
     },
     {
-     "id": "mid",
+     "id": "midp",
      "set": {
       "tone": "muted"
      }
     },
     {
+     "id": "midn",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
      "id": "out",
      "set": {
-      "tone": "muted"
+      "tone": "accent"
      }
     },
     {
@@ -704,9 +748,15 @@
      }
     },
     {
-     "id": "mid",
+     "id": "midp",
      "set": {
       "tone": "success"
+     }
+    },
+    {
+     "id": "midn",
+     "set": {
+      "tone": "muted"
      }
     },
     {
@@ -742,7 +792,7 @@
    ]
   },
   {
-   "caption": "At 10 MHz with one full cycle per clock: P = C·V²·f = 250 pJ × 10^7 = 2.5 mW. Halving V would cut it to a quarter.",
+   "caption": "At 10 MHz with one full cycle per clock: P = C·V²·f = 250 pJ × 10⁷ = 2.5 mW. Halving V would cut it to a quarter.",
    "patches": [
     {
      "id": "st",

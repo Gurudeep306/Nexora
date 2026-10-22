@@ -41,8 +41,8 @@ SOLUTIONS["cse-1991-a-1-i"] = {
     "concepts": ["Pass transistor", "NMOS and PMOS switches", "Series = AND", "Floating output"],
     "given": "Input $x$ reaches $f$ through a PMOS gated by $a$ and then an NMOS gated by $b$. Input $y$ reaches $f$ through an NMOS gated by $a$ and then a PMOS gated by $b$. The two paths meet at $f$.",
     "steps": [
-        {"title": "Condition for the top path", "body": "PMOS($a$) is on when $a = 0$, NMOS($b$) when $b = 1$. In series both must be on: the top path conducts when $\\overline{a}\\,b = 1$, and then $f = x$.", "scene": {"reveal": 9}},
-        {"title": "Condition for the bottom path", "body": "NMOS($a$) is on when $a = 1$, PMOS($b$) when $b = 0$: the bottom path conducts when $a\\,\\overline{b} = 1$, and then $f = y$."},
+        {"title": "Condition for the top path", "body": "PMOS($a$) is on when $a = 0$, NMOS($b$) when $b = 1$. In series both must be on: the top path conducts when $\\overline{a}\\,b = 1$, and then $f = x$.", "scene": {"reveal": 6}},
+        {"title": "Condition for the bottom path", "body": "NMOS($a$) is on when $a = 1$, PMOS($b$) when $b = 0$: the bottom path conducts when $a\\,\\overline{b} = 1$, and then $f = y$.", "scene": {"reveal": 9}},
         {"title": "The paths never fight", "body": "$\\overline{a}b$ and $a\\overline{b}$ cannot both be 1, so $x$ and $y$ are never connected to $f$ at the same time."},
         {"title": "Combine", "body": "$f = \\overline{a}\\,b\\,x + a\\,\\overline{b}\\,y$."},
         {"title": "What the expression does not say", "body": f"For $a = b$ (00 or 11) neither path conducts: $f$ is connected to nothing and **floats**. Where $f$ is driven, the value passes one transistor of each type, so its level is degraded (with $V_{{DD}} = 5$ V and 0.7 V thresholds, a 1 arrives as {V1} V and a 0 as {V0} V).", "scene": {"reveal": 12}},
@@ -50,13 +50,13 @@ SOLUTIONS["cse-1991-a-1-i"] = {
     "answer": {"value": "$f = \\overline{a}bx + a\\overline{b}y$ (and $f$ floats when $a = b$)", "matchesKey": True},
     "shortcut": "Write one product per path: the gate variable for each NMOS, its complement for each PMOS, times the path's input. OR the products.",
     "pitfalls": [
-        "Reading the PMOS as on for gate 1 and getting $f = a\\overline{b}x + \\overline{a}by$, with the two inputs swapped.",
+        "Reading the bubble the wrong way round (PMOS on at 1, NMOS on at 0) gives $f = a\\overline{b}x + \\overline{a}by$, with $x$ and $y$ swapped; ignoring the bubbles altogether (every device read as NMOS) gives $f = ab(x + y)$, which conducts both paths at once for $ab = 11$.",
         "Calling the circuit a multiplexer that always gives an output: for $a = b$ the output floats.",
         "Treating the series transistors as OR: a path needs every transistor on it to conduct.",
     ],
     "verification": "A switch-level simulation of the four transistors for all 16 values of $(a, b, x, y)$ gives $f = x$ for $ab = 01$, $f = y$ for $ab = 10$, and no conducting path (Z) for $ab = 00$ and $11$.",
     "animation": table("1991 network: which path conducts", ["top: ā·b", "bottom: a·b̄", "f"], _rows91,
-                       ["a b = 00", "a b = 01", "a b = 10", "a b = 11"], reveal=6),
+                       ["a b = 00", "a b = 01", "a b = 10", "a b = 11"], reveal=3),
 }
 
 # ── 1991 Q3(i): advantage of CMOS over nMOS ───────────────────────────────
@@ -76,13 +76,13 @@ SOLUTIONS["cse-1991-a-3-i"] = {
         {"title": "Power", "body": "In CMOS exactly one of the pull-up and pull-down networks conducts for every input, so in steady state no path joins $V_{DD}$ to ground: static power is (ideally) zero. In nMOS the load is always on, so whenever the output is low the load and the pull-down conduct together and current flows continuously. **A is correct.**"},
         {"title": "Size", "body": f"A CMOS gate needs two transistors per input (a NAND2 has {TC}), an nMOS gate one per input plus the load (a NAND2 has {TN}); the PMOS devices also need their own wells. CMOS is **larger**, so C is wrong."},
         {"title": "Masks", "body": "The wells and the extra p-type implants of CMOS add fabrication steps: CMOS needs **more** masks, so D is wrong."},
-        {"title": "Speed", "body": "Each CMOS input drives two transistor gates (more capacitance), and the PMOS pull-up is slow because holes are less mobile than electrons. Speed was not an advantage of CMOS over nMOS, so B is not counted."},
+        {"title": "Speed", "body": "Each CMOS input drives two gates (twice the input capacitance) and the cells are larger, so wires are longer; the PMOS devices must also be widened to keep up with the NMOS. nMOS has its own slow edge (its load is deliberately weak so that $V_{OL}$ stays low), so neither family wins on speed outright. Speed was not an advantage of CMOS over nMOS, so B is not counted."},
         {"title": "Conclusion", "body": "Only A holds, so E (none) is wrong too."},
     ],
     "answer": {"value": "(A) lower power dissipation", "choice": ["A"], "matchesKey": True},
     "optionAnalysis": [
         opt("A", True, "Complementary networks: no static current; nMOS draws current whenever its output is low."),
-        opt("B", False, "Not an advantage: each input loads two transistors and the PMOS pull-up is slow."),
+        opt("B", False, "Not an advantage: each input drives two gates (twice the input capacitance) and the cells are larger."),
         opt("C", False, "CMOS needs 2n transistors for an n-input gate against n + 1, plus wells: it is larger."),
         opt("D", False, "CMOS needs more masks (wells, extra implants), not fewer."),
         opt("E", False, "A is a genuine advantage, so 'none' is wrong."),
@@ -94,8 +94,8 @@ SOLUTIONS["cse-1991-a-3-i"] = {
     ],
     "verification": f"Switch-level simulation of a NAND2 in both styles: the nMOS version has a conducting $V_{{DD}}$–ground path on input 11 (output low); the CMOS version has none on any input. Transistor counts {TC} (CMOS) and {TN} (nMOS).",
     "animation": table("CMOS vs nMOS (NAND2)", ["CMOS", "nMOS"],
-                       [[TC, TN], ["none", "when Y = 0"], ["more (wells)", "fewer"], ["not faster", "comparable"]],
-                       ["transistors", "static current", "masks", "speed"]),
+                       [[TC, TN], ["none", "when Y = 0"], ["more (wells)", "fewer"], ["2 gates per input", "weak pull-up"]],
+                       ["transistors", "static current", "masks", "speed limited by"]),
 }
 
 # ── 1994 Q3.10: match the families ────────────────────────────────────────
@@ -113,12 +113,14 @@ SOLUTIONS["cse-1994-a-3-10"] = {
         {"title": "Device type", "body": "ECL and TTL are built from bipolar transistors, so they take (c) and (d). GaAs (MESFET) and CMOS are field-effect, unipolar families, so they take (a) and (b)."},
         {"title": "The two bipolar families", "body": "ECL never saturates its transistors, which makes it the fastest silicon family, at high static power and so low packing density: (i)–(c). TTL is the cheap, moderate-density workhorse: (iii)–(d)."},
         {"title": "The two unipolar families", "body": "GaAs is very fast and radiation-hard but hard and expensive to fabricate: (ii)–(a). CMOS is the low-power family: (iv)–(b). (In 1994 terms CMOS speed and density were 'modest'; the low power is what identifies it.)"},
+        {"title": "Eliminate the other pairings", "body": "(c) says bipolar, so it cannot be GaAs or CMOS; (a) says unipolar and very high speed, so it cannot be CMOS ('modest speed'): hence (ii)–(a) and (iv)–(b). (d) 'inexpensive, modest density' rules out ECL (low density, costly): hence (iii)–(d), leaving (i)–(c). Each description fits exactly one family."},
     ],
     "answer": {"value": KEY94, "matchesKey": True},
     "shortcut": "Bipolar or unipolar first; then the fastest of each pair is ECL (bipolar) and GaAs (unipolar).",
     "pitfalls": [
         "Giving ECL the 'very high speed, unipolar' description: ECL is bipolar silicon; the unipolar very-fast family is GaAs.",
         "Giving CMOS 'inexpensive, bipolar': CMOS is unipolar; the cheap bipolar family is TTL.",
+        "Matching CMOS to (a) because modern CMOS is fast: (a) says 'difficult to fabricate' and 'radiation-hard', the GaAs signature.",
     ],
     "verification": "Each List II description is satisfied by exactly one family in the lesson's family table (device type, speed, power, density, cost), and each is used once.",
     "animation": table("Families: device type and signature", ["device", "signature", "List II"],
@@ -140,21 +142,21 @@ SOLUTIONS["cse-1998-a-15"] = {
     "given": "Options: (A) any voltage above 2.5 V; (B) between 0.8 V and 5.0 V; (C) below 5.0 V; (D) below $V_{cc}$ but above 2.8 V.",
     "steps": [
         {"title": "The standard TTL levels", "body": f"$V_{{OH}} = {d(T['VOH'])}$ V, $V_{{OL}} = {d(T['VOL'])}$ V, $V_{{IH}} = {d(T['VIH'])}$ V, $V_{{IL}} = {d(T['VIL'])}$ V, $V_{{CC}} = {d(T['VCC'])}$ V. An input reads 1 for $2.0\\ \\text{{V}} \\le v \\le V_{{CC}}$, 0 for $0 \\le v \\le 0.8$ V, and is undefined in between."},
-        {"title": "Option A", "body": "'Above 2.5 V' has no upper limit: it includes voltages above $V_{CC}$, outside the operating range of the gate."},
+        {"title": "Option A", "body": "Every voltage from 2.5 V up to $V_{CC}$ is a valid 1, so A comes close. But 'above 2.5 V' has no upper limit: it also includes voltages above $V_{CC}$, outside the operating range of the gate."},
         {"title": "Options B and C", "body": "'Between 0.8 V and 5.0 V' includes the undefined band 0.8–2.0 V; 'below 5.0 V' includes 0 V, a logic 0. Neither describes logic 1."},
-        {"title": "Option D", "body": "'Below $V_{CC}$ but above 2.8 V' lies entirely inside 2.0 V to $V_{CC}$: every voltage in it is read as a 1. It is the only option of which that is true."},
+        {"title": "Option D", "body": "'Below $V_{CC}$ but above 2.8 V' lies entirely inside 2.0 V to $V_{CC}$: every voltage in it is read as a 1. It is the only option of which that is true, so D is the accepted key. It is the best-supported reading of a loosely worded question, not an official TTL figure: 2.8 V appears in no data sheet, and A (2.5 V up to $V_{CC}$, all valid 1s) fails only because it has no upper end."},
     ],
     "answer": {"value": "(D) any voltage below $V_{cc}$ but above 2.8 V", "choice": ["D"], "matchesKey": True,
-               "keyNote": "No option states the real threshold $V_{IH} = 2.0$ V; D is the key under the reading 'a range of voltages that are all valid logic 1s'. The scan of the 1998 paper matches the bank."},
+               "keyNote": "No option states the real threshold $V_{IH} = 2.0$ V, and 2.8 V is not a TTL data-sheet figure. D is the best-supported reading ('a range of voltages that are all valid logic 1s within the supply'), not an official TTL figure; the key could not be checked against an official answer. The scan of the 1998 paper matches the bank."},
     "optionAnalysis": [
-        opt("A", False, "Unbounded above: it includes voltages higher than V_CC, which are not valid inputs."),
+        opt("A", False, "Closest wrong option: 2.5 V to V_CC are valid 1s, but it is unbounded above and includes voltages higher than V_CC, which are not valid inputs."),
         opt("B", False, "Includes 0.8–2.0 V, the undefined region (and 0.8 V itself is a logic 0)."),
         opt("C", False, "Includes 0 V to 0.8 V, which TTL reads as logic 0."),
         opt("D", True, "2.8 V to V_CC lies wholly inside the TTL logic-1 input band 2.0 V to V_CC."),
     ],
     "shortcut": "Check each range against the band 2.0 V to $V_{CC}$: only a range wholly inside it describes logic 1.",
     "pitfalls": [
-        "Choosing A because 2.5 V is the middle of 0–5 V: TTL thresholds are not symmetric, and A has no upper end.",
+        "Choosing A: its voltages up to $V_{CC}$ are valid 1s too, but it has no upper end, which makes D the better fit.",
         f"Quoting the output level 2.4 V as the input threshold: inputs accept 1 from 2.0 V; the gap is the noise margin $NM_H = {d(NMH)}$ V.",
     ],
     "verification": f"Testing each option's range against the TTL input levels: A unbounded above the supply, B and C include undefined and logic-0 voltages, D all logic 1. Noise margins $NM_H = {d(NMH)}$ V, $NM_L = {d(NML)}$ V.",

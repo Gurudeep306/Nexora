@@ -155,7 +155,9 @@ assert bz.classify("0.8", T) == "0" and bz.classify("1.5", T) == "undefined" and
 assert [k for k, r in R98.items() if r == "all logic 1"] == bl.key_letters(bank["cse-1998-a-15"]["answer"]) == ["D"]
 opts98 = bl.option_values(bank["cse-1998-a-15"])
 assert "2.8" in opts98["D"] and "2.5" in opts98["A"]
-has("So the key is the last option (D), and the expected wrong answer is A")
+assert bz.classify("2.5", T) == "1" and bz.classify("2.0", T) == "1" and bz.classify(T["VCC"], T) == "1"  # A's voltages up to V_CC are valid 1s
+has("So the accepted key is D, chosen because", "A comes closest (every voltage from 2.5 V up to $V_{CC}$ is also a valid 1)",
+    "Treat D as the best-supported reading of a loosely worded question,\nnot as an official TTL figure")
 
 # ── Fan-out ────────────────────────────────────────────────────────────────
 fo = {k: bz.fanout_of(*v) for k, v in {"std": (bz.TTL_STD, bz.TTL_STD), "ls": (bz.TTL_LS, bz.TTL_LS), "ls-std": (bz.TTL_LS, bz.TTL_STD)}.items()}
@@ -195,6 +197,17 @@ key94 = ", ".join(f"({k})-({M[k]})" for k in ("i", "ii", "iii", "iv"))
 assert key94 == bank["cse-1994-a-3-10"]["answer"] == "(i)-(c), (ii)-(a), (iii)-(d), (iv)-(b)"
 assert bz.FAMILIES["ECL"]["device"] == bz.FAMILIES["TTL"]["device"] == "bipolar"
 assert bz.FAMILIES["CMOS"]["device"] == bz.FAMILIES["GaAs"]["device"] == "unipolar"
+# ex-fam-match: our own shuffled descriptions, each satisfied by exactly one family
+OWN = {"P": lambda f: f["device"] == "bipolar" and f["cost"] == "inexpensive",
+       "Q": lambda f: f["device"] == "unipolar" and f.get("very_fast") and f.get("radiation_hard") and f["cost"] == "high",
+       "R": lambda f: f["device"] == "unipolar" and f.get("low_power"),
+       "S": lambda f: f["device"] == "bipolar" and f.get("fastest_silicon") and f["p_mw"] > 10}
+mine_match = {fam: [k for k, t in OWN.items() if t(bz.FAMILIES[fam])] for fam in ("ECL", "GaAs", "TTL", "CMOS")}
+assert mine_match == {"ECL": ["S"], "GaAs": ["Q"], "TTL": ["P"], "CMOS": ["R"]}
+assert pdp["74LS"] < pdp["ECL"]
+has("ECL–S, GaAs–Q, TTL–P, CMOS–R. By PDP, 74LS (19 pJ) beats ECL (25 pJ)",
+    "74LS: $2\\ \\text{mW} \\times 9.5\\ \\text{ns} = 19$ pJ; ECL: $25\\ \\text{mW} \\times 1\\ \\text{ns} = 25$ pJ.",
+    'Older comparisons, including GATE 1994, describe CMOS as "low power; modest speed and packing density"')
 
 # ── Practice ───────────────────────────────────────────────────────────────
 q = P["nx-dl-07-03-q01"]
@@ -232,16 +245,21 @@ assert float(p6 / 2) == 5.445
 q = P["nx-dl-07-03-q07"]
 bl.assert_mcq(q, bl.which(bl.option_values(q), lambda t: t == str(fo["ls-std"][0]))[0])
 assert bl.option_values(q)["A"] == str(fo["ls"][0]) and bl.option_values(q)["B"] == str(int(fo["ls-std"][2]))
-# q08
-st8 = {"A": all(bz.evaluate(NET_E, {"s": s}, "f", {"x": x, "y": y})["value"] == (s & x | (1 - s) & y) for s, x, y in product((0, 1), repeat=3)),
-       "B": all(bz.evaluate(NET_E, {"s": s}, "f", {"x": 0, "y": 1})["value"] != "Z" for s in (0, 1)),
-       "C": lv[(1, 1)] == "strong", "D": lv[(0, 1)] == "strong"}
+# q08: the edge network with the device types swapped (x via PMOS(s), y via NMOS(s)); levels of a 0
+NET_Q8 = [("p", "s", "x", "f"), ("n", "s", "y", "f")]
+r8 = {(s, x, y): bz.evaluate(NET_Q8, {"s": s}, "f", {"x": x, "y": y}) for s, x, y in product((0, 1), repeat=3)}
+st8 = {"A": all(r["value"] == ((1 - s) & x | s & y) for (s, x, y), r in r8.items()),
+       "B": all(r["value"] != "Z" for r in r8.values()),
+       "C": r8[(0, 0, 0)]["value"] == 0 and r8[(0, 0, 0)]["level"] == "strong",
+       "D": r8[(1, 0, 0)]["value"] == 0 and r8[(1, 0, 0)]["level"] == "strong"}
+assert r8[(0, 0, 1)]["level"] == "degraded" and bz.pass_voltage(0, ["p"]) == F("0.7") and bz.pass_voltage(0, ["n"]) == 0
 bl.assert_msq(P["nx-dl-07-03-q08"], [k for k, v in st8.items() if v])
+assert P["nx-dl-07-03-q08"]["options"][0]["t"] == "$f = \\overline{s}\\,x + s\\,y$" and NET_Q8 != NET_E
 
 mine = sorted(k for k in P if k.startswith("nx-dl-07-03-"))
 assert len(mine) == 8
 mcq = [P[k]["answer"] for k in mine if P[k]["type"] == "MCQ"]
-assert sorted(set(mcq)) == ["B", "D"]
+assert sorted(set(mcq)) == ["A", "B", "D"]
 ids = set(re.findall(r"\{#([a-z0-9-]+)", L))
 for k in mine:
     assert set(P[k]["blocks"]) <= ids, (k, set(P[k]["blocks"]) - ids)
