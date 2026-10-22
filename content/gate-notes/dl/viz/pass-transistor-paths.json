@@ -1,0 +1,1344 @@
+{
+ "version": 1,
+ "title": "The 1991 pass-transistor network, input pair by input pair",
+ "width": 680,
+ "height": 412,
+ "narrow": {
+  "width": 360,
+  "height": 398
+ },
+ "intro": "Input x reaches f through a pMOS gated by a and an nMOS gated by b; y through an nMOS gated by a and a pMOS gated by b. Here x = 1 and y = 0.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "GATE 1991: which path reaches f?",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "size": 15
+   }
+  },
+  {
+   "id": "in0",
+   "type": "text",
+   "x": 70,
+   "y": 100.0,
+   "text": "x = 1",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "in0-n",
+   "type": "text",
+   "x": 28,
+   "y": 96.0,
+   "text": "x=1",
+   "size": 12,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "w0a",
+   "type": "line",
+   "points": [
+    [
+     76,
+     100.0
+    ],
+    [
+     110,
+     100.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      34,
+      96.0
+     ],
+     [
+      50,
+      96.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "t00",
+   "type": "box",
+   "x": 110,
+   "y": 80,
+   "w": 110,
+   "h": 40,
+   "label": "pMOS a",
+   "size": 14,
+   "narrow": {
+    "x": 50,
+    "y": 76,
+    "w": 76,
+    "size": 12
+   }
+  },
+  {
+   "id": "w0b",
+   "type": "line",
+   "points": [
+    [
+     220,
+     100.0
+    ],
+    [
+     270,
+     100.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      126,
+      96.0
+     ],
+     [
+      144,
+      96.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "t01",
+   "type": "box",
+   "x": 270,
+   "y": 80,
+   "w": 110,
+   "h": 40,
+   "label": "nMOS b",
+   "size": 14,
+   "narrow": {
+    "x": 144,
+    "y": 76,
+    "w": 76,
+    "size": 12
+   }
+  },
+  {
+   "id": "w0c",
+   "type": "line",
+   "points": [
+    [
+     380,
+     100.0
+    ],
+    [
+     430,
+     100.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      96.0
+     ],
+     [
+      250,
+      96.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "in1",
+   "type": "text",
+   "x": 70,
+   "y": 190.0,
+   "text": "y = 0",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "in1-n",
+   "type": "text",
+   "x": 28,
+   "y": 176.0,
+   "text": "y=0",
+   "size": 12,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "w1a",
+   "type": "line",
+   "points": [
+    [
+     76,
+     190.0
+    ],
+    [
+     110,
+     190.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      34,
+      176.0
+     ],
+     [
+      50,
+      176.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "t10",
+   "type": "box",
+   "x": 110,
+   "y": 170,
+   "w": 110,
+   "h": 40,
+   "label": "nMOS a",
+   "size": 14,
+   "narrow": {
+    "x": 50,
+    "y": 156,
+    "w": 76,
+    "size": 12
+   }
+  },
+  {
+   "id": "w1b",
+   "type": "line",
+   "points": [
+    [
+     220,
+     190.0
+    ],
+    [
+     270,
+     190.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      126,
+      176.0
+     ],
+     [
+      144,
+      176.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "t11",
+   "type": "box",
+   "x": 270,
+   "y": 170,
+   "w": 110,
+   "h": 40,
+   "label": "pMOS b",
+   "size": 14,
+   "narrow": {
+    "x": 144,
+    "y": 156,
+    "w": 76,
+    "size": 12
+   }
+  },
+  {
+   "id": "w1c",
+   "type": "line",
+   "points": [
+    [
+     380,
+     190.0
+    ],
+    [
+     430,
+     190.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      176.0
+     ],
+     [
+      250,
+      176.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "node",
+   "type": "line",
+   "points": [
+    [
+     430,
+     100.0
+    ],
+    [
+     430,
+     190.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      250,
+      96.0
+     ],
+     [
+      250,
+      176.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "fo",
+   "type": "line",
+   "points": [
+    [
+     430,
+     145.0
+    ],
+    [
+     470,
+     145.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      250,
+      136.0
+     ],
+     [
+      272,
+      136.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "fv",
+   "type": "text",
+   "x": 476,
+   "y": 145.0,
+   "text": "f",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 278,
+    "y": 136.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fl",
+   "type": "text",
+   "x": 476,
+   "y": 165.0,
+   "text": "",
+   "size": 13,
+   "anchor": "start",
+   "only": "wide"
+  },
+  {
+   "id": "fl-n",
+   "type": "text",
+   "x": 278,
+   "y": 156.0,
+   "text": "",
+   "size": 12,
+   "anchor": "start",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 40.0,
+   "y": 238,
+   "cellW": 150,
+   "cellH": 26,
+   "rows": [
+    [
+     "a b",
+     "top: a̅·b",
+     "bottom: a·b̅",
+     "f"
+    ],
+    [
+     "0 0",
+     "",
+     "",
+     ""
+    ],
+    [
+     "0 1",
+     "",
+     "",
+     ""
+    ],
+    [
+     "1 0",
+     "",
+     "",
+     ""
+    ],
+    [
+     "1 1",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "tt-n",
+   "type": "table",
+   "x": 12.0,
+   "y": 224,
+   "cellW": 84,
+   "cellH": 26,
+   "rows": [
+    [
+     "a b",
+     "top",
+     "bottom",
+     "f"
+    ],
+    [
+     "0 0",
+     "",
+     "",
+     ""
+    ],
+    [
+     "0 1",
+     "",
+     "",
+     ""
+    ],
+    [
+     "1 0",
+     "",
+     "",
+     ""
+    ],
+    [
+     "1 1",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "only": "narrow"
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 392,
+   "text": "",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 378,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "a b = 00: nMOS b, nMOS a are off, so neither path conducts. f is connected to nothing: it floats (Z).",
+   "patches": [
+    {
+     "id": "t00",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "t01",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w0a",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w0b",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w0c",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "t10",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "t11",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "w1a",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1b",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1c",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "node",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fo",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "fv",
+     "set": {
+      "text": "f = Z",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "fl",
+     "set": {
+      "text": "floats",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "top: a̅·b",
+        "bottom: a·b̅",
+        "f"
+       ],
+       [
+        "0 0",
+        "off",
+        "off",
+        "Z (floats)"
+       ],
+       [
+        "0 1",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "fl-n",
+     "set": {
+      "text": "floats",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "top",
+        "bottom",
+        "f"
+       ],
+       [
+        "0 0",
+        "off",
+        "off",
+        "Z (float)"
+       ],
+       [
+        "0 1",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "a b = 01: pMOS a and nMOS b are both on, so f = x = 1; it arrives degraded at 4.3 V (one transistor of each type).",
+   "patches": [
+    {
+     "id": "t00",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "t01",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "w0a",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w0b",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w0c",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t10",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "t11",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w1a",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1b",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1c",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "node",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "fo",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv",
+     "set": {
+      "text": "f = x = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fl",
+     "set": {
+      "text": "4.3 V (degraded)",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "top: a̅·b",
+        "bottom: a·b̅",
+        "f"
+       ],
+       [
+        "0 0",
+        "off",
+        "off",
+        "Z (floats)"
+       ],
+       [
+        "0 1",
+        "on",
+        "off",
+        "x = 1"
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "fl-n",
+     "set": {
+      "text": "4.3 V",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "top",
+        "bottom",
+        "f"
+       ],
+       [
+        "0 0",
+        "off",
+        "off",
+        "Z (float)"
+       ],
+       [
+        "0 1",
+        "on",
+        "off",
+        "x = 1"
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "a b = 10: nMOS a and pMOS b are both on, so f = y = 0; it arrives degraded at 0.7 V (one transistor of each type).",
+   "patches": [
+    {
+     "id": "t00",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "t01",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w0a",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w0b",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w0c",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "t10",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "t11",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "w1a",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w1b",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w1c",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "node",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "fo",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv",
+     "set": {
+      "text": "f = y = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fl",
+     "set": {
+      "text": "0.7 V (degraded)",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "top: a̅·b",
+        "bottom: a·b̅",
+        "f"
+       ],
+       [
+        "0 0",
+        "off",
+        "off",
+        "Z (floats)"
+       ],
+       [
+        "0 1",
+        "on",
+        "off",
+        "x = 1"
+       ],
+       [
+        "1 0",
+        "off",
+        "on",
+        "y = 0"
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "fl-n",
+     "set": {
+      "text": "0.7 V",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "top",
+        "bottom",
+        "f"
+       ],
+       [
+        "0 0",
+        "off",
+        "off",
+        "Z (float)"
+       ],
+       [
+        "0 1",
+        "on",
+        "off",
+        "x = 1"
+       ],
+       [
+        "1 0",
+        "off",
+        "on",
+        "y = 0"
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "a b = 11: pMOS a, pMOS b are off, so neither path conducts. f is connected to nothing: it floats (Z).",
+   "patches": [
+    {
+     "id": "t00",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "t01",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "w0a",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w0b",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w0c",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "t10",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "t11",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w1a",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1b",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1c",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "node",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fo",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "fv",
+     "set": {
+      "text": "f = Z",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "fl",
+     "set": {
+      "text": "floats",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "top: a̅·b",
+        "bottom: a·b̅",
+        "f"
+       ],
+       [
+        "0 0",
+        "off",
+        "off",
+        "Z (floats)"
+       ],
+       [
+        "0 1",
+        "on",
+        "off",
+        "x = 1"
+       ],
+       [
+        "1 0",
+        "off",
+        "on",
+        "y = 0"
+       ],
+       [
+        "1 1",
+        "off",
+        "off",
+        "Z (floats)"
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        4,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "fl-n",
+     "set": {
+      "text": "floats",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "top",
+        "bottom",
+        "f"
+       ],
+       [
+        "0 0",
+        "off",
+        "off",
+        "Z (float)"
+       ],
+       [
+        "0 1",
+        "on",
+        "off",
+        "x = 1"
+       ],
+       [
+        "1 0",
+        "off",
+        "on",
+        "y = 0"
+       ],
+       [
+        "1 1",
+        "off",
+        "off",
+        "Z (float)"
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        4,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So f = a̅·b·x + a·b̅·y. The two paths are never on together, but for a = b neither is: there f floats.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "f = a̅bx + ab̅y,  Z when a = b",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        3
+       ],
+       [
+        4,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "highlight": [
+       [
+        1,
+        3
+       ],
+       [
+        4,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}
