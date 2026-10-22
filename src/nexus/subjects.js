@@ -473,7 +473,10 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
       const parts = [];
       if (target) parts.push(Math.min(1, correct / target));
       if (lessons.length) parts.push(lessonsDone / lessons.length);
-      const progress = parts.length ? Math.min(100, Math.round((parts.reduce((a, b) => a + b, 0) / parts.length) * 100)) : 0;
+      const studied = parts.length ? Math.min(100, Math.round((parts.reduce((a, b) => a + b, 0) / parts.length) * 100)) : 0;
+      // Passed by a quick check ("Test out"): mastered, with its study progress kept for fair XP.
+      const testedOut = !!state.testouts?.has(key);
+      const progress = testedOut ? 100 : studied;
       const pos = s.layout.get(n.id) || { x: 50, row: 0 };
       const node = {
         id: n.id,
@@ -499,6 +502,7 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
           lessons: lessons.length ? { done: lessonsDone, total: lessons.length, subject: s.meta.notesSubject, ids: lessons } : null,
         },
         completed: progress >= 100,
+        ...(testedOut ? { testedOut: true, studyProgress: studied } : {}),
         memory: lastAt ? { lastAt, interval: ivN ? ivSum / ivN : 0 } : null,
         touchedAt: touched || 0,
         _cross: (n.requires || []).filter((r) => r.includes(":")),
