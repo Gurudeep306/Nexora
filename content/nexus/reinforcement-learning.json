@@ -39,6 +39,14 @@
       "name": "The RL problem",
       "icon": "compass",
       "desc": "Agents, environments, states, actions, rewards and returns.",
+      "summary": "You will be able to frame a decision problem as an agent interacting with an environment to maximise cumulative reward.",
+      "topics": [
+        "Agent-environment interaction loop",
+        "States, actions and rewards",
+        "Returns and discounting",
+        "Episodic vs continuing tasks",
+        "The reward hypothesis"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 60
@@ -49,6 +57,15 @@
       "name": "Multi-armed bandits",
       "icon": "random",
       "desc": "Exploration versus exploitation with epsilon-greedy, UCB and Thompson sampling.",
+      "summary": "You will be able to balance exploration and exploitation in multi-armed bandits with epsilon-greedy, UCB and Thompson sampling.",
+      "topics": [
+        "The k-armed bandit problem",
+        "Action-value estimates",
+        "Epsilon-greedy exploration",
+        "Upper confidence bound",
+        "Thompson sampling",
+        "Cumulative regret"
+      ],
       "kind": "lesson",
       "requires": [
         "rl-problem",
@@ -62,6 +79,14 @@
       "name": "MDPs",
       "icon": "graph",
       "desc": "Markov decision processes, policies, discounting and value functions.",
+      "summary": "You will be able to formalise sequential decision problems as Markov decision processes with policies and value functions.",
+      "topics": [
+        "Markov property",
+        "MDP tuple of states, actions, transitions and rewards",
+        "Policies, deterministic and stochastic",
+        "Discount factor",
+        "State-value and action-value functions"
+      ],
       "kind": "concept",
       "requires": [
         "rl-problem",
@@ -75,6 +100,14 @@
       "name": "Bellman equations",
       "icon": "function",
       "desc": "Bellman expectation and optimality equations for state and action values.",
+      "summary": "You will be able to write and interpret Bellman expectation and optimality equations for state and action values.",
+      "topics": [
+        "Bellman expectation equation for V",
+        "Bellman expectation equation for Q",
+        "Bellman optimality equations",
+        "Optimal policies from optimal values",
+        "Backup diagrams"
+      ],
       "kind": "concept",
       "requires": [
         "mdps"
@@ -87,6 +120,14 @@
       "name": "Value iteration",
       "icon": "route",
       "desc": "Policy evaluation, policy iteration and value iteration when the model is known.",
+      "summary": "You will be able to compute optimal policies with dynamic programming when the environment model is known.",
+      "topics": [
+        "Iterative policy evaluation",
+        "Policy improvement theorem",
+        "Policy iteration",
+        "Value iteration",
+        "Generalised policy iteration"
+      ],
       "kind": "lesson",
       "requires": [
         "bellman-equations",
@@ -100,6 +141,14 @@
       "name": "Monte Carlo methods",
       "icon": "random",
       "desc": "Learning values from complete episodes without a model.",
+      "summary": "You will be able to estimate values and improve policies from complete episodes without a model of the environment.",
+      "topics": [
+        "First-visit and every-visit estimation",
+        "Monte Carlo control",
+        "Exploring starts",
+        "On-policy epsilon-soft policies",
+        "Off-policy learning with importance sampling"
+      ],
       "kind": "lesson",
       "requires": [
         "bellman-equations"
@@ -112,6 +161,14 @@
       "name": "TD learning",
       "icon": "clock",
       "desc": "Temporal-difference updates, TD(0) and SARSA.",
+      "summary": "You will be able to learn values from incomplete episodes with temporal-difference updates and control with SARSA.",
+      "topics": [
+        "Bootstrapping from value estimates",
+        "TD(0) prediction",
+        "TD error",
+        "SARSA on-policy control",
+        "n-step TD methods"
+      ],
       "kind": "lesson",
       "requires": [
         "monte-carlo-rl"
@@ -124,6 +181,14 @@
       "name": "Q-learning",
       "icon": "grid",
       "desc": "Off-policy control with Q-learning and its convergence intuition.",
+      "summary": "You will be able to implement off-policy Q-learning and explain why it converges toward optimal action values.",
+      "topics": [
+        "Q-learning update rule",
+        "Off-policy vs on-policy control",
+        "Convergence conditions",
+        "Maximisation bias",
+        "Double Q-learning"
+      ],
       "kind": "lesson",
       "requires": [
         "td-learning"
@@ -136,6 +201,14 @@
       "name": "Gridworld agent",
       "icon": "gamepad",
       "desc": "Implement and compare value iteration, SARSA and Q-learning on gridworlds.",
+      "summary": "You will implement value iteration, SARSA and Q-learning on gridworlds and compare their learned policies and learning speed.",
+      "topics": [
+        "Building a gridworld environment",
+        "Implementing value iteration",
+        "Implementing SARSA and Q-learning",
+        "Plotting learning curves",
+        "Comparing learned policies"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -150,6 +223,14 @@
       "name": "Function approximation",
       "icon": "function",
       "desc": "Linear and neural value functions and the deadly triad.",
+      "summary": "You will be able to approximate value functions with linear and neural models and explain the instability of the deadly triad.",
+      "topics": [
+        "Why tabular methods do not scale",
+        "Linear function approximation and features",
+        "Semi-gradient TD methods",
+        "Neural network value functions",
+        "The deadly triad"
+      ],
       "kind": "concept",
       "requires": [
         "q-learning",
@@ -163,6 +244,14 @@
       "name": "Deep Q-networks",
       "icon": "layers",
       "desc": "DQN with experience replay and target networks, and later improvements.",
+      "summary": "You will be able to explain how DQN stabilises deep Q-learning with experience replay and target networks and how later variants improve it.",
+      "topics": [
+        "Deep Q-network architecture",
+        "Experience replay",
+        "Target networks",
+        "Double DQN",
+        "Dueling networks and prioritised replay"
+      ],
       "kind": "lesson",
       "requires": [
         "function-approximation",
@@ -176,6 +265,14 @@
       "name": "Exploration",
       "icon": "compass",
       "desc": "Exploration strategies for large state spaces, including count-based and curiosity methods.",
+      "summary": "You will be able to choose exploration strategies for large state spaces, including count-based bonuses and curiosity-driven methods.",
+      "topics": [
+        "Limits of epsilon-greedy",
+        "Optimism in the face of uncertainty",
+        "Count-based exploration bonuses",
+        "Curiosity and intrinsic motivation",
+        "Random network distillation"
+      ],
       "kind": "concept",
       "requires": [
         "bandits",
@@ -189,6 +286,14 @@
       "name": "Policy gradients",
       "icon": "trending-up",
       "desc": "The policy gradient theorem, REINFORCE and baselines.",
+      "summary": "You will be able to derive the policy gradient theorem and train policies directly with REINFORCE and baselines.",
+      "topics": [
+        "Parameterised stochastic policies",
+        "Policy gradient theorem",
+        "The REINFORCE algorithm",
+        "Baselines for variance reduction",
+        "Softmax and Gaussian policies"
+      ],
       "kind": "lesson",
       "requires": [
         "function-approximation"
@@ -201,6 +306,14 @@
       "name": "Actor-critic",
       "icon": "users",
       "desc": "Combining a learned policy and value function, A2C and advantage estimation.",
+      "summary": "You will be able to combine a learned policy with a learned value function in actor-critic methods such as A2C.",
+      "topics": [
+        "Actor and critic roles",
+        "Advantage functions",
+        "Advantage actor-critic (A2C)",
+        "Generalised advantage estimation",
+        "Asynchronous and parallel actors"
+      ],
       "kind": "lesson",
       "requires": [
         "policy-gradient",
@@ -214,6 +327,14 @@
       "name": "PPO",
       "icon": "shield",
       "desc": "Trust regions and clipped objectives for stable policy optimisation.",
+      "summary": "You will be able to explain how trust regions and PPO's clipped objective make policy optimisation stable.",
+      "topics": [
+        "Problems with large policy updates",
+        "Trust region policy optimisation",
+        "PPO clipped surrogate objective",
+        "KL penalty variant",
+        "PPO hyperparameters in practice"
+      ],
       "kind": "lesson",
       "requires": [
         "actor-critic"
@@ -226,6 +347,14 @@
       "name": "Control agent",
       "icon": "rocket",
       "desc": "Train agents on classic control and Atari-style tasks and analyse learning curves.",
+      "summary": "You will train agents on classic control and Atari-style tasks and analyse their learning curves and failure modes.",
+      "topics": [
+        "Setting up Gymnasium environments",
+        "Training a DQN or PPO agent",
+        "Hyperparameter sensitivity",
+        "Plotting and smoothing learning curves",
+        "Diagnosing training failures"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -240,6 +369,14 @@
       "name": "Model-based RL",
       "icon": "brain",
       "desc": "Learning environment models, planning and Monte Carlo tree search.",
+      "summary": "You will be able to learn environment models and use them for planning, including Monte Carlo tree search.",
+      "topics": [
+        "Learned dynamics models",
+        "Dyna-style planning",
+        "Model predictive control",
+        "Monte Carlo tree search",
+        "AlphaZero and MuZero ideas"
+      ],
       "kind": "lesson",
       "requires": [
         "actor-critic"
@@ -252,6 +389,14 @@
       "name": "Offline RL",
       "icon": "database",
       "desc": "Learning policies from fixed datasets and the distribution shift problem.",
+      "summary": "You will be able to learn policies from fixed datasets and explain how distribution shift makes offline RL difficult.",
+      "topics": [
+        "Offline vs online RL",
+        "Distribution shift and extrapolation error",
+        "Behaviour cloning baselines",
+        "Conservative Q-learning",
+        "Off-policy evaluation"
+      ],
       "kind": "concept",
       "requires": [
         "dqn"
@@ -264,6 +409,14 @@
       "name": "Multi-agent RL",
       "icon": "users",
       "desc": "Cooperative and competitive settings, self-play and non-stationarity.",
+      "summary": "You will be able to analyse cooperative and competitive multi-agent settings and explain self-play and non-stationarity.",
+      "topics": [
+        "Markov games",
+        "Cooperative vs competitive settings",
+        "Non-stationarity from other learners",
+        "Learning through self-play",
+        "Centralised training with decentralised execution"
+      ],
       "kind": "concept",
       "requires": [
         "actor-critic"
@@ -276,6 +429,15 @@
       "name": "RL from human feedback",
       "icon": "chat",
       "desc": "Reward models from human preferences and RL fine-tuning of language models.",
+      "summary": "You will understand how reward models are trained from human preferences and used to fine-tune language models with RL.",
+      "topics": [
+        "Collecting human preference data",
+        "Training a reward model",
+        "Fine-tuning with PPO",
+        "KL penalty to a reference model",
+        "Direct preference optimisation",
+        "Reward hacking"
+      ],
       "kind": "concept",
       "requires": [
         "ppo"

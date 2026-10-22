@@ -39,6 +39,14 @@
       "name": "Judges & ratings",
       "icon": "trophy",
       "desc": "Online judges, verdicts, rating systems and contest formats like ICPC and Codeforces rounds.",
+      "summary": "You will be able to navigate online judges, interpret verdicts and understand rating systems and contest formats such as ICPC and Codeforces rounds.",
+      "topics": [
+        "Online judges and submissions",
+        "Verdicts like WA, TLE and RE",
+        "Rating systems and divisions",
+        "ICPC scoring and penalty",
+        "Codeforces round formats and hacks"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 40
@@ -49,6 +57,14 @@
       "name": "Your template",
       "icon": "code",
       "desc": "A personal C++ template: macros, typedefs, fast I/O and multi-test loops.",
+      "summary": "You will be able to set up a personal C++ contest template with useful macros, typedefs, fast I/O and a multi-test loop.",
+      "topics": [
+        "bits/stdc++ and namespace usage",
+        "Typedefs like long long aliases",
+        "Helpful macros and their pitfalls",
+        "Fast I/O setup lines",
+        "Multi-test case loop structure"
+      ],
       "kind": "lesson",
       "requires": [
         "judges-ratings",
@@ -62,6 +78,14 @@
       "name": "Fast I/O",
       "icon": "bolt",
       "desc": "Fast input and output, buffering and avoiding slow I/O patterns.",
+      "summary": "You will be able to read and write large inputs quickly by using buffered I/O and avoiding slow patterns.",
+      "topics": [
+        "Untying cin from cout",
+        "Disabling stdio synchronisation",
+        "Avoiding endl and flushing",
+        "scanf and printf trade-offs",
+        "Custom buffered readers"
+      ],
       "kind": "concept",
       "requires": [
         "cp-template",
@@ -75,6 +99,14 @@
       "name": "Complexity budget",
       "icon": "timer",
       "desc": "Reading constraints and turning them into a target time complexity.",
+      "summary": "You will be able to read problem constraints and translate them into a target time complexity that fits the time limit.",
+      "topics": [
+        "Operations per second estimates",
+        "Mapping n limits to complexities",
+        "Memory limits and array sizes",
+        "Sum-of-n constraints across tests",
+        "Constant factors that matter"
+      ],
       "kind": "concept",
       "requires": [
         "judges-ratings",
@@ -88,6 +120,14 @@
       "name": "Edge cases & overflow",
       "icon": "warning",
       "desc": "Overflow, off-by-one, empty input, precision and other ways solutions fail.",
+      "summary": "You will be able to anticipate overflow, off-by-one errors, empty inputs and precision problems before they cost you a verdict.",
+      "topics": [
+        "Integer overflow and long long",
+        "Off-by-one boundary errors",
+        "Minimum and empty inputs",
+        "Floating-point precision issues",
+        "Resetting globals between tests"
+      ],
       "kind": "concept",
       "requires": [
         "complexity-budget"
@@ -100,6 +140,14 @@
       "name": "Debugging fast",
       "icon": "search",
       "desc": "Debug macros, asserts and finding the bug under time pressure.",
+      "summary": "You will be able to find bugs quickly under contest pressure using debug macros, asserts and systematic checks.",
+      "topics": [
+        "Debug print macros",
+        "Assertions to catch invariants",
+        "Testing on sample and tiny cases",
+        "Compiler warnings and sanitizers",
+        "Rereading the statement for misreads"
+      ],
       "kind": "lesson",
       "requires": [
         "cp-template"
@@ -112,6 +160,14 @@
       "name": "Stress testing",
       "icon": "random",
       "desc": "Random generators, a brute force and a checker script to find failing cases.",
+      "summary": "You will be able to find failing cases automatically with a random generator, a brute-force solution and a comparison script.",
+      "topics": [
+        "Writing a brute-force solution",
+        "Random test generators",
+        "Comparison scripts",
+        "Shrinking failing tests",
+        "Checkers for multiple valid answers"
+      ],
       "kind": "concept",
       "requires": [
         "debugging-cp",
@@ -125,6 +181,14 @@
       "name": "Reading problems",
       "icon": "book",
       "desc": "Extracting the real question, small cases by hand and spotting known patterns.",
+      "summary": "You will be able to extract the real question from a statement, work small cases by hand and spot known patterns.",
+      "topics": [
+        "Restating the problem formally",
+        "Working small cases by hand",
+        "Using constraints as hints",
+        "Recognising standard problem patterns",
+        "Reading samples carefully"
+      ],
       "kind": "concept",
       "requires": [
         "complexity-budget"
@@ -137,6 +201,14 @@
       "name": "Brute to optimal",
       "icon": "trending-up",
       "desc": "Start from brute force and remove redundant work step by step.",
+      "summary": "You will be able to start from a brute-force solution and remove redundant work step by step until it meets the constraints.",
+      "topics": [
+        "Writing the brute force first",
+        "Identifying repeated work",
+        "Precomputation and prefix sums",
+        "Sorting to simplify search",
+        "Replacing loops with data structures"
+      ],
       "kind": "concept",
       "requires": [
         "reading-problems",
@@ -151,6 +223,14 @@
       "name": "Constructive problems",
       "icon": "builder",
       "desc": "Build an answer that satisfies the conditions, from small patterns to proofs.",
+      "summary": "You will be able to build answers that satisfy given conditions by finding small patterns and proving they generalise.",
+      "topics": [
+        "Finding patterns from small cases",
+        "Greedy constructions",
+        "Proving a construction works",
+        "Impossibility conditions",
+        "Permutation and string constructions"
+      ],
       "kind": "concept",
       "requires": [
         "reading-problems",
@@ -164,6 +244,14 @@
       "name": "Ad-hoc & observations",
       "icon": "lightbulb",
       "desc": "Invariants, parity and the key observation that unlocks a problem.",
+      "summary": "You will be able to find the key observation in ad-hoc problems using invariants, parity and similar reasoning.",
+      "topics": [
+        "Invariants under operations",
+        "Parity arguments",
+        "Monovariants and termination",
+        "Pigeonhole principle",
+        "Reducing to a simpler equivalent"
+      ],
       "kind": "concept",
       "requires": [
         "reading-problems"
@@ -176,6 +264,14 @@
       "name": "Implementation-heavy",
       "icon": "wrench",
       "desc": "Simulation and long-code problems written cleanly the first time.",
+      "summary": "You will be able to write long simulation and implementation-heavy solutions cleanly and correctly on the first attempt.",
+      "topics": [
+        "Planning code before typing",
+        "Simulation of processes",
+        "Grid and direction handling",
+        "Breaking code into helper functions",
+        "Careful indexing and bounds"
+      ],
       "kind": "concept",
       "requires": [
         "edge-cases"
@@ -188,6 +284,14 @@
       "name": "Interactive problems",
       "icon": "chat",
       "desc": "Flushing output, query limits and binary-search style strategies against a judge.",
+      "summary": "You will be able to solve interactive problems by flushing output, staying within query limits and using binary-search style strategies.",
+      "topics": [
+        "Flushing output after queries",
+        "Reading judge responses",
+        "Query limit budgeting",
+        "Binary search strategies",
+        "Testing with a local interactor"
+      ],
       "kind": "concept",
       "requires": [
         "fast-io",
@@ -201,6 +305,14 @@
       "name": "Special checkers",
       "icon": "check-circle",
       "desc": "Problems with many valid answers, special checkers and output-only tasks.",
+      "summary": "You will be able to handle problems with many valid answers, special checkers and output-only tasks.",
+      "topics": [
+        "Problems with multiple correct outputs",
+        "How special checkers validate",
+        "Floating-point tolerance",
+        "Output-only tasks",
+        "Writing your own checker"
+      ],
       "kind": "concept",
       "requires": [
         "constructive"
@@ -213,6 +325,14 @@
       "name": "Offline & query tricks",
       "icon": "sort",
       "desc": "Sorting queries, sqrt decomposition and answering queries offline.",
+      "summary": "You will be able to answer many queries efficiently by processing them offline, sorting them and using sqrt decomposition.",
+      "topics": [
+        "Offline versus online queries",
+        "Sorting queries by endpoint",
+        "Sqrt decomposition",
+        "Mo's algorithm",
+        "Processing events in sweep order"
+      ],
       "kind": "concept",
       "requires": [
         "brute-to-optimal",
@@ -226,6 +346,14 @@
       "name": "Contest math tricks",
       "icon": "calculator",
       "desc": "Modular arithmetic, precomputed factorials and common formulas.",
+      "summary": "You will be able to apply modular arithmetic, precomputed factorials and common formulas that appear in contest problems.",
+      "topics": [
+        "Modular addition and multiplication",
+        "Modular inverse with fast exponentiation",
+        "Precomputed factorials for nCr",
+        "Sieve of Eratosthenes",
+        "GCD and LCM tricks"
+      ],
       "kind": "concept",
       "requires": [
         "edge-cases",
@@ -240,6 +368,14 @@
       "name": "Contest strategy",
       "icon": "target",
       "desc": "Problem order, time management, penalties and when to switch problems.",
+      "summary": "You will be able to choose problem order, manage time and penalties and decide when to switch problems during a contest.",
+      "topics": [
+        "Reading all problems first",
+        "Ordering by difficulty",
+        "Managing wrong-answer penalties",
+        "When to switch problems",
+        "Using the last minutes well"
+      ],
       "kind": "concept",
       "requires": [
         "brute-to-optimal",
@@ -253,6 +389,14 @@
       "name": "Virtual contests",
       "icon": "calendar",
       "desc": "Simulating real contests and tracking performance over time.",
+      "summary": "You will be able to simulate real contests with virtual participation and track your performance over time.",
+      "topics": [
+        "Setting up virtual contests",
+        "Simulating real time limits",
+        "Recording solve times",
+        "Tracking performance trends",
+        "Choosing contests at your level"
+      ],
       "kind": "lesson",
       "requires": [
         "contest-strategy"
@@ -265,6 +409,14 @@
       "name": "Upsolving",
       "icon": "trending-up",
       "desc": "Reading editorials and solving the problems you missed after each contest.",
+      "summary": "You will be able to learn from each contest by reading editorials and solving the problems you missed.",
+      "topics": [
+        "Reading editorials effectively",
+        "Solving missed problems yourself",
+        "Noting new techniques",
+        "Reviewing others' solutions",
+        "Keeping an upsolve log"
+      ],
       "kind": "lesson",
       "requires": [
         "virtual-contests"
@@ -277,6 +429,14 @@
       "name": "Code library project",
       "icon": "book",
       "desc": "Build and test your own library of snippets: segment tree, DSU, Dijkstra and modular math.",
+      "summary": "You will build and test your own library of reusable snippets including a segment tree, DSU, Dijkstra and modular arithmetic.",
+      "topics": [
+        "Segment tree implementation",
+        "Disjoint set union",
+        "Dijkstra with a priority queue",
+        "Modular arithmetic helpers",
+        "Testing library code"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -293,6 +453,14 @@
       "name": "Rating climb project",
       "icon": "medal",
       "desc": "Do a series of rated contests with upsolving and reach your next rating tier.",
+      "summary": "You will take part in a series of rated contests, upsolve after each one and aim to reach your next rating tier.",
+      "topics": [
+        "Planning a contest schedule",
+        "Upsolving after each round",
+        "Tracking weak topics",
+        "Targeted topic practice",
+        "Reviewing rating progress"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

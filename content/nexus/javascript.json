@@ -39,6 +39,14 @@
       "name": "JS basics",
       "icon": "code",
       "desc": "Variables with let and const, types, operators, control flow and functions.",
+      "summary": "You will be able to write basic JavaScript with let and const, operators, control flow and functions.",
+      "topics": [
+        "let, const and block scope",
+        "Numbers, strings and booleans",
+        "Operators and expressions",
+        "Conditionals and loops",
+        "Function declarations and arrow functions"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 40,
@@ -55,6 +63,15 @@
       "name": "Types & coercion",
       "icon": "shapes",
       "desc": "Primitive types, equality, truthiness and implicit type coercion.",
+      "summary": "You will understand JavaScript's primitive types and coercion rules well enough to predict equality and truthiness results.",
+      "topics": [
+        "The seven primitive types",
+        "typeof and its quirks",
+        "Strict vs loose equality",
+        "Truthy and falsy values",
+        "Implicit coercion in operators",
+        "null vs undefined"
+      ],
       "kind": "concept",
       "requires": [
         "js-basics"
@@ -67,6 +84,15 @@
       "name": "Arrays & objects",
       "icon": "array",
       "desc": "Arrays, objects, destructuring, spread and the array methods map, filter and reduce.",
+      "summary": "You will be able to work with arrays and objects using destructuring, spread and the map, filter and reduce methods.",
+      "topics": [
+        "Object literals and property access",
+        "Array basics and mutation",
+        "Destructuring assignment",
+        "Spread and rest syntax",
+        "map, filter and reduce",
+        "Shallow vs deep copies"
+      ],
       "kind": "concept",
       "requires": [
         "js-basics"
@@ -79,6 +105,14 @@
       "name": "Functions & closures",
       "icon": "function",
       "desc": "First-class functions, scope, closures and higher-order functions.",
+      "summary": "You will understand lexical scope and closures and be able to use functions as values in higher-order code.",
+      "topics": [
+        "First-class functions",
+        "Lexical scope and the scope chain",
+        "Closures and captured variables",
+        "Higher-order functions",
+        "Closures in loops"
+      ],
       "kind": "concept",
       "requires": [
         "arrays-objects"
@@ -91,6 +125,14 @@
       "name": "this & prototypes",
       "icon": "layers",
       "desc": "How this is bound, prototype chains and inheritance under the hood.",
+      "summary": "You will be able to predict how this is bound in each call style and explain inheritance through prototype chains.",
+      "topics": [
+        "Rules for binding this",
+        "call, apply and bind",
+        "Arrow functions and lexical this",
+        "Prototype chains and property lookup",
+        "Object.create and constructor functions"
+      ],
       "kind": "concept",
       "requires": [
         "closures"
@@ -103,6 +145,14 @@
       "name": "Classes & modules",
       "icon": "grid",
       "desc": "ES classes, getters and setters, and ES modules with import and export.",
+      "summary": "You will be able to write ES classes with accessors and organise code into ES modules with import and export.",
+      "topics": [
+        "Class syntax and constructors",
+        "Inheritance with extends and super",
+        "Getters, setters and private fields",
+        "Static members",
+        "Named and default exports"
+      ],
       "kind": "concept",
       "requires": [
         "prototypes"
@@ -115,6 +165,14 @@
       "name": "Iterators & generators",
       "icon": "route",
       "desc": "The iteration protocol, generators, Map and Set.",
+      "summary": "You will be able to make objects iterable, write generator functions and use the Map and Set collections.",
+      "topics": [
+        "The iterable and iterator protocols",
+        "for...of loops",
+        "Generator functions and yield",
+        "Map vs plain objects",
+        "Set for unique values"
+      ],
       "kind": "concept",
       "requires": [
         "closures"
@@ -127,6 +185,14 @@
       "name": "The event loop",
       "icon": "activity",
       "desc": "Call stack, task and microtask queues and why JavaScript is single-threaded.",
+      "summary": "You will understand how the call stack, task queue and microtask queue let single-threaded JavaScript handle asynchronous work.",
+      "topics": [
+        "The call stack",
+        "Web APIs and the task queue",
+        "Microtasks and promise callbacks",
+        "Ordering of setTimeout vs promises",
+        "Why long tasks block the UI"
+      ],
       "kind": "concept",
       "requires": [
         "closures"
@@ -139,6 +205,14 @@
       "name": "Promises & async",
       "icon": "clock",
       "desc": "Callbacks, promises, async/await and running work in parallel with Promise.all.",
+      "summary": "You will be able to write asynchronous code with promises and async/await and run independent operations concurrently.",
+      "topics": [
+        "Callbacks and callback hell",
+        "Creating and chaining promises",
+        "async functions and await",
+        "Promise.all and Promise.allSettled",
+        "Sequential vs parallel awaits"
+      ],
       "kind": "concept",
       "requires": [
         "event-loop"
@@ -151,6 +225,14 @@
       "name": "Fetch & JSON",
       "icon": "download",
       "desc": "Calling HTTP APIs with fetch, JSON parsing and handling network errors.",
+      "summary": "You will be able to call HTTP APIs with fetch, parse JSON responses and handle network and HTTP errors properly.",
+      "topics": [
+        "Making GET and POST requests with fetch",
+        "Request headers and bodies",
+        "Parsing JSON responses",
+        "Checking response.ok and status",
+        "Handling network failures and timeouts"
+      ],
       "kind": "lesson",
       "requires": [
         "async-js",
@@ -164,6 +246,14 @@
       "name": "Error handling",
       "icon": "warning",
       "desc": "try/catch, error types and handling errors in async code.",
+      "summary": "You will be able to catch and throw errors in synchronous and asynchronous code and choose suitable built-in or custom error types.",
+      "topics": [
+        "try, catch and finally",
+        "Built-in error types",
+        "Throwing custom errors",
+        "Catching rejected promises",
+        "Unhandled rejections"
+      ],
       "kind": "concept",
       "requires": [
         "async-js"
@@ -176,6 +266,14 @@
       "name": "The DOM",
       "icon": "tree",
       "desc": "Selecting, creating and updating elements through the DOM API.",
+      "summary": "You will be able to select, create, update and remove page elements through the DOM API.",
+      "topics": [
+        "The DOM tree and nodes",
+        "querySelector and querySelectorAll",
+        "Creating and inserting elements",
+        "Changing text, attributes and classes",
+        "Removing elements safely"
+      ],
       "kind": "concept",
       "requires": [
         "arrays-objects",
@@ -195,6 +293,14 @@
       "name": "Events",
       "icon": "bolt",
       "desc": "Event listeners, bubbling, delegation and form handling.",
+      "summary": "You will be able to respond to user actions with event listeners and use bubbling and delegation to handle events efficiently.",
+      "topics": [
+        "addEventListener and handlers",
+        "The event object",
+        "Bubbling and capturing",
+        "Event delegation",
+        "preventDefault and form submission"
+      ],
       "kind": "concept",
       "requires": [
         "dom",
@@ -208,6 +314,14 @@
       "name": "Browser storage",
       "icon": "save",
       "desc": "localStorage, sessionStorage and IndexedDB basics.",
+      "summary": "You will be able to persist data in the browser with localStorage, sessionStorage and basic IndexedDB operations.",
+      "topics": [
+        "localStorage vs sessionStorage",
+        "Storing JSON with stringify and parse",
+        "Storage limits and synchronous access",
+        "IndexedDB databases and object stores",
+        "When to use each storage option"
+      ],
       "kind": "lesson",
       "requires": [
         "dom"
@@ -220,6 +334,14 @@
       "name": "To-do app project",
       "icon": "check-circle",
       "desc": "Build a framework-free to-do app with persistent storage.",
+      "summary": "You will build a framework-free to-do app that renders from state, handles user events and persists tasks across reloads.",
+      "topics": [
+        "Modelling app state",
+        "Rendering lists from state",
+        "Adding, completing and deleting tasks",
+        "Persisting tasks in localStorage",
+        "Filtering tasks with event delegation"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -235,6 +357,14 @@
       "name": "npm & bundlers",
       "icon": "layers",
       "desc": "Packages with npm, package.json and bundling with a modern build tool.",
+      "summary": "You will be able to manage packages with npm and package.json and bundle a project for the browser with a modern build tool.",
+      "topics": [
+        "npm install and dependencies",
+        "package.json scripts",
+        "Semantic versioning and lock files",
+        "Bundling with Vite or esbuild",
+        "Development server and production builds"
+      ],
       "kind": "lesson",
       "requires": [
         "classes-modules"
@@ -247,6 +377,14 @@
       "name": "Node.js runtime",
       "icon": "server",
       "desc": "Node's module system, the fs and http modules, and streams.",
+      "summary": "You will understand how Node.js runs JavaScript outside the browser and be able to use its module system, fs, http and streams.",
+      "topics": [
+        "CommonJS vs ES modules in Node",
+        "Reading and writing files with fs",
+        "Building a server with http",
+        "Readable and writable streams",
+        "The process object and environment variables"
+      ],
       "kind": "concept",
       "requires": [
         "async-js",
@@ -260,6 +398,14 @@
       "name": "Testing JavaScript",
       "icon": "check-circle",
       "desc": "Unit tests with a test runner, mocks and testing async code.",
+      "summary": "You will be able to write unit tests with a JavaScript test runner, mock dependencies and test asynchronous code.",
+      "topics": [
+        "Test structure with describe and test",
+        "Assertions and matchers",
+        "Mocking functions and modules",
+        "Testing promises and async functions",
+        "Running tests in watch mode"
+      ],
       "kind": "lesson",
       "requires": [
         "npm-bundlers",
@@ -273,6 +419,14 @@
       "name": "Node CLI project",
       "icon": "terminal",
       "desc": "Build a tested command-line tool in Node that calls a public API.",
+      "summary": "You will build a tested Node command-line tool that parses arguments, calls a public API and prints formatted results.",
+      "topics": [
+        "Parsing command-line arguments",
+        "Calling an API with fetch",
+        "Formatting terminal output",
+        "Error handling and exit codes",
+        "Testing the CLI with mocks"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

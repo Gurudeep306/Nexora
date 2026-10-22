@@ -39,6 +39,14 @@
       "name": "Scalability basics",
       "icon": "trending-up",
       "desc": "Vertical versus horizontal scaling, stateless services, and where bottlenecks come from.",
+      "summary": "You will be able to choose between vertical and horizontal scaling, design stateless services and locate system bottlenecks.",
+      "topics": [
+        "Vertical vs horizontal scaling",
+        "Stateless vs stateful services",
+        "Identifying bottlenecks",
+        "Session storage externalisation",
+        "Scaling reads vs writes"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 60
@@ -49,6 +57,14 @@
       "name": "Latency & throughput",
       "icon": "timer",
       "desc": "Latency numbers every engineer should know, throughput, percentiles and queueing intuition.",
+      "summary": "You will be able to reason about latency and throughput using reference latency numbers, percentiles and basic queueing intuition.",
+      "topics": [
+        "Latency numbers every engineer should know",
+        "Latency vs throughput",
+        "Percentiles like p50 and p99",
+        "Little's law",
+        "Queueing and utilisation"
+      ],
       "kind": "concept",
       "requires": [
         "scalability-basics"
@@ -61,6 +77,14 @@
       "name": "Availability",
       "icon": "shield",
       "desc": "Availability nines, redundancy, failover, and SLIs, SLOs and SLAs.",
+      "summary": "You will be able to quantify availability in nines, design redundancy and failover and define SLIs, SLOs and SLAs.",
+      "topics": [
+        "Availability nines and downtime",
+        "Redundancy and single points of failure",
+        "Active-passive and active-active failover",
+        "SLIs, SLOs and SLAs",
+        "Error budgets"
+      ],
       "kind": "concept",
       "requires": [
         "scalability-basics"
@@ -73,6 +97,14 @@
       "name": "Back-of-envelope",
       "icon": "calculator",
       "desc": "Estimating QPS, storage and bandwidth for a design before drawing boxes.",
+      "summary": "You will be able to estimate queries per second, storage and bandwidth for a system before designing it.",
+      "topics": [
+        "Daily active users to QPS",
+        "Peak vs average load",
+        "Storage estimation",
+        "Bandwidth estimation",
+        "Powers of two and rounding"
+      ],
       "kind": "lesson",
       "requires": [
         "latency-throughput"
@@ -85,6 +117,14 @@
       "name": "DNS & CDNs",
       "icon": "globe",
       "desc": "How DNS routes users, and serving static content from edge caches.",
+      "summary": "You will understand how DNS resolves names to servers and how CDNs serve static content from edge caches close to users.",
+      "topics": [
+        "DNS resolution steps",
+        "Record types and TTLs",
+        "GeoDNS and DNS load balancing",
+        "CDN edge caching",
+        "Push vs pull CDNs"
+      ],
       "kind": "lesson",
       "requires": [
         "scalability-basics",
@@ -98,6 +138,14 @@
       "name": "Load balancing",
       "icon": "sliders",
       "desc": "L4 versus L7 balancers, balancing algorithms, health checks and sticky sessions.",
+      "summary": "You will be able to choose between L4 and L7 load balancers and configure algorithms, health checks and session stickiness.",
+      "topics": [
+        "L4 vs L7 load balancing",
+        "Round robin and least connections",
+        "Consistent hashing for balancing",
+        "Health checks",
+        "Sticky sessions"
+      ],
       "kind": "lesson",
       "requires": [
         "scalability-basics",
@@ -111,6 +159,14 @@
       "name": "Proxies & gateways",
       "icon": "server",
       "desc": "Reverse proxies, API gateways, service discovery and API design for services.",
+      "summary": "You will be able to use reverse proxies and API gateways for routing, authentication and service discovery, and design service APIs.",
+      "topics": [
+        "Forward vs reverse proxies",
+        "API gateway responsibilities",
+        "Service discovery",
+        "REST vs gRPC between services",
+        "API versioning"
+      ],
       "kind": "lesson",
       "requires": [
         "load-balancing"
@@ -123,6 +179,14 @@
       "name": "Rate limiting",
       "icon": "timer",
       "desc": "Token bucket, leaky bucket and sliding-window limiters, local and distributed.",
+      "summary": "You will be able to protect services with token bucket, leaky bucket and sliding-window rate limiters, locally or across nodes.",
+      "topics": [
+        "Token bucket algorithm",
+        "Leaky bucket algorithm",
+        "Fixed vs sliding window counters",
+        "Distributed rate limiting",
+        "Returning 429 responses"
+      ],
       "kind": "lesson",
       "requires": [
         "api-gateway"
@@ -135,6 +199,14 @@
       "name": "Caching",
       "icon": "bolt",
       "desc": "Cache-aside, write-through and write-back, eviction policies, invalidation and hot keys.",
+      "summary": "You will be able to choose caching strategies, eviction policies and invalidation approaches and handle hot keys.",
+      "topics": [
+        "Cache-aside pattern",
+        "Write-through and write-back",
+        "LRU and LFU eviction",
+        "Cache invalidation and TTLs",
+        "Hot keys and cache stampedes"
+      ],
       "kind": "lesson",
       "requires": [
         "latency-throughput"
@@ -147,6 +219,14 @@
       "name": "Databases at scale",
       "icon": "database",
       "desc": "Choosing SQL or NoSQL, indexing, read replicas and the limits of a single database.",
+      "summary": "You will be able to choose between SQL and NoSQL stores, scale reads with replicas and recognise the limits of one database.",
+      "topics": [
+        "SQL vs NoSQL trade-offs",
+        "Key-value, document and wide-column stores",
+        "Indexing for scale",
+        "Read replicas",
+        "Connection pooling"
+      ],
       "kind": "lesson",
       "requires": [
         "scalability-basics",
@@ -161,6 +241,15 @@
       "name": "Replication",
       "icon": "copy",
       "desc": "Leader–follower and multi-leader replication, replication lag and read-your-writes.",
+      "summary": "You will be able to compare leader-follower and multi-leader replication and handle replication lag and read-your-writes consistency.",
+      "topics": [
+        "Leader-follower replication",
+        "Synchronous vs asynchronous replication",
+        "Multi-leader replication",
+        "Replication lag",
+        "Read-your-writes consistency",
+        "Conflict resolution"
+      ],
       "kind": "lesson",
       "requires": [
         "databases-at-scale",
@@ -174,6 +263,14 @@
       "name": "Sharding",
       "icon": "grid",
       "desc": "Partitioning by key or range, consistent hashing and rebalancing.",
+      "summary": "You will be able to partition data by key or range, use consistent hashing and rebalance shards as data grows.",
+      "topics": [
+        "Horizontal partitioning",
+        "Range-based sharding",
+        "Hash-based sharding",
+        "Consistent hashing",
+        "Rebalancing and hot shards"
+      ],
       "kind": "lesson",
       "requires": [
         "databases-at-scale",
@@ -187,6 +284,14 @@
       "name": "CAP & consistency",
       "icon": "puzzle",
       "desc": "The CAP theorem, PACELC, and strong versus eventual consistency models.",
+      "summary": "You will be able to apply the CAP theorem and PACELC and choose between strong and eventual consistency models.",
+      "topics": [
+        "The CAP theorem",
+        "PACELC latency trade-offs",
+        "Strong consistency and linearisability",
+        "Eventual consistency",
+        "Quorum reads and writes"
+      ],
       "kind": "concept",
       "requires": [
         "replication"
@@ -199,6 +304,14 @@
       "name": "Object storage",
       "icon": "inbox",
       "desc": "Storing files and media in object stores and serving them efficiently.",
+      "summary": "You will be able to store files and media in object stores and serve them efficiently with signed URLs and CDNs.",
+      "topics": [
+        "Object vs block vs file storage",
+        "Buckets, keys and metadata",
+        "Pre-signed upload and download URLs",
+        "Multipart uploads",
+        "Serving media through a CDN"
+      ],
       "kind": "concept",
       "requires": [
         "databases-at-scale",
@@ -212,6 +325,14 @@
       "name": "Message queues",
       "icon": "messages",
       "desc": "Queues and logs (e.g. Kafka), producers and consumers, delivery guarantees and backpressure.",
+      "summary": "You will be able to decouple services with queues and logs such as Kafka and reason about delivery guarantees and backpressure.",
+      "topics": [
+        "Queues vs logs",
+        "Producers, consumers and consumer groups",
+        "Kafka partitions and offsets",
+        "At-most-once, at-least-once and exactly-once",
+        "Backpressure and dead-letter queues"
+      ],
       "kind": "lesson",
       "requires": [
         "scalability-basics",
@@ -225,6 +346,14 @@
       "name": "Event-driven design",
       "icon": "bolt",
       "desc": "Pub/sub, event sourcing, CQRS and idempotent consumers.",
+      "summary": "You will be able to design event-driven systems with pub/sub, event sourcing, CQRS and idempotent consumers.",
+      "topics": [
+        "Publish-subscribe messaging",
+        "Event sourcing",
+        "CQRS read and write models",
+        "Idempotent consumers",
+        "Event ordering and schemas"
+      ],
       "kind": "lesson",
       "requires": [
         "message-queues"
@@ -237,6 +366,14 @@
       "name": "Microservices",
       "icon": "layers",
       "desc": "Service boundaries, synchronous versus asynchronous communication, and their trade-offs against a monolith.",
+      "summary": "You will be able to draw service boundaries and weigh synchronous and asynchronous communication against staying with a monolith.",
+      "topics": [
+        "Monolith vs microservices",
+        "Defining service boundaries",
+        "Synchronous vs asynchronous communication",
+        "Database per service",
+        "Operational costs of microservices"
+      ],
       "kind": "concept",
       "requires": [
         "api-gateway",
@@ -250,6 +387,14 @@
       "name": "Consensus",
       "icon": "users",
       "desc": "Leader election, quorums, Raft at a high level, and distributed locks.",
+      "summary": "You will understand how distributed nodes agree through leader election, quorums and Raft and how distributed locks work.",
+      "topics": [
+        "Why consensus is hard",
+        "Leader election",
+        "Majority quorums",
+        "Raft at a high level",
+        "Distributed locks and fencing tokens"
+      ],
       "kind": "concept",
       "requires": [
         "cap-consistency"
@@ -262,6 +407,14 @@
       "name": "Distributed txns",
       "icon": "git-branch",
       "desc": "Two-phase commit, sagas and the outbox pattern.",
+      "summary": "You will be able to keep data consistent across services with two-phase commit, sagas and the outbox pattern.",
+      "topics": [
+        "Two-phase commit",
+        "Blocking in 2PC",
+        "Choreographed and orchestrated sagas",
+        "Compensating actions",
+        "Transactional outbox pattern"
+      ],
       "kind": "lesson",
       "requires": [
         "consensus",
@@ -275,6 +428,14 @@
       "name": "Observability",
       "icon": "analytics",
       "desc": "Logs, metrics and traces, alerting, and debugging production systems.",
+      "summary": "You will be able to instrument systems with logs, metrics and traces, set up alerting and debug production issues.",
+      "topics": [
+        "Structured logging",
+        "Metrics and dashboards",
+        "Distributed tracing",
+        "Alerting on symptoms",
+        "Debugging incidents in production"
+      ],
       "kind": "concept",
       "requires": [
         "microservices"
@@ -287,6 +448,14 @@
       "name": "URL shortener",
       "icon": "link",
       "desc": "Design a URL shortener end to end: estimates, API, ID generation, storage, caching and analytics.",
+      "summary": "You will design a URL shortener end to end, covering estimates, API, ID generation, storage, caching and analytics.",
+      "topics": [
+        "Requirements and traffic estimates",
+        "API design",
+        "Short ID generation strategies",
+        "Storage and caching",
+        "Redirects and click analytics"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -302,6 +471,14 @@
       "name": "Distributed limiter",
       "icon": "timer",
       "desc": "Design and prototype a distributed rate limiter backed by a shared cache, and load-test it.",
+      "summary": "You will design and prototype a distributed rate limiter backed by a shared cache and load-test it.",
+      "topics": [
+        "Requirements and limits",
+        "Choosing a limiting algorithm",
+        "Shared counters in Redis",
+        "Race conditions and atomic scripts",
+        "Load testing the limiter"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -316,6 +493,14 @@
       "name": "Chat system",
       "icon": "chat",
       "desc": "Design a chat service: persistent connections, message fan-out, ordering, storage and presence.",
+      "summary": "You will design a chat service covering persistent connections, message fan-out, ordering, storage and presence.",
+      "topics": [
+        "WebSockets and persistent connections",
+        "One-to-one and group message fan-out",
+        "Message ordering and IDs",
+        "Message storage design",
+        "Presence and online status"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -331,6 +516,14 @@
       "name": "News feed",
       "icon": "list",
       "desc": "Design a social news feed: fan-out on write versus read, ranking, caching and hot users.",
+      "summary": "You will design a social news feed and weigh fan-out on write against fan-out on read, including ranking and hot users.",
+      "topics": [
+        "Feed generation requirements",
+        "Fan-out on write vs read",
+        "Hybrid approach for celebrities",
+        "Feed ranking",
+        "Feed caching"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

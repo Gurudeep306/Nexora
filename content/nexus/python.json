@@ -39,6 +39,14 @@
       "name": "Python basics",
       "icon": "code",
       "desc": "Variables, numbers, booleans, control flow and the interactive interpreter.",
+      "summary": "You will be able to write simple Python programs with variables, numbers, booleans and control flow and experiment in the interpreter.",
+      "topics": [
+        "The interactive interpreter and scripts",
+        "Variables and dynamic typing",
+        "int, float and bool",
+        "if, elif and else",
+        "for and while loops"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 40,
@@ -55,6 +63,14 @@
       "name": "Strings & I/O",
       "icon": "type",
       "desc": "String methods, f-strings, slicing, and reading input and printing output.",
+      "summary": "You will be able to manipulate text with string methods, slicing and f-strings and handle console input and output.",
+      "topics": [
+        "String methods",
+        "Indexing and slicing",
+        "Formatting with f-strings",
+        "Reading input with input()",
+        "Printing output with print()"
+      ],
       "kind": "concept",
       "requires": [
         "python-basics"
@@ -67,6 +83,14 @@
       "name": "Lists, dicts & sets",
       "icon": "list",
       "desc": "The built-in containers, when to use each, and their common operations and costs.",
+      "summary": "You will be able to choose between lists, tuples, dicts and sets and use their common operations with an eye on cost.",
+      "topics": [
+        "Lists and their methods",
+        "Tuples and immutability",
+        "Dictionaries and key lookup",
+        "Sets and set operations",
+        "Time complexity of common operations"
+      ],
       "kind": "concept",
       "requires": [
         "python-basics"
@@ -79,6 +103,14 @@
       "name": "Functions",
       "icon": "function",
       "desc": "Defining functions, default and keyword arguments, *args/**kwargs, scope and closures.",
+      "summary": "You will be able to define flexible functions with default, keyword and variable arguments and understand scope and closures.",
+      "topics": [
+        "Defining functions and returning values",
+        "Default and keyword arguments",
+        "*args and **kwargs",
+        "Local, enclosing and global scope",
+        "Closures and nonlocal"
+      ],
       "kind": "concept",
       "requires": [
         "python-basics"
@@ -91,6 +123,14 @@
       "name": "Comprehensions",
       "icon": "wand",
       "desc": "List, dict and set comprehensions and generator expressions as readable loops.",
+      "summary": "You will be able to replace simple loops with list, dict and set comprehensions and generator expressions that stay readable.",
+      "topics": [
+        "List comprehensions",
+        "Dict and set comprehensions",
+        "Filtering with conditions",
+        "Nested comprehensions",
+        "Generator expressions"
+      ],
       "kind": "concept",
       "requires": [
         "python-collections",
@@ -104,6 +144,14 @@
       "name": "Exceptions",
       "icon": "warning",
       "desc": "Raising and catching exceptions, custom exception types and when to use them.",
+      "summary": "You will be able to raise and handle exceptions, define custom exception types and decide when exceptions are the right tool.",
+      "topics": [
+        "try, except, else and finally",
+        "Raising exceptions",
+        "The exception hierarchy",
+        "Custom exception classes",
+        "EAFP vs LBYL style"
+      ],
       "kind": "concept",
       "requires": [
         "python-functions"
@@ -116,6 +164,14 @@
       "name": "Files & modules",
       "icon": "book",
       "desc": "Reading and writing files, pathlib, importing modules and organising code into packages.",
+      "summary": "You will be able to read and write files with pathlib, import modules and organise code into packages.",
+      "topics": [
+        "Opening files with with",
+        "Reading and writing text files",
+        "Paths with pathlib",
+        "Importing modules",
+        "Packages and __init__.py"
+      ],
       "kind": "lesson",
       "requires": [
         "python-functions",
@@ -129,6 +185,14 @@
       "name": "Classes & objects",
       "icon": "shapes",
       "desc": "Classes, instances, methods, inheritance and properties in Python.",
+      "summary": "You will be able to write Python classes with methods, inheritance and properties to model data and behaviour.",
+      "topics": [
+        "Defining classes and __init__",
+        "Instance and class attributes",
+        "Methods and self",
+        "Inheritance and super()",
+        "Properties with @property"
+      ],
       "kind": "concept",
       "requires": [
         "python-functions"
@@ -141,6 +205,14 @@
       "name": "Dunder methods",
       "icon": "sparkles",
       "desc": "Special methods like __repr__, __eq__, __len__ and __iter__ that make objects feel built-in.",
+      "summary": "You will be able to implement special methods so your objects print, compare, size and iterate like built-in types.",
+      "topics": [
+        "__repr__ and __str__",
+        "__eq__ and __hash__",
+        "__len__ and __getitem__",
+        "__iter__ for iteration",
+        "Operator overloading"
+      ],
       "kind": "concept",
       "requires": [
         "python-oop"
@@ -153,6 +225,14 @@
       "name": "Type hints",
       "icon": "tag",
       "desc": "Annotating code with type hints, checking with mypy, and writing dataclasses.",
+      "summary": "You will be able to annotate Python code with type hints, check it with mypy and model data with dataclasses.",
+      "topics": [
+        "Annotating variables and functions",
+        "Generic collection types",
+        "Optional and union types",
+        "Checking with mypy",
+        "Dataclasses for data records"
+      ],
       "kind": "concept",
       "requires": [
         "python-oop"
@@ -165,6 +245,14 @@
       "name": "CLI tool project",
       "icon": "terminal",
       "desc": "Build a command-line tool with argparse that reads files, handles errors and is split into modules.",
+      "summary": "You will build a command-line tool with argparse that reads files, handles errors cleanly and is organised into modules.",
+      "topics": [
+        "Parsing arguments with argparse",
+        "Reading input files",
+        "Handling errors and exit codes",
+        "Splitting code into modules",
+        "Testing the tool"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -180,6 +268,14 @@
       "name": "Iterators & generators",
       "icon": "route",
       "desc": "The iterator protocol, generators with yield, and lazy pipelines with itertools.",
+      "summary": "You will be able to write iterators and generators and build lazy data pipelines with itertools.",
+      "topics": [
+        "The iterator protocol",
+        "Generator functions with yield",
+        "Lazy evaluation",
+        "Delegating with yield from",
+        "Tools from itertools"
+      ],
       "kind": "concept",
       "requires": [
         "comprehensions",
@@ -193,6 +289,14 @@
       "name": "Decorators",
       "icon": "wand",
       "desc": "Functions as values, writing decorators, functools.wraps and common built-in decorators.",
+      "summary": "You will be able to write decorators that wrap functions, preserve metadata with functools.wraps and use common built-in decorators.",
+      "topics": [
+        "Functions as first-class values",
+        "Writing a simple decorator",
+        "Decorators with arguments",
+        "Preserving metadata with functools.wraps",
+        "Built-ins like staticmethod and lru_cache"
+      ],
       "kind": "concept",
       "requires": [
         "python-functions"
@@ -205,6 +309,14 @@
       "name": "Context managers",
       "icon": "lock",
       "desc": "The with statement, writing context managers and contextlib.",
+      "summary": "You will be able to manage resources with the with statement and write your own context managers with classes or contextlib.",
+      "topics": [
+        "The with statement",
+        "__enter__ and __exit__",
+        "Handling exceptions in __exit__",
+        "Generator-based managers with contextlib",
+        "Common uses like files and locks"
+      ],
       "kind": "concept",
       "requires": [
         "exceptions",
@@ -218,6 +330,14 @@
       "name": "Concurrency & asyncio",
       "icon": "bolt",
       "desc": "Threads, processes, the GIL and async/await with asyncio.",
+      "summary": "You will be able to choose between threads, processes and asyncio for concurrent Python code and explain the GIL's effect.",
+      "topics": [
+        "The global interpreter lock",
+        "Threading for I/O-bound work",
+        "Multiprocessing for CPU-bound work",
+        "concurrent.futures executors",
+        "async and await with asyncio"
+      ],
       "kind": "concept",
       "requires": [
         "python-functions",
@@ -231,6 +351,14 @@
       "name": "Testing with pytest",
       "icon": "check-circle",
       "desc": "Writing tests, fixtures and parametrised tests with pytest.",
+      "summary": "You will be able to write and organise tests with pytest using fixtures and parametrisation.",
+      "topics": [
+        "Writing test functions",
+        "Assertions and failure output",
+        "Fixtures for setup",
+        "Parametrised tests",
+        "Testing exceptions with pytest.raises"
+      ],
       "kind": "lesson",
       "requires": [
         "python-functions",
@@ -244,6 +372,14 @@
       "name": "Packaging & venvs",
       "icon": "layers",
       "desc": "Virtual environments, pip, pyproject.toml and publishing a package.",
+      "summary": "You will be able to isolate dependencies with virtual environments, configure a project with pyproject.toml and publish a package.",
+      "topics": [
+        "Virtual environments with venv",
+        "Installing packages with pip",
+        "Requirements and lock files",
+        "pyproject.toml configuration",
+        "Building and publishing to PyPI"
+      ],
       "kind": "lesson",
       "requires": [
         "files-modules"
@@ -256,6 +392,15 @@
       "name": "NumPy & pandas",
       "icon": "grid",
       "desc": "Vectorised arrays with NumPy and tabular data wrangling with pandas DataFrames.",
+      "summary": "You will be able to compute with vectorised NumPy arrays and clean, filter and aggregate tabular data with pandas DataFrames.",
+      "topics": [
+        "NumPy arrays and dtypes",
+        "Vectorised operations and broadcasting",
+        "DataFrames and Series",
+        "Selecting and filtering rows",
+        "groupby and aggregation",
+        "Handling missing data"
+      ],
       "kind": "concept",
       "requires": [
         "python-collections",
@@ -269,6 +414,15 @@
       "name": "Plotting",
       "icon": "chart",
       "desc": "Charts with matplotlib: line, bar, scatter and histograms from DataFrames.",
+      "summary": "You will be able to create line, bar, scatter and histogram charts with matplotlib from DataFrames and label them clearly.",
+      "topics": [
+        "Figures and axes in matplotlib",
+        "Line and bar charts",
+        "Scatter plots",
+        "Histograms of distributions",
+        "Plotting from pandas",
+        "Labels, titles and legends"
+      ],
       "kind": "lesson",
       "requires": [
         "numpy-pandas"
@@ -281,6 +435,14 @@
       "name": "Data analysis project",
       "icon": "analytics",
       "desc": "Clean a real dataset, summarise it and present findings with charts in a notebook.",
+      "summary": "You will clean a real dataset, summarise it and present findings with charts in a notebook.",
+      "topics": [
+        "Loading data into pandas",
+        "Cleaning and transforming data",
+        "Summary statistics",
+        "Visualising findings",
+        "Writing up conclusions in a notebook"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

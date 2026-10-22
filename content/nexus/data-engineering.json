@@ -38,6 +38,14 @@
       "name": "Data engineering",
       "icon": "compass",
       "desc": "What data engineers build: sources, sinks, batch versus streaming and the modern data stack.",
+      "summary": "You will be able to describe what data engineers build, from sources to sinks, and compare batch and streaming within the modern data stack.",
+      "topics": [
+        "Data sources and sinks",
+        "Batch versus streaming processing",
+        "Components of the modern data stack",
+        "Roles of engineers, analysts and scientists",
+        "OLTP versus OLAP systems"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 60
@@ -48,6 +56,14 @@
       "name": "Analytical SQL",
       "icon": "database",
       "desc": "Window functions, CTEs, grouping sets and writing efficient analytical queries.",
+      "summary": "You will be able to write efficient analytical SQL using window functions, CTEs and grouping sets.",
+      "topics": [
+        "Common table expressions",
+        "Window functions and frames",
+        "Ranking and running totals",
+        "GROUPING SETS, ROLLUP and CUBE",
+        "Reading query plans for analytics"
+      ],
       "kind": "lesson",
       "requires": [
         "sql:joins"
@@ -60,6 +76,15 @@
       "name": "Data modelling",
       "icon": "grid",
       "desc": "Star and snowflake schemas, facts and dimensions, and when to denormalise.",
+      "summary": "You will be able to design star and snowflake schemas with fact and dimension tables and decide when to denormalise.",
+      "topics": [
+        "Fact and dimension tables",
+        "Star schema design",
+        "Snowflake schemas",
+        "Slowly changing dimensions",
+        "Grain of a fact table",
+        "Denormalisation trade-offs"
+      ],
       "kind": "lesson",
       "requires": [
         "analytical-sql",
@@ -73,6 +98,14 @@
       "name": "File formats",
       "icon": "hash",
       "desc": "CSV, JSON, Avro and Parquet; row versus columnar storage and compression.",
+      "summary": "You will be able to choose between CSV, JSON, Avro and Parquet based on row versus columnar layout, schema support and compression.",
+      "topics": [
+        "CSV and JSON limitations",
+        "Avro and schema evolution",
+        "Parquet columnar layout",
+        "Compression codecs",
+        "Predicate pushdown and column pruning"
+      ],
       "kind": "concept",
       "requires": [
         "de-overview"
@@ -85,6 +118,14 @@
       "name": "ETL & ELT",
       "icon": "route",
       "desc": "Extracting, transforming and loading data, and pushing transforms into the warehouse.",
+      "summary": "You will be able to build extract, transform and load processes and decide when to push transformations into the warehouse with ELT.",
+      "topics": [
+        "Extracting from APIs and databases",
+        "Full versus incremental loads",
+        "ETL versus ELT",
+        "Transformations with dbt",
+        "Staging and raw layers"
+      ],
       "kind": "lesson",
       "requires": [
         "data-modeling",
@@ -98,6 +139,14 @@
       "name": "Orchestration",
       "icon": "calendar",
       "desc": "Pipelines as DAGs: scheduling, retries, backfills and idempotent tasks.",
+      "summary": "You will be able to orchestrate pipelines as DAGs with scheduling, retries, backfills and idempotent tasks.",
+      "topics": [
+        "Pipelines as DAGs",
+        "Schedulers like Airflow",
+        "Retries and failure handling",
+        "Backfills of historical data",
+        "Idempotent task design"
+      ],
       "kind": "lesson",
       "requires": [
         "etl-elt"
@@ -110,6 +159,14 @@
       "name": "Data quality",
       "icon": "check-circle",
       "desc": "Validation checks, data contracts and testing pipelines before bad data spreads.",
+      "summary": "You will be able to protect pipelines with validation checks, data contracts and tests that stop bad data from spreading.",
+      "topics": [
+        "Schema and null checks",
+        "Freshness and volume checks",
+        "Data contracts with producers",
+        "Testing transformations",
+        "Alerting and quarantining bad data"
+      ],
       "kind": "lesson",
       "requires": [
         "etl-elt"
@@ -122,6 +179,14 @@
       "name": "Batch pipeline",
       "icon": "workshop",
       "desc": "Build a scheduled pipeline that ingests a public dataset daily, validates it and loads a warehouse.",
+      "summary": "You will build a scheduled pipeline that ingests a public dataset daily, validates it and loads it into a warehouse.",
+      "topics": [
+        "Ingesting from a public source",
+        "Scheduling with an orchestrator",
+        "Validation checks",
+        "Loading a warehouse",
+        "Modelling tables for analysis"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -136,6 +201,14 @@
       "name": "Data warehouses",
       "icon": "building",
       "desc": "Columnar MPP warehouses, clustering, materialised views and cost-aware queries.",
+      "summary": "You will be able to use columnar MPP warehouses efficiently with clustering, materialised views and cost-aware queries.",
+      "topics": [
+        "Columnar storage in warehouses",
+        "Massively parallel processing",
+        "Clustering and sort keys",
+        "Materialised views",
+        "Query cost and scan reduction"
+      ],
       "kind": "lesson",
       "requires": [
         "data-modeling",
@@ -149,6 +222,14 @@
       "name": "Data lakes",
       "icon": "droplet",
       "desc": "Object storage, lake layouts and lakehouse table formats with ACID transactions.",
+      "summary": "You will be able to organise data lakes on object storage and use lakehouse table formats that provide ACID transactions.",
+      "topics": [
+        "Object storage as a data lake",
+        "Lake zone layouts",
+        "Lakehouse table formats",
+        "ACID transactions with Delta and Iceberg",
+        "Time travel and schema evolution"
+      ],
       "kind": "lesson",
       "requires": [
         "file-formats"
@@ -161,6 +242,14 @@
       "name": "Distributed storage",
       "icon": "server",
       "desc": "How HDFS-style and object stores split, replicate and place data across machines.",
+      "summary": "You will be able to explain how HDFS-style and object stores split, replicate and place data across many machines.",
+      "topics": [
+        "HDFS blocks and NameNode",
+        "Replication factor",
+        "Rack-aware placement",
+        "Object store consistency",
+        "Data locality for compute"
+      ],
       "kind": "concept",
       "requires": [
         "data-lakes",
@@ -174,6 +263,14 @@
       "name": "Partitioning",
       "icon": "grid",
       "desc": "Choosing partition keys, bucketing and dealing with data skew.",
+      "summary": "You will be able to choose partition keys and bucketing schemes and handle data skew in large datasets.",
+      "topics": [
+        "Partition keys and pruning",
+        "Hive-style directory partitioning",
+        "Bucketing for joins",
+        "Data skew and hot partitions",
+        "Small files problem"
+      ],
       "kind": "concept",
       "requires": [
         "distributed-storage"
@@ -186,6 +283,14 @@
       "name": "MapReduce",
       "icon": "layers",
       "desc": "The map, shuffle and reduce model and why it scales.",
+      "summary": "You will be able to express computations in the map, shuffle and reduce model and explain why it scales across clusters.",
+      "topics": [
+        "Map and reduce functions",
+        "Shuffle and sort phase",
+        "Combiners for local aggregation",
+        "Fault tolerance by re-execution",
+        "Word count and join examples"
+      ],
       "kind": "concept",
       "requires": [
         "distributed-storage"
@@ -198,6 +303,14 @@
       "name": "Apache Spark",
       "icon": "bolt",
       "desc": "DataFrames, lazy evaluation, transformations versus actions, and the shuffle.",
+      "summary": "You will be able to process data with Spark DataFrames, understanding lazy evaluation, transformations, actions and the shuffle.",
+      "topics": [
+        "Spark architecture with driver and executors",
+        "DataFrames and Spark SQL",
+        "Lazy evaluation",
+        "Transformations versus actions",
+        "Narrow and wide dependencies"
+      ],
       "kind": "lesson",
       "requires": [
         "mapreduce",
@@ -211,6 +324,14 @@
       "name": "Spark tuning",
       "icon": "sliders",
       "desc": "Reading query plans, joins strategies, caching, partition sizing and avoiding spills.",
+      "summary": "You will be able to tune Spark jobs by reading query plans, picking join strategies, caching and sizing partitions to avoid spills.",
+      "topics": [
+        "Reading physical query plans",
+        "Broadcast versus sort-merge joins",
+        "Caching and persistence",
+        "Partition sizing and repartitioning",
+        "Handling skew and spills"
+      ],
       "kind": "lesson",
       "requires": [
         "spark",
@@ -224,6 +345,14 @@
       "name": "Spark job",
       "icon": "rocket",
       "desc": "Process a multi-gigabyte dataset with Spark and publish aggregated tables.",
+      "summary": "You will process a multi-gigabyte dataset with Spark and publish aggregated tables for analysis.",
+      "topics": [
+        "Reading large datasets",
+        "Cleaning with DataFrames",
+        "Aggregations and joins",
+        "Writing partitioned Parquet",
+        "Monitoring with the Spark UI"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -238,6 +367,14 @@
       "name": "Event logs & Kafka",
       "icon": "inbox",
       "desc": "Partitioned logs, producers, consumer groups, offsets and retention.",
+      "summary": "You will be able to use Kafka-style partitioned logs with producers, consumer groups, offsets and retention.",
+      "topics": [
+        "Topics and partitions",
+        "Producers and keys",
+        "Consumer groups",
+        "Offsets and commits",
+        "Retention and compaction"
+      ],
       "kind": "lesson",
       "requires": [
         "distributed-storage",
@@ -251,6 +388,14 @@
       "name": "Stream processing",
       "icon": "activity",
       "desc": "Windows, watermarks, late data, state and exactly-once processing.",
+      "summary": "You will be able to process streams with windows, watermarks, state and exactly-once guarantees while handling late data.",
+      "topics": [
+        "Event time versus processing time",
+        "Tumbling, sliding and session windows",
+        "Watermarks and late data",
+        "Stateful operators",
+        "Exactly-once processing"
+      ],
       "kind": "lesson",
       "requires": [
         "event-logs",
@@ -264,6 +409,14 @@
       "name": "Change data capture",
       "icon": "share",
       "desc": "Streaming database changes from transaction logs into downstream systems.",
+      "summary": "You will be able to stream database changes from transaction logs into downstream systems with change data capture.",
+      "topics": [
+        "Log-based change data capture",
+        "Debezium and connectors",
+        "Insert, update and delete events",
+        "Snapshots and initial loads",
+        "Applying changes downstream"
+      ],
       "kind": "concept",
       "requires": [
         "event-logs",
@@ -277,6 +430,14 @@
       "name": "Governance & lineage",
       "icon": "shield",
       "desc": "Catalogues, lineage, access control and handling personal data.",
+      "summary": "You will be able to manage data catalogues, lineage, access control and personal data handling.",
+      "topics": [
+        "Data catalogues",
+        "Lineage tracking",
+        "Access control and masking",
+        "Handling personal data",
+        "Retention and deletion policies"
+      ],
       "kind": "concept",
       "requires": [
         "data-quality"
@@ -289,6 +450,14 @@
       "name": "Streaming pipeline",
       "icon": "trophy",
       "desc": "Build a real-time pipeline from a source database through a log to live aggregates.",
+      "summary": "You will build a real-time pipeline from a source database through a log to continuously updated aggregates.",
+      "topics": [
+        "Capturing changes from a database",
+        "Publishing to Kafka",
+        "Windowed stream aggregations",
+        "Serving live aggregates",
+        "Monitoring lag"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

@@ -38,6 +38,14 @@
       "name": "How backends work",
       "icon": "server",
       "desc": "The request lifecycle, routing, middleware and the MVC pattern.",
+      "summary": "You will be able to trace an HTTP request through a backend framework's routing, middleware and controllers using the MVC pattern.",
+      "topics": [
+        "The request and response lifecycle",
+        "Routing requests to handlers",
+        "Middleware pipelines",
+        "Model, view and controller roles",
+        "Stateless servers and sessions"
+      ],
       "kind": "concept",
       "requires": [
         "web:http-basics"
@@ -50,6 +58,14 @@
       "name": "API design",
       "icon": "share",
       "desc": "Resource modelling, status codes, errors, versioning and OpenAPI specs.",
+      "summary": "You will be able to design backend APIs with clear resources, correct status codes, consistent errors, versioning and an OpenAPI spec.",
+      "topics": [
+        "Modelling resources and endpoints",
+        "Choosing HTTP status codes",
+        "Consistent error payloads",
+        "API versioning strategies",
+        "Documenting with OpenAPI"
+      ],
       "kind": "concept",
       "requires": [
         "how-backends-work"
@@ -62,6 +78,14 @@
       "name": "Data access & ORMs",
       "icon": "database",
       "desc": "Connections, ORMs versus raw SQL, migrations and transactions.",
+      "summary": "You will be able to connect a backend to a relational database, choose between an ORM and raw SQL, and manage migrations and transactions.",
+      "topics": [
+        "Connection pools",
+        "ORMs versus raw SQL",
+        "Schema migrations",
+        "Transactions and isolation",
+        "Preventing SQL injection with parameters"
+      ],
       "kind": "concept",
       "requires": [
         "how-backends-work",
@@ -75,6 +99,14 @@
       "name": "Express on Node",
       "icon": "terminal",
       "desc": "Routes, request and response objects and async handlers in Express.",
+      "summary": "You will be able to build HTTP endpoints in Express with routes, request and response objects and async handlers.",
+      "topics": [
+        "Creating an Express app and server",
+        "Route methods and path parameters",
+        "Request body, query and headers",
+        "Sending JSON responses and status codes",
+        "Async handlers and promise errors"
+      ],
       "kind": "lesson",
       "requires": [
         "how-backends-work",
@@ -88,6 +120,14 @@
       "name": "Middleware & errors",
       "icon": "layers",
       "desc": "Middleware chains, validation, error handling and logging.",
+      "summary": "You will be able to compose Express middleware for validation, logging and centralised error handling.",
+      "topics": [
+        "Middleware signature and next()",
+        "Built-in and third-party middleware",
+        "Request validation with schemas",
+        "Error-handling middleware",
+        "Request logging"
+      ],
       "kind": "lesson",
       "requires": [
         "express-node"
@@ -100,6 +140,14 @@
       "name": "Databases in Node",
       "icon": "database",
       "desc": "Using an ORM or query builder from Node with migrations.",
+      "summary": "You will be able to use a relational database from Node through an ORM or query builder with versioned migrations.",
+      "topics": [
+        "Choosing Prisma, Knex or Sequelize",
+        "Defining models or schemas",
+        "Writing and running migrations",
+        "Querying and relations",
+        "Transactions in Node"
+      ],
       "kind": "lesson",
       "requires": [
         "express-node",
@@ -113,6 +161,14 @@
       "name": "Express API",
       "icon": "rocket",
       "desc": "Build a validated, documented REST API with Express and a database.",
+      "summary": "You will build a validated, documented REST API with Express backed by a database, including errors and tests.",
+      "topics": [
+        "Project structure for an Express API",
+        "CRUD endpoints with a database",
+        "Input validation and error responses",
+        "OpenAPI documentation",
+        "Integration tests with Supertest"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -127,6 +183,14 @@
       "name": "Django basics",
       "icon": "code",
       "desc": "Projects and apps, URLs, views, templates and settings.",
+      "summary": "You will be able to create a Django project with apps, map URLs to views, render templates and configure settings.",
+      "topics": [
+        "Projects versus apps",
+        "URLconf and path routing",
+        "Function and class-based views",
+        "Templates and context",
+        "Settings and environment configuration"
+      ],
       "kind": "lesson",
       "requires": [
         "how-backends-work",
@@ -146,6 +210,14 @@
       "name": "Django ORM",
       "icon": "database",
       "desc": "Models, migrations, querysets and avoiding N+1 queries.",
+      "summary": "You will be able to define Django models, run migrations, build querysets and avoid N+1 queries with related-object loading.",
+      "topics": [
+        "Models and field types",
+        "makemigrations and migrate",
+        "QuerySets, filters and lazy evaluation",
+        "Relationships with ForeignKey and ManyToMany",
+        "select_related and prefetch_related"
+      ],
       "kind": "lesson",
       "requires": [
         "django-basics",
@@ -159,6 +231,14 @@
       "name": "Django REST APIs",
       "icon": "share",
       "desc": "Serializers, viewsets and permissions with Django REST framework.",
+      "summary": "You will be able to build REST APIs in Django REST framework using serializers, viewsets, routers and permissions.",
+      "topics": [
+        "Serializers and validation",
+        "APIView and generic views",
+        "ViewSets and routers",
+        "Permission classes",
+        "Pagination and filtering"
+      ],
       "kind": "lesson",
       "requires": [
         "django-orm",
@@ -172,6 +252,14 @@
       "name": "Auth & admin",
       "icon": "key",
       "desc": "Django's user model, authentication and the admin site.",
+      "summary": "You will be able to use Django's user model and authentication system and manage data through the admin site.",
+      "topics": [
+        "The built-in User model",
+        "Custom user models",
+        "Login, logout and sessions",
+        "Permissions and groups",
+        "Registering models in the admin"
+      ],
       "kind": "lesson",
       "requires": [
         "django-orm"
@@ -184,6 +272,14 @@
       "name": "Spring Boot basics",
       "icon": "building",
       "desc": "Dependency injection, beans, auto-configuration and profiles.",
+      "summary": "You will be able to build a Spring Boot application using dependency injection, beans, auto-configuration and profiles.",
+      "topics": [
+        "Inversion of control and dependency injection",
+        "Beans and component scanning",
+        "Auto-configuration and starters",
+        "application.properties and YAML config",
+        "Profiles for environments"
+      ],
       "kind": "lesson",
       "requires": [
         "how-backends-work",
@@ -203,6 +299,14 @@
       "name": "Spring MVC & REST",
       "icon": "share",
       "desc": "Controllers, request mapping, validation and exception handling.",
+      "summary": "You will be able to write REST controllers in Spring MVC with request mapping, validation and global exception handling.",
+      "topics": [
+        "@RestController and request mappings",
+        "Path variables, params and request bodies",
+        "Bean Validation annotations",
+        "ResponseEntity and status codes",
+        "@ControllerAdvice exception handling"
+      ],
       "kind": "lesson",
       "requires": [
         "spring-boot-basics",
@@ -216,6 +320,14 @@
       "name": "Spring Data JPA",
       "icon": "database",
       "desc": "Entities, repositories, queries and transactions with JPA.",
+      "summary": "You will be able to persist entities with Spring Data JPA, write repository queries and manage transactions.",
+      "topics": [
+        "JPA entities and mappings",
+        "Spring Data repositories",
+        "Derived and @Query queries",
+        "Entity relationships and fetch types",
+        "@Transactional boundaries"
+      ],
       "kind": "lesson",
       "requires": [
         "spring-boot-basics",
@@ -229,6 +341,14 @@
       "name": "Spring service",
       "icon": "rocket",
       "desc": "Build a REST service with Spring Boot, JPA and integration tests.",
+      "summary": "You will build a REST service with Spring Boot and JPA and verify it with integration tests.",
+      "topics": [
+        "Layered controller, service and repository design",
+        "Persistence with Spring Data JPA",
+        "Validation and error handling",
+        "Integration tests with @SpringBootTest",
+        "Testcontainers for a real database"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -243,6 +363,14 @@
       "name": "Authentication",
       "icon": "key",
       "desc": "Password hashing, sessions, JWTs, OAuth and role-based access control.",
+      "summary": "You will be able to secure a backend with hashed passwords, sessions or JWTs, OAuth sign-in and role-based access control.",
+      "topics": [
+        "Password hashing with bcrypt or Argon2",
+        "Session cookies versus JWTs",
+        "OAuth 2.0 and OpenID Connect login",
+        "Role-based access control",
+        "CSRF and secure cookie settings"
+      ],
       "kind": "lesson",
       "requires": [
         "api-design"
@@ -255,6 +383,14 @@
       "name": "Background jobs",
       "icon": "clock",
       "desc": "Queues, workers, scheduled jobs and retries.",
+      "summary": "You will be able to move slow work off the request path with queues, workers, scheduled jobs and safe retries.",
+      "topics": [
+        "Job queues and workers",
+        "Celery, BullMQ and similar tools",
+        "Scheduled and cron jobs",
+        "Retries and idempotent jobs",
+        "Dead-letter queues"
+      ],
       "kind": "lesson",
       "requires": [
         "express-node"
@@ -267,6 +403,14 @@
       "name": "Testing backends",
       "icon": "check-circle",
       "desc": "Unit, integration and contract tests for APIs.",
+      "summary": "You will be able to test backends with unit, integration and contract tests that run reliably in CI.",
+      "topics": [
+        "Unit tests with mocks and fakes",
+        "Integration tests against a database",
+        "HTTP endpoint tests",
+        "Contract tests between services",
+        "Test data and fixtures"
+      ],
       "kind": "lesson",
       "requires": [
         "express-middleware",
@@ -280,6 +424,14 @@
       "name": "Deploying backends",
       "icon": "upload",
       "desc": "Configuration, containers, health checks and zero-downtime releases.",
+      "summary": "You will be able to deploy a backend with environment-based configuration, containers, health checks and zero-downtime releases.",
+      "topics": [
+        "Twelve-factor configuration",
+        "Containerising the backend",
+        "Health and readiness checks",
+        "Rolling and blue-green deployments",
+        "Running migrations safely"
+      ],
       "kind": "lesson",
       "requires": [
         "backend-testing",
@@ -293,6 +445,14 @@
       "name": "Production API",
       "icon": "trophy",
       "desc": "Ship an authenticated API with background work, tests and a live deployment.",
+      "summary": "You will ship an authenticated API with background jobs, automated tests and a live deployment.",
+      "topics": [
+        "Authentication and authorisation",
+        "Background job processing",
+        "Automated test suite in CI",
+        "Containerised deployment",
+        "Logging and monitoring in production"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

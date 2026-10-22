@@ -47,6 +47,14 @@
       "name": "Compiler phases",
       "icon": "list",
       "desc": "The phases of a compiler, what each produces and which errors each catches.",
+      "summary": "You will be able to name the phases of a compiler, state what each one produces and identify which errors each phase catches.",
+      "topics": [
+        "Analysis and synthesis parts",
+        "Lexical, syntax and semantic analysis",
+        "Intermediate code, optimisation and code generation",
+        "Classifying errors by phase",
+        "Compilers versus interpreters"
+      ],
       "kind": "concept",
       "requires": [],
       "pyqTopics": [
@@ -66,6 +74,14 @@
       "name": "Lexical analysis",
       "icon": "search",
       "desc": "Tokens, lexemes and patterns; a lexer as a finite automaton built from regular expressions.",
+      "summary": "You will be able to describe tokens, lexemes and patterns and explain how a lexer is built as a finite automaton from regular expressions.",
+      "topics": [
+        "Tokens, lexemes and patterns",
+        "Regular expressions for token classes",
+        "From regular expressions to NFA and DFA",
+        "Lexer generators like lex",
+        "Input buffering"
+      ],
       "kind": "concept",
       "requires": [
         "compiler-phases",
@@ -83,6 +99,14 @@
       "name": "Counting tokens",
       "icon": "hash",
       "desc": "Longest match, lookahead, counting tokens in a program and lexical errors.",
+      "summary": "You will be able to count the tokens in a program using longest-match and lookahead rules and recognise lexical errors.",
+      "topics": [
+        "Longest match rule",
+        "Lookahead in tokenisation",
+        "Counting tokens in C snippets",
+        "Comments and whitespace handling",
+        "Detecting lexical errors"
+      ],
       "kind": "concept",
       "requires": [
         "lexical-analysis"
@@ -105,6 +129,14 @@
       "name": "Symbol table",
       "icon": "database",
       "desc": "What the symbol table stores, how it is organised and which phases use it.",
+      "summary": "You will be able to explain what a symbol table stores, how it is organised and which compiler phases read or update it.",
+      "topics": [
+        "Information stored per identifier",
+        "Hash table organisation",
+        "Scoped and nested symbol tables",
+        "Phases that use the symbol table",
+        "Lookup and insert operations"
+      ],
       "kind": "concept",
       "requires": [
         "compiler-phases"
@@ -124,6 +156,14 @@
       "name": "Parsing",
       "icon": "tree",
       "desc": "The parser's job, parse trees and derivations, and top-down versus bottom-up parsing.",
+      "summary": "You will be able to build parse trees and derivations for a grammar and contrast top-down with bottom-up parsing.",
+      "topics": [
+        "Role of the parser",
+        "Context-free grammars",
+        "Leftmost and rightmost derivations",
+        "Parse trees",
+        "Top-down versus bottom-up parsing"
+      ],
       "kind": "concept",
       "requires": [
         "lexical-analysis",
@@ -140,6 +180,14 @@
       "name": "Grammar rewriting",
       "icon": "edit",
       "desc": "Ambiguity and the dangling else, eliminating left recursion and left factoring.",
+      "summary": "You will be able to detect ambiguous grammars, resolve the dangling else and rewrite grammars by removing left recursion and left factoring.",
+      "topics": [
+        "Ambiguous grammars",
+        "The dangling else problem",
+        "Eliminating immediate left recursion",
+        "Eliminating indirect left recursion",
+        "Left factoring"
+      ],
       "kind": "concept",
       "requires": [
         "parsing"
@@ -162,6 +210,14 @@
       "name": "FIRST & FOLLOW",
       "icon": "list",
       "desc": "Computing FIRST and FOLLOW sets.",
+      "summary": "You will be able to compute FIRST and FOLLOW sets for every non-terminal of a context-free grammar.",
+      "topics": [
+        "Computing FIRST sets",
+        "Handling epsilon productions",
+        "Computing FOLLOW sets",
+        "End marker in FOLLOW of start symbol",
+        "FIRST of a string of symbols"
+      ],
       "kind": "concept",
       "requires": [
         "grammar-transformations"
@@ -183,6 +239,14 @@
       "name": "LL(1) parsing",
       "icon": "terminal",
       "desc": "Recursive descent, LL(1) tables and testing whether a grammar is LL(1).",
+      "summary": "You will be able to write recursive descent parsers, build LL(1) parsing tables and test whether a grammar is LL(1).",
+      "topics": [
+        "Recursive descent parsing",
+        "Predictive parsing",
+        "Constructing the LL(1) table",
+        "LL(1) conditions and conflicts",
+        "Tracing the LL(1) parse stack"
+      ],
       "kind": "concept",
       "requires": [
         "first-follow"
@@ -204,6 +268,14 @@
       "name": "LR parsing",
       "icon": "layers",
       "desc": "Shift-reduce parsing with handles, and shift-reduce and reduce-reduce conflicts.",
+      "summary": "You will be able to run shift-reduce parsing using handles and identify shift-reduce and reduce-reduce conflicts.",
+      "topics": [
+        "Shift-reduce parsing actions",
+        "Handles and handle pruning",
+        "Rightmost derivation in reverse",
+        "Shift-reduce conflicts",
+        "Reduce-reduce conflicts"
+      ],
       "kind": "concept",
       "requires": [
         "first-follow",
@@ -226,6 +298,15 @@
       "name": "LR(0) & SLR",
       "icon": "grid",
       "desc": "LR(0) items, the canonical collection and SLR(1) tables.",
+      "summary": "You will be able to construct LR(0) items and the canonical collection and build LR(0) and SLR(1) parsing tables.",
+      "topics": [
+        "Augmented grammar",
+        "LR(0) items and closure",
+        "GOTO and the canonical collection",
+        "LR(0) parsing table",
+        "SLR(1) table using FOLLOW sets",
+        "Counting states and conflicts"
+      ],
       "kind": "concept",
       "requires": [
         "lr-parsing"
@@ -246,6 +327,14 @@
       "name": "CLR & LALR",
       "icon": "grid",
       "desc": "LR(1) items, canonical LR and LALR tables, and how the parser classes compare.",
+      "summary": "You will be able to build canonical LR(1) and LALR(1) tables and compare the power of LR(0), SLR, LALR and CLR parsers.",
+      "topics": [
+        "LR(1) items with lookaheads",
+        "Canonical LR(1) table",
+        "Merging states into LALR(1)",
+        "Conflicts introduced by merging",
+        "Relative power of LR parser classes"
+      ],
       "kind": "concept",
       "requires": [
         "slr"
@@ -267,6 +356,14 @@
       "name": "Precedence parsing",
       "icon": "sort",
       "desc": "Operator precedence and associativity in grammars, operator-precedence parsing and yacc.",
+      "summary": "You will be able to encode operator precedence and associativity in grammars and parse with operator-precedence parsers and yacc.",
+      "topics": [
+        "Precedence and associativity in grammars",
+        "Operator grammars",
+        "Precedence relations table",
+        "Operator-precedence parsing",
+        "Resolving conflicts in yacc"
+      ],
       "kind": "concept",
       "requires": [
         "lr-parsing"
@@ -287,6 +384,14 @@
       "name": "Syntax-directed",
       "icon": "wand",
       "desc": "Syntax-directed definitions and translation schemes, and evaluating them on a parse tree.",
+      "summary": "You will be able to write syntax-directed definitions and translation schemes and evaluate them on a parse tree.",
+      "topics": [
+        "Syntax-directed definitions",
+        "Semantic rules on productions",
+        "Annotated parse trees",
+        "Dependency graphs and evaluation order",
+        "Syntax-directed translation schemes"
+      ],
       "kind": "concept",
       "requires": [
         "parsing"
@@ -302,6 +407,14 @@
       "name": "Attribute grammars",
       "icon": "tag",
       "desc": "Synthesised and inherited attributes, S-attributed and L-attributed definitions.",
+      "summary": "You will be able to distinguish synthesised and inherited attributes and classify definitions as S-attributed or L-attributed.",
+      "topics": [
+        "Synthesised attributes",
+        "Inherited attributes",
+        "S-attributed definitions",
+        "L-attributed definitions",
+        "Bottom-up evaluation of attributes"
+      ],
       "kind": "concept",
       "requires": [
         "sdt"
@@ -324,6 +437,14 @@
       "name": "Translation schemes",
       "icon": "code",
       "desc": "Embedding actions in grammars, infix to postfix translation and evaluation order.",
+      "summary": "You will be able to embed semantic actions in grammars, translate infix to postfix and work out the order actions run in.",
+      "topics": [
+        "Embedding actions in productions",
+        "Position of actions and output order",
+        "Infix to postfix translation",
+        "Tracing printed output during parsing",
+        "Actions in bottom-up parsers"
+      ],
       "kind": "concept",
       "requires": [
         "attributes"
@@ -344,6 +465,14 @@
       "name": "Semantic checks",
       "icon": "check-circle",
       "desc": "Type checking and the semantic errors a compiler detects.",
+      "summary": "You will be able to describe how a compiler performs type checking and which semantic errors it detects.",
+      "topics": [
+        "Type expressions and type systems",
+        "Static versus dynamic type checking",
+        "Type coercion",
+        "Common semantic errors",
+        "Undeclared and redeclared identifiers"
+      ],
       "kind": "concept",
       "requires": [
         "sdt",
@@ -364,6 +493,14 @@
       "name": "Intermediate code",
       "icon": "list",
       "desc": "Syntax trees, DAGs and three-address code as intermediate representations.",
+      "summary": "You will be able to represent programs as syntax trees, DAGs and three-address code and compare these intermediate representations.",
+      "topics": [
+        "Why intermediate representations",
+        "Abstract syntax trees",
+        "DAGs for expressions",
+        "Three-address code",
+        "Postfix notation as IR"
+      ],
       "kind": "concept",
       "requires": [
         "sdt"
@@ -379,6 +516,15 @@
       "name": "Three-address code",
       "icon": "code",
       "desc": "Quadruples and triples, SSA form, and translating expressions and array references.",
+      "summary": "You will be able to translate expressions and array references into three-address code and store it as quadruples, triples or SSA.",
+      "topics": [
+        "Quadruple representation",
+        "Triples and indirect triples",
+        "Static single assignment form",
+        "Translating expressions to three-address code",
+        "Array reference address computation",
+        "Counting temporaries"
+      ],
       "kind": "concept",
       "requires": [
         "intermediate-code"
@@ -401,6 +547,14 @@
       "name": "Code generation",
       "icon": "cpu",
       "desc": "Instruction selection, register allocation and the minimum registers an expression needs.",
+      "summary": "You will be able to describe instruction selection and register allocation and compute the minimum registers an expression needs.",
+      "topics": [
+        "Instruction selection",
+        "Register allocation by graph colouring",
+        "Minimum registers for an expression tree",
+        "Spilling registers to memory",
+        "Generating code from three-address code"
+      ],
       "kind": "concept",
       "requires": [
         "three-address-code",
@@ -424,6 +578,14 @@
       "name": "Runtime environments",
       "icon": "server",
       "desc": "Static, stack and heap allocation, and how storage is organised at run time.",
+      "summary": "You will be able to explain static, stack and heap allocation and how storage is organised at run time.",
+      "topics": [
+        "Static allocation",
+        "Stack allocation for procedures",
+        "Heap allocation",
+        "Run-time memory layout",
+        "Recursion and storage needs"
+      ],
       "kind": "concept",
       "requires": [
         "intermediate-code",
@@ -440,6 +602,14 @@
       "name": "Activation records",
       "icon": "layers",
       "desc": "Activation records and trees, access links and displays for nested procedures.",
+      "summary": "You will be able to describe activation records and trees and explain how access links and displays reach non-local variables.",
+      "topics": [
+        "Contents of an activation record",
+        "Activation trees",
+        "Control stack",
+        "Access links for nested procedures",
+        "Displays for non-local access"
+      ],
       "kind": "concept",
       "requires": [
         "runtime-environments"
@@ -462,6 +632,14 @@
       "name": "Scoping & parameters",
       "icon": "link",
       "desc": "Static versus dynamic scoping, and call by value, reference, value-result and name.",
+      "summary": "You will be able to trace programs under static and dynamic scoping and under call by value, reference, value-result and name.",
+      "topics": [
+        "Static versus dynamic scoping",
+        "Call by value",
+        "Call by reference",
+        "Call by value-result",
+        "Call by name"
+      ],
       "kind": "concept",
       "requires": [
         "activation-records"
@@ -482,6 +660,14 @@
       "name": "Code optimisation",
       "icon": "rocket",
       "desc": "Machine-independent optimisation on basic blocks and control-flow graphs.",
+      "summary": "You will be able to apply machine-independent optimisations on basic blocks and control-flow graphs without changing program meaning.",
+      "topics": [
+        "Goals of code optimisation",
+        "Basic blocks and leaders",
+        "Control-flow graphs",
+        "Local versus global optimisation",
+        "Peephole optimisation"
+      ],
       "kind": "concept",
       "requires": [
         "three-address-code"
@@ -497,6 +683,15 @@
       "name": "Local optimisations",
       "icon": "wand",
       "desc": "Common subexpressions with DAGs, constant folding, strength reduction, dead code and loop-invariant motion.",
+      "summary": "You will be able to apply common subexpression elimination with DAGs, constant folding, strength reduction, dead code removal and loop-invariant motion.",
+      "topics": [
+        "Common subexpression elimination",
+        "DAG construction for a basic block",
+        "Constant folding and propagation",
+        "Strength reduction",
+        "Dead code elimination",
+        "Loop-invariant code motion"
+      ],
       "kind": "concept",
       "requires": [
         "code-optimization"
@@ -521,6 +716,14 @@
       "name": "Data-flow analysis",
       "icon": "activity",
       "desc": "Basic blocks, control-flow graphs, liveness and other data-flow analyses.",
+      "summary": "You will be able to perform liveness and other data-flow analyses over control-flow graphs.",
+      "topics": [
+        "Partitioning code into basic blocks",
+        "Control-flow graph construction",
+        "Live variable analysis",
+        "Reaching definitions",
+        "Available expressions"
+      ],
       "kind": "concept",
       "requires": [
         "code-optimization"

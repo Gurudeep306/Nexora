@@ -39,6 +39,14 @@
       "name": "Complex linear algebra",
       "icon": "grid",
       "desc": "Complex vectors, inner products and unitary and Hermitian matrices.",
+      "summary": "You will be able to compute with complex vectors and matrices and recognise unitary and Hermitian matrices used in quantum mechanics.",
+      "topics": [
+        "Complex numbers and conjugates",
+        "Complex inner products and norms",
+        "Conjugate transpose",
+        "Unitary matrices",
+        "Hermitian matrices and real eigenvalues"
+      ],
       "kind": "concept",
       "requires": [
         "la:vector-spaces"
@@ -51,6 +59,14 @@
       "name": "Dirac notation",
       "icon": "type",
       "desc": "Kets, bras, inner and outer products.",
+      "summary": "You will be able to read and write quantum states and operators in Dirac notation using kets, bras and their products.",
+      "topics": [
+        "Kets and column vectors",
+        "Bras as conjugate transposes",
+        "Inner products as brackets",
+        "Outer products and projectors",
+        "Computational basis states"
+      ],
       "kind": "concept",
       "requires": [
         "complex-linear-algebra"
@@ -63,6 +79,14 @@
       "name": "Tensor products",
       "icon": "layers",
       "desc": "Combining systems with tensor products of vectors and matrices.",
+      "summary": "You will be able to describe multi-qubit systems with tensor products of vectors and matrices.",
+      "topics": [
+        "Tensor product of vectors",
+        "Kronecker product of matrices",
+        "Composite system state spaces",
+        "Product vs non-product states",
+        "Exponential growth of state dimension"
+      ],
       "kind": "concept",
       "requires": [
         "complex-linear-algebra"
@@ -75,6 +99,14 @@
       "name": "Measurement",
       "icon": "eye",
       "desc": "Amplitudes, the Born rule and measurement in different bases.",
+      "summary": "You will be able to compute measurement outcome probabilities with the Born rule and measure states in different bases.",
+      "topics": [
+        "Amplitudes and probabilities",
+        "The Born rule",
+        "State collapse after measurement",
+        "Measuring in other bases",
+        "Partial measurement of multi-qubit states"
+      ],
       "kind": "concept",
       "requires": [
         "dirac-notation",
@@ -88,6 +120,14 @@
       "name": "Qubits & Bloch sphere",
       "icon": "globe",
       "desc": "Single-qubit states, superposition and the Bloch sphere picture.",
+      "summary": "You will be able to represent single-qubit states as superpositions and visualise them as points on the Bloch sphere.",
+      "topics": [
+        "Qubit state vectors",
+        "Superposition of basis states",
+        "Global vs relative phase",
+        "Bloch sphere coordinates",
+        "Qubits vs classical bits"
+      ],
       "kind": "concept",
       "requires": [
         "dirac-notation",
@@ -101,6 +141,14 @@
       "name": "Single-qubit gates",
       "icon": "cpu",
       "desc": "Pauli, Hadamard and phase gates as rotations.",
+      "summary": "You will be able to apply Pauli, Hadamard and phase gates to qubits and interpret them as rotations of the Bloch sphere.",
+      "topics": [
+        "Pauli X, Y and Z gates",
+        "Hadamard gate",
+        "S and T phase gates",
+        "Rotation gates Rx, Ry and Rz",
+        "Gates as Bloch sphere rotations"
+      ],
       "kind": "lesson",
       "requires": [
         "qubits"
@@ -113,6 +161,14 @@
       "name": "Multi-qubit gates",
       "icon": "link",
       "desc": "CNOT, controlled gates and multi-qubit states.",
+      "summary": "You will be able to apply CNOT and other controlled gates to multi-qubit states and compute the resulting states.",
+      "topics": [
+        "CNOT gate",
+        "Controlled-U gates",
+        "SWAP and Toffoli gates",
+        "Matrix representation of multi-qubit gates",
+        "Creating entanglement with CNOT"
+      ],
       "kind": "lesson",
       "requires": [
         "single-qubit-gates",
@@ -126,6 +182,14 @@
       "name": "Entanglement",
       "icon": "share",
       "desc": "Bell states, teleportation and superdense coding.",
+      "summary": "You will be able to prepare Bell states and explain how entanglement enables quantum teleportation and superdense coding.",
+      "topics": [
+        "Entangled vs separable states",
+        "Bell states",
+        "Quantum teleportation protocol",
+        "Superdense coding",
+        "No-cloning theorem"
+      ],
       "kind": "concept",
       "requires": [
         "multi-qubit-gates"
@@ -138,6 +202,14 @@
       "name": "Quantum circuits",
       "icon": "git-branch",
       "desc": "Circuit model, reversibility and universal gate sets.",
+      "summary": "You will be able to build and read quantum circuits and explain reversibility and universal gate sets.",
+      "topics": [
+        "Circuit diagrams and wires",
+        "Reversible computation",
+        "Universal gate sets",
+        "Circuit depth and width",
+        "Uncomputation and ancilla qubits"
+      ],
       "kind": "lesson",
       "requires": [
         "multi-qubit-gates"
@@ -150,6 +222,14 @@
       "name": "Deutsch-Jozsa",
       "icon": "puzzle",
       "desc": "Oracles, phase kickback and the first quantum speed-ups.",
+      "summary": "You will be able to explain how oracles and phase kickback give the Deutsch-Jozsa algorithm an exponential query advantage.",
+      "topics": [
+        "Quantum oracles",
+        "Phase kickback",
+        "Deutsch's algorithm",
+        "Deutsch-Jozsa algorithm",
+        "Bernstein-Vazirani algorithm"
+      ],
       "kind": "lesson",
       "requires": [
         "quantum-circuits"
@@ -162,6 +242,14 @@
       "name": "Quantum Fourier",
       "icon": "function",
       "desc": "The quantum Fourier transform and its circuit.",
+      "summary": "You will be able to define the quantum Fourier transform and build its circuit from Hadamard and controlled phase gates.",
+      "topics": [
+        "Discrete Fourier transform recap",
+        "QFT on basis states",
+        "Product representation of the QFT",
+        "QFT circuit construction",
+        "Gate count compared with the FFT"
+      ],
       "kind": "lesson",
       "requires": [
         "quantum-circuits"
@@ -174,6 +262,14 @@
       "name": "Phase estimation",
       "icon": "target",
       "desc": "Estimating eigenphases of unitaries.",
+      "summary": "You will be able to estimate the eigenphase of a unitary with quantum phase estimation and analyse its precision.",
+      "topics": [
+        "Eigenvalues of unitaries as phases",
+        "Controlled-U powers",
+        "Inverse QFT readout",
+        "Precision and number of qubits",
+        "Applications of phase estimation"
+      ],
       "kind": "lesson",
       "requires": [
         "quantum-fourier"
@@ -186,6 +282,14 @@
       "name": "Shor's algorithm",
       "icon": "key",
       "desc": "Factoring via period finding and its impact on RSA.",
+      "summary": "You will be able to explain how Shor's algorithm reduces factoring to period finding and why it threatens RSA.",
+      "topics": [
+        "Reduction from factoring to order finding",
+        "Modular exponentiation circuit",
+        "Period finding with the QFT",
+        "Continued fractions post-processing",
+        "Impact on RSA and resource estimates"
+      ],
       "kind": "lesson",
       "requires": [
         "phase-estimation",
@@ -199,6 +303,14 @@
       "name": "Grover's search",
       "icon": "search",
       "desc": "Amplitude amplification and the quadratic speed-up for search.",
+      "summary": "You will be able to run Grover's search with amplitude amplification and compute the optimal number of iterations.",
+      "topics": [
+        "Unstructured search problem",
+        "Oracle and diffusion operator",
+        "Geometric picture of amplitude amplification",
+        "Optimal number of iterations",
+        "Quadratic speed-up and its optimality"
+      ],
       "kind": "lesson",
       "requires": [
         "quantum-circuits"
@@ -211,6 +323,14 @@
       "name": "Noise & decoherence",
       "icon": "warning",
       "desc": "Density matrices, quantum channels and decoherence.",
+      "summary": "You will be able to describe noisy quantum states with density matrices and model decoherence with quantum channels.",
+      "topics": [
+        "Density matrices and mixed states",
+        "Partial trace",
+        "Quantum channels and Kraus operators",
+        "Bit-flip, phase-flip and depolarising noise",
+        "T1 and T2 decoherence times"
+      ],
       "kind": "concept",
       "requires": [
         "entanglement"
@@ -223,6 +343,15 @@
       "name": "Error correction",
       "icon": "shield",
       "desc": "Bit-flip and phase-flip codes, the Shor code and stabilisers.",
+      "summary": "You will understand how quantum error-correcting codes detect and fix errors without measuring the encoded information.",
+      "topics": [
+        "Three-qubit bit-flip code",
+        "Phase-flip code",
+        "Shor nine-qubit code",
+        "Syndrome measurement",
+        "Stabiliser formalism",
+        "Surface codes overview"
+      ],
       "kind": "concept",
       "requires": [
         "noise-decoherence",
@@ -236,6 +365,14 @@
       "name": "Quantum hardware",
       "icon": "server",
       "desc": "Superconducting, trapped-ion and photonic qubits and their trade-offs.",
+      "summary": "You will be able to compare superconducting, trapped-ion and photonic qubit technologies by fidelity, connectivity and scalability.",
+      "topics": [
+        "Superconducting transmon qubits",
+        "Trapped-ion qubits",
+        "Photonic qubits",
+        "Gate fidelity and coherence",
+        "Connectivity and the NISQ era"
+      ],
       "kind": "concept",
       "requires": [
         "noise-decoherence"
@@ -248,6 +385,14 @@
       "name": "Variational algorithms",
       "icon": "sliders",
       "desc": "VQE and QAOA as hybrid quantum-classical methods.",
+      "summary": "You will understand how VQE and QAOA combine parameterised quantum circuits with classical optimisers.",
+      "topics": [
+        "Parameterised quantum circuits",
+        "Variational quantum eigensolver",
+        "QAOA for combinatorial optimisation",
+        "Classical optimisation loop",
+        "Barren plateaus"
+      ],
       "kind": "lesson",
       "requires": [
         "quantum-circuits",
@@ -261,6 +406,14 @@
       "name": "Quantum cryptography",
       "icon": "lock",
       "desc": "BB84 key distribution and post-quantum cryptography.",
+      "summary": "You will be able to explain how BB84 detects eavesdroppers and why post-quantum cryptography is needed against quantum attacks.",
+      "topics": [
+        "BB84 protocol",
+        "Detecting eavesdropping",
+        "Quantum key distribution in practice",
+        "Post-quantum cryptography",
+        "Lattice-based schemes"
+      ],
       "kind": "concept",
       "requires": [
         "entanglement",
@@ -274,6 +427,14 @@
       "name": "Quantum programming",
       "icon": "code",
       "desc": "Writing and simulating circuits with a quantum SDK and running on hardware.",
+      "summary": "You will be able to write, simulate and run quantum circuits with a quantum SDK on simulators and real hardware.",
+      "topics": [
+        "Building circuits with an SDK like Qiskit",
+        "Statevector and shot-based simulation",
+        "Transpilation to hardware gates",
+        "Running jobs on real devices",
+        "Reading measurement histograms"
+      ],
       "kind": "lesson",
       "requires": [
         "quantum-circuits",
@@ -287,6 +448,14 @@
       "name": "Algorithm simulator",
       "icon": "trophy",
       "desc": "Implement Grover and a small Shor instance and compare simulator and device results.",
+      "summary": "You will implement Grover's search and a small Shor instance and compare results from simulators and real quantum devices.",
+      "topics": [
+        "Implementing Grover's search",
+        "Implementing a small Shor instance",
+        "Simulator vs hardware results",
+        "Effects of noise on outcomes",
+        "Error mitigation basics"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

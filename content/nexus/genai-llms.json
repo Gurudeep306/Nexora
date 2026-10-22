@@ -39,6 +39,14 @@
       "name": "How LLMs work",
       "icon": "brain",
       "desc": "Next-token prediction with decoder-only transformers, and what models can and cannot do.",
+      "summary": "You will be able to explain how decoder-only transformers generate text by next-token prediction and what LLMs can and cannot do.",
+      "topics": [
+        "Next-token prediction",
+        "Decoder-only transformer architecture",
+        "Autoregressive generation",
+        "Hallucination and knowledge cutoffs",
+        "Capabilities and limitations"
+      ],
       "kind": "concept",
       "requires": [
         "deep:transformers"
@@ -51,6 +59,14 @@
       "name": "Tokens & context",
       "icon": "hash",
       "desc": "Tokenisers, context windows and how token counts drive cost and limits.",
+      "summary": "You will be able to explain how tokenisers split text, how context windows limit inputs and how token counts drive cost.",
+      "topics": [
+        "Subword tokenisation with BPE",
+        "Counting tokens",
+        "Context window limits",
+        "Input and output token pricing",
+        "Managing long conversations"
+      ],
       "kind": "concept",
       "requires": [
         "llm-basics"
@@ -63,6 +79,15 @@
       "name": "Sampling & decoding",
       "icon": "random",
       "desc": "Greedy decoding, temperature, top-k and top-p sampling.",
+      "summary": "You will be able to control generation with greedy decoding, temperature, top-k and top-p sampling.",
+      "topics": [
+        "Logits and probability distributions",
+        "Greedy decoding",
+        "Temperature scaling",
+        "Top-k sampling",
+        "Top-p nucleus sampling",
+        "Stop sequences and max tokens"
+      ],
       "kind": "concept",
       "requires": [
         "llm-basics",
@@ -76,6 +101,14 @@
       "name": "Pretraining at scale",
       "icon": "server",
       "desc": "Training data, scaling laws and the compute behind foundation models.",
+      "summary": "You will be able to describe how foundation models are pretrained, including training data, scaling laws and compute requirements.",
+      "topics": [
+        "Pretraining corpora and data cleaning",
+        "Self-supervised objective",
+        "Scaling laws",
+        "Compute and FLOPs",
+        "Base models versus chat models"
+      ],
       "kind": "concept",
       "requires": [
         "llm-basics"
@@ -88,6 +121,14 @@
       "name": "Prompt engineering",
       "icon": "edit",
       "desc": "Clear instructions, examples, roles and step-by-step reasoning prompts.",
+      "summary": "You will be able to write effective prompts using clear instructions, examples, roles and step-by-step reasoning.",
+      "topics": [
+        "Clear and specific instructions",
+        "System prompts and roles",
+        "Few-shot examples",
+        "Step-by-step reasoning prompts",
+        "Iterating on prompts"
+      ],
       "kind": "lesson",
       "requires": [
         "llm-basics"
@@ -100,6 +141,14 @@
       "name": "LLM APIs",
       "icon": "code",
       "desc": "Calling models over an API: messages, parameters, streaming and error handling.",
+      "summary": "You will be able to call LLMs over an API with messages and parameters, stream responses and handle errors and rate limits.",
+      "topics": [
+        "Messages and roles",
+        "Model parameters",
+        "Streaming responses",
+        "Rate limits and retries",
+        "Managing API keys"
+      ],
       "kind": "lesson",
       "requires": [
         "prompting",
@@ -113,6 +162,14 @@
       "name": "Structured output",
       "icon": "list",
       "desc": "Getting reliable JSON and schema-conforming output from a model.",
+      "summary": "You will be able to get reliable JSON and schema-conforming output from a model and validate it.",
+      "topics": [
+        "Prompting for JSON",
+        "JSON schemas",
+        "Structured output modes",
+        "Validating and parsing output",
+        "Retrying on invalid output"
+      ],
       "kind": "lesson",
       "requires": [
         "llm-apis"
@@ -125,6 +182,14 @@
       "name": "Chat assistant",
       "icon": "chat",
       "desc": "Build a chat assistant with conversation memory and a structured action output.",
+      "summary": "You will build a chat assistant that keeps conversation memory and produces structured action outputs.",
+      "topics": [
+        "Conversation history management",
+        "System prompt design",
+        "Structured action output",
+        "Streaming chat UI",
+        "Handling errors"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -139,6 +204,14 @@
       "name": "Text embeddings",
       "icon": "grid",
       "desc": "Embedding models for similarity, clustering and retrieval.",
+      "summary": "You will be able to use embedding models to measure semantic similarity and to cluster and retrieve text.",
+      "topics": [
+        "What embeddings represent",
+        "Cosine similarity",
+        "Embedding models",
+        "Clustering with embeddings",
+        "Semantic search"
+      ],
       "kind": "lesson",
       "requires": [
         "llm-basics"
@@ -151,6 +224,14 @@
       "name": "Vector databases",
       "icon": "database",
       "desc": "Storing embeddings and querying them with approximate nearest-neighbour indexes.",
+      "summary": "You will be able to store embeddings in a vector database and query them with approximate nearest-neighbour indexes.",
+      "topics": [
+        "Storing vectors with metadata",
+        "Exact versus approximate search",
+        "HNSW indexes",
+        "Metadata filtering",
+        "Choosing a vector store"
+      ],
       "kind": "lesson",
       "requires": [
         "text-embeddings",
@@ -164,6 +245,14 @@
       "name": "RAG",
       "icon": "search",
       "desc": "Retrieval-augmented generation: chunking, retrieval, re-ranking and grounded answers.",
+      "summary": "You will be able to build retrieval-augmented generation pipelines with chunking, retrieval, re-ranking and grounded answers.",
+      "topics": [
+        "Document chunking strategies",
+        "Retrieval with embeddings",
+        "Hybrid keyword and vector search",
+        "Re-ranking results",
+        "Grounded answers with citations"
+      ],
       "kind": "lesson",
       "requires": [
         "vector-databases",
@@ -177,6 +266,14 @@
       "name": "Tools & agents",
       "icon": "bot",
       "desc": "Tool calling, agent loops, planning and giving models access to external systems.",
+      "summary": "You will be able to give models access to external systems with tool calling and build agent loops that plan and act.",
+      "topics": [
+        "Tool definitions and schemas",
+        "Tool calling flow",
+        "Agent loops",
+        "Planning and multi-step tasks",
+        "Limiting agent permissions"
+      ],
       "kind": "lesson",
       "requires": [
         "structured-output"
@@ -189,6 +286,14 @@
       "name": "RAG app",
       "icon": "rocket",
       "desc": "Build a question-answering app over your own documents with citations.",
+      "summary": "You will build a question-answering app over your own documents that cites its sources.",
+      "topics": [
+        "Ingesting and chunking documents",
+        "Building the vector index",
+        "Retrieval and prompting",
+        "Showing citations",
+        "Evaluating answer quality"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -202,6 +307,14 @@
       "name": "Fine-tuning",
       "icon": "wrench",
       "desc": "Supervised fine-tuning on instruction data and when it beats prompting.",
+      "summary": "You will be able to fine-tune an LLM on instruction data and decide when fine-tuning beats prompting.",
+      "topics": [
+        "Supervised fine-tuning",
+        "Instruction datasets",
+        "Training and validation splits",
+        "Overfitting and forgetting",
+        "Fine-tuning versus prompting"
+      ],
       "kind": "lesson",
       "requires": [
         "pretraining"
@@ -214,6 +327,14 @@
       "name": "LoRA & PEFT",
       "icon": "sliders",
       "desc": "Parameter-efficient fine-tuning with adapters, LoRA and quantised training.",
+      "summary": "You will be able to fine-tune large models efficiently with adapters, LoRA and quantised training such as QLoRA.",
+      "topics": [
+        "Parameter-efficient fine-tuning",
+        "Adapter layers",
+        "LoRA low-rank updates",
+        "QLoRA and quantised training",
+        "Merging adapter weights"
+      ],
       "kind": "lesson",
       "requires": [
         "fine-tuning-llm"
@@ -226,6 +347,14 @@
       "name": "Alignment",
       "icon": "heart",
       "desc": "Preference tuning with RLHF and DPO and the goals of alignment.",
+      "summary": "You will be able to explain the goals of alignment and how preference tuning with RLHF and DPO shapes model behaviour.",
+      "topics": [
+        "Goals of alignment",
+        "Preference data collection",
+        "Reward models",
+        "RLHF with PPO",
+        "Direct preference optimisation"
+      ],
       "kind": "concept",
       "requires": [
         "fine-tuning-llm",
@@ -239,6 +368,14 @@
       "name": "Multimodal models",
       "icon": "image",
       "desc": "Models that read and generate images, audio and text together.",
+      "summary": "You will be able to describe how multimodal models read and generate images, audio and text together.",
+      "topics": [
+        "Vision-language models",
+        "Image encoders and projection",
+        "Speech recognition and synthesis",
+        "Image generation from text",
+        "Multimodal prompting"
+      ],
       "kind": "concept",
       "requires": [
         "llm-basics",
@@ -252,6 +389,14 @@
       "name": "Evaluating LLMs",
       "icon": "check-circle",
       "desc": "Benchmarks, task-specific evals, LLM-as-judge and regression testing prompts.",
+      "summary": "You will be able to evaluate LLM systems with benchmarks, task-specific evals, LLM-as-judge and prompt regression tests.",
+      "topics": [
+        "Public benchmarks",
+        "Task-specific eval sets",
+        "LLM-as-judge grading",
+        "Human evaluation",
+        "Regression testing prompts"
+      ],
       "kind": "lesson",
       "requires": [
         "rag",
@@ -265,6 +410,14 @@
       "name": "Inference & serving",
       "icon": "server",
       "desc": "Quantisation, KV caching, batching, latency and cost control.",
+      "summary": "You will be able to serve LLMs efficiently using quantisation, KV caching and batching while controlling latency and cost.",
+      "topics": [
+        "Model quantisation",
+        "KV caching",
+        "Continuous batching",
+        "Latency and throughput metrics",
+        "Cost control strategies"
+      ],
       "kind": "lesson",
       "requires": [
         "sampling-decoding",
@@ -278,6 +431,14 @@
       "name": "Safety & security",
       "icon": "shield",
       "desc": "Prompt injection, jailbreaks, data leakage and guardrails.",
+      "summary": "You will be able to defend LLM applications against prompt injection, jailbreaks and data leakage with guardrails.",
+      "topics": [
+        "Direct and indirect prompt injection",
+        "Jailbreak attempts",
+        "Sensitive data leakage",
+        "Input and output guardrails",
+        "Least privilege for tools"
+      ],
       "kind": "concept",
       "requires": [
         "tools-agents"
@@ -290,6 +451,14 @@
       "name": "Agent capstone",
       "icon": "trophy",
       "desc": "Ship a tool-using agent with evaluations and safety checks.",
+      "summary": "You will ship a tool-using agent with an evaluation suite and safety checks.",
+      "topics": [
+        "Designing agent tools",
+        "Implementing the agent loop",
+        "Building an evaluation suite",
+        "Safety and permission checks",
+        "Monitoring in production"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

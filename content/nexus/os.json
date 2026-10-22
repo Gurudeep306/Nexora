@@ -51,6 +51,14 @@
       "name": "Kernel & system calls",
       "icon": "shield",
       "desc": "User and kernel mode, system calls, traps and interrupts as the way into the OS.",
+      "summary": "You will understand how user programs enter the kernel through system calls, traps and interrupts and why dual-mode operation exists.",
+      "topics": [
+        "User mode vs kernel mode",
+        "System calls and the syscall interface",
+        "Traps and exceptions",
+        "Hardware interrupts",
+        "Monolithic vs microkernel structure"
+      ],
       "kind": "concept",
       "requires": [
         "coa:io-interrupts"
@@ -80,6 +88,14 @@
       "name": "Processes",
       "icon": "cpu",
       "desc": "The process abstraction, the PCB, multiprogramming and the parts of a process in memory.",
+      "summary": "You will be able to describe a process, its memory layout and its process control block, and explain how multiprogramming works.",
+      "topics": [
+        "Program vs process",
+        "Process memory layout: text, data, heap, stack",
+        "Process control block contents",
+        "Multiprogramming and degree of multiprogramming",
+        "CPU-bound vs I/O-bound processes"
+      ],
       "kind": "concept",
       "requires": [
         "os-structure"
@@ -95,6 +111,14 @@
       "name": "Process states",
       "icon": "activity",
       "desc": "The process state diagram, context switches and what triggers each transition.",
+      "summary": "You will be able to trace a process through the state diagram and identify the events that cause each transition and context switch.",
+      "topics": [
+        "New, ready, running, waiting and terminated",
+        "State transitions and their triggers",
+        "Context switch steps and overhead",
+        "Ready and device queues",
+        "Long, short and medium-term schedulers"
+      ],
       "kind": "concept",
       "requires": [
         "processes"
@@ -116,6 +140,14 @@
       "name": "fork and exec",
       "icon": "git-branch",
       "desc": "Process creation with fork, counting processes created by fork loops, exec and wait.",
+      "summary": "You will be able to predict the processes created by fork calls, including in loops, and use exec and wait correctly.",
+      "topics": [
+        "fork return values in parent and child",
+        "Counting processes from fork loops",
+        "exec family replacing the process image",
+        "wait and zombie processes",
+        "Orphan processes"
+      ],
       "kind": "concept",
       "requires": [
         "processes"
@@ -135,6 +167,14 @@
       "name": "Threads",
       "icon": "layers",
       "desc": "Threads versus processes, what threads share, and user-level versus kernel-level threads.",
+      "summary": "You will be able to contrast threads with processes, state what threads share and compare user-level and kernel-level threading.",
+      "topics": [
+        "Threads vs processes",
+        "Shared and private thread resources",
+        "User-level vs kernel-level threads",
+        "Many-to-one, one-to-one and many-to-many models",
+        "Benefits and costs of multithreading"
+      ],
       "kind": "concept",
       "requires": [
         "processes"
@@ -153,6 +193,14 @@
       "name": "CPU scheduling",
       "icon": "clock",
       "desc": "Scheduling criteria: turnaround, waiting and response time, throughput and CPU utilisation.",
+      "summary": "You will be able to define and compute the scheduling criteria used to compare CPU scheduling algorithms.",
+      "topics": [
+        "CPU and I/O burst cycles",
+        "Preemptive vs non-preemptive scheduling",
+        "Turnaround, waiting and response time",
+        "Throughput and CPU utilisation",
+        "The dispatcher and dispatch latency"
+      ],
       "kind": "concept",
       "requires": [
         "process-states"
@@ -168,6 +216,15 @@
       "name": "FCFS, SJF & SRTF",
       "icon": "sort",
       "desc": "Gantt charts for FCFS, SJF and SRTF and computing average waiting and turnaround times.",
+      "summary": "You will be able to draw Gantt charts for FCFS, SJF and SRTF and compute average waiting and turnaround times from them.",
+      "topics": [
+        "First-come first-served and the convoy effect",
+        "Shortest job first",
+        "Shortest remaining time first",
+        "Drawing Gantt charts",
+        "Average waiting and turnaround calculations",
+        "Predicting bursts by exponential averaging"
+      ],
       "kind": "concept",
       "requires": [
         "cpu-scheduling"
@@ -190,6 +247,14 @@
       "name": "Round robin",
       "icon": "random",
       "desc": "Round-robin scheduling, the time quantum and context-switch overhead.",
+      "summary": "You will be able to schedule processes with round robin and analyse how the time quantum affects response time and overhead.",
+      "topics": [
+        "Round-robin scheduling",
+        "Choosing the time quantum",
+        "Context-switch overhead",
+        "Response time analysis",
+        "Round robin vs FCFS behaviour"
+      ],
       "kind": "concept",
       "requires": [
         "cpu-scheduling"
@@ -210,6 +275,14 @@
       "name": "Priority scheduling",
       "icon": "flag",
       "desc": "Preemptive and non-preemptive priority scheduling, starvation and ageing.",
+      "summary": "You will be able to apply preemptive and non-preemptive priority scheduling and prevent starvation with ageing.",
+      "topics": [
+        "Static and dynamic priorities",
+        "Preemptive priority scheduling",
+        "Non-preemptive priority scheduling",
+        "Starvation and ageing",
+        "Multilevel queue and feedback queues"
+      ],
       "kind": "concept",
       "requires": [
         "sjf-srtf"
@@ -230,6 +303,14 @@
       "name": "Critical sections",
       "icon": "lock",
       "desc": "Race conditions and the critical-section problem: mutual exclusion, progress and bounded waiting.",
+      "summary": "You will be able to identify race conditions and check whether a solution meets mutual exclusion, progress and bounded waiting.",
+      "topics": [
+        "Race conditions on shared data",
+        "Critical section structure",
+        "Mutual exclusion, progress and bounded waiting",
+        "Peterson's solution",
+        "Analysing flawed two-process solutions"
+      ],
       "kind": "concept",
       "requires": [
         "threads"
@@ -253,6 +334,14 @@
       "name": "Synchronisation",
       "icon": "lock",
       "desc": "Locks, hardware support (test-and-set, swap) and the synchronisation tools built on it.",
+      "summary": "You will be able to build locks from hardware primitives like test-and-set and swap and reason about spinlocks and mutexes.",
+      "topics": [
+        "Disabling interrupts",
+        "Test-and-set instruction",
+        "Swap and compare-and-swap",
+        "Spinlocks and busy waiting",
+        "Mutex locks"
+      ],
       "kind": "concept",
       "requires": [
         "critical-section"
@@ -268,6 +357,14 @@
       "name": "Semaphores",
       "icon": "key",
       "desc": "Binary and counting semaphores, wait and signal, and tracing semaphore code.",
+      "summary": "You will be able to use binary and counting semaphores with wait and signal and trace semaphore values through concurrent code.",
+      "topics": [
+        "Binary vs counting semaphores",
+        "wait (P) and signal (V) operations",
+        "Blocking semaphores and waiting queues",
+        "Tracing semaphore values",
+        "Deadlock from misordered waits"
+      ],
       "kind": "concept",
       "requires": [
         "synchronization"
@@ -287,6 +384,14 @@
       "name": "Classic problems",
       "icon": "puzzle",
       "desc": "Producer–consumer, readers–writers, dining philosophers and barriers.",
+      "summary": "You will be able to solve producer-consumer, readers-writers and dining philosophers problems with semaphores and recognise their pitfalls.",
+      "topics": [
+        "Bounded-buffer producer-consumer",
+        "Readers-writers problem variants",
+        "Dining philosophers and deadlock",
+        "Barrier synchronisation",
+        "Monitors and condition variables"
+      ],
       "kind": "concept",
       "requires": [
         "semaphores"
@@ -308,6 +413,14 @@
       "name": "Precedence graphs",
       "icon": "graph",
       "desc": "Ordering concurrent statements with semaphores and parbegin/parend.",
+      "summary": "You will be able to enforce an execution order on concurrent statements using precedence graphs, semaphores and parbegin/parend.",
+      "topics": [
+        "Precedence graphs",
+        "parbegin and parend constructs",
+        "Implementing ordering with semaphores",
+        "Counting semaphores needed",
+        "Checking possible execution orders"
+      ],
       "kind": "concept",
       "requires": [
         "semaphores"
@@ -328,6 +441,14 @@
       "name": "Deadlock",
       "icon": "warning",
       "desc": "The four Coffman conditions, resource allocation graphs and deadlock detection.",
+      "summary": "You will be able to recognise deadlock using the four Coffman conditions and detect it with resource allocation and wait-for graphs.",
+      "topics": [
+        "The four Coffman conditions",
+        "Resource allocation graphs",
+        "Cycles with single vs multiple instances",
+        "Wait-for graphs",
+        "Detection algorithm and recovery"
+      ],
       "kind": "concept",
       "requires": [
         "semaphores"
@@ -343,6 +464,14 @@
       "name": "Banker's algorithm",
       "icon": "coins",
       "desc": "Safe states and safe sequences, and deadlock avoidance with the Banker's algorithm.",
+      "summary": "You will be able to run the Banker's algorithm to find safe sequences and decide whether granting a request keeps the system safe.",
+      "topics": [
+        "Max, allocation, need and available",
+        "Safe and unsafe states",
+        "Finding a safe sequence",
+        "Resource-request algorithm",
+        "Minimum resources to avoid deadlock"
+      ],
       "kind": "concept",
       "requires": [
         "deadlock"
@@ -363,6 +492,14 @@
       "name": "Deadlock prevention",
       "icon": "shield",
       "desc": "Breaking a Coffman condition: resource ordering, preemption and wait-die / wound-wait.",
+      "summary": "You will be able to prevent deadlock by breaking a Coffman condition using resource ordering, preemption or wait-die and wound-wait.",
+      "topics": [
+        "Breaking mutual exclusion and hold-and-wait",
+        "Allowing preemption",
+        "Resource ordering to prevent circular wait",
+        "Wait-die scheme",
+        "Wound-wait scheme"
+      ],
       "kind": "concept",
       "requires": [
         "deadlock"
@@ -385,6 +522,14 @@
       "name": "Contiguous allocation",
       "icon": "array",
       "desc": "Fixed and variable partitions, first-fit, best-fit and worst-fit, internal and external fragmentation.",
+      "summary": "You will be able to allocate memory with fixed and variable partitions and compare first-fit, best-fit and worst-fit placement.",
+      "topics": [
+        "Fixed vs variable partitioning",
+        "First-fit, best-fit and worst-fit",
+        "Internal fragmentation",
+        "External fragmentation",
+        "Memory compaction"
+      ],
       "kind": "concept",
       "requires": [
         "processes",
@@ -407,6 +552,14 @@
       "name": "Segmentation & linking",
       "icon": "layers",
       "desc": "Segment tables, relocation, overlays and dynamic linking of shared libraries.",
+      "summary": "You will be able to translate segmented addresses with segment tables and explain relocation, overlays and dynamic linking.",
+      "topics": [
+        "Logical view of segments",
+        "Segment table base and limit",
+        "Segmented address translation",
+        "Relocation and overlays",
+        "Dynamic linking and shared libraries"
+      ],
       "kind": "concept",
       "requires": [
         "contiguous-allocation"
@@ -428,6 +581,14 @@
       "name": "Paging",
       "icon": "grid",
       "desc": "Pages and frames, page tables and translating a logical address to a physical one.",
+      "summary": "You will be able to translate logical addresses to physical addresses using page tables, pages and frames.",
+      "topics": [
+        "Pages and frames",
+        "Splitting addresses into page number and offset",
+        "Page table lookup",
+        "Page size trade-offs",
+        "Internal fragmentation in paging"
+      ],
       "kind": "concept",
       "requires": [
         "contiguous-allocation"
@@ -449,6 +610,14 @@
       "name": "TLB & access time",
       "icon": "bolt",
       "desc": "The translation lookaside buffer and the effective memory access time with TLB hits and misses.",
+      "summary": "You will be able to compute effective memory access time for a paged system with a TLB given hit ratios and access times.",
+      "topics": [
+        "Translation lookaside buffer",
+        "TLB hits and misses",
+        "Hit ratio",
+        "Effective memory access time formula",
+        "TLB flushes and ASIDs"
+      ],
       "kind": "concept",
       "requires": [
         "paging",
@@ -472,6 +641,14 @@
       "name": "Multilevel paging",
       "icon": "layers",
       "desc": "Page table size, page table entries and splitting the page table across levels.",
+      "summary": "You will be able to compute page table sizes and split addresses across levels of a multilevel page table.",
+      "topics": [
+        "Page table entry size and contents",
+        "Page table size calculations",
+        "Two-level and multilevel page tables",
+        "Address bit splitting per level",
+        "Inverted and hashed page tables"
+      ],
       "kind": "concept",
       "requires": [
         "paging"
@@ -493,6 +670,14 @@
       "name": "Virtual memory",
       "icon": "eye",
       "desc": "Demand paging, page faults and how a process can be larger than physical memory.",
+      "summary": "You will understand how demand paging lets a process exceed physical memory and what happens during a page fault.",
+      "topics": [
+        "Virtual address spaces",
+        "Demand paging",
+        "Valid-invalid bits",
+        "Page fault handling steps",
+        "Copy-on-write after fork"
+      ],
       "kind": "concept",
       "requires": [
         "paging"
@@ -514,6 +699,14 @@
       "name": "Page replacement",
       "icon": "random",
       "desc": "FIFO, optimal and LRU replacement, counting page faults and Belady's anomaly.",
+      "summary": "You will be able to count page faults for FIFO, optimal and LRU replacement and recognise Belady's anomaly.",
+      "topics": [
+        "FIFO page replacement",
+        "Optimal page replacement",
+        "LRU and its approximations",
+        "Counting page faults on reference strings",
+        "Belady's anomaly and stack algorithms"
+      ],
       "kind": "concept",
       "requires": [
         "virtual-memory"
@@ -538,6 +731,14 @@
       "name": "Working set",
       "icon": "activity",
       "desc": "Working sets, thrashing and the effective access time with page faults.",
+      "summary": "You will be able to explain thrashing, use the working set model to prevent it and compute access time with page faults.",
+      "topics": [
+        "Causes of thrashing",
+        "Locality of reference",
+        "Working set model",
+        "Page fault frequency control",
+        "Effective access time with page faults"
+      ],
       "kind": "concept",
       "requires": [
         "page-replacement"
@@ -559,6 +760,14 @@
       "name": "File systems",
       "icon": "book",
       "desc": "Files, directories and the file-system interface, including Unix conventions.",
+      "summary": "You will understand how files and directories are presented to programs and how Unix-style file systems organise them.",
+      "topics": [
+        "File attributes and operations",
+        "Sequential and direct access",
+        "Directory structures",
+        "Unix permissions and conventions",
+        "Mounting file systems"
+      ],
       "kind": "concept",
       "requires": [
         "processes"
@@ -574,6 +783,15 @@
       "name": "File allocation",
       "icon": "list",
       "desc": "Contiguous, linked and indexed allocation, inodes and maximum file size, free-space management.",
+      "summary": "You will be able to compare contiguous, linked and indexed allocation and compute maximum file size for inode-based schemes.",
+      "topics": [
+        "Contiguous allocation",
+        "Linked allocation and FAT",
+        "Indexed allocation",
+        "Inode direct and indirect blocks",
+        "Maximum file size calculations",
+        "Free-space management with bitmaps"
+      ],
       "kind": "concept",
       "requires": [
         "file-systems",
@@ -598,6 +816,14 @@
       "name": "Disk scheduling",
       "icon": "sort",
       "desc": "Disk geometry and access time; FCFS, SSTF, SCAN and LOOK disk scheduling.",
+      "summary": "You will be able to compute disk access time and total head movement for FCFS, SSTF, SCAN and LOOK scheduling.",
+      "topics": [
+        "Disk geometry: platters, tracks and sectors",
+        "Seek time, rotational latency and transfer time",
+        "FCFS and SSTF scheduling",
+        "SCAN and C-SCAN",
+        "LOOK and C-LOOK"
+      ],
       "kind": "concept",
       "requires": [
         "file-systems"

@@ -38,6 +38,15 @@
       "name": "Kotlin basics",
       "icon": "code",
       "desc": "Null safety, data classes, extension functions, lambdas and collections.",
+      "summary": "You will be able to write idiomatic Kotlin using null safety, data classes, extension functions, lambdas and the standard collection operations.",
+      "topics": [
+        "Nullable types and safe-call operators",
+        "val, var and type inference",
+        "Data classes and copy",
+        "Extension functions",
+        "Lambdas and higher-order functions",
+        "Collection operations like map and filter"
+      ],
       "kind": "lesson",
       "requires": [
         "java:java-oop"
@@ -50,6 +59,14 @@
       "name": "Coroutines & Flow",
       "icon": "clock",
       "desc": "Structured concurrency, suspend functions, dispatchers and Flow.",
+      "summary": "You will be able to run asynchronous work with coroutines using structured concurrency and expose streams of values with Flow.",
+      "topics": [
+        "Suspend functions and coroutine builders",
+        "Structured concurrency and coroutine scopes",
+        "Dispatchers for main, IO and default work",
+        "Cancellation and exception handling",
+        "Cold Flow, StateFlow and SharedFlow"
+      ],
       "kind": "lesson",
       "requires": [
         "kotlin-basics",
@@ -63,6 +80,15 @@
       "name": "Studio & Gradle",
       "icon": "wrench",
       "desc": "Android Studio, emulators, Gradle builds and project structure.",
+      "summary": "You will be able to create, build and run an Android project in Android Studio and understand its Gradle configuration.",
+      "topics": [
+        "Android Studio project structure",
+        "Gradle modules and build scripts",
+        "Dependencies and version catalogs",
+        "Build variants and build types",
+        "Running on the emulator and devices",
+        "Logcat and the debugger"
+      ],
       "kind": "lesson",
       "requires": [
         "kotlin-basics"
@@ -81,6 +107,14 @@
       "name": "App components",
       "icon": "layers",
       "desc": "Activities, intents, the manifest and the Android lifecycle.",
+      "summary": "You will be able to explain how activities, intents and the manifest fit together and how the activity lifecycle affects your app.",
+      "topics": [
+        "Activities and the activity lifecycle",
+        "Explicit and implicit intents",
+        "The AndroidManifest file",
+        "Services, broadcast receivers and content providers",
+        "Configuration changes and recreation"
+      ],
       "kind": "concept",
       "requires": [
         "studio-gradle"
@@ -93,6 +127,14 @@
       "name": "Compose basics",
       "icon": "grid",
       "desc": "Composable functions, modifiers and layouts.",
+      "summary": "You will be able to build Android screens with composable functions, arrange them with layouts and style them with modifiers.",
+      "topics": [
+        "Writing @Composable functions",
+        "Column, Row and Box layouts",
+        "Modifier chains and their order",
+        "Text, Image and Button composables",
+        "Previewing composables in Studio"
+      ],
       "kind": "lesson",
       "requires": [
         "app-components",
@@ -112,6 +154,14 @@
       "name": "State in Compose",
       "icon": "sliders",
       "desc": "remember, recomposition and state hoisting.",
+      "summary": "You will be able to manage UI state in Compose so screens recompose correctly, using remember and state hoisting.",
+      "topics": [
+        "mutableStateOf and recomposition",
+        "remember and rememberSaveable",
+        "Stateful versus stateless composables",
+        "State hoisting to callers",
+        "Side effects with LaunchedEffect"
+      ],
       "kind": "lesson",
       "requires": [
         "compose-basics"
@@ -124,6 +174,14 @@
       "name": "Lists & navigation",
       "icon": "list",
       "desc": "Lazy lists and Navigation Compose with arguments.",
+      "summary": "You will be able to display long scrolling lists efficiently and move between screens with Navigation Compose, passing arguments along.",
+      "topics": [
+        "LazyColumn and LazyRow",
+        "Item keys and list performance",
+        "NavHost and NavController setup",
+        "Passing arguments between destinations",
+        "Back stack behaviour"
+      ],
       "kind": "lesson",
       "requires": [
         "compose-state"
@@ -136,6 +194,14 @@
       "name": "Material theming",
       "icon": "palette",
       "desc": "Material 3 components, colour schemes, typography and dark theme.",
+      "summary": "You will be able to apply Material 3 components and a custom theme with colour schemes, typography and dark theme support.",
+      "topics": [
+        "MaterialTheme and theme setup",
+        "Material 3 colour schemes",
+        "Typography and shape tokens",
+        "Dark theme and dynamic colour",
+        "Scaffold, top app bars and FABs"
+      ],
       "kind": "lesson",
       "requires": [
         "compose-basics"
@@ -148,6 +214,14 @@
       "name": "First Compose app",
       "icon": "rocket",
       "desc": "Build a multi-screen Compose app with lists and navigation.",
+      "summary": "You will build a multi-screen Jetpack Compose app that combines lists, navigation, state and Material theming into one working project.",
+      "topics": [
+        "Planning screens and navigation graph",
+        "Building list and detail screens",
+        "Hoisting and sharing screen state",
+        "Applying a consistent Material theme",
+        "Handling back navigation"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -162,6 +236,14 @@
       "name": "ViewModel & MVVM",
       "icon": "layers",
       "desc": "ViewModels, UI state, unidirectional data flow and the repository pattern.",
+      "summary": "You will be able to structure an app with ViewModels, observable UI state and repositories following unidirectional data flow.",
+      "topics": [
+        "ViewModel lifecycle and scope",
+        "Exposing UI state with StateFlow",
+        "Unidirectional data flow and UI events",
+        "Repository pattern for data access",
+        "viewModelScope for coroutines"
+      ],
       "kind": "lesson",
       "requires": [
         "compose-state",
@@ -176,6 +258,15 @@
       "name": "Room database",
       "icon": "database",
       "desc": "Entities, DAOs, migrations and observing queries with Flow.",
+      "summary": "You will be able to store structured data locally with Room, write DAOs, run migrations and observe query results as Flow.",
+      "topics": [
+        "Entities and primary keys",
+        "DAOs with queries and inserts",
+        "Database class and builder",
+        "Observing queries with Flow",
+        "Schema migrations between versions",
+        "Relations and type converters"
+      ],
       "kind": "lesson",
       "requires": [
         "viewmodel-mvvm",
@@ -189,6 +280,14 @@
       "name": "Networking",
       "icon": "globe",
       "desc": "Retrofit, JSON serialisation and handling network errors.",
+      "summary": "You will be able to call REST APIs from Android with Retrofit, parse JSON into Kotlin classes and handle network failures cleanly.",
+      "topics": [
+        "Defining Retrofit service interfaces",
+        "JSON parsing with kotlinx.serialization or Moshi",
+        "Suspend functions for network calls",
+        "OkHttp interceptors and logging",
+        "Handling errors, timeouts and offline cases"
+      ],
       "kind": "lesson",
       "requires": [
         "viewmodel-mvvm",
@@ -202,6 +301,15 @@
       "name": "Hilt & DI",
       "icon": "link",
       "desc": "Dependency injection with Hilt and scoping.",
+      "summary": "You will be able to wire app dependencies with Hilt, define modules and choose appropriate scopes for each object.",
+      "topics": [
+        "Why dependency injection helps testing",
+        "Hilt application and entry points",
+        "Constructor injection with @Inject",
+        "Modules with @Provides and @Binds",
+        "Component scopes like Singleton",
+        "Injecting ViewModels with @HiltViewModel"
+      ],
       "kind": "lesson",
       "requires": [
         "viewmodel-mvvm"
@@ -214,6 +322,14 @@
       "name": "Offline notes app",
       "icon": "rocket",
       "desc": "Build a notes app that works offline and syncs with a backend.",
+      "summary": "You will build a notes app that stores data in Room, works offline and synchronises changes with a backend when connectivity returns.",
+      "topics": [
+        "Offline-first data layer with Room",
+        "Single source of truth repository",
+        "Syncing with a REST backend",
+        "Scheduling sync with WorkManager",
+        "Resolving conflicting edits"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -229,6 +345,15 @@
       "name": "Permissions & sensors",
       "icon": "lock",
       "desc": "Runtime permissions, camera, location and sensors.",
+      "summary": "You will be able to request runtime permissions correctly and use the camera, location services and device sensors in your app.",
+      "topics": [
+        "Normal versus dangerous permissions",
+        "Requesting permissions with activity result APIs",
+        "Handling denial and rationale",
+        "Camera access with CameraX",
+        "Fused location provider",
+        "SensorManager and sensor events"
+      ],
       "kind": "lesson",
       "requires": [
         "app-components"
@@ -241,6 +366,14 @@
       "name": "Background work",
       "icon": "clock",
       "desc": "WorkManager, foreground services and battery limits.",
+      "summary": "You will be able to schedule reliable background work with WorkManager and foreground services while respecting Android battery restrictions.",
+      "topics": [
+        "WorkManager one-time and periodic work",
+        "Work constraints and chaining",
+        "Foreground services and their notifications",
+        "Doze mode and app standby",
+        "Choosing the right background API"
+      ],
       "kind": "lesson",
       "requires": [
         "coroutines-flow",
@@ -254,6 +387,14 @@
       "name": "Notifications",
       "icon": "bell",
       "desc": "Notification channels, actions and push messaging.",
+      "summary": "You will be able to post notifications through channels, add actions and receive push messages from Firebase Cloud Messaging.",
+      "topics": [
+        "Notification channels and importance",
+        "Building notifications with NotificationCompat",
+        "Notification actions and pending intents",
+        "POST_NOTIFICATIONS permission",
+        "Push messaging with Firebase Cloud Messaging"
+      ],
       "kind": "lesson",
       "requires": [
         "background-work"
@@ -266,6 +407,14 @@
       "name": "DataStore & files",
       "icon": "save",
       "desc": "Preferences DataStore and app-specific file storage.",
+      "summary": "You will be able to persist small settings with Preferences DataStore and store files in app-specific storage safely.",
+      "topics": [
+        "Preferences DataStore keys and reads",
+        "Proto DataStore for typed data",
+        "App-specific internal and external storage",
+        "Reading and writing files",
+        "Migrating from SharedPreferences"
+      ],
       "kind": "lesson",
       "requires": [
         "room-database"
@@ -278,6 +427,14 @@
       "name": "Testing Android",
       "icon": "check-circle",
       "desc": "Unit tests, Compose UI tests and instrumented tests.",
+      "summary": "You will be able to write local unit tests, Compose UI tests and instrumented tests to verify Android app behaviour.",
+      "topics": [
+        "Local unit tests with JUnit",
+        "Testing coroutines and ViewModels",
+        "Fakes and test doubles for repositories",
+        "Compose UI tests with semantics",
+        "Instrumented tests on devices"
+      ],
       "kind": "lesson",
       "requires": [
         "viewmodel-mvvm"
@@ -290,6 +447,15 @@
       "name": "App performance",
       "icon": "bolt",
       "desc": "Startup time, jank, baseline profiles and memory leaks.",
+      "summary": "You will be able to measure and improve app startup, rendering smoothness and memory use with Android profiling tools.",
+      "topics": [
+        "Measuring cold and warm startup",
+        "Finding jank and dropped frames",
+        "Baseline profiles for faster startup",
+        "Detecting memory leaks with LeakCanary",
+        "Android Studio profilers",
+        "Reducing unnecessary recompositions"
+      ],
       "kind": "lesson",
       "requires": [
         "lists-navigation"
@@ -302,6 +468,14 @@
       "name": "Play Store release",
       "icon": "upload",
       "desc": "App signing, app bundles, testing tracks and the Play Console.",
+      "summary": "You will be able to sign, package and publish an Android app bundle through the Play Console using testing tracks.",
+      "topics": [
+        "App signing and Play App Signing",
+        "Building Android App Bundles",
+        "Version codes and release notes",
+        "Internal, closed and open testing tracks",
+        "Store listing and policy requirements"
+      ],
       "kind": "lesson",
       "requires": [
         "testing-android"
@@ -314,6 +488,14 @@
       "name": "Android capstone",
       "icon": "trophy",
       "desc": "Ship a polished app with offline data, notifications and a Play Store release.",
+      "summary": "You will design and ship a polished Android app with offline data, notifications and a Play Store release on a testing track.",
+      "topics": [
+        "Architecture with MVVM and Hilt",
+        "Offline storage with Room",
+        "Notifications and background sync",
+        "Testing and performance checks",
+        "Publishing to a Play testing track"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

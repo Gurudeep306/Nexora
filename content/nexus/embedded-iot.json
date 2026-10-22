@@ -38,6 +38,14 @@
       "name": "What is embedded",
       "icon": "cpu",
       "desc": "Microcontrollers vs microprocessors, constraints and the embedded toolchain.",
+      "summary": "You will be able to distinguish microcontrollers from microprocessors, describe embedded constraints and set up the embedded toolchain.",
+      "topics": [
+        "Microcontrollers versus microprocessors",
+        "Resource, power and real-time constraints",
+        "Cross-compilers and toolchains",
+        "Flashing firmware to a board",
+        "Bare metal versus operating systems"
+      ],
       "kind": "concept",
       "requires": [
         "coa:isa"
@@ -50,6 +58,14 @@
       "name": "Microcontrollers",
       "icon": "cpu",
       "desc": "MCU architecture, memory map, registers and dev boards.",
+      "summary": "You will be able to describe MCU architecture, read its memory map and configure peripheral registers on a development board.",
+      "topics": [
+        "CPU core, flash and RAM",
+        "The memory map",
+        "Peripheral registers",
+        "Clock tree and clock configuration",
+        "Development boards and datasheets"
+      ],
       "kind": "concept",
       "requires": [
         "embedded-intro"
@@ -62,6 +78,14 @@
       "name": "Embedded C",
       "icon": "code",
       "desc": "Bit manipulation, volatile, memory-mapped registers and cross-compiling.",
+      "summary": "You will be able to write embedded C that manipulates bits, accesses memory-mapped registers through volatile and cross-compiles for a target.",
+      "topics": [
+        "Bitwise set, clear and toggle",
+        "The volatile keyword",
+        "Memory-mapped register access",
+        "Fixed-width integer types",
+        "Cross-compiling for a target"
+      ],
       "kind": "concept",
       "requires": [
         "microcontrollers",
@@ -75,6 +99,14 @@
       "name": "GPIO & blinky",
       "icon": "lightbulb",
       "desc": "Digital input and output, pull-ups and debouncing buttons.",
+      "summary": "You will be able to configure GPIO pins for digital input and output, use pull-up resistors and debounce buttons.",
+      "topics": [
+        "Configuring pins as input or output",
+        "Driving LEDs with blinky",
+        "Pull-up and pull-down resistors",
+        "Reading buttons",
+        "Software debouncing"
+      ],
       "kind": "lesson",
       "requires": [
         "embedded-c"
@@ -87,6 +119,14 @@
       "name": "Timers & PWM",
       "icon": "timer",
       "desc": "Hardware timers, PWM for motors and LEDs, and delays without blocking.",
+      "summary": "You will be able to use hardware timers for non-blocking delays and generate PWM signals to drive motors and dim LEDs.",
+      "topics": [
+        "Hardware timer prescalers and counters",
+        "Non-blocking delays",
+        "PWM duty cycle and frequency",
+        "Dimming LEDs with PWM",
+        "Driving motors and servos"
+      ],
       "kind": "concept",
       "requires": [
         "gpio"
@@ -99,6 +139,14 @@
       "name": "Interrupts",
       "icon": "bolt",
       "desc": "Interrupt service routines, priorities and sharing data safely with an ISR.",
+      "summary": "You will be able to write interrupt service routines, set interrupt priorities and share data safely between an ISR and main code.",
+      "topics": [
+        "Interrupt vectors and handlers",
+        "Writing short ISRs",
+        "Interrupt priorities and nesting",
+        "Sharing data with volatile and atomics",
+        "Critical sections"
+      ],
       "kind": "concept",
       "requires": [
         "gpio",
@@ -112,6 +160,14 @@
       "name": "ADC & sensors",
       "icon": "activity",
       "desc": "Analog-to-digital conversion, sampling and reading sensors.",
+      "summary": "You will be able to read analog sensors through an ADC, choose sampling rates and convert raw readings into physical units.",
+      "topics": [
+        "ADC resolution and reference voltage",
+        "Sampling rate and aliasing",
+        "Converting raw counts to units",
+        "Filtering noisy readings",
+        "Common analog sensors"
+      ],
       "kind": "concept",
       "requires": [
         "timers-pwm"
@@ -124,6 +180,14 @@
       "name": "UART, I2C & SPI",
       "icon": "link",
       "desc": "Serial communication buses and talking to peripheral chips.",
+      "summary": "You will be able to communicate with peripheral chips over UART, I2C and SPI and choose the right bus for a device.",
+      "topics": [
+        "UART framing and baud rate",
+        "I2C addressing and bus signals",
+        "SPI clock modes and chip select",
+        "Reading sensor registers",
+        "Choosing between serial buses"
+      ],
       "kind": "concept",
       "requires": [
         "mcu-interrupts"
@@ -136,6 +200,15 @@
       "name": "RTOS",
       "icon": "clock",
       "desc": "Tasks, priorities, preemptive scheduling, queues and semaphores in an RTOS.",
+      "summary": "You will be able to structure firmware as RTOS tasks with priorities and coordinate them using queues and semaphores.",
+      "topics": [
+        "Tasks and task states",
+        "Preemptive priority scheduling",
+        "Queues for message passing",
+        "Semaphores and mutexes",
+        "Priority inversion",
+        "FreeRTOS basics"
+      ],
       "kind": "concept",
       "requires": [
         "mcu-interrupts",
@@ -149,6 +222,14 @@
       "name": "Power management",
       "icon": "leaf",
       "desc": "Sleep modes, wake-up sources and battery budgets.",
+      "summary": "You will be able to cut power consumption with sleep modes and wake-up sources and estimate battery life for a device.",
+      "topics": [
+        "Active and sleep current",
+        "Sleep and deep sleep modes",
+        "Wake-up sources",
+        "Duty cycling",
+        "Battery life budgets"
+      ],
       "kind": "concept",
       "requires": [
         "timers-pwm"
@@ -161,6 +242,14 @@
       "name": "Memory & bootloaders",
       "icon": "layers",
       "desc": "Flash and RAM limits, linker scripts, bootloaders and firmware updates.",
+      "summary": "You will be able to fit firmware into flash and RAM using linker scripts and update devices safely through a bootloader.",
+      "topics": [
+        "Flash and RAM limits",
+        "Linker scripts and memory sections",
+        "Stack and heap sizing",
+        "How bootloaders work",
+        "Safe firmware updates"
+      ],
       "kind": "concept",
       "requires": [
         "embedded-c"
@@ -173,6 +262,14 @@
       "name": "Embedded debugging",
       "icon": "crosshair",
       "desc": "JTAG/SWD debuggers, logic analysers and printf debugging.",
+      "summary": "You will be able to debug firmware with JTAG or SWD debuggers, logic analysers and serial printf output.",
+      "topics": [
+        "JTAG and SWD debugging",
+        "Breakpoints and watchpoints on hardware",
+        "Logic analysers for buses",
+        "Printf debugging over UART",
+        "Diagnosing hard faults"
+      ],
       "kind": "lesson",
       "requires": [
         "serial-protocols"
@@ -185,6 +282,14 @@
       "name": "IoT architecture",
       "icon": "nexus",
       "desc": "Devices, gateways, cloud back ends and the edge.",
+      "summary": "You will be able to describe IoT system architecture from devices and gateways to cloud back ends and edge processing.",
+      "topics": [
+        "Devices, sensors and actuators",
+        "Gateways and protocol bridging",
+        "Cloud back ends",
+        "Edge computing",
+        "Data flow in IoT systems"
+      ],
       "kind": "concept",
       "requires": [
         "serial-protocols"
@@ -197,6 +302,14 @@
       "name": "MQTT & CoAP",
       "icon": "messages",
       "desc": "Lightweight publish/subscribe and request/response protocols for devices.",
+      "summary": "You will be able to connect devices with MQTT publish-subscribe and CoAP request-response protocols.",
+      "topics": [
+        "MQTT brokers and topics",
+        "MQTT QoS levels",
+        "Retained messages and last will",
+        "CoAP request-response model",
+        "Choosing MQTT or CoAP"
+      ],
       "kind": "concept",
       "requires": [
         "iot-architecture",
@@ -210,6 +323,14 @@
       "name": "BLE, Wi-Fi & LoRa",
       "icon": "globe",
       "desc": "Short and long range wireless options and their power and bandwidth trade-offs.",
+      "summary": "You will be able to compare BLE, Wi-Fi and LoRa by range, power and bandwidth and choose one for a device.",
+      "topics": [
+        "Bluetooth Low Energy and GATT",
+        "Wi-Fi for embedded devices",
+        "LoRa and LoRaWAN",
+        "Range, power and bandwidth trade-offs",
+        "Other options like Zigbee"
+      ],
       "kind": "concept",
       "requires": [
         "iot-architecture",
@@ -223,6 +344,14 @@
       "name": "IoT security",
       "icon": "shield",
       "desc": "Secure boot, device identity, encrypted transport and over-the-air updates.",
+      "summary": "You will be able to secure IoT devices with secure boot, unique device identity, encrypted transport and signed over-the-air updates.",
+      "topics": [
+        "Secure boot",
+        "Device identity and certificates",
+        "TLS for device traffic",
+        "Signed over-the-air updates",
+        "Common IoT attack vectors"
+      ],
       "kind": "concept",
       "requires": [
         "iot-protocols",
@@ -236,6 +365,14 @@
       "name": "Edge & cloud",
       "icon": "server",
       "desc": "Device shadows, telemetry pipelines and processing at the edge.",
+      "summary": "You will be able to build telemetry pipelines with device shadows and decide what processing belongs at the edge.",
+      "topics": [
+        "Device shadows and twins",
+        "Telemetry ingestion pipelines",
+        "Processing at the edge",
+        "Remote commands to devices",
+        "Storing and visualising time series"
+      ],
       "kind": "concept",
       "requires": [
         "iot-protocols"
@@ -248,6 +385,14 @@
       "name": "Weather station",
       "icon": "sun",
       "desc": "Build a sensor node that samples the weather, sleeps between readings and publishes over MQTT.",
+      "summary": "You will build a battery-powered sensor node that samples the weather, sleeps between readings and publishes data over MQTT.",
+      "topics": [
+        "Reading temperature and humidity sensors",
+        "Sleeping between readings",
+        "Connecting to Wi-Fi",
+        "Publishing readings over MQTT",
+        "Measuring battery life"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -263,6 +408,14 @@
       "name": "Smart home project",
       "icon": "home",
       "desc": "Build a secure smart-home controller with devices, a gateway and a dashboard.",
+      "summary": "You will build a secure smart-home controller with connected devices, a gateway and a dashboard.",
+      "topics": [
+        "Designing devices and gateway",
+        "Messaging between devices",
+        "Securing device communication",
+        "Building a control dashboard",
+        "Over-the-air updates"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

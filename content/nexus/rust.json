@@ -39,6 +39,14 @@
       "name": "Rust basics",
       "icon": "code",
       "desc": "Variables and mutability, scalar types, functions and control flow.",
+      "summary": "You will be able to write basic Rust programs using immutable and mutable variables, scalar types, functions and control flow.",
+      "topics": [
+        "let and mut bindings",
+        "Shadowing variables",
+        "Integer, float, bool and char types",
+        "Functions and expression returns",
+        "if, loop, while and for"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 40,
@@ -55,6 +63,14 @@
       "name": "Cargo",
       "icon": "wrench",
       "desc": "Creating projects, building, running and adding crates with Cargo.",
+      "summary": "You will be able to create, build and run Rust projects with Cargo and add third-party crates as dependencies.",
+      "topics": [
+        "cargo new and project layout",
+        "cargo build and cargo run",
+        "Cargo.toml and dependencies",
+        "Debug vs release builds",
+        "cargo check, fmt and clippy"
+      ],
       "kind": "lesson",
       "requires": [
         "rust-basics"
@@ -67,6 +83,14 @@
       "name": "Enums & match",
       "icon": "git-branch",
       "desc": "Enums with data, Option, pattern matching and if let.",
+      "summary": "You will be able to model data with enums, handle absence with Option and destructure values with exhaustive pattern matching.",
+      "topics": [
+        "Enums with associated data",
+        "Option instead of null",
+        "Exhaustive match expressions",
+        "Patterns and destructuring",
+        "if let and let else"
+      ],
       "kind": "concept",
       "requires": [
         "rust-basics"
@@ -79,6 +103,14 @@
       "name": "Ownership",
       "icon": "key",
       "desc": "Stack and heap, moves, copies, and how ownership replaces a garbage collector.",
+      "summary": "You will understand how Rust's ownership rules manage memory without a garbage collector through moves, copies and scope-based drops.",
+      "topics": [
+        "Stack vs heap allocation",
+        "The three ownership rules",
+        "Move semantics and Copy types",
+        "Drop and scope-based cleanup",
+        "Clone for deep copies"
+      ],
       "kind": "concept",
       "requires": [
         "rust-basics",
@@ -92,6 +124,14 @@
       "name": "Borrowing",
       "icon": "link",
       "desc": "Shared and mutable references and the borrow checker's rules.",
+      "summary": "You will be able to pass data by shared and mutable references and satisfy the borrow checker's aliasing rules.",
+      "topics": [
+        "Shared references with &",
+        "Mutable references with &mut",
+        "One mutable or many shared borrows",
+        "Non-lexical lifetimes",
+        "Common borrow checker errors"
+      ],
       "kind": "concept",
       "requires": [
         "ownership"
@@ -104,6 +144,14 @@
       "name": "Lifetimes",
       "icon": "clock",
       "desc": "Lifetime annotations, elision rules and why references cannot dangle.",
+      "summary": "You will be able to annotate lifetimes when the compiler needs them and explain how they prevent dangling references.",
+      "topics": [
+        "Dangling references",
+        "Lifetime annotation syntax",
+        "Lifetime elision rules",
+        "Lifetimes in structs",
+        "The 'static lifetime"
+      ],
       "kind": "concept",
       "requires": [
         "borrowing"
@@ -116,6 +164,14 @@
       "name": "Strings & slices",
       "icon": "type",
       "desc": "String vs &str, slices and UTF-8 text.",
+      "summary": "You will be able to choose between String and &str, take slices safely and work with UTF-8 text correctly.",
+      "topics": [
+        "String vs &str",
+        "String slices and byte ranges",
+        "Array and vector slices",
+        "UTF-8 and char boundaries",
+        "Iterating over chars and bytes"
+      ],
       "kind": "concept",
       "requires": [
         "borrowing"
@@ -128,6 +184,14 @@
       "name": "Structs & traits",
       "icon": "shapes",
       "desc": "Structs, impl blocks, traits and trait objects.",
+      "summary": "You will be able to define structs with impl blocks, share behaviour through traits and use trait objects for dynamic dispatch.",
+      "topics": [
+        "Defining structs",
+        "impl blocks and methods",
+        "Defining and implementing traits",
+        "Derivable traits like Debug and Clone",
+        "Trait objects with dyn"
+      ],
       "kind": "concept",
       "requires": [
         "enums-match",
@@ -141,6 +205,14 @@
       "name": "Generics",
       "icon": "layers",
       "desc": "Generic types, trait bounds and monomorphisation.",
+      "summary": "You will be able to write generic functions and types with trait bounds and understand how monomorphisation makes them zero-cost.",
+      "topics": [
+        "Generic functions and structs",
+        "Trait bounds and where clauses",
+        "impl Trait in arguments and returns",
+        "Monomorphisation at compile time",
+        "Static vs dynamic dispatch"
+      ],
       "kind": "concept",
       "requires": [
         "structs-traits"
@@ -153,6 +225,15 @@
       "name": "Result & errors",
       "icon": "warning",
       "desc": "Result, the ? operator, custom error types and when to panic.",
+      "summary": "You will be able to handle recoverable errors with Result and the ? operator, define custom error types and decide when to panic.",
+      "topics": [
+        "Result and its variants",
+        "The ? operator",
+        "Custom error types",
+        "From conversions for errors",
+        "panic vs Result",
+        "unwrap and expect"
+      ],
       "kind": "concept",
       "requires": [
         "enums-match"
@@ -165,6 +246,14 @@
       "name": "Iterators & closures",
       "icon": "route",
       "desc": "Closures, the Iterator trait and zero-cost iterator chains.",
+      "summary": "You will be able to write closures and compose iterator adaptor chains that compile to efficient loops.",
+      "topics": [
+        "Closure syntax and capture",
+        "Fn, FnMut and FnOnce",
+        "The Iterator trait and next",
+        "Adaptors like map and filter",
+        "Consumers like collect and sum"
+      ],
       "kind": "concept",
       "requires": [
         "generics-rust"
@@ -177,6 +266,14 @@
       "name": "Collections",
       "icon": "list",
       "desc": "Vec, HashMap, HashSet and VecDeque.",
+      "summary": "You will be able to store and process data with Vec, HashMap, HashSet and VecDeque and choose the right one.",
+      "topics": [
+        "Vec and growth",
+        "HashMap and the entry API",
+        "HashSet for unique values",
+        "VecDeque as a double-ended queue",
+        "Ownership of collection elements"
+      ],
       "kind": "concept",
       "requires": [
         "ownership"
@@ -189,6 +286,14 @@
       "name": "Box, Rc & RefCell",
       "icon": "gem",
       "desc": "Heap allocation with Box, shared ownership with Rc and interior mutability.",
+      "summary": "You will be able to allocate on the heap with Box, share ownership with Rc and mutate shared data with RefCell.",
+      "topics": [
+        "Box for heap allocation",
+        "Recursive types with Box",
+        "Rc and reference counting",
+        "RefCell and interior mutability",
+        "Weak references and cycles"
+      ],
       "kind": "concept",
       "requires": [
         "lifetimes",
@@ -202,6 +307,14 @@
       "name": "Threads & Send/Sync",
       "icon": "cpu",
       "desc": "Spawning threads, Arc and Mutex, channels and the Send and Sync traits.",
+      "summary": "You will be able to write safe multithreaded Rust with threads, Arc, Mutex and channels and explain the Send and Sync traits.",
+      "topics": [
+        "Spawning threads and join",
+        "Moving data into threads with move",
+        "Message passing with channels",
+        "Arc and Mutex for shared state",
+        "Send and Sync traits"
+      ],
       "kind": "concept",
       "requires": [
         "smart-pointers-rust",
@@ -215,6 +328,14 @@
       "name": "Async Rust",
       "icon": "bolt",
       "desc": "Futures, async/await and running tasks on an async runtime.",
+      "summary": "You will be able to write asynchronous Rust with futures and async/await and run tasks on a runtime such as Tokio.",
+      "topics": [
+        "The Future trait",
+        "async functions and await",
+        "Async runtimes like Tokio",
+        "Spawning tasks",
+        "Async vs threads trade-offs"
+      ],
       "kind": "concept",
       "requires": [
         "threads-rust"
@@ -227,6 +348,14 @@
       "name": "Unsafe & FFI",
       "icon": "warning",
       "desc": "Raw pointers, unsafe blocks and calling C code.",
+      "summary": "You will be able to use unsafe Rust responsibly with raw pointers and call C code through the foreign function interface.",
+      "topics": [
+        "What unsafe allows",
+        "Raw pointers",
+        "Unsafe functions and blocks",
+        "extern \"C\" and FFI",
+        "Safe wrappers around unsafe code"
+      ],
       "kind": "concept",
       "requires": [
         "smart-pointers-rust",
@@ -240,6 +369,14 @@
       "name": "Modules & crates",
       "icon": "grid",
       "desc": "Modules, visibility, workspaces and publishing a crate.",
+      "summary": "You will be able to organise code into modules and crates, control visibility, use workspaces and publish to crates.io.",
+      "topics": [
+        "Modules and the mod keyword",
+        "Visibility with pub",
+        "use paths and re-exports",
+        "Cargo workspaces",
+        "Publishing to crates.io"
+      ],
       "kind": "lesson",
       "requires": [
         "cargo",
@@ -253,6 +390,14 @@
       "name": "Testing",
       "icon": "check-circle",
       "desc": "Unit, integration and doc tests.",
+      "summary": "You will be able to write unit, integration and documentation tests for Rust code and run them with cargo test.",
+      "topics": [
+        "Unit tests with #[test]",
+        "Assertion macros",
+        "Integration tests directory",
+        "Documentation tests",
+        "Testing for panics and Results"
+      ],
       "kind": "lesson",
       "requires": [
         "modules-crates",
@@ -266,6 +411,14 @@
       "name": "CLI grep project",
       "icon": "terminal",
       "desc": "Build a fast grep-like command-line tool with tests.",
+      "summary": "You will build a fast grep-like command-line tool in Rust with argument parsing, error handling and tests.",
+      "topics": [
+        "Parsing command-line arguments",
+        "Reading files efficiently",
+        "Searching lines for patterns",
+        "Error handling with Result",
+        "Testing the search logic"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -281,6 +434,14 @@
       "name": "Async web service",
       "icon": "rocket",
       "desc": "Build an async JSON web service with a database pool and graceful error handling.",
+      "summary": "You will build an async JSON web service in Rust with a database connection pool and graceful error handling.",
+      "topics": [
+        "Async web frameworks like Axum",
+        "JSON serialisation with serde",
+        "Database connection pools",
+        "Mapping errors to HTTP responses",
+        "Integration testing the service"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
