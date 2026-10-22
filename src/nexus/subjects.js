@@ -84,6 +84,12 @@ function validateOutlines(docs, dsaNodes, opts = {}) {
     for (const k of ["name", "short", "group", "icon", "color"]) if (!d[k]) errors.push(`${where}: missing ${k}`);
     if (opts.strict && !d.domain) errors.push(`${where}: missing domain`);
     if (opts.strict && !d.stream) errors.push(`${where}: missing stream`);
+    if (opts.strict && !d.engine) {
+      for (const n of d.nodes || []) {
+        if (typeof n.summary !== "string" || n.summary.trim().split(/\s+/).length < 6) errors.push(`${where}: ${n.id} needs a summary`);
+        if (!Array.isArray(n.topics) || n.topics.length < 3 || n.topics.some((t) => typeof t !== "string" || !t.trim())) errors.push(`${where}: ${n.id} needs at least 3 topics`);
+      }
+    }
     if (d.stream && opts.streams && !opts.streams.has(d.stream)) errors.push(`${where}: unknown stream ${d.stream} (see _streams.json)`);
     if (d.engine) {
       if (!ENGINES.has(d.engine) || d.engine !== d.id) errors.push(`${where}: unknown engine ${d.engine}`);
@@ -636,6 +642,24 @@ function webStructure(reg, dsa) {
 }
 
 /**
+ * The DSA skill nodes' summaries and topics (content/nexus/_dsa-content.json),
+ * kept apart from the nodes themselves, which live in code.
+ */
+function readDsaContent(dir = DIR) {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(dir, "_dsa-content.json"), "utf8")).nodes || {};
+  } catch {
+    return {};
+  }
+}
+
+/** Missing DSA content entries (the nexus check fails on any). */
+function dsaContentGaps(dsaNodes, dir = DIR) {
+  const c = readDsaContent(dir);
+  return dsaNodes.filter((n) => !c[n.id]?.summary || !Array.isArray(c[n.id]?.topics) || c[n.id].topics.length < 3).map((n) => n.id);
+}
+
+/**
  * Streams (content/nexus/_streams.json): how subjects group on the radial
  * overview, in their order around the circle, each with its accent hue.
  */
@@ -696,6 +720,8 @@ function countLabel(n) {
 }
 
 module.exports = {
+  readDsaContent,
+  dsaContentGaps,
   readStreams,
   webStructure,
   webState,

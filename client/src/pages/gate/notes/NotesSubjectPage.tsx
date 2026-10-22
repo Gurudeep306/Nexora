@@ -57,14 +57,23 @@ function SubjectHome({ data }: { data: SubjectTree }) {
   }, [lessons, progress, subject.id])
   const verb = done === 0 && !lessons.some((l) => progressOf(progress, subject.id, l.id).scrollPct > 2) ? 'Start' : done === lessons.length ? 'Read again' : 'Continue'
 
-  const action = next && (
-    <Link to={NOTES_ROUTES.lesson(subject.id, next.id)} className="notes-tool notes-tool--main">
-      <Icon name="play" className="size-4" aria-hidden="true" />
-      <span>
-        {verb}
-        <span className="hidden sm:inline">: {next.title}</span>
-      </span>
-    </Link>
+  const action = (
+    <>
+      {/* The subject's skill tree (Nexus) beside its notes. */}
+      <Link to={`/gate/subjects/${subject.id}`} className="notes-tool">
+        <Icon name="nexus" className="size-4" aria-hidden="true" />
+        <span>Skill tree</span>
+      </Link>
+      {next && (
+        <Link to={NOTES_ROUTES.lesson(subject.id, next.id)} className="notes-tool notes-tool--main">
+          <Icon name="play" className="size-4" aria-hidden="true" />
+          <span>
+            {verb}
+            <span className="hidden sm:inline">: {next.title}</span>
+          </span>
+        </Link>
+      )}
+    </>
   )
 
   return (

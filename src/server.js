@@ -3709,6 +3709,78 @@ app.get("/api/courses/:subject/:concept?", (req, res) => {
   });
 });
 
+/**
+ * One node's content view (lazy, cached by the client): its summary and
+ * "what you'll learn" topics; its GATE notes lessons with their sections,
+ * worked examples, animations and practice questions (and "Read" deep
+ * links); or the course outline from content/courses; and its resources.
+ * Static per node — the reader's numbers come from /api/nexus/node.
+ */
+app.get("/api/nexus/content/:subject/:node", (req, res) => {
+  try {
+    const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+    const sid = String(req.params.subject);
+    const nid = String(req.params.node);
+    const s = reg.subjects.get(sid);
+    if (!s) return res.status(404).json({ ok: false, error: "Unknown subject" });
+    const dsa = s.engine === "dsa";
+    const raw = dsa ? reg.dsaNodes.find((n) => n.id === nid) : s.doc.nodes.find((n) => n.id === nid);
+    if (!raw) return res.status(404).json({ ok: false, error: "Unknown node" });
+    const extra = dsa ? nexusSubjects.readDsaContent()[nid] || {} : raw;
+    const notes = loadGateNotes();
+    const visible = nexusNotesVisible(req, notes);
+    const notesId = s.meta.notesSubject;
+    const notesSubj = notesId ? notes.subjects.get(notesId) : null;
+    const skip = /^(where this fits|gate radar|summary|practice|pyqs?|gate questions|try it)/i;
+    const lessons = (raw.lessons || [])
+      .map((id) => {
+        const hit = notesSubj?.lessons.get(id);
+        if (!hit) return null;
+        const l = hit.lesson;
+        const href = `/gate/notes/${notesId}/${id}`;
+        return {
+          id,
+          title: l.title,
+          chapter: hit.chapter.title,
+          minutes: l.est_minutes || null,
+          status: l.status || "published",
+          href,
+          readable: visible.has(notesId),
+          sections: (l.outline || []).filter((h) => h.level === 2 && !skip.test(h.text)).map((h) => ({ id: h.id, title: h.text, href: `${href}#n-${h.id}` })),
+          examples: (l.blocks || []).filter((b) => b.name === "example").length,
+          animations: (l.viz || []).length,
+          practice: (l.practice || []).length,
+          pyqs: (l.pyqLinks || l.pyqs || []).length,
+        };
+      })
+      .filter(Boolean);
+    // A hand-written course (content/courses/<subject>/<node>.md): its headings.
+    let course = null;
+    try {
+      const md = fs.readFileSync(path.join(__dirname, "..", "content", "courses", sid, `${nid}.md`), "utf8");
+      course = { outline: md.split(/\r?\n/).filter((x) => /^#{1,3}\s/.test(x)).map((x) => x.replace(/^#+\s*/, "").trim()).slice(0, 30) };
+    } catch {
+      course = null;
+    }
+    res.set("Cache-Control", "private, max-age=300");
+    res.json({
+      ok: true,
+      subject: sid,
+      node: nid,
+      summary: extra.summary || raw.desc || "",
+      topics: extra.topics || [],
+      desc: raw.desc || "",
+      kind: dsa ? "skill" : raw.kind || "concept",
+      optional: !dsa && (raw.optional === true || (raw.optional !== false && raw.kind === "project")),
+      resources: raw.resources || [],
+      lessons,
+      course,
+    });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
 app.get("/api/nexus/web", async (req, res) => {
   try {
     const fresh = req.query.fresh === "1";

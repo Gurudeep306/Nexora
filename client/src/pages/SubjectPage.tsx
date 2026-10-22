@@ -1,0 +1,442 @@
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { motion } from 'motion/react'
+import { ArrowRight, BookOpen, ChevronRight, Lock, PenLine, RefreshCw } from 'lucide-react'
+import { Button, Card, CardContent, ErrorState, LoadingBlock, RankGlyph, Tabs } from '@/components/ui'
+import { useApi } from '@/hooks/useApi'
+import { api } from '@/lib/api'
+import { useAuth } from '@/context/AuthContext'
+import { useAgentPageContext } from '@/context/AgentContext'
+import { cn, formatNumber } from '@/lib/utils'
+import { Icon } from '@/components/icon/Icon'
+import { SkillGraph } from '@/components/nexus/SkillGraph'
+import { WeeklyPool } from '@/components/nexus/WeeklyPool'
+import { TitleTrack } from '@/components/nexus/TitleTrack'
+import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
+import { NodeContent, NodeSheet, useReviewList } from '@/components/nexus/NodeContent'
+import { NexusPalette } from '@/components/nexus/NexusPalette'
+import { GoalMenu, startReview, useGoal, usePaletteHotkey } from '@/components/nexus/extras'
+import { courseHref, subjectHref } from '@/components/nexus/course'
+import { cachedState, cachedStructure, fetchNexusPath, fetchRoadmap, loadWeb, mergeWeb, nexusPathKey, ROADMAP_KEY } from '@/components/nexus/data'
+import type { CrossLink, NexusNode, NexusStatsResponse, NexusWebStructure } from '@/components/nexus/types'
+
+/*
+ * A subject's own page: /learn/<id>, /gate/subjects/<id> (GATE subjects)
+ * or /learn/dsa. The hero (name, stream, rank, Continue), the subject's Rift
+ * tree with its zones, goal steps and review rings, a zone overview and what
+ * it needs from other subjects; every node opens its contents (a slide-over,
+ * a full sheet on phones). A node deep-links as #<node>.
+ */
+
+/** The subject's id from the route (/learn/dsa has none: it is DSA). */
+function useSubjectId() {
+  const { subject } = useParams()
+  const { pathname } = useLocation()
+  return subject ?? (pathname.startsWith('/learn/dsa') ? 'dsa' : '')
+}
+
+export default function SubjectPage() {
+  const subject = useSubjectId()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  const username = user?.username ?? ''
+  const [tab, setTab] = useState<'tree' | 'ranks' | 'board'>('tree')
+
+  // The structure (streams, colours, cross links, goal routes): device first.
+  const [structure, setStructure] = useState<NexusWebStructure | null>(() => cachedStructure())
+  useEffect(() => {
+    loadWeb(false)
+      .then(({ structure: s }) => setStructure(s))
+      .catch(() => {})
+  }, [])
+  const cluster = structure?.clusters.find((c) => c.id === subject) ?? null
+  const stream = structure?.streams?.find((s) => s.id === (cluster?.stream ?? cluster?.domain))
+  const hueOf = useMemo(() => {
+    const hue = new Map((structure?.streams ?? []).map((x) => [x.id, x.hue]))
+    const of = new Map((structure?.clusters ?? []).map((c) => [c.id, hue.get(c.stream ?? c.domain)]))
+    return (id: string) => of.get(id)
+  }, [structure])
+
+  const { data: raw, loading, error, refetch } = useApi(() => fetchNexusPath(subject), [subject], { cacheKey: nexusPathKey(subject), skip: !subject })
+  // Only this subject's own skills and links: other subjects are "Needs · X".
+  const nexus = useMemo(() => {
+    if (!raw || raw.subject?.id !== subject) return null
+    const own = raw.nodes.filter((n) => !n.subject || n.subject === subject)
+    const ids = new Set(own.map((n) => n.id))
+    return { ...raw, nodes: own.map((n) => ({ ...n, requires: n.requires.filter((r) => ids.has(r)) })) }
+  }, [raw, subject])
+  const isDsa = (nexus?.subject?.engine ?? (subject === 'dsa' ? 'dsa' : null)) === 'dsa'
+  const roadmapApi = useApi(fetchRoadmap, [], { cacheKey: ROADMAP_KEY, skip: !isDsa })
+  const statsApi = useApi<NexusStatsResponse>(() => api.get<NexusStatsResponse>('/api/stats', { query: { username: username || undefined } }), [username], {
+    cacheKey: `stats:${username}`,
+  })
+
+  // The selected node lives in the URL hash (#node).
+  const selectedId = decodeURIComponent(location.hash.replace(/^#/, '')) || null
+  const setSelectedId = useCallback((id: string | null) => navigate({ hash: id ? encodeURIComponent(id) : '' }, { replace: true, state: location.state }), [navigate, location.state])
+  const selectedNode = useMemo(() => nexus?.nodes.find((n) => n.id === selectedId) ?? null, [nexus, selectedId])
+
+  // Goal steps, review rings (due or marked), ⌘K.
+  const webClusters = useMemo(() => (structure ? mergeWeb(structure, cachedState(username)) : null), [structure, username])
+  const { goal, plan, setGoal } = useGoal(structure?.routes ?? [], webClusters)
+  const own = useCallback((k: string) => (k.startsWith(`${subject}:`) ? k.slice(subject.length + 1) : null), [subject])
+  const steps = useMemo(() => {
+    if (!plan || !nexus) return undefined
+    const st = new Map(nexus.nodes.map((n) => [n.id, n]))
+    const mine = plan.order.map(own).filter((x): x is string => !!x && !st.get(x)?.completed)
+    return [...mine.filter((id) => st.get(id)?.unlocked), ...mine.filter((id) => !st.get(id)?.unlocked)].slice(0, 5)
+  }, [plan, nexus, own])
+  const highlight = useMemo(() => (plan ? new Set([...plan.keys].map(own).filter((x): x is string => !!x)) : undefined), [plan, own])
+  const review = useReviewList()
+  const due = useMemo(() => {
+    const out = new Set<string>()
+    const day = 86400000
+    for (const n of nexus?.nodes ?? []) {
+      const m = (n as { memory?: { lastAt: number; interval: number } | null }).memory
+      if (n.completed && m?.lastAt && (Date.now() - m.lastAt) / day >= Math.max(3, m.interval || 0)) out.add(n.id)
+      if (review.has(`${subject}:${n.id}`)) out.add(n.id)
+    }
+    return out
+  }, [nexus, review, subject])
+  const [paletteOpen, setPaletteOpen] = useState(false)
+  usePaletteHotkey(() => setPaletteOpen(true))
+
+  // Continue: the open skill you are furthest into (nearest the start).
+  const nextNode = useMemo(() => {
+    let best: NexusNode | null = null
+    for (const n of nexus?.nodes ?? []) {
+      if (!n.unlocked || n.completed) continue
+      if (!best || n.progress > best.progress || (n.progress === best.progress && n.zone < best.zone)) best = n
+    }
+    return best
+  }, [nexus])
+
+  // What this subject needs from others (from the structure's cross links).
+  const needs = useMemo(() => {
+    const count = new Map<string, number>()
+    for (const n of cluster?.nodes ?? []) for (const x of n.cx ?? []) count.set(x.split(':')[0], (count.get(x.split(':')[0]) ?? 0) + 1)
+    return [...count].sort((a, b) => b[1] - a[1]).map(([id, n]) => ({ c: structure?.clusters.find((x) => x.id === id), n })).filter((x) => !!x.c)
+  }, [cluster, structure])
+
+  const onJump = useCallback(
+    (l: CrossLink) => {
+      if (l.subject === subject) setSelectedId(l.id)
+      else {
+        const c = structure?.clusters.find((x) => x.id === l.subject)
+        navigate(c ? subjectHref(c, l.id) : `/learn/${l.subject}#${l.id}`)
+      }
+    },
+    [subject, setSelectedId, structure, navigate],
+  )
+
+  useAgentPageContext({
+    label: selectedNode ? `${nexus?.subject?.short ?? subject} · ${selectedNode.name}` : (nexus?.subject?.name ?? 'Subject'),
+    visibleText: nexus
+      ? [
+          `Subject page: ${nexus.subject?.name}. ${nexus.subjectRank ? `Rank ${nexus.subjectRank.tier} (${nexus.subjectRank.title}), ${nexus.subjectRank.progress}%.` : ''}`,
+          `Zones: ${nexus.zones.map((z) => `${z.level}. ${z.name} ${z.zoneProgress}%`).join('; ')}`,
+          selectedNode ? `Open node: ${selectedNode.name} — ${selectedNode.progress}% (${selectedNode.completed ? 'mastered' : selectedNode.unlocked ? 'open' : 'locked'}).` : '',
+        ]
+          .filter(Boolean)
+          .join('\n')
+      : undefined,
+  })
+
+  if (!subject) return <Navigate to="/nexus" replace />
+  if (structure && !cluster && !loading) return <Navigate to="/nexus" replace />
+
+  const loadingView = (
+    <div aria-busy="true">
+      <div className="mb-6 space-y-3">
+        <div className="nx-skel h-4 w-40 rounded" />
+        <div className="nx-skel h-9 w-72 max-w-full rounded" />
+        <div className="nx-skel h-4 w-[32rem] max-w-full rounded" />
+      </div>
+      <div className="nx-skel h-[520px] rounded-2xl" />
+    </div>
+  )
+  if (!nexus) return error ? <ErrorState message={error} onRetry={refetch} /> : loadingView
+
+  const { player, zones, nodes } = nexus
+  const rank = nexus.subjectRank
+  const done = nodes.filter((n) => n.completed).length
+  const pct = isDsa ? Math.round((done / Math.max(1, nodes.length)) * 100) : (rank?.progress ?? 0)
+  const selZone = selectedNode ? zones.find((z) => z.level === selectedNode.zone) : null
+  const notesHref = cluster?.gate?.notes ? `/gate/notes/${cluster.gate.notes}` : null
+  const roadmap = roadmapApi.data
+  const currentZone = isDsa ? player.level : (zones.find((z) => z.current)?.level ?? 1)
+  const studyHrefOf = (n: NexusNode) => {
+    const ls = n.metric?.lessons
+    if (ls?.ids.length) return `/gate/notes/${ls.subject}/${ls.ids[0]}`
+    return courseHref({ id: subject, engine: isDsa ? 'dsa' : null }, n.id)
+  }
+  const R = 30
+  const C = 2 * Math.PI * R
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28, ease: 'easeOut' }}>
+      {/* Nexus › Stream › Subject */}
+      <nav aria-label="Where you are" className="mb-3 flex flex-wrap items-center gap-1 text-[12px] text-text-muted">
+        <Link to="/nexus" className="hover:text-text-primary">
+          Nexus
+        </Link>
+        <ChevronRight className="size-3" aria-hidden="true" />
+        <span className="font-semibold" style={stream ? { color: stream.hue } : undefined}>
+          {stream?.name ?? 'Stream'}
+        </span>
+        <ChevronRight className="size-3" aria-hidden="true" />
+        <span className="text-text-primary">{nexus.subject?.name}</span>
+      </nav>
+
+      {/* Hero */}
+      <header className="mb-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="min-w-0">
+          {stream && (
+            <span
+              className="mb-2 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold tracking-wider uppercase"
+              style={{ color: stream.hue, borderColor: `color-mix(in oklab, ${stream.hue} 40%, transparent)`, background: `color-mix(in oklab, ${stream.hue} 8%, transparent)` }}
+            >
+              <span className="size-1.5 rounded-full" style={{ background: stream.hue }} aria-hidden="true" />
+              {stream.name}
+            </span>
+          )}
+          <h1 className="mb-2 font-display text-3xl font-semibold tracking-tight text-text-primary sm:text-[34px]">{nexus.subject?.name}</h1>
+          <p className="mb-4 line-clamp-2 max-w-[68ch] text-[15px] leading-relaxed text-text-secondary">{nexus.subject?.description}</p>
+          <div className="flex flex-wrap gap-2">
+            {nextNode ? (
+              <Button variant="primary" size="md" className="nx-press" onClick={() => setSelectedId(nextNode.id)}>
+                Continue · {nextNode.name} <ArrowRight className="size-4" aria-hidden="true" />
+              </Button>
+            ) : (
+              <Button variant="primary" size="md" className="nx-press" disabled>
+                Every skill mastered
+              </Button>
+            )}
+            {notesHref && (
+              <Link to={notesHref}>
+                <Button variant="outline" size="md" className="nx-press">
+                  <BookOpen className="size-4" aria-hidden="true" /> GATE notes
+                </Button>
+              </Link>
+            )}
+            {cluster?.gate?.pyq && (
+              <Link to={`/gate/practice?subject=${encodeURIComponent(cluster.gate.pyq)}`}>
+                <Button variant="outline" size="md" className="nx-press">
+                  <PenLine className="size-4" aria-hidden="true" /> PYQs
+                </Button>
+              </Link>
+            )}
+            {isDsa && (
+              <Link to="/learn">
+                <Button variant="outline" size="md" className="nx-press">
+                  <BookOpen className="size-4" aria-hidden="true" /> DSA lessons
+                </Button>
+              </Link>
+            )}
+            <Button variant="ghost" size="md" className="nx-press" onClick={() => refetch()} aria-label="Refresh">
+              <RefreshCw className={cn('size-4', loading && 'animate-spin')} aria-hidden="true" />
+            </Button>
+          </div>
+        </div>
+        {/* The subject rank */}
+        <div className="flex items-center gap-4 lg:justify-end" aria-label="Subject rank">
+          <div className="relative size-[76px] shrink-0">
+            <svg className="absolute inset-0 -rotate-90" width="76" height="76" aria-hidden="true">
+              <circle cx="38" cy="38" r={R} fill="none" stroke="var(--color-border)" strokeWidth="5" />
+              <circle cx="38" cy="38" r={R} fill="none" stroke="var(--color-accent-brand)" strokeWidth="5" strokeLinecap="round" strokeDasharray={`${(C * pct) / 100} ${C}`} className="nx-ring-in" />
+            </svg>
+            <span className="absolute inset-0 flex items-center justify-center font-display text-lg text-text-primary tabular-nums">{pct}%</span>
+          </div>
+          <div className="min-w-0">
+            <p className="mb-0 flex items-center gap-2 font-display text-[15px] tracking-wide text-text-primary">
+              <RankGlyph level={isDsa ? player.level : (rank?.tierIndex ?? 0) + 1} size={22} animated={false} />
+              {isDsa ? `LVL ${player.level} · ${player.name}` : rank ? `${rank.tier} · ${rank.title}` : nexus.subject?.short}
+            </p>
+            <p className="mt-1 mb-0 font-mono text-[12px] text-text-muted tabular-nums">
+              {done}/{nodes.length} skills mastered{isDsa ? ` · ${formatNumber(player.xp)} XP` : ''}
+            </p>
+            <p className="mt-0.5 mb-0 text-[12px] text-text-secondary">
+              {isDsa ? (
+                player.xpGated || player.probGated ? (
+                  <>Next rift: {player.xpGated ? `${formatNumber(Math.max(0, player.xpForNext - player.xpInLevel))} XP` : ''}{player.xpGated && player.probGated ? ' and ' : ''}{player.probGated ? `${Math.max(0, player.probsForNext - player.probsInLevel)} solves` : ''}</>
+                ) : (
+                  'Top rift reached.'
+                )
+              ) : rank?.toNext ? (
+                <>
+                  Next: <span className="font-semibold text-text-primary">{rank.toNext.tier}</span> at {rank.toNext.at}% · about {rank.toNext.concepts} concept{rank.toNext.concepts === 1 ? '' : 's'}
+                </>
+              ) : rank?.coreDone ? (
+                'Master — every core skill done.'
+              ) : (
+                'Top rank reached.'
+              )}
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <Tabs
+          variant="pills"
+          items={[
+            { id: 'tree', label: '/tree', icon: <Icon name="map" className="size-3.5" aria-hidden="true" /> },
+            ...(isDsa ? [{ id: 'ranks', label: '/ranks', icon: <Icon name="trophy" className="size-3.5" aria-hidden="true" /> }] : []),
+            { id: 'board', label: '/leaderboard', icon: <Icon name="users" className="size-3.5" aria-hidden="true" /> },
+          ]}
+          active={tab}
+          onChange={(id) => setTab(id as 'tree' | 'ranks' | 'board')}
+        />
+        {tab === 'tree' && <GoalMenu routes={structure?.routes ?? []} goal={goal} onGoal={setGoal} />}
+      </div>
+
+      {tab === 'ranks' ? (
+        statsApi.data ? <TitleTrack stats={statsApi.data} /> : <LoadingBlock rows={5} />
+      ) : tab === 'board' ? (
+        <WebLeaderboard subject={subject} subjectName={nexus.subject?.name} />
+      ) : (
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
+          <div className="min-w-0 space-y-4">
+            {plan && steps && (
+              <p className="mb-0 text-[12.5px] text-text-secondary" role="status">
+                <span className="font-semibold text-warning">Goal path</span> ·{' '}
+                {steps.length ? (
+                  <>
+                    next here:{' '}
+                    {steps.slice(0, 3).map((id, i) => (
+                      <span key={id}>
+                        {i ? ' → ' : ''}
+                        <button type="button" className="cursor-pointer text-text-primary hover:underline" onClick={() => setSelectedId(id)}>
+                          {i + 1}. {nodes.find((n) => n.id === id)?.name}
+                        </button>
+                      </span>
+                    ))}
+                  </>
+                ) : (
+                  'nothing left here — the next steps are in other subjects.'
+                )}
+              </p>
+            )}
+            <SkillGraph
+              nodes={nodes}
+              zones={zones}
+              selectedId={selectedId}
+              onSelect={(id) => setSelectedId(selectedId === id ? null : id)}
+              zoneWord={isDsa ? 'Zone' : 'Chapter'}
+              steps={steps}
+              highlight={highlight}
+              due={due}
+            />
+            {isDsa &&
+              (roadmap ? (
+                <WeeklyPool level={roadmap.levels.find((l) => l.level === currentZone)} weekSeed={roadmap.weekSeed} accentColor={zones.find((z) => z.level === currentZone)?.color ?? 'var(--color-primary)'} />
+              ) : (
+                <Card>
+                  <CardContent>
+                    <LoadingBlock rows={4} />
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
+
+          {/* Zones, and what it needs from other subjects */}
+          <aside className="space-y-6 xl:sticky xl:top-4 xl:self-start" aria-label="Subject overview">
+            <section>
+              <h2 className="mb-2.5 text-[11px] font-semibold tracking-wider text-text-muted uppercase">{isDsa ? 'Zones' : 'Chapters'}</h2>
+              <ol className="mb-0 space-y-1">
+                {zones.map((z) => (
+                  <li key={z.level}>
+                    <button
+                      type="button"
+                      onClick={() => document.getElementById(`zone-${z.level}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                      className="group w-full cursor-pointer rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-text-primary/5"
+                    >
+                      <span className="flex items-center gap-2 text-[13px]">
+                        <span className="w-4 font-mono text-[10.5px] text-text-muted tabular-nums">{z.level}</span>
+                        <span className={cn('min-w-0 flex-1 truncate', z.locked ? 'text-text-muted' : 'text-text-primary')}>{z.name}</span>
+                        {z.locked ? <Lock className="size-3 text-text-muted" aria-label="locked" /> : <span className="font-mono text-[11px] text-text-muted tabular-nums">{z.zoneProgress}%</span>}
+                      </span>
+                      <span className="mt-1.5 ml-6 block h-1 overflow-hidden rounded-full bg-bg-surface-3">
+                        <span className="block h-full rounded-full transition-[width] duration-700" style={{ width: `${z.zoneProgress}%`, background: z.color }} />
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ol>
+            </section>
+            {needs.length > 0 && (
+              <section>
+                <h2 className="mb-2.5 text-[11px] font-semibold tracking-wider text-text-muted uppercase">Needs from other subjects</h2>
+                <div className="flex flex-wrap gap-1.5">
+                  {needs.map(({ c, n }) => (
+                    <Link
+                      key={c!.id}
+                      to={subjectHref(c!)}
+                      className="nx-need nx-press inline-flex items-center gap-1.5 px-2.5 py-1 text-[12px]"
+                      data-hue={hueOf(c!.id) ? '' : undefined}
+                      style={hueOf(c!.id) ? ({ '--nx-chip': hueOf(c!.id) } as React.CSSProperties) : undefined}
+                    >
+                      {c!.name}
+                      <span className="font-mono text-[10.5px] opacity-70 tabular-nums">{n}</span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+            <p className="mb-0 text-[11.5px] leading-relaxed text-text-muted">
+              Select any skill to see what it covers, its lessons and practice. Amber rings are due for review; gold numbers are your goal path. Press ⌘K to search.
+            </p>
+          </aside>
+        </div>
+      )}
+
+      <NodeSheet open={!!selectedNode} onClose={() => setSelectedId(null)} label={selectedNode ? `${selectedNode.name}: contents` : 'Node'}>
+        {selectedNode && (
+          <NodeContent
+            key={selectedNode.id}
+            subject={subject}
+            node={selectedNode}
+            nodes={nodes}
+            zoneName={selZone?.name ?? `Zone ${selectedNode.zone}`}
+            zoneLevel={selectedNode.zone}
+            zoneColor={selZone?.color ?? 'var(--color-primary)'}
+            isDsa={isDsa}
+            due={due.has(selectedNode.id) && !review.has(`${subject}:${selectedNode.id}`)}
+            studyHref={studyHrefOf(selectedNode)}
+            onPractise={selectedNode.metric?.pyq ? () => void startReview(subject, selectedNode.id, (to) => navigate(to)) : undefined}
+            shareHref={cluster ? subjectHref(cluster, selectedNode.id) : `${location.pathname}#${selectedNode.id}`}
+            onClose={() => setSelectedId(null)}
+            onSelect={(id) => setSelectedId(id)}
+            onJump={onJump}
+            hueOf={hueOf}
+          />
+        )}
+      </NodeSheet>
+
+      <NexusPalette
+        open={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        clusters={webClusters ?? []}
+        streams={structure?.streams ?? []}
+        commands={[
+          ...(structure?.routes ?? []).map((r) => ({ id: `goal:${r.id}`, label: `Goal path: ${r.name}`, hint: goal === r.id ? 'active' : 'goal', run: () => setGoal(r.id) })),
+          ...(goal ? [{ id: 'goal:none', label: 'Clear the goal path', hint: 'goal', run: () => setGoal(null) }] : []),
+          { id: 'nexus', label: 'Back to the Nexus', hint: 'page', run: () => navigate('/nexus') },
+        ]}
+        onSubject={(id) => {
+          const c = structure?.clusters.find((x) => x.id === id)
+          if (c) navigate(subjectHref(c))
+        }}
+        onConcept={(k) => {
+          const [s2, ...rest] = k.split(':')
+          if (s2 === subject) setSelectedId(rest.join(':'))
+          else {
+            const c = structure?.clusters.find((x) => x.id === s2)
+            if (c) navigate(subjectHref(c, rest.join(':')))
+          }
+        }}
+      />
+    </motion.div>
+  )
+}

@@ -1286,14 +1286,8 @@ export function RadialWeb({
               }
             }
             else if (hs && !hs.beyond) {
-              // Zoom into the sector.
-              const mid = (hs.s.a0 + hs.s.a1) / 2
-              const rm = (layout.inner + hs.s.rMax) / 2
-              const { w, h } = view.current
-              const depth = hs.s.rMax - layout.inner + 400
-              const k = Math.min(1, Math.min(w, h) / depth)
-              if (cam.current.k < k * 0.9) flyTo({ x: Math.cos(mid) * rm, y: Math.sin(mid) * rm, k })
-              else cb.onSelect(null)
+              // Anywhere in a subject's sector: its own page.
+              cb.onOpenSubject(hs.s.id)
             } else cb.onSelect(null)
           }
         }

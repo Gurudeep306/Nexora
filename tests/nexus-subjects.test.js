@@ -326,6 +326,50 @@ test('web state carries "last studied" per node (continue where you left off)', 
   assert.ok(body.week && typeof body.week.xp === 'number' && typeof body.week.concepts === 'number');
 });
 
+test('node contents: every node has a summary and 3+ topics (data and validation)', () => {
+  const reg = subjects.loadRegistry(NEXUS_NODES);
+  let count = 0;
+  for (const s of reg.subjects.values()) {
+    for (const n of s.doc?.nodes || []) {
+      count++;
+      assert.ok(typeof n.summary === 'string' && n.summary.split(/\s+/).length >= 6, `${s.meta.id}:${n.id} summary`);
+      assert.ok(Array.isArray(n.topics) && n.topics.length >= 3 && n.topics.every((t) => typeof t === 'string' && t.trim()), `${s.meta.id}:${n.id} topics`);
+    }
+  }
+  const dsa = subjects.readDsaContent();
+  for (const n of NEXUS_NODES) assert.ok(dsa[n.id]?.summary && dsa[n.id].topics.length >= 3, `dsa:${n.id}`);
+  assert.equal(count + NEXUS_NODES.length, 1382);
+  assert.deepEqual(subjects.dsaContentGaps(NEXUS_NODES), []);
+  // The strict check rejects a node without them.
+  const bad = JSON.parse(JSON.stringify(DOCS.find((d) => d.id === 'rust')));
+  delete bad.nodes[0].summary;
+  bad.nodes[1].topics = ['one'];
+  const errors = subjects.validateOutlines([bad], NEXUS_NODES, { strict: true });
+  assert.ok(errors.some((e) => /needs a summary/.test(e)) && errors.some((e) => /at least 3 topics/.test(e)));
+});
+
+test('GET /api/nexus/content: DL lessons with their sections, examples, animations and practice; courses elsewhere', async () => {
+  const dl = await call('GET', '/api/nexus/content/dl/place-value');
+  assert.equal(dl.status, 200);
+  assert.ok(dl.body.summary && dl.body.topics.length >= 3);
+  const lesson = dl.body.lessons[0];
+  assert.equal(lesson.id, 'place-value');
+  assert.match(lesson.href, /^\/gate\/notes\/dl\/place-value$/);
+  assert.ok(lesson.sections.length >= 3 && lesson.sections.every((x) => x.href.startsWith(`${lesson.href}#n-`)));
+  assert.ok(!lesson.sections.some((x) => /^where this fits/i.test(x.title)), 'generic headings left out');
+  assert.ok(lesson.examples > 0 && lesson.animations > 0 && lesson.practice > 0);
+  const rust = await call('GET', '/api/nexus/content/rust/ownership');
+  assert.equal(rust.status, 200);
+  assert.deepEqual(rust.body.lessons, []);
+  assert.equal(rust.body.course, null);
+  assert.ok(rust.body.topics.length >= 3);
+  const dsa = await call('GET', '/api/nexus/content/dsa/bit_basics');
+  assert.equal(dsa.status, 200);
+  assert.ok(dsa.body.topics.length >= 3);
+  assert.equal((await call('GET', '/api/nexus/content/rust/nope')).status, 404);
+  assert.equal((await call('GET', '/api/nexus/content/nope/x')).status, 404);
+});
+
 test('week keys follow ISO weeks', () => {
   assert.equal(ranks.weekKey(Date.UTC(2026, 9, 21)), '2026-W43');
   assert.equal(ranks.weekKey(Date.UTC(2027, 0, 1)), '2026-W53');

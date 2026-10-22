@@ -1,6 +1,19 @@
 import type { WebCluster } from './types'
 
 /*
+ * Where a subject lives: its own page, with its tree, rank, leaderboard and
+ * every node's contents.
+ *   DSA                  /learn/dsa (beside the DSA learning hub)
+ *   a GATE subject       /gate/subjects/<id> (beside its notes and PYQs)
+ *   any other subject    /learn/<id>
+ * A node is the subject page with #<node>.
+ */
+export function subjectHref(subject: Pick<WebCluster, 'id' | 'engine' | 'gate'>, nodeId?: string | null): string {
+  const base = subject.engine === 'dsa' ? '/learn/dsa' : subject.gate ? `/gate/subjects/${encodeURIComponent(subject.id)}` : `/learn/${encodeURIComponent(subject.id)}`
+  return nodeId ? `${base}#${encodeURIComponent(nodeId)}` : base
+}
+
+/*
  * Where a Nexus skill's course lives.
  *   DSA                 the DSA learning hub (/learn)
  *   any other subject   /learn/<subject>/<concept> — the course page, which
