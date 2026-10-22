@@ -1194,6 +1194,61 @@ input[type='search']::-webkit-search-results-decoration {
 }
 .nx-need.nx-unlock:hover { background: color-mix(in oklab, var(--nx-b2, #7c3aed) 18%, var(--color-bg-surface)); border-color: var(--nx-b2, #7c3aed); }
 
+/* Chips in the linked subject's stream colour. */
+.nx-need[data-hue] {
+  border-color: color-mix(in oklab, var(--nx-chip) 45%, var(--color-border));
+  color: color-mix(in oklab, var(--nx-chip) 75%, var(--color-text-primary));
+  background: color-mix(in oklab, var(--nx-chip) 9%, var(--color-bg-surface));
+}
+.nx-need[data-hue]:hover { background: color-mix(in oklab, var(--nx-chip) 18%, var(--color-bg-surface)); border-color: var(--nx-chip); }
+
+/* ── Nexus craft: depth, motion, states ─────────────────────────────────── */
+/* Orbs: a soft contact shadow and a hairline highlight; crisp rings. */
+.nx-orb svg { shape-rendering: geometricPrecision; }
+.nx-orb::before {
+  content: '';
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -7px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.28), transparent);
+  transition: transform 220ms var(--ease-smooth), opacity 220ms;
+  pointer-events: none;
+}
+.nx-orb:hover::before { transform: scale(1.12, 1.2); opacity: 0.7; }
+.nx-orb .nx-orb-core::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.1), transparent 45%);
+  pointer-events: none;
+}
+.nx-orb:active { transform: translateY(0) scale(0.96) !important; }
+/* Rings fill in on load; orbs rise in, staggered. */
+@keyframes nx-ring-in { from { stroke-dasharray: 0 999; } }
+.nx-ring-in { animation: nx-ring-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes nx-rise { from { opacity: 0; transform: translateY(6px) scale(0.96); } }
+.nx-orb-wrap { animation: nx-rise 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: calc(min(var(--i, 0), 40) * 14ms); }
+/* Goal steps and spaced-review hints. */
+.nx-step { color: #1a1300; background: linear-gradient(180deg, #ffd978, #f4b73f); box-shadow: 0 0 0 2px var(--color-bg-app), 0 2px 6px -1px rgb(0 0 0 / 0.35); }
+.nx-due-ring { stroke: var(--color-warning, #f59e0b); }
+.nx-due-note { color: color-mix(in oklab, var(--color-warning, #f59e0b) 80%, var(--color-text-primary)); background: color-mix(in oklab, var(--color-warning, #f59e0b) 10%, transparent); border: 1px solid color-mix(in oklab, var(--color-warning, #f59e0b) 35%, transparent); }
+/* Press feedback for Nexus buttons. */
+.nx-press { transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.nx-press:active { transform: scale(0.97); }
+/* Skeletons that hold the layout (no shift). */
+.nx-skel { background: linear-gradient(90deg, var(--color-bg-surface-2), var(--color-bg-surface-3), var(--color-bg-surface-2)); background-size: 200% 100%; animation: nx-skel 1.4s ease-in-out infinite; }
+@keyframes nx-skel { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+/* The mobile bottom sheet. */
+.nx-sheet-handle { width: 40px; height: 4px; border-radius: 9999px; background: var(--color-border-strong); margin: 8px auto 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .nx-ring-in, .nx-orb-wrap, .nx-skel { animation: none; }
+  .nx-orb::before, .nx-press { transition: none; }
+}
+
 /* ── The Dock (components/layout/Deck.tsx) ───────────────────────────────── */
 /* Destination tiles (DockBadge.tsx) are IconBadges tinted with each item's
    hue: oklch(var(--dock-l) c h). The container and shape come from the icon

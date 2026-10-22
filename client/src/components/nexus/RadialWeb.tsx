@@ -109,10 +109,22 @@ export function RadialWeb({
   onCamera,
   streams,
   me,
+  route = null,
+  due,
+  celebrate,
+  nextStep: nextStepProp,
 }: {
   clusters: WebCluster[]
   streams: WebStream[]
   me: CoreInfo
+  /** the active goal path: its skills, and its next steps in order */
+  route?: { keys: Set<string>; next: string[] } | null
+  /** skills due for spaced review (amber ring) */
+  due?: Set<string>
+  /** skills mastered since the last visit (a small burst) */
+  celebrate?: string[]
+  /** the skill "Next step" jumps to */
+  nextStep?: string | null
   layout: RadialLayout
   selected: string | null
   onSelect: (key: string | null) => void
@@ -125,7 +137,7 @@ export function RadialWeb({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const iconsRef = useRef<HTMLDivElement>(null)
   const coreRef = useRef<HTMLDivElement>(null)
-  const [compact, setCompact] = useState(false)
+  const [compact, setCompact] = useState(() => typeof window !== 'undefined' && window.innerWidth < 640)
 
   /* ── data bound to the layout ── */
   const items = useMemo(() => {
@@ -183,7 +195,7 @@ export function RadialWeb({
   // Everything in view, the stream names on the rim included.
   // Fit: the whole disc with its stream names, a little below the toolbar.
   const fit = (w: number, h: number): Camera => {
-    const k = Math.min(w, h - 56) / (2 * (layout.extent + (w < 640 ? 170 : 320)))
+    const k = Math.min(w, h - 56) / (2 * (layout.extent + (w < 640 ? 300 : 320)))
     return { x: 0, y: -28 / k, k }
   }
   const cam = useRef<Camera>(initialCamera ?? { x: 0, y: 0, k: 0.05 })
@@ -202,8 +214,16 @@ export function RadialWeb({
   const fly = useRef<{ from: Camera; to: Camera; t0: number; dur: number } | null>(null)
   const dirty = useRef(true)
   const grid = useRef(new HitGrid(40))
-  const P = useRef({ selected, onSelect, onOpenSubject, onCamera })
-  P.current = { selected, onSelect, onOpenSubject, onCamera }
+  const P = useRef({ selected, onSelect, onOpenSubject, onCamera, route, due })
+  P.current = { selected, onSelect, onOpenSubject, onCamera, route, due }
+  const celebrateAt = useRef<{ keys: string[]; t0: number } | null>(null)
+  useEffect(() => {
+    if (celebrate?.length) celebrateAt.current = { keys: celebrate, t0: performance.now() + 500 }
+  }, [celebrate])
+  const velocity = useRef<{ vx: number; vy: number } | null>(null)
+  useEffect(() => {
+    dirty.current = true
+  }, [route, due])
   // Skills that opened since your last visit pulse gently (this visit only):
   // the open set from the last visit is read once, the new one saved after.
   const [before] = useState<Set<string> | null>(() => {
@@ -226,14 +246,7 @@ export function RadialWeb({
     }
   }, [items])
   // The next step: the open skill you are furthest into, nearest the centre.
-  const nextStep = useMemo(() => {
-    let best: Item | null = null
-    for (const it of items.values()) {
-      if (it.node.s !== 1) continue
-      if (!best || it.node.p > best.node.p || (it.node.p === best.node.p && (it.node.z < best.node.z || (it.node.z === best.node.z && it.cluster.order < best.cluster.order)))) best = it
-    }
-    return best?.key ?? null
-  }, [items])
+  const nextStep = nextStepProp ?? null
   useEffect(() => {
     dirty.current = true
   }, [selected, items])
@@ -405,6 +418,15 @@ export function RadialWeb({
         if (t >= 1) fly.current = null
         dirty.current = true
       }
+      // A gentle glide after a flick.
+      const vel = velocity.current
+      if (vel && !fly.current) {
+        cam.current = { ...cam.current, x: cam.current.x - vel.vx * 16, y: cam.current.y - vel.vy * 16 }
+        vel.vx *= 0.9
+        vel.vy *= 0.9
+        dirty.current = true
+        if (Math.hypot(vel.vx, vel.vy) * cam.current.k < 0.02) velocity.current = null
+      }
       const c = cam.current
       // Flowing links and pulses animate only when they are big enough to see.
       const animate = !reduce && c.k >= 0.3
@@ -418,7 +440,8 @@ export function RadialWeb({
       const intro = reduce ? 1 : Math.min(1, (now - mountedAt.current) / 900)
       const introE = 1 - Math.pow(1 - intro, 3)
       if (intro < 1) dirty.current = true
-      if (!dirty.current && !animate && !fresh.size) return
+      const bursting = !!celebrateAt.current && now - celebrateAt.current.t0 < 1600
+      if (!dirty.current && !animate && !fresh.size && !bursting) return
       dirty.current = false
       const camKey = `${c.x.toFixed(1)},${c.y.toFixed(1)},${c.k.toFixed(4)}`
       if (camKey !== lastCam) {
@@ -454,6 +477,9 @@ export function RadialWeb({
         ctx.fill()
       }
       ctx.globalAlpha = 1
+      // Rings reveal outward on load, one after another.
+      const ringIndex = new Map(layout.rings.map((g, i2) => [g.level, i2]))
+      const ringReveal = (level: number) => (reduce ? 1 : Math.max(0, Math.min(1, (intro * 1.6 - (ringIndex.get(level) ?? 0) * 0.09) / 0.35)))
       // Zone bands: each subject's zones tinted in their colour, as in the
       // original (the current zone lit, locked zones faint).
       for (const s of sectors) {
@@ -462,7 +488,7 @@ export function RadialWeb({
         for (const z of cl.zones) {
           const g = ringOf.get(z.level)
           if (!g) continue
-          ctx.globalAlpha = z.current ? 0.1 : z.locked ? 0.015 : 0.045
+          ctx.globalAlpha = (z.current ? 0.1 : z.locked ? 0.015 : 0.045) * ringReveal(z.level)
           ctx.fillStyle = z.color
           ctx.beginPath()
           ctx.arc(0, 0, g.r1, s.a0, s.a1)
@@ -565,13 +591,34 @@ export function RadialWeb({
           ctx.stroke()
         }
       }
-      // Anchor dots where connections meet each subject.
+      // Subject dots where connections meet: each with its progress ring.
       for (const s2 of sectors) {
         const m = (s2.a0 + s2.a1) / 2
-        ctx.globalAlpha = !hs || hs === s2.id ? 0.9 : 0.25
+        const cl2 = sectorOf.get(s2.id)
+        const prog2 = cl2 && cl2.nodes.length ? cl2.nodes.reduce((a2, n) => a2 + n.p, 0) / cl2.nodes.length : 0
+        const ax = Math.cos(m) * anchorR
+        const ay = Math.sin(m) * anchorR
+        const on = !hs || hs === s2.id
+        ctx.globalAlpha = on ? 1 : 0.3
+        ctx.fillStyle = C.app
+        ctx.beginPath()
+        ctx.arc(ax, ay, 5.2 * px, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.strokeStyle = C.border
+        ctx.lineWidth = 1.4 * px
+        ctx.beginPath()
+        ctx.arc(ax, ay, 4.6 * px, 0, Math.PI * 2)
+        ctx.stroke()
+        if (prog2 > 0) {
+          ctx.strokeStyle = hueOf(s2.id)
+          ctx.lineWidth = 1.8 * px
+          ctx.beginPath()
+          ctx.arc(ax, ay, 4.6 * px, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * Math.max(4, prog2) * introE) / 100)
+          ctx.stroke()
+        }
         ctx.fillStyle = hueOf(s2.id)
         ctx.beginPath()
-        ctx.arc(Math.cos(m) * anchorR, Math.sin(m) * anchorR, 3.2 * px, 0, Math.PI * 2)
+        ctx.arc(ax, ay, (hs === s2.id ? 2.6 : 2) * px, 0, Math.PI * 2)
         ctx.fill()
       }
       ctx.globalAlpha = 1
@@ -584,6 +631,8 @@ export function RadialWeb({
       }
       const doneByColor = new Map<string, { lit: Path2D; dim: Path2D }>()
       const cross = new Path2D()
+      const routeLinks = new Path2D()
+      const rt = p.route
       const link = (path: Path2D, a: Item, b: Item) => {
         const ra = Math.hypot(a.x, a.y)
         const rb = Math.hypot(b.x, b.y)
@@ -620,7 +669,8 @@ export function RadialWeb({
           const a = items.get(rk)
           if (!a || (!near && !inView(a.x, a.y, 900))) continue
           const state = b.node.s === 2 && a.node.s === 2 ? 'done' : b.node.s >= 1 ? 'open' : 'locked'
-          const lit = !related || (related.has(a.key) && related.has(b.key))
+          const lit = !related ? !rt || (rt.keys.has(a.key) && rt.keys.has(b.key)) : related.has(a.key) && related.has(b.key)
+          if (rt && !related && rt.keys.has(a.key) && rt.keys.has(b.key)) link(routeLinks, a, b)
           if (state === 'done') {
             let g = doneByColor.get(b.color)
             if (!g) doneByColor.set(b.color, (g = { lit: new Path2D(), dim: new Path2D() }))
@@ -660,6 +710,12 @@ export function RadialWeb({
       ctx.lineWidth = thin(1.25)
       ctx.stroke(cross)
       ctx.setLineDash([])
+      if (rt) {
+        ctx.strokeStyle = '#f4b73f'
+        ctx.globalAlpha = 0.85
+        ctx.lineWidth = thin(2.4)
+        ctx.stroke(routeLinks)
+      }
       // mastered: glowing in the zone colour
       for (const [col, g] of doneByColor) {
         ctx.strokeStyle = col
@@ -685,14 +741,16 @@ export function RadialWeb({
       for (const it of visible) {
         const n = it.node
         const state = n.s === 2 ? 'done' : n.s === 1 ? 'open' : 'locked'
-        const dim = related && !related.has(it.key)
+        const dim = related ? !related.has(it.key) : !!rt && !rt.keys.has(it.key)
+        const reveal = ringReveal(n.z)
         const sel = p.selected === it.key
         const hov = hovered.current === it.key
         g2.add(it.key, X(it.x), Y(it.y))
-        ctx.globalAlpha = dim ? 0.3 : 1
+        ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         if (rr < 2.2) {
           ctx.fillStyle = state === 'done' ? it.color : state === 'open' ? C.primary : C.strong
           const d = Math.max(1.6, rr * 1.4) * px
+          if (p.due?.has(it.key)) ctx.fillStyle = '#f59e0b'
           ctx.fillRect(it.x - d / 2, it.y - d / 2, d, d)
           continue
         }
@@ -701,12 +759,12 @@ export function RadialWeb({
         const coreR = 21 * s
         // A soft shadow under each orb; the hovered one lifts a little.
         if (rr >= 5) {
-          ctx.globalAlpha = (dim ? 0.3 : 1) * (hov ? 0.16 : 0.24) * (dark() ? 1.4 : 1)
+          ctx.globalAlpha = ((dim ? 0.3 : 1) * reveal) * (hov ? 0.16 : 0.24) * (dark() ? 1.4 : 1)
           ctx.fillStyle = '#000'
           ctx.beginPath()
           ctx.ellipse(it.x, it.y + R * (hov ? 0.95 : 0.82), R * (hov ? 1.0 : 0.86), R * 0.3, 0, 0, Math.PI * 2)
           ctx.fill()
-          ctx.globalAlpha = dim ? 0.3 : 1
+          ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         }
         const lift = hov && !reduce ? 4 : 0
         if (lift) ctx.translate(0, -lift)
@@ -719,17 +777,17 @@ export function RadialWeb({
           ctx.beginPath()
           ctx.arc(it.x, it.y, (R + 6) * (1 + 0.5 * t), 0, Math.PI * 2)
           ctx.stroke()
-          ctx.globalAlpha = dim ? 0.3 : 1
+          ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         }
         if (state === 'open' && pulseT >= 0) {
           const t = Math.min(1, pulseT / 0.8)
-          ctx.globalAlpha = (dim ? 0.3 : 1) * 0.7 * (1 - t)
+          ctx.globalAlpha = ((dim ? 0.3 : 1) * reveal) * 0.7 * (1 - t)
           ctx.strokeStyle = it.color
           ctx.lineWidth = 2
           ctx.beginPath()
           ctx.arc(it.x, it.y, (R + 4) * (0.92 + 0.43 * t), 0, Math.PI * 2)
           ctx.stroke()
-          ctx.globalAlpha = dim ? 0.3 : 1
+          ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         }
         // progress ring: track, then progress in the zone colour
         ctx.lineWidth = 3
@@ -737,10 +795,10 @@ export function RadialWeb({
         ctx.beginPath()
         ctx.arc(it.x, it.y, ringR, 0, Math.PI * 2)
         ctx.stroke()
-        ctx.globalAlpha = (dim ? 0.3 : 1) * 0.22
+        ctx.globalAlpha = ((dim ? 0.3 : 1) * reveal) * 0.22
         ctx.strokeStyle = it.color
         ctx.stroke()
-        ctx.globalAlpha = dim ? 0.3 : 1
+        ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         const pct = (n.s === 2 ? 100 : n.p) * introE
         if (pct > 0) {
           ctx.lineCap = 'round'
@@ -769,10 +827,10 @@ export function RadialWeb({
           ctx.beginPath()
           ctx.arc(it.x, it.y, coreR, 0, Math.PI * 2)
           ctx.fill()
-          ctx.globalAlpha = (dim ? 0.3 : 1) * 0.16
+          ctx.globalAlpha = ((dim ? 0.3 : 1) * reveal) * 0.16
           ctx.fillStyle = it.color
           ctx.fill()
-          ctx.globalAlpha = dim ? 0.3 : 1
+          ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         } else {
           ctx.fillStyle = C.surface2
           ctx.beginPath()
@@ -789,7 +847,7 @@ export function RadialWeb({
           ctx.beginPath()
           ctx.arc(it.x, it.y, coreR + 2, 0, Math.PI * 2)
           ctx.stroke()
-          ctx.globalAlpha = dim ? 0.3 : 1
+          ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         }
         if (rr >= 9) {
           const img = icons.get(`${nodeIcon(n.i)}|${state}`)
@@ -831,6 +889,17 @@ export function RadialWeb({
           ctx.beginPath()
           ctx.arc(bx, by - 0.8, 2.2, Math.PI, 0)
           ctx.stroke()
+        }
+        if (p.due?.has(it.key)) {
+          // Due for spaced review: a dashed amber ring.
+          ctx.strokeStyle = '#f59e0b'
+          ctx.globalAlpha = reveal
+          ctx.lineWidth = Math.max(1.5, 1.2 / c.k)
+          ctx.setLineDash([3 / Math.max(c.k, 0.25), 3 / Math.max(c.k, 0.25)])
+          ctx.beginPath()
+          ctx.arc(it.x, it.y, R + 3, 0, Math.PI * 2)
+          ctx.stroke()
+          ctx.setLineDash([])
         }
         if (sel) {
           ctx.strokeStyle = C.accent
@@ -874,6 +943,56 @@ export function RadialWeb({
 
       // Screen-space type: subject names along their branches, and YOU.
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      // The goal path's next steps, numbered.
+      if (rt) {
+        const placedBadges: [number, number][] = []
+        rt.next.forEach((k, idx) => {
+          const it = items.get(k)
+          if (!it) return
+          let sx = X(it.x) - Math.max(8, R * c.k * 0.75)
+          const sy = Y(it.y) - Math.max(8, R * c.k * 0.75)
+          // Neighbours on a small disc: step the badges aside, never stacked.
+          while (placedBadges.some(([bx, by]) => Math.hypot(bx - sx, by - sy) < 19)) sx += 19
+          placedBadges.push([sx, sy])
+          if (sx < -20 || sx > w + 20 || sy < -20 || sy > h + 20) return
+          ctx.fillStyle = C.app
+          ctx.beginPath()
+          ctx.arc(sx, sy, 10, 0, Math.PI * 2)
+          ctx.fill()
+          ctx.fillStyle = '#f4b73f'
+          ctx.beginPath()
+          ctx.arc(sx, sy, 8.5, 0, Math.PI * 2)
+          ctx.fill()
+          ctx.fillStyle = '#1a1300'
+          ctx.font = `700 10.5px ${font}`
+          ctx.textAlign = 'center'
+          ctx.textBaseline = 'middle'
+          ctx.fillText(String(idx + 1), sx, sy + 0.5)
+        })
+      }
+      // Mastered since your last visit: a small burst of particles.
+      const cb2 = celebrateAt.current
+      if (cb2 && !reduce) {
+        const t = (now - cb2.t0) / 1400
+        if (t >= 0 && t < 1) {
+          for (const k of cb2.keys) {
+            const it = items.get(k)
+            if (!it) continue
+            const cx0 = X(it.x)
+            const cy0 = Y(it.y)
+            for (let q = 0; q < 16; q++) {
+              const ang = (q / 16) * Math.PI * 2 + q * 0.37
+              const dist = (14 + (q % 4) * 7) * (0.25 + t * 1.1)
+              ctx.globalAlpha = (1 - t) * 0.9
+              ctx.fillStyle = q % 3 === 0 ? '#f4b73f' : q % 3 === 1 ? it.color : C.accent
+              ctx.beginPath()
+              ctx.arc(cx0 + Math.cos(ang) * dist, cy0 + Math.sin(ang) * dist - t * 6, 2.2 * (1 - t * 0.6), 0, Math.PI * 2)
+              ctx.fill()
+            }
+          }
+          ctx.globalAlpha = 1
+        } else if (t >= 1) celebrateAt.current = null
+      }
       // A faint inner shading toward the rim: the disc reads as a surface.
       {
         const R0 = (layout.extent + 70) * c.k
@@ -945,29 +1064,24 @@ export function RadialWeb({
         const info = streamOf.get(st.id)
         if (!info) continue
         const mid = (st.a0 + st.a1) / 2
-        const rr2 = layout.extent + 190
+        const rr2 = layout.extent + (w < 640 ? 150 : 190)
         const sx = X(Math.cos(mid) * rr2)
         const sy = Y(Math.sin(mid) * rr2)
         if (sx < -200 || sx > w + 200 || sy < -40 || sy > h + 40) continue
-        const label = info.name.toUpperCase()
-        if (rr2 * c.k < 230) {
-          // A small disc: straight, compact labels instead of curved ones.
-          ctx.font = `700 9.5px ${font}`
-          const short = info.name.replace('Programming ', '').replace(' & ', ' & ').toUpperCase()
-          const tw2 = ctx.measureText(short).width
-          const lx = Math.max(tw2 / 2 + 4, Math.min(w - tw2 / 2 - 4, sx))
-          const ly = Math.max(10, Math.min(h - 10, sy))
-          ctx.globalAlpha = hoverStream.current && hoverStream.current !== st.id ? 0.5 : 1
-          ctx.fillStyle = info.hue
-          ctx.fillText(short, lx, ly)
-          ctx.globalAlpha = 1
-          streamHits.current.push({ id: st.id, x: lx - tw2 / 2 - 4, y: ly - 9, w: tw2 + 8, h: 18 })
-          continue
-        }
+        // The short form when the full name will not fit its arc.
+        const arcPx = (st.a1 - st.a0) * rr2 * c.k * 0.92
+        ctx.font = `700 ${Math.max(8.5, Math.min(12, rr2 * c.k * 0.04))}px ${font}`
+        const fullW = ctx.measureText(info.name.toUpperCase()).width + 2.2 * info.name.length
+        let labelText = info.name
+        if (fullW > arcPx) labelText = info.name.replace(/^Programming /, '').replace(/ & .*$/, '')
+        if (ctx.measureText(labelText.toUpperCase()).width + 2.2 * labelText.length > arcPx) labelText = labelText.split(' ')[0]
+        const label = labelText.toUpperCase()
         streamHits.current.push({ id: st.id, x: sx - 70, y: sy - 18, w: 140, h: 36 })
-        ctx.font = `700 ${c.k < 0.05 ? 10.5 : 12}px ${font}`
+        const rimPx = rr2 * c.k
+        const fsz = Math.max(8.5, Math.min(12, rimPx * 0.04))
+        ctx.font = `700 ${fsz}px ${font}`
         const chars = [...label]
-        const sp = 2.2
+        const sp = fsz > 10 ? 2.2 : 1.4
         const widths = chars.map((ch) => ctx.measureText(ch).width)
         const tw = widths.reduce((a2, b2) => a2 + b2, 0) + sp * (chars.length - 1)
         // Along the rim, reading left to right on both halves.
@@ -1048,6 +1162,7 @@ export function RadialWeb({
   useEffect(() => {
     const canvas = canvasRef.current!
     const pts = new Map<number, { x: number; y: number }>()
+    let lastMove: { x: number; y: number; t: number; vx: number; vy: number } | null = null
     let drag: { x: number; y: number; moved: boolean; cx: number; cy: number } | null = null
     let pinch: { d: number; k: number; wx: number; wy: number } | null = null
     const local = (e: { clientX: number; clientY: number }) => {
@@ -1082,7 +1197,9 @@ export function RadialWeb({
       canvas.setPointerCapture(e.pointerId)
       const p = local(e)
       pts.set(e.pointerId, p)
+      velocity.current = null
       if (pts.size === 1) drag = { ...p, moved: false, cx: cam.current.x, cy: cam.current.y }
+      lastMove = { x: p.x, y: p.y, t: performance.now(), vx: 0, vy: 0 }
       if (pts.size === 2) {
         const [a, b] = [...pts.values()]
         const wm = toWorld({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 })
@@ -1108,6 +1225,11 @@ export function RadialWeb({
       if (drag && pts.size === 1) {
         if (!drag.moved && Math.hypot(p.x - drag.x, p.y - drag.y) > 5) drag.moved = true
         if (drag.moved) {
+          const t2 = performance.now()
+          if (lastMove) {
+            const dt = Math.max(1, t2 - lastMove.t)
+            lastMove = { x: p.x, y: p.y, t: t2, vx: lastMove.vx * 0.6 + (((p.x - lastMove.x) / dt) * 0.4) / cam.current.k, vy: lastMove.vy * 0.6 + (((p.y - lastMove.y) / dt) * 0.4) / cam.current.k }
+          }
           userMoved.current = true
           cam.current = { ...cam.current, x: drag.cx - (p.x - drag.x) / cam.current.k, y: drag.cy - (p.y - drag.y) / cam.current.k }
           fly.current = null
@@ -1137,6 +1259,10 @@ export function RadialWeb({
     }
     const up = (e: PointerEvent) => {
       const tap = drag && !drag.moved && pts.size === 1
+      if (drag?.moved && pts.size === 1 && lastMove && performance.now() - lastMove.t < 80 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // Velocity is in world units per ms; the loop moves 16 ms a frame.
+        velocity.current = { vx: lastMove.vx, vy: lastMove.vy }
+      }
       pts.delete(e.pointerId)
       if (pts.size < 2) pinch = null
       if (pts.size === 0) {
@@ -1261,6 +1387,18 @@ export function RadialWeb({
     }
   }, [items, layout])
 
+  // Commands from the Nexus palette (⌘K).
+  useEffect(() => {
+    const on = (e: Event) => {
+      const cmd = (e as CustomEvent<string>).detail
+      if (cmd === 'fit') fitNow()
+      else if (cmd === 'fullscreen') toggleFullscreen()
+      else if (cmd === 'next' && nextStep) P.current.onSelect(nextStep)
+      else if (cmd.startsWith('stream:')) flyToStream(cmd.slice(7))
+    }
+    window.addEventListener('nexus:command', on)
+    return () => window.removeEventListener('nexus:command', on)
+  })
   const selectedItem = selected ? (items.get(selected) ?? null) : null
   // The zone rail: the rings, outward, with their rank emblems.
   const rail = useMemo(() => {
@@ -1283,7 +1421,7 @@ export function RadialWeb({
     <div
       ref={cardRef}
       className={cn('card relative flex overflow-hidden p-0', fullscreen === 'css' && 'fixed inset-0 z-[60] rounded-none', fullscreen !== 'off' && 'bg-bg-app')}
-      style={fullscreen !== 'off' ? { height: '100vh', width: '100vw' } : { height: 'min(720px, max(440px, calc(100vh - 220px)))' }}
+      style={fullscreen !== 'off' ? { height: '100vh', width: '100vw' } : { height: compact ? 'min(560px, calc(100vw + 120px))' : 'min(720px, max(440px, calc(100vh - 220px)))' }}
       data-fullscreen={fullscreen !== 'off' || undefined}
     >
       <nav
@@ -1329,7 +1467,7 @@ export function RadialWeb({
         />
         <CoreEmblem ref={coreRef} me={me} />
         </div>
-        <div className="absolute top-3 right-3 flex gap-1.5">
+        <div className={cn('absolute right-3 flex gap-1.5', compact ? 'bottom-3' : 'top-3')} role="toolbar" aria-label="Nexus view">
           {nextStep && (
             <Button variant="outline" size="sm" onClick={() => P.current.onSelect(nextStep)} aria-label="Jump to my next step" title="Jump to my next step">
               <Crosshair className="size-3.5" /> <span className="hidden sm:inline">Next step</span>

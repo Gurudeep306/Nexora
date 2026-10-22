@@ -3713,10 +3713,13 @@ app.get("/api/nexus/web", async (req, res) => {
   try {
     const fresh = req.query.fresh === "1";
     const build = async () => {
-      const { reg, dsa, computed, webPlayer } = await nexusState(req, fresh);
+      const { reg, dsa, computed, webPlayer, score } = await nexusState(req, fresh);
       const ranks = {};
       for (const [sid, s] of reg.subjects) ranks[sid] = nexusSubjectRank(reg, sid, s.engine === "dsa" ? dsa.nodes : computed.get(sid)?.nodes || []);
-      return { user: me(), player: webPlayer, dsaPlayer: dsa.player, riftLevels: nexusRanks.webLevels(RIFT_LEVELS), state: nexusSubjects.webState(reg, dsa, computed), ranks };
+      const row = me() ? await get("SELECT week, week_base_xp FROM nexus_scores WHERE username=?", [me()]).catch(() => null) : null;
+      const all = [...computed.values()].flatMap((x) => x.nodes);
+      const week = nexusRanks.weekSummary(row, score, all);
+      return { user: me(), player: webPlayer, dsaPlayer: dsa.player, riftLevels: nexusRanks.webLevels(RIFT_LEVELS), state: nexusSubjects.webState(reg, dsa, computed), ranks, week };
     };
     const key = `${me() || "-"}|${hasAnyAdminPerm(req) ? 1 : 0}`;
     const body = fresh || !me() ? await build() : await nexusWebCache.get(key, build);
