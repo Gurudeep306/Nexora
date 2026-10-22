@@ -441,6 +441,18 @@ test('test out: a passed quick check masters the node (Nexus, web rank and subje
   assert.equal(node.testedOut, true);
 });
 
+test('mark as learned: allowed only where there is nothing to test out with; masters at once', async () => {
+  const st = (await call('GET', '/api/nexus/structure')).body;
+  const idx = st.clusters.find((c) => c.id === 'rust').nodes.findIndex((n) => n.id === 'cargo');
+  let r = await call('POST', '/api/nexus/done/rust/cargo');
+  assert.equal(r.status, 200);
+  const web = await call('GET', '/api/nexus/web');
+  assert.equal(web.body.state.subjects.rust.nodes[idx][1], 2);
+  r = await call('POST', '/api/nexus/done/dl/place-value');
+  assert.equal(r.status, 409, 'a node with PYQs is tested out instead');
+  assert.equal((await call('POST', '/api/nexus/done/rust/nope')).status, 404);
+});
+
 test('add to review: the node PYQs land in the Review deck (due today)', async () => {
   const r = await call('POST', '/api/nexus/review/dl/place-value');
   assert.equal(r.status, 200);
