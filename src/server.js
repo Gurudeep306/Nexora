@@ -3998,6 +3998,36 @@ app.post("/api/nexus/testout/:subject/:node", async (req, res) => {
   }
 });
 
+/**
+ * POST /api/nexus/done/:subject/:node — "I've learned this": masters a node
+ * that has no auto-graded questions to test out with (fewer than 3); one
+ * that has them must be tested out instead. Recorded like a test out
+ * (60% of the node's XP), so the Nexus, ranks and trees agree at once.
+ */
+app.post("/api/nexus/done/:subject/:node", async (req, res) => {
+  try {
+    const username = me();
+    if (!username) return res.status(401).json({ ok: false, error: "Sign in" });
+    const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+    const sid = String(req.params.subject);
+    const nid = String(req.params.node);
+    const s = reg.subjects.get(sid);
+    if (!s || s.engine === "dsa" || !s.doc?.nodes.some((n) => n.id === nid)) return res.status(404).json({ ok: false, error: "Unknown node" });
+    const bank = loadGateBank();
+    const ids = nexusSubjects.nodePools(reg, bank, loadGateNotes()).get(`${sid}:${nid}`) || [];
+    if (ids.map((id) => bank.byId.get(id)).filter(nexusInsight.testable).length >= 3) return res.status(409).json({ ok: false, error: "Test out to master this one" });
+    await run(
+      `INSERT INTO nexus_testouts(username, subject, node, score, total, created_at) VALUES(?,?,?,0,0,?)
+       ON CONFLICT(username, subject, node) DO NOTHING`,
+      [username, sid, nid, Date.now()],
+    );
+    nexusCache.invalidateNexusUser(username);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
 /** PUT /api/nexus/notes/:subject/:node {note, bookmarked} — the reader's own note (written on save). */
 app.put("/api/nexus/notes/:subject/:node", async (req, res) => {
   try {
