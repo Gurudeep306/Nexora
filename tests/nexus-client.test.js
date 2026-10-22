@@ -176,7 +176,7 @@ test('goal routes on the real data reach every route subject, in learning order'
   }
 });
 
-test('subject pages: DSA, GATE subjects and the rest each have their own page; a node is #node', async (t) => {
+test('one canonical page per subject (/learn/<id>); a node opens its lesson at /learn/<id>/<node>', async (t) => {
   let C;
   try {
     C = await import(path.join(__dirname, '..', 'client', 'src', 'components', 'nexus', 'course.ts'));
@@ -184,13 +184,20 @@ test('subject pages: DSA, GATE subjects and the rest each have their own page; a
     return t.skip('no TS loader');
   }
   assert.equal(C.subjectHref({ id: 'dsa', engine: 'dsa' }), '/learn/dsa');
-  assert.equal(C.subjectHref({ id: 'dl', engine: null, gate: { pyq: 'dl', notes: 'dl' } }, 'place-value'), '/gate/subjects/dl#place-value');
-  assert.equal(C.subjectHref({ id: 'os', engine: null, gate: { pyq: 'os', notes: null } }), '/gate/subjects/os');
-  assert.equal(C.subjectHref({ id: 'rust', engine: null }, 'ownership'), '/learn/rust#ownership');
+  assert.equal(C.subjectHref({ id: 'dsa', engine: 'dsa' }, 'arrays'), '/learn/dsa/skill/arrays');
+  assert.equal(C.subjectHref({ id: 'dl', engine: null, gate: { pyq: 'dl', notes: 'dl' } }, 'place-value'), '/learn/dl/place-value');
+  assert.equal(C.subjectHref({ id: 'os', engine: null, gate: { pyq: 'os', notes: null } }), '/learn/os');
+  assert.equal(C.subjectHref({ id: 'rust', engine: null }, 'ownership'), '/learn/rust/ownership');
+  assert.equal(C.courseHref, C.subjectHref);
   const st = structure();
+  const seen = new Set();
   for (const c of st.clusters) {
     const href = C.subjectHref(c);
-    assert.ok(c.engine === 'dsa' ? href === '/learn/dsa' : c.gate ? href === `/gate/subjects/${c.id}` : href === `/learn/${c.id}`, c.id);
+    assert.ok(c.engine === 'dsa' ? href === '/learn/dsa' : href === `/learn/${c.id}`, c.id);
+    assert.ok(!seen.has(href), `one page per subject: ${href}`);
+    seen.add(href);
+    const n = c.nodes[0].id;
+    assert.equal(C.subjectHref(c, n), c.engine === 'dsa' ? `/learn/dsa/skill/${n}` : `/learn/${c.id}/${n}`);
   }
 });
 
@@ -279,4 +286,22 @@ test('intro: full the first time, short after, a fade with reduced motion; one c
   assert.equal(N.stagger(0, 9, 300, 820), 300);
   assert.equal(N.stagger(8, 9, 300, 820), 820);
   assert.equal(N.stagger(0, 1, 300, 820), 300);
+});
+
+test('learning order and next lesson: prerequisites first, goal first, then what this lesson opens', (t) => {
+  if (I?.error) return t.skip('no TS loader');
+  const n = (id, requires, zone, completed = false, unlocked = true) => ({ id, requires, zone, completed, unlocked });
+  const nodes = [n('c', ['a', 'b'], 2, false, false), n('a', [], 1, true), n('b', [], 1), n('d', ['a'], 2), n('e', ['c'], 3, false, false)];
+  const order = I.learningOrder(nodes);
+  assert.deepEqual(order, ['a', 'b', 'c', 'd', 'e']);
+  for (const x of nodes) for (const r of x.requires) assert.ok(order.indexOf(r) < order.indexOf(x.id), `${r} before ${x.id}`);
+  assert.equal(order[0], 'a');
+  // Finishing b opens c (a is done): c is next.
+  assert.equal(I.nextLesson(nodes, 'b'), 'c');
+  // A goal step here wins.
+  assert.equal(I.nextLesson(nodes, 'b', ['d']), 'd');
+  // From d (opens nothing): the next open lesson.
+  assert.equal(I.nextLesson(nodes, 'd'), 'b');
+  // All done: nothing.
+  assert.equal(I.nextLesson(nodes.map((x) => ({ ...x, completed: true })), 'a'), null);
 });

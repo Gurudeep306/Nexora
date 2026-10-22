@@ -60,7 +60,7 @@ function SubjectHome({ data }: { data: SubjectTree }) {
   const action = (
     <>
       {/* The subject's skill tree (Nexus) beside its notes. */}
-      <Link to={`/gate/subjects/${subject.id}`} className="notes-tool">
+      <Link to={`/learn/${subject.id}`} className="notes-tool">
         <Icon name="nexus" className="size-4" aria-hidden="true" />
         <span>Skill tree</span>
       </Link>

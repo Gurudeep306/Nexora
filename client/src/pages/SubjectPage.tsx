@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { ArrowRight, BookOpen, CalendarCheck, ChevronRight, Clock, Lock, PenLine, RefreshCw, RotateCcw, Telescope } from 'lucide-react'
 import { Button, Card, CardContent, ErrorState, LoadingBlock, RankGlyph, Tabs } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
@@ -13,34 +13,37 @@ import { SkillGraph } from '@/components/nexus/SkillGraph'
 import { WeeklyPool } from '@/components/nexus/WeeklyPool'
 import { TitleTrack } from '@/components/nexus/TitleTrack'
 import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
-import { NodeContent, NodeSheet, useReviewList } from '@/components/nexus/NodeContent'
+import { useReviewList } from '@/components/nexus/NodeContent'
+import { CourseLesson } from '@/components/nexus/CourseLesson'
 import { NexusPalette } from '@/components/nexus/NexusPalette'
-import { GoalMenu, startReview, useGoal, usePaletteHotkey } from '@/components/nexus/extras'
+import { GoalMenu, useGoal, usePaletteHotkey } from '@/components/nexus/extras'
 import { HistorySpark, StudyPlanView, SubjectMiniMap } from '@/components/nexus/SubjectExtras'
-import { fmtMinutes, studyPlan } from '@/components/nexus/insights'
+import { fmtMinutes, nextLesson, studyPlan } from '@/components/nexus/insights'
 import type { NodeInsight } from '@/components/nexus/NodeExtras'
 import { useToast } from '@/components/ui'
-import { courseHref, subjectHref } from '@/components/nexus/course'
+import { subjectHref } from '@/components/nexus/course'
 import { cachedState, cachedStructure, fetchNexusPath, fetchRoadmap, loadWeb, mergeWeb, nexusPathKey, ROADMAP_KEY } from '@/components/nexus/data'
 import type { CrossLink, NexusNode, NexusStatsResponse, NexusWebStructure } from '@/components/nexus/types'
 
 /*
- * A subject's own page: /learn/<id>, /gate/subjects/<id> (GATE subjects)
- * or /learn/dsa. The hero (name, stream, rank, Continue), the subject's Rift
- * tree with its zones, goal steps and review rings, a zone overview and what
- * it needs from other subjects; every node opens its contents (a slide-over,
- * a full sheet on phones). A node deep-links as #<node>.
+ * A subject's one page — its course tree: /learn/<id> (/learn/dsa for DSA).
+ * The hero (name, stream, rank, Continue), the tree with its zones, goal
+ * steps and review rings, a chapter overview and what it needs from other
+ * subjects. Opening a node "blooms" its lesson in place: the camera flies
+ * into the node, the tree folds into a path rail and the lesson fills the
+ * page (/learn/<id>/<node>, /learn/dsa/skill/<node>).
  */
 
-/** The subject's id from the route (/learn/dsa has none: it is DSA). */
-function useSubjectId() {
-  const { subject } = useParams()
+/** The subject and node from the route (/learn/dsa has no subject: it is DSA). */
+function useSubjectRoute() {
+  const { subject, node } = useParams()
   const { pathname } = useLocation()
-  return subject ?? (pathname.startsWith('/learn/dsa') ? 'dsa' : '')
+  return { subject: subject ?? (pathname.startsWith('/learn/dsa') ? 'dsa' : ''), node: node ?? null }
 }
 
 export default function SubjectPage() {
-  const subject = useSubjectId()
+  const { subject, node: nodeParam } = useSubjectRoute()
+  const reduce = useReducedMotion()
   const location = useLocation()
   const navigate = useNavigate()
   const { user } = useAuth()
@@ -88,10 +91,39 @@ export default function SubjectPage() {
     cacheKey: `stats:${username}`,
   })
 
-  // The selected node lives in the URL hash (#node).
-  const selectedId = decodeURIComponent(location.hash.replace(/^#/, '')) || null
-  const setSelectedId = useCallback((id: string | null) => navigate({ hash: id ? encodeURIComponent(id) : '' }, { replace: true, state: location.state }), [navigate, location.state])
+  // The open node lives in the path (/learn/<id>/<node>).
+  const selectedId = nodeParam
+  const subjRef = useMemo(() => ({ id: subject, engine: isDsa ? ('dsa' as const) : null }), [subject, isDsa])
+  // The bloom: the tree zooms into the node it opens (and back out to it).
+  const treeRef = useRef<HTMLDivElement>(null)
+  const origin = useRef('50% 30%')
+  const lastNode = useRef<string | null>(null)
+  const setSelectedId = useCallback(
+    (id: string | null) => {
+      const el = id ? document.getElementById(`nx-node-${id}`) : null
+      const tree = treeRef.current
+      if (el && tree) {
+        const r = el.getBoundingClientRect()
+        const t = tree.getBoundingClientRect()
+        origin.current = `${Math.round(r.left + r.width / 2 - t.left)}px ${Math.round(r.top + 32 - t.top)}px`
+        tree.style.transformOrigin = origin.current
+      }
+      navigate(subjectHref(subjRef, id))
+    },
+    [navigate, subjRef],
+  )
   const selectedNode = useMemo(() => nexus?.nodes.find((n) => n.id === selectedId) ?? null, [nexus, selectedId])
+  useEffect(() => {
+    if (selectedId) {
+      lastNode.current = selectedId
+      return
+    }
+    // Back on the tree: the node you came from, in view.
+    const id = lastNode.current
+    if (!id) return
+    const t = window.setTimeout(() => document.getElementById(`nx-node-${id}`)?.scrollIntoView({ block: 'center', behavior: 'auto' }), 30)
+    return () => window.clearTimeout(t)
+  }, [selectedId])
 
   // Goal steps, review rings (due or marked), ⌘K.
   const webClusters = useMemo(() => (structure ? mergeWeb(structure, cachedState(username)) : null), [structure, username])
@@ -168,6 +200,8 @@ export default function SubjectPage() {
   })
 
   if (!subject) return <Navigate to="/nexus" replace />
+  const legacy = !nodeParam && location.hash.length > 1 ? decodeURIComponent(location.hash.slice(1)) : null
+  if (legacy && !legacy.startsWith('n-')) return <Navigate to={subjectHref(subjRef, legacy)} replace />
   if (structure && !cluster && !loading) return <Navigate to="/nexus" replace />
 
   const loadingView = (
@@ -190,11 +224,6 @@ export default function SubjectPage() {
   const notesHref = cluster?.gate?.notes ? `/gate/notes/${cluster.gate.notes}` : null
   const roadmap = roadmapApi.data
   const currentZone = isDsa ? player.level : (zones.find((z) => z.current)?.level ?? 1)
-  const studyHrefOf = (n: NexusNode) => {
-    const ls = n.metric?.lessons
-    if (ls?.ids.length) return `/gate/notes/${ls.subject}/${ls.ids[0]}`
-    return courseHref({ id: subject, engine: isDsa ? 'dsa' : null }, n.id)
-  }
   const R = 30
   const C = 2 * Math.PI * R
   const minutes = Object.fromEntries(Object.entries(ins?.nodes ?? {}).map(([id, x]) => [id, x.min]))
@@ -204,8 +233,68 @@ export default function SubjectPage() {
   const todayFirst = ins ? studyPlan(planNodes, minutes, weight, new Date(), 60).days[0]?.items[0]?.id ?? null : null
   const dueIds = [...due]
 
+  const lessonView = selectedNode ? (
+    <motion.div
+      key={`lesson:${selectedNode.id}`}
+      initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.97, y: 10 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.985 }}
+      transition={{ type: 'spring', stiffness: 240, damping: 30 }}
+    >
+      {/* Nexus › Stream › Subject › Chapter */}
+      <nav aria-label="Where you are" className="mb-5 flex flex-wrap items-center gap-1 text-[12px] text-text-muted">
+        <Link to="/nexus" className="hover:text-text-primary">
+          Nexus
+        </Link>
+        <ChevronRight className="size-3" aria-hidden="true" />
+        <span className="font-semibold" style={stream ? { color: stream.hue } : undefined}>
+          {stream?.name ?? 'Stream'}
+        </span>
+        <ChevronRight className="size-3" aria-hidden="true" />
+        <Link to={subjectHref(subjRef)} className="text-text-primary hover:underline">
+          {nexus.subject?.name}
+        </Link>
+        <ChevronRight className="size-3" aria-hidden="true" />
+        <span>{selZone?.name ?? `Zone ${selectedNode.zone}`}</span>
+      </nav>
+      <CourseLesson
+        key={selectedNode.id}
+        subject={subject}
+        subjectName={nexus.subject?.name ?? subject}
+        subjectHref={subjectHref(subjRef)}
+        nodeHref={(id) => subjectHref(subjRef, id)}
+        node={selectedNode}
+        nodes={nodes}
+        zoneName={selZone?.name ?? `Zone ${selectedNode.zone}`}
+        zoneColor={selZone?.color ?? 'var(--color-primary)'}
+        isDsa={isDsa}
+        isGate={!!cluster?.gate}
+        insight={ins?.nodes[selectedNode.id] ?? null}
+        minutes={minutes}
+        note={notesLocal[selectedNode.id] ?? ins?.notes[selectedNode.id] ?? null}
+        onNoteSaved={(v) => setNotesLocal((m) => ({ ...m, [selectedNode.id]: v }))}
+        nextId={nextLesson(nodes, selectedNode.id, steps ?? [])}
+        onMastered={refreshAll}
+        onJump={onJump}
+        hueOf={hueOf}
+        goTo={(id) => setSelectedId(id)}
+      />
+    </motion.div>
+  ) : null
+
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28, ease: 'easeOut' }}>
+    <>
+    <AnimatePresence mode="wait" initial={false}>
+    {lessonView ?? (
+    <motion.div
+      key="tree"
+      ref={treeRef}
+      style={{ transformOrigin: origin.current }}
+      initial={reduce ? { opacity: 0 } : lastNode.current ? { opacity: 0, scale: 1.18 } : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.6 }}
+      transition={{ duration: reduce ? 0.15 : 0.34, ease: [0.4, 0, 0.2, 1] }}
+    >
       {/* Nexus › Stream › Subject */}
       <nav aria-label="Where you are" className="mb-3 flex flex-wrap items-center gap-1 text-[12px] text-text-muted">
         <Link to="/nexus" className="hover:text-text-primary">
@@ -491,35 +580,10 @@ export default function SubjectPage() {
         </div>
       )}
 
-      <NodeSheet open={!!selectedNode} onClose={() => setSelectedId(null)} label={selectedNode ? `${selectedNode.name}: contents` : 'Node'}>
-        {selectedNode && (
-          <NodeContent
-            key={selectedNode.id}
-            subject={subject}
-            node={selectedNode}
-            nodes={nodes}
-            zoneName={selZone?.name ?? `Zone ${selectedNode.zone}`}
-            zoneLevel={selectedNode.zone}
-            zoneColor={selZone?.color ?? 'var(--color-primary)'}
-            isDsa={isDsa}
-            due={due.has(selectedNode.id) && !review.has(`${subject}:${selectedNode.id}`)}
-            studyHref={studyHrefOf(selectedNode)}
-            onPractise={selectedNode.metric?.pyq ? () => void startReview(subject, selectedNode.id, (to) => navigate(to)) : undefined}
-            shareHref={cluster ? subjectHref(cluster, selectedNode.id) : `${location.pathname}#${selectedNode.id}`}
-            onClose={() => setSelectedId(null)}
-            onSelect={(id) => setSelectedId(id)}
-            onJump={onJump}
-            hueOf={hueOf}
-            insight={ins?.nodes[selectedNode.id] ?? null}
-            minutes={minutes}
-            note={notesLocal[selectedNode.id] ?? ins?.notes[selectedNode.id] ?? null}
-            onNoteSaved={(v) => setNotesLocal((m) => ({ ...m, [selectedNode.id]: v }))}
-            onMastered={refreshAll}
-            subjectName={nexus.subject?.name ?? subject}
-          />
-        )}
-      </NodeSheet>
 
+    </motion.div>
+    )}
+    </AnimatePresence>
       <NexusPalette
         open={paletteOpen}
         onClose={() => setPaletteOpen(false)}
@@ -543,6 +607,6 @@ export default function SubjectPage() {
           }
         }}
       />
-    </motion.div>
+    </>
   )
 }

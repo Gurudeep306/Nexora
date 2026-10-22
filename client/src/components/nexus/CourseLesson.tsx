@@ -45,6 +45,8 @@ export interface LessonProps {
   zoneName: string
   zoneColor: string
   isDsa: boolean
+  /** a GATE subject (its lessons are GATE notes) */
+  isGate?: boolean
   insight: NodeInsight | null
   minutes: Record<string, number>
   note: { note: string; bookmarked: boolean } | null
@@ -71,6 +73,7 @@ function PathRail({
   fresh: Set<string>
 }) {
   const reduce = useReducedMotion()
+  const [open, setOpen] = useState(false)
   const prereqs = p.node.requires.map((id) => p.nodes.find((n) => n.id === id)).filter((n): n is NexusNode => !!n)
   const unlocks = p.nodes.filter((n) => n.requires.includes(p.node.id))
   const ring = p.node.completed ? 100 : Math.max(p.node.progress, Math.round(readPct * 0.5))
@@ -100,9 +103,22 @@ function PathRail({
       animate={{ opacity: 1, x: 0 }}
       transition={{ type: 'spring', stiffness: 260, damping: 30 }}
     >
-      <Link to={p.subjectHref} className="mb-4 inline-flex items-center gap-1.5 text-[12.5px] text-text-secondary hover:text-text-primary">
+      <Link to={p.subjectHref} className="mb-4 hidden items-center gap-1.5 text-[12.5px] text-text-secondary hover:text-text-primary lg:inline-flex">
         <ArrowLeft className="size-3.5" aria-hidden="true" /> {p.subjectName} tree
       </Link>
+      {/* Phones and tablets: a strip with the node, its progress and the path on demand. */}
+      <button type="button" className="nx-rail-strip" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
+        <span className="nx-rail-strip-bar" aria-hidden="true">
+          <span style={{ transform: `scaleX(${ring / 100})`, background: p.zoneColor }} />
+        </span>
+        <span className="min-w-0 flex-1 truncate text-left text-[13px] font-semibold text-text-primary">
+          {p.node.name}
+          {activeStop && stops.length ? <span className="font-normal text-text-muted"> · {stops.find((s) => s.id === activeStop)?.title}</span> : null}
+        </span>
+        <span className="font-mono text-[11px] text-text-muted tabular-nums">{ring}%</span>
+        <ChevronDown className={cn('size-4 shrink-0 text-text-muted transition-transform', open && 'rotate-180')} aria-hidden="true" />
+      </button>
+      <div className={cn('nx-rail-body', open && 'is-open')}>
       {prereqs.length > 0 && (
         <>
           <p className="nx-rail-label">Builds on</p>
@@ -113,7 +129,7 @@ function PathRail({
           </ul>
         </>
       )}
-      <div className="nx-rail-line" aria-hidden="true" />
+      {prereqs.length > 0 && <div className="nx-rail-line" aria-hidden="true" />}
       {/* The node, attached to the lesson by a fine connector. */}
       <div className="nx-rail-current">
         <div className="flex items-center gap-3">
@@ -131,6 +147,7 @@ function PathRail({
                   href={`#${s.id}`}
                   onClick={(e) => {
                     e.preventDefault()
+                    setOpen(false)
                     document.getElementById(s.id)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
                   }}
                   className={cn('-ml-[13px] block border-l-2 py-1 pl-3 text-[12.5px] leading-snug transition-colors', activeStop === s.id ? 'border-current font-semibold text-text-primary' : 'border-transparent text-text-secondary hover:text-text-primary')}
@@ -143,7 +160,7 @@ function PathRail({
           </ol>
         )}
       </div>
-      <div className="nx-rail-line" aria-hidden="true" />
+      {unlocks.length > 0 && <div className="nx-rail-line" aria-hidden="true" />}
       {unlocks.length > 0 && (
         <>
           <p className="nx-rail-label">Unlocks</p>
@@ -162,6 +179,10 @@ function PathRail({
           </Button>
         </Link>
       )}
+      <Link to={p.subjectHref} className="mt-3 inline-flex items-center gap-1.5 text-[12.5px] text-text-secondary hover:text-text-primary lg:hidden">
+        <ArrowLeft className="size-3.5" aria-hidden="true" /> {p.subjectName} tree
+      </Link>
+      </div>
     </motion.nav>
   )
 }
@@ -272,7 +293,10 @@ export function CourseLesson(p: LessonProps) {
   const [stops, setStops] = useState<Stop[]>([])
   const [active, setActive] = useState<string | null>(null)
   const [readPct, setReadPct] = useState(0)
-  const [testing, setTesting] = useState(false)
+  // The quick check opens where it was asked for: the header or the finish line.
+  const [testing, setTestingAt] = useState<'head' | 'foot' | null>(null)
+  const setTesting = (v: boolean | ((x: boolean) => boolean), at: 'head' | 'foot' = 'head') =>
+    setTestingAt((cur) => ((typeof v === 'function' ? v(!!cur) : v) ? at : null))
   const [metaOpen, setMetaOpen] = useState(false)
   const [, bump] = useState(0)
   const marked = readReviewList().has(key)
@@ -311,7 +335,7 @@ export function CourseLesson(p: LessonProps) {
     window.scrollTo({ top: 0, behavior: 'auto' })
     setStops([])
     setReadPct(0)
-    setTesting(false)
+    setTestingAt(null)
     setNotesGone(false)
   }, [key])
 
@@ -449,7 +473,7 @@ export function CourseLesson(p: LessonProps) {
               />
             </div>
           )}
-          <AnimatePresence>{testing && <div className="mt-5"><TestOut subject={p.subject} node={p.node.id} onClose={() => setTesting(false)} onPassed={p.onMastered} /></div>}</AnimatePresence>
+          <AnimatePresence>{testing === 'head' && <div className="mt-5"><TestOut subject={p.subject} node={p.node.id} onClose={() => setTesting(false)} onPassed={p.onMastered} /></div>}</AnimatePresence>
         </header>
 
         {/* What you'll learn */}
@@ -494,12 +518,21 @@ export function CourseLesson(p: LessonProps) {
             <div className="nx-coming-soon">
               <Sparkles className="size-5" style={{ color: p.zoneColor }} aria-hidden="true" />
               <div className="min-w-0">
-                <p className="mb-1 font-display text-[18px] font-semibold text-text-primary">{lessons.length ? 'Notes coming soon' : 'Course coming soon'}</p>
+                <p className="mb-1 font-display text-[18px] font-semibold text-text-primary">{p.isDsa ? 'Learn it in the DSA course' : p.isGate || lessons.length ? 'Notes coming soon' : 'Course coming soon'}</p>
                 <p className="mb-3 max-w-[60ch] text-[14.5px] leading-relaxed text-text-secondary">
-                  {lessons.length
-                    ? 'The GATE notes lesson for this node is being written. The checklist above is what it covers; practise its PYQs and ask the assistant to walk you through it meanwhile.'
-                    : 'This lesson is being written. The checklist above is exactly what it will cover — explore it with the assistant, then mark it learned.'}
+                  {p.isDsa
+                    ? 'This skill is taught in the DSA lessons and mastered by solving its problems. The checklist above is what it covers.'
+                    : p.isGate || lessons.length
+                      ? 'The GATE notes lesson for this node is being written. The checklist above is what it covers; practise its PYQs and ask the assistant to walk you through it meanwhile.'
+                      : 'This lesson is being written. The checklist above is exactly what it will cover — explore it with the assistant, then mark it learned.'}
                 </p>
+                {p.isDsa && (
+                  <Link to="/learn" className="mb-3 inline-block">
+                    <Button variant="outline" size="sm" className="nx-press">
+                      <BookOpen className="size-3.5" aria-hidden="true" /> Open the DSA lessons
+                    </Button>
+                  </Link>
+                )}
                 {lessons.length > 0 && (
                   <ul className="mb-0 space-y-1 text-[13.5px] text-text-secondary">
                     {lessons.flatMap((l) => l.sections).slice(0, 12).map((s) => (
@@ -528,7 +561,7 @@ export function CourseLesson(p: LessonProps) {
                 onClick={() => {
                   for (const l of lessons.filter((x) => x.readable)) setCompleted(l.href.split('/')[3], l.id, true)
                   toast.success('Lesson complete', canTest ? 'Now test out to master the node.' : 'Nice work.')
-                  if (canTest) setTesting(true)
+                  if (canTest) setTesting(true, 'foot')
                   window.setTimeout(p.onMastered, 600)
                 }}
               >
@@ -541,7 +574,7 @@ export function CourseLesson(p: LessonProps) {
               <Check className="size-4" aria-hidden="true" /> I’ve learned this
             </Button>
           ) : canTest ? (
-            <Button variant="primary" className="nx-press" onClick={() => setTesting(true)}>
+            <Button variant="primary" className="nx-press" onClick={() => setTesting(true, 'foot')}>
               <GraduationCap className="size-4" aria-hidden="true" /> Test out to master it
             </Button>
           ) : null}
@@ -553,6 +586,13 @@ export function CourseLesson(p: LessonProps) {
             </Link>
           )}
         </footer>
+        <AnimatePresence>
+          {testing === 'foot' && (
+            <div className="mt-5 max-w-[78ch]">
+              <TestOut subject={p.subject} node={p.node.id} onClose={() => setTesting(false)} onPassed={p.onMastered} />
+            </div>
+          )}
+        </AnimatePresence>
 
         {/* Prerequisites and unlocks across subjects */}
         {((p.node.crossRequires ?? []).length > 0 || (p.node.crossUnlocks ?? []).length > 0) && (
