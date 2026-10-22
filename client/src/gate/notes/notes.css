@@ -3160,3 +3160,126 @@ h4.notes-h {
 .cf-graph figcaption {
   margin-top: 6px;
 }
+
+/* ── Live Lab (Converter Bench) ──────────────────────────────────────── */
+.lab .cb-num {
+  width: 6.5em;
+}
+.cb-now {
+  margin: 4px 0 10px;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  overflow-wrap: anywhere;
+}
+.lab-cell.cb-undecided {
+  color: var(--color-text-muted);
+}
+.cb-chart,
+.cb-stairs {
+  max-height: 260px;
+}
+.cb-stairs {
+  cursor: pointer;
+}
+.cb-grid {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+.cb-band {
+  fill: color-mix(in oklab, var(--color-accent-brand) 14%, transparent);
+  stroke: color-mix(in oklab, var(--color-accent-brand) 45%, transparent);
+  stroke-width: 1;
+}
+.cb-band.is-next {
+  stroke-dasharray: 4 3;
+}
+.cb-level {
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.cb-level.is-keep {
+  stroke: var(--color-state-success);
+}
+.cb-level.is-clear {
+  stroke: var(--color-state-error);
+}
+.cb-vin {
+  stroke: var(--color-accent-brand);
+  stroke-width: 1.6;
+  stroke-dasharray: 6 4;
+}
+.lab-svg-small.cb-vin-label,
+.lab-svg-small.cb-accent {
+  fill: var(--color-accent-brand);
+}
+.cb-table td.cb-yes {
+  color: var(--color-state-success);
+  font-weight: 700;
+}
+.cb-table td.cb-no {
+  color: var(--color-state-error);
+  font-weight: 700;
+}
+.lab-inputs.cb-bits {
+  margin: 0;
+}
+.cb-range {
+  width: 10em;
+  max-width: 100%;
+  accent-color: var(--color-accent-brand);
+}
+.cb-code {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+.cb-scroll {
+  overflow-x: auto;
+  margin: 0 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--color-text-primary) 2.5%, var(--color-bg-surface));
+}
+.cb-ladder {
+  display: block;
+}
+.cb-wire {
+  fill: none;
+  stroke: var(--color-text-primary);
+  stroke-width: 1.6;
+}
+.cb-wire.is-on,
+.cb-wire.is-out {
+  stroke: var(--color-accent-brand);
+  stroke-width: 2.4;
+}
+.cb-wire.is-gnd {
+  stroke: var(--color-state-success);
+  stroke-width: 2.4;
+}
+.cb-wire.is-off {
+  stroke: var(--color-text-muted);
+  stroke-dasharray: 3 3;
+}
+.cb-res {
+  fill: var(--color-bg-surface);
+  stroke: var(--color-text-primary);
+  stroke-width: 1.4;
+}
+.cb-node {
+  fill: var(--color-text-primary);
+}
+.cb-step {
+  fill: none;
+  stroke: var(--color-text-primary);
+  stroke-width: 1.8;
+}
+.cb-guide {
+  stroke: var(--color-accent-brand);
+  stroke-dasharray: 3 3;
+}
+.cb-marker {
+  fill: var(--color-accent-brand);
+}
+.cb-figure {
+  margin: 0;
+}

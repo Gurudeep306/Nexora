@@ -1,0 +1,1141 @@
+[
+ {
+  "id": "nx-dl-07-01-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A RAM chip is organised as $256\\text{K} \\times 16$. How many address lines and how many data lines does it have?",
+  "options": [
+   {
+    "l": "A",
+    "t": "18 address lines and 16 data lines"
+   },
+   {
+    "l": "B",
+    "t": "22 address lines and 16 data lines"
+   },
+   {
+    "l": "C",
+    "t": "16 address lines and 18 data lines"
+   },
+   {
+    "l": "D",
+    "t": "18 address lines and 4 data lines"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Address lines name the words: $256\\text{K} = 2^8 \\cdot 2^{10} = 2^{18}$ words, so 18 address lines.",
+   "Data lines carry one word: 16 bits, so 16 data lines.",
+   "The width never changes the number of address lines."
+  ],
+  "concept": "A W × B memory has ⌈log₂ W⌉ address lines (words, not bits) and B data lines.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "22 = log₂(256K × 16) counts bits, not words."
+   },
+   {
+    "answer": "C",
+    "why": "The two numbers are swapped: 16 is the word width."
+   },
+   {
+    "answer": "D",
+    "why": "4 = log₂ 16 is not a pin count; every bit of the word needs its own data line."
+   }
+  ],
+  "blocks": [
+   "memory-types",
+   "address-lines-theorem",
+   "trap-width-lines"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-01-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "How many $2\\text{K} \\times 4$ RAM chips are needed to build a $16\\text{K} \\times 16$ memory?",
+  "answer": 32,
+  "solution": [
+   "Width: $16 / 4 = 4$ chips side by side in each row.",
+   "Capacity: $16\\text{K} / 2\\text{K} = 8$ rows.",
+   "Chips $= 8 \\times 4 = 32$; check with the capacity ratio $(16\\text{K} \\cdot 16) / (2\\text{K} \\cdot 4) = 32$."
+  ],
+  "concept": "Chips = (W / w) · (B / b).",
+  "common_wrong": [
+   {
+    "answer": 8,
+    "why": "Counts only the rows, forgetting that each row needs 4 chips for 16 bits."
+   },
+   {
+    "answer": 4,
+    "why": "Counts only the chips per row."
+   },
+   {
+    "answer": 12,
+    "why": "Adds the two ratios instead of multiplying them."
+   }
+  ],
+  "blocks": [
+   "chip-count",
+   "word-expansion",
+   "capacity-expansion"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-01-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A $128\\text{K} \\times 8$ memory is built from $32\\text{K} \\times 8$ chips, each chip holding a block of consecutive addresses. Which decoder drives the chip selects?",
+  "options": [
+   {
+    "l": "A",
+    "t": "A $1 : 2$ decoder on $A_{16}$"
+   },
+   {
+    "l": "B",
+    "t": "A $3 : 8$ decoder on $A_{16}A_{15}A_{14}$"
+   },
+   {
+    "l": "C",
+    "t": "A $2 : 4$ decoder on $A_1A_0$"
+   },
+   {
+    "l": "D",
+    "t": "A $2 : 4$ decoder on $A_{16}A_{15}$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "System: $128\\text{K} = 2^{17}$ words, so 17 address lines $A_{16} \\dots A_0$. Chip: $32\\text{K} = 2^{15}$, so $A_{14} \\dots A_0$ go to every chip.",
+   "Chips: $128\\text{K} / 32\\text{K} = 4$, one per decoder output, so 2 high bits.",
+   "The high bits are $A_{16}A_{15}$: a $2 : 4$ decoder."
+  ],
+  "concept": "Capacity expansion: the low log₂ w bits go to every chip, the high bits feed a decoder with one output per chip.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "Decoding the lowest bits spreads consecutive addresses over the chips (interleaving), not consecutive blocks."
+   },
+   {
+    "answer": "B",
+    "why": "A 3-bit decoder would be for 8 chips; A14 belongs to the chips' own address."
+   },
+   {
+    "answer": "A",
+    "why": "One bit selects between only 2 chips; there are 4."
+   }
+  ],
+  "blocks": [
+   "capacity-expansion",
+   "chip-count",
+   "trap-decoder-width"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-01-q04",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following statements about semiconductor RAM are correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "An SRAM cell is a pair of cross-coupled inverters with two access transistors (6 transistors)."
+   },
+   {
+    "l": "B",
+    "t": "A DRAM must be refreshed because the charge on its cell capacitors leaks away."
+   },
+   {
+    "l": "C",
+    "t": "Reading a DRAM cell destroys its stored charge, so the value is written back after every read."
+   },
+   {
+    "l": "D",
+    "t": "Both SRAM and DRAM lose their contents when the power is removed."
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "A: the SRAM cell is a latch (two inverters in a loop, 4 transistors) plus 2 access transistors: correct.",
+   "B: a DRAM bit is charge on a tiny capacitor, which leaks in milliseconds, so every row is periodically read and rewritten: correct.",
+   "C: a read shares the cell's charge with the much larger bit line, so the charge is gone; the sense amplifier restores it: correct.",
+   "D: both are volatile; SRAM needs power (but no refresh) to keep its latch: correct. All four statements hold."
+  ],
+  "concept": "SRAM = latch, no refresh; DRAM = 1 transistor + 1 capacitor, destructive read, refresh; both volatile.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "C is true as well: a DRAM read is destructive and is followed by a write-back."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "D is also true: SRAM keeps data only while powered (it needs no refresh, but it does need power)."
+   }
+  ],
+  "blocks": [
+   "sram-dram",
+   "memory-types",
+   "erratum-sram"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-01-q05",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 64-bit-wide main memory is built from eight $1\\text{G} \\times 8$ DRAM chips. Each chip has $2^{15}$ rows, one row refresh takes 60 ns, and every row must be refreshed once every 64 ms. What percentage of the time is the memory available for reads and writes? (Give the answer to one decimal place.)",
+  "answer": [
+   96.9,
+   97.0
+  ],
+  "solution": [
+   "All eight chips receive the same refresh command and refresh their own row at the same moment, so the busy time per period is the rows of **one** chip times the row refresh time.",
+   "Busy per period: $2^{15} \\times 60\\ \\text{ns} = 32\\,768 \\times 60\\ \\text{ns} = 1.96608$ ms.",
+   "Overhead: $1.96608 / 64 = 3.072\\%$; available $100 - 3.072 = 96.928\\% \\approx 96.9\\%$."
+  ],
+  "concept": "Chips of a memory refresh in parallel: overhead = (rows per chip) · t_RC / T, available = 1 − overhead.",
+  "common_wrong": [
+   {
+    "answer": 3.072,
+    "why": "That is the percentage spent refreshing; the question asks for the time available."
+   },
+   {
+    "answer": 75.424,
+    "why": "Multiplies the busy time by the 8 chips (24.576 % overhead); the chips refresh in parallel, not one after another."
+   }
+  ],
+  "blocks": [
+   "refresh-derivation",
+   "sram-dram",
+   "ex-org-refresh-chips"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-01-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A $4\\text{M} \\times 1$ DRAM array uses 2-D (row and column) decoding with the address split as evenly as possible. How many decoder output lines (row plus column) does it need?",
+  "answer": 4096,
+  "solution": [
+   "$4\\text{M} = 2^{22}$, so 22 address bits.",
+   "Balanced split: 11 row bits and 11 column bits.",
+   "Lines $= 2^{11} + 2^{11} = 2048 + 2048 = 4096$ (a single decoder would need $2^{22} = 4\\,194\\,304$)."
+  ],
+  "concept": "2-D decoding needs 2^r + 2^(k − r) lines, smallest at the balanced split.",
+  "common_wrong": [
+   {
+    "answer": 2048,
+    "why": "Counts only one of the two decoders."
+   },
+   {
+    "answer": 4194304,
+    "why": "That is the single 22 : 2^22 decoder that 2-D decoding avoids."
+   }
+  ],
+  "blocks": [
+   "chip-organisation",
+   "two-d-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-01-q07",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A $2\\text{K} \\times 8$ ROM sits on a 16-bit address bus. Its chip select is active when $A_{15} = 1$ and $A_{14} = 0$; bits $A_{13}$, $A_{12}$ and $A_{11}$ are not decoded. At which addresses (hexadecimal) does the ROM respond?",
+  "options": [
+   {
+    "l": "A",
+    "t": "`8000–87FF` only"
+   },
+   {
+    "l": "B",
+    "t": "`8000–87FF`, `9000–97FF`, `A000–A7FF`, `B000–B7FF` (four blocks)"
+   },
+   {
+    "l": "C",
+    "t": "`8000–87FF`, `8800–8FFF`, …, `B800–BFFF` (eight blocks, all of `8000–BFFF`)"
+   },
+   {
+    "l": "D",
+    "t": "`8000–FFFF` (every address with $A_{15} = 1$)"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "The ROM uses $m = 11$ address bits $A_{10} \\dots A_0$ ($2\\text{K} = 2^{11}$), so each copy is a block of `800` hex addresses.",
+   "The chip select fixes $A_{15}A_{14} = 10$; the $16 - 11 - 2 = 3$ bits $A_{13}A_{12}A_{11}$ are free, giving $2^3 = 8$ blocks.",
+   "With $A_{15}A_{14} = 10$ the address runs from $1000\\,0000\\,0000\\,0000_2 =$ `8000` to $1011\\,1111\\,1111\\,1111_2 =$ `BFFF`: the eight blocks `8000–87FF`, `8800–8FFF`, …, `B800–BFFF` tile it exactly."
+  ],
+  "concept": "Fixed high bits set the region, free high bits repeat the chip in it: 2^(n − m − d) blocks of 2^m addresses.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That would need full decoding: A13, A12 and A11 would also have to be checked as 0."
+   },
+   {
+    "answer": "B",
+    "why": "Lets only A13 and A12 run free; A11 is not decoded either, so the blocks are 800 apart, not 1000."
+   },
+   {
+    "answer": "D",
+    "why": "Ignores A14, which the chip select does check: A14 = 1 (C000–FFFF) deselects the ROM."
+   }
+  ],
+  "blocks": [
+   "alias-theorem",
+   "alias-intuition",
+   "address-map",
+   "trap-alias"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-01-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A $40\\text{K} \\times 8$ memory is to be built from $8\\text{K} \\times 8$ chips, each chip holding a block of consecutive addresses starting at 0. Which statements are correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "A $2 : 4$ decoder is enough to select the chips."
+   },
+   {
+    "l": "B",
+    "t": "Five chips are needed."
+   },
+   {
+    "l": "C",
+    "t": "The memory needs 16 address lines."
+   },
+   {
+    "l": "D",
+    "t": "A $3 : 8$ decoder on the top three address lines selects the chips, and three of its outputs are unused."
+   }
+  ],
+  "answer": [
+   "B",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "A: a $2 : 4$ decoder has only 4 outputs for 5 chips: wrong.",
+   "B: chips $= 40\\text{K} / 8\\text{K} = 5$: correct.",
+   "C: $40\\text{K} = 40\\,960$ words; $2^{15} = 32\\,768 < 40\\,960 \\le 65\\,536 = 2^{16}$, so 16 address lines: correct.",
+   "D: the chips use 13 bits; $16 - 13 = 3$ high bits give a $3 : 8$ decoder; five outputs are used and three are spare: correct."
+  ],
+  "concept": "For a non-power-of-two size, take the ceiling for the address lines; the decoder then has spare outputs.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "Four outputs cannot select five chips."
+   },
+   {
+    "answer": [
+     "B",
+     "D"
+    ],
+    "why": "C is also true: 15 lines reach only 32K words."
+   }
+  ],
+  "blocks": [
+   "capacity-expansion",
+   "chip-count",
+   "address-lines-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-02-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 4-bit DAC has $V_{ref} = 10$ V and output $V_o = V_{ref}D/2^4$. What is its output for the code $1111$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "10 V"
+   },
+   {
+    "l": "B",
+    "t": "9.375 V"
+   },
+   {
+    "l": "C",
+    "t": "8.75 V"
+   },
+   {
+    "l": "D",
+    "t": "10.625 V"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "The step is $\\Delta = 10/2^4 = 0.625$ V.",
+   "$1111 = 15$, so $V_o = 15 \\times 0.625 = 9.375$ V $= 10 \\times 0.1111_2$.",
+   "The top step is one step short of $V_{ref}$: $V_{FS} = V_{ref}(1 - 2^{-n})$."
+  ],
+  "concept": "Full scale is (2^n − 1) steps, V_ref (1 − 2^−n), never V_ref itself.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "10 V is the ceiling V_ref, which no code reaches (that would need 16 steps)."
+   },
+   {
+    "answer": "C",
+    "why": "8.75 V is 14 steps, the code 1110."
+   },
+   {
+    "answer": "D",
+    "why": "17 steps: adds a step instead of stopping one short of V_ref."
+   }
+  ],
+  "blocks": [
+   "dac-basics",
+   "dac-output-derivation",
+   "trap-full-scale"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-02-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "How many comparators does a 6-bit flash (parallel) ADC need?",
+  "answer": 63,
+  "solution": [
+   "A flash ADC places one comparator at every threshold between adjacent codes.",
+   "6 bits give $2^6 = 64$ codes, hence $64 - 1 = 63$ thresholds and 63 comparators (and 64 resistors in the divider string).",
+   "A priority encoder turns the 63-bit thermometer code into the 6-bit result."
+  ],
+  "concept": "An n-bit flash ADC needs 2^n − 1 comparators and 2^n resistors.",
+  "common_wrong": [
+   {
+    "answer": 64,
+    "why": "64 is the number of codes (and of resistors), one more than the thresholds."
+   },
+   {
+    "answer": 6,
+    "why": "6 = n confuses the number of bits with the number of thresholds; a flash ADC needs one comparator per threshold, $2^n - 1$ (a SAR uses a single comparator n times)."
+   }
+  ],
+  "blocks": [
+   "flash-adc",
+   "adc-compare"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-02-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 12-bit successive-approximation ADC decides one bit per clock and runs from a 4 MHz clock. How long does it take to convert a full-scale input?",
+  "options": [
+   {
+    "l": "A",
+    "t": "1023.75 μs"
+   },
+   {
+    "l": "B",
+    "t": "12 μs"
+   },
+   {
+    "l": "C",
+    "t": "3 μs"
+   },
+   {
+    "l": "D",
+    "t": "0.25 μs"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "The clock period is $1/(4\\text{ MHz}) = 0.25\\ \\mu$s.",
+   "A SAR makes exactly $n = 12$ decisions, one per clock, for every input, full scale included.",
+   "$12 \\times 0.25\\ \\mu\\text{s} = 3\\ \\mu$s."
+  ],
+  "concept": "SAR conversion time is n clock periods, independent of the input.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "4095 clocks is the counter ADC's worst case, not the SAR's."
+   },
+   {
+    "answer": "B",
+    "why": "12 μs takes the clock period as 1 μs instead of 0.25 μs."
+   },
+   {
+    "answer": "D",
+    "why": "One clock is the flash ADC."
+   }
+  ],
+  "blocks": [
+   "sar-adc",
+   "trap-sar-time",
+   "adc-compare"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-02-q04",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A 4-bit current-switched R-2R ladder DAC has $V_{ref} = 8$ V and $R = R_f = 1$ kΩ: series resistors $R$, a $2R$ leg at every node (to the amplifier's virtual-ground summing node when the bit is 1, to ground when it is 0) and a $2R$ terminator at the LSB node $A_0$. Which statements are correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "The current into the summing node is the same for every code."
+   },
+   {
+    "l": "B",
+    "t": "The reference supplies 8 mA, whatever the code."
+   },
+   {
+    "l": "C",
+    "t": "The voltage of the LSB node $A_0$ is 1 V."
+   },
+   {
+    "l": "D",
+    "t": "For the code $1010$ the output is $V_o = -5$ V."
+   }
+  ],
+  "answer": [
+   "B",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "A: the leg currents are $4, 2, 1, 0.5$ mA (MSB first); only the legs whose bit is 1 reach the summing node, so $I_{out}$ depends on the code: wrong.",
+   "B: every node sees $R$ looking away from the source, and both switch positions are at 0 V, so $I = V_{ref}/R = 8/1 = 8$ mA for every code: correct.",
+   "C: the node voltages halve from the source: $8, 4, 2, 1$ V, so $A_0 = 1$ V: correct.",
+   "D: code $1010$: $I_{out} = 4 + 1 = 5$ mA, $V_o = -1 \\times 5 = -5$ V $= -8 \\times 10/16$: correct."
+  ],
+  "concept": "The R-2R ladder draws V_ref/R for every code; the code only decides which halving currents reach OUT.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "It is I_ref (the source current) that is code-independent; I_out changes with the code."
+   },
+   {
+    "answer": [
+     "B",
+     "D"
+    ],
+    "why": "C is true as well: the node voltages are V_ref, V_ref/2, V_ref/4, V_ref/8 = 1 V."
+   }
+  ],
+  "blocks": [
+   "r2r",
+   "r2r-theorem",
+   "proof-r2r-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-02-q05",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 4-bit successive-approximation ADC has $V_{ref} = 8$ V, no ½-LSB offset, and keeps a trial bit when $V_{in} \\ge V_{DAC}$. For $V_{in} = 5.3$ V, which sequence of trial codes does the register present to the DAC, and what is the result?",
+  "options": [
+   {
+    "l": "A",
+    "t": "Trials 1000, 1100, 1010, 1011; result 1010"
+   },
+   {
+    "l": "B",
+    "t": "Trials 1000, 1100, 1110, 1111; result 1010"
+   },
+   {
+    "l": "C",
+    "t": "Trials 1000, 0100, 0110, 0101; result 0101"
+   },
+   {
+    "l": "D",
+    "t": "Trials 1000, 1100, 1010, 1011; result 1011"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "The LSB is $8/16 = 0.5$ V, so trial code $t$ gives $0.5t$ volts.",
+   "Clock 1: $1000 \\to 4$ V, $5.3 \\ge 4$, keep. Clock 2: $1100 \\to 6$ V, $5.3 < 6$, clear.",
+   "Clock 3: $1010 \\to 5$ V, keep. Clock 4: $1011 \\to 5.5$ V, $5.3 < 5.5$, clear.",
+   "Result $1010 = 10 = \\lfloor 5.3/0.5 \\rfloor$, error 0.3 V."
+  ],
+  "concept": "Each SAR trial is the decided bits plus the next bit set; it is the midpoint of the codes still possible.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Sets the next bit without clearing the rejected one: after 1100 fails, bit 2 must go back to 0."
+   },
+   {
+    "answer": "C",
+    "why": "Clears the MSB even though 5.3 ≥ 4; that is the trace of an input below 4 V."
+   },
+   {
+    "answer": "D",
+    "why": "The trials are right, but the last comparison 5.3 < 5.5 clears bit 0."
+   }
+  ],
+  "blocks": [
+   "sar-adc",
+   "sar-theorem",
+   "sar-viz"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-02-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "An 8-bit ADC has $V_{ref} = 2.56$ V and the ½-LSB offset (it rounds to the nearest code). What code (in decimal) does it give for $V_{in} = 1.237$ V?",
+  "answer": 124,
+  "solution": [
+   "LSB $= 2.56/256 = 0.01$ V.",
+   "$V_{in}/\\Delta = 123.7$; with the offset, $D = \\lfloor 123.7 + 0.5 \\rfloor = \\lfloor 124.2 \\rfloor = 124$.",
+   "Check: $V_q = 1.24$ V, error $-3$ mV $= -0.3$ LSB, inside $\\pm\\frac12$ LSB."
+  ],
+  "concept": "With the ½-LSB offset the code is ⌊V_in/Δ + ½⌋ (rounding); without it, ⌊V_in/Δ⌋.",
+  "common_wrong": [
+   {
+    "answer": 123,
+    "why": "Truncates: that is the code without the ½-LSB offset."
+   },
+   {
+    "answer": 125,
+    "why": "Adds a whole LSB instead of half an LSB before taking the floor."
+   }
+  ],
+  "blocks": [
+   "adc-basics",
+   "quant-error-theorem",
+   "trap-half-lsb"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-02-q07",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "An 8-bit binary-weighted resistor DAC uses a 2 kΩ resistor for the MSB, and each lower bit has twice the resistance of the bit above it. What is the LSB resistor, and what is the ratio of the largest to the smallest resistor?",
+  "options": [
+   {
+    "l": "A",
+    "t": "512 kΩ; ratio 256"
+   },
+   {
+    "l": "B",
+    "t": "16 kΩ; ratio 8"
+   },
+   {
+    "l": "C",
+    "t": "128 kΩ; ratio 64"
+   },
+   {
+    "l": "D",
+    "t": "256 kΩ; ratio 128"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Bit $i$ has $2^{n-1-i}R$: the MSB has $R = 2$ kΩ, the LSB $2^7 R$.",
+   "$2^7 \\times 2 = 256$ kΩ.",
+   "The spread is $2^{n-1} = 128$, which is why weighted DACs are not built beyond a few bits; the R-2R ladder uses only $R$ and $2R$."
+  ],
+  "concept": "A weighted DAC's resistors run from R to 2^(n−1) R: a spread of 2^(n−1).",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Uses 2^n instead of 2^(n−1): there are only 7 doublings from the MSB to the LSB."
+   },
+   {
+    "answer": "B",
+    "why": "Multiplies by n = 8 instead of doubling seven times."
+   },
+   {
+    "answer": "C",
+    "why": "Stops one doubling short (2^6 instead of 2^7): eight resistors need seven doublings."
+   }
+  ],
+  "blocks": [
+   "weighted-dac",
+   "weighted-spread"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-02-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which statements about analog-to-digital converters are correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "An 8-bit flash ADC needs 255 comparators."
+   },
+   {
+    "l": "B",
+    "t": "A counter (ramp) ADC takes the same number of clocks for every input."
+   },
+   {
+    "l": "C",
+    "t": "For an in-range input, a SAR ADC without the ½-LSB offset has a quantisation error $e = V_{in} - V_q$ with $0 \\le e < 1$ LSB."
+   },
+   {
+    "l": "D",
+    "t": "A dual-slope ADC that integrates the input for 1000 clocks, with $V_{ref} = 2$ V, completes the conversion of $V_{in} = 1$ V in 500 clocks."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "A: $2^8 - 1 = 255$ comparators: correct.",
+   "B: the counter climbs one step per clock, so code $D$ costs $D$ clocks: wrong (that property belongs to the SAR, which always takes $n$).",
+   "C: without the offset the SAR returns $\\lfloor V_{in}/\\Delta \\rfloor$, and a floor gives $0 \\le e < \\Delta$: correct.",
+   "D: the de-integration count is $N_2 = N_1 V_{in}/V_{ref} = 1000 \\times 1/2 = 500$, but the conversion also includes the fixed first phase: $N_1 + N_2 = 1500$ clocks: wrong."
+  ],
+  "concept": "Flash 2^n − 1 comparators; counter time grows with the code; truncating error in [0, 1) LSB; dual slope N2 = N1·V_in/V_ref, total N1 + N2.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "500 clocks is only the second ramp; the conversion takes N1 + N2 = 1500 clocks."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "B confuses the counter ADC with the SAR: the counter's time depends on the input."
+   },
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "C is true: ±½ LSB is the rounding converter; a truncating one errs on one side, below 1 LSB."
+   }
+  ],
+  "blocks": [
+   "flash-adc",
+   "counter-adc",
+   "quant-error-theorem",
+   "dual-slope"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-03-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "An NMOS transistor has its gate at $V_{DD} = 5$ V. One terminal is held at $V_{DD}$ and the other drives an otherwise unconnected node. Taking the threshold voltage as 0.7 V, what does the node settle to?",
+  "options": [
+   {
+    "l": "A",
+    "t": "5 V, a strong logic 1"
+   },
+   {
+    "l": "B",
+    "t": "4.3 V, a degraded logic 1"
+   },
+   {
+    "l": "C",
+    "t": "0 V, a strong logic 0"
+   },
+   {
+    "l": "D",
+    "t": "Nothing: the node floats"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Gate 1 turns the NMOS on, so the node is connected to the 5 V terminal.",
+   "While passing a 1, the node is the transistor's source; it conducts only while $V_{GS} = 5 - V_{node} > 0.7$ V.",
+   "Charging stops at $V_{node} = 5 - 0.7 = 4.3$ V: a degraded 1. (A PMOS would pass the full 5 V.)"
+  ],
+  "concept": "NMOS passes a strong 0 but only a degraded 1 (V_DD − V_t); PMOS the reverse.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "A full 5 V needs a PMOS (or a transmission gate); an NMOS turns itself off one threshold below the supply."
+   },
+   {
+    "answer": "D",
+    "why": "The gate is at 1, so the NMOS is on and the node is driven."
+   }
+  ],
+  "blocks": [
+   "mos-switch",
+   "threshold-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-03-q02",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Which NMOS pull-down network gives a single static CMOS stage with output $Y = \\overline{(A + B)\\,C}$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "NMOS $A$, $B$ and $C$ all in series"
+   },
+   {
+    "l": "B",
+    "t": "NMOS $A$, $B$ and $C$ all in parallel"
+   },
+   {
+    "l": "C",
+    "t": "NMOS $A$ and $B$ in series, that pair in parallel with NMOS $C$"
+   },
+   {
+    "l": "D",
+    "t": "NMOS $A$ and $B$ in parallel, that pair in series with NMOS $C$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "The pull-down must conduct exactly when $(A + B)C = 1$, so that $Y = 0$ then.",
+   "In an NMOS network OR is parallel and AND is series: $(A \\parallel B)$ in series with $C$.",
+   "The pull-up is the dual: PMOS $A$ and $B$ in series, that pair in parallel with PMOS $C$."
+  ],
+  "concept": "CMOS pull-down: AND = series, OR = parallel; the PMOS pull-up is the dual.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "That network conducts for AB + C, which gives Y = NOT(AB + C)."
+   },
+   {
+    "answer": "A",
+    "why": "All in series conducts only for ABC = 1 (a NAND3)."
+   },
+   {
+    "answer": "B",
+    "why": "All in parallel conducts for A + B + C (a NOR3)."
+   }
+  ],
+  "blocks": [
+   "cmos-gates",
+   "series-parallel-theorem",
+   "cmos-duality-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-03-q03",
+  "type": "NAT",
+  "marks": 1,
+  "text": "How many transistors does a single static CMOS stage for $Y = \\overline{AB + CD}$ use?",
+  "answer": 8,
+  "solution": [
+   "Each input literal drives one NMOS in the pull-down and one PMOS in the pull-up.",
+   "Pull-down: ($A$ series $B$) parallel ($C$ series $D$); pull-up: ($A \\parallel B$) series ($C \\parallel D$).",
+   "4 literals × 2 = 8 transistors."
+  ],
+  "concept": "A static CMOS stage has 2 transistors per input literal.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "Counts only one of the two networks."
+   },
+   {
+    "answer": 10,
+    "why": "Adds an output inverter that the inverting function does not need."
+   },
+   {
+    "answer": 5,
+    "why": "That is the nMOS count (one load plus four pull-down transistors)."
+   }
+  ],
+  "blocks": [
+   "cmos-gates",
+   "cmos-duality-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-03-q04",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Compare unsized static CMOS NAND2 and NOR2 gates (every transistor of unit width; a PMOS has twice the on-resistance of an NMOS). Which statements are correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "The NAND2 has its two NMOS transistors in series."
+   },
+   {
+    "l": "B",
+    "t": "The NOR2 has its two PMOS transistors in series."
+   },
+   {
+    "l": "C",
+    "t": "The worst-case pull-up resistance of the NOR2 is twice the worst-case pull-down resistance of the NAND2."
+   },
+   {
+    "l": "D",
+    "t": "The NOR2 needs fewer transistors than the NAND2."
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "C"
+  ],
+  "solution": [
+   "A and B: NAND puts the NMOS in series (AND) and the PMOS in parallel; NOR the opposite.",
+   "C: NAND2 pull-down = two NMOS in series = $2R$; NOR2 pull-up = two PMOS in series = $2 \\times 2R = 4R$, twice as much.",
+   "D: both have 4 transistors."
+  ],
+  "concept": "NOR puts its series stack on the slow PMOS side, which is why NAND is preferred.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "C also holds: 4R against 2R."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "Both gates have exactly 4 transistors."
+   }
+  ],
+  "blocks": [
+   "nand-vs-nor",
+   "sizing-derivation",
+   "erratum-nand-nor"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-03-q05",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A logic family guarantees $V_{OH} = 2.7$ V, $V_{OL} = 0.5$ V, $V_{IH} = 2.0$ V and $V_{IL} = 0.8$ V. What are its high and low noise margins $NM_H$ and $NM_L$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0.7 V and 0.3 V"
+   },
+   {
+    "l": "B",
+    "t": "0.7 V and 0.7 V"
+   },
+   {
+    "l": "C",
+    "t": "0.3 V and 0.7 V"
+   },
+   {
+    "l": "D",
+    "t": "0.4 V and 0.4 V"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "$NM_H = V_{OH} - V_{IH} = 2.7 - 2.0 = 0.7$ V.",
+   "$NM_L = V_{IL} - V_{OL} = 0.8 - 0.5 = 0.3$ V.",
+   "The family is limited by its smaller margin, 0.3 V, in the low state."
+  ],
+  "concept": "NM_H = V_OH − V_IH, NM_L = V_IL − V_OL.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "0.7 V is only the high margin; the low margin is 0.8 − 0.5 = 0.3 V."
+   },
+   {
+    "answer": "C",
+    "why": "The two margins are swapped."
+   },
+   {
+    "answer": "D",
+    "why": "0.4 V each is standard TTL (V_OH 2.4, V_OL 0.4), not this family."
+   }
+  ],
+  "blocks": [
+   "noise-margins",
+   "nm-derivation"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-03-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A CMOS output drives a 20 pF load at $V_{DD} = 3.3$ V and makes one full $0 \\to 1 \\to 0$ cycle 50 million times per second. What is its dynamic power in mW? (Give the answer to two decimal places.)",
+  "answer": [
+   10.85,
+   10.93
+  ],
+  "solution": [
+   "Each full cycle draws $C V^2 = 20\\ \\text{pF} \\times 3.3^2 = 20 \\times 10.89 = 217.8$ pJ from the supply.",
+   "$P = C V^2 f = 217.8\\ \\text{pJ} \\times 5 \\times 10^7 = 10.89$ mW.",
+   "No static power is added: in steady state one network of each gate is open."
+  ],
+  "concept": "P_dyn = α·C·V²·f; each full cycle costs C·V².",
+  "common_wrong": [
+   {
+    "answer": 5.45,
+    "why": "½CV²f counts only the energy stored in the load, not the energy drawn per cycle."
+   },
+   {
+    "answer": 3.3,
+    "why": "C·V·f uses V once instead of V²."
+   }
+  ],
+  "blocks": [
+   "power-speed",
+   "power-derivation"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-03-q07",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 74LS output can sink 8 mA and source 0.4 mA. Each standard TTL input draws 1.6 mA in the low state and 40 µA in the high state. How many standard TTL inputs can the 74LS output drive?",
+  "options": [
+   {
+    "l": "A",
+    "t": "20"
+   },
+   {
+    "l": "B",
+    "t": "10"
+   },
+   {
+    "l": "C",
+    "t": "50"
+   },
+   {
+    "l": "D",
+    "t": "5"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Low state: $8 / 1.6 = 5$ inputs.",
+   "High state: $0.4\\ \\text{mA} / 40\\ \\mu\\text{A} = 10$ inputs.",
+   "Fan-out is the smaller: 5."
+  ],
+  "concept": "Fan-out = min(I_OL / I_IL, I_OH / I_IH).",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Uses only the high-state ratio."
+   },
+   {
+    "answer": "A",
+    "why": "20 is the fan-out into 74LS inputs, which draw a quarter of the current."
+   },
+   {
+    "answer": "C",
+    "why": "Divides 8 mA by 0.16 mA, a misplaced decimal point."
+   }
+  ],
+  "blocks": [
+   "fan-out",
+   "fanout-intuition"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-07-03-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Input $x$ reaches node $f$ through one **PMOS** gated by $s$, and input $y$ reaches $f$ through one **NMOS** gated by $s$. Take $V_{DD} = 5$ V and thresholds of 0.7 V. Which statements are correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$f = \\overline{s}\\,x + s\\,y$"
+   },
+   {
+    "l": "B",
+    "t": "$f$ is never left floating."
+   },
+   {
+    "l": "C",
+    "t": "When $s = 0$ and $x = 0$, $f$ falls to the full 0 V."
+   },
+   {
+    "l": "D",
+    "t": "When $s = 1$ and $y = 0$, $f$ falls to the full 0 V."
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "The PMOS conducts for $s = 0$ and the NMOS for $s = 1$: exactly one path is on for every $s$, so $f = \\overline{s}x + sy$ and $f$ is never left floating (A and B are correct).",
+   "C: for $s = 0$ the 0 on $x$ must cross the PMOS. A PMOS conducts only while its gate is more than $\\lvert V_{tp} \\rvert$ below its higher terminal, which is now $f$ itself, so it switches itself off as $f$ falls: $f$ stops at 0.7 V, a degraded 0. C is wrong.",
+   "D: for $s = 1$ the 0 on $y$ crosses the NMOS, whose source stays at 0 V, so nothing stops the fall: $f$ reaches 0 V. D is correct."
+  ],
+  "concept": "Pass-transistor MUX: correct logic and never floating, but each value is strong only through the right device: NMOS passes a strong 0, PMOS a strong 1.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "A PMOS cannot pass a full 0; it stops one threshold above ground."
+   },
+   {
+    "answer": [
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "With the device types swapped, $x$ is selected by $s = 0$, so $f = \\overline{s}x + sy$, not $sx + \\overline{s}y$."
+   },
+   {
+    "answer": [
+     "A",
+     "D"
+    ],
+    "why": "B is also true: one of the two transistors is always on."
+   }
+  ],
+  "blocks": [
+   "pass-transistor",
+   "mos-switch",
+   "transmission-gate"
+  ],
+  "source": "nexora"
+ }
+]

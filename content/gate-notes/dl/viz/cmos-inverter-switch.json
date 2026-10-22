@@ -1,0 +1,807 @@
+{
+ "version": 1,
+ "title": "A CMOS inverter as two complementary switches",
+ "width": 640,
+ "height": 352,
+ "narrow": {
+  "width": 360,
+  "height": 352
+ },
+ "intro": "A pMOS from VDD to the output Y and an nMOS from Y to ground share the input A; Y drives a 10 pF load. The steps switch A and follow the current and the energy.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 22,
+   "text": "A CMOS inverter: two switches and a load",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "CMOS inverter: two switches",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "vdd",
+   "type": "text",
+   "x": 300,
+   "y": 48,
+   "text": "VDD = 5 V",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 150,
+    "size": 12
+   }
+  },
+  {
+   "id": "rail",
+   "type": "line",
+   "points": [
+    [
+     300,
+     60
+    ],
+    [
+     300,
+     80
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      150,
+      60
+     ],
+     [
+      150,
+      80
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pm",
+   "type": "box",
+   "x": 260.0,
+   "y": 80,
+   "w": 80,
+   "h": 44,
+   "label": "pMOS",
+   "size": 14,
+   "narrow": {
+    "x": 115.0,
+    "w": 70,
+    "size": 12
+   }
+  },
+  {
+   "id": "midp",
+   "type": "line",
+   "points": [
+    [
+     300,
+     124
+    ],
+    [
+     300,
+     160.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      150,
+      124
+     ],
+     [
+      150,
+      160.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "midn",
+   "type": "line",
+   "points": [
+    [
+     300,
+     160.0
+    ],
+    [
+     300,
+     196
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      150,
+      160.0
+     ],
+     [
+      150,
+      196
+     ]
+    ]
+   }
+  },
+  {
+   "id": "nm",
+   "type": "box",
+   "x": 260.0,
+   "y": 196,
+   "w": 80,
+   "h": 44,
+   "label": "nMOS",
+   "size": 14,
+   "narrow": {
+    "x": 115.0,
+    "w": 70,
+    "size": 12
+   }
+  },
+  {
+   "id": "out",
+   "type": "line",
+   "points": [
+    [
+     300,
+     160.0
+    ],
+    [
+     532.0,
+     160.0
+    ],
+    [
+     532.0,
+     184.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      150,
+      160.0
+     ],
+     [
+      310.0,
+      160.0
+     ],
+     [
+      310.0,
+      184.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl",
+   "type": "box",
+   "x": 500,
+   "y": 184.0,
+   "w": 64,
+   "h": 36,
+   "label": "10 pF",
+   "size": 14,
+   "narrow": {
+    "x": 280,
+    "w": 60,
+    "size": 12
+   }
+  },
+  {
+   "id": "gnd",
+   "type": "line",
+   "points": [
+    [
+     300,
+     240
+    ],
+    [
+     300,
+     262
+    ],
+    [
+     532.0,
+     262
+    ],
+    [
+     532.0,
+     220.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      150,
+      240
+     ],
+     [
+      150,
+      262
+     ],
+     [
+      310.0,
+      262
+     ],
+     [
+      310.0,
+      220.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gl",
+   "type": "text",
+   "x": 300,
+   "y": 276,
+   "text": "GND",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 150,
+    "size": 12
+   }
+  },
+  {
+   "id": "yv",
+   "type": "text",
+   "x": 400.0,
+   "y": 147.0,
+   "text": "Y",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 219.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "gin",
+   "type": "line",
+   "points": [
+    [
+     260.0,
+     102.0
+    ],
+    [
+     210.0,
+     102.0
+    ],
+    [
+     210.0,
+     218.0
+    ],
+    [
+     260.0,
+     218.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      115.0,
+      102.0
+     ],
+     [
+      79.0,
+      102.0
+     ],
+     [
+      79.0,
+      218.0
+     ],
+     [
+      115.0,
+      218.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ain",
+   "type": "line",
+   "points": [
+    [
+     156.0,
+     160.0
+    ],
+    [
+     210.0,
+     160.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      53.0,
+      160.0
+     ],
+     [
+      79.0,
+      160.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "av",
+   "type": "text",
+   "x": 150.0,
+   "y": 160.0,
+   "text": "A",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 47.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "ps",
+   "type": "text",
+   "x": 350.0,
+   "y": 102.0,
+   "text": "",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 195.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "ns",
+   "type": "text",
+   "x": 350.0,
+   "y": 218.0,
+   "text": "",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 195.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "en",
+   "type": "text",
+   "x": 320.0,
+   "y": 308,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "narrow": {
+    "x": 180.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 320.0,
+   "y": 332,
+   "text": "",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A = 0: the pMOS is on and the nMOS off, so Y connects to VDD only: Y = 1, strong. No path joins VDD to ground, so no current flows.",
+   "patches": [
+    {
+     "id": "av",
+     "set": {
+      "text": "A = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ain",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gin",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "pm",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "nm",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "ps",
+     "set": {
+      "text": "on",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ns",
+     "set": {
+      "text": "off",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "yv",
+     "set": {
+      "text": "Y = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rail",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "midp",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "midn",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gnd",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A rises through the middle: for a moment both transistors are partly on and a small short-circuit current flows from VDD to ground.",
+   "patches": [
+    {
+     "id": "av",
+     "set": {
+      "text": "A = ↑",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ain",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gin",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "pm",
+     "set": {
+      "tone": "warning",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "nm",
+     "set": {
+      "tone": "warning",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "ps",
+     "set": {
+      "text": "partly on",
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "ns",
+     "set": {
+      "text": "partly on",
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "yv",
+     "set": {
+      "text": "Y falling",
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "rail",
+     "set": {
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "midp",
+     "set": {
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "midn",
+     "set": {
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "gnd",
+     "set": {
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "tone": "warning"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A = 1: the nMOS is on and the pMOS off, Y = 0. The load empties through the nMOS: the 125 pJ it stored becomes heat.",
+   "patches": [
+    {
+     "id": "av",
+     "set": {
+      "text": "A = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ain",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "gin",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "pm",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "nm",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "ps",
+     "set": {
+      "text": "off",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ns",
+     "set": {
+      "text": "on",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "yv",
+     "set": {
+      "text": "Y = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rail",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "midp",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "midn",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gnd",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "en",
+     "set": {
+      "text": "discharge: 125 pJ lost in the nMOS"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A falls to 0: the pMOS refills the load. The supply gives C·V² = 250 pJ: 125 pJ stored in C, 125 pJ lost in the pMOS.",
+   "patches": [
+    {
+     "id": "av",
+     "set": {
+      "text": "A = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ain",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gin",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "pm",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "nm",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "ps",
+     "set": {
+      "text": "on",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ns",
+     "set": {
+      "text": "off",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "yv",
+     "set": {
+      "text": "Y = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rail",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "midp",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "midn",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "gnd",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "en",
+     "set": {
+      "text": "one full cycle draws C·V² = 250 pJ"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "For every input exactly one transistor conducts, so Y is always driven at full strength and, at rest, no current flows: static power 0.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "exactly one network on · no static current",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "At 10 MHz with one full cycle per clock: P = C·V²·f = 250 pJ × 10⁷ = 2.5 mW. Halving V would cut it to a quarter.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "P = C·V²·f = 2.5 mW",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

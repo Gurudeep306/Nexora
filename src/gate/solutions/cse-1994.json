@@ -457,7 +457,7 @@
       "verification": "Standard 8085 timing: T1 is dedicated to sending the address with ALE high on the shared lines."
     },
     "cse-1994-a-3-10": {
-      "approach": "Sort by transistor type (bipolar vs unipolar/FET) and then by the speed–power–density signature of each family.",
+      "approach": "Concept tested: **the signature of each logic family**. Split first by device type (bipolar or unipolar), then use speed, power and density to separate the two families on each side.",
       "concepts": [
         "Logic families",
         "ECL",
@@ -465,24 +465,74 @@
         "CMOS",
         "GaAs"
       ],
+      "given": "List I: (i) ECL, (ii) GaAs, (iii) TTL, (iv) CMOS. List II: (a) unipolar, very high speed, difficult to fabricate, good resistance to radiation; (b) unipolar, low power, modest speed and packing density; (c) bipolar, highest speed silicon IC, low packing density; (d) bipolar, modest packing density, inexpensive.",
       "steps": [
         {
-          "title": "Bipolar families",
-          "body": "ECL: non-saturating bipolar, fastest silicon logic, high power so low packing density → (c). TTL: bipolar, moderate density, cheap → (d)."
+          "title": "Device type",
+          "body": "ECL and TTL are built from bipolar transistors, so they take (c) and (d). GaAs (MESFET) and CMOS are field-effect, unipolar families, so they take (a) and (b)."
         },
         {
-          "title": "Unipolar families",
-          "body": "GaAs (MESFET): very high speed, hard to fabricate, radiation hard → (a). CMOS: very low static power, modest speed and density (in 1994 terms) → (b)."
+          "title": "The two bipolar families",
+          "body": "ECL never saturates its transistors, which makes it the fastest silicon family, at high static power and so low packing density: (i)–(c). TTL is the cheap, moderate-density workhorse: (iii)–(d)."
+        },
+        {
+          "title": "The two unipolar families",
+          "body": "GaAs is very fast and radiation-hard but hard and expensive to fabricate: (ii)–(a). CMOS is the low-power family: (iv)–(b). (In 1994 terms CMOS speed and density were 'modest'; the low power is what identifies it.)"
+        },
+        {
+          "title": "Eliminate the other pairings",
+          "body": "(c) says bipolar, so it cannot be GaAs or CMOS; (a) says unipolar and very high speed, so it cannot be CMOS ('modest speed'): hence (ii)–(a) and (iv)–(b). (d) 'inexpensive, modest density' rules out ECL (low density, costly): hence (iii)–(d), leaving (i)–(c). Each description fits exactly one family."
         }
       ],
       "answer": {
         "value": "(i)-(c), (ii)-(a), (iii)-(d), (iv)-(b)",
         "matchesKey": true
       },
+      "shortcut": "Bipolar or unipolar first; then the fastest of each pair is ECL (bipolar) and GaAs (unipolar).",
       "pitfalls": [
-        "Swapping ECL and GaAs — both are fast, but only ECL is bipolar silicon."
+        "Giving ECL the 'very high speed, unipolar' description: ECL is bipolar silicon; the unipolar very-fast family is GaAs.",
+        "Giving CMOS 'inexpensive, bipolar': CMOS is unipolar; the cheap bipolar family is TTL.",
+        "Matching CMOS to (a) because modern CMOS is fast: (a) says 'difficult to fabricate' and 'radiation-hard', the GaAs signature."
       ],
-      "verification": "Each description used once; bipolar/unipolar labels agree with the device types."
+      "verification": "Each List II description is satisfied by exactly one family in the lesson's family table (device type, speed, power, density, cost), and each is used once.",
+      "animation": {
+        "kind": "table",
+        "title": "Families: device type and signature",
+        "cols": [
+          "device",
+          "signature",
+          "List II"
+        ],
+        "rows": [
+          [
+            "bipolar",
+            "fastest silicon",
+            "(c)"
+          ],
+          [
+            "unipolar",
+            "very fast, radiation-hard",
+            "(a)"
+          ],
+          [
+            "bipolar",
+            "inexpensive",
+            "(d)"
+          ],
+          [
+            "unipolar",
+            "low power",
+            "(b)"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "(i) ECL",
+          "(ii) GaAs",
+          "(iii) TTL",
+          "(iv) CMOS"
+        ]
+      }
     },
     "cse-1994-a-3-11": {
       "approach": "Compare what each kind of independence must survive: a physical-schema change only has to be hidden by the internal/conceptual mapping, while a conceptual-schema change must be hidden from external views and application programs.",
