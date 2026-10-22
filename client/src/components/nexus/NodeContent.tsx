@@ -2,12 +2,16 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { ArrowUpRight, BookOpen, Bookmark, BookmarkCheck, Check, Clock, ExternalLink, Film, Link2, ListChecks, Lock, PenLine, Sparkles, Swords, Target, X, Zap } from 'lucide-react'
+import { ArrowUpRight, BookOpen, Bookmark, BookmarkCheck, Check, Clock, ExternalLink, Film, GraduationCap, Link2, ListChecks, Lock, MessageSquareText, PenLine, Sparkles, Swords, Target, X, Zap } from 'lucide-react'
 import { Badge, Button, LoadingBlock } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { CrossChips, DsaProblems, MasteryRing } from './NodePanel'
+import { ExamInsight, Flashcards, MasteryMeter, NodeNotes, TestOut, TimeChip, UnlockPath, type NodeInsight } from './NodeExtras'
+import { confidence, unlockPath } from './insights'
+import { useAgentContext } from '@/context/AgentContext'
+import { useToast } from '@/components/ui'
 import { usePhone } from './extras'
 import type { CrossLink, NexusNode } from './types'
 
@@ -45,6 +49,7 @@ export interface NodeContentData {
     pyqs: number
   }[]
   course: { outline: string[] } | null
+  cards?: { front: string; back: string; kind?: string }[]
 }
 
 const H = 'mb-2 flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase'
@@ -123,6 +128,12 @@ export function NodeContent({
   onSelect,
   onJump,
   hueOf,
+  insight = null,
+  minutes = {},
+  note = null,
+  onNoteSaved,
+  onMastered,
+  subjectName = '',
 }: {
   subject: string
   node: NexusNode
@@ -139,8 +150,21 @@ export function NodeContent({
   onSelect: (id: string) => void
   onJump: (l: CrossLink) => void
   hueOf?: (subject: string) => string | undefined
+  /** this node's insight (time, weightage, peers), from /api/nexus/insights */
+  insight?: NodeInsight | null
+  /** minutes per node of this subject (unlock path time) */
+  minutes?: Record<string, number>
+  /** your note and bookmark */
+  note?: { note: string; bookmarked: boolean } | null
+  onNoteSaved?: (v: { note: string; bookmarked: boolean }) => void
+  /** after a passed quick check: refresh everything */
+  onMastered?: () => void
+  subjectName?: string
 }) {
   const key = `${subject}:${node.id}`
+  const agent = useAgentContext()
+  const toast = useToast()
+  const [testing, setTesting] = useState(false)
   const { data, loading, error } = useApi<NodeContentData>(() => api.get<NodeContentData>(`/api/nexus/content/${subject}/${node.id}`), [subject, node.id], {
     cacheKey: `nexus:content:${key}`,
   })
@@ -178,6 +202,8 @@ export function NodeContent({
               {node.xpReward} XP
             </Badge>
             {(data?.optional || node.optional) && <Badge variant="default">optional</Badge>}
+            {insight && <TimeChip minutes={insight.min} />}
+            {insight?.hy && <Badge variant="warning">high-yield</Badge>}
             {(due || marked) && <Badge variant="warning">{due ? 'due for review' : 'marked for review'}</Badge>}
           </div>
         </div>
@@ -200,6 +226,11 @@ export function NodeContent({
         <p className="mb-0 text-[15px] leading-relaxed text-foreground-dim">{data?.summary || node.desc}</p>
       )}
 
+      {(() => {
+        const c = confidence(node)
+        return <MasteryMeter score={c.score} breakdown={c.breakdown} color={zoneColor} />
+      })()}
+
       {/* Actions */}
       <div className="flex flex-wrap gap-2">
         <Link to={studyHref} className="min-w-[9rem] flex-1" tabIndex={-1}>
@@ -210,6 +241,11 @@ export function NodeContent({
         {onPractise && (
           <Button variant="outline" size="sm" className="nx-press" onClick={onPractise}>
             <PenLine className="size-3.5" aria-hidden="true" /> Practise
+          </Button>
+        )}
+        {!isDsa && !node.completed && (node.metric?.pyq?.pool ?? 0) >= 3 && (
+          <Button variant="outline" size="sm" className="nx-press" onClick={() => setTesting((v) => !v)} aria-expanded={testing}>
+            <GraduationCap className="size-3.5" aria-hidden="true" /> Test out
           </Button>
         )}
         <Button variant="outline" size="sm" className="nx-press" onClick={() => toggleReview(key)} aria-pressed={marked}>
@@ -234,7 +270,43 @@ export function NodeContent({
           {copied ? <Check className="size-3.5" aria-hidden="true" /> : <Link2 className="size-3.5" aria-hidden="true" />}
           {copied ? 'Copied' : 'Copy link'}
         </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="nx-press"
+          onClick={() =>
+            agent.openAssistant(
+              `Explain "${node.name}" (${subjectName || subject}) to me step by step. It covers: ${(data?.topics ?? []).join('; ')}. My progress on it is ${node.progress}%${node.metric?.pyq ? `, ${Math.min(node.metric.pyq.correct, node.metric.pyq.target)}/${node.metric.pyq.target} PYQs right${node.metric.pyq.accuracy != null ? ` at ${node.metric.pyq.accuracy}% accuracy` : ''}` : ''}. Start with the idea, then a worked example, then the usual exam traps.`,
+            )
+          }
+        >
+          <MessageSquareText className="size-3.5" aria-hidden="true" /> Explain this
+        </Button>
       </div>
+
+      {testing && (
+        <TestOut
+          subject={subject}
+          node={node.id}
+          onClose={() => setTesting(false)}
+          onPassed={() => {
+            onMastered?.()
+          }}
+        />
+      )}
+
+      {!node.unlocked && (() => {
+        const path = unlockPath(nodes.map((n) => ({ id: n.id, requires: n.requires, completed: n.completed })), node.id, minutes)
+        return (
+          <UnlockPath
+            steps={path.steps}
+            names={Object.fromEntries(nodes.map((n) => [n.id, n.name]))}
+            minutes={minutes}
+            onStart={() => path.steps[0] && onSelect(path.steps[0])}
+            onPick={onSelect}
+          />
+        )
+      })()}
 
       {/* What you'll learn */}
       <section aria-labelledby={`wyl-${node.id}`}>
@@ -400,6 +472,32 @@ export function NodeContent({
           {isDsa && <DsaProblems node={node} />}
         </section>
       )}
+
+      <ExamInsight subject={subject} node={node.id} insight={insight} color={zoneColor} />
+
+      <Flashcards
+        cards={
+          data?.cards?.length
+            ? data.cards
+            : data
+              ? [
+                  { front: `What does **${node.name}** cover?`, back: data.summary },
+                  ...data.topics.map((t) => ({ front: `${t} — explain it in a sentence.`, back: `Part of ${node.name}${subjectName ? ` (${subjectName})` : ''}: ${data.summary}` })),
+                ]
+              : []
+        }
+        canReview={!!node.metric?.pyq}
+        onAddToReview={async () => {
+          try {
+            const r = await api.post<{ ok: boolean; added: number }>(`/api/nexus/review/${subject}/${node.id}`)
+            toast.success('Added to your Review deck', `${r.added} question${r.added === 1 ? '' : 's'} due today`)
+          } catch {
+            toast.error('Could not add to the Review deck')
+          }
+        }}
+      />
+
+      <NodeNotes subject={subject} node={node.id} initial={note} onSaved={(v) => onNoteSaved?.(v)} />
 
       {/* Needs and unlocks */}
       {(prereqs.length > 0 || unlocks.length > 0 || (node.crossRequires ?? []).length > 0 || (node.crossUnlocks ?? []).length > 0) && (
