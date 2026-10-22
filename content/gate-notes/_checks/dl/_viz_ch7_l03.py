@@ -11,7 +11,7 @@ from _viz_ch7_base import S, scene  # noqa: E402
 
 
 def tone_of(v):
-    return "danger" if v in ("Z", "X") else "success" if v == 1 else "muted"
+    return "danger" if v in ("Z", "X") else "success" if v == 1 else "accent"
 
 
 @scene
@@ -39,7 +39,8 @@ def cmos_inverter_switch(L):
     s.text("vdd", cx, 48, "VDD = 5 V", s.v(14, 12), anchor="middle", weight="bold")
     s.line("rail", [[cx, 60], [cx, yp]])
     s.box("pm", cx - bw / 2, yp, bw, bh, label="pMOS", size=s.v(14, 12))
-    s.line("mid", [[cx, yp + bh], [cx, yn]])
+    s.line("midp", [[cx, yp + bh], [cx, ym]])
+    s.line("midn", [[cx, ym], [cx, yn]])
     s.box("nm", cx - bw / 2, yn, bw, bh, label="nMOS", size=s.v(14, 12))
     xl = s.v(500, 280)
     lw = s.v(64, 60)
@@ -73,25 +74,25 @@ def cmos_inverter_switch(L):
     s.step(f"A = 0: the pMOS is on and the nMOS off, so Y connects to VDD only: Y = {r0['value']}, strong. "
            "No path joins VDD to ground, so no current flows.",
            *state(0, "accent", "muted", "on", "off", f"Y = {r0['value']}", "success",
-                  [("rail", {"tone": "accent"}), ("out", {"tone": "success"}), ("mid", {"tone": "success"}), ("gnd", {"tone": "muted"})]))
+                  [("rail", {"tone": "accent"}), ("out", {"tone": "success"}), ("midp", {"tone": "success"}), ("midn", {"tone": "muted"}), ("gnd", {"tone": "muted"})]))
     s.step("A rises through the middle: for a moment both transistors are partly on and a small short-circuit current "
            "flows from VDD to ground.",
            *state("↑", "warning", "warning", "partly on", "partly on", "Y falling", "warning",
-                  [("rail", {"tone": "warning"}), ("mid", {"tone": "warning"}), ("gnd", {"tone": "warning"}), ("out", {"tone": "warning"})]))
+                  [("rail", {"tone": "warning"}), ("midp", {"tone": "warning"}), ("midn", {"tone": "warning"}), ("gnd", {"tone": "warning"}), ("out", {"tone": "warning"})]))
     s.step(f"A = 1: the nMOS is on and the pMOS off, Y = {r1['value']}. The load empties through the nMOS: "
            f"the {pj(e_cycle / 2)} pJ it stored becomes heat.",
            *state(1, "muted", "accent", "off", "on", f"Y = {r1['value']}", "muted",
-                  [("rail", {"tone": "muted"}), ("mid", {"tone": "muted"}), ("out", {"tone": "muted"}), ("gnd", {"tone": "accent"})]),
+                  [("rail", {"tone": "muted"}), ("midp", {"tone": "muted"}), ("midn", {"tone": "accent"}), ("out", {"tone": "accent"}), ("gnd", {"tone": "accent"})]),
            ("en", {"text": f"discharge: {pj(e_cycle / 2)} pJ lost in the nMOS"}))
     s.step(f"A falls to 0: the pMOS refills the load. The supply gives C·V² = {pj(e_cycle)} pJ: "
            f"{pj(e_cycle / 2)} pJ stored in C, {pj(e_cycle / 2)} pJ lost in the pMOS.",
            *state(0, "accent", "muted", "on", "off", f"Y = {r0['value']}", "success",
-                  [("rail", {"tone": "accent"}), ("mid", {"tone": "success"}), ("out", {"tone": "success"}), ("gnd", {"tone": "muted"})]),
+                  [("rail", {"tone": "accent"}), ("midp", {"tone": "success"}), ("midn", {"tone": "muted"}), ("out", {"tone": "success"}), ("gnd", {"tone": "muted"})]),
            ("en", {"text": f"one full cycle draws C·V² = {pj(e_cycle)} pJ"}))
     s.step("For every input exactly one transistor conducts, so Y is always driven at full strength and, at rest, "
            "no current flows: static power 0.",
            ("st", {"text": "exactly one network on · no static current", "tone": "success"}))
-    s.step(f"At 10 MHz with one full cycle per clock: P = C·V²·f = {pj(e_cycle)} pJ × 10^7 = {bz.dec(p * 1000)} mW. "
+    s.step(f"At 10 MHz with one full cycle per clock: P = C·V²·f = {pj(e_cycle)} pJ × 10⁷ = {bz.dec(p * 1000)} mW. "
            f"Halving V would cut it to a quarter.",
            ("st", {"text": f"P = C·V²·f = {bz.dec(p * 1000)} mW", "tone": "accent"}))
     H = int(yb + 24 + 20)

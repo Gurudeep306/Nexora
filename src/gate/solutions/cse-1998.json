@@ -736,7 +736,7 @@
         },
         {
           "title": "Option A",
-          "body": "'Above 2.5 V' has no upper limit: it includes voltages above $V_{CC}$, outside the operating range of the gate."
+          "body": "Every voltage from 2.5 V up to $V_{CC}$ is a valid 1, so A comes close. But 'above 2.5 V' has no upper limit: it also includes voltages above $V_{CC}$, outside the operating range of the gate."
         },
         {
           "title": "Options B and C",
@@ -744,7 +744,7 @@
         },
         {
           "title": "Option D",
-          "body": "'Below $V_{CC}$ but above 2.8 V' lies entirely inside 2.0 V to $V_{CC}$: every voltage in it is read as a 1. It is the only option of which that is true."
+          "body": "'Below $V_{CC}$ but above 2.8 V' lies entirely inside 2.0 V to $V_{CC}$: every voltage in it is read as a 1. It is the only option of which that is true, so D is the accepted key. It is the best-supported reading of a loosely worded question, not an official TTL figure: 2.8 V appears in no data sheet, and A (2.5 V up to $V_{CC}$, all valid 1s) fails only because it has no upper end."
         }
       ],
       "answer": {
@@ -753,13 +753,13 @@
           "D"
         ],
         "matchesKey": true,
-        "keyNote": "No option states the real threshold $V_{IH} = 2.0$ V; D is the key under the reading 'a range of voltages that are all valid logic 1s'. The scan of the 1998 paper matches the bank."
+        "keyNote": "No option states the real threshold $V_{IH} = 2.0$ V, and 2.8 V is not a TTL data-sheet figure. D is the best-supported reading ('a range of voltages that are all valid logic 1s within the supply'), not an official TTL figure; the key could not be checked against an official answer. The scan of the 1998 paper matches the bank."
       },
       "optionAnalysis": [
         {
           "option": "A",
           "correct": false,
-          "reason": "Unbounded above: it includes voltages higher than V_CC, which are not valid inputs."
+          "reason": "Closest wrong option: 2.5 V to V_CC are valid 1s, but it is unbounded above and includes voltages higher than V_CC, which are not valid inputs."
         },
         {
           "option": "B",
@@ -779,7 +779,7 @@
       ],
       "shortcut": "Check each range against the band 2.0 V to $V_{CC}$: only a range wholly inside it describes logic 1.",
       "pitfalls": [
-        "Choosing A because 2.5 V is the middle of 0–5 V: TTL thresholds are not symmetric, and A has no upper end.",
+        "Choosing A: its voltages up to $V_{CC}$ are valid 1s too, but it has no upper end, which makes D the better fit.",
         "Quoting the output level 2.4 V as the input threshold: inputs accept 1 from 2.0 V; the gap is the noise margin $NM_H = 0.4$ V."
       ],
       "verification": "Testing each option's range against the TTL input levels: A unbounded above the supply, B and C include undefined and logic-0 voltages, D all logic 1. Noise margins $NM_H = 0.4$ V, $NM_L = 0.4$ V.",

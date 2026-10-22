@@ -966,21 +966,21 @@
     {
      "id": "fo",
      "set": {
-      "tone": "muted"
+      "tone": "accent"
      }
     },
     {
      "id": "fv",
      "set": {
       "text": "f = y = 0",
-      "tone": "muted"
+      "tone": "accent"
      }
     },
     {
      "id": "fl",
      "set": {
       "text": "0.7 V (degraded)",
-      "tone": "muted"
+      "tone": "accent"
      }
     },
     {
@@ -1038,7 +1038,7 @@
      "id": "fl-n",
      "set": {
       "text": "0.7 V",
-      "tone": "muted"
+      "tone": "accent"
      }
     },
     {
