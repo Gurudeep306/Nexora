@@ -39,6 +39,14 @@
       "name": "CIA & principles",
       "icon": "shield",
       "desc": "Confidentiality, integrity and availability, least privilege and defence in depth.",
+      "summary": "You will be able to apply the CIA triad, least privilege and defence in depth when reasoning about the security of a system.",
+      "topics": [
+        "Confidentiality, integrity and availability",
+        "Least privilege",
+        "Defence in depth",
+        "Fail-safe defaults",
+        "Separation of duties"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 40
@@ -49,6 +57,15 @@
       "name": "Threat modelling",
       "icon": "target",
       "desc": "Assets, attackers and attack surfaces, and STRIDE.",
+      "summary": "You will be able to identify assets, attackers and attack surfaces and enumerate threats systematically with STRIDE.",
+      "topics": [
+        "Identifying assets",
+        "Attacker profiles",
+        "Attack surfaces",
+        "STRIDE threat categories",
+        "Data flow diagrams",
+        "Prioritising risks"
+      ],
       "kind": "concept",
       "requires": [
         "security-principles"
@@ -61,6 +78,14 @@
       "name": "Authentication",
       "icon": "key",
       "desc": "Passwords, MFA, sessions and authorisation models.",
+      "summary": "You will be able to design authentication with passwords, MFA and sessions and choose an authorisation model for access control.",
+      "topics": [
+        "Authentication versus authorisation",
+        "Password policies and storage",
+        "Multi-factor authentication",
+        "Session management",
+        "RBAC and ABAC models"
+      ],
       "kind": "concept",
       "requires": [
         "security-principles",
@@ -74,6 +99,14 @@
       "name": "Network attacks",
       "icon": "warning",
       "desc": "Sniffing, spoofing, MITM, DoS and scanning.",
+      "summary": "You will be able to explain sniffing, spoofing, man-in-the-middle, denial of service and scanning attacks on networks.",
+      "topics": [
+        "Packet sniffing",
+        "IP and ARP spoofing",
+        "Man-in-the-middle attacks",
+        "Denial of service and DDoS",
+        "Port scanning with nmap"
+      ],
       "kind": "concept",
       "requires": [
         "security-principles",
@@ -87,6 +120,14 @@
       "name": "Firewalls & IDS",
       "icon": "shield",
       "desc": "Packet filtering, segmentation and intrusion detection.",
+      "summary": "You will be able to defend networks with packet filtering, segmentation and intrusion detection systems.",
+      "topics": [
+        "Stateless and stateful firewalls",
+        "Firewall rule design",
+        "Network segmentation and DMZs",
+        "Signature-based intrusion detection",
+        "Anomaly-based detection"
+      ],
       "kind": "concept",
       "requires": [
         "network-attacks"
@@ -99,6 +140,14 @@
       "name": "TLS & VPNs",
       "icon": "lock",
       "desc": "Secure channels with TLS and VPNs and certificate validation.",
+      "summary": "You will be able to secure communication channels with TLS and VPNs and validate certificates correctly.",
+      "topics": [
+        "How TLS protects traffic",
+        "Certificate validation",
+        "Certificate pinning",
+        "IPsec and WireGuard VPNs",
+        "Split tunnelling risks"
+      ],
       "kind": "concept",
       "requires": [
         "network-attacks",
@@ -112,6 +161,14 @@
       "name": "Wireless security",
       "icon": "globe",
       "desc": "Wi-Fi protocols, their attacks and securing wireless networks.",
+      "summary": "You will be able to compare Wi-Fi security protocols, describe their attacks and secure wireless networks.",
+      "topics": [
+        "WEP weaknesses",
+        "WPA2 and the four-way handshake",
+        "WPA3 improvements",
+        "Evil twin and deauthentication attacks",
+        "Enterprise Wi-Fi with 802.1X"
+      ],
       "kind": "concept",
       "requires": [
         "network-attacks"
@@ -124,6 +181,15 @@
       "name": "OWASP Top 10",
       "icon": "list",
       "desc": "The most common web application vulnerabilities.",
+      "summary": "You will be able to describe the OWASP Top 10 web application vulnerabilities and how each is typically exploited and prevented.",
+      "topics": [
+        "Broken access control",
+        "Cryptographic failures",
+        "Injection flaws",
+        "Security misconfiguration",
+        "Vulnerable and outdated components",
+        "Server-side request forgery"
+      ],
       "kind": "concept",
       "requires": [
         "threat-modeling",
@@ -137,6 +203,14 @@
       "name": "Injection",
       "icon": "code",
       "desc": "SQL, command and template injection and parameterised queries.",
+      "summary": "You will be able to exploit and prevent SQL, command and template injection, primarily through parameterised queries and safe APIs.",
+      "topics": [
+        "SQL injection",
+        "Parameterised queries",
+        "OS command injection",
+        "Server-side template injection",
+        "Input validation and escaping"
+      ],
       "kind": "concept",
       "requires": [
         "owasp-top10"
@@ -149,6 +223,14 @@
       "name": "XSS & CSRF",
       "icon": "warning",
       "desc": "Cross-site scripting, request forgery and browser defences.",
+      "summary": "You will be able to explain cross-site scripting and cross-site request forgery and apply browser defences against them.",
+      "topics": [
+        "Reflected, stored and DOM-based XSS",
+        "Output encoding",
+        "Content Security Policy",
+        "Cross-site request forgery",
+        "CSRF tokens and SameSite cookies"
+      ],
       "kind": "concept",
       "requires": [
         "owasp-top10"
@@ -161,6 +243,14 @@
       "name": "Session security",
       "icon": "lock",
       "desc": "Cookies, tokens, session fixation and secure session handling.",
+      "summary": "You will be able to handle sessions securely with properly configured cookies and tokens and prevent session fixation and hijacking.",
+      "topics": [
+        "Session cookies and identifiers",
+        "Secure, HttpOnly and SameSite flags",
+        "Session fixation",
+        "Session hijacking",
+        "Token storage and expiry"
+      ],
       "kind": "concept",
       "requires": [
         "owasp-top10",
@@ -174,6 +264,15 @@
       "name": "Buffer overflows",
       "icon": "cpu",
       "desc": "Stack and heap overflows, exploitation basics and mitigations like ASLR.",
+      "summary": "You will be able to explain stack and heap buffer overflows, how they are exploited and mitigations such as ASLR and stack canaries.",
+      "topics": [
+        "Stack layout and return addresses",
+        "Stack buffer overflows",
+        "Heap overflows and use-after-free",
+        "Stack canaries and DEP",
+        "Address space layout randomisation",
+        "Return-oriented programming"
+      ],
       "kind": "concept",
       "requires": [
         "threat-modeling",
@@ -187,6 +286,14 @@
       "name": "Privilege escalation",
       "icon": "crown",
       "desc": "Misconfigurations and vulnerabilities that turn a user into root.",
+      "summary": "You will be able to identify misconfigurations and vulnerabilities that let a normal user gain root or administrator privileges.",
+      "topics": [
+        "SUID binaries",
+        "Misconfigured sudo rules",
+        "Writable scripts and cron jobs",
+        "Kernel exploits",
+        "Windows service misconfigurations"
+      ],
       "kind": "concept",
       "requires": [
         "memory-safety",
@@ -200,6 +307,14 @@
       "name": "Malware",
       "icon": "flame",
       "desc": "Viruses, worms, ransomware and how they spread and persist.",
+      "summary": "You will be able to classify viruses, worms, trojans and ransomware and explain how malware spreads and persists.",
+      "topics": [
+        "Viruses, worms and trojans",
+        "Ransomware and extortion",
+        "Infection vectors",
+        "Persistence mechanisms",
+        "Static and dynamic malware analysis"
+      ],
       "kind": "concept",
       "requires": [
         "threat-modeling"
@@ -212,6 +327,14 @@
       "name": "Penetration testing",
       "icon": "crosshair",
       "desc": "Reconnaissance, exploitation and reporting in an authorised test.",
+      "summary": "You will be able to plan and carry out an authorised penetration test from reconnaissance to exploitation and reporting.",
+      "topics": [
+        "Scope and rules of engagement",
+        "Reconnaissance and enumeration",
+        "Vulnerability scanning",
+        "Exploitation and post-exploitation",
+        "Writing the report"
+      ],
       "kind": "concept",
       "requires": [
         "injection",
@@ -226,6 +349,14 @@
       "name": "Incident response",
       "icon": "bell",
       "desc": "Detection, containment, forensics and recovery.",
+      "summary": "You will be able to respond to a security incident through detection, containment, forensics and recovery.",
+      "topics": [
+        "Incident response lifecycle",
+        "Detection and triage",
+        "Containment and eradication",
+        "Digital forensics basics",
+        "Recovery and lessons learned"
+      ],
       "kind": "concept",
       "requires": [
         "malware",
@@ -239,6 +370,14 @@
       "name": "Secure development",
       "icon": "check-circle",
       "desc": "Security reviews, dependency scanning and secure coding practices.",
+      "summary": "You will be able to build security into software development with reviews, dependency scanning and secure coding practices.",
+      "topics": [
+        "Security requirements",
+        "Secure code review",
+        "Static and dynamic analysis",
+        "Dependency and supply chain scanning",
+        "Secrets management in code"
+      ],
       "kind": "concept",
       "requires": [
         "injection",
@@ -252,6 +391,14 @@
       "name": "CTF challenges project",
       "icon": "flag",
       "desc": "Solve a set of capture-the-flag challenges across web, crypto and binary categories.",
+      "summary": "You will solve a set of capture-the-flag challenges across web, cryptography and binary exploitation categories.",
+      "topics": [
+        "Web exploitation challenges",
+        "Cryptography challenges",
+        "Binary exploitation basics",
+        "Reverse engineering",
+        "Forensics and steganography"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -267,6 +414,14 @@
       "name": "Hack & fix lab project",
       "icon": "wrench",
       "desc": "Attack a deliberately vulnerable app in a lab, then patch every finding.",
+      "summary": "You will attack a deliberately vulnerable application in a lab environment and then patch every vulnerability you find.",
+      "topics": [
+        "Setting up an isolated lab",
+        "Finding vulnerabilities",
+        "Exploiting each finding",
+        "Writing patches",
+        "Verifying fixes with retests"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

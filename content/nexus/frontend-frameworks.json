@@ -38,6 +38,14 @@
       "name": "Modules & bundlers",
       "icon": "wrench",
       "desc": "ES modules, npm, and dev servers and bundlers such as Vite.",
+      "summary": "You will be able to organise frontend code with ES modules, manage packages with npm and run dev servers and bundlers like Vite.",
+      "topics": [
+        "ES module imports and exports",
+        "npm packages and package.json",
+        "Dev servers and hot module replacement",
+        "Bundling for production with Vite",
+        "Tree shaking"
+      ],
       "kind": "lesson",
       "requires": [
         "javascript:js-basics"
@@ -50,6 +58,14 @@
       "name": "Component thinking",
       "icon": "grid",
       "desc": "Declarative UI, components, one-way data flow and why frameworks exist.",
+      "summary": "You will be able to break interfaces into components with one-way data flow and explain why declarative frameworks exist.",
+      "topics": [
+        "Imperative versus declarative UI",
+        "Breaking a UI into components",
+        "Props and one-way data flow",
+        "UI as a function of state",
+        "Why frameworks exist"
+      ],
       "kind": "concept",
       "requires": [
         "javascript:dom"
@@ -62,6 +78,14 @@
       "name": "TypeScript for UIs",
       "icon": "type",
       "desc": "Typing props, events and state in frontend code.",
+      "summary": "You will be able to type props, events and state in frontend code with TypeScript to catch errors early.",
+      "topics": [
+        "Typing component props",
+        "Typing event handlers",
+        "Typing state and hooks",
+        "Union types for UI states",
+        "Generic components"
+      ],
       "kind": "lesson",
       "requires": [
         "modules-bundlers",
@@ -75,6 +99,14 @@
       "name": "React components",
       "icon": "layers",
       "desc": "JSX, props, composition, conditional rendering and lists with keys.",
+      "summary": "You will be able to build React components with JSX, props and composition and render conditional content and keyed lists.",
+      "topics": [
+        "JSX syntax and expressions",
+        "Props and children",
+        "Component composition",
+        "Conditional rendering",
+        "Rendering lists with keys"
+      ],
       "kind": "lesson",
       "requires": [
         "component-thinking",
@@ -95,6 +127,15 @@
       "name": "Hooks & state",
       "icon": "sliders",
       "desc": "useState, useEffect, useRef and writing custom hooks.",
+      "summary": "You will be able to manage state and side effects in React with useState, useEffect and useRef and write custom hooks.",
+      "topics": [
+        "useState and state updates",
+        "useEffect and dependency arrays",
+        "Effect cleanup",
+        "useRef for DOM and values",
+        "Writing custom hooks",
+        "Rules of hooks"
+      ],
       "kind": "lesson",
       "requires": [
         "react-components"
@@ -107,6 +148,14 @@
       "name": "Events & forms",
       "icon": "edit",
       "desc": "Handling events, controlled inputs and form validation.",
+      "summary": "You will be able to handle events and build controlled forms with validation in React.",
+      "topics": [
+        "Event handlers and synthetic events",
+        "Controlled inputs",
+        "Uncontrolled inputs and refs",
+        "Form submission",
+        "Client-side validation"
+      ],
       "kind": "lesson",
       "requires": [
         "react-hooks"
@@ -119,6 +168,14 @@
       "name": "Rendering model",
       "icon": "activity",
       "desc": "Re-renders, reconciliation, memoisation and avoiding wasted work.",
+      "summary": "You will be able to explain when React re-renders, how reconciliation works and how memoisation avoids wasted work.",
+      "topics": [
+        "What triggers a re-render",
+        "Reconciliation and the virtual DOM",
+        "Keys and component identity",
+        "Skipping renders with React.memo",
+        "useMemo and useCallback"
+      ],
       "kind": "concept",
       "requires": [
         "react-hooks"
@@ -131,6 +188,14 @@
       "name": "Context & global state",
       "icon": "share",
       "desc": "Context, reducers and external stores for shared state.",
+      "summary": "You will be able to share state across components with context, reducers and external stores.",
+      "topics": [
+        "Prop drilling",
+        "React context",
+        "Reducers with useReducer",
+        "External stores like Zustand or Redux",
+        "Choosing where state lives"
+      ],
       "kind": "lesson",
       "requires": [
         "react-hooks"
@@ -143,6 +208,14 @@
       "name": "Data fetching",
       "icon": "download",
       "desc": "Loading states, caching, revalidation and query libraries.",
+      "summary": "You will be able to fetch server data with loading and error states, caching and revalidation using query libraries.",
+      "topics": [
+        "Fetching in effects",
+        "Loading and error states",
+        "Caching and revalidation",
+        "TanStack Query",
+        "Mutations and optimistic updates"
+      ],
       "kind": "lesson",
       "requires": [
         "react-hooks",
@@ -156,6 +229,14 @@
       "name": "Routing",
       "icon": "route",
       "desc": "Client-side routing, nested routes and route data.",
+      "summary": "You will be able to add client-side routing with nested routes, URL parameters and route-level data loading.",
+      "topics": [
+        "Client-side routing",
+        "Route definitions and links",
+        "URL parameters",
+        "Nested routes and layouts",
+        "Route data loading"
+      ],
       "kind": "lesson",
       "requires": [
         "react-components"
@@ -168,6 +249,14 @@
       "name": "Styling components",
       "icon": "palette",
       "desc": "CSS modules, utility CSS and component libraries.",
+      "summary": "You will be able to style components with CSS modules, utility CSS and component libraries.",
+      "topics": [
+        "CSS modules and scoping",
+        "Utility-first CSS with Tailwind",
+        "CSS-in-JS libraries",
+        "Component libraries",
+        "Theming and design tokens"
+      ],
       "kind": "lesson",
       "requires": [
         "react-components",
@@ -181,6 +270,14 @@
       "name": "React SPA",
       "icon": "rocket",
       "desc": "Build a multi-page React app with shared state and a live API.",
+      "summary": "You will build a multi-page React single-page app with shared state and data from a live API.",
+      "topics": [
+        "Planning routes and components",
+        "Shared application state",
+        "Fetching from a live API",
+        "Forms and validation",
+        "Building and deploying the app"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -196,6 +293,14 @@
       "name": "Vue fundamentals",
       "icon": "layers",
       "desc": "Templates, directives and single-file components.",
+      "summary": "You will be able to build Vue single-file components with templates, directives and props.",
+      "topics": [
+        "Single-file components",
+        "Template syntax and interpolation",
+        "v-if, v-for and v-bind",
+        "Event handling with v-on",
+        "Props and emits"
+      ],
       "kind": "lesson",
       "requires": [
         "component-thinking"
@@ -214,6 +319,14 @@
       "name": "Vue reactivity",
       "icon": "bolt",
       "desc": "ref, reactive, computed, watchers and the Composition API.",
+      "summary": "You will be able to manage state in Vue with ref, reactive, computed values and watchers using the Composition API.",
+      "topics": [
+        "ref and reactive",
+        "Computed properties",
+        "Watchers with watch and watchEffect",
+        "The Composition API and setup",
+        "Reusable logic with composables"
+      ],
       "kind": "lesson",
       "requires": [
         "vue-fundamentals"
@@ -226,6 +339,14 @@
       "name": "Vue Router & Pinia",
       "icon": "route",
       "desc": "Routing and state management in the Vue ecosystem.",
+      "summary": "You will be able to add routing with Vue Router and manage shared state with Pinia stores.",
+      "topics": [
+        "Vue Router routes",
+        "Dynamic and nested routes",
+        "Navigation guards",
+        "Pinia stores",
+        "State, getters and actions"
+      ],
       "kind": "lesson",
       "requires": [
         "vue-reactivity"
@@ -238,6 +359,14 @@
       "name": "Vue app",
       "icon": "rocket",
       "desc": "Rebuild a small app in Vue and compare the approaches with React.",
+      "summary": "You will rebuild a small app in Vue and compare its approach to components, reactivity and state with React.",
+      "topics": [
+        "Porting components to Vue",
+        "Reactivity compared with hooks",
+        "Templates compared with JSX",
+        "State management compared",
+        "Comparing developer experience"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -251,6 +380,14 @@
       "name": "SSR frameworks",
       "icon": "server",
       "desc": "Server rendering, static generation and hydration with Next.js and Nuxt.",
+      "summary": "You will be able to choose between server rendering, static generation and client rendering and use hydration in Next.js and Nuxt.",
+      "topics": [
+        "Client versus server rendering",
+        "Static site generation",
+        "Hydration and its costs",
+        "Next.js routing and data loading",
+        "Nuxt equivalents"
+      ],
       "kind": "lesson",
       "requires": [
         "spa-routing",
@@ -264,6 +401,14 @@
       "name": "Testing UIs",
       "icon": "check-circle",
       "desc": "Component tests, mocking network calls and end-to-end tests.",
+      "summary": "You will be able to test components, mock network calls and write end-to-end tests for frontend apps.",
+      "topics": [
+        "Component tests with Testing Library",
+        "Querying by role and text",
+        "Mocking network requests",
+        "End-to-end tests with Playwright",
+        "Testing user flows"
+      ],
       "kind": "lesson",
       "requires": [
         "events-forms"
@@ -276,6 +421,14 @@
       "name": "Frontend performance",
       "icon": "bolt",
       "desc": "Code splitting, bundle size, Core Web Vitals and profiling renders.",
+      "summary": "You will be able to improve frontend performance with code splitting and smaller bundles, measured by Core Web Vitals and render profiling.",
+      "topics": [
+        "Code splitting and lazy loading",
+        "Analysing bundle size",
+        "Core Web Vitals",
+        "Profiling renders",
+        "Image and font optimisation"
+      ],
       "kind": "lesson",
       "requires": [
         "rendering-model",
@@ -289,6 +442,14 @@
       "name": "Production frontend",
       "icon": "trophy",
       "desc": "Ship a tested, accessible, fast app built on a meta-framework.",
+      "summary": "You will ship a tested, accessible and fast application built on a meta-framework.",
+      "topics": [
+        "Project setup with a meta-framework",
+        "Accessibility checks",
+        "Automated tests",
+        "Performance budgets",
+        "Deployment and monitoring"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

@@ -39,6 +39,14 @@
       "name": "Graph basics",
       "icon": "graph",
       "desc": "Vertices, edges, degrees, the handshake lemma, subgraphs and directed versus undirected graphs.",
+      "summary": "You will be able to describe graphs precisely using vertices, edges and degrees and apply the handshake lemma to simple counting problems.",
+      "topics": [
+        "Vertices, edges and degrees",
+        "The handshake lemma",
+        "Simple graphs and multigraphs",
+        "Subgraphs and induced subgraphs",
+        "Directed vs undirected graphs"
+      ],
       "kind": "concept",
       "requires": [
         "dm:sets-relations"
@@ -51,6 +59,14 @@
       "name": "Representations",
       "icon": "grid",
       "desc": "Adjacency matrices, adjacency lists and incidence matrices and their trade-offs.",
+      "summary": "You will be able to store a graph as an adjacency matrix, adjacency list or incidence matrix and pick one for a task.",
+      "topics": [
+        "Adjacency matrices",
+        "Adjacency lists",
+        "Incidence matrices",
+        "Space and query time trade-offs",
+        "Sparse vs dense graphs"
+      ],
       "kind": "lesson",
       "requires": [
         "graph-basics"
@@ -63,6 +79,15 @@
       "name": "Special graphs",
       "icon": "shapes",
       "desc": "Complete, bipartite, regular, cycle, path, wheel and hypercube graphs.",
+      "summary": "You will be able to recognise standard graph families and state their vertex counts, edge counts and degree properties.",
+      "topics": [
+        "Complete graphs K_n",
+        "Bipartite and complete bipartite graphs",
+        "Regular graphs",
+        "Cycles, paths and wheels",
+        "Hypercube graphs Q_n",
+        "Graph complements"
+      ],
       "kind": "concept",
       "requires": [
         "graph-basics"
@@ -75,6 +100,14 @@
       "name": "Isomorphism",
       "icon": "copy",
       "desc": "When two graphs are the same, graph invariants and automorphisms.",
+      "summary": "You will be able to decide whether two graphs are isomorphic using invariants and understand automorphisms as symmetries.",
+      "topics": [
+        "Definition of graph isomorphism",
+        "Invariants: degree sequence, cycles, connectivity",
+        "Proving two graphs are not isomorphic",
+        "Automorphisms and graph symmetry",
+        "Why isomorphism testing is hard"
+      ],
       "kind": "concept",
       "requires": [
         "special-graphs"
@@ -87,6 +120,14 @@
       "name": "Walks & paths",
       "icon": "route",
       "desc": "Walks, trails, paths, cycles, distance and diameter.",
+      "summary": "You will be able to distinguish walks, trails, paths and cycles and compute distances, eccentricity and diameter.",
+      "topics": [
+        "Walks, trails and paths",
+        "Cycles and girth",
+        "Distance between vertices",
+        "Eccentricity, radius and diameter",
+        "Counting walks with adjacency matrix powers"
+      ],
       "kind": "concept",
       "requires": [
         "graph-basics"
@@ -99,6 +140,14 @@
       "name": "Connectivity",
       "icon": "link",
       "desc": "Components, cut vertices, bridges, k-connectivity and Menger's theorem.",
+      "summary": "You will be able to analyse how well a graph holds together using components, cut vertices, bridges and Menger's theorem.",
+      "topics": [
+        "Connected components",
+        "Cut vertices and bridges",
+        "Vertex and edge connectivity",
+        "k-connected graphs",
+        "Menger's theorem"
+      ],
       "kind": "concept",
       "requires": [
         "walks-paths"
@@ -111,6 +160,15 @@
       "name": "Euler & Hamilton",
       "icon": "map",
       "desc": "Eulerian circuits, Hamiltonian cycles and conditions such as Dirac's and Ore's.",
+      "summary": "You will be able to test for Eulerian circuits and apply sufficient conditions such as Dirac's and Ore's for Hamiltonian cycles.",
+      "topics": [
+        "Eulerian circuits and trails",
+        "The even-degree condition",
+        "Hamiltonian paths and cycles",
+        "Dirac's theorem",
+        "Ore's theorem",
+        "Why Hamiltonicity is NP-complete"
+      ],
       "kind": "concept",
       "requires": [
         "walks-paths"
@@ -123,6 +181,14 @@
       "name": "BFS & DFS",
       "icon": "search",
       "desc": "Breadth-first and depth-first search and what their trees reveal about structure.",
+      "summary": "You will be able to run breadth-first and depth-first search and use their trees to reveal distances, components and cycles.",
+      "topics": [
+        "Breadth-first search and levels",
+        "Depth-first search and discovery times",
+        "BFS trees and shortest paths",
+        "DFS edge classification",
+        "Detecting cycles and bipartiteness"
+      ],
       "kind": "lesson",
       "requires": [
         "graph-representations",
@@ -136,6 +202,14 @@
       "name": "Directed graphs",
       "icon": "share",
       "desc": "Strong connectivity, condensation, DAGs and topological orderings.",
+      "summary": "You will be able to analyse directed graphs through strong connectivity and condensation and order DAGs topologically.",
+      "topics": [
+        "In-degree and out-degree",
+        "Strongly connected components",
+        "The condensation DAG",
+        "Directed acyclic graphs",
+        "Topological sorting"
+      ],
       "kind": "concept",
       "requires": [
         "connectivity"
@@ -148,6 +222,14 @@
       "name": "Trees",
       "icon": "tree",
       "desc": "Equivalent characterisations of trees, rooted trees and Cayley's formula.",
+      "summary": "You will be able to prove the equivalent characterisations of trees, work with rooted trees and count labelled trees with Cayley's formula.",
+      "topics": [
+        "Equivalent definitions of a tree",
+        "Leaves and the n minus 1 edges property",
+        "Rooted trees and forests",
+        "Cayley's formula",
+        "Prufer sequences"
+      ],
       "kind": "concept",
       "requires": [
         "connectivity"
@@ -160,6 +242,14 @@
       "name": "Spanning trees",
       "icon": "git-branch",
       "desc": "Minimum spanning trees and counting spanning trees with the matrix-tree theorem.",
+      "summary": "You will be able to find minimum spanning trees with Kruskal's and Prim's algorithms and count spanning trees with Kirchhoff's theorem.",
+      "topics": [
+        "Spanning trees and their existence",
+        "The cut and cycle properties",
+        "Kruskal's algorithm",
+        "Prim's algorithm",
+        "The matrix-tree theorem"
+      ],
       "kind": "lesson",
       "requires": [
         "trees",
@@ -173,6 +263,14 @@
       "name": "Matchings",
       "icon": "users",
       "desc": "Matchings and covers, Hall's marriage theorem and König's theorem.",
+      "summary": "You will be able to reason about matchings and covers in bipartite graphs using Hall's and König's theorems.",
+      "topics": [
+        "Matchings, maximal vs maximum",
+        "Augmenting paths",
+        "Hall's marriage theorem",
+        "Vertex covers and König's theorem",
+        "Perfect matchings"
+      ],
       "kind": "lesson",
       "requires": [
         "special-graphs",
@@ -186,6 +284,14 @@
       "name": "Network flows",
       "icon": "droplet",
       "desc": "Max-flow min-cut, augmenting paths and applications to matching.",
+      "summary": "You will be able to compute maximum flows with augmenting paths, prove optimality with min cuts and model matching as flow.",
+      "topics": [
+        "Flow networks and capacities",
+        "Residual graphs and augmenting paths",
+        "Ford-Fulkerson and Edmonds-Karp",
+        "The max-flow min-cut theorem",
+        "Bipartite matching via flow"
+      ],
       "kind": "lesson",
       "requires": [
         "directed-graphs",
@@ -199,6 +305,14 @@
       "name": "Graph colouring",
       "icon": "palette",
       "desc": "Chromatic number, greedy colouring, Brooks' theorem and edge colouring.",
+      "summary": "You will be able to bound the chromatic number of a graph, colour it greedily and apply Brooks' and Vizing's theorems.",
+      "topics": [
+        "Proper colourings and chromatic number",
+        "Greedy colouring and degree bounds",
+        "Cliques as lower bounds",
+        "Brooks' theorem",
+        "Edge colouring and Vizing's theorem"
+      ],
       "kind": "concept",
       "requires": [
         "special-graphs",
@@ -212,6 +326,14 @@
       "name": "Planar graphs",
       "icon": "map",
       "desc": "Euler's formula, Kuratowski's theorem and the four colour theorem.",
+      "summary": "You will be able to test and reason about planarity using Euler's formula, Kuratowski's theorem and colouring results for planar graphs.",
+      "topics": [
+        "Planar embeddings and faces",
+        "Euler's formula for connected planar graphs",
+        "Edge bounds for planar graphs",
+        "Kuratowski's theorem and K5, K3,3",
+        "The four and five colour theorems"
+      ],
       "kind": "concept",
       "requires": [
         "euler-hamilton"
@@ -224,6 +346,14 @@
       "name": "Graph toolkit",
       "icon": "wrench",
       "desc": "Implement a graph library with traversal, flow and colouring algorithms and tests.",
+      "summary": "You will implement and test a small graph library with traversals, flow and colouring algorithms behind a clean interface.",
+      "topics": [
+        "Graph data structure design",
+        "BFS and DFS implementations",
+        "Max-flow implementation",
+        "Greedy colouring routine",
+        "Unit tests on known graphs"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -239,6 +369,14 @@
       "name": "Spectral graphs",
       "icon": "chart",
       "desc": "Adjacency and Laplacian eigenvalues and what they say about a graph.",
+      "summary": "You will be able to relate adjacency and Laplacian eigenvalues to structural properties such as connectivity, bipartiteness and expansion.",
+      "topics": [
+        "Adjacency matrix spectrum",
+        "The graph Laplacian",
+        "Zero eigenvalues and connected components",
+        "Algebraic connectivity",
+        "Spectral bounds on chromatic number"
+      ],
       "kind": "concept",
       "requires": [
         "graph-representations",
@@ -252,6 +390,14 @@
       "name": "Random graphs",
       "icon": "random",
       "desc": "Erdos-Renyi graphs, thresholds and the giant component.",
+      "summary": "You will be able to analyse Erdos-Renyi random graphs and explain threshold phenomena such as the emergence of a giant component.",
+      "topics": [
+        "The G(n, p) model",
+        "Expected degree and edge counts",
+        "Threshold functions",
+        "The giant component",
+        "Connectivity threshold"
+      ],
       "kind": "concept",
       "requires": [
         "connectivity",
@@ -265,6 +411,14 @@
       "name": "Ramsey & extremal",
       "icon": "sparkles",
       "desc": "Ramsey numbers, Turan's theorem and extremal questions.",
+      "summary": "You will be able to state and prove basic Ramsey bounds and Turan's theorem on the maximum edges without a clique.",
+      "topics": [
+        "Ramsey numbers and R(3,3) = 6",
+        "Upper bounds via induction",
+        "Probabilistic lower bounds",
+        "Turan's theorem",
+        "Extremal graph questions"
+      ],
       "kind": "concept",
       "requires": [
         "graph-colouring",
@@ -278,6 +432,14 @@
       "name": "Network analysis",
       "icon": "users",
       "desc": "Centrality, PageRank and community detection in real networks.",
+      "summary": "You will be able to measure importance and structure in real networks using centrality measures, PageRank and community detection.",
+      "topics": [
+        "Degree, closeness and betweenness centrality",
+        "PageRank on directed networks",
+        "Clustering coefficient",
+        "Community detection and modularity",
+        "Small-world and scale-free networks"
+      ],
       "kind": "lesson",
       "requires": [
         "spectral-graphs",
@@ -291,6 +453,14 @@
       "name": "Network study",
       "icon": "trophy",
       "desc": "Analyse a real social or transport network and compare it with random models.",
+      "summary": "You will analyse a real social or transport network and compare its statistics with those of random graph models.",
+      "topics": [
+        "Loading and cleaning network data",
+        "Degree distribution analysis",
+        "Centrality and community results",
+        "Comparing with Erdos-Renyi baselines",
+        "Reporting findings"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

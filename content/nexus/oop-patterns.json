@@ -38,6 +38,14 @@
       "name": "OOP basics",
       "icon": "shapes",
       "desc": "Objects, classes, state and behaviour and why we model with objects.",
+      "summary": "You will be able to model a problem as objects that combine state and behaviour and explain why object-oriented design helps.",
+      "topics": [
+        "Objects, classes and instances",
+        "State and behaviour",
+        "Messages and method calls",
+        "Identity vs equality",
+        "Modelling real-world domains"
+      ],
       "kind": "concept",
       "requires": [
         "java:java-oop"
@@ -50,6 +58,14 @@
       "name": "Encapsulation",
       "icon": "lock",
       "desc": "Hiding state behind an interface and enforcing invariants.",
+      "summary": "You will be able to hide an object's internal state behind a public interface and enforce invariants that keep it valid.",
+      "topics": [
+        "Public interface vs implementation",
+        "Access modifiers",
+        "Class invariants",
+        "Validating state in constructors",
+        "Immutable objects"
+      ],
       "kind": "concept",
       "requires": [
         "oop-basics"
@@ -62,6 +78,14 @@
       "name": "Polymorphism",
       "icon": "layers",
       "desc": "Subtyping, overriding and dynamic dispatch.",
+      "summary": "You will be able to use subtyping, method overriding and dynamic dispatch to write code that works with many object types.",
+      "topics": [
+        "Subtype polymorphism",
+        "Method overriding",
+        "Dynamic dispatch",
+        "Abstract classes and interfaces",
+        "Overloading vs overriding"
+      ],
       "kind": "concept",
       "requires": [
         "oop-basics"
@@ -74,6 +98,14 @@
       "name": "Composition",
       "icon": "puzzle",
       "desc": "Favouring composition over inheritance and delegation.",
+      "summary": "You will be able to choose composition over inheritance and build behaviour by delegating to collaborating objects.",
+      "topics": [
+        "Has-a vs is-a relationships",
+        "Problems with deep inheritance",
+        "Delegation to collaborators",
+        "Fragile base class problem",
+        "Composing behaviour at runtime"
+      ],
       "kind": "concept",
       "requires": [
         "polymorphism"
@@ -86,6 +118,14 @@
       "name": "SOLID principles",
       "icon": "building",
       "desc": "Single responsibility, open/closed, Liskov, interface segregation and dependency inversion.",
+      "summary": "You will be able to apply the five SOLID principles to judge and improve the structure of object-oriented code.",
+      "topics": [
+        "Single responsibility principle",
+        "Open/closed principle",
+        "Liskov substitution principle",
+        "Interface segregation principle",
+        "Dependency inversion principle"
+      ],
       "kind": "concept",
       "requires": [
         "composition",
@@ -99,6 +139,14 @@
       "name": "UML class diagrams",
       "icon": "map",
       "desc": "Class and sequence diagrams for communicating a design.",
+      "summary": "You will be able to read and draw UML class and sequence diagrams to communicate a design clearly.",
+      "topics": [
+        "Classes, attributes and operations",
+        "Association, aggregation and composition",
+        "Inheritance and realisation arrows",
+        "Multiplicity notation",
+        "Sequence diagrams for interactions"
+      ],
       "kind": "lesson",
       "requires": [
         "oop-basics"
@@ -111,6 +159,14 @@
       "name": "Coupling & cohesion",
       "icon": "link",
       "desc": "Measuring how well modules are separated and focused.",
+      "summary": "You will be able to assess how tightly modules depend on each other and how focused each one is, and improve both.",
+      "topics": [
+        "Types of coupling",
+        "Types of cohesion",
+        "Law of Demeter",
+        "Measuring dependencies",
+        "Refactoring to reduce coupling"
+      ],
       "kind": "concept",
       "requires": [
         "solid"
@@ -123,6 +179,14 @@
       "name": "Dependency injection",
       "icon": "wrench",
       "desc": "Injecting collaborators, inversion of control and testable code.",
+      "summary": "You will be able to supply collaborators from outside a class using dependency injection to make code flexible and testable.",
+      "topics": [
+        "Constructor injection",
+        "Setter and interface injection",
+        "Inversion of control",
+        "Composition roots and containers",
+        "Injecting fakes in tests"
+      ],
       "kind": "concept",
       "requires": [
         "solid"
@@ -135,6 +199,14 @@
       "name": "Factory & builder",
       "icon": "builder",
       "desc": "Factory method, abstract factory and builder.",
+      "summary": "You will be able to decouple object creation from use with factory method, abstract factory and builder patterns.",
+      "topics": [
+        "Factory method pattern",
+        "Abstract factory pattern",
+        "Builder pattern",
+        "Fluent builders for complex objects",
+        "When to prefer a constructor"
+      ],
       "kind": "concept",
       "requires": [
         "solid"
@@ -147,6 +219,14 @@
       "name": "Singleton",
       "icon": "user",
       "desc": "Singleton, its problems, and alternatives through dependency injection.",
+      "summary": "You will be able to implement a singleton, explain the problems global state causes and replace it with dependency injection.",
+      "topics": [
+        "Singleton pattern structure",
+        "Lazy and thread-safe initialisation",
+        "Hidden global state problems",
+        "Testing difficulties with singletons",
+        "Alternatives via dependency injection"
+      ],
       "kind": "concept",
       "requires": [
         "creational"
@@ -159,6 +239,14 @@
       "name": "Adapter & facade",
       "icon": "link",
       "desc": "Adapting interfaces and simplifying subsystems.",
+      "summary": "You will be able to adapt incompatible interfaces with the adapter pattern and simplify complex subsystems with a facade.",
+      "topics": [
+        "Adapter pattern intent",
+        "Object vs class adapters",
+        "Wrapping third-party APIs",
+        "Facade pattern intent",
+        "Adapter vs facade vs wrapper"
+      ],
       "kind": "concept",
       "requires": [
         "composition"
@@ -171,6 +259,14 @@
       "name": "Decorator & proxy",
       "icon": "layers",
       "desc": "Wrapping objects to add behaviour or control access.",
+      "summary": "You will be able to add behaviour by wrapping objects with decorators and control access to them with proxies.",
+      "topics": [
+        "Decorator pattern structure",
+        "Stacking decorators",
+        "Proxy pattern structure",
+        "Virtual, protection and remote proxies",
+        "Decorator vs proxy intent"
+      ],
       "kind": "concept",
       "requires": [
         "composition"
@@ -183,6 +279,14 @@
       "name": "Composite",
       "icon": "tree",
       "desc": "Treating trees of objects uniformly.",
+      "summary": "You will be able to represent part-whole hierarchies with the composite pattern so clients treat leaves and groups uniformly.",
+      "topics": [
+        "Component, leaf and composite roles",
+        "Uniform treatment of trees",
+        "Recursive operations over composites",
+        "Managing child components",
+        "Examples like file systems and UI trees"
+      ],
       "kind": "concept",
       "requires": [
         "polymorphism"
@@ -195,6 +299,14 @@
       "name": "Strategy",
       "icon": "route",
       "desc": "Swapping algorithms behind a common interface.",
+      "summary": "You will be able to swap interchangeable algorithms behind a common interface using the strategy pattern.",
+      "topics": [
+        "Strategy pattern structure",
+        "Context and strategy interface",
+        "Selecting strategies at runtime",
+        "Strategies as functions or lambdas",
+        "Replacing conditionals with strategies"
+      ],
       "kind": "concept",
       "requires": [
         "polymorphism",
@@ -208,6 +320,14 @@
       "name": "Observer",
       "icon": "bell",
       "desc": "Publish/subscribe between objects and event systems.",
+      "summary": "You will be able to let objects subscribe to and react to changes in another object using the observer pattern.",
+      "topics": [
+        "Subject and observer roles",
+        "Push vs pull notification",
+        "Event systems and listeners",
+        "Unsubscribing and memory leaks",
+        "Observer vs publish-subscribe"
+      ],
       "kind": "concept",
       "requires": [
         "coupling-cohesion"
@@ -220,6 +340,14 @@
       "name": "Command",
       "icon": "play",
       "desc": "Requests as objects for undo, queues and macros.",
+      "summary": "You will be able to encapsulate requests as command objects to support undo, queuing and macros.",
+      "topics": [
+        "Command, invoker and receiver roles",
+        "Implementing undo and redo",
+        "Command queues",
+        "Macro commands",
+        "Logging and replaying commands"
+      ],
       "kind": "concept",
       "requires": [
         "polymorphism"
@@ -232,6 +360,14 @@
       "name": "State & template",
       "icon": "sliders",
       "desc": "State machines as objects and algorithms with overridable steps.",
+      "summary": "You will be able to model state-dependent behaviour with the state pattern and define algorithm skeletons with the template method.",
+      "topics": [
+        "State pattern and state objects",
+        "State transitions",
+        "Replacing state conditionals",
+        "Template method pattern",
+        "Hook methods and inheritance"
+      ],
       "kind": "concept",
       "requires": [
         "strategy"
@@ -244,6 +380,14 @@
       "name": "Iterator & visitor",
       "icon": "compass",
       "desc": "Traversing structures and adding operations without changing classes.",
+      "summary": "You will be able to traverse collections with iterators and add new operations to object structures using the visitor pattern.",
+      "topics": [
+        "Iterator pattern",
+        "External vs internal iteration",
+        "Visitor pattern structure",
+        "Double dispatch",
+        "Visitor trade-offs when adding types"
+      ],
       "kind": "concept",
       "requires": [
         "composite"
@@ -256,6 +400,14 @@
       "name": "Refactor to patterns",
       "icon": "edit",
       "desc": "Recognising code smells and refactoring safely toward patterns.",
+      "summary": "You will be able to spot code smells and refactor code safely toward appropriate design patterns under test protection.",
+      "topics": [
+        "Common code smells",
+        "Safe refactoring with tests",
+        "Extract method and extract class",
+        "Replace conditional with polymorphism",
+        "Refactoring toward a pattern"
+      ],
       "kind": "concept",
       "requires": [
         "strategy",
@@ -270,6 +422,14 @@
       "name": "Anti-patterns",
       "icon": "warning",
       "desc": "God objects, overengineering and pattern misuse.",
+      "summary": "You will be able to recognise design anti-patterns such as god objects and overengineering and know how to avoid them.",
+      "topics": [
+        "God object",
+        "Spaghetti and lava flow code",
+        "Overengineering and speculative generality",
+        "Pattern misuse",
+        "Anemic domain model"
+      ],
       "kind": "concept",
       "requires": [
         "singleton",
@@ -283,6 +443,14 @@
       "name": "Parking lot LLD",
       "icon": "building",
       "desc": "Design and implement a parking lot system with clean classes and tests.",
+      "summary": "You will design and implement a parking lot system with clear classes, responsibilities and unit tests as a low-level design exercise.",
+      "topics": [
+        "Gathering requirements",
+        "Identifying classes and relationships",
+        "Spot allocation strategies",
+        "Ticketing and payment flow",
+        "Unit testing the design"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -298,6 +466,14 @@
       "name": "Text editor project",
       "icon": "edit",
       "desc": "Build a small text editor with undo/redo, plugins and change notifications.",
+      "summary": "You will build a small text editor that supports undo and redo, plugins and change notifications using several design patterns.",
+      "topics": [
+        "Document model design",
+        "Undo and redo with commands",
+        "Plugins through a common interface",
+        "Change notifications with observers",
+        "Testing editor operations"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

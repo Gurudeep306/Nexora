@@ -43,6 +43,14 @@
       "name": "Layering",
       "icon": "layers",
       "desc": "The OSI and TCP/IP models, what each layer does and the units each layer exchanges.",
+      "summary": "You will be able to describe the OSI and TCP/IP models, what each layer does and the data unit each layer exchanges.",
+      "topics": [
+        "The seven OSI layers",
+        "The TCP/IP model",
+        "Encapsulation and headers",
+        "Frames, packets and segments",
+        "Devices at each layer"
+      ],
       "kind": "concept",
       "requires": [],
       "pyqTopics": [
@@ -62,6 +70,15 @@
       "name": "Switching & delays",
       "icon": "timer",
       "desc": "Circuit and packet switching; transmission, propagation and queuing delay in store-and-forward networks.",
+      "summary": "You will be able to compare circuit and packet switching and compute transmission, propagation and queuing delays end to end.",
+      "topics": [
+        "Circuit versus packet switching",
+        "Transmission delay",
+        "Propagation delay",
+        "Queuing and processing delay",
+        "Store-and-forward over multiple hops",
+        "Bandwidth-delay product"
+      ],
       "kind": "concept",
       "requires": [
         "layering"
@@ -85,6 +102,14 @@
       "name": "Framing & bit rates",
       "icon": "binary",
       "desc": "Asynchronous transmission with start and stop bits, framing and bit stuffing.",
+      "summary": "You will be able to compute effective bit rates for asynchronous transmission and apply framing and bit stuffing.",
+      "topics": [
+        "Asynchronous transmission",
+        "Start and stop bits overhead",
+        "Byte-oriented framing",
+        "Bit stuffing with flag sequences",
+        "Effective data rate"
+      ],
       "kind": "concept",
       "requires": [
         "switching-delays"
@@ -107,6 +132,14 @@
       "name": "Error detection",
       "icon": "check-circle",
       "desc": "Parity, checksums, CRC by polynomial division and Hamming codes for correction.",
+      "summary": "You will be able to detect errors with parity, checksums and CRC and correct single-bit errors with Hamming codes.",
+      "topics": [
+        "Parity bits",
+        "Internet checksum",
+        "CRC by polynomial division",
+        "Hamming distance",
+        "Hamming codes for correction"
+      ],
       "kind": "concept",
       "requires": [
         "framing-transmission",
@@ -131,6 +164,14 @@
       "name": "Stop-and-wait",
       "icon": "pause",
       "desc": "Stop-and-wait ARQ and link utilisation in terms of transmission and propagation delay.",
+      "summary": "You will be able to analyse stop-and-wait ARQ and compute link utilisation from transmission and propagation delays.",
+      "topics": [
+        "Stop-and-wait ARQ protocol",
+        "Acknowledgements and timeouts",
+        "Link utilisation formula",
+        "Effect of propagation delay",
+        "Throughput calculation"
+      ],
       "kind": "concept",
       "requires": [
         "switching-delays"
@@ -152,6 +193,14 @@
       "name": "Sliding window",
       "icon": "sliders",
       "desc": "Go-Back-N and Selective Repeat, window sizes and the sequence-number bits they need.",
+      "summary": "You will be able to analyse Go-Back-N and Selective Repeat and calculate window sizes and the sequence number bits they need.",
+      "topics": [
+        "Sliding window concept",
+        "Go-Back-N ARQ",
+        "Selective Repeat ARQ",
+        "Window size for full utilisation",
+        "Sequence number bits for each protocol"
+      ],
       "kind": "concept",
       "requires": [
         "stop-and-wait"
@@ -174,6 +223,14 @@
       "name": "MAC protocols",
       "icon": "users",
       "desc": "ALOHA, CSMA/CD and Ethernet minimum frame size, and token passing.",
+      "summary": "You will be able to analyse ALOHA, CSMA/CD and token passing and compute Ethernet's minimum frame size.",
+      "topics": [
+        "Pure and slotted ALOHA throughput",
+        "CSMA and collision detection",
+        "Ethernet minimum frame size",
+        "Binary exponential backoff",
+        "Token passing and token ring"
+      ],
       "kind": "concept",
       "requires": [
         "framing-transmission",
@@ -199,6 +256,14 @@
       "name": "Bridges & switches",
       "icon": "share",
       "desc": "Learning bridges, switches and the spanning tree protocol.",
+      "summary": "You will be able to explain how learning bridges and switches forward frames and how spanning tree prevents loops.",
+      "topics": [
+        "Learning bridges and MAC tables",
+        "Switch forwarding and flooding",
+        "Collision and broadcast domains",
+        "Spanning tree protocol",
+        "VLANs and trunking"
+      ],
       "kind": "concept",
       "requires": [
         "mac-protocols"
@@ -220,6 +285,15 @@
       "name": "IP addressing",
       "icon": "map",
       "desc": "IPv4 addresses, classes, subnetting, CIDR and longest-prefix-match forwarding.",
+      "summary": "You will be able to subnet IPv4 networks, use CIDR notation and forward packets with longest prefix matching.",
+      "topics": [
+        "IPv4 address structure",
+        "Classful addressing",
+        "Subnet masks and subnetting",
+        "CIDR and supernetting",
+        "Longest prefix match forwarding",
+        "Network and broadcast addresses"
+      ],
       "kind": "concept",
       "requires": [
         "layering"
@@ -243,6 +317,14 @@
       "name": "IP fragmentation",
       "icon": "grid",
       "desc": "Fragmenting datagrams to fit the MTU: offsets, flags and fragment sizes.",
+      "summary": "You will be able to fragment IP datagrams to fit an MTU and compute fragment offsets, flags and sizes.",
+      "topics": [
+        "MTU and fragmentation",
+        "Fragment offset in 8-byte units",
+        "More fragments and don't fragment flags",
+        "Computing fragment sizes",
+        "Reassembly at the destination"
+      ],
       "kind": "concept",
       "requires": [
         "ip-addressing"
@@ -263,6 +345,14 @@
       "name": "IPv4 header",
       "icon": "list",
       "desc": "IPv4 header fields, TTL and the header checksum.",
+      "summary": "You will be able to interpret IPv4 header fields, including TTL and the header checksum.",
+      "topics": [
+        "IPv4 header layout",
+        "Header length and total length",
+        "Time to live",
+        "Protocol field",
+        "Header checksum computation"
+      ],
       "kind": "concept",
       "requires": [
         "ip-addressing"
@@ -283,6 +373,14 @@
       "name": "ARP, ICMP, DHCP, NAT",
       "icon": "wrench",
       "desc": "The supporting protocols: ARP, ICMP and traceroute, DHCP and NAT.",
+      "summary": "You will be able to explain how ARP, ICMP, traceroute, DHCP and NAT support IP networking.",
+      "topics": [
+        "ARP address resolution",
+        "ICMP messages",
+        "How traceroute uses TTL",
+        "DHCP address assignment",
+        "NAT and port translation"
+      ],
       "kind": "concept",
       "requires": [
         "ip-addressing"
@@ -298,6 +396,14 @@
       "name": "Routing",
       "icon": "route",
       "desc": "Routing tables and how routers compute them; intra- and inter-domain routing.",
+      "summary": "You will be able to explain how routers build routing tables and distinguish intra-domain from inter-domain routing.",
+      "topics": [
+        "Forwarding versus routing",
+        "Routing tables",
+        "Static and dynamic routing",
+        "Intra-domain routing protocols",
+        "Inter-domain routing with BGP"
+      ],
       "kind": "concept",
       "requires": [
         "ip-addressing",
@@ -314,6 +420,14 @@
       "name": "Distance vector",
       "icon": "compass",
       "desc": "Distance-vector routing, Bellman-Ford updates and the count-to-infinity problem.",
+      "summary": "You will be able to run distance-vector routing updates with Bellman-Ford and explain the count-to-infinity problem.",
+      "topics": [
+        "Distance vectors",
+        "Bellman-Ford updates",
+        "Convergence of tables",
+        "Count-to-infinity problem",
+        "Split horizon and poison reverse"
+      ],
       "kind": "concept",
       "requires": [
         "routing"
@@ -337,6 +451,14 @@
       "name": "Link state",
       "icon": "graph",
       "desc": "Link-state routing with flooding and Dijkstra, as in OSPF.",
+      "summary": "You will be able to describe link-state routing with flooding and Dijkstra's algorithm as used in OSPF.",
+      "topics": [
+        "Link-state advertisements",
+        "Reliable flooding",
+        "Dijkstra's shortest path",
+        "OSPF areas and operation",
+        "Link state versus distance vector"
+      ],
       "kind": "concept",
       "requires": [
         "routing"
@@ -358,6 +480,14 @@
       "name": "UDP & sockets",
       "icon": "upload",
       "desc": "Ports, UDP's connectionless service, and the socket API.",
+      "summary": "You will be able to explain ports, UDP's connectionless service and how applications use the socket API.",
+      "topics": [
+        "Port numbers and multiplexing",
+        "UDP header",
+        "Connectionless delivery",
+        "UDP checksum",
+        "Socket API calls"
+      ],
       "kind": "concept",
       "requires": [
         "layering"
@@ -379,6 +509,14 @@
       "name": "TCP",
       "icon": "link",
       "desc": "TCP's reliable byte stream, segments, acknowledgements and flow control.",
+      "summary": "You will be able to explain how TCP provides a reliable byte stream with segments, acknowledgements and flow control.",
+      "topics": [
+        "TCP segment header",
+        "Cumulative acknowledgements",
+        "Retransmission and timeouts",
+        "Flow control with receive window",
+        "Byte stream semantics"
+      ],
       "kind": "concept",
       "requires": [
         "udp",
@@ -395,6 +533,14 @@
       "name": "TCP connections",
       "icon": "chat",
       "desc": "The three-way handshake, sequence numbers, wraparound and connection teardown.",
+      "summary": "You will be able to trace TCP connection setup and teardown and reason about sequence numbers and wraparound.",
+      "topics": [
+        "Three-way handshake",
+        "Initial sequence numbers",
+        "Sequence number wraparound time",
+        "Connection termination",
+        "TCP state transitions"
+      ],
       "kind": "concept",
       "requires": [
         "tcp"
@@ -417,6 +563,14 @@
       "name": "Congestion control",
       "icon": "activity",
       "desc": "Slow start, congestion avoidance, timeouts and the congestion window; token-bucket shaping.",
+      "summary": "You will be able to trace TCP's congestion window through slow start, congestion avoidance and timeouts and apply token-bucket shaping.",
+      "topics": [
+        "Slow start and threshold",
+        "Congestion avoidance",
+        "Fast retransmit and recovery",
+        "Reaction to timeouts",
+        "Leaky and token bucket shaping"
+      ],
       "kind": "concept",
       "requires": [
         "tcp"
@@ -438,6 +592,14 @@
       "name": "Application layer",
       "icon": "globe",
       "desc": "Client–server and peer-to-peer applications and which transport they use.",
+      "summary": "You will be able to compare client-server and peer-to-peer applications and match common applications to TCP or UDP.",
+      "topics": [
+        "Client-server architecture",
+        "Peer-to-peer architecture",
+        "Application protocol ports",
+        "Choosing TCP or UDP",
+        "Common application protocols"
+      ],
       "kind": "concept",
       "requires": [
         "tcp"
@@ -453,6 +615,14 @@
       "name": "DNS",
       "icon": "search",
       "desc": "Name resolution, iterative and recursive queries, and DNS caching.",
+      "summary": "You will be able to explain DNS name resolution with iterative and recursive queries and how caching speeds it up.",
+      "topics": [
+        "Domain name hierarchy",
+        "Root, TLD and authoritative servers",
+        "Iterative versus recursive queries",
+        "DNS caching and TTL",
+        "DNS record types"
+      ],
       "kind": "concept",
       "requires": [
         "application-layer",
@@ -473,6 +643,14 @@
       "name": "HTTP, FTP & email",
       "icon": "mail",
       "desc": "HTTP persistent and non-persistent connections, FTP, SMTP and POP3.",
+      "summary": "You will be able to compare persistent and non-persistent HTTP and explain how FTP, SMTP and POP3 work.",
+      "topics": [
+        "HTTP requests and responses",
+        "Persistent versus non-persistent connections",
+        "FTP control and data connections",
+        "SMTP for sending mail",
+        "POP3 and IMAP for retrieval"
+      ],
       "kind": "concept",
       "requires": [
         "application-layer"
@@ -498,6 +676,14 @@
       "name": "Network security",
       "icon": "shield",
       "desc": "Threats, firewalls, symmetric encryption and hash functions.",
+      "summary": "You will be able to describe network threats and defences such as firewalls, symmetric encryption and hash functions.",
+      "topics": [
+        "Security goals and threats",
+        "Firewalls and packet filtering",
+        "Symmetric encryption",
+        "Cryptographic hash functions",
+        "Message authentication codes"
+      ],
       "kind": "concept",
       "requires": [
         "layering"
@@ -513,6 +699,14 @@
       "name": "Public-key crypto",
       "icon": "key",
       "desc": "RSA, Diffie–Hellman key exchange and digital signatures.",
+      "summary": "You will be able to compute RSA operations, perform Diffie-Hellman key exchange and explain digital signatures.",
+      "topics": [
+        "Public and private keys",
+        "RSA key generation and encryption",
+        "Diffie-Hellman key exchange",
+        "Digital signatures",
+        "Certificates and authentication"
+      ],
       "kind": "concept",
       "requires": [
         "network-security",

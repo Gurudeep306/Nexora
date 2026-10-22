@@ -35,6 +35,14 @@
       "name": "Setup & tsc",
       "icon": "terminal",
       "desc": "Installing TypeScript, tsconfig.json and compiling with tsc.",
+      "summary": "You will be able to install TypeScript, configure a project with tsconfig.json and compile TypeScript to JavaScript with tsc.",
+      "topics": [
+        "Installing TypeScript with npm",
+        "Creating tsconfig.json",
+        "Compiling with tsc",
+        "target and module options",
+        "Watch mode and source maps"
+      ],
       "kind": "lesson",
       "requires": [
         "javascript:js-basics"
@@ -47,6 +55,14 @@
       "name": "Basic types",
       "icon": "tag",
       "desc": "Primitive types, arrays, tuples, object types, any and unknown.",
+      "summary": "You will be able to annotate values with TypeScript's basic types and choose unknown over any for values of uncertain type.",
+      "topics": [
+        "string, number and boolean",
+        "Arrays and tuples",
+        "Object types",
+        "any vs unknown",
+        "null, undefined and void"
+      ],
       "kind": "concept",
       "requires": [
         "ts-setup"
@@ -59,6 +75,14 @@
       "name": "Type inference",
       "icon": "lightbulb",
       "desc": "How TypeScript infers types and when to write annotations yourself.",
+      "summary": "You will understand how TypeScript infers types from code and know when an explicit annotation adds value.",
+      "topics": [
+        "Inference from initialisers",
+        "Return type inference",
+        "Contextual typing",
+        "Literal type widening",
+        "When to annotate explicitly"
+      ],
       "kind": "concept",
       "requires": [
         "ts-types"
@@ -71,6 +95,14 @@
       "name": "Unions & narrowing",
       "icon": "git-branch",
       "desc": "Union and literal types, narrowing with typeof, in and discriminated unions.",
+      "summary": "You will be able to model alternatives with union and literal types and narrow them safely with typeof, in and discriminants.",
+      "topics": [
+        "Union types",
+        "Literal types",
+        "Narrowing with typeof and instanceof",
+        "The in operator for narrowing",
+        "Discriminated unions"
+      ],
       "kind": "concept",
       "requires": [
         "ts-types"
@@ -83,6 +115,15 @@
       "name": "Interfaces & aliases",
       "icon": "shapes",
       "desc": "Interfaces, type aliases, optional and readonly properties, and extension.",
+      "summary": "You will be able to describe object shapes with interfaces and type aliases, including optional, readonly and extended properties.",
+      "topics": [
+        "Interfaces for object shapes",
+        "Type aliases",
+        "Optional and readonly properties",
+        "Extending interfaces",
+        "Intersection types",
+        "Interface vs type alias"
+      ],
       "kind": "concept",
       "requires": [
         "ts-types"
@@ -95,6 +136,14 @@
       "name": "Typing functions",
       "icon": "function",
       "desc": "Parameter and return types, overloads, and typing callbacks.",
+      "summary": "You will be able to type function parameters, return values, overloads and callbacks precisely.",
+      "topics": [
+        "Parameter and return types",
+        "Optional and default parameters",
+        "Rest parameters",
+        "Function overloads",
+        "Typing callbacks and function types"
+      ],
       "kind": "concept",
       "requires": [
         "ts-types"
@@ -107,6 +156,14 @@
       "name": "Classes in TS",
       "icon": "layers",
       "desc": "Access modifiers, abstract classes and implementing interfaces.",
+      "summary": "You will be able to write typed classes with access modifiers, abstract members and implemented interfaces.",
+      "topics": [
+        "Class property declarations",
+        "public, private and protected",
+        "Parameter properties",
+        "Abstract classes",
+        "Implementing interfaces"
+      ],
       "kind": "concept",
       "requires": [
         "interfaces-aliases",
@@ -120,6 +177,14 @@
       "name": "Modules & .d.ts",
       "icon": "book",
       "desc": "ES modules in TypeScript, declaration files and typing third-party libraries.",
+      "summary": "You will be able to use ES modules in TypeScript and write or consume declaration files to type third-party libraries.",
+      "topics": [
+        "ES module imports and exports",
+        "Type-only imports",
+        "Declaration files (.d.ts)",
+        "DefinitelyTyped and @types packages",
+        "Declaring modules and globals"
+      ],
       "kind": "lesson",
       "requires": [
         "interfaces-aliases"
@@ -132,6 +197,14 @@
       "name": "Generics",
       "icon": "shapes",
       "desc": "Generic functions and types, constraints and default type parameters.",
+      "summary": "You will be able to write reusable generic functions and types with constraints and default type parameters.",
+      "topics": [
+        "Generic functions",
+        "Generic interfaces and classes",
+        "Constraints with extends",
+        "Default type parameters",
+        "Inferring type arguments"
+      ],
       "kind": "concept",
       "requires": [
         "typed-functions",
@@ -145,6 +218,14 @@
       "name": "Utility types",
       "icon": "wrench",
       "desc": "Partial, Pick, Omit, Record, ReturnType and other built-in helpers.",
+      "summary": "You will be able to transform existing types with built-in utility types instead of redefining them by hand.",
+      "topics": [
+        "Partial and Required",
+        "Pick and Omit",
+        "Record for keyed objects",
+        "ReturnType and Parameters",
+        "Readonly and NonNullable"
+      ],
       "kind": "concept",
       "requires": [
         "generics-ts"
@@ -157,6 +238,14 @@
       "name": "keyof & mapped types",
       "icon": "grid",
       "desc": "Index types, keyof, indexed access and mapped types.",
+      "summary": "You will be able to derive new types from existing ones with keyof, indexed access and mapped types.",
+      "topics": [
+        "The keyof operator",
+        "Indexed access types",
+        "typeof in type positions",
+        "Mapped types",
+        "Key remapping with as"
+      ],
       "kind": "concept",
       "requires": [
         "utility-types"
@@ -169,6 +258,14 @@
       "name": "Conditional types",
       "icon": "git-branch",
       "desc": "Conditional types, infer and distributive behaviour over unions.",
+      "summary": "You will be able to write conditional types, extract types with infer and predict distributive behaviour over unions.",
+      "topics": [
+        "Conditional type syntax",
+        "Inferring with infer",
+        "Distributive conditional types",
+        "Preventing distribution",
+        "Template literal types"
+      ],
       "kind": "concept",
       "requires": [
         "keyof-mapped",
@@ -182,6 +279,14 @@
       "name": "Type guards",
       "icon": "shield",
       "desc": "User-defined type guards, assertion functions and exhaustiveness checks with never.",
+      "summary": "You will be able to write user-defined type guards and assertion functions and enforce exhaustive handling with never.",
+      "topics": [
+        "Type predicates with is",
+        "Assertion functions",
+        "Exhaustiveness checks with never",
+        "Narrowing in switch statements",
+        "Custom guards for unknown data"
+      ],
       "kind": "concept",
       "requires": [
         "unions-narrowing"
@@ -194,6 +299,14 @@
       "name": "Strict mode & config",
       "icon": "settings",
       "desc": "Strict compiler flags, project references and migrating JavaScript to TypeScript.",
+      "summary": "You will be able to enable strict compiler options, structure large codebases with project references and migrate JavaScript gradually.",
+      "topics": [
+        "The strict flag family",
+        "strictNullChecks and noImplicitAny",
+        "Project references",
+        "Gradual migration with allowJs",
+        "Checking JavaScript with JSDoc"
+      ],
       "kind": "lesson",
       "requires": [
         "declarations"
@@ -206,6 +319,14 @@
       "name": "Runtime validation",
       "icon": "check-circle",
       "desc": "Validating untrusted data at runtime and deriving static types from schemas.",
+      "summary": "You will be able to validate untrusted data at runtime and derive static types from the same schema.",
+      "topics": [
+        "Why static types vanish at runtime",
+        "Validating API responses",
+        "Schema libraries like Zod",
+        "Inferring types from schemas",
+        "Handling validation errors"
+      ],
       "kind": "concept",
       "requires": [
         "type-guards"
@@ -218,6 +339,14 @@
       "name": "TS with React",
       "icon": "monitor",
       "desc": "Typing props, state, hooks and events in React components.",
+      "summary": "You will be able to type React components, props, state, hooks and event handlers in TypeScript.",
+      "topics": [
+        "Typing component props",
+        "Typing useState and useReducer",
+        "Typing event handlers",
+        "Typing refs",
+        "Generic components"
+      ],
       "kind": "lesson",
       "requires": [
         "generics-ts",
@@ -231,6 +360,14 @@
       "name": "TS on the server",
       "icon": "server",
       "desc": "Typed Express handlers, request validation and shared types between client and server.",
+      "summary": "You will be able to build typed Express servers with validated requests and share types between client and server.",
+      "topics": [
+        "Typing Express handlers",
+        "Typed request params and bodies",
+        "Request validation middleware",
+        "Shared types in a monorepo",
+        "Running TypeScript on Node"
+      ],
       "kind": "lesson",
       "requires": [
         "generics-ts",
@@ -244,6 +381,14 @@
       "name": "Typed API client",
       "icon": "rocket",
       "desc": "Build a fully typed HTTP client library with validated responses and generated types.",
+      "summary": "You will build a fully typed HTTP client library with validated responses and types generated from an API schema.",
+      "topics": [
+        "Designing the client API",
+        "Typed request functions",
+        "Validating responses at runtime",
+        "Generating types from OpenAPI",
+        "Testing the client"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

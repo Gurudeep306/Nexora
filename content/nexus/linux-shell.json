@@ -39,6 +39,14 @@
       "name": "Linux & distros",
       "icon": "monitor",
       "desc": "Kernel vs distribution, the terminal and the shell.",
+      "summary": "You will understand how the Linux kernel, distributions, terminals and shells fit together and why Linux is used so widely.",
+      "topics": [
+        "Kernel vs distribution",
+        "Popular distributions and their families",
+        "Terminal emulator vs shell",
+        "Bash, zsh and other shells",
+        "Open-source licensing basics"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 40
@@ -49,6 +57,14 @@
       "name": "Shell basics",
       "icon": "terminal",
       "desc": "Commands, arguments, ls, cd, pwd, tab completion and history.",
+      "summary": "You will be able to run commands with options and arguments, move around the filesystem and work faster with completion and history.",
+      "topics": [
+        "Command, option and argument syntax",
+        "Navigating with ls, cd and pwd",
+        "Tab completion",
+        "Command history and reverse search",
+        "Clearing and exiting the shell"
+      ],
       "kind": "concept",
       "requires": [
         "linux-intro"
@@ -61,6 +77,14 @@
       "name": "Filesystem layout",
       "icon": "tree",
       "desc": "The directory tree, /etc, /home, /var, /usr and absolute vs relative paths.",
+      "summary": "You will be able to find your way around the Linux directory tree and use absolute and relative paths correctly.",
+      "topics": [
+        "The root directory and hierarchy",
+        "Purpose of /etc, /home, /var and /usr",
+        "Absolute vs relative paths",
+        "Special paths ., .. and ~",
+        "Hidden dotfiles"
+      ],
       "kind": "concept",
       "requires": [
         "shell-basics"
@@ -73,6 +97,14 @@
       "name": "Getting help",
       "icon": "info",
       "desc": "man pages, --help and reading command documentation.",
+      "summary": "You will be able to look up how any command works using man pages, built-in help and other documentation sources.",
+      "topics": [
+        "Reading man pages and sections",
+        "Searching with man -k and apropos",
+        "Using --help output",
+        "Shell builtins and help",
+        "Finding commands with which and type"
+      ],
       "kind": "lesson",
       "requires": [
         "shell-basics"
@@ -85,6 +117,14 @@
       "name": "Working with files",
       "icon": "copy",
       "desc": "cp, mv, rm, mkdir, touch, globbing and viewing files.",
+      "summary": "You will be able to create, copy, move, delete and view files and directories, using globbing to work on many at once.",
+      "topics": [
+        "Creating files and directories",
+        "Copying and moving with cp and mv",
+        "Deleting safely with rm",
+        "Wildcards and globbing patterns",
+        "Viewing files with cat, less, head and tail"
+      ],
       "kind": "concept",
       "requires": [
         "filesystem-layout"
@@ -97,6 +137,15 @@
       "name": "Permissions",
       "icon": "lock",
       "desc": "rwx bits, chmod, chown, umask and sudo.",
+      "summary": "You will be able to read and change Linux file permissions and ownership and run commands with elevated privileges using sudo.",
+      "topics": [
+        "Read, write and execute bits",
+        "User, group and other classes",
+        "chmod with symbolic and octal modes",
+        "chown and chgrp",
+        "Default permissions with umask",
+        "Running commands with sudo"
+      ],
       "kind": "concept",
       "requires": [
         "file-ops"
@@ -109,6 +158,14 @@
       "name": "Users & groups",
       "icon": "users",
       "desc": "Accounts, groups and /etc/passwd.",
+      "summary": "You will be able to manage user accounts and groups and understand how Linux stores account information.",
+      "topics": [
+        "User accounts and UIDs",
+        "Groups and group membership",
+        "The /etc/passwd and /etc/shadow files",
+        "Adding and modifying users",
+        "Switching users with su"
+      ],
       "kind": "concept",
       "requires": [
         "permissions"
@@ -121,6 +178,14 @@
       "name": "Links & inodes",
       "icon": "link",
       "desc": "Inodes, hard links, symbolic links and disk usage.",
+      "summary": "You will understand inodes and be able to create hard and symbolic links and check disk usage.",
+      "topics": [
+        "Inodes and file metadata",
+        "Hard links and link counts",
+        "Symbolic links",
+        "Inspecting files with stat and ls -i",
+        "Disk usage with df and du"
+      ],
       "kind": "concept",
       "requires": [
         "file-ops",
@@ -134,6 +199,15 @@
       "name": "Pipes & redirection",
       "icon": "route",
       "desc": "stdin, stdout, stderr, redirection and composing commands with pipes.",
+      "summary": "You will be able to redirect standard input, output and error and chain commands together with pipes.",
+      "topics": [
+        "stdin, stdout and stderr",
+        "Output redirection with > and >>",
+        "Input redirection and here documents",
+        "Redirecting stderr with 2>",
+        "Pipelines with |",
+        "Splitting output with tee"
+      ],
       "kind": "concept",
       "requires": [
         "shell-basics"
@@ -146,6 +220,14 @@
       "name": "grep & find",
       "icon": "search",
       "desc": "Searching file contents and the filesystem.",
+      "summary": "You will be able to search file contents with grep and locate files by name, type, size or age with find.",
+      "topics": [
+        "Searching text with grep",
+        "Recursive and case-insensitive grep",
+        "Finding files by name and type",
+        "find tests on size and modification time",
+        "Running commands on results with -exec and xargs"
+      ],
       "kind": "concept",
       "requires": [
         "pipes-redirection"
@@ -158,6 +240,14 @@
       "name": "Regular expressions",
       "icon": "code",
       "desc": "Basic and extended regex for grep and sed.",
+      "summary": "You will be able to write basic and extended regular expressions to match text patterns in grep and sed.",
+      "topics": [
+        "Literals, anchors and the dot",
+        "Character classes and ranges",
+        "Quantifiers like star, plus and question mark",
+        "Basic vs extended regex syntax",
+        "Groups and alternation"
+      ],
       "kind": "concept",
       "requires": [
         "grep-find",
@@ -171,6 +261,14 @@
       "name": "sed & awk",
       "icon": "edit",
       "desc": "Stream editing and column-oriented text processing.",
+      "summary": "You will be able to transform text streams with sed and process column-based data with awk.",
+      "topics": [
+        "Substitution with sed s///",
+        "Deleting and printing lines with sed",
+        "In-place editing",
+        "awk fields and records",
+        "awk patterns, actions and aggregates"
+      ],
       "kind": "concept",
       "requires": [
         "regex-shell"
@@ -183,6 +281,14 @@
       "name": "Processes & signals",
       "icon": "cpu",
       "desc": "ps, top, kill, signals, job control and nohup.",
+      "summary": "You will be able to inspect and control running processes, send signals and manage foreground and background jobs.",
+      "topics": [
+        "Listing processes with ps and top",
+        "Process IDs and parent processes",
+        "Signals like SIGTERM and SIGKILL",
+        "Job control with bg, fg and jobs",
+        "Keeping jobs running with nohup"
+      ],
       "kind": "concept",
       "requires": [
         "pipes-redirection",
@@ -196,6 +302,14 @@
       "name": "Package management",
       "icon": "download",
       "desc": "Installing software with apt, dnf or pacman.",
+      "summary": "You will be able to install, update and remove software with your distribution's package manager.",
+      "topics": [
+        "Packages and repositories",
+        "Using apt on Debian and Ubuntu",
+        "Using dnf on Fedora",
+        "Using pacman on Arch",
+        "Updating and removing packages"
+      ],
       "kind": "lesson",
       "requires": [
         "permissions"
@@ -208,6 +322,14 @@
       "name": "Networking tools",
       "icon": "globe",
       "desc": "ping, curl, ss, dig and inspecting network connections.",
+      "summary": "You will be able to diagnose network connectivity and inspect connections using common Linux networking commands.",
+      "topics": [
+        "Checking reachability with ping",
+        "HTTP requests with curl",
+        "Listing sockets with ss",
+        "DNS lookups with dig",
+        "Viewing interfaces with ip"
+      ],
       "kind": "concept",
       "requires": [
         "processes-signals",
@@ -221,6 +343,15 @@
       "name": "SSH & remote work",
       "icon": "key",
       "desc": "SSH keys, scp, rsync and working on remote machines.",
+      "summary": "You will be able to log in to remote machines securely with SSH keys and transfer files with scp and rsync.",
+      "topics": [
+        "Connecting with ssh",
+        "Generating and installing SSH keys",
+        "The ~/.ssh/config file",
+        "Copying files with scp",
+        "Syncing directories with rsync",
+        "Port forwarding basics"
+      ],
       "kind": "concept",
       "requires": [
         "net-tools"
@@ -233,6 +364,15 @@
       "name": "Bash scripting",
       "icon": "code",
       "desc": "Variables, conditionals, loops, functions and exit codes in bash scripts.",
+      "summary": "You will be able to write bash scripts with variables, conditionals, loops and functions that report success or failure through exit codes.",
+      "topics": [
+        "Shebang lines and executable scripts",
+        "Variables, quoting and expansion",
+        "Conditionals with test and [[ ]]",
+        "for and while loops",
+        "Functions and arguments",
+        "Exit codes and set -e"
+      ],
       "kind": "concept",
       "requires": [
         "pipes-redirection",
@@ -246,6 +386,15 @@
       "name": "cron & services",
       "icon": "calendar",
       "desc": "Scheduling jobs with cron and managing services with systemd.",
+      "summary": "You will be able to schedule recurring jobs with cron and manage long-running services with systemd.",
+      "topics": [
+        "Crontab syntax and scheduling",
+        "Editing crontabs",
+        "systemd units and systemctl",
+        "Writing a service unit file",
+        "Viewing logs with journalctl",
+        "systemd timers"
+      ],
       "kind": "lesson",
       "requires": [
         "bash-scripting",
@@ -259,6 +408,15 @@
       "name": "Environment & dotfiles",
       "icon": "settings",
       "desc": "Environment variables, PATH, shell configuration and dotfiles.",
+      "summary": "You will be able to configure your shell environment with environment variables, PATH and dotfiles you can carry between machines.",
+      "topics": [
+        "Environment vs shell variables",
+        "Exporting variables",
+        "The PATH variable",
+        "Shell startup files like .bashrc",
+        "Aliases and functions in dotfiles",
+        "Managing dotfiles with Git"
+      ],
       "kind": "lesson",
       "requires": [
         "bash-scripting"
@@ -271,6 +429,14 @@
       "name": "Log analyzer project",
       "icon": "analytics",
       "desc": "Write a script that parses server logs and reports top errors and visitors.",
+      "summary": "You will write a shell script that parses server logs and reports the most common errors and the top visitors.",
+      "topics": [
+        "Understanding log line formats",
+        "Extracting fields with awk",
+        "Counting with sort and uniq -c",
+        "Filtering errors with grep",
+        "Formatting a summary report"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -285,6 +451,14 @@
       "name": "Backup script project",
       "icon": "save",
       "desc": "Automate scheduled, rotating backups to a remote machine.",
+      "summary": "You will automate scheduled, rotating backups of important files to a remote machine using shell tools.",
+      "topics": [
+        "Archiving with tar and compression",
+        "Remote copies with rsync over SSH",
+        "Timestamped backup names",
+        "Deleting old backups for rotation",
+        "Scheduling with cron and logging results"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

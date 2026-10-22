@@ -35,6 +35,14 @@
       "name": "Why version control",
       "icon": "clock",
       "desc": "What version control solves, snapshots, and centralised vs distributed systems.",
+      "summary": "You will understand what problems version control solves and how centralised and distributed systems differ in the way they store history.",
+      "topics": [
+        "Tracking changes as snapshots",
+        "Collaboration without overwriting work",
+        "Centralised vs distributed version control",
+        "Local and remote repositories",
+        "Why Git became the standard"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 40
@@ -45,6 +53,15 @@
       "name": "Git basics",
       "icon": "git-branch",
       "desc": "init, add, commit, status and the working tree, index and repository.",
+      "summary": "You will be able to create a repository, stage changes and record commits while understanding the working tree, index and repository.",
+      "topics": [
+        "Initialising a repository with git init",
+        "Staging changes with git add",
+        "Recording snapshots with git commit",
+        "Reading git status output",
+        "Working tree, index and repository",
+        "Writing clear commit messages"
+      ],
       "kind": "concept",
       "requires": [
         "version-control",
@@ -64,6 +81,15 @@
       "name": "History & undo",
       "icon": "clock",
       "desc": "log, diff, show, restore, reset and revert.",
+      "summary": "You will be able to inspect project history and safely undo changes at the file, staging and commit level.",
+      "topics": [
+        "Browsing history with git log",
+        "Comparing changes with git diff",
+        "Inspecting commits with git show",
+        "Discarding changes with git restore",
+        "Soft, mixed and hard reset",
+        "Undoing published commits with revert"
+      ],
       "kind": "concept",
       "requires": [
         "git-basics"
@@ -76,6 +102,14 @@
       "name": "Ignoring & config",
       "icon": "settings",
       "desc": ".gitignore, git config and aliases.",
+      "summary": "You will be able to keep unwanted files out of a repository and configure Git with identity settings and aliases.",
+      "topics": [
+        "Writing .gitignore patterns",
+        "Ignoring build output and secrets",
+        "System, global and local config",
+        "Setting user name and email",
+        "Creating command aliases"
+      ],
       "kind": "lesson",
       "requires": [
         "git-basics"
@@ -88,6 +122,14 @@
       "name": "Branches",
       "icon": "git-branch",
       "desc": "Creating and switching branches and what a branch really is.",
+      "summary": "You will understand that a branch is a movable pointer to a commit and be able to create, switch and delete branches.",
+      "topics": [
+        "Branches as pointers to commits",
+        "HEAD and the current branch",
+        "Creating and switching branches",
+        "Detached HEAD state",
+        "Listing and deleting branches"
+      ],
       "kind": "concept",
       "requires": [
         "git-basics"
@@ -100,6 +142,14 @@
       "name": "Merging",
       "icon": "route",
       "desc": "Fast-forward and three-way merges.",
+      "summary": "You will be able to combine branches with git merge and predict whether Git performs a fast-forward or a three-way merge.",
+      "topics": [
+        "Fast-forward merges",
+        "Three-way merges and the merge base",
+        "Merge commits with two parents",
+        "Forcing merge commits with --no-ff",
+        "Squash merges"
+      ],
       "kind": "concept",
       "requires": [
         "branches"
@@ -112,6 +162,14 @@
       "name": "Merge conflicts",
       "icon": "warning",
       "desc": "Reading and resolving conflicts and using merge tools.",
+      "summary": "You will be able to read conflict markers, resolve conflicting changes by hand or with a merge tool, and complete the merge.",
+      "topics": [
+        "Why merge conflicts happen",
+        "Reading conflict markers",
+        "Resolving and staging conflicted files",
+        "Using a merge tool",
+        "Aborting a merge safely"
+      ],
       "kind": "concept",
       "requires": [
         "merging"
@@ -124,6 +182,14 @@
       "name": "Rebasing",
       "icon": "sort",
       "desc": "Rebase, interactive rebase and when not to rewrite history.",
+      "summary": "You will be able to replay commits onto a new base, tidy history with interactive rebase and know when rewriting history is unsafe.",
+      "topics": [
+        "Rebase vs merge",
+        "Replaying commits onto a new base",
+        "Interactive rebase: squash, reword, reorder",
+        "Resolving conflicts during a rebase",
+        "The golden rule of not rebasing shared history"
+      ],
       "kind": "concept",
       "requires": [
         "merging",
@@ -137,6 +203,15 @@
       "name": "Remotes",
       "icon": "globe",
       "desc": "clone, fetch, pull, push and tracking branches.",
+      "summary": "You will be able to clone repositories and synchronise work with remotes using fetch, pull and push with tracking branches.",
+      "topics": [
+        "Cloning a repository",
+        "Adding and listing remotes",
+        "Fetch vs pull",
+        "Pushing branches and setting upstream",
+        "Remote-tracking branches like origin/main",
+        "Handling rejected non-fast-forward pushes"
+      ],
       "kind": "concept",
       "requires": [
         "branches"
@@ -149,6 +224,14 @@
       "name": "Pull requests",
       "icon": "users",
       "desc": "Forks, pull requests, code review and keeping a branch up to date.",
+      "summary": "You will be able to contribute through forks and pull requests, respond to code review and keep a branch current with its base.",
+      "topics": [
+        "Forking and the upstream remote",
+        "Opening a pull request",
+        "Reviewing and responding to feedback",
+        "Updating a branch with merge or rebase",
+        "Merge strategies on hosting platforms"
+      ],
       "kind": "concept",
       "requires": [
         "remotes",
@@ -162,6 +245,14 @@
       "name": "Branching workflows",
       "icon": "map",
       "desc": "Trunk-based development, feature branches and release branches.",
+      "summary": "You will be able to compare common team branching strategies and choose one that fits a project's release cadence.",
+      "topics": [
+        "Trunk-based development",
+        "Short-lived feature branches",
+        "Release and hotfix branches",
+        "Git Flow and its trade-offs",
+        "Feature flags for incomplete work"
+      ],
       "kind": "concept",
       "requires": [
         "pull-requests",
@@ -175,6 +266,14 @@
       "name": "Open-source PR project",
       "icon": "heart",
       "desc": "Find an open-source project, fork it and land a real pull request.",
+      "summary": "You will land a real pull request in an open-source project, from finding an issue to getting the change merged.",
+      "topics": [
+        "Finding a beginner-friendly issue",
+        "Reading contribution guidelines",
+        "Forking, branching and committing a fix",
+        "Opening a well-described pull request",
+        "Iterating on maintainer feedback"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -189,6 +288,14 @@
       "name": "Objects & refs",
       "icon": "database",
       "desc": "Blobs, trees, commits and refs: the commit graph as a content-addressed DAG.",
+      "summary": "You will understand how Git stores data as content-addressed objects and how refs point into the commit graph.",
+      "topics": [
+        "Blobs, trees and commit objects",
+        "SHA hashes and content addressing",
+        "The commit graph as a DAG",
+        "Refs, HEAD and tags",
+        "Inspecting objects with git cat-file"
+      ],
       "kind": "concept",
       "requires": [
         "branches",
@@ -203,6 +310,14 @@
       "name": "Bisect & reflog",
       "icon": "search",
       "desc": "Recovering lost work with reflog and finding regressions with bisect.",
+      "summary": "You will be able to recover commits that seem lost using the reflog and locate the commit that introduced a bug with bisect.",
+      "topics": [
+        "How the reflog records HEAD movements",
+        "Recovering lost commits and branches",
+        "Binary search over history with git bisect",
+        "Marking good and bad commits",
+        "Automating bisect with a test script"
+      ],
       "kind": "concept",
       "requires": [
         "git-history",
@@ -216,6 +331,14 @@
       "name": "Stash & cherry-pick",
       "icon": "copy",
       "desc": "Stashing work in progress, cherry-picking and worktrees.",
+      "summary": "You will be able to set aside unfinished work, copy individual commits between branches and work on several branches at once.",
+      "topics": [
+        "Saving work with git stash",
+        "Applying, popping and dropping stashes",
+        "Copying commits with cherry-pick",
+        "Resolving cherry-pick conflicts",
+        "Multiple checkouts with git worktree"
+      ],
       "kind": "lesson",
       "requires": [
         "rebasing"
@@ -228,6 +351,14 @@
       "name": "Hooks",
       "icon": "bolt",
       "desc": "Client-side hooks for linting and tests before commit.",
+      "summary": "You will be able to automate checks such as linting and tests by writing client-side Git hooks that run before commits.",
+      "topics": [
+        "Where hooks live in .git/hooks",
+        "pre-commit and commit-msg hooks",
+        "pre-push hooks for running tests",
+        "Sharing hooks with a hook manager",
+        "Bypassing hooks with --no-verify"
+      ],
       "kind": "lesson",
       "requires": [
         "git-basics"
@@ -240,6 +371,14 @@
       "name": "Submodules & monorepos",
       "icon": "layers",
       "desc": "Submodules, subtrees and large repositories.",
+      "summary": "You will be able to manage code from multiple projects using submodules, subtrees or a monorepo and handle very large repositories.",
+      "topics": [
+        "Git submodules and pinned commits",
+        "Git subtrees as an alternative",
+        "Monorepo vs polyrepo trade-offs",
+        "Sparse checkout and partial clone",
+        "Large files with Git LFS"
+      ],
       "kind": "lesson",
       "requires": [
         "remotes"

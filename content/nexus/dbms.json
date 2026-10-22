@@ -43,6 +43,15 @@
       "name": "ER model",
       "icon": "shapes",
       "desc": "Entities, attributes, relationships, cardinality and participation constraints.",
+      "summary": "You will be able to model a domain with entities, attributes and relationships and specify cardinality and participation constraints.",
+      "topics": [
+        "Entities and entity sets",
+        "Simple, composite, multivalued and derived attributes",
+        "Relationship sets and degree",
+        "Cardinality ratios",
+        "Total and partial participation",
+        "Weak entity sets"
+      ],
       "kind": "concept",
       "requires": [],
       "pyqTopics": [
@@ -56,6 +65,15 @@
       "name": "ER to tables",
       "icon": "grid",
       "desc": "Mapping entities, weak entities, relationships and multivalued attributes to the fewest relations.",
+      "summary": "You will be able to map an ER diagram to the minimum number of relations, handling weak entities, relationships and multivalued attributes.",
+      "topics": [
+        "Mapping strong entities",
+        "Mapping weak entities",
+        "Mapping one-to-one and one-to-many relationships",
+        "Mapping many-to-many relationships",
+        "Multivalued attributes as tables",
+        "Minimum number of tables"
+      ],
       "kind": "concept",
       "requires": [
         "er-model"
@@ -79,6 +97,14 @@
       "name": "Relational model",
       "icon": "database",
       "desc": "Relations as sets of tuples, schemas, and referential integrity through foreign keys.",
+      "summary": "You will be able to describe relations as sets of tuples with schemas and enforce referential integrity with foreign keys.",
+      "topics": [
+        "Relations, tuples and attributes",
+        "Relation schemas and instances",
+        "Domain constraints",
+        "Foreign keys and referential integrity",
+        "Actions on delete and update"
+      ],
       "kind": "concept",
       "requires": [
         "er-model",
@@ -102,6 +128,14 @@
       "name": "Keys",
       "icon": "key",
       "desc": "Superkeys, candidate keys and primary keys, and counting the superkeys of a relation.",
+      "summary": "You will be able to identify superkeys, candidate keys and primary keys and count the superkeys of a relation.",
+      "topics": [
+        "Superkeys and uniqueness",
+        "Candidate keys",
+        "Primary and alternate keys",
+        "Prime and non-prime attributes",
+        "Counting superkeys"
+      ],
       "kind": "concept",
       "requires": [
         "relational-model"
@@ -122,6 +156,14 @@
       "name": "Relational algebra",
       "icon": "function",
       "desc": "Selection, projection, product, union, difference and rename, and what queries they express.",
+      "summary": "You will be able to write and evaluate relational algebra queries using selection, projection, product, union, difference and rename.",
+      "topics": [
+        "Selection and projection",
+        "Cartesian product",
+        "Union and set difference",
+        "Rename operator",
+        "Composing algebra expressions"
+      ],
       "kind": "concept",
       "requires": [
         "relational-model"
@@ -137,6 +179,14 @@
       "name": "Joins & division",
       "icon": "link",
       "desc": "Natural, theta and outer joins, division for 'for all' queries, and result cardinalities.",
+      "summary": "You will be able to use natural, theta and outer joins and division, and compute the cardinality of their results.",
+      "topics": [
+        "Natural join",
+        "Theta and equi joins",
+        "Left, right and full outer joins",
+        "Division for for-all queries",
+        "Bounds on result cardinality"
+      ],
       "kind": "concept",
       "requires": [
         "relational-algebra"
@@ -157,6 +207,14 @@
       "name": "Relational calculus",
       "icon": "type",
       "desc": "Tuple relational calculus, safe expressions and equivalence with relational algebra.",
+      "summary": "You will be able to write tuple relational calculus queries, recognise safe expressions and relate calculus to relational algebra.",
+      "topics": [
+        "Tuple relational calculus syntax",
+        "Existential and universal quantifiers",
+        "Safe expressions",
+        "Domain relational calculus",
+        "Equivalence with relational algebra"
+      ],
       "kind": "concept",
       "requires": [
         "relational-algebra",
@@ -177,6 +235,15 @@
       "name": "SQL",
       "icon": "terminal",
       "desc": "SELECT–FROM–WHERE, joins, set operations, NULLs, duplicates and constraints in SQL.",
+      "summary": "You will be able to write SQL queries with joins, set operations and constraints and predict how NULLs and duplicates behave.",
+      "topics": [
+        "SELECT, FROM and WHERE",
+        "Joins in SQL",
+        "UNION, INTERSECT and EXCEPT",
+        "NULLs and three-valued logic",
+        "DISTINCT and duplicates",
+        "Integrity constraints in DDL"
+      ],
       "kind": "concept",
       "requires": [
         "relational-algebra"
@@ -192,6 +259,14 @@
       "name": "Aggregation & grouping",
       "icon": "chart",
       "desc": "Aggregate functions, GROUP BY and HAVING, and how NULLs affect them.",
+      "summary": "You will be able to summarise data with aggregate functions, GROUP BY and HAVING and predict how NULLs affect the results.",
+      "topics": [
+        "COUNT, SUM, AVG, MIN and MAX",
+        "GROUP BY semantics",
+        "HAVING versus WHERE",
+        "NULLs in aggregates",
+        "COUNT(*) versus COUNT(column)"
+      ],
       "kind": "concept",
       "requires": [
         "sql"
@@ -212,6 +287,14 @@
       "name": "Nested queries",
       "icon": "layers",
       "desc": "Subqueries with IN, EXISTS, ANY and ALL, correlated subqueries and views.",
+      "summary": "You will be able to write and evaluate nested SQL queries using IN, EXISTS, ANY and ALL, correlated subqueries and views.",
+      "topics": [
+        "Subqueries with IN",
+        "EXISTS and NOT EXISTS",
+        "ANY and ALL comparisons",
+        "Correlated subqueries",
+        "Views and virtual tables"
+      ],
       "kind": "concept",
       "requires": [
         "sql"
@@ -235,6 +318,14 @@
       "name": "Functional deps",
       "icon": "function",
       "desc": "FDs, Armstrong's axioms, attribute closure, and equivalence and minimal covers of FD sets.",
+      "summary": "You will be able to reason with functional dependencies using Armstrong's axioms, attribute closure and minimal covers.",
+      "topics": [
+        "Functional dependency definition",
+        "Armstrong's axioms",
+        "Attribute closure",
+        "Equivalence of FD sets",
+        "Minimal or canonical cover"
+      ],
       "kind": "concept",
       "requires": [
         "keys"
@@ -255,6 +346,14 @@
       "name": "Finding keys",
       "icon": "search",
       "desc": "Finding all candidate keys from a set of FDs using attribute closure.",
+      "summary": "You will be able to find all candidate keys of a relation from its functional dependencies using attribute closure.",
+      "topics": [
+        "Attributes never on the right side",
+        "Closure-based key testing",
+        "Finding all candidate keys",
+        "Prime attributes",
+        "Counting candidate keys"
+      ],
       "kind": "concept",
       "requires": [
         "functional-dependencies"
@@ -275,6 +374,14 @@
       "name": "Normalisation",
       "icon": "layers",
       "desc": "Redundancy and anomalies, and why we decompose relations.",
+      "summary": "You will be able to explain how redundancy causes insertion, deletion and update anomalies and why relations are decomposed.",
+      "topics": [
+        "Redundancy in relations",
+        "Insertion anomalies",
+        "Deletion anomalies",
+        "Update anomalies",
+        "Goals of decomposition"
+      ],
       "kind": "concept",
       "requires": [
         "candidate-keys"
@@ -290,6 +397,14 @@
       "name": "Normal forms",
       "icon": "check-circle",
       "desc": "1NF, 2NF, 3NF and BCNF: testing a relation and identifying its highest normal form.",
+      "summary": "You will be able to test relations for 1NF, 2NF, 3NF and BCNF and determine the highest normal form a relation satisfies.",
+      "topics": [
+        "First normal form",
+        "Second normal form and partial dependencies",
+        "Third normal form and transitive dependencies",
+        "Boyce-Codd normal form",
+        "Finding the highest normal form"
+      ],
       "kind": "concept",
       "requires": [
         "normalization"
@@ -314,6 +429,14 @@
       "name": "Decomposition",
       "icon": "share",
       "desc": "Lossless-join and dependency-preserving decompositions.",
+      "summary": "You will be able to test whether a decomposition is lossless-join and dependency-preserving and decompose into 3NF or BCNF.",
+      "topics": [
+        "Lossless-join test",
+        "Dependency preservation",
+        "3NF synthesis algorithm",
+        "BCNF decomposition",
+        "Trade-off between BCNF and preservation"
+      ],
       "kind": "concept",
       "requires": [
         "normal-forms"
@@ -333,6 +456,14 @@
       "name": "Transactions",
       "icon": "check",
       "desc": "ACID properties, transaction states and schedules.",
+      "summary": "You will be able to explain ACID properties, transaction states and how transactions interleave in schedules.",
+      "topics": [
+        "ACID properties",
+        "Transaction states",
+        "Schedules and interleaving",
+        "Serial versus concurrent schedules",
+        "Read, write, commit and abort"
+      ],
       "kind": "concept",
       "requires": [
         "sql"
@@ -348,6 +479,14 @@
       "name": "Serializability",
       "icon": "sort",
       "desc": "Conflict and view serializability, and testing with a precedence graph.",
+      "summary": "You will be able to test schedules for conflict and view serializability using precedence graphs.",
+      "topics": [
+        "Conflicting operations",
+        "Conflict serializability",
+        "Precedence graphs",
+        "View serializability",
+        "Blind writes"
+      ],
       "kind": "concept",
       "requires": [
         "transactions"
@@ -368,6 +507,14 @@
       "name": "Recoverable schedules",
       "icon": "warning",
       "desc": "Recoverable, cascadeless and strict schedules.",
+      "summary": "You will be able to classify schedules as recoverable, cascadeless or strict and explain cascading rollbacks.",
+      "topics": [
+        "Recoverable schedules",
+        "Cascading rollbacks",
+        "Cascadeless schedules",
+        "Strict schedules",
+        "Relationship between schedule classes"
+      ],
       "kind": "concept",
       "requires": [
         "serializability"
@@ -389,6 +536,14 @@
       "name": "Concurrency control",
       "icon": "lock",
       "desc": "Two-phase locking and its variants, timestamp ordering and deadlock handling in databases.",
+      "summary": "You will be able to apply two-phase locking variants and timestamp ordering and handle deadlocks in database systems.",
+      "topics": [
+        "Shared and exclusive locks",
+        "Two-phase locking",
+        "Strict and rigorous 2PL",
+        "Timestamp ordering and Thomas write rule",
+        "Wait-die and wound-wait"
+      ],
       "kind": "concept",
       "requires": [
         "serializability",
@@ -414,6 +569,14 @@
       "name": "Logging & recovery",
       "icon": "save",
       "desc": "Write-ahead logging, undo and redo, checkpoints and crash recovery.",
+      "summary": "You will be able to describe write-ahead logging, undo and redo, checkpoints and how a database recovers after a crash.",
+      "topics": [
+        "Write-ahead logging",
+        "Undo and redo operations",
+        "Deferred and immediate update",
+        "Checkpoints in the log",
+        "Crash recovery procedure"
+      ],
       "kind": "concept",
       "requires": [
         "transactions"
@@ -436,6 +599,15 @@
       "name": "File organisation",
       "icon": "server",
       "desc": "Records and blocks, blocking factor, primary, clustering and secondary indexes, multilevel indexes.",
+      "summary": "You will be able to compute blocking factors and index sizes and compare primary, clustering, secondary and multilevel indexes.",
+      "topics": [
+        "Records, blocks and blocking factor",
+        "Primary indexes",
+        "Clustering indexes",
+        "Secondary indexes",
+        "Multilevel indexes",
+        "Dense versus sparse indexes"
+      ],
       "kind": "concept",
       "requires": [
         "relational-model"
@@ -459,6 +631,14 @@
       "name": "B-trees",
       "icon": "tree",
       "desc": "B-tree order, node capacity, height, insertion and splitting.",
+      "summary": "You will be able to compute B-tree order, node capacity and height and trace insertion with node splitting.",
+      "topics": [
+        "B-tree order and node structure",
+        "Order from block size",
+        "Minimum and maximum keys per node",
+        "Insertion and splitting",
+        "Height bounds"
+      ],
       "kind": "concept",
       "requires": [
         "file-organization",
@@ -479,6 +659,15 @@
       "name": "B+ trees",
       "icon": "tree",
       "desc": "B+ tree indexes: order from block size, insertion with splits, deletion, height and range queries.",
+      "summary": "You will be able to size B+ tree indexes from block size and trace insertion, deletion, height and range queries.",
+      "topics": [
+        "Internal versus leaf node order",
+        "Leaf-level linked list",
+        "Insertion with splits",
+        "Deletion and merging",
+        "Height and number of block accesses",
+        "Range queries"
+      ],
       "kind": "concept",
       "requires": [
         "b-trees",

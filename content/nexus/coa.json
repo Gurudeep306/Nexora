@@ -43,6 +43,14 @@
       "name": "Instruction sets",
       "icon": "cpu",
       "desc": "Machine instructions, registers, RISC versus CISC, and how an ISA describes a computer.",
+      "summary": "You will be able to explain how an instruction set architecture describes a computer and compare RISC and CISC designs.",
+      "topics": [
+        "Machine instructions and registers",
+        "Instruction types",
+        "RISC versus CISC",
+        "Stack, accumulator and register machines",
+        "Instruction cycle overview"
+      ],
       "kind": "concept",
       "requires": [
         "dl:signed-numbers"
@@ -58,6 +66,14 @@
       "name": "Instruction formats",
       "icon": "binary",
       "desc": "Fixed and expanding opcodes, operand fields and counting how many instructions fit an encoding.",
+      "summary": "You will be able to design fixed and expanding opcode formats and count how many instructions fit an encoding.",
+      "topics": [
+        "Opcode and operand fields",
+        "Zero, one, two and three address formats",
+        "Fixed-length opcodes",
+        "Expanding opcodes",
+        "Counting possible instructions"
+      ],
       "kind": "concept",
       "requires": [
         "isa"
@@ -78,6 +94,15 @@
       "name": "Addressing modes",
       "icon": "crosshair",
       "desc": "Immediate, direct, indirect, register, indexed, relative and auto-increment addressing.",
+      "summary": "You will be able to compute effective addresses for immediate, direct, indirect, register, indexed, relative and auto-increment modes.",
+      "topics": [
+        "Immediate and direct addressing",
+        "Indirect addressing",
+        "Register and register indirect modes",
+        "Indexed and base addressing",
+        "PC-relative addressing",
+        "Auto-increment and auto-decrement"
+      ],
       "kind": "concept",
       "requires": [
         "isa"
@@ -99,6 +124,14 @@
       "name": "Assembly programs",
       "icon": "code",
       "desc": "Tracing short assembly programs: loops, the program counter, stack operations and flags.",
+      "summary": "You will be able to trace short assembly programs through loops, program counter changes, stack operations and flags.",
+      "topics": [
+        "Tracing register values",
+        "Loops and branches",
+        "Program counter updates",
+        "Push, pop, call and return",
+        "Condition flags"
+      ],
       "kind": "concept",
       "requires": [
         "addressing-modes"
@@ -121,6 +154,14 @@
       "name": "CPU performance",
       "icon": "activity",
       "desc": "CPI, clock rate, execution time, speedup and Amdahl's law.",
+      "summary": "You will be able to compute CPU execution time from CPI and clock rate and apply speedup and Amdahl's law.",
+      "topics": [
+        "Clock rate and cycle time",
+        "CPI and weighted average CPI",
+        "CPU execution time equation",
+        "MIPS as a metric",
+        "Speedup and Amdahl's law"
+      ],
       "kind": "concept",
       "requires": [
         "isa"
@@ -136,6 +177,14 @@
       "name": "Datapath",
       "icon": "cpu",
       "desc": "The ALU, register file and buses that execute instructions, and the steps of instruction execution.",
+      "summary": "You will be able to describe how the ALU, register file and buses execute instructions and list the steps of instruction execution.",
+      "topics": [
+        "ALU and register file",
+        "Internal buses",
+        "Fetch, decode and execute steps",
+        "Single-cycle datapath",
+        "Multi-cycle datapath"
+      ],
       "kind": "concept",
       "requires": [
         "isa",
@@ -153,6 +202,14 @@
       "name": "Register transfers",
       "icon": "array",
       "desc": "Micro-operations on a single-bus datapath and counting the cycles an instruction takes.",
+      "summary": "You will be able to write micro-operations for instructions on a single-bus datapath and count the cycles each takes.",
+      "topics": [
+        "Register transfer notation",
+        "Single-bus datapath organisation",
+        "Micro-operations for fetch",
+        "Micro-operations for execute",
+        "Counting clock cycles"
+      ],
       "kind": "concept",
       "requires": [
         "datapath"
@@ -176,6 +233,14 @@
       "name": "Hardwired control",
       "icon": "settings",
       "desc": "Generating control signals with combinational and sequential logic.",
+      "summary": "You will be able to explain how hardwired control units generate control signals with combinational and sequential logic.",
+      "topics": [
+        "Control signals",
+        "Hardwired control unit design",
+        "Timing with step counters",
+        "Decoders for control",
+        "Hardwired versus microprogrammed"
+      ],
       "kind": "concept",
       "requires": [
         "register-transfer",
@@ -198,6 +263,14 @@
       "name": "Microprogramming",
       "icon": "list",
       "desc": "Microprogrammed control: control memory, horizontal and vertical microinstructions, and control word sizes.",
+      "summary": "You will be able to describe microprogrammed control and compute control word and control memory sizes for horizontal and vertical formats.",
+      "topics": [
+        "Control memory",
+        "Microinstructions and sequencing",
+        "Horizontal microprogramming",
+        "Vertical microprogramming",
+        "Control word and memory size"
+      ],
       "kind": "concept",
       "requires": [
         "hardwired-control"
@@ -217,6 +290,14 @@
       "name": "Pipelining",
       "icon": "layers",
       "desc": "Overlapping instruction execution in stages; pipeline registers and the ideal one-instruction-per-cycle.",
+      "summary": "You will be able to explain how pipelining overlaps instruction execution in stages using pipeline registers to approach one instruction per cycle.",
+      "topics": [
+        "Pipeline stages",
+        "Pipeline registers",
+        "Space-time diagrams",
+        "Ideal CPI of one",
+        "Pipeline fill and drain"
+      ],
       "kind": "concept",
       "requires": [
         "datapath",
@@ -233,6 +314,14 @@
       "name": "Pipeline speedup",
       "icon": "trending-up",
       "desc": "Speedup, throughput and latency with unequal stage delays and pipeline register overhead.",
+      "summary": "You will be able to compute pipeline speedup, throughput and latency with unequal stage delays and register overhead.",
+      "topics": [
+        "Cycle time from slowest stage",
+        "Pipeline register overhead",
+        "Time for n instructions",
+        "Speedup over non-pipelined",
+        "Throughput and latency"
+      ],
       "kind": "concept",
       "requires": [
         "pipelining"
@@ -255,6 +344,14 @@
       "name": "Data hazards",
       "icon": "warning",
       "desc": "RAW, WAR and WAW dependences, stalls and operand forwarding.",
+      "summary": "You will be able to identify RAW, WAR and WAW dependences, count stall cycles and apply operand forwarding.",
+      "topics": [
+        "RAW, WAR and WAW dependences",
+        "Stalls and bubbles",
+        "Operand forwarding",
+        "Load-use hazards",
+        "Counting stall cycles"
+      ],
       "kind": "concept",
       "requires": [
         "pipelining"
@@ -277,6 +374,14 @@
       "name": "Control hazards",
       "icon": "git-branch",
       "desc": "Branch penalties, delayed branches and their effect on the effective CPI.",
+      "summary": "You will be able to compute branch penalties and effective CPI and explain delayed branches and branch prediction.",
+      "topics": [
+        "Branch penalty",
+        "Effective CPI with branches",
+        "Delayed branching",
+        "Static branch prediction",
+        "Flushing the pipeline"
+      ],
       "kind": "concept",
       "requires": [
         "data-hazards"
@@ -295,6 +400,14 @@
       "name": "Memory hierarchy",
       "icon": "layers",
       "desc": "Locality and the levels of the hierarchy; average access time across levels.",
+      "summary": "You will be able to explain locality and the memory hierarchy and compute average access time across levels.",
+      "topics": [
+        "Temporal and spatial locality",
+        "Levels of the memory hierarchy",
+        "Cost, speed and capacity trade-offs",
+        "Average access time",
+        "Inclusion between levels"
+      ],
       "kind": "concept",
       "requires": [
         "performance"
@@ -315,6 +428,14 @@
       "name": "Cache memory",
       "icon": "bolt",
       "desc": "How a cache sits between CPU and memory, blocks, hits and misses.",
+      "summary": "You will be able to explain how a cache sits between CPU and memory, organises data in blocks, and handles hits and misses.",
+      "topics": [
+        "Cache blocks and lines",
+        "Hits and misses",
+        "Tags and valid bits",
+        "Block size effects",
+        "Cache controller role"
+      ],
       "kind": "concept",
       "requires": [
         "memory-hierarchy"
@@ -330,6 +451,15 @@
       "name": "Cache mapping",
       "icon": "grid",
       "desc": "Direct-mapped, set-associative and fully associative caches; splitting an address into tag, index and offset.",
+      "summary": "You will be able to split an address into tag, index and offset for direct-mapped, set-associative and fully associative caches.",
+      "topics": [
+        "Direct-mapped caches",
+        "Set-associative caches",
+        "Fully associative caches",
+        "Tag, index and offset fields",
+        "Tag memory size",
+        "Tracing block placements"
+      ],
       "kind": "concept",
       "requires": [
         "cache",
@@ -352,6 +482,14 @@
       "name": "Cache performance",
       "icon": "activity",
       "desc": "Hit ratio, miss penalty, AMAT, multilevel caches and the kinds of misses.",
+      "summary": "You will be able to compute hit ratio, miss penalty and AMAT for single and multilevel caches and classify cache misses.",
+      "topics": [
+        "Hit ratio and miss rate",
+        "Miss penalty",
+        "Average memory access time",
+        "Multilevel caches",
+        "Compulsory, capacity and conflict misses"
+      ],
       "kind": "concept",
       "requires": [
         "cache-mapping"
@@ -375,6 +513,14 @@
       "name": "Cache policies",
       "icon": "sliders",
       "desc": "Replacement (LRU, FIFO) and write policies: write-through, write-back and write-allocate.",
+      "summary": "You will be able to apply LRU and FIFO replacement and compare write-through, write-back and write-allocate policies.",
+      "topics": [
+        "LRU replacement",
+        "FIFO replacement",
+        "Write-through policy",
+        "Write-back and dirty bits",
+        "Write-allocate and no-write-allocate"
+      ],
       "kind": "concept",
       "requires": [
         "cache-mapping"
@@ -394,6 +540,14 @@
       "name": "Main memory",
       "icon": "database",
       "desc": "Memory chips, address decoding, interleaving and banks; DRAM refresh and memory capacity.",
+      "summary": "You will be able to design memory from chips with address decoding and analyse interleaving, banks and DRAM refresh.",
+      "topics": [
+        "Memory chip organisation",
+        "Building larger memory from chips",
+        "Address decoding",
+        "Memory interleaving and banks",
+        "DRAM refresh overhead"
+      ],
       "kind": "concept",
       "requires": [
         "memory-hierarchy",
@@ -410,6 +564,14 @@
       "name": "Interrupts",
       "icon": "bell",
       "desc": "Interrupt-driven I/O, vectored interrupts, priorities and daisy chaining.",
+      "summary": "You will be able to explain interrupt-driven I/O with vectored interrupts, priorities and daisy chaining.",
+      "topics": [
+        "Interrupt-driven I/O",
+        "Interrupt service routines",
+        "Vectored interrupts",
+        "Interrupt priorities",
+        "Daisy chaining"
+      ],
       "kind": "concept",
       "requires": [
         "assembly-programs"
@@ -429,6 +591,14 @@
       "name": "Programmed I/O",
       "icon": "terminal",
       "desc": "Polling, handshaking, memory-mapped versus isolated I/O and serial transfer rates.",
+      "summary": "You will be able to compare polling, handshaking, memory-mapped and isolated I/O and compute serial transfer rates.",
+      "topics": [
+        "Programmed I/O and polling",
+        "Handshaking signals",
+        "Memory-mapped versus isolated I/O",
+        "Serial transfer rates",
+        "CPU overhead of polling"
+      ],
       "kind": "concept",
       "requires": [
         "isa"
@@ -452,6 +622,14 @@
       "name": "DMA",
       "icon": "server",
       "desc": "Direct memory access, burst and cycle-stealing modes, and the CPU time DMA saves.",
+      "summary": "You will be able to explain direct memory access in burst and cycle-stealing modes and compute the CPU time it saves.",
+      "topics": [
+        "DMA controller role",
+        "Burst mode",
+        "Cycle-stealing mode",
+        "CPU time consumed by transfers",
+        "DMA versus interrupt-driven I/O"
+      ],
       "kind": "concept",
       "requires": [
         "io-interrupts",

@@ -39,6 +39,14 @@
       "name": "Java basics",
       "icon": "code",
       "desc": "Types, variables, operators, control flow and compiling and running a Java program.",
+      "summary": "You will be able to write, compile and run simple Java programs using primitive types, operators and control flow.",
+      "topics": [
+        "Compiling with javac and running with java",
+        "Primitive types and type casting",
+        "Operators and expressions",
+        "if, switch and loops",
+        "The main method and program structure"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 40,
@@ -55,6 +63,14 @@
       "name": "Methods & arrays",
       "icon": "array",
       "desc": "Static methods, arrays, the String class and StringBuilder.",
+      "summary": "You will be able to organise code into static methods and work with arrays, String and StringBuilder efficiently.",
+      "topics": [
+        "Defining static methods and parameters",
+        "Pass-by-value semantics",
+        "One- and two-dimensional arrays",
+        "String immutability and common methods",
+        "Building strings with StringBuilder"
+      ],
       "kind": "concept",
       "requires": [
         "java-basics"
@@ -67,6 +83,14 @@
       "name": "Classes & objects",
       "icon": "shapes",
       "desc": "Classes, constructors, encapsulation, inheritance and polymorphism in Java.",
+      "summary": "You will be able to model problems with Java classes using constructors, encapsulation, inheritance and polymorphism.",
+      "topics": [
+        "Classes, fields and constructors",
+        "Access modifiers and encapsulation",
+        "Inheritance with extends and super",
+        "Method overriding and polymorphism",
+        "The Object class and toString"
+      ],
       "kind": "concept",
       "requires": [
         "java-methods-arrays"
@@ -79,6 +103,14 @@
       "name": "Interfaces",
       "icon": "layers",
       "desc": "Interfaces, abstract classes, default methods and programming to an interface.",
+      "summary": "You will be able to choose between interfaces and abstract classes and write code against interfaces rather than implementations.",
+      "topics": [
+        "Declaring and implementing interfaces",
+        "Abstract classes and methods",
+        "Default and static interface methods",
+        "Programming to an interface",
+        "Multiple interface implementation"
+      ],
       "kind": "concept",
       "requires": [
         "java-oop"
@@ -91,6 +123,14 @@
       "name": "Exceptions",
       "icon": "warning",
       "desc": "Checked and unchecked exceptions, try-with-resources and custom exceptions.",
+      "summary": "You will be able to handle and throw checked and unchecked exceptions, manage resources with try-with-resources and define custom exceptions.",
+      "topics": [
+        "Checked vs unchecked exceptions",
+        "try, catch and finally",
+        "try-with-resources and AutoCloseable",
+        "Throwing and declaring exceptions",
+        "Custom exception classes"
+      ],
       "kind": "concept",
       "requires": [
         "java-oop"
@@ -103,6 +143,14 @@
       "name": "Enums & records",
       "icon": "tag",
       "desc": "Enums with behaviour, records as immutable data carriers, and sealed types.",
+      "summary": "You will be able to model fixed sets of values with enums, immutable data with records and closed hierarchies with sealed types.",
+      "topics": [
+        "Enums with fields and methods",
+        "Switching over enums",
+        "Records as immutable data carriers",
+        "Compact record constructors",
+        "Sealed classes and interfaces"
+      ],
       "kind": "concept",
       "requires": [
         "java-oop"
@@ -115,6 +163,14 @@
       "name": "Generics",
       "icon": "shapes",
       "desc": "Generic classes and methods, bounded types and wildcards.",
+      "summary": "You will be able to write type-safe generic classes and methods and use bounded types and wildcards correctly.",
+      "topics": [
+        "Generic classes and methods",
+        "Bounded type parameters",
+        "Wildcards with extends and super",
+        "The PECS rule",
+        "Type erasure and its limits"
+      ],
       "kind": "concept",
       "requires": [
         "interfaces"
@@ -127,6 +183,15 @@
       "name": "Collections",
       "icon": "list",
       "desc": "List, Set, Map and Queue implementations, equals/hashCode and choosing the right one.",
+      "summary": "You will be able to pick the right List, Set, Map or Queue implementation and implement equals and hashCode consistently.",
+      "topics": [
+        "ArrayList vs LinkedList",
+        "HashSet, LinkedHashSet and TreeSet",
+        "HashMap and TreeMap",
+        "Queues and ArrayDeque",
+        "The equals and hashCode contract",
+        "Comparable and Comparator"
+      ],
       "kind": "concept",
       "requires": [
         "generics",
@@ -140,6 +205,14 @@
       "name": "Lambdas & streams",
       "icon": "route",
       "desc": "Functional interfaces, lambdas, method references and the Streams API.",
+      "summary": "You will be able to write concise data-processing code with lambdas, method references and the Streams API.",
+      "topics": [
+        "Functional interfaces",
+        "Lambda expressions and method references",
+        "Stream pipelines: filter, map, reduce",
+        "Collectors and groupingBy",
+        "Optional for absent values"
+      ],
       "kind": "concept",
       "requires": [
         "java-collections"
@@ -152,6 +225,14 @@
       "name": "Bank system project",
       "icon": "coins",
       "desc": "Model accounts, transactions and reports in a console banking app with clean OOP.",
+      "summary": "You will build a console banking application with accounts, transactions and reports designed with clean object-oriented structure.",
+      "topics": [
+        "Modelling accounts and transactions",
+        "Encapsulating balance rules",
+        "Handling invalid operations with exceptions",
+        "Reporting with collections and streams",
+        "Separating domain and console code"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -167,6 +248,14 @@
       "name": "Threads & executors",
       "icon": "bolt",
       "desc": "Threads, executors, futures, synchronized and the java.util.concurrent toolkit.",
+      "summary": "You will be able to run concurrent work with threads and executors and coordinate it safely with synchronisation and concurrent utilities.",
+      "topics": [
+        "Creating threads and Runnable",
+        "ExecutorService and thread pools",
+        "Callable, Future and CompletableFuture",
+        "synchronized and volatile",
+        "Locks and concurrent collections"
+      ],
       "kind": "concept",
       "requires": [
         "java-oop",
@@ -180,6 +269,15 @@
       "name": "JVM & GC",
       "icon": "cpu",
       "desc": "Bytecode, class loading, the heap and stack, and how garbage collectors work.",
+      "summary": "You will understand how the JVM loads and runs bytecode, how memory is laid out and how garbage collectors reclaim objects.",
+      "topics": [
+        "Bytecode and the JIT compiler",
+        "Class loading and class loaders",
+        "Heap vs stack memory",
+        "Generational garbage collection",
+        "G1 and other collectors",
+        "Diagnosing memory issues"
+      ],
       "kind": "concept",
       "requires": [
         "java-oop"
@@ -192,6 +290,14 @@
       "name": "Maven & Gradle",
       "icon": "wrench",
       "desc": "Project layout, dependencies and builds with Maven or Gradle.",
+      "summary": "You will be able to structure a Java project and manage dependencies and builds with Maven or Gradle.",
+      "topics": [
+        "Standard project layout",
+        "Maven pom.xml and lifecycle phases",
+        "Gradle build scripts and tasks",
+        "Dependency scopes and repositories",
+        "Building runnable JARs"
+      ],
       "kind": "lesson",
       "requires": [
         "java-basics"
@@ -204,6 +310,14 @@
       "name": "JUnit testing",
       "icon": "check-circle",
       "desc": "Unit tests, assertions, parameterised tests and mocking with JUnit and Mockito.",
+      "summary": "You will be able to write unit tests with JUnit 5, including parameterised tests, and isolate dependencies with Mockito.",
+      "topics": [
+        "JUnit 5 tests and assertions",
+        "Test lifecycle annotations",
+        "Parameterised tests",
+        "Mocking with Mockito",
+        "Verifying interactions"
+      ],
       "kind": "lesson",
       "requires": [
         "java-oop",
@@ -217,6 +331,14 @@
       "name": "JDBC",
       "icon": "database",
       "desc": "Connecting to a relational database, prepared statements and transactions from Java.",
+      "summary": "You will be able to connect Java code to a relational database with JDBC, run prepared statements and manage transactions.",
+      "topics": [
+        "JDBC drivers and connections",
+        "PreparedStatement and parameters",
+        "Reading results with ResultSet",
+        "Transactions with commit and rollback",
+        "Connection pooling"
+      ],
       "kind": "lesson",
       "requires": [
         "java-exceptions",
@@ -230,6 +352,14 @@
       "name": "Spring Boot",
       "icon": "server",
       "desc": "Dependency injection, controllers and data access with Spring Boot.",
+      "summary": "You will be able to build Spring Boot applications using dependency injection, REST controllers and Spring Data repositories.",
+      "topics": [
+        "Auto-configuration and starters",
+        "Beans and dependency injection",
+        "REST controllers and request mapping",
+        "Spring Data JPA repositories",
+        "Application properties and profiles"
+      ],
       "kind": "lesson",
       "requires": [
         "interfaces",
@@ -250,6 +380,14 @@
       "name": "REST service project",
       "icon": "rocket",
       "desc": "Build a tested Spring Boot REST service backed by a database.",
+      "summary": "You will build a tested Spring Boot REST service backed by a database, with validation and proper error responses.",
+      "topics": [
+        "Designing resource endpoints",
+        "Entities and repositories",
+        "Request validation",
+        "Error handling with controller advice",
+        "Integration tests with a test database"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

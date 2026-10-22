@@ -34,6 +34,14 @@
       "name": "Containers vs VMs",
       "icon": "layers",
       "desc": "What containers are, how they differ from virtual machines and why they took over.",
+      "summary": "You will be able to explain what containers are, how they differ from virtual machines and why they became standard for shipping software.",
+      "topics": [
+        "Containers versus virtual machines",
+        "Shared host kernel",
+        "Images versus containers",
+        "Portability and reproducibility",
+        "Container runtimes and OCI"
+      ],
       "kind": "concept",
       "requires": [
         "os:processes"
@@ -46,6 +54,14 @@
       "name": "Namespaces & cgroups",
       "icon": "cpu",
       "desc": "The kernel features behind containers: namespaces, cgroups and union file systems.",
+      "summary": "You will be able to explain how Linux namespaces, cgroups and union file systems combine to create containers.",
+      "topics": [
+        "PID, network and mount namespaces",
+        "Control groups for resource limits",
+        "Union and overlay file systems",
+        "Capabilities and seccomp",
+        "Container isolation limits"
+      ],
       "kind": "concept",
       "requires": [
         "containers-intro",
@@ -59,6 +75,14 @@
       "name": "Docker basics",
       "icon": "terminal",
       "desc": "Running, inspecting, stopping and removing containers with the Docker CLI.",
+      "summary": "You will be able to run, inspect, stop and remove containers with the Docker CLI.",
+      "topics": [
+        "docker run and its options",
+        "Listing and inspecting containers",
+        "Viewing logs and exec into containers",
+        "Stopping and removing containers",
+        "Port publishing"
+      ],
       "kind": "concept",
       "requires": [
         "containers-intro",
@@ -79,6 +103,14 @@
       "name": "Dockerfiles",
       "icon": "edit",
       "desc": "Writing Dockerfiles, build context and instructions.",
+      "summary": "You will be able to write Dockerfiles that build reliable images using the right instructions and build context.",
+      "topics": [
+        "FROM, RUN, COPY and CMD",
+        "ENTRYPOINT versus CMD",
+        "Build context and .dockerignore",
+        "Environment variables and ARG",
+        "Running as a non-root user"
+      ],
       "kind": "concept",
       "requires": [
         "docker-basics"
@@ -91,6 +123,14 @@
       "name": "Images & registries",
       "icon": "inbox",
       "desc": "Image layers, caching, tags, multi-stage builds and pushing to registries.",
+      "summary": "You will be able to build small, cache-friendly images with multi-stage builds, tag them and push them to registries.",
+      "topics": [
+        "Image layers and caching",
+        "Ordering instructions for cache hits",
+        "Multi-stage builds",
+        "Tags and digests",
+        "Pushing to a registry"
+      ],
       "kind": "concept",
       "requires": [
         "dockerfiles"
@@ -103,6 +143,14 @@
       "name": "Volumes & networks",
       "icon": "database",
       "desc": "Persistent data with volumes and container networking.",
+      "summary": "You will be able to persist container data with volumes and connect containers through Docker networks.",
+      "topics": [
+        "Named volumes",
+        "Bind mounts",
+        "Bridge networks",
+        "Container DNS by name",
+        "Host and none networks"
+      ],
       "kind": "concept",
       "requires": [
         "docker-basics",
@@ -116,6 +164,14 @@
       "name": "Docker Compose",
       "icon": "grid",
       "desc": "Defining multi-container apps with Compose.",
+      "summary": "You will be able to define and run multi-container applications with Docker Compose.",
+      "topics": [
+        "Compose file structure",
+        "Services, volumes and networks",
+        "Environment and configuration",
+        "Dependencies and health checks",
+        "compose up, down and logs"
+      ],
       "kind": "concept",
       "requires": [
         "volumes-networks",
@@ -129,6 +185,14 @@
       "name": "Compose app project",
       "icon": "rocket",
       "desc": "Containerise a web app with a database and cache and run it with Compose.",
+      "summary": "You will containerise a web app with a database and cache and run the whole stack with Docker Compose.",
+      "topics": [
+        "Writing the app Dockerfile",
+        "Adding a database service",
+        "Adding a cache service",
+        "Persisting data with volumes",
+        "Configuring services with environment variables"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -143,6 +207,14 @@
       "name": "Kubernetes",
       "icon": "nexus",
       "desc": "The control plane, nodes, the declarative model and kubectl.",
+      "summary": "You will be able to describe the Kubernetes control plane and nodes, its declarative model and use kubectl to manage resources.",
+      "topics": [
+        "Control plane components",
+        "Worker nodes and kubelet",
+        "Declarative desired state",
+        "Reconciliation loops",
+        "kubectl basics"
+      ],
       "kind": "concept",
       "requires": [
         "images-registries"
@@ -161,6 +233,14 @@
       "name": "Pods & Deployments",
       "icon": "layers",
       "desc": "Pods, ReplicaSets, Deployments, rolling updates and probes.",
+      "summary": "You will be able to run workloads with Pods, ReplicaSets and Deployments, roll out updates and configure health probes.",
+      "topics": [
+        "Pods and containers",
+        "ReplicaSets and desired replicas",
+        "Deployments and rolling updates",
+        "Rolling back a Deployment",
+        "Liveness and readiness probes"
+      ],
       "kind": "concept",
       "requires": [
         "kubernetes"
@@ -173,6 +253,14 @@
       "name": "Services & Ingress",
       "icon": "route",
       "desc": "Service discovery, Service types and routing traffic in with Ingress.",
+      "summary": "You will be able to expose workloads with Services and route external HTTP traffic in with Ingress.",
+      "topics": [
+        "ClusterIP Services",
+        "NodePort and LoadBalancer types",
+        "Service discovery with DNS",
+        "Ingress resources",
+        "Ingress controllers"
+      ],
       "kind": "concept",
       "requires": [
         "pods-deployments"
@@ -185,6 +273,14 @@
       "name": "ConfigMaps & Secrets",
       "icon": "key",
       "desc": "Separating configuration and secrets from images.",
+      "summary": "You will be able to keep configuration and secrets out of images using ConfigMaps and Secrets.",
+      "topics": [
+        "Creating ConfigMaps",
+        "Creating Secrets",
+        "Injecting as environment variables",
+        "Mounting as files",
+        "Limits of Secret encoding"
+      ],
       "kind": "concept",
       "requires": [
         "pods-deployments"
@@ -197,6 +293,14 @@
       "name": "Persistent storage",
       "icon": "save",
       "desc": "Volumes, PersistentVolumeClaims, StorageClasses and StatefulSets.",
+      "summary": "You will be able to give workloads persistent storage with PersistentVolumeClaims, StorageClasses and StatefulSets.",
+      "topics": [
+        "Volumes in Pods",
+        "PersistentVolumes and claims",
+        "StorageClasses and dynamic provisioning",
+        "Access modes",
+        "StatefulSets for stateful apps"
+      ],
       "kind": "concept",
       "requires": [
         "pods-deployments"
@@ -209,6 +313,14 @@
       "name": "Helm",
       "icon": "book",
       "desc": "Packaging Kubernetes apps as Helm charts.",
+      "summary": "You will be able to package and install Kubernetes applications as Helm charts with configurable values.",
+      "topics": [
+        "Chart structure",
+        "Templates and values",
+        "Installing and upgrading releases",
+        "Rollback of releases",
+        "Chart repositories"
+      ],
       "kind": "lesson",
       "requires": [
         "services-ingress",
@@ -222,6 +334,14 @@
       "name": "Autoscaling",
       "icon": "trending-up",
       "desc": "Resource requests and limits, horizontal pod and cluster autoscaling.",
+      "summary": "You will be able to set resource requests and limits and scale workloads with horizontal pod and cluster autoscaling.",
+      "topics": [
+        "Resource requests and limits",
+        "Quality of service classes",
+        "Horizontal Pod Autoscaler",
+        "Cluster autoscaling",
+        "Vertical Pod Autoscaler"
+      ],
       "kind": "concept",
       "requires": [
         "pods-deployments"
@@ -234,6 +354,14 @@
       "name": "Observability",
       "icon": "activity",
       "desc": "Logs, metrics and debugging failing pods.",
+      "summary": "You will be able to debug failing pods using logs, events, metrics and kubectl inspection.",
+      "topics": [
+        "kubectl logs and describe",
+        "Events and CrashLoopBackOff",
+        "Metrics Server and kubectl top",
+        "Prometheus and Grafana",
+        "Common pod failure causes"
+      ],
       "kind": "concept",
       "requires": [
         "services-ingress"
@@ -246,6 +374,14 @@
       "name": "Kubernetes security",
       "icon": "shield",
       "desc": "RBAC, network policies, pod security and image scanning.",
+      "summary": "You will be able to secure a cluster with RBAC, network policies, pod security settings and image scanning.",
+      "topics": [
+        "Role-based access control",
+        "Service accounts",
+        "Network policies",
+        "Pod security standards",
+        "Image scanning"
+      ],
       "kind": "concept",
       "requires": [
         "config-secrets"
@@ -258,6 +394,14 @@
       "name": "Kubernetes app project",
       "icon": "rocket",
       "desc": "Deploy a multi-service app to a cluster with a Helm chart, autoscaling and monitoring.",
+      "summary": "You will deploy a multi-service app to a Kubernetes cluster with a Helm chart, autoscaling and monitoring.",
+      "topics": [
+        "Writing a Helm chart",
+        "Deployments and Services",
+        "Ingress routing",
+        "Horizontal autoscaling",
+        "Monitoring with metrics"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

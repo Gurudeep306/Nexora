@@ -38,6 +38,14 @@
       "name": "DevOps culture",
       "icon": "users",
       "desc": "Breaking down silos, shared ownership, DORA metrics and fast feedback.",
+      "summary": "You will be able to explain how DevOps breaks down silos through shared ownership and fast feedback and measure delivery with DORA metrics.",
+      "topics": [
+        "Dev and ops silos",
+        "Shared ownership of services",
+        "Fast feedback loops",
+        "The four DORA metrics",
+        "Continuous improvement culture"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 40
@@ -48,6 +56,14 @@
       "name": "Everything in Git",
       "icon": "git-branch",
       "desc": "Everything in version control: code, config and infrastructure.",
+      "summary": "You will be able to keep code, configuration and infrastructure in version control and use branching and review workflows to change them safely.",
+      "topics": [
+        "Version controlling everything",
+        "Trunk-based development",
+        "Pull requests and code review",
+        "Configuration as code",
+        "Tagging releases"
+      ],
       "kind": "concept",
       "requires": [
         "devops-culture",
@@ -61,6 +77,14 @@
       "name": "Automation scripting",
       "icon": "terminal",
       "desc": "Automating repetitive tasks with shell and Python scripts.",
+      "summary": "You will be able to automate repetitive operational tasks with robust shell and Python scripts.",
+      "topics": [
+        "Shell scripting fundamentals",
+        "Exit codes and error handling",
+        "Python for automation tasks",
+        "Idempotent scripts",
+        "Scheduling scripts with cron"
+      ],
       "kind": "concept",
       "requires": [
         "devops-culture",
@@ -74,6 +98,14 @@
       "name": "Build automation",
       "icon": "wrench",
       "desc": "Reproducible builds, dependency management and build caching.",
+      "summary": "You will be able to create reproducible builds with pinned dependencies and build caching.",
+      "topics": [
+        "Build tools and scripts",
+        "Dependency pinning and lockfiles",
+        "Reproducible builds",
+        "Build caching",
+        "Hermetic build environments"
+      ],
       "kind": "concept",
       "requires": [
         "automation-scripts"
@@ -86,6 +118,14 @@
       "name": "CI/CD",
       "icon": "run",
       "desc": "Continuous integration and delivery pipelines from commit to deploy.",
+      "summary": "You will be able to build continuous integration and delivery pipelines that take a commit through build, test and deploy stages.",
+      "topics": [
+        "Continuous integration principles",
+        "Continuous delivery versus deployment",
+        "Pipeline stages and jobs",
+        "Pipeline triggers",
+        "Pipeline configuration as code"
+      ],
       "kind": "concept",
       "requires": [
         "build-automation",
@@ -99,6 +139,14 @@
       "name": "Tests in the pipeline",
       "icon": "check-circle",
       "desc": "Unit, integration and security scans as pipeline stages and quality gates.",
+      "summary": "You will be able to run unit, integration and security scans as pipeline stages with quality gates that block bad changes.",
+      "topics": [
+        "Unit tests in CI",
+        "Integration tests with services",
+        "Static analysis and linting",
+        "Security and dependency scanning",
+        "Quality gates"
+      ],
       "kind": "lesson",
       "requires": [
         "ci-cd"
@@ -111,6 +159,14 @@
       "name": "Artifacts & registries",
       "icon": "inbox",
       "desc": "Versioned build artifacts, container registries and promotion between environments.",
+      "summary": "You will be able to version build artifacts, store them in registries and promote the same artifact between environments.",
+      "topics": [
+        "Versioned build artifacts",
+        "Artifact repositories",
+        "Container registries",
+        "Build once, deploy many",
+        "Promotion between environments"
+      ],
       "kind": "concept",
       "requires": [
         "build-automation"
@@ -123,6 +179,14 @@
       "name": "Blue-green & canary",
       "icon": "route",
       "desc": "Rolling, blue-green and canary deployments and rollbacks.",
+      "summary": "You will be able to release safely with rolling, blue-green and canary deployments and roll back quickly when problems appear.",
+      "topics": [
+        "Rolling deployments",
+        "Blue-green deployments",
+        "Canary releases",
+        "Automated rollbacks",
+        "Database changes during deploys"
+      ],
       "kind": "concept",
       "requires": [
         "ci-cd"
@@ -135,6 +199,14 @@
       "name": "Feature flags",
       "icon": "flag",
       "desc": "Decoupling deploy from release with feature flags.",
+      "summary": "You will be able to decouple deployment from release using feature flags for gradual rollouts and quick kill switches.",
+      "topics": [
+        "Deploy versus release",
+        "Release and ops toggles",
+        "Percentage rollouts",
+        "Kill switches",
+        "Cleaning up stale flags"
+      ],
       "kind": "concept",
       "requires": [
         "deploy-strategies"
@@ -147,6 +219,14 @@
       "name": "GitOps",
       "icon": "git-branch",
       "desc": "Declarative deployments reconciled from a Git repository.",
+      "summary": "You will be able to run declarative deployments that a controller continuously reconciles from a Git repository.",
+      "topics": [
+        "Declarative desired state",
+        "Pull-based reconciliation",
+        "Argo CD and Flux",
+        "Drift detection",
+        "Rollback by reverting commits"
+      ],
       "kind": "concept",
       "requires": [
         "deploy-strategies",
@@ -160,6 +240,14 @@
       "name": "Infrastructure as code",
       "icon": "code",
       "desc": "Provisioning infrastructure declaratively, plans, state and modules.",
+      "summary": "You will be able to provision infrastructure declaratively, review plans, manage state and reuse modules.",
+      "topics": [
+        "Declarative provisioning",
+        "Plan and apply workflow",
+        "Remote state and locking",
+        "Reusable modules",
+        "Infrastructure changes in CI"
+      ],
       "kind": "concept",
       "requires": [
         "git-flow-ops",
@@ -173,6 +261,14 @@
       "name": "Config management",
       "icon": "settings",
       "desc": "Configuring servers with tools like Ansible and immutable infrastructure.",
+      "summary": "You will be able to configure servers with tools like Ansible and explain when immutable infrastructure is the better choice.",
+      "topics": [
+        "Configuration management tools",
+        "Ansible playbooks and inventories",
+        "Idempotent configuration",
+        "Configuration drift",
+        "Immutable infrastructure and images"
+      ],
       "kind": "concept",
       "requires": [
         "infra-as-code-ops"
@@ -185,6 +281,14 @@
       "name": "Secrets management",
       "icon": "key",
       "desc": "Storing and injecting secrets safely in pipelines and runtime.",
+      "summary": "You will be able to store secrets securely and inject them into pipelines and running applications without leaking them.",
+      "topics": [
+        "Why secrets stay out of code",
+        "Secret managers like Vault",
+        "Injecting secrets in CI",
+        "Runtime secret injection",
+        "Rotation and leak detection"
+      ],
       "kind": "concept",
       "requires": [
         "infra-as-code-ops"
@@ -197,6 +301,14 @@
       "name": "Monitoring & metrics",
       "icon": "activity",
       "desc": "Metrics, dashboards, SLIs and SLOs.",
+      "summary": "You will be able to collect metrics, build dashboards and define SLIs and SLOs that reflect user experience.",
+      "topics": [
+        "Metric types and collection",
+        "Prometheus and Grafana",
+        "Golden signals",
+        "Service level indicators",
+        "Service level objectives"
+      ],
       "kind": "concept",
       "requires": [
         "deploy-strategies"
@@ -209,6 +321,14 @@
       "name": "Logging",
       "icon": "list",
       "desc": "Structured logs, aggregation and search.",
+      "summary": "You will be able to produce structured logs and aggregate and search them centrally.",
+      "topics": [
+        "Structured logging",
+        "Log levels",
+        "Log aggregation pipelines",
+        "Searching and querying logs",
+        "Retention and cost"
+      ],
       "kind": "concept",
       "requires": [
         "monitoring"
@@ -221,6 +341,14 @@
       "name": "Alerting & on-call",
       "icon": "bell",
       "desc": "Actionable alerts, on-call rotations and runbooks.",
+      "summary": "You will be able to write actionable alerts, organise on-call rotations and support responders with runbooks.",
+      "topics": [
+        "Symptom-based alerting",
+        "Reducing alert fatigue",
+        "On-call rotations",
+        "Escalation policies",
+        "Writing runbooks"
+      ],
       "kind": "concept",
       "requires": [
         "monitoring"
@@ -233,6 +361,14 @@
       "name": "Incidents & SRE",
       "icon": "flame",
       "desc": "Incident handling, blameless postmortems and error budgets.",
+      "summary": "You will be able to handle incidents, run blameless postmortems and use error budgets to balance reliability and speed.",
+      "topics": [
+        "Incident roles and communication",
+        "Severity levels",
+        "Mitigation before root cause",
+        "Blameless postmortems",
+        "Error budgets"
+      ],
       "kind": "concept",
       "requires": [
         "alerting",
@@ -246,6 +382,14 @@
       "name": "CI/CD pipeline project",
       "icon": "rocket",
       "desc": "Build a full pipeline that tests, packages and deploys an app with automatic rollback.",
+      "summary": "You will build a complete pipeline that tests, packages and deploys an application with automatic rollback on failure.",
+      "topics": [
+        "Pipeline configuration",
+        "Automated testing stages",
+        "Packaging and publishing artifacts",
+        "Automated deployment",
+        "Health checks and automatic rollback"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -261,6 +405,14 @@
       "name": "Observable service",
       "icon": "analytics",
       "desc": "Provision a service with code, add dashboards and alerts, and run an incident drill.",
+      "summary": "You will provision a service with infrastructure as code, add dashboards and alerts, and run an incident drill against it.",
+      "topics": [
+        "Provisioning with code",
+        "Instrumenting metrics and logs",
+        "Dashboards and alerts",
+        "Running an incident drill",
+        "Writing the postmortem"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

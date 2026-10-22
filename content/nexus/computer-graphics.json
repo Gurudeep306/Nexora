@@ -38,6 +38,14 @@
       "name": "Vectors & geometry",
       "icon": "crosshair",
       "desc": "Points, vectors, dot and cross products, lines and planes in 3D.",
+      "summary": "You will be able to use points, vectors, dot and cross products, lines and planes to solve 3D geometry problems in graphics.",
+      "topics": [
+        "Points versus vectors",
+        "Dot product and angles",
+        "Cross product and normals",
+        "Lines and parametric rays",
+        "Planes and point-plane distance"
+      ],
       "kind": "concept",
       "requires": [
         "la:vectors"
@@ -50,6 +58,14 @@
       "name": "Transformations",
       "icon": "layers",
       "desc": "Translation, rotation and scaling with homogeneous coordinates and composition.",
+      "summary": "You will be able to represent translation, rotation and scaling as matrices in homogeneous coordinates and compose them correctly.",
+      "topics": [
+        "Homogeneous coordinates",
+        "Translation, rotation and scaling matrices",
+        "Composition and order of transforms",
+        "Transforming normals",
+        "Model, world and local spaces"
+      ],
       "kind": "lesson",
       "requires": [
         "vectors-geometry",
@@ -63,6 +79,14 @@
       "name": "Raster images",
       "icon": "image",
       "desc": "Pixels, framebuffers, resolution and anti-aliasing.",
+      "summary": "You will be able to explain how images are stored as pixels in framebuffers and reduce aliasing artefacts.",
+      "topics": [
+        "Pixels and resolution",
+        "Framebuffers and colour depth",
+        "Aliasing and jaggies",
+        "Supersampling and MSAA",
+        "Image formats"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 60
@@ -73,6 +97,14 @@
       "name": "Colour & light",
       "icon": "palette",
       "desc": "RGB and colour spaces, gamma, HDR and how we perceive colour.",
+      "summary": "You will be able to work with RGB and other colour spaces, apply gamma correction and explain HDR and colour perception.",
+      "topics": [
+        "Human colour perception",
+        "RGB and HSV colour spaces",
+        "sRGB and gamma correction",
+        "Linear versus gamma space",
+        "HDR and tone mapping"
+      ],
       "kind": "concept",
       "requires": [
         "raster-images"
@@ -85,6 +117,14 @@
       "name": "Rasterisation",
       "icon": "grid",
       "desc": "Turning lines and triangles into pixels with barycentric interpolation.",
+      "summary": "You will be able to convert lines and triangles into pixels and interpolate attributes with barycentric coordinates.",
+      "topics": [
+        "Line drawing with Bresenham",
+        "Triangle rasterisation with edge functions",
+        "Barycentric coordinates",
+        "Attribute interpolation",
+        "Perspective-correct interpolation"
+      ],
       "kind": "lesson",
       "requires": [
         "raster-images",
@@ -98,6 +138,14 @@
       "name": "Cameras & projection",
       "icon": "eye",
       "desc": "View transforms, perspective and orthographic projection.",
+      "summary": "You will be able to build view and projection matrices for perspective and orthographic cameras.",
+      "topics": [
+        "Camera look-at view matrix",
+        "Perspective projection",
+        "Orthographic projection",
+        "Field of view and aspect ratio",
+        "Clip space and normalised device coordinates"
+      ],
       "kind": "lesson",
       "requires": [
         "transformations"
@@ -110,6 +158,14 @@
       "name": "The GPU pipeline",
       "icon": "cpu",
       "desc": "Vertex processing, rasterisation, fragment processing and output merging on the GPU.",
+      "summary": "You will be able to describe each stage of the GPU pipeline from vertex processing to output merging.",
+      "topics": [
+        "Vertex shading stage",
+        "Primitive assembly",
+        "Rasterisation stage",
+        "Fragment shading stage",
+        "Depth test and blending"
+      ],
       "kind": "lesson",
       "requires": [
         "rasterisation",
@@ -124,6 +180,14 @@
       "name": "Visibility",
       "icon": "filter",
       "desc": "Clipping, culling and the z-buffer.",
+      "summary": "You will be able to determine visible surfaces using clipping, back-face and frustum culling and the z-buffer.",
+      "topics": [
+        "Clipping against the view frustum",
+        "Back-face culling",
+        "Frustum culling",
+        "The z-buffer algorithm",
+        "Depth precision and z-fighting"
+      ],
       "kind": "concept",
       "requires": [
         "rasterisation"
@@ -136,6 +200,14 @@
       "name": "WebGL & OpenGL",
       "icon": "code",
       "desc": "Buffers, shaders programs and draw calls in a graphics API.",
+      "summary": "You will be able to draw geometry with WebGL or OpenGL using buffers, shader programs and draw calls.",
+      "topics": [
+        "Vertex buffers and attributes",
+        "Compiling and linking shader programs",
+        "Uniform variables",
+        "Draw calls and index buffers",
+        "The render loop"
+      ],
       "kind": "lesson",
       "requires": [
         "gpu-pipeline"
@@ -148,6 +220,14 @@
       "name": "Lighting models",
       "icon": "sun",
       "desc": "Ambient, diffuse and specular light with Phong and Blinn-Phong.",
+      "summary": "You will be able to compute ambient, diffuse and specular lighting with the Phong and Blinn-Phong models.",
+      "topics": [
+        "Ambient lighting",
+        "Lambertian diffuse reflection",
+        "Phong specular highlights",
+        "Blinn-Phong half vector",
+        "Point and directional lights"
+      ],
       "kind": "lesson",
       "requires": [
         "gpu-pipeline"
@@ -160,6 +240,14 @@
       "name": "Shaders",
       "icon": "wand",
       "desc": "Writing vertex and fragment shaders for lighting and effects.",
+      "summary": "You will be able to write vertex and fragment shaders in GLSL to implement lighting and visual effects.",
+      "topics": [
+        "GLSL syntax and types",
+        "Vertex shader responsibilities",
+        "Fragment shader responsibilities",
+        "Passing varyings between stages",
+        "Per-fragment lighting"
+      ],
       "kind": "lesson",
       "requires": [
         "webgl-opengl",
@@ -173,6 +261,14 @@
       "name": "Texture mapping",
       "icon": "image",
       "desc": "UV coordinates, mipmapping, filtering and normal maps.",
+      "summary": "You will be able to apply textures with UV coordinates, filtering and mipmaps and add surface detail with normal maps.",
+      "topics": [
+        "UV coordinates",
+        "Nearest and bilinear filtering",
+        "Mipmapping and trilinear filtering",
+        "Texture wrapping modes",
+        "Normal mapping and tangent space"
+      ],
       "kind": "lesson",
       "requires": [
         "shaders"
@@ -185,6 +281,14 @@
       "name": "Shadows",
       "icon": "moon",
       "desc": "Shadow mapping and its artefacts.",
+      "summary": "You will be able to render shadows with shadow mapping and reduce its artefacts like acne and aliasing.",
+      "topics": [
+        "Shadow map rendering from the light",
+        "Depth comparison for shadows",
+        "Shadow acne and bias",
+        "Percentage-closer filtering",
+        "Cascaded shadow maps"
+      ],
       "kind": "lesson",
       "requires": [
         "shaders",
@@ -198,6 +302,14 @@
       "name": "Real-time renderer",
       "icon": "rocket",
       "desc": "Build a renderer that loads meshes and draws lit, textured, shadowed scenes.",
+      "summary": "You will build a real-time renderer that loads meshes and draws lit, textured and shadowed scenes.",
+      "topics": [
+        "Loading mesh files",
+        "Camera controls",
+        "Lighting shaders",
+        "Texture loading",
+        "Shadow mapping pass"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -212,6 +324,14 @@
       "name": "Ray casting",
       "icon": "crosshair",
       "desc": "Generating rays and intersecting them with spheres, planes and triangles.",
+      "summary": "You will be able to generate camera rays and compute intersections with spheres, planes and triangles.",
+      "topics": [
+        "Generating camera rays",
+        "Ray-sphere intersection",
+        "Ray-plane intersection",
+        "Ray-triangle intersection",
+        "Closest hit and shading"
+      ],
       "kind": "lesson",
       "requires": [
         "cameras-projection"
@@ -224,6 +344,14 @@
       "name": "BVHs & grids",
       "icon": "tree",
       "desc": "Acceleration structures that make ray tracing fast.",
+      "summary": "You will be able to speed up ray tracing with bounding volume hierarchies and uniform grids.",
+      "topics": [
+        "Bounding boxes and slab test",
+        "Building a BVH",
+        "Surface area heuristic",
+        "Traversing a BVH",
+        "Uniform grids"
+      ],
       "kind": "lesson",
       "requires": [
         "ray-casting"
@@ -236,6 +364,14 @@
       "name": "Path tracing",
       "icon": "route",
       "desc": "The rendering equation and Monte Carlo light transport.",
+      "summary": "You will be able to explain the rendering equation and estimate light transport with Monte Carlo path tracing.",
+      "topics": [
+        "The rendering equation",
+        "Monte Carlo integration",
+        "Importance sampling",
+        "Russian roulette termination",
+        "Noise and sample counts"
+      ],
       "kind": "lesson",
       "requires": [
         "ray-casting",
@@ -249,6 +385,14 @@
       "name": "PBR materials",
       "icon": "gem",
       "desc": "Physically based materials, microfacets and energy conservation.",
+      "summary": "You will be able to describe physically based materials with microfacet models and energy conservation.",
+      "topics": [
+        "BRDFs and reflectance",
+        "Microfacet theory",
+        "GGX distribution",
+        "Fresnel and Schlick approximation",
+        "Metallic-roughness workflow"
+      ],
       "kind": "concept",
       "requires": [
         "path-tracing",
@@ -262,6 +406,14 @@
       "name": "Ray tracer",
       "icon": "trophy",
       "desc": "Write a path tracer that renders global illumination scenes.",
+      "summary": "You will write a path tracer that renders scenes with global illumination using physically based materials.",
+      "topics": [
+        "Scene description",
+        "Recursive path tracing",
+        "Material sampling",
+        "Acceleration structure",
+        "Image output and denoising"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -276,6 +428,14 @@
       "name": "Curves & surfaces",
       "icon": "shapes",
       "desc": "Bezier curves, B-splines and subdivision surfaces.",
+      "summary": "You will be able to construct Bezier curves, B-splines and subdivision surfaces and evaluate them.",
+      "topics": [
+        "Bezier curves and control points",
+        "De Casteljau's algorithm",
+        "B-splines and knots",
+        "Bezier surface patches",
+        "Subdivision surfaces"
+      ],
       "kind": "concept",
       "requires": [
         "transformations"
@@ -288,6 +448,14 @@
       "name": "Mesh processing",
       "icon": "grid",
       "desc": "Mesh data structures, normals, simplification and smoothing.",
+      "summary": "You will be able to store and process meshes, compute normals, simplify them and smooth them.",
+      "topics": [
+        "Indexed face sets",
+        "Half-edge data structure",
+        "Computing vertex normals",
+        "Mesh simplification",
+        "Laplacian smoothing"
+      ],
       "kind": "lesson",
       "requires": [
         "curves-surfaces"
@@ -300,6 +468,14 @@
       "name": "Animation",
       "icon": "play",
       "desc": "Keyframes, interpolation, quaternions and skeletal skinning.",
+      "summary": "You will be able to animate objects with keyframes and interpolation, use quaternions for rotation and skin characters with skeletons.",
+      "topics": [
+        "Keyframes and interpolation",
+        "Splines for motion",
+        "Quaternions and slerp",
+        "Skeletal hierarchies",
+        "Linear blend skinning"
+      ],
       "kind": "lesson",
       "requires": [
         "transformations",
@@ -313,6 +489,14 @@
       "name": "Simulation",
       "icon": "activity",
       "desc": "Particles, cloth and rigid bodies with numerical integration.",
+      "summary": "You will be able to simulate particles, cloth and rigid bodies using numerical integration methods.",
+      "topics": [
+        "Particle systems",
+        "Euler and Verlet integration",
+        "Mass-spring cloth",
+        "Rigid body dynamics",
+        "Collision detection and response"
+      ],
       "kind": "concept",
       "requires": [
         "animation",

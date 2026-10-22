@@ -39,6 +39,14 @@
       "name": "Goals & adversaries",
       "icon": "target",
       "desc": "Confidentiality, integrity, authenticity and Kerckhoffs's principle.",
+      "summary": "You will be able to state the goals of cryptography, model adversaries and explain Kerckhoffs's principle.",
+      "topics": [
+        "Confidentiality, integrity and authenticity",
+        "Threat models and adversaries",
+        "Kerckhoffs's principle",
+        "Symmetric versus asymmetric cryptography",
+        "Attack models like chosen plaintext"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 40
@@ -49,6 +57,14 @@
       "name": "Classical ciphers",
       "icon": "book",
       "desc": "Caesar, Vigenère and substitution ciphers and how to break them.",
+      "summary": "You will be able to encrypt with Caesar, Vigenere and substitution ciphers and break them with frequency analysis.",
+      "topics": [
+        "Caesar shift cipher",
+        "Monoalphabetic substitution",
+        "Vigenere cipher",
+        "Frequency analysis",
+        "Kasiski examination"
+      ],
       "kind": "concept",
       "requires": [
         "crypto-intro"
@@ -61,6 +77,14 @@
       "name": "Perfect secrecy",
       "icon": "eye",
       "desc": "One-time pad, Shannon's perfect secrecy and why it is impractical.",
+      "summary": "You will be able to define Shannon's perfect secrecy, prove the one-time pad achieves it and explain why it is impractical.",
+      "topics": [
+        "Shannon's definition of perfect secrecy",
+        "The one-time pad",
+        "Key length lower bound",
+        "Dangers of key reuse",
+        "Practical limitations"
+      ],
       "kind": "concept",
       "requires": [
         "classical-ciphers",
@@ -74,6 +98,14 @@
       "name": "Computational security",
       "icon": "cpu",
       "desc": "Security against efficient adversaries, negligible advantage and pseudorandomness.",
+      "summary": "You will be able to define security against efficient adversaries using negligible advantage and pseudorandomness.",
+      "topics": [
+        "Efficient adversaries",
+        "Negligible functions",
+        "Indistinguishability games",
+        "Pseudorandom generators",
+        "Pseudorandom functions"
+      ],
       "kind": "concept",
       "requires": [
         "perfect-secrecy",
@@ -87,6 +119,14 @@
       "name": "Block ciphers & AES",
       "icon": "lock",
       "desc": "Block ciphers, substitution-permutation networks and AES.",
+      "summary": "You will be able to explain how block ciphers work and describe the structure of AES as a substitution-permutation network.",
+      "topics": [
+        "Block ciphers as permutations",
+        "Substitution-permutation networks",
+        "Feistel networks and DES",
+        "AES rounds and key schedule",
+        "Key sizes and brute force"
+      ],
       "kind": "concept",
       "requires": [
         "computational-security"
@@ -99,6 +139,14 @@
       "name": "Stream ciphers",
       "icon": "route",
       "desc": "Pseudorandom generators, ChaCha20 and the danger of nonce reuse.",
+      "summary": "You will be able to describe stream ciphers built from pseudorandom generators such as ChaCha20 and explain the danger of nonce reuse.",
+      "topics": [
+        "Keystreams and XOR encryption",
+        "Stream ciphers from PRGs",
+        "ChaCha20 design",
+        "Nonces and counters",
+        "Two-time pad attacks"
+      ],
       "kind": "concept",
       "requires": [
         "computational-security"
@@ -111,6 +159,14 @@
       "name": "Modes of operation",
       "icon": "layers",
       "desc": "ECB, CBC, CTR and why the mode matters.",
+      "summary": "You will be able to compare ECB, CBC and CTR modes and explain why the choice of mode affects security.",
+      "topics": [
+        "ECB and its pattern leakage",
+        "CBC mode and IVs",
+        "CTR mode",
+        "Padding for block modes",
+        "IV and nonce requirements"
+      ],
       "kind": "concept",
       "requires": [
         "symmetric-crypto"
@@ -123,6 +179,15 @@
       "name": "Hash functions",
       "icon": "hash",
       "desc": "Collision, preimage and second-preimage resistance, SHA-2 and SHA-3.",
+      "summary": "You will be able to define collision, preimage and second-preimage resistance and describe SHA-2 and SHA-3.",
+      "topics": [
+        "Preimage resistance",
+        "Second-preimage resistance",
+        "Collision resistance",
+        "Birthday attack bound",
+        "SHA-2 and Merkle-Damgard",
+        "SHA-3 sponge construction"
+      ],
       "kind": "concept",
       "requires": [
         "computational-security"
@@ -135,6 +200,14 @@
       "name": "MACs",
       "icon": "check-circle",
       "desc": "Message authentication codes and HMAC.",
+      "summary": "You will be able to authenticate messages with MACs and HMAC and explain why naive hash-based MACs fail.",
+      "topics": [
+        "MAC security definition",
+        "Length extension attacks",
+        "HMAC construction",
+        "CBC-MAC and its pitfalls",
+        "Constant-time tag comparison"
+      ],
       "kind": "concept",
       "requires": [
         "crypto-hashing",
@@ -148,6 +221,14 @@
       "name": "AEAD",
       "icon": "shield",
       "desc": "Encrypt-then-MAC and AEAD modes like AES-GCM.",
+      "summary": "You will be able to combine encryption and authentication correctly with encrypt-then-MAC and AEAD modes such as AES-GCM.",
+      "topics": [
+        "Why encryption alone is not enough",
+        "Encrypt-then-MAC composition",
+        "AEAD and associated data",
+        "AES-GCM mode",
+        "ChaCha20-Poly1305 construction"
+      ],
       "kind": "concept",
       "requires": [
         "macs",
@@ -161,6 +242,14 @@
       "name": "Password hashing",
       "icon": "key",
       "desc": "Salts, key stretching, bcrypt, scrypt and Argon2.",
+      "summary": "You will be able to store passwords safely using salts, key stretching and algorithms like bcrypt, scrypt and Argon2.",
+      "topics": [
+        "Why fast hashes are unsafe",
+        "Salts and rainbow tables",
+        "Key stretching",
+        "bcrypt and scrypt",
+        "Argon2 and memory hardness"
+      ],
       "kind": "concept",
       "requires": [
         "crypto-hashing"
@@ -173,6 +262,14 @@
       "name": "Public-key basics",
       "icon": "key",
       "desc": "Key pairs, trapdoor functions and hard problems behind public-key crypto.",
+      "summary": "You will be able to explain how key pairs, trapdoor functions and hard mathematical problems make public-key cryptography possible.",
+      "topics": [
+        "Public and private key pairs",
+        "Trapdoor one-way functions",
+        "Modular arithmetic background",
+        "Factoring and discrete log problems",
+        "Hybrid encryption"
+      ],
       "kind": "concept",
       "requires": [
         "computational-security",
@@ -186,6 +283,14 @@
       "name": "RSA",
       "icon": "calculator",
       "desc": "Key generation, encryption, padding and why textbook RSA is insecure.",
+      "summary": "You will be able to generate RSA keys, encrypt and decrypt, and explain why textbook RSA needs padding such as OAEP.",
+      "topics": [
+        "RSA key generation",
+        "Euler's totient and modular inverse",
+        "Encryption and decryption",
+        "Malleability of textbook RSA",
+        "OAEP padding"
+      ],
       "kind": "concept",
       "requires": [
         "public-key",
@@ -199,6 +304,14 @@
       "name": "Diffie-Hellman",
       "icon": "share",
       "desc": "Key exchange over groups and the discrete logarithm problem.",
+      "summary": "You will be able to perform Diffie-Hellman key exchange over a group and relate its security to the discrete logarithm problem.",
+      "topics": [
+        "Cyclic groups and generators",
+        "Diffie-Hellman exchange steps",
+        "Discrete logarithm problem",
+        "Computational Diffie-Hellman assumption",
+        "Man-in-the-middle attacks"
+      ],
       "kind": "concept",
       "requires": [
         "public-key",
@@ -212,6 +325,14 @@
       "name": "Elliptic curves",
       "icon": "shapes",
       "desc": "Elliptic-curve groups, ECDH and why keys are shorter.",
+      "summary": "You will be able to describe elliptic-curve groups, perform ECDH and explain why elliptic-curve keys are shorter for equal security.",
+      "topics": [
+        "Elliptic curve equations",
+        "Point addition and doubling",
+        "Scalar multiplication",
+        "ECDH key exchange",
+        "Curve25519 and key sizes"
+      ],
       "kind": "concept",
       "requires": [
         "diffie-hellman"
@@ -224,6 +345,14 @@
       "name": "Digital signatures",
       "icon": "edit",
       "desc": "RSA and ECDSA/EdDSA signatures and hash-then-sign.",
+      "summary": "You will be able to explain how RSA, ECDSA and EdDSA signatures work and why messages are hashed before signing.",
+      "topics": [
+        "Signature security goals",
+        "Hash-then-sign paradigm",
+        "RSA signatures and PSS",
+        "ECDSA and nonce reuse",
+        "EdDSA and Ed25519"
+      ],
       "kind": "concept",
       "requires": [
         "rsa",
@@ -238,6 +367,14 @@
       "name": "PKI & certificates",
       "icon": "award",
       "desc": "Certificates, certificate authorities, chains of trust and revocation.",
+      "summary": "You will be able to explain how certificates, certificate authorities and chains of trust bind keys to identities, and how revocation works.",
+      "topics": [
+        "X.509 certificates",
+        "Certificate authorities",
+        "Chains of trust and root stores",
+        "Revocation with CRL and OCSP",
+        "Certificate transparency"
+      ],
       "kind": "concept",
       "requires": [
         "digital-signatures"
@@ -250,6 +387,14 @@
       "name": "TLS",
       "icon": "lock",
       "desc": "The TLS 1.3 handshake, forward secrecy and record protection.",
+      "summary": "You will be able to walk through the TLS 1.3 handshake and explain forward secrecy and record protection.",
+      "topics": [
+        "TLS 1.3 handshake flow",
+        "Ephemeral key exchange",
+        "Forward secrecy",
+        "Server authentication with certificates",
+        "Record layer encryption"
+      ],
       "kind": "concept",
       "requires": [
         "pki",
@@ -264,6 +409,14 @@
       "name": "Attacks & misuse",
       "icon": "warning",
       "desc": "Padding oracles, timing side channels and common implementation mistakes.",
+      "summary": "You will be able to recognise padding oracle attacks, timing side channels and common implementation mistakes in cryptographic code.",
+      "topics": [
+        "Padding oracle attacks",
+        "Timing side channels",
+        "Nonce and IV reuse",
+        "Weak randomness",
+        "Rolling your own crypto"
+      ],
       "kind": "concept",
       "requires": [
         "authenticated-encryption",
@@ -277,6 +430,14 @@
       "name": "Zero-knowledge proofs",
       "icon": "eye",
       "desc": "Proving a statement without revealing why, and where ZK proofs are used.",
+      "summary": "You will be able to explain how zero-knowledge proofs prove a statement without revealing the reason, and where they are used.",
+      "topics": [
+        "Completeness, soundness and zero knowledge",
+        "Interactive proofs like Schnorr",
+        "Fiat-Shamir heuristic",
+        "zk-SNARKs overview",
+        "Applications in authentication and blockchains"
+      ],
       "kind": "concept",
       "requires": [
         "digital-signatures"
@@ -289,6 +450,14 @@
       "name": "Toy RSA project",
       "icon": "code",
       "desc": "Implement RSA key generation, encryption and signing from scratch, then attack weak parameters.",
+      "summary": "You will implement RSA key generation, encryption and signing from scratch and then attack keys with weak parameters.",
+      "topics": [
+        "Generating primes",
+        "Computing keys with extended Euclid",
+        "Modular exponentiation",
+        "Signing and verification",
+        "Attacking small exponents and close primes"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -303,6 +472,14 @@
       "name": "Secure chat project",
       "icon": "messages",
       "desc": "Build an end-to-end encrypted chat with key exchange, AEAD and authenticated peers.",
+      "summary": "You will build an end-to-end encrypted chat with key exchange, AEAD encryption and authenticated peers.",
+      "topics": [
+        "Key exchange between peers",
+        "Deriving keys with HKDF",
+        "AEAD message encryption",
+        "Authenticating peers with signatures",
+        "Replay protection"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

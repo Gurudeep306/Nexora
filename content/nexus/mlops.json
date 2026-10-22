@@ -38,6 +38,14 @@
       "name": "ML lifecycle",
       "icon": "route",
       "desc": "The path from experiment to production model and where ML systems fail.",
+      "summary": "You will understand the stages a model goes through from experiment to production and the common ways ML systems fail.",
+      "topics": [
+        "Stages from data to deployment",
+        "Experimentation vs production code",
+        "Training-serving skew",
+        "Hidden technical debt in ML systems",
+        "Common failure modes in production"
+      ],
       "kind": "concept",
       "requires": [
         "ml:end-to-end-pipeline"
@@ -50,6 +58,14 @@
       "name": "MLOps principles",
       "icon": "compass",
       "desc": "Automation, versioning, testing and monitoring as practices, and maturity levels.",
+      "summary": "You will be able to explain the core MLOps practices of automation, versioning, testing and monitoring and assess a team's maturity level.",
+      "topics": [
+        "Automation of training and deployment",
+        "Versioning code, data and models",
+        "Testing and monitoring as practices",
+        "MLOps maturity levels",
+        "Roles across data science and engineering"
+      ],
       "kind": "concept",
       "requires": [
         "ml-lifecycle"
@@ -62,6 +78,14 @@
       "name": "Reproducible envs",
       "icon": "layers",
       "desc": "Pinned dependencies, lock files, random seeds and deterministic training.",
+      "summary": "You will be able to make training runs reproducible with pinned dependencies, lock files, fixed seeds and deterministic settings.",
+      "topics": [
+        "Pinning dependencies with lock files",
+        "Containerised environments",
+        "Setting random seeds",
+        "Deterministic GPU operations",
+        "Recording environment metadata"
+      ],
       "kind": "lesson",
       "requires": [
         "ml-lifecycle"
@@ -74,6 +98,14 @@
       "name": "Data versioning",
       "icon": "git-branch",
       "desc": "Versioning datasets and features alongside code.",
+      "summary": "You will be able to version datasets and features alongside code so any model can be traced back to its exact data.",
+      "topics": [
+        "Why data needs versioning",
+        "Data versioning tools like DVC",
+        "Storing data in remote storage",
+        "Linking data versions to commits",
+        "Dataset snapshots and lineage"
+      ],
       "kind": "lesson",
       "requires": [
         "reproducible-envs",
@@ -87,6 +119,14 @@
       "name": "Experiment tracking",
       "icon": "analytics",
       "desc": "Logging parameters, metrics and artefacts to compare runs.",
+      "summary": "You will be able to log parameters, metrics and artefacts for each training run and compare runs to choose the best model.",
+      "topics": [
+        "Logging parameters and metrics",
+        "Storing artefacts and models",
+        "Tracking tools like MLflow",
+        "Comparing and visualising runs",
+        "Tagging and organising experiments"
+      ],
       "kind": "lesson",
       "requires": [
         "reproducible-envs"
@@ -99,6 +139,14 @@
       "name": "Feature stores",
       "icon": "database",
       "desc": "Sharing consistent features between training and serving.",
+      "summary": "You will understand how feature stores keep feature definitions consistent between training and serving.",
+      "topics": [
+        "Offline and online feature stores",
+        "Feature definitions and reuse",
+        "Point-in-time correct joins",
+        "Avoiding training-serving skew",
+        "Feature freshness and materialisation"
+      ],
       "kind": "concept",
       "requires": [
         "data-versioning"
@@ -111,6 +159,14 @@
       "name": "Model registry",
       "icon": "bookmarks",
       "desc": "Versioned models, stages, approvals and lineage.",
+      "summary": "You will be able to manage model versions in a registry with stages, approvals and lineage back to their training runs.",
+      "topics": [
+        "Registering model versions",
+        "Stages like staging and production",
+        "Approval and promotion workflows",
+        "Model lineage and metadata",
+        "Rolling back to earlier versions"
+      ],
       "kind": "lesson",
       "requires": [
         "experiment-tracking"
@@ -123,6 +179,14 @@
       "name": "Packaging models",
       "icon": "copy",
       "desc": "Serialising models and packaging them with their runtime into containers.",
+      "summary": "You will be able to serialise trained models and package them with their runtime dependencies into containers.",
+      "topics": [
+        "Model serialisation formats",
+        "ONNX for portable models",
+        "Packaging inference code with the model",
+        "Building Docker images for models",
+        "Managing model artefact size"
+      ],
       "kind": "lesson",
       "requires": [
         "model-registry",
@@ -136,6 +200,14 @@
       "name": "Model serving",
       "icon": "server",
       "desc": "Online and batch inference, REST and gRPC endpoints, and latency budgets.",
+      "summary": "You will be able to choose between online and batch inference and expose models through REST or gRPC endpoints within latency budgets.",
+      "topics": [
+        "Online vs batch inference",
+        "REST and gRPC endpoints",
+        "Model servers and frameworks",
+        "Latency budgets and percentiles",
+        "Autoscaling inference services"
+      ],
       "kind": "lesson",
       "requires": [
         "model-packaging"
@@ -148,6 +220,14 @@
       "name": "Faster inference",
       "icon": "bolt",
       "desc": "Quantisation, compilation, batching and hardware choices.",
+      "summary": "You will be able to speed up model inference with quantisation, compilation, batching and appropriate hardware choices.",
+      "topics": [
+        "Post-training quantisation",
+        "Graph compilation and optimisation",
+        "Dynamic batching of requests",
+        "CPU vs GPU inference",
+        "Distillation and pruning"
+      ],
       "kind": "lesson",
       "requires": [
         "model-serving"
@@ -160,6 +240,14 @@
       "name": "Serve a model",
       "icon": "rocket",
       "desc": "Containerise a trained model and serve it behind a documented API with load tests.",
+      "summary": "You will containerise a trained model, serve it behind a documented API and load-test it to measure latency and throughput.",
+      "topics": [
+        "Writing the inference API",
+        "Request and response schemas",
+        "Containerising the service",
+        "API documentation",
+        "Load testing for latency and throughput"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -173,6 +261,14 @@
       "name": "Training pipelines",
       "icon": "workshop",
       "desc": "Orchestrated, repeatable pipelines from data to registered model.",
+      "summary": "You will be able to build orchestrated training pipelines that repeatably turn raw data into a registered model.",
+      "topics": [
+        "Pipeline steps and DAGs",
+        "Orchestrators like Airflow and Kubeflow",
+        "Data validation steps",
+        "Training and evaluation steps",
+        "Registering the resulting model"
+      ],
       "kind": "lesson",
       "requires": [
         "feature-stores",
@@ -186,6 +282,14 @@
       "name": "CI/CD for ML",
       "icon": "check-circle",
       "desc": "Automated tests, training and gated promotion of models.",
+      "summary": "You will be able to set up CI/CD for ML that tests code, retrains models and promotes them only when they pass quality gates.",
+      "topics": [
+        "Continuous integration for ML code",
+        "Automated training in CI",
+        "Evaluation gates before promotion",
+        "Continuous delivery of models",
+        "Canary and blue-green model rollouts"
+      ],
       "kind": "lesson",
       "requires": [
         "training-pipelines",
@@ -199,6 +303,14 @@
       "name": "Testing ML systems",
       "icon": "check",
       "desc": "Data tests, model behaviour tests and infrastructure tests.",
+      "summary": "You will be able to test ML systems at the data, model and infrastructure levels to catch problems before production.",
+      "topics": [
+        "Data validation and schema tests",
+        "Model behaviour and invariance tests",
+        "Performance regression tests",
+        "Infrastructure and integration tests",
+        "Testing for training-serving consistency"
+      ],
       "kind": "lesson",
       "requires": [
         "training-pipelines"
@@ -211,6 +323,14 @@
       "name": "ML on Kubernetes",
       "icon": "grid",
       "desc": "Scaling training jobs and inference services on a cluster.",
+      "summary": "You will be able to run training jobs and scalable inference services on Kubernetes with GPUs and autoscaling.",
+      "topics": [
+        "Kubernetes basics for ML",
+        "Running training as Jobs",
+        "Scheduling GPU workloads",
+        "Deploying inference services",
+        "Horizontal pod autoscaling"
+      ],
       "kind": "lesson",
       "requires": [
         "model-serving",
@@ -224,6 +344,14 @@
       "name": "Model monitoring",
       "icon": "activity",
       "desc": "Tracking latency, errors, prediction distributions and business metrics.",
+      "summary": "You will be able to monitor deployed models by tracking latency, errors, prediction distributions and business metrics with alerts.",
+      "topics": [
+        "Operational metrics: latency and errors",
+        "Prediction distribution monitoring",
+        "Delayed ground truth and accuracy tracking",
+        "Business KPI monitoring",
+        "Dashboards and alerting"
+      ],
       "kind": "lesson",
       "requires": [
         "model-serving"
@@ -236,6 +364,14 @@
       "name": "Drift detection",
       "icon": "trending-up",
       "desc": "Detecting data and concept drift with statistical tests.",
+      "summary": "You will be able to detect data drift and concept drift in production using statistical tests and distribution distances.",
+      "topics": [
+        "Data drift vs concept drift",
+        "Kolmogorov-Smirnov test",
+        "Population stability index",
+        "Chi-square tests for categorical features",
+        "Setting drift thresholds"
+      ],
       "kind": "concept",
       "requires": [
         "model-monitoring",
@@ -249,6 +385,14 @@
       "name": "Retraining loops",
       "icon": "route",
       "desc": "Triggered and scheduled retraining, shadow deployments and rollbacks.",
+      "summary": "You will be able to keep models current with scheduled or triggered retraining and release them safely with shadow deployments and rollbacks.",
+      "topics": [
+        "Scheduled vs triggered retraining",
+        "Drift-based retraining triggers",
+        "Shadow deployments",
+        "Champion-challenger comparison",
+        "Automated rollback"
+      ],
       "kind": "lesson",
       "requires": [
         "drift-detection",
@@ -262,6 +406,14 @@
       "name": "Responsible ML",
       "icon": "shield",
       "desc": "Fairness audits, explainability, model cards and governance.",
+      "summary": "You will be able to audit models for fairness, explain their predictions and document them with model cards under clear governance.",
+      "topics": [
+        "Fairness metrics and audits",
+        "Explainability with SHAP and LIME",
+        "Model cards and datasheets",
+        "Governance and approval processes",
+        "Privacy and regulatory considerations"
+      ],
       "kind": "concept",
       "requires": [
         "model-monitoring"
@@ -274,6 +426,14 @@
       "name": "End-to-end MLOps",
       "icon": "trophy",
       "desc": "Build a pipeline that trains, deploys, monitors and retrains a model automatically.",
+      "summary": "You will build an automated system that trains, deploys, monitors and retrains a model end to end.",
+      "topics": [
+        "Automated training pipeline",
+        "Model registry and promotion",
+        "Serving and monitoring",
+        "Drift-triggered retraining",
+        "Documenting the system"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

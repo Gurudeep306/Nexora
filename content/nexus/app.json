@@ -39,6 +39,14 @@
       "name": "Mobile platforms",
       "icon": "monitor",
       "desc": "iOS and Android, native versus cross-platform (Flutter, React Native), and how apps are packaged and run.",
+      "summary": "You will be able to compare iOS and Android, native and cross-platform approaches, and explain how mobile apps are packaged and run.",
+      "topics": [
+        "iOS and Android platform differences",
+        "Native versus cross-platform development",
+        "Flutter and React Native architectures",
+        "App packages like APK, AAB and IPA",
+        "App sandboxing and permissions"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 60
@@ -49,6 +57,14 @@
       "name": "App language",
       "icon": "code",
       "desc": "Getting fluent in the language of your stack: Kotlin, Swift, Dart or TypeScript.",
+      "summary": "You will be able to write everyday app code fluently in your stack's language, whether Kotlin, Swift, Dart or TypeScript.",
+      "topics": [
+        "Types, variables and null safety",
+        "Functions, closures and lambdas",
+        "Classes, structs and data models",
+        "Collections and their common operations",
+        "Async syntax in your language"
+      ],
       "kind": "lesson",
       "requires": [
         "mobile-platforms"
@@ -61,6 +77,14 @@
       "name": "Tooling & emulators",
       "icon": "wrench",
       "desc": "IDEs, simulators and emulators, debugging, and running on a real device.",
+      "summary": "You will be able to set up an IDE, run apps on simulators, emulators and real devices, and debug them effectively.",
+      "topics": [
+        "IDEs like Android Studio, Xcode and VS Code",
+        "Simulators versus emulators",
+        "Running on a physical device",
+        "Breakpoints and the debugger",
+        "Logs and hot reload"
+      ],
       "kind": "lesson",
       "requires": [
         "mobile-platforms"
@@ -73,6 +97,14 @@
       "name": "Mobile UI",
       "icon": "palette",
       "desc": "Declarative UI, widgets and components, layout and styling.",
+      "summary": "You will be able to build mobile screens with declarative UI components and control their layout and styling.",
+      "topics": [
+        "Declarative UI and rendering from state",
+        "Widgets and reusable components",
+        "Stacks, rows and columns for layout",
+        "Spacing, alignment and styling",
+        "Handling taps and user input"
+      ],
       "kind": "lesson",
       "requires": [
         "app-language",
@@ -96,6 +128,14 @@
       "name": "Lists & layouts",
       "icon": "list",
       "desc": "Scrolling lists, grids, adaptive layouts for phones and tablets.",
+      "summary": "You will be able to display scrolling lists and grids efficiently and adapt layouts to different phone and tablet sizes.",
+      "topics": [
+        "Lazy and recycled scrolling lists",
+        "Grids and sections",
+        "Stable item keys",
+        "Responsive layouts and breakpoints",
+        "Safe areas and orientation changes"
+      ],
       "kind": "lesson",
       "requires": [
         "mobile-ui"
@@ -108,6 +148,14 @@
       "name": "Navigation",
       "icon": "compass",
       "desc": "Screens, stacks, tabs, passing arguments and deep links.",
+      "summary": "You will be able to move between screens using stacks and tabs, pass arguments and open specific screens from deep links.",
+      "topics": [
+        "Stack navigation and the back stack",
+        "Tab and drawer navigation",
+        "Passing arguments between screens",
+        "Modal screens and dialogs",
+        "Deep links and universal links"
+      ],
       "kind": "lesson",
       "requires": [
         "mobile-ui"
@@ -120,6 +168,14 @@
       "name": "Theming & a11y",
       "icon": "sun",
       "desc": "Design systems, dark mode, dynamic type and screen readers.",
+      "summary": "You will be able to apply a consistent design system with dark mode and make apps usable with dynamic type and screen readers.",
+      "topics": [
+        "Design tokens and theme objects",
+        "Light and dark mode",
+        "Dynamic type and scalable text",
+        "Screen reader labels with VoiceOver and TalkBack",
+        "Touch target size and colour contrast"
+      ],
       "kind": "concept",
       "requires": [
         "mobile-ui"
@@ -132,6 +188,14 @@
       "name": "Todo app",
       "icon": "check",
       "desc": "Build a multi-screen todo app with lists, navigation and a polished theme.",
+      "summary": "You will build a multi-screen todo app with lists, navigation between screens and a polished, consistent theme.",
+      "topics": [
+        "Designing todo list and detail screens",
+        "Adding, editing and completing items",
+        "Navigating with arguments",
+        "Applying a theme and dark mode",
+        "Accessibility checks"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -146,6 +210,14 @@
       "name": "App state",
       "icon": "sliders",
       "desc": "Local versus shared state, state hoisting, view models and unidirectional data flow.",
+      "summary": "You will be able to decide where state should live and manage it with view models and unidirectional data flow.",
+      "topics": [
+        "Local versus shared state",
+        "State hoisting",
+        "View models as state holders",
+        "Unidirectional data flow",
+        "Immutable UI state objects"
+      ],
       "kind": "lesson",
       "requires": [
         "navigation"
@@ -158,6 +230,14 @@
       "name": "App lifecycle",
       "icon": "activity",
       "desc": "Foreground, background and process death; saving and restoring state.",
+      "summary": "You will be able to handle foreground, background and process death so your app saves and restores state reliably.",
+      "topics": [
+        "App and screen lifecycle states",
+        "Foreground and background transitions",
+        "Process death and recreation",
+        "Saving and restoring UI state",
+        "Releasing resources when backgrounded"
+      ],
       "kind": "concept",
       "requires": [
         "app-state",
@@ -171,6 +251,14 @@
       "name": "Local storage",
       "icon": "save",
       "desc": "Key-value preferences, files and on-device SQL databases (SQLite, Room, Core Data).",
+      "summary": "You will be able to store data on the device with key-value preferences, files and SQL databases such as SQLite, Room or Core Data.",
+      "topics": [
+        "Key-value storage for settings",
+        "Reading and writing files",
+        "SQLite tables and queries",
+        "Room and Core Data abstractions",
+        "Schema migrations"
+      ],
       "kind": "lesson",
       "requires": [
         "app-state",
@@ -184,6 +272,14 @@
       "name": "Async & threads",
       "icon": "clock",
       "desc": "Keeping the main thread free: coroutines, async/await and background work.",
+      "summary": "You will be able to keep the main thread responsive by moving slow work to background threads with coroutines or async/await.",
+      "topics": [
+        "The main UI thread and freezes",
+        "Coroutines and async/await",
+        "Background threads and dispatchers",
+        "Cancelling work when screens close",
+        "Updating UI safely from background work"
+      ],
       "kind": "lesson",
       "requires": [
         "app-state",
@@ -197,6 +293,14 @@
       "name": "Notes app",
       "icon": "edit",
       "desc": "Build a notes app with search and on-device persistence that survives restarts.",
+      "summary": "You will build a notes app with search and on-device persistence so notes survive app restarts.",
+      "topics": [
+        "Note data model and database schema",
+        "Create, edit and delete flows",
+        "Searching and filtering notes",
+        "Persisting with a local database",
+        "Restoring state after restart"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -211,6 +315,14 @@
       "name": "Networking",
       "icon": "globe",
       "desc": "Calling REST APIs, JSON parsing, error handling and loading states.",
+      "summary": "You will be able to call REST APIs from an app, parse JSON responses and show loading, success and error states.",
+      "topics": [
+        "HTTP clients on mobile",
+        "Parsing JSON into models",
+        "Loading, success and error UI states",
+        "Handling timeouts and no connectivity",
+        "Retrying failed requests"
+      ],
       "kind": "lesson",
       "requires": [
         "concurrency-mobile",
@@ -224,6 +336,14 @@
       "name": "Sign-in & security",
       "icon": "lock",
       "desc": "Login flows, secure token storage and OAuth on mobile.",
+      "summary": "You will be able to implement sign-in flows on mobile, store tokens securely and use OAuth with PKCE.",
+      "topics": [
+        "Email and password login flows",
+        "OAuth 2.0 with PKCE on mobile",
+        "Secure storage with Keychain and Keystore",
+        "Access and refresh tokens",
+        "Signing out and session expiry"
+      ],
       "kind": "lesson",
       "requires": [
         "app-networking"
@@ -236,6 +356,14 @@
       "name": "Offline & sync",
       "icon": "download",
       "desc": "Caching responses, offline-first design, and syncing local data with a server.",
+      "summary": "You will be able to design offline-first apps that cache responses and synchronise local changes with a server.",
+      "topics": [
+        "Caching API responses locally",
+        "Offline-first architecture",
+        "Queuing local changes for upload",
+        "Conflict resolution strategies",
+        "Detecting connectivity changes"
+      ],
       "kind": "lesson",
       "requires": [
         "app-networking",
@@ -249,6 +377,14 @@
       "name": "Weather app",
       "icon": "sun",
       "desc": "Build a weather app that fetches forecasts from a public API, caches them for offline use, and handles errors gracefully.",
+      "summary": "You will build a weather app that fetches forecasts from a public API, caches them offline and handles errors gracefully.",
+      "topics": [
+        "Calling a public weather API",
+        "Modelling forecast data",
+        "Caching forecasts for offline use",
+        "Location-based lookups",
+        "Error and empty states"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -262,6 +398,14 @@
       "name": "Device features",
       "icon": "image",
       "desc": "Permissions, camera, location and sensors.",
+      "summary": "You will be able to request permissions and use the camera, location and motion sensors in a mobile app.",
+      "topics": [
+        "Runtime permission requests",
+        "Camera capture and photo picking",
+        "Location updates and accuracy",
+        "Accelerometer and gyroscope sensors",
+        "Handling denied permissions"
+      ],
       "kind": "lesson",
       "requires": [
         "app-state"
@@ -274,6 +418,14 @@
       "name": "Notifications",
       "icon": "bell",
       "desc": "Local and push notifications and background tasks.",
+      "summary": "You will be able to schedule local notifications, receive push notifications and run tasks in the background.",
+      "topics": [
+        "Local scheduled notifications",
+        "Push via FCM and APNs",
+        "Notification permissions",
+        "Handling notification taps",
+        "Background task limits"
+      ],
       "kind": "lesson",
       "requires": [
         "app-networking"
@@ -286,6 +438,14 @@
       "name": "Testing & perf",
       "icon": "check-circle",
       "desc": "Unit and UI tests, profiling, startup time and smooth scrolling.",
+      "summary": "You will be able to test apps with unit and UI tests and profile startup time, memory and scrolling performance.",
+      "topics": [
+        "Unit tests for logic and view models",
+        "UI tests for user flows",
+        "Profiling CPU and memory",
+        "Measuring startup time",
+        "Smooth scrolling and frame rate"
+      ],
       "kind": "lesson",
       "requires": [
         "app-state"
@@ -298,6 +458,14 @@
       "name": "Publishing",
       "icon": "upload",
       "desc": "Signing, store listings, review guidelines, releases and crash reporting.",
+      "summary": "You will be able to sign, release and monitor an app on the App Store or Play Store, including crash reporting.",
+      "topics": [
+        "Code signing and certificates",
+        "Store listings and screenshots",
+        "Review guidelines and rejections",
+        "Beta tracks and staged rollouts",
+        "Crash reporting and analytics"
+      ],
       "kind": "lesson",
       "requires": [
         "app-testing"
@@ -310,6 +478,14 @@
       "name": "Capstone app",
       "icon": "trophy",
       "desc": "Design, build and publish (to a test track) an app with sign-in, a backend API, offline support and notifications.",
+      "summary": "You will design, build and publish to a test track an app with sign-in, a backend API, offline support and notifications.",
+      "topics": [
+        "Planning features and architecture",
+        "Sign-in and backend integration",
+        "Offline storage and sync",
+        "Push notifications",
+        "Testing and test-track release"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

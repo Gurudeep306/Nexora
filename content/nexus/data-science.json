@@ -38,6 +38,14 @@
       "name": "Data science workflow",
       "icon": "compass",
       "desc": "The iterative loop of asking a question, collecting and cleaning data, exploring, modelling and communicating.",
+      "summary": "You will be able to follow the iterative data science loop from asking a question through cleaning, exploring and modelling to communicating results.",
+      "topics": [
+        "Framing a question",
+        "Collecting and cleaning data",
+        "Exploring the data",
+        "Modelling and evaluation",
+        "Communicating findings"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 60
@@ -48,6 +56,14 @@
       "name": "Notebooks",
       "icon": "book",
       "desc": "Working in Jupyter notebooks: cells, kernels, inline plots and keeping analysis readable.",
+      "summary": "You will be able to work productively in Jupyter notebooks with cells, kernels and inline plots while keeping analysis readable.",
+      "topics": [
+        "Code and markdown cells",
+        "Kernels and execution order",
+        "Inline plots",
+        "Restart and run all",
+        "Organising a readable notebook"
+      ],
       "kind": "lesson",
       "requires": [
         "python:python-basics",
@@ -61,6 +77,14 @@
       "name": "NumPy arrays",
       "icon": "array",
       "desc": "Vectorised computation with ndarrays: shapes, broadcasting, indexing and aggregation.",
+      "summary": "You will be able to compute with NumPy ndarrays using shapes, broadcasting, indexing and vectorised aggregations.",
+      "topics": [
+        "Creating ndarrays",
+        "Shapes and reshaping",
+        "Broadcasting rules",
+        "Boolean and fancy indexing",
+        "Vectorised aggregations"
+      ],
       "kind": "lesson",
       "requires": [
         "jupyter-notebooks"
@@ -73,6 +97,14 @@
       "name": "pandas DataFrames",
       "icon": "grid",
       "desc": "Series and DataFrames, selecting rows and columns, dtypes and basic summaries.",
+      "summary": "You will be able to create and inspect pandas Series and DataFrames, select rows and columns and summarise data.",
+      "topics": [
+        "Series and DataFrames",
+        "Selecting with loc and iloc",
+        "Boolean filtering",
+        "Data types and conversions",
+        "describe, info and value_counts"
+      ],
       "kind": "lesson",
       "requires": [
         "numpy-arrays"
@@ -85,6 +117,14 @@
       "name": "Getting data",
       "icon": "download",
       "desc": "Loading data from CSV, JSON, Excel, web APIs and SQL databases into DataFrames.",
+      "summary": "You will be able to load data from CSV, JSON, Excel, web APIs and SQL databases into pandas DataFrames.",
+      "topics": [
+        "Reading CSV and Excel files",
+        "Parsing JSON data",
+        "Calling web APIs with requests",
+        "Querying SQL databases",
+        "Handling encodings and parsing options"
+      ],
       "kind": "lesson",
       "requires": [
         "pandas-dataframes",
@@ -98,6 +138,14 @@
       "name": "Data cleaning",
       "icon": "filter",
       "desc": "Handling missing values, wrong types, duplicates, inconsistent categories and outliers.",
+      "summary": "You will be able to clean messy data by handling missing values, wrong types, duplicates, inconsistent categories and outliers.",
+      "topics": [
+        "Detecting and imputing missing values",
+        "Fixing data types",
+        "Removing duplicates",
+        "Standardising categories",
+        "Detecting outliers"
+      ],
       "kind": "lesson",
       "requires": [
         "pandas-dataframes"
@@ -110,6 +158,14 @@
       "name": "Reshape & merge",
       "icon": "layers",
       "desc": "groupby and aggregation, pivot and melt, and joining tables on keys.",
+      "summary": "You will be able to aggregate with groupby, reshape with pivot and melt and join tables on keys in pandas.",
+      "topics": [
+        "groupby and aggregation",
+        "pivot and pivot_table",
+        "melt for long format",
+        "merge and join types",
+        "Concatenating DataFrames"
+      ],
       "kind": "lesson",
       "requires": [
         "data-cleaning"
@@ -122,6 +178,14 @@
       "name": "Time series data",
       "icon": "clock",
       "desc": "Datetime indexes, resampling, rolling windows and handling time zones.",
+      "summary": "You will be able to handle time series in pandas with datetime indexes, resampling, rolling windows and time zones.",
+      "topics": [
+        "Parsing dates and datetime indexes",
+        "Resampling frequencies",
+        "Rolling and expanding windows",
+        "Time zone handling",
+        "Lags and differences"
+      ],
       "kind": "lesson",
       "requires": [
         "reshaping-merging"
@@ -134,6 +198,14 @@
       "name": "Exploratory analysis",
       "icon": "search",
       "desc": "Profiling a dataset: distributions, relationships, group comparisons and sanity checks.",
+      "summary": "You will be able to profile a dataset by examining distributions, relationships and group comparisons and running sanity checks.",
+      "topics": [
+        "Univariate distributions",
+        "Correlations and relationships",
+        "Group comparisons",
+        "Sanity checks on data",
+        "Forming hypotheses from exploration"
+      ],
       "kind": "lesson",
       "requires": [
         "reshaping-merging",
@@ -147,6 +219,14 @@
       "name": "Visualisation",
       "icon": "chart",
       "desc": "Plotting with matplotlib and seaborn and choosing the right chart for the question.",
+      "summary": "You will be able to plot data with matplotlib and seaborn and choose the right chart for the question being asked.",
+      "topics": [
+        "matplotlib figures and axes",
+        "seaborn statistical plots",
+        "Choosing a chart type",
+        "Histograms, scatter and box plots",
+        "Labels, scales and readability"
+      ],
       "kind": "lesson",
       "requires": [
         "eda"
@@ -159,6 +239,14 @@
       "name": "Feature engineering",
       "icon": "wrench",
       "desc": "Encoding categories, scaling, binning, date parts and building informative derived features.",
+      "summary": "You will be able to create informative features by encoding categories, scaling, binning, extracting date parts and deriving new columns.",
+      "topics": [
+        "One-hot and ordinal encoding",
+        "Scaling and normalisation",
+        "Binning continuous variables",
+        "Extracting date parts",
+        "Derived ratio and interaction features"
+      ],
       "kind": "lesson",
       "requires": [
         "eda"
@@ -171,6 +259,14 @@
       "name": "EDA report",
       "icon": "analytics",
       "desc": "Clean and explore a messy public dataset and write up the main findings with charts.",
+      "summary": "You will clean and explore a messy public dataset and write up its main findings with clear charts.",
+      "topics": [
+        "Choosing a dataset and questions",
+        "Cleaning the data",
+        "Exploratory charts",
+        "Summarising key findings",
+        "Writing the report"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -186,6 +282,15 @@
       "name": "scikit-learn models",
       "icon": "brain",
       "desc": "Fitting, validating and comparing models with scikit-learn pipelines and cross-validation.",
+      "summary": "You will be able to fit, validate and compare models with scikit-learn pipelines and cross-validation.",
+      "topics": [
+        "The estimator fit and predict API",
+        "Train and test splits",
+        "Preprocessing pipelines",
+        "K-fold cross-validation",
+        "Hyperparameter search",
+        "Comparing evaluation metrics"
+      ],
       "kind": "lesson",
       "requires": [
         "feature-engineering-ds",
@@ -205,6 +310,14 @@
       "name": "A/B experiments",
       "icon": "sliders",
       "desc": "Designing controlled experiments, choosing metrics and sample sizes, and reading the results.",
+      "summary": "You will be able to design A/B experiments, choose metrics and sample sizes and interpret the statistical results.",
+      "topics": [
+        "Randomised controlled experiments",
+        "Choosing primary metrics",
+        "Sample size and power",
+        "Hypothesis tests and p-values",
+        "Common pitfalls like peeking"
+      ],
       "kind": "lesson",
       "requires": [
         "statistics:hypothesis-testing",
@@ -218,6 +331,14 @@
       "name": "Interpreting models",
       "icon": "eye",
       "desc": "Feature importance, partial dependence and SHAP values to explain what a model learned.",
+      "summary": "You will be able to explain what a model learned using feature importance, partial dependence and SHAP values.",
+      "topics": [
+        "Model coefficients",
+        "Permutation feature importance",
+        "Partial dependence plots",
+        "SHAP values",
+        "Communicating model behaviour"
+      ],
       "kind": "lesson",
       "requires": [
         "sklearn-models"
@@ -230,6 +351,14 @@
       "name": "Prediction project",
       "icon": "target",
       "desc": "Build, tune and explain a predictive model for a real dataset such as churn or prices.",
+      "summary": "You will build, tune and explain a predictive model for a real dataset such as customer churn or house prices.",
+      "topics": [
+        "Defining the target and metric",
+        "Feature engineering",
+        "Training and tuning models",
+        "Validating on held-out data",
+        "Explaining predictions"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -244,6 +373,14 @@
       "name": "Data storytelling",
       "icon": "chat",
       "desc": "Structuring an analysis as a narrative for a non-technical audience.",
+      "summary": "You will be able to structure an analysis as a clear narrative with visuals for a non-technical audience.",
+      "topics": [
+        "Knowing your audience",
+        "Leading with the key message",
+        "Narrative structure",
+        "Choosing effective visuals",
+        "Stating limitations honestly"
+      ],
       "kind": "lesson",
       "requires": [
         "visualization"
@@ -256,6 +393,14 @@
       "name": "Dashboards",
       "icon": "monitor",
       "desc": "Building interactive dashboards that track key metrics for stakeholders.",
+      "summary": "You will be able to build interactive dashboards that track key metrics for stakeholders.",
+      "topics": [
+        "Choosing key metrics",
+        "Dashboard layout",
+        "Interactive filters",
+        "Tools like Streamlit or Tableau",
+        "Refreshing data"
+      ],
       "kind": "lesson",
       "requires": [
         "storytelling"
@@ -268,6 +413,14 @@
       "name": "Reproducible analysis",
       "icon": "git-branch",
       "desc": "Version control, environments, parameterised notebooks and scripts others can rerun.",
+      "summary": "You will be able to make analyses reproducible with version control, pinned environments, parameterised notebooks and rerunnable scripts.",
+      "topics": [
+        "Version control with Git",
+        "Environment management",
+        "Parameterised notebooks",
+        "Moving code into scripts",
+        "Random seeds and data versioning"
+      ],
       "kind": "lesson",
       "requires": [
         "jupyter-notebooks",
@@ -281,6 +434,14 @@
       "name": "Data ethics",
       "icon": "shield",
       "desc": "Privacy, consent, bias in data and models, and responsible reporting.",
+      "summary": "You will be able to identify privacy, consent and bias issues in data and models and report results responsibly.",
+      "topics": [
+        "Privacy and anonymisation",
+        "Informed consent",
+        "Bias in data collection",
+        "Fairness in model outcomes",
+        "Responsible reporting"
+      ],
       "kind": "concept",
       "requires": [
         "data-sources"
@@ -293,6 +454,14 @@
       "name": "Data science capstone",
       "icon": "trophy",
       "desc": "An end-to-end project from question to data to model to a published, reproducible report.",
+      "summary": "You will complete an end-to-end project from question to data to model and publish a reproducible report.",
+      "topics": [
+        "Defining a question",
+        "Acquiring and cleaning data",
+        "Exploration and modelling",
+        "Reproducible project setup",
+        "Publishing the report"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

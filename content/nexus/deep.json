@@ -47,6 +47,14 @@
       "name": "Neural networks",
       "icon": "brain",
       "desc": "Neurons, layers and multilayer perceptrons; the forward pass and counting parameters.",
+      "summary": "You will be able to describe neurons, layers and multilayer perceptrons, compute a forward pass and count a network's parameters.",
+      "topics": [
+        "Artificial neurons and weights",
+        "Layers and multilayer perceptrons",
+        "The forward pass",
+        "Counting weights and biases",
+        "Universal approximation intuition"
+      ],
       "kind": "lesson",
       "requires": [
         "ml:gradient-descent",
@@ -69,6 +77,14 @@
       "name": "Activation functions",
       "icon": "activity",
       "desc": "Sigmoid, tanh, ReLU and friends, and why non-linearity matters.",
+      "summary": "You will be able to compare sigmoid, tanh, ReLU and related activations and explain why non-linearity is essential.",
+      "topics": [
+        "Why non-linearity matters",
+        "Sigmoid and tanh",
+        "ReLU and dying neurons",
+        "Leaky ReLU and GELU",
+        "Saturation and gradient flow"
+      ],
       "kind": "concept",
       "requires": [
         "neural-networks"
@@ -81,6 +97,14 @@
       "name": "Loss functions",
       "icon": "target",
       "desc": "Mean squared error, cross-entropy and softmax outputs.",
+      "summary": "You will be able to choose and compute mean squared error, cross-entropy and softmax outputs for regression and classification.",
+      "topics": [
+        "Mean squared error",
+        "Softmax outputs",
+        "Cross-entropy loss",
+        "Binary cross-entropy",
+        "Matching losses to tasks"
+      ],
       "kind": "concept",
       "requires": [
         "neural-networks",
@@ -94,6 +118,14 @@
       "name": "Backpropagation",
       "icon": "route",
       "desc": "Computing gradients with the chain rule over a computation graph, and automatic differentiation.",
+      "summary": "You will be able to compute gradients with the chain rule over a computation graph and explain how automatic differentiation works.",
+      "topics": [
+        "Computation graphs",
+        "Chain rule for gradients",
+        "Backward pass step by step",
+        "Gradients of common layers",
+        "Reverse-mode automatic differentiation"
+      ],
       "kind": "lesson",
       "requires": [
         "loss-functions",
@@ -111,6 +143,14 @@
       "name": "Optimisers",
       "icon": "rocket",
       "desc": "SGD with momentum, RMSProp, Adam and learning-rate schedules.",
+      "summary": "You will be able to train networks with SGD, momentum, RMSProp and Adam and choose learning-rate schedules.",
+      "topics": [
+        "Mini-batch stochastic gradient descent",
+        "Momentum and Nesterov momentum",
+        "RMSProp adaptive learning rates",
+        "Adam optimiser",
+        "Learning-rate schedules and warmup"
+      ],
       "kind": "lesson",
       "requires": [
         "backpropagation"
@@ -123,6 +163,14 @@
       "name": "Init & normalisation",
       "icon": "sliders",
       "desc": "Weight initialisation, vanishing and exploding gradients, batch and layer normalisation.",
+      "summary": "You will be able to initialise weights sensibly, diagnose vanishing and exploding gradients and apply batch and layer normalisation.",
+      "topics": [
+        "Xavier and He initialisation",
+        "Vanishing and exploding gradients",
+        "Batch normalisation",
+        "Layer normalisation",
+        "Gradient clipping"
+      ],
       "kind": "lesson",
       "requires": [
         "backpropagation"
@@ -135,6 +183,14 @@
       "name": "Regularising nets",
       "icon": "shield",
       "desc": "Dropout, weight decay, data augmentation and early stopping.",
+      "summary": "You will be able to reduce overfitting in neural networks with dropout, weight decay, data augmentation and early stopping.",
+      "topics": [
+        "Overfitting in deep nets",
+        "Dropout and inverted dropout",
+        "Weight decay",
+        "Data augmentation",
+        "Early stopping"
+      ],
       "kind": "lesson",
       "requires": [
         "optimizers",
@@ -148,6 +204,14 @@
       "name": "Digit recogniser",
       "icon": "play",
       "desc": "Train an MLP on MNIST in PyTorch, plot training curves, and tune the optimiser and regularisation.",
+      "summary": "You will train an MLP on MNIST in PyTorch, plot its training curves and tune the optimiser and regularisation.",
+      "topics": [
+        "Loading MNIST with DataLoader",
+        "Defining an MLP in PyTorch",
+        "Writing the training loop",
+        "Plotting loss and accuracy curves",
+        "Tuning optimiser and dropout"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -162,6 +226,14 @@
       "name": "Convolutional nets",
       "icon": "grid",
       "desc": "Convolutions, padding and stride, pooling, and feature maps.",
+      "summary": "You will be able to explain convolutions, padding, stride and pooling and compute the size of the resulting feature maps.",
+      "topics": [
+        "Convolution operation",
+        "Padding and stride",
+        "Output size formula",
+        "Pooling layers",
+        "Feature maps and channels"
+      ],
       "kind": "lesson",
       "requires": [
         "backpropagation"
@@ -174,6 +246,14 @@
       "name": "CNN architectures",
       "icon": "layers",
       "desc": "LeNet, VGG and ResNet, residual connections and why depth helps.",
+      "summary": "You will be able to describe LeNet, VGG and ResNet and explain how residual connections make very deep networks trainable.",
+      "topics": [
+        "LeNet-5 and early CNNs",
+        "VGG and small kernels",
+        "ResNet residual blocks",
+        "Degradation problem in deep nets",
+        "Global average pooling"
+      ],
       "kind": "concept",
       "requires": [
         "cnn",
@@ -187,6 +267,14 @@
       "name": "Transfer learning",
       "icon": "share",
       "desc": "Fine-tuning pretrained networks and using them as feature extractors.",
+      "summary": "You will be able to fine-tune pretrained networks and use them as fixed feature extractors for new tasks.",
+      "topics": [
+        "Pretrained ImageNet models",
+        "Feature extraction with frozen layers",
+        "Fine-tuning top layers",
+        "Replacing the classifier head",
+        "Learning rates for fine-tuning"
+      ],
       "kind": "lesson",
       "requires": [
         "cnn-architectures"
@@ -199,6 +287,14 @@
       "name": "Image classifier",
       "icon": "image",
       "desc": "Fine-tune a pretrained CNN on your own small image dataset and analyse its mistakes.",
+      "summary": "You will fine-tune a pretrained CNN on your own small image dataset and analyse the mistakes it makes.",
+      "topics": [
+        "Building an image dataset",
+        "Data augmentation",
+        "Fine-tuning a pretrained CNN",
+        "Confusion matrix analysis",
+        "Inspecting misclassified images"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -213,6 +309,14 @@
       "name": "Recurrent nets",
       "icon": "random",
       "desc": "Recurrent networks over sequences, backpropagation through time and its gradient problems.",
+      "summary": "You will be able to explain how recurrent networks process sequences, train them with backpropagation through time and recognise their gradient problems.",
+      "topics": [
+        "Recurrent hidden state",
+        "Unrolling over time",
+        "Backpropagation through time",
+        "Vanishing gradients in RNNs",
+        "Sequence-to-sequence tasks"
+      ],
       "kind": "lesson",
       "requires": [
         "backpropagation"
@@ -225,6 +329,14 @@
       "name": "LSTM & GRU",
       "icon": "lock",
       "desc": "Gated recurrent units and long short-term memory cells.",
+      "summary": "You will be able to explain how LSTM and GRU gates control information flow and help with long-range dependencies.",
+      "topics": [
+        "LSTM cell state",
+        "Input, forget and output gates",
+        "GRU update and reset gates",
+        "Long-range dependencies",
+        "Bidirectional and stacked RNNs"
+      ],
       "kind": "lesson",
       "requires": [
         "rnn"
@@ -237,6 +349,14 @@
       "name": "Word embeddings",
       "icon": "type",
       "desc": "Tokenisation, embedding layers and word2vec-style representations.",
+      "summary": "You will be able to tokenise text and represent tokens with embedding layers and word2vec-style vectors.",
+      "topics": [
+        "Word and subword tokenisation",
+        "One-hot versus dense embeddings",
+        "Embedding layers",
+        "Word2vec skip-gram and CBOW",
+        "Semantic similarity in vector space"
+      ],
       "kind": "concept",
       "requires": [
         "neural-networks"
@@ -249,6 +369,14 @@
       "name": "Text generator",
       "icon": "keyboard",
       "desc": "Train a character-level LSTM language model and sample text from it.",
+      "summary": "You will train a character-level LSTM language model and sample new text from it using temperature.",
+      "topics": [
+        "Preparing character sequences",
+        "Building an LSTM language model",
+        "Training with teacher forcing",
+        "Sampling with temperature",
+        "Evaluating with perplexity"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -263,6 +391,14 @@
       "name": "Attention",
       "icon": "eye",
       "desc": "Query, key and value; scaled dot-product attention and multi-head attention.",
+      "summary": "You will be able to compute scaled dot-product attention with queries, keys and values and explain multi-head attention.",
+      "topics": [
+        "Queries, keys and values",
+        "Scaled dot-product attention",
+        "Attention weights with softmax",
+        "Multi-head attention",
+        "Self-attention versus cross-attention"
+      ],
       "kind": "lesson",
       "requires": [
         "embeddings",
@@ -276,6 +412,14 @@
       "name": "Transformers",
       "icon": "bolt",
       "desc": "The transformer block, positional encodings, encoder versus decoder models.",
+      "summary": "You will be able to describe the transformer block, positional encodings and the difference between encoder and decoder models.",
+      "topics": [
+        "Transformer block structure",
+        "Positional encodings",
+        "Residual connections and layer norm",
+        "Causal masking in decoders",
+        "Encoder, decoder and encoder-decoder models"
+      ],
       "kind": "lesson",
       "requires": [
         "attention",
@@ -289,6 +433,14 @@
       "name": "Pretrained LMs",
       "icon": "sparkles",
       "desc": "Pretraining and fine-tuning, BERT and GPT-style models, and prompting.",
+      "summary": "You will be able to explain pretraining and fine-tuning of BERT and GPT-style language models and how prompting uses them.",
+      "topics": [
+        "Self-supervised pretraining",
+        "Masked language modelling in BERT",
+        "Autoregressive modelling in GPT",
+        "Fine-tuning for downstream tasks",
+        "Prompting and in-context learning"
+      ],
       "kind": "concept",
       "requires": [
         "transformers",
@@ -302,6 +454,14 @@
       "name": "Transformer fine-tune",
       "icon": "wand",
       "desc": "Fine-tune a small pretrained transformer for text classification and compare it with your LSTM.",
+      "summary": "You will fine-tune a small pretrained transformer for text classification and compare its results with your LSTM model.",
+      "topics": [
+        "Loading a pretrained transformer",
+        "Tokenising with its tokenizer",
+        "Fine-tuning for classification",
+        "Evaluating accuracy and F1",
+        "Comparing with the LSTM baseline"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -315,6 +475,14 @@
       "name": "Autoencoders",
       "icon": "copy",
       "desc": "Autoencoders and variational autoencoders, latent spaces and reconstruction.",
+      "summary": "You will be able to build autoencoders and variational autoencoders and explain latent spaces and reconstruction losses.",
+      "topics": [
+        "Encoder and decoder networks",
+        "Bottleneck latent space",
+        "Reconstruction loss",
+        "Variational autoencoders and KL term",
+        "Reparameterisation trick"
+      ],
       "kind": "lesson",
       "requires": [
         "optimizers",
@@ -328,6 +496,14 @@
       "name": "GANs",
       "icon": "gamepad",
       "desc": "Generator versus discriminator, adversarial training and its instabilities.",
+      "summary": "You will be able to explain how a generator and discriminator are trained adversarially and why GAN training is unstable.",
+      "topics": [
+        "Generator and discriminator roles",
+        "The minimax objective",
+        "Alternating training steps",
+        "Mode collapse",
+        "Stabilising GAN training"
+      ],
       "kind": "concept",
       "requires": [
         "autoencoders",
@@ -341,6 +517,14 @@
       "name": "Diffusion models",
       "icon": "droplet",
       "desc": "Denoising diffusion: the forward noising process and learning to reverse it.",
+      "summary": "You will be able to explain denoising diffusion models, from the forward noising process to learning the reverse denoising steps.",
+      "topics": [
+        "Forward noising process",
+        "Noise schedules",
+        "Learning to predict noise",
+        "Reverse sampling steps",
+        "Conditioning and guidance"
+      ],
       "kind": "concept",
       "requires": [
         "autoencoders"

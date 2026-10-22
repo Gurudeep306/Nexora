@@ -39,6 +39,14 @@
       "name": "Divisibility",
       "icon": "calculator",
       "desc": "Divisors, the division algorithm and proofs about divisibility.",
+      "summary": "You will be able to reason about divisors with the division algorithm and write short proofs of divisibility statements.",
+      "topics": [
+        "Definition of divisibility",
+        "The division algorithm",
+        "Properties of divisibility",
+        "Divisibility proofs by induction",
+        "Divisibility tests"
+      ],
       "kind": "concept",
       "requires": [
         "dm:proof-techniques"
@@ -51,6 +59,14 @@
       "name": "GCD & Euclid",
       "icon": "function",
       "desc": "Greatest common divisors and Euclid's algorithm with its running time.",
+      "summary": "You will be able to compute greatest common divisors with Euclid's algorithm and explain why it runs in logarithmic time.",
+      "topics": [
+        "Greatest common divisor and lcm",
+        "gcd(a, b) = gcd(b, a mod b)",
+        "Euclid's algorithm",
+        "Running time and Lamé's theorem",
+        "Binary GCD"
+      ],
       "kind": "lesson",
       "requires": [
         "divisibility"
@@ -63,6 +79,14 @@
       "name": "Extended Euclid",
       "icon": "route",
       "desc": "Bezout's identity and computing its coefficients.",
+      "summary": "You will be able to prove Bezout's identity and compute integer coefficients x and y with the extended Euclidean algorithm.",
+      "topics": [
+        "Bezout's identity",
+        "Extended Euclidean algorithm",
+        "Back substitution vs iterative form",
+        "Solving linear Diophantine equations",
+        "Coprimality criterion"
+      ],
       "kind": "lesson",
       "requires": [
         "gcd-euclid"
@@ -75,6 +99,14 @@
       "name": "Primes",
       "icon": "star",
       "desc": "Prime numbers, the infinitude of primes and unique factorisation.",
+      "summary": "You will be able to prove there are infinitely many primes and use unique prime factorisation to reason about integers.",
+      "topics": [
+        "Prime and composite numbers",
+        "Euclid's proof of infinitely many primes",
+        "Euclid's lemma",
+        "Fundamental theorem of arithmetic",
+        "Divisor counts from factorisations"
+      ],
       "kind": "concept",
       "requires": [
         "divisibility"
@@ -87,6 +119,14 @@
       "name": "Modular arithmetic",
       "icon": "hash",
       "desc": "Congruence classes and adding, multiplying and reducing mod n.",
+      "summary": "You will be able to compute with congruences, reducing sums, products and powers modulo n correctly.",
+      "topics": [
+        "Congruence modulo n",
+        "Residue classes",
+        "Addition and multiplication mod n",
+        "Reducing intermediate results",
+        "Properties of congruences"
+      ],
       "kind": "concept",
       "requires": [
         "gcd-euclid",
@@ -100,6 +140,14 @@
       "name": "Modular inverses",
       "icon": "key",
       "desc": "When inverses exist and computing them with extended Euclid.",
+      "summary": "You will be able to decide when an integer has an inverse modulo n and compute it with the extended Euclidean algorithm.",
+      "topics": [
+        "Existence condition gcd(a, n) = 1",
+        "Computing inverses with extended Euclid",
+        "Inverses via Fermat's little theorem",
+        "Division in modular arithmetic",
+        "Batch computation of inverses"
+      ],
       "kind": "lesson",
       "requires": [
         "modular-arithmetic",
@@ -113,6 +161,14 @@
       "name": "Linear congruences",
       "icon": "list",
       "desc": "Solving ax = b (mod n) and counting solutions.",
+      "summary": "You will be able to solve linear congruences ax ≡ b (mod n) and count how many solutions exist.",
+      "topics": [
+        "Solvability condition gcd(a, n) divides b",
+        "Number of incongruent solutions",
+        "Reducing the congruence by the gcd",
+        "Finding all solutions",
+        "Link to linear Diophantine equations"
+      ],
       "kind": "lesson",
       "requires": [
         "modular-inverse"
@@ -125,6 +181,14 @@
       "name": "Chinese remainder",
       "icon": "layers",
       "desc": "The Chinese remainder theorem and solving systems of congruences.",
+      "summary": "You will be able to solve systems of congruences with the Chinese remainder theorem, including moduli that are not pairwise coprime.",
+      "topics": [
+        "Statement of the Chinese remainder theorem",
+        "Constructive solution with inverses",
+        "Uniqueness modulo the product",
+        "Non-coprime moduli",
+        "Using CRT to speed up computations"
+      ],
       "kind": "lesson",
       "requires": [
         "linear-congruences"
@@ -137,6 +201,14 @@
       "name": "Fast exponentiation",
       "icon": "bolt",
       "desc": "Square-and-multiply for computing large powers mod n.",
+      "summary": "You will be able to compute large modular powers efficiently with square-and-multiply in logarithmically many steps.",
+      "topics": [
+        "Binary representation of exponents",
+        "Square-and-multiply algorithm",
+        "Iterative vs recursive versions",
+        "Logarithmic running time",
+        "Modular multiplication overflow"
+      ],
       "kind": "lesson",
       "requires": [
         "modular-arithmetic"
@@ -149,6 +221,14 @@
       "name": "Sieves",
       "icon": "filter",
       "desc": "Sieve of Eratosthenes, linear sieve and segmented sieves.",
+      "summary": "You will be able to generate primes up to a bound with the sieve of Eratosthenes, a linear sieve and a segmented sieve.",
+      "topics": [
+        "Sieve of Eratosthenes",
+        "Complexity O(n log log n)",
+        "Linear sieve with smallest prime factors",
+        "Segmented sieve for large ranges",
+        "Factorising with a precomputed sieve"
+      ],
       "kind": "lesson",
       "requires": [
         "primes",
@@ -162,6 +242,14 @@
       "name": "Fermat & Euler",
       "icon": "award",
       "desc": "Euler's totient, Fermat's little theorem and Euler's theorem.",
+      "summary": "You will be able to compute Euler's totient and apply Fermat's little theorem and Euler's theorem to modular powers.",
+      "topics": [
+        "Euler's totient function",
+        "Multiplicativity of phi",
+        "Fermat's little theorem",
+        "Euler's theorem",
+        "Reducing exponents modulo phi(n)"
+      ],
       "kind": "concept",
       "requires": [
         "modular-arithmetic",
@@ -175,6 +263,14 @@
       "name": "Primality testing",
       "icon": "check-circle",
       "desc": "Fermat and Miller-Rabin tests and why randomness helps.",
+      "summary": "You will be able to test large numbers for primality with Fermat and Miller-Rabin tests and explain their error probabilities.",
+      "topics": [
+        "Trial division limits",
+        "Fermat primality test",
+        "Carmichael numbers",
+        "Miller-Rabin test",
+        "Error probability and deterministic bases"
+      ],
       "kind": "lesson",
       "requires": [
         "fermat-euler",
@@ -188,6 +284,14 @@
       "name": "Factorisation",
       "icon": "shapes",
       "desc": "Trial division, Pollard's rho and why factoring is believed hard.",
+      "summary": "You will be able to factor integers with trial division and Pollard's rho and explain why factoring large numbers is believed hard.",
+      "topics": [
+        "Trial division up to the square root",
+        "Pollard's rho algorithm",
+        "Birthday paradox and cycle detection",
+        "Fermat's factorisation method",
+        "Hardness assumptions behind RSA"
+      ],
       "kind": "lesson",
       "requires": [
         "primality-testing"
@@ -200,6 +304,14 @@
       "name": "Prime distribution",
       "icon": "chart",
       "desc": "The prime number theorem and gaps between primes.",
+      "summary": "You will understand how primes are distributed through the prime number theorem and known results about gaps between primes.",
+      "topics": [
+        "The prime counting function",
+        "Prime number theorem",
+        "Density estimate n / ln n",
+        "Bertrand's postulate",
+        "Prime gaps and twin primes"
+      ],
       "kind": "concept",
       "requires": [
         "sieves"
@@ -212,6 +324,15 @@
       "name": "NT library",
       "icon": "wrench",
       "desc": "Write a tested number theory library: gcd, inverses, CRT, sieves and primality.",
+      "summary": "You will write a tested number theory library covering gcd, modular inverses, CRT, sieves and primality tests.",
+      "topics": [
+        "API design for number theory routines",
+        "gcd and extended Euclid",
+        "Modular inverse and exponentiation",
+        "CRT solver",
+        "Sieve and Miller-Rabin implementation",
+        "Property-based tests"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -227,6 +348,14 @@
       "name": "Groups mod n",
       "icon": "grid",
       "desc": "The multiplicative group of integers mod n and element orders.",
+      "summary": "You will be able to describe the multiplicative group of integers mod n and compute the order of its elements.",
+      "topics": [
+        "Group axioms",
+        "The group of units mod n",
+        "Order of an element",
+        "Lagrange's theorem",
+        "Cyclic subgroups"
+      ],
       "kind": "concept",
       "requires": [
         "fermat-euler",
@@ -240,6 +369,14 @@
       "name": "Primitive roots",
       "icon": "crown",
       "desc": "Generators of cyclic groups and when primitive roots exist.",
+      "summary": "You will be able to find primitive roots, test candidates efficiently and state for which moduli they exist.",
+      "topics": [
+        "Generators of cyclic groups",
+        "Definition of a primitive root",
+        "Existence for 1, 2, 4, p^k and 2p^k",
+        "Testing candidates with prime factors of phi",
+        "Number of primitive roots"
+      ],
       "kind": "concept",
       "requires": [
         "groups-mod-n"
@@ -252,6 +389,14 @@
       "name": "Quadratic residues",
       "icon": "shapes",
       "desc": "Squares mod p, the Legendre symbol and quadratic reciprocity.",
+      "summary": "You will be able to determine which numbers are squares modulo a prime using the Legendre symbol and quadratic reciprocity.",
+      "topics": [
+        "Quadratic residues mod p",
+        "Euler's criterion",
+        "The Legendre symbol",
+        "Law of quadratic reciprocity",
+        "Computing modular square roots"
+      ],
       "kind": "concept",
       "requires": [
         "primitive-roots"
@@ -264,6 +409,14 @@
       "name": "Discrete logarithm",
       "icon": "lock",
       "desc": "The discrete log problem and baby-step giant-step.",
+      "summary": "You will understand the discrete logarithm problem and be able to solve small instances with baby-step giant-step.",
+      "topics": [
+        "Definition of the discrete logarithm",
+        "Brute force search",
+        "Baby-step giant-step algorithm",
+        "Time-memory trade-off",
+        "Pohlig-Hellman idea"
+      ],
       "kind": "concept",
       "requires": [
         "primitive-roots"
@@ -276,6 +429,14 @@
       "name": "RSA mathematics",
       "icon": "key",
       "desc": "Why RSA works, key generation and the role of factoring.",
+      "summary": "You will be able to explain why RSA decryption works, generate keys and relate RSA's security to integer factorisation.",
+      "topics": [
+        "Key generation with primes p and q",
+        "Choosing e and computing d",
+        "Correctness via Euler's theorem",
+        "Security and factoring",
+        "Textbook RSA weaknesses"
+      ],
       "kind": "lesson",
       "requires": [
         "fermat-euler",
@@ -289,6 +450,14 @@
       "name": "Diffie-Hellman",
       "icon": "share",
       "desc": "Key exchange from the hardness of discrete logarithms.",
+      "summary": "You will be able to carry out Diffie-Hellman key exchange and explain how its security rests on the discrete logarithm problem.",
+      "topics": [
+        "Public parameters p and g",
+        "Exchanging g^a and g^b",
+        "Computational Diffie-Hellman assumption",
+        "Man-in-the-middle attacks",
+        "Choosing safe primes"
+      ],
       "kind": "lesson",
       "requires": [
         "discrete-log"
@@ -301,6 +470,14 @@
       "name": "Elliptic curves",
       "icon": "shapes",
       "desc": "The group law on elliptic curves over finite fields.",
+      "summary": "You will be able to perform point addition on elliptic curves over finite fields and see why they support smaller cryptographic keys.",
+      "topics": [
+        "Weierstrass equation",
+        "Chord-and-tangent group law",
+        "Curves over finite fields",
+        "Scalar multiplication",
+        "Elliptic curve discrete logarithm"
+      ],
       "kind": "concept",
       "requires": [
         "groups-mod-n"
@@ -313,6 +490,14 @@
       "name": "Toy RSA & DH",
       "icon": "trophy",
       "desc": "Implement textbook RSA and Diffie-Hellman and attack weak parameter choices.",
+      "summary": "You will implement textbook RSA and Diffie-Hellman and break them when parameters are chosen badly.",
+      "topics": [
+        "Implementing RSA key generation",
+        "Implementing Diffie-Hellman exchange",
+        "Small exponent attacks",
+        "Common modulus and shared factor attacks",
+        "Small subgroup attacks"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

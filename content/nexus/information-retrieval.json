@@ -38,6 +38,14 @@
       "name": "IR basics",
       "icon": "search",
       "desc": "Documents, queries, relevance and Boolean retrieval.",
+      "summary": "You will understand the core retrieval problem of matching queries to relevant documents and be able to answer Boolean queries.",
+      "topics": [
+        "Documents, collections and queries",
+        "Information needs and relevance",
+        "Boolean retrieval model",
+        "Term-document incidence matrix",
+        "Limits of exact-match retrieval"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 60
@@ -48,6 +56,14 @@
       "name": "Inverted index",
       "icon": "list",
       "desc": "Building posting lists and answering queries by merging them.",
+      "summary": "You will be able to build an inverted index of posting lists and answer queries efficiently by merging those lists.",
+      "topics": [
+        "Dictionary and posting lists",
+        "Index construction by sorting",
+        "Intersecting posting lists",
+        "Skip pointers",
+        "Document frequency in the dictionary"
+      ],
       "kind": "lesson",
       "requires": [
         "ir-basics"
@@ -60,6 +76,14 @@
       "name": "Text processing",
       "icon": "filter",
       "desc": "Tokenisation, normalisation and stemming choices for indexing.",
+      "summary": "You will be able to choose tokenisation, normalisation and stemming steps for an index and predict their effect on recall and precision.",
+      "topics": [
+        "Tokenisation rules",
+        "Case folding and normalisation",
+        "Stop word removal",
+        "Stemming vs lemmatisation",
+        "Porter stemmer"
+      ],
       "kind": "lesson",
       "requires": [
         "ir-basics",
@@ -73,6 +97,14 @@
       "name": "Index compression",
       "icon": "binary",
       "desc": "Gap encoding, variable-byte and other posting list compression.",
+      "summary": "You will be able to shrink posting lists with gap encoding and variable-length codes while keeping decoding fast.",
+      "topics": [
+        "Heaps' and Zipf's laws",
+        "Dictionary compression",
+        "Gap encoding of document IDs",
+        "Variable-byte encoding",
+        "Gamma codes"
+      ],
       "kind": "lesson",
       "requires": [
         "inverted-index"
@@ -85,6 +117,14 @@
       "name": "Query processing",
       "icon": "terminal",
       "desc": "Boolean, phrase, positional and wildcard queries.",
+      "summary": "You will be able to evaluate Boolean, phrase, positional and wildcard queries using the right index structures.",
+      "topics": [
+        "Boolean query evaluation order",
+        "Positional indexes",
+        "Phrase and proximity queries",
+        "Wildcard queries with permuterm indexes",
+        "k-gram indexes for wildcards"
+      ],
       "kind": "lesson",
       "requires": [
         "inverted-index",
@@ -98,6 +138,15 @@
       "name": "Vector space model",
       "icon": "grid",
       "desc": "TF-IDF weighting and cosine similarity ranking.",
+      "summary": "You will be able to rank documents by representing queries and documents as TF-IDF vectors and scoring them with cosine similarity.",
+      "topics": [
+        "Term frequency weighting",
+        "Inverse document frequency",
+        "TF-IDF weighting variants",
+        "Cosine similarity",
+        "Length normalisation",
+        "Top-k retrieval"
+      ],
       "kind": "lesson",
       "requires": [
         "inverted-index",
@@ -111,6 +160,14 @@
       "name": "BM25",
       "icon": "chart",
       "desc": "The probabilistic relevance framework and the BM25 scoring function.",
+      "summary": "You will understand the probabilistic relevance framework and be able to compute and tune BM25 scores for documents.",
+      "topics": [
+        "Probability ranking principle",
+        "Binary independence model",
+        "BM25 term frequency saturation",
+        "Document length normalisation",
+        "Tuning k1 and b"
+      ],
       "kind": "lesson",
       "requires": [
         "vector-space-model",
@@ -124,6 +181,14 @@
       "name": "Query likelihood",
       "icon": "function",
       "desc": "Language-model retrieval with smoothing.",
+      "summary": "You will be able to rank documents by the likelihood of generating the query under a smoothed document language model.",
+      "topics": [
+        "Unigram document language models",
+        "Query likelihood ranking",
+        "Jelinek-Mercer smoothing",
+        "Dirichlet prior smoothing",
+        "Comparison with TF-IDF"
+      ],
       "kind": "concept",
       "requires": [
         "bm25"
@@ -136,6 +201,14 @@
       "name": "Mini search engine",
       "icon": "rocket",
       "desc": "Build a search engine over a document collection with BM25 ranking.",
+      "summary": "You will build a working search engine over a document collection with an inverted index and BM25 ranking.",
+      "topics": [
+        "Parsing and tokenising a corpus",
+        "Building an inverted index",
+        "BM25 scoring implementation",
+        "Query interface and top-k results",
+        "Testing on sample queries"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -151,6 +224,15 @@
       "name": "IR evaluation",
       "icon": "check-circle",
       "desc": "Precision, recall, MAP and nDCG.",
+      "summary": "You will be able to measure retrieval quality with set-based and ranked metrics such as precision, recall, MAP and nDCG.",
+      "topics": [
+        "Precision and recall",
+        "Precision at k",
+        "Precision-recall curves",
+        "Mean average precision",
+        "Graded relevance and nDCG",
+        "Mean reciprocal rank"
+      ],
       "kind": "lesson",
       "requires": [
         "vector-space-model"
@@ -163,6 +245,14 @@
       "name": "Relevance feedback",
       "icon": "route",
       "desc": "Rocchio, pseudo-relevance feedback and query expansion.",
+      "summary": "You will be able to improve queries using explicit or pseudo-relevance feedback and query expansion.",
+      "topics": [
+        "Explicit relevance feedback",
+        "The Rocchio algorithm",
+        "Pseudo-relevance feedback",
+        "Query expansion with thesauri",
+        "Risks of query drift"
+      ],
       "kind": "lesson",
       "requires": [
         "vector-space-model"
@@ -175,6 +265,14 @@
       "name": "Test collections",
       "icon": "bookmarks",
       "desc": "TREC-style collections, pooling, online A/B tests and interleaving.",
+      "summary": "You will understand how test collections are built and how offline judgments compare with online A/B tests and interleaving.",
+      "topics": [
+        "Cranfield paradigm",
+        "TREC-style collections",
+        "Pooling for relevance judgments",
+        "Online A/B testing",
+        "Interleaving experiments"
+      ],
       "kind": "concept",
       "requires": [
         "ir-evaluation"
@@ -187,6 +285,14 @@
       "name": "Web crawling",
       "icon": "globe",
       "desc": "Crawler design, politeness, freshness and duplicate detection.",
+      "summary": "You will be able to design a web crawler that respects politeness, prioritises freshness and detects duplicate pages.",
+      "topics": [
+        "Crawler architecture and URL frontier",
+        "Politeness and robots.txt",
+        "Recrawl scheduling and freshness",
+        "Near-duplicate detection with shingling",
+        "SimHash and MinHash fingerprints"
+      ],
       "kind": "lesson",
       "requires": [
         "inverted-index"
@@ -199,6 +305,14 @@
       "name": "Link analysis",
       "icon": "link",
       "desc": "PageRank and HITS for ranking pages by link structure.",
+      "summary": "You will be able to rank web pages by link structure using PageRank and HITS and compute them iteratively.",
+      "topics": [
+        "The web as a graph",
+        "Anchor text as evidence",
+        "PageRank and the random surfer",
+        "Teleportation and damping",
+        "HITS hubs and authorities"
+      ],
       "kind": "lesson",
       "requires": [
         "web-crawling",
@@ -212,6 +326,14 @@
       "name": "Learning to rank",
       "icon": "sort",
       "desc": "Pointwise, pairwise and listwise ranking models.",
+      "summary": "You will be able to train ranking models from features and relevance labels using pointwise, pairwise and listwise approaches.",
+      "topics": [
+        "Ranking features",
+        "Pointwise regression and classification",
+        "Pairwise methods like RankNet",
+        "Listwise methods like LambdaMART",
+        "Optimising ranking metrics"
+      ],
       "kind": "lesson",
       "requires": [
         "ir-evaluation",
@@ -225,6 +347,14 @@
       "name": "Distributed indexing",
       "icon": "server",
       "desc": "Sharding and replicating indexes and query fan-out.",
+      "summary": "You will understand how large indexes are partitioned and replicated across machines and how queries fan out and merge.",
+      "topics": [
+        "MapReduce index construction",
+        "Document vs term partitioning",
+        "Replication for throughput",
+        "Query fan-out and result merging",
+        "Tail latency in search clusters"
+      ],
       "kind": "concept",
       "requires": [
         "index-compression"
@@ -237,6 +367,14 @@
       "name": "Recommenders",
       "icon": "star",
       "desc": "Collaborative filtering and matrix factorisation for recommendations.",
+      "summary": "You will be able to build recommendation models with collaborative filtering and matrix factorisation and evaluate them.",
+      "topics": [
+        "Content-based vs collaborative filtering",
+        "User-based and item-based neighbours",
+        "Matrix factorisation",
+        "Implicit feedback",
+        "Cold start problem"
+      ],
       "kind": "lesson",
       "requires": [
         "vector-space-model"
@@ -249,6 +387,14 @@
       "name": "Dense retrieval",
       "icon": "layers",
       "desc": "Dual-encoder models that embed queries and documents.",
+      "summary": "You will understand how dual-encoder models embed queries and documents into one vector space for semantic retrieval.",
+      "topics": [
+        "Dual-encoder architecture",
+        "Contrastive training with negatives",
+        "Hard negative mining",
+        "Vocabulary mismatch and semantic matching",
+        "Dense vs sparse retrieval"
+      ],
       "kind": "lesson",
       "requires": [
         "learning-to-rank",
@@ -262,6 +408,14 @@
       "name": "Vector search",
       "icon": "crosshair",
       "desc": "Approximate nearest neighbour search with HNSW and product quantisation.",
+      "summary": "You will be able to search millions of embeddings quickly with approximate nearest neighbour indexes such as HNSW and product quantisation.",
+      "topics": [
+        "Exact vs approximate nearest neighbours",
+        "HNSW graph indexes",
+        "Inverted file indexes",
+        "Product quantisation",
+        "Recall vs latency trade-offs"
+      ],
       "kind": "lesson",
       "requires": [
         "dense-retrieval"
@@ -274,6 +428,14 @@
       "name": "Neural re-ranking",
       "icon": "sort",
       "desc": "Cross-encoder re-rankers and retrieve-then-rerank pipelines.",
+      "summary": "You will be able to improve rankings with cross-encoder re-rankers in a retrieve-then-rerank pipeline.",
+      "topics": [
+        "Cross-encoder architecture",
+        "Retrieve-then-rerank pipelines",
+        "Re-ranking depth and cost",
+        "Bi-encoder vs cross-encoder trade-offs",
+        "Late interaction models like ColBERT"
+      ],
       "kind": "lesson",
       "requires": [
         "dense-retrieval"
@@ -286,6 +448,14 @@
       "name": "Hybrid search",
       "icon": "trophy",
       "desc": "Combine BM25 and dense retrieval with re-ranking and evaluate the gains.",
+      "summary": "You will build a hybrid search system combining BM25 and dense retrieval with re-ranking and measure the improvement.",
+      "topics": [
+        "Running sparse and dense retrievers",
+        "Score fusion and reciprocal rank fusion",
+        "Adding a cross-encoder re-ranker",
+        "Evaluating with nDCG and recall",
+        "Ablation of each component"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

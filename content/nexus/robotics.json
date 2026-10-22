@@ -38,6 +38,14 @@
       "name": "Robot systems",
       "icon": "bot",
       "desc": "Sensors, actuators, onboard compute and the sense-plan-act loop.",
+      "summary": "You will be able to describe the parts of a robot system and how sensing, planning and acting fit together in a control loop.",
+      "topics": [
+        "Sensors, actuators and compute",
+        "The sense-plan-act loop",
+        "Manipulators vs mobile robots",
+        "Degrees of freedom",
+        "Real-time constraints"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 60
@@ -48,6 +56,14 @@
       "name": "Rotations & frames",
       "icon": "compass",
       "desc": "Coordinate frames, rotation matrices, quaternions and homogeneous transforms.",
+      "summary": "You will be able to represent orientation and pose with rotation matrices, quaternions and homogeneous transforms between frames.",
+      "topics": [
+        "Coordinate frames",
+        "Rotation matrices and SO(3)",
+        "Euler angles and gimbal lock",
+        "Unit quaternions",
+        "Homogeneous transforms and SE(3)"
+      ],
       "kind": "concept",
       "requires": [
         "la:matrices"
@@ -60,6 +76,14 @@
       "name": "ROS basics",
       "icon": "share",
       "desc": "Nodes, topics, services, launch files and tooling in ROS 2.",
+      "summary": "You will be able to build ROS 2 applications from nodes communicating over topics and services and start them with launch files.",
+      "topics": [
+        "ROS 2 nodes",
+        "Topics and publish-subscribe",
+        "Services and actions",
+        "Launch files and parameters",
+        "Tools like rviz and ros2 bag"
+      ],
       "kind": "lesson",
       "requires": [
         "robot-systems",
@@ -73,6 +97,14 @@
       "name": "Sensors & actuators",
       "icon": "cpu",
       "desc": "Encoders, IMUs, cameras, lidar, motors and their noise characteristics.",
+      "summary": "You will be able to choose common robot sensors and actuators and account for their noise and limitations.",
+      "topics": [
+        "Wheel encoders",
+        "IMUs: accelerometers and gyroscopes",
+        "Cameras and lidar",
+        "DC, servo and stepper motors",
+        "Sensor noise and calibration"
+      ],
       "kind": "concept",
       "requires": [
         "robot-systems"
@@ -85,6 +117,14 @@
       "name": "Forward kinematics",
       "icon": "link",
       "desc": "Chaining joint transforms and Denavit-Hartenberg parameters.",
+      "summary": "You will be able to compute an end-effector pose by chaining joint transforms using Denavit-Hartenberg parameters.",
+      "topics": [
+        "Joints and links",
+        "Chaining homogeneous transforms",
+        "Denavit-Hartenberg parameters",
+        "Workspace of a manipulator",
+        "Forward kinematics of a planar arm"
+      ],
       "kind": "lesson",
       "requires": [
         "rotations-frames"
@@ -97,6 +137,14 @@
       "name": "Inverse kinematics",
       "icon": "crosshair",
       "desc": "Analytical and numerical IK and the Jacobian.",
+      "summary": "You will be able to find joint angles for a desired pose with analytical and numerical inverse kinematics using the Jacobian.",
+      "topics": [
+        "Analytical IK for simple arms",
+        "Multiple and no solutions",
+        "The manipulator Jacobian",
+        "Numerical IK with Jacobian pseudoinverse",
+        "Kinematic singularities"
+      ],
       "kind": "lesson",
       "requires": [
         "forward-kinematics"
@@ -109,6 +157,14 @@
       "name": "Robot dynamics",
       "icon": "bolt",
       "desc": "Forces, torques and equations of motion for manipulators.",
+      "summary": "You will be able to relate forces and torques to motion and write equations of motion for manipulators.",
+      "topics": [
+        "Newton-Euler equations",
+        "Lagrangian formulation",
+        "Mass matrix, Coriolis and gravity terms",
+        "Joint torques",
+        "Forward and inverse dynamics"
+      ],
       "kind": "concept",
       "requires": [
         "forward-kinematics"
@@ -121,6 +177,14 @@
       "name": "Mobile robots",
       "icon": "route",
       "desc": "Wheeled robot models, differential drive and odometry.",
+      "summary": "You will be able to model wheeled robots, control differential drive motion and estimate pose with odometry.",
+      "topics": [
+        "Differential drive kinematics",
+        "Unicycle model",
+        "Nonholonomic constraints",
+        "Wheel odometry",
+        "Odometry drift"
+      ],
       "kind": "concept",
       "requires": [
         "rotations-frames"
@@ -133,6 +197,14 @@
       "name": "State estimation",
       "icon": "activity",
       "desc": "The Bayes filter and fusing noisy sensor readings.",
+      "summary": "You will be able to estimate a robot's state from noisy sensors using the Bayes filter framework.",
+      "topics": [
+        "Belief as a probability distribution",
+        "Motion and measurement models",
+        "Bayes filter prediction and update",
+        "Sensor fusion",
+        "Uncertainty propagation"
+      ],
       "kind": "concept",
       "requires": [
         "sensors-actuators",
@@ -146,6 +218,14 @@
       "name": "Kalman filters",
       "icon": "function",
       "desc": "Kalman and extended Kalman filters for tracking and fusion.",
+      "summary": "You will be able to track and fuse sensor data with Kalman and extended Kalman filters.",
+      "topics": [
+        "Linear Gaussian systems",
+        "Kalman filter predict and update",
+        "Kalman gain",
+        "Extended Kalman filter",
+        "Tuning process and measurement noise"
+      ],
       "kind": "lesson",
       "requires": [
         "state-estimation"
@@ -158,6 +238,14 @@
       "name": "Localisation",
       "icon": "map",
       "desc": "Particle filters and map-based localisation.",
+      "summary": "You will be able to localise a robot in a known map with particle filters and other map-based methods.",
+      "topics": [
+        "Localisation problem types",
+        "Monte Carlo localisation",
+        "Particle weighting and resampling",
+        "Kidnapped robot problem",
+        "Map representations for localisation"
+      ],
       "kind": "lesson",
       "requires": [
         "kalman-filters",
@@ -171,6 +259,14 @@
       "name": "SLAM",
       "icon": "globe",
       "desc": "Simultaneous localisation and mapping with filters and pose graphs.",
+      "summary": "You will understand how robots build a map while localising themselves using filter-based and pose-graph SLAM.",
+      "topics": [
+        "The SLAM problem",
+        "EKF SLAM",
+        "Occupancy grid mapping",
+        "Pose graph optimisation",
+        "Loop closure"
+      ],
       "kind": "lesson",
       "requires": [
         "localization"
@@ -183,6 +279,14 @@
       "name": "Robot perception",
       "icon": "eye",
       "desc": "Camera and lidar perception for obstacles and objects.",
+      "summary": "You will be able to detect obstacles and objects from camera and lidar data for use in robot planning.",
+      "topics": [
+        "Camera models and calibration",
+        "Point clouds from lidar",
+        "Ground and obstacle segmentation",
+        "Object detection for robots",
+        "Depth estimation"
+      ],
       "kind": "lesson",
       "requires": [
         "sensors-actuators",
@@ -196,6 +300,14 @@
       "name": "PID control",
       "icon": "sliders",
       "desc": "Feedback control, PID tuning and stability intuition.",
+      "summary": "You will be able to design and tune PID controllers for feedback control and reason about their stability.",
+      "topics": [
+        "Open-loop vs closed-loop control",
+        "Proportional, integral and derivative terms",
+        "Tuning PID gains",
+        "Integral windup",
+        "Overshoot, settling time and stability"
+      ],
       "kind": "lesson",
       "requires": [
         "robot-dynamics"
@@ -208,6 +320,14 @@
       "name": "Motion planning",
       "icon": "route",
       "desc": "Configuration space, grid search, A*, RRT and PRM.",
+      "summary": "You will be able to plan collision-free paths in configuration space using grid search, A* and sampling-based planners.",
+      "topics": [
+        "Configuration space and obstacles",
+        "Grid-based search",
+        "A* with heuristics",
+        "Rapidly-exploring random trees",
+        "Probabilistic roadmaps"
+      ],
       "kind": "lesson",
       "requires": [
         "mobile-robots",
@@ -221,6 +341,14 @@
       "name": "Trajectories",
       "icon": "trending-up",
       "desc": "Smooth trajectory generation and tracking.",
+      "summary": "You will be able to generate smooth time-parameterised trajectories and track them with feedback controllers.",
+      "topics": [
+        "Paths vs trajectories",
+        "Polynomial trajectories",
+        "Velocity and acceleration limits",
+        "Minimum-jerk trajectories",
+        "Trajectory tracking"
+      ],
       "kind": "lesson",
       "requires": [
         "motion-planning",
@@ -234,6 +362,14 @@
       "name": "MPC",
       "icon": "target",
       "desc": "Model predictive control as repeated constrained optimisation.",
+      "summary": "You will understand model predictive control as repeatedly solving a constrained optimisation over a receding horizon.",
+      "topics": [
+        "Prediction models",
+        "Cost functions and constraints",
+        "Receding horizon principle",
+        "Linear MPC as quadratic programming",
+        "Computational cost of MPC"
+      ],
       "kind": "concept",
       "requires": [
         "trajectories"
@@ -246,6 +382,14 @@
       "name": "Navigation stack",
       "icon": "rocket",
       "desc": "Build a simulated robot that maps a space and navigates to goals.",
+      "summary": "You will build a simulated robot that maps its environment and navigates autonomously to goal positions.",
+      "topics": [
+        "Simulating a mobile robot",
+        "Building a map with SLAM",
+        "Global and local planners",
+        "Obstacle avoidance",
+        "Sending and reaching navigation goals"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -261,6 +405,14 @@
       "name": "Robot learning",
       "icon": "brain",
       "desc": "Reinforcement learning for robots and the sim-to-real gap.",
+      "summary": "You will be able to apply reinforcement learning to robots and explain techniques for bridging the sim-to-real gap.",
+      "topics": [
+        "RL for robot control",
+        "Simulation environments",
+        "Sample efficiency challenges",
+        "Sim-to-real gap",
+        "Domain randomisation"
+      ],
       "kind": "concept",
       "requires": [
         "mpc",
@@ -274,6 +426,14 @@
       "name": "Imitation learning",
       "icon": "copy",
       "desc": "Learning policies from demonstrations with behaviour cloning.",
+      "summary": "You will be able to train robot policies from demonstrations with behaviour cloning and explain compounding errors.",
+      "topics": [
+        "Collecting demonstrations",
+        "Behaviour cloning",
+        "Covariate shift and compounding errors",
+        "DAgger for interactive correction",
+        "Inverse reinforcement learning"
+      ],
       "kind": "lesson",
       "requires": [
         "robot-learning"
@@ -286,6 +446,14 @@
       "name": "Pick-and-place arm",
       "icon": "wrench",
       "desc": "Program a simulated arm to detect, grasp and place objects.",
+      "summary": "You will program a simulated robot arm to detect objects, plan grasps and place them at target locations.",
+      "topics": [
+        "Object detection for grasping",
+        "Grasp pose selection",
+        "Inverse kinematics for reaching",
+        "Motion planning around obstacles",
+        "Gripper control and placement"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

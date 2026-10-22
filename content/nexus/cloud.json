@@ -38,6 +38,14 @@
       "name": "Cloud basics",
       "icon": "globe",
       "desc": "What the cloud is, on-demand resources, elasticity and the shared responsibility model.",
+      "summary": "You will be able to explain what cloud computing is, how on-demand elastic resources work and who is responsible for what.",
+      "topics": [
+        "On-demand self-service",
+        "Elasticity and pay-as-you-go pricing",
+        "Capital versus operational expenditure",
+        "The shared responsibility model",
+        "Major cloud providers"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 40
@@ -48,6 +56,14 @@
       "name": "IaaS, PaaS & SaaS",
       "icon": "layers",
       "desc": "Service and deployment models: public, private and hybrid clouds.",
+      "summary": "You will be able to distinguish IaaS, PaaS and SaaS and compare public, private and hybrid cloud deployments.",
+      "topics": [
+        "Infrastructure as a service",
+        "Platform as a service",
+        "Software as a service",
+        "Public, private and hybrid clouds",
+        "Multi-cloud trade-offs"
+      ],
       "kind": "concept",
       "requires": [
         "cloud-basics"
@@ -60,6 +76,14 @@
       "name": "Regions & zones",
       "icon": "map",
       "desc": "Regions, availability zones, edge locations and designing for failure.",
+      "summary": "You will be able to use regions, availability zones and edge locations to design systems that survive failures.",
+      "topics": [
+        "Regions and data residency",
+        "Availability zones",
+        "Edge locations",
+        "Multi-AZ deployments",
+        "Designing for failure"
+      ],
       "kind": "concept",
       "requires": [
         "cloud-basics"
@@ -72,6 +96,14 @@
       "name": "Virtualization",
       "icon": "monitor",
       "desc": "Hypervisors, virtual machines and how a cloud slices physical hardware.",
+      "summary": "You will be able to explain how hypervisors and virtual machines let a cloud share physical hardware among many tenants.",
+      "topics": [
+        "Type 1 and type 2 hypervisors",
+        "Virtual machines and guest OSes",
+        "Hardware-assisted virtualisation",
+        "Multi-tenancy and isolation",
+        "Virtual machines versus containers"
+      ],
       "kind": "concept",
       "requires": [
         "cloud-basics",
@@ -85,6 +117,14 @@
       "name": "Virtual machines",
       "icon": "server",
       "desc": "Instance types, images, launching and sizing VMs.",
+      "summary": "You will be able to choose instance types, launch VMs from images and size them for a workload.",
+      "topics": [
+        "Instance families and sizes",
+        "Machine images",
+        "Launching and connecting with SSH",
+        "Instance metadata and user data",
+        "Right-sizing instances"
+      ],
       "kind": "lesson",
       "requires": [
         "virtualization"
@@ -97,6 +137,14 @@
       "name": "Object storage",
       "icon": "inbox",
       "desc": "Buckets, objects, storage classes and durability.",
+      "summary": "You will be able to store and serve data with object storage buckets and choose storage classes for cost and durability.",
+      "topics": [
+        "Buckets and object keys",
+        "Storage classes and lifecycle rules",
+        "Durability and availability",
+        "Object versioning",
+        "Bucket access policies and presigned URLs"
+      ],
       "kind": "concept",
       "requires": [
         "cloud-basics"
@@ -109,6 +157,14 @@
       "name": "Block & file storage",
       "icon": "save",
       "desc": "Volumes, snapshots and shared file systems.",
+      "summary": "You will be able to attach block volumes, take snapshots and share data through managed network file systems.",
+      "topics": [
+        "Block volumes and performance tiers",
+        "Snapshots and backups",
+        "Instance storage versus persistent volumes",
+        "Managed network file systems",
+        "Choosing block, file or object storage"
+      ],
       "kind": "concept",
       "requires": [
         "vms"
@@ -121,6 +177,14 @@
       "name": "Managed databases",
       "icon": "database",
       "desc": "Managed relational and NoSQL databases, backups and read replicas.",
+      "summary": "You will be able to run relational and NoSQL databases as managed services with backups, failover and read replicas.",
+      "topics": [
+        "Managed relational databases",
+        "Managed NoSQL databases",
+        "Automated backups and point-in-time recovery",
+        "Multi-AZ failover",
+        "Read replicas"
+      ],
       "kind": "concept",
       "requires": [
         "vms",
@@ -134,6 +198,14 @@
       "name": "Virtual networks",
       "icon": "grid",
       "desc": "VPCs, subnets, route tables, gateways and security groups.",
+      "summary": "You will be able to design a virtual private cloud with subnets, route tables, gateways and security groups.",
+      "topics": [
+        "VPCs and CIDR blocks",
+        "Public and private subnets",
+        "Route tables",
+        "Internet and NAT gateways",
+        "Security groups and network ACLs"
+      ],
       "kind": "concept",
       "requires": [
         "regions-zones",
@@ -147,6 +219,14 @@
       "name": "Identity & access",
       "icon": "key",
       "desc": "Users, roles, policies and least privilege.",
+      "summary": "You will be able to control access to cloud resources with users, roles and policies following least privilege.",
+      "topics": [
+        "Users, groups and roles",
+        "Policy documents and permissions",
+        "Least privilege",
+        "Roles for services and workloads",
+        "Multi-factor authentication"
+      ],
       "kind": "concept",
       "requires": [
         "cloud-basics"
@@ -159,6 +239,14 @@
       "name": "Load balancing & CDN",
       "icon": "share",
       "desc": "Managed load balancers, DNS and content delivery networks.",
+      "summary": "You will be able to distribute traffic with managed load balancers, route users with DNS and cache content with a CDN.",
+      "topics": [
+        "Layer 4 and layer 7 load balancers",
+        "Health checks and target groups",
+        "Managed DNS and routing policies",
+        "Content delivery networks",
+        "TLS termination"
+      ],
       "kind": "concept",
       "requires": [
         "vpc",
@@ -172,6 +260,14 @@
       "name": "Serverless",
       "icon": "bolt",
       "desc": "Functions as a service, event triggers and their limits.",
+      "summary": "You will be able to build event-driven functions as a service and understand their cold starts, timeouts and other limits.",
+      "topics": [
+        "Functions as a service",
+        "Event triggers",
+        "Cold starts",
+        "Timeouts and concurrency limits",
+        "Serverless pricing"
+      ],
       "kind": "concept",
       "requires": [
         "iam",
@@ -185,6 +281,14 @@
       "name": "Managed containers",
       "icon": "layers",
       "desc": "Container services and managed Kubernetes.",
+      "summary": "You will be able to run containers on managed container services and managed Kubernetes clusters.",
+      "topics": [
+        "Container registries",
+        "Managed container services",
+        "Managed Kubernetes clusters",
+        "Serverless containers",
+        "Choosing a container platform"
+      ],
       "kind": "concept",
       "requires": [
         "vms",
@@ -198,6 +302,14 @@
       "name": "Infrastructure as code",
       "icon": "code",
       "desc": "Describing infrastructure in code with tools like Terraform.",
+      "summary": "You will be able to describe and provision cloud infrastructure in code with Terraform and manage its state.",
+      "topics": [
+        "Declarative infrastructure",
+        "Terraform providers and resources",
+        "Plan and apply workflow",
+        "State files and remote state",
+        "Modules and reuse"
+      ],
       "kind": "concept",
       "requires": [
         "vpc",
@@ -211,6 +323,14 @@
       "name": "Autoscaling",
       "icon": "trending-up",
       "desc": "Scaling groups, scaling policies and stateless design.",
+      "summary": "You will be able to scale workloads automatically with scaling groups and policies and design services to be stateless.",
+      "topics": [
+        "Auto scaling groups",
+        "Target tracking and step policies",
+        "Scaling on custom metrics",
+        "Stateless application design",
+        "Scale-in protection and cooldowns"
+      ],
       "kind": "concept",
       "requires": [
         "cloud-load-balancing",
@@ -224,6 +344,14 @@
       "name": "Monitoring",
       "icon": "activity",
       "desc": "Metrics, logs, alarms and dashboards for cloud resources.",
+      "summary": "You will be able to monitor cloud resources with metrics, logs, alarms and dashboards.",
+      "topics": [
+        "Built-in resource metrics",
+        "Centralised logging",
+        "Alarms and notifications",
+        "Operational dashboards",
+        "Audit logs"
+      ],
       "kind": "concept",
       "requires": [
         "autoscaling"
@@ -236,6 +364,15 @@
       "name": "Cost management",
       "icon": "coins",
       "desc": "Pricing models, reserved and spot capacity, budgets and cost optimisation.",
+      "summary": "You will be able to compare cloud pricing models and keep spending under control with budgets and optimisation.",
+      "topics": [
+        "On-demand pricing",
+        "Reserved and savings plans",
+        "Spot instances",
+        "Budgets and cost alerts",
+        "Tagging and cost allocation",
+        "Identifying idle resources"
+      ],
       "kind": "concept",
       "requires": [
         "autoscaling",
@@ -249,6 +386,14 @@
       "name": "Cloud security",
       "icon": "shield",
       "desc": "Encryption, secrets, network isolation and common misconfigurations.",
+      "summary": "You will be able to secure cloud workloads with encryption, secrets management, network isolation and checks for common misconfigurations.",
+      "topics": [
+        "Encryption at rest and in transit",
+        "Key management services",
+        "Secrets managers",
+        "Network isolation and private endpoints",
+        "Public bucket and open port misconfigurations"
+      ],
       "kind": "concept",
       "requires": [
         "iam",
@@ -262,6 +407,14 @@
       "name": "Static site project",
       "icon": "upload",
       "desc": "Host a static website on object storage behind a CDN with a custom domain.",
+      "summary": "You will host a static website on object storage behind a CDN with a custom domain and HTTPS.",
+      "topics": [
+        "Uploading a site to a bucket",
+        "Serving through a CDN",
+        "Custom domain with DNS",
+        "TLS certificates",
+        "Cache invalidation on deploy"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -276,6 +429,14 @@
       "name": "Three-tier app project",
       "icon": "building",
       "desc": "Deploy a web app, API and database with infrastructure as code, autoscaling and alarms.",
+      "summary": "You will deploy a web app, API and database using infrastructure as code, with autoscaling and monitoring alarms.",
+      "topics": [
+        "Three-tier architecture design",
+        "Provisioning with Terraform",
+        "Networking across subnets",
+        "Autoscaling the app tier",
+        "Alarms and dashboards"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
