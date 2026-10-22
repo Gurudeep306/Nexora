@@ -193,3 +193,55 @@ test('subject pages: DSA, GATE subjects and the rest each have their own page; a
     assert.ok(c.engine === 'dsa' ? href === '/learn/dsa' : c.gate ? href === `/gate/subjects/${c.id}` : href === `/learn/${c.id}`, c.id);
   }
 });
+
+test('confidence: lessons, PYQs and accuracy, fading with time; tested out counts at least 80', (t) => {
+  if (I?.error) return t.skip('no TS loader');
+  const now = Date.UTC(2026, 9, 22);
+  const D = 86400000;
+  const fresh = I.confidence({ progress: 100, completed: true, metric: { lessons: { done: 1, total: 1 }, pyq: { pool: 11, target: 10, correct: 10, attempted: 11, accuracy: 100 } }, memory: { lastAt: now, interval: 0 } }, now);
+  assert.equal(fresh.score, 100);
+  const old = I.confidence({ progress: 100, completed: true, metric: { lessons: { done: 1, total: 1 }, pyq: { pool: 11, target: 10, correct: 10, attempted: 11, accuracy: 100 } }, memory: { lastAt: now - 14 * D, interval: 0 } }, now);
+  assert.ok(old.score < fresh.score && old.score >= 50, `fades (${old.score}) but never below half`);
+  assert.match(old.breakdown, /Lessons 1\/1 · PYQs 10\/10 \(100%\) · last practised 14 days ago/);
+  const part = I.confidence({ progress: 33, completed: false, metric: { pyq: { pool: 9, target: 9, correct: 6, attempted: 9, accuracy: 67 } }, memory: null }, now);
+  assert.equal(part.score, Math.round(100 * (0.7 * (6 / 9) + 0.3 * 0.67)));
+  assert.equal(I.confidence({ progress: 100, completed: true, testedOut: true, metric: { pyq: { pool: 5, target: 5, correct: 0, attempted: 0, accuracy: null } } }, now).score, 80);
+  assert.equal(I.confidence({ progress: 0, completed: false, metric: null }, now).breakdown, 'Nothing studied yet');
+});
+
+test('shortest unlock path: every unmastered prerequisite, prerequisites first, with time', (t) => {
+  if (I?.error) return t.skip('no TS loader');
+  const nodes = [
+    { id: 'a', requires: [], completed: true },
+    { id: 'b', requires: ['a'], completed: false },
+    { id: 'c', requires: ['a'], completed: false },
+    { id: 'd', requires: ['b', 'c'], completed: false },
+    { id: 'e', requires: ['d'], completed: false },
+    { id: 'x', requires: [], completed: false },
+  ];
+  const p = I.unlockPath(nodes, 'e', { b: 30, c: 20, d: 40 });
+  assert.deepEqual(p.steps, ['b', 'c', 'd']);
+  assert.equal(p.minutes, 90);
+  assert.deepEqual(I.unlockPath(nodes, 'b').steps, [], 'already open');
+});
+
+test('study plan: prerequisites first, heavier weight earlier, packed into days, on time or not', (t) => {
+  if (I?.error) return t.skip('no TS loader');
+  const nodes = [
+    { id: 'a', requires: [], completed: false, progress: 0 },
+    { id: 'b', requires: [], completed: false, progress: 50 },
+    { id: 'c', requires: ['a'], completed: false, progress: 0 },
+    { id: 'm', requires: [], completed: true, progress: 100 },
+  ];
+  const start = new Date(Date.UTC(2026, 9, 22));
+  const plan = I.studyPlan(nodes, { a: 60, b: 60, c: 60 }, { b: 9, a: 1, c: 5 }, start, 60, new Date(Date.UTC(2026, 9, 30)));
+  const order = plan.days.flatMap((d) => d.items.map((i) => i.id));
+  assert.deepEqual([...new Set(order)], ['b', 'a', 'c'], 'weight first among ready; c waits for a');
+  assert.equal(plan.days[0].date, '2026-10-22');
+  assert.ok(plan.days.every((d) => d.minutes <= 60));
+  assert.equal(plan.days.reduce((x, d) => x + d.minutes, 0), 30 + 60 + 60, 'remaining minutes only');
+  assert.equal(plan.onTime, true);
+  assert.equal(I.studyPlan(nodes, { a: 600, b: 600, c: 600 }, {}, start, 60, new Date(Date.UTC(2026, 9, 25))).onTime, false);
+  assert.equal(I.fmtMinutes(105), '1h 45m');
+  assert.equal(I.fmtMinutes(40), '40m');
+});

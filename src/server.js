@@ -3756,6 +3756,30 @@ app.get("/api/nexus/content/:subject/:node", (req, res) => {
         };
       })
       .filter(Boolean);
+    // Flashcards: the lessons' definitions and theorems (term → statement),
+    // as Markdown with inline maths.
+    const flat = (n) => {
+      if (n == null) return "";
+      if (typeof n === "string") return n;
+      if (Array.isArray(n)) return n.map(flat).join("");
+      if (n.t === "im") return `$${n.v}$`;
+      if (n.t === "math") return ` $$${n.v}$$ `;
+      return flat(n.c);
+    };
+    const cards = [];
+    const collect = (n) => {
+      if (!n || typeof n !== "object" || cards.length >= 10) return;
+      if (Array.isArray(n)) return n.forEach(collect);
+      if (n.t === "block" && (n.name === "definition" || n.name === "theorem")) {
+        const term = n.attrs?.term || n.attrs?.title || n.title;
+        const firstP = (n.c || []).find((x) => x.t === "p");
+        const back = flat(firstP).replace(/\s+/g, " ").trim();
+        if (term && back) cards.push({ front: String(term), back: back.length > 360 ? `${back.slice(0, 357)}…` : back, kind: n.name });
+        return;
+      }
+      collect(n.c);
+    };
+    for (const id of raw.lessons || []) collect(notesSubj?.lessons.get(id)?.lesson?.body);
     // A hand-written course (content/courses/<subject>/<node>.md): its headings.
     let course = null;
     try {
@@ -3777,6 +3801,7 @@ app.get("/api/nexus/content/:subject/:node", (req, res) => {
       resources: raw.resources || [],
       lessons,
       course,
+      cards,
     });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
