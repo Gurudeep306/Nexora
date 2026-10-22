@@ -35,6 +35,9 @@ import type { CrossLink, NexusNode, NexusStatsResponse, NexusWebStructure } from
  * page (/learn/<id>/<node>, /learn/dsa/skill/<node>).
  */
 
+/** The last bloom: which node opened, from where (to zoom back out to it). */
+const bloom: { subject: string | null; node: string | null; origin: string } = { subject: null, node: null, origin: '50% 30%' }
+
 /** The subject and node from the route (/learn/dsa has no subject: it is DSA). */
 function useSubjectRoute() {
   const { subject, node } = useParams()
@@ -96,36 +99,52 @@ export default function SubjectPage() {
   // The open node lives in the path (/learn/<id>/<node>).
   const selectedId = nodeParam
   const subjRef = useMemo(() => ({ id: subject, engine: isDsa ? ('dsa' as const) : null }), [subject, isDsa])
-  // The bloom: the tree zooms into the node it opens (and back out to it).
+  // The bloom: the camera flies into the node it opens — the tree zooms in
+  // on it and fades as the lesson unfolds — and back out to it on return.
   const treeRef = useRef<HTMLDivElement>(null)
-  const origin = useRef('50% 30%')
-  const lastNode = useRef<string | null>(null)
+  const [returning] = useState(() => (bloom.subject === subject && bloom.node ? bloom : null))
   const setSelectedId = useCallback(
     (id: string | null) => {
+      const to = subjectHref(subjRef, id)
       const el = id ? document.getElementById(`nx-node-${id}`) : null
       const tree = treeRef.current
-      if (el && tree) {
-        const r = el.getBoundingClientRect()
-        const t = tree.getBoundingClientRect()
-        origin.current = `${Math.round(r.left + r.width / 2 - t.left)}px ${Math.round(r.top + 32 - t.top)}px`
-        tree.style.transformOrigin = origin.current
+      if (!el || !tree) return navigate(to)
+      const r = el.getBoundingClientRect()
+      const t = tree.getBoundingClientRect()
+      const origin = `${Math.round(r.left + r.width / 2 - t.left)}px ${Math.round(r.top + 32 - t.top)}px`
+      Object.assign(bloom, { subject, node: id, origin })
+      if (reduce || typeof tree.animate !== 'function') return navigate(to)
+      tree.style.transformOrigin = origin
+      const a = tree.animate(
+        [
+          { transform: 'scale(1)', opacity: 1, filter: 'blur(0px)' },
+          { transform: 'scale(1.7)', opacity: 0, filter: 'blur(2px)' },
+        ],
+        { duration: 320, easing: 'cubic-bezier(0.55, 0, 0.3, 1)', fill: 'forwards' },
+      )
+      let gone = false
+      const go = () => {
+        if (gone) return
+        gone = true
+        navigate(to)
       }
-      navigate(subjectHref(subjRef, id))
+      a.onfinish = go
+      window.setTimeout(go, 420)
     },
-    [navigate, subjRef],
+    [navigate, subjRef, subject, reduce],
   )
   const selectedNode = useMemo(() => nexus?.nodes.find((n) => n.id === selectedId) ?? null, [nexus, selectedId])
   useEffect(() => {
     if (selectedId) {
-      lastNode.current = selectedId
+      Object.assign(bloom, { subject, node: selectedId })
       return
     }
     // Back on the tree: the node you came from, in view.
-    const id = lastNode.current
+    const id = returning?.node
     if (!id) return
     const t = window.setTimeout(() => document.getElementById(`nx-node-${id}`)?.scrollIntoView({ block: 'center', behavior: 'auto' }), 30)
     return () => window.clearTimeout(t)
-  }, [selectedId])
+  }, [selectedId, subject, returning])
 
   // Goal steps, review rings (due or marked), ⌘K.
   const webClusters = useMemo(() => (structure ? mergeWeb(structure, cachedState(username)) : null), [structure, username])
@@ -286,13 +305,13 @@ export default function SubjectPage() {
 
   return (
     <>
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode="wait">
     {lessonView ?? (
     <motion.div
       key="tree"
       ref={treeRef}
-      style={{ transformOrigin: origin.current }}
-      initial={reduce ? { opacity: 0 } : lastNode.current ? { opacity: 0, scale: 1.18 } : { opacity: 0, y: 8 }}
+      style={{ transformOrigin: returning?.origin ?? '50% 30%' }}
+      initial={reduce ? { opacity: 0 } : returning ? { opacity: 0, scale: 1.35 } : { opacity: 0, y: 8 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.6 }}
       transition={{ duration: reduce ? 0.15 : 0.34, ease: [0.4, 0, 0.2, 1] }}

@@ -437,7 +437,7 @@ function RadialOverview() {
           </div>
           <div>
               <div className="nx-hud sticky top-4" style={hud(260)}>
-                <SelectHint text="Every subject is a sector, its zones are rings outward from you. Click a subject's name to open its own tree, or any skill to inspect it." />
+                <SelectHint text="Every subject is a sector, its zones are rings outward from you. Click a subject's name to open its course tree, or any skill to open its lesson." />
               </div>
           </div>
         </div>
