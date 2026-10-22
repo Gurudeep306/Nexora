@@ -245,3 +245,38 @@ test('study plan: prerequisites first, heavier weight earlier, packed into days,
   assert.equal(I.fmtMinutes(105), '1h 45m');
   assert.equal(I.fmtMinutes(40), '40m');
 });
+
+// The Nexus opening (client/src/components/nexus/intro.ts).
+let N = null;
+test.before(async () => {
+  try {
+    N = await import(path.join(__dirname, '..', 'client', 'src', 'components', 'nexus', 'intro.ts'));
+  } catch (e) {
+    N = { error: e };
+  }
+});
+
+test('intro: full the first time, short after, a fade with reduced motion; one clock for every beat', (t) => {
+  if (N?.error) return t.skip('no TS loader');
+  let seen = false;
+  const mark = () => seen;
+  assert.equal(N.pickIntro(false, mark).mode, 'full');
+  seen = true;
+  assert.deepEqual(N.pickIntro(false, mark), { mode: 'short', dur: 800 });
+  assert.equal(N.pickIntro(true, mark).mode, 'fade');
+  // The short intro plays the same beats on the same 2,000 ms clock, faster.
+  assert.equal(N.introClock(400, 0, 800), 1000);
+  assert.equal(N.introClock(5000, 0, 2000), N.INTRO_CLOCK);
+  assert.equal(N.introClock(0, 100, 2000), 0);
+  // Eased 0 → 1 within its window, flat outside it.
+  assert.equal(N.seg(100, 300, 1100), 0);
+  assert.equal(N.seg(1100, 300, 1100), 1);
+  assert.ok(N.seg(700, 300, 1100) > 0.5, 'ease-out is past half way at the midpoint');
+  assert.equal(N.pop(0, 100, 400), 0);
+  assert.ok(Math.abs(N.pop(400, 100, 400) - 1) < 1e-9);
+  assert.ok(Math.max(...[150, 200, 250, 300, 350].map((x) => N.pop(x, 100, 400))) > 1, 'a small overshoot');
+  // Staggered starts span the window evenly.
+  assert.equal(N.stagger(0, 9, 300, 820), 300);
+  assert.equal(N.stagger(8, 9, 300, 820), 820);
+  assert.equal(N.stagger(0, 1, 300, 820), 300);
+});

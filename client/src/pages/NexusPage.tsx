@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { RefreshCw } from 'lucide-react'
 import {
@@ -43,6 +43,7 @@ import type {
   WebNode,
 } from '@/components/nexus/types'
 import { cachedState, cachedStructure, loadWeb, mergeWeb } from '@/components/nexus/data'
+import { INTRO_SKIP, pickIntro } from '@/components/nexus/intro'
 import { Icon } from '@/components/icon/Icon'
 
 /*
@@ -159,6 +160,14 @@ function RadialOverview() {
   const navigate = useNavigate()
   const selKey = params.get('node')
   const [tab, setTab] = useState<'map' | 'ranks'>('map')
+  // The opening animation: full on the first open this session, short after.
+  const [intro] = useState(() => pickIntro(typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches))
+  const [introState, setIntroState] = useState<string>(intro.mode)
+  useEffect(() => {
+    const on = () => setIntroState('done')
+    window.addEventListener(INTRO_SKIP, on)
+    return () => window.removeEventListener(INTRO_SKIP, on)
+  }, [])
   const { user } = useAuth()
   const username = user?.username ?? ''
 
@@ -341,11 +350,14 @@ function RadialOverview() {
   const selZone = sel?.c.zones.find((z) => z.level === sel.n.z)
   const week = state.week
 
+  const hud = (d: number) => ({ '--nx-hud-d': `${d}ms` }) as CSSProperties
   return (
-    <div>
-      {header}
+    <div data-intro={introState}>
+      <div className="nx-hud" style={hud(0)}>
+        {header}
+      </div>
       {/* The web rank, in the original player card. */}
-      <Card glow className="mb-4">
+      <Card glow className="nx-hud mb-4" style={hud(70)}>
         <CardContent className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
@@ -407,7 +419,7 @@ function RadialOverview() {
         </CardContent>
       </Card>
 
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+      <div className="nx-hud mb-4 flex flex-wrap items-end justify-between gap-3" style={hud(140)}>
         <Tabs
           variant="pills"
           items={[
@@ -429,7 +441,7 @@ function RadialOverview() {
         )}
       </div>
       {tab === 'map' && plan && (
-        <p className="-mt-2 mb-3 text-[12px] text-foreground-dim" role="status">
+        <p className="nx-hud -mt-2 mb-3 text-[12px] text-foreground-dim" style={hud(200)} role="status">
           <span className="font-semibold text-warning">Goal path</span> · {plan.order.length} concepts ·{' '}
           {plan.order.filter((k) => byKey.get(k)?.n.s === 2).length} mastered · next:{' '}
           {plan.next.slice(0, 3).map((k, i) => (
@@ -492,6 +504,7 @@ function RadialOverview() {
                 due={due}
                 celebrate={celebrate}
                 nextStep={next}
+                intro={intro}
               />
             ) : (
               <RadialSkeleton />
@@ -522,7 +535,9 @@ function RadialOverview() {
                 />
               </ResponsivePanel>
             ) : (
-              <SelectHint text="Every subject is a sector, its zones are rings outward from you. Click a subject's name to open its own tree, or any skill to inspect it." />
+              <div className="nx-hud sticky top-4" style={hud(260)}>
+                <SelectHint text="Every subject is a sector, its zones are rings outward from you. Click a subject's name to open its own tree, or any skill to inspect it." />
+              </div>
             )}
           </div>
         </div>

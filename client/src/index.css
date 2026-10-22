@@ -1300,3 +1300,159 @@ input[type='search']::-webkit-search-results-decoration {
   --ng-c2: #9b6bff;
   --ng-c3: #2dd4bf;
 }
+
+/* ── Nexus opening: the HUD arrives last, with a spring ── */
+[data-intro='full'] .nx-hud {
+  animation: nx-hud-in 640ms cubic-bezier(0.2, 0.9, 0.25, 1.12) both;
+  animation-delay: calc(1650ms + var(--nx-hud-d, 0ms));
+}
+[data-intro='short'] .nx-hud {
+  animation: nx-hud-in 420ms cubic-bezier(0.2, 0.9, 0.25, 1.12) both;
+  animation-delay: calc(520ms + var(--nx-hud-d, 0ms) * 0.5);
+}
+[data-intro='fade'] .nx-hud { animation: nx-hud-fade 220ms ease-out both; }
+@keyframes nx-hud-in {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes nx-hud-fade { from { opacity: 0; } to { opacity: 1; } }
+/* YOU: the rank ring draws its arc as the emblem ignites. */
+.nx-core-ignite { animation: nx-core-arc 760ms cubic-bezier(0.3, 0.7, 0.2, 1) 120ms both; }
+.nx-intro-done .nx-core-ignite { animation: none; }
+@keyframes nx-core-arc { from { stroke-dashoffset: var(--nx-arc); } to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  [data-intro] .nx-hud { animation: nx-hud-fade 200ms ease-out both; }
+  .nx-core-ignite { animation: none; }
+}
+
+/* ── Bloomed lesson: the path rail, the reading surface, the tools ── */
+.nx-bloom {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .nx-bloom { grid-template-columns: 236px minmax(0, 1fr); }
+}
+@media (min-width: 1440px) {
+  .nx-bloom { grid-template-columns: 236px minmax(0, 1fr) 300px; }
+}
+.nx-rail {
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: 0.25rem 0.25rem 1rem 0;
+  scrollbar-width: thin;
+}
+.nx-rail-label {
+  margin: 0.25rem 0 0.25rem 0.5rem;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.nx-rail-line {
+  margin: 0.25rem 0 0.25rem 1.1rem;
+  height: 18px;
+  width: 1px;
+  background: linear-gradient(var(--color-border-strong), var(--color-border));
+}
+.nx-rail-current {
+  position: relative;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-bg-surface);
+  padding: 0.75rem;
+  box-shadow: 0 10px 30px -18px rgb(0 0 0 / 0.45);
+}
+/* The fine connector from the node to the lesson it bloomed into. */
+@media (min-width: 1024px) {
+  .nx-rail-current::after {
+    content: '';
+    position: absolute;
+    top: 30px;
+    right: -2rem;
+    width: 2rem;
+    height: 1px;
+    background: linear-gradient(90deg, var(--color-border-strong), transparent);
+  }
+}
+.nx-just-unlocked { animation: nx-unlock-glow 1.8s ease-out 2; }
+@keyframes nx-unlock-glow {
+  0% { background: color-mix(in oklab, var(--color-accent-brand) 26%, transparent); }
+  100% { background: transparent; }
+}
+.nx-read-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  height: 2px;
+  margin-bottom: 1rem;
+  background: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.nx-read-bar > span {
+  display: block;
+  height: 100%;
+  transform-origin: left center;
+  transition: transform 120ms linear;
+}
+.nx-lesson-head { max-width: 72ch; }
+.nx-learn-list {
+  margin-top: 1.75rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--color-bg-surface) 92%, transparent);
+  max-width: 78ch;
+}
+.nx-lesson-paper { max-width: none; }
+.nx-lesson-md { max-width: 72ch; font-size: 16px; line-height: 1.75; }
+.nx-coming-soon {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  padding: 1.4rem 1.5rem;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 16px;
+  max-width: 78ch;
+}
+.nx-lesson-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
+  max-width: 78ch;
+}
+.nx-meta { display: none; }
+.nx-meta-inline { margin-top: 2rem; border-top: 1px solid var(--color-border); max-width: 78ch; }
+@media (min-width: 1440px) {
+  .nx-meta {
+    display: block;
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+  .nx-meta-inline { display: none; }
+}
+/* Below desktop the rail sits above the lesson as a compact strip. */
+@media (max-width: 1023px) {
+  .nx-rail {
+    position: static;
+    max-height: none;
+    padding: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nx-just-unlocked { animation: none; }
+  .nx-read-bar > span { transition: none; }
+}
