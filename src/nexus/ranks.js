@@ -100,7 +100,9 @@ function webScore(totals, computed, dsaNodes = []) {
     for (const n of data.nodes) {
       const pyq = Math.min(n.metric?.pyq?.correct || 0, n.metric?.pyq?.target || 0);
       const lessons = n.metric?.lessons?.done || 0;
-      xp += Math.round(((n.xpReward || 0) * (n.progress || 0)) / 100) + pyq * XP_PER_PYQ + lessons * XP_PER_LESSON;
+      // A node passed by a quick check earns 60% of its XP (plus what was studied).
+      const share = n.testedOut ? 0.6 + 0.4 * ((n.studyProgress || 0) / 100) : (n.progress || 0) / 100;
+      xp += Math.round((n.xpReward || 0) * share) + pyq * XP_PER_PYQ + lessons * XP_PER_LESSON;
       solved += pyq + lessons;
     }
     subjects[sid] = subjectProgress(data.nodes);
@@ -196,6 +198,13 @@ async function saveScore({ get, run }, last, username, score, level, now = Date.
        week_base_xp=excluded.week_base_xp, updated_at=excluded.updated_at`,
     [username, score.xp, score.solved, level, subjectsJson, week, Math.min(base, score.xp), now],
   );
+  // One progress snapshot per day (the subject page's history sparkline).
+  const day = new Date(now).toISOString().slice(0, 10);
+  await run(
+    `INSERT INTO nexus_history(username, day, web_xp, subjects) VALUES(?,?,?,?)
+     ON CONFLICT(username, day) DO UPDATE SET web_xp=excluded.web_xp, subjects=excluded.subjects`,
+    [username, day, score.xp, subjectsJson],
+  ).catch(() => {});
   if (last.size > 5000) last.clear();
   last.set(username, sig);
   return true;
