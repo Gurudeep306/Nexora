@@ -159,7 +159,7 @@ export function NodeContent({
   const kind = isDsa ? 'Skill' : node.kind === 'project' ? 'Project' : node.kind === 'lesson' ? 'Lesson' : 'Concept'
 
   return (
-    <article className="nx-panel space-y-6" aria-label={`${node.name}: contents`}>
+    <article className="nx-panel space-y-6" style={{ boxShadow: "none", border: 0, background: "transparent", padding: 0, borderRadius: 0 }} aria-label={`${node.name}: contents`}>
       {/* Header */}
       <header className="flex items-start gap-3">
         <MasteryRing value={node.completed ? 100 : node.progress} color={zoneColor} state={state} icon={node.icon} due={due || marked} />
