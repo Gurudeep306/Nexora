@@ -36,7 +36,8 @@ const keyOf = (s: InsightSubject, n: InsightNode) => `${s.id}:${n.id}`
  * A goal route: every concept of the goal's subjects plus everything they
  * need (across subjects), in learning order — prerequisites first, then
  * lower zones, then the subject's place. `next` are the first steps not yet
- * mastered, the ones open to you first.
+ * mastered: open ones in the goal's subjects first, then open prerequisites
+ * elsewhere, then locked ones.
  */
 export function routePlan(subjects: InsightSubject[], goal: string[], nextCount = 5): { order: string[]; next: string[]; keys: Set<string> } {
   const byKey = new Map<string, { s: InsightSubject; n: InsightNode }>()
@@ -81,9 +82,11 @@ export function routePlan(subjects: InsightSubject[], goal: string[], nextCount 
   }
   // Anything left (a cycle in the data) goes last, still in a stable order.
   for (const k of [...want].sort()) if (!order.includes(k)) order.push(k)
-  const open = order.filter((k) => byKey.get(k)!.n.s === 1)
-  const rest = order.filter((k) => byKey.get(k)!.n.s === 0)
-  return { order, next: [...open, ...rest].slice(0, nextCount), keys: want }
+  // Next: what you can do now in the goal's own subjects, then the open
+  // prerequisites elsewhere, then what is still locked (goal subjects first).
+  const inGoal = (k: string) => goals.has(byKey.get(k)!.s.id)
+  const pick = (st: number, own: boolean) => order.filter((k) => byKey.get(k)!.n.s === st && inGoal(k) === own)
+  return { order, next: [...pick(1, true), ...pick(1, false), ...pick(0, true), ...pick(0, false)].slice(0, nextCount), keys: want }
 }
 
 /** The next step: the open skill you are furthest into, nearest the centre. */

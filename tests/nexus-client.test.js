@@ -147,7 +147,7 @@ test('goal route: prerequisites first, across subjects, next steps open first', 
   assert.deepEqual([...plan.keys].sort(), ['a:x', 'a:y', 'a:z', 'b:q', 'b:r']);
   const pos = new Map(plan.order.map((k, i) => [k, i]));
   assert.ok(pos.get('a:x') < pos.get('a:y') && pos.get('a:y') < pos.get('a:z') && pos.get('a:z') < pos.get('b:q'));
-  assert.deepEqual(plan.next, ['a:y', 'b:r', 'a:z', 'b:q'], 'open steps before locked ones; mastered skipped');
+  assert.deepEqual(plan.next, ['b:r', 'a:y', 'b:q', 'a:z'], 'open steps in the goal first, then open prerequisites, then locked; mastered skipped');
 });
 
 test('next step, continue where you left off, spaced review, celebration', (t) => {

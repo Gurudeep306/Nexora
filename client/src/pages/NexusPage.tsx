@@ -30,7 +30,7 @@ import { getLayout, layoutNow } from '@/components/nexus/layoutCache'
 import { courseHref } from '@/components/nexus/course'
 import { continueFrom, isDue, nextStep as findNextStep } from '@/components/nexus/insights'
 import { NexusPalette, type PaletteCommand } from '@/components/nexus/NexusPalette'
-import { ContinueChip, GoalMenu, RadialSkeleton, RankCardSkeleton, ResponsivePanel, startReview, useCelebration, useGoal, usePaletteHotkey } from '@/components/nexus/extras'
+import { ContinueChip, GoalMenu, RadialSkeleton, RankCardSkeleton, ResponsivePanel, startReview, useCelebration, useGoal, usePaletteHotkey, usePhone } from '@/components/nexus/extras'
 import { Crosshair, Expand, Maximize2 } from 'lucide-react'
 import type { RadialLayout } from '@/components/nexus/radial'
 import type {
@@ -213,7 +213,13 @@ function SubjectTree({ subject }: { subject: string }) {
   }, [username])
   const { goal, plan, setGoal } = useGoal(cachedStructure()?.routes ?? [], webClusters)
   const own = (k: string) => (k.startsWith(`${subject}:`) ? k.slice(subject.length + 1) : null)
-  const steps = useMemo(() => (plan ? plan.next.map(own).filter((x): x is string => !!x) : undefined), [plan])
+  // This subject's next steps along the goal path: open ones first, then the rest.
+  const steps = useMemo(() => {
+    if (!plan || !raw) return undefined
+    const state = new Map(raw.nodes.map((n) => [n.id, n]))
+    const mine = plan.order.map(own).filter((x): x is string => !!x && !state.get(x)?.completed)
+    return [...mine.filter((id) => state.get(id)?.unlocked), ...mine.filter((id) => !state.get(id)?.unlocked)].slice(0, 5)
+  }, [plan, raw])
   const highlight = useMemo(() => (plan ? new Set([...plan.keys].map(own).filter((x): x is string => !!x)) : undefined), [plan])
   const due = useMemo(() => {
     const out = new Set<string>()
@@ -232,6 +238,7 @@ function SubjectTree({ subject }: { subject: string }) {
   }, [])
   const [paletteOpen, setPaletteOpen] = useState(false)
   usePaletteHotkey(() => setPaletteOpen(true))
+  const phone = usePhone()
   // A jump lands on its node: bring it into view.
   useEffect(() => {
     if (!selectedNode) return
@@ -577,6 +584,7 @@ function SubjectTree({ subject }: { subject: string }) {
                     onReview={due.has(selectedNode.id) ? () => void startReview(subject, selectedNode.id, navigate) : undefined}
                     shareHref={`/nexus?subject=${encodeURIComponent(subject)}&node=${encodeURIComponent(selectedNode.id)}`}
                     hueOf={hueOf}
+                    bare={phone}
                   />
                 </ResponsivePanel>
               ) : (
@@ -724,6 +732,7 @@ function RadialOverview() {
   }, [structure, clusters])
   const [paletteOpen, setPaletteOpen] = useState(false)
   usePaletteHotkey(() => setPaletteOpen(true))
+  const phone = usePhone()
   const run = (cmd: string) => window.dispatchEvent(new CustomEvent('nexus:command', { detail: cmd }))
   const commands: PaletteCommand[] = [
     { id: 'next', label: 'Jump to my next step', hint: 'command', icon: <Crosshair className="size-4" />, run: () => run('next') },
@@ -960,6 +969,7 @@ function RadialOverview() {
                   onReview={due.has(selKey!) ? () => void startReview(sel.c.id, sel.n.id, navigate) : undefined}
                   shareHref={`/nexus?subject=${encodeURIComponent(sel.c.id)}&node=${encodeURIComponent(sel.n.id)}`}
                   hueOf={hueOf}
+                  bare={phone}
                 />
               </ResponsivePanel>
             ) : (
