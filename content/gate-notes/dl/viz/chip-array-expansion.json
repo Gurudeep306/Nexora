@@ -1,0 +1,1500 @@
+{
+ "version": 1,
+ "title": "Building a 64K × 16 memory from 16K × 8 chips",
+ "width": 680,
+ "height": 382,
+ "narrow": {
+  "width": 360,
+  "height": 406
+ },
+ "intro": "Eight 16K × 8 chips in four rows of two. The two chips of a row give the high and low byte; a 2:4 decoder on the top address bits A15 A14 enables one row, and A13–A0 go to every chip.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "64K × 16 from 16K × 8 chips: width, then capacity",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "64K × 16 from 16K × 8 chips",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "hd1",
+   "type": "text",
+   "x": 310.0,
+   "y": 68,
+   "text": "D15–D8",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 162.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "hd0",
+   "type": "text",
+   "x": 450.0,
+   "y": 68,
+   "text": "D7–D0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 276.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "c00",
+   "type": "box",
+   "x": 250,
+   "y": 84.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": true,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 112,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "c01",
+   "type": "box",
+   "x": 390,
+   "y": 84.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": false,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 226,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "c10",
+   "type": "box",
+   "x": 250,
+   "y": 146.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": true,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 112,
+    "y": 154.0,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "c11",
+   "type": "box",
+   "x": 390,
+   "y": 146.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": true,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 226,
+    "y": 154.0,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "c20",
+   "type": "box",
+   "x": 250,
+   "y": 208.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": true,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 112,
+    "y": 224.0,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "c21",
+   "type": "box",
+   "x": 390,
+   "y": 208.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": true,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 226,
+    "y": 224.0,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "c30",
+   "type": "box",
+   "x": 250,
+   "y": 270.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": true,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 112,
+    "y": 294.0,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "c31",
+   "type": "box",
+   "x": 390,
+   "y": 270.0,
+   "w": 120,
+   "h": 40,
+   "mono": true,
+   "hidden": true,
+   "label": "16K × 8",
+   "size": 14,
+   "narrow": {
+    "x": 226,
+    "y": 294.0,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "rg0",
+   "type": "text",
+   "x": 524,
+   "y": 104.0,
+   "text": "0000–3FFF",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 219.0,
+    "y": 131.0,
+    "size": 12,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "rg1",
+   "type": "text",
+   "x": 524,
+   "y": 166.0,
+   "text": "4000–7FFF",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 219.0,
+    "y": 201.0,
+    "size": 12,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "rg2",
+   "type": "text",
+   "x": 524,
+   "y": 228.0,
+   "text": "8000–BFFF",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 219.0,
+    "y": 271.0,
+    "size": 12,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "rg3",
+   "type": "text",
+   "x": 524,
+   "y": 290.0,
+   "text": "C000–FFFF",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 219.0,
+    "y": 341.0,
+    "size": 12,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "lk0",
+   "type": "line",
+   "points": [
+    [
+     370,
+     104.0
+    ],
+    [
+     390,
+     104.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      212,
+      102.0
+     ],
+     [
+      226,
+      102.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lk1",
+   "type": "line",
+   "points": [
+    [
+     370,
+     166.0
+    ],
+    [
+     390,
+     166.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      212,
+      172.0
+     ],
+     [
+      226,
+      172.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lk2",
+   "type": "line",
+   "points": [
+    [
+     370,
+     228.0
+    ],
+    [
+     390,
+     228.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      212,
+      242.0
+     ],
+     [
+      226,
+      242.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lk3",
+   "type": "line",
+   "points": [
+    [
+     370,
+     290.0
+    ],
+    [
+     390,
+     290.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      212,
+      312.0
+     ],
+     [
+      226,
+      312.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "dec",
+   "type": "box",
+   "x": 110,
+   "y": 73.0,
+   "w": 90,
+   "h": 248,
+   "hidden": true,
+   "narrow": {
+    "x": 40,
+    "y": 67.0,
+    "w": 56,
+    "h": 280
+   }
+  },
+  {
+   "id": "dec-l0",
+   "type": "text",
+   "x": 115,
+   "y": 135.0,
+   "text": "A15",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 45,
+    "y": 137.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-l1",
+   "type": "text",
+   "x": 115,
+   "y": 259.0,
+   "text": "A14",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 45,
+    "y": 277.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r0",
+   "type": "text",
+   "x": 195,
+   "y": 104.0,
+   "text": "0",
+   "size": 13,
+   "anchor": "end",
+   "hidden": true,
+   "narrow": {
+    "x": 91,
+    "y": 102.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r1",
+   "type": "text",
+   "x": 195,
+   "y": 166.0,
+   "text": "1",
+   "size": 13,
+   "anchor": "end",
+   "hidden": true,
+   "narrow": {
+    "x": 91,
+    "y": 172.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r2",
+   "type": "text",
+   "x": 195,
+   "y": 228.0,
+   "text": "2",
+   "size": 13,
+   "anchor": "end",
+   "hidden": true,
+   "narrow": {
+    "x": 91,
+    "y": 242.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r3",
+   "type": "text",
+   "x": 195,
+   "y": 290.0,
+   "text": "3",
+   "size": 13,
+   "anchor": "end",
+   "hidden": true,
+   "narrow": {
+    "x": 91,
+    "y": 312.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-n",
+   "type": "text",
+   "x": 155.0,
+   "y": 197.0,
+   "text": "2:4",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 68.0,
+    "y": 207.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "cs0",
+   "type": "line",
+   "points": [
+    [
+     200,
+     104.0
+    ],
+    [
+     250,
+     104.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      96,
+      102.0
+     ],
+     [
+      112,
+      102.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cs1",
+   "type": "line",
+   "points": [
+    [
+     200,
+     166.0
+    ],
+    [
+     250,
+     166.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      96,
+      172.0
+     ],
+     [
+      112,
+      172.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cs2",
+   "type": "line",
+   "points": [
+    [
+     200,
+     228.0
+    ],
+    [
+     250,
+     228.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      96,
+      242.0
+     ],
+     [
+      112,
+      242.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cs3",
+   "type": "line",
+   "points": [
+    [
+     200,
+     290.0
+    ],
+    [
+     250,
+     290.0
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      96,
+      312.0
+     ],
+     [
+      112,
+      312.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "in0",
+   "type": "line",
+   "points": [
+    [
+     74,
+     135.0
+    ],
+    [
+     110,
+     135.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      22,
+      137.0
+     ],
+     [
+      40,
+      137.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "iv0",
+   "type": "text",
+   "x": 69,
+   "y": 135.0,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 17,
+    "y": 137.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "in1",
+   "type": "line",
+   "points": [
+    [
+     74,
+     259.0
+    ],
+    [
+     110,
+     259.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      22,
+      277.0
+     ],
+     [
+      40,
+      277.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "iv1",
+   "type": "text",
+   "x": 69,
+   "y": 259.0,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 17,
+    "y": 277.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "low",
+   "type": "text",
+   "x": 340.0,
+   "y": 338.0,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "narrow": {
+    "x": 180.0,
+    "y": 364.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 362.0,
+   "text": "",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 386.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "One 16K × 8 chip: 14 address lines (16K = 2^14 words) and 8 data lines. We need 64K words of 16 bits.",
+   "patches": [
+    {
+     "id": "low",
+     "set": {
+      "text": "chip: A13–A0 in, 8 bits out"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Width first: a second chip side by side, same address lines, gives 16-bit words. 2 chips per row, no decoder.",
+   "patches": [
+    {
+     "id": "c00",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hd1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lk0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "low",
+     "set": {
+      "text": "both chips see the same A13–A0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Capacity: 64K / 16K = 4 rows of 2 chips, 8 chips in all. Each row owns a block of 16K consecutive addresses.",
+   "patches": [
+    {
+     "id": "c10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c11",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c20",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c21",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c30",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c31",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lk1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lk2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lk3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "rg0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "rg1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "rg2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "rg3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "64K words need 16 address lines. The low 14 go to every chip; the top 2, A15 A14, drive a 2:4 decoder, one output per row.",
+   "patches": [
+    {
+     "id": "dec",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dec-l0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dec-l1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dec-r0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dec-r1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dec-r2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dec-r3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dec-n",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "cs0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "cs1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "cs2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "cs3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "in0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "in1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "low",
+     "set": {
+      "text": "A13–A0 → all 8 chips (offset inside a chip)"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address 9A3C: A15 A14 = 10, so decoder output 2 enables row 2 (8000–BFFF); both its chips read word 1A3C.",
+   "patches": [
+    {
+     "id": "iv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lk0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dec-r0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "c00",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c01",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "cs1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lk1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dec-r1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "c10",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c11",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "cs2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "lk2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rg2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "dec-r2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "c20",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "c21",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "cs3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lk3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dec-r3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "c30",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c31",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "9A3C → row 2, offset 1A3C",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address 2F00: A15 A14 = 00, so decoder output 0 enables row 0 (0000–3FFF); both its chips read word 2F00.",
+   "patches": [
+    {
+     "id": "iv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "iv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "lk0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rg0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "dec-r0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "c00",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "c01",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "cs1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lk1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dec-r1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "c10",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c11",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "cs2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lk2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dec-r2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "c20",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c21",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "cs3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lk3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dec-r3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "c30",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c31",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "2F00 → row 0, offset 2F00",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Result: 8 chips, a 2:4 decoder on A15 A14, A13–A0 shared. Chips = (64K/16K)·(16/8) = 8.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "8 chips · 2:4 decoder · 14 shared lines",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "c00",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c01",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c10",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c11",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c20",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c21",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c30",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c31",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "cs0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lk0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lk1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lk2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lk3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rg3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dec-r0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "dec-r1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "dec-r2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "dec-r3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "iv0",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "iv1",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  }
+ ]
+}
