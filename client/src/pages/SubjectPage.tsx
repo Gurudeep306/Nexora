@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { ArrowRight, BookOpen, ChevronRight, Lock, PenLine, RefreshCw } from 'lucide-react'
+import { ArrowRight, BookOpen, CalendarCheck, ChevronRight, Clock, Lock, PenLine, RefreshCw, RotateCcw, Telescope } from 'lucide-react'
 import { Button, Card, CardContent, ErrorState, LoadingBlock, RankGlyph, Tabs } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
@@ -16,6 +16,10 @@ import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
 import { NodeContent, NodeSheet, useReviewList } from '@/components/nexus/NodeContent'
 import { NexusPalette } from '@/components/nexus/NexusPalette'
 import { GoalMenu, startReview, useGoal, usePaletteHotkey } from '@/components/nexus/extras'
+import { HistorySpark, StudyPlanView, SubjectMiniMap } from '@/components/nexus/SubjectExtras'
+import { fmtMinutes, studyPlan } from '@/components/nexus/insights'
+import type { NodeInsight } from '@/components/nexus/NodeExtras'
+import { useToast } from '@/components/ui'
 import { courseHref, subjectHref } from '@/components/nexus/course'
 import { cachedState, cachedStructure, fetchNexusPath, fetchRoadmap, loadWeb, mergeWeb, nexusPathKey, ROADMAP_KEY } from '@/components/nexus/data'
 import type { CrossLink, NexusNode, NexusStatsResponse, NexusWebStructure } from '@/components/nexus/types'
@@ -41,7 +45,9 @@ export default function SubjectPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const username = user?.username ?? ''
-  const [tab, setTab] = useState<'tree' | 'ranks' | 'board'>('tree')
+  const [tab, setTab] = useState<'tree' | 'plan' | 'ranks' | 'board'>('tree')
+  const [revision, setRevision] = useState(false)
+  const toast = useToast()
 
   // The structure (streams, colours, cross links, goal routes): device first.
   const [structure, setStructure] = useState<NexusWebStructure | null>(() => cachedStructure())
@@ -67,6 +73,16 @@ export default function SubjectPage() {
     return { ...raw, nodes: own.map((n) => ({ ...n, requires: n.requires.filter((r) => ids.has(r)) })) }
   }, [raw, subject])
   const isDsa = (nexus?.subject?.engine ?? (subject === 'dsa' ? 'dsa' : null)) === 'dsa'
+  // Insights (time, weightage, peers, your notes, history) and the exam date.
+  const insightsApi = useApi<{ ok: boolean; nodes: Record<string, NodeInsight>; zones: Record<string, number>; remainingMin: number; notes: Record<string, { note: string; bookmarked: boolean }>; history: { day: string; p: number }[] }>(
+    () => api.get(`/api/nexus/insights/${subject}`),
+    [subject],
+    { cacheKey: `nexus:insights:${subject}`, skip: !subject },
+  )
+  const ins = insightsApi.data
+  const planApi = useApi<{ ok: boolean; plan: { examDate?: string | null } | null }>(() => api.get('/api/gate/me/plan'), [], { cacheKey: 'gate:me:plan' })
+  const examDate = planApi.data?.plan?.examDate ?? null
+  const [notesLocal, setNotesLocal] = useState<Record<string, { note: string; bookmarked: boolean }>>({})
   const roadmapApi = useApi(fetchRoadmap, [], { cacheKey: ROADMAP_KEY, skip: !isDsa })
   const statsApi = useApi<NexusStatsResponse>(() => api.get<NexusStatsResponse>('/api/stats', { query: { username: username || undefined } }), [username], {
     cacheKey: `stats:${username}`,
@@ -119,6 +135,14 @@ export default function SubjectPage() {
     return [...count].sort((a, b) => b[1] - a[1]).map(([id, n]) => ({ c: structure?.clusters.find((x) => x.id === id), n })).filter((x) => !!x.c)
   }, [cluster, structure])
 
+  const refreshAll = useCallback(() => {
+    refetch()
+    insightsApi.refetch()
+    loadWeb(true)
+      .then(({ structure: s }) => setStructure(s))
+      .catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refetch])
   const onJump = useCallback(
     (l: CrossLink) => {
       if (l.subject === subject) setSelectedId(l.id)
@@ -173,6 +197,12 @@ export default function SubjectPage() {
   }
   const R = 30
   const C = 2 * Math.PI * R
+  const minutes = Object.fromEntries(Object.entries(ins?.nodes ?? {}).map(([id, x]) => [id, x.min]))
+  const weight = Object.fromEntries(Object.entries(ins?.nodes ?? {}).map(([id, x]) => [id, x.w?.marks ?? 0]))
+  const names = Object.fromEntries(nodes.map((n) => [n.id, n.name]))
+  const planNodes = nodes.map((n) => ({ id: n.id, requires: n.requires, completed: n.completed, progress: n.progress }))
+  const todayFirst = ins ? studyPlan(planNodes, minutes, weight, new Date(), 60).days[0]?.items[0]?.id ?? null : null
+  const dueIds = [...due]
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28, ease: 'easeOut' }}>
@@ -234,6 +264,16 @@ export default function SubjectPage() {
                 </Button>
               </Link>
             )}
+            {todayFirst && todayFirst !== nextNode?.id && (
+              <Button variant="outline" size="md" className="nx-press" onClick={() => setSelectedId(todayFirst)}>
+                <CalendarCheck className="size-4" aria-hidden="true" /> Today
+              </Button>
+            )}
+            <Link to={`/nexus?focus=${encodeURIComponent(subject)}`}>
+              <Button variant="ghost" size="md" className="nx-press">
+                <Telescope className="size-4" aria-hidden="true" /> View in Nexus
+              </Button>
+            </Link>
             <Button variant="ghost" size="md" className="nx-press" onClick={() => refetch()} aria-label="Refresh">
               <RefreshCw className={cn('size-4', loading && 'animate-spin')} aria-hidden="true" />
             </Button>
@@ -255,7 +295,17 @@ export default function SubjectPage() {
             </p>
             <p className="mt-1 mb-0 font-mono text-[12px] text-text-muted tabular-nums">
               {done}/{nodes.length} skills mastered{isDsa ? ` · ${formatNumber(player.xp)} XP` : ''}
+              {ins ? (
+                <span className="ml-2 inline-flex items-center gap-1">
+                  <Clock className="size-3" aria-hidden="true" /> ≈ {fmtMinutes(ins.remainingMin)} left
+                </span>
+              ) : null}
             </p>
+            {ins && ins.history.length > 1 && (
+              <div className="mt-1.5">
+                <HistorySpark points={ins.history} />
+              </div>
+            )}
             <p className="mt-0.5 mb-0 text-[12px] text-text-secondary">
               {isDsa ? (
                 player.xpGated || player.probGated ? (
@@ -282,22 +332,62 @@ export default function SubjectPage() {
           variant="pills"
           items={[
             { id: 'tree', label: '/tree', icon: <Icon name="map" className="size-3.5" aria-hidden="true" /> },
+            { id: 'plan', label: '/plan', icon: <Icon name="calendar" className="size-3.5" aria-hidden="true" /> },
             ...(isDsa ? [{ id: 'ranks', label: '/ranks', icon: <Icon name="trophy" className="size-3.5" aria-hidden="true" /> }] : []),
             { id: 'board', label: '/leaderboard', icon: <Icon name="users" className="size-3.5" aria-hidden="true" /> },
           ]}
           active={tab}
-          onChange={(id) => setTab(id as 'tree' | 'ranks' | 'board')}
+          onChange={(id) => setTab(id as 'tree' | 'plan' | 'ranks' | 'board')}
         />
-        {tab === 'tree' && <GoalMenu routes={structure?.routes ?? []} goal={goal} onGoal={setGoal} />}
+        {tab === 'tree' && (
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant={revision ? 'primary' : 'outline'} size="sm" className="nx-press" onClick={() => setRevision((v) => !v)} aria-pressed={revision}>
+              <RotateCcw className="size-3.5" aria-hidden="true" /> Revision mode{dueIds.length ? ` · ${dueIds.length}` : ''}
+            </Button>
+            <GoalMenu routes={structure?.routes ?? []} goal={goal} onGoal={setGoal} />
+          </div>
+        )}
       </div>
 
-      {tab === 'ranks' ? (
+      {tab === 'plan' ? (
+        <StudyPlanView subject={subject} nodes={planNodes} names={names} minutes={minutes} weight={weight} examDate={examDate} onPick={(id) => setSelectedId(id)} />
+      ) : tab === 'ranks' ? (
         statsApi.data ? <TitleTrack stats={statsApi.data} /> : <LoadingBlock rows={5} />
       ) : tab === 'board' ? (
         <WebLeaderboard subject={subject} subjectName={nexus.subject?.name} />
       ) : (
         <div className="grid grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
           <div className="min-w-0 space-y-4">
+            {revision && (
+              <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-warning/40 px-3.5 py-2.5 text-[13px]" role="status">
+                <span className="text-text-secondary">
+                  <span className="font-semibold text-warning">Revision mode</span> ·{' '}
+                  {dueIds.length ? `${dueIds.length} skill${dueIds.length === 1 ? '' : 's'} due or marked for review; the rest steps back.` : 'nothing is due — come back in a few days.'}
+                </span>
+                {dueIds.length > 0 && (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    className="nx-press"
+                    onClick={async () => {
+                      let added = 0
+                      for (const id of dueIds) {
+                        if (!nodes.find((n) => n.id === id)?.metric?.pyq) continue
+                        try {
+                          added += (await api.post<{ added: number }>(`/api/nexus/review/${subject}/${id}`)).added
+                        } catch {
+                          /* skip */
+                        }
+                      }
+                      toast.success('Review queue ready', `${added} question${added === 1 ? '' : 's'} due today`)
+                      navigate('/gate/review')
+                    }}
+                  >
+                    Review all due
+                  </Button>
+                )}
+              </div>
+            )}
             {plan && steps && (
               <p className="mb-0 text-[12.5px] text-text-secondary" role="status">
                 <span className="font-semibold text-warning">Goal path</span> ·{' '}
@@ -324,8 +414,8 @@ export default function SubjectPage() {
               selectedId={selectedId}
               onSelect={(id) => setSelectedId(selectedId === id ? null : id)}
               zoneWord={isDsa ? 'Zone' : 'Chapter'}
-              steps={steps}
-              highlight={highlight}
+              steps={revision ? undefined : steps}
+              highlight={revision ? due : highlight}
               due={due}
             />
             {isDsa &&
@@ -355,6 +445,15 @@ export default function SubjectPage() {
                       <span className="flex items-center gap-2 text-[13px]">
                         <span className="w-4 font-mono text-[10.5px] text-text-muted tabular-nums">{z.level}</span>
                         <span className={cn('min-w-0 flex-1 truncate', z.locked ? 'text-text-muted' : 'text-text-primary')}>{z.name}</span>
+                        {ins?.zones[z.level] ? (
+                          <span
+                            className="rounded px-1 font-mono text-[10px] tabular-nums"
+                            title={`${ins.zones[z.level]}% of this subject's PYQ marks`}
+                            style={{ background: `color-mix(in oklab, var(--color-warning) ${Math.min(60, 8 + ins.zones[z.level])}%, transparent)`, color: 'var(--color-text-primary)' }}
+                          >
+                            {ins.zones[z.level]}%
+                          </span>
+                        ) : null}
                         {z.locked ? <Lock className="size-3 text-text-muted" aria-label="locked" /> : <span className="font-mono text-[11px] text-text-muted tabular-nums">{z.zoneProgress}%</span>}
                       </span>
                       <span className="mt-1.5 ml-6 block h-1 overflow-hidden rounded-full bg-bg-surface-3">
@@ -365,6 +464,7 @@ export default function SubjectPage() {
                 ))}
               </ol>
             </section>
+            {structure && <SubjectMiniMap structure={structure} subject={subject} />}
             {needs.length > 0 && (
               <section>
                 <h2 className="mb-2.5 text-[11px] font-semibold tracking-wider text-text-muted uppercase">Needs from other subjects</h2>
@@ -385,7 +485,7 @@ export default function SubjectPage() {
               </section>
             )}
             <p className="mb-0 text-[11.5px] leading-relaxed text-text-muted">
-              Select any skill to see what it covers, its lessons and practice. Amber rings are due for review; gold numbers are your goal path. Press ⌘K to search.
+              Select any skill to see what it covers, its lessons and practice. Amber rings are due for review; gold numbers are your goal path; the amber % beside a chapter is its share of PYQ marks. Press ⌘K to search.
             </p>
           </aside>
         </div>
@@ -410,6 +510,12 @@ export default function SubjectPage() {
             onSelect={(id) => setSelectedId(id)}
             onJump={onJump}
             hueOf={hueOf}
+            insight={ins?.nodes[selectedNode.id] ?? null}
+            minutes={minutes}
+            note={notesLocal[selectedNode.id] ?? ins?.notes[selectedNode.id] ?? null}
+            onNoteSaved={(v) => setNotesLocal((m) => ({ ...m, [selectedNode.id]: v }))}
+            onMastered={refreshAll}
+            subjectName={nexus.subject?.name ?? subject}
           />
         )}
       </NodeSheet>
