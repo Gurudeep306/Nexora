@@ -4,6 +4,7 @@
   "short": "WEB",
   "group": "beyond",
   "domain": "web-mobile",
+  "stream": "web-app",
   "order": 17,
   "icon": "globe",
   "color": "#06b6d4",
@@ -171,6 +172,7 @@
       "icon": "play",
       "desc": "Build a responsive single-page tool in plain JavaScript that fetches data from a public API.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "dom-events",
         "async-js",
@@ -246,6 +248,7 @@
       "icon": "rocket",
       "desc": "Build a multi-page React app with routing, forms and data from an external API.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "client-routing",
         "typescript"
@@ -315,6 +318,7 @@
       "icon": "terminal",
       "desc": "Build a REST API with a database, authentication and tests for a small domain like a notes or bookmarks app.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "databases-orm",
         "authentication"
@@ -379,6 +383,7 @@
       "icon": "trophy",
       "desc": "Ship a full-stack app: React frontend, REST backend with auth and a database, tests, and a live deployment.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "react-app",
         "rest-backend",

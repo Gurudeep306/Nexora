@@ -4,6 +4,7 @@
   "short": "ML",
   "group": "beyond",
   "domain": "ai",
+  "stream": "ai-data",
   "order": 15,
   "icon": "brain",
   "color": "#6366f1",
@@ -94,6 +95,7 @@
       "icon": "home",
       "desc": "Build a regression model on a housing dataset: clean the data, fit linear regression, and report test error.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "linear-regression",
         "data-preprocessing"
@@ -268,6 +270,7 @@
       "icon": "mail",
       "desc": "Build a text classifier with bag-of-words features, compare naive Bayes and logistic regression, and evaluate with precision and recall.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "naive-bayes",
         "logistic-regression",
@@ -347,6 +350,7 @@
       "icon": "users",
       "desc": "Cluster a customer dataset, reduce it with PCA to visualise the groups, and describe each segment.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "clustering",
         "pca"
@@ -399,6 +403,7 @@
       "icon": "rocket",
       "desc": "Take a tabular competition dataset from raw CSV to a tuned ensemble with a reproducible pipeline and a short written report.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "ensembles",
         "feature-engineering",

@@ -4,6 +4,7 @@
   "short": "GAME",
   "group": "beyond",
   "domain": "visual-product",
+  "stream": "theory-frontier",
   "order": 56,
   "icon": "gamepad",
   "color": "#f97316",
@@ -135,6 +136,7 @@
       "icon": "gamepad",
       "desc": "Build a complete small arcade game like Breakout with scoring and levels.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "input-handling",
         "game-maths"
@@ -259,6 +261,7 @@
       "icon": "rocket",
       "desc": "Build a platformer with physics, enemies, animation, menus and saves.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "rigid-body-physics",
         "character-animation",
@@ -325,6 +328,7 @@
       "icon": "trophy",
       "desc": "Design, build, test and publish an original game.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "shipping-game",
         "profiling-games"

@@ -4,6 +4,7 @@
   "short": "OOP",
   "group": "beyond",
   "domain": "software-engineering",
+  "stream": "software-engineering",
   "order": 40,
   "icon": "shapes",
   "color": "#8b5cf6",
@@ -283,6 +284,7 @@
       "icon": "building",
       "desc": "Design and implement a parking lot system with clean classes and tests.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "creational",
         "strategy",
@@ -297,6 +299,7 @@
       "icon": "edit",
       "desc": "Build a small text editor with undo/redo, plugins and change notifications.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "command",
         "observer",

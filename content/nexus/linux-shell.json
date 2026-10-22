@@ -4,6 +4,7 @@
   "short": "SH",
   "group": "beyond",
   "domain": "tools",
+  "stream": "systems-cloud",
   "order": 31,
   "icon": "terminal",
   "color": "#4b5563",
@@ -271,6 +272,7 @@
       "icon": "analytics",
       "desc": "Write a script that parses server logs and reports top errors and visitors.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "sed-awk",
         "bash-scripting"
@@ -284,6 +286,7 @@
       "icon": "save",
       "desc": "Automate scheduled, rotating backups to a remote machine.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "cron-systemd",
         "ssh"

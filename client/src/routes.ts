@@ -23,6 +23,7 @@ export const pageLoaders = {
   AnalyticsPage: () => import('@/pages/AnalyticsPage'),
   AchievementsPage: () => import('@/pages/AchievementsPage'),
   LearnPage: () => import('@/pages/LearnPage'),
+  CoursePage: () => import('@/pages/CoursePage'),
   LearnTopicPage: () => import('@/learn/ui/TopicPage'),
   LearnPracticePage: () => import('@/learn/ui/PracticePage'),
   SystemDossierPage: () => import('@/pages/SystemDossierPage'),
@@ -112,6 +113,8 @@ export function idlePrefetchCommonRoutes(): void {
     const to = queue.shift()
     if (!to) return
     prefetchRoute(to)
+    // The Nexus also warms its data and computes its layout off-thread.
+    if (to === '/nexus') DATA_BY_SEGMENT.nexus?.()
     idle(next)
   }
   window.setTimeout(() => idle(next), 1200)

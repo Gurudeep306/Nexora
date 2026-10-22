@@ -4,6 +4,7 @@
   "short": "IOS",
   "group": "beyond",
   "domain": "web-mobile",
+  "stream": "web-app",
   "order": 61,
   "icon": "gem",
   "color": "#3b82f6",
@@ -161,6 +162,7 @@
       "icon": "rocket",
       "desc": "Build a multi-screen SwiftUI app with lists and navigation.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "lists-navigation-ios",
         "layout-modifiers"
@@ -224,6 +226,7 @@
       "icon": "rocket",
       "desc": "Build a journal app with local storage and data from a web API.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "swiftdata",
         "networking-ios"
@@ -322,6 +325,7 @@
       "icon": "trophy",
       "desc": "Ship a polished app with persistence, notifications and a widget through TestFlight.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "journal-app",
         "notifications-ios",

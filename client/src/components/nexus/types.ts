@@ -26,6 +26,8 @@ export interface NexusNode {
   subject?: string
   /** concept | lesson | project (subjects only). */
   kind?: string
+  /** Not needed for a subject's Master rank (projects by default). */
+  optional?: boolean
   /** Row inside the zone tier (subjects lay out in several rows). */
   row?: number
   metric?: NodeMetric
@@ -109,8 +111,6 @@ export interface WebNode {
   n: string
   /** zone level */
   z: number
-  x: number
-  y: number
   /** progress 0–100 */
   p: number
   s: 0 | 1 | 2
@@ -120,9 +120,23 @@ export interface WebNode {
   cx?: string[]
   /** kind when not a concept (lesson / project) */
   k?: string
+  /** icon (semantic name or legacy DSA string) */
+  i?: string
+  /** GATE notes lessons it teaches (its course) */
+  ls?: string[]
+  /** 1: optional (projects by default) — not needed for Master */
+  o?: number
   xp: number
   /** count label ("3/10 PYQs", "4/8") */
   c: string
+  /** days since its PYQs were last answered right (-1: never) */
+  ag?: number
+  /** spaced-repetition interval reached, days */
+  iv?: number
+  /** studied in the last 24 h */
+  rc?: number
+  /** days since it was last studied (-1: never) */
+  td?: number
 }
 
 export interface WebZone {
@@ -144,6 +158,18 @@ export interface SubjectRank {
   title: string
   progress: number
   next: string | null
+  /** the next tier, its threshold and about how many concepts away */
+  toNext?: { tier: string; at: number; concepts: number | null } | null
+  /** every core node mastered (Master, optional nodes skipped) */
+  coreDone?: boolean
+  coreLeft?: number | null
+}
+
+export interface WebStream {
+  id: string
+  name: string
+  hue: string
+  order: number
 }
 
 export interface WebCluster {
@@ -151,6 +177,10 @@ export interface WebCluster {
   name: string
   short: string
   domain: string
+  /** the stream it belongs to on the radial overview */
+  stream: string
+  gate?: { pyq: string | null; notes: string | null }
+  description?: string
   order: number
   engine: string | null
   zones: WebZone[]
@@ -175,14 +205,61 @@ export interface WebBoardResponse {
   subject?: NexusSubjectMeta
 }
 
-export interface NexusWebResponse {
+/** A goal route: a named set of subjects (content/nexus/_routes.json). */
+export interface WebRoute {
+  id: string
+  name: string
+  description: string
+  subjects: string[]
+}
+
+/** GET /api/nexus/structure — static, versioned, cached on the device. */
+export interface NexusWebStructure {
   ok: boolean
+  version: string
+  routes: WebRoute[]
+  /** streams in their order around the radial overview */
+  streams?: WebStream[]
+  clusters: {
+    id: string
+    name: string
+    short: string
+    domain: string
+    stream?: string
+    order: number
+    engine: string | null
+    /** the GATE subject behind it (PYQ bank id, notes id) */
+    gate?: { pyq: string | null; notes: string | null }
+    description?: string
+    zones: { level: number; name: string; color: string }[]
+    nodes: { id: string; n: string; z: number; req: string[]; cx?: string[]; k?: string; i?: string; ls?: string[]; o?: number; xp: number }[]
+  }[]
+}
+
+/** GET /api/nexus/web — the reader's numbers, in structure order. */
+export interface NexusWebState {
+  ok: boolean
+  user?: string
   /** The unified web rank. */
   player: RiftPlayer
   /** The DSA-only Rift level (the DSA path's zone unlocks). */
   dsaPlayer?: RiftPlayer
   riftLevels: RiftLevel[]
-  clusters: WebCluster[]
+  ranks: Record<string, SubjectRank>
+  /** this week so far */
+  week?: { xp: number; concepts: number; since: number }
+  state: {
+    version: string
+    subjects: Record<
+      string,
+      {
+        /** [done, count, progress %, flags: 1 locked | 2 current | 4 completed] */
+        zones: [number, number, number, number][]
+        /** [progress %, state, count label, days since review, interval, recent] */
+        nodes: [number, 0 | 1 | 2, string, number, number, number, number?][]
+      }
+    >
+  }
 }
 
 export interface NexusNodeResponse {
@@ -211,6 +288,9 @@ export interface RiftPlayer {
   xp: number
   name: string
   badge: string
+  /** web rank only: XP and about how many concepts to the next level */
+  xpToNext?: number
+  conceptsToNext?: number
   color: string
   glow: string
   xpInLevel: number

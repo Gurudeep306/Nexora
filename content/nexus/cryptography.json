@@ -4,6 +4,7 @@
   "short": "CRYP",
   "group": "beyond",
   "domain": "security",
+  "stream": "security",
   "order": 61,
   "icon": "key",
   "color": "#7c3aed",
@@ -289,6 +290,7 @@
       "icon": "code",
       "desc": "Implement RSA key generation, encryption and signing from scratch, then attack weak parameters.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "rsa",
         "digital-signatures"
@@ -302,6 +304,7 @@
       "icon": "messages",
       "desc": "Build an end-to-end encrypted chat with key exchange, AEAD and authenticated peers.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "tls",
         "authenticated-encryption"

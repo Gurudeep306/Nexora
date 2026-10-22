@@ -4,6 +4,7 @@
   "short": "ANDR",
   "group": "beyond",
   "domain": "web-mobile",
+  "stream": "web-app",
   "order": 60,
   "icon": "monitor",
   "color": "#22c55e",
@@ -148,6 +149,7 @@
       "icon": "rocket",
       "desc": "Build a multi-screen Compose app with lists and navigation.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "lists-navigation",
         "material-theming"
@@ -213,6 +215,7 @@
       "icon": "rocket",
       "desc": "Build a notes app that works offline and syncs with a backend.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "room-database",
         "networking-android",
@@ -312,6 +315,7 @@
       "icon": "trophy",
       "desc": "Ship a polished app with offline data, notifications and a Play Store release.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "offline-notes-app",
         "notifications-android",

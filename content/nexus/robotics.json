@@ -4,6 +4,7 @@
   "short": "ROBO",
   "group": "beyond",
   "domain": "ai",
+  "stream": "ai-data",
   "order": 48,
   "icon": "bot",
   "color": "#ea580c",
@@ -246,6 +247,7 @@
       "icon": "rocket",
       "desc": "Build a simulated robot that maps a space and navigates to goals.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "slam",
         "motion-planning",
@@ -285,6 +287,7 @@
       "icon": "wrench",
       "desc": "Program a simulated arm to detect, grasp and place objects.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "inverse-kinematics",
         "robot-perception",

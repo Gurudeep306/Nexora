@@ -11,6 +11,7 @@ import { AdminRoute } from '@/components/admin/AdminRoute'
 const AuthPage = lazy(pageLoaders.AuthPage)
 const LandingPage = lazy(pageLoaders.LandingPage)
 const HubPage = lazy(pageLoaders.HubPage)
+const CoursePage = lazy(pageLoaders.CoursePage)
 const ProblemsPage = lazy(pageLoaders.ProblemsPage)
 const SolvePage = lazy(pageLoaders.SolvePage)
 const ContestsPage = lazy(pageLoaders.ContestsPage)
@@ -106,6 +107,8 @@ export default function App() {
             <Route path="/learn/system-design/:systemId" element={<SystemDossierPage />} />
             <Route path="/learn/dsa/:topic/practice" element={<LearnPracticePage />} />
             <Route path="/learn/dsa/:topic/:page?" element={<LearnTopicPage />} />
+            {/* Nexus courses: GATE subjects redirect to their notes / PYQs, the rest are course pages. */}
+            <Route path="/learn/:subject/:concept?" element={<CoursePage />} />
             <Route path="/gate" element={<LegacyGateRedirect><GateHomePage /></LegacyGateRedirect>} />
             <Route path="/gate/practice" element={<GatePage />} />
             <Route path="/gate/notes" element={<NotesIndexPage />} />

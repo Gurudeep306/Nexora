@@ -4,6 +4,7 @@
   "short": "ALGO",
   "group": "gate",
   "domain": "core-cs",
+  "stream": "core-cs",
   "order": 9,
   "icon": "route",
   "color": "#f97316",

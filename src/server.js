@@ -3569,12 +3569,13 @@ async function nexusGateState(fresh) {
     if (hit) return hit;
   }
   const [qrows, lrows] = await Promise.all([
-    all("SELECT question_id, attempts, correct FROM gate_qstate WHERE username=? AND attempts>0", [username]),
-    all("SELECT subject, lesson FROM gate_notes_progress WHERE username=? AND completed=1", [username]),
+    all("SELECT question_id, attempts, correct, last_at, interval_days FROM gate_qstate WHERE username=? AND attempts>0", [username]),
+    all("SELECT subject, lesson, completed, updated_at FROM gate_notes_progress WHERE username=?", [username]),
   ]);
   const state = {
-    qstate: new Map((qrows || []).map((r) => [r.question_id, { attempts: r.attempts || 0, correct: r.correct || 0 }])),
-    lessons: new Set((lrows || []).map((r) => `${r.subject}/${r.lesson}`)),
+    qstate: new Map((qrows || []).map((r) => [r.question_id, { attempts: r.attempts || 0, correct: r.correct || 0, lastAt: Number(r.last_at) || 0, interval: Number(r.interval_days) || 0 }])),
+    lessons: new Set((lrows || []).filter((r) => r.completed).map((r) => `${r.subject}/${r.lesson}`)),
+    lessonsAt: new Map((lrows || []).map((r) => [`${r.subject}/${r.lesson}`, Number(r.updated_at) || 0])),
   };
   nexusCache.setCached(username, state);
   return state;
@@ -3606,9 +3607,11 @@ async function nexusState(req, fresh) {
     n.crossUnlocks = nexusSubjects.dsaCrossUnlocks(reg, n.id, computed);
   }
   // The unified web rank: DSA XP is the floor, every subject adds on top.
-  const score = nexusRanks.webScore(totals, computed);
+  const score = nexusRanks.webScore(totals, computed, dsa.nodes);
   if (reg.subjects.has("dsa")) score.subjects.dsa = nexusRanks.subjectProgress(dsa.nodes);
-  const webPlayer = calcLevel(score.xp, score.solved);
+  // Never below the best level this user ever had (no rank drops).
+  const best = me() ? await get("SELECT web_level FROM nexus_scores WHERE username=?", [me()]).catch(() => null) : null;
+  const webPlayer = nexusRanks.webLevel(score.xp, RIFT_LEVELS, best?.web_level || 1);
   // Kept for the leaderboards; written only when the numbers change.
   await nexusRanks.saveScore({ get, run }, nexusScoreSeen, me(), score, webPlayer.level).catch((e) => console.error("[nexus] score:", errMessage(e)));
   return { reg, dsa, computed, score, webPlayer };
@@ -3618,7 +3621,7 @@ const nexusBoardCache = new Map(); // key → { at, rows }
 
 /** The rank inside one subject (tier + its title). */
 function nexusSubjectRank(reg, sid, nodes) {
-  return nexusRanks.subjectRank(nexusSubjects.subjectMeta(reg, sid), nexusRanks.subjectProgress(nodes));
+  return nexusRanks.subjectRank(nexusSubjects.subjectMeta(reg, sid), nexusRanks.subjectProgress(nodes), nodes);
 }
 
 /**
@@ -3652,17 +3655,76 @@ app.get("/api/nexus", async (req, res) => {
   }
 });
 
+/** The web's structure (subjects, zones, nodes, links, routes): static. */
+function nexusStructure() {
+  const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+  // DSA zone names and colours are the Rift ladder's: no user data needed.
+  return nexusSubjects.webStructure(reg, reg.structure ? null : buildDsaNexus({ xp: 0, solved: 0, rawSolved: 0 }, []));
+}
+
 /**
- * GET /api/nexus/web[?fresh=1] — the whole Nexus as one web: every subject
- * a cluster at its computed place, every node with position, name, state
- * and progress. Node details load lazily (below).
+ * GET /api/nexus/structure[?v=<version>] — the web's structure. With the
+ * current version in ?v= it is immutable and cached for a year; the client
+ * keeps it on the device too, so the web paints before any request.
  */
+app.get("/api/nexus/structure", (req, res) => {
+  try {
+    const st = nexusStructure();
+    res.set("ETag", `"nx-${st.version}"`);
+    res.set("Cache-Control", req.query.v === st.version ? "private, max-age=31536000, immutable" : "private, max-age=60");
+    if (String(req.headers["if-none-match"] || "").includes(`"nx-${st.version}"`)) return res.status(304).end();
+    res.json({ ok: true, ...st });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
+// The reader's numbers for the web, per user; recomputed at most once a
+// minute, and right after any study or solve (writes to these tables).
+const nexusWebCache = sharedCache({
+  name: "nexus-web",
+  ttlMs: 60 * 1000,
+  tables: ["progress", "gate_qstate", "gate_notes_progress", "users"],
+});
+
+/**
+ * GET /api/nexus/web[?fresh=1] — the reader's state for the web: the unified
+ * web rank, subject ranks, and per zone / node numbers in structure order
+ * (see webState). Small; the structure comes from /api/nexus/structure.
+ */
+/**
+ * A course page's content: content/courses/<subject>/<concept>.md (or
+ * <subject>/index.md for the subject page), written by hand. Missing file:
+ * body null and the page shows "Course coming soon".
+ */
+app.get("/api/courses/:subject/:concept?", (req, res) => {
+  const id = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
+  const subject = String(req.params.subject || "");
+  const concept = String(req.params.concept || "index");
+  if (!id.test(subject) || !id.test(concept)) return res.status(400).json({ ok: false, error: "Bad course id" });
+  const file = path.join(__dirname, "..", "content", "courses", subject, `${concept}.md`);
+  fs.readFile(file, "utf8", (err, body) => {
+    res.set("Cache-Control", "private, max-age=60");
+    res.json({ ok: true, subject, concept, body: err ? null : body });
+  });
+});
+
 app.get("/api/nexus/web", async (req, res) => {
   try {
-    const { reg, dsa, computed, webPlayer } = await nexusState(req, req.query.fresh === "1");
-    const web = nexusSubjects.webPayload(reg, dsa, computed);
-    for (const c of web.clusters) c.rank = nexusSubjectRank(reg, c.id, c.engine === "dsa" ? dsa.nodes : computed.get(c.id)?.nodes || []);
-    res.json({ ok: true, player: webPlayer, dsaPlayer: dsa.player, riftLevels: RIFT_LEVELS, ...web });
+    const fresh = req.query.fresh === "1";
+    const build = async () => {
+      const { reg, dsa, computed, webPlayer, score } = await nexusState(req, fresh);
+      const ranks = {};
+      for (const [sid, s] of reg.subjects) ranks[sid] = nexusSubjectRank(reg, sid, s.engine === "dsa" ? dsa.nodes : computed.get(sid)?.nodes || []);
+      const row = me() ? await get("SELECT week, week_base_xp FROM nexus_scores WHERE username=?", [me()]).catch(() => null) : null;
+      const all = [...computed.values()].flatMap((x) => x.nodes);
+      const week = nexusRanks.weekSummary(row, score, all);
+      return { user: me(), player: webPlayer, dsaPlayer: dsa.player, riftLevels: nexusRanks.webLevels(RIFT_LEVELS), state: nexusSubjects.webState(reg, dsa, computed), ranks, week };
+    };
+    const key = `${me() || "-"}|${hasAnyAdminPerm(req) ? 1 : 0}`;
+    const body = fresh || !me() ? await build() : await nexusWebCache.get(key, build);
+    res.set("Cache-Control", "private, no-cache");
+    res.json({ ok: true, ...body });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }

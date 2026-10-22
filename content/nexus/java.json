@@ -4,6 +4,7 @@
   "short": "JAVA",
   "group": "beyond",
   "domain": "languages",
+  "stream": "languages",
   "order": 21,
   "icon": "code",
   "color": "#e76f00",
@@ -152,6 +153,7 @@
       "icon": "coins",
       "desc": "Model accounts, transactions and reports in a console banking app with clean OOP.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "java-collections",
         "java-exceptions",
@@ -249,6 +251,7 @@
       "icon": "rocket",
       "desc": "Build a tested Spring Boot REST service backed by a database.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "spring-boot",
         "jdbc",

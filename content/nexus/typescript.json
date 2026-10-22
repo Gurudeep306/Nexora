@@ -4,6 +4,7 @@
   "short": "TS",
   "group": "beyond",
   "domain": "languages",
+  "stream": "languages",
   "order": 24,
   "icon": "code",
   "color": "#3178c6",
@@ -244,6 +245,7 @@
       "icon": "rocket",
       "desc": "Build a fully typed HTTP client library with validated responses and generated types.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "runtime-validation",
         "conditional-types",

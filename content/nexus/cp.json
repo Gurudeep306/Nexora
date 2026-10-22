@@ -4,6 +4,7 @@
   "short": "CP",
   "group": "beyond",
   "domain": "tools",
+  "stream": "theory-frontier",
   "order": 32,
   "icon": "trophy",
   "color": "#f59e0b",
@@ -277,6 +278,7 @@
       "icon": "book",
       "desc": "Build and test your own library of snippets: segment tree, DSU, Dijkstra and modular math.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "cp-template",
         "dsa:tb_segtree",
@@ -292,6 +294,7 @@
       "icon": "medal",
       "desc": "Do a series of rated contests with upsolving and reach your next rating tier.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "upsolving",
         "interactive",
