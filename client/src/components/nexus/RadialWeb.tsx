@@ -137,7 +137,7 @@ export function RadialWeb({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const iconsRef = useRef<HTMLDivElement>(null)
   const coreRef = useRef<HTMLDivElement>(null)
-  const [compact, setCompact] = useState(false)
+  const [compact, setCompact] = useState(() => typeof window !== 'undefined' && window.innerWidth < 640)
 
   /* ── data bound to the layout ── */
   const items = useMemo(() => {
@@ -945,11 +945,15 @@ export function RadialWeb({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       // The goal path's next steps, numbered.
       if (rt) {
+        const placedBadges: [number, number][] = []
         rt.next.forEach((k, idx) => {
           const it = items.get(k)
           if (!it) return
-          const sx = X(it.x) - Math.max(8, R * c.k * 0.75)
+          let sx = X(it.x) - Math.max(8, R * c.k * 0.75)
           const sy = Y(it.y) - Math.max(8, R * c.k * 0.75)
+          // Neighbours on a small disc: step the badges aside, never stacked.
+          while (placedBadges.some(([bx, by]) => Math.hypot(bx - sx, by - sy) < 19)) sx += 19
+          placedBadges.push([sx, sy])
           if (sx < -20 || sx > w + 20 || sy < -20 || sy > h + 20) return
           ctx.fillStyle = C.app
           ctx.beginPath()
@@ -1068,7 +1072,10 @@ export function RadialWeb({
         const arcPx = (st.a1 - st.a0) * rr2 * c.k * 0.92
         ctx.font = `700 ${Math.max(8.5, Math.min(12, rr2 * c.k * 0.04))}px ${font}`
         const fullW = ctx.measureText(info.name.toUpperCase()).width + 2.2 * info.name.length
-        const label = (fullW > arcPx ? info.name.replace(/^Programming /, '').replace(/ & .*$/, '') : info.name).toUpperCase()
+        let labelText = info.name
+        if (fullW > arcPx) labelText = info.name.replace(/^Programming /, '').replace(/ & .*$/, '')
+        if (ctx.measureText(labelText.toUpperCase()).width + 2.2 * labelText.length > arcPx) labelText = labelText.split(' ')[0]
+        const label = labelText.toUpperCase()
         streamHits.current.push({ id: st.id, x: sx - 70, y: sy - 18, w: 140, h: 36 })
         const rimPx = rr2 * c.k
         const fsz = Math.max(8.5, Math.min(12, rimPx * 0.04))
@@ -1414,7 +1421,7 @@ export function RadialWeb({
     <div
       ref={cardRef}
       className={cn('card relative flex overflow-hidden p-0', fullscreen === 'css' && 'fixed inset-0 z-[60] rounded-none', fullscreen !== 'off' && 'bg-bg-app')}
-      style={fullscreen !== 'off' ? { height: '100vh', width: '100vw' } : { height: 'min(720px, max(440px, calc(100vh - 220px)))' }}
+      style={fullscreen !== 'off' ? { height: '100vh', width: '100vw' } : { height: compact ? 'min(560px, calc(100vw + 120px))' : 'min(720px, max(440px, calc(100vh - 220px)))' }}
       data-fullscreen={fullscreen !== 'off' || undefined}
     >
       <nav

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { ChevronDown, Flag, History, X } from 'lucide-react'
 import { Button, Card, CardContent, Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger, useToast } from '@/components/ui'
@@ -140,19 +141,21 @@ export function ResponsivePanel({ open, onClose, label, children }: { open: bool
   const phone = usePhone()
   const reduce = useReducedMotion()
   if (!phone) return <>{children}</>
-  return (
+  // In a portal: above the app's bottom bar and any stacking context.
+  return createPortal(
     <AnimatePresence>
       {open && (
         <>
-          <motion.div className="fixed inset-0 z-[70] bg-bg-app/50" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} aria-hidden="true" />
+          <motion.div className="fixed inset-0 z-[2190] bg-bg-app/55 backdrop-blur-[2px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} aria-hidden="true" />
           <motion.aside
             role="dialog"
             aria-label={label}
-            className="pop-surface fixed inset-x-0 bottom-0 z-[71] max-h-[78vh] overflow-y-auto !rounded-b-none !rounded-t-2xl px-4 pb-[max(16px,env(safe-area-inset-bottom))]"
+            className="pop-surface fixed inset-x-0 bottom-0 z-[2200] max-h-[82vh] bg-bg-surface overflow-y-auto !rounded-b-none !rounded-t-2xl px-4 pb-[max(16px,env(safe-area-inset-bottom))]"
             initial={reduce ? { opacity: 0 } : { y: '100%' }}
             animate={reduce ? { opacity: 1 } : { y: 0 }}
             exit={reduce ? { opacity: 0 } : { y: '100%' }}
             transition={{ type: 'spring', stiffness: 360, damping: 34 }}
+            style={{ background: 'var(--color-bg-surface)', backdropFilter: 'none' }}
             drag={reduce ? false : 'y'}
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={{ top: 0, bottom: 0.6 }}
@@ -165,7 +168,8 @@ export function ResponsivePanel({ open, onClose, label, children }: { open: bool
           </motion.aside>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }
 
@@ -202,7 +206,7 @@ export function ContinueChip({ name, subjectName, onClick }: { name: string; sub
 export function RadialSkeleton() {
   return (
     <Card className="overflow-hidden p-0" aria-busy="true" aria-label="Loading the Nexus">
-      <CardContent className="flex items-center justify-center p-0" style={{ height: 'min(720px, max(440px, calc(100vh - 220px)))' }}>
+      <CardContent className="flex items-center justify-center p-0" style={{ height: typeof window !== 'undefined' && window.innerWidth < 640 ? 'min(560px, calc(100vw + 120px))' : 'min(720px, max(440px, calc(100vh - 220px)))' }}>
         <div className="relative aspect-square h-[80%] max-w-[90%]">
           <div className="nx-skel absolute inset-0 rounded-full opacity-40" />
           <div className="absolute inset-[22%] rounded-full bg-bg-surface" />
