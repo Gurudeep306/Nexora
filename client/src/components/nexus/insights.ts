@@ -132,3 +132,208 @@ export function masteredKeys(subjects: InsightSubject[]): string[] {
   for (const s of subjects) for (const n of s.nodes) if (n.s === 2) out.push(keyOf(s, n))
   return out
 }
+
+/* ── per node: confidence, unlock path; per subject: study plan ── */
+
+/** What confidence needs of a subject-tree node (a NexusNode fits). */
+export interface ConfidenceNode {
+  progress: number
+  completed: boolean
+  testedOut?: boolean
+  metric?: {
+    pyq?: { pool: number; target: number; correct: number; attempted: number; accuracy: number | null } | null
+    lessons?: { done: number; total: number } | null
+  } | null
+  memory?: { lastAt: number; interval: number } | null
+}
+
+/**
+ * A node's mastery confidence (0–100) from what was studied — lessons read,
+ * PYQs right against the target, accuracy — fading with time since the
+ * PYQs were last answered right (half-life: twice the review interval, at
+ * least 7 days; never below half). A passed quick check counts at least 80.
+ */
+export function confidence(n: ConfidenceNode, now = Date.now()) {
+  const pyq = n.metric?.pyq ?? null
+  const lessons = n.metric?.lessons ?? null
+  const parts: number[] = []
+  if (lessons && lessons.total) parts.push(lessons.done / lessons.total)
+  if (pyq && pyq.target) parts.push(0.7 * Math.min(1, pyq.correct / pyq.target) + 0.3 * ((pyq.accuracy ?? 0) / 100))
+  const base = parts.length ? parts.reduce((a, b) => a + b, 0) / parts.length : n.progress / 100
+  const days = n.memory?.lastAt ? Math.max(0, (now - n.memory.lastAt) / 86400000) : null
+  const half = Math.max(7, 2 * (n.memory?.interval ?? 0))
+  const decay = days === null ? 1 : Math.pow(0.5, days / half)
+  let score = Math.round(100 * base * (0.5 + 0.5 * decay))
+  if (n.testedOut) score = Math.max(score, 80)
+  if (n.completed && !pyq && !lessons) score = Math.max(score, 100)
+  const bits: string[] = []
+  if (lessons && lessons.total) bits.push(`Lessons ${lessons.done}/${lessons.total}`)
+  if (pyq && pyq.target) bits.push(`PYQs ${Math.min(pyq.correct, pyq.target)}/${pyq.target}${pyq.accuracy != null ? ` (${pyq.accuracy}%)` : ''}`)
+  if (days !== null) bits.push(days < 1 ? 'practised today' : `last practised ${Math.round(days)} day${Math.round(days) === 1 ? '' : 's'} ago`)
+  if (n.testedOut) bits.push('tested out')
+  return { score: Math.min(100, score), days: days === null ? null : Math.round(days), decay, breakdown: bits.join(' · ') || 'Nothing studied yet' }
+}
+
+/**
+ * The shortest way to unlock a node: every not-yet-mastered prerequisite it
+ * depends on (all are needed), in an order you can study them, with time.
+ */
+export function unlockPath(nodes: { id: string; requires: string[]; completed: boolean }[], target: string, minutes: Record<string, number> = {}) {
+  const byId = new Map(nodes.map((n) => [n.id, n]))
+  const need = new Set<string>()
+  const walk = (id: string, guard = 0) => {
+    for (const r of byId.get(id)?.requires ?? []) {
+      const p = byId.get(r)
+      if (!p || p.completed || need.has(r) || guard > 300) continue
+      need.add(r)
+      walk(r, guard + 1)
+    }
+  }
+  walk(target)
+  // Topological order (prerequisites first), stable by file order.
+  const index = new Map(nodes.map((n, i) => [n.id, i]))
+  const order: string[] = []
+  const placed = new Set<string>()
+  const ids = [...need].sort((a, b) => index.get(a)! - index.get(b)!)
+  while (order.length < ids.length) {
+    const next = ids.find((id) => !placed.has(id) && (byId.get(id)!.requires ?? []).every((r) => !need.has(r) || placed.has(r)))
+    if (!next) break
+    placed.add(next)
+    order.push(next)
+  }
+  for (const id of ids) if (!placed.has(id)) order.push(id)
+  return { steps: order, minutes: order.reduce((a, id) => a + (minutes[id] ?? 0), 0) }
+}
+
+export interface PlanNode {
+  id: string
+  requires: string[]
+  completed: boolean
+  progress: number
+}
+
+/**
+ * A study plan through a subject's remaining nodes: prerequisites first,
+ * heavier exam weight earlier among what is ready, packed into days of
+ * `perDay` minutes from `start`; `onTime` says whether it ends by `end`
+ * (the exam date). Returns the days, the weeks they group into and the finish.
+ */
+export function studyPlan(nodes: PlanNode[], minutes: Record<string, number>, weight: Record<string, number>, start: Date, perDay: number, end?: Date | null) {
+  const left = new Map(nodes.filter((n) => !n.completed).map((n) => [n.id, Math.max(10, Math.round((minutes[n.id] ?? 40) * (1 - n.progress / 100)))]))
+  const done = new Set(nodes.filter((n) => n.completed).map((n) => n.id))
+  const byId = new Map(nodes.map((n) => [n.id, n]))
+  const index = new Map(nodes.map((n, i) => [n.id, i]))
+  const order: string[] = []
+  const queued = new Set<string>()
+  while (order.length < left.size) {
+    const ready = [...left.keys()].filter((id) => !queued.has(id) && (byId.get(id)!.requires ?? []).every((r) => done.has(r) || queued.has(r) || !byId.has(r)))
+    if (!ready.length) {
+      for (const id of left.keys()) {
+        if (!queued.has(id)) {
+          queued.add(id)
+          order.push(id)
+        }
+      }
+      break
+    }
+    ready.sort((a, b) => (weight[b] ?? 0) - (weight[a] ?? 0) || index.get(a)! - index.get(b)!)
+    queued.add(ready[0])
+    order.push(ready[0])
+  }
+  const day0 = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()))
+  const iso = (d: Date) => d.toISOString().slice(0, 10)
+  const days: { date: string; items: { id: string; minutes: number }[]; minutes: number }[] = []
+  let cur = { date: iso(day0), items: [] as { id: string; minutes: number }[], minutes: 0 }
+  let di = 0
+  const cap = Math.max(15, perDay)
+  for (const id of order) {
+    let need = left.get(id)!
+    while (need > 0) {
+      const room = cap - cur.minutes
+      if (room <= 0) {
+        days.push(cur)
+        di++
+        cur = { date: iso(new Date(day0.getTime() + di * 86400000)), items: [], minutes: 0 }
+        continue
+      }
+      const take = Math.min(room, need)
+      cur.items.push({ id, minutes: take })
+      cur.minutes += take
+      need -= take
+    }
+  }
+  if (cur.items.length) days.push(cur)
+  const weeks: { start: string; days: typeof days; minutes: number }[] = []
+  for (const d of days) {
+    const w = Math.floor((Date.parse(d.date) - day0.getTime()) / (7 * 86400000))
+    if (!weeks[w]) weeks[w] = { start: iso(new Date(day0.getTime() + w * 7 * 86400000)), days: [], minutes: 0 }
+    weeks[w].days.push(d)
+    weeks[w].minutes += d.minutes
+  }
+  const finish = days.length ? days[days.length - 1].date : iso(day0)
+  return { days, weeks: weeks.filter(Boolean), finish, onTime: end ? Date.parse(finish) <= end.getTime() : null }
+}
+
+/** "1h 45m" / "40m". */
+export function fmtMinutes(m: number) {
+  const h = Math.floor(m / 60)
+  const r = Math.round(m % 60)
+  return h ? (r ? `${h}h ${r}m` : `${h}h`) : `${r}m`
+}
+
+export interface LessonNode {
+  id: string
+  requires: string[]
+  completed: boolean
+  unlocked: boolean
+  zone: number
+}
+
+/** The course's learning order: prerequisites first (ties by zone, then as listed). */
+export function learningOrder(nodes: LessonNode[]): string[] {
+  const ids = new Set(nodes.map((n) => n.id))
+  const indeg = new Map(nodes.map((n) => [n.id, n.requires.filter((r) => ids.has(r)).length]))
+  const pos = new Map(nodes.map((n, i) => [n.id, i]))
+  const byId = new Map(nodes.map((n) => [n.id, n]))
+  const kids = new Map<string, string[]>()
+  for (const n of nodes) for (const r of n.requires) if (ids.has(r)) kids.set(r, [...(kids.get(r) ?? []), n.id])
+  const cmp = (a: string, b: string) => byId.get(a)!.zone - byId.get(b)!.zone || pos.get(a)! - pos.get(b)!
+  const ready = nodes.filter((n) => indeg.get(n.id) === 0).map((n) => n.id)
+  const out: string[] = []
+  const seen = new Set<string>()
+  while (ready.length) {
+    ready.sort(cmp)
+    const id = ready.shift()!
+    out.push(id)
+    seen.add(id)
+    for (const k of kids.get(id) ?? []) {
+      indeg.set(k, indeg.get(k)! - 1)
+      if (indeg.get(k) === 0) ready.push(k)
+    }
+  }
+  // A cycle (never in valid data): whatever is left, in zone order.
+  for (const n of [...nodes].sort((a, b) => cmp(a.id, b.id))) if (!seen.has(n.id)) out.push(n.id)
+  return out
+}
+
+/**
+ * "Next lesson" after `current`: your goal path's next step here first, then
+ * what this lesson opens, then the next open lesson in learning order, then
+ * the next unfinished one at all. Null when the course is done.
+ */
+export function nextLesson(nodes: LessonNode[], current: string, goalSteps: string[] = []): string | null {
+  const byId = new Map(nodes.map((n) => [n.id, n]))
+  const left = (id: string) => id !== current && byId.has(id) && !byId.get(id)!.completed
+  const goal = goalSteps.find((id) => left(id) && byId.get(id)!.unlocked)
+  if (goal) return goal
+  const full = learningOrder(nodes)
+  const order = full.filter(left)
+  // Treat the current lesson as done: what it opens is next.
+  const opens = order.find((id) => {
+    const n = byId.get(id)!
+    return n.requires.includes(current) && n.requires.every((r) => r === current || byId.get(r)?.completed)
+  })
+  if (opens) return opens
+  const after = full.indexOf(current)
+  return order.find((id) => byId.get(id)!.unlocked && full.indexOf(id) > after) ?? order.find((id) => byId.get(id)!.unlocked) ?? order[0] ?? null
+}

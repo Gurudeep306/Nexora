@@ -38,6 +38,14 @@
       "name": "Models of computation",
       "icon": "cpu",
       "desc": "Turing machine variants, the RAM model and why they agree up to polynomial factors.",
+      "summary": "You will be able to compare Turing machine variants and the RAM model and explain why they simulate each other with polynomial overhead.",
+      "topics": [
+        "Single-tape and multi-tape Turing machines",
+        "Nondeterministic Turing machines",
+        "The RAM model",
+        "Polynomial-time simulations between models",
+        "The extended Church-Turing thesis"
+      ],
       "kind": "concept",
       "requires": [
         "toc:turing-machines"
@@ -50,6 +58,14 @@
       "name": "Time complexity",
       "icon": "clock",
       "desc": "Measuring running time as a function of input size and the class P.",
+      "summary": "You will be able to measure running time as a function of input size and explain why the class P captures efficient computation.",
+      "topics": [
+        "Running time as a function of input length",
+        "Encoding inputs and measuring size",
+        "Time complexity classes like DTIME",
+        "Definition of the class P",
+        "Why polynomial time is robust"
+      ],
       "kind": "concept",
       "requires": [
         "computation-models",
@@ -63,6 +79,14 @@
       "name": "Reductions",
       "icon": "share",
       "desc": "Many-one and polynomial-time reductions as a way to compare problems.",
+      "summary": "You will be able to use many-one and polynomial-time reductions to compare the difficulty of computational problems.",
+      "topics": [
+        "Many-one reductions",
+        "Polynomial-time reductions",
+        "Direction of a reduction",
+        "Transitivity of reductions",
+        "Hardness and completeness for a class"
+      ],
       "kind": "concept",
       "requires": [
         "computation-models",
@@ -76,6 +100,14 @@
       "name": "P versus NP",
       "icon": "puzzle",
       "desc": "NP as efficiently verifiable problems and what P = NP would mean.",
+      "summary": "You will be able to define NP through efficiently verifiable certificates and explain what P = NP would imply.",
+      "topics": [
+        "NP via polynomial-time verifiers",
+        "NP via nondeterministic machines",
+        "Certificates and witnesses",
+        "Consequences if P equals NP",
+        "Search versus decision problems"
+      ],
       "kind": "concept",
       "requires": [
         "time-complexity",
@@ -90,6 +122,14 @@
       "name": "NP-complete problems",
       "icon": "list",
       "desc": "SAT, 3-SAT, clique, vertex cover, subset sum and how to prove NP-completeness.",
+      "summary": "You will be able to prove problems NP-complete by reduction using SAT, 3-SAT, clique, vertex cover and subset sum.",
+      "topics": [
+        "Steps of an NP-completeness proof",
+        "SAT and 3-SAT",
+        "Clique, independent set and vertex cover",
+        "Subset sum and knapsack",
+        "Hamiltonian cycle and graph colouring"
+      ],
       "kind": "lesson",
       "requires": [
         "p-np",
@@ -103,6 +143,14 @@
       "name": "Cook-Levin theorem",
       "icon": "key",
       "desc": "Why SAT is NP-complete, by encoding a computation as a formula.",
+      "summary": "You will be able to explain the Cook-Levin proof that SAT is NP-complete by encoding a Turing machine computation as a formula.",
+      "topics": [
+        "Statement of the Cook-Levin theorem",
+        "Tableau of machine configurations",
+        "Encoding cells, start and accept conditions",
+        "Encoding legal transitions as clauses",
+        "Formula size is polynomial"
+      ],
       "kind": "concept",
       "requires": [
         "p-np"
@@ -115,6 +163,14 @@
       "name": "coNP",
       "icon": "layers",
       "desc": "Complements of NP problems, tautology and the NP versus coNP question.",
+      "summary": "You will be able to define coNP, identify coNP-complete problems such as tautology and discuss the NP versus coNP question.",
+      "topics": [
+        "Complement classes",
+        "Definition of coNP",
+        "Tautology as coNP-complete",
+        "NP intersect coNP",
+        "Consequences of NP equal to coNP"
+      ],
       "kind": "concept",
       "requires": [
         "p-np"
@@ -127,6 +183,14 @@
       "name": "Reduction workbook",
       "icon": "edit",
       "desc": "Write and check a set of polynomial-time reductions between classic NP-complete problems.",
+      "summary": "You will write and check a set of polynomial-time reductions between classic NP-complete problems, verifying correctness in both directions.",
+      "topics": [
+        "3-SAT to independent set",
+        "Vertex cover to set cover",
+        "3-SAT to subset sum",
+        "Proving both directions of correctness",
+        "Checking reductions run in polynomial time"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -141,6 +205,15 @@
       "name": "Space complexity",
       "icon": "database",
       "desc": "PSPACE, L and NL, and Savitch's theorem.",
+      "summary": "You will be able to define the space classes L, NL and PSPACE and apply Savitch's theorem.",
+      "topics": [
+        "Measuring space with work tapes",
+        "The classes L and NL",
+        "The class PSPACE",
+        "Savitch's theorem",
+        "NL-completeness of path finding",
+        "Immerman-Szelepcsenyi theorem"
+      ],
       "kind": "concept",
       "requires": [
         "time-complexity"
@@ -153,6 +226,14 @@
       "name": "PSPACE-completeness",
       "icon": "layers",
       "desc": "TQBF and why many two-player games are PSPACE-complete.",
+      "summary": "You will be able to explain why TQBF is PSPACE-complete and why many two-player games are PSPACE-complete.",
+      "topics": [
+        "Quantified Boolean formulas",
+        "TQBF is PSPACE-complete",
+        "Games as alternating quantifiers",
+        "Generalised geography",
+        "PSPACE versus NP"
+      ],
       "kind": "concept",
       "requires": [
         "space-complexity",
@@ -166,6 +247,14 @@
       "name": "Hierarchy theorems",
       "icon": "trending-up",
       "desc": "Diagonalisation showing that more time or space solves more problems.",
+      "summary": "You will be able to use diagonalisation to show that more time or more space lets machines decide strictly more problems.",
+      "topics": [
+        "Diagonalisation arguments",
+        "Space-constructible functions",
+        "Space hierarchy theorem",
+        "Time hierarchy theorem",
+        "Separations like P versus EXPTIME"
+      ],
       "kind": "concept",
       "requires": [
         "space-complexity"
@@ -178,6 +267,14 @@
       "name": "Polynomial hierarchy",
       "icon": "layers",
       "desc": "Alternating quantifiers and the classes above NP.",
+      "summary": "You will be able to describe the polynomial hierarchy with alternating quantifiers and oracle machines and place problems above NP in it.",
+      "topics": [
+        "Sigma and Pi levels",
+        "Alternating quantifier characterisation",
+        "Oracle Turing machines",
+        "Collapse of the hierarchy",
+        "Complete problems at each level"
+      ],
       "kind": "concept",
       "requires": [
         "conp"
@@ -190,6 +287,15 @@
       "name": "Randomised classes",
       "icon": "random",
       "desc": "BPP, RP and ZPP, and error reduction by repetition.",
+      "summary": "You will be able to define BPP, RP and ZPP and reduce their error probability through independent repetition.",
+      "topics": [
+        "Probabilistic Turing machines",
+        "One-sided error and RP",
+        "Two-sided error and BPP",
+        "Zero-error class ZPP",
+        "Error reduction by repetition",
+        "Polynomial identity testing"
+      ],
       "kind": "concept",
       "requires": [
         "p-np",
@@ -203,6 +309,14 @@
       "name": "Approximation",
       "icon": "target",
       "desc": "Approximation ratios, greedy and LP-based algorithms and PTAS.",
+      "summary": "You will be able to analyse approximation algorithms by their ratio and design greedy, LP-based and PTAS approximations for NP-hard problems.",
+      "topics": [
+        "Approximation ratio",
+        "2-approximation for vertex cover",
+        "Greedy set cover",
+        "LP relaxation and rounding",
+        "PTAS and FPTAS for knapsack"
+      ],
       "kind": "lesson",
       "requires": [
         "np-complete-problems"
@@ -215,6 +329,14 @@
       "name": "Inapproximability",
       "icon": "warning",
       "desc": "Gap reductions and the PCP theorem.",
+      "summary": "You will be able to explain gap reductions and how the PCP theorem shows some problems cannot be approximated well unless P equals NP.",
+      "topics": [
+        "Gap problems",
+        "Gap-preserving reductions",
+        "Statement of the PCP theorem",
+        "Hardness of approximating MAX-3SAT",
+        "Unique games conjecture"
+      ],
       "kind": "concept",
       "requires": [
         "approximation"
@@ -227,6 +349,14 @@
       "name": "Fixed-parameter",
       "icon": "sliders",
       "desc": "Parameterised complexity, FPT algorithms and kernelisation.",
+      "summary": "You will be able to design fixed-parameter tractable algorithms using bounded search trees and kernelisation.",
+      "topics": [
+        "Parameterised problems",
+        "The class FPT",
+        "Bounded search trees for vertex cover",
+        "Kernelisation rules",
+        "W-hierarchy and W[1]-hardness"
+      ],
       "kind": "concept",
       "requires": [
         "np-complete-problems"
@@ -239,6 +369,14 @@
       "name": "SAT solver",
       "icon": "rocket",
       "desc": "Implement a DPLL solver with unit propagation and use it on encoded puzzles.",
+      "summary": "You will implement a DPLL SAT solver with unit propagation and use it to solve puzzles encoded in CNF.",
+      "topics": [
+        "CNF representation",
+        "DPLL backtracking search",
+        "Unit propagation",
+        "Pure literal elimination",
+        "Encoding puzzles like Sudoku as SAT"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -252,6 +390,14 @@
       "name": "Circuit complexity",
       "icon": "cpu",
       "desc": "Boolean circuits, P/poly and lower bound barriers.",
+      "summary": "You will be able to describe Boolean circuits, the class P/poly and the barriers that make circuit lower bounds hard to prove.",
+      "topics": [
+        "Boolean circuits size and depth",
+        "The class P/poly",
+        "Shannon's counting argument",
+        "Classes AC0 and NC",
+        "Relativisation and natural proofs barriers"
+      ],
       "kind": "concept",
       "requires": [
         "p-np"
@@ -264,6 +410,14 @@
       "name": "Interactive proofs",
       "icon": "chat",
       "desc": "Interactive proof systems, IP = PSPACE and zero knowledge.",
+      "summary": "You will be able to explain interactive proof systems, the result IP = PSPACE and zero-knowledge proofs.",
+      "topics": [
+        "Provers and verifiers",
+        "Graph non-isomorphism protocol",
+        "The class IP",
+        "IP equals PSPACE",
+        "Zero-knowledge proofs"
+      ],
       "kind": "concept",
       "requires": [
         "randomised-classes"
@@ -276,6 +430,14 @@
       "name": "Hardness & crypto",
       "icon": "lock",
       "desc": "One-way functions and average-case hardness behind cryptography.",
+      "summary": "You will be able to explain how one-way functions and average-case hardness provide the foundation for cryptography.",
+      "topics": [
+        "Worst-case versus average-case hardness",
+        "One-way functions",
+        "Hard-core predicates",
+        "Pseudorandom generators",
+        "Cryptography and P versus NP"
+      ],
       "kind": "concept",
       "requires": [
         "randomised-classes",
@@ -289,6 +451,14 @@
       "name": "Quantum complexity",
       "icon": "sparkles",
       "desc": "BQP and how it relates to P, NP and BPP.",
+      "summary": "You will be able to define BQP and describe its known and conjectured relationships to P, NP and BPP.",
+      "topics": [
+        "Qubits and quantum circuits",
+        "The class BQP",
+        "BPP inside BQP inside PSPACE",
+        "Shor's factoring algorithm",
+        "Grover search and NP"
+      ],
       "kind": "concept",
       "requires": [
         "randomised-classes",

@@ -38,6 +38,14 @@
       "name": "Floating point",
       "icon": "binary",
       "desc": "How IEEE 754 numbers are stored, machine epsilon and rounding.",
+      "summary": "You will understand how IEEE 754 floating-point numbers are stored and how rounding and machine epsilon limit numerical accuracy.",
+      "topics": [
+        "Sign, exponent and mantissa",
+        "Single vs double precision",
+        "Machine epsilon",
+        "Rounding modes",
+        "Subnormals, infinities and NaN"
+      ],
       "kind": "concept",
       "requires": [
         "dl:ieee-754"
@@ -50,6 +58,14 @@
       "name": "Error analysis",
       "icon": "warning",
       "desc": "Truncation versus rounding error, error propagation and cancellation.",
+      "summary": "You will be able to separate truncation from rounding error, track how errors propagate and avoid catastrophic cancellation.",
+      "topics": [
+        "Absolute and relative error",
+        "Truncation vs rounding error",
+        "Error propagation through operations",
+        "Catastrophic cancellation",
+        "Rewriting formulas for stability"
+      ],
       "kind": "concept",
       "requires": [
         "floating-point",
@@ -63,6 +79,14 @@
       "name": "Conditioning",
       "icon": "activity",
       "desc": "Condition numbers and the difference between a hard problem and an unstable algorithm.",
+      "summary": "You will be able to measure a problem's sensitivity with condition numbers and tell an ill-conditioned problem from an unstable algorithm.",
+      "topics": [
+        "Condition number of a problem",
+        "Matrix condition numbers",
+        "Forward and backward error",
+        "Backward stability",
+        "Ill-conditioning vs instability"
+      ],
       "kind": "concept",
       "requires": [
         "error-analysis"
@@ -75,6 +99,14 @@
       "name": "Root finding",
       "icon": "crosshair",
       "desc": "Bisection, Newton's method, the secant method and convergence rates.",
+      "summary": "You will be able to find roots of nonlinear equations with bisection, Newton and secant methods and compare their convergence rates.",
+      "topics": [
+        "Bisection method",
+        "Newton's method",
+        "Secant method",
+        "Fixed-point iteration",
+        "Linear, superlinear and quadratic convergence"
+      ],
       "kind": "lesson",
       "requires": [
         "error-analysis"
@@ -87,6 +119,14 @@
       "name": "Direct solvers",
       "icon": "grid",
       "desc": "LU factorisation with pivoting and Cholesky for linear systems.",
+      "summary": "You will be able to solve linear systems with LU factorisation with partial pivoting and with Cholesky for symmetric positive definite matrices.",
+      "topics": [
+        "Gaussian elimination cost",
+        "LU factorisation",
+        "Partial pivoting",
+        "Cholesky factorisation",
+        "Forward and back substitution"
+      ],
       "kind": "lesson",
       "requires": [
         "conditioning",
@@ -100,6 +140,14 @@
       "name": "Iterative solvers",
       "icon": "route",
       "desc": "Jacobi, Gauss-Seidel and conjugate gradient methods.",
+      "summary": "You will be able to solve large linear systems iteratively with Jacobi, Gauss-Seidel and conjugate gradient methods and check convergence.",
+      "topics": [
+        "Jacobi iteration",
+        "Gauss-Seidel iteration",
+        "Convergence and diagonal dominance",
+        "Conjugate gradient method",
+        "Preconditioning to speed convergence"
+      ],
       "kind": "lesson",
       "requires": [
         "direct-solvers"
@@ -112,6 +160,14 @@
       "name": "Least squares",
       "icon": "trending-up",
       "desc": "Normal equations, QR factorisation and fitting data.",
+      "summary": "You will be able to fit models to data by least squares using the normal equations or QR factorisation and know which is more stable.",
+      "topics": [
+        "Overdetermined systems",
+        "Normal equations",
+        "QR factorisation",
+        "Stability of QR vs normal equations",
+        "Polynomial curve fitting"
+      ],
       "kind": "lesson",
       "requires": [
         "direct-solvers"
@@ -124,6 +180,14 @@
       "name": "Eigenvalue methods",
       "icon": "function",
       "desc": "Power iteration, inverse iteration and the QR algorithm.",
+      "summary": "You will be able to compute eigenvalues numerically with power iteration, inverse iteration and the QR algorithm.",
+      "topics": [
+        "Power iteration",
+        "Rayleigh quotient",
+        "Inverse and shifted iteration",
+        "QR algorithm",
+        "Convergence and eigenvalue gaps"
+      ],
       "kind": "lesson",
       "requires": [
         "iterative-solvers",
@@ -137,6 +201,14 @@
       "name": "Interpolation",
       "icon": "chart",
       "desc": "Lagrange and Newton polynomials and Runge's phenomenon.",
+      "summary": "You will be able to construct interpolating polynomials in Lagrange and Newton form and explain Runge's phenomenon.",
+      "topics": [
+        "Lagrange interpolation",
+        "Newton divided differences",
+        "Interpolation error bound",
+        "Runge's phenomenon",
+        "Chebyshev nodes"
+      ],
       "kind": "lesson",
       "requires": [
         "error-analysis"
@@ -149,6 +221,14 @@
       "name": "Splines",
       "icon": "shapes",
       "desc": "Piecewise polynomial and cubic spline interpolation.",
+      "summary": "You will be able to interpolate data with piecewise polynomials and cubic splines and choose appropriate boundary conditions.",
+      "topics": [
+        "Piecewise linear interpolation",
+        "Cubic spline conditions",
+        "Natural and clamped boundary conditions",
+        "Solving the tridiagonal spline system",
+        "Smoothness vs polynomial interpolation"
+      ],
       "kind": "lesson",
       "requires": [
         "interpolation"
@@ -161,6 +241,14 @@
       "name": "Numerical derivatives",
       "icon": "function",
       "desc": "Finite difference formulas and choosing the step size.",
+      "summary": "You will be able to approximate derivatives with finite difference formulas and choose a step size that balances truncation and rounding.",
+      "topics": [
+        "Forward and backward differences",
+        "Central differences",
+        "Truncation error from Taylor series",
+        "Optimal step size with rounding error",
+        "Richardson extrapolation"
+      ],
       "kind": "lesson",
       "requires": [
         "interpolation"
@@ -173,6 +261,14 @@
       "name": "Numerical integration",
       "icon": "layers",
       "desc": "Trapezoidal, Simpson's and Gaussian quadrature rules.",
+      "summary": "You will be able to approximate definite integrals with trapezoidal, Simpson's and Gaussian quadrature and estimate their errors.",
+      "topics": [
+        "Trapezoidal rule",
+        "Simpson's rule",
+        "Composite rules and error order",
+        "Gaussian quadrature",
+        "Adaptive quadrature"
+      ],
       "kind": "lesson",
       "requires": [
         "interpolation"
@@ -185,6 +281,14 @@
       "name": "Numerics toolkit",
       "icon": "wrench",
       "desc": "Implement and test solvers, fitting and quadrature, comparing accuracy against known results.",
+      "summary": "You will implement and test root finders, linear solvers, fitting and quadrature routines and compare them against known results.",
+      "topics": [
+        "Implementing core numerical routines",
+        "Testing against analytic solutions",
+        "Measuring convergence rates",
+        "Comparing with library implementations",
+        "Documenting accuracy limits"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -200,6 +304,14 @@
       "name": "Euler's method",
       "icon": "route",
       "desc": "Explicit and implicit Euler for initial value problems.",
+      "summary": "You will be able to solve initial value problems with explicit and implicit Euler methods and analyse their accuracy and stability.",
+      "topics": [
+        "Initial value problems",
+        "Explicit Euler method",
+        "Implicit Euler method",
+        "Local and global truncation error",
+        "Stability and step size"
+      ],
       "kind": "lesson",
       "requires": [
         "numerical-derivatives",
@@ -213,6 +325,14 @@
       "name": "Runge-Kutta",
       "icon": "trending-up",
       "desc": "RK4, adaptive step sizes and error control.",
+      "summary": "You will be able to integrate ODEs with RK4 and adaptive Runge-Kutta methods that control error by adjusting the step size.",
+      "topics": [
+        "Midpoint and Heun methods",
+        "Classical fourth-order Runge-Kutta",
+        "Embedded Runge-Kutta pairs",
+        "Adaptive step size control",
+        "Systems of ODEs"
+      ],
       "kind": "lesson",
       "requires": [
         "eulers-method"
@@ -225,6 +345,14 @@
       "name": "Stiff equations",
       "icon": "warning",
       "desc": "Why some ODEs need implicit methods and stability regions.",
+      "summary": "You will be able to recognise stiff ODEs and explain why implicit methods with large stability regions are needed for them.",
+      "topics": [
+        "What makes an ODE stiff",
+        "Stability regions of methods",
+        "A-stability of implicit methods",
+        "Implicit methods for stiff systems",
+        "Backward differentiation formulas"
+      ],
       "kind": "concept",
       "requires": [
         "runge-kutta"
@@ -237,6 +365,14 @@
       "name": "Finite differences",
       "icon": "grid",
       "desc": "Discretising PDEs such as the heat equation on a grid.",
+      "summary": "You will be able to discretise PDEs like the heat equation on a grid and choose stable explicit or implicit schemes.",
+      "topics": [
+        "Discretising space and time",
+        "Explicit scheme for the heat equation",
+        "CFL and stability conditions",
+        "Implicit and Crank-Nicolson schemes",
+        "Boundary conditions on grids"
+      ],
       "kind": "lesson",
       "requires": [
         "runge-kutta",
@@ -250,6 +386,14 @@
       "name": "Optimisation methods",
       "icon": "target",
       "desc": "Gradient descent, Newton and quasi-Newton methods for minimisation.",
+      "summary": "You will be able to minimise functions numerically with gradient descent, Newton's method and quasi-Newton methods like BFGS.",
+      "topics": [
+        "Gradient descent and step sizes",
+        "Line search",
+        "Newton's method for minimisation",
+        "Quasi-Newton methods and BFGS",
+        "Convergence and local minima"
+      ],
       "kind": "lesson",
       "requires": [
         "root-finding",
@@ -263,6 +407,14 @@
       "name": "Sparse matrices",
       "icon": "grid",
       "desc": "Sparse storage formats and solving large sparse systems.",
+      "summary": "You will be able to store large sparse matrices efficiently and solve sparse systems without forming dense matrices.",
+      "topics": [
+        "Sparsity patterns",
+        "COO, CSR and CSC formats",
+        "Sparse matrix-vector products",
+        "Fill-in during factorisation",
+        "Iterative solvers for sparse systems"
+      ],
       "kind": "concept",
       "requires": [
         "iterative-solvers"
@@ -275,6 +427,14 @@
       "name": "Monte Carlo methods",
       "icon": "random",
       "desc": "Random sampling for integration and simulation, and variance reduction.",
+      "summary": "You will be able to estimate integrals and simulate systems with random sampling and reduce variance to improve accuracy.",
+      "topics": [
+        "Monte Carlo integration",
+        "Error decreasing as 1 over root n",
+        "Pseudo-random number generators",
+        "Importance sampling",
+        "Variance reduction techniques"
+      ],
       "kind": "lesson",
       "requires": [
         "numerical-integration",
@@ -288,6 +448,14 @@
       "name": "Physics simulation",
       "icon": "play",
       "desc": "Simulate a physical system such as orbits or heat flow and check energy and error behaviour.",
+      "summary": "You will simulate a physical system such as orbits or heat flow and check energy conservation and error behaviour.",
+      "topics": [
+        "Modelling the physical system",
+        "Choosing an integrator",
+        "Energy conservation checks",
+        "Symplectic vs non-symplectic methods",
+        "Error vs step size analysis"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

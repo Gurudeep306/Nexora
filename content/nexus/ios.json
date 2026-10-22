@@ -38,6 +38,14 @@
       "name": "Swift basics",
       "icon": "code",
       "desc": "Constants, variables, control flow, functions, closures and collections.",
+      "summary": "You will be able to write basic Swift code with constants, variables, control flow, functions, closures and the standard collection types.",
+      "topics": [
+        "let vs var and type inference",
+        "Control flow with if, switch and loops",
+        "Functions and argument labels",
+        "Closures and trailing closure syntax",
+        "Arrays, dictionaries and sets"
+      ],
       "kind": "lesson",
       "requires": [
         "app:mobile-platforms"
@@ -56,6 +64,14 @@
       "name": "Swift type system",
       "icon": "shapes",
       "desc": "Structs, classes, enums, optionals and value versus reference semantics.",
+      "summary": "You will understand Swift's type system well enough to choose between structs, classes and enums and handle optionals safely.",
+      "topics": [
+        "Structs vs classes",
+        "Value vs reference semantics",
+        "Enums with associated values",
+        "Optionals and optional binding",
+        "Optional chaining and nil coalescing"
+      ],
       "kind": "lesson",
       "requires": [
         "swift-basics"
@@ -68,6 +84,14 @@
       "name": "Protocols & generics",
       "icon": "puzzle",
       "desc": "Protocol-oriented design, extensions and generic code.",
+      "summary": "You will be able to design protocol-oriented Swift code using protocols, extensions and generics with constraints.",
+      "topics": [
+        "Defining and adopting protocols",
+        "Protocol extensions and default implementations",
+        "Generic functions and types",
+        "Associated types",
+        "Opaque types with some"
+      ],
       "kind": "lesson",
       "requires": [
         "swift-types"
@@ -80,6 +104,15 @@
       "name": "Swift concurrency",
       "icon": "clock",
       "desc": "async/await, tasks, actors and the main actor.",
+      "summary": "You will be able to write safe asynchronous Swift code with async/await, tasks and actors and keep UI work on the main actor.",
+      "topics": [
+        "async and await functions",
+        "Task and structured concurrency",
+        "async let and task groups",
+        "Actors and data isolation",
+        "The MainActor",
+        "Sendable types"
+      ],
       "kind": "lesson",
       "requires": [
         "protocols-generics",
@@ -93,6 +126,14 @@
       "name": "Xcode",
       "icon": "wrench",
       "desc": "Projects, targets, simulators, previews and the debugger.",
+      "summary": "You will be able to navigate Xcode projects and targets, run apps in simulators, use SwiftUI previews and debug with breakpoints.",
+      "topics": [
+        "Projects, targets and schemes",
+        "Running on simulators and devices",
+        "SwiftUI previews",
+        "Breakpoints and the debugger",
+        "Reading build errors and warnings"
+      ],
       "kind": "lesson",
       "requires": [
         "swift-basics"
@@ -105,6 +146,14 @@
       "name": "SwiftUI views",
       "icon": "layers",
       "desc": "Views, modifiers and composing interfaces.",
+      "summary": "You will be able to build interfaces in SwiftUI by composing small views and applying modifiers in the right order.",
+      "topics": [
+        "The View protocol and body",
+        "Text, Image and Button",
+        "Composing views from subviews",
+        "View modifiers and their order",
+        "Declarative UI concepts"
+      ],
       "kind": "lesson",
       "requires": [
         "xcode",
@@ -124,6 +173,14 @@
       "name": "State & bindings",
       "icon": "sliders",
       "desc": "@State, @Binding and how SwiftUI updates views.",
+      "summary": "You will understand how SwiftUI re-renders views when state changes and be able to share state between views with bindings.",
+      "topics": [
+        "@State for local view state",
+        "@Binding for shared state",
+        "Single source of truth",
+        "How state changes trigger updates",
+        "Passing bindings to child views"
+      ],
       "kind": "lesson",
       "requires": [
         "swiftui-views",
@@ -137,6 +194,14 @@
       "name": "Lists & navigation",
       "icon": "list",
       "desc": "Lists, NavigationStack and sheets.",
+      "summary": "You will be able to display data in lists and move between screens with NavigationStack, navigation links and sheets.",
+      "topics": [
+        "List and ForEach with identifiable data",
+        "NavigationStack and NavigationLink",
+        "Value-based navigation destinations",
+        "Presenting sheets",
+        "Swipe actions and deletion"
+      ],
       "kind": "lesson",
       "requires": [
         "state-bindings"
@@ -149,6 +214,14 @@
       "name": "Layout & modifiers",
       "icon": "grid",
       "desc": "Stacks, grids, spacing, adaptive layout and styling.",
+      "summary": "You will be able to lay out SwiftUI screens with stacks and grids that adapt to different sizes and apply consistent styling.",
+      "topics": [
+        "HStack, VStack and ZStack",
+        "Spacers, padding and alignment",
+        "LazyVGrid and LazyHGrid",
+        "Adaptive layout for size classes",
+        "Dynamic Type and styling"
+      ],
       "kind": "lesson",
       "requires": [
         "swiftui-views"
@@ -161,6 +234,14 @@
       "name": "First SwiftUI app",
       "icon": "rocket",
       "desc": "Build a multi-screen SwiftUI app with lists and navigation.",
+      "summary": "You will build a multi-screen SwiftUI app that shows data in lists and navigates between detail and edit screens.",
+      "topics": [
+        "Planning screens and data model",
+        "List and detail views",
+        "Navigation between screens",
+        "Adding and editing items",
+        "Previewing and testing on simulator"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -175,6 +256,14 @@
       "name": "Observable & MVVM",
       "icon": "share",
       "desc": "The Observation framework, view models and app architecture.",
+      "summary": "You will be able to structure a SwiftUI app with the Observation framework and view models following the MVVM pattern.",
+      "topics": [
+        "The @Observable macro",
+        "View models and MVVM",
+        "Sharing objects through the environment",
+        "Separating view and business logic",
+        "Dependency injection in SwiftUI"
+      ],
       "kind": "lesson",
       "requires": [
         "state-bindings",
@@ -188,6 +277,14 @@
       "name": "SwiftData",
       "icon": "database",
       "desc": "Persisting models, queries and relationships with SwiftData.",
+      "summary": "You will be able to persist app data with SwiftData models, fetch it with queries and model relationships between objects.",
+      "topics": [
+        "The @Model macro",
+        "ModelContainer and ModelContext",
+        "Fetching with @Query",
+        "Sorting and filtering with predicates",
+        "Relationships between models"
+      ],
       "kind": "lesson",
       "requires": [
         "observable-mvvm"
@@ -200,6 +297,14 @@
       "name": "URLSession & Codable",
       "icon": "globe",
       "desc": "Fetching JSON with URLSession and decoding it with Codable.",
+      "summary": "You will be able to fetch JSON from web APIs with URLSession and decode it into Swift types with Codable.",
+      "topics": [
+        "URLSession data tasks with async/await",
+        "Codable, Encodable and Decodable",
+        "Custom CodingKeys",
+        "Handling HTTP errors and status codes",
+        "Showing loading and error states"
+      ],
       "kind": "lesson",
       "requires": [
         "observable-mvvm",
@@ -213,6 +318,14 @@
       "name": "UIKit basics",
       "icon": "monitor",
       "desc": "UIKit view controllers and bridging UIKit and SwiftUI.",
+      "summary": "You will understand UIKit's view controller model and be able to embed UIKit views in SwiftUI and SwiftUI views in UIKit.",
+      "topics": [
+        "UIViewController lifecycle",
+        "UIView and Auto Layout basics",
+        "UIViewRepresentable for wrapping views",
+        "UIHostingController for SwiftUI in UIKit",
+        "Delegates and target-action"
+      ],
       "kind": "concept",
       "requires": [
         "swiftui-views"
@@ -225,6 +338,14 @@
       "name": "Journal app",
       "icon": "rocket",
       "desc": "Build a journal app with local storage and data from a web API.",
+      "summary": "You will build a journal app that stores entries locally and enriches them with data fetched from a web API.",
+      "topics": [
+        "Designing the entry model",
+        "Persisting entries with SwiftData",
+        "Fetching remote data with URLSession",
+        "Editing and deleting entries",
+        "Handling offline and error states"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -239,6 +360,14 @@
       "name": "Privacy & permissions",
       "icon": "lock",
       "desc": "Permission prompts, privacy manifests and camera, photos and location.",
+      "summary": "You will be able to request camera, photos and location access correctly and declare data use in privacy manifests.",
+      "topics": [
+        "Usage description keys in Info.plist",
+        "Requesting and checking authorisation",
+        "Camera and photo library access",
+        "Location permissions with Core Location",
+        "Privacy manifests"
+      ],
       "kind": "lesson",
       "requires": [
         "xcode"
@@ -251,6 +380,14 @@
       "name": "Background tasks",
       "icon": "clock",
       "desc": "Background refresh, processing tasks and app lifecycle.",
+      "summary": "You will understand the iOS app lifecycle and be able to schedule background refresh and processing tasks within system limits.",
+      "topics": [
+        "App lifecycle and scene phases",
+        "BackgroundTasks framework",
+        "App refresh vs processing tasks",
+        "Background URLSession transfers",
+        "System limits on background time"
+      ],
       "kind": "lesson",
       "requires": [
         "swift-concurrency"
@@ -263,6 +400,14 @@
       "name": "Notifications",
       "icon": "bell",
       "desc": "Local and push notifications.",
+      "summary": "You will be able to schedule local notifications and understand how push notifications are delivered through APNs.",
+      "topics": [
+        "Requesting notification permission",
+        "Scheduling local notifications with triggers",
+        "Notification content and actions",
+        "Push notifications via APNs",
+        "Handling notifications in the app"
+      ],
       "kind": "lesson",
       "requires": [
         "background-tasks"
@@ -275,6 +420,14 @@
       "name": "Widgets & extensions",
       "icon": "star",
       "desc": "Home screen widgets and app extensions sharing data.",
+      "summary": "You will be able to build Home Screen widgets with WidgetKit and share data between an app and its extensions.",
+      "topics": [
+        "WidgetKit and timeline providers",
+        "Widget families and sizes",
+        "App groups for shared data",
+        "Reloading widget timelines",
+        "Other app extension types"
+      ],
       "kind": "lesson",
       "requires": [
         "swiftui-views",
@@ -288,6 +441,14 @@
       "name": "Testing iOS apps",
       "icon": "check-circle",
       "desc": "Unit tests, UI tests and testing async code.",
+      "summary": "You will be able to write unit and UI tests for iOS apps and test asynchronous code reliably.",
+      "topics": [
+        "Unit tests with XCTest or Swift Testing",
+        "Testing async functions",
+        "UI tests with XCUITest",
+        "Mocking network dependencies",
+        "Code coverage in Xcode"
+      ],
       "kind": "lesson",
       "requires": [
         "observable-mvvm"
@@ -300,6 +461,14 @@
       "name": "Instruments",
       "icon": "activity",
       "desc": "Profiling time, memory and energy with Instruments.",
+      "summary": "You will be able to profile an app with Instruments to find slow code, memory leaks and excessive energy use.",
+      "topics": [
+        "Time Profiler",
+        "Allocations and Leaks instruments",
+        "Finding retain cycles",
+        "Energy and hang diagnostics",
+        "Profiling on a real device"
+      ],
       "kind": "lesson",
       "requires": [
         "lists-navigation-ios"
@@ -312,6 +481,14 @@
       "name": "App Store release",
       "icon": "upload",
       "desc": "Signing, TestFlight, App Store Connect and review guidelines.",
+      "summary": "You will be able to sign, distribute through TestFlight and submit an app to the App Store in line with review guidelines.",
+      "topics": [
+        "Certificates, identifiers and provisioning",
+        "Archiving and uploading builds",
+        "TestFlight beta testing",
+        "App Store Connect metadata",
+        "App Review guidelines"
+      ],
       "kind": "lesson",
       "requires": [
         "testing-ios"
@@ -324,6 +501,15 @@
       "name": "iOS capstone",
       "icon": "trophy",
       "desc": "Ship a polished app with persistence, notifications and a widget through TestFlight.",
+      "summary": "You will ship a polished iOS app with persistence, notifications and a widget and distribute it to testers via TestFlight.",
+      "topics": [
+        "Scoping and designing the app",
+        "Persistence with SwiftData",
+        "Local notifications",
+        "A Home Screen widget",
+        "Testing and profiling before release",
+        "TestFlight distribution"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

@@ -39,6 +39,14 @@
       "name": "HCI foundations",
       "icon": "users",
       "desc": "Human-computer interaction as a field and user-centred design.",
+      "summary": "You will understand human-computer interaction as a field and the principles of user-centred design.",
+      "topics": [
+        "What HCI studies",
+        "User-centred design principles",
+        "Usability and user experience",
+        "Norman's affordances and signifiers",
+        "Mental models and feedback"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 60
@@ -49,6 +57,14 @@
       "name": "Perception & cognition",
       "icon": "brain",
       "desc": "Gestalt principles, attention, memory limits, Fitts's law and Hick's law.",
+      "summary": "You will be able to apply Gestalt principles, attention and memory limits, and Fitts's and Hick's laws to interface design.",
+      "topics": [
+        "Gestalt principles of grouping",
+        "Attention and visual search",
+        "Working memory limits",
+        "Fitts's law",
+        "Hick's law"
+      ],
       "kind": "concept",
       "requires": [
         "hci-foundations"
@@ -61,6 +77,14 @@
       "name": "Design process",
       "icon": "route",
       "desc": "Discover, define, develop and deliver as an iterative process.",
+      "summary": "You will be able to run an iterative design process through discover, define, develop and deliver phases.",
+      "topics": [
+        "The double diamond model",
+        "Divergent and convergent thinking",
+        "Problem framing",
+        "Iteration and feedback loops",
+        "Design thinking methods"
+      ],
       "kind": "concept",
       "requires": [
         "hci-foundations"
@@ -73,6 +97,14 @@
       "name": "Usability heuristics",
       "icon": "check-circle",
       "desc": "Nielsen's heuristics and common usability problems.",
+      "summary": "You will be able to evaluate an interface against Nielsen's heuristics and report common usability problems.",
+      "topics": [
+        "Nielsen's ten heuristics",
+        "Heuristic evaluation method",
+        "Severity ratings",
+        "Common usability problems",
+        "Limits of expert reviews"
+      ],
       "kind": "concept",
       "requires": [
         "perception-cognition"
@@ -85,6 +117,14 @@
       "name": "User research",
       "icon": "search",
       "desc": "Interviews, contextual inquiry and observing real users.",
+      "summary": "You will be able to plan and conduct interviews, contextual inquiry and observation to understand real users.",
+      "topics": [
+        "Research goals and questions",
+        "User interviews",
+        "Contextual inquiry",
+        "Observation and field studies",
+        "Recruiting participants"
+      ],
       "kind": "lesson",
       "requires": [
         "design-process"
@@ -97,6 +137,14 @@
       "name": "Personas & journeys",
       "icon": "user",
       "desc": "Synthesising research into personas, journey maps and problem statements.",
+      "summary": "You will be able to synthesise research into personas, journey maps and clear problem statements.",
+      "topics": [
+        "Affinity mapping",
+        "Personas grounded in research",
+        "Customer journey maps",
+        "Jobs to be done",
+        "Problem statements and how-might-we"
+      ],
       "kind": "lesson",
       "requires": [
         "user-research"
@@ -109,6 +157,14 @@
       "name": "Surveys & analytics",
       "icon": "analytics",
       "desc": "Writing unbiased surveys and reading product analytics.",
+      "summary": "You will be able to write unbiased surveys and interpret product analytics such as funnels and retention.",
+      "topics": [
+        "Writing neutral survey questions",
+        "Sampling and response bias",
+        "Likert scales",
+        "Funnels and conversion",
+        "Retention and cohort analysis"
+      ],
       "kind": "lesson",
       "requires": [
         "user-research",
@@ -122,6 +178,14 @@
       "name": "Info architecture",
       "icon": "list",
       "desc": "Card sorting, navigation structures and content hierarchy.",
+      "summary": "You will be able to organise content and navigation using card sorting, tree testing and clear hierarchies.",
+      "topics": [
+        "Open and closed card sorting",
+        "Tree testing",
+        "Navigation structures",
+        "Labelling and taxonomies",
+        "Content hierarchy"
+      ],
       "kind": "lesson",
       "requires": [
         "personas-journeys"
@@ -134,6 +198,14 @@
       "name": "Wireframes",
       "icon": "edit",
       "desc": "Sketching and wireframing layouts and flows.",
+      "summary": "You will be able to sketch and wireframe screen layouts and user flows quickly at low fidelity.",
+      "topics": [
+        "Paper sketching",
+        "Low-fidelity wireframes",
+        "User flows",
+        "Layout and content placement",
+        "Annotating wireframes"
+      ],
       "kind": "lesson",
       "requires": [
         "info-architecture"
@@ -146,6 +218,14 @@
       "name": "Interaction patterns",
       "icon": "bolt",
       "desc": "Common patterns for navigation, input, search and feedback.",
+      "summary": "You will be able to apply common interaction patterns for navigation, input, search and feedback consistently.",
+      "topics": [
+        "Navigation patterns",
+        "Input controls",
+        "Search and filtering patterns",
+        "Feedback and system status",
+        "Consistency and conventions"
+      ],
       "kind": "lesson",
       "requires": [
         "usability-heuristics",
@@ -159,6 +239,14 @@
       "name": "Prototyping",
       "icon": "wand",
       "desc": "Clickable prototypes at the right fidelity for the question.",
+      "summary": "You will be able to build clickable prototypes at the right fidelity for the design question you need to answer.",
+      "topics": [
+        "Choosing prototype fidelity",
+        "Clickable prototypes in design tools",
+        "Prototyping interactions and transitions",
+        "Testing assumptions with prototypes",
+        "Throwaway vs evolutionary prototypes"
+      ],
       "kind": "lesson",
       "requires": [
         "wireframes"
@@ -171,6 +259,14 @@
       "name": "Forms & feedback",
       "icon": "check",
       "desc": "Form design, validation, empty, loading and error states and microcopy.",
+      "summary": "You will be able to design usable forms with helpful validation and clear empty, loading and error states.",
+      "topics": [
+        "Form layout and labels",
+        "Inline validation",
+        "Error messages and recovery",
+        "Empty, loading and error states",
+        "Writing microcopy"
+      ],
       "kind": "lesson",
       "requires": [
         "interaction-patterns"
@@ -183,6 +279,14 @@
       "name": "App redesign",
       "icon": "rocket",
       "desc": "Research and redesign a flow in an existing app as a tested prototype.",
+      "summary": "You will research and redesign a flow in an existing app and validate it as a tested prototype.",
+      "topics": [
+        "Auditing the current flow",
+        "Identifying user pain points",
+        "Sketching alternatives",
+        "Building a prototype",
+        "Testing and iterating the redesign"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -197,6 +301,14 @@
       "name": "Typography",
       "icon": "type",
       "desc": "Typefaces, type scales, line length and readability.",
+      "summary": "You will be able to choose typefaces and build type scales that make interfaces readable and well structured.",
+      "topics": [
+        "Serif vs sans-serif typefaces",
+        "Type scales and hierarchy",
+        "Line length and line height",
+        "Font weights and pairing",
+        "Readability on screens"
+      ],
       "kind": "lesson",
       "requires": [
         "perception-cognition"
@@ -209,6 +321,14 @@
       "name": "Colour & contrast",
       "icon": "palette",
       "desc": "Colour palettes, meaning, contrast ratios and dark mode.",
+      "summary": "You will be able to build colour palettes with meaning, meet contrast requirements and adapt designs to dark mode.",
+      "topics": [
+        "Colour palettes and roles",
+        "Colour meaning and culture",
+        "WCAG contrast ratios",
+        "Not relying on colour alone",
+        "Designing for dark mode"
+      ],
       "kind": "lesson",
       "requires": [
         "perception-cognition"
@@ -221,6 +341,14 @@
       "name": "Layout & grids",
       "icon": "grid",
       "desc": "Grids, spacing systems, alignment and visual hierarchy.",
+      "summary": "You will be able to lay out screens with grids, spacing systems and alignment to create clear visual hierarchy.",
+      "topics": [
+        "Column grids",
+        "Spacing scales like 8-point grids",
+        "Alignment and proximity",
+        "Visual hierarchy",
+        "Responsive layout breakpoints"
+      ],
       "kind": "lesson",
       "requires": [
         "typography"
@@ -233,6 +361,14 @@
       "name": "Design systems",
       "icon": "layers",
       "desc": "Design tokens, component libraries and documentation.",
+      "summary": "You will be able to build and document a design system with tokens and reusable components.",
+      "topics": [
+        "Design tokens",
+        "Component libraries",
+        "Variants and states",
+        "Documentation and usage guidelines",
+        "Governance and versioning"
+      ],
       "kind": "lesson",
       "requires": [
         "layout-grids",
@@ -246,6 +382,14 @@
       "name": "Accessible design",
       "icon": "eye",
       "desc": "Designing for screen readers, keyboard use and low vision.",
+      "summary": "You will be able to design interfaces that work with screen readers, keyboards and low vision following WCAG guidance.",
+      "topics": [
+        "WCAG principles",
+        "Screen reader considerations",
+        "Keyboard navigation and focus",
+        "Low vision and zoom",
+        "Accessible names and alt text"
+      ],
       "kind": "lesson",
       "requires": [
         "colour-contrast",
@@ -265,6 +409,14 @@
       "name": "Usability testing",
       "icon": "users",
       "desc": "Planning, moderating and analysing usability tests.",
+      "summary": "You will be able to plan, moderate and analyse usability tests and turn findings into design changes.",
+      "topics": [
+        "Writing test tasks",
+        "Moderated vs unmoderated testing",
+        "Think-aloud protocol",
+        "Measuring success and time on task",
+        "Synthesising findings"
+      ],
       "kind": "lesson",
       "requires": [
         "prototyping"
@@ -277,6 +429,14 @@
       "name": "A/B testing",
       "icon": "sliders",
       "desc": "Running controlled experiments on design changes.",
+      "summary": "You will be able to run controlled A/B experiments on design changes and interpret results correctly.",
+      "topics": [
+        "Hypotheses and metrics",
+        "Randomisation and sample size",
+        "Statistical significance",
+        "Novelty effects",
+        "Interpreting and acting on results"
+      ],
       "kind": "lesson",
       "requires": [
         "usability-testing",
@@ -290,6 +450,14 @@
       "name": "Design to code",
       "icon": "code",
       "desc": "Handing off designs and working with engineers on implementation.",
+      "summary": "You will be able to hand off designs clearly and collaborate with engineers to implement them faithfully.",
+      "topics": [
+        "Design specs and redlines",
+        "Handoff in design tools",
+        "Design tokens in code",
+        "Reviewing implementations",
+        "Collaborating on trade-offs"
+      ],
       "kind": "lesson",
       "requires": [
         "design-systems",
@@ -303,6 +471,14 @@
       "name": "UX case study",
       "icon": "trophy",
       "desc": "Take a product problem from research to a tested, accessible design and document it.",
+      "summary": "You will take a product problem from research to a tested, accessible design and document the process as a case study.",
+      "topics": [
+        "Defining the problem",
+        "Research and synthesis",
+        "Design iterations",
+        "Testing and accessibility checks",
+        "Writing the case study"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

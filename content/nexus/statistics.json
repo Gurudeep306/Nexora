@@ -38,6 +38,14 @@
       "name": "Data & sampling",
       "icon": "list",
       "desc": "Types of variables, populations versus samples, sampling designs and sources of bias.",
+      "summary": "You will be able to classify variables, distinguish populations from samples and recognise sampling designs and sources of bias.",
+      "topics": [
+        "Categorical vs numerical variables",
+        "Populations, samples and parameters",
+        "Simple random and stratified sampling",
+        "Cluster and convenience sampling",
+        "Selection and response bias"
+      ],
       "kind": "concept",
       "requires": [
         "prob:probability-basics"
@@ -50,6 +58,14 @@
       "name": "Descriptive statistics",
       "icon": "chart",
       "desc": "Mean, median, mode, variance, standard deviation, quantiles and skew.",
+      "summary": "You will be able to summarise data with measures of centre, spread, position and shape.",
+      "topics": [
+        "Mean, median and mode",
+        "Variance and standard deviation",
+        "Quantiles and the interquartile range",
+        "Skewness and shape",
+        "Robustness to outliers"
+      ],
       "kind": "lesson",
       "requires": [
         "data-and-sampling"
@@ -62,6 +78,14 @@
       "name": "Plotting distributions",
       "icon": "analytics",
       "desc": "Histograms, box plots, density plots and QQ plots for seeing the shape of data.",
+      "summary": "You will be able to visualise the shape of data with histograms, box plots, density plots and QQ plots and read what they show.",
+      "topics": [
+        "Histograms and bin width",
+        "Box plots and outliers",
+        "Kernel density plots",
+        "QQ plots for normality",
+        "Comparing groups visually"
+      ],
       "kind": "lesson",
       "requires": [
         "descriptive-stats"
@@ -74,6 +98,14 @@
       "name": "Correlation",
       "icon": "trending-up",
       "desc": "Covariance, Pearson and Spearman correlation, and why correlation is not causation.",
+      "summary": "You will be able to measure association with covariance and Pearson and Spearman correlation and avoid confusing correlation with causation.",
+      "topics": [
+        "Scatter plots",
+        "Covariance as joint variability",
+        "Pearson correlation",
+        "Spearman rank correlation",
+        "Correlation vs causation"
+      ],
       "kind": "concept",
       "requires": [
         "descriptive-stats"
@@ -86,6 +118,14 @@
       "name": "Sampling distributions",
       "icon": "layers",
       "desc": "How a statistic varies from sample to sample and the idea of a standard error.",
+      "summary": "You will understand how a statistic varies across repeated samples and be able to compute and interpret its standard error.",
+      "topics": [
+        "Statistics as random variables",
+        "Sampling distribution of the mean",
+        "Standard error",
+        "Sampling distribution of a proportion",
+        "Simulation of sampling distributions"
+      ],
       "kind": "concept",
       "requires": [
         "descriptive-stats",
@@ -99,6 +139,14 @@
       "name": "Central limit theorem",
       "icon": "bolt",
       "desc": "Why sample means are approximately normal and when the approximation breaks down.",
+      "summary": "You will be able to apply the central limit theorem to sample means and recognise when the normal approximation is unreliable.",
+      "topics": [
+        "Statement of the central limit theorem",
+        "Sample size and approximation quality",
+        "Normal approximation for means",
+        "Skewed and heavy-tailed populations",
+        "CLT for proportions"
+      ],
       "kind": "concept",
       "requires": [
         "sampling-distributions"
@@ -111,6 +159,14 @@
       "name": "Point estimation",
       "icon": "target",
       "desc": "Estimators, bias and variance, method of moments and maximum likelihood.",
+      "summary": "You will be able to construct estimators by the method of moments and maximum likelihood and compare them by bias and variance.",
+      "topics": [
+        "Estimators and estimates",
+        "Bias, variance and mean squared error",
+        "Consistency of estimators",
+        "Method of moments",
+        "Maximum likelihood estimation"
+      ],
       "kind": "concept",
       "requires": [
         "sampling-distributions"
@@ -123,6 +179,14 @@
       "name": "Confidence intervals",
       "icon": "sliders",
       "desc": "Constructing and correctly interpreting intervals for means and proportions.",
+      "summary": "You will be able to construct confidence intervals for means and proportions and interpret their coverage correctly.",
+      "topics": [
+        "Meaning of confidence level",
+        "z intervals for means",
+        "t intervals for means",
+        "Intervals for proportions",
+        "Margin of error and sample size"
+      ],
       "kind": "lesson",
       "requires": [
         "clt",
@@ -136,6 +200,14 @@
       "name": "Bootstrap",
       "icon": "random",
       "desc": "Resampling to estimate standard errors and intervals without closed-form formulas.",
+      "summary": "You will be able to estimate standard errors and confidence intervals by resampling when no closed-form formula is available.",
+      "topics": [
+        "Resampling with replacement",
+        "Bootstrap standard errors",
+        "Percentile bootstrap intervals",
+        "BCa and other interval methods",
+        "When the bootstrap fails"
+      ],
       "kind": "lesson",
       "requires": [
         "confidence-intervals"
@@ -148,6 +220,15 @@
       "name": "Hypothesis testing",
       "icon": "check-circle",
       "desc": "Null and alternative hypotheses, test statistics, p-values, type I and II errors and power.",
+      "summary": "You will be able to set up and carry out hypothesis tests and interpret p-values, error types and power correctly.",
+      "topics": [
+        "Null and alternative hypotheses",
+        "Test statistics and null distributions",
+        "p-values and significance levels",
+        "Type I and type II errors",
+        "Statistical power",
+        "Statistical vs practical significance"
+      ],
       "kind": "lesson",
       "requires": [
         "confidence-intervals",
@@ -161,6 +242,14 @@
       "name": "t-tests",
       "icon": "calculator",
       "desc": "One-sample, two-sample and paired t-tests and their assumptions.",
+      "summary": "You will be able to choose and run one-sample, two-sample and paired t-tests and check their assumptions.",
+      "topics": [
+        "One-sample t-test",
+        "Two-sample t-test",
+        "Welch's unequal-variance test",
+        "Paired t-test",
+        "Normality and independence assumptions"
+      ],
       "kind": "lesson",
       "requires": [
         "hypothesis-testing"
@@ -173,6 +262,14 @@
       "name": "Chi-square tests",
       "icon": "grid",
       "desc": "Goodness of fit and independence tests for categorical data.",
+      "summary": "You will be able to test goodness of fit and independence for categorical data with chi-square tests.",
+      "topics": [
+        "Observed vs expected counts",
+        "Goodness-of-fit test",
+        "Contingency tables",
+        "Test of independence",
+        "Expected count requirements"
+      ],
       "kind": "lesson",
       "requires": [
         "hypothesis-testing"
@@ -185,6 +282,14 @@
       "name": "ANOVA",
       "icon": "layers",
       "desc": "Comparing several group means with one-way and two-way analysis of variance.",
+      "summary": "You will be able to compare several group means with one-way and two-way ANOVA and follow up with post-hoc tests.",
+      "topics": [
+        "Between- and within-group variation",
+        "The F statistic",
+        "One-way ANOVA",
+        "Two-way ANOVA and interactions",
+        "Post-hoc comparisons like Tukey's"
+      ],
       "kind": "lesson",
       "requires": [
         "t-tests"
@@ -197,6 +302,14 @@
       "name": "Multiple testing",
       "icon": "warning",
       "desc": "Why many tests inflate false positives, with Bonferroni and false discovery rate control.",
+      "summary": "You will be able to explain why many tests inflate false positives and control errors with Bonferroni and false discovery rate methods.",
+      "topics": [
+        "Family-wise error rate",
+        "Bonferroni correction",
+        "Holm's procedure",
+        "False discovery rate",
+        "Benjamini-Hochberg procedure"
+      ],
       "kind": "concept",
       "requires": [
         "hypothesis-testing"
@@ -209,6 +322,14 @@
       "name": "Non-parametric tests",
       "icon": "shapes",
       "desc": "Rank-based tests such as Mann-Whitney and Wilcoxon, and permutation tests.",
+      "summary": "You will be able to use rank-based and permutation tests when parametric assumptions do not hold.",
+      "topics": [
+        "When to use non-parametric tests",
+        "Mann-Whitney U test",
+        "Wilcoxon signed-rank test",
+        "Kruskal-Wallis test",
+        "Permutation tests"
+      ],
       "kind": "lesson",
       "requires": [
         "hypothesis-testing"
@@ -221,6 +342,14 @@
       "name": "Linear regression",
       "icon": "trending-up",
       "desc": "Ordinary least squares, inference on coefficients, R-squared and interpreting effects.",
+      "summary": "You will be able to fit linear regression by ordinary least squares, test coefficients and interpret effects and R-squared.",
+      "topics": [
+        "Ordinary least squares",
+        "Coefficient standard errors and t tests",
+        "Confidence intervals for coefficients",
+        "R-squared and adjusted R-squared",
+        "Categorical predictors and interactions"
+      ],
       "kind": "lesson",
       "requires": [
         "correlation",
@@ -235,6 +364,14 @@
       "name": "Regression diagnostics",
       "icon": "search",
       "desc": "Residual plots, heteroscedasticity, leverage, multicollinearity and transformations.",
+      "summary": "You will be able to check regression assumptions with residual plots and fix problems such as heteroscedasticity and multicollinearity.",
+      "topics": [
+        "Residual vs fitted plots",
+        "Detecting heteroscedasticity",
+        "Leverage and influential points",
+        "Multicollinearity and VIF",
+        "Variable transformations"
+      ],
       "kind": "lesson",
       "requires": [
         "linear-regression-stats"
@@ -247,6 +384,14 @@
       "name": "GLMs",
       "icon": "function",
       "desc": "Generalised linear models: logistic and Poisson regression and link functions.",
+      "summary": "You will be able to model binary and count outcomes with logistic and Poisson regression and interpret link functions.",
+      "topics": [
+        "Exponential family and link functions",
+        "Logistic regression and odds ratios",
+        "Poisson regression for counts",
+        "Maximum likelihood fitting",
+        "Deviance and model comparison"
+      ],
       "kind": "lesson",
       "requires": [
         "linear-regression-stats"
@@ -259,6 +404,14 @@
       "name": "A/B test analysis",
       "icon": "sliders",
       "desc": "Analyse a simulated A/B test end to end, from power analysis to a decision memo.",
+      "summary": "You will analyse a simulated A/B test end to end, from power analysis and sample sizing to a written decision memo.",
+      "topics": [
+        "Choosing metrics and hypotheses",
+        "Power analysis and sample size",
+        "Randomisation checks",
+        "Running the test and computing intervals",
+        "Writing the decision memo"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -273,6 +426,14 @@
       "name": "Bayesian inference",
       "icon": "brain",
       "desc": "Priors, likelihoods and posteriors, conjugate models and credible intervals.",
+      "summary": "You will be able to update priors into posteriors with Bayes' theorem, use conjugate models and report credible intervals.",
+      "topics": [
+        "Prior, likelihood and posterior",
+        "Conjugate priors like beta-binomial",
+        "Posterior summaries",
+        "Credible vs confidence intervals",
+        "MCMC sampling overview"
+      ],
       "kind": "lesson",
       "requires": [
         "point-estimation",
@@ -286,6 +447,14 @@
       "name": "Time series",
       "icon": "clock",
       "desc": "Trend, seasonality, autocorrelation and ARIMA-style forecasting.",
+      "summary": "You will be able to decompose time series into trend and seasonality, examine autocorrelation and fit ARIMA-style forecasts.",
+      "topics": [
+        "Trend and seasonality",
+        "Stationarity and differencing",
+        "Autocorrelation and partial autocorrelation",
+        "AR, MA and ARIMA models",
+        "Forecast evaluation"
+      ],
       "kind": "lesson",
       "requires": [
         "regression-diagnostics"
@@ -298,6 +467,14 @@
       "name": "Causal inference",
       "icon": "git-branch",
       "desc": "Confounding, randomised experiments, causal graphs and observational study designs.",
+      "summary": "You will be able to reason about causal effects using randomised experiments, causal graphs and observational study designs.",
+      "topics": [
+        "Potential outcomes framework",
+        "Confounding variables",
+        "Randomised controlled experiments",
+        "Causal graphs and DAGs",
+        "Matching and difference-in-differences"
+      ],
       "kind": "concept",
       "requires": [
         "regression-diagnostics"
@@ -310,6 +487,14 @@
       "name": "Statistical study",
       "icon": "trophy",
       "desc": "Plan, run and report a complete statistical analysis on a real dataset.",
+      "summary": "You will plan, run and report a complete statistical analysis on a real dataset with clear conclusions.",
+      "topics": [
+        "Formulating research questions",
+        "Exploratory analysis",
+        "Choosing appropriate tests and models",
+        "Checking assumptions",
+        "Reporting results and limitations"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

@@ -39,6 +39,14 @@
       "name": "Digital images",
       "icon": "image",
       "desc": "Pixels, channels and colour spaces, and images as arrays you can compute on.",
+      "summary": "You will be able to treat digital images as numeric arrays of pixels and channels and convert between colour spaces.",
+      "topics": [
+        "Pixels and intensity values",
+        "Colour channels",
+        "RGB, HSV and grayscale conversion",
+        "Images as NumPy arrays",
+        "Histograms and contrast"
+      ],
       "kind": "concept",
       "requires": [
         "la:matrices"
@@ -51,6 +59,14 @@
       "name": "Image filtering",
       "icon": "sliders",
       "desc": "Convolution, blurring, sharpening and denoising filters.",
+      "summary": "You will be able to apply convolution filters to blur, sharpen and denoise images.",
+      "topics": [
+        "Convolution and kernels",
+        "Box and Gaussian blur",
+        "Sharpening filters",
+        "Median filtering for noise",
+        "Padding and border handling"
+      ],
       "kind": "lesson",
       "requires": [
         "digital-images"
@@ -63,6 +79,14 @@
       "name": "Edges & gradients",
       "icon": "shapes",
       "desc": "Image gradients, Sobel and Canny edge detection.",
+      "summary": "You will be able to compute image gradients and detect edges with Sobel filters and the Canny detector.",
+      "topics": [
+        "Image gradients",
+        "Sobel operator",
+        "Gradient magnitude and orientation",
+        "Canny edge detection steps",
+        "Non-maximum suppression and hysteresis"
+      ],
       "kind": "lesson",
       "requires": [
         "image-filtering",
@@ -76,6 +100,14 @@
       "name": "Geometric transforms",
       "icon": "crosshair",
       "desc": "Affine transforms, homographies and image warping.",
+      "summary": "You will be able to warp images with affine transforms and homographies.",
+      "topics": [
+        "Translation, rotation and scaling",
+        "Affine transformations",
+        "Homographies and planar mappings",
+        "Image warping and interpolation",
+        "Estimating transforms from points"
+      ],
       "kind": "lesson",
       "requires": [
         "digital-images"
@@ -88,6 +120,14 @@
       "name": "Keypoints & features",
       "icon": "target",
       "desc": "Corner detection and descriptors such as Harris, SIFT and ORB.",
+      "summary": "You will be able to detect corners and compute local descriptors such as Harris, SIFT and ORB.",
+      "topics": [
+        "Harris corner detector",
+        "Scale-space and SIFT",
+        "ORB binary descriptors",
+        "Feature descriptors",
+        "Invariance to scale and rotation"
+      ],
       "kind": "lesson",
       "requires": [
         "edges-gradients"
@@ -100,6 +140,14 @@
       "name": "Feature matching",
       "icon": "link",
       "desc": "Matching descriptors and fitting models robustly with RANSAC.",
+      "summary": "You will be able to match feature descriptors between images and fit geometric models robustly with RANSAC.",
+      "topics": [
+        "Nearest-neighbour descriptor matching",
+        "Ratio test",
+        "Outliers in matches",
+        "RANSAC model fitting",
+        "Estimating homographies"
+      ],
       "kind": "lesson",
       "requires": [
         "keypoints-features",
@@ -113,6 +161,14 @@
       "name": "Camera model",
       "icon": "eye",
       "desc": "The pinhole camera, intrinsics and extrinsics, and calibration.",
+      "summary": "You will be able to describe the pinhole camera model with intrinsic and extrinsic parameters and calibrate a real camera.",
+      "topics": [
+        "Pinhole projection",
+        "Intrinsic matrix",
+        "Extrinsic rotation and translation",
+        "Lens distortion",
+        "Calibration with a checkerboard"
+      ],
       "kind": "concept",
       "requires": [
         "geometric-transforms"
@@ -125,6 +181,14 @@
       "name": "Panorama stitcher",
       "icon": "image",
       "desc": "Stitch overlapping photos into a panorama using features and homographies.",
+      "summary": "You will build a panorama stitcher that aligns overlapping photos using features and homographies and blends them together.",
+      "topics": [
+        "Detecting and matching features",
+        "Estimating homographies with RANSAC",
+        "Warping images to a common plane",
+        "Blending seams",
+        "Cropping the panorama"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -138,6 +202,14 @@
       "name": "CNNs for images",
       "icon": "layers",
       "desc": "Convolutional networks for image classification and what their filters learn.",
+      "summary": "You will be able to explain how convolutional networks classify images and what their learned filters respond to.",
+      "topics": [
+        "Convolutional layers",
+        "Pooling and stride",
+        "Feature maps and receptive fields",
+        "Classification heads",
+        "Visualising learned filters"
+      ],
       "kind": "lesson",
       "requires": [
         "image-filtering",
@@ -151,6 +223,14 @@
       "name": "Modern backbones",
       "icon": "building",
       "desc": "ResNet, EfficientNet and Vision Transformers as feature extractors.",
+      "summary": "You will be able to compare ResNet, EfficientNet and Vision Transformers and use them as feature extractors.",
+      "topics": [
+        "Residual connections in ResNet",
+        "Compound scaling in EfficientNet",
+        "Patch embeddings in Vision Transformers",
+        "Pretrained backbones",
+        "Extracting features for downstream tasks"
+      ],
       "kind": "lesson",
       "requires": [
         "cnn-vision"
@@ -163,6 +243,14 @@
       "name": "Augmentation",
       "icon": "random",
       "desc": "Flips, crops, colour jitter and mixing strategies to improve generalisation.",
+      "summary": "You will be able to improve generalisation with flips, crops, colour jitter and mixing strategies such as mixup and CutMix.",
+      "topics": [
+        "Flips and random crops",
+        "Colour jitter",
+        "Random erasing",
+        "Mixup and CutMix",
+        "Augmentation pipelines"
+      ],
       "kind": "lesson",
       "requires": [
         "cnn-vision"
@@ -175,6 +263,14 @@
       "name": "Transfer learning",
       "icon": "share",
       "desc": "Fine-tuning pretrained backbones on small datasets.",
+      "summary": "You will be able to fine-tune pretrained vision backbones on small datasets.",
+      "topics": [
+        "Feature extraction with frozen layers",
+        "Fine-tuning strategies",
+        "Learning rates for fine-tuning",
+        "Avoiding overfitting on small data",
+        "Choosing a pretrained model"
+      ],
       "kind": "lesson",
       "requires": [
         "modern-backbones"
@@ -187,6 +283,15 @@
       "name": "Object detection",
       "icon": "crosshair",
       "desc": "Bounding boxes, anchors, one-stage and two-stage detectors, IoU and NMS.",
+      "summary": "You will be able to explain how detectors predict bounding boxes and compare one-stage and two-stage designs using IoU and NMS.",
+      "topics": [
+        "Bounding box representation",
+        "Anchor boxes",
+        "Two-stage detectors like Faster R-CNN",
+        "One-stage detectors like YOLO",
+        "Intersection over union",
+        "Non-maximum suppression"
+      ],
       "kind": "lesson",
       "requires": [
         "transfer-learning-cv"
@@ -199,6 +304,14 @@
       "name": "Segmentation",
       "icon": "grid",
       "desc": "Semantic and instance segmentation with U-Net and Mask R-CNN style models.",
+      "summary": "You will be able to perform semantic and instance segmentation with U-Net and Mask R-CNN style models.",
+      "topics": [
+        "Semantic versus instance segmentation",
+        "Encoder-decoder architectures",
+        "U-Net skip connections",
+        "Mask R-CNN",
+        "Segmentation losses"
+      ],
       "kind": "lesson",
       "requires": [
         "transfer-learning-cv"
@@ -211,6 +324,14 @@
       "name": "Vision metrics",
       "icon": "chart",
       "desc": "Precision-recall, mAP and mIoU for detection and segmentation.",
+      "summary": "You will be able to evaluate detection and segmentation models with precision-recall curves, mAP and mIoU.",
+      "topics": [
+        "Precision and recall",
+        "Precision-recall curves",
+        "Average precision and mAP",
+        "IoU thresholds",
+        "Mean IoU for segmentation"
+      ],
       "kind": "concept",
       "requires": [
         "object-detection"
@@ -223,6 +344,14 @@
       "name": "Train a detector",
       "icon": "rocket",
       "desc": "Collect or adapt a labelled dataset and train and evaluate an object detector.",
+      "summary": "You will collect or adapt a labelled dataset and train and evaluate an object detector on it.",
+      "topics": [
+        "Dataset collection and labelling",
+        "Annotation formats",
+        "Training a pretrained detector",
+        "Evaluating with mAP",
+        "Error analysis"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -238,6 +367,14 @@
       "name": "Stereo & depth",
       "icon": "layers",
       "desc": "Epipolar geometry, stereo matching and monocular depth estimation.",
+      "summary": "You will be able to recover depth with epipolar geometry and stereo matching and estimate depth from a single image.",
+      "topics": [
+        "Epipolar geometry",
+        "Fundamental and essential matrices",
+        "Stereo rectification",
+        "Disparity and depth",
+        "Monocular depth estimation"
+      ],
       "kind": "lesson",
       "requires": [
         "camera-model",
@@ -251,6 +388,14 @@
       "name": "Motion & video",
       "icon": "play",
       "desc": "Optical flow, object tracking and video models.",
+      "summary": "You will be able to estimate optical flow, track objects across frames and describe deep models for video.",
+      "topics": [
+        "Optical flow",
+        "Lucas-Kanade method",
+        "Object tracking",
+        "Multi-object tracking",
+        "Video models and 3D convolutions"
+      ],
       "kind": "lesson",
       "requires": [
         "edges-gradients",
@@ -264,6 +409,14 @@
       "name": "Vision-language models",
       "icon": "sparkles",
       "desc": "Vision transformers and joint image-text models such as CLIP.",
+      "summary": "You will be able to explain vision transformers and joint image-text models such as CLIP and use them for zero-shot tasks.",
+      "topics": [
+        "Vision transformer architecture",
+        "Contrastive image-text pretraining",
+        "CLIP embeddings",
+        "Zero-shot classification",
+        "Vision-language models"
+      ],
       "kind": "lesson",
       "requires": [
         "modern-backbones",
@@ -277,6 +430,14 @@
       "name": "Image generation",
       "icon": "wand",
       "desc": "Generative models for images, image editing and conditioning.",
+      "summary": "You will be able to describe generative models for images and how they are conditioned and used for editing.",
+      "topics": [
+        "GANs for images",
+        "Diffusion models",
+        "Text-to-image conditioning",
+        "Inpainting and image editing",
+        "Classifier-free guidance"
+      ],
       "kind": "concept",
       "requires": [
         "cnn-vision",

@@ -38,6 +38,14 @@
       "name": "Why distributed",
       "icon": "globe",
       "desc": "Scale, fault tolerance and latency, and the fallacies of distributed computing.",
+      "summary": "You will be able to explain why systems are distributed for scale, fault tolerance and latency, and recognise the fallacies of distributed computing.",
+      "topics": [
+        "Scaling beyond one machine",
+        "Fault tolerance through redundancy",
+        "Latency and geographic distribution",
+        "Fallacies of distributed computing",
+        "Shared-nothing architecture"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 40
@@ -48,6 +56,15 @@
       "name": "Failure models",
       "icon": "warning",
       "desc": "Crash, omission and Byzantine failures, partial failure and partitions.",
+      "summary": "You will be able to distinguish crash, omission and Byzantine failures and reason about partial failures and network partitions.",
+      "topics": [
+        "Crash-stop and crash-recovery failures",
+        "Omission failures",
+        "Byzantine failures",
+        "Partial failure",
+        "Network partitions",
+        "Synchronous versus asynchronous models"
+      ],
       "kind": "concept",
       "requires": [
         "ds-intro"
@@ -60,6 +77,14 @@
       "name": "RPC & messaging",
       "icon": "messages",
       "desc": "Remote procedure calls, at-most-once vs at-least-once delivery and idempotency.",
+      "summary": "You will be able to explain remote procedure calls and messaging semantics and design idempotent operations for safe retries.",
+      "topics": [
+        "Remote procedure call mechanics",
+        "Marshalling and stubs",
+        "At-most-once versus at-least-once delivery",
+        "Exactly-once illusions",
+        "Idempotency and deduplication"
+      ],
       "kind": "concept",
       "requires": [
         "ds-intro",
@@ -73,6 +98,14 @@
       "name": "Physical clocks",
       "icon": "clock",
       "desc": "Clock drift, NTP and why wall-clock time cannot order events.",
+      "summary": "You will be able to explain clock drift and NTP synchronisation and why wall-clock time cannot reliably order events.",
+      "topics": [
+        "Quartz clock drift",
+        "Clock skew",
+        "NTP synchronisation",
+        "Monotonic versus time-of-day clocks",
+        "Why timestamps misorder events"
+      ],
       "kind": "concept",
       "requires": [
         "failure-models"
@@ -85,6 +118,14 @@
       "name": "Logical clocks",
       "icon": "timer",
       "desc": "Happens-before, Lamport clocks and vector clocks.",
+      "summary": "You will be able to order events with the happens-before relation using Lamport clocks and vector clocks.",
+      "topics": [
+        "The happens-before relation",
+        "Lamport clocks",
+        "Total order from Lamport timestamps",
+        "Vector clocks",
+        "Detecting concurrent events"
+      ],
       "kind": "concept",
       "requires": [
         "physical-clocks"
@@ -97,6 +138,14 @@
       "name": "Broadcast & ordering",
       "icon": "share",
       "desc": "Reliable, FIFO, causal and total-order broadcast.",
+      "summary": "You will be able to compare reliable, FIFO, causal and total-order broadcast and the guarantees each provides.",
+      "topics": [
+        "Reliable broadcast",
+        "FIFO broadcast",
+        "Causal broadcast",
+        "Total-order broadcast",
+        "State machine replication"
+      ],
       "kind": "concept",
       "requires": [
         "logical-clocks",
@@ -110,6 +159,14 @@
       "name": "Replication",
       "icon": "copy",
       "desc": "Leader-follower, multi-leader and leaderless replication.",
+      "summary": "You will be able to compare leader-follower, multi-leader and leaderless replication and their handling of lag and conflicts.",
+      "topics": [
+        "Leader-follower replication",
+        "Synchronous versus asynchronous replication",
+        "Replication lag",
+        "Multi-leader replication and conflicts",
+        "Leaderless replication"
+      ],
       "kind": "concept",
       "requires": [
         "failure-models",
@@ -123,6 +180,14 @@
       "name": "Consistency models",
       "icon": "layers",
       "desc": "Linearizability, sequential, causal and eventual consistency.",
+      "summary": "You will be able to distinguish linearizability, sequential, causal and eventual consistency and the trade-offs captured by CAP.",
+      "topics": [
+        "Linearizability and real-time order",
+        "Sequential consistency",
+        "Causal consistency",
+        "Eventual consistency",
+        "The CAP theorem"
+      ],
       "kind": "concept",
       "requires": [
         "replication",
@@ -136,6 +201,14 @@
       "name": "Quorums",
       "icon": "users",
       "desc": "Read and write quorums, sloppy quorums and anti-entropy.",
+      "summary": "You will be able to choose read and write quorum sizes and explain sloppy quorums, hinted handoff and anti-entropy repair.",
+      "topics": [
+        "Quorum condition r + w > n",
+        "Read and write quorums",
+        "Sloppy quorums and hinted handoff",
+        "Read repair",
+        "Anti-entropy with Merkle trees"
+      ],
       "kind": "concept",
       "requires": [
         "replication"
@@ -148,6 +221,14 @@
       "name": "CRDTs",
       "icon": "git-branch",
       "desc": "Conflict-free replicated data types for coordination-free replication.",
+      "summary": "You will be able to design conflict-free replicated data types that converge without coordination.",
+      "topics": [
+        "Strong eventual consistency",
+        "State-based CRDTs",
+        "Operation-based CRDTs",
+        "Counters and sets",
+        "Join semilattices and merges"
+      ],
       "kind": "concept",
       "requires": [
         "consistency-models",
@@ -161,6 +242,14 @@
       "name": "Consensus",
       "icon": "check-circle",
       "desc": "The consensus problem, FLP impossibility and why it underlies coordination.",
+      "summary": "You will be able to state the consensus problem, explain the FLP impossibility result and why consensus underlies coordination.",
+      "topics": [
+        "Agreement, validity and termination",
+        "FLP impossibility",
+        "Partial synchrony",
+        "Consensus and total-order broadcast",
+        "Uses of consensus"
+      ],
       "kind": "concept",
       "requires": [
         "broadcast",
@@ -175,6 +264,14 @@
       "name": "Leader election",
       "icon": "crown",
       "desc": "Elections, terms, leases and avoiding split brain.",
+      "summary": "You will be able to elect leaders safely using terms and leases while avoiding split brain.",
+      "topics": [
+        "Why systems need a leader",
+        "Election algorithms",
+        "Terms and epochs",
+        "Leader leases and expiry",
+        "Fencing tokens and split brain"
+      ],
       "kind": "concept",
       "requires": [
         "consensus"
@@ -187,6 +284,14 @@
       "name": "Raft",
       "icon": "route",
       "desc": "Raft's leader election, log replication and safety.",
+      "summary": "You will be able to explain Raft's leader election, log replication and safety rules.",
+      "topics": [
+        "Follower, candidate and leader states",
+        "Leader election with terms",
+        "Log replication",
+        "Commit rules",
+        "Safety and log matching"
+      ],
       "kind": "concept",
       "requires": [
         "leader-election"
@@ -199,6 +304,14 @@
       "name": "Paxos",
       "icon": "book",
       "desc": "Single-decree and Multi-Paxos.",
+      "summary": "You will be able to explain how single-decree Paxos reaches agreement and how Multi-Paxos extends it to a log.",
+      "topics": [
+        "Proposers, acceptors and learners",
+        "Prepare and promise phase",
+        "Accept phase",
+        "Why Paxos is safe",
+        "Multi-Paxos for a replicated log"
+      ],
       "kind": "concept",
       "requires": [
         "consensus"
@@ -211,6 +324,14 @@
       "name": "Byzantine faults",
       "icon": "shield",
       "desc": "Byzantine fault tolerance, PBFT and the 3f+1 bound.",
+      "summary": "You will be able to explain Byzantine fault tolerance, the 3f+1 bound and how PBFT reaches agreement.",
+      "topics": [
+        "Byzantine generals problem",
+        "The 3f+1 bound",
+        "PBFT phases",
+        "View changes",
+        "Cost of Byzantine tolerance"
+      ],
       "kind": "concept",
       "requires": [
         "consensus"
@@ -223,6 +344,14 @@
       "name": "Partitioning",
       "icon": "grid",
       "desc": "Range and hash partitioning, consistent hashing and rebalancing.",
+      "summary": "You will be able to partition data by range or hash, apply consistent hashing and rebalance partitions across nodes.",
+      "topics": [
+        "Range partitioning",
+        "Hash partitioning",
+        "Consistent hashing",
+        "Hot spots and skew",
+        "Rebalancing partitions"
+      ],
       "kind": "concept",
       "requires": [
         "replication",
@@ -236,6 +365,14 @@
       "name": "2PC & sagas",
       "icon": "lock",
       "desc": "Atomic commit with two-phase commit and long-running sagas.",
+      "summary": "You will be able to implement atomic commit with two-phase commit and coordinate long-running workflows with sagas.",
+      "topics": [
+        "Atomic commitment",
+        "Two-phase commit protocol",
+        "Coordinator failure and blocking",
+        "Sagas and compensations",
+        "Choosing 2PC or sagas"
+      ],
       "kind": "concept",
       "requires": [
         "consensus",
@@ -249,6 +386,14 @@
       "name": "Distributed storage",
       "icon": "database",
       "desc": "How systems like Dynamo, Bigtable and Spanner combine these ideas.",
+      "summary": "You will be able to explain how Dynamo, Bigtable and Spanner combine partitioning, replication and consensus into real storage systems.",
+      "topics": [
+        "Dynamo design",
+        "Bigtable design",
+        "Spanner and TrueTime",
+        "Design trade-offs between systems",
+        "Mapping concepts to real systems"
+      ],
       "kind": "concept",
       "requires": [
         "partitioning",
@@ -262,6 +407,14 @@
       "name": "MapReduce & dataflow",
       "icon": "workshop",
       "desc": "MapReduce, Spark-style dataflow and fault-tolerant batch processing.",
+      "summary": "You will be able to explain MapReduce and Spark-style dataflow and how they tolerate failures in batch processing.",
+      "topics": [
+        "Map, shuffle and reduce",
+        "Fault tolerance by re-execution",
+        "Stragglers and backup tasks",
+        "Spark RDD lineage",
+        "Dataflow graphs"
+      ],
       "kind": "concept",
       "requires": [
         "partitioning"
@@ -274,6 +427,14 @@
       "name": "Raft KV store project",
       "icon": "server",
       "desc": "Implement Raft and build a replicated, fault-tolerant key-value store on it.",
+      "summary": "You will implement Raft and build a replicated, fault-tolerant key-value store on top of it.",
+      "topics": [
+        "Implementing leader election",
+        "Implementing log replication",
+        "Applying commands to a state machine",
+        "Handling client requests",
+        "Testing under failures and partitions"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

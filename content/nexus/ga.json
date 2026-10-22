@@ -1,0 +1,386 @@
+{
+  "id": "ga",
+  "name": "General Aptitude",
+  "short": "GA",
+  "group": "gate",
+  "domain": "math",
+  "stream": "math",
+  "order": 63,
+  "icon": "puzzle",
+  "color": "#14b8a6",
+  "description": "The 15 marks every GATE paper shares: verbal ability, quantitative aptitude, analytical reasoning and spatial thinking.",
+  "rankTitle": "Sharp Reasoner",
+  "gate": {
+    "pyqSubject": "ga",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Verbal ability"
+    },
+    {
+      "level": 2,
+      "name": "Quantitative aptitude"
+    },
+    {
+      "level": 3,
+      "name": "Analytical reasoning"
+    },
+    {
+      "level": 4,
+      "name": "Spatial and visual"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "grammar-usage",
+      "zone": 1,
+      "name": "Grammar and usage",
+      "icon": "type",
+      "desc": "Articles, prepositions, tenses, subject–verb agreement and the error-spotting questions built on them.",
+      "summary": "You will be able to spot and fix the grammar errors GATE sets in sentence-completion and error-spotting questions.",
+      "topics": [
+        "Articles and prepositions",
+        "Tenses and subject-verb agreement",
+        "Error spotting in a sentence",
+        "Sentence completion"
+      ],
+      "kind": "concept",
+      "requires": [],
+      "pyqTopics": [
+        "ga/verbal"
+      ],
+      "pyqTags": [
+        "grammar",
+        "sentence"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "vocabulary",
+      "zone": 1,
+      "name": "Vocabulary",
+      "icon": "book",
+      "desc": "Synonyms, antonyms, word pairs and analogies, and choosing the word that fits the context.",
+      "summary": "You will be able to choose the right word from context and solve synonym, antonym and analogy questions quickly.",
+      "topics": [
+        "Synonyms and antonyms",
+        "Word analogies",
+        "Words in context",
+        "Idioms and phrases"
+      ],
+      "kind": "concept",
+      "requires": [],
+      "pyqTopics": [
+        "ga/verbal"
+      ],
+      "pyqTags": [
+        "synonym",
+        "antonym",
+        "analogy",
+        "word"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "reading-comprehension",
+      "zone": 1,
+      "name": "Reading comprehension",
+      "icon": "book",
+      "desc": "Reading a short passage for its main idea, inferences and the statement that follows from it.",
+      "summary": "You will be able to read a short passage and pick the inference, main idea or assumption that it actually supports.",
+      "topics": [
+        "Main idea of a passage",
+        "Inference versus assumption",
+        "Statements that follow",
+        "Tone and purpose"
+      ],
+      "kind": "concept",
+      "requires": [
+        "grammar-usage",
+        "vocabulary"
+      ],
+      "pyqTopics": [
+        "ga/verbal"
+      ],
+      "pyqTags": [
+        "passage",
+        "infer"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "number-system-ga",
+      "zone": 2,
+      "name": "Numbers and arithmetic",
+      "icon": "grid",
+      "desc": "Divisibility, remainders, HCF and LCM, fractions and the arithmetic shortcuts aptitude questions rely on.",
+      "summary": "You will be able to handle divisibility, remainders, HCF, LCM and fraction arithmetic quickly and without a calculator.",
+      "topics": [
+        "Divisibility and remainders",
+        "HCF and LCM",
+        "Fractions and decimals",
+        "Arithmetic shortcuts"
+      ],
+      "kind": "concept",
+      "requires": [],
+      "pyqTopics": [
+        "ga/quant"
+      ],
+      "pyqTags": [
+        "remainder",
+        "divisible",
+        "lcm",
+        "hcf"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "percentages-ratios",
+      "zone": 2,
+      "name": "Percentages, ratio and proportion",
+      "icon": "chart",
+      "desc": "Percent change, profit and loss, ratios, mixtures and proportional reasoning.",
+      "summary": "You will be able to solve percentage, profit and loss, ratio and mixture problems with clean proportional reasoning.",
+      "topics": [
+        "Percentage change",
+        "Profit, loss and discount",
+        "Ratio and proportion",
+        "Mixtures and alligation"
+      ],
+      "kind": "concept",
+      "requires": [
+        "number-system-ga"
+      ],
+      "pyqTopics": [
+        "ga/quant"
+      ],
+      "pyqTags": [
+        "percent",
+        "ratio",
+        "profit"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "time-work-speed",
+      "zone": 2,
+      "name": "Time, work and speed",
+      "icon": "clock",
+      "desc": "Work rates, pipes and cisterns, speed, distance and relative motion.",
+      "summary": "You will be able to set up rate equations for work, pipes, speed and relative motion problems and solve them fast.",
+      "topics": [
+        "Work and rates",
+        "Pipes and cisterns",
+        "Speed, time and distance",
+        "Relative speed"
+      ],
+      "kind": "concept",
+      "requires": [
+        "percentages-ratios"
+      ],
+      "pyqTopics": [
+        "ga/quant"
+      ],
+      "pyqTags": [
+        "speed",
+        "work",
+        "train"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "data-interpretation",
+      "zone": 2,
+      "name": "Data interpretation",
+      "icon": "chart",
+      "desc": "Reading tables, bar and pie charts, and computing the percentages and ratios they ask for.",
+      "summary": "You will be able to read tables and charts accurately and compute the percentages, ratios and trends a question asks for.",
+      "topics": [
+        "Tables and bar charts",
+        "Pie charts",
+        "Percentages from data",
+        "Trends and comparisons"
+      ],
+      "kind": "concept",
+      "requires": [
+        "percentages-ratios"
+      ],
+      "pyqTopics": [
+        "ga/quant"
+      ],
+      "pyqTags": [
+        "chart",
+        "table",
+        "graph"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "counting-probability-ga",
+      "zone": 2,
+      "name": "Counting and chance",
+      "icon": "target",
+      "desc": "Permutations, combinations and simple probability as GATE aptitude asks them.",
+      "summary": "You will be able to count arrangements and selections and compute simple probabilities in aptitude-style questions.",
+      "topics": [
+        "Permutations",
+        "Combinations",
+        "Simple probability",
+        "Expected outcomes"
+      ],
+      "kind": "concept",
+      "requires": [
+        "number-system-ga"
+      ],
+      "pyqTopics": [
+        "ga/quant"
+      ],
+      "pyqTags": [
+        "probability",
+        "ways",
+        "arrange"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "logical-reasoning",
+      "zone": 3,
+      "name": "Logical reasoning",
+      "icon": "lightbulb",
+      "desc": "Statements and conclusions, syllogisms, and deciding what must, could or cannot be true.",
+      "summary": "You will be able to decide which conclusions follow from given statements, including syllogisms and must-be-true questions.",
+      "topics": [
+        "Statements and conclusions",
+        "Syllogisms",
+        "Must, could and cannot be true",
+        "Cause and effect"
+      ],
+      "kind": "concept",
+      "requires": [
+        "reading-comprehension"
+      ],
+      "pyqTopics": [
+        "ga/analytical"
+      ],
+      "pyqTags": [
+        "conclusion",
+        "statement",
+        "logic"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "arrangements-puzzles",
+      "zone": 3,
+      "name": "Arrangements and puzzles",
+      "icon": "puzzle",
+      "desc": "Seating arrangements, ordering, blood relations and the grid puzzles that test careful casework.",
+      "summary": "You will be able to solve seating, ordering and relation puzzles by laying out the constraints and eliminating cases.",
+      "topics": [
+        "Linear and circular seating",
+        "Ordering and ranking",
+        "Blood relations",
+        "Constraint grids"
+      ],
+      "kind": "concept",
+      "requires": [
+        "logical-reasoning"
+      ],
+      "pyqTopics": [
+        "ga/analytical"
+      ],
+      "pyqTags": [
+        "seat",
+        "arrange",
+        "puzzle"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "series-patterns",
+      "zone": 3,
+      "name": "Series and patterns",
+      "icon": "layers",
+      "desc": "Number and letter series, coding–decoding and spotting the rule behind a sequence.",
+      "summary": "You will be able to find the rule behind number and letter series and decode coded words reliably.",
+      "topics": [
+        "Number series",
+        "Letter series",
+        "Coding and decoding",
+        "Odd one out"
+      ],
+      "kind": "concept",
+      "requires": [
+        "number-system-ga"
+      ],
+      "pyqTopics": [
+        "ga/analytical"
+      ],
+      "pyqTags": [
+        "series",
+        "pattern",
+        "code"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "spatial-reasoning",
+      "zone": 4,
+      "name": "Spatial reasoning",
+      "icon": "shapes",
+      "desc": "Paper folding, mirror images, rotations, cubes and counting figures.",
+      "summary": "You will be able to reason about folds, mirror images, rotations and cubes to answer spatial questions without drawing everything.",
+      "topics": [
+        "Paper folding and cutting",
+        "Mirror and water images",
+        "Rotations of figures",
+        "Cubes and dice"
+      ],
+      "kind": "concept",
+      "requires": [
+        "series-patterns"
+      ],
+      "pyqTopics": [
+        "ga/spatial"
+      ],
+      "pyqTags": [
+        "figure",
+        "cube",
+        "fold",
+        "mirror"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "geometry-mensuration",
+      "zone": 4,
+      "name": "Geometry and mensuration",
+      "icon": "grid",
+      "desc": "Areas, perimeters and volumes of common shapes, and the geometry facts aptitude questions use.",
+      "summary": "You will be able to compute areas, perimeters and volumes of common shapes and use basic geometry facts in aptitude questions.",
+      "topics": [
+        "Triangles and circles",
+        "Areas and perimeters",
+        "Volumes and surface areas",
+        "Coordinate geometry basics"
+      ],
+      "kind": "concept",
+      "requires": [
+        "number-system-ga"
+      ],
+      "pyqTopics": [
+        "ga/quant",
+        "ga/spatial"
+      ],
+      "pyqTags": [
+        "area",
+        "volume",
+        "triangle",
+        "circle"
+      ],
+      "xpReward": 40
+    }
+  ]
+}

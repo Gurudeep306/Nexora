@@ -326,6 +326,141 @@ test('web state carries "last studied" per node (continue where you left off)', 
   assert.ok(body.week && typeof body.week.xp === 'number' && typeof body.week.concepts === 'number');
 });
 
+test('node contents: every node has a summary and 3+ topics (data and validation)', () => {
+  const reg = subjects.loadRegistry(NEXUS_NODES);
+  let count = 0;
+  for (const s of reg.subjects.values()) {
+    for (const n of s.doc?.nodes || []) {
+      count++;
+      assert.ok(typeof n.summary === 'string' && n.summary.split(/\s+/).length >= 6, `${s.meta.id}:${n.id} summary`);
+      assert.ok(Array.isArray(n.topics) && n.topics.length >= 3 && n.topics.every((t) => typeof t === 'string' && t.trim()), `${s.meta.id}:${n.id} topics`);
+    }
+  }
+  const dsa = subjects.readDsaContent();
+  for (const n of NEXUS_NODES) assert.ok(dsa[n.id]?.summary && dsa[n.id].topics.length >= 3, `dsa:${n.id}`);
+  assert.equal(count + NEXUS_NODES.length, 1407);
+  assert.deepEqual(subjects.dsaContentGaps(NEXUS_NODES), []);
+  // The strict check rejects a node without them.
+  const bad = JSON.parse(JSON.stringify(DOCS.find((d) => d.id === 'rust')));
+  delete bad.nodes[0].summary;
+  bad.nodes[1].topics = ['one'];
+  const errors = subjects.validateOutlines([bad], NEXUS_NODES, { strict: true });
+  assert.ok(errors.some((e) => /needs a summary/.test(e)) && errors.some((e) => /at least 3 topics/.test(e)));
+});
+
+test('GET /api/nexus/content: DL lessons with their sections, examples, animations and practice; courses elsewhere', async () => {
+  const dl = await call('GET', '/api/nexus/content/dl/place-value');
+  assert.equal(dl.status, 200);
+  assert.ok(dl.body.summary && dl.body.topics.length >= 3);
+  const lesson = dl.body.lessons[0];
+  assert.equal(lesson.id, 'place-value');
+  assert.match(lesson.href, /^\/gate\/notes\/dl\/place-value$/);
+  assert.ok(lesson.sections.length >= 3 && lesson.sections.every((x) => x.href.startsWith(`${lesson.href}#n-`)));
+  assert.ok(!lesson.sections.some((x) => /^where this fits/i.test(x.title)), 'generic headings left out');
+  assert.ok(lesson.examples > 0 && lesson.animations > 0 && lesson.practice > 0);
+  const rust = await call('GET', '/api/nexus/content/rust/ownership');
+  assert.equal(rust.status, 200);
+  assert.deepEqual(rust.body.lessons, []);
+  assert.equal(rust.body.course, null);
+  assert.ok(rust.body.topics.length >= 3);
+  const dsa = await call('GET', '/api/nexus/content/dsa/bit_basics');
+  assert.equal(dsa.status, 200);
+  assert.ok(dsa.body.topics.length >= 3);
+  assert.equal((await call('GET', '/api/nexus/content/rust/nope')).status, 404);
+  assert.equal((await call('GET', '/api/nexus/content/nope/x')).status, 404);
+});
+
+test('one model: every radial node is exactly one subject-tree node, and back', async () => {
+  const { body: st } = await call('GET', '/api/nexus/structure');
+  const radial = new Set();
+  for (const c of st.clusters) for (const n of c.nodes) radial.add(`${c.id}:${n.id}`);
+  assert.equal(radial.size, 1407);
+  const tree = new Set();
+  for (const c of st.clusters) {
+    const { status, body } = await call('GET', `/api/nexus?subject=${c.id}`);
+    assert.equal(status, 200, c.id);
+    for (const n of body.nodes) {
+      const k = `${c.id}:${n.id}`;
+      assert.ok(!tree.has(k), `${k} appears twice`);
+      tree.add(k);
+    }
+  }
+  assert.deepEqual([...radial].filter((k) => !tree.has(k)), [], 'radial nodes missing from their subject tree');
+  assert.deepEqual([...tree].filter((k) => !radial.has(k)), [], 'tree nodes missing from the radial');
+});
+
+test('insights: time, weightage, high-yield, zone heat, remaining time, notes and history', async () => {
+  const { status, body } = await call('GET', '/api/nexus/insights/dl');
+  assert.equal(status, 200);
+  const pv = body.nodes['place-value'];
+  assert.ok(pv.min > 40 && pv.w && pv.w.n > 0 && Object.keys(pv.w.years).length > 0);
+  assert.ok(Object.values(body.nodes).some((n) => n.hy), 'some nodes are high-yield');
+  assert.equal(Object.values(body.zones).reduce((a, b) => a + b, 0) > 95, true, 'zone heat shares sum to ~100');
+  assert.ok(body.remainingMin > 0);
+  assert.ok(Array.isArray(body.history));
+  const rust = await call('GET', '/api/nexus/insights/rust');
+  assert.equal(rust.body.nodes.ownership.w, null, 'no PYQs, no weightage');
+  assert.equal((await call('GET', '/api/nexus/insights/nope')).status, 404);
+});
+
+test('notes and bookmarks per node: saved on write, read back, cleared when empty', async () => {
+  let r = await call('PUT', '/api/nexus/notes/rust/ownership', { note: 'moves vs copies', bookmarked: true });
+  assert.equal(r.status, 200);
+  r = await call('GET', '/api/nexus/insights/rust');
+  assert.deepEqual({ note: r.body.notes.ownership.note, bookmarked: r.body.notes.ownership.bookmarked }, { note: 'moves vs copies', bookmarked: true });
+  await call('PUT', '/api/nexus/notes/rust/ownership', { note: '', bookmarked: false });
+  r = await call('GET', '/api/nexus/insights/rust');
+  assert.equal(r.body.notes.ownership, undefined);
+});
+
+test('test out: a passed quick check masters the node (Nexus, web rank and subject rank at once), with fair XP', async () => {
+  const bank = loadGateBank();
+  const before = await call('GET', '/api/nexus/web');
+  const idx = (await call('GET', '/api/nexus/structure')).body.clusters.find((c) => c.id === 'dl').nodes.findIndex((n) => n.id === 'canonical-forms');
+  assert.ok(idx >= 0);
+  const q = await call('GET', '/api/nexus/testout/dl/canonical-forms');
+  assert.equal(q.status, 200);
+  assert.ok(q.body.available && q.body.questions.length >= 3 && q.body.questions.every((x) => x.answer === undefined), 'no keys sent');
+  // A wrong attempt does not pass.
+  const wrong = await call('POST', '/api/nexus/testout/dl/canonical-forms', { answers: Object.fromEntries(q.body.questions.map((x) => [x.id, '__'])) });
+  assert.equal(wrong.body.passed, false);
+  const answers = {};
+  for (const x of q.body.questions) {
+    const k = bank.byId.get(x.id).answer;
+    answers[x.id] = x.type === 'NAT' ? String(k).split(/\s+to\s+|:/i)[0] : k;
+  }
+  const r = await call('POST', '/api/nexus/testout/dl/canonical-forms', { answers });
+  assert.equal(r.body.passed, true, JSON.stringify(r.body));
+  const after = await call('GET', '/api/nexus/web');
+  assert.equal(after.body.state.subjects.dl.nodes[idx][1], 2, 'the radial sees it mastered at once');
+  assert.ok(after.body.player.xp > before.body.player.xp, 'web XP rises');
+  assert.ok(after.body.ranks.dl.progress >= before.body.ranks.dl.progress);
+  const tree = await call('GET', '/api/nexus?subject=dl');
+  const node = tree.body.nodes.find((n) => n.id === 'canonical-forms');
+  assert.equal(node.completed, true);
+  assert.equal(node.testedOut, true);
+});
+
+test('mark as learned: allowed only where there is nothing to test out with; masters at once', async () => {
+  const st = (await call('GET', '/api/nexus/structure')).body;
+  const idx = st.clusters.find((c) => c.id === 'rust').nodes.findIndex((n) => n.id === 'cargo');
+  let r = await call('POST', '/api/nexus/done/rust/cargo');
+  assert.equal(r.status, 200);
+  const web = await call('GET', '/api/nexus/web');
+  assert.equal(web.body.state.subjects.rust.nodes[idx][1], 2);
+  r = await call('POST', '/api/nexus/done/dl/place-value');
+  assert.equal(r.status, 409, 'a node with PYQs is tested out instead');
+  assert.equal((await call('POST', '/api/nexus/done/rust/nope')).status, 404);
+});
+
+test('add to review: the node PYQs land in the Review deck (due today)', async () => {
+  const r = await call('POST', '/api/nexus/review/dl/place-value');
+  assert.equal(r.status, 200);
+  assert.ok(r.body.added > 0);
+  const rev = await call('GET', '/api/gate/me/review?limit=100');
+  assert.ok(rev.body.dueCount >= r.body.added);
+});
+
 test('week keys follow ISO weeks', () => {
   assert.equal(ranks.weekKey(Date.UTC(2026, 9, 21)), '2026-W43');
   assert.equal(ranks.weekKey(Date.UTC(2027, 0, 1)), '2026-W53');

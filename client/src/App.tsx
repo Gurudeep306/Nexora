@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { LegacyGateRedirect } from '@/gate/LegacyGateRedirect'
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { LoadingBlock } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
@@ -11,7 +11,7 @@ import { AdminRoute } from '@/components/admin/AdminRoute'
 const AuthPage = lazy(pageLoaders.AuthPage)
 const LandingPage = lazy(pageLoaders.LandingPage)
 const HubPage = lazy(pageLoaders.HubPage)
-const CoursePage = lazy(pageLoaders.CoursePage)
+const SubjectPage = lazy(pageLoaders.SubjectPage)
 const ProblemsPage = lazy(pageLoaders.ProblemsPage)
 const SolvePage = lazy(pageLoaders.SolvePage)
 const ContestsPage = lazy(pageLoaders.ContestsPage)
@@ -49,6 +49,14 @@ const SettingsPage = lazy(pageLoaders.SettingsPage)
 const ThemeCentrePage = lazy(pageLoaders.ThemeCentrePage)
 const NotFoundPage = lazy(pageLoaders.NotFoundPage)
 const VizLab = import.meta.env.DEV ? lazy(() => import('@/learn/ui/VizLab')) : null
+
+/** /gate/subjects/<id>[/<node>] (older links): the subject's one page, under /learn. */
+function GateSubjectAlias() {
+  const { subject = '', node } = useParams()
+  const { hash } = useLocation()
+  const n = node ?? (decodeURIComponent(hash.replace(/^#/, '')) || null)
+  return <Navigate to={`/learn/${encodeURIComponent(subject)}${n ? `/${encodeURIComponent(n)}` : ''}`} replace />
+}
 
 function PageLoader() {
   return (
@@ -107,10 +115,15 @@ export default function App() {
             <Route path="/learn/system-design/:systemId" element={<SystemDossierPage />} />
             <Route path="/learn/dsa/:topic/practice" element={<LearnPracticePage />} />
             <Route path="/learn/dsa/:topic/:page?" element={<LearnTopicPage />} />
-            {/* Nexus courses: GATE subjects redirect to their notes / PYQs, the rest are course pages. */}
-            <Route path="/learn/:subject/:concept?" element={<CoursePage />} />
+            {/* Every Nexus subject's one page: its course tree; a node opens its lesson in place. */}
+            <Route path="/learn/dsa" element={<SubjectPage />} />
+            <Route path="/learn/dsa/skill/:node" element={<SubjectPage />} />
+            <Route path="/learn/:subject" element={<SubjectPage />} />
+            <Route path="/learn/:subject/:node" element={<SubjectPage />} />
             <Route path="/gate" element={<LegacyGateRedirect><GateHomePage /></LegacyGateRedirect>} />
             <Route path="/gate/practice" element={<GatePage />} />
+            <Route path="/gate/subjects/:subject" element={<GateSubjectAlias />} />
+            <Route path="/gate/subjects/:subject/:node" element={<GateSubjectAlias />} />
             <Route path="/gate/notes" element={<NotesIndexPage />} />
             <Route path="/gate/notes/_fonts" element={<NotesFontsPage />} />
             <Route path="/gate/notes/:subject" element={<NotesSubjectPage />} />

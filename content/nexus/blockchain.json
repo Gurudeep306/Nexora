@@ -35,6 +35,14 @@
       "name": "Blockchain basics",
       "icon": "link",
       "desc": "Blocks, hash pointers, ledgers and what problem blockchains solve.",
+      "summary": "You will be able to explain how blocks linked by hash pointers form a tamper-evident ledger and what problem blockchains solve.",
+      "topics": [
+        "Cryptographic hash functions",
+        "Hash pointers and block headers",
+        "Tamper evidence in a chain",
+        "Distributed ledgers without a central party",
+        "The double-spending problem"
+      ],
       "kind": "concept",
       "requires": [
         "cryptography:crypto-hashing"
@@ -47,6 +55,14 @@
       "name": "Merkle trees",
       "icon": "tree",
       "desc": "Merkle trees, inclusion proofs and light clients.",
+      "summary": "You will be able to build a Merkle tree, verify inclusion proofs and explain how light clients rely on them.",
+      "topics": [
+        "Building a Merkle tree from transactions",
+        "Merkle roots in block headers",
+        "Inclusion proofs of log n size",
+        "Simplified payment verification",
+        "Merkle Patricia tries in Ethereum"
+      ],
       "kind": "concept",
       "requires": [
         "blockchain-basics"
@@ -59,6 +75,14 @@
       "name": "Keys & wallets",
       "icon": "key",
       "desc": "Key pairs, addresses, signatures and wallet types.",
+      "summary": "You will be able to explain how key pairs, addresses and digital signatures work and compare wallet types.",
+      "topics": [
+        "Public and private key pairs",
+        "Elliptic curve signatures like ECDSA",
+        "Deriving addresses from public keys",
+        "Hierarchical deterministic wallets and seed phrases",
+        "Hot, cold and hardware wallets"
+      ],
       "kind": "concept",
       "requires": [
         "blockchain-basics",
@@ -72,6 +96,14 @@
       "name": "Peer-to-peer network",
       "icon": "nexus",
       "desc": "Gossip, node discovery and propagating blocks and transactions.",
+      "summary": "You will be able to describe how blockchain nodes discover peers and propagate transactions and blocks over a gossip network.",
+      "topics": [
+        "Full nodes and light nodes",
+        "Peer discovery",
+        "Gossip propagation of transactions",
+        "Block propagation and latency",
+        "The mempool"
+      ],
       "kind": "concept",
       "requires": [
         "blockchain-basics",
@@ -85,6 +117,14 @@
       "name": "UTXO transactions",
       "icon": "coins",
       "desc": "Bitcoin's UTXO model, transaction structure and scripts.",
+      "summary": "You will be able to read Bitcoin transactions in the UTXO model and explain how inputs, outputs and scripts authorise spending.",
+      "topics": [
+        "Unspent transaction outputs",
+        "Transaction inputs and outputs",
+        "Change outputs and fees",
+        "Bitcoin Script and P2PKH",
+        "UTXO versus account models"
+      ],
       "kind": "concept",
       "requires": [
         "keys-wallets",
@@ -98,6 +138,14 @@
       "name": "Proof of work",
       "icon": "bolt",
       "desc": "Mining, difficulty, the longest-chain rule and 51% attacks.",
+      "summary": "You will be able to explain proof-of-work mining, difficulty adjustment, the longest-chain rule and the risk of 51% attacks.",
+      "topics": [
+        "Hash puzzles and nonces",
+        "Difficulty adjustment",
+        "Longest or heaviest chain rule",
+        "Block rewards and miner incentives",
+        "51% attacks and selfish mining"
+      ],
       "kind": "concept",
       "requires": [
         "utxo",
@@ -111,6 +159,14 @@
       "name": "Proof of stake",
       "icon": "coins",
       "desc": "Staking, validators, slashing and finality gadgets.",
+      "summary": "You will be able to explain how proof-of-stake chains select validators, punish misbehaviour with slashing and reach finality.",
+      "topics": [
+        "Staking and validator selection",
+        "Slashing conditions",
+        "Nothing-at-stake problem",
+        "Finality gadgets like Casper FFG",
+        "Long-range attacks and checkpoints"
+      ],
       "kind": "concept",
       "requires": [
         "proof-of-work"
@@ -123,6 +179,14 @@
       "name": "BFT consensus",
       "icon": "check-circle",
       "desc": "Byzantine fault tolerant protocols used by permissioned and PoS chains.",
+      "summary": "You will be able to describe Byzantine fault tolerant consensus protocols and their 3f+1 fault bound as used by permissioned and PoS chains.",
+      "topics": [
+        "The Byzantine generals problem",
+        "The 3f+1 fault tolerance bound",
+        "PBFT phases",
+        "Tendermint and HotStuff",
+        "Safety versus liveness"
+      ],
       "kind": "concept",
       "requires": [
         "proof-of-stake",
@@ -136,6 +200,14 @@
       "name": "Forks & finality",
       "icon": "git-branch",
       "desc": "Soft and hard forks, reorgs and probabilistic vs absolute finality.",
+      "summary": "You will be able to distinguish soft and hard forks, explain chain reorganisations and compare probabilistic and absolute finality.",
+      "topics": [
+        "Soft forks versus hard forks",
+        "Temporary forks and orphaned blocks",
+        "Chain reorganisations",
+        "Probabilistic finality and confirmations",
+        "Absolute finality in BFT chains"
+      ],
       "kind": "concept",
       "requires": [
         "proof-of-work"
@@ -148,6 +220,14 @@
       "name": "Ethereum & the EVM",
       "icon": "cpu",
       "desc": "Accounts, gas and the Ethereum Virtual Machine.",
+      "summary": "You will be able to explain Ethereum accounts, gas and how the EVM executes contract code.",
+      "topics": [
+        "Externally owned and contract accounts",
+        "Transactions and nonces",
+        "Gas, gas limits and fees",
+        "EVM stack machine and opcodes",
+        "World state and storage"
+      ],
       "kind": "concept",
       "requires": [
         "forks-finality",
@@ -161,6 +241,14 @@
       "name": "Solidity basics",
       "icon": "code",
       "desc": "Writing, testing and deploying smart contracts in Solidity.",
+      "summary": "You will be able to write, test and deploy Solidity smart contracts with state, functions, events and modifiers.",
+      "topics": [
+        "Solidity types and state variables",
+        "Functions, visibility and modifiers",
+        "Events and logs",
+        "Testing with Hardhat or Foundry",
+        "Deploying to a test network"
+      ],
       "kind": "concept",
       "requires": [
         "ethereum"
@@ -173,6 +261,14 @@
       "name": "Contract security",
       "icon": "shield",
       "desc": "Reentrancy, overflow, front-running and auditing practices.",
+      "summary": "You will be able to spot common smart contract vulnerabilities such as reentrancy and front-running and apply auditing practices.",
+      "topics": [
+        "Reentrancy and checks-effects-interactions",
+        "Integer overflow and checked arithmetic",
+        "Front-running and MEV",
+        "Access control mistakes",
+        "Static analysis and audits"
+      ],
       "kind": "concept",
       "requires": [
         "smart-contracts"
@@ -185,6 +281,14 @@
       "name": "Tokens & NFTs",
       "icon": "gem",
       "desc": "Fungible and non-fungible token standards.",
+      "summary": "You will be able to explain fungible and non-fungible token standards and the functions and events they require.",
+      "topics": [
+        "ERC-20 fungible tokens",
+        "Allowances and approve",
+        "ERC-721 non-fungible tokens",
+        "ERC-1155 multi-token standard",
+        "Token metadata"
+      ],
       "kind": "concept",
       "requires": [
         "smart-contracts"
@@ -197,6 +301,14 @@
       "name": "Token project",
       "icon": "coins",
       "desc": "Write, test and deploy your own token contract to a test network.",
+      "summary": "You will write, test and deploy your own token contract to a test network and interact with it from a wallet.",
+      "topics": [
+        "Implementing an ERC-20 token",
+        "Using OpenZeppelin contracts",
+        "Writing unit tests",
+        "Deploying to a testnet",
+        "Verifying the contract source"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -211,6 +323,14 @@
       "name": "Layer 2 scaling",
       "icon": "layers",
       "desc": "Payment channels, optimistic and zk rollups.",
+      "summary": "You will be able to explain how payment channels and optimistic and zk rollups scale blockchains while inheriting layer 1 security.",
+      "topics": [
+        "Blockchain scalability limits",
+        "Payment and state channels",
+        "Optimistic rollups and fraud proofs",
+        "Zk rollups and validity proofs",
+        "Data availability"
+      ],
       "kind": "concept",
       "requires": [
         "ethereum",
@@ -224,6 +344,14 @@
       "name": "DeFi",
       "icon": "chart",
       "desc": "Exchanges, lending and stablecoins built from contracts.",
+      "summary": "You will be able to explain how decentralised exchanges, lending protocols and stablecoins are built from smart contracts.",
+      "topics": [
+        "Automated market makers",
+        "Constant product formula",
+        "Overcollateralised lending and liquidation",
+        "Stablecoin designs",
+        "Oracles and price feeds"
+      ],
       "kind": "concept",
       "requires": [
         "tokens"
@@ -236,6 +364,14 @@
       "name": "dApp frontends",
       "icon": "monitor",
       "desc": "Connecting a web frontend to contracts and wallets.",
+      "summary": "You will be able to connect a web frontend to smart contracts and user wallets to read state and send transactions.",
+      "topics": [
+        "Wallet connection with injected providers",
+        "ethers.js or viem libraries",
+        "Contract ABIs",
+        "Reading state and sending transactions",
+        "Listening for contract events"
+      ],
       "kind": "concept",
       "requires": [
         "smart-contracts",
@@ -249,6 +385,14 @@
       "name": "Privacy & ZK",
       "icon": "eye",
       "desc": "Privacy coins and zero-knowledge proofs on chain.",
+      "summary": "You will be able to explain how privacy coins and zero-knowledge proofs hide transaction details while keeping them verifiable.",
+      "topics": [
+        "Zero-knowledge proof properties",
+        "zk-SNARKs and zk-STARKs",
+        "Privacy coins like Zcash and Monero",
+        "Commitments and nullifiers",
+        "Mixers and their trade-offs"
+      ],
       "kind": "concept",
       "requires": [
         "layer2"
@@ -261,6 +405,14 @@
       "name": "dApp project",
       "icon": "rocket",
       "desc": "Build a full dApp: contract, tests and a web frontend on a test network.",
+      "summary": "You will build a complete dApp with a tested smart contract and a web frontend deployed on a test network.",
+      "topics": [
+        "Designing the contract",
+        "Writing tests",
+        "Deploying to a testnet",
+        "Building the web frontend",
+        "Wallet integration and transactions"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

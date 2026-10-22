@@ -39,6 +39,14 @@
       "name": "Tables & keys",
       "icon": "grid",
       "desc": "Tables, rows, columns, primary and foreign keys and NULL.",
+      "summary": "You will understand how relational tables store data in rows and columns and how primary and foreign keys connect them.",
+      "topics": [
+        "Tables, rows and columns",
+        "Primary keys and uniqueness",
+        "Foreign keys and relationships",
+        "Natural vs surrogate keys",
+        "What NULL represents"
+      ],
       "kind": "concept",
       "requires": [
         "dbms:relational-model"
@@ -51,6 +59,15 @@
       "name": "SELECT queries",
       "icon": "search",
       "desc": "SELECT, FROM, WHERE, ORDER BY, LIMIT and expressions.",
+      "summary": "You will be able to write SELECT queries that retrieve, compute, sort and limit rows from a single table.",
+      "topics": [
+        "SELECT and FROM",
+        "Filtering rows with WHERE",
+        "Column aliases and expressions",
+        "Sorting with ORDER BY",
+        "Limiting results with LIMIT and OFFSET",
+        "Removing duplicates with DISTINCT"
+      ],
       "kind": "concept",
       "requires": [
         "tables-keys"
@@ -63,6 +80,15 @@
       "name": "Filtering & NULLs",
       "icon": "filter",
       "desc": "LIKE, IN, BETWEEN, CASE expressions and three-valued logic with NULL.",
+      "summary": "You will be able to filter rows with LIKE, IN, BETWEEN and CASE and reason correctly about NULL with three-valued logic.",
+      "topics": [
+        "Pattern matching with LIKE",
+        "IN and BETWEEN",
+        "CASE expressions",
+        "IS NULL and IS NOT NULL",
+        "Three-valued logic with NULL",
+        "COALESCE for default values"
+      ],
       "kind": "concept",
       "requires": [
         "select-queries"
@@ -75,6 +101,14 @@
       "name": "Aggregation",
       "icon": "chart",
       "desc": "COUNT, SUM, AVG, GROUP BY and HAVING.",
+      "summary": "You will be able to summarise data with aggregate functions, group rows with GROUP BY and filter groups with HAVING.",
+      "topics": [
+        "COUNT, SUM, AVG, MIN and MAX",
+        "COUNT(*) vs COUNT(column)",
+        "Grouping with GROUP BY",
+        "Filtering groups with HAVING",
+        "WHERE vs HAVING"
+      ],
       "kind": "concept",
       "requires": [
         "filtering"
@@ -87,6 +121,15 @@
       "name": "Joins",
       "icon": "link",
       "desc": "Inner, left, right, full and self joins and how they combine rows.",
+      "summary": "You will be able to combine rows from several tables with inner, outer and self joins and predict the rows each produces.",
+      "topics": [
+        "Inner joins on keys",
+        "Left and right outer joins",
+        "Full outer joins",
+        "Self joins",
+        "Cross joins and Cartesian products",
+        "Finding unmatched rows"
+      ],
       "kind": "concept",
       "requires": [
         "select-queries",
@@ -100,6 +143,14 @@
       "name": "Subqueries",
       "icon": "layers",
       "desc": "Scalar, IN and EXISTS subqueries and correlated subqueries.",
+      "summary": "You will be able to nest queries as scalar, IN and EXISTS subqueries, including correlated subqueries evaluated per row.",
+      "topics": [
+        "Scalar subqueries",
+        "IN and NOT IN subqueries",
+        "EXISTS and NOT EXISTS",
+        "Correlated subqueries",
+        "Subqueries in the FROM clause"
+      ],
       "kind": "concept",
       "requires": [
         "joins",
@@ -113,6 +164,14 @@
       "name": "Set operations",
       "icon": "shapes",
       "desc": "UNION, INTERSECT and EXCEPT.",
+      "summary": "You will be able to combine query results with UNION, INTERSECT and EXCEPT and know their column compatibility rules.",
+      "topics": [
+        "UNION vs UNION ALL",
+        "INTERSECT for common rows",
+        "EXCEPT or MINUS",
+        "Union-compatible columns",
+        "Duplicates in set operations"
+      ],
       "kind": "concept",
       "requires": [
         "select-queries"
@@ -125,6 +184,14 @@
       "name": "Insert, update, delete",
       "icon": "edit",
       "desc": "Changing data safely with INSERT, UPDATE, DELETE and upserts.",
+      "summary": "You will be able to insert, update and delete rows safely and write upserts that insert or update in one statement.",
+      "topics": [
+        "INSERT single and multiple rows",
+        "INSERT from a SELECT",
+        "UPDATE with WHERE",
+        "DELETE vs TRUNCATE",
+        "Upserts with ON CONFLICT or MERGE"
+      ],
       "kind": "concept",
       "requires": [
         "select-queries"
@@ -137,6 +204,14 @@
       "name": "DDL & constraints",
       "icon": "lock",
       "desc": "CREATE and ALTER TABLE, data types, NOT NULL, UNIQUE, CHECK and foreign keys.",
+      "summary": "You will be able to create and alter tables with suitable data types and constraints that keep data valid.",
+      "topics": [
+        "CREATE TABLE and data types",
+        "ALTER and DROP TABLE",
+        "NOT NULL and DEFAULT",
+        "UNIQUE and CHECK constraints",
+        "Foreign keys with ON DELETE actions"
+      ],
       "kind": "concept",
       "requires": [
         "tables-keys"
@@ -149,6 +224,14 @@
       "name": "Views",
       "icon": "eye",
       "desc": "Views and materialised views for reuse and access control.",
+      "summary": "You will be able to create views and materialised views to reuse queries and restrict what users can see.",
+      "topics": [
+        "Creating views",
+        "Updatable views",
+        "Materialised views",
+        "Refreshing materialised views",
+        "Views for access control"
+      ],
       "kind": "concept",
       "requires": [
         "subqueries"
@@ -161,6 +244,14 @@
       "name": "Schema design",
       "icon": "building",
       "desc": "Turning requirements into normalised tables and knowing when to denormalise.",
+      "summary": "You will be able to turn requirements into a normalised schema and judge when denormalising is worth the trade-off.",
+      "topics": [
+        "Entities and relationships",
+        "One-to-many and many-to-many tables",
+        "First, second and third normal forms",
+        "Functional dependencies",
+        "When to denormalise"
+      ],
       "kind": "concept",
       "requires": [
         "ddl-constraints",
@@ -174,6 +265,14 @@
       "name": "Window functions",
       "icon": "sliders",
       "desc": "OVER, PARTITION BY, ROW_NUMBER, RANK, LAG and running totals.",
+      "summary": "You will be able to compute rankings, running totals and row-to-row comparisons with window functions.",
+      "topics": [
+        "OVER and PARTITION BY",
+        "ROW_NUMBER, RANK and DENSE_RANK",
+        "LAG and LEAD",
+        "Running totals and moving averages",
+        "Window frame clauses"
+      ],
       "kind": "concept",
       "requires": [
         "aggregation"
@@ -186,6 +285,14 @@
       "name": "CTEs & recursion",
       "icon": "route",
       "desc": "WITH clauses and recursive queries over hierarchies.",
+      "summary": "You will be able to structure complex queries with common table expressions and traverse hierarchies with recursive queries.",
+      "topics": [
+        "WITH clauses for readability",
+        "Chaining multiple CTEs",
+        "Recursive CTE structure",
+        "Querying tree and graph hierarchies",
+        "Terminating recursion"
+      ],
       "kind": "concept",
       "requires": [
         "subqueries"
@@ -198,6 +305,14 @@
       "name": "Transactions",
       "icon": "shield",
       "desc": "BEGIN, COMMIT, ROLLBACK and isolation levels in practice.",
+      "summary": "You will be able to group statements into transactions and choose isolation levels that prevent the anomalies you care about.",
+      "topics": [
+        "BEGIN, COMMIT and ROLLBACK",
+        "ACID properties",
+        "Savepoints and partial rollback",
+        "Isolation levels",
+        "Dirty reads, non-repeatable reads and phantoms"
+      ],
       "kind": "concept",
       "requires": [
         "dml",
@@ -211,6 +326,14 @@
       "name": "Procedures & triggers",
       "icon": "bolt",
       "desc": "Stored procedures, functions and triggers.",
+      "summary": "You will be able to write stored procedures, user-defined functions and triggers and know when logic belongs in the database.",
+      "topics": [
+        "Stored procedures",
+        "User-defined functions",
+        "BEFORE and AFTER triggers",
+        "Row-level vs statement-level triggers",
+        "Trade-offs of database-side logic"
+      ],
       "kind": "lesson",
       "requires": [
         "dml"
@@ -223,6 +346,14 @@
       "name": "Indexes",
       "icon": "bookmark",
       "desc": "How indexes work, composite indexes and when an index helps.",
+      "summary": "You will understand how B-tree indexes speed up lookups and be able to design single and composite indexes for real queries.",
+      "topics": [
+        "B-tree index structure",
+        "Creating and dropping indexes",
+        "Composite indexes and column order",
+        "Covering indexes",
+        "Write cost and when indexes do not help"
+      ],
       "kind": "concept",
       "requires": [
         "schema-design",
@@ -236,6 +367,14 @@
       "name": "EXPLAIN & tuning",
       "icon": "timer",
       "desc": "Reading query plans and rewriting slow queries.",
+      "summary": "You will be able to read query plans with EXPLAIN and rewrite slow queries or add indexes to speed them up.",
+      "topics": [
+        "EXPLAIN and EXPLAIN ANALYZE",
+        "Sequential vs index scans",
+        "Join algorithms in plans",
+        "Statistics and cost estimates",
+        "Rewriting slow queries"
+      ],
       "kind": "concept",
       "requires": [
         "indexes",
@@ -249,6 +388,14 @@
       "name": "Library DB project",
       "icon": "book",
       "desc": "Design and build a library database with constraints, sample data and reporting queries.",
+      "summary": "You will design and build a library database with constraints, realistic sample data and reporting queries.",
+      "topics": [
+        "Modelling books, members and loans",
+        "Defining tables and constraints",
+        "Loading sample data",
+        "Writing reporting queries",
+        "Testing constraint enforcement"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -264,6 +411,14 @@
       "name": "Analytics project",
       "icon": "analytics",
       "desc": "Answer business questions over a sales dataset with window functions and CTEs.",
+      "summary": "You will answer business questions over a sales dataset using window functions, CTEs and aggregation.",
+      "topics": [
+        "Framing business questions",
+        "Revenue by period with aggregation",
+        "Rankings with window functions",
+        "Cohort and retention queries",
+        "Presenting results clearly"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

@@ -3568,14 +3568,16 @@ async function nexusGateState(fresh) {
     const hit = nexusCache.getCached(username);
     if (hit) return hit;
   }
-  const [qrows, lrows] = await Promise.all([
+  const [qrows, lrows, trows] = await Promise.all([
     all("SELECT question_id, attempts, correct, last_at, interval_days FROM gate_qstate WHERE username=? AND attempts>0", [username]),
     all("SELECT subject, lesson, completed, updated_at FROM gate_notes_progress WHERE username=?", [username]),
+    all("SELECT subject, node FROM nexus_testouts WHERE username=?", [username]).catch(() => []),
   ]);
   const state = {
     qstate: new Map((qrows || []).map((r) => [r.question_id, { attempts: r.attempts || 0, correct: r.correct || 0, lastAt: Number(r.last_at) || 0, interval: Number(r.interval_days) || 0 }])),
     lessons: new Set((lrows || []).filter((r) => r.completed).map((r) => `${r.subject}/${r.lesson}`)),
     lessonsAt: new Map((lrows || []).map((r) => [`${r.subject}/${r.lesson}`, Number(r.updated_at) || 0])),
+    testouts: new Set((trows || []).map((r) => `${r.subject}:${r.node}`)),
   };
   nexusCache.setCached(username, state);
   return state;
@@ -3684,7 +3686,7 @@ app.get("/api/nexus/structure", (req, res) => {
 const nexusWebCache = sharedCache({
   name: "nexus-web",
   ttlMs: 60 * 1000,
-  tables: ["progress", "gate_qstate", "gate_notes_progress", "users"],
+  tables: ["progress", "gate_qstate", "gate_notes_progress", "users", "nexus_testouts"],
 });
 
 /**
@@ -3707,6 +3709,368 @@ app.get("/api/courses/:subject/:concept?", (req, res) => {
     res.set("Cache-Control", "private, max-age=60");
     res.json({ ok: true, subject, concept, body: err ? null : body });
   });
+});
+
+/**
+ * One node's content view (lazy, cached by the client): its summary and
+ * "what you'll learn" topics; its GATE notes lessons with their sections,
+ * worked examples, animations and practice questions (and "Read" deep
+ * links); or the course outline from content/courses; and its resources.
+ * Static per node — the reader's numbers come from /api/nexus/node.
+ */
+app.get("/api/nexus/content/:subject/:node", (req, res) => {
+  try {
+    const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+    const sid = String(req.params.subject);
+    const nid = String(req.params.node);
+    const s = reg.subjects.get(sid);
+    if (!s) return res.status(404).json({ ok: false, error: "Unknown subject" });
+    const dsa = s.engine === "dsa";
+    const raw = dsa ? reg.dsaNodes.find((n) => n.id === nid) : s.doc.nodes.find((n) => n.id === nid);
+    if (!raw) return res.status(404).json({ ok: false, error: "Unknown node" });
+    const extra = dsa ? nexusSubjects.readDsaContent()[nid] || {} : raw;
+    const notes = loadGateNotes();
+    const visible = nexusNotesVisible(req, notes);
+    const notesId = s.meta.notesSubject;
+    const notesSubj = notesId ? notes.subjects.get(notesId) : null;
+    const skip = /^(where this fits|gate radar|summary|practice|pyqs?|gate questions|try it)/i;
+    const lessons = (raw.lessons || [])
+      .map((id) => {
+        const hit = notesSubj?.lessons.get(id);
+        if (!hit) return null;
+        const l = hit.lesson;
+        const href = `/gate/notes/${notesId}/${id}`;
+        return {
+          id,
+          title: l.title,
+          chapter: hit.chapter.title,
+          minutes: l.est_minutes || null,
+          status: l.status || "published",
+          href,
+          readable: visible.has(notesId),
+          sections: (l.outline || []).filter((h) => h.level === 2 && !skip.test(h.text)).map((h) => ({ id: h.id, title: h.text, href: `${href}#n-${h.id}` })),
+          examples: (l.blocks || []).filter((b) => b.name === "example").length,
+          animations: (l.viz || []).length,
+          practice: (l.practice || []).length,
+          pyqs: (l.pyqLinks || l.pyqs || []).length,
+        };
+      })
+      .filter(Boolean);
+    // Flashcards: the lessons' definitions and theorems (term → statement),
+    // as Markdown with inline maths.
+    const flat = (n) => {
+      if (n == null) return "";
+      if (typeof n === "string") return n;
+      if (Array.isArray(n)) return n.map(flat).join("");
+      if (n.t === "im") return `$${n.v}$`;
+      if (n.t === "math") return ` $$${n.v}$$ `;
+      return flat(n.c);
+    };
+    const cards = [];
+    const collect = (n) => {
+      if (!n || typeof n !== "object" || cards.length >= 10) return;
+      if (Array.isArray(n)) return n.forEach(collect);
+      if (n.t === "block" && (n.name === "definition" || n.name === "theorem")) {
+        const term = n.attrs?.term || n.attrs?.title || n.title;
+        const firstP = (n.c || []).find((x) => x.t === "p");
+        const back = flat(firstP).replace(/\s+/g, " ").trim();
+        if (term && back) cards.push({ front: String(term), back: back.length > 360 ? `${back.slice(0, 357)}…` : back, kind: n.name });
+        return;
+      }
+      collect(n.c);
+    };
+    for (const id of raw.lessons || []) collect(notesSubj?.lessons.get(id)?.lesson?.body);
+    // A hand-written course (content/courses/<subject>/<node>.md): its headings.
+    let course = null;
+    try {
+      const md = fs.readFileSync(path.join(__dirname, "..", "content", "courses", sid, `${nid}.md`), "utf8");
+      course = { outline: md.split(/\r?\n/).filter((x) => /^#{1,3}\s/.test(x)).map((x) => x.replace(/^#+\s*/, "").trim()).slice(0, 30) };
+    } catch {
+      course = null;
+    }
+    res.set("Cache-Control", "private, max-age=300");
+    res.json({
+      ok: true,
+      subject: sid,
+      node: nid,
+      summary: extra.summary || raw.desc || "",
+      topics: extra.topics || [],
+      desc: raw.desc || "",
+      kind: dsa ? "skill" : raw.kind || "concept",
+      optional: !dsa && (raw.optional === true || (raw.optional !== false && raw.kind === "project")),
+      resources: raw.resources || [],
+      lessons,
+      course,
+      cards,
+    });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
+/* ── Nexus learning intelligence (src/nexus/insights.js) ── */
+const nexusInsight = require("./nexus/insights");
+const nexusPeerCache = new Map(); // subject → { at, rows }
+async function nexusPeerRows(ids) {
+  if (!ids.length) return [];
+  const key = ids.join(",");
+  const hit = nexusPeerCache.get(key);
+  if (hit && Date.now() - hit.at < 60 * 60 * 1000) return hit.rows;
+  const rows = await all(
+    `SELECT username, question_id, MIN(created_at) AS first_at, MIN(CASE WHEN outcome='correct' THEN created_at END) AS first_correct
+     FROM gate_attempts WHERE question_id IN (${ids.map(() => "?").join(",")}) GROUP BY username, question_id`,
+    ids,
+  ).catch(() => []);
+  if (nexusPeerCache.size > 200) nexusPeerCache.clear();
+  nexusPeerCache.set(key, { at: Date.now(), rows: rows || [] });
+  return rows || [];
+}
+
+/**
+ * GET /api/nexus/insights/:subject — per node: time estimate, exam
+ * weightage (marks by year), high-yield, peer mastery (aggregate only) and
+ * the reader's notes/bookmarks; per zone: weightage heat; the subject's
+ * remaining time and the reader's progress history.
+ */
+app.get("/api/nexus/insights/:subject", async (req, res) => {
+  try {
+    const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+    const sid = String(req.params.subject);
+    const s = reg.subjects.get(sid);
+    if (!s) return res.status(404).json({ ok: false, error: "Unknown subject" });
+    const { dsa, computed } = await nexusState(req, false);
+    const view = s.engine === "dsa" ? dsa : computed.get(sid);
+    const bank = loadGateBank();
+    const notes = loadGateNotes();
+    const pools = nexusSubjects.nodePools(reg, bank, notes);
+    const notesSubj = s.meta.notesSubject ? notes.subjects.get(s.meta.notesSubject) : null;
+    const weights = new Map();
+    const allIds = [];
+    for (const n of view.nodes) {
+      const ids = pools.get(`${sid}:${n.id}`) || [];
+      allIds.push(...ids);
+      weights.set(n.id, nexusInsight.weightage(ids, bank.byId));
+    }
+    const hy = nexusInsight.highYield(weights);
+    const peerRows = s.engine === "dsa" ? [] : await nexusPeerRows([...new Set(allIds)]);
+    const nodes = {};
+    let remaining = 0;
+    for (const n of view.nodes) {
+      const ids = pools.get(`${sid}:${n.id}`) || [];
+      const raw = s.doc?.nodes.find((x) => x.id === n.id);
+      const lessonMinutes = (raw?.lessons || []).map((l) => notesSubj?.lessons.get(l)?.lesson?.est_minutes || 0);
+      const min = nexusInsight.nodeMinutes({ kind: n.kind, lessonMinutes, pyqTarget: n.metric?.pyq?.target || 0, dsaTarget: s.engine === "dsa" ? n.target : 0 });
+      remaining += Math.round(min * (1 - Math.min(100, n.progress || 0) / 100));
+      const w = weights.get(n.id);
+      nodes[n.id] = {
+        min,
+        w: w.n ? w : null,
+        hy: hy.has(n.id),
+        peer: n.metric?.pyq ? nexusInsight.peerMastery(peerRows, ids, n.metric.pyq.target) : null,
+      };
+    }
+    // Zone heat: share of the subject's PYQ marks.
+    const total = [...weights.values()].reduce((a, w) => a + w.marks, 0);
+    const zones = {};
+    for (const n of view.nodes) zones[n.zone] = (zones[n.zone] || 0) + weights.get(n.id).marks;
+    for (const z of Object.keys(zones)) zones[z] = total ? Math.round((zones[z] / total) * 100) : 0;
+    const username = me();
+    const [noteRows, histRows] = username
+      ? await Promise.all([
+          all("SELECT node, note, bookmarked, updated_at FROM nexus_node_notes WHERE username=? AND subject=?", [username, sid]).catch(() => []),
+          all("SELECT day, subjects FROM nexus_history WHERE username=? ORDER BY day DESC LIMIT 90", [username]).catch(() => []),
+        ])
+      : [[], []];
+    const history = (histRows || [])
+      .map((r) => {
+        let p = null;
+        try {
+          p = JSON.parse(r.subjects)[sid];
+        } catch {
+          p = null;
+        }
+        return p === undefined || p === null ? null : { day: r.day, p: Number(p) || 0 };
+      })
+      .filter(Boolean)
+      .reverse();
+    res.set("Cache-Control", "private, no-cache");
+    res.json({
+      ok: true,
+      subject: sid,
+      nodes,
+      zones,
+      remainingMin: remaining,
+      notes: Object.fromEntries((noteRows || []).map((r) => [r.node, { note: r.note, bookmarked: !!r.bookmarked, updatedAt: Number(r.updated_at) }])),
+      history,
+    });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
+/** GET /api/nexus/mistakes/:subject/:node — where learners slip (aggregate). */
+app.get("/api/nexus/mistakes/:subject/:node", async (req, res) => {
+  try {
+    const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+    const ids = nexusSubjects.nodePools(reg, loadGateBank(), loadGateNotes()).get(`${req.params.subject}:${req.params.node}`) || [];
+    if (!ids.length) return res.json({ ok: true, slips: [] });
+    const bank = loadGateBank();
+    const rows = await all(
+      `SELECT question_id, COUNT(*) AS n, SUM(outcome='correct') AS c FROM gate_attempts
+       WHERE question_id IN (${ids.map(() => "?").join(",")}) AND outcome IN ('correct','wrong','partial') GROUP BY question_id`,
+      ids,
+    ).catch(() => []);
+    const worst = (rows || [])
+      .filter((r) => Number(r.n) >= 3)
+      .map((r) => ({ id: r.question_id, n: Number(r.n), acc: Math.round((Number(r.c) / Number(r.n)) * 100) }))
+      .sort((a, b) => a.acc - b.acc)
+      .slice(0, 2);
+    const slips = [];
+    for (const w of worst) {
+      const q = bank.byId.get(w.id);
+      if (!q) continue;
+      let wrong = null;
+      if (q.type === "MCQ") {
+        const opts = await all(`SELECT response, COUNT(*) AS n FROM gate_attempts WHERE question_id=? AND outcome='wrong' GROUP BY response ORDER BY n DESC LIMIT 1`, [w.id]).catch(() => []);
+        const top = opts?.[0];
+        if (top) {
+          let v = top.response;
+          try {
+            v = JSON.parse(v);
+          } catch {
+            /* plain */
+          }
+          const letter = Array.isArray(v) ? v[0] : v;
+          const opt = (q.options || []).find((o) => String(o.l).toUpperCase() === String(letter).toUpperCase());
+          wrong = opt ? { option: opt.l, text: String(opt.t).slice(0, 120), share: Math.round((Number(top.n) / w.n) * 100) } : null;
+        }
+      }
+      slips.push({ id: q.id, label: `${q.exam || ""} ${q.year || ""}`.trim(), topic: (q.tags || [])[0] || q.topic || null, attempts: w.n, accuracy: w.acc, text: String(q.text || "").replace(/\s+/g, " ").slice(0, 140), wrong });
+    }
+    res.json({ ok: true, slips });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
+/** GET /api/nexus/testout/:subject/:node — 3–5 auto-graded questions (no keys). */
+app.get("/api/nexus/testout/:subject/:node", (req, res) => {
+  const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+  const bank = loadGateBank();
+  const ids = nexusSubjects.nodePools(reg, bank, loadGateNotes()).get(`${req.params.subject}:${req.params.node}`) || [];
+  const day = new Date().toISOString().slice(0, 10);
+  const qs = nexusInsight.pickQuick(ids, bank.byId, `${me() || "-"}|${req.params.node}|${day}`);
+  res.json({
+    ok: true,
+    available: qs.length >= 3,
+    questions: qs.map((q) => ({ id: q.id, type: q.type, marks: q.marks, year: q.year, exam: q.exam, text: q.text, options: q.options || [] })),
+  });
+});
+
+/** POST /api/nexus/testout/:subject/:node {answers:{id:pick}} — grade; a pass marks the node mastered. */
+app.post("/api/nexus/testout/:subject/:node", async (req, res) => {
+  try {
+    const username = me();
+    if (!username) return res.status(401).json({ ok: false, error: "Sign in" });
+    const answers = req.body && typeof req.body.answers === "object" ? req.body.answers : {};
+    const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+    const bank = loadGateBank();
+    const ids = new Set(nexusSubjects.nodePools(reg, bank, loadGateNotes()).get(`${req.params.subject}:${req.params.node}`) || []);
+    const results = [];
+    for (const [id, pick] of Object.entries(answers).slice(0, 5)) {
+      const q = bank.byId.get(id);
+      if (!q || !ids.has(id) || !nexusInsight.testable(q)) continue;
+      results.push({ id, correct: nexusInsight.isCorrect(q, pick), key: q.answer });
+    }
+    const score = results.filter((r) => r.correct).length;
+    const pass = nexusInsight.passed(score, results.length);
+    if (pass) {
+      await run(
+        `INSERT INTO nexus_testouts(username, subject, node, score, total, created_at) VALUES(?,?,?,?,?,?)
+         ON CONFLICT(username, subject, node) DO UPDATE SET score=excluded.score, total=excluded.total, created_at=excluded.created_at`,
+        [username, String(req.params.subject), String(req.params.node), score, results.length, Date.now()],
+      );
+      nexusCache.invalidateNexusUser(username);
+    }
+    res.json({ ok: true, score, total: results.length, passed: pass, results });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
+/**
+ * POST /api/nexus/done/:subject/:node — "I've learned this": masters a node
+ * that has no auto-graded questions to test out with (fewer than 3); one
+ * that has them must be tested out instead. Recorded like a test out
+ * (60% of the node's XP), so the Nexus, ranks and trees agree at once.
+ */
+app.post("/api/nexus/done/:subject/:node", async (req, res) => {
+  try {
+    const username = me();
+    if (!username) return res.status(401).json({ ok: false, error: "Sign in" });
+    const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+    const sid = String(req.params.subject);
+    const nid = String(req.params.node);
+    const s = reg.subjects.get(sid);
+    if (!s || s.engine === "dsa" || !s.doc?.nodes.some((n) => n.id === nid)) return res.status(404).json({ ok: false, error: "Unknown node" });
+    const bank = loadGateBank();
+    const ids = nexusSubjects.nodePools(reg, bank, loadGateNotes()).get(`${sid}:${nid}`) || [];
+    if (ids.map((id) => bank.byId.get(id)).filter(nexusInsight.testable).length >= 3) return res.status(409).json({ ok: false, error: "Test out to master this one" });
+    await run(
+      `INSERT INTO nexus_testouts(username, subject, node, score, total, created_at) VALUES(?,?,?,0,0,?)
+       ON CONFLICT(username, subject, node) DO NOTHING`,
+      [username, sid, nid, Date.now()],
+    );
+    nexusCache.invalidateNexusUser(username);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
+/** PUT /api/nexus/notes/:subject/:node {note, bookmarked} — the reader's own note (written on save). */
+app.put("/api/nexus/notes/:subject/:node", async (req, res) => {
+  try {
+    const username = me();
+    if (!username) return res.status(401).json({ ok: false, error: "Sign in" });
+    const note = typeof req.body?.note === "string" ? req.body.note.slice(0, 4000) : "";
+    const bookmarked = req.body?.bookmarked ? 1 : 0;
+    const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+    if (!reg.subjects.has(String(req.params.subject))) return res.status(404).json({ ok: false, error: "Unknown subject" });
+    if (!note.trim() && !bookmarked) {
+      await run("DELETE FROM nexus_node_notes WHERE username=? AND subject=? AND node=?", [username, String(req.params.subject), String(req.params.node)]);
+    } else {
+      await run(
+        `INSERT INTO nexus_node_notes(username, subject, node, note, bookmarked, updated_at) VALUES(?,?,?,?,?,?)
+         ON CONFLICT(username, subject, node) DO UPDATE SET note=excluded.note, bookmarked=excluded.bookmarked, updated_at=excluded.updated_at`,
+        [username, String(req.params.subject), String(req.params.node), note, bookmarked, Date.now()],
+      );
+    }
+    res.json({ ok: true, note, bookmarked: !!bookmarked });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
+/** POST /api/nexus/review/:subject/:node — put the node's PYQs in the Review deck (due today). */
+app.post("/api/nexus/review/:subject/:node", async (req, res) => {
+  try {
+    const username = me();
+    if (!username) return res.status(401).json({ ok: false, error: "Sign in" });
+    const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+    const ids = (nexusSubjects.nodePools(reg, loadGateBank(), loadGateNotes()).get(`${req.params.subject}:${req.params.node}`) || []).slice(0, 30);
+    const today = new Date().toISOString().slice(0, 10);
+    for (const id of ids) {
+      await run(
+        `INSERT INTO gate_qstate(username, question_id, due) VALUES(?,?,?)
+         ON CONFLICT(username, question_id) DO UPDATE SET due=CASE WHEN gate_qstate.due IS NULL OR gate_qstate.due > excluded.due THEN excluded.due ELSE gate_qstate.due END`,
+        [username, id, today],
+      );
+    }
+    res.json({ ok: true, added: ids.length });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
 });
 
 app.get("/api/nexus/web", async (req, res) => {

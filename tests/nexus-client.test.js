@@ -175,3 +175,133 @@ test('goal routes on the real data reach every route subject, in learning order'
     assert.equal(plan.next.length, 5);
   }
 });
+
+test('one canonical page per subject (/learn/<id>); a node opens its lesson at /learn/<id>/<node>', async (t) => {
+  let C;
+  try {
+    C = await import(path.join(__dirname, '..', 'client', 'src', 'components', 'nexus', 'course.ts'));
+  } catch {
+    return t.skip('no TS loader');
+  }
+  assert.equal(C.subjectHref({ id: 'dsa', engine: 'dsa' }), '/learn/dsa');
+  assert.equal(C.subjectHref({ id: 'dsa', engine: 'dsa' }, 'arrays'), '/learn/dsa/skill/arrays');
+  assert.equal(C.subjectHref({ id: 'dl', engine: null, gate: { pyq: 'dl', notes: 'dl' } }, 'place-value'), '/learn/dl/place-value');
+  assert.equal(C.subjectHref({ id: 'os', engine: null, gate: { pyq: 'os', notes: null } }), '/learn/os');
+  assert.equal(C.subjectHref({ id: 'rust', engine: null }, 'ownership'), '/learn/rust/ownership');
+  assert.equal(C.courseHref, C.subjectHref);
+  const st = structure();
+  const seen = new Set();
+  for (const c of st.clusters) {
+    const href = C.subjectHref(c);
+    assert.ok(c.engine === 'dsa' ? href === '/learn/dsa' : href === `/learn/${c.id}`, c.id);
+    assert.ok(!seen.has(href), `one page per subject: ${href}`);
+    seen.add(href);
+    const n = c.nodes[0].id;
+    assert.equal(C.subjectHref(c, n), c.engine === 'dsa' ? `/learn/dsa/skill/${n}` : `/learn/${c.id}/${n}`);
+  }
+});
+
+test('confidence: lessons, PYQs and accuracy, fading with time; tested out counts at least 80', (t) => {
+  if (I?.error) return t.skip('no TS loader');
+  const now = Date.UTC(2026, 9, 22);
+  const D = 86400000;
+  const fresh = I.confidence({ progress: 100, completed: true, metric: { lessons: { done: 1, total: 1 }, pyq: { pool: 11, target: 10, correct: 10, attempted: 11, accuracy: 100 } }, memory: { lastAt: now, interval: 0 } }, now);
+  assert.equal(fresh.score, 100);
+  const old = I.confidence({ progress: 100, completed: true, metric: { lessons: { done: 1, total: 1 }, pyq: { pool: 11, target: 10, correct: 10, attempted: 11, accuracy: 100 } }, memory: { lastAt: now - 14 * D, interval: 0 } }, now);
+  assert.ok(old.score < fresh.score && old.score >= 50, `fades (${old.score}) but never below half`);
+  assert.match(old.breakdown, /Lessons 1\/1 · PYQs 10\/10 \(100%\) · last practised 14 days ago/);
+  const part = I.confidence({ progress: 33, completed: false, metric: { pyq: { pool: 9, target: 9, correct: 6, attempted: 9, accuracy: 67 } }, memory: null }, now);
+  assert.equal(part.score, Math.round(100 * (0.7 * (6 / 9) + 0.3 * 0.67)));
+  assert.equal(I.confidence({ progress: 100, completed: true, testedOut: true, metric: { pyq: { pool: 5, target: 5, correct: 0, attempted: 0, accuracy: null } } }, now).score, 80);
+  assert.equal(I.confidence({ progress: 0, completed: false, metric: null }, now).breakdown, 'Nothing studied yet');
+});
+
+test('shortest unlock path: every unmastered prerequisite, prerequisites first, with time', (t) => {
+  if (I?.error) return t.skip('no TS loader');
+  const nodes = [
+    { id: 'a', requires: [], completed: true },
+    { id: 'b', requires: ['a'], completed: false },
+    { id: 'c', requires: ['a'], completed: false },
+    { id: 'd', requires: ['b', 'c'], completed: false },
+    { id: 'e', requires: ['d'], completed: false },
+    { id: 'x', requires: [], completed: false },
+  ];
+  const p = I.unlockPath(nodes, 'e', { b: 30, c: 20, d: 40 });
+  assert.deepEqual(p.steps, ['b', 'c', 'd']);
+  assert.equal(p.minutes, 90);
+  assert.deepEqual(I.unlockPath(nodes, 'b').steps, [], 'already open');
+});
+
+test('study plan: prerequisites first, heavier weight earlier, packed into days, on time or not', (t) => {
+  if (I?.error) return t.skip('no TS loader');
+  const nodes = [
+    { id: 'a', requires: [], completed: false, progress: 0 },
+    { id: 'b', requires: [], completed: false, progress: 50 },
+    { id: 'c', requires: ['a'], completed: false, progress: 0 },
+    { id: 'm', requires: [], completed: true, progress: 100 },
+  ];
+  const start = new Date(Date.UTC(2026, 9, 22));
+  const plan = I.studyPlan(nodes, { a: 60, b: 60, c: 60 }, { b: 9, a: 1, c: 5 }, start, 60, new Date(Date.UTC(2026, 9, 30)));
+  const order = plan.days.flatMap((d) => d.items.map((i) => i.id));
+  assert.deepEqual([...new Set(order)], ['b', 'a', 'c'], 'weight first among ready; c waits for a');
+  assert.equal(plan.days[0].date, '2026-10-22');
+  assert.ok(plan.days.every((d) => d.minutes <= 60));
+  assert.equal(plan.days.reduce((x, d) => x + d.minutes, 0), 30 + 60 + 60, 'remaining minutes only');
+  assert.equal(plan.onTime, true);
+  assert.equal(I.studyPlan(nodes, { a: 600, b: 600, c: 600 }, {}, start, 60, new Date(Date.UTC(2026, 9, 25))).onTime, false);
+  assert.equal(I.fmtMinutes(105), '1h 45m');
+  assert.equal(I.fmtMinutes(40), '40m');
+});
+
+// The Nexus opening (client/src/components/nexus/intro.ts).
+let N = null;
+test.before(async () => {
+  try {
+    N = await import(path.join(__dirname, '..', 'client', 'src', 'components', 'nexus', 'intro.ts'));
+  } catch (e) {
+    N = { error: e };
+  }
+});
+
+test('intro: full the first time, short after, a fade with reduced motion; one clock for every beat', (t) => {
+  if (N?.error) return t.skip('no TS loader');
+  let seen = false;
+  const mark = () => seen;
+  assert.equal(N.pickIntro(false, mark).mode, 'full');
+  seen = true;
+  assert.deepEqual(N.pickIntro(false, mark), { mode: 'short', dur: 800 });
+  assert.equal(N.pickIntro(true, mark).mode, 'fade');
+  // The short intro plays the same beats on the same 2,000 ms clock, faster.
+  assert.equal(N.introClock(400, 0, 800), 1000);
+  assert.equal(N.introClock(5000, 0, 2000), N.INTRO_CLOCK);
+  assert.equal(N.introClock(0, 100, 2000), 0);
+  // Eased 0 → 1 within its window, flat outside it.
+  assert.equal(N.seg(100, 300, 1100), 0);
+  assert.equal(N.seg(1100, 300, 1100), 1);
+  assert.ok(N.seg(700, 300, 1100) > 0.5, 'ease-out is past half way at the midpoint');
+  assert.equal(N.pop(0, 100, 400), 0);
+  assert.ok(Math.abs(N.pop(400, 100, 400) - 1) < 1e-9);
+  assert.ok(Math.max(...[150, 200, 250, 300, 350].map((x) => N.pop(x, 100, 400))) > 1, 'a small overshoot');
+  // Staggered starts span the window evenly.
+  assert.equal(N.stagger(0, 9, 300, 820), 300);
+  assert.equal(N.stagger(8, 9, 300, 820), 820);
+  assert.equal(N.stagger(0, 1, 300, 820), 300);
+});
+
+test('learning order and next lesson: prerequisites first, goal first, then what this lesson opens', (t) => {
+  if (I?.error) return t.skip('no TS loader');
+  const n = (id, requires, zone, completed = false, unlocked = true) => ({ id, requires, zone, completed, unlocked });
+  const nodes = [n('c', ['a', 'b'], 2, false, false), n('a', [], 1, true), n('b', [], 1), n('d', ['a'], 2), n('e', ['c'], 3, false, false)];
+  const order = I.learningOrder(nodes);
+  assert.deepEqual(order, ['a', 'b', 'c', 'd', 'e']);
+  for (const x of nodes) for (const r of x.requires) assert.ok(order.indexOf(r) < order.indexOf(x.id), `${r} before ${x.id}`);
+  assert.equal(order[0], 'a');
+  // Finishing b opens c (a is done): c is next.
+  assert.equal(I.nextLesson(nodes, 'b'), 'c');
+  // A goal step here wins.
+  assert.equal(I.nextLesson(nodes, 'b', ['d']), 'd');
+  // From d (opens nothing): the next open lesson.
+  assert.equal(I.nextLesson(nodes, 'd'), 'b');
+  // All done: nothing.
+  assert.equal(I.nextLesson(nodes.map((x) => ({ ...x, completed: true })), 'a'), null);
+});

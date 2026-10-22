@@ -21,7 +21,7 @@ function statusBadge(status: string) {
 const label = 'mb-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase'
 
 /** "Needs · Trees (DSA)" / "Unlocks · B+ trees (DBMS)" chips; click jumps there. */
-function CrossChips({ title, links, kind, onJump, hueOf }: { title: string; links: CrossLink[]; kind: 'needs' | 'unlocks'; onJump?: (l: CrossLink) => void; hueOf?: (subject: string) => string | undefined }) {
+export function CrossChips({ title, links, kind, onJump, hueOf }: { title: string; links: CrossLink[]; kind: 'needs' | 'unlocks'; onJump?: (l: CrossLink) => void; hueOf?: (subject: string) => string | undefined }) {
   if (!links.length) return null
   return (
     <div>
@@ -48,7 +48,7 @@ function CrossChips({ title, links, kind, onJump, hueOf }: { title: string; link
   )
 }
 
-function DsaProblems({ node }: { node: NexusNode }) {
+export function DsaProblems({ node }: { node: NexusNode }) {
   const { data, loading } = useApi(
     () => api.get<SkillProblemsResponse>(`/api/skill-tree/${node.id}/problems`),
     [node.id],
@@ -155,6 +155,7 @@ export function NodePanel({
   onReview,
   shareHref,
   hueOf,
+  compact = false,
 }: {
   node: NexusNode
   nodes: NexusNode[]
@@ -182,6 +183,8 @@ export function NodePanel({
   shareHref?: string
   /** A subject's stream colour (for the chips). */
   hueOf?: (subject: string) => string | undefined
+  /** A short preview (the Nexus overview): the full contents live on the subject page. */
+  compact?: boolean
 }) {
   const [copied, setCopied] = useState(false)
   // The solve-count engine (the competitive-programming tree) shows rated problems.
@@ -241,8 +244,8 @@ export function NodePanel({
                   </Button>
                 )}
                 {onOpenPath && (
-                  <Button variant="outline" size="sm" className="nx-press" onClick={onOpenPath}>
-                    <GitBranch className="size-3.5" aria-hidden="true" /> Open its tree
+                  <Button variant={compact ? 'primary' : 'outline'} size="sm" className="nx-press" onClick={onOpenPath}>
+                    <GitBranch className="size-3.5" aria-hidden="true" /> {compact ? 'Open in subject' : 'Open its tree'}
                   </Button>
                 )}
                 {shareHref && (
@@ -370,7 +373,7 @@ export function NodePanel({
           <CrossChips title="Unlocks in other subjects" links={node.crossUnlocks ?? []} kind="unlocks" onJump={onJump} hueOf={hueOf} />
 
           {/* GATE notes lessons */}
-          {m?.lessons && (
+          {!compact && m?.lessons && (
             <div>
               <p className={label}>Study</p>
               <ul className="space-y-1">
@@ -390,7 +393,7 @@ export function NodePanel({
           )}
 
           {/* resources */}
-          {node.resources.length > 0 && (
+          {!compact && node.resources.length > 0 && (
             <div>
               <p className={label}>Resources</p>
               <ul className="space-y-1">
@@ -411,7 +414,7 @@ export function NodePanel({
             </div>
           )}
 
-          {isDsa ? <DsaProblems node={node} /> : <SubjectPyqs node={node} />}
+          {!compact && (isDsa ? <DsaProblems node={node} /> : <SubjectPyqs node={node} />)}
     </>
   )
   if (bare) {
@@ -428,7 +431,7 @@ export function NodePanel({
 }
 
 /** The skill's mastery as a ring in its zone colour, its icon inside, % beneath. */
-function MasteryRing({ value, color, state, icon, due }: { value: number; color: string; state: 'done' | 'open' | 'locked'; icon?: string; due?: boolean }) {
+export function MasteryRing({ value, color, state, icon, due }: { value: number; color: string; state: 'done' | 'open' | 'locked'; icon?: string; due?: boolean }) {
   const S = 56
   const r = S / 2 - 3
   const c = 2 * Math.PI * r

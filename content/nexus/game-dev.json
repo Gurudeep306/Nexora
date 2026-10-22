@@ -39,6 +39,14 @@
       "name": "Game design",
       "icon": "lightbulb",
       "desc": "Core loops, mechanics, goals, feedback and what makes play engaging.",
+      "summary": "You will be able to describe a game's core loop, mechanics, goals and feedback and reason about what makes play engaging.",
+      "topics": [
+        "Core gameplay loops",
+        "Mechanics, dynamics and aesthetics",
+        "Goals and challenge",
+        "Feedback and game feel",
+        "Prototyping ideas"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 60
@@ -49,6 +57,14 @@
       "name": "The game loop",
       "icon": "clock",
       "desc": "Update and render loops, fixed versus variable time steps and frame timing.",
+      "summary": "You will be able to write update and render loops and choose between fixed and variable time steps for stable frame timing.",
+      "topics": [
+        "Update and render phases",
+        "Delta time",
+        "Fixed versus variable time steps",
+        "Accumulator for fixed updates",
+        "Frame rate and vsync"
+      ],
       "kind": "concept",
       "requires": [
         "game-design"
@@ -61,6 +77,14 @@
       "name": "Game maths",
       "icon": "calculator",
       "desc": "Vectors, interpolation, angles and transforms used in gameplay code.",
+      "summary": "You will be able to use vectors, interpolation, angles and transforms to write movement and aiming code.",
+      "topics": [
+        "Vectors for position and velocity",
+        "Normalising and dot products",
+        "Linear interpolation and easing",
+        "Angles and trigonometry",
+        "Transforms and local space"
+      ],
       "kind": "concept",
       "requires": [
         "computer-graphics:vectors-geometry"
@@ -73,6 +97,14 @@
       "name": "Using an engine",
       "icon": "wrench",
       "desc": "Scenes, game objects, components and scripting in an engine such as Godot or Unity.",
+      "summary": "You will be able to build scenes from game objects and components and script behaviour in an engine such as Godot or Unity.",
+      "topics": [
+        "Scenes and game objects",
+        "Components and nodes",
+        "Scripting behaviour",
+        "Engine lifecycle callbacks",
+        "The editor workflow"
+      ],
       "kind": "lesson",
       "requires": [
         "game-loop"
@@ -85,6 +117,14 @@
       "name": "Entities & components",
       "icon": "grid",
       "desc": "Composition over inheritance and the entity-component-system pattern.",
+      "summary": "You will be able to structure game code with composition over inheritance and the entity-component-system pattern.",
+      "topics": [
+        "Problems with deep inheritance",
+        "Composition over inheritance",
+        "Entities, components and systems",
+        "Data-oriented ECS",
+        "Querying components"
+      ],
       "kind": "concept",
       "requires": [
         "using-an-engine"
@@ -97,6 +137,14 @@
       "name": "Scene graphs",
       "icon": "tree",
       "desc": "Parent-child transforms and organising a game world.",
+      "summary": "You will be able to organise a game world with scene graphs and compute parent-child transforms.",
+      "topics": [
+        "Scene graph hierarchy",
+        "Parent-child transforms",
+        "Local and world coordinates",
+        "Organising a level",
+        "Spatial partitioning"
+      ],
       "kind": "concept",
       "requires": [
         "entities-components",
@@ -110,6 +158,14 @@
       "name": "Input handling",
       "icon": "keyboard",
       "desc": "Keyboard, mouse, controller and touch input with action mapping.",
+      "summary": "You will be able to handle keyboard, mouse, controller and touch input through action mappings.",
+      "topics": [
+        "Polling versus event input",
+        "Keyboard and mouse input",
+        "Gamepads and controllers",
+        "Touch input",
+        "Action mapping and rebinding"
+      ],
       "kind": "lesson",
       "requires": [
         "game-loop"
@@ -122,6 +178,14 @@
       "name": "Performance budgets",
       "icon": "timer",
       "desc": "Frame budgets, memory allocation and cache-friendly data layouts.",
+      "summary": "You will be able to work within a frame budget by controlling memory allocation and using cache-friendly data layouts.",
+      "topics": [
+        "Frame time budgets",
+        "Avoiding allocations in hot loops",
+        "Object pooling",
+        "Cache-friendly data layouts",
+        "Garbage collection spikes"
+      ],
       "kind": "concept",
       "requires": [
         "entities-components",
@@ -135,6 +199,14 @@
       "name": "Arcade clone",
       "icon": "gamepad",
       "desc": "Build a complete small arcade game like Breakout with scoring and levels.",
+      "summary": "You will build a complete small arcade game like Breakout with scoring, levels and a game over state.",
+      "topics": [
+        "Paddle and ball movement",
+        "Brick collisions",
+        "Scoring and lives",
+        "Level progression",
+        "Game states and restart"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -149,6 +221,14 @@
       "name": "Collision detection",
       "icon": "crosshair",
       "desc": "Bounding volumes, separating axis tests and broad-phase culling.",
+      "summary": "You will be able to detect collisions with bounding volumes and separating axis tests and cull pairs in a broad phase.",
+      "topics": [
+        "AABB and circle tests",
+        "Separating axis theorem",
+        "Broad phase and narrow phase",
+        "Spatial grids and quadtrees",
+        "Continuous collision detection"
+      ],
       "kind": "lesson",
       "requires": [
         "game-maths",
@@ -162,6 +242,14 @@
       "name": "Rigid-body physics",
       "icon": "bolt",
       "desc": "Integration, forces, impulses and resolving collisions.",
+      "summary": "You will be able to simulate rigid bodies with numerical integration, forces and impulses and resolve collisions.",
+      "topics": [
+        "Velocity and acceleration integration",
+        "Forces and mass",
+        "Impulse-based collision response",
+        "Restitution and friction",
+        "Physics engine settings"
+      ],
       "kind": "lesson",
       "requires": [
         "collision-detection"
@@ -174,6 +262,14 @@
       "name": "Game AI",
       "icon": "bot",
       "desc": "Finite state machines, behaviour trees and steering behaviours.",
+      "summary": "You will be able to build game AI with finite state machines, behaviour trees and steering behaviours.",
+      "topics": [
+        "Finite state machines for enemies",
+        "Behaviour trees",
+        "Seek, flee and arrive steering",
+        "Flocking with separation, alignment and cohesion",
+        "Utility-based decisions"
+      ],
       "kind": "lesson",
       "requires": [
         "entities-components"
@@ -186,6 +282,14 @@
       "name": "Pathfinding",
       "icon": "route",
       "desc": "A* on grids and navigation meshes.",
+      "summary": "You will be able to find paths with A* on grids and navigation meshes.",
+      "topics": [
+        "Graph search for games",
+        "A* algorithm and heuristics",
+        "Grid-based pathfinding",
+        "Navigation meshes",
+        "Path smoothing"
+      ],
       "kind": "lesson",
       "requires": [
         "game-ai",
@@ -199,6 +303,14 @@
       "name": "Menus, HUD & saves",
       "icon": "list",
       "desc": "Game UI, state management between screens and save files.",
+      "summary": "You will be able to build game menus and HUDs, manage state between screens and save and load progress.",
+      "topics": [
+        "Menus and screen flow",
+        "HUD elements",
+        "Game state management",
+        "Serialising save data",
+        "Loading and versioning saves"
+      ],
       "kind": "lesson",
       "requires": [
         "input-handling"
@@ -211,6 +323,14 @@
       "name": "Rendering for games",
       "icon": "image",
       "desc": "Sprites, batching, cameras, level of detail and lighting in engines.",
+      "summary": "You will be able to render games efficiently with sprites, batching, cameras, level of detail and engine lighting.",
+      "topics": [
+        "Sprites and sprite sheets",
+        "Draw call batching",
+        "Game cameras",
+        "Level of detail",
+        "Lighting in engines"
+      ],
       "kind": "lesson",
       "requires": [
         "scene-graphs",
@@ -224,6 +344,14 @@
       "name": "Shaders & VFX",
       "icon": "wand",
       "desc": "Particle systems and shader effects.",
+      "summary": "You will be able to create visual effects with particle systems and simple shader effects.",
+      "topics": [
+        "Particle system parameters",
+        "Emitters and lifetimes",
+        "Writing simple shaders",
+        "Dissolve and flash effects",
+        "Post-processing effects like bloom"
+      ],
       "kind": "lesson",
       "requires": [
         "game-rendering"
@@ -236,6 +364,14 @@
       "name": "Character animation",
       "icon": "play",
       "desc": "Sprite and skeletal animation, blending and animation state machines.",
+      "summary": "You will be able to animate characters with sprite and skeletal animation, blending and animation state machines.",
+      "topics": [
+        "Sprite frame animation",
+        "Skeletal animation",
+        "Animation blending",
+        "Animation state machines",
+        "Root motion"
+      ],
       "kind": "lesson",
       "requires": [
         "game-rendering"
@@ -248,6 +384,14 @@
       "name": "Game audio",
       "icon": "bell",
       "desc": "Sound effects, music, mixing and spatial audio.",
+      "summary": "You will be able to add sound effects and music, mix them and position sounds in space.",
+      "topics": [
+        "Sound effects and triggers",
+        "Music and looping",
+        "Mixing and buses",
+        "Spatial 3D audio",
+        "Audio middleware"
+      ],
       "kind": "lesson",
       "requires": [
         "game-loop"
@@ -260,6 +404,14 @@
       "name": "Platformer",
       "icon": "rocket",
       "desc": "Build a platformer with physics, enemies, animation, menus and saves.",
+      "summary": "You will build a platformer with physics-based movement, enemies, animation, menus and save files.",
+      "topics": [
+        "Character controller and jumping",
+        "Tilemap levels",
+        "Enemy behaviour",
+        "Animation states",
+        "Menus and save files"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -276,6 +428,14 @@
       "name": "Multiplayer netcode",
       "icon": "users",
       "desc": "Client-server models, prediction, interpolation and lag compensation.",
+      "summary": "You will be able to build multiplayer games with client-server networking, client prediction, interpolation and lag compensation.",
+      "topics": [
+        "Client-server versus peer-to-peer",
+        "Authoritative servers",
+        "Client-side prediction",
+        "Entity interpolation",
+        "Lag compensation"
+      ],
       "kind": "lesson",
       "requires": [
         "game-loop",
@@ -289,6 +449,14 @@
       "name": "Profiling games",
       "icon": "activity",
       "desc": "Finding CPU and GPU bottlenecks with profilers.",
+      "summary": "You will be able to locate CPU and GPU bottlenecks in a game with profilers and fix them.",
+      "topics": [
+        "Engine profilers",
+        "CPU-bound versus GPU-bound",
+        "Frame timing breakdown",
+        "GPU frame debuggers",
+        "Fixing common bottlenecks"
+      ],
       "kind": "lesson",
       "requires": [
         "performance-budgets",
@@ -302,6 +470,14 @@
       "name": "Playtesting & tuning",
       "icon": "heart",
       "desc": "Running playtests and balancing difficulty from feedback and data.",
+      "summary": "You will be able to run playtests and tune difficulty and balance from player feedback and gameplay data.",
+      "topics": [
+        "Planning playtests",
+        "Observing players",
+        "Collecting feedback",
+        "Gameplay analytics",
+        "Difficulty curves and balancing"
+      ],
       "kind": "lesson",
       "requires": [
         "game-design",
@@ -315,6 +491,14 @@
       "name": "Shipping a game",
       "icon": "upload",
       "desc": "Builds for multiple platforms, store pages and post-launch updates.",
+      "summary": "You will be able to build a game for multiple platforms, publish a store page and support it with post-launch updates.",
+      "topics": [
+        "Platform builds and export",
+        "Store pages and assets",
+        "Release checklists",
+        "Patches and updates",
+        "Gathering player reviews"
+      ],
       "kind": "lesson",
       "requires": [
         "playtesting"
@@ -327,6 +511,14 @@
       "name": "Game capstone",
       "icon": "trophy",
       "desc": "Design, build, test and publish an original game.",
+      "summary": "You will design, build, test and publish an original game from concept to release.",
+      "topics": [
+        "Writing a design document",
+        "Prototyping the core loop",
+        "Building content",
+        "Playtesting and polish",
+        "Publishing the game"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
