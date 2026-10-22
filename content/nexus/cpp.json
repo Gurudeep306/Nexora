@@ -39,6 +39,14 @@
       "name": "C++ basics",
       "icon": "code",
       "desc": "Types, I/O streams, namespaces, std::string and how C++ extends C.",
+      "summary": "You will be able to write simple C++ programs using types, I/O streams, namespaces and std::string, and explain how C++ extends C.",
+      "topics": [
+        "Fundamental types and auto",
+        "cin and cout streams",
+        "Namespaces and using declarations",
+        "std::string basics",
+        "Differences from C"
+      ],
       "kind": "concept",
       "requires": [
         "c:c-basics"
@@ -51,6 +59,14 @@
       "name": "References & pointers",
       "icon": "link",
       "desc": "References, const correctness, pointers and passing by value or reference.",
+      "summary": "You will be able to choose between references, pointers and values when passing data and apply const correctness.",
+      "topics": [
+        "Lvalue references",
+        "Pointers versus references",
+        "Const correctness",
+        "Passing by value, reference and const reference",
+        "Returning references safely"
+      ],
       "kind": "concept",
       "requires": [
         "cpp-basics",
@@ -64,6 +80,14 @@
       "name": "Overloading",
       "icon": "copy",
       "desc": "Function overloading, default arguments and inline functions.",
+      "summary": "You will be able to overload functions, use default arguments and understand how overload resolution and inline functions work.",
+      "topics": [
+        "Function overloading rules",
+        "Overload resolution",
+        "Default arguments",
+        "Inline functions",
+        "Name mangling"
+      ],
       "kind": "concept",
       "requires": [
         "cpp-basics"
@@ -76,6 +100,14 @@
       "name": "Classes",
       "icon": "shapes",
       "desc": "Classes, access control, constructors, member functions and static members.",
+      "summary": "You will be able to define classes with access control, constructors, member functions and static members.",
+      "topics": [
+        "Class definition and members",
+        "Public, private and protected access",
+        "Constructors and initialiser lists",
+        "Const member functions",
+        "Static data members and functions"
+      ],
       "kind": "concept",
       "requires": [
         "references"
@@ -88,6 +120,14 @@
       "name": "RAII & destructors",
       "icon": "lock",
       "desc": "Destructors, the rule of three/five and tying resource lifetime to object lifetime.",
+      "summary": "You will be able to tie resource lifetime to object lifetime with destructors and apply the rule of three and rule of five.",
+      "topics": [
+        "Destructors and scope exit",
+        "Resource acquisition is initialisation",
+        "Copy constructor and copy assignment",
+        "Rule of three and rule of five",
+        "Rule of zero"
+      ],
       "kind": "concept",
       "requires": [
         "classes"
@@ -100,6 +140,14 @@
       "name": "Operator overloading",
       "icon": "calculator",
       "desc": "Overloading arithmetic, comparison, stream and subscript operators sensibly.",
+      "summary": "You will be able to overload arithmetic, comparison, stream and subscript operators in a way that matches user expectations.",
+      "topics": [
+        "Member versus non-member operators",
+        "Arithmetic and compound assignment operators",
+        "Comparison and spaceship operator",
+        "Stream insertion and extraction",
+        "Subscript operator"
+      ],
       "kind": "concept",
       "requires": [
         "classes",
@@ -113,6 +161,15 @@
       "name": "Inheritance & virtual",
       "icon": "layers",
       "desc": "Inheritance, virtual functions, vtables and abstract base classes.",
+      "summary": "You will be able to use inheritance and virtual functions for runtime polymorphism and explain how vtables implement it.",
+      "topics": [
+        "Public inheritance",
+        "Virtual functions and override",
+        "Vtables and dynamic dispatch",
+        "Pure virtual functions and abstract classes",
+        "Virtual destructors",
+        "Object slicing"
+      ],
       "kind": "concept",
       "requires": [
         "classes"
@@ -125,6 +182,14 @@
       "name": "Templates",
       "icon": "shapes",
       "desc": "Function and class templates, template argument deduction and specialisation.",
+      "summary": "You will be able to write function and class templates and understand template argument deduction and specialisation.",
+      "topics": [
+        "Function templates",
+        "Class templates",
+        "Template argument deduction",
+        "Full and partial specialisation",
+        "Concepts and constraints"
+      ],
       "kind": "concept",
       "requires": [
         "classes"
@@ -137,6 +202,15 @@
       "name": "STL containers",
       "icon": "grid",
       "desc": "vector, deque, list, map, unordered_map, set and their complexity guarantees.",
+      "summary": "You will be able to choose the right STL container for a task based on its operations and complexity guarantees.",
+      "topics": [
+        "vector and dynamic arrays",
+        "deque and list",
+        "map and set as balanced trees",
+        "unordered_map and hashing",
+        "Complexity of container operations",
+        "Iterator invalidation rules"
+      ],
       "kind": "concept",
       "requires": [
         "templates"
@@ -149,6 +223,14 @@
       "name": "Iterators & algorithms",
       "icon": "route",
       "desc": "Iterator categories and the <algorithm> library: sort, find, transform and friends.",
+      "summary": "You will be able to use iterator categories and the algorithm library to sort, search and transform data without hand-written loops.",
+      "topics": [
+        "Iterator categories",
+        "Sorting and binary search algorithms",
+        "find, count and accumulate",
+        "transform and copy algorithms",
+        "Erase-remove idiom"
+      ],
       "kind": "concept",
       "requires": [
         "stl"
@@ -161,6 +243,14 @@
       "name": "Text indexer project",
       "icon": "search",
       "desc": "Build a word index over a set of files with STL containers and fast lookups.",
+      "summary": "You will build a word index over a set of files using STL containers for fast lookups and ranked results.",
+      "topics": [
+        "Reading files with streams",
+        "Tokenising and normalising words",
+        "Mapping words to file positions",
+        "Choosing map versus unordered_map",
+        "Answering lookup queries"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -175,6 +265,14 @@
       "name": "Move semantics",
       "icon": "bolt",
       "desc": "Rvalue references, move constructors, std::move and perfect forwarding.",
+      "summary": "You will be able to use rvalue references, move constructors, std::move and perfect forwarding to avoid unnecessary copies.",
+      "topics": [
+        "Lvalues and rvalues",
+        "Rvalue references",
+        "Move constructor and move assignment",
+        "std::move and moved-from state",
+        "Perfect forwarding with std::forward"
+      ],
       "kind": "concept",
       "requires": [
         "raii",
@@ -188,6 +286,14 @@
       "name": "Smart pointers",
       "icon": "key",
       "desc": "unique_ptr, shared_ptr and weak_ptr and when to use each.",
+      "summary": "You will be able to manage heap objects with unique_ptr, shared_ptr and weak_ptr and choose the right one for each ownership model.",
+      "topics": [
+        "unique_ptr and exclusive ownership",
+        "shared_ptr and reference counting",
+        "weak_ptr and breaking cycles",
+        "make_unique and make_shared",
+        "Custom deleters"
+      ],
       "kind": "concept",
       "requires": [
         "raii"
@@ -200,6 +306,14 @@
       "name": "Lambdas",
       "icon": "function",
       "desc": "Lambda expressions, captures, std::function and functional style with algorithms.",
+      "summary": "You will be able to write lambda expressions with captures, store them in std::function and use them with STL algorithms.",
+      "topics": [
+        "Lambda syntax",
+        "Capture by value and by reference",
+        "Mutable and generic lambdas",
+        "Storing callables in std::function",
+        "Lambdas with STL algorithms"
+      ],
       "kind": "concept",
       "requires": [
         "stl-algorithms"
@@ -212,6 +326,15 @@
       "name": "std::thread",
       "icon": "cpu",
       "desc": "std::thread, mutexes, condition variables, atomics and futures.",
+      "summary": "You will be able to write concurrent C++ with std::thread, mutexes, condition variables, atomics and futures.",
+      "topics": [
+        "Creating and joining std::thread",
+        "Mutexes and lock_guard",
+        "Condition variables",
+        "Atomic variables with std::atomic",
+        "Futures, promises and std::async",
+        "Data races"
+      ],
       "kind": "concept",
       "requires": [
         "lambdas",
@@ -225,6 +348,14 @@
       "name": "Build & CMake",
       "icon": "wrench",
       "desc": "Compilation units, linking, headers and building projects with CMake.",
+      "summary": "You will be able to organise code into headers and compilation units and build multi-file projects with CMake.",
+      "topics": [
+        "Headers and include guards",
+        "Compilation and linking steps",
+        "One definition rule",
+        "CMakeLists targets",
+        "Linking libraries with CMake"
+      ],
       "kind": "lesson",
       "requires": [
         "cpp-basics"
@@ -237,6 +368,14 @@
       "name": "UB & sanitizers",
       "icon": "warning",
       "desc": "Common undefined behaviour and catching it with AddressSanitizer and UBSan.",
+      "summary": "You will be able to recognise common undefined behaviour in C++ and catch it with AddressSanitizer and UBSan.",
+      "topics": [
+        "What undefined behaviour means",
+        "Out-of-bounds and use-after-free",
+        "Signed overflow and uninitialised reads",
+        "Catching memory errors with AddressSanitizer",
+        "Catching UB with UBSan"
+      ],
       "kind": "concept",
       "requires": [
         "references",
@@ -250,6 +389,14 @@
       "name": "Profiling",
       "icon": "timer",
       "desc": "Measuring performance, cache-friendly data layout and profilers.",
+      "summary": "You will be able to measure C++ performance with profilers and improve it with cache-friendly data layouts.",
+      "topics": [
+        "Benchmarking correctly",
+        "Sampling profilers like perf",
+        "CPU caches and locality",
+        "Struct of arrays versus array of structs",
+        "Compiler optimisation flags"
+      ],
       "kind": "lesson",
       "requires": [
         "stl",
@@ -263,6 +410,14 @@
       "name": "Matrix library project",
       "icon": "calculator",
       "desc": "Write a generic matrix class with operators, move semantics and benchmarks.",
+      "summary": "You will write a generic matrix class with overloaded operators and move semantics, and benchmark its performance.",
+      "topics": [
+        "Templated matrix class design",
+        "Operator overloading for matrices",
+        "Move semantics for temporaries",
+        "Cache-friendly multiplication",
+        "Unit tests and benchmarks"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

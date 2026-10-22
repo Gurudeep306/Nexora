@@ -38,6 +38,14 @@
       "name": "Why parallel",
       "icon": "cpu",
       "desc": "The end of frequency scaling, multicore, and concurrency vs parallelism.",
+      "summary": "You will understand why hardware moved to multicore and be able to distinguish concurrency from parallelism.",
+      "topics": [
+        "End of Dennard scaling and frequency limits",
+        "Multicore and manycore processors",
+        "Concurrency vs parallelism",
+        "Task vs data parallelism",
+        "Where parallel speedups come from"
+      ],
       "kind": "concept",
       "requires": [
         "coa:pipelining"
@@ -50,6 +58,14 @@
       "name": "Amdahl & Gustafson",
       "icon": "chart",
       "desc": "Speedup, efficiency, Amdahl's and Gustafson's laws.",
+      "summary": "You will be able to compute speedup and efficiency and predict scaling limits with Amdahl's and Gustafson's laws.",
+      "topics": [
+        "Speedup and efficiency",
+        "Amdahl's law and serial fractions",
+        "Gustafson's law and scaled speedup",
+        "Strong vs weak scaling",
+        "Superlinear speedup"
+      ],
       "kind": "concept",
       "requires": [
         "parallel-intro"
@@ -62,6 +78,14 @@
       "name": "Parallel models",
       "icon": "layers",
       "desc": "Shared memory vs message passing, SIMD vs MIMD and Flynn's taxonomy.",
+      "summary": "You will be able to classify parallel systems with Flynn's taxonomy and compare shared-memory and message-passing models.",
+      "topics": [
+        "Flynn's taxonomy",
+        "SIMD vs MIMD",
+        "Shared memory programming model",
+        "Message passing model",
+        "UMA and NUMA architectures"
+      ],
       "kind": "concept",
       "requires": [
         "parallel-intro"
@@ -74,6 +98,14 @@
       "name": "Threads & locks",
       "icon": "lock",
       "desc": "Creating threads, mutexes, condition variables and protecting shared state.",
+      "summary": "You will be able to create threads and protect shared state with mutexes and condition variables.",
+      "topics": [
+        "Creating and joining threads",
+        "Shared state and critical sections",
+        "Mutexes and lock guards",
+        "Condition variables and waiting",
+        "Spurious wakeups and predicate loops"
+      ],
       "kind": "concept",
       "requires": [
         "parallel-models",
@@ -87,6 +119,14 @@
       "name": "Races & deadlocks",
       "icon": "warning",
       "desc": "Data races, deadlocks, livelock and tools for finding them.",
+      "summary": "You will be able to identify data races, deadlocks and livelocks and use tools such as thread sanitisers to find them.",
+      "topics": [
+        "Data races and undefined behaviour",
+        "Deadlock conditions",
+        "Lock ordering to avoid deadlock",
+        "Livelock and starvation",
+        "ThreadSanitizer and Helgrind"
+      ],
       "kind": "concept",
       "requires": [
         "threads-locks"
@@ -99,6 +139,14 @@
       "name": "Memory models",
       "icon": "layers",
       "desc": "Cache coherence, false sharing, memory ordering and happens-before.",
+      "summary": "You will understand cache coherence, false sharing and memory ordering well enough to reason about happens-before relationships.",
+      "topics": [
+        "Cache coherence and MESI",
+        "False sharing and padding",
+        "Instruction and memory reordering",
+        "Sequential consistency",
+        "Happens-before and memory fences"
+      ],
       "kind": "concept",
       "requires": [
         "threads-locks",
@@ -112,6 +160,14 @@
       "name": "Atomics & lock-free",
       "icon": "bolt",
       "desc": "Atomic operations, compare-and-swap and lock-free data structures.",
+      "summary": "You will be able to use atomic operations and compare-and-swap to build simple lock-free data structures and know their pitfalls.",
+      "topics": [
+        "Atomic read-modify-write operations",
+        "Compare-and-swap loops",
+        "Memory orderings for atomics",
+        "Lock-free stacks and queues",
+        "The ABA problem"
+      ],
       "kind": "concept",
       "requires": [
         "memory-models"
@@ -124,6 +180,14 @@
       "name": "Concurrent structures",
       "icon": "grid",
       "desc": "Concurrent queues, hash maps and fine-grained locking.",
+      "summary": "You will be able to design concurrent queues and hash maps using coarse and fine-grained locking strategies.",
+      "topics": [
+        "Coarse-grained locking",
+        "Fine-grained and lock striping",
+        "Concurrent queues",
+        "Concurrent hash maps",
+        "Reader-writer locks"
+      ],
       "kind": "concept",
       "requires": [
         "threads-locks"
@@ -136,6 +200,14 @@
       "name": "Tasks & work stealing",
       "icon": "users",
       "desc": "Thread pools, futures, fork-join and work stealing schedulers.",
+      "summary": "You will be able to express parallel work as tasks with thread pools, futures and fork-join and explain work stealing.",
+      "topics": [
+        "Thread pools",
+        "Futures and promises",
+        "Fork-join parallelism",
+        "Work-stealing schedulers",
+        "Task granularity"
+      ],
       "kind": "concept",
       "requires": [
         "threads-locks"
@@ -148,6 +220,14 @@
       "name": "Actors & async",
       "icon": "messages",
       "desc": "Message passing within a process, actors, channels and async I/O.",
+      "summary": "You will be able to structure concurrent programs with actors, channels and async I/O instead of shared mutable state.",
+      "topics": [
+        "Message passing within a process",
+        "The actor model",
+        "Channels and CSP",
+        "Event loops and async I/O",
+        "Async/await and non-blocking calls"
+      ],
       "kind": "concept",
       "requires": [
         "task-parallelism"
@@ -160,6 +240,14 @@
       "name": "OpenMP",
       "icon": "code",
       "desc": "Parallel loops, reductions and scheduling with OpenMP.",
+      "summary": "You will be able to parallelise loops in C or C++ with OpenMP using reductions, scheduling clauses and data-sharing rules.",
+      "topics": [
+        "The parallel for directive",
+        "Shared and private variables",
+        "Reduction clauses",
+        "Static, dynamic and guided scheduling",
+        "Critical sections and atomics in OpenMP"
+      ],
       "kind": "lesson",
       "requires": [
         "task-parallelism"
@@ -172,6 +260,14 @@
       "name": "Work & span",
       "icon": "graph",
       "desc": "The work-span model, parallelism and analysing parallel algorithms.",
+      "summary": "You will be able to analyse parallel algorithms with the work-span model and compute their available parallelism.",
+      "topics": [
+        "Work and span definitions",
+        "Parallelism as work over span",
+        "Computation DAGs",
+        "Brent's theorem",
+        "Work-efficient algorithms"
+      ],
       "kind": "concept",
       "requires": [
         "speedup-laws",
@@ -185,6 +281,14 @@
       "name": "Map, reduce & scan",
       "icon": "route",
       "desc": "Parallel map, reduce, prefix sum and stencil patterns.",
+      "summary": "You will be able to implement parallel map, reduce, prefix sum and stencil patterns and analyse their work and span.",
+      "topics": [
+        "Parallel map",
+        "Tree-based reduction",
+        "Parallel prefix sum",
+        "Stencil computations",
+        "Associativity requirements"
+      ],
       "kind": "concept",
       "requires": [
         "work-span"
@@ -197,6 +301,14 @@
       "name": "Parallel sorting",
       "icon": "sort",
       "desc": "Parallel merge sort, sample sort and bitonic sort.",
+      "summary": "You will be able to implement and analyse parallel merge sort, sample sort and bitonic sort.",
+      "topics": [
+        "Parallel merge sort",
+        "Parallel merging",
+        "Sample sort",
+        "Bitonic sorting networks",
+        "Load balancing in sorting"
+      ],
       "kind": "concept",
       "requires": [
         "parallel-patterns"
@@ -209,6 +321,14 @@
       "name": "MPI",
       "icon": "globe",
       "desc": "Message passing on clusters: point-to-point and collective operations.",
+      "summary": "You will be able to write distributed programs with MPI using point-to-point messages and collective operations.",
+      "topics": [
+        "MPI ranks and communicators",
+        "Send and receive",
+        "Blocking vs non-blocking communication",
+        "Broadcast, scatter and gather",
+        "Reduce and allreduce"
+      ],
       "kind": "concept",
       "requires": [
         "parallel-models"
@@ -221,6 +341,14 @@
       "name": "Parallel image filter",
       "icon": "image",
       "desc": "Parallelise an image-processing pipeline and measure speedup across core counts.",
+      "summary": "You will parallelise an image-processing pipeline and measure how speedup scales as you add cores.",
+      "topics": [
+        "Decomposing an image into tiles",
+        "Parallel convolution filters",
+        "Measuring speedup and efficiency",
+        "Load balancing across threads",
+        "Profiling bottlenecks"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -236,6 +364,14 @@
       "name": "SIMD",
       "icon": "array",
       "desc": "Vector instructions, auto-vectorisation and intrinsics.",
+      "summary": "You will be able to speed up loops with vector instructions through auto-vectorisation and intrinsics.",
+      "topics": [
+        "SIMD registers and lanes",
+        "SSE, AVX and NEON",
+        "Auto-vectorisation by compilers",
+        "Compiler intrinsics",
+        "Data alignment and layout"
+      ],
       "kind": "concept",
       "requires": [
         "memory-models"
@@ -248,6 +384,14 @@
       "name": "GPU programming",
       "icon": "cpu",
       "desc": "The GPU execution model, kernels, threads, blocks and warps.",
+      "summary": "You will understand the GPU execution model and be able to write kernels organised into threads, blocks and warps.",
+      "topics": [
+        "GPU vs CPU architecture",
+        "Kernels and launch configuration",
+        "Threads, blocks and grids",
+        "Warps and SIMT execution",
+        "Branch divergence"
+      ],
       "kind": "concept",
       "requires": [
         "parallel-patterns",
@@ -261,6 +405,14 @@
       "name": "GPU memory",
       "icon": "layers",
       "desc": "Global, shared and register memory, coalescing and occupancy.",
+      "summary": "You will be able to optimise GPU kernels by using the memory hierarchy well, coalescing accesses and tuning occupancy.",
+      "topics": [
+        "Global, shared and register memory",
+        "Memory coalescing",
+        "Shared memory tiling",
+        "Bank conflicts",
+        "Occupancy and latency hiding"
+      ],
       "kind": "concept",
       "requires": [
         "gpu-programming"
@@ -273,6 +425,14 @@
       "name": "N-body on the GPU",
       "icon": "rocket",
       "desc": "Implement an N-body simulation on the GPU and compare it against a multicore CPU version.",
+      "summary": "You will implement an N-body simulation on the GPU and compare its performance against a multicore CPU version.",
+      "topics": [
+        "N-body force computation",
+        "Parallel CPU implementation",
+        "GPU kernel implementation",
+        "Shared memory tiling for forces",
+        "Performance comparison and analysis"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

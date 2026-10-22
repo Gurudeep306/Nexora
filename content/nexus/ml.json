@@ -43,6 +43,14 @@
       "name": "The ML workflow",
       "icon": "route",
       "desc": "Supervised versus unsupervised learning, features and labels, train/test splits, and the problem → data → model → evaluation loop.",
+      "summary": "You will understand the main types of machine learning and be able to frame a problem as features, labels and a train-test evaluation loop.",
+      "topics": [
+        "Supervised vs unsupervised learning",
+        "Features, labels and examples",
+        "Regression vs classification",
+        "Train, validation and test splits",
+        "The problem, data, model, evaluation loop"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 60,
@@ -59,6 +67,14 @@
       "name": "Data preprocessing",
       "icon": "filter",
       "desc": "Cleaning data, handling missing values, encoding categories, and feature scaling with pandas and scikit-learn.",
+      "summary": "You will be able to clean a raw dataset, handle missing values, encode categories and scale features with pandas and scikit-learn.",
+      "topics": [
+        "Inspecting and cleaning data with pandas",
+        "Imputing missing values",
+        "One-hot and ordinal encoding",
+        "Standardisation and min-max scaling",
+        "Fitting transformers on training data only"
+      ],
       "kind": "lesson",
       "requires": [
         "ml-workflow"
@@ -71,6 +87,15 @@
       "name": "Linear regression",
       "icon": "trending-up",
       "desc": "Least squares as a loss, the normal equations, and interpreting coefficients.",
+      "summary": "You will be able to fit linear regression by least squares, derive the normal equations and interpret the learned coefficients.",
+      "topics": [
+        "Hypothesis and mean squared error loss",
+        "Least squares fitting",
+        "The normal equations",
+        "Interpreting coefficients",
+        "Polynomial features",
+        "R-squared and residuals"
+      ],
       "kind": "lesson",
       "requires": [
         "ml-workflow",
@@ -94,6 +119,14 @@
       "name": "House price model",
       "icon": "home",
       "desc": "Build a regression model on a housing dataset: clean the data, fit linear regression, and report test error.",
+      "summary": "You will build a house price regression model, from cleaning the data to fitting linear regression and reporting test error.",
+      "topics": [
+        "Exploring the housing dataset",
+        "Cleaning and encoding features",
+        "Fitting a linear regression model",
+        "Measuring RMSE on a test set",
+        "Interpreting the most important features"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -108,6 +141,14 @@
       "name": "Gradient descent",
       "icon": "activity",
       "desc": "Batch, stochastic and mini-batch gradient descent; learning rates and convergence.",
+      "summary": "You will be able to train models with batch, stochastic and mini-batch gradient descent and choose a learning rate that converges.",
+      "topics": [
+        "Gradients of a loss function",
+        "Batch gradient descent",
+        "Stochastic and mini-batch variants",
+        "Choosing the learning rate",
+        "Convergence and feature scaling"
+      ],
       "kind": "lesson",
       "requires": [
         "linear-regression",
@@ -121,6 +162,14 @@
       "name": "Bias–variance",
       "icon": "sliders",
       "desc": "Underfitting and overfitting, the bias–variance trade-off and learning curves.",
+      "summary": "You will be able to diagnose underfitting and overfitting using the bias-variance trade-off and learning curves.",
+      "topics": [
+        "Underfitting and overfitting",
+        "Bias and variance decomposition",
+        "Model complexity trade-off",
+        "Training vs validation error",
+        "Learning curves"
+      ],
       "kind": "concept",
       "requires": [
         "linear-regression"
@@ -133,6 +182,14 @@
       "name": "Regularisation",
       "icon": "shield",
       "desc": "Ridge (L2) and lasso (L1) penalties and how they control model complexity.",
+      "summary": "You will be able to control model complexity with ridge and lasso penalties and explain how they affect coefficients.",
+      "topics": [
+        "Why regularisation reduces overfitting",
+        "Ridge regression and the L2 penalty",
+        "Lasso and the L1 penalty",
+        "Sparsity and feature selection with lasso",
+        "Choosing the regularisation strength"
+      ],
       "kind": "lesson",
       "requires": [
         "bias-variance",
@@ -146,6 +203,14 @@
       "name": "Model evaluation",
       "icon": "check-circle",
       "desc": "Accuracy, precision, recall, F1, ROC curves, confusion matrices and k-fold cross-validation.",
+      "summary": "You will be able to evaluate models with the right metrics and estimate generalisation reliably with k-fold cross-validation.",
+      "topics": [
+        "Confusion matrix",
+        "Accuracy, precision, recall and F1",
+        "ROC curves and AUC",
+        "Class imbalance and metric choice",
+        "k-fold cross-validation"
+      ],
       "kind": "lesson",
       "requires": [
         "bias-variance"
@@ -161,6 +226,14 @@
       "name": "Logistic regression",
       "icon": "function",
       "desc": "The sigmoid, cross-entropy loss and decision boundaries for binary classification.",
+      "summary": "You will be able to train logistic regression for binary classification and interpret its probabilities and decision boundary.",
+      "topics": [
+        "The sigmoid function",
+        "Log-odds and probabilities",
+        "Cross-entropy loss",
+        "Decision boundaries and thresholds",
+        "Multiclass with softmax"
+      ],
       "kind": "lesson",
       "requires": [
         "gradient-descent",
@@ -183,6 +256,14 @@
       "name": "Naive Bayes",
       "icon": "brain",
       "desc": "Generative classification with Bayes' rule and the conditional-independence assumption.",
+      "summary": "You will be able to build generative classifiers with Bayes' rule and the naive conditional-independence assumption.",
+      "topics": [
+        "Bayes' rule for classification",
+        "Conditional-independence assumption",
+        "Multinomial and Gaussian naive Bayes",
+        "Laplace smoothing",
+        "Generative vs discriminative models"
+      ],
       "kind": "lesson",
       "requires": [
         "prob:bayes-theorem",
@@ -204,6 +285,14 @@
       "name": "k-nearest neighbours",
       "icon": "users",
       "desc": "Distance-based classification, choosing k and the curse of dimensionality.",
+      "summary": "You will be able to classify with k-nearest neighbours, choose k and a distance metric, and explain the curse of dimensionality.",
+      "topics": [
+        "Distance metrics",
+        "The k-NN classification rule",
+        "Choosing k",
+        "Importance of feature scaling",
+        "The curse of dimensionality"
+      ],
       "kind": "lesson",
       "requires": [
         "ml-workflow"
@@ -226,6 +315,14 @@
       "name": "Decision trees",
       "icon": "tree",
       "desc": "Splitting on entropy and information gain or Gini impurity, and pruning.",
+      "summary": "You will be able to grow decision trees by choosing splits with entropy or Gini impurity and prune them to avoid overfitting.",
+      "topics": [
+        "Recursive binary splitting",
+        "Entropy and information gain",
+        "Gini impurity",
+        "Stopping criteria and pruning",
+        "Interpreting trees"
+      ],
       "kind": "lesson",
       "requires": [
         "ml-workflow"
@@ -247,6 +344,14 @@
       "name": "SVMs & perceptron",
       "icon": "crosshair",
       "desc": "The perceptron, maximum-margin classifiers, support vectors and the kernel trick.",
+      "summary": "You will understand the perceptron and maximum-margin classifiers and be able to use kernels for non-linear decision boundaries.",
+      "topics": [
+        "The perceptron learning rule",
+        "Maximum-margin hyperplanes",
+        "Support vectors",
+        "Soft margins and the C parameter",
+        "The kernel trick and RBF kernels"
+      ],
       "kind": "lesson",
       "requires": [
         "logistic-regression"
@@ -269,6 +374,14 @@
       "name": "Spam classifier",
       "icon": "mail",
       "desc": "Build a text classifier with bag-of-words features, compare naive Bayes and logistic regression, and evaluate with precision and recall.",
+      "summary": "You will build a spam classifier with bag-of-words features and compare naive Bayes and logistic regression using precision and recall.",
+      "topics": [
+        "Tokenising and vectorising email text",
+        "Bag-of-words and TF-IDF features",
+        "Training naive Bayes",
+        "Training logistic regression",
+        "Comparing precision and recall"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -284,6 +397,14 @@
       "name": "k-means clustering",
       "icon": "shapes",
       "desc": "k-means, initialisation, choosing k and the elbow method.",
+      "summary": "You will be able to cluster unlabelled data with k-means, initialise it well and choose the number of clusters.",
+      "topics": [
+        "The k-means algorithm",
+        "Within-cluster sum of squares",
+        "k-means++ initialisation",
+        "The elbow method",
+        "Silhouette scores"
+      ],
       "kind": "lesson",
       "requires": [
         "ml-workflow"
@@ -305,6 +426,14 @@
       "name": "Hierarchical clusters",
       "icon": "git-branch",
       "desc": "Agglomerative clustering, single and complete linkage, and dendrograms.",
+      "summary": "You will be able to build agglomerative clusterings, compare linkage criteria and read dendrograms to pick clusters.",
+      "topics": [
+        "Agglomerative clustering",
+        "Single linkage",
+        "Complete and average linkage",
+        "Reading dendrograms",
+        "Cutting the tree into clusters"
+      ],
       "kind": "lesson",
       "requires": [
         "clustering"
@@ -326,6 +455,14 @@
       "name": "PCA",
       "icon": "layers",
       "desc": "Dimensionality reduction with principal components, explained variance and LDA.",
+      "summary": "You will be able to reduce dimensionality with principal component analysis and contrast it with supervised LDA.",
+      "topics": [
+        "Covariance and principal directions",
+        "PCA via eigendecomposition or SVD",
+        "Explained variance ratio",
+        "Choosing the number of components",
+        "Linear discriminant analysis"
+      ],
       "kind": "lesson",
       "requires": [
         "la:eigenvalues",
@@ -349,6 +486,14 @@
       "name": "Customer segments",
       "icon": "users",
       "desc": "Cluster a customer dataset, reduce it with PCA to visualise the groups, and describe each segment.",
+      "summary": "You will cluster a customer dataset, visualise the groups with PCA and describe what distinguishes each segment.",
+      "topics": [
+        "Preparing customer features",
+        "Clustering with k-means",
+        "Choosing k for segments",
+        "Projecting clusters with PCA",
+        "Profiling and naming segments"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -363,6 +508,14 @@
       "name": "Ensembles",
       "icon": "trophy",
       "desc": "Bagging, random forests and gradient boosting.",
+      "summary": "You will be able to combine models with bagging, random forests and gradient boosting to improve predictive accuracy.",
+      "topics": [
+        "Bagging and bootstrap samples",
+        "Random forests and feature subsampling",
+        "Boosting principles",
+        "Gradient boosting machines",
+        "Feature importance from ensembles"
+      ],
       "kind": "lesson",
       "requires": [
         "decision-trees",
@@ -376,6 +529,14 @@
       "name": "Feature engineering",
       "icon": "wrench",
       "desc": "Building informative features, feature selection, pipelines and avoiding data leakage.",
+      "summary": "You will be able to create informative features, select useful ones and build pipelines that avoid data leakage.",
+      "topics": [
+        "Creating features from domain knowledge",
+        "Interaction and polynomial features",
+        "Feature selection methods",
+        "scikit-learn pipelines",
+        "Detecting and avoiding data leakage"
+      ],
       "kind": "lesson",
       "requires": [
         "data-preprocessing",
@@ -389,6 +550,14 @@
       "name": "Hyperparameter tuning",
       "icon": "sliders",
       "desc": "Grid and random search with cross-validation, and keeping a clean held-out test set.",
+      "summary": "You will be able to tune hyperparameters with grid and random search under cross-validation while keeping a clean held-out test set.",
+      "topics": [
+        "Parameters vs hyperparameters",
+        "Grid search with cross-validation",
+        "Random search",
+        "Nested cross-validation",
+        "Keeping the test set untouched"
+      ],
       "kind": "lesson",
       "requires": [
         "model-evaluation",
@@ -402,6 +571,14 @@
       "name": "End-to-end pipeline",
       "icon": "rocket",
       "desc": "Take a tabular competition dataset from raw CSV to a tuned ensemble with a reproducible pipeline and a short written report.",
+      "summary": "You will take a tabular dataset from raw CSV to a tuned, reproducible ensemble model and write a short report on the results.",
+      "topics": [
+        "Exploratory data analysis",
+        "Preprocessing pipeline",
+        "Baseline and ensemble models",
+        "Hyperparameter tuning",
+        "Reproducibility and the written report"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

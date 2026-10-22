@@ -38,6 +38,14 @@
       "name": "Software lifecycle",
       "icon": "route",
       "desc": "Lifecycle models: waterfall, iterative, spiral and where each fits.",
+      "summary": "You will be able to compare waterfall, iterative and spiral lifecycle models and choose one that fits a project's risks.",
+      "topics": [
+        "Phases of the software lifecycle",
+        "Waterfall model",
+        "Iterative and incremental development",
+        "Spiral model and risk",
+        "Choosing a lifecycle model"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 40
@@ -48,6 +56,14 @@
       "name": "Agile & Scrum",
       "icon": "activity",
       "desc": "Agile values, Scrum roles and ceremonies, and Kanban.",
+      "summary": "You will be able to explain agile values and run Scrum and Kanban practices including roles, events and boards.",
+      "topics": [
+        "Agile manifesto values",
+        "Scrum roles",
+        "Sprints and Scrum events",
+        "Product and sprint backlogs",
+        "Kanban boards and WIP limits"
+      ],
       "kind": "concept",
       "requires": [
         "sdlc"
@@ -60,6 +76,14 @@
       "name": "Requirements",
       "icon": "list",
       "desc": "Functional and non-functional requirements, user stories and acceptance criteria.",
+      "summary": "You will be able to capture functional and non-functional requirements as user stories with clear acceptance criteria.",
+      "topics": [
+        "Functional vs non-functional requirements",
+        "Eliciting requirements",
+        "User stories",
+        "Acceptance criteria",
+        "Prioritisation techniques"
+      ],
       "kind": "concept",
       "requires": [
         "sdlc"
@@ -72,6 +96,14 @@
       "name": "Estimation & planning",
       "icon": "calendar",
       "desc": "Story points, estimation techniques and planning under uncertainty.",
+      "summary": "You will be able to estimate work with story points and other techniques and plan releases under uncertainty.",
+      "topics": [
+        "Story points and relative sizing",
+        "Planning poker",
+        "Team velocity",
+        "Estimation pitfalls",
+        "Planning with buffers and ranges"
+      ],
       "kind": "concept",
       "requires": [
         "agile",
@@ -85,6 +117,14 @@
       "name": "Architecture styles",
       "icon": "building",
       "desc": "Layered, hexagonal, event-driven and microservice architectures.",
+      "summary": "You will be able to compare layered, hexagonal, event-driven and microservice architectures and their trade-offs.",
+      "topics": [
+        "Layered architecture",
+        "Hexagonal architecture",
+        "Event-driven architecture",
+        "Microservices vs monoliths",
+        "Quality attributes and trade-offs"
+      ],
       "kind": "concept",
       "requires": [
         "requirements",
@@ -98,6 +138,14 @@
       "name": "Modular design",
       "icon": "grid",
       "desc": "Module boundaries, interfaces and information hiding.",
+      "summary": "You will be able to draw module boundaries with clean interfaces and use information hiding to contain change.",
+      "topics": [
+        "Module boundaries",
+        "Interfaces and contracts",
+        "Information hiding",
+        "Coupling and cohesion",
+        "Dependency direction"
+      ],
       "kind": "concept",
       "requires": [
         "architecture-styles"
@@ -110,6 +158,14 @@
       "name": "Docs & ADRs",
       "icon": "book",
       "desc": "Design documents, architecture decision records and diagrams.",
+      "summary": "You will be able to write design documents and architecture decision records and draw diagrams that communicate a design.",
+      "topics": [
+        "Structure of a design document",
+        "Architecture decision records",
+        "C4 and other diagram styles",
+        "Documenting alternatives considered",
+        "Reviewing design docs"
+      ],
       "kind": "lesson",
       "requires": [
         "architecture-styles"
@@ -122,6 +178,14 @@
       "name": "Unit testing",
       "icon": "check-circle",
       "desc": "Writing small, fast, isolated tests and the test pyramid.",
+      "summary": "You will be able to write small, fast, isolated unit tests and place them correctly within the test pyramid.",
+      "topics": [
+        "What makes a good unit test",
+        "Arrange-act-assert structure",
+        "Test isolation",
+        "The test pyramid",
+        "Naming and organising tests"
+      ],
       "kind": "concept",
       "requires": [
         "modular-design"
@@ -134,6 +198,14 @@
       "name": "Test case design",
       "icon": "target",
       "desc": "Equivalence partitioning, boundary values and decision tables.",
+      "summary": "You will be able to derive effective test cases systematically with equivalence partitioning, boundary values and decision tables.",
+      "topics": [
+        "Equivalence partitioning",
+        "Boundary value analysis",
+        "Decision tables",
+        "State transition testing",
+        "Black-box vs white-box testing"
+      ],
       "kind": "concept",
       "requires": [
         "unit-testing"
@@ -146,6 +218,14 @@
       "name": "Test doubles",
       "icon": "copy",
       "desc": "Mocks, stubs, fakes and spies and when to use them.",
+      "summary": "You will be able to choose between mocks, stubs, fakes and spies and use test doubles without making tests brittle.",
+      "topics": [
+        "Dummies and stubs",
+        "Mocks and interaction verification",
+        "Fakes with working implementations",
+        "Spies that record calls",
+        "Over-mocking and brittle tests"
+      ],
       "kind": "concept",
       "requires": [
         "unit-testing"
@@ -158,6 +238,14 @@
       "name": "TDD",
       "icon": "play",
       "desc": "Red-green-refactor and letting tests drive the design.",
+      "summary": "You will be able to develop code test-first using the red-green-refactor cycle and let tests shape the design.",
+      "topics": [
+        "Red-green-refactor cycle",
+        "Writing the simplest passing code",
+        "Refactoring under tests",
+        "Tests as design feedback",
+        "When TDD helps and hurts"
+      ],
       "kind": "concept",
       "requires": [
         "unit-testing"
@@ -170,6 +258,14 @@
       "name": "Integration & E2E",
       "icon": "layers",
       "desc": "Integration, end-to-end and contract tests and their trade-offs.",
+      "summary": "You will be able to write integration, end-to-end and contract tests and balance their confidence against cost and flakiness.",
+      "topics": [
+        "Integration tests",
+        "End-to-end tests",
+        "Contract testing",
+        "Test environments and data",
+        "Speed and flakiness trade-offs"
+      ],
       "kind": "concept",
       "requires": [
         "mocking"
@@ -182,6 +278,14 @@
       "name": "Coverage & mutation",
       "icon": "chart",
       "desc": "Statement and branch coverage, and mutation testing to judge test quality.",
+      "summary": "You will be able to measure statement and branch coverage and use mutation testing to judge how strong a test suite is.",
+      "topics": [
+        "Statement coverage",
+        "Branch coverage",
+        "Limits of coverage metrics",
+        "Mutation testing",
+        "Mutation score"
+      ],
       "kind": "concept",
       "requires": [
         "test-design"
@@ -194,6 +298,14 @@
       "name": "Code review",
       "icon": "eye",
       "desc": "Giving and receiving review, checklists and keeping changes small.",
+      "summary": "You will be able to give and receive constructive code reviews and keep changes small enough to review well.",
+      "topics": [
+        "Goals of code review",
+        "Writing helpful review comments",
+        "Review checklists",
+        "Small, focused changes",
+        "Responding to feedback"
+      ],
       "kind": "concept",
       "requires": [
         "git:pull-requests"
@@ -206,6 +318,14 @@
       "name": "Linters & analysis",
       "icon": "search",
       "desc": "Linters, formatters, type checkers and static analysis tools.",
+      "summary": "You will be able to use linters, formatters, type checkers and static analysis tools to catch problems before runtime.",
+      "topics": [
+        "Linters and style rules",
+        "Automatic formatters",
+        "Static type checking",
+        "Static analysis for bugs and security",
+        "Running checks in pre-commit and CI"
+      ],
       "kind": "lesson",
       "requires": [
         "modular-design"
@@ -218,6 +338,14 @@
       "name": "Debugging",
       "icon": "crosshair",
       "desc": "Reproducing bugs, debuggers, logging and bisecting.",
+      "summary": "You will be able to find bugs systematically by reproducing them, using debuggers and logs and bisecting changes.",
+      "topics": [
+        "Reproducing bugs reliably",
+        "Using a debugger with breakpoints",
+        "Logging for diagnosis",
+        "Bisecting to find regressions",
+        "Scientific debugging with hypotheses"
+      ],
       "kind": "concept",
       "requires": [
         "unit-testing"
@@ -230,6 +358,14 @@
       "name": "Refactoring & debt",
       "icon": "wrench",
       "desc": "Managing technical debt and refactoring safely under tests.",
+      "summary": "You will be able to identify and prioritise technical debt and pay it down through safe refactoring under tests.",
+      "topics": [
+        "Types of technical debt",
+        "Code smells",
+        "Prioritising debt",
+        "Refactoring safely with tests",
+        "Strangler fig approach"
+      ],
       "kind": "concept",
       "requires": [
         "tdd",
@@ -243,6 +379,14 @@
       "name": "Versioning & releases",
       "icon": "tag",
       "desc": "Semantic versioning, changelogs and release processes.",
+      "summary": "You will be able to version software with semantic versioning, maintain changelogs and run repeatable release processes.",
+      "topics": [
+        "Semantic versioning",
+        "Breaking vs non-breaking changes",
+        "Maintaining changelogs",
+        "Release branches and tags",
+        "Release automation"
+      ],
       "kind": "concept",
       "requires": [
         "git:git-basics",
@@ -256,6 +400,14 @@
       "name": "Testing in CI",
       "icon": "run",
       "desc": "Running test suites automatically, flaky tests and quality gates.",
+      "summary": "You will be able to run test suites automatically in CI, handle flaky tests and enforce quality gates on merges.",
+      "topics": [
+        "CI pipelines for tests",
+        "Parallelising test runs",
+        "Detecting and fixing flaky tests",
+        "Quality gates",
+        "Fast feedback for developers"
+      ],
       "kind": "lesson",
       "requires": [
         "integration-testing",
@@ -269,6 +421,14 @@
       "name": "Tested library project",
       "icon": "check",
       "desc": "Build a small library test-first with high branch coverage and CI.",
+      "summary": "You will build a small library test-first with high branch coverage and continuous integration.",
+      "topics": [
+        "Designing the library API",
+        "Test-first development",
+        "Measuring branch coverage",
+        "Setting up CI",
+        "Documentation and examples"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -284,6 +444,14 @@
       "name": "Team project",
       "icon": "users",
       "desc": "Run a short team project with sprints, reviews and a tagged release.",
+      "summary": "You will run a short team project with sprints, code reviews and a tagged release.",
+      "topics": [
+        "Sprint planning and backlog",
+        "Branching and pull requests",
+        "Code reviews",
+        "Sprint retrospectives",
+        "Tagging a release"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

@@ -165,6 +165,11 @@ export interface SubjectRank {
   coreLeft?: number | null
 }
 
+export interface WebHubs {
+  gate: { CSE?: { bank: string; name: string; nexus: string }[]; DA?: { bank: string; name: string; nexus: string }[]; exceptions?: Record<string, string> }
+  learn: { course: string; name: string; href: string; nexus: string }[]
+}
+
 export interface WebStream {
   id: string
   name: string
@@ -220,6 +225,8 @@ export interface NexusWebStructure {
   routes: WebRoute[]
   /** streams in their order around the radial overview */
   streams?: WebStream[]
+  /** where Learn courses and GATE subjects live in the Nexus (content/nexus/_hubs.json) */
+  hubs?: WebHubs
   clusters: {
     id: string
     name: string

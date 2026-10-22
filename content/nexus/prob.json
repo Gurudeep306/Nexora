@@ -43,6 +43,14 @@
       "name": "Probability basics",
       "icon": "random",
       "desc": "Sample spaces, events, the axioms, complements and the addition rule, with dice, coins and cards.",
+      "summary": "You will be able to define sample spaces and events and compute probabilities with the axioms, complements and the addition rule.",
+      "topics": [
+        "Sample spaces and events",
+        "Axioms of probability",
+        "Complement rule",
+        "Addition rule for unions",
+        "Dice, coin and card examples"
+      ],
       "kind": "lesson",
       "requires": [
         "dm:sets-relations"
@@ -74,6 +82,14 @@
       "name": "Counting & probability",
       "icon": "calculator",
       "desc": "Equally likely outcomes counted with permutations and combinations: birthday, urn and sampling-without-replacement problems.",
+      "summary": "You will be able to compute probabilities of equally likely outcomes using permutations and combinations in classic counting problems.",
+      "topics": [
+        "Equally likely outcomes",
+        "Permutations and combinations",
+        "The birthday problem",
+        "Urn and ball problems",
+        "Sampling with and without replacement"
+      ],
       "kind": "lesson",
       "requires": [
         "probability-basics",
@@ -100,6 +116,14 @@
       "name": "Conditional prob.",
       "icon": "filter",
       "desc": "P(A|B), the multiplication rule and sequential experiments.",
+      "summary": "You will be able to compute conditional probabilities and use the multiplication rule for sequential experiments.",
+      "topics": [
+        "Definition of P(A|B)",
+        "Multiplication rule",
+        "Probability trees",
+        "Sequential experiments",
+        "Conditioning as reducing the sample space"
+      ],
       "kind": "lesson",
       "requires": [
         "probability-basics"
@@ -118,6 +142,14 @@
       "name": "Independence",
       "icon": "git-branch",
       "desc": "Independent events, pairwise versus mutual independence, and repeated trials.",
+      "summary": "You will be able to test events for independence and distinguish pairwise from mutual independence in repeated trials.",
+      "topics": [
+        "Independent events",
+        "Independence vs mutual exclusivity",
+        "Pairwise vs mutual independence",
+        "Independent repeated trials",
+        "Conditional independence"
+      ],
       "kind": "lesson",
       "requires": [
         "conditional-probability"
@@ -137,6 +169,14 @@
       "name": "Total probability",
       "icon": "layers",
       "desc": "Partitioning the sample space and the law of total probability.",
+      "summary": "You will be able to partition a sample space and compute probabilities with the law of total probability.",
+      "topics": [
+        "Partitions of the sample space",
+        "Law of total probability",
+        "Two-stage experiments",
+        "Tree diagrams for total probability",
+        "Total expectation preview"
+      ],
       "kind": "lesson",
       "requires": [
         "conditional-probability"
@@ -156,6 +196,14 @@
       "name": "Bayes' theorem",
       "icon": "brain",
       "desc": "Inverting conditional probabilities with Bayes' theorem; priors, likelihoods and posteriors.",
+      "summary": "You will be able to invert conditional probabilities with Bayes' theorem and interpret priors, likelihoods and posteriors.",
+      "topics": [
+        "Statement of Bayes' theorem",
+        "Prior, likelihood and posterior",
+        "Diagnostic test problems",
+        "Base rate fallacy",
+        "Updating beliefs with evidence"
+      ],
       "kind": "lesson",
       "requires": [
         "total-probability",
@@ -177,6 +225,14 @@
       "name": "Random variables",
       "icon": "activity",
       "desc": "Discrete and continuous random variables, PMF, PDF and CDF.",
+      "summary": "You will be able to describe discrete and continuous random variables with PMFs, PDFs and CDFs.",
+      "topics": [
+        "Random variables as functions",
+        "Probability mass functions",
+        "Probability density functions",
+        "Cumulative distribution functions",
+        "Functions of a random variable"
+      ],
       "kind": "lesson",
       "requires": [
         "conditional-probability",
@@ -200,6 +256,14 @@
       "name": "Expectation & variance",
       "icon": "target",
       "desc": "Expectation, linearity, indicator variables, variance and standard deviation.",
+      "summary": "You will be able to compute expectations and variances, using linearity and indicator variables to simplify hard problems.",
+      "topics": [
+        "Expected value",
+        "Linearity of expectation",
+        "Indicator random variables",
+        "Variance and standard deviation",
+        "Var(aX + b) and E[X^2]"
+      ],
       "kind": "lesson",
       "requires": [
         "random-variables"
@@ -223,6 +287,15 @@
       "name": "Joint distributions",
       "icon": "grid",
       "desc": "Joint and marginal distributions, sums, minimum and maximum of random variables, conditional expectation.",
+      "summary": "You will be able to work with joint and marginal distributions, sums, minima and maxima of random variables and conditional expectation.",
+      "topics": [
+        "Joint PMFs and PDFs",
+        "Marginal distributions",
+        "Independence of random variables",
+        "Sums of random variables",
+        "Distribution of minimum and maximum",
+        "Conditional expectation"
+      ],
       "kind": "lesson",
       "requires": [
         "expectation-variance",
@@ -248,6 +321,14 @@
       "name": "Discrete distributions",
       "icon": "chart",
       "desc": "Bernoulli, binomial, geometric and Poisson distributions: their means, variances and when to use each.",
+      "summary": "You will be able to choose among Bernoulli, binomial, geometric and Poisson distributions and use their means and variances.",
+      "topics": [
+        "Bernoulli distribution",
+        "Binomial distribution",
+        "Geometric distribution",
+        "Poisson distribution",
+        "Poisson approximation to the binomial"
+      ],
       "kind": "lesson",
       "requires": [
         "expectation-variance"
@@ -271,6 +352,14 @@
       "name": "Normal & exponential",
       "icon": "trending-up",
       "desc": "Uniform, exponential and normal distributions, memorylessness and standardising.",
+      "summary": "You will be able to use uniform, exponential and normal distributions, apply memorylessness and standardise normal variables.",
+      "topics": [
+        "Continuous uniform distribution",
+        "Exponential distribution",
+        "Memoryless property",
+        "Normal distribution",
+        "Standardising with z-scores"
+      ],
       "kind": "lesson",
       "requires": [
         "distributions"
@@ -292,6 +381,14 @@
       "name": "Limit theorems",
       "icon": "sparkles",
       "desc": "The law of large numbers and the central limit theorem, and the normal approximation to the binomial.",
+      "summary": "You will be able to apply the law of large numbers and central limit theorem, including the normal approximation to the binomial.",
+      "topics": [
+        "Markov and Chebyshev inequalities",
+        "Weak law of large numbers",
+        "Central limit theorem",
+        "Normal approximation to the binomial",
+        "Continuity correction"
+      ],
       "kind": "concept",
       "requires": [
         "continuous-distributions"
@@ -307,6 +404,14 @@
       "name": "Markov chains",
       "icon": "route",
       "desc": "States, transition matrices, stationary distributions and simple random walks.",
+      "summary": "You will be able to model systems as Markov chains with transition matrices and find stationary distributions.",
+      "topics": [
+        "States and the Markov property",
+        "Transition matrices",
+        "Multi-step transition probabilities",
+        "Stationary distributions",
+        "Simple random walks"
+      ],
       "kind": "concept",
       "requires": [
         "distributions",
@@ -320,6 +425,14 @@
       "name": "Descriptive statistics",
       "icon": "analytics",
       "desc": "Mean, median, mode, variance and standard deviation of data.",
+      "summary": "You will be able to summarise a data set with measures of centre and spread such as mean, median, mode and standard deviation.",
+      "topics": [
+        "Mean, median and mode",
+        "Range and quartiles",
+        "Variance and standard deviation",
+        "Sample vs population formulas",
+        "Effect of outliers"
+      ],
       "kind": "lesson",
       "requires": [
         "expectation-variance"
@@ -343,6 +456,14 @@
       "name": "Correlation",
       "icon": "activity",
       "desc": "Covariance, the correlation coefficient and the Cauchy–Schwarz bound.",
+      "summary": "You will be able to compute covariance and the correlation coefficient and explain why correlation always lies between -1 and 1.",
+      "topics": [
+        "Covariance and its properties",
+        "Variance of a sum",
+        "Correlation coefficient",
+        "Cauchy-Schwarz bound",
+        "Uncorrelated vs independent"
+      ],
       "kind": "lesson",
       "requires": [
         "joint-distributions",
@@ -367,6 +488,14 @@
       "name": "Statistical inference",
       "icon": "search",
       "desc": "Sampling distributions, estimators, confidence intervals and the idea of hypothesis testing (t, chi-square).",
+      "summary": "You will understand sampling distributions and estimators and be able to build confidence intervals and outline t and chi-square tests.",
+      "topics": [
+        "Populations, samples and statistics",
+        "Sampling distribution of the mean",
+        "Unbiased estimators",
+        "Confidence intervals",
+        "t and chi-square distributions"
+      ],
       "kind": "concept",
       "requires": [
         "limit-theorems",
@@ -389,6 +518,14 @@
       "name": "Hypothesis testing",
       "icon": "check-circle",
       "desc": "Null and alternative hypotheses, p-values, z and t tests, and type I and II errors.",
+      "summary": "You will be able to set up hypotheses, compute z and t test statistics and p-values and interpret type I and II errors.",
+      "topics": [
+        "Null and alternative hypotheses",
+        "Test statistics and p-values",
+        "z tests with known variance",
+        "t tests with unknown variance",
+        "Type I and type II errors"
+      ],
       "kind": "concept",
       "requires": [
         "statistical-inference"
@@ -401,6 +538,14 @@
       "name": "Least-squares line",
       "icon": "trending-up",
       "desc": "Fitting a line to data by least squares and reading the correlation coefficient.",
+      "summary": "You will be able to fit a least-squares line to data and interpret its slope together with the correlation coefficient.",
+      "topics": [
+        "Scatter plots",
+        "Least-squares criterion",
+        "Slope and intercept formulas",
+        "Relation of slope to correlation",
+        "Residuals and prediction"
+      ],
       "kind": "concept",
       "requires": [
         "covariance-correlation"

@@ -1,0 +1,38 @@
+{
+  "_doc": "Where every Learn course and GATE subject lives in the Nexus: each maps to exactly one Nexus subject, whose one page (/learn/<id>) is linked from /learn, /gate and the Nexus. GATE keys are PYQ-bank subject ids; 'exceptions' are bank subjects with no skill tree, and why. Validated by tests/nexus-hubs.test.js.",
+  "gate": {
+    "CSE": [
+      { "bank": "ga", "name": "General Aptitude", "nexus": "ga" },
+      { "bank": "dm", "name": "Discrete Mathematics", "nexus": "dm" },
+      { "bank": "la", "name": "Linear Algebra", "nexus": "la" },
+      { "bank": "calc", "name": "Calculus", "nexus": "calc" },
+      { "bank": "prob", "name": "Probability", "nexus": "prob" },
+      { "bank": "dl", "name": "Digital Logic", "nexus": "dl" },
+      { "bank": "coa", "name": "Computer Organization and Architecture", "nexus": "coa" },
+      { "bank": "pds", "name": "Programming and Data Structures", "nexus": "c" },
+      { "bank": "algo", "name": "Algorithms", "nexus": "algo" },
+      { "bank": "toc", "name": "Theory of Computation", "nexus": "toc" },
+      { "bank": "cd", "name": "Compiler Design", "nexus": "cd" },
+      { "bank": "os", "name": "Operating Systems", "nexus": "os" },
+      { "bank": "db", "name": "Databases", "nexus": "dbms" },
+      { "bank": "cn", "name": "Computer Networks", "nexus": "cn" }
+    ],
+    "DA": [
+      { "bank": "ga", "name": "General Aptitude", "nexus": "ga" },
+      { "bank": "prob", "name": "Probability and Statistics", "nexus": "prob" },
+      { "bank": "la", "name": "Linear Algebra", "nexus": "la" },
+      { "bank": "calc", "name": "Calculus and Optimization", "nexus": "calc" },
+      { "bank": "pdsa", "name": "Programming, Data Structures and Algorithms", "nexus": "python" },
+      { "bank": "dbw", "name": "Database Management and Warehousing", "nexus": "dbms" },
+      { "bank": "ml", "name": "Machine Learning", "nexus": "ml" },
+      { "bank": "ai", "name": "Artificial Intelligence", "nexus": "ai" }
+    ],
+    "exceptions": {
+      "legacy": "Topics dropped from the current GATE CSE syllabus (microprocessors, software engineering, web, graphics, numerical methods). Practised from GATE practice; the live subjects for them are software-engineering, web, computer-graphics and numerical-methods."
+    }
+  },
+  "learn": [
+    { "course": "dsa", "name": "DSA Course", "href": "/learn?tab=dsa", "nexus": "dsa" },
+    { "course": "sysdesign", "name": "System Design Studio", "href": "/learn?tab=sysdesign", "nexus": "sysd" }
+  ]
+}

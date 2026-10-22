@@ -39,6 +39,14 @@
       "name": "How the web works",
       "icon": "globe",
       "desc": "Browsers, servers, URLs, DNS and what happens when you load a page.",
+      "summary": "You will be able to explain what happens between typing a URL and seeing a page, including DNS, servers and browsers.",
+      "topics": [
+        "Clients, servers and browsers",
+        "Anatomy of a URL",
+        "DNS resolution",
+        "TCP and TLS connections",
+        "How browsers render a page"
+      ],
       "kind": "concept",
       "requires": [
         "cn:ip-addressing"
@@ -51,6 +59,15 @@
       "name": "HTTP basics",
       "icon": "link",
       "desc": "Requests and responses, methods, status codes, headers, cookies and caching.",
+      "summary": "You will be able to read and reason about HTTP requests and responses, including methods, status codes, headers, cookies and caching.",
+      "topics": [
+        "Request and response structure",
+        "HTTP methods",
+        "Status code classes",
+        "Headers and content types",
+        "Cookies and Set-Cookie",
+        "Cache-Control and ETags"
+      ],
       "kind": "lesson",
       "requires": [
         "how-the-web-works",
@@ -70,6 +87,14 @@
       "name": "HTML & CSS",
       "icon": "palette",
       "desc": "Semantic HTML, the CSS box model, selectors and the cascade.",
+      "summary": "You will be able to write semantic HTML and style it with CSS selectors, the box model and the cascade.",
+      "topics": [
+        "Semantic HTML elements",
+        "CSS selectors",
+        "The box model",
+        "Cascade, specificity and inheritance",
+        "Units and colours"
+      ],
       "kind": "lesson",
       "requires": [
         "how-the-web-works"
@@ -92,6 +117,14 @@
       "name": "Layout & responsive",
       "icon": "grid",
       "desc": "Flexbox, CSS grid, media queries and mobile-first design.",
+      "summary": "You will be able to build responsive layouts with Flexbox, CSS grid and media queries using a mobile-first approach.",
+      "topics": [
+        "Flexbox layout",
+        "CSS grid layout",
+        "Media queries",
+        "Mobile-first design",
+        "Responsive images and units"
+      ],
       "kind": "lesson",
       "requires": [
         "html-css"
@@ -104,6 +137,14 @@
       "name": "Accessibility",
       "icon": "eye",
       "desc": "Semantic structure, keyboard navigation, ARIA basics and colour contrast.",
+      "summary": "You will be able to make pages accessible with semantic structure, keyboard support, basic ARIA and sufficient colour contrast.",
+      "topics": [
+        "Semantic structure and landmarks",
+        "Keyboard navigation and focus",
+        "ARIA roles and labels",
+        "Colour contrast",
+        "Alt text for images"
+      ],
       "kind": "concept",
       "requires": [
         "html-css"
@@ -122,6 +163,14 @@
       "name": "JavaScript",
       "icon": "code",
       "desc": "Values, functions, closures, objects, arrays and modules.",
+      "summary": "You will be able to write JavaScript using values, functions, closures, objects, arrays and modules for the browser.",
+      "topics": [
+        "Values and types",
+        "Functions and closures",
+        "Objects and arrays",
+        "Array methods",
+        "ES modules"
+      ],
       "kind": "lesson",
       "requires": [
         "html-css"
@@ -140,6 +189,14 @@
       "name": "DOM & events",
       "icon": "monitor",
       "desc": "Selecting and updating elements, event listeners and form handling.",
+      "summary": "You will be able to select and update page elements and respond to user input with event listeners and form handling.",
+      "topics": [
+        "Selecting elements",
+        "Updating content and classes",
+        "Event listeners",
+        "Event delegation",
+        "Handling form submissions"
+      ],
       "kind": "lesson",
       "requires": [
         "javascript"
@@ -152,6 +209,14 @@
       "name": "Async JavaScript",
       "icon": "clock",
       "desc": "The event loop, promises, async/await and fetching data.",
+      "summary": "You will be able to fetch data asynchronously with promises and async/await and understand how the event loop schedules work.",
+      "topics": [
+        "The event loop",
+        "Promises and chaining",
+        "async and await",
+        "Fetching data with fetch",
+        "Error handling for requests"
+      ],
       "kind": "lesson",
       "requires": [
         "javascript",
@@ -171,6 +236,14 @@
       "name": "Interactive page",
       "icon": "play",
       "desc": "Build a responsive single-page tool in plain JavaScript that fetches data from a public API.",
+      "summary": "You will build a responsive single-page tool in plain JavaScript that fetches and displays data from a public API.",
+      "topics": [
+        "Planning the page layout",
+        "Fetching API data",
+        "Rendering results to the DOM",
+        "Handling loading and errors",
+        "Responsive styling"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -186,6 +259,14 @@
       "name": "TypeScript",
       "icon": "type",
       "desc": "Static types for JavaScript: annotations, interfaces, generics and narrowing.",
+      "summary": "You will be able to add static types to JavaScript with annotations, interfaces, generics and narrowing.",
+      "topics": [
+        "Type annotations",
+        "Interfaces and type aliases",
+        "Union types and narrowing",
+        "Generic functions and types",
+        "Configuring the compiler"
+      ],
       "kind": "lesson",
       "requires": [
         "javascript"
@@ -204,6 +285,14 @@
       "name": "React",
       "icon": "layers",
       "desc": "Components, JSX, props and rendering lists.",
+      "summary": "You will be able to build user interfaces from React components using JSX and props and render lists of data.",
+      "topics": [
+        "Components as functions",
+        "JSX syntax",
+        "Passing data with props",
+        "Rendering lists with keys",
+        "Conditional rendering"
+      ],
       "kind": "lesson",
       "requires": [
         "dom-events"
@@ -222,6 +311,14 @@
       "name": "State & hooks",
       "icon": "sliders",
       "desc": "useState, useEffect, lifting state up, and data fetching in components.",
+      "summary": "You will be able to manage component state with useState, run effects with useEffect and fetch data inside components.",
+      "topics": [
+        "Local state with useState",
+        "useEffect and dependencies",
+        "Lifting state up",
+        "Fetching data in components",
+        "Derived state and rerenders"
+      ],
       "kind": "lesson",
       "requires": [
         "react",
@@ -235,6 +332,14 @@
       "name": "Routing & forms",
       "icon": "route",
       "desc": "Client-side routing, controlled forms and validation.",
+      "summary": "You will be able to add client-side routing to a React app and build controlled forms with validation.",
+      "topics": [
+        "Client-side routing",
+        "Route parameters",
+        "Navigation links",
+        "Controlled form inputs",
+        "Form validation"
+      ],
       "kind": "lesson",
       "requires": [
         "react-state"
@@ -247,6 +352,14 @@
       "name": "React app",
       "icon": "rocket",
       "desc": "Build a multi-page React app with routing, forms and data from an external API.",
+      "summary": "You will build a multi-page React app with routing, forms and data loaded from an external API.",
+      "topics": [
+        "Project setup with a build tool",
+        "Component structure",
+        "Routing between pages",
+        "Forms with validation",
+        "Fetching and displaying API data"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -261,6 +374,14 @@
       "name": "Node.js servers",
       "icon": "server",
       "desc": "Running JavaScript on the server, npm, and handling requests with a framework like Express.",
+      "summary": "You will be able to run JavaScript on the server with Node.js and handle HTTP requests with a framework like Express.",
+      "topics": [
+        "Node.js runtime basics",
+        "npm and package.json",
+        "Express apps and routes",
+        "Middleware functions",
+        "Serving JSON responses"
+      ],
       "kind": "lesson",
       "requires": [
         "async-js",
@@ -280,6 +401,14 @@
       "name": "REST APIs",
       "icon": "share",
       "desc": "Resource design, routes, status codes, JSON, validation and pagination.",
+      "summary": "You will be able to design REST APIs with clear resources, routes, status codes, validation and pagination.",
+      "topics": [
+        "Resources and URL design",
+        "HTTP methods for CRUD",
+        "Status codes for APIs",
+        "Input validation",
+        "Pagination and filtering"
+      ],
       "kind": "lesson",
       "requires": [
         "node-server"
@@ -292,6 +421,14 @@
       "name": "Databases for web",
       "icon": "database",
       "desc": "Connecting a backend to SQL, migrations, ORMs and avoiding N+1 queries.",
+      "summary": "You will be able to connect a backend to a SQL database with migrations and an ORM and avoid N+1 query problems.",
+      "topics": [
+        "Connecting to a SQL database",
+        "Schema migrations",
+        "ORMs and query builders",
+        "The N+1 query problem",
+        "Transactions in web apps"
+      ],
       "kind": "lesson",
       "requires": [
         "rest-apis",
@@ -305,6 +442,14 @@
       "name": "Authentication",
       "icon": "key",
       "desc": "Password hashing, sessions versus tokens, cookies and OAuth sign-in.",
+      "summary": "You will be able to implement secure sign-in with hashed passwords, sessions or tokens, secure cookies and OAuth.",
+      "topics": [
+        "Password hashing with bcrypt or argon2",
+        "Sessions vs tokens",
+        "Secure cookie flags",
+        "JSON Web Tokens",
+        "OAuth sign-in flows"
+      ],
       "kind": "lesson",
       "requires": [
         "rest-apis"
@@ -317,6 +462,14 @@
       "name": "REST backend",
       "icon": "terminal",
       "desc": "Build a REST API with a database, authentication and tests for a small domain like a notes or bookmarks app.",
+      "summary": "You will build a REST API with a database, authentication and automated tests for a small domain such as notes or bookmarks.",
+      "topics": [
+        "Data model and migrations",
+        "CRUD endpoints",
+        "Authentication and authorisation",
+        "Validation and error handling",
+        "API tests"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -331,6 +484,14 @@
       "name": "Web security",
       "icon": "shield",
       "desc": "XSS, CSRF, SQL injection, CORS and HTTPS.",
+      "summary": "You will be able to recognise and defend against XSS, CSRF and SQL injection and configure CORS and HTTPS correctly.",
+      "topics": [
+        "Cross-site scripting",
+        "Cross-site request forgery",
+        "SQL injection",
+        "CORS policies",
+        "HTTPS and security headers"
+      ],
       "kind": "lesson",
       "requires": [
         "authentication",
@@ -344,6 +505,14 @@
       "name": "Performance",
       "icon": "bolt",
       "desc": "Measuring load and render time, bundling, code splitting, image optimisation and HTTP caching.",
+      "summary": "You will be able to measure and improve page load and render performance with bundling, code splitting, image optimisation and caching.",
+      "topics": [
+        "Core Web Vitals",
+        "Measuring with browser dev tools",
+        "Bundling and code splitting",
+        "Image optimisation",
+        "HTTP caching"
+      ],
       "kind": "lesson",
       "requires": [
         "react",
@@ -357,6 +526,14 @@
       "name": "Testing",
       "icon": "check-circle",
       "desc": "Unit, component and end-to-end tests for frontend and backend.",
+      "summary": "You will be able to write unit, component and end-to-end tests for both frontend and backend code.",
+      "topics": [
+        "Unit tests for logic",
+        "Component tests",
+        "API tests",
+        "End-to-end browser tests",
+        "Running tests in CI"
+      ],
       "kind": "lesson",
       "requires": [
         "react-state",
@@ -370,6 +547,14 @@
       "name": "Deployment",
       "icon": "upload",
       "desc": "Environments and config, building for production, hosting, CI/CD and monitoring.",
+      "summary": "You will be able to build and deploy web apps to production with environment config, CI/CD pipelines and monitoring.",
+      "topics": [
+        "Environments and configuration",
+        "Production builds",
+        "Hosting options",
+        "CI/CD pipelines",
+        "Monitoring and logging"
+      ],
       "kind": "lesson",
       "requires": [
         "node-server"
@@ -382,6 +567,14 @@
       "name": "Full-stack app",
       "icon": "trophy",
       "desc": "Ship a full-stack app: React frontend, REST backend with auth and a database, tests, and a live deployment.",
+      "summary": "You will ship a full-stack app with a React frontend, an authenticated REST backend with a database, tests and a live deployment.",
+      "topics": [
+        "Architecture and planning",
+        "React frontend",
+        "REST backend with auth",
+        "Database integration",
+        "Testing and deployment"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

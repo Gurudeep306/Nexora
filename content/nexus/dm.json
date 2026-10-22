@@ -47,6 +47,14 @@
       "name": "Propositional logic",
       "icon": "binary",
       "desc": "Connectives, truth tables, implication and its variants; tautologies, contradictions and satisfiability.",
+      "summary": "You will be able to build truth tables for compound propositions and classify formulas as tautologies, contradictions or satisfiable.",
+      "topics": [
+        "Logical connectives",
+        "Truth tables",
+        "Implication, converse, inverse and contrapositive",
+        "The biconditional connective",
+        "Tautologies, contradictions and satisfiability"
+      ],
       "kind": "lesson",
       "requires": [],
       "pyqTopics": [
@@ -72,6 +80,15 @@
       "name": "Equivalence & forms",
       "icon": "shapes",
       "desc": "Logical equivalence laws, De Morgan, CNF and DNF, and checking whether two formulas say the same thing.",
+      "summary": "You will be able to prove formulas equivalent with logical laws, convert them to CNF and DNF and test whether two formulas match.",
+      "topics": [
+        "Standard equivalence laws",
+        "De Morgan's laws",
+        "Rewriting implications",
+        "Conjunctive normal form",
+        "Disjunctive normal form",
+        "Testing equivalence of formulas"
+      ],
       "kind": "lesson",
       "requires": [
         "propositional-logic"
@@ -94,6 +111,14 @@
       "name": "Inference & validity",
       "icon": "check-circle",
       "desc": "Valid arguments, modus ponens and friends, resolution, and logical consequence.",
+      "summary": "You will be able to test argument validity using rules of inference, resolution and logical consequence.",
+      "topics": [
+        "Valid and invalid arguments",
+        "Modus ponens and modus tollens",
+        "Hypothetical and disjunctive syllogism",
+        "Resolution rule of inference",
+        "Logical consequence"
+      ],
       "kind": "lesson",
       "requires": [
         "logical-equivalence"
@@ -118,6 +143,14 @@
       "name": "Predicate logic",
       "icon": "function",
       "desc": "Predicates, universal and existential quantifiers, nested quantifiers, negation and translating English to first-order logic.",
+      "summary": "You will be able to translate English statements into first-order logic with quantifiers and negate quantified statements correctly.",
+      "topics": [
+        "Predicates and domains",
+        "Universal and existential quantifiers",
+        "Nested quantifiers and order",
+        "Negating quantified statements",
+        "Translating English to logic"
+      ],
       "kind": "lesson",
       "requires": [
         "propositional-logic"
@@ -141,6 +174,14 @@
       "name": "Proof techniques",
       "icon": "lightbulb",
       "desc": "Direct proof, contradiction, contrapositive and mathematical induction.",
+      "summary": "You will be able to write direct proofs, proofs by contradiction and contrapositive, and proofs by mathematical induction.",
+      "topics": [
+        "Direct proof",
+        "Proof by contrapositive",
+        "Proof by contradiction",
+        "Mathematical induction",
+        "Strong induction"
+      ],
       "kind": "concept",
       "requires": [
         "inference-rules",
@@ -163,6 +204,15 @@
       "name": "Sets & relations",
       "icon": "shapes",
       "desc": "Set operations and identities, power sets, Cartesian products, relations and their reflexive, symmetric and transitive properties.",
+      "summary": "You will be able to apply set operations and identities and test relations for reflexive, symmetric, antisymmetric and transitive properties.",
+      "topics": [
+        "Set operations and identities",
+        "Power sets",
+        "Cartesian products",
+        "Relations as subsets",
+        "Reflexive, symmetric and transitive properties",
+        "Antisymmetric relations"
+      ],
       "kind": "lesson",
       "requires": [
         "propositional-logic"
@@ -192,6 +242,14 @@
       "name": "Equivalence relations",
       "icon": "layers",
       "desc": "Equivalence classes, partitions, closures, and counting relations with given properties.",
+      "summary": "You will be able to find equivalence classes and partitions, compute closures and count relations with given properties.",
+      "topics": [
+        "Equivalence relations",
+        "Equivalence classes and partitions",
+        "Reflexive, symmetric and transitive closures",
+        "Counting relations with given properties",
+        "Bell numbers for partitions"
+      ],
       "kind": "lesson",
       "requires": [
         "sets-relations"
@@ -213,6 +271,15 @@
       "name": "Functions",
       "icon": "function",
       "desc": "Injective, surjective and bijective functions, composition, inverses, images and preimages.",
+      "summary": "You will be able to classify functions as injective, surjective or bijective and work with composition, inverses, images and preimages.",
+      "topics": [
+        "Injective functions",
+        "Surjective functions",
+        "Bijections and invertibility",
+        "Composition and inverses",
+        "Images and preimages",
+        "Counting functions between finite sets"
+      ],
       "kind": "lesson",
       "requires": [
         "sets-relations"
@@ -238,6 +305,14 @@
       "name": "Countability",
       "icon": "hash",
       "desc": "Finite, countable and uncountable sets, cardinality, and diagonalisation.",
+      "summary": "You will be able to classify sets as finite, countable or uncountable and prove uncountability by diagonalisation.",
+      "topics": [
+        "Cardinality and bijections",
+        "Countably infinite sets",
+        "Countability of rationals",
+        "Cantor's diagonal argument",
+        "Uncountability of reals and power sets"
+      ],
       "kind": "concept",
       "requires": [
         "functions"
@@ -258,6 +333,15 @@
       "name": "Posets & lattices",
       "icon": "git-branch",
       "desc": "Partial orders, Hasse diagrams, chains and antichains, lub and glb, lattices, distributive and complemented lattices.",
+      "summary": "You will be able to draw Hasse diagrams, find bounds in posets and decide whether a lattice is distributive or complemented.",
+      "topics": [
+        "Partial orders",
+        "Hasse diagrams",
+        "Chains and antichains",
+        "Least upper and greatest lower bounds",
+        "Lattices as posets with meet and join",
+        "Distributive and complemented lattices"
+      ],
       "kind": "lesson",
       "requires": [
         "equivalence-relations"
@@ -273,6 +357,14 @@
       "name": "Boolean algebra",
       "icon": "binary",
       "desc": "Boolean algebra as a complemented distributive lattice; the link between posets and logic circuits.",
+      "summary": "You will be able to recognise Boolean algebras as complemented distributive lattices and connect them to logic circuits.",
+      "topics": [
+        "Boolean algebra axioms",
+        "Complemented distributive lattices",
+        "Atoms and finite Boolean algebras",
+        "Boolean functions",
+        "Link to logic circuits"
+      ],
       "kind": "concept",
       "requires": [
         "posets-lattices",
@@ -294,6 +386,14 @@
       "name": "Groups",
       "icon": "puzzle",
       "desc": "Binary operations, closure, associativity, identity and inverses; groups and abelian groups, often over modular arithmetic.",
+      "summary": "You will be able to check group axioms for an operation, often modular arithmetic, and identify abelian groups.",
+      "topics": [
+        "Binary operations and closure",
+        "Checking associativity",
+        "Identity and inverses",
+        "Abelian groups",
+        "Groups under modular arithmetic"
+      ],
       "kind": "lesson",
       "requires": [
         "functions",
@@ -322,6 +422,14 @@
       "name": "Semigroups & monoids",
       "icon": "layers",
       "desc": "The algebraic ladder: groupoid, semigroup, monoid, group; checking each axiom on a given operation.",
+      "summary": "You will be able to classify an algebraic structure as a groupoid, semigroup, monoid or group by checking each axiom.",
+      "topics": [
+        "Groupoids and closure",
+        "Semigroups and associativity",
+        "Monoids and identity elements",
+        "Climbing the algebraic ladder",
+        "Checking axioms on tables"
+      ],
       "kind": "lesson",
       "requires": [
         "groups"
@@ -341,6 +449,14 @@
       "name": "Subgroups & Lagrange",
       "icon": "grid",
       "desc": "Subgroups, cosets, Lagrange's theorem, cyclic groups and generators, element orders.",
+      "summary": "You will be able to find subgroups and cosets, apply Lagrange's theorem and work with cyclic groups, generators and element orders.",
+      "topics": [
+        "Subgroup tests",
+        "Left and right cosets",
+        "Lagrange's theorem",
+        "Cyclic groups and generators",
+        "Order of an element"
+      ],
       "kind": "lesson",
       "requires": [
         "groups"
@@ -364,6 +480,14 @@
       "name": "Counting principles",
       "icon": "calculator",
       "desc": "Sum and product rules, permutations, counting strings and subsets.",
+      "summary": "You will be able to count arrangements using the sum and product rules, permutations and counts of strings and subsets.",
+      "topics": [
+        "Sum rule",
+        "Product rule",
+        "Permutations of n objects",
+        "Counting strings",
+        "Counting subsets"
+      ],
       "kind": "lesson",
       "requires": [
         "sets-relations"
@@ -386,6 +510,14 @@
       "name": "Combinations",
       "icon": "coins",
       "desc": "Binomial coefficients, multisets and stars and bars, distributions of identical and distinct objects, lattice paths.",
+      "summary": "You will be able to count selections and distributions with binomial coefficients, multisets, stars and bars and lattice paths.",
+      "topics": [
+        "Combinations and binomial coefficients",
+        "Binomial theorem",
+        "Multisets and stars and bars",
+        "Identical versus distinct objects",
+        "Lattice paths"
+      ],
       "kind": "lesson",
       "requires": [
         "counting-basics"
@@ -410,6 +542,14 @@
       "name": "Inclusion–exclusion",
       "icon": "filter",
       "desc": "Inclusion–exclusion, counting onto functions and derangements, and the pigeonhole principle.",
+      "summary": "You will be able to count with inclusion-exclusion, including onto functions and derangements, and apply the pigeonhole principle.",
+      "topics": [
+        "Inclusion-exclusion principle",
+        "Counting onto functions",
+        "Counting derangements",
+        "Pigeonhole principle",
+        "Generalised pigeonhole principle"
+      ],
       "kind": "lesson",
       "requires": [
         "combinatorics"
@@ -435,6 +575,14 @@
       "name": "Catalan & identities",
       "icon": "sparkles",
       "desc": "Catalan numbers, the ballot problem, double counting and summation identities.",
+      "summary": "You will be able to apply Catalan numbers and the ballot problem and prove identities by double counting.",
+      "topics": [
+        "Catalan numbers",
+        "Applications of Catalan numbers",
+        "The ballot problem",
+        "Double counting",
+        "Summation identities"
+      ],
       "kind": "concept",
       "requires": [
         "combinatorics"
@@ -457,6 +605,14 @@
       "name": "Recurrence relations",
       "icon": "activity",
       "desc": "Setting up recurrences for counting problems; solving linear homogeneous and non-homogeneous recurrences via the characteristic equation.",
+      "summary": "You will be able to set up recurrences for counting problems and solve linear recurrences with the characteristic equation.",
+      "topics": [
+        "Modelling problems with recurrences",
+        "Linear homogeneous recurrences",
+        "Characteristic equations",
+        "Repeated roots",
+        "Non-homogeneous recurrences"
+      ],
       "kind": "lesson",
       "requires": [
         "combinatorics",
@@ -482,6 +638,14 @@
       "name": "Generating functions",
       "icon": "function",
       "desc": "Ordinary generating functions for sequences and counting, and solving recurrences with them.",
+      "summary": "You will be able to use ordinary generating functions to represent sequences, count combinations and solve recurrences.",
+      "topics": [
+        "Ordinary generating functions",
+        "Common generating function identities",
+        "Coefficient extraction",
+        "Counting with generating functions",
+        "Solving recurrences with generating functions"
+      ],
       "kind": "lesson",
       "requires": [
         "recurrence-relations"
@@ -497,6 +661,14 @@
       "name": "Graph basics",
       "icon": "graph",
       "desc": "Graph types, degree and the handshaking lemma, complete and bipartite graphs, adjacency representations.",
+      "summary": "You will be able to describe graph types, apply the handshaking lemma and represent graphs with adjacency matrices and lists.",
+      "topics": [
+        "Simple graphs, multigraphs and digraphs",
+        "Degree and the handshaking lemma",
+        "Complete and bipartite graphs",
+        "Regular graphs",
+        "Adjacency matrices and lists"
+      ],
       "kind": "lesson",
       "requires": [
         "sets-relations",
@@ -522,6 +694,15 @@
       "name": "Paths & connectivity",
       "icon": "route",
       "desc": "Walks, paths and cycles, connected components, cut vertices and edges, diameter, Euler and Hamiltonian paths.",
+      "summary": "You will be able to analyse walks, paths, cycles and connectivity and decide whether Euler or Hamiltonian paths exist.",
+      "topics": [
+        "Walks, paths and cycles",
+        "Connected components",
+        "Cut vertices and cut edges",
+        "Diameter and distance",
+        "Euler paths and circuits",
+        "Hamiltonian paths and cycles"
+      ],
       "kind": "lesson",
       "requires": [
         "graph-theory"
@@ -546,6 +727,14 @@
       "name": "Trees & spanning trees",
       "icon": "tree",
       "desc": "Properties of trees and forests, counting spanning trees and Cayley's formula.",
+      "summary": "You will be able to prove properties of trees and forests and count spanning trees, including with Cayley's formula.",
+      "topics": [
+        "Properties of trees",
+        "Forests and components",
+        "Spanning trees",
+        "Cayley's formula",
+        "Counting spanning trees"
+      ],
       "kind": "lesson",
       "requires": [
         "connectivity"
@@ -567,6 +756,14 @@
       "name": "Planar graphs",
       "icon": "map",
       "desc": "Euler's formula, face counting, K5 and K3,3, and Kuratowski's theorem.",
+      "summary": "You will be able to apply Euler's formula to planar graphs, count faces and test planarity with Kuratowski's theorem.",
+      "topics": [
+        "Planar graphs and embeddings",
+        "Euler's formula",
+        "Edge bounds for planar graphs",
+        "Non-planarity of K5 and K3,3",
+        "Kuratowski's theorem"
+      ],
       "kind": "lesson",
       "requires": [
         "connectivity"
@@ -590,6 +787,15 @@
       "name": "Colouring & covers",
       "icon": "palette",
       "desc": "Chromatic number, independent sets, vertex covers, cliques and matchings.",
+      "summary": "You will be able to find chromatic numbers and relate independent sets, vertex covers, cliques and matchings.",
+      "topics": [
+        "Chromatic number",
+        "Independent sets",
+        "Vertex covers",
+        "Cliques and clique number",
+        "Matchings and perfect matchings",
+        "Relations between these parameters"
+      ],
       "kind": "lesson",
       "requires": [
         "graph-theory"
@@ -615,6 +821,14 @@
       "name": "Isomorphism",
       "icon": "copy",
       "desc": "Graph isomorphism and invariants, complements and self-complementary graphs, counting graphs.",
+      "summary": "You will be able to test graphs for isomorphism using invariants, work with complements and count labelled graphs.",
+      "topics": [
+        "Graph isomorphism",
+        "Isomorphism invariants",
+        "Graph complements",
+        "Self-complementary graphs",
+        "Counting labelled graphs"
+      ],
       "kind": "concept",
       "requires": [
         "graph-theory"

@@ -39,6 +39,14 @@
       "name": "NLP tasks",
       "icon": "compass",
       "desc": "The main NLP tasks and why language is hard: ambiguity, context and variation.",
+      "summary": "You will be able to name the main NLP tasks and explain why ambiguity, context and variation make language hard for computers.",
+      "topics": [
+        "Classification, tagging and generation tasks",
+        "Lexical and syntactic ambiguity",
+        "Context and world knowledge",
+        "Variation across dialects and domains",
+        "Levels of linguistic analysis"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 60
@@ -49,6 +57,14 @@
       "name": "Text preprocessing",
       "icon": "filter",
       "desc": "Tokenisation, normalisation, stemming, lemmatisation and stop words.",
+      "summary": "You will be able to prepare raw text for models with tokenisation, normalisation, stemming, lemmatisation and stop word removal.",
+      "topics": [
+        "Word and sentence tokenisation",
+        "Lowercasing and Unicode normalisation",
+        "Stemming algorithms",
+        "Lemmatisation with dictionaries",
+        "Stop word removal trade-offs"
+      ],
       "kind": "lesson",
       "requires": [
         "python:python-basics",
@@ -62,6 +78,14 @@
       "name": "Regex for text",
       "icon": "search",
       "desc": "Using regular expressions to clean, match and extract patterns from text.",
+      "summary": "You will be able to use regular expressions to clean text and extract patterns such as dates, emails and numbers.",
+      "topics": [
+        "Regex syntax and character classes",
+        "Quantifiers and anchors",
+        "Capture groups for extraction",
+        "Search, match and substitute",
+        "Cleaning noisy text with regex"
+      ],
       "kind": "lesson",
       "requires": [
         "text-preprocessing"
@@ -74,6 +98,14 @@
       "name": "Corpora & annotation",
       "icon": "book",
       "desc": "Text datasets, annotation schemes, inter-annotator agreement and data splits.",
+      "summary": "You will understand how text datasets are built and annotated and be able to measure annotation quality and split data properly.",
+      "topics": [
+        "Common NLP corpora",
+        "Annotation schemes and guidelines",
+        "Inter-annotator agreement and Cohen's kappa",
+        "Train, development and test splits",
+        "Avoiding leakage between splits"
+      ],
       "kind": "concept",
       "requires": [
         "nlp-tasks"
@@ -86,6 +118,14 @@
       "name": "Bag of words & TF-IDF",
       "icon": "list",
       "desc": "Representing documents as sparse count and TF-IDF vectors.",
+      "summary": "You will be able to represent documents as sparse count and TF-IDF vectors and understand what these representations lose.",
+      "topics": [
+        "Vocabulary construction",
+        "Count vectors",
+        "TF-IDF weighting",
+        "n-gram features",
+        "Sparsity and lost word order"
+      ],
       "kind": "lesson",
       "requires": [
         "text-preprocessing"
@@ -98,6 +138,14 @@
       "name": "n-gram models",
       "icon": "chart",
       "desc": "Language models from counts, smoothing and perplexity.",
+      "summary": "You will be able to build n-gram language models from counts, smooth them and evaluate them with perplexity.",
+      "topics": [
+        "The chain rule and Markov assumption",
+        "Estimating n-gram probabilities",
+        "Laplace and add-k smoothing",
+        "Backoff and interpolation",
+        "Perplexity evaluation"
+      ],
       "kind": "lesson",
       "requires": [
         "text-preprocessing",
@@ -111,6 +159,14 @@
       "name": "Text classification",
       "icon": "tag",
       "desc": "Naive Bayes and logistic regression classifiers for topics, spam and sentiment.",
+      "summary": "You will be able to train and compare naive Bayes and logistic regression classifiers for topic, spam and sentiment tasks.",
+      "topics": [
+        "Text classification setup",
+        "Multinomial naive Bayes",
+        "Logistic regression on text features",
+        "Handling class imbalance",
+        "Precision, recall and F1"
+      ],
       "kind": "lesson",
       "requires": [
         "bag-of-words",
@@ -124,6 +180,14 @@
       "name": "POS tags & NER",
       "icon": "type",
       "desc": "Part-of-speech tagging and named entity recognition with HMMs and CRFs.",
+      "summary": "You will be able to tag parts of speech and named entities with HMMs and CRFs and understand BIO encoding.",
+      "topics": [
+        "Part-of-speech tag sets",
+        "Named entity types and BIO tagging",
+        "Hidden Markov models",
+        "Viterbi decoding",
+        "Conditional random fields"
+      ],
       "kind": "lesson",
       "requires": [
         "ngram-models"
@@ -136,6 +200,14 @@
       "name": "Sentiment classifier",
       "icon": "heart",
       "desc": "Build and evaluate a sentiment classifier for product or movie reviews.",
+      "summary": "You will build and evaluate a sentiment classifier for product or movie reviews and analyse its errors.",
+      "topics": [
+        "Preparing a review dataset",
+        "Feature extraction",
+        "Training a baseline classifier",
+        "Evaluation with F1 and confusion matrix",
+        "Error analysis on negation and sarcasm"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -149,6 +221,15 @@
       "name": "Word embeddings",
       "icon": "grid",
       "desc": "Dense word vectors with word2vec and GloVe and what their geometry captures.",
+      "summary": "You will understand how word2vec and GloVe learn dense word vectors and what their geometry captures about meaning.",
+      "topics": [
+        "Distributional hypothesis",
+        "Skip-gram and CBOW",
+        "Negative sampling",
+        "GloVe co-occurrence factorisation",
+        "Vector analogies and similarity",
+        "Bias in embeddings"
+      ],
       "kind": "lesson",
       "requires": [
         "bag-of-words",
@@ -162,6 +243,14 @@
       "name": "RNNs for text",
       "icon": "activity",
       "desc": "Recurrent networks and LSTMs for language modelling and sequence labelling.",
+      "summary": "You will be able to apply recurrent networks and LSTMs to language modelling and sequence labelling tasks.",
+      "topics": [
+        "Recurrent neural networks",
+        "Backpropagation through time",
+        "Vanishing gradients",
+        "LSTM and GRU cells",
+        "Bidirectional RNNs for tagging"
+      ],
       "kind": "lesson",
       "requires": [
         "word-embeddings",
@@ -175,6 +264,14 @@
       "name": "Seq2seq & attention",
       "icon": "route",
       "desc": "Encoder-decoder models and attention for translation and summarisation.",
+      "summary": "You will understand encoder-decoder models and how attention improves translation and summarisation.",
+      "topics": [
+        "Encoder-decoder architecture",
+        "The fixed-length bottleneck",
+        "Attention mechanisms",
+        "Teacher forcing",
+        "Greedy and beam search decoding"
+      ],
       "kind": "lesson",
       "requires": [
         "rnn-text"
@@ -187,6 +284,14 @@
       "name": "Syntactic parsing",
       "icon": "tree",
       "desc": "Constituency and dependency parsing and what parse trees are used for.",
+      "summary": "You will be able to analyse sentence structure with constituency and dependency parsing and know where parse trees are useful.",
+      "topics": [
+        "Constituency trees and phrase structure",
+        "CKY parsing",
+        "Dependency relations",
+        "Transition-based dependency parsing",
+        "Applications of parse trees"
+      ],
       "kind": "concept",
       "requires": [
         "sequence-labeling"
@@ -199,6 +304,14 @@
       "name": "BERT-style encoders",
       "icon": "layers",
       "desc": "Transformer encoders, masked language modelling and contextual embeddings.",
+      "summary": "You will understand how transformer encoders like BERT are pretrained with masked language modelling to produce contextual embeddings.",
+      "topics": [
+        "Self-attention and transformer encoders",
+        "Masked language modelling",
+        "Next sentence prediction",
+        "Contextual vs static embeddings",
+        "The CLS token and special tokens"
+      ],
       "kind": "lesson",
       "requires": [
         "seq2seq",
@@ -212,6 +325,14 @@
       "name": "Subword tokenisation",
       "icon": "hash",
       "desc": "BPE, WordPiece and SentencePiece and how they handle rare words.",
+      "summary": "You will understand how BPE, WordPiece and SentencePiece split text into subwords to handle rare and unseen words.",
+      "topics": [
+        "Out-of-vocabulary problem",
+        "Byte-pair encoding",
+        "WordPiece tokenisation",
+        "SentencePiece and unigram models",
+        "Vocabulary size trade-offs"
+      ],
       "kind": "lesson",
       "requires": [
         "text-preprocessing",
@@ -225,6 +346,14 @@
       "name": "Fine-tuning for NLP",
       "icon": "wrench",
       "desc": "Adapting pretrained models to classification, tagging and span tasks.",
+      "summary": "You will be able to fine-tune pretrained transformers for classification, token tagging and span extraction tasks.",
+      "topics": [
+        "Task-specific heads",
+        "Sequence classification fine-tuning",
+        "Token classification fine-tuning",
+        "Span prediction for extraction",
+        "Learning rates and overfitting"
+      ],
       "kind": "lesson",
       "requires": [
         "bert-encoders",
@@ -238,6 +367,14 @@
       "name": "NER with BERT",
       "icon": "target",
       "desc": "Fine-tune a transformer to extract entities from domain text and measure F1.",
+      "summary": "You will fine-tune a transformer to extract named entities from domain-specific text and measure entity-level F1.",
+      "topics": [
+        "Preparing BIO-labelled data",
+        "Aligning labels with subword tokens",
+        "Fine-tuning a token classifier",
+        "Entity-level precision, recall and F1",
+        "Error analysis by entity type"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -252,6 +389,14 @@
       "name": "Question answering",
       "icon": "chat",
       "desc": "Extractive and generative question answering over passages.",
+      "summary": "You will be able to build extractive and generative question answering systems over passages of text.",
+      "topics": [
+        "Reading comprehension datasets like SQuAD",
+        "Extractive span prediction",
+        "Generative question answering",
+        "Retrieval for open-domain QA",
+        "Exact match and F1 metrics"
+      ],
       "kind": "lesson",
       "requires": [
         "fine-tuning-nlp"
@@ -264,6 +409,14 @@
       "name": "Summarise & translate",
       "icon": "globe",
       "desc": "Sequence-to-sequence transformers for summarisation and machine translation.",
+      "summary": "You will be able to apply sequence-to-sequence transformers to summarisation and machine translation and judge output quality.",
+      "topics": [
+        "Encoder-decoder transformers like T5",
+        "Extractive vs abstractive summarisation",
+        "Neural machine translation",
+        "Decoding strategies",
+        "Hallucination and faithfulness"
+      ],
       "kind": "lesson",
       "requires": [
         "seq2seq",
@@ -277,6 +430,14 @@
       "name": "Evaluating NLP",
       "icon": "check-circle",
       "desc": "Accuracy, F1, BLEU, ROUGE and human evaluation, and their limits.",
+      "summary": "You will be able to choose and interpret NLP metrics such as F1, BLEU and ROUGE and know when human evaluation is needed.",
+      "topics": [
+        "Accuracy and F1 for classification",
+        "BLEU for translation",
+        "ROUGE for summarisation",
+        "Human evaluation protocols",
+        "Limits of automatic metrics"
+      ],
       "kind": "concept",
       "requires": [
         "text-classification"
@@ -289,6 +450,14 @@
       "name": "Semantic search",
       "icon": "search",
       "desc": "Sentence embeddings for similarity search, clustering and deduplication.",
+      "summary": "You will be able to use sentence embeddings to search, cluster and deduplicate text by meaning.",
+      "topics": [
+        "Sentence embedding models",
+        "Cosine similarity search",
+        "Approximate nearest neighbour indexes",
+        "Clustering with embeddings",
+        "Near-duplicate detection"
+      ],
       "kind": "lesson",
       "requires": [
         "bert-encoders"

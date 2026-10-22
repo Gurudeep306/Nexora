@@ -47,6 +47,15 @@
       "name": "Vectors",
       "icon": "trending-up",
       "desc": "Vectors, dot product, length and angle, and the geometry of linear combinations.",
+      "summary": "You will be able to compute with vectors, using dot products for length and angle, and interpret linear combinations geometrically.",
+      "topics": [
+        "Vector addition and scalar multiplication",
+        "Linear combinations",
+        "Dot product",
+        "Length and unit vectors",
+        "Angle between vectors",
+        "Cauchy-Schwarz inequality"
+      ],
       "kind": "concept",
       "requires": [],
       "pyqTopics": [
@@ -67,6 +76,15 @@
       "name": "Matrices",
       "icon": "grid",
       "desc": "Matrix algebra: addition, multiplication, transpose, trace, powers and commuting matrices.",
+      "summary": "You will be able to carry out matrix algebra confidently, including products, transposes, traces and powers, and recognise when matrices commute.",
+      "topics": [
+        "Matrix addition and scalar multiples",
+        "Matrix multiplication and its rules",
+        "Transpose and its properties",
+        "Trace of a matrix",
+        "Matrix powers",
+        "Commuting matrices"
+      ],
       "kind": "lesson",
       "requires": [
         "vectors"
@@ -91,6 +109,14 @@
       "name": "Special matrices",
       "icon": "shapes",
       "desc": "Symmetric, skew-symmetric, triangular, idempotent, nilpotent, orthogonal, projection and rotation matrices.",
+      "summary": "You will be able to recognise special classes of matrices and use their defining properties to simplify computations.",
+      "topics": [
+        "Symmetric and skew-symmetric matrices",
+        "Triangular and diagonal matrices",
+        "Idempotent and nilpotent matrices",
+        "Orthogonal matrices",
+        "Projection and rotation matrices"
+      ],
       "kind": "lesson",
       "requires": [
         "matrices"
@@ -117,6 +143,14 @@
       "name": "Determinants",
       "icon": "calculator",
       "desc": "Cofactor expansion, properties under row operations, and determinants of structured matrices.",
+      "summary": "You will be able to evaluate determinants by cofactor expansion and row operations and exploit structure in special matrices.",
+      "topics": [
+        "Cofactor expansion",
+        "Effect of row operations",
+        "Product rule det(AB) = det(A)det(B)",
+        "Determinants of triangular matrices",
+        "Block and Vandermonde determinants"
+      ],
       "kind": "lesson",
       "requires": [
         "matrices",
@@ -139,6 +173,14 @@
       "name": "Inverse & adjoint",
       "icon": "random",
       "desc": "Invertibility, the adjoint formula, singular matrices and inverse identities.",
+      "summary": "You will be able to decide when a matrix is invertible and compute inverses using the adjoint formula and standard identities.",
+      "topics": [
+        "Invertibility and nonzero determinant",
+        "Adjoint and cofactor matrix",
+        "The formula A inverse = adj(A)/det(A)",
+        "Inverse of products and transposes",
+        "Singular matrices"
+      ],
       "kind": "lesson",
       "requires": [
         "determinants"
@@ -160,6 +202,14 @@
       "name": "Rank",
       "icon": "layers",
       "desc": "Row echelon form, rank, and how rank behaves under products and sums.",
+      "summary": "You will be able to compute the rank of a matrix from its echelon form and bound the rank of products and sums.",
+      "topics": [
+        "Row echelon and reduced row echelon form",
+        "Rank as number of pivots",
+        "Row rank equals column rank",
+        "Rank of products and sums",
+        "Rank and invertibility"
+      ],
       "kind": "lesson",
       "requires": [
         "determinants"
@@ -179,6 +229,14 @@
       "name": "Linear systems",
       "icon": "sliders",
       "desc": "Ax = b: consistency, unique versus infinitely many solutions, and the rank test.",
+      "summary": "You will be able to determine whether Ax = b has no solution, a unique solution or infinitely many using the rank test.",
+      "topics": [
+        "Matrix form of linear systems",
+        "Augmented matrix",
+        "Consistency and the rank condition",
+        "Unique vs infinitely many solutions",
+        "Free variables and parameters"
+      ],
       "kind": "lesson",
       "requires": [
         "rank"
@@ -201,6 +259,14 @@
       "name": "Gaussian elimination",
       "icon": "list",
       "desc": "Row reduction, back substitution and solving systems by hand.",
+      "summary": "You will be able to solve linear systems by hand using row reduction to echelon form followed by back substitution.",
+      "topics": [
+        "Elementary row operations",
+        "Forward elimination to echelon form",
+        "Back substitution",
+        "Gauss-Jordan elimination",
+        "Finding inverses by row reduction"
+      ],
       "kind": "lesson",
       "requires": [
         "linear-systems"
@@ -222,6 +288,14 @@
       "name": "LU decomposition",
       "icon": "layers",
       "desc": "Factorising A = LU and using it to solve systems.",
+      "summary": "You will be able to factor a matrix as A = LU and solve systems efficiently with forward and back substitution.",
+      "topics": [
+        "Lower and upper triangular factors",
+        "LU from Gaussian elimination",
+        "Forward and back substitution",
+        "Solving multiple right-hand sides",
+        "Pivoting and PA = LU"
+      ],
       "kind": "lesson",
       "requires": [
         "gaussian-elimination"
@@ -237,6 +311,14 @@
       "name": "Homogeneous systems",
       "icon": "target",
       "desc": "Ax = 0, trivial versus non-trivial solutions, and null spaces.",
+      "summary": "You will be able to decide when Ax = 0 has non-trivial solutions and describe the null space with a basis.",
+      "topics": [
+        "Trivial vs non-trivial solutions",
+        "Condition det(A) = 0",
+        "Null space of a matrix",
+        "Basis of the solution space",
+        "More unknowns than equations"
+      ],
       "kind": "lesson",
       "requires": [
         "linear-systems"
@@ -258,6 +340,14 @@
       "name": "Vector spaces",
       "icon": "compass",
       "desc": "Vector spaces and subspaces over a field, span and linear independence.",
+      "summary": "You will be able to verify the vector space axioms, identify subspaces and test sets of vectors for span and linear independence.",
+      "topics": [
+        "Vector space axioms over a field",
+        "Subspaces and the subspace test",
+        "Span of a set of vectors",
+        "Linear independence and dependence",
+        "Function and polynomial spaces"
+      ],
       "kind": "lesson",
       "requires": [
         "homogeneous-systems",
@@ -274,6 +364,14 @@
       "name": "Basis & dimension",
       "icon": "grid",
       "desc": "Bases, dimension, the four fundamental subspaces and the rank–nullity theorem.",
+      "summary": "You will be able to find bases and dimensions of the four fundamental subspaces and apply the rank-nullity theorem.",
+      "topics": [
+        "Basis and coordinates",
+        "Dimension of a vector space",
+        "Column space and row space",
+        "Null space and left null space",
+        "Rank-nullity theorem"
+      ],
       "kind": "lesson",
       "requires": [
         "vector-spaces"
@@ -300,6 +398,14 @@
       "name": "Orthogonality",
       "icon": "crosshair",
       "desc": "Orthogonal and orthonormal bases, projections and Gram–Schmidt.",
+      "summary": "You will be able to build orthonormal bases with Gram-Schmidt and compute orthogonal projections onto subspaces.",
+      "topics": [
+        "Orthogonal and orthonormal vectors",
+        "Orthogonal complements",
+        "Projection onto a vector and a subspace",
+        "Gram-Schmidt process",
+        "QR factorisation"
+      ],
       "kind": "concept",
       "requires": [
         "basis-dimension"
@@ -322,6 +428,14 @@
       "name": "Eigenvalues",
       "icon": "target",
       "desc": "The characteristic polynomial, eigenvalues, and their links to trace and determinant.",
+      "summary": "You will be able to find eigenvalues from the characteristic polynomial and relate their sum and product to trace and determinant.",
+      "topics": [
+        "The eigenvalue equation Av = λv",
+        "Characteristic polynomial",
+        "Sum of eigenvalues equals trace",
+        "Product of eigenvalues equals determinant",
+        "Eigenvalues of A inverse and A^k"
+      ],
       "kind": "lesson",
       "requires": [
         "determinants",
@@ -345,6 +459,14 @@
       "name": "Eigenvectors",
       "icon": "trending-up",
       "desc": "Eigenvectors and eigenspaces, algebraic and geometric multiplicity.",
+      "summary": "You will be able to compute eigenvectors and eigenspaces and compare algebraic and geometric multiplicities of eigenvalues.",
+      "topics": [
+        "Solving (A - λI)v = 0",
+        "Eigenspaces as null spaces",
+        "Algebraic multiplicity",
+        "Geometric multiplicity",
+        "Independence of distinct eigenvectors"
+      ],
       "kind": "lesson",
       "requires": [
         "eigenvalues"
@@ -365,6 +487,14 @@
       "name": "Cayley–Hamilton",
       "icon": "function",
       "desc": "Every matrix satisfies its characteristic equation; computing powers and inverses with it.",
+      "summary": "You will be able to apply the Cayley-Hamilton theorem to compute matrix powers, inverses and polynomials in a matrix.",
+      "topics": [
+        "Statement of the Cayley-Hamilton theorem",
+        "Computing the inverse from the characteristic equation",
+        "Reducing high matrix powers",
+        "Minimal polynomial",
+        "Evaluating polynomials in a matrix"
+      ],
       "kind": "concept",
       "requires": [
         "eigenvalues"
@@ -385,6 +515,14 @@
       "name": "Eigen of special forms",
       "icon": "shapes",
       "desc": "Eigenvalues of symmetric, triangular, rank-one, block and projection matrices.",
+      "summary": "You will be able to read off or quickly derive eigenvalues of symmetric, triangular, rank-one, block and projection matrices.",
+      "topics": [
+        "Triangular matrices: diagonal entries",
+        "Real eigenvalues of symmetric matrices",
+        "Rank-one matrices uv transpose",
+        "Block diagonal and block triangular matrices",
+        "Projection and orthogonal matrix eigenvalues"
+      ],
       "kind": "lesson",
       "requires": [
         "eigenvalues",
@@ -410,6 +548,14 @@
       "name": "Diagonalisation",
       "icon": "grid",
       "desc": "When A = PDP⁻¹ exists, orthogonal diagonalisation of symmetric matrices, and matrix powers.",
+      "summary": "You will be able to test whether a matrix is diagonalisable, orthogonally diagonalise symmetric matrices and compute matrix powers.",
+      "topics": [
+        "A = PDP inverse",
+        "Conditions for diagonalisability",
+        "Spectral theorem for symmetric matrices",
+        "Orthogonal diagonalisation",
+        "Computing A^k via diagonalisation"
+      ],
       "kind": "lesson",
       "requires": [
         "eigenvectors"
@@ -431,6 +577,14 @@
       "name": "Quadratic forms",
       "icon": "activity",
       "desc": "Quadratic forms, definiteness and the Rayleigh quotient.",
+      "summary": "You will be able to write quadratic forms as symmetric matrices, classify their definiteness and bound them with the Rayleigh quotient.",
+      "topics": [
+        "Matrix form x transpose Ax",
+        "Positive and negative definiteness",
+        "Eigenvalue and principal minor tests",
+        "Principal axes transformation",
+        "Rayleigh quotient bounds"
+      ],
       "kind": "concept",
       "requires": [
         "diagonalization"
@@ -451,6 +605,15 @@
       "name": "SVD",
       "icon": "layers",
       "desc": "Singular values, the singular value decomposition, and low-rank approximation.",
+      "summary": "You will be able to compute and interpret the singular value decomposition and use it for low-rank approximation.",
+      "topics": [
+        "Singular values from A transpose A",
+        "The decomposition A = UΣV transpose",
+        "Geometric meaning of the SVD",
+        "Rank and singular values",
+        "Low-rank approximation",
+        "Moore-Penrose pseudoinverse"
+      ],
       "kind": "lesson",
       "requires": [
         "diagonalization",

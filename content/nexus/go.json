@@ -39,6 +39,14 @@
       "name": "Go basics",
       "icon": "code",
       "desc": "Packages, variables, functions, control flow and the zero value.",
+      "summary": "You will be able to write simple Go programs using packages, variables, functions and control flow, relying on zero values for initialisation.",
+      "topics": [
+        "Packages and the main function",
+        "Variables, constants and short declarations",
+        "Basic types and zero values",
+        "if, for and switch statements",
+        "Functions with multiple return values"
+      ],
       "kind": "concept",
       "requires": [],
       "xpReward": 40,
@@ -55,6 +63,14 @@
       "name": "Go tooling & modules",
       "icon": "wrench",
       "desc": "go build, go run, go fmt, go vet and dependency management with modules.",
+      "summary": "You will be able to build, run, format and vet Go code and manage dependencies with Go modules.",
+      "topics": [
+        "go run and go build",
+        "Formatting with go fmt",
+        "Static checks with go vet",
+        "go.mod and go.sum files",
+        "Adding and upgrading dependencies"
+      ],
       "kind": "lesson",
       "requires": [
         "go-basics"
@@ -67,6 +83,14 @@
       "name": "Slices & maps",
       "icon": "array",
       "desc": "Arrays, slices and their backing arrays, maps and range loops.",
+      "summary": "You will understand how slices share backing arrays and be able to use slices, maps and range loops correctly.",
+      "topics": [
+        "Arrays vs slices",
+        "Length, capacity and append",
+        "Shared backing array pitfalls",
+        "Creating and using maps",
+        "Iterating with range"
+      ],
       "kind": "concept",
       "requires": [
         "go-basics"
@@ -79,6 +103,14 @@
       "name": "Structs & methods",
       "icon": "shapes",
       "desc": "Structs, methods, pointer vs value receivers and embedding.",
+      "summary": "You will be able to define structs with methods, choose between pointer and value receivers and reuse behaviour through embedding.",
+      "topics": [
+        "Defining and initialising structs",
+        "Methods on named types",
+        "Pointer vs value receivers",
+        "Struct embedding and promoted methods",
+        "Constructor functions by convention"
+      ],
       "kind": "concept",
       "requires": [
         "slices-maps"
@@ -91,6 +123,14 @@
       "name": "Interfaces",
       "icon": "layers",
       "desc": "Implicit interfaces, the empty interface, type switches and small interfaces.",
+      "summary": "You will be able to design small interfaces that types satisfy implicitly and inspect dynamic types with type assertions and switches.",
+      "topics": [
+        "Implicit interface satisfaction",
+        "Small interfaces like io.Reader",
+        "The empty interface and any",
+        "Type assertions and type switches",
+        "Nil interfaces vs nil values"
+      ],
       "kind": "concept",
       "requires": [
         "structs-methods"
@@ -103,6 +143,15 @@
       "name": "Errors",
       "icon": "warning",
       "desc": "Errors as values, wrapping, errors.Is/As, and panic and recover.",
+      "summary": "You will be able to handle errors as ordinary values, wrap them with context and know when panic and recover are appropriate.",
+      "topics": [
+        "The error interface",
+        "Checking and returning errors",
+        "Wrapping errors with %w",
+        "errors.Is and errors.As",
+        "Sentinel and custom error types",
+        "panic, defer and recover"
+      ],
       "kind": "concept",
       "requires": [
         "interfaces-go"
@@ -115,6 +164,14 @@
       "name": "Generics",
       "icon": "shapes",
       "desc": "Type parameters and constraints in Go.",
+      "summary": "You will be able to write type-safe generic functions and types in Go using type parameters and constraints.",
+      "topics": [
+        "Type parameters on functions",
+        "Generic types",
+        "Constraints and type sets",
+        "The comparable constraint",
+        "When generics beat interfaces"
+      ],
       "kind": "concept",
       "requires": [
         "interfaces-go"
@@ -127,6 +184,14 @@
       "name": "Goroutines",
       "icon": "bolt",
       "desc": "Starting goroutines, the Go scheduler and WaitGroups.",
+      "summary": "You will be able to run work concurrently with goroutines, wait for it with WaitGroups and understand how the Go scheduler works.",
+      "topics": [
+        "Starting goroutines with go",
+        "The Go scheduler and GOMAXPROCS",
+        "Waiting with sync.WaitGroup",
+        "Closure capture in loops",
+        "Avoiding goroutine leaks"
+      ],
       "kind": "concept",
       "requires": [
         "go-basics",
@@ -140,6 +205,14 @@
       "name": "Channels",
       "icon": "route",
       "desc": "Buffered and unbuffered channels, closing and ranging over channels.",
+      "summary": "You will be able to pass data between goroutines with buffered and unbuffered channels and close and range over them safely.",
+      "topics": [
+        "Unbuffered channels and synchronisation",
+        "Buffered channels and capacity",
+        "Closing channels and ranging over them",
+        "Directional channel types",
+        "Deadlocks from blocked channels"
+      ],
       "kind": "concept",
       "requires": [
         "goroutines"
@@ -152,6 +225,15 @@
       "name": "select & context",
       "icon": "clock",
       "desc": "Multiplexing with select, timeouts and cancellation with context.",
+      "summary": "You will be able to wait on multiple channel operations with select and propagate timeouts and cancellation with context.",
+      "topics": [
+        "Multiplexing with select",
+        "Timeouts with time.After",
+        "Non-blocking operations with default",
+        "context.Context and cancellation",
+        "WithTimeout and WithCancel",
+        "Passing context through call chains"
+      ],
       "kind": "concept",
       "requires": [
         "channels"
@@ -164,6 +246,14 @@
       "name": "sync & races",
       "icon": "lock",
       "desc": "Mutexes, Once, atomic and finding data races with -race.",
+      "summary": "You will be able to protect shared state with mutexes and atomics and detect data races with the race detector.",
+      "topics": [
+        "sync.Mutex and RWMutex",
+        "One-time initialisation with sync.Once",
+        "Atomic operations in sync/atomic",
+        "Detecting races with go test -race",
+        "Channels vs mutexes"
+      ],
       "kind": "concept",
       "requires": [
         "goroutines",
@@ -177,6 +267,14 @@
       "name": "Worker pool project",
       "icon": "users",
       "desc": "Build a concurrent worker pool that processes jobs with cancellation and error reporting.",
+      "summary": "You will build a concurrent worker pool that distributes jobs, collects results, reports errors and stops cleanly on cancellation.",
+      "topics": [
+        "Fan-out and fan-in with channels",
+        "Bounding concurrency with fixed workers",
+        "Collecting results and errors",
+        "Cancellation with context",
+        "Graceful shutdown of workers"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -192,6 +290,14 @@
       "name": "net/http",
       "icon": "globe",
       "desc": "HTTP servers and clients, handlers, middleware and routing in the standard library.",
+      "summary": "You will be able to build HTTP servers and clients with the standard library, including handlers, routing and middleware.",
+      "topics": [
+        "http.Handler and HandlerFunc",
+        "Routing with ServeMux patterns",
+        "Writing middleware",
+        "Making requests with http.Client",
+        "Server and client timeouts"
+      ],
       "kind": "concept",
       "requires": [
         "interfaces-go",
@@ -205,6 +311,14 @@
       "name": "JSON encoding",
       "icon": "code",
       "desc": "Marshalling and unmarshalling JSON with struct tags.",
+      "summary": "You will be able to convert between Go structs and JSON using encoding/json and control field mapping with struct tags.",
+      "topics": [
+        "json.Marshal and json.Unmarshal",
+        "Struct tags and omitempty",
+        "Exported fields requirement",
+        "Streaming with Encoder and Decoder",
+        "Decoding into maps and RawMessage"
+      ],
       "kind": "concept",
       "requires": [
         "structs-methods"
@@ -217,6 +331,15 @@
       "name": "database/sql",
       "icon": "database",
       "desc": "Querying relational databases with database/sql and connection pooling.",
+      "summary": "You will be able to query relational databases from Go with database/sql, scan results safely and tune the connection pool.",
+      "topics": [
+        "Opening a database with a driver",
+        "Query, QueryRow and Exec",
+        "Scanning rows into structs",
+        "Placeholders against SQL injection",
+        "Transactions with database/sql",
+        "Connection pool settings"
+      ],
       "kind": "lesson",
       "requires": [
         "go-errors",
@@ -230,6 +353,14 @@
       "name": "Testing",
       "icon": "check-circle",
       "desc": "Table-driven tests, benchmarks, fuzzing and httptest.",
+      "summary": "You will be able to write table-driven tests, benchmarks and fuzz tests in Go and test HTTP handlers with httptest.",
+      "topics": [
+        "The testing package and go test",
+        "Table-driven tests and subtests",
+        "Benchmarks with testing.B",
+        "Fuzz testing",
+        "Testing handlers with httptest"
+      ],
       "kind": "lesson",
       "requires": [
         "go-errors"
@@ -242,6 +373,14 @@
       "name": "Profiling with pprof",
       "icon": "timer",
       "desc": "CPU and memory profiling and reading flame graphs.",
+      "summary": "You will be able to profile CPU and memory usage of Go programs with pprof and read flame graphs to find hotspots.",
+      "topics": [
+        "CPU profiling with pprof",
+        "Heap and allocation profiles",
+        "Exposing net/http/pprof endpoints",
+        "Reading flame graphs",
+        "Profiling from benchmarks"
+      ],
       "kind": "lesson",
       "requires": [
         "go-testing",
@@ -255,6 +394,14 @@
       "name": "Deploying Go",
       "icon": "upload",
       "desc": "Static binaries, small container images and configuration.",
+      "summary": "You will be able to ship Go services as static binaries in small container images with configuration from the environment.",
+      "topics": [
+        "Static binaries and CGO_ENABLED",
+        "Cross-compiling with GOOS and GOARCH",
+        "Multi-stage Docker builds",
+        "Minimal distroless or scratch images",
+        "Configuration from environment variables"
+      ],
       "kind": "lesson",
       "requires": [
         "go-tooling",
@@ -268,6 +415,14 @@
       "name": "REST service project",
       "icon": "rocket",
       "desc": "Build a tested REST service in Go with a database, graceful shutdown and a container image.",
+      "summary": "You will build and containerise a tested REST service in Go backed by a database with graceful shutdown.",
+      "topics": [
+        "Designing REST endpoints",
+        "Database access layer",
+        "Handler and integration tests",
+        "Graceful shutdown on signals",
+        "Building the container image"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

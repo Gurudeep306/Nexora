@@ -38,6 +38,14 @@
       "name": "HTTP for APIs",
       "icon": "globe",
       "desc": "Methods, status codes, headers, caching and idempotency from an API designer's view.",
+      "summary": "You will be able to use HTTP methods, status codes, headers and caching deliberately when designing an API, including idempotency guarantees.",
+      "topics": [
+        "Safe and idempotent HTTP methods",
+        "Choosing correct status codes",
+        "Request and response headers",
+        "Cache-Control and ETags",
+        "Idempotency keys for retries"
+      ],
       "kind": "concept",
       "requires": [
         "web:http-basics",
@@ -51,6 +59,14 @@
       "name": "API styles",
       "icon": "compass",
       "desc": "REST, RPC, GraphQL and event-based APIs compared.",
+      "summary": "You will be able to compare REST, RPC, GraphQL and event-based APIs and choose the style that fits a given use case.",
+      "topics": [
+        "Resource-oriented REST",
+        "RPC-style APIs",
+        "GraphQL client-driven queries",
+        "Event-driven and asynchronous APIs",
+        "Trade-offs in coupling and tooling"
+      ],
       "kind": "concept",
       "requires": [
         "http-for-apis"
@@ -63,6 +79,14 @@
       "name": "Data formats",
       "icon": "code",
       "desc": "JSON, schemas, Protocol Buffers and serialisation trade-offs.",
+      "summary": "You will be able to choose between JSON and Protocol Buffers, define schemas and weigh serialisation trade-offs for API payloads.",
+      "topics": [
+        "JSON structure and its limitations",
+        "JSON Schema for validation",
+        "Protocol Buffers messages and field numbers",
+        "Schema evolution and compatibility",
+        "Size and speed of text versus binary"
+      ],
       "kind": "concept",
       "requires": [
         "http-for-apis"
@@ -75,6 +99,14 @@
       "name": "REST design",
       "icon": "route",
       "desc": "Resources, URIs, verbs, status codes and consistent error responses.",
+      "summary": "You will be able to design consistent REST APIs with sensible resource URIs, correct verbs and status codes and uniform error responses.",
+      "topics": [
+        "Modelling resources and collections",
+        "URI naming conventions",
+        "Mapping CRUD to HTTP verbs",
+        "Status codes for success and failure",
+        "Consistent error response format"
+      ],
       "kind": "concept",
       "requires": [
         "api-styles",
@@ -88,6 +120,14 @@
       "name": "Paging & versioning",
       "icon": "list",
       "desc": "Pagination, filtering, sorting and evolving an API without breaking clients.",
+      "summary": "You will be able to add pagination, filtering and sorting to collections and evolve an API without breaking existing clients.",
+      "topics": [
+        "Offset versus cursor pagination",
+        "Filtering and sorting query parameters",
+        "Backward-compatible changes",
+        "URI, header and media type versioning",
+        "Deprecation and sunset policies"
+      ],
       "kind": "concept",
       "requires": [
         "rest-design"
@@ -100,6 +140,14 @@
       "name": "OpenAPI",
       "icon": "book",
       "desc": "Describing APIs with OpenAPI and generating docs and clients.",
+      "summary": "You will be able to describe an HTTP API in an OpenAPI document and generate documentation, clients and validation from it.",
+      "topics": [
+        "OpenAPI document structure",
+        "Paths, operations and parameters",
+        "Reusable schemas and components",
+        "Generating docs and client SDKs",
+        "Design-first versus code-first workflows"
+      ],
       "kind": "lesson",
       "requires": [
         "rest-design",
@@ -113,6 +161,15 @@
       "name": "API auth",
       "icon": "key",
       "desc": "API keys, OAuth 2.0, JWTs and scopes.",
+      "summary": "You will be able to secure APIs with API keys, OAuth 2.0 flows and JWT access tokens limited by scopes.",
+      "topics": [
+        "API keys and their limits",
+        "OAuth 2.0 roles and grant types",
+        "Authorization code flow with PKCE",
+        "JWT structure and signature validation",
+        "Scopes and least-privilege access",
+        "Token expiry and refresh tokens"
+      ],
       "kind": "concept",
       "requires": [
         "rest-design"
@@ -125,6 +182,14 @@
       "name": "GraphQL",
       "icon": "graph",
       "desc": "Schemas, queries, mutations, resolvers and the N+1 problem.",
+      "summary": "You will be able to define a GraphQL schema, write queries and mutations, implement resolvers and avoid the N+1 query problem.",
+      "topics": [
+        "Schema definition language and types",
+        "Queries, mutations and subscriptions",
+        "Writing resolvers",
+        "The N+1 problem and DataLoader batching",
+        "Query depth and cost limits"
+      ],
       "kind": "concept",
       "requires": [
         "api-styles"
@@ -137,6 +202,14 @@
       "name": "gRPC",
       "icon": "bolt",
       "desc": "Protobuf services, streaming RPCs and when gRPC fits.",
+      "summary": "You will be able to define gRPC services in Protobuf, use unary and streaming RPCs and judge when gRPC is a good fit.",
+      "topics": [
+        "Service definitions in .proto files",
+        "Generated client and server stubs",
+        "Unary, server, client and bidirectional streaming",
+        "HTTP/2 transport and deadlines",
+        "gRPC versus REST for internal services"
+      ],
       "kind": "concept",
       "requires": [
         "data-formats"
@@ -149,6 +222,14 @@
       "name": "Webhooks & WebSockets",
       "icon": "bell",
       "desc": "Push-based APIs with webhooks, WebSockets and server-sent events.",
+      "summary": "You will be able to build push-based APIs with webhooks, WebSockets and server-sent events and choose between them.",
+      "topics": [
+        "Webhook delivery and retries",
+        "Verifying webhook signatures",
+        "WebSocket connections and messages",
+        "Server-sent events for one-way streams",
+        "Scaling persistent connections"
+      ],
       "kind": "concept",
       "requires": [
         "http-for-apis"
@@ -161,6 +242,14 @@
       "name": "Microservices",
       "icon": "grid",
       "desc": "What microservices are, their benefits and costs versus a monolith.",
+      "summary": "You will be able to explain what microservices are and weigh their benefits and operational costs against a well-structured monolith.",
+      "topics": [
+        "Monoliths versus microservices",
+        "Independent deployment and scaling",
+        "Team ownership and Conway's law",
+        "Operational and network complexity",
+        "The modular monolith alternative"
+      ],
       "kind": "concept",
       "requires": [
         "rest-design",
@@ -174,6 +263,14 @@
       "name": "Service boundaries",
       "icon": "map",
       "desc": "Domain-driven design, bounded contexts and splitting a monolith.",
+      "summary": "You will be able to draw service boundaries using domain-driven design and plan an incremental split of a monolith.",
+      "topics": [
+        "Domains and subdomains",
+        "Bounded contexts and ubiquitous language",
+        "Context mapping between services",
+        "Strangler fig migration pattern",
+        "Avoiding a distributed monolith"
+      ],
       "kind": "concept",
       "requires": [
         "microservices-intro"
@@ -186,6 +283,14 @@
       "name": "Service communication",
       "icon": "messages",
       "desc": "Synchronous calls versus asynchronous messaging and events.",
+      "summary": "You will be able to choose between synchronous calls and asynchronous messaging between services and understand the coupling each creates.",
+      "topics": [
+        "Synchronous REST and gRPC calls",
+        "Message queues and brokers",
+        "Publish-subscribe events",
+        "Temporal and runtime coupling",
+        "At-least-once delivery and idempotent consumers"
+      ],
       "kind": "concept",
       "requires": [
         "microservices-intro",
@@ -199,6 +304,14 @@
       "name": "Gateways & discovery",
       "icon": "compass",
       "desc": "API gateways, service discovery and service meshes.",
+      "summary": "You will be able to explain how API gateways, service discovery and service meshes route and secure traffic between clients and services.",
+      "topics": [
+        "API gateway responsibilities",
+        "Backend for frontend pattern",
+        "Client-side and server-side discovery",
+        "Service registries",
+        "Service mesh sidecars and mTLS"
+      ],
       "kind": "concept",
       "requires": [
         "service-communication"
@@ -211,6 +324,15 @@
       "name": "Data per service",
       "icon": "database",
       "desc": "Database per service, sagas and eventual consistency between services.",
+      "summary": "You will be able to keep data consistent across services that own separate databases using sagas and eventual consistency.",
+      "topics": [
+        "Database per service pattern",
+        "Why distributed transactions are avoided",
+        "Choreography and orchestration sagas",
+        "Compensating transactions",
+        "Transactional outbox pattern",
+        "Eventual consistency trade-offs"
+      ],
       "kind": "concept",
       "requires": [
         "service-boundaries"
@@ -223,6 +345,14 @@
       "name": "Resilience",
       "icon": "shield",
       "desc": "Timeouts, retries with backoff, circuit breakers and bulkheads.",
+      "summary": "You will be able to protect services from cascading failures with timeouts, retries with backoff, circuit breakers and bulkheads.",
+      "topics": [
+        "Timeouts and deadlines",
+        "Retries with exponential backoff and jitter",
+        "Circuit breaker states",
+        "Bulkhead isolation",
+        "Fallbacks and graceful degradation"
+      ],
       "kind": "concept",
       "requires": [
         "service-communication"
@@ -235,6 +365,14 @@
       "name": "Tracing & metrics",
       "icon": "activity",
       "desc": "Distributed tracing, correlation IDs, metrics and structured logs.",
+      "summary": "You will be able to observe a distributed system using traces, correlation IDs, metrics and structured logs.",
+      "topics": [
+        "Distributed traces and spans",
+        "Context propagation and correlation IDs",
+        "OpenTelemetry instrumentation",
+        "RED and USE metrics",
+        "Structured logging"
+      ],
       "kind": "concept",
       "requires": [
         "api-gateway"
@@ -247,6 +385,14 @@
       "name": "Contract testing",
       "icon": "check-circle",
       "desc": "Consumer-driven contracts and testing services in isolation.",
+      "summary": "You will be able to test services in isolation and catch breaking API changes early with consumer-driven contract tests.",
+      "topics": [
+        "Limits of end-to-end testing",
+        "Consumer-driven contracts",
+        "Contract testing with Pact",
+        "Provider verification in CI",
+        "Stubbing dependent services"
+      ],
       "kind": "lesson",
       "requires": [
         "openapi",
@@ -260,6 +406,14 @@
       "name": "Public API project",
       "icon": "rocket",
       "desc": "Build and document a versioned, authenticated public REST API.",
+      "summary": "You will build and document a versioned, authenticated public REST API with pagination, consistent errors and an OpenAPI specification.",
+      "topics": [
+        "Resource and endpoint design",
+        "Authentication with API keys or OAuth",
+        "Versioning and pagination",
+        "OpenAPI documentation",
+        "Rate limiting and error handling"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [
@@ -275,6 +429,14 @@
       "name": "Microservice shop",
       "icon": "building",
       "desc": "Build a small shop as several containerised services with messaging and tracing.",
+      "summary": "You will build a small online shop as several containerised services that communicate through messaging and are observable with tracing.",
+      "topics": [
+        "Splitting catalogue, orders and payments",
+        "Containerising each service",
+        "Asynchronous messaging between services",
+        "Saga for order placement",
+        "Distributed tracing across services"
+      ],
       "kind": "project",
       "optional": true,
       "requires": [

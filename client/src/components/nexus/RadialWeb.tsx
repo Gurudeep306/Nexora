@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
+import { forwardRef, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { ChevronRight, Crosshair, Expand, Maximize2, Minus, Plus, Shrink } from 'lucide-react'
 import { Avatar, Button, RankGlyph } from '@/components/ui'
 import { LogoMark } from '@/components/brand/Logo'
@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { Icon } from '@/components/icon/Icon'
 import { nodeIcon } from './icons'
 import { HitGrid, lineage, NODE, R, sectorAt, type RadialLayout } from './radial'
+import { INTRO_CLOCK, INTRO_SKIP, introClock, pop, seg, stagger, type IntroMode } from './intro'
 import type { RiftPlayer, WebCluster, WebNode, WebStream } from './types'
 
 /*
@@ -113,6 +114,8 @@ export function RadialWeb({
   due,
   celebrate,
   nextStep: nextStepProp,
+  intro = { mode: 'full', dur: 2000 },
+  focus = null,
 }: {
   clusters: WebCluster[]
   streams: WebStream[]
@@ -125,6 +128,10 @@ export function RadialWeb({
   celebrate?: string[]
   /** the skill "Next step" jumps to */
   nextStep?: string | null
+  /** the opening animation for this visit (see intro.ts) */
+  intro?: { mode: IntroMode; dur: number }
+  /** a subject to fly to and highlight ("View in Nexus") */
+  focus?: string | null
   layout: RadialLayout
   selected: string | null
   onSelect: (key: string | null) => void
@@ -207,15 +214,17 @@ export function RadialWeb({
   const tiltRef = useRef<HTMLDivElement>(null)
   const cardRef = useRef<HTMLDivElement>(null)
   const [fullscreen, setFullscreen] = useState<'off' | 'native' | 'css'>('off')
-  const mountedAt = useRef(0)
+  const introAt = useRef(0)
+  const introOver = useRef(false)
   const view = useRef({ w: 1, h: 1, dpr: 1 })
   const hovered = useRef<string | null>(null)
   const hoverSector = useRef<string | null>(null)
+  const focusSector = useRef<string | null>(null)
   const fly = useRef<{ from: Camera; to: Camera; t0: number; dur: number } | null>(null)
   const dirty = useRef(true)
   const grid = useRef(new HitGrid(40))
-  const P = useRef({ selected, onSelect, onOpenSubject, onCamera, route, due })
-  P.current = { selected, onSelect, onOpenSubject, onCamera, route, due }
+  const P = useRef({ selected, onSelect, onOpenSubject, onCamera, route, due, nextStep: nextStepProp ?? null })
+  P.current = { selected, onSelect, onOpenSubject, onCamera, route, due, nextStep: nextStepProp ?? null }
   const celebrateAt = useRef<{ keys: string[]; t0: number } | null>(null)
   useEffect(() => {
     if (celebrate?.length) celebrateAt.current = { keys: celebrate, t0: performance.now() + 500 }
@@ -274,6 +283,29 @@ export function RadialWeb({
     const size = Math.max(layout.extent - layout.inner * 0.6, 2 * Math.sin(span / 2) * layout.extent) + 400
     flyTo({ x: Math.cos(mid) * rm, y: Math.sin(mid) * rm, k: Math.min(view.current.w, view.current.h) / size }, 700)
   }
+  // A subject's sector, filling the view.
+  const flyToSubject = (id: string) => {
+    const sc = layout.sectors.find((x) => x.id === id)
+    if (!sc) return
+    const mid = (sc.a0 + sc.a1) / 2
+    const r1 = Math.max(sc.rMax, layout.inner * 1.4)
+    const rm = (layout.inner * 0.55 + r1) / 2
+    const span = Math.min(Math.PI, Math.max(0.35, sc.a1 - sc.a0))
+    const size = Math.max(r1 - layout.inner * 0.5, 2 * Math.sin(span / 2) * r1) + 520
+    userMoved.current = true
+    flyTo({ x: Math.cos(mid) * rm, y: Math.sin(mid) * rm, k: Math.min(view.current.w, view.current.h) / size }, 900)
+  }
+  // "View in Nexus": once the opening has played, fly to the subject and keep it lit.
+  useEffect(() => {
+    focusSector.current = focus && layout.sectors.some((x) => x.id === focus) ? focus : null
+    dirty.current = true
+    if (!focusSector.current) return
+    const id = focusSector.current
+    const wait = Math.max(0, intro.dur + 60 - (performance.now() - (introAt.current || performance.now())))
+    const t = window.setTimeout(() => flyToSubject(id), wait)
+    return () => window.clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focus, layout])
   const toggleFullscreen = () => {
     const el = cardRef.current
     if (!el) return
@@ -403,7 +435,50 @@ export function RadialWeb({
     let related: Set<string> | null = null
     let raf = 0
     let lastCam = ''
-    if (!mountedAt.current) mountedAt.current = performance.now()
+    if (!introAt.current) introAt.current = performance.now()
+    // The opening plays once per mount; any click, scroll or key ends it.
+    const introDur = intro.dur
+    const fadeOnly = intro.mode === 'fade'
+    const skipIntro = () => {
+      if (introOver.current) return
+      introAt.current = performance.now() - introDur - 1
+      dirty.current = true
+      window.dispatchEvent(new Event(INTRO_SKIP))
+    }
+    const skipOpts = { capture: true, passive: true } as const
+    const skipEvents = ['pointerdown', 'wheel', 'keydown', 'touchstart'] as const
+    if (!introOver.current) for (const ev of skipEvents) window.addEventListener(ev, skipIntro, skipOpts)
+    // The web is the opening's stage: bring all of it into view first (only
+    // from the top of the page, never fighting a scroll the reader made).
+    if (!introOver.current && window.scrollY < 4) {
+      const r = wrap.getBoundingClientRect()
+      if (r.bottom > window.innerHeight) window.scrollTo({ top: r.bottom - window.innerHeight + 12, behavior: 'instant' })
+    }
+    const endIntro = () => {
+      introOver.current = true
+      for (const ev of skipEvents) window.removeEventListener(ev, skipIntro, skipOpts)
+      canvas.style.opacity = ''
+      coreRef.current?.classList.add('nx-intro-done')
+      const tilt = tiltRef.current
+      if (tilt) {
+        tilt.style.transition = ''
+        tilt.style.transform = ''
+      }
+    }
+    // The order things arrive in: streams around the circle, subjects by
+    // stream, links by the subject they leave from.
+    const streamIdx = new Map(layout.streams.map((x, i2) => [x.id, i2]))
+    const sectorOrder = new Map(
+      [...sectors]
+        .sort((a2, b2) => (streamIdx.get(sectorOf.get(a2.id)?.stream ?? '') ?? 0) - (streamIdx.get(sectorOf.get(b2.id)?.stream ?? '') ?? 0) || a2.a0 - b2.a0)
+        .map((x, i2) => [x.id, i2]),
+    )
+    const linkOrder = new Map(
+      [...subjectLinks]
+        .sort((a2, b2) => (sectorOrder.get(a2.from) ?? 0) - (sectorOrder.get(b2.from) ?? 0))
+        .map((l, i2) => [`${l.from}>${l.to}`, i2]),
+    )
+    let beaconAt = 0
     const dark = () => document.documentElement.dataset.mode === 'dark' || document.documentElement.classList.contains('dark')
 
     const frame = (now: number) => {
@@ -436,12 +511,32 @@ export function RadialWeb({
         related = fk ? lineage(prereqs, fk) : null
         dirty.current = true
       }
-      // Progress arcs fill in on load.
-      const intro = reduce ? 1 : Math.min(1, (now - mountedAt.current) / 900)
-      const introE = 1 - Math.pow(1 - intro, 3)
-      if (intro < 1) dirty.current = true
+      // The opening: one clock (0 … 2000) every layer reads.
+      const T0 = introOver.current ? INTRO_CLOCK : introClock(now, introAt.current, introDur)
+      const T = fadeOnly ? INTRO_CLOCK : T0
+      const playing = !introOver.current
+      if (playing) {
+        dirty.current = true
+        canvas.style.opacity = String(fadeOnly ? T0 / INTRO_CLOCK : seg(T, 0, 320))
+        const core0 = coreRef.current
+        if (core0) core0.style.opacity = String(fadeOnly ? T0 / INTRO_CLOCK : seg(T, 60, 360))
+        const tilt = tiltRef.current
+        if (tilt && !fadeOnly) {
+          // A light settle into the 3D tilt at the end.
+          const st = seg(T, 1500, 2000)
+          tilt.style.transition = 'none'
+          tilt.style.transform = `rotateX(${(6 * (1 - st)).toFixed(2)}deg) scale(${(0.975 + 0.025 * st).toFixed(4)})`
+        }
+        if (T0 >= INTRO_CLOCK) endIntro()
+      }
+      if (!beaconAt && T >= 1600) beaconAt = now
+      const beaconing = !reduce && !!beaconAt && now - beaconAt < 4800 && !!p.nextStep
+      const linkIn = seg(T, 650, 1250)
+      const litLinks = seg(T, 1250, 1850)
+      const growIn = seg(T, 700, 1500)
+      const litOf = (it: Item) => (T >= INTRO_CLOCK ? 1 : seg(T, 1200 + 520 * Math.min(1, Math.hypot(it.x, it.y) / layout.extent), 1420 + 520 * Math.min(1, Math.hypot(it.x, it.y) / layout.extent)))
       const bursting = !!celebrateAt.current && now - celebrateAt.current.t0 < 1600
-      if (!dirty.current && !animate && !fresh.size && !bursting) return
+      if (!dirty.current && !animate && !fresh.size && !bursting && !beaconing) return
       dirty.current = false
       const camKey = `${c.x.toFixed(1)},${c.y.toFixed(1)},${c.k.toFixed(4)}`
       if (camKey !== lastCam) {
@@ -463,23 +558,38 @@ export function RadialWeb({
       const vy1 = c.y + h / 2 / c.k + NODE
       const inView = (x: number, y: number, m = 0) => x > vx0 - m && x < vx1 + m && y > vy0 - m && y < vy1 + m
 
-      const hs = hoverSector.current
+      const hs = hoverSector.current ?? focusSector.current
+      // Each stream sweeps open in turn (an angular wipe in its hue).
+      const wipe = (id: string) => {
+        if (T >= INTRO_CLOCK) return 1
+        const i2 = streamIdx.get(id) ?? 0
+        const a = stagger(i2, layout.streams.length, 300, 820)
+        return seg(T, a, a + 360)
+      }
       // Streams: a quiet wash of the stream's hue behind its subjects.
       for (const st of layout.streams) {
         const hue = streamOf.get(st.id)?.hue
         if (!hue) continue
+        const wp = wipe(st.id)
+        if (wp <= 0) continue
+        const e1 = st.a0 + (st.a1 - st.a0) * wp
         ctx.globalAlpha = (hs && sectorOf.get(hs)?.stream === st.id) || hoverStream.current === st.id ? 0.075 : 0.035
         ctx.fillStyle = hue
         ctx.beginPath()
-        ctx.arc(0, 0, layout.extent + 60, st.a0, st.a1)
-        ctx.arc(0, 0, layout.inner * 0.6, st.a1, st.a0, true)
+        ctx.arc(0, 0, layout.extent + 60, st.a0, e1)
+        ctx.arc(0, 0, layout.inner * 0.6, e1, st.a0, true)
         ctx.closePath()
         ctx.fill()
       }
       ctx.globalAlpha = 1
       // Rings reveal outward on load, one after another.
       const ringIndex = new Map(layout.rings.map((g, i2) => [g.level, i2]))
-      const ringReveal = (level: number) => (reduce ? 1 : Math.max(0, Math.min(1, (intro * 1.6 - (ringIndex.get(level) ?? 0) * 0.09) / 0.35)))
+      // Zone rings ripple outward from YOU, one after another.
+      const ringReveal = (level: number) => {
+        if (T >= INTRO_CLOCK) return 1
+        const a = stagger(ringIndex.get(level) ?? 0, layout.rings.length, 260, 820)
+        return seg(T, a, a + 300)
+      }
       // Zone bands: each subject's zones tinted in their colour, as in the
       // original (the current zone lit, locked zones faint).
       for (const s of sectors) {
@@ -502,23 +612,29 @@ export function RadialWeb({
       ctx.strokeStyle = C.border
       ctx.lineWidth = px
       for (const g of layout.rings) {
+        const rv = ringReveal(g.level)
+        if (rv <= 0) continue
+        ctx.globalAlpha = rv
         ctx.beginPath()
-        ctx.arc(0, 0, g.r0, 0, Math.PI * 2)
+        ctx.arc(0, 0, g.r0 * (0.82 + 0.18 * rv), 0, Math.PI * 2)
         ctx.stroke()
       }
+      ctx.globalAlpha = 1
 
       // Stream rim: an arc in the stream's hue along the outer edge.
       for (const st of layout.streams) {
         const hue = streamOf.get(st.id)?.hue
         if (!hue) continue
+        const wp = wipe(st.id)
+        if (wp <= 0) continue
         ctx.strokeStyle = hue
         ctx.globalAlpha = 0.85
         ctx.lineWidth = 3 * px
         ctx.lineCap = 'round'
         ctx.beginPath()
-        ctx.arc(0, 0, layout.extent + 70, st.a0 + 0.004, st.a1 - 0.004)
+        ctx.arc(0, 0, layout.extent + 70, st.a0 + 0.004, st.a0 + 0.004 + Math.max(0, st.a1 - st.a0 - 0.008) * wp)
         ctx.stroke()
-        ctx.globalAlpha = 0.25
+        ctx.globalAlpha = 0.25 * wp
         ctx.lineWidth = px
         ctx.beginPath()
         ctx.moveTo(Math.cos(st.a0) * layout.inner * 0.62, Math.sin(st.a0) * layout.inner * 0.62)
@@ -550,10 +666,25 @@ export function RadialWeb({
         return [Math.cos(a1) * anchorR, Math.sin(a1) * anchorR, Math.cos(h1) * hr, Math.sin(h1) * hr, Math.cos(h2) * hr, Math.sin(h2) * hr, Math.cos(a2) * anchorR, Math.sin(a2) * anchorR]
       }
       const hueOf = (id: string) => streamOf.get(sectorOf.get(id)?.stream ?? '')?.hue ?? C.primary
+      const glints: [number, number, string][] = []
       for (const l of subjectLinks) {
         const on = hs ? l.from === hs || l.to === hs : true
         if (hs && !on) continue
         const [x0, y0, x1, y1, x2, y2, x3, y3] = chord(l.from, l.to)
+        // Drawn from the prerequisite to the dependent, a glint at the tip.
+        let drawn = 1
+        if (T < INTRO_CLOCK) {
+          const a = stagger(linkOrder.get(`${l.from}>${l.to}`) ?? 0, subjectLinks.length, 850, 1450)
+          drawn = seg(T, a, a + 460)
+          if (drawn <= 0) continue
+          if (drawn < 1) {
+            const len = Math.hypot(x1 - x0, y1 - y0) + Math.hypot(x2 - x1, y2 - y1) + Math.hypot(x3 - x2, y3 - y2)
+            ctx.setLineDash([len * drawn, len * 2])
+            const u = drawn
+            const v = 1 - u
+            glints.push([v * v * v * x0 + 3 * v * v * u * x1 + 3 * v * u * u * x2 + u * u * u * x3, v * v * v * y0 + 3 * v * v * u * y1 + 3 * v * u * u * y2 + u * u * u * y3, hueOf(l.to)])
+          }
+        }
         const g = ctx.createLinearGradient(x0, y0, x3, y3)
         g.addColorStop(0, hueOf(l.from))
         g.addColorStop(1, hueOf(l.to))
@@ -564,6 +695,7 @@ export function RadialWeb({
         ctx.moveTo(x0, y0)
         ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3)
         ctx.stroke()
+        if (drawn < 1) ctx.setLineDash([])
         if (hs) {
           // A small arrowhead at the dependent end.
           const ang = Math.atan2(y3 - y2, x3 - x2)
@@ -591,34 +723,55 @@ export function RadialWeb({
           ctx.stroke()
         }
       }
+      for (const [gx0, gy0, col] of glints) {
+        ctx.globalAlpha = 0.95
+        ctx.fillStyle = C.app
+        ctx.beginPath()
+        ctx.arc(gx0, gy0, 2.6 * px, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.fillStyle = col
+        ctx.beginPath()
+        ctx.arc(gx0, gy0, 1.7 * px, 0, Math.PI * 2)
+        ctx.fill()
+      }
+      ctx.globalAlpha = 1
       // Subject dots where connections meet: each with its progress ring.
       for (const s2 of sectors) {
+        // They pop in along their sectors, stream by stream.
+        let sz = 1
+        let fill = 1
+        if (T < INTRO_CLOCK) {
+          const a = stagger(sectorOrder.get(s2.id) ?? 0, sectors.length, 680, 1300)
+          sz = pop(T, a, a + 280)
+          if (sz <= 0) continue
+          fill = seg(T, a + 140, a + 640)
+        }
         const m = (s2.a0 + s2.a1) / 2
         const cl2 = sectorOf.get(s2.id)
         const prog2 = cl2 && cl2.nodes.length ? cl2.nodes.reduce((a2, n) => a2 + n.p, 0) / cl2.nodes.length : 0
         const ax = Math.cos(m) * anchorR
         const ay = Math.sin(m) * anchorR
         const on = !hs || hs === s2.id
-        ctx.globalAlpha = on ? 1 : 0.3
+        ctx.globalAlpha = (on ? 1 : 0.3) * Math.min(1, sz)
         ctx.fillStyle = C.app
         ctx.beginPath()
-        ctx.arc(ax, ay, 5.2 * px, 0, Math.PI * 2)
+        ctx.arc(ax, ay, 5.2 * px * sz, 0, Math.PI * 2)
         ctx.fill()
         ctx.strokeStyle = C.border
         ctx.lineWidth = 1.4 * px
         ctx.beginPath()
-        ctx.arc(ax, ay, 4.6 * px, 0, Math.PI * 2)
+        ctx.arc(ax, ay, 4.6 * px * sz, 0, Math.PI * 2)
         ctx.stroke()
-        if (prog2 > 0) {
+        if (prog2 > 0 && fill > 0) {
           ctx.strokeStyle = hueOf(s2.id)
           ctx.lineWidth = 1.8 * px
           ctx.beginPath()
-          ctx.arc(ax, ay, 4.6 * px, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * Math.max(4, prog2) * introE) / 100)
+          ctx.arc(ax, ay, 4.6 * px * sz, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * Math.max(4, prog2) * fill) / 100)
           ctx.stroke()
         }
         ctx.fillStyle = hueOf(s2.id)
         ctx.beginPath()
-        ctx.arc(ax, ay, (hs === s2.id ? 2.6 : 2) * px, 0, Math.PI * 2)
+        ctx.arc(ax, ay, (hs === s2.id ? 2.6 : 2) * px * sz, 0, Math.PI * 2)
         ctx.fill()
       }
       ctx.globalAlpha = 1
@@ -690,20 +843,20 @@ export function RadialWeb({
       ctx.lineCap = 'round'
       // locked hairlines
       ctx.strokeStyle = C.strong
-      ctx.globalAlpha = 0.08
+      ctx.globalAlpha = 0.08 * linkIn
       ctx.lineWidth = thin(1.25)
       ctx.stroke(groups.locked.dim)
-      ctx.globalAlpha = related ? 0.95 : 0.6
+      ctx.globalAlpha = (related ? 0.95 : 0.6) * linkIn
       ctx.lineWidth = thin(related ? 1.75 : 1.25)
       ctx.stroke(groups.locked.lit)
       // open: flowing toward the skill you can take next
       ctx.strokeStyle = C.primary
       ctx.setLineDash([5, 7])
       ctx.lineDashOffset = animate ? ((now / 1100) * 24) % 24 : 0
-      ctx.globalAlpha = 0.08
+      ctx.globalAlpha = 0.08 * linkIn
       ctx.lineWidth = thin(2)
       ctx.stroke(groups.open.dim)
-      ctx.globalAlpha = 1
+      ctx.globalAlpha = linkIn
       ctx.lineWidth = thin(related ? 2.75 : 2)
       ctx.stroke(groups.open.lit)
       ctx.globalAlpha = 0.55
@@ -711,21 +864,25 @@ export function RadialWeb({
       ctx.stroke(cross)
       ctx.setLineDash([])
       if (rt) {
+        // The goal path traces itself in gold.
+        const tr = seg(T, 1300, 1880)
         ctx.strokeStyle = '#f4b73f'
-        ctx.globalAlpha = 0.85
+        ctx.globalAlpha = 0.85 * Math.min(1, tr * 3)
         ctx.lineWidth = thin(2.4)
+        if (tr < 1) ctx.setLineDash([900 * tr, 1e5])
         ctx.stroke(routeLinks)
+        ctx.setLineDash([])
       }
       // mastered: glowing in the zone colour
       for (const [col, g] of doneByColor) {
         ctx.strokeStyle = col
-        ctx.globalAlpha = 0.08
+        ctx.globalAlpha = 0.08 * litLinks
         ctx.lineWidth = thin(2)
         ctx.stroke(g.dim)
-        ctx.globalAlpha = 0.22
+        ctx.globalAlpha = 0.22 * litLinks
         ctx.lineWidth = thin(6)
         ctx.stroke(g.lit)
-        ctx.globalAlpha = 1
+        ctx.globalAlpha = litLinks
         ctx.lineWidth = thin(related ? 2.75 : 2)
         ctx.stroke(g.lit)
       }
@@ -743,12 +900,14 @@ export function RadialWeb({
         const state = n.s === 2 ? 'done' : n.s === 1 ? 'open' : 'locked'
         const dim = related ? !related.has(it.key) : !!rt && !rt.keys.has(it.key)
         const reveal = ringReveal(n.z)
+        // Mastered skills light up outward from the centre, a pulse spreading.
+        const lit = state === 'done' ? litOf(it) : 1
         const sel = p.selected === it.key
         const hov = hovered.current === it.key
         g2.add(it.key, X(it.x), Y(it.y))
         ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         if (rr < 2.2) {
-          ctx.fillStyle = state === 'done' ? it.color : state === 'open' ? C.primary : C.strong
+          ctx.fillStyle = state === 'done' && lit > 0.5 ? it.color : state === 'open' || state === 'done' ? C.primary : C.strong
           const d = Math.max(1.6, rr * 1.4) * px
           if (p.due?.has(it.key)) ctx.fillStyle = '#f59e0b'
           ctx.fillRect(it.x - d / 2, it.y - d / 2, d, d)
@@ -799,7 +958,7 @@ export function RadialWeb({
         ctx.strokeStyle = it.color
         ctx.stroke()
         ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
-        const pct = (n.s === 2 ? 100 : n.p) * introE
+        const pct = n.s === 2 ? 100 * lit : n.p * growIn
         if (pct > 0) {
           ctx.lineCap = 'round'
           ctx.beginPath()
@@ -807,6 +966,22 @@ export function RadialWeb({
           ctx.stroke()
         }
         // core
+        if (state === 'done' && lit < 1) {
+          // Not lit yet: an open core underneath, a ring flashing as it lights.
+          ctx.fillStyle = C.surface3
+          ctx.beginPath()
+          ctx.arc(it.x, it.y, coreR, 0, Math.PI * 2)
+          ctx.fill()
+          if (lit > 0) {
+            ctx.globalAlpha = ((dim ? 0.3 : 1) * reveal) * 0.6 * (1 - lit)
+            ctx.strokeStyle = it.color
+            ctx.lineWidth = 2
+            ctx.beginPath()
+            ctx.arc(it.x, it.y, (R + 3) * (1 + 0.45 * lit), 0, Math.PI * 2)
+            ctx.stroke()
+          }
+          ctx.globalAlpha = ((dim ? 0.3 : 1) * reveal) * lit
+        }
         if (state === 'done') {
           // The original: radial-gradient(circle at 35% 30%, zone+white, zone 55%, zone+black).
           const gx = it.x - coreR * 0.3
@@ -822,6 +997,7 @@ export function RadialWeb({
           hi.addColorStop(1, 'rgba(0,0,0,0.35)')
           ctx.fillStyle = hi
           ctx.fill()
+          if (lit < 1) ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         } else if (state === 'open') {
           ctx.fillStyle = C.surface3
           ctx.beginPath()
@@ -850,10 +1026,10 @@ export function RadialWeb({
           ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         }
         if (rr >= 9) {
-          const img = icons.get(`${nodeIcon(n.i)}|${state}`)
+          const img = icons.get(`${nodeIcon(n.i)}|${state === 'done' && lit < 0.5 ? 'open' : state}`)
           if (img?.complete && img.naturalWidth) ctx.drawImage(img, it.x - 9.5, it.y - 9.5, 19, 19)
         }
-        if (rr >= 8 && state === 'done') {
+        if (rr >= 8 && state === 'done' && lit >= 1) {
           const bx = it.x + R * 0.72
           const by = it.y - R * 0.72
           ctx.fillStyle = C.app
@@ -911,6 +1087,21 @@ export function RadialWeb({
         if (lift) ctx.translate(0, lift)
       }
       ctx.globalAlpha = 1
+      // The next step: a gentle beacon as the opening ends (three pulses).
+      if (beaconing && p.nextStep) {
+        const it = items.get(p.nextStep)
+        if (it && inView(it.x, it.y)) {
+          const t = ((now - beaconAt) % 1600) / 1600
+          const r0 = Math.max(R + 6, 9 / c.k)
+          ctx.strokeStyle = '#f4b73f'
+          ctx.lineWidth = Math.max(1.6, 1.6 / c.k)
+          ctx.globalAlpha = 0.7 * (1 - t)
+          ctx.beginPath()
+          ctx.arc(it.x, it.y, r0 * (1 + 0.9 * t), 0, Math.PI * 2)
+          ctx.stroke()
+          ctx.globalAlpha = 1
+        }
+      }
 
       // Names under the orbs, the original's type at the original's scale.
       if (c.k >= 0.62) {
@@ -944,7 +1135,8 @@ export function RadialWeb({
       // Screen-space type: subject names along their branches, and YOU.
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       // The goal path's next steps, numbered.
-      if (rt) {
+      if (rt && T >= 1700) {
+        ctx.globalAlpha = seg(T, 1700, 1950)
         const placedBadges: [number, number][] = []
         rt.next.forEach((k, idx) => {
           const it = items.get(k)
@@ -969,6 +1161,7 @@ export function RadialWeb({
           ctx.textBaseline = 'middle'
           ctx.fillText(String(idx + 1), sx, sy + 0.5)
         })
+        ctx.globalAlpha = 1
       }
       // Mastered since your last visit: a small burst of particles.
       const cb2 = celebrateAt.current
@@ -1028,6 +1221,7 @@ export function RadialWeb({
         ctx.font = `600 ${size}px ${font}`
         ctx.globalAlpha = !hs || hs === s.id || subjectLinks.some((l) => (l.from === hs && l.to === s.id) || (l.to === hs && l.from === s.id)) ? 1 : 0.35
         ctx.fillStyle = hs === s.id ? C.accent : C.text
+        if (T < INTRO_CLOCK) ctx.globalAlpha *= growIn
         ctx.fillText(cl.name, 0, 0)
         ctx.restore()
         ctx.globalAlpha = 1
@@ -1090,7 +1284,13 @@ export function RadialWeb({
         let ang = mid + ((bottom ? 1 : -1) * tw) / 2 / rad
         ctx.fillStyle = info.hue
         ctx.globalAlpha = hoverStream.current && hoverStream.current !== st.id ? 0.55 : 1
+        // Typed onto the rim as the stream sweeps open.
+        const typed = T >= INTRO_CLOCK ? chars.length : (() => {
+          const a = stagger(streamIdx.get(st.id) ?? 0, layout.streams.length, 480, 960)
+          return Math.ceil(chars.length * seg(T, a, a + 380))
+        })()
         chars.forEach((ch, i) => {
+          if (i >= typed) return
           const step = (widths[i] + sp) / rad
           const a3 = ang + ((bottom ? -1 : 1) * widths[i]) / 2 / rad
           ctx.save()
@@ -1144,13 +1344,14 @@ export function RadialWeb({
       const core = coreRef.current
       if (core) {
         // Smaller when the first ring is small on screen, so it never covers the web.
-        const sc = Math.max(0.5, Math.min(1, (layout.inner * 0.5 * c.k) / 76))
+        const sc = Math.max(0.5, Math.min(1, (layout.inner * 0.5 * c.k) / 76)) * (playing && !fadeOnly ? 0.9 + 0.1 * seg(T, 0, 340) : 1)
         core.style.transform = `translate(${X(0).toFixed(1)}px, ${Y(0).toFixed(1)}px) translate(-50%, -38px) scale(${sc.toFixed(3)})`
       }
     }
     raf = requestAnimationFrame(frame)
     return () => {
       cancelAnimationFrame(raf)
+      for (const ev of skipEvents) window.removeEventListener(ev, skipIntro, skipOpts)
       ro.disconnect()
       themeObs.disconnect()
       probe.remove()
@@ -1286,14 +1487,8 @@ export function RadialWeb({
               }
             }
             else if (hs && !hs.beyond) {
-              // Zoom into the sector.
-              const mid = (hs.s.a0 + hs.s.a1) / 2
-              const rm = (layout.inner + hs.s.rMax) / 2
-              const { w, h } = view.current
-              const depth = hs.s.rMax - layout.inner + 400
-              const k = Math.min(1, Math.min(w, h) / depth)
-              if (cam.current.k < k * 0.9) flyTo({ x: Math.cos(mid) * rm, y: Math.sin(mid) * rm, k })
-              else cb.onSelect(null)
+              // Anywhere in a subject's sector: its own page.
+              cb.onOpenSubject(hs.s.id)
             } else cb.onSelect(null)
           }
         }
@@ -1425,7 +1620,8 @@ export function RadialWeb({
       data-fullscreen={fullscreen !== 'off' || undefined}
     >
       <nav
-        className={cn('shrink-0 flex-col overflow-y-auto border-r border-border py-2', compact ? 'hidden' : 'flex w-[184px]')}
+        className={cn('nx-hud shrink-0 flex-col overflow-y-auto border-r border-border py-2', compact ? 'hidden' : 'flex w-[184px]')}
+        style={{ '--nx-hud-d': '60ms' } as CSSProperties}
         aria-label="Zones (rings, outward)"
       >
         {rail.map((z) => (
@@ -1465,9 +1661,9 @@ export function RadialWeb({
           role="application"
           aria-label={`The Nexus: ${clusters.length} subjects grown outward from you, zones as rings. Drag to pan, scroll or pinch to zoom; click a subject's name to open its tree, a sector to zoom in, a skill to see it. Arrow keys pan, plus and minus zoom, 0 fits.`}
         />
-        <CoreEmblem ref={coreRef} me={me} />
+        <CoreEmblem ref={coreRef} me={me} ignite={intro.mode !== 'fade'} />
         </div>
-        <div className={cn('absolute right-3 flex gap-1.5', compact ? 'bottom-3' : 'top-3')} role="toolbar" aria-label="Nexus view">
+        <div className={cn('nx-hud absolute right-3 flex gap-1.5', compact ? 'bottom-3' : 'top-3')} style={{ '--nx-hud-d': '120ms' } as CSSProperties} role="toolbar" aria-label="Nexus view">
           {nextStep && (
             <Button variant="outline" size="sm" onClick={() => P.current.onSelect(nextStep)} aria-label="Jump to my next step" title="Jump to my next step">
               <Crosshair className="size-3.5" /> <span className="hidden sm:inline">Next step</span>
@@ -1518,7 +1714,7 @@ export function RadialWeb({
  * web rank, the rank's emblem and name beneath, the NG mark set into the
  * ring. Your numbers appear only on hover or focus, as a small caption.
  */
-const CoreEmblem = forwardRef<HTMLDivElement, { me: CoreInfo }>(function CoreEmblem({ me }, ref) {
+const CoreEmblem = forwardRef<HTMLDivElement, { me: CoreInfo; ignite?: boolean }>(function CoreEmblem({ me, ignite }, ref) {
   const pct = Math.max(0, Math.min(1, me.player.xpInLevel / Math.max(1, me.player.xpForNext)))
   const SIZE = 76
   const r = SIZE / 2 - 3
@@ -1535,7 +1731,7 @@ const CoreEmblem = forwardRef<HTMLDivElement, { me: CoreInfo }>(function CoreEmb
               </linearGradient>
             </defs>
             <circle cx={SIZE / 2} cy={SIZE / 2} r={r} fill="none" stroke="var(--color-border)" strokeWidth="2" />
-            <circle cx={SIZE / 2} cy={SIZE / 2} r={r} fill="none" stroke="url(#nx-core-ring)" strokeWidth="2.5" strokeLinecap="round" strokeDasharray={`${circ * pct} ${circ}`} />
+            <circle className={ignite ? 'nx-core-ignite' : undefined} cx={SIZE / 2} cy={SIZE / 2} r={r} fill="none" stroke="url(#nx-core-ring)" strokeWidth="2.5" strokeLinecap="round" strokeDasharray={`${circ * pct} ${circ * 2}`} style={{ '--nx-arc': `${circ * pct}` } as CSSProperties} />
           </svg>
           <span className="absolute inset-[9px] overflow-hidden rounded-full">
             <Avatar src={me.avatarUrl} avatar={me.avatar} name={me.displayName ?? me.username} seed={me.username} size="2xl" ring={false} className="!h-full !w-full" />

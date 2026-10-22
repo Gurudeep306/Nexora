@@ -13,6 +13,8 @@ const { loadGateBank } = require("../src/routes/gate");
 
 const docs = readOutlines();
 const errors = validateOutlines(docs, NEXUS_NODES, { bank: loadGateBank(), strict: true });
+// The DSA nodes' summaries and topics live in content/nexus/_dsa-content.json.
+for (const id of require("../src/nexus/subjects").dsaContentGaps(NEXUS_NODES)) errors.push(`_dsa-content.json: ${id} needs a summary and at least 3 topics`);
 let nodes = 0;
 for (const d of docs) {
   if (d.engine) {

@@ -84,6 +84,12 @@ function validateOutlines(docs, dsaNodes, opts = {}) {
     for (const k of ["name", "short", "group", "icon", "color"]) if (!d[k]) errors.push(`${where}: missing ${k}`);
     if (opts.strict && !d.domain) errors.push(`${where}: missing domain`);
     if (opts.strict && !d.stream) errors.push(`${where}: missing stream`);
+    if (opts.strict && !d.engine) {
+      for (const n of d.nodes || []) {
+        if (typeof n.summary !== "string" || n.summary.trim().split(/\s+/).length < 6) errors.push(`${where}: ${n.id} needs a summary`);
+        if (!Array.isArray(n.topics) || n.topics.length < 3 || n.topics.some((t) => typeof t !== "string" || !t.trim())) errors.push(`${where}: ${n.id} needs at least 3 topics`);
+      }
+    }
     if (d.stream && opts.streams && !opts.streams.has(d.stream)) errors.push(`${where}: unknown stream ${d.stream} (see _streams.json)`);
     if (d.engine) {
       if (!ENGINES.has(d.engine) || d.engine !== d.id) errors.push(`${where}: unknown engine ${d.engine}`);
@@ -467,7 +473,10 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
       const parts = [];
       if (target) parts.push(Math.min(1, correct / target));
       if (lessons.length) parts.push(lessonsDone / lessons.length);
-      const progress = parts.length ? Math.min(100, Math.round((parts.reduce((a, b) => a + b, 0) / parts.length) * 100)) : 0;
+      const studied = parts.length ? Math.min(100, Math.round((parts.reduce((a, b) => a + b, 0) / parts.length) * 100)) : 0;
+      // Passed by a quick check ("Test out"): mastered, with its study progress kept for fair XP.
+      const testedOut = !!state.testouts?.has(key);
+      const progress = testedOut ? 100 : studied;
       const pos = s.layout.get(n.id) || { x: 50, row: 0 };
       const node = {
         id: n.id,
@@ -493,6 +502,7 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
           lessons: lessons.length ? { done: lessonsDone, total: lessons.length, subject: s.meta.notesSubject, ids: lessons } : null,
         },
         completed: progress >= 100,
+        ...(testedOut ? { testedOut: true, studyProgress: studied } : {}),
         memory: lastAt ? { lastAt, interval: ivN ? ivSum / ivN : 0 } : null,
         touchedAt: touched || 0,
         _cross: (n.requires || []).filter((r) => r.includes(":")),
@@ -629,10 +639,42 @@ function webStructure(reg, dsa) {
   }
   const routes = readRoutes(reg);
   const streams = readStreams();
-  const body = { clusters, routes, streams };
+  const hubs = readHubs();
+  const body = { clusters, routes, streams, ...(hubs ? { hubs } : {}) };
   const version = crypto.createHash("sha1").update(JSON.stringify(body)).digest("hex").slice(0, 12);
   reg.structure = { version, ...body };
   return reg.structure;
+}
+
+/**
+ * The DSA skill nodes' summaries and topics (content/nexus/_dsa-content.json),
+ * kept apart from the nodes themselves, which live in code.
+ */
+function readDsaContent(dir = DIR) {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(dir, "_dsa-content.json"), "utf8")).nodes || {};
+  } catch {
+    return {};
+  }
+}
+
+/** Missing DSA content entries (the nexus check fails on any). */
+function dsaContentGaps(dsaNodes, dir = DIR) {
+  const c = readDsaContent(dir);
+  return dsaNodes.filter((n) => !c[n.id]?.summary || !Array.isArray(c[n.id]?.topics) || c[n.id].topics.length < 3).map((n) => n.id);
+}
+
+/**
+ * Where Learn courses and GATE subjects live in the Nexus
+ * (content/nexus/_hubs.json): each maps to one Nexus subject.
+ */
+function readHubs(dir = DIR) {
+  try {
+    const raw = JSON.parse(fs.readFileSync(path.join(dir, "_hubs.json"), "utf8"));
+    return { gate: raw.gate || {}, learn: raw.learn || [] };
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -696,7 +738,10 @@ function countLabel(n) {
 }
 
 module.exports = {
+  readDsaContent,
+  dsaContentGaps,
   readStreams,
+  readHubs,
   webStructure,
   webState,
   readRoutes,

@@ -28,6 +28,7 @@ import { usePlanInputs, useStudyPlan } from '@/gate/insights/planInputs'
 import { shortSubject, useSubjects } from '@/gate/insights/subjects'
 import { QuestionRow } from '@/gate/insights/QuestionRow'
 import { OutcomeDot, TestLine } from '@/gate/insights/TestLine'
+import { GateSubjectsPanel } from '@/components/nexus/SubjectsHub'
 
 const QUESTIONS_PER_HOUR = 6
 
@@ -63,6 +64,9 @@ export default function GateHomePage() {
               {loading ? <Skeleton className="h-28 w-full rounded-lg" /> : <ActivityHeatmap activity={s?.activity ?? {}} />}
             </Panel>
             <SubjectRings summary={s} loading={loading} />
+            <Panel title="Subjects" icon="map" subtitle={`Every GATE ${exam} subject as a skill tree: lessons, notes and PYQs in one place`} action={<PanelLink to="/learn">All subjects</PanelLink>}>
+              <GateSubjectsPanel exam={exam} />
+            </Panel>
           </div>
           <div className="min-w-0 space-y-5">
             <ContinuePanel summary={s} loading={loading} />

@@ -1,0 +1,309 @@
+{
+  "_doc": "Summary and topics for the DSA skill nodes (src/nexus/dsa-nodes.js), shown in each node's content view.",
+  "nodes": {
+    "bit_basics": {
+      "summary": "You will be able to read problem statements carefully, handle fast input and output and implement straightforward simulations without bugs.",
+      "topics": [
+        "Reading constraints and choosing data types",
+        "Fast input and output",
+        "Simulating a process step by step",
+        "Integer overflow and 64-bit types",
+        "Estimating time complexity from constraints"
+      ]
+    },
+    "byte_sorting": {
+      "summary": "You will be able to sort data efficiently, write custom comparators and use counting sort when values are small.",
+      "topics": [
+        "Built-in sort and O(n log n) bounds",
+        "Custom comparators and sorting pairs",
+        "Stable sorting",
+        "Counting sort for small ranges",
+        "Coordinate compression"
+      ]
+    },
+    "byte_strings": {
+      "summary": "You will be able to manipulate strings, count characters, check palindromes and do simple pattern matching efficiently.",
+      "topics": [
+        "String indexing and substrings",
+        "Character frequency counting",
+        "Palindrome checks",
+        "Naive pattern matching",
+        "Avoiding quadratic string concatenation"
+      ]
+    },
+    "byte_brute": {
+      "summary": "You will be able to solve problems by complete search, enumerating candidates with recursion and backtracking and pruning the search.",
+      "topics": [
+        "Iterating over all candidates",
+        "Generating subsets with bitmasks",
+        "Generating permutations",
+        "Recursive backtracking",
+        "Pruning the search space"
+      ]
+    },
+    "kb_bsearch": {
+      "summary": "You will be able to apply binary search to sorted arrays and monotonic answers and solve range problems with two pointers.",
+      "topics": [
+        "Binary search on sorted arrays",
+        "lower_bound and upper_bound",
+        "Binary search on the answer",
+        "Two-pointer technique",
+        "Ternary search on unimodal functions"
+      ]
+    },
+    "kb_greedy": {
+      "summary": "You will be able to design greedy algorithms for scheduling and interval problems and justify them with exchange arguments.",
+      "topics": [
+        "Greedy choice property",
+        "Exchange argument proofs",
+        "Interval scheduling by end time",
+        "Activity selection and deadlines",
+        "Counterexamples to wrong greedies"
+      ]
+    },
+    "kb_prefix": {
+      "summary": "You will be able to answer range sum queries in constant time with 1D and 2D prefix sums and apply range updates with difference arrays.",
+      "topics": [
+        "1D prefix sums",
+        "2D prefix sums for submatrices",
+        "Difference arrays for range updates",
+        "Prefix sums with hash maps for subarray counts",
+        "Prefix XOR and other invertible operations"
+      ]
+    },
+    "mb_ntheory": {
+      "summary": "You will be able to use primes, GCD, modular arithmetic and sieves to solve number theory problems within time limits.",
+      "topics": [
+        "Primality testing by trial division",
+        "Sieve of Eratosthenes",
+        "GCD, LCM and Euclid's algorithm",
+        "Modular arithmetic and fast exponentiation",
+        "Modular inverses",
+        "Prime factorisation and divisors"
+      ]
+    },
+    "mb_dp": {
+      "summary": "You will be able to define DP states and transitions and solve classic problems such as knapsack, LIS, LCS and coin change.",
+      "topics": [
+        "States, transitions and base cases",
+        "Memoisation vs tabulation",
+        "0/1 knapsack",
+        "Longest increasing subsequence",
+        "Longest common subsequence",
+        "Coin change counting and minimum coins"
+      ]
+    },
+    "mb_graphs": {
+      "summary": "You will be able to represent graphs and use BFS and DFS to find components, shortest unweighted paths and bipartite structure.",
+      "topics": [
+        "Adjacency list representation",
+        "Breadth-first search",
+        "Depth-first search",
+        "Connected components",
+        "Bipartite check by two-colouring",
+        "Grid graphs and flood fill"
+      ]
+    },
+    "mb_dsu": {
+      "summary": "You will be able to maintain dynamic connectivity with union-find using path compression, union by rank and weighted variants.",
+      "topics": [
+        "Find and union operations",
+        "Path compression",
+        "Union by rank or size",
+        "Kruskal's MST with DSU",
+        "Weighted DSU for relative values"
+      ]
+    },
+    "gb_adv_dp": {
+      "summary": "You will be able to solve harder DP problems over subsets, digits, trees and DAGs by choosing compact state representations.",
+      "topics": [
+        "Bitmask DP over subsets",
+        "Travelling salesman with bitmasks",
+        "Digit DP with tight flags",
+        "DP on trees with subtree states",
+        "DP on DAGs in topological order"
+      ]
+    },
+    "gb_ds": {
+      "summary": "You will be able to choose and use stacks, queues, ordered sets, maps, priority queues and Fenwick trees to speed up solutions.",
+      "topics": [
+        "Stacks and monotonic stacks",
+        "Queues and deques",
+        "Ordered sets and maps",
+        "Priority queues and heaps",
+        "Fenwick tree for prefix sums"
+      ]
+    },
+    "gb_trees": {
+      "summary": "You will be able to traverse trees, find diameters and lowest common ancestors and flatten trees with an Euler tour.",
+      "topics": [
+        "Rooting a tree with DFS",
+        "Subtree sizes and depths",
+        "Tree diameter",
+        "LCA with binary lifting",
+        "Euler tour flattening"
+      ]
+    },
+    "gb_spaths": {
+      "summary": "You will be able to compute shortest paths with Dijkstra, Bellman-Ford, Floyd-Warshall and 0-1 BFS and pick the right one.",
+      "topics": [
+        "Dijkstra's algorithm with a heap",
+        "Bellman-Ford and negative cycles",
+        "Floyd-Warshall all-pairs paths",
+        "0-1 BFS with a deque",
+        "Path reconstruction"
+      ]
+    },
+    "tb_segtree": {
+      "summary": "You will be able to answer range queries with point and range updates using segment trees with lazy propagation and persistence.",
+      "topics": [
+        "Building a segment tree",
+        "Point updates and range queries",
+        "Lazy propagation for range updates",
+        "Merging custom node data",
+        "Persistent segment trees"
+      ]
+    },
+    "tb_combo": {
+      "summary": "You will be able to count arrangements with permutations, binomial coefficients and inclusion-exclusion under a modulus.",
+      "topics": [
+        "Permutations and combinations",
+        "Precomputing factorials and inverse factorials",
+        "Pascal's triangle",
+        "Stars and bars",
+        "Inclusion-exclusion principle"
+      ]
+    },
+    "tb_stralgo": {
+      "summary": "You will be able to match patterns in linear time with KMP and the Z-function and compare substrings fast with hashing.",
+      "topics": [
+        "Prefix function and KMP",
+        "Z-function for pattern matching",
+        "Polynomial rolling hashes",
+        "Avoiding hash collisions",
+        "Suffix array construction basics"
+      ]
+    },
+    "pb_flows": {
+      "summary": "You will be able to model problems as network flows and solve max flow, min cut, bipartite matching and assignment problems.",
+      "topics": [
+        "Residual graphs and augmenting paths",
+        "Dinic's algorithm",
+        "Max-flow min-cut theorem",
+        "Bipartite matching",
+        "Hungarian algorithm for assignment"
+      ]
+    },
+    "pb_game": {
+      "summary": "You will be able to analyse impartial games with Sprague-Grundy theory and search game trees with minimax and alpha-beta pruning.",
+      "topics": [
+        "Winning and losing positions",
+        "Nim and XOR of pile sizes",
+        "Grundy numbers and mex",
+        "Sums of games",
+        "Minimax with alpha-beta pruning"
+      ]
+    },
+    "pb_adv_trees": {
+      "summary": "You will be able to answer path and subtree queries with heavy-light and centroid decomposition and understand link-cut trees.",
+      "topics": [
+        "Heavy-light decomposition",
+        "Path queries with segment trees",
+        "Centroid decomposition",
+        "Counting paths with centroids",
+        "Link-cut tree basics"
+      ]
+    },
+    "pb_geometry": {
+      "summary": "You will be able to solve computational geometry problems with cross products, convex hulls, segment intersection and polygon area.",
+      "topics": [
+        "Points, vectors and cross products",
+        "Orientation tests",
+        "Line segment intersection",
+        "Polygon area with the shoelace formula",
+        "Convex hull with monotone chain",
+        "Precision and integer geometry"
+      ]
+    },
+    "eb_fft": {
+      "summary": "You will be able to multiply polynomials and compute convolutions in O(n log n) with FFT and the number theoretic transform.",
+      "topics": [
+        "Polynomial multiplication as convolution",
+        "Roots of unity",
+        "Cooley-Tukey FFT",
+        "Number theoretic transform",
+        "Applications to counting problems"
+      ]
+    },
+    "eb_dp_opt": {
+      "summary": "You will be able to speed up DP transitions with divide and conquer, Knuth's optimisation, convex hull trick and the aliens trick.",
+      "topics": [
+        "Divide and conquer optimisation",
+        "Knuth's optimisation",
+        "Convex hull trick",
+        "Li Chao tree",
+        "Aliens trick with Lagrangian relaxation"
+      ]
+    },
+    "eb_adv_graphs": {
+      "summary": "You will be able to solve harder graph problems with SCCs, 2-SAT, block-cut trees and Euler paths.",
+      "topics": [
+        "Strongly connected components",
+        "2-SAT via implication graphs",
+        "Bridges and articulation points",
+        "Block-cut trees",
+        "Euler paths with Hierholzer's algorithm"
+      ]
+    },
+    "zb_expert_ds": {
+      "summary": "You will be able to implement balanced and persistent structures such as treaps, splay trees and wavelet trees for advanced queries.",
+      "topics": [
+        "Treaps with split and merge",
+        "Implicit treaps for sequences",
+        "Splay trees",
+        "Persistent data structures",
+        "Wavelet trees for k-th smallest queries"
+      ]
+    },
+    "zb_expert_combo": {
+      "summary": "You will be able to count with generating functions, formal power series and Burnside's lemma and Polya enumeration.",
+      "topics": [
+        "Ordinary and exponential generating functions",
+        "Formal power series operations",
+        "Power series inverse and logarithm",
+        "Burnside's lemma",
+        "Polya enumeration theorem"
+      ]
+    },
+    "yb_expert_trees": {
+      "summary": "You will be able to maintain dynamic forests with link-cut trees, Euler tour trees and top trees for path and subtree queries.",
+      "topics": [
+        "Link-cut tree operations",
+        "Dynamic connectivity",
+        "Euler tour trees",
+        "Top trees",
+        "Path aggregates on dynamic trees"
+      ]
+    },
+    "yb_expert_math": {
+      "summary": "You will be able to apply advanced mathematics such as elliptic curves, matroid intersection and multivariate polynomials in contest problems.",
+      "topics": [
+        "Elliptic curves over finite fields",
+        "Matroids and their independence systems",
+        "Matroid intersection",
+        "Multivariate polynomial techniques",
+        "Linear algebra over finite fields"
+      ]
+    },
+    "overflow_ascension": {
+      "summary": "You will combine techniques across every domain to solve elite contest problems that require several advanced ideas at once.",
+      "topics": [
+        "Recognising underlying techniques",
+        "Combining multiple algorithms",
+        "Proving solution correctness",
+        "Optimising constant factors",
+        "Stress testing and debugging"
+      ]
+    }
+  }
+}

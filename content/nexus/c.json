@@ -43,6 +43,15 @@
       "name": "C basics",
       "icon": "terminal",
       "desc": "Types, integer representation, operators, precedence and expression evaluation in C (and the Pascal-style snippets older papers use).",
+      "summary": "You will be able to predict the result of C expressions using types, integer representation, operator precedence and evaluation rules.",
+      "topics": [
+        "Basic data types and their sizes",
+        "Signed and unsigned integer representation",
+        "Operator precedence and associativity",
+        "Implicit type conversions",
+        "Increment operators and side effects",
+        "Reading Pascal-style pseudocode"
+      ],
       "kind": "concept",
       "requires": [
         "dl:signed-numbers"
@@ -64,6 +73,14 @@
       "name": "Loops & control flow",
       "icon": "terminal",
       "desc": "if/switch, for/while/do-while, break and continue; tracing loops and reasoning with loop invariants.",
+      "summary": "You will be able to trace C loops and branches accurately and reason about their behaviour using loop invariants.",
+      "topics": [
+        "if-else and switch fall-through",
+        "for, while and do-while loops",
+        "break and continue",
+        "Counting loop iterations",
+        "Loop invariants for correctness"
+      ],
       "kind": "concept",
       "requires": [
         "c-basics"
@@ -83,6 +100,15 @@
       "name": "Functions & scope",
       "icon": "function",
       "desc": "Function calls, block and file scope, lifetime, and static variables that keep their value between calls.",
+      "summary": "You will be able to determine which variable a name refers to and how long it lives, including static variables across calls.",
+      "topics": [
+        "Function declarations and calls",
+        "Block scope and file scope",
+        "Automatic versus static lifetime",
+        "Static local variables across calls",
+        "Global variables and shadowing",
+        "Static versus dynamic scoping"
+      ],
       "kind": "concept",
       "requires": [
         "control-flow"
@@ -102,6 +128,14 @@
       "name": "Parameter passing",
       "icon": "function",
       "desc": "Call by value versus simulated call by reference through pointers; why swap(a, b) does not work.",
+      "summary": "You will be able to trace call by value and simulated call by reference in C and explain why a naive swap fails.",
+      "topics": [
+        "Call by value semantics",
+        "Passing pointers to modify caller data",
+        "Why swap(a, b) fails",
+        "Arrays decaying to pointers in calls",
+        "Call by reference and call by name"
+      ],
       "kind": "concept",
       "requires": [
         "functions-scope"
@@ -124,6 +158,14 @@
       "name": "Macros & linking",
       "icon": "wrench",
       "desc": "The preprocessor and macros, compilation units, linkers, loaders, relocation and external symbols.",
+      "summary": "You will be able to expand preprocessor macros correctly and explain how compilation units are linked, loaded and relocated.",
+      "topics": [
+        "Preprocessor directives and #define",
+        "Macro expansion pitfalls",
+        "Separate compilation units",
+        "extern and static linkage",
+        "Linkers, loaders and relocation"
+      ],
       "kind": "concept",
       "requires": [
         "functions-scope"
@@ -139,6 +181,14 @@
       "name": "Pointers",
       "icon": "link",
       "desc": "Addresses, dereferencing, pointers to pointers, aliasing and how pointers make C functions modify caller data.",
+      "summary": "You will be able to declare, dereference and trace pointers, including pointers to pointers and aliasing.",
+      "topics": [
+        "Address-of and dereference operators",
+        "Pointer declarations and types",
+        "Pointers to pointers",
+        "Aliasing through multiple pointers",
+        "NULL pointers"
+      ],
       "kind": "concept",
       "requires": [
         "parameter-passing"
@@ -158,6 +208,14 @@
       "name": "Pointer arithmetic",
       "icon": "link",
       "desc": "Pointer arithmetic, the array–pointer relationship, and indexing multi-dimensional arrays through pointers.",
+      "summary": "You will be able to compute pointer arithmetic results and index one- and multi-dimensional arrays through pointers.",
+      "topics": [
+        "Pointer arithmetic and element size",
+        "Array names as pointers",
+        "Equivalence of a[i] and *(a + i)",
+        "Pointers to arrays versus arrays of pointers",
+        "Two-dimensional arrays through pointers"
+      ],
       "kind": "concept",
       "requires": [
         "pointers"
@@ -179,6 +237,15 @@
       "name": "Strings & structs",
       "icon": "type",
       "desc": "Null-terminated strings, character arrays versus string literals, structs and pointers to structs.",
+      "summary": "You will be able to manipulate null-terminated strings and structs in C, including pointers to structs.",
+      "topics": [
+        "Null-terminated character arrays",
+        "String literals versus char arrays",
+        "Common string library functions",
+        "Defining and using structs",
+        "Pointers to structs and the arrow operator",
+        "Self-referential structs"
+      ],
       "kind": "concept",
       "requires": [
         "pointer-arithmetic"
@@ -198,6 +265,14 @@
       "name": "Dynamic memory",
       "icon": "database",
       "desc": "malloc and free, heap versus stack storage, dangling pointers and memory leaks.",
+      "summary": "You will be able to allocate and free heap memory in C and recognise dangling pointers and memory leaks.",
+      "topics": [
+        "malloc, calloc and realloc",
+        "Freeing memory with free",
+        "Heap versus stack storage",
+        "Dangling pointers",
+        "Memory leaks"
+      ],
       "kind": "concept",
       "requires": [
         "pointers"
@@ -218,6 +293,14 @@
       "name": "Recursion",
       "icon": "git-branch",
       "desc": "Recursive functions in C: base cases, tracing output, and counting calls.",
+      "summary": "You will be able to write recursive C functions with correct base cases and trace their output and number of calls.",
+      "topics": [
+        "Base and recursive cases",
+        "Tracing recursive output",
+        "Head versus tail recursion",
+        "Counting recursive calls",
+        "Recursion with return values"
+      ],
       "kind": "concept",
       "requires": [
         "functions-scope"
@@ -233,6 +316,14 @@
       "name": "Recursion trees",
       "icon": "git-branch",
       "desc": "Drawing recursion trees, counting calls and stack depth, and mixing recursion with pointer or static parameters.",
+      "summary": "You will be able to draw recursion trees for C programs and count calls and stack depth, even with static or pointer parameters.",
+      "topics": [
+        "Drawing recursion trees",
+        "Counting total calls",
+        "Maximum stack depth",
+        "Recursion with static variables",
+        "Recursion with pointer parameters"
+      ],
       "kind": "concept",
       "requires": [
         "recursion",
@@ -256,6 +347,14 @@
       "name": "Arrays",
       "icon": "array",
       "desc": "One- and two-dimensional arrays, in-place algorithms on arrays and their loop invariants.",
+      "summary": "You will be able to write and reason about array algorithms in C, including in-place updates and their loop invariants.",
+      "topics": [
+        "Declaring and initialising arrays",
+        "Two-dimensional arrays",
+        "In-place reversal and rotation",
+        "Array traversal invariants",
+        "Out-of-bounds access"
+      ],
       "kind": "concept",
       "requires": [
         "pointer-arithmetic"
@@ -271,6 +370,14 @@
       "name": "Array addressing",
       "icon": "grid",
       "desc": "Row-major and column-major layout, address formulas, and triangular or sparse matrix storage.",
+      "summary": "You will be able to compute element addresses in row-major and column-major layouts and store triangular and sparse matrices compactly.",
+      "topics": [
+        "Row-major order address formula",
+        "Column-major order address formula",
+        "Arbitrary lower bounds in indices",
+        "Lower and upper triangular storage",
+        "Sparse matrix representations"
+      ],
       "kind": "concept",
       "requires": [
         "arrays"
@@ -294,6 +401,14 @@
       "name": "Linked lists",
       "icon": "link",
       "desc": "Singly, doubly and circular linked lists: insertion, deletion, reversal and pointer manipulation.",
+      "summary": "You will be able to implement and trace singly, doubly and circular linked lists, including insertion, deletion and reversal.",
+      "topics": [
+        "Node structure with next pointers",
+        "Insertion at head, tail and middle",
+        "Deletion and pointer updates",
+        "Reversing a linked list",
+        "Doubly and circular linked lists"
+      ],
       "kind": "concept",
       "requires": [
         "pointers",
@@ -310,6 +425,14 @@
       "name": "Stacks & queues",
       "icon": "layers",
       "desc": "Stack and queue ADTs on arrays and lists, circular queues, queues from stacks and stack permutations.",
+      "summary": "You will be able to implement stacks and queues on arrays and lists and reason about circular queues and stack permutations.",
+      "topics": [
+        "Stack push and pop",
+        "Array and linked queue implementations",
+        "Circular queue full and empty conditions",
+        "Queue using two stacks",
+        "Valid stack permutations"
+      ],
       "kind": "concept",
       "requires": [
         "arrays",
@@ -326,6 +449,14 @@
       "name": "Expression evaluation",
       "icon": "calculator",
       "desc": "Infix to postfix conversion, postfix evaluation and parenthesis matching with a stack.",
+      "summary": "You will be able to convert infix to postfix, evaluate postfix expressions and check parenthesis matching with a stack.",
+      "topics": [
+        "Infix, prefix and postfix notation",
+        "Infix to postfix with operator precedence",
+        "Evaluating postfix expressions",
+        "Balanced parenthesis checking",
+        "Stack contents during conversion"
+      ],
       "kind": "concept",
       "requires": [
         "stacks-queues"
@@ -347,6 +478,14 @@
       "name": "Binary trees",
       "icon": "tree",
       "desc": "Binary and n-ary trees: representation, recursive algorithms on trees, and their properties.",
+      "summary": "You will be able to represent binary and n-ary trees in C and write recursive algorithms over them.",
+      "topics": [
+        "Tree terminology",
+        "Linked node representation",
+        "Array representation of binary trees",
+        "Recursive height and size functions",
+        "n-ary trees and child-sibling form"
+      ],
       "kind": "concept",
       "requires": [
         "recursion",
@@ -363,6 +502,14 @@
       "name": "Tree traversals",
       "icon": "tree",
       "desc": "Preorder, inorder, postorder and level order traversals, and rebuilding a tree from two traversals.",
+      "summary": "You will be able to perform preorder, inorder, postorder and level-order traversals and rebuild a tree from two traversals.",
+      "topics": [
+        "Preorder, inorder and postorder",
+        "Level-order traversal with a queue",
+        "Rebuilding from inorder and preorder",
+        "Which traversal pairs are sufficient",
+        "Iterative traversal with a stack"
+      ],
       "kind": "concept",
       "requires": [
         "trees"
@@ -383,6 +530,14 @@
       "name": "Tree properties",
       "icon": "tree",
       "desc": "Counting nodes, leaves and heights in full, complete and n-ary trees; proofs by induction.",
+      "summary": "You will be able to count nodes, leaves and heights in full, complete and n-ary trees and prove such facts by induction.",
+      "topics": [
+        "Full, complete and perfect binary trees",
+        "Leaves versus internal nodes relation",
+        "Minimum and maximum height bounds",
+        "Node counts in n-ary trees",
+        "Proofs by induction on trees"
+      ],
       "kind": "concept",
       "requires": [
         "trees"
@@ -406,6 +561,14 @@
       "name": "Binary search trees",
       "icon": "tree",
       "desc": "BST search, insertion and deletion, traversal orders of a BST and counting BSTs.",
+      "summary": "You will be able to search, insert into and delete from binary search trees and count BSTs on n keys.",
+      "topics": [
+        "The BST property",
+        "Search and insertion",
+        "Deletion with inorder successor",
+        "Inorder traversal gives sorted order",
+        "Counting BSTs with Catalan numbers"
+      ],
       "kind": "concept",
       "requires": [
         "tree-traversals"
@@ -421,6 +584,14 @@
       "name": "Balanced BSTs",
       "icon": "tree",
       "desc": "AVL trees, rotations and height bounds of balanced search trees.",
+      "summary": "You will be able to keep a BST balanced with AVL rotations and compute height bounds for balanced search trees.",
+      "topics": [
+        "Balance factor",
+        "LL, RR, LR and RL rotations",
+        "Insertion with rebalancing",
+        "Minimum nodes for a given height",
+        "O(log n) height guarantee"
+      ],
       "kind": "concept",
       "requires": [
         "bst"
@@ -441,6 +612,14 @@
       "name": "Heaps",
       "icon": "layers",
       "desc": "Binary min- and max-heaps stored in arrays; the heap property and priority queues.",
+      "summary": "You will be able to store binary min- and max-heaps in arrays and use them as priority queues.",
+      "topics": [
+        "Heap order property",
+        "Array representation and index formulas",
+        "Min-heap versus max-heap",
+        "Priority queue operations",
+        "Checking whether an array is a heap"
+      ],
       "kind": "concept",
       "requires": [
         "trees",
@@ -457,6 +636,14 @@
       "name": "Heap operations",
       "icon": "layers",
       "desc": "Insert, delete, heapify and linear-time build-heap, d-ary heaps and their costs.",
+      "summary": "You will be able to trace heap insertion, deletion and heapify, build a heap in linear time and analyse d-ary heaps.",
+      "topics": [
+        "Insertion with sift-up",
+        "Delete-max with sift-down",
+        "Linear-time build-heap",
+        "Heap sort",
+        "d-ary heap height and costs"
+      ],
       "kind": "concept",
       "requires": [
         "heaps"
@@ -479,6 +666,14 @@
       "name": "Hashing",
       "icon": "hash",
       "desc": "Hash functions, hash tables and load factor.",
+      "summary": "You will be able to design simple hash functions and reason about hash tables and their load factor.",
+      "topics": [
+        "Hash tables and buckets",
+        "Division and multiplication hash functions",
+        "Load factor",
+        "Collisions and their causes",
+        "Expected search cost"
+      ],
       "kind": "concept",
       "requires": [
         "arrays"
@@ -494,6 +689,14 @@
       "name": "Collision resolution",
       "icon": "hash",
       "desc": "Chaining, linear probing and double hashing: tracing insertions and probe sequences.",
+      "summary": "You will be able to trace insertions and probe sequences under chaining, linear probing and double hashing.",
+      "topics": [
+        "Separate chaining",
+        "Linear probing and primary clustering",
+        "Quadratic probing",
+        "Double hashing probe sequences",
+        "Deletion in open addressing"
+      ],
       "kind": "concept",
       "requires": [
         "hashing",
@@ -516,6 +719,14 @@
       "name": "Graph representation",
       "icon": "graph",
       "desc": "Adjacency matrices and adjacency lists, their space costs and simple queries on them.",
+      "summary": "You will be able to represent graphs with adjacency matrices and lists and compare their space and query costs.",
+      "topics": [
+        "Adjacency matrix representation",
+        "Adjacency list representation",
+        "Space costs for sparse and dense graphs",
+        "Degree and edge queries",
+        "Directed and weighted graphs"
+      ],
       "kind": "concept",
       "requires": [
         "linked-lists",

@@ -47,6 +47,15 @@
       "name": "Place value & bases",
       "icon": "binary",
       "desc": "Place value and changing bases. Positional value and the digit limit; base → decimal (expansion, Horner); decimal → base (repeated division, uniqueness proof); base → base",
+      "summary": "You will be able to convert numbers between any two bases and solve problems where the base itself is the unknown.",
+      "topics": [
+        "Converting base b to decimal",
+        "Repeated division to write base b",
+        "Converting from one base to another",
+        "Digits needed to represent a number",
+        "Solving for an unknown base",
+        "Counting solutions with two unknowns"
+      ],
       "kind": "lesson",
       "requires": [],
       "lessons": [
@@ -59,6 +68,14 @@
       "name": "Binary, octal & hex",
       "icon": "binary",
       "desc": "Binary, octal and hex: grouping and arithmetic. The grouping theorem (k-bit groups from the point); octal ↔ hex via binary; base 4; powers-of-16 sums read as hex; popcount per hex digit",
+      "summary": "You will be able to convert between binary, octal, hex and base 4 by grouping bits and do arithmetic directly in these bases.",
+      "topics": [
+        "Why bit grouping works",
+        "Octal, hex and base 4 via binary",
+        "Sums of powers of 16",
+        "Counting 1s from hex digits",
+        "Arithmetic directly in base b"
+      ],
       "kind": "lesson",
       "requires": [
         "place-value"
@@ -73,6 +90,13 @@
       "name": "Fractions & fixed point",
       "icon": "binary",
       "desc": "Fractions and fixed-point numbers. Fraction → base b by repeated multiplication; mixed numbers; the terminating vs recurring theorem; truncation error",
+      "summary": "You will be able to convert fractions into any base, decide which fractions terminate, and represent values in fixed point with known truncation error.",
+      "topics": [
+        "Converting a fraction into base b",
+        "Terminating versus recurring fractions",
+        "Truncation error",
+        "Fixed-point number formats"
+      ],
       "kind": "lesson",
       "requires": [
         "place-value",
@@ -88,6 +112,15 @@
       "name": "Signed numbers",
       "icon": "binary",
       "desc": "Signed numbers and complements. Unsigned; sign-magnitude; 1's complement; 2's complement (−2^{n−1} weight, invert + 1, copy-to-first-1); ranges and counts; two zeros; decoding",
+      "summary": "You will be able to read n-bit patterns as unsigned, sign-magnitude, 1's complement, 2's complement or biased values and spot overflow.",
+      "topics": [
+        "Four ways to read n bits",
+        "Complements in any base",
+        "Sign extension when changing width",
+        "Arithmetic shifts",
+        "A first look at overflow",
+        "Biased excess-K codes"
+      ],
       "kind": "lesson",
       "requires": [
         "place-value",
@@ -104,6 +137,14 @@
       "name": "Floating point basics",
       "icon": "binary",
       "desc": "Floating point: normalisation, biased exponents and range. Scientific notation in base 2 and 16; mantissa/significand, exponent and bias (excess-K); normalisation and the hidden bit",
+      "summary": "You will be able to encode and decode a custom floating-point format using normalisation and a biased exponent, and work out its range and precision.",
+      "topics": [
+        "Range against precision trade-off",
+        "Normalisation and the hidden bit",
+        "Biased exponent field",
+        "Encoding and decoding a custom format",
+        "Range, precision and gaps between neighbours"
+      ],
       "kind": "lesson",
       "requires": [
         "fractions-fixed-point",
@@ -119,6 +160,15 @@
       "name": "IEEE-754",
       "icon": "binary",
       "desc": "IEEE-754 single and double precision. The single and double layouts; bias 127/1023; encode and decode; special values (±0, ±∞, NaN); denormals; largest and smallest values; reading hex words quickly",
+      "summary": "You will be able to encode and decode IEEE-754 single and double precision values, including special values, denormals and the extreme representable numbers.",
+      "topics": [
+        "Single and double precision layouts",
+        "Decoding hex patterns to values",
+        "Encoding decimal values to hex",
+        "Zero, infinity and NaN",
+        "Denormals and gradual underflow",
+        "Machine epsilon, ulp and extremes"
+      ],
       "kind": "lesson",
       "requires": [
         "floating-point-basics"
@@ -133,6 +183,14 @@
       "name": "Float arithmetic",
       "icon": "binary",
       "desc": "Floating-point arithmetic, rounding and overflow. Add/subtract (align, add, normalise, round); multiply/divide (add/subtract exponents); multiplying by powers of two; rounding and absorption; non-associativity",
+      "summary": "You will be able to carry out floating-point addition, subtraction, multiplication and division with rounding and recognise absorption, cancellation and overflow.",
+      "topics": [
+        "Rounding exact results to floats",
+        "Floating-point addition and subtraction",
+        "Absorption, cancellation and lost associativity",
+        "Floating-point multiplication and division",
+        "Overflow and underflow"
+      ],
       "kind": "lesson",
       "requires": [
         "ieee-754"
@@ -147,6 +205,13 @@
       "name": "Binary codes",
       "icon": "binary",
       "desc": "Binary codes: BCD, excess-3, Gray, parity and Hamming. Weighted vs unweighted codes (8421, 2421, 84−2−1); BCD validity; self-complementing codes; excess-3; reflected Gray (construction, conversions, unit distance)",
+      "summary": "You will be able to use BCD and other decimal codes, self-complementing codes and Gray code, and apply parity and Hamming codes to detect and correct errors.",
+      "topics": [
+        "Weighted and unweighted decimal codes",
+        "Self-complementing codes like excess-3",
+        "Gray code construction and conversion",
+        "Parity and Hamming error correction"
+      ],
       "kind": "lesson",
       "requires": [
         "place-value",
@@ -162,6 +227,15 @@
       "name": "Code arithmetic",
       "icon": "binary",
       "desc": "Arithmetic with number codes. Binary add/subtract (borrows), shift-and-add multiplication, long division; add/subtract/ multiply in base 8, 16 and any base b",
+      "summary": "You will be able to perform binary and base-b arithmetic, subtract with complements and add in BCD and excess-3 with the right corrections.",
+      "topics": [
+        "Binary addition, subtraction, multiplication and division",
+        "Arithmetic in base 8, 16 and b",
+        "Subtraction with complements",
+        "Signed addition and overflow",
+        "BCD addition with the +6 correction",
+        "Excess-3 addition"
+      ],
       "kind": "lesson",
       "requires": [
         "signed-numbers",
@@ -177,6 +251,13 @@
       "name": "Booth's algorithm",
       "icon": "binary",
       "desc": "Signed multiplication and Booth's algorithm. Shift-and-add for unsigned and signed operands (sign-extended partial products; the multiplier's sign bit weighs −2ⁿ⁻¹); product bits as Boolean functions",
+      "summary": "You will be able to multiply signed numbers by shift-and-add and by Booth recoding, and count the additions and subtractions Booth's algorithm needs.",
+      "topics": [
+        "Shift-and-add for signed numbers",
+        "Radix-2 Booth recoding",
+        "Counting Booth additions and subtractions",
+        "Bit-pair radix-4 recoding"
+      ],
       "kind": "lesson",
       "requires": [
         "code-arithmetic"
@@ -191,6 +272,14 @@
       "name": "Logic gates",
       "icon": "cpu",
       "desc": "Logic gates and truth tables. NOT, AND, OR, NAND, NOR, XOR, XNOR (symbols, truth tables, multi-input forms); bubbles and active-low; positive vs negative logic; buffers",
+      "summary": "You will be able to read and evaluate circuits built from the basic and derived logic gates, including active-low signals and negative logic.",
+      "topics": [
+        "The three basic gates",
+        "NAND, NOR, XOR and XNOR",
+        "Bubbles, active-low signals and De Morgan",
+        "Positive and negative logic",
+        "Reading a circuit gate by gate"
+      ],
       "kind": "lesson",
       "requires": [
         "codes"
@@ -205,6 +294,15 @@
       "name": "Boolean laws",
       "icon": "cpu",
       "desc": "Boolean algebra: postulates, laws and theorems. Huntington postulates; identity, complement, idempotence, involution, absorption, distributivity (both forms), De Morgan, consensus, duality",
+      "summary": "You will be able to simplify, prove and disprove Boolean identities using the postulates, De Morgan's laws, consensus and Shannon expansion.",
+      "topics": [
+        "Postulates and the duality principle",
+        "Basic theorems and simplification",
+        "De Morgan's laws and complementing",
+        "The consensus theorem",
+        "Shannon expansion",
+        "Solving Boolean equations"
+      ],
       "kind": "lesson",
       "requires": [
         "logic-gates"
@@ -219,6 +317,14 @@
       "name": "XOR algebra",
       "icon": "cpu",
       "desc": "XOR/XNOR algebra and custom operators. XOR/XNOR laws (a ⊕ a = 0, a ⊕ 1 = ā, associativity, complementing inputs); parity functions; XNOR as equivalence",
+      "summary": "You will be able to manipulate XOR and XNOR expressions, compute parity of many inputs and analyse custom defined operators.",
+      "topics": [
+        "Forms of XOR and XNOR",
+        "The laws of XOR",
+        "Parity as XOR of many inputs",
+        "XNOR as equivalence and XNOR chains",
+        "Properties of defined and nested operators"
+      ],
       "kind": "lesson",
       "requires": [
         "boolean-laws"
@@ -233,6 +339,15 @@
       "name": "Canonical forms",
       "icon": "cpu",
       "desc": "Minterms, maxterms and canonical forms. Minterm/maxterm indices; SOP/POS and canonical SOP/POS; Σ ↔ Π conversion; expanding terms over missing variables; counting functions (2^{2ⁿ})",
+      "summary": "You will be able to write functions in canonical SOP and POS form, convert between minterm and maxterm lists and count Boolean functions.",
+      "topics": [
+        "Minterms and maxterms",
+        "Canonical SOP and POS forms",
+        "Converting between sigma and pi",
+        "Expanding a term into minterms",
+        "Counting Boolean functions",
+        "Duals, self-dual and majority functions"
+      ],
       "kind": "lesson",
       "requires": [
         "boolean-laws"
@@ -247,6 +362,14 @@
       "name": "Universal gates",
       "icon": "cpu",
       "desc": "Universal gates and functional completeness. NAND-only and NOR-only realisations; minimum gate counts (XOR = 4 NAND, 5 NOR; two-level NAND–NAND / NOR–NOR)",
+      "summary": "You will be able to realise any function with only NAND or NOR gates, find minimum gate counts and decide whether a gate set is functionally complete.",
+      "topics": [
+        "Functional completeness",
+        "NAND and NOR as universal gates",
+        "Two-level NAND-NAND and NOR-NOR circuits",
+        "Minimum gate counts",
+        "Testing whether a gate set is complete"
+      ],
       "kind": "lesson",
       "requires": [
         "canonical-forms"
@@ -261,6 +384,13 @@
       "name": "Circuit analysis",
       "icon": "cpu",
       "desc": "Analysing gate circuits and timing. Reading multi-level circuits; f = f₁f₂ + f₃ style minterm reasoning; propagation delay; glitches and pulse generation (X·X̄ with delay)",
+      "summary": "You will be able to derive the function of multi-level gate circuits and switch networks and reason about propagation delay and timing.",
+      "topics": [
+        "Reading a gate circuit",
+        "Circuits of function blocks",
+        "Wrong gates and switch networks",
+        "Propagation delay and timing"
+      ],
       "kind": "lesson",
       "requires": [
         "canonical-forms",
@@ -276,6 +406,15 @@
       "name": "K-maps",
       "icon": "grid",
       "desc": "Karnaugh maps (2–4 variables). Map layout and Gray order; adjacency and wrap-around (corners); grouping rules (powers of 2, largest first); SOP from 1s and POS from 0s; reading a given map",
+      "summary": "You will be able to minimise functions of up to four variables with Karnaugh maps, producing minimal SOP and POS expressions.",
+      "topics": [
+        "Gray-order map layout",
+        "Adjacency and wrap-around",
+        "Grouping 1s for SOP",
+        "Grouping 0s for POS",
+        "Reading a given map",
+        "Functions given by conditions"
+      ],
       "kind": "lesson",
       "requires": [
         "canonical-forms",
@@ -291,6 +430,13 @@
       "name": "Prime implicants",
       "icon": "grid",
       "desc": "Implicants, prime implicants and don't-cares. Implicant / PI / EPI definitions; listing all PIs; counting PIs; selecting a minimal cover (EPIs first, then the cheapest cover)",
+      "summary": "You will be able to identify implicants, prime implicants and essential prime implicants and choose a minimal cover using don't-cares.",
+      "topics": [
+        "Implicants and prime implicants",
+        "Essential prime implicants",
+        "Multiple minimal covers and cyclic functions",
+        "Using don't-care conditions"
+      ],
       "kind": "lesson",
       "requires": [
         "kmaps"
@@ -305,6 +451,14 @@
       "name": "Quine–McCluskey",
       "icon": "grid",
       "desc": "Quine–McCluskey, PI charts and larger maps. The Quine–McCluskey tabular method (grouping by weight, combining, PI chart, row and column dominance, Petrick's method in brief); 5-variable maps",
+      "summary": "You will be able to minimise functions with the Quine-McCluskey method and prime-implicant charts and handle five- and six-variable maps.",
+      "topics": [
+        "Quine-McCluskey tabulation",
+        "The prime-implicant chart",
+        "Petrick's method",
+        "Five- and six-variable maps",
+        "Variable-entered maps"
+      ],
       "kind": "lesson",
       "requires": [
         "prime-implicants"
@@ -319,6 +473,13 @@
       "name": "Two-level design",
       "icon": "grid",
       "desc": "From minimal forms to gates: cost, NAND/NOR, hazards. Literal and gate cost; SOP vs POS cost; NAND–NAND and NOR–NOR from minimal forms; minimum NOR count for a given function",
+      "summary": "You will be able to cost two-level circuits, implement minimal forms with NAND or NOR gates, share terms across outputs and spot static hazards.",
+      "topics": [
+        "Measuring circuit cost",
+        "Two-level NAND and NOR circuits",
+        "Static hazards",
+        "Multiple outputs sharing terms"
+      ],
       "kind": "lesson",
       "requires": [
         "prime-implicants",
@@ -334,6 +495,15 @@
       "name": "Ripple-carry adders",
       "icon": "calculator",
       "desc": "Half/full adders, subtractors and ripple-carry adders. Half and full adder (from 2 HAs + OR); half and full subtractor; n-bit ripple adder; delay models (2n + 1 etc.); worst-case carry chain",
+      "summary": "You will be able to build half and full adders and subtractors, chain them into ripple-carry adders and compute their worst-case delay.",
+      "topics": [
+        "Half and full adders",
+        "Gate counts in NAND and NOR",
+        "Half and full subtractors",
+        "Ripple-carry adder structure",
+        "Delay models and slowest operands",
+        "Pipelined adders"
+      ],
       "kind": "lesson",
       "requires": [
         "xor-and-operators",
@@ -349,6 +519,15 @@
       "name": "Carry look-ahead",
       "icon": "calculator",
       "desc": "Carry look-ahead adders. Generate/propagate; C_{i+1} = G_i + P_i C_i expanded; two-level CLA delay; group (block) G/P and multi-level CLA; fan-in limits (O(log n))",
+      "summary": "You will be able to derive carry look-ahead logic from generate and propagate signals and compare multi-level and hybrid fast adders.",
+      "topics": [
+        "Generate and propagate signals",
+        "Unrolling the carry recurrence",
+        "The 4-bit carry look-ahead adder",
+        "Group generate and propagate",
+        "Multi-level carry look-ahead",
+        "Carry-select and carry-skip adders"
+      ],
       "kind": "lesson",
       "requires": [
         "adders-ripple-carry"
@@ -363,6 +542,15 @@
       "name": "Adder–subtractor",
       "icon": "calculator",
       "desc": "The adder–subtractor, flag logic and the BCD adder circuit. XOR-controlled adder/subtractor (K and C₀ control lines); the overflow detector (XOR of the last two carries) and flag logic (C, V, S, Z)",
+      "summary": "You will be able to design an adder-subtractor with control lines, generate overflow and status flags and build BCD adder hardware.",
+      "topics": [
+        "One adder that also subtracts",
+        "Control lines for the adder",
+        "Overflow and status flags",
+        "The ALU around the adder",
+        "BCD adder and subtractor circuits",
+        "Adders as code converters"
+      ],
       "kind": "lesson",
       "requires": [
         "adders-ripple-carry",
@@ -378,6 +566,14 @@
       "name": "Multiplier hardware",
       "icon": "calculator",
       "desc": "Array, sequential and Booth multiplier hardware. The array multiplier (AND array + adder rows); its critical path and Θ(n) delay; hardware cost",
+      "summary": "You will be able to design array, sequential and Booth multiplier hardware and estimate their delay and hardware cost.",
+      "topics": [
+        "Partial products and the array multiplier",
+        "Delay of the array multiplier",
+        "Sequential multipliers",
+        "Booth multiplier hardware",
+        "Radix-4 bit-pair hardware"
+      ],
       "kind": "lesson",
       "requires": [
         "adder-subtractor-overflow",
@@ -393,6 +589,15 @@
       "name": "Combinational design",
       "icon": "layers",
       "desc": "Designing combinational circuits; code converters. The design procedure (spec → truth table → K-map → gates); BCD → mod-n, BCD ≥ 5 detectors; excess-3 ↔ BCD; binary ↔ Gray converters; seven-segment (aside)",
+      "summary": "You will be able to design combinational circuits from word specifications, including detectors, voting circuits and code converters.",
+      "topics": [
+        "The design procedure",
+        "Truth tables from word specifications",
+        "Detectors and voting circuits",
+        "Counting gates",
+        "Code converters",
+        "Multiple-output circuits"
+      ],
       "kind": "lesson",
       "requires": [
         "prime-implicants",
@@ -408,6 +613,14 @@
       "name": "Multiplexers",
       "icon": "layers",
       "desc": "Multiplexers and function realisation. 2ⁿ:1 MUX equation; MUX trees; implementing functions (n or n−1 select variables, the residue on the data lines); cascaded/feedback MUX puzzles",
+      "summary": "You will be able to analyse multiplexer circuits, implement any Boolean function with a MUX and build large multiplexers from small ones.",
+      "topics": [
+        "What a multiplexer does",
+        "Reading MUX circuits",
+        "Implementing functions with a MUX",
+        "MUX trees from smaller multiplexers",
+        "The MUX as a universal element"
+      ],
       "kind": "lesson",
       "requires": [
         "combinational-design",
@@ -423,6 +636,15 @@
       "name": "Decoders & encoders",
       "icon": "layers",
       "desc": "Decoders, demultiplexers, encoders and priority encoders. N:2ⁿ decoder as a minterm generator; enable inputs and decoder expansion; DEMUX = decoder with data on enable; encoders; priority encoders with a valid bit",
+      "summary": "You will be able to use decoders to build functions and memory address logic, expand decoders, and design encoders and priority encoders.",
+      "topics": [
+        "Decoders as minterm generators",
+        "Building functions from a decoder",
+        "Bigger decoders from smaller ones",
+        "Demultiplexers via the enable input",
+        "Encoders and priority encoders",
+        "Address decoding for memory"
+      ],
       "kind": "lesson",
       "requires": [
         "multiplexers"
@@ -437,6 +659,13 @@
       "name": "Comparators & parity",
       "icon": "layers",
       "desc": "Magnitude comparators and parity circuits. 1-bit and n-bit comparators (equality via XNOR, greater/less cascades); parity generator and checker",
+      "summary": "You will be able to design and cascade magnitude comparators, compare numbers by subtraction and build parity generators and checkers.",
+      "topics": [
+        "Comparing numbers by first difference",
+        "Cascading comparators and gate counts",
+        "Comparing by subtraction",
+        "Parity generators and checkers"
+      ],
       "kind": "lesson",
       "requires": [
         "combinational-design",
@@ -452,6 +681,14 @@
       "name": "ROM, PLA & PAL",
       "icon": "layers",
       "desc": "ROM, PLA and PAL as combinational logic. ROM = decoder + OR array; sizing a ROM for a truth table (2ⁿ × m); PLA vs PAL; the multiplier-ROM size questions",
+      "summary": "You will be able to implement combinational logic with ROMs, PLAs and PALs and size a ROM for a given truth table.",
+      "topics": [
+        "ROM as a stored truth table",
+        "Sizing a ROM",
+        "Building bigger ROMs from smaller chips",
+        "PLA with shared product terms",
+        "PAL and choosing between devices"
+      ],
       "kind": "lesson",
       "requires": [
         "decoders-encoders"
@@ -466,6 +703,13 @@
       "name": "Faults & testing",
       "icon": "layers",
       "desc": "Stuck-at faults and test inputs. The stuck-at-0/1 model; activation and propagation; finding a test vector; counting faults",
+      "summary": "You will be able to apply the stuck-at fault model and find test vectors that activate and propagate a fault to an output.",
+      "topics": [
+        "The stuck-at fault model",
+        "Fault activation and propagation",
+        "Undetectable faults and redundancy",
+        "Test sets and equivalent faults"
+      ],
       "kind": "lesson",
       "requires": [
         "gate-circuit-analysis"
@@ -480,6 +724,14 @@
       "name": "Latches",
       "icon": "clock",
       "desc": "Feedback, latches and races. Feedback and stable states; SR latch (NOR and NAND, active-low); the forbidden input and oscillation; gated latches; D latch (MUX with feedback)",
+      "summary": "You will be able to explain how feedback stores a bit and analyse SR, NAND, gated and D latches, including forbidden inputs.",
+      "topics": [
+        "Feedback and stable states",
+        "The NOR SR latch",
+        "The NAND latch with active-low inputs",
+        "Gated latches and the D latch",
+        "Latch versus flip-flop"
+      ],
       "kind": "lesson",
       "requires": [
         "gate-circuit-analysis"
@@ -505,6 +757,15 @@
       "name": "Flip-flops",
       "icon": "clock",
       "desc": "Flip-flops: SR, JK, D, T, edge triggering and timing. Level vs edge triggering; master–slave; characteristic tables and equations; excitation tables; conversions between types; asynchronous preset/clear",
+      "summary": "You will be able to use SR, JK, D and T flip-flops with their characteristic and excitation tables, convert between types and read timing diagrams.",
+      "topics": [
+        "Edge triggering and master-slave design",
+        "SR, JK, D and T flip-flops",
+        "Race-around in JK flip-flops",
+        "Excitation tables and conversions",
+        "Asynchronous preset and clear",
+        "Setup, hold and clock-to-Q timing"
+      ],
       "kind": "lesson",
       "requires": [
         "latches"
@@ -529,6 +790,15 @@
       "name": "Sequential analysis",
       "icon": "clock",
       "desc": "Analysing synchronous sequential circuits. Synchronous vs asynchronous (and why synchronous); excitation and state equations from a circuit; state tables and diagrams",
+      "summary": "You will be able to analyse a synchronous sequential circuit by deriving its state equations, state table and state diagram and tracing it clock by clock.",
+      "topics": [
+        "Synchronous sequential circuits",
+        "The analysis procedure",
+        "State tables and state diagrams",
+        "Tracing a circuit clock by clock",
+        "Reachability and cycles",
+        "Reading outputs at the right time"
+      ],
       "kind": "lesson",
       "requires": [
         "flip-flops"
@@ -561,6 +831,15 @@
       "name": "Ripple counters",
       "icon": "clock",
       "desc": "Counter basics and asynchronous (ripple) counters. Mod-N and the flip-flop count ⌈log₂ N⌉; ripple up/down counters; frequency division (f/2ⁿ); ripple delay and max frequency; mod-N by asynchronous clear",
+      "summary": "You will be able to design and analyse ripple up, down and mod-N counters and compute their frequency division and ripple delay.",
+      "topics": [
+        "Counter basics and mod-N",
+        "Ripple up counters",
+        "Down and up/down counters",
+        "Frequency division by each stage",
+        "Ripple delay and glitches",
+        "Mod-N counters by asynchronous clear"
+      ],
       "kind": "lesson",
       "requires": [
         "flip-flops"
@@ -586,6 +865,15 @@
       "name": "Synchronous counters",
       "icon": "clock",
       "desc": "Synchronous counter design. The design procedure with excitation tables; arbitrary sequences; repeated-value sequences (needs extra state bits); Gray and saturating counters",
+      "summary": "You will be able to design synchronous counters for arbitrary sequences using excitation tables and check them for self-starting behaviour.",
+      "topics": [
+        "The synchronous binary counter",
+        "Design with excitation tables",
+        "Arbitrary, Gray and saturating sequences",
+        "Repeated values needing extra state bits",
+        "Unused states, self-starting and lock-out",
+        "Analysing a given synchronous counter"
+      ],
       "kind": "lesson",
       "requires": [
         "ripple-counters",
@@ -617,6 +905,14 @@
       "name": "Shift registers",
       "icon": "clock",
       "desc": "Shift registers, ring and Johnson counters, LFSRs. SISO/SIPO/PISO/PIPO; bidirectional/universal; ring (N states) and Johnson (2N states) counters; counter + decoder = ring; LFSR sequences",
+      "summary": "You will be able to analyse shift registers, universal registers, ring and Johnson counters and LFSRs and work out their state sequences.",
+      "topics": [
+        "Serial and parallel shift registers",
+        "Parallel load and universal registers",
+        "Ring counters",
+        "Johnson twisted-ring counters",
+        "Feedback shift registers and LFSRs"
+      ],
       "kind": "lesson",
       "requires": [
         "sequential-analysis"
@@ -646,6 +942,15 @@
       "name": "Mealy & Moore FSMs",
       "icon": "clock",
       "desc": "Finite state machines: Mealy and Moore. Mealy vs Moore; state diagrams and tables; sequence detectors (overlapping or not); serial adders and serial 2's complementers",
+      "summary": "You will be able to design Mealy and Moore machines from word descriptions, including sequence detectors and serial machines, and turn them into circuits.",
+      "topics": [
+        "Mealy versus Moore machines",
+        "From words to a state diagram",
+        "Overlapping and non-overlapping sequence detectors",
+        "Serial adders and complementers",
+        "Shortest input to a target state",
+        "From a state machine to a circuit"
+      ],
       "kind": "lesson",
       "requires": [
         "synchronous-counter-design"
@@ -671,6 +976,15 @@
       "name": "State minimisation",
       "icon": "clock",
       "desc": "State minimisation. Equivalent states; partition refinement; implication tables; incompletely specified machines (brief)",
+      "summary": "You will be able to minimise the states of a finite state machine using partition refinement and implication tables.",
+      "topics": [
+        "Equivalent states and k-equivalence",
+        "Partition refinement",
+        "The implication table",
+        "Removing unreachable states",
+        "Incompletely specified machines",
+        "Flip-flop savings from minimisation"
+      ],
       "kind": "lesson",
       "requires": [
         "finite-state-machines"
