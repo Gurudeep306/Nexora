@@ -527,7 +527,7 @@ export function CourseLesson(p: LessonProps) {
                       : 'This lesson is being written. The checklist above is exactly what it will cover — explore it with the assistant, then mark it learned.'}
                 </p>
                 {p.isDsa && (
-                  <Link to="/learn" className="mb-3 inline-block">
+                  <Link to="/learn?tab=dsa" className="mb-3 inline-block">
                     <Button variant="outline" size="sm" className="nx-press">
                       <BookOpen className="size-3.5" aria-hidden="true" /> Open the DSA lessons
                     </Button>

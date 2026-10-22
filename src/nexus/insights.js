@@ -83,7 +83,7 @@ function natRange(a) {
 function isCorrect(q, pick) {
   if (pick === undefined || pick === null || pick === "" || (Array.isArray(pick) && !pick.length)) return false;
   if (q.type === "MSQ") {
-    const u = (Array.isArray(pick) ? [...pick] : [pick]).map(String).sort();
+    const u = list(pick).sort();
     return alts(q.answer).some((k) => {
       const t = list(k).sort();
       return u.length === t.length && u.every((v, i) => v === t[i]);

@@ -14,6 +14,7 @@ import { WeeklyPool } from '@/components/nexus/WeeklyPool'
 import { TitleTrack } from '@/components/nexus/TitleTrack'
 import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
 import { useReviewList } from '@/components/nexus/NodeContent'
+import { useNotesSubjects } from '@/gate/notes/api'
 import { CourseLesson } from '@/components/nexus/CourseLesson'
 import { NexusPalette } from '@/components/nexus/NexusPalette'
 import { GoalMenu, useGoal, usePaletteHotkey } from '@/components/nexus/extras'
@@ -85,6 +86,7 @@ export default function SubjectPage() {
   const ins = insightsApi.data
   const planApi = useApi<{ ok: boolean; plan: { examDate?: string | null } | null }>(() => api.get('/api/gate/me/plan'), [], { cacheKey: 'gate:me:plan' })
   const examDate = planApi.data?.plan?.examDate ?? null
+  const notesOpen = useNotesSubjects()
   const [notesLocal, setNotesLocal] = useState<Record<string, { note: string; bookmarked: boolean }>>({})
   const roadmapApi = useApi(fetchRoadmap, [], { cacheKey: ROADMAP_KEY, skip: !isDsa })
   const statsApi = useApi<NexusStatsResponse>(() => api.get<NexusStatsResponse>('/api/stats', { query: { username: username || undefined } }), [username], {
@@ -221,7 +223,7 @@ export default function SubjectPage() {
   const done = nodes.filter((n) => n.completed).length
   const pct = isDsa ? Math.round((done / Math.max(1, nodes.length)) * 100) : (rank?.progress ?? 0)
   const selZone = selectedNode ? zones.find((z) => z.level === selectedNode.zone) : null
-  const notesHref = cluster?.gate?.notes ? `/gate/notes/${cluster.gate.notes}` : null
+  const notesHref = cluster?.gate?.notes && notesOpen.data?.some((x) => x.id === cluster.gate!.notes) ? `/gate/notes/${cluster.gate.notes}` : null
   const roadmap = roadmapApi.data
   const currentZone = isDsa ? player.level : (zones.find((z) => z.current)?.level ?? 1)
   const R = 30
@@ -347,7 +349,7 @@ export default function SubjectPage() {
               </Link>
             )}
             {isDsa && (
-              <Link to="/learn">
+              <Link to="/learn?tab=dsa">
                 <Button variant="outline" size="md" className="nx-press">
                   <BookOpen className="size-4" aria-hidden="true" /> DSA lessons
                 </Button>

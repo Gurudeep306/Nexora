@@ -639,7 +639,8 @@ function webStructure(reg, dsa) {
   }
   const routes = readRoutes(reg);
   const streams = readStreams();
-  const body = { clusters, routes, streams };
+  const hubs = readHubs();
+  const body = { clusters, routes, streams, ...(hubs ? { hubs } : {}) };
   const version = crypto.createHash("sha1").update(JSON.stringify(body)).digest("hex").slice(0, 12);
   reg.structure = { version, ...body };
   return reg.structure;
@@ -661,6 +662,19 @@ function readDsaContent(dir = DIR) {
 function dsaContentGaps(dsaNodes, dir = DIR) {
   const c = readDsaContent(dir);
   return dsaNodes.filter((n) => !c[n.id]?.summary || !Array.isArray(c[n.id]?.topics) || c[n.id].topics.length < 3).map((n) => n.id);
+}
+
+/**
+ * Where Learn courses and GATE subjects live in the Nexus
+ * (content/nexus/_hubs.json): each maps to one Nexus subject.
+ */
+function readHubs(dir = DIR) {
+  try {
+    const raw = JSON.parse(fs.readFileSync(path.join(dir, "_hubs.json"), "utf8"));
+    return { gate: raw.gate || {}, learn: raw.learn || [] };
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -727,6 +741,7 @@ module.exports = {
   readDsaContent,
   dsaContentGaps,
   readStreams,
+  readHubs,
   webStructure,
   webState,
   readRoutes,
