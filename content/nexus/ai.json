@@ -1,0 +1,361 @@
+{
+  "id": "ai",
+  "name": "Artificial Intelligence",
+  "short": "AI",
+  "group": "gate",
+  "domain": "ai",
+  "stream": "ai-data",
+  "order": 64,
+  "icon": "bot",
+  "color": "#a855f7",
+  "description": "GATE DA's AI: problem-solving as search, adversarial games, logic and reasoning under uncertainty.",
+  "rankTitle": "Reasoning Engine",
+  "gate": {
+    "pyqSubject": "ai",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Agents and search"
+    },
+    {
+      "level": 2,
+      "name": "Informed and adversarial search"
+    },
+    {
+      "level": 3,
+      "name": "Logic"
+    },
+    {
+      "level": 4,
+      "name": "Reasoning under uncertainty"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "agents-problems",
+      "zone": 1,
+      "name": "Agents and problem formulation",
+      "icon": "bot",
+      "desc": "Agents and environments, states, actions, goal tests and path costs.",
+      "summary": "You will be able to describe an agent and its environment and formulate a problem as states, actions, goal test and path cost.",
+      "topics": [
+        "Agents and environments",
+        "State space formulation",
+        "Goal tests and path costs",
+        "Problem types"
+      ],
+      "kind": "concept",
+      "requires": [],
+      "pyqTopics": [
+        "ai/search"
+      ],
+      "pyqTags": [
+        "agent",
+        "state space"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "uninformed-search",
+      "zone": 1,
+      "name": "Uninformed search",
+      "icon": "route",
+      "desc": "Breadth-first, depth-first, uniform-cost, depth-limited and iterative deepening search.",
+      "summary": "You will be able to run BFS, DFS, uniform-cost and iterative deepening search and compare their completeness and cost.",
+      "topics": [
+        "Breadth-first search",
+        "Depth-first and depth-limited search",
+        "Uniform-cost search",
+        "Iterative deepening",
+        "Completeness, optimality and complexity"
+      ],
+      "kind": "concept",
+      "requires": [
+        "agents-problems",
+        "algo:graph-traversal"
+      ],
+      "pyqTopics": [
+        "ai/search"
+      ],
+      "pyqTags": [
+        "bfs",
+        "dfs",
+        "uniform",
+        "iterative deepening"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "heuristics",
+      "zone": 2,
+      "name": "Heuristics",
+      "icon": "compass",
+      "desc": "Admissible and consistent heuristics, dominance and designing a heuristic by relaxation.",
+      "summary": "You will be able to judge whether a heuristic is admissible or consistent and design one by relaxing the problem.",
+      "topics": [
+        "Admissibility",
+        "Consistency",
+        "Dominance",
+        "Relaxed problems"
+      ],
+      "kind": "concept",
+      "requires": [
+        "uninformed-search"
+      ],
+      "pyqTopics": [
+        "ai/search"
+      ],
+      "pyqTags": [
+        "heuristic",
+        "admissible"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "a-star",
+      "zone": 2,
+      "name": "Greedy best-first and A*",
+      "icon": "target",
+      "desc": "Greedy best-first search, A* and why an admissible heuristic makes A* optimal.",
+      "summary": "You will be able to trace greedy best-first search and A* on a graph and explain when A* returns an optimal path.",
+      "topics": [
+        "Greedy best-first search",
+        "A* and f = g + h",
+        "Optimality of A*",
+        "Tracing A* on a graph"
+      ],
+      "kind": "concept",
+      "requires": [
+        "heuristics"
+      ],
+      "pyqTopics": [
+        "ai/search"
+      ],
+      "pyqTags": [
+        "a*",
+        "best-first",
+        "greedy"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "local-search",
+      "zone": 2,
+      "name": "Local search",
+      "icon": "trending-up",
+      "desc": "Hill climbing, simulated annealing and the local maxima that trap them.",
+      "summary": "You will be able to apply hill climbing and simulated annealing and explain local maxima, plateaus and restarts.",
+      "topics": [
+        "Hill climbing",
+        "Local maxima and plateaus",
+        "Random restarts",
+        "Simulated annealing"
+      ],
+      "kind": "concept",
+      "requires": [
+        "uninformed-search"
+      ],
+      "pyqTopics": [
+        "ai/search"
+      ],
+      "pyqTags": [
+        "hill",
+        "annealing"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "adversarial-search",
+      "zone": 2,
+      "name": "Adversarial search",
+      "icon": "gamepad",
+      "desc": "Game trees, minimax and alpha–beta pruning.",
+      "summary": "You will be able to evaluate a game tree with minimax and prune it with alpha-beta, counting the nodes pruned.",
+      "topics": [
+        "Game trees",
+        "Minimax",
+        "Alpha-beta pruning",
+        "Move ordering"
+      ],
+      "kind": "concept",
+      "requires": [
+        "uninformed-search"
+      ],
+      "pyqTopics": [
+        "ai/search"
+      ],
+      "pyqTags": [
+        "minimax",
+        "alpha",
+        "game"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "propositional-logic-ai",
+      "zone": 3,
+      "name": "Propositional logic for AI",
+      "icon": "lightbulb",
+      "desc": "Knowledge bases, entailment, models and inference by truth tables.",
+      "summary": "You will be able to represent knowledge in propositional logic and decide entailment by model checking.",
+      "topics": [
+        "Knowledge bases",
+        "Models and entailment",
+        "Truth-table inference",
+        "Validity and satisfiability"
+      ],
+      "kind": "concept",
+      "requires": [
+        "agents-problems",
+        "dm:propositional-logic"
+      ],
+      "pyqTopics": [
+        "ai/logic"
+      ],
+      "pyqTags": [
+        "entail",
+        "propositional",
+        "knowledge base"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "resolution",
+      "zone": 3,
+      "name": "Resolution and normal forms",
+      "icon": "layers",
+      "desc": "CNF, resolution refutation and forward and backward chaining with Horn clauses.",
+      "summary": "You will be able to convert sentences to CNF and prove entailment by resolution, forward chaining and backward chaining.",
+      "topics": [
+        "Conjunctive normal form",
+        "Resolution refutation",
+        "Horn clauses",
+        "Forward and backward chaining"
+      ],
+      "kind": "concept",
+      "requires": [
+        "propositional-logic-ai"
+      ],
+      "pyqTopics": [
+        "ai/logic"
+      ],
+      "pyqTags": [
+        "resolution",
+        "cnf",
+        "horn",
+        "chaining"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "first-order-logic-ai",
+      "zone": 3,
+      "name": "First-order logic",
+      "icon": "shapes",
+      "desc": "Predicates, quantifiers, unification and inference in first-order logic.",
+      "summary": "You will be able to write facts in first-order logic and apply unification and resolution to draw conclusions.",
+      "topics": [
+        "Predicates and quantifiers",
+        "Translating English to FOL",
+        "Unification",
+        "First-order resolution"
+      ],
+      "kind": "concept",
+      "requires": [
+        "resolution",
+        "dm:predicate-logic"
+      ],
+      "pyqTopics": [
+        "ai/logic"
+      ],
+      "pyqTags": [
+        "first-order",
+        "quantifier",
+        "unification",
+        "predicate"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "uncertainty-basics",
+      "zone": 4,
+      "name": "Acting under uncertainty",
+      "icon": "chart",
+      "desc": "Probability as degrees of belief, joint distributions and conditional independence.",
+      "summary": "You will be able to reason with degrees of belief using joint distributions and conditional independence.",
+      "topics": [
+        "Degrees of belief",
+        "Joint distributions",
+        "Marginalisation",
+        "Conditional independence"
+      ],
+      "kind": "concept",
+      "requires": [
+        "prob:conditional-probability"
+      ],
+      "pyqTopics": [
+        "ai/uncertainty"
+      ],
+      "pyqTags": [
+        "uncertain",
+        "belief"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "bayesian-networks",
+      "zone": 4,
+      "name": "Bayesian networks",
+      "icon": "grid",
+      "desc": "Network structure, the chain rule and exact inference by enumeration and variable elimination.",
+      "summary": "You will be able to read independences from a Bayesian network and compute a posterior by enumeration or variable elimination.",
+      "topics": [
+        "Network structure",
+        "Chain rule factorisation",
+        "d-separation",
+        "Exact inference"
+      ],
+      "kind": "concept",
+      "requires": [
+        "uncertainty-basics",
+        "prob:bayes-theorem"
+      ],
+      "pyqTopics": [
+        "ai/uncertainty"
+      ],
+      "pyqTags": [
+        "bayesian network",
+        "bayes net"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "approximate-inference",
+      "zone": 4,
+      "name": "Sampling and approximate inference",
+      "icon": "activity",
+      "desc": "Prior sampling, rejection sampling, likelihood weighting and Gibbs sampling.",
+      "summary": "You will be able to estimate probabilities in a Bayesian network by rejection sampling, likelihood weighting and Gibbs sampling.",
+      "topics": [
+        "Prior sampling",
+        "Rejection sampling",
+        "Likelihood weighting",
+        "Gibbs sampling"
+      ],
+      "kind": "concept",
+      "requires": [
+        "bayesian-networks"
+      ],
+      "pyqTopics": [
+        "ai/uncertainty"
+      ],
+      "pyqTags": [
+        "sampling",
+        "gibbs"
+      ],
+      "xpReward": 40
+    }
+  ]
+}

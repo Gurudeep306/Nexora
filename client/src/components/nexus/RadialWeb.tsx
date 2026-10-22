@@ -115,6 +115,7 @@ export function RadialWeb({
   celebrate,
   nextStep: nextStepProp,
   intro = { mode: 'full', dur: 2000 },
+  focus = null,
 }: {
   clusters: WebCluster[]
   streams: WebStream[]
@@ -129,6 +130,8 @@ export function RadialWeb({
   nextStep?: string | null
   /** the opening animation for this visit (see intro.ts) */
   intro?: { mode: IntroMode; dur: number }
+  /** a subject to fly to and highlight ("View in Nexus") */
+  focus?: string | null
   layout: RadialLayout
   selected: string | null
   onSelect: (key: string | null) => void
@@ -216,6 +219,7 @@ export function RadialWeb({
   const view = useRef({ w: 1, h: 1, dpr: 1 })
   const hovered = useRef<string | null>(null)
   const hoverSector = useRef<string | null>(null)
+  const focusSector = useRef<string | null>(null)
   const fly = useRef<{ from: Camera; to: Camera; t0: number; dur: number } | null>(null)
   const dirty = useRef(true)
   const grid = useRef(new HitGrid(40))
@@ -279,6 +283,29 @@ export function RadialWeb({
     const size = Math.max(layout.extent - layout.inner * 0.6, 2 * Math.sin(span / 2) * layout.extent) + 400
     flyTo({ x: Math.cos(mid) * rm, y: Math.sin(mid) * rm, k: Math.min(view.current.w, view.current.h) / size }, 700)
   }
+  // A subject's sector, filling the view.
+  const flyToSubject = (id: string) => {
+    const sc = layout.sectors.find((x) => x.id === id)
+    if (!sc) return
+    const mid = (sc.a0 + sc.a1) / 2
+    const r1 = Math.max(sc.rMax, layout.inner * 1.4)
+    const rm = (layout.inner * 0.55 + r1) / 2
+    const span = Math.min(Math.PI, Math.max(0.35, sc.a1 - sc.a0))
+    const size = Math.max(r1 - layout.inner * 0.5, 2 * Math.sin(span / 2) * r1) + 520
+    userMoved.current = true
+    flyTo({ x: Math.cos(mid) * rm, y: Math.sin(mid) * rm, k: Math.min(view.current.w, view.current.h) / size }, 900)
+  }
+  // "View in Nexus": once the opening has played, fly to the subject and keep it lit.
+  useEffect(() => {
+    focusSector.current = focus && layout.sectors.some((x) => x.id === focus) ? focus : null
+    dirty.current = true
+    if (!focusSector.current) return
+    const id = focusSector.current
+    const wait = Math.max(0, intro.dur + 60 - (performance.now() - (introAt.current || performance.now())))
+    const t = window.setTimeout(() => flyToSubject(id), wait)
+    return () => window.clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focus, layout])
   const toggleFullscreen = () => {
     const el = cardRef.current
     if (!el) return
@@ -531,7 +558,7 @@ export function RadialWeb({
       const vy1 = c.y + h / 2 / c.k + NODE
       const inView = (x: number, y: number, m = 0) => x > vx0 - m && x < vx1 + m && y > vy0 - m && y < vy1 + m
 
-      const hs = hoverSector.current
+      const hs = hoverSector.current ?? focusSector.current
       // Each stream sweeps open in turn (an angular wipe in its hue).
       const wipe = (id: string) => {
         if (T >= INTRO_CLOCK) return 1

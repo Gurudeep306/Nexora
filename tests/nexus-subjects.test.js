@@ -338,7 +338,7 @@ test('node contents: every node has a summary and 3+ topics (data and validation
   }
   const dsa = subjects.readDsaContent();
   for (const n of NEXUS_NODES) assert.ok(dsa[n.id]?.summary && dsa[n.id].topics.length >= 3, `dsa:${n.id}`);
-  assert.equal(count + NEXUS_NODES.length, 1382);
+  assert.equal(count + NEXUS_NODES.length, 1407);
   assert.deepEqual(subjects.dsaContentGaps(NEXUS_NODES), []);
   // The strict check rejects a node without them.
   const bad = JSON.parse(JSON.stringify(DOCS.find((d) => d.id === 'rust')));
@@ -374,7 +374,7 @@ test('one model: every radial node is exactly one subject-tree node, and back', 
   const { body: st } = await call('GET', '/api/nexus/structure');
   const radial = new Set();
   for (const c of st.clusters) for (const n of c.nodes) radial.add(`${c.id}:${n.id}`);
-  assert.equal(radial.size, 1382);
+  assert.equal(radial.size, 1407);
   const tree = new Set();
   for (const c of st.clusters) {
     const { status, body } = await call('GET', `/api/nexus?subject=${c.id}`);

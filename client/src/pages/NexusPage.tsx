@@ -19,21 +19,17 @@ import { api } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 import { useAgentPageContext } from '@/context/AgentContext'
 import { cn, formatNumber } from '@/lib/utils'
-import { NodePanel } from '@/components/nexus/NodePanel'
 import { TitleTrack } from '@/components/nexus/TitleTrack'
 import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
 import { RadialWeb, type Camera } from '@/components/nexus/RadialWeb'
 import { getLayout, layoutNow } from '@/components/nexus/layoutCache'
-import { courseHref, subjectHref } from '@/components/nexus/course'
+import { subjectHref } from '@/components/nexus/course'
 import { continueFrom, isDue, nextStep as findNextStep } from '@/components/nexus/insights'
 import { NexusPalette, type PaletteCommand } from '@/components/nexus/NexusPalette'
-import { ContinueChip, GoalMenu, RadialSkeleton, RankCardSkeleton, ResponsivePanel, startReview, useCelebration, useGoal, usePaletteHotkey, usePhone } from '@/components/nexus/extras'
+import { ContinueChip, GoalMenu, RadialSkeleton, RankCardSkeleton, useCelebration, useGoal, usePaletteHotkey } from '@/components/nexus/extras'
 import { Crosshair, Expand, Maximize2 } from 'lucide-react'
 import type { RadialLayout } from '@/components/nexus/radial'
 import type {
-  CrossLink,
-  NexusNode,
-  NexusNodeResponse,
   NexusStatsResponse,
   NexusWebState,
   NexusWebStructure,
@@ -79,33 +75,6 @@ function webTitles(stats: NexusStatsResponse | null, player: RiftPlayer, levels:
   }
 }
 
-/** A radial node in the shape the node panel reads (details merged in when loaded). */
-function asNexusNode(c: WebCluster, n: WebNode): NexusNode {
-  const dsa = c.engine === 'dsa'
-  const [solved, target] = dsa ? n.c.split('/').map(Number) : [0, 0]
-  return {
-    id: n.id,
-    subject: c.id,
-    kind: n.k,
-    zone: n.z,
-    name: n.n,
-    icon: n.i ?? '',
-    desc: '',
-    tags: [],
-    requires: n.req,
-    target: target || 0,
-    x: 0,
-    y: 0,
-    difficulty: [0, 0],
-    xpReward: n.xp,
-    resources: [],
-    solved: solved || 0,
-    progress: n.p,
-    unlocked: n.s >= 1,
-    completed: n.s === 2,
-  }
-}
-
 /** The legend card shown while no skill is selected (the original's). */
 function SelectHint({ text }: { text: string }) {
   return (
@@ -134,8 +103,11 @@ function SelectHint({ text }: { text: string }) {
 
 export default function NexusPage() {
   const [params] = useSearchParams()
-  const subject = params.get('subject')
-  return subject ? <SubjectRedirect subject={subject} node={params.get('node')} /> : <RadialOverview />
+  // Older links: ?subject=x[&node=y] and ?node=x:y open the subject's page.
+  const node = params.get('node')
+  const subject = params.get('subject') ?? (node?.includes(':') ? node.split(':')[0] : null)
+  const nodeId = node?.includes(':') ? node.split(':').slice(1).join(':') : node
+  return subject ? <SubjectRedirect subject={subject} node={nodeId} /> : <RadialOverview />
 }
 
 /** Old links (/nexus?subject=x&node=y) open the subject's own page. */
@@ -156,9 +128,8 @@ function SubjectRedirect({ subject, node }: { subject: string; node: string | nu
 /* ── every subject in one radial tree ── */
 
 function RadialOverview() {
-  const [params, setParams] = useSearchParams()
+  const [params] = useSearchParams()
   const navigate = useNavigate()
-  const selKey = params.get('node')
   const [tab, setTab] = useState<'map' | 'ranks'>('map')
   // The opening animation: full on the first open this session, short after.
   const [intro] = useState(() => pickIntro(typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches))
@@ -214,63 +185,24 @@ function RadialOverview() {
     for (const c of clusters ?? []) for (const n of c.nodes) m.set(`${c.id}:${n.id}`, { c, n })
     return m
   }, [clusters])
-  const sel = selKey ? byKey.get(selKey) : undefined
+  // A concept opens its lesson, in place on its subject's page.
   const setSel = useCallback(
-    (key: string | null) =>
-      setParams(
-        (p) => {
-          const next = new URLSearchParams(p)
-          if (key) next.set('node', key)
-          else next.delete('node')
-          return next
-        },
-        { replace: true },
-      ),
-    [setParams],
+    (key: string | null) => {
+      if (!key) return
+      const [sid, ...rest] = key.split(':')
+      const c = structure?.clusters.find((x) => x.id === sid)
+      navigate(c ? subjectHref(c, rest.join(':')) : `/learn/${sid}/${rest.join(':')}`)
+    },
+    [navigate, structure],
   )
   // A subject opens its own page (with its tree); a node lands on it there.
   const openSubject = useCallback(
     (id: string, nodeId?: string) => {
       const c = structure?.clusters.find((x) => x.id === id)
-      navigate(c ? subjectHref(c, nodeId) : `/learn/${id}${nodeId ? `#${nodeId}` : ''}`)
+      navigate(c ? subjectHref(c, nodeId) : `/learn/${id}${nodeId ? `/${nodeId}` : ''}`)
     },
     [navigate, structure],
   )
-  // Esc deselects.
-  useEffect(() => {
-    if (!selKey) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !(e.target instanceof HTMLInputElement)) setSel(null)
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [selKey, setSel])
-
-  const detailApi = useApi<NexusNodeResponse>(
-    () => api.get<NexusNodeResponse>(`/api/nexus/node/${sel!.c.id}/${sel!.n.id}`),
-    [sel?.c.id, sel?.n.id],
-    { skip: !sel, cacheKey: sel ? `nexus:node:${sel.c.id}:${sel.n.id}` : undefined },
-  )
-  const selectedNode = useMemo<NexusNode | null>(() => {
-    if (!sel) return null
-    const base = asNexusNode(sel.c, sel.n)
-    const d = detailApi.data?.node
-    if (!d || d.id !== sel.n.id) return base
-    const fix = (l: CrossLink) => {
-      const live = byKey.get(`${l.subject}:${l.id}`)
-      return live ? { ...l, completed: live.n.s === 2, progress: live.n.p } : l
-    }
-    return {
-      ...d,
-      progress: base.progress,
-      unlocked: base.unlocked,
-      completed: base.completed,
-      solved: sel.c.engine === 'dsa' ? base.solved : d.solved,
-      crossRequires: (d.crossRequires ?? []).map(fix),
-      crossUnlocks: (d.crossUnlocks ?? []).map(fix),
-    }
-  }, [sel, detailApi.data, byKey])
-  const selNodes = useMemo(() => (sel ? sel.c.nodes.map((n) => asNexusNode(sel.c, n)) : []), [sel])
 
   // Goal path, review hints, the next step, where you left off, celebrations.
   const { goal, plan, setGoal } = useGoal(structure?.routes ?? [], clusters)
@@ -282,14 +214,8 @@ function RadialOverview() {
   const next = useMemo(() => (clusters ? findNextStep(clusters) : null), [clusters])
   const resume = useMemo(() => (clusters ? continueFrom(clusters) : null), [clusters])
   const celebrate = useCelebration(clusters, !refreshing && !!state)
-  const hueOf = useMemo(() => {
-    const hue = new Map((structure?.streams ?? []).map((x) => [x.id, x.hue]))
-    const of = new Map((clusters ?? []).map((c) => [c.id, hue.get(c.stream)]))
-    return (id: string) => of.get(id)
-  }, [structure, clusters])
   const [paletteOpen, setPaletteOpen] = useState(false)
   usePaletteHotkey(() => setPaletteOpen(true))
-  const phone = usePhone()
   const run = (cmd: string) => window.dispatchEvent(new CustomEvent('nexus:command', { detail: cmd }))
   const commands: PaletteCommand[] = [
     { id: 'next', label: 'Jump to my next step', hint: 'command', icon: <Crosshair className="size-4" />, run: () => run('next') },
@@ -308,12 +234,11 @@ function RadialOverview() {
     return [
       `Web rank: level ${p.level} (${p.name}), ${p.xp} web XP across every subject; ${p.xpInLevel}/${p.xpForNext} XP toward the next level.`,
       `The radial Nexus: ${clusters.length} subjects as sectors around you, zones as rings; ${mastered}/${allNodes.length} skills mastered.`,
-      selectedNode ? `Selected skill: ${selectedNode.name} (${sel?.c.name}) — ${selectedNode.progress}%; ${selectedNode.completed ? 'mastered' : selectedNode.unlocked ? 'unlocked' : 'locked'}.` : '',
     ]
       .filter(Boolean)
       .join('\n')
-  }, [state, clusters, mastered, allNodes.length, selectedNode, sel])
-  useAgentPageContext({ label: selectedNode ? `Nexus · ${selectedNode.name}` : 'Nexus', visibleText: brief })
+  }, [state, clusters, mastered, allNodes.length])
+  useAgentPageContext({ label: 'Nexus', visibleText: brief })
 
   const header = (
     <PageHeader
@@ -347,7 +272,6 @@ function RadialOverview() {
     )
   }
   const player = state.player
-  const selZone = sel?.c.zones.find((z) => z.level === sel.n.z)
   const week = state.week
 
   const hud = (d: number) => ({ '--nx-hud-d': `${d}ms` }) as CSSProperties
@@ -482,7 +406,7 @@ function RadialOverview() {
               <RadialWeb
                 clusters={clusters}
                 layout={layout}
-                selected={sel ? selKey : null}
+                selected={null}
                 onSelect={setSel}
                 onOpenSubject={(id) => openSubject(id)}
                 initialCamera={lastCamera}
@@ -505,40 +429,16 @@ function RadialOverview() {
                 celebrate={celebrate}
                 nextStep={next}
                 intro={intro}
+                focus={params.get('focus')}
               />
             ) : (
               <RadialSkeleton />
             )}
           </div>
           <div>
-            {selectedNode && sel ? (
-              <ResponsivePanel open onClose={() => setSel(null)} label={`${selectedNode.name} details`}>
-                <NodePanel
-                  key={selKey!}
-                  node={selectedNode}
-                  nodes={selNodes}
-                  zoneColor={selZone?.color ?? 'var(--color-primary)'}
-                  zoneName={`${sel.c.short} · ${selZone?.name ?? `Zone ${selectedNode.zone}`}`}
-                  detailLoading={detailApi.loading && !detailApi.data}
-                  engine={sel.c.engine}
-                  onClose={() => setSel(null)}
-                  onJump={(l) => setSel(`${l.subject}:${l.id}`)}
-                  onSelect={(id) => setSel(`${sel.c.id}:${id}`)}
-                  onOpenPath={() => openSubject(sel.c.id, sel.n.id)}
-                  compact
-                  studyHref={courseHref(sel.c, sel.n.id)}
-                  due={due.has(selKey!)}
-                  onReview={due.has(selKey!) ? () => void startReview(sel.c.id, sel.n.id, navigate) : undefined}
-                  shareHref={`/nexus?subject=${encodeURIComponent(sel.c.id)}&node=${encodeURIComponent(sel.n.id)}`}
-                  hueOf={hueOf}
-                  bare={phone}
-                />
-              </ResponsivePanel>
-            ) : (
               <div className="nx-hud sticky top-4" style={hud(260)}>
                 <SelectHint text="Every subject is a sector, its zones are rings outward from you. Click a subject's name to open its own tree, or any skill to inspect it." />
               </div>
-            )}
           </div>
         </div>
       )}

@@ -69,7 +69,7 @@ export default function TopicPage() {
       <motion.div className="learn-readbar fixed inset-x-0 top-0 z-[60] h-[3px] origin-left" style={{ scaleX: readBar }} aria-hidden="true" />
       {/* sidebar */}
       <aside className="lg:sticky lg:top-20 lg:max-h-[calc(100dvh-7rem)] lg:self-start lg:overflow-y-auto">
-        <Link to="/learn" className="mb-3 inline-flex items-center gap-1.5 text-[12.5px] text-text-muted !no-underline hover:text-text-primary">
+        <Link to="/learn?tab=dsa" className="mb-3 inline-flex items-center gap-1.5 text-[12.5px] text-text-muted !no-underline hover:text-text-primary">
           <ArrowLeft className="size-3.5" /> DSA course
         </Link>
         <div className="card p-4">
