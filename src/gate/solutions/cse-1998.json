@@ -722,54 +722,100 @@
       "verification": "$\\lceil \\log_2 16 \\rceil = 4$ select lines, as stated."
     },
     "cse-1998-a-15": {
-      "approach": "Standard TTL input levels: $V_{IL}\\le0.8$ V, $V_{IH}\\ge2.0$ V, supply $V_{CC}=5$ V. Pick the option that describes a voltage band always read as logic 1.",
+      "approach": "Concept tested: **TTL input and output voltage levels**. Standard TTL reads an input as 1 from $V_{IH} = 2.0$ V up to $V_{CC}$ and as 0 up to $V_{IL} = 0.8$ V; its outputs give at least 2.4 V for a 1. No option names 2.0 V, so read the question as: which option describes voltages that are all valid TTL logic 1s?",
       "concepts": [
-        "TTL logic levels",
+        "TTL levels",
+        "V_IH and V_IL",
         "Noise margin"
       ],
+      "given": "Options: (A) any voltage above 2.5 V; (B) between 0.8 V and 5.0 V; (C) below 5.0 V; (D) below $V_{cc}$ but above 2.8 V.",
       "steps": [
         {
-          "title": "TTL thresholds",
-          "body": "Inputs $\\le0.8$ V read as 0, inputs $\\ge2.0$ V read as 1, and $0.8$–$2.0$ V is undefined. The input voltage must not exceed the supply $V_{CC}$."
+          "title": "The standard TTL levels",
+          "body": "$V_{OH} = 2.4$ V, $V_{OL} = 0.4$ V, $V_{IH} = 2$ V, $V_{IL} = 0.8$ V, $V_{CC} = 5$ V. An input reads 1 for $2.0\\ \\text{V} \\le v \\le V_{CC}$, 0 for $0 \\le v \\le 0.8$ V, and is undefined in between."
         },
         {
-          "title": "Test the options",
-          "body": "- 'Above 2.5 V' has no upper limit (voltages above $V_{CC}$ are not valid inputs).\n- '0.8–5.0 V' includes the undefined region $0.8$–$2.0$ V.\n- 'Below 5.0 V' includes logic-0 voltages.\n- 'Below $V_{CC}$ but above 2.8 V' lies entirely in the valid logic-1 region and within the supply, so it is the right description among these."
+          "title": "Option A",
+          "body": "'Above 2.5 V' has no upper limit: it includes voltages above $V_{CC}$, outside the operating range of the gate."
+        },
+        {
+          "title": "Options B and C",
+          "body": "'Between 0.8 V and 5.0 V' includes the undefined band 0.8–2.0 V; 'below 5.0 V' includes 0 V, a logic 0. Neither describes logic 1."
+        },
+        {
+          "title": "Option D",
+          "body": "'Below $V_{CC}$ but above 2.8 V' lies entirely inside 2.0 V to $V_{CC}$: every voltage in it is read as a 1. It is the only option of which that is true."
         }
       ],
       "answer": {
-        "value": "any voltage below $V_{cc}$ but above 2.8 V",
+        "value": "(D) any voltage below $V_{cc}$ but above 2.8 V",
         "choice": [
           "D"
         ],
-        "matchesKey": true
+        "matchesKey": true,
+        "keyNote": "No option states the real threshold $V_{IH} = 2.0$ V; D is the key under the reading 'a range of voltages that are all valid logic 1s'. The scan of the 1998 paper matches the bank."
       },
       "optionAnalysis": [
         {
           "option": "A",
           "correct": false,
-          "reason": "Unbounded above; inputs above $V_{CC}$ are outside the valid range."
+          "reason": "Unbounded above: it includes voltages higher than V_CC, which are not valid inputs."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Includes the indeterminate band $0.8$–$2.0$ V."
+          "reason": "Includes 0.8–2.0 V, the undefined region (and 0.8 V itself is a logic 0)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Includes logic-0 voltages (below 0.8 V)."
+          "reason": "Includes 0 V to 0.8 V, which TTL reads as logic 0."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Bounded by $V_{CC}$ and safely above $V_{IH}=2.0$ V."
+          "reason": "2.8 V to V_CC lies wholly inside the TTL logic-1 input band 2.0 V to V_CC."
         }
       ],
+      "shortcut": "Check each range against the band 2.0 V to $V_{CC}$: only a range wholly inside it describes logic 1.",
       "pitfalls": [
-        "Picking 'above 2.5 V', which has no upper bound."
+        "Choosing A because 2.5 V is the middle of 0–5 V: TTL thresholds are not symmetric, and A has no upper end.",
+        "Quoting the output level 2.4 V as the input threshold: inputs accept 1 from 2.0 V; the gap is the noise margin $NM_H = 0.4$ V."
       ],
-      "verification": "74-series datasheet values: $V_{IH(min)}=2.0$ V, $V_{IL(max)}=0.8$ V, $V_{CC}=5$ V."
+      "verification": "Testing each option's range against the TTL input levels: A unbounded above the supply, B and C include undefined and logic-0 voltages, D all logic 1. Noise margins $NM_H = 0.4$ V, $NM_L = 0.4$ V.",
+      "animation": {
+        "kind": "table",
+        "title": "TTL: how an input reads each option's range",
+        "cols": [
+          "range",
+          "reads as"
+        ],
+        "rows": [
+          [
+            "> 2.5 V",
+            "unbounded above V_CC"
+          ],
+          [
+            "0.8 – 5.0 V",
+            "undefined + 1"
+          ],
+          [
+            "< 5.0 V",
+            "0 + undefined + 1"
+          ],
+          [
+            "2.8 V – V_CC",
+            "all logic 1"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ]
+      }
     },
     "cse-1998-a-16": {
       "approach": "Each asynchronous character carries 1 start bit + data + parity + stop bits; multiply bits per character by characters per second and choose the smallest listed rate that is enough.",
