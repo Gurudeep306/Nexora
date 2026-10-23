@@ -215,6 +215,18 @@ assert not VA(["c -> g", "g"], "c") and L.valid_argument(["c -> g", "g"], "c")[1
 D.assert_mcq(P["nx-dm-01-03-q11"], "B")
 assert len([k for k in P if k.startswith("nx-dm-01-03-")]) == 11
 
+# Radar marks line: 3 one-mark, 2 two-mark, 3 descriptive, recomputed from the bank.
+PYQ03 = ["cse-1991-a-4-iv", "cse-1992-b-15-a", "cse-1993-ii-b-18", "cse-2003-cs-72", "it-2004-it-31",
+         "cse-2012-cs-1", "cse-2015-2-cs-3", "cse-2015-3-cs-24"]
+desc = [k for k in PYQ03 if B[k]["type"] == "DESC"]
+assert len(desc) == 3
+assert sorted(k for k in PYQ03 if k not in desc and B[k]["marks"] == 1) == ["cse-2012-cs-1", "cse-2015-2-cs-3", "cse-2015-3-cs-24"]
+assert sorted(k for k in PYQ03 if k not in desc and B[k]["marks"] == 2) == ["cse-2003-cs-72", "it-2004-it-31"]
+assert "3 one-mark (2012, both 2015 papers), 2 two-mark (2003, IT 2004), 3 descriptive" in TXT
+# Resolution is refutation-complete but not derivation-complete: {p} has no resolvents, so p ∨ q is never derived.
+assert L.implies("p", "p | q") and L.resolve(fs({"p"}), fs({"p"})) == []
+assert L.refutable([{"p"}, {"¬p"}, {"¬q"}])        # but {p} ∪ {¬(p ∨ q)} = {p, ¬p, ¬q} refutes at once
+
 D.must_contain(TXT, "Arguments **1 and 4** are valid", "**(C)** \"If a person is kind", "**I1 is correct but I2 is not.**",
                "**The result is head**", "**Every subsystem is consistent, but not necessarily complete.**",
                "$(A, B, C) = (1, 0, 1)$", ":::lab{#lab-argument")

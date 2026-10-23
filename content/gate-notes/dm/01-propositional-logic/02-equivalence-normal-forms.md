@@ -46,11 +46,12 @@ vocabulary GATE uses in the Discrete Mathematics section.
 |:--|:--|
 | PYQs mapped to this lesson | 23 (1991–2021) |
 | Marks | 7 one-mark, 11 two-mark, 4 descriptive, 1 unmarked multi-select |
-| Pattern 1 | Which formula is (or is not) a tautology: 1992, 1996, 1997, 2002, 2014, 2021 (both papers) |
-| Pattern 2 | Which formulas are equivalent to a given one: 1993, 2008, 2015, 2017 |
+| Pattern 1 | Which formula is (or is not) a tautology, or prove / refute one: 1992, 1996, 1997, 1999 (both parts), 2002, 2014, 2021 (both papers) |
+| Pattern 2 | Which formulas are equivalent to a given one: 1993, 2008, 2015, 2017 (paper 1, Q1) |
 | Pattern 3 | Satisfiable / valid vocabulary: 1991, 2001, 2004, 2005, 2006 |
 | Pattern 4 | Canonical forms and CNF: 1995 (principal CNF), 2007 (satisfying half the clauses) |
 | Pattern 5 | Functional completeness: 2008 (IT) |
+| Pattern 6 | Value of a formula under given facts: 2000 (two equivalences given), 2017 (paper 1, Q29: a formula given false) |
 | What examiners test | That ≡ is a statement about columns while ↔ is a connective, that $(A \wedge B) \to C$ splits into an **or** of implications, that one row is enough to refute a tautology, that maxterms are numbered by the row that makes them false, and that a set of connectives which always outputs T on the all-true row cannot build ¬ |
 :::
 
