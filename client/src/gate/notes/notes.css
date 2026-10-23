@@ -3382,3 +3382,33 @@ h4.notes-h {
 .lab .rec-in {
   width: 9em;
 }
+.lab .gl-edge {
+  stroke: var(--color-text-secondary);
+  stroke-width: 1.8;
+}
+.lab .gl-edge.is-hl {
+  stroke: var(--color-accent-brand);
+  stroke-width: 4;
+}
+.lab .gl-node circle {
+  fill: var(--color-bg-surface);
+  stroke: var(--color-accent-brand);
+  stroke-width: 2;
+}
+.lab .gl-node.is-hl circle {
+  stroke: var(--color-state-error);
+  stroke-width: 3.5;
+}
+.lab .gl-node.is-picked circle {
+  stroke: var(--color-state-warning);
+  stroke-width: 4;
+}
+.lab .gl-node[class*='grp-c'] {
+  background: none;
+}
+.lab .gl-node.grp-c0 circle { fill: color-mix(in oklab, var(--color-accent-brand) 35%, var(--color-bg-surface)); }
+.lab .gl-node.grp-c1 circle { fill: color-mix(in oklab, var(--color-state-success) 35%, var(--color-bg-surface)); }
+.lab .gl-node.grp-c2 circle { fill: color-mix(in oklab, var(--color-state-warning) 40%, var(--color-bg-surface)); }
+.lab .gl-node.grp-c3 circle { fill: color-mix(in oklab, var(--color-state-error) 30%, var(--color-bg-surface)); }
+.lab .gl-node.grp-c4 circle { fill: color-mix(in oklab, var(--color-text-primary) 25%, var(--color-bg-surface)); }
+.lab .gl-node.grp-c5 circle { fill: color-mix(in oklab, var(--color-state-info, #3b82f6) 30%, var(--color-bg-surface)); }

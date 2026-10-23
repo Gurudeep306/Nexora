@@ -207,3 +207,28 @@ test('recurrence lab: iteration, characteristic roots, fitted closed forms and s
   for (const [s, k, want] of vec.binom) assert.deepEqual(R.binomPower(s, k), want);
   for (const p of R.PRESETS) R.iterate(p.rec, 8);
 });
+
+test('graph playground: components, cuts, bridges, bipartition, colourings, Euler and Hamilton, spanning trees and matchings match graphlib', async () => {
+  const Gl = await load('graphLogic.ts');
+  const vec = vectors(8);
+  const named = Object.fromEntries(Gl.PRESETS.map((p) => [p.id, p.make()]));
+  for (const c of [...vec.named, ...vec.random]) {
+    const g = { n: c.n, edges: c.edges };
+    if (named[c.name]) assert.deepEqual(named[c.name].edges, c.edges, `${c.name}: preset edges`);
+    assert.deepEqual(Gl.degrees(g), c.degrees, `${c.name}: degrees`);
+    assert.deepEqual(Gl.components(g), c.components, `${c.name}: components`);
+    assert.deepEqual(Gl.cutVertices(g), c.cuts, `${c.name}: cut vertices`);
+    assert.deepEqual(Gl.bridges(g), c.bridges, `${c.name}: bridges`);
+    assert.deepEqual(Gl.bipartition(g), [c.bipartite, c.bp], `${c.name}: bipartition`);
+    assert.deepEqual(Gl.greedyColouring(g), c.greedy, `${c.name}: greedy`);
+    assert.equal(Gl.chromaticNumber(g), c.chi, `${c.name}: χ`);
+    assert.deepEqual(Gl.colouring(g, c.chi) ?? [], c.colouring, `${c.name}: colouring`);
+    assert.equal(Gl.eulerKind(g), c.euler, `${c.name}: Euler kind`);
+    assert.deepEqual(Gl.eulerTour(g), c.tour, `${c.name}: Euler tour`);
+    assert.deepEqual(Gl.hamiltonianCycle(g), c.ham, `${c.name}: Hamiltonian cycle`);
+    if (c.trees !== null) assert.equal(Gl.spanningTrees(g), c.trees, `${c.name}: spanning trees`);
+    assert.equal(Gl.matchingNumber(g), c.nu, `${c.name}: ν`);
+    assert.equal(Gl.independenceNumber(g), c.alpha, `${c.name}: α`);
+  }
+  for (const o of vec.greedyOrders) assert.deepEqual(Gl.greedyColouring(named[o.name], o.order), o.colours);
+});
