@@ -13,6 +13,9 @@ export const LABS = {
   'flipflop-scope': lazy(() => import('./FlipflopScope')),
   'counter-fsm': lazy(() => import('./CounterFsm')),
   'converter-bench': lazy(() => import('./ConverterBench')),
+  'c-tracer': lazy(() => import('./CTracer')),
+  'memory-lab': lazy(() => import('./MemoryLab')),
+  'recursion-lab': lazy(() => import('./RecursionLab')),
 } as const
 
 export type LabName = keyof typeof LABS

@@ -3283,3 +3283,172 @@ h4.notes-h {
 .cb-figure {
   margin: 0;
 }
+
+/* ── C labs (Programming & Data Structures: C Tracer, Memory Inspector, Recursion Tracer) ── */
+.clab-edit {
+  margin: 0 0 10px;
+}
+.clab-edit > summary {
+  cursor: pointer;
+  min-height: 32px;
+  color: var(--color-text-secondary);
+}
+.clab-src {
+  display: block;
+  width: 100%;
+  margin: 6px 0 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 8px;
+  background: var(--color-bg-surface-2);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  line-height: 1.5;
+  tab-size: 4;
+  resize: vertical;
+}
+.clab-wide {
+  width: min(34em, 100%);
+}
+.clab-slider {
+  flex: 1 1 140px;
+  display: flex;
+}
+.clab-slider input {
+  width: 100%;
+}
+.clab-count {
+  margin: 0;
+}
+.clab-code {
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-surface-2);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-x: auto;
+}
+.clab-code li {
+  display: flex;
+  gap: 10px;
+  padding: 0 10px 0 4px;
+  white-space: pre;
+}
+.clab-code li.is-cur {
+  background: color-mix(in oklab, var(--color-accent-brand) 18%, transparent);
+  box-shadow: inset 3px 0 0 var(--color-accent-brand);
+}
+.clab-ln {
+  min-width: 2.2em;
+  text-align: right;
+  color: var(--color-text-tertiary, var(--color-text-secondary));
+  user-select: none;
+}
+.clab-code code {
+  font: inherit;
+}
+.clab-note {
+  margin: 0 0 8px;
+  padding: 6px 10px;
+  border-left: 3px solid var(--color-accent-brand);
+  background: color-mix(in oklab, var(--color-accent-brand) 8%, transparent);
+  font-size: 14px;
+}
+.clab-h {
+  margin: 10px 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+.clab-frame {
+  width: 100%;
+  margin: 0 0 8px;
+  border-collapse: collapse;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 13.5px;
+}
+.clab-frame.is-top {
+  border-color: var(--color-accent-brand);
+}
+.clab-frame caption {
+  caption-side: top;
+  text-align: left;
+  padding: 4px 0;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.clab-frame th,
+.clab-frame td {
+  padding: 3px 8px;
+  border-top: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+.clab-frame tr.is-changed td,
+.clab-frame tr.is-changed th {
+  background: color-mix(in oklab, var(--color-state-warning) 16%, transparent);
+}
+.clab-type {
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+}
+.clab-static {
+  border-style: dashed;
+}
+.clab-out {
+  margin: 0;
+  padding: 6px 10px;
+  min-height: 2em;
+  max-height: 14em;
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-surface-2);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.clab-compare {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+.clab-arrow,
+.clab-ret {
+  color: var(--color-state-info, var(--color-accent-brand));
+  font-family: var(--font-mono);
+}
+.clab-tree,
+.clab-tree ul {
+  margin: 0;
+  padding-left: 1.2em;
+  list-style: none;
+  border-left: 1px dashed var(--color-border-strong);
+}
+.clab-tree li {
+  margin: 2px 0;
+  padding-left: 6px;
+  font-size: 14px;
+}
+.clab-steps {
+  margin: 0 0 8px;
+  padding-left: 1.6em;
+  font-size: 14px;
+}
+.clab-steps li.is-skip {
+  color: var(--color-text-secondary);
+  text-decoration: line-through dotted;
+}
+.clab-mem td:first-child {
+  white-space: nowrap;
+}

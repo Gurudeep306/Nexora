@@ -914,3 +914,36 @@ test('converter bench: R-2R and weighted DACs by nodal analysis, SAR, flash, cou
   assert.equal(cv.conversionClocks('counter', 8), 255);
   assert.equal(cv.dec(cv.q(-5, 8)), '-0.625');
 });
+
+/* ── Live Labs (Programming & DS): the C interpreter against the system C compiler ── */
+
+test('pds C labs: cLogic.ts prints exactly what cc prints for every vector program, and rejects the undefined ones', async () => {
+  const { pathToFileURL } = require('node:url');
+  const c = await import(pathToFileURL(path.join(ROOT, 'client', 'src', 'gate', 'notes', 'labs', 'cLogic.ts')).href);
+  const presets = await import(pathToFileURL(path.join(ROOT, 'client', 'src', 'gate', 'notes', 'labs', 'cPresets.ts')).href);
+  const vec = JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'gate-notes', '_checks', 'pds', 'lab_vectors_c.json'), 'utf8'));
+  assert.ok(vec.vectors.length >= 30);
+  for (const v of vec.vectors) {
+    const r = c.runC(v.src, { input: v.input });
+    if (v.expect === 'error') {
+      assert.equal(r.ok, false, `${v.id}: undefined behaviour must be reported`);
+      continue;
+    }
+    assert.equal(r.error, null, `${v.id}: ${r.error && r.error.message}`);
+    assert.equal(r.out, v.cc.out, `${v.id}: output differs from cc`);
+    assert.ok(r.steps.length > 0, `${v.id}: trace`);
+  }
+  // Every preset is a vector, with the compiler's output.
+  const byId = new Map(vec.vectors.map((v) => [v.id, v]));
+  for (const p of presets.C_PRESETS) assert.equal(p.cc, byId.get(p.id).cc.out, p.id);
+  // Expression explanations: short circuit is reported, values and types are right.
+  const e = c.explainExpr('int a = 2, b = 3, c = 4;', 'a < b || ++a < c');
+  assert.equal(e.value, '1');
+  assert.ok(e.steps.some((s) => s.note && s.note.startsWith('not evaluated')));
+  assert.equal(e.vars.find((v) => v.name === 'a').value, '2');
+  const u = c.explainExpr('unsigned int u = 1; int i = -1;', 'i < u');
+  assert.equal(u.value, '0');
+  // Compile errors are reported as such.
+  const bad = c.runC('int main(void) { int a = 5; int a = 7; return 0; }');
+  assert.equal(bad.ok, false);
+});

@@ -1,0 +1,385 @@
+{
+ "compiler": "cc -std=c11 -O0",
+ "vectors": [
+  {
+   "id": "int-division",
+   "src": "#include <stdio.h>\nint main(void) {\n    printf(\"%d %d\\n\", 7 / 2, 7 % 2);\n    printf(\"%d %d\\n\", -7 / 2, -7 % 2);\n    printf(\"%d %d\\n\", 7 / -2, 7 % -2);\n    printf(\"%f\\n\", 7 / 2.0);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "3 1\n-3 -1\n-3 1\n3.500000\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "promotion",
+   "src": "#include <stdio.h>\nint main(void) {\n    unsigned int u = 1;\n    int i = -1;\n    char c = 'A';\n    if (i < u) printf(\"-1 < 1u\\n\");\n    else printf(\"-1 > 1u: -1 became %u\\n\", (unsigned) i);\n    printf(\"%d %d\\n\", c + 1, (int) sizeof(c + 1));\n    printf(\"%u\\n\", u - 2);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "-1 > 1u: -1 became 4294967295\n66 4\n4294967295\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "short-circuit",
+   "src": "#include <stdio.h>\nint main(void) {\n    int i, j, count;\n    count = 0;\n    i = 0;\n    for (j = -3; j <= 3; j++) {\n        if ((j >= 0) && (i++))\n            count = count + j;\n    }\n    count = count + i;\n    printf(\"%d\\n\", count);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "10\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "incdec",
+   "src": "#include <stdio.h>\nint main(void) {\n    int m = 10;\n    int n, n1;\n    n = ++m;\n    n1 = m++;\n    n--;\n    --n1;\n    n -= n1;\n    printf(\"%d\\n\", n);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "0\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "bitwise-ascii",
+   "src": "#include <stdio.h>\nint main(void) {\n    char a = 'P';\n    char b = 'x';\n    char c = (a & b) + '*';\n    char d = (a | b) - '-';\n    char e = (a ^ b) + '+';\n    printf(\"%c %c %c\\n\", c, d, e);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "z K S\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "shift-count",
+   "src": "#include <stdio.h>\nint func(int num) {\n    int count = 0;\n    while (num) {\n        count++;\n        num >>= 1;\n    }\n    return count;\n}\nint main(void) {\n    printf(\"%d\\n\", func(435));\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "9\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "ternary",
+   "src": "#include <stdio.h>\nint main(void) {\n    int x = 3, y = 4, z = 2;\n    int a = (x > y) ? ((x > z) ? x : z) : ((y > z) ? y : z);\n    printf(\"%d\\n\", a);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "4\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "unsigned-strlen",
+   "src": "#include <stdio.h>\n#include <string.h>\nvoid printlength(char *s, char *t) {\n    unsigned int c = 0;\n    int len = ((strlen(s) - strlen(t)) > c) ? strlen(s) : strlen(t);\n    printf(\"%d\\n\", len);\n}\nint main(void) {\n    char *x = \"abc\";\n    char *y = \"defgh\";\n    printlength(x, y);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "3\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "char-wrap",
+   "src": "#include <stdio.h>\nint main(void) {\n    unsigned char u = 250;\n    int n = 0;\n    while (u != 4) { u++; n++; }\n    printf(\"%d\\n\", n);\n    signed char s = 127;\n    s = s + 1;\n    printf(\"%d\\n\", s);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "10\n-128\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "comma-op",
+   "src": "#include <stdio.h>\nint main(void) {\n    int a, b;\n    a = (b = 3, b + 4);\n    printf(\"%d %d\\n\", a, b);\n    a = 1, 2;\n    printf(\"%d\\n\", a);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "7 3\n1\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "switch-fall",
+   "src": "#include <stdio.h>\nint main(void) {\n    char inChar = 'A';\n    switch (inChar) {\n    case 'A': printf(\"Choice A\\n\");\n    case 'B':\n    case 'C': printf(\"Choice B\");\n    case 'D':\n    case 'E':\n    default: printf(\" No Choice\");\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "Choice A\nChoice B No Choice\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "switch-count",
+   "src": "#include <stdio.h>\nint main(void) {\n    int i, j, k = 0, calls = 0;\n    j = 2 * 3 / 4 + 2.0 / 5 + 8 / 5;\n    k -= --j;\n    for (i = 0; i < 5; i++) {\n        switch (i + k) {\n        case 1:\n        case 2: printf(\"%d \", i + k); calls++;\n        case 3: printf(\"%d \", i + k); calls++;\n        default: printf(\"%d \", i + k); calls++;\n        }\n    }\n    printf(\"\\ncalls = %d\\n\", calls);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "-1 0 1 1 1 2 2 2 3 3 \ncalls = 10\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "dangling-else",
+   "src": "#include <stdio.h>\nint main(void) {\n    int x = -10, y = 20;\n    if (x > y)\n        if (x < 0) x = -x;\n        else x = 2 * x;\n    printf(\"%d\\n\", x);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "-10\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "halving-loop",
+   "src": "#include <stdio.h>\nint main(void) {\n    int i, j, n = 37;\n    for (i = n, j = 0; i > 0; i /= 2, j += i)\n        ;\n    printf(\"%d\\n\", j);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "34\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "do-while",
+   "src": "#include <stdio.h>\nint main(void) {\n    int n = 0, w = 0, d = 0;\n    while (n > 0) { w++; n--; }\n    n = 0;\n    do { d++; n--; } while (n > 0);\n    printf(\"while: %d, do-while: %d\\n\", w, d);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "while: 0, do-while: 1\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "float-loop",
+   "src": "#include <stdio.h>\nint main(void) {\n    float sum = 0.0, j = 1.0, i = 2.0;\n    int times = 0;\n    while (i / j > 0.0625) {\n        j = j + j;\n        sum = sum + i / j;\n        printf(\"%f\\n\", sum);\n        times++;\n    }\n    printf(\"printed %d times\\n\", times);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "1.000000\n1.500000\n1.750000\n1.875000\n1.937500\nprinted 5 times\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "nested-loop-sum",
+   "src": "#include <stdio.h>\nint unknown(int n) {\n    int i, j, k = 0;\n    for (i = n / 2; i <= n; i++)\n        for (j = 2; j <= n; j = j * 2)\n            k = k + n / 2;\n    return k;\n}\nint main(void) {\n    printf(\"%d %d %d\\n\", unknown(8), unknown(16), unknown(10));\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "60 288 90\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "gcd-subtract",
+   "src": "#include <stdio.h>\nint main(void) {\n    int x = 126, y = 105;\n    do {\n        if (x > y) x = x - y;\n        else y = y - x;\n    } while (x != y);\n    printf(\"%d\\n\", x);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "21\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "fast-power",
+   "src": "#include <stdio.h>\nint power(int X, int Y) {\n    int res = 1, a = X, b = Y;\n    while (b != 0) {\n        if (b % 2 == 0) { a = a * a; b = b / 2; }\n        else { res = res * a; b = b - 1; }\n    }\n    return res;\n}\nint main(void) {\n    printf(\"%d %d\\n\", power(3, 5), power(2, 10));\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "243 1024\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "horner",
+   "src": "#include <stdio.h>\nint SimpleFunction(int Y[], int n, int x) {\n    int total = Y[0], loopIndex;\n    for (loopIndex = 1; loopIndex <= n - 1; loopIndex++)\n        total = x * total + Y[loopIndex];\n    return total;\n}\nint main(void) {\n    int Z[10] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};\n    printf(\"%d\\n\", SimpleFunction(Z, 10, 2));\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "1023\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "reverse-digits",
+   "src": "#include <stdio.h>\nint main(void) {\n    int n = 4729, rev = 0;\n    while (n > 0) {\n        rev = rev * 10 + n % 10;\n        n = n / 10;\n        printf(\"rev = %d, n = %d\\n\", rev, n);\n    }\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "rev = 9, n = 472\nrev = 92, n = 47\nrev = 927, n = 4\nrev = 9274, n = 0\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "alt-digits",
+   "src": "#include <stdio.h>\nint gate(int n) {\n    int d, t, newnum, turn;\n    newnum = turn = 0;\n    t = 1;\n    while (n >= t) t *= 10;\n    t /= 10;\n    while (t > 0) {\n        d = n / t;\n        n = n % t;\n        t /= 10;\n        if (turn) newnum = 10 * newnum + d;\n        turn = (turn + 1) % 2;\n    }\n    return newnum;\n}\nint main(void) {\n    printf(\"%d\\n\", gate(14362));\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "46\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "static-counter",
+   "src": "#include <stdio.h>\nint incr(int i) {\n    static int count = 0;\n    count = count + i;\n    return count;\n}\nint main(void) {\n    int i, j;\n    for (i = 0; i <= 4; i++)\n        j = incr(i);\n    printf(\"%d\\n\", j);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "10\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "static-vs-auto",
+   "src": "#include <stdio.h>\nint a, b, c = 0;\nvoid prtFun(void);\nint main(void) {\n    static int a = 1;\n    prtFun();\n    a += 1;\n    prtFun();\n    printf(\"%d %d\\n\", a, b);\n    return 0;\n}\nvoid prtFun(void) {\n    static int a = 2;\n    int b = 1;\n    a += ++b;\n    printf(\"%d %d\\n\", a, b);\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "4 2\n6 2\n2 0\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "globals-statics",
+   "src": "#include <stdio.h>\nint f1(void);\nint f2(void);\nint f3(void);\nint x = 10;\nint main(void) {\n    int x = 1;\n    x += f1() + f2() + f3() + f2();\n    printf(\"%d\\n\", x);\n    return 0;\n}\nint f1(void) { int x = 25; x++; return x; }\nint f2(void) { static int x = 50; x++; return x; }\nint f3(void) { x *= 10; return x; }\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "230\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "static-for",
+   "src": "#include <stdio.h>\nint r(void) {\n    static int num = 7;\n    return num--;\n}\nint main(void) {\n    for (r(); r(); r())\n        printf(\"%d \", r());\n    printf(\"\\n\");\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "5 2 \n",
+    "status": 0
+   }
+  },
+  {
+   "id": "funcp-static",
+   "src": "#include <stdio.h>\nint funcp(void) {\n    static int x = 1;\n    x++;\n    return x;\n}\nint main(void) {\n    int x, y;\n    x = funcp();\n    y = funcp() + x;\n    printf(\"%d\\n\", x + y);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "7\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "block-shadow",
+   "src": "#include <stdio.h>\nvoid func(int i, int j) {\n    if (i < j) {\n        int i = 0;\n        while (i < 10) { j += 2; i++; }\n    }\n    printf(\"%d\\n\", i);\n}\nint main(void) {\n    int i = 9, j = 10;\n    func(i, j);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "9\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "shadow-loop",
+   "src": "#include <stdio.h>\nint main(void) {\n    int i, j;\n    int a[8] = {1, 2, 3, 4, 5, 6, 7, 8};\n    for (i = 0; i < 3; i++) {\n        a[i] = a[i] + 1;\n        i++;\n    }\n    i--;\n    for (j = 7; j > 4; j--) {\n        int i = j / 2;\n        a[i] = a[i] - 1;\n    }\n    printf(\"%d,%d\\n\", i, a[i]);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "3,2\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "call-by-value",
+   "src": "#include <stdio.h>\nvoid swap(int a, int b) { int t = a; a = b; b = t; }\nvoid swapp(int *a, int *b) { int t = *a; *a = *b; *b = t; }\nint main(void) {\n    int x = 1, y = 2;\n    swap(x, y);\n    printf(\"%d %d\\n\", x, y);\n    swapp(&x, &y);\n    printf(\"%d %d\\n\", x, y);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "1 2\n2 1\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "jumble",
+   "src": "#include <stdio.h>\nint jumble(int x, int y) {\n    x = 2 * x + y;\n    return x;\n}\nint main(void) {\n    int x = 2, y = 5;\n    y = jumble(y, x);\n    x = jumble(y, x);\n    printf(\"%d\\n\", x);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "26\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "macro-swap",
+   "src": "#include <stdio.h>\n#define swap1(a, b) tmp = a; a = b; b = tmp\nvoid swap2(int a, int b) { int tmp; tmp = a; a = b; b = tmp; }\nvoid swap3(int *a, int *b) { int tmp; tmp = *a; *a = *b; *b = tmp; }\nint main(void) {\n    int num1 = 5, num2 = 4, tmp;\n    if (num1 > num2) { swap1(num1, num2); }\n    if (num1 < num2) { swap2(num1 + 1, num2); }\n    if (num1 >= num2) { swap3(&num1, &num2); }\n    printf(\"%d %d\\n\", num1, num2);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "4 5\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "macro-paren",
+   "src": "#include <stdio.h>\n#define SQ(x) x * x\n#define SQP(x) ((x) * (x))\nint main(void) {\n    printf(\"%d %d\\n\", SQ(2 + 3), SQP(2 + 3));\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "11 25\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "ub-double-modify",
+   "src": "#include <stdio.h>\nint main(void) {\n    int i = 5;\n    i = i++ + ++i;\n    printf(\"%d\\n\", i);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "error",
+   "cc": {
+    "out": "12\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "ub-div-zero",
+   "src": "#include <stdio.h>\nint main(void) {\n    int z = 0;\n    printf(\"%d\\n\", 10 / z);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "error",
+   "cc": {
+    "out": "0\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "printf-return",
+   "src": "#include <stdio.h>\nint main(void) {\n    int n = printf(\"GATE%d\\n\", 2027);\n    printf(\"%d\\n\", n);\n    printf(\"%d\\n\", printf(\"ab\"));\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "GATE2027\n9\nab2\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "octal-hex",
+   "src": "#include <stdio.h>\nint main(void) {\n    int a = 011, b = 0x1F, c = 'a';\n    printf(\"%d %d %d %o %x %c\\n\", a, b, c, 64, 255, 66);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "9 31 97 100 ff B\n",
+    "status": 0
+   }
+  },
+  {
+   "id": "int-overflow-unsigned",
+   "src": "#include <stdio.h>\nint main(void) {\n    unsigned int n = 2000, p1, p2;\n    p1 = n * (n - 1) * (n - 2) / 6;\n    p2 = n * (n - 1) / 2 * (n - 2) / 3;\n    printf(\"%u %u\\n\", p1, p2);\n    return 0;\n}\n",
+   "input": "",
+   "expect": "ok",
+   "cc": {
+    "out": "615506117 1331334000\n",
+    "status": 0
+   }
+  }
+ ]
+}
