@@ -103,3 +103,34 @@ test('relation lab: properties with witnesses, closures, Warshall stages, classe
   for (const [n, want] of Object.entries(vec.counts)) assert.deepEqual(R.counts(Number(n)), want, `counts n=${n}`);
   for (const p of R.PRESETS) assert.ok(p.pairs.every(([a, b]) => a < p.n && b < p.n), p.id);
 });
+
+test('hasse lab: covers, levels, bounds, lattice tests, complements and linear extensions match orderlib', async () => {
+  const O = await load('orderLogic.ts');
+  const vec = vectors(4);
+  for (const c of vec.cases) {
+    const P = O.fromPreset(c.src);
+    assert.deepEqual(P.labels, c.labels, `${c.src}: labels`);
+    assert.deepEqual(P.le, c.le, `${c.src}: order`);
+    assert.deepEqual(O.covers(P), c.covers, `${c.src}: covers`);
+    assert.deepEqual(O.levels(P), c.levels, `${c.src}: levels`);
+    assert.deepEqual(O.minimal(P), c.minimal);
+    assert.deepEqual(O.maximal(P), c.maximal);
+    assert.equal(O.least(P), c.least);
+    assert.equal(O.greatest(P), c.greatest);
+    const n = c.labels.length;
+    for (let a = 0; a < n; a++)
+      for (let b = 0; b < n; b++) {
+        assert.equal(O.lub(P, a, b), c.lub[a][b], `${c.src}: lub(${a}, ${b})`);
+        assert.equal(O.glb(P, a, b), c.glb[a][b], `${c.src}: glb(${a}, ${b})`);
+      }
+    assert.deepEqual(O.latticeFailure(P), c.latticeFailure, `${c.src}: lattice failure`);
+    const an = O.analyse(P);
+    assert.deepEqual(an, c.analysis, `${c.src}: analysis`);
+    if (an.lattice && !an.distributive) assert.deepEqual(O.distributiveFailure(P), c.distributiveFailure, `${c.src}: distributive failure`);
+    if (c.complements) for (let a = 0; a < n; a++) assert.deepEqual(O.complements(P, a), c.complements[a], `${c.src}: complements of ${a}`);
+    assert.equal(O.linearExtensions(P), c.linearExtensions, `${c.src}: linear extensions`);
+    assert.deepEqual(O.heightWidth(P), { height: c.height, width: c.width }, `${c.src}: height/width`);
+  }
+  for (const p of O.PRESETS) O.fromPreset(p.src);
+  assert.throws(() => O.parsePairs('a<b, b<a'));
+});

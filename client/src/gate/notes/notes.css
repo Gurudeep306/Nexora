@@ -3329,3 +3329,15 @@ h4.notes-h {
 .lab .rel-counts {
   font-size: 13.5px;
 }
+.lab .hasse-node {
+  cursor: pointer;
+}
+.lab .hasse-node.is-picked .rel-node {
+  fill: color-mix(in oklab, var(--color-accent-brand) 30%, var(--color-bg-surface));
+}
+.lab .hasse-node.is-upper .rel-node {
+  fill: color-mix(in oklab, var(--color-state-success) 25%, var(--color-bg-surface));
+}
+.lab .hasse-node.is-lower .rel-node {
+  fill: color-mix(in oklab, var(--color-state-warning) 25%, var(--color-bg-surface));
+}

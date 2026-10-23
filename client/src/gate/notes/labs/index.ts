@@ -17,6 +17,7 @@ export const LABS = {
   'truth-table': lazy(() => import('./TruthTable')),
   'quantifier-lab': lazy(() => import('./QuantifierLab')),
   'relation-lab': lazy(() => import('./RelationLab')),
+  'hasse-lab': lazy(() => import('./HasseLab')),
 } as const
 
 export type LabName = keyof typeof LABS
