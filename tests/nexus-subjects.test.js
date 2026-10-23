@@ -563,3 +563,34 @@ test('leaderboards: web rank (overall, week, friends) and per subject, from nexu
   await call('GET', '/api/nexus/web');
   assert.equal(withDb((db) => db.prepare('SELECT updated_at FROM nexus_scores WHERE username=?').get(ME).updated_at), before);
 });
+
+test('subject trees paint without waiting: a small immutable tree per subject, tiny progress, layout in the structure', async () => {
+  const st = (await call('GET', '/api/nexus/structure')).body;
+  // Every node carries its tree layout, so a cached structure paints any subject's tree.
+  for (const c of st.clusters) for (const n of c.nodes) assert.equal(typeof n.x, 'number', `${c.id}:${n.id} has no x`);
+  for (const c of st.clusters) {
+    const r = await fetch(`${base}/api/nexus/tree/${c.id}?v=${st.version}`, { headers: { Cookie: cookie } });
+    assert.equal(r.status, 200, c.id);
+    assert.match(r.headers.get('cache-control'), /immutable/);
+    const text = await r.text();
+    // Budget: a tree is a few KB (it is on the critical path of opening a subject).
+    assert.ok(text.length < 16 * 1024, `${c.id} tree is ${text.length} B`);
+    const t = JSON.parse(text);
+    assert.equal(t.version, st.version);
+    assert.deepEqual(t.nodes.map((n) => n.id), c.nodes.map((n) => n.id), `${c.id}: structure order`);
+    assert.ok(t.zones.every((z) => z.rows >= 1));
+    const etag = r.headers.get('etag');
+    const again = await fetch(`${base}/api/nexus/tree/${c.id}`, { headers: { Cookie: cookie, 'If-None-Match': etag } });
+    assert.equal(again.status, 304);
+  }
+  assert.equal((await call('GET', '/api/nexus/tree/nope')).status, 404);
+  // The reader's numbers for one subject: tiny, lined up with the tree.
+  const t = (await call('GET', '/api/nexus/tree/dl')).body;
+  const r = await fetch(`${base}/api/nexus/progress/dl`, { headers: { Cookie: cookie } });
+  const text = await r.text();
+  assert.ok(text.length < 4 * 1024, `progress is ${text.length} B`);
+  const p = JSON.parse(text);
+  assert.equal(p.nodes.length, t.nodes.length);
+  assert.equal(p.zones.length, t.zones.length);
+  assert.ok(p.rank && typeof p.rank.progress === 'number');
+});
