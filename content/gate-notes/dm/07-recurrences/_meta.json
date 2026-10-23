@@ -1,0 +1,4 @@
+{
+  "title": "Recurrences and generating functions",
+  "summary": "Setting up recurrences by looking at the last step, solving them by unrolling, by characteristic roots (distinct, repeated and complex) and particular solutions, reading growth from the dominant root, and generating functions for sequences, recurrences and counting."
+}

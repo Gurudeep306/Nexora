@@ -177,3 +177,33 @@ test('counting lab: the twelvefold way, inclusion–exclusion terms, derangement
   for (const [m, n, v] of vec.onto) assert.equal(K.onto(m, n), v, `onto ${m}→${n}`);
   vec.catalan.forEach((c, n) => assert.equal(K.catalan(n), c, `C${n}`));
 });
+
+test('recurrence lab: iteration, characteristic roots, fitted closed forms and series match reclib', async () => {
+  const R = await load('recLogic.ts');
+  const vec = vectors(7);
+  const near = (a, b, tol, msg) => assert.ok(Math.abs(a - b) <= tol * Math.max(1, Math.abs(b)), `${msg}: ${a} vs ${b}`);
+  for (const c of vec.recs) {
+    const rec = { coeffs: c.coeffs, init: c.init, poly: c.poly, q: c.q, s: c.s };
+    const at = `${c.coeffs}/${c.init}`;
+    R.iterate(rec, 16).forEach((t, n) => near(t, c.terms[n], 1e-12, `${at} a${n}`));
+    const roots = R.charRoots(c.coeffs);
+    assert.equal(roots.length, c.roots.length, `${at}: number of distinct roots`);
+    roots.forEach((r, i) => {
+      near(r.root.re, c.roots[i][0].re, 1e-5, `${at} root re`);
+      near(r.root.im, c.roots[i][0].im, 1e-5, `${at} root im`);
+      assert.equal(r.mult, c.roots[i][1], `${at} multiplicity`);
+    });
+    if (c.solution) {
+      const sol = R.homogeneousSolution(c.coeffs, c.init);
+      sol.forEach((t, i) => {
+        near(t.c.re, c.solution[i].c.re, 1e-6, `${at} constant re`);
+        near(t.c.im, c.solution[i].c.im, 1e-6, `${at} constant im`);
+        assert.equal(t.power, c.solution[i].power);
+      });
+      for (let n = 0; n < 16; n++) near(R.evalTerms(sol, n), c.terms[n], 1e-6, `${at} closed form at ${n}`);
+    }
+  }
+  for (const s of vec.series) R.series(s.num, s.den, 16).forEach((v, i) => near(v, s.coeffs[i], 1e-12, `series ${s.num}/${s.den} [${i}]`));
+  for (const [s, k, want] of vec.binom) assert.deepEqual(R.binomPower(s, k), want);
+  for (const p of R.PRESETS) R.iterate(p.rec, 8);
+});

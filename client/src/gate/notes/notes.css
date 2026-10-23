@@ -3379,3 +3379,6 @@ h4.notes-h {
 .lab .cnt-check.is-bad {
   color: var(--color-state-error);
 }
+.lab .rec-in {
+  width: 9em;
+}
