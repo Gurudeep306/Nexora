@@ -1,0 +1,608 @@
+{
+ "version": 1,
+ "title": "Critical rows decide validity",
+ "width": 640,
+ "height": 360,
+ "narrow": {
+  "width": 360,
+  "height": 360
+ },
+ "intro": "An argument is valid when the conclusion is true on every row where all premises are true. We mark those critical rows and test two conclusions.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Checking an argument only on its critical rows",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Critical rows of an argument",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 75,
+   "y": 44,
+   "cellW": 70,
+   "cellH": 30,
+   "rows": [
+    [
+     "p",
+     "q",
+     "r",
+     "p→q",
+     "q→r",
+     "p→r",
+     "r→p"
+    ],
+    [
+     "T",
+     "T",
+     "T",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "T",
+     "T",
+     "F",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "T",
+     "F",
+     "T",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "T",
+     "F",
+     "F",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "F",
+     "T",
+     "T",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "F",
+     "T",
+     "F",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "F",
+     "F",
+     "T",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "F",
+     "F",
+     "F",
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 12,
+    "y": 44,
+    "cellW": 48,
+    "cellH": 30
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 320,
+   "y": 340,
+   "text": "premises p → q and q → r",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 340,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Fill the two premise columns. p → q fails only on rows 3 and 4; q → r fails only on rows 2 and 6.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "p",
+        "q",
+        "r",
+        "p→q",
+        "q→r",
+        "p→r",
+        "r→p"
+       ],
+       [
+        "T",
+        "T",
+        "T",
+        "T",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "T",
+        "T",
+        "F",
+        "T",
+        "F",
+        "",
+        ""
+       ],
+       [
+        "T",
+        "F",
+        "T",
+        "F",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "T",
+        "F",
+        "F",
+        "F",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "F",
+        "T",
+        "T",
+        "T",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "F",
+        "T",
+        "F",
+        "T",
+        "F",
+        "",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "T",
+        "T",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "F",
+        "T",
+        "T",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        3
+       ],
+       [
+        4,
+        3
+       ],
+       [
+        2,
+        4
+       ],
+       [
+        6,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "premises fail on rows 2, 3, 4, 6",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The critical rows are those where every premise is T: rows 1, 5, 7, 8. Only these rows can produce a counterexample.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        3
+       ],
+       [
+        1,
+        4
+       ],
+       [
+        5,
+        3
+       ],
+       [
+        5,
+        4
+       ],
+       [
+        7,
+        3
+       ],
+       [
+        7,
+        4
+       ],
+       [
+        8,
+        3
+       ],
+       [
+        8,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "critical rows: 1, 5, 7, 8",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Conclusion p → r: look at the critical rows only. It is T on all four, so no counterexample exists: the argument is valid (hypothetical syllogism).",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "p",
+        "q",
+        "r",
+        "p→q",
+        "q→r",
+        "p→r",
+        "r→p"
+       ],
+       [
+        "T",
+        "T",
+        "T",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "T",
+        "T",
+        "F",
+        "T",
+        "F",
+        "F",
+        ""
+       ],
+       [
+        "T",
+        "F",
+        "T",
+        "F",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "T",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        ""
+       ],
+       [
+        "F",
+        "T",
+        "T",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "F",
+        "T",
+        "F",
+        "T",
+        "F",
+        "T",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "T",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "F",
+        "T",
+        "T",
+        "T",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        5
+       ],
+       [
+        5,
+        5
+       ],
+       [
+        7,
+        5
+       ],
+       [
+        8,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "p → r is T on every critical row: valid",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now try the conclusion r → p with the same premises. On critical rows 5 (F T T) and 7 (F F T) it is T → F = F.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "p",
+        "q",
+        "r",
+        "p→q",
+        "q→r",
+        "p→r",
+        "r→p"
+       ],
+       [
+        "T",
+        "T",
+        "T",
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "T",
+        "T",
+        "F",
+        "T",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "T",
+        "F",
+        "T",
+        "F",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "T",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F",
+        "T"
+       ],
+       [
+        "F",
+        "T",
+        "T",
+        "T",
+        "T",
+        "T",
+        "F"
+       ],
+       [
+        "F",
+        "T",
+        "F",
+        "T",
+        "F",
+        "T",
+        "T"
+       ],
+       [
+        "F",
+        "F",
+        "T",
+        "T",
+        "T",
+        "T",
+        "F"
+       ],
+       [
+        "F",
+        "F",
+        "F",
+        "T",
+        "T",
+        "T",
+        "T"
+       ]
+      ],
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        5,
+        3
+       ],
+       [
+        5,
+        4
+       ],
+       [
+        5,
+        5
+       ],
+       [
+        5,
+        6
+       ],
+       [
+        7,
+        0
+       ],
+       [
+        7,
+        1
+       ],
+       [
+        7,
+        2
+       ],
+       [
+        7,
+        3
+       ],
+       [
+        7,
+        4
+       ],
+       [
+        7,
+        5
+       ],
+       [
+        7,
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "rows 5 and 7: premises T, r → p F",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Even one critical row with a false conclusion is a counterexample, so p → q, q → r ∴ r → p is invalid (it is the converse of the valid conclusion). The non-critical rows never matter.",
+   "patches": [
+    {
+     "id": "note",
+     "set": {
+      "text": "counterexample p = F, r = T: invalid",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

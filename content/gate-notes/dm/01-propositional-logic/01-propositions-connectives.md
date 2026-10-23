@@ -27,9 +27,9 @@ Most of it looks easy, and most of it is, with one exception that costs marks ye
 
 ## Where this fits
 
-This is the first lesson of Discrete Mathematics. Lesson 2 uses
+This is the first lesson of Discrete Mathematics. [Lesson 2](lesson:equivalence-normal-forms) uses
 the truth tables built here to prove laws and decide whether a formula is always true;
-Lesson 3 uses them to decide whether an argument is valid. Chapter 2
+[Lesson 3](lesson:inference-resolution) uses them to decide whether an argument is valid. Chapter 2
 adds quantifiers ("for all", "there exists") on top of the same connectives. If you have done
 [Boolean algebra in Digital Logic](/gate/notes/dl/boolean-laws), you will recognise $\wedge$ as AND,
 $\vee$ as OR and $\neg$ as NOT; the new pieces here are $\to$, $\leftrightarrow$ and translation from

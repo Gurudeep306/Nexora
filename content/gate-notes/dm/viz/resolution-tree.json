@@ -1,0 +1,373 @@
+{
+ "version": 1,
+ "title": "A resolution tree",
+ "width": 640,
+ "height": 400,
+ "narrow": {
+  "width": 360,
+  "height": 400
+ },
+ "intro": "Resolution proves a conclusion by adding its negation and cancelling complementary literals until the empty clause appears.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Resolution refutation: proving r from p ∨ q, p → r, q → r",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Refuting the negated goal ¬r",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "c0",
+   "type": "box",
+   "x": 30,
+   "y": 56,
+   "w": 120,
+   "h": 44,
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 8,
+    "y": 56,
+    "w": 80,
+    "h": 40,
+    "size": 14
+   },
+   "label": "p ∨ q"
+  },
+  {
+   "id": "c1",
+   "type": "box",
+   "x": 180,
+   "y": 56,
+   "w": 120,
+   "h": 44,
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 96,
+    "y": 56,
+    "w": 80,
+    "h": 40,
+    "size": 14
+   },
+   "label": "¬p ∨ r"
+  },
+  {
+   "id": "c2",
+   "type": "box",
+   "x": 330,
+   "y": 56,
+   "w": 120,
+   "h": 44,
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 184,
+    "y": 56,
+    "w": 80,
+    "h": 40,
+    "size": 14
+   },
+   "label": "¬q ∨ r"
+  },
+  {
+   "id": "c3",
+   "type": "box",
+   "x": 480,
+   "y": 56,
+   "w": 120,
+   "h": 44,
+   "size": 16,
+   "mono": true,
+   "tone": "warning",
+   "narrow": {
+    "x": 272,
+    "y": 56,
+    "w": 80,
+    "h": 40,
+    "size": 14
+   },
+   "label": "¬r"
+  },
+  {
+   "id": "n5",
+   "type": "box",
+   "x": 240,
+   "y": 150,
+   "w": 100,
+   "h": 44,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 130,
+    "y": 150,
+    "w": 70,
+    "h": 40,
+    "size": 14
+   },
+   "label": "¬p"
+  },
+  {
+   "id": "n6",
+   "type": "box",
+   "x": 420,
+   "y": 150,
+   "w": 100,
+   "h": 44,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 250,
+    "y": 150,
+    "w": 70,
+    "h": 40,
+    "size": 14
+   },
+   "label": "¬q"
+  },
+  {
+   "id": "n7",
+   "type": "box",
+   "x": 120,
+   "y": 240,
+   "w": 100,
+   "h": 44,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 30,
+    "y": 240,
+    "w": 70,
+    "h": 40,
+    "size": 14
+   },
+   "label": "q"
+  },
+  {
+   "id": "n8",
+   "type": "box",
+   "x": 290,
+   "y": 320,
+   "w": 100,
+   "h": 44,
+   "size": 18,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 150,
+    "y": 320,
+    "w": 70,
+    "h": 40,
+    "size": 14
+   },
+   "label": "□"
+  },
+  {
+   "id": "a1",
+   "type": "arrow",
+   "from": "c1",
+   "to": "n5",
+   "hidden": true
+  },
+  {
+   "id": "a2",
+   "type": "arrow",
+   "from": "c3",
+   "to": "n5",
+   "hidden": true
+  },
+  {
+   "id": "a3",
+   "type": "arrow",
+   "from": "c2",
+   "to": "n6",
+   "hidden": true
+  },
+  {
+   "id": "a4",
+   "type": "arrow",
+   "from": "c3",
+   "to": "n6",
+   "hidden": true
+  },
+  {
+   "id": "a5",
+   "type": "arrow",
+   "from": "c0",
+   "to": "n7",
+   "hidden": true
+  },
+  {
+   "id": "a6",
+   "type": "arrow",
+   "from": "n5",
+   "to": "n7",
+   "hidden": true
+  },
+  {
+   "id": "a7",
+   "type": "arrow",
+   "from": "n7",
+   "to": "n8",
+   "hidden": true
+  },
+  {
+   "id": "a8",
+   "type": "arrow",
+   "from": "n6",
+   "to": "n8",
+   "hidden": true
+  },
+  {
+   "id": "foot",
+   "type": "text",
+   "x": 320,
+   "y": 386,
+   "text": "clauses of the premises, plus ¬r",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 386,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Write the premises as clauses (p → r is ¬p ∨ r, q → r is ¬q ∨ r) and add the negation of the goal, ¬r. If this set is unsatisfiable, r follows.",
+   "patches": [
+    {
+     "id": "c3",
+     "set": {
+      "tone": "warning",
+      "fill": "warning"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Resolve ¬p ∨ r with ¬r on the pair r, ¬r: the resolvent is ¬p.",
+   "patches": [
+    {
+     "id": "n5",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Resolve ¬q ∨ r with ¬r in the same way: the resolvent is ¬q.",
+   "patches": [
+    {
+     "id": "n6",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "a4",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Resolve p ∨ q with ¬p on the pair p, ¬p: the resolvent is q.",
+   "patches": [
+    {
+     "id": "n7",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "a6",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Resolve q with ¬q: nothing is left. The empty clause □ is false in every world, so the clause set is unsatisfiable and r follows.",
+   "patches": [
+    {
+     "id": "n8",
+     "set": {
+      "hidden": false,
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "a7",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "a8",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "foot",
+     "set": {
+      "text": "□ derived: {p ∨ q, p → r, q → r} ⊨ r",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}
