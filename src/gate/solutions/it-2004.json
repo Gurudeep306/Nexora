@@ -1626,28 +1626,33 @@
       "verification": "Each statement is a textbook property of its technology; none contains a false qualifier."
     },
     "it-2004-it-31": {
-      "approach": "An argument $P\\rightarrow C$ is valid iff no assignment makes all premises true and the conclusion false. Try to build such a counterexample for each.",
+      "approach": "Concept tested: **validity of an argument**. $P_1 \\wedge \\dots \\wedge P_n \\to C$ is valid iff no assignment makes every premise true and the conclusion false. For each argument, set the conclusion false and try to make the premises true.",
       "concepts": [
-        "Validity",
-        "Counterexample search",
-        "Resolution"
+        "Valid argument",
+        "Counterexample",
+        "Rules of inference"
       ],
+      "given": "1. $(\\neg p \\vee q) \\wedge (r \\to s) \\wedge (p \\vee r) \\to (\\neg s \\to q)$; 2. $(\\neg p \\wedge q) \\wedge (q \\to (p \\to r)) \\to \\neg r$; 3. $((q \\wedge r) \\to p) \\wedge (\\neg q \\wedge p) \\to r$; 4. $p \\wedge (p \\to r) \\wedge (q \\vee \\neg r) \\to q$.",
       "steps": [
         {
           "title": "Argument 1",
-          "body": "To falsify $\\neg s\\rightarrow q$ need $s=F, q=F$. Then $\\neg p\\vee q$ forces $p=F$; $r\\rightarrow s$ forces $r=F$; but then $p\\vee r=F$. Premises cannot all hold ⇒ **valid**."
+          "body": "Conclusion $\\neg s \\to q$ false means $s = $ F, $q = $ F. Then $r \\to s$ needs $r = $ F, $p \\vee r$ needs $p = $ T, and $\\neg p \\vee q = $ F ∨ F = F. No counterexample: **valid**. (Proof: assume $\\neg s$; MT gives $\\neg r$; DS gives $p$; DS gives $q$.)"
         },
         {
           "title": "Argument 2",
-          "body": "Take $p=F, q=T, r=T$: $\\neg p\\wedge q=T$, $p\\rightarrow r=T$ so $q\\rightarrow(p\\rightarrow r)=T$; conclusion $\\neg r=F$ ⇒ **invalid**."
+          "body": "Conclusion $\\neg r$ false means $r = $ T. $\\neg p \\wedge q$ forces $p = $ F, $q = $ T; then $p \\to r$ is T and $q \\to (p \\to r)$ is T. All premises true, conclusion false: **invalid** (counterexample $p = $ F, $q = $ T, $r = $ T)."
         },
         {
           "title": "Argument 3",
-          "body": "Take $q=F, p=T, r=F$: $(q\\wedge r)\\rightarrow p=T$, $\\neg q\\wedge p=T$; conclusion $r=F$ ⇒ **invalid**."
+          "body": "Conclusion $r$ false means $r = $ F. $\\neg q \\wedge p$ forces $q = $ F, $p = $ T; then $q \\wedge r = $ F and $(q \\wedge r) \\to p$ is T. **Invalid** (counterexample $p = $ T, $q = $ F, $r = $ F)."
         },
         {
           "title": "Argument 4",
-          "body": "$p$ and $p\\rightarrow r$ give $r$ (modus ponens); $q\\vee\\neg r$ with $r$ gives $q$ (disjunctive syllogism) ⇒ **valid**."
+          "body": "$p$ and $p \\to r$ give $r$ (MP); $q \\vee \\neg r$ with $\\neg r$ false gives $q$ (DS). **Valid**."
+        },
+        {
+          "title": "Match the option",
+          "body": "Valid: 1 and 4, option C."
         }
       ],
       "answer": {
@@ -1661,17 +1666,17 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Argument 2 is invalid ($p=F,q=T,r=T$)."
+          "reason": "Argument 2 is invalid: $p = $ F, $q = $ T, $r = $ T makes its premises true and $\\neg r$ false."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Argument 3 is invalid ($p=T,q=F,r=F$)."
+          "reason": "Argument 3 is invalid: $p = $ T, $q = $ F, $r = $ F makes its premises true and $r$ false."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: only 1 and 4 are valid."
+          "reason": "Arguments 1 and 4 have no counterexample; both can be derived by modus tollens/ponens and disjunctive syllogism."
         },
         {
           "option": "D",
@@ -1679,10 +1684,71 @@
           "reason": "Arguments 2 and 3 have counterexamples."
         }
       ],
+      "shortcut": "Arguments 2 and 3 conclude something about $r$ while their premises leave $r$ free (in 2, $p$ = F makes $p \\to r$ true; in 3, $q$ = F makes $(q \\wedge r) \\to p$ true): a free conclusion letter is a quick sign of invalidity.",
       "pitfalls": [
-        "Checking only one assignment and calling an argument valid; validity needs *every* assignment."
+        "Testing validity by 'the conclusion seems related to the premises' instead of hunting for a counterexample row.",
+        "In argument 1, forgetting that $\\neg s \\to q$ is false only when $s$ = F and $q$ = F."
       ],
-      "verification": "Counterexamples for 2 and 3 were substituted explicitly; 1 and 4 were shown to force a contradiction / derive the conclusion."
+      "verification": "Truth tables over $p, q, r, s$: arguments 1 and 4 are tautologies; 2 fails only on $(p, q, r) = $ (F, T, T), 3 only on (T, F, F).",
+      "animation": {
+        "kind": "table",
+        "title": "Counterexample search",
+        "cols": [
+          "argument",
+          "conclusion F needs",
+          "premises forced",
+          "result"
+        ],
+        "rows": [
+          [
+            "1",
+            "s = F, q = F",
+            "r = F, p = T, ¬p ∨ q = F",
+            "valid"
+          ],
+          [
+            "2",
+            "r = T",
+            "p = F, q = T: all T",
+            "invalid"
+          ],
+          [
+            "3",
+            "r = F",
+            "q = F, p = T: all T",
+            "invalid"
+          ],
+          [
+            "4",
+            "q = F",
+            "r = T, q ∨ ¬r = F",
+            "valid"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "c": 3,
+            "tone": "success"
+          },
+          {
+            "r": 1,
+            "c": 3,
+            "tone": "error"
+          },
+          {
+            "r": 2,
+            "c": 3,
+            "tone": "error"
+          },
+          {
+            "r": 3,
+            "c": 3,
+            "tone": "success"
+          }
+        ]
+      }
     },
     "it-2004-it-32": {
       "approach": "Expand along the first row to get the recurrence $D_n=3D_{n-1}-D_{n-2}$, then test the options at $n=1,2$ instead of solving fully.",

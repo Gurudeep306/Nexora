@@ -806,23 +806,29 @@
       "verification": "For any candidate $e$, $\\max(e-1,e)=e\\ne e-1$, so $e$ fails."
     },
     "cse-1997-a-17": {
-      "approach": "Rewrite implications as $\\neg a\\vee b$ and look for $p\\vee\\neg p$.",
+      "approach": "Concept tested: **finding the tautology by falsification**. For each option try to build a falsifying row; the one where every attempt clashes is the tautology.",
       "concepts": [
         "Tautology",
-        "Implication equivalence"
+        "Falsification",
+        "Excluded middle"
       ],
+      "given": "(A) $(p \\vee q) \\to p$, (B) $p \\vee (q \\to p)$, (C) $p \\vee (p \\to q)$, (D) $p \\to (p \\to q)$.",
       "steps": [
         {
           "title": "Option C",
-          "body": "$p\\vee(p\\to q)=p\\vee\\neg p\\vee q=\\text{T}\\vee q=\\text{T}$ — a tautology."
+          "body": "A false disjunction needs both parts F: $p$ = F and $p \\to q$ = F. But $p \\to q$ = F needs $p$ = T. Clash, so C is a tautology: it is $p \\vee \\neg p \\vee q$."
         },
         {
-          "title": "Counterexamples for the others",
-          "body": "A: $p=F,q=T$: $T\\to F=F$.\n\nB: $p=F,q=T$: $F\\vee(T\\to F)=F$.\n\nD: $p=T,q=F$: $T\\to(T\\to F)=T\\to F=F$."
+          "title": "Options A and B",
+          "body": "A: $p$ = F, $q$ = T gives T → F. B: $p$ = F needs $q \\to p$ = F, i.e. $q$ = T: row $p$ = F, $q$ = T falsifies B too."
+        },
+        {
+          "title": "Option D",
+          "body": "$p \\to (p \\to q) \\equiv \\neg p \\vee q$, false on $p$ = T, $q$ = F."
         }
       ],
       "answer": {
-        "value": "$p\\vee(p\\to q)$",
+        "value": "$p \\vee (p \\to q)$",
         "choice": [
           "C"
         ],
@@ -832,25 +838,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "False at $p=F,q=T$."
+          "reason": "Falsified by $p$ = F, $q$ = T."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "False at $p=F,q=T$."
+          "reason": "$p \\vee \\neg q \\vee p$; falsified by $p$ = F, $q$ = T."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Simplifies to $p\\vee\\neg p\\vee q=$ T. Correct."
+          "reason": "$p \\vee \\neg p \\vee q$ contains $p \\vee \\neg p$: always true."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "False at $p=T,q=F$."
+          "reason": "Equivalent to $p \\to q$; falsified by $p$ = T, $q$ = F."
         }
       ],
-      "verification": "Each non-tautology has an explicit falsifying assignment; C has none since either $p$ or $\\neg p$ holds."
+      "shortcut": "Rewrite each as a single clause: look for a variable and its negation in the same clause. Only C has $p$ and $\\neg p$.",
+      "pitfalls": [
+        "Choosing D because it 'repeats p': exportation turns it into $(p \\wedge p) \\to q = p \\to q$."
+      ],
+      "verification": "Truth tables over $p, q$: only C is T on all four rows."
     },
     "cse-1997-a-18": {
       "approach": "A complement $x$ of $e$ must satisfy $e\\wedge x=f$ (bottom) and $e\\vee x=a$ (top); check every element incomparable with $e$.",

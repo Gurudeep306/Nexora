@@ -2242,23 +2242,25 @@
       "verification": "$X = \\{1,2\\}$, $Y = \\{2,3\\}$: $X\\setminus Y = \\{1\\}$; $Y' = \\{1,4,5,6\\}$, $X' = \\{3,4,5,6\\}$, $Y'\\setminus X' = \\{1\\}$ ✓."
     },
     "cse-2015-3-cs-24": {
-      "approach": "Case on the speaker's type. A truth-teller's statement is true; a liar's is false. In both cases the biconditional forces the coin to be head.",
+      "approach": "Concept tested: **truth-teller/liar reasoning as a biconditional**. A speaker's statement $S$ is true exactly when the speaker is truthful: $t \\leftrightarrow S$. Here $S = (h \\leftrightarrow t)$, so the constraint is $t \\leftrightarrow (h \\leftrightarrow t)$.",
       "concepts": [
-        "Knights and knaves",
-        "Biconditional"
+        "Biconditional",
+        "Truth-tellers and liars",
+        "Case analysis"
       ],
+      "given": "$t$: the person is Type 1 (truthful); $h$: the coin shows head. Statement: 'head if and only if I am telling the truth'.",
       "steps": [
         {
-          "title": "Type 1 (truthful)",
-          "body": "Statement is true and \"I am telling the truth\" $= T$, so $H \\leftrightarrow T$ true $\\Rightarrow H$ true: head."
+          "title": "Type 1 (t = T)",
+          "body": "The statement must be true: $h \\leftrightarrow \\text{T}$, i.e. $h$. Head."
         },
         {
-          "title": "Type 2 (liar)",
-          "body": "Statement is false and \"I am telling the truth\" $= F$, so $H \\leftrightarrow F$ must be false $\\Rightarrow H$ true: head."
+          "title": "Type 2 (t = F)",
+          "body": "The statement must be false: $h \\leftrightarrow \\text{F} \\equiv \\neg h$ must be false, so $h$ is true. Head again."
         },
         {
-          "title": "Conclusion",
-          "body": "Either way the result is head."
+          "title": "Evaluate the options",
+          "body": "In both possible worlds the coin is head. A ('head') is true in both; B ('tail') in neither; C ('Type 2 → tail') fails in the world (Type 2, head); D ('Type 1 → tail') fails in (Type 1, head)."
         }
       ],
       "answer": {
@@ -2272,28 +2274,89 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Head in both cases ✓."
+          "reason": "Both consistent worlds, (Type 1, head) and (Type 2, head), have head."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Tail is impossible for either type."
+          "reason": "Tail is impossible: a truth-teller would be stating a falsehood, a liar a truth."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "A Type 2 person also implies head."
+          "reason": "A Type 2 person can only be in the world with head."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "A Type 1 person implies head."
+          "reason": "A Type 1 person's true statement forces head."
         }
       ],
+      "shortcut": "$t \\leftrightarrow (h \\leftrightarrow t) \\equiv h$, because $\\leftrightarrow$ is associative and $t \\leftrightarrow t$ is always true. Any statement of the form 'X iff I am truthful' reveals X.",
       "pitfalls": [
-        "Negating each part of the liar's statement instead of the whole biconditional."
+        "Concluding that the answer depends on the type: the type stays unknown, but the coin does not.",
+        "Forgetting that a liar's statement must be false, not merely 'unreliable'."
       ],
-      "verification": "Only $H = T$ is consistent with \"statement value = speaker honesty\" for both types."
+      "verification": "Of the four (type, coin) worlds, exactly (Type 1, head) and (Type 2, head) satisfy $t \\leftrightarrow (h \\leftrightarrow t)$.",
+      "animation": {
+        "kind": "table",
+        "title": "Type × coin: keep the worlds where the statement matches the type",
+        "cols": [
+          "type",
+          "coin",
+          "h ↔ t",
+          "fits?"
+        ],
+        "rows": [
+          [
+            "Type 1",
+            "head",
+            "T",
+            "yes"
+          ],
+          [
+            "Type 1",
+            "tail",
+            "F",
+            "no"
+          ],
+          [
+            "Type 2",
+            "head",
+            "F",
+            "yes"
+          ],
+          [
+            "Type 2",
+            "tail",
+            "T",
+            "no"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "c": 3,
+            "tone": "success"
+          },
+          {
+            "r": 2,
+            "c": 3,
+            "tone": "success"
+          },
+          {
+            "r": 1,
+            "c": 3,
+            "tone": "error"
+          },
+          {
+            "r": 3,
+            "c": 3,
+            "tone": "error"
+          }
+        ]
+      }
     },
     "cse-2015-3-cs-25": {
       "approach": "In any binary tree, $n_0 = n_2 + 1$ (leaves = nodes with two children + 1).",

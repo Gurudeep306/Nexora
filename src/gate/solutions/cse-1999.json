@@ -4098,60 +4098,122 @@
       "verification": "Re-ran the schedule with no inter-stage buffers (an instruction holds its stage until the next one is free): I4 waits in D until 10, I5 decodes 10–12, executes 13 and writes 14–15 — still 15 cycles. The '-' cells in the diagram are waiting cycles."
     },
     "cse-1999-b-62-a": {
-      "approach": "An implication is false only when its premise is true and its conclusion false. Make $q \\Rightarrow p$ false ($q=T, p=F$) and check that the premise $\\sim p \\vee q$ is then true.",
+      "approach": "Concept tested: **showing a formula is not a tautology by exhibiting one falsifying row**. Make the conclusion false, then check the hypothesis can still be true.",
       "concepts": [
         "Tautology",
-        "Implication",
-        "Counterexample"
+        "Falsification",
+        "Converse"
       ],
+      "given": "$(\\sim p \\vee q) \\Rightarrow (q \\Rightarrow p)$.",
       "steps": [
         {
           "title": "Falsify the conclusion",
-          "body": "$q \\Rightarrow p$ is false only for $q = T,\\ p = F$."
+          "body": "$q \\Rightarrow p$ is false only when $q$ = T and $p$ = F."
         },
         {
-          "title": "Check the premise",
-          "body": "With $p=F$: $\\sim p = T$, so $\\sim p \\vee q = T$. The formula becomes $T \\Rightarrow F = F$."
+          "title": "Check the hypothesis on that row",
+          "body": "$\\sim p \\vee q = \\text{T} \\vee \\text{T} = $ T. No clash."
         },
         {
-          "title": "Conclusion",
-          "body": "An assignment ($p=F, q=T$) makes the formula false, so it is not a tautology."
+          "title": "Conclude",
+          "body": "On $p$ = F, $q$ = T the formula is T ⇒ F = F, so it is not a tautology. (It says $(p \\to q) \\to (q \\to p)$: an implication does not imply its converse.)"
         }
       ],
       "answer": {
-        "value": "p = F, q = T: (∼p ∨ q) = T and (q ⇒ p) = F, so the formula is F; hence not a tautology.",
+        "value": "$p$ = F, $q$ = T makes the formula false, so it is not a tautology",
         "matchesKey": true
       },
+      "shortcut": "$\\sim p \\vee q$ is $p \\to q$; the formula claims every implication implies its converse, and the row $p$ = F, $q$ = T separates them.",
       "pitfalls": [
-        "Checking only rows with p = T, where the conclusion q ⇒ p is always true."
+        "Trying to prove the formula by laws: laws cannot show a non-equivalence; a single row is the proof."
       ],
-      "verification": "Full truth table (p,q): TT→T, TF→T, FT→F, FF→T; exactly one false row."
+      "verification": "Of the four rows only FT makes the formula false (TT, TF, FF give T).",
+      "animation": {
+        "kind": "table",
+        "title": "The only falsifying row",
+        "cols": [
+          "p",
+          "q",
+          "¬p ∨ q",
+          "q → p",
+          "formula"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "T",
+            "F",
+            "F",
+            "T",
+            "T"
+          ],
+          [
+            "F",
+            "T",
+            "T",
+            "F",
+            "F"
+          ],
+          [
+            "F",
+            "F",
+            "T",
+            "T",
+            "T"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 2,
+            "c": 4,
+            "tone": "error"
+          }
+        ]
+      }
     },
     "cse-1999-b-62-b": {
-      "approach": "A tautology is true under every truth assignment, and a disjunction is true as soon as one disjunct is true. So $A \\vee B$ is true under every assignment.",
+      "approach": "Concept tested: **the definition of tautology applied row by row**. A tautology is true under every assignment; a disjunction with a true part is true.",
       "concepts": [
         "Tautology",
         "Disjunction",
-        "Truth assignment"
+        "Proof over all assignments"
       ],
+      "given": "$A$ is a tautology and $B$ is any formula. Show $A \\vee B$ is a tautology.",
       "steps": [
         {
-          "title": "Take any assignment",
-          "body": "Let $v$ be any truth assignment to the variables of $A$ and $B$. Since $A$ is a tautology, $v(A) = T$ (values of variables outside $A$ do not matter)."
+          "title": "Fix an arbitrary assignment",
+          "body": "Let $v$ be any assignment of truth values to all variables of $A$ and $B$."
         },
         {
-          "title": "Disjunction",
-          "body": "$v(A \\vee B) = v(A) \\vee v(B) = T \\vee v(B) = T$. As $v$ was arbitrary, $A \\vee B$ is true under every assignment, i.e. a tautology. $\\blacksquare$"
+          "title": "Use the hypothesis",
+          "body": "$A$ is a tautology, so $v(A)$ = T."
+        },
+        {
+          "title": "Evaluate the disjunction",
+          "body": "$v(A \\vee B) = \\text{T} \\vee v(B) = $ T, whatever $v(B)$ is."
+        },
+        {
+          "title": "Generalise",
+          "body": "Since $v$ was arbitrary, $A \\vee B$ is true under every assignment: it is a tautology."
         }
       ],
       "answer": {
-        "value": "Under every assignment v, v(A) = T, so v(A ∨ B) = T ∨ v(B) = T; therefore A ∨ B is a tautology.",
+        "value": "Under every assignment $A$ is T, hence $A \\vee B$ is T: $A \\vee B$ is a tautology",
         "matchesKey": true
       },
+      "shortcut": "Domination law: $A \\equiv \\text{T}$, so $A \\vee B \\equiv \\text{T} \\vee B \\equiv \\text{T}$.",
       "pitfalls": [
-        "Trying to reason about B's truth value — it is irrelevant."
+        "Proving it for one example $B$ only: the argument must work for an arbitrary $B$.",
+        "Extending the claim to $A \\wedge B$, which is a tautology only if $B$ is."
       ],
-      "verification": "Equivalently A ≡ T, and T ∨ B ≡ T by the domination law."
+      "verification": "Checked over all 16 two-variable functions: whenever $A$'s column is all T, the column of $A \\vee B$ is all T for every $B$."
     },
     "cse-1999-b-63": {
       "approach": "Trace the body y := y+1; z := z+x for each mechanism. Under reference, y and z are both aliases of a; under copy-restore they are separate copies written back to a on return, so the last write-back wins.",

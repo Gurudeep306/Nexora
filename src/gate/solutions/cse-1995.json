@@ -3576,34 +3576,142 @@
       "verification": "After pass k the last k elements are the k largest in order: pass 3 ends with 37, 52, 92. ✓"
     },
     "cse-1995-b-61": {
-      "approach": "Build the truth table; the principal CNF is the AND of one maxterm per row where the formula is false (a variable appears plain if it is 0 in that row, negated if it is 1).",
+      "approach": "Concept tested: **principal (canonical) CNF from the truth table**. List the rows where the formula is false; each gives a maxterm, written with a plain literal where the bit is 0 and a negated literal where it is 1.",
       "concepts": [
-        "Principal conjunctive normal form",
+        "Principal CNF",
         "Maxterms",
         "Truth table"
       ],
+      "given": "$(p \\wedge q) \\vee (\\neg q \\wedge r)$, variables in the order $p, q, r$.",
       "steps": [
         {
-          "title": "Where the formula is true",
-          "body": "$(p\\wedge q)$ is true for $pqr = 110, 111$; $(\\neg q\\wedge r)$ is true for $pqr = 001, 101$. So $f=1$ on rows 001, 101, 110, 111 and $f = 0$ on **000, 010, 011, 100**."
+          "title": "Find the true rows",
+          "body": "$p \\wedge q$ is true on 111 and 110; $\\neg q \\wedge r$ is true on 101 and 001. True rows: 7, 6, 5, 1, so the formula is $\\Sigma(1, 5, 6, 7)$."
         },
         {
-          "title": "Maxterms for the false rows",
-          "body": "| $pqr$ | maxterm |\n|---|---|\n| 000 | $p\\vee q\\vee r$ |\n| 010 | $p\\vee\\neg q\\vee r$ |\n| 011 | $p\\vee\\neg q\\vee\\neg r$ |\n| 100 | $\\neg p\\vee q\\vee r$ |"
+          "title": "The false rows",
+          "body": "The remaining rows are 000, 010, 011, 100: indices 0, 2, 3, 4."
         },
         {
-          "title": "Principal CNF",
-          "body": "$$(p\\vee q\\vee r)\\wedge(p\\vee\\neg q\\vee r)\\wedge(p\\vee\\neg q\\vee\\neg r)\\wedge(\\neg p\\vee q\\vee r)$$\ni.e. $\\prod M(0,2,3,4)$."
+          "title": "Write the maxterms",
+          "body": "Plain = 0, negated = 1: $M_0 = p \\vee q \\vee r$, $M_2 = p \\vee \\neg q \\vee r$, $M_3 = p \\vee \\neg q \\vee \\neg r$, $M_4 = \\neg p \\vee q \\vee r$."
+        },
+        {
+          "title": "Multiply them",
+          "body": "PCNF $= (p \\vee q \\vee r)(p \\vee \\neg q \\vee r)(p \\vee \\neg q \\vee \\neg r)(\\neg p \\vee q \\vee r) = \\Pi(0, 2, 3, 4)$."
         }
       ],
       "answer": {
-        "value": "$(p\\vee q\\vee r)\\wedge(p\\vee\\neg q\\vee r)\\wedge(p\\vee\\neg q\\vee\\neg r)\\wedge(\\neg p\\vee q\\vee r)$",
+        "value": "$(p \\vee q \\vee r)(p \\vee \\neg q \\vee r)(p \\vee \\neg q \\vee \\neg r)(\\neg p \\vee q \\vee r) = \\Pi(0, 2, 3, 4)$",
         "matchesKey": true
       },
+      "shortcut": "PCNF indices are the complement of the PDNF indices: find the 4 true rows (easy here), and the other 4 rows are the maxterms.",
       "pitfalls": [
-        "Writing the literal un-negated when the variable is 1 in the false row — maxterms use the opposite polarity to minterms."
+        "Writing a maxterm with the minterm rule (plain = 1): row 100 would then wrongly become $p \\vee \\neg q \\vee \\neg r$.",
+        "Leaving a clause without all three variables; that is a CNF, but not the principal one."
       ],
-      "verification": "The minterms are {1, 5, 6, 7} and the maxterms {0, 2, 3, 4}; together they cover all 8 rows with no overlap."
+      "verification": "The product of the four clauses has the same 8-row column as the formula (checked by script), and each clause is false on exactly its own row.",
+      "animation": {
+        "kind": "table",
+        "title": "Rows of (p ∧ q) ∨ (¬q ∧ r)",
+        "cols": [
+          "p",
+          "q",
+          "r",
+          "f",
+          "#",
+          "term"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "T",
+            "T",
+            "7",
+            "m7"
+          ],
+          [
+            "T",
+            "T",
+            "F",
+            "T",
+            "6",
+            "m6"
+          ],
+          [
+            "T",
+            "F",
+            "T",
+            "T",
+            "5",
+            "m5"
+          ],
+          [
+            "T",
+            "F",
+            "F",
+            "F",
+            "4",
+            "M4"
+          ],
+          [
+            "F",
+            "T",
+            "T",
+            "F",
+            "3",
+            "M3"
+          ],
+          [
+            "F",
+            "T",
+            "F",
+            "F",
+            "2",
+            "M2"
+          ],
+          [
+            "F",
+            "F",
+            "T",
+            "T",
+            "1",
+            "m1"
+          ],
+          [
+            "F",
+            "F",
+            "F",
+            "F",
+            "0",
+            "M0"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 3,
+            "c": 5,
+            "tone": "error"
+          },
+          {
+            "r": 4,
+            "c": 5,
+            "tone": "error"
+          },
+          {
+            "r": 5,
+            "c": 5,
+            "tone": "error"
+          },
+          {
+            "r": 7,
+            "c": 5,
+            "tone": "error"
+          }
+        ]
+      }
     },
     "cse-1995-b-62-a": {
       "approach": "Tracks per surface = radial band width / track pitch. Unformatted capacity = surfaces × tracks × sectors × 4000 bytes; formatting takes 96 bytes of each sector.",

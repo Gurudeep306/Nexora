@@ -564,19 +564,29 @@
       "verification": "Example: $Q_1$ = 2-SAT (in P, so in NP), $Q_2$ = halting problem (NP-hard, not in NP) satisfies both reductions, and only A stays true."
     },
     "cse-2015-2-cs-3": {
-      "approach": "Write S1 as $C \\to \\neg E$ and S2 as $K \\to E$. The contrapositive of S1 is $E \\to \\neg C$; chain it with S2.",
+      "approach": "Concept tested: **chaining implications with a contrapositive (hypothetical syllogism)**. Write both statements as implications about one candidate, flip one by contraposition so the middle terms match, and chain.",
       "concepts": [
         "Contrapositive",
-        "Hypothetical syllogism"
+        "Hypothetical syllogism",
+        "Translation"
       ],
+      "given": "S1: corrupt → not elected. S2: kind → elected.",
       "steps": [
         {
-          "title": "Symbolise",
-          "body": "$C$: known to be corrupt, $E$: elected, $K$: kind.\n\nS1: $C \\to \\neg E$, contrapositive $E \\to \\neg C$. S2: $K \\to E$."
+          "title": "Formalise",
+          "body": "$c$: known to be corrupt, $e$: elected, $k$: kind. S1: $c \\to \\neg e$. S2: $k \\to e$."
+        },
+        {
+          "title": "Contrapositive of S1",
+          "body": "$c \\to \\neg e \\equiv e \\to \\neg c$ (swap and negate). Now $e$ is a hypothesis."
         },
         {
           "title": "Chain",
-          "body": "$K \\to E$ and $E \\to \\neg C$ give $K \\to \\neg C$: \"If a person is kind, he is not known to be corrupt.\""
+          "body": "$k \\to e$ and $e \\to \\neg c$ give $k \\to \\neg c$ by hypothetical syllogism: 'if a person is kind, he is not known to be corrupt'. That is option C."
+        },
+        {
+          "title": "Reject the others",
+          "body": "Each other option has a row with S1 and S2 true and the option false: A ($c \\to k$) fails at $c = $ T, $e = $ F, $k = $ F; B ($\\neg c \\to \\neg k$) at $c = $ F, $e = $ T, $k = $ T; D ($\\neg k \\to \\neg c$) at $c = $ T, $e = $ F, $k = $ F."
         }
       ],
       "answer": {
@@ -590,25 +600,48 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$C \\to K$ does not follow; in fact $C \\to \\neg K$ follows (contrapositive of C)."
+          "reason": "$c \\to k$: a corrupt, unelected, unkind candidate satisfies S1 and S2 but not A."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$\\neg C \\to \\neg K$ is the inverse of $K \\to \\neg C$ — not valid."
+          "reason": "$\\neg c \\to \\neg k$: a kind, elected, honest candidate satisfies S1 and S2 but breaks it (honest yet kind)."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$K \\to \\neg C$ follows by hypothetical syllogism. Correct."
+          "reason": "$k \\to e$ and $e \\to \\neg c$ chain to $k \\to \\neg c$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$\\neg K \\to \\neg C$ is the inverse of $C \\to K$ — not implied."
+          "reason": "$\\neg k \\to \\neg c$ is the contrapositive of option A, so it fails with A: a corrupt, unkind, unelected candidate satisfies S1 and S2 but breaks it."
         }
       ],
-      "verification": "Counter-model for D: a corrupt, unkind person (C true, K false, E false) satisfies S1 and S2 but violates D; no model of S1, S2 has K true and C true."
+      "shortcut": "Combine into one statement: S1 and S2 together say a kind candidate is elected and an elected candidate is not corrupt, so 'kind and corrupt' never happens: $\\neg(k \\wedge c) \\equiv k \\to \\neg c \\equiv c \\to \\neg k$.",
+      "pitfalls": [
+        "Chaining without contraposition: $c \\to \\neg e$ and $k \\to e$ do not share a middle term as written.",
+        "Choosing the converse or inverse of the valid conclusion (options B and D)."
+      ],
+      "verification": "Truth table over $c, e, k$: on every row where S1 and S2 hold, only option C is always true.",
+      "animation": {
+        "kind": "equation",
+        "title": "Contrapositive, then chain",
+        "lines": [
+          {
+            "tex": "S_1:\\ c \\to \\neg e \\;\\equiv\\; e \\to \\neg c",
+            "note": "contrapositive"
+          },
+          {
+            "tex": "S_2:\\ k \\to e",
+            "note": "given"
+          },
+          {
+            "tex": "k \\to e,\\ e \\to \\neg c \\;\\models\\; k \\to \\neg c",
+            "note": "hypothetical syllogism"
+          }
+        ]
+      }
     },
     "cse-2015-2-cs-4": {
       "approach": "An SRS states **what** the system must do (functional and non-functional requirements, external interfaces), not **how** it will be built. Design details belong in the design document.",

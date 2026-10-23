@@ -4603,28 +4603,29 @@
       "verification": "1000 × 165 = 165 µs plus 3 × 165 ns = 0.495 µs → 165.495 µs."
     },
     "cse-2004-cs-70": {
-      "approach": "An implication is false only when its antecedent is true and its consequent false. Find one falsifying and one satisfying assignment.",
+      "approach": "Concept tested: **satisfiable but not valid (contingency)**. Find one row that falsifies the formula and one that satisfies it.",
       "concepts": [
-        "implication",
-        "satisfiability",
-        "validity"
+        "Contingency",
+        "Falsification",
+        "Satisfiable"
       ],
+      "given": "$(P \\to (Q \\vee R)) \\to ((P \\vee Q) \\to R)$.",
       "steps": [
         {
-          "title": "Try to falsify",
-          "body": "Need $(P\\vee Q)\\to R$ false: $P\\vee Q = T$, $R = F$. Take $P=F,\\ Q=T,\\ R=F$.\n\nThen $P\\to(Q\\vee R) = F\\to T = T$, so the whole formula is $T\\to F = F$. **Not valid.**"
+          "title": "Falsify the conclusion",
+          "body": "$(P \\vee Q) \\to R$ = F needs $P \\vee Q$ = T and $R$ = F."
         },
         {
-          "title": "Find a model",
-          "body": "With $R=T$: $(P\\vee Q)\\to T = T$, so the formula is $(\\ldots)\\to T = T$. **Satisfiable.**"
+          "title": "Keep the hypothesis true",
+          "body": "Take $P$ = F, $Q$ = T, $R$ = F: $P \\to (Q \\vee R)$ = F → T = T. So the formula is T → F = F: **not valid**."
         },
         {
-          "title": "Conclude",
-          "body": "True for some assignments, false for others: satisfiable but not valid."
+          "title": "Find a satisfying row",
+          "body": "With $R$ = T the conclusion is T, so the whole formula is T: **satisfiable**."
         }
       ],
       "answer": {
-        "value": "satisfiable but not valid",
+        "value": "Satisfiable but not valid",
         "choice": [
           "A"
         ],
@@ -4634,17 +4635,17 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "True at $R=T$, false at $P=F,Q=T,R=F$."
+          "reason": "False on $P$ = F, $Q$ = T, $R$ = F and true whenever $R$ = T."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$P=F,Q=T,R=F$ makes it false, so it is not a tautology."
+          "reason": "The row $P$ = F, $Q$ = T, $R$ = F falsifies it."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Any assignment with $R=T$ makes it true."
+          "reason": "Any row with $R$ = T satisfies it."
         },
         {
           "option": "D",
@@ -4652,10 +4653,11 @@
           "reason": "A describes it exactly."
         }
       ],
+      "shortcut": "A conclusion that is a bare $R$ (after the arrow) can always be made true, so the formula is satisfiable; then one falsifying row settles it.",
       "pitfalls": [
-        "Reading $\\to$ as associative: the main connective is the middle arrow."
+        "Trying $P$ = T first: then the hypothesis needs $Q \\vee R$, and with $R$ = F you need $Q$ = T, which also works (TTF), but missing the easy row wastes time."
       ],
-      "verification": "Checked both assignments by direct evaluation."
+      "verification": "Truth table over $P, Q, R$: false on TTF and FTF, true on the other six rows."
     },
     "cse-2004-cs-71": {
       "approach": "Solve two equations, then test the third. A consistent overdetermined 3×2 system with independent columns has exactly one solution.",

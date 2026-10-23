@@ -2665,20 +2665,29 @@
       "verification": "$S=\\{1\\}$: $P(S)=\\{\\phi,\\{1\\}\\}$, $P(P(S))=\\{\\phi,\\{\\phi\\},\\{\\{1\\}\\},P(S)\\}$; common element only $\\phi$."
     },
     "cse-2000-a-2-7": {
-      "approach": "Simplify with the given equivalences: $b\\vee\\neg b$ is a tautology so $a$ is true, and $c$ can be replaced by $b$. The formula collapses to $b\\to(b\\vee d)$, a tautology.",
+      "approach": "Concept tested: **replacement of equivalents under given facts**. Use $a \\leftrightarrow (b \\vee \\neg b)$ to replace $a$ by T and $b \\leftrightarrow c$ to replace $c$ by $b$; the formula collapses to a tautology.",
       "concepts": [
-        "Tautology",
-        "Logical equivalence",
-        "Implication"
+        "Replacement of equivalents",
+        "Excluded middle",
+        "Precedence"
       ],
+      "given": "$a \\leftrightarrow (b \\vee \\neg b)$ and $b \\leftrightarrow c$ hold. Value of $(a \\wedge b) \\to (a \\wedge c) \\vee d$?",
       "steps": [
         {
-          "title": "Substitute",
-          "body": "$a\\leftrightarrow(b\\vee\\neg b)$ and $b\\vee\\neg b\\equiv T$ ⇒ $a\\equiv T$. Also $c\\equiv b$.\n$$(a\\wedge b)\\to(a\\wedge c)\\vee d\\;\\equiv\\; b\\to(b\\vee d).$$"
+          "title": "Bracket by precedence",
+          "body": "$\\wedge$, then $\\vee$, then $\\to$: the formula is $(a \\wedge b) \\to ((a \\wedge c) \\vee d)$."
         },
         {
-          "title": "Evaluate",
-          "body": "If $b=T$, then $b\\vee d=T$, so the implication is $T$. If $b=F$, the antecedent is false, so the implication is $T$. Always **True**."
+          "title": "Use the first fact",
+          "body": "$b \\vee \\neg b$ is always T, so $a$ is T. The formula becomes $b \\to (c \\vee d)$ (identity law $\\text{T} \\wedge X \\equiv X$)."
+        },
+        {
+          "title": "Use the second fact",
+          "body": "$b$ and $c$ have the same value, so replace $c$ by $b$: $b \\to (b \\vee d) \\equiv \\neg b \\vee b \\vee d$."
+        },
+        {
+          "title": "Conclude",
+          "body": "$\\neg b \\vee b$ is T, so the formula is always **true** in every situation allowed by the facts."
         }
       ],
       "answer": {
@@ -2692,25 +2701,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: $b\\to(b\\vee d)$ is a tautology."
+          "reason": "After the replacements the formula is $b \\to (b \\vee d)$, a tautology."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "It is never false."
+          "reason": "It is never false under the facts."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "When $b=F$ it is still True."
+          "reason": "When $b$ is F the formula is still T, so it does not follow $b$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "When $d=F$ it is still True."
+          "reason": "When $d$ is F the formula is still T, so it does not follow $d$."
         }
       ],
-      "verification": "Other parenthesisation $((a\\wedge b)\\to(a\\wedge c))\\vee d\\equiv(b\\to b)\\vee d\\equiv T$ — same answer either way."
+      "shortcut": "The facts give $a$ = T and $c = b$; a formula of the form $b \\to (b \\vee \\dots)$ is the addition tautology.",
+      "pitfalls": [
+        "Reading the formula as $((a \\wedge b) \\to (a \\wedge c)) \\vee d$; with → lowest it is $(a \\wedge b) \\to (\\dots \\vee d)$ (the answer is T either way here, but the habit matters)."
+      ],
+      "verification": "Over all 16 assignments of $a, b, c, d$, the 4 that satisfy both facts ($a$ = T, $b = c$) all make the formula T."
     },
     "cse-2000-a-2-8": {
       "approach": "List the unary languages whose minimal DFA has exactly two states (the start state plus one more), then compare with the options.",

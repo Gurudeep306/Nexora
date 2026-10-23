@@ -472,19 +472,25 @@
       "verification": "Second letters D, G, K, P = 4, 7, 11, 16 (gaps 3, 4, 5) → next 16 + 6 = 22 = V, consistent."
     },
     "cse-2012-cs-1": {
-      "approach": "Write both arguments symbolically with $r$ = it rains, $m$ = match played. I1 is modus tollens (valid); I2 is denying the antecedent (a classic fallacy).",
+      "approach": "Concept tested: **modus tollens versus the fallacy of denying the antecedent**. Translate both inferences with $r$: it rains, $m$: the match is played. The common premise is $r \\to \\neg m$.",
       "concepts": [
         "Modus tollens",
-        "Fallacy of denying the antecedent"
+        "Denying the antecedent",
+        "Fallacy"
       ],
+      "given": "I1: $r \\to \\neg m$, $m$, therefore $\\neg r$. I2: $r \\to \\neg m$, $\\neg r$, therefore $m$.",
       "steps": [
         {
-          "title": "I1 is modus tollens",
-          "body": "Premises: $r \\rightarrow \\neg m$ and $m$. Since $m$ is true, $\\neg m$ is false, so $r$ must be false (otherwise the implication would be $T \\rightarrow F$). Conclusion $\\neg r$ — **valid**."
+          "title": "Inference I1",
+          "body": "The premise $m$ denies the conclusion $\\neg m$ of the implication; going back to $\\neg r$ is **modus tollens**, a valid rule. The only row with $r \\to \\neg m$ and $m$ true is $r = $ F, $m = $ T, where $\\neg r$ is T."
         },
         {
-          "title": "I2 denies the antecedent",
-          "body": "Premises: $r \\rightarrow \\neg m$ and $\\neg r$. Counter-example: $r = F$, $m = F$ (no rain, match still cancelled). Both premises are true ($F \\rightarrow T$ is true) but the conclusion $m$ is false — **invalid**."
+          "title": "Inference I2",
+          "body": "The premise $\\neg r$ denies the hypothesis; concluding the negation of the consequent ($m$) is **denying the antecedent**, a fallacy. Counterexample: $r = $ F, $m = $ F (no rain, but the match was cancelled for another reason): both premises true, conclusion false."
+        },
+        {
+          "title": "Conclude",
+          "body": "I1 is a correct inference, I2 is not: option B."
         }
       ],
       "answer": {
@@ -498,28 +504,84 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "I2 is invalid: with $r=F, m=F$ the premises hold and the conclusion fails."
+          "reason": "I2 is denying the antecedent; the row $r = $ F, $m = $ F refutes it."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "I1 is modus tollens (valid), I2 is denying the antecedent (invalid)."
+          "reason": "I1 is modus tollens (valid); I2 is denying the antecedent (invalid)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Reverses the truth: I1 is the valid one."
+          "reason": "This reverses the verdicts: I1 is the valid one."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "I1 is valid by modus tollens."
+          "reason": "I1 has no counterexample: its single critical row has $\\neg r$ true."
         }
       ],
+      "shortcut": "From $A \\to B$ you may go forward from $A$ or backward from $\\neg B$. I1 goes backward from $\\neg B$ ($B = \\neg m$, and $m$ denies it); I2 goes forward from $\\neg A$, which is not allowed.",
       "pitfalls": [
-        "Treating $p \\rightarrow q$ as if it also meant $\\neg p \\rightarrow \\neg q$."
+        "Treating 'if it rains the match is not played' as 'the match is not played exactly when it rains' (a biconditional), which would make I2 valid.",
+        "Judging I2 by whether its conclusion sounds plausible."
       ],
-      "verification": "Truth-table check: for I1 the only row with $r \\rightarrow \\neg m$ and $m$ true is $r=F$; for I2 the row $r=F, m=F$ is a counter-example."
+      "verification": "Truth table over $r, m$: I1's premises are both true only on (F, T) where $\\neg r$ holds; I2's premises are both true on (F, T) and (F, F), and $m$ fails on (F, F).",
+      "animation": {
+        "kind": "table",
+        "title": "The two inferences on the table of r → ¬m",
+        "cols": [
+          "r",
+          "m",
+          "r → ¬m",
+          "I1 premises",
+          "I2 premises"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "F",
+            "-",
+            "-"
+          ],
+          [
+            "T",
+            "F",
+            "T",
+            "-",
+            "-"
+          ],
+          [
+            "F",
+            "T",
+            "T",
+            "yes: ¬r T",
+            "yes: m T"
+          ],
+          [
+            "F",
+            "F",
+            "T",
+            "-",
+            "yes: m F"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 2,
+            "c": 3,
+            "tone": "success"
+          },
+          {
+            "r": 3,
+            "c": 4,
+            "tone": "error"
+          }
+        ]
+      }
     },
     "cse-2012-cs-2": {
       "approach": "Recall the normal-form hierarchy: BCNF is a strictly stronger condition than 3NF, so BCNF ⊂ 3NF.",

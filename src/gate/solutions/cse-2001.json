@@ -109,20 +109,25 @@
       "verification": "R1 and R3 partition their sets into two classes each (even/odd, positive/negative), confirming equivalence."
     },
     "cse-2001-a-3": {
-      "approach": "Simplify each implication with $X\\Rightarrow Y \\equiv \\neg X\\vee Y$.",
+      "approach": "Concept tested: **satisfiable versus valid**. Simplify each formula with $X \\Rightarrow Y \\equiv \\neg X \\vee Y$ and read off its column.",
       "concepts": [
-        "Satisfiability",
-        "Validity",
-        "Implication"
+        "Satisfiable",
+        "Valid",
+        "Implication law"
       ],
+      "given": "$F1 = P \\Rightarrow \\neg P$, $F2 = (P \\Rightarrow \\neg P) \\vee (\\neg P \\Rightarrow P)$.",
       "steps": [
         {
           "title": "Simplify F1",
-          "body": "$P\\Rightarrow\\neg P \\equiv \\neg P\\vee\\neg P \\equiv \\neg P$. True when $P$ is false, so F1 is **satisfiable** (but not valid)."
+          "body": "$P \\Rightarrow \\neg P \\equiv \\neg P \\vee \\neg P \\equiv \\neg P$: true when $P$ = F, false when $P$ = T. Satisfiable, not valid."
         },
         {
           "title": "Simplify F2",
-          "body": "$(P\\Rightarrow\\neg P)\\vee(\\neg P\\Rightarrow P) \\equiv \\neg P \\vee P$, which is true for every assignment: F2 is **valid**."
+          "body": "$\\neg P \\Rightarrow P \\equiv P \\vee P \\equiv P$, so $F2 \\equiv \\neg P \\vee P$: valid (a tautology)."
+        },
+        {
+          "title": "Match the options",
+          "body": "'F1 is satisfiable, F2 is valid' states both facts precisely."
         }
       ],
       "answer": {
@@ -136,28 +141,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "F1 ≡ ¬P is satisfiable; F2 ≡ ¬P ∨ P is a tautology — the exact classification."
+          "reason": "$F1 \\equiv \\neg P$ is satisfiable (by $P$ = F); $F2 \\equiv \\neg P \\vee P$ is valid."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "F1 is satisfiable (take $P$ = false)."
+          "reason": "F1 is satisfiable: $P$ = F makes $P \\Rightarrow \\neg P$ true (F ⇒ T)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "F1 is not unsatisfiable: $P$ = false makes it true."
+          "reason": "Same error as B: F1 is not unsatisfiable."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Literally true (valid implies satisfiable) but understates F2; A is the precise classification and the intended answer."
+          "reason": "Literally true (a valid formula is satisfiable), but it understates F2; the keyed, precise answer is A."
         }
       ],
+      "shortcut": "$X \\Rightarrow \\neg X$ just says '$X$ is false', which can happen; $(X \\Rightarrow \\neg X) \\vee (\\neg X \\Rightarrow X)$ is $\\neg X \\vee X$.",
       "pitfalls": [
-        "$P\\Rightarrow\\neg P$ is not a contradiction; it just says $P$ is false."
+        "Treating $P \\Rightarrow \\neg P$ as a contradiction.",
+        "Forgetting that every valid formula is also satisfiable, which makes D technically true; GATE keys the most precise statement."
       ],
-      "verification": "Truth table: P=0 gives F1=1, F2=1; P=1 gives F1=0, F2=1."
+      "verification": "Columns over $P$ = T, F: F1 gives F, T; F2 gives T, T."
     },
     "cse-2001-a-4": {
       "approach": "S1 needs only a mod-2 counter; S2 needs to compare counts, which a pumping argument rules out.",

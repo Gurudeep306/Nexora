@@ -4613,28 +4613,34 @@
       "verification": "Checked the quantifier law ∀y(φ(y) → ψ) ≡ (∃y φ(y)) → ψ when y is not free in ψ."
     },
     "cse-2003-cs-72": {
-      "approach": "Here P, Q, R stand for arbitrary formulas (option (d) speaks of P and Q being unsatisfiable). Check soundness of resolution for (a), a tautology for (b), and look for a counterexample to the converse in (c).",
+      "approach": "Concept tested: **what the resolution rule guarantees**. The parents imply the resolvent (soundness), but not the other way round; so satisfiability passes from the parents to the resolvent, not back.",
       "concepts": [
         "Resolution",
-        "Validity vs satisfiability",
-        "Soundness"
+        "Soundness",
+        "Satisfiability",
+        "Validity"
       ],
+      "given": "Rule: from $(P \\vee R)$ and $(Q \\vee \\neg R)$ derive $(P \\vee Q)$, with $P, Q, R$ arbitrary formulas. Find the FALSE statement.",
       "steps": [
         {
-          "title": "(a) and (b) are valid",
-          "body": "(a) If $R$ is true, $Q\\vee\\neg R$ forces $Q$; if $R$ is false, $P\\vee R$ forces $P$. Either way $P\\vee Q$ holds — resolution is sound.\\n\\n(b) The consequent contains $R\\vee\\neg R$, so it is a tautology and the implication is valid."
+          "title": "Option A: soundness",
+          "body": "If $R$ is true, $Q \\vee \\neg R$ forces $Q$; if $R$ is false, $P \\vee R$ forces $P$. Either way $P \\vee Q$ holds. So $((P \\vee R) \\wedge (Q \\vee \\neg R)) \\Rightarrow (P \\vee Q)$ is valid: A is true."
         },
         {
-          "title": "(d) is true",
-          "body": "\"$(P\\vee Q)\\Rightarrow\\text{FALSE}$\" (as a valid statement) says $P\\vee Q$ is unsatisfiable, which happens exactly when both $P$ and $Q$ are unsatisfiable."
+          "title": "Option B: a tautology on the right",
+          "body": "$(P \\vee R) \\vee (Q \\vee \\neg R)$ contains $R \\vee \\neg R$, so it is always true, and every formula implies a tautology: B is true."
         },
         {
-          "title": "(c) fails",
-          "body": "By (a), if $(P\\vee R)\\wedge(Q\\vee\\neg R)$ is satisfiable then so is $P\\vee Q$. The converse fails: take $P=\\text{true}$, $Q=\\text{false}$, $R=\\text{true}$ (as formulas, e.g. $R = S\\vee\\neg S$).\\n\\n- $P\\vee Q = \\text{true}$ — satisfiable.\\n- $(P\\vee R)\\wedge(Q\\vee\\neg R) = \\text{true}\\wedge(\\text{false}\\vee\\text{false}) = \\text{false}$ — unsatisfiable.\\n\\nSo the \"if and only if\" in (c) is FALSE."
+          "title": "Option D",
+          "body": "$X \\Rightarrow$ FALSE is valid exactly when $X$ is unsatisfiable; $P \\vee Q$ is unsatisfiable exactly when both $P$ and $Q$ are. D is true."
+        },
+        {
+          "title": "Option C: the converse fails",
+          "body": "By A, satisfiable parents give a satisfiable resolvent. The converse is false: take $P = x$, $Q = \\neg x$, $R = x$. Then $P \\vee Q = x \\vee \\neg x$ is satisfiable, but $(P \\vee R) \\wedge (Q \\vee \\neg R) = x \\wedge \\neg x$ is not. C is the false statement."
         }
       ],
       "answer": {
-        "value": "(c): satisfiability of P ∨ Q does not imply satisfiability of (P ∨ R) ∧ (Q ∨ ¬R)",
+        "value": "(C): P ∨ Q satisfiable does not imply (P ∨ R) ∧ (Q ∨ ¬R) satisfiable",
         "choice": [
           "C"
         ],
@@ -4644,28 +4650,48 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "True: resolution is sound — case split on R."
+          "reason": "True: this is the soundness of resolution (case on $R$)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "True: the consequent contains R ∨ ¬R, so it is a tautology."
+          "reason": "True: the right side contains $R \\vee \\neg R$, a tautology."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "FALSE (the answer): only the direction \"premises satisfiable ⇒ resolvent satisfiable\" holds; P = true, Q = false, R = true is a counterexample to the converse."
+          "reason": "False in general: $P = x$, $Q = \\neg x$, $R = x$ makes the resolvent satisfiable and the parents unsatisfiable. (It does hold when $R$ is a fresh letter not in $P, Q$, but the option does not say so.)"
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "True: P ∨ Q is unsatisfiable exactly when both disjuncts are."
+          "reason": "True: $P \\vee Q \\Rightarrow$ FALSE is valid iff $P \\vee Q$ is unsatisfiable iff both $P$ and $Q$ are."
         }
       ],
+      "shortcut": "Resolution only goes downhill: parents ⊨ resolvent. Any 'if and only if' between parents and resolvent is suspect.",
       "pitfalls": [
-        "Treating P, Q, R as single propositional atoms: then every option looks true. The question (see option d) treats them as formulas that can themselves be unsatisfiable or valid."
+        "Treating $P, Q, R$ as distinct atoms: then C happens to hold (choose $R$ freely), but the rule is stated for arbitrary formulas.",
+        "Thinking B is false because $P \\vee Q$ 'loses' $R$: the right side is a tautology."
       ],
-      "verification": "Evaluated the counterexample directly: P ∨ Q = true while the conjunction evaluates to false under every assignment."
+      "verification": "Brute force with $P, Q, R$ ranging over all 16 truth tables in two letters: A, B and D hold in every case; C fails for some (for example $P = x$, $Q = \\neg x$, $R = x$).",
+      "animation": {
+        "kind": "equation",
+        "title": "The counterexample to C",
+        "lines": [
+          {
+            "tex": "P = x,\\quad Q = \\neg x,\\quad R = x",
+            "note": "choose formulas"
+          },
+          {
+            "tex": "P \\vee Q = x \\vee \\neg x",
+            "note": "satisfiable (a tautology)"
+          },
+          {
+            "tex": "(P \\vee R) \\wedge (Q \\vee \\neg R) = x \\wedge \\neg x",
+            "note": "unsatisfiable"
+          }
+        ]
+      }
     },
     "cse-2003-cs-73": {
       "approach": "Call by need evaluates the argument expression once, on its first use, and caches the value. Under static scoping the names i and j in the argument i + j refer to the globals.",

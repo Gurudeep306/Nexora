@@ -3,20 +3,25 @@
   "version": 2,
   "solutions": {
     "it-2008-it-1": {
-      "approach": "Use Post's criterion: a set is functionally complete iff it is not contained in any of the five closed classes (0-preserving, 1-preserving, self-dual, monotone, linear). Find the set trapped in one class.",
+      "approach": "Concept tested: **functional completeness via Post's classes**. A set is complete only if it escapes each of the five classes; a set whose every connective preserves T cannot build ¬.",
       "concepts": [
         "Functional completeness",
-        "Post's closed classes",
-        "Universal gates"
+        "Post's classes",
+        "EX-NOR"
       ],
+      "given": "Sets: EX-NOR; {implication, negation}; {OR, negation}; NAND.",
       "steps": [
         {
-          "title": "Check EX-NOR alone",
-          "body": "$x \\odot y$ is **1-preserving**: $1\\odot 1 = 1$. Every circuit built only from XNOR therefore outputs 1 when all inputs are 1, so NOT ($\\neg 1 = 0$) can never be produced. XNOR is also linear ($x\\odot y = x\\oplus y\\oplus 1$). Hence $\\{\\text{XNOR}\\}$ is **not** complete."
+          "title": "The standard complete sets",
+          "body": "$\\{\\neg, \\vee\\}$ is complete (De Morgan gives $\\wedge$); $\\{\\to, \\neg\\}$ is complete since $p \\vee q \\equiv \\neg p \\to q$; NAND is complete since $\\neg p = p \\uparrow p$ and $p \\wedge q = (p \\uparrow q) \\uparrow (p \\uparrow q)$."
         },
         {
-          "title": "Check the other sets",
-          "body": "- $\\{\\to,\\neg\\}$: $x\\lor y = \\neg x\\to y$, so with $\\neg$ we get $\\{\\lor,\\neg\\}$ — complete.\n- $\\{\\lor,\\neg\\}$: $x\\land y = \\neg(\\neg x\\lor\\neg y)$ (De Morgan) — complete.\n- $\\{\\text{NAND}\\}$: $\\neg x = x\\uparrow x$, $x\\land y = \\neg(x\\uparrow y)$ — complete (universal gate)."
+          "title": "The all-T test on EX-NOR",
+          "body": "$\\text{T} \\leftrightarrow \\text{T} = \\text{T}$, so EX-NOR preserves T (class $T_1$); every formula built from it is T on the all-T row and $\\neg p$ cannot be built."
+        },
+        {
+          "title": "Conclude",
+          "body": "EX-NOR alone is not functionally complete. (It is also affine, a second reason.)"
         }
       ],
       "answer": {
@@ -30,28 +35,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: XNOR preserves the constant 1 (and is linear), so NOT cannot be synthesised."
+          "reason": "EX-NOR preserves T and is affine; it cannot build ¬ or ∧."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$\\neg x \\to y \\equiv x\\lor y$; together with $\\neg$ this gives the complete set $\\{\\lor,\\neg\\}$."
+          "reason": "Complete: $\\neg p \\to q \\equiv p \\vee q$, and $\\{\\neg, \\vee\\}$ is complete."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\{\\lor,\\neg\\}$ is complete since $\\land$ follows by De Morgan's law."
+          "reason": "Complete: $p \\wedge q \\equiv \\neg(\\neg p \\vee \\neg q)$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "NAND is a universal gate on its own."
+          "reason": "NAND alone is complete."
         }
       ],
+      "shortcut": "Plug all-T into each connective: EX-NOR returns T, so it is trapped in $T_1$.",
       "pitfalls": [
-        "XOR plus the constant 1 gives NOT, but XNOR alone has no constants, so it stays inside the 1-preserving class."
+        "Thinking EX-NOR is complete because XOR-type gates are 'universal' in some circuits; adding ¬ still leaves it affine."
       ],
-      "verification": "Every XNOR-only expression evaluated at the all-ones input yields 1, confirming NOT is unreachable."
+      "verification": "Post class membership computed by script: EX-NOR lies in $T_1$ and affine; each of B, C, D escapes all five classes."
     },
     "it-2008-it-2": {
       "approach": "Convert the complement probabilities to $P(A)$ and $P(B)$ and apply the addition rule.",

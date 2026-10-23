@@ -829,27 +829,29 @@
       "verification": "Both directions agree: $(15)_{16} = 21$ and $21 = 2\\cdot9 + 1\\cdot3 + 0 = (210)_3$."
     },
     "cse-2021-1-cs-7": {
-      "approach": "Simplify the common sub-formula: $\\neg p\\wedge(p\\vee q)\\equiv\\neg p\\wedge q$, then check each implication.",
+      "approach": "Concept tested: **simplifying a shared sub-formula, then testing each implication**. $\\neg p \\wedge (p \\vee q) \\equiv \\neg p \\wedge q$; a conjunction implies its parts, but $q$ alone does not imply $\\neg p \\wedge q$.",
       "concepts": [
+        "Distributive law",
         "Tautology",
-        "Propositional equivalences"
+        "Disjunctive syllogism"
       ],
+      "given": "$S_1 = (\\neg p \\wedge (p \\vee q)) \\to q$, $S_2 = q \\to (\\neg p \\wedge (p \\vee q))$.",
       "steps": [
         {
-          "title": "Simplify",
-          "body": "$\\neg p\\wedge(p\\vee q)=(\\neg p\\wedge p)\\vee(\\neg p\\wedge q)=\\neg p\\wedge q$."
+          "title": "Simplify the shared part",
+          "body": "$\\neg p \\wedge (p \\vee q) \\equiv (\\neg p \\wedge p) \\vee (\\neg p \\wedge q) \\equiv \\neg p \\wedge q$."
         },
         {
-          "title": "$S_1$",
-          "body": "$(\\neg p\\wedge q)\\to q$ — the conclusion is a conjunct of the premise, so it is always true. Tautology."
+          "title": "Test S1",
+          "body": "$(\\neg p \\wedge q) \\to q \\equiv p \\vee \\neg q \\vee q \\equiv$ T: a tautology (disjunctive syllogism)."
         },
         {
-          "title": "$S_2$",
-          "body": "$q\\to(\\neg p\\wedge q)\\equiv\\neg q\\vee\\neg p$. With $p=q=T$: $T\\to F$ is false. Not a tautology."
+          "title": "Test S2",
+          "body": "$q \\to (\\neg p \\wedge q)$ is false when $q$ = T and $\\neg p \\wedge q$ = F, i.e. $p = q =$ T. Not a tautology."
         }
       ],
       "answer": {
-        "value": "$S_1$ is a tautology but $S_2$ is not a tautology.",
+        "value": "$S_1$ is a tautology but $S_2$ is not a tautology",
         "choice": [
           "B"
         ],
@@ -859,17 +861,17 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$S_2$ fails at $p=q=T$."
+          "reason": "$S_2$ fails on $p = q =$ T."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$S_1\\equiv(\\neg p\\wedge q)\\to q$ is valid; $S_2$ fails at $p=q=T$."
+          "reason": "$S_1 \\equiv$ T; $S_2$ is false on $p = q =$ T."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Reversed: $S_1$ is the tautology."
+          "reason": "$S_1$ is the tautology; $S_2$ is not."
         },
         {
           "option": "D",
@@ -877,10 +879,11 @@
           "reason": "$S_1$ is a tautology."
         }
       ],
+      "shortcut": "$S_2$ is the converse of $S_1$; converses of tautological implications are usually not tautologies. Test $p = q =$ T.",
       "pitfalls": [
-        "Simplifying $\\neg p\\wedge(p\\vee q)$ to $q$ alone."
+        "Assuming that because $S_1$ is a tautology its converse $S_2$ is one too."
       ],
-      "verification": "Truth table: $S_1$ is T in all 4 rows; $S_2$ is F only at $p=q=T$."
+      "verification": "Truth tables over $p, q$: $S_1$ is T on all four rows; $S_2$ is F on TT."
     },
     "cse-2021-1-cs-8": {
       "approach": "An ARP request is broadcast because the target MAC is unknown; the reply is unicast to the requester whose MAC is in the request.",
