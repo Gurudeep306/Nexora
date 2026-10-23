@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { useNotesSubjects } from '@/gate/notes/api'
 import { cachedState, cachedStructure, loadWeb, mergeWeb } from './data'
 import { subjectHref } from './course'
+import { prefetchHandlers } from '@/routes'
 import type { NexusWebState, NexusWebStructure, WebCluster } from './types'
 
 /*
@@ -117,7 +118,7 @@ export function LearnSubjectsHub() {
                     transition={{ duration: 0.25, delay: Math.min(0.4, si * 0.03 + i * 0.015) }}
                     className="nx-hub-card"
                   >
-                    <Link to={subjectHref(c)} className="flex items-center gap-3 p-3.5" aria-label={`${c.name}: ${p}% · ${done} of ${c.nodes.length} skills`}>
+                    <Link to={subjectHref(c)} {...prefetchHandlers(subjectHref(c))} className="flex items-center gap-3 p-3.5" aria-label={`${c.name}: ${p}% · ${done} of ${c.nodes.length} skills`}>
                       <Ring value={p} color={st.hue} />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-[14.5px] font-semibold text-text-primary">{c.name}</span>
@@ -171,7 +172,7 @@ export function GateSubjectsPanel({ exam }: { exam: 'CSE' | 'DA' | string }) {
           <li key={e.bank} className="flex flex-wrap items-center gap-x-3 gap-y-1.5 py-2.5">
             <Ring value={p} color={hue.get(c.stream) ?? 'var(--color-accent-brand)'} />
             <span className="min-w-0 flex-1">
-              <Link to={subjectHref(c)} className="block truncate text-[14px] font-semibold text-text-primary hover:underline">
+              <Link to={subjectHref(c)} {...prefetchHandlers(subjectHref(c))} className="block truncate text-[14px] font-semibold text-text-primary hover:underline">
                 {e.name}
               </Link>
               <span className="block truncate text-[11.5px] text-text-muted">
@@ -179,7 +180,7 @@ export function GateSubjectsPanel({ exam }: { exam: 'CSE' | 'DA' | string }) {
               </span>
             </span>
             <span className="flex flex-wrap gap-1.5">
-              <Link to={subjectHref(c)} className="nx-hub-chip">
+              <Link to={subjectHref(c)} {...prefetchHandlers(subjectHref(c))} className="nx-hub-chip">
                 <Telescope className="size-3" aria-hidden="true" /> Tree
               </Link>
               {notes ? (

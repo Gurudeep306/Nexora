@@ -239,7 +239,8 @@ export interface NexusWebStructure {
     gate?: { pyq: string | null; notes: string | null }
     description?: string
     zones: { level: number; name: string; color: string }[]
-    nodes: { id: string; n: string; z: number; req: string[]; cx?: string[]; k?: string; i?: string; ls?: string[]; o?: number; xp: number }[]
+    /** x (0–100) and r (row in its zone): the subject tree's layout */
+    nodes: { id: string; n: string; z: number; req: string[]; cx?: string[]; k?: string; i?: string; ls?: string[]; o?: number; xp: number; x?: number; r?: number }[]
   }[]
 }
 

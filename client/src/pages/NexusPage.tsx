@@ -199,7 +199,7 @@ function RadialOverview() {
   const openSubject = useCallback(
     (id: string, nodeId?: string) => {
       const c = structure?.clusters.find((x) => x.id === id)
-      navigate(c ? subjectHref(c, nodeId) : `/learn/${id}${nodeId ? `/${nodeId}` : ''}`)
+      navigate(c ? subjectHref(c, nodeId) : `/learn/${id}${nodeId ? `/${nodeId}` : ''}`, { state: { fromNexus: true } })
     },
     [navigate, structure],
   )
