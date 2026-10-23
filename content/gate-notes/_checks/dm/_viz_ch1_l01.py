@@ -182,3 +182,42 @@ def custom_operator():
     return spec("Rewriting an invented operator", (640, 290), (360, 420),
                 "GATE sometimes defines a connective by its four-row table. Read its false row, rewrite it with ¬ and ∨, and the options become easy.",
                 els, steps)
+
+
+@scene
+def parse_tree():
+    f = "~p | q & r -> p <-> q"
+    env = {"p": False, "q": True, "r": False}
+    e = L.parse(f)
+    assert e == L.parse("((~p | (q & r)) -> p) <-> q") and e[0] == "iff"  # precedence: ↔ is the root
+    sub = {k: L.ev(L.parse(s), env) for k, s in
+           {"neg": "~p", "and": "q & r", "or": "~p | (q & r)", "imp": "(~p | (q & r)) -> p", "root": f}.items()}
+    assert sub == {"neg": True, "and": False, "or": True, "imp": False, "root": False}
+    # (id, wide x, y, narrow x, label before, label after evaluation)
+    nodes = [("n0", 265, 50, 145, "↔", f"↔ = {TF(sub['root'])}"),
+             ("n1", 140, 120, 75, "→", f"→ = {TF(sub['imp'])}"), ("n2", 420, 120, 230, "q", "q = T"),
+             ("n3", 60, 190, 20, "∨", f"∨ = {TF(sub['or'])}"), ("n4", 240, 190, 140, "p", "p = F"),
+             ("n5", 10, 260, 5, "¬p", f"¬p = {TF(sub['neg'])}"), ("n6", 140, 260, 90, "∧", f"∧ = {TF(sub['and'])}"),
+             ("n7", 80, 330, 55, "q", "q = T"), ("n8", 220, 330, 150, "r", "r = F")]
+    els = [*heads("The parse tree of ¬p ∨ q ∧ r → p ↔ q", "Parse tree of ¬p ∨ q ∧ r → p ↔ q", 640)]
+    for i, x, y, nx, lab, _ in nodes:
+        els.append(box(i, x, y, 110, 40, lab, {"x": nx, "y": y, "w": 72, "h": 40, "size": 13}, size=15, mono=True))
+    for k, (a, b) in enumerate([("n0", "n1"), ("n0", "n2"), ("n1", "n3"), ("n1", "n4"), ("n3", "n5"), ("n3", "n6"), ("n6", "n7"), ("n6", "n8")]):
+        els.append(arrow(f"e{k}", a, b, None))
+    els.append(text("foot", 320, 400, "the root is the main connective", {"x": 180, "y": 400, "size": 13}, anchor="middle", size=15, tone="muted"))
+    lab = {i: after for i, *_, after in nodes}
+    steps = [
+        step("Precedence decides the shape: ¬ binds first, then ∧, then ∨, then →, and ↔ is applied last. So ↔ is the root (the main connective): the formula is a biconditional.",
+             ("n0", {"tone": "accent", "fill": "accent"}), ("foot", {"text": "main connective: ↔", "tone": "accent"})),
+        step("Evaluate at p = F, q = T, r = F. Start at the leaves: write each variable's value.",
+             *[(i, {"label": lab[i]}) for i in ("n2", "n4", "n7", "n8")]),
+        step("Lowest operators next: ¬p = T, and q ∧ r = T ∧ F = F.",
+             ("n5", {"label": lab["n5"], "tone": "success"}), ("n6", {"label": lab["n6"], "tone": "danger"})),
+        step("One level up: ¬p ∨ (q ∧ r) = T ∨ F = T.", ("n3", {"label": lab["n3"], "tone": "success"})),
+        step("The implication has hypothesis T and conclusion p = F: T → F = F, its one false row.", ("n1", {"label": lab["n1"], "tone": "danger"})),
+        step("The root compares its two sides: F ↔ T = F, because they disagree. A truth table is this tree evaluated once per row.",
+             ("n0", {"label": lab["n0"], "tone": "danger", "fill": "danger"}), ("foot", {"text": "value at p = F, q = T, r = F: F", "tone": "danger"})),
+    ]
+    return spec("Reading a formula as a tree", (640, 416), (360, 416),
+                "Precedence turns a string of symbols into a tree. The connective applied last is the root; evaluation runs from the leaves up.",
+                els, steps)

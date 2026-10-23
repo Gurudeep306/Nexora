@@ -1,7 +1,7 @@
 """Propositional logic for the Discrete Mathematics checks (Chapter 1) and the Truth Table Lab.
 
 Formulas are parsed from text with the usual precedence (highest first):
-    ¬ (also ~ ! not)   ∧ (& and /\\)   ∨ (| or \\/ v)   ⊕ (xor)   → (-> => implies)   ↔ (<-> <=> iff ≡)
+    ¬ (also ~ ! not)   ∧ (& and /\\)   ∨ (| or \\/)   ⊕ (xor)   → (-> => implies)   ↔ (<-> <=> iff ≡)
 → is right-associative (p → q → r = p → (q → r)); ∧ ∨ ⊕ ↔ are left-associative. Constants T/F, 1/0,
 true/false. Variables are letters (optionally followed by digits). LaTeX spellings (\\neg, \\wedge,
 \\vee, \\rightarrow, \\Rightarrow, \\leftrightarrow, \\Leftrightarrow, \\oplus, \\lnot, \\land, \\lor, \\to,
@@ -18,7 +18,7 @@ _TOKEN = re.compile(r"""
     \s*(?:
       (?P<lp>[(\[{])|(?P<rp>[)\]}])|
       (?P<iff>↔|⟷|⇔|<->|<=>|\\leftrightarrow|\\Leftrightarrow|\\iff|\\equiv|≡|\biff\b)|
-      (?P<imp>→|⇒|->|=>|\\rightarrow|\\Rightarrow|\\to|\\implies|\bimplies\b)|
+      (?P<imp>→|⇒|->|=>|\\rightarrow|\\Rightarrow|\\to(?![a-zA-Z])|\\implies|\bimplies\b)|
       (?P<xor>⊕|\\oplus|\bxor\b)|
       (?P<or>∨|\\vee|\\lor|\|\||\||\bor\b|\\/)|
       (?P<and>∧|\\wedge|\\land|&&|&|\band\b|/\\)|
@@ -256,6 +256,8 @@ def dnf(ms, vars_):
     for m in ms:
         bits = format(m, f"0{len(vars_)}b")
         terms.append("(" + " ∧ ".join(v if b == "1" else "¬" + v for v, b in zip(vars_, bits)) + ")")
+    if terms and not vars_:
+        return "T"  # a constants-only formula that is true
     return " ∨ ".join(terms) if terms else "F"
 
 
@@ -264,6 +266,8 @@ def cnf(Ms, vars_):
     for m in Ms:
         bits = format(m, f"0{len(vars_)}b")
         cl.append("(" + " ∨ ".join("¬" + v if b == "1" else v for v, b in zip(vars_, bits)) + ")")
+    if cl and not vars_:
+        return "F"  # a constants-only formula that is false
     return " ∧ ".join(cl) if cl else "T"
 
 
@@ -274,8 +278,7 @@ def to_str(e):
     if k == "const":
         return "T" if e[1] else "F"
     if k == "not":
-        s = to_str(e[1])
-        return "¬" + (s if e[1][0] in ("var", "const", "not") else f"({s})")
+        return "¬" + to_str(e[1])  # a binary operand is already bracketed
     sym = {"and": "∧", "or": "∨", "xor": "⊕", "imp": "→", "iff": "↔"}
     if k == "op":
         return f"({to_str(e[2])} ⊙ {to_str(e[3])})"

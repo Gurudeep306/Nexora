@@ -35,7 +35,10 @@
     4,
     5,
     6
-   ]
+   ],
+   "dnf": "(¬p ∧ ¬q ∧ ¬r) ∨ (¬p ∧ ¬q ∧ r) ∨ (¬p ∧ q ∧ r) ∨ (p ∧ q ∧ r)",
+   "cnf": "(p ∨ ¬q ∨ r) ∧ (¬p ∨ q ∨ r) ∧ (¬p ∨ q ∨ ¬r) ∧ (¬p ∨ ¬q ∨ r)",
+   "shown": "(p → q) ∧ (q → r)"
   },
   {
    "src": "p -> q -> r",
@@ -66,7 +69,10 @@
    ],
    "maxterms": [
     6
-   ]
+   ],
+   "dnf": "(¬p ∧ ¬q ∧ ¬r) ∨ (¬p ∧ ¬q ∧ r) ∨ (¬p ∧ q ∧ ¬r) ∨ (¬p ∧ q ∧ r) ∨ (p ∧ ¬q ∧ ¬r) ∨ (p ∧ ¬q ∧ r) ∨ (p ∧ q ∧ r)",
+   "cnf": "(¬p ∨ ¬q ∨ r)",
+   "shown": "p → (q → r)"
   },
   {
    "src": "(p -> q) -> r",
@@ -97,7 +103,10 @@
     0,
     2,
     6
-   ]
+   ],
+   "dnf": "(¬p ∧ ¬q ∧ r) ∨ (¬p ∧ q ∧ r) ∨ (p ∧ ¬q ∧ ¬r) ∨ (p ∧ ¬q ∧ r) ∨ (p ∧ q ∧ r)",
+   "cnf": "(p ∨ q ∨ r) ∧ (p ∨ ¬q ∨ r) ∧ (¬p ∨ ¬q ∨ r)",
+   "shown": "(p → q) → r"
   },
   {
    "src": "(X & ~Z) -> Y",
@@ -128,7 +137,10 @@
    ],
    "maxterms": [
     4
-   ]
+   ],
+   "dnf": "(¬X ∧ ¬Y ∧ ¬Z) ∨ (¬X ∧ ¬Y ∧ Z) ∨ (¬X ∧ Y ∧ ¬Z) ∨ (¬X ∧ Y ∧ Z) ∨ (X ∧ ¬Y ∧ Z) ∨ (X ∧ Y ∧ ¬Z) ∨ (X ∧ Y ∧ Z)",
+   "cnf": "(¬X ∨ Y ∨ Z)",
+   "shown": "(X ∧ ¬Z) → Y"
   },
   {
    "src": "(~(p <-> q) & r) | (p & q & ~r)",
@@ -159,7 +171,10 @@
     2,
     4,
     7
-   ]
+   ],
+   "dnf": "(¬p ∧ q ∧ r) ∨ (p ∧ ¬q ∧ r) ∨ (p ∧ q ∧ ¬r)",
+   "cnf": "(p ∨ q ∨ r) ∧ (p ∨ q ∨ ¬r) ∧ (p ∨ ¬q ∨ r) ∧ (¬p ∨ q ∨ r) ∧ (¬p ∨ ¬q ∨ ¬r)",
+   "shown": "(¬(p ↔ q) ∧ r) ∨ ((p ∧ q) ∧ ¬r)"
   },
   {
    "src": "~(~A ⊙ B)",
@@ -181,7 +196,10 @@
     0,
     1,
     2
-   ]
+   ],
+   "dnf": "(A ∧ B)",
+   "cnf": "(A ∨ B) ∧ (A ∨ ¬B) ∧ (¬A ∨ B)",
+   "shown": "¬(¬A ⊙ B)"
   },
   {
    "src": "~A ⊙ B",
@@ -203,7 +221,10 @@
    ],
    "maxterms": [
     3
-   ]
+   ],
+   "dnf": "(¬A ∧ ¬B) ∨ (¬A ∧ B) ∨ (A ∧ ¬B)",
+   "cnf": "(¬A ∨ ¬B)",
+   "shown": "¬A ⊙ B"
   },
   {
    "src": "(p -> q) <-> (~q -> ~p)",
@@ -224,7 +245,10 @@
     2,
     3
    ],
-   "maxterms": []
+   "maxterms": [],
+   "dnf": "(¬p ∧ ¬q) ∨ (¬p ∧ q) ∨ (p ∧ ¬q) ∨ (p ∧ q)",
+   "cnf": "T",
+   "shown": "(p → q) ↔ (¬q → ¬p)"
   },
   {
    "src": "((p -> q) -> p) -> p",
@@ -245,7 +269,10 @@
     2,
     3
    ],
-   "maxterms": []
+   "maxterms": [],
+   "dnf": "(¬p ∧ ¬q) ∨ (¬p ∧ q) ∨ (p ∧ ¬q) ∨ (p ∧ q)",
+   "cnf": "T",
+   "shown": "((p → q) → p) → p"
   },
   {
    "src": "p & ~p",
@@ -261,7 +288,10 @@
    "maxterms": [
     0,
     1
-   ]
+   ],
+   "dnf": "F",
+   "cnf": "(p) ∧ (¬p)",
+   "shown": "p ∧ ¬p"
   },
   {
    "src": "p xor q xor r",
@@ -292,7 +322,10 @@
     3,
     5,
     6
-   ]
+   ],
+   "dnf": "(¬p ∧ ¬q ∧ r) ∨ (¬p ∧ q ∧ ¬r) ∨ (p ∧ ¬q ∧ ¬r) ∨ (p ∧ q ∧ r)",
+   "cnf": "(p ∨ q ∨ r) ∧ (p ∨ ¬q ∨ ¬r) ∧ (¬p ∨ q ∨ ¬r) ∧ (¬p ∨ ¬q ∨ r)",
+   "shown": "(p ⊕ q) ⊕ r"
   },
   {
    "src": "~p | q -> r",
@@ -323,7 +356,10 @@
     0,
     2,
     6
-   ]
+   ],
+   "dnf": "(¬p ∧ ¬q ∧ r) ∨ (¬p ∧ q ∧ r) ∨ (p ∧ ¬q ∧ ¬r) ∨ (p ∧ ¬q ∧ r) ∨ (p ∧ q ∧ r)",
+   "cnf": "(p ∨ q ∨ r) ∧ (p ∨ ¬q ∨ r) ∧ (¬p ∨ ¬q ∨ r)",
+   "shown": "(¬p ∨ q) → r"
   },
   {
    "src": "a & b | c & d",
@@ -371,7 +407,10 @@
     8,
     9,
     10
-   ]
+   ],
+   "dnf": "(¬a ∧ ¬b ∧ c ∧ d) ∨ (¬a ∧ b ∧ c ∧ d) ∨ (a ∧ ¬b ∧ c ∧ d) ∨ (a ∧ b ∧ ¬c ∧ ¬d) ∨ (a ∧ b ∧ ¬c ∧ d) ∨ (a ∧ b ∧ c ∧ ¬d) ∨ (a ∧ b ∧ c ∧ d)",
+   "cnf": "(a ∨ b ∨ c ∨ d) ∧ (a ∨ b ∨ c ∨ ¬d) ∧ (a ∨ b ∨ ¬c ∨ d) ∧ (a ∨ ¬b ∨ c ∨ d) ∧ (a ∨ ¬b ∨ c ∨ ¬d) ∧ (a ∨ ¬b ∨ ¬c ∨ d) ∧ (¬a ∨ b ∨ c ∨ d) ∧ (¬a ∨ b ∨ c ∨ ¬d) ∧ (¬a ∨ b ∨ ¬c ∨ d)",
+   "shown": "(a ∧ b) ∨ (c ∧ d)"
   },
   {
    "src": "(a | b) & (c | d) -> e",
@@ -452,7 +491,10 @@
     26,
     28,
     30
-   ]
+   ],
+   "dnf": "(¬a ∧ ¬b ∧ ¬c ∧ ¬d ∧ ¬e) ∨ (¬a ∧ ¬b ∧ ¬c ∧ ¬d ∧ e) ∨ (¬a ∧ ¬b ∧ ¬c ∧ d ∧ ¬e) ∨ (¬a ∧ ¬b ∧ ¬c ∧ d ∧ e) ∨ (¬a ∧ ¬b ∧ c ∧ ¬d ∧ ¬e) ∨ (¬a ∧ ¬b ∧ c ∧ ¬d ∧ e) ∨ (¬a ∧ ¬b ∧ c ∧ d ∧ ¬e) ∨ (¬a ∧ ¬b ∧ c ∧ d ∧ e) ∨ (¬a ∧ b ∧ ¬c ∧ ¬d ∧ ¬e) ∨ (¬a ∧ b ∧ ¬c ∧ ¬d ∧ e) ∨ (¬a ∧ b ∧ ¬c ∧ d ∧ e) ∨ (¬a ∧ b ∧ c ∧ ¬d ∧ e) ∨ (¬a ∧ b ∧ c ∧ d ∧ e) ∨ (a ∧ ¬b ∧ ¬c ∧ ¬d ∧ ¬e) ∨ (a ∧ ¬b ∧ ¬c ∧ ¬d ∧ e) ∨ (a ∧ ¬b ∧ ¬c ∧ d ∧ e) ∨ (a ∧ ¬b ∧ c ∧ ¬d ∧ e) ∨ (a ∧ ¬b ∧ c ∧ d ∧ e) ∨ (a ∧ b ∧ ¬c ∧ ¬d ∧ ¬e) ∨ (a ∧ b ∧ ¬c ∧ ¬d ∧ e) ∨ (a ∧ b ∧ ¬c ∧ d ∧ e) ∨ (a ∧ b ∧ c ∧ ¬d ∧ e) ∨ (a ∧ b ∧ c ∧ d ∧ e)",
+   "cnf": "(a ∨ ¬b ∨ c ∨ ¬d ∨ e) ∧ (a ∨ ¬b ∨ ¬c ∨ d ∨ e) ∧ (a ∨ ¬b ∨ ¬c ∨ ¬d ∨ e) ∧ (¬a ∨ b ∨ c ∨ ¬d ∨ e) ∧ (¬a ∨ b ∨ ¬c ∨ d ∨ e) ∧ (¬a ∨ b ∨ ¬c ∨ ¬d ∨ e) ∧ (¬a ∨ ¬b ∨ c ∨ ¬d ∨ e) ∧ (¬a ∨ ¬b ∨ ¬c ∨ d ∨ e) ∧ (¬a ∨ ¬b ∨ ¬c ∨ ¬d ∨ e)",
+   "shown": "((a ∨ b) ∧ (c ∨ d)) → e"
   },
   {
    "src": "T -> F",
@@ -464,7 +506,10 @@
    "minterms": [],
    "maxterms": [
     0
-   ]
+   ],
+   "dnf": "F",
+   "cnf": "F",
+   "shown": "T → F"
   },
   {
    "src": "p <-> q <-> r",
@@ -495,7 +540,10 @@
     3,
     5,
     6
-   ]
+   ],
+   "dnf": "(¬p ∧ ¬q ∧ r) ∨ (¬p ∧ q ∧ ¬r) ∨ (p ∧ ¬q ∧ ¬r) ∨ (p ∧ q ∧ r)",
+   "cnf": "(p ∨ q ∨ r) ∧ (p ∨ ¬q ∨ ¬r) ∧ (¬p ∨ q ∨ ¬r) ∧ (¬p ∨ ¬q ∨ r)",
+   "shown": "(p ↔ q) ↔ r"
   },
   {
    "src": "\\neg p \\vee (p \\Rightarrow q)",
@@ -517,7 +565,10 @@
    ],
    "maxterms": [
     2
-   ]
+   ],
+   "dnf": "(¬p ∧ ¬q) ∨ (¬p ∧ q) ∨ (p ∧ q)",
+   "cnf": "(¬p ∨ q)",
+   "shown": "¬p ∨ (p → q)"
   },
   {
    "src": "(P \\wedge Q) \\rightarrow R",
@@ -548,7 +599,607 @@
    ],
    "maxterms": [
     6
-   ]
+   ],
+   "dnf": "(¬P ∧ ¬Q ∧ ¬R) ∨ (¬P ∧ ¬Q ∧ R) ∨ (¬P ∧ Q ∧ ¬R) ∨ (¬P ∧ Q ∧ R) ∨ (P ∧ ¬Q ∧ ¬R) ∨ (P ∧ ¬Q ∧ R) ∨ (P ∧ Q ∧ R)",
+   "cnf": "(¬P ∨ ¬Q ∨ R)",
+   "shown": "(P ∧ Q) → R"
+  },
+  {
+   "src": "T",
+   "vars": [],
+   "table": [
+    true
+   ],
+   "kind": "tautology",
+   "minterms": [
+    0
+   ],
+   "maxterms": [],
+   "dnf": "T",
+   "cnf": "T",
+   "shown": "T"
+  },
+  {
+   "src": "F",
+   "vars": [],
+   "table": [
+    false
+   ],
+   "kind": "contradiction",
+   "minterms": [],
+   "maxterms": [
+    0
+   ],
+   "dnf": "F",
+   "cnf": "F",
+   "shown": "F"
+  },
+  {
+   "src": "T & ~F",
+   "vars": [],
+   "table": [
+    true
+   ],
+   "kind": "tautology",
+   "minterms": [
+    0
+   ],
+   "maxterms": [],
+   "dnf": "T",
+   "cnf": "T",
+   "shown": "T ∧ ¬F"
+  },
+  {
+   "src": "~T | F",
+   "vars": [],
+   "table": [
+    false
+   ],
+   "kind": "contradiction",
+   "minterms": [],
+   "maxterms": [
+    0
+   ],
+   "dnf": "F",
+   "cnf": "F",
+   "shown": "¬T ∨ F"
+  },
+  {
+   "src": "T -> F <-> F",
+   "vars": [],
+   "table": [
+    true
+   ],
+   "kind": "tautology",
+   "minterms": [
+    0
+   ],
+   "maxterms": [],
+   "dnf": "T",
+   "cnf": "T",
+   "shown": "(T → F) ↔ F"
+  },
+  {
+   "src": "p",
+   "vars": [
+    "p"
+   ],
+   "table": [
+    true,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    1
+   ],
+   "maxterms": [
+    0
+   ],
+   "dnf": "(p)",
+   "cnf": "(p)",
+   "shown": "p"
+  },
+  {
+   "src": "~~p",
+   "vars": [
+    "p"
+   ],
+   "table": [
+    true,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    1
+   ],
+   "maxterms": [
+    0
+   ],
+   "dnf": "(p)",
+   "cnf": "(p)",
+   "shown": "¬¬p"
+  },
+  {
+   "src": "(a -> b) & (c | d) <-> e",
+   "vars": [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e"
+   ],
+   "table": [
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    false,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    true,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    false,
+    true,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    false,
+    true
+   ],
+   "kind": "contingency",
+   "minterms": [
+    0,
+    3,
+    5,
+    7,
+    8,
+    11,
+    13,
+    15,
+    16,
+    18,
+    20,
+    22,
+    24,
+    27,
+    29,
+    31
+   ],
+   "maxterms": [
+    1,
+    2,
+    4,
+    6,
+    9,
+    10,
+    12,
+    14,
+    17,
+    19,
+    21,
+    23,
+    25,
+    26,
+    28,
+    30
+   ],
+   "dnf": "(¬a ∧ ¬b ∧ ¬c ∧ ¬d ∧ ¬e) ∨ (¬a ∧ ¬b ∧ ¬c ∧ d ∧ e) ∨ (¬a ∧ ¬b ∧ c ∧ ¬d ∧ e) ∨ (¬a ∧ ¬b ∧ c ∧ d ∧ e) ∨ (¬a ∧ b ∧ ¬c ∧ ¬d ∧ ¬e) ∨ (¬a ∧ b ∧ ¬c ∧ d ∧ e) ∨ (¬a ∧ b ∧ c ∧ ¬d ∧ e) ∨ (¬a ∧ b ∧ c ∧ d ∧ e) ∨ (a ∧ ¬b ∧ ¬c ∧ ¬d ∧ ¬e) ∨ (a ∧ ¬b ∧ ¬c ∧ d ∧ ¬e) ∨ (a ∧ ¬b ∧ c ∧ ¬d ∧ ¬e) ∨ (a ∧ ¬b ∧ c ∧ d ∧ ¬e) ∨ (a ∧ b ∧ ¬c ∧ ¬d ∧ ¬e) ∨ (a ∧ b ∧ ¬c ∧ d ∧ e) ∨ (a ∧ b ∧ c ∧ ¬d ∧ e) ∨ (a ∧ b ∧ c ∧ d ∧ e)",
+   "cnf": "(a ∨ b ∨ c ∨ d ∨ ¬e) ∧ (a ∨ b ∨ c ∨ ¬d ∨ e) ∧ (a ∨ b ∨ ¬c ∨ d ∨ e) ∧ (a ∨ b ∨ ¬c ∨ ¬d ∨ e) ∧ (a ∨ ¬b ∨ c ∨ d ∨ ¬e) ∧ (a ∨ ¬b ∨ c ∨ ¬d ∨ e) ∧ (a ∨ ¬b ∨ ¬c ∨ d ∨ e) ∧ (a ∨ ¬b ∨ ¬c ∨ ¬d ∨ e) ∧ (¬a ∨ b ∨ c ∨ d ∨ ¬e) ∧ (¬a ∨ b ∨ c ∨ ¬d ∨ ¬e) ∧ (¬a ∨ b ∨ ¬c ∨ d ∨ ¬e) ∧ (¬a ∨ b ∨ ¬c ∨ ¬d ∨ ¬e) ∧ (¬a ∨ ¬b ∨ c ∨ d ∨ ¬e) ∧ (¬a ∨ ¬b ∨ c ∨ ¬d ∨ e) ∧ (¬a ∨ ¬b ∨ ¬c ∨ d ∨ e) ∧ (¬a ∨ ¬b ∨ ¬c ∨ ¬d ∨ e)",
+   "shown": "((a → b) ∧ (c ∨ d)) ↔ e"
+  },
+  {
+   "src": "a xor b xor c xor d xor e",
+   "vars": [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e"
+   ],
+   "table": [
+    true,
+    false,
+    false,
+    true,
+    false,
+    true,
+    true,
+    false,
+    false,
+    true,
+    true,
+    false,
+    true,
+    false,
+    false,
+    true,
+    false,
+    true,
+    true,
+    false,
+    true,
+    false,
+    false,
+    true,
+    true,
+    false,
+    false,
+    true,
+    false,
+    true,
+    true,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    1,
+    2,
+    4,
+    7,
+    8,
+    11,
+    13,
+    14,
+    16,
+    19,
+    21,
+    22,
+    25,
+    26,
+    28,
+    31
+   ],
+   "maxterms": [
+    0,
+    3,
+    5,
+    6,
+    9,
+    10,
+    12,
+    15,
+    17,
+    18,
+    20,
+    23,
+    24,
+    27,
+    29,
+    30
+   ],
+   "dnf": "(¬a ∧ ¬b ∧ ¬c ∧ ¬d ∧ e) ∨ (¬a ∧ ¬b ∧ ¬c ∧ d ∧ ¬e) ∨ (¬a ∧ ¬b ∧ c ∧ ¬d ∧ ¬e) ∨ (¬a ∧ ¬b ∧ c ∧ d ∧ e) ∨ (¬a ∧ b ∧ ¬c ∧ ¬d ∧ ¬e) ∨ (¬a ∧ b ∧ ¬c ∧ d ∧ e) ∨ (¬a ∧ b ∧ c ∧ ¬d ∧ e) ∨ (¬a ∧ b ∧ c ∧ d ∧ ¬e) ∨ (a ∧ ¬b ∧ ¬c ∧ ¬d ∧ ¬e) ∨ (a ∧ ¬b ∧ ¬c ∧ d ∧ e) ∨ (a ∧ ¬b ∧ c ∧ ¬d ∧ e) ∨ (a ∧ ¬b ∧ c ∧ d ∧ ¬e) ∨ (a ∧ b ∧ ¬c ∧ ¬d ∧ e) ∨ (a ∧ b ∧ ¬c ∧ d ∧ ¬e) ∨ (a ∧ b ∧ c ∧ ¬d ∧ ¬e) ∨ (a ∧ b ∧ c ∧ d ∧ e)",
+   "cnf": "(a ∨ b ∨ c ∨ d ∨ e) ∧ (a ∨ b ∨ c ∨ ¬d ∨ ¬e) ∧ (a ∨ b ∨ ¬c ∨ d ∨ ¬e) ∧ (a ∨ b ∨ ¬c ∨ ¬d ∨ e) ∧ (a ∨ ¬b ∨ c ∨ d ∨ ¬e) ∧ (a ∨ ¬b ∨ c ∨ ¬d ∨ e) ∧ (a ∨ ¬b ∨ ¬c ∨ d ∨ e) ∧ (a ∨ ¬b ∨ ¬c ∨ ¬d ∨ ¬e) ∧ (¬a ∨ b ∨ c ∨ d ∨ ¬e) ∧ (¬a ∨ b ∨ c ∨ ¬d ∨ e) ∧ (¬a ∨ b ∨ ¬c ∨ d ∨ e) ∧ (¬a ∨ b ∨ ¬c ∨ ¬d ∨ ¬e) ∧ (¬a ∨ ¬b ∨ c ∨ d ∨ e) ∧ (¬a ∨ ¬b ∨ c ∨ ¬d ∨ ¬e) ∧ (¬a ∨ ¬b ∨ ¬c ∨ d ∨ ¬e) ∧ (¬a ∨ ¬b ∨ ¬c ∨ ¬d ∨ e)",
+   "shown": "(((a ⊕ b) ⊕ c) ⊕ d) ⊕ e"
+  },
+  {
+   "src": "p | q xor r",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "table": [
+    false,
+    true,
+    false,
+    true,
+    false,
+    true,
+    true,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    1,
+    2,
+    4,
+    6
+   ],
+   "maxterms": [
+    0,
+    3,
+    5,
+    7
+   ],
+   "dnf": "(¬p ∧ ¬q ∧ r) ∨ (¬p ∧ q ∧ ¬r) ∨ (p ∧ ¬q ∧ ¬r) ∨ (p ∧ q ∧ ¬r)",
+   "cnf": "(p ∨ q ∨ r) ∧ (p ∨ ¬q ∨ ¬r) ∧ (¬p ∨ q ∨ ¬r) ∧ (¬p ∨ ¬q ∨ ¬r)",
+   "shown": "(p ∨ q) ⊕ r"
+  },
+  {
+   "src": "p xor q | r",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "table": [
+    false,
+    false,
+    false,
+    true,
+    true,
+    true,
+    true,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "maxterms": [
+    0,
+    5,
+    6,
+    7
+   ],
+   "dnf": "(¬p ∧ ¬q ∧ r) ∨ (¬p ∧ q ∧ ¬r) ∨ (¬p ∧ q ∧ r) ∨ (p ∧ ¬q ∧ ¬r)",
+   "cnf": "(p ∨ q ∨ r) ∧ (¬p ∨ q ∨ ¬r) ∧ (¬p ∨ ¬q ∨ r) ∧ (¬p ∨ ¬q ∨ ¬r)",
+   "shown": "p ⊕ (q ∨ r)"
+  },
+  {
+   "src": "p ⊙ q xor r",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "table": [
+    false,
+    true,
+    false,
+    true,
+    true,
+    false,
+    false,
+    true
+   ],
+   "kind": "contingency",
+   "minterms": [
+    0,
+    3,
+    4,
+    6
+   ],
+   "maxterms": [
+    1,
+    2,
+    5,
+    7
+   ],
+   "dnf": "(¬p ∧ ¬q ∧ ¬r) ∨ (¬p ∧ q ∧ r) ∨ (p ∧ ¬q ∧ ¬r) ∨ (p ∧ q ∧ ¬r)",
+   "cnf": "(p ∨ q ∨ ¬r) ∧ (p ∨ ¬q ∨ r) ∧ (¬p ∨ q ∨ ¬r) ∧ (¬p ∨ ¬q ∨ ¬r)",
+   "shown": "(p ⊙ q) ⊕ r"
+  },
+  {
+   "src": "~p ⊙ q -> r",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "table": [
+    true,
+    true,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    1,
+    3,
+    5,
+    6,
+    7
+   ],
+   "maxterms": [
+    0,
+    2,
+    4
+   ],
+   "dnf": "(¬p ∧ ¬q ∧ r) ∨ (¬p ∧ q ∧ r) ∨ (p ∧ ¬q ∧ r) ∨ (p ∧ q ∧ ¬r) ∨ (p ∧ q ∧ r)",
+   "cnf": "(p ∨ q ∨ r) ∧ (p ∨ ¬q ∨ r) ∧ (¬p ∨ q ∨ r)",
+   "shown": "(¬p ⊙ q) → r"
+  },
+  {
+   "src": "p & q -> r",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "table": [
+    true,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "kind": "contingency",
+   "minterms": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    7
+   ],
+   "maxterms": [
+    6
+   ],
+   "dnf": "(¬p ∧ ¬q ∧ ¬r) ∨ (¬p ∧ ¬q ∧ r) ∨ (¬p ∧ q ∧ ¬r) ∨ (¬p ∧ q ∧ r) ∨ (p ∧ ¬q ∧ ¬r) ∨ (p ∧ ¬q ∧ r) ∨ (p ∧ q ∧ r)",
+   "cnf": "(¬p ∨ ¬q ∨ r)",
+   "shown": "(p ∧ q) → r"
+  },
+  {
+   "src": "p & (q -> r)",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "table": [
+    true,
+    false,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    4,
+    5,
+    7
+   ],
+   "maxterms": [
+    0,
+    1,
+    2,
+    3,
+    6
+   ],
+   "dnf": "(p ∧ ¬q ∧ ¬r) ∨ (p ∧ ¬q ∧ r) ∨ (p ∧ q ∧ r)",
+   "cnf": "(p ∨ q ∨ r) ∧ (p ∨ q ∨ ¬r) ∧ (p ∨ ¬q ∨ r) ∧ (p ∨ ¬q ∨ ¬r) ∧ (¬p ∨ ¬q ∨ r)",
+   "shown": "p ∧ (q → r)"
+  },
+  {
+   "src": "(p xor q xor r) & ~(p & q & r)",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "table": [
+    false,
+    false,
+    false,
+    true,
+    false,
+    true,
+    true,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    1,
+    2,
+    4
+   ],
+   "maxterms": [
+    0,
+    3,
+    5,
+    6,
+    7
+   ],
+   "dnf": "(¬p ∧ ¬q ∧ r) ∨ (¬p ∧ q ∧ ¬r) ∨ (p ∧ ¬q ∧ ¬r)",
+   "cnf": "(p ∨ q ∨ r) ∧ (p ∨ ¬q ∨ ¬r) ∧ (¬p ∨ q ∨ ¬r) ∧ (¬p ∨ ¬q ∨ r) ∧ (¬p ∨ ¬q ∨ ¬r)",
+   "shown": "((p ⊕ q) ⊕ r) ∧ ¬((p ∧ q) ∧ r)"
+  },
+  {
+   "src": "p <-> q <-> r <-> s",
+   "vars": [
+    "p",
+    "q",
+    "r",
+    "s"
+   ],
+   "table": [
+    true,
+    false,
+    false,
+    true,
+    false,
+    true,
+    true,
+    false,
+    false,
+    true,
+    true,
+    false,
+    true,
+    false,
+    false,
+    true
+   ],
+   "kind": "contingency",
+   "minterms": [
+    0,
+    3,
+    5,
+    6,
+    9,
+    10,
+    12,
+    15
+   ],
+   "maxterms": [
+    1,
+    2,
+    4,
+    7,
+    8,
+    11,
+    13,
+    14
+   ],
+   "dnf": "(¬p ∧ ¬q ∧ ¬r ∧ ¬s) ∨ (¬p ∧ ¬q ∧ r ∧ s) ∨ (¬p ∧ q ∧ ¬r ∧ s) ∨ (¬p ∧ q ∧ r ∧ ¬s) ∨ (p ∧ ¬q ∧ ¬r ∧ s) ∨ (p ∧ ¬q ∧ r ∧ ¬s) ∨ (p ∧ q ∧ ¬r ∧ ¬s) ∨ (p ∧ q ∧ r ∧ s)",
+   "cnf": "(p ∨ q ∨ r ∨ ¬s) ∧ (p ∨ q ∨ ¬r ∨ s) ∧ (p ∨ ¬q ∨ r ∨ s) ∧ (p ∨ ¬q ∨ ¬r ∨ ¬s) ∧ (¬p ∨ q ∨ r ∨ s) ∧ (¬p ∨ q ∨ ¬r ∨ ¬s) ∧ (¬p ∨ ¬q ∨ r ∨ ¬s) ∧ (¬p ∨ ¬q ∨ ¬r ∨ s)",
+   "shown": "((p ↔ q) ↔ r) ↔ s"
+  },
+  {
+   "src": "p \\to q",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "table": [
+    true,
+    false,
+    true,
+    true
+   ],
+   "kind": "contingency",
+   "minterms": [
+    0,
+    1,
+    3
+   ],
+   "maxterms": [
+    2
+   ],
+   "dnf": "(¬p ∧ ¬q) ∨ (¬p ∧ q) ∨ (p ∧ q)",
+   "cnf": "(¬p ∨ q)",
+   "shown": "p → q"
   }
  ],
  "pairs": [
@@ -664,6 +1315,63 @@
    "aImpliesB": true,
    "bImpliesA": true,
    "differ": []
+  },
+  {
+   "a": "T",
+   "b": "p | ~p",
+   "vars": [
+    "p"
+   ],
+   "equivalent": true,
+   "aImpliesB": true,
+   "bImpliesA": true,
+   "differ": []
+  },
+  {
+   "a": "p <-> q <-> r",
+   "b": "p xor q xor r",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "equivalent": true,
+   "aImpliesB": true,
+   "bImpliesA": true,
+   "differ": []
+  },
+  {
+   "a": "~p & ~q",
+   "b": "~(p & q)",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "equivalent": false,
+   "aImpliesB": true,
+   "bImpliesA": false,
+   "differ": [
+    1,
+    2
+   ]
+  },
+  {
+   "a": "p & q -> r",
+   "b": "p & (q -> r)",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "equivalent": false,
+   "aImpliesB": false,
+   "bImpliesA": true,
+   "differ": [
+    4,
+    5,
+    6,
+    7
+   ]
   }
  ],
  "args": [
@@ -768,6 +1476,51 @@
     "A",
     "B",
     "C"
+   ],
+   "critical": [
+    2
+   ],
+   "counter": [],
+   "valid": true
+  },
+  {
+   "premises": [
+    "p",
+    "~p"
+   ],
+   "conclusion": "q",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "critical": [],
+   "counter": [],
+   "valid": true
+  },
+  {
+   "premises": [
+    "T"
+   ],
+   "conclusion": "p | ~p",
+   "vars": [
+    "p"
+   ],
+   "critical": [
+    0,
+    1
+   ],
+   "counter": [],
+   "valid": true
+  },
+  {
+   "premises": [
+    "p xor q",
+    "q"
+   ],
+   "conclusion": "~p",
+   "vars": [
+    "p",
+    "q"
    ],
    "critical": [
     2

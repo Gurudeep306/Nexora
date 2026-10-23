@@ -1,7 +1,7 @@
 /*
   Truth Table Lab logic (Discrete Mathematics, Chapter 1). A TypeScript twin
   of content/gate-notes/_checks/dm/logiclib.py: the same grammar, precedence
-  and row order, tested against lab_vectors_ch1.json in tests/gate-notes.test.js.
+  and row order, tested against lab_vectors_ch1.json in tests/gate-notes-dm.test.js.
 
   Grammar (tightest first): ¬ (~ ! not)  ∧ (& and /\)  ∨ (| or \/)  ⊕ (xor)
   and the custom operator ⊙ (both at the ⊕ level)  → (-> => implies)  ↔ (<-> <=> iff ≡).
@@ -38,7 +38,7 @@ const PATTERNS: [Tok['t'], RegExp][] = [
 
 export function tokenize(src: string): Tok[] {
   let s = src.replace(/\$/g, '').replace(/\\(left|right|big|Big|bigl|bigr)(?![a-zA-Z])/g, '')
-  s = s.replace(/\\[,; ]/g, ' ')
+  s = s.replace(/\\[,; ]/g, ' ').replace(/\\(text|mathrm)\{/g, '{')
   const out: Tok[] = []
   while (s.length) {
     const ws = /^\s+/.exec(s)
@@ -171,7 +171,9 @@ export function show(e: Formula, top = true): string {
   return top ? s : `(${s})`
 }
 
-/** Sub-formulas that get their own column: every non-variable node, innermost first, no repeats. */
+/** Sub-formulas that get their own column: every non-variable node, innermost first, no repeats.
+    A formula that is a bare variable or constant gets one column for itself, so a table always
+    ends with the formula's own column. */
 export function columns(e: Formula): Formula[] {
   const out: Formula[] = []
   const seen = new Set<string>()
@@ -189,7 +191,13 @@ export function columns(e: Formula): Formula[] {
     }
   }
   walk(e)
+  if (!out.length) out.push(e)
   return out
+}
+
+/** Distinct variables of several formulas, sorted (the column order of a comparison or argument). */
+export function allVariables(fs: Formula[]): string[] {
+  return [...new Set(fs.flatMap(variables))].sort()
 }
 
 export function table(e: Formula, vars = variables(e), op: OpTable = DEFAULT_OP): boolean[] {
@@ -217,6 +225,7 @@ export function maxterms(col: boolean[], n: number): number[] {
 
 export function dnfText(ms: number[], vars: string[]): string {
   if (!ms.length) return 'F'
+  if (!vars.length) return 'T' // a constants-only formula that is true
   return ms
     .map((m) => '(' + vars.map((v, j) => ((m >> (vars.length - 1 - j)) & 1 ? v : '¬' + v)).join(' ∧ ') + ')')
     .join(' ∨ ')
@@ -224,13 +233,14 @@ export function dnfText(ms: number[], vars: string[]): string {
 
 export function cnfText(Ms: number[], vars: string[]): string {
   if (!Ms.length) return 'T'
+  if (!vars.length) return 'F' // a constants-only formula that is false
   return Ms.map((m) => '(' + vars.map((v, j) => ((m >> (vars.length - 1 - j)) & 1 ? '¬' + v : v)).join(' ∨ ') + ')').join(' ∧ ')
 }
 
 export type Comparison = { vars: string[]; a: boolean[]; b: boolean[]; equivalent: boolean; aImpliesB: boolean; bImpliesA: boolean; differ: number[] }
 
 export function compare(a: Formula, b: Formula, op: OpTable = DEFAULT_OP): Comparison {
-  const vars = [...new Set([...variables(a), ...variables(b)])].sort()
+  const vars = allVariables([a, b])
   const ta = table(a, vars, op)
   const tb = table(b, vars, op)
   const differ = ta.flatMap((x, i) => (x !== tb[i] ? [i] : []))
@@ -249,7 +259,7 @@ export type Argument = { vars: string[]; premises: boolean[][]; conclusion: bool
 
 /** Valid iff every critical row (all premises true) makes the conclusion true. */
 export function argument(premises: Formula[], conclusion: Formula, op: OpTable = DEFAULT_OP): Argument {
-  const vars = [...new Set([...premises.flatMap(variables), ...variables(conclusion)])].sort()
+  const vars = allVariables([...premises, conclusion])
   const ps = premises.map((p) => table(p, vars, op))
   const c = table(conclusion, vars, op)
   const critical = c.flatMap((_, i) => (ps.every((p) => p[i]) ? [i] : []))
@@ -264,6 +274,8 @@ export const PRESETS: { id: string; label: string; formula: string; op?: OpTable
   { id: 'exactly2', label: 'Exactly two of p, q, r (GATE 2014)', formula: '(~(p <-> q) & r) | (p & q & ~r)' },
   { id: 'gate2006', label: '∼(∼A ⊙ B) with ⊙ = T, T, F, T (GATE 2006)', formula: '~(~A ⊙ B)', op: [true, true, false, true] },
   { id: 'contra', label: 'Contrapositive check', formula: '(p -> q) <-> (~q -> ~p)' },
+  { id: 'parity', label: 'p ↔ q ↔ r (true on an even number of F)', formula: 'p <-> q <-> r' },
+  { id: 'exactly1', label: 'Exactly one of p, q, r', formula: '(p xor q xor r) & ~(p & q & r)' },
   { id: 'peirce', label: 'Peirce: ((p → q) → p) → p', formula: '((p -> q) -> p) -> p' },
 ]
 

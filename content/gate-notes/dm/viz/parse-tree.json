@@ -1,0 +1,373 @@
+{
+ "version": 1,
+ "title": "Reading a formula as a tree",
+ "width": 640,
+ "height": 416,
+ "narrow": {
+  "width": 360,
+  "height": 416
+ },
+ "intro": "Precedence turns a string of symbols into a tree. The connective applied last is the root; evaluation runs from the leaves up.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "The parse tree of ¬p ∨ q ∧ r → p ↔ q",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Parse tree of ¬p ∨ q ∧ r → p ↔ q",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "n0",
+   "type": "box",
+   "x": 265,
+   "y": 50,
+   "w": 110,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 50,
+    "w": 72,
+    "h": 40,
+    "size": 13
+   },
+   "label": "↔"
+  },
+  {
+   "id": "n1",
+   "type": "box",
+   "x": 140,
+   "y": 120,
+   "w": 110,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 75,
+    "y": 120,
+    "w": 72,
+    "h": 40,
+    "size": 13
+   },
+   "label": "→"
+  },
+  {
+   "id": "n2",
+   "type": "box",
+   "x": 420,
+   "y": 120,
+   "w": 110,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 230,
+    "y": 120,
+    "w": 72,
+    "h": 40,
+    "size": 13
+   },
+   "label": "q"
+  },
+  {
+   "id": "n3",
+   "type": "box",
+   "x": 60,
+   "y": 190,
+   "w": 110,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 20,
+    "y": 190,
+    "w": 72,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∨"
+  },
+  {
+   "id": "n4",
+   "type": "box",
+   "x": 240,
+   "y": 190,
+   "w": 110,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 140,
+    "y": 190,
+    "w": 72,
+    "h": 40,
+    "size": 13
+   },
+   "label": "p"
+  },
+  {
+   "id": "n5",
+   "type": "box",
+   "x": 10,
+   "y": 260,
+   "w": 110,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 5,
+    "y": 260,
+    "w": 72,
+    "h": 40,
+    "size": 13
+   },
+   "label": "¬p"
+  },
+  {
+   "id": "n6",
+   "type": "box",
+   "x": 140,
+   "y": 260,
+   "w": 110,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 90,
+    "y": 260,
+    "w": 72,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∧"
+  },
+  {
+   "id": "n7",
+   "type": "box",
+   "x": 80,
+   "y": 330,
+   "w": 110,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 55,
+    "y": 330,
+    "w": 72,
+    "h": 40,
+    "size": 13
+   },
+   "label": "q"
+  },
+  {
+   "id": "n8",
+   "type": "box",
+   "x": 220,
+   "y": 330,
+   "w": 110,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 150,
+    "y": 330,
+    "w": 72,
+    "h": 40,
+    "size": 13
+   },
+   "label": "r"
+  },
+  {
+   "id": "e0",
+   "type": "arrow",
+   "from": "n0",
+   "to": "n1"
+  },
+  {
+   "id": "e1",
+   "type": "arrow",
+   "from": "n0",
+   "to": "n2"
+  },
+  {
+   "id": "e2",
+   "type": "arrow",
+   "from": "n1",
+   "to": "n3"
+  },
+  {
+   "id": "e3",
+   "type": "arrow",
+   "from": "n1",
+   "to": "n4"
+  },
+  {
+   "id": "e4",
+   "type": "arrow",
+   "from": "n3",
+   "to": "n5"
+  },
+  {
+   "id": "e5",
+   "type": "arrow",
+   "from": "n3",
+   "to": "n6"
+  },
+  {
+   "id": "e6",
+   "type": "arrow",
+   "from": "n6",
+   "to": "n7"
+  },
+  {
+   "id": "e7",
+   "type": "arrow",
+   "from": "n6",
+   "to": "n8"
+  },
+  {
+   "id": "foot",
+   "type": "text",
+   "x": 320,
+   "y": 400,
+   "text": "the root is the main connective",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 400,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Precedence decides the shape: ¬ binds first, then ∧, then ∨, then →, and ↔ is applied last. So ↔ is the root (the main connective): the formula is a biconditional.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "foot",
+     "set": {
+      "text": "main connective: ↔",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Evaluate at p = F, q = T, r = F. Start at the leaves: write each variable's value.",
+   "patches": [
+    {
+     "id": "n2",
+     "set": {
+      "label": "q = T"
+     }
+    },
+    {
+     "id": "n4",
+     "set": {
+      "label": "p = F"
+     }
+    },
+    {
+     "id": "n7",
+     "set": {
+      "label": "q = T"
+     }
+    },
+    {
+     "id": "n8",
+     "set": {
+      "label": "r = F"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Lowest operators next: ¬p = T, and q ∧ r = T ∧ F = F.",
+   "patches": [
+    {
+     "id": "n5",
+     "set": {
+      "label": "¬p = T",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "n6",
+     "set": {
+      "label": "∧ = F",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "One level up: ¬p ∨ (q ∧ r) = T ∨ F = T.",
+   "patches": [
+    {
+     "id": "n3",
+     "set": {
+      "label": "∨ = T",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The implication has hypothesis T and conclusion p = F: T → F = F, its one false row.",
+   "patches": [
+    {
+     "id": "n1",
+     "set": {
+      "label": "→ = F",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The root compares its two sides: F ↔ T = F, because they disagree. A truth table is this tree evaluated once per row.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "label": "↔ = F",
+      "tone": "danger",
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "foot",
+     "set": {
+      "text": "value at p = F, q = T, r = F: F",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

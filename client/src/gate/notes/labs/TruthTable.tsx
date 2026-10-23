@@ -12,11 +12,12 @@
   All logic is in ./logicLogic.ts (tested against the Python checks in
   content/gate-notes/_checks/dm/logiclib.py).
 */
-import { useId, useMemo, useState } from 'react'
+import { useId, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { cn } from '@/lib/utils'
 import {
   DEFAULT_OP,
   MAX_VARS,
+  allVariables,
   PRESETS,
   argument,
   classify,
@@ -41,8 +42,25 @@ const TABS: { id: TruthTab; label: string }[] = [
   { id: 'table', label: 'Truth table' },
   { id: 'compare', label: 'Compare / argument' },
 ]
-const SYMBOLS = ['¬', '∧', '∨', '→', '↔', '⊕', '⊙', '(', ')']
+const SYMBOLS: [string, string][] = [
+  ['¬', 'not'],
+  ['∧', 'and'],
+  ['∨', 'or'],
+  ['→', 'implies'],
+  ['↔', 'if and only if'],
+  ['⊕', 'exclusive or'],
+  ['⊙', 'custom operator'],
+  ['(', 'open bracket'],
+  [')', 'close bracket'],
+]
 const TF = (b: boolean) => (b ? 'T' : 'F')
+
+/** The joint variables of several formulas, or an error when a table over them would be too big. */
+function tooMany(fs: (Formula | null)[]): string | null {
+  const ok = fs.filter((f): f is Formula => f !== null)
+  const n = allVariables(ok).length
+  return n > MAX_VARS ? `Together these use ${n} variables; the lab shows at most ${MAX_VARS} (${2 ** MAX_VARS} rows)` : null
+}
 
 function tryParse(src: string): { f: Formula | null; err: string | null } {
   try {
@@ -58,6 +76,16 @@ export default function TruthTable({ tab: initial = 'table', title }: { tab?: st
   const [tab, setTab] = useState<TruthTab>(initial === 'compare' ? 'compare' : 'table')
   const [op, setOp] = useState<OpTable>(DEFAULT_OP)
   const uid = useId()
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
+  // Arrow keys move between the tabs (WAI-ARIA tabs pattern); only the selected tab is in the tab order.
+  const onTabKey = (e: KeyboardEvent<HTMLButtonElement>, i: number) => {
+    const j = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : e.key === 'Home' ? 0 : e.key === 'End' ? TABS.length - 1 : null
+    if (j === null) return
+    e.preventDefault()
+    const k = (j + TABS.length) % TABS.length
+    setTab(TABS[k]!.id)
+    tabRefs.current[k]?.focus()
+  }
   return (
     <div className="lab">
       <div className="lab-head">
@@ -65,13 +93,18 @@ export default function TruthTable({ tab: initial = 'table', title }: { tab?: st
         <span className="lab-title">{title || 'Truth Table Lab'}</span>
       </div>
       <div className="lab-tabs" role="tablist" aria-label="Truth Table Lab tools">
-        {TABS.map((t) => (
+        {TABS.map((t, i) => (
           <button
             key={t.id}
+            ref={(el) => {
+              tabRefs.current[i] = el
+            }}
             type="button"
             role="tab"
             id={`${uid}-tab-${t.id}`}
             aria-selected={tab === t.id}
+            tabIndex={tab === t.id ? 0 : -1}
+            onKeyDown={(e) => onTabKey(e, i)}
             aria-controls={`${uid}-panel`}
             className={cn('lab-tab', tab === t.id && 'is-on')}
             onClick={() => setTab(t.id)}
@@ -89,20 +122,29 @@ export default function TruthTable({ tab: initial = 'table', title }: { tab?: st
 
 /* ── Shared pieces ───────────────────────────────────────────────────── */
 
-function FormulaInput({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
+function FormulaInput({ value, onChange, label, invalid }: { value: string; onChange: (v: string) => void; label: string; invalid?: boolean }) {
   const id = useId()
   return (
     <div className="lab-row">
       <label htmlFor={id}>{label}</label>
-      <input id={id} className="lab-input tt-input" value={value} spellCheck={false} autoComplete="off" onChange={(e) => onChange(e.target.value)} />
-      <span className="lab-palette" aria-label="Insert a symbol">
-        {SYMBOLS.map((s) => (
-          <button key={s} type="button" className="lab-row-btn" onClick={() => onChange(value + (s.length === 1 && '()'.includes(s) ? s : ` ${s} `))}>
+      <input id={id} className="lab-input tt-input" value={value} spellCheck={false} autoComplete="off" aria-invalid={invalid || undefined} onChange={(e) => onChange(e.target.value)} />
+      <span className="lab-palette" role="group" aria-label={`Insert a symbol into ${label}`}>
+        {SYMBOLS.map(([s, name]) => (
+          <button key={s} type="button" className="lab-row-btn" aria-label={`Insert ${name}`} title={name} onClick={() => onChange(value + ('()'.includes(s) ? s : ` ${s} `))}>
             {s}
           </button>
         ))}
       </span>
     </div>
+  )
+}
+
+/** Error text, announced to screen readers as soon as it appears. */
+function Warn({ msg }: { msg: string | null | undefined }) {
+  return (
+    <p className="lab-warn" role="alert">
+      {msg || ''}
+    </p>
   )
 }
 
@@ -168,16 +210,22 @@ function TableTool({ op, setOp }: { op: OpTable; setOp: (o: OpTable) => void }) 
           ))}
         </select>
       </div>
-      <FormulaInput value={src} onChange={setSrc} label="Formula" />
+      <FormulaInput value={src} onChange={setSrc} label="Formula" invalid={!!err} />
       <OpEditor op={op} setOp={setOp} />
-      {err && <p className="lab-warn">{err}</p>}
+      {err && <Warn msg={err} />}
+      <p className={cn('lab-result', data && (data.kind === 'contradiction' ? 'is-bad' : 'is-good'))} aria-live="polite">
+        {data && (
+          <>
+            {show(f!)} is a <strong>{data.kind}</strong> ({data.result.filter(Boolean).length} of {data.rs.length} row{data.rs.length === 1 ? '' : 's'} true)
+            {data.vars.length === 0 && ' (no variables: a formula of constants has a single row)'}
+          </>
+        )}
+      </p>
       {data && (
         <>
-          <p className={cn('lab-result', data.kind === 'contradiction' ? 'is-bad' : 'is-good')} aria-live="polite">
-            {show(f!)} is a <strong>{data.kind}</strong> ({data.result.filter(Boolean).length} of {data.rs.length} rows true)
-          </p>
           <div className="lab-tt-wrap">
             <table className="lab-tt">
+              <caption className="sr-only">Truth table of {show(f!)}: one row per assignment, one column per sub-formula, the last column is the whole formula</caption>
               <thead>
                 <tr>
                   {data.vars.map((v) => (
@@ -234,6 +282,7 @@ function CompareTool({ op, setOp }: { op: OpTable; setOp: (o: OpTable) => void }
   const fb = useMemo(() => tryParse(b), [b])
   const ps = useMemo(() => prem.split(',').map((s) => s.trim()).filter(Boolean).map(tryParse), [prem])
   const fc = useMemo(() => tryParse(concl), [concl])
+  const argErr = ps.find((p) => p.err)?.err || fc.err || (ps.length ? tooMany([...ps.map((p) => p.f), fc.f]) : 'Type at least one premise')
   return (
     <>
       <div className="lab-row" role="group" aria-label="Mode">
@@ -247,17 +296,17 @@ function CompareTool({ op, setOp }: { op: OpTable; setOp: (o: OpTable) => void }
       <OpEditor op={op} setOp={setOp} />
       {mode === 'equiv' ? (
         <>
-          <FormulaInput value={a} onChange={setA} label="A" />
-          <FormulaInput value={b} onChange={setB} label="B" />
-          {(fa.err || fb.err) && <p className="lab-warn">{fa.err || fb.err}</p>}
-          {fa.f && fb.f && <EquivView a={fa.f} b={fb.f} op={op} />}
+          <FormulaInput value={a} onChange={setA} label="A" invalid={!!fa.err} />
+          <FormulaInput value={b} onChange={setB} label="B" invalid={!!fb.err} />
+          {(fa.err || fb.err || tooMany([fa.f, fb.f])) && <Warn msg={fa.err || fb.err || tooMany([fa.f, fb.f])} />}
+          {fa.f && fb.f && !tooMany([fa.f, fb.f]) && <EquivView a={fa.f} b={fb.f} op={op} />}
         </>
       ) : (
         <>
-          <FormulaInput value={prem} onChange={setPrem} label="Premises (comma-separated)" />
-          <FormulaInput value={concl} onChange={setConcl} label="Conclusion" />
-          {(ps.find((p) => p.err)?.err || fc.err) && <p className="lab-warn">{ps.find((p) => p.err)?.err || fc.err}</p>}
-          {fc.f && ps.length > 0 && ps.every((p) => p.f) && <ArgView premises={ps.map((p) => p.f!)} conclusion={fc.f} op={op} />}
+          <FormulaInput value={prem} onChange={setPrem} label="Premises (comma-separated)" invalid={ps.some((p) => p.err)} />
+          <FormulaInput value={concl} onChange={setConcl} label="Conclusion" invalid={!!fc.err} />
+          {argErr && <Warn msg={argErr} />}
+          {!argErr && fc.f && ps.length > 0 && ps.every((p) => p.f) && <ArgView premises={ps.map((p) => p.f!)} conclusion={fc.f} op={op} />}
         </>
       )}
     </>
@@ -276,13 +325,17 @@ function EquivView({ a, b, op }: { a: Formula; b: Formula; op: OpTable }) {
       </p>
       <div className="lab-tt-wrap">
         <table className="lab-tt">
+          <caption className="sr-only">Columns of A and B on every assignment; the last column marks the rows where they differ</caption>
           <thead>
             <tr>
               {c.vars.map((v) => (
-                <th key={v}>{v}</th>
+                <th key={v} scope="col">
+                  {v}
+                </th>
               ))}
-              <th>A</th>
-              <th>B</th>
+              <th scope="col">A</th>
+              <th scope="col">B</th>
+              <th scope="col">A ≠ B?</th>
             </tr>
           </thead>
           <tbody>
@@ -293,12 +346,13 @@ function EquivView({ a, b, op }: { a: Formula; b: Formula; op: OpTable }) {
                 ))}
                 <td className={cn('lab-f', c.a[i] && 'is-one')}>{TF(c.a[i]!)}</td>
                 <td className={cn('lab-f', c.b[i] && 'is-one')}>{TF(c.b[i]!)}</td>
+                <td>{c.differ.includes(i) ? 'differ' : ''}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <p className="lab-hint">Highlighted rows are where A and B differ.</p>
+      <p className="lab-hint">Highlighted rows (marked “differ”) are where A and B take different values.</p>
     </>
   )
 }
@@ -309,21 +363,29 @@ function ArgView({ premises, conclusion, op }: { premises: Formula[]; conclusion
   return (
     <>
       <p className={cn('lab-result', arg.valid ? 'is-good' : 'is-bad')} aria-live="polite">
-        {arg.valid
-          ? `Valid: the conclusion is true on all ${arg.critical.length} critical row${arg.critical.length === 1 ? '' : 's'}`
-          : `Invalid: ${arg.counter.length} counterexample row${arg.counter.length > 1 ? 's' : ''} (premises true, conclusion false)`}
+        {!arg.critical.length
+          ? 'Valid, but only vacuously: the premises are never all true together (they are inconsistent), so no row can be a counterexample'
+          : arg.valid
+            ? `Valid: the conclusion is true on all ${arg.critical.length} critical row${arg.critical.length === 1 ? '' : 's'}`
+            : `Invalid: ${arg.counter.length} counterexample row${arg.counter.length > 1 ? 's' : ''} (premises true, conclusion false)`}
       </p>
       <div className="lab-tt-wrap">
         <table className="lab-tt">
+          <caption className="sr-only">Premises and conclusion on every assignment; the last column marks critical rows and counterexamples</caption>
           <thead>
             <tr>
               {arg.vars.map((v) => (
-                <th key={v}>{v}</th>
+                <th key={v} scope="col">
+                  {v}
+                </th>
               ))}
               {premises.map((p, j) => (
-                <th key={j}>{show(p)}</th>
+                <th key={j} scope="col">
+                  {show(p)}
+                </th>
               ))}
-              <th>⊢ {show(conclusion)}</th>
+              <th scope="col">⊢ {show(conclusion)}</th>
+              <th scope="col">Row</th>
             </tr>
           </thead>
           <tbody>
@@ -338,12 +400,13 @@ function ArgView({ premises, conclusion, op }: { premises: Formula[]; conclusion
                   </td>
                 ))}
                 <td className={cn('lab-f', arg.conclusion[i] && 'is-one')}>{TF(arg.conclusion[i]!)}</td>
+                <td>{arg.counter.includes(i) ? 'counterexample' : arg.critical.includes(i) ? 'critical' : ''}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <p className="lab-hint">Critical rows (all premises true) are outlined; a highlighted row is a counterexample.</p>
+      <p className="lab-hint">Critical rows (all premises true) are outlined and marked “critical”; a highlighted row marked “counterexample” has the premises true and the conclusion false.</p>
     </>
   )
 }

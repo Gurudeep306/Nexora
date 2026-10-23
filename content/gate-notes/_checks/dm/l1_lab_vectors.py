@@ -3,7 +3,7 @@
 The lab's logic lives in client/src/gate/notes/labs/logicLogic.ts. This check computes, with logiclib,
 what that module claims (variables, truth-table columns, classification, minterms/maxterms, equivalence
 and implication between formulas, argument validity with critical and counterexample rows), writes
-lab_vectors_ch1.json, and fails if the committed file is stale; tests/gate-notes.test.js checks the
+lab_vectors_ch1.json, and fails if the committed file is stale; tests/gate-notes-dm.test.js checks the
 TypeScript against the same file.
 
     python3 content/gate-notes/_checks/dm/l1_lab_vectors.py --write
@@ -22,19 +22,30 @@ FORMULAS = [
     "~(~A ⊙ B)", "~A ⊙ B", "(p -> q) <-> (~q -> ~p)", "((p -> q) -> p) -> p", "p & ~p", "p xor q xor r",
     "~p | q -> r", "a & b | c & d", "(a | b) & (c | d) -> e", "T -> F", "p <-> q <-> r",
     "\\neg p \\vee (p \\Rightarrow q)", "(P \\wedge Q) \\rightarrow R",
+    # Edge cases: constants only (one row, no variables), a bare variable, five variables (32 rows),
+    # precedence between ∨, ⊕, ⊙ and →, and the parity facts taught in the lesson.
+    "T", "F", "T & ~F", "~T | F", "T -> F <-> F", "p", "~~p",
+    "(a -> b) & (c | d) <-> e", "a xor b xor c xor d xor e", "p | q xor r", "p xor q | r", "p ⊙ q xor r", "~p ⊙ q -> r",
+    "p & q -> r", "p & (q -> r)", "(p xor q xor r) & ~(p & q & r)", "p <-> q <-> r <-> s", "p \\to q",
 ]
 PAIRS = [("p -> q", "~q -> ~p"), ("p -> q", "q -> p"), ("p & (p -> q)", "q"), ("p", "p | q"), ("p <-> q", "p -> ~q"),
-         ("~(p & q)", "~p | ~q"), ("p & (q -> r)", "(p & q) -> (p & r)"), ("x xor y", "~(x <-> y)")]
+         ("~(p & q)", "~p | ~q"), ("p & (q -> r)", "(p & q) -> (p & r)"), ("x xor y", "~(x <-> y)"),
+         ("T", "p | ~p"), ("p <-> q <-> r", "p xor q xor r"), ("~p & ~q", "~(p & q)"), ("p & q -> r", "p & (q -> r)")]
 ARGS = [(["p -> q", "~q"], "~p"), (["p -> q", "q"], "p"), (["p | q", "~p"], "q"), (["p -> q", "q -> r"], "p -> r"),
-        (["p -> q", "~p"], "~q"), (["A", "A -> (B | C)", "B -> ~A"], "C")]
+        (["p -> q", "~p"], "~q"), (["A", "A -> (B | C)", "B -> ~A"], "C"),
+        (["p", "~p"], "q"), (["T"], "p | ~p"), (["p xor q", "q"], "~p")]
 
 
 def case(src):
     e = L.parse(src, {"⊙": OP})
     vs = sorted(L.variables(e))
     col = [L.ev(e, r) for r in L.rows(vs)]
-    return {"src": src, "vars": vs, "table": col, "kind": L.classify(e, vs),
-            "minterms": L.minterms(e, vs), "maxterms": L.maxterms(e, vs)}
+    shown = L.to_str(e)
+    if e[0] not in ("var", "const", "not"):
+        shown = shown[1:-1]  # the lab drops the outermost brackets
+    ms, Ms = L.minterms(e, vs), L.maxterms(e, vs)
+    return {"src": src, "vars": vs, "table": col, "kind": L.classify(e, vs), "minterms": ms, "maxterms": Ms,
+            "dnf": L.dnf(ms, vs), "cnf": L.cnf(Ms, vs), "shown": shown}
 
 
 def pair(a, b):
