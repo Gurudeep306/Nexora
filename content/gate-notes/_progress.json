@@ -166,13 +166,27 @@
       "stages": {
         "digests": "done",
         "outline": "review",
-        "lessons": "pending",
-        "viz": "pending",
-        "questions": "pending",
-        "review": "pending",
+        "lessons": "ch1 written",
+        "viz": "ch1 done",
+        "questions": "ch1 done",
+        "review": "ch1 reviewed",
         "wrapup": "pending"
       },
-      "chapters": []
+      "chapters": [
+        {
+          "id": "01-propositional-logic",
+          "title": "Propositional logic",
+          "lessons": 3,
+          "pyqs": 43,
+          "status": "reviewed",
+          "review": "2026-10-23: examiner review by two independent reviewers: 0 errors in keys (43/43 re-derived), 1 error (radar marks), 5 misleading items, 12 style and 8 minor findings, all fixed; lesson 1 deepened to 8.2k words; Truth Table Lab fixes.",
+          "lessons_status": {
+            "propositions-connectives": "published+reviewed",
+            "equivalence-normal-forms": "published+reviewed",
+            "inference-resolution": "published+reviewed"
+          }
+        }
+      ]
     },
     "pds": {
       "name": "Programming & Data Structures",
