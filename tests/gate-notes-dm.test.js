@@ -134,3 +134,33 @@ test('hasse lab: covers, levels, bounds, lattice tests, complements and linear e
   for (const p of O.PRESETS) O.fromPreset(p.src);
   assert.throws(() => O.parsePairs('a<b, b<a'));
 });
+
+test('group lab: tables, axiom witnesses, kinds, orders, generators, subgroups, cosets and powers match grouplib', async () => {
+  const G = await load('groupLogic.ts');
+  const vec = vectors(5);
+  for (const c of vec.presets) {
+    const S = G.PRESETS.find((p) => p.id === c.id).make();
+    assert.deepEqual(S.labels, c.labels, `${c.id}: labels`);
+    assert.deepEqual(S.t, c.table, `${c.id}: table`);
+    assert.deepEqual(G.closureFailure(S), c.closure, `${c.id}: closure`);
+    assert.deepEqual(G.associativeFailure(S), c.assoc, `${c.id}: associativity`);
+    assert.deepEqual(G.commutativeFailure(S), c.comm, `${c.id}: commutativity`);
+    assert.equal(G.kind(S), c.kind, `${c.id}: kind`);
+    if ('identity' in c) {
+      assert.equal(G.identity(S), c.identity);
+      assert.deepEqual(S.labels.map((_, a) => G.inverse(S, a)), c.inverses, `${c.id}: inverses`);
+    }
+    if (c.orders) {
+      assert.deepEqual(S.labels.map((_, a) => G.order(S, a)), c.orders, `${c.id}: orders`);
+      assert.deepEqual(G.generators(S), c.generators, `${c.id}: generators`);
+      const subs = G.subgroups(S);
+      assert.deepEqual(subs, c.subgroups, `${c.id}: subgroups`);
+      subs.forEach((h, i) => assert.deepEqual(G.leftCosets(S, h), c.cosets[i], `${c.id}: cosets of subgroup ${i}`));
+    }
+  }
+  for (const p of vec.pow) assert.deepEqual(G.powMod(p.a, p.k, p.n), { value: p.value, steps: p.steps }, `${p.a}^${p.k} mod ${p.n}`);
+  for (const o of vec.orders) assert.equal(G.orderMod(o.a, o.n), o.order);
+  const T = G.parseTable('e a\ne a\na e');
+  assert.equal(G.kind(T), 'abelian group');
+  assert.throws(() => G.parseTable('e a\na'));
+});

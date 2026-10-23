@@ -3341,3 +3341,21 @@ h4.notes-h {
 .lab .hasse-node.is-lower .rel-node {
   fill: color-mix(in oklab, var(--color-state-warning) 25%, var(--color-bg-surface));
 }
+.lab .grp-text {
+  width: min(24em, 100%);
+  min-height: 7em;
+  padding: 6px 8px;
+}
+.lab .grp-num {
+  width: 6em;
+}
+.lab-tt td.grp-out {
+  color: var(--color-state-error);
+  font-weight: 700;
+}
+.lab .grp-c0 { background: color-mix(in oklab, var(--color-accent-brand) 16%, transparent); }
+.lab .grp-c1 { background: color-mix(in oklab, var(--color-state-success) 16%, transparent); }
+.lab .grp-c2 { background: color-mix(in oklab, var(--color-state-warning) 18%, transparent); }
+.lab .grp-c3 { background: color-mix(in oklab, var(--color-state-info, #3b82f6) 16%, transparent); }
+.lab .grp-c4 { background: color-mix(in oklab, var(--color-state-error) 12%, transparent); }
+.lab .grp-c5 { background: color-mix(in oklab, var(--color-text-primary) 10%, transparent); }
