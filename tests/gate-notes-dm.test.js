@@ -164,3 +164,16 @@ test('group lab: tables, axiom witnesses, kinds, orders, generators, subgroups, 
   assert.equal(G.kind(T), 'abelian group');
   assert.throws(() => G.parseTable('e a\na'));
 });
+
+test('counting lab: the twelvefold way, inclusion–exclusion terms, derangements, onto maps and Catalan numbers match countlib', async () => {
+  const K = await load('countLogic.ts');
+  const vec = vectors(6);
+  for (const [n, k, bd, xd, r, v] of vec.twelve) {
+    assert.equal(K.twelvefold(n, k, bd, xd, r), v, `${n} balls, ${k} boxes, ${bd}/${xd}/${r}`);
+    if (k ** n <= 5000) assert.equal(K.twelvefoldBrute(n, k, bd, xd, r), v, `brute ${n}, ${k}, ${bd}/${xd}/${r}`);
+  }
+  for (const p of vec.pie) assert.deepEqual(K.divisibilityPie(p.N, p.ds), { terms: p.terms, total: p.total, none: p.none }, `PIE ${p.N} ${p.ds}`);
+  vec.derangements.forEach((d, n) => assert.equal(K.derangements(n), d, `D${n}`));
+  for (const [m, n, v] of vec.onto) assert.equal(K.onto(m, n), v, `onto ${m}→${n}`);
+  vec.catalan.forEach((c, n) => assert.equal(K.catalan(n), c, `C${n}`));
+});
