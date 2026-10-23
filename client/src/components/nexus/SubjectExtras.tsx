@@ -4,6 +4,7 @@ import { CalendarDays, Target } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { fmtMinutes, studyPlan, type PlanNode } from './insights'
 import { subjectHref } from './course'
+import { prefetchSubjectRoute } from '@/routes'
 import type { NexusWebStructure } from './types'
 
 /*
@@ -71,7 +72,7 @@ export function SubjectMiniMap({ structure, subject }: { structure: NexusWebStru
           const isMe = c.id === subject
           const linked = needs.has(c.id) || unlocks.has(c.id)
           return (
-            <g key={c.id} className={cn(!isMe && 'cursor-pointer')} onClick={() => !isMe && navigate(subjectHref(c))}>
+            <g key={c.id} className={cn(!isMe && 'cursor-pointer')} onClick={() => !isMe && navigate(subjectHref(c))} onMouseEnter={() => !isMe && prefetchSubjectRoute(subjectHref(c))}>
               <title>{c.name}</title>
               <circle cx={p.x} cy={p.y} r={isMe ? 6.5 : linked ? 4 : 2.4} fill={colorOf(c)} opacity={isMe || linked ? 1 : 0.45} stroke={isMe ? 'var(--color-bg-app)' : 'none'} strokeWidth={2} />
               {isMe && <circle cx={p.x} cy={p.y} r={10} fill="none" stroke={colorOf(c)} strokeWidth={1.2} />}

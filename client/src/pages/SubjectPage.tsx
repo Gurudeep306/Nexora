@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { ArrowRight, BookOpen, CalendarCheck, ChevronRight, Clock, Lock, PenLine, RefreshCw, RotateCcw, Telescope } from 'lucide-react'
 import { Button, Card, CardContent, ErrorState, LoadingBlock, RankGlyph, Tabs } from '@/components/ui'
-import { useApi } from '@/hooks/useApi'
+import { prefetchApi, useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 import { useAgentPageContext } from '@/context/AgentContext'
@@ -14,8 +14,8 @@ import { WeeklyPool } from '@/components/nexus/WeeklyPool'
 import { TitleTrack } from '@/components/nexus/TitleTrack'
 import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
 import { useReviewList } from '@/components/nexus/NodeContent'
-import { useNotesSubjects } from '@/gate/notes/api'
-import { CourseLesson } from '@/components/nexus/CourseLesson'
+import { notesApi, useNotesSubjects } from '@/gate/notes/api'
+import { loadProgress, loadTree, progressNow, quickNexus, treeNow } from '@/components/nexus/subjectTree'
 import { NexusPalette } from '@/components/nexus/NexusPalette'
 import { GoalMenu, useGoal, usePaletteHotkey } from '@/components/nexus/extras'
 import { HistorySpark, StudyPlanView, SubjectMiniMap } from '@/components/nexus/SubjectExtras'
@@ -34,6 +34,10 @@ import type { CrossLink, NexusNode, NexusStatsResponse, NexusWebStructure } from
  * into the node, the tree folds into a path rail and the lesson fills the
  * page (/learn/<id>/<node>, /learn/dsa/skill/<node>).
  */
+
+/* The lesson (notes reader, KaTeX, Markdown) is its own chunk: the tree never waits for it. */
+const loadLesson = () => import('@/components/nexus/CourseLesson')
+const CourseLesson = lazy(() => loadLesson().then((m) => ({ default: m.CourseLesson })))
 
 /** The last bloom: which node opened, from where (to zoom back out to it). */
 const bloom: { subject: string | null; node: string | null; origin: string } = { subject: null, node: null, origin: '50% 30%' }
@@ -71,14 +75,46 @@ export default function SubjectPage() {
     return (id: string) => of.get(id)
   }, [structure])
 
+  // The tree paints at once from the device (memory, the cached structure,
+  // IndexedDB), the reader's numbers fill the rings from a tiny request, and
+  // the full response (lesson metrics, review memory, cross links) follows.
+  const [treeTick, setTreeTick] = useState(0)
+  const tree = useMemo(() => (subject ? treeNow(subject) : null), [subject, treeTick]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!subject) return
+    let live = true
+    loadTree(subject).then((t) => live && t && setTreeTick((x) => x + 1))
+    return () => {
+      live = false
+    }
+  }, [subject])
+  const progApi = useApi(() => loadProgress(subject), [subject], { cacheKey: `nexus:progress:${subject}`, skip: !subject })
+  const prog = progApi.data ?? (subject ? progressNow(subject, username) : null)
+  const quick = useMemo(() => (tree && tree.subject.id === subject ? quickNexus(tree, prog) : null), [tree, prog, subject])
   const { data: raw, loading, error, refetch } = useApi(() => fetchNexusPath(subject), [subject], { cacheKey: nexusPathKey(subject), skip: !subject })
   // Only this subject's own skills and links: other subjects are "Needs · X".
-  const nexus = useMemo(() => {
+  const full = useMemo(() => {
     if (!raw || raw.subject?.id !== subject) return null
     const own = raw.nodes.filter((n) => !n.subject || n.subject === subject)
     const ids = new Set(own.map((n) => n.id))
     return { ...raw, nodes: own.map((n) => ({ ...n, requires: n.requires.filter((r) => ids.has(r)) })) }
   }, [raw, subject])
+  const nexus = full ?? quick
+  // About to open a node: its content, its GATE notes lesson and the lesson chunk.
+  const prefetchLesson = useCallback(
+    (id: string) => {
+      void loadLesson().catch(() => {})
+      prefetchApi(`nexus:content:${subject}:${id}`, () => api.get(`/api/nexus/content/${subject}/${id}`))
+      const ls = full?.nodes.find((n) => n.id === id)?.metric?.lessons
+      if (ls?.ids[0]) prefetchApi(`gate:notes:lesson:${ls.subject}/${ls.ids[0]}`, () => notesApi.lesson(ls.subject, ls.ids[0]))
+    },
+    [subject, full],
+  )
+  // Warm the lesson chunk once the tree is up.
+  useEffect(() => {
+    const idle = (cb: () => void) => ('requestIdleCallback' in window ? window.requestIdleCallback(cb, { timeout: 2500 }) : setTimeout(cb, 800))
+    idle(() => void loadLesson().catch(() => {}))
+  }, [])
   const isDsa = (nexus?.subject?.engine ?? (subject === 'dsa' ? 'dsa' : null)) === 'dsa'
   // Insights (time, weightage, peers, your notes, history) and the exam date.
   const insightsApi = useApi<{ ok: boolean; nodes: Record<string, NodeInsight>; zones: Record<string, number>; remainingMin: number; notes: Record<string, { note: string; bookmarked: boolean }>; history: { day: string; p: number }[] }>(
@@ -190,6 +226,7 @@ export default function SubjectPage() {
 
   const refreshAll = useCallback(() => {
     refetch()
+    progApi.refetch()
     insightsApi.refetch()
     loadWeb(true)
       .then(({ structure: s }) => setStructure(s))
@@ -257,7 +294,7 @@ export default function SubjectPage() {
   const lessonView = selectedNode ? (
     <motion.div
       key={`lesson:${selectedNode.id}`}
-      initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.97, y: 10 }}
+      initial={reduce ? false : { opacity: 0.6, scale: 0.985, y: 6 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.985 }}
       transition={{ type: 'spring', stiffness: 240, damping: 30 }}
@@ -278,6 +315,7 @@ export default function SubjectPage() {
         <ChevronRight className="size-3" aria-hidden="true" />
         <span>{selZone?.name ?? `Zone ${selectedNode.zone}`}</span>
       </nav>
+      <Suspense fallback={<div className="nx-skel h-[60vh] rounded-2xl" aria-busy="true" />}>
       <CourseLesson
         key={selectedNode.id}
         subject={subject}
@@ -300,6 +338,7 @@ export default function SubjectPage() {
         hueOf={hueOf}
         goTo={(id) => setSelectedId(id)}
       />
+      </Suspense>
     </motion.div>
   ) : null
 
@@ -311,7 +350,7 @@ export default function SubjectPage() {
       key="tree"
       ref={treeRef}
       style={{ transformOrigin: returning?.origin ?? '50% 30%' }}
-      initial={reduce ? { opacity: 0 } : returning ? { opacity: 0, scale: 1.35 } : { opacity: 0, y: 8 }}
+      initial={reduce ? false : returning ? { opacity: 0.5, scale: 1.25 } : (location.state as { fromNexus?: boolean } | null)?.fromNexus ? { scale: 0.94, opacity: 0.85 } : false}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.6 }}
       transition={{ duration: reduce ? 0.15 : 0.34, ease: [0.4, 0, 0.2, 1] }}
@@ -527,6 +566,7 @@ export default function SubjectPage() {
               steps={revision ? undefined : steps}
               highlight={revision ? due : highlight}
               due={due}
+              onHoverNode={prefetchLesson}
             />
             {isDsa &&
               (roadmap ? (

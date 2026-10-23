@@ -622,9 +622,15 @@ function webStructure(reg, dsa) {
   for (const [sid, s] of reg.subjects) {
     const zones = s.engine === "dsa" ? dsa.zones.map((z) => ({ level: z.level, name: z.name, color: z.color })) : s.doc.zones.map((z) => ({ level: z.level, name: z.name, color: s.zoneColor.get(z.level) }));
     const nodes = s.engine === "dsa"
-      ? reg.dsaNodes.map((n) => ({ id: n.id, n: n.name, z: n.zone, req: n.requires, xp: n.xpReward, ...(n.icon ? { i: n.icon } : {}) }))
+      ? reg.dsaNodes.map((n) => ({ id: n.id, n: n.name, z: n.zone, req: n.requires, xp: n.xpReward, ...(n.icon ? { i: n.icon } : {}), x: n.x }))
       : s.doc.nodes.map((n) => {
           const out = { id: n.id, n: n.name, z: n.zone, req: (n.requires || []).filter((r) => !r.includes(":")), xp: n.xpReward || 50 };
+          // The subject tree's layout (x 0–100, row in its zone): a tree paints from the structure alone.
+          const pos = s.layout?.get(n.id);
+          if (pos) {
+            out.x = pos.x;
+            if (pos.row) out.r = pos.row;
+          }
           const cross = (n.requires || []).filter((r) => r.includes(":") && reg.names.has(r));
           if (cross.length) out.cx = cross;
           if (n.kind && n.kind !== "concept") out.k = n.kind;

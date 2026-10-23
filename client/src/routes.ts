@@ -8,6 +8,7 @@
  * import() is cached by the browser/bundler, so calling a loader twice is free.
  */
 import { prefetchNexusData } from '@/components/nexus/data'
+import { prefetchSubject } from '@/components/nexus/subjectTree'
 
 type Loader = () => Promise<unknown>
 
@@ -62,11 +63,12 @@ const BY_SEGMENT: Record<string, Loader[]> = {
   solve: [pageLoaders.SolvePage],
   contests: [pageLoaders.ContestsPage],
   workshop: [pageLoaders.WorkshopPage],
-  nexus: [pageLoaders.NexusPage],
+  // Subject pages open from the Nexus, /learn and the GATE home: their chunk comes along.
+  nexus: [pageLoaders.NexusPage, pageLoaders.SubjectPage],
   analytics: [pageLoaders.AnalyticsPage],
   achievements: [pageLoaders.AchievementsPage],
-  learn: [pageLoaders.LearnPage],
-  gate: [pageLoaders.GateHomePage, pageLoaders.GatePage],
+  learn: [pageLoaders.LearnPage, pageLoaders.SubjectPage],
+  gate: [pageLoaders.GateHomePage, pageLoaders.GatePage, pageLoaders.SubjectPage],
   social: [pageLoaders.SocialPage],
   submissions: [pageLoaders.SubmissionsPage],
   bookmarks: [pageLoaders.BookmarksPage],
@@ -125,12 +127,25 @@ const DATA_BY_SEGMENT: Record<string, () => void> = {
   nexus: prefetchNexusData,
 }
 
+/** A subject page (/learn/<id>[/<node>], /learn/dsa…): its tree, warmed. */
+const NOT_SUBJECTS = new Set(['system-design'])
+export function prefetchSubjectRoute(to: string): void {
+  const m = /^\/learn\/([a-z0-9][a-z0-9-]*)/.exec(to)
+  if (!m || NOT_SUBJECTS.has(m[1])) return
+  prefetchRoute(to)
+  prefetchSubject(m[1])
+}
+
 /** Props that prefetch a route's chunk (and data, where known) on hover, focus or touch. */
 export function prefetchHandlers(to: string) {
   const go = () => {
     prefetchRoute(to)
+    prefetchSubjectRoute(to)
     const segment = to.split(/[/?#]/)[1] ?? ''
     DATA_BY_SEGMENT[segment]?.()
   }
   return { onMouseEnter: go, onFocus: go, onTouchStart: go }
 }
+
+// Opened straight on a subject page: start its chunk and tree with the app.
+if (typeof window !== 'undefined') prefetchSubjectRoute(window.location.pathname)
