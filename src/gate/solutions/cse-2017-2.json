@@ -972,23 +972,29 @@
       "verification": "With $R = \\frac4\\pi$: $f'(\\frac12) = \\frac{4}{\\pi}\\cdot\\frac{\\pi}{2}\\cdot\\frac{\\sqrt2}{2} = \\sqrt2$. Correct."
     },
     "cse-2017-2-cs-11": {
-      "approach": "Translate clause by clause; “A only if B” means A → B.",
+      "approach": "Concept tested: **translating a compound English sentence**: split at the main 'and', translate each clause, and read 'X only if Y' as $X \\to Y$.",
       "concepts": [
-        "Propositional translation",
-        "“only if” as implication"
+        "Translation",
+        "Only if",
+        "Conjunction"
       ],
+      "given": "$p$: raining, $q$: cold, $r$: pleasant. 'It is not raining and it is pleasant, and it is not pleasant only if it is raining and it is cold.'",
       "steps": [
         {
           "title": "First clause",
-          "body": "“It is not raining and it is pleasant” is $\\neg p \\wedge r$."
+          "body": "'It is not raining and it is pleasant': $\\neg p \\wedge r$."
         },
         {
           "title": "Second clause",
-          "body": "“It is not pleasant only if it is raining and it is cold”: A = not pleasant $(\\neg r)$, B = raining and cold $(p \\wedge q)$, and A only if B is $A \\to B$, so $\\neg r \\to (p \\wedge q)$."
+          "body": "'It is not pleasant only if it is raining and it is cold': 'X only if Y' is $X \\to Y$, so $\\neg r \\to (p \\wedge q)$."
         },
         {
-          "title": "Combine",
-          "body": "The two clauses are joined by “and”: $(\\neg p \\wedge r) \\wedge (\\neg r \\to (p \\wedge q))$."
+          "title": "Join",
+          "body": "The sentence asserts both: $(\\neg p \\wedge r) \\wedge (\\neg r \\to (p \\wedge q))$, option A."
+        },
+        {
+          "title": "A remark on option B",
+          "body": "B writes the second clause as $(p \\wedge q) \\to \\neg r$, the converse. Because the first clause already forces $p$ = F and $r$ = T, A and B happen to have the same truth table as whole formulas (both reduce to $\\neg p \\wedge r$); but B mistranslates the 'only if', and the question asks for the representation of the sentence, so the key is A."
         }
       ],
       "answer": {
@@ -1002,28 +1008,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct translation."
+          "reason": "Clause by clause translation, with 'only if' read as $\\neg r \\to (p \\wedge q)$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Reverses the implication and negates its conclusion: $(p\\wedge q) \\to \\neg r$ says “raining and cold only if not pleasant”."
+          "reason": "Reverses the 'only if' in the second clause (it writes the converse). As a whole formula it is equivalent to A here, but it is not the sentence's representation."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Uses $\\vee$ between the clauses (the sentence says “and”) and has the wrong implication."
+          "reason": "Uses ∨ for the sentence's 'and', and also reverses the 'only if'."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Uses $\\vee$, and $r \\to (p\\wedge q)$ drops the negation of “pleasant”."
+          "reason": "Uses ∨ for 'and' and translates the second clause as $r \\to (p \\wedge q)$."
         }
       ],
+      "shortcut": "Look for ∧ between the clauses (rules out C, D) and the arrow pointing **from** 'not pleasant' (rules out B).",
       "pitfalls": [
-        "Reading “A only if B” as B → A; that is “A if B”."
+        "Reading 'X only if Y' as $Y \\to X$.",
+        "Assuming that two options with the same truth table must both be keys in a translation question."
       ],
-      "verification": "Option B's implication $(p\\wedge q)\\to\\neg r$ is equivalent to $r \\to \\neg(p\\wedge q)$, a different statement from $\\neg r \\to (p\\wedge q)$ (its contrapositive is $\\neg(p\\wedge q) \\to r$)."
+      "verification": "A parses to exactly $(\\neg p \\wedge r) \\wedge (\\neg r \\to (p \\wedge q))$; truth tables show A ≡ B ≡ $\\neg p \\wedge r$ while C and D differ."
     },
     "cse-2017-2-cs-12": {
       "approach": "Concept tested: **decoding single precision** with a negative exponent. Split 1 | 8 | 23, compute $E = e - 127 = -3$, and evaluate $1.f \\times 2^{-3}$.",

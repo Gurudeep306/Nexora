@@ -1,0 +1,460 @@
+[
+ {
+  "id": "nx-dm-01-01-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "What is the **contrapositive** of “if it rains, then the match is cancelled”?",
+  "options": [
+   {
+    "l": "A",
+    "t": "If the match is cancelled, then it rains."
+   },
+   {
+    "l": "B",
+    "t": "If it does not rain, then the match is not cancelled."
+   },
+   {
+    "l": "C",
+    "t": "If the match is not cancelled, then it does not rain."
+   },
+   {
+    "l": "D",
+    "t": "It rains and the match is not cancelled."
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Write the statement as $r \\to c$ with $r$: it rains, $c$: the match is cancelled.",
+   "The contrapositive swaps the two sides **and** negates both: $\\neg c \\to \\neg r$.",
+   "In words: if the match is not cancelled, then it does not rain. It is equivalent to the original."
+  ],
+  "concept": "Contrapositive = swap and negate; it is the only variant equivalent to the original.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That only swaps the sides: it is the **converse** $c \\to r$."
+   },
+   {
+    "answer": "B",
+    "why": "That only negates the sides: it is the **inverse** $\\neg r \\to \\neg c$."
+   },
+   {
+    "answer": "D",
+    "why": "$r \\wedge \\neg c$ is the **negation** of the statement, the one situation it forbids."
+   }
+  ],
+  "blocks": [
+   "variants-def",
+   "contrapositive-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-01-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "On how many of the 8 rows of its truth table is $(p \\vee q) \\to r$ **false**?",
+  "answer": 3,
+  "solution": [
+   "An implication is false exactly when its hypothesis is true and its conclusion false.",
+   "So we need $p \\vee q$ = T and $r$ = F.",
+   "$p \\vee q$ is true for 3 of the 4 settings of $(p, q)$ (all but FF), and $r$ must be F: $3 \\times 1 = 3$ rows."
+  ],
+  "concept": "Count the false rows of an implication as (rows with a true hypothesis) × (rows with a false conclusion).",
+  "common_wrong": [
+   {
+    "answer": 1,
+    "why": "Counting only the row $p = q = $ T: $p \\vee q$ is inclusive, so TF and FT also make it true."
+   },
+   {
+    "answer": 5,
+    "why": "5 is the number of rows where the implication is **true** ($8 - 3$); the question asks for the false rows."
+   }
+  ],
+  "blocks": [
+   "implication-def",
+   "trick-false-row",
+   "rows-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-01-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Let $e$: “you can enrol” and $f$: “you have paid the fee”. Which formula represents “you can enrol **only if** you have paid the fee”?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$f \\to e$"
+   },
+   {
+    "l": "B",
+    "t": "$e \\to f$"
+   },
+   {
+    "l": "C",
+    "t": "$e \\leftrightarrow f$"
+   },
+   {
+    "l": "D",
+    "t": "$\\neg e \\to \\neg f$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "“$p$ only if $q$” is $p \\to q$: $p$ cannot happen without $q$.",
+   "Here $p = e$ and $q = f$, so the sentence is $e \\to f$.",
+   "Check by the forbidden situation: the sentence forbids enrolling without having paid, $e \\wedge \\neg f$, which is exactly the false row of $e \\to f$."
+  ],
+  "concept": "“p only if q” is p → q; the condition after “only if” is the conclusion.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "$f \\to e$ is “you can enrol **if** you have paid”, the converse."
+   },
+   {
+    "answer": "D",
+    "why": "$\\neg e \\to \\neg f$ is the inverse of the sentence, equivalent to $f \\to e$, the converse again."
+   },
+   {
+    "answer": "C",
+    "why": "The sentence promises nothing in the other direction: paying need not let you enrol."
+   }
+  ],
+  "blocks": [
+   "imp-readings",
+   "only-if-theorem",
+   "trap-only-if"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-01-q04",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following are logically equivalent to $p \\to q$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\neg p \\vee q$"
+   },
+   {
+    "l": "B",
+    "t": "$\\neg q \\to \\neg p$"
+   },
+   {
+    "l": "C",
+    "t": "$q \\to p$"
+   },
+   {
+    "l": "D",
+    "t": "$\\neg(p \\wedge \\neg q)$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "$p \\to q$ is false on exactly one row: $p$ = T, $q$ = F. A formula is equivalent to it iff it is false on that row and true on the other three.",
+   "(A) $\\neg p \\vee q$ is false only when $p$ = T and $q$ = F. Equivalent.",
+   "(B) The contrapositive $\\neg q \\to \\neg p$ is false only when $\\neg q$ = T, $\\neg p$ = F, i.e. the same row. Equivalent.",
+   "(C) $q \\to p$ is false at $q$ = T, $p$ = F, a different row. Not equivalent.",
+   "(D) $\\neg(p \\wedge \\neg q)$ is false exactly when $p \\wedge \\neg q$ is true: the same row. Equivalent."
+  ],
+  "concept": "Equivalent formulas have the same false rows; p → q ≡ ¬p ∨ q ≡ ¬q → ¬p ≡ ¬(p ∧ ¬q).",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "The converse $q \\to p$ is a different claim: it fails on $p$ = F, $q$ = T where $p \\to q$ holds."
+   },
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "$\\neg(p \\wedge \\neg q)$ is just $\\neg p \\vee q$ by De Morgan."
+   }
+  ],
+  "blocks": [
+   "imp-as-or",
+   "contrapositive-theorem",
+   "variants-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-01-q05",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Which formula represents “$q$ unless $p$”?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\neg q \\to \\neg p$"
+   },
+   {
+    "l": "B",
+    "t": "$p \\to q$"
+   },
+   {
+    "l": "C",
+    "t": "$q \\to \\neg p$"
+   },
+   {
+    "l": "D",
+    "t": "$\\neg p \\to q$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "“Unless” means “if not”: “$q$ unless $p$” is “if not $p$, then $q$”.",
+   "So the formula is $\\neg p \\to q$, which is equivalent to $p \\vee q$.",
+   "It forbids only the situation where $p$ fails and $q$ fails too."
+  ],
+  "concept": "“q unless p” = ¬p → q = p ∨ q.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "$p \\to q$ forbids $p \\wedge \\neg q$; the sentence forbids $\\neg p \\wedge \\neg q$."
+   },
+   {
+    "answer": "A",
+    "why": "$\\neg q \\to \\neg p$ is the contrapositive of $p \\to q$, so it is wrong for the same reason."
+   },
+   {
+    "answer": "C",
+    "why": "$q \\to \\neg p$ reads “$q$ only if not $p$”, a different claim."
+   }
+  ],
+  "blocks": [
+   "unless-def",
+   "trick-forbidden"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-01-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "On how many of the 8 assignments to $p, q, r$ do $p \\to (q \\to r)$ and $(p \\to q) \\to r$ take **different** truth values?",
+  "answer": 2,
+  "solution": [
+   "$p \\to (q \\to r)$ is false only when $p$ = T, $q$ = T, $r$ = F (one row).",
+   "$(p \\to q) \\to r$ is false when $p \\to q$ is T and $r$ is F: $(p, q) \\in \\{$TT, FT, FF$\\}$ with $r$ = F (three rows).",
+   "They differ on the rows where exactly one is false: FTF and FFF.",
+   "So they differ on **2** rows; implication is not associative."
+  ],
+  "concept": "→ is right-associative and not associative; compare the false rows of the two groupings.",
+  "common_wrong": [
+   {
+    "answer": 0,
+    "why": "Treating → as associative. On $p = q = r = $ F the first is T (false hypothesis) and the second is F."
+   },
+   {
+    "answer": 3,
+    "why": "That is the number of false rows of $(p \\to q) \\to r$; one of them (TTF) is also false for the other grouping."
+   }
+  ],
+  "blocks": [
+   "precedence",
+   "trap-assoc",
+   "ex-conn-edge"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-01-q07",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "The operator $\\ast$ is defined by: $p \\ast q$ is F when $p$ = T and $q$ = T, and T otherwise. Which formula is equivalent to $p \\vee q$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$(p \\ast p) \\ast (q \\ast q)$"
+   },
+   {
+    "l": "B",
+    "t": "$p \\ast q$"
+   },
+   {
+    "l": "C",
+    "t": "$(p \\ast q) \\ast (p \\ast q)$"
+   },
+   {
+    "l": "D",
+    "t": "$p \\ast (q \\ast q)$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "$\\ast$ is false only on TT, so $p \\ast q \\equiv \\neg(p \\wedge q) \\equiv \\neg p \\vee \\neg q$ (NAND).",
+   "$x \\ast x \\equiv \\neg x$, so $p \\ast p \\equiv \\neg p$ and $q \\ast q \\equiv \\neg q$.",
+   "(A) $\\neg p \\ast \\neg q \\equiv \\neg\\neg p \\vee \\neg\\neg q \\equiv p \\vee q$.",
+   "(B) is NAND, (C) is $\\neg(\\neg(p \\wedge q)) = p \\wedge q$, (D) is $p \\ast \\neg q \\equiv \\neg p \\vee q$."
+  ],
+  "concept": "Rewrite an operator from its false row (here NAND), then substitute each option.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "Negating a NAND gives AND, not OR."
+   },
+   {
+    "answer": "D",
+    "why": "$p \\ast (q \\ast q) = p \\ast \\neg q = \\neg p \\vee q$, which is $p \\to q$."
+   },
+   {
+    "answer": "B",
+    "why": "$p \\ast q$ is the NAND itself, false only on TT."
+   }
+  ],
+  "blocks": [
+   "custom-def",
+   "ex-op-gate"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-01-q08",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "It is known that $p \\to q$ is **false**. What is the truth value of $(q \\to r) \\wedge (r \\vee \\neg p)$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "True"
+   },
+   {
+    "l": "B",
+    "t": "False"
+   },
+   {
+    "l": "C",
+    "t": "Cannot be determined"
+   },
+   {
+    "l": "D",
+    "t": "True exactly when $q$ is true"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "$p \\to q$ is false only when $p$ = T and $q$ = F. Nothing is known about $r$.",
+   "$q \\to r = $ F $\\to r$ = T whatever $r$ is.",
+   "$r \\vee \\neg p = r \\vee $ F $= r$.",
+   "So the formula equals $r$: true if $r$ is true, false otherwise. It cannot be determined."
+  ],
+  "concept": "A false implication fixes both its parts (p = T, q = F); evaluate the rest and see what is still free.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "$q \\to r$ is indeed true, but the second conjunct is just $r$, which is unknown."
+   },
+   {
+    "answer": "D",
+    "why": "$q$ is already known to be F, so this would make the formula always false; in fact it depends on $r$."
+   }
+  ],
+  "blocks": [
+   "implication-def",
+   "ex-conn-unknown"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-01-q09",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following say the same thing as “$x$ being even is **necessary** for $x$ to be divisible by 4”?",
+  "options": [
+   {
+    "l": "A",
+    "t": "If $x$ is divisible by 4, then $x$ is even."
+   },
+   {
+    "l": "B",
+    "t": "$x$ is even only if $x$ is divisible by 4."
+   },
+   {
+    "l": "C",
+    "t": "$x$ is divisible by 4 only if $x$ is even."
+   },
+   {
+    "l": "D",
+    "t": "If $x$ is not even, then $x$ is not divisible by 4."
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "“$a$ is necessary for $b$” is $b \\to a$. With $a$: $x$ even, $b$: $x$ divisible by 4, the sentence is $b \\to a$.",
+   "(A) is $b \\to a$. Same.",
+   "(B) is $a \\to b$ (“$a$ only if $b$”), the converse. Different.",
+   "(C) is $b \\to a$. Same.",
+   "(D) is $\\neg a \\to \\neg b$, the contrapositive of $b \\to a$. Same."
+  ],
+  "concept": "The necessary condition is the conclusion; “p only if q” and the contrapositive say the same.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "(B) reverses the direction: being even does not force divisibility by 4 ($x = 6$)."
+   },
+   {
+    "answer": [
+     "A",
+     "C"
+    ],
+    "why": "(D) is the contrapositive of (A), so it is equivalent."
+   }
+  ],
+  "blocks": [
+   "necessary-sufficient",
+   "trap-necessary",
+   "contrapositive-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-01-q10",
+  "type": "NAT",
+  "marks": 2,
+  "text": "How many assignments of truth values to $p, q, r, s$ make **exactly two** of the four variables true **and** make $p \\to q$ true?",
+  "answer": 4,
+  "solution": [
+   "Exactly two true: choose the true pair, $\\binom{4}{2} = 6$ assignments.",
+   "$p \\to q$ is false only when $p$ = T and $q$ = F. Among the pairs, those containing $p$ but not $q$ are $\\{p, r\\}$ and $\\{p, s\\}$.",
+   "Remove them: $6 - 2 = 4$ assignments ($\\{p, q\\}, \\{q, r\\}, \\{q, s\\}, \\{r, s\\}$)."
+  ],
+  "concept": "Count by complement: all rows meeting the count condition minus those on the implication's false row.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "Forgetting the second condition: two of the pairs put $p$ = T, $q$ = F."
+   },
+   {
+    "answer": 3,
+    "why": "Removing $\\{p, q\\}$ as well: there $p \\to q$ = T → T = T, so it stays."
+   }
+  ],
+  "blocks": [
+   "implication-def",
+   "rows-count"
+  ],
+  "source": "nexora"
+ }
+]

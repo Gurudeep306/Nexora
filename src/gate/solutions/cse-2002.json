@@ -340,23 +340,33 @@
       "verification": "$a^nb^n$ needs an unbounded stack and is not accepted with a 10-item limit, consistent with regularity."
     },
     "cse-2002-a-8": {
-      "approach": "\"$P$ unless $Z$\" means \"if not $Z$ then $P$\". Here $P$ is \"if X then Y\", so the statement is $\\neg Z\\to(X\\to Y)$, which exports to $(X\\wedge\\neg Z)\\to Y$.",
+      "approach": "Concept tested: **translating 'unless'**. 'A unless Z' means 'if not Z then A'; here A is the whole promise 'if X then Y'. Then use exportation.",
       "concepts": [
-        "Propositional logic",
-        "Exportation law"
+        "Unless",
+        "Implication",
+        "Exportation"
       ],
+      "given": "Sentence: 'If X then Y unless Z'.",
       "steps": [
         {
-          "title": "Translate 'unless'",
-          "body": "\"$P$ unless $Z$\" $\\equiv \\neg Z \\rightarrow P$, with $P = X\\rightarrow Y$: $\\;\\neg Z\\rightarrow(X\\rightarrow Y)$."
+          "title": "Bracket the sentence",
+          "body": "The qualifier 'unless Z' applies to the promise 'if X then Y': $(X \\to Y)$ unless $Z$."
         },
         {
-          "title": "Export",
-          "body": "$A\\to(B\\to C)\\equiv(A\\wedge B)\\to C$, so $\\neg Z\\to(X\\to Y)\\equiv(X\\wedge\\neg Z)\\to Y$, which is option A."
+          "title": "Unless = if not",
+          "body": "$\\neg Z \\to (X \\to Y)$."
+        },
+        {
+          "title": "Exportation",
+          "body": "$A \\to (B \\to C) \\equiv (A \\wedge B) \\to C$, so the formula is $(X \\wedge \\neg Z) \\to Y$: option A."
+        },
+        {
+          "title": "Check the forbidden situation",
+          "body": "The sentence is broken only when X holds, Z does not, and Y fails. $(X \\wedge \\neg Z) \\to Y$ is false exactly on $X$ = T, $Z$ = F, $Y$ = F."
         }
       ],
       "answer": {
-        "value": "$(X\\wedge\\neg Z)\\rightarrow Y$",
+        "value": "$(X \\wedge \\neg Z) \\rightarrow Y$",
         "choice": [
           "A"
         ],
@@ -366,25 +376,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: Y is promised only when X holds and Z does not."
+          "reason": "Equals $\\neg Z \\to (X \\to Y)$ by exportation."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Says X and Y together force not-Z; Y is no longer the consequence."
+          "reason": "$(X \\wedge Y) \\to \\neg Z$ forbids X, Y and Z together, which the sentence allows."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Forces $\\neg Z$ whenever X holds, but 'unless Z' makes no claim about Z."
+          "reason": "$X \\to (Y \\wedge \\neg Z)$ forbids X with Z, but when Z holds the sentence promises nothing."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Asserts $\\neg Z$ unconditionally, so it is false whenever Z is true."
+          "reason": "$(X \\to Y) \\wedge \\neg Z$ asserts that Z is false, which the sentence never claims."
         }
       ],
-      "verification": "With $Z$ true the sentence says nothing, so it must be true: A is true for $Z=1$ (antecedent false), while C and D can be false there."
+      "shortcut": "Each option forbids certain rows; the sentence forbids only X = T, Y = F, Z = F. Only A is false on exactly that row.",
+      "pitfalls": [
+        "Reading 'unless Z' as '∧ ¬Z' (option D).",
+        "Attaching 'unless Z' to Y alone (option C)."
+      ],
+      "verification": "Truth tables over X, Y, Z: only option A has the single false row (T, F, F)."
     },
     "cse-2002-a-9": {
       "approach": "In the 8085 interrupt cycle the CPU acknowledges INTR by asserting $\\overline{\\text{INTA}}$; the device places the RST/CALL opcode on the data bus while that acknowledge is active.",

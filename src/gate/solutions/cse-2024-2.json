@@ -981,64 +981,25 @@
       }
     },
     "cse-2024-2-cs-2": {
-      "approach": "\"$X$ cannot happen when $Y$\" means \"if $Y$ then not $X$\". Here $Y = q$ (scores > 50%) and $X = p$ (fail grade can be given), so the statement is $q \\to \\neg p$.",
+      "approach": "Concept tested: **'cannot B when A' is $A \\to \\neg B$**. Identify the condition (the 'when' clause) as the hypothesis and check by the forbidden situation.",
       "concepts": [
-        "Propositional logic",
+        "Translation",
         "Implication",
-        "Translating English to logic"
+        "Forbidden situation"
       ],
+      "given": "$p$: fail grade can be given; $q$: student scores more than 50%. 'Fail grade cannot be given when student scores more than 50% marks.'",
       "steps": [
         {
-          "title": "Identify condition and consequence",
-          "body": "\"Fail grade cannot be given **when** student scores more than 50% marks.\"\n\n- Condition (\"when …\"): the student scores more than 50% → $q$.\n- Consequence: fail grade cannot be given → $\\neg p$.\n\nSo the statement is $q \\to \\neg p$."
+          "title": "Hypothesis and conclusion",
+          "body": "'B when A' is $A \\to B$. The condition is $q$ (scores > 50%); the conclusion is 'fail grade cannot be given', $\\neg p$. So the formula is $q \\to \\neg p$."
         },
         {
-          "title": "Confirm with the forbidden case",
-          "body": "The statement is violated exactly when a student scores more than 50% **and** a fail grade can be given, i.e. $p = T, q = T$. The table row $p = T, q = T$ is the only row where $q \\to \\neg p$ is false; it is true everywhere else, as the statement should be.",
-          "scene": {
-            "hl": [
-              {
-                "r": 0,
-                "tone": "warning"
-              },
-              {
-                "c": 2,
-                "tone": "success"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Reject the other forms",
-          "body": "$q \\to p$, $p \\to q$ and $\\neg p \\to q$ are all **true** in the forbidden row $p = q = T$, so none of them forbids failing a student who scored above 50%.",
-          "scene": {
-            "hl": [
-              {
-                "r": 0,
-                "c": 2,
-                "tone": "success"
-              },
-              {
-                "r": 0,
-                "c": 3,
-                "tone": "error"
-              },
-              {
-                "r": 0,
-                "c": 4,
-                "tone": "error"
-              },
-              {
-                "r": 0,
-                "c": 5,
-                "tone": "error"
-              }
-            ]
-          }
+          "title": "Check",
+          "body": "The sentence forbids exactly one situation: a student above 50% getting a fail grade, $q \\wedge p$. $q \\to \\neg p$ is false exactly when $q$ = T and $p$ = T."
         }
       ],
       "answer": {
-        "value": "$q \\to \\neg p$ — option (A)",
+        "value": "$q \\to \\neg p$",
         "choice": [
           "A"
         ],
@@ -1048,78 +1009,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "If the student scores above 50% ($q$), a fail grade cannot be given ($\\neg p$). Equivalent to $\\neg(p \\wedge q)$."
+          "reason": "False only when $q$ and $p$ are both true: the forbidden situation."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$q \\to p$ says a high score means a fail grade **can** be given — the negation is lost."
+          "reason": "$q \\to p$ would force a fail grade to be possible for every student above 50%."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$p \\to q$ says \"if a fail grade can be given, the student scored above 50%\" — the opposite sense."
+          "reason": "$p \\to q$ says a fail grade can be given only to students above 50%, the opposite rule."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$\\neg p \\to q$ says \"if no fail grade, then the student scored above 50%\"; it is true when $p = q = T$, so it does not forbid the case the statement forbids."
+          "reason": "$\\neg p \\to q$ forbids '$p$ false and $q$ false', unrelated to the sentence."
         }
       ],
-      "shortcut": "The statement forbids exactly $p \\wedge q$, i.e. it is $\\neg(p \\wedge q) \\equiv \\neg q \\vee \\neg p \\equiv q \\to \\neg p$.",
+      "shortcut": "The sentence forbids $p \\wedge q$, so the formula is $\\neg(p \\wedge q) \\equiv q \\to \\neg p \\equiv p \\to \\neg q$.",
       "pitfalls": [
-        "Reading \"A when B\" as $A \\to B$ — the clause after \"when\" is the condition.",
-        "Mixing up $\\neg p \\to q$ with the contrapositive $p \\to \\neg q$ (which **is** equivalent to the answer)."
+        "Taking the first clause of the English sentence as the hypothesis: in 'B when A' the hypothesis comes second."
       ],
-      "verification": "Contrapositive check: $q \\to \\neg p \\equiv p \\to \\neg q$ — \"if a fail grade can be given, the student did not score above 50%\", which says the same thing.",
-      "animation": {
-        "kind": "table",
-        "title": "Truth table: p = fail grade can be given, q = scores > 50%",
-        "cols": [
-          "p",
-          "q",
-          "q→¬p",
-          "q→p",
-          "p→q",
-          "¬p→q"
-        ],
-        "rows": [
-          [
-            "T",
-            "T",
-            "F",
-            "T",
-            "T",
-            "T"
-          ],
-          [
-            "T",
-            "F",
-            "T",
-            "T",
-            "F",
-            "T"
-          ],
-          [
-            "F",
-            "T",
-            "T",
-            "F",
-            "T",
-            "T"
-          ],
-          [
-            "F",
-            "F",
-            "T",
-            "T",
-            "T",
-            "F"
-          ]
-        ],
-        "mono": true,
-        "caption": "Forbidden case: p = T and q = T (row 1)"
-      }
+      "verification": "Truth table over $p, q$: only option A is false exactly on $p = q =$ T."
     },
     "cse-2024-2-cs-3": {
       "approach": "Trace the calls in order: before `f` runs, its arguments are evaluated right to left (`h(20)` then `g(10)`), each printing its value; then `f`'s body prints `x` and `y` in order.",

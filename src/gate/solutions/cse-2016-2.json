@@ -493,23 +493,25 @@
       "verification": "Five plotted points, $x=-3,-1,0,1,3$, all satisfy $f(x)=2-|x-1|$."
     },
     "cse-2016-2-cs-1": {
-      "approach": "Simplify the premise: $P \\wedge (P \\Rightarrow Q) \\equiv P \\wedge Q$ (modus ponens). Then a formula is implied iff it is true whenever $P = Q = \\text{true}$.",
+      "approach": "Concept tested: **logical implication**. $A$ implies $B$ iff every row making $A$ true makes $B$ true. Simplify $A = P \\wedge (P \\Rightarrow Q)$ first.",
       "concepts": [
         "Logical implication",
-        "Modus ponens"
+        "Modus ponens",
+        "Truth table"
       ],
+      "given": "$A = P \\wedge (P \\Rightarrow Q)$; candidates: false, $Q$, true, $P \\vee Q$, $\\neg Q \\vee P$.",
       "steps": [
         {
-          "title": "Simplify the premise",
-          "body": "$P \\wedge (P \\Rightarrow Q) = P \\wedge (\\neg P \\vee Q) = (P \\wedge \\neg P) \\vee (P \\wedge Q) = P \\wedge Q$. It is true only when $P = Q = T$."
+          "title": "Simplify A",
+          "body": "$P \\wedge (\\neg P \\vee Q) = (P \\wedge \\neg P) \\vee (P \\wedge Q) = P \\wedge Q$. So $A$ is true on exactly one row: $P = Q =$ T."
         },
         {
-          "title": "Evaluate each expression at P = Q = T",
-          "body": "| Expression | Value | Implied? |\n|---|---|---|\n| (i) false | F | No |\n| (ii) $Q$ | T | Yes |\n| (iii) true | T | Yes |\n| (iv) $P \\vee Q$ | T | Yes |\n| (v) $\\neg Q \\vee P$ | F ∨ T = T | Yes |"
+          "title": "Test each candidate on that row",
+          "body": "false: F (not implied). $Q$: T. true: T. $P \\vee Q$: T. $\\neg Q \\vee P$: F ∨ T = T."
         },
         {
           "title": "Count",
-          "body": "Expressions (ii), (iii), (iv), (v) are implied: **4**."
+          "body": "Four expressions are true on the only row where $A$ is true: **4**."
         }
       ],
       "answer": {
@@ -517,10 +519,101 @@
         "number": 4,
         "matchesKey": true
       },
+      "shortcut": "When the premise is true on a single row, implication is just 'is the candidate true on that row?'.",
       "pitfalls": [
-        "Counting 'false' as implied: only a contradictory premise implies false, and $P \\wedge Q$ is satisfiable."
+        "Thinking 'false' is implied because $A$ is 'sometimes false': implication needs the candidate true wherever $A$ is.",
+        "Missing 'true', which is implied by everything."
       ],
-      "verification": "The premise has exactly one satisfying assignment (P = Q = T); four of the five expressions are true there."
+      "verification": "Truth table over $P, Q$: the candidates true at TT are $Q$, true, $P \\vee Q$, $\\neg Q \\vee P$.",
+      "animation": {
+        "kind": "table",
+        "title": "A = P ∧ (P → Q) and the five candidates",
+        "cols": [
+          "P",
+          "Q",
+          "A",
+          "F",
+          "Q",
+          "T",
+          "P∨Q",
+          "¬Q∨P"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "T",
+            "F",
+            "T",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "T",
+            "F",
+            "F",
+            "F",
+            "F",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "F",
+            "T",
+            "F",
+            "F",
+            "T",
+            "T",
+            "T",
+            "F"
+          ],
+          [
+            "F",
+            "F",
+            "F",
+            "F",
+            "F",
+            "T",
+            "F",
+            "T"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "c": 2,
+            "tone": "success"
+          },
+          {
+            "r": 0,
+            "c": 3,
+            "tone": "error"
+          },
+          {
+            "r": 0,
+            "c": 4,
+            "tone": "success"
+          },
+          {
+            "r": 0,
+            "c": 5,
+            "tone": "success"
+          },
+          {
+            "r": 0,
+            "c": 6,
+            "tone": "success"
+          },
+          {
+            "r": 0,
+            "c": 7,
+            "tone": "success"
+          }
+        ]
+      }
     },
     "cse-2016-2-cs-2": {
       "approach": "$f(x)+f(-x)$ keeps only the even-power terms of $f$, and $g(x)-g(-x)$ keeps only the odd-power terms of $g = f'$, which come from differentiating those even-power terms.",

@@ -1353,24 +1353,24 @@
       "verification": "Identity used: $(A \\to C) \\wedge (B \\to C) \\equiv \\neg A \\wedge \\neg B \\vee C \\equiv (A \\vee B) \\to C$."
     },
     "cse-2009-cs-24": {
-      "approach": "Recognise the operator from its truth table: $P \\square Q$ is false only when $P = F, Q = T$, so $P \\square Q \\equiv Q \\to P \\equiv P \\vee \\neg Q$. Then substitute into each option.",
+      "approach": "Concept tested: **an operator defined by a truth table**. $P \\square Q$ is false only at $P$ = F, $Q$ = T, so $P \\square Q \\equiv P \\vee \\neg Q$; substitute each option.",
       "concepts": [
-        "Propositional logic",
-        "Truth tables",
-        "Implication"
+        "Truth table",
+        "Custom connective"
       ],
+      "given": "$P \\square Q$: TT → T, TF → T, FT → F, FF → T.",
       "steps": [
         {
-          "title": "Identify the operator",
-          "body": "The only F row is $P = F, Q = T$, so $P \\square Q \\equiv P \\vee \\neg Q$."
+          "title": "Rewrite the operator",
+          "body": "The only false row is $P$ = F, $Q$ = T; $P \\vee \\neg Q$ is false exactly there. So $x \\square y \\equiv x \\vee \\neg y$ (which is $y \\to x$)."
         },
         {
-          "title": "Evaluate the options",
-          "body": "Using $X \\square Y = X \\vee \\neg Y$:\n- (A) $\\neg Q \\square \\neg P = \\neg Q \\vee P$\n- (B) $P \\square \\neg Q = P \\vee Q$\n- (C) $\\neg P \\square Q = \\neg P \\vee \\neg Q$\n- (D) $\\neg P \\square \\neg Q = \\neg P \\vee Q$"
+          "title": "Substitute",
+          "body": "A: $\\neg Q \\vee P$. B: $P \\vee \\neg\\neg Q = P \\vee Q$. C: $\\neg P \\vee \\neg Q$. D: $\\neg P \\vee Q$."
         },
         {
-          "title": "Match",
-          "body": "Only (B) equals $P \\vee Q$."
+          "title": "Pick",
+          "body": "Only B equals $P \\vee Q$."
         }
       ],
       "answer": {
@@ -1384,28 +1384,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Equals $P \\vee \\neg Q$; false at $P = F, Q = T$ where $P \\vee Q$ is true."
+          "reason": "$\\neg Q \\square \\neg P = \\neg Q \\vee P$, i.e. $Q \\to P$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$P \\vee \\neg(\\neg Q) = P \\vee Q$."
+          "reason": "$P \\square \\neg Q = P \\vee \\neg\\neg Q = P \\vee Q$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Equals $\\neg P \\vee \\neg Q$ (NAND); false at $P = Q = T$."
+          "reason": "$\\neg P \\square Q = \\neg P \\vee \\neg Q$, a NAND."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Equals $\\neg P \\vee Q$; false at $P = T, Q = F$."
+          "reason": "$\\neg P \\square \\neg Q = \\neg P \\vee Q$, i.e. $P \\to Q$."
         }
       ],
+      "shortcut": "$P \\vee Q$ is false only at FF. Plug FF into each option: only B gives F.",
       "pitfalls": [
-        "Do not read $\\square$ as $P \\to Q$; the F row has $P$ false, so it is $Q \\to P$."
+        "Mistaking $\\square$ for $P \\to Q$; its false row is F, T, so it is $Q \\to P$."
       ],
-      "verification": "Truth table of $P \\square \\neg Q$: TT gives $T \\square F = T$, TF gives $T \\square T = T$, FT gives $F \\square F = T$, FF gives $F \\square T = F$, which matches $P \\vee Q$."
+      "verification": "Truth tables of the four options: only B gives T, T, T, F."
     },
     "cse-2009-cs-25": {
       "approach": "Rewrite the integrand as $\\tan(\\pi/4 - x)$, substitute $u = \\pi/4 - x$ and integrate $\\tan u$.",

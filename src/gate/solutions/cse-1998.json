@@ -204,20 +204,25 @@
       "verification": "The graph is a V with a sharp corner at the origin and no break."
     },
     "cse-1998-a-5": {
-      "approach": "Translate 'P only if Q' into $P\\to Q$, then swap hypothesis and conclusion to get the converse $Q\\to P$.",
+      "approach": "Concept tested: **reading 'only if' and forming the converse**. 'p only if q' is $p \\to q$; the converse swaps the sides.",
       "concepts": [
-        "Implication",
+        "Only if",
         "Converse",
-        "Only if"
+        "Implication"
       ],
+      "given": "Assertion: 'I stay only if you go'.",
       "steps": [
         {
           "title": "Formalise",
-          "body": "Let $P$ = 'I stay', $Q$ = 'you go'. '$P$ only if $Q$' means $P\\to Q$ (if I stay then you go)."
+          "body": "Let $s$: I stay, $g$: you go. 'I stay only if you go' is $s \\to g$ (staying is impossible without your going)."
         },
         {
           "title": "Converse",
-          "body": "The converse of $P\\to Q$ is $Q\\to P$: 'if you go then I stay', i.e. **I stay if you go**."
+          "body": "Swap the sides: $g \\to s$, 'if you go then I stay'."
+        },
+        {
+          "title": "Match the wording",
+          "body": "'I stay if you go' puts 'you go' in the if-clause: that is $g \\to s$. Option A."
         }
       ],
       "answer": {
@@ -231,28 +236,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "'I stay if you go' is $Q\\to P$, the converse."
+          "reason": "'I stay if you go' is $g \\to s$, the converse of $s \\to g$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "'If I stay then you go' is $P\\to Q$, the original statement itself."
+          "reason": "'If I stay then you go' is $s \\to g$, the original assertion itself."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\lnot Q\\to\\lnot P$ is the contrapositive (equivalent to the original)."
+          "reason": "'If you do not go then I do not stay' is $\\neg g \\to \\neg s$, the contrapositive (equivalent to the original)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$\\lnot P\\to Q$ is not the converse."
+          "reason": "'If I do not stay then you go' is $\\neg s \\to g$, unrelated to the converse."
         }
       ],
+      "shortcut": "'p only if q' = $p \\to q$; 'p if q' = $q \\to p$. The converse of an only-if sentence is the same sentence with 'only if' replaced by 'if'.",
       "pitfalls": [
-        "Treating 'only if' like 'if': '$P$ only if $Q$' is $P\\to Q$, not $Q\\to P$."
+        "Reading 'only if' as 'if', which makes the original look like option A and the converse look like option B."
       ],
-      "verification": "Option A is the only one logically equivalent to $Q\\to P$ (B and C are equivalent to the original)."
+      "verification": "$s \\to g$ and $g \\to s$ differ on the row $s$ = F, $g$ = T, so A is not the original; B and C are equivalent to the original."
     },
     "cse-1998-a-6": {
       "approach": "The largest equivalence relation relates every element to every element, i.e. it is $A\\times A$.",

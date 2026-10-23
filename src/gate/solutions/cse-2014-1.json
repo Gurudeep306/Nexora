@@ -3507,20 +3507,25 @@
       "verification": "Explicit graphs built for A, B, D; impossibility argument for C."
     },
     "cse-2014-1-cs-53": {
-      "approach": "Split \"exactly two true\" into the case r true (then exactly one of p, q is true, i.e. p ↔ q is false) and the case r false (then p and q are both true). Check which formula encodes exactly that.",
+      "approach": "Concept tested: **expressing a counting condition ('exactly two true') as a formula**. Split on $r$: if $r$ is true exactly one of $p, q$ is true ($\\neg(p \\leftrightarrow q)$); if $r$ is false both are.",
       "concepts": [
-        "Propositional logic",
         "Biconditional",
-        "Case analysis"
+        "Exclusive or",
+        "Truth table"
       ],
+      "given": "Want: true exactly when two of $p, q, r$ are true (rows TTF, TFT, FTT).",
       "steps": [
         {
-          "title": "Required formula",
-          "body": "If $r$ is true, exactly one of $p, q$ is true $\\iff \\sim(p \\leftrightarrow q)$. If $r$ is false, $p \\wedge q$. So \"exactly two true\" $\\equiv (\\sim(p\\leftrightarrow q) \\wedge r) \\vee (p \\wedge q \\wedge \\sim r)$ — option B."
+          "title": "Case r = T",
+          "body": "Exactly one of $p, q$ must be T: $p \\oplus q \\equiv \\neg(p \\leftrightarrow q)$. Term: $\\neg(p \\leftrightarrow q) \\wedge r$."
         },
         {
-          "title": "Check the three true cases in B",
-          "body": "$(1,1,0)$: second disjunct true. $(1,0,1)$ and $(0,1,1)$: $p \\leftrightarrow q$ false, $r$ true, first disjunct true. So B is TRUE in every exactly-two case (and false for $(1,1,1)$, $(0,0,0)$, etc.)."
+          "title": "Case r = F",
+          "body": "Both $p$ and $q$ must be T: $p \\wedge q \\wedge \\neg r$."
+        },
+        {
+          "title": "Combine and check boundary rows",
+          "body": "Option B is the disjunction of the two cases. On TTT it gives (F ∧ T) ∨ F = F, on FFF it gives F: correct."
         }
       ],
       "answer": {
@@ -3534,25 +3539,116 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "For p = 1, q = 0, r = 1: (p ↔ q) is false and p ∧ q is false, so A is false although exactly two are true."
+          "reason": "$(p \\leftrightarrow q) \\wedge r$ is true on TTT (three true) and on FFT (one true)."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "True for (1,1,0), (1,0,1) and (0,1,1)."
+          "reason": "Exactly the rows TTF, TFT, FTT."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "For p = 1, q = 0, r = 1: p → q is false, so C is false."
+          "reason": "$(p \\to q) \\wedge r$ is true on TTT and FFT as well."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "The conjunction needs r and ∼r at once, so D is always false."
+          "reason": "A conjunction that needs both $r$ and $\\sim r$: always false."
         }
       ],
-      "verification": "Evaluated all three exactly-two assignments for each option."
+      "shortcut": "Test the all-true row TTT: options A and C are true there, so they are wrong; D is a contradiction.",
+      "pitfalls": [
+        "Checking only the rows with exactly two trues and not the row with three."
+      ],
+      "verification": "Truth table over $p, q, r$: option B is true exactly on TTF, TFT, FTT.",
+      "animation": {
+        "kind": "table",
+        "title": "Option B against 'exactly two'",
+        "cols": [
+          "p",
+          "q",
+          "r",
+          "exactly 2",
+          "B"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "T",
+            "F",
+            "F"
+          ],
+          [
+            "T",
+            "T",
+            "F",
+            "T",
+            "T"
+          ],
+          [
+            "T",
+            "F",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "T",
+            "F",
+            "F",
+            "F",
+            "F"
+          ],
+          [
+            "F",
+            "T",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "F",
+            "T",
+            "F",
+            "F",
+            "F"
+          ],
+          [
+            "F",
+            "F",
+            "T",
+            "F",
+            "F"
+          ],
+          [
+            "F",
+            "F",
+            "F",
+            "F",
+            "F"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 1,
+            "c": 4,
+            "tone": "success"
+          },
+          {
+            "r": 2,
+            "c": 4,
+            "tone": "success"
+          },
+          {
+            "r": 4,
+            "c": 4,
+            "tone": "success"
+          }
+        ]
+      }
     },
     "cse-2014-1-cs-54": {
       "approach": "The inner query returns, for every department at location 1700, the pair (dept-id, latest hire-date). The outer query keeps employees whose own (dept-id, hire-date) pair is in that set — exactly the latest hires per department. Multi-column (pairwise) IN is valid SQL.",

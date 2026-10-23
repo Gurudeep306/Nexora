@@ -1430,23 +1430,25 @@
       "verification": "Re-evaluated both sides of P1 and P2 at $A=1,B=0,C=0$."
     },
     "cse-2006-cs-28": {
-      "approach": "Read the truth table as a known connective: $A \\odot B$ is false only for $A=F, B=T$, so $A \\odot B \\equiv A \\vee \\neg B$. Then simplify each option.",
+      "approach": "Concept tested: **an operator defined by a truth table**. Read off its false row to rewrite it with ¬ and ∨, then substitute each option and simplify with De Morgan.",
       "concepts": [
-        "Truth tables",
-        "De Morgan laws"
+        "Truth table",
+        "Custom connective",
+        "De Morgan's laws"
       ],
+      "given": "$A \\odot B$: TT → T, TF → T, FT → F, FF → T; $\\sim$ is negation.",
       "steps": [
         {
-          "title": "Identify ⊙",
-          "body": "Only row $(F, T)$ gives False, which is exactly when $A \\vee \\neg B$ is false. So $A \\odot B \\equiv A \\vee \\neg B$ (i.e. $B \\to A$)."
+          "title": "Rewrite the operator",
+          "body": "It is false only at $A$ = F, $B$ = T. The disjunction false exactly there is $A \\vee \\neg B$, so $x \\odot y \\equiv x \\vee \\neg y$."
         },
         {
-          "title": "Evaluate option (D)",
-          "body": "$\\sim(\\sim A \\odot B) = \\neg(\\neg A \\vee \\neg B) = A \\wedge B$ by De Morgan."
+          "title": "Aim for a negated disjunction",
+          "body": "$A \\wedge B \\equiv \\neg(\\neg A \\vee \\neg B)$. We need an option of the form $\\sim(\\dots)$ whose inside is $\\neg A \\vee \\neg B$."
         },
         {
-          "title": "Other options",
-          "body": "(A) $\\neg A \\vee \\neg B$ = NAND; (B) $\\neg(A \\vee \\neg\\neg B) = \\neg(A\\vee B)$ = NOR; (C) $\\neg(\\neg A \\vee \\neg\\neg B) = \\neg(\\neg A \\vee B) = A \\wedge \\neg B$."
+          "title": "Evaluate the options",
+          "body": "$\\sim A \\odot B \\equiv \\neg A \\vee \\neg B$ (NAND). $\\sim(A \\odot \\sim B) \\equiv \\neg(A \\vee B)$. $\\sim(\\sim A \\odot \\sim B) \\equiv \\neg(\\neg A \\vee B) \\equiv A \\wedge \\neg B$. $\\sim(\\sim A \\odot B) \\equiv \\neg(\\neg A \\vee \\neg B) \\equiv A \\wedge B$."
         }
       ],
       "answer": {
@@ -1460,25 +1462,69 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Wrong: $\\neg A \\odot B = \\neg A \\vee \\neg B$, the NAND of $A$ and $B$."
+          "reason": "$\\sim A \\odot B = \\neg A \\vee \\neg B$, the NAND of A and B."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong: $\\neg(A \\odot \\neg B) = \\neg(A \\vee B)$, the NOR."
+          "reason": "$\\sim(A \\odot \\sim B) = \\neg(A \\vee B) = \\neg A \\wedge \\neg B$ (NOR)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Wrong: $\\neg(\\neg A \\odot \\neg B) = \\neg(\\neg A \\vee B) = A \\wedge \\neg B$."
+          "reason": "$\\sim(\\sim A \\odot \\sim B) = \\neg(\\neg A \\vee B) = A \\wedge \\neg B$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: $\\neg(\\neg A \\vee \\neg B) = A \\wedge B$."
+          "reason": "$\\neg(\\neg A \\vee \\neg B) = A \\wedge B$ by De Morgan."
         }
       ],
-      "verification": "Row check for (D): $A=B=T$: $\\neg A\\odot B = F\\odot T = F$, negated $T$; $A=T,B=F$: $F\\odot F = T$, negated $F$ — matches $A\\wedge B$."
+      "shortcut": "Test the row A = B = T: only A ∧ B-equivalent options give T there and F on the other three. A gives F at TT, so it is out; D gives T at TT and F elsewhere.",
+      "pitfalls": [
+        "Forgetting that $\\sim$ binds tighter than $\\odot$: $\\sim A \\odot B$ is $(\\sim A) \\odot B$.",
+        "Reading the table as an implication $A \\to B$ (it is $B \\to A$)."
+      ],
+      "verification": "Four-row truth tables of the four options: only D has the column T, F, F, F.",
+      "animation": {
+        "kind": "table",
+        "title": "A ⊙ B ≡ A ∨ ¬B",
+        "cols": [
+          "A",
+          "B",
+          "A ⊙ B"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "T",
+            "F",
+            "T"
+          ],
+          [
+            "F",
+            "T",
+            "F"
+          ],
+          [
+            "F",
+            "F",
+            "T"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 2,
+            "c": 2,
+            "tone": "error"
+          }
+        ]
+      }
     },
     "cse-2006-cs-29": {
       "approach": "A language is regular when membership needs only bounded memory. The prefix-bounded difference, finite sets of counts and modular counts are bounded; an unbounded difference that is only checked at the end is not.",

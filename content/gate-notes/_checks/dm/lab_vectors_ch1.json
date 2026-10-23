@@ -1,0 +1,779 @@
+{
+ "op": [
+  true,
+  true,
+  false,
+  true
+ ],
+ "cases": [
+  {
+   "src": "(p -> q) & (q -> r)",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "table": [
+    true,
+    false,
+    false,
+    false,
+    true,
+    false,
+    true,
+    true
+   ],
+   "kind": "contingency",
+   "minterms": [
+    0,
+    1,
+    3,
+    7
+   ],
+   "maxterms": [
+    2,
+    4,
+    5,
+    6
+   ]
+  },
+  {
+   "src": "p -> q -> r",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "table": [
+    true,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "kind": "contingency",
+   "minterms": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    7
+   ],
+   "maxterms": [
+    6
+   ]
+  },
+  {
+   "src": "(p -> q) -> r",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "table": [
+    true,
+    false,
+    true,
+    true,
+    true,
+    false,
+    true,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    1,
+    3,
+    4,
+    5,
+    7
+   ],
+   "maxterms": [
+    0,
+    2,
+    6
+   ]
+  },
+  {
+   "src": "(X & ~Z) -> Y",
+   "vars": [
+    "X",
+    "Y",
+    "Z"
+   ],
+   "table": [
+    true,
+    true,
+    true,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "kind": "contingency",
+   "minterms": [
+    0,
+    1,
+    2,
+    3,
+    5,
+    6,
+    7
+   ],
+   "maxterms": [
+    4
+   ]
+  },
+  {
+   "src": "(~(p <-> q) & r) | (p & q & ~r)",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "table": [
+    false,
+    true,
+    true,
+    false,
+    true,
+    false,
+    false,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    3,
+    5,
+    6
+   ],
+   "maxterms": [
+    0,
+    1,
+    2,
+    4,
+    7
+   ]
+  },
+  {
+   "src": "~(~A ⊙ B)",
+   "vars": [
+    "A",
+    "B"
+   ],
+   "table": [
+    true,
+    false,
+    false,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    3
+   ],
+   "maxterms": [
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "src": "~A ⊙ B",
+   "vars": [
+    "A",
+    "B"
+   ],
+   "table": [
+    false,
+    true,
+    true,
+    true
+   ],
+   "kind": "contingency",
+   "minterms": [
+    0,
+    1,
+    2
+   ],
+   "maxterms": [
+    3
+   ]
+  },
+  {
+   "src": "(p -> q) <-> (~q -> ~p)",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "table": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "kind": "tautology",
+   "minterms": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "maxterms": []
+  },
+  {
+   "src": "((p -> q) -> p) -> p",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "table": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "kind": "tautology",
+   "minterms": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "maxterms": []
+  },
+  {
+   "src": "p & ~p",
+   "vars": [
+    "p"
+   ],
+   "table": [
+    false,
+    false
+   ],
+   "kind": "contradiction",
+   "minterms": [],
+   "maxterms": [
+    0,
+    1
+   ]
+  },
+  {
+   "src": "p xor q xor r",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "table": [
+    true,
+    false,
+    false,
+    true,
+    false,
+    true,
+    true,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    1,
+    2,
+    4,
+    7
+   ],
+   "maxterms": [
+    0,
+    3,
+    5,
+    6
+   ]
+  },
+  {
+   "src": "~p | q -> r",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "table": [
+    true,
+    false,
+    true,
+    true,
+    true,
+    false,
+    true,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    1,
+    3,
+    4,
+    5,
+    7
+   ],
+   "maxterms": [
+    0,
+    2,
+    6
+   ]
+  },
+  {
+   "src": "a & b | c & d",
+   "vars": [
+    "a",
+    "b",
+    "c",
+    "d"
+   ],
+   "table": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    3,
+    7,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "maxterms": [
+    0,
+    1,
+    2,
+    4,
+    5,
+    6,
+    8,
+    9,
+    10
+   ]
+  },
+  {
+   "src": "(a | b) & (c | d) -> e",
+   "vars": [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e"
+   ],
+   "table": [
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    true,
+    true,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    true,
+    true,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "kind": "contingency",
+   "minterms": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    13,
+    15,
+    16,
+    17,
+    19,
+    21,
+    23,
+    24,
+    25,
+    27,
+    29,
+    31
+   ],
+   "maxterms": [
+    10,
+    12,
+    14,
+    18,
+    20,
+    22,
+    26,
+    28,
+    30
+   ]
+  },
+  {
+   "src": "T -> F",
+   "vars": [],
+   "table": [
+    false
+   ],
+   "kind": "contradiction",
+   "minterms": [],
+   "maxterms": [
+    0
+   ]
+  },
+  {
+   "src": "p <-> q <-> r",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "table": [
+    true,
+    false,
+    false,
+    true,
+    false,
+    true,
+    true,
+    false
+   ],
+   "kind": "contingency",
+   "minterms": [
+    1,
+    2,
+    4,
+    7
+   ],
+   "maxterms": [
+    0,
+    3,
+    5,
+    6
+   ]
+  },
+  {
+   "src": "\\neg p \\vee (p \\Rightarrow q)",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "table": [
+    true,
+    false,
+    true,
+    true
+   ],
+   "kind": "contingency",
+   "minterms": [
+    0,
+    1,
+    3
+   ],
+   "maxterms": [
+    2
+   ]
+  },
+  {
+   "src": "(P \\wedge Q) \\rightarrow R",
+   "vars": [
+    "P",
+    "Q",
+    "R"
+   ],
+   "table": [
+    true,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "kind": "contingency",
+   "minterms": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    7
+   ],
+   "maxterms": [
+    6
+   ]
+  }
+ ],
+ "pairs": [
+  {
+   "a": "p -> q",
+   "b": "~q -> ~p",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "equivalent": true,
+   "aImpliesB": true,
+   "bImpliesA": true,
+   "differ": []
+  },
+  {
+   "a": "p -> q",
+   "b": "q -> p",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "equivalent": false,
+   "aImpliesB": false,
+   "bImpliesA": false,
+   "differ": [
+    1,
+    2
+   ]
+  },
+  {
+   "a": "p & (p -> q)",
+   "b": "q",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "equivalent": false,
+   "aImpliesB": true,
+   "bImpliesA": false,
+   "differ": [
+    2
+   ]
+  },
+  {
+   "a": "p",
+   "b": "p | q",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "equivalent": false,
+   "aImpliesB": true,
+   "bImpliesA": false,
+   "differ": [
+    2
+   ]
+  },
+  {
+   "a": "p <-> q",
+   "b": "p -> ~q",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "equivalent": false,
+   "aImpliesB": false,
+   "bImpliesA": false,
+   "differ": [
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "a": "~(p & q)",
+   "b": "~p | ~q",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "equivalent": true,
+   "aImpliesB": true,
+   "bImpliesA": true,
+   "differ": []
+  },
+  {
+   "a": "p & (q -> r)",
+   "b": "(p & q) -> (p & r)",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "equivalent": false,
+   "aImpliesB": true,
+   "bImpliesA": false,
+   "differ": [
+    4,
+    5,
+    6,
+    7
+   ]
+  },
+  {
+   "a": "x xor y",
+   "b": "~(x <-> y)",
+   "vars": [
+    "x",
+    "y"
+   ],
+   "equivalent": true,
+   "aImpliesB": true,
+   "bImpliesA": true,
+   "differ": []
+  }
+ ],
+ "args": [
+  {
+   "premises": [
+    "p -> q",
+    "~q"
+   ],
+   "conclusion": "~p",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "critical": [
+    3
+   ],
+   "counter": [],
+   "valid": true
+  },
+  {
+   "premises": [
+    "p -> q",
+    "q"
+   ],
+   "conclusion": "p",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "critical": [
+    0,
+    2
+   ],
+   "counter": [
+    2
+   ],
+   "valid": false
+  },
+  {
+   "premises": [
+    "p | q",
+    "~p"
+   ],
+   "conclusion": "q",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "critical": [
+    2
+   ],
+   "counter": [],
+   "valid": true
+  },
+  {
+   "premises": [
+    "p -> q",
+    "q -> r"
+   ],
+   "conclusion": "p -> r",
+   "vars": [
+    "p",
+    "q",
+    "r"
+   ],
+   "critical": [
+    0,
+    4,
+    6,
+    7
+   ],
+   "counter": [],
+   "valid": true
+  },
+  {
+   "premises": [
+    "p -> q",
+    "~p"
+   ],
+   "conclusion": "~q",
+   "vars": [
+    "p",
+    "q"
+   ],
+   "critical": [
+    2,
+    3
+   ],
+   "counter": [
+    2
+   ],
+   "valid": false
+  },
+  {
+   "premises": [
+    "A",
+    "A -> (B | C)",
+    "B -> ~A"
+   ],
+   "conclusion": "C",
+   "vars": [
+    "A",
+    "B",
+    "C"
+   ],
+   "critical": [
+    2
+   ],
+   "counter": [],
+   "valid": true
+  }
+ ]
+}

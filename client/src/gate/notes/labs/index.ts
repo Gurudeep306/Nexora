@@ -13,6 +13,8 @@ export const LABS = {
   'flipflop-scope': lazy(() => import('./FlipflopScope')),
   'counter-fsm': lazy(() => import('./CounterFsm')),
   'converter-bench': lazy(() => import('./ConverterBench')),
+  // Discrete Mathematics
+  'truth-table': lazy(() => import('./TruthTable')),
 } as const
 
 export type LabName = keyof typeof LABS

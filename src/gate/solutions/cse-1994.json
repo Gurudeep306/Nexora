@@ -600,34 +600,86 @@
       "verification": "Multiplied $A^{-1}A$ row by row and obtained the identity."
     },
     "cse-1994-a-3-13": {
-      "approach": "The claim \"$p\\Leftrightarrow q$ does not imply $p\\to\\neg q$\" is true iff some truth-table row makes $p\\Leftrightarrow q$ true and $p\\to\\neg q$ false.",
+      "approach": "Concept tested: **logical implication between formulas, decided by truth table**. $A$ implies $B$ exactly when no row makes $A$ true and $B$ false; so look for such a row.",
       "concepts": [
         "Truth table",
         "Logical implication",
         "Biconditional"
       ],
+      "given": "Claim: $p \\leftrightarrow q$ does **not** imply $p \\rightarrow \\neg q$.",
       "steps": [
         {
-          "title": "Truth table",
-          "body": "| $p$ | $q$ | $p\\Leftrightarrow q$ | $p\\to\\neg q$ |\n|---|---|---|---|\n| T | T | T | **F** |\n| T | F | F | T |\n| F | T | F | T |\n| F | F | T | T |"
+          "title": "What 'implies' means",
+          "body": "$p \\leftrightarrow q$ implies $p \\to \\neg q$ iff every row where $p \\leftrightarrow q$ is T also has $p \\to \\neg q$ T. One row with T then F is enough to refute it."
         },
         {
-          "title": "Look for a counterexample row",
-          "body": "In row 1 ($p=q=T$) the premise $p\\Leftrightarrow q$ is **T** but $p\\to\\neg q$ is **F**. So $p\\Leftrightarrow q \\Rightarrow p\\to\\neg q$ is not a tautology, i.e. the implication fails."
+          "title": "Build the two columns",
+          "body": "Rows TT, TF, FT, FF. $p \\leftrightarrow q$: T, F, F, T. $p \\to \\neg q$ (false only when $p$ = T and $\\neg q$ = F, i.e. $q$ = T): F, T, T, T."
         },
         {
-          "title": "Verdict",
-          "body": "Hence \"$p\\Leftrightarrow q$ does **not** imply $p\\to\\neg q$\" is **True**."
+          "title": "Find the critical row",
+          "body": "Row TT: $p \\leftrightarrow q$ = T but $p \\to \\neg q$ = F. So the implication fails, and the statement 'does not imply' is **true**."
         }
       ],
       "answer": {
-        "value": "**True** — at $p=q=T$, $p\\Leftrightarrow q$ is true but $p\\to\\neg q$ is false.",
+        "value": "True ($p \\leftrightarrow q$ is T and $p \\to \\neg q$ is F on the row $p = q =$ T)",
         "matchesKey": true
       },
+      "shortcut": "To refute 'A implies B', exhibit one row with A true and B false. The row $p = q =$ T makes the biconditional true and $p \\to \\neg q$ = T → F.",
       "pitfalls": [
-        "Answering about the implication itself (\"false\") rather than about the statement \"does not imply\" (\"true\")."
+        "Reading the question as 'is the biconditional equivalent to the implication': only one direction is asked.",
+        "Forgetting that $p \\to \\neg q$ is false on exactly one row ($p$ = T, $q$ = T)."
       ],
-      "verification": "Only one row is needed as a counterexample; rechecked $p\\to\\neg q$ at $p=q=T$ is $T\\to F = F$."
+      "verification": "Truth table over $p, q$: the only row with $p \\leftrightarrow q$ = T and $p \\to \\neg q$ = F is TT.",
+      "animation": {
+        "kind": "table",
+        "title": "Columns of p ↔ q and p → ¬q",
+        "cols": [
+          "p",
+          "q",
+          "p ↔ q",
+          "p → ¬q"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "T",
+            "F"
+          ],
+          [
+            "T",
+            "F",
+            "F",
+            "T"
+          ],
+          [
+            "F",
+            "T",
+            "F",
+            "T"
+          ],
+          [
+            "F",
+            "F",
+            "T",
+            "T"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "c": 2,
+            "tone": "success"
+          },
+          {
+            "r": 0,
+            "c": 3,
+            "tone": "error"
+          }
+        ]
+      }
     },
     "cse-1994-a-3-2": {
       "approach": "RISC favours fixed-length, simple-to-decode formats; expanding (variable-length) opcodes are a CISC density trick.",
