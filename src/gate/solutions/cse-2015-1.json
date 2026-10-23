@@ -1084,24 +1084,25 @@
       "verification": "This matches the definition used for LR parsing: the set of viable prefixes is a regular language recognised by the LR(0) automaton, and the parser stack always spells a string in that set. The official GATE key is C."
     },
     "cse-2015-1-cs-14": {
-      "approach": "The biconditional $p \\leftrightarrow q$ is true exactly when $p$ and $q$ have the same truth value. Check which option is true when they differ: that one is XOR, the negation.",
+      "approach": "Concept tested: **the equivalent forms of the biconditional**. $p \\leftrightarrow q$ is true exactly when $p$ and $q$ agree; the option true when they differ is XOR, its negation.",
       "concepts": [
         "Biconditional",
-        "Logical equivalence",
-        "XOR"
+        "Implication law",
+        "Exclusive or"
       ],
+      "given": "Find the option NOT equivalent to $p \\leftrightarrow q$.",
       "steps": [
         {
-          "title": "Standard forms of $p \\leftrightarrow q$",
-          "body": "$p \\leftrightarrow q \\equiv (p \\rightarrow q) \\wedge (q \\rightarrow p) \\equiv (\\neg p \\vee q) \\wedge (p \\vee \\neg q) \\equiv (p \\wedge q) \\vee (\\neg p \\wedge \\neg q)$."
+          "title": "The implication form",
+          "body": "$p \\leftrightarrow q \\equiv (p \\to q) \\wedge (q \\to p) \\equiv (\\neg p \\vee q) \\wedge (p \\vee \\neg q)$: option A; B is A with $q \\to p$ left unrewritten."
         },
         {
-          "title": "Match the options",
-          "body": "(A) is $(p\\to q)\\wedge(q\\to p)$. (B) is $(p\\to q)\\wedge(q\\to p)$ written with one arrow. (D) says \"both true or both false\". All three are equivalent."
+          "title": "The agreement form",
+          "body": "True exactly on TT and FF: $(p \\wedge q) \\vee (\\neg p \\wedge \\neg q)$, option D."
         },
         {
           "title": "The odd one out",
-          "body": "(C) $(\\neg p \\wedge q) \\vee (p \\wedge \\neg q)$ is true exactly when $p \\ne q$. That is $p \\oplus q = \\neg(p \\leftrightarrow q)$, so it is **not** equivalent."
+          "body": "Option C, $(\\neg p \\wedge q) \\vee (p \\wedge \\neg q)$, is true exactly on FT and TF: it is $p \\oplus q = \\neg(p \\leftrightarrow q)$."
         }
       ],
       "answer": {
@@ -1115,28 +1116,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$\\neg p \\vee q = p \\to q$ and $p \\vee \\neg q = q \\to p$, so this equals $p \\leftrightarrow q$."
+          "reason": "$(p \\to q) \\wedge (q \\to p)$ written as clauses: equivalent."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$(\\neg p \\vee q) = p \\to q$, combined with $q \\to p$, gives $p \\leftrightarrow q$."
+          "reason": "Same as A with the second clause kept as $q \\to p$: equivalent."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "This is exclusive OR, true when $p$ and $q$ differ. It is the negation of $p \\leftrightarrow q$."
+          "reason": "Lists the rows where $p, q$ differ: XOR, the negation of $p \\leftrightarrow q$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "True when both are false or both are true, which is exactly $p \\leftrightarrow q$."
+          "reason": "Lists the rows where $p, q$ agree: equivalent."
         }
       ],
+      "shortcut": "Test the row $p = q =$ T: A, B, D are T there, C is F.",
       "pitfalls": [
-        "Mixing up the sum-of-products form of XNOR, which is (D), with that of XOR, which is (C)."
+        "Confusing the CNF (A) with the DNF (D) and suspecting one of them; both are correct."
       ],
-      "verification": "Try $p=1, q=0$: $p\\leftrightarrow q = 0$, while (C) gives $0 \\vee 1 = 1$. Options (A), (B) and (D) all give 0."
+      "verification": "Columns over TT, TF, FT, FF: A, B, D give T, F, F, T; C gives F, T, T, F."
     },
     "cse-2015-1-cs-15": {
       "approach": "Check each statement against the basic facts: XML is case-sensitive and requires every tag to be closed, while HTML is case-insensitive and lenient about closing tags.",

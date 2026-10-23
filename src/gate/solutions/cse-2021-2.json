@@ -1454,24 +1454,25 @@
       "verification": "Each statement checked directly against the textbook definitions of the scheduling criteria and mechanisms."
     },
     "cse-2021-2-cs-15": {
-      "approach": "Rewrite both sides using $A \\to B \\equiv \\neg A \\vee B$. They reduce to the same clause, so $S$ has the form $X \\to X$: a tautology whose antecedent and consequent are equivalent.",
+      "approach": "Concept tested: **proving equivalence by a rewrite ladder**. Remove the arrows from both sides; antecedent and consequent both become $\\neg P \\vee \\neg Q \\vee R$, so $S$ is $X \\to X$.",
       "concepts": [
-        "Implication elimination",
-        "Tautology",
-        "Logical equivalence"
+        "Implication law",
+        "Idempotent law",
+        "Tautology"
       ],
+      "given": "$S: ((P \\wedge Q) \\to R) \\to ((P \\wedge Q) \\to (Q \\to R))$.",
       "steps": [
         {
           "title": "Antecedent",
-          "body": "$$(P\\wedge Q)\\to R \\equiv \\neg(P\\wedge Q)\\vee R \\equiv \\neg P \\vee \\neg Q \\vee R$$"
+          "body": "$(P \\wedge Q) \\to R \\equiv \\neg(P \\wedge Q) \\vee R \\equiv \\neg P \\vee \\neg Q \\vee R$."
         },
         {
           "title": "Consequent",
-          "body": "$$(P\\wedge Q)\\to(Q\\to R) \\equiv \\neg P\\vee\\neg Q\\vee(\\neg Q\\vee R) \\equiv \\neg P\\vee\\neg Q\\vee R$$ (since $\\neg Q \\vee \\neg Q = \\neg Q$)."
+          "body": "$(P \\wedge Q) \\to (Q \\to R) \\equiv \\neg P \\vee \\neg Q \\vee (\\neg Q \\vee R) \\equiv \\neg P \\vee \\neg Q \\vee R$ (idempotence)."
         },
         {
-          "title": "Conclusion",
-          "body": "Both sides equal $X = \\neg P\\vee\\neg Q\\vee R$, so $S \\equiv X \\to X \\equiv \\neg X \\vee X \\equiv \\text{T}$. $S$ is a **tautology** (B) and antecedent ≡ consequent (D)."
+          "title": "Conclude",
+          "body": "The two sides are equivalent, so $S \\equiv X \\to X \\equiv \\neg X \\vee X \\equiv$ T: $S$ is a tautology (B) and D holds; A and C are false."
         }
       ],
       "answer": {
@@ -1486,29 +1487,47 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "S is true under every assignment, so it is not contingent."
+          "reason": "$S$ is a tautology, so it is not 'neither'."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: S has the form X → X."
+          "reason": "$S$ has the form $X \\to X$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "A contradiction is false everywhere; S is true everywhere."
+          "reason": "A tautology is never a contradiction."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: both reduce to ¬P ∨ ¬Q ∨ R."
+          "reason": "Both sides reduce to $\\neg P \\vee \\neg Q \\vee R$."
         }
       ],
-      "shortcut": "Exportation: $(P\\wedge Q)\\to(Q\\to R) \\equiv (P\\wedge Q\\wedge Q)\\to R \\equiv (P\\wedge Q)\\to R$.",
+      "shortcut": "Exportation: $(P \\wedge Q) \\to (Q \\to R) \\equiv (P \\wedge Q \\wedge Q) \\to R \\equiv (P \\wedge Q) \\to R$.",
       "pitfalls": [
-        "Trying a full 8-row truth table — the algebra is much quicker."
+        "Marking only B: in an MSQ, D is also correct and is the reason B holds."
       ],
-      "verification": "S could be false only if the antecedent is true and the consequent false, impossible since they are the same formula."
+      "verification": "Truth tables over $P, Q, R$: antecedent and consequent agree on all 8 rows (both false only on TTF), and $S$ is T on all 8.",
+      "animation": {
+        "kind": "equation",
+        "title": "Both sides of S",
+        "lines": [
+          {
+            "tex": "(P \\wedge Q) \\to R \\equiv \\neg P \\vee \\neg Q \\vee R",
+            "note": "antecedent"
+          },
+          {
+            "tex": "(P \\wedge Q) \\to (Q \\to R) \\equiv \\neg P \\vee \\neg Q \\vee \\neg Q \\vee R",
+            "note": "consequent"
+          },
+          {
+            "tex": "\\equiv \\neg P \\vee \\neg Q \\vee R",
+            "note": "idempotent: S is X → X"
+          }
+        ]
+      }
     },
     "cse-2021-2-cs-16": {
       "approach": "Label the 7-node complete tree 1–7 level by level. BFS takes the root and its two children; DFS takes the root, one child and that child’s child. They differ in exactly one element.",

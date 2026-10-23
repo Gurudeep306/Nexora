@@ -1376,23 +1376,25 @@
       "verification": "A hungry tiger: (D) forces $attacks(x)$, as the sentence requires; a calm lion: (D) imposes nothing."
     },
     "cse-2006-cs-27": {
-      "approach": "Rewrite each side in disjunctive form. $(A\\wedge B)\\to C$ and $(A\\vee B)\\to C$ are swapped relative to the right-hand sides, so find one counter-assignment for each.",
+      "approach": "Concept tested: **hypothesis splitting** — on the left of an arrow, ∧ and ∨ swap. Both P1 and P2 keep the connective instead of swapping it, so find a row where each pair of sides differs.",
       "concepts": [
-        "Propositional equivalence",
-        "Implication laws"
+        "Hypothesis splitting",
+        "Tautology",
+        "Counterexample"
       ],
+      "given": "P1: $((A \\wedge B) \\to C) \\equiv ((A \\to C) \\wedge (B \\to C))$. P2: $((A \\vee B) \\to C) \\equiv ((A \\to C) \\vee (B \\to C))$.",
       "steps": [
         {
-          "title": "Check P1",
-          "body": "LHS: $(A\\wedge B)\\to C \\equiv \\neg A \\vee \\neg B \\vee C$.\n\nRHS: $(A\\to C)\\wedge(B\\to C) \\equiv (\\neg A \\wedge \\neg B) \\vee C \\equiv (A \\vee B) \\to C$.\n\nCounter-example $A=1, B=0, C=0$: LHS $= 0 \\vee 1 \\vee 0 = 1$, RHS $= (0\\wedge1)\\vee0 = 0$. Not a tautology."
+          "title": "The correct laws",
+          "body": "$(A \\wedge B) \\to C \\equiv \\neg A \\vee \\neg B \\vee C \\equiv (A \\to C) \\vee (B \\to C)$, and $(A \\vee B) \\to C \\equiv (A \\to C) \\wedge (B \\to C)$. P1 and P2 have the connectives swapped."
         },
         {
-          "title": "Check P2",
-          "body": "LHS: $(A\\vee B)\\to C \\equiv (\\neg A\\wedge\\neg B)\\vee C$.\n\nRHS: $(A\\to C)\\vee(B\\to C) \\equiv \\neg A\\vee\\neg B\\vee C \\equiv (A\\wedge B)\\to C$.\n\nSame counter-example $A=1,B=0,C=0$: LHS $=0$, RHS $=1$. Not a tautology."
+          "title": "Refute P1",
+          "body": "$A$ = T, $B$ = F, $C$ = F: left $(\\text{F}) \\to \\text{F}$ = T; right $(\\text{T} \\to \\text{F}) \\wedge (\\text{F} \\to \\text{F})$ = F. The biconditional is F."
         },
         {
-          "title": "Conclusion",
-          "body": "Neither biconditional is a tautology — option (D). (The correct laws pair them the other way round.)"
+          "title": "Refute P2",
+          "body": "Same row: left $(\\text{T}) \\to \\text{F}$ = F; right $(\\text{F}) \\vee (\\text{T})$ = T. The biconditional is F."
         }
       ],
       "answer": {
@@ -1406,28 +1408,63 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Wrong: P1 fails for $A=1,B=0,C=0$."
+          "reason": "P1 fails on $A$ = T, $B$ = F, $C$ = F."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong: P2 fails for $A=1,B=0,C=0$."
+          "reason": "P2 fails on the same row."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Wrong: neither is a tautology."
+          "reason": "Neither is a tautology."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: both have a falsifying assignment."
+          "reason": "Each has the ∧/∨ on its right side swapped; one row refutes both."
         }
       ],
+      "shortcut": "Remember 'on the left, ∧ and ∨ swap'. Seeing the same connective on both sides is enough to suspect both, and the row T, F, F confirms it.",
       "pitfalls": [
-        "Mixing up the true laws: $(A\\vee B)\\to C \\equiv (A\\to C)\\wedge(B\\to C)$ and $(A\\wedge B)\\to C \\equiv (A\\to C)\\vee(B\\to C)$."
+        "Distributing the arrow over the hypothesis as if it were multiplication."
       ],
-      "verification": "Re-evaluated both sides of P1 and P2 at $A=1,B=0,C=0$."
+      "verification": "Truth tables over $A, B, C$: each biconditional is false on TFF and FTF.",
+      "animation": {
+        "kind": "table",
+        "title": "The row A = T, B = F, C = F",
+        "cols": [
+          "formula",
+          "left",
+          "right"
+        ],
+        "rows": [
+          [
+            "P1",
+            "T",
+            "F"
+          ],
+          [
+            "P2",
+            "F",
+            "T"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "c": 2,
+            "tone": "error"
+          },
+          {
+            "r": 1,
+            "c": 2,
+            "tone": "error"
+          }
+        ]
+      }
     },
     "cse-2006-cs-28": {
       "approach": "Concept tested: **an operator defined by a truth table**. Read off its false row to rewrite it with ¬ and ∨, then substitute each option and simplify with De Morgan.",

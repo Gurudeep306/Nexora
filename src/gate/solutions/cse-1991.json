@@ -1785,28 +1785,33 @@
       "verification": "Counter-examples exist for B (Peterson), C (two monitors), E (small leftover holes)."
     },
     "cse-1991-a-3-xii": {
-      "approach": "If $F_1\\land F_2$ were true under some assignment, both $F_3$ and $\\neg F_3$ would have to be true there — impossible. So $F_1\\land F_2$ is unsatisfiable.",
+      "approach": "Concept tested: **what two tautological implications with opposite conclusions force**. If $C \\to D$ and $C \\to \\neg D$ are both tautologies, no row can make $C$ true; apply this with $C = F_1 \\wedge F_2$, then test the other claims with small examples.",
       "concepts": [
-        "tautology",
-        "satisfiability",
-        "implication"
+        "Tautology",
+        "Satisfiability",
+        "Implication"
       ],
+      "given": "$F_1 \\wedge F_2 \\to F_3$ and $F_1 \\wedge F_2 \\to \\neg F_3$ are both tautologies.",
       "steps": [
         {
-          "title": "Combine the implications",
-          "body": "$(P\\to F_3)\\land(P\\to\\neg F_3) \\equiv P \\to (F_3\\land\\neg F_3) \\equiv P\\to\\text{False} \\equiv \\neg P$, with $P = F_1\\land F_2$."
+          "title": "Bracket by precedence",
+          "body": "$\\wedge$ binds tighter than $\\to$, so the formulas are $(F_1 \\wedge F_2) \\to F_3$ and $(F_1 \\wedge F_2) \\to \\neg F_3$. Write $C = F_1 \\wedge F_2$."
         },
         {
-          "title": "Conclusion",
-          "body": "Both are tautologies ⇔ $\\neg(F_1\\land F_2)$ is a tautology ⇔ $F_1\\land F_2$ is not satisfiable → (B)."
+          "title": "Suppose some row makes C true",
+          "body": "Both implications are true on that row (they are tautologies), and their hypothesis $C$ is true, so both conclusions $F_3$ and $\\neg F_3$ are true there. That is impossible."
         },
         {
-          "title": "Rule out the rest",
-          "body": "Take $F_1 = \\text{True}$, $F_2 = \\text{False}$: the conditions hold, $F_1$ is a tautology (so C fails), $F_1$ is satisfiable (D fails), and $F_2$ is not a tautology (A fails)."
+          "title": "Conclude",
+          "body": "No row makes $C$ true: $F_1 \\wedge F_2$ is **unsatisfiable**. (Equivalently: $(C \\to F_3) \\wedge (C \\to \\neg F_3) \\equiv C \\to (F_3 \\wedge \\neg F_3) \\equiv \\neg C$, and this is a tautology.)"
+        },
+        {
+          "title": "Test the other claims",
+          "body": "$F_1 = p$, $F_2 = \\neg p$ satisfies the hypothesis: neither is a tautology and both are satisfiable, so A and D fail. $F_1 = p \\vee \\neg p$, $F_2 = p \\wedge \\neg p$ also satisfies it, and now $F_1$ is a tautology, so C fails. Since B holds, E fails."
         }
       ],
       "answer": {
-        "value": "B",
+        "value": "The conjunction $F_1 \\wedge F_2$ is not satisfiable",
         "choice": [
           "B"
         ],
@@ -1816,30 +1821,53 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "If both were tautologies, $F_1\\land F_2$ would be true and force $F_3\\land\\neg F_3$."
+          "reason": "If both were tautologies, $F_1 \\wedge F_2$ would be true on every row, and then $F_3$ and $\\neg F_3$ would both be true. The opposite is forced."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Derived: the hypotheses are equivalent to $\\neg(F_1\\land F_2)$ being valid."
+          "reason": "A row making $F_1 \\wedge F_2$ true would make both $F_3$ and $\\neg F_3$ true."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$F_1 = \\text{True}$, $F_2=\\text{False}$ satisfies the hypotheses with $F_1$ tautologous."
+          "reason": "Not forced: $F_1 = p \\vee \\neg p$ (a tautology) with $F_2 = p \\wedge \\neg p$ meets the hypothesis."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Same example: $F_1$ is satisfiable."
+          "reason": "Not forced: $F_1 = p$, $F_2 = \\neg p$ are each satisfiable, yet their conjunction is not."
         },
         {
           "option": "E",
           "correct": false,
-          "reason": "(B) is correct."
+          "reason": "B is forced, so 'none of the above' is wrong."
         }
       ],
-      "verification": "Counter-model $F_1 = T$, $F_2 = F$ checked against A, C, D."
+      "shortcut": "Absurdity law: $(C \\to D) \\wedge (C \\to \\neg D) \\equiv \\neg C$. Both being tautologies means $\\neg C$ is a tautology, i.e. $C$ is a contradiction.",
+      "pitfalls": [
+        "Concluding that each of $F_1$, $F_2$ is unsatisfiable: only their conjunction must be.",
+        "Reading 'neither is tautologous' as a consequence; one of them may well be a tautology."
+      ],
+      "verification": "Brute force over all functions $F_1, F_2, F_3$ of two variables: whenever both implications are tautologies, $F_1 \\wedge F_2$ is all F, while each of A, C, D has counterexamples.",
+      "animation": {
+        "kind": "equation",
+        "title": "The absurdity law at work",
+        "lines": [
+          {
+            "tex": "(C \\to F_3) \\wedge (C \\to \\neg F_3)",
+            "note": "both tautologies"
+          },
+          {
+            "tex": "\\equiv C \\to (F_3 \\wedge \\neg F_3)",
+            "note": "conclusion splitting"
+          },
+          {
+            "tex": "\\equiv C \\to \\mathrm{F} \\equiv \\neg C",
+            "note": "so ¬C is a tautology"
+          }
+        ]
+      }
     },
     "cse-1991-a-3-xiii": {
       "approach": "Describe each language: $r$ = strings beginning with 1; $s = 1^+0$; $t = 1^*0$. Then $s \\subseteq r$ and $s \\subseteq t$; options (A) and (C) both say exactly this.",
@@ -2025,31 +2053,97 @@
       "verification": "Balanced cost $5/3$ < chain cost $2$."
     },
     "cse-1991-a-4-iv": {
-      "approach": "Dropping axioms can never create a contradiction (fewer theorems), so consistency is inherited; but a dropped axiom may become neither provable nor refutable, so completeness is lost in general.",
+      "approach": "Concept tested: **consistency and (negation) completeness of axiom systems under removing axioms**. Fewer axioms prove fewer theorems: that can never create a contradiction, but it can leave a statement undecided.",
       "concepts": [
-        "axiom systems",
-        "consistency",
-        "completeness"
+        "Axiom system",
+        "Consistency",
+        "Completeness",
+        "Subsystem"
       ],
+      "given": "A finite axiom system $A$ that is complete (for every $\\varphi$, $A \\vdash \\varphi$ or $A \\vdash \\neg\\varphi$) and consistent (never both). Question: is every subsystem $A' \\subseteq A$ complete and consistent?",
       "steps": [
         {
           "title": "Consistency is inherited",
-          "body": "Every theorem of a subsystem $A' \\subseteq A$ is a theorem of $A$. If $A'$ proved both $\\varphi$ and $\\neg\\varphi$, so would $A$ — contradiction. So every subsystem is consistent."
+          "body": "Any derivation from $A'$ uses only axioms of $A'$, which are axioms of $A$, so it is also a derivation from $A$. If $A'$ proved both $\\varphi$ and $\\neg\\varphi$, then $A$ would too, contradicting the consistency of $A$. So **every subsystem is consistent**. (Semantically: a model of $A$ is a model of every subset.)"
         },
         {
-          "title": "Completeness is not",
-          "body": "Let $\\alpha \\in A$ be independent of $A\\setminus\\{\\alpha\\}$. Then $A' = A\\setminus\\{\\alpha\\}$ proves neither $\\alpha$ (independence) nor $\\neg\\alpha$ ($A'$ is consistent with $\\alpha$, since $A$ is consistent). So $A'$ is incomplete. Example: the empty subsystem of a complete theory proves only tautologies."
+          "title": "Completeness is not inherited",
+          "body": "Removing an axiom can make a statement unprovable without making its negation provable. Example over the variables $p, q$: $A = \\{p, q\\}$ has exactly one model ($p = q =$ T), so it decides every formula: complete and consistent. Its subsystem $A' = \\{p\\}$ has two models ($q$ = T and $q$ = F), so it proves neither $q$ nor $\\neg q$."
+        },
+        {
+          "title": "General reason",
+          "body": "A consistent propositional theory is complete exactly when it has one model. Dropping axioms can only add models; once two models exist, the formula that separates them is undecided."
         },
         {
           "title": "Answer",
-          "body": "No — every subsystem is consistent, but not necessarily complete."
+          "body": "No: every subsystem is **consistent**, but **not necessarily complete**."
         }
       ],
       "answer": {
         "value": "Every subsystem is consistent but not necessarily complete",
         "matchesKey": true
       },
-      "verification": "Extreme case: the empty axiom set is consistent but cannot decide any non-logical sentence."
+      "shortcut": "Think 'fewer axioms, fewer theorems': contradictions (two theorems $\\varphi$, $\\neg\\varphi$) can only disappear, and so can answers.",
+      "pitfalls": [
+        "Mixing the two meanings of complete: propositional logic's proof system is complete (proves every valid formula) whatever the axioms, but a **theory** being complete depends on its axioms.",
+        "Answering 'yes, both' because a subsystem 'is part of a good system'."
+      ],
+      "verification": "By brute force over all 16 formulas in $p, q$: $\\{p, q\\}$ decides each one, $\\{p\\}$ leaves $q$ undecided, and both $\\{p\\}$ and $\\emptyset$ are satisfiable (consistent).",
+      "animation": {
+        "kind": "table",
+        "title": "Models of A = {p, q} and of the subsystem {p}",
+        "cols": [
+          "p",
+          "q",
+          "A = {p, q}",
+          "A' = {p}"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "model",
+            "model"
+          ],
+          [
+            "T",
+            "F",
+            "-",
+            "model"
+          ],
+          [
+            "F",
+            "T",
+            "-",
+            "-"
+          ],
+          [
+            "F",
+            "F",
+            "-",
+            "-"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "c": 2,
+            "tone": "success"
+          },
+          {
+            "r": 0,
+            "c": 3,
+            "tone": "warning"
+          },
+          {
+            "r": 1,
+            "c": 3,
+            "tone": "warning"
+          }
+        ],
+        "caption": "One model: complete. Two models: q is undecided."
+      }
     },
     "cse-1991-b-5-a": {
       "approach": "Concept tested: **stable states of a feedback loop**. Cut the feedback wire, write the loop function $Q^+ = f(a, b, Q)$, and for each input pair keep the values of $Q$ that reproduce themselves ($f = Q$).",

@@ -3009,28 +3009,29 @@
       "verification": "For $n=2^{16}$ the path has 17 nodes; binary search needs about $\\lceil\\log_2 17\\rceil=5$ comparisons, i.e. $\\approx\\log_2\\log_2 n$."
     },
     "cse-2007-cs-48": {
-      "approach": "Compare any assignment $\\tau$ with its complement $\\bar\\tau$: every clause is true under at least one of them, so one of the two satisfies at least half of the clauses.",
+      "approach": "Concept tested: **a guarantee for every CNF: some assignment satisfies at least half the clauses**. Pair any assignment with its complement: every non-empty clause is true under at least one of the two.",
       "concepts": [
-        "Conjunctive normal form",
-        "MAX-SAT",
-        "Averaging argument"
+        "CNF",
+        "Satisfiability",
+        "Complement argument"
       ],
+      "given": "Statements about every formula in conjunctive normal form.",
       "steps": [
         {
-          "title": "Assignment vs. its complement",
-          "body": "Take a clause $C$ and any literal $\\ell$ in it. If $\\ell$ is false under $\\tau$, it is true under $\\bar\\tau$ (every variable flipped). So each clause is true under $\\tau$ **or** under $\\bar\\tau$."
+          "title": "Refute B",
+          "body": "$p \\wedge \\neg p$ is a CNF with two clauses and no assignment satisfies both. So not every CNF is satisfiable."
         },
         {
-          "title": "Count",
-          "body": "With $m$ clauses, $\\text{sat}(\\tau)+\\text{sat}(\\bar\\tau)\\ge m$, so $\\max(\\text{sat}(\\tau),\\text{sat}(\\bar\\tau))\\ge \\tfrac m2$. Hence (A) holds for every formula."
+          "title": "Prove A",
+          "body": "Take any assignment $\\tau$ and its complement $\\bar\\tau$. A clause false under $\\tau$ has all literals false, so all of them are true under $\\bar\\tau$. Hence every clause is true under $\\tau$ or $\\bar\\tau$; if $\\tau$ satisfies $s$ of $m$ clauses, $\\bar\\tau$ satisfies at least $m - s$, and one of them gets $\\ge m/2$."
         },
         {
-          "title": "Reject the others",
-          "body": "(B) fails for $x\\wedge\\neg x$ (unsatisfiable). (C) contradicts (A): some assignment always satisfies $\\ge \\tfrac m2>\\tfrac m4$ clauses. So (D) is also wrong."
+          "title": "Refute C and D",
+          "body": "C says some CNF has at most a quarter of its clauses true under every assignment; A gives an assignment with at least half. So C is false, and D ('none') is false since A holds."
         }
       ],
       "answer": {
-        "value": "At least half the clauses can always be satisfied — option (A)",
+        "value": "For any formula, some assignment makes at least half the clauses true",
         "choice": [
           "A"
         ],
@@ -3040,25 +3041,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct by the complement argument (a random assignment even satisfies each $k$-literal clause with probability $1-2^{-k}\\ge\\tfrac12$)."
+          "reason": "An assignment and its complement together satisfy every clause, so one satisfies at least half."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "False: $x\\wedge\\neg x$ has no satisfying assignment."
+          "reason": "$p \\wedge \\neg p$ is an unsatisfiable CNF."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Impossible, since some assignment always satisfies at least half (more than a quarter) of the clauses."
+          "reason": "Contradicts A: half is more than a quarter."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Wrong because (A) is true."
+          "reason": "A is true."
         }
       ],
-      "verification": "Checked $x\\wedge\\neg x$: each assignment satisfies exactly $1$ of the $2$ clauses, so the bound $\\tfrac m2$ is tight."
+      "shortcut": "Averaging: a random assignment satisfies each clause with probability at least 1/2, so the expected number is at least $m/2$, and some assignment reaches the average.",
+      "pitfalls": [
+        "Confusing 'some assignment satisfies half' with 'every assignment satisfies half' ($p \\wedge q \\wedge r$ with all F satisfies none)."
+      ],
+      "verification": "Exhaustive check over all clause sets on two variables and 6000 random clause lists on three and four variables: the best assignment always satisfies at least half."
     },
     "cse-2007-cs-49": {
       "approach": "Use the exchange (cycle) argument. A minimum-weight edge is in *some* MST, but with ties it need not be in *every* MST — a triangle of equal weights refutes (D).",

@@ -2353,23 +2353,25 @@
       "verification": "Lower bound check: merging $k$ sorted lists of total size $n$ needs $\\Omega(n\\log k)$ comparisons, so $\\Theta(n\\log\\log n)$ is tight."
     },
     "cse-2005-cs-40": {
-      "approach": "Rewrite both: $X = (P\\vee Q)\\to R \\equiv (P\\to R)\\wedge(Q\\to R)$, while $Y = (P\\to R)\\vee(Q\\to R)$. A conjunction always implies the corresponding disjunction.",
+      "approach": "Concept tested: **implication between formulas versus equivalence, via hypothesis splitting**. $X \\equiv (P \\to R) \\wedge (Q \\to R)$ and $Y \\equiv (P \\to R) \\vee (Q \\to R)$; a conjunction implies the disjunction of the same parts, not conversely.",
       "concepts": [
-        "Propositional equivalences",
-        "Tautology"
+        "Logical implication",
+        "Hypothesis splitting",
+        "Equivalence"
       ],
+      "given": "$X = (P \\vee Q) \\to R$, $Y = (P \\to R) \\vee (Q \\to R)$.",
       "steps": [
         {
-          "title": "Simplify X",
-          "body": "$X \\equiv \\neg(P\\vee Q)\\vee R \\equiv (\\neg P\\wedge\\neg Q)\\vee R \\equiv (\\neg P\\vee R)\\wedge(\\neg Q\\vee R) \\equiv (P\\to R)\\wedge(Q\\to R)$."
+          "title": "Rewrite X",
+          "body": "$(P \\vee Q) \\to R \\equiv \\neg(P \\vee Q) \\vee R \\equiv (\\neg P \\wedge \\neg Q) \\vee R \\equiv (\\neg P \\vee R) \\wedge (\\neg Q \\vee R) = (P \\to R) \\wedge (Q \\to R)$."
         },
         {
-          "title": "Simplify Y",
-          "body": "$Y \\equiv \\neg P\\vee R\\vee\\neg Q\\vee R \\equiv \\neg(P\\wedge Q)\\vee R \\equiv (P\\wedge Q)\\to R$."
+          "title": "X → Y",
+          "body": "$(A \\wedge B) \\to (A \\vee B)$ is a tautology, with $A = P \\to R$, $B = Q \\to R$. So B is correct."
         },
         {
-          "title": "Compare",
-          "body": "$A\\wedge B \\to A\\vee B$ is a tautology, so $X\\to Y$ is a tautology. The converse fails: $P=1, Q=0, R=0$ gives $Y = 1$ (since $Q\\to R$ is true) but $X = 0$."
+          "title": "Refute the others",
+          "body": "$P$ = T, $Q$ = F, $R$ = F: $Y$ = T ($Q \\to R$ is T), $X$ = F. So $Y \\to X$ fails and $X \\not\\equiv Y$. $P = Q =$ T, $R$ = F: $\\neg Y$ = T, $X$ = F, so $\\neg Y \\to X$ fails."
         }
       ],
       "answer": {
@@ -2383,25 +2385,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Not a tautology: at $P=1,Q=0,R=0$, $X=0$ and $Y=1$."
+          "reason": "$X$ and $Y$ differ on $P$ = T, $Q$ = F, $R$ = F."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: (a ∧ b) → (a ∨ b)."
+          "reason": "$X$ is the conjunction of the two implications, $Y$ their disjunction."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Fails at $P=1,Q=0,R=0$: $Y$ true, $X$ false."
+          "reason": "The row $P$ = T, $Q$ = F, $R$ = F has $Y$ = T and $X$ = F."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Fails at $P=Q=1, R=0$: $Y = 0$, so $\\neg Y = 1$, and $X = 0$."
+          "reason": "On $P = Q =$ T, $R$ = F, $\\neg Y$ is T but $X$ is F."
         }
       ],
-      "verification": "Checked all 8 assignments: X is false at (1,0,0),(0,1,0),(1,1,0); Y is false only at (1,1,0); X→Y never fails."
+      "shortcut": "Also $Y \\equiv (P \\wedge Q) \\to R$. A weaker hypothesis ($P \\vee Q$) in $X$ makes $X$ the stronger statement, and the stronger implies the weaker.",
+      "pitfalls": [
+        "Splitting the hypothesis with the same connective: $(P \\vee Q) \\to R$ is an **and** of implications, not an or."
+      ],
+      "verification": "Truth tables over $P, Q, R$: $X \\to Y$ is T on all 8 rows; each other option has a false row."
     },
     "cse-2005-cs-41": {
       "approach": "For each teacher x there must exist (possibly a different) y who is a student and likes x. \"Some … is …\" uses ∃ with ∧, \"every … is …\" uses ∀ with →.",

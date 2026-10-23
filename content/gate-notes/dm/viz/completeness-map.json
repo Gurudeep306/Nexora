@@ -1,0 +1,334 @@
+{
+ "version": 1,
+ "title": "Post's completeness map",
+ "width": 640,
+ "height": 332,
+ "narrow": {
+  "width": 360,
+  "height": 332
+ },
+ "intro": "Five properties are preserved by composition. A set of connectives is complete exactly when it can escape each of them.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Post's five classes: which connective lies in which",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Post's classes",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 110,
+   "y": 44,
+   "cellW": 70,
+   "cellH": 28,
+   "rows": [
+    [
+     "",
+     "T₀",
+     "T₁",
+     "s-d",
+     "mon",
+     "aff"
+    ],
+    [
+     "¬",
+     "—",
+     "—",
+     "in",
+     "—",
+     "in"
+    ],
+    [
+     "∧",
+     "in",
+     "in",
+     "—",
+     "in",
+     "—"
+    ],
+    [
+     "∨",
+     "in",
+     "in",
+     "—",
+     "in",
+     "—"
+    ],
+    [
+     "→",
+     "—",
+     "in",
+     "—",
+     "—",
+     "—"
+    ],
+    [
+     "↔",
+     "—",
+     "in",
+     "—",
+     "—",
+     "in"
+    ],
+    [
+     "⊕",
+     "in",
+     "—",
+     "—",
+     "—",
+     "in"
+    ],
+    [
+     "↑",
+     "—",
+     "—",
+     "—",
+     "—",
+     "—"
+    ],
+    [
+     "↓",
+     "—",
+     "—",
+     "—",
+     "—",
+     "—"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 12,
+    "y": 44,
+    "cellW": 56,
+    "cellH": 28
+   }
+  },
+  {
+   "id": "foot",
+   "type": "text",
+   "x": 320,
+   "y": 318,
+   "text": "in = the connective lies in that class",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 318,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Each column is a class closed under composition. A set of connectives is complete only if, in every column, some member of the set says '—' (it escapes).",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        0,
+        1
+       ],
+       [
+        0,
+        2
+       ],
+       [
+        0,
+        3
+       ],
+       [
+        0,
+        4
+       ],
+       [
+        0,
+        5
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "{∧, ∨, →, ↔}: all four say 'in' under T₁ (they output T on all-T inputs). Trapped: ¬ can never be built, so the set is not complete.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        2,
+        2
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        5,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "foot",
+     "set": {
+      "text": "{∧, ∨, →, ↔}: trapped in T₁",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "{↔, ¬}: ¬ escapes T₁, but both are 'in' under affine. Everything they build is an XOR-type (linear) function, so ∧ is out of reach.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        5,
+        5
+       ],
+       [
+        1,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "foot",
+     "set": {
+      "text": "{↔, ¬}: trapped in the affine class",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "{¬, ∧}: under every column one of them escapes (¬ escapes T₀, T₁, monotone; ∧ escapes self-dual and affine). Complete.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        1,
+        4
+       ],
+       [
+        2,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "foot",
+     "set": {
+      "text": "{¬, ∧}: escapes all five, complete",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "NAND and NOR are '—' in every column: each escapes all five classes on its own, so each alone is functionally complete.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        7,
+        1
+       ],
+       [
+        7,
+        2
+       ],
+       [
+        7,
+        3
+       ],
+       [
+        7,
+        4
+       ],
+       [
+        7,
+        5
+       ],
+       [
+        8,
+        1
+       ],
+       [
+        8,
+        2
+       ],
+       [
+        8,
+        3
+       ],
+       [
+        8,
+        4
+       ],
+       [
+        8,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "foot",
+     "set": {
+      "text": "↑ and ↓ alone are complete",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

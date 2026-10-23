@@ -1974,23 +1974,29 @@
       "verification": "Example: cycle $C_4$ (4 vertices, 4 edges): has a cycle, stays connected after removing one edge, disconnected after removing two."
     },
     "cse-1993-ii-a-8-2": {
-      "approach": "Distribute ∧ over ∨ and drop the contradiction.",
+      "approach": "Concept tested: **simplifying with the distributive and complement laws**. Distribute $p \\wedge$ over the disjunction; the $p \\wedge \\neg p$ part is F and drops out.",
       "concepts": [
-        "Propositional equivalence",
-        "Distributive law"
+        "Distributive law",
+        "Complement law",
+        "Logical equivalence"
       ],
+      "given": "$p \\wedge (\\sim p \\vee q)$.",
       "steps": [
         {
           "title": "Distribute",
-          "body": "$p \\wedge (\\sim p \\vee q) \\equiv (p \\wedge \\sim p) \\vee (p \\wedge q)$."
+          "body": "$p \\wedge (\\neg p \\vee q) \\equiv (p \\wedge \\neg p) \\vee (p \\wedge q)$."
         },
         {
-          "title": "Simplify",
-          "body": "$p \\wedge \\sim p \\equiv F$, so the expression is $F \\vee (p \\wedge q) \\equiv p \\wedge q$."
+          "title": "Complement and identity",
+          "body": "$p \\wedge \\neg p \\equiv \\text{F}$ and $\\text{F} \\vee X \\equiv X$, so the formula is $p \\wedge q$."
+        },
+        {
+          "title": "Check the options",
+          "body": "$p \\wedge q$ is true on one row and false on three: not a tautology, not a contradiction, and not $p \\vee q$ (they differ on TF)."
         }
       ],
       "answer": {
-        "value": "equivalent to p ∧ q",
+        "value": "Logically equivalent to $p \\wedge q$",
         "choice": [
           "B"
         ],
@@ -2000,30 +2006,88 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "False when p is false."
+          "reason": "False on $p$ = F, so not a tautology."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Shown by the distributive law."
+          "reason": "$p \\wedge (\\neg p \\vee q) \\equiv (p \\wedge \\neg p) \\vee (p \\wedge q) \\equiv p \\wedge q$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "p = F, q = T makes p ∨ q true but the proposition false."
+          "reason": "On $p$ = T, $q$ = F the formula is F but $p \\vee q$ is T."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "True when p = q = T."
+          "reason": "True on $p = q =$ T, so not a contradiction."
         },
         {
           "option": "E",
           "correct": false,
-          "reason": "(b) is correct."
+          "reason": "B holds, so 'none of the above' is wrong."
         }
       ],
-      "verification": "Truth table: only p = T, q = T makes it true, same as p ∧ q."
+      "shortcut": "The pattern $p \\wedge (\\neg p \\vee q) \\equiv p \\wedge q$: inside a conjunction with $p$, the literal $\\neg p$ is false and drops out.",
+      "pitfalls": [
+        "Applying absorption $p \\wedge (p \\vee q) \\equiv p$ to a formula with $\\neg p$; absorption needs the same literal."
+      ],
+      "verification": "Columns over TT, TF, FT, FF: the formula gives T, F, F, F, identical to $p \\wedge q$.",
+      "animation": {
+        "kind": "table",
+        "title": "p ∧ (¬p ∨ q) against p ∧ q",
+        "cols": [
+          "p",
+          "q",
+          "¬p ∨ q",
+          "formula",
+          "p ∧ q"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "T",
+            "F",
+            "F",
+            "F",
+            "F"
+          ],
+          [
+            "F",
+            "T",
+            "T",
+            "F",
+            "F"
+          ],
+          [
+            "F",
+            "F",
+            "T",
+            "F",
+            "F"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "c": 3,
+            "tone": "success"
+          },
+          {
+            "r": 0,
+            "c": 4,
+            "tone": "success"
+          }
+        ]
+      }
     },
     "cse-1993-ii-a-8-3": {
       "approach": "A finite union of finite sets is finite, so an infinite set split into finitely many pieces must have an infinite piece.",
@@ -2710,100 +2774,106 @@
       "verification": "Example $x=4,y=0,z=1$: regions only-V 0, only-F 0, only-E 1, union $=16-5=11$; at least two $=10$. Example $x=y=z=0$: union 16, at least two 5. Both satisfy every given count."
     },
     "cse-1993-ii-b-18": {
-      "approach": "C is a logical consequence of $F$ iff every row where $F$ is true also has $C$ true. Build the 8-row truth table of $F=A\\wedge(A\\to(B\\vee C))\\wedge(B\\to\\sim A)$.",
+      "approach": "Concept tested: **logical consequence by truth table**. $C$ is a logical consequence of $F$ iff $C$ is true on every row where $F$ is true; so find the rows that make $F$ true.",
       "concepts": [
         "Logical consequence",
         "Truth table",
         "Implication"
       ],
+      "given": "$F = A \\wedge (A \\to (B \\vee C)) \\wedge (B \\to \\sim A)$. Show $F \\models C$.",
       "steps": [
         {
-          "title": "Truth table",
-          "body": "$F$ is a conjunction, so it needs $A=1$; then $B\\to\\sim A$ forces $B=0$; then $A\\to(B\\vee C)$ forces $C=1$.",
-          "scene": {
-            "kind": "table",
-            "cols": [
-              "A",
-              "B",
-              "C",
-              "F"
-            ],
-            "rows": [
-              [
-                0,
-                0,
-                0,
-                0
-              ],
-              [
-                0,
-                0,
-                1,
-                0
-              ],
-              [
-                0,
-                1,
-                0,
-                0
-              ],
-              [
-                0,
-                1,
-                1,
-                0
-              ],
-              [
-                1,
-                0,
-                0,
-                0
-              ],
-              [
-                1,
-                0,
-                1,
-                1
-              ],
-              [
-                1,
-                1,
-                0,
-                0
-              ],
-              [
-                1,
-                1,
-                1,
-                0
-              ]
-            ],
-            "reveal": 32,
-            "hl": [
-              {
-                "r": 5,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Restrict to A = T",
+          "body": "$F$ is a conjunction containing $A$, so $F$ can be true only on the four rows with $A = 1$."
         },
         {
-          "title": "Rows where F is true",
-          "body": "Only the row $A=1,B=0,C=1$ gives $F=1$: $1\\wedge(1\\to(0\\vee1))\\wedge(0\\to0)=1\\wedge1\\wedge1=1$. In that row $C=1$."
+          "title": "Use B → ¬A",
+          "body": "With $A = 1$, $B \\to \\sim A$ is $B \\to 0$, true only when $B = 0$. Rows left: $(A, B, C) = (1, 0, 1)$ and $(1, 0, 0)$."
         },
         {
-          "title": "Conclusion",
-          "body": "Every row with $F=1$ has $C=1$, so $F\\to C$ is a tautology and $C$ is a logical consequence of $F$."
+          "title": "Use A → (B ∨ C)",
+          "body": "With $A = 1$ and $B = 0$ it needs $C = 1$. The row $(1, 0, 0)$ fails. So $F$ is true on exactly one row: $(1, 0, 1)$."
+        },
+        {
+          "title": "Check C there",
+          "body": "On $(1, 0, 1)$, $C = 1$. Every row with $F$ true has $C$ true, so $F \\to C$ is a tautology and $C$ is a logical consequence of $F$."
         }
       ],
       "answer": {
-        "value": "F is true only for A = 1, B = 0, C = 1, where C is true; hence $F\\Rightarrow C$ (C is a logical consequence).",
+        "value": "F is true only for A = 1, B = 0, C = 1, where C is true; hence F ⊨ C",
         "matchesKey": true
       },
+      "shortcut": "Chain the premises: $A$ and $B \\to \\sim A$ give $\\sim B$ (modus tollens); $A$ and $A \\to (B \\vee C)$ give $B \\vee C$ (modus ponens); then $\\sim B$ gives $C$ (disjunctive syllogism).",
       "pitfalls": [
-        "Checking only that F and C can be simultaneously true — consequence needs C true in **every** model of F."
+        "Checking $C$ on all eight rows: rows where $F$ is false do not matter.",
+        "Concluding 'not a consequence' because $C$ is false on some row where $F$ is also false."
       ],
-      "verification": "Resolution check: from A and B→¬A get ¬B; from A and A→(B∨C) get B∨C; with ¬B, C."
+      "verification": "Full 8-row truth table: $F$ = 1 only on row 101.",
+      "animation": {
+        "kind": "table",
+        "title": "Truth table of F (rows with A = 1)",
+        "cols": [
+          "A",
+          "B",
+          "C",
+          "A→(B∨C)",
+          "B→¬A",
+          "F",
+          "C"
+        ],
+        "rows": [
+          [
+            "1",
+            "1",
+            "1",
+            "1",
+            "0",
+            "0",
+            "1"
+          ],
+          [
+            "1",
+            "1",
+            "0",
+            "1",
+            "0",
+            "0",
+            "0"
+          ],
+          [
+            "1",
+            "0",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1"
+          ],
+          [
+            "1",
+            "0",
+            "0",
+            "0",
+            "1",
+            "0",
+            "0"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 2,
+            "c": 5,
+            "tone": "success"
+          },
+          {
+            "r": 2,
+            "c": 6,
+            "tone": "success"
+          }
+        ],
+        "caption": "Rows with A = 0 make F false and are omitted."
+      }
     },
     "cse-1993-ii-c-19": {
       "approach": "Concept tested: **the analysis procedure**. Turn the NAND network into input equations (a NAND of NANDs is an AND–OR), use $Q^+ = D$ for both flip-flops, and evaluate every state for both values of $P$.",

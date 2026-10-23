@@ -2937,31 +2937,36 @@
       "verification": "Sum $= 1+2-2-1 = 0 = \\operatorname{trace}(A) = 1+2+(-2)+(-1)$; product $= 1\\cdot2\\cdot(-2)\\cdot(-1) = 4 = \\det A$."
     },
     "cse-2002-b-53-b": {
-      "approach": "Simplify each formula with idempotence/absorption/De Morgan, falling back on a single assignment to show \"neither\".",
+      "approach": "Concept tested: **classifying formulas as tautology, contradiction or contingency**. Simplify with idempotence and De Morgan; to show 'neither', exhibit one true and one false row.",
       "concepts": [
         "Tautology",
         "Contradiction",
-        "De Morgan’s law"
+        "Contingency"
       ],
+      "given": "(i) $A \\leftrightarrow (A \\vee A)$, (ii) $(A \\vee B) \\rightarrow B$, (iii) $A \\wedge (\\neg(A \\vee B))$.",
       "steps": [
         {
-          "title": "(i) A ↔ (A ∨ A)",
-          "body": "Idempotence: $A\\vee A \\equiv A$, so the formula is $A\\leftrightarrow A$, true for both values of $A$: **tautology**."
+          "title": "Formula (i)",
+          "body": "Idempotence: $A \\vee A \\equiv A$, so the formula is $A \\leftrightarrow A$, true on every row: **tautology**."
         },
         {
-          "title": "(ii) (A ∨ B) → B",
-          "body": "$A=1,B=0$: $(1\\vee0)\\rightarrow0 = 1\\rightarrow0 = 0$ (false).\n$A=0,B=1$: $1\\rightarrow1 = 1$ (true).\nIt is sometimes true and sometimes false: **neither**. (It simplifies to $\\neg A\\vee B$, i.e. $A\\rightarrow B$.)"
+          "title": "Formula (ii)",
+          "body": "$A$ = T, $B$ = F gives $(\\text{T}) \\to \\text{F}$ = F; $B$ = T gives T. Both values occur: **neither** (a contingency)."
         },
         {
-          "title": "(iii) A ∧ ¬(A ∨ B)",
-          "body": "De Morgan: $\\neg(A\\vee B) \\equiv \\neg A\\wedge\\neg B$, so the formula is $A\\wedge\\neg A\\wedge\\neg B \\equiv 0\\wedge\\neg B \\equiv 0$: **contradiction**."
+          "title": "Formula (iii)",
+          "body": "De Morgan: $\\neg(A \\vee B) \\equiv \\neg A \\wedge \\neg B$, so the formula is $A \\wedge \\neg A \\wedge \\neg B$, false on every row: **contradiction**."
         }
       ],
       "answer": {
         "value": "(i) tautology; (ii) neither; (iii) contradiction",
         "matchesKey": true
       },
-      "verification": "Truth table over $(A,B)\\in\\{00,01,10,11\\}$: (i) $1,1,1,1$; (ii) $1,1,0,1$; (iii) $0,0,0,0$."
+      "shortcut": "(ii) is 'from $A \\vee B$ conclude $B$', which fails when only $A$ holds.",
+      "pitfalls": [
+        "Calling (ii) a contradiction because it is not a tautology; it is true whenever $B$ is true."
+      ],
+      "verification": "Truth tables: (i) T, T; (ii) T, F, T, T over TT, TF, FT, FF; (iii) F on all four rows."
     },
     "cse-2002-b-54": {
       "approach": "Preorder visits the root first, so C is the root and B, A (in that order) must be the preorder of C’s subtrees; enumerate where B and A can sit.",

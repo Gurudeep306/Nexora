@@ -1,0 +1,366 @@
+{
+ "version": 1,
+ "title": "A ladder of laws",
+ "width": 640,
+ "height": 366,
+ "narrow": {
+  "width": 360,
+  "height": 412
+ },
+ "intro": "Proving an equivalence by laws: one rung per law, arrows out first, then negations in, then tidy up.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "A rewrite ladder: GATE 2021's consequent becomes its antecedent",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Rewrite ladder (GATE 2021)",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "r0",
+   "type": "box",
+   "x": 30,
+   "y": 44,
+   "w": 300,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": false,
+   "narrow": {
+    "x": 10,
+    "y": 44,
+    "w": 340,
+    "h": 34,
+    "size": 13
+   },
+   "label": "(P ∧ Q) → (Q → R)"
+  },
+  {
+   "id": "w0",
+   "type": "text",
+   "x": 350,
+   "y": 70,
+   "text": "start: the consequent of S",
+   "size": 14,
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "x": 180,
+    "y": 93,
+    "size": 12,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "r1",
+   "type": "box",
+   "x": 30,
+   "y": 94,
+   "w": 300,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 102,
+    "w": 340,
+    "h": 34,
+    "size": 13
+   },
+   "label": "¬(P ∧ Q) ∨ (Q → R)"
+  },
+  {
+   "id": "w1",
+   "type": "text",
+   "x": 350,
+   "y": 120,
+   "text": "implication: A → B ≡ ¬A ∨ B",
+   "size": 14,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 180,
+    "y": 151,
+    "size": 12,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "r2",
+   "type": "box",
+   "x": 30,
+   "y": 144,
+   "w": 300,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 160,
+    "w": 340,
+    "h": 34,
+    "size": 13
+   },
+   "label": "¬(P ∧ Q) ∨ ¬Q ∨ R"
+  },
+  {
+   "id": "w2",
+   "type": "text",
+   "x": 350,
+   "y": 170,
+   "text": "implication again",
+   "size": 14,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 180,
+    "y": 209,
+    "size": 12,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "r3",
+   "type": "box",
+   "x": 30,
+   "y": 194,
+   "w": 300,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 218,
+    "w": 340,
+    "h": 34,
+    "size": 13
+   },
+   "label": "¬P ∨ ¬Q ∨ ¬Q ∨ R"
+  },
+  {
+   "id": "w3",
+   "type": "text",
+   "x": 350,
+   "y": 220,
+   "text": "De Morgan",
+   "size": 14,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 180,
+    "y": 267,
+    "size": 12,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "r4",
+   "type": "box",
+   "x": 30,
+   "y": 244,
+   "w": 300,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 276,
+    "w": 340,
+    "h": 34,
+    "size": 13
+   },
+   "label": "¬P ∨ ¬Q ∨ R"
+  },
+  {
+   "id": "w4",
+   "type": "text",
+   "x": 350,
+   "y": 270,
+   "text": "idempotent: ¬Q ∨ ¬Q ≡ ¬Q",
+   "size": 14,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 180,
+    "y": 325,
+    "size": 12,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "r5",
+   "type": "box",
+   "x": 30,
+   "y": 294,
+   "w": 300,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 334,
+    "w": 340,
+    "h": 34,
+    "size": 13
+   },
+   "label": "(P ∧ Q) → R"
+  },
+  {
+   "id": "w5",
+   "type": "text",
+   "x": 350,
+   "y": 320,
+   "text": "De Morgan + implication, read back",
+   "size": 14,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 180,
+    "y": 383,
+    "size": 12,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "foot",
+   "type": "text",
+   "x": 320,
+   "y": 352,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "accent",
+   "narrow": {
+    "x": 180,
+    "y": 400,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Rung 1: remove the outer arrow with A → B ≡ ¬A ∨ B, taking A = P ∧ Q. Always remove arrows first.",
+   "patches": [
+    {
+     "id": "r1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Rung 2: implication again. The formula becomes ¬(P ∧ Q) ∨ ¬Q ∨ R.",
+   "patches": [
+    {
+     "id": "r2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Rung 3: push the negation inward with De Morgan: ¬(P ∧ Q) becomes ¬P ∨ ¬Q. Now every ¬ sits on a variable.",
+   "patches": [
+    {
+     "id": "r3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Rung 4: idempotent: ¬Q ∨ ¬Q ≡ ¬Q. The formula becomes ¬P ∨ ¬Q ∨ R.",
+   "patches": [
+    {
+     "id": "r4",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w4",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Rung 5: ¬P ∨ ¬Q ∨ R is exactly ¬(P ∧ Q) ∨ R, i.e. (P ∧ Q) → R: the antecedent of S. So S has the shape X → X, a tautology.",
+   "patches": [
+    {
+     "id": "r5",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "r5",
+     "set": {
+      "hidden": false,
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "foot",
+     "set": {
+      "text": "antecedent ≡ consequent, so S ≡ X → X ≡ T"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -456,5 +456,1046 @@
    "rows-count"
   ],
   "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-02-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Which one of the following formulas is a **contingency** (neither a tautology nor a contradiction)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$(p \\wedge q) \\to p$"
+   },
+   {
+    "l": "B",
+    "t": "$(p \\to q) \\to p$"
+   },
+   {
+    "l": "C",
+    "t": "$p \\wedge \\neg(p \\vee q)$"
+   },
+   {
+    "l": "D",
+    "t": "$p \\vee \\neg(p \\wedge q)$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "(A): a conjunction implies each of its parts, so $(p \\wedge q) \\to p$ is a tautology (falsifying $p$ forces the hypothesis false).",
+   "(B): with $p$ = F, $q$ = T the hypothesis $p \\to q$ is T and the conclusion F, so the formula is F; with $p$ = T it is T. Both values occur: a contingency.",
+   "(C): De Morgan gives $p \\wedge \\neg p \\wedge \\neg q$, a contradiction. (D): $p \\vee \\neg p \\vee \\neg q$, a tautology."
+  ],
+  "concept": "A contingency needs one row that makes it true and one that makes it false; find both.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "$(p \\wedge q) \\to p$ cannot be falsified: making $p$ false also makes the hypothesis false. It is a tautology."
+   },
+   {
+    "answer": "C",
+    "why": "$\\neg(p \\vee q)$ forces $p$ = F, which clashes with the first conjunct: a contradiction, not a contingency."
+   },
+   {
+    "answer": "D",
+    "why": "$\\neg(p \\wedge q) = \\neg p \\vee \\neg q$ contains $\\neg p$, so the whole disjunction is $p \\vee \\neg p \\vee \\dots$, a tautology."
+   }
+  ],
+  "blocks": [
+   "classes-def",
+   "falsify-method",
+   "laws-table"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-02-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "How many minterms appear in the principal disjunctive normal form of $p \\to (q \\wedge r)$ over the variables $p, q, r$?",
+  "answer": 5,
+  "solution": [
+   "The PDNF has one minterm per row on which the formula is true.",
+   "If $p$ = F the implication is vacuously true: all 4 rows with $p$ = F count.",
+   "If $p$ = T we need $q \\wedge r$: only the row TTT. Total $4 + 1 = 5$."
+  ],
+  "concept": "The number of PDNF terms is the number of true rows; count the true rows of an implication by splitting on the hypothesis.",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "3 is the number of **false** rows (maxterms): TTF, TFT, TFF."
+   },
+   {
+    "answer": 1,
+    "why": "Counting only the row where everything is true forgets the vacuously true rows with $p$ = F."
+   }
+  ],
+  "blocks": [
+   "canonical-def",
+   "trick-complement-indices"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-02-q03",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Variables are ordered $p, q, r$ with $p$ the most significant bit and T = 1. The formula $(p \\vee q \\vee \\neg r) \\wedge (\\neg p \\vee q \\vee r)$ in maxterm notation is",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\Pi(1, 4)$"
+   },
+   {
+    "l": "B",
+    "t": "$\\Pi(3, 6)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\Pi(0, 2, 3, 5, 6, 7)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\Pi(1, 3, 4, 6)$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Both clauses contain every variable, so each is a maxterm; a maxterm is numbered by the single row that makes it **false**.",
+   "$p \\vee q \\vee \\neg r$ is false when $p$ = 0, $q$ = 0, $r$ = 1: row 001 = 1.",
+   "$\\neg p \\vee q \\vee r$ is false when $p$ = 1, $q$ = 0, $r$ = 0: row 100 = 4. So the formula is $\\Pi(1, 4)$."
+  ],
+  "concept": "Maxterm index = the falsifying row: plain literal → 0, negated literal → 1.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Numbering the clauses with the minterm rule (plain = 1) gives 110 = 6 and 011 = 3, the complementary rows."
+   },
+   {
+    "answer": "C",
+    "why": "Those are the true rows; they belong in $\\Sigma(\\dots)$, the PDNF, not in the PCNF."
+   },
+   {
+    "answer": "D",
+    "why": "Mixing both numbering rules double-counts each clause; a 2-clause PCNF has exactly 2 indices."
+   }
+  ],
+  "blocks": [
+   "canonical-def",
+   "maxterm-index-derivation",
+   "trap-maxterm-numbering"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-02-q04",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following are logically equivalent to $p \\to (q \\to r)$? (Select all that apply.)",
+  "options": [
+   {
+    "l": "A",
+    "t": "$(p \\wedge q) \\to r$"
+   },
+   {
+    "l": "B",
+    "t": "$(p \\to q) \\to r$"
+   },
+   {
+    "l": "C",
+    "t": "$q \\to (p \\to r)$"
+   },
+   {
+    "l": "D",
+    "t": "$(p \\to r) \\vee (q \\to r)$"
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "Rewrite the target: $p \\to (q \\to r) \\equiv \\neg p \\vee \\neg q \\vee r$ (exportation).",
+   "(A) $\\neg(p \\wedge q) \\vee r = \\neg p \\vee \\neg q \\vee r$: equal. (C) $\\neg q \\vee \\neg p \\vee r$: equal (commutativity). (D) $\\neg p \\vee r \\vee \\neg q \\vee r$: equal (idempotence); this is hypothesis splitting.",
+   "(B) differs on $p = q = r =$ F: $(\\text{T}) \\to \\text{F} = $ F, while the target is T."
+  ],
+  "concept": "Exportation and hypothesis splitting: an ∧ in the hypothesis becomes an ∨ of implications.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "→ is not associative: $(p \\to q) \\to r$ is false on the all-false row, where $p \\to (q \\to r)$ is true."
+   },
+   {
+    "answer": [
+     "A",
+     "C"
+    ],
+    "why": "(D) is also right: $(p \\to r) \\vee (q \\to r) \\equiv (p \\wedge q) \\to r$; the ∧ on the left turns into ∨."
+   }
+  ],
+  "blocks": [
+   "imp-laws",
+   "exportation-derivation",
+   "split-derivation"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-02-q05",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Which one of the following sets of connectives is NOT functionally complete?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\{\\neg, \\vee\\}$"
+   },
+   {
+    "l": "B",
+    "t": "$\\{\\to, \\text{F}\\}$ (implication and the constant false)"
+   },
+   {
+    "l": "C",
+    "t": "$\\{\\downarrow\\}$ (NOR)"
+   },
+   {
+    "l": "D",
+    "t": "$\\{\\wedge, \\vee, \\to, \\leftrightarrow\\}$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "All-T test: $\\wedge$, $\\vee$, $\\to$ and $\\leftrightarrow$ all give T when every input is T.",
+   "So every formula built from set D is T on the all-T row, and $\\neg p$ (F when $p$ = T) cannot be built.",
+   "A, B and C are on the standard list: $p \\wedge q \\equiv \\neg(\\neg p \\vee \\neg q)$; $\\neg p \\equiv p \\to \\text{F}$; $\\neg p \\equiv p \\downarrow p$."
+  ],
+  "concept": "A set whose connectives all preserve T (Post's class T₁) cannot build ¬.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "With F available, $p \\to \\text{F} \\equiv \\neg p$, and $\\neg p \\to q \\equiv p \\vee q$: complete."
+   },
+   {
+    "answer": "C",
+    "why": "NOR alone builds $\\neg p = p \\downarrow p$ and $p \\vee q = (p \\downarrow q) \\downarrow (p \\downarrow q)$: complete."
+   },
+   {
+    "answer": "A",
+    "why": "De Morgan rebuilds ∧ from ¬ and ∨, and {¬, ∧, ∨} writes every PDNF."
+   }
+  ],
+  "blocks": [
+   "standard-complete",
+   "trick-t1-test",
+   "trap-xnor"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-02-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A Boolean function $f(x, y, z)$ is **self-dual** if $f(\\neg x, \\neg y, \\neg z) = \\neg f(x, y, z)$ for every assignment. How many self-dual functions of three variables are there?",
+  "answer": 16,
+  "solution": [
+   "The 8 rows pair up as (row, complemented row): 4 pairs.",
+   "Choosing $f$ on one row of a pair fixes it on the other ($f(\\bar x) = \\neg f(x)$), so each pair gives 2 choices.",
+   "Total $2^4 = 16$."
+  ],
+  "concept": "Self-dual functions of n variables: 2^(2^(n−1)).",
+  "common_wrong": [
+   {
+    "answer": 256,
+    "why": "256 = $2^{2^3}$ counts all functions of three variables, not the self-dual ones."
+   },
+   {
+    "answer": 70,
+    "why": "70 = $\\binom{8}{4}$ counts the neutral functions (four T rows), a different property."
+   }
+  ],
+  "blocks": [
+   "count-functions",
+   "post-classes"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-02-q07",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "The absorption law $p \\vee (p \\wedge q) \\equiv p$ holds. By the duality principle, which of the following also holds?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\neg p \\vee (\\neg p \\wedge \\neg q) \\equiv \\neg p$"
+   },
+   {
+    "l": "B",
+    "t": "$p \\wedge (p \\vee q) \\equiv \\neg p$"
+   },
+   {
+    "l": "C",
+    "t": "$p \\vee (p \\vee q) \\equiv p$"
+   },
+   {
+    "l": "D",
+    "t": "$p \\wedge (p \\vee q) \\equiv p$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "The dual swaps ∧ with ∨ (and T with F); variables and ¬ signs stay as they are.",
+   "The dual of $p \\vee (p \\wedge q)$ is $p \\wedge (p \\vee q)$, and the dual of $p$ is $p$.",
+   "Duality preserves equivalence, so $p \\wedge (p \\vee q) \\equiv p$ (the other absorption law)."
+  ],
+  "concept": "Duality: swap ∧/∨ and T/F on both sides of an equivalence; do not negate the variables.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Duality does not negate the right-hand side; the dual of $p$ is $p$."
+   },
+   {
+    "answer": "A",
+    "why": "That is a substitution instance ($p \\mapsto \\neg p$, $q \\mapsto \\neg q$), true but not the dual: the connectives are unchanged."
+   },
+   {
+    "answer": "C",
+    "why": "Only one connective was changed; $p \\vee (p \\vee q) \\equiv p \\vee q$, not $p$."
+   }
+  ],
+  "blocks": [
+   "duality-def",
+   "duality-theorem",
+   "laws-table"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-02-q08",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Consider $S = ((p \\to q) \\to p) \\to p$. Which one of the following is correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$S$ is a contingency"
+   },
+   {
+    "l": "B",
+    "t": "$S$ is a contradiction"
+   },
+   {
+    "l": "C",
+    "t": "$S$ is a tautology"
+   },
+   {
+    "l": "D",
+    "t": "$S$ is satisfiable but not valid"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Try to falsify: the conclusion $p$ must be F and the hypothesis $(p \\to q) \\to p$ must be T.",
+   "With $p$ = F, $p \\to q$ = T, so the hypothesis is $\\text{T} \\to \\text{F}$ = F. Clash.",
+   "No falsifying row exists: $S$ is a tautology (it is known as Peirce's law)."
+  ],
+  "concept": "Falsification: assume the formula is F, force values, and look for a clash.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "A contingency needs a falsifying row; the forced values clash, so there is none."
+   },
+   {
+    "answer": "D",
+    "why": "'Satisfiable but not valid' is the same as contingency; $S$ is valid."
+   },
+   {
+    "answer": "B",
+    "why": "On $p$ = T the formula is $\\dots \\to \\text{T}$ = T, so it is certainly satisfiable."
+   }
+  ],
+  "blocks": [
+   "falsify-method",
+   "trick-implication-chain",
+   "classes-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-02-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A CNF formula over the variables $p, q, r$ consists of **7 distinct clauses**, each containing all three variables exactly once (each literal plain or negated). How many truth assignments satisfy it?",
+  "answer": 1,
+  "solution": [
+   "Each clause containing all three variables is a maxterm and is false on exactly one row.",
+   "Distinct maxterms are false on distinct rows, so the 7 clauses forbid 7 different rows.",
+   "Of the $2^3 = 8$ rows, $8 - 7 = 1$ survives."
+  ],
+  "concept": "A full clause forbids one row; m distinct maxterms leave 2ⁿ − m satisfying rows.",
+  "common_wrong": [
+   {
+    "answer": 0,
+    "why": "7 clauses cannot cover all 8 rows; you need all 8 maxterms for a contradiction."
+   },
+   {
+    "answer": 7,
+    "why": "7 is the number of forbidden rows, not the survivors."
+   }
+  ],
+  "blocks": [
+   "k-cnf-count",
+   "canonical-def",
+   "sat-intuition"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-02-q10",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following are tautologies? (Select all that apply.)",
+  "options": [
+   {
+    "l": "A",
+    "t": "$(p \\wedge (p \\to q)) \\to q$"
+   },
+   {
+    "l": "B",
+    "t": "$(q \\wedge (p \\to q)) \\to p$"
+   },
+   {
+    "l": "C",
+    "t": "$(p \\to q) \\vee (q \\to p)$"
+   },
+   {
+    "l": "D",
+    "t": "$(p \\wedge (q \\to r)) \\leftrightarrow ((p \\wedge q) \\to (p \\wedge r))$"
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "(A) Falsify: $q$ = F, then the hypothesis needs $p$ = T and $p \\to q$ = T, forcing $q$ = T. Clash: tautology (modus ponens).",
+   "(B) $q$ = T, $p$ = F: hypothesis T, conclusion F. Not a tautology (affirming the consequent).",
+   "(C) $\\neg p \\vee q \\vee \\neg q \\vee p$ contains $q \\vee \\neg q$: tautology. (D) On $p$ = F the left side is F and the right side is $\\text{F} \\to \\text{F}$ = T: not a tautology (∧ does not distribute over →)."
+  ],
+  "concept": "Falsify each option; one clean row refutes a tautology.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "(D) claims ∧ distributes over →; the row $p$ = F breaks it."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "(B) infers $p$ from $q$ and $p \\to q$: the row $p$ = F, $q$ = T falsifies it."
+   }
+  ],
+  "blocks": [
+   "falsify-method",
+   "trap-distribute-imp",
+   "ex-law-edge"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-02-q11",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Over the variables $p, q$ (with $p$ the most significant bit and T = 1), a formula has PDNF $\\Sigma(0, 3)$. The formula is equivalent to",
+  "options": [
+   {
+    "l": "A",
+    "t": "$p \\oplus q$"
+   },
+   {
+    "l": "B",
+    "t": "$p \\leftrightarrow q$"
+   },
+   {
+    "l": "C",
+    "t": "$\\neg p \\wedge \\neg q$"
+   },
+   {
+    "l": "D",
+    "t": "$p \\to q$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Minterm 0 is row 00 ($p = q =$ F) and minterm 3 is row 11 ($p = q =$ T).",
+   "So the formula is $(\\neg p \\wedge \\neg q) \\vee (p \\wedge q)$: true exactly when $p$ and $q$ agree.",
+   "That is $p \\leftrightarrow q$."
+  ],
+  "concept": "Read a Σ list as the rows where the formula is true.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "$p \\oplus q$ is $\\Sigma(1, 2)$, the complementary rows."
+   },
+   {
+    "answer": "C",
+    "why": "That is only minterm 0; the row 11 is also true."
+   },
+   {
+    "answer": "D",
+    "why": "$p \\to q$ is $\\Sigma(0, 1, 3)$: it is also true on row 01."
+   }
+  ],
+  "blocks": [
+   "canonical-def",
+   "imp-laws"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-02-q12",
+  "type": "NAT",
+  "marks": 2,
+  "text": "Of the 16 Boolean functions of two variables, how many are functionally complete **on their own** (that is, the one-element set containing that function is functionally complete)?",
+  "answer": 2,
+  "solution": [
+   "The function must escape $T_0$ and $T_1$: $f(\\text{F}, \\text{F}) = $ T and $f(\\text{T}, \\text{T}) = $ F. That leaves the two rows TF, FT free: 4 candidates.",
+   "Two of them are $\\neg p$ and $\\neg q$, which are self-dual (and affine), so they are trapped.",
+   "The other two are NAND and NOR, both complete. Answer 2."
+  ],
+  "concept": "Post's criterion applied to a single connective: only NAND and NOR survive.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "¬p and ¬q pass the T₀/T₁ tests but are self-dual and affine; a function of one input cannot build ∧."
+   },
+   {
+    "answer": 16,
+    "why": "Most binary functions fail the all-T or all-F test (for example ∧ and ∨ preserve both)."
+   }
+  ],
+  "blocks": [
+   "post-theorem",
+   "post-classes",
+   "ex-comp-edge"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-03-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "From the premises $p \\to q$ and $\\neg q$ we conclude $\\neg p$. Which rule of inference is this?",
+  "options": [
+   {
+    "l": "A",
+    "t": "Modus ponens"
+   },
+   {
+    "l": "B",
+    "t": "Modus tollens"
+   },
+   {
+    "l": "C",
+    "t": "Hypothetical syllogism"
+   },
+   {
+    "l": "D",
+    "t": "Disjunctive syllogism"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "The premise $\\neg q$ denies the **conclusion** of the implication $p \\to q$.",
+   "Going backwards from a denied conclusion to a denied hypothesis is modus tollens: $(\\neg q \\wedge (p \\to q)) \\to \\neg p$ is a tautology.",
+   "Check: the only row with both premises true is $p = q = $ F, where $\\neg p$ is true."
+  ],
+  "concept": "Modus tollens: from p → q and ¬q, infer ¬p.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Modus ponens needs $p$ as a premise and concludes $q$; here we start from $\\neg q$."
+   },
+   {
+    "answer": "D",
+    "why": "Disjunctive syllogism needs a disjunction $p \\vee q$; although $p \\to q \\equiv \\neg p \\vee q$ makes the two related, the rule named for this shape is modus tollens."
+   },
+   {
+    "answer": "C",
+    "why": "Hypothetical syllogism chains two implications and concludes an implication, not a negation."
+   }
+  ],
+  "blocks": [
+   "rules-def",
+   "rules-theorem",
+   "ex-arg-easy"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-03-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "For the argument $p \\vee q,\\ \\neg p \\vee r \\;\\therefore\\; q \\vee r$, how many of the 8 rows of the truth table over $p, q, r$ are **critical rows** (rows on which every premise is true)?",
+  "answer": 4,
+  "solution": [
+   "Split on $p$. If $p$ = T, the first premise is true and $\\neg p \\vee r$ needs $r$ = T; $q$ is free: 2 rows.",
+   "If $p$ = F, the second premise is true and $p \\vee q$ needs $q$ = T; $r$ is free: 2 rows.",
+   "Total $2 + 2 = 4$ critical rows; on each one $q \\vee r$ is true, so the resolution rule is valid."
+  ],
+  "concept": "Critical rows are the rows where all premises hold; validity is checked only there.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "6 is the number of rows where $q \\vee r$ (the conclusion) is true, not where both premises are."
+   },
+   {
+    "answer": 2,
+    "why": "Counting only one value of the free letter in each case; in each case one variable is unconstrained, giving 2 rows."
+   }
+  ],
+  "blocks": [
+   "argument-def",
+   "derivation-resolution-rule"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-03-q03",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following arguments are **valid**?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$p \\to q,\\ \\neg p \\;\\therefore\\; \\neg q$"
+   },
+   {
+    "l": "B",
+    "t": "$p \\to q,\\ q \\to r \\;\\therefore\\; p \\to r$"
+   },
+   {
+    "l": "C",
+    "t": "$p \\vee q,\\ p \\;\\therefore\\; \\neg q$"
+   },
+   {
+    "l": "D",
+    "t": "$p \\vee q,\\ \\neg q \\;\\therefore\\; p$"
+   }
+  ],
+  "answer": [
+   "B",
+   "D"
+  ],
+  "solution": [
+   "A is denying the antecedent: $p = $ F, $q = $ T makes both premises true and $\\neg q$ false. Invalid.",
+   "B is hypothetical syllogism and D is disjunctive syllogism: both valid.",
+   "C treats $\\vee$ as exclusive: $p = q = $ T makes both premises true and $\\neg q$ false. Invalid."
+  ],
+  "concept": "Find a counterexample row (premises T, conclusion F) to reject an argument; the standard rules have none.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "A is the fallacy of denying the antecedent: the row $p$ = F, $q$ = T refutes it."
+   },
+   {
+    "answer": [
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "Logical $\\vee$ is inclusive, so knowing $p$ tells you nothing about $q$."
+   }
+  ],
+  "blocks": [
+   "rules-def",
+   "fallacy-def",
+   "fallacy-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-03-q04",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Premises: “If it snows, the school closes.” “The school did not close.” Which conclusion follows by a valid rule?",
+  "options": [
+   {
+    "l": "A",
+    "t": "It did not snow."
+   },
+   {
+    "l": "B",
+    "t": "It snowed."
+   },
+   {
+    "l": "C",
+    "t": "If it does not snow, the school closes."
+   },
+   {
+    "l": "D",
+    "t": "Nothing can be concluded about the snow."
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Let $s$: it snows, $c$: the school closes. Premises $s \\to c$ and $\\neg c$.",
+   "Modus tollens gives $\\neg s$.",
+   "Check: the only critical row is $s = c = $ F, where $\\neg s$ is true."
+  ],
+  "concept": "Modus tollens: a denied conclusion denies the hypothesis.",
+  "common_wrong": [
+   {
+    "answer": "D",
+    "why": "This would be right for the premise “the school closed” (affirming the consequent gives nothing), but a **denied** consequent does give $\\neg s$."
+   },
+   {
+    "answer": "C",
+    "why": "That is $\\neg s \\to c$. We already know $\\neg s$ (by modus tollens), so it would force $c$, contradicting the premise $\\neg c$: it is false on the only critical row."
+   },
+   {
+    "answer": "B",
+    "why": "$s$ is false on the only critical row."
+   }
+  ],
+  "blocks": [
+   "rules-def",
+   "ex-fal-medium"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-03-q05",
+  "type": "NAT",
+  "marks": 1,
+  "text": "On how many of the 8 assignments to $p, q, r$ are **all three** of $p \\to q$, $q \\to r$, $r \\to p$ true?",
+  "answer": 2,
+  "solution": [
+   "The three implications form a cycle $p \\to q \\to r \\to p$, so by hypothetical syllogism each letter implies every other.",
+   "So $p, q, r$ must all have the same value: if any one is T, all are T.",
+   "Exactly two assignments: TTT and FFF. The set is consistent (2 > 0)."
+  ],
+  "concept": "A cycle of implications forces all its letters to be equal.",
+  "common_wrong": [
+   {
+    "answer": 1,
+    "why": "Forgetting the all-false row: F → F is true, so FFF satisfies every implication."
+   },
+   {
+    "answer": 4,
+    "why": "Checking only two of the three implications; the third closes the cycle."
+   }
+  ],
+  "blocks": [
+   "consistency-def",
+   "rules-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-03-q06",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Consider the clause set $\\{p \\vee q,\\ \\neg p \\vee q,\\ p \\vee \\neg q,\\ \\neg p \\vee \\neg q\\}$. Which statement is correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "It is satisfied by $p = q = $ T."
+   },
+   {
+    "l": "B",
+    "t": "It is satisfiable, but resolution cannot derive the empty clause from it."
+   },
+   {
+    "l": "C",
+    "t": "Resolution cannot be applied, because every pair of clauses clashes on two letters."
+   },
+   {
+    "l": "D",
+    "t": "It is unsatisfiable, and the empty clause is derived in three resolution steps."
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Resolve $p \\vee q$ with $\\neg p \\vee q$ on $p$: $q$.",
+   "Resolve $p \\vee \\neg q$ with $\\neg p \\vee \\neg q$ on $p$: $\\neg q$.",
+   "Resolve $q$ with $\\neg q$: $\\square$. Three steps; the set is unsatisfiable (each clause forbids one of the four rows)."
+  ],
+  "concept": "Each two-literal clause over p, q forbids one row; all four rows forbidden means unsatisfiable, and resolution finds □.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "$p = q = $ T makes $\\neg p \\vee \\neg q$ false."
+   },
+   {
+    "answer": "C",
+    "why": "$p \\vee q$ and $\\neg p \\vee q$ clash only on $p$; only some pairs clash twice."
+   },
+   {
+    "answer": "B",
+    "why": "By refutation completeness, an unsatisfiable set always yields $\\square$, and this set is unsatisfiable."
+   }
+  ],
+  "blocks": [
+   "resolution-def",
+   "completeness-theorem",
+   "refutation-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-03-q07",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "On an island of truth-tellers and liars, $A$ says: “We are both liars” (meaning $A$ and $B$). What are $A$ and $B$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "Both are truth-tellers"
+   },
+   {
+    "l": "B",
+    "t": "Both are liars"
+   },
+   {
+    "l": "C",
+    "t": "$A$ is a liar and $B$ is a truth-teller"
+   },
+   {
+    "l": "D",
+    "t": "$A$ is a truth-teller and $B$ is a liar"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Constraint: $a \\leftrightarrow (\\neg a \\wedge \\neg b)$.",
+   "If $a$ = T the statement would have to be true, but it says $A$ is a liar: impossible. So $a$ = F.",
+   "A liar's statement is false: $\\neg(\\neg a \\wedge \\neg b)$ with $\\neg a$ true needs $\\neg b$ false, so $b$ = T."
+  ],
+  "concept": "Speaker X saying S gives x ↔ S; a liar's statement must be false.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "If both were liars, A's statement would be **true**, which a liar cannot say."
+   },
+   {
+    "answer": "D",
+    "why": "A truth-teller cannot call himself a liar."
+   },
+   {
+    "answer": "A",
+    "why": "Then the statement “we are both liars” would be false, but a truth-teller says only true things."
+   }
+  ],
+  "blocks": [
+   "knights-def",
+   "ex-kn-easy",
+   "trick-knights-iff"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-03-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Let $S = \\{p \\to q,\\ q \\to r,\\ r \\to \\neg p\\}$. Which statements are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$S$ is consistent."
+   },
+   {
+    "l": "B",
+    "t": "$S \\models \\neg p$"
+   },
+   {
+    "l": "C",
+    "t": "$S \\models \\neg r$"
+   },
+   {
+    "l": "D",
+    "t": "$S \\cup \\{p\\}$ is inconsistent."
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "Chaining gives $p \\to \\neg p$, which is equivalent to $\\neg p$: so $S \\models \\neg p$ (B), and adding $p$ makes it inconsistent (D).",
+   "$S$ is consistent: $p = q = r = $ F satisfies all three (A).",
+   "C fails: $p = $ F, $q = $ F, $r = $ T satisfies $S$ (F → F, F → T, T → T) with $r$ true."
+  ],
+  "concept": "Γ ⊨ C iff Γ ∪ {¬C} is inconsistent; a chain p → … → ¬p forces ¬p.",
+  "common_wrong": [
+   {
+    "answer": [
+     "B",
+     "D"
+    ],
+    "why": "Forcing $\\neg p$ does not make $S$ inconsistent: $p$ = F leaves room for models."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "$r$ is not forced: with $p$ false, $r \\to \\neg p$ holds whatever $r$ is."
+   }
+  ],
+  "blocks": [
+   "consequence-def",
+   "consistency-def",
+   "refutation-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-03-q09",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A theory over the variables $p, q$ has the single axiom $p \\leftrightarrow q$ (with a sound and complete proof system). Which is true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "It is consistent but not complete: it proves neither $p$ nor $\\neg p$."
+   },
+   {
+    "l": "B",
+    "t": "It is consistent and complete."
+   },
+   {
+    "l": "C",
+    "t": "It is inconsistent."
+   },
+   {
+    "l": "D",
+    "t": "It proves $p$."
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Models of $p \\leftrightarrow q$: TT and FF. At least one model, so consistent.",
+   "$p$ is T on TT and F on FF: neither $p$ nor $\\neg p$ holds in every model, so neither is provable.",
+   "A consistent theory with two models is not negation-complete."
+  ],
+  "concept": "A consistent propositional theory is complete exactly when it has one model.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "It decides some formulas (for example $p \\to q$) but not $p$; completeness needs every formula decided."
+   },
+   {
+    "answer": "D",
+    "why": "The model FF makes $p$ false, so $p$ is not a consequence."
+   },
+   {
+    "answer": "C",
+    "why": "Two models exist, so no contradiction is derivable."
+   }
+  ],
+  "blocks": [
+   "axiom-props-def",
+   "ex-ax-medium"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-03-q10",
+  "type": "NAT",
+  "marks": 2,
+  "text": "How many of the following are logical consequences of $\\{p \\vee q,\\ \\neg p\\}$: $q$, $p$, $q \\vee r$, $p \\to r$, $\\neg q$?",
+  "answer": 3,
+  "solution": [
+   "The premises force $p$ = F and (by disjunctive syllogism) $q$ = T; $r$ is free.",
+   "$q$: yes. $q \\vee r$: yes (addition). $p \\to r$: yes, its hypothesis is false.",
+   "$p$ and $\\neg q$: no. Count 3."
+  ],
+  "concept": "With p forced false, anything of the form p → … follows vacuously.",
+  "common_wrong": [
+   {
+    "answer": 2,
+    "why": "Missing $p \\to r$: an implication with a false hypothesis is true on every critical row."
+   },
+   {
+    "answer": 1,
+    "why": "Missing addition: $q \\models q \\vee r$ whatever $r$ is."
+   }
+  ],
+  "blocks": [
+   "consequence-def",
+   "rules-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-01-03-q11",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "“If the password is correct, access is granted. Access was granted. So the password was correct.” This inference is",
+  "options": [
+   {
+    "l": "A",
+    "t": "valid, by modus ponens"
+   },
+   {
+    "l": "B",
+    "t": "invalid: affirming the consequent"
+   },
+   {
+    "l": "C",
+    "t": "invalid: denying the antecedent"
+   },
+   {
+    "l": "D",
+    "t": "valid, by modus tollens"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Let $c$: password correct, $g$: access granted. Premises $c \\to g$, $g$; conclusion $c$.",
+   "Reasoning backwards from a true conclusion is affirming the consequent.",
+   "Counterexample: $c$ = F, $g$ = T (access granted another way, say by an administrator)."
+  ],
+  "concept": "From p → q and q nothing follows about p.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Modus ponens would need the premise $c$ and conclude $g$; here it is the other way round."
+   },
+   {
+    "answer": "C",
+    "why": "Denying the antecedent starts from $\\neg c$; this argument starts from $g$."
+   },
+   {
+    "answer": "D",
+    "why": "Modus tollens needs a **denied** consequent $\\neg g$."
+   }
+  ],
+  "blocks": [
+   "fallacy-def",
+   "fallacy-theorem",
+   "trap-fallacy-true-conclusion"
+  ],
+  "source": "nexora"
  }
 ]

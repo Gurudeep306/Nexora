@@ -4200,20 +4200,25 @@
       "verification": "9 vertices need 8 edges: 5 of weight 1 + 3 of weight 2 (one for $\\{b,e\\}$, $fh$, one for $h$) — matches every choice."
     },
     "cse-2014-2-cs-53": {
-      "approach": "Find one falsifying assignment: an implication is false only when its antecedent is true and its consequent false.",
+      "approach": "Concept tested: **finding the non-tautology by falsification**. For each option falsify the conclusion and see whether the hypothesis can stay true.",
       "concepts": [
         "Tautology",
-        "Implication",
-        "Biconditional"
+        "Falsification",
+        "Hypothetical syllogism"
       ],
+      "given": "(A) $((a \\to b) \\wedge (b \\to c)) \\to (a \\to c)$, (B) $(a \\leftrightarrow c) \\to (\\sim b \\to (a \\wedge c))$, (C) $(a \\wedge b \\wedge c) \\to (c \\vee a)$, (D) $a \\to (b \\to a)$.",
       "steps": [
         {
-          "title": "Falsify (B)",
-          "body": "Need $a\\leftrightarrow c$ true and $\\sim b\\to(a\\wedge c)$ false, i.e. $b=F$ and $a\\wedge c=F$. Take $a=c=F$, $b=F$: $a\\leftrightarrow c=T$, $\\sim b=T$, $a\\wedge c=F$, so (B) $=T\\to F=F$."
+          "title": "Option A",
+          "body": "$a \\to c$ = F forces $a$ = T, $c$ = F; then $a \\to b$ = T forces $b$ = T and $b \\to c$ = T forces $c$ = T. Clash: tautology."
         },
         {
-          "title": "Others are tautologies",
-          "body": "(A) is transitivity of $\\to$. (C): if $a\\wedge b\\wedge c$ is true then $c\\vee a$ is true. (D) $a\\to(b\\to a)$: false would need $a=T$ and $b\\to a=F$, impossible."
+          "title": "Option B",
+          "body": "Falsify $\\sim b \\to (a \\wedge c)$: $b$ = F and $a \\wedge c$ = F. Then $a \\leftrightarrow c$ = T with $a = c =$ F. No clash: the row $a = b = c =$ F makes B false."
+        },
+        {
+          "title": "Options C and D",
+          "body": "C: $c \\vee a$ = F needs $a = c =$ F, but the hypothesis needs both T. D: $b \\to a$ = F needs $a$ = F, but the hypothesis needs $a$ = T. Both clash: tautologies."
         }
       ],
       "answer": {
@@ -4227,25 +4232,59 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Hypothetical syllogism — always true."
+          "reason": "Hypothetical syllogism; falsifying it forces $c$ to be both T and F."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$a=b=c=F$ makes it false."
+          "reason": "False on $a = b = c =$ F: hypothesis F ↔ F = T, conclusion T → F = F."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Conjunction implies any disjunction of its parts."
+          "reason": "A conjunction implies a disjunction of some of its parts: a tautology."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Consequent $b\\to a$ is true whenever $a$ is true."
+          "reason": "$a \\to (b \\to a) \\equiv \\neg a \\vee \\neg b \\vee a$: a tautology."
         }
       ],
-      "verification": "Substituting $a=b=c=F$ in (B) gives $T\\to(T\\to F)=T\\to F=F$."
+      "shortcut": "In B the hypothesis $a \\leftrightarrow c$ is satisfied by $a = c =$ F, which also kills $a \\wedge c$; with $b$ = F the conclusion fails.",
+      "pitfalls": [
+        "Assuming a biconditional hypothesis forces its sides true; F ↔ F is T."
+      ],
+      "verification": "Truth tables over $a, b, c$: A, C, D are T on all 8 rows; B is F on FFF only.",
+      "animation": {
+        "kind": "table",
+        "title": "Falsifying option B",
+        "cols": [
+          "a",
+          "b",
+          "c",
+          "a ↔ c",
+          "¬b → (a ∧ c)",
+          "B"
+        ],
+        "rows": [
+          [
+            "F",
+            "F",
+            "F",
+            "T",
+            "F",
+            "F"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "c": 5,
+            "tone": "error"
+          }
+        ]
+      }
     },
     "cse-2014-2-cs-54": {
       "approach": "The `IN` query returns each tuple of R (with R's own duplicates) at most once per R occurrence; a join reproduces this only if S's join values are made distinct.",

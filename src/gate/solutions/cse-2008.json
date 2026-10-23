@@ -1739,24 +1739,25 @@
       "verification": "Model check: in a domain containing a PDA $p$ that is not an FSA, (C) is false (since $fsa(p)$ fails) even though the English statement can be true — so (C) is wrong."
     },
     "cse-2008-cs-31": {
-      "approach": "Reduce each expression to a minimal form (or list its minterms over $(P,Q)$) and compare.",
+      "approach": "Concept tested: **equivalence by canonical forms**. Write each expression as a minterm list over $(P, Q)$; equal lists mean equivalent formulas.",
       "concepts": [
-        "Propositional equivalence",
-        "De Morgan",
-        "Minterms"
+        "Minterms",
+        "De Morgan's laws",
+        "Logical equivalence"
       ],
+      "given": "I. $P \\vee \\sim Q$; II. $\\sim(\\sim P \\wedge Q)$; III. $PQ \\vee P\\sim Q \\vee \\sim P \\sim Q$; IV. $PQ \\vee P\\sim Q \\vee \\sim PQ$.",
       "steps": [
         {
-          "title": "I and II",
-          "body": "I: $P\\vee\\sim Q$. II: $\\sim(\\sim P\\wedge Q) = P \\vee \\sim Q$ (De Morgan). So I ≡ II."
+          "title": "Expression I",
+          "body": "$P \\vee \\neg Q$ is false only when $P$ = F and $Q$ = T (row 01 = 1). So I = $\\Sigma(0, 2, 3)$."
         },
         {
-          "title": "III and IV as minterms",
-          "body": "III covers $(P,Q) = (1,1),(1,0),(0,0)$ — everything except $(0,1)$ ⇒ $P\\vee\\sim Q$.\n\nIV covers $(1,1),(1,0),(0,1)$ — everything except $(0,0)$ ⇒ $P\\vee Q$."
+          "title": "Expression II",
+          "body": "De Morgan: $\\neg(\\neg P \\wedge Q) \\equiv P \\vee \\neg Q$, the same as I."
         },
         {
-          "title": "Conclusion",
-          "body": "I, II, III are all $P\\vee\\sim Q$; IV is $P\\vee Q$. Answer: only I, II and III."
+          "title": "III and IV",
+          "body": "III lists minterms 11, 10, 00 = $\\Sigma(3, 2, 0)$, equal to I. IV lists 11, 10, 01 = $\\Sigma(1, 2, 3)$, which is $P \\vee Q$."
         }
       ],
       "answer": {
@@ -1770,25 +1771,63 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Misses III, which also equals $P\\vee\\sim Q$."
+          "reason": "III also equals I: it lists exactly the rows where $P \\vee \\neg Q$ is true."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct."
+          "reason": "I, II, III all have minterms {0, 2, 3}."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "IV is $P\\vee Q$, not $P\\vee\\sim Q$; and III is missing."
+          "reason": "IV is $\\Sigma(1, 2, 3) = P \\vee Q$, true on row 01 where I is false."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "IV differs from the others at $(P,Q)=(0,1)$ and $(0,0)$."
+          "reason": "IV differs from the others on rows 00 and 01."
         }
       ],
-      "verification": "At $P=0,Q=1$: I = 0, II = 0, III = 0, IV = 1 — IV is the odd one out."
+      "shortcut": "III is missing only the minterm $\\neg P Q$, so it is $\\neg(\\neg P \\wedge Q)$, which is II.",
+      "pitfalls": [
+        "Simplifying IV as $P \\vee \\neg Q$ by misreading $\\sim PQ$ as $\\sim(PQ)$."
+      ],
+      "verification": "Columns over TT, TF, FT, FF: I, II, III give T, T, F, T; IV gives T, T, T, F.",
+      "animation": {
+        "kind": "table",
+        "title": "Minterm lists over (P, Q)",
+        "cols": [
+          "expr",
+          "Σ"
+        ],
+        "rows": [
+          [
+            "I",
+            "0, 2, 3"
+          ],
+          [
+            "II",
+            "0, 2, 3"
+          ],
+          [
+            "III",
+            "0, 2, 3"
+          ],
+          [
+            "IV",
+            "1, 2, 3"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 3,
+            "c": 1,
+            "tone": "error"
+          }
+        ]
+      }
     },
     "cse-2008-cs-32": {
       "approach": "Seek time = acceleration + coast + deceleration + settle. The arm must start from rest and stop precisely, so short seeks are dominated by fixed start/stop costs — hence the non-linear relation with distance.",

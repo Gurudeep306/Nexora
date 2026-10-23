@@ -1169,19 +1169,29 @@
       "verification": "Each invalid option has an explicit finite counter-model; (a) has a direct proof."
     },
     "cse-1992-a-2-xvi": {
-      "approach": "An implication is a tautology iff it can never have a true antecedent and a false consequent; try to falsify each one.",
+      "approach": "Concept tested: **testing tautologies by falsification**. An implication is false only as T → F; for each option, try to make the conclusion false and the hypothesis true. One clean row refutes an option.",
       "concepts": [
         "Tautology",
-        "Implication"
+        "Falsification",
+        "Right-associative →"
       ],
+      "given": "(a) $a \\vee b \\to b \\wedge c$, (b) $a \\wedge b \\to b \\vee c$, (c) $a \\vee b \\to (b \\to c)$, (d) $a \\to b \\to (b \\to c)$.",
       "steps": [
         {
-          "title": "(b) cannot be falsified",
-          "body": "To falsify $a \\land b \\to b \\lor c$ we need $a \\land b = 1$, so $b = 1$; but then $b \\lor c = 1$. Impossible — tautology."
+          "title": "Option (a)",
+          "body": "Falsify $b \\wedge c$ with $b$ = F; keep $a \\vee b$ true with $a$ = T. Row $a$ = T, $b$ = F, $c$ = F gives T → F = F. Not a tautology."
         },
         {
-          "title": "Falsify the others",
-          "body": "- (a) $a = 1, b = 0$: $a \\lor b = 1$, $b \\land c = 0$ → false.\n- (c) $a = b = 1, c = 0$: $1 \\to (1 \\to 0) = 1 \\to 0 = 0$.\n- (d) $a = b = 1, c = 0$: either grouping gives $0$ — right-associated $1 \\to (1 \\to 0) = 0$; left-associated $(1 \\to 1) \\to (1 \\to 0) = 1 \\to 0 = 0$."
+          "title": "Option (b)",
+          "body": "To falsify, $b \\vee c$ = F needs $b$ = F, but the hypothesis $a \\wedge b$ = T needs $b$ = T. Clash: **tautology** (a conjunction implies a disjunction sharing a variable)."
+        },
+        {
+          "title": "Option (c)",
+          "body": "$b \\to c$ = F needs $b$ = T, $c$ = F; then $a \\vee b$ = T. Row $a$ = T, $b$ = T, $c$ = F falsifies it."
+        },
+        {
+          "title": "Option (d)",
+          "body": "$\\to$ is right-associative: $a \\to (b \\to (b \\to c)) \\equiv \\neg a \\vee \\neg b \\vee c$, false on $a$ = T, $b$ = T, $c$ = F. (Read as $(a \\to b) \\to (b \\to c)$ it fails on $a$ = F, $b$ = T, $c$ = F.) Not a tautology either way."
         }
       ],
       "answer": {
@@ -1195,25 +1205,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$a = 1, b = 0$ falsifies it."
+          "reason": "Falsified by $a$ = T, $b$ = F, $c$ = F: hypothesis T, conclusion F."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "True antecedent forces $b = 1$, which makes the consequent true."
+          "reason": "Falsifying the conclusion forces $b$ = F, which makes the hypothesis false: a clash on every attempt."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$a = b = 1, c = 0$ falsifies it."
+          "reason": "Falsified by $a = b =$ T, $c$ = F."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$a = b = 1, c = 0$ falsifies it under either bracketing."
+          "reason": "Equals $\\neg a \\vee \\neg b \\vee c$; falsified by $a = b =$ T, $c$ = F."
         }
       ],
-      "verification": "Each non-tautology has a falsifying assignment; (b) was checked by contradiction."
+      "shortcut": "For $H \\to C$, falsify $C$ first: in (b) that alone forces $b$ = F and kills the hypothesis.",
+      "pitfalls": [
+        "Regrouping (d) as $(a \\to b) \\to (b \\to c)$ and then worrying; it is not a tautology under either reading.",
+        "Calling (c) a tautology because $b$ appears on both sides."
+      ],
+      "verification": "Truth tables over $a, b, c$: (b) is T on all 8 rows; (a), (c), (d) each have a false row."
     },
     "cse-1992-a-2-xvii": {
       "approach": "Read (a) and (b) as the standard identities $(r^*)^* = r^*$ and $(r^*s^*)^* = (r+s)^*$ (the scan lost the outer star), then test each with small strings.",
@@ -2753,30 +2768,85 @@
       "verification": "Spot check: $\\gcd(8, 6) = 2 \\in D_{24}$, $\\operatorname{lcm}(8, 6) = 24 \\in D_{24}$; absorption $\\gcd(8, \\operatorname{lcm}(8,6)) = 8$ ✓."
     },
     "cse-1992-b-15-a": {
-      "approach": "Convert to clauses and resolve with the substitution $x = a,\\ y = a$: get $R(a)$ from (2),(3), then $P(a)$ from (1), which clashes with $\\sim P(a)$.",
+      "approach": "Concept tested: **refutation by resolution (or chained modus ponens)**. Universal clauses hold for every value, so substitute $x = a$, $y = a$; then the four statements become clauses over the atoms $P(a), Q(a), R(a)$, and we derive the empty clause.",
       "concepts": [
         "Resolution",
         "Modus ponens",
-        "Unification"
+        "Inconsistency",
+        "Instantiation"
       ],
+      "given": "(1) $Q(x) \\to P(x) \\vee \\sim R(a)$; (2) $R(a) \\vee \\sim Q(a)$; (3) $Q(a)$; (4) $\\sim P(y)$; $x, y$ universally quantified, $a$ a constant.",
       "steps": [
         {
-          "title": "Clauses",
-          "body": "(1) $\\sim Q(x) \\lor P(x) \\lor \\sim R(a)$ (2) $R(a) \\lor \\sim Q(a)$ (3) $Q(a)$ (4) $\\sim P(y)$"
+          "title": "Instantiate and write clauses",
+          "body": "With $x = a$ and $y = a$: (1) $\\{\\neg Q(a), P(a), \\neg R(a)\\}$ (since $A \\to B \\equiv \\neg A \\vee B$), (2) $\\{R(a), \\neg Q(a)\\}$, (3) $\\{Q(a)\\}$, (4) $\\{\\neg P(a)\\}$."
         },
         {
-          "title": "Resolve",
-          "body": "- (2) + (3): $R(a)$ … (5)\n- (1) with $x = a$ + (3): $P(a) \\lor \\sim R(a)$ … (6)\n- (6) + (5): $P(a)$ … (7)\n- (7) + (4) with $y = a$: $\\square$ (empty clause)\n\nThe empty clause shows the set is **inconsistent**. In modus-ponens form: $Q(a)$ and $Q(a) \\rightarrow R(a)$ give $R(a)$; $Q(a)$ and (1) give $P(a) \\lor \\sim R(a)$, i.e. $R(a) \\rightarrow P(a)$, so $P(a)$, contradicting $\\forall y\\, \\sim P(y)$."
+          "title": "Derive R(a)",
+          "body": "Resolve (3) with (2) on $Q(a)$: (5) $\\{R(a)\\}$. In modus ponens form: $Q(a)$ and $Q(a) \\to R(a)$ give $R(a)$."
+        },
+        {
+          "title": "Derive P(a)",
+          "body": "Resolve (3) with (1) on $Q(a)$: (6) $\\{P(a), \\neg R(a)\\}$. Resolve (6) with (5) on $R(a)$: (7) $\\{P(a)\\}$."
+        },
+        {
+          "title": "Reach the empty clause",
+          "body": "Resolve (7) with (4): $\\{P(a)\\}$ and $\\{\\neg P(a)\\}$ give $\\square$. The set is unsatisfiable, i.e. **inconsistent**."
         }
       ],
       "answer": {
-        "value": "Derive R(a) from (2),(3); instantiate (1) with x = a to get P(a) ∨ ~R(a), hence P(a); this contradicts ~P(a) from (4) with y = a",
+        "value": "Inconsistent: R(a) from (2), (3); P(a) from (1) with x = a; this contradicts ~P(a) from (4) with y = a",
         "matchesKey": true
       },
+      "shortcut": "Every step is modus ponens on ground instances: $Q(a) \\Rightarrow R(a) \\Rightarrow P(a)$, while (4) says nothing is $P$.",
       "pitfalls": [
-        "Forgetting to instantiate the universally quantified $y$ in (4) with $a$."
+        "Forgetting that (4) with a universal $y$ applies to $a$: $\\sim P(y)$ means $P$ is false for every object.",
+        "Reading (1) as $(Q(x) \\to P(x)) \\vee \\sim R(a)$; the arrow binds weaker than $\\vee$, so it is $Q(x) \\to (P(x) \\vee \\sim R(a))$."
       ],
-      "verification": "Even if (2) were read as R(a) ∧ ~Q(a), ~Q(a) clashes with (3) directly, so the set is inconsistent under either reading."
+      "verification": "As propositional formulas over $P(a), Q(a), R(a)$ the four statements have no common satisfying assignment (8-row check), and resolution saturation derives $\\square$.",
+      "animation": {
+        "kind": "tree",
+        "title": "Resolution tree down to the empty clause",
+        "root": {
+          "label": "□",
+          "tone": "success",
+          "children": [
+            {
+              "label": "P(a)",
+              "children": [
+                {
+                  "label": "P(a) ∨ ¬R(a)",
+                  "children": [
+                    {
+                      "label": "(1) ¬Q(a) ∨ P(a) ∨ ¬R(a)"
+                    },
+                    {
+                      "id": "q3a",
+                      "label": "(3) Q(a)"
+                    }
+                  ]
+                },
+                {
+                  "label": "R(a)",
+                  "children": [
+                    {
+                      "label": "(2) R(a) ∨ ¬Q(a)"
+                    },
+                    {
+                      "id": "q3b",
+                      "label": "(3) Q(a)"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "(4) ¬P(a)",
+              "tone": "warning"
+            }
+          ]
+        }
+      }
     },
     "cse-1992-b-15-b": {
       "approach": "Check reflexive, symmetric and transitive directly from \"$n$ divides $a-b$\"; the classes are the residues mod 5.",

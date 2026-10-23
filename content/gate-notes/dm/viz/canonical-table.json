@@ -1,0 +1,607 @@
+{
+ "version": 1,
+ "title": "Minterms and maxterms from one table",
+ "width": 640,
+ "height": 380,
+ "narrow": {
+  "width": 360,
+  "height": 380
+ },
+ "intro": "One truth table gives both canonical forms: true rows become minterms (Σ), false rows become maxterms (Π).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Canonical forms of (p ∧ q) ∨ (¬q ∧ r)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Canonical forms (GATE 1995)",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 80,
+   "y": 44,
+   "cellW": 80,
+   "cellH": 30,
+   "rows": [
+    [
+     "p",
+     "q",
+     "r",
+     "f",
+     "#",
+     "term"
+    ],
+    [
+     "T",
+     "T",
+     "T",
+     "",
+     "",
+     ""
+    ],
+    [
+     "T",
+     "T",
+     "F",
+     "",
+     "",
+     ""
+    ],
+    [
+     "T",
+     "F",
+     "T",
+     "",
+     "",
+     ""
+    ],
+    [
+     "T",
+     "F",
+     "F",
+     "",
+     "",
+     ""
+    ],
+    [
+     "F",
+     "T",
+     "T",
+     "",
+     "",
+     ""
+    ],
+    [
+     "F",
+     "T",
+     "F",
+     "",
+     "",
+     ""
+    ],
+    [
+     "F",
+     "F",
+     "T",
+     "",
+     "",
+     ""
+    ],
+    [
+     "F",
+     "F",
+     "F",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 12,
+    "y": 44,
+    "cellW": 56,
+    "cellH": 30
+   }
+  },
+  {
+   "id": "s1",
+   "type": "text",
+   "x": 320,
+   "y": 340,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 340,
+    "size": 13
+   }
+  },
+  {
+   "id": "s2",
+   "type": "text",
+   "x": 320,
+   "y": 366,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 366,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Fill the column of f: p ∧ q is true on TTT and TTF; ¬q ∧ r on TFT and FFT. Four true rows.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "p",
+        "q",
+        "r",
+        "f",
+        "#",
+        "term"
+       ],
+       [
+        "T",
+        "T",
+        "T",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "T",
+        "T",
+        "F",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "T",
+        "F",
+        "T",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "T",
+        "F",
+        "F",
+        "F",
+        "",
+        ""
+       ],
+       [
+        "F",
+        "T",
+        "T",
+        "F",
+        "",
+        ""
+       ],
+       [
+        "F",
+        "T",
+        "F",
+        "F",
+        "",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "T",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "F",
+        "F",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        3
+       ],
+       [
+        7,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Number each row by reading T = 1, F = 0 with p as the most significant bit: TTT is 7, down to FFF = 0.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "p",
+        "q",
+        "r",
+        "f",
+        "#",
+        "term"
+       ],
+       [
+        "T",
+        "T",
+        "T",
+        "T",
+        "7",
+        ""
+       ],
+       [
+        "T",
+        "T",
+        "F",
+        "T",
+        "6",
+        ""
+       ],
+       [
+        "T",
+        "F",
+        "T",
+        "T",
+        "5",
+        ""
+       ],
+       [
+        "T",
+        "F",
+        "F",
+        "F",
+        "4",
+        ""
+       ],
+       [
+        "F",
+        "T",
+        "T",
+        "F",
+        "3",
+        ""
+       ],
+       [
+        "F",
+        "T",
+        "F",
+        "F",
+        "2",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "T",
+        "T",
+        "1",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "F",
+        "F",
+        "0",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        4
+       ],
+       [
+        2,
+        4
+       ],
+       [
+        3,
+        4
+       ],
+       [
+        4,
+        4
+       ],
+       [
+        5,
+        4
+       ],
+       [
+        6,
+        4
+       ],
+       [
+        7,
+        4
+       ],
+       [
+        8,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Each true row gives a minterm, true on that row only. The PDNF is Σ(1, 5, 6, 7).",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "p",
+        "q",
+        "r",
+        "f",
+        "#",
+        "term"
+       ],
+       [
+        "T",
+        "T",
+        "T",
+        "T",
+        "7",
+        "m7"
+       ],
+       [
+        "T",
+        "T",
+        "F",
+        "T",
+        "6",
+        "m6"
+       ],
+       [
+        "T",
+        "F",
+        "T",
+        "T",
+        "5",
+        "m5"
+       ],
+       [
+        "T",
+        "F",
+        "F",
+        "F",
+        "4",
+        ""
+       ],
+       [
+        "F",
+        "T",
+        "T",
+        "F",
+        "3",
+        ""
+       ],
+       [
+        "F",
+        "T",
+        "F",
+        "F",
+        "2",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "T",
+        "T",
+        "1",
+        "m1"
+       ],
+       [
+        "F",
+        "F",
+        "F",
+        "F",
+        "0",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        5
+       ],
+       [
+        2,
+        5
+       ],
+       [
+        3,
+        5
+       ],
+       [
+        7,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "PDNF = Σ(1, 5, 6, 7)",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Each false row gives a maxterm, false on that row only. The PCNF is Π(0, 2, 3, 4): the indices the PDNF left out.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "p",
+        "q",
+        "r",
+        "f",
+        "#",
+        "term"
+       ],
+       [
+        "T",
+        "T",
+        "T",
+        "T",
+        "7",
+        "m7"
+       ],
+       [
+        "T",
+        "T",
+        "F",
+        "T",
+        "6",
+        "m6"
+       ],
+       [
+        "T",
+        "F",
+        "T",
+        "T",
+        "5",
+        "m5"
+       ],
+       [
+        "T",
+        "F",
+        "F",
+        "F",
+        "4",
+        "M4"
+       ],
+       [
+        "F",
+        "T",
+        "T",
+        "F",
+        "3",
+        "M3"
+       ],
+       [
+        "F",
+        "T",
+        "F",
+        "F",
+        "2",
+        "M2"
+       ],
+       [
+        "F",
+        "F",
+        "T",
+        "T",
+        "1",
+        "m1"
+       ],
+       [
+        "F",
+        "F",
+        "F",
+        "F",
+        "0",
+        "M0"
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        5
+       ],
+       [
+        5,
+        5
+       ],
+       [
+        6,
+        5
+       ],
+       [
+        8,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "Σ(1, 5, 6, 7)  =  Π(0, 2, 3, 4)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Write each maxterm with plain = 0, negated = 1: row 010 gives p ∨ ¬q ∨ r. The four clauses are the answer to GATE 1995.",
+   "patches": [
+    {
+     "id": "s2",
+     "set": {
+      "text": "PCNF = (p∨q∨r)(p∨¬q∨r)(p∨¬q∨¬r)(¬p∨q∨r)",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

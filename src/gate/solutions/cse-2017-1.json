@@ -485,24 +485,25 @@
       "verification": "Counting contours inward from the 450 line near the top-left (425, 450, 475, 500, …) confirms the bands; matches the official key (C)."
     },
     "cse-2017-1-cs-1": {
-      "approach": "Rewrite every implication as a disjunction ($A \\Rightarrow B \\equiv \\neg A \\vee B$) and compare the resulting clauses.",
+      "approach": "Concept tested: **implication law and converse/inverse**. Rewrite every implication as a disjunction and compare the clauses: $\\neg p \\Rightarrow \\neg q \\equiv p \\vee \\neg q$.",
       "concepts": [
-        "Implication as disjunction",
-        "Contrapositive",
-        "Logical equivalence"
+        "Implication law",
+        "Inverse",
+        "Converse"
       ],
+      "given": "$(\\neg p) \\Rightarrow (\\neg q)$; candidates I. $p \\Rightarrow q$, II. $q \\Rightarrow p$, III. $(\\neg q) \\vee p$, IV. $(\\neg p) \\vee q$.",
       "steps": [
         {
           "title": "Rewrite the given statement",
-          "body": "$$(\\neg p) \\Rightarrow (\\neg q) \\equiv \\neg(\\neg p) \\vee \\neg q \\equiv p \\vee \\neg q$$"
+          "body": "$\\neg p \\Rightarrow \\neg q \\equiv \\neg\\neg p \\vee \\neg q \\equiv p \\vee \\neg q$."
         },
         {
-          "title": "Rewrite each candidate",
-          "body": "- I: $p \\Rightarrow q \\equiv \\neg p \\vee q$ — different.\n- II: $q \\Rightarrow p \\equiv \\neg q \\vee p$ — **same**.\n- III: $(\\neg q) \\vee p$ — **same**.\n- IV: $(\\neg p) \\vee q$ — same as I, different."
+          "title": "Rewrite the candidates",
+          "body": "I: $\\neg p \\vee q$. II: $\\neg q \\vee p$. III: $\\neg q \\vee p$. IV: $\\neg p \\vee q$."
         },
         {
-          "title": "Conclude",
-          "body": "Statements II and III are equivalent to $(\\neg p) \\Rightarrow (\\neg q)$ (II is its contrapositive)."
+          "title": "Compare",
+          "body": "II and III are the clause $p \\vee \\neg q$; I and IV are the different clause $\\neg p \\vee q$ (they differ on $p$ = T, $q$ = F)."
         }
       ],
       "answer": {
@@ -516,29 +517,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "I is $\\neg p \\vee q$; with $p=0,q=1$ the given statement is false but I is true."
+          "reason": "I is $p \\Rightarrow q$, of which the given statement is the inverse; they differ on $p$ = T, $q$ = F."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "I and IV are the same formula $\\neg p \\vee q$, which is the converse, not the given statement."
+          "reason": "I and IV are both $\\neg p \\vee q$, the wrong clause."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "II is equivalent, but III ($\\neg q \\vee p$) is also equivalent, so \"II only\" is incomplete."
+          "reason": "II is right but III is also equivalent."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Both II ($\\neg q \\vee p$) and III ($\\neg q \\vee p$) equal $p \\vee \\neg q$."
+          "reason": "II ($q \\Rightarrow p$, the contrapositive of the given statement) and III ($p \\vee \\neg q$)."
         }
       ],
-      "shortcut": "The contrapositive of $\\neg p \\Rightarrow \\neg q$ is $q \\Rightarrow p$; any option containing the converse $p \\Rightarrow q$ is out.",
+      "shortcut": "$\\neg p \\Rightarrow \\neg q$ has contrapositive $q \\Rightarrow p$; and $q \\Rightarrow p \\equiv \\neg q \\vee p$.",
       "pitfalls": [
-        "Confusing the converse ($p \\Rightarrow q$) with the contrapositive ($q \\Rightarrow p$)."
+        "Cancelling the negations to get $p \\Rightarrow q$: negating both sides of an implication gives the inverse, not an equivalent statement."
       ],
-      "verification": "Truth table check at $p=0,q=1$: given statement is $1 \\Rightarrow 0 = 0$; II gives $1 \\Rightarrow 0 = 0$, III gives $0 \\vee 0 = 0$, while I and IV give 1."
+      "verification": "Truth tables over $p, q$: the given statement, II and III are T, T, F, T (false only on FT); I and IV are T, F, T, T."
     },
     "cse-2017-1-cs-2": {
       "approach": "Take each sentence and ask whether every model of $\\forall x\\,\\exists y\\,R(x,y)$ satisfies it; a small counter-model kills the non-implied ones.",
@@ -1991,23 +1992,29 @@
       "verification": "Factoring: $x^3-3x^2+2=(x-1)(x^2-2x-2)$ and $x^7-2x^5+1=(x-1)(x^6+x^5-x^4-x^3-x^2-x-1)$; at $x=1$: $\\frac{-3}{-3}=1$."
     },
     "cse-2017-1-cs-29": {
-      "approach": "An implication is false only as T → F, so \"(p→q)→r is always false\" pins r = F and p→q = T; substitute into the second expression.",
+      "approach": "Concept tested: **forcing values from a false implication**. '$(p \\to q) \\to r$ is a contradiction' is meant as 'it is false'; an implication is false only as T → F, which pins $r$ = F and $p \\to q$ = T.",
       "concepts": [
-        "implication",
-        "contradiction"
+        "Implication",
+        "Falsification",
+        "Substitution"
       ],
+      "given": "$(p \\to q) \\to r$ is false. Describe $(r \\to p) \\to q$.",
       "steps": [
         {
-          "title": "Use the contradiction",
-          "body": "$(p\\to q)\\to r$ is F only when $p\\to q=\\text{T}$ and $r=\\text{F}$."
+          "title": "Force the values",
+          "body": "$(p \\to q) \\to r$ = F needs $p \\to q$ = T and $r$ = F. The allowed rows are $(p, q) \\in$ {TT, FT, FF} with $r$ = F."
         },
         {
-          "title": "Simplify the target",
-          "body": "With $r=\\text{F}$: $r\\to p=\\text{T}$, so $(r\\to p)\\to q\\equiv \\text{T}\\to q\\equiv q$. It is TRUE exactly when $q$ is TRUE."
+          "title": "Substitute r = F",
+          "body": "$r \\to p = \\text{F} \\to p = $ T, so $(r \\to p) \\to q = \\text{T} \\to q \\equiv q$."
+        },
+        {
+          "title": "Read the options",
+          "body": "The target equals $q$: it is T exactly when $q$ is T. On the allowed row FF it is F, so it is not a tautology; on TT it is T, so not a contradiction; with $p$ = F it is F on FF."
         }
       ],
       "answer": {
-        "value": "always TRUE when q is TRUE",
+        "value": "Always TRUE when $q$ is TRUE",
         "choice": [
           "D"
         ],
@@ -2017,25 +2024,68 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "It equals q, which can be F (e.g. p = F, q = F)."
+          "reason": "On the allowed row $p = q =$ F (with $r$ = F) the target is F."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "It equals q, which can be T."
+          "reason": "On the allowed row $p = q =$ T the target is T."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "p = F allows q = F (p→q still T), making the expression F."
+          "reason": "With $p$ = F, the allowed row $q$ = F still gives F."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "The expression reduces to q."
+          "reason": "Under the condition the target is equivalent to $q$."
         }
       ],
-      "verification": "Case p = F, q = F, r = F satisfies the premise and gives (T)→F = F, ruling out A and C; p = q = T, r = F gives T, ruling out B."
+      "shortcut": "Once $r$ = F, any implication out of $r$ is T, so $(r \\to p) \\to q$ collapses to $q$.",
+      "pitfalls": [
+        "Taking 'contradiction' literally: $(p \\to q) \\to r$ is satisfiable, so the question can only mean that its value is false.",
+        "Forgetting that $p \\to q$ = T still allows $p$ = F with $q$ either value."
+      ],
+      "verification": "Over the three rows where $(p \\to q) \\to r$ is false (TTF, FTF, FFF), the target takes the values T, T, F, matching $q$.",
+      "animation": {
+        "kind": "table",
+        "title": "Rows where (p → q) → r is false",
+        "cols": [
+          "p",
+          "q",
+          "r",
+          "(r → p) → q"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "F",
+            "T"
+          ],
+          [
+            "F",
+            "T",
+            "F",
+            "T"
+          ],
+          [
+            "F",
+            "F",
+            "F",
+            "F"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 2,
+            "c": 3,
+            "tone": "error"
+          }
+        ]
+      }
     },
     "cse-2017-1-cs-30": {
       "approach": "The angle bisector of two vectors points along the sum of their unit vectors; scale it to have coefficient 1 on u.",

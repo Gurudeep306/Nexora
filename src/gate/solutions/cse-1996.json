@@ -1741,28 +1741,33 @@
       "verification": "Counterexample checked by hand; symmetry follows from commutativity of intersection."
     },
     "cse-1996-a-28": {
-      "approach": "Simplify each formula with $p\\rightarrow q\\equiv\\neg p\\vee q$; the false one is the formula that is not a tautology. Try $x=0$ on D.",
+      "approach": "Concept tested: **recognising tautologies by simplification and falsification**. 'False' here means 'not a tautology': find the option that some row makes false.",
       "concepts": [
         "Tautology",
-        "Implication",
-        "Biconditional"
+        "Implication laws",
+        "Falsification"
       ],
+      "given": "Four formulas in $x, y$; find the one that is not always true.",
       "steps": [
         {
-          "title": "A, B, C are tautologies",
-          "body": "A is modus ponens. In B, if $x$ were false the premise would need both $y$ and $\\neg y$, so the premise is false and the implication holds. C: $x\\rightarrow(x\\vee y)\\equiv\\neg x\\vee x\\vee y\\equiv T$."
+          "title": "Option A",
+          "body": "$((x \\to y) \\wedge x) \\to y$ is modus ponens: falsifying $y$ and keeping $x$ true makes $x \\to y$ false. Clash: tautology."
         },
         {
-          "title": "Simplify D",
-          "body": "$\\neg x\\rightarrow\\neg y\\equiv x\\vee\\neg y$. So D is $(x\\vee y)\\leftrightarrow(x\\vee\\neg y)$."
+          "title": "Option B",
+          "body": "$(\\neg x \\to y) \\wedge (\\neg x \\to \\neg y) \\equiv \\neg x \\to (y \\wedge \\neg y) \\equiv \\neg\\neg x \\equiv x$ (absurdity), so B is $x \\to x$: tautology."
         },
         {
-          "title": "Counterexample",
-          "body": "Put $x=0,\\ y=1$: left side $=1$, right side $=0\\vee 0=0$, so the biconditional is **false**. D is not valid."
+          "title": "Option C",
+          "body": "$x \\to (x \\vee y)$: falsifying the conclusion needs $x$ = F, which makes the hypothesis false. Tautology."
+        },
+        {
+          "title": "Option D",
+          "body": "$\\neg x \\to \\neg y \\equiv x \\vee \\neg y$, so D is $(x \\vee y) \\leftrightarrow (x \\vee \\neg y)$. On $x$ = F, $y$ = T: left T, right F, so D is F."
         }
       ],
       "answer": {
-        "value": "$((x\\vee y)\\leftrightarrow(\\neg x\\rightarrow\\neg y))$",
+        "value": "$((x \\vee y) \\leftrightarrow (\\neg x \\rightarrow \\neg y))$",
         "choice": [
           "D"
         ],
@@ -1772,25 +1777,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Modus ponens — always true."
+          "reason": "Modus ponens; it is a tautology, so it is not the false one."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Proof by contradiction pattern — premise is false whenever $x$ is false, so always true."
+          "reason": "By absurdity the hypothesis is equivalent to $x$, giving $x \\to x$: a tautology."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Addition rule — always true."
+          "reason": "Addition: a formula implies its disjunction with anything. A tautology."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: with $x=0,y=1$ the two sides differ, so the formula is not a tautology."
+          "reason": "Equivalent to $x$ (both sides agree exactly when $x$ is T), so it is false whenever $x$ = F."
         }
       ],
-      "verification": "Full truth table of D: rows (0,0)→0, (0,1)→0, (1,0)→1, (1,1)→1; two false rows."
+      "shortcut": "Try $x$ = F in D: $(x \\vee y)$ becomes $y$ and $\\neg x \\to \\neg y$ becomes $\\neg y$, and $y \\leftrightarrow \\neg y$ is always F.",
+      "pitfalls": [
+        "Thinking B is false because its two hypotheses 'contradict': they only force $x$ = T, which is what B concludes."
+      ],
+      "verification": "Truth tables over $x, y$: A, B, C are T on all four rows; D is F on FT and FF."
     },
     "cse-1996-a-29": {
       "approach": "Check the four group axioms; strings under concatenation have an identity (the empty string) but no inverses.",
