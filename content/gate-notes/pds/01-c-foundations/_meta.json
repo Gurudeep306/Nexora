@@ -1,0 +1,4 @@
+{
+  "title": "C foundations: values, control flow and functions",
+  "summary": "The vocabulary of every C program: types, ranges and conversions; operators, precedence and short-circuit evaluation; control flow and loop tracing; loop invariants; functions, storage classes and lifetime; block, static and dynamic scope; parameter passing and macros; and the toolchain from source to running program."
+}

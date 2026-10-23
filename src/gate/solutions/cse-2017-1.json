@@ -3596,20 +3596,43 @@
       }
     },
     "cse-2017-1-cs-53": {
-      "approach": "Both `strlen` results are `size_t` (unsigned), so their difference is computed in unsigned arithmetic and wraps around instead of going negative.",
+      "approach": "Concept tested: **unsigned subtraction never goes negative**. `strlen` returns the unsigned `size_t`, so `strlen(s) - strlen(t)` = 3 − 5 wraps round to a huge positive number, the comparison `> c` is true, and the program prints `strlen(s)`.",
       "concepts": [
+        "size_t",
         "Unsigned arithmetic",
-        "Integer wrap-around",
-        "Usual arithmetic conversions"
+        "Usual arithmetic conversions",
+        "Conditional operator"
       ],
       "steps": [
         {
-          "title": "Evaluate the condition",
-          "body": "`strlen(s) = 3`, `strlen(t) = 5`. As unsigned 32-bit values:\n\n$$3 - 5 \\equiv 2^{32} - 2 = 4294967294$$\n\nCompared with `c = 0` (unsigned): $4294967294 > 0$ is **true**."
+          "title": "The lengths",
+          "body": "`strlen(\"abc\") = 3` and `strlen(\"defgh\") = 5`, both of type `size_t` (unsigned).",
+          "scene": {
+            "line": 6,
+            "vars": {
+              "strlen(s)": 3,
+              "strlen(t)": 5
+            }
+          }
         },
         {
-          "title": "Pick the branch",
-          "body": "The conditional yields `strlen(s)` $= 3$, assigned to `len` and printed: output **3**."
+          "title": "3 − 5 in unsigned arithmetic",
+          "body": "Unsigned arithmetic is modulo $2^w$ ($w$ = 32 for the question's `unsigned int`, 64 for a 64-bit `size_t`): $3 - 5 = 2^w - 2$, a very large **positive** number. There are no negative unsigned values.",
+          "scene": {
+            "vars": {
+              "strlen(s)": 3,
+              "strlen(t)": 5,
+              "s−t": "2^w − 2"
+            }
+          }
+        },
+        {
+          "title": "The comparison and the choice",
+          "body": "`(2^w − 2) > c` with `c = 0` is true, so the conditional operator chooses `strlen(s)` = 3, and `len = 3`. The program prints **3**.",
+          "scene": {
+            "line": 7,
+            "output": "3"
+          }
         }
       ],
       "answer": {
@@ -3617,10 +3640,19 @@
         "number": 3,
         "matchesKey": true
       },
+      "shortcut": "If the difference of two `size_t` values is compared with 0 (or any unsigned 0), the test is true unless the two lengths are equal; so the first branch wins whenever the lengths differ.",
       "pitfalls": [
-        "Treating $3 - 5 = -2$ as signed and choosing `strlen(t)` (5)."
+        "Answering 5 by treating 3 − 5 as −2 (false) and taking `strlen(t)`: that is what happens with `int` lengths, not with `size_t`.",
+        "Worrying about `void main()`: it is not standard C but the compilers GATE assumes accept it; the question is about the arithmetic."
       ],
-      "verification": "Any unsigned difference that is non-zero is $> 0$; only $s$ and $t$ of equal length would select `strlen(t)`."
+      "verification": "Compiled and run with cc (with `int main` and also as written): prints 3. With the lengths cast to int, `(3 - 5) > 0` is 0 and the program would print 5.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "#include <stdio.h>\n#include <string.h>\n\nvoid printlength(char *s, char *t) {\n   unsigned int c = 0;\n   int len = ((strlen(s) - strlen(t)) > c) ? strlen(s): strlen(t);\n   printf(\"%d\\n\", len);\n}\n\nvoid main() {\n   char *x = \"abc\";\n   char *y = \"defgh\";\n   printlength(x,y);\n}",
+        "title": "printlength(\"abc\", \"defgh\")",
+        "line": 6
+      }
     },
     "cse-2017-1-cs-54": {
       "approach": "The address splits as TAG | INDEX | OFFSET. Going from direct-mapped to 16-way keeps the offset and total width but cuts the number of sets by 16, moving $\\log_2 16 = 4$ bits from INDEX to TAG.",

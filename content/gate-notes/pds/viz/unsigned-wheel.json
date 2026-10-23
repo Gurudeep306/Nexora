@@ -1,0 +1,819 @@
+{
+ "version": 1,
+ "title": "Unsigned and signed readings of 3-bit patterns",
+ "width": 680,
+ "height": 380,
+ "narrow": {
+  "width": 360,
+  "height": 560
+ },
+ "intro": "Eight 3-bit patterns around a circle. Adding 1 moves one step clockwise; the circle has no end, which is why unsigned arithmetic wraps.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "One circle of bit patterns, two ways to read it",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "3-bit patterns on a circle",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "p0",
+   "type": "circle",
+   "cx": 200.0,
+   "cy": 85.0,
+   "r": 22,
+   "mono": true,
+   "label": "000",
+   "size": 13,
+   "narrow": {
+    "cx": 180.0,
+    "cy": 128.0,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "u0",
+   "type": "text",
+   "x": 200.0,
+   "y": 43.0,
+   "text": "0",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "info",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 86.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "s0",
+   "type": "text",
+   "x": 200.0,
+   "y": 135.0,
+   "text": "0",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "warning",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 178.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "p1",
+   "type": "circle",
+   "cx": 284.85,
+   "cy": 120.15,
+   "r": 22,
+   "mono": true,
+   "label": "001",
+   "size": 13,
+   "narrow": {
+    "cx": 259.2,
+    "cy": 160.8,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "u1",
+   "type": "text",
+   "x": 314.55,
+   "y": 90.45,
+   "text": "1",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "info",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 288.89,
+    "y": 131.11,
+    "size": 13
+   }
+  },
+  {
+   "id": "s1",
+   "type": "text",
+   "x": 249.5,
+   "y": 155.5,
+   "text": "1",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "warning",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 223.84,
+    "y": 196.16,
+    "size": 13
+   }
+  },
+  {
+   "id": "p2",
+   "type": "circle",
+   "cx": 320.0,
+   "cy": 205.0,
+   "r": 22,
+   "mono": true,
+   "label": "010",
+   "size": 13,
+   "narrow": {
+    "cx": 292.0,
+    "cy": 240.0,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "u2",
+   "type": "text",
+   "x": 362.0,
+   "y": 205.0,
+   "text": "2",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "info",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 334.0,
+    "y": 240.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "s2",
+   "type": "text",
+   "x": 270.0,
+   "y": 205.0,
+   "text": "2",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "warning",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 242.0,
+    "y": 240.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "p3",
+   "type": "circle",
+   "cx": 284.85,
+   "cy": 289.85,
+   "r": 22,
+   "mono": true,
+   "label": "011",
+   "size": 13,
+   "narrow": {
+    "cx": 259.2,
+    "cy": 319.2,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "u3",
+   "type": "text",
+   "x": 314.55,
+   "y": 319.55,
+   "text": "3",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "info",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 288.89,
+    "y": 348.89,
+    "size": 13
+   }
+  },
+  {
+   "id": "s3",
+   "type": "text",
+   "x": 249.5,
+   "y": 254.5,
+   "text": "3",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "warning",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 223.84,
+    "y": 283.84,
+    "size": 13
+   }
+  },
+  {
+   "id": "p4",
+   "type": "circle",
+   "cx": 200.0,
+   "cy": 325.0,
+   "r": 22,
+   "mono": true,
+   "label": "100",
+   "size": 13,
+   "narrow": {
+    "cx": 180.0,
+    "cy": 352.0,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "u4",
+   "type": "text",
+   "x": 200.0,
+   "y": 367.0,
+   "text": "4",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "info",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 394.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "s4",
+   "type": "text",
+   "x": 200.0,
+   "y": 275.0,
+   "text": "−4",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "warning",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 302.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "p5",
+   "type": "circle",
+   "cx": 115.15,
+   "cy": 289.85,
+   "r": 22,
+   "mono": true,
+   "label": "101",
+   "size": 13,
+   "narrow": {
+    "cx": 100.8,
+    "cy": 319.2,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "u5",
+   "type": "text",
+   "x": 85.45,
+   "y": 319.55,
+   "text": "5",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "info",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 71.11,
+    "y": 348.89,
+    "size": 13
+   }
+  },
+  {
+   "id": "s5",
+   "type": "text",
+   "x": 150.5,
+   "y": 254.5,
+   "text": "−3",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "warning",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 136.16,
+    "y": 283.84,
+    "size": 13
+   }
+  },
+  {
+   "id": "p6",
+   "type": "circle",
+   "cx": 80.0,
+   "cy": 205.0,
+   "r": 22,
+   "mono": true,
+   "label": "110",
+   "size": 13,
+   "narrow": {
+    "cx": 68.0,
+    "cy": 240.0,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "u6",
+   "type": "text",
+   "x": 38.0,
+   "y": 205.0,
+   "text": "6",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "info",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 26.0,
+    "y": 240.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "s6",
+   "type": "text",
+   "x": 130.0,
+   "y": 205.0,
+   "text": "−2",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "warning",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 118.0,
+    "y": 240.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "p7",
+   "type": "circle",
+   "cx": 115.15,
+   "cy": 120.15,
+   "r": 22,
+   "mono": true,
+   "label": "111",
+   "size": 13,
+   "narrow": {
+    "cx": 100.8,
+    "cy": 160.8,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "u7",
+   "type": "text",
+   "x": 85.45,
+   "y": 90.45,
+   "text": "7",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "info",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 71.11,
+    "y": 131.11,
+    "size": 13
+   }
+  },
+  {
+   "id": "s7",
+   "type": "text",
+   "x": 150.5,
+   "y": 155.5,
+   "text": "−1",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "warning",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 136.16,
+    "y": 196.16,
+    "size": 13
+   }
+  },
+  {
+   "id": "t0",
+   "type": "text",
+   "x": 400,
+   "y": 90,
+   "text": "blue outside: unsigned value",
+   "size": 14,
+   "hidden": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 20,
+    "y": 432,
+    "size": 13
+   }
+  },
+  {
+   "id": "t1",
+   "type": "text",
+   "x": 400,
+   "y": 120,
+   "text": "orange inside: signed value",
+   "size": 14,
+   "hidden": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 20,
+    "y": 462,
+    "size": 13
+   }
+  },
+  {
+   "id": "t2",
+   "type": "text",
+   "x": 400,
+   "y": 150,
+   "text": "",
+   "size": 14,
+   "hidden": true,
+   "tone": "ink",
+   "narrow": {
+    "x": 20,
+    "y": 492,
+    "size": 13
+   }
+  },
+  {
+   "id": "t3",
+   "type": "text",
+   "x": 400,
+   "y": 180,
+   "text": "",
+   "size": 14,
+   "hidden": true,
+   "tone": "ink",
+   "narrow": {
+    "x": 20,
+    "y": 522,
+    "size": 13
+   }
+  },
+  {
+   "id": "t4",
+   "type": "text",
+   "x": 400,
+   "y": 210,
+   "text": "",
+   "size": 14,
+   "hidden": true,
+   "tone": "ink",
+   "narrow": {
+    "x": 20,
+    "y": 552,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Show the unsigned reading: the patterns 000 … 111 are 0 … 7, going clockwise.",
+   "patches": [
+    {
+     "id": "u0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "u1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "u2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "u3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "u4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "u5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "u6",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "u7",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "t0",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Show the two's-complement reading: the top bit weighs −4, so 100 … 111 are −4 … −1.",
+   "patches": [
+    {
+     "id": "s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "s2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "s3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "s4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "s5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "s6",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "s7",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "111 is 7 unsigned and −1 signed: the same bits. Converting −1 to unsigned changes nothing in the bits.",
+   "patches": [
+    {
+     "id": "p7",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "hidden": false,
+      "text": "111: unsigned 7, signed −1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now compute 3 − 5 by walking: start at 011 (3).",
+   "patches": [
+    {
+     "id": "p7",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p3",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "hidden": false,
+      "text": "start at 3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Subtract 1 (step 1 of 5): 011 → 010.",
+   "patches": [
+    {
+     "id": "p3",
+     "set": {
+      "tone": "muted",
+      "fill": "muted"
+     }
+    },
+    {
+     "id": "p2",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "after 1: 010"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Subtract 1 (step 2 of 5): 010 → 001.",
+   "patches": [
+    {
+     "id": "p2",
+     "set": {
+      "tone": "muted",
+      "fill": "muted"
+     }
+    },
+    {
+     "id": "p1",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "after 2: 001"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Subtract 1 (step 3 of 5): 001 → 000.",
+   "patches": [
+    {
+     "id": "p1",
+     "set": {
+      "tone": "muted",
+      "fill": "muted"
+     }
+    },
+    {
+     "id": "p0",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "after 3: 000"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Subtract 1 (step 4 of 5): 000 → 111. Going below 000 wraps round to 111.",
+   "patches": [
+    {
+     "id": "p0",
+     "set": {
+      "tone": "muted",
+      "fill": "muted"
+     }
+    },
+    {
+     "id": "p7",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "after 4: 111"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Subtract 1 (step 5 of 5): 111 → 110.",
+   "patches": [
+    {
+     "id": "p7",
+     "set": {
+      "tone": "muted",
+      "fill": "muted"
+     }
+    },
+    {
+     "id": "p6",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "after 5: 110"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "3 − 5 lands on 110: unsigned 6 = 2³ − 2, signed −2. A size_t difference 3 − 5 is likewise 2⁶⁴ − 2, never negative.",
+   "patches": [
+    {
+     "id": "p6",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "t4",
+     "set": {
+      "hidden": false,
+      "text": "3 − 5 → 110 = 6 or −2"
+     }
+    }
+   ]
+  }
+ ]
+}

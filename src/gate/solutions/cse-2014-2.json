@@ -861,41 +861,40 @@
       "verification": "Tag = log2(address space / (cache size / ways)) = log2(2^32 / 2^12) = 20."
     },
     "cse-2014-2-cs-10": {
-      "approach": "Each iteration shifts `num` right by one bit and increments `count`, until `num` becomes 0. So `func` returns the number of bits in the binary form of 435.",
+      "approach": "Concept tested: **right shift as halving**. Each `num >>= 1` drops the lowest bit, so the loop runs once per bit of 435 and stops when no 1 bits remain: the count is the number of binary digits, $\\lfloor \\log_2 435 \\rfloor + 1$.",
       "concepts": [
         "Right shift",
-        "Loop tracing",
-        "Binary representation"
+        "Binary representation",
+        "Loop counting"
       ],
       "steps": [
         {
-          "title": "What the loop counts",
-          "body": "`num >>= 1` drops the lowest bit. The loop runs once per bit up to and including the most significant 1, i.e. $\\lfloor\\log_2 435\\rfloor+1$ times.",
+          "title": "Write 435 in binary",
+          "body": "$435 = 256 + 128 + 32 + 16 + 2 + 1 = 110110011_2$, a 9-bit number (its top bit has weight $2^8 = 256$).",
           "scene": {
-            "reveal": 0,
-            "caption": "Trace of func(435)"
+            "line": 3,
+            "vars": {
+              "num": 435,
+              "count": 0
+            }
           }
         },
         {
-          "title": "Binary of 435",
-          "body": "$435=256+128+32+16+2+1=(110110011)_2$, which has 9 bits because $2^8=256\\le435<512=2^9$.",
+          "title": "Each iteration removes one bit",
+          "body": "`num >>= 1` is integer division by 2 for a positive value: 435 → 217 → 108 → 54 → 27 → 13 → 6 → 3 → 1 → 0. The loop body runs once for each of the 9 values before 0.",
           "scene": {
-            "reveal": 16,
-            "caption": "Each shift halves num (integer division)"
+            "line": 5,
+            "vars": {
+              "num": 0,
+              "count": 9
+            }
           }
         },
         {
-          "title": "Result",
-          "body": "After the 9th shift `num` becomes 0 and the loop exits, so `func(435)` returns `count` $=9$.",
+          "title": "Return the count",
+          "body": "The loop ends when num becomes 0, after **9** iterations: func(435) = 9.",
           "scene": {
-            "reveal": 36,
-            "hl": [
-              {
-                "r": 8,
-                "tone": "success"
-              }
-            ],
-            "caption": "num reaches 0 after 9 iterations, count = 9"
+            "line": 7
           }
         }
       ],
@@ -904,102 +903,52 @@
         "number": 9,
         "matchesKey": true
       },
-      "animation": {
-        "kind": "table",
-        "cols": [
-          "iteration",
-          "num before",
-          "num after >>1",
-          "count"
-        ],
-        "rows": [
-          [
-            1,
-            435,
-            217,
-            1
-          ],
-          [
-            2,
-            217,
-            108,
-            2
-          ],
-          [
-            3,
-            108,
-            54,
-            3
-          ],
-          [
-            4,
-            54,
-            27,
-            4
-          ],
-          [
-            5,
-            27,
-            13,
-            5
-          ],
-          [
-            6,
-            13,
-            6,
-            6
-          ],
-          [
-            7,
-            6,
-            3,
-            7
-          ],
-          [
-            8,
-            3,
-            1,
-            8
-          ],
-          [
-            9,
-            1,
-            0,
-            9
-          ]
-        ],
-        "reveal": 0,
-        "mono": true,
-        "caption": "Trace of func(435)"
-      },
+      "shortcut": "For n > 0 the loop count is the bit length: $\\lfloor \\log_2 n \\rfloor + 1$. Since $2^8 = 256 \\le 435 < 512 = 2^9$, it is 9.",
       "pitfalls": [
-        "Counting only the 1-bits (6); the loop counts every bit up to the highest 1."
+        "Counting the 1 bits instead (popcount 435 = 6): the loop counts every shift, not only the 1s.",
+        "Answering $\\lfloor \\log_2 435 \\rfloor = 8$: the loop also runs for the last value 1."
       ],
-      "verification": "Full trace: 435 → 217 → 108 → 54 → 27 → 13 → 6 → 3 → 1 → 0, nine shifts."
+      "verification": "Compiled and run with cc: func(435) prints 9; for n = 1, 2, 3, 7, 8, 255, 256, 1000 and 2³⁰ the result equals ⌊log₂ n⌋ + 1.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "int func(int num) {\n    int count = 0;\n    while (num) {\n        count++;\n        num >>= 1;\n    }\n    return (count);\n}",
+        "title": "func(435)",
+        "line": 1,
+        "vars": {
+          "num": 435,
+          "count": 0
+        }
+      }
     },
     "cse-2014-2-cs-11": {
-      "approach": "Look for an order of operations that keeps every intermediate value small and every division exact. $n(n-1)/2$ is always an integer, and $\\binom{n}{2}(n-2)=3\\binom{n}{3}$ is always divisible by 3.",
+      "approach": "Concept tested: **unsigned overflow and exact integer division**. With 32-bit unsigned arithmetic, a product that exceeds $2^{32} - 1$ wraps modulo $2^{32}$, so keep intermediate values small by dividing early, but only by divisions that are always exact.",
       "concepts": [
-        "Integer overflow",
+        "Unsigned overflow",
         "Integer division",
-        "C evaluation order"
+        "Order of evaluation"
       ],
+      "given": "`n` and `p` are `unsigned int` (32 bits); we want $\\binom{n}{3} = \\frac{n(n-1)(n-2)}{6}$ for large n.",
       "steps": [
         {
-          "title": "Evaluation order",
-          "body": "`*` and `/` have equal precedence and associate left to right, so (B) is evaluated as `((n*(n-1))/2*(n-2))/3`."
+          "title": "Why A overflows",
+          "body": "`n * (n-1) * (n-2)` is computed first, about $n^3$. For n = 2000 that is $7.99 \\times 10^9 > 2^{32} \\approx 4.29 \\times 10^9$, so it wraps before the division by 6 and the result is wrong although $\\binom{2000}{3} = 1\\,331\\,334\\,000$ itself fits."
         },
         {
-          "title": "Exactness in (B)",
-          "body": "$n(n-1)$ is a product of consecutive integers, so it is even: $/2$ is exact. Then $\\frac{n(n-1)}{2}(n-2)=3\\binom{n}{3}$ is divisible by 3, so $/3$ is exact too."
+          "title": "Why D does not help",
+          "body": "In `n * (n-1) * (n-2) / 6.0` the product is still evaluated in `unsigned int` (left to right, both operands unsigned) and wraps; only the final division is done in double. The damage is already done."
         },
         {
-          "title": "Overflow",
-          "body": "The largest intermediate value in (B) is about $n^3/2$, half the $n^3$ intermediate in (A) and (D), so (B) works for larger $n$."
+          "title": "Why B is exact and keeps numbers small",
+          "body": "Left to right: `n * (n-1)` is a product of two consecutive integers, always even, so `/ 2` is exact; then `* (n-2)` gives $\\binom{n}{2}(n-2)$, which is $3\\binom{n}{3}$, so `/ 3` is exact too. The largest intermediate value is about $n^3/2$ instead of $n^3$."
+        },
+        {
+          "title": "Why C can be wrong",
+          "body": "`n * (n-1) / 3` is exact only when 3 divides $n(n-1)$, i.e. when $n \\bmod 3 \\ne 2$. For n = 5: $20/3 = 6$ (truncated), $6 \\times 3 / 2 = 9$, but $\\binom{5}{3} = 10$."
         }
       ],
       "answer": {
-        "value": "p = n * (n-1) / 2 * (n-2) / 3;",
+        "value": "(B) p = n * (n-1) / 2 * (n-2) / 3;",
         "choice": [
           "B"
         ],
@@ -1009,25 +958,64 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Mathematically exact, but $n(n-1)(n-2)$ overflows first for large n."
+          "reason": "Forms the full product n(n−1)(n−2) first; for large n it wraps modulo 2³² before the division."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: both divisions are exact and the intermediate stays smaller."
+          "reason": "Both divisions are exact at the moment they happen (two consecutive integers are divisible by 2; C(n,2)(n−2) = 3·C(n,3)) and intermediate values stay half as large."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$n(n-1)$ need not be divisible by 3: for n = 5, 20/3 truncates to 6 and 6·3/2 = 9 ≠ 10."
+          "reason": "Divides n(n−1) by 3 first, which truncates when n mod 3 = 2 (n = 5 gives 9 instead of 10)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "The product $n(n-1)(n-2)$ is still computed in unsigned int before the conversion to double, so it overflows just like (A)."
+          "reason": "The product is still computed in unsigned int and wraps; converting to double only for the last division is too late."
         }
       ],
-      "verification": "n = 5: (B) gives 20/2 = 10, 10·3 = 30, 30/3 = 10 = C(5,3); (C) gives 9."
+      "shortcut": "Divide as early as possible, but only by a number that is guaranteed to divide what you have so far: 2 | n(n−1), then 3 | C(n,2)(n−2).",
+      "pitfalls": [
+        "Choosing D because \"6.0 makes it floating point\": the conversion happens only at the last operation.",
+        "Choosing C because it also divides early: the first division is not always exact."
+      ],
+      "verification": "Compiled with cc for n = 5, 10, 100, 1000, 1500, 1625 and 2000: B always equals the exact C(n,3); for n = 2000, A and D give wrapped values; C gives 9 for n = 5.",
+      "animation": {
+        "kind": "table",
+        "title": "n = 2000 (exact C(n,3) = 1331334000)",
+        "cols": [
+          "largest intermediate",
+          "result"
+        ],
+        "rows": [
+          [
+            "7,992,004,000 (wraps)",
+            "wrong"
+          ],
+          [
+            "3,996,002,000 (fits)",
+            "1331334000"
+          ],
+          [
+            "2,665,334 × 1998 ok",
+            "exact only if 3 | n(n−1)"
+          ],
+          [
+            "wraps before /6.0",
+            "wrong"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "reveal": 0
+      }
     },
     "cse-2014-2-cs-12": {
       "approach": "Insert each key at the next free leaf (keeping the tree complete) and sift it up while it is larger than its parent.",

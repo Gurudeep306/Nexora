@@ -1,0 +1,899 @@
+{
+ "version": 1,
+ "title": "The tree of an expression, built by precedence",
+ "width": 700,
+ "height": 380,
+ "narrow": {
+  "width": 360,
+  "height": 420
+ },
+ "intro": "The expression c + 1 < x * 2 && !d with c = 'A', x = 30 and d = 0. The invisible brackets become a tree.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "c + 1 < x * 2 && !d   (c = 'A', x = 30, d = 0)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "c + 1 < x * 2 && !d",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "sub",
+   "type": "text",
+   "x": 180,
+   "y": 46,
+   "text": "c = 'A', x = 30, d = 0",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "only": "narrow"
+  },
+  {
+   "id": "neLLL",
+   "type": "line",
+   "points": [
+    [
+     113.15,
+     254.02
+    ],
+    [
+     71.29,
+     305.98
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      54.78,
+      281.98
+     ],
+     [
+      31.44,
+      342.02
+     ]
+    ]
+   }
+  },
+  {
+   "id": "neLL",
+   "type": "line",
+   "points": [
+    [
+     238.04,
+     169.49
+    ],
+    [
+     139.73,
+     230.51
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      119.46,
+      191.84
+     ],
+     [
+      69.43,
+      256.16
+     ]
+    ]
+   }
+  },
+  {
+   "id": "neLLR",
+   "type": "line",
+   "points": [
+    [
+     135.73,
+     254.02
+    ],
+    [
+     177.6,
+     305.98
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      65.66,
+      281.98
+     ],
+     [
+      89.0,
+      342.02
+     ]
+    ]
+   }
+  },
+  {
+   "id": "neL",
+   "type": "line",
+   "points": [
+    [
+     493.92,
+     85.34
+    ],
+    [
+     270.52,
+     154.66
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      252.94,
+      100.11
+     ],
+     [
+      141.29,
+      171.89
+     ]
+    ]
+   }
+  },
+  {
+   "id": "neLRL",
+   "type": "line",
+   "points": [
+    [
+     370.93,
+     254.02
+    ],
+    [
+     329.07,
+     305.98
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      191.67,
+      281.98
+     ],
+     [
+      168.33,
+      342.02
+     ]
+    ]
+   }
+  },
+  {
+   "id": "neLR",
+   "type": "line",
+   "points": [
+    [
+     268.62,
+     169.49
+    ],
+    [
+     366.93,
+     230.51
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      137.88,
+      191.84
+     ],
+     [
+      187.9,
+      256.16
+     ]
+    ]
+   }
+  },
+  {
+   "id": "neLRR",
+   "type": "line",
+   "points": [
+    [
+     393.51,
+     254.02
+    ],
+    [
+     435.38,
+     305.98
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      202.55,
+      281.98
+     ],
+     [
+      225.89,
+      342.02
+     ]
+    ]
+   }
+  },
+  {
+   "id": "neR",
+   "type": "line",
+   "points": [
+    [
+     522.4,
+     94.02
+    ],
+    [
+     564.27,
+     145.98
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      271.0,
+      105.98
+     ],
+     [
+      294.34,
+      166.02
+     ]
+    ]
+   }
+  },
+  {
+   "id": "neRR",
+   "type": "line",
+   "points": [
+    [
+     586.85,
+     174.02
+    ],
+    [
+     628.71,
+     225.98
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      305.22,
+      193.98
+     ],
+     [
+      328.56,
+      254.02
+     ]
+    ]
+   }
+  },
+  {
+   "id": "nLLL",
+   "type": "circle",
+   "cx": 60.0,
+   "cy": 320,
+   "r": 18,
+   "tone": "ink",
+   "label": "c",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "cx": 26.0,
+    "cy": 356,
+    "r": 15,
+    "size": 12
+   }
+  },
+  {
+   "id": "nLL",
+   "type": "circle",
+   "cx": 124.44,
+   "cy": 240,
+   "r": 18,
+   "tone": "ink",
+   "label": "+",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "cx": 60.22,
+    "cy": 268,
+    "r": 15,
+    "size": 12
+   }
+  },
+  {
+   "id": "nLLR",
+   "type": "circle",
+   "cx": 188.89,
+   "cy": 320,
+   "r": 18,
+   "tone": "ink",
+   "label": "1",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "cx": 94.44,
+    "cy": 356,
+    "r": 15,
+    "size": 12
+   }
+  },
+  {
+   "id": "nL",
+   "type": "circle",
+   "cx": 253.33,
+   "cy": 160,
+   "r": 18,
+   "tone": "ink",
+   "label": "<",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "cx": 128.67,
+    "cy": 180,
+    "r": 15,
+    "size": 12
+   }
+  },
+  {
+   "id": "nLRL",
+   "type": "circle",
+   "cx": 317.78,
+   "cy": 320,
+   "r": 18,
+   "tone": "ink",
+   "label": "x",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "cx": 162.89,
+    "cy": 356,
+    "r": 15,
+    "size": 12
+   }
+  },
+  {
+   "id": "nLR",
+   "type": "circle",
+   "cx": 382.22,
+   "cy": 240,
+   "r": 18,
+   "tone": "ink",
+   "label": "*",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "cx": 197.11,
+    "cy": 268,
+    "r": 15,
+    "size": 12
+   }
+  },
+  {
+   "id": "nLRR",
+   "type": "circle",
+   "cx": 446.67,
+   "cy": 320,
+   "r": 18,
+   "tone": "ink",
+   "label": "2",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "cx": 231.33,
+    "cy": 356,
+    "r": 15,
+    "size": 12
+   }
+  },
+  {
+   "id": "nr",
+   "type": "circle",
+   "cx": 511.11,
+   "cy": 80,
+   "r": 18,
+   "tone": "ink",
+   "label": "&&",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "cx": 265.56,
+    "cy": 92,
+    "r": 15,
+    "size": 12
+   }
+  },
+  {
+   "id": "nR",
+   "type": "circle",
+   "cx": 575.56,
+   "cy": 160,
+   "r": 18,
+   "tone": "ink",
+   "label": "!",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "cx": 299.78,
+    "cy": 180,
+    "r": 15,
+    "size": 12
+   }
+  },
+  {
+   "id": "nRR",
+   "type": "circle",
+   "cx": 640.0,
+   "cy": 240,
+   "r": 18,
+   "tone": "ink",
+   "label": "d",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "cx": 334.0,
+    "cy": 268,
+    "r": 15,
+    "size": 12
+   }
+  },
+  {
+   "id": "vLLL",
+   "type": "text",
+   "x": 60.0,
+   "y": 350,
+   "text": "65",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "success",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 26.0,
+    "y": 383,
+    "size": 12
+   }
+  },
+  {
+   "id": "vLL",
+   "type": "text",
+   "x": 124.44,
+   "y": 270,
+   "text": "66",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "success",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 60.22,
+    "y": 295,
+    "size": 12
+   }
+  },
+  {
+   "id": "vLLR",
+   "type": "text",
+   "x": 188.89,
+   "y": 350,
+   "text": "1",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "success",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 94.44,
+    "y": 383,
+    "size": 12
+   }
+  },
+  {
+   "id": "vL",
+   "type": "text",
+   "x": 253.33,
+   "y": 190,
+   "text": "0",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "success",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 128.67,
+    "y": 207,
+    "size": 12
+   }
+  },
+  {
+   "id": "vLRL",
+   "type": "text",
+   "x": 317.78,
+   "y": 350,
+   "text": "30",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "success",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 162.89,
+    "y": 383,
+    "size": 12
+   }
+  },
+  {
+   "id": "vLR",
+   "type": "text",
+   "x": 382.22,
+   "y": 270,
+   "text": "60",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "success",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 197.11,
+    "y": 295,
+    "size": 12
+   }
+  },
+  {
+   "id": "vLRR",
+   "type": "text",
+   "x": 446.67,
+   "y": 350,
+   "text": "2",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "success",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 231.33,
+    "y": 383,
+    "size": 12
+   }
+  },
+  {
+   "id": "vr",
+   "type": "text",
+   "x": 511.11,
+   "y": 110,
+   "text": "0",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "success",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 265.56,
+    "y": 119,
+    "size": 12
+   }
+  },
+  {
+   "id": "vR",
+   "type": "text",
+   "x": 575.56,
+   "y": 190,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "success",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 299.78,
+    "y": 207,
+    "size": 12
+   }
+  },
+  {
+   "id": "vRR",
+   "type": "text",
+   "x": 640.0,
+   "y": 270,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "success",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 334.0,
+    "y": 295,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Precedence first: the operands are the leaves c, 1, x, 2, d.",
+   "patches": [
+    {
+     "id": "nLLL",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nLLR",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nLRL",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nLRR",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nRR",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "+ and * bind tightest, so they grab c, 1 and x, 2; ! is unary and grabs d.",
+   "patches": [
+    {
+     "id": "nLL",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nLR",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nR",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "neLLL",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "neLLR",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "neLRL",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "neLRR",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "neRR",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "< is looser than + and *, so it compares the two sums; && is loosest and joins < and !.",
+   "patches": [
+    {
+     "id": "nL",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nr",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "neLL",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "neLR",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "neL",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "neR",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Evaluate from the left: c is the char 'A' = 65, promoted to int before the addition.",
+   "patches": [
+    {
+     "id": "nLLL",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "vLLL",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "vLLR",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "c + 1 = 66 (int). Then x * 2 = 60.",
+   "patches": [
+    {
+     "id": "nLL",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "vLL",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nLR",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "vLRL",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "vLRR",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "vLR",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "66 < 60 is false: the comparison yields the int 0.",
+   "patches": [
+    {
+     "id": "nL",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "vL",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "&& sees a left operand of 0: the result is 0 and !d is never evaluated (short circuit).",
+   "patches": [
+    {
+     "id": "nR",
+     "set": {
+      "tone": "muted",
+      "dashed": true
+     }
+    },
+    {
+     "id": "nRR",
+     "set": {
+      "tone": "muted",
+      "dashed": true
+     }
+    },
+    {
+     "id": "neRR",
+     "set": {
+      "dashed": true
+     }
+    },
+    {
+     "id": "neR",
+     "set": {
+      "dashed": true
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The whole expression is the int 0. Precedence fixed the shape; && fixed what ran.",
+   "patches": [
+    {
+     "id": "nr",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "vr",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  }
+ ]
+}

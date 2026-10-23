@@ -82,7 +82,7 @@ def run_c(src, stdin="", std="c11", flags=(), timeout=5, cache=True):
     `std` may be "c89", "c99", "c11", "gnu11"; extra compiler `flags` (e.g. "-Wall") are passed on.
     The program runs in a fresh temporary directory with a CPU time limit and no input but `stdin`.
     """
-    key = hashlib.sha256(json.dumps([src, stdin, std, list(flags), CC]).encode()).hexdigest()
+    key = hashlib.sha256(json.dumps([src, stdin, std, list(flags), CC, "v2"]).encode()).hexdigest()
     cfile = CACHE / f"{key}.json"
     if cache and cfile.exists():
         d = json.loads(cfile.read_text())
@@ -90,7 +90,9 @@ def run_c(src, stdin="", std="c11", flags=(), timeout=5, cache=True):
     with tempfile.TemporaryDirectory(prefix="pds-cbox-") as tmp:
         t = pathlib.Path(tmp)
         (t / "prog.c").write_text(src)
-        cmd = [CC, f"-std={std}", "-O0", "-w", *flags, "prog.c", "-o", "prog", "-lm"]
+        # -w silences warnings, unless the caller asks for specific ones (-W…), e.g. -Werror=unsequenced.
+        quiet = [] if any(f.startswith("-W") for f in flags) else ["-w"]
+        cmd = [CC, f"-std={std}", "-O0", *quiet, *flags, "prog.c", "-o", "prog", "-lm"]
         c = subprocess.run(cmd, cwd=tmp, capture_output=True, text=True, timeout=60)
         if c.returncode != 0:
             res = CResult(False, None, "", c.stderr)

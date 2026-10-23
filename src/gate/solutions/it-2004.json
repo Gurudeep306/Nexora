@@ -847,23 +847,34 @@
       "verification": "POSIX: pthread_create allocates a new stack per thread, and other resources are inherited from the process."
     },
     "it-2004-it-15": {
-      "approach": "The statement toggles x between 0 and 1. Test each option on both values.",
+      "approach": "Concept tested: **arithmetic that flips a 0/1 value**. When x can only be 0 or 1, the statement maps 0 → 1 and 1 → 0; check each option on both values, and watch for an option that divides by zero.",
       "concepts": [
-        "C expressions",
-        "Toggle"
+        "Arithmetic operators",
+        "Integer remainder",
+        "Undefined behaviour"
       ],
       "steps": [
         {
-          "title": "Required mapping",
-          "body": "$0 \\mapsto 1$ and $1 \\mapsto 0$."
+          "title": "What the statement does",
+          "body": "`if (x == 0) x = 1; else x = 0;` sends **0 → 1** and **1 → 0**: it toggles x.",
+          "scene": {
+            "reveal": 1
+          }
         },
         {
-          "title": "Check $x = 1 - x$",
-          "body": "$x=0$: $1-0=1$ ✓. $x=1$: $1-1=0$ ✓."
+          "title": "Try each option on x = 0 and x = 1",
+          "body": "A: `1 + x` gives 1 and 2 (wrong for x = 1). **B: `1 - x` gives 1 and 0** (exactly the toggle). C: `x - 1` gives −1 and 0. D: `1 % x` divides by zero when x = 0.",
+          "scene": {
+            "reveal": 5
+          }
+        },
+        {
+          "title": "Why D is not an answer even if it seems to print 1",
+          "body": "`1 % 0` is integer division by zero, which is **undefined behaviour** in C: on x86-64 the program is killed with a floating-point exception, on some ARM processors the instruction quietly produces a number. A statement with undefined behaviour is not equivalent to anything."
         }
       ],
       "answer": {
-        "value": "x = 1 - x;",
+        "value": "(B) x = 1 - x;",
         "choice": [
           "B"
         ],
@@ -873,26 +884,69 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "1 + x maps 1 to 2."
+          "reason": "1 + x maps 0 → 1 but 1 → 2, not 0."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "1 − x maps 0 to 1 and 1 to 0."
+          "reason": "1 − x maps 0 → 1 and 1 → 0: exactly the toggle."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "x − 1 maps 0 to −1."
+          "reason": "x − 1 maps 0 → −1 and 1 → 0."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "1 % x divides by zero when x = 0 (undefined behaviour)."
+          "reason": "For x = 0 it computes 1 % 0, a division by zero: undefined behaviour (x = 1 gives 1 % 1 = 0)."
         }
       ],
-      "shortcut": "x ^ 1 or !x would also work.",
-      "verification": "Both input values checked."
+      "shortcut": "For a value known to be 0 or 1, `1 - x`, `!x` and `x ^ 1` all toggle it.",
+      "pitfalls": [
+        "Testing only x = 0: A and D both seem to give 1 there.",
+        "Believing `1 % 0` is 1 because one compiler printed 1: division and remainder by zero are undefined."
+      ],
+      "verification": "Each option compiled and run for x = 0 and x = 1 with cc: only B prints 1 then 0; D is reported as a division by zero by the undefined-behaviour sanitizer.",
+      "animation": {
+        "kind": "table",
+        "title": "The four options on both inputs",
+        "cols": [
+          "x = 0",
+          "x = 1"
+        ],
+        "rows": [
+          [
+            "1",
+            "0"
+          ],
+          [
+            "1",
+            "2"
+          ],
+          [
+            "1",
+            "0"
+          ],
+          [
+            "-1",
+            "0"
+          ],
+          [
+            "÷ by 0",
+            "0"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "if/else",
+          "A: 1 + x",
+          "B: 1 - x",
+          "C: x - 1",
+          "D: 1 % x"
+        ],
+        "reveal": 1
+      }
     },
     "it-2004-it-16": {
       "approach": "Renaming means y ends up with x's contents and x no longer exists. In Unix this is `mv x y`, or copy then remove: `cp x y; rm x`.",

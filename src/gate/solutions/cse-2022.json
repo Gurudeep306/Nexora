@@ -2369,27 +2369,65 @@
       "verification": "Matches the official key A."
     },
     "cse-2022-cs-34": {
-      "approach": "Convert P (80) and x (120) to binary, apply &, |, ^, then add/subtract the given ASCII codes and map back to characters.",
+      "approach": "Concept tested: **characters are small integers**. Do the bitwise operations on the ASCII codes in binary, add or subtract the codes of `*`, `-`, `+`, and print each result with `%c` as a character.",
       "concepts": [
-        "Bitwise operators",
-        "ASCII"
+        "char arithmetic",
+        "ASCII",
+        "Bitwise AND OR XOR",
+        "printf %c"
       ],
+      "given": "'P' = 80 = 0101 0000, 'x' = 120 = 0111 1000, '*' = 42, '-' = 45, '+' = 43.",
       "steps": [
         {
-          "title": "Binary values",
-          "body": "'P' $= 80 = 0101\\,0000_2$, 'x' $= 120 = 0111\\,1000_2$."
+          "title": "a & b",
+          "body": "0101 0000 & 0111 1000 = 0101 0000 = 80. Then 80 + 42 = 122 = **'z'**.",
+          "scene": {
+            "line": 3,
+            "vars": {
+              "a": "80 'P'",
+              "b": "120 'x'",
+              "c": "122 'z'"
+            }
+          }
         },
         {
-          "title": "Bitwise results",
-          "body": "$a \\,\\&\\, b = 0101\\,0000 = 80$\n\n$a \\mid b = 0111\\,1000 = 120$\n\n$a \\oplus b = 0010\\,1000 = 40$"
+          "title": "a | b",
+          "body": "0101 0000 | 0111 1000 = 0111 1000 = 120. Then 120 − 45 = 75 = **'K'**.",
+          "scene": {
+            "line": 4,
+            "vars": {
+              "a": "80 'P'",
+              "b": "120 'x'",
+              "c": "122 'z'",
+              "d": "75 'K'"
+            }
+          }
         },
         {
-          "title": "Add/subtract and print",
-          "body": "$c = 80 + 42 = 122 \\to$ 'z'\n\n$d = 120 - 45 = 75 \\to$ 'K' ($65 + 10$)\n\n$e = 40 + 43 = 83 \\to$ 'S' ($65 + 18$)\n\n`%c` prints characters: `z K S`."
+          "title": "a ^ b",
+          "body": "0101 0000 ^ 0111 1000 = 0010 1000 = 40. Then 40 + 43 = 83 = **'S'**.",
+          "scene": {
+            "line": 5,
+            "vars": {
+              "a": "80 'P'",
+              "b": "120 'x'",
+              "c": "122 'z'",
+              "d": "75 'K'",
+              "e": "83 'S'"
+            }
+          }
+        },
+        {
+          "title": "Print as characters",
+          "body": "`%c` prints the character with each code: **z K S**.",
+          "scene": {
+            "line": 6,
+            "output": "z K S"
+          }
         }
       ],
       "answer": {
-        "value": "z K S",
+        "value": "(A) z K S",
         "choice": [
           "A"
         ],
@@ -2399,25 +2437,40 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: 122, 75, 83 printed as characters."
+          "reason": "122, 75 and 83 printed with %c are z, K and S."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong: these are the numeric codes, but the format is %c, not %d."
+          "reason": "These are the right codes, but %c prints characters, not numbers."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Wrong: ignores the bitwise parts and prints only the added constants."
+          "reason": "These are just the three constants added; the bitwise results were ignored."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Wrong: prints a, b and the last constant instead of c, d, e."
+          "reason": "Not related to the computation (it echoes the inputs and one constant)."
         }
       ],
-      "verification": "80 & 120: bits 6 and 4 are common (64 + 16 = 80). 80 ^ 120 = 120 − 80 = 40 since the bits of 80 are a subset of those of 120."
+      "shortcut": "80 and 120 differ only in bits 5 and 3 (32 + 8 = 40): AND keeps the common part 80, OR gives 120, XOR gives 40. Add the constants and read the ASCII table.",
+      "pitfalls": [
+        "Printing codes instead of characters (option B).",
+        "Worrying about overflow: every result (122, 75, 83) fits in a char."
+      ],
+      "verification": "Compiled and run with cc: prints `z K S`.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "char a = 'P';\nchar b = 'x';\nchar c = (a & b) + '*';\nchar d = (a | b) - '-';\nchar e = (a ^ b) + '+';\nprintf(\"%c %c %c\\n\", c, d, e);",
+        "line": 1,
+        "vars": {
+          "a": "80 'P'",
+          "b": "120 'x'"
+        }
+      }
     },
     "cse-2022-cs-35": {
       "approach": "Use Doolittle LU (unit diagonal in $L$), which is exactly Gaussian elimination: the elimination multipliers are the entries of $L$ and the reduced matrix is $U$. Then forward/back substitute for $x$.",

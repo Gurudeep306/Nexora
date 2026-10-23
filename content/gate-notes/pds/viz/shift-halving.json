@@ -1,0 +1,1288 @@
+{
+ "version": 1,
+ "title": "Counting bits by shifting right",
+ "width": 660,
+ "height": 300,
+ "narrow": {
+  "width": 360,
+  "height": 360
+ },
+ "intro": "435 = 110110011 in nine bits, with the place values underneath. Each right shift halves the number and drops one bit.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 22,
+   "text": "func(435): every num >>= 1 drops the last bit",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "435 >>= 1, again and again",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "bc0",
+   "type": "box",
+   "x": 96.0,
+   "y": 96,
+   "w": 52,
+   "h": 46,
+   "mono": true,
+   "label": "1",
+   "size": 18,
+   "narrow": {
+    "x": 27.0,
+    "y": 98,
+    "w": 34,
+    "h": 38,
+    "size": 15
+   }
+  },
+  {
+   "id": "bb0",
+   "type": "text",
+   "x": 122.0,
+   "y": 153,
+   "text": "256",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 44.0,
+    "y": 147,
+    "size": 12
+   }
+  },
+  {
+   "id": "bc1",
+   "type": "box",
+   "x": 148.0,
+   "y": 96,
+   "w": 52,
+   "h": 46,
+   "mono": true,
+   "label": "1",
+   "size": 18,
+   "narrow": {
+    "x": 61.0,
+    "y": 98,
+    "w": 34,
+    "h": 38,
+    "size": 15
+   }
+  },
+  {
+   "id": "bb1",
+   "type": "text",
+   "x": 174.0,
+   "y": 153,
+   "text": "128",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 78.0,
+    "y": 147,
+    "size": 12
+   }
+  },
+  {
+   "id": "bc2",
+   "type": "box",
+   "x": 200.0,
+   "y": 96,
+   "w": 52,
+   "h": 46,
+   "mono": true,
+   "label": "0",
+   "size": 18,
+   "narrow": {
+    "x": 95.0,
+    "y": 98,
+    "w": 34,
+    "h": 38,
+    "size": 15
+   }
+  },
+  {
+   "id": "bb2",
+   "type": "text",
+   "x": 226.0,
+   "y": 153,
+   "text": "64",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 112.0,
+    "y": 147,
+    "size": 12
+   }
+  },
+  {
+   "id": "bc3",
+   "type": "box",
+   "x": 252.0,
+   "y": 96,
+   "w": 52,
+   "h": 46,
+   "mono": true,
+   "label": "1",
+   "size": 18,
+   "narrow": {
+    "x": 129.0,
+    "y": 98,
+    "w": 34,
+    "h": 38,
+    "size": 15
+   }
+  },
+  {
+   "id": "bb3",
+   "type": "text",
+   "x": 278.0,
+   "y": 153,
+   "text": "32",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 146.0,
+    "y": 147,
+    "size": 12
+   }
+  },
+  {
+   "id": "bc4",
+   "type": "box",
+   "x": 304.0,
+   "y": 96,
+   "w": 52,
+   "h": 46,
+   "mono": true,
+   "label": "1",
+   "size": 18,
+   "narrow": {
+    "x": 163.0,
+    "y": 98,
+    "w": 34,
+    "h": 38,
+    "size": 15
+   }
+  },
+  {
+   "id": "bb4",
+   "type": "text",
+   "x": 330.0,
+   "y": 153,
+   "text": "16",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 147,
+    "size": 12
+   }
+  },
+  {
+   "id": "bc5",
+   "type": "box",
+   "x": 356.0,
+   "y": 96,
+   "w": 52,
+   "h": 46,
+   "mono": true,
+   "label": "0",
+   "size": 18,
+   "narrow": {
+    "x": 197.0,
+    "y": 98,
+    "w": 34,
+    "h": 38,
+    "size": 15
+   }
+  },
+  {
+   "id": "bb5",
+   "type": "text",
+   "x": 382.0,
+   "y": 153,
+   "text": "8",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 214.0,
+    "y": 147,
+    "size": 12
+   }
+  },
+  {
+   "id": "bc6",
+   "type": "box",
+   "x": 408.0,
+   "y": 96,
+   "w": 52,
+   "h": 46,
+   "mono": true,
+   "label": "0",
+   "size": 18,
+   "narrow": {
+    "x": 231.0,
+    "y": 98,
+    "w": 34,
+    "h": 38,
+    "size": 15
+   }
+  },
+  {
+   "id": "bb6",
+   "type": "text",
+   "x": 434.0,
+   "y": 153,
+   "text": "4",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 248.0,
+    "y": 147,
+    "size": 12
+   }
+  },
+  {
+   "id": "bc7",
+   "type": "box",
+   "x": 460.0,
+   "y": 96,
+   "w": 52,
+   "h": 46,
+   "mono": true,
+   "label": "1",
+   "size": 18,
+   "narrow": {
+    "x": 265.0,
+    "y": 98,
+    "w": 34,
+    "h": 38,
+    "size": 15
+   }
+  },
+  {
+   "id": "bb7",
+   "type": "text",
+   "x": 486.0,
+   "y": 153,
+   "text": "2",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 282.0,
+    "y": 147,
+    "size": 12
+   }
+  },
+  {
+   "id": "bc8",
+   "type": "box",
+   "x": 512.0,
+   "y": 96,
+   "w": 52,
+   "h": 46,
+   "mono": true,
+   "label": "1",
+   "size": 18,
+   "narrow": {
+    "x": 299.0,
+    "y": 98,
+    "w": 34,
+    "h": 38,
+    "size": 15
+   }
+  },
+  {
+   "id": "bb8",
+   "type": "text",
+   "x": 538.0,
+   "y": 153,
+   "text": "1",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 316.0,
+    "y": 147,
+    "size": 12
+   }
+  },
+  {
+   "id": "num",
+   "type": "text",
+   "x": 330,
+   "y": 196,
+   "text": "num = 435",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180,
+    "size": 15
+   }
+  },
+  {
+   "id": "cnt",
+   "type": "text",
+   "x": 330,
+   "y": 232,
+   "text": "count = 0",
+   "size": 16,
+   "anchor": "middle",
+   "tone": "info",
+   "narrow": {
+    "x": 180,
+    "y": 236,
+    "size": 14
+   }
+  },
+  {
+   "id": "ex",
+   "type": "text",
+   "x": 330,
+   "y": 266,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 180,
+    "y": 276,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Shift 1: num becomes 217 = ⌊435/2⌋.",
+   "patches": [
+    {
+     "id": "bc0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc1",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc2",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc3",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc4",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc5",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc6",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc7",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc8",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "num",
+     "set": {
+      "text": "num = 217"
+     }
+    },
+    {
+     "id": "cnt",
+     "set": {
+      "text": "count = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Shift 2: num becomes 108 = ⌊217/2⌋.",
+   "patches": [
+    {
+     "id": "bc0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc2",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc3",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc4",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc5",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc6",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc7",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc8",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "num",
+     "set": {
+      "text": "num = 108"
+     }
+    },
+    {
+     "id": "cnt",
+     "set": {
+      "text": "count = 2"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Shift 3: num becomes 54 = ⌊108/2⌋.",
+   "patches": [
+    {
+     "id": "bc0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc3",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc4",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc5",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc6",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc7",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc8",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "num",
+     "set": {
+      "text": "num = 54"
+     }
+    },
+    {
+     "id": "cnt",
+     "set": {
+      "text": "count = 3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Shift 4: num becomes 27 = ⌊54/2⌋.",
+   "patches": [
+    {
+     "id": "bc0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc4",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc5",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc6",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc7",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc8",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "num",
+     "set": {
+      "text": "num = 27"
+     }
+    },
+    {
+     "id": "cnt",
+     "set": {
+      "text": "count = 4"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Shift 5: num becomes 13 = ⌊27/2⌋.",
+   "patches": [
+    {
+     "id": "bc0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc4",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc5",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc6",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc7",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc8",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "num",
+     "set": {
+      "text": "num = 13"
+     }
+    },
+    {
+     "id": "cnt",
+     "set": {
+      "text": "count = 5"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Shift 6: num becomes 6 = ⌊13/2⌋.",
+   "patches": [
+    {
+     "id": "bc0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc4",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc5",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc6",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc7",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc8",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "num",
+     "set": {
+      "text": "num = 6"
+     }
+    },
+    {
+     "id": "cnt",
+     "set": {
+      "text": "count = 6"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Shift 7: num becomes 3 = ⌊6/2⌋.",
+   "patches": [
+    {
+     "id": "bc0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc4",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc5",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc6",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc7",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc8",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "num",
+     "set": {
+      "text": "num = 3"
+     }
+    },
+    {
+     "id": "cnt",
+     "set": {
+      "text": "count = 7"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Shift 8: num becomes 1 = ⌊3/2⌋.",
+   "patches": [
+    {
+     "id": "bc0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc4",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc5",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc6",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc7",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc8",
+     "set": {
+      "label": "1",
+      "tone": "ink",
+      "fill": "accent",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "num",
+     "set": {
+      "text": "num = 1"
+     }
+    },
+    {
+     "id": "cnt",
+     "set": {
+      "text": "count = 8"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Shift 9: num becomes 0 (the last 1 is gone, so the loop stops).",
+   "patches": [
+    {
+     "id": "bc0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc4",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc5",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc6",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc7",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "bc8",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "num",
+     "set": {
+      "text": "num = 0"
+     }
+    },
+    {
+     "id": "cnt",
+     "set": {
+      "text": "count = 9"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The loop ran once per binary digit: 9 = ⌊log₂ 435⌋ + 1, because 256 ≤ 435 < 512.",
+   "patches": [
+    {
+     "id": "ex",
+     "set": {
+      "hidden": false,
+      "text": "256 ≤ 435 < 512, so 9 bits"
+     }
+    },
+    {
+     "id": "cnt",
+     "set": {
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

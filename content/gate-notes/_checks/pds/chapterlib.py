@@ -230,7 +230,7 @@ def check_pyqs(ch):
             problems.append(f"{qid}: no v2 solution")
             continue
         if qid not in sols or json.dumps(sols[qid], sort_keys=True) != json.dumps(sol, sort_keys=True):
-            problems.append(f"{qid}: src/gate/solutions differs from _sol_ch{ch}_lNN.py (run python3 content/gate-notes/_checks/pds/_sol_ch{ch}.py)")
+            problems.append(f"{qid}: src/gate/solutions differs from _sol_ch{ch}_lNN.py (run python3 content/gate-notes/_checks/pds/_sol.py {ch})")
         if not sol["approach"].startswith("Concept tested"):
             problems.append(f"{qid}: approach must open with 'Concept tested: …'")
         if len(sol["steps"]) < 2:

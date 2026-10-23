@@ -1122,98 +1122,36 @@
       }
     },
     "cse-2024-2-cs-3": {
-      "approach": "Trace the calls in order: before `f` runs, its arguments are evaluated right to left (`h(20)` then `g(10)`), each printing its value; then `f`'s body prints `x` and `y` in order.",
+      "approach": "Concept tested: **arguments are evaluated before the call, in an order C leaves unspecified**. The question fixes the order (right to left), so `h(20)` runs before `g(10)`; then f's body calls g and h in program order.",
       "concepts": [
-        "Function call evaluation",
-        "Order of argument evaluation",
-        "C printf trace"
+        "Function call",
+        "Order of evaluation",
+        "Side effects"
       ],
       "steps": [
         {
-          "title": "Evaluate the right argument: h(20)",
-          "body": "Arguments are evaluated right to left, so `h(20)` runs first: it prints **20** and returns 20, which becomes `y`.\n\nOutput so far: `20`",
+          "title": "Evaluate f's arguments, right to left",
+          "body": "First `h(20)`: prints **20**, returns 20. Then `g(10)`: prints **10**, returns 10. Output so far: `2010`.",
           "scene": {
-            "line": 4,
-            "hl": [
-              12
-            ],
-            "vars": {
-              "y": 20
-            },
-            "callStack": [
-              {
-                "name": "main"
-              },
-              {
-                "name": "h",
-                "vars": {
-                  "q": 20
-                }
-              }
-            ],
-            "output": "20"
-          }
-        },
-        {
-          "title": "Evaluate the left argument: g(10)",
-          "body": "`g(10)` prints **10** and returns 10, which becomes `x`.\n\nOutput so far: `2010`",
-          "scene": {
-            "line": 3,
-            "vars": {
-              "x": 10,
-              "y": 20
-            },
-            "callStack": [
-              {
-                "name": "main"
-              },
-              {
-                "name": "g",
-                "vars": {
-                  "p": 10
-                }
-              }
-            ],
+            "line": 12,
             "output": "2010"
           }
         },
         {
-          "title": "Inside f: g(x)",
-          "body": "`f(10, 20)` now runs. Its first statement `g(x)` prints **10**.\n\nOutput so far: `201010`",
+          "title": "Run f(10, 20)",
+          "body": "x = 10, y = 20. `g(x)` prints **10**, then `h(y)` prints **20**. Statements always run in order.",
           "scene": {
-            "line": 7,
-            "hl": [
-              7
-            ],
-            "callStack": [
-              {
-                "name": "main"
-              },
-              {
-                "name": "f",
-                "vars": {
-                  "x": 10,
-                  "y": 20
-                }
-              }
-            ],
-            "output": "201010"
+            "line": 8,
+            "output": "20101020"
           }
         },
         {
-          "title": "Inside f: h(y)",
-          "body": "The second statement `h(y)` prints **20**. The digits are printed with no separators, so the complete output is\n\n`20101020`",
-          "scene": {
-            "line": 8,
-            "hl": [
-              8
-            ],
-            "output": "20101020"
-          }
+          "title": "Total output",
+          "body": "Putting the two halves together: the arguments printed `20` then `10`, the body printed `10` then `20`, so the whole output is **20101020**. Notice that the second half never depends on the argument order: it is always g first, then h."
         }
       ],
       "answer": {
-        "value": "The program prints **20101020** — option (A)",
+        "value": "(A) 20101020",
         "choice": [
           "A"
         ],
@@ -1223,45 +1161,35 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Arguments right to left (20, 10), then the body of `f` in order (10, 20)."
+          "reason": "Arguments right to left (20, 10), then the body in order (10, 20)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "10202010 evaluates the arguments left to right and then runs `f`'s body in reverse."
+          "reason": "Arguments left to right and then the body backwards: the body's statements cannot run backwards."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "20102010 gets the arguments right but runs `f`'s body as `h(y)` before `g(x)`."
+          "reason": "Right to left for the arguments, but then the body is also run backwards (h before g)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "10201020 evaluates the arguments left to right, ignoring the given assumption."
+          "reason": "This is the output with left-to-right argument evaluation, which the question rules out."
         }
       ],
+      "shortcut": "Only the argument order is in question; the second half of the output is always g then h, i.e. ...1020. Right-to-left makes the first half 2010.",
       "pitfalls": [
-        "Forgetting that the argument calls themselves print before `f` starts.",
-        "Applying the right-to-left rule to the statements inside `f` — it applies only to evaluating arguments."
+        "Applying \"right to left\" to the statements inside f: it applies only to evaluating the arguments of one call.",
+        "Believing C always evaluates arguments left to right: the order is unspecified; the question had to state it."
       ],
-      "verification": "Each of the four printf calls prints one 2-digit number: two come from argument evaluation (20 then 10) and two from `f`'s body (x = 10 then y = 20), giving 20 | 10 | 10 | 20.",
+      "verification": "Simulated with both orders: right to left gives 20101020, left to right 10201020; the compiled program prints one of these two (cc on this machine evaluates left to right).",
       "animation": {
         "kind": "code",
-        "title": "Call trace",
         "lang": "c",
         "code": "#include <stdio.h>\n\nint g(int p) { printf(\"%d\", p); return p; }\nint h(int q) { printf(\"%d\", q); return q; }\n\nvoid f(int x, int y) {\n  g(x);\n  h(y);\n}\n\nint main() {\n  f(g(10),h(20));\n}",
-        "line": 12,
-        "hl": [
-          12
-        ],
-        "vars": {},
-        "callStack": [
-          {
-            "name": "main"
-          }
-        ],
-        "output": ""
+        "line": 12
       }
     },
     "cse-2024-2-cs-4": {

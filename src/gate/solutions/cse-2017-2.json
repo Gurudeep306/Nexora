@@ -3860,28 +3860,30 @@
       "verification": "Equivalently, memory has $2^{32}/2^5 = 2^{27}$ blocks sharing $2^9$ lines: $2^{27}/2^9 = 2^{18}$ blocks per line → 18 tag bits."
     },
     "cse-2017-2-cs-54": {
-      "approach": "Trace the variables line by line, remembering that `++m` increments before use while `m++` uses the old value first.",
+      "approach": "Concept tested: **pre- versus post-increment**. `++m` increments first and yields the new value; `m++` yields the old value and increments afterwards. As separate statements `n--` and `--n1` are just decrements.",
       "concepts": [
-        "Pre-/post-increment",
-        "Code tracing"
+        "Pre-increment",
+        "Post-increment",
+        "Compound assignment"
       ],
       "steps": [
         {
           "title": "n = ++m",
-          "body": "`m` becomes 11, then `n = 11`.",
+          "body": "m becomes 11 first, and n receives the new value: m = 11, n = 11.",
           "scene": {
-            "line": 3,
+            "line": 5,
             "vars": {
               "m": 11,
-              "n": 11
+              "n": 11,
+              "n1": "?"
             }
           }
         },
         {
           "title": "n1 = m++",
-          "body": "`n1` gets the old value 11, then `m` becomes 12.",
+          "body": "n1 receives the current value 11, then m becomes 12: n1 = 11, m = 12.",
           "scene": {
-            "line": 4,
+            "line": 6,
             "vars": {
               "m": 12,
               "n": 11,
@@ -3890,10 +3892,10 @@
           }
         },
         {
-          "title": "Decrements",
-          "body": "`n--` → n = 10; `--n1` → n1 = 10.",
+          "title": "n-- and --n1",
+          "body": "Used as whole statements, prefix and postfix forms do the same thing: n = 10, n1 = 10.",
           "scene": {
-            "line": 6,
+            "line": 8,
             "vars": {
               "m": 12,
               "n": 10,
@@ -3903,9 +3905,9 @@
         },
         {
           "title": "n -= n1",
-          "body": "$n = 10 - 10 = 0$; the program prints **0**.",
+          "body": "n = 10 − 10 = **0**, which is printed.",
           "scene": {
-            "line": 8,
+            "line": 10,
             "vars": {
               "m": 12,
               "n": 0,
@@ -3915,25 +3917,26 @@
           }
         }
       ],
-      "animation": {
-        "kind": "code",
-        "lang": "c",
-        "code": "int m = 10;\nint n, n1;\nn = ++m;\nn1 = m++;\nn--;\n--n1;\nn -= n1;\nprintf(\"%d\", n);",
-        "line": 1,
-        "vars": {
-          "m": 10
-        },
-        "output": ""
-      },
       "answer": {
         "value": "0",
         "number": 0,
         "matchesKey": true
       },
+      "shortcut": "n and n1 both start at 11 (++m gives the new 11, m++ gives the old 11) and both lose 1, so their difference is 0.",
       "pitfalls": [
-        "Giving n1 the value 12 (post-increment yields the old value)."
+        "Taking n1 = 12 (as if m++ yielded the new value): that gives −1.",
+        "Thinking `n--` versus `--n1` makes a difference here: only the value of the expression differs, and here that value is not used."
       ],
-      "verification": "n and n1 both start at 11 and are each decremented once, so their difference is 0."
+      "verification": "Compiled and run with cc: prints 0.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "#include<stdio.h>\nint main() {\n    int m = 10;\n    int n, n1;\n    n = ++m;\n    n1 = m++;\n    n--;\n    --n1;\n    n -= n1;\n    printf(\"%d\", n);\n    return 0;\n}",
+        "line": 3,
+        "vars": {
+          "m": 10
+        }
+      }
     },
     "cse-2017-2-cs-55": {
       "approach": "`i[p]` is the same as `p[i]`. Turn the two characters into ASCII codes, simplify the pointer offset, and take strlen of the remaining suffix.",

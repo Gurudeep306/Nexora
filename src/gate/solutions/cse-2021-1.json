@@ -2570,134 +2570,45 @@
       "verification": "Path $P_5$ (diameter 4): in $P_5^2$ the end vertices are 2 apart, $= \\lceil 4/2 \\rceil$."
     },
     "cse-2021-1-cs-37": {
-      "approach": "Trace the loop, remembering that \\`&&\\` short-circuits: \\`i++\\` is evaluated only when \\`j >= 0\\`, and as a post-increment it yields the old value of \\`i\\`.",
+      "approach": "Concept tested: **short-circuit evaluation with a side effect**. `&&` evaluates its right operand only when the left one is true, so `i++` runs only for j ≥ 0; and `i++` yields the **old** value of i, so the very first time it is 0 (false).",
       "concepts": [
-        "Short-circuit evaluation",
+        "Short-circuit &&",
         "Post-increment",
-        "Code tracing"
+        "Side effects",
+        "Loop tracing"
       ],
       "steps": [
         {
-          "title": "Negative j",
-          "body": "For $j = -3, -2, -1$ the left operand \\`j >= 0\\` is false, so \\`i++\\` is **not** evaluated. $i = 0$, count $= 0$.",
+          "title": "j = −3, −2, −1",
+          "body": "`j >= 0` is false, so `&&` stops: `i++` is **not evaluated**. i stays 0, count stays 0.",
           "scene": {
-            "reveal": 15,
-            "hl": [
-              {
-                "r": 0
-              },
-              {
-                "r": 1
-              },
-              {
-                "r": 2
-              }
-            ],
-            "caption": "j < 0: i++ skipped"
+            "reveal": 3
           }
         },
         {
           "title": "j = 0",
-          "body": "\\`j >= 0\\` is true, so \\`i++\\` runs: it yields $0$ (false) and makes $i = 1$. Body skipped; count $= 0$.",
+          "body": "`j >= 0` is true, so `i++` runs: it yields the old value 0 (false) and i becomes 1. The condition is false; count is unchanged.",
           "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "r": 3
-              }
-            ],
-            "caption": "i++ yields 0"
+            "reveal": 4
           }
         },
         {
           "title": "j = 1, 2, 3",
-          "body": "\\`i++\\` yields $1, 2, 3$ (all true), leaving $i = 2, 3, 4$. count $= 0 + 1 + 2 + 3 = 6$.",
+          "body": "Now `i++` yields 1, 2, 3 (all true) and i becomes 2, 3, 4. Each time count += j: count = 1 + 2 + 3 = 6.",
           "scene": {
-            "reveal": 35,
-            "hl": [
-              {
-                "r": 4
-              },
-              {
-                "r": 5
-              },
-              {
-                "r": 6
-              }
-            ],
-            "caption": "count accumulates 1+2+3"
+            "reveal": 7
           }
         },
         {
           "title": "After the loop",
-          "body": "count $=$ count $+ i = 6 + 4 = 10$. The program compiles (nothing illegal) and prints **10**."
+          "body": "count = count + i = 6 + 4 = **10**. The program compiles and prints 10.",
+          "scene": {
+            "reveal": 8
+          }
         }
       ],
-      "animation": {
-        "kind": "table",
-        "cols": [
-          "j",
-          "j>=0",
-          "i++ value",
-          "i after",
-          "count"
-        ],
-        "rows": [
-          [
-            -3,
-            "F",
-            "—",
-            0,
-            0
-          ],
-          [
-            -2,
-            "F",
-            "—",
-            0,
-            0
-          ],
-          [
-            -1,
-            "F",
-            "—",
-            0,
-            0
-          ],
-          [
-            0,
-            "T",
-            0,
-            1,
-            0
-          ],
-          [
-            1,
-            "T",
-            1,
-            2,
-            1
-          ],
-          [
-            2,
-            "T",
-            2,
-            3,
-            3
-          ],
-          [
-            3,
-            "T",
-            3,
-            4,
-            6
-          ]
-        ],
-        "reveal": 0,
-        "mono": true
-      },
       "answer": {
-        "value": "Compiles and prints 10",
+        "value": "(B) compiles and prints 10",
         "choice": [
           "B"
         ],
@@ -2707,29 +2618,111 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "The code is valid ANSI C; `i++` as an operand of `&&` is legal."
+          "reason": "The program is ordinary ANSI C; nothing in it is a compile error."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "count = 1 + 2 + 3 = 6, then + i (= 4) gives 10."
+          "reason": "i++ runs only for j = 0…3 (i ends at 4); it is true for j = 1, 2, 3, adding 6; 6 + 4 = 10."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "8 would need i = 2 at the end, i.e. ignoring the increments at j = 2, 3."
+          "reason": "8 would need i = 2 or count = 4 at the end; the trace gives count = 6 (j = 1, 2, 3) and i = 4."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "13 would come from adding all of 0..3 and ignoring short-circuiting (6 + 7)."
+          "reason": "13 would come from evaluating i++ for all seven values of j (i = 7) and adding 6, ignoring the short circuit."
         }
       ],
+      "shortcut": "The right operand runs once per j ≥ 0: four times, so i = 4. It is true for all but its first run, so count gets j = 1, 2, 3 = 6. Total 6 + 4.",
       "pitfalls": [
-        "Incrementing `i` for negative `j` (short-circuit skips it).",
-        "Treating `i++` at j = 0 as true — it yields the old value 0."
+        "Forgetting the short circuit and incrementing i for negative j as well (gives 13).",
+        "Using the new value of i in the test: `i++` tests the value before the increment, so j = 0 adds nothing."
       ],
-      "verification": "i is incremented exactly once per non-negative j (4 times), and the body runs for the 3 iterations where the old i was non-zero (j = 1, 2, 3)."
+      "verification": "Compiled and run with cc: prints 10.",
+      "animation": {
+        "kind": "table",
+        "title": "The loop, iteration by iteration",
+        "cols": [
+          "j >= 0",
+          "i++ runs?",
+          "old i",
+          "i after",
+          "count"
+        ],
+        "rows": [
+          [
+            "no",
+            "no",
+            "-",
+            "0",
+            "0"
+          ],
+          [
+            "no",
+            "no",
+            "-",
+            "0",
+            "0"
+          ],
+          [
+            "no",
+            "no",
+            "-",
+            "0",
+            "0"
+          ],
+          [
+            "yes",
+            "yes",
+            "0",
+            "1",
+            "0"
+          ],
+          [
+            "yes",
+            "yes",
+            "1",
+            "2",
+            "1"
+          ],
+          [
+            "yes",
+            "yes",
+            "2",
+            "3",
+            "3"
+          ],
+          [
+            "yes",
+            "yes",
+            "3",
+            "4",
+            "6"
+          ],
+          [
+            "",
+            "",
+            "",
+            "",
+            "6 + 4 = 10"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "j = -3",
+          "j = -2",
+          "j = -1",
+          "j = 0",
+          "j = 1",
+          "j = 2",
+          "j = 3",
+          "end"
+        ],
+        "reveal": 0
+      }
     },
     "cse-2021-1-cs-38": {
       "approach": "Build the standard 4-state DFA for \"ends with 011\" (state = longest suffix that is a prefix of 011) and compare the transitions out of the accepting state, where the options differ.",

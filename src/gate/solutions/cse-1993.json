@@ -529,35 +529,76 @@
       "verification": "Exact solution $y=x-1+e^{-x}$ gives $y(0.1)=0.1-1+0.904837=0.004837\\approx0.005$."
     },
     "cse-1993-a-2-5": {
-      "approach": "Evaluate with FORTRAN rules: `**` first (unary minus binds looser than `**`), then `*` and `/` left to right, integer division truncates, and assigning to the implicitly INTEGER variable `I` truncates.",
+      "approach": "Concept tested: **precedence, associativity and integer division**. In FORTRAN `**` binds tighter than unary minus, `*` and `/` share one level and go left to right, and dividing two integers truncates; the REAL result is truncated when it is stored in the INTEGER `I`.",
       "concepts": [
-        "FORTRAN operator precedence",
+        "Operator precedence",
+        "Associativity",
         "Integer division",
-        "Implicit typing (I–N are INTEGER)"
+        "Type conversion"
       ],
+      "given": "`I = -2**2 + 5.0*X/X*3 + 3/4` with `X = 4.0`; `I` is INTEGER (FORTRAN's implicit typing: names starting with I–N are integers).",
       "steps": [
         {
-          "title": "Exponent and unary minus",
-          "body": "`-2**2` $=-(2^2)=-4$ (integer)."
+          "title": "-2**2",
+          "body": "Exponentiation binds tighter than the unary minus: $-2^{**}2 = -(2^2) = -4$, not $(-2)^2 = 4$."
         },
         {
-          "title": "Left-to-right `*` and `/`",
-          "body": "`5.0*X/X*3` with $X=4.0$: $5.0\\times4.0=20.0$, $20.0/4.0=5.0$, $5.0\\times3=15.0$."
+          "title": "5.0*X/X*3",
+          "body": "`*` and `/` have equal precedence and associate left to right: $((5.0 \\times 4.0) / 4.0) \\times 3 = (20.0 / 4.0) \\times 3 = 5.0 \\times 3 = 15.0$."
         },
         {
-          "title": "Integer division and the sum",
-          "body": "`3/4` is integer division $=0$. Sum: $-4+15.0+0=11.0$; storing into INTEGER `I` gives $I=11$."
+          "title": "3/4",
+          "body": "Both operands are integers, so this is integer division: $3/4 = 0$ (the fraction is discarded)."
+        },
+        {
+          "title": "Add and store",
+          "body": "$-4 + 15.0 + 0 = 11.0$; storing the REAL 11.0 into the INTEGER `I` gives **11**."
         }
       ],
       "answer": {
-        "value": "$I=11$",
+        "value": "11",
+        "number": 11,
         "matchesKey": true
       },
       "pitfalls": [
-        "Reading `5.0*X/X*3` as $\\frac{5.0X}{3X}$ — FORTRAN evaluates `/` and `*` strictly left to right (that reading would give $I=-2$).",
-        "Treating `3/4` as 0.75 — both operands are integers."
+        "Reading `-2**2` as $(-2)^2 = 4$, which gives 19: unary minus is applied after `**`.",
+        "Treating `5.0*X/X*3` as $5.0X/(3X)$ (a fraction with $X \\cdot 3$ below): that gives $-4 + 1.67 + 0 \\approx -2$. Left-to-right grouping puts the 3 in the numerator.",
+        "Taking 3/4 as 0.75: with two integer operands it is 0."
       ],
-      "verification": "Re-evaluated with explicit parentheses: $(-(2^2))+(((5.0\\cdot4.0)/4.0)\\cdot3)+(3\\,\\text{div}\\,4)=-4+15+0=11$."
+      "verification": "Re-evaluated with the FORTRAN rules in Python: (−4) + 15.0 + 0 = 11.0, truncated to 11 (the misreading as a fraction would give −2).",
+      "animation": {
+        "kind": "table",
+        "title": "Evaluating the right-hand side, term by term",
+        "cols": [
+          "term",
+          "rule",
+          "value"
+        ],
+        "rows": [
+          [
+            "-2**2",
+            "** before unary -",
+            "-4"
+          ],
+          [
+            "5.0*X/X*3",
+            "* / left to right",
+            "15.0"
+          ],
+          [
+            "3/4",
+            "integer division",
+            "0"
+          ],
+          [
+            "sum → I",
+            "REAL to INTEGER",
+            "11"
+          ]
+        ],
+        "mono": true,
+        "reveal": 0
+      }
     },
     "cse-1993-a-2-6": {
       "approach": "Integrate the inner variable $y$ from 0 to $1/x$ (giving $\\arctan(1/x)$), then use $\\arctan(1/x)=\\frac{\\pi}{2}-\\arctan x$ for $x>0$ and integrate by parts.",

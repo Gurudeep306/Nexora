@@ -1951,26 +1951,37 @@
       "verification": "Hierarchy: finite ⊂ regular ⊂ CFL ⊂ CSL ⊂ recursive ⊂ RE."
     },
     "cse-1991-a-4-i": {
-      "approach": "The relational expression `x > 5` already has type boolean, so assign it directly.",
+      "approach": "Concept tested: **a relational expression is itself a Boolean value**. `x > 5` already evaluates to `true` or `false`, so the whole `if` that copies that truth value into `y` collapses to one assignment.",
       "concepts": [
-        "boolean expressions",
-        "Pascal assignment"
+        "Boolean expression",
+        "Relational operator",
+        "Assignment"
       ],
+      "given": "Pascal: `if x > 5 then y := true else y := false;` with `y` a Boolean variable.",
       "steps": [
         {
-          "title": "Observe",
-          "body": "The `if` assigns `true` exactly when `x > 5` is true and `false` otherwise — i.e. $y$ takes the value of the condition itself."
+          "title": "What the if statement stores",
+          "body": "When `x > 5` is true the statement stores `true` in `y`; when it is false it stores `false`. In both cases the value stored is exactly the value of the condition `x > 5`."
         },
         {
-          "title": "Single assignment",
-          "body": "```pascal\ny := x > 5;\n```"
+          "title": "Replace the if by its condition",
+          "body": "So the statement is equivalent to **`y := x > 5`**. In Pascal `>` has lower precedence than `:=`'s right-hand side needs, but the right-hand side of an assignment is the whole expression, so no parentheses are required (writing `y := (x > 5)` is equally correct)."
+        },
+        {
+          "title": "The same idea in C",
+          "body": "In C a relational expression has type `int` with value 1 or 0, so `if (x > 5) y = 1; else y = 0;` is `y = x > 5;` for the same reason."
         }
       ],
       "answer": {
         "value": "y := x > 5",
         "matchesKey": true
       },
-      "verification": "Both branches checked: $x=6 \\Rightarrow y=\\text{true}$; $x=5 \\Rightarrow y=\\text{false}$."
+      "shortcut": "Whenever an `if` assigns `true` in one branch and `false` in the other, the assignment is `y := condition` (or `y := not condition` if the branches are swapped).",
+      "pitfalls": [
+        "Writing `y := (x > 5) = true`: correct but redundant; comparing a Boolean with `true` adds nothing.",
+        "Swapping the branches by mistake: `if x > 5 then y := false else y := true` is `y := not (x > 5)`, i.e. `y := x <= 5`."
+      ],
+      "verification": "For every x from −3 to 11 the value stored by the if statement equals the value of `x > 5` (checked exhaustively)."
     },
     "cse-1991-a-4-ii": {
       "approach": "`repeat S until B` executes S at least once and stops when B becomes true. So run S once, then loop on S while B is false.",

@@ -917,23 +917,29 @@
       "verification": "A tcpdump trace shows the SYN at the moment the client calls `connect`."
     },
     "cse-2008-cs-18": {
-      "approach": "The expression returns $\\max(x,y,z)$; pick the option whose maximum is 4 — but trace each, since ties can change which branch runs.",
+      "approach": "Concept tested: **the conditional operator `?:`**. The nested expression returns the largest of x, y and z, so `a = 4` exactly when the maximum of the three is 4.",
       "concepts": [
         "Conditional operator",
-        "Expression tracing"
+        "Nested expressions",
+        "Maximum"
       ],
+      "given": "`a = (x > y) ? ((x > z) ? x : z) : ((y > z) ? y : z)`",
       "steps": [
         {
-          "title": "Meaning",
-          "body": "If $x>y$ it returns $\\max(x,z)$, else $\\max(y,z)$ — overall the maximum of the three."
+          "title": "Read the expression",
+          "body": "If x > y, the larger of x and z is chosen; otherwise the larger of y and z. Either way the result is **max(x, y, z)** (ties resolve to one of the equal values, which is still the maximum)."
         },
         {
-          "title": "Trace",
-          "body": "A: $3>4$ false → $4>2$ true → $a=4$ ✓. B: $6>5$, $6>3$ → 6. C: $6>3$, $6>5$ → 6. D: $5>4$, $5>5$ false → $z=5$."
+          "title": "Find the option whose maximum is 4",
+          "body": "A: max(3, 4, 2) = **4**. B: max(6, 5, 3) = 6. C: max(6, 3, 5) = 6. D: max(5, 4, 5) = 5."
+        },
+        {
+          "title": "Trace A to be sure",
+          "body": "x = 3, y = 4: `x > y` is false, so evaluate `(y > z) ? y : z` = `(4 > 2) ? 4 : 2` = 4. So a = 4."
         }
       ],
       "answer": {
-        "value": "x = 3, y = 4, z = 2",
+        "value": "(A) x = 3, y = 4, z = 2",
         "choice": [
           "A"
         ],
@@ -943,25 +949,69 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Trace gives $a=y=4$."
+          "reason": "x > y is false, then y > z is true: a = y = 4."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$a=x=6$."
+          "reason": "x > y and x > z: a = x = 6."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$a=x=6$."
+          "reason": "x > y and x > z: a = x = 6."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$a=z=5$."
+          "reason": "x > y, then x > z is false (5 > 5): a = z = 5."
         }
       ],
-      "verification": "max(3,4,2)=4; the other options have maximum 6, 6, 5."
+      "shortcut": "Recognise the pattern \"(x > y) ? max(x, z) : max(y, z)\" as max of three; then only option A has maximum 4.",
+      "pitfalls": [
+        "Grouping `?:` the wrong way: it associates right to left, and here the parentheses make the grouping explicit anyway.",
+        "In D, taking 5 > 5 as true: it is false, so z (also 5) is chosen; the result is 5 either way."
+      ],
+      "verification": "Compiled and run with cc for the four (x, y, z) triples: 4, 6, 6, 5.",
+      "animation": {
+        "kind": "table",
+        "title": "Which branch each option takes",
+        "cols": [
+          "x > y?",
+          "next test",
+          "a"
+        ],
+        "rows": [
+          [
+            "no",
+            "y > z: yes",
+            "4"
+          ],
+          [
+            "yes",
+            "x > z: yes",
+            "6"
+          ],
+          [
+            "yes",
+            "x > z: yes",
+            "6"
+          ],
+          [
+            "yes",
+            "x > z: no",
+            "5"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "A (3,4,2)",
+          "B (6,5,3)",
+          "C (6,3,5)",
+          "D (5,4,5)"
+        ],
+        "reveal": 0
+      }
     },
     "cse-2008-cs-19": {
       "approach": "In BFS every neighbour of an earlier-dequeued vertex must appear before any neighbour of a later one. Simulate from each option's first vertex and reject the first ordering violation.",
