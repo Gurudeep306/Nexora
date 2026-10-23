@@ -15,6 +15,7 @@ export const LABS = {
   'converter-bench': lazy(() => import('./ConverterBench')),
   // Discrete Mathematics
   'truth-table': lazy(() => import('./TruthTable')),
+  'quantifier-lab': lazy(() => import('./QuantifierLab')),
 } as const
 
 export type LabName = keyof typeof LABS
