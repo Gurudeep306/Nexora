@@ -1,0 +1,12 @@
+{
+  "title": "Discrete Mathematics",
+  "order": 3,
+  "icon": "puzzle",
+  "color": "syntax-function",
+  "description": "Propositional and first-order logic, sets, relations and functions, partial orders and lattices, groups, counting, recurrences and generating functions, and graph theory, built from first principles with proofs, animated diagrams, Live Labs and every GATE question mapped.",
+  "hidden": true,
+  "status": "draft",
+  "pyq_scope": [
+    "dm"
+  ]
+}
