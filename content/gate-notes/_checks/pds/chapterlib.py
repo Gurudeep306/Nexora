@@ -197,6 +197,9 @@ def merge_solutions(ch):
 
 
 def write_solutions(sols):
+    """Write solutions into src/gate/solutions/<paper>.json (under a lock, so lessons can run in parallel)."""
+    lockf = open(C.ROOT / "src" / "gate" / "solutions" / ".pds-write.lock", "w")
+    fcntl.flock(lockf, fcntl.LOCK_EX)
     bank = C.bank()
     by_paper = {}
     for qid, sol in sols.items():
@@ -208,6 +211,9 @@ def write_solutions(sols):
             d["solutions"][qid] = json.loads(json.dumps(sol))
         p.write_text(json.dumps(d, indent=2, ensure_ascii=False) + "\n")
         print(f"{paper}: {', '.join(sorted(ss))}")
+    fcntl.flock(lockf, fcntl.LOCK_UN)
+    lockf.close()
+    (C.ROOT / "src" / "gate" / "solutions" / ".pds-write.lock").unlink(missing_ok=True)
 
 
 def check_pyqs(ch):
