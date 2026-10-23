@@ -1,0 +1,628 @@
+{
+ "version": 1,
+ "title": "A truth table, column by column",
+ "width": 640,
+ "height": 352,
+ "narrow": {
+  "width": 360,
+  "height": 352
+ },
+ "intro": "The formula (p → q) ∧ (q → r) has three variables. We list all 8 assignments and add one column per sub-formula.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Building the table of (p → q) ∧ (q → r), one column at a time",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Truth table of (p→q) ∧ (q→r)",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 50,
+   "y": 44,
+   "cellW": 90,
+   "cellH": 30,
+   "rows": [
+    [
+     "p",
+     "q",
+     "r",
+     "p→q",
+     "q→r",
+     "both"
+    ],
+    [
+     "T",
+     "T",
+     "T",
+     "",
+     "",
+     ""
+    ],
+    [
+     "T",
+     "T",
+     "F",
+     "",
+     "",
+     ""
+    ],
+    [
+     "T",
+     "F",
+     "T",
+     "",
+     "",
+     ""
+    ],
+    [
+     "T",
+     "F",
+     "F",
+     "",
+     "",
+     ""
+    ],
+    [
+     "F",
+     "T",
+     "T",
+     "",
+     "",
+     ""
+    ],
+    [
+     "F",
+     "T",
+     "F",
+     "",
+     "",
+     ""
+    ],
+    [
+     "F",
+     "F",
+     "T",
+     "",
+     "",
+     ""
+    ],
+    [
+     "F",
+     "F",
+     "F",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 12,
+    "y": 44,
+    "cellW": 56,
+    "cellH": 30
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 320,
+   "y": 338,
+   "text": "8 rows: p alternates slowest, T before F",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 338,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Three variables give 2³ = 8 rows. The variable columns are filled first: p is T for the first four rows, q alternates in pairs, r every row.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        6,
+        0
+       ],
+       [
+        6,
+        1
+       ],
+       [
+        6,
+        2
+       ],
+       [
+        7,
+        0
+       ],
+       [
+        7,
+        1
+       ],
+       [
+        7,
+        2
+       ],
+       [
+        8,
+        0
+       ],
+       [
+        8,
+        1
+       ],
+       [
+        8,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column p → q: it is false only where p = T and q = F, which is rows 3 and 4. Every other row keeps the promise.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "p",
+        "q",
+        "r",
+        "p→q",
+        "q→r",
+        "both"
+       ],
+       [
+        "T",
+        "T",
+        "T",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "T",
+        "T",
+        "F",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "T",
+        "F",
+        "T",
+        "F",
+        "",
+        ""
+       ],
+       [
+        "T",
+        "F",
+        "F",
+        "F",
+        "",
+        ""
+       ],
+       [
+        "F",
+        "T",
+        "T",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "F",
+        "T",
+        "F",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "T",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "F",
+        "T",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        3
+       ],
+       [
+        4,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "p → q fails on rows 3 and 4",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column q → r: false only where q = T and r = F, rows 2 and 6.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "p",
+        "q",
+        "r",
+        "p→q",
+        "q→r",
+        "both"
+       ],
+       [
+        "T",
+        "T",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "T",
+        "T",
+        "F",
+        "T",
+        "F",
+        ""
+       ],
+       [
+        "T",
+        "F",
+        "T",
+        "F",
+        "T",
+        ""
+       ],
+       [
+        "T",
+        "F",
+        "F",
+        "F",
+        "T",
+        ""
+       ],
+       [
+        "F",
+        "T",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "F",
+        "T",
+        "F",
+        "T",
+        "F",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "F",
+        "T",
+        "T",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        4
+       ],
+       [
+        6,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "q → r fails on rows 2 and 6",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The conjunction is true only where both columns are T: rows 1, 5, 7 and 8 (TTT, FTT, FFT, FFF).",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "p",
+        "q",
+        "r",
+        "p→q",
+        "q→r",
+        "both"
+       ],
+       [
+        "T",
+        "T",
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "T",
+        "T",
+        "F",
+        "T",
+        "F",
+        "F"
+       ],
+       [
+        "T",
+        "F",
+        "T",
+        "F",
+        "T",
+        "F"
+       ],
+       [
+        "T",
+        "F",
+        "F",
+        "F",
+        "T",
+        "F"
+       ],
+       [
+        "F",
+        "T",
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "F",
+        "T",
+        "F",
+        "T",
+        "F",
+        "F"
+       ],
+       [
+        "F",
+        "F",
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "F",
+        "F",
+        "F",
+        "T",
+        "T",
+        "T"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        5
+       ],
+       [
+        5,
+        5
+       ],
+       [
+        7,
+        5
+       ],
+       [
+        8,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "true on rows 1, 5, 7, 8",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Read the true rows left to right: the values never drop from T to F along p, q, r. The column is the whole meaning of the formula.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        7,
+        0
+       ],
+       [
+        7,
+        1
+       ],
+       [
+        7,
+        2
+       ],
+       [
+        8,
+        0
+       ],
+       [
+        8,
+        1
+       ],
+       [
+        8,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "true exactly when p, q, r never go T → F",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

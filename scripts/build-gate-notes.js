@@ -47,7 +47,10 @@ const DEFAULTS = {
 
 // Live Labs the reader can render and the tabs each one has (keep in step with
 // client/src/gate/notes/labs/index.ts).
-const LAB_TABS = { "gate-bench": ["bench", "challenge", "sets"], "kmap-solver": ["map", "qm"], "comb-workbench": ["mux", "implement", "decoder"], "adder-race": ["race", "scaling"], "flipflop-scope": ["scope", "tables"], "counter-fsm": ["counter", "fsm"], "converter-bench": ["sar", "dac"] };
+const LAB_TABS = { "gate-bench": ["bench", "challenge", "sets"], "kmap-solver": ["map", "qm"], "comb-workbench": ["mux", "implement", "decoder"], "adder-race": ["race", "scaling"], "flipflop-scope": ["scope", "tables"], "counter-fsm": ["counter", "fsm"], "converter-bench": ["sar", "dac"],
+  // Discrete Mathematics labs (one per chapter).
+  "truth-table": ["table", "compare"], "quantifier-lab": ["evaluate", "models"], "relation-lab": ["matrix", "closure"], "hasse-lab": ["diagram", "lattice"],
+  "group-lab": ["table", "subgroups"], "counting-lab": ["twelvefold", "pie"], "recurrence-lab": ["iterate", "series"], "graph-lab": ["explore", "colour", "tours"] };
 const LABS = Object.keys(LAB_TABS);
 // Attribute kinds: 'text' (any short string), 'ref' (an id resolved later), or a list of allowed values.
 const BLOCKS = {

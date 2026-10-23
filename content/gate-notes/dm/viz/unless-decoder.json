@@ -1,0 +1,177 @@
+{
+ "version": 1,
+ "title": "'Unless' means 'if not'",
+ "width": 640,
+ "height": 336,
+ "narrow": {
+  "width": 360,
+  "height": 336
+ },
+ "intro": "The phrase 'unless Z' turns into the hypothesis 'not Z'. We decode a GATE sentence in three moves.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Decoding “if X then Y unless Z”",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Decoding “unless”",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "l0",
+   "type": "box",
+   "x": 150,
+   "y": 48,
+   "w": 340,
+   "h": 46,
+   "size": 16,
+   "hidden": false,
+   "mono": false,
+   "narrow": {
+    "x": 20,
+    "y": 48,
+    "w": 320,
+    "h": 46,
+    "size": 14
+   },
+   "label": "if X then Y  unless Z"
+  },
+  {
+   "id": "l1",
+   "type": "box",
+   "x": 150,
+   "y": 112,
+   "w": 340,
+   "h": 46,
+   "size": 16,
+   "hidden": true,
+   "mono": false,
+   "narrow": {
+    "x": 20,
+    "y": 112,
+    "w": 320,
+    "h": 46,
+    "size": 14
+   },
+   "label": "(if X then Y)  unless  Z"
+  },
+  {
+   "id": "l2",
+   "type": "box",
+   "x": 150,
+   "y": 176,
+   "w": 340,
+   "h": 46,
+   "size": 16,
+   "hidden": true,
+   "mono": true,
+   "narrow": {
+    "x": 20,
+    "y": 176,
+    "w": 320,
+    "h": 46,
+    "size": 14
+   },
+   "label": "¬Z → (X → Y)"
+  },
+  {
+   "id": "l3",
+   "type": "box",
+   "x": 150,
+   "y": 240,
+   "w": 340,
+   "h": 46,
+   "size": 16,
+   "hidden": true,
+   "mono": true,
+   "narrow": {
+    "x": 20,
+    "y": 240,
+    "w": 320,
+    "h": 46,
+    "size": 14
+   },
+   "label": "(X ∧ ¬Z) → Y"
+  },
+  {
+   "id": "foot",
+   "type": "text",
+   "x": 320,
+   "y": 322,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 322,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Bracket the sentence first. 'Unless Z' qualifies the whole promise 'if X then Y'.",
+   "patches": [
+    {
+     "id": "l1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "'A unless Z' means 'if not Z, then A'. With A = (X → Y) this is ¬Z → (X → Y).",
+   "patches": [
+    {
+     "id": "l2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Exportation moves the outer hypothesis inside: A → (B → C) ≡ (A ∧ B) → C. The result is (X ∧ ¬Z) → Y.",
+   "patches": [
+    {
+     "id": "l3",
+     "set": {
+      "hidden": false,
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check with the forbidden situation. The sentence is broken only if X happens, Z does not, and Y fails: X = T, Y = F, Z = F. The formula is false on exactly that row.",
+   "patches": [
+    {
+     "id": "foot",
+     "set": {
+      "text": "only forbidden row: X = T, Y = F, Z = F",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

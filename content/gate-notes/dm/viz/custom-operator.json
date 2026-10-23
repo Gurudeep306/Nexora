@@ -1,0 +1,223 @@
+{
+ "version": 1,
+ "title": "Rewriting an invented operator",
+ "width": 640,
+ "height": 290,
+ "narrow": {
+  "width": 360,
+  "height": 420
+ },
+ "intro": "GATE sometimes defines a connective by its four-row table. Read its false row, rewrite it with ¬ and ∨, and the options become easy.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "An operator given only by its table (GATE 2006)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "A new operator ⊙",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 40,
+   "y": 50,
+   "cellW": 70,
+   "cellH": 32,
+   "rows": [
+    [
+     "A",
+     "B",
+     "A ⊙ B"
+    ],
+    [
+     "T",
+     "T",
+     "T"
+    ],
+    [
+     "T",
+     "F",
+     "T"
+    ],
+    [
+     "F",
+     "T",
+     "F"
+    ],
+    [
+     "F",
+     "F",
+     "T"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 99,
+    "y": 46,
+    "cellW": 54,
+    "cellH": 30
+   }
+  },
+  {
+   "id": "r1",
+   "type": "box",
+   "x": 300,
+   "y": 54,
+   "w": 310,
+   "h": 44,
+   "size": 15,
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 204,
+    "w": 320,
+    "h": 44,
+    "size": 14
+   },
+   "label": "false only at A = F, B = T"
+  },
+  {
+   "id": "r2",
+   "type": "box",
+   "x": 300,
+   "y": 112,
+   "w": 310,
+   "h": 44,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 256,
+    "w": 320,
+    "h": 44,
+    "size": 14
+   },
+   "label": "A ⊙ B ≡ A ∨ ¬B"
+  },
+  {
+   "id": "r3",
+   "type": "box",
+   "x": 300,
+   "y": 170,
+   "w": 310,
+   "h": 44,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 308,
+    "w": 320,
+    "h": 44,
+    "size": 14
+   },
+   "label": "¬A ⊙ B ≡ ¬A ∨ ¬B"
+  },
+  {
+   "id": "r4",
+   "type": "box",
+   "x": 300,
+   "y": 228,
+   "w": 310,
+   "h": 44,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 360,
+    "w": 320,
+    "h": 44,
+    "size": 14
+   },
+   "label": "¬(¬A ⊙ B) ≡ A ∧ B"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Find the false rows of the new operator. There is only one: A = F, B = T.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "r1",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "An operator false on one row is the disjunction that fails there: A ∨ ¬B fails only at A = F, B = T. So A ⊙ B ≡ A ∨ ¬B (which is B → A).",
+   "patches": [
+    {
+     "id": "r2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "We want A ∧ B = ¬(¬A ∨ ¬B). The option ¬A ⊙ B substitutes ¬A for A: it gives ¬A ∨ ¬B, a NAND.",
+   "patches": [
+    {
+     "id": "r3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Negating it gives ¬(¬A ∨ ¬B) = A ∧ B by De Morgan. The answer is ∼(∼A ⊙ B).",
+   "patches": [
+    {
+     "id": "r4",
+     "set": {
+      "hidden": false,
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

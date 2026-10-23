@@ -489,24 +489,25 @@
       "verification": "$(3142)_8 + (4364)_8 = (7526)_8$ by octal addition."
     },
     "cse-2014-3-cs-1": {
-      "approach": "Formalise with $g$ = good, $c$ = cheap: $P \\equiv g \\to \\neg c$ and $Q \\equiv c \\to \\neg g$. Each is the contrapositive of the other, so they are logically equivalent.",
+      "approach": "Concept tested: **contrapositive equivalence**. Write both sentences as implications about one phone; one is the contrapositive of the other, so they are equivalent.",
       "concepts": [
-        "Implication",
         "Contrapositive",
-        "Logical equivalence"
+        "Implication",
+        "Translation"
       ],
+      "given": "P: good phones are not cheap. Q: cheap phones are not good.",
       "steps": [
         {
-          "title": "Translate",
-          "body": "$P$: for every phone, $g(x) \\to \\neg c(x)$.\n\n$Q$: for every phone, $c(x) \\to \\neg g(x)$."
+          "title": "Formalise",
+          "body": "For a phone, let $g$: it is good, $c$: it is cheap. P: $g \\to \\neg c$. Q: $c \\to \\neg g$."
         },
         {
-          "title": "Compare",
-          "body": "Contrapositive of $g \\to \\neg c$ is $\\neg\\neg c \\to \\neg g$, i.e. $c \\to \\neg g$, which is $Q$. Both also equal $\\neg(g \\wedge c)$: no phone is both good and cheap."
+          "title": "Contrapositive",
+          "body": "The contrapositive of $g \\to \\neg c$ is $\\neg\\neg c \\to \\neg g$, i.e. $c \\to \\neg g$, which is Q."
         },
         {
-          "title": "Evaluate L, M, N",
-          "body": "$P \\equiv Q$, so $P \\to Q$ (L), $Q \\to P$ (M) and $P \\leftrightarrow Q$ (N) are all TRUE."
+          "title": "Conclude",
+          "body": "P ≡ Q, so P implies Q (L), Q implies P (M), and P is equivalent to Q (N): all three hold."
         }
       ],
       "answer": {
@@ -520,17 +521,17 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "M is also true, because the implication holds in both directions."
+          "reason": "M also holds: Q implies P because they are contrapositives."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "L is also true."
+          "reason": "L also holds for the same reason."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "If N (equivalence) is true, L and M must be true too, so \"only N\" is impossible."
+          "reason": "Equivalence (N) brings both implications L and M with it."
         },
         {
           "option": "D",
@@ -538,7 +539,11 @@
           "reason": "P and Q are contrapositives, hence equivalent."
         }
       ],
-      "verification": "Both reduce to $\\neg(g \\wedge c)$."
+      "shortcut": "Both sentences say the same thing: no phone is both good and cheap ($\\neg(g \\wedge c)$).",
+      "pitfalls": [
+        "Treating Q as the converse of P: the converse of $g \\to \\neg c$ would be $\\neg c \\to g$."
+      ],
+      "verification": "$g \\to \\neg c$ and $c \\to \\neg g$ are both $\\neg g \\vee \\neg c$; their truth tables agree on all four rows."
     },
     "cse-2014-3-cs-2": {
       "approach": "Pre-images respect all set operations ($x \\in f^{-1}(S\\cap T) \\iff f(x)\\in S$ and $f(x) \\in T$), while images respect unions but not intersections or sizes. Kill A–C with a constant function.",

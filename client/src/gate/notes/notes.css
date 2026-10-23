@@ -3283,3 +3283,14 @@ h4.notes-h {
 .cb-figure {
   margin: 0;
 }
+
+/* ── Discrete Mathematics labs ─────────────────────────────────────────── */
+.lab .tt-input {
+  width: min(28em, 100%);
+}
+.lab-tt td.tt-last {
+  border-left: 2px solid var(--color-border-strong);
+}
+.lab-tt tr.tt-critical td {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-accent-brand) 55%, transparent);
+}

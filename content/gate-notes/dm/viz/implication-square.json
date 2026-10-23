@@ -1,0 +1,307 @@
+{
+ "version": 1,
+ "title": "Converse, inverse and contrapositive",
+ "width": 640,
+ "height": 360,
+ "narrow": {
+  "width": 360,
+  "height": 360
+ },
+ "intro": "From one implication we can build three others by swapping and negating its two sides. Only one of them says the same thing.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "The four relatives of an implication",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Four relatives of p → q",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "orig",
+   "type": "box",
+   "x": 40,
+   "y": 60,
+   "w": 200,
+   "h": 56,
+   "size": 14,
+   "narrow": {
+    "x": 10,
+    "y": 60,
+    "w": 160,
+    "h": 56,
+    "size": 12
+   },
+   "label": "p → q (original)"
+  },
+  {
+   "id": "origt",
+   "type": "text",
+   "x": 140,
+   "y": 140,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 90,
+    "y": 138,
+    "size": 13
+   }
+  },
+  {
+   "id": "conv",
+   "type": "box",
+   "x": 400,
+   "y": 60,
+   "w": 200,
+   "h": 56,
+   "size": 14,
+   "narrow": {
+    "x": 190,
+    "y": 60,
+    "w": 160,
+    "h": 56,
+    "size": 12
+   },
+   "label": "q → p (converse)"
+  },
+  {
+   "id": "convt",
+   "type": "text",
+   "x": 500,
+   "y": 140,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 270,
+    "y": 138,
+    "size": 13
+   }
+  },
+  {
+   "id": "inv",
+   "type": "box",
+   "x": 40,
+   "y": 230,
+   "w": 200,
+   "h": 56,
+   "size": 14,
+   "narrow": {
+    "x": 10,
+    "y": 230,
+    "w": 160,
+    "h": 56,
+    "size": 12
+   },
+   "label": "¬p → ¬q (inverse)"
+  },
+  {
+   "id": "invt",
+   "type": "text",
+   "x": 140,
+   "y": 310,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 90,
+    "y": 308,
+    "size": 13
+   }
+  },
+  {
+   "id": "contra",
+   "type": "box",
+   "x": 400,
+   "y": 230,
+   "w": 200,
+   "h": 56,
+   "size": 14,
+   "narrow": {
+    "x": 190,
+    "y": 230,
+    "w": 160,
+    "h": 56,
+    "size": 12
+   },
+   "label": "¬q → ¬p (contrapos.)"
+  },
+  {
+   "id": "contrat",
+   "type": "text",
+   "x": 500,
+   "y": 310,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 270,
+    "y": 308,
+    "size": 13
+   }
+  },
+  {
+   "id": "a1",
+   "type": "arrow",
+   "from": "orig",
+   "to": "conv",
+   "label": "swap",
+   "head": "both"
+  },
+  {
+   "id": "a2",
+   "type": "arrow",
+   "from": "orig",
+   "to": "inv",
+   "label": "negate",
+   "head": "both"
+  },
+  {
+   "id": "a3",
+   "type": "arrow",
+   "from": "orig",
+   "to": "contra",
+   "label": "swap + negate",
+   "head": "both",
+   "hidden": true
+  },
+  {
+   "id": "foot",
+   "type": "text",
+   "x": 320,
+   "y": 346,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 346,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start from p → q. Swapping the sides gives the converse q → p; negating both sides gives the inverse ¬p → ¬q.",
+   "patches": [
+    {
+     "id": "orig",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Doing both (swap and negate) gives the contrapositive ¬q → ¬p.",
+   "patches": [
+    {
+     "id": "a3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Test the row p = T, q = F. Original: T → F = F. Contrapositive: ¬q → ¬p = T → F = F. They fail together.",
+   "patches": [
+    {
+     "id": "origt",
+     "set": {
+      "text": "p=T,q=F: F",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "contrat",
+     "set": {
+      "text": "p=T,q=F: F",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "contra",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "orig",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "On the same row the converse is F → T = T and the inverse is F → T = T: they differ from the original, so they are not equivalent to it.",
+   "patches": [
+    {
+     "id": "convt",
+     "set": {
+      "text": "p=T,q=F: T",
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "invt",
+     "set": {
+      "text": "p=T,q=F: T",
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "conv",
+     "set": {
+      "tone": "warning",
+      "fill": "warning"
+     }
+    },
+    {
+     "id": "inv",
+     "set": {
+      "tone": "warning",
+      "fill": "warning"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The diagonals pair up: original ≡ contrapositive, and converse ≡ inverse (each is the other's contrapositive).",
+   "patches": [
+    {
+     "id": "foot",
+     "set": {
+      "text": "p → q ≡ ¬q → ¬p    and    q → p ≡ ¬p → ¬q",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

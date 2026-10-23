@@ -503,23 +503,25 @@
       "verification": "$N(46.02) = 10000\\,e^{-0.11513 \\times 6.02} = 10000 \\times 0.5 = 5000$."
     },
     "cse-2016-1-cs-1": {
-      "approach": "Push the negation inside: $\\neg((p\\Rightarrow q)\\wedge(\\neg r\\vee\\neg s)) \\equiv (p\\wedge\\neg q)\\vee(r\\wedge s)$, then check which integer satisfies it.",
+      "approach": "Concept tested: **evaluating a formula over a parameter**. Simplify the formula first (De Morgan, $\\neg(p \\to q) \\equiv p \\wedge \\neg q$), then ask which integers make the simplified condition true.",
       "concepts": [
         "De Morgan's laws",
-        "Implication"
+        "Negated implication",
+        "Open sentences"
       ],
+      "given": "$p$: $x \\in \\{8,9,10,11,12\\}$; $q$: composite; $r$: perfect square; $s$: prime. Find $x \\ge 2$ with $\\neg((p \\Rightarrow q) \\wedge (\\neg r \\vee \\neg s))$.",
       "steps": [
         {
           "title": "Simplify",
-          "body": "$\\neg(A\\wedge B) = \\neg A \\vee \\neg B$. Here $\\neg(p\\Rightarrow q) = p\\wedge\\neg q$ and $\\neg(\\neg r\\vee\\neg s) = r\\wedge s$. So we need $(p\\wedge\\neg q)\\vee(r\\wedge s)$."
+          "body": "$\\neg(A \\wedge B) = \\neg A \\vee \\neg B$: the formula is $\\neg(p \\to q) \\vee \\neg(\\neg r \\vee \\neg s) = (p \\wedge \\neg q) \\vee (r \\wedge s)$."
         },
         {
-          "title": "r ∧ s is impossible",
-          "body": "A prime ($s$) has exactly two divisors, while a perfect square $>1$ ($r$) has an odd number of divisors, so no $x$ is both."
+          "title": "The second disjunct is impossible",
+          "body": "$r \\wedge s$: a perfect square $k^2$ ($k \\ge 2$) has divisor $k$, so it is not prime. Never true."
         },
         {
-          "title": "p ∧ ¬q",
-          "body": "$x \\in \\{8,9,10,11,12\\}$ and **not** composite. Since $x \\ge 2$, not composite means prime: 8, 9, 10, 12 are composite; **11** is prime."
+          "title": "The first disjunct",
+          "body": "$p \\wedge \\neg q$: $x$ in 8…12 and not composite; for $x \\ge 2$ that means prime. Only 11."
         }
       ],
       "answer": {
@@ -527,10 +529,12 @@
         "number": 11,
         "matchesKey": true
       },
+      "shortcut": "A negated implication $\\neg(p \\to q)$ is $p \\wedge \\neg q$: 'in the range and not composite'.",
       "pitfalls": [
-        "Forgetting that $\\neg(p\\Rightarrow q)$ is $p\\wedge\\neg q$, not $\\neg p\\Rightarrow\\neg q$."
+        "Taking 'not composite' to include 1: the question restricts to $x \\ge 2$.",
+        "Missing that $r \\wedge s$ can never hold."
       ],
-      "verification": "For $x=11$: $p$ true, $q$ false so $p\\Rightarrow q$ is false, making the conjunction false and its negation true."
+      "verification": "Brute force over $x = 2, \\dots, 499$: only $x = 11$ satisfies the formula."
     },
     "cse-2016-1-cs-2": {
       "approach": "Classify valid strings by their last bit: ending in 0 extends any valid $(n-1)$-string; ending in 1 forces the previous bit to be 0.",
