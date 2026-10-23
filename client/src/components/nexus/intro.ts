@@ -1,16 +1,17 @@
 /*
  * The Nexus opening: one timeline the canvas and the HUD both read.
  *
- * The choreography is written against a 2,000 ms "full" clock; the short
- * repeat (later in the same session, or coming back) plays the same beats
- * compressed to 800 ms, and reduced motion is a quick fade. Any click,
+ * The choreography is written against a 2,000-unit clock, played over 3.5 s
+ * the first time; the short repeat (later in the same session, or coming
+ * back) plays the same beats over 1.4 s, and reduced motion is a quick fade. Any click,
  * scroll or key skips straight to the end.
  */
 
 export type IntroMode = 'full' | 'short' | 'fade'
 
 export const INTRO_CLOCK = 2000
-const DURATION: Record<IntroMode, number> = { full: 2000, short: 800, fade: 220 }
+// Calm: the full opening takes 3.5 s, the repeat 1.4 s (the same beats).
+const DURATION: Record<IntroMode, number> = { full: 3500, short: 1400, fade: 220 }
 const SEEN = 'nexus:intro:v1'
 export const INTRO_SKIP = 'nexus:intro-skip'
 
@@ -48,15 +49,18 @@ export function introClock(now: number, t0: number, dur: number): number {
 }
 
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
-/** 0 → 1 between two moments of the full clock, eased out (cubic). */
+/** 0 → 1 between two moments of the full clock: a calm ease (gentle start, long settle). */
 export function seg(T: number, a: number, b: number): number {
   const t = clamp01((T - a) / Math.max(1, b - a))
-  return 1 - Math.pow(1 - t, 3)
+  // ease-in-out sine blended toward ease-out: no snap at either end.
+  const inOut = 0.5 - 0.5 * Math.cos(Math.PI * t)
+  const out = 1 - Math.pow(1 - t, 2)
+  return 0.5 * inOut + 0.5 * out
 }
 /** A small overshoot ("pop") for dots appearing. */
 export function pop(T: number, a: number, b: number): number {
   const t = clamp01((T - a) / Math.max(1, b - a))
-  const c1 = 1.70158
+  const c1 = 1.1 // a soft overshoot
   const c3 = c1 + 1
   return t === 0 ? 0 : 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2)
 }
