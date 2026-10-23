@@ -6,7 +6,7 @@ title: Propositions, connectives and truth tables
 order: 1
 prerequisites: []
 pyq_topics: [dm/logic]
-est_minutes: 60
+est_minutes: 85
 difficulty: basic
 status: published
 needs_review: false
@@ -193,9 +193,15 @@ you go" forbids exactly one situation, me staying while you do not go.
 ### The biconditional and exclusive or
 
 :::intuition{#iff-intuition title="If and only if: the two sides agree" depth="standard"}
-"$p$ if and only if $q$" is two promises at once, $p \to q$ and $q \to p$. Together they say that $p$
-and $q$ always have the same truth value: both true or both false. Exclusive or is the opposite: true
-when the two sides **disagree**.
+"$p$ if and only if $q$" is two promises at once, $p \to q$ and $q \to p$. The first forbids "$p$ without
+$q$", the second forbids "$q$ without $p$"; what is left is the two situations where $p$ and $q$ **have
+the same truth value**: both true or both false. Think of two lamps wired to the same switch: they are
+always both on or both off.
+
+Exclusive or is the opposite test: it is true when the two sides **disagree**. Think of a staircase
+light with a switch at the top and one at the bottom: flipping either switch changes the light, so the
+light is on exactly when the switches are in different positions. That "flip" behaviour is what makes
+$\oplus$ so useful for counting, as we will see below.
 :::
 
 :::definition{#iff-xor-def term="Biconditional p ↔ q and exclusive or p ⊕ q" depth="quick"}
@@ -206,26 +212,176 @@ when the two sides **disagree**.
 | F | T | F | T |
 | F | F | T | F |
 
-$p \leftrightarrow q \equiv (p \to q) \wedge (q \to p)$, and $p \oplus q \equiv \neg(p \leftrightarrow q)$.
-"Necessary and sufficient", "exactly when", "just in case" all mean $\leftrightarrow$.
+$p \leftrightarrow q \equiv (p \to q) \wedge (q \to p) \equiv (p \wedge q) \vee (\neg p \wedge \neg q)$, and
+$p \oplus q \equiv \neg(p \leftrightarrow q) \equiv (p \wedge \neg q) \vee (\neg p \wedge q) \equiv (p \vee q) \wedge \neg(p \wedge q)$.
+The last form explains the name: $\oplus$ is "or" with the both-true row switched off.
+"Necessary and sufficient", "exactly when", "just in case" all mean $\leftrightarrow$; "either … or …, but
+not both" means $\oplus$. In Digital Logic, $\oplus$ is the XOR gate and $\leftrightarrow$ is XNOR.
+:::
+
+:::definition{#iff-xor-props term="Algebra of ↔ and ⊕" depth="standard"}
+These facts are used constantly in GATE simplifications; each is a four-row (or eight-row) check.
+
+- **Moving a negation.** $\neg(p \leftrightarrow q) \equiv \neg p \leftrightarrow q \equiv p \leftrightarrow \neg q
+  \equiv p \oplus q$. Negating **one** side turns agreement into disagreement; negating **both** sides
+  changes nothing: $\neg p \leftrightarrow \neg q \equiv p \leftrightarrow q$.
+- **Constants.** $p \oplus \text{F} \equiv p$, $p \oplus \text{T} \equiv \neg p$, $p \oplus p \equiv \text{F}$;
+  dually $p \leftrightarrow \text{T} \equiv p$, $p \leftrightarrow \text{F} \equiv \neg p$, $p \leftrightarrow p \equiv \text{T}$.
+  So "$\oplus$ T" is a controlled NOT: it flips its input.
+- **Commutative and associative.** $p \oplus q \equiv q \oplus p$ and $(p \oplus q) \oplus r \equiv p \oplus (q \oplus r)$;
+  the same two laws hold for $\leftrightarrow$. Brackets in a pure $\oplus$-chain or a pure $\leftrightarrow$-chain
+  never matter. Contrast $\to$, which is **neither** commutative nor associative.
+- **Solving like an equation.** $(x \oplus y) \leftrightarrow z \equiv x \leftrightarrow (y \oplus z)$: you may
+  "move" a term across an $\oplus$-equation, exactly as you subtract in arithmetic.
+- **Bridge.** $p \leftrightarrow q \equiv p \oplus q \oplus \text{T}$: a biconditional is an exclusive or
+  followed by one flip.
+:::
+
+:::theorem{#parity-theorem name="Parity of ⊕-chains and ↔-chains" depth="standard"}
+For $n \ge 1$ variables, $p_1 \oplus p_2 \oplus \dots \oplus p_n$ is true exactly when an **odd number** of the
+$p_i$ are true. For $n \ge 2$, $p_1 \leftrightarrow p_2 \leftrightarrow \dots \leftrightarrow p_n$ (bracketed in any
+way) is true exactly when an **even number** of the $p_i$ are **false**. Each chain is true on exactly
+$2^{n-1}$ of the $2^n$ rows, and for odd $n$ the two chains are the same proposition.
+:::
+
+:::proof{#proof-parity of="the parity theorem" depth="standard"}
+**Idea first:** an $\oplus$ with a true input flips the running value; an $\oplus$ with a false input
+leaves it alone. So the final value records whether the number of flips was odd.
+
+*The $\oplus$-chain, by induction on $n$.* For $n = 1$ the "chain" is $p_1$, true exactly when one (an odd
+number) of the variables is true. Suppose the claim holds for $n$ variables and add $p_{n+1}$: the new
+chain is $(p_1 \oplus \dots \oplus p_n) \oplus p_{n+1}$. If $p_{n+1}$ is F, neither the value nor the count of
+true variables changes. If $p_{n+1}$ is T, the value flips ($x \oplus \text{T} = \neg x$) and the count
+goes up by one, so its parity flips too. Either way "true exactly when the count is odd" survives.
+Associativity lets us bracket from the left without loss.
+
+*The $\leftrightarrow$-chain.* Each $\leftrightarrow$ is an $\oplus$ followed by one extra flip ($a \leftrightarrow b \equiv a
+\oplus b \oplus \text{T}$). A chain of $n$ variables has $n - 1$ signs, so it equals the $\oplus$-chain flipped
+$n - 1$ times. Write $t$ and $f$ for the numbers of true and false variables ($t + f = n$). The chain
+is true when $t + (n - 1)$ is odd, i.e. when $t + n = 2t + f$ is even, i.e. when $f$ is even.
+
+*Counting and coincidence.* Flipping $p_1$ alone flips either chain, which pairs every true row with a
+false one: exactly half, $2^{n-1}$, are true. For odd $n$ the number of extra flips, $n - 1$, is even,
+so the two chains coincide. **Sanity check** ($n = 2$): $p \leftrightarrow q$ is true when zero or two
+variables are false (TT, FF). Correct.
+:::
+
+:::trap{#trap-iff-chain title="p ↔ q ↔ r does not mean 'all three are equal'" depth="quick"}
+The tempting reading is "true on TTT and FFF only". In fact $p \leftrightarrow q \leftrightarrow r$ is true on
+TTT, TFF, FTF and FFT (zero or two F's) and **false on FFF** (three F's). "All three have the same
+value" is $(p \leftrightarrow q) \wedge (q \leftrightarrow r)$, a conjunction of two biconditionals, true on TTT and
+FFF only. A chain of $\leftrightarrow$'s is a parity test, not an equality test.
+:::
+
+:::trap{#trap-xor-exactly-one title="p ⊕ q ⊕ r is not 'exactly one of them'" depth="quick"}
+For two variables, $p \oplus q$ is indeed "exactly one". For three, $p \oplus q \oplus r$ means "an **odd**
+number", which includes all three, so it is also true on TTT. Options that offer $p \oplus q \oplus r$
+for "exactly one of $p, q, r$" are wrong on that one row; a correct formula is $(p \oplus q \oplus r)
+\wedge \neg(p \wedge q \wedge r)$.
+:::
+
+:::trick{#trick-parity title="Evaluate a long ⊕ or ↔ chain by counting" depth="standard"}
+Do not evaluate $p \oplus q \oplus r \oplus s$ step by step: count the T's. Odd means true. For a pure
+$\leftrightarrow$-chain, count the F's: even means true.
+
+**Why it works:** the parity theorem; the chains are associative, so the order of evaluation does not
+matter. **When it fails:** the moment the chain mixes in another connective. $p \oplus q \to r$ or
+$(p \leftrightarrow q) \wedge (q \leftrightarrow r)$ are not chains; bracket them by precedence and evaluate normally.
+:::
+
+:::note{#recap-iff-xor title="Recap" depth="quick"}
+$\leftrightarrow$: the sides agree; $\oplus$: they differ; $\oplus \equiv \neg\leftrightarrow$, and one negation moves
+freely between the sides. Both are associative and commutative. A $\oplus$-chain is true for an odd
+number of T's, a $\leftrightarrow$-chain for an even number of F's; neither means "all equal" or "exactly one".
+:::
+
+### Well-formed formulas, precedence and the main connective
+
+:::intuition{#grammar-intuition title="A formula has a grammar, just like arithmetic" depth="standard"}
+Everyone reads $2 + 3 \times 4$ as $14$, not $20$, because $\times$ binds more tightly than $+$; the brackets
+are invisible but agreed. Logic works the same way. A formula is a string of symbols, and two separate
+questions arise. **Is the string a formula at all?** ("$p \wedge \vee\, q$" is not, just as "$2 + \times 3$"
+is not.) **If it is, how must it be read?** The answer to the second is a tree: the connective applied
+last sits at the root, its operands hang below it, and so on down to the variables.
+
+The root, called the **main connective**, is the most useful thing to find in any formula. It tells you
+what kind of statement you are holding (an implication, a conjunction, a negation of something), and so
+which shortcut applies: the false-row trick works only when the main connective is $\to$.
+:::
+
+:::definition{#wff-def term="Well-formed formula (WFF)" depth="standard"}
+Well-formed formulas are defined **recursively**:
+
+1. Every propositional variable ($p, q, r, \dots$) and each constant T, F is a WFF.
+2. If $A$ is a WFF, so is $\neg A$.
+3. If $A$ and $B$ are WFFs, so are $(A \wedge B)$, $(A \vee B)$, $(A \to B)$, $(A \leftrightarrow B)$ and $(A \oplus B)$.
+4. Nothing else is a WFF.
+
+Rule 3 puts a bracket pair around every binary connective, so a fully bracketed WFF can be read in only
+one way (its parse tree is unique). In practice we drop brackets using the precedence rules below and
+read them back in before evaluating.
+
+- WFFs: $p$; $\neg\neg q$; $(p \to (q \wedge \neg r))$, built as $r$, $\neg r$, $q \wedge \neg r$, then $p \to \dots$
+- Not WFFs: $p \wedge \vee\, q$ ($\vee$ has no left operand); $\neg$ alone (nothing to negate); $(p \to q$
+  (unbalanced bracket); $p\,q$ (two formulas with no connective); $p \neg q$ ($\neg$ is a prefix that takes
+  one operand, it cannot join two).
 :::
 
 :::definition{#precedence term="Precedence and grouping" depth="standard"}
-To save brackets we use the order (tightest first): $\neg$, then $\wedge$, then $\vee$, then $\to$, then
-$\leftrightarrow$. So $\neg p \vee q \to r$ means $((\neg p) \vee q) \to r$. Implication groups to the
-**right**: $p \to q \to r$ means $p \to (q \to r)$. When a question writes brackets, they override all of
-this; when it does not and the reading matters, add the brackets yourself before evaluating.
+To save brackets we use the order (tightest first):
+
+| Rank | Connective | So … | means … |
+|:-:|:--|:--|:--|
+| 1 | $\neg$ | $\neg p \wedge q$ | $(\neg p) \wedge q$ |
+| 2 | $\wedge$ | $p \vee q \wedge r$ | $p \vee (q \wedge r)$ |
+| 3 | $\vee$ | $p \vee q \to r$ | $(p \vee q) \to r$ |
+| 4 | $\to$ | $p \to q \leftrightarrow r$ | $(p \to q) \leftrightarrow r$ |
+| 5 | $\leftrightarrow$ | | |
+
+So $\neg p \vee q \to r$ means $((\neg p) \vee q) \to r$. A $\neg$ applies only to the smallest formula
+directly after it: a variable, a constant, another $\neg$, or a bracket. Implication groups to the
+**right**: $p \to q \to r$ means $p \to (q \to r)$. For $\wedge$, $\vee$, $\oplus$, $\leftrightarrow$ the grouping of a
+chain does not matter, because each is associative.
+
+Two conventions are **not** universal, so treat them with care. Some books give $\wedge$ and $\vee$ the same
+rank, and some refuse to read an unbracketed chain $p \to q \to r$ at all. And $\oplus$ has no agreed place;
+in this subject (and in the Lab below) it sits between $\vee$ and $\to$, so $p \vee q \oplus r$ is $(p \vee q)
+\oplus r$. GATE papers write the brackets whenever the reading matters; when a question does not and the
+reading matters, add the brackets yourself before evaluating.
+:::
+
+:::definition{#main-connective term="Main connective and parse tree" depth="standard"}
+The **main connective** of a formula is the connective applied last: the root of its parse tree. To
+find it, look **outside all brackets** for the connective of **lowest** precedence (rank 5 before 4
+before 3 …); in a chain of $\to$'s it is the **leftmost** $\to$ (right grouping), and a formula that
+starts with $\neg$ followed by a bracket enclosing everything has $\neg$ as its main connective.
+
+The main connective names the formula: $\neg p \vee q \to r$ is an **implication** (root $\to$, hypothesis
+$\neg p \vee q$, conclusion $r$), while $\neg(p \vee q \to r)$ is a **negation**. A truth table is just the parse
+tree evaluated bottom-up, one column per node.
+:::
+
+:::viz{#parse-tree-viz spec="parse-tree" mode="animate" depth="standard"}
+:::
+
+:::trap{#trap-neg-scope title="¬ reaches only the next symbol" depth="quick"}
+$\neg p \wedge q$ is $(\neg p) \wedge q$, not $\neg(p \wedge q)$. They differ on two rows: on $p$ = T,
+$q$ = F and on $p$ = F, $q$ = F the first is F and the second T (they agree only on TT and FT). The wrong reading is the one
+examiners expect from students who "distribute" the $\neg$ by eye. When a negation is meant to cover a
+compound, the paper writes the bracket: $\neg(p \wedge q)$.
 :::
 
 :::trap{#trap-assoc title="Implication is not associative" depth="quick"}
 $(p \to q) \to r$ and $p \to (q \to r)$ differ: with $p = q = r = $ F, the first is $(\text{T}) \to
-\text{F} = $ F, the second is $\text{F} \to (\dots) = $ T. Never regroup an implication chain.
+\text{F} = $ F, the second is $\text{F} \to (\dots) = $ T. Never regroup an implication chain. (Contrast
+$\leftrightarrow$ and $\oplus$, where regrouping is always safe.)
 :::
 
 :::note{#recap-connectives title="Recap" depth="quick"}
 $\neg$ flips; $\wedge$ needs both; $\vee$ needs one (inclusive); $p \to q$ is false only on T→F, so it
 equals $\neg p \vee q$; "$p$ only if $q$" is $p \to q$; $\leftrightarrow$ means the sides agree, $\oplus$
-that they differ.
+that they differ. Read a formula by precedence ($\neg, \wedge, \vee, \to, \leftrightarrow$; $\to$ to the right),
+find the main connective, and evaluate the tree from the leaves up.
 :::
 
 ### Worked examples: the connectives
@@ -306,6 +462,123 @@ reading (right-associative), but the two groupings are different propositions.
 :::
 ::::
 
+### Worked examples: ↔, ⊕ and precedence
+
+::::example{#ex-prec-easy level="easy" title="Bracket, find the root, evaluate" depth="standard"}
+Insert all brackets in $\neg p \vee q \wedge r \to p \leftrightarrow q$, name the main connective, and evaluate
+it for $p$ = F, $q$ = T, $r$ = F.
+
+:::step{why="Apply the ranks from the tightest: ¬ first, then ∧, then ∨, then →, and ↔ last."}
+$\neg p$ and $q \wedge r$ are formed first; then $\neg p \vee (q \wedge r)$; then $(\neg p \vee (q \wedge r)) \to p$;
+finally the whole thing is joined to $q$ by $\leftrightarrow$:
+$\big((\neg p \vee (q \wedge r)) \to p\big) \leftrightarrow q$.
+:::
+
+:::step{why="The connective applied last is the root of the tree; here it is the lowest-ranked one outside all brackets."}
+The main connective is $\leftrightarrow$: the formula is a **biconditional** between $(\neg p \vee (q \wedge r)) \to p$
+and $q$.
+:::
+
+:::step{why="Evaluate the tree from the leaves up, one node at a time."}
+$\neg p = \text{T}$; $q \wedge r = \text{T} \wedge \text{F} = \text{F}$; $\neg p \vee (q \wedge r) = \text{T} \vee \text{F} = \text{T}$.
+:::
+
+:::step{why="The implication has a true hypothesis and the conclusion p is F, the one false row of →."}
+$\text{T} \to p = \text{T} \to \text{F} = \text{F}$.
+:::
+
+:::step{why="A biconditional is true when the sides agree; here they disagree."}
+$\text{F} \leftrightarrow q = \text{F} \leftrightarrow \text{T} = \text{F}$.
+:::
+
+:::answer
+Fully bracketed: $((\neg p \vee (q \wedge r)) \to p) \leftrightarrow q$; main connective $\leftrightarrow$; value **F**.
+:::
+::::
+
+::::example{#ex-prec-medium level="medium" title="Where does the ∧ belong?" depth="standard"}
+On how many of the 8 rows do $p \wedge q \to r$ and $p \wedge (q \to r)$ take different values?
+
+:::step{why="∧ outranks →, so the unbracketed formula is (p ∧ q) → r, an implication."}
+$p \wedge q \to r$ means $(p \wedge q) \to r$. It is false only when $p \wedge q$ is T and $r$ is F: the single row
+TTF. So it is true on 7 rows.
+:::
+
+:::step{why="The bracketed formula is a conjunction, so it needs both parts: p true, and q → r true."}
+$p \wedge (q \to r)$ is true only when $p$ = T and $(q, r) \ne$ (T, F): rows TTT, TFT, TFF. True on 3 rows.
+:::
+
+:::step{why="Compare the two columns row by row. The key observation: when p = F the implication is vacuously true, but the conjunction is false."}
+Rows with $p$ = T: both formulas agree (both are false on TTF, true on the other three). Rows with $p$ = F
+(four of them): the first is T, the second F.
+:::
+
+:::answer
+They differ on **4** rows, exactly the rows with $p$ = F. Reading $p \wedge q \to r$ as $p \wedge (q \to r)$ is
+the classic precedence slip; it turns an implication into a conjunction.
+:::
+::::
+
+::::example{#ex-iff-chain level="gate" title="When is p ↔ q ↔ r true?" depth="standard"}
+List the rows on which $p \leftrightarrow q \leftrightarrow r$ is true, and decide whether it is equivalent to
+$p \oplus q \oplus r$.
+
+:::step{why="↔ is associative, so bracket from the left: (p ↔ q) ↔ r. Fill the inner column first."}
+$p \leftrightarrow q$ on the rows TTT, TTF, TFT, TFF, FTT, FTF, FFT, FFF: T, T, F, F, F, F, T, T.
+:::
+
+:::step{why="Now compare that column with r: the outer ↔ is true where they agree."}
+$(p \leftrightarrow q) \leftrightarrow r$: T, F, F, T, F, T, T, F. True on TTT, TFF, FTF, FFT.
+:::
+
+:::step{why="Sanity check with the parity theorem: true exactly when the number of F's is even (0 or 2)."}
+TTT has no F; TFF, FTF, FFT have two each. FFF has three F's and is false, as predicted.
+:::
+
+:::step{why="Compare with p ⊕ q ⊕ r, true when the number of T's is odd (1 or 3)."}
+$p \oplus q \oplus r$ is true on TTT (three T's) and on TFF, FTF, FFT (one T each): the same four rows.
+:::
+
+:::answer
+True on TTT, TFF, FTF, FFT; and yes, $p \leftrightarrow q \leftrightarrow r \equiv p \oplus q \oplus r$ (three variables
+is odd, so the two chains coincide). In particular the chain is **not** "all three equal": it is false
+on FFF.
+:::
+::::
+
+::::example{#ex-exactly-one level="gate" title="Edge case: a formula for 'exactly one of p, q, r'" depth="standard"}
+A student proposes $p \oplus q \oplus r$ for "exactly one of $p, q, r$ is true". Test it and repair it.
+
+:::step{why="'Exactly one' is about a count, so test the boundary counts: 0, 1, 2, 3 true variables."}
+The ⊕-chain is true when the count of T's is odd: counts 1 and **3**.
+:::
+
+:::step{why="The boundary row with all three true is the one that breaks the proposal."}
+On TTT the proposal gives T, but three (not one) variables are true. Wrong on exactly that row.
+:::
+
+:::step{why="Remove the bad row by adding a conjunct that is false only there."}
+$(p \oplus q \oplus r) \wedge \neg(p \wedge q \wedge r)$ is true on TFF, FTF, FFT only.
+:::
+
+:::step{why="A second method, from the definition: exactly one = at least one AND at most one."}
+$(p \vee q \vee r) \wedge \neg(p \wedge q) \wedge \neg(p \wedge r) \wedge \neg(q \wedge r)$: the first factor rules out FFF,
+the pair conditions rule out every row with two or more T's. Same three rows.
+:::
+
+:::answer
+$p \oplus q \oplus r$ fails on TTT; $(p \oplus q \oplus r) \wedge \neg(p \wedge q \wedge r)$ (or the at-least-one,
+at-most-one form) is correct. For two variables, $p \oplus q$ really is "exactly one"; the trap appears
+from three variables on.
+:::
+::::
+
+:::note{#recap-prec-examples title="Recap" depth="quick"}
+Bracket by rank before you evaluate, and name the main connective: it decides whether the formula is an
+implication, a conjunction or a biconditional. For $\leftrightarrow$/$\oplus$ chains count F's or T's, and for
+any "exactly $k$" condition test the boundary rows (all true, all false).
+:::
+
 ## Truth tables
 
 :::intuition{#tt-intuition title="List every world, then let the formula vote" depth="standard"}
@@ -326,7 +599,7 @@ ending with the whole formula.
 Each of the $n$ variables independently takes one of 2 values, so by the product rule there are
 $2 \cdot 2 \cdots 2 = 2^n$ assignments. **Sanity check:** one variable gives 2 rows (T, F), two give 4,
 three give 8. A consequence used in Lesson 2: there are $2^{2^n}$ different truth-table columns, i.e.
-$2^{2^n}$ different propositions in $n$ variables ($16$ for $n = 2$).
+$2^{2^n}$ pairwise non-equivalent propositions in $n$ variables ($16$ for $n = 2$).
 :::
 
 :::viz{#tt-build-viz spec="truth-table-build" mode="animate" depth="standard"}
@@ -611,6 +884,47 @@ p$.
 sentences with several clauses, apply it clause by clause, after bracketing the sentence.
 :::
 
+:::definition{#more-patterns term="More glue words and counting phrases" depth="standard"}
+| English | Formula | What it forbids |
+|:--|:--|:--|
+| $p$ but $q$; $p$ although $q$; $p$ yet $q$; $p$, however $q$ | $p \wedge q$ | anything but TT |
+| neither $p$ nor $q$ | $\neg p \wedge \neg q \equiv \neg(p \vee q)$ | every row with a T |
+| not both $p$ and $q$ | $\neg(p \wedge q) \equiv \neg p \vee \neg q$ | only TT |
+| $p$ or $q$; either $p$ or $q$ | $p \vee q$ (inclusive) | only FF |
+| either $p$ or $q$, but not both | $p \oplus q$ | TT and FF |
+| $q$ whenever $p$; $q$ when $p$; $q$ provided that $p$ | $p \to q$ | $p$ true, $q$ false |
+| at least one of $p, q, r$ | $p \vee q \vee r$ | only FFF |
+| at most one of $p, q, r$ | $\neg(p \wedge q) \wedge \neg(p \wedge r) \wedge \neg(q \wedge r)$ | every row with two or more T's |
+| exactly one of $p, q, r$ | (at least one) $\wedge$ (at most one) | rows with 0, 2 or 3 T's |
+| all of $p, q, r$ / none of them | $p \wedge q \wedge r$ / $\neg p \wedge \neg q \wedge \neg r$ | |
+
+Three habits make these safe. First, "but" and its relatives assert **both** clauses; the contrast is
+tone, not logic. Second, the clause after "whenever", "when", "provided that" is the **hypothesis**,
+wherever it stands in the sentence. Third, "at most one" is a conjunction of **pairwise** "not both"
+conditions: for $k$ variables there are $\binom{k}{2}$ of them.
+:::
+
+:::trap{#trap-neither title="'Neither … nor' is not 'not both'" depth="quick"}
+"Neither $p$ nor $q$" denies **each** part: $\neg p \wedge \neg q$, true only on FF. "Not both $p$ and $q$"
+denies only the **combination**: $\neg(p \wedge q)$, true on TF, FT and FF. The wrong answer examiners
+expect for "neither … nor" is $\neg p \vee \neg q$ (that is "not both", by De Morgan); the two differ on
+the rows TF and FT.
+:::
+
+:::trap{#trap-whenever title="'q whenever p' puts p first in the formula" depth="quick"}
+"The alarm rings whenever the door opens" is $\text{open} \to \text{ring}$, even though "the alarm rings"
+comes first in the sentence. The tempting wrong answer is $\text{ring} \to \text{open}$, the converse.
+Test with the forbidden situation: the sentence is broken by an open door and a silent alarm, which is
+the false row of $\text{open} \to \text{ring}$.
+:::
+
+:::trap{#trap-either-or title="'Either … or' is inclusive unless the sentence says 'but not both'" depth="quick"}
+In everyday speech "you can have tea or coffee" often means one of them, but logic (and GATE) read "or"
+and "either … or" as **inclusive** $\vee$ unless the sentence adds "but not both", "exactly one" or
+similar. Writing $\oplus$ for a bare "either … or" is the error; writing $\vee$ for "but not both" is the
+opposite error.
+:::
+
 ### Worked examples: translation
 
 ::::example{#ex-tr-easy level="easy" title="'Only if' and 'if'" depth="quick"}
@@ -697,9 +1011,113 @@ different situations.)
 :::
 ::::
 
+### Worked examples: more translation patterns
+
+::::example{#ex-tr2-easy level="easy" title="'Neither … nor' against 'not both'" depth="quick"}
+Let $r$: it is raining, $c$: it is cold. Translate (i) "it is neither raining nor cold" and (ii) "it is
+not both raining and cold", and find the rows where they disagree.
+
+:::step{why="'Neither p nor q' denies each part separately."}
+(i) $\neg r \wedge \neg c$, true only on FF.
+:::
+
+:::step{why="'Not both' denies only the combination; by De Morgan it is ¬r ∨ ¬c."}
+(ii) $\neg(r \wedge c) \equiv \neg r \vee \neg c$, false only on TT.
+:::
+
+:::step{why="Compare the columns on the rows TT, TF, FT, FF."}
+(i): F, F, F, T. (ii): F, T, T, T. They disagree on TF and FT.
+:::
+
+:::answer
+(i) $\neg r \wedge \neg c$, (ii) $\neg(r \wedge c)$; they disagree on the two rows where exactly one of
+$r, c$ holds. (i) implies (ii), but not conversely.
+:::
+::::
+
+::::example{#ex-tr2-medium level="medium" title="'Whenever' and 'but' in one sentence" depth="standard"}
+$a$: the alarm sounds, $d$: the door is open, $s$: the system is armed. Translate "the alarm sounds
+whenever the door is open, but it does not sound if the system is disarmed", and decide whether it
+follows that the system is armed whenever the door is open.
+
+:::step{why="'But' joins two asserted clauses, so the whole sentence is a conjunction."}
+Clause 1 ∧ clause 2.
+:::
+
+:::step{why="'q whenever p' is p → q: the 'whenever' clause (the door is open) is the hypothesis."}
+Clause 1: $d \to a$.
+:::
+
+:::step{why="'If the system is disarmed, it does not sound': hypothesis ¬s, conclusion ¬a."}
+Clause 2: $\neg s \to \neg a$, equivalently (contrapositive) $a \to s$.
+:::
+
+:::step{why="Chain the two promises: d forces a, and a forces s. Check by looking for a row with d ∧ ¬s that keeps both clauses."}
+If $d$ = T and $s$ = F, clause 1 forces $a$ = T and clause 2 forces $a$ = F: impossible. So every row
+satisfying the sentence has $d \to s$.
+:::
+
+:::answer
+$(d \to a) \wedge (\neg s \to \neg a)$; it **does** imply $d \to s$ (but not $s \to d$: an armed system with
+the door shut satisfies the sentence).
+:::
+::::
+
+::::example{#ex-tr2-gate level="gate" title="'At most one' (GATE style)" depth="standard"}
+$x, y, z$ say that servers X, Y, Z are down. Which formula says "at most one server is down":
+(a) $\neg(x \wedge y \wedge z)$, (b) $(\neg x \wedge \neg y) \vee (\neg x \wedge \neg z) \vee (\neg y \wedge \neg z)$,
+(c) $x \oplus y \oplus z$?
+
+:::step{why="Translate the target first: at most one down means no two are down together, i.e. pairwise 'not both'."}
+Target: $\neg(x \wedge y) \wedge \neg(x \wedge z) \wedge \neg(y \wedge z)$, true on FFF, TFF, FTF, FFT (4 rows).
+:::
+
+:::step{why="(a) only forbids all three being down. Test a boundary row with two down."}
+(a) on TTF: $\neg(\text{F}) = $ T, but two servers are down. Wrong (it is true on 7 rows).
+:::
+
+:::step{why="(b) says some pair of servers are both up, which is 'at least two up' = 'at most one down'."}
+(b) is true exactly when two or more variables are F: FFF, TFF, FTF, FFT. Matches.
+:::
+
+:::step{why="(c) is a parity test: odd number down. Test FFF (none down, allowed) and TTT."}
+(c) is F on FFF (should be T) and T on TTT (should be F). Wrong twice.
+:::
+
+:::answer
+**(b)**. "At most one down" equals "at least two up"; the wrong options either forbid too little (a) or
+test parity instead of a count (c).
+:::
+::::
+
+::::example{#ex-tr2-edge level="gate" title="Edge case: 'either … or …, but not both'" depth="standard"}
+$k$: the key is correct, $\ell$: the door stays locked. Translate "either the key is correct or the door
+stays locked, but not both", and say how it differs from the version without "but not both".
+
+:::step{why="'But not both' switches off the TT row of the inclusive or: that is exclusive or."}
+$k \oplus \ell$, equivalently $(k \vee \ell) \wedge \neg(k \wedge \ell)$.
+:::
+
+:::step{why="Move the negation across the biconditional: p ⊕ q ≡ p ↔ ¬q. This reads well in English."}
+$k \oplus \ell \equiv k \leftrightarrow \neg\ell$: "the key is correct exactly when the door does not stay
+locked".
+:::
+
+:::step{why="Without 'but not both' the sentence is the inclusive k ∨ ℓ. Compare the columns TT, TF, FT, FF."}
+$k \oplus \ell$: F, T, T, F. $k \vee \ell$: T, T, T, F. They differ only on TT.
+:::
+
+:::answer
+$k \oplus \ell$ ($\equiv k \leftrightarrow \neg\ell$); dropping "but not both" gives $k \vee \ell$, which differs only on
+the row where both hold.
+:::
+::::
+
 :::note{#recap-translate title="Recap" depth="quick"}
-"$p$ only if $q$" = $p \to q$; "$p$ if $q$" = $q \to p$; "$q$ unless $p$" = $\neg p \to q$ = $p \vee q$;
-necessary = conclusion; "cannot $B$ when $A$" = $A \to \neg B$. Always check by the forbidden situation.
+"$p$ only if $q$" = $p \to q$; "$p$ if $q$" = "$p$ whenever $q$" = $q \to p$; "$q$ unless $p$" = $\neg p \to q$ =
+$p \vee q$; necessary = conclusion; "cannot $B$ when $A$" = $A \to \neg B$; "but" = $\wedge$; "neither … nor" =
+$\neg p \wedge \neg q$, "not both" = $\neg(p \wedge q)$; "or" is inclusive unless "but not both" makes it $\oplus$;
+"at most one" = pairwise "not both". Always check by the forbidden situation.
 :::
 
 ## Operators defined by a truth table
@@ -712,8 +1130,8 @@ possible columns, so it can always be written with $\neg$, $\wedge$, $\vee$.
 :::
 
 :::definition{#custom-def term="Reading a new connective from its table" depth="standard"}
-If a binary operator $\odot$ is false on exactly one row, it is an implication-like connective: the
-false row $(a, b)$ tells you which. For example, the table T, T, F, T (false only at $A$ = F, $B$ = T)
+If a binary operator $\odot$ is false on exactly one row, it is a disjunction of two literals (and so also
+an implication): the false row $(a, b)$ tells you which literals, each one chosen to be false on that row. For example, the table T, T, F, T (false only at $A$ = F, $B$ = T)
 gives $A \odot B \equiv \neg(\neg A \wedge B) \equiv A \vee \neg B \equiv B \to A$. In general, write the
 negation of the false rows (CNF, Lesson 2) or the disjunction of the true rows (DNF).
 :::
@@ -807,9 +1225,10 @@ Morgan. For "exactly $k$ true" conditions, split on one variable and test the bo
 
 ## Try it: the Truth Table Lab
 
-Type any formula (use the buttons or write `->`, `<->`, `&`, `|`, `~`), watch its table fill, and read
-the classification. Try `p -> q -> r` against `(p -> q) -> r`, or define an operator by its four
-outputs and test the GATE 2006 options.
+Type any formula (use the buttons or write `->`, `<->`, `&`, `|`, `~`, `xor`; `T` and `F` are the
+constants), watch its table fill, and read the classification. Try `p -> q -> r` against `(p -> q) -> r`,
+`p & q -> r` against `p & (q -> r)`, the parity preset `p <-> q <-> r`, or define an operator by its four
+outputs and test the GATE 2006 options. The Compare tab checks two formulas for equivalence row by row.
 
 :::lab{#lab-tt lab="truth-table" tab="table" depth="standard"}
 :::
@@ -836,7 +1255,7 @@ All twelve previous-year questions. Try each before opening the solution.
 :::pyq{id="cse-2009-cs-24" tests="custom-def,ex-op-medium" depth="standard"}
 :::
 
-:::pyq{id="cse-2014-1-cs-53" tests="iff-xor-def,ex-op-edge" depth="standard"}
+:::pyq{id="cse-2014-1-cs-53" tests="iff-xor-def,trap-xor-exactly-one,ex-op-edge" depth="standard"}
 :::
 
 :::pyq{id="cse-2014-3-cs-1" tests="contrapositive-theorem,ex-var-gate" depth="standard"}
@@ -848,10 +1267,10 @@ All twelve previous-year questions. Try each before opening the solution.
 :::pyq{id="cse-2016-2-cs-1" tests="implication-def,tt-def,trick-false-row" depth="standard"}
 :::
 
-:::pyq{id="cse-2017-2-cs-11" tests="imp-readings,ex-tr-medium,trap-but" depth="standard"}
+:::pyq{id="cse-2017-2-cs-11" tests="imp-readings,ex-tr-medium,trap-but,main-connective" depth="standard"}
 :::
 
-:::pyq{id="cse-2024-2-cs-2" tests="necessary-sufficient,trick-forbidden,ex-tr-edge" depth="standard"}
+:::pyq{id="cse-2024-2-cs-2" tests="necessary-sufficient,trick-forbidden,trap-whenever,ex-tr-edge" depth="standard"}
 :::
 
 ## Practice
@@ -900,8 +1319,10 @@ Our own questions in GATE formats: warm-ups first, then exam-level questions, th
 | Readings | "if $p$ then $q$" = "$p$ only if $q$" = "$q$ is necessary for $p$" = "$p$ is sufficient for $q$" |
 | Unless | "$q$ unless $p$" = $\neg p \to q$ = $p \vee q$ |
 | Variants | contrapositive $\neg q \to \neg p$ ≡ original; converse ≡ inverse ≢ original |
-| $\leftrightarrow$ / $\oplus$ | sides agree / sides differ; $p \oplus q \equiv \neg(p \leftrightarrow q)$ |
-| Grouping | $\neg > \wedge > \vee > \to > \leftrightarrow$; $p \to q \to r = p \to (q \to r)$ |
+| $\leftrightarrow$ / $\oplus$ | sides agree / sides differ; $p \oplus q \equiv \neg(p \leftrightarrow q) \equiv p \leftrightarrow \neg q$; both associative |
+| Parity | $\oplus$-chain: odd number of T's; $\leftrightarrow$-chain: even number of F's; not "all equal", not "exactly one" |
+| Grouping | $\neg > \wedge > \vee > \to > \leftrightarrow$; $p \to q \to r = p \to (q \to r)$; main connective = the root |
+| More English | but = $\wedge$; neither–nor = $\neg p \wedge \neg q$; not both = $\neg(p \wedge q)$; "$q$ whenever $p$" = $p \to q$; at most one = pairwise not both |
 | New operators | rewrite from the false rows, then simplify each option |
 :::
 

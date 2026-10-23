@@ -56,6 +56,90 @@ exactly2 = lambda r: sum(r.values()) == 2  # noqa: E731
 f14 = "(~(p <-> q) & r) | (p & q & ~r)"
 assert all(L.ev(L.parse(f14), r) == exactly2(r) for r in L.rows(list("pqr")))          # ex-op-edge
 
+# ── ↔ and ⊕: definitions, algebra, parity (iff-xor-def, iff-xor-props, parity-theorem, traps) ──
+assert L.equivalent("p <-> q", "(p & q) | (~p & ~q)")
+assert L.equivalent("p xor q", "(p & ~q) | (~p & q)") and L.equivalent("p xor q", "(p | q) & ~(p & q)")
+assert all(L.equivalent("~(p <-> q)", g) for g in ["~p <-> q", "p <-> ~q", "p xor q"]) and L.equivalent("~p <-> ~q", "p <-> q")
+assert L.equivalent("p xor F", "p") and L.equivalent("p xor T", "~p") and L.classify("p xor p") == "contradiction"
+assert L.equivalent("p <-> T", "p") and L.equivalent("p <-> F", "~p") and L.classify("p <-> p") == "tautology"
+for op_ in ("xor", "<->"):
+    assert L.equivalent(f"p {op_} q", f"q {op_} p") and L.equivalent(f"(p {op_} q) {op_} r", f"p {op_} (q {op_} r)")
+assert not L.equivalent("p -> q", "q -> p") and not L.equivalent("(p -> q) -> r", "p -> (q -> r)")
+assert L.equivalent("(x xor y) <-> z", "x <-> (y xor z)") and L.equivalent("p <-> q", "p xor q xor T")
+for n in range(1, 7):                                                                # parity theorem, n = 1..6
+    vs = [f"v{i}" for i in range(n)]
+    xc, ic = " xor ".join(vs), " <-> ".join(vs)
+    for r in L.rows(vs):
+        t = sum(r.values())
+        assert L.ev(L.parse(xc), r) == (t % 2 == 1)
+        if n >= 2:
+            assert L.ev(L.parse(ic), r) == ((n - t) % 2 == 0)
+            # any bracketing: right-nested chain too
+            rn = vs[-1]
+            for v in reversed(vs[:-1]):
+                rn = f"({v} <-> {rn})"
+            assert L.ev(L.parse(rn), r) == L.ev(L.parse(ic), r)
+    assert L.table(xc, vs).count(T) == 2 ** (n - 1)
+    if n >= 2:
+        assert L.table(ic, vs).count(T) == 2 ** (n - 1)
+        assert L.equivalent(xc, ic) == (n % 2 == 1)
+TTF = lambda f, vs: ["".join("T" if r[v] else "F" for v in vs) for r in L.rows(vs) if L.ev(L.parse(f), r)]  # noqa: E731
+assert TTF("p <-> q <-> r", list("pqr")) == ["TTT", "TFF", "FTF", "FFT"]                      # trap-iff-chain, ex-iff-chain
+assert TTF("(p <-> q) & (q <-> r)", list("pqr")) == ["TTT", "FFF"]
+assert L.table("p <-> q", list("pqr")) == [T, T, F_, F_, F_, F_, T, T]
+assert L.table("(p <-> q) <-> r", list("pqr")) == [T, F_, F_, T, F_, T, T, F_]
+assert L.equivalent("p <-> q <-> r", "p xor q xor r")
+assert TTF("p xor q xor r", list("pqr")) == ["TTT", "TFF", "FTF", "FFT"]                       # trap-xor-exactly-one
+one = lambda r: sum(r.values()) == 1  # noqa: E731
+for g in ["(p xor q xor r) & ~(p & q & r)", "(p | q | r) & ~(p & q) & ~(p & r) & ~(q & r)"]:   # ex-exactly-one
+    assert all(L.ev(L.parse(g), r) == one(r) for r in L.rows(list("pqr")))
+assert all(L.ev(L.parse("p xor q"), r) == one(r) for r in L.rows(["p", "q"]))
+
+# ── WFFs, precedence, main connective (wff-def, precedence, main-connective, traps) ──
+for good in ["p", "~~q", "(p -> (q & ~r))", "T", "F"]:
+    L.parse(good)
+for bad in ["p & | q", "~", "(p -> q", "p q", "p ~ q"]:
+    try:
+        L.parse(bad)
+        raise SystemExit(f"{bad!r} parsed but is not a WFF")
+    except (ValueError, AssertionError):
+        pass
+assert L.parse("~p & q") == L.parse("(~p) & q") and L.parse("p | q & r") == L.parse("p | (q & r)")
+assert L.parse("p | q -> r") == L.parse("(p | q) -> r") and L.parse("p -> q <-> r") == L.parse("(p -> q) <-> r")
+assert L.parse("p | q xor r") == L.parse("(p | q) xor r")                                   # ⊕ between ∨ and →
+assert L.parse("~p | q -> r")[0] == "imp" and L.parse("~(p | q -> r)")[0] == "not"
+d = L.table("~p & q", ["p", "q"]), L.table("~(p & q)", ["p", "q"])                          # trap-neg-scope
+assert [i for i in range(4) if d[0][i] != d[1][i]] == [1, 3] and d[0][1] is F_ and d[0][3] is F_
+f_prec = "~p | q & r -> p <-> q"                                                             # ex-prec-easy
+assert L.parse(f_prec) == L.parse("((~p | (q & r)) -> p) <-> q") and L.parse(f_prec)[0] == "iff"
+assert L.ev(L.parse(f_prec), {"p": F_, "q": T, "r": F_}) is F_
+a1, a2 = L.table("p & q -> r", list("pqr")), L.table("p & (q -> r)", list("pqr"))          # ex-prec-medium
+assert a1.count(T) == 7 and TTF("p & (q -> r)", list("pqr")) == ["TTT", "TFT", "TFF"]
+assert [i for i in range(8) if a1[i] != a2[i]] == [4, 5, 6, 7]
+
+# ── More translation patterns (more-patterns, traps, ex-tr2-*) ──
+assert L.table("~p & ~q", ["p", "q"]) == [F_, F_, F_, T] and L.equivalent("~p & ~q", "~(p | q)")
+assert L.table("~(p & q)", ["p", "q"]) == [F_, T, T, T] and L.equivalent("~(p & q)", "~p | ~q")
+assert L.implies("~r & ~c", "~(r & c)") and not L.implies("~(r & c)", "~r & ~c")             # ex-tr2-easy
+assert TTF("p | q | r", list("pqr")).count("FFF") == 0 and len(TTF("p | q | r", list("pqr"))) == 7
+amo = "~(p & q) & ~(p & r) & ~(q & r)"
+assert TTF(amo, list("pqr")) == ["TFF", "FTF", "FFT", "FFF"]
+alarm = "(d -> a) & (~s -> ~a)"                                                              # ex-tr2-medium
+assert L.equivalent("~s -> ~a", "a -> s") and L.implies(alarm, "d -> s") and not L.implies(alarm, "s -> d")
+assert not L.consistent(["d", "~s", alarm])
+srv = "~(x & y) & ~(x & z) & ~(y & z)"                                                       # ex-tr2-gate
+assert TTF(srv, list("xyz")) == ["TFF", "FTF", "FFT", "FFF"]
+assert L.table("~(x & y & z)", list("xyz")).count(T) == 7 and L.ev(L.parse("~(x & y & z)"), {"x": T, "y": T, "z": F_})
+assert L.equivalent("(~x & ~y) | (~x & ~z) | (~y & ~z)", srv)
+assert not L.ev(L.parse("x xor y xor z"), {"x": F_, "y": F_, "z": F_}) and L.ev(L.parse("x xor y xor z"), {"x": T, "y": T, "z": T})
+assert L.equivalent("k xor l", "(k | l) & ~(k & l)") and L.equivalent("k xor l", "k <-> ~l")  # ex-tr2-edge
+assert L.table("k xor l", ["k", "l"]) == [F_, T, T, F_] and L.table("k | l", ["k", "l"]) == [T, T, T, F_]
+# custom-def: each one-false-row operator is the disjunction of the two literals false on that row.
+for i, (a_, b_) in enumerate([(T, T), (T, F_), (F_, T), (F_, F_)]):
+    tab = tuple(j != i for j in range(4))
+    lit = f"{'~A' if a_ else 'A'} | {'~B' if b_ else 'B'}"
+    assert L.equivalent(L.parse("A ⊙ B", {"⊙": tab}), lit)
+
 # ── PYQs (keys re-derived) ────────────────────────────────────────────────
 # 1994 (TF): "p <-> q does not imply p -> ~q" is TRUE: some row makes p <-> q true and p -> ~q false.
 assert not L.implies("p <-> q", "p -> ~q") and B["cse-1994-a-3-13"]["answer"] == "True"
@@ -102,7 +186,9 @@ q = B["cse-2024-2-cs-2"]
 D.assert_key("cse-2024-2-cs-2", D.which(q, lambda t: L.equivalent(t, "~(q & p)")))
 
 # ── Practice ───────────────────────────────────────────────────────────────
-D.assert_mcq(P["nx-dm-01-01-q01"], "C")
+q = P["nx-dm-01-01-q01"]
+q01 = {"A": "c -> r", "B": "~r -> ~c", "C": "~c -> ~r", "D": "r & ~c"}
+D.assert_mcq(q, [k for k, f in q01.items() if L.equivalent(f, "r -> c")][0])
 D.assert_nat(P["nx-dm-01-01-q02"], L.table("(p | q) -> r", list("pqr")).count(F_))
 q = P["nx-dm-01-01-q03"]
 D.assert_mcq(q, D.which(q, lambda t: L.equivalent(t, "e -> f"))[0])
@@ -126,5 +212,5 @@ cnt = sum(1 for bits in itertools.product([T, F_], repeat=4) if sum(bits) == 2 a
 D.assert_nat(P["nx-dm-01-01-q10"], cnt)
 assert len([k for k in P if k.startswith("nx-dm-01-01-")]) == 10
 
-D.must_contain(TXT, "$x = 11$", "(X \\wedge \\neg Z) \\to Y", "$q \\to \\neg p$", "$\\sim(\\sim A \\odot B)$")
-print("l1_01_connectives: connective tables, contrapositive, 12 PYQ keys and 10 practice answers OK")
+D.must_contain(TXT, "$x = 11$", "They differ on **4** rows", "True on TTT, TFF, FTF, FFT", "**(b)**", "(X \\wedge \\neg Z) \\to Y", "$q \\to \\neg p$", "$\\sim(\\sim A \\odot B)$")
+print("l1_01_connectives: connective tables, ↔/⊕ algebra and parity, precedence, translations, 12 PYQ keys and 10 practice answers OK")
