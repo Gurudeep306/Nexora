@@ -82,3 +82,24 @@ test('quantifier lab: parsing, finite evaluation and the model search match pred
   assert.deepEqual(Q.freeVars(Q.parse('P(x) & forall y R(x, y)')), ['x']);
   assert.throws(() => Q.parse('forall x (P(x)'));
 });
+
+test('relation lab: properties with witnesses, closures, Warshall stages, classes and counts match rellib', async () => {
+  const R = await load('relLogic.ts');
+  const vec = vectors(3);
+  for (const c of vec.cases) {
+    const m = R.fromPairs(c.n, c.pairs);
+    const at = `n=${c.n} ${JSON.stringify(c.pairs)}`;
+    assert.deepEqual(R.violations(m), c.violations, `${at}: violations`);
+    assert.deepEqual(R.compose(m, m), c.square, `${at}: R∘R`);
+    assert.deepEqual(R.inverse(m), c.inverse, `${at}: inverse`);
+    assert.deepEqual(R.reflexiveClosure(m), c.reflexive, `${at}: reflexive closure`);
+    assert.deepEqual(R.symmetricClosure(m), c.symmetric, `${at}: symmetric closure`);
+    assert.deepEqual(R.warshall(m), c.stages, `${at}: Warshall stages`);
+    assert.deepEqual(R.equivalenceClosure(m), c.equivalence, `${at}: equivalence closure`);
+    assert.equal(R.isEquivalence(m), c.isEquivalence);
+    assert.equal(R.isPartialOrder(m), c.isPartialOrder);
+    if (c.classes) assert.deepEqual(R.classes(m), c.classes, `${at}: classes`);
+  }
+  for (const [n, want] of Object.entries(vec.counts)) assert.deepEqual(R.counts(Number(n)), want, `counts n=${n}`);
+  for (const p of R.PRESETS) assert.ok(p.pairs.every(([a, b]) => a < p.n && b < p.n), p.id);
+});
