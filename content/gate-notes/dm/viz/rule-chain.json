@@ -1,0 +1,236 @@
+{
+ "version": 1,
+ "title": "Contrapositive, then chain",
+ "width": 640,
+ "height": 384,
+ "narrow": {
+  "width": 360,
+  "height": 390
+ },
+ "intro": "Two implications that do not line up can often be chained after taking a contrapositive.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Chaining two implications (GATE 2015)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Chaining S1 and S2",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "legend",
+   "type": "text",
+   "x": 320,
+   "y": 54,
+   "text": "c: known corrupt   e: elected   k: kind",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 54,
+    "size": 13
+   }
+  },
+  {
+   "id": "s1",
+   "type": "box",
+   "x": 40,
+   "y": 80,
+   "w": 240,
+   "h": 46,
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 10,
+    "y": 80,
+    "w": 160,
+    "h": 40,
+    "size": 14
+   },
+   "label": "S1: c → ¬e"
+  },
+  {
+   "id": "s2",
+   "type": "box",
+   "x": 360,
+   "y": 80,
+   "w": 240,
+   "h": 46,
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 190,
+    "y": 80,
+    "w": 160,
+    "h": 40,
+    "size": 14
+   },
+   "label": "S2: k → e"
+  },
+  {
+   "id": "s1c",
+   "type": "box",
+   "x": 40,
+   "y": 190,
+   "w": 240,
+   "h": 46,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 190,
+    "w": 160,
+    "h": 40,
+    "size": 14
+   },
+   "label": "e → ¬c"
+  },
+  {
+   "id": "res",
+   "type": "box",
+   "x": 200,
+   "y": 290,
+   "w": 240,
+   "h": 46,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 100,
+    "y": 290,
+    "w": 160,
+    "h": 40,
+    "size": 14
+   },
+   "label": "k → ¬c"
+  },
+  {
+   "id": "a1",
+   "type": "arrow",
+   "from": "s1",
+   "to": "s1c",
+   "label": "contrapositive",
+   "hidden": true
+  },
+  {
+   "id": "a2",
+   "type": "arrow",
+   "from": "s2",
+   "to": "res",
+   "hidden": true
+  },
+  {
+   "id": "a3",
+   "type": "arrow",
+   "from": "s1c",
+   "to": "res",
+   "hidden": true
+  },
+  {
+   "id": "foot",
+   "type": "text",
+   "x": 320,
+   "y": 366,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 372,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Translate both sentences about one candidate: S1 is c → ¬e and S2 is k → e. The middle letters do not match: one says ¬e, the other e.",
+   "patches": [
+    {
+     "id": "s1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "s2",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Take the contrapositive of S1: c → ¬e is equivalent to e → ¬c. Now e appears as a hypothesis.",
+   "patches": [
+    {
+     "id": "s1c",
+     "set": {
+      "hidden": false,
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S2 ends in e and the rewritten S1 starts with e. Hypothetical syllogism chains them: k → e and e → ¬c give k → ¬c.",
+   "patches": [
+    {
+     "id": "res",
+     "set": {
+      "hidden": false,
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "a3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "k → ¬c is option C: if a person is kind, he is not known to be corrupt. Options A, B and D each have a row with S1 and S2 true and the option false.",
+   "patches": [
+    {
+     "id": "foot",
+     "set": {
+      "text": "follows: k → ¬c (and its contrapositive c → ¬k)",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

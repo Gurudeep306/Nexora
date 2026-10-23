@@ -1,0 +1,282 @@
+{
+ "version": 1,
+ "title": "Truth-tellers, liars and a coin",
+ "width": 640,
+ "height": 280,
+ "narrow": {
+  "width": 360,
+  "height": 270
+ },
+ "intro": "A speaker's statement is true exactly when the speaker is truthful. Tabulate type against coin and keep the worlds where that rule holds.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "“Head if and only if I am telling the truth” (GATE 2015)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Head iff I am truthful",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 100,
+   "y": 50,
+   "cellW": 110,
+   "cellH": 36,
+   "rows": [
+    [
+     "speaker",
+     "coin",
+     "h ↔ t",
+     "fits?"
+    ],
+    [
+     "truthful",
+     "head",
+     "",
+     ""
+    ],
+    [
+     "truthful",
+     "tail",
+     "",
+     ""
+    ],
+    [
+     "liar",
+     "head",
+     "",
+     ""
+    ],
+    [
+     "liar",
+     "tail",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "narrow": {
+    "x": 10,
+    "y": 50,
+    "cellW": 85,
+    "cellH": 34
+   }
+  },
+  {
+   "id": "foot",
+   "type": "text",
+   "x": 320,
+   "y": 262,
+   "text": "t: the speaker is truthful   h: the coin shows head",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 252,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "List the four possible worlds: the speaker's type times the coin. In each, evaluate the statement h ↔ t.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "speaker",
+        "coin",
+        "h ↔ t",
+        "fits?"
+       ],
+       [
+        "truthful",
+        "head",
+        "T",
+        ""
+       ],
+       [
+        "truthful",
+        "tail",
+        "F",
+        ""
+       ],
+       [
+        "liar",
+        "head",
+        "F",
+        ""
+       ],
+       [
+        "liar",
+        "tail",
+        "T",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        2
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        4,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A truthful speaker's statement must be T and a liar's must be F. Keep a world only if the statement's value matches the type.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "speaker",
+        "coin",
+        "h ↔ t",
+        "fits?"
+       ],
+       [
+        "truthful",
+        "head",
+        "T",
+        "yes"
+       ],
+       [
+        "truthful",
+        "tail",
+        "F",
+        "no"
+       ],
+       [
+        "liar",
+        "head",
+        "F",
+        "yes"
+       ],
+       [
+        "liar",
+        "tail",
+        "T",
+        "no"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        3
+       ],
+       [
+        4,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Two worlds survive, rows 1 and 3: (truthful, head) and (liar, head). The coin is head in both.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "foot",
+     "set": {
+      "text": "surviving worlds: both show head",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So the result is head, whatever the type; the type itself stays unknown. Algebraically t ↔ (h ↔ t) ≡ h.",
+   "patches": [
+    {
+     "id": "foot",
+     "set": {
+      "text": "t ↔ (h ↔ t) ≡ h: the coin is head",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}
