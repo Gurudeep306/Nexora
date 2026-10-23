@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { Icon } from '@/components/icon/Icon'
 import { nodeIcon } from './icons'
 import { HitGrid, lineage, NODE, R, sectorAt, type RadialLayout } from './radial'
+import { prefetchSubjectRoute } from '@/routes'
 import { INTRO_CLOCK, INTRO_SKIP, introClock, pop, seg, stagger, type IntroMode } from './intro'
 import type { RiftPlayer, WebCluster, WebNode, WebStream } from './types'
 
@@ -1452,7 +1453,12 @@ export function RadialWeb({
         }
         const hs = key || sh ? null : hitSector(p)
         const sec = hs ? hs.s.id : null
-        if (key !== hovered.current || sec !== hoverSector.current) dirty.current = true
+        if (key !== hovered.current || sec !== hoverSector.current) {
+          dirty.current = true
+          // About to open it: warm its page and tree.
+          const sid = sec ?? (key ? key.split(':')[0] : null)
+          if (sid) prefetchSubjectRoute(`/learn/${sid}`)
+        }
         hovered.current = key
         hoverSector.current = sec
         canvas.style.cursor = key || sh || hs?.onName ? 'pointer' : 'grab'
