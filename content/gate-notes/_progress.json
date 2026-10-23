@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-19",
+  "updated": "2026-10-23",
   "steps": {
     "N0": "review",
     "N1": "review",
@@ -159,13 +159,13 @@
     },
     "dm": {
       "name": "Discrete Mathematics",
-      "order": 2,
-      "status": "pending",
+      "order": 3,
+      "status": "in-progress",
       "noteSets": 5,
       "pages": 919,
       "stages": {
-        "digests": "pending",
-        "outline": "pending",
+        "digests": "done",
+        "outline": "review",
         "lessons": "pending",
         "viz": "pending",
         "questions": "pending",

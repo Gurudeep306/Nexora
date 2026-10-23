@@ -1,0 +1,33 @@
+"""Every dm PYQ is assigned to exactly one lesson in content/gate-notes/dm/_outline.md.
+
+The outline lists each lesson's PYQs on a line starting "- PYQs (". This check fails
+if any dm question in src/gate/questions.json is missing (the "unassigned" list must be
+empty), appears under two lessons, or if the outline names an id that is not a dm PYQ.
+"""
+import json
+import pathlib
+import re
+
+ROOT = pathlib.Path.cwd()
+OUTLINE = ROOT / "content" / "gate-notes" / "dm" / "_outline.md"
+BANK = ROOT / "src" / "gate" / "questions.json"
+
+dm = {q["id"] for q in json.loads(BANK.read_text())["questions"] if q["subject"] == "dm"}
+lesson = None
+where = {}
+for line in OUTLINE.read_text().splitlines():
+    m = re.match(r"^### (dm-\d\d-\d\d-[a-z0-9-]+) ·", line)
+    if m:
+        lesson = m.group(1)
+        continue
+    if line.startswith("- PYQs ("):
+        assert lesson, f"PYQ line before any lesson heading: {line[:60]}"
+        for qid in re.findall(r"`([a-z0-9-]+)`", line):
+            assert qid in dm, f"{lesson}: {qid} is not a dm PYQ"
+            assert qid not in where, f"{qid} is under both {where[qid]} and {lesson}"
+            where[qid] = lesson
+
+unassigned = sorted(dm - where.keys())
+assert not unassigned, f"{len(unassigned)} unassigned dm PYQs: {unassigned}"
+assert len(where) == len(dm) == 392, (len(where), len(dm))
+print(f"{len(where)} dm PYQs assigned across {len(set(where.values()))} lessons; unassigned: 0")
