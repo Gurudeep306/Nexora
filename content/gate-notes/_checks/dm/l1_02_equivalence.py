@@ -330,6 +330,8 @@ assert [cls(f) for f in ["A <-> (A | A)", "(A | B) -> B", "A & (~(A | B))"]] == 
 # 2004 (MCQ, key A): satisfiable but not valid.
 c04 = cls(B["cse-2004-cs-70"]["text"].split("$")[1])
 D.assert_key("cse-2004-cs-70", {"contingency": "A", "tautology": "B", "contradiction": "C"}[c04])
+assert imp("(P | Q) -> R", "P -> (Q | R)") and not imp("P -> (Q | R)", "(P | Q) -> R")   # 2004 pitfall: conclusion is stronger
+assert falsifiers("(P -> (Q | R)) -> ((P | Q) -> R)") == [{"P": T, "Q": T, "R": F_}, {"P": F_, "Q": T, "R": F_}]
 # 2005 (MCQ, key B)
 sub = lambda t: t.replace("X", f"({X})").replace("Y", f"({Y})")  # noqa: E731
 q = B["cse-2005-cs-40"]
@@ -413,6 +415,12 @@ D.assert_mcq(q, D.which(q, lambda t: L.minterms(t, ["p", "q"]) == [0, 3])[0])
 D.assert_nat(P["nx-dm-01-02-q12"], len(sole))
 assert len([k for k in P if k.startswith("nx-dm-01-02-")]) == 12
 
+# Radar marks line (7 one-mark, 11 two-mark, 4 descriptive, 1 unmarked MSQ) recomputed from the bank.
+PYQ02 = [k for k in B if k in TXT and B[k]["subject"] == "dm" and f'pyq{{id="{k}"' in TXT]
+assert len(PYQ02) == 23
+dsc = [k for k in PYQ02 if B[k]["type"] == "DESC"]
+assert len(dsc) == 4 and sum(B[k]["marks"] == 1 for k in PYQ02 if k not in dsc) == 7
+assert sum(B[k]["marks"] == 2 for k in PYQ02 if k not in dsc) == 11 and sum(B[k]["marks"] is None for k in PYQ02 if k not in dsc) == 1
 D.must_contain(TXT, "\\Pi(1, 4, 6)", "\\Pi(0, 2, 3, 4)", "\\Sigma(0, 2, 3)", "$2^{2^n}$",
                "$p \\wedge (\\neg p \\vee q) \\equiv p \\wedge q$", "Exactly **2** of the 16 binary connectives")
 print("l1_02_equivalence: laws and duals, falsification, canonical forms (Π(1, 4, 6)), CNF bounds, Post classes, "

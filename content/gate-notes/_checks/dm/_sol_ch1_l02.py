@@ -266,7 +266,7 @@ SOLUTIONS["cse-2004-cs-70"] = {
         opt("D", False, "A describes it exactly."),
     ],
     "shortcut": "A conclusion that is a bare $R$ (after the arrow) can always be made true, so the formula is satisfiable; then one falsifying row settles it.",
-    "pitfalls": ["Trying $P$ = T first: then the hypothesis needs $Q \\vee R$, and with $R$ = F you need $Q$ = T, which also works (TTF), but missing the easy row wastes time."],
+    "pitfalls": ["Calling it valid because the hypothesis $P \\to (Q \\vee R)$ looks like it should give the conclusion: the conclusion $(P \\vee Q) \\to R$ is a different (and stronger) claim, refuted by $P$ = F, $Q$ = T, $R$ = F (and also by TTF).", "Calling it a contradiction after finding one false row: any row with $R$ = T makes it true."],
     "verification": "Truth table over $P, Q, R$: false on TTF and FTF, true on the other six rows.",
 }
 

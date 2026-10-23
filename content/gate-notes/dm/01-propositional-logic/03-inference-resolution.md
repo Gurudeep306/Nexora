@@ -42,7 +42,7 @@ the engine under both.
 | What | Detail |
 |:--|:--|
 | PYQs mapped to this lesson | 8 (1991–2015) |
-| Marks | 2 one-mark, 3 two-mark, 3 descriptive (1991, 1992, 1993) |
+| Marks | 3 one-mark (2012, both 2015 papers), 2 two-mark (2003, IT 2004), 3 descriptive (1991, 1992, 1993) |
 | Pattern 1 | Which arguments (or inferences) are valid: IT 2004, 2012 |
 | Pattern 2 | What follows from two English premises (chain of implications): 2015 |
 | Pattern 3 | Resolution: which statement about the rule is false (2003); show a set inconsistent by resolution (1992) |
@@ -938,8 +938,9 @@ $\{q, \neg q\}$ or $\{p, \neg p\}$, both tautologies: useless but correct. One p
 
 :::trap{#trap-resolution-equisat title="The resolvent does not imply its parents" depth="quick"}
 Resolution is a one-way street: parents $\models$ resolvent, but a satisfiable resolvent does not mean the
-parents are jointly satisfiable. GATE 2003 offered "$P \vee Q$ is satisfiable if and only if
-$(P \vee R) \wedge (Q \vee \neg R)$ is satisfiable" as a true statement; with formulas allowed for $P, Q, R$,
+parents are jointly satisfiable. GATE 2003 asks which statement about the rule is **false**; the one
+that sounds true but is the keyed false statement is "$P \vee Q$ is satisfiable if and only if
+$(P \vee R) \wedge (Q \vee \neg R)$ is satisfiable". With formulas allowed for $P, Q, R$,
 take $P = x$, $Q = \neg x$, $R = x$: the resolvent $x \vee \neg x$ is satisfiable but the parents become $x$
 and $\neg x$, which are not. (The "if and only if" does hold when $R$ is a fresh letter not occurring in $P$
 or $Q$; that special fact is what SAT solvers use, but it is not what the option claims.)
@@ -985,7 +986,8 @@ Prove $r$ from $p \vee q$, $p \to r$, $q \to r$ by resolution.
 
 :::answer
 $\square$ is derived, so $\{p \vee q, p \to r, q \to r, \neg r\}$ is unsatisfiable and $r$ follows. This is
-the constructive dilemma (with $q = s = r$), proved by resolution; the animation above draws the tree.
+the constructive dilemma with both of its conclusions equal to $r$ (from $p \vee q$, $p \to r$, $q \to r$
+infer $r \vee r \equiv r$), proved by resolution; the animation above draws the tree.
 :::
 ::::
 
@@ -1088,8 +1090,10 @@ syntactic). Three questions compare the rulebook with the truth. Does it only pr
 (**sound**)? Does it produce every truth (**complete**)? Does it avoid producing a statement together
 with its negation (**consistent**)?
 
-For propositional logic, the standard systems (and resolution) are both sound and complete, so $\vdash$ and
-$\models$ coincide. A **theory** (a set of axioms about some subject) is called complete in a second,
+For propositional logic, the standard proof systems are both sound and complete, so $\vdash$ and
+$\models$ coincide. (Resolution is sound and **refutation**-complete: it always finds $\square$ in an
+unsatisfiable set, but it cannot derive every consequence directly; from $p$ alone it never produces
+$p \vee q$. That is why we use it on $\Gamma \cup \{\neg C\}$.) A **theory** (a set of axioms about some subject) is called complete in a second,
 stronger sense if it settles every question: for every statement, it proves it or proves its negation.
 GATE 1991 asks about this sense.
 :::
