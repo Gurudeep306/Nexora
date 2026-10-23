@@ -206,6 +206,7 @@ export function SkillGraph({
   steps,
   highlight,
   due,
+  onHoverNode,
 }: {
   nodes: NexusNode[]
   zones: NexusZone[]
@@ -219,6 +220,8 @@ export function SkillGraph({
   highlight?: Set<string>
   /** skills due for spaced review */
   due?: Set<string>
+  /** a node about to be opened (hover / focus): warm its lesson */
+  onHoverNode?: (id: string) => void
 }) {
   const [ref, width] = useWidth<HTMLDivElement>()
   const [hovered, setHovered] = useState<string | null>(null)
@@ -420,7 +423,10 @@ export function SkillGraph({
                 dimmed={related ? !related.has(p.node.id) : !!highlight && !highlight.has(p.node.id)}
                 available={p.node.unlocked && !p.node.completed}
                 onSelect={onSelect}
-                onHover={setHovered}
+                onHover={(id) => {
+                  setHovered(id)
+                  if (id) onHoverNode?.(id)
+                }}
                 step={steps && steps.includes(p.node.id) ? steps.indexOf(p.node.id) + 1 : undefined}
                 due={due?.has(p.node.id)}
               />

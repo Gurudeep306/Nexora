@@ -305,3 +305,37 @@ test('learning order and next lesson: prerequisites first, goal first, then what
   // All done: nothing.
   assert.equal(I.nextLesson(nodes.map((x) => ({ ...x, completed: true })), 'a'), null);
 });
+
+test('subject tree from the cached structure: every subject paints at once, with the reader numbers when they line up (budget)', async (t) => {
+  let M;
+  try {
+    M = await import(path.join(__dirname, '..', 'client', 'src', 'components', 'nexus', 'subjectModel.ts'));
+  } catch {
+    return t.skip('no TS loader');
+  }
+  const st = structure();
+  let worst = 0;
+  for (const c of st.clusters) {
+    const tree = M.treeFromStructure(st, c.id);
+    assert.ok(tree, `${c.id}: no tree from the structure`);
+    assert.equal(tree.nodes.length, c.nodes.length);
+    const t0 = performance.now();
+    const q = M.quickNexus(tree, null);
+    worst = Math.max(worst, performance.now() - t0);
+    assert.equal(q.nodes.length, c.nodes.length);
+    assert.ok(q.nodes.every((n) => typeof n.x === 'number' && n.zone >= 1), c.id);
+    assert.ok(q.zones.every((z) => z.rows >= 1), c.id);
+  }
+  // Building the model is far inside a frame (it runs on the first render).
+  assert.ok(worst < 8, `quickNexus took ${worst.toFixed(2)} ms`);
+  // The reader's numbers fill the rings when they match the tree's version and shape.
+  const tree = M.treeFromStructure(st, 'dl');
+  const prog = { version: tree.version, zones: tree.zones.map(() => [1, 2, 50, 2]), nodes: tree.nodes.map((_, i) => [i === 0 ? 100 : 40, i === 0 ? 2 : 1, '']), rank: null, player: null };
+  const q = M.quickNexus(tree, prog);
+  assert.equal(q.nodes[0].completed, true);
+  assert.equal(q.nodes[1].progress, 40);
+  assert.equal(q.zones[0].current, true);
+  // A stale copy (another version) is ignored rather than misread.
+  const stale = M.quickNexus(tree, { ...prog, version: 'old' });
+  assert.equal(stale.nodes[0].completed, false);
+});

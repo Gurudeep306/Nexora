@@ -3681,6 +3681,60 @@ app.get("/api/nexus/structure", (req, res) => {
   }
 });
 
+/**
+ * One subject's tree, static: its zones (with row counts) and nodes (names,
+ * icons, links, laid-out x and row), in the structure's node order so the
+ * reader's numbers from /api/nexus/web line up by index. Small (a few KB),
+ * versioned with the structure: with ?v=<version> it is immutable. The
+ * subject page paints from it (and the device's copy) before any per-user
+ * request returns.
+ */
+const nexusTreeCache = new Map(); // `${version}:${subject}` → body
+function nexusSubjectTree(sid) {
+  const st = nexusStructure();
+  const key = `${st.version}:${sid}`;
+  if (nexusTreeCache.has(key)) return nexusTreeCache.get(key);
+  const c = st.clusters.find((x) => x.id === sid);
+  if (!c) return null;
+  const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+  const s = reg.subjects.get(sid);
+  const pos = (id) => s?.layout?.get(id) || { x: 50, row: 0 };
+  const dsaZones = c.engine === "dsa" ? new Map(buildDsaNexus({ xp: 0, solved: 0, rawSolved: 0 }, []).zones.map((z) => [z.level, z])) : null;
+  const nodes = c.nodes.map((n) => {
+    const p = pos(n.id);
+    return { id: n.id, name: n.n, zone: n.z, icon: n.i || "", requires: n.req, x: p.x, row: p.row, xp: n.xp, ...(n.k ? { kind: n.k } : {}), ...(n.o ? { optional: true } : {}) };
+  });
+  const zones = c.zones.map((z) => {
+    const rows = Math.max(1, ...nodes.filter((n) => n.zone === z.level).map((n) => n.row + 1));
+    const d = dsaZones?.get(z.level);
+    return { level: z.level, name: z.name, color: z.color, rows, ...(d ? { xpRequired: d.xpRequired, probsRequired: d.probsRequired, glow: d.glow } : {}) };
+  });
+  const body = {
+    version: st.version,
+    subject: { id: c.id, name: c.name, short: c.short, stream: c.stream, engine: c.engine, description: c.description, ...(c.gate ? { gate: c.gate } : {}) },
+    zones,
+    nodes,
+  };
+  if (nexusTreeCache.size > 400) nexusTreeCache.clear();
+  nexusTreeCache.set(key, body);
+  return body;
+}
+
+/** GET /api/nexus/tree/:subject[?v=<version>] — see nexusSubjectTree. */
+app.get("/api/nexus/tree/:subject", (req, res) => {
+  try {
+    const t = nexusSubjectTree(String(req.params.subject));
+    if (!t) return res.status(404).json({ ok: false, error: "Unknown subject" });
+    const tag = `"nxt-${t.version}-${t.subject.id}"`;
+    res.set("ETag", tag);
+    res.set("Cache-Control", req.query.v === t.version ? "public, max-age=31536000, immutable" : "public, max-age=60");
+    if (String(req.headers["if-none-match"] || "").includes(tag)) return res.status(304).end();
+    res.json({ ok: true, ...t });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
 // The reader's numbers for the web, per user; recomputed at most once a
 // minute, and right after any study or solve (writes to these tables).
 const nexusWebCache = sharedCache({
@@ -3699,6 +3753,24 @@ const nexusWebCache = sharedCache({
  * <subject>/index.md for the subject page), written by hand. Missing file:
  * body null and the page shows "Course coming soon".
  */
+/**
+ * GET /api/nexus/progress/:subject — the reader's numbers for one subject:
+ * its zone and node tuples (as in /api/nexus/web, structure order) and its
+ * rank. A few hundred bytes; the subject page fills its rings from it.
+ */
+app.get("/api/nexus/progress/:subject", async (req, res) => {
+  try {
+    const sid = String(req.params.subject);
+    const web = await nexusWebFor(req);
+    const sub = web.state.subjects[sid];
+    if (!sub) return res.status(404).json({ ok: false, error: "Unknown subject" });
+    res.set("Cache-Control", "private, no-cache");
+    res.json({ ok: true, version: web.state.version, subject: sid, zones: sub.zones, nodes: sub.nodes, rank: web.ranks?.[sid] ?? null, player: sid === "dsa" ? web.dsaPlayer ?? null : null });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
 app.get("/api/courses/:subject/:concept?", (req, res) => {
   const id = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
   const subject = String(req.params.subject || "");
@@ -4073,9 +4145,8 @@ app.post("/api/nexus/review/:subject/:node", async (req, res) => {
   }
 });
 
-app.get("/api/nexus/web", async (req, res) => {
-  try {
-    const fresh = req.query.fresh === "1";
+/** The reader's web numbers (cached per user, see nexusWebCache). */
+async function nexusWebFor(req, fresh = false) {
     const build = async () => {
       const { reg, dsa, computed, webPlayer, score } = await nexusState(req, fresh);
       const ranks = {};
@@ -4086,7 +4157,12 @@ app.get("/api/nexus/web", async (req, res) => {
       return { user: me(), player: webPlayer, dsaPlayer: dsa.player, riftLevels: nexusRanks.webLevels(RIFT_LEVELS), state: nexusSubjects.webState(reg, dsa, computed), ranks, week };
     };
     const key = `${me() || "-"}|${hasAnyAdminPerm(req) ? 1 : 0}`;
-    const body = fresh || !me() ? await build() : await nexusWebCache.get(key, build);
+    return fresh || !me() ? build() : nexusWebCache.get(key, build);
+}
+
+app.get("/api/nexus/web", async (req, res) => {
+  try {
+    const body = await nexusWebFor(req, req.query.fresh === "1");
     res.set("Cache-Control", "private, no-cache");
     res.json({ ok: true, ...body });
   } catch (e) {
