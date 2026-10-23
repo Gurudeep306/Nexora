@@ -267,13 +267,13 @@ test('intro: full the first time, short after, a fade with reduced motion; one c
   if (N?.error) return t.skip('no TS loader');
   let seen = false;
   const mark = () => seen;
-  assert.equal(N.pickIntro(false, mark).mode, 'full');
+  assert.deepEqual(N.pickIntro(false, mark), { mode: 'full', dur: 3500 }, 'a calm 3.5 s the first time');
   seen = true;
-  assert.deepEqual(N.pickIntro(false, mark), { mode: 'short', dur: 800 });
+  assert.deepEqual(N.pickIntro(false, mark), { mode: 'short', dur: 1400 });
   assert.equal(N.pickIntro(true, mark).mode, 'fade');
   // The short intro plays the same beats on the same 2,000 ms clock, faster.
-  assert.equal(N.introClock(400, 0, 800), 1000);
-  assert.equal(N.introClock(5000, 0, 2000), N.INTRO_CLOCK);
+  assert.equal(N.introClock(700, 0, 1400), 1000);
+  assert.equal(N.introClock(5000, 0, 3500), N.INTRO_CLOCK);
   assert.equal(N.introClock(0, 100, 2000), 0);
   // Eased 0 → 1 within its window, flat outside it.
   assert.equal(N.seg(100, 300, 1100), 0);

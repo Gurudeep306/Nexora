@@ -1201,6 +1201,22 @@ export function RadialWeb({
       const lane = (s: (typeof sectors)[number]) => (s.a1 - s.a0) * layout.inner * 0.9 * c.k
       const hst = hoverStream.current ?? (hs ? (sectorOf.get(hs)?.stream ?? null) : null)
       const fitK = fit(w, h).k
+      // A hovered or selected subject: its name, and the names of every
+      // subject it connects to, always show — what it needs in teal (←),
+      // what it unlocks in violet (→). Zoomed out they move outside the disc
+      // on leader lines, nudged apart so they never collide.
+      const roles = new Map<string, 'self' | 'needs' | 'unlocks' | 'both'>()
+      if (hs) {
+        roles.set(hs, 'self')
+        for (const l of subjectLinks) {
+          if (l.to === hs && l.from !== hs) roles.set(l.from, roles.get(l.from) === 'unlocks' ? 'both' : 'needs')
+          if (l.from === hs && l.to !== hs) roles.set(l.to, roles.get(l.to) === 'needs' ? 'both' : 'unlocks')
+        }
+      }
+      const outside = c.k < fitK * 1.6
+      const isDark = dark()
+      const roleColor = (r: string) => (r === 'self' ? C.accent : r === 'unlocks' ? (isDark ? '#a78bfa' : '#7c3aed') : isDark ? '#2dd4bf' : '#0d9488')
+      const roleText = (r: string, name: string) => (r === 'needs' ? `← ${name}` : r === 'unlocks' ? `${name} →` : r === 'both' ? `↔ ${name}` : name)
       ctx.textBaseline = 'middle'
       for (const s of sectors) {
         const cl = sectorOf.get(s.id)
@@ -1211,19 +1227,24 @@ export function RadialWeb({
         const sy = Y(Math.sin(mid) * r1)
         if (sx < -300 || sx > w + 300 || sy < -300 || sy > h + 300) continue
         const size = Math.max(10, Math.min(13, lane(s) * 0.5))
+        const role = roles.get(s.id)
+        // Linked names zoomed out are drawn outside the disc (below).
+        if (role && outside) continue
         // Zoomed out the names would crowd: only the hovered stream's show
         // (the rest are dots and the nine stream names on the rim).
-        if ((lane(s) < 15 || c.k < fitK * 1.6) && hst !== cl.stream) continue
+        if (!role && (lane(s) < 15 || outside) && hst !== cl.stream) continue
+        // With linked names on leader lines, the other in-place names step aside.
+        if (!role && outside && hs) continue
         const flip = Math.cos(mid) < 0
         ctx.save()
         ctx.translate(sx, sy)
         ctx.rotate(flip ? mid + Math.PI : mid)
         ctx.textAlign = flip ? 'left' : 'right'
-        ctx.font = `600 ${size}px ${font}`
-        ctx.globalAlpha = !hs || hs === s.id || subjectLinks.some((l) => (l.from === hs && l.to === s.id) || (l.to === hs && l.from === s.id)) ? 1 : 0.35
-        ctx.fillStyle = hs === s.id ? C.accent : C.text
+        ctx.font = `${role === 'self' ? 700 : 600} ${role === 'self' ? Math.max(12, size + 1) : size}px ${font}`
+        ctx.globalAlpha = !hs || role ? 1 : 0.35
+        ctx.fillStyle = role ? roleColor(role) : C.text
         if (T < INTRO_CLOCK) ctx.globalAlpha *= growIn
-        ctx.fillText(cl.name, 0, 0)
+        ctx.fillText(role ? roleText(role, cl.name) : cl.name, 0, 0)
         ctx.restore()
         ctx.globalAlpha = 1
       }
@@ -1303,6 +1324,99 @@ export function RadialWeb({
         })
         ctx.globalAlpha = 1
       }
+      // Zoomed out: the selected subject and its linked subjects, named outside
+      // the disc on leader lines; each side is spread so no two labels touch.
+      if (hs && outside && roles.size) {
+        const cx = X(0)
+        const cy = Y(0)
+        const phoneSize = w < 640
+        const Rl = (layout.extent + (phoneSize ? 120 : 112)) * c.k
+        type Lab = { id: string; role: string; text: string; mid: number; side: 1 | -1; y: number; x: number; tw: number; size: number }
+        const labs: Lab[] = []
+        for (const [id, role] of roles) {
+          const sct = sectorById.get(id)
+          const cl = sectorOf.get(id)
+          if (!sct || !cl) continue
+          const mid = (sct.a0 + sct.a1) / 2
+          const size = role === 'self' ? (phoneSize ? 12.5 : 13.5) : phoneSize ? 11 : 12
+          ctx.font = `${role === 'self' ? 700 : 600} ${size}px ${font}`
+          const text = roleText(role, cl.name)
+          labs.push({ id, role, text, mid, side: Math.cos(mid) >= 0 ? 1 : -1, y: cy + Math.sin(mid) * Rl, x: cx + Math.cos(mid) * Rl, tw: ctx.measureText(text).width, size })
+        }
+        // Place every label without touching another, the info box or the
+        // view buttons: each keeps its x (by its side) and slides in y, down
+        // first and up if it would leave the view.
+        type Box = { x: number; y: number; w: number; h: number }
+        const padX = 7
+        const boxOf = (l: Lab, y: number): Box => {
+          const bw = l.tw + padX * 2
+          const bh = l.size + 9
+          const bx0 = l.side > 0 ? l.x + 6 : l.x - 6 - bw
+          return { x: Math.max(6, Math.min(w - 6 - bw, bx0)), y: y - bh / 2, w: bw, h: bh }
+        }
+        const hit = (a: Box, b: Box) => a.x < b.x + b.w + 3 && b.x < a.x + a.w + 3 && a.y < b.y + b.h + 3 && b.y < a.y + a.h + 3
+        const taken: Box[] = [{ x: 0, y: 0, w: phoneSize ? 250 : 270, h: 12 + 3 * 18 + 22 }]
+        taken.push(window.innerWidth < 640 ? { x: w - 250, y: h - 56, w: 250, h: 56 } : { x: w - 320, y: 0, w: 320, h: 52 })
+        // YOU (the emblem over the centre) is an obstacle too.
+        const esc = Math.max(0.5, Math.min(1, (layout.inner * 0.5 * c.k) / 76))
+        taken.push({ x: cx - 52 * esc, y: cy - 42 * esc, w: 104 * esc, h: 112 * esc })
+        const top = 10
+        const bottom = h - 10
+        const place = (l: Lab, dir: 1 | -1): number | null => {
+          let y = l.y
+          for (let k = 0; k < 80; k++) {
+            const b = boxOf(l, y)
+            if (b.y < top || b.y + b.h > bottom) return null
+            const other = taken.find((t) => hit(t, b))
+            if (!other) return y
+            y = dir > 0 ? other.y + other.h + 3 + b.h / 2 + 0.5 : other.y - 3 - b.h / 2 - 0.5
+          }
+          return null
+        }
+        // The selected subject first (it keeps its spot), then the rest by angle.
+        labs.sort((a, b) => (a.role === 'self' ? -1 : b.role === 'self' ? 1 : a.y - b.y))
+        const boxes = new Map<Lab, Box>()
+        for (const l of labs) {
+          l.y = Math.max(top + l.size, Math.min(bottom - l.size, l.y))
+          const y = place(l, 1) ?? place(l, -1) ?? l.y
+          l.y = y
+          const b = boxOf(l, y)
+          boxes.set(l, b)
+          taken.push(b)
+        }
+        const growA = T < INTRO_CLOCK ? growIn : 1
+        for (const l of labs) {
+          const colr = roleColor(l.role)
+          const { x: bx, y: by, w: bw, h: bh } = boxes.get(l)!
+          // Leader: from the subject's dot out along its sector, then to the label.
+          const a0 = Math.max(layout.inner * 0.62, 1) * c.k
+          const a1 = (layout.extent + 70) * c.k
+          const ex = l.side > 0 ? bx : bx + bw
+          ctx.globalAlpha = 0.7 * growA
+          ctx.strokeStyle = colr
+          ctx.lineWidth = l.role === 'self' ? 1.6 : 1.1
+          ctx.beginPath()
+          ctx.moveTo(cx + Math.cos(l.mid) * a0, cy + Math.sin(l.mid) * a0)
+          ctx.lineTo(cx + Math.cos(l.mid) * a1, cy + Math.sin(l.mid) * a1)
+          ctx.lineTo(ex, l.y)
+          ctx.stroke()
+          ctx.globalAlpha = 0.94 * growA
+          ctx.fillStyle = C.surface2
+          ctx.beginPath()
+          ctx.roundRect(bx, by, bw, bh, bh / 2)
+          ctx.fill()
+          ctx.globalAlpha = growA
+          ctx.strokeStyle = colr
+          ctx.lineWidth = l.role === 'self' ? 1.5 : 1
+          ctx.stroke()
+          ctx.fillStyle = l.role === 'self' ? C.text : colr
+          ctx.font = `${l.role === 'self' ? 700 : 600} ${l.size}px ${font}`
+          ctx.textAlign = 'left'
+          ctx.textBaseline = 'middle'
+          ctx.fillText(l.text, bx + padX, l.y + 0.5)
+        }
+        ctx.globalAlpha = 1
+      }
       // Hovering a subject: what it needs and what it leads to, as labels.
       if (hs) {
         const cl = sectorOf.get(hs)
@@ -1314,8 +1428,12 @@ export function RadialWeb({
           const done2 = cl.nodes.filter((n) => n.s === 2).length
           const prog = cl.nodes.length ? Math.round(cl.nodes.reduce((a2, n) => a2 + n.p, 0) / cl.nodes.length) : 0
           const lines: [string, string][] = [[`${cl.name} · ${prog}% mastered`, C.text], [`${done2}/${cl.nodes.length} skills · ${streamOf.get(cl.stream)?.name ?? ''}`, C.muted]]
-          if (needs.length) lines.push([`needs ${short(needs)}`, C.muted])
-          if (leads.length) lines.push([`leads to ${short(leads)}`, C.muted])
+          // Zoomed out the linked names are on the map itself; the box just counts them.
+          if (outside && (needs.length || leads.length)) lines.push([`needs ${needs.length} · unlocks ${leads.length} subjects`, C.muted])
+          else {
+            if (needs.length) lines.push([`needs ${short(needs)}`, C.muted])
+            if (leads.length) lines.push([`leads to ${short(leads)}`, C.muted])
+          }
           if (!needs.length && !leads.length) lines.push(['stands on its own', C.muted])
           ctx.font = `600 12px ${font}`
           const bw = Math.max(...lines.map(([t]) => ctx.measureText(t).width)) + 24
