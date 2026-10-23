@@ -1304,12 +1304,12 @@ input[type='search']::-webkit-search-results-decoration {
 
 /* ── Nexus opening: the HUD arrives last, with a spring ── */
 [data-intro='full'] .nx-hud {
-  animation: nx-hud-in 640ms cubic-bezier(0.2, 0.9, 0.25, 1.12) both;
-  animation-delay: calc(1650ms + var(--nx-hud-d, 0ms));
+  animation: nx-hud-in 950ms cubic-bezier(0.22, 0.8, 0.3, 1.06) both;
+  animation-delay: calc(2850ms + var(--nx-hud-d, 0ms) * 1.6);
 }
 [data-intro='short'] .nx-hud {
-  animation: nx-hud-in 420ms cubic-bezier(0.2, 0.9, 0.25, 1.12) both;
-  animation-delay: calc(520ms + var(--nx-hud-d, 0ms) * 0.5);
+  animation: nx-hud-in 620ms cubic-bezier(0.22, 0.8, 0.3, 1.06) both;
+  animation-delay: calc(980ms + var(--nx-hud-d, 0ms) * 0.7);
 }
 [data-intro='fade'] .nx-hud { animation: nx-hud-fade 220ms ease-out both; }
 @keyframes nx-hud-in {
@@ -1318,7 +1318,7 @@ input[type='search']::-webkit-search-results-decoration {
 }
 @keyframes nx-hud-fade { from { opacity: 0; } to { opacity: 1; } }
 /* YOU: the rank ring draws its arc as the emblem ignites. */
-.nx-core-ignite { animation: nx-core-arc 760ms cubic-bezier(0.3, 0.7, 0.2, 1) 120ms both; }
+.nx-core-ignite { animation: nx-core-arc 1300ms cubic-bezier(0.35, 0.1, 0.25, 1) 200ms both; }
 .nx-intro-done .nx-core-ignite { animation: none; }
 @keyframes nx-core-arc { from { stroke-dashoffset: var(--nx-arc); } to { stroke-dashoffset: 0; } }
 @media (prefers-reduced-motion: reduce) {
