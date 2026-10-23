@@ -1230,8 +1230,9 @@ input[type='search']::-webkit-search-results-decoration {
 /* Rings fill in on load; orbs rise in, staggered. */
 @keyframes nx-ring-in { from { stroke-dasharray: 0 999; } }
 .nx-ring-in { animation: nx-ring-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
-@keyframes nx-rise { from { opacity: 0; transform: translateY(6px) scale(0.96); } }
-.nx-orb-wrap { animation: nx-rise 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: calc(min(var(--i, 0), 40) * 14ms); }
+/* Orbs settle in from a visible state: the tree is readable on its first frame. */
+@keyframes nx-rise { from { transform: translateY(3px) scale(0.985); } }
+.nx-orb-wrap { animation: nx-rise 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: calc(min(var(--i, 0), 20) * 5ms); }
 /* Goal steps and spaced-review hints. */
 .nx-step { color: #1a1300; background: linear-gradient(180deg, #ffd978, #f4b73f); box-shadow: 0 0 0 2px var(--color-bg-app), 0 2px 6px -1px rgb(0 0 0 / 0.35); }
 .nx-due-ring { stroke: var(--color-warning, #f59e0b); }
