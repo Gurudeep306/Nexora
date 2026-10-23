@@ -1,0 +1,12 @@
+{
+  "title": "Programming & Data Structures",
+  "order": 2,
+  "icon": "terminal",
+  "color": "syntax-function",
+  "description": "Programming in C (types, control flow, functions, scope, parameter passing, pointers, arrays, strings, structures and memory), recursion, and the classic data structures (arrays, linked lists, stacks, queues, trees, BSTs, AVL trees, heaps and hashing), built from first principles with traced programs, animated memory diagrams and every GATE question mapped.",
+  "hidden": true,
+  "status": "draft",
+  "pyq_scope": [
+    "pds"
+  ]
+}

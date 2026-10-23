@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-19",
+  "updated": "2026-10-23",
   "steps": {
     "N0": "review",
     "N1": "review",
@@ -176,20 +176,70 @@
     },
     "pds": {
       "name": "Programming & Data Structures",
-      "order": 3,
-      "status": "pending",
+      "order": 2,
+      "status": "in-progress",
       "noteSets": 5,
       "pages": 545,
       "stages": {
-        "digests": "pending",
-        "outline": "pending",
+        "digests": "done",
+        "outline": "review",
         "lessons": "pending",
         "viz": "pending",
         "questions": "pending",
         "review": "pending",
         "wrapup": "pending"
       },
-      "chapters": []
+      "chapters": [
+        {
+          "id": "01-c-foundations",
+          "title": "C foundations: values, control flow and functions",
+          "lessons": 7,
+          "pyqs": 78,
+          "status": "pending"
+        },
+        {
+          "id": "02-pointers-memory",
+          "title": "Pointers, arrays, strings and memory",
+          "lessons": 5,
+          "pyqs": 49,
+          "status": "pending"
+        },
+        {
+          "id": "03-recursion",
+          "title": "Recursion",
+          "lessons": 4,
+          "pyqs": 46,
+          "status": "pending"
+        },
+        {
+          "id": "04-arrays-lists",
+          "title": "Arrays and linked lists",
+          "lessons": 4,
+          "pyqs": 46,
+          "status": "pending"
+        },
+        {
+          "id": "05-stacks-queues",
+          "title": "Stacks and queues",
+          "lessons": 3,
+          "pyqs": 34,
+          "status": "pending"
+        },
+        {
+          "id": "06-trees",
+          "title": "Trees and binary search trees",
+          "lessons": 7,
+          "pyqs": 99,
+          "status": "pending"
+        },
+        {
+          "id": "07-heaps-hashing-graphs",
+          "title": "Heaps, hashing and graph representation",
+          "lessons": 4,
+          "pyqs": 52,
+          "status": "pending"
+        }
+      ]
     },
     "algo": {
       "name": "Algorithms",
