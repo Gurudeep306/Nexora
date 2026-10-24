@@ -1196,24 +1196,95 @@
       "verification": "The XML 1.0 well-formedness rules require matching end tags and case-sensitive names. HTML parsers accept unclosed tags and `<P>` is the same as `<p>`."
     },
     "cse-2015-1-cs-16": {
-      "approach": "$2^A$ is a set of sets. Something is an **element** of $2^A$ if it is a subset of $A$. Something is a **subset** of $2^A$ if every element of it is a subset of $A$.",
+      "approach": "Concept tested: **membership versus subset one level up**. $X \\in 2^A \\iff X \\subseteq A$, while $X \\subseteq 2^A$ needs every element of $X$ to be a subset of $A$.",
       "concepts": [
         "Power set",
-        "Membership vs subset"
+        "Membership versus subset",
+        "Empty set"
       ],
-      "given": "| Item | Test |\n|---|---|\n| $X \\in 2^A$ | $X \\subseteq A$ |\n| $X \\subseteq 2^A$ | every element of $X$ is a subset of $A$ |",
+      "given": "$A = \\{5, \\{6\\}, \\{7\\}\\}$.",
       "steps": [
         {
-          "title": "I and II",
-          "body": "I: $\\emptyset \\subseteq A$, so $\\emptyset \\in 2^A$. **True.**\n\nII: the empty set is a subset of every set, so $\\emptyset \\subseteq 2^A$. **True.**"
+          "title": "I: ∅ ∈ 2^A",
+          "body": "$\\emptyset \\subseteq A$ always, so $\\emptyset \\in 2^A$: **true**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
         },
         {
-          "title": "III and IV",
-          "body": "III: $5 \\in A$ and $\\{6\\} \\in A$, so $\\{5,\\{6\\}\\} \\subseteq A$ and therefore $\\{5,\\{6\\}\\} \\in 2^A$. **True.**\n\nIV: this would need $5 \\in 2^A$, which means $5 \\subseteq A$. But 5 is not a set. It also needs $\\{6\\} \\in 2^A$, which means $\\{6\\} \\subseteq A$, i.e. $6 \\in A$, and that fails. **False.**"
+          "title": "II: ∅ ⊆ 2^A",
+          "body": "The empty set is a subset of every set: **true**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
         },
         {
-          "title": "Answer",
-          "body": "I, II and III are true, which is option (C)."
+          "title": "III: {5, {6}} ∈ 2^A",
+          "body": "Is $\\{5, \\{6\\}\\} \\subseteq A$? Its items $5$ and $\\{6\\}$ are both listed in $A$: **true**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "IV: {5, {6}} ⊆ 2^A",
+          "body": "Needs $5 \\in 2^A$, i.e. $5$ to be a subset of $A$; but $5$ is a number, not a set of elements of $A$. (Also $\\{6\\} \\in 2^A$ would need $6 \\in A$, false.) **False**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "c": 1,
+                "tone": "error"
+              }
+            ]
+          }
         }
       ],
       "answer": {
@@ -1227,28 +1298,57 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Leaves out II, which is true because $\\emptyset$ is a subset of every set."
+          "reason": "Misses II: $\\emptyset$ is a subset of every set, including $2^A$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Leaves out I, which is true because $\\emptyset \\subseteq A$."
+          "reason": "Misses I: $\\emptyset \\subseteq A$, so $\\emptyset$ is an element of $2^A$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: I, II and III are true and IV is false."
+          "reason": "I, II, III are true; IV is false."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Includes IV, which is false because $\\{6\\} \\not\\subseteq A$ (here $6 \\notin A$; only $\\{6\\} \\in A$)."
+          "reason": "IV is false ($5 \\notin 2^A$) and III, which is true, is left out."
         }
       ],
+      "shortcut": "Moving up from $A$ to $2^A$ turns '$\\subseteq A$' into '$\\in 2^A$'. III is the subset test $\\{5, \\{6\\}\\} \\subseteq A$ in disguise; IV asks for subsets of $2^A$, a level too high.",
       "pitfalls": [
-        "Treating $\\in$ and $\\subseteq$ the same when the elements are themselves sets."
+        "Thinking $\\emptyset$ must be either an element or a subset, not both: it is both here.",
+        "Treating IV as the same claim as III."
       ],
-      "verification": "List the elements: $2^A$ has $2^3 = 8$ elements, $\\{\\emptyset, \\{5\\}, \\{\\{6\\}\\}, \\{\\{7\\}\\}, \\{5,\\{6\\}\\}, \\{5,\\{7\\}\\}, \\{\\{6\\},\\{7\\}\\}, A\\}$. Both $\\emptyset$ and $\\{5,\\{6\\}\\}$ appear, but neither 5 nor $\\{6\\}$ does."
+      "verification": "Built $A$ and $2^A$ as Python frozensets: the four claims evaluate to True, True, True, False.",
+      "animation": {
+        "kind": "table",
+        "title": "Four claims about 2^A",
+        "cols": [
+          "claim",
+          "verdict"
+        ],
+        "rows": [
+          [
+            "I: ∅ ∈ 2^A",
+            "?"
+          ],
+          [
+            "II: ∅ ⊆ 2^A",
+            "?"
+          ],
+          [
+            "III: {5,{6}} ∈ 2^A",
+            "?"
+          ],
+          [
+            "IV: {5,{6}} ⊆ 2^A",
+            "?"
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-2015-1-cs-17": {
       "approach": "Ask which protocols open more than one TCP connection between the same client and server. FTP keeps a control connection plus separate data connections, and an HTTP client can open several parallel connections.",

@@ -2208,18 +2208,25 @@
       "verification": "$\\det\\begin{bmatrix}2-\\lambda&3\\\\-4&10-\\lambda\\end{bmatrix} = \\lambda^2 - 12\\lambda + 32 = (\\lambda-4)(\\lambda-8)$ ✓"
     },
     "cse-2010-cs-30": {
-      "approach": "Push the negation outward: the formula is the negation of \"someone can fool everyone at all times\".",
+      "approach": "Concept tested: **reading a negated quantifier block back into English**. Pull the negation outward: ∀x∃y∃t ¬F ≡ ¬∃x∀y∀t F, 'it is not the case that someone can fool everyone at every time'.",
       "concepts": [
-        "Quantifier negation"
+        "De Morgan for quantifiers",
+        "Nested quantifiers",
+        "Translation"
       ],
+      "given": "$F(x, y, t)$: $x$ can fool $y$ at time $t$. Formula: $\\forall x \\exists y \\exists t\\,(\\neg F(x, y, t))$.",
       "steps": [
         {
-          "title": "Rewrite",
-          "body": "$\\forall x\\,\\exists y\\,\\exists t\\,\\lnot F(x,y,t) \\equiv \\lnot\\,\\exists x\\,\\forall y\\,\\forall t\\,F(x,y,t)$."
+          "title": "Pull ¬ outward",
+          "body": "$\\forall x \\exists y \\exists t\\, \\neg F \\equiv \\forall x \\exists y\\, \\neg\\forall t\\, F \\equiv \\forall x\\, \\neg\\forall y \\forall t\\, F \\equiv \\neg\\exists x \\forall y \\forall t\\, F$."
         },
         {
-          "title": "Read it",
-          "body": "$\\exists x\\,\\forall y\\,\\forall t\\,F$ = \"someone can fool everyone all the time\". Its negation: **no one can fool everyone all the time**."
+          "title": "Read the inside",
+          "body": "$\\exists x \\forall y \\forall t\\, F(x, y, t)$: 'someone can fool everyone all the time'."
+        },
+        {
+          "title": "Read the negation",
+          "body": "'No one can fool everyone all the time': option B. Directly: for every $x$ there is a person $y$ and a time $t$ at which $x$ fails to fool $y$."
         }
       ],
       "answer": {
@@ -2233,25 +2240,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "That is $\\forall x\\exists y\\exists t\\,F$ — the negation sign is missing."
+          "reason": "'Everyone can fool some person at some time' is $\\forall x \\exists y \\exists t\\, F$: the ¬ is missing."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Exact reading of ¬∃x∀y∀t F."
+          "reason": "$\\neg\\exists x \\forall y \\forall t\\, F$, equivalent to the given formula."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "\"cannot fool some person all the time\" reads as $\\forall x\\exists y\\forall t\\,\\lnot F$ — the time quantifier is wrong."
+          "reason": "'Everyone cannot fool some person all the time' most naturally reads $\\forall x \\exists y \\forall t\\, \\neg F$ (some $y$ is never fooled by $x$), which is stronger: it needs one $y$ who resists at every time."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "That is $\\lnot\\exists x\\exists y\\exists t\\,F$, i.e. nobody ever fools anyone — far stronger."
+          "reason": "'No one can fool some person at some time' is $\\neg\\exists x \\exists y \\exists t\\, F$ = $\\forall x \\forall y \\forall t\\, \\neg F$: nobody ever fools anybody. Far stronger."
         }
       ],
-      "verification": "For each x the formula only needs one victim y and one instant t where x fails — exactly what \"x cannot fool everyone all the time\" means."
+      "shortcut": "A ∀∃∃ block with ¬ inside is the denial of the ∃∀∀ block: 'not (someone … everyone … always)'.",
+      "pitfalls": [
+        "Reading $\\exists t\\, \\neg F$ as 'never fools' ($\\forall t\\, \\neg F$)."
+      ],
+      "verification": "Script: push_not(¬∃x∀y∀t F) equals the given formula, and only B's formula is equivalent to it on all interpretations over domains of size 1 and 2."
     },
     "cse-2010-cs-31": {
       "approach": "Concept tested: **reading stacked NOR gates**. A NOR of two NORs is the AND of their ORs; then absorption shows that $P$ drops out. (The paper's figure has first-level NORs on (P, Q), (Q, R), (P, R) and (Q, R).)",

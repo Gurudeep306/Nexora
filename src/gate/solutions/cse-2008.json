@@ -53,23 +53,113 @@
       "verification": "At $x=1000$: $(1000-\\sin 1000)/(1000+\\cos 1000)\\approx 0.999$."
     },
     "cse-2008-cs-2": {
-      "approach": "Factor $Q\\cap R$ out of the first two terms; the rest is the complement of $Q\\cap R$ by De Morgan.",
+      "approach": "Concept tested: **simplifying with set laws**. Combine the first two terms (they differ only in $P$), then use $X \\cup X^c = U$ with De Morgan.",
       "concepts": [
         "Set identities",
-        "De Morgan's law"
+        "De Morgan's laws",
+        "Complement"
       ],
+      "given": "$(P \\cap Q \\cap R) \\cup (P^c \\cap Q \\cap R) \\cup Q^c \\cup R^c$.",
       "steps": [
         {
-          "title": "Merge first two terms",
-          "body": "$(P\\cap Q\\cap R)\\cup(P^c\\cap Q\\cap R)=(P\\cup P^c)\\cap(Q\\cap R)=Q\\cap R$."
+          "title": "Merge the first two terms",
+          "body": "$(P \\cap Q \\cap R) \\cup (P^c \\cap Q \\cap R) = (P \\cup P^c) \\cap (Q \\cap R) = U \\cap Q \\cap R = Q \\cap R$.",
+          "scene": {
+            "hl": [
+              {
+                "region": "ABC",
+                "tone": "accent"
+              },
+              {
+                "region": "BC",
+                "tone": "accent"
+              }
+            ]
+          }
         },
         {
-          "title": "De Morgan",
-          "body": "$Q^c\\cup R^c=(Q\\cap R)^c$, so the expression is $(Q\\cap R)\\cup(Q\\cap R)^c=U$."
+          "title": "Recognise the complement",
+          "body": "By De Morgan, $Q^c \\cup R^c = (Q \\cap R)^c$.",
+          "scene": {
+            "hl": [
+              {
+                "region": "ABC",
+                "tone": "accent"
+              },
+              {
+                "region": "BC",
+                "tone": "accent"
+              },
+              {
+                "region": "A",
+                "tone": "info"
+              },
+              {
+                "region": "AB",
+                "tone": "info"
+              },
+              {
+                "region": "AC",
+                "tone": "info"
+              },
+              {
+                "region": "B",
+                "tone": "info"
+              },
+              {
+                "region": "C",
+                "tone": "info"
+              },
+              {
+                "region": "-",
+                "tone": "info"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Union with its complement",
+          "body": "$(Q \\cap R) \\cup (Q \\cap R)^c = U$: every one of the eight regions is lit.",
+          "scene": {
+            "hl": [
+              {
+                "region": "ABC",
+                "tone": "success"
+              },
+              {
+                "region": "AB",
+                "tone": "success"
+              },
+              {
+                "region": "AC",
+                "tone": "success"
+              },
+              {
+                "region": "A",
+                "tone": "success"
+              },
+              {
+                "region": "BC",
+                "tone": "success"
+              },
+              {
+                "region": "B",
+                "tone": "success"
+              },
+              {
+                "region": "C",
+                "tone": "success"
+              },
+              {
+                "region": "-",
+                "tone": "success"
+              }
+            ]
+          }
         }
       ],
       "answer": {
-        "value": "U",
+        "value": "$U$",
         "choice": [
           "D"
         ],
@@ -79,25 +169,48 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Misses $Q\\cap R$, which the first two terms contribute."
+          "reason": "$Q^c \\cup R^c$ misses the region $Q \\cap R$, which the first two terms cover."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Misses elements of $P^c\\cap Q\\cap R$ (from the second term)."
+          "reason": "$P \\cup Q^c \\cup R^c$ misses $P^c \\cap Q \\cap R$, which the second term covers."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Misses elements of $P\\cap Q\\cap R$ (from the first term)."
+          "reason": "$P^c \\cup Q^c \\cup R^c$ misses $P \\cap Q \\cap R$, the first term."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "A set union its complement is the universal set."
+          "reason": "The expression is $(Q \\cap R) \\cup (Q \\cap R)^c = U$."
         }
       ],
-      "verification": "Any element either lies in $Q\\cap R$ (covered by term 1 or 2 depending on $P$) or not (covered by $Q^c\\cup R^c$)."
+      "shortcut": "An element outside $Q \\cap R$ is caught by $Q^c \\cup R^c$; an element inside $Q \\cap R$ is caught by one of the first two terms, depending on $P$. Everything is caught.",
+      "pitfalls": [
+        "Dropping one of the first two terms and ending with B or C."
+      ],
+      "verification": "Region semantics over $P, Q, R$ (all eight regions covered) and brute force over all triples of subsets of a 3-element universe.",
+      "animation": {
+        "kind": "venn",
+        "title": "Regions of P, Q, R",
+        "sets": [
+          {
+            "id": "A",
+            "label": "P"
+          },
+          {
+            "id": "B",
+            "label": "Q"
+          },
+          {
+            "id": "C",
+            "label": "R"
+          }
+        ],
+        "hl": []
+      }
     },
     "cse-2008-cs-3": {
       "approach": "A square system has a unique solution iff its coefficient determinant is non-zero; compute it as a function of $\\alpha$.",
@@ -1679,64 +1792,67 @@
       "verification": "With $\\sigma_Y=3$: $Y\\ge2$ is exactly one standard deviation above its mean, mirroring $X\\le-1$, one SD below its mean."
     },
     "cse-2008-cs-30": {
-      "approach": "The intended formula is $\\forall x\\,(fsa(x)\\Rightarrow\\exists y\\,(pda(y)\\wedge equivalent(x,y)))$. Reject options that force every object to be an FSA/PDA or that negate the claim; (A) is the only one with the right implication structure (reading $\\forall x$ as scoping over the whole implication).",
+      "approach": "Concept tested: **scope of quantifiers in a translation**. The intended formula is ∀x(fsa(x) ⇒ ∃y(pda(y) ∧ equivalent(x, y))); option A is this formula with the scope brackets dropped, and the others are wrong under any reading.",
       "concepts": [
-        "First-order logic",
-        "Quantifier scope",
-        "Translating English to FOL"
+        "Scope",
+        "Free variables",
+        "Nested quantifiers"
       ],
+      "given": "'Each finite state automaton has an equivalent pushdown automaton.'",
       "steps": [
         {
-          "title": "Correct translation",
-          "body": "\"Each FSA has an equivalent PDA\": for every $x$, **if** $x$ is an FSA **then** some $y$ is a PDA equivalent to $x$:\n$$\\forall x\\,\\big(fsa(x)\\Rightarrow \\exists y\\,(pda(y)\\wedge equivalent(x,y))\\big)$$"
-        },
-        {
-          "title": "Options with ∧ instead of ⇒",
-          "body": "(C) $\\forall x\\exists y\\,(fsa(x)\\wedge pda(y)\\wedge\\dots)$ claims **every** object is an FSA; (D) claims every object is a PDA with an equivalent FSA. Both are far too strong — a universal quantifier must be paired with $\\Rightarrow$."
-        },
-        {
-          "title": "Option B",
-          "body": "$\\sim\\forall y\\,(\\dots)$ is a negated universal, i.e. it asserts that some $y$ fails the condition — it does not express the property."
+          "title": "Intended formula",
+          "body": "'Each FSA has …': $\\forall x(fsa(x) \\Rightarrow \\dots)$. '… an equivalent PDA': $\\exists y(pda(y) \\wedge equivalent(x, y))$. Together: $\\forall x(fsa(x) \\Rightarrow \\exists y(pda(y) \\wedge equivalent(x, y)))$."
         },
         {
           "title": "Option A",
-          "body": "(A) has the right shape: being an FSA implies the existence of an equivalent PDA. Read with $\\forall x$ scoping over the implication it is exactly the translation above, so it is the intended answer."
+          "body": "A writes the same symbols in the same order. Read with each quantifier's scope extending to the end of the formula, it is exactly the intended formula. (As printed, $\\forall x$ covers only $fsa(x)$ and $x, y$ are free in $equivalent(x, y)$, a bracketing slip.)"
+        },
+        {
+          "title": "Options C and D",
+          "body": "C, $\\forall x \\exists y(fsa(x) \\wedge pda(y) \\wedge equivalent(x, y))$, claims every object is an FSA: $\\forall$ paired with $\\wedge$. D additionally swaps the roles ($fsa(y)$, $pda(x)$)."
+        },
+        {
+          "title": "Option B",
+          "body": "B begins $\\sim\\forall y$, a negated claim about all PDAs, and leaves $x$ free; it does not express 'each FSA has …' under any bracketing."
         }
       ],
       "answer": {
-        "value": "(∀x fsa(x)) ⇒ (∃y pda(y) ∧ equivalent(x,y))",
+        "value": "$(\\forall x\\ fsa(x)) \\Rightarrow (\\exists y\\ pda(y) \\wedge equivalent(x, y))$, read as $\\forall x(fsa(x) \\Rightarrow \\exists y(pda(y) \\wedge equivalent(x, y)))$",
         "choice": [
           "A"
         ],
-        "matchesKey": true
+        "matchesKey": true,
+        "keyNote": "As printed, option A leaves x and y free in equivalent(x, y); the key A assumes each quantifier's scope runs to the end, which is the intended translation. B, C, D are wrong under every reading."
       },
       "optionAnalysis": [
         {
           "option": "A",
           "correct": true,
-          "reason": "Intended answer: FSA-ness implies an equivalent PDA exists (taking $\\forall x$ to scope over the whole formula)."
+          "reason": "The intended formula once the quantifiers are given their intended (wide) scope."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Negation of a universal statement; it asserts a counterexample exists, not the property."
+          "reason": "Negated universal over PDAs with $x$ free: not a translation of the sentence."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Uses $\\wedge$ under $\\forall x$, so it asserts that every object is an FSA."
+          "reason": "$\\forall x(fsa(x) \\wedge \\dots)$ asserts every object is an FSA."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Swaps the roles: asserts every $x$ is a PDA and some $y$ is an FSA."
+          "reason": "Asserts every object is a PDA with an FSA equivalent: roles swapped and $\\forall$ with $\\wedge$."
         }
       ],
+      "shortcut": "Look for $\\forall$ with $\\Rightarrow$ on $fsa$ and $\\exists$ with $\\wedge$ on $pda$: only A has both, once its brackets are read generously.",
       "pitfalls": [
-        "Using $\\wedge$ instead of $\\Rightarrow$ under a universal quantifier.",
-        "Strictly, the parenthesisation in (A) leaves $x$ free in the consequent; the question intends the wider scope."
+        "Rejecting A for its bracketing and picking C, which has correct brackets but the wrong connective.",
+        "Treating an unquantified $x$ as if it were universally quantified."
       ],
-      "verification": "Model check: in a domain containing a PDA $p$ that is not an FSA, (C) is false (since $fsa(p)$ fails) even though the English statement can be true — so (C) is wrong."
+      "verification": "Script: A with wide scope is equivalent to the intended formula on all interpretations up to size 3; C, D and B (even with ∃x widened) are not; as printed A has free variables {x, y}."
     },
     "cse-2008-cs-31": {
       "approach": "Concept tested: **equivalence by canonical forms**. Write each expression as a minterm list over $(P, Q)$; equal lists mean equivalent formulas.",

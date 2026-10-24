@@ -2611,58 +2611,146 @@
       "verification": "$1R3$ (sum 4), $2R4$ (sum 6), not $1R2$ (sum 3): two classes, matching the residues mod 2."
     },
     "cse-2000-a-2-6": {
-      "approach": "Test each option against the definitions; the empty set is a subset of everything, so $\\phi$ belongs to both $P(S)$ and $P(P(S))$, which makes (B) the intended answer — (A), (C), (D) fail for every or almost every $S$.",
+      "approach": "Concept tested: **what a power set always contains**. Use $X \\in P(S) \\iff X \\subseteq S$ to test each option; the law $P(A) \\cap P(B) = P(A \\cap B)$ settles option B.",
       "concepts": [
         "Power set",
-        "Element vs subset"
+        "Membership versus subset",
+        "Power-set laws"
       ],
+      "given": "Which statement about $P(S)$ is always true?",
       "steps": [
         {
-          "title": "Eliminate A, C, D",
-          "body": "**(A)** $|P(P(S))|=2^{|P(S)|}>|P(S)|$, so they are never equal.\n\n**(D)** $S\\subseteq S$ ⇒ $S\\in P(S)$, so $S\\notin P(S)$ is always false.\n\n**(C)** $P(S)\\cap S=P(S)$ means $P(S)\\subseteq S$; for $S=\\phi$: $P(\\phi)=\\{\\phi\\}\\not\\subseteq\\phi$."
+          "title": "Option D is always false",
+          "body": "$S \\subseteq S$, so $S \\in P(S)$ for every set $S$. '$S \\notin P(S)$' never holds.",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "c": 1,
+                "tone": "error"
+              }
+            ]
+          }
         },
         {
-          "title": "Option B",
-          "body": "$\\phi\\subseteq S$ ⇒ $\\phi\\in P(S)$, and $\\phi\\subseteq P(S)$ ⇒ $\\phi\\in P(P(S))$. So $\\phi$ is always common. For an ordinary set (elements not themselves sets, e.g. $S=\\{1,2\\}$) no non-empty subset of $S$ is also a subset of $P(S)$, so the intersection is exactly $\\{\\phi\\}$."
+          "title": "Options A and C fail by size",
+          "body": "For finite $S$ with $n$ elements, $|S| = n < 2^n = |P(S)| < 2^{2^n} = |P(P(S))|$. So $P(P(S)) \\ne P(S)$, and $P(S) \\cap S = P(S)$ would need $P(S) \\subseteq S$, impossible.",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "error"
+              }
+            ]
+          }
         },
         {
-          "title": "Caveat",
-          "body": "For $S=\\{\\phi\\}$: $P(S)=\\{\\phi,\\{\\phi\\}\\}$ and $\\{\\phi\\}\\in P(P(S))$ too, so the intersection is $\\{\\phi,\\{\\phi\\}\\}$. Strictly no option is “always” true; (B) is the accepted answer."
+          "title": "Option B by the power-set law",
+          "body": "$P(S) \\cap P(P(S)) = P(S \\cap P(S))$. For an ordinary set such as $S = \\{1, 2\\}$, no element of $S$ is a subset of $S$, so $S \\cap P(S) = \\emptyset$ and the intersection is $P(\\emptyset) = \\{\\emptyset\\}$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "The fine print",
+          "body": "B fails when some element of $S$ is also a subset of $S$: for $S = \\{\\emptyset\\}$ the intersection is $\\{\\emptyset, \\{\\emptyset\\}\\}$. B is the intended answer (it holds for every set of ordinary objects and is the only option that can hold); strictly, it is not true for literally every $S$."
         }
       ],
       "answer": {
-        "value": "$P(S)\\cap P(P(S))=\\{\\phi\\}$",
+        "value": "$P(S) \\cap P(P(S)) = \\{\\phi\\}$",
         "choice": [
           "B"
         ],
-        "matchesKey": true
+        "matchesKey": true,
+        "keyNote": "Holds exactly when no element of S is also a subset of S (true for sets of numbers, letters, etc.); fails for S = {∅}. B is the intended answer; A, C and D fail for every finite S."
       },
       "optionAnalysis": [
         {
           "option": "A",
           "correct": false,
-          "reason": "$P(P(S))$ is strictly larger than $P(S)$."
+          "reason": "$|P(P(S))| = 2^{2^n} \\ne 2^n = |P(S)|$, so they are never equal for finite $S$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "True for ordinary sets (intended answer); fails only for sets that contain sets, e.g. $S=\\{\\phi\\}$."
+          "reason": "$P(S) \\cap P(P(S)) = P(S \\cap P(S)) = P(\\emptyset) = \\{\\emptyset\\}$ whenever no element of $S$ is a subset of $S$ (the intended reading; it fails for $S = \\{\\emptyset\\}$)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Fails for $S=\\phi$ (and any set whose subsets are not its elements)."
+          "reason": "$P(S) \\cap S = P(S)$ would mean $P(S) \\subseteq S$, impossible since $|P(S)| > |S|$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$S$ is always an element of $P(S)$."
+          "reason": "$S \\subseteq S$, so $S \\in P(S)$ always."
         }
       ],
+      "shortcut": "D is false for every $S$ ($S \\in P(S)$), A and C are false by counting, so B is the only candidate.",
       "pitfalls": [
-        "Confusing $\\in$ with $\\subseteq$: $\\phi\\in P(X)$ for every $X$."
+        "Believing $S \\notin P(S)$ because '$S$ is the whole set, not a part of it': every set is a subset of itself.",
+        "Accepting B without noticing that it depends on $S$ having no element that is also a subset of $S$."
       ],
-      "verification": "$S=\\{1\\}$: $P(S)=\\{\\phi,\\{1\\}\\}$, $P(P(S))=\\{\\phi,\\{\\phi\\},\\{\\{1\\}\\},P(S)\\}$; common element only $\\phi$."
+      "verification": "Python frozensets for $S = \\emptyset, \\{1\\}, \\{1, 2\\}, \\{1, 2, 3\\}, \\{\\emptyset\\}, \\{\\emptyset, \\{\\emptyset\\}\\}, \\{1, \\{1\\}\\}$: A, C, D fail for all; B holds exactly for the four sets with $S \\cap P(S) = \\emptyset$.",
+      "animation": {
+        "kind": "table",
+        "title": "The four options",
+        "cols": [
+          "option",
+          "verdict"
+        ],
+        "rows": [
+          [
+            "A: P(P(S)) = P(S)",
+            "?"
+          ],
+          [
+            "B: P(S) ∩ P(P(S)) = {∅}",
+            "?"
+          ],
+          [
+            "C: P(S) ∩ S = P(S)",
+            "?"
+          ],
+          [
+            "D: S ∉ P(S)",
+            "?"
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-2000-a-2-7": {
       "approach": "Concept tested: **replacement of equivalents under given facts**. Use $a \\leftrightarrow (b \\vee \\neg b)$ to replace $a$ by T and $b \\leftrightarrow c$ to replace $c$ by $b$; the formula collapses to a tautology.",

@@ -1,0 +1,384 @@
+{
+ "version": 1,
+ "title": "Quantifiers over a domain strip",
+ "width": 640,
+ "height": 336,
+ "narrow": {
+  "width": 360,
+  "height": 330
+ },
+ "intro": "On a finite domain, ∀ joins the cells with AND and ∃ joins them with OR. One counterexample or one witness decides.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "∀ as a big AND, ∃ as a big OR over the domain {1, …, 5}",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∀ = big AND, ∃ = big OR",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "d0",
+   "type": "box",
+   "x": 40,
+   "y": 56,
+   "w": 96,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 8,
+    "y": 56,
+    "w": 64,
+    "h": 44,
+    "size": 13
+   },
+   "label": "x = 1"
+  },
+  {
+   "id": "v0",
+   "type": "box",
+   "x": 40,
+   "y": 112,
+   "w": 96,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 8,
+    "y": 112,
+    "w": 64,
+    "h": 44,
+    "size": 13
+   },
+   "label": "P = ?"
+  },
+  {
+   "id": "d1",
+   "type": "box",
+   "x": 156,
+   "y": 56,
+   "w": 96,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 78,
+    "y": 56,
+    "w": 64,
+    "h": 44,
+    "size": 13
+   },
+   "label": "x = 2"
+  },
+  {
+   "id": "v1",
+   "type": "box",
+   "x": 156,
+   "y": 112,
+   "w": 96,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 78,
+    "y": 112,
+    "w": 64,
+    "h": 44,
+    "size": 13
+   },
+   "label": "P = ?"
+  },
+  {
+   "id": "d2",
+   "type": "box",
+   "x": 272,
+   "y": 56,
+   "w": 96,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 148,
+    "y": 56,
+    "w": 64,
+    "h": 44,
+    "size": 13
+   },
+   "label": "x = 3"
+  },
+  {
+   "id": "v2",
+   "type": "box",
+   "x": 272,
+   "y": 112,
+   "w": 96,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 148,
+    "y": 112,
+    "w": 64,
+    "h": 44,
+    "size": 13
+   },
+   "label": "P = ?"
+  },
+  {
+   "id": "d3",
+   "type": "box",
+   "x": 388,
+   "y": 56,
+   "w": 96,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 218,
+    "y": 56,
+    "w": 64,
+    "h": 44,
+    "size": 13
+   },
+   "label": "x = 4"
+  },
+  {
+   "id": "v3",
+   "type": "box",
+   "x": 388,
+   "y": 112,
+   "w": 96,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 218,
+    "y": 112,
+    "w": 64,
+    "h": 44,
+    "size": 13
+   },
+   "label": "P = ?"
+  },
+  {
+   "id": "d4",
+   "type": "box",
+   "x": 504,
+   "y": 56,
+   "w": 96,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 288,
+    "y": 56,
+    "w": 64,
+    "h": 44,
+    "size": 13
+   },
+   "label": "x = 5"
+  },
+  {
+   "id": "v4",
+   "type": "box",
+   "x": 504,
+   "y": 112,
+   "w": 96,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 288,
+    "y": 112,
+    "w": 64,
+    "h": 44,
+    "size": 13
+   },
+   "label": "P = ?"
+  },
+  {
+   "id": "all",
+   "type": "box",
+   "x": 40,
+   "y": 186,
+   "w": 560,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 8,
+    "y": 180,
+    "w": 344,
+    "h": 46,
+    "size": 13
+   },
+   "label": "∀x P(x) = P(1) ∧ P(2) ∧ … ∧ P(5)"
+  },
+  {
+   "id": "any",
+   "type": "box",
+   "x": 40,
+   "y": 246,
+   "w": 560,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 8,
+    "y": 240,
+    "w": 344,
+    "h": 46,
+    "size": 13
+   },
+   "label": "∃x P(x) = P(1) ∨ P(2) ∨ … ∨ P(5)"
+  },
+  {
+   "id": "foot",
+   "type": "text",
+   "x": 320,
+   "y": 322,
+   "text": "P(x): x² > 5",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 316,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Fill the strip: P(x) is 'x² > 5'. It is false for 1 and 2 (1 and 4 are not above 5) and true for 3, 4, 5.",
+   "patches": [
+    {
+     "id": "v0",
+     "set": {
+      "label": "P = F",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "label": "P = F",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "label": "P = T",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "v3",
+     "set": {
+      "label": "P = T",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "v4",
+     "set": {
+      "label": "P = T",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∀x P(x) is the AND of all five cells. One F cell is enough to sink an AND.",
+   "patches": [
+    {
+     "id": "all",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The very first cell, x = 1, is F: a counterexample. So ∀x P(x) is false; the other cells do not matter.",
+   "patches": [
+    {
+     "id": "d0",
+     "set": {
+      "tone": "danger",
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "all",
+     "set": {
+      "label": "∀x P(x) = F: counterexample x = 1",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∃x P(x) is the OR of the same cells. One T cell is enough to make an OR true.",
+   "patches": [
+    {
+     "id": "any",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "x = 3 is the first T cell: a witness. So ∃x P(x) is true.",
+   "patches": [
+    {
+     "id": "d2",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "any",
+     "set": {
+      "label": "∃x P(x) = T: witness x = 3",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The counterexample of ∀ is a witness of ∃¬: x = 1 makes ¬P true. That is De Morgan for quantifiers, ¬∀x P ≡ ∃x ¬P.",
+   "patches": [
+    {
+     "id": "foot",
+     "set": {
+      "text": "¬∀x P(x) ≡ ∃x ¬P(x): x = 1 is the witness",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

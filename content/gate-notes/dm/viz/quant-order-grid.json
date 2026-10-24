@@ -1,0 +1,269 @@
+{
+ "version": 1,
+ "title": "The order of quantifiers",
+ "width": 640,
+ "height": 284,
+ "narrow": {
+  "width": 360,
+  "height": 350
+ },
+ "intro": "Draw a relation as a grid. 'For every x some y' and 'some y for every x' ask different questions of the same grid.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "∀x∃y: a mark in every row.  ∃y∀x: one full column.",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∀x∃y vs ∃y∀x on a grid",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "g",
+   "type": "table",
+   "x": 40,
+   "y": 52,
+   "cellW": 70,
+   "cellH": 46,
+   "rows": [
+    [
+     "x \\ y",
+     "a",
+     "b",
+     "c"
+    ],
+    [
+     "a",
+     "·",
+     "●",
+     "·"
+    ],
+    [
+     "b",
+     "·",
+     "·",
+     "●"
+    ],
+    [
+     "c",
+     "●",
+     "·",
+     "·"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 40,
+    "y": 48,
+    "cellW": 70,
+    "cellH": 40
+   }
+  },
+  {
+   "id": "b1",
+   "type": "box",
+   "x": 360,
+   "y": 60,
+   "w": 260,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 10,
+    "y": 224,
+    "w": 340,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∀x∃y R(x, y) = ?"
+  },
+  {
+   "id": "b2",
+   "type": "box",
+   "x": 360,
+   "y": 124,
+   "w": 260,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 10,
+    "y": 272,
+    "w": 340,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∃y∀x R(x, y) = ?"
+  },
+  {
+   "id": "foot",
+   "type": "text",
+   "x": 320,
+   "y": 268,
+   "text": "rows are x, columns are y; ● marks R(x, y)",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 336,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The relation is a cycle: a → b, b → c, c → a. Row x has a mark in column y when R(x, y) holds.",
+   "patches": [
+    {
+     "id": "g",
+     "set": {
+      "highlight": [
+       [
+        1,
+        2
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        1
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∀x∃y R(x, y): for each row, can we find a mark? Row a: column b. Row b: column c. Row c: column a. Yes, every row has one.",
+   "patches": [
+    {
+     "id": "b1",
+     "set": {
+      "label": "∀x∃y R(x, y) = T",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∃y∀x R(x, y): is some column full? Each column has exactly one mark, so no single y works for every x.",
+   "patches": [
+    {
+     "id": "b2",
+     "set": {
+      "label": "∃y∀x R(x, y) = F",
+      "tone": "danger",
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "g",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        3,
+        1
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now add the pairs (a, a) and (b, a). Column a becomes full: a is a y that works for every x.",
+   "patches": [
+    {
+     "id": "g",
+     "set": {
+      "rows": [
+       [
+        "x \\ y",
+        "a",
+        "b",
+        "c"
+       ],
+       [
+        "a",
+        "●",
+        "●",
+        "·"
+       ],
+       [
+        "b",
+        "●",
+        "·",
+        "●"
+       ],
+       [
+        "c",
+        "●",
+        "·",
+        "·"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        3,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "b2",
+     "set": {
+      "label": "∃y∀x R(x, y) = T",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A full column puts a mark in every row, so ∃y∀x always implies ∀x∃y. The cycle shows the converse fails.",
+   "patches": [
+    {
+     "id": "foot",
+     "set": {
+      "text": "∃y∀x ⇒ ∀x∃y, but not conversely",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1109,27 +1109,61 @@
       "verification": "$n=1$: P(exactly one head in 2 tosses) $=2/4=\\binom21/4$ ✓."
     },
     "cse-2006-cs-22": {
-      "approach": "Write both sets with complements: $A-B=A\\cap\\overline B$, then simplify with distributive laws.",
+      "approach": "Concept tested: **comparing set expressions in three sets**. Reduce each to its Venn regions; equal regions mean equal sets.",
       "concepts": [
-        "Set algebra",
-        "De Morgan"
+        "Venn regions",
+        "Set difference",
+        "Set identities"
       ],
+      "given": "$X = (E \\cap F) - (F \\cap G)$, $Y = (E - (E \\cap G)) - (E - F)$.",
       "steps": [
         {
-          "title": "Simplify X",
-          "body": "$X=(E\\cap F)\\cap\\overline{F\\cap G}=(E\\cap F)\\cap(\\overline F\\cup\\overline G)=(E\\cap F\\cap\\overline F)\\cup(E\\cap F\\cap\\overline G)=E\\cap F\\cap\\overline G.$"
+          "title": "Regions of X",
+          "body": "$E \\cap F = \\{EFG, EF\\}$; removing $F \\cap G$ (which contains $EFG$) leaves $\\{EF\\}$: in $E$ and $F$, not in $G$.",
+          "scene": {
+            "hl": [
+              {
+                "region": "EF",
+                "tone": "accent"
+              }
+            ]
+          }
         },
         {
-          "title": "Simplify Y",
-          "body": "$E-(E\\cap G)=E\\cap\\overline G$. $E-F=E\\cap\\overline F$.\n$Y=(E\\cap\\overline G)\\cap\\overline{E\\cap\\overline F}=(E\\cap\\overline G)\\cap(\\overline E\\cup F)=E\\cap F\\cap\\overline G.$"
+          "title": "First part of Y",
+          "body": "$E - (E \\cap G) = E - G = \\{EF, E\\}$.",
+          "scene": {
+            "hl": [
+              {
+                "region": "EF",
+                "tone": "info"
+              },
+              {
+                "region": "E",
+                "tone": "info"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Subtract E − F",
+          "body": "$E - F = \\{EG, E\\}$. Removing it deletes $E$ and leaves $\\{EF\\}$.",
+          "scene": {
+            "hl": [
+              {
+                "region": "EF",
+                "tone": "success"
+              }
+            ]
+          }
         },
         {
           "title": "Compare",
-          "body": "$X=Y=E\\cap F\\cap\\overline G$."
+          "body": "$X = Y = E \\cap F \\cap G^c$ for all sets, so $X = Y$; options with a proper inclusion, and D, which needs $Y \\not\\subseteq X$, are wrong."
         }
       ],
       "answer": {
-        "value": "$X=Y$",
+        "value": "$X = Y$",
         "choice": [
           "C"
         ],
@@ -1139,25 +1173,48 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Proper subset is impossible since the sets are equal."
+          "reason": "$X \\subset Y$ (proper) would need an element of $Y$ outside $X$; both are the region $E \\cap F \\cap G^c$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Proper superset is impossible since the sets are equal."
+          "reason": "Same reason in the other direction."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: both equal $E\\cap F\\cap\\overline G$."
+          "reason": "Both reduce to $E \\cap F \\cap G^c$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$Y-X=\\emptyset$ because the sets are equal."
+          "reason": "$Y - X$ is always empty because $Y = X$."
         }
       ],
-      "verification": "Venn region check: both sets are the region inside $E$ and $F$ but outside $G$."
+      "shortcut": "$X = E \\cap F \\cap G^c$ in one step; $Y = (E \\cap G^c) \\cap (E \\cap F^c)^c = E \\cap G^c \\cap (E^c \\cup F) = E \\cap F \\cap G^c$.",
+      "pitfalls": [
+        "Distributing the difference wrongly: $A - (B - C)$ is not $(A - B) - C$."
+      ],
+      "verification": "Region semantics over $E, F, G$ and brute force over all triples of subsets of $\\{0, 1, 2\\}$: $X = Y$ always.",
+      "animation": {
+        "kind": "venn",
+        "title": "X = (E ∩ F) − (F ∩ G)",
+        "sets": [
+          {
+            "id": "E",
+            "label": "E"
+          },
+          {
+            "id": "F",
+            "label": "F"
+          },
+          {
+            "id": "G",
+            "label": "G"
+          }
+        ],
+        "hl": []
+      }
     },
     "cse-2006-cs-23": {
       "approach": "Two different solutions $u \\ne v$ of $Fx=b$ force a non-trivial null space: $F(u-v)=0$. Check each statement against that single fact.",
@@ -1322,23 +1379,29 @@
       "verification": "$m=4$, $X_1=\\{1,2,3\\}$, $X_2=\\{2,3,4\\}$: $f = (1,2,2,1)$, sum $6 = 3\\cdot2$."
     },
     "cse-2006-cs-26": {
-      "approach": "\"Tigers and lions\" means any animal that is a tiger or a lion (no animal is both). The condition \"if hungry or threatened\" is an implication whose consequent is \"attacks\".",
+      "approach": "Concept tested: **plural subjects and conditional predicates**. 'Tigers and lions' means every animal that is a tiger **or** a lion; 'attack if hungry or threatened' is (hungry ∨ threatened) → attacks.",
       "concepts": [
-        "First-order logic translation",
-        "Universal quantifier with implication"
+        "Plural subject as ∨",
+        "Universal with →",
+        "Implication"
       ],
+      "given": "'Tigers and lions attack if they are hungry or threatened.'",
       "steps": [
         {
-          "title": "Subject",
-          "body": "The rule applies to every $x$ that is a tiger **or** a lion: $tiger(x) \\vee lion(x)$. Using $\\wedge$ would describe animals that are both, which is empty."
+          "title": "The subject class",
+          "body": "The sentence is about each tiger and each lion. 'Tigers do X and lions do X' is $\\forall x(tiger \\to X) \\wedge \\forall x(lion \\to X) \\equiv \\forall x((tiger(x) \\vee lion(x)) \\to X)$."
         },
         {
-          "title": "Rule",
-          "body": "\"attack if hungry or threatened\" $\\Rightarrow$ $(hungry(x) \\vee threatened(x)) \\rightarrow attacks(x)$."
+          "title": "The property",
+          "body": "'Attack if hungry or threatened': the if-clause is the hypothesis, so $X = (hungry(x) \\vee threatened(x)) \\to attacks(x)$."
         },
         {
           "title": "Combine",
-          "body": "$$\\forall x\\,[(tiger(x) \\vee lion(x)) \\rightarrow \\{(hungry(x) \\vee threatened(x)) \\rightarrow attacks(x)\\}]$$ which is option (D)."
+          "body": "$\\forall x[(tiger(x) \\vee lion(x)) \\to \\{(hungry(x) \\vee threatened(x)) \\to attacks(x)\\}]$: option D."
+        },
+        {
+          "title": "Why the ∧ subject fails",
+          "body": "A's filter $tiger(x) \\wedge lion(x)$ is false for every real animal, so A is vacuously true and says nothing; a hungry tiger that does not attack does not falsify it."
         }
       ],
       "answer": {
@@ -1352,28 +1415,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Wrong: $tiger(x) \\wedge lion(x)$ is never true, so the statement says nothing about real tigers or lions."
+          "reason": "The filter $tiger \\wedge lion$ selects animals that are both, i.e. none; the formula is vacuous."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong: uses $\\wedge$ instead of $\\rightarrow$ — claims every tiger/lion is always hungry-or-threatened and always attacks."
+          "reason": "Asserts that every tiger and lion **is** hungry or threatened **and** attacks: the 'if' became 'and'."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Wrong: reverses the implication ($attacks \\rightarrow hungry$) and attaches $threatened$ by $\\vee$."
+          "reason": "$(attacks \\to hungry) \\vee threatened$ reverses the conditional: it says an attacking animal must be hungry (unless threatened)."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: universal rule over tigers or lions with the right implication."
+          "reason": "Plural subject as $\\vee$, condition as hypothesis, attack as conclusion."
         }
       ],
+      "shortcut": "Two quick filters: the subject must be $tiger \\vee lion$ (rules out A) and the condition must imply the attack (rules out B and C).",
       "pitfalls": [
-        "Translating the English \"and\" in \"tigers and lions\" literally as $\\wedge$."
+        "Translating the English 'and' between two classes as $\\wedge$.",
+        "Reading 'X if Y' as $X \\to Y$; the if-clause is the hypothesis."
       ],
-      "verification": "A hungry tiger: (D) forces $attacks(x)$, as the sentence requires; a calm lion: (D) imposes nothing."
+      "verification": "Script: only D is equivalent to the intended formula on all interpretations of the five predicates over domains of size 1 to 3."
     },
     "cse-2006-cs-27": {
       "approach": "Concept tested: **hypothesis splitting** — on the left of an arrow, ∧ and ∨ swap. Both P1 and P2 keep the connective instead of swapping it, so find a row where each pair of sides differs.",
@@ -3408,24 +3473,52 @@
       "verification": "n = 3, m = 1: insert ×3, delete → t = 3: x = 6, y = 4 = n + m. Interleaved insert/delete/insert/delete… with m = n gives t = m: x = n + m, y = 2m."
     },
     "cse-2006-cs-50": {
-      "approach": "Read the pseudo-code operators as logic: `^` is AND, `~` is NOT, `V` is OR. Then $z_i = (x_i \\wedge \\lnot y_i) \\vee (\\lnot x_i \\wedge y_i) = x_i \\oplus y_i$.",
+      "approach": "Concept tested: **sets as bit arrays**. Translate the bit formula into connectives ($\\wedge$, $\\vee$, $\\neg$), recognise exclusive or, and translate back to sets.",
       "concepts": [
-        "Bit-vector sets",
-        "XOR",
-        "Symmetric difference"
+        "Bit vectors",
+        "Symmetric difference",
+        "Exclusive or"
       ],
+      "given": "`z[i] = (x[i] ^ ~y[i]) V (~x[i] ^ y[i])` with `^` = AND, `V` = OR, `~` = NOT.",
       "steps": [
         {
-          "title": "Translate each term",
-          "body": "$x_i \\wedge \\lnot y_i = 1 \\iff i \\in X - Y$, and $\\lnot x_i \\wedge y_i = 1 \\iff i \\in Y - X$."
+          "title": "Read the notation",
+          "body": "The line uses logic notation: `^` is $\\wedge$, `V` is $\\vee$, `~` is $\\neg$. So $z_i = (x_i \\wedge \\neg y_i) \\vee (\\neg x_i \\wedge y_i)$."
         },
         {
-          "title": "Combine",
-          "body": "OR of the two: $i \\in Z \\iff i \\in (X - Y) \\cup (Y - X)$, the symmetric difference."
+          "title": "Recognise XOR",
+          "body": "The first bracket is 1 when $i \\in X$ and $i \\notin Y$ (that is $X - Y$); the second when $i \\in Y$ and $i \\notin X$ ($Y - X$). Their OR is 1 exactly when $x_i \\ne y_i$: $z_i = x_i \\oplus y_i$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 2,
+                "c": 0,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 3,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 5,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Back to sets",
+          "body": "$Z = (X - Y) \\cup (Y - X) = X \\,\\Delta\\, Y$: option D. On the example $X = \\{0, 2\\}$, $Y = \\{2, 3\\}$ (bits $1010$, $0011$) the loop gives $1001 = \\{0, 3\\}$."
+        },
+        {
+          "title": "Why not the other readings",
+          "body": "Option C, $(X - Y) \\cap (Y - X)$, is always empty (no element is in $X$-not-$Y$ and $Y$-not-$X$ at once). Reading `^` as C's XOR would give $x$ XNOR $y$ in both brackets, i.e. the complement of $X \\,\\Delta\\, Y$, which is not offered."
         }
       ],
       "answer": {
-        "value": "(X − Y) ∪ (Y − X)",
+        "value": "$(X - Y) \\cup (Y - X)$",
         "choice": [
           "D"
         ],
@@ -3435,25 +3528,89 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Union would also include elements in both X and Y, but for those both terms are 0."
+          "reason": "$X \\cup Y$ would also include elements in both sets, where the formula gives 0."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "For $i \\in X \\cap Y$ both terms are 0, so Z excludes the intersection."
+          "reason": "$X \\cap Y$: on $x_i = y_i = 1$ both brackets are 0, so those elements are excluded."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$X - Y$ and $Y - X$ are disjoint, so this intersection is always empty."
+          "reason": "$(X - Y) \\cap (Y - X) = \\emptyset$ always; the loop sets $z_i = 1$ whenever $x_i \\ne y_i$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Exactly the XOR of the two bit vectors."
+          "reason": "OR of 'in $X$ not $Y$' and 'in $Y$ not $X$': the symmetric difference."
         }
       ],
-      "verification": "X = {1,2}, Y = {2,3}: z = 1 for 1 and 3 only → {1,3} = symmetric difference."
+      "shortcut": "$(a \\wedge \\neg b) \\vee (\\neg a \\wedge b)$ is the textbook expansion of $a \\oplus b$; XOR of membership bits is $\\Delta$.",
+      "pitfalls": [
+        "Reading `^` as the C XOR operator; the `V` for OR shows the line is in logic notation.",
+        "Choosing C because it 'mentions both differences': it intersects them instead of uniting them."
+      ],
+      "verification": "Simulated for all pairs $X, Y \\subseteq \\{0, 1, 2, 3\\}$: the loop's $Z$ always equals $(X - Y) \\cup (Y - X)$, and $(X - Y) \\cap (Y - X)$ is always empty.",
+      "animation": {
+        "kind": "table",
+        "title": "Bit by bit, X = 1010 and Y = 0011",
+        "cols": [
+          "i",
+          "x",
+          "y",
+          "x∧¬y",
+          "¬x∧y",
+          "z"
+        ],
+        "rows": [
+          [
+            "0",
+            "1",
+            "0",
+            "1",
+            "0",
+            "1"
+          ],
+          [
+            "1",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+          ],
+          [
+            "2",
+            "1",
+            "1",
+            "0",
+            "0",
+            "0"
+          ],
+          [
+            "3",
+            "0",
+            "1",
+            "0",
+            "1",
+            "1"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "c": 5,
+            "tone": "success"
+          },
+          {
+            "r": 3,
+            "c": 5,
+            "tone": "success"
+          }
+        ]
+      }
     },
     "cse-2006-cs-51": {
       "approach": "Substitute $n = 2^m$ so that $\\sqrt{n}$ becomes halving of $m$, then use the master theorem on the new recurrence.",

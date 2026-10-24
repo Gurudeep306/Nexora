@@ -1200,28 +1200,33 @@
       }
     },
     "cse-2026-2-cs-1": {
-      "approach": "Name the special person $y$. \"There is a person\" gives $\\exists y$ outermost; \"everyone else\" gives $\\forall x$ with $x \\ne y$. For each such $x$: $x$ knows $y$ and $y$ does not know $x$.",
+      "approach": "Concept tested: **'there is a person … everyone else' with ≠ and the order ∃y∀x**. Name the special person y first; then every other person x knows y and is not known by y.",
       "concepts": [
-        "First-order logic translation",
-        "Quantifier order",
-        "Restricted universal quantifier"
+        "Order of quantifiers",
+        "Restriction with ≠",
+        "Translation"
       ],
+      "given": "$M(x, y)$: $x$ knows $y$. 'There is a person who does not know anyone else, but that person is known by everyone else.'",
       "steps": [
         {
-          "title": "Translate the inner condition",
-          "body": "For a fixed other person $x \\ne y$:\n- \"that person is known by everyone else\" → $M(x, y)$ ($x$ knows $y$);\n- \"does not know anyone else\" → $\\neg M(y, x)$.\nCombined: $(x \\ne y) \\rightarrow (M(x,y) \\land \\neg M(y,x))$. The implication restricts the claim to people other than $y$ — the right form for a universal."
+          "title": "Outer quantifier",
+          "body": "'There is a person' (call them $y$) comes first: $\\exists y$, outermost."
         },
         {
-          "title": "Attach the quantifiers",
-          "body": "One fixed person works against **all** others: $(\\exists y)(\\forall x)\\,((x \\ne y) \\rightarrow (M(x,y) \\land \\neg M(y,x)))$ — option (A). The order $\\exists y\\,\\forall x$ matters: the same $y$ must work for every $x$."
+          "title": "Everyone else",
+          "body": "'Everyone else' ranges over $x \\ne y$: $\\forall x(x \\ne y \\to \\dots)$."
         },
         {
-          "title": "Why the other prefixes fail",
-          "body": "- $\\forall y\\,\\exists x$: each person has *some* other person — no single special person.\n- $\\exists y\\,\\exists x$: choosing $x = y$ makes the implication vacuously true, so the formula says nothing.\n- $\\forall y\\,\\forall x$: demands that everyone is known by and knows no one else — contradictory as soon as there are two people.\nOnly $\\exists y\\,\\forall x$ (option A) fits."
+          "title": "The two facts about each other person",
+          "body": "$x$ knows $y$: $M(x, y)$; $y$ does not know $x$: $\\neg M(y, x)$. So $\\exists y \\forall x((x \\ne y) \\to (M(x, y) \\wedge \\neg M(y, x)))$: option A."
+        },
+        {
+          "title": "Check the order",
+          "body": "B ($\\forall y \\exists x$) says every person has someone else who knows them and whom they do not know: a different claim. C needs only one other person; D makes **everyone** such a person, impossible with two people."
         }
       ],
       "answer": {
-        "value": "$(\\exists y)(\\forall x)\\,((x \\ne y) \\rightarrow (M(x,y) \\land \\neg M(y,x)))$ — option (A)",
+        "value": "$(\\exists y)(\\forall x)\\,((x \\neq y) \\rightarrow (M(x, y) \\land \\neg M(y, x)))$",
         "choice": [
           "A"
         ],
@@ -1231,30 +1236,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "One person $y$; every other $x$ knows $y$ and is not known by $y$ — exactly the statement."
+          "reason": "One person $y$; every other $x$ knows $y$ and is unknown to $y$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$\\forall y\\,\\exists x$ says every person has *someone* who knows them and whom they do not know — no single special person."
+          "reason": "$\\forall y \\exists x$: for every person some other person fits, not one special person; and $x = y$ makes the inner implication vacuously true, so B is close to trivial."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\exists y\\,\\exists x$ with an implication is trivially true (pick $x = y$, making the antecedent false); it says nothing about everyone."
+          "reason": "$\\exists y \\exists x$: only one other person needs to know $y$ (or $x = y$ makes it vacuous)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$\\forall y\\,\\forall x$ demands this of **every** person, which is self-contradictory for two people ($M(x,y)$ and $\\neg M(x,y)$)."
+          "reason": "Everyone would be known by everyone else and know nobody: contradictory for two different people."
         }
       ],
-      "shortcut": "\"There is a person … everyone else\" → $\\exists y\\,\\forall x$; only one option has that prefix.",
+      "shortcut": "'There is a person … everyone else' = $\\exists y \\forall x(x \\ne y \\to \\dots)$: only A has $\\exists\\forall$ in that order.",
       "pitfalls": [
-        "Swapping the quantifier order ($\\forall\\exists$ vs $\\exists\\forall$).",
-        "Mixing the argument order of $M$: \"$y$ is known by $x$\" is $M(x, y)$."
+        "Choosing B by quantifying 'everyone' first.",
+        "Forgetting that $x \\ne y$ is a filter, so the matrix is an implication."
       ],
-      "verification": "Model: people $\\{p, q, r\\}$ with $q$ and $r$ knowing $p$ and $p$ knowing nobody. (A) is true with $y = p$; (D) fails at $y = q$, since $p$ does not know $q$."
+      "verification": "Script: only A is equivalent to the intended formula on all interpretations up to size 3; in the world a → c, b → c, a → b, person c satisfies A."
     },
     "cse-2026-2-cs-2": {
       "approach": "Each traversal is named after **when the node is visited** relative to its subtrees: in-order (between), pre-order (before), post-order (after). Left is always visited before right.",

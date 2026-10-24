@@ -542,24 +542,29 @@
       "verification": "Truth tables over $p, q$: the given statement, II and III are T, T, F, T (false only on FT); I and IV are T, F, T, T."
     },
     "cse-2017-1-cs-2": {
-      "approach": "Take each sentence and ask whether every model of $\\forall x\\,\\exists y\\,R(x,y)$ satisfies it; a small counter-model kills the non-implied ones.",
+      "approach": "Concept tested: **what ∀x∃y R(x, y) implies**: ∀ ⇒ ∃ on non-empty domains, De Morgan for quantifiers, and why the order cannot be swapped.",
       "concepts": [
+        "Logical implication",
         "Quantifier order",
-        "De Morgan for quantifiers",
-        "Counter-models"
+        "De Morgan for quantifiers"
       ],
+      "given": "$F = \\forall x \\exists y R(x, y)$; domains non-empty.",
       "steps": [
         {
-          "title": "I is implied",
-          "body": "The domain is non-empty, so pick any $x_0$. $F$ gives a $y_0$ with $R(x_0,y_0)$, hence $\\exists y\\,\\exists x\\,R(x,y)$."
+          "title": "IV equals F",
+          "body": "$\\neg\\exists x \\forall y \\neg R(x,y) \\equiv \\forall x \\neg\\forall y \\neg R \\equiv \\forall x \\exists y R(x,y) = F$. Implied."
         },
         {
-          "title": "IV is implied",
-          "body": "Push the negation inside: $$\\neg\\exists x\\,\\forall y\\,\\neg R(x,y) \\equiv \\forall x\\,\\neg\\forall y\\,\\neg R(x,y) \\equiv \\forall x\\,\\exists y\\,R(x,y) = F.$$"
+          "title": "I follows",
+          "body": "Pick any element $a$; $F$ gives $b$ with $R(a, b)$, so $\\exists y \\exists x R(x, y)$. Implied (needs non-empty domain)."
         },
         {
-          "title": "II and III are not implied",
-          "body": "Domain $\\{1,2\\}$, $R=\\{(1,1),(2,2)\\}$ (equality). $F$ holds (each $x$ relates to itself).\n\n- II needs one $y$ related to **every** $x$: $y=1$ fails for $x=2$, $y=2$ fails for $x=1$.\n\nFor III take domain $\\{1,2\\}$, $R=\\{(1,1),(2,1)\\}$: $F$ holds, but $y=2$ has no $x$ with $R(x,2)$, so III fails."
+          "title": "II fails",
+          "body": "$D = \\{0, 1\\}$, $R$ = equality: every $x$ has $y = x$, but no $y$ works for all $x$. $F$ true, II false."
+        },
+        {
+          "title": "III fails",
+          "body": "$D = \\{0, 1\\}$, $R = \\{(0, 0), (1, 0)\\}$: every row has a 1, but column 1 is empty, so $\\forall y \\exists x R$ is false."
         }
       ],
       "answer": {
@@ -573,29 +578,75 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "IV is implied, but I is also implied, so \"IV only\" is incomplete."
+          "reason": "Misses I, which follows because the domain is non-empty."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "I follows from non-emptiness; IV is logically identical to $F$."
+          "reason": "I by ∀ ⇒ ∃, IV by De Morgan; II and III have counter-models."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "II swaps $\\forall\\exists$ to $\\exists\\forall$, which is strictly stronger; the equality relation is a counter-model."
+          "reason": "II is the swapped, stronger sentence ∃y∀x: refuted by equality."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Neither II nor III is implied (counter-models in step 3), and the true ones I, IV are missing."
+          "reason": "II and III both fail (equality and the 'column' relation)."
         }
       ],
+      "shortcut": "In grid terms F says 'every row has a 1': I (some 1) and IV (no all-0 row) follow; 'a full column' (II) and 'every column has a 1' (III) do not.",
       "pitfalls": [
-        "$\\forall x\\,\\exists y$ does not imply $\\exists y\\,\\forall x$ — the witness $y$ may depend on $x$.",
-        "III swaps the roles of the variables; it is a different statement, not a rewriting."
+        "Thinking ∀x∃y gives ∃y∀x.",
+        "Overlooking that IV is just F after pushing the negation."
       ],
-      "verification": "IV was reduced to $F$ by two quantifier De Morgan steps; I and the counter-models were checked element by element."
+      "verification": "Exhaustive search up to size 3: F → I and F → IV have no counter-model; F → II and F → III fail on two elements.",
+      "animation": {
+        "kind": "table",
+        "title": "The 'column' world R = {(0,0), (1,0)}",
+        "cols": [
+          "x \\ y",
+          "0",
+          "1"
+        ],
+        "rows": [
+          [
+            "0",
+            "1",
+            "0"
+          ],
+          [
+            "1",
+            "1",
+            "0"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "c": 1,
+            "tone": "success"
+          },
+          {
+            "r": 1,
+            "c": 1,
+            "tone": "success"
+          },
+          {
+            "r": 0,
+            "c": 2,
+            "tone": "error"
+          },
+          {
+            "r": 1,
+            "c": 2,
+            "tone": "error"
+          }
+        ],
+        "caption": "Every row has a 1 (F true); column 1 is empty (III false)."
+      }
     },
     "cse-2017-1-cs-3": {
       "approach": "Notice $b = A\\mathbf{1}$, so the system is consistent; the non-trivial dependency $\\sum c_i a_i=0$ makes $A$ singular, so the solution is not unique.",

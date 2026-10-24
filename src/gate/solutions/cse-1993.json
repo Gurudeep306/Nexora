@@ -2141,23 +2141,67 @@
       "verification": "Counter-examples given for every other option."
     },
     "cse-1993-ii-a-8-4": {
-      "approach": "|A × A| = n², and a set of size k has 2^k subsets.",
+      "approach": "Concept tested: **the size of a power set applied to a Cartesian product**. First count the base set $A \\times A$, then raise 2 to that count.",
       "concepts": [
+        "Power set",
         "Cartesian product",
-        "Power set"
+        "Product rule"
       ],
+      "given": "$|A| = n$. Find $|P(A \\times A)|$.",
       "steps": [
         {
-          "title": "Size of A × A",
-          "body": "$|A\\times A| = n \\cdot n = n^2$."
+          "title": "Count the base set",
+          "body": "An element of $A \\times A$ is an ordered pair $(a, b)$: $n$ choices for $a$ and $n$ for $b$, so $|A \\times A| = n^2$.",
+          "scene": {
+            "lines": [
+              {
+                "tex": "|A \\times A| = n \\cdot n = n^2",
+                "note": "product rule"
+              }
+            ]
+          }
         },
         {
-          "title": "Power set",
-          "body": "$|\\mathcal P(A\\times A)| = 2^{n^2}$."
+          "title": "Power set of the base",
+          "body": "A set with $m$ elements has $2^m$ subsets (one in/out choice per element). With $m = n^2$: $|P(A \\times A)| = 2^{n^2}$.",
+          "scene": {
+            "lines": [
+              {
+                "tex": "|A \\times A| = n \\cdot n = n^2",
+                "note": "product rule"
+              },
+              {
+                "tex": "|P(A \\times A)| = 2^{n^2}",
+                "note": "2 choices per pair",
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Separate the look-alikes at n = 3",
+          "body": "$2^{2^n} = 256$, $2^{n^2} = 512$, $(2^n)^2 = 64$, $(2^2)^n = 64$. Only option B equals 512 for every $n$; at $n = 2$ options A and B coincide (16), which is why a test value of 3 is safer.",
+          "scene": {
+            "lines": [
+              {
+                "tex": "|A \\times A| = n \\cdot n = n^2",
+                "note": "product rule"
+              },
+              {
+                "tex": "|P(A \\times A)| = 2^{n^2}",
+                "note": "2 choices per pair",
+                "tone": "success"
+              },
+              {
+                "tex": "n = 3:\\; 2^{2^3} = 256,\\; 2^{9} = 512,\\; (2^3)^2 = 64,\\; (2^2)^3 = 64",
+                "note": "only B gives 512"
+              }
+            ]
+          }
         }
       ],
       "answer": {
-        "value": "2^{n^2}",
+        "value": "$2^{n^2}$",
         "choice": [
           "B"
         ],
@@ -2167,30 +2211,44 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$2^{2^n}$ is the size of the power set of the power set of A."
+          "reason": "$2^{2^n}$ is $|P(P(A))|$, the power set of the power set; it differs from $2^{n^2}$ for $n \\ge 3$ (256 against 512)."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$2^{n^2}$."
+          "reason": "$|A \\times A| = n^2$, and a set of $n^2$ elements has $2^{n^2}$ subsets."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$(2^n)^2 = 2^{2n}$, equal to $2^{n^2}$ only for n = 0, 2."
+          "reason": "$(2^n)^2 = 2^{2n}$ counts ordered **pairs of subsets** of $A$, not subsets of $A \\times A$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$(2^2)^n = 2^{2n}$, same issue."
+          "reason": "$(2^2)^n = 4^n = 2^{2n}$, the same wrong value as C."
         },
         {
           "option": "E",
           "correct": false,
-          "reason": "(b) is correct."
+          "reason": "B is correct, so 'none of the above' is false."
         }
       ],
-      "verification": "n = 3: $2^9 = 512$, while (c), (d) give $2^6 = 64$ and (a) gives $2^8 = 256$."
+      "shortcut": "Power set of anything: 2 to the number of its elements. Count the elements of the base ($n^2$ pairs) and stop.",
+      "pitfalls": [
+        "Confusing $P(A \\times A)$ with $P(A) \\times P(A)$, whose size is $(2^n)^2$.",
+        "Testing with $n = 2$, where $2^{2^n}$ and $2^{n^2}$ are both 16."
+      ],
+      "verification": "Enumeration for $n = 0, 1, 2, 3$: the power set of $A \\times A$ has $1, 2, 16, 512$ elements, i.e. $2^{n^2}$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Counting subsets of A × A",
+        "lines": [
+          {
+            "tex": "|A| = n"
+          }
+        ]
+      }
     },
     "cse-1993-ii-a-8-5": {
       "approach": "A partial order must be reflexive, antisymmetric and transitive; < is irreflexive, so it fails — then check each option's stated reason.",

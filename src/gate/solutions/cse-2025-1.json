@@ -5460,71 +5460,33 @@
       "verification": "Chase/tableau: rows for $t_1$ $(n, c, b_1)$ and $t_2$ $(n, b_2, o)$; applying $\\mathit{name} \\to \\mathit{owner}$ to the first row makes it $(n, c, o)$, an all-distinguished row ⇒ lossless ✓."
     },
     "cse-2025-1-cs-38": {
-      "approach": "Translate \"exactly one\" as **existence + uniqueness**: some $y$ is the mother of $x$, and no $z$ different from $y$ is. Then test each formula on three situations for a person $x$: no mother, exactly one, two mothers — a correct formula must give F, T, F.",
+      "approach": "Concept tested: **'exactly one' as existence plus uniqueness**. Everyone has exactly one mother: ∀x∃y(mother(y, x) ∧ no z ≠ y is a mother of x). Test each option on a person with 0, 1 and 2 mothers.",
       "concepts": [
-        "First-order logic translation",
-        "Uniqueness quantification",
-        "Quantifier negation"
+        "Uniqueness ∃!",
+        "Nested quantifiers",
+        "Counter-models"
       ],
+      "given": "$mother(y, x)$: $y$ is the mother of $x$; $noteq(x, y)$: $x \\ne y$.",
       "steps": [
         {
-          "title": "The target formula",
-          "body": "\"$x$ has exactly one mother\" = \"$x$ has a mother $y$, and anyone $z \\ne y$ is not $x$'s mother\":\n$$\\forall x\\, \\exists y\\, [\\mathit{mother}(y,x) \\wedge \\forall z\\,(\\mathit{noteq}(z,y) \\to \\neg\\mathit{mother}(z,x))]$$\nThat is option (B) verbatim.",
-          "scene": {
-            "reveal": 12,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Target",
+          "body": "$\\forall x\\, \\exists! y\\, mother(y, x)$, i.e. $\\forall x \\exists y[mother(y, x) \\wedge \\forall z(z \\ne y \\to \\neg mother(z, x))]$."
         },
         {
-          "title": "D is the same formula",
-          "body": "Push the negation in D's inner part:\n$$\\neg\\exists z\\,(\\mathit{noteq}(z,y) \\wedge \\mathit{mother}(z,x)) \\equiv \\forall z\\,\\neg(\\mathit{noteq}(z,y) \\wedge \\mathit{mother}(z,x)) \\equiv \\forall z\\,(\\mathit{noteq}(z,y) \\to \\neg\\mathit{mother}(z,x))$$\nusing $\\neg(p \\wedge q) \\equiv p \\to \\neg q$. So D $\\equiv$ B — **correct**.",
-          "scene": {
-            "reveal": 12,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "success"
-              },
-              {
-                "r": 3,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "B and D",
+          "body": "B is the target verbatim. D writes the uniqueness as $\\neg\\exists z(z \\ne y \\wedge mother(z, x))$, which equals $\\forall z(z \\ne y \\to \\neg mother(z, x))$ by De Morgan. Both are correct."
         },
         {
-          "title": "A and C fail",
-          "body": "- **A**: $\\exists y\\exists z\\,(\\mathit{mother}(y,x) \\wedge \\neg\\mathit{mother}(z,x))$ only says \"$x$ has a mother, and somebody is not his mother\". With two mothers it is still true (take $z$ = any non-mother, e.g. $x$ himself) — uniqueness is not expressed.\n- **C**: $\\forall y[\\mathit{mother}(y,x) \\to \\exists z(\\mathit{mother}(z,x) \\wedge z = y)]$ — choose $z = y$ and the consequent is the antecedent, so C is **always true** (a tautology). It asserts neither existence nor uniqueness.\n\nCorrect: **(B) and (D)**.",
-          "scene": {
-            "reveal": 12,
-            "hl": [
-              {
-                "r": 0,
-                "tone": "error"
-              },
-              {
-                "r": 2,
-                "tone": "error"
-              },
-              {
-                "r": 1,
-                "tone": "success"
-              },
-              {
-                "r": 3,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Option A",
+          "body": "$\\exists y \\exists z(mother(y, x) \\wedge \\neg mother(z, x))$: 'some $y$ is a mother of $x$ and some $z$ is not'. A person with two mothers in a three-person world satisfies it: existence without uniqueness."
+        },
+        {
+          "title": "Option C",
+          "body": "$\\forall y[mother(y, x) \\to \\exists z(mother(z, x) \\wedge \\neg noteq(z, y))]$: take $z = y$; the formula is always true, even for a person with no mother."
         }
       ],
       "answer": {
-        "value": "Options **(B)** and **(D)**",
+        "value": "B and D",
         "choice": [
           "B",
           "D"
@@ -5535,40 +5497,36 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "True even when someone has two mothers; \"someone is not the mother\" does not mean \"no one else is the mother\"."
+          "reason": "Allows two (or more) mothers; it only needs one mother and one non-mother."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Existence ($\\mathit{mother}(y,x)$) plus uniqueness (every $z \\ne y$ is not a mother) — the standard \"exactly one\" pattern."
+          "reason": "Some $y$ is the mother, and every $z$ different from $y$ is not."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Valid formula (take $z = y$): true in every world, including people with no mother or two mothers."
+          "reason": "A tautology ($z = y$ always works); it asserts neither existence nor uniqueness."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$\\neg\\exists z(p \\wedge q) \\equiv \\forall z(p \\to \\neg q)$, so D is logically equivalent to B."
+          "reason": "Same as B with the inner $\\forall\\neg$ written as $\\neg\\exists$."
         }
       ],
-      "shortcut": "Look for \"∃y [mother(y,x) ∧ no other z is a mother]\". B states it with ∀…→¬, D with ¬∃…∧ — the two standard equivalent forms.",
+      "shortcut": "Three-world test per person: 0 mothers, 1 mother, 2 mothers. A correct option gives F, T, F; A gives F, T, T and C gives T, T, T.",
       "pitfalls": [
-        "Reading A's $\\neg\\mathit{mother}(z,x)$ as \"nobody else is a mother\": $z$ is existentially quantified, so it says only that one non-mother exists.",
-        "Thinking C expresses uniqueness because of $\\neg\\mathit{noteq}(z,y)$ (i.e. $z = y$); it is trivially satisfied."
+        "Accepting A because it 'mentions both a mother and a non-mother'.",
+        "Missing that C's inner witness can be $y$ itself."
       ],
-      "verification": "Truth table over the three situations (table): B and D give F, T, F exactly like \"exactly one mother\"; A gives F, T, T and C gives T, T, T.",
+      "verification": "Script (noteq read as ≠): B and D are equivalent to $\\forall x \\exists! y\\, mother(y, x)$ on all interpretations up to size 3; A is not; C is valid.",
       "animation": {
         "kind": "table",
-        "title": "Truth value for one person x",
-        "corner": "formula",
+        "title": "One person x with 0, 1, 2 mothers",
         "cols": [
-          "no mother",
-          "exactly one",
-          "two mothers"
-        ],
-        "rowLabels": [
+          "mothers of x",
+          "target",
           "A",
           "B",
           "C",
@@ -5576,63 +5534,49 @@
         ],
         "rows": [
           [
-            {
-              "v": "F",
-              "tone": "error"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            }
+            "0",
+            "F",
+            "F",
+            "F",
+            "T",
+            "F"
           ],
           [
-            {
-              "v": "F",
-              "tone": "error"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "F",
-              "tone": "error"
-            }
+            "1",
+            "T",
+            "T",
+            "T",
+            "T",
+            "T"
           ],
           [
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            }
-          ],
-          [
-            {
-              "v": "F",
-              "tone": "error"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "F",
-              "tone": "error"
-            }
+            "2",
+            "F",
+            "T",
+            "F",
+            "T",
+            "F"
           ]
         ],
-        "reveal": 0
+        "mono": true,
+        "hl": [
+          {
+            "r": 2,
+            "c": 2,
+            "tone": "error"
+          },
+          {
+            "r": 0,
+            "c": 4,
+            "tone": "error"
+          },
+          {
+            "r": 2,
+            "c": 4,
+            "tone": "error"
+          }
+        ],
+        "caption": "A world with a third person who is nobody's mother."
       }
     },
     "cse-2025-1-cs-39": {

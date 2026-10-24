@@ -1958,25 +1958,30 @@
       "verification": "Binary encoding: finite subsets of N correspond one-to-one with natural numbers written in binary."
     },
     "cse-2018-cs-28": {
-      "approach": "For a ∃*∀* (Bernays–Schönfinkel) sentence without function symbols, keep only the three elements chosen as witnesses for s, t, u. The universal part still holds on this substructure, so there is a model with at most 3 elements.",
+      "approach": "Concept tested: **the small-model property of ∃*∀* sentences without function symbols** (the Bernays–Schönfinkel class). Restrict any model to the witnesses of the existential quantifiers.",
       "concepts": [
-        "First-order logic",
-        "Bernays–Schönfinkel class",
-        "Substructures",
-        "Universal sentences"
+        "Model",
+        "Substructure",
+        "Small-model property",
+        "Prenex form"
       ],
+      "given": "$\\varphi = \\exists s \\exists t \\exists u \\forall v \\forall w \\forall x \\forall y\\, \\psi$, $\\psi$ quantifier-free, predicates and equality only; $\\varphi$ has a 7-element model.",
       "steps": [
         {
-          "title": "Take witnesses",
-          "body": "In the 7-element model M pick $a, b, c$ with $M \\models \\forall v\\forall w\\forall x\\forall y\\,\\psi(a,b,c,v,w,x,y)$."
+          "title": "Pick the witnesses",
+          "body": "In the 7-element model choose $a, b, c$ for $s, t, u$ with $\\forall v \\forall w \\forall x \\forall y\\, \\psi(a, b, c, v, w, x, y)$ true."
         },
         {
-          "title": "Restrict",
-          "body": "Let $M'$ be M restricted to $\\{a,b,c\\}$ (at most 3 elements). With no function symbols this is a valid substructure. ψ is quantifier-free, so its truth for any assignment from $\\{a,b,c\\}$ is the same in $M'$ and M. The universal quantifiers now range over fewer elements, so they still hold. Hence $M' \\models \\varphi$ with size ≤ 3: option A."
+          "title": "Restrict the model",
+          "body": "Let $E = \\{a, b, c\\}$ (1 to 3 elements) and keep only the tuples of each predicate that lie inside $E$."
         },
         {
-          "title": "Other options",
-          "body": "B contradicts the model just built. For C and D, take $\\psi \\equiv (s = s)$ (always true): then φ has models of every size, including 7 and sizes larger than 7, so neither C nor D is necessarily true."
+          "title": "The ∀ part survives",
+          "body": "Every choice of $v, w, x, y$ from $E$ was a case in the big model, and ψ (no quantifiers, no functions) depends only on the chosen elements, so it stays true. The witnesses are still present, so $\\varphi$ holds in a model of size $\\le 3$."
+        },
+        {
+          "title": "Discard the rest",
+          "body": "(B) contradicts what we just built. (C) and (D) fail for ψ = $(v = v)$, which has models of every size, e.g. 8."
         }
       ],
       "answer": {
@@ -1990,28 +1995,101 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: the substructure on the three witnesses is a model."
+          "reason": "Restricting the given model to the three witnesses gives a model of size at most 3."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "False: that substructure is a model of size ≤ 3."
+          "reason": "Contradicted by the restricted model."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Not necessary: e.g. if ψ is a tautology, φ has models of every size, including more than 7."
+          "reason": "Not necessarily: with ψ = (v = v), φ has models of every size."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Not necessary: the 3-element substructure is already a smaller model."
+          "reason": "The restricted model (size ≤ 3) is a counter-example, and larger models can also exist."
         }
       ],
+      "shortcut": "∃^k∀* without functions ⇒ a model with at most k elements: keep only the witnesses.",
       "pitfalls": [
-        "Thinking the existential witnesses must be distinct: they may coincide, which is why the bound is \"≤ 3\"."
+        "Thinking the bound is exactly 3: witnesses may coincide, so the model can have 1 or 2 elements.",
+        "Applying the argument to ∀∃ sentences, where witnesses depend on the universal variables."
       ],
-      "verification": "This is the standard small-model property of the Bernays–Schönfinkel class (number of existential variables, here 3)."
+      "verification": "Executed on random ∃²∀² sentences: whenever a model exists, its restriction to the witnesses is a model, and one of size ≤ 2 is always found.",
+      "animation": {
+        "kind": "graph",
+        "title": "Keep the witnesses s, t, u",
+        "directed": true,
+        "layout": "manual",
+        "nodes": [
+          {
+            "id": "0",
+            "x": 0,
+            "y": 0,
+            "tone": "muted"
+          },
+          {
+            "id": "1",
+            "x": 1,
+            "y": 0,
+            "tone": "muted"
+          },
+          {
+            "id": "2",
+            "x": 2,
+            "y": 0,
+            "tone": "accent",
+            "sub": "s"
+          },
+          {
+            "id": "3",
+            "x": 3,
+            "y": 0,
+            "tone": "muted"
+          },
+          {
+            "id": "4",
+            "x": 4,
+            "y": 0,
+            "tone": "accent",
+            "sub": "t"
+          },
+          {
+            "id": "5",
+            "x": 5,
+            "y": 0,
+            "tone": "muted"
+          },
+          {
+            "id": "6",
+            "x": 6,
+            "y": 0,
+            "tone": "accent",
+            "sub": "u"
+          }
+        ],
+        "edges": [
+          {
+            "from": "2",
+            "to": "4",
+            "tone": "accent"
+          },
+          {
+            "from": "4",
+            "to": "6",
+            "tone": "accent"
+          },
+          {
+            "from": "2",
+            "to": "6",
+            "tone": "accent"
+          }
+        ],
+        "caption": "A 7-element model restricted to {2, 4, 6} is still a model."
+      }
     },
     "cse-2018-cs-29": {
       "approach": "C passes arguments by value. `fun1` swaps its local copies of the pointers, so main is unaffected. `fun2` gets the addresses of `str1`/`str2` and swaps the pointers themselves.",

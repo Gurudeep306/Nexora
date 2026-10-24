@@ -1,0 +1,251 @@
+{
+ "version": 1,
+ "title": "Exactly one",
+ "width": 640,
+ "height": 276,
+ "narrow": {
+  "width": 360,
+  "height": 250
+ },
+ "intro": "Test any formula for 'exactly one' on three worlds: nobody qualifies, one qualifies, two qualify.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "“Exactly one” = at least one AND at most one",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Exactly one = two promises",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "t",
+   "type": "table",
+   "x": 60,
+   "y": 52,
+   "cellW": 130,
+   "cellH": 44,
+   "rows": [
+    [
+     "world",
+     "at least 1",
+     "at most 1",
+     "exactly 1"
+    ],
+    [
+     "P = ∅",
+     "",
+     "",
+     ""
+    ],
+    [
+     "P = {2}",
+     "",
+     "",
+     ""
+    ],
+    [
+     "P = {1, 3}",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 10,
+    "y": 48,
+    "cellW": 85,
+    "cellH": 40
+   }
+  },
+  {
+   "id": "foot",
+   "type": "text",
+   "x": 320,
+   "y": 262,
+   "text": "domain {1, 2, 3}",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 236,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Three worlds on the domain {1, 2, 3}: nobody has P, exactly one element has P, two elements have P.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        3,
+        0
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Existence, ∃x P(x): false in the empty world, true in the other two. On its own it cannot tell one from two.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "world",
+        "at least 1",
+        "at most 1",
+        "exactly 1"
+       ],
+       [
+        "P = ∅",
+        "F",
+        "",
+        ""
+       ],
+       [
+        "P = {2}",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "P = {1, 3}",
+        "T",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        1
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Uniqueness, ∀x∀y((P(x) ∧ P(y)) → x = y): true in the empty world (vacuously) and in the one-element world, false with two.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "world",
+        "at least 1",
+        "at most 1",
+        "exactly 1"
+       ],
+       [
+        "P = ∅",
+        "F",
+        "T",
+        ""
+       ],
+       [
+        "P = {2}",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "P = {1, 3}",
+        "T",
+        "F",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∃x(P(x) ∧ ∀y(P(y) → y = x)) needs both: it is true only in the middle world. That F, T, F pattern is the test for any 'exactly one' option.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "world",
+        "at least 1",
+        "at most 1",
+        "exactly 1"
+       ],
+       [
+        "P = ∅",
+        "F",
+        "T",
+        "F"
+       ],
+       [
+        "P = {2}",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "P = {1, 3}",
+        "T",
+        "F",
+        "F"
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "foot",
+     "set": {
+      "text": "correct 'exactly one': F, T, F",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

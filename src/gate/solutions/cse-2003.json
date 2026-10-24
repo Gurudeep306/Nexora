@@ -1773,24 +1773,33 @@
       "verification": "The 3-element model satisfies all hypotheses and A, B, C simultaneously; D fails in every model because P(c) is forced True."
     },
     "cse-2003-cs-32": {
-      "approach": "Distribution of ∀ over → is valid: if α→β holds everywhere and α holds everywhere, β holds everywhere. Break each other option with a 2-element domain.",
+      "approach": "Concept tested: **∀ over → and its converse**, for schematic formulas. One instance with simple predicates refutes a schema; the valid one must hold for every α, β.",
       "concepts": [
-        "First-order validity",
-        "Quantifier distribution",
-        "Countermodels"
+        "Validity",
+        "One-way laws",
+        "Schematic formulas"
       ],
+      "given": "$\\alpha$, $\\beta$: formulas with $x$ as the only free variable.",
       "steps": [
         {
-          "title": "Prove (D)",
-          "body": "Assume $\\forall x[\\alpha\\Rightarrow\\beta]$ and $\\forall x[\\alpha]$. For any $x$: $\\alpha(x)$ and $\\alpha(x)\\Rightarrow\\beta(x)$ give $\\beta(x)$. Hence $\\forall x[\\beta]$. Valid."
+          "title": "Choose simple instances",
+          "body": "A schema is valid only if every instance is; to refute one, take $\\alpha = A(x)$, $\\beta = B(x)$ with fresh unary predicates on $D = \\{0, 1\\}$."
         },
         {
-          "title": "Countermodels",
-          "body": "Domain $\\{1,2\\}$:\n- (A) $\\alpha=\\{1\\}$, $\\beta=\\varnothing$: $\\forall\\alpha$ is false so the premise is true, but $\\alpha(1)\\Rightarrow\\beta(1)$ fails.\n- (B) $\\alpha$ everywhere, $\\beta=\\varnothing$: $\\exists x[\\alpha\\wedge\\beta]$ false.\n- (C) $\\alpha=\\beta=\\varnothing$: $\\forall[\\alpha\\vee\\beta]$ false ⇒ premise true, but $\\forall\\alpha$ false."
+          "title": "(D) is the ∀-over-→ law",
+          "body": "If $\\alpha \\to \\beta$ holds for every $x$ and $\\alpha$ holds for every $x$, then by modus ponens at each $x$, $\\beta$ holds for every $x$. Valid for all $\\alpha$, $\\beta$."
+        },
+        {
+          "title": "Refute (A) and (B)",
+          "body": "(A), the converse of (D): $A = \\{0\\}$, $B = \\varnothing$ makes $\\forall A \\to \\forall B$ vacuously T but $A(0) \\to B(0)$ F. (B): $A = D$, $B = \\varnothing$ gives T → F (no common witness)."
+        },
+        {
+          "title": "Refute (C)",
+          "body": "Need the hypothesis $\\forall x(\\alpha \\vee \\beta) \\to \\exists x \\alpha$ true and $\\forall x \\alpha$ false: $A = \\{0\\}$, $B = \\{1\\}$ gives (T → T) → F = F."
         }
       ],
       "answer": {
-        "value": "$(\\forall x)[\\alpha\\Rightarrow\\beta]\\Rightarrow((\\forall x)[\\alpha]\\Rightarrow(\\forall x)[\\beta])$",
+        "value": "$(\\forall x)[\\alpha \\Rightarrow \\beta] \\Rightarrow ((\\forall x)[\\alpha] \\Rightarrow (\\forall x)[\\beta])$",
         "choice": [
           "D"
         ],
@@ -1800,45 +1809,114 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Invalid: the converse of the valid law; fails with α true only somewhere and β nowhere."
+          "reason": "Converse of the valid law: with α true only at 0 and β nowhere, the hypothesis is vacuously true and the conclusion false."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Invalid: β may be false everywhere."
+          "reason": "∀α gives no element where β holds: α everywhere, β nowhere makes it T → F."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Invalid: with α, β false everywhere the premise is vacuously true but the conclusion false."
+          "reason": "α = {0}, β = {1}: the inner implication is T → T, but ∀α is F."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Valid: ∀ distributes over implication in this direction."
+          "reason": "Modus ponens applied at every element: valid for all α, β."
         }
       ],
-      "verification": "Each countermodel was evaluated term by term; (D) has a direct proof."
+      "shortcut": "Of the options, only (D) moves from a strong 'for every x' hypothesis to a weaker conclusion; the others go backwards.",
+      "pitfalls": [
+        "Thinking a counter-model must work for every α, β: one instance is enough to refute a schema.",
+        "Picking (A) because it has the same symbols as (D) in a different order."
+      ],
+      "verification": "With α, β replaced by unary predicates, exhaustive search up to size 3 finds no counter-model for (D) and two-element counter-models for (A), (B), (C).",
+      "animation": {
+        "kind": "table",
+        "title": "Counter-models on D = {0, 1}",
+        "cols": [
+          "option",
+          "A (α)",
+          "B (β)",
+          "value"
+        ],
+        "rows": [
+          [
+            "A",
+            "{0}",
+            "∅",
+            "F"
+          ],
+          [
+            "B",
+            "{0,1}",
+            "∅",
+            "F"
+          ],
+          [
+            "C",
+            "{0}",
+            "{1}",
+            "F"
+          ],
+          [
+            "D",
+            "any",
+            "any",
+            "T"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 3,
+            "c": 3,
+            "tone": "success"
+          },
+          {
+            "r": 0,
+            "c": 3,
+            "tone": "error"
+          },
+          {
+            "r": 1,
+            "c": 3,
+            "tone": "error"
+          },
+          {
+            "r": 2,
+            "c": 3,
+            "tone": "error"
+          }
+        ]
+      }
     },
     "cse-2003-cs-33": {
-      "approach": "Instantiate the inner ∀y at y = x: $Q_{xx}\\Leftrightarrow\\neg Q_{xx}$ is a contradiction, so the bracket is false for every x, making the antecedent say ∀x ¬P_x — exactly the consequent. α is true in every interpretation.",
+      "approach": "Concept tested: **a diagonal (Russell-style) argument**. The inner bracket $\\forall y(Q_{xy} \\Leftrightarrow \\neg Q_{yy})$ fails at $y = x$, so it is false for every $x$ in every interpretation; then α simplifies to $X \\Rightarrow X$.",
       "concepts": [
-        "First-order semantics",
-        "Russell-style diagonal argument",
-        "Satisfaction"
+        "Interpretation",
+        "Validity",
+        "Diagonal argument"
       ],
+      "given": "$\\alpha: \\forall x[P_x \\Leftrightarrow \\forall y(Q_{xy} \\Leftrightarrow \\neg Q_{yy})] \\Rightarrow \\forall x \\neg P_x$; $I_1$: ℕ, P = prime, Q(x,y) = 'y divides x'; $I_2$: P = composite.",
       "steps": [
         {
-          "title": "Inner formula is always false",
-          "body": "Let $\\varphi(x) = (\\forall y)[Q_{xy}\\Leftrightarrow\\neg Q_{yy}]$. Taking $y=x$ gives $Q_{xx}\\Leftrightarrow\\neg Q_{xx}$, which is false. So $\\varphi(x)$ is false for **every** $x$, whatever $Q$ means."
+          "title": "Instantiate the inner ∀ at y = x",
+          "body": "For any $x$: $\\forall y(Q_{xy} \\Leftrightarrow \\neg Q_{yy})$ implies $Q_{xx} \\Leftrightarrow \\neg Q_{xx}$, which is false. So the bracket is **false for every x**, in every interpretation."
         },
         {
-          "title": "Simplify α",
-          "body": "Then $P_x\\Leftrightarrow\\varphi(x)$ is $P_x\\Leftrightarrow\\text{False} \\equiv \\neg P_x$. So α becomes $(\\forall x)[\\neg P_x]\\Rightarrow(\\forall x)[\\neg P_x]$ — a tautology."
+          "title": "Simplify the hypothesis",
+          "body": "$P_x \\Leftrightarrow \\text{F} \\equiv \\neg P_x$, so the hypothesis is $\\forall x \\neg P_x$."
         },
         {
-          "title": "Conclusion",
-          "body": "α is true under any interpretation, in particular both $I_1$ (primes) and $I_2$ (composites). Answer **(D)**."
+          "title": "α is X → X",
+          "body": "$\\alpha \\equiv \\forall x \\neg P_x \\Rightarrow \\forall x \\neg P_x$: true in **every** interpretation, whatever $P$ and $Q$ mean. In particular both $I_1$ and $I_2$ satisfy it."
+        },
+        {
+          "title": "Check directly in I₁",
+          "body": "The hypothesis claims no number is prime (since the bracket is false). 2 is prime, so the hypothesis is false and α is vacuously true. In $I_2$, 4 is composite: same."
         }
       ],
       "answer": {
@@ -1852,28 +1930,48 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "I₂ also satisfies α (α is valid)."
+          "reason": "α is valid, so it cannot fail in $I_2$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "I₁ also satisfies α."
+          "reason": "α is valid, so it cannot fail in $I_1$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Both satisfy α."
+          "reason": "Both interpretations make the hypothesis false (some prime, some composite exists), so α holds vacuously in both."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: α is valid, so every interpretation satisfies it."
+          "reason": "The diagonal instance kills the bracket; α becomes X → X, true in every interpretation."
         }
       ],
+      "shortcut": "Whenever a formula compares $Q(x, y)$ with $Q(y, y)$ under $\\forall y$, set $y = x$ first.",
       "pitfalls": [
-        "Trying to evaluate \"prime\" vs \"composite\" is unnecessary — the meaning of P never matters."
+        "Evaluating 'divides' and 'prime' number by number instead of noticing the formula is valid.",
+        "Thinking the answer depends on whether 0 or 1 are in ℕ: it does not."
       ],
-      "verification": "Directly in I₁: $Q_{yy}$ (y divides y) is true, so the bracket asks that no y divides x — false since x | x; antecedent = \"no x is prime\", which is false, so the implication is true. Same for I₂."
+      "verification": "No counter-model to α on domains of size 1–3 (exhaustive); on {1, …, 39} with 'divides' and either meaning of P, α evaluates to true.",
+      "animation": {
+        "kind": "equation",
+        "title": "Collapse of α",
+        "lines": [
+          {
+            "tex": "\\forall y(Q_{xy} \\Leftrightarrow \\neg Q_{yy}) \\Rightarrow (Q_{xx} \\Leftrightarrow \\neg Q_{xx}) \\equiv \\text{F}",
+            "note": "instantiate y = x"
+          },
+          {
+            "tex": "P_x \\Leftrightarrow \\text{F} \\equiv \\neg P_x",
+            "note": "for every x"
+          },
+          {
+            "tex": "\\alpha \\equiv \\forall x\\neg P_x \\Rightarrow \\forall x \\neg P_x",
+            "note": "valid: X → X"
+          }
+        ]
+      }
     },
     "cse-2003-cs-34": {
       "approach": "Pre-place k balls in each bag, then distribute the remaining m − kn identical balls freely by stars and bars.",
@@ -4557,24 +4655,29 @@
       "verification": "Hand-traced the 2-cycle example for every entry; the induction argument relies only on monotonicity and the split at the highest-numbered intermediate vertex."
     },
     "cse-2003-cs-71": {
-      "approach": "Translate each Horn clause: a rule head ← body is a universally quantified implication, and a headless clause ← B is a denial (the body can never hold). Variables appearing only in the body become existential on the left of the implication.",
+      "approach": "Concept tested: **Horn-clause logic programs as first-order sentences**. A rule head ← body is the universal closure of body → head; a variable only in the body becomes ∃ inside the hypothesis; a headless clause is a denial; the program is the conjunction.",
       "concepts": [
-        "Horn clauses",
-        "Logic programming semantics",
-        "Quantifier movement"
+        "Horn clause",
+        "Null quantification",
+        "Logic program"
       ],
+      "given": "Program: $A(x) \\leftarrow B(x, y), C(y)$ and $\\leftarrow B(x, x)$.",
       "steps": [
         {
-          "title": "The rule",
-          "body": "$A(x) \\leftarrow B(x,y), C(y)$ means $\\forall x\\,\\forall y\\,[B(x,y)\\wedge C(y) \\Rightarrow A(x)]$. Since $y$ does not occur in $A(x)$:\\n\\n$$\\forall y\\,[\\varphi(y)\\Rightarrow A(x)] \\equiv [\\exists y\\,\\varphi(y)] \\Rightarrow A(x)$$\\n\\nso the rule is $(\\forall x)[(\\exists y)[B(x,y)\\wedge C(y)] \\Rightarrow A(x)]$."
+          "title": "Translate the rule",
+          "body": "$\\forall x \\forall y\\,(B(x, y) \\wedge C(y) \\Rightarrow A(x))$."
         },
         {
-          "title": "The goal clause",
-          "body": "$\\leftarrow B(x,x)$ has an empty head, i.e. $\\forall x\\,[B(x,x)\\Rightarrow \\text{false}] \\equiv \\neg(\\exists x)[B(x,x)]$."
+          "title": "Move the body-only variable",
+          "body": "$y$ is not in $A(x)$, so $\\forall y(\\Phi(y) \\Rightarrow W) \\equiv \\exists y \\Phi(y) \\Rightarrow W$: the rule is $\\forall x[\\exists y(B(x, y) \\wedge C(y)) \\Rightarrow A(x)]$."
         },
         {
-          "title": "Conjoin",
-          "body": "A program is the **conjunction** of its clauses:\\n\\n$$(\\forall x)[(\\exists y)[B(x,y)\\wedge C(y)] \\Rightarrow A(x)] \\wedge \\neg(\\exists x)[B(x,x)]$$\\n\\nwhich is option (a)."
+          "title": "Translate the denial",
+          "body": "$\\leftarrow B(x, x)$ is $\\forall x \\neg B(x, x) \\equiv \\neg\\exists x B(x, x)$."
+        },
+        {
+          "title": "Join with ∧",
+          "body": "A program asserts all its clauses: $\\forall x[\\exists y(B(x, y) \\wedge C(y)) \\Rightarrow A(x)] \\wedge \\neg\\exists x B(x, x)$, option (A)."
         }
       ],
       "answer": {
@@ -4582,35 +4685,55 @@
         "choice": [
           "A"
         ],
-        "matchesKey": true
+        "matchesKey": true,
+        "keyNote": "As printed, options (B) and (D) are identical (the original paper probably had a different connective in one of them); both are wrong for the same reason."
       },
       "optionAnalysis": [
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: body-only variable y becomes ∃y on the left of ⇒, and the clauses are conjoined."
+          "reason": "Exactly the conjunction of the two translated clauses, with the body-only y existential in the hypothesis."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong: ∀y inside the antecedent demands B(x,y) ∧ C(y) for every y before concluding A(x) — a much weaker rule."
+          "reason": "∀y inside the hypothesis: in $D = \\{0, 1\\}$, $B = \\{(0, 1)\\}$, $C = \\{1\\}$, $A = \\varnothing$ the program fails but (B) holds."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Wrong: clauses of a program are combined with ∧, not ∨."
+          "reason": "Clauses of a program are joined by ∧; with ∨ the sentence can hold while the denial is broken ($B = \\{(0, 0)\\}$, $C = \\varnothing$)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Printed identically to (b) in the paper; wrong for the same reason (∀y in the antecedent)."
+          "reason": "Printed identical to (B): the same ∀y error."
         }
       ],
+      "shortcut": "Body-only variables are existential: 'if some y makes the body true, the head holds'.",
       "pitfalls": [
-        "Moving ∀y into the antecedent without flipping it to ∃y.",
-        "Treating the headless clause as asserting B(x,x) instead of denying it."
+        "Quantifying y universally inside the hypothesis (options B/D).",
+        "Joining clauses with ∨ (option C)."
       ],
-      "verification": "Checked the quantifier law ∀y(φ(y) → ψ) ≡ (∃y φ(y)) → ψ when y is not free in ψ."
+      "verification": "Option (A) is equivalent to the literal translation on every interpretation of A, B, C up to size 3; the listed worlds separate (B), (C), (D) from the program.",
+      "animation": {
+        "kind": "equation",
+        "title": "From program to sentence",
+        "lines": [
+          {
+            "tex": "A(x) \\leftarrow B(x,y), C(y) \\;\\;\\leadsto\\;\\; \\forall x \\forall y\\,(B(x,y) \\wedge C(y) \\to A(x))",
+            "note": "rule"
+          },
+          {
+            "tex": "\\equiv \\forall x\\,(\\exists y\\,(B(x,y) \\wedge C(y)) \\to A(x))",
+            "note": "y only in the body"
+          },
+          {
+            "tex": "\\leftarrow B(x,x) \\;\\;\\leadsto\\;\\; \\neg \\exists x\\, B(x,x)",
+            "note": "denial"
+          }
+        ]
+      }
     },
     "cse-2003-cs-72": {
       "approach": "Concept tested: **what the resolution rule guarantees**. The parents imply the resolvent (soundness), but not the other way round; so satisfiability passes from the parents to the resolvent, not back.",

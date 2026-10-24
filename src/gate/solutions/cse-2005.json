@@ -365,28 +365,61 @@
       "verification": "Equivalently, run DFS/BFS from each vertex: $n cdot O(n+m) = O(n^3)$ for dense relations."
     },
     "cse-2005-cs-8": {
-      "approach": "Rewrite each difference as an intersection with a complement and simplify; both reduce to $A\\cap B'\\cap C'$.",
+      "approach": "Concept tested: **comparing two set expressions**. Write each as a list of Venn regions (or rewrite differences as intersections with complements) and compare.",
       "concepts": [
         "Set difference",
-        "De Morgan laws",
-        "Distributive law"
+        "Venn regions",
+        "Set identities"
       ],
+      "given": "$X = (A - B) - C$, $Y = (A - C) - (B - C)$.",
       "steps": [
         {
-          "title": "Simplify X",
-          "body": "$X=(A-B)-C=(A\\cap B')\\cap C' = A\\cap B'\\cap C'$."
+          "title": "Regions of X",
+          "body": "$A - B$ is $\\{AC, A\\}$ (in $A$, not in $B$). Removing $C$ leaves $\\{A\\}$: the part of $A$ outside both $B$ and $C$.",
+          "scene": {
+            "hl": [
+              {
+                "region": "A",
+                "tone": "accent"
+              }
+            ]
+          }
         },
         {
-          "title": "Simplify Y",
-          "body": "$Y=(A\\cap C')\\cap (B\\cap C')' = (A\\cap C')\\cap(B'\\cup C)$.\n\nDistribute: $(A\\cap C'\\cap B')\\cup(A\\cap C'\\cap C) = (A\\cap B'\\cap C')\\cup\\varnothing = A\\cap B'\\cap C'$."
+          "title": "Regions of A − C and B − C",
+          "body": "$A - C = \\{AB, A\\}$ and $B - C = \\{AB, B\\}$.",
+          "scene": {
+            "hl": [
+              {
+                "region": "AB",
+                "tone": "info"
+              },
+              {
+                "region": "A",
+                "tone": "info"
+              }
+            ]
+          }
         },
         {
-          "title": "Compare",
-          "body": "Both equal $A\\cap B'\\cap C'$ (elements of $A$ in neither $B$ nor $C$), so $X=Y$."
+          "title": "Regions of Y",
+          "body": "Removing $B - C$ from $A - C$ deletes $AB$ and leaves $\\{A\\}$.",
+          "scene": {
+            "hl": [
+              {
+                "region": "A",
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Compare (and confirm by laws)",
+          "body": "Both are the single region $A \\cap B^c \\cap C^c$, so $X = Y$ for all sets. By laws: $Y = (A \\cap C^c) \\cap (B \\cap C^c)^c = A \\cap C^c \\cap (B^c \\cup C) = A \\cap B^c \\cap C^c$."
         }
       ],
       "answer": {
-        "value": "X = Y",
+        "value": "$X = Y$",
         "choice": [
           "A"
         ],
@@ -396,28 +429,48 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: both simplify to $A\\cap B'\\cap C'$."
+          "reason": "Both equal $A \\cap B^c \\cap C^c$ (the region in $A$ only)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Proper subset would need an element of Y not in X; none exists since the sets are equal."
+          "reason": "A proper inclusion would need an element in $Y$ but not in $X$; they cover the same region, so there is none."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Same reason — the sets are equal, so neither is a proper subset of the other."
+          "reason": "Same reason: the sets are always equal, so neither is a proper subset of the other."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "An identity holds (X = Y), so \"none of these\" is false."
+          "reason": "A is correct."
         }
       ],
+      "shortcut": "Removing $C$ from both $A$ and $B$ first and then subtracting is the same as subtracting $B$ and $C$ from $A$: $(A - C) - (B - C) = (A - B) - C = A - (B \\cup C)$.",
       "pitfalls": [
-        "Forgetting that $(B-C)' = B'\\cup C$ (De Morgan), not $B'\\cap C'$."
+        "Picking a strict inclusion because the formulas look different; simplify first."
       ],
-      "verification": "Venn check: an element of $A$ only (not in $B$, not in $C$) is in both; an element of $A\\cap B$ not in $C$ is removed from both; anything in $C$ is removed from both."
+      "verification": "Region lists ($X = Y = \\{A\\}$) and brute force over every triple of subsets of a 3-element universe agree.",
+      "animation": {
+        "kind": "venn",
+        "title": "X = (A − B) − C",
+        "sets": [
+          {
+            "id": "A",
+            "label": "A"
+          },
+          {
+            "id": "B",
+            "label": "B"
+          },
+          {
+            "id": "C",
+            "label": "C"
+          }
+        ],
+        "hl": []
+      }
     },
     "cse-2005-cs-9": {
       "approach": "Every pair has a join and meet ($a$ is top, $e$ is bottom), so it is a lattice; but it is the diamond $M_3$, the standard non-distributive lattice.",
@@ -2410,24 +2463,33 @@
       "verification": "Truth tables over $P, Q, R$: $X \\to Y$ is T on all 8 rows; each other option has a false row."
     },
     "cse-2005-cs-41": {
-      "approach": "For each teacher x there must exist (possibly a different) y who is a student and likes x. \"Some … is …\" uses ∃ with ∧, \"every … is …\" uses ∀ with →.",
+      "approach": "Concept tested: **order of nested quantifiers with restrictions**. 'Every teacher is liked by some student' lets the student depend on the teacher: ∀x(teacher → ∃y(student ∧ likes(y, x))).",
       "concepts": [
-        "First-order logic",
-        "Quantifier scope",
-        "Translating English"
+        "Nested quantifiers",
+        "Order of quantifiers",
+        "Pairing rule"
       ],
+      "given": "'Every teacher is liked by some student'; $likes(y, x)$: $y$ likes $x$.",
       "steps": [
         {
-          "title": "Structure",
-          "body": "\"Every teacher …\": $\\forall x\\,[\\text{teacher}(x) \\to \\dots]$. \"… is liked by some student\": $\\exists y\\,[\\text{student}(y) \\wedge \\text{likes}(y,x)]$."
+          "title": "Outer: every teacher",
+          "body": "'Every A is …' is $\\forall x(teacher(x) \\to \\dots)$."
+        },
+        {
+          "title": "Inner: some student",
+          "body": "'… is liked by some student' is 'some student likes $x$': $\\exists y(student(y) \\wedge likes(y, x))$. The $\\exists y$ sits inside $\\forall x$, so different teachers may have different admirers."
         },
         {
           "title": "Combine",
-          "body": "$\\forall x\\,[\\text{teacher}(x) \\to \\exists y\\,[\\text{student}(y) \\wedge \\text{likes}(y,x)]]$ — option (B)."
+          "body": "$\\forall x[teacher(x) \\to \\exists y[student(y) \\wedge likes(y, x)]]$: option B."
+        },
+        {
+          "title": "Option C is stronger, not equivalent",
+          "body": "C, $\\exists y \\forall x(teacher(x) \\to (student(y) \\wedge likes(y, x)))$, names **one** student who likes every teacher. It implies B (the order theorem), but in a world with two teachers each liked only by a different student, B is true and C false."
         }
       ],
       "answer": {
-        "value": "$\\forall(x)[\\text{teacher}(x) \\rightarrow \\exists(y)[\\text{student}(y) \\wedge \\text{likes}(y,x)]]$",
+        "value": "$\\forall x[teacher(x) \\rightarrow \\exists y[student(y) \\wedge likes(y, x)]]$",
         "choice": [
           "B"
         ],
@@ -2437,29 +2499,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$\\exists y[\\text{student}(y)\\to\\dots]$ is satisfied by any non-student $y$, so it does not require a liking student."
+          "reason": "$\\exists y(student(y) \\to likes(y, x))$ is made true by any non-student $y$: $\\exists$ paired with $\\to$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct."
+          "reason": "$\\forall$ with $\\to$ outside, $\\exists$ with $\\wedge$ inside, in the right order."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\exists y\\forall x$ demands one single student who likes every teacher — stronger than the sentence."
+          "reason": "$\\exists y\\forall x$: a single student who likes all teachers. Stronger than the sentence."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$\\forall x[\\text{teacher}(x)\\wedge\\dots]$ asserts that everything is a teacher; also uses $\\to$ under $\\exists$."
+          "reason": "$\\forall x(teacher(x) \\wedge \\dots)$ makes everything a teacher; the inner part also pairs $\\exists$ with $\\to$."
         }
       ],
+      "shortcut": "Check the pairing at each quantifier (only B has ∀→ and ∃∧), then the order (the 'some' that depends on 'every' goes inside).",
       "pitfalls": [
-        "∃ pairs with ∧, ∀ pairs with →.",
-        "Quantifier order: ∀x∃y ≠ ∃y∀x."
+        "Choosing C because 'some student' appears first in the formula's English rewrite.",
+        "Swapping the arguments of $likes$: the student is the one who likes."
       ],
-      "verification": "A world with no student liking a teacher makes (A) true via a non-student y but (B) false — so only (B) captures the sentence."
+      "verification": "Script: only B is equivalent to the intended formula on all interpretations up to size 3; C implies it but not conversely."
     },
     "cse-2005-cs-42": {
       "approach": "Reflexivity, symmetry and transitivity are each preserved by intersection. Union preserves reflexivity and symmetry but can break transitivity.",

@@ -1303,19 +1303,24 @@
       "verification": "$\\langle c \\rangle = \\{c, b, d, a\\}$ covers all four elements."
     },
     "cse-2009-cs-23": {
-      "approach": "The sentence means: anything that is a gold ornament or a silver ornament is precious. A universal statement about a class is written with an implication, and \"gold and silver\" here describes two classes, so the antecedent is a disjunction.",
+      "approach": "Concept tested: **a plural subject joined by 'and'**. 'Gold and silver ornaments are precious' is about every ornament that is gold **or** silver: ∀x((G ∨ S) → P).",
       "concepts": [
-        "First-order logic",
-        "Translation to predicate logic"
+        "Plural subject as ∨",
+        "Universal with →"
       ],
+      "given": "$G(x)$: gold ornament, $S(x)$: silver ornament, $P(x)$: precious.",
       "steps": [
         {
-          "title": "Read the claim",
-          "body": "Every gold ornament is precious, and every silver ornament is precious: $\\forall x (G(x) \\to P(x)) \\wedge \\forall x (S(x) \\to P(x))$."
+          "title": "Two classes",
+          "body": "The sentence says gold ornaments are precious and silver ornaments are precious: $\\forall x(G \\to P) \\wedge \\forall x(S \\to P)$."
         },
         {
-          "title": "Combine",
-          "body": "$(G \\to P) \\wedge (S \\to P) \\equiv (G \\vee S) \\to P$, giving $\\forall x ((G(x) \\vee S(x)) \\to P(x))$."
+          "title": "Merge",
+          "body": "$\\forall$ distributes over $\\wedge$ and $(G \\to P) \\wedge (S \\to P) \\equiv (G \\vee S) \\to P$, so the sentence is $\\forall x((G(x) \\vee S(x)) \\to P(x))$: option D."
+        },
+        {
+          "title": "Reject B",
+          "body": "B's filter $G \\wedge S$ picks out ornaments that are both gold and silver; if there are none, B is vacuously true even when a gold ornament is not precious."
         }
       ],
       "answer": {
@@ -1329,28 +1334,73 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Reverses the implication: it says every precious thing is both gold and silver."
+          "reason": "$\\forall x(P \\to (G \\wedge S))$ says every precious thing is both gold and silver: the converse, with $\\wedge$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$G(x) \\wedge S(x)$ talks only about objects that are both gold and silver, which may not exist; it says nothing about ordinary gold ornaments."
+          "reason": "The filter $G \\wedge S$ is (in any sensible world) empty, so B says nothing about real ornaments."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "An existential with an implication is almost trivially true and does not express a universal claim."
+          "reason": "$\\exists$ with $\\to$: true as soon as one object is not both gold and silver."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: any gold or silver ornament is precious."
+          "reason": "Every ornament that is gold or silver is precious."
         }
       ],
+      "shortcut": "'A and B are C' about two classes = $\\forall x((A \\vee B) \\to C)$.",
       "pitfalls": [
-        "The English \"and\" joining two classes becomes OR in the antecedent."
+        "Translating the English 'and' of a plural subject as $\\wedge$."
       ],
-      "verification": "Identity used: $(A \\to C) \\wedge (B \\to C) \\equiv \\neg A \\wedge \\neg B \\vee C \\equiv (A \\vee B) \\to C$."
+      "verification": "Script: only D is equivalent to $\\forall x((G \\vee S) \\to P)$ on all interpretations up to size 3. World with one gold, non-precious ornament: D false (correct), B true.",
+      "animation": {
+        "kind": "table",
+        "title": "World: one gold ornament that is not precious",
+        "cols": [
+          "option",
+          "value",
+          "sentence"
+        ],
+        "rows": [
+          [
+            "A",
+            "T",
+            "F"
+          ],
+          [
+            "B",
+            "T",
+            "F"
+          ],
+          [
+            "C",
+            "T",
+            "F"
+          ],
+          [
+            "D",
+            "F",
+            "F"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 3,
+            "c": 1,
+            "tone": "success"
+          },
+          {
+            "r": 1,
+            "c": 1,
+            "tone": "error"
+          }
+        ]
+      }
     },
     "cse-2009-cs-24": {
       "approach": "Concept tested: **an operator defined by a truth table**. $P \\square Q$ is false only at $P$ = F, $Q$ = T, so $P \\square Q \\equiv P \\vee \\neg Q$; substitute each option.",
@@ -1463,19 +1513,24 @@
       "verification": "The integrand falls from 1 to 0 and is convex, so the area is below the triangle $\\frac{1}{2}\\cdot\\frac{\\pi}{4} \\approx 0.39$; $\\frac12\\ln 2 \\approx 0.347$ fits."
     },
     "cse-2009-cs-26": {
-      "approach": "Push each negation inside the quantifier ($\\neg\\forall \\equiv \\exists\\neg$, $\\neg\\exists \\equiv \\forall\\neg$) and compare normal forms.",
+      "approach": "Concept tested: **De Morgan's laws for quantifiers**. Push each negation inside: ¬∀ = ∃¬ and ¬∃ = ∀¬; then compare the four normal forms.",
       "concepts": [
-        "Quantifier negation",
-        "Logical equivalence"
+        "De Morgan for quantifiers",
+        "Equivalence"
       ],
+      "given": "I. $\\neg\\forall x P(x)$, II. $\\neg\\exists x P(x)$, III. $\\neg\\exists x \\neg P(x)$, IV. $\\exists x \\neg P(x)$.",
       "steps": [
         {
-          "title": "Normalise each formula",
-          "body": "- I: $\\neg\\forall x P(x) \\equiv \\exists x \\neg P(x)$\n- II: $\\neg\\exists x P(x) \\equiv \\forall x \\neg P(x)$\n- III: $\\neg\\exists x \\neg P(x) \\equiv \\forall x P(x)$\n- IV: $\\exists x \\neg P(x)$"
+          "title": "Normalise each",
+          "body": "I: $\\exists x\\, \\neg P(x)$. II: $\\forall x\\, \\neg P(x)$. III: $\\forall x\\, \\neg\\neg P(x) = \\forall x\\, P(x)$. IV: $\\exists x\\, \\neg P(x)$."
         },
         {
           "title": "Compare",
-          "body": "I and IV are identical; II, III are different from each other and from I."
+          "body": "I and IV have the same normal form: 'some element is not $P$'. II says 'nothing is $P$', III says 'everything is $P$'."
+        },
+        {
+          "title": "Check the pairs offered",
+          "body": "I and III are negations of each other (not equivalent). II and III are 'nothing' vs 'everything'. II and IV differ on a world where one element is $P$ and one is not: II is F, IV is T."
         }
       ],
       "answer": {
@@ -1489,7 +1544,7 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "I says some $x$ fails $P$; III says every $x$ satisfies $P$ (they are negations of each other)."
+          "reason": "I is $\\exists x\\neg P$, III is $\\forall x P$: they are negations of each other."
         },
         {
           "option": "B",
@@ -1499,18 +1554,86 @@
         {
           "option": "C",
           "correct": false,
-          "reason": "II is $\\forall x \\neg P$, III is $\\forall x P$: opposite claims on a non-empty domain."
+          "reason": "II is 'nothing is P', III is 'everything is P': opposite claims (on a non-empty domain they cannot both hold)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "II is $\\forall x \\neg P$, IV is $\\exists x \\neg P$: II implies IV but not conversely."
+          "reason": "II is $\\forall x\\neg P$, IV is $\\exists x\\neg P$; II implies IV but not conversely."
         }
       ],
+      "shortcut": "¬∀ and ∃¬ are the same thing; that pairs I with IV at a glance.",
       "pitfalls": [
-        "Moving a negation across a quantifier flips the quantifier."
+        "Moving the ¬ past the quantifier without flipping it (reading I as $\\forall x \\neg P$)."
       ],
-      "verification": "Domain $\\{1, 2\\}$ with $P(1)$ true, $P(2)$ false: I, IV true; II, III false, so I and III, II and IV etc. are separated."
+      "verification": "Script: among all six pairs, only (I, IV) are equivalent on every interpretation up to size 3.",
+      "animation": {
+        "kind": "table",
+        "title": "The four formulas on three worlds of {1, 2}",
+        "cols": [
+          "world",
+          "I",
+          "II",
+          "III",
+          "IV"
+        ],
+        "rows": [
+          [
+            "P = ∅",
+            "T",
+            "T",
+            "F",
+            "T"
+          ],
+          [
+            "P = {1}",
+            "T",
+            "F",
+            "F",
+            "T"
+          ],
+          [
+            "P = {1, 2}",
+            "F",
+            "F",
+            "T",
+            "F"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "c": 1,
+            "tone": "success"
+          },
+          {
+            "r": 0,
+            "c": 4,
+            "tone": "success"
+          },
+          {
+            "r": 1,
+            "c": 1,
+            "tone": "success"
+          },
+          {
+            "r": 1,
+            "c": 4,
+            "tone": "success"
+          },
+          {
+            "r": 2,
+            "c": 1,
+            "tone": "success"
+          },
+          {
+            "r": 2,
+            "c": 4,
+            "tone": "success"
+          }
+        ]
+      }
     },
     "cse-2009-cs-27": {
       "approach": "Concept tested: **shortest input to a (state, output) target, by breadth-first search**. First find the arcs that meet the target (next state 01 **and** output 1), then search from 00 for the source of such an arc and append its input.",

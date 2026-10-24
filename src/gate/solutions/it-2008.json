@@ -1207,24 +1207,33 @@
       "verification": "Eliminated A, B by II/III; D by the impossible DNS–firewall pairing."
     },
     "it-2008-it-21": {
-      "approach": "Use the equivalence $(\\exists x\\,\\alpha(x))\\to\\beta \\equiv \\forall x\\,(\\alpha(x)\\to\\beta)$ when $x$ is not free in $\\beta$; refute the others with a two-element model.",
+      "approach": "Concept tested: **moving a quantifier past a formula without x (null quantification)**. Pull every quantifier out to the β-free side; a quantifier leaving the hypothesis of → flips.",
       "concepts": [
-        "Quantifier equivalences",
+        "Null quantification",
         "Validity",
-        "Counter-models"
+        "Counter-model"
       ],
+      "given": "$\\alpha(x)$ has $x$ free; $\\beta$ has no free variable.",
       "steps": [
         {
-          "title": "C is valid",
-          "body": "$(\\exists x\\,\\alpha(x))\\to\\beta \\equiv \\neg\\exists x\\,\\alpha(x)\\lor\\beta \\equiv \\forall x\\,\\neg\\alpha(x)\\lor\\beta \\equiv \\forall x\\,(\\neg\\alpha(x)\\lor\\beta)$ (as $x$ is not free in $\\beta$) $\\equiv \\forall x\\,(\\alpha(x)\\to\\beta)$. An implication between equivalent formulas is valid."
+          "title": "The three rewrites",
+          "body": "$\\forall x(\\beta \\to \\alpha) \\equiv \\beta \\to \\forall x \\alpha$; $\\exists x(\\beta \\to \\alpha) \\equiv \\beta \\to \\exists x \\alpha$; $\\forall x(\\alpha \\to \\beta) \\equiv \\exists x \\alpha \\to \\beta$ (flip out of the hypothesis)."
         },
         {
-          "title": "Counter-model for A, B, D",
-          "body": "Domain $\\{1,2\\}$ with $\\alpha(1)$ true and $\\alpha(2)$ false.\n- A, B: take $\\beta$ true. A: LHS $\\beta\\to\\exists x\\,\\alpha$ = T, RHS $\\forall x(\\beta\\to\\alpha(x))$ fails at $x=2$. B: LHS $\\exists x(\\beta\\to\\alpha(x))$ = T ($x=1$), RHS $\\beta\\to\\forall x\\,\\alpha(x)$ = F.\n- D: take $\\beta$ false. LHS: $\\forall x\\,\\alpha$ is F, so LHS = T; RHS fails at $x=1$ since $\\alpha(1)\\to\\beta$ = F."
+          "title": "Substitute",
+          "body": "(A) $(\\beta \\to \\exists\\alpha) \\to (\\beta \\to \\forall\\alpha)$. (B) $(\\beta \\to \\exists\\alpha) \\to (\\beta \\to \\forall\\alpha)$. (C) $(\\exists\\alpha \\to \\beta) \\to (\\exists\\alpha \\to \\beta)$. (D) $(\\forall\\alpha \\to \\beta) \\to (\\exists\\alpha \\to \\beta)$."
+        },
+        {
+          "title": "(C) is X → X",
+          "body": "Valid. (It is the null-quantification equivalence read one way.)"
+        },
+        {
+          "title": "Refute the rest",
+          "body": "$D = \\{0, 1\\}$, α true at 0 only. With β = T: $\\beta \\to \\exists\\alpha$ = T, $\\beta \\to \\forall\\alpha$ = F, so (A), (B) fail. With β = F: $\\forall\\alpha \\to \\beta$ = T, $\\exists\\alpha \\to \\beta$ = F, so (D) fails."
         }
       ],
       "answer": {
-        "value": "C",
+        "value": "$[(\\exists x\\,\\alpha(x)) \\to \\beta] \\to [\\forall x\\,(\\alpha(x) \\to \\beta)]$",
         "choice": [
           "C"
         ],
@@ -1234,48 +1243,76 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Invalid: $\\beta$ true and $\\alpha$ true for only some $x$."
+          "reason": "Becomes (β → ∃α) → (β → ∀α): with β true and α true at one element only, T → F."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Invalid: same counter-model."
+          "reason": "∃x(β → α) is β → ∃α, not β → ∀α; same counter-model as (A)."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: the two sides are logically equivalent."
+          "reason": "∀x(α → β) ≡ ∃xα → β, so the formula is X → X."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Invalid: $(\\forall x\\,\\alpha)\\to\\beta \\equiv \\exists x\\,(\\alpha(x)\\to\\beta)$, which does not imply the $\\forall$ form."
+          "reason": "Becomes (∀α → β) → (∃α → β): with β false and α true at one element only, T → F."
         }
       ],
-      "verification": "Explicit two-element counter-models for A, B and D."
+      "shortcut": "Rewrite every implication as ∨, then the quantifier passes β without changing; the flip appears via De Morgan.",
+      "pitfalls": [
+        "Pulling ∀ out of a hypothesis without flipping it (the trap in option D).",
+        "Reading '∀x, β → α(x)' as (∀x β) → α(x): the comma means the quantifier scopes over the whole implication."
+      ],
+      "verification": "With α(x) = A(x) and β a nullary predicate, exhaustive search up to size 3 finds no counter-model for (C) and two-element counter-models for (A), (B), (D).",
+      "animation": {
+        "kind": "equation",
+        "title": "Null quantification turns (C) into X → X",
+        "lines": [
+          {
+            "tex": "\\forall x\\,(\\alpha(x) \\to \\beta) \\equiv \\forall x\\,(\\neg\\alpha(x) \\vee \\beta)"
+          },
+          {
+            "tex": "\\equiv (\\forall x\\, \\neg\\alpha(x)) \\vee \\beta \\equiv \\neg\\exists x\\,\\alpha(x) \\vee \\beta",
+            "note": "β has no x"
+          },
+          {
+            "tex": "\\equiv (\\exists x\\,\\alpha(x)) \\to \\beta",
+            "note": "the flip"
+          }
+        ]
+      }
     },
     "it-2008-it-22": {
-      "approach": "Push the negation inward: $\\neg\\forall=\\exists\\neg$, $\\neg\\exists=\\forall\\neg$, $\\neg(p\\to q)=p\\land\\neg q$.",
+      "approach": "Concept tested: **pushing a negation through nested quantifiers and implications**. Each ∀ becomes ∃ and vice versa where the ¬ passes it, and each ¬(p → q) becomes p ∧ ¬q.",
       "concepts": [
-        "Negation of quantifiers",
-        "Negation of implication"
+        "De Morgan for quantifiers",
+        "Negated implication",
+        "Nested scope"
       ],
+      "given": "Negate $\\forall x, \\alpha \\to (\\exists y, \\beta \\to (\\forall u, \\exists v, \\gamma))$ (a comma extends a quantifier's scope to the end).",
       "steps": [
         {
-          "title": "Outer layer",
-          "body": "$\\neg[\\forall x\\,(\\alpha\\to\\Phi)] \\equiv \\exists x\\,\\neg(\\alpha\\to\\Phi) \\equiv \\exists x\\,(\\alpha\\land\\neg\\Phi)$, with $\\Phi = \\exists y\\,(\\beta\\to\\Psi)$."
+          "title": "Outer quantifier",
+          "body": "$\\neg\\forall x(\\alpha \\to R) \\equiv \\exists x\\,\\neg(\\alpha \\to R) \\equiv \\exists x(\\alpha \\wedge \\neg R)$, where $R = \\exists y(\\beta \\to S)$."
         },
         {
-          "title": "Middle layer",
-          "body": "$\\neg\\Phi = \\forall y\\,\\neg(\\beta\\to\\Psi) = \\forall y\\,(\\beta\\land\\neg\\Psi)$, with $\\Psi = \\forall u\\,\\exists v\\,\\gamma$."
+          "title": "Second quantifier",
+          "body": "$\\neg\\exists y(\\beta \\to S) \\equiv \\forall y\\,\\neg(\\beta \\to S) \\equiv \\forall y(\\beta \\wedge \\neg S)$, where $S = \\forall u \\exists v\\, \\gamma$."
         },
         {
-          "title": "Inner layer",
-          "body": "$\\neg\\Psi = \\exists u\\,\\forall v\\,\\neg\\gamma$. Hence\n$$\\exists x\\,[\\alpha\\land(\\forall y\\,[\\beta\\land(\\exists u\\,\\forall v\\,\\neg\\gamma)])].$$"
+          "title": "Innermost block",
+          "body": "$\\neg\\forall u \\exists v\\, \\gamma \\equiv \\exists u \\forall v\\, \\neg\\gamma$."
+        },
+        {
+          "title": "Assemble",
+          "body": "$\\exists x, \\alpha \\wedge (\\forall y, \\beta \\wedge (\\exists u, \\forall v, \\neg\\gamma))$: option D."
         }
       ],
       "answer": {
-        "value": "D",
+        "value": "$[\\exists x,\\alpha\\wedge(\\forall y,\\beta\\wedge(\\exists u,\\forall v,\\neg\\gamma))]$",
         "choice": [
           "D"
         ],
@@ -1285,25 +1322,52 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Keeps the implications and leaves $\\gamma$ un-negated."
+          "reason": "Flips the quantifiers but keeps the implications and leaves $\\gamma$ un-negated."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Negates $\\gamma$ but keeps the implications; $\\neg(p\\to q)$ is $p\\land\\neg q$."
+          "reason": "Negates $\\gamma$ but keeps $\\to$; the negation of $p \\to q$ is $p \\wedge \\neg q$, not $p \\to \\neg q$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Keeps $\\forall x$ and negates the antecedents — not a negation."
+          "reason": "Negates every atom without flipping any quantifier: that is not how ¬ passes ∀ or ∃."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct."
+          "reason": "Every quantifier flipped, every $\\to$ turned into $\\wedge$, $\\gamma$ negated, $\\alpha$ and $\\beta$ kept."
         }
       ],
-      "verification": "Each quantifier flipped exactly once; each → replaced by ∧ with the consequent negated."
+      "shortcut": "In the negation, the hypotheses $\\alpha, \\beta$ survive unchanged and become conjuncts; only the final conclusion is negated. Only D has $\\wedge$ in both places.",
+      "pitfalls": [
+        "Negating the hypotheses $\\alpha$ and $\\beta$ (option C).",
+        "Writing $\\neg(p \\to q)$ as $p \\to \\neg q$ (option B)."
+      ],
+      "verification": "Script: push_not of the negated formula equals option D structurally (α(x), β(x, y), γ(u, v)), and only D is equivalent to the negation on all interpretations over domains of size 1 and 2.",
+      "animation": {
+        "kind": "equation",
+        "title": "Negation travelling inward",
+        "lines": [
+          {
+            "tex": "\\neg\\forall x\\,(\\alpha \\to \\exists y\\,(\\beta \\to \\forall u\\,\\exists v\\,\\gamma))",
+            "note": "given, negated"
+          },
+          {
+            "tex": "\\exists x\\,(\\alpha \\wedge \\neg\\exists y\\,(\\beta \\to \\forall u\\,\\exists v\\,\\gamma))",
+            "note": "¬∀ = ∃¬, ¬(p → q) = p ∧ ¬q"
+          },
+          {
+            "tex": "\\exists x\\,(\\alpha \\wedge \\forall y\\,(\\beta \\wedge \\neg\\forall u\\,\\exists v\\,\\gamma))",
+            "note": "¬∃ = ∀¬, again"
+          },
+          {
+            "tex": "\\exists x\\,(\\alpha \\wedge \\forall y\\,(\\beta \\wedge \\exists u\\,\\forall v\\,\\neg\\gamma))",
+            "note": "flip the last block"
+          }
+        ]
+      }
     },
     "it-2008-it-23": {
       "approach": "Use the complement: \"at least three share a birthday\" fails exactly when either all $r$ birthdays are distinct or exactly one pair shares a day and everyone else is distinct. Subtract both from 1.",

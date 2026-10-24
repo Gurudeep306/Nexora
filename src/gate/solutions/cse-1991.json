@@ -3284,30 +3284,96 @@
       "verification": "Checked on 12 and 18: 6 × 36 = 216 = 12 × 18."
     },
     "cse-1991-b-15-b": {
-      "approach": "The formula says R is serial (everyone has a successor), asymmetric, transitive and irreflexive — a strict order with no maximal element. Following successors in a finite domain must revisit an element, which transitivity turns into $R(x,x)$.",
+      "approach": "Concept tested: **satisfiable sentences with only infinite models**. Read the four conjuncts as properties of $R$; show that a finite domain leads to a contradiction, then exhibit the natural numbers as a model.",
       "concepts": [
-        "first-order models",
-        "strict partial order",
-        "satisfiability"
+        "Interpretation",
+        "Satisfiability",
+        "Strict order",
+        "Infinite model"
       ],
+      "given": "$\\varphi = \\forall x \\exists y R(x,y) \\wedge \\forall x \\forall y (R(x,y) \\to \\neg R(y,x)) \\wedge \\forall x \\forall y \\forall z (R(x,y) \\wedge R(y,z) \\to R(x,z)) \\wedge \\forall x \\neg R(x,x)$.",
       "steps": [
         {
-          "title": "No finite model",
-          "body": "Take a model with $n$ elements. Start at any $x_0$ and use $\\forall x \\exists y\\, R(x,y)$ to pick $x_1, x_2, \\ldots, x_n$ with $R(x_m, x_{m+1})$. These are $n+1$ names for $n$ elements, so $x_p = x_q$ for some $p < q$. Transitivity along the chain gives $R(x_p, x_q) = R(x_p, x_p)$, contradicting $\\forall x\\, \\neg R(x,x)$ (and asymmetry with $x=y$)."
+          "title": "Name the properties",
+          "body": "The conjuncts say $R$ is **serial** (every element has a successor), **asymmetric**, **transitive** and **irreflexive**: a strict order with no last element. (Irreflexivity even follows from asymmetry with $y = x$.)"
         },
         {
-          "title": "A countable model",
-          "body": "Domain $\\mathbb{N}$, $R(x,y) \\iff x < y$:\n\n- every $x$ has $y = x+1$ with $x < y$ ✓\n- $x<y \\Rightarrow \\neg(y<x)$ ✓\n- $x<y,\\ y<z \\Rightarrow x<z$ ✓\n- $\\neg(x<x)$ ✓\n\nSo the formula is **satisfiable**, but only in infinite models."
+          "title": "Follow successors in a finite domain",
+          "body": "Let $|D| = k$ be finite. Start at $a_0$ and use seriality $k$ times: $R(a_0, a_1), R(a_1, a_2), \\dots, R(a_{k-1}, a_k)$. These are $k + 1$ names for elements of a $k$-element set, so $a_i = a_j$ for some $i < j$."
+        },
+        {
+          "title": "Transitivity closes the loop",
+          "body": "Transitivity along $a_i, a_{i+1}, \\dots, a_j$ gives $R(a_i, a_j)$, i.e. $R(a_i, a_i)$, contradicting irreflexivity. So **no finite model** exists."
+        },
+        {
+          "title": "Exhibit a countable model",
+          "body": "Domain $\\mathbb{N}$, $R$ = '<': every $n$ has $n + 1 > n$; $<$ is asymmetric, transitive and irreflexive. So $\\varphi$ is **satisfiable**, with the countable model $(\\mathbb{N}, <)$ (also $(\\mathbb{Z}, <)$ or $(\\mathbb{Q}, <)$)."
         }
       ],
       "answer": {
-        "value": "**No finite models**; it is **satisfiable** — e.g. $(\\mathbb{N}, <)$ is a countable model.",
+        "value": "**No finite models**; it is **satisfiable**, e.g. $(\\mathbb{N}, <)$ is a countable model.",
         "matchesKey": true
       },
+      "shortcut": "Serial + strict order = an infinite ascending staircase. Finite worlds force a loop, and transitivity turns any loop into $R(a, a)$.",
       "pitfalls": [
-        "Answering 'unsatisfiable' because no finite model exists — first-order formulas can have only infinite models."
+        "Concluding 'unsatisfiable' because no small model exists: a finite search cannot prove unsatisfiability.",
+        "Offering $(\\mathbb{N}, \\le)$: $\\le$ is reflexive, so irreflexivity and asymmetry fail."
       ],
-      "verification": "Irreflexivity already follows from asymmetry (put y = x), so the answer does not depend on how the blurred last conjunct is read."
+      "verification": "An exhaustive search over every relation on domains of size 1–4 finds no model; $(\\mathbb{N}, <)$ satisfies each conjunct directly. Dropping transitivity allows the finite 3-cycle model, which shows that conjunct is essential.",
+      "animation": {
+        "kind": "graph",
+        "title": "A successor chain in a 4-element domain must loop",
+        "directed": true,
+        "layout": "manual",
+        "nodes": [
+          {
+            "id": "a0",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "a1",
+            "x": 1,
+            "y": 0
+          },
+          {
+            "id": "a2",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "a3",
+            "x": 3,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "a0",
+            "to": "a1"
+          },
+          {
+            "from": "a1",
+            "to": "a2"
+          },
+          {
+            "from": "a2",
+            "to": "a3"
+          },
+          {
+            "from": "a3",
+            "to": "a1",
+            "tone": "warning"
+          },
+          {
+            "from": "a1",
+            "to": "a3",
+            "tone": "error",
+            "dashed": true
+          }
+        ],
+        "caption": "a3 must point back; transitivity gives R(a1, a3) and R(a3, a1), hence R(a1, a1)."
+      }
     },
     "cse-1991-b-16-a": {
       "approach": "Count balanced strings and subtract the bad ones with the reflection principle; the result is the Catalan number.",

@@ -1931,23 +1931,28 @@
       "verification": "Each false claim has an explicit counterexample, and P holds for all $n\\ge3$."
     },
     "cse-2013-cs-27": {
-      "approach": "\"None of my friends are perfect\" means there is no $x$ that is both a friend and perfect: $\\neg\\exists x(F(x)\\wedge P(x))$.",
+      "approach": "Concept tested: **'none of the A are B' is ¬∃x(A ∧ B)**, equivalently ∀x(A → ¬B).",
       "concepts": [
-        "Predicate logic",
-        "Quantifier negation"
+        "Negated existential",
+        "No A is B"
       ],
+      "given": "'None of my friends are perfect'; $F(x)$: friend, $P(x)$: perfect.",
       "steps": [
         {
-          "title": "Translate",
-          "body": "\"Some friend is perfect\" is $\\exists x(F(x)\\wedge P(x))$; \"none\" negates it: $\\neg\\exists x(F(x)\\wedge P(x))$."
+          "title": "Pattern",
+          "body": "'None of the A are B' denies 'some A is B': $\\neg\\exists x(F(x) \\wedge P(x))$, option D."
         },
         {
           "title": "Equivalent form",
-          "body": "This equals $\\forall x(F(x)\\to\\neg P(x))$: every friend is not perfect."
+          "body": "Pushing the ¬ in: $\\forall x(\\neg F \\vee \\neg P) \\equiv \\forall x(F(x) \\to \\neg P(x))$, 'every friend is imperfect'."
+        },
+        {
+          "title": "The others",
+          "body": "A says some friend is imperfect (consistent with other friends being perfect); B and C talk about non-friends."
         }
       ],
       "answer": {
-        "value": "¬∃x(F(x) ∧ P(x))",
+        "value": "$\\neg\\exists x(F(x) \\wedge P(x))$",
         "choice": [
           "D"
         ],
@@ -1957,25 +1962,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Says some friend is not perfect — it allows other friends to be perfect."
+          "reason": "'Some friend is not perfect': true even if another friend is perfect."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Says some non-friend is perfect — unrelated."
+          "reason": "'Someone who is not my friend is perfect': about non-friends."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Says some non-friend is not perfect — unrelated."
+          "reason": "'Someone who is not my friend is not perfect': about non-friends."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: no one is both a friend and perfect."
+          "reason": "No object is both a friend and perfect."
         }
       ],
-      "verification": "Pushing the negation in gives $\\forall x(\\neg F(x)\\vee\\neg P(x))$, i.e. no perfect friends."
+      "shortcut": "'None' = 'not some': put ¬ in front of the 'some A are B' formula.",
+      "pitfalls": [
+        "Choosing A ('some friend is not perfect'), which is 'not all', not 'none'."
+      ],
+      "verification": "Script: only D is equivalent to $\\neg\\exists x(F \\wedge P)$ on all interpretations up to size 3."
     },
     "cse-2013-cs-28": {
       "approach": "The sequence saves the current PC into memory at address X and loads a new address Y into PC — exactly what happens when an interrupt is accepted.",
@@ -3541,60 +3550,136 @@
       "verification": "Level sizes of a 2×4 decoder tree for 16 outputs: 16/4 = 4 leaf decoders, 4/4 = 1 root decoder; 4 + 1 = 5."
     },
     "cse-2013-cs-47": {
-      "approach": "Push the negation inside, then rewrite each option as a disjunction under ∀x and compare. Abbreviate P = ∀y(α), Q = ∀z(β); the quantifiers over y and z just move as whole blocks.",
+      "approach": "Concept tested: **De Morgan for quantifiers and rewriting implications**. Push the negation in, abbreviate the inner quantified blocks, and compare each option as a disjunction under ∀x.",
       "concepts": [
-        "Quantifier negation",
-        "Implication as disjunction",
-        "Logical equivalence"
+        "De Morgan for quantifiers",
+        "Equivalence",
+        "Implication law"
       ],
+      "given": "Find the option NOT equivalent to $\\neg\\exists x(\\forall y(\\alpha) \\wedge \\forall z(\\beta))$.",
       "steps": [
         {
-          "title": "Simplify the given formula",
-          "body": "Let $P = \\forall y(\\alpha)$, $Q = \\forall z(\\beta)$, so $\\neg P \\equiv \\exists y(\\neg\\alpha)$ and $\\neg Q \\equiv \\exists z(\\neg\\beta)$.\n$$\\neg\\exists x(P\\wedge Q) \\equiv \\forall x\\,\\neg(P\\wedge Q) \\equiv \\forall x(\\neg P \\vee \\neg Q)$$"
+          "title": "Push the negation",
+          "body": "Write $P = \\forall y\\,\\alpha$, $Q = \\forall z\\,\\beta$. Given $\\equiv \\forall x\\,\\neg(P \\wedge Q) \\equiv \\forall x(\\neg P \\vee \\neg Q)$, with $\\neg P \\equiv \\exists y \\neg\\alpha$, $\\neg Q \\equiv \\exists z \\neg\\beta$."
         },
         {
           "title": "Rewrite each option",
-          "body": "| Option | Form | As disjunction | Equivalent? |\n|---|---|---|---|\n| A | $\\neg Q \\to P$ | $Q \\vee P$ | No |\n| B | $Q \\to \\neg P$ | $\\neg Q \\vee \\neg P$ | Yes |\n| C | $P \\to \\neg Q$ | $\\neg P \\vee \\neg Q$ | Yes |\n| D | $\\neg P \\to \\neg Q$ | $P \\vee \\neg Q$ | No |"
+          "body": "(A) $\\forall x(\\neg Q \\to P) = \\forall x(Q \\vee P)$. (B) $\\forall x(Q \\to \\neg P) = \\forall x(\\neg Q \\vee \\neg P)$. (C) $\\forall x(P \\to \\neg Q) = \\forall x(\\neg P \\vee \\neg Q)$. (D) $\\forall x(\\neg P \\to \\neg Q) = \\forall x(P \\vee \\neg Q)$."
         },
         {
-          "title": "Conclusion",
-          "body": "D is $\\forall x(P \\vee \\neg Q)$, which differs from $\\forall x(\\neg P \\vee \\neg Q)$ (e.g. take $P$ false, $Q$ true: the given formula is true, D is false). So D is NOT equivalent — the stored key.\n\nNote: A ($\\forall x(P\\vee Q)$) is also not equivalent (take $P, Q$ both true), so the question as printed has two correct options; it is flagged for review."
+          "title": "Compare",
+          "body": "(B) and (C) match the given form (they are contrapositives of each other). (D) differs: with $P$ false and $Q$ true at some $x$, the given body is T and (D)'s body F. So (D) is NOT equivalent."
+        },
+        {
+          "title": "A printing problem",
+          "body": "(A) also differs: with $P$, $Q$ both false the given body is T, (A)'s body F. As printed, two options are not equivalent; the key is (D)."
         }
       ],
       "answer": {
-        "value": "D (A is also not equivalent — flawed question)",
+        "value": "(D) $\\forall x(\\exists y(\\neg\\alpha) \\to \\exists z(\\neg\\beta))$",
         "choice": [
           "D"
         ],
-        "matchesKey": true
+        "matchesKey": true,
+        "keyNote": "As printed, option (A) is also not equivalent (it reduces to ∀x(Q ∨ P)); the paper most likely misprinted (A). The bank key (D) is a correct NOT-equivalent option."
       },
       "optionAnalysis": [
         {
           "option": "A",
           "correct": false,
-          "reason": "$\\neg Q \\to P \\equiv Q \\vee P$ — also not equivalent (fails when P and Q are both true); a second valid answer, so the question is flawed."
+          "reason": "Reduces to ∀x(Q ∨ P), which is also not equivalent as printed; not the keyed answer (likely a misprint in the paper)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$Q \\to \\neg P \\equiv \\neg Q \\vee \\neg P$ — equivalent."
+          "reason": "∀x(Q → ¬P) = ∀x(¬Q ∨ ¬P): equivalent."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$P \\to \\neg Q \\equiv \\neg P \\vee \\neg Q$ — equivalent."
+          "reason": "∀x(P → ¬Q) = ∀x(¬P ∨ ¬Q): equivalent."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$\\neg P \\to \\neg Q \\equiv P \\vee \\neg Q$ — not equivalent (fails when P is false and Q is true). Matches the stored key."
+          "reason": "∀x(¬P → ¬Q) = ∀x(P ∨ ¬Q): differs when P is false and Q true. Not equivalent."
         }
       ],
+      "shortcut": "Treat ∀yα and ∀zβ as single letters P, Q: the question is then propositional under one ∀x.",
       "pitfalls": [
-        "Pushing ¬ through ∀y as ∀y(¬α) instead of ∃y(¬α).",
-        "Assuming exactly one option must fail without checking all four."
+        "Distributing the outer ¬ into α and β themselves instead of only flipping the quantifiers.",
+        "Forgetting that X → Y and ¬Y → ¬X are the same (B and C)."
       ],
-      "verification": "Truth-table on (P, Q): given = ¬P∨¬Q is false only at (T,T). A is false only at (F,F); D is false only at (F,T); B and C match exactly."
+      "verification": "With α = A(x, y), β = B(x, z), exhaustive search on domains of size 1–2: (B) and (C) are equivalent to the given sentence; (A) and (D) each have a counter-model.",
+      "animation": {
+        "kind": "table",
+        "title": "Each option's body as a function of P = ∀yα, Q = ∀zβ",
+        "cols": [
+          "P",
+          "Q",
+          "given ¬P∨¬Q",
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "F",
+            "T",
+            "F",
+            "F",
+            "T"
+          ],
+          [
+            "T",
+            "F",
+            "T",
+            "T",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "F",
+            "T",
+            "T",
+            "T",
+            "T",
+            "T",
+            "F"
+          ],
+          [
+            "F",
+            "F",
+            "T",
+            "F",
+            "T",
+            "T",
+            "T"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 2,
+            "c": 6,
+            "tone": "error"
+          },
+          {
+            "r": 0,
+            "c": 3,
+            "tone": "warning"
+          },
+          {
+            "r": 3,
+            "c": 3,
+            "tone": "warning"
+          }
+        ]
+      }
     },
     "cse-2013-cs-48": {
       "approach": "Use code motion to delay d and e into the else-branch (the only place they are used), then check the largest set of simultaneously live values. If it still exceeds two, at least one spill is unavoidable.",

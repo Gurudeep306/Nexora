@@ -2191,24 +2191,99 @@
       "verification": "SACK-permitted is TCP option kind 4 and SACK is kind 5."
     },
     "cse-2015-3-cs-23": {
-      "approach": "Rewrite set difference as intersection with complement: $X \\setminus Y = X \\cap Y'$ and $Y' \\setminus X' = Y' \\cap X$ — identical. Refute the rest with counterexamples.",
+      "approach": "Concept tested: **quantified statements about subsets**. Test each option: a 'for all' claim falls to one counterexample, an 'exists' claim needs one witness, and D is an identity provable by rewriting differences as intersections.",
       "concepts": [
         "Set difference",
         "Complement",
         "Quantifiers"
       ],
+      "given": "$U = P(S)$ with $S = \\{1, \\dots, 6\\}$; $T'$ is the complement in $S$; $T \\setminus R$ is $T - R$.",
       "steps": [
         {
-          "title": "Prove D",
-          "body": "$Y' \\setminus X' = Y' \\cap (X')' = Y' \\cap X = X \\cap Y' = X \\setminus Y$. True for all $X, Y$."
+          "title": "A is false",
+          "body": "$|X| = |X'|$ for all $X$? Take $X = \\emptyset$: $|X| = 0$ but $|X'| = 6$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "error"
+              }
+            ]
+          }
         },
         {
-          "title": "Refute others",
-          "body": "A: $X = \\emptyset$ gives $|X| = 0$, $|X'| = 6$.\n\nB: two disjoint 5-element sets need $5 + 5 = 10 > 6$ elements.\n\nC: fails e.g. for $|X| = 1$ (the conjunction must hold for every pair)."
+          "title": "B is false",
+          "body": "Two disjoint 5-element subsets of a 6-element set would need $5 + 5 = 10 > 6$ elements.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "C is false",
+          "body": "It claims every $X$ has $|X| = 2$ (among other things); $X = \\emptyset$ already breaks it.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "D is an identity",
+          "body": "$X \\setminus Y = X \\cap Y'$ and $Y' \\setminus X' = Y' \\cap (X')' = Y' \\cap X$. Same set for every $X, Y$: **true**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
         }
       ],
       "answer": {
-        "value": "D",
+        "value": "$\\forall X \\in U\\ \\forall Y \\in U\\ (X \\setminus Y = Y' \\setminus X')$",
         "choice": [
           "D"
         ],
@@ -2218,28 +2293,56 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "False: $\\emptyset$ has 0 elements, its complement 6."
+          "reason": "$X = \\emptyset$ gives $0 \\ne 6$; only 3-element sets satisfy $|X| = |X'|$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "False: two disjoint 5-subsets need 10 elements, but $|S| = 6$."
+          "reason": "Disjoint 5-element sets need 10 elements; $S$ has 6."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "False: it claims every $X$ has size 2 and every $Y$ size 3."
+          "reason": "A 'for all' over every pair cannot force $|X| = 2$; $X = \\emptyset$ is a counterexample."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "True by $A \\setminus B = A \\cap B'$ ✓."
+          "reason": "$X - Y = X \\cap Y' = Y' - X'$: the contrapositive form of a difference."
         }
       ],
+      "shortcut": "$A - B = A \\cap B^c$; apply it to both sides of D and they become the same intersection. (In logic: $x \\wedge \\neg y \\equiv \\neg y \\wedge \\neg\\neg x$.)",
       "pitfalls": [
-        "Reading C as a conditional; it is a conjunction under ∀."
+        "Reading C as 'there exist $X, Y$ with …', which would be true ($X \\subseteq Y$, sizes 2 and 3); the quantifiers are universal."
       ],
-      "verification": "$X = \\{1,2\\}$, $Y = \\{2,3\\}$: $X\\setminus Y = \\{1\\}$; $Y' = \\{1,4,5,6\\}$, $X' = \\{3,4,5,6\\}$, $Y'\\setminus X' = \\{1\\}$ ✓."
+      "verification": "Exhaustive check over all 64 subsets of $\\{1, \\dots, 6\\}$ (and all 4096 pairs): A, B, C are false and D is true.",
+      "animation": {
+        "kind": "table",
+        "title": "The four statements",
+        "cols": [
+          "statement",
+          "verdict"
+        ],
+        "rows": [
+          [
+            "A: ∀X |X| = |X'|",
+            "?"
+          ],
+          [
+            "B: ∃X,Y |X|=|Y|=5, disjoint",
+            "?"
+          ],
+          [
+            "C: ∀X,Y |X|=2, |Y|=3, X∖Y=∅",
+            "?"
+          ],
+          [
+            "D: ∀X,Y X∖Y = Y'∖X'",
+            "?"
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-2015-3-cs-24": {
       "approach": "Concept tested: **truth-teller/liar reasoning as a biconditional**. A speaker's statement $S$ is true exactly when the speaker is truthful: $t \\leftrightarrow S$. Here $S = (h \\leftrightarrow t)$, so the constraint is $t \\leftrightarrow (h \\leftrightarrow t)$.",

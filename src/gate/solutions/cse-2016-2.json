@@ -1643,20 +1643,25 @@
       "verification": "Re-checked each link of the counterexample numerically."
     },
     "cse-2016-2-cs-27": {
-      "approach": "Test each formula with the standard quantifier laws; a two-element domain where $p$ and $q$ split the elements kills (D).",
+      "approach": "Concept tested: **which quantifier distributions are valid**. Rewrite (A) without arrows, recognise (B) and (C) as laws, and refute (D) in the split world.",
       "concepts": [
-        "Predicate logic",
-        "Quantifier distribution",
-        "Validity"
+        "Validity",
+        "One-way laws",
+        "Counter-model"
       ],
+      "given": "Find the formula that is NOT valid.",
       "steps": [
         {
-          "title": "A, B, C are valid",
-          "body": "- (A) $\\forall x\\,p\\Rightarrow\\forall x\\,q\\equiv\\neg\\forall x\\,p\\vee\\forall x\\,q\\equiv\\exists x\\,\\neg p\\vee\\forall x\\,q$ — an implication between equivalent formulas: valid.\n- (B) $\\exists x\\,p\\vee\\exists x\\,q\\equiv\\exists x(p\\vee q)$: valid.\n- (C) A witness of $p\\wedge q$ is a witness for each: valid."
+          "title": "(A) is X → X",
+          "body": "$\\forall x p \\Rightarrow \\forall x q \\equiv \\neg\\forall x p \\vee \\forall x q \\equiv \\exists x \\neg p \\vee \\forall x q$, which is the conclusion. Valid."
         },
         {
-          "title": "D fails",
-          "body": "Domain $\\{1,2\\}$, $p=\\{1\\}$, $q=\\{2\\}$: $\\forall x(p\\vee q)$ is true, but $\\forall x\\,p$ and $\\forall x\\,q$ are both false. So (D) is **not valid** → option **(D)**."
+          "title": "(B), (C) are laws",
+          "body": "(B) is ∃ over ∨ (an equivalence, used right-to-left). (C) is the one-way law ∃(p ∧ q) ⇒ ∃p ∧ ∃q. Both valid."
+        },
+        {
+          "title": "(D) fails",
+          "body": "$D = \\{0, 1\\}$, $p = \\{0\\}$, $q = \\{1\\}$: $\\forall x(p \\vee q)$ = T, $\\forall x p \\vee \\forall x q$ = F ∨ F = F."
         }
       ],
       "answer": {
@@ -1670,25 +1675,77 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Valid: the consequent is just a rewriting of the antecedent."
+          "reason": "Valid: hypothesis and conclusion are the same formula once the arrow is rewritten."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Valid: $\\exists$ distributes over $\\vee$."
+          "reason": "Valid: ∃ distributes over ∨."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Valid: one witness satisfies both conjuncts."
+          "reason": "Valid: a common witness witnesses each conjunct."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$\\forall$ does not distribute over $\\vee$ — counterexample above."
+          "reason": "Not valid: ∀ does not distribute over ∨ (split world)."
         }
       ],
-      "verification": "The counter-model makes the antecedent of D true and its consequent false."
+      "shortcut": "∀ with ∨ is the only mismatched pairing among the options.",
+      "pitfalls": [
+        "Marking (A) as not valid because it 'changes ∀ into ∃'.",
+        "Confusing (C) (valid direction) with its converse."
+      ],
+      "verification": "Exhaustive search up to size 3: no counter-model for (A), (B), (C); (D) fails on two elements.",
+      "animation": {
+        "kind": "table",
+        "title": "Split world for (D)",
+        "cols": [
+          "x",
+          "p(x)",
+          "q(x)",
+          "p∨q"
+        ],
+        "rows": [
+          [
+            "0",
+            "T",
+            "F",
+            "T"
+          ],
+          [
+            "1",
+            "F",
+            "T",
+            "T"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "c": 3,
+            "tone": "success"
+          },
+          {
+            "r": 1,
+            "c": 3,
+            "tone": "success"
+          },
+          {
+            "r": 1,
+            "c": 1,
+            "tone": "error"
+          },
+          {
+            "r": 0,
+            "c": 2,
+            "tone": "error"
+          }
+        ]
+      }
     },
     "cse-2016-2-cs-28": {
       "approach": "Model compounds as vertices and reactions as edges; the handshake lemma forces the degree sum in $U\\setminus S$ to be odd.",

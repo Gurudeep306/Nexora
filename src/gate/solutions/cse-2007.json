@@ -1219,23 +1219,33 @@
       "verification": "Every group of order $p^2$ is Abelian, and there are exactly two of order 4."
     },
     "cse-2007-cs-22": {
-      "approach": "Rewrite 'not every graph is connected' as $\\neg\\forall x(G(x)\\Rightarrow C(x))\\equiv\\exists x(G(x)\\wedge\\neg C(x))$ and test each option for equivalence.",
+      "approach": "Concept tested: **negating a restricted universal**. 'Not every graph is connected' is ¬∀x(G → C) ≡ ∃x(G ∧ ¬C); find the option that is **not** equivalent.",
       "concepts": [
-        "First-order logic",
-        "Quantifier negation"
+        "Negation of ∀",
+        "Restricted quantifiers",
+        "Equivalence"
       ],
+      "given": "Which formula does **not** represent 'not every graph is connected'?",
       "steps": [
         {
-          "title": "Target",
-          "body": "$\\neg\\forall x\\,(G\\Rightarrow C)\\equiv\\exists x\\,\\neg(\\neg G\\vee C)\\equiv\\exists x\\,(G\\wedge\\neg C)$."
+          "title": "Translate",
+          "body": "'Every graph is connected': $\\forall x(G(x) \\to C(x))$. Its negation: $\\neg\\forall x(G(x) \\to C(x))$, option A."
         },
         {
-          "title": "Check options",
-          "body": "(A) is the target verbatim. (B) is its equivalent form. (C) uses $G\\Rightarrow C\\equiv\\neg G\\vee C$, so equals (A).\n\n(D) $\\forall x\\,(G\\Rightarrow\\neg C)$ says **no** graph is connected — stronger and different."
+          "title": "Push the negation in",
+          "body": "$\\exists x\\,\\neg(G \\to C) \\equiv \\exists x(G(x) \\wedge \\neg C(x))$, option B: some graph is not connected."
+        },
+        {
+          "title": "Rewrite the arrow",
+          "body": "$G \\to C \\equiv \\neg G \\vee C$, so option C is option A in disguise."
+        },
+        {
+          "title": "The odd one out",
+          "body": "D, $\\forall x(G \\to \\neg C)$, says **no** graph is connected. With one connected and one disconnected graph, the sentence is true and D is false."
         }
       ],
       "answer": {
-        "value": "$\\forall x\\,(Graph(x)\\Rightarrow\\neg Connected(x))$",
+        "value": "$\\forall x\\,(Graph(x) \\Rightarrow \\neg Connected(x))$",
         "choice": [
           "D"
         ],
@@ -1245,25 +1255,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Exactly 'not every graph is connected'."
+          "reason": "A literal translation of the sentence, so it does represent it (not the answer)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "'Some graph is not connected' — equivalent."
+          "reason": "Equivalent to A by De Morgan for quantifiers and $\\neg(p \\to q) \\equiv p \\wedge \\neg q$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\neg G\\vee C$ is $G\\Rightarrow C$, so this equals (A)."
+          "reason": "Equivalent to A, since $G \\Rightarrow C \\equiv \\neg G \\vee C$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Means 'no graph is connected' — not the given statement."
+          "reason": "'No graph is connected', much stronger than 'not every graph is connected': it does not represent the sentence."
         }
       ],
-      "verification": "Model check: a world with one connected and one disconnected graph makes A, B, C true but D false."
+      "shortcut": "'Not all A are B' = 'some A is not B'. D keeps the ∀ and only negates the conclusion, so it is the one that is different.",
+      "pitfalls": [
+        "Negating only the conclusion and keeping ∀ ('every graph is not connected').",
+        "Missing the 'DOES NOT' in the question."
+      ],
+      "verification": "Script: A, B, C are equivalent to $\\neg\\forall x(G \\to C)$ on all interpretations up to size 3; D is not."
     },
     "cse-2007-cs-23": {
       "approach": "A connected graph has an Eulerian circuit iff every vertex has even degree. Check degree parity and connectivity for each option.",

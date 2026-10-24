@@ -1767,29 +1767,37 @@
       "verification": "Smallest key at the root of a 7-node heap needs 2 = log₂ 7 rounded down swaps."
     },
     "cse-2015-2-cs-18": {
-      "approach": "A set with $k$ elements has $2^k$ subsets; count the elements carefully (0 is included).",
+      "approach": "Concept tested: **the size of a power set**. Count the elements of the set, then $|P(S)| = 2^{|S|}$.",
       "concepts": [
-        "Power set"
+        "Power set",
+        "Cardinality"
       ],
+      "given": "$S = \\{0, 1, 2, \\dots, 10\\}$.",
       "steps": [
         {
-          "title": "Count elements",
-          "body": "$\\{0,1,\\ldots,10\\}$ has $10 - 0 + 1 = 11$ elements."
+          "title": "Count the elements",
+          "body": "The numbers $0$ through $10$ inclusive: $10 - 0 + 1 = 11$ elements (do not forget $0$)."
         },
         {
-          "title": "Power set size",
-          "body": "$|\\mathcal P(S)| = 2^{11} = 2048$."
+          "title": "Two choices per element",
+          "body": "Each of the 11 elements is in or out of a subset, independently: $2^{11}$ subsets."
+        },
+        {
+          "title": "Compute",
+          "body": "$2^{10} = 1024$, so $2^{11} = 2048$."
         }
       ],
       "answer": {
-        "value": "**2048**",
+        "value": "2048",
         "number": 2048,
         "matchesKey": true
       },
+      "shortcut": "$|\\{0, \\dots, n\\}| = n + 1$; here $2^{11} = 2048$.",
       "pitfalls": [
-        "Counting 10 elements (forgetting 0) and answering 1024."
+        "Counting 10 elements (forgetting $0$) and answering 1024.",
+        "Answering $2^{11} - 1$, the number of proper (or non-empty) subsets."
       ],
-      "verification": "$2^{10} = 1024$, doubled = 2048."
+      "verification": "Enumerated: the power set of range(11) has 2048 elements."
     },
     "cse-2015-2-cs-19": {
       "approach": "Map each compiler task to the algorithm/structure it uses; only one option is consistent.",
@@ -4170,59 +4178,113 @@
       "verification": "Both methods give 0.95."
     },
     "cse-2015-2-cs-55": {
-      "approach": "Use $P \\rightarrow R \\equiv \\neg P \\vee R$: the two sides of (C) are the same formula, so the biconditional is valid. Disprove A and B with small models.",
+      "approach": "Concept tested: **valid quantified biconditionals and implications**: replacement of equivalent bodies, the ∀∃/∃∀ swap, and free variables.",
       "concepts": [
-        "First-order logic",
         "Validity",
-        "Quantifier order"
+        "Quantifier order",
+        "Replacement",
+        "Free variables"
       ],
+      "given": "Four well-formed formulas over $R$, $S$, $P$.",
       "steps": [
         {
-          "title": "Option C",
-          "body": "Since $P(x,y) \\rightarrow R(x,y) \\equiv \\neg P(x,y) \\vee R(x,y)$ for every $x,y$, both sides of the $\\leftrightarrow$ are logically equivalent, so (C) is valid."
+          "title": "(C) is valid",
+          "body": "$P(x,y) \\to R(x,y) \\equiv \\neg P(x,y) \\vee R(x,y)$ for every $x, y$, so quantifying both sides the same way ($\\forall x \\exists y$) gives the same sentence: the biconditional is valid."
         },
         {
-          "title": "Options A and B",
-          "body": "(A): over $\\{1,2\\}$ with $R = \\{(1,1),(2,2)\\}$, $\\forall x\\exists y R$ is true but $\\exists y \\forall x R$ is false.\n\n(B): with $R = S = \\emptyset$ the antecedent is true (every implication has a false premise) but $\\forall x\\exists y S(x,y)$ is false."
+          "title": "(A) fails",
+          "body": "$\\forall x \\exists y R \\leftrightarrow \\exists y \\forall x R$ needs both directions; ∀∃ → ∃∀ fails on $\\{0, 1\\}$ with $R$ = equality."
         },
         {
-          "title": "Answer",
-          "body": "Option (C) is the intended tautology. (D), which only renames bound variables, is also valid as printed — see the review note on this question."
+          "title": "(B) fails",
+          "body": "The ∃y binds only $R(x, y)$, so $y$ in $S(x, y)$ is free. With $D = \\{0\\}$, $R = S = \\varnothing$: every hypothesis implication is vacuously T, but $\\forall x \\exists y S$ is F."
+        },
+        {
+          "title": "(D) as printed",
+          "body": "$\\forall x \\forall y P(x,y) \\to \\forall x \\forall y P(y,x)$: rename and commute the bound variables, and the conclusion is the hypothesis. So (D) is **also** valid as printed; the intended key is (C)."
         }
       ],
       "answer": {
-        "value": "Option C",
+        "value": "Option (C)",
         "choice": [
           "C"
         ],
-        "matchesKey": true
+        "matchesKey": true,
+        "keyNote": "As printed, (D) is valid too (both sides say P holds for every ordered pair); the published key is (C)."
       },
       "optionAnalysis": [
         {
           "option": "A",
           "correct": false,
-          "reason": "Swapping $\\forall\\exists$ to $\\exists\\forall$ is not valid (only $\\exists\\forall \\Rightarrow \\forall\\exists$ holds)."
+          "reason": "The swap ∀x∃y → ∃y∀x fails (equality on two elements), so the biconditional is not valid."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Countermodel: $R = S = \\emptyset$ makes the antecedent true and $\\forall x\\exists y S$ false."
+          "reason": "y in S(x, y) is free; R = S = ∅ on one element makes the hypothesis T and the conclusion F."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Both sides are equivalent by $P\\rightarrow R \\equiv \\neg P \\vee R$."
+          "reason": "The two sides have equivalent bodies under the same quantifiers: valid."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Intended as a distractor, but strictly it is also valid: both sides say $P$ holds for every ordered pair. The key is C."
+          "reason": "Valid as printed (bound variables can be renamed and like quantifiers commute), but it is not the keyed answer; the paper probably intended a different formula."
         }
       ],
+      "shortcut": "Look for an option whose two sides differ only by a propositional law: that one is valid by replacement.",
       "pitfalls": [
-        "Reading (D) as a symmetry claim — the variables are bound on both sides, so it is not about $P$ being symmetric."
+        "Reading (D) as 'P is symmetric': symmetry would be ∀x∀y(P(x,y) → P(y,x)).",
+        "Missing the free y in (B)."
       ],
-      "verification": "C checked by equivalence; A and B refuted by explicit models; D noted as also valid (record already flagged needsReview)."
+      "verification": "Exhaustive search up to size 3 finds no counter-model for (C) or (D); (A) fails on two elements and (B) on one.",
+      "animation": {
+        "kind": "table",
+        "title": "Verdicts",
+        "cols": [
+          "option",
+          "valid?",
+          "reason"
+        ],
+        "rows": [
+          [
+            "A",
+            "no",
+            "∀∃ ⇏ ∃∀"
+          ],
+          [
+            "B",
+            "no",
+            "free y"
+          ],
+          [
+            "C",
+            "yes",
+            "same body"
+          ],
+          [
+            "D",
+            "yes*",
+            "rename"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 2,
+            "c": 1,
+            "tone": "success"
+          },
+          {
+            "r": 3,
+            "c": 1,
+            "tone": "warning"
+          }
+        ],
+        "caption": "* valid as printed; key is (C)"
+      }
     }
   }
 }

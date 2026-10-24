@@ -3165,23 +3165,25 @@
       "verification": "104 = 01101000 and 64 = 01000000 have the leading bit 0 (inside /17) and the low 3 bits 000 (aligned to /21)."
     },
     "cse-2020-cs-39": {
-      "approach": "Rewrite each implication as a disjunction and move the quantifier past W (which has no free x). The only formula that does not survive this is the ∀ with an implication.",
+      "approach": "Concept tested: **null quantification**: moving a quantifier past a formula $W$ without free $x$, flipping it when it leaves the hypothesis of an implication.",
       "concepts": [
-        "Quantifier laws",
-        "Prenex normal form"
+        "Null quantification",
+        "Equivalence",
+        "Counter-model"
       ],
+      "given": "$W$ has no free occurrence of $x$.",
       "steps": [
         {
-          "title": "Pull W out",
-          "body": "Because $x$ is not free in $W$:\n- $\\forall x(p(x)\\vee W) \\equiv \\forall x\\,p(x)\\vee W$ — (A) valid.\n- $\\exists x(p(x)\\wedge W) \\equiv \\exists x\\,p(x)\\wedge W$ — (B) valid."
+          "title": "(A), (B): ∧ and ∨ lines",
+          "body": "$\\forall x(p \\vee W) \\equiv \\forall x p \\vee W$ and $\\exists x(p \\wedge W) \\equiv \\exists x p \\wedge W$: split on $W$ (T or F); both sides agree. Valid."
         },
         {
-          "title": "Implications",
-          "body": "$\\forall x(p(x)\\rightarrow W) \\equiv \\forall x(\\neg p(x)\\vee W) \\equiv (\\forall x\\,\\neg p(x))\\vee W \\equiv \\neg\\exists x\\,p(x)\\vee W \\equiv \\exists x\\,p(x)\\rightarrow W$.\n\nSo the correct right side of (C) is $\\exists x\\,p(x)\\rightarrow W$, not $\\forall x\\,p(x)\\rightarrow W$.\n\n$\\exists x(p(x)\\rightarrow W) \\equiv \\exists x\\,\\neg p(x)\\vee W \\equiv \\neg\\forall x\\,p(x)\\vee W \\equiv \\forall x\\,p(x)\\rightarrow W$ — (D) valid."
+          "title": "(D): flip out of the hypothesis",
+          "body": "$\\exists x(p \\to W) \\equiv \\exists x(\\neg p \\vee W) \\equiv \\exists x \\neg p \\vee W \\equiv \\neg\\forall x p \\vee W \\equiv \\forall x p \\to W$. Valid."
         },
         {
-          "title": "Counterexample for (C)",
-          "body": "Domain $\\{1,2\\}$, $p(1)=\\text{T}$, $p(2)=\\text{F}$, $W=\\text{F}$.\n- Left: $p(1)\\rightarrow \\text{F}$ is false, so $\\forall x(p(x)\\rightarrow W)$ is **false**.\n- Right: $\\forall x\\,p(x)$ is false, so $\\forall x\\,p(x)\\rightarrow W$ is **true**."
+          "title": "(C): missing flip",
+          "body": "The same chain for ∀ gives $\\forall x(p \\to W) \\equiv \\exists x p \\to W$, not $\\forall x p \\to W$. Counter-model: $D = \\{0, 1\\}$, $p = \\{0\\}$, $W$ = F: left F (at $x = 0$), right F → F = T."
         }
       ],
       "answer": {
@@ -3195,29 +3197,65 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Valid: ∀ distributes over ∨ with a constant (x-free) disjunct."
+          "reason": "Valid: ∀ passes W in a disjunction."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Valid: ∃ distributes over ∧ with an x-free conjunct."
+          "reason": "Valid: ∃ passes W in a conjunction."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Not valid: ∀x(p(x)→W) ≡ ∃x p(x) → W; the counterexample separates the two sides."
+          "reason": "Not valid: ∀ in a hypothesis must become ∃; fails with p = {0}, W false."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Valid: ∃x(¬p(x) ∨ W) ≡ ¬∀x p(x) ∨ W ≡ ∀x p(x) → W."
+          "reason": "Valid: the ∃ correctly becomes ∀ as it leaves the hypothesis."
         }
       ],
-      "shortcut": "A quantifier flips (∀↔∃) when it is pulled out of the antecedent of an implication.",
+      "shortcut": "Hypothesis position flips the quantifier: (D) flips and is right, (C) does not flip and is wrong.",
       "pitfalls": [
-        "Pulling a quantifier out of the left side of → changes it, because the antecedent is negated."
+        "Rejecting (D) because 'the quantifier changed'.",
+        "Factoring ∀ out of p(x) → W as if → were ∧."
       ],
-      "verification": "The counterexample makes the two sides of (C) differ; (A), (B), (D) follow by standard equivalences."
+      "verification": "Exhaustive search up to size 3 (W a nullary predicate): (A), (B), (D) have no counter-model; (C) fails on two elements.",
+      "animation": {
+        "kind": "table",
+        "title": "World D = {0, 1}, p = {0}, W = F",
+        "cols": [
+          "form",
+          "value"
+        ],
+        "rows": [
+          [
+            "∀x(p(x) → W)",
+            "F"
+          ],
+          [
+            "∃x p(x) → W",
+            "F"
+          ],
+          [
+            "∀x p(x) → W",
+            "T"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 2,
+            "c": 1,
+            "tone": "error"
+          },
+          {
+            "r": 1,
+            "c": 1,
+            "tone": "success"
+          }
+        ]
+      }
     },
     "cse-2020-cs-40": {
       "approach": "Sum w' along any path: the f-terms telescope, leaving only f(start) − f(end). Every path between the same two vertices shifts by the same constant, so shortest paths are preserved for any f.",

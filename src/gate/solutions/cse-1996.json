@@ -3,51 +3,115 @@
   "version": 2,
   "solutions": {
     "cse-1996-a-1": {
-      "approach": "Split $A\\cup B$ into three disjoint regions: only-A, only-B and both. The given union lists exactly these three regions.",
+      "approach": "Concept tested: **simplifying a set expression by Venn regions**. With two sets there are four regions; write each piece as a list of regions and take the union.",
       "concepts": [
         "Set difference",
-        "Venn diagram regions"
+        "Venn regions",
+        "Union"
       ],
+      "given": "$(A - B) \\cup (B - A) \\cup (A \\cap B)$.",
       "steps": [
         {
-          "title": "Name the regions",
-          "body": "$A-B$ = elements only in A, $B-A$ = elements only in B, $A\\cap B$ = elements in both."
+          "title": "Region of A − B",
+          "body": "$A - B$ is the part of $A$ outside $B$: the region 'in $A$ only'.",
+          "scene": {
+            "hl": [
+              {
+                "region": "A",
+                "tone": "accent"
+              }
+            ]
+          }
         },
         {
-          "title": "Union of all three",
-          "body": "Every element of $A\\cup B$ lies in exactly one of the three regions, and nothing outside $A\\cup B$ lies in any of them, so\n$$(A-B)\\cup(B-A)\\cup(A\\cap B)=A\\cup B.$$"
+          "title": "Add B − A",
+          "body": "$B - A$ is the region 'in $B$ only'. Together, $A - B$ and $B - A$ make $A \\,\\Delta\\, B$.",
+          "scene": {
+            "hl": [
+              {
+                "region": "A",
+                "tone": "accent"
+              },
+              {
+                "region": "B",
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Add A ∩ B",
+          "body": "The lens in the middle. Now every region inside either circle is lit: in $A$ only, in $B$ only, in both.",
+          "scene": {
+            "hl": [
+              {
+                "region": "A",
+                "tone": "success"
+              },
+              {
+                "region": "B",
+                "tone": "success"
+              },
+              {
+                "region": "AB",
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Name the result",
+          "body": "The three regions that make up 'inside $A$ or inside $B$' are exactly $A \\cup B$. By laws: $(A \\cap B^c) \\cup (A \\cap B) = A$, and $A \\cup (B \\cap A^c) = A \\cup B$."
         }
       ],
-      "optionAnalysis": [
-        {
-          "option": "A",
-          "correct": true,
-          "reason": "Correct: the three disjoint regions together make up $A\\cup B$."
-        },
-        {
-          "option": "B",
-          "correct": false,
-          "reason": "$A^c\\cup B^c=(A\\cap B)^c$ contains elements outside both sets and excludes $A\\cap B$."
-        },
-        {
-          "option": "C",
-          "correct": false,
-          "reason": "$A\\cap B$ is only one of the three regions."
-        },
-        {
-          "option": "D",
-          "correct": false,
-          "reason": "$A^c\\cap B^c$ is the region outside both sets, disjoint from the given set."
-        }
-      ],
-      "shortcut": "$(A\\triangle B)\\cup(A\\cap B)=A\\cup B$.",
-      "verification": "Take $A=\\{1,2\\}, B=\\{2,3\\}$: $\\{1\\}\\cup\\{3\\}\\cup\\{2\\}=\\{1,2,3\\}=A\\cup B$.",
       "answer": {
-        "value": "$A\\cup B$",
+        "value": "$A \\cup B$",
         "choice": [
           "A"
         ],
         "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The three pieces are the three regions of $A \\cup B$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$A^c \\cup B^c = (A \\cap B)^c$ omits the lens $A \\cap B$, which the expression contains, and adds the outside region."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$A \\cap B$ is only one of the three pieces."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$A^c \\cap B^c$ is the outside region, which none of the pieces touches."
+        }
+      ],
+      "shortcut": "'Only $A$', 'only $B$' and 'both' together are 'at least one': $A \\cup B$.",
+      "pitfalls": [
+        "Reading $(A - B) \\cup (B - A)$ as the whole answer and forgetting the third piece."
+      ],
+      "verification": "Region lists over $\\{AB, A, B, -\\}$, and brute force over all pairs of subsets of a 3-element universe: the expression equals $A \\cup B$ and differs from B, C, D.",
+      "animation": {
+        "kind": "venn",
+        "title": "Regions of A and B",
+        "sets": [
+          {
+            "id": "A",
+            "label": "A"
+          },
+          {
+            "id": "B",
+            "label": "B"
+          }
+        ],
+        "hl": []
       }
     },
     "cse-1996-a-2": {

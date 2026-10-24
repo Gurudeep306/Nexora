@@ -1426,23 +1426,28 @@
       "verification": "Equivalent DFA: $\\{q_0\\} \\xrightarrow{a} \\{q_0,q_1,q_2\\}$ (accepting) with an $a$ self-loop — exactly $a^+$."
     },
     "cse-2012-cs-13": {
-      "approach": "\"Some A are B\" is existential with a conjunction: there is an $x$ that is both real and rational.",
+      "approach": "Concept tested: **'some A are B' is ∃x(A ∧ B)**. The witness must be both a real number and rational.",
       "concepts": [
-        "Predicate logic",
-        "Existential quantifier"
+        "Existential with ∧",
+        "Pairing rule"
       ],
+      "given": "'Some real numbers are rational.'",
       "steps": [
         {
           "title": "Pattern",
-          "body": "\"All A are B\" $\\equiv \\forall x\\,(A(x) \\rightarrow B(x))$; \"Some A are B\" $\\equiv \\exists x\\,(A(x) \\wedge B(x))$."
+          "body": "'Some A are B' claims one object that is an A **and** a B: $\\exists x(real(x) \\wedge rational(x))$, option C."
         },
         {
-          "title": "Apply",
-          "body": "$\\exists x\\,(\\mathrm{real}(x) \\wedge \\mathrm{rational}(x))$."
+          "title": "Why not →",
+          "body": "$\\exists x(rational(x) \\to real(x))$ is true as soon as one object is not rational (or is real), whatever the reals are like; it does not say that some real is rational."
+        },
+        {
+          "title": "Why not ∨ or ∀",
+          "body": "$\\exists x(real \\vee rational)$ needs only something that is one of the two; $\\forall x(real \\to rational)$ claims **all** reals are rational, which is false."
         }
       ],
       "answer": {
-        "value": "∃x (real(x) ∧ rational(x))",
+        "value": "$\\exists x\\,(real(x) \\wedge rational(x))$",
         "choice": [
           "C"
         ],
@@ -1452,28 +1457,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "True as soon as anything is real *or* rational — it does not require a real rational number."
+          "reason": "$\\vee$ is too weak: an irrational real (or any rational object) is a witness."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Says *all* reals are rational."
+          "reason": "'All reals are rational', a different (and false) claim."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "There exists something that is both real and rational."
+          "reason": "One object that is both real and rational."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Vacuously true for any non-rational $x$ (false antecedent), so it asserts nothing about real rationals."
+          "reason": "$\\exists$ with $\\to$: true in any world with a non-rational object."
         }
       ],
+      "shortcut": "$\\exists$ goes with $\\wedge$.",
       "pitfalls": [
-        "Using $\\rightarrow$ inside $\\exists$ — it makes the statement almost always true."
+        "Choosing D because 'rational numbers are real' is true; the question asks for a translation, not a true statement."
       ],
-      "verification": "In a domain with no rational numbers, A and D could still be true while the English sentence is false; only C tracks it exactly."
+      "verification": "Script: only C is equivalent to $\\exists x(real \\wedge rational)$ on all interpretations up to size 3."
     },
     "cse-2012-cs-14": {
       "approach": "ER allows multivalued and composite attributes; the relational model requires atomic values (1NF), so a cell holds exactly one value or NULL.",

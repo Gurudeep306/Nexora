@@ -1969,24 +1969,29 @@
       "verification": "Parts: $\\int u^2\\sin u = -u^2\\cos u + 2u\\sin u + 2\\cos u$; at $\\pm\\pi$ both give $\\pi^2 - 2$, difference 0."
     },
     "it-2005-cs-36": {
-      "approach": "Check B directly (it is a valid inference) and give small-domain counterexamples to the other three.",
+      "approach": "Concept tested: **∀ over → (valid) versus its converses and ∀ over ∨ (not valid)**. Prove (B) by modus ponens at each element; one split world refutes the other three.",
       "concepts": [
-        "Quantifiers",
         "Validity",
-        "Counterexamples"
+        "One-way laws",
+        "Counter-model"
       ],
+      "given": "Arbitrary unary predicates $P$, $Q$.",
       "steps": [
         {
-          "title": "B is valid",
-          "body": "Assume $\\forall x(P\\Rightarrow Q)$ and $\\forall x P$. For any $x$, $P(x)$ holds, so $Q(x)$ holds by modus ponens; hence $\\forall x Q$."
+          "title": "(B) is valid",
+          "body": "Assume $\\forall x(P \\Rightarrow Q)$ and $\\forall x P$. For any element $a$, $P(a)$ and $P(a) \\Rightarrow Q(a)$ give $Q(a)$. So $\\forall x Q$."
         },
         {
-          "title": "Counterexamples",
-          "body": "Domain $\\{1,2\\}$, $P=\\{1\\}$, $Q=\\{2\\}$ (true sets).\n- A: $\\forall x(P\\vee Q)$ true, but $\\forall P$, $\\forall Q$ both false.\n- C: $\\forall P$ false so antecedent true; $\\forall x(P\\Rightarrow Q)$ false at $x=1$.\n- D: $\\forall P \\Leftrightarrow \\forall Q$ (both false) true; $\\forall x(P\\Leftrightarrow Q)$ false."
+          "title": "(A): ∀ over ∨",
+          "body": "In $D = \\{0, 1\\}$, $P = \\{0\\}$, $Q = \\{1\\}$, every element has $P$ or $Q$, but neither is universal: T ⇒ F."
+        },
+        {
+          "title": "(C), (D): converses",
+          "body": "In the same world $\\forall x P$ and $\\forall x Q$ are both F, so $\\forall P \\Rightarrow \\forall Q$ and $\\forall P \\Leftrightarrow \\forall Q$ are both T; but $P(0) \\Rightarrow Q(0)$ and $P(0) \\Leftrightarrow Q(0)$ are F."
         }
       ],
       "answer": {
-        "value": "(∀x(P(x)⇒Q(x))) ⇒ ((∀x P(x)) ⇒ (∀x Q(x)))",
+        "value": "(∀x(P(x) ⇒ Q(x))) ⇒ ((∀x P(x)) ⇒ (∀x Q(x)))",
         "choice": [
           "B"
         ],
@@ -1996,25 +2001,90 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "∀ does not distribute over ∨: counterexample above."
+          "reason": "∀ does not distribute over ∨: $D = \\{0, 1\\}$, $P = \\{0\\}$, $Q = \\{1\\}$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: valid by universal instantiation and modus ponens."
+          "reason": "Modus ponens at every element; valid."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Antecedent can be vacuously true while $P\\Rightarrow Q$ fails pointwise."
+          "reason": "Converse of (B): when $P$ is not universal the hypothesis is vacuous and says nothing about individual elements."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Both universals false makes the antecedent true, yet $P$ and $Q$ differ pointwise."
+          "reason": "Both sides of ∀P ⇔ ∀Q can be false while $P$ and $Q$ disagree at an element."
         }
       ],
-      "verification": "A single interpretation refutes A, C and D simultaneously."
+      "shortcut": "Evaluate all four options in the split world: only (B) survives.",
+      "pitfalls": [
+        "Choosing (C) because 'implication between universals' feels the same as a universal implication.",
+        "Choosing (D) by analogy with ∀ over ∧."
+      ],
+      "verification": "Exhaustive search up to size 3: no counter-model for (B); (A), (C), (D) all fail in the split world.",
+      "animation": {
+        "kind": "table",
+        "title": "The split world refutes A, C, D",
+        "cols": [
+          "option",
+          "hypothesis",
+          "conclusion",
+          "value"
+        ],
+        "rows": [
+          [
+            "A",
+            "T",
+            "F",
+            "F"
+          ],
+          [
+            "B",
+            "F",
+            "F",
+            "T"
+          ],
+          [
+            "C",
+            "T",
+            "F",
+            "F"
+          ],
+          [
+            "D",
+            "T",
+            "F",
+            "F"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 1,
+            "c": 3,
+            "tone": "success"
+          },
+          {
+            "r": 0,
+            "c": 3,
+            "tone": "error"
+          },
+          {
+            "r": 2,
+            "c": 3,
+            "tone": "error"
+          },
+          {
+            "r": 3,
+            "c": 3,
+            "tone": "error"
+          }
+        ],
+        "caption": "D = {0, 1}, P = {0}, Q = {1}"
+      }
     },
     "it-2005-cs-37": {
       "approach": "Run the subset construction from {X}. If every reachable subset that contains Y also contains Z (and vice versa), then the two acceptance choices accept exactly the same strings.",

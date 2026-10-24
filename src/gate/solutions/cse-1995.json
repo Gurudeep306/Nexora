@@ -956,19 +956,53 @@
       "verification": "Both counter-examples checked against the definitions."
     },
     "cse-1995-a-20": {
-      "approach": "Count the elements of S (treating each set element as one element), then $|P(S)| = 2^{|S|}$.",
+      "approach": "Concept tested: **elements of a set whose elements are sets**. Count only the items directly inside the outer braces, then use $|P(S)| = 2^{|S|}$.",
       "concepts": [
         "Power set",
+        "Nested sets",
         "Cardinality"
       ],
+      "given": "$S = \\{\\{\\phi\\}, 1, \\{2, 3\\}\\}$.",
       "steps": [
         {
-          "title": "Elements of S",
-          "body": "$S = \\{\\{\\phi\\},\\ 1,\\ \\{2,3\\}\\}$ has three elements: the set $\\{\\phi\\}$, the number 1, and the set $\\{2,3\\}$. So $|S| = 3$."
+          "title": "List the elements",
+          "body": "Directly inside the outer braces are three items: the set $\\{\\phi\\}$, the number $1$ and the set $\\{2, 3\\}$. Do not open the inner sets: $\\phi$, $2$ and $3$ are not elements of $S$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "accent"
+              },
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "accent"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "accent"
+              }
+            ]
+          }
         },
         {
-          "title": "Power set",
-          "body": "Each element is either in or out of a subset, so $|P(S)| = 2^{|S|} = 2^3 = 8$."
+          "title": "Apply the power-set formula",
+          "body": "$|S| = 3$, so $|P(S)| = 2^3 = 8$. The formula does not care what the elements look like.",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "List them as a check",
+          "body": "$\\emptyset$; $\\{\\{\\phi\\}\\}$, $\\{1\\}$, $\\{\\{2, 3\\}\\}$; $\\{\\{\\phi\\}, 1\\}$, $\\{\\{\\phi\\}, \\{2, 3\\}\\}$, $\\{1, \\{2, 3\\}\\}$; and $S$ itself: $1 + 3 + 3 + 1 = 8$."
         }
       ],
       "answer": {
@@ -982,17 +1016,17 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "2 would mean $|S| = 1$."
+          "reason": "2 would be $|P(S)|$ for a one-element set; $S$ has three elements."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "4 would mean $|S| = 2$."
+          "reason": "4 is $2^2$: it treats $\\{\\phi\\}$ as empty and drops it, but $\\{\\phi\\}$ is a non-empty set and an element of $S$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$2^3 = 8$. Correct."
+          "reason": "Three elements, $2^3 = 8$ subsets."
         },
         {
           "option": "D",
@@ -1000,10 +1034,39 @@
           "reason": "C is correct."
         }
       ],
+      "shortcut": "Count the commas at the top level plus one: three elements, eight subsets.",
       "pitfalls": [
-        "Unpacking $\\{2,3\\}$ into two elements (giving $|S| = 4$ and 16) or treating $\\{\\phi\\}$ as empty."
+        "Unpacking $\\{2, 3\\}$ into two elements (giving $2^4 = 16$).",
+        "Treating $\\{\\phi\\}$ as the empty set (giving $2^2 = 4$)."
       ],
-      "verification": "List: {}, {{φ}}, {1}, {{2,3}}, {{φ},1}, {{φ},{2,3}}, {1,{2,3}}, S — 8 subsets."
+      "verification": "Built as a Python frozenset $\\{\\{\\emptyset\\}, 1, \\{2, 3\\}\\}$: it has 3 elements and its power set has 8.",
+      "animation": {
+        "kind": "table",
+        "title": "The elements of S",
+        "cols": [
+          "item",
+          "element of S?"
+        ],
+        "rows": [
+          [
+            "{φ}",
+            "yes (a set)"
+          ],
+          [
+            "1",
+            "yes"
+          ],
+          [
+            "{2, 3}",
+            "yes (a set)"
+          ],
+          [
+            "|P(S)|",
+            "2³ = 8"
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-1995-a-21": {
       "approach": "Let $f(x) = x - \\cos x$. It changes sign on $[0,\\pi]$ and is increasing, so it has exactly one root.",

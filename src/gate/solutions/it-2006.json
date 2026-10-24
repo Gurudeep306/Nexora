@@ -1095,20 +1095,29 @@
       "verification": "E.g. SHA-256 always outputs 256 bits regardless of input length."
     },
     "it-2006-cs-21": {
-      "approach": "The formula says R is symmetric. Find one model where R is symmetric and one where it is not.",
+      "approach": "Concept tested: **satisfiable, valid, contingent**. The sentence says $R$ is symmetric; exhibit one interpretation where it holds and one where it fails.",
       "concepts": [
-        "First-order logic",
+        "Interpretation",
         "Satisfiability",
         "Validity"
       ],
+      "given": "$\\forall x \\forall y (R(x, y) \\Rightarrow R(y, x))$.",
       "steps": [
         {
-          "title": "Satisfiable",
-          "body": "Take $R=\\emptyset$ (or equality): the implication holds vacuously, so the formula is satisfiable."
+          "title": "Read it",
+          "body": "Whenever $R(x, y)$, also $R(y, x)$: '$R$ is symmetric'."
         },
         {
-          "title": "Negation satisfiable",
-          "body": "Domain $\\{1,2\\}$, $R=\\{(1,2)\\}$: $R(1,2)$ true, $R(2,1)$ false, so the formula is false and its negation is true. Hence the formula is not valid, and both it and its negation are satisfiable."
+          "title": "A model",
+          "body": "$D = \\{0\\}$, $R = \\varnothing$ (or equality, or any symmetric relation): every implication has a false hypothesis or holds. **Satisfiable.**"
+        },
+        {
+          "title": "A counter-model",
+          "body": "$D = \\{0, 1\\}$, $R = \\{(0, 1)\\}$: $R(0, 1)$ holds and $R(1, 0)$ does not. So the **negation** is satisfiable too."
+        },
+        {
+          "title": "Match the options",
+          "body": "Neither valid nor unsatisfiable: 'satisfiable and so is its negation'."
         }
       ],
       "answer": {
@@ -1122,25 +1131,64 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Not valid: $R=\\{(1,2)\\}$ falsifies it."
+          "reason": "Not valid: $R = \\{(0, 1)\\}$ falsifies it."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct."
+          "reason": "A symmetric relation is a model; a non-symmetric one is a model of the negation."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "It is satisfiable ($R=\\emptyset$)."
+          "reason": "It is satisfiable (the empty relation)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "The negation is satisfiable ($R=\\{(1,2)\\}$)."
+          "reason": "Its negation is satisfiable, by $R = \\{(0, 1)\\}$."
         }
       ],
-      "verification": "Two explicit models given, one for each."
+      "shortcut": "A sentence that states a property some relations have and others lack is always contingent.",
+      "pitfalls": [
+        "Calling it valid because it is true for the 'obvious' relation (equality).",
+        "Confusing 'satisfiable' with 'valid'."
+      ],
+      "verification": "Model search: a model on 1 element and a counter-model on 2 elements.",
+      "animation": {
+        "kind": "table",
+        "title": "A model and a counter-model",
+        "cols": [
+          "world",
+          "R",
+          "symmetric?"
+        ],
+        "rows": [
+          [
+            "D = {0}",
+            "∅",
+            "T"
+          ],
+          [
+            "D = {0, 1}",
+            "{(0, 1)}",
+            "F"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "c": 2,
+            "tone": "success"
+          },
+          {
+            "r": 1,
+            "c": 2,
+            "tone": "error"
+          }
+        ]
+      }
     },
     "it-2006-cs-22": {
       "approach": "N is geometric with success probability p; its mean is 1/p.",
@@ -1190,24 +1238,81 @@
       "verification": "$p=\\tfrac12$ gives $E=2$, the familiar answer for a fair coin."
     },
     "it-2006-cs-23": {
-      "approach": "Test each identity region by region (the 8 Venn regions of $P,Q,R$): an identity holds iff both sides contain exactly the same regions. One counter-region kills statement 1; statement 2 is the distributive law of $\\cap$ over $\\Delta$.",
+      "approach": "Concept tested: **identities with symmetric difference**. Translate to membership bits ($\\Delta$ = XOR); $\\cap$ (AND) distributes over XOR, but the first statement fails, which one region (or one tiny example) shows.",
       "concepts": [
         "Symmetric difference",
-        "Venn-region membership",
-        "Distributive law"
+        "Distributive laws",
+        "Venn regions"
       ],
+      "given": "1. $P \\,\\Delta\\, (Q \\cup R) = (P \\,\\Delta\\, Q) \\cap (P \\,\\Delta\\, R)$. 2. $P \\cap (Q \\,\\Delta\\, R) = (P \\cap Q) \\,\\Delta\\, (P \\cap R)$.",
       "steps": [
         {
-          "title": "Statement 1 fails",
-          "body": "Take an element $x \\in Q$, $x \\notin P$, $x \\notin R$.\n\n- LHS: $x \\in Q \\cup R$ and $x \\notin P$, so $x \\in P \\Delta (Q \\cup R)$.\n- RHS: $x \\in P \\Delta Q$ (in $Q$ only) but $x \\notin P \\Delta R$ (in neither), so $x \\notin (P\\Delta Q) \\cap (P \\Delta R)$.\n\nThe two sides differ, so 1 is FALSE."
+          "title": "Statement 1, left side",
+          "body": "$P \\,\\Delta\\, (Q \\cup R)$ covers the regions lying in exactly one of $P$ and $Q \\cup R$: the region in $P$ only, and, outside $P$, the regions $Q$ only, $R$ only and $Q \\cap R$.",
+          "scene": {
+            "hl": [
+              {
+                "region": "A",
+                "tone": "accent"
+              },
+              {
+                "region": "B",
+                "tone": "accent"
+              },
+              {
+                "region": "C",
+                "tone": "accent"
+              },
+              {
+                "region": "BC",
+                "tone": "accent"
+              }
+            ]
+          }
         },
         {
-          "title": "Statement 2 holds",
-          "body": "Membership of $x$ in $Q \\Delta R$ is $q \\oplus r$. Then\n\n$$x \\in P \\cap (Q \\Delta R) \\iff p \\wedge (q \\oplus r) = (p\\wedge q) \\oplus (p \\wedge r) \\iff x \\in (P\\cap Q)\\Delta(P \\cap R)$$\n\nsince AND distributes over XOR. So 2 is TRUE."
+          "title": "Statement 1, right side",
+          "body": "$(P \\,\\Delta\\, Q) \\cap (P \\,\\Delta\\, R)$: regions where $P \\ne Q$ and $P \\ne R$: $P$ only and $QR$. The regions '$Q$ only' and '$R$ only' are missing, so statement 1 is **false**. Example: $P = \\emptyset$, $Q = \\{1\\}$, $R = \\emptyset$ gives $\\{1\\}$ against $\\emptyset$.",
+          "scene": {
+            "hl": [
+              {
+                "region": "A",
+                "tone": "success"
+              },
+              {
+                "region": "BC",
+                "tone": "success"
+              },
+              {
+                "region": "B",
+                "tone": "error"
+              },
+              {
+                "region": "C",
+                "tone": "error"
+              }
+            ]
+          }
         },
         {
-          "title": "Conclusion",
-          "body": "Only statement 2 is true, which is option B."
+          "title": "Statement 2",
+          "body": "In bits: $p \\wedge (q \\oplus r)$ against $(p \\wedge q) \\oplus (p \\wedge r)$. If $p = 0$ both are 0; if $p = 1$ both are $q \\oplus r$. So statement 2 is **true**: the regions $PQ$ and $PR$ (inside $P$, in exactly one of $Q$, $R$) on both sides.",
+          "scene": {
+            "hl": [
+              {
+                "region": "AB",
+                "tone": "success"
+              },
+              {
+                "region": "AC",
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Conclude",
+          "body": "Only statement 2 holds: option B."
         }
       ],
       "answer": {
@@ -1221,28 +1326,49 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Statement 1 fails for an element lying only in $Q$."
+          "reason": "Statement 1 fails, e.g. $P = R = \\emptyset$, $Q = \\{1\\}$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: $\\cap$ distributes over $\\Delta$ (AND over XOR), and 1 fails."
+          "reason": "Statement 2 is AND distributing over XOR; statement 1 fails."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Statement 2 is true for every choice of sets."
+          "reason": "Statement 2 holds for all sets."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Statement 1 is false, so \"both\" is wrong."
+          "reason": "Statement 1 fails."
         }
       ],
+      "shortcut": "Test statement 1 with $P$ empty: the left side becomes $Q \\cup R$, the right side $Q \\cap R$; they differ as soon as $Q \\ne R$.",
       "pitfalls": [
-        "$\\Delta$ does not distribute over $\\cup$ in the way statement 1 claims; check a region in only one of $Q,R$."
+        "Checking only elements of $P$, where both sides of statement 1 happen to agree.",
+        "Assuming $\\Delta$ behaves like $\\cup$ in distributive laws."
       ],
-      "verification": "Concrete check: $P=\\varnothing$, $Q=\\{1\\}$, $R=\\varnothing$ gives LHS $=\\{1\\}$, RHS $=\\{1\\}\\cap\\varnothing=\\varnothing$."
+      "verification": "Region semantics and brute force over all triples of subsets of $\\{0, 1, 2\\}$: statement 1 has counterexamples, statement 2 none.",
+      "animation": {
+        "kind": "venn",
+        "title": "P Δ (Q ∪ R) against (P Δ Q) ∩ (P Δ R)",
+        "sets": [
+          {
+            "id": "A",
+            "label": "P"
+          },
+          {
+            "id": "B",
+            "label": "Q"
+          },
+          {
+            "id": "C",
+            "label": "R"
+          }
+        ],
+        "hl": []
+      }
     },
     "it-2006-cs-24": {
       "approach": "Count the integers in $1..123$ divisible by 2, 3 or 5 with inclusion–exclusion, then subtract from 123.",

@@ -2109,23 +2109,29 @@
       "verification": "For $n=3$ path-shaped tree: only one assignment of {1,2,3} works."
     },
     "cse-2011-cs-30": {
-      "approach": "Read the formula: $x\\ne1$ and every divisor $y$ of $x$ is either 1 or $x$ — the definition of a prime.",
+      "approach": "Concept tested: **reading a number-theory predicate**. ∃z(x = y·z) is 'y divides x'; the formula says x ≠ 1 and every divisor of x is 1 or x, the definition of a prime.",
       "concepts": [
-        "Predicate logic",
-        "Prime numbers"
+        "Divides as ∃",
+        "Prime predicate",
+        "Reading formulas"
       ],
+      "given": "$P(x) = \\neg(x = 1) \\wedge \\forall y(\\exists z(x = y \\cdot z) \\Rightarrow (y = x) \\vee (y = 1))$ over the positive integers.",
       "steps": [
         {
-          "title": "Translate",
-          "body": "$\\exists z\\,(x=y*z)$ means \"$y$ divides $x$\". So $\\forall y\\,(y\\mid x \\Rightarrow y=x \\lor y=1)$: the only divisors are 1 and $x$."
+          "title": "Name the inner part",
+          "body": "$\\exists z(x = y \\cdot z)$ says $y \\mid x$. So $P(x) = x \\ne 1 \\wedge \\forall y(y \\mid x \\to y = x \\vee y = 1)$."
         },
         {
-          "title": "Add $\\neg(x=1)$",
-          "body": "A number $>1$ whose only divisors are 1 and itself is **prime**."
+          "title": "Read it",
+          "body": "'$x$ is not 1, and its only divisors are $x$ and 1': $x$ is prime."
+        },
+        {
+          "title": "Test the distractors",
+          "body": "B: $x = 4 \\ne 1$ but $P(4)$ is false (divisor 2). C: $P(1)$ is false. D: $P(2)$ is true although 2 has **no** factor other than 1 and 2."
         }
       ],
       "answer": {
-        "value": "$x$ is prime",
+        "value": "$P(x)$ being true means that $x$ is a prime number",
         "choice": [
           "A"
         ],
@@ -2135,28 +2141,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Exactly the definition of a prime."
+          "reason": "The formula is the definition of a prime; for $x = 1, \\dots, 199$ it holds exactly at the primes."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Too weak: $x=4$ is not 1 but $P(4)$ is false ($y=2$)."
+          "reason": "$x \\ne 1$ is only the first conjunct; $x = 4$ satisfies it but not $P$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$P(1)$ and $P(4)$ are false."
+          "reason": "$P(1)$ is false (and so are $P(4), P(6), \\dots$)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Primes have no factors other than 1 and $x$."
+          "reason": "The formula says the only factors are 1 and $x$, i.e. none other; a number with two extra factors, such as 6 (factors 2 and 3), fails $P$, and the primes have none."
         }
       ],
+      "shortcut": "Recognise the pattern $\\forall y(y \\mid x \\to y = 1 \\vee y = x)$: 'only trivial divisors' = prime (with $x \\ne 1$ excluding 1).",
       "pitfalls": [
-        "Ignoring the $\\neg(x=1)$ conjunct."
+        "Forgetting that $\\neg(x = 1)$ is what excludes 1.",
+        "Reading 'the only factors are 1 and x' as 'two factors besides 1 and x'."
       ],
-      "verification": "$P(7)$ true, $P(6)$ false ($y=2$), $P(1)$ false."
+      "verification": "Script: brute force over $x = 1, \\dots, 199$ (with $y, z$ over the positive integers) matches primality exactly; $P(1)$, $P(4)$ false, $P(2)$ true."
     },
     "cse-2011-cs-31": {
       "approach": "Write numerator and denominator in Euler form: the integrand is $e^{ix}/e^{-ix}=e^{2ix}$, which integrates directly.",

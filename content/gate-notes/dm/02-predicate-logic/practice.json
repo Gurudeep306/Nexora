@@ -1,0 +1,1037 @@
+[
+ {
+  "id": "nx-dm-02-01-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Let $Pr(x)$: $x$ is prime, $G(x)$: $x > 2$, $O(x)$: $x$ is odd, over the positive integers. Which formula represents “every prime greater than 2 is odd”?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\forall x\\,(Pr(x) \\wedge G(x) \\wedge O(x))$"
+   },
+   {
+    "l": "B",
+    "t": "$\\forall x\\,((Pr(x) \\wedge G(x)) \\to O(x))$"
+   },
+   {
+    "l": "C",
+    "t": "$\\exists x\\,((Pr(x) \\wedge G(x)) \\to O(x))$"
+   },
+   {
+    "l": "D",
+    "t": "$\\forall x\\,(O(x) \\to (Pr(x) \\wedge G(x)))$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "The subject class is “primes greater than 2”: the filter is $Pr(x) \\wedge G(x)$.",
+   "“Every A is B” pairs $\\forall$ with $\\to$: $\\forall x((Pr(x) \\wedge G(x)) \\to O(x))$.",
+   "Check with a non-prime such as 4: the filter is false, the implication vacuously true, so 4 does not refute the sentence, as it should not."
+  ],
+  "concept": "All A are B is ∀x(A(x) → B(x)); a two-condition subject becomes a conjunction inside the filter.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "∀ with ∧ claims every number is a prime greater than 2; 4 refutes it although the sentence is true."
+   },
+   {
+    "answer": "C",
+    "why": "∃ with → is true as soon as one number fails the filter (e.g. 1); it says almost nothing."
+   },
+   {
+    "answer": "D",
+    "why": "That is the converse, “every odd number is a prime greater than 2”, false at 9."
+   }
+  ],
+  "blocks": [
+   "four-forms",
+   "pairing-theorem",
+   "only-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q02",
+  "type": "NAT",
+  "marks": 2,
+  "text": "On the domain $\\{1, 2, 3, 4, 5\\}$ with the usual order, how many of these sentences are true? (i) $\\forall x \\exists y\\,(x < y)$ (ii) $\\exists y \\forall x\\,(x \\le y)$ (iii) $\\forall x \\exists y\\,(y < x \\vee y = x)$ (iv) $\\exists x \\forall y\\,(x \\le y)$ (v) $\\forall y \\exists x\\,(x < y)$",
+  "answer": 3,
+  "solution": [
+   "(i) says there is no largest element: $x = 5$ is a counterexample. False.",
+   "(ii) some element is at least every element: $y = 5$. True. (iv) some element is at most every element: $x = 1$. True.",
+   "(iii) take $y = x$. True. (v) says there is no least element: $y = 1$ has nothing below it. False.",
+   "Three sentences are true."
+  ],
+  "concept": "∀x∃y lets the witness depend on x; ∃y∀x needs one witness for all. On a finite chain, 'no maximum' and 'no minimum' fail.",
+  "common_wrong": [
+   {
+    "answer": 5,
+    "why": "Reading (i) and (v) as true by forgetting that a finite domain has a largest and a smallest element."
+   },
+   {
+    "answer": 2,
+    "why": "Missing that $y = x$ is allowed in (iii); the disjunction makes it trivially true."
+   }
+  ],
+  "blocks": [
+   "nested-def",
+   "order-theorem",
+   "ex-eval-medium"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Which formula is equivalent to $\\neg\\forall x \\exists y\\,(P(x, y) \\to Q(y))$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\exists x \\forall y\\,(P(x, y) \\to \\neg Q(y))$"
+   },
+   {
+    "l": "B",
+    "t": "$\\forall x \\exists y\\,(P(x, y) \\wedge \\neg Q(y))$"
+   },
+   {
+    "l": "C",
+    "t": "$\\exists x \\forall y\\,(P(x, y) \\wedge \\neg Q(y))$"
+   },
+   {
+    "l": "D",
+    "t": "$\\exists x \\exists y\\,(\\neg P(x, y) \\wedge Q(y))$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Flip each quantifier as the negation passes it: $\\neg\\forall x \\exists y \\equiv \\exists x \\forall y\\,\\neg$.",
+   "Negate the matrix: $\\neg(P(x, y) \\to Q(y)) \\equiv P(x, y) \\wedge \\neg Q(y)$.",
+   "Result: $\\exists x \\forall y\\,(P(x, y) \\wedge \\neg Q(y))$."
+  ],
+  "concept": "Negation flips every quantifier it passes and negates the matrix; ¬(p → q) = p ∧ ¬q.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Negating an implication does not negate its conclusion only: ¬(p → q) is p ∧ ¬q, not p → ¬q."
+   },
+   {
+    "answer": "B",
+    "why": "The quantifiers were left unflipped; only the matrix was negated."
+   },
+   {
+    "answer": "D",
+    "why": "Both quantifiers became ∃ and the wrong parts were negated; ¬P ∧ Q is the negation of P ∨ ¬Q, not of P → Q."
+   }
+  ],
+  "blocks": [
+   "quant-demorgan",
+   "trick-negation"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q04",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Let $S(x)$: $x$ is a student and $F(x)$: $x$ failed. Which formulas represent “no student failed”?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\neg\\exists x\\,(S(x) \\wedge F(x))$"
+   },
+   {
+    "l": "B",
+    "t": "$\\forall x\\,(S(x) \\to \\neg F(x))$"
+   },
+   {
+    "l": "C",
+    "t": "$\\forall x\\,(F(x) \\to \\neg S(x))$"
+   },
+   {
+    "l": "D",
+    "t": "$\\forall x\\,(S(x) \\wedge \\neg F(x))$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "C"
+  ],
+  "solution": [
+   "“No A is B” is $\\neg\\exists x(A \\wedge B)$: option A.",
+   "Pushing the negation in gives $\\forall x\\,\\neg(S \\wedge F) \\equiv \\forall x(S \\to \\neg F)$: option B.",
+   "The contrapositive inside the quantifier, $S \\to \\neg F \\equiv F \\to \\neg S$, gives option C (“nobody who failed is a student”).",
+   "Option D claims every object is a student; a world with one non-student refutes it while the sentence holds."
+  ],
+  "concept": "No A is B: ¬∃x(A ∧ B) ≡ ∀x(A → ¬B) ≡ ∀x(B → ¬A).",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "C is the contrapositive of B inside the quantifier, so it is equivalent too."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "D is the ∀-with-∧ trap: it makes everything a student."
+   }
+  ],
+  "blocks": [
+   "four-forms",
+   "restricted-negation",
+   "trap-forall-and"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q05",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Let $M(x)$: $x$ is a member and $V(x)$: $x$ can vote. Which formula represents “only members can vote”?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\forall x\\,(M(x) \\to V(x))$"
+   },
+   {
+    "l": "B",
+    "t": "$\\exists x\\,(V(x) \\wedge M(x))$"
+   },
+   {
+    "l": "C",
+    "t": "$\\forall x\\,(M(x) \\wedge V(x))$"
+   },
+   {
+    "l": "D",
+    "t": "$\\forall x\\,(V(x) \\to M(x))$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "“Only A are B” says being B requires being A: the necessary condition is the conclusion.",
+   "Here B = can vote, A = member: $\\forall x(V(x) \\to M(x))$.",
+   "It forbids exactly a non-member who votes, and says nothing about members who cannot vote."
+  ],
+  "concept": "Only A are B = ∀x(B(x) → A(x)), the converse of 'all A are B'.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is “all members can vote”, the converse; it allows non-members to vote."
+   },
+   {
+    "answer": "B",
+    "why": "That only says some voting member exists; it does not exclude non-members."
+   },
+   {
+    "answer": "C",
+    "why": "∀ with ∧ makes everything a voting member."
+   }
+  ],
+  "blocks": [
+   "only-def",
+   "trap-only",
+   "ex-only-easy"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "Let $D = \\{a, b, c\\}$. For how many of the $2^9$ binary relations $R$ on $D$ is $\\exists y \\forall x\\, R(x, y)$ true?",
+  "answer": 169,
+  "solution": [
+   "On the 3×3 grid (rows $x$, columns $y$) the sentence says some column is full.",
+   "A column is full in $1$ of its $2^3 = 8$ patterns, so it is not full in 7. The three columns are independent, so no column is full in $7^3 = 343$ relations.",
+   "Hence $512 - 343 = 169$ relations have a full column."
+  ],
+  "concept": "∃y∀x R(x, y): some column of the relation grid is full; count by the complement.",
+  "common_wrong": [
+   {
+    "answer": 343,
+    "why": "343 counts the relations with **no** full column (and also, by coincidence, the relations where every row is non-empty, ∀x∃y R)."
+   },
+   {
+    "answer": 3,
+    "why": "Counting the columns, not the relations."
+   }
+  ],
+  "blocks": [
+   "nested-def",
+   "order-intuition",
+   "order-viz"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q07",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "With $L(x, y)$: $x$ loves $y$, which of these sentences is true in **every** interpretation?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\exists y \\forall x\\, L(x, y) \\to \\forall x \\exists y\\, L(x, y)$"
+   },
+   {
+    "l": "B",
+    "t": "$\\forall x \\exists y\\, L(x, y) \\to \\exists y \\forall x\\, L(x, y)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\forall x \\exists y\\, L(x, y) \\to \\exists x \\forall y\\, L(x, y)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\exists x \\forall y\\, L(x, y) \\to \\exists y \\forall x\\, L(x, y)$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "A: if one person $b$ is loved by everyone, then each $x$ loves someone (namely $b$). True in every interpretation (the order theorem).",
+   "B and C fail on a 3-cycle $a \\to b \\to c \\to a$: everyone loves someone, but nobody is loved by all and nobody loves all.",
+   "D fails when $a$ loves everyone and nobody else loves anyone: $a$ loves all, but no one is loved by $b$."
+  ],
+  "concept": "∃y∀x ⇒ ∀x∃y is the only valid move across a ∃/∀ boundary.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "That is the converse of the valid direction; the cycle is a counter-model."
+   },
+   {
+    "answer": "D",
+    "why": "“Someone loves everyone” is about a full row; “someone is loved by everyone” is about a full column. One row does not fill a column."
+   }
+  ],
+  "blocks": [
+   "order-theorem",
+   "trick-order",
+   "ex-nest-medium"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which formulas say “exactly one element has property $P$”?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\exists x\\,(P(x) \\wedge \\forall y\\,(P(y) \\to y = x))$"
+   },
+   {
+    "l": "B",
+    "t": "$\\exists x \\forall y\\,(P(y) \\leftrightarrow y = x)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\exists x\\, P(x) \\wedge \\forall x \\forall y\\,((P(x) \\wedge P(y)) \\to x = y)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\exists x \\exists y\\,(P(x) \\wedge P(y) \\wedge x \\ne y)$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "C"
+  ],
+  "solution": [
+   "Test each on three worlds: $P$ empty, $P$ with one element, $P$ with two elements. A correct formula gives F, T, F.",
+   "A (existence + every other $P$ is the same): F, T, F. B (the $P$'s are exactly $x$): F, T, F. C (at least one and at most one): F, T, F.",
+   "D says “at least two”: F, F, T."
+  ],
+  "concept": "Exactly one = existence + uniqueness; three standard equivalent forms.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "C"
+    ],
+    "why": "B is the compact form: $P(y) \\leftrightarrow y = x$ says the $P$'s are precisely $x$."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "D is “at least two”, the negation of “at most one”."
+   }
+  ],
+  "blocks": [
+   "unique-def",
+   "unique-forms-theorem",
+   "trick-three-worlds"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q09",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Which variables occur free in $\\forall x\\,(P(x) \\to \\exists y\\, R(x, y, z)) \\wedge Q(x)$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$z$ only"
+   },
+   {
+    "l": "B",
+    "t": "$x$ and $z$"
+   },
+   {
+    "l": "C",
+    "t": "$x$, $y$ and $z$"
+   },
+   {
+    "l": "D",
+    "t": "none"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "The bracket after $\\forall x$ closes before $\\wedge\\, Q(x)$, so the $x$ in $Q(x)$ is outside every quantifier on $x$: free.",
+   "$y$ is bound by $\\exists y$; $z$ has no quantifier: free.",
+   "Free variables: $x$ (in $Q(x)$) and $z$."
+  ],
+  "concept": "A variable is free where it lies outside the scope of every quantifier on it; a letter can be bound in one place and free in another.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "The $x$ in $Q(x)$ lies outside the bracket that $\\forall x$ governs."
+   },
+   {
+    "answer": "C",
+    "why": "$y$ appears only inside $\\exists y$, so it is bound."
+   },
+   {
+    "answer": "D",
+    "why": "$z$ is never quantified."
+   }
+  ],
+  "blocks": [
+   "bound-free-def",
+   "precedence-quant",
+   "ex-scope-easy"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q10",
+  "type": "NAT",
+  "marks": 2,
+  "text": "On the domain $\\{1, 2, \\dots, 10\\}$, for how many $x$ is $\\forall y\\,((y \\mid x \\wedge y > 1) \\to Even(y))$ true?",
+  "answer": 4,
+  "solution": [
+   "The formula says every divisor of $x$ greater than 1 is even, i.e. $x$ has no odd divisor above 1: $x$ is a power of 2.",
+   "Powers of 2 in range: 2, 4, 8.",
+   "And $x = 1$: it has no divisor greater than 1, so every implication is vacuously true. Total $4$ (1, 2, 4, 8)."
+  ],
+  "concept": "A restricted ∀ over an empty restriction is vacuously true.",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "Forgetting $x = 1$, where the filter is empty and the ∀ holds vacuously."
+   },
+   {
+    "answer": 5,
+    "why": "Counting the even numbers; 6 and 10 have the odd divisors 3 and 5."
+   }
+  ],
+  "blocks": [
+   "number-predicates",
+   "ex-eval-edge",
+   "nonempty-convention"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Which one of the following formulas is **valid** (domains are non-empty)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\forall x\\,(P(x) \\vee Q(x)) \\to (\\forall x\\, P(x) \\vee \\forall x\\, Q(x))$"
+   },
+   {
+    "l": "B",
+    "t": "$(\\exists x\\, P(x) \\wedge \\exists x\\, Q(x)) \\to \\exists x\\,(P(x) \\wedge Q(x))$"
+   },
+   {
+    "l": "C",
+    "t": "$\\forall x\\,(P(x) \\wedge Q(x)) \\to \\exists x\\, P(x)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\exists x\\, P(x) \\to \\forall x\\, P(x)$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "$\\forall x(P \\wedge Q)$ gives $\\forall x\\, P$ (law 2), and $\\forall x\\, P \\Rightarrow \\exists x\\, P$ on a non-empty domain: pick any element.",
+   "(A) and (B) are the converses of the one-way laws; the world $D = \\{0, 1\\}$, $P = \\{0\\}$, $Q = \\{1\\}$ makes each hypothesis true and each conclusion false.",
+   "(D) fails with $P = \\{0\\}$ on $\\{0, 1\\}$."
+  ],
+  "concept": "∀ distributes over ∧, and ∀ ⇒ ∃ needs only a non-empty domain; ∀ over ∨ and ∃ over ∧ go one way only.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is ∀ distributed over ∨, valid only from right to left."
+   },
+   {
+    "answer": "B",
+    "why": "Two separate witnesses need not be the same element."
+   },
+   {
+    "answer": "D",
+    "why": "One element with $P$ does not make every element a $P$."
+   }
+  ],
+  "blocks": [
+   "two-way-laws",
+   "one-way-laws",
+   "trap-empty-domain"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q02",
+  "type": "NAT",
+  "marks": 2,
+  "text": "Consider all interpretations of the unary predicates $P$ and $Q$ on the domain $\\{0, 1\\}$ (there are 16). In how many of them is $\\forall x\\,(P(x) \\vee Q(x)) \\to (\\forall x\\, P(x) \\vee \\forall x\\, Q(x))$ **false**?",
+  "answer": 2,
+  "solution": [
+   "The implication is false exactly when every element has $P$ or $Q$, but $P$ is not universal and $Q$ is not universal.",
+   "Some element lacks $P$; it must then have $Q$. Some element lacks $Q$; it must then have $P$. These are different elements, so one element is $P$-only and the other $Q$-only.",
+   "That gives $P = \\{0\\}, Q = \\{1\\}$ or $P = \\{1\\}, Q = \\{0\\}$: **2** interpretations."
+  ],
+  "concept": "Counter-models of ∀ over ∨ are exactly the 'split' worlds.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "Counting worlds where $P$ and $Q$ are both non-universal without requiring $\\forall x(P \\vee Q)$."
+   },
+   {
+    "answer": 0,
+    "why": "The formula is not valid; only its converse is."
+   }
+  ],
+  "blocks": [
+   "one-way-laws",
+   "trick-two-element",
+   "search-viz"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Which formula is equivalent to $\\neg\\exists x \\forall y\\,(P(x, y) \\to Q(y))$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\forall x \\exists y\\,(P(x, y) \\wedge \\neg Q(y))$"
+   },
+   {
+    "l": "B",
+    "t": "$\\forall x \\exists y\\,(\\neg P(x, y) \\wedge Q(y))$"
+   },
+   {
+    "l": "C",
+    "t": "$\\exists x \\forall y\\,(P(x, y) \\wedge \\neg Q(y))$"
+   },
+   {
+    "l": "D",
+    "t": "$\\forall x \\forall y\\,(P(x, y) \\to \\neg Q(y))$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "$\\neg\\exists x$ becomes $\\forall x\\, \\neg$, and $\\neg\\forall y$ becomes $\\exists y\\, \\neg$.",
+   "$\\neg(P \\to Q) \\equiv P \\wedge \\neg Q$.",
+   "Result: $\\forall x \\exists y\\,(P(x, y) \\wedge \\neg Q(y))$."
+  ],
+  "concept": "Each quantifier flips as the ¬ passes it; a negated implication is 'hypothesis and not conclusion'.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Negated the wrong side of the implication."
+   },
+   {
+    "answer": "C",
+    "why": "Forgot to flip the quantifiers."
+   },
+   {
+    "answer": "D",
+    "why": "Pushed the ¬ only into the conclusion and kept both quantifiers."
+   }
+  ],
+  "blocks": [
+   "two-way-laws",
+   "ex-two-easy"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q04",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "$W$ is a formula with no free occurrence of $x$. Which of the following are valid?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\forall x\\,(P(x) \\to W) \\leftrightarrow (\\exists x\\, P(x) \\to W)$"
+   },
+   {
+    "l": "B",
+    "t": "$\\exists x\\,(W \\to P(x)) \\leftrightarrow (W \\to \\exists x\\, P(x))$"
+   },
+   {
+    "l": "C",
+    "t": "$\\forall x\\,(P(x) \\to W) \\leftrightarrow (\\forall x\\, P(x) \\to W)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\exists x\\,(P(x) \\vee W) \\leftrightarrow (\\exists x\\, P(x) \\vee W)$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "(A) $\\forall x(\\neg P \\vee W) \\equiv \\forall x\\,\\neg P \\vee W \\equiv \\neg\\exists x P \\vee W$: the quantifier flips out of the hypothesis. Valid.",
+   "(B) $W$ is the hypothesis, $P(x)$ the conclusion: no flip. Valid (non-empty domain).",
+   "(C) keeps ∀ in the hypothesis position: false with $D = \\{0, 1\\}$, $P = \\{0\\}$, $W$ = F.",
+   "(D) ∃ over ∨ and null quantification: valid."
+  ],
+  "concept": "A quantifier leaving the hypothesis of → flips; everywhere else it stays.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "(C) is the classic unflipped version; it fails when $P$ holds somewhere but not everywhere and $W$ is false."
+   },
+   {
+    "answer": [
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "(A) is right: the ∀ must become ∃ when it leaves the hypothesis."
+   }
+  ],
+  "blocks": [
+   "null-laws",
+   "null-derivation",
+   "trap-null-flip"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q05",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Which sentence is **implied** by $\\exists y \\forall x\\, R(x, y)$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\forall y \\forall x\\, R(x, y)$"
+   },
+   {
+    "l": "B",
+    "t": "$\\forall x \\exists y\\, R(x, y)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\exists x \\forall y\\, R(x, y)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\forall y \\exists x\\, R(x, y)$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "A witness $b$ with $R(a, b)$ for every $a$ serves as the $y$ for each $x$: $\\forall x \\exists y R$ follows.",
+   "In the grid (rows $x$, columns $y$) the hypothesis is 'a full column'. The world $R = \\{(0, 0), (1, 0)\\}$ has a full column 0 but no full row (C), not all pairs (A), and column 1 empty (D)."
+  ],
+  "concept": "∃y∀x ⇒ ∀x∃y: a full column puts a 1 in every row.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "One full column is not the whole grid."
+   },
+   {
+    "answer": "C",
+    "why": "A full column is not a full row."
+   },
+   {
+    "answer": "D",
+    "why": "'Every column has a 1' is about columns; one column can be full while another is empty."
+   }
+  ],
+  "blocks": [
+   "swap-theorem",
+   "trick-grid",
+   "swap-viz"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "What is the smallest size of a domain on which $\\forall x \\exists y\\, R(x, y) \\wedge \\forall x \\forall y\\,(R(x, y) \\to \\neg R(y, x))$ has a model?",
+  "answer": 3,
+  "solution": [
+   "Asymmetry with $y = x$ forbids loops, so each element needs a successor different from itself.",
+   "Two elements: $0 \\to 1$ and $1 \\to 0$ are forced, which breaks asymmetry. So size 2 is impossible.",
+   "Three elements: the cycle $0 \\to 1 \\to 2 \\to 0$ works. Answer **3**."
+  ],
+  "concept": "Without transitivity a serial asymmetric relation can close into a cycle of length 3; with transitivity it cannot be finite.",
+  "common_wrong": [
+   {
+    "answer": 2,
+    "why": "On two elements the forced pairs $(0,1), (1,0)$ violate asymmetry."
+   },
+   {
+    "answer": 1,
+    "why": "A single element would need $R(0,0)$, a loop, which asymmetry forbids."
+   }
+  ],
+  "blocks": [
+   "strict-order-def",
+   "ex-inf-edge"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q07",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Which first-order sentence is equivalent to the logic-program rule $P(x) \\leftarrow Q(x, y), R(y)$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\forall x\\,[\\forall y\\,(Q(x, y) \\wedge R(y)) \\to P(x)]$"
+   },
+   {
+    "l": "B",
+    "t": "$\\forall x\\,[P(x) \\to \\exists y\\,(Q(x, y) \\wedge R(y))]$"
+   },
+   {
+    "l": "C",
+    "t": "$\\exists y \\forall x\\,[(Q(x, y) \\wedge R(y)) \\to P(x)]$"
+   },
+   {
+    "l": "D",
+    "t": "$\\forall x\\,[\\exists y\\,(Q(x, y) \\wedge R(y)) \\to P(x)]$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "The rule is $\\forall x \\forall y\\,(Q(x, y) \\wedge R(y) \\to P(x))$.",
+   "$y$ occurs only in the body, so $\\forall y$ moves into the hypothesis as $\\exists y$."
+  ],
+  "concept": "Body-only variables of a Horn rule are existential inside the hypothesis.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "∀y inside the hypothesis demands every y, far too weak."
+   },
+   {
+    "answer": "B",
+    "why": "That reverses the arrow (head → body)."
+   },
+   {
+    "answer": "C",
+    "why": "∃y outside asks for one y that works for the rule; the rule must hold for every y."
+   }
+  ],
+  "blocks": [
+   "horn-def",
+   "horn-derivation",
+   "trap-horn-forall"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q08",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A prenex form of $\\forall x\\, P(x) \\vee \\forall x\\, Q(x)$ is",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\forall x \\forall y\\,(P(x) \\vee Q(y))$"
+   },
+   {
+    "l": "B",
+    "t": "$\\forall x\\,(P(x) \\vee Q(x))$"
+   },
+   {
+    "l": "C",
+    "t": "$\\forall x \\exists y\\,(P(x) \\vee Q(y))$"
+   },
+   {
+    "l": "D",
+    "t": "$\\exists x \\forall y\\,(P(x) \\vee Q(y))$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Rename the second bound variable: $\\forall x\\, P(x) \\vee \\forall y\\, Q(y)$.",
+   "Pull $\\forall x$ and then $\\forall y$ out (each part lacks the other variable)."
+  ],
+  "concept": "Rename bound variables apart before pulling; ∀ does not merge over ∨.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Merging the two ∀ is the one-way law (a) run backwards."
+   },
+   {
+    "answer": "C",
+    "why": "∃y gives $\\forall x P(x) \\vee \\exists y Q(y)$."
+   },
+   {
+    "answer": "D",
+    "why": "∃x gives $\\exists x P(x) \\vee \\forall y Q(y)$."
+   }
+  ],
+  "blocks": [
+   "prenex-def",
+   "trap-rename",
+   "ex-pnf-edge"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q09",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following sentences have **no finite model** (but at least one infinite model)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\forall x \\exists y\\, R(x, y) \\wedge \\forall x\\, \\neg R(x, x) \\wedge \\forall x \\forall y \\forall z\\,(R(x, y) \\wedge R(y, z) \\to R(x, z))$"
+   },
+   {
+    "l": "B",
+    "t": "$\\forall x \\exists y\\, R(x, y) \\wedge \\forall x\\, \\neg R(x, x)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\forall x \\exists y\\, R(x, y) \\wedge \\forall x \\forall y\\,(R(x, y) \\to \\neg R(y, x))$"
+   },
+   {
+    "l": "D",
+    "t": "$\\exists x \\forall y\\, \\neg R(y, x) \\wedge \\forall x \\exists y\\, R(x, y) \\wedge \\forall x\\, \\neg R(x, x) \\wedge \\forall x \\forall y \\forall z\\,(R(x, y) \\wedge R(y, z) \\to R(x, z))$"
+   }
+  ],
+  "answer": [
+   "A",
+   "D"
+  ],
+  "solution": [
+   "(A): irreflexive + transitive implies asymmetric ($R(x,y), R(y,x)$ would give $R(x,x)$). So (A) is the 1991 sentence: $(\\mathbb{N}, <)$ is a model, no finite model.",
+   "(D) adds 'some element has no predecessor' to (A); $(\\mathbb{N}, <)$ with $x = 0$ still works, and finite models are still impossible.",
+   "(B): $R = \\{(0, 1), (1, 0)\\}$ is a two-element model. (C): the 3-cycle is a model."
+  ],
+  "concept": "A serial strict order forces an infinite chain; drop transitivity (or asymmetry) and a finite cycle appears.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "(D) only adds a condition that $(\\mathbb{N}, <)$ meets; it still has no finite model."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "(B) has the two-element model $0 \\leftrightarrow 1$: nothing forbids a 2-cycle without transitivity."
+   }
+  ],
+  "blocks": [
+   "no-finite-model-theorem",
+   "strict-order-def",
+   "chain-viz"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q10",
+  "type": "NAT",
+  "marks": 1,
+  "text": "Every satisfiable sentence of the form $\\exists a \\exists b \\exists c \\exists d\\, \\forall u \\forall v\\, \\psi$ ($\\psi$ quantifier-free, predicates and equality only, no function symbols) has a model with at most $m$ elements. What is the least such $m$?",
+  "answer": 4,
+  "solution": [
+   "By the small-model theorem, restricting any model to the 4 witnesses gives a model of size at most 4.",
+   "4 is needed: with $\\psi$ = '$a, b, c, d$ are pairwise different', every model has at least 4 elements."
+  ],
+  "concept": "An ∃^k∀* sentence without functions has a model of size ≤ k, and k can be forced.",
+  "common_wrong": [
+   {
+    "answer": 2,
+    "why": "The number of universal variables does not bound the model; the existentials do."
+   },
+   {
+    "answer": 6,
+    "why": "Only the existential witnesses must be kept."
+   }
+  ],
+  "blocks": [
+   "small-model-theorem",
+   "bs-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q11",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Over the natural numbers, which statement is TRUE for **every** predicate $P$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$(P(0) \\wedge \\forall x\\,(P(x) \\to P(x + 2))) \\to \\forall x\\, P(x)$"
+   },
+   {
+    "l": "B",
+    "t": "$(P(0) \\wedge P(1) \\wedge \\forall x\\,(P(x) \\to P(x + 2))) \\to \\forall x\\, P(x)$"
+   },
+   {
+    "l": "C",
+    "t": "$(P(1) \\wedge \\forall x\\,(P(x) \\to P(x + 1))) \\to \\forall x\\, P(x)$"
+   },
+   {
+    "l": "D",
+    "t": "$(P(0) \\wedge \\forall x\\,(P(x + 1) \\to P(x))) \\to \\forall x\\, P(x)$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Steps of 2 need two bases: induct on $S(k) = P(2k) \\wedge P(2k + 1)$.",
+   "(A) fails for 'x is even'; (C) fails for 'x ≥ 1' (0 is missed); (D) steps downwards and fails for 'x = 0'."
+  ],
+  "concept": "A step of size d needs d consecutive bases starting at 0, and the step must point upwards.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "From 0 with steps of 2 you reach only the even numbers."
+   },
+   {
+    "answer": "C",
+    "why": "Base 1 never reaches 0."
+   },
+   {
+    "answer": "D",
+    "why": "$P(x+1) \\to P(x)$ moves towards 0, never upwards."
+   }
+  ],
+  "blocks": [
+   "induction-def",
+   "induction-theorem",
+   "ex-ind-edge"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q12",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "The sentence $\\forall x \\forall y\\,(R(x, y) \\to R(y, x)) \\wedge \\exists x \\exists y\\, R(x, y) \\wedge \\forall x\\, \\neg R(x, x)$ is",
+  "options": [
+   {
+    "l": "A",
+    "t": "valid"
+   },
+   {
+    "l": "B",
+    "t": "unsatisfiable"
+   },
+   {
+    "l": "C",
+    "t": "satisfiable, and so is its negation"
+   },
+   {
+    "l": "D",
+    "t": "satisfiable, but only in infinite domains"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Model: $D = \\{0, 1\\}$, $R = \\{(0, 1), (1, 0)\\}$ (symmetric, a pair, no loops).",
+   "Counter-model: $D = \\{0\\}$, $R = \\varnothing$ (no pair at all). So both the sentence and its negation are satisfiable."
+  ],
+  "concept": "To classify a sentence, exhibit one model and one counter-model.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "With $R$ empty the middle conjunct fails."
+   },
+   {
+    "answer": "B",
+    "why": "The two-element symmetric pair is a model."
+   },
+   {
+    "answer": "D",
+    "why": "A two-element model exists."
+   }
+  ],
+  "blocks": [
+   "validity-def",
+   "ex-val-medium"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q13",
+  "type": "NAT",
+  "marks": 1,
+  "text": "On the domain $\\{0, 1, 2\\}$, in how many of the 8 interpretations of the unary predicate $P$ is $\\exists x\\,(P(x) \\to \\forall y\\, P(y))$ **false**?",
+  "answer": 0,
+  "solution": [
+   "$\\forall y P(y)$ has no free $x$, so $\\exists x(P(x) \\to W) \\equiv \\forall x P(x) \\to W$ with $W = \\forall y P(y)$.",
+   "That is $X \\to X$: true in every interpretation. Answer **0**."
+  ],
+  "concept": "Null quantification flips ∃ to ∀ out of a hypothesis; the 'trigger' sentence is valid.",
+  "common_wrong": [
+   {
+    "answer": 1,
+    "why": "The world where every element has P makes the sentence true (any x works)."
+   },
+   {
+    "answer": 7,
+    "why": "If some element lacks P, choose it as x: the implication is vacuously true."
+   }
+  ],
+  "blocks": [
+   "null-laws",
+   "ex-null-drinker"
+  ],
+  "source": "nexora"
+ }
+]

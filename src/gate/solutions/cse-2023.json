@@ -3492,29 +3492,33 @@
       "verification": "RFC 2328 describes OSPF as a link-state IGP that runs the Dijkstra SPF algorithm and supports areas — consistent with B and D being true and A, C false."
     },
     "cse-2023-cs-16": {
-      "approach": "An option implies the conjecture if, assuming it, you can produce a witness $y$ for every $x$ with $P(x)$. B and C hand you such a witness; A and D speak about only one $x$, and a single counter-model kills both.",
+      "approach": "Concept tested: **which quantified statements imply ∀x(P(x) → ∃y Q(x, y))**. An option implies the conjecture if, assuming it, every x with P(x) gets a witness y; a single counter-model rules an option out.",
       "concepts": [
-        "First-order logic",
-        "Quantifier order",
-        "Logical implication"
+        "Order of quantifiers",
+        "Logical implication",
+        "Counter-models"
       ],
-      "given": "Conjecture $G$: $\\forall x\\,\\big(P(x) \\Rightarrow \\exists y\\, Q(x, y)\\big)$ over the integers (non-empty domain).",
+      "given": "Conjecture: $\\forall x(P(x) \\Rightarrow \\exists y\\, Q(x, y))$.",
       "steps": [
         {
-          "title": "B implies G",
-          "body": "Assume $\\forall x \\forall y\\, Q(x, y)$. Take any $x$ with $P(x)$; choose $y = 0$ (the domain is non-empty). Then $Q(x, 0)$ holds, so $\\exists y\\, Q(x, y)$. Hence $G$."
+          "title": "Option B",
+          "body": "$\\forall x \\forall y\\, Q(x, y)$: for any $x$ with $P(x)$, every $y$ works, and the domain is non-empty, so some $y$ exists. B implies the conjecture."
         },
         {
-          "title": "C implies G",
-          "body": "Assume $\\exists y\\, \\forall x\\, (P(x) \\Rightarrow Q(x, y))$ and fix such a $y_0$. For any $x$ with $P(x)$ we get $Q(x, y_0)$, so $\\exists y\\, Q(x, y)$ with witness $y_0$. Hence $G$. (C is the stronger \"one $y$ for all $x$\" form — $\\exists y \\forall x$ implies $\\forall x \\exists y$.)"
+          "title": "Option C",
+          "body": "$\\exists y \\forall x(P(x) \\Rightarrow Q(x, y))$ names one $b$ with $P(x) \\Rightarrow Q(x, b)$ for every $x$. Then any $x$ with $P(x)$ has the witness $y = b$. C implies the conjecture (the ∃∀ ⇒ ∀∃ pattern)."
         },
         {
-          "title": "A and D do not: one counter-model",
-          "body": "Let $P(x)$ be true for every integer and $Q(x, y) \\equiv (x = 0)$.\n\n| formula | value | reason |\n|---|---|---|\n| A: $\\exists x\\,(P(x) \\wedge \\forall y\\, Q(x,y))$ | true | $x = 0$ |\n| D: $\\exists x\\,(P(x) \\wedge \\exists y\\, Q(x,y))$ | true | $x = 0$ |\n| $G$ | **false** | $x = 1$: $P(1)$ but no $y$ has $Q(1, y)$ |\n\nA and D are true while $G$ is false, so neither implies $G$."
+          "title": "Option A",
+          "body": "$\\exists x(P(x) \\wedge \\forall y\\, Q(x, y))$ talks about one $x$ only. Counter-model: $D = \\{0, 1\\}$, $P = \\{0, 1\\}$, $Q = \\{(0,0), (0,1)\\}$: A holds at $x = 0$, but $x = 1$ has $P(1)$ and no $y$. A does not imply it."
+        },
+        {
+          "title": "Option D",
+          "body": "$\\exists x(P(x) \\wedge \\exists y\\, Q(x, y))$ is weaker still; the same world refutes it."
         }
       ],
       "answer": {
-        "value": "Options **(B)** and **(C)** imply the conjecture",
+        "value": "B and C",
         "choice": [
           "B",
           "C"
@@ -3525,30 +3529,71 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Only guarantees one good $x$; other $x$ with $P(x)$ may have no witness (counter-model: $Q(x,y) \\equiv x = 0$)."
+          "reason": "Guarantees a witness for one $x$, not for every $x$ with $P(x)$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$Q$ holds for all pairs, so any $y$ is a witness for every $x$."
+          "reason": "Every pair satisfies $Q$, and the non-empty domain supplies a $y$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "A single $y_0$ that works for every $x$ satisfying $P$ certainly gives each such $x$ a witness ($\\exists y \\forall x \\Rightarrow \\forall x \\exists y$)."
+          "reason": "One $y$ that works for all $x$ is in particular a $y$ for each $x$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "This is just one instance of the conjecture holding; it says nothing about other $x$ (same counter-model as A)."
+          "reason": "Again only about one $x$; the counter-model of A refutes it."
         }
       ],
-      "shortcut": "\"Implies a $\\forall x$ statement\" needs a $\\forall x$ (or $\\exists y \\forall x$) in the premise: B and C have it, A and D start with $\\exists x$.",
+      "shortcut": "Statements that start with $\\exists x$ speak about one $x$ and cannot imply a $\\forall x$ claim; B and C both supply a witness for every $x$.",
       "pitfalls": [
-        "Reading A as \"for all $x$\" because of the inner $\\forall y$ — the outer quantifier is $\\exists x$.",
-        "Forgetting that $\\exists y \\forall x$ implies $\\forall x \\exists y$ (the converse is what fails)."
+        "Accepting A because it looks 'stronger' ($\\forall y$ inside); its outer $\\exists x$ is what makes it weak.",
+        "Rejecting C because the quantifier order differs: ∃y∀x implies ∀x∃y."
       ],
-      "verification": "Check the converse direction is not needed: we only need premise ⇒ $G$. In the counter-model, B is false ($Q(1, 0)$ fails) and C is false (no $y$ makes $Q(1, y)$ true), consistent with both still implying $G$ (an implication with a false premise is vacuously fine)."
+      "verification": "Script: B ⇒ conjecture and C ⇒ conjecture hold on every interpretation up to size 3 (proved in the lesson); A and D have counter-models of size 2.",
+      "animation": {
+        "kind": "table",
+        "title": "Counter-model for A and D",
+        "cols": [
+          "x",
+          "P(x)",
+          "Q(x,0)",
+          "Q(x,1)",
+          "∃y Q(x,y)"
+        ],
+        "rows": [
+          [
+            "0",
+            "T",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "1",
+            "T",
+            "F",
+            "F",
+            "F"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 1,
+            "c": 4,
+            "tone": "error"
+          },
+          {
+            "r": 0,
+            "c": 4,
+            "tone": "success"
+          }
+        ],
+        "caption": "A and D hold at x = 0; the conjecture fails at x = 1."
+      }
     },
     "cse-2023-cs-17": {
       "approach": "For each policy ask one question: is a waiting process's delay **bounded**, no matter which processes keep arriving? FIFO and Round Robin bound it; Priority and SJF let an endless stream of 'better' arrivals overtake a waiting process, so they can starve it.",

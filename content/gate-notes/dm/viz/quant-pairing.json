@@ -1,0 +1,288 @@
+{
+ "version": 1,
+ "title": "The pairing rule",
+ "width": 640,
+ "height": 268,
+ "narrow": {
+  "width": 360,
+  "height": 350
+ },
+ "intro": "A world with one object outside the subject class (a dog) exposes the wrong pairing of quantifier and connective.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "“Some cats are black”: why ∃ needs ∧, not →",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Why ∃ goes with ∧",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 30,
+   "y": 48,
+   "cellW": 64,
+   "cellH": 32,
+   "rows": [
+    [
+     "x",
+     "C",
+     "B",
+     "C→B",
+     "C∧B"
+    ],
+    [
+     "cat 1",
+     "T",
+     "F",
+     "",
+     ""
+    ],
+    [
+     "cat 2",
+     "T",
+     "F",
+     "",
+     ""
+    ],
+    [
+     "dog",
+     "F",
+     "T",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 10,
+    "y": 44,
+    "cellW": 64,
+    "cellH": 30
+   }
+  },
+  {
+   "id": "r1",
+   "type": "box",
+   "x": 370,
+   "y": 52,
+   "w": 250,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 176,
+    "w": 340,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∃x(C ∧ B) = ?"
+  },
+  {
+   "id": "r2",
+   "type": "box",
+   "x": 370,
+   "y": 108,
+   "w": 250,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 224,
+    "w": 340,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∃x(C → B) = ?"
+  },
+  {
+   "id": "r3",
+   "type": "box",
+   "x": 370,
+   "y": 164,
+   "w": 250,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 272,
+    "w": 340,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∀x(C → B) = ?"
+  },
+  {
+   "id": "foot",
+   "type": "text",
+   "x": 320,
+   "y": 252,
+   "text": "world: two white cats and a black dog",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 336,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The world has two cats, neither black, and one black dog. 'Some cats are black' is false here.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        3,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Fill the two columns. C ∧ B is T only on a black cat: there is none. C → B is F on each white cat and vacuously T on the dog.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "C",
+        "B",
+        "C→B",
+        "C∧B"
+       ],
+       [
+        "cat 1",
+        "T",
+        "F",
+        "F",
+        "F"
+       ],
+       [
+        "cat 2",
+        "T",
+        "F",
+        "F",
+        "F"
+       ],
+       [
+        "dog",
+        "F",
+        "T",
+        "T",
+        "F"
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∃x(C ∧ B) is the OR of the C ∧ B column: F. It agrees with the English.",
+   "patches": [
+    {
+     "id": "r1",
+     "set": {
+      "hidden": false,
+      "label": "∃x(C ∧ B) = F  ✓",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∃x(C → B) is the OR of the C → B column: T, witnessed by the dog, which is not even a cat. It claims something false.",
+   "patches": [
+    {
+     "id": "r2",
+     "set": {
+      "hidden": false,
+      "label": "∃x(C → B) = T  ✗",
+      "tone": "danger",
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "For 'all cats are black' the filter → is right: ∀x(C → B) = F (the white cats are counterexamples) and the dog is ignored.",
+   "patches": [
+    {
+     "id": "r3",
+     "set": {
+      "hidden": false,
+      "label": "∀x(C → B) = F  ✓",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "foot",
+     "set": {
+      "text": "∀ goes with →,  ∃ goes with ∧",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

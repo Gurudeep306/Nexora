@@ -1298,28 +1298,33 @@
       "verification": "Equivalent to `child::*[name() != \"TOC\"]`."
     },
     "it-2007-cs-21": {
-      "approach": "Prove A directly; refute B, C, D with tiny counter-models.",
+      "approach": "Concept tested: **valid quantifier laws versus tempting non-laws** (∃ over → with the wrong quantifier, ∃ over ∧ as an equivalence, swapping ∀∃).",
       "concepts": [
-        "First-order validity",
-        "Quantifier distribution",
-        "Counter-models"
+        "Validity",
+        "One-way laws",
+        "Quantifier order"
       ],
+      "given": "Four formulas over $P$, $Q$ (unary) and $P(x, y)$ (binary).",
       "steps": [
         {
-          "title": "A is valid",
-          "body": "Assume $\\forall x(P(x)\\Rightarrow Q(x))$ and $\\forall xP(x)$. For any $a$: $P(a)$ and $P(a)\\Rightarrow Q(a)$ give $Q(a)$. Hence $\\forall xQ(x)$."
+          "title": "(A) is valid",
+          "body": "If every $x$ has $P \\Rightarrow Q$ and every $x$ has $P$, every $x$ has $Q$ (modus ponens at each element)."
         },
         {
-          "title": "B and C fail",
-          "body": "**B:** domain $\\{1\\}$, $P=\\{1\\}$, $Q=\\varnothing$: $\\exists x(P(x)\\vee Q(x))$ true, $\\exists xP(x)$ true, $\\exists xQ(x)$ false, so the formula is false.\n\n**C:** domain $\\{1,2\\}$, $P=\\{1\\}$, $Q=\\{2\\}$: $\\exists x(P(x)\\wedge Q(x))$ false but $\\exists xP(x)\\wedge\\exists xQ(x)$ true, so the equivalence is false."
+          "title": "(B) fails",
+          "body": "$\\exists x(P \\vee Q) \\Rightarrow (\\exists x P \\Rightarrow \\exists x Q)$: with $P$ everywhere and $Q$ nowhere on $\\{0, 1\\}$ the hypothesis is T and $\\exists P \\Rightarrow \\exists Q$ is T → F."
         },
         {
-          "title": "D fails",
-          "body": "Domain $\\mathbb N$, $P(x,y): y>x$. Every x has a larger y, but no y exceeds every x. LHS true, RHS false."
+          "title": "(C) fails",
+          "body": "$\\exists x(P \\wedge Q) \\equiv \\exists x P \\wedge \\exists x Q$ fails right-to-left: $D = \\{0, 1\\}$, $P = \\{0\\}$, $Q = \\{1\\}$."
+        },
+        {
+          "title": "(D) fails",
+          "body": "$\\forall x \\exists y P(x, y) \\Rightarrow \\exists y \\forall x P(x, y)$: on $\\{0, 1\\}$ with $P$ = equality, every $x$ has $y = x$, but no single $y$ works for both."
         }
       ],
       "answer": {
-        "value": "∀x(P(x)⇒Q(x)) ⇒ ((∀xP(x)) ⇒ (∀xQ(x)))",
+        "value": "∀x(P(x) ⇒ Q(x)) ⇒ ((∀xP(x)) ⇒ (∀xQ(x)))",
         "choice": [
           "A"
         ],
@@ -1329,25 +1334,65 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Valid — universal instantiation and modus ponens."
+          "reason": "The ∀-over-→ law: valid."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Fails when P is non-empty and Q is empty."
+          "reason": "P everywhere, Q nowhere: hypothesis T, conclusion T → F."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Only the ⇒ direction holds; P = {1}, Q = {2} breaks ⇐."
+          "reason": "Only one direction holds; $D = \\{0, 1\\}$, $P = \\{0\\}$, $Q = \\{1\\}$ breaks the other."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Swapping ∀∃ to ∃∀ is invalid (y > x on ℕ)."
+          "reason": "∀∃ does not give ∃∀: the equality relation on two elements."
         }
       ],
-      "verification": "A is the standard law ∀x(P→Q) ⊨ ∀xP → ∀xQ."
+      "shortcut": "Memorise the three facts: ∀ over → is one-way and valid as written in (A); ∃ over ∧ is one-way; ∃∀ ⇒ ∀∃ only.",
+      "pitfalls": [
+        "Accepting (C) as an equivalence.",
+        "Accepting (D): the witness y may depend on x."
+      ],
+      "verification": "Exhaustive search up to size 3: no counter-model for (A); two-element counter-models for (B), (C), (D).",
+      "animation": {
+        "kind": "table",
+        "title": "Equality on {0, 1}: P(x, y)",
+        "cols": [
+          "x \\ y",
+          "0",
+          "1"
+        ],
+        "rows": [
+          [
+            "0",
+            "1",
+            "0"
+          ],
+          [
+            "1",
+            "0",
+            "1"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "c": 1,
+            "tone": "success"
+          },
+          {
+            "r": 1,
+            "c": 2,
+            "tone": "success"
+          }
+        ],
+        "caption": "Every row has a 1 (∀x∃y), but no column is full (no ∃y∀x)."
+      }
     },
     "it-2007-cs-22": {
       "approach": "Use the composite trapezoidal error bound $|E|\\le\\frac{(b-a)h^2}{12}\\max|f''|$ and require it to be at most $0.5\\times10^{-7}$.",

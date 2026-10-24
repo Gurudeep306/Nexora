@@ -2759,34 +2759,74 @@
       "verification": "Example: (1,2), (2,3), (3,4); delete (3,4) → (2,3) deleted ($w = 3 = x$) → (1,2) deleted ($w = 2 < 3$)."
     },
     "cse-2001-b-51-a": {
-      "approach": "Prove set equality by a chain of equivalences on an arbitrary set $X$: membership in a powerset is just the subset relation, and \"subset of an intersection\" splits into two subset conditions.",
+      "approach": "Concept tested: **proving a set equality by element chasing**. The elements of a power set are sets, so take an arbitrary set $X$ and show $X \\in P(A \\cap B) \\iff X \\in P(A) \\cap P(B)$.",
       "concepts": [
-        "Powerset",
-        "Subset",
-        "Set equality"
+        "Power set",
+        "Element chasing",
+        "Subset"
       ],
+      "given": "Prove $P(A \\cap B) = P(A) \\cap P(B)$.",
       "steps": [
         {
-          "title": "Unfold the definitions",
-          "body": "For any set $X$: $X \\in \\mathcal{P}(S) \\iff X \\subseteq S$. So we must show $X \\subseteq A \\cap B \\iff (X \\subseteq A \\text{ and } X \\subseteq B)$."
+          "title": "Unfold the left side",
+          "body": "For any set $X$: $X \\in P(A \\cap B) \\iff X \\subseteq A \\cap B$, by the definition of the power set."
         },
         {
-          "title": "Chain of equivalences",
-          "body": "$$X \\in \\mathcal{P}(A\\cap B) \\iff X \\subseteq A \\cap B \\iff \\forall x\\,(x \\in X \\Rightarrow x \\in A \\wedge x \\in B)$$\n$$\\iff (\\forall x\\,(x\\in X \\Rightarrow x\\in A)) \\wedge (\\forall x\\,(x\\in X \\Rightarrow x \\in B)) \\iff X \\subseteq A \\wedge X \\subseteq B$$\n$$\\iff X \\in \\mathcal{P}(A) \\wedge X \\in \\mathcal{P}(B) \\iff X \\in \\mathcal{P}(A) \\cap \\mathcal{P}(B).$$"
+          "title": "Split the subset condition",
+          "body": "$X \\subseteq A \\cap B$ means every $x \\in X$ satisfies $x \\in A$ and $x \\in B$, i.e. ($\\forall x \\in X$: $x \\in A$) and ($\\forall x \\in X$: $x \\in B$): $X \\subseteq A$ and $X \\subseteq B$. ('For all' distributes over 'and'.)",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Fold back",
+          "body": "$X \\subseteq A \\iff X \\in P(A)$ and $X \\subseteq B \\iff X \\in P(B)$, so the condition is $X \\in P(A) \\cap P(B)$.",
+          "scene": {
+            "reveal": 5
+          }
         },
         {
           "title": "Conclude",
-          "body": "Since every set $X$ belongs to the left side exactly when it belongs to the right side, $\\mathcal{P}(A\\cap B) = \\mathcal{P}(A) \\cap \\mathcal{P}(B)$. $\\blacksquare$"
+          "body": "Each step is an 'if and only if', so every set belongs to one side exactly when it belongs to the other. The two power sets are equal. (The analogous claim for $\\cup$ fails: $\\{a, b\\}$ with $a \\in A - B$, $b \\in B - A$ is in $P(A \\cup B)$ but in neither $P(A)$ nor $P(B)$.)"
         }
       ],
       "answer": {
-        "value": "$X \\in \\mathcal{P}(A\\cap B) \\iff X \\subseteq A\\cap B \\iff X\\subseteq A \\wedge X \\subseteq B \\iff X \\in \\mathcal{P}(A)\\cap\\mathcal{P}(B)$, so the two sets are equal.",
+        "value": "$X \\in P(A \\cap B) \\iff X \\subseteq A \\cap B \\iff X \\subseteq A \\text{ and } X \\subseteq B \\iff X \\in P(A) \\cap P(B)$, so the sets are equal.",
         "matchesKey": true
       },
+      "shortcut": "'Inside both' is the same as 'inside the overlap', for a whole set $X$ as much as for one element.",
       "pitfalls": [
-        "The analogous statement for union is false: $\\mathcal{P}(A\\cup B) \\supseteq \\mathcal{P}(A)\\cup\\mathcal{P}(B)$ only (e.g. $A=\\{1\\}, B=\\{2\\}$: $\\{1,2\\}$ is in the left side only)."
+        "Proving only one inclusion: both directions are needed (here every step is reversible, so one chain of ⇔ does both).",
+        "Extending the result to unions, where only $P(A) \\cup P(B) \\subseteq P(A \\cup B)$ holds."
       ],
-      "verification": "Example $A=\\{1,2\\}, B=\\{2,3\\}$: $\\mathcal{P}(A\\cap B)=\\{\\emptyset,\\{2\\}\\}$ and $\\mathcal{P}(A)\\cap\\mathcal{P}(B)=\\{\\emptyset,\\{2\\}\\}$."
+      "verification": "Brute force over all pairs $A, B \\subseteq \\{0, 1, 2\\}$: $P(A \\cap B) = P(A) \\cap P(B)$ every time, while $P(A) \\cup P(B) = P(A \\cup B)$ exactly when $A \\subseteq B$ or $B \\subseteq A$.",
+      "animation": {
+        "kind": "equation",
+        "title": "The chain of equivalences",
+        "lines": [
+          {
+            "tex": "X \\in P(A \\cap B)"
+          },
+          {
+            "tex": "\\iff X \\subseteq A \\cap B",
+            "note": "definition of P"
+          },
+          {
+            "tex": "\\iff X \\subseteq A \\;\\wedge\\; X \\subseteq B",
+            "note": "every element in both"
+          },
+          {
+            "tex": "\\iff X \\in P(A) \\;\\wedge\\; X \\in P(B)",
+            "note": "definition of P"
+          },
+          {
+            "tex": "\\iff X \\in P(A) \\cap P(B)",
+            "note": "definition of ∩"
+          }
+        ],
+        "caption": "Each line is equivalent to the next.",
+        "reveal": 2
+      }
     },
     "cse-2001-b-51-b": {
       "approach": "Fix $m$ and induct on $n$. The only fact needed is the recursive definition $\\text{sum}(k+1) = \\text{sum}(k) + (k+1)$.",
