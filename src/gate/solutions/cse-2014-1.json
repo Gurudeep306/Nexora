@@ -2960,27 +2960,53 @@
       }
     },
     "cse-2014-1-cs-41": {
-      "approach": "The triple loop computes the sum of every contiguous sub-array E[i..j] and keeps the largest in Y. The initial Y is the whole-array sum, which is itself a sub-array sum, so it does not change the result.",
+      "approach": "Concept tested: **recognising what nested loops compute**. The innermost loop sums E[i..j] for every pair i ≤ j, and Y keeps the largest such sum; Y starts at the total, which is itself a sub-array sum. So MyX is the maximum sub-array sum.",
       "concepts": [
-        "Code tracing",
+        "Nested loops",
+        "Loop tracing",
         "Maximum sub-array sum"
       ],
       "steps": [
         {
-          "title": "First loop",
-          "body": "Sets $Y = \\sum_{i} E[i]$, the sum of the sub-array $E[0..size-1]$."
+          "title": "The first loop",
+          "body": "Y = E[0] + … + E[size−1], the sum of the whole array.",
+          "scene": {
+            "line": 8
+          }
         },
         {
-          "title": "Nested loops",
-          "body": "For every $i \\le j$, the innermost loop computes $Z = E[i] + \\dots + E[j]$, the sum of sub-array $E[i..j]$, and $Y = \\max(Y, Z)$."
+          "title": "The triple loop",
+          "body": "For each i ≤ j the k loop sets Z = E[i] + … + E[j], the sum of the contiguous sub-array from i to j; `if (Z > Y) Y = Z` keeps the maximum.",
+          "scene": {
+            "line": 14,
+            "hl": [
+              10,
+              11,
+              13,
+              14
+            ]
+          }
         },
         {
-          "title": "Result",
-          "body": "$Y$ = maximum over all contiguous sub-arrays (the initial value is one of them), i.e. the **maximum possible sub-array sum**. Example $E = [2, -5, 3]$: total $0$, best sub-array $[3]$, returns $3$."
+          "title": "Why starting from the total is harmless",
+          "body": "The total is the sum of the sub-array i = 0, j = size − 1, which the loops visit anyway; so Y = max over all non-empty sub-arrays of their sums.",
+          "scene": {
+            "line": 17
+          }
+        },
+        {
+          "title": "Test on an input that splits the options",
+          "body": "E = [3, −4, 5, −1, 2]: MyX = 6 (5 − 1 + 2), the largest element is 5, the total is 5, and the sum of the sub-array maxima is 50. Only (A) gives 6.",
+          "scene": {
+            "line": 19,
+            "vars": {
+              "Y": 6
+            }
+          }
         }
       ],
       "answer": {
-        "value": "maximum possible sum of elements in any sub-array of array E",
+        "value": "(A) maximum possible sum of elements in any sub-array",
         "choice": [
           "A"
         ],
@@ -2990,25 +3016,39 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Y ends as the maximum of all sub-array sums E[i..j]."
+          "reason": "Z runs through every sub-array sum and Y keeps the largest."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "It adds elements (Z = Z + E[k]); it does not track a maximum element. For [2, 3] it returns 5, not 3."
+          "reason": "The maximum element is the best one-element sub-array; MyX also considers longer ones (6 > 5 on [3, −4, 5, −1, 2])."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Nothing sums per-sub-array maxima."
+          "reason": "Nothing in the code takes a maximum inside a sub-array; it adds the elements."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "The total is only the starting value; it is replaced when some sub-array is larger, e.g. [2, −5, 3] returns 3, not 0."
+          "reason": "The total is only the starting value of Y; any larger sub-array sum replaces it."
         }
       ],
-      "verification": "Traced E = [2, −5, 3]: Y starts 0, sub-array sums 2, −3, 0, −5, −2, 3 give Y = 3."
+      "shortcut": "Z = E[i] + … + E[j] and `if (Z > Y) Y = Z` is the definition of the maximum sub-array sum, by brute force in Θ(n³) additions.",
+      "pitfalls": [
+        "Answering D because Y is initialised to the total.",
+        "Reading Z as the maximum of E[i..j] (it is a sum: `Z = Z + E[k]`)."
+      ],
+      "verification": "MyX compiled and compared with Kadane's algorithm on 65 arrays (60 random, plus an all-negative one and classic examples): identical results.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "int MyX(int *E, unsigned int size)\n{\n  int Y = 0;\n  int Z;\n  int i, j, k;\n\n    for(i = 0; i < size; i++)\n        Y = Y + E[i];\n\n    for(i = 0; i < size; i++)\n        for(j = i; j < size; j++)\n        {\n           Z = 0;\n           for(k = i; k <= j; k++)\n               Z = Z + E[k];\n           if (Z > Y)\n               Y = Z;\n        }\n    return Y;\n}",
+        "line": 1,
+        "vars": {
+          "size": 5
+        }
+      }
     },
     "cse-2014-1-cs-42": {
       "approach": "Count the (i, j, k) triples visited: for each j the k-loop runs n − j times and the i-loop gives j choices of i ≤ j. Summing j(n − j) gives (n − 1)n(n + 1)/6.",

@@ -570,40 +570,39 @@
       "verification": "Hierarchy 1NF ⊃ 2NF ⊃ 3NF ⊃ BCNF ⊃ 4NF is standard."
     },
     "cse-2012-cs-3": {
-      "approach": "A `switch` jumps to the matching `case` and then falls through every following case until a `break` — there is none here, so all three `printf`s run.",
+      "approach": "Concept tested: **switch fall-through**. The switch jumps to `case 'A'` and then executes every statement below it, ignoring the other labels, because there is no `break` anywhere.",
       "concepts": [
         "switch statement",
-        "Fall-through"
+        "Fall-through",
+        "case labels"
       ],
       "steps": [
         {
-          "title": "Jump to case 'A'",
-          "body": "`inChar` is `'A'`, so control enters at `case 'A'` and prints `Choice A` followed by a newline.",
+          "title": "Jump to the matching label",
+          "body": "`inChar` is `'A'`, so control enters at `case 'A'` and prints `Choice A` and a newline.",
           "scene": {
             "line": 3,
             "hl": [
               3
             ],
-            "output": "Choice A\n",
-            "caption": "Matched case 'A'"
+            "output": "Choice A\n"
           }
         },
         {
-          "title": "Fall through to 'C'",
-          "body": "No `break`, so execution continues through the empty `case 'B'` into `case 'C'` and prints `Choice B`.",
+          "title": "Fall through the empty labels",
+          "body": "Labels are positions, not statements: `case 'B':` labels the same statement as `case 'C':`, so `printf(\"Choice B\")` runs next.",
           "scene": {
             "line": 5,
             "hl": [
               4,
               5
             ],
-            "output": "Choice A\nChoice B",
-            "caption": "Fall-through: no break"
+            "output": "Choice A\nChoice B"
           }
         },
         {
           "title": "Fall through to default",
-          "body": "Still no `break`: cases `'D'`, `'E'` are empty and `default` prints ` No Choice`. Final output:\n```\nChoice A\nChoice B No Choice\n```",
+          "body": "Still no `break`: `case 'D'`, `case 'E'` and `default` are passed and `printf(\" No Choice\")` runs. Output: `Choice A`, newline, `Choice B No Choice`.",
           "scene": {
             "line": 8,
             "hl": [
@@ -611,23 +610,12 @@
               7,
               8
             ],
-            "output": "Choice A\nChoice B No Choice",
-            "caption": "default also runs"
+            "output": "Choice A\nChoice B No Choice"
           }
         }
       ],
-      "animation": {
-        "kind": "code",
-        "lang": "c",
-        "code": "char inChar = 'A' ;\nswitch ( inChar ) {\ncase 'A' : printf (\"Choice A\\n\") ;\ncase 'B' :\ncase 'C' : printf (\"Choice B\") ;\ncase 'D' :\ncase 'E' :\ndefault  : printf ( \" No Choice\" ) ; }",
-        "line": 2,
-        "vars": {
-          "inChar": "'A'"
-        },
-        "output": ""
-      },
       "answer": {
-        "value": "Choice A\nChoice B No Choice",
+        "value": "(C) Choice A / Choice B No Choice",
         "choice": [
           "C"
         ],
@@ -637,28 +625,40 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "That would be the output only for a value matching no case (or only `'D'`/`'E'`)."
+          "reason": "`No Choice` alone is printed only when no case matches; 'A' matches."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Would need a `break` after the first `printf`."
+          "reason": "Stopping after `Choice A` would need a `break` after the first printf."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Fall-through executes all three `printf`s."
+          "reason": "Entry at case 'A' and fall-through to the end: all three printf calls run."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Empty case labels and a missing `break` are legal C."
+          "reason": "Empty case labels and a default without break are legal C."
         }
       ],
+      "shortcut": "No `break` anywhere: everything from the matched label to the closing brace runs.",
       "pitfalls": [
-        "Assuming each `case` ends automatically as in some other languages."
+        "Assuming each case ends automatically (as in Pascal's case statement): C falls through.",
+        "Thinking stacked labels such as `case 'D': case 'E':` are errors: a label may label the next labelled statement."
       ],
-      "verification": "Counting `printf`s reached from `case 'A'` with no `break`: 3, producing exactly option C's text."
+      "verification": "Compiled and run with cc: prints `Choice A`, a newline and `Choice B No Choice`; with inChar = 'C' only `Choice B No Choice`, with 'Z' only ` No Choice`.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "char inChar = 'A' ;\nswitch ( inChar ) {\ncase 'A' : printf (\"Choice A\\n\") ;\ncase 'B' :\ncase 'C' : printf (\"Choice B\") ;\ncase 'D' :\ncase 'E' :\ndefault  : printf ( \" No Choice\" ) ; }",
+        "line": 2,
+        "vars": {
+          "inChar": "'A'"
+        },
+        "output": ""
+      }
     },
     "cse-2012-cs-4": {
       "approach": "If any NP-complete problem were in P, every NP problem would reduce to it in polynomial time, giving P = NP. So under P ≠ NP, no NP-complete problem lies in P.",

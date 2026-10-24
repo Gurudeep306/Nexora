@@ -1875,27 +1875,28 @@
       "verification": "$N = 5$, input $1,2,3,4,5$: the scan compares $(1,2),(2,3),(3,4),(4,5)$ — exactly $N-1 = 4$ pairs, growing linearly with $N$."
     },
     "cse-2024-1-cs-8": {
-      "approach": "Trace the loop variable with C integer division. Once $a$ becomes 1, the body maps $1 \\mapsto 1/12 + 1 + 0 = 1$, a fixed point below 10, so the condition never fails.",
+      "approach": "Concept tested: **termination**. Run the body twice: a = 6 becomes 6/12 + 1 + 0 = 1, and 1 becomes 1/12 + 1 + 0 = 1 again. The state repeats while the test `a < 10` is true, so the loop never ends and nothing is printed.",
       "concepts": [
-        "Integer division truncation",
-        "Loop invariant / fixed point",
-        "Infinite loop"
+        "while loop",
+        "Integer division",
+        "Infinite loop",
+        "Fixed point"
       ],
       "steps": [
         {
-          "title": "Initial values",
-          "body": "$a = 6$, $b = 0$. Since $b$ is never changed, `a += b` never changes $a$.",
+          "title": "First pass",
+          "body": "a = 6 < 10: `a = 6/12 + 1` = 0 + 1 = 1 (integer division), then `a += b` adds 0: a = 1.",
           "scene": {
-            "line": 5,
+            "line": 7,
             "vars": {
-              "a": 6,
+              "a": 1,
               "b": 0
             }
           }
         },
         {
-          "title": "First iteration",
-          "body": "$6 < 10$ holds, so the body runs:\n$$a = \\left\\lfloor \\frac{6}{12} \\right\\rfloor + 1 = 0 + 1 = 1, \\qquad a = 1 + 0 = 1.$$",
+          "title": "Second pass",
+          "body": "a = 1 < 10: `a = 1/12 + 1` = 1, `a += 0`: a = 1. The body maps 1 to itself: a **fixed point**.",
           "scene": {
             "line": 8,
             "vars": {
@@ -1905,29 +1906,19 @@
           }
         },
         {
-          "title": "Second iteration: a fixed point",
-          "body": "$1 < 10$ holds again:\n$$a = \\left\\lfloor \\frac{1}{12} \\right\\rfloor + 1 = 0 + 1 = 1, \\qquad a = 1 + 0 = 1.$$\n$a$ is still 1. In fact for any $0 \\le a < 10$ the body yields $\\lfloor a/12 \\rfloor + 1 = 1$, so $a$ stays 1 forever.",
+          "title": "Conclusion",
+          "body": "The test `1 < 10` is true at a state that never changes, so the loop runs for ever and `printf` is never reached: **infinite loop**.",
           "scene": {
             "line": 6,
-            "hl": [
-              6,
-              7,
-              8
-            ],
             "vars": {
               "a": 1,
               "b": 0
-            },
-            "caption": "a = 1 → 1 → 1 → … and 1 < 10 forever"
+            }
           }
-        },
-        {
-          "title": "Conclusion",
-          "body": "The condition $a < 10$ is always true, `printf` is never reached and the program **gets stuck in an infinite loop** — option (C)."
         }
       ],
       "answer": {
-        "value": "The program **gets stuck in an infinite loop** — option (C)",
+        "value": "(C) The program gets stuck in an infinite loop",
         "choice": [
           "C"
         ],
@@ -1937,39 +1928,39 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Wrong: nothing is ever printed; 9 would need the loop to exit, but a stays 1."
+          "reason": "a never grows: after the first pass it is always 1."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong: reaching 10 would need $a$ to grow, but every iteration sets it to 1."
+          "reason": "Reaching 10 would need b ≥ 9; with b = 0 the loop cannot reach it."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: $a$ becomes 1 and stays 1, so $a < 10$ never fails."
+          "reason": "a = 1 is a fixed point of the body with the test true: the loop never ends."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Wrong: printing 6 would need the loop body to be skipped, but 6 < 10 enters the loop."
+          "reason": "6 would be printed only if the body never ran, but 6 < 10 is true."
         }
       ],
-      "shortcut": "While $a < 10$: $a/12 = 0$ in integer arithmetic, so $a$ becomes $0 + 1 + b = 1$ every time — it can never reach 10.",
+      "shortcut": "For 0 ≤ a < 10, a/12 is 0, so the body sets a = 1 + b every time: the loop ends only if 1 + b ≥ 10.",
       "pitfalls": [
-        "Using real division ($6/12 = 0.5$) instead of C integer division ($6/12 = 0$).",
-        "Misreading the braces: both `a = a/12 + 1;` and `a += b;` are inside the loop."
+        "Reading `a / 12` as a fraction that slowly accumulates: integer division makes it 0.",
+        "Assuming every while loop in an exam terminates."
       ],
-      "verification": "Loop invariant: after any iteration $a = 1 + b = 1$. Since $1 < 10$, the exit condition is unreachable.",
+      "verification": "Compiled and run with cc under a time limit: no output, still running when stopped. With an iteration cap of 1000, a is 1 at the end; with b = 9 the program prints 10, with b = 3 it sticks at 4.",
       "animation": {
         "kind": "code",
         "lang": "c",
         "code": "#include <stdio.h>\n\nint main(){\n    int a = 6;\n    int b = 0;\n    while(a < 10) {\n        a = a / 12 + 1;\n        a += b;}\n    printf(\"%d\", a);\n    return 0;}",
         "line": 4,
         "vars": {
-          "a": 6
-        },
-        "title": "Tracing the while loop"
+          "a": 6,
+          "b": 0
+        }
       }
     },
     "cse-2024-1-cs-9": {
@@ -5742,63 +5733,49 @@
       "verification": "$XY + YZ + XZ$ over rows 0–7 gives 0, 0, 0, 1, 0, 1, 1, 1."
     },
     "cse-2024-1-cs-38": {
-      "approach": "Find a closed form instead of tracing 20 iterations: the update $x \\leftarrow 2x + y$ becomes pure doubling for $x + y$, so after $y$ iterations $f(x, y) = 2^{y}(x + y) - y$. Then compare with $2^{10} = 1024$ and $2^{20} = 1\\,048\\,576$.",
+      "approach": "Concept tested: **a closed form for a loop**. `x = x + x + y` makes $x + y$ double on every pass ($y$ is fixed), so after $y$ passes $x = (x_0 + y)\\,2^y - y$; compare that with the powers of two.",
       "concepts": [
-        "Loop invariant / closed form",
-        "Linear recurrence",
-        "Integer range"
+        "Closed form",
+        "Loop invariant",
+        "Powers of two"
       ],
       "steps": [
         {
-          "title": "Closed form of the loop",
+          "title": "Find the doubling quantity",
+          "body": "New $x + y = (2x + y) + y = 2(x + y)$. So the invariant at index $i$ is $x + y = (x_0 + y)\\,2^i$.",
           "scene": {
-            "reveal": 2,
-            "caption": "First iteration: x = 20 + 20 + 10 = 50."
-          },
-          "body": "Each iteration does $x \\leftarrow x + x + y = 2x + y$. Adding $y$ to both sides:\n\n$$x_{\\text{new}} + y = 2x + 2y = 2(x + y).$$\n\nSo $x + y$ doubles every iteration. The loop runs $y$ times ($i = 0, \\dots, y-1$; $y$ itself never changes), hence\n\n$$f(x, y) = 2^{y}(x + y) - y.$$"
-        },
-        {
-          "title": "f(20, 10) = 30710",
-          "body": "$f(20, 10) = 2^{10}(20 + 10) - 10 = 1024 \\times 30 - 10 = 30720 - 10 = 30710$, matching the trace in the table.\n\n- (A): $30710 > 2^{20} = 1048576$? **No** — false.\n- (C): $30710 < 2^{10} = 1024$? **No** — false.",
-          "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "r": 9,
-                "tone": "warning"
-              }
-            ],
-            "caption": "f(20, 10) = 30710: below $2^{20}$, above $2^{10}$."
+            "line": 3
           }
         },
         {
-          "title": "f(20, 20) and f(10, 20)",
-          "body": "- (B): $f(20, 20) = 2^{20}(20 + 20) - 20 = 1048576 \\times 40 - 20 = 41943040 - 20 = 41943020 > 2^{20}$ — **true**.\n- (D): $f(10, 20) = 2^{20}(10 + 20) - 20 = 1048576 \\times 30 - 20 = 31457280 - 20 = 31457260 > 2^{20}$ — **true**.\n\nBoth values are below $2^{31} - 1 = 2147483647$, so there is no `int` overflow. Answer: **B, D**.",
+          "title": "Closed form",
+          "body": "At exit ($i = y$): $f(x_0, y) = (x_0 + y)\\,2^y - y$. Check: $f(1, 2)$: $1 \\to 4 \\to 10$, and $3 \\cdot 4 - 2 = 10$ ✓.",
           "scene": {
-            "kind": "equation",
-            "title": "f(x, y) = 2^y (x + y) − y",
-            "lines": [
-              {
-                "tex": "f(20,10)=2^{10}\\cdot 30-10=30710",
-                "note": "< 2^20, > 2^10",
-                "tone": "error"
-              },
-              {
-                "tex": "f(20,20)=2^{20}\\cdot 40-20=41943020",
-                "note": "> 2^20",
-                "tone": "success"
-              },
-              {
-                "tex": "f(10,20)=2^{20}\\cdot 30-20=31457260",
-                "note": "> 2^20",
-                "tone": "success"
-              }
-            ]
+            "line": 5
+          }
+        },
+        {
+          "title": "Evaluate the calls",
+          "body": "$f(20, 10) = 30 \\cdot 1024 - 10 = 30\\,710$; $f(20, 20) = 40 \\cdot 2^{20} - 20 = 41\\,943\\,020$; $f(10, 20) = 30 \\cdot 2^{20} - 20 = 31\\,457\\,260$. All fit in a 32-bit int.",
+          "scene": {
+            "line": 5,
+            "vars": {
+              "f(20,10)": 30710,
+              "f(20,20)": 41943020,
+              "f(10,20)": 31457260
+            }
+          }
+        },
+        {
+          "title": "Compare",
+          "body": "$2^{10} = 1024$, $2^{20} = 1\\,048\\,576$. A: 30 710 > 2²⁰? no. B: yes. C: 30 710 < 2¹⁰? no. D: yes.",
+          "scene": {
+            "line": 5
           }
         }
       ],
       "answer": {
-        "value": "Options **(B), (D)**",
+        "value": "(B) and (D)",
         "choice": [
           "B",
           "D"
@@ -5809,82 +5786,39 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "False: $f(20, 10) = 2^{10} \\cdot 30 - 10 = 30710$, far below $2^{20} = 1048576$ (only 10 doublings happen)."
+          "reason": "f(20, 10) = 30·2¹⁰ − 10 = 30 710, far below 2²⁰ = 1 048 576."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "True: $f(20, 20) = 2^{20} \\cdot 40 - 20 = 41943020 > 2^{20}$."
+          "reason": "f(20, 20) = 40·2²⁰ − 20 = 41 943 020 > 2²⁰."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "False: $30710$ is much larger than $2^{10} = 1024$; the sum $x + y = 30$ is already multiplied by $2^{10}$."
+          "reason": "f(20, 10) = 30 710 is much larger than 2¹⁰ = 1024."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "True: $f(10, 20) = 2^{20} \\cdot 30 - 20 = 31457260 > 2^{20}$."
+          "reason": "f(10, 20) = 30·2²⁰ − 20 = 31 457 260 > 2²⁰."
         }
       ],
-      "shortcut": "With $y$ iterations the result is about $2^{y}(x + y)$: for $y = 10$ that is $\\approx 30 \\cdot 2^{10}$ (between $2^{10}$ and $2^{20}$), for $y = 20$ it is $\\approx 30$–$40 \\cdot 2^{20}$ (above $2^{20}$). So (B) and (D).",
+      "shortcut": "After y passes x is about (x₀ + y)·2^y. With y = 20 the factor 2²⁰ already makes it larger than 2²⁰; with y = 10 the result is 30·2¹⁰, between 2¹⁴ and 2¹⁵.",
       "pitfalls": [
-        "Reading $2^{20}$ as \"220\" (the superscript is easy to miss) — with 220, option (A) would look true.",
-        "Forgetting that $y$ also controls the number of iterations, not only the added constant.",
-        "Worrying about overflow: the largest value, $41943020$, fits easily in a 32-bit `int`."
+        "Treating the update as x ← 2x only and forgetting the + y, or treating y as changing (it is the loop bound and stays fixed).",
+        "Choosing C by comparing 30·2¹⁰ with 2¹⁰ the wrong way round."
       ],
-      "verification": "Direct trace for $(20, 10)$: $50, 110, 230, 470, 950, 1910, 3830, 7670, 15350, 30710$ — the 10th value equals the closed form $30710$.",
+      "verification": "Compiled as given: f(20, 10) = 30710, f(20, 20) = 41943020, f(10, 20) = 31457260; the closed form is checked at every pass for x₀ from −5 to 29 and y up to 11.",
       "animation": {
-        "kind": "table",
-        "title": "Trace of f(20, 10)",
-        "cols": [
-          "i",
-          "x after iteration"
-        ],
-        "rows": [
-          [
-            0,
-            50
-          ],
-          [
-            1,
-            110
-          ],
-          [
-            2,
-            230
-          ],
-          [
-            3,
-            470
-          ],
-          [
-            4,
-            950
-          ],
-          [
-            5,
-            1910
-          ],
-          [
-            6,
-            3830
-          ],
-          [
-            7,
-            7670
-          ],
-          [
-            8,
-            15350
-          ],
-          [
-            9,
-            30710
-          ]
-        ],
-        "reveal": 0,
-        "mono": true
+        "kind": "code",
+        "lang": "c",
+        "code": "int f(int x, int y) {\n  for (int i=0; i<y; i++) {\n    x=x+x+y;\n  }\n  return x;\n}\n",
+        "line": 1,
+        "vars": {
+          "x": 20,
+          "y": 10
+        }
       }
     },
     "cse-2024-1-cs-39": {

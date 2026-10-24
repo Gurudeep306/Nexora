@@ -1628,22 +1628,49 @@
       "verification": "Name lookup in P finds P's own m first."
     },
     "cse-1993-ii-a-7-4": {
-      "approach": "This is the classic swap without a temporary: trace with symbolic values a = A, b = B.",
+      "approach": "Concept tested: **swapping without a temporary**. After `a := a + b` the variable `a` holds the sum, and the sum together with either value recovers the other, so the next two statements put the old values in exchanged places.",
       "concepts": [
-        "Arithmetic swap"
+        "Swap",
+        "Assignment sequence",
+        "Overflow"
       ],
       "steps": [
         {
-          "title": "Trace",
-          "body": "`a := a + b` → $a = A+B$\n\n`b := a - b` → $b = (A+B) - B = A$\n\n`a := a - b` → $a = (A+B) - A = B$"
+          "title": "a := a + b",
+          "body": "With old values $a_0, b_0$: $a = a_0 + b_0$, $b = b_0$.",
+          "scene": {
+            "line": 3,
+            "vars": {
+              "a": "a0 + b0",
+              "b": "b0"
+            }
+          }
         },
         {
-          "title": "Result",
-          "body": "Now $a = B$, $b = A$: the values are exchanged (ignoring overflow)."
+          "title": "b := a - b",
+          "body": "$b = (a_0 + b_0) - b_0 = a_0$: `b` now has the old value of `a`.",
+          "scene": {
+            "line": 4,
+            "vars": {
+              "a": "a0 + b0",
+              "b": "a0"
+            }
+          }
+        },
+        {
+          "title": "a := a - b",
+          "body": "$a = (a_0 + b_0) - a_0 = b_0$: `a` has the old value of `b`. Example: $(5, 9) \\to (14, 9) \\to (14, 5) \\to (9, 5)$.",
+          "scene": {
+            "line": 5,
+            "vars": {
+              "a": "b0",
+              "b": "a0"
+            }
+          }
         }
       ],
       "answer": {
-        "value": "exchanges a and b",
+        "value": "(A) exchanges a and b",
         "choice": [
           "A"
         ],
@@ -1653,33 +1680,45 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Trace gives a = B, b = A."
+          "reason": "The pair (a₀, b₀) becomes (a₀ + b₀, b₀), then (a₀ + b₀, a₀), then (b₀, a₀)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "b ends as A, not 2A."
+          "reason": "b ends with the old a, not 2a: (5, 9) gives b = 5."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "a ends as B, not 2B."
+          "reason": "a ends with the old b, not 2b: (5, 9) gives a = 9."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Both change unless A = B."
+          "reason": "Both values change whenever a₀ ≠ b₀."
         },
         {
           "option": "E",
           "correct": false,
-          "reason": "(a) is correct."
+          "reason": "A is correct."
         }
       ],
+      "shortcut": "Try one pair of different numbers, such as (5, 9): it ends as (9, 5).",
       "pitfalls": [
-        "Overflow of a + b can break the swap on fixed-width integers, but that is not what is asked."
+        "Thinking the values are lost because there is no temporary: the sum stores both of them.",
+        "Ignoring the limits of the trick: a + b can overflow (an error in Pascal, undefined for signed int in C), and if a and b are the same variable the value becomes 0."
       ],
-      "verification": "Example a=3, b=5: a=8, b=3, a=5."
+      "verification": "Checked for every pair a, b in −20 … 20, and compiled in C for (5, 9): prints 14 9, 14 5, 9 5. With unsigned C variables the swap works even when the sum wraps.",
+      "animation": {
+        "kind": "code",
+        "lang": "pseudo",
+        "code": "var a, b : integer;\nbegin\n    a:=a+b;\n    b:=a-b;\n    a:=a-b\nend;\n",
+        "line": 2,
+        "vars": {
+          "a": "a0",
+          "b": "b0"
+        }
+      }
     },
     "cse-1993-ii-a-7-5": {
       "approach": "After ptr := nil the next statement dereferences nil, which is detected only when the program runs.",

@@ -2040,31 +2040,54 @@
       }
     },
     "cse-2016-2-cs-35": {
-      "approach": "Find the loop invariant by checking which expression is unchanged by both branches of the loop body (and holds initially). This is fast exponentiation by squaring.",
+      "approach": "Concept tested: **the invariant of square-and-multiply**. Both branches rewrite $a^b$ as an equal product, so $res \\cdot a^b$ never changes; it starts as $X^Y$ and, when $b = 0$, equals $res$.",
       "concepts": [
         "Loop invariant",
-        "Exponentiation by squaring"
+        "Fast exponentiation",
+        "Binary exponent"
       ],
       "steps": [
         {
-          "title": "Initial state",
-          "body": "Before the first iteration $res = 1$, $a = X$, $b = Y$, so $res \\cdot a^b = 1 \\cdot X^Y = X^Y$. Option C holds initially."
+          "title": "Initialisation",
+          "body": "$res = 1$, $a = X$, $b = Y$: $res \\cdot a^b = X^Y$. (Options B and D also reduce to $X^Y = X^Y$ here, so the first state cannot decide.)",
+          "scene": {
+            "line": 4,
+            "vars": {
+              "res": 1,
+              "a": "X",
+              "b": "Y"
+            }
+          }
         },
         {
-          "title": "Even branch preserves it",
-          "body": "If $b$ is even: $a' = a^2$, $b' = b/2$, $res' = res$.\n\n$$res' \\cdot (a')^{b'} = res \\cdot (a^2)^{b/2} = res \\cdot a^b$$"
+          "title": "Even b",
+          "body": "`a = a*a; b = b/2;` gives $res \\cdot (a^2)^{b/2} = res \\cdot a^b$: unchanged.",
+          "scene": {
+            "line": 5
+          }
         },
         {
-          "title": "Odd branch preserves it",
-          "body": "If $b$ is odd: $res' = res \\cdot a$, $b' = b - 1$, $a' = a$.\n\n$$res' \\cdot (a')^{b'} = res \\cdot a \\cdot a^{b-1} = res \\cdot a^b$$\n\nSo $X^Y = res \\cdot a^b$ is true before every iteration; at exit $b = 0$ gives $res = X^Y$."
+          "title": "Odd b",
+          "body": "`res = res*a; b = b-1;` gives $(res \\cdot a) \\cdot a^{b-1} = res \\cdot a^b$: unchanged.",
+          "scene": {
+            "line": 6
+          }
         },
         {
-          "title": "Test the others on X = 2, Y = 3",
-          "body": "Iteration 1 starts with $(res, a, b) = (1, 2, 3)$; iteration 2 starts with $(2, 2, 2)$.\n\n- A: $a^b = 2^2 = 4 \\ne 8$ ✗\n- B: $(res \\cdot a)^Y = 4^3 = 64$, $(res \\cdot X)^b = 4^2 = 16$ ✗\n- D: $(res \\cdot a)^b = 4^2 = 16 \\ne 8$ ✗\n- C: $res \\cdot a^b = 2 \\cdot 4 = 8$ ✓"
+          "title": "Refute A, B, D with X = 2, Y = 3",
+          "body": "The states at the tests are $(res, a, b) = (1, 2, 3), (2, 2, 2), (2, 4, 1)$. In the second state: A gives $a^b = 4 \\ne 8$; B gives $(res \\cdot a)^Y = 64$ but $(res \\cdot X)^b = 16$; D gives $(res \\cdot a)^b = 16 \\ne 8$. C gives $2 \\cdot 2^2 = 8$ ✓ (and $2 \\cdot 4^1 = 8$ in the third).",
+          "scene": {
+            "line": 3,
+            "vars": {
+              "res": 2,
+              "a": 2,
+              "b": 2
+            }
+          }
         }
       ],
       "answer": {
-        "value": "$X^Y = res \\cdot a^b$",
+        "value": "(C) X^Y = res · a^b",
         "choice": [
           "C"
         ],
@@ -2074,29 +2097,41 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Ignores the factor already accumulated in res; fails once res ≠ 1 (e.g. X=2, Y=3 at the second check: $2^2 = 4 \\ne 8$)."
+          "reason": "Ignores what has already been moved into res: after the first odd step (X = 2, Y = 3) a^b = 4 but X^Y = 8."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Fails at the second check for X=2, Y=3: $4^3 = 64$ vs $4^2 = 16$."
+          "reason": "True at the first test (1·X)^Y = X^Y, but in the state (2, 2, 2) it says 64 = 16."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Holds initially and is preserved by both branches — the loop invariant."
+          "reason": "Both branches keep res · a^b fixed, and at b = 0 it gives res = X^Y."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Raises res to the power b as well; for X=2, Y=3 at the second check gives $16 \\ne 8$."
+          "reason": "True at the first test, but in the state (2, 2, 2) (res·a)^b = 16 ≠ 8."
         }
       ],
-      "shortcut": "Plug a tiny case (X=2, Y=3) and evaluate each option at the start of the second iteration — only C survives.",
+      "shortcut": "Ask what the function returns at b = 0: res. The invariant must become res = X^Y when b = 0, which only C (with a^0 = 1) does.",
       "pitfalls": [
-        "Checking only the first iteration, where res = 1 makes A and C look identical."
+        "Checking candidates only in the first state, where B, C and D all hold.",
+        "Reading the loop as plain repeated multiplication: the even branch squares a and halves b, so it takes about log₂ Y + popcount(Y) passes."
       ],
-      "verification": "Traced X=2, Y=3: states (1,2,3) → (2,2,2) → (2,4,1) → (8,4,0); $res \\cdot a^b$ = 8 at every check."
+      "verification": "Each option evaluated with exact integers at every test of the loop for X = 2 … 5 and Y = 1 … 19: only C always holds; the compiled function returns X^Y for X ≤ 4, Y ≤ 14 with ⌊log₂ Y⌋ + popcount(Y) passes.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "int exp(int X, int Y) {\n    int res = 1, a = X, b = Y;\n\n    while ( b != 0 ){\n        if ( b%2 == 0) { a = a*a; b = b/2; }\n        else           { res = res*a; b = b-1; }\n    }\n    return res;\n}\n",
+        "title": "exp(2, 3)",
+        "line": 2,
+        "vars": {
+          "X": 2,
+          "Y": 3
+        }
+      }
     },
     "cse-2016-2-cs-36": {
       "approach": "Build the expression tree from the postfix string with a stack, then traverse root → right → left. New-order is exactly the reverse of postorder, so the answer is the input string reversed.",

@@ -435,33 +435,90 @@
       "verification": "$A = 0011$, $B = 0011$: $3 \\times 3 = 9 = 1001$, so $c_1 = 0$; formula $1\\cdot1 \\oplus 1\\cdot1 = 0$. ✓"
     },
     "cse-1991-a-1-vi": {
-      "approach": "Find a property true on loop entry and preserved by one iteration. The guard $i \\bmod 2 = 0$ makes $i$ even on entry, and the body always corrects the parity back to even.",
+      "approach": "Concept tested: **finding a loop invariant**. The `if` lets the loop start only with an even `i`, and each branch of the body is chosen so that `i` comes out even again; so \"`i` is even\" is true at every test of the guard.",
       "concepts": [
-        "loop invariant",
-        "parity"
+        "Loop invariant",
+        "Initialisation and maintenance",
+        "Pascal div and mod"
       ],
+      "given": "Pascal: `if i mod 2 = 0 then while i >= 0 do begin i := i div 2; if i mod 2 <> 0 then i := i - 1 else i := i - 2 end`.",
       "steps": [
         {
-          "title": "Initially",
-          "body": "The while-loop is reached only if $i \\bmod 2 = 0$, so $i$ is even at the first test."
+          "title": "Initialisation",
+          "body": "The loop is reached only through `if i mod 2 = 0`, so at the first test of `i >= 0` the value of `i` is **even**.",
+          "scene": {
+            "reveal": 4
+          }
         },
         {
-          "title": "One iteration preserves it",
-          "body": "Let $j = i \\text{ div } 2$.\n- If $j$ is odd, $i := j - 1$ — odd minus 1 is even.\n- If $j$ is even, $i := j - 2$ — even minus 2 is even.\n\nEither way $i$ is even before the next test."
+          "title": "Maintenance",
+          "body": "Inside the body `i >= 0`, so `div` and `mod` act on a non-negative number. Let $h = i \\text{ div } 2$. If $h$ is odd the body makes $i = h - 1$ (even); if $h$ is even it makes $i = h - 2$ (even). Either way `i` is even at the next test.",
+          "scene": {
+            "reveal": 12
+          }
         },
         {
-          "title": "Invariant",
-          "body": "At every evaluation of the loop condition, $i \\bmod 2 = 0$ ($i$ is even)."
+          "title": "Termination and the final value",
+          "body": "Each pass lowers `i` by at least 1 ($h \\le i$, then 1 or 2 is subtracted), so the loop ends; the smallest possible new value is $0 - 2 = -2$. With \"$i$ even and $i \\ge -2$\" as the invariant, the exit condition $i < 0$ forces $i = -2$. Example: $10 \\to 4 \\to 0 \\to -2$.",
+          "scene": {
+            "reveal": 16
+          }
         }
       ],
       "answer": {
-        "value": "$i \\bmod 2 = 0$ (i.e. $i$ is even)",
+        "value": "i mod 2 = 0 (i is even); strengthened, i is even and i ≥ −2, so the loop ends with i = −2",
         "matchesKey": true
       },
+      "shortcut": "Look at what the code before the loop guarantees (here: `i` even) and check that each branch of the body restores it.",
       "pitfalls": [
-        "Stating $i \\ge 0$ — that is the loop guard, not an invariant (it fails on exit)."
+        "Giving `i >= 0`: that is the guard, which is false after the last pass, so it is not an invariant.",
+        "Giving `i mod 2 <> 0` or a statement about `i div 2`: those describe the middle of the body, not the moments when the guard is tested."
       ],
-      "verification": "Trace $i = 12$: $12\\to 6\\to 4$ (6 even ⇒ $-2$), $4 \\to 2 \\to 0$, $0 \\to 0 \\to -2$ — every value at the test (12, 4, 0, −2) is even. ✓"
+      "verification": "Simulated in Python with Pascal's div and mod (non-negative operands inside the body) for every even i from 0 to 1000: i is even and ≥ −2 at every test, strictly decreases, and ends at −2.",
+      "animation": {
+        "kind": "table",
+        "title": "i = 10: the value at each test of the guard",
+        "cols": [
+          "i",
+          "i div 2",
+          "branch",
+          "new i"
+        ],
+        "rows": [
+          [
+            "10",
+            "5 (odd)",
+            "i − 1",
+            "4"
+          ],
+          [
+            "4",
+            "2 (even)",
+            "i − 2",
+            "0"
+          ],
+          [
+            "0",
+            "0 (even)",
+            "i − 2",
+            "−2"
+          ],
+          [
+            "−2",
+            "",
+            "exit",
+            "even"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "test 1",
+          "test 2",
+          "test 3",
+          "test 4"
+        ],
+        "reveal": 0
+      }
     },
     "cse-1991-a-1-vii": {
       "approach": "Use the decision-tree lower bound $\\lceil \\log_2 n! \\rceil$ and note that for $n = 5$ the Ford–Johnson (merge-insertion) method meets it.",
@@ -1598,27 +1655,45 @@
       "verification": "5 pushes and 5 pops, so the stack ends empty; popped values sum to 80 = pushed values 10+20+10+20+20."
     },
     "cse-1991-a-3-viii": {
-      "approach": "The loop stops at the first $i$ with $i^2 > N$. That smallest such integer is $\\lfloor\\sqrt N\\rfloor + 1$.",
+      "approach": "Concept tested: **the exit condition of a counting loop**. `i` climbs while $i^2 \\le M$, so the loop stops at the **first** $i$ whose square exceeds $M$, one step past $\\lfloor \\sqrt M \\rfloor$.",
       "concepts": [
-        "loop invariant",
-        "floor of square root"
+        "Loop invariant",
+        "Exit condition",
+        "Integer square root",
+        "Off-by-one"
       ],
       "steps": [
         {
-          "title": "Exit condition",
-          "body": "Starting from $i=0$, $i$ is incremented while $i^2 \\le N$. On exit $i$ is the least integer with $i^2 > N$, and $(i-1)^2 \\le N$."
+          "title": "The invariant",
+          "body": "At every test, $(i - 1)^2 \\le M$ (for $i \\ge 1$): the previous value of `i` was accepted. It holds after the first pass ($0^2 \\le M$) and each `i := i + 1` happens only after $i^2 \\le M$ was confirmed.",
+          "scene": {
+            "line": 5,
+            "vars": {
+              "i": 0
+            }
+          }
         },
         {
-          "title": "Identify $i$",
-          "body": "$(i-1)^2 \\le N < i^2 \\Rightarrow i-1 \\le \\sqrt N < i \\Rightarrow i-1 = \\lfloor\\sqrt N\\rfloor$, so $X(N) = \\lfloor\\sqrt N\\rfloor + 1$."
+          "title": "The exit",
+          "body": "The loop stops when $i^2 > M$. Together with $(i - 1)^2 \\le M$ this gives $i - 1 \\le \\sqrt M < i$, so $i - 1 = \\lfloor \\sqrt M \\rfloor$ and **X(N) = $\\lfloor \\sqrt N \\rfloor + 1$**.",
+          "scene": {
+            "line": 6
+          }
         },
         {
-          "title": "Check",
-          "body": "$N=4$: $i$ = 0,1,2 satisfy $i^2\\le4$; $i=3$ fails → returns $3 = \\lfloor 2\\rfloor+1$. $N=5$: returns $3 = \\lfloor 2.23\\rfloor + 1$."
+          "title": "Test the tempting options",
+          "body": "$N = 10$: the loop accepts 0, 1, 2, 3 and stops at 4; $\\lfloor\\sqrt{10}\\rfloor + 1 = 4$ and $\\lceil \\sqrt{10} \\rceil = 4$. $N = 16$: it accepts 4 (since $16 \\le 16$) and stops at 5; $\\lfloor\\sqrt{16}\\rfloor + 1 = 5$ but $\\lceil \\sqrt{16} \\rceil = 4$. So only B is right for every positive N.",
+          "scene": {
+            "line": 6,
+            "vars": {
+              "M": 16,
+              "i": 5
+            }
+          }
         }
       ],
       "answer": {
-        "value": "B",
+        "value": "(B) ⌊√N⌋ + 1",
         "choice": [
           "B"
         ],
@@ -1628,33 +1703,46 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "For $N=4$ the function returns 3, not 2."
+          "reason": "The loop overshoots by one: X(10) = 4, not ⌊√10⌋ = 3."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Proved above; e.g. $N=4 \\to 3$, $N=5 \\to 3$."
+          "reason": "The loop stops at the first i with i² > N, which is ⌊√N⌋ + 1."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "For $N=4$, $\\lceil\\sqrt4\\rceil = 2 \\ne 3$."
+          "reason": "Agrees with B except at perfect squares: X(16) = 5 but ⌈√16⌉ = 4."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "For $N=5$, $\\lceil\\sqrt5\\rceil+1 = 4 \\ne 3$."
+          "reason": "Agrees with B only at perfect squares: X(10) = 4 but ⌈√10⌉ + 1 = 5."
         },
         {
           "option": "E",
           "correct": false,
-          "reason": "(B) is correct."
+          "reason": "B is always correct, so 'none of the above' is wrong."
         }
       ],
+      "shortcut": "A loop `while (cond(i)) i++` returns the first i for which cond fails. Here cond is i² ≤ N, so the answer is the first i with i² > N.",
       "pitfalls": [
-        "(B) and (D) agree only for non-perfect squares; test a perfect square like $N=4$ to tell (C)/(D) apart."
+        "Choosing C because ⌈√N⌉ = ⌊√N⌋ + 1 for every non-square N; perfect squares break it.",
+        "Choosing A by thinking the loop stops at the last i with i² ≤ N; the increment happens after that test."
       ],
-      "verification": "Checked $N=1$ (returns 2), $N=4$ (3), $N=5$ (3), $N=9$ (4)."
+      "verification": "The function translated to C and compiled: for every N from 1 to 10 000 it returns ⌊√N⌋ + 1; it differs from ⌈√N⌉ at perfect squares and from ⌈√N⌉ + 1 elsewhere.",
+      "animation": {
+        "kind": "code",
+        "lang": "pseudo",
+        "code": "function X (M : integer) : integer;\nvar i : integer;\nbegin\n  i := 0;\n  while i*i <= M do i := i + 1;\n  X := i\nend;\n",
+        "title": "X(N)",
+        "line": 4,
+        "vars": {
+          "M": 10,
+          "i": 0
+        }
+      }
     },
     "cse-1991-a-3-x": {
       "approach": "Test each statement separately: left recursion loops recursive descent forever; three-address code (not postfix) suits optimisation; without recursion or pointers all storage is static; C can only approximate call-by-name; Pascal variant records break strong typing.",
@@ -1984,29 +2072,58 @@
       "verification": "For every x from −3 to 11 the value stored by the if statement equals the value of `x > 5` (checked exhaustively)."
     },
     "cse-1991-a-4-ii": {
-      "approach": "`repeat S until B` executes S at least once and stops when B becomes true. So run S once, then loop on S while B is false.",
+      "approach": "Concept tested: **test-after versus test-before loops**. `repeat S until B` always runs `S` once and then stops as soon as `B` is true; a `while` loop tests first and continues while its condition is true. So peel off the first execution of `S` and negate the condition.",
       "concepts": [
-        "loop constructs",
-        "repeat-until vs while"
+        "repeat-until",
+        "while loop",
+        "Loop equivalence",
+        "Pascal"
       ],
+      "given": "Pascal: `repeat S until B;` with an arbitrary statement S and Boolean condition B.",
       "steps": [
         {
-          "title": "Semantics",
-          "body": "`repeat` is a post-test loop: S, test B, S, test B, … until B is true. `while` is a pre-test loop."
+          "title": "What repeat … until does",
+          "body": "Run S; evaluate B; if B is **true**, stop; otherwise run S again and repeat. S runs **at least once**, and B is a *stopping* condition.",
+          "scene": {
+            "line": 1
+          }
         },
         {
-          "title": "Equivalent",
-          "body": "```pascal\nbegin\n  S;\n  while not B do S\nend\n```"
+          "title": "Match the first execution",
+          "body": "A `while` loop tests before its first pass, so it cannot by itself guarantee one execution of S. Write that first execution in front: `S;`.",
+          "scene": {
+            "line": 3
+          }
+        },
+        {
+          "title": "Match the remaining executions",
+          "body": "After the first S, `repeat` continues exactly while B is **false**: that is `while not B do S`. Together: **`S; while not B do S`**. (If S is several statements, wrap the loop body in `begin … end`.)",
+          "scene": {
+            "line": 4
+          }
+        },
+        {
+          "title": "Why `while not B do S` alone is wrong",
+          "body": "If B is already true before the loop, `while not B do S` runs S zero times, while `repeat` runs it once. Example: `repeat x := 2*x until x > 100` from x = 500 gives 1000; `while not (x > 100) do x := 2*x` leaves 500."
         }
       ],
       "answer": {
         "value": "S; while not B do S",
         "matchesKey": true
       },
+      "shortcut": "repeat = do-while with the condition negated: `repeat S until B` ≡ C's `do S while (!B);` ≡ `S; while (!B) S;`.",
       "pitfalls": [
-        "Writing just `while not B do S` loses the guaranteed first execution of S."
+        "Writing `while not B do S` without the leading S: it fails when B is true at the start.",
+        "Writing `S; while B do S`: `until B` means *stop* when B holds, so the while condition must be `not B`."
       ],
-      "verification": "If B is true after the first S, both versions execute S exactly once."
+      "verification": "Checked on 2000 random little state machines (a random map S and a random predicate B): `S; while not B do S` always runs the same steps as `repeat S until B`, while `while not B do S` alone differs on some; and on the example from x = 3 (192 after 6 passes) and x = 500 (1000 after 1).",
+      "animation": {
+        "kind": "code",
+        "lang": "pseudo",
+        "code": "repeat S until B;\n\n{ equivalent: }\nS;\nwhile not B do S;",
+        "title": "repeat … until written with while",
+        "line": 1
+      }
     },
     "cse-1991-a-4-iii": {
       "approach": "With equal probabilities, the optimal BST is the most balanced one: the middle key in sorted order (stop) is the root.",

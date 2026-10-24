@@ -1,0 +1,331 @@
+{
+ "version": 1,
+ "title": "Horner's rule as a chain",
+ "width": 660,
+ "height": 320,
+ "narrow": {
+  "width": 360,
+  "height": 380
+ },
+ "intro": "The coefficients 4, 7, 2, 9 and x = 10. Horner's loop rebuilds the number 4729 one digit at a time.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 22,
+   "text": "Horner: total = x · total + Y[k], with x = 10",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Horner with x = 10",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "yc0",
+   "type": "box",
+   "x": 80,
+   "y": 70,
+   "w": 70,
+   "h": 44,
+   "mono": true,
+   "label": "4",
+   "size": 18,
+   "narrow": {
+    "x": 60,
+    "w": 60,
+    "h": 40,
+    "size": 16
+   }
+  },
+  {
+   "id": "ya0",
+   "type": "text",
+   "x": 115.0,
+   "y": 59,
+   "text": "Y[0]",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 90.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "yc1",
+   "type": "box",
+   "x": 150,
+   "y": 70,
+   "w": 70,
+   "h": 44,
+   "mono": true,
+   "label": "7",
+   "size": 18,
+   "narrow": {
+    "x": 120,
+    "w": 60,
+    "h": 40,
+    "size": 16
+   }
+  },
+  {
+   "id": "ya1",
+   "type": "text",
+   "x": 185.0,
+   "y": 59,
+   "text": "Y[1]",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 150.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "yc2",
+   "type": "box",
+   "x": 220,
+   "y": 70,
+   "w": 70,
+   "h": 44,
+   "mono": true,
+   "label": "2",
+   "size": 18,
+   "narrow": {
+    "x": 180,
+    "w": 60,
+    "h": 40,
+    "size": 16
+   }
+  },
+  {
+   "id": "ya2",
+   "type": "text",
+   "x": 255.0,
+   "y": 59,
+   "text": "Y[2]",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 210.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "yc3",
+   "type": "box",
+   "x": 290,
+   "y": 70,
+   "w": 70,
+   "h": 44,
+   "mono": true,
+   "label": "9",
+   "size": 18,
+   "narrow": {
+    "x": 240,
+    "w": 60,
+    "h": 40,
+    "size": 16
+   }
+  },
+  {
+   "id": "ya3",
+   "type": "text",
+   "x": 325.0,
+   "y": 59,
+   "text": "Y[3]",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 270.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "tot",
+   "type": "text",
+   "x": 330,
+   "y": 190,
+   "text": "total = 4",
+   "size": 20,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180,
+    "size": 17
+   }
+  },
+  {
+   "id": "why",
+   "type": "text",
+   "x": 330,
+   "y": 236,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 180,
+    "size": 13
+   }
+  },
+  {
+   "id": "inv",
+   "type": "text",
+   "x": 330,
+   "y": 280,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "x": 180,
+    "y": 300,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start: total = Y[0] = 4, the polynomial of the first coefficient alone.",
+   "patches": [
+    {
+     "id": "yc0",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "k = 1: total = 10 · 4 + 7 = 47. Multiplying by x shifts every earlier coefficient up one power.",
+   "patches": [
+    {
+     "id": "yc1",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "tot",
+     "set": {
+      "text": "total = 47"
+     }
+    },
+    {
+     "id": "why",
+     "set": {
+      "hidden": false,
+      "text": "10 × 4 + 7"
+     }
+    },
+    {
+     "id": "inv",
+     "set": {
+      "hidden": false,
+      "text": "invariant: total = Y[0]x^(k) + … + Y[k]"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "k = 2: total = 10 · 47 + 2 = 472. Multiplying by x shifts every earlier coefficient up one power.",
+   "patches": [
+    {
+     "id": "yc2",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "tot",
+     "set": {
+      "text": "total = 472"
+     }
+    },
+    {
+     "id": "why",
+     "set": {
+      "hidden": false,
+      "text": "10 × 47 + 2"
+     }
+    },
+    {
+     "id": "inv",
+     "set": {
+      "hidden": false,
+      "text": "invariant: total = Y[0]x^(k) + … + Y[k]"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "k = 3: total = 10 · 472 + 9 = 4729. Multiplying by x shifts every earlier coefficient up one power.",
+   "patches": [
+    {
+     "id": "yc3",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "tot",
+     "set": {
+      "text": "total = 4729"
+     }
+    },
+    {
+     "id": "why",
+     "set": {
+      "hidden": false,
+      "text": "10 × 472 + 9"
+     }
+    },
+    {
+     "id": "inv",
+     "set": {
+      "hidden": false,
+      "text": "invariant: total = Y[0]x^(k) + … + Y[k]"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "4729 = 4·10³ + 7·10² + 2·10 + 9: 3 multiplications for a degree-3 polynomial.",
+   "patches": [
+    {
+     "id": "tot",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "why",
+     "set": {
+      "text": "3 multiplications, 3 additions"
+     }
+    }
+   ]
+  }
+ ]
+}

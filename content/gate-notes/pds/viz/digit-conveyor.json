@@ -1,0 +1,492 @@
+{
+ "version": 1,
+ "title": "Reversing digits with % and /",
+ "width": 660,
+ "height": 320,
+ "narrow": {
+  "width": 360,
+  "height": 380
+ },
+ "intro": "n = 4729 above, rev = 0 below. Each pass moves the last digit of n onto the end of rev.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 22,
+   "text": "Reversing digits: n % 10 moves the last digit onto rev",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Reversing the digits of 4729",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "ln",
+   "type": "text",
+   "x": 40,
+   "y": 100,
+   "text": "n",
+   "size": 16,
+   "weight": "bold",
+   "narrow": {
+    "x": 16,
+    "size": 14
+   }
+  },
+  {
+   "id": "lr",
+   "type": "text",
+   "x": 40,
+   "y": 190,
+   "text": "rev",
+   "size": 16,
+   "weight": "bold",
+   "narrow": {
+    "x": 16,
+    "size": 14
+   }
+  },
+  {
+   "id": "nc0",
+   "type": "box",
+   "x": 100,
+   "y": 78,
+   "w": 56,
+   "h": 44,
+   "mono": true,
+   "label": "4",
+   "size": 18,
+   "narrow": {
+    "x": 60,
+    "w": 40,
+    "h": 40,
+    "size": 16
+   }
+  },
+  {
+   "id": "nc1",
+   "type": "box",
+   "x": 156,
+   "y": 78,
+   "w": 56,
+   "h": 44,
+   "mono": true,
+   "label": "7",
+   "size": 18,
+   "narrow": {
+    "x": 100,
+    "w": 40,
+    "h": 40,
+    "size": 16
+   }
+  },
+  {
+   "id": "nc2",
+   "type": "box",
+   "x": 212,
+   "y": 78,
+   "w": 56,
+   "h": 44,
+   "mono": true,
+   "label": "2",
+   "size": 18,
+   "narrow": {
+    "x": 140,
+    "w": 40,
+    "h": 40,
+    "size": 16
+   }
+  },
+  {
+   "id": "nc3",
+   "type": "box",
+   "x": 268,
+   "y": 78,
+   "w": 56,
+   "h": 44,
+   "mono": true,
+   "label": "9",
+   "size": 18,
+   "narrow": {
+    "x": 180,
+    "w": 40,
+    "h": 40,
+    "size": 16
+   }
+  },
+  {
+   "id": "rc0",
+   "type": "box",
+   "x": 100,
+   "y": 168,
+   "w": 56,
+   "h": 44,
+   "mono": true,
+   "label": "",
+   "size": 18,
+   "narrow": {
+    "x": 60,
+    "w": 40,
+    "h": 40,
+    "size": 16
+   }
+  },
+  {
+   "id": "rc1",
+   "type": "box",
+   "x": 156,
+   "y": 168,
+   "w": 56,
+   "h": 44,
+   "mono": true,
+   "label": "",
+   "size": 18,
+   "narrow": {
+    "x": 100,
+    "w": 40,
+    "h": 40,
+    "size": 16
+   }
+  },
+  {
+   "id": "rc2",
+   "type": "box",
+   "x": 212,
+   "y": 168,
+   "w": 56,
+   "h": 44,
+   "mono": true,
+   "label": "",
+   "size": 18,
+   "narrow": {
+    "x": 140,
+    "w": 40,
+    "h": 40,
+    "size": 16
+   }
+  },
+  {
+   "id": "rc3",
+   "type": "box",
+   "x": 268,
+   "y": 168,
+   "w": 56,
+   "h": 44,
+   "mono": true,
+   "label": "",
+   "size": 18,
+   "narrow": {
+    "x": 180,
+    "w": 40,
+    "h": 40,
+    "size": 16
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 330,
+   "y": 270,
+   "text": "n = 4729, rev = 0",
+   "size": 15,
+   "anchor": "middle",
+   "narrow": {
+    "x": 180,
+    "y": 290,
+    "size": 14
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Pass 1: d = n % 10 = 9; rev = rev·10 + 9 = 9; n = n / 10 = 472.",
+   "patches": [
+    {
+     "id": "nc0",
+     "set": {
+      "label": "4",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "nc1",
+     "set": {
+      "label": "7",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "nc2",
+     "set": {
+      "label": "2",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "nc3",
+     "set": {
+      "label": "",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rc0",
+     "set": {
+      "label": "9",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "rc1",
+     "set": {
+      "label": "",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rc2",
+     "set": {
+      "label": "",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rc3",
+     "set": {
+      "label": "",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "n = 472, rev = 9"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 2: d = n % 10 = 2; rev = rev·10 + 2 = 92; n = n / 10 = 47.",
+   "patches": [
+    {
+     "id": "nc0",
+     "set": {
+      "label": "4",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "nc1",
+     "set": {
+      "label": "7",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "nc2",
+     "set": {
+      "label": "",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "nc3",
+     "set": {
+      "label": "",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rc0",
+     "set": {
+      "label": "9",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rc1",
+     "set": {
+      "label": "2",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "rc2",
+     "set": {
+      "label": "",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rc3",
+     "set": {
+      "label": "",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "n = 47, rev = 92"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 3: d = n % 10 = 7; rev = rev·10 + 7 = 927; n = n / 10 = 4.",
+   "patches": [
+    {
+     "id": "nc0",
+     "set": {
+      "label": "4",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "nc1",
+     "set": {
+      "label": "",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "nc2",
+     "set": {
+      "label": "",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "nc3",
+     "set": {
+      "label": "",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rc0",
+     "set": {
+      "label": "9",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rc1",
+     "set": {
+      "label": "2",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rc2",
+     "set": {
+      "label": "7",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "rc3",
+     "set": {
+      "label": "",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "n = 4, rev = 927"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 4: d = n % 10 = 4; rev = rev·10 + 4 = 9274; n = n / 10 = 0.",
+   "patches": [
+    {
+     "id": "nc0",
+     "set": {
+      "label": "",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "nc1",
+     "set": {
+      "label": "",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "nc2",
+     "set": {
+      "label": "",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "nc3",
+     "set": {
+      "label": "",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rc0",
+     "set": {
+      "label": "9",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rc1",
+     "set": {
+      "label": "2",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rc2",
+     "set": {
+      "label": "7",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rc3",
+     "set": {
+      "label": "4",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "n = 0, rev = 9274"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "n = 0 stops the loop: rev = 9274, the digits of 4729 in reverse order.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

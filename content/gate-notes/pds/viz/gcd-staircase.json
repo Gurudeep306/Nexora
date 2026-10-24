@@ -1,0 +1,691 @@
+{
+ "version": 1,
+ "title": "GCD by repeated subtraction",
+ "width": 700,
+ "height": 420,
+ "narrow": {
+  "width": 360,
+  "height": 560
+ },
+ "intro": "A 126 × 105 rectangle. Each pass of the loop cuts the shorter side off the longer one; the gcd of the sides never changes.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "gcd(126, 105) by subtraction: cut off squares, keep the gcd",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "gcd by subtraction",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "bgr",
+   "type": "box",
+   "x": 30,
+   "y": 60,
+   "w": 277.2,
+   "h": 231.0,
+   "tone": "muted",
+   "dashed": true,
+   "narrow": {
+    "y": 70,
+    "w": 239.4,
+    "h": 199.5
+   }
+  },
+  {
+   "id": "rect",
+   "type": "box",
+   "x": 30,
+   "y": 60,
+   "w": 277.2,
+   "h": 231.0,
+   "tone": "accent",
+   "fill": "accent",
+   "emphasis": "soft",
+   "only": "wide"
+  },
+  {
+   "id": "rect-n",
+   "type": "box",
+   "x": 30,
+   "y": 70,
+   "w": 239.4,
+   "h": 199.5,
+   "tone": "accent",
+   "fill": "accent",
+   "emphasis": "soft",
+   "only": "narrow"
+  },
+  {
+   "id": "dim",
+   "type": "text",
+   "x": 168.6,
+   "y": 309.0,
+   "text": "126 × 105",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "dim-n",
+   "type": "text",
+   "x": 149.7,
+   "y": 287.5,
+   "text": "126 × 105",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tb",
+   "type": "table",
+   "x": 340,
+   "y": 60,
+   "cellW": 100,
+   "cellH": 30,
+   "rows": [
+    [
+     "x",
+     "y",
+     "gcd(x, y)"
+    ],
+    [
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 30,
+    "y": 330,
+    "cellW": 96
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start: x = 126, y = 105. gcd(126, 105) = 21.",
+   "patches": [
+    {
+     "id": "tb",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "y",
+        "gcd(x, y)"
+       ],
+       [
+        "126",
+        "105",
+        "21"
+       ],
+       [
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 1: x > y: x = 126 − 105 = 21. A common divisor of x and y also divides their difference, so gcd stays 21.",
+   "patches": [
+    {
+     "id": "rect",
+     "set": {
+      "w": 46.2,
+      "h": 231.0
+     }
+    },
+    {
+     "id": "dim",
+     "set": {
+      "text": "21 × 105",
+      "x": 53.1,
+      "y": 309.0
+     }
+    },
+    {
+     "id": "tb",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "y",
+        "gcd(x, y)"
+       ],
+       [
+        "126",
+        "105",
+        "21"
+       ],
+       [
+        "21",
+        "105",
+        "21"
+       ],
+       [
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "rect-n",
+     "set": {
+      "w": 39.9,
+      "h": 199.5
+     }
+    },
+    {
+     "id": "dim-n",
+     "set": {
+      "text": "21 × 105",
+      "x": 49.95,
+      "y": 287.5
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 2: y > x: y = 105 − 21 = 84. A common divisor of x and y also divides their difference, so gcd stays 21.",
+   "patches": [
+    {
+     "id": "rect",
+     "set": {
+      "w": 46.2,
+      "h": 184.8
+     }
+    },
+    {
+     "id": "dim",
+     "set": {
+      "text": "21 × 84",
+      "x": 53.1,
+      "y": 262.8
+     }
+    },
+    {
+     "id": "tb",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "y",
+        "gcd(x, y)"
+       ],
+       [
+        "126",
+        "105",
+        "21"
+       ],
+       [
+        "21",
+        "105",
+        "21"
+       ],
+       [
+        "21",
+        "84",
+        "21"
+       ],
+       [
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "rect-n",
+     "set": {
+      "w": 39.9,
+      "h": 159.6
+     }
+    },
+    {
+     "id": "dim-n",
+     "set": {
+      "text": "21 × 84",
+      "x": 49.95,
+      "y": 247.6
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 3: y > x: y = 84 − 21 = 63. A common divisor of x and y also divides their difference, so gcd stays 21.",
+   "patches": [
+    {
+     "id": "rect",
+     "set": {
+      "w": 46.2,
+      "h": 138.6
+     }
+    },
+    {
+     "id": "dim",
+     "set": {
+      "text": "21 × 63",
+      "x": 53.1,
+      "y": 216.6
+     }
+    },
+    {
+     "id": "tb",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "y",
+        "gcd(x, y)"
+       ],
+       [
+        "126",
+        "105",
+        "21"
+       ],
+       [
+        "21",
+        "105",
+        "21"
+       ],
+       [
+        "21",
+        "84",
+        "21"
+       ],
+       [
+        "21",
+        "63",
+        "21"
+       ],
+       [
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "rect-n",
+     "set": {
+      "w": 39.9,
+      "h": 119.7
+     }
+    },
+    {
+     "id": "dim-n",
+     "set": {
+      "text": "21 × 63",
+      "x": 49.95,
+      "y": 207.7
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 4: y > x: y = 63 − 21 = 42. A common divisor of x and y also divides their difference, so gcd stays 21.",
+   "patches": [
+    {
+     "id": "rect",
+     "set": {
+      "w": 46.2,
+      "h": 92.4
+     }
+    },
+    {
+     "id": "dim",
+     "set": {
+      "text": "21 × 42",
+      "x": 53.1,
+      "y": 170.4
+     }
+    },
+    {
+     "id": "tb",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "y",
+        "gcd(x, y)"
+       ],
+       [
+        "126",
+        "105",
+        "21"
+       ],
+       [
+        "21",
+        "105",
+        "21"
+       ],
+       [
+        "21",
+        "84",
+        "21"
+       ],
+       [
+        "21",
+        "63",
+        "21"
+       ],
+       [
+        "21",
+        "42",
+        "21"
+       ],
+       [
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "rect-n",
+     "set": {
+      "w": 39.9,
+      "h": 79.8
+     }
+    },
+    {
+     "id": "dim-n",
+     "set": {
+      "text": "21 × 42",
+      "x": 49.95,
+      "y": 167.8
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 5: y > x: y = 42 − 21 = 21. A common divisor of x and y also divides their difference, so gcd stays 21.",
+   "patches": [
+    {
+     "id": "rect",
+     "set": {
+      "w": 46.2,
+      "h": 46.2
+     }
+    },
+    {
+     "id": "dim",
+     "set": {
+      "text": "21 × 21",
+      "x": 53.1,
+      "y": 124.2
+     }
+    },
+    {
+     "id": "tb",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "y",
+        "gcd(x, y)"
+       ],
+       [
+        "126",
+        "105",
+        "21"
+       ],
+       [
+        "21",
+        "105",
+        "21"
+       ],
+       [
+        "21",
+        "84",
+        "21"
+       ],
+       [
+        "21",
+        "63",
+        "21"
+       ],
+       [
+        "21",
+        "42",
+        "21"
+       ],
+       [
+        "21",
+        "21",
+        "21"
+       ]
+      ],
+      "highlight": [
+       [
+        6,
+        0
+       ],
+       [
+        6,
+        1
+       ],
+       [
+        6,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "rect-n",
+     "set": {
+      "w": 39.9,
+      "h": 39.9
+     }
+    },
+    {
+     "id": "dim-n",
+     "set": {
+      "text": "21 × 21",
+      "x": 49.95,
+      "y": 127.9
+     }
+    }
+   ]
+  },
+  {
+   "caption": "x = y = 21: the loop stops, and gcd(21, 21) = 21 is the answer. Five passes.",
+   "patches": [
+    {
+     "id": "rect",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "tb",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "rect-n",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

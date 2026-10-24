@@ -2317,24 +2317,51 @@
       "verification": "Total of the chosen order: $48 + 75 + 50 + 2000 = 2173$, which matches the DP."
     },
     "cse-2018-cs-32": {
-      "approach": "The first loop counts how many times n can be halved, giving $j = \\log_2 n = 40$. The second loop counts halvings of 40 down to 1.",
+      "approach": "Concept tested: **counting the passes of halving loops**. A loop that halves i while i > 1 runs ⌊log₂ i⌋ times. The first loop leaves j = log₂ 2⁴⁰ = 40, and the second loop halves j: ⌊log₂ 40⌋ = 5.",
       "concepts": [
-        "Loop tracing",
-        "Integer division",
-        "Logarithms"
+        "Halving loop",
+        "Iteration count",
+        "Logarithm",
+        "unsigned long"
       ],
       "steps": [
         {
           "title": "First loop",
-          "body": "$i = 2^{40}, 2^{39}, \\ldots, 2^1$: the body runs while $i > 1$, so 40 times. $j = 40$."
+          "body": "i = 2⁴⁰, 2³⁹, …, 2¹ pass the test `i > 1`; i = 1 fails. That is 40 passes, so **j = 40**. (A 64-bit unsigned long holds 2⁴⁰.)",
+          "scene": {
+            "line": 3,
+            "vars": {
+              "i": 1,
+              "j": 40,
+              "sum": 0
+            }
+          }
         },
         {
           "title": "Second loop",
-          "body": "| j | j > 1? | sum after |\n|---|---|---|\n| 40 | yes | 1 |\n| 20 | yes | 2 |\n| 10 | yes | 3 |\n| 5 | yes | 4 |\n| 2 | yes | 5 |\n| 1 | no | stop |\n\nReturns **5**, which is option B."
+          "body": "j = 40, 20, 10, 5, 2 pass `j > 1`; j = 1 fails. Five passes: **sum = 5**.",
+          "scene": {
+            "line": 4,
+            "vars": {
+              "i": 1,
+              "j": 1,
+              "sum": 5
+            }
+          }
+        },
+        {
+          "title": "Formula check",
+          "body": "sum = ⌊log₂ ⌊log₂ n⌋⌋ = ⌊log₂ 40⌋ = 5, since 32 ≤ 40 < 64.",
+          "scene": {
+            "line": 5,
+            "vars": {
+              "return": 5
+            }
+          }
         }
       ],
       "answer": {
-        "value": "5",
+        "value": "(B) 5",
         "choice": [
           "B"
         ],
@@ -2344,28 +2371,41 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Misses one iteration (e.g. stopping at j = 2)."
+          "reason": "4 undercounts the second loop: 40 → 20 → 10 → 5 → 2 is five halvings before reaching 1."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: 40 → 20 → 10 → 5 → 2 → 1 gives 5 increments."
+          "reason": "j = 40 after the first loop; the second loop runs ⌊log₂ 40⌋ = 5 times."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Uses $\\lceil \\log_2 40 \\rceil = 6$; integer halving (5/2 = 2) gives 5."
+          "reason": "6 is the number of binary digits of 40 (the count for a test `j > 0`); with `j > 1` it is one less."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "That is j, not sum."
+          "reason": "40 is the value of j after the first loop, not the returned sum."
         }
       ],
+      "shortcut": "Two halving loops in a row compute ⌊log₂ ⌊log₂ n⌋⌋: log₂ 2⁴⁰ = 40, and 2⁵ ≤ 40 < 2⁶.",
       "pitfalls": [
-        "Using $\\lceil\\log_2 40\\rceil = 6$: integer division gives $\\lfloor\\log_2 40\\rfloor = 5$."
+        "Returning j instead of sum (40).",
+        "Using the `> 0` count ⌊log₂ j⌋ + 1 = 6 for a loop whose test is `> 1`."
       ],
-      "verification": "$\\lfloor \\log_2 \\lfloor \\log_2 2^{40} \\rfloor \\rfloor = \\lfloor \\log_2 40 \\rfloor = 5$."
+      "verification": "Compiled with 64-bit unsigned long: fun(2⁴⁰) = 5, fun(2¹⁶) = 4, fun(1000) = 3; for every n = 2ᵉ (e = 2 … 63) the result is ⌊log₂ e⌋.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "unsigned long int fun(unsigned long int n){\n    unsigned long int i, j = 0, sum = 0;\n    for (i = n; i > 1; i = i/2) j++;\n    for ( ; j > 1; j = j/2) sum++;\n    return(sum);\n}",
+        "line": 1,
+        "vars": {
+          "n": "2^40",
+          "j": 0,
+          "sum": 0
+        }
+      }
     },
     "cse-2018-cs-33": {
       "approach": "Concept tested: exact representability in fixed point. With 5 integer and 3 fraction bits, a value is exact iff it lies in $[0, 31.875]$ and is a multiple of $2^{-3} = 0.125$ (i.e. $8x$ is a whole number).",

@@ -3024,17 +3024,19 @@
       "verification": "Names are all distinct, so groups = students = 5."
     },
     "cse-2019-cs-52": {
-      "approach": "Trace the loop: $j$ doubles each iteration and the loop test is $2/j > 0.0625$, i.e. $j < 32$. Count the iterations (one print each).",
+      "approach": "Concept tested: **counting the passes of a loop on floats**. j doubles each pass, so the tested ratio i/j halves: 2, 1, 0.5, 0.25, 0.125, 0.0625. All are powers of two, exact in float, so the loop runs while the ratio is strictly above 0.0625: 5 times.",
       "concepts": [
-        "Loop tracing",
-        "Floating-point comparison"
+        "while loop",
+        "Floating point",
+        "Powers of two",
+        "Iteration count"
       ],
       "steps": [
         {
-          "title": "Loop condition",
-          "body": "$i = 2$ is fixed and $j$ doubles each pass, so the test $2/j > 0.0625 = 2^{-4}$ holds exactly while $j < 2^5 = 32$.",
+          "title": "Track the ratio",
+          "body": "Before each test, i/j is 2/1 = 2, then 2/2 = 1, 2/4 = 0.5, 2/8 = 0.25, 2/16 = 0.125, 2/32 = 0.0625 (j doubles inside the body).",
           "scene": {
-            "line": 4,
+            "line": 5,
             "vars": {
               "i": 2,
               "j": 1,
@@ -3043,45 +3045,49 @@
           }
         },
         {
-          "title": "Iterations",
-          "body": "| test $i/j$ | true? | new $j$ | print # |\n|---|---|---|---|\n| 2/1 = 2 | yes | 2 | 1 |\n| 2/2 = 1 | yes | 4 | 2 |\n| 2/4 = 0.5 | yes | 8 | 3 |\n| 2/8 = 0.25 | yes | 16 | 4 |\n| 2/16 = 0.125 | yes | 32 | 5 |\n| 2/32 = 0.0625 | **no** | — | — |",
+          "title": "Which tests pass",
+          "body": "The body runs for the ratios 2, 1, 0.5, 0.25, 0.125, all > 0.0625: five passes, printing sum = 1, 1.5, 1.75, 1.875, 1.9375.",
           "scene": {
-            "line": 4,
+            "line": 8,
             "vars": {
               "i": 2,
               "j": 32,
               "sum": 1.9375
             },
-            "output": "1.000000\n1.500000\n1.750000\n1.875000\n1.937500\n",
-            "caption": "Loop exits when i/j = 0.0625 (not > 0.0625)"
+            "output": "1.000000\n1.500000\n1.750000\n1.875000\n1.937500\n"
           }
         },
         {
-          "title": "Answer",
-          "body": "All values are exact powers of 2 in float, so $0.0625 > 0.0625$ is exactly false. sum is printed **5** times."
+          "title": "The last test and exactness",
+          "body": "At j = 32 the ratio is exactly 0.0625 = 2⁻⁴, and `0.0625 > 0.0625` is false. No rounding is involved: every value is a power of two or a short binary fraction. Answer **5**.",
+          "scene": {
+            "line": 10
+          }
         }
       ],
+      "answer": {
+        "value": "5",
+        "number": 5,
+        "matchesKey": true
+      },
+      "shortcut": "The ratio goes 2 → 0.0625 = 2⁻⁴ by halving: from 2¹ down to 2⁻³ inclusive is 5 values that pass the strict test.",
+      "pitfalls": [
+        "Fearing that 0.0625 is stored inexactly and counting a sixth pass: powers of two are exact in binary floating point.",
+        "Counting the doublings of j after the loop has already stopped, or treating `>` as `>=` (6)."
+      ],
+      "verification": "Compiled and run with cc: exactly five lines, 1.000000 1.500000 1.750000 1.875000 1.937500.",
       "animation": {
         "kind": "code",
         "lang": "c",
         "code": "#include <stdio.h>\nint main(){\n    float sum = 0.0, j = 1.0, i = 2.0;\n    while (i/j > 0.0625){\n        j = j + j;\n        sum = sum + i/j;\n        printf(\"%f\\n\", sum);\n    }\n    return 0;\n}",
-        "line": 3,
+        "line": 4,
         "vars": {
           "i": 2,
           "j": 1,
           "sum": 0
         },
         "output": ""
-      },
-      "answer": {
-        "value": "5",
-        "number": 5,
-        "matchesKey": true
-      },
-      "pitfalls": [
-        "Worrying about float rounding — powers of two are represented exactly."
-      ],
-      "verification": "Loop runs while $j < 32$, i.e. $j = 1, 2, 4, 8, 16$ → 5 iterations."
+      }
     },
     "cse-2019-cs-53": {
       "approach": "$b$ points to $a[4] = 10$, so $*b - i = 10 - i$ and $*(b - i) = a[4-i]$. Sum $(10 - i) - a[4-i]$ for $i = 0..4$.",

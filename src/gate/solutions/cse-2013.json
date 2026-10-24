@@ -2132,27 +2132,53 @@
       "verification": "Substituting each option into $k\\log k$ shows only C gives exactly $\\Theta(\\log n)$."
     },
     "cse-2013-cs-31": {
-      "approach": "Count iterations: the outer loop runs about $n/2$ times, the inner doubling loop $\\lfloor\\log_2 n\\rfloor$ times, each adding $n/2$ to k.",
+      "approach": "Concept tested: **closed form of a nested loop's result**. Count the passes of each loop (outer: about n/2; inner doubling loop: ⌊log₂ n⌋), then multiply by the amount added each time, n/2. The question asks for the returned value, not the running time.",
       "concepts": [
-        "Loop analysis",
-        "Logarithmic loops"
+        "Nested loops",
+        "Doubling loop",
+        "Closed form",
+        "Asymptotic value"
       ],
       "steps": [
         {
           "title": "Outer loop",
-          "body": "$i$ from $n/2$ to $n$: $n/2+1=\\Theta(n)$ iterations."
+          "body": "i runs from ⌊n/2⌋ to n in steps of 1: n − ⌊n/2⌋ + 1 passes, about n/2.",
+          "scene": {
+            "line": 3
+          }
         },
         {
           "title": "Inner loop",
-          "body": "$j=2,4,8,\\dots\\le n$: $\\lfloor\\log_2 n\\rfloor=\\Theta(\\log n)$ iterations."
+          "body": "j = 2, 4, 8, … while j ≤ n: a doubling loop from 2, so ⌊log₂ n⌋ passes, the same for every i.",
+          "scene": {
+            "line": 4
+          }
         },
         {
-          "title": "Value of k",
-          "body": "$k=(n/2+1)\\cdot\\lfloor\\log_2 n\\rfloor\\cdot\\frac n2=\\Theta(n^2\\log n)$."
+          "title": "What each pass adds",
+          "body": "`k = k + n/2` adds the constant ⌊n/2⌋. So k = (n − ⌊n/2⌋ + 1) · ⌊log₂ n⌋ · ⌊n/2⌋ ≈ n² log₂ n / 4.",
+          "scene": {
+            "line": 5,
+            "vars": {
+              "n": 8,
+              "k": "5·3·4 = 60"
+            }
+          }
+        },
+        {
+          "title": "Asymptotics",
+          "body": "(n/2) · log n · (n/2) = **Θ(n² log n)**. (The number of passes alone is Θ(n log n): that is the running time, not the value.)",
+          "scene": {
+            "line": 6,
+            "vars": {
+              "n": 8,
+              "k": 60
+            }
+          }
         }
       ],
       "answer": {
-        "value": "Θ(n² log n)",
+        "value": "(B) Θ(n² log n)",
         "choice": [
           "B"
         ],
@@ -2162,28 +2188,40 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Misses the $\\log n$ factor from the doubling loop."
+          "reason": "Θ(n²) misses the ⌊log₂ n⌋ passes of the inner doubling loop."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: $\\Theta(n)\\cdot\\Theta(\\log n)\\cdot n/2$."
+          "reason": "k = (n − ⌊n/2⌋ + 1)·⌊log₂ n⌋·⌊n/2⌋ ≈ n² log n / 4."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Treats the inner loop as linear."
+          "reason": "Θ(n³) treats the inner loop as linear, but j doubles."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Adds an extra factor of $n$."
+          "reason": "Θ(n³ log n) overcounts both the inner loop and the outer one."
         }
       ],
+      "shortcut": "value = (number of executions) × (amount added) = Θ(n log n) × Θ(n).",
       "pitfalls": [
-        "The question asks for the returned value, not the running time; the value carries the extra $n/2$ factor."
+        "Answering with the running time Θ(n log n) (not even an option) or forgetting that each pass adds n/2, not 1.",
+        "Counting the inner loop as log₂ n + 1: it starts at j = 2, so it runs ⌊log₂ n⌋ times (no effect on Θ)."
       ],
-      "verification": "$n=16$: $9\\times4\\times8=288$; $n^2\\log n/4=256\\cdot4/4=256$ — same order."
+      "verification": "Compiled for every n from 2 to 79 and for 100, 128 and 1000: the function equals the closed form (unknown(8) = 60, unknown(16) = 288, unknown(10) = 90), and k / (n² log₂ n) approaches 1/4.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "int unknown(int n){\n    int i, j, k=0;\n    for (i=n/2; i<=n; i++)\n        for (j=2; j<=n; j=j*2)\n            k = k + n/2;\n    return (k);\n}",
+        "line": 1,
+        "vars": {
+          "n": 8,
+          "k": 0
+        }
+      }
     },
     "cse-2013-cs-32": {
       "approach": "$L_1=0^*1^*0^*$ is regular, so its complement is regular too; that makes statement D false. Check the others quickly.",

@@ -155,23 +155,50 @@
       "verification": "8086 INTR: the device puts a type number on the bus during INTA, and the CPU reads the vector table at type × 4 — the source supplies the branch information."
     },
     "cse-1995-a-4": {
-      "approach": "Resolve the dangling else: the else belongs to the nearest unmatched if (the inner one). Then the outer test is false, so nothing runs.",
+      "approach": "Concept tested: **the dangling else**. An `else` belongs to the nearest preceding `if` that has no `else` yet, here `if X < 0`, so the whole inner `if … else` is the body of `if X > Y`, which is false: nothing is assigned.",
       "concepts": [
         "Dangling else",
-        "Pascal if-then-else"
+        "Nested if",
+        "Pascal"
       ],
       "steps": [
         {
-          "title": "Parse",
-          "body": "The else binds to the inner `if`:\n```pascal\nif X > Y then\n   begin\n     if X < 0 then X := abs(X) else X := 2*X\n   end;\n```"
+          "title": "Attach the else",
+          "body": "The `else X := 2*X` belongs to the nearest unmatched `if`, which is `if X < 0`. The statement is `if X > Y then (if X < 0 then X := abs(X) else X := 2*X)`; the outer `if` has no `else`.",
+          "scene": {
+            "line": 3,
+            "hl": [
+              3,
+              4
+            ]
+          }
         },
         {
-          "title": "Evaluate",
-          "body": "$X = -10,\\ Y = 20$: $X > Y$ is $-10 > 20$ = false. The whole inner `if–else` is skipped, so $X$ stays $-10$."
+          "title": "Evaluate the outer test",
+          "body": "`X > Y` is `-10 > 20`: **false**. So the body of the outer `if`, the inner `if … else`, is skipped entirely.",
+          "scene": {
+            "line": 2,
+            "vars": {
+              "X": -10,
+              "Y": 20,
+              "X > Y": "false"
+            }
+          }
+        },
+        {
+          "title": "Result",
+          "body": "No assignment to X happens, so X keeps its initial value **−10**.",
+          "scene": {
+            "line": 4,
+            "vars": {
+              "X": -10,
+              "Y": 20
+            }
+          }
         }
       ],
       "answer": {
-        "value": "-10",
+        "value": "(C) -10",
         "choice": [
           "C"
         ],
@@ -181,17 +208,17 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "10 = abs(X) would need both $X > Y$ and $X < 0$; $X > Y$ is false."
+          "reason": "10 would need `X := abs(X)` to run, but that requires X > Y, which is false."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "−20 = 2·X would only happen if the else were attached to the outer `if` (wrong binding)."
+          "reason": "−20 comes from attaching the else to the outer if (the else would run because X > Y is false); the grammar attaches it to the inner if."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Outer condition false and the else belongs to the inner if, so X is unchanged at −10. Correct."
+          "reason": "The outer test fails and the outer if has no else, so X stays −10."
         },
         {
           "option": "D",
@@ -199,10 +226,22 @@
           "reason": "C is correct."
         }
       ],
+      "shortcut": "With a dangling else, first check the outer condition: if it is false, the whole nested statement does nothing.",
       "pitfalls": [
-        "Matching the else with the outer if — that gives −20 (option B)."
+        "Following the layout instead of the grammar: indentation never decides where an else belongs.",
+        "Running `abs(X)` because X < 0 is true, forgetting that the inner if is only reached when X > Y."
       ],
-      "verification": "Same rule as C/Java: an else always pairs with the closest preceding unmatched if."
+      "verification": "Translated to C (C and Pascal resolve the dangling else identically) and compiled: prints −10; with braces around the inner if it prints −20. A Python model agrees with the C program on 49 pairs (X, Y).",
+      "animation": {
+        "kind": "code",
+        "lang": "pseudo",
+        "code": "X := -10; Y := 20;\nIf X > Y then\n    if X < 0 then X := abs(X)\n    else X := 2*X;",
+        "line": 1,
+        "vars": {
+          "X": -10,
+          "Y": 20
+        }
+      }
     },
     "cse-1995-a-5": {
       "approach": "Merge sort splits the array into halves, sorts each recursively and merges — the textbook divide-and-conquer pattern.",
@@ -1346,27 +1385,38 @@
       "verification": "$2^{12} \\times 16 = 65536$ bits $= 4\\text{K} \\times 16$."
     },
     "cse-1995-a-28": {
-      "approach": "This is the subtraction form of Euclid's algorithm: replacing the larger number by (larger − smaller) keeps the GCD unchanged until both are equal.",
+      "approach": "Concept tested: **Euclid's algorithm by subtraction**. Replacing the larger number by the difference never changes the gcd (both pairs have the same common divisors), both numbers stay positive, and the loop stops when they are equal, at the gcd.",
       "concepts": [
-        "Euclid's algorithm",
-        "GCD"
+        "GCD",
+        "Loop invariant",
+        "Termination"
       ],
+      "given": "X and Y are positive integers.",
       "steps": [
         {
-          "title": "Invariant",
-          "body": "If $X > Y$ then $\\gcd(X, Y) = \\gcd(X - Y, Y)$, because any common divisor of $X$ and $Y$ also divides $X - Y$ and vice versa. So $\\gcd$ is preserved each iteration."
+          "title": "The invariant",
+          "body": "If $d$ divides $X$ and $Y$ it divides $X - Y$; if it divides $X - Y$ and $Y$ it divides $X$. So $\\gcd(X - Y, Y) = \\gcd(X, Y)$, and the gcd of the pair never changes.",
+          "scene": {
+            "reveal": 3
+          }
         },
         {
           "title": "Termination",
-          "body": "Both stay positive and their sum strictly decreases, so the loop ends with $X = Y$, and then $\\gcd(X, X) = X$ is printed."
+          "body": "Both numbers stay positive and their sum drops by the smaller one each pass, so the loop must stop.",
+          "scene": {
+            "reveal": 12
+          }
         },
         {
-          "title": "Trace X = 12, Y = 18",
-          "body": "$(12,18) \\to (12,6) \\to (6,6)$; prints $6 = \\gcd(12,18)$."
+          "title": "The exit",
+          "body": "It stops when $X = Y$, and $\\gcd(X, X) = X$. So `write(X)` prints the gcd of the original numbers. Example: (12, 18) → (12, 6) → (6, 6): prints 6.",
+          "scene": {
+            "reveal": 15
+          }
         }
       ],
       "answer": {
-        "value": "Computes the GCD",
+        "value": "(C) Computes the GCD of two numbers",
         "choice": [
           "C"
         ],
@@ -1376,25 +1426,75 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "LCM(12,18) = 36, but the trace prints 6."
+          "reason": "The result never exceeds the smaller input; for (12, 18) it prints 6, while the LCM is 36."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "It does not divide: 18/12 is not 6."
+          "reason": "Repeated subtraction of the same divisor would be division, but here the roles swap; (12, 18) prints 6, not 1 (the quotient) or 6 as a remainder by coincidence: (7, 3) prints 1, while 7 div 3 = 2."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: subtraction-based Euclid."
+          "reason": "gcd(X − Y, Y) = gcd(X, Y) is invariant, and the loop ends with X = Y = gcd."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Option C is correct."
+          "reason": "C is correct."
         }
       ],
-      "verification": "Second trace: (9, 4) → (5,4) → (1,4) → (1,3) → (1,2) → (1,1), prints 1 = gcd(9,4)."
+      "shortcut": "\"While unequal, subtract the smaller from the larger\" is Euclid's subtraction GCD; memorise its shape.",
+      "pitfalls": [
+        "Confusing it with LCM: the numbers only ever decrease, so the result cannot be a multiple of both.",
+        "Forgetting the precondition: with Y = 0 the loop would never end."
+      ],
+      "verification": "Simulated (Pascal's while and := behave as in C here) for every X, Y from 1 to 39: always equals math.gcd(X, Y).",
+      "animation": {
+        "kind": "table",
+        "title": "X = 12, Y = 18",
+        "cols": [
+          "X",
+          "Y",
+          "gcd(X, Y)"
+        ],
+        "rows": [
+          [
+            "12",
+            "18",
+            "6"
+          ],
+          [
+            "12",
+            "6",
+            "6"
+          ],
+          [
+            "6",
+            "6",
+            "6"
+          ],
+          [
+            "",
+            "",
+            ""
+          ],
+          [
+            "write(X)",
+            "",
+            "6"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "start",
+          "pass 1",
+          "pass 2",
+          "",
+          "exit"
+        ],
+        "reveal": 0
+      }
     },
     "cse-1995-a-29": {
       "approach": "FIND takes X as a value parameter; its formal X is a local real copy, so changing it does not change the global integer X, which prints 2.",

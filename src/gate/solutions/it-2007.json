@@ -1905,133 +1905,65 @@
       "verification": "Recursion depth equals the queue length; the insertion order 3, 2, 1 is the reverse of the deletion order 1, 2, 3."
     },
     "it-2007-cs-31": {
-      "approach": "The loop sums runs of non-negative, non-decreasing elements and records the best run when a run breaks. Trace the six iterations directly.",
+      "approach": "Concept tested: **tracing a loop with a branch**. The `if` branch closes the current run (saving its sum if it is the best) and starts a new one; the `else` extends the run. Trace the six elements one by one.",
       "concepts": [
-        "C program tracing",
-        "Arrays",
-        "Maximum run sum"
+        "Loop tracing",
+        "if-else",
+        "Running maximum"
       ],
       "steps": [
         {
-          "title": "Start: i = 0, 1, 2",
-          "body": "i = 0: reset branch, sum $=2$. i = 1: $a[1]=-2<0$, so maxsum $=2$, sum $=0$. i = 2: $a[2]=-1<0$, $0>2$ is false, sum $=0$.",
+          "title": "i = 0",
+          "body": "`i == 0` is true: `sum > maxsum` (0 > 0) is false; sum = a[0] = 2 (positive).",
           "scene": {
-            "reveal": 18,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "warning"
-              }
-            ]
+            "line": 7,
+            "vars": {
+              "i": 0,
+              "sum": 2,
+              "maxsum": 0
+            }
           }
         },
         {
-          "title": "Run 3, 4",
-          "body": "i = 3: $a[3]=3$ is not negative and $3 < -1$ is false → sum $=0+3=3$. i = 4: $4<3$ false → sum $=3+4=7$.",
+          "title": "i = 1, 2",
+          "body": "a[1] = −2 < 0: maxsum = 2, sum = 0. a[2] = −1 < 0: 0 > 2 false, sum = 0.",
           "scene": {
-            "reveal": 30,
-            "hl": [
-              {
-                "r": 4,
-                "c": 4,
-                "tone": "accent"
-              }
-            ]
+            "line": 8,
+            "vars": {
+              "i": 2,
+              "sum": 0,
+              "maxsum": 2
+            }
           }
         },
         {
-          "title": "Run breaks at i = 5",
-          "body": "i = 5: $a[5]=2 < a[4]=4$ → reset branch: $7 > 2$, so maxsum $=7$; sum $=2$. After the loop $2 > 7$ is false, so the program prints **7**.",
+          "title": "i = 3, 4",
+          "body": "a[3] = 3: not negative and not < a[2] = −1, so `else`: sum = 3. a[4] = 4 ≥ 3: sum = 7.",
           "scene": {
-            "reveal": 42,
-            "hl": [
-              {
-                "r": 5,
-                "c": 5,
-                "tone": "success"
-              },
-              {
-                "r": 6,
-                "c": 5,
-                "tone": "success"
-              }
-            ]
+            "line": 11,
+            "vars": {
+              "i": 4,
+              "sum": 7,
+              "maxsum": 2
+            }
+          }
+        },
+        {
+          "title": "i = 5 and after the loop",
+          "body": "a[5] = 2 < a[4] = 4: maxsum = 7, sum = 2. After the loop, 2 > 7 is false. The program prints **7**.",
+          "scene": {
+            "line": 14,
+            "vars": {
+              "i": 6,
+              "sum": 2,
+              "maxsum": 7
+            },
+            "output": "7"
           }
         }
       ],
-      "animation": {
-        "kind": "table",
-        "title": "Trace of the loop",
-        "cols": [
-          "i",
-          "a[i]",
-          "reset condition",
-          "maxsum update",
-          "sum",
-          "maxsum"
-        ],
-        "rows": [
-          [
-            "0",
-            "2",
-            "i == 0",
-            "0 > 0? no",
-            "2",
-            "0"
-          ],
-          [
-            "1",
-            "-2",
-            "a[1] < 0",
-            "2 > 0 → maxsum = 2",
-            "0",
-            "2"
-          ],
-          [
-            "2",
-            "-1",
-            "a[2] < 0",
-            "0 > 2? no",
-            "0",
-            "2"
-          ],
-          [
-            "3",
-            "3",
-            "no (else)",
-            "—",
-            "0 + 3 = 3",
-            "2"
-          ],
-          [
-            "4",
-            "4",
-            "no (else)",
-            "—",
-            "3 + 4 = 7",
-            "2"
-          ],
-          [
-            "5",
-            "2",
-            "a[5] < a[4]",
-            "7 > 2 → maxsum = 7",
-            "2",
-            "7"
-          ],
-          [
-            "end",
-            "",
-            "",
-            "2 > 7? no",
-            "2",
-            "7"
-          ]
-        ],
-        "reveal": 0
-      },
       "answer": {
-        "value": "7",
+        "value": "(C) 7",
         "choice": [
           "C"
         ],
@@ -2041,28 +1973,40 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "9 = 3 + 4 + 2 would require adding 2 after 4, but 2 < 4 breaks the run."
+          "reason": "9 adds the final 2 to the run 3 + 4, but 2 < 4 breaks the run."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "8 does not arise from any run of the array."
+          "reason": "8 is not the sum of any run the loop forms."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: the best run is 3, 4 with sum 7."
+          "reason": "The runs are [2], [−2], [−1], [3, 4], [2]; the best sum is 7."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "6 is not a run sum here; the 3, 4 run gives 7."
+          "reason": "6 would come from not saving the run [3, 4] before restarting at a[5]."
         }
       ],
+      "shortcut": "The loop computes the largest sum of a run of non-negative, non-decreasing elements: split 2 | −2 | −1 | 3 4 | 2 and take 3 + 4.",
       "pitfalls": [
-        "Missing the a[i] < a[i−1] condition and adding the final 2 (giving 9)."
+        "Treating the condition `a[i] < a[i-1]` as `a[i] < 0` only: a drop also breaks the run.",
+        "Forgetting the final `if (sum > maxsum)` after the loop (irrelevant here, but decisive when the best run is last)."
       ],
-      "verification": "Runs found: {2}, {}, {}, {3, 4}, {2} with sums 2, 0, 0, 7, 2; the maximum is 7."
+      "verification": "Compiled and run with cc: prints 7. With the array {1, 2, 3, −1, 5, 6} it prints 11, confirming the run-sum reading.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "#include <stdio.h>\nint main ( ) {\n    int sum = 0, maxsum = 0, i, n = 6;\n    int a [ ] = {2, -2, -1, 3, 4, 2};\n    for (i = 0; i < n; i++) {\n        if (i == 0 || a[i] < 0 || a[i] < a[i-1]) {\n            if (sum > maxsum) maxsum = sum;\n            sum = (a[i] > 0) ? a[i] : 0;\n        }\n        else sum += a[i];\n    }\n    if (sum > maxsum) maxsum = sum;\n    printf (\"%d\\n\", maxsum);\n}",
+        "line": 4,
+        "vars": {
+          "sum": 0,
+          "maxsum": 0
+        }
+      }
     },
     "it-2007-cs-32": {
       "approach": "The input is a postfix expression: evaluate it with a stack. Taken as digit values it gives 5·2 + 3·(3+2) = 25 (the intended answer). Strictly, the code pushes character codes and prints with %c, which no option shows.",

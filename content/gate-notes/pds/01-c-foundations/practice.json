@@ -407,5 +407,856 @@
    "sizeof-op"
   ],
   "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-02-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "```c\nint x = 5, y = 0;\nif (x > 0)\n    if (y > 0) printf(\"A\");\nelse printf(\"B\");\nprintf(\"C\");\n```\nWhat is printed?",
+  "options": [
+   {
+    "l": "A",
+    "t": "`BC`"
+   },
+   {
+    "l": "B",
+    "t": "`C`"
+   },
+   {
+    "l": "C",
+    "t": "`AC`"
+   },
+   {
+    "l": "D",
+    "t": "`ABC`"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "The `else` belongs to the nearest unmatched `if`, which is `if (y > 0)`, whatever the indentation suggests.",
+   "`x > 0` is true, so the inner `if` runs: `y > 0` is false, so its `else` prints `B`.",
+   "The last `printf` is outside both `if`s and always prints `C`: the output is `BC`."
+  ],
+  "concept": "The dangling else binds to the nearest unmatched if; indentation is ignored.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "That attaches the else to the outer if (as the indentation suggests): since x > 0 is true, the else would be skipped."
+   },
+   {
+    "answer": "D",
+    "why": "Only one of the two branches of an if can run."
+   }
+  ],
+  "blocks": [
+   "dangling-else",
+   "trap-indentation",
+   "if-else"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-02-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "How many times does the body of `for (i = 5; i < 100; i += 7) count++;` execute?",
+  "answer": 14,
+  "solution": [
+   "The counter takes the values 5, 12, 19, …, an arithmetic progression with step 7.",
+   "With the strict test `i < 100` the largest allowed value is 99: the count is $\\lfloor (99 - 5)/7 \\rfloor + 1 = 13 + 1 = 14$.",
+   "Check: the last value is $5 + 13 \\cdot 7 = 96 < 100$ and the next, 103, fails."
+  ],
+  "concept": "An arithmetic loop from a to b with step s runs ⌊(b − a)/s⌋ + 1 times (b − 1 for a strict test).",
+  "common_wrong": [
+   {
+    "answer": 13,
+    "why": "That is the number of gaps (b − a)/s, not the number of values."
+   },
+   {
+    "answer": 15,
+    "why": "That counts 103, which already fails the test."
+   }
+  ],
+  "blocks": [
+   "count-arith",
+   "trap-off-by-one"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-02-q03",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "```c\nint s = 0;\nfor (int i = 1; i <= 4; i++) {\n    switch (i % 3) {\n        case 1: s += 1;\n        default: s += 10; break;\n        case 2: s += 100;\n    }\n}\nprintf(\"%d\", s);\n```\nWhat is printed?",
+  "options": [
+   {
+    "l": "A",
+    "t": "112"
+   },
+   {
+    "l": "B",
+    "t": "142"
+   },
+   {
+    "l": "C",
+    "t": "132"
+   },
+   {
+    "l": "D",
+    "t": "121"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "i % 3 takes the values 1, 2, 0, 1 for i = 1 … 4.",
+   "Value 1 enters at `case 1`, adds 1, falls into `default` (adds 10) and breaks: +11. This happens for i = 1 and i = 4.",
+   "Value 2 enters at `case 2`: +100. Value 0 matches no case, so control goes to `default`: +10, then break.",
+   "Total: 11 + 100 + 10 + 11 = 132."
+  ],
+  "concept": "A switch jumps to the matching label (or default) and falls through to the next break; default can stand anywhere.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That stops each case at its own label, ignoring the fall-through from case 1 into default."
+   },
+   {
+    "answer": "B",
+    "why": "That runs default for every value, as if it were always executed."
+   },
+   {
+    "answer": "D",
+    "why": "That stops the loop after i = 3."
+   }
+  ],
+  "blocks": [
+   "switch",
+   "fallthrough-theorem",
+   "trap-default-first"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-02-q04",
+  "type": "NAT",
+  "marks": 2,
+  "text": "```c\nint c = 0, n = 10;\nfor (int i = 1; i <= n; i++)\n    for (int j = 1; j <= n; j += i)\n        c++;\nprintf(\"%d\", c);\n```\nWhat is printed?",
+  "answer": 33,
+  "solution": [
+   "For a fixed i, the inner loop visits 1, 1 + i, 1 + 2i, … up to 10: $\\lfloor 9/i \\rfloor + 1$ values.",
+   "i = 1 … 10 gives 10, 5, 4, 3, 2, 2, 2, 2, 2, 1.",
+   "The rows have different lengths, so add them: 10 + 5 + 4 + 3 + 2 + 2 + 2 + 2 + 2 + 1 = 33."
+  ],
+  "concept": "A dependent nested loop is counted by adding the inner counts row by row (here a harmonic-type sum, Θ(n log n)).",
+  "common_wrong": [
+   {
+    "answer": 100,
+    "why": "That multiplies the loop bounds as if the inner loop always made 10 passes."
+   },
+   {
+    "answer": 27,
+    "why": "That uses ⌊10/i⌋ instead of ⌊9/i⌋ + 1, missing the start value 1 of each row."
+   }
+  ],
+  "blocks": [
+   "nested-loops",
+   "count-arith"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-02-q05",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following loops terminate? (`int` is 32 bits, `char` 8 bits.)",
+  "options": [
+   {
+    "l": "A",
+    "t": "`for (unsigned u = 5; u >= 0; u--) ;`"
+   },
+   {
+    "l": "B",
+    "t": "`int a = 100; while (a > 1) a = a / 2;`"
+   },
+   {
+    "l": "C",
+    "t": "`float x = 0; while (x != 1.0f) x += 0.1f;`"
+   },
+   {
+    "l": "D",
+    "t": "`unsigned char c = 0; do c += 3; while (c != 10);`"
+   }
+  ],
+  "answer": [
+   "B",
+   "D"
+  ],
+  "solution": [
+   "A: an unsigned value is never negative, so `u >= 0` is always true; after 0, `u--` wraps to 4 294 967 295. Infinite.",
+   "B: a = 100, 50, 25, 12, 6, 3, 1: six passes, then `1 > 1` is false. Terminates.",
+   "C: 0.1f is not exact; after ten additions x is 1.000000119, never exactly 1.0f, and it keeps growing. Infinite.",
+   "D: c runs through 3, 6, 9, … modulo 256. Since 3 and 256 have no common factor, every residue is reached; $3 \\cdot 174 = 522 \\equiv 10 \\pmod{256}$, so the loop stops after 174 passes."
+  ],
+  "concept": "Termination: a test that cannot fail for the type (unsigned ≥ 0), float equality after inexact additions, and modular counters that do or do not reach their target.",
+  "common_wrong": [
+   {
+    "answer": [
+     "B",
+     "C"
+    ],
+    "why": "C needs x to hit 1.0f exactly, which rounding prevents."
+   },
+   {
+    "answer": [
+     "B"
+    ],
+    "why": "D looks infinite because 10 is not a multiple of 3, but the unsigned char wraps modulo 256 and reaches 10 on pass 174."
+   }
+  ],
+  "blocks": [
+   "infinite-loops",
+   "float-loops",
+   "trap-float-equality",
+   "fixed-point"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-02-q06",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "```c\nint n = 0, a = 0, b = 0;\nwhile (n) { a++; n--; }\ndo { b++; } while (n);\nprintf(\"%d %d\", a, b);\n```\nWhat is printed?",
+  "options": [
+   {
+    "l": "A",
+    "t": "`0 1`"
+   },
+   {
+    "l": "B",
+    "t": "`0 0`"
+   },
+   {
+    "l": "C",
+    "t": "`1 1`"
+   },
+   {
+    "l": "D",
+    "t": "The do-while loop never ends"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "`while (n)` tests first: n is 0 (false), so the body never runs and a = 0.",
+   "`do … while (n)` runs the body once (b = 1), then tests n = 0, false, and stops.",
+   "Output: `0 1`."
+  ],
+  "concept": "while tests before the first pass; do-while runs its body at least once.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "That treats do-while like while."
+   },
+   {
+    "answer": "D",
+    "why": "The body does not change n, but n is 0, so the test is false after the first pass."
+   }
+  ],
+  "blocks": [
+   "while",
+   "do-while"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-02-q07",
+  "type": "NAT",
+  "marks": 2,
+  "text": "```c\nint i, j, n = 100;\nfor (i = n, j = 0; i > 0; i /= 2, j += i);\nprintf(\"%d\", j);\n```\nWhat is printed?",
+  "answer": 97,
+  "solution": [
+   "The body is empty; each pass halves i and then adds the **new** i to j.",
+   "i: 100 → 50 → 25 → 12 → 6 → 3 → 1 → 0, so j = 50 + 25 + 12 + 6 + 3 + 1 + 0 = 97.",
+   "Check with the halving-sum theorem: 100 = 1100100₂ has three 1 bits, and 100 − 3 = 97."
+  ],
+  "concept": "The sum of the halvings Σ⌊n/2ᵏ⌋ (k ≥ 1) equals n minus the number of 1 bits of n.",
+  "common_wrong": [
+   {
+    "answer": 197,
+    "why": "That adds n = 100 itself, but the first addition comes after the first halving."
+   },
+   {
+    "answer": 7,
+    "why": "That counts the passes instead of adding the values."
+   }
+  ],
+  "blocks": [
+   "for",
+   "halving-sum",
+   "count-halving"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-02-q08",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "```c\nlong c = 0;\nfor (long i = n; i > 1; i /= 2)\n    for (long j = 1; j < i; j *= 2)\n        c++;\n```\nFor $n = 2^L$, the final value of `c` as a function of n is",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\Theta(\\log n)$"
+   },
+   {
+    "l": "B",
+    "t": "$\\Theta(\\log^2 n)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\Theta(n)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\Theta(n \\log n)$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "The outer loop visits $i = 2^L, 2^{L-1}, \\dots, 2$: L passes.",
+   "For $i = 2^m$ the inner doubling loop visits $1, 2, \\dots, 2^{m-1}$ (all $< 2^m$): m passes.",
+   "So $c = L + (L - 1) + \\dots + 1 = L(L+1)/2$ with $L = \\log_2 n$: $\\Theta(\\log^2 n)$."
+  ],
+  "concept": "Halving and doubling loops each run Θ(log) times; nested, their counts add up to a triangular number of logs.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "The inner loop doubles j, so it runs log i times, not i times."
+   },
+   {
+    "answer": "A",
+    "why": "The inner loop is not constant: it runs m times when i = 2^m."
+   }
+  ],
+  "blocks": [
+   "count-halving",
+   "nested-loops",
+   "triangular-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-02-q09",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "Which of the following compile as standard C?",
+  "options": [
+   {
+    "l": "A",
+    "t": "`char c = 'b'; switch (c) { case 'a' + 1: printf(\"x\"); }`"
+   },
+   {
+    "l": "B",
+    "t": "`double d = 2.0; switch (d) { case 2: printf(\"x\"); }`"
+   },
+   {
+    "l": "C",
+    "t": "`int x = 3; switch (x) { default: printf(\"d\"); case 1: printf(\"1\"); }`"
+   },
+   {
+    "l": "D",
+    "t": "`int x = 3, y = 3; switch (x) { case y: printf(\"y\"); }`"
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "A: `'a' + 1` is an integer constant expression (98); a char controlling expression is promoted to int. Compiles.",
+   "B: the controlling expression of a switch must have integer type; a double is a compile error.",
+   "C: `default` may appear anywhere in the body, including first. Compiles.",
+   "D: a case label must be a constant expression; a variable is not. Compile error."
+  ],
+  "concept": "switch needs an integer controlling expression and integer constant case labels; default may be anywhere.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "default does not have to be the last label."
+   },
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "A variable cannot be a case label, even if its value is known."
+   }
+  ],
+  "blocks": [
+   "switch",
+   "trap-default-first"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-02-q10",
+  "type": "NAT",
+  "marks": 2,
+  "text": "```c\nint i = 0, s = 0;\ndo {\n    i++;\n    if (i % 3 == 0) continue;\n    s += i;\n} while (i < 10);\nprintf(\"%d\", s);\n```\nWhat is printed?",
+  "answer": 37,
+  "solution": [
+   "In a do-while, `continue` jumps to the test `i < 10`; the loop does not restart from the top without testing.",
+   "i takes the values 1 … 10 in the body (the test fails after i = 10). The multiples of 3 (3, 6, 9) are skipped.",
+   "s = (1 + 2 + … + 10) − (3 + 6 + 9) = 55 − 18 = 37."
+  ],
+  "concept": "continue ends the current iteration; in a do-while it goes to the test, in a for to the increment.",
+  "common_wrong": [
+   {
+    "answer": 55,
+    "why": "That ignores the continue."
+   },
+   {
+    "answer": 27,
+    "why": "That stops at i = 9, forgetting that the body runs once more with i = 10 after the test 9 < 10."
+   }
+  ],
+  "blocks": [
+   "break-continue",
+   "do-while"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-03-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "What value does `r` hold after this fragment?\n\n```c\nint n = 13, r = 0;\nwhile (n > 0) { r = r * 2 + n % 2; n /= 2; }\n```",
+  "options": [
+   {
+    "l": "A",
+    "t": "11"
+   },
+   {
+    "l": "B",
+    "t": "13"
+   },
+   {
+    "l": "C",
+    "t": "6"
+   },
+   {
+    "l": "D",
+    "t": "3"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "The loop is digit reversal in base 2: `n % 2` peels the last binary digit and `r * 2 + …` appends it to r (Horner's rule on the peeled digits).",
+   "13 = 1101 in binary. The digits are peeled in the order 1, 0, 1, 1, so r goes 1 → 2 → 5 → 11.",
+   "r = 1011 in binary = 11: the binary digits of 13 in reverse."
+  ],
+  "concept": "The digit-reversal loop works in any base: % b peels the last digit, / b drops it, r*b + d appends it.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Assumes the loop rebuilds n itself; it rebuilds the digits in reverse order."
+   },
+   {
+    "answer": "C",
+    "why": "That is 13 / 2, a single halving, not the result of the loop."
+   }
+  ],
+  "blocks": [
+   "digit-loops",
+   "reverse-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-03-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "How many times does the body of the loop run for `m = 91, n = 35`?\n\n```c\nwhile (m != n) {\n    if (m > n) m = m - n;\n    else       n = n - m;\n}\n```",
+  "answer": 5,
+  "solution": [
+   "Trace the pairs: (91, 35) → (56, 35) → (21, 35) → (21, 14) → (7, 14) → (7, 7): five passes, ending at gcd(91, 35) = 7.",
+   "Check with Euclid's quotients: 91 = 2·35 + 21, 35 = 1·21 + 14, 21 = 1·14 + 7, 14 = 2·7. The quotients sum to 6, and the subtraction loop makes (sum of quotients) − 1 = 5 passes."
+  ],
+  "concept": "Subtraction GCD: each run of subtractions is one Euclid quotient; the last run stops one early when m = n.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "Counts the final subtraction 14 − 7 twice: the loop stops as soon as m = n = 7."
+   },
+   {
+    "answer": 7,
+    "why": "Gives the gcd, not the number of passes."
+   }
+  ],
+  "blocks": [
+   "gcd-subtraction",
+   "gcd-theorem",
+   "gcd-remainder"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-03-q03",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "For positive integers X and Y, the fragment below computes `r` = X^Y.\n\n```c\nint r = 1, a = X, b = Y;\nwhile (b > 0) {\n    if (b & 1) r = r * a;\n    a = a * a;\n    b = b >> 1;\n}\n```\n\nWhich condition holds every time the guard `b > 0` is tested (in exact arithmetic)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$r = X^{Y - b}$"
+   },
+   {
+    "l": "B",
+    "t": "$r \\cdot a^b = X^Y$"
+   },
+   {
+    "l": "C",
+    "t": "$a = X^b$"
+   },
+   {
+    "l": "D",
+    "t": "$r \\cdot a = X^Y$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Initially r = 1, a = X, b = Y, so $r \\cdot a^b = X^Y$.",
+   "If b is odd, write $a^b = a \\cdot (a^2)^{\\lfloor b/2 \\rfloor}$; the body moves the factor a into r, squares a and halves b, so $r \\cdot a^b$ is unchanged. If b is even, $a^b = (a^2)^{b/2}$ and only a and b change: unchanged again.",
+   "At exit b = 0 and the invariant gives r = X^Y. Option A fails after one pass for X = 2, Y = 3 (r = 2, b = 1, but $2^{3-1} = 4$); C and D fail at the first test for Y ≥ 2."
+  ],
+  "concept": "Square-and-multiply keeps res · a^b equal to the answer; at b = 0 only res is left.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Treats b as counting the factors still missing; but b is halved, not decremented, so Y − b is not the exponent collected."
+   },
+   {
+    "answer": "D",
+    "why": "Drops the exponent b; that holds only when b = 1."
+   }
+  ],
+  "blocks": [
+   "power-theorem",
+   "fast-power",
+   "invariant-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-03-q04",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "With all variables `int`, the fragment\n\n```c\nq = 0; r = x;\nwhile (r >= y) { r = r - y; q = q + 1; }\n```\n\nis run with each of the inputs below. For which inputs does it terminate in a state with `x == q*y + r && 0 <= r && r < y`?",
+  "options": [
+   {
+    "l": "A",
+    "t": "x = 7, y = 0"
+   },
+   {
+    "l": "B",
+    "t": "x = −5, y = 3"
+   },
+   {
+    "l": "C",
+    "t": "x = 0, y = 4"
+   },
+   {
+    "l": "D",
+    "t": "x = 23, y = 23"
+   }
+  ],
+  "answer": [
+   "C",
+   "D"
+  ],
+  "solution": [
+   "A: with y = 0 the guard r ≥ 0 stays true for ever (r never changes), so the loop does not terminate.",
+   "B: −5 ≥ 3 is false, so the loop is skipped: q = 0, r = −5. Then x = qy + r and r < y hold, but 0 ≤ r fails.",
+   "C: 0 ≥ 4 is false: q = 0, r = 0, and 0 = 0·4 + 0 with 0 ≤ 0 < 4 ✓.",
+   "D: one pass: r = 0, q = 1, and 23 = 1·23 + 0 with 0 ≤ 0 < 23 ✓."
+  ],
+  "concept": "The division loop is correct for x ≥ 0 and y > 0: y > 0 gives termination, x ≥ 0 gives r ≥ 0 at the start.",
+  "common_wrong": [
+   {
+    "answer": [
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "Forgets that the loop never makes a negative r non-negative: it only subtracts."
+   },
+   {
+    "answer": [
+     "D"
+    ],
+    "why": "Thinks a loop that runs zero times cannot establish the postcondition; the invariant already holds at the start."
+   }
+  ],
+  "blocks": [
+   "division-theorem",
+   "trap-division-precondition",
+   "termination"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-03-q05",
+  "type": "NAT",
+  "marks": 2,
+  "text": "What is printed?\n\n```c\nint x = 3;\nfor (int i = 0; i < 5; i++) x = 3 * x - 4;\nprintf(\"%d\", x);\n```",
+  "answer": 245,
+  "solution": [
+   "The update x ← 3x − 4 has the fixed point f with f = 3f − 4, i.e. f = 2.",
+   "x − 2 is multiplied by 3 on every pass: (3x − 4) − 2 = 3(x − 2). Starting from x − 2 = 1, after five passes x − 2 = 3⁵ = 243.",
+   "So x = 245. Trace check: 3 → 5 → 11 → 29 → 83 → 245."
+  ],
+  "concept": "An affine update x ← cx + d has closed form x_k = f + c^k (x_0 − f) with fixed point f = d/(1 − c).",
+  "common_wrong": [
+   {
+    "answer": 83,
+    "why": "Stops after four passes; i runs 0 … 4, which is five passes."
+   },
+   {
+    "answer": 243,
+    "why": "Forgets to add the fixed point 2 back."
+   }
+  ],
+  "blocks": [
+   "closed-forms",
+   "closed-form-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-03-q06",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "For an `int m` with 1 ≤ m ≤ 46340, what does `g(m)` return?\n\n```c\nint g(int m) {\n    int x = m;\n    while (x * x > m) x = (x + m / x) / 2;\n    return x;\n}\n```",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\lceil \\sqrt m \\rceil$"
+   },
+   {
+    "l": "B",
+    "t": "$\\lfloor \\sqrt m \\rfloor + 1$"
+   },
+   {
+    "l": "C",
+    "t": "$\\lfloor \\sqrt m \\rfloor$"
+   },
+   {
+    "l": "D",
+    "t": "$\\lfloor m/2 \\rfloor$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "The update is Newton's (Heron's) step x ← (x + m/x)/2 in integer arithmetic. Starting at x = m ≥ ⌊√m⌋, every value stays ≥ ⌊√m⌋ (integer AM–GM), and while x² > m the value strictly decreases.",
+   "The loop stops at the first x with x² ≤ m. Since x never drops below ⌊√m⌋ and every x > ⌊√m⌋ has x² > m, it stops exactly at x = ⌊√m⌋.",
+   "Example m = 1000: x = 1000 → 500 → 251 → 127 → 67 → 40 → 32 → 31, and 31² = 961 ≤ 1000: returns 31 = ⌊√1000⌋. (The bound 46340 keeps x·x inside int.)"
+  ],
+  "concept": "Integer Newton iteration for the square root decreases to floor(√m) and stops there.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "That is the counting loop while (i*i <= M) i++, which overshoots by one; this loop stops at the first x whose square fits."
+   },
+   {
+    "answer": "A",
+    "why": "For m = 1000 the ceiling is 32, but 32² = 1024 > 1000 keeps the loop running."
+   }
+  ],
+  "blocks": [
+   "sqrt-loops",
+   "heron-theorem",
+   "isqrt-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-03-q07",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "For an `int n ≥ 0`, consider\n\n```c\nint i = 0, s = 0;\nwhile (i < n) { i++; s += 2 * i - 1; }\n```\n\nWhich of the following are loop invariants (true every time the guard is tested)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$s = i^2$"
+   },
+   {
+    "l": "B",
+    "t": "$i \\le n$"
+   },
+   {
+    "l": "C",
+    "t": "$s \\le n^2$"
+   },
+   {
+    "l": "D",
+    "t": "$s$ is odd"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "C"
+  ],
+  "solution": [
+   "A: initially 0 = 0². If s = i², the pass makes i' = i + 1 and s' = i² + 2(i + 1) − 1 = (i + 1)² ✓.",
+   "B: initially 0 ≤ n. A pass runs only when i < n, so i + 1 ≤ n ✓.",
+   "C: follows from A and B: s = i² ≤ n² ✓.",
+   "D: initially s = 0 is even, so it is not an invariant (also s = 4 after two passes)."
+  ],
+  "concept": "An invariant must hold at the first test and survive a pass; consequences of invariants are invariants too.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "B and C are weaker but still invariants; 'invariant' does not mean 'the one that proves the result'."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "The odd numbers are what is added, not the running sum: 0, 1, 4, 9, … alternate in parity."
+   }
+  ],
+  "blocks": [
+   "invariant-def",
+   "invariant-theorem",
+   "ex-strong-invariant"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-03-q08",
+  "type": "NAT",
+  "marks": 2,
+  "text": "What is the value of `t` after the loop?\n\n```c\nint c[4] = {2, -1, 0, 3}, x = 3, t = 0;\nfor (int k = 0; k < 4; k++) t = t * x + c[k];\n```",
+  "answer": 48,
+  "solution": [
+   "The loop is Horner's rule for $2x^3 - x^2 + 0x + 3$ at x = 3 (starting from t = 0 just adds one harmless pass).",
+   "t: 0 → 2 → 2·3 − 1 = 5 → 5·3 + 0 = 15 → 15·3 + 3 = 48.",
+   "Check: 2·27 − 9 + 0 + 3 = 48."
+  ],
+  "concept": "Horner's rule: t = t·x + c[k] keeps the value of the polynomial of the first k coefficients.",
+  "common_wrong": [
+   {
+    "answer": 66,
+    "why": "Adds +x² instead of −x²: 54 + 9 + 3."
+   },
+   {
+    "answer": 15,
+    "why": "Stops one pass early, before the constant term is added."
+   }
+  ],
+  "blocks": [
+   "horner",
+   "horner-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-03-q09",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "What does the program print?\n\n```c\nvoid swap(int *p, int *q) { *p = *p + *q; *q = *p - *q; *p = *p - *q; }\nint main(void) {\n    int v[3] = {4, 7, 9};\n    swap(&v[0], &v[2]);\n    swap(&v[1], &v[1]);\n    printf(\"%d %d %d\", v[0], v[1], v[2]);\n    return 0;\n}\n```",
+  "options": [
+   {
+    "l": "A",
+    "t": "`9 7 4`"
+   },
+   {
+    "l": "B",
+    "t": "`4 0 9`"
+   },
+   {
+    "l": "C",
+    "t": "`9 14 4`"
+   },
+   {
+    "l": "D",
+    "t": "`9 0 4`"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "The first call has two distinct objects, so the arithmetic swap works: v = {9, 7, 4}.",
+   "In the second call p and q both point to v[1]: *p = 7 + 7 = 14, then *q = 14 − 14 = 0 (the same cell), then *p = 0 − 0 = 0.",
+   "So v = {9, 0, 4}."
+  ],
+  "concept": "The swap without a temporary assumes two different objects; an aliased call zeroes the value.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is what a swap with a temporary variable prints; the arithmetic swap destroys an aliased value."
+   },
+   {
+    "answer": "C",
+    "why": "Stops after the first statement of the aliased call."
+   }
+  ],
+  "blocks": [
+   "swap-arith",
+   "trap-swap-alias",
+   "ex-swap-alias"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-pds-01-03-q10",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "For a real x and a large n, what does `s` approximate?\n\n```c\ndouble s = 0, t = x;\nfor (int i = 1; i <= n; i++) {\n    s += t;\n    t = -t * x * x / ((2 * i) * (2 * i + 1));\n}\n```",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\sin x$"
+   },
+   {
+    "l": "B",
+    "t": "$\\cos x$"
+   },
+   {
+    "l": "C",
+    "t": "$e^x$"
+   },
+   {
+    "l": "D",
+    "t": "$\\ln(1 + x)$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "The running term starts at x and is multiplied by $-x^2 / ((2i)(2i + 1))$: the terms are $x, -\\frac{x^3}{3!}, \\frac{x^5}{5!}, \\dots$",
+   "Invariant: before pass i, $t = (-1)^{i-1} \\frac{x^{2i-1}}{(2i-1)!}$ and s is the sum of the earlier terms.",
+   "$x - \\frac{x^3}{3!} + \\frac{x^5}{5!} - \\dots = \\sin x$ (for x = 1 the loop gives 0.841471 = sin 1)."
+  ],
+  "concept": "A series loop is identified by its first term and the ratio between consecutive terms.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "cos x starts at 1 and has even powers, with denominators (2i − 1)(2i)."
+   },
+   {
+    "answer": "C",
+    "why": "e^x has ratio x/i with no sign change and starts at 1."
+   }
+  ],
+  "blocks": [
+   "series-loops",
+   "series-derivation"
+  ],
+  "source": "nexora"
  }
 ]

@@ -3,27 +3,48 @@
   "version": 2,
   "solutions": {
     "cse-2003-cs-1": {
-      "approach": "Track what $p$ holds after each iteration: it builds the next Taylor term of $e^x$, and $s$ accumulates those terms.",
+      "approach": "Concept tested: **recognising a series by its running term**. The term `p` is multiplied by $x/i$ on pass $i$, so it is $x^i / i!$, and `s` adds these terms to the initial 1: the series of $e^x$.",
       "concepts": [
+        "Series summation",
         "Loop invariant",
-        "Taylor series of e^x"
+        "Exponential series"
       ],
       "steps": [
         {
-          "title": "Invariant for p",
-          "body": "Initially $p = 1$. In iteration $i$, $p \\leftarrow p\\cdot\\frac{x}{i}$, so after iterations $i = 1, 2, \\dots, k$:\n$$p = \\frac{x}{1}\\cdot\\frac{x}{2}\\cdots\\frac{x}{k} = \\frac{x^k}{k!}$$"
+          "title": "Follow the running term",
+          "body": "$p$ starts at 1 and is multiplied by $x/1$, then $x/2$, then $x/3$, …: after pass $i$, $p = \\frac{x^i}{i!}$.",
+          "scene": {
+            "line": 4,
+            "vars": {
+              "i": 1,
+              "p": "x",
+              "s": "1 + x"
+            }
+          }
         },
         {
-          "title": "Invariant for s",
-          "body": "$s$ starts at $1 = \\frac{x^0}{0!}$ and each iteration adds the new $p$. The loop runs for $i = 1, \\dots, y-1$, so\n$$s = \\sum_{k=0}^{y-1} \\frac{x^k}{k!}$$"
+          "title": "State the invariant",
+          "body": "At the test with index $i$: $s = \\sum_{k=0}^{i-1} \\frac{x^k}{k!}$ and $p = \\frac{x^{i-1}}{(i-1)!}$. It holds at $i = 1$ ($s = p = 1$) and each pass appends the next term.",
+          "scene": {
+            "line": 3,
+            "vars": {
+              "i": "i",
+              "p": "x^(i−1)/(i−1)!",
+              "s": "Σ x^k/k!, k < i"
+            }
+          }
         },
         {
-          "title": "Large y",
-          "body": "As $y \\to \\infty$ this is the Maclaurin series $\\sum_{k\\ge 0} \\frac{x^k}{k!} = e^x$."
+          "title": "The exit",
+          "body": "The loop stops at $i = y$, returning $1 + x + \\frac{x^2}{2!} + \\dots + \\frac{x^{y-1}}{(y-1)!}$. As $y$ grows this tends to $e^x$. Numerically `f(1, 20)` returns 2.718282 ≈ e.",
+          "scene": {
+            "line": 7,
+            "output": "f(1, 20) = 2.718282"
+          }
         }
       ],
       "answer": {
-        "value": "$e^x$ — option (B)",
+        "value": "(B) eˣ",
         "choice": [
           "B"
         ],
@@ -33,28 +54,43 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$x^y$ would need $p$ multiplied by $x$ only; here it is also divided by $i$."
+          "reason": "x^y would need p *= x with no division by i; f(1, 20) would then be 20 (a sum of ones) or 1, not 2.718."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "The partial sums $\\sum_{k<y} x^k/k!$ converge to $e^x$."
+          "reason": "The sum of x^k/k! for k < y, which converges to eˣ."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\ln(1+x)$ has terms $(-1)^{k+1}x^k/k$ — alternating signs and no factorial."
+          "reason": "ln(1 + x) = x − x²/2 + x³/3 − … has alternating signs and no factorials."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$x^x$ does not depend on the loop structure at all; no such series is formed."
+          "reason": "x^x is unrelated; f(1, y) would tend to 1."
         }
       ],
+      "shortcut": "The ratio between consecutive terms identifies the series: x/i (with no sign change) means eˣ.",
       "pitfalls": [
-        "Forgetting that $s$ already includes the $k=0$ term (initial value 1)."
+        "Reading `p *= x/i` as `p = x^i` and forgetting that the divisions accumulate into i!.",
+        "Worrying about integer division: x is float, so x/i is a floating division."
       ],
-      "verification": "For $x = 1$, $y = 6$: $s = 1 + 1 + 0.5 + 0.1667 + 0.0417 + 0.0083 = 2.7167 \\approx e$."
+      "verification": "Compiled as given: f(1, 20) = 2.718282, f(2, 20) = 7.389057 (e² = 7.389056), f(1, 5) = 2.708333; the invariant is checked with exact fractions for three values of x.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "float f(float x, int y) {\n    float p, s; int i;\n    for (s=1, p=1, i=1; i < y; i++) {\n        p *= x/i;\n        s += p;\n    }\n    return s;\n}\n",
+        "title": "f(x, y)",
+        "line": 3,
+        "vars": {
+          "x": 1,
+          "i": 1,
+          "p": 1,
+          "s": 1
+        }
+      }
     },
     "cse-2003-cs-2": {
       "approach": "An expression can be assigned to only if it is a modifiable lvalue; an array name (or a row of a 2-D array) is not.",
@@ -5731,32 +5767,46 @@
       }
     },
     "cse-2003-cs-88": {
-      "approach": "A[j] stays 0 only if j % k == 0 for every k in 2..min(j−1, TwoLog_n). Show no j in 3..n can be divisible by all those k.",
+      "approach": "Concept tested: **tracing what a loop really computes**. The fragment looks like the sieve of Eratosthenes, but it ORs in `j % k`, which is non-zero when k does **not** divide j; every j ≥ 3 has such a k in the range, so every entry is marked and nothing is printed.",
       "concepts": [
-        "Loop analysis",
-        "Divisibility",
-        "LCM growth"
+        "Loop tracing",
+        "Nested loops",
+        "Logical OR",
+        "Remainder"
       ],
+      "given": "n ≥ 3, TwoLog_n = 2⌊log₂ n⌋, A[3..n] set to 0 first.",
       "steps": [
         {
-          "title": "When is j printed?",
-          "body": "\\`A[j] = A[j] || (j%k)\\` becomes 1 as soon as some $k$ with $2 \\le k < j$, $k \\le T$ ($T = 2\\lfloor\\log_2 n\\rfloor$) does **not** divide $j$. So $j$ is printed iff $j$ is divisible by every $k \\in [2, \\min(j-1, T)]$."
+          "title": "Read the update",
+          "body": "`A[j] = A[j] || (j % k)`: once A[j] is 1 it stays 1, and it becomes 1 as soon as some k (2 ≤ k ≤ TwoLog_n, k < j) gives `j % k ≠ 0`, i.e. some k that does **not** divide j. A real sieve would mark j when k *divides* it.",
+          "scene": {
+            "reveal": 1
+          }
         },
         {
-          "title": "Case j − 1 ≤ T",
-          "body": "Then $(j-1) \\mid j$, which forces $j = 2$ — but $j \\ge 3$. Not printed."
+          "title": "Odd j",
+          "body": "k = 2 is always in range (n ≥ 3 makes TwoLog_n ≥ 2) and 2 < j. For odd j, `j % 2 = 1`: marked.",
+          "scene": {
+            "reveal": 3
+          }
         },
         {
-          "title": "Case j − 1 > T",
-          "body": "Then $\\operatorname{lcm}(2,\\dots,T) \\mid j$. With $L = \\lfloor\\log_2 n\\rfloor \\ge 2$ (i.e. $n\\ge4$): $T = 2L$ and $\\operatorname{lcm}(1..T) \\ge 2^{T-1} = 2^{2L-1} \\ge 2^{L+1} > n \\ge j$, impossible. Examples: $n=4..7$: $T=4$, lcm $=12 > 7$; $n=8..15$: $T=6$, lcm $=60$. For $n=3$: $T=2$ and $3 \\bmod 2 = 1$."
+          "title": "Even j",
+          "body": "Let m be the smallest number ≥ 2 that does not divide j. All of 2 … m − 1 divide j, so their lcm (≥ 2^(m−2)) is ≤ j; hence m ≤ ⌊log₂ j⌋ + 2 ≤ 2⌊log₂ n⌋ (n ≥ 4), and m ≤ j − 1 since j − 1 never divides j. So k = m is tried and marks A[j]. E.g. j = 4: k = 3; j = 6: k = 4; j = 12: k = 5.",
+          "scene": {
+            "reveal": 6
+          }
         },
         {
-          "title": "Result",
-          "body": "No $j$ is printed — the empty set."
+          "title": "What is printed",
+          "body": "Every A[j] with 3 ≤ j ≤ n is 1, so the last loop prints **nothing**: the empty set.",
+          "scene": {
+            "reveal": 7
+          }
         }
       ],
       "answer": {
-        "value": "{ } (nothing is printed)",
+        "value": "(D) { }",
         "choice": [
           "D"
         ],
@@ -5766,28 +5816,84 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Factorials such as 6 are not divisible by 4 (k = 4 ≤ T for n ≥ 4), so 6 is not printed."
+          "reason": "Factorials such as 6 = 3! are marked too (6 % 4 = 2)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Squares like 4 are not divisible by 3 (k = 3 ≤ T for n ≥ 4)."
+          "reason": "Squares such as 4 and 9 are marked (4 % 3 = 1, 9 % 2 = 1)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Primes are exactly the numbers with j % k ≠ 0, so primes get A[j] = 1 — the test is inverted."
+          "reason": "Primes would be printed by the sieve `A[j] || !(j % k)`, which marks multiples; this code marks non-multiples, so primes are marked as well (3 % 2 = 1)."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: no j ≥ 3 is divisible by all k in the range."
+          "reason": "Every j from 3 to n has a non-divisor k in the loop's range, so every A[j] becomes 1 and nothing is printed."
         }
       ],
+      "shortcut": "Try j = 3: k = 2 gives 3 % 2 = 1, so 3 is marked. 3 is prime, a square? no, a factorial? no; already C is dead, and the same one-line test kills every odd j. Then any even j: try k = 3 (or the next non-divisor).",
       "pitfalls": [
-        "Mistaking it for a sieve: a sieve would mark j when j % k == 0, but here non-divisibility sets the flag."
+        "Pattern-matching the code to the sieve of Eratosthenes and answering C without reading `j % k` versus `!(j % k)`.",
+        "Forgetting that `||` keeps A[j] at 1 once set, so the order of the k values does not matter."
       ],
-      "verification": "Hand-run for n = 8 (T = 6): every j in 3..8 has some k ≤ 6, k < j not dividing it, so nothing prints."
+      "verification": "Compiled and run for every n from 3 to 129: nothing printed. Python confirms for all j ≤ n < 400 that the smallest non-divisor of j lies in the loop's range. With `!(j % k)` the same fragment prints 3 5 7 for n = 10.",
+      "animation": {
+        "kind": "table",
+        "title": "n = 10, TwoLog_n = 6: the first k that marks each j",
+        "cols": [
+          "first k with j % k ≠ 0",
+          "A[j]"
+        ],
+        "rows": [
+          [
+            "2",
+            "1"
+          ],
+          [
+            "3",
+            "1"
+          ],
+          [
+            "2",
+            "1"
+          ],
+          [
+            "4",
+            "1"
+          ],
+          [
+            "2",
+            "1"
+          ],
+          [
+            "3",
+            "1"
+          ],
+          [
+            "2",
+            "1"
+          ],
+          [
+            "3",
+            "1"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "j = 3",
+          "j = 4",
+          "j = 5",
+          "j = 6",
+          "j = 7",
+          "j = 8",
+          "j = 9",
+          "j = 10"
+        ],
+        "reveal": 0
+      }
     },
     "cse-2003-cs-89": {
       "approach": "Track the global x and P's local x separately; C uses static scoping, so Q sees the global x, and y points to the global x.",

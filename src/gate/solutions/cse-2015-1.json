@@ -2380,24 +2380,50 @@
       "verification": "Check every parent–child pair in (B): 40 ≥ 35, 20; 35 ≥ 10, 30; 20 ≥ 16, 17; 10 ≥ 8, 4; 30 ≥ 15 ✓"
     },
     "cse-2015-1-cs-33": {
-      "approach": "The loop computes integer division by repeated subtraction. Find the loop invariant and add the exit condition.",
+      "approach": "Concept tested: **postcondition = invariant + failed guard**. The loop keeps $x = qy + r$ (each pass moves one $y$ from $r$ into $qy$) and stops when $r \\ge y$ fails, i.e. $r < y$.",
       "concepts": [
-        "Loop invariant",
         "Postcondition",
-        "Integer division"
+        "Loop invariant",
+        "Division by repeated subtraction"
       ],
+      "given": "x and y are positive integers.",
       "steps": [
         {
-          "title": "Invariant",
-          "body": "Initially $q = 0$ and $r = x$, so $x = qy + r$. Each iteration does $r \\leftarrow r - y$ and $q \\leftarrow q + 1$, so $(q+1)y + (r - y) = qy + r = x$. The invariant $x = qy + r$ holds throughout."
+          "title": "The invariant",
+          "body": "Initially $q = 0$, $r = x$: $x = 0 \\cdot y + x$ ✓. A pass does $r \\leftarrow r - y$, $q \\leftarrow q + 1$, and $(q + 1)y + (r - y) = qy + r$, so $x = qy + r$ holds at every test.",
+          "scene": {
+            "line": 4,
+            "vars": {
+              "x": 17,
+              "y": 5,
+              "q": 0,
+              "r": 17
+            }
+          }
         },
         {
-          "title": "Exit",
-          "body": "The loop stops when the guard $r \\ge y$ fails, i.e. $r < y$. Postcondition: $x = qy + r \\wedge r < y$, which is option (B). It is the quotient-remainder relation."
+          "title": "The exit",
+          "body": "The loop ends when the guard `r >= y` is false: $r < y$. The postcondition is the invariant joined with this: $\\{x = qy + r \\wedge r < y\\}$.",
+          "scene": {
+            "line": 8,
+            "vars": {
+              "x": 17,
+              "y": 5,
+              "q": 3,
+              "r": 2
+            }
+          }
+        },
+        {
+          "title": "Check on x = 17, y = 5",
+          "body": "$(q, r)$: $(0, 17), (1, 12), (2, 7), (3, 2)$. B: $17 = 3 \\cdot 5 + 2$ and $2 < 5$ ✓. A: $2 = 3 \\cdot 17 + 5$ ✗. C: $5 = 3 \\cdot 17 + 2$ ✗. D: $4 < -3$ ✗.",
+          "scene": {
+            "line": 9
+          }
         }
       ],
       "answer": {
-        "value": "$\\{x = qy + r \\wedge r < y\\}$",
+        "value": "(B) {x = qy + r ∧ r < y}",
         "choice": [
           "B"
         ],
@@ -2407,25 +2433,40 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$r = qx + y$ swaps the roles of the variables. With $x = 7, y = 3$ the result is $q = 2, r = 1$, and $1 \\ne 2 \\cdot 7 + 3$."
+          "reason": "Swaps the roles of x and r: for x = 17, y = 5 it claims 2 = 3·17 + 5."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: the invariant $x = qy + r$ plus the negated guard $r < y$."
+          "reason": "Invariant x = qy + r and the negated guard r < y: the quotient–remainder relation."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$y = qx + r$ is the wrong relation. Also $0 < r$ fails when $y$ divides $x$, where $r = 0$."
+          "reason": "Swaps x and y, and 0 < r fails whenever y divides x (r = 0)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Not implied: for $x = 7, y = 3$ the result is $q = 2, r = 1$, and $3 < -2$ is false."
+          "reason": "Not related to the loop: for x = 17, y = 5 it claims 4 < −3."
         }
       ],
-      "verification": "Trace $x = 7, y = 3$: $(q, r) = (0, 7) \\to (1, 4) \\to (2, 1)$, stopping because $1 < 3$. Check: $7 = 2 \\cdot 3 + 1$ ✓"
+      "shortcut": "Postcondition of a loop = (what every pass preserves) ∧ (not the guard). Only B has the shape \"x = qy + r and r < y\".",
+      "pitfalls": [
+        "Picking C because it adds 0 < r: the remainder can be 0 (x = 10, y = 5 ends with r = 0).",
+        "Mixing up which variable is divided: q counts copies of y taken out of x."
+      ],
+      "verification": "Simulated for every x, y from 1 to 59: B holds at the end every time, and each of A, C, D fails for some pair; the trace for (17, 5) is compiled in C.",
+      "animation": {
+        "kind": "code",
+        "lang": "pseudo",
+        "code": "begin\n  q := 0\n  r := x\n  while r >= y do\n  begin\n    r := r - y\n    q := q + 1\n  end\nend\n",
+        "line": 2,
+        "vars": {
+          "x": 17,
+          "y": 5
+        }
+      }
     },
     "cse-2015-1-cs-34": {
       "approach": "The lattice is the diamond $M_3$, which is not distributive. Find the triples that break $x \\vee (y \\wedge z) = (x \\vee y) \\wedge (x \\vee z)$ and compare with $5^3 = 125$.",

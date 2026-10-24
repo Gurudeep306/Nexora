@@ -3614,78 +3614,69 @@
       "verification": "1023 = 2¹⁰ − 1 is a complete tree with 10 levels; the last level holds 2⁹ = 512 leaves."
     },
     "cse-2020-cs-48": {
-      "approach": "tob stores the binary digits of b (LSB first); pp is square-and-multiply, so pp(a, b) = a^b. Trace it for b = 4.",
+      "approach": "Concept tested: **binary exponentiation over the bits of the exponent**. `tob` stores the bits of $b$ lowest first; `pp` keeps $ex = a^{2^i}$ and multiplies it into `tot` when bit $i$ is 1, so it returns $a^b$: $3^4 = 81$.",
       "concepts": [
-        "Binary exponentiation",
-        "Code tracing"
+        "Binary representation",
+        "Fast exponentiation",
+        "Loop invariant"
       ],
       "steps": [
         {
-          "title": "tob(4)",
-          "body": "$4 \\bmod 2 = 0$, $b=2$; $2 \\bmod 2 = 0$, $b=1$; $1 \\bmod 2 = 1$, $b=0$. So arr $= [0,0,1]$, len $= 3$.",
+          "title": "tob(4, arr)",
+          "body": "$4 \\% 2 = 0$: arr[0] = 0, b = 2; arr[1] = 0, b = 1; arr[2] = 1, b = 0. It returns $i = 3$: the bits of 4 = 100₂, lowest first.",
           "scene": {
-            "reveal": 0,
-            "caption": "arr = [0, 0, 1]"
+            "line": 5,
+            "vars": {
+              "b": 0,
+              "i": 3,
+              "arr": "0 0 1"
+            }
           }
         },
         {
-          "title": "Loop in pp",
-          "body": "Start tot $=1$, ex $=3$.\n- $i=0$: arr 0, tot stays 1; ex $=9$.\n- $i=1$: arr 0, tot stays 1; ex $=81$.\n- $i=2$: arr 1, tot $=1 \\times 81 = 81$; ex $=6561$.",
+          "title": "The loop in pp",
+          "body": "Invariant at index $i$: $ex = 3^{2^i}$ and $tot = 3^{(4 \\bmod 2^i)}$. $i = 0$: bit 0, ex = 9. $i = 1$: bit 0, ex = 81. $i = 2$: bit 1, tot = 1·81 = 81, ex = 6561.",
           "scene": {
-            "reveal": 12,
-            "hl": [
-              {
-                "r": 2,
-                "tone": "success"
-              }
-            ]
+            "line": 18,
+            "vars": {
+              "i": 2,
+              "tot": 81,
+              "ex": 6561,
+              "len": 3
+            }
           }
         },
         {
-          "title": "Result",
-          "body": "pp(3,4) returns **81** $=3^4$."
+          "title": "Return",
+          "body": "The loop ends at $i = len = 3$ and returns **81** $= 3^4$. The last square (6561) is computed but never used.",
+          "scene": {
+            "line": 21,
+            "output": "81"
+          }
         }
       ],
-      "animation": {
-        "kind": "table",
-        "cols": [
-          "i",
-          "arr[i]",
-          "tot after",
-          "ex after"
-        ],
-        "rows": [
-          [
-            "0",
-            "0",
-            "1",
-            "9"
-          ],
-          [
-            "1",
-            "0",
-            "1",
-            "81"
-          ],
-          [
-            "2",
-            "1",
-            "81",
-            "6561"
-          ]
-        ],
-        "reveal": 0,
-        "mono": true
-      },
       "answer": {
         "value": "81",
         "number": 81,
         "matchesKey": true
       },
+      "shortcut": "pp(a, b) computes a^b by the binary method, so pp(3, 4) = 3⁴ = 81.",
       "pitfalls": [
-        "tot is multiplied by ex *before* ex is squared in the same iteration."
+        "Multiplying tot for every bit instead of only the 1 bits (gives 3·9·81).",
+        "Reading the bits highest first: arr[0] is the lowest bit, matched with ex = a."
       ],
-      "verification": "pp computes a^b by square-and-multiply; 3⁴ = 81."
+      "verification": "Compiled as given: pp(3, 4) prints 81 and tob(4) gives len 3 with bits 0 0 1; pp(a, b) = a^b for a ≤ 4, b ≤ 14, and the invariant ex = a^(2^i), tot = a^(b mod 2^i) is checked in Python.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "int tob(int b, int* arr){\n   int i;\n   for(i=0; b>0; i++){\n      if(b%2) arr[i]=1;\n      else    arr[i]=0;\n      b = b/2;\n   }\n   return(i);\n}\n\nint pp(int a,int b) {\n   int arr[20];\n   int i, tot = 1, ex, len;\n   ex = a;\n   len = tob(b,arr);\n   for(i=0; i<len; i++){\n      if(arr[i]==1)\n         tot = tot * ex;\n      ex = ex * ex;\n   }\n   return(tot);\n}\n",
+        "title": "pp(3, 4)",
+        "line": 12,
+        "vars": {
+          "a": 3,
+          "b": 4
+        }
+      }
     },
     "cse-2020-cs-49": {
       "approach": "Every edge weighs at least 1 and a spanning tree on 100 vertices has 99 edges, so the weight is at least 99. The path v1–v2–…–v100 uses only weight-1 edges, reaching that bound.",

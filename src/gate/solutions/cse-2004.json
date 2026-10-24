@@ -1831,23 +1831,38 @@
       "verification": "Sum of increments 1 + 2 + 3 = 6 added to 1 gives 7, the first value ≥ 5."
     },
     "cse-2004-cs-32": {
-      "approach": "Each iteration moves the last digit of n to the end of rev. After j iterations, n has lost its last j digits and rev holds them in reverse order.",
+      "approach": "Concept tested: **the invariant of digit reversal**. Each pass moves the last digit of `n` to the end of `rev`; after $j$ passes, `n` is the first $m - j$ digits and `rev` the last $j$ digits in reverse order.",
       "concepts": [
         "Loop invariant",
-        "Digit reversal"
+        "Digit extraction",
+        "Integer division and remainder"
       ],
+      "given": "$n = d_1 d_2 \\dots d_m$ (decimal digits), and the loop `rev = rev * 10 + n % 10; n = n / 10;` while $n > 0$.",
       "steps": [
         {
-          "title": "One iteration",
-          "body": "\\`rev = rev*10 + n%10\\` appends the last digit of n to rev; \\`n = n/10\\` deletes it from n."
+          "title": "One pass",
+          "body": "`n % 10` is the last digit of the current $n$; `rev * 10 + …` appends it to `rev`; `n / 10` deletes it from `n`.",
+          "scene": {
+            "reveal": 3
+          }
         },
         {
-          "title": "After j iterations",
-          "body": "Digits $d_m, d_{m-1}, \\ldots, d_{m-j+1}$ (j digits) have moved, in that order: $n = d_1 d_2 \\ldots d_{m-j}$ **and** $rev = d_m d_{m-1} \\ldots d_{m-j+1}$."
+          "title": "By induction",
+          "body": "After 0 passes $n = d_1 \\dots d_m$, $rev = 0$. If after $j$ passes $n = d_1 \\dots d_{m-j}$ and $rev = d_m \\dots d_{m-j+1}$, the next pass peels $d_{m-j}$: $n = d_1 \\dots d_{m-j-1}$, $rev = d_m \\dots d_{m-j}$. That is option A.",
+          "scene": {
+            "reveal": 9
+          }
+        },
+        {
+          "title": "Refute the others on n = 4729 after two passes",
+          "body": "The state is $n = 47$, $rev = 92$. B claims $n = 29$ or $rev = 74$: false. D claims $n = 4729$ or $rev = 9274$: false (D holds only before the loop or at its end). C ($n \\ne rev$) happens to hold, but for $n = 11$ one pass gives $n = rev = 1$.",
+          "scene": {
+            "reveal": 15
+          }
         }
       ],
       "answer": {
-        "value": "$n = d_1 \\ldots d_{m-j}$ and $rev = d_m \\ldots d_{m-j+1}$",
+        "value": "(A) n = d₁d₂…d_{m−j} and rev = d_m d_{m−1}…d_{m−j+1}",
         "choice": [
           "A"
         ],
@@ -1857,25 +1872,75 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: both parts hold simultaneously after the j-th iteration."
+          "reason": "Each pass moves one digit from the end of n to the end of rev, which is exactly this statement for every j."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "n keeps its **leading** digits, not the trailing ones, and \"or\" is too weak for an invariant."
+          "reason": "Both parts describe the wrong digits: after two passes on 4729, n = 47 (not 29) and rev = 92 (not 74)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$n \\ne rev$ is not an invariant: for $n = 11$, after one iteration $n = 1$ and $rev = 1$. It also says nothing about the digits."
+          "reason": "Not an invariant: for n = 11 the first pass gives n = 1 and rev = 1."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "These are the initial and final states, joined by \"or\"; neither describes the j-th iteration."
+          "reason": "The first part holds only before the loop and the second only after it; in between both are false."
         }
       ],
-      "verification": "$n = 1234$, $j = 1$: $n = 123 = d_1d_2d_3$, $rev = 4 = d_4$. ✓"
+      "shortcut": "An invariant must describe the middle of the loop. Only A changes with j; options that mention only the start or the end state cannot be right.",
+      "pitfalls": [
+        "Accepting an \"or\" of the start state and the end state: an invariant must hold after every pass, including the middle ones.",
+        "Accepting C from one example: always test candidates on a second input."
+      ],
+      "verification": "The loop is compiled and traced on 4729 (states 472/9, 47/92, 4/927, 0/9274); option A is checked at every pass for every n below 20 000, and the four options are evaluated at j = 2 on 4729 and on n = 11.",
+      "animation": {
+        "kind": "table",
+        "title": "n = 4729, after each pass",
+        "cols": [
+          "n",
+          "rev",
+          "A holds?"
+        ],
+        "rows": [
+          [
+            "472",
+            "9",
+            "yes"
+          ],
+          [
+            "47",
+            "92",
+            "yes"
+          ],
+          [
+            "4",
+            "927",
+            "yes"
+          ],
+          [
+            "0",
+            "9274",
+            "yes"
+          ],
+          [
+            "(n = 11) 1",
+            "1",
+            "C fails"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "j = 1",
+          "j = 2",
+          "j = 3",
+          "j = 4",
+          "other n"
+        ],
+        "reveal": 0
+      }
     },
     "cse-2004-cs-33": {
       "approach": "Index the first copy: \\`p[0] = s[length - 0] = s[6]\\`, which is the string terminator \\`'\\0'\\`. So \\`p\\` begins with NUL and prints as the empty string.",
@@ -2426,23 +2491,50 @@
       "verification": "Without ordering or hashing there is no faster duplicate check than pairwise comparison."
     },
     "cse-2004-cs-41": {
-      "approach": "Subtracting the smaller from the larger preserves gcd(m, n) (Euclid's subtraction form) and ends when both are equal — that common value is the gcd.",
+      "approach": "Concept tested: **Euclid's subtraction GCD as a loop with an invariant**. $\\gcd(m, n)$ never changes when the larger number is replaced by the difference; the loop ends with $m = n$, which then is the gcd.",
       "concepts": [
-        "Euclid algorithm",
-        "Loop invariant"
+        "GCD",
+        "Loop invariant",
+        "Variant"
       ],
       "steps": [
         {
           "title": "Invariant",
-          "body": "$\\gcd(m, n) = \\gcd(m - n, n)$ when $m > n$, so $\\gcd(m,n) = \\gcd(x,y)$ throughout. Values stay positive and decrease, so the loop ends."
+          "body": "$m > 0$, $n > 0$ and $\\gcd(m, n) = \\gcd(x, y)$. It holds initially ($m = x$, $n = y$, both positive). A pass replaces the larger by the difference, which is positive and has the same common divisors with the smaller one.",
+          "scene": {
+            "line": 6,
+            "vars": {
+              "m": 126,
+              "n": 105
+            }
+          }
+        },
+        {
+          "title": "Variant",
+          "body": "$m + n$ falls by $\\min(m, n) \\ge 1$ each pass and stays $\\ge 2$, so the loop terminates.",
+          "scene": {
+            "line": 8,
+            "vars": {
+              "m": 21,
+              "n": 105
+            }
+          }
         },
         {
           "title": "Exit",
-          "body": "At exit $m = n$, and $\\gcd(n,n) = n$, so it prints $\\gcd(x,y)$. Example $x=12, y=18$: $(12,18) \\to (12,6) \\to (6,6)$, prints 6."
+          "body": "The loop stops when $m = n$; since $\\gcd(n, n) = n$, the program prints $\\gcd(x, y)$. For (126, 105) the states are (21, 105), (21, 84), (21, 63), (21, 42), (21, 21): prints 21.",
+          "scene": {
+            "line": 12,
+            "vars": {
+              "m": 21,
+              "n": 21
+            },
+            "output": "21"
+          }
         }
       ],
       "answer": {
-        "value": "the greatest common divisor of x and y",
+        "value": "(C) the greatest common divisor of x and y",
         "choice": [
           "C"
         ],
@@ -2452,44 +2544,74 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Nothing is ever added."
+          "reason": "Nothing is ever added; the numbers only decrease. For (12, 18) it prints 6, not 30."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "x mod y would stop when $m < n$; e.g. (12,18) prints 6, but $12 \\bmod 18 = 12$."
+          "reason": "x mod y would keep subtracting y from x only; here the roles swap. (12, 18) prints 6, while 12 mod 18 = 12."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct."
+          "reason": "gcd(m, n) is invariant and the loop stops at m = n = gcd(x, y)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "LCM(12,18) = 36, but the program prints 6."
+          "reason": "The result divides both inputs, so it cannot be their LCM (36 for (12, 18)) unless x = y."
         }
       ],
-      "verification": "Trace (12, 18) prints 6 = gcd."
+      "shortcut": "Same loop as GATE 1995 and 2025: \"subtract the smaller from the larger until equal\" is the gcd.",
+      "pitfalls": [
+        "Thinking the loop computes a remainder because it subtracts repeatedly: a remainder loop subtracts the same y every time.",
+        "Ignoring the precondition x > 0, y > 0: with a zero input the loop never ends."
+      ],
+      "verification": "Compiled (with `int main`) and run on the inputs (126, 105), (12, 18), (7, 13), (100, 75), (9, 9): prints 21, 6, 1, 25, 9, the gcd each time; the loop is also compared with math.gcd for all pairs up to 60.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "main ()\n{ int x, y, m, n;\n  scanf (\"%d %d\", &x, &y);\n  /* Assume x > 0 and y > 0 */\n  m = x; n = y;\n  while (m != n)\n  { if (m > n)\n        m = m - n;\n    else\n        n = n - m;\n  }\n  printf(\"%d\", n);\n}\n",
+        "line": 5,
+        "vars": {
+          "x": 126,
+          "y": 105
+        }
+      }
     },
     "cse-2004-cs-42": {
-      "approach": "The loop keeps $x \\cdot y = m$ with $y \\le \\sqrt m \\le x$ and replaces $x$ by the average of $x$ and $y$ — the Babylonian (Newton) square-root iteration.",
+      "approach": "Concept tested: **Heron's (Newton's) square-root iteration and its invariant**. The loop keeps $x \\cdot y = m$ with $y \\le \\sqrt m \\le x$, and averaging brings $x$ and $y$ together, so both approach $\\sqrt m$.",
       "concepts": [
         "Newton's method",
-        "Square root"
+        "Loop invariant",
+        "Convergence"
       ],
+      "given": "$m > 1$, $\\epsilon > 0$ (written `e`), real arithmetic.",
       "steps": [
         {
-          "title": "Invariant",
-          "body": "After each iteration $y = m/x$, so $xy = m$; by AM–GM $x = \\frac{x_{old}+y_{old}}{2} \\ge \\sqrt{x_{old}y_{old}} = \\sqrt m$. The gap $x - y$ shrinks to below $\\epsilon$."
+          "title": "The invariant x·y = m",
+          "body": "Initially $x \\cdot y = m \\cdot 1 = m$. After `x = (x + y)/2; y = m/x;` the new product is $x \\cdot \\frac{m}{x} = m$ again.",
+          "scene": {
+            "reveal": 3
+          }
         },
         {
-          "title": "Limit",
-          "body": "$x = y = m/x \\Rightarrow x^2 = m \\Rightarrow x \\to \\sqrt m = m^{1/2}$. Example $m = 4$: $x = 4 \\to 2.5 \\to 2.05 \\to 2.0006$."
+          "title": "x stays above √m, y below",
+          "body": "The average of two positive numbers is at least their geometric mean: $\\frac{x + y}{2} \\ge \\sqrt{xy} = \\sqrt m$. Then $y = m/x \\le \\sqrt m$. The gap $x - y$ at least halves every pass, so the loop terminates.",
+          "scene": {
+            "reveal": 9
+          }
+        },
+        {
+          "title": "Where it converges",
+          "body": "At exit $x - y \\le \\epsilon$ with $y \\le \\sqrt m \\le x$, so $x$ is within $\\epsilon$ of $\\sqrt m$. For $m = 9$: $x = 5, 3.4, 3.0235, 3.00009, 3.0000000014$: it approaches 3.",
+          "scene": {
+            "reveal": 15
+          }
         }
       ],
       "answer": {
-        "value": "$m^{1/2}$",
+        "value": "(C) m^{1/2}",
         "choice": [
           "C"
         ],
@@ -2499,25 +2621,75 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "No logarithmic relation; the fixed point satisfies x² = m."
+          "reason": "For m = 9 the loop gives 3, while log 9 ≈ 2.20 (natural) or 0.95 (base 10)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "x only decreases from m, never reaching $m^2$."
+          "reason": "x starts at m and only decreases, so it cannot approach m² > m."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct."
+          "reason": "x·y = m is invariant and x − y → 0, so x² → m."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "A cube root would need $y = m/x^2$."
+          "reason": "A cube root would need an invariant like x·y² = m; here it is x·y = m. For m = 9 the loop gives 3, not 2.08."
         }
       ],
-      "verification": "m = 4 converges to 2 = √4."
+      "shortcut": "Find the invariant: x·y = m. When the loop stops x ≈ y, so x² ≈ m.",
+      "pitfalls": [
+        "Tracing with integer division: the algorithm is in real arithmetic (with integers y = m/x would truncate).",
+        "Choosing log m because the gap halves each pass: the halving describes the speed, not the limit."
+      ],
+      "verification": "Simulated in double precision (compiled C): m = 2 gives 1.4142136 after 4 passes, m = 9 gives 3.0000000014 after 5 passes with e = 10⁻⁶; the invariant, the halving of x − y and the quadratic error formula are checked for seven values of m.",
+      "animation": {
+        "kind": "table",
+        "title": "m = 9",
+        "cols": [
+          "x",
+          "y = m/x",
+          "x·y"
+        ],
+        "rows": [
+          [
+            "5",
+            "1.8",
+            "9"
+          ],
+          [
+            "3.4",
+            "2.6471",
+            "9"
+          ],
+          [
+            "3.0235",
+            "2.9767",
+            "9"
+          ],
+          [
+            "3.00009",
+            "2.99991",
+            "9"
+          ],
+          [
+            "3.0000000014",
+            "2.9999999986",
+            "9"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "pass 1",
+          "pass 2",
+          "pass 3",
+          "pass 4",
+          "pass 5"
+        ],
+        "reveal": 0
+      }
     },
     "cse-2004-cs-43": {
       "approach": "The function returns 0 for a leaf and 1 + the larger child value otherwise — the definition of height measured in edges.",

@@ -3283,88 +3283,101 @@
       "verification": "The recoding $-1\\,+1\\,-1\\,0\\,+1\\,-1\\,0\\,+1\\,-1\\,+1\\,-1\\,+1\\,-1\\,+1\\,-1\\,0$ has 13 non-zero digits. ✓"
     },
     "cse-2025-2-cs-23": {
-      "approach": "The loop is Euclid's subtraction algorithm: replacing the larger number by the difference keeps $\\gcd(x, y)$ unchanged, and it stops when $x = y$, i.e. at the gcd. So the output is $\\gcd(126, 105)$; a short trace confirms it.",
+      "approach": "Concept tested: **Euclid's subtraction GCD in a do–while loop**. Each pass replaces the larger value by the difference, which keeps $\\gcd(x, y)$; the loop stops when $x = y$, so it prints $\\gcd(126, 105) = 21$.",
       "concepts": [
+        "GCD",
         "do-while loop",
-        "Euclid's algorithm (subtraction form)",
-        "GCD invariant"
+        "Loop invariant"
       ],
       "steps": [
         {
-          "title": "Invariant",
-          "body": "$\\gcd(x, y) = \\gcd(x - y, y)$, so each iteration preserves the gcd. Values stay positive and strictly decrease, so the loop ends with $x = y = \\gcd(126, 105)$.",
+          "title": "First pass (the do-while body runs before any test)",
+          "body": "126 > 105, so x = 126 − 105 = 21. Test 21 ≠ 105: continue.",
           "scene": {
-            "line": 1,
-            "vars": {
-              "x": 126,
-              "y": 105
-            }
+            "reveal": 3
           }
         },
         {
-          "title": "Iteration 1",
-          "body": "$126 > 105$ ⇒ $x = 126 - 105 = 21$. Test $21 \\ne 105$ ⇒ repeat.",
+          "title": "Subtract 21 from y",
+          "body": "y: 105 → 84 → 63 → 42 → 21. After the pass that makes y = 21, the test 21 ≠ 21 fails.",
           "scene": {
-            "line": 3,
-            "vars": {
-              "x": 21,
-              "y": 105
-            }
+            "reveal": 15
           }
         },
         {
-          "title": "Iterations 2–3",
-          "body": "$21 < 105$ ⇒ $y = 105 - 21 = 84$; $21 < 84$ ⇒ $y = 84 - 21 = 63$.",
+          "title": "Why it is the gcd",
+          "body": "$\\gcd(x, y)$ is unchanged by each subtraction and $\\gcd(21, 21) = 21$. Check: $126 = 2 \\cdot 3^2 \\cdot 7$, $105 = 3 \\cdot 5 \\cdot 7$, gcd $= 21$. The program prints **21**.",
           "scene": {
-            "line": 4,
-            "vars": {
-              "x": 21,
-              "y": 63
-            }
-          }
-        },
-        {
-          "title": "Iterations 4–5, loop exits",
-          "body": "$y = 63 - 21 = 42$; then $y = 42 - 21 = 21$. Now $x = y = 21$, so `while(x!=y)` is false and the loop ends.",
-          "scene": {
-            "line": 5,
-            "vars": {
-              "x": 21,
-              "y": 21
-            }
-          }
-        },
-        {
-          "title": "Print",
-          "body": "`printf` prints $x = 21$. Check: $126 = 2 \\cdot 3^2 \\cdot 7$, $105 = 3 \\cdot 5 \\cdot 7$, $\\gcd = 3 \\cdot 7 = 21$.",
-          "scene": {
-            "line": 6,
-            "output": "21"
+            "reveal": 18,
+            "hl": [
+              {
+                "r": 5
+              }
+            ]
           }
         }
       ],
       "answer": {
-        "value": "The program prints **21**",
+        "value": "21",
         "number": 21,
         "matchesKey": true
       },
-      "shortcut": "Recognise subtraction-Euclid ⇒ answer is $\\gcd(126, 105) = 21$.",
+      "shortcut": "Subtract the smaller from the larger until equal = gcd. Factor: gcd(126, 105) = 21.",
       "pitfalls": [
-        "Stopping after the first subtraction (21) for the wrong reason — the loop actually continues until $y$ also reaches 21; the answer is the same only because 21 is the gcd.",
-        "Thinking a do-while with equal start values loops forever — here they start unequal."
+        "Stopping after the first subtraction and printing 21 for the wrong reason, or printing y: here x and y are both 21 at the end.",
+        "Using this do–while with equal inputs: the body runs once, makes y = 0, and the loop never ends (x = x − 0 for ever); the while form would print x at once."
       ],
-      "verification": "Modulo form: $126 \\bmod 105 = 21$, $105 \\bmod 21 = 0$ ⇒ $\\gcd = 21$.",
+      "verification": "Compiled as given: prints 21 after five passes (states 21/105, 21/84, 21/63, 21/42, 21/21); with x = y = 5 the do–while version runs until the time limit.",
       "animation": {
-        "kind": "code",
-        "title": "Trace",
-        "lang": "c",
-        "code": "int x=126,y=105;\ndo {\n    if(x>y) x=x-y;\n    else y=y-x;\n} while(x!=y);\nprintf(\"%d\",x);",
-        "line": 1,
-        "vars": {
-          "x": 126,
-          "y": 105
-        },
-        "output": ""
+        "kind": "table",
+        "title": "x = 126, y = 105",
+        "cols": [
+          "x",
+          "y",
+          "x ≠ y?"
+        ],
+        "rows": [
+          [
+            "21",
+            "105",
+            "yes"
+          ],
+          [
+            "21",
+            "84",
+            "yes"
+          ],
+          [
+            "21",
+            "63",
+            "yes"
+          ],
+          [
+            "21",
+            "42",
+            "yes"
+          ],
+          [
+            "21",
+            "21",
+            "no"
+          ],
+          [
+            "print",
+            "",
+            "21"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "pass 1",
+          "pass 2",
+          "pass 3",
+          "pass 4",
+          "pass 5",
+          "after"
+        ],
+        "reveal": 0
       }
     },
     "cse-2025-2-cs-24": {

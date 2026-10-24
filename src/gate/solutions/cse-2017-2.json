@@ -2658,27 +2658,50 @@
       "verification": "Preorder of the rebuilt tree reproduces $12, 8, 6, 2, 7, 9, 10, 16, 15, 19, 17, 20$ ✓."
     },
     "cse-2017-2-cs-37": {
-      "approach": "The loop body preserves $y \\cdot q + r$ (it subtracts $y$ from $r$ and adds 1 to $q$). So the postcondition holds iff $x = y q + r$ holds before the loop, and termination needs $y > 0$.",
+      "approach": "Concept tested: **the precondition a loop invariant needs**. The loop preserves $x = yq + r$, so it ends in that state only if the relation already holds at the start ($q = 0$, $r = x$), and it ends at all only if $y > 0$.",
       "concepts": [
+        "Precondition",
         "Loop invariant",
-        "Termination"
+        "Termination",
+        "unsigned int"
       ],
+      "given": "x, y, q, r are `unsigned int`; the fragment is `while (r >= y) { r = r - y; q = q + 1; }`.",
       "steps": [
         {
-          "title": "Invariant",
-          "body": "After one iteration $y(q + 1) + (r - y) = yq + r$, so $yq + r$ never changes."
+          "title": "The loop preserves x == y*q + r",
+          "body": "A pass replaces $(q, r)$ by $(q + 1, r - y)$, and $y(q + 1) + (r - y) = yq + r$. So the final state satisfies the relation exactly when the initial state does.",
+          "scene": {
+            "line": 2
+          }
         },
         {
-          "title": "Precondition",
-          "body": "We need $x = yq + r$ initially. With $q = 0$ and $r = x$: $y \\cdot 0 + x = x$ ✓."
+          "title": "Initialisation must make it true",
+          "body": "With $q = 0$ and $r = x$: $y \\cdot 0 + x = x$ ✓ (option C). B leaves $q$ unknown and D leaves $r$ unknown, so the relation may be false from the start: B with $x = r = 7$, $y = 2$, $q = 5$ ends at $q = 8$, $r = 1$, and $17 \\ne 7$.",
+          "scene": {
+            "vars": {
+              "x": 7,
+              "y": 2,
+              "q": 0,
+              "r": 7
+            }
+          }
         },
         {
-          "title": "Termination",
-          "body": "If $y = 0$, $r \\ge 0$ is always true for unsigned $r$ and the loop never ends; $y > 0$ makes $r$ strictly decrease until $r < y$. Option (C) gives all three conditions."
+          "title": "Termination needs y > 0",
+          "body": "With $y = 0$ the guard `r >= 0` is always true for an unsigned $r$ and the loop never ends. A does not exclude $y = 0$ (and with $y > 0$ it would still need $x = 0$).",
+          "scene": {
+            "vars": {
+              "x": 7,
+              "y": 2,
+              "q": 3,
+              "r": 1
+            },
+            "line": 5
+          }
         }
       ],
       "answer": {
-        "value": "(q == 0) && (r == x) && (y > 0)",
+        "value": "(C) (q == 0) && (r == x) && (y > 0)",
         "choice": [
           "C"
         ],
@@ -2688,28 +2711,42 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$q = r = 0$ gives $yq + r = 0$, which equals $x$ only if $x = 0$; also $y = 0$ would loop forever."
+          "reason": "q = r = 0 makes y·q + r = 0, which equals x only if x = 0; and y = 0 is allowed, which loops for ever."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$q$ is unconstrained, e.g. $q = 5$ makes $yq + r = 5y + x \\ne x$."
+          "reason": "q is not initialised, so x = y·q + r can be false at the start (q = 5, x = r = 7, y = 2 ends with 2·8 + 1 = 17 ≠ 7)."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Invariant holds initially and $y > 0$ guarantees termination — correct."
+          "reason": "q = 0, r = x make the invariant true initially; y > 0 makes r a decreasing variant, so the loop ends with x = y·q + r."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$r$ is unconstrained, so $yq + r = r$ need not equal $x$."
+          "reason": "r is not tied to x (r = 4 with x = 7, y = 2 ends with 2·2 + 0 = 4 ≠ 7)."
         }
       ],
+      "shortcut": "An invariant-preserving loop cannot create the invariant: the precondition must establish it (q = 0, r = x) and must make the loop finite (y > 0).",
       "pitfalls": [
-        "Ignoring termination: with $y = 0$ an unsigned $r \\ge 0$ is always true."
+        "Choosing B because x > 0 sounds necessary: x = 0 works fine; what matters is q = 0.",
+        "Forgetting that with unsigned variables r >= 0 is always true, so y = 0 never stops."
       ],
-      "verification": "$x = 17, y = 5$: $(q, r) = (0,17) \\to (1,12) \\to (2,7) \\to (3,2)$, and $5 \\times 3 + 2 = 17$ ✓."
+      "verification": "Compiled with unsigned variables: C ends with x == y*q + r for all x < 60, 1 ≤ y < 12; counter-examples for B (q = 5) and D (r = 4) end with the relation false; y = 0 runs until the time limit.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "while (r >= y) {\n    r = r - y;\n    q = q + 1;\n}\n",
+        "line": 1,
+        "vars": {
+          "x": 7,
+          "y": 2,
+          "q": "?",
+          "r": "?"
+        }
+      }
     },
     "cse-2017-2-cs-38": {
       "approach": "For a fixed $i$ the inner loop runs about $n/i$ times; summing over $i$ gives $n$ times the harmonic number.",

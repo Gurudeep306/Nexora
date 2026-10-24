@@ -1,0 +1,394 @@
+{
+ "version": 1,
+ "title": "Halving loops count binary digits",
+ "width": 700,
+ "height": 360,
+ "narrow": {
+  "width": 360,
+  "height": 480
+ },
+ "intro": "GATE 2018's function on n = 2⁴⁰: the first loop measures log₂ n, the second measures the log of that.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "GATE 2018: fun(2⁴⁰) is two halving loops in a row",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "fun(2⁴⁰): two halving loops",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "l1",
+   "type": "text",
+   "x": 30,
+   "y": 76,
+   "text": "Loop 1: for (i = n; i > 1; i = i/2) j++;",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 16,
+    "y": 70,
+    "size": 12
+   }
+  },
+  {
+   "id": "v1",
+   "type": "text",
+   "x": 30,
+   "y": 110,
+   "text": "i = 2⁴⁰, j = 0",
+   "size": 16,
+   "weight": "bold",
+   "narrow": {
+    "x": 16,
+    "y": 100,
+    "size": 14
+   }
+  },
+  {
+   "id": "l2",
+   "type": "text",
+   "x": 30,
+   "y": 170,
+   "text": "Loop 2: for ( ; j > 1; j = j/2) sum++;",
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 16,
+    "y": 160,
+    "size": 12
+   }
+  },
+  {
+   "id": "qc0",
+   "type": "box",
+   "x": 30,
+   "y": 210,
+   "w": 96,
+   "h": 40,
+   "mono": true,
+   "label": "",
+   "size": 16,
+   "hidden": true,
+   "narrow": {
+    "x": 16,
+    "y": 196,
+    "w": 54,
+    "h": 36,
+    "size": 14
+   }
+  },
+  {
+   "id": "qa0",
+   "type": "text",
+   "x": 78.0,
+   "y": 199,
+   "text": "j",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 43.0,
+    "y": 185,
+    "size": 12
+   }
+  },
+  {
+   "id": "qc1",
+   "type": "box",
+   "x": 126,
+   "y": 210,
+   "w": 96,
+   "h": 40,
+   "mono": true,
+   "label": "",
+   "size": 16,
+   "hidden": true,
+   "narrow": {
+    "x": 70,
+    "y": 196,
+    "w": 54,
+    "h": 36,
+    "size": 14
+   }
+  },
+  {
+   "id": "qc2",
+   "type": "box",
+   "x": 222,
+   "y": 210,
+   "w": 96,
+   "h": 40,
+   "mono": true,
+   "label": "",
+   "size": 16,
+   "hidden": true,
+   "narrow": {
+    "x": 124,
+    "y": 196,
+    "w": 54,
+    "h": 36,
+    "size": 14
+   }
+  },
+  {
+   "id": "qc3",
+   "type": "box",
+   "x": 318,
+   "y": 210,
+   "w": 96,
+   "h": 40,
+   "mono": true,
+   "label": "",
+   "size": 16,
+   "hidden": true,
+   "narrow": {
+    "x": 178,
+    "y": 196,
+    "w": 54,
+    "h": 36,
+    "size": 14
+   }
+  },
+  {
+   "id": "qc4",
+   "type": "box",
+   "x": 414,
+   "y": 210,
+   "w": 96,
+   "h": 40,
+   "mono": true,
+   "label": "",
+   "size": 16,
+   "hidden": true,
+   "narrow": {
+    "x": 232,
+    "y": 196,
+    "w": 54,
+    "h": 36,
+    "size": 14
+   }
+  },
+  {
+   "id": "qc5",
+   "type": "box",
+   "x": 510,
+   "y": 210,
+   "w": 96,
+   "h": 40,
+   "mono": true,
+   "label": "",
+   "size": 16,
+   "hidden": true,
+   "narrow": {
+    "x": 286,
+    "y": 196,
+    "w": 54,
+    "h": 36,
+    "size": 14
+   }
+  },
+  {
+   "id": "sum",
+   "type": "text",
+   "x": 30,
+   "y": 290,
+   "text": "",
+   "size": 16,
+   "weight": "bold",
+   "hidden": true,
+   "tone": "info",
+   "narrow": {
+    "x": 16,
+    "y": 280,
+    "size": 14
+   }
+  },
+  {
+   "id": "fin",
+   "type": "text",
+   "x": 30,
+   "y": 330,
+   "text": "",
+   "size": 15,
+   "hidden": true,
+   "narrow": {
+    "x": 16,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Loop 1 halves i from 2⁴⁰ down to 1: one pass per halving, so j counts 40 of them.",
+   "patches": [
+    {
+     "id": "v1",
+     "set": {
+      "text": "i: 2⁴⁰ → 2³⁹ → … → 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "After loop 1: i = 1 and j = 40 = log₂ n.",
+   "patches": [
+    {
+     "id": "v1",
+     "set": {
+      "text": "i = 1, j = 40",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Loop 2 halves j while j > 1, counting the passes in sum.",
+   "patches": [
+    {
+     "id": "l2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "qc0",
+     "set": {
+      "hidden": false,
+      "label": "40"
+     }
+    },
+    {
+     "id": "sum",
+     "set": {
+      "hidden": false,
+      "text": "sum = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 1: j = 40 becomes 20, sum = 1.",
+   "patches": [
+    {
+     "id": "qc1",
+     "set": {
+      "hidden": false,
+      "label": "20"
+     }
+    },
+    {
+     "id": "sum",
+     "set": {
+      "text": "sum = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 2: j = 20 becomes 10, sum = 2.",
+   "patches": [
+    {
+     "id": "qc2",
+     "set": {
+      "hidden": false,
+      "label": "10"
+     }
+    },
+    {
+     "id": "sum",
+     "set": {
+      "text": "sum = 2"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 3: j = 10 becomes 5, sum = 3.",
+   "patches": [
+    {
+     "id": "qc3",
+     "set": {
+      "hidden": false,
+      "label": "5"
+     }
+    },
+    {
+     "id": "sum",
+     "set": {
+      "text": "sum = 3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 4: j = 5 becomes 2, sum = 4.",
+   "patches": [
+    {
+     "id": "qc4",
+     "set": {
+      "hidden": false,
+      "label": "2"
+     }
+    },
+    {
+     "id": "sum",
+     "set": {
+      "text": "sum = 4"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pass 5: j = 2 becomes 1, sum = 5. Now j = 1, so the loop stops.",
+   "patches": [
+    {
+     "id": "qc5",
+     "set": {
+      "hidden": false,
+      "label": "1"
+     }
+    },
+    {
+     "id": "sum",
+     "set": {
+      "text": "sum = 5"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "fun(2⁴⁰) returns 5 = ⌊log₂ 40⌋ = ⌊log₂ log₂ n⌋.",
+   "patches": [
+    {
+     "id": "sum",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fin",
+     "set": {
+      "hidden": false,
+      "text": "returns 5 = ⌊log₂ log₂ 2⁴⁰⌋"
+     }
+    }
+   ]
+  }
+ ]
+}

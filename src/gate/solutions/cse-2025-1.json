@@ -7504,16 +7504,16 @@
       }
     },
     "cse-2025-1-cs-53": {
-      "approach": "`t` becomes the place value of the leading digit, then the loop peels digits off from the left. `turn` alternates 0, 1, 0, 1, …, and a digit is appended to `newnum` only when `turn` is 1 — i.e. the 2nd, 4th, … digits from the left.",
+      "approach": "Concept tested: **reading digits from the left**. The first loop finds $t = 10^{m-1}$, the place value of the leading digit; the second loop peels digits with `n / t` and `n % t`, and `turn` keeps every second one (the 2nd, 4th, … from the left).",
       "concepts": [
-        "Integer division and modulo",
         "Digit extraction",
-        "Loop tracing"
+        "Integer division and remainder",
+        "Loop invariant"
       ],
       "steps": [
         {
-          "title": "Find the leading place value",
-          "body": "`t` grows $1 \\to 10 \\to 100 \\to 1000 \\to 10000 \\to 100000$ while $14362 \\ge t$; it stops at $100000 > 14362$. Then `t /= 10` gives $t = 10000$.",
+          "title": "Find the leading place",
+          "body": "`while (n >= t) t *= 10;` stops at the first power of 10 above 14362: $t = 100000$. Then `t /= 10` gives $t = 10000$.",
           "scene": {
             "line": 6,
             "vars": {
@@ -7525,74 +7525,55 @@
           }
         },
         {
-          "title": "Digits 1 and 4",
-          "body": "Iteration 1: $d = 14362/10000 = 1$, $n = 4362$, $t = 1000$; turn = 0 → skip; turn becomes 1.\n\nIteration 2: $d = 4362/1000 = 4$, $n = 362$, $t = 100$; turn = 1 → newnum $= 10 \\times 0 + 4 = 4$; turn becomes 0.",
+          "title": "Invariant of the second loop",
+          "body": "Before the $k$-th pass: $t = 10^{5-k}$, $n$ is the digits not yet read, $turn = (k - 1) \\bmod 2$, and newnum holds the even-position digits read so far.",
           "scene": {
-            "line": 11,
-            "vars": {
-              "n": 362,
-              "t": 100,
-              "d": 4,
-              "turn": 0,
-              "newnum": 4
-            }
+            "line": 7
           }
         },
         {
-          "title": "Digits 3 and 6",
-          "body": "Iteration 3: $d = 362/100 = 3$, $n = 62$, $t = 10$; turn = 0 → skip; turn becomes 1.\n\nIteration 4: $d = 62/10 = 6$, $n = 2$, $t = 1$; turn = 1 → newnum $= 10 \\times 4 + 6 = 46$; turn becomes 0.",
+          "title": "Peel the digits",
+          "body": "d = 1 (turn 0: skip), 4 (turn 1: newnum = 4), 3 (skip), 6 (newnum = 46), 2 (skip). After the fifth pass $t = 0$ and the loop ends.",
           "scene": {
-            "line": 11,
-            "vars": {
-              "n": 2,
-              "t": 1,
-              "d": 6,
-              "turn": 0,
-              "newnum": 46
-            }
-          }
-        },
-        {
-          "title": "Digit 2 and return",
-          "body": "Iteration 5: $d = 2/1 = 2$, $n = 0$, $t = 0$; turn = 0 → skip. Now $t = 0$, the loop ends and `gate` returns 46.\n\nThe program prints **46**.",
-          "scene": {
-            "line": 14,
+            "line": 12,
             "vars": {
               "n": 0,
               "t": 0,
-              "d": 2,
               "turn": 1,
               "newnum": 46
-            },
+            }
+          }
+        },
+        {
+          "title": "Print",
+          "body": "The function returns **46**, which main prints.",
+          "scene": {
+            "line": 17,
             "output": "46"
           }
         }
       ],
       "answer": {
-        "value": "The program prints **46**",
+        "value": "46",
         "number": 46,
         "matchesKey": true
       },
-      "shortcut": "Keep the even-position digits from the left of 1 4 3 6 2: positions 2 and 4 are 4 and 6 → 46.",
+      "shortcut": "turn starts at 0 and the test is `if (turn)`, so digits 2, 4, … from the left are kept: 1**4**3**6**2 → 46.",
       "pitfalls": [
-        "Taking the odd positions (1, 3, 2 → 132) — `turn` starts at 0, so the first digit is skipped.",
-        "Stopping `t` at 10000 too early or late: the loop exits with $t = 100000$, then divides once to 10000.",
-        "Reading digits from the right (the code divides by a decreasing power of 10, so it reads left to right)."
+        "Keeping the digits read on turn 0 (1, 3, 2 → 132): the first digit is read with turn = 0 and skipped.",
+        "Peeling from the right (as in the reversal loop): here d = n / t takes the leading digit."
       ],
-      "verification": "Pattern check with another input: for `gate(123456)` the same logic keeps digits 2, 4, 6 → 246, consistent with \"even positions from the left\"; for 14362 that gives 46.",
+      "verification": "Compiled as given: prints 46. The function is also compared with \"every second digit from the left\" in Python for every n below 200 000.",
       "animation": {
         "kind": "code",
         "lang": "c",
-        "title": "Trace of gate(14362)",
-        "code": "int gate (int n) {\n    int d, t, newnum, turn;\n    newnum = turn = 0; t=1;\n    while (n>=t) t *= 10;\n    t /=10;\n    while (t>0) {\n        d = n/t;\n        n = n%t;\n        t /= 10;\n        if (turn) newnum = 10*newnum + d;\n        turn = (turn + 1) % 2;\n    }\n    return newnum;\n}",
-        "line": 3,
+        "code": "#include <stdio.h>\nint gate (int n) {\n    int d, t, newnum, turn;\n    newnum = turn = 0; t=1;\n    while (n>=t) t *= 10;\n    t /=10;\n    while (t>0) {\n        d = n/t;\n        n = n%t;\n        t /= 10;\n        if (turn) newnum = 10*newnum + d;\n        turn = (turn + 1) % 2;\n    }\n    return newnum;\n}\nint main () {\n    printf (\"%d\", gate(14362));\n    return 0;\n}\n",
+        "title": "gate(14362)",
+        "line": 4,
         "vars": {
           "n": 14362,
-          "t": 1,
-          "turn": 0,
-          "newnum": 0
-        },
-        "output": ""
+          "t": 1
+        }
       }
     },
     "cse-2025-1-cs-54": {
