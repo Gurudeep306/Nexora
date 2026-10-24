@@ -1,0 +1,387 @@
+{
+ "version": 1,
+ "title": "Set operations on bit strings",
+ "width": 640,
+ "height": 420,
+ "narrow": {
+  "width": 360,
+  "height": 380
+ },
+ "intro": "Store a subset of an ordered universe as a row of bits. Union, intersection, difference and symmetric difference become OR, AND, AND-NOT and XOR.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Sets as bit strings: each operation is one bit rule",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Sets as bit strings",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "la",
+   "type": "text",
+   "x": 150,
+   "y": 80,
+   "text": "A",
+   "anchor": "end",
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 60,
+    "y": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "ba",
+   "type": "bits",
+   "x": 170,
+   "y": 58,
+   "bits": "11110000",
+   "cell": 40,
+   "labels": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+   ],
+   "narrow": {
+    "x": 74,
+    "y": 58,
+    "cell": 32
+   }
+  },
+  {
+   "id": "lb",
+   "type": "text",
+   "x": 150,
+   "y": 130,
+   "text": "B",
+   "anchor": "end",
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 60,
+    "y": 120,
+    "size": 13
+   }
+  },
+  {
+   "id": "bb",
+   "type": "bits",
+   "x": 170,
+   "y": 110,
+   "bits": "00111100",
+   "cell": 40,
+   "narrow": {
+    "x": 74,
+    "y": 104,
+    "cell": 32
+   }
+  },
+  {
+   "id": "l0",
+   "type": "text",
+   "x": 150,
+   "y": 200,
+   "text": "A ∪ B",
+   "anchor": "end",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 60,
+    "y": 176,
+    "size": 13
+   }
+  },
+  {
+   "id": "r0",
+   "type": "bits",
+   "x": 170,
+   "y": 180,
+   "bits": "11111100",
+   "cell": 40,
+   "hidden": true,
+   "narrow": {
+    "x": 74,
+    "y": 160,
+    "cell": 32
+   }
+  },
+  {
+   "id": "l1",
+   "type": "text",
+   "x": 150,
+   "y": 250,
+   "text": "A ∩ B",
+   "anchor": "end",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 60,
+    "y": 222,
+    "size": 13
+   }
+  },
+  {
+   "id": "r1",
+   "type": "bits",
+   "x": 170,
+   "y": 230,
+   "bits": "00110000",
+   "cell": 40,
+   "hidden": true,
+   "narrow": {
+    "x": 74,
+    "y": 206,
+    "cell": 32
+   }
+  },
+  {
+   "id": "l2",
+   "type": "text",
+   "x": 150,
+   "y": 300,
+   "text": "A − B",
+   "anchor": "end",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 60,
+    "y": 268,
+    "size": 13
+   }
+  },
+  {
+   "id": "r2",
+   "type": "bits",
+   "x": 170,
+   "y": 280,
+   "bits": "11000000",
+   "cell": 40,
+   "hidden": true,
+   "narrow": {
+    "x": 74,
+    "y": 252,
+    "cell": 32
+   }
+  },
+  {
+   "id": "l3",
+   "type": "text",
+   "x": 150,
+   "y": 350,
+   "text": "A Δ B",
+   "anchor": "end",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 60,
+    "y": 314,
+    "size": 13
+   }
+  },
+  {
+   "id": "r3",
+   "type": "bits",
+   "x": 170,
+   "y": 330,
+   "bits": "11001100",
+   "cell": 40,
+   "hidden": true,
+   "narrow": {
+    "x": 74,
+    "y": 298,
+    "cell": 32
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 320,
+   "y": 400,
+   "text": "U = {1, …, 8}; bit i is 1 iff i is in the set",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 360,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A = {1, 2, 3, 4} and B = {3, 4, 5, 6} as 8-bit strings over U = {1, …, 8}: bit i records whether i is in the set.",
+   "patches": [
+    {
+     "id": "ba",
+     "set": {
+      "highlight": [
+       0,
+       1,
+       2,
+       3
+      ]
+     }
+    },
+    {
+     "id": "bb",
+     "set": {
+      "highlight": [
+       2,
+       3,
+       4,
+       5
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A ∪ B = {1, 2, 3, 4, 5, 6}: OR: 1 if either is 1, position by position, gives 11111100.",
+   "patches": [
+    {
+     "id": "l0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "r0",
+     "set": {
+      "hidden": false,
+      "highlight": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "OR: 1 if either is 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A ∩ B = {3, 4}: AND: 1 if both are 1, position by position, gives 00110000.",
+   "patches": [
+    {
+     "id": "l1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "r1",
+     "set": {
+      "hidden": false,
+      "highlight": [
+       2,
+       3
+      ],
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "AND: 1 if both are 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A − B = {1, 2}: A AND NOT B, position by position, gives 11000000.",
+   "patches": [
+    {
+     "id": "l2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "r2",
+     "set": {
+      "hidden": false,
+      "highlight": [
+       0,
+       1
+      ],
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "A AND NOT B",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A Δ B = {1, 2, 5, 6}: XOR: 1 if they differ, position by position, gives 11001100.",
+   "patches": [
+    {
+     "id": "l3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "r3",
+     "set": {
+      "hidden": false,
+      "highlight": [
+       0,
+       1,
+       4,
+       5
+      ],
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "XOR: 1 if they differ",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

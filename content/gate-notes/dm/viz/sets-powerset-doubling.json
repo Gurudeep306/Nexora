@@ -1,0 +1,457 @@
+{
+ "version": 1,
+ "title": "Doubling the power set",
+ "width": 640,
+ "height": 320,
+ "narrow": {
+  "width": 360,
+  "height": 370
+ },
+ "intro": "We add the elements a, b, c one at a time and watch the number of subsets double.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Building P({a, b, c}) by doubling",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Building P({a, b, c})",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "t",
+   "type": "table",
+   "x": 40,
+   "y": 46,
+   "cellW": 120,
+   "cellH": 28,
+   "rows": [
+    [
+     "subset",
+     "bits abc"
+    ],
+    [
+     "∅",
+     "000"
+    ],
+    [
+     "",
+     ""
+    ],
+    [
+     "",
+     ""
+    ],
+    [
+     "",
+     ""
+    ],
+    [
+     "",
+     ""
+    ],
+    [
+     "",
+     ""
+    ],
+    [
+     "",
+     ""
+    ],
+    [
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 20,
+    "y": 44,
+    "cellW": 104,
+    "cellH": 26
+   }
+  },
+  {
+   "id": "n",
+   "type": "text",
+   "x": 470,
+   "y": 90,
+   "text": "1 subset",
+   "anchor": "middle",
+   "size": 20,
+   "weight": "bold",
+   "tone": "accent",
+   "narrow": {
+    "x": 180,
+    "y": 300,
+    "size": 14
+   }
+  },
+  {
+   "id": "why",
+   "type": "text",
+   "x": 470,
+   "y": 130,
+   "text": "start: only ∅",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 324,
+    "size": 12
+   }
+  },
+  {
+   "id": "rule",
+   "type": "text",
+   "x": 470,
+   "y": 300,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 352,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start with no elements: the only subset is ∅, the empty bit string. One subset.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Add a. Every old subset stays (a out) and gets a twin with a added (a in): ∅ and {a}. Two subsets.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "subset",
+        "bits abc"
+       ],
+       [
+        "∅",
+        "000"
+       ],
+       [
+        "{a}",
+        "100"
+       ],
+       [
+        "",
+        ""
+       ],
+       [
+        "",
+        ""
+       ],
+       [
+        "",
+        ""
+       ],
+       [
+        "",
+        ""
+       ],
+       [
+        "",
+        ""
+       ],
+       [
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "n",
+     "set": {
+      "text": "2 subsets"
+     }
+    },
+    {
+     "id": "why",
+     "set": {
+      "text": "old ones + old ones with a"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Add b. The two old subsets stay and their twins {b}, {a, b} appear. Four subsets: the count doubles.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "subset",
+        "bits abc"
+       ],
+       [
+        "∅",
+        "000"
+       ],
+       [
+        "{a}",
+        "100"
+       ],
+       [
+        "{b}",
+        "010"
+       ],
+       [
+        "{a, b}",
+        "110"
+       ],
+       [
+        "",
+        ""
+       ],
+       [
+        "",
+        ""
+       ],
+       [
+        "",
+        ""
+       ],
+       [
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "n",
+     "set": {
+      "text": "4 subsets"
+     }
+    },
+    {
+     "id": "why",
+     "set": {
+      "text": "old ones + old ones with b"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Add c. Four old subsets and four twins with c. Eight subsets, one for each 3-bit string 000 … 111.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "subset",
+        "bits abc"
+       ],
+       [
+        "∅",
+        "000"
+       ],
+       [
+        "{a}",
+        "100"
+       ],
+       [
+        "{b}",
+        "010"
+       ],
+       [
+        "{a, b}",
+        "110"
+       ],
+       [
+        "{c}",
+        "001"
+       ],
+       [
+        "{a, c}",
+        "101"
+       ],
+       [
+        "{b, c}",
+        "011"
+       ],
+       [
+        "{a, b, c}",
+        "111"
+       ]
+      ],
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        6,
+        0
+       ],
+       [
+        6,
+        1
+       ],
+       [
+        7,
+        0
+       ],
+       [
+        7,
+        1
+       ],
+       [
+        8,
+        0
+       ],
+       [
+        8,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "n",
+     "set": {
+      "text": "8 subsets"
+     }
+    },
+    {
+     "id": "why",
+     "set": {
+      "text": "old ones + old ones with c"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Each element is an in/out switch, so n elements give 2ⁿ subsets: the bit strings are the subsets.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        6,
+        1
+       ],
+       [
+        7,
+        1
+       ],
+       [
+        8,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "n",
+     "set": {
+      "text": "2³ = 8",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rule",
+     "set": {
+      "text": "each new element doubles the count",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

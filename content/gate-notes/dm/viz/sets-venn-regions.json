@@ -1,0 +1,573 @@
+{
+ "version": 1,
+ "title": "Comparing expressions by Venn regions",
+ "width": 640,
+ "height": 380,
+ "narrow": {
+  "width": 360,
+  "height": 400
+ },
+ "intro": "Every expression in A, B, C is a list of some of the 8 Venn regions. Two expressions are equal for all sets exactly when their lists agree.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Venn regions: (A − B) − C against (A − C) − (B − C)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Venn regions (GATE 2005)",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "cA",
+   "type": "circle",
+   "cx": 255,
+   "cy": 160,
+   "r": 95,
+   "tone": "accent",
+   "narrow": {
+    "cx": 144.0,
+    "cy": 124.8,
+    "r": 68
+   }
+  },
+  {
+   "id": "cB",
+   "type": "circle",
+   "cx": 355,
+   "cy": 160,
+   "r": 95,
+   "tone": "info",
+   "narrow": {
+    "cx": 216.0,
+    "cy": 124.8,
+    "r": 68
+   }
+  },
+  {
+   "id": "cC",
+   "type": "circle",
+   "cx": 305,
+   "cy": 245,
+   "r": 95,
+   "tone": "warning",
+   "narrow": {
+    "cx": 180.0,
+    "cy": 186.0,
+    "r": 68
+   }
+  },
+  {
+   "id": "tA",
+   "type": "text",
+   "x": 180,
+   "y": 82,
+   "text": "A",
+   "anchor": "middle",
+   "size": 18,
+   "weight": "bold",
+   "narrow": {
+    "x": 90.0,
+    "y": 68.6,
+    "size": 14
+   }
+  },
+  {
+   "id": "tB",
+   "type": "text",
+   "x": 430,
+   "y": 82,
+   "text": "B",
+   "anchor": "middle",
+   "size": 18,
+   "weight": "bold",
+   "narrow": {
+    "x": 270.0,
+    "y": 68.6,
+    "size": 14
+   }
+  },
+  {
+   "id": "tC",
+   "type": "text",
+   "x": 305,
+   "y": 355,
+   "text": "C",
+   "anchor": "middle",
+   "size": 18,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 265.2,
+    "size": 14
+   }
+  },
+  {
+   "id": "rABC",
+   "type": "node",
+   "cx": 305,
+   "cy": 188,
+   "r": 19,
+   "size": 12,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "cx": 180.0,
+    "cy": 145.0,
+    "r": 15,
+    "size": 11
+   },
+   "label": "ABC"
+  },
+  {
+   "id": "rAB",
+   "type": "node",
+   "cx": 305,
+   "cy": 128,
+   "r": 19,
+   "size": 12,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "cx": 180.0,
+    "cy": 101.8,
+    "r": 15,
+    "size": 11
+   },
+   "label": "AB"
+  },
+  {
+   "id": "rAC",
+   "type": "node",
+   "cx": 258,
+   "cy": 226,
+   "r": 19,
+   "size": 12,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "cx": 146.2,
+    "cy": 172.3,
+    "r": 15,
+    "size": 11
+   },
+   "label": "AC"
+  },
+  {
+   "id": "rBC",
+   "type": "node",
+   "cx": 352,
+   "cy": 226,
+   "r": 19,
+   "size": 12,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "cx": 213.8,
+    "cy": 172.3,
+    "r": 15,
+    "size": 11
+   },
+   "label": "BC"
+  },
+  {
+   "id": "rA",
+   "type": "node",
+   "cx": 215,
+   "cy": 140,
+   "r": 19,
+   "size": 12,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "cx": 115.2,
+    "cy": 110.4,
+    "r": 15,
+    "size": 11
+   },
+   "label": "A"
+  },
+  {
+   "id": "rB",
+   "type": "node",
+   "cx": 395,
+   "cy": 140,
+   "r": 19,
+   "size": 12,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "cx": 244.8,
+    "cy": 110.4,
+    "r": 15,
+    "size": 11
+   },
+   "label": "B"
+  },
+  {
+   "id": "rC",
+   "type": "node",
+   "cx": 305,
+   "cy": 292,
+   "r": 19,
+   "size": 12,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "cx": 180.0,
+    "cy": 219.8,
+    "r": 15,
+    "size": 11
+   },
+   "label": "C"
+  },
+  {
+   "id": "r-",
+   "type": "node",
+   "cx": 90,
+   "cy": 300,
+   "r": 19,
+   "size": 12,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "cx": 30,
+    "cy": 52,
+    "r": 15,
+    "size": 11
+   },
+   "label": "-"
+  },
+  {
+   "id": "e1",
+   "type": "text",
+   "x": 450,
+   "y": 230,
+   "text": "",
+   "size": 15,
+   "mono": true,
+   "anchor": "start",
+   "narrow": {
+    "x": 180,
+    "y": 330,
+    "size": 13,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "e2",
+   "type": "text",
+   "x": 450,
+   "y": 262,
+   "text": "",
+   "size": 15,
+   "mono": true,
+   "anchor": "start",
+   "narrow": {
+    "x": 180,
+    "y": 356,
+    "size": 13,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "e3",
+   "type": "text",
+   "x": 450,
+   "y": 300,
+   "text": "",
+   "size": 15,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 180,
+    "y": 386,
+    "size": 13,
+    "anchor": "middle"
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Three circles cut the universe into 8 regions, one per membership pattern. Each is named by the sets that contain it; − is outside all.",
+   "patches": []
+  },
+  {
+   "caption": "A − B keeps the part of A outside B: regions AC and A.",
+   "patches": [
+    {
+     "id": "rAC",
+     "set": {
+      "tone": "accent",
+      "fill": "accent",
+      "emphasis": "strong"
+     }
+    },
+    {
+     "id": "rA",
+     "set": {
+      "tone": "accent",
+      "fill": "accent",
+      "emphasis": "strong"
+     }
+    },
+    {
+     "id": "e1",
+     "set": {
+      "text": "A − B = {AC, A}"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Removing C deletes AC. So X = (A − B) − C is the single region A: in A, not in B, not in C.",
+   "patches": [
+    {
+     "id": "rAC",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rA",
+     "set": {
+      "tone": "success",
+      "fill": "success",
+      "emphasis": "strong"
+     }
+    },
+    {
+     "id": "e2",
+     "set": {
+      "text": "X = {A}",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "For Y: A − C = {AB, A} and B − C = {AB, B}.",
+   "patches": [
+    {
+     "id": "rABC",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rAB",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rAC",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rBC",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rA",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rB",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rC",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "r-",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rAB",
+     "set": {
+      "tone": "accent",
+      "fill": "accent",
+      "emphasis": "strong"
+     }
+    },
+    {
+     "id": "rA",
+     "set": {
+      "tone": "accent",
+      "fill": "accent",
+      "emphasis": "strong"
+     }
+    },
+    {
+     "id": "rB",
+     "set": {
+      "tone": "info",
+      "fill": "info",
+      "emphasis": "strong"
+     }
+    },
+    {
+     "id": "e1",
+     "set": {
+      "text": "A − C = {AB, A}"
+     }
+    },
+    {
+     "id": "e2",
+     "set": {
+      "text": "B − C = {AB, B}",
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Removing B − C from A − C deletes AB and leaves the region A. Y has the same region list as X.",
+   "patches": [
+    {
+     "id": "rABC",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rAB",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rAC",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rBC",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rA",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rB",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rC",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "r-",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "emphasis": "soft"
+     }
+    },
+    {
+     "id": "rA",
+     "set": {
+      "tone": "success",
+      "fill": "success",
+      "emphasis": "strong"
+     }
+    },
+    {
+     "id": "e1",
+     "set": {
+      "text": "Y = {A}",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "e2",
+     "set": {
+      "text": "X = {A}",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Same regions, so X = Y for every choice of A, B, C. Neither is a proper subset of the other.",
+   "patches": [
+    {
+     "id": "e3",
+     "set": {
+      "text": "X = Y = A ∩ Bᶜ ∩ Cᶜ",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,450 @@
+[
+ {
+  "id": "nx-dm-03-01-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Let $S = \\{1, \\{2, 3\\}, \\{\\emptyset\\}, \\emptyset\\}$. How many elements do $S$ and its power set $P(S)$ have?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$|S| = 4$ and $|P(S)| = 16$"
+   },
+   {
+    "l": "B",
+    "t": "$|S| = 5$ and $|P(S)| = 32$"
+   },
+   {
+    "l": "C",
+    "t": "$|S| = 6$ and $|P(S)| = 64$"
+   },
+   {
+    "l": "D",
+    "t": "$|S| = 3$ and $|P(S)| = 8$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Count only the items directly inside the outer braces: $1$, $\\{2, 3\\}$, $\\{\\emptyset\\}$ and $\\emptyset$.",
+   "$\\{2, 3\\}$ is one element (a set), $\\{\\emptyset\\}$ is one element (a box containing an empty box), and $\\emptyset$ is listed, so it is an element too. $|S| = 4$.",
+   "A power set has $2^{|S|}$ elements, whatever the elements look like: $2^4 = 16$."
+  ],
+  "concept": "Elements are the items directly inside the outer braces; |P(S)| = 2^|S| regardless of what the elements are.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Counting the $\\emptyset$ inside $\\{\\emptyset\\}$ as an extra element of $S$; it sits one level down."
+   },
+   {
+    "answer": "C",
+    "why": "Unpacking $\\{2, 3\\}$ into two elements $2$ and $3$; the set $\\{2, 3\\}$ is a single element of $S$."
+   },
+   {
+    "answer": "D",
+    "why": "Ignoring $\\emptyset$ because it is 'empty'; a listed $\\emptyset$ is an element like any other."
+   }
+  ],
+  "blocks": [
+   "set-def",
+   "trap-empty-vs-singleton",
+   "powerset-size"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-03-01-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "How many elements does $P(P(\\{a, b\\}))$ have?",
+  "answer": 16,
+  "solution": [
+   "$P(\\{a, b\\}) = \\{\\emptyset, \\{a\\}, \\{b\\}, \\{a, b\\}\\}$ has $2^2 = 4$ elements.",
+   "The power set of a 4-element set has $2^4 = 16$ elements.",
+   "In general $|P(P(S))| = 2^{2^n}$; here $2^{2^2} = 16$."
+  ],
+  "concept": "Apply |P(X)| = 2^|X| twice: 2^(2^n).",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "That is $|P(\\{a, b\\})|$; the question applies $P$ twice."
+   },
+   {
+    "answer": 8,
+    "why": "Doubling instead of exponentiating: the second power set has $2^4$, not $2 \\cdot 4$, elements."
+   }
+  ],
+  "blocks": [
+   "powerset-size",
+   "nested-powerset"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-03-01-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Subsets of $U = \\{1, 2, \\dots, 8\\}$ are stored as 8-bit strings, bit $i$ (from the left) being 1 iff $i$ is in the set. If $A = 10110010$ and $B = 01110100$, which string represents $A \\,\\Delta\\, B$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$00110000$"
+   },
+   {
+    "l": "B",
+    "t": "$11000110$"
+   },
+   {
+    "l": "C",
+    "t": "$11110110$"
+   },
+   {
+    "l": "D",
+    "t": "$10000010$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Symmetric difference keeps the elements in exactly one of the sets: bitwise XOR.",
+   "Column by column: $1 \\oplus 0, 0 \\oplus 1, 1 \\oplus 1, 1 \\oplus 1, 0 \\oplus 0, 0 \\oplus 1, 1 \\oplus 0, 0 \\oplus 0$ = $1, 1, 0, 0, 0, 1, 1, 0$.",
+   "So $A \\,\\Delta\\, B = 11000110 = \\{1, 2, 6, 7\\}$."
+  ],
+  "concept": "As bit vectors, ∪ is OR, ∩ is AND, − is AND-NOT and Δ is XOR.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is the AND, i.e. $A \\cap B$."
+   },
+   {
+    "answer": "C",
+    "why": "That is the OR, i.e. $A \\cup B$; it keeps the shared elements 3 and 4."
+   },
+   {
+    "answer": "D",
+    "why": "That is $A - B$ only; $\\Delta$ also includes $B - A$."
+   }
+  ],
+  "blocks": [
+   "bitvector-def",
+   "symdiff-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-03-01-q04",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following hold for **all** sets $A, B, C$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A - (B \\cap C) = (A - B) \\cup (A - C)$"
+   },
+   {
+    "l": "B",
+    "t": "$A \\cup (B \\,\\Delta\\, C) = (A \\cup B) \\,\\Delta\\, (A \\cup C)$"
+   },
+   {
+    "l": "C",
+    "t": "$A \\cap (B \\,\\Delta\\, C) = (A \\cap B) \\,\\Delta\\, (A \\cap C)$"
+   },
+   {
+    "l": "D",
+    "t": "$(A - B) - C = A - (B - C)$"
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "(A) Both sides are $A \\cap (B \\cap C)^c = A \\cap (B^c \\cup C^c)$ by De Morgan: regions $\\{AB, AC, A\\}$. Holds.",
+   "(B) For an element of $A$ the left side is 1 and the right side is $1 \\oplus 1 = 0$. With $A = B = \\{1\\}$, $C = \\emptyset$: $\\{1\\}$ against $\\emptyset$. Fails.",
+   "(C) AND distributes over XOR: $a \\wedge (b \\oplus c) = (a \\wedge b) \\oplus (a \\wedge c)$ (both are 0 when $a = 0$ and $b \\oplus c$ when $a = 1$). Holds.",
+   "(D) Regions: $(A - B) - C = \\{A\\}$ but $A - (B - C) = \\{ABC, AC, A\\}$. With $A = C = \\{1\\}$, $B = \\emptyset$: $\\emptyset$ against $\\{1\\}$. Fails."
+  ],
+  "concept": "Translate to membership bits: ∩ distributes over Δ, ∪ does not; difference is not associative.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Assuming ∪ distributes over Δ because ∩ does; the element-of-$A$ case breaks it."
+   },
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "Treating difference as associative; the correct regrouping is $(A - B) - C = A - (B \\cup C)$."
+   }
+  ],
+  "blocks": [
+   "laws-table",
+   "symdiff-laws",
+   "ex-op-edge",
+   "ex-id-edge"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-03-01-q05",
+  "type": "NAT",
+  "marks": 2,
+  "text": "Let $S = \\{1, 2, 3, 4, 5, 6\\}$. How many ordered pairs $(A, B)$ of subsets of $S$ satisfy $A \\subseteq B$ and $|B| = 4$?",
+  "answer": 240,
+  "solution": [
+   "Choose $B$ first: a 4-element subset of a 6-element set, $\\binom{6}{4} = 15$ ways.",
+   "Then $A$ is any subset of $B$: $2^4 = 16$ ways.",
+   "Each pair arises once: $15 \\cdot 16 = 240$."
+  ],
+  "concept": "Fixing |B| = k: C(n, k) · 2^k; summing over k gives 3^n.",
+  "common_wrong": [
+   {
+    "answer": 729,
+    "why": "$3^6$ counts all pairs with $A \\subseteq B$, ignoring the size condition."
+   },
+   {
+    "answer": 15,
+    "why": "Counts only the choices of $B$; $A$ can still be any of its 16 subsets."
+   }
+  ],
+  "blocks": [
+   "nonlocal-counts",
+   "standard-counts",
+   "ex-cnt-medium"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-03-01-q06",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Let $A, B, C$ be sets, $X = (A \\cap B) \\cup (A - C)$ and $Y = A - (C - B)$. Which one is TRUE for all $A, B, C$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$X \\subset Y$ (proper)"
+   },
+   {
+    "l": "B",
+    "t": "$Y \\subset X$ (proper)"
+   },
+   {
+    "l": "C",
+    "t": "$X = Y$"
+   },
+   {
+    "l": "D",
+    "t": "$X \\cap Y = \\emptyset$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Region lists with codes $ABC, AB, AC, A, BC, B, C, -$.",
+   "$A \\cap B = \\{ABC, AB\\}$ and $A - C = \\{AB, A\\}$, so $X = \\{ABC, AB, A\\}$.",
+   "$C - B = \\{AC, C\\}$; removing it from $A = \\{ABC, AB, AC, A\\}$ leaves $Y = \\{ABC, AB, A\\}$.",
+   "Same regions, so $X = Y$ for all sets."
+  ],
+  "concept": "Two expressions are equal for all sets exactly when they cover the same Venn regions.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "The formulas look different, but they cover the same regions; a proper inclusion is never 'always' true here."
+   },
+   {
+    "answer": "D",
+    "why": "Both contain $A \\cap B$, so they are disjoint only when $A$ is empty."
+   }
+  ],
+  "blocks": [
+   "region-theorem",
+   "trick-region-lists",
+   "trap-strict-subset"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-03-01-q07",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Which statement about power sets holds for **all** sets $A$ and $B$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$P(A \\cup B) = P(A) \\cup P(B)$"
+   },
+   {
+    "l": "B",
+    "t": "$P(A - B) = P(A) - P(B)$"
+   },
+   {
+    "l": "C",
+    "t": "$P(A) \\cap P(B) = \\{\\emptyset\\}$"
+   },
+   {
+    "l": "D",
+    "t": "$P(A \\cap B) = P(A) \\cap P(B)$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "$X \\subseteq A \\cap B$ iff $X \\subseteq A$ and $X \\subseteq B$, so $P(A \\cap B) = P(A) \\cap P(B)$ always.",
+   "(A) fails for $A = \\{1\\}$, $B = \\{2\\}$: $\\{1, 2\\}$ is in the left side only.",
+   "(B) never holds: $\\emptyset \\in P(A - B)$, but $\\emptyset \\in P(B)$, so $\\emptyset \\notin P(A) - P(B)$.",
+   "(C) fails whenever $A \\cap B \\ne \\emptyset$: e.g. $A = B = \\{1\\}$ gives $\\{\\emptyset, \\{1\\}\\}$."
+  ],
+  "concept": "P(A ∩ B) = P(A) ∩ P(B); the union law holds only when one set contains the other.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Only $P(A) \\cup P(B) \\subseteq P(A \\cup B)$; subsets mixing elements of both sets are missing."
+   },
+   {
+    "answer": "C",
+    "why": "That is the value of $P(A \\cap B)$ only when $A$ and $B$ are disjoint."
+   }
+  ],
+  "blocks": [
+   "powerset-meet",
+   "ex-ps-union"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-03-01-q08",
+  "type": "NAT",
+  "marks": 2,
+  "text": "Let $S = \\{1, 2, 3, 4\\}$. How many ordered pairs $(A, B)$ of subsets of $S$ satisfy $A \\cup B = S$ and $A \\cap B \\neq \\emptyset$?",
+  "answer": 65,
+  "solution": [
+   "$A \\cup B = S$ forbids only the pattern 'in neither': each element is in both, in $A$ only, or in $B$ only, so there are $3^4 = 81$ pairs.",
+   "Among them, $A \\cap B = \\emptyset$ means each element is in exactly one set: $2^4 = 16$ pairs.",
+   "Remove those: $81 - 16 = 65$."
+  ],
+  "concept": "Count the per-element condition (3^n), then subtract the pairs that violate the whole-set condition (2^n).",
+  "common_wrong": [
+   {
+    "answer": 81,
+    "why": "Forgets the condition $A \\cap B \\ne \\emptyset$."
+   },
+   {
+    "answer": 80,
+    "why": "Subtracts only one pair; there are $2^4$ pairs that split $S$ into two disjoint parts."
+   }
+  ],
+  "blocks": [
+   "per-element-theorem",
+   "standard-counts",
+   "trick-pattern-menu"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-03-01-q09",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "Let $S = \\{1, \\{2\\}, \\{1, 2\\}\\}$. Which of the following are TRUE?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\{2\\} \\in S$"
+   },
+   {
+    "l": "B",
+    "t": "$\\{2\\} \\subseteq S$"
+   },
+   {
+    "l": "C",
+    "t": "$\\{1\\} \\subseteq S$"
+   },
+   {
+    "l": "D",
+    "t": "$\\{1, \\{2\\}\\} \\in P(S)$"
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "(A) $\\{2\\}$ is listed in $S$: true.",
+   "(B) Unpacking $\\{2\\}$ gives the number $2$, which is not listed in $S$ (it only sits inside elements): false.",
+   "(C) Unpacking $\\{1\\}$ gives $1$, which is listed: true.",
+   "(D) $\\{1, \\{2\\}\\} \\in P(S)$ iff $\\{1, \\{2\\}\\} \\subseteq S$; both $1$ and $\\{2\\}$ are listed: true."
+  ],
+  "concept": "X ∈ S: X is listed; X ⊆ S: every item inside X is listed; X ∈ P(S) iff X ⊆ S.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "Taking $\\{2\\} \\in S$ to imply $\\{2\\} \\subseteq S$; the subset test needs $2 \\in S$."
+   },
+   {
+    "answer": [
+     "A",
+     "C"
+    ],
+    "why": "Missing that membership in $P(S)$ is the subset test one level down."
+   }
+  ],
+  "blocks": [
+   "member-subset-bridge",
+   "trick-strip-braces"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-03-01-q10",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Finite sets $A$ and $B$ have $|A| = 25$, $|B| = 18$ and $|A \\cup B| = 35$. What is $|A \\,\\Delta\\, B|$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "27"
+   },
+   {
+    "l": "B",
+    "t": "35"
+   },
+   {
+    "l": "C",
+    "t": "19"
+   },
+   {
+    "l": "D",
+    "t": "43"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "$|A \\cap B| = |A| + |B| - |A \\cup B| = 25 + 18 - 35 = 8$.",
+   "$A \\,\\Delta\\, B$ is the union without the overlap: $35 - 8 = 27$.",
+   "Check with $|A| + |B| - 2|A \\cap B| = 43 - 16 = 27$."
+  ],
+  "concept": "|A Δ B| = |A ∪ B| − |A ∩ B| = |A| + |B| − 2|A ∩ B|.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "That is $|A \\cup B|$; the 8 shared elements must be removed."
+   },
+   {
+    "answer": "D",
+    "why": "$|A| + |B|$ counts the overlap twice instead of not at all."
+   }
+  ],
+  "blocks": [
+   "symdiff-laws",
+   "union-count",
+   "ex-cmp-count"
+  ],
+  "source": "nexora"
+ }
+]

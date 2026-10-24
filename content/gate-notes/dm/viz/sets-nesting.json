@@ -1,0 +1,537 @@
+{
+ "version": 1,
+ "title": "Element or subset?",
+ "width": 640,
+ "height": 330,
+ "narrow": {
+  "width": 360,
+  "height": 440
+ },
+ "intro": "A set is a box; its elements are what lies directly inside. Elements can be boxes too, which is where ∈ and ⊆ part ways.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Membership looks one level down; subset unpacks first",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∈ against ⊆",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "outer",
+   "type": "box",
+   "x": 20,
+   "y": 50,
+   "w": 380,
+   "h": 150,
+   "tone": "accent",
+   "narrow": {
+    "x": 10,
+    "y": 46,
+    "w": 340,
+    "h": 130
+   }
+  },
+  {
+   "id": "sname",
+   "type": "text",
+   "x": 34,
+   "y": 68,
+   "text": "S = {a, {b}, {a, b}}",
+   "size": 14,
+   "mono": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 22,
+    "y": 62,
+    "size": 13
+   }
+  },
+  {
+   "id": "ea",
+   "type": "box",
+   "x": 40,
+   "y": 100,
+   "w": 60,
+   "h": 70,
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 24,
+    "y": 88,
+    "w": 56,
+    "h": 70
+   },
+   "label": "a"
+  },
+  {
+   "id": "eb",
+   "type": "box",
+   "x": 125,
+   "y": 90,
+   "w": 105,
+   "h": 90,
+   "narrow": {
+    "x": 100,
+    "y": 82,
+    "w": 92,
+    "h": 82
+   }
+  },
+  {
+   "id": "eb1",
+   "type": "box",
+   "x": 152,
+   "y": 115,
+   "w": 50,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 122,
+    "y": 102,
+    "w": 48,
+    "h": 44
+   },
+   "label": "b"
+  },
+  {
+   "id": "eab",
+   "type": "box",
+   "x": 255,
+   "y": 90,
+   "w": 125,
+   "h": 90,
+   "narrow": {
+    "x": 210,
+    "y": 82,
+    "w": 128,
+    "h": 82
+   }
+  },
+  {
+   "id": "eab1",
+   "type": "box",
+   "x": 266,
+   "y": 115,
+   "w": 48,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 220,
+    "y": 102,
+    "w": 50,
+    "h": 44
+   },
+   "label": "a"
+  },
+  {
+   "id": "eab2",
+   "type": "box",
+   "x": 322,
+   "y": 115,
+   "w": 48,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 278,
+    "y": 102,
+    "w": 50,
+    "h": 44
+   },
+   "label": "b"
+  },
+  {
+   "id": "lvl",
+   "type": "text",
+   "x": 210,
+   "y": 222,
+   "text": "three elements: a, {b}, {a, b}",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 196,
+    "size": 13
+   }
+  },
+  {
+   "id": "c0",
+   "type": "text",
+   "x": 430,
+   "y": 62,
+   "text": "{b} ∈ S",
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 20,
+    "y": 222,
+    "size": 14
+   }
+  },
+  {
+   "id": "v0",
+   "type": "text",
+   "x": 560,
+   "y": 62,
+   "text": "?",
+   "size": 16,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 200,
+    "y": 222,
+    "size": 14
+   }
+  },
+  {
+   "id": "c1",
+   "type": "text",
+   "x": 430,
+   "y": 106,
+   "text": "{b} ⊆ S",
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 20,
+    "y": 258,
+    "size": 14
+   }
+  },
+  {
+   "id": "v1",
+   "type": "text",
+   "x": 560,
+   "y": 106,
+   "text": "?",
+   "size": 16,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 200,
+    "y": 258,
+    "size": 14
+   }
+  },
+  {
+   "id": "c2",
+   "type": "text",
+   "x": 430,
+   "y": 150,
+   "text": "{a} ⊆ S",
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 20,
+    "y": 294,
+    "size": 14
+   }
+  },
+  {
+   "id": "v2",
+   "type": "text",
+   "x": 560,
+   "y": 150,
+   "text": "?",
+   "size": 16,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 200,
+    "y": 294,
+    "size": 14
+   }
+  },
+  {
+   "id": "c3",
+   "type": "text",
+   "x": 430,
+   "y": 194,
+   "text": "{a, b} ∈ S",
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 20,
+    "y": 330,
+    "size": 14
+   }
+  },
+  {
+   "id": "v3",
+   "type": "text",
+   "x": 560,
+   "y": 194,
+   "text": "?",
+   "size": 16,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 200,
+    "y": 330,
+    "size": 14
+   }
+  },
+  {
+   "id": "c4",
+   "type": "text",
+   "x": 430,
+   "y": 238,
+   "text": "{a, b} ⊆ S",
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 20,
+    "y": 366,
+    "size": 14
+   }
+  },
+  {
+   "id": "v4",
+   "type": "text",
+   "x": 560,
+   "y": 238,
+   "text": "?",
+   "size": 16,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 200,
+    "y": 366,
+    "size": 14
+   }
+  },
+  {
+   "id": "c5",
+   "type": "text",
+   "x": 430,
+   "y": 282,
+   "text": "{{b}} ⊆ S",
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 20,
+    "y": 402,
+    "size": 14
+   }
+  },
+  {
+   "id": "v5",
+   "type": "text",
+   "x": 560,
+   "y": 282,
+   "text": "?",
+   "size": 16,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 200,
+    "y": 402,
+    "size": 14
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The elements of S are the three items directly inside its box: a, the box {b} and the box {a, b}. The b on its own is not one of them.",
+   "patches": [
+    {
+     "id": "ea",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "eb",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "eab",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "{b} ∈ S asks: is the box {b} itself lying in S? Yes, it is the middle item. {b} ⊆ S unpacks {b} first: is b in S? No.",
+   "patches": [
+    {
+     "id": "eb",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "ea",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "eab",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "text": "true",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "false",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "eb1",
+     "set": {
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "{a} ⊆ S unpacks to a, which lies directly in S: true. So a ∈ S and {a} ⊆ S say the same thing.",
+   "patches": [
+    {
+     "id": "eb",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "eb1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ea",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "true",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "{a, b} is an element (the third item), but {a, b} ⊆ S fails: unpacking gives a (in S) and b (not in S).",
+   "patches": [
+    {
+     "id": "ea",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "eab",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "eab2",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "v3",
+     "set": {
+      "text": "true",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "v4",
+     "set": {
+      "text": "false",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "{{b}} ⊆ S unpacks one pair of braces to {b}, which is an element of S: true. Strip one pair of braces for ⊆, none for ∈.",
+   "patches": [
+    {
+     "id": "eab",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "eab2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "eb",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "v5",
+     "set": {
+      "text": "true",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lvl",
+     "set": {
+      "text": "X ∈ S: listed?   X ⊆ S: unpack, then listed?",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

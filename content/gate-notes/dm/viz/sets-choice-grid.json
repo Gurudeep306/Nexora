@@ -1,0 +1,396 @@
+{
+ "version": 1,
+ "title": "Each element chooses",
+ "width": 640,
+ "height": 300,
+ "narrow": {
+  "width": 360,
+  "height": 270
+ },
+ "intro": "To count pairs of subsets, let every element choose its own membership status. The condition removes some statuses; the rest multiply.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Counting pairs (A, B) with A ⊆ B, one element at a time",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Pairs with A ⊆ B",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "t",
+   "type": "table",
+   "x": 60,
+   "y": 50,
+   "cellW": 104,
+   "cellH": 34,
+   "rows": [
+    [
+     "element",
+     "in both",
+     "B only",
+     "A only",
+     "neither"
+    ],
+    [
+     "1",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "2",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "3",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "4",
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "narrow": {
+    "x": 15,
+    "y": 48,
+    "cellW": 66,
+    "cellH": 30
+   }
+  },
+  {
+   "id": "prod",
+   "type": "text",
+   "x": 320,
+   "y": 250,
+   "text": "",
+   "anchor": "middle",
+   "size": 18,
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180,
+    "y": 220,
+    "size": 14
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 320,
+   "y": 286,
+   "text": "S = {1, 2, 3, 4}",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 252,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Each element of S = {1, 2, 3, 4} has four possible statuses: in both sets, in B only, in A only, in neither.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "element",
+        "in both",
+        "B only",
+        "A only",
+        "neither"
+       ],
+       [
+        "1",
+        "✓",
+        "✓",
+        "✓",
+        "✓"
+       ],
+       [
+        "2",
+        "✓",
+        "✓",
+        "✓",
+        "✓"
+       ],
+       [
+        "3",
+        "✓",
+        "✓",
+        "✓",
+        "✓"
+       ],
+       [
+        "4",
+        "✓",
+        "✓",
+        "✓",
+        "✓"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        1,
+        4
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        2,
+        4
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ],
+       [
+        3,
+        4
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        4,
+        3
+       ],
+       [
+        4,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A ⊆ B forbids exactly one status: being in A but not in B. Cross that column out.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "element",
+        "in both",
+        "B only",
+        "A only",
+        "neither"
+       ],
+       [
+        "1",
+        "✓",
+        "✓",
+        "✗",
+        "✓"
+       ],
+       [
+        "2",
+        "✓",
+        "✓",
+        "✗",
+        "✓"
+       ],
+       [
+        "3",
+        "✓",
+        "✓",
+        "✗",
+        "✓"
+       ],
+       [
+        "4",
+        "✓",
+        "✓",
+        "✗",
+        "✓"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        3
+       ],
+       [
+        4,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "forbidden: in A, not in B",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Every element now picks one of 3 statuses, independently of the others, and each choice list is a different pair.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        4
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        4
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        4
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        4,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "3 choices per element",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Multiply over the four elements: 3 × 3 × 3 × 3 = 81 pairs. An enumeration of all 256 pairs finds exactly 81.",
+   "patches": [
+    {
+     "id": "prod",
+     "set": {
+      "text": "3 · 3 · 3 · 3 = 3⁴ = 81",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "In general 3ⁿ; for |S| = 10 (GATE 2021) that is 3¹⁰ = 59049. Other conditions just change the number of allowed statuses.",
+   "patches": [
+    {
+     "id": "note",
+     "set": {
+      "text": "|S| = n  ⇒  3ⁿ pairs;  n = 10: 59049",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}
