@@ -1,0 +1,282 @@
+{
+ "version": 1,
+ "title": "Counter-model search on tiny domains",
+ "width": 640,
+ "height": 280,
+ "narrow": {
+  "width": 360,
+  "height": 270
+ },
+ "intro": "To refute a law, try every interpretation on a 1-element domain, then a 2-element one. Here the split world P = {0}, Q = {1} appears on size 2.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Searching for a counter-model, smallest domain first",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Counter-model search",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "f",
+   "type": "text",
+   "x": 320,
+   "y": 52,
+   "text": "∀x(P(x) ∨ Q(x)) → (∀x P(x) ∨ ∀x Q(x))",
+   "anchor": "middle",
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 50,
+    "size": 13
+   }
+  },
+  {
+   "id": "t1",
+   "type": "table",
+   "x": 70,
+   "y": 70,
+   "cellW": 100,
+   "cellH": 30,
+   "rows": [
+    [
+     "P(0)",
+     "Q(0)",
+     "∀(P∨Q)",
+     "∀P∨∀Q",
+     "→"
+    ],
+    [
+     "F",
+     "F",
+     "F",
+     "F",
+     "T"
+    ],
+    [
+     "F",
+     "T",
+     "T",
+     "T",
+     "T"
+    ],
+    [
+     "T",
+     "F",
+     "T",
+     "T",
+     "T"
+    ],
+    [
+     "T",
+     "T",
+     "T",
+     "T",
+     "T"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 15,
+    "y": 66,
+    "cellW": 66,
+    "cellH": 28
+   }
+  },
+  {
+   "id": "t2",
+   "type": "table",
+   "x": 170,
+   "y": 70,
+   "cellW": 75,
+   "cellH": 34,
+   "rows": [
+    [
+     "x",
+     "P(x)",
+     "Q(x)",
+     "P∨Q"
+    ],
+    [
+     "0",
+     "T",
+     "F",
+     "T"
+    ],
+    [
+     "1",
+     "F",
+     "T",
+     "T"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 30,
+    "y": 66,
+    "cellW": 75,
+    "cellH": 32
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 320,
+   "y": 262,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 250,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Size 1: the domain {0}. There are 4 interpretations (P(0) and Q(0) each T or F). In every one the implication is true: on one element, 'each is P or Q' already means 'all P or all Q'.",
+   "patches": [
+    {
+     "id": "t1",
+     "set": {
+      "highlight": [
+       [
+        1,
+        4
+       ],
+       [
+        2,
+        4
+       ],
+       [
+        3,
+        4
+       ],
+       [
+        4,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "size 1: no counter-model (4 of 4 pass)",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Size 2: 16 interpretations of P and Q on {0, 1}. The search tries them in order and the 7th is the first that makes the formula false.",
+   "patches": [
+    {
+     "id": "t1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "size 2: counter-model at try 7 of 16",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check the hypothesis in that world: element 0 has P, element 1 has Q, so every element has P or Q. ∀x(P(x) ∨ Q(x)) is T.",
+   "patches": [
+    {
+     "id": "t2",
+     "set": {
+      "highlight": [
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "hypothesis ∀x(P ∨ Q): T",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check the conclusion: P fails at 1 and Q fails at 0, so ∀x P(x) and ∀x Q(x) are both F, and so is their disjunction.",
+   "patches": [
+    {
+     "id": "t2",
+     "set": {
+      "highlight": [
+       [
+        2,
+        1
+       ],
+       [
+        1,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "conclusion ∀P ∨ ∀Q: F",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "T → F: one counter-model, so the formula is not valid. Had sizes 1–3 all passed, we would have learned nothing about validity: only a proof shows that.",
+   "patches": [
+    {
+     "id": "note",
+     "set": {
+      "text": "counter-model found: NOT valid",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

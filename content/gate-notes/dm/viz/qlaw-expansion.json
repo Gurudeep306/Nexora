@@ -1,0 +1,301 @@
+{
+ "version": 1,
+ "title": "Quantifiers as long connectives",
+ "width": 640,
+ "height": 270,
+ "narrow": {
+  "width": 360,
+  "height": 256
+ },
+ "intro": "Over a finite domain, ∀ is an AND and ∃ an OR of one instance per element. The two-way laws are regroupings; the one-way laws are where regrouping fails.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "∀ is a long AND, ∃ is a long OR",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∀ = big AND, ∃ = big OR",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "t",
+   "type": "table",
+   "x": 120,
+   "y": 46,
+   "cellW": 80,
+   "cellH": 30,
+   "rows": [
+    [
+     "x",
+     "P(x)",
+     "Q(x)",
+     "P∧Q",
+     "P∨Q"
+    ],
+    [
+     "a",
+     "T",
+     "F",
+     "F",
+     "T"
+    ],
+    [
+     "b",
+     "T",
+     "T",
+     "T",
+     "T"
+    ],
+    [
+     "c",
+     "F",
+     "T",
+     "F",
+     "T"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 30,
+    "y": 44,
+    "cellW": 60,
+    "cellH": 28
+   }
+  },
+  {
+   "id": "l1",
+   "type": "text",
+   "x": 320,
+   "y": 196,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 186,
+    "size": 12
+   }
+  },
+  {
+   "id": "l2",
+   "type": "text",
+   "x": 320,
+   "y": 224,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 210,
+    "size": 12
+   }
+  },
+  {
+   "id": "l3",
+   "type": "text",
+   "x": 320,
+   "y": 252,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 236,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "On the domain {a, b, c}, ∀x(P(x) ∧ Q(x)) is the AND of the P∧Q column: F ∧ T ∧ F.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "highlight": [
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "l1",
+     "set": {
+      "text": "∀x(P∧Q) = (P∧Q)(a)∧(P∧Q)(b)∧(P∧Q)(c) = F"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "An AND of ANDs regroups: the same six atoms, sorted into the P column and the Q column. So ∀x(P ∧ Q) ≡ ∀x P ∧ ∀x Q.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        3,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "l2",
+     "set": {
+      "text": "∀xP ∧ ∀xQ = F ∧ F = F"
+     }
+    },
+    {
+     "id": "l3",
+     "set": {
+      "text": "∀ distributes over ∧ (both ways)",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Likewise ∃x(P ∨ Q) is the OR of the P∨Q column, and an OR of ORs regroups into ∃x P ∨ ∃x Q.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "highlight": [
+       [
+        1,
+        4
+       ],
+       [
+        2,
+        4
+       ],
+       [
+        3,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "l1",
+     "set": {
+      "text": "∃x(P∨Q) = T"
+     }
+    },
+    {
+     "id": "l2",
+     "set": {
+      "text": "∃xP ∨ ∃xQ = T ∨ T = T"
+     }
+    },
+    {
+     "id": "l3",
+     "set": {
+      "text": "∃ distributes over ∨ (both ways)",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A mixture does not regroup. ∀x(P ∨ Q) is an AND of ORs: the P∨Q column is all T. But neither the P column nor the Q column is all T.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "highlight": [
+       [
+        1,
+        4
+       ],
+       [
+        2,
+        4
+       ],
+       [
+        3,
+        4
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        1,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "l1",
+     "set": {
+      "text": "∀x(P∨Q) = T"
+     }
+    },
+    {
+     "id": "l2",
+     "set": {
+      "text": "∀xP ∨ ∀xQ = F ∨ F = F"
+     }
+    },
+    {
+     "id": "l3",
+     "set": {
+      "text": "∀ over ∨: only ∀P ∨ ∀Q ⇒ ∀(P ∨ Q)",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

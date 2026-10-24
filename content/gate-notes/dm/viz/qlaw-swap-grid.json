@@ -1,0 +1,320 @@
+{
+ "version": 1,
+ "title": "The ∃∀ ⇒ ∀∃ grid",
+ "width": 640,
+ "height": 330,
+ "narrow": {
+  "width": 360,
+  "height": 300
+ },
+ "intro": "A relation drawn as a 0/1 grid. ∃y∀x asks for a full column; ∀x∃y asks for a 1 in every row.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Rows x, columns y: a full column versus a 1 in every row",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∃y∀x versus ∀x∃y",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "grid",
+   "type": "grid",
+   "x": 280,
+   "y": 66,
+   "rows": 3,
+   "cols": 3,
+   "cell": 50,
+   "values": [
+    [
+     "0",
+     "1",
+     "0"
+    ],
+    [
+     "1",
+     "1",
+     "0"
+    ],
+    [
+     "0",
+     "1",
+     "1"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 110,
+    "y": 64,
+    "cell": 46
+   }
+  },
+  {
+   "id": "c0",
+   "type": "text",
+   "x": 305,
+   "y": 60,
+   "text": "y=0",
+   "anchor": "middle",
+   "size": 13,
+   "tone": "muted",
+   "narrow": {
+    "x": 133,
+    "y": 58,
+    "size": 12
+   }
+  },
+  {
+   "id": "c1",
+   "type": "text",
+   "x": 355,
+   "y": 60,
+   "text": "y=1",
+   "anchor": "middle",
+   "size": 13,
+   "tone": "muted",
+   "narrow": {
+    "x": 179,
+    "y": 58,
+    "size": 12
+   }
+  },
+  {
+   "id": "c2",
+   "type": "text",
+   "x": 405,
+   "y": 60,
+   "text": "y=2",
+   "anchor": "middle",
+   "size": 13,
+   "tone": "muted",
+   "narrow": {
+    "x": 225,
+    "y": 58,
+    "size": 12
+   }
+  },
+  {
+   "id": "r0",
+   "type": "text",
+   "x": 270,
+   "y": 96,
+   "text": "x=0",
+   "anchor": "end",
+   "size": 13,
+   "tone": "muted",
+   "narrow": {
+    "x": 104,
+    "y": 92,
+    "size": 12
+   }
+  },
+  {
+   "id": "r1",
+   "type": "text",
+   "x": 270,
+   "y": 146,
+   "text": "x=1",
+   "anchor": "end",
+   "size": 13,
+   "tone": "muted",
+   "narrow": {
+    "x": 104,
+    "y": 138,
+    "size": 12
+   }
+  },
+  {
+   "id": "r2",
+   "type": "text",
+   "x": 270,
+   "y": 196,
+   "text": "x=2",
+   "anchor": "end",
+   "size": 13,
+   "tone": "muted",
+   "narrow": {
+    "x": 104,
+    "y": 184,
+    "size": 12
+   }
+  },
+  {
+   "id": "ae",
+   "type": "text",
+   "x": 320,
+   "y": 262,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 238,
+    "size": 13
+   }
+  },
+  {
+   "id": "ea",
+   "type": "text",
+   "x": 320,
+   "y": 288,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 262,
+    "size": 13
+   }
+  },
+  {
+   "id": "foot",
+   "type": "text",
+   "x": 320,
+   "y": 314,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 288,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "This R has a full column, y = 1: every x is related to it. So ∃y∀x R(x, y) is T.",
+   "patches": [
+    {
+     "id": "grid",
+     "set": {
+      "highlight": [
+       [
+        0,
+        1
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ea",
+     "set": {
+      "text": "∃y∀x R(x, y) = T",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The same column puts a 1 in every row, so every x has a partner: ∀x∃y R(x, y) is T. That is the proof of ∃y∀x ⇒ ∀x∃y: reuse the one witness for every x.",
+   "patches": [
+    {
+     "id": "ae",
+     "set": {
+      "text": "∀x∃y R(x, y) = T",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now a cyclic relation: each row still has exactly one 1, so ∀x∃y R(x, y) stays T, with a different partner for each x.",
+   "patches": [
+    {
+     "id": "grid",
+     "set": {
+      "values": [
+       [
+        "0",
+        "1",
+        "0"
+       ],
+       [
+        "0",
+        "0",
+        "1"
+       ],
+       [
+        "1",
+        "0",
+        "0"
+       ]
+      ],
+      "highlight": [
+       [
+        0,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        2,
+        0
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ae",
+     "set": {
+      "text": "∀x∃y R(x, y) = T"
+     }
+    },
+    {
+     "id": "ea",
+     "set": {
+      "text": "∃y∀x R(x, y) = ?",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "But no column is full: the partners are y = 1, 2, 0, all different. So ∃y∀x R(x, y) is F, and ∀x∃y ⇒ ∃y∀x fails.",
+   "patches": [
+    {
+     "id": "ea",
+     "set": {
+      "text": "∃y∀x R(x, y) = F",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "foot",
+     "set": {
+      "text": "the witness depends on x: no master key",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,577 @@
+{
+ "version": 1,
+ "title": "One-way laws with their counter-models",
+ "width": 640,
+ "height": 370,
+ "narrow": {
+  "width": 360,
+  "height": 350
+ },
+ "intro": "Each law goes from a strong statement to a weak one. A two-element world with the properties split refutes every converse.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Each one-way law, and the world that blocks its converse",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "One-way laws and counter-models",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "cap",
+   "type": "text",
+   "x": 320,
+   "y": 50,
+   "text": "domain {0, 1}; the world makes the right side T and the left side F",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "muted",
+   "only": "wide"
+  },
+  {
+   "id": "capn",
+   "type": "text",
+   "x": 180,
+   "y": 48,
+   "text": "domain {0, 1}: right side T, left side F",
+   "anchor": "middle",
+   "size": 12,
+   "tone": "muted",
+   "only": "narrow"
+  },
+  {
+   "id": "lawa",
+   "type": "box",
+   "x": 30,
+   "y": 66,
+   "w": 300,
+   "h": 34,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 62,
+    "w": 196,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∀A ∨ ∀B ⇒ ∀(A ∨ B)"
+  },
+  {
+   "id": "wa",
+   "type": "box",
+   "x": 345,
+   "y": 66,
+   "w": 160,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 208,
+    "y": 62,
+    "w": 146,
+    "h": 32,
+    "size": 12
+   },
+   "label": "A={0}, B={1}"
+  },
+  {
+   "id": "va",
+   "type": "text",
+   "x": 515,
+   "y": 88,
+   "text": "",
+   "size": 14,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "lawb",
+   "type": "box",
+   "x": 30,
+   "y": 108,
+   "w": 300,
+   "h": 34,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 102,
+    "w": 196,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∃(A ∧ B) ⇒ ∃A ∧ ∃B"
+  },
+  {
+   "id": "wb",
+   "type": "box",
+   "x": 345,
+   "y": 108,
+   "w": 160,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 208,
+    "y": 102,
+    "w": 146,
+    "h": 32,
+    "size": 12
+   },
+   "label": "A={0}, B={1}"
+  },
+  {
+   "id": "vb",
+   "type": "text",
+   "x": 515,
+   "y": 130,
+   "text": "",
+   "size": 14,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "lawc",
+   "type": "box",
+   "x": 30,
+   "y": 150,
+   "w": 300,
+   "h": 34,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 142,
+    "w": 196,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∀(A → B) ⇒ (∀A → ∀B)"
+  },
+  {
+   "id": "wc",
+   "type": "box",
+   "x": 345,
+   "y": 150,
+   "w": 160,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 208,
+    "y": 142,
+    "w": 146,
+    "h": 32,
+    "size": 12
+   },
+   "label": "A={0}, B=∅"
+  },
+  {
+   "id": "vc",
+   "type": "text",
+   "x": 515,
+   "y": 172,
+   "text": "",
+   "size": 14,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "lawd",
+   "type": "box",
+   "x": 30,
+   "y": 192,
+   "w": 300,
+   "h": 34,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 182,
+    "w": 196,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∀(A → B) ⇒ (∃A → ∃B)"
+  },
+  {
+   "id": "wd",
+   "type": "box",
+   "x": 345,
+   "y": 192,
+   "w": 160,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 208,
+    "y": 182,
+    "w": 146,
+    "h": 32,
+    "size": 12
+   },
+   "label": "A={0}, B={1}"
+  },
+  {
+   "id": "vd",
+   "type": "text",
+   "x": 515,
+   "y": 214,
+   "text": "",
+   "size": 14,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "lawe",
+   "type": "box",
+   "x": 30,
+   "y": 234,
+   "w": 300,
+   "h": 34,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 222,
+    "w": 196,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∀(A ↔ B) ⇒ (∀A ↔ ∀B)"
+  },
+  {
+   "id": "we",
+   "type": "box",
+   "x": 345,
+   "y": 234,
+   "w": 160,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 208,
+    "y": 222,
+    "w": 146,
+    "h": 32,
+    "size": 12
+   },
+   "label": "A={0}, B={1}"
+  },
+  {
+   "id": "ve",
+   "type": "text",
+   "x": 515,
+   "y": 256,
+   "text": "",
+   "size": 14,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "lawf",
+   "type": "box",
+   "x": 30,
+   "y": 276,
+   "w": 300,
+   "h": 34,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 262,
+    "w": 196,
+    "h": 32,
+    "size": 12
+   },
+   "label": "(∃A → ∀B) ⇒ ∀(A → B)"
+  },
+  {
+   "id": "wf",
+   "type": "box",
+   "x": 345,
+   "y": 276,
+   "w": 160,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 208,
+    "y": 262,
+    "w": 146,
+    "h": 32,
+    "size": 12
+   },
+   "label": "A=B={0}"
+  },
+  {
+   "id": "vf",
+   "type": "text",
+   "x": 515,
+   "y": 298,
+   "text": "",
+   "size": 14,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "lawg",
+   "type": "box",
+   "x": 30,
+   "y": 318,
+   "w": 300,
+   "h": 34,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 302,
+    "w": 196,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∀A ⇒ ∃A"
+  },
+  {
+   "id": "wg",
+   "type": "box",
+   "x": 345,
+   "y": 318,
+   "w": 160,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 208,
+    "y": 302,
+    "w": 146,
+    "h": 32,
+    "size": 12
+   },
+   "label": "A={0}"
+  },
+  {
+   "id": "vg",
+   "type": "text",
+   "x": 515,
+   "y": 340,
+   "text": "",
+   "size": 14,
+   "hidden": true,
+   "only": "wide"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "(a) If one predicate holds everywhere, the disjunction does. Converse: 0 has A, 1 has B, so ∀(A ∨ B) is T, but neither ∀A nor ∀B.",
+   "patches": [
+    {
+     "id": "lawa",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wa",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "va",
+     "set": {
+      "hidden": false,
+      "text": "converse ✗",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "(b) A common witness witnesses each part. Converse: ∃A and ∃B are T (0 and 1), but no element has both.",
+   "patches": [
+    {
+     "id": "lawb",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wb",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vb",
+     "set": {
+      "hidden": false,
+      "text": "converse ✗",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "(c) Modus ponens at every element. Converse: ∀A is F, so ∀A → ∀B is vacuously T; but A(0) → B(0) is T → F.",
+   "patches": [
+    {
+     "id": "lawc",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wc",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vc",
+     "set": {
+      "hidden": false,
+      "text": "converse ✗",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "(d) A witness of A is carried to a witness of B. Converse: ∃A → ∃B is T → T, yet A(0) → B(0) fails.",
+   "patches": [
+    {
+     "id": "lawd",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vd",
+     "set": {
+      "hidden": false,
+      "text": "converse ✗",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "(e) Apply (c) both ways. Converse: ∀A and ∀B are both F, so ∀A ↔ ∀B is T; but A(0) ↔ B(0) is F.",
+   "patches": [
+    {
+     "id": "lawe",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "we",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "ve",
+     "set": {
+      "hidden": false,
+      "text": "converse ✗",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "(f) If one A forces all B, each A forces its own B. Converse: ∀(A → B) is T, but ∃A is T and ∀B is F.",
+   "patches": [
+    {
+     "id": "lawf",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wf",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vf",
+     "set": {
+      "hidden": false,
+      "text": "converse ✗",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "(g) Pick any element (domains are non-empty). Converse: ∃A is T at 0, ∀A is F at 1.",
+   "patches": [
+    {
+     "id": "lawg",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wg",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vg",
+     "set": {
+      "hidden": false,
+      "text": "converse ✗",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

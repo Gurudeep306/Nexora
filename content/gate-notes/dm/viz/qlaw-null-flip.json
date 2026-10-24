@@ -1,0 +1,333 @@
+{
+ "version": 1,
+ "title": "Null quantification: the flip",
+ "width": 640,
+ "height": 336,
+ "narrow": {
+  "width": 360,
+  "height": 356
+ },
+ "intro": "Rewrite the implication as a disjunction, move the quantifier past W, and De Morgan does the flip.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Moving ∀ out of a hypothesis flips it to ∃",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Out of a hypothesis, ∀ flips",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "r0",
+   "type": "box",
+   "x": 40,
+   "y": 48,
+   "w": 250,
+   "h": 38,
+   "size": 16,
+   "mono": true,
+   "hidden": false,
+   "narrow": {
+    "x": 10,
+    "y": 46,
+    "w": 190,
+    "h": 36,
+    "size": 13
+   },
+   "label": "∀x (p(x) → W)"
+  },
+  {
+   "id": "r1",
+   "type": "box",
+   "x": 40,
+   "y": 98,
+   "w": 250,
+   "h": 38,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 92,
+    "w": 190,
+    "h": 36,
+    "size": 13
+   },
+   "label": "∀x (¬p(x) ∨ W)"
+  },
+  {
+   "id": "y1",
+   "type": "text",
+   "x": 305,
+   "y": 122,
+   "text": "X → Y ≡ ¬X ∨ Y",
+   "size": 14,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 206,
+    "y": 115,
+    "size": 11
+   }
+  },
+  {
+   "id": "r2",
+   "type": "box",
+   "x": 40,
+   "y": 148,
+   "w": 250,
+   "h": 38,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 138,
+    "w": 190,
+    "h": 36,
+    "size": 13
+   },
+   "label": "(∀x ¬p(x)) ∨ W"
+  },
+  {
+   "id": "y2",
+   "type": "text",
+   "x": 305,
+   "y": 172,
+   "text": "∀ passes W (no x) in ∨",
+   "size": 14,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 206,
+    "y": 161,
+    "size": 11
+   }
+  },
+  {
+   "id": "r3",
+   "type": "box",
+   "x": 40,
+   "y": 198,
+   "w": 250,
+   "h": 38,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 184,
+    "w": 190,
+    "h": 36,
+    "size": 13
+   },
+   "label": "¬∃x p(x) ∨ W"
+  },
+  {
+   "id": "y3",
+   "type": "text",
+   "x": 305,
+   "y": 222,
+   "text": "De Morgan: ∀¬ ≡ ¬∃",
+   "size": 14,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 206,
+    "y": 207,
+    "size": 11
+   }
+  },
+  {
+   "id": "r4",
+   "type": "box",
+   "x": 40,
+   "y": 248,
+   "w": 250,
+   "h": 38,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 230,
+    "w": 190,
+    "h": 36,
+    "size": 13
+   },
+   "label": "∃x p(x) → W"
+  },
+  {
+   "id": "y4",
+   "type": "text",
+   "x": 305,
+   "y": 272,
+   "text": "¬X ∨ Y ≡ X → Y",
+   "size": 14,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 206,
+    "y": 253,
+    "size": 11
+   }
+  },
+  {
+   "id": "bad",
+   "type": "box",
+   "x": 380,
+   "y": 48,
+   "w": 230,
+   "h": 38,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 286,
+    "w": 190,
+    "h": 36,
+    "size": 13
+   },
+   "label": "∀x p(x) → W"
+  },
+  {
+   "id": "world",
+   "type": "text",
+   "x": 320,
+   "y": 318,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 342,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Remove the arrow: p(x) → W is ¬p(x) ∨ W. The hypothesis is now visibly negated.",
+   "patches": [
+    {
+     "id": "r1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "y1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "W has no free x, so ∀x passes it in a disjunction: ∀x(¬p(x) ∨ W) ≡ (∀x ¬p(x)) ∨ W.",
+   "patches": [
+    {
+     "id": "r2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "y2",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "De Morgan for quantifiers: ∀x ¬p(x) is ¬∃x p(x). This is where the ∀ turns into an ∃.",
+   "patches": [
+    {
+     "id": "r3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "y3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Put the arrow back: ¬∃x p(x) ∨ W is ∃x p(x) → W. One p is enough to force W.",
+   "patches": [
+    {
+     "id": "r4",
+     "set": {
+      "hidden": false,
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "y4",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The tempting answer keeps ∀: ∀x p(x) → W (GATE 2020, option C). Test it in the world D = {0, 1}, p = {0}, W = F.",
+   "patches": [
+    {
+     "id": "bad",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "world",
+     "set": {
+      "text": "world: D = {0, 1}, p = {0}, W = F"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Every rung of the ladder is F there (at x = 0, p(0) → W is T → F), but ∀x p(x) → W is F → F = T. Not equivalent.",
+   "patches": [
+    {
+     "id": "bad",
+     "set": {
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "world",
+     "set": {
+      "text": "ladder: F   tempting form: T",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

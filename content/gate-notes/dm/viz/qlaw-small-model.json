@@ -1,0 +1,415 @@
+{
+ "version": 1,
+ "title": "The small-model property",
+ "width": 640,
+ "height": 280,
+ "narrow": {
+  "width": 360,
+  "height": 270
+ },
+ "intro": "A model of an ∃∃∃∀∀ sentence without functions, restricted to its three witnesses, is still a model.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Keep the witnesses, drop the rest (GATE 2018)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Shrinking an ∃*∀* model",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "f",
+   "type": "text",
+   "x": 320,
+   "y": 50,
+   "text": "∃s∃t∃u ∀v∀w (R(s,t) ∧ R(t,u) ∧ s≠u ∧ (R(v,w) → ¬R(w,v)))",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "fn",
+   "type": "text",
+   "x": 180,
+   "y": 48,
+   "text": "∃s∃t∃u∀v∀w(R(s,t)∧R(t,u)∧s≠u∧(R(v,w)→¬R(w,v)))",
+   "anchor": "middle",
+   "size": 11,
+   "mono": true,
+   "only": "narrow"
+  },
+  {
+   "id": "n0",
+   "type": "node",
+   "cx": 50,
+   "cy": 120,
+   "r": 22,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "cx": 24,
+    "cy": 110,
+    "r": 18,
+    "size": 13
+   },
+   "label": "0"
+  },
+  {
+   "id": "n1",
+   "type": "node",
+   "cx": 140,
+   "cy": 120,
+   "r": 22,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "cx": 76,
+    "cy": 110,
+    "r": 18,
+    "size": 13
+   },
+   "label": "1"
+  },
+  {
+   "id": "n2",
+   "type": "node",
+   "cx": 230,
+   "cy": 120,
+   "r": 22,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "cx": 128,
+    "cy": 110,
+    "r": 18,
+    "size": 13
+   },
+   "label": "2"
+  },
+  {
+   "id": "n3",
+   "type": "node",
+   "cx": 320,
+   "cy": 120,
+   "r": 22,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "cx": 180,
+    "cy": 110,
+    "r": 18,
+    "size": 13
+   },
+   "label": "3"
+  },
+  {
+   "id": "n4",
+   "type": "node",
+   "cx": 410,
+   "cy": 120,
+   "r": 22,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "cx": 232,
+    "cy": 110,
+    "r": 18,
+    "size": 13
+   },
+   "label": "4"
+  },
+  {
+   "id": "n5",
+   "type": "node",
+   "cx": 500,
+   "cy": 120,
+   "r": 22,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "cx": 284,
+    "cy": 110,
+    "r": 18,
+    "size": 13
+   },
+   "label": "5"
+  },
+  {
+   "id": "n6",
+   "type": "node",
+   "cx": 590,
+   "cy": 120,
+   "r": 22,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "cx": 336,
+    "cy": 110,
+    "r": 18,
+    "size": 13
+   },
+   "label": "6"
+  },
+  {
+   "id": "l2",
+   "type": "text",
+   "x": 230,
+   "y": 166,
+   "text": "s",
+   "anchor": "middle",
+   "size": 15,
+   "hidden": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 128,
+    "y": 146,
+    "size": 13
+   }
+  },
+  {
+   "id": "l4",
+   "type": "text",
+   "x": 410,
+   "y": 166,
+   "text": "t",
+   "anchor": "middle",
+   "size": 15,
+   "hidden": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 232,
+    "y": 146,
+    "size": 13
+   }
+  },
+  {
+   "id": "l6",
+   "type": "text",
+   "x": 590,
+   "y": 166,
+   "text": "u",
+   "anchor": "middle",
+   "size": 15,
+   "hidden": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 336,
+    "y": 146,
+    "size": 13
+   }
+  },
+  {
+   "id": "a24",
+   "type": "arrow",
+   "from": "n2",
+   "to": "n4",
+   "curve": -0.35,
+   "hidden": true,
+   "narrow": {
+    "curve": -0.4
+   }
+  },
+  {
+   "id": "a46",
+   "type": "arrow",
+   "from": "n4",
+   "to": "n6",
+   "curve": -0.35,
+   "hidden": true,
+   "narrow": {
+    "curve": -0.4
+   }
+  },
+  {
+   "id": "a26",
+   "type": "arrow",
+   "from": "n2",
+   "to": "n6",
+   "curve": 0.4,
+   "hidden": true,
+   "narrow": {
+    "curve": 0.5
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 320,
+   "y": 236,
+   "text": "a model with 7 elements: R is < on 0…6",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 226,
+    "size": 12
+   }
+  },
+  {
+   "id": "note2",
+   "type": "text",
+   "x": 320,
+   "y": 264,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 252,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "In this 7-element world the sentence is true: for example s = 2, t = 4, u = 6 are witnesses (2 < 4, 4 < 6, 2 ≠ 6, and < is asymmetric).",
+   "patches": [
+    {
+     "id": "l2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "l4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "l6",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "n4",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "n6",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Send everyone else home: keep only {2, 4, 6}, and keep exactly the pairs of R that lie inside this set.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "opacity": 0.25
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "opacity": 0.25
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "opacity": 0.25
+     }
+    },
+    {
+     "id": "n5",
+     "set": {
+      "opacity": 0.25
+     }
+    },
+    {
+     "id": "a24",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "a46",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "a26",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "restricted R = {(2,4), (4,6), (2,6)}",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The ∃ part survives: the witnesses are still present, and R(2, 4), R(4, 6), 2 ≠ 6 are the same atoms as before.",
+   "patches": [
+    {
+     "id": "note2",
+     "set": {
+      "text": "witnesses kept: ∃s∃t∃u still true",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The ∀ part survives: every choice of v, w from {2, 4, 6} was already one of the choices in the big world, and a quantifier-free body without functions only looks at those elements.",
+   "patches": [
+    {
+     "id": "note2",
+     "set": {
+      "text": "fewer cases for ∀v∀w: still true",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So a model with at most 3 elements exists (GATE 2018, option A). With function symbols, or a ∀ before an ∃, a needed element could be outside the kept set.",
+   "patches": [
+    {
+     "id": "note",
+     "set": {
+      "text": "model of size 3 ≤ number of ∃",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}
