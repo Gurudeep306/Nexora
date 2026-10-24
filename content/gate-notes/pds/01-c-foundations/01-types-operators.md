@@ -34,7 +34,7 @@ defined.
 
 This is the first lesson of the course, and it needs nothing except a little binary arithmetic (the
 two's-complement representation of negative numbers is explained again briefly; the Digital Logic course
-covers it fully in [signed numbers](/gate/notes/dl/signed-numbers)). Lesson 2 (control flow) uses
+covers it fully in [signed numbers](/gate/notes/dl/signed-numbers)). [Lesson 2](lesson:control-flow) uses
 these expressions as the conditions of `if`, `switch` and loops; Lesson 4 (functions and storage classes) adds
 functions; Chapter 2 adds pointers, whose arithmetic is the same arithmetic scaled by a size. The sentence
 to keep from this lesson: **an expression's value is decided by its types (after promotion and

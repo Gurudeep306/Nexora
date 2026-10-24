@@ -11,9 +11,13 @@ difficulty: core
 status: draft
 needs_review: true
 sources:
-  - "Nexora's own text, examples and diagrams; every C output, iteration count, closed form and PYQ key is produced by compiling and running the program with the system C compiler in content/gate-notes/_checks/pds/l1_02_control_flow.py (the Pascal questions translated to C where the semantics coincide and re-derived in Python from the language rules; loops that never stop are run against an iteration cap or a time limit)."
+  - "Nexora's own text, examples and diagrams"
+  - "every C output, iteration count"
+  - "closed form and PYQ key is produced by compiling and running the program with the system C compiler in content/gate-notes/_checks/pds/l1_02_control_flow.py (the Pascal questions translated to C where the semantics coincide and re-derived in Python from the language rules"
+  - "loops that never stop are run against an iteration cap or a time limit)."
   - "Coverage checklist only (internal digests, never copied): set B pp. 113, 119 and 225, set C pp. 280–281 and 295, set E pp. 540 and 545."
-  - "Facts checked against: ISO/IEC 9899:2011 (C11) §6.8.4 (selection statements), §6.8.5 (iteration statements), §6.8.6 (jump statements), §5.2.4.2.2 and annex F (floating types); B. W. Kernighan and D. M. Ritchie, The C Programming Language (2nd ed.), chapter 3; K. Jensen and N. Wirth, Pascal User Manual and Report, chapter 4."
+  - "Facts checked against: ISO/IEC 9899:2011 (C11) §6.8.4 (selection statements), §6.8.5 (iteration statements), §6.8.6 (jump statements), §5.2.4.2.2 and annex F (floating types); B. W. Kernighan and D. M. Ritchie, The C Programming Language (2nd ed.), chapter 3"
+  - "K. Jensen and N. Wirth, Pascal User Manual and Report, chapter 4."
   - "PYQs: src/gate/questions.json (cse-1991-a-4-ii, cse-1995-a-4, cse-2003-cs-88, cse-2006-cs-15, it-2007-cs-31, cse-2012-cs-3, cse-2013-cs-31, cse-2014-1-cs-41, cse-2015-3-cs-48, cse-2018-cs-32, cse-2019-cs-52, cse-2024-1-cs-8); every key is re-derived by running the code."
 updated: "2026-10-24"
 ---

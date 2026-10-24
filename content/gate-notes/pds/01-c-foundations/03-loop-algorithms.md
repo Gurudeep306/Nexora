@@ -11,10 +11,15 @@ difficulty: core
 status: draft
 needs_review: true
 sources:
-  - "Nexora's own text, examples and diagrams; every C output, loop count, invariant check and PYQ key is produced by compiling and running the program with the system C compiler in content/gate-notes/_checks/pds/l1_03_loop_algorithms.py (the Pascal and pseudo-code questions are simulated in Python or translated to C)."
+  - "Nexora's own text, examples and diagrams"
+  - "every C output, loop count, invariant check and PYQ key is produced by compiling and running the program with the system C compiler in content/gate-notes/_checks/pds/l1_03_loop_algorithms.py (the Pascal and pseudo-code questions are simulated in Python or translated to C)."
   - "Coverage checklist only (internal digests, never copied): set B pp. 156–158 and 231–234, set C pp. 297–306, set E p. 543."
-  - "Facts checked against: ISO/IEC 9899:2011 (C11) §6.5, §6.8.5; B. W. Kernighan and D. M. Ritchie, The C Programming Language (2nd ed.), chapters 1–3; D. E. Knuth, The Art of Computer Programming vol. 1 §1.1–1.2 (Euclid's algorithm, induction) and vol. 2 §4.5.3 and §4.6.3 (Euclid's step count, powers); Cormen, Leiserson, Rivest and Stein, Introduction to Algorithms, §2.1 (loop invariants) and §31.2 (gcd); D. Gries, The Science of Programming, chapter 11 (invariants and bound functions)."
-  - "PYQs: src/gate/questions.json (cse-1991-a-1-vi, cse-1991-a-3-viii, cse-1993-ii-a-7-4, cse-1995-a-28, cse-2003-cs-1, cse-2004-cs-32, cse-2004-cs-41, cse-2004-cs-42, cse-2015-1-cs-33, cse-2016-2-cs-35, cse-2017-2-cs-37, cse-2020-cs-48, cse-2021-1-cs-48, cse-2024-1-cs-38, cse-2025-1-cs-53, cse-2025-2-cs-23); every key is re-derived by running the code."
+  - "Facts checked against: ISO/IEC 9899:2011 (C11) §6.5, §6.8.5; B. W. Kernighan and D. M. Ritchie, The C Programming Language (2nd ed.), chapters 1–3"
+  - "D. E. Knuth, The Art of Computer Programming vol. 1 §1.1–1.2 (Euclid's algorithm, induction) and vol. 2 §4.5.3 and §4.6.3 (Euclid's step count, powers); Cormen, Leiserson, Rivest and Stein, Introduction to Algorithms, §2.1 (loop invariants) and §31.2 (gcd)"
+  - "D. Gries, The Science of Programming, chapter 11 (invariants and bound functions)."
+  - "PYQs: src/gate/questions.json (cse-1991-a-1-vi, cse-1991-a-3-viii, cse-1993-ii-a-7-4, cse-1995-a-28, cse-2003-cs-1, cse-2004-cs-32, cse-2004-cs-41, cse-2004-cs-42, cse-2015-1-cs-33, cse-2016-2-cs-35, cse-2017-2-cs-37, cse-2020-cs-48, cse-2021-1-cs-48, cse-2024-1-cs-38"
+  - "cse-2025-1-cs-53, cse-2025-2-cs-23)"
+  - "every key is re-derived by running the code."
 updated: "2026-10-24"
 ---
 
