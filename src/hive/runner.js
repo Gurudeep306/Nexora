@@ -12,6 +12,8 @@ const { toolsFor, execute } = require("./tools");
 const { systemPrompt } = require("./prompts");
 const { resolvePlugins, repoMap, modelTier } = require("./plugins");
 const vault = require("./vault");
+const { pickDefault } = require("./models");
+const defaultModelOf = (key, vendor) => key.default_model || pickDefault(json(key.models_json, []), vendor.suggested);
 
 const MAX_AGENTS = Number(process.env.HIVE_MAX_AGENTS || 16);
 const MAX_STEPS = Number(process.env.HIVE_MAX_STEPS || 60);
@@ -170,7 +172,7 @@ async function resolveSpec(spec) {
   if (!vendor.caps.tools) throw new Error(`${vendor.label} models can't use tools, so they can only chat — pick another provider for agents`);
   const key = await keys.pickKey(spec.provider, { prefer: spec.keyId || "auto" });
   if (!key) throw new Error(`No ${vendor.label} key with budget left — add one in the key vault`);
-  const model = spec.model || key.default_model || vendor.suggested[0];
+  const model = spec.model || defaultModelOf(key, vendor);
   if (!model) throw new Error("Choose a model");
   return { key, model, provider: spec.provider, effort: spec.effort || null };
 }
@@ -307,7 +309,7 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
     const fields = { key_id: next.id, handoffs: (agent.handoffs || 0) + 1 };
     if (crossVendor) {
       const vendor = keys.keyVendor(next);
-      Object.assign(fields, { provider: vendor, model: next.default_model || providerOf(vendor).suggested[0], effort: null });
+      Object.assign(fields, { provider: vendor, model: defaultModelOf(next, providerOf(vendor)), effort: null });
     }
     await event(task.id, agentId, "handoff", { reason, from: { key: keyRow?.label, provider: agent.provider, model: agent.model }, to: { key: next.label, provider: fields.provider || agent.provider, model: fields.model || agent.model } });
     keyRow = next;

@@ -21,6 +21,7 @@ const { readBase } = require("../hive/snapshot");
 const { commitTask } = require("../hive/commit");
 const plugins = require("../hive/plugins");
 const chat = require("../hive/chat");
+const modelsLib = require("../hive/models");
 const multer = require("multer");
 
 const MODES = new Set(["solo", "team", "compare", "review"]);
@@ -128,6 +129,14 @@ function createHiveRouter() {
   const router = express.Router();
   const ready = initHiveDb().catch((e) => console.error("[hive] schema:", e.message));
   const writeLimiter = rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: true, legacyHeaders: false, message: { ok: false, error: "Slow down a little" } });
+
+  // Model radar: refresh every key's model list twice a day, so new releases
+  // appear (and retired models stop being defaults) without anyone clicking.
+  if (process.env.NODE_ENV !== "test") {
+    const refresh = () => ready.then(() => keys.refreshAll()).then((fresh) => fresh.length && hub.emit("models", { fresh })).catch(() => {});
+    setTimeout(refresh, 45_000).unref?.();
+    setInterval(refresh, 12 * 3600e3).unref?.();
+  }
 
   router.use("/api/hive", staffOnly, async (_req, _res, next) => {
     await ready;
@@ -249,6 +258,23 @@ function createHiveRouter() {
     "/api/hive/keys/:id/usage",
     h(async (req, res) => {
       res.json({ ok: true, ...(await keys.usageSeries(req.params.id, 30)) });
+    }),
+  );
+
+  /* ── model radar ─────────────────────────────────────────────────── */
+  router.get(
+    "/api/hive/models/radar",
+    h(async (req, res) => {
+      const [recent, market] = await Promise.all([modelsLib.recent(45), modelsLib.marketFeed({ force: req.query.refresh === "1" })]);
+      res.json({ ok: true, recent, market: market.models, marketAt: market.at, marketError: market.error || null });
+    }),
+  );
+  router.post(
+    "/api/hive/models/refresh",
+    h(async (_req, res) => {
+      const fresh = await keys.refreshAll();
+      hub.emit("keys", {});
+      res.json({ ok: true, fresh });
     }),
   );
 
@@ -927,8 +953,34 @@ function createHiveRouter() {
       const spec = cleanSpec(b.agent);
       const text = typeof b.text === "string" ? b.text.slice(0, 100000) : "";
       if (!text.trim() && !(Array.isArray(b.refs) && b.refs.length)) throw new BadInput("Write a message or attach a file");
-      const r = await chat.send(req.params.id, { text, refs: b.refs, spec, mode: b.mode === "image" ? "image" : "text", username: req.hiveUser });
-      res.json({ ok: true, ...r });
+      const mode = b.mode === "image" ? "image" : "text";
+      if (!b.stream) {
+        const r = await chat.send(req.params.id, { text, refs: b.refs, spec, mode, username: req.hiveUser });
+        return res.json({ ok: true, user: r.user, replyId: r.replyId });
+      }
+      // Stream the reply on this response (NDJSON, one event per line). The
+      // sender never depends on socket rooms; generation keeps going and is
+      // saved even if the browser goes away mid-reply.
+      await chat.convoFor(req.params.id, req.hiveUser);
+      res.status(200).set({ "Content-Type": "application/x-ndjson; charset=utf-8", "Cache-Control": "no-store", "X-Accel-Buffering": "no" });
+      res.flushHeaders?.();
+      let open = true;
+      res.on("close", () => (open = false));
+      const write = (type, data) => {
+        if (!open) return;
+        res.write(JSON.stringify({ type, data }) + "\n");
+        res.flush?.(); // compression() buffers otherwise
+      };
+      const ping = setInterval(() => write("ping", {}), 15000);
+      try {
+        const r = await chat.send(req.params.id, { text, refs: b.refs, spec, mode, username: req.hiveUser, sink: write });
+        await r.done;
+      } catch (e) {
+        write("error", { error: e.message || "Something went wrong" });
+      } finally {
+        clearInterval(ping);
+        if (open) res.end();
+      }
     }),
   );
   router.post(
