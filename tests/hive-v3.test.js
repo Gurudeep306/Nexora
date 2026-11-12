@@ -168,3 +168,17 @@ test("launchpad: idea → plan → new repo, PLAN.md, memory and milestone 1", a
   const ideas = await ok("GET", "/api/hive/ideas");
   assert.equal(ideas.ideas.find((i) => i.id === idea.id).status, "launched");
 });
+
+test("a key whose check failed is retried after a cool-down, and 'no key' explains why", async () => {
+  process.env.DB_PATH = ":memory:";
+  const { initHiveDb, run } = require("../src/hive/db");
+  await initHiveDb();
+  const keys = require("../src/hive/keys");
+  const id = await keys.createKey({ provider: "openai", label: "Team GPT", apiKey: "sk-test-abcdefghijkl" }, "u");
+  await run("UPDATE hive_keys SET status='invalid', status_detail='Missing scopes: model.read', updated_at=? WHERE id=?", [Date.now(), id]);
+  assert.equal(await keys.pickKey("openai"), null, "just rejected: skipped for now");
+  assert.match(await keys.explainNoKey("openai"), /Team GPT.*rejected.*model\.read/);
+  await run("UPDATE hive_keys SET updated_at=? WHERE id=?", [Date.now() - 11 * 60_000, id]);
+  assert.equal((await keys.pickKey("openai"))?.id, id, "retried after the cool-down");
+  assert.match(await keys.explainNoKey("mistral"), /No Mistral key yet/);
+});

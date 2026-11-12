@@ -154,13 +154,17 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
   set.add(controller);
   active.set(convo.id, set);
   const tried = [];
+  let lastErr = null; // the provider's own error, shown if every key fails
   let error = null;
   let usage = { input: 0, output: 0 };
   let served = { provider: spec.provider, model: spec.model };
   try {
     for (let attempt = 0; attempt < 4; attempt++) {
       const pick = await pickChatKey(spec, tried);
-      if (!pick) throw new Error("No key with budget left for this provider — add one or raise a limit");
+      if (!pick) {
+        if (lastErr) throw lastErr;
+        throw new Error(await keys.explainNoKey(spec.provider));
+      }
       const { key, provider } = pick;
       const v = providerOf(provider);
       const model = provider === spec.provider && spec.model ? spec.model : key.default_model || pickDefault(json(key.models_json, []), v.suggested);
@@ -236,6 +240,7 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
           break;
         }
         if (["auth", "quota", "rate"].includes(e.kind)) {
+          lastErr = e;
           tried.push(key.id);
           if (e.kind === "auth") keys.checkKey(key.id).catch(() => {});
           continue;
