@@ -13,12 +13,15 @@ function emit(event, payload) {
 function emitTask(taskId, event, payload) {
   nsp?.to(`task:${taskId}`).emit(event, payload);
 }
+function emitConvo(convoId, event, payload) {
+  nsp?.to(`convo:${convoId}`).emit(event, payload);
+}
 
 /**
  * attachHive(io, { authorize(socket) → Promise<username|null> })
  * authorize must check the session, bans/private mode and staff permission.
  */
-function attachHive(io, { authorize }) {
+function attachHive(io, { authorize, canSeeConvo }) {
   nsp = io.of("/hive");
   nsp.use(async (socket, next) => {
     try {
@@ -45,6 +48,15 @@ function attachHive(io, { authorize }) {
       if (view?.taskId && view.taskId.length <= 64) socket.join(`task:${view.taskId}`);
       emit("presence", roster());
     });
+    // Chats are private unless shared: check before joining their stream.
+    socket.on("convo", async (v) => {
+      for (const room of socket.rooms) if (room.startsWith("convo:")) socket.leave(room);
+      const id = v && typeof v.id === "string" ? v.id.slice(0, 64) : null;
+      if (!id) return;
+      try {
+        if (canSeeConvo && (await canSeeConvo(id, me))) socket.join(`convo:${id}`);
+      } catch {}
+    });
     socket.on("typing", (v) => {
       const projectId = v && typeof v.projectId === "string" ? v.projectId.slice(0, 64) : null;
       if (projectId) socket.to("hive").emit("typing", { username: me, projectId });
@@ -58,4 +70,4 @@ function attachHive(io, { authorize }) {
   return nsp;
 }
 
-module.exports = { attachHive, emit, emitTask, roster };
+module.exports = { attachHive, emit, emitTask, emitConvo, roster };

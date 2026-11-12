@@ -26,7 +26,15 @@ function toContents(messages) {
     else contents.push({ role, parts });
   };
   for (const m of messages) {
-    if (m.role === "user") push("user", [{ text: m.text }]);
+    if (m.role === "user") {
+      const parts = [];
+      for (const a of m.attachments || []) {
+        if (a.mime.startsWith("image/") || a.mime === "application/pdf") parts.push({ inlineData: { mimeType: a.mime, data: a.data } });
+        else if (a.text != null) parts.push({ text: `File: ${a.name}\n\n${a.text}` });
+      }
+      parts.push({ text: m.text || "(see attachments)" });
+      push("user", parts);
+    }
     else if (m.role === "assistant") {
       if (m.raw?.provider === "gemini" && m.raw.parts?.length) push("model", m.raw.parts);
       else {
@@ -45,13 +53,13 @@ function toContents(messages) {
   return contents;
 }
 
-async function turn({ secret, model, system, messages, tools, signal, onText, onThinking }) {
+async function turn({ secret, model, system, messages, tools, signal, onText, onThinking, onToolInput }) {
   const body = {
     systemInstruction: { parts: [{ text: system }] },
     contents: toContents(messages),
-    tools: [{ functionDeclarations: tools.map((t) => ({ name: t.name, description: t.description, parameters: cleanSchema(t.schema) })) }],
     generationConfig: { thinkingConfig: { includeThoughts: true } },
   };
+  if (tools.length) body.tools = [{ functionDeclarations: tools.map((t) => ({ name: t.name, description: t.description, parameters: cleanSchema(t.schema) })) }];
   let res;
   try {
     res = await fetch(`${BASE}/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`, {
@@ -93,7 +101,10 @@ async function turn({ secret, model, system, messages, tools, signal, onText, on
           const last = parts[parts.length - 1];
           if (last && typeof last.text === "string" && !last.thought && !last.functionCall && !p.thoughtSignature) last.text += p.text;
           else parts.push({ ...p });
-        } else parts.push(p);
+        } else {
+          parts.push(p);
+          if (p.functionCall && onToolInput) onToolInput({ id: `g${parts.length}`, name: p.functionCall.name, json: JSON.stringify(p.functionCall.args || {}) });
+        }
       }
     }
   } catch (e) {
@@ -127,4 +138,21 @@ async function listModels({ secret }) {
     .sort();
 }
 
-module.exports = { id: "gemini", turn, listModels, SUGGESTED };
+/** Image generation with a Gemini image model (returns inline image parts). */
+async function generateImage({ secret, model, prompt }) {
+  const res = await fetch(`${BASE}/models/${encodeURIComponent(model)}:generateContent`, {
+    method: "POST",
+    headers: { "x-goog-api-key": secret, "Content-Type": "application/json" },
+    body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseModalities: ["TEXT", "IMAGE"] } }),
+  }).catch((e) => {
+    throw new ProviderError(e.message, { kind: "network" });
+  });
+  if (!res.ok) await failFromResponse(res, "Gemini");
+  const j = await res.json();
+  const parts = j.candidates?.[0]?.content?.parts || [];
+  const images = parts.filter((p) => p.inlineData?.data).map((p) => ({ mime: p.inlineData.mimeType || "image/png", data: p.inlineData.data }));
+  if (!images.length) throw new ProviderError("The model returned no image", { kind: "server" });
+  return { images, text: parts.filter((p) => p.text).map((p) => p.text).join("") };
+}
+
+module.exports = { id: "gemini", turn, listModels, generateImage, SUGGESTED };

@@ -7,10 +7,25 @@ const DEFAULT_BASE = "https://api.openai.com/v1";
 const SUGGESTED = ["gpt-5", "gpt-5-mini", "o4-mini", "gpt-4.1"];
 const REASONING = /^(o\d|gpt-5)/;
 
-function toOpenAiMessages(system, messages) {
+function userContent(m, { official, vision }) {
+  if (!m.attachments?.length) return m.text;
+  const parts = [];
+  const notes = [];
+  for (const a of m.attachments) {
+    if (a.mime.startsWith("image/") && vision) parts.push({ type: "image_url", image_url: { url: `data:${a.mime};base64,${a.data}` } });
+    else if (a.mime === "application/pdf" && official) parts.push({ type: "file", file: { filename: a.name, file_data: `data:application/pdf;base64,${a.data}` } });
+    else if (a.text != null) parts.push({ type: "text", text: `File: ${a.name}\n\n${a.text}` });
+    else notes.push(a.name);
+  }
+  const note = notes.length ? `\n\n(Attached but not readable by this model: ${notes.join(", ")})` : "";
+  parts.push({ type: "text", text: (m.text || "(see attachments)") + note });
+  return parts;
+}
+
+function toOpenAiMessages(system, messages, opts = {}) {
   const out = [{ role: "system", content: system }];
   for (const m of messages) {
-    if (m.role === "user") out.push({ role: "user", content: m.text });
+    if (m.role === "user") out.push({ role: "user", content: userContent(m, opts) });
     else if (m.role === "assistant") {
       const msg = { role: "assistant", content: m.text || null };
       if (m.toolCalls?.length) {
@@ -25,15 +40,15 @@ function toOpenAiMessages(system, messages) {
   return out;
 }
 
-async function turn({ secret, baseUrl, model, system, messages, tools, effort, signal, onText, onThinking, official }) {
+async function turn({ secret, baseUrl, model, system, messages, tools, effort, signal, onText, onThinking, onToolInput, official, vision = true }) {
   const base = (baseUrl || DEFAULT_BASE).replace(/\/+$/, "");
   const body = {
     model,
-    messages: toOpenAiMessages(system, messages),
-    tools: tools.map((t) => ({ type: "function", function: { name: t.name, description: t.description, parameters: t.schema } })),
+    messages: toOpenAiMessages(system, messages, { official, vision }),
     stream: true,
     stream_options: { include_usage: true },
   };
+  if (tools.length) body.tools = tools.map((t) => ({ type: "function", function: { name: t.name, description: t.description, parameters: t.schema } }));
   if (official && REASONING.test(model) && effort) {
     body.reasoning_effort = { low: "low", medium: "medium", high: "high", xhigh: "high", max: "high" }[effort] || "medium";
   }
@@ -86,6 +101,7 @@ async function turn({ secret, baseUrl, model, system, messages, tools, effort, s
         if (tc.function?.name) cur.name += tc.function.name;
         if (tc.function?.arguments) cur.args += tc.function.arguments;
         calls.set(idx, cur);
+        if (onToolInput && cur.name) onToolInput({ id: cur.id || `idx${idx}`, name: cur.name, json: cur.args });
       }
       if (ch.finish_reason) finish = ch.finish_reason;
     }
@@ -131,4 +147,30 @@ async function listModels({ secret, baseUrl, official }) {
   return ids.sort();
 }
 
-module.exports = { id: "openai", turn, listModels, SUGGESTED, DEFAULT_BASE };
+/** Text-to-image through an OpenAI-style /images/generations endpoint. */
+async function generateImage({ secret, baseUrl, model, prompt, size }) {
+  const base = (baseUrl || DEFAULT_BASE).replace(/\/+$/, "");
+  const body = { model, prompt, n: 1 };
+  if (size) body.size = size;
+  const res = await fetch(`${base}/images/generations`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${secret}`, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  }).catch((e) => {
+    throw new ProviderError(e.message, { kind: "network" });
+  });
+  if (!res.ok) await failFromResponse(res, "Images");
+  const j = await res.json();
+  const out = [];
+  for (const d of j.data || []) {
+    if (d.b64_json) out.push({ mime: "image/png", data: d.b64_json });
+    else if (d.url && /^https:\/\//.test(d.url)) {
+      const img = await fetch(d.url);
+      if (img.ok) out.push({ mime: img.headers.get("content-type") || "image/png", data: Buffer.from(await img.arrayBuffer()).toString("base64") });
+    }
+  }
+  if (!out.length) throw new ProviderError("The provider returned no image", { kind: "server" });
+  return { images: out, text: j.data?.[0]?.revised_prompt || "" };
+}
+
+module.exports = { id: "openai", turn, listModels, generateImage, SUGGESTED, DEFAULT_BASE };

@@ -143,12 +143,89 @@ const SCHEMA = [
     created_at INTEGER NOT NULL
   )`,
   "CREATE INDEX IF NOT EXISTS idx_hive_chat_project ON hive_chat(project_id, created_at)",
+  // Shared project memory: facts every agent on the project sees.
+  `CREATE TABLE IF NOT EXISTS hive_memory (
+    id TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    body TEXT NOT NULL,
+    author TEXT NOT NULL,
+    pinned INTEGER NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL
+  )`,
+  "CREATE INDEX IF NOT EXISTS idx_hive_memory_project ON hive_memory(project_id, created_at)",
+  // Plugins: built-ins switched on/configured per scope ('*' = everywhere,
+  // or a project id), plus custom instruction plugins staff write.
+  `CREATE TABLE IF NOT EXISTS hive_plugins (
+    id TEXT PRIMARY KEY,
+    scope TEXT NOT NULL DEFAULT '*',
+    kind TEXT NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    enabled INTEGER NOT NULL DEFAULT 1,
+    config_json TEXT NOT NULL DEFAULT '{}',
+    created_by TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  )`,
+  // Claude-style conversations with any model.
+  `CREATE TABLE IF NOT EXISTS hive_convos (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    owner TEXT NOT NULL,
+    shared INTEGER NOT NULL DEFAULT 0,
+    project_id TEXT,
+    provider TEXT,
+    key_id TEXT,
+    model TEXT,
+    system TEXT NOT NULL DEFAULT '',
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  )`,
+  "CREATE INDEX IF NOT EXISTS idx_hive_convos_owner ON hive_convos(owner, updated_at)",
+  `CREATE TABLE IF NOT EXISTS hive_convo_msgs (
+    id TEXT PRIMARY KEY,
+    convo_id TEXT NOT NULL,
+    role TEXT NOT NULL,
+    content TEXT NOT NULL DEFAULT '',
+    attachments_json TEXT NOT NULL DEFAULT '[]',
+    provider TEXT,
+    model TEXT,
+    author TEXT,
+    input_tokens INTEGER NOT NULL DEFAULT 0,
+    output_tokens INTEGER NOT NULL DEFAULT 0,
+    error TEXT,
+    created_at INTEGER NOT NULL
+  )`,
+  "CREATE INDEX IF NOT EXISTS idx_hive_convo_msgs ON hive_convo_msgs(convo_id, created_at)",
+  // Uploaded and generated files (base64), referenced by chats and tasks.
+  `CREATE TABLE IF NOT EXISTS hive_files (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    mime TEXT NOT NULL,
+    size INTEGER NOT NULL,
+    data_b64 TEXT NOT NULL,
+    origin TEXT NOT NULL DEFAULT 'upload',
+    created_by TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  )`,
+];
+
+// Columns added after the first release (ALTER fails harmlessly if present).
+const COLUMNS = [
+  ["hive_keys", "preset TEXT"],
+  ["hive_keys", "priority INTEGER NOT NULL DEFAULT 0"],
+  ["hive_tasks", "budget_tokens INTEGER"],
+  ["hive_tasks", "attachments_json TEXT"],
+  ["hive_agents", "title TEXT"],
+  ["hive_agents", "handoffs INTEGER NOT NULL DEFAULT 0"],
 ];
 
 let ready = null;
 function initHiveDb() {
   ready ||= (async () => {
     for (const sql of SCHEMA) await run(sql);
+    for (const [table, col] of COLUMNS) await run(`ALTER TABLE ${table} ADD COLUMN ${col}`).catch(() => {});
     // Agents that were running when the process stopped will never finish.
     await run(
       "UPDATE hive_agents SET status='interrupted', error='The server restarted while this agent was running', finished_at=? WHERE status IN ('queued','running')",

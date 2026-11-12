@@ -33,10 +33,25 @@ function client(secret, baseUrl) {
   return new Anthropic({ apiKey: secret, baseURL: baseUrl || undefined, maxRetries: 2, timeout: 10 * 60 * 1000 });
 }
 
+const IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/gif", "image/webp"]);
+
+/** A user turn with optional attachments → Anthropic content blocks. */
+function userContent(m) {
+  if (!m.attachments?.length) return m.text;
+  const blocks = [];
+  for (const a of m.attachments) {
+    if (IMAGE_TYPES.has(a.mime)) blocks.push({ type: "image", source: { type: "base64", media_type: a.mime, data: a.data } });
+    else if (a.mime === "application/pdf") blocks.push({ type: "document", source: { type: "base64", media_type: "application/pdf", data: a.data }, title: a.name });
+    else if (a.text != null) blocks.push({ type: "text", text: `File: ${a.name}\n\n${a.text}` });
+  }
+  blocks.push({ type: "text", text: m.text || "(see attachments)" });
+  return blocks;
+}
+
 function toAnthropicMessages(messages) {
   const out = [];
   for (const m of messages) {
-    if (m.role === "user") out.push({ role: "user", content: m.text });
+    if (m.role === "user") out.push({ role: "user", content: userContent(m) });
     else if (m.role === "assistant") {
       // Replay the exact content blocks (thinking/fallback blocks included).
       if (m.raw?.provider === "anthropic" && Array.isArray(m.raw.content)) out.push({ role: "assistant", content: m.raw.content });
@@ -56,21 +71,29 @@ function toAnthropicMessages(messages) {
   return out;
 }
 
-async function turn({ secret, baseUrl, model, system, messages, tools, effort, signal, onText, onThinking }) {
+async function turn({ secret, baseUrl, model, system, messages, tools, effort, signal, onText, onThinking, onToolInput, trimAt, cache = true }) {
   const c = client(secret, baseUrl);
   const params = {
     model,
     max_tokens: 64000,
     system,
     messages: toAnthropicMessages(messages),
-    tools: tools.map((t) => ({ name: t.name, description: t.description, input_schema: t.schema, eager_input_streaming: true })),
-    cache_control: { type: "ephemeral" },
   };
+  if (tools.length) params.tools = tools.map((t) => ({ name: t.name, description: t.description, input_schema: t.schema, eager_input_streaming: true }));
+  if (cache) params.cache_control = { type: "ephemeral" };
   if (ADAPTIVE.test(model)) {
     params.thinking = { type: "adaptive", display: "summarized" };
     params.output_config = { effort: EFFORTS.has(effort) ? effort : "high" };
   }
   const betas = [];
+  // Context trimmer plugin: the API clears old tool results server-side
+  // (keeps the history append-only, so cached prefixes and thinking survive).
+  if (trimAt && tools.length) {
+    betas.push("context-management-2025-06-27");
+    params.context_management = {
+      edits: [{ type: "clear_tool_uses_20250919", trigger: { type: "input_tokens", value: trimAt }, keep: { type: "tool_uses", value: 6 }, exclude_tools: ["delegate", "finish"] }],
+    };
+  }
   if (FALLBACKS.test(model)) {
     betas.push("server-side-fallback-2026-07-01");
     params.fallbacks = "default";
@@ -83,6 +106,21 @@ async function turn({ secret, baseUrl, model, system, messages, tools, effort, s
     stream = c.beta.messages.stream(params, { signal });
     stream.on("text", (d) => onText?.(d));
     stream.on("thinking", (d) => onThinking?.(d));
+    if (onToolInput) {
+      // Live code: stream each tool call's input as the model writes it.
+      const blocks = new Map(); // index -> { id, name, json }
+      stream.on("streamEvent", (ev) => {
+        if (ev.type === "content_block_start" && ev.content_block.type === "tool_use") {
+          blocks.set(ev.index, { id: ev.content_block.id, name: ev.content_block.name, json: "" });
+        } else if (ev.type === "content_block_delta" && ev.delta.type === "input_json_delta") {
+          const b = blocks.get(ev.index);
+          if (b) {
+            b.json += ev.delta.partial_json;
+            onToolInput(b);
+          }
+        }
+      });
+    }
     message = await stream.finalMessage();
   } catch (err) {
     if (err instanceof Anthropic.APIUserAbortError || signal?.aborted) throw new ProviderError("Stopped", { kind: "aborted" });
@@ -138,4 +176,4 @@ async function listModels({ secret, baseUrl }) {
   return ids;
 }
 
-module.exports = { id: "anthropic", turn, listModels, SUGGESTED, PRICES };
+module.exports = { id: "anthropic", turn, listModels, SUGGESTED, PRICES, IMAGE_TYPES };

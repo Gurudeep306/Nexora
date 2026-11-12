@@ -6064,6 +6064,10 @@ attachHive(io, {
     if (!verdict.ok || !hasAnyAdminPerm(verdict.access)) return null;
     return user.username;
   },
+  canSeeConvo: async (id, username) => {
+    const c = await get("SELECT owner, shared FROM hive_convos WHERE id=?", [id]);
+    return !!c && (c.owner === username || !!c.shared);
+  },
 });
 
 /** Payloads come straight from the client — never destructure null. */
