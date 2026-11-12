@@ -115,7 +115,9 @@ function startMock() {
                 text: "Adding quantity support.",
                 calls: [{ name: "edit_file", input: { path: "src/cart.js", old_string: "return cart.items.reduce((s, i) => s + i.price, 0);", new_string: "return cart.items.reduce((s, i) => s + i.price * (i.qty ?? 1), 0);" } }],
               });
-            return sseOpenAi(res, { calls: [{ name: "finish", input: { summary: "Cart totals now respect item quantities." } }] });
+            const canRun = b.tools.some((t) => t.function?.name === "run_command");
+            if (toolRounds === 2 && canRun) return sseOpenAi(res, { text: "Running the tests.", calls: [{ name: "run_command", input: { command: "node --test" } }] });
+            return sseOpenAi(res, { text: "All set — totals now multiply by quantity.", calls: [{ name: "finish", input: { summary: "Cart totals now respect item quantities. Tests pass." } }] });
           }
           return sseOpenAi(res, { reasoning: "The user wants an overview of the repo. I'll summarise the two modules.", text: REPLY });
         }
@@ -179,6 +181,22 @@ async function main() {
   await call("POST", "/api/hive/keys", { provider: "custom", label: "Demo AI", apiKey: "demo-key-123456", baseUrl: `${mock.url}/v1`, defaultModel: "demo-coder-large" });
   const ghId = gh.github?.id || gh.id || gh.account?.id;
   await call("POST", "/api/hive/projects", { githubId: ghId, owner: "octo", repo: "demo-shop", name: "Demo shop" }).catch((e) => console.warn("project:", e.message));
+  // A machine: the real bridge, on a git checkout of the demo repo.
+  const machine = await call("POST", "/api/hive/machines", { name: "Demo laptop" });
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "hive-machine-"));
+  const repoDir = path.join(root, "demo-shop");
+  for (const [f, c] of Object.entries(REPO)) {
+    fs.mkdirSync(path.dirname(path.join(repoDir, f)), { recursive: true });
+    fs.writeFileSync(path.join(repoDir, f), c);
+  }
+  const { execSync } = require("node:child_process");
+  execSync('git init -q -b main && git add -A && git -c user.name=demo -c user.email=d@d commit -qm "initial"', { cwd: repoDir });
+  const bridge = spawn(process.execPath, [path.join(__dirname, "..", "bridge", "hive-bridge.js"), "--server", base, "--token", machine.token, "--root", root], { stdio: ["ignore", "pipe", "pipe"] });
+  bridge.stdout.on("data", (d) => process.env.DEMO_LOG && process.stdout.write(`[bridge] ${d}`));
+  process.on("exit", () => bridge.kill());
+  await new Promise((r) => setTimeout(r, 1500));
+  await call("PATCH", "/api/hive/machines/" + machine.id, { policy: process.env.DEMO_POLICY || "ask" });
+  await call("POST", "/api/hive/projects", { name: "Shop (laptop)", machineId: machine.id, folder: repoDir, color: "green" }).catch((e) => console.warn("local project:", e.message));
   console.log(`\nHive demo ready → ${base}/hive   (sign in as ${OWNER} / ${PASSWORD})\nMock provider + GitHub: ${mock.url}\n`);
   if (process.env.DEMO_LOG) proc.stdout.pipe(process.stdout);
 }

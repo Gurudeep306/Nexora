@@ -270,6 +270,7 @@ const COLUMNS = [
   ["hive_projects", "idea_id TEXT"],
   ["hive_projects", "machine_id TEXT"],
   ["hive_projects", "folder TEXT"],
+  ["hive_projects", "site_url TEXT"],
 ];
 
 let ready = null;

@@ -69,4 +69,17 @@ module.exports = {
   updateRef: (t, o, r, branch, sha, force = false) =>
     gh(t, "PATCH", `${repoPath(o, r)}/git/refs/heads/${refPath(branch)}`, { body: { sha, force } }),
   createPull: (t, o, r, body) => gh(t, "POST", `${repoPath(o, r)}/pulls`, { body }),
+  pull: (t, o, r, n) => gh(t, "GET", `${repoPath(o, r)}/pulls/${Number(n)}`),
+  pullFiles: (t, o, r, n) => gh(t, "GET", `${repoPath(o, r)}/pulls/${Number(n)}/files?per_page=100`),
+  mergePull: (t, o, r, n, body) => gh(t, "PUT", `${repoPath(o, r)}/pulls/${Number(n)}/merge`, { body }),
+  checkRuns: (t, o, r, ref) => gh(t, "GET", `${repoPath(o, r)}/commits/${refPath(ref)}/check-runs?per_page=100`),
+  combinedStatus: (t, o, r, ref) => gh(t, "GET", `${repoPath(o, r)}/commits/${refPath(ref)}/status`),
+  listPulls: (t, o, r, state = "open") => gh(t, "GET", `${repoPath(o, r)}/pulls?state=${enc(state)}&per_page=30&sort=updated&direction=desc`),
+  commits: (t, o, r, ref, n = 15) => gh(t, "GET", `${repoPath(o, r)}/commits?sha=${enc(ref)}&per_page=${n}`),
+  deployments: (t, o, r) => gh(t, "GET", `${repoPath(o, r)}/deployments?per_page=10`),
+  deploymentStatuses: (t, o, r, id) => gh(t, "GET", `${repoPath(o, r)}/deployments/${Number(id)}/statuses?per_page=5`),
+  createRepo: (t, { org, name, description, isPrivate }) =>
+    gh(t, "POST", org ? `/orgs/${enc(org)}/repos` : "/user/repos", { body: { name, description: description || "", private: !!isPrivate, auto_init: true } }),
+  putFile: (t, o, r, path, { content, message, branch, sha }) =>
+    gh(t, "PUT", `${repoPath(o, r)}/contents/${path.split("/").map(enc).join("/")}`, { body: { content: Buffer.from(content, "utf8").toString("base64"), message, branch, sha } }),
 };
