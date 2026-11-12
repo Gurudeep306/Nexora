@@ -153,14 +153,20 @@ async function turnOnce({ secret, baseUrl, model, system, messages, tools, effor
   };
 }
 
-async function listModels({ secret, baseUrl, official }) {
+async function listModels({ secret, baseUrl, official, modelsUrl }) {
   const base = (baseUrl || DEFAULT_BASE).replace(/\/+$/, "");
-  const res = await fetch(`${base}/models`, { headers: { Authorization: `Bearer ${secret}` } }).catch((e) => {
+  // Some hosts list models elsewhere (GitHub Models: a public catalogue).
+  const res = await fetch(modelsUrl || `${base}/models`, { headers: { Authorization: `Bearer ${secret}`, Accept: "application/json" }, signal: AbortSignal.timeout(30000) }).catch((e) => {
     throw new ProviderError(e.message, { kind: "network" });
   });
   if (!res.ok) await failFromResponse(res, "Models");
   const j = await res.json();
-  let ids = (j.data || j.models || []).map((m) => m.id || m.name).filter(Boolean);
+  const list = Array.isArray(j) ? j : j.data || j.models || [];
+  let ids = list
+    // Hosts that tag model types: keep chat/text models only.
+    .filter((m) => !/embed|image|audio|rerank|speech/i.test(String(m?.type || m?.task || "")))
+    .map((m) => (typeof m === "string" ? m : m.id || m.name))
+    .filter(Boolean);
   if (official) ids = ids.filter((id) => /^(gpt|o\d|chatgpt|codex)/.test(id) && !/(audio|realtime|tts|transcribe|image|embedding|search|moderation|instruct|dall)/.test(id));
   return ids.sort();
 }
