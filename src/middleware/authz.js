@@ -104,18 +104,33 @@ async function refreshSessionRole(req) {
   if (cached.role !== role) req.session.user = { ...cached, role };
 }
 
+/**
+ * Express matches routes case-insensitively and ignores a trailing slash (and
+ * collapses nothing else), so `/API/messages/a/b` and `/api/messages/a/b/`
+ * reach the same handlers as the canonical path. Match the rules the same way,
+ * keeping the original case of path parameters (usernames are case-sensitive).
+ */
+function canonicalPath(p) {
+  const s = String(p || "/").replace(/\/{2,}/g, "/").replace(/\/+$/, "");
+  return s || "/";
+}
+const isApiPath = (p) => /^\/api(\/|$)/i.test(p);
+const RULE_RES = RULES.map(([, re]) => (re.flags.includes("i") ? re : new RegExp(re.source, re.flags + "i")));
+
 function authz() {
   return async (req, res, next) => {
-    if (!req.path.startsWith("/api/")) return next();
+    const path = canonicalPath(req.path);
+    if (!isApiPath(path)) return next();
     try {
       if (!req.accessResolved) await refreshSessionRole(req);
     } catch (e) {
       return next(e); // fail closed rather than trust a stale role
     }
-    const rule = RULES.find(([m, re]) => m.split("|").includes(req.method) && re.test(req.path));
-    if (!rule) return next();
-    const [, re, r] = rule;
-    req.params0 = req.path.match(re);
+    const idx = RULES.findIndex(([m], i) => m.split("|").includes(req.method) && RULE_RES[i].test(path));
+    if (idx < 0) return next();
+    const [, , r] = RULES[idx];
+    const re = RULE_RES[idx];
+    req.params0 = path.match(re);
     const user = getSessionUser(req);
     const me = user?.username;
     if (!me) return deny(res, 401, "Please sign in first");
@@ -152,4 +167,4 @@ function authz() {
   };
 }
 
-module.exports = { authz, RULES };
+module.exports = { authz, RULES, canonicalPath, isApiPath };
