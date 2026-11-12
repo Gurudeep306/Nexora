@@ -70,6 +70,30 @@ function total() {
 
 Want me to add quantities and a \`DELETE /cart/:id\` route?`;
 
+const PLAN = {
+  name: "PulseWatch",
+  tagline: "Uptime alerts on Telegram for tiny teams",
+  summary: "PulseWatch checks your websites every minute and messages you on Telegram the moment one goes down — and again when it recovers. Setup takes one minute.",
+  audience: "Indie hackers and small teams running a few sites",
+  features: [
+    { title: "HTTP checks", detail: "Every 60s, with timeout and expected status", priority: "must" },
+    { title: "Telegram alerts", detail: "Down and recovered messages with response time", priority: "must" },
+    { title: "Status page", detail: "Public page with 90-day uptime bars", priority: "should" },
+    { title: "SSL expiry warnings", detail: "Alert 14 days before a certificate expires", priority: "could" },
+  ],
+  stack: { frontend: "React + Vite", backend: "Node 22 + Express", database: "SQLite (Turso in prod)", hosting: "Render free tier" },
+  architecture: "A scheduler loop pings each monitor and writes results to SQLite; state changes enqueue Telegram messages; a small React app manages monitors and renders the status page.",
+  milestones: [
+    { title: "Core checks", goal: "Monitors run and results are stored", tasks: [{ title: "Scaffold API + DB", detail: "Express app, SQLite schema for monitors and checks" }, { title: "Scheduler", detail: "Ping every 60s with timeouts; store latency + status" }, { title: "Tests", detail: "node --test for scheduler logic" }] },
+    { title: "Alerts", goal: "Telegram messages on state changes", tasks: [{ title: "Bot setup", detail: "Token + chat id config" }, { title: "Down/up detection", detail: "Debounce flapping with 2 failures" }] },
+    { title: "Dashboard", goal: "Manage monitors in the browser", tasks: [{ title: "Monitor CRUD UI" }, { title: "Status page" }] },
+  ],
+  risks: ["Free hosting sleeps — use an external cron ping", "Telegram rate limits on many monitors"],
+  repoName: "pulsewatch",
+  conventions: ["Small modules, one responsibility each", "Every feature ships with a node --test test", "Config via environment variables only"],
+  firstTask: "Scaffold an Express + SQLite API with a monitors table, a scheduler that checks each monitor every 60 seconds, a README and a passing node --test test.",
+};
+
 function sseOpenAi(res, { text = "", reasoning = "", calls = [] }) {
   res.writeHead(200, { "Content-Type": "text/event-stream", "x-ratelimit-remaining-tokens": "180000", "x-ratelimit-limit-tokens": "200000" });
   const chunks = [];
@@ -88,6 +112,8 @@ function sseOpenAi(res, { text = "", reasoning = "", calls = [] }) {
   };
   tick();
 }
+
+const created = new Set();
 
 function startMock() {
   return new Promise((resolve) => {
@@ -119,13 +145,31 @@ function startMock() {
             if (toolRounds === 2 && canRun) return sseOpenAi(res, { text: "Running the tests.", calls: [{ name: "run_command", input: { command: "node --test" } }] });
             return sseOpenAi(res, { text: "All set — totals now multiply by quantity.", calls: [{ name: "finish", input: { summary: "Cart totals now respect item quantities. Tests pass." } }] });
           }
+          if (/principal engineer/.test(msgs[0]?.content || "")) return sseOpenAi(res, { text: JSON.stringify(PLAN) });
           return sseOpenAi(res, { reasoning: "The user wants an overview of the repo. I'll summarise the two modules.", text: REPLY });
         }
         // ── GitHub ──
         if ((p.startsWith("/user") || p.startsWith("/repos")) && req.headers.authorization !== `Bearer ${GH_TOKEN}`) return json(401, { message: "Bad credentials" });
         if (p === "/user") return json(200, { login: "octo" });
-        if (p === "/user/repos") return json(200, [{ name: "demo-shop", full_name: "octo/demo-shop", owner: { login: "octo" }, default_branch: "main", private: false, description: "Demo shop", pushed_at: new Date().toISOString() }]);
-        if (p === "/repos/octo/demo-shop") return json(200, { name: "demo-shop", owner: { login: "octo" }, default_branch: "main", description: "Demo shop" });
+        if (p === "/user/repos" && req.method === "GET") return json(200, [{ name: "demo-shop", full_name: "octo/demo-shop", owner: { login: "octo" }, default_branch: "main", private: false, description: "Demo shop", pushed_at: new Date().toISOString() }]);
+        if (p === "/user/repos" && req.method === "POST") {
+          const name = JSON.parse(body).name;
+          created.add(name);
+          return json(201, { name, owner: { login: "octo" }, default_branch: "main", private: true, full_name: `octo/${name}` });
+        }
+        const m = /^\/repos\/octo\/([^/]+)(\/.*)?$/.exec(p);
+        if (m && created.has(m[1])) {
+          // A freshly created repo: only the initial commit and file writes.
+          if (!m[2]) return json(200, { name: m[1], owner: { login: "octo" }, default_branch: "main", private: true, permissions: { push: true } });
+          if (m[2].startsWith("/commits/")) return json(200, { sha: "f".repeat(40), commit: { tree: { sha: "e".repeat(40) } } });
+          if (m[2].startsWith("/contents/")) return json(201, { content: {} });
+          if (m[2].startsWith("/git/trees/")) return json(200, { truncated: false, tree: [{ path: "README.md", type: "blob", mode: "100644", size: 10 }] });
+          if (m[2].startsWith("/tarball/")) {
+            res.writeHead(200, { "Content-Type": "application/gzip" });
+            return res.end(tarGz({ [`octo-${m[1]}-ffff/README.md`]: `# ${m[1]}\n` }));
+          }
+        }
+        if (p === "/repos/octo/demo-shop") return json(200, { name: "demo-shop", owner: { login: "octo" }, default_branch: "main", description: "Demo shop", private: false, permissions: { push: true } });
         if (p.startsWith("/repos/octo/demo-shop/branches")) return json(200, [{ name: "main" }]);
         if (p.startsWith("/repos/octo/demo-shop/commits/")) return json(200, { sha: "a".repeat(40), commit: { tree: { sha: "t".repeat(40) } } });
         if (p.startsWith("/repos/octo/demo-shop/git/trees/")) return json(200, { truncated: false, tree: Object.keys(REPO).map((f) => ({ path: f, type: "blob", mode: "100644", size: REPO[f].length })) });

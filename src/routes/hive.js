@@ -988,11 +988,12 @@ function createHiveRouter() {
     h(async (req, res) => {
       const b = req.body || {};
       const spec = cleanSpec(b.agent);
+      const specs = Array.isArray(b.agents) && b.agents.length ? b.agents.slice(0, 4).map(cleanSpec) : null;
       const text = typeof b.text === "string" ? b.text.slice(0, 100000) : "";
       if (!text.trim() && !(Array.isArray(b.refs) && b.refs.length)) throw new BadInput("Write a message or attach a file");
       const mode = b.mode === "image" ? "image" : "text";
       if (!b.stream) {
-        const r = await chat.send(req.params.id, { text, refs: b.refs, spec, mode, username: req.hiveUser });
+        const r = await chat.send(req.params.id, { text, refs: b.refs, spec, specs, mode, username: req.hiveUser });
         return res.json({ ok: true, user: r.user, replyId: r.replyId });
       }
       // Stream the reply on this response (NDJSON, one event per line). The
@@ -1010,7 +1011,7 @@ function createHiveRouter() {
       };
       const ping = setInterval(() => write("ping", {}), 15000);
       try {
-        const r = await chat.send(req.params.id, { text, refs: b.refs, spec, mode, username: req.hiveUser, sink: write });
+        const r = await chat.send(req.params.id, { text, refs: b.refs, spec, specs, mode, username: req.hiveUser, sink: write });
         await r.done;
       } catch (e) {
         write("error", { error: e.message || "Something went wrong" });
@@ -1018,6 +1019,17 @@ function createHiveRouter() {
         clearInterval(ping);
         if (open) res.end();
       }
+    }),
+  );
+  // Side-by-side answers: pick the one the conversation continues from.
+  router.post(
+    "/api/hive/convos/:id/prefer",
+    h(async (req, res) => {
+      const c = await chat.convoFor(req.params.id, req.hiveUser);
+      const m = await get("SELECT * FROM hive_convo_msgs WHERE id=? AND convo_id=?", [String(req.body?.messageId || ""), c.id]);
+      if (!m?.group_id) throw new BadInput("Not a side-by-side answer");
+      await run("UPDATE hive_convo_msgs SET preferred=CASE WHEN id=? THEN 1 ELSE 0 END WHERE convo_id=? AND group_id=?", [m.id, c.id, m.group_id]);
+      res.json({ ok: true });
     }),
   );
   router.post(
