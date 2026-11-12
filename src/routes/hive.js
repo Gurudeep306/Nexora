@@ -18,7 +18,8 @@ const runner = require("../hive/runner");
 const { catalogue, providerOf } = require("../hive/providers");
 const { workspace, adoptVariant, dropOverlay, cleanPath } = require("../hive/workspace");
 const { readBase } = require("../hive/snapshot");
-const { commitTask } = require("../hive/commit");
+const { commitTask, commitOnMachine } = require("../hive/commit");
+const machines = require("../hive/machines");
 const plugins = require("../hive/plugins");
 const chat = require("../hive/chat");
 const modelsLib = require("../hive/models");
@@ -337,6 +338,21 @@ function createHiveRouter() {
     "/api/hive/projects",
     h(async (req, res) => {
       const b = req.body || {};
+      // A project without GitHub: a folder on a connected machine.
+      if (!b.githubId && b.machineId) {
+        const m = await get("SELECT id FROM hive_machines WHERE id=?", [String(b.machineId)]);
+        if (!m) throw new BadInput("Machine not found");
+        const id = newId("prj");
+        const t = now();
+        await run(
+          `INSERT INTO hive_projects(id, name, github_id, repo_owner, repo_name, default_branch, description, instructions, color, created_by, created_at, updated_at, machine_id, folder, idea_id)
+           VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+          [id, str(b.name, "name", { max: 60 }), "", "", "", "main", str(b.description, "description", { max: 300, optional: true }) || "", str(b.instructions, "instructions", { max: 8000, optional: true }) || "", COLORS.has(b.color) ? b.color : "violet", req.hiveUser, t, t, m.id, str(b.folder, "folder", { max: 500 }), b.ideaId || null],
+        );
+        const p = await projectRow(id);
+        hub.emit("project", p);
+        return res.json({ ok: true, project: p });
+      }
       const githubId = str(b.githubId, "GitHub connection", { max: 64 });
       const owner = str(b.owner, "repository owner", { max: 100 });
       const repo = str(b.repo, "repository name", { max: 100 });
@@ -367,6 +383,7 @@ function createHiveRouter() {
           t,
         ],
       );
+      if (b.machineId || b.ideaId) await run("UPDATE hive_projects SET machine_id=?, folder=?, idea_id=? WHERE id=?", [b.machineId || null, b.machineId ? String(b.folder || "").slice(0, 500) || null : null, b.ideaId || null, id]);
       await audit(req, "hive.project.create", id, { repo: `${info.owner.login}/${info.name}` });
       const p = await projectRow(id);
       hub.emit("project", p);
@@ -383,6 +400,9 @@ function createHiveRouter() {
       const description = b.description !== undefined ? String(b.description).slice(0, 300) : undefined;
       const instructions = b.instructions !== undefined ? String(b.instructions).slice(0, 8000) : undefined;
       const branch = str(b.branch, "branch", { max: 120, optional: true });
+      if (b.machineId !== undefined) {
+        await run("UPDATE hive_projects SET machine_id=?, folder=? WHERE id=?", [b.machineId || null, b.machineId ? String(b.folder || "").slice(0, 500) || null : null, p.id]);
+      }
       await run("UPDATE hive_projects SET name=?, description=?, instructions=?, default_branch=?, color=?, updated_at=? WHERE id=?", [
         name ?? p.name,
         description ?? p.description,
@@ -475,13 +495,27 @@ function createHiveRouter() {
       for (const s of [...specs, ...(lead ? [lead] : [])]) await runner.resolveSpec(s).catch((e) => {
         throw new BadInput(e.message);
       });
-      const token = await githubToken(p.github_id);
-      const baseRef = str(b.baseRef, "base branch", { max: 120, optional: true }) || p.default_branch;
-      let base;
-      try {
-        base = await gh.commit(token, p.repo_owner, p.repo_name, baseRef);
-      } catch (e) {
-        throw new BadInput(`Can't read ${baseRef}: ${e.message}`);
+      // Where the work happens: a linked repo of the project, and optionally a
+      // folder on a connected machine (real files + commands).
+      const repoId = typeof b.repoId === "string" && b.repoId ? b.repoId : null;
+      if (repoId && !(await get("SELECT id FROM hive_project_repos WHERE id=? AND project_id=?", [repoId, p.id]))) throw new BadInput("Unknown repository for this project");
+      const target = await runner.effectiveProject(p, { repo_id: repoId });
+      const machineId = typeof b.machineId === "string" && b.machineId ? b.machineId : repoId ? null : p.machine_id || null;
+      const folder = machineId ? str(b.folder, "folder", { max: 500, optional: true }) || (machineId === p.machine_id ? p.folder : null) : null;
+      if (machineId) {
+        if (!(await get("SELECT id FROM hive_machines WHERE id=?", [machineId]))) throw new BadInput("Machine not found");
+        if (!folder) throw new BadInput("Pick a folder on the machine");
+        if (!machines.isOnline(machineId)) throw new BadInput("That machine is offline — start the Hive bridge on it", 409);
+      } else if (!target.github_id) throw new BadInput("This project has no repository — pick a machine folder to work in");
+      const baseRef = str(b.baseRef, "base branch", { max: 120, optional: true }) || target.default_branch || "main";
+      let base = { sha: "local" };
+      if (!machineId) {
+        const token = await githubToken(target.github_id);
+        try {
+          base = await gh.commit(token, target.repo_owner, target.repo_name, baseRef);
+        } catch (e) {
+          throw new BadInput(`Can't read ${baseRef}: ${e.message}`);
+        }
       }
       const id = newId("tsk");
       const title = str(b.title, "title", { max: 120, optional: true }) || prompt.split("\n")[0].slice(0, 90);
@@ -491,6 +525,7 @@ function createHiveRouter() {
          VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
         [id, p.id, title, prompt, mode, "queued", baseRef, base.sha, `hive/${slug(title)}-${id.slice(-4)}`, req.hiveUser, t, t],
       );
+      if (repoId || machineId) await run("UPDATE hive_tasks SET repo_id=?, machine_id=?, folder=? WHERE id=?", [repoId, machineId, folder, id]);
       const fileIds = (Array.isArray(b.attachments) ? b.attachments : []).map(String).slice(0, 12);
       const budget = Number(b.budgetTokens) > 0 ? Math.round(Number(b.budgetTokens)) : null;
       if (fileIds.length || budget) await run("UPDATE hive_tasks SET attachments_json=?, budget_tokens=? WHERE id=?", [JSON.stringify(fileIds), budget, id]);
@@ -542,14 +577,14 @@ function createHiveRouter() {
   async function wsFor(req) {
     const ctx = await runner.taskContext(req.params.id);
     const variant = typeof (req.query.variant || req.body?.variant) === "string" ? req.query.variant || req.body.variant : "main";
-    return { ...ctx, variant, ws: workspace({ task: ctx.task, variant, snap: ctx.snap }) };
+    return { ...ctx, variant, ws: runner.workspaceOf(ctx, variant) };
   }
 
   router.get(
     "/api/hive/tasks/:id/changes",
     h(async (req, res) => {
       const { ws, snap } = await wsFor(req);
-      res.json({ ok: true, changes: await ws.changes(), index: snap.status });
+      res.json({ ok: true, changes: await ws.changes(), index: snap ? snap.status : "ready" });
     }),
   );
 
@@ -558,7 +593,7 @@ function createHiveRouter() {
     h(async (req, res) => {
       const { ws, snap } = await wsFor(req);
       const paths = await ws.listPaths();
-      res.json({ ok: true, paths: paths.slice(0, 20000), total: paths.length, truncated: snap.truncatedTree, index: snap.status });
+      res.json({ ok: true, paths: paths.slice(0, 20000), total: paths.length, truncated: snap ? snap.truncatedTree : false, index: snap ? snap.status : "ready" });
     }),
   );
 
@@ -567,7 +602,7 @@ function createHiveRouter() {
     h(async (req, res) => {
       const { ws, snap } = await wsFor(req);
       const path = cleanPath(req.query.path);
-      const base = snap.entries.has(path) ? await readBase(snap, path).catch((e) => ({ error: e.message })) : null;
+      const base = ws.readBase ? await ws.readBase(path).catch(() => null) : snap.entries.has(path) ? await readBase(snap, path).catch((e) => ({ error: e.message })) : null;
       if (base && typeof base === "object") throw new BadInput(base.error);
       const current = await ws.read(path).catch(() => null);
       res.json({ ok: true, path, base, current, status: base === null ? (current === null ? "missing" : "added") : current === null ? "deleted" : base === current ? "unchanged" : "modified" });
@@ -626,7 +661,9 @@ function createHiveRouter() {
       const branch = str(b.branch, "branch", { max: 120, optional: true }) || ctx.task.branch;
       let result;
       try {
-        result = await commitTask({
+        result = ctx.machine
+          ? await commitOnMachine({ ...ctx, message, branch, openPr: !!b.openPr, prTitle: str(b.prTitle, "PR title", { max: 200, optional: true }), prBody: typeof b.prBody === "string" ? b.prBody.slice(0, 60000) : "", author: req.hiveUser })
+          : await commitTask({
           ...ctx,
           variant: typeof b.variant === "string" ? b.variant : "main",
           message,
@@ -1012,6 +1049,9 @@ function createHiveRouter() {
       res.json({ ok: true, message: msg });
     }),
   );
+
+  // Machines, approvals, ship pipeline, launchpad, linked repos, terminal.
+  require("./hive-ops").mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRow, BadInput, cleanSpec, COLORS, ready });
 
   return router;
 }
