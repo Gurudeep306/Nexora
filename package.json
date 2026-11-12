@@ -26,6 +26,7 @@
     "user:set-password": "node scripts/set-password.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
     "@libsql/client": "^0.18.0",
     "@sentry/node": "^11.7.0",
     "cheerio": "^1.0.0-rc.12",

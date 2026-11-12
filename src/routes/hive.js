@@ -1,0 +1,679 @@
+// Nexora Hive — the staff-only multi-agent workspace (REST side).
+//
+// Only staff (anyone holding an admin-panel permission: owner, admins,
+// moderators, granted staff) can reach any of this. Everyone else gets the
+// same 404 as an unknown endpoint, so the feature isn't even discoverable.
+// Realtime (presence, live agent streams) is the /hive socket namespace in
+// src/hive/hub.js, gated the same way.
+const express = require("express");
+const rateLimit = require("express-rate-limit");
+const { getSessionUser } = require("../middleware/auth");
+const { hasAnyAdminPerm } = require("../authz/permissions");
+const { initHiveDb, newId, now, json, run, get, all } = require("../hive/db");
+const keys = require("../hive/keys");
+const vault = require("../hive/vault");
+const gh = require("../hive/github");
+const hub = require("../hive/hub");
+const runner = require("../hive/runner");
+const { catalogue, providerOf } = require("../hive/providers");
+const { workspace, adoptVariant, dropOverlay, cleanPath } = require("../hive/workspace");
+const { readBase } = require("../hive/snapshot");
+const { commitTask } = require("../hive/commit");
+
+const MODES = new Set(["solo", "team", "compare", "review"]);
+const EFFORTS = new Set(["low", "medium", "high", "xhigh", "max"]);
+const COLORS = new Set(["violet", "blue", "cyan", "green", "amber", "rose", "slate"]);
+
+class BadInput extends Error {
+  constructor(message, status = 400) {
+    super(message);
+    this.status = status;
+  }
+}
+
+function isStaff(req) {
+  const u = getSessionUser(req);
+  return !!u?.username && hasAnyAdminPerm(req);
+}
+
+/** Admins and the owner can manage anything; other staff manage what they added. */
+const isAdmin = (req) => ["admin", "owner"].includes(req.access?.role);
+
+function staffOnly(req, res, next) {
+  if (!isStaff(req)) return res.status(404).json({ ok: false, error: "API endpoint not found" });
+  req.hiveUser = getSessionUser(req).username;
+  next();
+}
+
+const h = (fn) => async (req, res) => {
+  try {
+    await fn(req, res);
+  } catch (e) {
+    const status = e.status && e.status < 600 ? e.status : 500;
+    if (status >= 500) console.error("[hive]", req.method, req.path, e.message);
+    res.status(status).json({ ok: false, error: e.message || "Something went wrong" });
+  }
+};
+
+async function audit(req, action, target, details) {
+  await run(
+    `INSERT INTO audit_log(actor, actor_role, action, target_type, target, before, after, ip, created_at) VALUES(?,?,?,?,?,?,?,?,?)`,
+    [req.hiveUser, req.access?.role || null, action, "hive", target, null, details ? JSON.stringify(details) : null, req.ip || null, Date.now()],
+  ).catch(() => {});
+}
+
+function str(v, name, { max = 200, min = 1, optional = false } = {}) {
+  if (v === undefined || v === null || v === "") {
+    if (optional) return undefined;
+    throw new BadInput(`${name} is required`);
+  }
+  if (typeof v !== "string") throw new BadInput(`${name} must be text`);
+  const s = v.trim();
+  if (s.length < min || s.length > max) throw new BadInput(`${name} must be ${min}-${max} characters`);
+  return s;
+}
+
+function cleanSpec(s) {
+  if (!s || typeof s !== "object") throw new BadInput("Each agent needs a provider and model");
+  providerOf(s.provider);
+  return {
+    provider: s.provider,
+    keyId: typeof s.keyId === "string" && s.keyId ? s.keyId : "auto",
+    model: str(s.model, "model", { max: 120, optional: true }),
+    effort: EFFORTS.has(s.effort) ? s.effort : null,
+    name: str(s.name, "agent name", { max: 40, optional: true }),
+  };
+}
+
+async function githubToken(githubId) {
+  const cred = await get("SELECT * FROM hive_github WHERE id=?", [githubId]);
+  if (!cred) throw new BadInput("GitHub connection not found", 404);
+  return vault.open(cred.token_enc);
+}
+
+async function projectRow(id) {
+  const p = await get("SELECT * FROM hive_projects WHERE id=?", [id]);
+  if (!p) throw new BadInput("Project not found", 404);
+  return p;
+}
+
+async function taskRow(id) {
+  const t = await get("SELECT * FROM hive_tasks WHERE id=?", [id]);
+  if (!t) throw new BadInput("Task not found", 404);
+  return t;
+}
+
+const publicGithub = (r) => ({ id: r.id, label: r.label, login: r.login, last4: r.last4, createdBy: r.created_by, createdAt: r.created_at });
+
+async function members() {
+  return all(
+    `SELECT username, display_name, avatar, avatar_url, role FROM users
+     WHERE role IN ('moderator','admin','owner')
+        OR username IN (SELECT username FROM user_permissions WHERE granted=1 AND perm <> 'early_access')
+     ORDER BY username LIMIT 200`,
+  );
+}
+
+const slug = (s) =>
+  String(s)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40) || "task";
+
+function createHiveRouter() {
+  const router = express.Router();
+  const ready = initHiveDb().catch((e) => console.error("[hive] schema:", e.message));
+  const writeLimiter = rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: true, legacyHeaders: false, message: { ok: false, error: "Slow down a little" } });
+
+  router.use("/api/hive", staffOnly, async (_req, _res, next) => {
+    await ready;
+    next();
+  });
+  router.use("/api/hive", (req, res, next) => (req.method === "GET" ? next() : writeLimiter(req, res, next)));
+
+  /* ── bootstrap ───────────────────────────────────────────────────── */
+  router.get(
+    "/api/hive/bootstrap",
+    h(async (req, res) => {
+      const [k, gits, projects, team] = await Promise.all([
+        keys.listKeys(),
+        all("SELECT * FROM hive_github ORDER BY created_at"),
+        all("SELECT * FROM hive_projects ORDER BY updated_at DESC"),
+        members(),
+      ]);
+      const counts = await all(
+        "SELECT project_id, COUNT(*) AS n, SUM(CASE WHEN status='running' THEN 1 ELSE 0 END) AS running FROM hive_tasks WHERE archived=0 GROUP BY project_id",
+      );
+      const byProject = Object.fromEntries(counts.map((c) => [c.project_id, { tasks: Number(c.n), running: Number(c.running || 0) }]));
+      res.json({
+        ok: true,
+        me: { username: req.hiveUser, role: req.access?.role || "member", admin: isAdmin(req) },
+        catalogue: catalogue(),
+        keys: k,
+        github: gits.map(publicGithub),
+        projects: projects.map((p) => ({ ...p, ...(byProject[p.id] || { tasks: 0, running: 0 }) })),
+        members: team,
+        online: hub.roster(),
+        runningAgents: runner.runningCount(),
+      });
+    }),
+  );
+
+  router.get(
+    "/api/hive/stats",
+    h(async (_req, res) => {
+      const today = new Date().toISOString().slice(0, 10);
+      const since = new Date(Date.now() - 13 * 86400e3).toISOString().slice(0, 10);
+      const byProvider = await all(
+        `SELECT k.provider AS provider, u.day AS day, SUM(u.input_tokens) AS input, SUM(u.output_tokens) AS output, SUM(u.requests) AS requests, SUM(u.cost_micros) AS cost
+         FROM hive_usage u JOIN hive_keys k ON k.id = u.key_id WHERE u.day >= ? GROUP BY k.provider, u.day ORDER BY u.day`,
+        [since],
+      );
+      const byUser = await all(
+        "SELECT username, SUM(input_tokens + output_tokens) AS tokens, SUM(requests) AS requests FROM hive_usage WHERE day = ? GROUP BY username ORDER BY tokens DESC",
+        [today],
+      );
+      const tasks = await get(
+        "SELECT COUNT(*) AS total, SUM(CASE WHEN status='running' THEN 1 ELSE 0 END) AS running, SUM(CASE WHEN pr_url IS NOT NULL THEN 1 ELSE 0 END) AS prs FROM hive_tasks",
+      );
+      res.json({ ok: true, byProvider, byUser, tasks, runningAgents: runner.runningCount() });
+    }),
+  );
+
+  /* ── provider keys ───────────────────────────────────────────────── */
+  router.post(
+    "/api/hive/keys",
+    h(async (req, res) => {
+      const b = req.body || {};
+      try {
+        const id = await keys.createKey({ ...b, label: b.label ?? "" }, req.hiveUser);
+        await audit(req, "hive.key.create", id, { provider: b.provider, label: b.label });
+        const check = await keys.checkKey(id);
+        hub.emit("keys", { by: req.hiveUser });
+        res.json({ ok: true, id, check });
+      } catch (e) {
+        throw e.status ? e : new BadInput(e.message);
+      }
+    }),
+  );
+
+  async function manageableKey(req) {
+    const row = await keys.keyRow(req.params.id);
+    if (!row) throw new BadInput("Key not found", 404);
+    if (row.owner !== req.hiveUser && !isAdmin(req)) throw new BadInput("Only the person who added this key, or an admin, can change it", 403);
+    return row;
+  }
+
+  router.patch(
+    "/api/hive/keys/:id",
+    h(async (req, res) => {
+      await manageableKey(req);
+      try {
+        await keys.updateKey(req.params.id, req.body || {});
+      } catch (e) {
+        throw e.status ? e : new BadInput(e.message);
+      }
+      await audit(req, "hive.key.update", req.params.id, { fields: Object.keys(req.body || {}).filter((k) => k !== "apiKey") });
+      if (req.body?.apiKey) await keys.checkKey(req.params.id);
+      hub.emit("keys", { by: req.hiveUser });
+      res.json({ ok: true });
+    }),
+  );
+
+  router.delete(
+    "/api/hive/keys/:id",
+    h(async (req, res) => {
+      const row = await manageableKey(req);
+      await keys.deleteKey(row.id);
+      await audit(req, "hive.key.delete", row.id, { label: row.label, provider: row.provider });
+      hub.emit("keys", { by: req.hiveUser });
+      res.json({ ok: true });
+    }),
+  );
+
+  router.post(
+    "/api/hive/keys/:id/check",
+    h(async (req, res) => {
+      const r = await keys.checkKey(req.params.id);
+      hub.emit("keys", { by: req.hiveUser });
+      res.json({ ok: true, ...r });
+    }),
+  );
+
+  router.get(
+    "/api/hive/keys/:id/usage",
+    h(async (req, res) => {
+      res.json({ ok: true, ...(await keys.usageSeries(req.params.id, 30)) });
+    }),
+  );
+
+  /* ── GitHub connections ──────────────────────────────────────────── */
+  router.post(
+    "/api/hive/github",
+    h(async (req, res) => {
+      const token = str(req.body?.token, "token", { max: 400, min: 10 });
+      const label = str(req.body?.label, "name", { max: 60, optional: true });
+      let me;
+      try {
+        me = await gh.me(token);
+      } catch (e) {
+        throw new BadInput(`GitHub rejected that token: ${e.message}`);
+      }
+      const id = newId("gh");
+      await run("INSERT INTO hive_github(id, label, login, token_enc, last4, created_by, created_at) VALUES(?,?,?,?,?,?,?)", [
+        id,
+        label || `@${me.login}`,
+        me.login,
+        vault.seal(token),
+        vault.last4(token),
+        req.hiveUser,
+        now(),
+      ]);
+      await audit(req, "hive.github.create", id, { login: me.login });
+      hub.emit("github", { by: req.hiveUser });
+      res.json({ ok: true, id, login: me.login });
+    }),
+  );
+
+  router.delete(
+    "/api/hive/github/:id",
+    h(async (req, res) => {
+      const row = await get("SELECT * FROM hive_github WHERE id=?", [req.params.id]);
+      if (!row) throw new BadInput("Not found", 404);
+      if (row.created_by !== req.hiveUser && !isAdmin(req)) throw new BadInput("Only the person who added it, or an admin, can remove it", 403);
+      const used = await get("SELECT COUNT(*) AS n FROM hive_projects WHERE github_id=?", [row.id]);
+      if (Number(used?.n) > 0) throw new BadInput("Projects still use this connection — remove or move them first", 409);
+      await run("DELETE FROM hive_github WHERE id=?", [row.id]);
+      await audit(req, "hive.github.delete", row.id, { login: row.login });
+      hub.emit("github", { by: req.hiveUser });
+      res.json({ ok: true });
+    }),
+  );
+
+  router.get(
+    "/api/hive/github/:id/repos",
+    h(async (req, res) => {
+      const repos = await gh.listRepos(await githubToken(req.params.id));
+      res.json({
+        ok: true,
+        repos: repos.map((r) => ({ owner: r.owner.login, name: r.name, fullName: r.full_name, private: r.private, defaultBranch: r.default_branch, description: r.description, pushedAt: r.pushed_at, permissions: r.permissions || null })),
+      });
+    }),
+  );
+
+  /* ── projects ────────────────────────────────────────────────────── */
+  router.post(
+    "/api/hive/projects",
+    h(async (req, res) => {
+      const b = req.body || {};
+      const githubId = str(b.githubId, "GitHub connection", { max: 64 });
+      const owner = str(b.owner, "repository owner", { max: 100 });
+      const repo = str(b.repo, "repository name", { max: 100 });
+      const token = await githubToken(githubId);
+      let info;
+      try {
+        info = await gh.repo(token, owner, repo);
+      } catch (e) {
+        throw new BadInput(`Can't open ${owner}/${repo} with that connection: ${e.message}`);
+      }
+      const id = newId("prj");
+      const t = now();
+      await run(
+        `INSERT INTO hive_projects(id, name, github_id, repo_owner, repo_name, default_branch, description, instructions, color, created_by, created_at, updated_at)
+         VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
+        [
+          id,
+          str(b.name, "name", { max: 60, optional: true }) || info.name,
+          githubId,
+          info.owner.login,
+          info.name,
+          str(b.branch, "branch", { max: 120, optional: true }) || info.default_branch,
+          str(b.description, "description", { max: 300, optional: true }) || info.description || "",
+          str(b.instructions, "instructions", { max: 8000, optional: true }) || "",
+          COLORS.has(b.color) ? b.color : "violet",
+          req.hiveUser,
+          t,
+          t,
+        ],
+      );
+      await audit(req, "hive.project.create", id, { repo: `${info.owner.login}/${info.name}` });
+      const p = await projectRow(id);
+      hub.emit("project", p);
+      res.json({ ok: true, project: p });
+    }),
+  );
+
+  router.patch(
+    "/api/hive/projects/:id",
+    h(async (req, res) => {
+      const p = await projectRow(req.params.id);
+      const b = req.body || {};
+      const name = str(b.name, "name", { max: 60, optional: true });
+      const description = b.description !== undefined ? String(b.description).slice(0, 300) : undefined;
+      const instructions = b.instructions !== undefined ? String(b.instructions).slice(0, 8000) : undefined;
+      const branch = str(b.branch, "branch", { max: 120, optional: true });
+      await run("UPDATE hive_projects SET name=?, description=?, instructions=?, default_branch=?, color=?, updated_at=? WHERE id=?", [
+        name ?? p.name,
+        description ?? p.description,
+        instructions ?? p.instructions,
+        branch ?? p.default_branch,
+        COLORS.has(b.color) ? b.color : p.color,
+        now(),
+        p.id,
+      ]);
+      const np = await projectRow(p.id);
+      hub.emit("project", np);
+      res.json({ ok: true, project: np });
+    }),
+  );
+
+  router.delete(
+    "/api/hive/projects/:id",
+    h(async (req, res) => {
+      const p = await projectRow(req.params.id);
+      if (p.created_by !== req.hiveUser && !isAdmin(req)) throw new BadInput("Only the creator or an admin can delete a project", 403);
+      const live = await get("SELECT COUNT(*) AS n FROM hive_tasks WHERE project_id=? AND status='running'", [p.id]);
+      if (Number(live?.n)) throw new BadInput("Stop the running tasks first", 409);
+      const tasks = await all("SELECT id FROM hive_tasks WHERE project_id=?", [p.id]);
+      for (const t of tasks) {
+        await run("DELETE FROM hive_events WHERE task_id=?", [t.id]);
+        await run("DELETE FROM hive_changes WHERE task_id=?", [t.id]);
+        await run("DELETE FROM hive_agents WHERE task_id=?", [t.id]);
+        dropOverlay(t.id);
+      }
+      await run("DELETE FROM hive_tasks WHERE project_id=?", [p.id]);
+      await run("DELETE FROM hive_chat WHERE project_id=?", [p.id]);
+      await run("DELETE FROM hive_projects WHERE id=?", [p.id]);
+      await audit(req, "hive.project.delete", p.id, { repo: `${p.repo_owner}/${p.repo_name}` });
+      hub.emit("project_deleted", { id: p.id });
+      res.json({ ok: true });
+    }),
+  );
+
+  router.get(
+    "/api/hive/projects/:id/branches",
+    h(async (req, res) => {
+      const p = await projectRow(req.params.id);
+      const list = await gh.branches(await githubToken(p.github_id), p.repo_owner, p.repo_name);
+      res.json({ ok: true, branches: list.map((b) => ({ name: b.name, sha: b.commit.sha })) });
+    }),
+  );
+
+  router.get(
+    "/api/hive/projects/:id/tasks",
+    h(async (req, res) => {
+      await projectRow(req.params.id);
+      const archived = req.query.archived === "1" ? 1 : 0;
+      const tasks = await all("SELECT * FROM hive_tasks WHERE project_id=? AND archived=? ORDER BY updated_at DESC LIMIT 200", [req.params.id, archived]);
+      const agents = tasks.length
+        ? await all(
+            `SELECT id, task_id, name, provider, model, status, role, input_tokens, output_tokens FROM hive_agents WHERE task_id IN (${tasks.map(() => "?").join(",")})`,
+            tasks.map((t) => t.id),
+          )
+        : [];
+      const byTask = {};
+      for (const a of agents) (byTask[a.task_id] ||= []).push(a);
+      res.json({ ok: true, tasks: tasks.map((t) => ({ ...t, agents: byTask[t.id] || [] })) });
+    }),
+  );
+
+  /* ── tasks ───────────────────────────────────────────────────────── */
+  router.post(
+    "/api/hive/projects/:id/tasks",
+    h(async (req, res) => {
+      const p = await projectRow(req.params.id);
+      const b = req.body || {};
+      const prompt = str(b.prompt, "prompt", { max: 30000 });
+      const mode = MODES.has(b.mode) ? b.mode : "solo";
+      const specs = (Array.isArray(b.agents) ? b.agents : []).slice(0, 8).map(cleanSpec);
+      const lead = b.lead ? cleanSpec(b.lead) : null;
+      if (!specs.length && !lead) throw new BadInput("Pick at least one agent");
+      if ((mode === "compare" || mode === "review") && !specs.length) throw new BadInput("Pick the agents to run");
+      // Fail fast if a spec can't get a key (no budget / no key for provider).
+      for (const s of [...specs, ...(lead ? [lead] : [])]) await runner.resolveSpec(s).catch((e) => {
+        throw new BadInput(e.message);
+      });
+      const token = await githubToken(p.github_id);
+      const baseRef = str(b.baseRef, "base branch", { max: 120, optional: true }) || p.default_branch;
+      let base;
+      try {
+        base = await gh.commit(token, p.repo_owner, p.repo_name, baseRef);
+      } catch (e) {
+        throw new BadInput(`Can't read ${baseRef}: ${e.message}`);
+      }
+      const id = newId("tsk");
+      const title = str(b.title, "title", { max: 120, optional: true }) || prompt.split("\n")[0].slice(0, 90);
+      const t = now();
+      await run(
+        `INSERT INTO hive_tasks(id, project_id, title, prompt, mode, status, base_ref, base_sha, branch, created_by, created_at, updated_at)
+         VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
+        [id, p.id, title, prompt, mode, "queued", baseRef, base.sha, `hive/${slug(title)}-${id.slice(-4)}`, req.hiveUser, t, t],
+      );
+      await run("UPDATE hive_projects SET updated_at=? WHERE id=?", [t, p.id]);
+      const task = await taskRow(id);
+      hub.emit("task", task);
+      await runner.startTask(task, { mode, specs, lead, username: req.hiveUser }).catch((e) => {
+        throw new BadInput(e.message);
+      });
+      res.json({ ok: true, task: await taskRow(id) });
+    }),
+  );
+
+  router.get(
+    "/api/hive/tasks/:id",
+    h(async (req, res) => {
+      const task = await taskRow(req.params.id);
+      const project = await projectRow(task.project_id);
+      const agents = await all("SELECT * FROM hive_agents WHERE task_id=? ORDER BY created_at", [task.id]);
+      const events = (await all("SELECT * FROM hive_events WHERE task_id=? ORDER BY seq DESC LIMIT 1500", [task.id])).reverse().map((e) => ({ ...e, data: json(e.data_json, {}), data_json: undefined }));
+      const variants = (await all("SELECT DISTINCT variant FROM hive_changes WHERE task_id=?", [task.id])).map((r) => r.variant);
+      res.json({ ok: true, task, project, agents, events, variants });
+    }),
+  );
+
+  router.get(
+    "/api/hive/tasks/:id/events",
+    h(async (req, res) => {
+      const after = Number(req.query.after || 0);
+      const events = await all("SELECT * FROM hive_events WHERE task_id=? AND seq>? ORDER BY seq LIMIT 2000", [req.params.id, after]);
+      res.json({ ok: true, events: events.map((e) => ({ ...e, data: json(e.data_json, {}), data_json: undefined })) });
+    }),
+  );
+
+  router.patch(
+    "/api/hive/tasks/:id",
+    h(async (req, res) => {
+      const task = await taskRow(req.params.id);
+      const b = req.body || {};
+      const fields = {};
+      if (b.title !== undefined) fields.title = str(b.title, "title", { max: 120 });
+      if (b.archived !== undefined) fields.archived = b.archived ? 1 : 0;
+      if (b.branch !== undefined) fields.branch = str(b.branch, "branch", { max: 120 });
+      if (!Object.keys(fields).length) return res.json({ ok: true, task });
+      res.json({ ok: true, task: await runner.setTask(task.id, fields) });
+    }),
+  );
+
+  async function wsFor(req) {
+    const ctx = await runner.taskContext(req.params.id);
+    const variant = typeof (req.query.variant || req.body?.variant) === "string" ? req.query.variant || req.body.variant : "main";
+    return { ...ctx, variant, ws: workspace({ task: ctx.task, variant, snap: ctx.snap }) };
+  }
+
+  router.get(
+    "/api/hive/tasks/:id/changes",
+    h(async (req, res) => {
+      const { ws, snap } = await wsFor(req);
+      res.json({ ok: true, changes: await ws.changes(), index: snap.status });
+    }),
+  );
+
+  router.get(
+    "/api/hive/tasks/:id/tree",
+    h(async (req, res) => {
+      const { ws, snap } = await wsFor(req);
+      const paths = await ws.listPaths();
+      res.json({ ok: true, paths: paths.slice(0, 20000), total: paths.length, truncated: snap.truncatedTree, index: snap.status });
+    }),
+  );
+
+  router.get(
+    "/api/hive/tasks/:id/file",
+    h(async (req, res) => {
+      const { ws, snap } = await wsFor(req);
+      const path = cleanPath(req.query.path);
+      const base = snap.entries.has(path) ? await readBase(snap, path).catch((e) => ({ error: e.message })) : null;
+      if (base && typeof base === "object") throw new BadInput(base.error);
+      const current = await ws.read(path).catch(() => null);
+      res.json({ ok: true, path, base, current, status: base === null ? (current === null ? "missing" : "added") : current === null ? "deleted" : base === current ? "unchanged" : "modified" });
+    }),
+  );
+
+  router.put(
+    "/api/hive/tasks/:id/file",
+    h(async (req, res) => {
+      const { ws, task, variant } = await wsFor(req);
+      const path = cleanPath(req.body?.path);
+      if (req.body?.delete) await ws.remove(path, `@${req.hiveUser}`);
+      else {
+        if (typeof req.body?.content !== "string") throw new BadInput("content is required");
+        await ws.write(path, req.body.content, `@${req.hiveUser}`);
+      }
+      await runner.event(task.id, null, "human_edit", { username: req.hiveUser, path, variant, deleted: !!req.body?.delete });
+      hub.emitTask(task.id, "changes", { variant });
+      res.json({ ok: true });
+    }),
+  );
+
+  router.delete(
+    "/api/hive/tasks/:id/file",
+    h(async (req, res) => {
+      const { ws, task, variant } = await wsFor(req);
+      const path = cleanPath(req.query.path);
+      await ws.revert(path);
+      await runner.event(task.id, null, "human_edit", { username: req.hiveUser, path, variant, reverted: true });
+      hub.emitTask(task.id, "changes", { variant });
+      res.json({ ok: true });
+    }),
+  );
+
+  router.post(
+    "/api/hive/tasks/:id/adopt",
+    h(async (req, res) => {
+      const task = await taskRow(req.params.id);
+      const variant = str(req.body?.variant, "variant", { max: 64 });
+      if (variant === "main") throw new BadInput("Pick a compare result to adopt");
+      const agent = await get("SELECT name, model FROM hive_agents WHERE id=? AND task_id=?", [variant, task.id]);
+      if (!agent) throw new BadInput("Unknown result", 404);
+      await adoptVariant(task.id, variant, "main");
+      await runner.event(task.id, null, "system", { message: `@${req.hiveUser} adopted ${agent.name}'s result (${agent.model})` });
+      hub.emitTask(task.id, "changes", { variant: "main" });
+      res.json({ ok: true });
+    }),
+  );
+
+  router.post(
+    "/api/hive/tasks/:id/commit",
+    h(async (req, res) => {
+      const ctx = await runner.taskContext(req.params.id);
+      const b = req.body || {};
+      const message = str(b.message, "commit message", { max: 5000 });
+      const branch = str(b.branch, "branch", { max: 120, optional: true }) || ctx.task.branch;
+      let result;
+      try {
+        result = await commitTask({
+          ...ctx,
+          variant: typeof b.variant === "string" ? b.variant : "main",
+          message,
+          branch,
+          openPr: !!b.openPr,
+          prTitle: str(b.prTitle, "PR title", { max: 200, optional: true }),
+          prBody: typeof b.prBody === "string" ? b.prBody.slice(0, 60000) : "",
+          author: req.hiveUser,
+        });
+      } catch (e) {
+        throw e.status && e.status < 500 ? new BadInput(e.message, e.status === 404 ? 400 : e.status) : e;
+      }
+      const fields = { head_sha: result.sha, branch: result.branch };
+      if (result.pr) Object.assign(fields, { pr_url: result.pr.url, pr_number: result.pr.number, status: "pr_open" });
+      else fields.status = "committed";
+      await runner.setTask(ctx.task.id, fields);
+      await runner.event(ctx.task.id, null, "commit", { username: req.hiveUser, ...result, message });
+      await audit(req, "hive.commit", ctx.task.id, { repo: `${ctx.project.repo_owner}/${ctx.project.repo_name}`, branch: result.branch, sha: result.sha, pr: result.pr?.url });
+      res.json({ ok: true, ...result });
+    }),
+  );
+
+  router.post(
+    "/api/hive/tasks/:id/agents",
+    h(async (req, res) => {
+      const task = await taskRow(req.params.id);
+      const prompt = str(req.body?.prompt, "message", { max: 20000 });
+      const spec = cleanSpec(req.body?.agent);
+      await runner.resolveSpec(spec).catch((e) => {
+        throw new BadInput(e.message);
+      });
+      const variant = typeof req.body?.variant === "string" && req.body.variant ? req.body.variant : "main";
+      const agent = await runner.addAgent(task.id, { spec, prompt, username: req.hiveUser, readOnly: !!req.body?.readOnly, variant });
+      res.json({ ok: true, agent });
+    }),
+  );
+
+  router.post(
+    "/api/hive/tasks/:id/stop",
+    h(async (req, res) => {
+      const task = await taskRow(req.params.id);
+      const n = await runner.stopTask(task.id);
+      await runner.event(task.id, null, "system", { message: `@${req.hiveUser} stopped the task` });
+      res.json({ ok: true, stopped: n });
+    }),
+  );
+
+  router.post(
+    "/api/hive/agents/:id/stop",
+    h(async (req, res) => {
+      const a = await get("SELECT task_id FROM hive_agents WHERE id=?", [req.params.id]);
+      if (!a) throw new BadInput("Agent not found", 404);
+      const ok = runner.stopAgent(req.params.id);
+      if (ok) await runner.event(a.task_id, req.params.id, "system", { message: `@${req.hiveUser} stopped this agent` });
+      res.json({ ok: true, stopped: ok });
+    }),
+  );
+
+  router.post(
+    "/api/hive/agents/:id/steer",
+    h(async (req, res) => {
+      const message = str(req.body?.message, "message", { max: 4000 });
+      const ok = await runner.steer(req.params.id, req.hiveUser, message);
+      if (!ok) throw new BadInput("That agent is not running — send a follow-up instead", 409);
+      res.json({ ok: true });
+    }),
+  );
+
+  /* ── team chat ───────────────────────────────────────────────────── */
+  router.get(
+    "/api/hive/projects/:id/chat",
+    h(async (req, res) => {
+      const rows = await all("SELECT * FROM hive_chat WHERE project_id=? ORDER BY created_at DESC LIMIT 200", [req.params.id]);
+      res.json({ ok: true, messages: rows.reverse() });
+    }),
+  );
+
+  router.post(
+    "/api/hive/projects/:id/chat",
+    h(async (req, res) => {
+      await projectRow(req.params.id);
+      const body = str(req.body?.body, "message", { max: 4000 });
+      const taskId = typeof req.body?.taskId === "string" ? req.body.taskId.slice(0, 64) : null;
+      const msg = { id: newId("msg"), project_id: req.params.id, task_id: taskId, username: req.hiveUser, body, created_at: now() };
+      await run("INSERT INTO hive_chat(id, project_id, task_id, username, body, created_at) VALUES(?,?,?,?,?,?)", [msg.id, msg.project_id, msg.task_id, msg.username, msg.body, msg.created_at]);
+      hub.emit("chat", msg);
+      res.json({ ok: true, message: msg });
+    }),
+  );
+
+  return router;
+}
+
+module.exports = { createHiveRouter, isStaff };
