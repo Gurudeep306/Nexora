@@ -1,0 +1,170 @@
+// Hive v3 end to end, through the demo harness (scripts/hive-demo.js): the
+// real server + the real bridge on a temp git repo + mock provider/GitHub.
+// Streamed chat replies, side-by-side answers, machine tasks with command
+// approvals, the terminal, checkpoints + restore, the GitHub access doctor,
+// cached-token accounting and the idea launchpad.
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const { spawn } = require("node:child_process");
+const path = require("node:path");
+
+const PORT = 3400 + Math.floor(Math.random() * 400);
+const base = `http://localhost:${PORT}`;
+let demo;
+let cookie = "";
+
+async function call(method, url, body) {
+  const r = await fetch(base + url, { method, headers: { "Content-Type": "application/json", Cookie: cookie, Origin: base }, body: body ? JSON.stringify(body) : undefined });
+  const sc = r.headers.get("set-cookie");
+  if (sc) cookie = sc.split(";")[0];
+  const j = await r.json().catch(() => ({}));
+  return { status: r.status, body: j };
+}
+const ok = async (method, url, body) => {
+  const r = await call(method, url, body);
+  assert.ok(r.status < 300, `${method} ${url} → ${r.status} ${JSON.stringify(r.body)}`);
+  return r.body;
+};
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+async function waitTask(id) {
+  for (let i = 0; i < 80; i++) {
+    await sleep(250);
+    const t = await ok("GET", `/api/hive/tasks/${id}`);
+    if (!["running", "queued"].includes(t.task.status)) return t;
+  }
+  throw new Error("task did not finish");
+}
+
+test.before(async () => {
+  demo = spawn(process.execPath, [path.join(__dirname, "..", "scripts", "hive-demo.js")], {
+    env: { ...process.env, PORT: String(PORT), DEMO_POLICY: "ask" },
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  let out = "";
+  demo.stdout.on("data", (d) => (out += d));
+  demo.stderr.on("data", (d) => (out += d));
+  for (let i = 0; i < 240 && !out.includes("Hive demo ready"); i++) {
+    if (demo.exitCode !== null) throw new Error(`demo exited:\n${out}`);
+    await sleep(250);
+  }
+  assert.ok(out.includes("Hive demo ready"), out);
+  await ok("POST", "/api/user/login", { username: "owner", password: "owner123" });
+});
+
+test.after(() => {
+  demo?.kill("SIGTERM");
+});
+
+test("chat replies stream on the send request (NDJSON) and side-by-side answers work", async () => {
+  const boot = await ok("GET", "/api/hive/bootstrap");
+  const key = boot.keys[0];
+  assert.equal(key.defaultModel, "demo-coder-large", "default picked from the live model list");
+  const c = (await ok("POST", "/api/hive/convos", {})).convo;
+  const r = await fetch(`${base}/api/hive/convos/${c.id}/messages`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Cookie: cookie, Origin: base },
+    body: JSON.stringify({ text: "Explain the repo", agent: { provider: key.provider, keyId: "auto" }, agents: [{ provider: key.provider, keyId: "auto" }, { provider: key.provider, keyId: "auto", model: "demo-coder-mini" }], stream: true }),
+  });
+  assert.match(r.headers.get("content-type"), /ndjson/);
+  const events = (await r.text()).trim().split("\n").map((l) => JSON.parse(l));
+  const types = events.map((e) => e.type);
+  assert.equal(types[0], "msg");
+  assert.equal(types.filter((t) => t === "start").length, 2, "one reply per model");
+  assert.ok(types.includes("delta"));
+  const done = events.filter((e) => e.type === "done");
+  assert.equal(done.length, 2);
+  for (const d of done) {
+    assert.equal(d.data.error, null);
+    assert.match(d.data.content, /quick overview/);
+  }
+  const stored = await ok("GET", `/api/hive/convos/${c.id}`);
+  const answers = stored.messages.filter((m) => m.role === "assistant");
+  assert.equal(answers.length, 2);
+  assert.ok(answers[0].group_id && answers[0].group_id === answers[1].group_id);
+  await ok("POST", `/api/hive/convos/${c.id}/prefer`, { messageId: answers[1].id });
+});
+
+test("machine task: real files, approval-gated commands, terminal, checkpoints and restore", async () => {
+  const boot = await ok("GET", "/api/hive/bootstrap");
+  const key = boot.keys[0];
+  const ms = await ok("GET", "/api/hive/machines");
+  assert.equal(ms.machines.length, 1);
+  assert.equal(ms.machines[0].online, true, "the bridge connected");
+  const proj = boot.projects.find((p) => p.machine_id);
+  const { task } = await ok("POST", `/api/hive/projects/${proj.id}/tasks`, { prompt: "Support quantities and run the tests", agents: [{ provider: key.provider, keyId: "auto" }] });
+  // The agent's command waits for a human.
+  let approved = false;
+  for (let i = 0; i < 60 && !approved; i++) {
+    await sleep(250);
+    const a = await ok("GET", "/api/hive/approvals");
+    if (a.approvals.length) {
+      assert.equal(a.approvals[0].command, "node --test");
+      await ok("POST", `/api/hive/approvals/${a.approvals[0].id}`, { approved: true });
+      approved = true;
+    }
+  }
+  assert.ok(approved, "an approval was requested");
+  const t = await waitTask(task.id);
+  const kinds = t.events.map((e) => e.kind);
+  assert.ok(kinds.includes("approval") && kinds.includes("approval_result"));
+  const run = t.events.find((e) => e.kind === "tool_result" && e.data.name === "run_command");
+  assert.match(run.data.preview, /exit 0/);
+  const changes = await ok("GET", `/api/hive/tasks/${task.id}/changes`);
+  assert.deepEqual(changes.changes.map((c) => c.path), ["src/cart.js"]);
+  const file = await ok("GET", `/api/hive/tasks/${task.id}/file?path=src/cart.js`);
+  assert.equal(file.status, "modified");
+  assert.match(file.current, /qty/);
+  // Terminal.
+  const ex = await ok("POST", `/api/hive/machines/${ms.machines[0].id}/exec`, { folder: proj.folder, command: "git status --short" });
+  assert.match(ex.output, /src\/cart\.js/);
+  // Checkpoint taken when the agent finished; revert by hand, then restore it.
+  const cps = (await ok("GET", `/api/hive/tasks/${task.id}/checkpoints`)).checkpoints;
+  assert.ok(cps.some((c) => c.files === 1));
+  await ok("POST", `/api/hive/machines/${ms.machines[0].id}/exec`, { folder: proj.folder, command: "git checkout -- src/cart.js" });
+  assert.equal((await ok("GET", `/api/hive/tasks/${task.id}/changes`)).changes.length, 0);
+  await ok("POST", `/api/hive/tasks/${task.id}/checkpoints/${cps.find((c) => c.files === 1).id}/restore`, {});
+  assert.equal((await ok("GET", `/api/hive/tasks/${task.id}/changes`)).changes.length, 1, "the agent's result is back");
+  // Bridge endpoints need the machine token.
+  assert.equal((await fetch(`${base}/api/hive-bridge/poll`, { headers: { Authorization: "Bearer hvm_wrongwrongwrongwrongwrong" } })).status, 401);
+});
+
+test("GitHub doctor explains missing access; cached tokens don't eat the budget", async () => {
+  const boot = await ok("GET", "/api/hive/bootstrap");
+  const rep = await ok("POST", `/api/hive/github/${boot.github[0].id}/test`, { owner: "octo", repo: "secret" });
+  assert.equal(rep.report.ok, false);
+  assert.equal(rep.report.status, 404);
+  assert.ok(rep.report.steps.length >= 1);
+  const good = await ok("POST", `/api/hive/github/${boot.github[0].id}/test`, { owner: "octo", repo: "demo-shop" });
+  assert.equal(good.report.ok, true);
+  assert.equal(good.report.canPush, true);
+  const k = boot.keys[0];
+  assert.ok(k.todayTokens > 0 && k.periodStart, "usage summary includes today + period");
+});
+
+test("prompt-cache reads are tracked but not charged against a key's budget", async () => {
+  process.env.DB_PATH = ":memory:";
+  const { initHiveDb } = require("../src/hive/db");
+  await initHiveDb();
+  const keys = require("../src/hive/keys");
+  const id = await keys.createKey({ provider: "anthropic", label: "t", apiKey: "sk-ant-test-1234567890", tokenLimit: 10000, limitPeriod: "day" }, "u");
+  await keys.recordUsage(id, "u", { input: 1000, output: 50, cacheRead: 900 });
+  const k = (await keys.listKeys()).find((x) => x.id === id);
+  assert.equal(k.used, 150, "100 fresh input + 50 output");
+  assert.equal(k.periodCached, 900);
+  assert.equal(k.remaining, 9850);
+});
+
+test("launchpad: idea → plan → new repo, PLAN.md, memory and milestone 1", async () => {
+  const boot = await ok("GET", "/api/hive/bootstrap");
+  const { idea } = await ok("POST", "/api/hive/ideas", { pitch: "Uptime alerts on Telegram for my sites" });
+  assert.equal(idea.status, "planned");
+  assert.equal(idea.plan.name, "PulseWatch");
+  const r = await ok("POST", `/api/hive/ideas/${idea.id}/launch`, { githubId: boot.github[0].id, repoName: "pulsewatch", agents: [{ provider: boot.keys[0].provider, keyId: "auto" }] });
+  assert.equal(r.project.repo_name, "pulsewatch");
+  assert.equal(r.project.idea_id, idea.id);
+  const mem = await ok("GET", `/api/hive/projects/${r.project.id}/memory`);
+  assert.ok(mem.memory.some((m) => m.title === "Stack"));
+  assert.match(r.task.title, /Milestone 1/);
+  const ideas = await ok("GET", "/api/hive/ideas");
+  assert.equal(ideas.ideas.find((i) => i.id === idea.id).status, "launched");
+});

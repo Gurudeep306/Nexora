@@ -81,6 +81,21 @@ const DEFS = {
     description: "Read a public web page (documentation, API reference, changelog) as text.",
     schema: obj({ url: str("https URL") }, ["url"]),
   },
+  run_command: {
+    description:
+      "Run a shell command in the project folder on the connected machine (tests, builds, linters, git status, package installs…). Returns the exit code and output. Prefer short, non-interactive commands; long-running servers go through start_server.",
+    schema: obj({ command: str("The shell command"), timeout_seconds: { type: "integer", description: "Max run time (default 120, max 1800)" } }, ["command"]),
+  },
+  start_server: {
+    description: "Start a long-running process (dev server, watcher) in the background on the machine and return its first output. Use server_logs to read more and stop_server when done.",
+    schema: obj({ name: str("Short id, e.g. \"web\""), command: str("e.g. \"npm run dev\"") }, ["name", "command"]),
+  },
+  server_logs: { description: "Read the latest output of a background process started with start_server.", schema: obj({ name: str("Its id") }, ["name"]) },
+  stop_server: { description: "Stop a background process started with start_server.", schema: obj({ name: str("Its id") }, ["name"]) },
+  fetch_local: {
+    description: "HTTP GET a page from a dev server running on the machine (http://localhost:PORT/…) to smoke-test it. Returns status and body.",
+    schema: obj({ url: str("http://localhost:PORT/path") }, ["url"]),
+  },
   finish: {
     description: "Call when your work is complete, with a concise summary of what you did (files changed, decisions, anything a reviewer should check).",
     schema: obj({ summary: str("Summary for the humans reviewing this task") }, ["summary"]),
@@ -90,8 +105,11 @@ const DEFS = {
 const READ_ONLY = ["list_files", "read_file", "search", "view_changes", "team_note", "read_team_board", "finish"];
 const WRITE = ["write_file", "edit_file", "delete_file"];
 
-function toolsFor(role, { readOnly = false, memory = false, web = false } = {}) {
+const MACHINE = ["run_command", "start_server", "server_logs", "stop_server", "fetch_local"];
+
+function toolsFor(role, { readOnly = false, memory = false, web = false, machine = false, commands = true } = {}) {
   const names = [...READ_ONLY.slice(0, 3), ...(readOnly ? [] : WRITE), ...READ_ONLY.slice(3)];
+  if (machine && commands) names.splice(names.indexOf("finish"), 0, ...(readOnly ? ["run_command"] : MACHINE));
   if (role === "lead") names.splice(names.indexOf("finish"), 0, "delegate");
   if (memory) names.splice(names.indexOf("finish"), 0, "remember");
   if (web) names.splice(names.indexOf("finish"), 0, "read_url");
@@ -177,7 +195,7 @@ async function execute(name, input, ctx) {
         if (!pick.length) return { content: "No changes yet." };
         const parts = [];
         for (const c of pick.slice(0, 40)) {
-          const base = c.status === "added" ? "" : (await readBase(ws.snap, c.path).catch(() => "")) || "";
+          const base = c.status === "added" ? "" : (await (ws.readBase ? ws.readBase(c.path) : readBase(ws.snap, c.path)).catch(() => "")) || "";
           const cur = c.status === "deleted" ? "" : (await ws.read(c.path)) || "";
           parts.push(`# ${c.status.toUpperCase()} ${c.path} (+${c.additions} -${c.deletions}, by ${c.author})\n${clip(unifiedDiff(base, cur, c.path), 20_000)}`);
         }
@@ -202,6 +220,37 @@ async function execute(name, input, ctx) {
       case "read_url": {
         const r = await readWebPage(input.url);
         return { content: clip(r.text, 60_000), meta: { url: input.url } };
+      }
+      case "run_command":
+      case "start_server": {
+        if (!ws.exec) return { content: "Commands need a connected machine (Hive → Machines).", isError: true };
+        const command = String(input.command).slice(0, 4000);
+        const ok = ctx.approve ? await ctx.approve({ command, kind: name === "start_server" ? "server" : "command" }) : { approved: true };
+        if (!ok.approved) return { content: `Not run: ${ok.reason || "denied"}. Adjust your plan or ask the humans for help.`, isError: true, meta: { command, denied: true } };
+        if (name === "start_server") {
+          const id = `${ctx.taskId || "t"}-${String(input.name).replace(/[^\w-]/g, "").slice(0, 30)}`;
+          const r = await ws.call("proc_start", { command, id });
+          return { content: `${r.running ? "Running" : "Exited"} — first output:\n${clip(r.log || "(no output yet)", 6000)}`, meta: { command, server: input.name, running: r.running } };
+        }
+        const secs = Math.min(1800, Math.max(5, input.timeout_seconds || 120));
+        const r = await ws.exec(command, { timeoutMs: secs * 1000 });
+        return { content: `exit ${r.code ?? r.signal} · ${(r.ms / 1000).toFixed(1)}s\n${clip(r.output || "(no output)", 30_000)}`, isError: r.code !== 0, meta: { command, exit: r.code, ms: r.ms, output: (r.output || "").slice(-4000) } };
+      }
+      case "server_logs":
+      case "stop_server": {
+        if (!ws.call) return { content: "No machine connected.", isError: true };
+        const id = `${ctx.taskId || "t"}-${String(input.name).replace(/[^\w-]/g, "").slice(0, 30)}`;
+        if (name === "stop_server") {
+          await ws.call("proc_stop", { id });
+          return { content: `Stopped ${input.name}.` };
+        }
+        const r = await ws.call("proc_logs", { id });
+        return { content: `${r.running ? "running" : `exited (${r.exit})`}\n${clip(r.log || "(no output)", 20_000)}` };
+      }
+      case "fetch_local": {
+        if (!ws.call) return { content: "No machine connected.", isError: true };
+        const r = await ws.call("http_get", { url: input.url });
+        return { content: `HTTP ${r.status} ${r.contentType || ""}\n${clip(r.body, 20_000)}`, meta: { url: input.url, status: r.status } };
       }
       case "finish":
         ctx.onFinish?.(String(input.summary || ""));

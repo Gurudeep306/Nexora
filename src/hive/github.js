@@ -46,7 +46,25 @@ const refPath = (ref) => String(ref).split("/").map(enc).join("/");
 module.exports = {
   GitHubError,
   me: (t) => gh(t, "GET", "/user"),
-  listRepos: (t) => gh(t, "GET", "/user/repos?per_page=100&sort=pushed&affiliation=owner,collaborator,organization_member"),
+  listRepos: async (t) => {
+    // Up to 300 repos (fine-grained tokens list only the repos they were given).
+    const out = [];
+    for (let page = 1; page <= 3; page++) {
+      const r = await gh(t, "GET", `/user/repos?per_page=100&page=${page}&sort=pushed&affiliation=owner,collaborator,organization_member`);
+      out.push(...r);
+      if (r.length < 100) break;
+    }
+    return out;
+  },
+  /** Raw response (headers too) — for token diagnostics. */
+  probe: async (t, path) => {
+    const res = await fetch(API + path, { headers: { Authorization: `Bearer ${t}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "nexora-hive" } });
+    let body = null;
+    try {
+      body = await res.json();
+    } catch {}
+    return { status: res.status, headers: res.headers, body };
+  },
   repo: (t, o, r) => gh(t, "GET", repoPath(o, r)),
   branches: (t, o, r) => gh(t, "GET", `${repoPath(o, r)}/branches?per_page=100`),
   commit: (t, o, r, ref) => gh(t, "GET", `${repoPath(o, r)}/commits/${refPath(ref)}`),
@@ -69,4 +87,17 @@ module.exports = {
   updateRef: (t, o, r, branch, sha, force = false) =>
     gh(t, "PATCH", `${repoPath(o, r)}/git/refs/heads/${refPath(branch)}`, { body: { sha, force } }),
   createPull: (t, o, r, body) => gh(t, "POST", `${repoPath(o, r)}/pulls`, { body }),
+  pull: (t, o, r, n) => gh(t, "GET", `${repoPath(o, r)}/pulls/${Number(n)}`),
+  pullFiles: (t, o, r, n) => gh(t, "GET", `${repoPath(o, r)}/pulls/${Number(n)}/files?per_page=100`),
+  mergePull: (t, o, r, n, body) => gh(t, "PUT", `${repoPath(o, r)}/pulls/${Number(n)}/merge`, { body }),
+  checkRuns: (t, o, r, ref) => gh(t, "GET", `${repoPath(o, r)}/commits/${refPath(ref)}/check-runs?per_page=100`),
+  combinedStatus: (t, o, r, ref) => gh(t, "GET", `${repoPath(o, r)}/commits/${refPath(ref)}/status`),
+  listPulls: (t, o, r, state = "open") => gh(t, "GET", `${repoPath(o, r)}/pulls?state=${enc(state)}&per_page=30&sort=updated&direction=desc`),
+  commits: (t, o, r, ref, n = 15) => gh(t, "GET", `${repoPath(o, r)}/commits?sha=${enc(ref)}&per_page=${n}`),
+  deployments: (t, o, r) => gh(t, "GET", `${repoPath(o, r)}/deployments?per_page=10`),
+  deploymentStatuses: (t, o, r, id) => gh(t, "GET", `${repoPath(o, r)}/deployments/${Number(id)}/statuses?per_page=5`),
+  createRepo: (t, { org, name, description, isPrivate }) =>
+    gh(t, "POST", org ? `/orgs/${enc(org)}/repos` : "/user/repos", { body: { name, description: description || "", private: !!isPrivate, auto_init: true } }),
+  putFile: (t, o, r, path, { content, message, branch, sha }) =>
+    gh(t, "PUT", `${repoPath(o, r)}/contents/${path.split("/").map(enc).join("/")}`, { body: { content: Buffer.from(content, "utf8").toString("base64"), message, branch, sha } }),
 };

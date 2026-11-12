@@ -51,4 +51,46 @@ async function commitTask({ task, project, token, snap, variant = "main", messag
   return { sha: commit.sha, url: commit.html_url || `https://github.com/${o}/${r}/commit/${commit.sha}`, branch, pr: pr ? { url: pr.html_url, number: pr.number } : null, files: entries.length };
 }
 
-module.exports = { commitTask, BRANCH_RE };
+/**
+ * Machine tasks: the edits are already in a real git checkout — commit them
+ * there on the task's branch, push with the project's token (passed for this
+ * one call only) and open a PR through the API.
+ */
+async function commitOnMachine({ task, project, token, machine, message, branch, openPr, prTitle, prBody, author }) {
+  const { machineWorkspace } = require("./localws");
+  if (!BRANCH_RE.test(branch || "")) throw Object.assign(new Error("Invalid branch name"), { status: 400 });
+  if (project.default_branch && branch === project.default_branch) throw Object.assign(new Error(`Commit to a new branch, not ${project.default_branch} — open a PR to merge`), { status: 400 });
+  const ws = machineWorkspace({ machineId: machine.id, folder: machine.folder });
+  const must = async (args, what, o) => {
+    const r = await ws.git(args, o);
+    if (r.code !== 0) throw Object.assign(new Error(`${what} failed: ${r.output.trim().slice(-600)}`), { status: 400 });
+    return r;
+  };
+  const changes = await ws.changes();
+  if (!changes.length) throw Object.assign(new Error("No changes to commit"), { status: 400 });
+  await must(["checkout", "-B", branch], "Switching branch");
+  await must(["add", "-A"], "Staging");
+  const r = await ws.git(["-c", "user.name=Nexora Hive", "-c", "user.email=hive@nexora.local", "commit", "-m", `${message}\n\nMade in Nexora Hive by @${author}.`]);
+  if (r.code !== 0 && !/nothing to commit/.test(r.output)) throw Object.assign(new Error(`Commit failed: ${r.output.trim().slice(-600)}`), { status: 400 });
+  const sha = (await ws.git(["rev-parse", "HEAD"])).output.trim();
+  let pushed = false;
+  if (project.repo_owner && project.repo_name) {
+    // The project's token, sent for this one push only (never stored on the machine).
+    const r2 = await ws.call("git", { args: ["push", "-u", "origin", branch], token: token || undefined }, { timeoutMs: 180000 });
+    if (r2.code !== 0) throw Object.assign(new Error(`Push failed: ${r2.output.trim().slice(-600)}`), { status: 400 });
+    pushed = true;
+  }
+  let pr = null;
+  if (pushed && openPr && !task.pr_url && token) {
+    try {
+      const p = await gh.createPull(token, project.repo_owner, project.repo_name, { title: prTitle || message.split("\n")[0], head: branch, base: project.default_branch, body: prBody || "" });
+      pr = { url: p.html_url, number: p.number };
+    } catch (e) {
+      if (e.status !== 422) throw e;
+    }
+  }
+  const url = project.repo_owner ? `https://github.com/${project.repo_owner}/${project.repo_name}/commit/${sha}` : null;
+  return { sha, url, branch, pr, files: changes.length, pushed };
+}
+
+module.exports = { commitTask, commitOnMachine, BRANCH_RE };

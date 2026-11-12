@@ -47,7 +47,9 @@ const keyVendor = (row) => (row.preset && BY_ID.has(row.preset) ? row.preset : r
 /** Back-compat: the old providerOf() shape the runner uses. */
 function providerOf(id) {
   const v = vendorOf(id);
-  return { ...v, impl: v.implModule, suggested: v.suggested };
+  // Adapters learn which vendor they talk to (quirks differ per API).
+  const impl = { ...v.implModule, turn: (args) => v.implModule.turn({ vendor: v.id, ...args }) };
+  return { ...v, impl, suggested: v.suggested };
 }
 
 function catalogue() {
