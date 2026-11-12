@@ -114,13 +114,18 @@ test("machine task: real files, approval-gated commands, terminal, checkpoints a
   const file = await ok("GET", `/api/hive/tasks/${task.id}/file?path=src/cart.js`);
   assert.equal(file.status, "modified");
   assert.match(file.current, /qty/);
+  // Each session works in its own git worktree: the project folder stays clean.
+  const wt = t.task.folder;
+  assert.ok(t.task.worktree && wt !== proj.folder && /\.hive-worktrees/.test(wt), `private worktree, got ${wt}`);
+  const clean = await ok("POST", `/api/hive/machines/${ms.machines[0].id}/exec`, { folder: proj.folder, command: "git status --short" });
+  assert.doesNotMatch(clean.output, /src\/cart\.js/);
   // Terminal.
-  const ex = await ok("POST", `/api/hive/machines/${ms.machines[0].id}/exec`, { folder: proj.folder, command: "git status --short" });
+  const ex = await ok("POST", `/api/hive/machines/${ms.machines[0].id}/exec`, { folder: wt, command: "git status --short" });
   assert.match(ex.output, /src\/cart\.js/);
   // Checkpoint taken when the agent finished; revert by hand, then restore it.
   const cps = (await ok("GET", `/api/hive/tasks/${task.id}/checkpoints`)).checkpoints;
   assert.ok(cps.some((c) => c.files === 1));
-  await ok("POST", `/api/hive/machines/${ms.machines[0].id}/exec`, { folder: proj.folder, command: "git checkout -- src/cart.js" });
+  await ok("POST", `/api/hive/machines/${ms.machines[0].id}/exec`, { folder: wt, command: "git checkout -- src/cart.js" });
   assert.equal((await ok("GET", `/api/hive/tasks/${task.id}/changes`)).changes.length, 0);
   await ok("POST", `/api/hive/tasks/${task.id}/checkpoints/${cps.find((c) => c.files === 1).id}/restore`, {});
   assert.equal((await ok("GET", `/api/hive/tasks/${task.id}/changes`)).changes.length, 1, "the agent's result is back");
