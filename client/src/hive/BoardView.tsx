@@ -20,8 +20,8 @@ export function BoardView({ agents, events }: { agents: AgentRow[]; events: Hive
 
   return (
     <div className="grid h-full min-h-0 grid-cols-1 gap-3 xl:grid-cols-[1fr_360px]">
-      <div className="flex min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-bg-surface/70">
-        <div className="flex items-center gap-1 border-b border-border/70 px-2 py-1.5">
+      <div className="flex min-h-0 flex-col overflow-hidden hive-card">
+        <div className="flex items-center gap-1 border-b hive-line px-2 py-1.5">
           <span className="px-1.5 text-xs font-semibold text-text-primary">Activity</span>
           {(['all', 'edits', 'notes', 'problems'] as const).map((f) => (
             <button key={f} type="button" onClick={() => setFilter(f)} className={cn('h-6 rounded-md px-2 text-[11px] capitalize', filter === f ? 'bg-text-primary/10 text-text-primary' : 'text-text-muted hover:text-text-secondary')}>
@@ -41,8 +41,8 @@ export function BoardView({ agents, events }: { agents: AgentRow[]; events: Hive
         </ol>
       </div>
       <div className="flex min-h-0 flex-col gap-3">
-        <div className="max-h-[40%] min-h-0 overflow-hidden rounded-xl border border-border bg-bg-surface/70">
-          <div className="flex items-center gap-1.5 border-b border-border/70 px-3 py-2 text-xs font-semibold text-text-primary">
+        <div className="max-h-[40%] min-h-0 overflow-hidden hive-card">
+          <div className="flex items-center gap-1.5 border-b hive-line px-3 py-2 text-xs font-semibold text-text-primary">
             <StickyNote className="size-3.5 text-state-warning" /> Team board
           </div>
           <div className="hive-scroll max-h-64 space-y-1.5 overflow-y-auto p-2">
@@ -114,7 +114,9 @@ export function StaffChat({ className }: { className?: string }) {
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
   const end = useRef<HTMLDivElement>(null)
-  useEffect(() => end.current?.scrollIntoView({ block: 'end' }), [chat.length])
+  useEffect(() => {
+    end.current?.scrollIntoView({ block: 'end' })
+  }, [chat.length])
   const typers = Object.keys(typing).filter((u) => u !== boot?.me.username)
   if (!projectId) return null
   const send = async () => {
@@ -130,8 +132,8 @@ export function StaffChat({ className }: { className?: string }) {
     }
   }
   return (
-    <div className={cn('flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-bg-surface/70', className)}>
-      <div className="flex items-center gap-1.5 border-b border-border/70 px-3 py-2 text-xs font-semibold text-text-primary">
+    <div className={cn('flex min-h-0 flex-1 flex-col overflow-hidden hive-card', className)}>
+      <div className="flex items-center gap-1.5 border-b hive-line px-3 py-2 text-xs font-semibold text-text-primary">
         <MessageSquare className="size-3.5 text-accent-brand" /> Staff chat
         <span className="ml-auto text-[10px] font-normal text-text-muted">project-wide</span>
       </div>
@@ -154,7 +156,7 @@ export function StaffChat({ className }: { className?: string }) {
       </div>
       {typers.length > 0 && <div className="px-3 pb-1 text-[10px] text-text-muted">{typers.map((u) => `@${u}`).join(', ')} typing…</div>}
       <form
-        className="flex items-center gap-2 border-t border-border/70 p-2"
+        className="flex items-center gap-2 border-t hive-line p-2"
         onSubmit={(e) => {
           e.preventDefault()
           send()

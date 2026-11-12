@@ -75,14 +75,16 @@ One server-side AI agent (`src/ai/`), powered only by **Groq**, behind every AI 
 - **AI Battle** - 1v1 time-based racing against a simulated opponent
 
 ### 🐝 **Hive — staff AI workspace** (`/hive`, staff only)
-A shared, real-time workspace where every staff member runs AI coding agents on the team's GitHub repositories:
-- **Any provider** — Claude (official Anthropic SDK: adaptive thinking, effort, refusal fallbacks, prompt caching), GPT, Gemini, and any OpenAI-compatible API (OpenRouter, Groq, DeepSeek, xAI, Mistral, Together)
-- **Shared key vault** — keys encrypted at rest (AES-256-GCM, `HIVE_SECRET`), never sent to a browser; per-key token budgets (per day / month / total), parallel-call limits, live provider rate limits, usage per person, automatic key choice and failover
-- **Four modes** — *Solo*; *Team* (a lead plans and delegates sub-tasks that run in parallel on a shared working copy); *Compare* (models race on their own copies, you adopt the winner); *Review* (read-only audits)
-- **Agents act through tools** (list, read, search, write, edit, delete, team notes, delegate) on a copy-on-write working copy — no shell, nothing pushed until a human commits
-- **Humans stay in control** — steer a running agent, stop it, edit results in a Monaco diff, revert files, add follow-up or reviewer agents, then commit to a branch and open a PR
-- **Multiplayer** — presence, who is watching which task, staff chat, live streaming of every agent to everyone
-- Non-staff get a 404 from the page, the API and the socket namespace
+One shared, real-time place where every staff member runs AI agents from any provider on the team's GitHub repositories — together, on the same projects, at the same time:
+- **16 providers** — Claude (official Anthropic SDK), GPT, Gemini, DeepSeek, Grok, Mistral, OpenRouter, Groq, Together, Fireworks, Cerebras, Kimi, Qwen, GLM, Perplexity and any OpenAI-compatible API; as many accounts per provider as you like
+- **Work never stops** — when a key hits its budget, is rate-limited or rejected, the agent moves to another account, then another provider (in the order you choose), carrying its full context; or hand any agent's work to a model you pick with *Continue with…*
+- **Shared context** — project memory every agent reads (agents add to it with `remember`), a team radar so each agent knows what agents on other tasks in the same repo are doing, and a shared board per task
+- **Modes** — Solo (one or several agents on one copy), Team (a lead delegates parallel sub-tasks, by name or difficulty), Race (the same work to many agents, each on its own copy — keep the best), Review (read-only audits); assign more work to the agents you pick at any time
+- **Watch them code** — every agent's transcript beside a live code pane that shows the file as it's being typed; steer, stop, edit results in a diff, revert, then commit to a branch and open a PR
+- **Chat like Claude** with any model — attach images, PDFs, code or files straight from a repo; create images with GPT, Gemini, Grok or Together; share chats with the team
+- **Plugins** to spend tokens well — repo map, context trimmer (Claude server-side context editing), lean reads, prompt caching, terse mode, smart router, budget guard, auto review, web reader — plus your own instruction plugins per project
+- **Keys & usage** — encrypted vault (`HIVE_SECRET`), budgets per day/month/total, priorities, live provider rate limits, usage per provider and person
+- Mission Control across all projects, task tabs, presence, staff chat, ⌘K. Non-staff get a 404 from the page, the API and the socket namespace
 
 ### 🎨 **Editor & IDE**
 - **Monaco Editor** - Professional code editor with syntax highlighting

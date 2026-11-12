@@ -59,7 +59,7 @@ export function ChangesView({ taskId, agents }: { taskId: string; agents: AgentR
   return (
     <div className="flex h-full min-h-0 flex-col gap-3">
       {compareAgents.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-bg-surface/70 p-2">
+        <div className="flex flex-wrap items-center gap-2 hive-card p-2">
           <span className="px-1 text-[11px] font-semibold uppercase tracking-wider text-text-muted">Results</span>
           {[{ id: 'main', name: 'Adopted', provider: null as AgentRow['provider'] | null, status: '' }, ...compareAgents].map((a) => (
             <button
@@ -95,8 +95,8 @@ export function ChangesView({ taskId, agents }: { taskId: string; agents: AgentR
       )}
 
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-[260px_1fr]">
-        <aside className="flex min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-bg-surface/70">
-          <div className="flex items-center justify-between border-b border-border/70 px-3 py-2 text-xs">
+        <aside className="flex min-h-0 flex-col overflow-hidden hive-card">
+          <div className="flex items-center justify-between border-b hive-line px-3 py-2 text-xs">
             <span className="font-medium text-text-primary">
               {changes.length} file{changes.length === 1 ? '' : 's'}
             </span>
@@ -144,7 +144,7 @@ export function ChangesView({ taskId, agents }: { taskId: string; agents: AgentR
           {task && variant === 'main' && <CommitBox taskId={taskId} changes={changes.length} />}
         </aside>
 
-        <div className="min-h-[420px] overflow-hidden rounded-xl border border-border bg-bg-surface/70">
+        <div className="min-h-[420px] overflow-hidden hive-card">
           {selected ? <DiffPane key={`${variant}:${selected}`} taskId={taskId} path={selected} variant={variant} onSaved={load} version={changesVersion} /> : <div className="grid h-full place-items-center text-sm text-text-muted">Select a file to see its diff</div>}
         </div>
       </div>
@@ -222,7 +222,7 @@ function DiffPane({ taskId, path, variant, onSaved, version }: { taskId: string;
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-2 border-b border-border/70 px-3 py-2">
+      <div className="flex items-center gap-2 border-b hive-line px-3 py-2">
         <span className="min-w-0 flex-1 truncate font-mono text-xs text-text-primary">{path}</span>
         {file && <span className="text-[11px] capitalize text-text-muted">{file.status}</span>}
         {editing ? (
@@ -323,7 +323,7 @@ function CommitBox({ taskId, changes }: { taskId: string; changes: number }) {
   }
 
   return (
-    <div className="space-y-2 border-t border-border/70 p-2.5">
+    <div className="space-y-2 border-t hive-line p-2.5">
       {task.pr_url && (
         <a href={task.pr_url} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-lg bg-state-success/10 px-2.5 py-2 text-xs font-medium text-state-success hover:bg-state-success/15">
           <GitPullRequest className="size-3.5" /> PR #{task.pr_number} open <ExternalLink className="ml-auto size-3" />

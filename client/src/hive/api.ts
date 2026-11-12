@@ -1,5 +1,5 @@
 import { api } from '@/lib/api'
-import type { AgentRow, AgentSpec, Bootstrap, Change, ChatMessage, HiveEvent, Mode, Project, Task } from './types'
+import type { AgentRow, AgentSpec, Bootstrap, Change, ChatMessage, Convo, ConvoMsg, HiveEvent, HiveFile, LiveAgent, MemoryItem, Mode, Plugin, Project, Task } from './types'
 
 type Ok<T> = T & { ok: boolean }
 
@@ -25,8 +25,9 @@ export const hiveApi = {
   updateProject: (id: string, body: Record<string, unknown>) => api.patch<Ok<{ project: Project }>>(`/api/hive/projects/${id}`, body),
   deleteProject: (id: string) => api.delete<Ok<object>>(`/api/hive/projects/${id}`),
   branches: (id: string) => api.get<Ok<{ branches: { name: string; sha: string }[] }>>(`/api/hive/projects/${id}/branches`),
+  projectTree: (projectId: string) => api.get<Ok<{ paths: string[]; sha: string }>>(`/api/hive/projects/${projectId}/tree`, { timeoutMs: 60000 }),
   tasks: (projectId: string, archived = false) => api.get<Ok<{ tasks: Task[] }>>(`/api/hive/projects/${projectId}/tasks`, { query: { archived: archived ? 1 : undefined } }),
-  createTask: (projectId: string, body: { prompt: string; title?: string; mode: Mode; agents: AgentSpec[]; lead?: AgentSpec | null; baseRef?: string }) =>
+  createTask: (projectId: string, body: { prompt: string; title?: string; mode: Mode; agents: AgentSpec[]; lead?: AgentSpec | null; baseRef?: string; attachments?: string[]; budgetTokens?: number | null }) =>
     api.post<Ok<{ task: Task }>>(`/api/hive/projects/${projectId}/tasks`, body, { timeoutMs: 90000 }),
 
   task: (id: string) => api.get<Ok<{ task: Task; project: Project; agents: AgentRow[]; events: HiveEvent[]; variants: string[] }>>(`/api/hive/tasks/${id}`),
@@ -44,6 +45,35 @@ export const hiveApi = {
   stopTask: (id: string) => api.post<Ok<object>>(`/api/hive/tasks/${id}/stop`, {}),
   stopAgent: (id: string) => api.post<Ok<object>>(`/api/hive/agents/${id}/stop`, {}),
   steer: (id: string, message: string) => api.post<Ok<object>>(`/api/hive/agents/${id}/steer`, { message }),
+
+  overview: () => api.get<Ok<{ tasks: (Task & { project_name: string; project_color: string; repo_owner: string; repo_name: string })[]; live: LiveAgent[]; today: { tokens: number; requests: number; cost: number } }>>('/api/hive/overview'),
+  assign: (taskId: string, body: { title?: string; instructions: string; agents: AgentSpec[]; together: boolean }) => api.post<Ok<{ agents: AgentRow[] }>>(`/api/hive/tasks/${taskId}/assign`, body, { timeoutMs: 60000 }),
+  handoff: (agentId: string, agent: AgentSpec) => api.post<Ok<{ agent: AgentRow }>>(`/api/hive/agents/${agentId}/handoff`, { agent }, { timeoutMs: 60000 }),
+
+  memory: (projectId: string) => api.get<Ok<{ memory: MemoryItem[] }>>(`/api/hive/projects/${projectId}/memory`),
+  addMemory: (projectId: string, body: { title: string; body: string; pinned?: boolean }) => api.post<Ok<{ id: string }>>(`/api/hive/projects/${projectId}/memory`, body),
+  updateMemory: (id: string, body: Record<string, unknown>) => api.patch<Ok<object>>(`/api/hive/memory/${id}`, body),
+  deleteMemory: (id: string) => api.delete<Ok<object>>(`/api/hive/memory/${id}`),
+
+  plugins: (projectId?: string | null) => api.get<Ok<{ builtins: Plugin[]; custom: Plugin[] }>>('/api/hive/plugins', { query: { projectId: projectId ?? undefined } }),
+  setPlugin: (id: string, body: { scope: string; enabled?: boolean; config?: Record<string, unknown> }) => api.put<Ok<object>>(`/api/hive/plugins/builtin/${id}`, body),
+  addCustomPlugin: (body: { scope: string; name: string; description?: string; instructions: string; appliesTo: string }) => api.post<Ok<{ id: string }>>('/api/hive/plugins/custom', body),
+  updateCustomPlugin: (id: string, body: Record<string, unknown>) => api.patch<Ok<object>>(`/api/hive/plugins/custom/${id}`, body),
+  deleteCustomPlugin: (id: string) => api.delete<Ok<object>>(`/api/hive/plugins/custom/${id}`),
+
+  upload: (file: File) => {
+    const fd = new FormData()
+    fd.append('file', file)
+    return api.post<Ok<{ file: HiveFile }>>('/api/hive/files', fd, { timeoutMs: 120000 })
+  },
+  convos: () => api.get<Ok<{ convos: Convo[] }>>('/api/hive/convos'),
+  createConvo: (body: { title?: string; projectId?: string | null; system?: string } = {}) => api.post<Ok<{ convo: Convo }>>('/api/hive/convos', body),
+  convo: (id: string) => api.get<Ok<{ convo: Convo; messages: ConvoMsg[] }>>(`/api/hive/convos/${id}`),
+  updateConvo: (id: string, body: Record<string, unknown>) => api.patch<Ok<object>>(`/api/hive/convos/${id}`, body),
+  deleteConvo: (id: string) => api.delete<Ok<object>>(`/api/hive/convos/${id}`),
+  sendMessage: (id: string, body: { text: string; refs?: ({ fileId: string } | { projectId: string; path: string })[]; agent: AgentSpec; mode?: 'text' | 'image' }) =>
+    api.post<Ok<{ user: ConvoMsg; replyId: string }>>(`/api/hive/convos/${id}/messages`, body, { timeoutMs: 60000 }),
+  stopConvo: (id: string) => api.post<Ok<object>>(`/api/hive/convos/${id}/stop`, {}),
 
   chat: (projectId: string) => api.get<Ok<{ messages: ChatMessage[] }>>(`/api/hive/projects/${projectId}/chat`),
   sendChat: (projectId: string, body: string, taskId?: string | null) => api.post<Ok<{ message: ChatMessage }>>(`/api/hive/projects/${projectId}/chat`, { body, taskId }),

@@ -97,7 +97,7 @@ export default function App() {
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/" element={<LandingPage />} />
           {VizLab && <Route path="/viz-lab" element={<VizLab />} />}
-          <Route path="/hive/:projectId?/:taskId?" element={<RequireAuth><HiveRoute /></RequireAuth>} />
+          <Route path="/hive/*" element={<RequireAuth><HiveRoute /></RequireAuth>} />
           <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
             <Route path="/hub" element={<HubPage />} />
             <Route path="/problems" element={<ProblemsPage />} />
