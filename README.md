@@ -74,6 +74,18 @@ One server-side AI agent (`src/ai/`), powered only by **Groq**, behind every AI 
 - Needs `GROQ_API_KEY`; without it AI endpoints answer `503` and the rest of the site works. Per-user rate limits and a daily token budget (`AI_DAILY_TOKENS`) apply.
 - **AI Battle** - 1v1 time-based racing against a simulated opponent
 
+### 🐝 **Hive — staff AI workspace** (`/hive`, staff only)
+One shared, real-time place where every staff member runs AI agents from any provider on the team's GitHub repositories — together, on the same projects, at the same time:
+- **16 providers** — Claude (official Anthropic SDK), GPT, Gemini, DeepSeek, Grok, Mistral, OpenRouter, Groq, Together, Fireworks, Cerebras, Kimi, Qwen, GLM, Perplexity and any OpenAI-compatible API; as many accounts per provider as you like
+- **Work never stops** — when a key hits its budget, is rate-limited or rejected, the agent moves to another account, then another provider (in the order you choose), carrying its full context; or hand any agent's work to a model you pick with *Continue with…*
+- **Shared context** — project memory every agent reads (agents add to it with `remember`), a team radar so each agent knows what agents on other tasks in the same repo are doing, and a shared board per task
+- **Modes** — Solo (one or several agents on one copy), Team (a lead delegates parallel sub-tasks, by name or difficulty), Race (the same work to many agents, each on its own copy — keep the best), Review (read-only audits); assign more work to the agents you pick at any time
+- **Watch them code** — every agent's transcript beside a live code pane that shows the file as it's being typed; steer, stop, edit results in a diff, revert, then commit to a branch and open a PR
+- **Chat like Claude** with any model — attach images, PDFs, code or files straight from a repo; create images with GPT, Gemini, Grok or Together; share chats with the team
+- **Plugins** to spend tokens well — repo map, context trimmer (Claude server-side context editing), lean reads, prompt caching, terse mode, smart router, budget guard, auto review, web reader — plus your own instruction plugins per project
+- **Keys & usage** — encrypted vault (`HIVE_SECRET`), budgets per day/month/total, priorities, live provider rate limits, usage per provider and person
+- Mission Control across all projects, task tabs, presence, staff chat, ⌘K. Non-staff get a 404 from the page, the API and the socket namespace
+
 ### 🎨 **Editor & IDE**
 - **Monaco Editor** - Professional code editor with syntax highlighting
 - **Zen Mode** - Minimize distractions with minimizable panels

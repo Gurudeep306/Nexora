@@ -6,7 +6,7 @@ import { LoadingBlock } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
 import { idlePrefetchCommonRoutes, pageLoaders } from '@/routes'
 import { SiteGate } from '@/components/site/SiteGate'
-import { AdminRoute } from '@/components/admin/AdminRoute'
+import { AdminRoute, HiveRoute } from '@/components/admin/AdminRoute'
 
 const AuthPage = lazy(pageLoaders.AuthPage)
 const LandingPage = lazy(pageLoaders.LandingPage)
@@ -97,6 +97,7 @@ export default function App() {
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/" element={<LandingPage />} />
           {VizLab && <Route path="/viz-lab" element={<VizLab />} />}
+          <Route path="/hive/*" element={<RequireAuth><HiveRoute /></RequireAuth>} />
           <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
             <Route path="/hub" element={<HubPage />} />
             <Route path="/problems" element={<ProblemsPage />} />

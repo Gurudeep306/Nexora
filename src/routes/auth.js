@@ -4,6 +4,7 @@ const { errMessage } = require("../http-error");
 const { persistUpload } = require("../upload-store");
 const { isSetAvatar, normalizeAvatar } = require("../avatar-set");
 const { regenerateSession, sanitizeSessionUser } = require("../middleware/auth");
+const { renameUserEverywhere } = require("../user-rename");
 const { isOwnerName, mayEnterPrivateSite } = require("../authz/permissions");
 const { getSettings, privateModeActive } = require("../authz/site-settings");
 const { banPayload, loadUserAccess, privatePayload } = require("../authz/access");
@@ -178,8 +179,11 @@ function createAuthRouter(deps) {
       const isPrivate = privateModeActive(site);
       let invited = false;
       if (!existing && role !== "owner" && (isPrivate || !site.registrations.open)) {
+        // Only identities we can vouch for: the chosen username, and the email
+        // GitHub/Google returned for this login. An email typed into the form
+        // is unverified, so anyone knowing an invited address could claim it.
         const oauthEmail = req.session?.oauthUser?.email || null;
-        const candidates = [clean, email, oauthEmail].filter((v) => typeof v === "string" && v);
+        const candidates = [clean, oauthEmail].filter((v) => typeof v === "string" && v);
         const hit = candidates.length
           ? await get(
               `SELECT entry FROM access_allowlist WHERE entry IN (${candidates.map(() => "?").join(",")}) COLLATE NOCASE LIMIT 1`,
@@ -390,6 +394,11 @@ function createAuthRouter(deps) {
               .status(400)
               .json({ ok: false, error: "Invalid new username" });
           }
+          // The owner's name is reserved: whoever holds it IS the owner
+          // (effectiveRole), so nobody may rename onto it.
+          if (isOwnerName(cleanNew) && !isOwnerName(currentUsername)) {
+            return res.status(400).json({ ok: false, error: "That username is reserved" });
+          }
           const taken = await findUsernameNoCase(cleanNew);
           // A case-only rename of your own account ("bob" -> "Bob") is fine.
           if (taken && taken.username !== currentUsername)
@@ -400,37 +409,9 @@ function createAuthRouter(deps) {
             cleanNew,
             currentUsername,
           ]);
-          await run("UPDATE friendships SET from_user=? WHERE from_user=?", [
-            cleanNew,
-            currentUsername,
-          ]);
-          await run("UPDATE friendships SET to_user=? WHERE to_user=?", [
-            cleanNew,
-            currentUsername,
-          ]);
-          await run("UPDATE messages SET from_user=? WHERE from_user=?", [
-            cleanNew,
-            currentUsername,
-          ]);
-          await run("UPDATE messages SET to_user=? WHERE to_user=?", [
-            cleanNew,
-            currentUsername,
-          ]);
-          await run("UPDATE activity_feed SET username=? WHERE username=?", [
-            cleanNew,
-            currentUsername,
-          ]).catch(() => {});
-          // Carry the user's own progress, XP, notes, settings and bookmarks over.
-          for (const [table, col] of [
-            ["progress", "username"], ["submissions", "username"], ["daily_activity", "username"],
-            ["decomposition_notes", "username"], ["skill_progress", "username"], ["forge_progress", "username"],
-            ["settings", "username"], ["tutorial_progress", "username"],
-            ["ai_battles", "username"], ["code_replays", "username"], ["user_achievements", "username"],
-            ["user_daily_challenges", "username"], ["bookmarks", "username"],
-            ["custom_problems", "creator"], ["custom_contests", "creator"], ["solve_rooms", "creator"],
-          ]) {
-            await run(`UPDATE ${table} SET ${col}=? WHERE ${col}=?`, [cleanNew, currentUsername]).catch(() => {});
-          }
+          // Every row that names the user moves with them (see src/user-rename.js),
+          // so nothing is left for whoever registers the old name next.
+          await renameUserEverywhere(currentUsername, cleanNew);
           finalUsername = cleanNew;
         }
 

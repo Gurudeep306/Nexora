@@ -52,6 +52,8 @@ const { createAgentRouter } = require("./routes/agent");
 const { weaknessAnalysis } = require("./ai/data");
 const { createForgeRouter } = require("./routes/forge");
 const { createLiveRouter } = require("./routes/live");
+const { createHiveRouter } = require("./routes/hive");
+const { attachHive } = require("./hive/hub");
 const { initForgeDb } = require("./forge-db");
 const { initLiveDb } = require("./live-db");
 const {
@@ -5983,6 +5985,8 @@ app.use("/api/forge", createForgeRouter({ all, get, run }));
 
 // LiveClass routes
 app.use("/api/live", createLiveRouter({ all, get, run }));
+// Nexora Hive: staff-only multi-agent workspace (src/routes/hive.js).
+app.use(createHiveRouter());
 
 /* ========== START ========== */
 const PORT = process.env.PORT || 3000;
@@ -6047,6 +6051,23 @@ io.use(async (socket, next) => {
   }
   socket.data.username = user.username;
   next();
+});
+
+// Hive's realtime namespace: same session, origin, ban and private-mode checks
+// as the default namespace, plus the staff permission (src/hive/hub.js).
+attachHive(io, {
+  authorize: async (socket) => {
+    if (!isAllowedSocketOrigin(socket.request)) return null;
+    const user = getSessionUser(socket.request);
+    if (!user?.username) return null;
+    const verdict = await socketAccess(user.username);
+    if (!verdict.ok || !hasAnyAdminPerm(verdict.access)) return null;
+    return user.username;
+  },
+  canSeeConvo: async (id, username) => {
+    const c = await get("SELECT owner, shared FROM hive_convos WHERE id=?", [id]);
+    return !!c && (c.owner === username || !!c.shared);
+  },
 });
 
 /** Payloads come straight from the client — never destructure null. */

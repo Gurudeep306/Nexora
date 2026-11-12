@@ -1,6 +1,6 @@
 import { useMemo, type ComponentType } from 'react'
 import { iconComponent } from '@/components/icon/iconComponent'
-import { ACCOUNT_ITEMS, ADMIN_ITEM, CREATE_SECTION, NAV_SECTIONS, type NavItem } from '@/config/nav'
+import { ACCOUNT_ITEMS, ADMIN_ITEM, CREATE_SECTION, HIVE_ITEM, NAV_SECTIONS, type NavItem } from '@/config/nav'
 import { useSite } from '@/context/SiteContext'
 import { featureForPath } from '@/lib/site'
 import type { RecentSearch } from '@/lib/recentSearches'
@@ -21,7 +21,7 @@ export function usePageEntries(): PageEntry[] {
       // Creator tools follow the problems.manage permission (admins by default).
       ...CREATE_SECTION.items.filter((i) => !i.adminOnly || can('problems.manage')).map((i) => ({ ...i, section: CREATE_SECTION.title })),
       ...ACCOUNT_ITEMS.map((i) => ({ ...i, section: 'Account' })),
-      ...(isStaff ? [{ ...ADMIN_ITEM, section: 'Account' }] : []),
+      ...(isStaff ? [{ ...ADMIN_ITEM, section: 'Account' }, { ...HIVE_ITEM, section: 'Account' }] : []),
     ],
     [can, featureOn, isStaff],
   )

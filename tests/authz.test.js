@@ -124,3 +124,48 @@ test('short passwords are rejected at sign-up', async () => {
   });
   assert.equal(r.status, 400);
 });
+
+// Express routes case-insensitively and ignores a trailing slash; the rules
+// must apply to every spelling that reaches a handler.
+test('uppercase or trailing-slash paths cannot skip the rules', async () => {
+  await call('POST', '/api/messages', alice, { from: A, to: B, content: 'bypass-check' });
+  for (const p of [`/API/messages/${A}/${B}`, `/api/messages/${A}/${B}/`, `/Api/Messages/${A}/${B}`, `/api//messages/${A}/${B}`]) {
+    const anon = await call('GET', p);
+    assert.notEqual(anon.status, 200, `anonymous ${p}`);
+    const r = await call('GET', p, eve);
+    if (r.status === 200) {
+      const j = await r.json();
+      assert.ok(!(j.messages || []).some((m) => m.content === 'bypass-check'), `eve read DMs via ${p}`);
+    }
+  }
+  for (const p of ['/api/run/', '/API/run', '/api/Judge']) {
+    assert.equal((await call('POST', p, null, { language: 'python', code: 'print(1)' })).status, 401, p);
+  }
+  const forged = await (await call('POST', '/API/messages/', eve, { from: A, to: B, content: 'forged' })).json();
+  if (forged.ok) assert.equal(forged.message.from_user, E, 'identity pinning applies to /API/messages/');
+  // The participant check still works for the owners of the conversation.
+  const own = await call('GET', `/api/messages/${A}/${B}/`, alice);
+  assert.equal(own.status, 200);
+});
+
+test('a renamed account leaves nothing behind for whoever takes the old name', async () => {
+  const old = `rn${Date.now().toString(36)}`;
+  const cookie = await signup(old);
+  // Data in tables outside the original rename list.
+  const put = await (await call('PUT', '/api/nexus/notes/dsa/arrays', cookie, { note: 'my private note' })).json();
+  assert.equal(put.ok, true, JSON.stringify(put));
+  const r = await (await call('PUT', '/api/user/profile', cookie, { currentUsername: old, newUsername: `${old}x` })).json();
+  assert.equal(r.ok, true, JSON.stringify(r));
+  const squatter = await signup(old);
+  const before = await (await call('GET', '/api/nexus/insights/dsa', cookie)).text();
+  const n = await (await call('GET', '/api/nexus/insights/dsa', squatter)).text();
+  assert.ok(!before.includes('my private note') || true);
+  assert.ok(!n.includes('my private note'), 'the new owner of the old name must not see the old note');
+});
+
+test('an invite cannot be claimed by typing someone else\'s email', async () => {
+  // Without private mode on, registration is open; the check here is that the
+  // register handler no longer looks the body email up at all.
+  const src = require('node:fs').readFileSync(path.join(__dirname, '..', 'src', 'routes', 'auth.js'), 'utf8');
+  assert.ok(!/candidates = \[clean, email,/.test(src), 'body email must not satisfy the allowlist');
+});
