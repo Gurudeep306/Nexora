@@ -44,6 +44,9 @@ export function UserMenu({ children, side = 'top', align = 'start' }: { children
             <MenuItem icon={<Icon name={isOwner ? 'crown' : 'shield'} />} onSelect={() => navigate('/admin')} {...prefetchHandlers('/admin')}>
               Admin
             </MenuItem>
+            <MenuItem icon={<Icon name="bot" />} onSelect={() => navigate('/hive')} {...prefetchHandlers('/hive')}>
+              Hive · AI workspace
+            </MenuItem>
             {isOwner && (
               <MenuItem icon={<Icon name="eye" />} onSelect={() => setPreviewAsMember(true)}>
                 View as member
