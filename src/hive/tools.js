@@ -4,6 +4,7 @@
 const { ToolError } = require("./workspace");
 const { unifiedDiff } = require("./diff");
 const { readBase } = require("./snapshot");
+const { readWebPage } = require("./plugins");
 
 const str = (description) => ({ type: "string", description });
 const obj = (properties, required) => ({ type: "object", properties, required, additionalProperties: false });
@@ -63,6 +64,7 @@ const DEFS = {
               instructions: str("Complete instructions for the agent"),
               files: { type: "array", items: { type: "string" }, description: "Files/directories this sub-task owns" },
               agent: str("Optional: name of the pool agent to use"),
+              difficulty: { type: "string", enum: ["easy", "normal", "hard"], description: "How hard the sub-task is (routes easy work to cheaper models)" },
             },
             ["title", "instructions"],
           ),
@@ -70,6 +72,14 @@ const DEFS = {
       },
       ["tasks"],
     ),
+  },
+  remember: {
+    description: "Save a durable fact to the project's shared memory (conventions, decisions, gotchas) so every current and future agent knows it. Keep it short and specific.",
+    schema: obj({ title: str("Short title"), note: str("The fact, in one to three sentences") }, ["title", "note"]),
+  },
+  read_url: {
+    description: "Read a public web page (documentation, API reference, changelog) as text.",
+    schema: obj({ url: str("https URL") }, ["url"]),
   },
   finish: {
     description: "Call when your work is complete, with a concise summary of what you did (files changed, decisions, anything a reviewer should check).",
@@ -80,9 +90,11 @@ const DEFS = {
 const READ_ONLY = ["list_files", "read_file", "search", "view_changes", "team_note", "read_team_board", "finish"];
 const WRITE = ["write_file", "edit_file", "delete_file"];
 
-function toolsFor(role, { readOnly = false } = {}) {
+function toolsFor(role, { readOnly = false, memory = false, web = false } = {}) {
   const names = [...READ_ONLY.slice(0, 3), ...(readOnly ? [] : WRITE), ...READ_ONLY.slice(3)];
   if (role === "lead") names.splice(names.indexOf("finish"), 0, "delegate");
+  if (memory) names.splice(names.indexOf("finish"), 0, "remember");
+  if (web) names.splice(names.indexOf("finish"), 0, "read_url");
   return names.map((name) => ({ name, description: DEFS[name].description, schema: DEFS[name].schema }));
 }
 
@@ -131,7 +143,7 @@ async function execute(name, input, ctx) {
         if (text === null) return { content: `${input.path} does not exist.`, isError: true };
         const lines = text.split("\n");
         const offset = Math.max(1, input.offset || 1);
-        const limit = Math.min(2000, Math.max(1, input.limit || 2000));
+        const limit = Math.min(2000, Math.max(1, input.limit || ctx.maxLines || 2000));
         const slice = lines.slice(offset - 1, offset - 1 + limit);
         const width = String(offset + slice.length).length;
         let out = slice.map((l, i) => `${String(offset + i).padStart(width)}│${l.length > 2000 ? l.slice(0, 2000) + "…" : l}`).join("\n");
@@ -182,6 +194,14 @@ async function execute(name, input, ctx) {
         if (!tasks.length) return { content: "Give at least one sub-task.", isError: true };
         const reports = await ctx.delegateFn(tasks);
         return { content: clip(reports, 60_000) };
+      }
+      case "remember":
+        if (!ctx.remember) return { content: "Shared memory is off for this project.", isError: true };
+        await ctx.remember(String(input.title).slice(0, 120), String(input.note).slice(0, 1500));
+        return { content: "Saved to project memory. Every agent on this project will see it." };
+      case "read_url": {
+        const r = await readWebPage(input.url);
+        return { content: clip(r.text, 60_000), meta: { url: input.url } };
       }
       case "finish":
         ctx.onFinish?.(String(input.summary || ""));

@@ -19,6 +19,9 @@ const { catalogue, providerOf } = require("../hive/providers");
 const { workspace, adoptVariant, dropOverlay, cleanPath } = require("../hive/workspace");
 const { readBase } = require("../hive/snapshot");
 const { commitTask } = require("../hive/commit");
+const plugins = require("../hive/plugins");
+const chat = require("../hive/chat");
+const multer = require("multer");
 
 const MODES = new Set(["solo", "team", "compare", "review"]);
 const EFFORTS = new Set(["low", "medium", "high", "xhigh", "max"]);
@@ -156,6 +159,7 @@ function createHiveRouter() {
         members: team,
         online: hub.roster(),
         runningAgents: runner.runningCount(),
+        live: runner.liveAgents(),
       });
     }),
   );
@@ -450,6 +454,9 @@ function createHiveRouter() {
          VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
         [id, p.id, title, prompt, mode, "queued", baseRef, base.sha, `hive/${slug(title)}-${id.slice(-4)}`, req.hiveUser, t, t],
       );
+      const fileIds = (Array.isArray(b.attachments) ? b.attachments : []).map(String).slice(0, 12);
+      const budget = Number(b.budgetTokens) > 0 ? Math.round(Number(b.budgetTokens)) : null;
+      if (fileIds.length || budget) await run("UPDATE hive_tasks SET attachments_json=?, budget_tokens=? WHERE id=?", [JSON.stringify(fileIds), budget, id]);
       await run("UPDATE hive_projects SET updated_at=? WHERE id=?", [t, p.id]);
       const task = await taskRow(id);
       hub.emit("task", task);
@@ -648,6 +655,276 @@ function createHiveRouter() {
       const ok = await runner.steer(req.params.id, req.hiveUser, message);
       if (!ok) throw new BadInput("That agent is not running — send a follow-up instead", 409);
       res.json({ ok: true });
+    }),
+  );
+
+  /* ── overview across projects ────────────────────────────────────── */
+  router.get(
+    "/api/hive/overview",
+    h(async (_req, res) => {
+      const tasks = await all(
+        `SELECT t.*, p.name AS project_name, p.color AS project_color, p.repo_owner, p.repo_name FROM hive_tasks t JOIN hive_projects p ON p.id = t.project_id
+         WHERE t.archived=0 ORDER BY CASE WHEN t.status IN ('running','queued') THEN 0 WHEN t.status='review' THEN 1 ELSE 2 END, t.updated_at DESC LIMIT 60`,
+      );
+      const agents = tasks.length
+        ? await all(
+            `SELECT id, task_id, name, provider, model, status, role, title, input_tokens, output_tokens FROM hive_agents WHERE task_id IN (${tasks.map(() => "?").join(",")})`,
+            tasks.map((t) => t.id),
+          )
+        : [];
+      const byTask = {};
+      for (const a of agents) (byTask[a.task_id] ||= []).push(a);
+      const today = new Date().toISOString().slice(0, 10);
+      const usage = await get("SELECT COALESCE(SUM(input_tokens+output_tokens),0) AS tokens, COALESCE(SUM(requests),0) AS requests, COALESCE(SUM(cost_micros),0) AS cost FROM hive_usage WHERE day=?", [today]);
+      res.json({ ok: true, tasks: tasks.map((t) => ({ ...t, agents: byTask[t.id] || [] })), live: runner.liveAgents(), today: usage });
+    }),
+  );
+
+  /* ── assign / hand off ───────────────────────────────────────────── */
+  router.post(
+    "/api/hive/tasks/:id/assign",
+    h(async (req, res) => {
+      const task = await taskRow(req.params.id);
+      const b = req.body || {};
+      const instructions = str(b.instructions, "instructions", { max: 20000 });
+      const specs = (Array.isArray(b.agents) ? b.agents : []).slice(0, 8).map(cleanSpec);
+      if (!specs.length) throw new BadInput("Pick at least one agent");
+      for (const sp of specs) await runner.resolveSpec(sp).catch((e) => {
+        throw new BadInput(e.message);
+      });
+      const agents = await runner.assign(task.id, { title: str(b.title, "title", { max: 120, optional: true }), instructions, specs, together: b.together !== false, username: req.hiveUser });
+      res.json({ ok: true, agents });
+    }),
+  );
+
+  router.post(
+    "/api/hive/agents/:id/handoff",
+    h(async (req, res) => {
+      const spec = cleanSpec(req.body?.agent);
+      await runner.resolveSpec(spec).catch((e) => {
+        throw new BadInput(e.message);
+      });
+      const agent = await runner.handoffAgent(req.params.id, { spec, username: req.hiveUser });
+      res.json({ ok: true, agent });
+    }),
+  );
+
+  /* ── shared project memory ───────────────────────────────────────── */
+  router.get(
+    "/api/hive/projects/:id/memory",
+    h(async (req, res) => {
+      res.json({ ok: true, memory: await all("SELECT * FROM hive_memory WHERE project_id=? ORDER BY pinned DESC, created_at DESC LIMIT 300", [req.params.id]) });
+    }),
+  );
+  router.post(
+    "/api/hive/projects/:id/memory",
+    h(async (req, res) => {
+      await projectRow(req.params.id);
+      const id = newId("mem");
+      await run("INSERT INTO hive_memory(id, project_id, title, body, author, pinned, created_at) VALUES(?,?,?,?,?,?,?)", [
+        id,
+        req.params.id,
+        str(req.body?.title, "title", { max: 120 }),
+        str(req.body?.body, "note", { max: 1500 }),
+        `@${req.hiveUser}`,
+        req.body?.pinned ? 1 : 0,
+        now(),
+      ]);
+      hub.emit("memory", { projectId: req.params.id });
+      res.json({ ok: true, id });
+    }),
+  );
+  router.patch(
+    "/api/hive/memory/:id",
+    h(async (req, res) => {
+      const m = await get("SELECT * FROM hive_memory WHERE id=?", [req.params.id]);
+      if (!m) throw new BadInput("Not found", 404);
+      await run("UPDATE hive_memory SET pinned=?, title=?, body=? WHERE id=?", [
+        req.body?.pinned === undefined ? m.pinned : req.body.pinned ? 1 : 0,
+        str(req.body?.title, "title", { max: 120, optional: true }) ?? m.title,
+        str(req.body?.body, "note", { max: 1500, optional: true }) ?? m.body,
+        m.id,
+      ]);
+      hub.emit("memory", { projectId: m.project_id });
+      res.json({ ok: true });
+    }),
+  );
+  router.delete(
+    "/api/hive/memory/:id",
+    h(async (req, res) => {
+      const m = await get("SELECT project_id FROM hive_memory WHERE id=?", [req.params.id]);
+      await run("DELETE FROM hive_memory WHERE id=?", [req.params.id]);
+      if (m) hub.emit("memory", { projectId: m.project_id });
+      res.json({ ok: true });
+    }),
+  );
+
+  /* ── plugins ─────────────────────────────────────────────────────── */
+  const scopeOf = (v) => (typeof v === "string" && v && v !== "*" ? v.slice(0, 64) : "*");
+  router.get(
+    "/api/hive/plugins",
+    h(async (req, res) => {
+      const projectId = typeof req.query.projectId === "string" ? req.query.projectId : null;
+      const r = await plugins.resolvePlugins(projectId);
+      res.json({ ok: true, builtins: Object.values(r.builtins), custom: r.custom });
+    }),
+  );
+  router.put(
+    "/api/hive/plugins/builtin/:id",
+    h(async (req, res) => {
+      if (req.body?.scope === "*" || !req.body?.scope) {
+        if (!isAdmin(req)) throw new BadInput("Only admins can change workspace-wide defaults — set it for a project instead", 403);
+      }
+      await plugins.setBuiltin(scopeOf(req.body?.scope), req.params.id, { enabled: req.body?.enabled, config: req.body?.config }, req.hiveUser);
+      await audit(req, "hive.plugin", req.params.id, { scope: scopeOf(req.body?.scope), enabled: req.body?.enabled });
+      hub.emit("plugins", { by: req.hiveUser });
+      res.json({ ok: true });
+    }),
+  );
+  router.post(
+    "/api/hive/plugins/custom",
+    h(async (req, res) => {
+      const b = req.body || {};
+      const id = newId("plg");
+      const t = now();
+      const appliesTo = ["all", "tasks", "chat"].includes(b.appliesTo) ? b.appliesTo : "all";
+      await run(
+        "INSERT INTO hive_plugins(id, scope, kind, name, description, enabled, config_json, created_by, created_at, updated_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
+        [id, scopeOf(b.scope), "instructions", str(b.name, "name", { max: 60 }), str(b.description, "description", { max: 300, optional: true }) || "", 1, JSON.stringify({ instructions: str(b.instructions, "instructions", { max: 6000 }), appliesTo }), req.hiveUser, t, t],
+      );
+      hub.emit("plugins", { by: req.hiveUser });
+      res.json({ ok: true, id });
+    }),
+  );
+  router.patch(
+    "/api/hive/plugins/custom/:id",
+    h(async (req, res) => {
+      const r = await get("SELECT * FROM hive_plugins WHERE id=? AND kind='instructions'", [req.params.id]);
+      if (!r) throw new BadInput("Not found", 404);
+      const b = req.body || {};
+      const cfg = json(r.config_json, {});
+      if (b.instructions !== undefined) cfg.instructions = str(b.instructions, "instructions", { max: 6000 });
+      if (["all", "tasks", "chat"].includes(b.appliesTo)) cfg.appliesTo = b.appliesTo;
+      await run("UPDATE hive_plugins SET name=?, description=?, enabled=?, config_json=?, updated_at=? WHERE id=?", [
+        str(b.name, "name", { max: 60, optional: true }) ?? r.name,
+        b.description !== undefined ? String(b.description).slice(0, 300) : r.description,
+        b.enabled === undefined ? r.enabled : b.enabled ? 1 : 0,
+        JSON.stringify(cfg),
+        now(),
+        r.id,
+      ]);
+      hub.emit("plugins", { by: req.hiveUser });
+      res.json({ ok: true });
+    }),
+  );
+  router.delete(
+    "/api/hive/plugins/custom/:id",
+    h(async (req, res) => {
+      const r = await get("SELECT created_by FROM hive_plugins WHERE id=? AND kind='instructions'", [req.params.id]);
+      if (!r) throw new BadInput("Not found", 404);
+      if (r.created_by !== req.hiveUser && !isAdmin(req)) throw new BadInput("Only its author or an admin can delete it", 403);
+      await run("DELETE FROM hive_plugins WHERE id=?", [req.params.id]);
+      hub.emit("plugins", { by: req.hiveUser });
+      res.json({ ok: true });
+    }),
+  );
+
+  /* ── files (uploads + generated images) ──────────────────────────── */
+  const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: chat.MAX_FILE, files: 1 } });
+  router.post("/api/hive/files", (req, res, next) =>
+    upload.single("file")(req, res, (err) => {
+      if (err) return res.status(400).json({ ok: false, error: err.code === "LIMIT_FILE_SIZE" ? "File too large (20 MB max)" : err.message });
+      next();
+    }),
+    h(async (req, res) => {
+      if (!req.file) throw new BadInput("No file");
+      const f = await chat.saveFile({ name: req.file.originalname, mime: req.file.mimetype, buffer: req.file.buffer, username: req.hiveUser });
+      res.json({ ok: true, file: f });
+    }),
+  );
+  router.get(
+    "/api/hive/files/:id",
+    h(async (req, res) => {
+      const f = await get("SELECT * FROM hive_files WHERE id=?", [req.params.id]);
+      if (!f) throw new BadInput("Not found", 404);
+      // Only raster images render inline; everything else downloads, so an
+      // uploaded HTML/SVG file can never run script on this origin.
+      const inline = /^image\/(png|jpeg|gif|webp)$/.test(f.mime);
+      res.set({
+        "Content-Type": inline ? f.mime : "application/octet-stream",
+        "Content-Disposition": `${inline ? "inline" : "attachment"}; filename="${String(f.name).replace(/["\r\n\\]/g, "_")}"`,
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'none'; sandbox",
+        "Cache-Control": "private, max-age=86400",
+      });
+      res.send(Buffer.from(f.data_b64, "base64"));
+    }),
+  );
+
+  /* ── chats ───────────────────────────────────────────────────────── */
+  router.get(
+    "/api/hive/convos",
+    h(async (req, res) => {
+      res.json({ ok: true, convos: await chat.listConvos(req.hiveUser) });
+    }),
+  );
+  router.post(
+    "/api/hive/convos",
+    h(async (req, res) => {
+      const b = req.body || {};
+      res.json({ ok: true, convo: await chat.createConvo(req.hiveUser, { title: str(b.title, "title", { max: 120, optional: true }), projectId: b.projectId, system: typeof b.system === "string" ? b.system.slice(0, 8000) : "" }) });
+    }),
+  );
+  router.get(
+    "/api/hive/convos/:id",
+    h(async (req, res) => {
+      const c = await chat.convoFor(req.params.id, req.hiveUser);
+      res.json({ ok: true, convo: c, messages: await chat.messagesOf(c.id) });
+    }),
+  );
+  router.patch(
+    "/api/hive/convos/:id",
+    h(async (req, res) => {
+      const c = await chat.convoFor(req.params.id, req.hiveUser);
+      if (c.owner !== req.hiveUser) throw new BadInput("Only its owner can change this chat", 403);
+      const b = req.body || {};
+      await run("UPDATE hive_convos SET title=?, shared=?, system=?, updated_at=? WHERE id=?", [
+        str(b.title, "title", { max: 120, optional: true }) ?? c.title,
+        b.shared === undefined ? c.shared : b.shared ? 1 : 0,
+        typeof b.system === "string" ? b.system.slice(0, 8000) : c.system,
+        now(),
+        c.id,
+      ]);
+      hub.emit("convos", { by: req.hiveUser });
+      res.json({ ok: true });
+    }),
+  );
+  router.delete(
+    "/api/hive/convos/:id",
+    h(async (req, res) => {
+      const c = await chat.convoFor(req.params.id, req.hiveUser);
+      if (c.owner !== req.hiveUser && !isAdmin(req)) throw new BadInput("Only its owner can delete this chat", 403);
+      await run("DELETE FROM hive_convo_msgs WHERE convo_id=?", [c.id]);
+      await run("DELETE FROM hive_convos WHERE id=?", [c.id]);
+      res.json({ ok: true });
+    }),
+  );
+  router.post(
+    "/api/hive/convos/:id/messages",
+    h(async (req, res) => {
+      const b = req.body || {};
+      const spec = cleanSpec(b.agent);
+      const text = typeof b.text === "string" ? b.text.slice(0, 100000) : "";
+      if (!text.trim() && !(Array.isArray(b.refs) && b.refs.length)) throw new BadInput("Write a message or attach a file");
+      const r = await chat.send(req.params.id, { text, refs: b.refs, spec, mode: b.mode === "image" ? "image" : "text", username: req.hiveUser });
+      res.json({ ok: true, ...r });
+    }),
+  );
+  router.post(
+    "/api/hive/convos/:id/stop",
+    h(async (req, res) => {
+      await chat.convoFor(req.params.id, req.hiveUser);
+      res.json({ ok: true, stopped: chat.stop(req.params.id) });
     }),
   );
 
