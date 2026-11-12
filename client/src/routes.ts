@@ -54,6 +54,7 @@ export const pageLoaders = {
   ThemeCentrePage: () => import('@/pages/ThemeCentrePage'),
   NotFoundPage: () => import('@/pages/NotFoundPage'),
   AdminPage: () => import('@/pages/AdminPage'),
+  HivePage: () => import('@/hive/HivePage'),
 } satisfies Record<string, Loader>
 
 /** First path segment → the chunk(s) that route renders. */
@@ -78,6 +79,7 @@ const BY_SEGMENT: Record<string, Loader[]> = {
   theme: [pageLoaders.ThemeCentrePage],
   auth: [pageLoaders.AuthPage],
   admin: [pageLoaders.AdminPage],
+  hive: [pageLoaders.HivePage],
 }
 
 const started = new Set<Loader>()

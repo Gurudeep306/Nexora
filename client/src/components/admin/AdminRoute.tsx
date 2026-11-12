@@ -4,6 +4,7 @@ import { useSite } from '@/context/SiteContext'
 import { pageLoaders } from '@/routes'
 
 const AdminPage = lazy(pageLoaders.AdminPage)
+const HivePage = lazy(pageLoaders.HivePage)
 const NotFoundPage = lazy(pageLoaders.NotFoundPage)
 
 /**
@@ -23,4 +24,22 @@ export function AdminRoute() {
   }
   if (!isStaff) return <NotFoundPage />
   return <AdminPage />
+}
+
+/**
+ * /hive — the staff-only multi-agent workspace. Same rule as /admin: anyone
+ * without an admin-panel permission sees the 404 page and never downloads
+ * the chunk; the API and socket namespace refuse them too.
+ */
+export function HiveRoute() {
+  const { status, loading, isStaff } = useSite()
+  if (loading && !status) {
+    return (
+      <div className="p-8" aria-busy="true">
+        <LoadingBlock rows={6} />
+      </div>
+    )
+  }
+  if (!isStaff) return <NotFoundPage />
+  return <HivePage />
 }

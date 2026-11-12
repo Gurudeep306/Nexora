@@ -74,6 +74,16 @@ One server-side AI agent (`src/ai/`), powered only by **Groq**, behind every AI 
 - Needs `GROQ_API_KEY`; without it AI endpoints answer `503` and the rest of the site works. Per-user rate limits and a daily token budget (`AI_DAILY_TOKENS`) apply.
 - **AI Battle** - 1v1 time-based racing against a simulated opponent
 
+### 🐝 **Hive — staff AI workspace** (`/hive`, staff only)
+A shared, real-time workspace where every staff member runs AI coding agents on the team's GitHub repositories:
+- **Any provider** — Claude (official Anthropic SDK: adaptive thinking, effort, refusal fallbacks, prompt caching), GPT, Gemini, and any OpenAI-compatible API (OpenRouter, Groq, DeepSeek, xAI, Mistral, Together)
+- **Shared key vault** — keys encrypted at rest (AES-256-GCM, `HIVE_SECRET`), never sent to a browser; per-key token budgets (per day / month / total), parallel-call limits, live provider rate limits, usage per person, automatic key choice and failover
+- **Four modes** — *Solo*; *Team* (a lead plans and delegates sub-tasks that run in parallel on a shared working copy); *Compare* (models race on their own copies, you adopt the winner); *Review* (read-only audits)
+- **Agents act through tools** (list, read, search, write, edit, delete, team notes, delegate) on a copy-on-write working copy — no shell, nothing pushed until a human commits
+- **Humans stay in control** — steer a running agent, stop it, edit results in a Monaco diff, revert files, add follow-up or reviewer agents, then commit to a branch and open a PR
+- **Multiplayer** — presence, who is watching which task, staff chat, live streaming of every agent to everyone
+- Non-staff get a 404 from the page, the API and the socket namespace
+
 ### 🎨 **Editor & IDE**
 - **Monaco Editor** - Professional code editor with syntax highlighting
 - **Zen Mode** - Minimize distractions with minimizable panels

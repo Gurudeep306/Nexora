@@ -62,6 +62,9 @@ export const CREATE_SECTION: NavSection = {
 /** Shown to anyone holding an admin-panel permission. */
 export const ADMIN_ITEM: NavItem = { to: '/admin', label: 'Admin', icon: 'shield' }
 
+/** Staff-only multi-agent workspace. */
+export const HIVE_ITEM: NavItem = { to: '/hive', label: 'Hive · AI workspace', icon: 'bot' }
+
 export const ACCOUNT_ITEMS: NavItem[] = [
   { to: '/profile', label: 'Profile', icon: 'profile' },
   { to: '/theme', label: 'Theme Centre', icon: 'palette' },

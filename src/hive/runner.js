@@ -116,10 +116,23 @@ async function setAgent(agentId, fields) {
   return a;
 }
 
-async function pickName(taskId) {
+// Names reserved by agents being created right now (creation runs in
+// parallel when a lead delegates, so the database alone can't prevent twins).
+const reservedNames = new Map(); // taskId -> Set
+async function pickName(taskId, wanted) {
   const used = new Set((await all("SELECT name FROM hive_agents WHERE task_id=?", [taskId])).map((r) => r.name));
-  for (const n of NAMES) if (!used.has(n)) return n;
-  return `Agent ${used.size + 1}`;
+  const held = reservedNames.get(taskId) || reservedNames.set(taskId, new Set()).get(taskId);
+  for (const n of held) used.add(n);
+  let name = null;
+  if (wanted) {
+    name = wanted;
+    for (let i = 2; used.has(name); i++) name = `${wanted}-${i}`;
+  } else {
+    name = NAMES.find((n) => !used.has(n)) || `Agent ${used.size + 1}`;
+  }
+  held.add(name);
+  setTimeout(() => held.delete(name), 60_000).unref?.();
+  return name;
 }
 
 /** Resolve an agent spec { keyId|'auto', provider, model, effort } to a key row. */
@@ -139,7 +152,7 @@ async function createAgent(task, { role, spec, instructions, variant = "main", p
   await run(
     `INSERT INTO hive_agents(id, task_id, parent_id, role, name, key_id, provider, model, effort, variant, instructions, status, started_by, created_at)
      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-    [id, task.id, parentId, readOnly ? "reviewer" : role, name || (await pickName(task.id)), r.key.id, r.provider, r.model, r.effort, variant === "self" ? id : variant, instructions, "queued", startedBy, now()],
+    [id, task.id, parentId, readOnly ? "reviewer" : role, await pickName(task.id, name || spec.name), r.key.id, r.provider, r.model, r.effort, variant === "self" ? id : variant, instructions, "queued", startedBy, now()],
   );
   const a = await get("SELECT * FROM hive_agents WHERE id=?", [id]);
   hub.emitTask(task.id, "agent", a);
