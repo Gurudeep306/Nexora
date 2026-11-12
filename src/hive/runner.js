@@ -7,11 +7,16 @@ const hub = require("./hub");
 const keys = require("./keys");
 const { providerOf } = require("./providers");
 const { workspace } = require("./workspace");
+const { machineWorkspace } = require("./localws");
+const machines = require("./machines");
+const checkpoints = require("./checkpoints");
 const { getSnapshot } = require("./snapshot");
 const { toolsFor, execute } = require("./tools");
 const { systemPrompt } = require("./prompts");
 const { resolvePlugins, repoMap, modelTier } = require("./plugins");
 const vault = require("./vault");
+const { pickDefault } = require("./models");
+const defaultModelOf = (key, vendor) => key.default_model || pickDefault(json(key.models_json, []), vendor.suggested);
 
 const MAX_AGENTS = Number(process.env.HIVE_MAX_AGENTS || 16);
 const MAX_STEPS = Number(process.env.HIVE_MAX_STEPS || 60);
@@ -115,15 +120,34 @@ class Board {
 const boardOf = (taskId) => boards.get(taskId) || boards.set(taskId, new Board(taskId)).get(taskId);
 
 /* ── helpers ────────────────────────────────────────────────────────── */
+/** The repository a task works on: the project's primary one or a linked extra. */
+async function effectiveProject(project, task) {
+  if (!task?.repo_id || !project) return project;
+  const r = await get("SELECT * FROM hive_project_repos WHERE id=? AND project_id=?", [task.repo_id, project.id]);
+  return r ? { ...project, github_id: r.github_id, repo_owner: r.repo_owner, repo_name: r.repo_name, default_branch: r.default_branch } : project;
+}
+
 async function taskContext(taskId) {
   const task = await get("SELECT * FROM hive_tasks WHERE id=?", [taskId]);
   if (!task) throw Object.assign(new Error("Task not found"), { status: 404 });
-  const project = await get("SELECT * FROM hive_projects WHERE id=?", [task.project_id]);
-  const cred = project && (await get("SELECT * FROM hive_github WHERE id=?", [project.github_id]));
+  const project = await effectiveProject(await get("SELECT * FROM hive_projects WHERE id=?", [task.project_id]), task);
+  if (!project) throw new Error("This task's project was deleted");
+  const cred = project.github_id ? await get("SELECT * FROM hive_github WHERE id=?", [project.github_id]) : null;
+  const token = cred ? vault.open(cred.token_enc) : null;
+  // Tasks on a machine work in a real folder (git gives base + changes).
+  if (task.machine_id && task.folder) {
+    const m = await get("SELECT * FROM hive_machines WHERE id=?", [task.machine_id]);
+    if (!m) throw new Error("This task's machine was removed");
+    return { task, project, token, snap: null, machine: { id: m.id, name: m.name, policy: m.policy, folder: task.folder } };
+  }
   if (!cred) throw new Error("This project's GitHub connection was removed");
-  const token = vault.open(cred.token_enc);
   const snap = await getSnapshot(token, project.repo_owner, project.repo_name, task.base_sha);
   return { task, project, token, snap };
+}
+
+/** The working copy for a task context (overlay on GitHub, or a machine folder). */
+function workspaceOf(ctx, variant = "main") {
+  return ctx.machine ? machineWorkspace({ machineId: ctx.machine.id, folder: ctx.machine.folder }) : workspace({ task: ctx.task, variant, snap: ctx.snap });
 }
 
 async function setTask(taskId, fields) {
@@ -170,7 +194,7 @@ async function resolveSpec(spec) {
   if (!vendor.caps.tools) throw new Error(`${vendor.label} models can't use tools, so they can only chat — pick another provider for agents`);
   const key = await keys.pickKey(spec.provider, { prefer: spec.keyId || "auto" });
   if (!key) throw new Error(`No ${vendor.label} key with budget left — add one in the key vault`);
-  const model = spec.model || key.default_model || vendor.suggested[0];
+  const model = spec.model || defaultModelOf(key, vendor);
   if (!model) throw new Error("Choose a model");
   return { key, model, provider: spec.provider, effort: spec.effort || null };
 }
@@ -251,8 +275,18 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
   agent = await setAgent(agentId, { status: "running", started_at: now() });
   await event(task.id, agentId, "status", { status: "running", model: agent.model, provider: agent.provider });
 
-  const ws = workspace({ task, variant: agent.variant, snap });
-  const tools = toolsFor(agent.role === "lead" ? "lead" : "solo", { readOnly, memory: on("shared_memory"), web: on("web_reader") });
+  const ws = workspaceOf(ctx, agent.variant);
+  const tools = toolsFor(agent.role === "lead" ? "lead" : "solo", { readOnly, memory: on("shared_memory"), web: on("web_reader"), machine: !!ctx.machine, commands: ctx.machine?.policy !== "read" });
+  // Commands on a machine: its policy decides whether a human approves each one.
+  const approve = async ({ command, kind }) => {
+    const m = await get("SELECT policy, name FROM hive_machines WHERE id=?", [ctx.machine.id]);
+    if (!m || m.policy === "read") return { approved: false, reason: "This machine is read-only" };
+    if (m.policy === "auto") return { approved: true };
+    await event(task.id, agentId, "approval", { command, kind, machine: m.name });
+    const r = await machines.requestApproval({ taskId: task.id, agentId, agent: agent.name, projectId: project.id, command, kind, machine: m.name, folder: ctx.machine.folder });
+    await event(task.id, agentId, "approval_result", { command, approved: r.approved, by: r.by || null, reason: r.reason || null });
+    return r;
+  };
 
   // Shared context, in the stable system prompt (cache-friendly).
   const extras = [];
@@ -261,8 +295,8 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
     if (mem.length) extras.push(`Project memory (shared by the whole team — trust it, add to it with remember):\n${mem.map((m) => `- ${m.title}: ${m.body}`).join("\n")}`);
   }
   if (on("repo_map")) {
-    await snap.treeReady;
-    extras.push(repoMap([...snap.entries.keys()], Number(plugins.repo_map.config.maxEntries) || 400));
+    const paths = ctx.machine ? await ws.listPaths().catch(() => []) : (await snap.treeReady, [...snap.entries.keys()]);
+    extras.push(repoMap(paths, Number(plugins.repo_map.config.maxEntries) || 400));
   }
   if (on("lean_reads")) extras.push("Token discipline: search before reading; read files in windows (offset/limit) rather than whole; don't re-read files you already have.");
   if (on("terse")) extras.push("Be terse: one short sentence before tool calls at most, no recaps. Your final summary may be a few bullet points.");
@@ -307,7 +341,7 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
     const fields = { key_id: next.id, handoffs: (agent.handoffs || 0) + 1 };
     if (crossVendor) {
       const vendor = keys.keyVendor(next);
-      Object.assign(fields, { provider: vendor, model: next.default_model || providerOf(vendor).suggested[0], effort: null });
+      Object.assign(fields, { provider: vendor, model: defaultModelOf(next, providerOf(vendor)), effort: null });
     }
     await event(task.id, agentId, "handoff", { reason, from: { key: keyRow?.label, provider: agent.provider, model: agent.model }, to: { key: next.label, provider: fields.provider || agent.provider, model: fields.model || agent.model } });
     keyRow = next;
@@ -407,7 +441,7 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
       state.retried = false;
       flush();
       step++;
-      await keys.recordUsage(keyRow.id, agent.started_by, { input: res.usage.input, output: res.usage.output, costMicros: res.costMicros || 0 }, res.rateLimit);
+      await keys.recordUsage(keyRow.id, agent.started_by, { input: res.usage.input, output: res.usage.output, cacheRead: res.usage.cacheRead || 0, costMicros: res.costMicros || 0 }, res.rateLimit);
       agent = await setAgent(agentId, {
         steps: step,
         input_tokens: agent.input_tokens + res.usage.input,
@@ -444,13 +478,15 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
                 maxLines: on("lean_reads") ? Number(plugins.lean_reads.config.maxLines) || 400 : 2000,
                 remember: on("shared_memory") ? (t, n) => remember(project.id, t, n, `agent:${agent.name}`) : null,
                 delegateFn: agent.role === "lead" ? delegateFn : null,
+                taskId: task.id,
+                approve: ctx.machine ? approve : null,
                 onFinish: (summary) => (finished = summary || lastText || "Done"),
               });
           await event(task.id, agentId, "tool_result", {
             id: call.id,
             name: call.name,
             isError: !!out.isError,
-            preview: String(out.content).slice(0, 1500),
+            preview: String(out.content).slice(0, ["run_command", "server_logs", "start_server", "fetch_local", "view_changes"].includes(call.name) ? 8000 : 2500),
             meta: out.meta || null,
           });
           if (out.meta?.write) {
@@ -485,6 +521,11 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
   board.status(agentId, status);
   agent = await setAgent(agentId, { status, result, error, finished_at: now() });
   await event(task.id, agentId, "status", { status, summary: result ? result.slice(0, 4000) : null, error });
+  // Every agent's result is a restore point.
+  if (!readOnly) {
+    const head = String(result || error || status).split("\n")[0].slice(0, 120);
+    await checkpoints.create(ctx, { variant: agent.variant, label: `${agent.name} · ${agent.model} — ${head}`, agentId, auto: true }).catch(() => null);
+  }
   return agent;
 }
 
@@ -524,8 +565,9 @@ async function remember(projectId, title, body, author) {
 function summarizeInput(name, input) {
   if (!input || typeof input !== "object") return input;
   const out = { ...input };
-  if (typeof out.content === "string" && out.content.length > 400) out.content = `${out.content.slice(0, 400)}… (${out.content.length} chars)`;
-  for (const k of ["old_string", "new_string"]) if (typeof out[k] === "string" && out[k].length > 600) out[k] = `${out[k].slice(0, 600)}…`;
+  // Kept generous so the transcript can show real diffs and file previews.
+  if (typeof out.content === "string" && out.content.length > 6000) out.content = `${out.content.slice(0, 6000)}\n… (${out.content.length} chars)`;
+  for (const k of ["old_string", "new_string"]) if (typeof out[k] === "string" && out[k].length > 4000) out[k] = `${out[k].slice(0, 4000)}…`;
   if (name === "delegate" && Array.isArray(out.tasks)) out.tasks = out.tasks.map((t) => ({ title: t.title, agent: t.agent, files: t.files, difficulty: t.difficulty, instructions: String(t.instructions || "").slice(0, 300) }));
   return out;
 }
@@ -679,17 +721,29 @@ async function startTask(task, { mode, specs, lead, username }) {
 
 /** Context for an agent joining an existing task. */
 async function joinBrief(taskId, variant = "main") {
-  const { task, snap } = await taskContext(taskId);
-  const ws = workspace({ task, variant, snap });
+  const ctx = await taskContext(taskId);
+  const { task } = ctx;
+  const ws = workspaceOf(ctx, variant);
   const changes = await ws.changes();
   const prior = task.summary ? `\n\nEarlier work on this task:\n${task.summary.slice(0, 3000)}` : "";
-  const files = changes.length ? `\n\nFiles changed so far: ${changes.map((c) => `${c.path} (${c.status})`).join(", ")}` : "";
-  return { task, text: `Task: ${task.title}\nOriginal request: ${task.prompt}${prior}${files}` };
+  const files = changes.length ? `\n\nFiles changed so far: ${changes.map((c) => `${c.path} (${c.status}, +${c.additions} -${c.deletions})`).join(", ")}` : "";
+  // Everyone who has worked on this task, what they were asked and what they reported.
+  const team = await all("SELECT name, model, provider, status, title, result, error FROM hive_agents WHERE task_id=? ORDER BY created_at", [taskId]);
+  const roster = team.length
+    ? `\n\nAgents on this task so far (you can see their edits in view_changes and their notes with read_team_board):\n${team
+        .map((a) => `- ${a.name} (${a.model}) [${a.status}]${a.title ? ` — ${a.title}` : ""}: ${String(a.result || a.error || "working…").replace(/\s+/g, " ").slice(0, 400)}`)
+        .join("\n")}`
+    : "";
+  return { task, text: `Task: ${task.title}\nOriginal request: ${task.prompt}${prior}${roster}${files}` };
 }
 
 /** Add an agent to an existing task (follow-up, extra helper or reviewer). */
 async function addAgent(taskId, { spec, prompt, username, readOnly = false, variant = "main", title = null }) {
   const { task, text } = await joinBrief(taskId, variant);
+  if (!readOnly) {
+    const ctx = await taskContext(taskId).catch(() => null);
+    if (ctx) await checkpoints.create(ctx, { variant, label: `Before ${title || "another agent"} joined`, by: username, auto: true }).catch(() => null);
+  }
   const instructions = `${text}\n\nNew request from @${username}:\n${prompt}`;
   const a = await createAgent(task, { role: "solo", spec, instructions, startedBy: username, readOnly, variant, title: title || (readOnly ? "Review" : "Follow-up") });
   await setTask(taskId, { status: "running" });
@@ -739,12 +793,14 @@ async function handoffAgent(agentId, { spec, username }) {
 function stopAgent(agentId) {
   const s = running.get(agentId);
   if (!s) return false;
+  machines.dropApprovals({ agentId });
   s.controller.abort();
   return true;
 }
 
 async function stopTask(taskId) {
   let n = 0;
+  machines.dropApprovals({ taskId });
   for (const [, s] of running) if (s.taskId === taskId) s.controller.abort(), n++;
   await run("UPDATE hive_agents SET status='stopped', finished_at=? WHERE task_id=? AND status='queued'", [now(), taskId]);
   return n;
@@ -769,6 +825,8 @@ module.exports = {
   stopTask,
   steer,
   taskContext,
+  workspaceOf,
+  effectiveProject,
   setTask,
   event,
   runningCount,
