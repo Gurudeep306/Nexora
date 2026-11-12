@@ -9,6 +9,7 @@ const { providerOf } = require("./providers");
 const { workspace } = require("./workspace");
 const { machineWorkspace } = require("./localws");
 const machines = require("./machines");
+const checkpoints = require("./checkpoints");
 const { getSnapshot } = require("./snapshot");
 const { toolsFor, execute } = require("./tools");
 const { systemPrompt } = require("./prompts");
@@ -440,7 +441,7 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
       state.retried = false;
       flush();
       step++;
-      await keys.recordUsage(keyRow.id, agent.started_by, { input: res.usage.input, output: res.usage.output, costMicros: res.costMicros || 0 }, res.rateLimit);
+      await keys.recordUsage(keyRow.id, agent.started_by, { input: res.usage.input, output: res.usage.output, cacheRead: res.usage.cacheRead || 0, costMicros: res.costMicros || 0 }, res.rateLimit);
       agent = await setAgent(agentId, {
         steps: step,
         input_tokens: agent.input_tokens + res.usage.input,
@@ -520,6 +521,11 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
   board.status(agentId, status);
   agent = await setAgent(agentId, { status, result, error, finished_at: now() });
   await event(task.id, agentId, "status", { status, summary: result ? result.slice(0, 4000) : null, error });
+  // Every agent's result is a restore point.
+  if (!readOnly) {
+    const head = String(result || error || status).split("\n")[0].slice(0, 120);
+    await checkpoints.create(ctx, { variant: agent.variant, label: `${agent.name} · ${agent.model} — ${head}`, agentId, auto: true }).catch(() => null);
+  }
   return agent;
 }
 
@@ -720,13 +726,24 @@ async function joinBrief(taskId, variant = "main") {
   const ws = workspaceOf(ctx, variant);
   const changes = await ws.changes();
   const prior = task.summary ? `\n\nEarlier work on this task:\n${task.summary.slice(0, 3000)}` : "";
-  const files = changes.length ? `\n\nFiles changed so far: ${changes.map((c) => `${c.path} (${c.status})`).join(", ")}` : "";
-  return { task, text: `Task: ${task.title}\nOriginal request: ${task.prompt}${prior}${files}` };
+  const files = changes.length ? `\n\nFiles changed so far: ${changes.map((c) => `${c.path} (${c.status}, +${c.additions} -${c.deletions})`).join(", ")}` : "";
+  // Everyone who has worked on this task, what they were asked and what they reported.
+  const team = await all("SELECT name, model, provider, status, title, result, error FROM hive_agents WHERE task_id=? ORDER BY created_at", [taskId]);
+  const roster = team.length
+    ? `\n\nAgents on this task so far (you can see their edits in view_changes and their notes with read_team_board):\n${team
+        .map((a) => `- ${a.name} (${a.model}) [${a.status}]${a.title ? ` — ${a.title}` : ""}: ${String(a.result || a.error || "working…").replace(/\s+/g, " ").slice(0, 400)}`)
+        .join("\n")}`
+    : "";
+  return { task, text: `Task: ${task.title}\nOriginal request: ${task.prompt}${prior}${roster}${files}` };
 }
 
 /** Add an agent to an existing task (follow-up, extra helper or reviewer). */
 async function addAgent(taskId, { spec, prompt, username, readOnly = false, variant = "main", title = null }) {
   const { task, text } = await joinBrief(taskId, variant);
+  if (!readOnly) {
+    const ctx = await taskContext(taskId).catch(() => null);
+    if (ctx) await checkpoints.create(ctx, { variant, label: `Before ${title || "another agent"} joined`, by: username, auto: true }).catch(() => null);
+  }
   const instructions = `${text}\n\nNew request from @${username}:\n${prompt}`;
   const a = await createAgent(task, { role: "solo", spec, instructions, startedBy: username, readOnly, variant, title: title || (readOnly ? "Review" : "Follow-up") });
   await setTask(taskId, { status: "running" });

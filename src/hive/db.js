@@ -241,6 +241,21 @@ const SCHEMA = [
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
   )`,
+  // Checkpoints: saved states of a task's working copy (restore any result).
+  `CREATE TABLE IF NOT EXISTS hive_checkpoints (
+    id TEXT PRIMARY KEY,
+    task_id TEXT NOT NULL,
+    variant TEXT NOT NULL DEFAULT 'main',
+    label TEXT NOT NULL,
+    agent_id TEXT,
+    overlay_json TEXT,
+    git_sha TEXT,
+    files INTEGER NOT NULL DEFAULT 0,
+    created_by TEXT,
+    auto INTEGER NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL
+  )`,
+  "CREATE INDEX IF NOT EXISTS idx_hive_checkpoints_task ON hive_checkpoints(task_id, created_at)",
   // Machines: computers/servers running the Hive bridge (local folders, commands).
   `CREATE TABLE IF NOT EXISTS hive_machines (
     id TEXT PRIMARY KEY,
@@ -263,6 +278,7 @@ const COLUMNS = [
   ["hive_agents", "title TEXT"],
   ["hive_agents", "handoffs INTEGER NOT NULL DEFAULT 0"],
   ["hive_keys", "default_pinned INTEGER NOT NULL DEFAULT 0"],
+  ["hive_usage", "cached_tokens INTEGER NOT NULL DEFAULT 0"],
   ["hive_tasks", "repo_id TEXT"],
   ["hive_tasks", "machine_id TEXT"],
   ["hive_tasks", "folder TEXT"],

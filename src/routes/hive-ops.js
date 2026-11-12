@@ -154,6 +154,83 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     }),
   );
 
+  /* ── checkpoints: restore any earlier result ───────────────────────── */
+  const checkpoints = require("../hive/checkpoints");
+  router.get(
+    "/api/hive/tasks/:id/checkpoints",
+    h(async (req, res) => {
+      await taskRow(req.params.id);
+      res.json({ ok: true, checkpoints: await checkpoints.list(req.params.id) });
+    }),
+  );
+  router.post(
+    "/api/hive/tasks/:id/checkpoints",
+    h(async (req, res) => {
+      const ctx = await runner.taskContext(req.params.id);
+      const cp = await checkpoints.create(ctx, { variant: typeof req.body?.variant === "string" ? req.body.variant : "main", label: str(req.body?.label, "label", { max: 200, optional: true }) || `Saved by @${req.hiveUser}`, by: req.hiveUser });
+      if (!cp) throw new BadInput("Nothing to save yet");
+      res.json({ ok: true, checkpoint: cp });
+    }),
+  );
+  router.post(
+    "/api/hive/tasks/:id/checkpoints/:cp/restore",
+    h(async (req, res) => {
+      const ctx = await runner.taskContext(req.params.id);
+      const busy = await get("SELECT COUNT(*) AS n FROM hive_agents WHERE task_id=? AND status IN ('running','queued')", [ctx.task.id]);
+      if (Number(busy?.n) && !req.body?.force) throw new BadInput("Agents are still working on this task — stop them first (or restore anyway)", 409);
+      const r = await checkpoints.restore(ctx, req.params.cp, { into: typeof req.body?.into === "string" ? req.body.into : undefined, by: req.hiveUser });
+      await runner.event(ctx.task.id, null, "system", { message: `@${req.hiveUser} restored “${r.label}”` });
+      res.json({ ok: true, ...r });
+    }),
+  );
+
+  /* ── GitHub access doctor ──────────────────────────────────────────── */
+  // Explains exactly why a repository is (not) reachable with a connection:
+  // token type, scopes, repo visibility, and what is missing to fix it.
+  router.post(
+    "/api/hive/github/:id/test",
+    h(async (req, res) => {
+      const token = await githubToken(req.params.id);
+      const owner = str(req.body?.owner, "owner", { max: 100 });
+      const repo = str(req.body?.repo, "repo", { max: 100 });
+      const kind = token.startsWith("github_pat_") ? "fine-grained" : token.startsWith("ghp_") ? "classic" : token.startsWith("gho_") || token.startsWith("ghu_") ? "app" : "unknown";
+      const me = await gh.probe(token, "/user");
+      const scopes = me.headers.get("x-oauth-scopes");
+      const r = await gh.probe(token, `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`);
+      const steps = [];
+      const out = { kind, login: me.body?.login || null, scopes: scopes ? scopes.split(/,\s*/).filter(Boolean) : null, status: r.status, ok: false, private: null, canPush: null, defaultBranch: null, contents: null, steps };
+      if (me.status === 401) {
+        steps.push("GitHub rejected the token itself — it expired or was revoked. Create a new one and reconnect.");
+        return res.json({ ok: true, report: out });
+      }
+      if (r.status === 404 || r.status === 403) {
+        if (kind === "fine-grained") {
+          steps.push(`This fine-grained token can't see ${owner}/${repo}. Private repos are only visible if the token was given them explicitly.`);
+          steps.push("Open github.com → Settings → Developer settings → Fine-grained tokens → this token → Edit.");
+          steps.push(`Set “Resource owner” to ${owner}, then “Repository access” → “Only select repositories” (or “All repositories”) and add ${repo}.`);
+          steps.push("Under “Repository permissions” set Contents: Read and write, Pull requests: Read and write (Metadata is automatic). Add Actions + Commit statuses: Read to see CI, and Administration: Read and write only if the launchpad should create repos.");
+          steps.push("Save — the same token keeps working; click Test again.");
+        } else if (kind === "classic") {
+          steps.push(`This classic token can't see ${owner}/${repo}. Classic tokens need the “repo” scope for private repositories${scopes != null ? ` (it has: ${scopes || "no scopes"})` : ""}.`);
+          steps.push("Edit the token on github.com → Settings → Developer settings → Tokens (classic) and tick “repo” (and “workflow” to edit GitHub Actions files).");
+          steps.push(`If ${owner} is an organisation with SSO, click “Configure SSO” on the token and authorise ${owner}.`);
+        } else steps.push(`GitHub says ${r.status} for ${owner}/${repo}: the repo name is wrong or this token has no access to it.`);
+        return res.json({ ok: true, report: out });
+      }
+      if (r.status >= 400) {
+        steps.push(`GitHub answered ${r.status}: ${r.body?.message || "unknown error"}`);
+        return res.json({ ok: true, report: out });
+      }
+      Object.assign(out, { ok: true, private: !!r.body.private, canPush: r.body.permissions ? !!r.body.permissions.push : null, defaultBranch: r.body.default_branch, fullName: r.body.full_name });
+      const c = await gh.probe(token, `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/commits/${encodeURIComponent(r.body.default_branch)}`);
+      out.contents = c.status === 200;
+      if (!out.contents) steps.push("The repo is visible but its contents aren't: give the token Contents: Read and write.");
+      if (out.canPush === false) steps.push("Read-only access: Hive can read the code but can't push branches or open PRs. Give the token Contents + Pull requests: Read and write.");
+      if (!steps.length) steps.push(`All good — Hive can read ${out.fullName}, push branches and open pull requests.`);
+      res.json({ ok: true, report: out });
+    }),
+  );
+
   /* ── approvals ─────────────────────────────────────────────────────── */
   router.get(
     "/api/hive/approvals",
@@ -358,7 +435,7 @@ Prefer boring, well-supported technology that is cheap to host. 4-8 features, 3-
       const model = spec?.provider === vendor && spec.model ? spec.model : key.default_model || pickDefault(json(key.models_json, []), v.suggested);
       try {
         const r = await v.impl.turn({ secret: keys.secretOf(key), baseUrl: key.base_url || v.baseUrl, official: !!v.official, vision: false, model, effort: "high", system: PLAN_SYSTEM, messages: [{ role: "user", text: prompt }], tools: [], cache: false });
-        await keys.recordUsage(key.id, "launchpad", { input: r.usage.input, output: r.usage.output, costMicros: r.costMicros || 0 }, r.rateLimit);
+        await keys.recordUsage(key.id, "launchpad", { input: r.usage.input, output: r.usage.output, cacheRead: r.usage.cacheRead || 0, costMicros: r.costMicros || 0 }, r.rateLimit);
         return { plan: extractJson(r.text), model: `${v.label} · ${model}` };
       } catch (e) {
         if (["auth", "quota", "rate", "model"].includes(e.kind)) {
