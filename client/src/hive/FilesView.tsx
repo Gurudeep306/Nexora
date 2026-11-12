@@ -106,8 +106,8 @@ export function FilesView({ taskId }: { taskId: string }) {
 
   return (
     <div className="grid h-full min-h-0 grid-cols-1 gap-3 lg:grid-cols-[280px_1fr]">
-      <aside className="flex min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-bg-surface/70">
-        <div className="border-b border-border/70 p-2">
+      <aside className="flex min-h-0 flex-col overflow-hidden hive-card">
+        <div className="border-b hive-line p-2">
           <label className="flex h-8 items-center gap-2 rounded-lg bg-text-primary/5 px-2">
             <Search className="size-3.5 text-text-muted" />
             <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={`Find in ${meta.total.toLocaleString()} files`} className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-text-muted" />
@@ -130,9 +130,9 @@ export function FilesView({ taskId }: { taskId: string }) {
             renderNode(tree, 0)
           )}
         </div>
-        {meta.truncated && <p className="border-t border-border/70 px-3 py-1.5 text-[10px] text-text-muted">Very large repository: the listing is partial.</p>}
+        {meta.truncated && <p className="border-t hive-line px-3 py-1.5 text-[10px] text-text-muted">Very large repository: the listing is partial.</p>}
       </aside>
-      <div className="min-h-[420px] overflow-hidden rounded-xl border border-border bg-bg-surface/70">
+      <div className="min-h-[420px] overflow-hidden hive-card">
         {selected ? <FileEditor key={selected} taskId={taskId} path={selected} /> : <div className="grid h-full place-items-center text-sm text-text-muted">Open a file to read or edit it</div>}
       </div>
     </div>
@@ -169,7 +169,7 @@ function FileEditor({ taskId, path }: { taskId: string; path: string }) {
   }
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-2 border-b border-border/70 px-3 py-2">
+      <div className="flex items-center gap-2 border-b hive-line px-3 py-2">
         <span className="min-w-0 flex-1 truncate font-mono text-xs text-text-primary">{path}</span>
         {dirty && <span className="text-[11px] text-state-warning">unsaved</span>}
         <Button size="sm" onClick={save} loading={busy} disabled={!dirty}>

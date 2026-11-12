@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { io, type Socket } from 'socket.io-client'
 import { API_BASE } from '@/lib/api'
 import { hiveApi } from './api'
-import type { AgentRow, Bootstrap, ChatMessage, HiveEvent, OnlineUser, Project, Task } from './types'
+import type { AgentRow, Bootstrap, ChatMessage, CodeStream, HiveEvent, LiveAgent, OnlineUser, Project, Task } from './types'
 
 export interface TaskDetail {
   task: Task
@@ -37,6 +37,18 @@ interface HiveValue {
   chat: ChatMessage[]
   emitTyping: () => void
   select: (projectId: string | null, taskId?: string | null) => void
+  /** Agents running anywhere in the hive right now. */
+  live: LiveAgent[]
+  /** What each agent is typing into a file right now. */
+  code: Record<string, CodeStream>
+  /** Every task we've heard about, across projects (tabs, home). */
+  taskIndex: Record<string, Task & { project_name?: string }>
+  noteTasks: (tasks: (Task & { project_name?: string })[]) => void
+  memoryVersion: number
+  pluginsVersion: number
+  convosVersion: number
+  on: (event: string, fn: (...args: never[]) => void) => () => void
+  emit: (event: string, payload: unknown) => void
 }
 
 const HiveContext = createContext<HiveValue | null>(null)
@@ -72,7 +84,21 @@ export function HiveProvider({
   const [thinking, setThinking] = useState<Record<string, string>>({})
   const [changesVersion, setChangesVersion] = useState(0)
   const [chat, setChat] = useState<ChatMessage[]>([])
+  const [live, setLive] = useState<LiveAgent[]>([])
+  const [code, setCode] = useState<Record<string, CodeStream>>({})
+  const [taskIndex, setTaskIndex] = useState<Record<string, Task & { project_name?: string }>>({})
+  const [memoryVersion, setMemoryVersion] = useState(0)
+  const [pluginsVersion, setPluginsVersion] = useState(0)
+  const [convosVersion, setConvosVersion] = useState(0)
   const socketRef = useRef<Socket | null>(null)
+  const [sock, setSock] = useState<Socket | null>(null)
+  const noteTasks = useCallback((list: (Task & { project_name?: string })[]) => {
+    setTaskIndex((m) => {
+      const n = { ...m }
+      for (const t of list) n[t.id] = { ...n[t.id], ...t }
+      return n
+    })
+  }, [])
   const ids = useRef({ projectId, taskId })
   ids.current = { projectId, taskId }
 
@@ -81,6 +107,7 @@ export function HiveProvider({
       const b = await hiveApi.bootstrap()
       setBoot(b)
       setOnline((o) => (o.length ? o : b.online))
+      setLive(b.live ?? [])
       setError(null)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not load Hive')
@@ -106,10 +133,11 @@ export function HiveProvider({
     try {
       const r = await hiveApi.tasks(pid)
       if (ids.current.projectId === pid) setTasks(r.tasks)
+      noteTasks(r.tasks)
     } finally {
       setTasksLoading(false)
     }
-  }, [])
+  }, [noteTasks])
 
   const refreshDetail = useCallback(async () => {
     const tid = ids.current.taskId
@@ -134,6 +162,7 @@ export function HiveProvider({
     const opts = { transports: ['websocket', 'polling'], withCredentials: true }
     const s = io(`${API_BASE}/hive`, opts)
     socketRef.current = s
+    setSock(s)
     s.on('connect', () => {
       setConnected(true)
       s.emit('view', ids.current)
@@ -154,7 +183,14 @@ export function HiveProvider({
       setBoot((b) => (b ? { ...b, projects: b.projects.filter((x) => x.id !== id) } : b))
       if (ids.current.projectId === id) onSelect(null)
     })
+    s.on('radar', (r: LiveAgent[]) => setLive(r))
+    s.on('memory', () => setMemoryVersion((v) => v + 1))
+    s.on('plugins', () => setPluginsVersion((v) => v + 1))
+    s.on('convos', () => setConvosVersion((v) => v + 1))
+    s.on('code', (c: Omit<CodeStream, 'at'> & { agentId: string }) => setCode((m) => ({ ...m, [c.agentId]: { tool: c.tool, path: c.path, text: c.text, old: c.old, at: Date.now() } })))
+    s.on('code_done', ({ agentId }: { agentId: string }) => setCode((m) => (m[agentId] ? { ...m, [agentId]: { ...m[agentId], done: true } } : m)))
     s.on('task', (t: Task) => {
+      setTaskIndex((m) => ({ ...m, [t.id]: { ...m[t.id], ...t } }))
       if (t.archived) {
         setTasks((list) => list.filter((x) => x.id !== t.id))
         if (t.id === ids.current.taskId) onSelect(t.project_id)
@@ -253,6 +289,19 @@ export function HiveProvider({
 
   const project = useMemo(() => boot?.projects.find((p) => p.id === projectId) ?? null, [boot, projectId])
 
+  const on = useCallback(
+    (event: string, fn: (...args: never[]) => void) => {
+      sock?.on(event, fn as never)
+      return () => {
+        sock?.off(event, fn as never)
+      }
+    },
+    [sock],
+  )
+  const emit = useCallback((event: string, payload: unknown) => {
+    socketRef.current?.emit(event, payload)
+  }, [])
+
   const value: HiveValue = {
     boot,
     loading,
@@ -276,6 +325,15 @@ export function HiveProvider({
     chat,
     emitTyping,
     select: onSelect,
+    live,
+    code,
+    taskIndex,
+    noteTasks,
+    memoryVersion,
+    pluginsVersion,
+    convosVersion,
+    on,
+    emit,
   }
   return <HiveContext.Provider value={value}>{children}</HiveContext.Provider>
 }

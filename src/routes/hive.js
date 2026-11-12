@@ -405,6 +405,17 @@ function createHiveRouter() {
   );
 
   router.get(
+    "/api/hive/projects/:id/tree",
+    h(async (req, res) => {
+      const p = await projectRow(req.params.id);
+      const token = await githubToken(p.github_id);
+      const head = await gh.commit(token, p.repo_owner, p.repo_name, p.default_branch);
+      const snap = await require("../hive/snapshot").getSnapshot(token, p.repo_owner, p.repo_name, head.sha);
+      res.json({ ok: true, paths: [...snap.entries.keys()].sort().slice(0, 20000), sha: head.sha });
+    }),
+  );
+
+  router.get(
     "/api/hive/projects/:id/tasks",
     h(async (req, res) => {
       await projectRow(req.params.id);
