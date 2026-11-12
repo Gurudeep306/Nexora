@@ -12,7 +12,7 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nexora-live-'));
 const DB = path.join(tmp, 'test.db');
 function sql(stmt, ...args) {
   const { DatabaseSync } = require('node:sqlite');
-  const db = new DatabaseSync(DB);
+  const db = new DatabaseSync(DB, { timeout: 10000 }); // wait for the server's write lock instead of failing
   try { return db.prepare(stmt).run(...args); } finally { db.close(); }
 }
 

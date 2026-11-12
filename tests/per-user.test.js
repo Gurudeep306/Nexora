@@ -58,7 +58,7 @@ test.before(async () => {
   await waitFor(`${base}/api/health`);
   // Seed one problem + a testcase straight into the database file.
   const { DatabaseSync } = require('node:sqlite');
-  const db = new DatabaseSync(DB);
+  const db = new DatabaseSync(DB, { timeout: 10000 }); // wait for the server's write lock instead of failing
   db.exec("INSERT INTO problems(platform, problem_id, title, url, rating, tags) VALUES('codeforces','9999Z','Double it','https://x',900,'[\"math\"]')");
   pid = Number(db.prepare("SELECT id FROM problems WHERE problem_id='9999Z'").get().id);
   db.close();
