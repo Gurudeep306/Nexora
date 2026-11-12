@@ -46,7 +46,25 @@ const refPath = (ref) => String(ref).split("/").map(enc).join("/");
 module.exports = {
   GitHubError,
   me: (t) => gh(t, "GET", "/user"),
-  listRepos: (t) => gh(t, "GET", "/user/repos?per_page=100&sort=pushed&affiliation=owner,collaborator,organization_member"),
+  listRepos: async (t) => {
+    // Up to 300 repos (fine-grained tokens list only the repos they were given).
+    const out = [];
+    for (let page = 1; page <= 3; page++) {
+      const r = await gh(t, "GET", `/user/repos?per_page=100&page=${page}&sort=pushed&affiliation=owner,collaborator,organization_member`);
+      out.push(...r);
+      if (r.length < 100) break;
+    }
+    return out;
+  },
+  /** Raw response (headers too) — for token diagnostics. */
+  probe: async (t, path) => {
+    const res = await fetch(API + path, { headers: { Authorization: `Bearer ${t}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "nexora-hive" } });
+    let body = null;
+    try {
+      body = await res.json();
+    } catch {}
+    return { status: res.status, headers: res.headers, body };
+  },
   repo: (t, o, r) => gh(t, "GET", repoPath(o, r)),
   branches: (t, o, r) => gh(t, "GET", `${repoPath(o, r)}/branches?per_page=100`),
   commit: (t, o, r, ref) => gh(t, "GET", `${repoPath(o, r)}/commits/${refPath(ref)}`),

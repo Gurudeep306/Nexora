@@ -211,7 +211,7 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
         reply.content = res.text;
         served.model = res.servedModel || model;
         usage = res.usage;
-        await keys.recordUsage(key.id, username, { input: res.usage.input, output: res.usage.output, costMicros: res.costMicros || 0 }, res.rateLimit);
+        await keys.recordUsage(key.id, username, { input: res.usage.input, output: res.usage.output, cacheRead: res.usage.cacheRead || 0, costMicros: res.costMicros || 0 }, res.rateLimit);
         hub.emit("usage", { keyId: key.id });
         if (res.stop === "refusal") error = "The model declined this request";
         break;
