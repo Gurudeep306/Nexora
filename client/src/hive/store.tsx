@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { io, type Socket } from 'socket.io-client'
 import { API_BASE } from '@/lib/api'
 import { hiveApi } from './api'
-import type { AgentRow, Bootstrap, ChatMessage, CodeStream, HiveEvent, LiveAgent, OnlineUser, Project, Task } from './types'
+import type { AgentRow, Approval, Bootstrap, ChatMessage, CodeStream, HiveEvent, LiveAgent, Machine, OnlineUser, Project, Task } from './types'
 
 export interface TaskDetail {
   task: Task
@@ -49,6 +49,16 @@ interface HiveValue {
   convosVersion: number
   on: (event: string, fn: (...args: never[]) => void) => () => void
   emit: (event: string, payload: unknown) => void
+  /** Connected computers/servers running the bridge. */
+  machines: Machine[]
+  refreshMachines: () => Promise<void>
+  /** Commands waiting for a human's yes/no. */
+  approvals: Approval[]
+  answerApproval: (id: string, approved: boolean) => Promise<void>
+  ideasVersion: number
+  modelsVersion: number
+  /** Ask everything that lists chats to reload. */
+  touchConvos: () => void
 }
 
 const HiveContext = createContext<HiveValue | null>(null)
@@ -90,6 +100,23 @@ export function HiveProvider({
   const [memoryVersion, setMemoryVersion] = useState(0)
   const [pluginsVersion, setPluginsVersion] = useState(0)
   const [convosVersion, setConvosVersion] = useState(0)
+  const [ideasVersion, setIdeasVersion] = useState(0)
+  const [modelsVersion, setModelsVersion] = useState(0)
+  const [machines, setMachines] = useState<Machine[]>([])
+  const [approvals, setApprovals] = useState<Approval[]>([])
+  const refreshMachines = useCallback(async () => {
+    try {
+      const r = await hiveApi.machines()
+      setMachines(r.machines)
+      setApprovals(r.approvals)
+    } catch {
+      /* not fatal */
+    }
+  }, [])
+  const answerApproval = useCallback(async (id: string, approved: boolean) => {
+    setApprovals((a) => a.filter((x) => x.id !== id))
+    await hiveApi.answer(id, approved).catch(() => {})
+  }, [])
   const socketRef = useRef<Socket | null>(null)
   const [sock, setSock] = useState<Socket | null>(null)
   const noteTasks = useCallback((list: (Task & { project_name?: string })[]) => {
@@ -155,7 +182,11 @@ export function HiveProvider({
 
   useEffect(() => {
     refresh()
-  }, [refresh])
+    refreshMachines()
+    // Machines' online state is time-based: re-read it now and then.
+    const t = setInterval(refreshMachines, 30000)
+    return () => clearInterval(t)
+  }, [refresh, refreshMachines])
 
   // Socket: one connection to the staff-only /hive namespace.
   useEffect(() => {
@@ -166,6 +197,9 @@ export function HiveProvider({
     s.on('connect', () => {
       setConnected(true)
       s.emit('view', ids.current)
+      // Rooms are per connection: catch up on anything missed while away.
+      refreshMachines()
+      if (ids.current.taskId) refreshDetail()
     })
     s.on('disconnect', () => setConnected(false))
     s.on('presence', (r: OnlineUser[]) => setOnline(r))
@@ -187,6 +221,11 @@ export function HiveProvider({
     s.on('memory', () => setMemoryVersion((v) => v + 1))
     s.on('plugins', () => setPluginsVersion((v) => v + 1))
     s.on('convos', () => setConvosVersion((v) => v + 1))
+    s.on('ideas', () => setIdeasVersion((v) => v + 1))
+    s.on('models', () => setModelsVersion((v) => v + 1))
+    s.on('machines', () => refreshMachines())
+    s.on('approval', (a: Approval) => setApprovals((l) => (l.some((x) => x.id === a.id) ? l : [...l, a])))
+    s.on('approval_done', ({ id }: { id: string }) => setApprovals((l) => l.filter((x) => x.id !== id)))
     s.on('code', (c: Omit<CodeStream, 'at'> & { agentId: string }) => setCode((m) => ({ ...m, [c.agentId]: { tool: c.tool, path: c.path, text: c.text, old: c.old, at: Date.now() } })))
     s.on('code_done', ({ agentId }: { agentId: string }) => setCode((m) => (m[agentId] ? { ...m, [agentId]: { ...m[agentId], done: true } } : m)))
     s.on('task', (t: Task) => {
@@ -253,7 +292,7 @@ export function HiveProvider({
       s.disconnect()
       socketRef.current = null
     }
-  }, [softRefresh, onSelect])
+  }, [softRefresh, onSelect, refreshMachines, refreshDetail])
 
   // Tell the namespace what we're looking at (presence + task room).
   useEffect(() => {
@@ -334,6 +373,13 @@ export function HiveProvider({
     convosVersion,
     on,
     emit,
+    machines,
+    refreshMachines,
+    approvals,
+    answerApproval,
+    ideasVersion,
+    modelsVersion,
+    touchConvos: () => setConvosVersion((v) => v + 1),
   }
   return <HiveContext.Provider value={value}>{children}</HiveContext.Provider>
 }

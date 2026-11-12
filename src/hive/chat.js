@@ -105,7 +105,9 @@ async function pickChatKey(spec, exclude = []) {
  * Send a message and stream the reply. spec: { provider, keyId, model, effort }.
  * mode 'image' generates an image instead of text.
  */
-async function send(convoId, { text, refs, spec, mode = "text", username, sink }) {
+async function send(convoId, { text, refs, spec, specs, mode = "text", username, sink }) {
+  // Several models at once: one user message, one reply per model (side by side).
+  const list = Array.isArray(specs) && specs.length ? specs.slice(0, 4) : [spec];
   const convo = await convoFor(convoId, username);
   const files = await resolveRefs(refs, username);
   const userMsg = { id: newId("m"), convo_id: convoId, role: "user", content: String(text || ""), attachments: files, author: username, created_at: now() };
@@ -125,14 +127,16 @@ async function send(convoId, { text, refs, spec, mode = "text", username, sink }
   await run(`UPDATE hive_convos SET ${Object.keys(fields).map((k) => `${k}=?`).join(", ")} WHERE id=?`, [...Object.values(fields), convoId]);
   hub.emitConvo(convoId, "convo:meta", { id: convoId, ...fields });
 
-  const reply = { id: newId("m"), convo_id: convoId, role: "assistant", content: "", attachments: [], author: null, created_at: now() + 1 };
-  hub.emitConvo(convoId, "convo:start", { id: reply.id, convoId });
-  sink?.("start", { id: reply.id, convoId });
-  const done = generate(convo, reply, { spec, mode, prompt: userMsg.content, username, sink }).catch((e) => {
-    console.error("[hive chat]", e.message);
-    sink?.("done", { ...reply, error: e.message });
+  const runs = list.map((sp, i) => {
+    const reply = { id: newId("m"), convo_id: convoId, role: "assistant", content: "", attachments: [], author: null, created_at: now() + 1 + i, group_id: list.length > 1 ? userMsg.id : null };
+    hub.emitConvo(convoId, "convo:start", { id: reply.id, convoId, provider: sp.provider, model: sp.model || null, group: reply.group_id });
+    sink?.("start", { id: reply.id, convoId, provider: sp.provider, model: sp.model || null, group: reply.group_id });
+    return { reply, done: generate(convo, reply, { spec: sp, mode, prompt: userMsg.content, username, sink }).catch((e) => {
+      console.error("[hive chat]", e.message);
+      sink?.("done", { ...reply, error: e.message });
+    }) };
   });
-  return { user: userMsg, replyId: reply.id, done };
+  return { user: userMsg, replyId: runs[0].reply.id, replyIds: runs.map((r) => r.reply.id), done: Promise.all(runs.map((r) => r.done)) };
 }
 
 async function generate(convo, reply, { spec: spec0, mode, prompt, username, sink }) {
@@ -145,7 +149,10 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
     sink?.(event, payload);
   };
   const controller = new AbortController();
-  active.set(convo.id, controller);
+  // Several replies may stream at once: stop() aborts them all.
+  const set = active.get(convo.id) || new Set();
+  set.add(controller);
+  active.set(convo.id, set);
   const tried = [];
   let error = null;
   let usage = { input: 0, output: 0 };
@@ -177,7 +184,15 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
         const messages = [];
         for (const m of history) {
           if (m.role === "user") messages.push({ role: "user", text: m.content, attachments: await loadAttachments(m.attachments) });
-          else if (m.role === "assistant" && m.content) messages.push({ role: "assistant", text: m.content });
+          else if (m.role === "assistant" && m.content) {
+            // Side-by-side answers: keep one per turn (the one marked preferred, else the first).
+            const last = messages[messages.length - 1];
+            if (last?.role === "assistant") {
+              if (m.preferred) last.text = m.content;
+              continue;
+            }
+            messages.push({ role: "assistant", text: m.content });
+          }
         }
         const plugins = await resolvePlugins(convo.project_id);
         const extras = plugins.custom.filter((c) => c.enabled && (c.config.appliesTo || "all") !== "tasks").map((c) => c.config.instructions);
@@ -243,11 +258,12 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
   } catch (e) {
     error = friendlyError(e, served);
   } finally {
-    active.delete(convo.id);
+    set.delete(controller);
+    if (!set.size) active.delete(convo.id);
   }
   await run(
-    "INSERT INTO hive_convo_msgs(id, convo_id, role, content, attachments_json, provider, model, input_tokens, output_tokens, error, created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
-    [reply.id, convo.id, "assistant", reply.content, JSON.stringify(reply.attachments), served.provider, served.model, usage.input, usage.output, error, reply.created_at],
+    "INSERT INTO hive_convo_msgs(id, convo_id, role, content, attachments_json, provider, model, input_tokens, output_tokens, error, created_at, group_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+    [reply.id, convo.id, "assistant", reply.content, JSON.stringify(reply.attachments), served.provider, served.model, usage.input, usage.output, error, reply.created_at, reply.group_id || null],
   );
   out("done", { ...reply, provider: served.provider, model: served.model, input_tokens: usage.input, output_tokens: usage.output, error });
 }
@@ -272,9 +288,9 @@ function friendlyError(e, served) {
 }
 
 function stop(convoId) {
-  const c = active.get(convoId);
-  if (c) c.abort();
-  return !!c;
+  const set = active.get(convoId);
+  if (set) for (const c of set) c.abort();
+  return !!set;
 }
 
 module.exports = { listConvos, createConvo, convoFor, canSee, messagesOf, send, stop, saveFile, MAX_FILE };

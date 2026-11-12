@@ -279,6 +279,8 @@ const COLUMNS = [
   ["hive_agents", "handoffs INTEGER NOT NULL DEFAULT 0"],
   ["hive_keys", "default_pinned INTEGER NOT NULL DEFAULT 0"],
   ["hive_usage", "cached_tokens INTEGER NOT NULL DEFAULT 0"],
+  ["hive_convo_msgs", "group_id TEXT"],
+  ["hive_convo_msgs", "preferred INTEGER NOT NULL DEFAULT 0"],
   ["hive_tasks", "repo_id TEXT"],
   ["hive_tasks", "machine_id TEXT"],
   ["hive_tasks", "folder TEXT"],

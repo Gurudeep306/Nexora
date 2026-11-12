@@ -31,6 +31,11 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     res.json({ ok: true, name: req.machine.name, id: req.machine.id });
   });
   router.get("/api/hive-bridge/poll", bridgeAuth, (req, res) => machines.poll(req.machine, res));
+  // The bridge script itself, fetched with the machine's token (one-line setup).
+  router.get("/api/hive-bridge/script", bridgeAuth, (_req, res) => {
+    res.set({ "Content-Type": "text/javascript; charset=utf-8", "Content-Disposition": 'attachment; filename="hive-bridge.js"', "Cache-Control": "no-store" });
+    res.send(fs.readFileSync(BRIDGE_FILE));
+  });
   router.post("/api/hive-bridge/result", bridgeAuth, (req, res) => {
     machines.result(req.machine, req.body || {});
     res.json({ ok: true });

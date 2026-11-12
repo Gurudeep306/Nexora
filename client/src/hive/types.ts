@@ -36,6 +36,11 @@ export interface HiveKey {
   periodOutput?: number
   periodRequests?: number
   periodCostMicros?: number
+  periodCached?: number
+  todayTokens?: number
+  todayRequests?: number
+  periodStart?: string
+  periodEnds?: number | null
 }
 
 export interface GithubConn {
@@ -61,6 +66,120 @@ export interface Project {
   updated_at: number
   tasks?: number
   running?: number
+  machine_id?: string | null
+  folder?: string | null
+  site_url?: string | null
+  idea_id?: string | null
+}
+
+export interface Machine {
+  id: string
+  name: string
+  createdBy: string
+  policy: 'ask' | 'auto' | 'read'
+  info: { hostname?: string; platform?: string; node?: string; roots?: string[]; user?: string; cpus?: number; memGb?: number; version?: string }
+  lastSeen: number | null
+  online: boolean
+  createdAt: number
+}
+
+export interface Approval {
+  id: string
+  taskId?: string
+  agentId?: string
+  agent?: string
+  projectId?: string
+  command: string
+  kind: 'command' | 'server'
+  machine: string
+  folder: string
+  at: number
+}
+
+export interface LinkedRepo {
+  id: string
+  project_id: string
+  github_id: string
+  repo_owner: string
+  repo_name: string
+  default_branch: string
+  role: string
+}
+
+export interface Check {
+  name: string
+  status: string
+  conclusion: string | null
+  url: string | null
+  startedAt?: string | null
+  completedAt?: string | null
+}
+
+export interface PrInfo {
+  number: number
+  title: string
+  state: string
+  merged: boolean
+  mergeable: boolean | null
+  mergeableState: string
+  url: string
+  head: string
+  base: string
+  sha: string
+  additions: number
+  deletions: number
+  changedFiles: number
+  commits: number
+  draft: boolean
+}
+
+export interface ProjectActivity {
+  commits: { sha: string; message: string; author: string; avatar: string | null; at: string; url: string }[]
+  headChecks: { checks: Check[]; state: string } | null
+  pulls: { number: number; title: string; author: string; url: string; head: string; draft: boolean; updatedAt: string }[]
+  deployments: { id: number; environment: string; sha: string; ref: string; createdAt: string; state: string; url: string | null }[]
+  site: { url: string; up: boolean; status?: number; ms: number; version?: string | null; error?: string } | null
+}
+
+export interface IdeaPlan {
+  name: string
+  tagline?: string
+  summary?: string
+  audience?: string
+  features?: { title: string; detail?: string; priority?: string }[]
+  stack?: Record<string, string>
+  architecture?: string
+  milestones?: { title: string; goal?: string; tasks?: { title: string; detail?: string }[] }[]
+  risks?: string[]
+  repoName?: string
+  conventions?: string[]
+  firstTask?: string
+  error?: string
+  _model?: string
+}
+
+export interface Idea {
+  id: string
+  title: string
+  pitch: string
+  plan: IdeaPlan | null
+  status: 'draft' | 'planning' | 'planned' | 'failed' | 'launched'
+  project_id: string | null
+  created_by: string
+  created_at: number
+  updated_at: number
+}
+
+export interface MarketModel {
+  id: string
+  name: string
+  lab: string
+  created: number
+  context: number | null
+  input: number | null
+  output: number | null
+  modalities: string[] | null
+  description: string
 }
 
 export interface AgentRow {
@@ -90,7 +209,7 @@ export interface AgentRow {
   finished_at: number | null
 }
 
-export type TaskStatus = 'queued' | 'running' | 'review' | 'committed' | 'pr_open' | 'failed' | 'stopped' | 'interrupted'
+export type TaskStatus = 'queued' | 'running' | 'review' | 'committed' | 'pr_open' | 'merged' | 'failed' | 'stopped' | 'interrupted'
 
 export interface Task {
   id: string
@@ -106,6 +225,9 @@ export interface Task {
   pr_url: string | null
   pr_number: number | null
   summary: string | null
+  machine_id?: string | null
+  folder?: string | null
+  repo_id?: string | null
   archived: number
   created_by: string
   created_at: number
@@ -118,7 +240,7 @@ export interface HiveEvent {
   seq: number
   task_id: string
   agent_id: string | null
-  kind: 'text' | 'thinking' | 'tool_call' | 'tool_result' | 'status' | 'note' | 'steer' | 'error' | 'system' | 'human_edit' | 'commit' | 'handoff'
+  kind: 'text' | 'thinking' | 'tool_call' | 'tool_result' | 'status' | 'note' | 'steer' | 'error' | 'system' | 'human_edit' | 'commit' | 'handoff' | 'approval' | 'approval_result' | 'merge' | 'review'
   data: Record<string, unknown>
   created_at: number
 }
@@ -217,6 +339,7 @@ export interface Convo {
   title: string
   owner: string
   shared: number
+  pinned?: number
   project_id: string | null
   provider: string | null
   key_id: string | null
@@ -239,6 +362,8 @@ export interface ConvoMsg {
   output_tokens?: number
   error?: string | null
   created_at: number
+  group_id?: string | null
+  preferred?: number
 }
 
 export interface CodeStream {
@@ -277,4 +402,31 @@ export interface ChatMessage {
   username: string
   body: string
   created_at: number
+}
+
+export interface Checkpoint {
+  id: string
+  task_id: string
+  variant: string
+  label: string
+  agent_id: string | null
+  git_sha: string | null
+  files: number
+  created_by: string | null
+  auto: number
+  created_at: number
+}
+
+export interface GithubReport {
+  kind: 'fine-grained' | 'classic' | 'app' | 'unknown'
+  login: string | null
+  scopes: string[] | null
+  status: number
+  ok: boolean
+  private: boolean | null
+  canPush: boolean | null
+  defaultBranch: string | null
+  contents: boolean | null
+  fullName?: string
+  steps: string[]
 }
