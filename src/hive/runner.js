@@ -193,7 +193,7 @@ async function resolveSpec(spec) {
   const vendor = providerOf(spec.provider);
   if (!vendor.caps.tools) throw new Error(`${vendor.label} models can't use tools, so they can only chat — pick another provider for agents`);
   const key = await keys.pickKey(spec.provider, { prefer: spec.keyId || "auto" });
-  if (!key) throw new Error(`No ${vendor.label} key with budget left — add one in the key vault`);
+  if (!key) throw new Error(await keys.explainNoKey(spec.provider));
   const model = spec.model || defaultModelOf(key, vendor);
   if (!model) throw new Error("Choose a model");
   return { key, model, provider: spec.provider, effort: spec.effort || null };
