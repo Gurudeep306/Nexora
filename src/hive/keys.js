@@ -178,7 +178,11 @@ async function deleteKey(id) {
 }
 
 function secretOf(row) {
-  return vault.open(row.secret_enc);
+  try {
+    return vault.open(row.secret_enc);
+  } catch {
+    throw Object.assign(new Error(`“${row.label}” can't be decrypted — HIVE_SECRET (or SESSION_SECRET) changed since it was saved. Paste the key again in Keys (⋯ → Budget, model & priority → new key).`), { kind: "auth" });
+  }
 }
 
 /** Verify a key by listing models; stores the model list and status. */
@@ -245,9 +249,13 @@ async function pickKey(provider, { prefer = "auto", exclude = [] } = {}) {
   let best = null;
   let bestScore = -Infinity;
   for (const r of rows) {
-    if (exclude.includes(r.id) || r.status === "invalid") continue;
+    if (exclude.includes(r.id)) continue;
+    // A key whose last check failed is retried after a cool-down: listing
+    // models can fail (restricted project keys, a provider hiccup) while
+    // chatting works. A real auth failure on a call re-marks it.
+    if (r.status === "invalid" && Date.now() - Number(r.updated_at || 0) < 10 * 60_000) continue;
     if (!(await hasBudget(r))) continue;
-    const share = r.token_limit == null ? 1 : 1 - (await usedTokens(r)) / Math.max(1, Number(r.token_limit));
+    const share = (r.token_limit == null ? 1 : 1 - (await usedTokens(r)) / Math.max(1, Number(r.token_limit))) - (r.status === "invalid" || r.status === "error" ? 0.5 : 0);
     const load = (active.get(r.id) || 0) / Math.max(1, r.max_concurrency);
     // Staff can rank keys (e.g. spend the free tier first).
     const score = share - load + Number(r.priority || 0) / 10;
@@ -310,6 +318,23 @@ async function usageSeries(keyId, days = 30) {
   return { days: rows.map((r) => ({ day: r.day, input: Number(r.input), output: Number(r.output), cached: Number(r.cached || 0), requests: Number(r.requests) })), byUser };
 }
 
+/** Why no key of this vendor can take a call — one readable sentence. */
+async function explainNoKey(vendorId) {
+  let label = vendorId;
+  try {
+    label = vendorOf(vendorId).label;
+  } catch {}
+  const rows = (await all("SELECT * FROM hive_keys")).filter((r) => keyVendor(r) === vendorId);
+  if (!rows.length) return `No ${label} key yet — add one in Keys.`;
+  const parts = [];
+  for (const r of rows) {
+    if (r.disabled) parts.push(`“${r.label}” is paused`);
+    else if (r.status === "invalid") parts.push(`“${r.label}” was rejected by ${label}${r.status_detail ? `: ${String(r.status_detail).slice(0, 200)}` : ""}`);
+    else if (r.token_limit != null && (await usedTokens(r)) >= Number(r.token_limit)) parts.push(`“${r.label}” used its ${Number(r.token_limit).toLocaleString()}-token ${r.limit_period === "total" ? "budget" : `budget for this ${r.limit_period}`}`);
+  }
+  return `No ${label} key can take this right now — ${parts.join("; ") || "all are busy"}. Fix it in Keys.`;
+}
+
 /** Re-check every enabled key: refreshes model lists, defaults and the radar. */
 async function refreshAll() {
   const rows = await all("SELECT id FROM hive_keys WHERE disabled=0");
@@ -321,4 +346,4 @@ async function refreshAll() {
   return fresh;
 }
 
-module.exports = { refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };
+module.exports = { explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };
