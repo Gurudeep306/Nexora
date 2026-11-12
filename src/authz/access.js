@@ -38,9 +38,13 @@ const PUBLIC_API = new Set([
   "/api/user/check-username",
   "/api/site/status",
 ]);
-const isApi = (p) => p.startsWith("/api/");
+// Express routes case-insensitively and ignores trailing slashes, so compare
+// a canonical form (see src/middleware/authz.js).
+const canon = (p) => String(p || "/").replace(/\/{2,}/g, "/").replace(/\/+$/, "") || "/";
+const isApi = (p) => /^\/api(\/|$)/i.test(canon(p));
+const isPublicApi = (p) => PUBLIC_API.has(canon(p).toLowerCase());
 function isPublicPath(p) {
-  if (isApi(p)) return PUBLIC_API.has(p);
+  if (isApi(p)) return isPublicApi(p);
   if (p === "/auth" || p.startsWith("/auth/")) return true; // sign-in page + OAuth
   if (p.startsWith("/uploads/")) return false;
   // Static assets (scripts, styles, fonts, images, manifest) — not pages.
@@ -49,14 +53,15 @@ function isPublicPath(p) {
 
 // Section → API paths switched off with it.
 const FEATURE_ROUTES = [
-  ["gate", /^\/api\/gate(\/|$)/],
-  ["contests", /^\/api\/(contests|live)(\/|$)/],
-  ["social", /^\/api\/(friends|messages|rooms|feed|social)(\/|$)/],
-  ["ai_tutor", /^\/api\/(agent|ai)(\/|$)/],
-  ["practice", /^\/api\/(problems|problem-statement)(\/|$)/],
+  ["gate", /^\/api\/gate(\/|$)/i],
+  ["contests", /^\/api\/(contests|live)(\/|$)/i],
+  ["social", /^\/api\/(friends|messages|rooms|feed|social)(\/|$)/i],
+  ["ai_tutor", /^\/api\/(agent|ai)(\/|$)/i],
+  ["practice", /^\/api\/(problems|problem-statement)(\/|$)/i],
 ];
 function featureFor(p) {
-  for (const [flag, re] of FEATURE_ROUTES) if (re.test(p)) return flag;
+  const c = canon(p);
+  for (const [flag, re] of FEATURE_ROUTES) if (re.test(c)) return flag;
   return null;
 }
 
@@ -146,7 +151,7 @@ function createAccessControl() {
     }
 
     const p = req.path;
-    if (req.accountBan && isApi(p) && !PUBLIC_API.has(p)) {
+    if (req.accountBan && isApi(p) && !isPublicApi(p)) {
       return res.status(403).json(banPayload(req.accountBan));
     }
 
