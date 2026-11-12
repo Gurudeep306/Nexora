@@ -28,7 +28,7 @@ const getJson = async (p) => {
 };
 function withDb(fn) {
   const { DatabaseSync } = require('node:sqlite');
-  const db = new DatabaseSync(DB);
+  const db = new DatabaseSync(DB, { timeout: 10000 }); // wait for the server's write lock instead of failing
   try { return fn(db); } finally { db.close(); }
 }
 const day = (n) => new Date(Date.now() - n * 86400000).toISOString().slice(0, 10);

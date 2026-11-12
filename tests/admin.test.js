@@ -46,7 +46,7 @@ async function login(name) {
 }
 function sql(stmt, ...args) {
   const { DatabaseSync } = require('node:sqlite');
-  const db = new DatabaseSync(DB);
+  const db = new DatabaseSync(DB, { timeout: 10000 }); // wait for the server's write lock instead of failing
   try { return db.prepare(stmt).run(...args); } finally { db.close(); }
 }
 const settle = () => new Promise((r) => setTimeout(r, 50));
