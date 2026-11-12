@@ -262,7 +262,7 @@ test('review queue: due now, count and the next 14 days', async () => {
   assert.ok(before.upcoming[addDays(isoDay(), 1)] >= 2);
   // Make the wrong MCQ due yesterday.
   const { DatabaseSync } = require('node:sqlite');
-  const db = new DatabaseSync(DB);
+  const db = new DatabaseSync(DB, { timeout: 10000 }); // wait for the server's write lock instead of failing
   db.prepare('UPDATE gate_qstate SET due=? WHERE question_id=?').run(addDays(isoDay(), -1), MCQ.id);
   db.close();
   const after = (await call('GET', '/api/gate/me/review?limit=5', alice)).body;

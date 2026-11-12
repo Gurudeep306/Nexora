@@ -53,7 +53,7 @@ test.before(async () => {
   }
   if (!ready) throw new Error(`server not ready within 40s: ${serverLog}`);
   const { DatabaseSync } = require('node:sqlite');
-  const db = new DatabaseSync(DB);
+  const db = new DatabaseSync(DB, { timeout: 10000 }); // wait for the server's write lock instead of failing
   db.exec("INSERT INTO problems(platform, problem_id, title, url, rating, tags) VALUES('codeforces','8881A','Sum it','https://x',800,'[]')");
   pid = Number(db.prepare("SELECT id FROM problems WHERE problem_id='8881A'").get().id);
   db.close();
