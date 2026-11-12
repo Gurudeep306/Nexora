@@ -3,6 +3,7 @@
 const { run, get, all, newId, now, json } = require("./db");
 const vault = require("./vault");
 const { vendorOf, keyVendor, VENDORS } = require("./providers");
+const modelsLib = require("./models");
 
 const PERIODS = new Set(["day", "month", "total"]);
 const day = (t = Date.now()) => new Date(t).toISOString().slice(0, 10);
@@ -96,8 +97,8 @@ async function createKey(input, owner) {
   const v = vendorOf(input.provider);
   const family = v.impl === "openai" && !v.official ? "openai_compat" : v.impl;
   await run(
-    `INSERT INTO hive_keys(id, provider, preset, label, base_url, secret_enc, last4, token_limit, limit_period, max_concurrency, owner, default_model, created_at, updated_at)
-     VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    `INSERT INTO hive_keys(id, provider, preset, label, base_url, secret_enc, last4, token_limit, limit_period, max_concurrency, owner, default_model, default_pinned, created_at, updated_at)
+     VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     [
       id,
       family,
@@ -111,6 +112,7 @@ async function createKey(input, owner) {
       Number(input.maxConcurrency || 4),
       owner,
       input.defaultModel || null,
+      input.defaultModel ? 1 : 0,
       t,
       t,
     ],
@@ -133,7 +135,10 @@ async function updateKey(id, input) {
   if (input.limitPeriod !== undefined) set("limit_period", input.limitPeriod);
   if (input.maxConcurrency !== undefined) set("max_concurrency", Number(input.maxConcurrency));
   if (input.disabled !== undefined) set("disabled", input.disabled ? 1 : 0);
-  if (input.defaultModel !== undefined) set("default_model", input.defaultModel || null);
+  if (input.defaultModel !== undefined) {
+    set("default_model", input.defaultModel || null);
+    set("default_pinned", input.defaultModel ? 1 : 0);
+  }
   if (input.baseUrl !== undefined) set("base_url", input.baseUrl || null);
   if (input.priority !== undefined) set("priority", Math.max(-100, Math.min(100, Math.round(Number(input.priority) || 0))));
   if (input.apiKey) {
@@ -164,14 +169,17 @@ async function checkKey(id) {
   const p = vendorOf(keyVendor(row));
   try {
     const models = await p.implModule.listModels({ secret: secretOf(row), baseUrl: row.base_url || p.baseUrl, official: !!p.official });
-    const def = row.default_model || models.find((m) => p.suggested.includes(m)) || p.suggested.find((m) => models.includes(m)) || models[0] || null;
-    await run("UPDATE hive_keys SET models_json=?, status='ok', status_detail=NULL, default_model=COALESCE(default_model, ?), updated_at=? WHERE id=?", [
-      JSON.stringify(models.slice(0, 400)),
+    // Keep a chosen default only while the provider still offers it.
+    const keep = !!row.default_pinned && !!row.default_model && (!models.length || models.includes(row.default_model));
+    const def = keep ? row.default_model : modelsLib.pickDefault(models, p.suggested);
+    await run("UPDATE hive_keys SET models_json=?, status='ok', status_detail=NULL, default_model=?, updated_at=? WHERE id=?", [
+      JSON.stringify(models.slice(0, 600)),
       def,
       now(),
       id,
     ]);
-    return { ok: true, models };
+    const fresh = await modelsLib.observe(p.id, models).catch(() => []);
+    return { ok: true, models, defaultModel: def, newModels: fresh };
   } catch (e) {
     await run("UPDATE hive_keys SET status=?, status_detail=?, updated_at=? WHERE id=?", [e.kind === "auth" ? "invalid" : "error", String(e.message).slice(0, 300), now(), id]);
     return { ok: false, error: e.message };
@@ -277,4 +285,15 @@ async function usageSeries(keyId, days = 30) {
   return { days: rows.map((r) => ({ day: r.day, input: Number(r.input), output: Number(r.output), requests: Number(r.requests) })), byUser };
 }
 
-module.exports = { listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };
+/** Re-check every enabled key: refreshes model lists, defaults and the radar. */
+async function refreshAll() {
+  const rows = await all("SELECT id FROM hive_keys WHERE disabled=0");
+  const fresh = [];
+  for (const r of rows) {
+    const c = await checkKey(r.id).catch(() => null);
+    if (c?.newModels?.length) fresh.push(...c.newModels);
+  }
+  return fresh;
+}
+
+module.exports = { refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };

@@ -46,19 +46,33 @@ function toContents(messages) {
     } else if (m.role === "tool") {
       push(
         "user",
-        m.results.map((r) => ({ functionResponse: { name: r.name, response: r.isError ? { error: r.content } : { result: r.content } } })),
+        m.results.map((r) => ({
+          functionResponse: { ...(r.id && !String(r.id).startsWith("gem_") ? { id: r.id } : {}), name: r.name, response: r.isError ? { error: r.content } : { result: r.content } },
+        })),
       );
     }
   }
   return contents;
 }
 
-async function turn({ secret, model, system, messages, tools, signal, onText, onThinking, onToolInput }) {
+// Thinking models (2.5 and later); older ones reject thinkingConfig.
+const THINKS = /gemini-(2\.5|[3-9])/;
+
+async function turn(args) {
+  try {
+    return await turnOnce(args, THINKS.test(args.model));
+  } catch (e) {
+    if (e.status === 400 && /thinking/i.test(e.message)) return turnOnce(args, false);
+    throw e;
+  }
+}
+
+async function turnOnce({ secret, model, system, messages, tools, signal, onText, onThinking, onToolInput }, thinking) {
   const body = {
     systemInstruction: { parts: [{ text: system }] },
     contents: toContents(messages),
-    generationConfig: { thinkingConfig: { includeThoughts: true } },
   };
+  if (thinking) body.generationConfig = { thinkingConfig: { includeThoughts: true } };
   if (tools.length) body.tools = [{ functionDeclarations: tools.map((t) => ({ name: t.name, description: t.description, parameters: cleanSchema(t.schema) })) }];
   let res;
   try {

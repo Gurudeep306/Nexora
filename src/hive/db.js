@@ -209,6 +209,49 @@ const SCHEMA = [
     created_by TEXT NOT NULL,
     created_at INTEGER NOT NULL
   )`,
+  // Model radar: every model id each vendor has offered, and when it appeared.
+  `CREATE TABLE IF NOT EXISTS hive_models (
+    vendor TEXT NOT NULL,
+    model TEXT NOT NULL,
+    first_seen INTEGER NOT NULL,
+    last_seen INTEGER NOT NULL,
+    PRIMARY KEY (vendor, model)
+  )`,
+  // Extra repositories linked to a project (the primary one lives on hive_projects).
+  `CREATE TABLE IF NOT EXISTS hive_project_repos (
+    id TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL,
+    github_id TEXT NOT NULL,
+    repo_owner TEXT NOT NULL,
+    repo_name TEXT NOT NULL,
+    default_branch TEXT NOT NULL DEFAULT 'main',
+    role TEXT NOT NULL DEFAULT '',
+    created_at INTEGER NOT NULL
+  )`,
+  "CREATE INDEX IF NOT EXISTS idx_hive_project_repos ON hive_project_repos(project_id)",
+  // Idea → project launchpad.
+  `CREATE TABLE IF NOT EXISTS hive_ideas (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    pitch TEXT NOT NULL,
+    plan_json TEXT,
+    status TEXT NOT NULL DEFAULT 'draft',
+    project_id TEXT,
+    created_by TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  )`,
+  // Machines: computers/servers running the Hive bridge (local folders, commands).
+  `CREATE TABLE IF NOT EXISTS hive_machines (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    token_hash TEXT NOT NULL,
+    created_by TEXT NOT NULL,
+    info_json TEXT NOT NULL DEFAULT '{}',
+    policy TEXT NOT NULL DEFAULT 'ask',
+    last_seen INTEGER,
+    created_at INTEGER NOT NULL
+  )`,
 ];
 
 // Columns added after the first release (ALTER fails harmlessly if present).
@@ -219,6 +262,14 @@ const COLUMNS = [
   ["hive_tasks", "attachments_json TEXT"],
   ["hive_agents", "title TEXT"],
   ["hive_agents", "handoffs INTEGER NOT NULL DEFAULT 0"],
+  ["hive_keys", "default_pinned INTEGER NOT NULL DEFAULT 0"],
+  ["hive_tasks", "repo_id TEXT"],
+  ["hive_tasks", "machine_id TEXT"],
+  ["hive_tasks", "folder TEXT"],
+  ["hive_convos", "pinned INTEGER NOT NULL DEFAULT 0"],
+  ["hive_projects", "idea_id TEXT"],
+  ["hive_projects", "machine_id TEXT"],
+  ["hive_projects", "folder TEXT"],
 ];
 
 let ready = null;

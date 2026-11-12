@@ -27,11 +27,14 @@ function toOpenAiMessages(system, messages, opts = {}) {
   for (const m of messages) {
     if (m.role === "user") out.push({ role: "user", content: userContent(m, opts) });
     else if (m.role === "assistant") {
-      const msg = { role: "assistant", content: m.text || null };
+      // Some APIs reject content:null unless tool calls are present.
+      const msg = { role: "assistant", content: m.text || (m.toolCalls?.length ? null : "") };
       if (m.toolCalls?.length) {
         msg.tool_calls = m.toolCalls.map((c) => ({ id: c.id, type: "function", function: { name: c.name, arguments: JSON.stringify(c.input || {}) } }));
       }
-      if (m.raw?.provider === "openai" && m.raw.reasoning_content) msg.reasoning_content = m.raw.reasoning_content;
+      // Only DeepSeek / Kimi want their reasoning replayed; others (Groq,
+      // Mistral, OpenAI) reject the unknown field with a 400.
+      if (opts.replayReasoning && m.raw?.provider === "openai" && m.raw.reasoning_content) msg.reasoning_content = m.raw.reasoning_content;
       out.push(msg);
     } else if (m.role === "tool") {
       for (const r of m.results) out.push({ role: "tool", tool_call_id: r.id, content: r.content });
@@ -40,16 +43,31 @@ function toOpenAiMessages(system, messages, opts = {}) {
   return out;
 }
 
-async function turn({ secret, baseUrl, model, system, messages, tools, effort, signal, onText, onThinking, onToolInput, official, vision = true }) {
+const REPLAY_REASONING = new Set(["deepseek", "moonshot"]);
+// Vendors known to accept stream_options (usage in the final chunk).
+const STREAM_USAGE = new Set(["openai", "openrouter", "groq", "together", "fireworks", "cerebras", "deepseek", "xai", "qwen", "moonshot", "zhipu"]);
+const OPTIONAL_FIELD = /stream_options|reasoning_effort|reasoning_content|extra (fields|inputs)|not permitted|unrecognized|unknown (field|parameter|argument)|unsupported (parameter|field)|additional properties/i;
+
+async function turn(args) {
+  try {
+    return await turnOnce(args, false);
+  } catch (e) {
+    // A strict OpenAI-compatible API rejecting an optional field: retry bare.
+    if (e instanceof ProviderError && (e.status === 400 || e.status === 422) && OPTIONAL_FIELD.test(e.message)) return turnOnce(args, true);
+    throw e;
+  }
+}
+
+async function turnOnce({ secret, baseUrl, model, system, messages, tools, effort, signal, onText, onThinking, onToolInput, official, vision = true, vendor }, bare) {
   const base = (baseUrl || DEFAULT_BASE).replace(/\/+$/, "");
   const body = {
     model,
-    messages: toOpenAiMessages(system, messages, { official, vision }),
+    messages: toOpenAiMessages(system, messages, { official, vision, replayReasoning: !bare && REPLAY_REASONING.has(vendor) }),
     stream: true,
-    stream_options: { include_usage: true },
   };
+  if (!bare && (official || STREAM_USAGE.has(vendor))) body.stream_options = { include_usage: true };
   if (tools.length) body.tools = tools.map((t) => ({ type: "function", function: { name: t.name, description: t.description, parameters: t.schema } }));
-  if (official && REASONING.test(model) && effort) {
+  if (!bare && official && REASONING.test(model) && effort) {
     body.reasoning_effort = { low: "low", medium: "medium", high: "high", xhigh: "high", max: "high" }[effort] || "medium";
   }
   let res;
