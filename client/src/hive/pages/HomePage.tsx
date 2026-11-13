@@ -50,7 +50,7 @@ export default function HomePage() {
       boot
         ? [
             { id: 'keys', done: boot.keys.length > 0, label: 'Add an AI key', to: '/hive/keys', icon: KeyRound },
-            { id: 'github', done: boot.github.length > 0, label: 'Connect GitHub', to: '/hive/keys', icon: FolderGit2 },
+            { id: 'github', done: boot.github.length > 0, label: 'Connect GitHub — every repo becomes available', to: '/hive/repos', icon: FolderGit2 },
             { id: 'project', done: boot.projects.length > 0, label: 'Open NexoraGuru as a project', to: '/hive/nexora', icon: Sparkles },
             { id: 'machine', done: machines.length > 0, label: 'Connect a machine (optional)', to: '/hive/machines', icon: Server },
           ]
@@ -138,6 +138,9 @@ export default function HomePage() {
                     <span className="hive-hex size-3.5" style={{ background: projectColor(p.color) }} /> {p.name}
                   </MenuItem>
                 ))}
+                <MenuItem onSelect={() => navigate('/hive/repos')}>
+                  <FolderGit2 className="size-3.5" /> Any repository on your GitHub…
+                </MenuItem>
               </MenuContent>
             </Menu>
             {spec && target !== 'copilot' && <AgentChip boot={boot} spec={spec} onChange={setSpec} need={target === 'chat' ? 'chat' : 'tools'} />}

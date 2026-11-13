@@ -1,6 +1,6 @@
 import { api } from '@/lib/api'
 import { API_BASE } from '@/lib/api'
-import type { ArchitectReply, Cap, CatalogInfo, Checkpoint, CliStatus, ConnectedModel, DriveItem, GithubReport, HiveAlert, ImproveResult, Lifecycle, MeasuredStat, Pipeline, PipelineRun, PipelineStage, PipelineTemplate, RouteResult, Schedule, ScheduleTemplate, Spend, StewardAction, StewardPlan, StewardReport, Toolbox, Verdict, HealthKey, Dispatch, CopilotMsg, CopilotBrain, CopilotSettings, CopilotWork } from './types'
+import type { ArchitectReply, Cap, CatalogInfo, Checkpoint, CliStatus, ConnectedModel, DriveItem, GithubReport, HiveAlert, ImproveResult, Lifecycle, MeasuredStat, Pipeline, PipelineRun, PipelineStage, PipelineTemplate, RouteResult, Schedule, ScheduleTemplate, Spend, StewardAction, StewardPlan, StewardReport, Toolbox, Verdict, HealthKey, Dispatch, CopilotMsg, CopilotBrain, CopilotSettings, CopilotWork, GhRepo } from './types'
 import type { AgentRow, AgentSpec, Approval, Bootstrap, Change, ChatMessage, Check, Convo, ConvoMsg, HiveEvent, HiveFile, Idea, LinkedRepo, LiveAgent, Machine, MarketModel, MemoryItem, Mode, Plugin, PrInfo, Project, ProjectActivity, Task } from './types'
 
 type Ok<T> = T & { ok: boolean }
@@ -23,6 +23,9 @@ export const hiveApi = {
   repos: (id: string) =>
     api.get<Ok<{ repos: { owner: string; name: string; fullName: string; private: boolean; defaultBranch: string; description: string | null; pushedAt: string }[] }>>(`/api/hive/github/${id}/repos`, { timeoutMs: 45000 }),
 
+  allRepos: (refresh = false) => api.get<Ok<{ repos: GhRepo[]; connections: number; errors: string[] }>>(`/api/hive/repos${refresh ? '?refresh=1' : ''}`, { timeoutMs: 60000 }),
+  openRepo: (repo: string) => api.post<Ok<{ project: Project; created: boolean }>>('/api/hive/repos/open', { repo }, { timeoutMs: 45000 }),
+  writeBrief: (projectId: string) => api.post<Ok<{ instructions: string }>>(`/api/hive/projects/${projectId}/brief`, {}, { timeoutMs: 120000 }),
   createProject: (body: Record<string, unknown>) => api.post<Ok<{ project: Project }>>('/api/hive/projects', body),
   updateProject: (id: string, body: Record<string, unknown>) => api.patch<Ok<{ project: Project }>>(`/api/hive/projects/${id}`, body),
   deleteProject: (id: string) => api.delete<Ok<object>>(`/api/hive/projects/${id}`),

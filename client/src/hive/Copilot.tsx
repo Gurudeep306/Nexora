@@ -360,11 +360,13 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
   const navigate = useNavigate()
   const handed = useRef(false)
   useEffect(() => {
-    const st = location.state as { send?: string } | null
-    if (compact || !st?.send || handed.current || !msgs) return
+    const st = location.state as { send?: string; draft?: string } | null
+    if (compact || !(st?.send || st?.draft) || handed.current || !msgs) return
     handed.current = true
     navigate(location.pathname, { replace: true, state: null })
-    send(st.send)
+    // A draft (e.g. "In owner/repo: ") is put in the box for the person to finish.
+    if (st.draft) setText(st.draft)
+    else if (st.send) send(st.send)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [msgs])
 

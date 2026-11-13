@@ -1000,3 +1000,20 @@ export interface CopilotWork {
   updatedAt: number
   agents: { provider: string; model: string; status: string }[]
 }
+
+/** A GitHub repository any connected GitHub account can reach. */
+export interface GhRepo {
+  owner: string
+  name: string
+  fullName: string
+  private: boolean
+  defaultBranch: string
+  description: string
+  language: string | null
+  pushedAt: string
+  stars: number
+  githubId: string
+  connection: string
+  canPush: boolean
+  projectId: string | null
+}
