@@ -14,6 +14,7 @@ Hive is the staff-only AI workspace at **/hive** on the site (staff see a **Hive
 | **Sessions** | One piece of work by one or more agents. See below. |
 | **Launchpad** | Describe an idea and get a plan (product, stack, architecture, milestones). **Launch** creates the repo, PLAN.md and project memory, and starts milestone 1. |
 | **Machines** | Computers running the Hive bridge. On a machine, agents work on real folders and run commands, tests and dev servers. |
+| **Copilot** (⌘I, or the round button at the bottom right of every page) | Your chief of staff. Say what you want; it plans the work, writes the prompts, puts the right agents on it, watches, reads the changes, judges them, fixes what's missing and tells you when it's ready. It never ships without you. |
 | **Dispatcher** | Describe the work. Hive splits it into parts by kind of work (reading, mechanical, coding, writing, review, hard engineering) and puts the cheapest model that can really do each part on it. You see the plan as a graph with each part's model and cost, next to "one premium model for everything". Swap any model, then **Start the team**: independent parts run in parallel, and a reviewer from another lab checks the whole change. |
 | **Agent health** | Every connected agent: working, flaky, cooling down after errors, or down (bad key, no credit). Failing agents are skipped automatically and their work goes to the next best one. Free and plan agents are tested every 4 hours; **Test everything** checks them all now. |
 | **Pipelines** | Relay teams of agents: plan → build → test → review → ship, with gates, fix loops and races judged by the Judge. Describe what you want to the **Architect** and it designs the pipeline. |
@@ -153,6 +154,43 @@ Tune it in **Plugins → Token Steward**:
 | `triggerTokens` | 24000 | History size at which compaction starts |
 | `keepTokens` | 8000 | Recent turns kept word for word |
 | `maxToolChars` | 12000 | Maximum size of one tool result |
+
+## Copilot: your chief of staff
+
+The Copilot can do everything you can do in Hive:
+- see what's running
+- start sessions (one agent, or several to compare)
+- plan and run Dispatcher teams
+- write and sharpen prompts
+- bring in, steer or stop agents
+- read a session's diff and have the Judge pick the best attempt
+- check agent health and spend
+- research models on the web, and remember what matters
+
+**Its brain**, chosen with the pill at the top of the Copilot:
+- **Auto (recommended).** Your **Claude plan** comes first: Claude Code on your worker machine, with Hive connected to it as an MCP server, so it costs no API credits. When the plan's window is used up or the machine is offline, it falls back to the best free model that can use tools, then the best paid one.
+- **Claude plan only.**
+- **A specific model.**
+
+**Autonomy**, set in the brain pill's menu:
+- **Autopilot (default).** It acts for you:
+  - starts work and approves *safe* commands agents want to run (never destructive ones, such as deleting outside the project, force-pushing or piping a download into a shell)
+  - reviews and fixes, then **ships verified work as a pull request**
+  - runs pipelines, schedules automations, writes Drive files and changes Hive settings
+- **Assist.** It starts and reviews work, but asks you before shipping, approving, scheduling or changing settings.
+- **Let it merge when CI is green.** Admins only, and **off by default**, because merging to the main branch can deploy the live site. When it's on, the Copilot queues a merge and completes it once the checks pass. If CI fails, it brings in an agent to fix it and tries again.
+
+**It keeps its own token use low.**
+- It plans and judges, and gives the coding to agents: cheap or free models for simple parts, strong ones for hard parts (quality first).
+- Side jobs such as summarising, drafting and comparing go to the cheapest capable model (`ask_model`).
+- Big diffs and long Drive files are summarised by a free model before the Copilot reads them, and it only asks for exact lines when it needs them.
+
+**It reviews by itself.** Sessions the Copilot starts, or is asked to watch, are reviewed automatically when they finish:
+1. It reads the result and the diff.
+2. It brings in an agent to fix anything that's missing.
+3. It posts a verdict in the thread: ✅ ready to ship, ⚠️ needs changes, or ❌ failed.
+
+You also get an alert.
 
 ## Speed without losing quality
 
