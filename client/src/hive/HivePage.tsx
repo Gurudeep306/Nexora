@@ -47,6 +47,7 @@ import { Launcher, type LaunchGroup } from './Launcher'
 import { CopilotDock } from './Copilot'
 import { HiveLogo } from './HiveLogo'
 import { projectColor } from './projectColor'
+import { ModelsAtWork, ProjectSwitcher } from './Showcase'
 import { HiveProvider, useHive } from './store'
 import type { Convo } from './types'
 import { StatusDot, UserDot, timeAgo } from './ui'
@@ -654,7 +655,7 @@ function SideAdd({ to, label }: { to: string; label: string }) {
 
 /* ── Top bar: breadcrumbs + live state ─────────────────────────────────── */
 function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: boolean; onToggleSide: () => void; onMobileNav: () => void; onPalette: () => void; onTeam: () => void }) {
-  const { project, detail, online, connected, live, approvals } = useHive()
+  const { project, detail, online, connected, approvals } = useHive()
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const section = useMemo(() => {
@@ -671,6 +672,9 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
           {side ? <PanelLeftClose className="size-4" /> : <PanelLeftOpen className="size-4" />}
         </button>
       </Tooltip>
+      <div className="hidden sm:block">
+        <ProjectSwitcher />
+      </div>
       <nav className="flex min-w-0 flex-1 items-center gap-1 text-[13px]" aria-label="Breadcrumb">
         <Link to="/hive" className="flex shrink-0 items-center gap-1.5 rounded-md px-1.5 py-1 font-medium text-text-secondary hover:text-text-primary">
           <HiveLogo size={16} /> Hive
@@ -682,13 +686,13 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
           </>
         )}
         {project && (
-          <>
+          <span className="contents sm:hidden">
             <ChevronRight className="size-3.5 shrink-0 text-text-muted" />
             <button type="button" onClick={() => navigate(`/hive/p/${project.id}`)} className={cn('flex min-w-0 items-center gap-1.5 rounded-md px-1.5 py-1 hover:bg-text-primary/[0.05]', detail ? 'text-text-secondary' : 'font-medium text-text-primary')}>
               <span className="hive-hex size-2.5 shrink-0" style={{ background: projectColor(project.color) }} />
               <span className="truncate">{project.name}</span>
             </button>
-          </>
+          </span>
         )}
         {detail && project && (
           <>
@@ -705,11 +709,7 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
           <ShieldAlert className="size-3.5" /> {approvals.length} waiting
         </button>
       )}
-      {live.length > 0 && (
-        <span className="hidden items-center gap-1.5 rounded-full bg-accent-brand/10 px-2.5 py-1 text-[12px] font-medium text-accent-brand md:inline-flex">
-          <span className="hive-dot-run size-1.5 rounded-full bg-accent-brand" /> {live.length} agent{live.length === 1 ? '' : 's'} working
-        </span>
-      )}
+      <ModelsAtWork />
       <AlertsBell />
       <button type="button" onClick={onTeam} className="flex items-center -space-x-1.5 px-1" aria-label="Who's online">
         {online.slice(0, 4).map((o) => (

@@ -57,8 +57,10 @@ function publicKey(row, usedTokens = 0, extra = {}) {
     baseUrl: row.base_url || null,
     priority: Number(row.priority || 0),
     last4: row.last4,
-    // Once a key's models are tested, only the ones that answered are offered.
-    models: workingModels(row),
+    // Only models that answered a test call, minus any failing in real use right now
+    // (two or more failures in a row in the last day, with no success since).
+    models: row.status === "invalid" ? [] : workingModels(row).filter((m) => !(extra.failing || []).includes(m)),
+    failingModels: extra.failing || [],
     untestedModels: (() => {
       const w = new Set(workingModels(row));
       return json(row.models_json, []).filter((m) => !w.has(m));
@@ -121,6 +123,7 @@ async function listKeys() {
       [r.id, periodStart(r.limit_period)],
     );
     const today = await get("SELECT COALESCE(SUM(input_tokens + output_tokens),0) AS t, COALESCE(SUM(requests),0) AS n FROM hive_usage WHERE key_id=? AND day=?", [r.id, day()]);
+    const failing = (await all("SELECT model FROM hive_health WHERE key_id=? AND model<>'' AND consecutive_fails>=2 AND last_fail>? AND (last_ok IS NULL OR last_ok<last_fail)", [r.id, Date.now() - 86_400_000]).catch(() => [])).map((x) => x.model);
     out.push(
       publicKey(r, used, {
         periodInput: Number(totals.i),
@@ -132,6 +135,7 @@ async function listKeys() {
         todayRequests: Number(today?.n || 0),
         periodStart: periodStart(r.limit_period),
         periodEnds: periodEnd(r.limit_period),
+        failing,
       }),
     );
   }
