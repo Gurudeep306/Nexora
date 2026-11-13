@@ -144,7 +144,7 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
         } catch {
           continue;
         }
-        const list = v.subscription ? ["default"] : json(r.models_json, []).filter(isChatModel);
+        const list = v.subscription ? ["default"] : keys.workingModels(r).filter(isChatModel);
         for (const m of list.slice(0, 400)) {
           const card = catalog.cardFor(m, v.id);
           if (card.guessed && !v.subscription && list.length > 60 && m !== r.default_model) continue; // long lists: known models only
@@ -809,6 +809,25 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     }),
   );
 
+  // Test every model on a key (or on every free key) and keep only the ones that answer.
+  router.post(
+    "/api/hive/health/verify",
+    h(async (req, res) => {
+      const b = req.body || {};
+      const job = b.keyId ? health.verifyKey(String(b.keyId), { retest: !!b.retest }) : health.verifyAll({ includePaid: !!b.includePaid });
+      const done = job.then((r) => {
+        hub.emit("health", { verified: true });
+        hub.emit("keys", { verified: true });
+        return r;
+      });
+      done.catch((e) => console.error("[hive verify]", e.message));
+      if (b.wait) return res.json({ ok: true, result: await done, keys: await health.board() });
+      // Testing many models takes a minute or two: answer now, progress arrives on the board.
+      await new Promise((r) => setTimeout(r, 300));
+      res.json({ ok: true, started: true, progress: health.verifyProgress(), keys: await health.board() });
+    }),
+  );
+
   /* ── The Dispatcher ── */
   router.get(
     "/api/hive/dispatches",
@@ -856,6 +875,8 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     hub.bus.on("approval", (a) => copilot.onApproval(a).catch((e) => console.error("[hive copilot]", e.message)));
     // Queued merges go through once CI is green.
     setInterval(() => copilot.mergeTick().catch((e) => console.error("[hive copilot merge]", e.message)), 2 * 60_000).unref?.();
+    // Work never stops: agents whose model goes down (or that hang) are handed to a healthy model.
+    setInterval(() => copilot.rescueTick().catch((e) => console.error("[hive rescue]", e.message)), 2 * 60_000).unref?.();
   }
   router.post("/api/hive-mcp", (req, res) => {
     copilot.mcpHandle(req, res, copilotDeps(null)).catch((e) => res.status(500).json({ jsonrpc: "2.0", id: req.body?.id ?? null, error: { code: -32603, message: e.message } }));

@@ -493,6 +493,7 @@ const COLUMNS = [
   ["hive_convos", "tools INTEGER NOT NULL DEFAULT 1"],
   ["hive_convos", "summary_json TEXT"],
   ["hive_keys", "blocked_models TEXT"],
+  ["hive_keys", "verified_json TEXT"],
   ["hive_copilot_settings", "autonomy TEXT NOT NULL DEFAULT 'autopilot'"],
   ["hive_copilot_settings", "can_merge INTEGER NOT NULL DEFAULT 0"],
   ["hive_copilot_settings", "admin INTEGER NOT NULL DEFAULT 0"],
