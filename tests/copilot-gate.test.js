@@ -32,6 +32,8 @@ test.before(async () => {
     "http://127.0.0.1:9/v1",
     "ok",
   ]);
+  // Tested: every model answered (only tested models are offered).
+  await db.run("UPDATE hive_keys SET verified_json=? WHERE id='farm1'", [JSON.stringify({ at: t, ok: ["qwen3.8-27b", "gemma-4-31b", "qwen3-coder-next", "paddleocr-vl"], failed: {} })]);
   await db.run("INSERT INTO hive_tasks(id, project_id, title, prompt, base_ref, base_sha, created_by, created_at, updated_at) VALUES(?,?,?,?,?,?,?,?,?)", ["task1", "p1", "Build a page", "Build it", "main", "x", "owner", t, t]);
   await db.run("INSERT INTO hive_agents(id, task_id, name, provider, model, instructions, key_id, started_by, created_at) VALUES(?,?,?,?,?,?,?,?,?)", ["a1", "task1", "Ada", "farm", "qwen3.8-27b", "Build it", "farm1", "owner", t]);
 });

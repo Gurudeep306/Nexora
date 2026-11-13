@@ -24,6 +24,7 @@ export const hiveApi = {
     api.get<Ok<{ repos: { owner: string; name: string; fullName: string; private: boolean; defaultBranch: string; description: string | null; pushedAt: string }[] }>>(`/api/hive/github/${id}/repos`, { timeoutMs: 45000 }),
 
   allRepos: (refresh = false) => api.get<Ok<{ repos: GhRepo[]; connections: number; errors: string[] }>>(`/api/hive/repos${refresh ? '?refresh=1' : ''}`, { timeoutMs: 60000 }),
+  projectChat: (projectId: string, fresh = false) => api.post<Ok<{ convo: Convo }>>(`/api/hive/projects/${projectId}/chat`, { fresh }),
   openRepo: (repo: string) => api.post<Ok<{ project: Project; created: boolean }>>('/api/hive/repos/open', { repo }, { timeoutMs: 45000 }),
   importStart: (body: { name: string; private?: boolean; githubId?: string }) => api.post<Ok<{ id: string; repo: string; private: boolean; maxFile: number }>>('/api/hive/import/start', body, { timeoutMs: 60000 }),
   importFiles: (id: string, files: { file: File; path: string }[]) => {
@@ -275,8 +276,8 @@ export const hiveApi = {
   copilotActive: () => api.get<Ok<{ active: CopilotWork[] }>>('/api/hive/copilot/active'),
   clearCopilot: () => api.delete<Ok<object>>('/api/hive/copilot'),
   copilotSettings: (body: Partial<CopilotSettings>) => api.put<Ok<{ settings: CopilotSettings; brain: CopilotBrain }>>('/api/hive/copilot/settings', body),
-  sendCopilot: async (text: string, onEvent: (type: string, data: Record<string, unknown>) => void, signal?: AbortSignal) => {
-    const res = await fetch(`${API_BASE}/api/hive/copilot`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }), signal })
+  sendCopilot: async (text: string, onEvent: (type: string, data: Record<string, unknown>) => void, signal?: AbortSignal, opts: { quick?: boolean; projectId?: string | null } = {}) => {
+    const res = await fetch(`${API_BASE}/api/hive/copilot`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, quick: !!opts.quick, projectId: opts.projectId ?? null }), signal })
     if (!res.ok || !res.body) {
       const j = await res.json().catch(() => ({}))
       throw new Error((j as { error?: string }).error || `Request failed (${res.status})`)

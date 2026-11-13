@@ -1012,7 +1012,8 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
       };
       const ping = setInterval(() => write("ping", {}), 15000);
       try {
-        await copilot.send({ username: req.hiveUser, text, sink: write, deps: copilotDeps(req), signal: ctl.signal });
+        const projectId = typeof req.body?.projectId === "string" ? req.body.projectId.slice(0, 80) : null;
+        await copilot.send({ username: req.hiveUser, text, sink: write, deps: copilotDeps(req), signal: ctl.signal, quick: !!req.body?.quick, projectId });
       } catch (e) {
         write("error", { error: e.message || "Something went wrong" });
       } finally {

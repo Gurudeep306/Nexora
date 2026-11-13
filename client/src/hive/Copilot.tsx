@@ -5,7 +5,7 @@
    a step you can open. Lives on its own page and as a floating panel on
    every Hive page.
    ──────────────────────────────────────────────────────────────────────── */
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
@@ -19,6 +19,10 @@ import {
   ShieldCheck,
   Check,
   ChevronDown,
+  Copy,
+  FolderGit2,
+  RotateCcw,
+  Zap,
   Coins,
   Eye,
   FileDiff,
@@ -324,6 +328,137 @@ function TokenSaver({ settings, onChange }: { settings: CopilotSettings; onChang
   )
 }
 
+function readPref(k: string): string | null {
+  try {
+    return localStorage.getItem(k)
+  } catch {
+    return null
+  }
+}
+function writePref(k: string, v: string | null) {
+  try {
+    if (v == null) localStorage.removeItem(k)
+    else localStorage.setItem(k, v)
+  } catch {
+    /* private mode */
+  }
+}
+
+/** What the Copilot is doing right now, with a running clock — so a slow start never looks stuck. */
+function LiveStatus({ pending }: { pending: { text: string; steps: CopilotStep[]; brain?: CopilotBrain; started: number } }) {
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(t)
+  }, [])
+  const secs = Math.max(0, Math.round((now - pending.started) / 1000))
+  const running = pending.steps.filter((s) => s.status === 'running')
+  const phase = running.length
+    ? (STEP[running[running.length - 1].name]?.label(running[running.length - 1].input) ?? `Using ${running[running.length - 1].name.replace(/_/g, ' ')}`)
+    : pending.text
+      ? 'Writing'
+      : !pending.brain
+        ? 'Choosing who thinks'
+        : pending.brain.kind === 'cli' && !pending.steps.length
+          ? 'Starting Claude on your machine'
+          : pending.steps.length
+            ? 'Thinking about the results'
+            : 'Thinking'
+  return (
+    <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-accent-brand/[0.08] px-2.5 py-1 text-[12px] text-text-secondary ring-1 ring-accent-brand/15">
+      <Loader2 className="size-3.5 animate-spin text-accent-brand" />
+      <span className="font-medium">{phase}…</span>
+      <span className="tabular-nums text-text-muted">{secs}s</span>
+      {pending.brain?.kind === 'cli' && secs > 25 && !pending.text && <span className="text-text-muted">· turn on Quick for faster answers</span>}
+    </div>
+  )
+}
+
+function ReplyActions({ text, onRetry }: { text: string; onRetry?: () => void }) {
+  const [copied, setCopied] = useState(false)
+  return (
+    <div className="mt-1.5 flex gap-1 opacity-60 transition-opacity hover:opacity-100">
+      {text && (
+        <Tooltip label={copied ? 'Copied' : 'Copy'}>
+          <button
+            type="button"
+            onClick={() =>
+              navigator.clipboard?.writeText(text).then(() => {
+                setCopied(true)
+                setTimeout(() => setCopied(false), 1200)
+              })
+            }
+            className="grid size-7 place-items-center rounded-lg text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary"
+            aria-label="Copy reply"
+          >
+            {copied ? <Check className="size-3.5 text-state-success" /> : <Copy className="size-3.5" />}
+          </button>
+        </Tooltip>
+      )}
+      {onRetry && (
+        <Tooltip label="Ask again">
+          <button type="button" onClick={onRetry} className="grid size-7 place-items-center rounded-lg text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary" aria-label="Ask again">
+            <RotateCcw className="size-3.5" />
+          </button>
+        </Tooltip>
+      )}
+    </div>
+  )
+}
+
+/** The project the Copilot works on: "this", "the repo" and "it" mean this one. */
+function ProjectFocus({ projects, value, onChange }: { projects: { id: string; name: string; repo_owner: string; repo_name: string }[]; value: { id: string; name: string } | null; onChange: (id: string | null) => void }) {
+  const [open, setOpen] = useState(false)
+  const [q, setQ] = useState('')
+  const list = projects.filter((p) => `${p.name} ${p.repo_owner}/${p.repo_name}`.toLowerCase().includes(q.toLowerCase().trim())).slice(0, 30)
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button type="button" className={cn('inline-flex h-7 max-w-[240px] items-center gap-1.5 rounded-full border px-2.5 text-[12px] font-medium', value ? 'border-accent-brand/40 bg-accent-brand/10 text-accent-brand' : 'hive-line text-text-muted hover:text-text-primary')}>
+          <FolderGit2 className="size-3.5 shrink-0" />
+          <span className="truncate">{value ? value.name : 'Any project'}</span>
+          <ChevronDown className="size-3 shrink-0" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-72 p-1.5">
+        <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Find a project…" className="mb-1 h-8 w-full rounded-lg bg-text-primary/[0.05] px-2.5 text-[13px] outline-none" />
+        <button
+          type="button"
+          onClick={() => {
+            onChange(null)
+            setOpen(false)
+          }}
+          className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[12.5px] hover:bg-text-primary/[0.05]"
+        >
+          <span className="flex-1 text-text-muted">Any project — I’ll say which</span>
+          {!value && <Check className="size-3.5 text-accent-brand" />}
+        </button>
+        <div className="hive-scroll max-h-64 overflow-y-auto">
+          {list.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => {
+                onChange(p.id)
+                setOpen(false)
+              }}
+              className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left hover:bg-text-primary/[0.05]"
+            >
+              <FolderGit2 className="size-3.5 shrink-0 text-text-muted" />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[12.5px] font-medium">{p.name}</span>
+                {p.repo_owner && <span className="block truncate text-[11px] text-text-muted">{p.repo_owner}/{p.repo_name}</span>}
+              </span>
+              {value?.id === p.id && <Check className="size-3.5 text-accent-brand" />}
+            </button>
+          ))}
+          {!list.length && <div className="px-2 py-3 text-center text-[12px] text-text-muted">No projects match. Add repos in Your GitHub.</div>}
+        </div>
+      </PopoverContent>
+    </Popover>
+  )
+}
+
 export function CopilotThread({ compact = false }: { compact?: boolean }) {
   const { on, boot } = useHive()
   const toast = useToast()
@@ -333,7 +468,14 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
   const [admin, setAdmin] = useState(false)
   const [active, setActive] = useState<CopilotWork[]>([])
   const [text, setText] = useState('')
-  const [pending, setPending] = useState<{ text: string; steps: CopilotStep[]; note?: string; brain?: CopilotBrain } | null>(null)
+  const [pending, setPending] = useState<{ text: string; steps: CopilotStep[]; note?: string; brain?: CopilotBrain; started: number } | null>(null)
+  // Composer options, remembered in this browser: Quick answers and the project in focus.
+  const [quick, setQuick] = useState(() => readPref('hive:copilot-quick') === '1')
+  const [focusId, setFocusId] = useState<string | null>(() => readPref('hive:copilot-project'))
+  const projects = useMemo(() => boot?.projects ?? [], [boot])
+  const focus = projects.find((p) => p.id === focusId) ?? null
+  useEffect(() => writePref('hive:copilot-quick', quick ? '1' : null), [quick])
+  useEffect(() => writePref('hive:copilot-project', focusId), [focusId])
   const ctl = useRef<AbortController | null>(null)
   const end = useRef<HTMLDivElement>(null)
   const ta = useRef<HTMLTextAreaElement>(null)
@@ -383,7 +525,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
     setText('')
     const c = new AbortController()
     ctl.current = c
-    setPending({ text: '', steps: [] })
+    setPending({ text: '', steps: [], started: Date.now() })
     try {
       await hiveApi.sendCopilot(
         t,
@@ -399,6 +541,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
           else if (type === 'error') toast.error(String(d.error ?? 'Something went wrong'))
         },
         c.signal,
+        { quick, projectId: focus?.id ?? null },
       )
     } catch (e) {
       if (!c.signal.aborted) toast.error(errMsg(e))
@@ -413,10 +556,12 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
   const navigate = useNavigate()
   const handed = useRef(false)
   useEffect(() => {
-    const st = location.state as { send?: string; draft?: string } | null
-    if (compact || !(st?.send || st?.draft) || handed.current || !msgs) return
+    const st = location.state as { send?: string; draft?: string; projectId?: string } | null
+    if (compact || !(st?.send || st?.draft || st?.projectId) || handed.current || !msgs) return
     handed.current = true
     navigate(location.pathname, { replace: true, state: null })
+    // Opened from a repo: that project is in focus.
+    if (st.projectId) setFocusId(st.projectId)
     // A draft (e.g. "In owner/repo: ") is put in the box for the person to finish.
     if (st.draft) setText(st.draft)
     else if (st.send) send(st.send)
@@ -506,6 +651,18 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
                       <Steps steps={m.tools} />
                       {m.content && <AiMarkdown text={m.content} />}
                       {m.error && <div className="mt-1 rounded-xl bg-state-error/[0.07] px-3 py-2 text-[12.5px] text-state-error">{m.error}</div>}
+                      <ReplyActions
+                        text={m.content}
+                        onRetry={
+                          pending
+                            ? undefined
+                            : () => {
+                                const i = msgs.indexOf(m)
+                                const prev = [...msgs.slice(0, i)].reverse().find((x) => x.role === 'user' && !x.auto)
+                                if (prev) send(prev.content)
+                              }
+                        }
+                      />
                     </div>
                   </motion.div>
                 ),
@@ -518,8 +675,9 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
                       <span className="font-medium text-text-secondary">Copilot</span> {pending.brain?.kind === 'cli' ? '· Claude · your plan' : pending.brain?.model ? `· ${pending.brain.model}` : ''}
                     </div>
                     {pending.note && <div className="mb-2 inline-flex rounded-full bg-state-warning/12 px-2.5 py-0.5 text-[11.5px] text-state-warning">{pending.note}</div>}
+                    <LiveStatus pending={pending} />
                     <Steps steps={pending.steps} live />
-                    {pending.text ? <AiMarkdown text={pending.text} streaming /> : !pending.steps.length && <span className="hive-shine text-[13.5px] font-medium">Thinking…</span>}
+                    {pending.text && <AiMarkdown text={pending.text} streaming />}
                   </div>
                 </div>
               )}
@@ -539,6 +697,14 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
             ))}
           </div>
         )}
+        <div className={cn('mx-auto mb-1.5 flex flex-wrap items-center gap-1.5', !compact && 'max-w-[820px]')}>
+          <ProjectFocus projects={projects} value={focus} onChange={(id) => setFocusId(id)} />
+          <Tooltip label={quick ? 'Quick: a fast model answers right away. Turn off for big jobs — then your Claude plan plans and runs the work.' : 'Quick is off: your Claude plan thinks on your machine (best quality, slower to start). Turn on for fast answers.'}>
+            <button type="button" onClick={() => setQuick((q) => !q)} aria-pressed={quick} className={cn('inline-flex h-7 items-center gap-1 rounded-full border px-2.5 text-[12px] font-medium transition-colors', quick ? 'border-state-warning/40 bg-state-warning/12 text-state-warning' : 'hive-line text-text-muted hover:text-text-primary')}>
+              <Zap className={cn('size-3.5', quick && 'fill-current')} /> Quick
+            </button>
+          </Tooltip>
+        </div>
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -557,7 +723,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
               }
             }}
             rows={1}
-            placeholder="Tell your Copilot what you want done…"
+            placeholder={focus ? `What should happen in ${focus.name}?` : 'Tell your Copilot what you want done…'}
             className="hive-scroll max-h-[200px] min-h-9 flex-1 resize-none bg-transparent py-2 text-[14px] outline-none placeholder:text-text-muted"
             aria-label="Message the Copilot"
           />
