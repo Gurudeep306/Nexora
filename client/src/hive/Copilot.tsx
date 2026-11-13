@@ -476,6 +476,14 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
   const focus = projects.find((p) => p.id === focusId) ?? null
   useEffect(() => writePref('hive:copilot-quick', quick ? '1' : null), [quick])
   useEffect(() => writePref('hive:copilot-project', focusId), [focusId])
+  useEffect(() => {
+    const on = (e: Event) => {
+      const id = (e as CustomEvent<string | null>).detail
+      if (id) setFocusId(id)
+    }
+    window.addEventListener('hive:focus', on)
+    return () => window.removeEventListener('hive:focus', on)
+  }, [])
   const ctl = useRef<AbortController | null>(null)
   const end = useRef<HTMLDivElement>(null)
   const ta = useRef<HTMLTextAreaElement>(null)

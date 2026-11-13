@@ -32,8 +32,10 @@ import { hiveApi } from '../api'
 import { AgentChip, defaultSpec } from '../AgentPicker'
 import { FileChips, useUploads } from '../uploads'
 import { ProjectSettingsDialog } from '../dialogs'
-import { PROJECT_COLORS, projectColor } from '../projectColor'
+import { PROJECT_COLORS } from '../projectColor'
 import { Session } from '../Session'
+import { ProjectAvatar } from '../Showcase'
+import { AgentMark } from '../agents'
 import { useHive } from '../store'
 import type { AgentSpec, GithubReport, LinkedRepo, Mode, Project, ProjectActivity, Task } from '../types'
 import { MODE_INFO, ProviderGlyph, StatusPill, fmtTokens, timeAgo } from '../ui'
@@ -86,11 +88,19 @@ function ProjectHome({ project }: { project: Project }) {
     <div className="mx-auto w-full max-w-[1160px] px-4 pb-20 pt-6 sm:px-8">
       {/* Header */}
       <div className="flex flex-wrap items-start gap-4">
-        <span className="hive-hex grid size-14 shrink-0 place-items-center text-[20px] font-bold text-white shadow-lg" style={{ background: projectColor(project.color) }}>
-          {project.name.slice(0, 1).toUpperCase()}
-        </span>
+        <ProjectAvatar project={project} size={56} live={working.length} />
         <div className="min-w-0 flex-1">
           <h1 className="text-[26px] font-semibold tracking-[-0.02em]">{project.name}</h1>
+          {working.length > 0 && (
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+              {[...new Map(working.map((a) => [`${a.provider}|${a.model}`, a])).values()].slice(0, 6).map((a) => (
+                <span key={`${a.provider}|${a.model}`} className="inline-flex items-center gap-1.5 rounded-full bg-text-primary/[0.05] py-0.5 pl-0.5 pr-2 text-[11.5px] ring-1 ring-[var(--hive-line)]">
+                  <AgentMark provider={a.provider} model={a.model} size={18} /> {a.model}
+                </span>
+              ))}
+              <span className="text-[11.5px] text-accent-brand">{working.length} working now</span>
+            </div>
+          )}
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-text-muted">
             {project.repo_owner && (
               <a href={`https://github.com/${project.repo_owner}/${project.repo_name}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-text-primary">

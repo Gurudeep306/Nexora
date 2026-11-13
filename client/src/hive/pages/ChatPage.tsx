@@ -41,6 +41,7 @@ import { AgentAvatar, AgentMark, describeTool } from '../agents'
 import { HiveLogo } from '../HiveLogo'
 import { ImproveButton } from '../Improve'
 import { projectColor } from '../projectColor'
+import { setFocusProject } from '../Showcase'
 import { useHive } from '../store'
 import type { AgentSpec, Bootstrap, ChatToolStep, Convo, ConvoMsg, HiveFile, Project } from '../types'
 import { fmtTokens, timeAgo, vendorName } from '../ui'
@@ -58,6 +59,10 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<ConvoMsg[]>([])
   const [convo, setConvo] = useState<Convo | null>(null)
   const chatProject = useMemo(() => (convo?.project_id ? (boot?.projects.find((p) => p.id === convo.project_id) ?? null) : null), [boot, convo?.project_id])
+  // A project chat puts its project in focus (top bar, Copilot).
+  useEffect(() => {
+    if (chatProject) setFocusProject(chatProject.id)
+  }, [chatProject])
   const [pending, setPending] = useState<Record<string, Pending>>({})
   const [loading, setLoading] = useState(false)
   const [confirm, setConfirm] = useState(false)
