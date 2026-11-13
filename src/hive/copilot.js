@@ -918,6 +918,12 @@ async function send({ username, text, auto = false, sink = null, deps = {}, sign
   // The project picked in the composer: what "this", "the repo" and "it" refer to.
   const focus = projectId ? await get("SELECT id, name, repo_owner, repo_name FROM hive_projects WHERE id=?", [projectId]).catch(() => null) : null;
   if (focus) system += `\n\nThe person is working on the project "${focus.name}" (id ${focus.id}${focus.repo_owner ? `, repo ${focus.repo_owner}/${focus.repo_name}` : ""}). Unless they say otherwise, "this", "the repo", "the project" and "it" mean this project — use its id with your tools without asking which project.`;
+  if (focus) {
+    const guide = await require("./chat")
+      .guideOf(focus.id)
+      .catch(() => "");
+    if (guide) system += `\n\n${guide}`;
+  }
   if (quick) system += "\n\nQuick mode: answer directly and briefly. Use tools only when the answer needs them.";
   const past = (await history(username, 24)).filter((m) => m.id !== userMsg.id && m.content);
   const tried = [];

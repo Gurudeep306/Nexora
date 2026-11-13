@@ -132,6 +132,19 @@ async function effectiveProject(project, task) {
   return r ? { ...project, github_id: r.github_id, repo_owner: r.repo_owner, repo_name: r.repo_name, default_branch: r.default_branch } : project;
 }
 
+/** The repo's guide for AI agents (AGENTS.md, else CLAUDE.md), ready for a system prompt. */
+async function repoGuide(read, max = 12000) {
+  for (const f of ["AGENTS.md", "CLAUDE.md"]) {
+    try {
+      const text = await read(f);
+      if (text && String(text).trim() && !/^@AGENTS\.md\s*$/m.test(String(text).trim().split("\n")[0] || "") ) return `The repository's guide for AI agents (${f}) — follow it:\n${String(text).slice(0, max)}`;
+    } catch {
+      /* not there */
+    }
+  }
+  return "";
+}
+
 async function taskContext(taskId) {
   const task = await get("SELECT * FROM hive_tasks WHERE id=?", [taskId]);
   if (!task) throw Object.assign(new Error("Task not found"), { status: 404 });
@@ -330,6 +343,9 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
 
   // Shared context, in the stable system prompt (cache-friendly).
   const extras = [];
+  // The repo's own guide for agents (AGENTS.md, else CLAUDE.md): the same context Claude Code, Codex and Vibe read.
+  const guide = await repoGuide((p) => ws.read(p));
+  if (guide) extras.push(guide);
   if (on("shared_memory")) {
     const mem = await all("SELECT title, body, author FROM hive_memory WHERE project_id=? ORDER BY pinned DESC, created_at DESC LIMIT ?", [project.id, Number(plugins.shared_memory.config.maxItems) || 30]);
     if (mem.length) extras.push(`Project memory (shared by the whole team — trust it, add to it with remember):\n${mem.map((m) => `- ${m.title}: ${m.body}`).join("\n")}`);
@@ -1116,7 +1132,7 @@ async function steer(agentId, username, message) {
 
 const runningCount = () => running.size;
 
-module.exports = {
+module.exports = { repoGuide,
   startTask,
   addAgent,
   spawnAndWait,
