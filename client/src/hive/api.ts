@@ -25,6 +25,16 @@ export const hiveApi = {
 
   allRepos: (refresh = false) => api.get<Ok<{ repos: GhRepo[]; connections: number; errors: string[] }>>(`/api/hive/repos${refresh ? '?refresh=1' : ''}`, { timeoutMs: 60000 }),
   openRepo: (repo: string) => api.post<Ok<{ project: Project; created: boolean }>>('/api/hive/repos/open', { repo }, { timeoutMs: 45000 }),
+  importStart: (body: { name: string; private?: boolean; githubId?: string }) => api.post<Ok<{ id: string; repo: string; private: boolean; maxFile: number }>>('/api/hive/import/start', body, { timeoutMs: 60000 }),
+  importFiles: (id: string, files: { file: File; path: string }[]) => {
+    const fd = new FormData()
+    for (const f of files) {
+      fd.append('files', f.file, f.file.name)
+      fd.append('paths', f.path)
+    }
+    return api.post<Ok<{ files: { path: string; ok?: boolean; error?: string }[]; skipped: number; total: number }>>(`/api/hive/import/${id}/files`, fd, { timeoutMs: 600000 })
+  },
+  importFinish: (id: string) => api.post<Ok<{ project: Project; repo: string; files: number; skipped: number }>>(`/api/hive/import/${id}/finish`, {}, { timeoutMs: 300000 }),
   writeBrief: (projectId: string) => api.post<Ok<{ instructions: string }>>(`/api/hive/projects/${projectId}/brief`, {}, { timeoutMs: 120000 }),
   createProject: (body: Record<string, unknown>) => api.post<Ok<{ project: Project }>>('/api/hive/projects', body),
   updateProject: (id: string, body: Record<string, unknown>) => api.patch<Ok<{ project: Project }>>(`/api/hive/projects/${id}`, body),

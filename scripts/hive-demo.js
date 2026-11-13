@@ -208,6 +208,12 @@ function startMock() {
           if (m[2].startsWith("/commits/")) return json(200, { sha: "f".repeat(40), commit: { tree: { sha: "e".repeat(40) } } });
           if (m[2].startsWith("/contents/")) return json(201, { content: {} });
           if (m[2].startsWith("/git/trees/")) return json(200, { truncated: false, tree: [{ path: "README.md", type: "blob", mode: "100644", size: 10 }] });
+          // Folder uploads: blobs, one tree, one commit, move the branch.
+          if (m[2] === "/git/blobs") return json(201, { sha: require("crypto").createHash("sha1").update(body).digest("hex") });
+          if (m[2] === "/git/ref/heads/main") return json(200, { object: { sha: "f".repeat(40) } });
+          if (m[2] === "/git/trees") return json(201, { sha: "7".repeat(40) });
+          if (m[2] === "/git/commits") return json(201, { sha: "8".repeat(40) });
+          if (m[2] === "/git/refs/heads/main" && req.method === "PATCH") return json(200, { object: { sha: JSON.parse(body).sha } });
           if (m[2].startsWith("/tarball/")) {
             res.writeHead(200, { "Content-Type": "application/gzip" });
             return res.end(tarGz({ [`octo-${m[1]}-ffff/README.md`]: `# ${m[1]}\n` }));

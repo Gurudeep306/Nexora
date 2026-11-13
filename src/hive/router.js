@@ -88,6 +88,8 @@ async function candidates({ kind = "coding", needTools = true, machineId = null,
   const rows = await all("SELECT * FROM hive_keys WHERE disabled=0");
   // Measured response times (from every real call and the health probes).
   const lat = new Map((await all("SELECT key_id, model, latency_ms FROM hive_health WHERE latency_ms IS NOT NULL").catch(() => [])).map((h) => [`${h.key_id}|${h.model}`, Number(h.latency_ms)]));
+  // Parent Claude accounts (each person's Copilot brain) lead; worker accounts do the agent work first.
+  const parents = new Set((await all("SELECT brain_key FROM hive_copilot_settings WHERE brain_key IS NOT NULL").catch(() => [])).map((x) => x.brain_key));
   const out = [];
   for (const r of rows) {
     if (exclude.keys?.includes(r.id)) continue;
@@ -118,6 +120,8 @@ async function candidates({ kind = "coding", needTools = true, machineId = null,
       q += adj.delta;
       // Save plan windows for real work: light jobs prefer other free options.
       if (v.subscription && LIGHT.has(kind)) q -= 8;
+      // Keep the parent's plan for leading: it takes agent work only when no worker account can.
+      if (v.subscription && parents.has(r.id) && !chat) q -= 7;
       if (r.status === "error") q -= 5;
       // Failing right now (rate-limited, erroring, out of credit): only used when nothing else can take the work.
       const cool = await health.cooling(r.id, model);
