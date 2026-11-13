@@ -244,7 +244,7 @@ export default function PipelinesPage() {
   if (!projects.length)
     return (
       <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-        <PageTitle title="Pipelines" sub="Chains of agents that turn a request into shipped work." />
+        <PageTitle icon={<Workflow />} title="Pipelines" sub="Chains of agents that turn a request into shipped work." />
         <div className="hive-card p-8 text-center">
           <Workflow className="mx-auto size-6 text-text-muted" />
           <div className="mt-2 text-[14px] font-medium">Create a project first</div>
@@ -258,7 +258,7 @@ export default function PipelinesPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 pb-24 sm:px-6 lg:px-8">
-      <PageTitle title="Pipelines" sub="Chains of AI agents that take one request all the way to a pull request — planning, building, testing, reviewing and shipping.">
+      <PageTitle icon={<Workflow />} title="Pipelines" sub="Chains of AI agents that take one request all the way to a pull request — planning, building, testing, reviewing and shipping.">
         <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <Select aria-label="Project" value={projectId ?? ''} onValueChange={(v) => setParams({ project: v })} className="h-9 min-w-[180px] flex-1 sm:flex-none">
             {projects.map((p) => (

@@ -5,7 +5,6 @@ import { FreeSetup } from '../FreeSetup'
 import {
   Activity,
   CheckCircle2,
-  Clock,
   Copy,
   Database,
   ExternalLink,
@@ -34,7 +33,7 @@ import { hiveApi } from '../api'
 import { AddGithubDialog, EditKeyDialog, parseLimit } from '../dialogs'
 import { useHive } from '../store'
 import type { HiveKey, ProviderInfo } from '../types'
-import { PlanWindows, ProviderGlyph, fmtCost, fmtTokens, keyShare, shareTone, timeAgo, vendorName, vendorStyle, type PlanWindow } from '../ui'
+import { ProviderGlyph, fmtCost, fmtTokens, keyShare, shareTone, vendorName, vendorStyle, LimitBar } from '../ui'
 
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Something went wrong')
 
@@ -124,21 +123,42 @@ export default function KeysPage() {
         </label>
       )}
 
-      <div id="free" className="mb-10">
-        <FreeSetup />
-      </div>
-      <SubscriptionsPanel onConnect={(sub) => setAdding(sub)} />
-
-      {keys.length === 0 && <EmptyVault onAdd={(p) => setAdding(p)} providers={boot.catalogue.providers} />}
-
-      <div className="space-y-6">
-        {grouped.map(([vendor, list]) => (
-          <ProviderGroup key={vendor} vendor={vendor} keys={list} onAdd={() => setAdding(vendor)} />
+      {/* Jump to a part of the page — nothing to dig for. */}
+      <div className="sticky top-0 z-10 -mx-1 mb-6 flex gap-1 overflow-x-auto border-b border-border bg-bg-app/95 px-1 backdrop-blur">
+        {(
+          [
+            ['connected', `Your connections${keys.length ? ` · ${keys.length}` : ''}`],
+            ['plans', 'Claude & Codex plans'],
+            ['free', 'Free models'],
+            ['github', 'GitHub'],
+          ] as const
+        ).map(([id, label]) => (
+          <button key={id} type="button" onClick={() => document.getElementById(`keys-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="h-10 shrink-0 border-b-2 border-transparent px-3 text-[13px] font-medium text-text-secondary hover:border-accent-brand/60 hover:text-text-primary">
+            {label}
+          </button>
         ))}
       </div>
 
+      <div id="keys-connected" className="scroll-mt-14">
+        {keys.length === 0 && <EmptyVault onAdd={(p) => setAdding(p)} providers={boot.catalogue.providers} />}
+        <div className="space-y-6">
+          {grouped.map(([vendor, list]) => (
+            <ProviderGroup key={vendor} vendor={vendor} keys={list} onAdd={() => setAdding(vendor)} />
+          ))}
+        </div>
+      </div>
+
+      <div id="keys-plans" className="mt-10 scroll-mt-14">
+        <SubscriptionsPanel onConnect={(sub) => setAdding(sub)} />
+      </div>
+
+      <div id="keys-free" className="mb-10 scroll-mt-14">
+        <div id="free" />
+        <FreeSetup />
+      </div>
+
       {/* GitHub */}
-      <section className="mt-12">
+      <section id="keys-github" className="mt-12 scroll-mt-14">
         <div className="mb-3 flex items-center gap-3">
           <span className="hive-tile size-9" style={{ ['--tile' as string]: 'var(--color-text-primary)' }}>
             <FolderGit2 className="size-4" />
@@ -342,13 +362,7 @@ function KeyRow({ k }: { k: HiveKey }) {
   const [confirm, setConfirm] = useState(false)
   const [usage, setUsage] = useState<{ day: string; tokens: number; cached: number }[]>([])
   const canManage = !!boot && (boot.me.admin || boot.me.username === k.owner)
-  const rl = k.rateLimit
   const color = vendorStyle(k.provider).color
-  const plan = (rl as unknown as { plan?: boolean; windows?: Record<string, PlanWindow> } | null)?.plan ? (rl as unknown as { windows: Record<string, PlanWindow> }).windows : null
-  // A provider window that has already reset is full again; don't keep showing old numbers.
-  const resetPassed = !!rl?.resetAt && Date.parse(rl.resetAt) < Date.now()
-  const rlShare = plan ? null : resetPassed ? 1 : rl?.tokensLimit ? (rl.tokensRemaining ?? 0) / rl.tokensLimit : rl?.requestsLimit ? (rl.requestsRemaining ?? 0) / rl.requestsLimit : null
-  const fresh = rl && k.rateLimitAt && Date.now() - k.rateLimitAt < 5 * 60_000
 
   useEffect(() => {
     let live = true
@@ -436,25 +450,7 @@ function KeyRow({ k }: { k: HiveKey }) {
           </div>
           {k.tokenLimit != null && k.periodEnds && <div className="mt-1 text-[10.5px] text-text-muted">Resets in {countdown(k.periodEnds)}</div>}
         </div>
-        {plan ? (
-          <PlanWindows windows={plan} />
-        ) : (
-        <div>
-          <div className="mb-1 flex justify-between gap-2 text-[11.5px] tabular-nums text-text-muted">
-            <span className="inline-flex items-center gap-1">
-              <Clock className="size-3" /> Provider rate limit
-            </span>
-            <span>
-              {resetPassed ? 'window reset — full again' : rl?.tokensLimit != null ? `${fmtTokens(rl.tokensRemaining)} / ${fmtTokens(rl.tokensLimit)} tok left` : rl?.requestsLimit != null ? `${fmtTokens(rl.requestsRemaining)} / ${fmtTokens(rl.requestsLimit)} req left` : rl ? 'not reported by this provider' : 'reported after the first call'}
-              {rl?.resetAt && !resetPassed && countdown(rl.resetAt) ? ` · resets in ${countdown(rl.resetAt)}` : ''}
-            </span>
-          </div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-text-primary/[0.07]">
-            {rlShare != null && <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${Math.round(rlShare * 100)}%`, background: shareTone(rlShare), opacity: fresh ? 1 : 0.45 }} />}
-          </div>
-          {rl && k.rateLimitAt && <div className="mt-1 text-[10.5px] text-text-muted">Last reported {timeAgo(k.rateLimitAt)} ago</div>}
-        </div>
-        )}
+        <LimitBar k={k} />
       </div>
 
       <div className="hidden h-14 lg:block" aria-hidden>

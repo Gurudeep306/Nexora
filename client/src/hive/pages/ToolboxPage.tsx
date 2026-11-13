@@ -114,7 +114,7 @@ export default function ToolboxPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-      <PageTitle title="Toolbox" sub={`${data?.tools.length ?? '300+'} open-source AI tools — connect what Hive can use, discover the rest. Shared by the whole team.`}>
+      <PageTitle icon={<Boxes />} title="Toolbox" sub={`${data?.tools.length ?? '300+'} open-source AI tools — connect what Hive can use, discover the rest. Shared by the whole team.`}>
         <div className="flex flex-wrap gap-2">
           <Button variant="secondary" onClick={() => setConnect({ kind: 'skill' })}>
             <Wand2 /> Import a skill
@@ -334,7 +334,6 @@ function Connected({ data, reload, onAdd }: { data: Toolbox; reload: () => void;
   if (!data.integrations.length)
     return (
       <div className="hive-card relative overflow-hidden p-8 sm:p-10">
-        <div className="pointer-events-none absolute -right-20 -top-24 size-72 rounded-full opacity-20 blur-3xl" style={{ background: hue(285) }} />
         <div className="relative max-w-xl">
           <Plug className="size-7 text-accent-brand" />
           <h2 className="mt-3 text-[20px] font-semibold tracking-tight">Give your agents real tools</h2>

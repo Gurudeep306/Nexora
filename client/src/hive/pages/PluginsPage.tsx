@@ -58,7 +58,7 @@ export default function PluginsPage() {
 
   return (
     <div className="mx-auto w-full max-w-[920px] px-8 pb-20 pt-10">
-      <PageTitle title="Plugins" sub={`${enabledCount} active · they cut token use, keep work going when limits hit, and share context between agents.`}>
+      <PageTitle icon={<Puzzle />} title="Plugins" sub={`${enabledCount} active · they cut token use, keep work going when limits hit, and share context between agents.`}>
         <Button onClick={() => setEditing('new')}>
           <Plus /> New plugin
         </Button>

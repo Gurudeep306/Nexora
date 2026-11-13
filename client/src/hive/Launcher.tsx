@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Search, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { IconTile } from './ui'
 
 export type LaunchItem = { to: string; label: string; icon: React.ComponentType<{ className?: string }>; hint?: string; hue: number; badge?: number }
 export type LaunchGroup = { title: string; blurb: string; items: LaunchItem[] }
@@ -70,9 +71,9 @@ export function Launcher({ open, onClose, groups }: { open: boolean; onClose: ()
                             animate={{ opacity: 1, y: 0, transition: { delay: Math.min(i, 24) * 0.012, duration: 0.2 } }}
                             className="hive-launcher-tile group flex items-start gap-3 rounded-2xl border border-transparent p-3 text-left hover:border-[var(--hive-line-strong)] hover:bg-text-primary/[0.03]"
                           >
-                            <span className="hive-hex-tile relative grid size-11 shrink-0 place-items-center" style={{ background: `linear-gradient(140deg, oklch(70% 0.15 ${it.hue}), oklch(58% 0.17 ${it.hue + 30}))` }}>
-                              <it.icon className="size-[18px] text-white" />
-                            </span>
+                            <IconTile hue={it.hue} size={44}>
+                              <it.icon />
+                            </IconTile>
                             <span className="min-w-0">
                               <span className="flex items-center gap-1.5 text-[13.5px] font-semibold text-text-primary">
                                 {it.label}

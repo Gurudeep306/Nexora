@@ -327,89 +327,40 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
 }
 
 /* ════════════════════════════════════════════════════════════════════════
-   Hive theme — a honeycomb identity layered on the site's tokens.
-   Soft hex lattice + slow aurora behind everything, frosted cards, a
-   glowing composer ring, hexagonal accents. Works in every palette and in
-   light/dark; motion respects prefers-reduced-motion.
+   Hive looks like the rest of NexoraGuru: the site's flat app background,
+   its cards (surface, hairline border, card radius, soft elevation), rounded
+   icon tiles and quiet focus. No patterns, glows or hexagons.
    ════════════════════════════════════════════════════════════════════════ */
-.hive-root {
-  --hive-aurora-1: color-mix(in oklab, var(--color-accent-brand) 16%, transparent);
-  --hive-aurora-2: color-mix(in oklab, oklch(72% 0.15 200) 12%, transparent);
-  --hive-aurora-3: color-mix(in oklab, oklch(78% 0.14 75) 9%, transparent);
-  --hive-glass: color-mix(in oklab, var(--color-bg-surface) 70%, transparent);
-  --hive-honey: oklch(80% 0.15 78);
-}
 .hive-root ::selection { background: color-mix(in oklab, var(--color-accent-brand) 30%, transparent); }
-/* Background: aurora glows over a hex lattice that fades out downwards.
-   All layers are attached to the viewport, so they stay put while you scroll. */
-.hive-main {
-  background:
-    radial-gradient(900px 520px at 12% -10%, var(--hive-aurora-1), transparent 70%),
-    radial-gradient(800px 520px at 95% 0%, var(--hive-aurora-2), transparent 70%),
-    radial-gradient(700px 600px at 60% 115%, var(--hive-aurora-3), transparent 70%),
-    linear-gradient(to bottom, transparent 0, var(--color-bg-app) 75%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100' viewBox='0 0 56 100'%3E%3Cpath d='M28 66L0 50V16L28 0l28 16v34L28 66zm0 0v34' fill='none' stroke='%23808080' stroke-opacity='0.1' stroke-width='1'/%3E%3C/svg%3E") 0 0 / 56px 100px,
-    var(--color-bg-app);
-  background-attachment: fixed;
-}
-/* Frosted surfaces */
+.hive-main { background: var(--color-bg-app); }
 .hive-card {
-  background: var(--hive-glass);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  backdrop-filter: blur(14px) saturate(140%);
-  box-shadow: 0 1px 0 color-mix(in oklab, white 6%, transparent) inset, 0 10px 30px -22px color-mix(in oklab, black 70%, transparent);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border, var(--hive-line-strong));
+  border-radius: var(--radius-card, 16px);
+  box-shadow: var(--elev-1);
 }
-.hive-card-hover:hover { transform: translateY(-1px); }
-
-/* Hero composer: a slowly turning gradient ring */
+.hive-card-hover:hover { transform: none; border-color: color-mix(in oklab, var(--color-text-primary) 18%, transparent); box-shadow: var(--elev-2); }
+.hive-lift:hover { transform: none; }
+/* The main inputs: a calm border that turns accent on focus (no animated rings). */
 .hive-ring { position: relative; }
-.hive-ring::before {
-  content: "";
-  position: absolute;
-  inset: -1.5px;
-  border-radius: inherit;
-  padding: 1.5px;
-  background: conic-gradient(from var(--hive-angle, 0deg), var(--color-accent-brand), oklch(72% 0.15 200), var(--hive-honey), var(--color-accent-brand));
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0.55;
-  animation: hive-spin 9s linear infinite;
-  pointer-events: none;
-}
-.hive-ring:focus-within::before { opacity: 1; }
-@property --hive-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
-@keyframes hive-spin { to { --hive-angle: 360deg; } }
-
-/* Gradient headline text */
-.hive-gradient-text {
-  background: linear-gradient(100deg, var(--color-text-primary) 10%, var(--color-accent-brand) 55%, oklch(70% 0.15 200) 90%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Hexagon tiles (launcher, badges) */
+.hive-ring:focus-within { border-color: color-mix(in oklab, var(--color-accent-brand) 55%, transparent); }
+.hive-gradient-text { color: var(--color-text-primary); }
+.hive-comb { display: none; }
+/* Icon tiles: rounded squares tinted by their colour, like Nexora's feature cards. */
+.hive-hex,
 .hive-hex-tile {
-  clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0 50%);
+  clip-path: none;
+  border-radius: var(--radius-control, 12px);
 }
-.hive-launcher-tile { transition: transform 200ms var(--hive-ease), background-color 160ms, border-color 160ms; }
-.hive-launcher-tile:hover { transform: translateY(-2px); }
-.hive-launcher-tile:hover .hive-hex-tile { transform: rotate(-8deg) scale(1.06); }
-.hive-launcher-tile .hive-hex-tile { transition: transform 260ms var(--hive-ease); }
-
-/* Rail: honey dot under the active item */
-.hive-rail { background: color-mix(in oklab, var(--color-bg-surface) 42%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.hive-launcher-tile { transition: background-color 160ms, border-color 160ms; }
+.hive-rail { background: var(--color-bg-app); }
+.hive-side { background: var(--color-bg-app); }
 
 /* Thin, quiet scrollbars */
 .hive-root ::-webkit-scrollbar { width: 10px; height: 10px; }
 .hive-root ::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--color-text-primary) 12%, transparent); border-radius: 999px; border: 3px solid transparent; background-clip: padding-box; }
 .hive-root ::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--color-text-primary) 22%, transparent); background-clip: padding-box; border: 3px solid transparent; }
 
-/* Focus ring for buttons and links (text fields keep their own focus glow) */
+/* Focus ring for buttons and links (text fields keep their own focus) */
 .hive-root :is(a, button, [role="button"], [role="tab"], [role="switch"]):focus-visible { outline: 2px solid color-mix(in oklab, var(--color-accent-brand) 70%, transparent); outline-offset: 2px; }
 .hive-root :is(input, textarea):focus-visible { outline: none; }
-
-@media (prefers-reduced-motion: reduce) {
-  .hive-ring::before { animation: none; }
-}

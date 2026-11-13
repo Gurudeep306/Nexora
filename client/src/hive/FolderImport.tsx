@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils'
 import { hiveApi } from './api'
 import { errMsg } from './Improve'
 import { useHive } from './store'
+import { IconTile } from './ui'
 
 const SKIP_DIR = /(^|\/)(node_modules|\.git|\.next|\.nuxt|\.svelte-kit|\.turbo|\.cache|\.parcel-cache|dist|build|out|coverage|\.venv|venv|env|__pycache__|\.pytest_cache|\.mypy_cache|\.gradle|\.idea|target|Pods|DerivedData)(\/|$)/
 const SKIP_FILE = /(^|\/)(\.DS_Store|Thumbs\.db|desktop\.ini|\.env|\.env\.[^/]*local)$/
@@ -99,12 +100,11 @@ export function FolderImport({ compact = false }: { compact?: boolean }) {
 
   return (
     <section className={cn('hive-card relative overflow-hidden', compact ? 'p-4' : 'p-5')}>
-      <div className="pointer-events-none absolute -right-14 -top-14 size-48 rounded-full opacity-[0.18] blur-3xl" style={{ background: 'oklch(72% 0.14 160)' }} />
       <input ref={input} type="file" multiple hidden onChange={pick} {...({ webkitdirectory: '', directory: '' } as Record<string, string>)} />
       <div className="relative flex flex-wrap items-center gap-3">
-        <span className="hive-hex-tile grid size-11 shrink-0 place-items-center" style={{ background: 'linear-gradient(140deg, oklch(72% 0.14 160), oklch(58% 0.15 190))' }}>
-          <FolderUp className="size-5 text-white" />
-        </span>
+        <IconTile hue={160} size={44}>
+          <FolderUp />
+        </IconTile>
         <div className="min-w-[220px] flex-1">
           <div className="text-[14.5px] font-semibold">Upload a folder and work on it</div>
           <div className="text-[12.5px] text-text-muted">Any size of code folder. It goes into a new {isPrivate ? 'private ' : ''}GitHub repository and opens as a project the agents can work on. node_modules, build output and .env files are left out.</div>

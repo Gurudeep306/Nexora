@@ -69,7 +69,6 @@ export function LiveWall() {
   if (!live.length)
     return (
       <div className="hive-card relative overflow-hidden p-5">
-        <div className="pointer-events-none absolute -right-16 -top-16 size-48 rounded-full opacity-15 blur-3xl" style={{ background: 'oklch(70% 0.15 285)' }} />
         <div className="relative flex flex-wrap items-center gap-4">
           <div className="flex -space-x-2">
             {['anthropic', 'openai', 'gemini', 'deepseek', 'qwen'].map((p, i) => (

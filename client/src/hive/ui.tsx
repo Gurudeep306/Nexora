@@ -255,14 +255,18 @@ export function Toggle({ on, onChange, label, disabled }: { on: boolean; onChang
   )
 }
 
-export function PageTitle({ title, sub, children }: { title: ReactNode; sub?: ReactNode; children?: ReactNode }) {
+/** Page title in the site's style: icon badge, display title, subtitle, actions on the right. */
+export function PageTitle({ title, sub, icon, children }: { title: ReactNode; sub?: ReactNode; icon?: ReactNode; children?: ReactNode }) {
   return (
-    <div className="mb-8 flex flex-wrap items-end gap-4">
-      <div className="min-w-0 flex-[1_1_18rem]">
-        <h1 className="text-[26px] font-semibold tracking-[-0.02em] text-text-primary">{title}</h1>
-        {sub && <p className="mt-1 text-[14px] text-text-muted">{sub}</p>}
+    <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+      <div className="flex min-w-0 flex-[1_1_18rem] items-start gap-4">
+        {icon && <div className="mt-1 hidden size-11 shrink-0 items-center justify-center rounded-[var(--radius-control,12px)] border border-border bg-bg-surface-2 text-accent-brand shadow-[inset_0_1px_0_var(--specular)] sm:flex [&_svg]:size-5">{icon}</div>}
+        <div className="min-w-0">
+          <h1 className="font-display text-[26px] leading-[1.15] font-semibold tracking-[-0.022em] text-text-primary md:text-[30px]">{title}</h1>
+          {sub && <p className="mt-2 mb-0 max-w-2xl text-[14px] leading-relaxed text-text-secondary text-pretty">{sub}</p>}
+        </div>
       </div>
-      {children}
+      {children && <div className="flex flex-wrap items-center gap-2">{children}</div>}
     </div>
   )
 }
@@ -286,3 +290,82 @@ export const MODE_INFO = {
   review: { label: 'Review', hint: 'Read-only agents audit the code and report findings.' },
   pipeline: { label: 'Pipeline', hint: 'Stages of agents run one after another — build, test, review, fix, ship.' },
 } as const
+
+/**
+ * An icon tile like Nexora's feature cards: a rounded square tinted by `hue`
+ * (OKLCH hue angle), with a soft border and the icon in the same colour.
+ */
+export function IconTile({ hue, size = 40, className, children }: { hue: number; size?: number; className?: string; children: ReactNode }) {
+  return (
+    <span
+      className={cn('grid shrink-0 place-items-center rounded-[var(--radius-control,12px)] border [&_svg]:size-[46%]', className)}
+      style={{ width: size, height: size, background: `oklch(62% 0.13 ${hue} / 0.14)`, borderColor: `oklch(62% 0.13 ${hue} / 0.32)`, color: `color-mix(in oklab, oklch(66% 0.15 ${hue}) 82%, var(--color-text-primary))` }}
+    >
+      {children}
+    </span>
+  )
+}
+
+/** Midnight UTC — when most providers' daily free limits reset. */
+function nextUtcMidnight() {
+  const d = new Date()
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1)
+}
+
+/**
+ * The limit of one connection, always: the provider's live numbers when it
+ * sends them, a plan's usage windows for subscriptions, else the free tier's
+ * daily allowance against what Hive used today, else the budget you set.
+ */
+export function LimitBar({ k, compact = false }: { k: HiveKey; compact?: boolean }) {
+  const rl = k.rateLimit
+  const plan = (rl as unknown as { plan?: boolean; windows?: Record<string, PlanWindow> } | null)?.plan ? (rl as unknown as { windows: Record<string, PlanWindow> }).windows : null
+  if (plan) return <PlanWindows windows={plan} compact={compact} />
+  const fresh = !!rl && !!k.rateLimitAt && Date.now() - k.rateLimitAt < 10 * 60_000 && !(rl.resetAt && Date.parse(rl.resetAt) < Date.now())
+  let label = ''
+  let left = ''
+  let used: number | null = null
+  let foot = ''
+  if (fresh && (rl!.requestsLimit || rl!.tokensLimit)) {
+    const tok = rl!.tokensLimit != null
+    const lim = tok ? rl!.tokensLimit! : rl!.requestsLimit!
+    const rem = tok ? (rl!.tokensRemaining ?? 0) : (rl!.requestsRemaining ?? 0)
+    label = 'Provider limit (live)'
+    left = `${fmtTokens(rem)} / ${fmtTokens(lim)} ${tok ? 'tokens' : 'requests'} left`
+    used = 1 - rem / Math.max(1, lim)
+    foot = rl!.resetAt ? `resets in ${until(Date.parse(rl!.resetAt))}` : ''
+  } else if (k.freeLimit && (k.freeLimit.rpd || k.freeLimit.tpd)) {
+    const byTokens = !k.freeLimit.rpd
+    const lim = byTokens ? k.freeLimit.tpd! : k.freeLimit.rpd!
+    const u = byTokens ? (k.todayTokens ?? 0) : (k.todayRequests ?? 0)
+    label = 'Free daily limit'
+    left = `${fmtTokens(u)} / ${fmtTokens(lim)} ${byTokens ? 'tokens' : 'requests'} today`
+    used = u / Math.max(1, lim)
+    foot = `about · resets in ${until(nextUtcMidnight())}${k.freeLimit.rpm ? ` · ${k.freeLimit.rpm}/min` : ''}`
+  } else if (k.tokenLimit != null) {
+    label = 'Your budget'
+    left = `${fmtTokens(k.remaining ?? 0)} / ${fmtTokens(k.tokenLimit)} left`
+    used = k.used / Math.max(1, k.tokenLimit)
+    foot = k.periodEnds ? `resets in ${until(k.periodEnds)}` : ''
+  } else if (k.freeLimit) {
+    label = 'Free limit'
+    left = `${fmtTokens(k.todayRequests ?? 0)} requests today`
+    foot = k.freeLimit.note
+  } else {
+    label = 'Limit'
+    left = `${fmtTokens(k.todayRequests ?? 0)} requests · ${fmtTokens(k.todayTokens ?? 0)} tokens today`
+    foot = 'No fixed limit · set a budget to cap it'
+  }
+  const pct = used == null ? null : Math.min(100, Math.max(0, used * 100))
+  const tone = used == null ? 'var(--color-text-muted)' : used > 0.9 ? 'var(--color-state-error)' : used > 0.7 ? 'var(--color-state-warning)' : 'var(--color-state-success)'
+  return (
+    <div title={k.freeLimit?.note}>
+      <div className={cn('mb-1 flex justify-between gap-2 tabular-nums text-text-muted', compact ? 'text-[11px]' : 'text-[11.5px]')}>
+        <span>{label}</span>
+        <span className="truncate text-text-secondary">{left}</span>
+      </div>
+      <div className="h-1.5 overflow-hidden rounded-full bg-text-primary/[0.07]">{pct != null && <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${Math.max(pct, pct > 0 ? 2 : 0)}%`, background: tone }} />}</div>
+      {foot && <div className={cn('mt-1 truncate text-text-muted', compact ? 'text-[10.5px]' : 'text-[10.5px]')}>{foot}</div>}
+    </div>
+  )
+}
