@@ -163,4 +163,50 @@ ${files.join("\n\n")}`;
 
 const clearCache = () => (cache = { at: 0, repos: null });
 
-module.exports = { allRepos, findRepo, openRepo, writeBrief, clearCache };
+/**
+ * Agents that run on a machine (Claude Code, Codex, Mistral Vibe) work in a
+ * folder there. When a project isn't on a machine where the chosen agent is
+ * connected, clone its repo onto that machine (into the bridge's root) and
+ * link the project, so "use vibe on Nexora" just works.
+ * `vendors`: vendor ids the session will use. Returns the (updated) project.
+ */
+async function ensureOnMachine(projectId, vendors = []) {
+  const providers = require("./providers");
+  const machines = require("./machines");
+  const keys = require("./keys");
+  const needs = [...new Set(vendors)].filter((v) => {
+    try {
+      return !!providers.vendorOf(v).needsMachine;
+    } catch {
+      return false;
+    }
+  });
+  let p = await get("SELECT * FROM hive_projects WHERE id=?", [projectId]);
+  if (!p || !needs.length) return p;
+  const rows = (await all("SELECT * FROM hive_keys WHERE disabled=0 ORDER BY created_at")).filter((k) => needs.includes(keys.keyVendor(k)) && k.machine_id);
+  const machineIds = [...new Set(rows.map((k) => k.machine_id))];
+  // Already on a machine that is online and has the agent: nothing to do.
+  if (p.machine_id && machineIds.includes(p.machine_id) && machines.isOnline(p.machine_id)) return p;
+  const target = machineIds.find((id) => machines.isOnline(id));
+  if (!target) return p; // resolveSpec explains what's missing (not connected / offline)
+  if (!p.repo_owner || !p.github_id) throw Object.assign(new Error(`“${p.name}” has no GitHub repository to copy onto the machine — link a folder on the machine to the project instead`), { status: 400 });
+  const conn = await get("SELECT * FROM hive_github WHERE id=?", [p.github_id]);
+  if (!conn) throw Object.assign(new Error("The project's GitHub connection is gone — reconnect GitHub in Your GitHub"), { status: 400 });
+  let r;
+  try {
+    r = await machines.call(target, "clone", { name: p.repo_name, url: `https://github.com/${p.repo_owner}/${p.repo_name}.git`, token: tokenOf(conn), branch: p.default_branch || undefined }, { timeoutMs: 600_000 });
+  } catch (e) {
+    const msg = String(e.message || e);
+    throw Object.assign(new Error(/auth|403|401|denied|could not read|invalid/i.test(msg) ? `GitHub refused to copy ${p.repo_owner}/${p.repo_name} onto the machine — the GitHub token is invalid or expired. Reconnect it in Your GitHub. (${msg.slice(0, 200)})` : `Couldn't copy ${p.repo_owner}/${p.repo_name} onto the machine: ${msg.slice(0, 300)}`), { status: 400 });
+  }
+  await run("UPDATE hive_projects SET machine_id=?, folder=?, updated_at=? WHERE id=?", [target, r.path, now(), p.id]);
+  p = await get("SELECT * FROM hive_projects WHERE id=?", [p.id]);
+  try {
+    require("./hub").emit("project", p);
+  } catch {
+    /* tests */
+  }
+  return p;
+}
+
+module.exports = { allRepos, findRepo, openRepo, writeBrief, clearCache, ensureOnMachine };

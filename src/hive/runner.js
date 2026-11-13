@@ -217,10 +217,10 @@ async function resolveSpec(spec, { prompt = "", machineId = null, kind = null } 
   let key;
   if (vendor.needsMachine) {
     const rows = (await all("SELECT * FROM hive_keys WHERE disabled=0")).filter((r) => keys.keyVendor(r) === spec.provider);
-    if (!rows.length) throw new Error(`Connect ${vendor.label} first: Keys → Subscription agents`);
+    if (!rows.length) throw new Error(`Connect ${vendor.label} first: Keys & limits → Claude & Codex plans`);
     if (!machineId) throw new Error(`${vendor.label} works in a folder on a connected machine — start this session on a machine`);
     key = (spec.keyId && spec.keyId !== "auto" ? rows.find((r) => r.id === spec.keyId) : null) || rows.find((r) => r.machine_id === machineId);
-    if (!key || key.machine_id !== machineId) throw new Error(`${vendor.label} isn't connected on this session's machine — connect it there in Keys → Subscription agents`);
+    if (!key || key.machine_id !== machineId) throw new Error(`${vendor.label} isn't connected on this session's machine — connect it there in Keys & limits → Claude & Codex plans`);
     if (!machines.isOnline(machineId)) throw new Error("That machine is offline — start the Hive bridge on it");
   } else {
     key = await keys.pickKey(spec.provider, { prefer: spec.keyId || "auto" });
