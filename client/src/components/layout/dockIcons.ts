@@ -22,6 +22,7 @@ export const DOCK_ICONS: Record<string, IconName> = {
   look: 'palette',
   settings: 'settings',
   search: 'search',
+  hive: 'bot',
 }
 
 export function dockIconName(id: string): IconName {

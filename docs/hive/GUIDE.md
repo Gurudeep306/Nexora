@@ -1,19 +1,27 @@
 # Nexora Hive — guide
 
-Hive is the staff-only AI workspace at **/hive** on the site. Use it to chat with any model, put several agents on a codebase, and ship their work as a pull request. Merged changes deploy to nexoraguru.in. It works from any browser, including a phone.
+Hive is the staff-only AI workspace at **/hive** on the site (staff see a **Hive** icon in the Dock). Use it to chat with any model, put teams of agents on a codebase, automate work overnight, and ship the results as pull requests. Merged changes deploy to nexoraguru.in. It works from any browser, including a phone.
+
+**One shared workspace.** Every staff member sees every chat, session, pipeline and file, and every connected key, subscription and tool works for everyone. Only the person who started a chat (or an admin) can rename or delete it. Staff talk in **Team** (top right): `#general` plus one channel per project.
 
 ## Find your way around
 
 | Where | What it's for |
 |---|---|
 | **Mission control** (Home) | One box to ask a model or start a session in a project. Shows live agents, commands waiting for approval, recent sessions, today's usage and new models. |
-| **Chat** | Talk to any connected model. Attach images, PDFs, code or repo files, and make images. **Compare** asks up to 4 models the same question side by side; pick the answer the chat continues from. Each chat can have its own instructions; you can share it with staff or export it as Markdown. |
+| **Chat** | Talk to any connected model, or leave it on **Auto** and Hive picks the right one. Attach images, PDFs, code, repo files or Drive files, and make images. With tools on (🌐 in the header) a model can search the web, read pages, read the project's code and Drive, use connected MCP tools, and **create documents** (PDF, Word, slides). You see each step live. **Compare** asks up to 4 models side by side; **Let the Judge pick** has a different model choose the best answer. 👍/👎 teach the router. **Export** saves the chat, or one answer, as PDF, Word, slides, a web page or Markdown. **✨ Improve** rewrites your prompt into a clear brief before you send it. |
 | **Projects** | A project is a codebase: a GitHub repo, extra linked repos, and optionally a folder on a machine. The project page shows its *pulse* (CI on the default branch, open PRs, deploys, live-site health) and lists its sessions. |
 | **Sessions** | One piece of work by one or more agents. See below. |
 | **Launchpad** | Describe an idea and get a plan (product, stack, architecture, milestones). **Launch** creates the repo, PLAN.md and project memory, and starts milestone 1. |
 | **Machines** | Computers running the Hive bridge. On a machine, agents work on real folders and run commands, tests and dev servers. |
-| **Model radar** | Models that recently appeared on your keys, plus the newest models across all labs. |
-| **Keys** | AI keys (any number per provider), budgets, live rate limits and GitHub connections. |
+| **Pipelines** | Relay teams of agents: plan → build → test → review → ship, with gates, fix loops and races judged by the Judge. Describe what you want to the **Architect** and it designs the pipeline. |
+| **Automations** | Recurring work: nightly test fixing, dependency updates, security reviews, docs. They run on schedule, overnight too, and resume after restarts. |
+| **Drive** | The team's file manager. Keep PDFs, designs, docs and data here; agents and chats can read them. Push files to GitHub as a branch or PR when they're done. |
+| **Models** | *Who does what*: every model ranked by intelligence, coding, reasoning, writing, speed and price, plus what it's good and bad at. Live router picks per kind of work, **free sources**, side-by-side **compare**, and the model radar. |
+| **Keys** | AI keys (any number per provider), **your subscriptions** (Claude Code and Codex on your plans), budgets, live rate limits and GitHub connections. |
+| **Toolbox** | 300+ open-source AI tools from the team's research, each marked with how Hive uses it. Connect MCP servers and search engines, import skills, and see what's already built in. |
+| **Token Steward** | An AI that keeps token spend low: an efficiency score, one-click savings, a "which model is enough?" sizer, and a Steward you can ask. |
+| **Budgets** | Caps per project, provider, model or person (per day or month), with alerts at 80% and 100%. |
 
 Shortcuts:
 - **⌘K**: search and actions
@@ -93,6 +101,56 @@ curl -fsSL -H "Authorization: Bearer hvm_…" https://nexoraguru.in/api/hive-bri
   - 30-day usage, with cached tokens shown separately
   - today's tokens and estimated spend
 - **Model lists:** every key's model list refreshes twice a day. A default model you picked yourself is kept; automatic defaults move to the best chat model the key currently offers.
+
+## Subscriptions: Claude Code and Codex without API credits
+
+Claude and ChatGPT plans can't be used through an API key, so Hive runs the official CLIs on an **always-on worker machine** and drives them for you:
+
+1. In **Machines**, add a machine and copy its token. On that computer (a mini PC, a home server or a small VPS), run:
+   `curl -fsSL https://nexoraguru.in/api/hive-bridge/setup.sh | bash -s -- --server https://nexoraguru.in --token <token>`
+   This installs Node, git, Claude Code and Codex, and keeps the bridge running as a service.
+2. Log in once on that machine: `claude` (or paste a `claude setup-token` token in Hive), and `codex login --device-auth`.
+3. In **Keys → Your subscriptions**, click **Connect**, then pick the machine. Hive checks that the CLI is installed and logged in.
+
+After that, everyone can pick *Claude Code* or *Codex* in any agent picker, or let **Auto** use them, from any device. The plan's usage windows (5-hour and weekly) show in Keys. When a plan hits its limit, the work carries on with the best other model for the same kind of work, free models first.
+
+## Toolbox: the open-source ecosystem
+
+**Toolbox** lists 300+ open-source tools in 14 categories: gateways, MCP, coding agents, browser and search, documents, RAG and vector stores, agent frameworks and memory, automation, image and video, audio, local models, evals and cost, infrastructure, and developer integrations. Each one says how Hive uses it:
+
+| Badge | What it means | What to do |
+|---|---|---|
+| **MCP** | A Model Context Protocol server | **Connect** with its remote URL (Streamable HTTP) and an optional token. Its tools appear in chat and for every agent; read-only agents only get read-only tools. Use **Try** to run a tool by hand. Servers that only run locally can be exposed through a gateway such as Docker MCP Gateway or MCPHub. |
+| **Search** | Tavily, Exa, Brave, SearXNG, Jina Reader, Firecrawl | **Connect** with a key (or your SearXNG URL). Web search uses it first; Jina and Firecrawl also read JavaScript-heavy pages. |
+| **Models** | An OpenAI-compatible endpoint (LiteLLM, Bifrost, vLLM, LocalAI, llama.cpp, Ollama, OpenRouter…) | **Add in Keys**. The router can then use it like any other model. |
+| **Skill** | A SKILL.md or rules pack (Superpowers, wshobson/agents…) | **Import** from a GitHub link. Long skills are condensed by a free model. The result is a plugin every agent follows. |
+| **Built in** | Hive already does this (repo map, prompt caching, memory, web reader, documents, Judge…) | Nothing to install. |
+| **Machine** | A CLI that runs next to the bridge (Aider, OpenCode, Gemini CLI…) | Install it on a worker machine. |
+| **Reference** | Useful to know | Open the project. |
+
+**Directories** links to curated lists with thousands more servers and skills. Secrets are encrypted, and connected tools are shared by the whole team. Only public hosts can be connected; set `HIVE_ALLOW_PRIVATE_TOOLS=1` on the server to allow your own network.
+
+## Token Steward: spend tokens wisely
+
+The Steward is on by default (a built-in plugin) and works in three ways:
+
+- **Automatically**
+  - Long chats are folded into a running summary written by a **free** model and cached on the chat, so each new message re-sends a few thousand tokens instead of the whole history. You'll see a note such as "folded 14 earlier messages — saved ~38K tokens".
+  - Tool output (search results, pages, MCP replies) is trimmed to a sensible size.
+- **Audit** (Token Steward page)
+  - An efficiency score and where the money goes (free · plan · $ · $$ · $$$).
+  - Concrete savings with **Apply** buttons: switch on a token saver, route by savings when premium models dominate, connect free sources, add a monthly cap, or trim too many MCP tools.
+- **Advice**
+  - **Which model is enough?** sizes a task and shows the cheapest model that clears the quality bar next to the strongest one, with an estimated cost.
+  - **Ask the Steward** answers cost questions from your real numbers and the Toolbox catalogue, on a free model when one is connected.
+
+Tune it in **Plugins → Token Steward**:
+
+| Setting | Default | What it does |
+|---|---|---|
+| `triggerTokens` | 24000 | History size at which compaction starts |
+| `keepTokens` | 8000 | Recent turns kept word for word |
+| `maxToolChars` | 12000 | Maximum size of one tool result |
 
 ## Running Hive locally without keys
 

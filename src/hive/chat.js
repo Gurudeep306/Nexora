@@ -9,15 +9,22 @@ const vault = require("./vault");
 const gh = require("./github");
 const { providerOf } = require("./providers");
 const { resolvePlugins } = require("./plugins");
+const steward = require("./steward");
 const { getSnapshot, readBase } = require("./snapshot");
 const { fileToAttachment } = require("./runner");
 const { pickDefault } = require("./models");
+const caps = require("./caps");
+const router = require("./router");
+const chatTools = require("./chattools");
+const drive = require("./drive");
 
 const MAX_FILE = 20 * 1024 * 1024;
 const active = new Map(); // convoId -> AbortController
 
-async function canSee(convo, username) {
-  return !!convo && (convo.owner === username || !!convo.shared);
+// One shared workspace: every staff member sees and can continue every chat
+// (only the owner or an admin can rename or delete one).
+async function canSee(convo) {
+  return !!convo;
 }
 
 async function convoFor(id, username) {
@@ -27,7 +34,8 @@ async function convoFor(id, username) {
 }
 
 async function listConvos(username) {
-  return all("SELECT * FROM hive_convos WHERE owner=? OR shared=1 ORDER BY updated_at DESC LIMIT 200", [username]);
+  void username;
+  return all("SELECT * FROM hive_convos ORDER BY pinned DESC, updated_at DESC LIMIT 300");
 }
 
 async function createConvo(username, { title, projectId, provider, keyId, model, system }) {
@@ -42,7 +50,7 @@ async function createConvo(username, { title, projectId, provider, keyId, model,
 
 async function messagesOf(convoId) {
   const rows = await all("SELECT * FROM hive_convo_msgs WHERE convo_id=? ORDER BY created_at, id", [convoId]);
-  return rows.map((r) => ({ ...r, attachments: json(r.attachments_json, []), attachments_json: undefined }));
+  return rows.map((r) => ({ ...r, attachments: json(r.attachments_json, []), attachments_json: undefined, tools: json(r.tools_json, []), tools_json: undefined }));
 }
 
 async function saveFile({ name, mime, buffer, origin = "upload", username }) {
@@ -90,7 +98,35 @@ async function loadAttachments(list) {
   return rows.map(fileToAttachment);
 }
 
-async function pickChatKey(spec, exclude = []) {
+/** A short, readable label for a tool call in the chat. */
+function summarizeTool(name, input = {}) {
+  if (name === "web_search") return { query: String(input.query || "").slice(0, 200) };
+  if (name === "read_url") return { url: String(input.url || "").slice(0, 300) };
+  if (name === "create_document") return { title: input.title, format: input.format };
+  if (name === "remember") return { fact: String(input.fact || "").slice(0, 200) };
+  return Object.fromEntries(Object.entries(input).map(([k, v]) => [k, typeof v === "string" ? v.slice(0, 200) : v]));
+}
+
+/** The attached project's default-branch snapshot (for repo tools). */
+async function projectSnapshot(projectId) {
+  const p = await get("SELECT * FROM hive_projects WHERE id=?", [projectId]);
+  if (!p?.github_id) return null;
+  const cred = await get("SELECT * FROM hive_github WHERE id=?", [p.github_id]);
+  if (!cred) return null;
+  const token = vault.open(cred.token_enc);
+  const head = await gh.commit(token, p.repo_owner, p.repo_name, p.default_branch);
+  const snap = await getSnapshot(token, p.repo_owner, p.repo_name, head.sha);
+  await Promise.race([snap.contentReady, new Promise((r) => setTimeout(r, 20000))]);
+  return { snap, readBase };
+}
+
+async function pickChatKey(spec, exclude = [], prompt = "", useTools = false) {
+  if (spec.provider === "auto") {
+    const r = await router.route({ prompt, chat: true, needTools: useTools, kind: spec.kind || null, freeOnly: !!spec.freeOnly, exclude: { keys: exclude } }).catch(() => null);
+    if (!r) return null;
+    const key = await keys.keyRow(r.pick.keyId);
+    return key ? { key, provider: r.pick.provider, model: r.pick.model, note: r.note } : null;
+  }
   const k = await keys.pickKey(spec.provider, { prefer: spec.keyId || "auto", exclude });
   if (k && (await keys.hasBudget(k)) && !exclude.includes(k.id)) return { key: k, provider: spec.provider };
   const same = await keys.pickKey(spec.provider, { exclude: [...exclude, k?.id].filter(Boolean) });
@@ -160,14 +196,22 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
   let served = { provider: spec.provider, model: spec.model };
   try {
     for (let attempt = 0; attempt < 4; attempt++) {
-      const pick = await pickChatKey(spec, tried);
+      const wantTools = mode !== "image" && convo.tools !== 0;
+      const pick = await pickChatKey(spec, tried, prompt, wantTools);
       if (!pick) {
         if (lastErr) throw lastErr;
-        throw new Error(await keys.explainNoKey(spec.provider));
+        throw new Error(spec.provider === "auto" ? "No connected model can answer right now — add a key (Keys → Free models) or connect a subscription agent" : await keys.explainNoKey(spec.provider));
       }
       const { key, provider } = pick;
       const v = providerOf(provider);
-      const model = provider === spec.provider && spec.model ? spec.model : key.default_model || pickDefault(json(key.models_json, []), v.suggested);
+      const model = pick.model || (provider === spec.provider && spec.model ? spec.model : key.default_model || pickDefault(json(key.models_json, []), v.suggested));
+      if (pick.note && attempt === 0) out("note", { id: reply.id, text: `Auto picked ${pick.note.split(" · ")[0].replace(/^.*→ /, "")}` });
+      const capOk = await caps.check({ projectId: convo.project_id || "", vendor: provider, model, username });
+      if (!capOk.ok) {
+        lastErr = Object.assign(new Error(capOk.reason), { kind: "quota" });
+        tried.push(key.id);
+        continue;
+      }
       served = { provider, model };
       if (provider !== spec.provider || attempt > 0) out("note", { id: reply.id, text: `Continuing with ${v.label} (${key.label})` });
       try {
@@ -201,7 +245,27 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
         const plugins = await resolvePlugins(convo.project_id);
         const extras = plugins.custom.filter((c) => c.enabled && (c.config.appliesTo || "all") !== "tasks").map((c) => c.config.instructions);
         if (plugins.builtins.terse?.enabled) extras.push("Be concise.");
-        const system = [convo.system || "You are a helpful, precise assistant for a software team. Use Markdown. Put code in fenced blocks with a language.", ...extras].filter(Boolean).join("\n\n");
+        const facts = await chatTools.userMemory(username).catch(() => []);
+        const useTools = wantTools && v.caps.tools && v.impl !== "cli";
+        const mcpDefs = useTools ? (await require("./toolbox").mcpTools().catch(() => [])).map(({ name, description, schema }) => ({ name, description, schema })) : [];
+        const toolDefs = useTools ? [...chatTools.toolsFor({ project: !!convo.project_id, drive: true }), ...mcpDefs] : [];
+        // Token Steward: fold old turns into a cached summary (written by a free model) when the chat is long.
+        const compact = await steward.compactHistory(convo, messages, { username }).catch(() => ({ messages, compacted: null }));
+        if (compact.compacted) {
+          messages.splice(0, messages.length, ...compact.messages);
+          out("note", { id: reply.id, text: `Token Steward folded ${compact.compacted.folded} earlier messages into a summary — saved ~${Math.round(compact.compacted.saved / 1000)}K tokens on this reply` });
+        }
+        const system = [
+          convo.system || "You are a helpful, precise assistant for a software team working in Nexora Hive. Use Markdown. Put code in fenced blocks with a language.",
+          `Today is ${new Date().toISOString().slice(0, 10)}. You are talking with @${username}.`,
+          facts.length ? `What you know about @${username} (saved memory):\n${facts.map((f) => `- ${f}`).join("\n")}` : "",
+          useTools
+            ? `You have tools: search the web and read pages for anything current, read the project's code, read Hive Drive, create documents (PDF, Word, slides…) whenever someone wants a file, and remember lasting facts about the person.${mcpDefs.length ? " Tools starting with mcp_ come from the team's connected MCP servers (shown in [brackets] in each description)." : ""} Use them when they help; don't narrate tool use at length.`
+            : "",
+          ...extras,
+        ]
+          .filter(Boolean)
+          .join("\n\n");
         let flushTimer = null;
         let buf = "";
         let think = "";
@@ -210,28 +274,70 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
           if (buf) out("delta", { id: reply.id, text: buf }), (buf = "");
           if (think) out("thinking", { id: reply.id, text: think }), (think = "");
         };
-        const res = await v.impl.turn({
-          secret: keys.secretOf(key),
-          baseUrl: key.base_url || v.baseUrl,
-          official: !!v.official,
-          vision: !!v.caps.vision,
-          model,
-          effort: spec.effort || (provider === "anthropic" ? "medium" : null),
-          system,
-          messages,
-          tools: [],
-          signal: controller.signal,
-          cache: plugins.builtins.prompt_cache?.enabled !== false,
-          onText: (d) => ((buf += d), (flushTimer ||= setTimeout(flush, 60))),
-          onThinking: (d) => ((think += d), (flushTimer ||= setTimeout(flush, 60))),
-        });
-        clearTimeout(flushTimer);
-        flush();
-        reply.content = res.text;
+        const toolLog = [];
+        const convoMsgs = [...messages];
+        let text = "";
+        let res;
+        usage = { input: 0, output: 0 };
+        for (let step = 0; step < 10; step++) {
+          if (step > 0 && text && !text.endsWith("\n")) {
+            buf += "\n\n";
+            text += "\n\n";
+          }
+          res = await v.impl.turn({
+            secret: keys.secretOf(key),
+            keyRow: key,
+            baseUrl: key.base_url || v.baseUrl,
+            official: !!v.official,
+            vision: !!v.caps.vision,
+            model,
+            effort: spec.effort || (provider === "anthropic" ? "medium" : null),
+            system,
+            messages: convoMsgs,
+            tools: toolDefs,
+            signal: controller.signal,
+            cache: plugins.builtins.prompt_cache?.enabled !== false,
+            onText: (d) => ((buf += d), (flushTimer ||= setTimeout(flush, 60))),
+            onThinking: (d) => ((think += d), (flushTimer ||= setTimeout(flush, 60))),
+          });
+          clearTimeout(flushTimer);
+          flush();
+          text += res.text || "";
+          usage = { input: usage.input + res.usage.input, output: usage.output + res.usage.output };
+          await keys.recordUsage(key.id, username, { input: res.usage.input, output: res.usage.output, cacheRead: res.usage.cacheRead || 0, costMicros: res.costMicros || 0 }, res.rateLimit, { projectId: convo.project_id || "", vendor: provider, model: res.servedModel || model });
+          hub.emit("usage", { keyId: key.id });
+          if (res.stop !== "tool" || !res.toolCalls?.length || !useTools) break;
+          convoMsgs.push({ role: "assistant", text: res.text, toolCalls: res.toolCalls, raw: res.raw });
+          const results = [];
+          for (const call of res.toolCalls) {
+            const entry = { id: call.id, name: call.name, input: summarizeTool(call.name, call.input), status: "running" };
+            toolLog.push(entry);
+            out("tool", { id: reply.id, tool: entry });
+            const r = call.invalid
+              ? { content: `Arguments were not valid JSON: ${call.rawArgs}`, isError: true }
+              : await chatTools.execute(call.name, call.input || {}, {
+                  username,
+                  projectId: convo.project_id || null,
+                  drive,
+                  projectRepo: convo.project_id ? () => projectSnapshot(convo.project_id) : null,
+                  saveFile: async (name, mime, buffer, folder) => {
+                    const f = await saveFile({ name, mime, buffer, origin: "generated", username });
+                    reply.attachments.push(f);
+                    const dpath = await drive.freePath({ path: `${folder || "/documents"}/${name}`, projectId: convo.project_id || null });
+                    await drive.put({ path: dpath, projectId: convo.project_id || null, mime, buffer, by: username }).catch(() => null);
+                    out("attachment", { id: reply.id, file: f });
+                    return f;
+                  },
+                });
+            Object.assign(entry, { status: r.isError ? "error" : "done", preview: String(r.content).slice(0, 600), meta: r.meta || null });
+            out("tool_done", { id: reply.id, tool: entry });
+            results.push({ id: call.id, name: call.name, content: await steward.clipTool(String(r.content), convo.project_id), isError: !!r.isError });
+          }
+          convoMsgs.push({ role: "tool", results });
+        }
+        reply.content = text;
+        reply.tools = toolLog;
         served.model = res.servedModel || model;
-        usage = res.usage;
-        await keys.recordUsage(key.id, username, { input: res.usage.input, output: res.usage.output, cacheRead: res.usage.cacheRead || 0, costMicros: res.costMicros || 0 }, res.rateLimit);
-        hub.emit("usage", { keyId: key.id });
         if (res.stop === "refusal") error = "The model declined this request";
         break;
       } catch (e) {
@@ -267,8 +373,8 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
     if (!set.size) active.delete(convo.id);
   }
   await run(
-    "INSERT INTO hive_convo_msgs(id, convo_id, role, content, attachments_json, provider, model, input_tokens, output_tokens, error, created_at, group_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
-    [reply.id, convo.id, "assistant", reply.content, JSON.stringify(reply.attachments), served.provider, served.model, usage.input, usage.output, error, reply.created_at, reply.group_id || null],
+    "INSERT INTO hive_convo_msgs(id, convo_id, role, content, attachments_json, provider, model, input_tokens, output_tokens, error, created_at, group_id, tools_json) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    [reply.id, convo.id, "assistant", reply.content, JSON.stringify(reply.attachments), served.provider, served.model, usage.input, usage.output, error, reply.created_at, reply.group_id || null, reply.tools?.length ? JSON.stringify(reply.tools) : null],
   );
   out("done", { ...reply, provider: served.provider, model: served.model, input_tokens: usage.input, output_tokens: usage.output, error });
 }

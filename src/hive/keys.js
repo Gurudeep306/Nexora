@@ -43,6 +43,15 @@ function publicKey(row, usedTokens = 0, extra = {}) {
     remaining: limit == null ? null : Math.max(0, limit - usedTokens),
     active: active.get(row.id) || 0,
     createdAt: row.created_at,
+    machineId: row.machine_id || null,
+    freeTier: !!row.free_tier,
+    subscription: (() => {
+      try {
+        return !!vendorOf(keyVendor(row)).subscription;
+      } catch {
+        return false;
+      }
+    })(),
     ...extra,
   };
 }
@@ -88,9 +97,12 @@ async function keyRow(id) {
   return get("SELECT * FROM hive_keys WHERE id=?", [id]);
 }
 
-function validateInput({ provider, label, apiKey, baseUrl, tokenLimit, limitPeriod, maxConcurrency }, { creating }) {
+function validateInput({ provider, label, apiKey, baseUrl, tokenLimit, limitPeriod, maxConcurrency, machineId }, { creating }) {
   const p = vendorOf(provider);
-  if (creating && (!apiKey || typeof apiKey !== "string" || apiKey.trim().length < 8)) throw new Error("Paste a valid API key");
+  if (p.subscription) {
+    if (creating && !machineId) throw new Error(`${p.label} runs on a connected machine — pick one (Hive → Machines)`);
+    if (apiKey && (typeof apiKey !== "string" || apiKey.trim().length < 20)) throw new Error("That doesn't look like a token from `claude setup-token`");
+  } else if (creating && (!apiKey || typeof apiKey !== "string" || apiKey.trim().length < (provider === "ollama" ? 1 : 8))) throw new Error("Paste a valid API key");
   if (label !== undefined && (typeof label !== "string" || !label.trim() || label.length > 60)) throw new Error("Give the key a name (≤ 60 characters)");
   if (p.baseUrlRequired && creating && !baseUrl) throw new Error("This provider needs a base URL");
   if (baseUrl) {
@@ -112,8 +124,8 @@ async function createKey(input, owner) {
   validateInput(input, { creating: true });
   const id = newId("key");
   const t = now();
-  const secret = input.apiKey.trim();
   const v = vendorOf(input.provider);
+  const secret = String(input.apiKey || "").trim();
   const family = v.impl === "openai" && !v.official ? "openai_compat" : v.impl;
   await run(
     `INSERT INTO hive_keys(id, provider, preset, label, base_url, secret_enc, last4, token_limit, limit_period, max_concurrency, owner, default_model, default_pinned, created_at, updated_at)
@@ -124,8 +136,8 @@ async function createKey(input, owner) {
       v.id,
       input.label.trim(),
       input.baseUrl || null,
-      vault.seal(secret),
-      vault.last4(secret),
+      secret ? vault.seal(secret) : "none",
+      secret ? vault.last4(secret) : v.subscription ? "plan" : "",
       input.tokenLimit == null || input.tokenLimit === "" ? null : Math.round(Number(input.tokenLimit)),
       input.limitPeriod || "month",
       Number(input.maxConcurrency || 4),
@@ -136,6 +148,8 @@ async function createKey(input, owner) {
       t,
     ],
   );
+  const freeTier = input.freeTier === undefined ? !!v.freeTier : !!input.freeTier;
+  await run("UPDATE hive_keys SET machine_id=?, free_tier=? WHERE id=?", [v.subscription ? String(input.machineId) : null, freeTier ? 1 : 0, id]);
   return id;
 }
 
@@ -159,6 +173,8 @@ async function updateKey(id, input) {
     set("default_pinned", input.defaultModel ? 1 : 0);
   }
   if (input.baseUrl !== undefined) set("base_url", input.baseUrl || null);
+  if (input.freeTier !== undefined) set("free_tier", input.freeTier ? 1 : 0);
+  if (input.machineId !== undefined && input.machineId) set("machine_id", String(input.machineId));
   if (input.priority !== undefined) set("priority", Math.max(-100, Math.min(100, Math.round(Number(input.priority) || 0))));
   if (input.apiKey) {
     set("secret_enc", vault.seal(input.apiKey.trim()));
@@ -178,10 +194,21 @@ async function deleteKey(id) {
 }
 
 function secretOf(row) {
+  if (row.secret_enc === "none") return null;
   try {
     return vault.open(row.secret_enc);
   } catch {
     throw Object.assign(new Error(`“${row.label}” can't be decrypted — HIVE_SECRET (or SESSION_SECRET) changed since it was saved. Paste the key again in Keys (⋯ → Budget, model & priority → new key).`), { kind: "auth" });
+  }
+}
+
+/** Subscription connections may have no secret (the machine is signed in). */
+function optionalSecret(row) {
+  if (!row.secret_enc || row.secret_enc === "none") return null;
+  try {
+    return vault.open(row.secret_enc);
+  } catch {
+    return null;
   }
 }
 
@@ -191,7 +218,7 @@ async function checkKey(id) {
   if (!row) throw Object.assign(new Error("Key not found"), { status: 404 });
   const p = vendorOf(keyVendor(row));
   try {
-    const models = await p.implModule.listModels({ secret: secretOf(row), baseUrl: row.base_url || p.baseUrl, official: !!p.official });
+    const models = await p.implModule.listModels({ secret: p.subscription ? optionalSecret(row) : secretOf(row), baseUrl: row.base_url || p.baseUrl, official: !!p.official, modelsUrl: p.modelsUrl, vendor: p.id, cli: p.cli, machineId: row.machine_id });
     // Keep a chosen default only while the provider still offers it.
     const keep = !!row.default_pinned && !!row.default_model && (!models.length || models.includes(row.default_model));
     const def = keep ? row.default_model : modelsLib.pickDefault(models, p.suggested);
@@ -214,7 +241,7 @@ async function checkKey(id) {
  * `input`; those are ~10x cheaper and re-sent every agent step, so they are
  * stored separately and NOT charged against the key's token budget.
  */
-async function recordUsage(keyId, username, { input = 0, output = 0, cacheRead = 0, costMicros = 0 }, rateLimit) {
+async function recordUsage(keyId, username, { input = 0, output = 0, cacheRead = 0, costMicros = 0 }, rateLimit, meta = null) {
   const d = day();
   const cached = Math.max(0, Math.min(input, cacheRead || 0));
   const fresh = Math.max(0, input - cached);
@@ -226,6 +253,45 @@ async function recordUsage(keyId, username, { input = 0, output = 0, cacheRead =
   const c = usageCache.get(keyId);
   if (c) c.tokens += fresh + output;
   if (rateLimit) await run("UPDATE hive_keys SET rl_json=?, rl_at=? WHERE id=?", [JSON.stringify(rateLimit), now(), keyId]);
+  // Per project / vendor / model detail, for budgets and the Usage page.
+  if (meta?.vendor) {
+    let cost = costMicros;
+    if (!cost) {
+      const row = await get("SELECT free_tier, preset, provider FROM hive_keys WHERE id=?", [keyId]);
+      const { cardFor, priceOf } = require("./catalog");
+      const sub = (() => {
+        try {
+          return !!vendorOf(meta.vendor).subscription;
+        } catch {
+          return false;
+        }
+      })();
+      if (row && !row.free_tier && !sub && !/:free$/.test(meta.model || "")) {
+        const usd = priceOf(cardFor(meta.model, meta.vendor), fresh + cached * 0.1, output);
+        cost = usd ? Math.round(usd * 1e6) : 0;
+      }
+    }
+    await run(
+      `INSERT INTO hive_usage_detail(day, project_id, vendor, model, username, input_tokens, output_tokens, cached_tokens, requests, cost_micros) VALUES(?,?,?,?,?,?,?,?,1,?)
+       ON CONFLICT(day, project_id, vendor, model, username) DO UPDATE SET input_tokens=input_tokens+excluded.input_tokens, output_tokens=output_tokens+excluded.output_tokens, cached_tokens=cached_tokens+excluded.cached_tokens, requests=requests+1, cost_micros=cost_micros+excluded.cost_micros`,
+      [d, meta.projectId || "", meta.vendor, meta.model || "", username, fresh, output, cached, cost],
+    );
+    await require("./caps").afterUsage({ projectId: meta.projectId || "", vendor: meta.vendor, model: meta.model || "", username }).catch(() => {});
+  }
+}
+
+/** Live subscription usage windows (Claude Code reports them on every run). */
+async function setPlanUsage(keyId, info) {
+  if (!info || typeof info !== "object") return;
+  const windows = info.unifiedWindows || {};
+  const out = {
+    plan: true,
+    status: info.status || null,
+    type: info.rateLimitType || null,
+    resetsAt: info.resetsAt ? info.resetsAt * 1000 : null,
+    windows: Object.fromEntries(Object.entries(windows).map(([k, w]) => [k, { utilization: Number(w.utilization ?? 0), resetsAt: w.resetsAt ? w.resetsAt * 1000 : null, status: w.status || null }])),
+  };
+  await run("UPDATE hive_keys SET rl_json=?, rl_at=? WHERE id=?", [JSON.stringify(out), now(), keyId]);
 }
 
 /** Is there budget left on this key? */
@@ -250,6 +316,7 @@ async function pickKey(provider, { prefer = "auto", exclude = [] } = {}) {
   let bestScore = -Infinity;
   for (const r of rows) {
     if (exclude.includes(r.id)) continue;
+    if (r.machine_id && !require("./machines").isOnline(r.machine_id)) continue;
     // A key whose last check failed is retried after a cool-down: listing
     // models can fail (restricted project keys, a provider hiccup) while
     // chatting works. A real auth failure on a call re-marks it.
@@ -282,7 +349,7 @@ async function pickHandoffKey({ exclude = [], order = [], skipVendor } = {}) {
     } catch {
       continue;
     }
-    if (!v.caps.tools) continue;
+    if (!v.caps.tools || v.subscription) continue;
     const k = await pickKey(vid, { exclude });
     if (k) return k;
   }
@@ -346,4 +413,4 @@ async function refreshAll() {
   return fresh;
 }
 
-module.exports = { explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };
+module.exports = { setPlanUsage, explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };

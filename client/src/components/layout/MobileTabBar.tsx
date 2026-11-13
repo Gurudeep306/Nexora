@@ -15,13 +15,13 @@ import { tStandard } from '@/lib/motion'
 export function MobileTabBar() {
   const { pathname } = useLocation()
   const dock = useDock()
-  const { featureOn } = useSite()
+  const { featureOn, isStaff } = useSite()
 
   if (isDockFocusRoute(pathname)) return null
 
   const pages = dock.pinned
     .map((id) => DOCK_BY_ID.get(id))
-    .filter((i): i is DockItem => !!i && !!i.to && !i.external && !i.action && !i.to.includes('?') && featureOn(featureForPath(i.to)))
+    .filter((i): i is DockItem => !!i && !!i.to && !i.external && !i.action && !i.to.includes('?') && (!i.staffOnly || isStaff) && featureOn(featureForPath(i.to)))
     .slice(0, 4)
   const tabs: (DockItem | 'search')[] = [...pages.slice(0, 2), 'search', ...pages.slice(2, 4)]
 

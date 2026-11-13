@@ -80,6 +80,18 @@ function str(v, name, { max = 200, min = 1, optional = false } = {}) {
 
 function cleanSpec(s) {
   if (!s || typeof s !== "object") throw new BadInput("Each agent needs a provider and model");
+  // "auto": the smart router picks the best model for the kind of work.
+  if (s.provider === "auto") {
+    return {
+      provider: "auto",
+      keyId: "auto",
+      kind: typeof s.kind === "string" ? s.kind.slice(0, 20) : undefined,
+      freeOnly: !!s.freeOnly,
+      preference: ["balanced", "quality", "savings"].includes(s.preference) ? s.preference : undefined,
+      effort: EFFORTS.has(s.effort) ? s.effort : null,
+      name: str(s.name, "agent name", { max: 40, optional: true }),
+    };
+  }
   providerOf(s.provider);
   return {
     provider: s.provider,
@@ -491,10 +503,6 @@ function createHiveRouter() {
       const lead = b.lead ? cleanSpec(b.lead) : null;
       if (!specs.length && !lead) throw new BadInput("Pick at least one agent");
       if ((mode === "compare" || mode === "review") && !specs.length) throw new BadInput("Pick the agents to run");
-      // Fail fast if a spec can't get a key (no budget / no key for provider).
-      for (const s of [...specs, ...(lead ? [lead] : [])]) await runner.resolveSpec(s).catch((e) => {
-        throw new BadInput(e.message);
-      });
       // Where the work happens: a linked repo of the project, and optionally a
       // folder on a connected machine (real files + commands).
       const repoId = typeof b.repoId === "string" && b.repoId ? b.repoId : null;
@@ -507,6 +515,10 @@ function createHiveRouter() {
         if (!folder) throw new BadInput("Pick a folder on the machine");
         if (!machines.isOnline(machineId)) throw new BadInput("That machine is offline — start the Hive bridge on it", 409);
       } else if (!target.github_id) throw new BadInput("This project has no repository — pick a machine folder to work in");
+      // Fail fast if a spec can't get a model (no key, no budget, wrong machine).
+      for (const s of [...specs, ...(lead ? [lead] : [])]) await runner.resolveSpec(s, { prompt, machineId }).catch((e) => {
+        throw new BadInput(e.message);
+      });
       const baseRef = str(b.baseRef, "base branch", { max: 120, optional: true }) || target.default_branch || "main";
       let base = { sha: "local" };
       if (!machineId) {
@@ -526,6 +538,7 @@ function createHiveRouter() {
         [id, p.id, title, prompt, mode, "queued", baseRef, base.sha, `hive/${slug(title)}-${id.slice(-4)}`, req.hiveUser, t, t],
       );
       if (repoId || machineId) await run("UPDATE hive_tasks SET repo_id=?, machine_id=?, folder=? WHERE id=?", [repoId, machineId, folder, id]);
+      if (machineId && b.isolate !== false) await router.hiveIsolate?.(id);
       const fileIds = (Array.isArray(b.attachments) ? b.attachments : []).map(String).slice(0, 12);
       const budget = Number(b.budgetTokens) > 0 ? Math.round(Number(b.budgetTokens)) : null;
       if (fileIds.length || budget) await run("UPDATE hive_tasks SET attachments_json=?, budget_tokens=? WHERE id=?", [JSON.stringify(fileIds), budget, id]);
@@ -692,7 +705,7 @@ function createHiveRouter() {
       const task = await taskRow(req.params.id);
       const prompt = str(req.body?.prompt, "message", { max: 20000 });
       const spec = cleanSpec(req.body?.agent);
-      await runner.resolveSpec(spec).catch((e) => {
+      await runner.resolveSpec(spec, { prompt, machineId: task.machine_id || null }).catch((e) => {
         throw new BadInput(e.message);
       });
       const variant = typeof req.body?.variant === "string" && req.body.variant ? req.body.variant : "main";
@@ -763,7 +776,7 @@ function createHiveRouter() {
       const instructions = str(b.instructions, "instructions", { max: 20000 });
       const specs = (Array.isArray(b.agents) ? b.agents : []).slice(0, 8).map(cleanSpec);
       if (!specs.length) throw new BadInput("Pick at least one agent");
-      for (const sp of specs) await runner.resolveSpec(sp).catch((e) => {
+      for (const sp of specs) await runner.resolveSpec(sp, { prompt: instructions, machineId: task.machine_id || null }).catch((e) => {
         throw new BadInput(e.message);
       });
       const agents = await runner.assign(task.id, { title: str(b.title, "title", { max: 120, optional: true }), instructions, specs, together: b.together !== false, username: req.hiveUser });
@@ -775,7 +788,8 @@ function createHiveRouter() {
     "/api/hive/agents/:id/handoff",
     h(async (req, res) => {
       const spec = cleanSpec(req.body?.agent);
-      await runner.resolveSpec(spec).catch((e) => {
+      const old = await get("SELECT a.instructions, t.machine_id FROM hive_agents a JOIN hive_tasks t ON t.id=a.task_id WHERE a.id=?", [req.params.id]);
+      await runner.resolveSpec(spec, { prompt: old?.instructions || "", machineId: old?.machine_id || null }).catch((e) => {
         throw new BadInput(e.message);
       });
       const agent = await runner.handoffAgent(req.params.id, { spec, username: req.hiveUser });
@@ -960,7 +974,7 @@ function createHiveRouter() {
     "/api/hive/convos/:id",
     h(async (req, res) => {
       const c = await chat.convoFor(req.params.id, req.hiveUser);
-      if (c.owner !== req.hiveUser) throw new BadInput("Only its owner can change this chat", 403);
+      if (c.owner !== req.hiveUser && !isAdmin(req)) throw new BadInput("Only its owner or an admin can rename this chat", 403);
       const b = req.body || {};
       await run("UPDATE hive_convos SET title=?, shared=?, system=?, updated_at=? WHERE id=?", [
         str(b.title, "title", { max: 120, optional: true }) ?? c.title,
@@ -1064,6 +1078,8 @@ function createHiveRouter() {
 
   // Machines, approvals, ship pipeline, launchpad, linked repos, terminal.
   require("./hive-ops").mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRow, BadInput, cleanSpec, COLORS, ready });
+  // Routing, subscription agents, budgets, Drive, Judge, pipelines, automations, guide.
+  require("./hive-v4").mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRow, BadInput, ready });
 
   return router;
 }
