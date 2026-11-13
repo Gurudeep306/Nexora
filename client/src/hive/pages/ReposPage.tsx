@@ -15,7 +15,7 @@ import { hiveApi } from '../api'
 import { errMsg } from '../Improve'
 import { useHive } from '../store'
 import type { GhRepo } from '../types'
-import { PageTitle, timeAgo } from '../ui'
+import { IconTile, PageTitle, timeAgo } from '../ui'
 import { FolderImport } from '../FolderImport'
 
 // A classic token with these scopes sees every repo you can (yours, collaborations and orgs).
@@ -90,11 +90,8 @@ export default function ReposPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
       <PageTitle
-        title={
-          <span className="inline-flex items-center gap-2.5">
-            <GitBranch className="size-6 text-accent-brand" /> Your GitHub
-          </span>
-        }
+        icon={<GitBranch />}
+        title="Your GitHub"
         sub="Every repository you can reach. Open one and it's a project, with a brief Hive writes from the code — or hand it to the Copilot and say what you want."
       >
         {connected && (
@@ -145,9 +142,9 @@ export default function ReposPage() {
               {shown.slice(0, 200).map((r, i) => (
                 <motion.div key={r.fullName} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0, transition: { delay: Math.min(i, 16) * 0.015 } }} className="hive-card group flex flex-col gap-2 p-3.5">
                   <div className="flex items-start gap-3">
-                    <span className="hive-hex-tile grid size-10 shrink-0 place-items-center" style={{ background: `linear-gradient(140deg, oklch(70% 0.14 ${LANG_HUE[r.language ?? ''] ?? 260}), oklch(56% 0.16 ${(LANG_HUE[r.language ?? ''] ?? 260) + 30}))` }}>
-                      <FolderGit2 className="size-[18px] text-white" />
-                    </span>
+                    <IconTile hue={LANG_HUE[r.language ?? ''] ?? 260}>
+                      <FolderGit2 />
+                    </IconTile>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-1.5">
                         <span className="truncate text-[14px] font-semibold">
@@ -219,7 +216,6 @@ export function ConnectGithub({ onDone }: { onDone?: () => void }) {
   }
   return (
     <section className="hive-card relative mx-auto max-w-2xl overflow-hidden p-6">
-      <div className="pointer-events-none absolute -right-16 -top-16 size-56 rounded-full opacity-20 blur-3xl" style={{ background: 'oklch(70% 0.15 280)' }} />
       <h2 className="relative text-[17px] font-semibold">Connect GitHub once — every repo is ready</h2>
       <p className="relative mt-1 text-[13px] text-text-muted">After this, all your repositories (yours, ones you collaborate on, and your organisations’) show up here and the Copilot can work on any of them.</p>
       <ol className="relative mt-5 space-y-4 text-[13px]">

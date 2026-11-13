@@ -46,6 +46,16 @@ export interface HiveKey {
   subscription?: boolean
   verified?: ModelVerification | null
   untestedModels?: string[]
+  /** A free connection's typical allowance (shown when the provider sends no live numbers). */
+  freeLimit?: FreeLimit | null
+}
+
+export interface FreeLimit {
+  rpd?: number
+  rpm?: number
+  tpd?: number
+  tpm?: number
+  note: string
 }
 
 /** The last "test every model" run on a key: which models really answered. */

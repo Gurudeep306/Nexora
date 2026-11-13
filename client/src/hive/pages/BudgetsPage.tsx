@@ -5,7 +5,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip as RTooltip, XAxis, YAxis } from 'recharts'
-import { AlertTriangle, Bell, BellOff, CheckCheck, Coins, Gauge, Globe2, Info, Lock, Plus, ShieldAlert, ShieldCheck, Sparkles, Trash2, XCircle, Zap } from 'lucide-react'
+import { AlertTriangle, Bell, BellOff, CheckCheck, Coins, Gauge, Globe2, Info, Lock, Plus, ShieldAlert, ShieldCheck, Sparkles, Trash2, XCircle, Zap, Wallet } from 'lucide-react'
 import { AnimatedNumber, Button, ConfirmDialog, Input, Modal, Select, Tabs, Tooltip, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
@@ -113,7 +113,7 @@ export default function BudgetsPage() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-6 pb-24 sm:px-6 lg:px-8">
-      <PageTitle title="Budgets & spend" sub="See where every token goes, and set limits so nothing runs away with the bill.">
+      <PageTitle icon={<Wallet />} title="Budgets & spend" sub="See where every token goes, and set limits so nothing runs away with the bill.">
         <div role="radiogroup" aria-label="Period" className="flex rounded-xl bg-text-primary/[0.05] p-1">
           {PERIODS.map((d) => (
             <button

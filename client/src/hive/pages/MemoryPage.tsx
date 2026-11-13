@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Bot, Pin, PinOff, Plus, Trash2 } from 'lucide-react'
+import { Bot, Pin, PinOff, Plus, Trash2, Brain } from 'lucide-react'
 import { Button, Input, Textarea, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
@@ -45,7 +45,7 @@ export default function MemoryPage() {
 
   return (
     <div className="mx-auto w-full max-w-[820px] px-8 pb-20 pt-10">
-      <PageTitle title="Memory" sub="What every agent on a project knows before it starts — whichever provider it runs on. Agents add to it as they learn; pin what matters most." />
+      <PageTitle icon={<Brain />} title="Memory" sub="What every agent on a project knows before it starts — whichever provider it runs on. Agents add to it as they learn; pin what matters most." />
       <div className="mb-8 flex flex-wrap gap-1 rounded-xl bg-text-primary/[0.04] p-1">
         {boot.projects.map((p) => (
           <button key={p.id} type="button" onClick={() => setProjectId(p.id)} className={cn('flex h-8 items-center gap-1.5 rounded-lg px-3 text-[13px]', projectId === p.id ? 'bg-bg-surface text-text-primary shadow-sm' : 'text-text-muted')}>

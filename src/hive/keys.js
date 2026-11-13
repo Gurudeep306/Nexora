@@ -60,6 +60,16 @@ function publicKey(row, usedTokens = 0, extra = {}) {
     machineId: row.machine_id || null,
     freeTier: !!row.free_tier,
     verified: require("./health").verifiedOf(row),
+    // Free connections always show a limit: the provider's live numbers when it sends them, else its typical free allowance.
+    freeLimit: (() => {
+      try {
+        const v = vendorOf(keyVendor(row));
+        if (v.subscription || !(row.free_tier || v.freeTier)) return null;
+        return require("./catalog").freeLimitFor(v.id);
+      } catch {
+        return null;
+      }
+    })(),
     subscription: (() => {
       try {
         return !!vendorOf(keyVendor(row)).subscription;
