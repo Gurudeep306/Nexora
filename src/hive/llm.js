@@ -33,7 +33,7 @@ function extractJson(text) {
  * spec (optional) forces a provider/key/model; otherwise the router picks.
  * Returns { text, data?, model, provider, note }.
  */
-async function ask({ kind = "writing", prompt, system = "", json = false, username = "hive", preference = "quality", excludeVendors = [], spec = null, attachments = [], maxTries = 3, projectId = "" }) {
+async function ask({ kind = "writing", prompt, system = "", json = false, username = "hive", preference = "quality", excludeVendors = [], spec = null, attachments = [], maxTries = 3, projectId = "", freeOnly = false }) {
   const tried = [];
   let lastErr = null;
   for (let attempt = 0; attempt < maxTries; attempt++) {
@@ -47,7 +47,10 @@ async function ask({ kind = "writing", prompt, system = "", json = false, userna
       model = spec.model || key?.default_model;
       if (!key) throw new Error(await keys.explainNoKey(spec.provider));
     } else {
-      const list = (await router.candidates({ kind, needTools: false, chat: true, exclude: { keys: tried } })).filter((c) => !excludeVendors.includes(c.vendor));
+      const pool = async (free) => (await router.candidates({ kind, needTools: false, chat: true, freeOnly: free, exclude: { keys: tried } })).filter((c) => !excludeVendors.includes(c.vendor));
+      // freeOnly: Hive's housekeeping (summaries, condensing) prefers free models, falling back to any.
+      let list = await pool(freeOnly);
+      if (!list.length && freeOnly) list = await pool(false);
       if (!list.length) break;
       const { ranked } = router.rank(list, kind, preference);
       const c = ranked[0];

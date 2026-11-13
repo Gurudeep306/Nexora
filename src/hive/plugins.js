@@ -45,6 +45,15 @@ const BUILTINS = [
     config: { maxEntries: 400 },
   },
   {
+    id: "token_steward",
+    name: "Token Steward",
+    category: "Token saver",
+    icon: "piggy-bank",
+    default: true,
+    description: "Long chats are folded into a running summary written by a free model (cached, so it's paid once), and long tool output — search results, web pages, MCP replies — is trimmed. The Steward also audits spend and suggests one-click savings.",
+    config: { triggerTokens: 24000, keepTokens: 8000, maxToolChars: 12000 },
+  },
+  {
     id: "context_trim",
     name: "Context trimmer",
     category: "Token saver",

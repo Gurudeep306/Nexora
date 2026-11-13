@@ -309,6 +309,23 @@ const SCHEMA = [
     created_at INTEGER NOT NULL
   )`,
   "CREATE INDEX IF NOT EXISTS idx_hive_alerts ON hive_alerts(created_at)",
+  // Connected tools from the ecosystem: remote MCP servers and search engines.
+  `CREATE TABLE IF NOT EXISTS hive_integrations (
+    id TEXT PRIMARY KEY,
+    kind TEXT NOT NULL,
+    tool_id TEXT,
+    name TEXT NOT NULL,
+    url TEXT,
+    engine TEXT,
+    secret_enc TEXT,
+    enabled INTEGER NOT NULL DEFAULT 1,
+    tools_json TEXT NOT NULL DEFAULT '[]',
+    status TEXT,
+    error TEXT,
+    checked_at INTEGER,
+    created_by TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  )`,
   // Things each person wants every chat to know about them.
   `CREATE TABLE IF NOT EXISTS hive_user_memory (
     id TEXT PRIMARY KEY,
@@ -412,6 +429,7 @@ const COLUMNS = [
   ["hive_convo_msgs", "rating INTEGER"],
   ["hive_convo_msgs", "tools_json TEXT"],
   ["hive_convos", "tools INTEGER NOT NULL DEFAULT 1"],
+  ["hive_convos", "summary_json TEXT"],
   ["hive_tasks", "pipeline_run TEXT"],
   ["hive_schedules", "pipeline_id TEXT"],
 ];
