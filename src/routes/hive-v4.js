@@ -207,13 +207,13 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     "/api/hive/subscriptions",
     h(async (req, res) => {
       const b = req.body || {};
-      if (!["claude_code", "codex"].includes(b.provider)) throw new BadInput("Pick Claude Code or Codex");
+      if (!["claude_code", "codex", "vibe"].includes(b.provider)) throw new BadInput("Pick Claude Code, Codex or Mistral Vibe");
       const m = await get("SELECT * FROM hive_machines WHERE id=?", [String(b.machineId || "")]);
       if (!m) throw new BadInput("Pick a connected machine");
       // Several accounts on one machine get numbered names unless the person names them.
       const same = await get("SELECT COUNT(*) AS n FROM hive_keys WHERE preset=? AND machine_id=?", [b.provider, m.id]);
       const n = Number(same?.n || 0);
-      const label = str(b.label, "name", { max: 60, optional: true }) || `${b.provider === "codex" ? "Codex" : "Claude Code"}${n ? ` ${n + 1}` : ""} on ${m.name}`;
+      const label = str(b.label, "name", { max: 60, optional: true }) || `${{ codex: "Codex", vibe: "Mistral Vibe" }[b.provider] || "Claude Code"}${n ? ` ${n + 1}` : ""} on ${m.name}`;
       // The same setup token twice is the same Claude account — say so instead of adding a duplicate.
       if (b.token) {
         const last4 = String(b.token).trim().slice(-4);
@@ -226,7 +226,7 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
           } catch {
             /* unreadable */
           }
-          if (same) throw new BadInput(`That token is already connected as “${d.label}”. Log in to claude.ai with the other account (a private window helps), run \`claude setup-token\` again and paste the new token.`, 409);
+          if (same) throw new BadInput(b.provider === "claude_code" ? `That token is already connected as “${d.label}”. Log in to claude.ai with the other account (a private window helps), run \`claude setup-token\` again and paste the new token.` : `That key is already connected as “${d.label}”.`, 409);
         }
       }
       let id;
@@ -249,9 +249,10 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
       const m = await get("SELECT * FROM hive_machines WHERE id=?", [req.params.id]);
       if (!m) throw new BadInput("Machine not found", 404);
       if (!machines.isOnline(m.id)) return res.json({ ok: true, online: false, agents: {} });
-      const probe = (cli) => machines.call(m.id, "cli_detect", { cli }, { timeoutMs: 40_000 }).catch((e) => ({ error: e.message }));
-      const [claude, codex] = await Promise.all([probe("claude"), probe("codex")]);
-      res.json({ ok: true, online: true, agents: { claude_code: claude, codex } });
+      const cliMod = require("../hive/providers/cli");
+      const probe = async (cli) => ((await cliMod.bridgeKnows(cli, m.id)) ? machines.call(m.id, "cli_detect", { cli }, { timeoutMs: 40_000 }).catch((e) => ({ error: e.message })) : { error: cliMod.OLD_BRIDGE });
+      const [claude, codex, vibe] = await Promise.all([probe("claude"), probe("codex"), probe("vibe")]);
+      res.json({ ok: true, online: true, agents: { claude_code: claude, codex, vibe } });
     }),
   );
 

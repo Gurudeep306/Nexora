@@ -352,7 +352,7 @@ Reply with JSON only:
 async function architect({ history = [], draft = null, projectId, username }) {
   const router = require("./router");
   const cands = await router.candidates({ kind: "coding", needTools: true, machineId: null }).catch(() => []);
-  const subs = await all("SELECT preset, label FROM hive_keys WHERE disabled=0 AND preset IN ('claude_code','codex')");
+  const subs = await all("SELECT preset, label FROM hive_keys WHERE disabled=0 AND preset IN ('claude_code','codex','vibe')");
   const seen = new Set();
   const models = [];
   for (const c of cands) {

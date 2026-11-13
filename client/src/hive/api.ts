@@ -187,9 +187,9 @@ export const hiveApi = {
   setIsolation: (projectId: string, isolate: boolean) => api.patch<Ok<object>>(`/api/hive/projects/${projectId}/isolation`, { isolate }),
 
   refreshPlanUsage: (keyId?: string) => api.post<Ok<{ results: { keyId: string; windows?: Record<string, unknown>; error?: string }[] }>>('/api/hive/subscriptions/usage', keyId ? { keyId } : {}, { timeoutMs: 60000 }),
-  addSubscription: (body: { provider: 'claude_code' | 'codex'; machineId: string; label?: string; token?: string; tokenLimit?: number | null; limitPeriod?: string }) =>
+  addSubscription: (body: { provider: 'claude_code' | 'codex' | 'vibe'; machineId: string; label?: string; token?: string; tokenLimit?: number | null; limitPeriod?: string }) =>
     api.post<Ok<{ id: string; check: { ok: boolean; error?: string } }>>('/api/hive/subscriptions', body, { timeoutMs: 90000 }),
-  machineAgents: (id: string) => api.get<Ok<{ online: boolean; agents: { claude_code?: CliStatus; codex?: CliStatus } }>>(`/api/hive/machines/${id}/agents`, { timeoutMs: 60000 }),
+  machineAgents: (id: string) => api.get<Ok<{ online: boolean; agents: { claude_code?: CliStatus; codex?: CliStatus; vibe?: CliStatus } }>>(`/api/hive/machines/${id}/agents`, { timeoutMs: 60000 }),
 
   caps: () => api.get<Ok<{ caps: Cap[] }>>('/api/hive/caps'),
   addCap: (body: { scopeType: Cap['scopeType']; scope?: string; tokens?: number | null; dollars?: number | null; period: Cap['period']; action: Cap['action'] }) => api.post<Ok<{ id: string }>>('/api/hive/caps', body),

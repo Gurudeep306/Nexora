@@ -1,5 +1,5 @@
 /* ────────────────────────────────────────────────────────────────────────
-   Subscription agents — Claude Code and Codex on your own plans, no API
+   Subscription agents — Claude Code, Codex and Mistral Vibe on your own plans, no API
    credits. The CLIs run on an always-on worker machine (the bridge); Hive
    drives them, shows the plan's usage windows, and hands work to another
    model when a plan limit is hit.
@@ -17,10 +17,11 @@ import { useHive } from './store'
 import type { CliStatus, HiveKey } from './types'
 import { LimitBar, timeAgo } from './ui'
 
-type Sub = 'claude_code' | 'codex'
+type Sub = 'claude_code' | 'codex' | 'vibe'
 const INFO: Record<Sub, { name: string; plan: string; model: string; login: string; token: string; tokenHint: string }> = {
   claude_code: { name: 'Claude Code', plan: 'Claude Pro / Max', model: 'claude-opus-5-5', login: 'claude', token: 'claude setup-token', tokenHint: 'Paste the token from `claude setup-token` (optional if the machine is already logged in)' },
   codex: { name: 'Codex', plan: 'ChatGPT Plus / Pro', model: 'gpt-5-codex', login: 'codex login --device-auth', token: 'codex login --device-auth', tokenHint: 'Codex uses the machine’s own login — leave empty after `codex login --device-auth`' },
+  vibe: { name: 'Mistral Vibe', plan: 'Le Chat Pro / Student', model: 'mistral-medium-3.5', login: 'vibe --setup', token: 'vibe --setup', tokenHint: 'Paste your Vibe API key (optional if `vibe --setup` was run on the machine)' },
 }
 
 
@@ -51,10 +52,10 @@ export function SubscriptionsPanel({ onConnect }: { onConnect: (s: Sub) => void 
       <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
         <div>
           <h2 className="text-[15px] font-semibold">Your subscriptions — no API credits</h2>
-          <p className="text-[13px] text-text-muted">Claude Code and Codex run on an always-on machine with your plan. Every staff member can use them, from anywhere.</p>
+          <p className="text-[13px] text-text-muted">Claude Code, Codex and Mistral Vibe run on an always-on machine with your plan. Every staff member can use them, from anywhere.</p>
         </div>
       </div>
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {(Object.keys(INFO) as Sub[]).map((s, i) => {
           const list = keys.filter((k) => k.provider === s)
           return (
@@ -247,13 +248,13 @@ export function SubscriptionDialog({ sub, onClose }: { sub: Sub | null; onClose:
                       </span>
                     ) : (
                       <span className="text-state-warning">
-                        Not logged in — run <code className="hive-kbd">{info.login}</code> on the machine{sub === 'claude_code' ? ', or paste a setup token below' : ''}
+                        Not logged in — run <code className="hive-kbd">{info.login}</code> on the machine{sub === 'claude_code' ? ', or paste a setup token below' : sub === 'vibe' ? ', or paste your Vibe API key below' : ''}
                       </span>
                     )}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 text-state-warning">
-                    <X className="size-3.5" /> {info.name} isn’t installed there — run the setup line from Machines, or <code className="hive-kbd">npm i -g {sub === 'codex' ? '@openai/codex' : '@anthropic-ai/claude-code'}</code>
+                    <X className="size-3.5" /> {info.name} isn’t installed there — run the setup line from Machines, or <code className="hive-kbd">{sub === 'vibe' ? 'uv tool install mistral-vibe' : `npm i -g ${sub === 'codex' ? '@openai/codex' : '@anthropic-ai/claude-code'}`}</code>
                   </span>
                 )}
               </div>
@@ -262,10 +263,10 @@ export function SubscriptionDialog({ sub, onClose }: { sub: Sub | null; onClose:
                 <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder={sub === 'claude_code' ? 'e.g. Main, Worker 1, Riya’s Pro' : 'e.g. Main'} maxLength={60} />
                 <span className="mt-1 block text-[11.5px] text-text-muted">Helps tell several accounts apart. Add as many accounts as you have — each needs its own setup token, made while logged in to <b>that</b> account.</span>
               </label>
-              {sub === 'claude_code' && (
+              {(sub === 'claude_code' || sub === 'vibe') && (
                 <label className="block">
-                  <span className="mb-1 block text-[12px] font-medium text-text-secondary">Setup token (optional)</span>
-                  <Input type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder="sk-ant-oat01-…" autoComplete="off" />
+                  <span className="mb-1 block text-[12px] font-medium text-text-secondary">{sub === 'vibe' ? 'Vibe API key (optional)' : 'Setup token (optional)'}</span>
+                  <Input type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder={sub === 'vibe' ? 'Your Vibe key' : 'sk-ant-oat01-…'} autoComplete="off" />
                   <span className="mt-1 block text-[11.5px] text-text-muted">{info.tokenHint}. Stored encrypted; sent only to that machine.</span>
                 </label>
               )}

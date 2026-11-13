@@ -10,13 +10,15 @@
 // • Talks to Hive over HTTPS long-polling: no inbound ports, works behind NAT.
 // • Zero dependencies, Node 18+. Stop it any time with Ctrl+C.
 "use strict";
+// Subscription CLIs Hive may start here (never a shell, never another binary).
+const CLI_BIN = { claude: "claude", codex: "codex", vibe: "vibe" };
 const fs = require("node:fs");
 const fsp = require("node:fs/promises");
 const path = require("node:path");
 const os = require("node:os");
 const { spawn } = require("node:child_process");
 
-const VERSION = "1.1.0";
+const VERSION = "1.2.0";
 const args = process.argv.slice(2);
 const opt = (name, fallback) => {
   const i = args.indexOf(`--${name}`);
@@ -255,9 +257,9 @@ const OPS = {
   async procs() {
     return { procs: [...procs.entries()].map(([id, p]) => ({ id, cmd: p.cmd, cwd: p.cwd, running: p.exit === null, started: p.started })) };
   },
-  /** Is Claude Code / Codex installed here, and signed in? */
+  /** Is Claude Code / Codex / Mistral Vibe installed here, and signed in? */
   async cli_detect({ cli }) {
-    const bin = cli === "codex" ? "codex" : "claude";
+    const bin = CLI_BIN[cli] || "claude";
     const v = await sh(`${bin} --version`, { timeoutMs: 20000 });
     if (v.code !== 0) return { installed: false, version: null, loggedIn: false, detail: v.output.trim().slice(-300) };
     let loggedIn = false;
@@ -271,6 +273,15 @@ const OPS = {
       } catch {
         detail = st.output.trim().slice(-200);
       }
+    } else if (bin === "vibe") {
+      // `vibe --setup` keeps the key in $VIBE_HOME/.env (default ~/.vibe/.env).
+      const envFile = path.join(process.env.VIBE_HOME || path.join(os.homedir(), ".vibe"), ".env");
+      let saved = "";
+      try {
+        saved = fs.readFileSync(envFile, "utf8");
+      } catch {}
+      loggedIn = !!process.env.MISTRAL_API_KEY || /^\s*MISTRAL_API_KEY\s*=\s*\S+/m.test(saved);
+      detail = loggedIn ? "signed in" : "not signed in — run: vibe --setup";
     } else {
       const st = await sh("codex login status", { timeoutMs: 20000 });
       loggedIn = st.code === 0 && !/not logged in/i.test(st.output);
@@ -288,7 +299,7 @@ const OPS = {
       cwd = path.join(ROOTS[0], ".hive-chat");
       fs.mkdirSync(cwd, { recursive: true });
     }
-    const bin = cli === "codex" ? "codex" : "claude";
+    const bin = CLI_BIN[cli] || "claude";
     const argv = cliArgs.map(String);
     if (hook && bin === "claude") {
       const self = path.resolve(process.argv[1]);
