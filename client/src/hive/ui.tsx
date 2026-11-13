@@ -49,6 +49,7 @@ const VENDOR: Record<string, { name: string; mark: string; hue: number; chroma?:
   opencode_zen: { name: 'OpenCode Zen', mark: 'Zn', hue: 210 },
   kilo: { name: 'Kilo Gateway', mark: 'Ki', hue: 120 },
   claude_code: { name: 'Claude Code', mark: 'CC', hue: 30 },
+  vibe: { name: 'Mistral Vibe', mark: 'MV', hue: 50 },
   codex: { name: 'Codex', mark: '>_', hue: 160 },
   auto: { name: 'Auto', mark: '✦', hue: 285 },
   custom: { name: 'Custom', mark: '◇', hue: 290, chroma: 0.03 },

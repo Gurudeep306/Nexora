@@ -151,6 +151,7 @@ const CARDS = [
 // Subscription agents: what you get when Claude Code / Codex run on your plan.
 const SUBSCRIPTION_CARDS = {
   claude_code: c({ id: "claude-code", name: "Claude Code", lab: "Anthropic · your Claude plan", intelligence: 90, coding: 94, reasoning: 90, writing: 90, speed: 2, context: 1000, tier: "sub", vision: true, strengths: ["Full agent: reads, edits, runs tests on the machine", "Uses your Claude subscription — no API credit", "Best at large, careful changes"], weaknesses: ["Needs a connected machine", "Plan usage windows (resets every few hours)"] }),
+  vibe: c({ id: "vibe", name: "Mistral Vibe", lab: "Mistral · your Le Chat plan", intelligence: 76, coding: 80, reasoning: 72, writing: 72, speed: 4, context: 256, tier: "sub", vision: false, strengths: ["Full coding agent on your machine (Devstral / Mistral Medium)", "Uses your Le Chat Pro or student plan — no API credit", "Fast; good for tests, backend, refactors and fixes"], weaknesses: ["Needs a connected machine", "Below Claude on UI and hard engineering", "Plan usage limits"] }),
   codex: c({ id: "codex", name: "Codex", lab: "OpenAI · your ChatGPT plan", intelligence: 86, coding: 91, reasoning: 87, writing: 78, speed: 3, context: 400, tier: "sub", vision: true, strengths: ["Full agent with a sandbox", "Uses your ChatGPT subscription — no API credit", "Token-efficient"], weaknesses: ["Needs a connected machine", "Plan usage windows"] }),
 };
 
