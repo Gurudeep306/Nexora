@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useHiveSections } from '../HivePage'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, ArrowUp, Bot, Check, ChevronDown, Cpu, FolderGit2, KeyRound, Lightbulb, Loader2, MessageSquare, Radar, Server, ShieldAlert, Sparkles, Workflow, Zap } from 'lucide-react'
-import { LogoMark } from '@/components/brand/Logo'
+import { ArrowRight, ArrowUp, Bot, Check, ChevronDown, Cpu, FolderGit2, KeyRound, Loader2, MessageSquare, Radar, Server, ShieldAlert, Sparkles, Zap } from 'lucide-react'
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuTrigger, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
@@ -12,7 +12,7 @@ import { HealthStrip, LiveWall } from '../LiveWall'
 import { projectColor } from '../projectColor'
 import { useHive } from '../store'
 import type { AgentSpec, MarketModel, Task } from '../types'
-import { StatusPill, fmtCost, fmtTokens, timeAgo } from '../ui'
+import { IconTile, StatusPill, fmtCost, fmtTokens, timeAgo } from '../ui'
 
 type OverviewTask = Task & { project_name: string; project_color: string }
 
@@ -150,13 +150,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Quick actions */}
-        <div className="mx-auto mt-6 grid max-w-[920px] grid-cols-2 gap-2.5 md:grid-cols-4">
-          <Quick to="/hive/nexora" tone="var(--color-accent-brand)" icon={<LogoMark size={18} />} title="Build NexoraGuru" sub="Code → PR → live" />
-          <Quick to="/hive/launchpad" tone="var(--color-state-warning)" icon={<Lightbulb className="size-4" />} title="New idea" sub="Plan + repo + agents" />
-          <Quick to="/hive/machines" tone="var(--color-state-success)" icon={<Server className="size-4" />} title="Machines" sub={`${machines.filter((m) => m.online).length} online`} />
-          <Quick to="/hive/dispatch" tone="var(--color-state-info)" icon={<Workflow className="size-4" />} title="Dispatch a team" sub="Right model per part" />
-        </div>
+        <Explore />
 
         {/* Setup */}
         {doneCount < setup.length && (
@@ -284,20 +278,6 @@ export default function HomePage() {
   )
 }
 
-function Quick({ to, tone, icon, title, sub }: { to: string; tone: string; icon: React.ReactNode; title: string; sub: string }) {
-  const navigate = useNavigate()
-  return (
-    <button type="button" onClick={() => navigate(to)} className="hive-card hive-card-hover hive-lift flex items-center gap-3 p-3.5 text-left">
-      <span className="hive-tile size-10 shrink-0" style={{ ['--tile' as string]: tone }}>
-        {icon}
-      </span>
-      <span className="min-w-0">
-        <span className="block truncate text-[13.5px] font-medium">{title}</span>
-        <span className="block truncate text-[11.5px] text-text-muted">{sub}</span>
-      </span>
-    </button>
-  )
-}
 
 function SectionHead({ icon, title, action }: { icon: React.ReactNode; title: string; action?: React.ReactNode }) {
   return (
@@ -315,5 +295,46 @@ function Mini({ label, value, onClick }: { label: string; value: string; onClick
       <div className="text-[11px] text-text-muted">{label}</div>
       <div className="mt-0.5 text-[18px] font-semibold tabular-nums">{value}</div>
     </button>
+  )
+}
+
+/** Every part of Hive, one click away — like "Explore NexoraGuru" on the site's hub. */
+function Explore() {
+  const groups = useHiveSections()
+  const navigate = useNavigate()
+  const [tab, setTab] = useState('All')
+  const items = groups.flatMap((g) => g.items.map((it) => ({ ...it, group: g.title })))
+  const shown = tab === 'All' ? items : items.filter((it) => it.group === tab)
+  return (
+    <section className="mx-auto mt-10 max-w-[1120px]">
+      <div className="mb-3 flex flex-wrap items-end gap-x-3 gap-y-2">
+        <h2 className="text-[20px] font-semibold tracking-[-0.015em]">Explore Hive</h2>
+        <span className="text-[13px] text-text-muted">Every part of Hive, one click away.</span>
+        <div className="ml-auto flex flex-wrap gap-1.5">
+          {['All', ...groups.map((g) => g.title)].map((t) => (
+            <button key={t} type="button" onClick={() => setTab(t)} className={cn('inline-flex h-7 items-center gap-1.5 rounded-full border px-3 text-[12px] transition-colors', tab === t ? 'border-accent-brand/50 bg-accent-brand/12 text-text-primary' : 'border-border text-text-secondary hover:text-text-primary')}>
+              {t}
+              <span className="text-[10.5px] text-text-muted">{t === 'All' ? items.length : groups.find((g) => g.title === t)?.items.length}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
+        {shown.map((it) => (
+          <button key={it.group + it.label} type="button" onClick={() => navigate(it.to)} className="hive-card hive-card-hover flex items-start gap-3 p-3.5 text-left">
+            <IconTile hue={it.hue}>
+              <it.icon />
+            </IconTile>
+            <span className="min-w-0">
+              <span className="flex items-center gap-1.5 text-[14px] font-semibold text-text-primary">
+                {it.label}
+                {it.badge ? <span className="rounded-full bg-state-warning px-1.5 text-[10px] font-bold text-white">{it.badge}</span> : null}
+              </span>
+              {it.hint && <span className="mt-0.5 line-clamp-2 block text-[12px] leading-snug text-text-muted">{((h) => h.charAt(0).toUpperCase() + h.slice(1))(it.hint.replace(/^⌘[^·]*·\s*/, ''))}</span>}
+            </span>
+          </button>
+        ))}
+      </div>
+    </section>
   )
 }

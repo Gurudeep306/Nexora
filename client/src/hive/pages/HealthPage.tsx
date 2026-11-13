@@ -15,7 +15,7 @@ import { hiveApi } from '../api'
 import { errMsg } from '../Improve'
 import { useHive } from '../store'
 import type { HealthKey, HealthState } from '../types'
-import { PageTitle, timeAgo } from '../ui'
+import { LimitBar, PageTitle, timeAgo } from '../ui'
 
 const EASE = [0.2, 0.8, 0.2, 1] as const
 export const HEALTH: Record<HealthState, { label: string; tone: string; icon: typeof CircleCheck; hint: string }> = {
@@ -149,11 +149,8 @@ export default function HealthPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
       <PageTitle
-        title={
-          <span className="inline-flex items-center gap-2.5">
-            <HeartPulse className="size-6 text-state-success" /> Agent health
-          </span>
-        }
+        icon={<HeartPulse />}
+        title="Agent health"
         sub="Hive skips any agent that's failing and gives its work to the next best one — so work never stops. Here's who's working right now."
       >
         <div className="flex flex-wrap gap-2">
@@ -171,7 +168,6 @@ export default function HealthPage() {
 
       {/* Pulse */}
       <section className="hive-card relative mb-6 overflow-hidden p-5">
-        <div className="pointer-events-none absolute -left-16 -top-20 size-64 rounded-full opacity-[0.15] blur-3xl" style={{ background: 'oklch(72% 0.15 155)' }} />
         <div className="relative flex flex-wrap items-center gap-6">
           <Pulse ratio={total ? working / total : 0} />
           <div className="min-w-[200px] flex-1">
@@ -261,6 +257,8 @@ function Pulse({ ratio }: { ratio: number }) {
 
 function KeyCard({ k, t, i, busy, onTest, verifying, onVerify, onHide }: { k: HealthKey; t: number; i: number; busy: boolean; onTest: () => void; verifying: boolean; onVerify: (retest: boolean) => void; onHide: (model: string) => void }) {
   const [showFailed, setShowFailed] = useState(false)
+  const { boot } = useHive()
+  const keyRow = boot?.keys.find((x) => x.id === k.keyId)
   const v = k.verified
   const running = k.verifying
   const [open, setOpen] = useState(k.state !== 'healthy')
@@ -304,6 +302,11 @@ function KeyCard({ k, t, i, busy, onTest, verifying, onVerify, onHide }: { k: He
         )}
       </div>
       {k.detail && <div className="mx-3.5 mb-3 rounded-xl bg-state-error/[0.06] px-3 py-2 text-[12px] text-text-secondary">{k.detail}</div>}
+      {keyRow && (
+        <div className="mx-3.5 mb-3">
+          <LimitBar k={keyRow} compact />
+        </div>
+      )}
       {!k.subscription && (
         <div className="mx-3.5 mb-3 rounded-xl bg-text-primary/[0.035] px-3 py-2 text-[12px]">
           {running ? (

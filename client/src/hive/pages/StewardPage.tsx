@@ -45,7 +45,7 @@ export default function StewardPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-      <PageTitle title={<span className="inline-flex items-center gap-2.5">Token Steward</span>} sub="An AI that watches every token — folds long chats with free models, routes cheap-first, trims tool output, and shows exactly where to save.">
+      <PageTitle icon={<PiggyBank />} title="Token Steward" sub="An AI that watches every token — folds long chats with free models, routes cheap-first, trims tool output, and shows exactly where to save.">
         <div className="flex gap-1 rounded-xl bg-text-primary/[0.05] p-1">
           {[7, 30, 90].map((d) => (
             <button key={d} type="button" onClick={() => setDays(d)} className={cn('h-8 rounded-lg px-3 text-[12.5px] font-medium', days === d ? 'bg-bg-surface text-text-primary shadow-sm' : 'text-text-muted hover:text-text-primary')}>
@@ -91,8 +91,6 @@ function Hero({ rep }: { rep: StewardReport }) {
   const verdict = rep.score >= 85 ? 'Lean and efficient' : rep.score >= 60 ? 'Good — a few easy savings left' : 'Money is leaking — start with the big savings below'
   return (
     <motion.section initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.26, ease: EASE }} className="hive-card relative overflow-hidden p-5 sm:p-7">
-      <div className="pointer-events-none absolute -left-24 -top-24 size-80 rounded-full opacity-[0.18] blur-3xl" style={{ background: 'oklch(70% 0.15 155)' }} />
-      <div className="pointer-events-none absolute -bottom-32 right-0 size-80 rounded-full opacity-[0.12] blur-3xl" style={{ background: 'oklch(70% 0.15 285)' }} />
       <div className="relative grid gap-6 md:grid-cols-[auto_1fr] md:items-center">
         <div className="flex items-center gap-5">
           <div className="relative">
