@@ -27,7 +27,7 @@ const int = (description) => ({ type: "integer", description });
 const bool = (description) => ({ type: "boolean", description });
 const obj = (properties, required = []) => ({ type: "object", properties, required, additionalProperties: false });
 const AGENT_HINT =
-  'Who does the work: "auto" (best model for the kind of work), "free" (best free model), "fast", "quality", or a specific model as "vendor/model" (e.g. "claude_code/default", "gemini/gemini-3-pro-preview", "groq/openai/gpt-oss-120b").';
+  'Who does the work: "auto" (best model for the kind of work), "free" (best free model), "fast", "quality", or a specific model as "vendor/model" (e.g. "claude_code/default", "vibe/default", "gemini/gemini-3-pro-preview", "groq/openai/gpt-oss-120b").';
 
 function specFrom(agent, kind = null) {
   const a = String(agent || "auto").trim();
@@ -835,6 +835,7 @@ async function pickBrain(username, exclude = []) {
 const TOKEN_RULES = (settings) => `
 Token budget — you run on the person's Claude plan, which is limited. You lead and check; other models do the work:
 - Do not write code, long text, scene JSON or translations yourself. Give the work to agents ("auto" picks the best non-Claude model that clears the quality bar). Your GPU farm's specialists, when connected: farm/qwen3.8-27b (UI, Nexora scene JSON, motion code, everyday coding), farm/uigen-x-32b (UI layouts), farm/qwen3-coder-next (backend, tests, refactors), farm/nemotron-cascade-2-30b (maths, GATE solutions), farm/devstral-small-2 (design or screenshot to code), farm/paddleocr-vl (reading scans), farm/sarvam-translate (Indian languages). list_models shows which are up.
+- Mistral Vibe ("vibe/default", the person's Le Chat plan on their machine) is a full coding agent that costs no Claude tokens: give it everyday coding — tests, backend, fixes, refactors, scripts. Not signature UI or hard engineering. Its work passes check_session like any other model's.
 - Keep your own reading small: check_session instead of reading whole diffs, session_diff summaries, ask_model for any summarising or extracting.
 Quality floor — never lower quality to save tokens:
 - These always go to Claude (agent "claude_code/default"), from writing to review: ${(settings.claudeOnly || []).map((x) => `"${x}"`).join(", ") || "(none)"}.

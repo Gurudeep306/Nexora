@@ -22,7 +22,7 @@ import { duration, fmtTokens } from './ui'
 const WRITE = new Set(['write_file', 'edit_file', 'delete_file'])
 
 function costOf(a: AgentRow, keys: { id: string; freeTier?: boolean; subscription?: boolean }[]): CostClass | null {
-  if (a.provider === 'claude_code' || a.provider === 'codex') return 'sub'
+  if (a.provider === 'claude_code' || a.provider === 'codex' || a.provider === 'vibe') return 'sub'
   const k = keys.find((x) => x.id === a.key_id)
   if (k?.freeTier || /:free$/.test(a.model)) return 'free'
   return null
