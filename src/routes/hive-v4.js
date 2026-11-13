@@ -21,6 +21,8 @@ const machines = require("../hive/machines");
 const cliProvider = require("../hive/providers/cli");
 const gh = require("../hive/github");
 const catalog = require("../hive/catalog");
+const toolbox = require("../hive/toolbox");
+const steward = require("../hive/steward");
 const { vendorOf, keyVendor } = require("../hive/providers");
 const { isChatModel } = require("../hive/models");
 
@@ -313,7 +315,7 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
   /* ── chat extras: judge, rate, export ─────────────────────────────── */
   const convoOf = async (req) => {
     const c = await get("SELECT * FROM hive_convos WHERE id=?", [req.params.id]);
-    if (!c || (c.owner !== req.hiveUser && !c.shared)) throw new BadInput("Chat not found", 404);
+    if (!c) throw new BadInput("Chat not found", 404);
     return c;
   };
   router.post(
@@ -340,7 +342,6 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     "/api/hive/convos/:id/tools",
     h(async (req, res) => {
       const c = await convoOf(req);
-      if (c.owner !== req.hiveUser) throw new BadInput("Only the owner can change this", 403);
       await run("UPDATE hive_convos SET tools=? WHERE id=?", [req.body?.tools ? 1 : 0, c.id]);
       res.json({ ok: true });
     }),
@@ -372,6 +373,45 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
       const dp = await drive.freePath({ path: `/documents/${r.name}`, projectId: c.project_id || null });
       const d = await drive.put({ path: dp, projectId: c.project_id || null, mime: r.mime, buffer: r.buffer, by: req.hiveUser }).catch(() => null);
       res.json({ ok: true, file: f, drive: d, note: r.note || null });
+    }),
+  );
+
+  /* ── team chat: #general + one channel per project ─────────────────── */
+  const channelOf = (v) => {
+    const c = String(v || "general");
+    return c === "general" ? "" : c.slice(0, 64);
+  };
+  router.get(
+    "/api/hive/team/chat",
+    h(async (req, res) => {
+      const ch = channelOf(req.query.channel);
+      const before = Number(req.query.before) || Date.now() + 1;
+      const rows = await all("SELECT * FROM hive_chat WHERE project_id=? AND created_at<? ORDER BY created_at DESC LIMIT 120", [ch, before]);
+      res.json({ ok: true, messages: rows.reverse() });
+    }),
+  );
+  router.get(
+    "/api/hive/team/channels",
+    h(async (_req, res) => {
+      const last = await all("SELECT project_id, MAX(created_at) AS at, COUNT(*) AS n FROM hive_chat GROUP BY project_id");
+      res.json({ ok: true, channels: last.map((r) => ({ id: r.project_id || "general", lastAt: Number(r.at), count: Number(r.n) })) });
+    }),
+  );
+  router.post(
+    "/api/hive/team/chat",
+    h(async (req, res) => {
+      const ch = channelOf(req.body?.channel);
+      if (ch) await projectRow(ch);
+      let body = str(req.body?.body, "message", { max: 4000 });
+      // Shared links to a session, chat, file or pipeline travel with the message.
+      const a = req.body?.attach;
+      if (a && typeof a === "object" && /^(task|convo|drive|pipeline|project)$/.test(String(a.type))) {
+        body += `\n[[${String(a.type)}:${String(a.id || "").slice(0, 400)}|${String(a.title || "").replace(/[|\]\n]/g, " ").slice(0, 140)}]]`;
+      }
+      const msg = { id: newId("msg"), project_id: ch, task_id: typeof req.body?.taskId === "string" ? req.body.taskId.slice(0, 64) : null, username: req.hiveUser, body, created_at: now() };
+      await run("INSERT INTO hive_chat(id, project_id, task_id, username, body, created_at) VALUES(?,?,?,?,?,?)", [msg.id, msg.project_id, msg.task_id, msg.username, msg.body, msg.created_at]);
+      hub.emit("chat", msg);
+      res.json({ ok: true, message: msg });
     }),
   );
 
@@ -650,6 +690,106 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
       const after = await get("SELECT * FROM hive_schedules WHERE id=?", [s.id]);
       res.json({ ok: true, schedule: automation.publicSchedule(after) });
     }),
+  );
+  /* ── Toolbox: the open-source ecosystem, MCP servers, search engines, skills ── */
+  router.get(
+    "/api/hive/toolbox",
+    h(async (_req, res) => res.json(await toolbox.catalogue())),
+  );
+  router.post(
+    "/api/hive/toolbox/connect",
+    h(async (req, res) => {
+      const b = req.body || {};
+      const kind = b.kind === "search" ? "search" : "mcp";
+      const r = await toolbox.connect(
+        {
+          kind,
+          name: b.name ? str(b.name, "name", { max: 40 }) : "",
+          url: b.url ? str(b.url, "url", { max: 500 }) : "",
+          token: b.token ? str(b.token, "token", { max: 4000 }) : "",
+          engine: b.engine ? str(b.engine, "engine", { max: 20 }) : null,
+          toolId: b.toolId ? str(b.toolId, "toolId", { max: 80 }) : null,
+        },
+        req.hiveUser,
+      );
+      await audit(req, "toolbox.connect", `${kind} ${b.name || b.engine || b.url}`);
+      hub.emit("toolbox", { by: req.hiveUser });
+      res.json({ ok: true, ...r });
+    }),
+  );
+  router.patch(
+    "/api/hive/toolbox/integrations/:id",
+    h(async (req, res) => {
+      const b = req.body || {};
+      await toolbox.update(req.params.id, { enabled: b.enabled === undefined ? undefined : !!b.enabled, name: b.name ? str(b.name, "name", { max: 40 }) : undefined, token: b.token === undefined ? undefined : String(b.token || "") });
+      hub.emit("toolbox", { by: req.hiveUser });
+      res.json({ ok: true });
+    }),
+  );
+  router.post(
+    "/api/hive/toolbox/integrations/:id/refresh",
+    h(async (req, res) => {
+      const tools = await toolbox.refreshTools(req.params.id).catch((e) => {
+        throw new BadInput(e.message);
+      });
+      hub.emit("toolbox", { by: req.hiveUser });
+      res.json({ ok: true, tools: tools.length });
+    }),
+  );
+  router.post(
+    "/api/hive/toolbox/integrations/:id/call",
+    h(async (req, res) => {
+      const b = req.body || {};
+      const r = await toolbox.callServerTool(req.params.id, str(b.tool, "tool", { max: 120 }), b.input && typeof b.input === "object" ? b.input : {});
+      res.json({ ...r, content: String(r.content).slice(0, 20000) });
+    }),
+  );
+  router.delete(
+    "/api/hive/toolbox/integrations/:id",
+    h(async (req, res) => {
+      const r = await get("SELECT created_by FROM hive_integrations WHERE id=?", [req.params.id]);
+      if (!r) throw new BadInput("Not found", 404);
+      if (r.created_by !== req.hiveUser && !isAdmin(req)) throw new BadInput("Only the person who connected it or an admin can remove it", 403);
+      await toolbox.remove(req.params.id);
+      await audit(req, "toolbox.remove", req.params.id);
+      hub.emit("toolbox", { by: req.hiveUser });
+      res.json({ ok: true });
+    }),
+  );
+  router.post(
+    "/api/hive/toolbox/skill",
+    h(async (req, res) => {
+      const b = req.body || {};
+      const r = await toolbox.importSkill({ url: str(b.url, "url", { max: 500 }), scope: b.projectId ? String(b.projectId) : "*", appliesTo: ["all", "tasks", "chat"].includes(b.appliesTo) ? b.appliesTo : "all" }, req.hiveUser);
+      await audit(req, "toolbox.skill", r.source);
+      hub.emit("plugins", { by: req.hiveUser });
+      res.json({ ok: true, ...r });
+    }),
+  );
+
+  /* ── Token Steward ── */
+  router.get(
+    "/api/hive/steward",
+    h(async (req, res) => res.json(await steward.report({ days: Math.min(90, Math.max(1, Number(req.query.days) || 30)) }))),
+  );
+  router.post(
+    "/api/hive/steward/apply",
+    h(async (req, res) => {
+      const a = req.body?.action;
+      if (a?.type === "cap" && !isAdmin(req)) throw new BadInput("Only admins can set budgets", 403);
+      const r = await steward.apply(a, req.hiveUser);
+      await audit(req, "steward.apply", JSON.stringify(a).slice(0, 200));
+      hub.emit(a?.type === "cap" ? "caps" : "plugins", { by: req.hiveUser });
+      res.json(r);
+    }),
+  );
+  router.post(
+    "/api/hive/steward/plan",
+    h(async (req, res) => res.json(await steward.plan({ prompt: str(req.body?.prompt, "prompt", { max: 20000 }), chat: !!req.body?.chat }))),
+  );
+  router.post(
+    "/api/hive/steward/ask",
+    h(async (req, res) => res.json(await steward.ask({ question: str(req.body?.question, "question", { max: 4000 }), username: req.hiveUser }))),
   );
 }
 

@@ -81,6 +81,9 @@ function parseDuckDuckGo(html) {
 
 async function webSearch(query) {
   const q = String(query).slice(0, 300);
+  // Connected engines (Plugins → Connected tools: Tavily, Exa, Brave, SearXNG, Jina, Firecrawl) first.
+  const viaEngine = await require("./toolbox").search(q).catch(() => null);
+  if (viaEngine?.results?.length) return viaEngine.results;
   if (process.env.BRAVE_API_KEY) {
     const res = await fetch(`https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(q)}&count=8`, { headers: { "X-Subscription-Token": process.env.BRAVE_API_KEY, Accept: "application/json" }, signal: AbortSignal.timeout(15000) });
     if (!res.ok) throw new Error(`Search failed (Brave ${res.status})`);
@@ -105,6 +108,7 @@ const clip = (s, n) => (s.length > n ? `${s.slice(0, n)}\n… [${s.length - n} m
  */
 async function execute(name, input, ctx) {
   try {
+    if (name.startsWith("mcp_")) return await require("./toolbox").callMcpTool(name, input);
     switch (name) {
       case "web_search": {
         const r = await webSearch(input.query);
@@ -112,8 +116,8 @@ async function execute(name, input, ctx) {
         return { content: r.map((x, i) => `${i + 1}. ${x.title}\n   ${x.url}\n   ${x.snippet}`).join("\n"), meta: { results: r.slice(0, 6) } };
       }
       case "read_url": {
-        const r = await readWebPage(input.url);
-        return { content: clip(r.text || "", 40_000), meta: { url: input.url } };
+        const r = (await require("./toolbox").readPage(input.url).catch(() => null)) || (await readWebPage(input.url));
+        return { content: clip(r.text || "", 40_000), meta: { url: input.url, via: r.via || null } };
       }
       case "repo_search":
       case "repo_read": {

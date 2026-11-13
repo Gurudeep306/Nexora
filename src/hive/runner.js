@@ -313,6 +313,10 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
 
   const ws = workspaceOf(ctx, agent.variant);
   const tools = toolsFor(agent.role === "lead" ? "lead" : "solo", { readOnly, memory: on("shared_memory"), web: on("web_reader"), machine: !!ctx.machine, commands: ctx.machine?.policy !== "read" });
+  // Connected MCP servers (Plugins → Connected tools) — read-only agents only get read-only tools.
+  for (const d of await require("./toolbox").mcpTools({ limit: 40 }).catch(() => [])) {
+    if (!readOnly || d._ro) tools.splice(tools.length - 1, 0, { name: d.name, description: d.description, schema: d.schema });
+  }
   // Commands on a machine: its policy decides whether a human approves each one.
   const approve = async ({ command, kind }) => {
     const m = await get("SELECT policy, name FROM hive_machines WHERE id=?", [ctx.machine.id]);
@@ -683,6 +687,10 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
           await event(task.id, agentId, "tool_call", { id: call.id, name: call.name, input: summarizeInput(call.name, call.input) });
           const out = call.invalid
             ? { content: `Your arguments were not valid JSON: ${call.rawArgs}`, isError: true }
+            : call.name.startsWith("mcp_")
+            ? await require("./toolbox")
+                .callMcpTool(call.name, call.input)
+                .then(async (r) => ({ ...r, content: await require("./steward").clipTool(r.content, project.id) }))
             : await execute(call.name, call.input, {
                 ws,
                 agent,

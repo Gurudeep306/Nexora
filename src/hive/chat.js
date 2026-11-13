@@ -9,6 +9,7 @@ const vault = require("./vault");
 const gh = require("./github");
 const { providerOf } = require("./providers");
 const { resolvePlugins } = require("./plugins");
+const steward = require("./steward");
 const { getSnapshot, readBase } = require("./snapshot");
 const { fileToAttachment } = require("./runner");
 const { pickDefault } = require("./models");
@@ -20,8 +21,10 @@ const drive = require("./drive");
 const MAX_FILE = 20 * 1024 * 1024;
 const active = new Map(); // convoId -> AbortController
 
-async function canSee(convo, username) {
-  return !!convo && (convo.owner === username || !!convo.shared);
+// One shared workspace: every staff member sees and can continue every chat
+// (only the owner or an admin can rename or delete one).
+async function canSee(convo) {
+  return !!convo;
 }
 
 async function convoFor(id, username) {
@@ -31,7 +34,8 @@ async function convoFor(id, username) {
 }
 
 async function listConvos(username) {
-  return all("SELECT * FROM hive_convos WHERE owner=? OR shared=1 ORDER BY updated_at DESC LIMIT 200", [username]);
+  void username;
+  return all("SELECT * FROM hive_convos ORDER BY pinned DESC, updated_at DESC LIMIT 300");
 }
 
 async function createConvo(username, { title, projectId, provider, keyId, model, system }) {
@@ -243,13 +247,20 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
         if (plugins.builtins.terse?.enabled) extras.push("Be concise.");
         const facts = await chatTools.userMemory(username).catch(() => []);
         const useTools = wantTools && v.caps.tools && v.impl !== "cli";
-        const toolDefs = useTools ? chatTools.toolsFor({ project: !!convo.project_id, drive: true }) : [];
+        const mcpDefs = useTools ? (await require("./toolbox").mcpTools().catch(() => [])).map(({ name, description, schema }) => ({ name, description, schema })) : [];
+        const toolDefs = useTools ? [...chatTools.toolsFor({ project: !!convo.project_id, drive: true }), ...mcpDefs] : [];
+        // Token Steward: fold old turns into a cached summary (written by a free model) when the chat is long.
+        const compact = await steward.compactHistory(convo, messages, { username }).catch(() => ({ messages, compacted: null }));
+        if (compact.compacted) {
+          messages.splice(0, messages.length, ...compact.messages);
+          out("note", { id: reply.id, text: `Token Steward folded ${compact.compacted.folded} earlier messages into a summary — saved ~${Math.round(compact.compacted.saved / 1000)}K tokens on this reply` });
+        }
         const system = [
           convo.system || "You are a helpful, precise assistant for a software team working in Nexora Hive. Use Markdown. Put code in fenced blocks with a language.",
           `Today is ${new Date().toISOString().slice(0, 10)}. You are talking with @${username}.`,
           facts.length ? `What you know about @${username} (saved memory):\n${facts.map((f) => `- ${f}`).join("\n")}` : "",
           useTools
-            ? "You have tools: search the web and read pages for anything current, read the project's code, read Hive Drive, create documents (PDF, Word, slides…) whenever someone wants a file, and remember lasting facts about the person. Use them when they help; don't narrate tool use at length."
+            ? `You have tools: search the web and read pages for anything current, read the project's code, read Hive Drive, create documents (PDF, Word, slides…) whenever someone wants a file, and remember lasting facts about the person.${mcpDefs.length ? " Tools starting with mcp_ come from the team's connected MCP servers (shown in [brackets] in each description)." : ""} Use them when they help; don't narrate tool use at length.`
             : "",
           ...extras,
         ]
@@ -320,7 +331,7 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
                 });
             Object.assign(entry, { status: r.isError ? "error" : "done", preview: String(r.content).slice(0, 600), meta: r.meta || null });
             out("tool_done", { id: reply.id, tool: entry });
-            results.push({ id: call.id, name: call.name, content: String(r.content), isError: !!r.isError });
+            results.push({ id: call.id, name: call.name, content: await steward.clipTool(String(r.content), convo.project_id), isError: !!r.isError });
           }
           convoMsgs.push({ role: "tool", results });
         }

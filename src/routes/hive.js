@@ -974,7 +974,7 @@ function createHiveRouter() {
     "/api/hive/convos/:id",
     h(async (req, res) => {
       const c = await chat.convoFor(req.params.id, req.hiveUser);
-      if (c.owner !== req.hiveUser) throw new BadInput("Only its owner can change this chat", 403);
+      if (c.owner !== req.hiveUser && !isAdmin(req)) throw new BadInput("Only its owner or an admin can rename this chat", 403);
       const b = req.body || {};
       await run("UPDATE hive_convos SET title=?, shared=?, system=?, updated_at=? WHERE id=?", [
         str(b.title, "title", { max: 120, optional: true }) ?? c.title,
