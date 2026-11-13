@@ -430,6 +430,7 @@ const COLUMNS = [
   ["hive_convo_msgs", "tools_json TEXT"],
   ["hive_convos", "tools INTEGER NOT NULL DEFAULT 1"],
   ["hive_convos", "summary_json TEXT"],
+  ["hive_keys", "blocked_models TEXT"],
   ["hive_tasks", "pipeline_run TEXT"],
   ["hive_schedules", "pipeline_id TEXT"],
 ];

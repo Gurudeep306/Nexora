@@ -10,7 +10,7 @@ class ProviderError extends Error {
 
 // Providers that answer a bad key with 400 (Gemini) or a 404 for an unknown model.
 const BAD_KEY = /api key not valid|invalid api key|incorrect api key|invalid x-api-key|api_key_invalid|unauthorized|invalid authentication|authentication failed/i;
-const NO_MODEL = /model.{0,40}(not found|does not exist|not supported|unknown|is not available|decommissioned|deprecated)|no such model|invalid model|model_not_found/i;
+const NO_MODEL = /model.{0,60}(not found|does not exist|not supported|unknown|is not available|(is )?no longer (available|supported)|not available to new users|decommissioned|deprecated|retired|has been (removed|shut down))|no such model|invalid model|model_not_found/i;
 
 function classify(status, message = "") {
   if (status === 401 || status === 403 || (status === 400 && BAD_KEY.test(message))) return { kind: "auth", retryable: false };
