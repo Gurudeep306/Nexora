@@ -1,6 +1,6 @@
 import { api } from '@/lib/api'
 import { API_BASE } from '@/lib/api'
-import type { ArchitectReply, Cap, CatalogInfo, Checkpoint, CliStatus, ConnectedModel, DriveItem, GithubReport, HiveAlert, ImproveResult, Lifecycle, MeasuredStat, Pipeline, PipelineRun, PipelineStage, PipelineTemplate, RouteResult, Schedule, ScheduleTemplate, Spend, StewardAction, StewardPlan, StewardReport, Toolbox, Verdict, HealthKey, Dispatch } from './types'
+import type { ArchitectReply, Cap, CatalogInfo, Checkpoint, CliStatus, ConnectedModel, DriveItem, GithubReport, HiveAlert, ImproveResult, Lifecycle, MeasuredStat, Pipeline, PipelineRun, PipelineStage, PipelineTemplate, RouteResult, Schedule, ScheduleTemplate, Spend, StewardAction, StewardPlan, StewardReport, Toolbox, Verdict, HealthKey, Dispatch, CopilotMsg, CopilotBrain, CopilotSettings } from './types'
 import type { AgentRow, AgentSpec, Approval, Bootstrap, Change, ChatMessage, Check, Convo, ConvoMsg, HiveEvent, HiveFile, Idea, LinkedRepo, LiveAgent, Machine, MarketModel, MemoryItem, Mode, Plugin, PrInfo, Project, ProjectActivity, Task } from './types'
 
 type Ok<T> = T & { ok: boolean }
@@ -254,4 +254,35 @@ export const hiveApi = {
   editDispatch: (id: string, body: { partId: string; spec?: { provider: string; keyId?: string; model?: string }; prompt?: string; remove?: boolean }) => api.patch<Ok<{ dispatch: Dispatch }>>(`/api/hive/dispatches/${id}`, body),
   startDispatch: (id: string) => api.post<Ok<{ dispatch: Dispatch }>>(`/api/hive/dispatches/${id}/start`, {}, { timeoutMs: 120000 }),
   stopDispatch: (id: string) => api.post<Ok<{ stopped: boolean }>>(`/api/hive/dispatches/${id}/stop`, {}),
+
+  copilot: () => api.get<Ok<{ messages: CopilotMsg[]; settings: CopilotSettings; brain: CopilotBrain }>>('/api/hive/copilot'),
+  clearCopilot: () => api.delete<Ok<object>>('/api/hive/copilot'),
+  copilotSettings: (body: CopilotSettings) => api.put<Ok<{ settings: CopilotSettings; brain: CopilotBrain }>>('/api/hive/copilot/settings', body),
+  sendCopilot: async (text: string, onEvent: (type: string, data: Record<string, unknown>) => void, signal?: AbortSignal) => {
+    const res = await fetch(`${API_BASE}/api/hive/copilot`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }), signal })
+    if (!res.ok || !res.body) {
+      const j = await res.json().catch(() => ({}))
+      throw new Error((j as { error?: string }).error || `Request failed (${res.status})`)
+    }
+    const reader = res.body.getReader()
+    const dec = new TextDecoder()
+    let buf = ''
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buf += dec.decode(value, { stream: true })
+      let i
+      while ((i = buf.indexOf('\n')) >= 0) {
+        const line = buf.slice(0, i).trim()
+        buf = buf.slice(i + 1)
+        if (!line) continue
+        try {
+          const ev = JSON.parse(line) as { type: string; data: Record<string, unknown> }
+          onEvent(ev.type, ev.data)
+        } catch {
+          /* partial line */
+        }
+      }
+    }
+  },
 }

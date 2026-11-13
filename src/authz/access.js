@@ -43,7 +43,7 @@ const PUBLIC_API = new Set([
 const canon = (p) => String(p || "/").replace(/\/{2,}/g, "/").replace(/\/+$/, "") || "/";
 const isApi = (p) => /^\/api(\/|$)/i.test(canon(p));
 // The Hive bridge authenticates with its own machine token (src/routes/hive.js).
-const isPublicApi = (p) => PUBLIC_API.has(canon(p).toLowerCase()) || /^\/api\/hive-bridge\/(hello|poll|result|script|approve|setup\.sh)$/i.test(canon(p));
+const isPublicApi = (p) => PUBLIC_API.has(canon(p).toLowerCase()) || (/^\/api\/hive-bridge\/(hello|poll|result|script|approve|setup\.sh)$/i.test(canon(p)) || /^\/api\/hive-mcp$/i.test(canon(p)));
 function isPublicPath(p) {
   if (isApi(p)) return isPublicApi(p);
   if (p === "/auth" || p.startsWith("/auth/")) return true; // sign-in page + OAuth

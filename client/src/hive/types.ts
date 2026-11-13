@@ -943,3 +943,34 @@ export interface Dispatch {
   createdAt: number
   updatedAt: number
 }
+
+/* ── Hive Copilot ───────────────────────────────────────────────────── */
+export interface CopilotStep {
+  id: string
+  name: string
+  input: Record<string, unknown>
+  status: 'running' | 'done' | 'error'
+  preview?: string
+}
+export interface CopilotMsg {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  tools: CopilotStep[]
+  provider: string | null
+  model: string | null
+  auto: boolean
+  error: string | null
+  createdAt: number
+}
+export interface CopilotBrain {
+  provider?: string
+  model?: string
+  kind?: 'cli' | 'api'
+  name?: string | null
+  error?: string
+}
+export interface CopilotSettings {
+  brain: 'auto' | 'claude_code' | 'api'
+  model: string
+}

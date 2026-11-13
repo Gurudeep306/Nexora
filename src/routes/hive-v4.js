@@ -25,6 +25,7 @@ const toolbox = require("../hive/toolbox");
 const steward = require("../hive/steward");
 const health = require("../hive/health");
 const dispatcher = require("../hive/dispatcher");
+const copilot = require("../hive/copilot");
 const { vendorOf, keyVendor } = require("../hive/providers");
 const { isChatModel } = require("../hive/models");
 
@@ -844,6 +845,62 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
   router.post(
     "/api/hive/dispatches/:id/stop",
     h(async (req, res) => res.json({ ok: true, stopped: dispatcher.stop(req.params.id) })),
+  );
+  /* ── Hive Copilot ── */
+  const copilotDeps = (req) => ({ createTask: (p, o) => createTaskRow(p, o), origin: req ? req.headers.origin || `${req.protocol}://${req.get("host")}` : process.env.HIVE_PUBLIC_URL || null });
+  // Sessions the Copilot started (or was asked to watch) are reviewed when they finish.
+  if (!hub.bus.__copilot) {
+    hub.bus.__copilot = true;
+    hub.bus.on("task", (t) => copilot.onTask(t, copilotDeps(null)).catch((e) => console.error("[hive copilot]", e.message)));
+  }
+  router.post("/api/hive-mcp", (req, res) => {
+    copilot.mcpHandle(req, res, copilotDeps(null)).catch((e) => res.status(500).json({ jsonrpc: "2.0", id: req.body?.id ?? null, error: { code: -32603, message: e.message } }));
+  });
+  router.get("/api/hive-mcp", (_req, res) => res.status(405).end());
+  router.get(
+    "/api/hive/copilot",
+    h(async (req, res) => res.json({ ok: true, messages: await copilot.messages(req.hiveUser), settings: await copilot.brainSettings(req.hiveUser), brain: await copilot.currentBrain(req.hiveUser) })),
+  );
+  router.post(
+    "/api/hive/copilot",
+    h(async (req, res) => {
+      const text = str(req.body?.text, "message", { max: 20000 });
+      res.status(200).set({ "Content-Type": "application/x-ndjson; charset=utf-8", "Cache-Control": "no-store", "X-Accel-Buffering": "no" });
+      res.flushHeaders?.();
+      let open = true;
+      const ctl = new AbortController();
+      res.on("close", () => {
+        open = false;
+      });
+      const write = (type, data) => {
+        if (!open) return;
+        res.write(JSON.stringify({ type, data }) + "\n");
+        res.flush?.();
+      };
+      const ping = setInterval(() => write("ping", {}), 15000);
+      try {
+        await copilot.send({ username: req.hiveUser, text, sink: write, deps: copilotDeps(req), signal: ctl.signal });
+      } catch (e) {
+        write("error", { error: e.message || "Something went wrong" });
+      } finally {
+        clearInterval(ping);
+        if (open) res.end();
+      }
+    }),
+  );
+  router.delete(
+    "/api/hive/copilot",
+    h(async (req, res) => {
+      await copilot.clear(req.hiveUser);
+      res.json({ ok: true });
+    }),
+  );
+  router.put(
+    "/api/hive/copilot/settings",
+    h(async (req, res) => {
+      const s = await copilot.saveSettings(req.hiveUser, { brain: req.body?.brain, model: req.body?.model });
+      res.json({ ok: true, settings: s, brain: await copilot.currentBrain(req.hiveUser) });
+    }),
   );
 }
 

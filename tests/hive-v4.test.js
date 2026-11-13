@@ -254,3 +254,44 @@ test("routing keeps quality first: a faster but weaker model never beats a clear
   assert.equal(rank([a, b], "coding", "fast").ranked[0].model, "b");
   assert.equal(rank([a, b], "coding", "balanced").ranked[0].model, "b");
 });
+
+test("Hive Copilot operates the hive with tools, starts a session, and reviews it by itself when it finishes", async () => {
+  const st = await ok("GET", "/api/hive/copilot");
+  assert.ok(st.brain && !st.brain.error, JSON.stringify(st.brain));
+  const r = await fetch(`${base}/api/hive/copilot`, { method: "POST", headers: { "Content-Type": "application/json", Cookie: cookie, Origin: base }, body: JSON.stringify({ text: "Add quantities to the cart in the demo shop" }) });
+  const events = (await r.text()).trim().split("\n").map((l) => JSON.parse(l));
+  const tools = events.filter((e) => e.type === "tool_done").map((e) => e.data.tool);
+  assert.deepEqual(tools.map((t) => t.name), ["hive_overview", "start_session"]);
+  assert.ok(tools.every((t) => t.status === "done"), JSON.stringify(tools));
+  const started = JSON.parse(tools[1].preview);
+  assert.ok(started.sessionId, tools[1].preview);
+  const done = events.find((e) => e.type === "done").data.message;
+  assert.match(done.content, /Cart quantities/);
+  // The Copilot watches the session and reviews it when it finishes.
+  let review;
+  for (let i = 0; i < 160 && !review; i++) {
+    await sleep(250);
+    review = (await ok("GET", "/api/hive/copilot")).messages.find((m) => m.role === "assistant" && m.auto);
+  }
+  assert.ok(review, "an automatic review was posted");
+  assert.match(review.content, /Ready to ship/);
+  assert.ok(review.tools.some((t) => t.name === "session_detail"));
+  await ok("DELETE", "/api/hive/copilot");
+  assert.equal((await ok("GET", "/api/hive/copilot")).messages.length, 0);
+});
+
+test("the Copilot's MCP endpoint (for Claude Code on your plan) speaks JSON-RPC and needs a live token", async () => {
+  const bad = await fetch(`${base}/api/hive-mcp`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer nope" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }) });
+  assert.equal(bad.status, 401);
+  const copilot = require("../src/hive/copilot");
+  const names = copilot.toolDefs().map((t) => t.name);
+  for (const n of ["hive_overview", "list_models", "start_session", "plan_team", "start_team", "session_diff", "judge_session", "improve_prompt", "web_search"]) assert.ok(names.includes(n), n);
+  // In-process: a valid token lists the tools.
+  copilot._tokens.set("t1", { username: "owner", exp: Date.now() + 60000 });
+  let out;
+  const res = { status: () => res, json: (j) => (out = j), end: () => {} };
+  await copilot.mcpHandle({ method: "POST", headers: { authorization: "Bearer t1" }, body: { jsonrpc: "2.0", id: 7, method: "initialize", params: { protocolVersion: "2025-06-18" } } }, res, {});
+  assert.equal(out.result.serverInfo.name, "nexora-hive");
+  await copilot.mcpHandle({ method: "POST", headers: { authorization: "Bearer t1" }, body: { jsonrpc: "2.0", id: 8, method: "tools/list" } }, res, {});
+  assert.ok(out.result.tools.length >= 15 && out.result.tools.every((t) => t.inputSchema?.type === "object"));
+});
