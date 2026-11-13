@@ -191,11 +191,13 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
   active.set(convo.id, set);
   const tried = [];
   let lastErr = null; // the provider's own error, shown if every key fails
+  let primary = null; // the first error from the model the person picked — shown even if a handoff also fails
+  let finished = false;
   let error = null;
   let usage = { input: 0, output: 0 };
   let served = { provider: spec.provider, model: spec.model };
   try {
-    for (let attempt = 0; attempt < 4; attempt++) {
+    for (let attempt = 0; attempt < 6; attempt++) {
       const wantTools = mode !== "image" && convo.tools !== 0;
       const pick = await pickChatKey(spec, tried, prompt, wantTools);
       if (!pick) {
@@ -226,6 +228,7 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
           reply.content = r.text || "";
           served.model = v.imageModel;
           await keys.recordUsage(key.id, username, { input: 0, output: 0 }, null);
+          finished = true;
           break;
         }
         const history = await messagesOf(convo.id);
@@ -339,35 +342,56 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
         reply.tools = toolLog;
         served.model = res.servedModel || model;
         if (res.stop === "refusal") error = "The model declined this request";
+        finished = true;
         break;
       } catch (e) {
         if (e.kind === "aborted" || controller.signal.aborted) {
           error = "Stopped";
+          finished = true;
           break;
         }
+        const handoff = spec.provider === "auto" || provider !== spec.provider;
+        if (!primary && !handoff) primary = { e, served: { ...served } };
         if (["auth", "quota", "rate"].includes(e.kind)) {
           lastErr = e;
           tried.push(key.id);
           if (e.kind === "auth") keys.checkKey(key.id).catch(() => {});
           continue;
         }
-        // The chosen model is gone or not offered by this key: refresh the
-        // key's model list and continue on its (new) default.
-        if (e.kind === "model" && !modelRetried) {
-          modelRetried = true;
-          const c = await keys.checkKey(key.id).catch(() => null);
-          const next = c?.defaultModel;
-          if (next && next !== model) {
+        // The model is retired or not offered by this key: remember that, so
+        // neither chat nor the router picks it again, and move on to the
+        // key's next best model (or, for Auto and handoffs, the next model).
+        if (e.kind === "model") {
+          const next = await keys.blockModel(key.id, model).catch(() => null);
+          lastErr = e;
+          if (!handoff && next && !modelRetried) {
+            modelRetried = true;
             spec = { ...spec, model: next };
-            out("note", { id: reply.id, text: `${model} isn't available on this key — using ${next}` });
+            out("note", { id: reply.id, text: `${model} isn't available any more — using ${next}` });
             continue;
           }
+          if (handoff) {
+            if (!next) tried.push(key.id);
+            continue;
+          }
+        }
+        // A handoff model that fails for any other reason: try the next one.
+        if (handoff) {
+          lastErr = e;
+          tried.push(key.id);
+          continue;
         }
         throw e;
       }
     }
+    if (!finished) throw lastErr || new Error("No connected model could answer");
   } catch (e) {
-    error = friendlyError(e, served);
+    // Lead with the error from the model the person actually picked; the
+    // handoff's own failure comes second.
+    if (primary && primary.e !== e) {
+      error = `${friendlyError(primary.e, primary.served)}\nHive also tried other models; the last one said: ${String(e.message || "").slice(0, 200)}`;
+      served = primary.served;
+    } else error = friendlyError(e, served);
   } finally {
     set.delete(controller);
     if (!set.size) active.delete(convo.id);
