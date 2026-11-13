@@ -8,7 +8,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Bot, Check, ExternalLink, FolderGit2, GitBranch, Loader2, Lock, RefreshCw, Search, Star } from 'lucide-react'
+import { ArrowRight, Bot, Check, ExternalLink, FolderGit2, GitBranch, Loader2, Lock, MessagesSquare, Plus, RefreshCw, Search, Star } from 'lucide-react'
 import { Button, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
@@ -66,7 +66,7 @@ export default function ReposPage() {
     })
   }, [repos, q, filter, logins])
 
-  const open = async (r: GhRepo, then: 'project' | 'copilot') => {
+  const open = async (r: GhRepo, then: 'project' | 'copilot' | 'chat') => {
     setBusy(r.fullName + then)
     try {
       const res = r.projectId ? { project: { id: r.projectId }, created: false } : await hiveApi.openRepo(r.fullName)
@@ -75,11 +75,35 @@ export default function ReposPage() {
         await refresh()
         setRepos((list) => (list ?? []).map((x) => (x.fullName === r.fullName ? { ...x, projectId: res.project.id } : x)))
       }
-      if (then === 'copilot') navigate('/hive/copilot', { state: { draft: `In ${r.fullName}: ` } })
+      if (then === 'chat') {
+        const c = await hiveApi.projectChat(res.project.id)
+        navigate(`/hive/chat/${c.convo.id}`)
+      } else if (then === 'copilot') navigate('/hive/copilot', { state: { projectId: res.project.id } })
       else {
         select(res.project.id)
         navigate(`/hive/p/${res.project.id}`)
       }
+    } catch (e) {
+      toast.error(errMsg(e))
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  // Any repository by owner/name or URL — including public repos you don't own.
+  const [addRef, setAddRef] = useState('')
+  const addRepo = async () => {
+    const ref = addRef.trim()
+    if (!ref) return
+    setBusy('add')
+    try {
+      const res = await hiveApi.openRepo(ref)
+      toast.success(res.created ? 'Added — Hive is writing a brief from its code' : 'Already a project — opening its chat')
+      setAddRef('')
+      await refresh()
+      load(true)
+      const c = await hiveApi.projectChat(res.project.id)
+      navigate(`/hive/chat/${c.convo.id}`)
     } catch (e) {
       toast.error(errMsg(e))
     } finally {
@@ -105,6 +129,24 @@ export default function ReposPage() {
         <ConnectGithub onDone={() => refresh().then(() => load(true))} />
       ) : (
         <>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              addRepo()
+            }}
+            className="hive-card mb-3 flex flex-col gap-2 p-3.5 sm:flex-row sm:items-center"
+          >
+            <IconTile hue={150}>
+              <Plus />
+            </IconTile>
+            <div className="min-w-0 flex-1">
+              <div className="text-[13.5px] font-semibold">Add any repository</div>
+              <input value={addRef} onChange={(e) => setAddRef(e.target.value)} placeholder="owner/name or a github.com link — yours, your org’s or any public repo" className="mt-1 h-9 w-full rounded-lg bg-text-primary/[0.05] px-3 text-[13.5px] outline-none ring-1 ring-[var(--hive-line)] placeholder:text-text-muted focus:ring-accent-brand/50" />
+            </div>
+            <Button type="submit" loading={busy === 'add'} disabled={!addRef.trim() || (!!busy && busy !== 'add')}>
+              <MessagesSquare /> Add & chat
+            </Button>
+          </form>
           <div className="mb-5">
             <FolderImport compact />
           </div>
@@ -179,8 +221,11 @@ export default function ReposPage() {
                     </a>
                   </div>
                   <div className="flex gap-1.5">
-                    <button type="button" disabled={!!busy} onClick={() => open(r, 'copilot')} className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-accent-brand text-[12.5px] font-medium text-on-accent-brand disabled:opacity-60">
-                      {busy === r.fullName + 'copilot' ? <Loader2 className="size-3.5 animate-spin" /> : <Bot className="size-3.5" />} Work on it with Copilot
+                    <button type="button" disabled={!!busy} onClick={() => open(r, 'chat')} className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-accent-brand text-[12.5px] font-medium text-on-accent-brand disabled:opacity-60">
+                      {busy === r.fullName + 'chat' ? <Loader2 className="size-3.5 animate-spin" /> : <MessagesSquare className="size-3.5" />} Chat
+                    </button>
+                    <button type="button" disabled={!!busy} onClick={() => open(r, 'copilot')} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-text-primary/[0.06] px-3 text-[12.5px] font-medium hover:bg-text-primary/[0.1] disabled:opacity-60" title="Hand it to the Copilot: it plans and runs agents">
+                      {busy === r.fullName + 'copilot' ? <Loader2 className="size-3.5 animate-spin" /> : <Bot className="size-3.5" />} Copilot
                     </button>
                     <button type="button" disabled={!!busy} onClick={() => open(r, 'project')} className="inline-flex h-8 items-center gap-1 rounded-lg bg-text-primary/[0.06] px-3 text-[12.5px] font-medium hover:bg-text-primary/[0.1] disabled:opacity-60">
                       {busy === r.fullName + 'project' ? <Loader2 className="size-3.5 animate-spin" /> : null} {r.projectId ? 'Open' : 'Open as project'} <ArrowRight className="size-3.5" />

@@ -1011,6 +1011,14 @@ function createHiveRouter() {
       res.json({ ok: true, convo: await chat.createConvo(req.hiveUser, { title: str(b.title, "title", { max: 120, optional: true }), projectId: b.projectId, system: typeof b.system === "string" ? b.system.slice(0, 8000) : "" }) });
     }),
   );
+  // A project's own chat: the latest one about it, or a new one (?new=1).
+  router.post(
+    "/api/hive/projects/:id/chat",
+    h(async (req, res) => {
+      const p = await projectRow(req.params.id);
+      res.json({ ok: true, convo: await chat.projectChat(req.hiveUser, p.id, { fresh: !!req.body?.fresh }) });
+    }),
+  );
   router.get(
     "/api/hive/convos/:id",
     h(async (req, res) => {
