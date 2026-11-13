@@ -23,12 +23,14 @@ async function allRepos({ force = false } = {}) {
     const conns = await all("SELECT * FROM hive_github ORDER BY created_at");
     const seen = new Map();
     const errors = [];
+    const dead = new Set();
     for (const c of conns) {
       let list = [];
       try {
         list = await gh.listRepos(tokenOf(c));
       } catch (e) {
         errors.push(`${c.label}: ${e.message}`);
+        if (e.status === 401 || /bad credentials|decrypt/i.test(String(e.message))) dead.add(c.id);
         continue;
       }
       for (const r of list) {
@@ -41,6 +43,7 @@ async function allRepos({ force = false } = {}) {
       }
     }
     cache = { at: Date.now(), repos: [...seen.values()].sort((a, b) => Date.parse(b.pushedAt || 0) - Date.parse(a.pushedAt || 0)), errors };
+    if (dead.size) await moveOffDead(dead, seen);
   }
   return {
     repos: cache.repos.map((r) => {
@@ -50,6 +53,25 @@ async function allRepos({ force = false } = {}) {
     connections: (await all("SELECT id FROM hive_github")).length,
     errors: cache.errors || [],
   };
+}
+
+/**
+ * Projects opened through a GitHub connection whose token has died (expired,
+ * revoked) move to a working connection that can reach the same repo, so
+ * agents keep working without anyone re-opening them.
+ */
+async function moveOffDead(dead, seen) {
+  const rows = await all(`SELECT id, repo_owner, repo_name, github_id FROM hive_projects WHERE github_id IN (${[...dead].map(() => "?").join(",")})`, [...dead]);
+  for (const p of rows) {
+    const r = seen.get(`${p.repo_owner}/${p.repo_name}`.toLowerCase());
+    if (!r || dead.has(r.githubId)) continue;
+    await run("UPDATE hive_projects SET github_id=?, updated_at=? WHERE id=?", [r.githubId, now(), p.id]);
+    try {
+      require("./hub").emit("project", await get("SELECT * FROM hive_projects WHERE id=?", [p.id]));
+    } catch {
+      /* tests */
+    }
+  }
 }
 
 /** Find a repo by "owner/name", "name" or a GitHub URL. */
@@ -190,6 +212,9 @@ async function ensureOnMachine(projectId, vendors = []) {
   const target = machineIds.find((id) => machines.isOnline(id));
   if (!target) return p; // resolveSpec explains what's missing (not connected / offline)
   if (!p.repo_owner || !p.github_id) throw Object.assign(new Error(`“${p.name}” has no GitHub repository to copy onto the machine — link a folder on the machine to the project instead`), { status: 400 });
+  // A project on a dead GitHub token moves to a working connection first.
+  await allRepos({ force: true }).catch(() => null);
+  p = await get("SELECT * FROM hive_projects WHERE id=?", [p.id]);
   const conn = await get("SELECT * FROM hive_github WHERE id=?", [p.github_id]);
   if (!conn) throw Object.assign(new Error("The project's GitHub connection is gone — reconnect GitHub in Your GitHub"), { status: 400 });
   let r;

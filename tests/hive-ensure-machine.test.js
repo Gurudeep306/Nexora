@@ -50,3 +50,29 @@ test("the repo is cloned onto the agent's machine once, then reused; API-only ag
     Object.assign(machines, orig);
   }
 });
+
+test("projects on a GitHub connection whose token died move to a working connection that can see the repo", async () => {
+  const db = require("../src/hive/db");
+  const vault = require("../src/hive/vault");
+  const gh = require("../src/hive/github");
+  const repos = require("../src/hive/repos");
+  const t = Date.now();
+  await db.run("INSERT INTO hive_github(id, label, token_enc, created_by, created_at) VALUES(?,?,?,?,?)", ["dead", "old", vault.seal("ghp_dead"), "owner", t]);
+  await db.run("INSERT INTO hive_github(id, label, token_enc, created_by, created_at) VALUES(?,?,?,?,?)", ["good", "new", vault.seal("ghp_good"), "owner", t + 1]);
+  await db.run("INSERT INTO hive_projects(id, name, github_id, repo_owner, repo_name, default_branch, created_by, created_at, updated_at) VALUES(?,?,?,?,?,?,?,?,?)", ["p2", "Twin", "dead", "me", "Twin", "main", "owner", t, t]);
+  const orig = gh.listRepos;
+  gh.listRepos = async (token) => {
+    if (token === "ghp_good") return [{ full_name: "me/Twin", name: "Twin", owner: { login: "me" }, private: true, default_branch: "main", permissions: { push: true } }];
+    if (token === "ghp_x") return [];
+    throw Object.assign(new Error("Bad credentials (GET /user/repos)"), { status: 401 });
+  };
+  try {
+    repos.clearCache();
+    const r = await repos.allRepos({ force: true });
+    assert.ok(r.errors.some((e) => /Bad credentials/.test(e)));
+    assert.equal((await db.get("SELECT github_id FROM hive_projects WHERE id='p2'")).github_id, "good");
+  } finally {
+    gh.listRepos = orig;
+    repos.clearCache();
+  }
+});
