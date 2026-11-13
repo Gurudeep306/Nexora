@@ -19,6 +19,15 @@ const VENDOR: Record<string, { name: string; mark: string; hue: number; chroma?:
   qwen: { name: 'Qwen', mark: 'Q', hue: 290 },
   zhipu: { name: 'GLM', mark: 'Z', hue: 245 },
   perplexity: { name: 'Perplexity', mark: 'P', hue: 185 },
+  github: { name: 'GitHub Models', mark: 'GH', hue: 220, chroma: 0.03 },
+  nvidia: { name: 'NVIDIA NIM', mark: 'N', hue: 135 },
+  sambanova: { name: 'SambaNova', mark: 'S', hue: 25 },
+  huggingface: { name: 'Hugging Face', mark: 'HF', hue: 55 },
+  cloudflare: { name: 'Workers AI', mark: 'CF', hue: 35 },
+  ollama: { name: 'Ollama', mark: 'O', hue: 0, chroma: 0 },
+  claude_code: { name: 'Claude Code', mark: 'CC', hue: 30 },
+  codex: { name: 'Codex', mark: '>_', hue: 160 },
+  auto: { name: 'Auto', mark: '✦', hue: 285 },
   custom: { name: 'Custom', mark: '◇', hue: 290, chroma: 0.03 },
   openai_compat: { name: 'Custom', mark: '◇', hue: 290, chroma: 0.03 },
 }
@@ -181,7 +190,7 @@ export function Toggle({ on, onChange, label, disabled }: { on: boolean; onChang
 export function PageTitle({ title, sub, children }: { title: ReactNode; sub?: ReactNode; children?: ReactNode }) {
   return (
     <div className="mb-8 flex flex-wrap items-end gap-4">
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-[1_1_18rem]">
         <h1 className="text-[26px] font-semibold tracking-[-0.02em] text-text-primary">{title}</h1>
         {sub && <p className="mt-1 text-[14px] text-text-muted">{sub}</p>}
       </div>
@@ -207,4 +216,5 @@ export const MODE_INFO = {
   team: { label: 'Team', hint: 'A lead plans and hands sub-tasks to agents that run in parallel on one working copy.' },
   compare: { label: 'Race', hint: 'The same task goes to every agent, each on its own copy. Keep the best result.' },
   review: { label: 'Review', hint: 'Read-only agents audit the code and report findings.' },
+  pipeline: { label: 'Pipeline', hint: 'Stages of agents run one after another — build, test, review, fix, ship.' },
 } as const
