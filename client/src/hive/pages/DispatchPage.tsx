@@ -126,18 +126,13 @@ export default function DispatchPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <PageTitle
-        title={
-          <span className="inline-flex items-center gap-2.5">
-            <Workflow className="size-6 text-accent-brand" /> Dispatcher
-          </span>
-        }
+        icon={<Workflow />}
+        title="Dispatcher"
         sub="Describe the work. Hive splits it into parts and gives each part the cheapest model that can really do it — then runs the whole team."
       />
 
       {/* Composer */}
       <section className="hive-card relative overflow-hidden p-4 sm:p-5">
-        <div className="pointer-events-none absolute -right-24 -top-24 size-72 rounded-full opacity-[0.16] blur-3xl" style={{ background: 'oklch(70% 0.16 285)' }} />
-        <div className="pointer-events-none absolute -bottom-28 left-10 size-64 rounded-full opacity-[0.12] blur-3xl" style={{ background: 'oklch(72% 0.14 160)' }} />
         <div className="relative">
           <textarea
             value={request}

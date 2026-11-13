@@ -63,7 +63,6 @@ export function SubscriptionsPanel({ onConnect }: { onConnect: (s: Sub) => void 
           const list = keys.filter((k) => k.provider === s)
           return (
             <motion.div key={s} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0, transition: { delay: i * 0.05 } }} className="hive-card relative overflow-hidden p-4">
-              <div className="pointer-events-none absolute -right-10 -top-10 size-40 rounded-full opacity-20 blur-3xl" style={{ background: s === 'codex' ? 'oklch(72% 0.12 165)' : 'oklch(70% 0.14 40)' }} />
               <div className="relative flex items-center gap-3">
                 <AgentMark provider={s} model={INFO[s].model} size={40} />
                 <div className="min-w-0 flex-1">

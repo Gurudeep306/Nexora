@@ -13,7 +13,7 @@ import { hiveApi } from './api'
 import { errMsg } from './Improve'
 import { useHive } from './store'
 import type { FreeSource } from './types'
-import { vendorStyle } from './ui'
+import { LimitBar, vendorStyle } from './ui'
 
 const NO_SIGNUP = ['pollinations', 'llm7', 'ovh']
 
@@ -106,9 +106,19 @@ export function FreeSetup() {
               </div>
               <div className="flex shrink-0 items-center gap-2 sm:w-[340px] sm:justify-end">
                 {on ? (
-                  <span className="inline-flex h-8 items-center gap-1 rounded-lg bg-state-success/12 px-2.5 text-[12px] font-medium text-state-success">
-                    <Check className="size-3.5" /> Connected
-                  </span>
+                  <div className="flex w-full items-center gap-3">
+                    {(() => {
+                      const key = (boot?.keys ?? []).find((x) => x.provider === s.vendor && !x.disabled)
+                      return key ? (
+                        <div className="min-w-0 flex-1">
+                          <LimitBar k={key} compact />
+                        </div>
+                      ) : null
+                    })()}
+                    <span className="inline-flex h-8 shrink-0 items-center gap-1 rounded-lg bg-state-success/12 px-2.5 text-[12px] font-medium text-state-success">
+                      <Check className="size-3.5" /> Connected
+                    </span>
+                  </div>
                 ) : needsUrl(s.vendor) ? (
                   <Link to={`/hive/keys?add=${s.vendor}`} className="inline-flex h-8 items-center gap-1 rounded-lg bg-text-primary/[0.06] px-2.5 text-[12px] font-medium hover:bg-text-primary/[0.1]">
                     Set up →

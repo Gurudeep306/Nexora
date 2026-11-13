@@ -485,4 +485,38 @@ const FREE_SOURCES = [
   },
 ];
 
-module.exports = { KINDS, MIN_QUALITY, COST_ORDER, CARDS, SUBSCRIPTION_CARDS, FREE_SOURCES, baseId, cardFor, quality, bestFor, priceOf, publicCard, guessCard };
+// Typical free-tier limits per provider, so every free connection shows a
+// limit even when the provider sends no rate-limit headers. Providers change
+// these; when a provider does send live numbers (x-ratelimit-* headers),
+// those are shown instead. rpd = requests/day, rpm = requests/minute,
+// tpd = tokens/day, tpm = tokens/month.
+const FREE_LIMITS = {
+  gemini: { rpd: 250, rpm: 10, note: "Gemini Flash free tier: about 250 requests a day per model (Flash-Lite allows more)" },
+  groq: { rpd: 1000, rpm: 30, note: "About 1,000 requests a day and 30 a minute per model" },
+  cerebras: { tpd: 1000000, rpm: 30, note: "About 1M tokens a day, 30 requests a minute" },
+  openrouter: { rpd: 50, rpm: 20, note: "Free models: 50 requests a day (1,000 a day once the account has $10 of credit), 20 a minute" },
+  github: { rpd: 50, rpm: 10, note: "Big models: about 50 requests a day; small models allow about 150" },
+  nvidia: { rpm: 40, note: "About 40 requests a minute; no published daily cap" },
+  mistral: { rpm: 60, tpm: 1000000000, note: "Free tier: about 1 request a second, 1B tokens a month" },
+  codestral: { rpm: 30, rpd: 2000, note: "Codestral free: about 30 requests a minute, 2,000 a day" },
+  sambanova: { rpm: 20, note: "About 20 requests a minute on the free tier" },
+  cohere: { rpm: 20, rpd: 33, note: "Trial key: about 1,000 calls a month, 20 a minute" },
+  cloudflare: { note: "10,000 Neurons a day free (roughly a few hundred chat replies)" },
+  huggingface: { note: "Small monthly free credit; heavy use needs a PRO plan" },
+  qwen: { note: "About 1M free tokens per model, for 90 days" },
+  modelscope: { rpd: 2000, note: "About 2,000 free calls a day" },
+  chutes: { note: "Free models with per-minute limits" },
+  siliconflow: { rpm: 1000, note: "Free models with high per-minute limits" },
+  zai: { note: "GLM Flash models are free with per-minute limits" },
+  zhipu: { note: "GLM Flash models are free with per-minute limits" },
+  pollinations: { note: "No sign-up; shared rate limit per IP address" },
+  llm7: { note: "No sign-up; shared rate limit" },
+  ovh: { rpm: 2, note: "Without an account: about 2 requests a minute per model" },
+  ollama_cloud: { note: "Free plan with hourly and weekly usage limits" },
+  opencode_zen: { note: "Free models with fair-use limits" },
+  kilo: { note: "Free models with fair-use limits" },
+  vercel: { note: "About $5 of free credit a month" },
+};
+const freeLimitFor = (vendor) => FREE_LIMITS[vendor] || null;
+
+module.exports = { FREE_LIMITS, freeLimitFor, KINDS, MIN_QUALITY, COST_ORDER, CARDS, SUBSCRIPTION_CARDS, FREE_SOURCES, baseId, cardFor, quality, bestFor, priceOf, publicCard, guessCard };

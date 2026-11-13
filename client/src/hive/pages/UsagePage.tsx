@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { BarChart3 } from 'lucide-react'
 import { Bar, BarChart, ResponsiveContainer, Tooltip as RTooltip, XAxis } from 'recharts'
 import { hiveApi } from '../api'
 import { useHive } from '../store'
@@ -45,7 +46,7 @@ export default function UsagePage() {
 
   return (
     <div className="mx-auto w-full max-w-[920px] px-8 pb-20 pt-10">
-      <PageTitle title="Usage" sub="Last 14 days, every provider and every person." />
+      <PageTitle icon={<BarChart3 />} title="Usage" sub="Last 14 days, every provider and every person." />
       <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
           ['Tokens', fmtTokens(all.tokens)],
