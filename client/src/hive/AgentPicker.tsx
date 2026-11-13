@@ -4,6 +4,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import type { AgentSpec, Bootstrap, Effort, HiveKey, ProviderId, ProviderInfo } from './types'
 import { ProviderGlyph, fmtTokens, keyShare, shareTone, vendorName } from './ui'
+import { AgentMark, FAMILY, familyOf } from './agents'
 
 const EFFORTS: Effort[] = ['low', 'medium', 'high', 'xhigh', 'max']
 
@@ -29,7 +30,12 @@ export function modelsFor(boot: Bootstrap, provider: ProviderId, keyId: string):
   return [...first, ...[...set].filter((m) => !first.includes(m)).sort()]
 }
 
+/** The smart router: Hive picks the best model for the kind of work. */
+export const AUTO_SPEC: AgentSpec = { provider: 'auto', keyId: 'auto', model: '' }
+
 export function defaultSpec(boot: Bootstrap, provider?: ProviderId, need: 'tools' | 'images' | undefined = 'tools'): AgentSpec | null {
+  // Auto is the default whenever anything usable is connected (not for images).
+  if (!provider && need !== 'images' && usableProviders(boot, need).length) return { ...AUTO_SPEC }
   const recent = readList(RECENT_KEY)[0]
   const usable = usableProviders(boot, need)
   if (!provider && recent && usable.includes(recent.provider) && modelsFor(boot, recent.provider, 'auto').includes(recent.model)) {
@@ -101,12 +107,12 @@ export function AgentChip({
       <span className="group inline-flex items-center rounded-full bg-text-primary/[0.06] transition-colors hover:bg-text-primary/[0.1]">
         <PopoverTrigger asChild>
           <button type="button" className={cn('flex min-w-0 items-center gap-1.5 py-1 pl-1 text-[12.5px] outline-none', onRemove ? 'pr-1' : 'pr-2.5')}>
-            <ProviderGlyph provider={spec.provider} size="sm" className="rounded-full" />
+            <AgentMark provider={spec.provider} model={spec.model} size={20} />
             {label && <span className="text-text-muted">{label}</span>}
-            <span className={cn('truncate font-medium text-text-primary', compact ? 'max-w-28' : 'max-w-48')}>{spec.name || shortModel(spec.model) || 'Choose model'}</span>
+            <span className={cn('truncate font-medium text-text-primary', compact ? 'max-w-28' : 'max-w-48')}>{spec.provider === 'auto' ? (spec.freeOnly ? 'Auto · free' : 'Auto') : spec.name || shortModel(spec.model) || 'Choose model'}</span>
             {spec.name && !compact && <span className="max-w-28 truncate text-text-muted">{shortModel(spec.model)}</span>}
             {spec.effort && spec.provider === 'anthropic' && !compact && <span className="text-[11px] text-text-muted">· {spec.effort}</span>}
-            <span className="size-1.5 shrink-0 rounded-full" style={{ background: shareTone(share) }} title={key ? `${key.label}: ${key.tokenLimit == null ? 'no limit' : `${fmtTokens(key.remaining)} left`}` : ''} />
+            {spec.provider !== 'auto' && <span className="size-1.5 shrink-0 rounded-full" style={{ background: shareTone(share) }} title={key ? `${key.label}: ${key.tokenLimit == null ? 'no limit' : `${fmtTokens(key.remaining)} left`}` : ''} />}
             <ChevronDown className="size-3 text-text-muted transition-transform group-data-[state=open]:rotate-180" />
           </button>
         </PopoverTrigger>
@@ -179,7 +185,7 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
 
   const pick = (r: ModelRef) => {
     const sameVendor = r.provider === spec.provider
-    onChange({ ...spec, provider: r.provider, model: r.model, keyId: sameVendor ? spec.keyId : 'auto', effort: r.provider === 'anthropic' ? (spec.effort ?? 'high') : null }, true)
+    onChange({ ...spec, provider: r.provider, model: r.model, keyId: sameVendor ? spec.keyId : 'auto', effort: r.provider === 'anthropic' ? (spec.effort ?? 'high') : null, freeOnly: undefined }, true)
   }
   const keys = boot.keys.filter((k) => k.provider === spec.provider && !k.disabled)
   const supportsEffort = spec.provider === 'anthropic' || spec.provider === 'openai'
@@ -216,6 +222,27 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
           {!providers.length && <p className="p-2 text-[11.5px] text-text-muted">Add a key in Keys first.</p>}
         </nav>
         <div ref={listRef} className="hive-scroll min-h-0 flex-1 overflow-y-auto p-1.5">
+          {need !== 'images' && vendor === 'all' && !q.trim() && (
+            <div className="mb-1.5">
+              <div className="px-2 pb-1 pt-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-text-muted">Let Hive choose</div>
+              {[
+                { free: false, title: 'Auto', sub: 'The best model for this kind of job — free and plan models first' },
+                { free: true, title: 'Auto · free only', sub: 'Only free models (free tiers and :free models)' },
+              ].map((o) => {
+                const active = spec.provider === 'auto' && !!spec.freeOnly === o.free
+                return (
+                  <button key={o.title} type="button" onClick={() => onChange({ provider: 'auto', keyId: 'auto', model: '', freeOnly: o.free || undefined, name: spec.name }, true)} className={cn('flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left', active ? 'bg-accent-brand/10' : 'hover:bg-text-primary/[0.04]')}>
+                    <AgentMark provider="auto" size={22} />
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[13px] font-medium text-text-primary">{o.title}</span>
+                      <span className="block truncate text-[11px] text-text-muted">{o.sub}</span>
+                    </span>
+                    {active && <Check className="size-3.5 shrink-0 text-accent-brand" />}
+                  </button>
+                )
+              })}
+            </div>
+          )}
           {groups.map((g) => (
             <div key={g.title} className="mb-1.5">
               <div className="px-2 pb-1 pt-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-text-muted">{g.title}</div>
@@ -232,10 +259,12 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
                     className={cn('group/row flex items-center gap-2.5 rounded-lg px-2 py-1.5', idx === cursor ? 'bg-accent-brand/10' : '')}
                   >
                     <button type="button" onClick={() => pick(r)} className="flex min-w-0 flex-1 items-center gap-2.5 text-left">
-                      <ProviderGlyph provider={r.provider} size="xs" />
+                      <AgentMark provider={r.provider} model={r.model} size={22} />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-[13px] text-text-primary">{shortModel(r.model)}</span>
-                        <span className="block truncate font-mono text-[10.5px] text-text-muted">{r.model}</span>
+                        <span className="block truncate text-[10.5px] text-text-muted">
+                          {FAMILY[familyOf(r.provider, r.model)].name} · {vendorName(r.provider)} · <span className="font-mono">{r.model}</span>
+                        </span>
                       </span>
                       <span className="flex shrink-0 items-center gap-1 text-text-muted">
                         {caps?.vision && <Eye className="size-3" aria-label="Sees images" />}
@@ -261,6 +290,7 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
         </div>
       </div>
       <div className="space-y-2.5 border-t hive-line bg-text-primary/[0.02] p-3">
+        {spec.provider !== 'auto' && (
         <div className="flex items-center gap-2">
           <span className="w-16 shrink-0 text-[11px] font-medium text-text-muted">Account</span>
           <div className="hive-scroll flex min-w-0 flex-1 gap-1 overflow-x-auto">
@@ -275,6 +305,7 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
             ))}
           </div>
         </div>
+        )}
         {supportsEffort && need !== 'images' && (
           <div className="flex items-center gap-2">
             <span className="w-16 shrink-0 text-[11px] font-medium text-text-muted">Effort</span>

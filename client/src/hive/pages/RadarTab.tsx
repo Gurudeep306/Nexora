@@ -11,7 +11,7 @@ import { ProviderGlyph, fmtTokens, timeAgo, vendorName } from '../ui'
 
 type Sort = 'new' | 'cheap' | 'context'
 
-export default function ModelsPage() {
+export default function RadarTab({ embedded = false }: { embedded?: boolean }) {
   const { boot, modelsVersion, refresh } = useHive()
   const toast = useToast()
   const navigate = useNavigate()
@@ -57,7 +57,7 @@ export default function ModelsPage() {
   const tryIt = (provider: string, model: string) => navigate('/hive/chat', { state: { send: `Hi! In two sentences: who are you, and what are you best at?`, spec: { provider, keyId: 'auto', model, effort: null } } })
 
   return (
-    <div className="mx-auto w-full max-w-[1160px] px-4 pb-24 pt-8 sm:px-8">
+    <div className={embedded ? 'w-full pb-16' : 'mx-auto w-full max-w-[1160px] px-4 pb-24 pt-8 sm:px-8'}>
       <div className="hive-card relative overflow-hidden p-6 sm:p-7">
         <div className="hive-comb pointer-events-none absolute inset-0" />
         <div className="relative flex flex-wrap items-start gap-5">

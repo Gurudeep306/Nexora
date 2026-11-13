@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { SubscriptionDialog, SubscriptionsPanel } from '../Subscriptions'
 import {
   Activity,
   CheckCircle2,
@@ -38,7 +40,9 @@ const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Something went
 export default function KeysPage() {
   const { boot, refresh } = useHive()
   const toast = useToast()
-  const [adding, setAdding] = useState<string | null>(null) // provider id, or '' for the picker
+  // ?add=<vendor> (from Models → Free sources, the Toolbox or the Token Steward) opens the add dialog for it.
+  const [params, setParams] = useSearchParams()
+  const [adding, setAdding] = useState<string | null>(() => params.get('add')) // provider id, or '' for the picker
   const [addingGh, setAddingGh] = useState(false)
   const [confirmGh, setConfirmGh] = useState<string | null>(null)
   const [q, setQ] = useState('')
@@ -119,6 +123,8 @@ export default function KeysPage() {
         </label>
       )}
 
+      <SubscriptionsPanel onConnect={(sub) => setAdding(sub)} />
+
       {keys.length === 0 && <EmptyVault onAdd={(p) => setAdding(p)} providers={boot.catalogue.providers} />}
 
       <div className="space-y-6">
@@ -169,7 +175,20 @@ export default function KeysPage() {
         </div>
       </section>
 
-      <AddKeysDialog provider={adding} onClose={() => setAdding(null)} />
+      <SubscriptionDialog
+        sub={adding === 'claude_code' || adding === 'codex' ? adding : null}
+        onClose={() => {
+          setAdding(null)
+          if (params.has('add')) setParams((p) => (p.delete('add'), p), { replace: true })
+        }}
+      />
+      <AddKeysDialog
+        provider={adding === 'claude_code' || adding === 'codex' ? null : adding}
+        onClose={() => {
+          setAdding(null)
+          if (params.has('add')) setParams((p) => (p.delete('add'), p), { replace: true })
+        }}
+      />
       <AddGithubDialog open={addingGh} onClose={() => setAddingGh(false)} />
       <ConfirmDialog
         open={!!confirmGh}

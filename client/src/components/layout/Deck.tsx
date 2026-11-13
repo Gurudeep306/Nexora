@@ -180,10 +180,13 @@ export function Deck() {
   const reduce = useReducedMotion()
 
   // Sections switched off by an admin (feature flags) leave the dock.
-  const { featureOn } = useSite()
-  const enabled = (i: DockItem) => featureOn(featureForPath(i.to ?? ''))
-  const items = dock.pinned.map((id) => DOCK_BY_ID.get(id)).filter((i): i is DockItem => !!i && enabled(i))
-  const rest = DOCK_ITEMS.filter((i) => !dock.pinned.includes(i.id) && enabled(i))
+  const { featureOn, isStaff } = useSite()
+  const enabled = (i: DockItem) => (!i.staffOnly || isStaff) && featureOn(featureForPath(i.to ?? ''))
+  const pinnedItems = dock.pinned.map((id) => DOCK_BY_ID.get(id)).filter((i): i is DockItem => !!i && enabled(i))
+  // Staff always get Hive (the AI workspace) in the Dock, even if they never pinned it.
+  const hive = DOCK_BY_ID.get('hive')
+  const items = isStaff && hive && !pinnedItems.includes(hive) ? [...pinnedItems, hive] : pinnedItems
+  const rest = DOCK_ITEMS.filter((i) => !items.includes(i) && enabled(i))
   const mono = dock.iconStyle === 'mono'
   const moreActive = rest.some((i) => isActive(i, pathname))
 

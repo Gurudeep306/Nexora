@@ -1,6 +1,7 @@
 import { Minus, Plus, RotateCcw } from 'lucide-react'
 import { motion, Reorder, useReducedMotion } from 'motion/react'
 import { Button, Modal } from '@/components/ui'
+import { useSite } from '@/context/SiteContext'
 import { cn } from '@/lib/utils'
 import { tStandard } from '@/lib/motion'
 import { DockBadge } from './DockBadge'
@@ -48,9 +49,10 @@ function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boolean) =
  */
 export function DockEditor({ open, onClose }: { open: boolean; onClose: () => void }) {
   const dock = useDock()
+  const { isStaff } = useSite()
   const reduce = useReducedMotion()
   const mono = dock.iconStyle === 'mono'
-  const available = DOCK_ITEMS.filter((i) => !dock.pinned.includes(i.id))
+  const available = DOCK_ITEMS.filter((i) => !dock.pinned.includes(i.id) && (!i.staffOnly || isStaff))
   const full = dock.pinned.length >= MAX_PINNED
 
   return (
