@@ -200,14 +200,14 @@ export default function KeysPage() {
       </section>
 
       <SubscriptionDialog
-        sub={adding === 'claude_code' || adding === 'codex' ? adding : null}
+        sub={adding === 'claude_code' || adding === 'codex' || adding === 'vibe' ? adding : null}
         onClose={() => {
           setAdding(null)
           if (params.has('add')) setParams((p) => (p.delete('add'), p), { replace: true })
         }}
       />
       <AddKeysDialog
-        provider={adding === 'claude_code' || adding === 'codex' ? null : adding}
+        provider={adding === 'claude_code' || adding === 'codex' || adding === 'vibe' ? null : adding}
         onClose={() => {
           setAdding(null)
           if (params.has('add')) setParams((p) => (p.delete('add'), p), { replace: true })

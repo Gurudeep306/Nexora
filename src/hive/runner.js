@@ -537,7 +537,7 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
       if (failure) throw new Error(`${v.label}: ${String(failure.text || failure.message || "failed").slice(0, 600)}`);
       if (!result && r.exit && r.exit !== 0) {
         const err = String(r.stderr || "").trim().slice(-600);
-        throw Object.assign(new Error(`${v.label} exited (${r.exit})${err ? `: ${err}` : ""}`), { kind: /login|logged in|auth|credential|token/i.test(err) ? "auth" : "server" });
+        throw Object.assign(new Error(`${v.label} exited (${r.exit})${err ? `: ${err}` : ""}`), { kind: cliMod.LIMIT_RE.test(err) ? "limit" : /login|logged in|auth|credential|token|api key/i.test(err) ? "auth" : "server" });
       }
       return result?.text || text || "Done";
     }

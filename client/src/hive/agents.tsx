@@ -15,6 +15,7 @@ export type Family =
   | 'claude'
   | 'claudecode'
   | 'codex'
+  | 'vibe'
   | 'gpt'
   | 'gemini'
   | 'hermes'
@@ -44,6 +45,7 @@ export const FAMILY: Record<Family, FamilyInfo> = {
   claude: { name: 'Claude', hue: 42, chroma: 0.15, hue2: 25, tagline: 'Careful, thorough, great with large changes' },
   claudecode: { name: 'Claude Code', hue: 42, chroma: 0.15, hue2: 18, tagline: 'Full agent on your machine, on your Claude plan' },
   codex: { name: 'Codex', hue: 165, chroma: 0.13, hue2: 190, tagline: 'Sandboxed coding agent on your ChatGPT plan' },
+  vibe: { name: 'Mistral Vibe', hue: 50, chroma: 0.17, hue2: 28, tagline: 'Coding agent on your machine, on your Le Chat plan' },
   gpt: { name: 'GPT', hue: 160, chroma: 0.11, hue2: 140, tagline: 'Strong all-rounder, good at planning and debugging' },
   gemini: { name: 'Gemini', hue: 262, chroma: 0.16, hue2: 300, tagline: 'Fast, huge context, sees images and PDFs' },
   hermes: { name: 'Hermes', hue: 80, chroma: 0.14, hue2: 300, tagline: 'Steerable open model with a strong voice' },
@@ -67,6 +69,7 @@ export function familyOf(provider: string, model?: string | null): Family {
   if (provider === 'auto') return 'auto'
   if (provider === 'claude_code') return 'claudecode'
   if (provider === 'codex') return 'codex'
+  if (provider === 'vibe') return 'vibe'
   const m = String(model || '').toLowerCase()
   if (/claude|opus|sonnet|haiku|fable|mythos/.test(m) || (!m && provider === 'anthropic')) return 'claude'
   if (/hermes|nous/.test(m)) return 'hermes'
@@ -120,6 +123,19 @@ function Glyph({ f, gid }: { f: Family; gid: string }) {
           <path d="M12 2.6l8.1 4.7v9.4L12 21.4l-8.1-4.7V7.3z" />
           <path d="M8.2 9.6l3 2.4-3 2.4" />
           <path d="M12.8 15h3.4" />
+        </g>
+      )
+    case 'vibe':
+      // Stepped bars (a nod to Mistral) over a terminal prompt.
+      return (
+        <g>
+          <g fill={fill}>
+            <rect x="3.5" y="3" width="4" height="4" rx="0.8" />
+            <rect x="16.5" y="3" width="4" height="4" rx="0.8" />
+            <rect x="3.5" y="8.2" width="17" height="4" rx="0.8" />
+          </g>
+          <path d="M5.5 15.4l2.6 2.1-2.6 2.1" stroke={fill} strokeWidth="1.7" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          <rect x="10" y="18.6" width="8" height="1.7" rx="0.85" fill={fill} />
         </g>
       )
     case 'gpt':

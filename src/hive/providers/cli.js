@@ -1,5 +1,6 @@
-// Subscription agents: Claude Code and Codex running on a connected machine
-// (the Hive bridge) under the owner's own Claude / ChatGPT plan.
+// Subscription agents: Claude Code, Codex and Mistral Vibe running on a
+// connected machine (the Hive bridge) under the owner's own Claude / ChatGPT /
+// Le Chat plan.
 //
 // Hive never sees the model API here. It starts the CLI through the bridge in
 // headless JSON mode, reads its JSON-lines output, and translates every line
@@ -174,16 +175,86 @@ function parseCodex(line, state) {
   return out;
 }
 
+// Vibe's built-in tools → Hive tool names the Session UI knows how to draw.
+const VIBE_TOOL = { bash: "run_command", git_bash: "run_command", windows_shell: "run_command", read_file: "read_file", write_file: "write_file", edit: "edit_file", search_replace: "edit_file", grep: "search", web_fetch: "read_url", web_search: "web_search", todo: "plan", task: "delegate", ask_user_question: "ask" };
+
+/**
+ * Turn one `vibe -p … --output streaming` line (one session message as JSON)
+ * into Hive events. Assistant messages carry text, reasoning and tool calls;
+ * "tool" messages carry each call's result.
+ */
+function parseVibe(line, state) {
+  let j;
+  try {
+    j = JSON.parse(line);
+  } catch {
+    return [];
+  }
+  if (!j || typeof j !== "object") return [];
+  const out = [];
+  if (!state.announced && (j.session_id || j.sessionId)) {
+    state.announced = true;
+    out.push({ kind: "session", id: j.session_id || j.sessionId });
+  }
+  if (j.role === "assistant") {
+    if (j.reasoning_content) out.push({ kind: "thinking", text: String(j.reasoning_content) });
+    if (j.content && String(j.content).trim()) out.push({ kind: "text", text: String(j.content) });
+    for (const [i, c] of (j.tool_calls || []).entries()) {
+      const raw = c.function?.name || "tool";
+      const id = c.id || `vibe_${state.n++}_${i}`;
+      let input = {};
+      try {
+        input = typeof c.function?.arguments === "string" ? JSON.parse(c.function.arguments || "{}") : c.function?.arguments || {};
+      } catch {
+        input = { arguments: String(c.function?.arguments || "").slice(0, 2000) };
+      }
+      const name = VIBE_TOOL[raw] || raw;
+      state.tools.set(id, { name, raw, input });
+      if (name === "plan" && Array.isArray(input.todos)) {
+        out.push({ kind: "plan", items: input.todos.map((t) => ({ text: t.content || "", done: t.status === "completed" || t.status === "done" })) });
+        continue;
+      }
+      out.push({ kind: "tool_call", id, name, raw, input: { ...input, path: input.file_path || input.path, query: input.query || input.pattern } });
+    }
+    const u = j.usage || j.token_usage;
+    if (u && typeof u === "object") out.push({ kind: "turn_done", usage: { input: u.prompt_tokens || u.input_tokens || 0, output: u.completion_tokens || u.output_tokens || 0, cacheRead: 0 } });
+  } else if (j.role === "tool") {
+    const id = j.tool_call_id || `vibe_${state.n++}`;
+    const t = state.tools.get(id) || { name: VIBE_TOOL[j.name] || j.name || "tool", input: {} };
+    if (t.name === "plan") return out;
+    const o = j.tool_result?.output || {};
+    const content = typeof j.content === "string" ? j.content : JSON.stringify(j.content ?? o).slice(0, 8000);
+    const isError = !!(j.tool_result?.cancelled || o.error || o.is_error || /^(error|<tool_error>)/i.test(content.trim()));
+    const exit = typeof o.returncode === "number" ? o.returncode : typeof o.exit_code === "number" ? o.exit_code : undefined;
+    out.push({ kind: "tool_result", id, name: t.name, isError: isError || (exit != null && exit !== 0), content, exit, path: t.input?.file_path || t.input?.path || o.file_path || o.file || null, write: WRITES.has(t.name) && !isError });
+  }
+  return out;
+}
+
+const PARSERS = { claude: parseClaude, codex: parseCodex, vibe: parseVibe };
+const CLI_LABEL = { claude: "Claude Code", codex: "Codex", vibe: "Mistral Vibe" };
+const CLI_OF_VENDOR = { claude_code: "claude", codex: "codex", vibe: "vibe" };
+
 const POLICY = {
   // Claude Code permission mode, Codex sandbox flags, and whether Hive approves commands.
-  ask: { claude: ["--permission-mode", "acceptEdits"], codex: ["--sandbox", "workspace-write"], hook: true },
-  auto: { claude: ["--permission-mode", "bypassPermissions"], codex: ["--dangerously-bypass-approvals-and-sandbox"], hook: false },
-  read: { claude: ["--permission-mode", "plan"], codex: ["--sandbox", "read-only"], hook: false },
+  // Vibe in headless mode can't ask anyone: "ask" auto-runs the safe calls and refuses risky ones.
+  ask: { claude: ["--permission-mode", "acceptEdits"], codex: ["--sandbox", "workspace-write"], vibe: ["--agent", "smart-approve"], hook: true },
+  auto: { claude: ["--permission-mode", "bypassPermissions"], codex: ["--dangerously-bypass-approvals-and-sandbox"], vibe: ["--auto-approve"], hook: false },
+  read: { claude: ["--permission-mode", "plan"], codex: ["--sandbox", "read-only"], vibe: ["--enabled-tools", "read_file", "--enabled-tools", "grep"], hook: false },
 };
 
 /** argv for a run. resume: the CLI's session id to continue. */
 function buildArgs({ cli, model, system, prompt, policy = "ask", resume = null, chat = false }) {
   const pol = POLICY[policy] || POLICY.ask;
+  if (cli === "vibe") {
+    // Headless run: one JSON message per line. The brief goes first in the
+    // prompt (Vibe's --system-prompt-file would replace its own instructions).
+    const flags = ["--output", "streaming", "--trust", ...(chat ? ["--enabled-tools", "read_file", "--max-turns", "2"] : pol.vibe)];
+    if (model && model !== "default") flags.push("--model", model);
+    if (resume) flags.push("--resume", resume);
+    const text = resume || !system ? prompt : `${system}\n\n---\n\n${prompt}`;
+    return { args: [...flags, "-p", text], input: null, hook: false };
+  }
   if (cli === "codex") {
     const head = resume ? ["exec", "resume", resume] : ["exec"];
     const flags = ["--json", "--skip-git-repo-check", ...(chat ? ["--sandbox", "read-only"] : pol.codex)];
@@ -217,7 +288,7 @@ async function stream({ machineId, folder, cli, args, input, env, hook, signal, 
   const m = machines();
   if (approve) live.set(id, { approve });
   const state = { tools: new Map(), n: 0 };
-  const parse = cli === "codex" ? parseCodex : parseClaude;
+  const parse = PARSERS[cli] || parseClaude;
   try {
     await m.call(machineId, "run_start", { folder, cli, args, input, env, id, hook });
     let from = 0;
@@ -246,10 +317,24 @@ async function answerHook(runId, info) {
   return r.approve(info);
 }
 
+/** Bridges older than 1.2.0 don't know Mistral Vibe (they would probe Claude instead). */
+async function bridgeKnows(cli, machineId) {
+  if (cli !== "vibe") return true;
+  const row = await require("../db").get("SELECT info_json FROM hive_machines WHERE id=?", [machineId]);
+  let v = "0";
+  try {
+    v = JSON.parse(row?.info_json || "{}").version || "0";
+  } catch {}
+  const [a, b] = String(v).split(".").map(Number);
+  return a > 1 || (a === 1 && b >= 2);
+}
+const OLD_BRIDGE = "The Hive bridge on that machine is too old for Mistral Vibe — re-run the setup line from Hive → Machines to update it";
+
 /** Probe a machine: is the CLI there and signed in? Returns its model list. */
 async function listModels({ cli, machineId, vendor, secret }) {
   if (!machineId) throw new ProviderError("Pick the machine this runs on", { kind: "auth" });
-  const label = cli === "codex" ? "Codex" : "Claude Code";
+  if (!(await bridgeKnows(cli, machineId))) throw new ProviderError(OLD_BRIDGE, { kind: "auth" });
+  const label = CLI_LABEL[cli] || "Claude Code";
   let d;
   try {
     d = await machines().call(machineId, "cli_detect", { cli }, { timeoutMs: 40_000 });
@@ -257,25 +342,26 @@ async function listModels({ cli, machineId, vendor, secret }) {
     throw new ProviderError(e.message, { kind: "network" });
   }
   if (!d.installed) {
-    const how = cli === "codex" ? "npm install -g @openai/codex" : "npm install -g @anthropic-ai/claude-code";
+    const how = cli === "codex" ? "npm install -g @openai/codex" : cli === "vibe" ? "uv tool install mistral-vibe (or: pipx install mistral-vibe)" : "npm install -g @anthropic-ai/claude-code";
     throw new ProviderError(`${label} isn't installed on that machine — run: ${how}`, { kind: "auth" });
   }
   // A Claude token pasted in Hive (from `claude setup-token`) signs it in per run.
-  if (!d.loggedIn && !(vendor === "claude_code" && secret)) {
-    const how = cli === "codex" ? "codex login --device-auth" : "claude setup-token (then paste the token in Hive), or claude auth login";
+  if (!d.loggedIn && !((vendor === "claude_code" || vendor === "vibe") && secret)) {
+    const how = cli === "codex" ? "codex login --device-auth" : cli === "vibe" ? "vibe --setup (sign in with your Le Chat account), or paste your Vibe API key in Hive" : "claude setup-token (then paste the token in Hive), or claude auth login";
     throw new ProviderError(`${label} is installed (${d.version}) but not signed in — on the machine run: ${how}`, { kind: "auth" });
   }
+  if (cli === "vibe") return ["default", "mistral-medium-3.5", "devstral-small"];
   return cli === "codex" ? ["default", "gpt-5-codex", "gpt-5"] : ["default", "opus", "sonnet", "haiku", "claude-fable-5-1", "claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
 }
 
-const envFor = (vendor, secret) => (vendor === "claude_code" && secret ? { CLAUDE_CODE_OAUTH_TOKEN: secret } : {});
+const envFor = (vendor, secret) => (!secret ? {} : vendor === "claude_code" ? { CLAUDE_CODE_OAUTH_TOKEN: secret } : vendor === "vibe" ? { MISTRAL_API_KEY: secret } : {});
 
 /**
  * Chat turn (no tools): the conversation goes in as one prompt, the reply
  * streams back. Runs in a scratch folder on the machine.
  */
 async function turn({ vendor, secret, model, system, messages, signal, onText, onThinking, keyRow }) {
-  const cli = vendor === "codex" ? "codex" : "claude";
+  const cli = CLI_OF_VENDOR[vendor] || "claude";
   const machineId = keyRow?.machine_id;
   if (!machineId) throw new ProviderError("This subscription connection has no machine", { kind: "auth" });
   const transcript = messages
@@ -309,7 +395,7 @@ async function turn({ vendor, secret, model, system, messages, signal, onText, o
         text += ev.text;
         onText?.(ev.text);
       } else if (ev.kind === "thinking") onThinking?.(ev.text);
-      else if (ev.kind === "text" && cli === "codex") {
+      else if (ev.kind === "text" && cli !== "claude") {
         text += (text ? "\n\n" : "") + ev.text;
         onText?.(ev.text);
       } else if (ev.kind === "session" && ev.model) served = ev.model;
@@ -325,8 +411,8 @@ async function turn({ vendor, secret, model, system, messages, signal, onText, o
   });
   if (signal?.aborted || r.stopped) throw new ProviderError("Stopped", { kind: "aborted" });
   if (failure) throw new ProviderError(failure.text || failure.message || "The CLI failed", { kind: failure.limit ? "quota" : "server" });
-  if (r.exit && r.exit !== 0 && !text) throw new ProviderError(`${cli === "codex" ? "Codex" : "Claude Code"} exited with ${r.exit}: ${String(r.stderr).trim().slice(-400)}`, { kind: /auth|login|logged in|credential/i.test(r.stderr) ? "auth" : "server" });
+  if (r.exit && r.exit !== 0 && !text) throw new ProviderError(`${CLI_LABEL[cli]} exited with ${r.exit}: ${String(r.stderr).trim().slice(-400)}`, { kind: LIMIT_RE.test(r.stderr) ? "quota" : /auth|login|logged in|credential|api key/i.test(r.stderr) ? "auth" : "server" });
   return { text, toolCalls: [], raw: { provider: "cli" }, usage, costMicros: 0, stop: "end", servedModel: served || model || "default", rateLimit: null };
 }
 
-module.exports = { id: "cli", parseClaude, parseCodex, buildArgs, stream, answerHook, listModels, turn, envFor, LIMIT_RE, POLICY };
+module.exports = { bridgeKnows, OLD_BRIDGE, id: "cli", parseClaude, parseCodex, parseVibe, buildArgs, stream, answerHook, listModels, turn, envFor, LIMIT_RE, POLICY };

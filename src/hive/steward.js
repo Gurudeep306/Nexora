@@ -115,7 +115,7 @@ async function report({ days = 30 } = {}) {
   const models = rows.map((r) => {
     const card = cardFor(r.model, r.vendor);
     const free = keys.some((k) => k.provider === r.vendor && k.free_tier) || /:free$/.test(r.model);
-    const tier = r.vendor === "claude_code" || r.vendor === "codex" ? "sub" : free ? "free" : card?.tier || "mid";
+    const tier = ["claude_code", "codex", "vibe"].includes(r.vendor) ? "sub" : free ? "free" : card?.tier || "mid";
     const usd = Number(r.cost || 0) / 1e6;
     tiers[tier] += usd;
     dollars += usd;
