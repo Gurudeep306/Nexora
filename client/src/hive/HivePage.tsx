@@ -3,6 +3,7 @@ import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-ro
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   BarChart3,
+  Bot,
   HeartPulse,
   Network,
   Boxes,
@@ -39,6 +40,7 @@ import { Tooltip } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from './api'
 import { AlertsBell, TeamChat } from './TeamChat'
+import { CopilotDock } from './Copilot'
 import { HiveLogo } from './HiveLogo'
 import { projectColor } from './projectColor'
 import { HiveProvider, useHive } from './store'
@@ -65,6 +67,7 @@ const ToolboxPage = lazy(() => import('./pages/ToolboxPage'))
 const StewardPage = lazy(() => import('./pages/StewardPage'))
 const DispatchPage = lazy(() => import('./pages/DispatchPage'))
 const HealthPage = lazy(() => import('./pages/HealthPage'))
+const CopilotPage = lazy(() => import('./pages/CopilotPage'))
 
 const store = {
   get: (k: string, d: string) => {
@@ -217,12 +220,14 @@ function Shell() {
               <Route path="steward" element={<StewardPage />} />
               <Route path="dispatch" element={<DispatchPage />} />
               <Route path="health" element={<HealthPage />} />
+              <Route path="copilot" element={<CopilotPage />} />
               <Route path="*" element={<HomePage />} />
             </Routes>
           </Suspense>
         </main>
       </div>
       <ApprovalsTray />
+      <CopilotDock />
       <TeamDrawer open={team} onClose={() => setTeam(false)} />
       <Palette open={palette} onClose={() => setPalette(false)} />
       <MobileNav open={mobileNav} onClose={() => setMobileNav(false)} />
@@ -259,6 +264,7 @@ function useNav(): { main: NavItem[]; config: NavItem[] } {
       { to: projectHref, label: 'Projects', icon: FolderGit2, match: /^\/hive\/p\//, hint: 'Sessions with agents on your code' },
       { to: '/hive/launchpad', label: 'Launchpad', icon: Lightbulb, hint: '⌘⇧I · turn an idea into a project' },
       { to: '/hive/machines', label: 'Machines', icon: Server, badge: approvals.length || undefined, tone: approvals.length ? 'var(--color-state-warning)' : online ? 'var(--color-state-success)' : undefined, hint: `${online} online · run commands, tests, servers` },
+      { to: '/hive/copilot', label: 'Copilot', icon: Bot, hint: '⌘I · your chief of staff — plans, delegates, reviews' },
       { to: '/hive/dispatch', label: 'Dispatcher', icon: Network, hint: 'Describe the work — the right model on every part, fewest tokens' },
       { to: '/hive/pipelines', label: 'Pipelines', icon: Workflow, hint: 'Teams of agents that hand work on — design one with the Architect' },
       { to: '/hive/automations', label: 'Automations', icon: Clock3, hint: 'Runs on a schedule — overnight too' },
@@ -542,7 +548,7 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
   const navigate = useNavigate()
   const section = useMemo(() => {
     const m = /^\/hive\/([^/]+)/.exec(pathname)?.[1]
-    return { chat: 'Chat', launchpad: 'Launchpad', machines: 'Machines', models: 'Models', keys: 'Keys', usage: 'Usage', memory: 'Memory', plugins: 'Plugins', nexora: 'Build NexoraGuru', drive: 'Drive', budgets: 'Budgets', automations: 'Automations', pipelines: 'Pipelines', toolbox: 'Toolbox', steward: 'Token Steward', dispatch: 'Dispatcher', health: 'Agent health' }[m ?? ''] ?? null
+    return { chat: 'Chat', launchpad: 'Launchpad', machines: 'Machines', models: 'Models', keys: 'Keys', usage: 'Usage', memory: 'Memory', plugins: 'Plugins', nexora: 'Build NexoraGuru', drive: 'Drive', budgets: 'Budgets', automations: 'Automations', pipelines: 'Pipelines', toolbox: 'Toolbox', steward: 'Token Steward', dispatch: 'Dispatcher', health: 'Agent health', copilot: 'Copilot' }[m ?? ''] ?? null
   }, [pathname])
   return (
     <header className="flex h-12 shrink-0 items-center gap-2 border-b hive-line px-2 sm:px-3">
@@ -752,6 +758,7 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
       { id: 'n:memory', group: 'Go to', label: 'Memory', icon: <Brain className="size-4" />, run: go('/hive/memory') },
       { id: 'n:plugins', group: 'Go to', label: 'Plugins', icon: <Puzzle className="size-4" />, run: go('/hive/plugins') },
       { id: 'n:usage', group: 'Go to', label: 'Usage', icon: <BarChart3 className="size-4" />, run: go('/hive/usage') },
+      { id: 'a:copilot', group: 'Actions', label: 'Ask the Copilot', hint: '⌘I · it plans, delegates and reviews', icon: <Bot className="size-4" />, run: go('/hive/copilot') },
       { id: 'a:dispatch', group: 'Actions', label: 'Dispatch a team of agents', hint: 'Right model per part', icon: <Network className="size-4" />, run: go('/hive/dispatch') },
       { id: 'n:health', group: 'Go to', label: 'Agent health', icon: <HeartPulse className="size-4" />, run: go('/hive/health') },
       { id: 'a:pipeline', group: 'Actions', label: 'Design a pipeline with the Architect', hint: 'Many agents, one flow', icon: <Workflow className="size-4" />, run: go('/hive/pipelines') },

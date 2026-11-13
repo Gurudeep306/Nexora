@@ -7,8 +7,17 @@ function roster() {
   return [...presence.entries()].map(([username, p]) => ({ username, view: p.view || null, since: p.since }));
 }
 
+// In-process listeners (e.g. the Copilot reviewing finished sessions).
+const bus = new (require("events").EventEmitter)();
+bus.setMaxListeners(50);
+
 function emit(event, payload) {
   nsp?.to("hive").emit(event, payload);
+  try {
+    bus.emit(event, payload);
+  } catch {
+    /* a listener failed: never break the broadcast */
+  }
 }
 function emitTask(taskId, event, payload) {
   nsp?.to(`task:${taskId}`).emit(event, payload);
@@ -70,4 +79,4 @@ function attachHive(io, { authorize, canSeeConvo }) {
   return nsp;
 }
 
-module.exports = { attachHive, emit, emitTask, emitConvo, roster };
+module.exports = { attachHive, emit, emitTask, emitConvo, roster, bus };
