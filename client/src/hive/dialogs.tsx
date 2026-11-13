@@ -272,17 +272,22 @@ export function AddGithubDialog({ open, onClose }: { open: boolean; onClose: () 
   const [label, setLabel] = useState('')
   const [busy, setBusy] = useState(false)
   return (
-    <Modal open={open} onClose={onClose} title="Connect GitHub" description="A fine-grained personal access token with Contents and Pull requests (read & write) on the repositories Hive should work on." size="md">
+    <Modal open={open} onClose={onClose} title="Connect GitHub" description="One token and every repository you can reach is available in Hive (Your GitHub). The quickest: a classic token, pre-filled — pick an expiry and press Generate." size="md">
       <div className="flex flex-col gap-4">
         <Field
           label="Token"
           hint={
-            <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noreferrer" className="text-accent-brand hover:underline">
-              Create a fine-grained token ↗
-            </a>
+            <span className="flex flex-wrap gap-x-3">
+              <a href="https://github.com/settings/tokens/new?scopes=repo,workflow,read:org&description=Nexora%20Hive" target="_blank" rel="noreferrer" className="text-accent-brand hover:underline">
+                Create a token, pre-filled (all repos) ↗
+              </a>
+              <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noreferrer" className="text-text-muted hover:underline">
+                or a fine-grained one (chosen repos) ↗
+              </a>
+            </span>
           }
         >
-          <Input value={token} onChange={(e) => setToken(e.target.value)} type="password" placeholder="github_pat_…" autoComplete="off" className="font-mono" />
+          <Input value={token} onChange={(e) => setToken(e.target.value)} type="password" placeholder="ghp_… or github_pat_…" autoComplete="off" className="font-mono" />
         </Field>
         <Field label="Name (optional)">
           <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Org bot" maxLength={60} />
