@@ -988,6 +988,10 @@ export interface CopilotSettings {
   model: string
   autonomy?: 'autopilot' | 'assist'
   canMerge?: boolean
+  /** Claude leads and checks; your GPU farm and free models do the work. */
+  saveTokens?: boolean
+  /** Work that always goes to Claude. */
+  claudeOnly?: string[]
 }
 
 export interface CopilotWork {

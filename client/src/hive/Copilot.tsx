@@ -60,6 +60,7 @@ const STEP: Record<string, { icon: typeof Bot; label: (i: Record<string, unknown
   stop_agent: { icon: Activity, label: () => 'Stopped an agent' },
   swap_agent: { icon: Network, label: (i) => `Replaced an agent${i.agent ? ` with ${String(i.agent)}` : ' with the best healthy model'}` },
   verify_models: { icon: Radar, label: () => 'Tested every model — removing the ones that don’t answer' },
+  check_session: { icon: Activity, label: () => 'Quality check by another model' },
   hide_model: { icon: Eye, label: (i) => `Hid ${String(i.model || 'a model')}` },
   list_models: { icon: Radar, label: (i) => `Compared models${i.kind ? ` for ${i.kind}` : ''}` },
   session_detail: { icon: Activity, label: () => 'Checked a session' },
@@ -206,7 +207,7 @@ function BrainPill({ brain, settings, onChange, compact, admin }: { brain: Copil
           <ChevronDown className="size-3 shrink-0 text-text-muted" />
         </button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-80 p-3">
+      <PopoverContent align="start" className="hive-scroll max-h-[min(80vh,640px)] w-80 overflow-y-auto p-3">
         <div className="mb-2 text-[12.5px] font-semibold">The Copilot's brain</div>
         <div className="space-y-1">
           {(
@@ -266,8 +267,60 @@ function BrainPill({ brain, settings, onChange, compact, admin }: { brain: Copil
             </span>
           </label>
         </div>
+        {settings && <TokenSaver settings={settings} onChange={onChange} />}
       </PopoverContent>
     </Popover>
+  )
+}
+
+/** Claude leads and checks; other models do the work — with areas that always stay with Claude. */
+function TokenSaver({ settings, onChange }: { settings: CopilotSettings; onChange: (s: CopilotSettings) => void }) {
+  const [draft, setDraft] = useState('')
+  const on = settings.saveTokens !== false
+  const areas = settings.claudeOnly ?? []
+  const setAreas = (next: string[]) => onChange({ ...settings, claudeOnly: next })
+  return (
+    <div className="mt-3 border-t hive-line pt-3">
+      <label className="flex cursor-pointer items-start gap-2 rounded-xl p-2 hover:bg-text-primary/[0.04]">
+        <input type="checkbox" checked={on} onChange={(e) => onChange({ ...settings, saveTokens: e.target.checked })} className="mt-0.5 accent-[var(--color-accent-brand)]" />
+        <span>
+          <span className="block text-[12.5px] font-medium">Save Claude tokens</span>
+          <span className="block text-[11.5px] text-text-muted">Claude plans and checks; your GPU farm and free models do the work. Their work is accepted only when tests and a reviewer from another model family pass it — otherwise Claude takes over. Quality never drops.</span>
+        </span>
+      </label>
+      {on && (
+        <div className="mt-1.5 px-2">
+          <div className="mb-1 text-[11.5px] font-medium text-text-secondary">Always done by Claude</div>
+          <div className="flex flex-wrap gap-1">
+            {areas.map((a) => (
+              <span key={a} className="inline-flex max-w-full items-center gap-1 rounded-full bg-accent-brand/10 py-0.5 pl-2 pr-1 text-[11px] text-text-primary">
+                <span className="truncate">{a}</span>
+                <button type="button" onClick={() => setAreas(areas.filter((x) => x !== a))} className="grid size-4 shrink-0 place-items-center rounded-full text-text-muted hover:bg-text-primary/10 hover:text-text-primary" aria-label={`Remove ${a}`}>
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+          <form
+            className="mt-1.5 flex gap-1"
+            onSubmit={(e) => {
+              e.preventDefault()
+              const v = draft.trim()
+              if (v && !areas.includes(v)) setAreas([...areas, v])
+              setDraft('')
+            }}
+          >
+            <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="Add an area, e.g. Payments" className="h-7 min-w-0 flex-1 rounded-lg border hive-line bg-bg-surface px-2 text-[11.5px] outline-none focus:border-accent-brand/50" />
+            <button type="submit" disabled={!draft.trim()} className="h-7 rounded-lg bg-text-primary/[0.06] px-2 text-[11.5px] font-medium disabled:opacity-40">
+              Add
+            </button>
+          </form>
+          <Link to="/hive/keys?add=farm" className="mt-2 inline-block text-[11.5px] text-accent-brand hover:underline">
+            Connect your GPU farm →
+          </Link>
+        </div>
+      )}
+    </div>
   )
 }
 
