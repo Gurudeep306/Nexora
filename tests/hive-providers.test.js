@@ -156,3 +156,33 @@ test('workspace edits are serialized per file, so concurrent agents never lose w
   await ws.write('a.txt', 'x=0\ny=0\nz=0\n', 'agent:A');
   assert.equal((await ws.changes()).length, 0);
 });
+
+test('reasoning models that stream content as typed parts (Mistral Magistral) give text and thinking, never "[object Object]"', async () => {
+  const { s, url } = await server((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/event-stream' });
+    const send = (o) => res.write(`data: ${JSON.stringify(o)}\n\n`);
+    send({ choices: [{ delta: { content: [{ type: 'thinking', thinking: [{ type: 'text', text: 'Let me think.' }] }] } }] });
+    send({ choices: [{ delta: { content: [{ type: 'text', text: 'Hello' }] } }] });
+    send({ choices: [{ delta: { content: ' world' }, finish_reason: 'stop' }] });
+    res.end('data: [DONE]\n\n');
+  });
+  const openai = require('../src/hive/providers/openai');
+  let shown = '';
+  let thought = '';
+  const r = await openai.turn({ secret: 'k', baseUrl: url, model: 'magistral-medium-latest', system: 's', messages: [{ role: 'user', text: 'hi' }], tools: [], onText: (t) => (shown += t), onThinking: (t) => (thought += t), vendor: 'mistral' });
+  s.close();
+  assert.equal(r.text, 'Hello world');
+  assert.equal(shown, 'Hello world');
+  assert.equal(thought, 'Let me think.');
+  assert.ok(!/object Object/.test(r.text));
+});
+
+test('nested error messages (Mistral 422) are readable, not "[object Object]"', async () => {
+  const { s, url } = await server((req, res) => {
+    res.writeHead(422, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ object: 'error', message: { detail: [{ type: 'extra_forbidden', msg: 'Extra inputs are not permitted' }] }, type: 'invalid_request_error' }));
+  });
+  const openai = require('../src/hive/providers/openai');
+  await assert.rejects(openai.turn({ secret: 'k', baseUrl: url, model: 'm', system: 's', messages: [{ role: 'user', text: 'hi' }], tools: [], vendor: 'mistral' }), (e) => /Extra inputs are not permitted/.test(e.message) && !/object Object/.test(e.message));
+  s.close();
+});
