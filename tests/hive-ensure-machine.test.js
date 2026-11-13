@@ -128,3 +128,16 @@ test("models failing in real use right now are left out of the picker", async ()
   await db.run("UPDATE hive_health SET consecutive_fails=0, last_ok=? WHERE key_id='kf'", [t + 1000]);
   assert.deepEqual((await keys.listKeys()).find((x) => x.id === "kf").models, ["good", "flaky"], "it comes back once it answers again");
 });
+
+test("a paid key that was never tested gets tested; a tested paid key is left alone", async () => {
+  const db = require("../src/hive/db");
+  const vault = require("../src/hive/vault");
+  const health = require("../src/hive/health");
+  const t = Date.now();
+  await db.run("INSERT INTO hive_keys(id, provider, label, secret_enc, last4, models_json, owner, created_at, updated_at, status, base_url) VALUES(?,?,?,?,?,?,?,?,?,?,?)", ["kpaid", "mistral", "Mistral", vault.seal("x"), "x", JSON.stringify(["mistral-medium-latest"]), "owner", t, t, "ok", "http://127.0.0.1:9/v1"]);
+  await db.run("INSERT INTO hive_keys(id, provider, label, secret_enc, last4, models_json, owner, created_at, updated_at, status, verified_json, base_url) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)", ["kpaid2", "mistral", "Mistral 2", vault.seal("x"), "x", JSON.stringify(["mistral-medium-latest"]), "owner", t, t, "ok", JSON.stringify({ at: t, ok: ["mistral-medium-latest"], failed: {} }), "http://127.0.0.1:9/v1"]);
+  const out = await health.verifyAll({ olderThanMs: 20 * 3600_000 });
+  const ids = out.map((x) => x.keyId);
+  assert.ok(ids.includes("kpaid"), "never tested: tested now");
+  assert.ok(!ids.includes("kpaid2"), "tested paid key: not re-tested daily");
+});
