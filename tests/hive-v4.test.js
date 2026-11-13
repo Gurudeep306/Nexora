@@ -284,6 +284,23 @@ test("upload a folder: it becomes a private GitHub repo and a project; junk fold
   assert.equal(again.status, 409, "finishing twice is refused");
 });
 
+test("any number of Claude accounts can join one machine; numbered names; the same token twice is refused", async () => {
+  const machines = (await ok("GET", "/api/hive/machines")).machines;
+  const m = machines[0];
+  const added = [];
+  for (const i of [1, 2, 3, 4]) {
+    const r = await ok("POST", "/api/hive/subscriptions", { provider: "claude_code", machineId: m.id, token: `sk-ant-oat01-test-account-${i}-xxxxxxxxxxxx` });
+    added.push(r.id);
+  }
+  const keys = (await ok("GET", "/api/hive/bootstrap")).keys.filter((k) => added.includes(k.id));
+  assert.equal(keys.length, 4, "four accounts connected");
+  assert.equal(new Set(keys.map((k) => k.label)).size, 4, `names are distinct: ${keys.map((k) => k.label)}`);
+  const dup = await call("POST", "/api/hive/subscriptions", { provider: "claude_code", machineId: m.id, token: "sk-ant-oat01-test-account-2-xxxxxxxxxxxx" });
+  assert.equal(dup.status, 409);
+  assert.match(dup.body.error, /already connected/);
+  for (const id of added) await ok("DELETE", `/api/hive/keys/${id}`);
+});
+
 test("the Dispatcher splits a request, assigns each part, and runs the team in dependency waves", async () => {
   const boot = await ok("GET", "/api/hive/bootstrap");
   const project = boot.projects.find((p) => !p.machine_id) || boot.projects[0];
