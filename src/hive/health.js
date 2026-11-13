@@ -283,9 +283,13 @@ async function verifyAll({ includePaid = false, olderThanMs = 0 } = {}) {
     try {
       const v = vendorOf(keyVendor(r));
       if (v.subscription) return false;
+      const ver = JSON.parse(r.verified_json || "null");
+      // Every key, paid included, is tested once (a test is a few tokens per model);
+      // a test cut short by a rate limit is finished an hour later.
+      if (!ver?.at) return true;
+      if ((ver.stoppedBy === "rate" || ver.stoppedBy === "quota") && Date.now() - ver.at > 60 * 60_000) return true;
       if (!(includePaid || r.free_tier || v.freeTier)) return false;
-      const at = JSON.parse(r.verified_json || "null")?.at || 0;
-      return Date.now() - at >= olderThanMs;
+      return Date.now() - ver.at >= olderThanMs;
     } catch {
       return false;
     }
