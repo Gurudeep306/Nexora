@@ -113,7 +113,26 @@ async function projectContext(projectId) {
   const p = await get("SELECT name, repo_owner, repo_name, default_branch, description, instructions FROM hive_projects WHERE id=?", [projectId]).catch(() => null);
   if (!p) return "";
   const repo = p.repo_owner ? `${p.repo_owner}/${p.repo_name} (branch ${p.default_branch || "main"})` : "a local folder";
-  return [`This chat is about the project “${p.name}” — ${repo}.${p.description ? ` ${p.description}` : ""} Answer about this project unless asked otherwise; read its code with the repo tools before answering questions about it.`, p.instructions?.trim() ? `Project brief:\n${p.instructions.trim().slice(0, 6000)}` : ""].filter(Boolean).join("\n\n");
+  const guide = await guideOf(projectId).catch(() => "");
+  return [`This chat is about the project “${p.name}” — ${repo}.${p.description ? ` ${p.description}` : ""} Answer about this project unless asked otherwise; read its code with the repo tools before answering questions about it.`, p.instructions?.trim() ? `Project brief:\n${p.instructions.trim().slice(0, 6000)}` : "", guide].filter(Boolean).join("\n\n");
+}
+
+// A project's AGENTS.md / CLAUDE.md from its default branch, cached for 10 minutes.
+const guideCache = new Map();
+async function guideOf(projectId) {
+  const hit = guideCache.get(projectId);
+  if (hit && Date.now() - hit.at < 10 * 60_000) return hit.text;
+  const p = await get("SELECT * FROM hive_projects WHERE id=?", [projectId]);
+  let text = "";
+  if (p?.github_id && p.repo_owner) {
+    const cred = await get("SELECT * FROM hive_github WHERE id=?", [p.github_id]);
+    if (cred) {
+      const token = vault.open(cred.token_enc);
+      text = await require("./runner").repoGuide((f) => gh.rawFile(token, p.repo_owner, p.repo_name, f, p.default_branch || "main").then((b) => b.toString("utf8")), 8000);
+    }
+  }
+  guideCache.set(projectId, { at: Date.now(), text });
+  return text;
 }
 
 /** The latest chat this person has about a project, or a new one. */
@@ -480,4 +499,4 @@ function stop(convoId) {
   return !!set;
 }
 
-module.exports = { projectChat, projectContext, listConvos, createConvo, convoFor, canSee, messagesOf, send, stop, saveFile, MAX_FILE };
+module.exports = { guideOf, projectChat, projectContext, listConvos, createConvo, convoFor, canSee, messagesOf, send, stop, saveFile, MAX_FILE };

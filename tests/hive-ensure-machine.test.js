@@ -104,3 +104,13 @@ test("a project's own chat is reused, and knows the repo and its brief", async (
   assert.match(ctx, /npm test/);
   assert.equal(await chat.projectContext(null), "");
 });
+
+test("the repo's AGENTS.md (else CLAUDE.md) is the guide every agent gets; a CLAUDE.md that only imports AGENTS.md is skipped", async () => {
+  const { repoGuide } = require("../src/hive/runner");
+  const files = { "AGENTS.md": "# Rules\nNever commit to main." };
+  const read = async (f) => files[f] ?? null;
+  assert.match(await repoGuide(read), /AGENTS\.md.*Never commit to main/s);
+  assert.match(await repoGuide(async (f) => (f === "CLAUDE.md" ? "Use pnpm." : null)), /CLAUDE\.md.*pnpm/s);
+  assert.equal(await repoGuide(async (f) => (f === "CLAUDE.md" ? "@AGENTS.md\n" : null)), "");
+  assert.equal(await repoGuide(async () => { throw new Error("404"); }), "");
+});
