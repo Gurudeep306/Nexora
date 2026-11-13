@@ -356,8 +356,15 @@ function createHiveRouter() {
       const row = await get("SELECT * FROM hive_github WHERE id=?", [req.params.id]);
       if (!row) throw new BadInput("Not found", 404);
       if (row.created_by !== req.hiveUser && !isAdmin(req)) throw new BadInput("Only the person who added it, or an admin, can remove it", 403);
+      // Projects on this connection move to another connection that can reach their repo.
+      const repos = require("../hive/repos");
+      const { repos: list } = await repos.allRepos({ force: true });
+      for (const p of await all("SELECT id, repo_owner, repo_name FROM hive_projects WHERE github_id=?", [row.id])) {
+        const r = list.find((x) => x.fullName.toLowerCase() === `${p.repo_owner}/${p.repo_name}`.toLowerCase() && x.githubId !== row.id);
+        if (r) await run("UPDATE hive_projects SET github_id=?, updated_at=? WHERE id=?", [r.githubId, now(), p.id]);
+      }
       const used = await get("SELECT COUNT(*) AS n FROM hive_projects WHERE github_id=?", [row.id]);
-      if (Number(used?.n) > 0) throw new BadInput("Projects still use this connection — remove or move them first", 409);
+      if (Number(used?.n) > 0) throw new BadInput("Some projects' repos can only be reached through this connection — connect another GitHub account that can see them first", 409);
       await run("DELETE FROM hive_github WHERE id=?", [row.id]);
       await audit(req, "hive.github.delete", row.id, { login: row.login });
       hub.emit("github", { by: req.hiveUser });
