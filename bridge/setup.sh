@@ -93,7 +93,7 @@ After=network-online.target
 
 [Service]
 EnvironmentFile=$HOME/.hive/bridge.env
-Environment=PATH=$(dirname "$NODE_BIN"):${NPM_PREFIX:+$NPM_PREFIX/bin:}/usr/local/bin:/usr/bin:/bin
+Environment=PATH=$(dirname "$NODE_BIN"):${NPM_PREFIX:+$NPM_PREFIX/bin:}$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin
 ExecStart=$NODE_BIN $HOME/.hive/hive-bridge.js --root $ROOT
 Restart=always
 RestartSec=5
