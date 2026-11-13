@@ -237,6 +237,26 @@ function optionalSecret(row) {
   }
 }
 
+/**
+ * List a key's models. Some OpenAI-compatible gateways don't serve
+ * GET /models (404). Then, at the same address only, check the chat endpoint
+ * exists and fall back to the models already on the key plus the vendor's
+ * suggestions; each one is then tested with a real call (health.verifyKey).
+ */
+async function listOrProbe(row, p) {
+  const secret = p.subscription ? optionalSecret(row) : secretOf(row);
+  const base = row.base_url || p.baseUrl;
+  try {
+    return await p.implModule.listModels({ secret, baseUrl: base, official: !!p.official, modelsUrl: p.modelsUrl, vendor: p.id, cli: p.cli, machineId: row.machine_id });
+  } catch (e) {
+    if (p.impl !== "openai" || e.status !== 404 || p.modelsUrl || !p.implModule.probeChat) throw e;
+    const fallback = [...new Set([...json(row.models_json, []), ...(p.suggested || [])])];
+    const status = fallback.length ? await p.implModule.probeChat({ secret, baseUrl: base, model: fallback[0] }).catch(() => null) : null;
+    if (status && status !== 404) return fallback;
+    throw Object.assign(new Error(`Nothing answers at ${base} (model list and chat both 404). Copy the API base URL from the provider's console or docs into the key's Address field.`), { kind: "config" });
+  }
+}
+
 /** Verify a key by listing models; stores the model list and status. */
 async function checkKey(id) {
   const row = await keyRow(id);
@@ -244,7 +264,7 @@ async function checkKey(id) {
   const p = vendorOf(keyVendor(row));
   try {
     const blocked = new Set(json(row.blocked_models, []));
-    const listed = await p.implModule.listModels({ secret: p.subscription ? optionalSecret(row) : secretOf(row), baseUrl: row.base_url || p.baseUrl, official: !!p.official, modelsUrl: p.modelsUrl, vendor: p.id, cli: p.cli, machineId: row.machine_id });
+    const listed = await listOrProbe(row, p);
     // Models the provider still lists but refuses to serve (retired for new users…) stay out.
     let models = listed.filter((m) => !blocked.has(m));
     // A free OpenRouter key can only call the ":free" variants.
