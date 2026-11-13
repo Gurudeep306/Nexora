@@ -62,7 +62,19 @@ async function findRepo(ref) {
   if (!s) return null;
   const { repos } = await allRepos();
   const low = s.toLowerCase();
-  return repos.find((r) => r.fullName.toLowerCase() === low) || repos.find((r) => r.name.toLowerCase() === low) || repos.find((r) => r.fullName.toLowerCase().includes(low)) || null;
+  const hit = repos.find((r) => r.fullName.toLowerCase() === low) || repos.find((r) => r.name.toLowerCase() === low) || repos.find((r) => r.fullName.toLowerCase().includes(low));
+  if (hit || !s.includes("/")) return hit || null;
+  // Not in the (cached, newest-first) list — e.g. a repo created a moment ago: ask GitHub directly.
+  const [owner, name] = s.split("/");
+  for (const c of await all("SELECT * FROM hive_github ORDER BY created_at")) {
+    try {
+      const r = await gh.repo(tokenOf(c), owner, name);
+      return { owner: r.owner.login, name: r.name, fullName: r.full_name, private: r.private, defaultBranch: r.default_branch, description: r.description || "", language: r.language || null, pushedAt: r.pushed_at, stars: r.stargazers_count || 0, githubId: c.id, connection: c.label, canPush: !!(r.permissions?.push || r.permissions?.admin) };
+    } catch {
+      /* not visible to this connection */
+    }
+  }
+  return null;
 }
 
 /**

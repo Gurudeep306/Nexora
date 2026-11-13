@@ -665,7 +665,11 @@ export default function DrivePage() {
               A whole folder
             </MenuItem>
             <MenuSeparator />
-            <div className="px-2.5 pb-1 pt-0.5 text-[11.5px] text-text-muted">Or drop files anywhere on this page.</div>
+            <MenuItem icon={<FolderUp />} onSelect={() => navigate('/hive/repos')}>
+              A code folder to work on (any size)
+            </MenuItem>
+            <MenuSeparator />
+            <div className="px-2.5 pb-1 pt-0.5 text-[11.5px] text-text-muted">Drive holds documents (up to 20 MB each). Big code folders become a project instead. Or drop files anywhere on this page.</div>
           </MenuContent>
         </Menu>
       </div>

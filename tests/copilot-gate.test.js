@@ -65,3 +65,13 @@ test("token saving is on by default with Claude-only areas, and both can be chan
   assert.equal(kept.saveTokens, false, "other changes keep the setting");
   assert.deepEqual(kept.claudeOnly, ["All UI"]);
 });
+
+test("one Claude account can be the parent (leads); the setting persists alongside the others", async () => {
+  const copilot = require("../src/hive/copilot");
+  const saved = await copilot.saveSettings("lead", { brainKey: "key-main" });
+  assert.equal(saved.brainKey, "key-main");
+  const kept = await copilot.saveSettings("lead", { saveTokens: false });
+  assert.equal(kept.brainKey, "key-main", "other changes keep the parent");
+  const cleared = await copilot.saveSettings("lead", { brainKey: null });
+  assert.equal(cleared.brainKey, null);
+});
