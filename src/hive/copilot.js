@@ -228,11 +228,13 @@ const TOOLS = {
       ["projectId", "prompt"],
     ),
     run: async (i, ctx) => {
-      const p = await projectOf(i.projectId);
+      let p = await projectOf(i.projectId);
       const runner = require("./runner");
       const router = require("./router");
       const kind = router.classify(i.prompt).kind;
       const list = (Array.isArray(i.agents) && i.agents.length ? i.agents : ["auto"]).slice(0, 4).map((a) => specFrom(a, kind));
+      // Claude Code / Codex / Vibe work in a folder on their machine: copy the repo there first if needed.
+      p = (await require("./repos").ensureOnMachine(p.id, list.map((s) => s.provider))) || p;
       const mode = ["solo", "compare", "team"].includes(i.mode) ? i.mode : list.length > 1 ? "compare" : "solo";
       for (const s of list) await runner.resolveSpec(s, { prompt: i.prompt, machineId: p.machine_id || null });
       const task = await ctx.createTask(p, { title: i.title || String(i.prompt).split("\n")[0].slice(0, 90), prompt: i.prompt });
