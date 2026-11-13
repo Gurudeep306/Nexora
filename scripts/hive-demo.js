@@ -127,6 +127,11 @@ function startMock() {
           res.writeHead(s, { "Content-Type": "application/json" });
           res.end(JSON.stringify(o));
         };
+        // ── Claude plan usage (what Claude Code's /usage shows) ──
+        if (p === "/api/oauth/usage") {
+          if (!/Bearer sk-ant-oat01-/.test(req.headers.authorization || "")) return json(401, { error: { message: "invalid token" } });
+          return json(200, { five_hour: { utilization: 42, resets_at: new Date(Date.now() + 2 * 3600e3).toISOString() }, seven_day: { utilization: 13.5, resets_at: new Date(Date.now() + 4 * 86400e3).toISOString() } });
+        }
         // ── AI provider ──
         if (p.endsWith("/models")) return json(200, { data: [{ id: "demo-coder-large" }, { id: "demo-coder-mini" }, { id: "demo-vision-2" }, { id: "demo-retired" }, { id: "demo-gated" }] });
         if (p.endsWith("/chat/completions")) {
@@ -246,7 +251,7 @@ async function main() {
   const base = `http://localhost:${PORT}`;
   const proc = spawn(process.execPath, ["src/server.js"], {
     cwd: path.join(__dirname, ".."),
-    env: { ...process.env, PORT: String(PORT), NODE_ENV: "development", DB_PATH: dbPath, DISABLE_PUPPETEER: "1", DISABLE_SCRAPER: "1", OWNER_USERNAME: OWNER, HIVE_GITHUB_API: mock.url, HIVE_DEMO: "1" },
+    env: { ...process.env, PORT: String(PORT), NODE_ENV: "development", DB_PATH: dbPath, DISABLE_PUPPETEER: "1", DISABLE_SCRAPER: "1", OWNER_USERNAME: OWNER, HIVE_GITHUB_API: mock.url, HIVE_ANTHROPIC_API: mock.url, HIVE_DEMO: "1" },
     stdio: ["ignore", "pipe", "pipe"],
   });
   let log = "";

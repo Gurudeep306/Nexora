@@ -14,8 +14,8 @@ import { AgentMark } from './agents'
 import { hiveApi } from './api'
 import { errMsg } from './Improve'
 import { useHive } from './store'
-import type { CliStatus, HiveKey, PlanUsage } from './types'
-import { PlanWindows, timeAgo } from './ui'
+import type { CliStatus, HiveKey } from './types'
+import { LimitBar, timeAgo } from './ui'
 
 type Sub = 'claude_code' | 'codex'
 const INFO: Record<Sub, { name: string; plan: string; model: string; login: string; token: string; tokenHint: string }> = {
@@ -23,10 +23,6 @@ const INFO: Record<Sub, { name: string; plan: string; model: string; login: stri
   codex: { name: 'Codex', plan: 'ChatGPT Plus / Pro', model: 'gpt-5-codex', login: 'codex login --device-auth', token: 'codex login --device-auth', tokenHint: 'Codex uses the machine’s own login — leave empty after `codex login --device-auth`' },
 }
 
-const planOf = (k: HiveKey) => {
-  const r = k.rateLimit as unknown as PlanUsage | null
-  return r && (r as PlanUsage).plan ? r : null
-}
 
 export function SubscriptionsPanel({ onConnect }: { onConnect: (s: Sub) => void }) {
   const { boot, machines } = useHive()
@@ -100,7 +96,22 @@ export function SubscriptionsPanel({ onConnect }: { onConnect: (s: Sub) => void 
 }
 
 function SubKey({ k, machineName, online, role, onMakeParent }: { k: HiveKey; machineName?: string; online: boolean; role?: 'parent' | 'worker' | null; onMakeParent?: () => void }) {
-  const plan = planOf(k)
+  const toast = useToast()
+  const { refresh } = useHive()
+  const [busy, setBusy] = useState(false)
+  const refreshUsage = async () => {
+    setBusy(true)
+    try {
+      const r = await hiveApi.refreshPlanUsage(k.id)
+      const e = r.results[0]?.error
+      if (e) toast.error(e)
+      await refresh()
+    } catch (err) {
+      toast.error(errMsg(err))
+    } finally {
+      setBusy(false)
+    }
+  }
   return (
     <div className="rounded-xl bg-text-primary/[0.035] p-3">
       <div className="flex items-center gap-2 text-[12.5px]">
@@ -123,8 +134,13 @@ function SubKey({ k, machineName, online, role, onMakeParent }: { k: HiveKey; ma
         </span>
       </div>
       <div className="mt-2">
-        <PlanWindows windows={plan?.windows} compact />
+        <LimitBar k={k} compact />
       </div>
+      {k.provider === 'claude_code' && (
+        <button type="button" onClick={refreshUsage} disabled={busy} className="mt-1.5 inline-flex items-center gap-1 text-[11px] text-accent-brand hover:underline disabled:opacity-50">
+          {busy ? <Loader2 className="size-3 animate-spin" /> : null} Refresh usage
+        </button>
+      )}
     </div>
   )
 }
