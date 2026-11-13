@@ -15,14 +15,13 @@ import { hiveApi } from './api'
 import { errMsg } from './Improve'
 import { useHive } from './store'
 import type { CliStatus, HiveKey, PlanUsage } from './types'
-import { timeAgo } from './ui'
+import { PlanWindows, timeAgo } from './ui'
 
 type Sub = 'claude_code' | 'codex'
 const INFO: Record<Sub, { name: string; plan: string; model: string; login: string; token: string; tokenHint: string }> = {
   claude_code: { name: 'Claude Code', plan: 'Claude Pro / Max', model: 'claude-opus-5-5', login: 'claude', token: 'claude setup-token', tokenHint: 'Paste the token from `claude setup-token` (optional if the machine is already logged in)' },
   codex: { name: 'Codex', plan: 'ChatGPT Plus / Pro', model: 'gpt-5-codex', login: 'codex login --device-auth', token: 'codex login --device-auth', tokenHint: 'Codex uses the machine’s own login — leave empty after `codex login --device-auth`' },
 }
-const WINDOW_LABEL: Record<string, string> = { five_hour: '5-hour window', seven_day: 'Weekly', seven_day_opus: 'Weekly · Opus', seven_day_sonnet: 'Weekly · Sonnet', primary: 'Primary window', secondary: 'Weekly' }
 
 const planOf = (k: HiveKey) => {
   const r = k.rateLimit as unknown as PlanUsage | null
@@ -77,7 +76,6 @@ export function SubscriptionsPanel({ onConnect }: { onConnect: (s: Sub) => void 
 
 function SubKey({ k, machineName, online }: { k: HiveKey; machineName?: string; online: boolean }) {
   const plan = planOf(k)
-  const windows = Object.entries(plan?.windows ?? {})
   return (
     <div className="rounded-xl bg-text-primary/[0.035] p-3">
       <div className="flex items-center gap-2 text-[12.5px]">
@@ -88,28 +86,9 @@ function SubKey({ k, machineName, online }: { k: HiveKey; machineName?: string; 
           {machineName ?? 'machine'} · {online ? 'online' : 'offline'}
         </span>
       </div>
-      {windows.length > 0 ? (
-        <div className="mt-2 space-y-1.5">
-          {windows.map(([id, w]) => {
-            const pct = Math.round(Math.min(1, w.utilization > 1 ? w.utilization / 100 : w.utilization) * 100)
-            return (
-              <div key={id}>
-                <div className="flex justify-between text-[11px] text-text-muted">
-                  <span>{WINDOW_LABEL[id] ?? id}</span>
-                  <span className="tabular-nums">
-                    {pct}% used{w.resetsAt ? ` · resets ${timeAgo(w.resetsAt * (w.resetsAt < 1e12 ? 1000 : 1)).replace(' ago', '')}` : ''}
-                  </span>
-                </div>
-                <div className="mt-0.5 h-1.5 overflow-hidden rounded-full bg-text-primary/[0.07]">
-                  <div className="h-full rounded-full" style={{ width: `${pct}%`, background: pct > 85 ? 'var(--color-state-error)' : pct > 60 ? 'var(--color-state-warning)' : 'var(--color-state-success)' }} />
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      ) : (
-        <div className="mt-1 text-[11.5px] text-text-muted">Plan usage shows here after the first run.</div>
-      )}
+      <div className="mt-2">
+        <PlanWindows windows={plan?.windows} compact />
+      </div>
     </div>
   )
 }

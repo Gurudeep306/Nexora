@@ -3,6 +3,8 @@ import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-ro
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   BarChart3,
+  LayoutGrid,
+  Sparkles,
   Bot,
   HeartPulse,
   Network,
@@ -40,6 +42,7 @@ import { Tooltip } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from './api'
 import { AlertsBell, TeamChat } from './TeamChat'
+import { Launcher, type LaunchGroup } from './Launcher'
 import { CopilotDock } from './Copilot'
 import { HiveLogo } from './HiveLogo'
 import { projectColor } from './projectColor'
@@ -110,6 +113,7 @@ export default function HivePage() {
 function Shell() {
   const { boot, loading, error, noteTasks } = useHive()
   const [palette, setPalette] = useState(false)
+  const [launcher, setLauncher] = useState(false)
   const [team, setTeam] = useState(false)
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -143,6 +147,9 @@ function Shell() {
       if (k === 'k') {
         e.preventDefault()
         setPalette((p) => !p)
+      } else if (k === '.') {
+        e.preventDefault()
+        setLauncher((v) => !v)
       } else if (k === 'b') {
         e.preventDefault()
         toggleRef.current()
@@ -188,7 +195,7 @@ function Shell() {
 
   return (
     <div className="hive-root flex h-dvh overflow-hidden text-text-primary">
-      <ActivityBar onTeam={() => setTeam(true)} onPalette={() => setPalette(true)} />
+      <ActivityBar onTeam={() => setTeam(true)} onPalette={() => setPalette(true)} onLauncher={() => setLauncher(true)} />
       <AnimatePresence initial={false}>
         {side && (
           <motion.div key="side" initial={{ width: 0, opacity: 0 }} animate={{ width: 'auto', opacity: 1 }} exit={{ width: 0, opacity: 0 }} transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }} className="hidden overflow-hidden lg:block">
@@ -231,8 +238,14 @@ function Shell() {
       <TeamDrawer open={team} onClose={() => setTeam(false)} />
       <Palette open={palette} onClose={() => setPalette(false)} />
       <MobileNav open={mobileNav} onClose={() => setMobileNav(false)} />
+      <LauncherMount open={launcher} onClose={() => setLauncher(false)} />
     </div>
   )
+}
+
+function LauncherMount({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { groups } = useNav()
+  return <Launcher open={open} onClose={onClose} groups={groups} />
 }
 
 function PageSkeleton() {
@@ -252,41 +265,51 @@ function PageSkeleton() {
 /* ── Activity bar ─────────────────────────────────────────────────────── */
 type NavItem = { to: string; label: string; icon: typeof Home; end?: boolean; match?: RegExp; badge?: number; tone?: string; hint?: string }
 
-function useNav(): { main: NavItem[]; config: NavItem[] } {
+function useNav(): { main: NavItem[]; config: NavItem[]; rail: NavItem[]; groups: LaunchGroup[] } {
   const { boot, project, machines, approvals } = useHive()
   const last = store.get('hive:lastProject', '')
   const projectHref = `/hive/p/${project?.id ?? (boot?.projects.find((p) => p.id === last) ?? boot?.projects[0])?.id ?? ''}`
   const online = machines.filter((m) => m.online).length
+  const I = {
+    home: { to: '/hive', label: 'Mission control', icon: Home, end: true, hint: 'Everything live across projects' },
+    copilot: { to: '/hive/copilot', label: 'Copilot', icon: Bot, hint: '⌘I · your chief of staff — plans, delegates, reviews, ships' },
+    chat: { to: '/hive/chat', label: 'Chat', icon: MessageSquare, hint: '⌘J · any model, files, images, side by side' },
+    projects: { to: projectHref, label: 'Projects', icon: FolderGit2, match: /^\/hive\/p\//, hint: 'Sessions with agents on your code' },
+    dispatch: { to: '/hive/dispatch', label: 'Dispatcher', icon: Network, hint: 'The right model on every part of the work, fewest tokens' },
+    pipelines: { to: '/hive/pipelines', label: 'Pipelines', icon: Workflow, hint: 'Relay teams of agents — design one with the Architect' },
+    automations: { to: '/hive/automations', label: 'Automations', icon: Clock3, hint: 'Runs on a schedule — overnight too' },
+    launchpad: { to: '/hive/launchpad', label: 'Launchpad', icon: Lightbulb, hint: '⌘⇧I · turn an idea into a project' },
+    drive: { to: '/hive/drive', label: 'Drive', icon: HardDrive, hint: 'Team files — push to GitHub when done' },
+    machines: { to: '/hive/machines', label: 'Machines', icon: Server, badge: approvals.length || undefined, tone: approvals.length ? 'var(--color-state-warning)' : online ? 'var(--color-state-success)' : undefined, hint: `${online} online · run commands, tests, servers` },
+    models: { to: '/hive/models', label: 'Models', icon: Radar, hint: 'Every model ranked — who does what, free sources, compare' },
+    health: { to: '/hive/health', label: 'Agent health', icon: HeartPulse, hint: 'Who is working, cooling down or down' },
+    keys: { to: '/hive/keys', label: 'Keys & free models', icon: KeyRound, hint: 'AI accounts, free sources, subscriptions, GitHub' },
+    toolbox: { to: '/hive/toolbox', label: 'Toolbox', icon: Boxes, hint: '300+ open-source tools — MCP servers, search, skills' },
+    plugins: { to: '/hive/plugins', label: 'Plugins', icon: Puzzle, hint: 'Behaviours and token savers' },
+    memory: { to: '/hive/memory', label: 'Memory', icon: Brain, hint: 'What every agent knows' },
+    steward: { to: '/hive/steward', label: 'Token Steward', icon: PiggyBank, hint: 'Score, savings, ask the Steward' },
+    budgets: { to: '/hive/budgets', label: 'Budgets', icon: Wallet, hint: 'Caps and alerts per project, model or person' },
+    usage: { to: '/hive/usage', label: 'Usage', icon: BarChart3, hint: 'Tokens and spend' },
+    nexora: { to: '/hive/nexora', label: 'Build NexoraGuru', icon: Sparkles, hint: 'Guided: code → PR → live site' },
+  } satisfies Record<string, NavItem>
+  const H = (it: NavItem, hue: number) => ({ to: it.to, label: it.label, icon: it.icon, hint: it.hint, hue, badge: it.badge })
   return {
-    main: [
-      { to: '/hive', label: 'Mission control', icon: Home, end: true, hint: 'Everything live across projects' },
-      { to: '/hive/chat', label: 'Chat', icon: MessageSquare, hint: '⌘J · any model, files, images, side by side' },
-      { to: projectHref, label: 'Projects', icon: FolderGit2, match: /^\/hive\/p\//, hint: 'Sessions with agents on your code' },
-      { to: '/hive/launchpad', label: 'Launchpad', icon: Lightbulb, hint: '⌘⇧I · turn an idea into a project' },
-      { to: '/hive/machines', label: 'Machines', icon: Server, badge: approvals.length || undefined, tone: approvals.length ? 'var(--color-state-warning)' : online ? 'var(--color-state-success)' : undefined, hint: `${online} online · run commands, tests, servers` },
-      { to: '/hive/copilot', label: 'Copilot', icon: Bot, hint: '⌘I · your chief of staff — plans, delegates, reviews' },
-      { to: '/hive/dispatch', label: 'Dispatcher', icon: Network, hint: 'Describe the work — the right model on every part, fewest tokens' },
-      { to: '/hive/pipelines', label: 'Pipelines', icon: Workflow, hint: 'Teams of agents that hand work on — design one with the Architect' },
-      { to: '/hive/automations', label: 'Automations', icon: Clock3, hint: 'Runs on a schedule — overnight too' },
-      { to: '/hive/drive', label: 'Drive', icon: HardDrive, hint: 'Team files — work on them, push to GitHub when done' },
-      { to: '/hive/models', label: 'Models', icon: Radar, hint: 'Who does what — every model ranked, free sources, compare' },
-    ],
-    config: [
-      { to: '/hive/keys', label: 'Keys', icon: KeyRound, hint: 'AI accounts, budgets, GitHub' },
-      { to: '/hive/memory', label: 'Memory', icon: Brain, hint: 'What every agent knows' },
-      { to: '/hive/health', label: 'Agent health', icon: HeartPulse, hint: 'Who is working, cooling down or down — failing agents are skipped' },
-      { to: '/hive/toolbox', label: 'Toolbox', icon: Boxes, hint: '300+ open-source tools — MCP servers, search, skills' },
-      { to: '/hive/plugins', label: 'Plugins', icon: Puzzle, hint: 'Behaviours and token savers' },
-      { to: '/hive/steward', label: 'Token Steward', icon: PiggyBank, hint: 'Spend tokens wisely — score, savings, ask the Steward' },
-      { to: '/hive/budgets', label: 'Budgets', icon: Wallet, hint: 'Caps and alerts per project, model or person' },
-      { to: '/hive/usage', label: 'Usage', icon: BarChart3, hint: 'Tokens and spend' },
+    main: [I.home, I.copilot, I.chat, I.projects, I.dispatch, I.pipelines, I.automations, I.launchpad, I.drive, I.machines, I.models],
+    config: [I.keys, I.health, I.toolbox, I.plugins, I.memory, I.steward, I.budgets, I.usage],
+    // The rail: the places used every day. Everything else is one keystroke away in the launcher.
+    rail: [I.home, I.copilot, I.chat, I.projects, I.dispatch, I.models, I.drive],
+    groups: [
+      { title: 'Work', blurb: 'Talk, plan and build', items: [H(I.copilot, 285), H(I.chat, 230), H(I.projects, 200), H(I.dispatch, 310), H(I.launchpad, 75), H(I.nexora, 260)] },
+      { title: 'Run', blurb: 'Teams, schedules and machines', items: [H(I.pipelines, 330), H(I.automations, 160), H(I.machines, 140), H(I.drive, 45), H(I.home, 255)] },
+      { title: 'Models', blurb: 'Who does what, and who is up', items: [H(I.models, 210), H(I.health, 150), H(I.keys, 60), H(I.toolbox, 290), H(I.plugins, 20), H(I.memory, 340)] },
+      { title: 'Spend', blurb: 'Tokens, money and savings', items: [H(I.steward, 155), H(I.budgets, 95), H(I.usage, 185)] },
     ],
   }
 }
 
-function ActivityBar({ onTeam, onPalette }: { onTeam: () => void; onPalette: () => void }) {
+function ActivityBar({ onTeam, onPalette, onLauncher }: { onTeam: () => void; onPalette: () => void; onLauncher: () => void }) {
   const { online, live } = useHive()
-  const { main, config } = useNav()
+  const { rail } = useNav()
   return (
     <nav className="hive-rail hidden w-[64px] shrink-0 flex-col items-center border-r hive-line py-3 md:flex" aria-label="Hive">
       <Link to="/hive" className="mb-3 grid size-11 place-items-center rounded-2xl transition-transform hover:scale-105" aria-label="Hive home">
@@ -296,13 +319,23 @@ function ActivityBar({ onTeam, onPalette }: { onTeam: () => void; onPalette: () 
         <Search className="size-[18px]" strokeWidth={1.8} />
       </button>
       <div className="hive-scroll flex min-h-0 flex-1 flex-col items-center gap-1 overflow-y-auto">
-        {main.map((it) => (
+        {rail.map((it) => (
           <RailLink key={it.label} it={it} />
         ))}
         <div className="my-2 h-px w-7 bg-[var(--hive-line)]" />
-        {config.map((it) => (
-          <RailLink key={it.label} it={it} />
-        ))}
+        <Tooltip
+          side="right"
+          label={
+            <span>
+              <span className="font-medium">Everything</span>
+              <span className="block text-[11px] opacity-70">⌘. · every part of Hive in one place</span>
+            </span>
+          }
+        >
+          <button type="button" onClick={onLauncher} className="hive-hex-tile grid size-10 place-items-center bg-[linear-gradient(140deg,oklch(70%_0.15_285),oklch(66%_0.15_200))] text-white transition-transform hover:rotate-[-8deg] hover:scale-105" aria-label="All of Hive (⌘.)">
+            <LayoutGrid className="size-[17px]" />
+          </button>
+        </Tooltip>
       </div>
       <Tooltip label={`Team · ${online.length} online`} side="right">
         <button type="button" onClick={onTeam} className="relative mb-1 grid size-10 place-items-center rounded-xl text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary" aria-label="Team">
@@ -873,7 +906,7 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
               </button>
             </div>
             <div className="space-y-0.5 px-2">
-              {[...main, ...config].map((it) => (
+              {[...main, ...config.filter((c) => !main.includes(c))].map((it) => (
                 <NavLink key={it.label} to={it.to} end={it.end} className={({ isActive }) => cn('flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px]', isActive ? 'bg-accent-brand/12 text-accent-brand' : 'text-text-secondary')}>
                   <it.icon className="size-4" /> {it.label}
                   {it.badge ? <span className="ml-auto rounded-full bg-state-warning px-1.5 text-[11px] text-white">{it.badge}</span> : null}

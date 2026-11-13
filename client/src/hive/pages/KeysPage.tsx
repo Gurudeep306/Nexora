@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { SubscriptionDialog, SubscriptionsPanel } from '../Subscriptions'
+import { FreeSetup } from '../FreeSetup'
 import {
   Activity,
   CheckCircle2,
@@ -33,7 +34,7 @@ import { hiveApi } from '../api'
 import { AddGithubDialog, EditKeyDialog, parseLimit } from '../dialogs'
 import { useHive } from '../store'
 import type { HiveKey, ProviderInfo } from '../types'
-import { ProviderGlyph, fmtCost, fmtTokens, keyShare, shareTone, timeAgo, vendorName, vendorStyle } from '../ui'
+import { PlanWindows, ProviderGlyph, fmtCost, fmtTokens, keyShare, shareTone, timeAgo, vendorName, vendorStyle, type PlanWindow } from '../ui'
 
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Something went wrong')
 
@@ -123,6 +124,9 @@ export default function KeysPage() {
         </label>
       )}
 
+      <div id="free" className="mb-10">
+        <FreeSetup />
+      </div>
       <SubscriptionsPanel onConnect={(sub) => setAdding(sub)} />
 
       {keys.length === 0 && <EmptyVault onAdd={(p) => setAdding(p)} providers={boot.catalogue.providers} />}
@@ -283,7 +287,12 @@ function ProviderGroup({ vendor, keys, onAdd }: { vendor: string; keys: HiveKey[
       <div className="mx-5 mb-3 flex h-1.5 gap-0.5 overflow-hidden rounded-full bg-text-primary/[0.06]">
         {keys.map((k) => {
           const share = keyShare(k)
-          return <div key={k.id} className="h-full transition-[flex-grow] duration-700" style={{ flexGrow: Math.max(1, k.tokenLimit ?? 1), background: share == null ? `color-mix(in oklab, ${color} 45%, transparent)` : shareTone(share), opacity: k.disabled ? 0.3 : 1 }} title={`${k.label}`} />
+          // One equal segment per account: filled by its remaining budget (accounts without a budget show as open).
+          return (
+            <div key={k.id} className="relative h-full flex-1 overflow-hidden bg-text-primary/[0.05]" style={{ opacity: k.disabled ? 0.3 : 1 }} title={`${k.label}: ${share == null ? 'no budget limit' : `${Math.round(share * 100)}% left`}`}>
+              <div className="absolute inset-y-0 left-0 transition-[width] duration-700" style={{ width: share == null ? '100%' : `${Math.round(share * 100)}%`, background: share == null ? `color-mix(in oklab, ${color} 35%, transparent)` : shareTone(share) }} />
+            </div>
+          )
         })}
       </div>
       <div className="divide-y divide-[var(--hive-line)] border-t hive-line">
@@ -335,7 +344,10 @@ function KeyRow({ k }: { k: HiveKey }) {
   const canManage = !!boot && (boot.me.admin || boot.me.username === k.owner)
   const rl = k.rateLimit
   const color = vendorStyle(k.provider).color
-  const rlShare = rl?.tokensLimit ? (rl.tokensRemaining ?? 0) / rl.tokensLimit : rl?.requestsLimit ? (rl.requestsRemaining ?? 0) / rl.requestsLimit : null
+  const plan = (rl as unknown as { plan?: boolean; windows?: Record<string, PlanWindow> } | null)?.plan ? (rl as unknown as { windows: Record<string, PlanWindow> }).windows : null
+  // A provider window that has already reset is full again; don't keep showing old numbers.
+  const resetPassed = !!rl?.resetAt && Date.parse(rl.resetAt) < Date.now()
+  const rlShare = plan ? null : resetPassed ? 1 : rl?.tokensLimit ? (rl.tokensRemaining ?? 0) / rl.tokensLimit : rl?.requestsLimit ? (rl.requestsRemaining ?? 0) / rl.requestsLimit : null
   const fresh = rl && k.rateLimitAt && Date.now() - k.rateLimitAt < 5 * 60_000
 
   useEffect(() => {
@@ -424,14 +436,17 @@ function KeyRow({ k }: { k: HiveKey }) {
           </div>
           {k.tokenLimit != null && k.periodEnds && <div className="mt-1 text-[10.5px] text-text-muted">Resets in {countdown(k.periodEnds)}</div>}
         </div>
+        {plan ? (
+          <PlanWindows windows={plan} />
+        ) : (
         <div>
           <div className="mb-1 flex justify-between gap-2 text-[11.5px] tabular-nums text-text-muted">
             <span className="inline-flex items-center gap-1">
               <Clock className="size-3" /> Provider rate limit
             </span>
             <span>
-              {rl?.tokensLimit != null ? `${fmtTokens(rl.tokensRemaining)} / ${fmtTokens(rl.tokensLimit)} tok` : rl?.requestsLimit != null ? `${fmtTokens(rl.requestsRemaining)} / ${fmtTokens(rl.requestsLimit)} req` : 'reported after the first call'}
-              {rl?.resetAt && fresh ? ` · resets ${countdown(rl.resetAt)}` : ''}
+              {resetPassed ? 'window reset — full again' : rl?.tokensLimit != null ? `${fmtTokens(rl.tokensRemaining)} / ${fmtTokens(rl.tokensLimit)} tok left` : rl?.requestsLimit != null ? `${fmtTokens(rl.requestsRemaining)} / ${fmtTokens(rl.requestsLimit)} req left` : rl ? 'not reported by this provider' : 'reported after the first call'}
+              {rl?.resetAt && !resetPassed && countdown(rl.resetAt) ? ` · resets in ${countdown(rl.resetAt)}` : ''}
             </span>
           </div>
           <div className="h-1.5 overflow-hidden rounded-full bg-text-primary/[0.07]">
@@ -439,6 +454,7 @@ function KeyRow({ k }: { k: HiveKey }) {
           </div>
           {rl && k.rateLimitAt && <div className="mt-1 text-[10.5px] text-text-muted">Last reported {timeAgo(k.rateLimitAt)} ago</div>}
         </div>
+        )}
       </div>
 
       <div className="hidden h-14 lg:block" aria-hidden>

@@ -1,6 +1,6 @@
 import { api } from '@/lib/api'
 import { API_BASE } from '@/lib/api'
-import type { ArchitectReply, Cap, CatalogInfo, Checkpoint, CliStatus, ConnectedModel, DriveItem, GithubReport, HiveAlert, ImproveResult, Lifecycle, MeasuredStat, Pipeline, PipelineRun, PipelineStage, PipelineTemplate, RouteResult, Schedule, ScheduleTemplate, Spend, StewardAction, StewardPlan, StewardReport, Toolbox, Verdict, HealthKey, Dispatch, CopilotMsg, CopilotBrain, CopilotSettings } from './types'
+import type { ArchitectReply, Cap, CatalogInfo, Checkpoint, CliStatus, ConnectedModel, DriveItem, GithubReport, HiveAlert, ImproveResult, Lifecycle, MeasuredStat, Pipeline, PipelineRun, PipelineStage, PipelineTemplate, RouteResult, Schedule, ScheduleTemplate, Spend, StewardAction, StewardPlan, StewardReport, Toolbox, Verdict, HealthKey, Dispatch, CopilotMsg, CopilotBrain, CopilotSettings, CopilotWork } from './types'
 import type { AgentRow, AgentSpec, Approval, Bootstrap, Change, ChatMessage, Check, Convo, ConvoMsg, HiveEvent, HiveFile, Idea, LinkedRepo, LiveAgent, Machine, MarketModel, MemoryItem, Mode, Plugin, PrInfo, Project, ProjectActivity, Task } from './types'
 
 type Ok<T> = T & { ok: boolean }
@@ -255,7 +255,8 @@ export const hiveApi = {
   startDispatch: (id: string) => api.post<Ok<{ dispatch: Dispatch }>>(`/api/hive/dispatches/${id}/start`, {}, { timeoutMs: 120000 }),
   stopDispatch: (id: string) => api.post<Ok<{ stopped: boolean }>>(`/api/hive/dispatches/${id}/stop`, {}),
 
-  copilot: () => api.get<Ok<{ messages: CopilotMsg[]; settings: CopilotSettings; brain: CopilotBrain; admin: boolean }>>('/api/hive/copilot'),
+  copilot: () => api.get<Ok<{ messages: CopilotMsg[]; settings: CopilotSettings; brain: CopilotBrain; admin: boolean; active: CopilotWork[] }>>('/api/hive/copilot'),
+  copilotActive: () => api.get<Ok<{ active: CopilotWork[] }>>('/api/hive/copilot/active'),
   clearCopilot: () => api.delete<Ok<object>>('/api/hive/copilot'),
   copilotSettings: (body: Partial<CopilotSettings>) => api.put<Ok<{ settings: CopilotSettings; brain: CopilotBrain }>>('/api/hive/copilot/settings', body),
   sendCopilot: async (text: string, onEvent: (type: string, data: Record<string, unknown>) => void, signal?: AbortSignal) => {
