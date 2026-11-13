@@ -800,13 +800,14 @@ async function brainSettings(username) {
 const DEFAULT_CLAUDE_ONLY = ["Landing page, hero sections and signature UI", "Shaders and complex animation", "Architecture, security and data migrations", "Final review before shipping"];
 
 /** Pick who thinks: your Claude plan first, then the best healthy model with tools (free first). */
-async function pickBrain(username, exclude = []) {
+async function pickBrain(username, exclude = [], { quick = false } = {}) {
   const keys = require("./keys");
   const machines = require("./machines");
   const router = require("./router");
   const { keyVendor } = require("./providers");
   const s = await brainSettings(username);
-  if (s.brain !== "api") {
+  // Quick: answer with a fast API model instead of starting Claude Code on the machine.
+  if (s.brain !== "api" && !quick) {
     let subs = (await all("SELECT * FROM hive_keys WHERE disabled=0 ORDER BY created_at")).filter((k) => keyVendor(k) === "claude_code" && k.machine_id && machines.isOnline(k.machine_id) && !exclude.includes(k.id));
     // The parent account leads; if it's at its plan limit, the next Claude account takes over.
     const health = require("./health");
@@ -823,7 +824,7 @@ async function pickBrain(username, exclude = []) {
     if (k) return { kind: "api", key: k, vendor, model: rest.join("/") || k.default_model };
   }
   for (const freeOnly of [true, false]) {
-    const r = await router.route({ kind: "hard", needTools: true, chat: true, preference: "quality", freeOnly, noSubscription: true, exclude: { keys: exclude } }).catch(() => null);
+    const r = await router.route({ kind: quick ? "coding" : "hard", needTools: true, chat: true, preference: quick ? "fast" : "quality", freeOnly, noSubscription: true, exclude: { keys: exclude } }).catch(() => null);
     if (r) {
       const key = await keys.keyRow(r.pick.keyId);
       // Free first, but only if it's genuinely capable of orchestrating.
@@ -888,7 +889,7 @@ async function clear(username) {
  * tools), stream progress to `sink`, store the reply.
  * deps: { createTask(project, {title, prompt}), origin }
  */
-async function send({ username, text, auto = false, sink = null, deps = {}, signal = null }) {
+async function send({ username, text, auto = false, sink = null, deps = {}, signal = null, quick = false, projectId = null }) {
   const t = now();
   const userMsg = { id: newId("cpm"), role: "user", content: String(text).slice(0, 20000), auto: auto ? 1 : 0 };
   await run("INSERT INTO hive_copilot_msgs(id, username, role, content, auto, created_at) VALUES(?,?,?,?,?,?)", [userMsg.id, username, "user", userMsg.content, userMsg.auto, t]);
@@ -913,7 +914,11 @@ async function send({ username, text, auto = false, sink = null, deps = {}, sign
     .userMemory(username)
     .catch(() => []);
   const snapshot = await overview().catch(() => ({}));
-  const system = SYSTEM(username, facts, snapshot, settings);
+  let system = SYSTEM(username, facts, snapshot, settings);
+  // The project picked in the composer: what "this", "the repo" and "it" refer to.
+  const focus = projectId ? await get("SELECT id, name, repo_owner, repo_name FROM hive_projects WHERE id=?", [projectId]).catch(() => null) : null;
+  if (focus) system += `\n\nThe person is working on the project "${focus.name}" (id ${focus.id}${focus.repo_owner ? `, repo ${focus.repo_owner}/${focus.repo_name}` : ""}). Unless they say otherwise, "this", "the repo", "the project" and "it" mean this project — use its id with your tools without asking which project.`;
+  if (quick) system += "\n\nQuick mode: answer directly and briefly. Use tools only when the answer needs them.";
   const past = (await history(username, 24)).filter((m) => m.id !== userMsg.id && m.content);
   const tried = [];
   let lastErr = null;
@@ -921,7 +926,7 @@ async function send({ username, text, auto = false, sink = null, deps = {}, sign
     for (let attempt = 0; attempt < 3; attempt++) {
       let brain;
       try {
-        brain = await pickBrain(username, tried);
+        brain = await pickBrain(username, tried, { quick });
       } catch (e) {
         throw lastErr || e;
       }

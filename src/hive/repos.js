@@ -79,8 +79,13 @@ async function findRepo(ref) {
   const s = String(ref || "")
     .trim()
     .replace(/^https?:\/\/github\.com\//i, "")
-    .replace(/\.git$/, "")
-    .replace(/\/+$/, "");
+    .replace(/^(www\.)?github\.com\//i, "")
+    .replace(/[?#].*$/, "")
+    .replace(/\/+$/, "")
+    .split("/")
+    .slice(0, 2)
+    .join("/")
+    .replace(/\.git$/, "");
   if (!s) return null;
   const { repos } = await allRepos();
   const low = s.toLowerCase();

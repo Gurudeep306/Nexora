@@ -107,6 +107,27 @@ function summarizeTool(name, input = {}) {
   return Object.fromEntries(Object.entries(input).map(([k, v]) => [k, typeof v === "string" ? v.slice(0, 200) : v]));
 }
 
+/** A project chat knows which repo it is about and its brief (written from the code). */
+async function projectContext(projectId) {
+  if (!projectId) return "";
+  const p = await get("SELECT name, repo_owner, repo_name, default_branch, description, instructions FROM hive_projects WHERE id=?", [projectId]).catch(() => null);
+  if (!p) return "";
+  const repo = p.repo_owner ? `${p.repo_owner}/${p.repo_name} (branch ${p.default_branch || "main"})` : "a local folder";
+  return [`This chat is about the project “${p.name}” — ${repo}.${p.description ? ` ${p.description}` : ""} Answer about this project unless asked otherwise; read its code with the repo tools before answering questions about it.`, p.instructions?.trim() ? `Project brief:\n${p.instructions.trim().slice(0, 6000)}` : ""].filter(Boolean).join("\n\n");
+}
+
+/** The latest chat this person has about a project, or a new one. */
+async function projectChat(username, projectId, { fresh = false } = {}) {
+  const p = await get("SELECT id, name FROM hive_projects WHERE id=?", [projectId]);
+  if (!p) throw Object.assign(new Error("Project not found"), { status: 404 });
+  if (!fresh) {
+    const c = await get("SELECT * FROM hive_convos WHERE project_id=? AND owner=? ORDER BY updated_at DESC LIMIT 1", [projectId, username]);
+    if (c) return c;
+  }
+  const c = await createConvo(username, { title: `${p.name} · chat`, projectId });
+  return c;
+}
+
 /** The attached project's default-branch snapshot (for repo tools). */
 async function projectSnapshot(projectId) {
   const p = await get("SELECT * FROM hive_projects WHERE id=?", [projectId]);
@@ -261,6 +282,7 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
         const system = [
           convo.system || "You are a helpful, precise assistant for a software team working in Nexora Hive. Use Markdown. Put code in fenced blocks with a language.",
           `Today is ${new Date().toISOString().slice(0, 10)}. You are talking with @${username}.`,
+          await projectContext(convo.project_id),
           facts.length ? `What you know about @${username} (saved memory):\n${facts.map((f) => `- ${f}`).join("\n")}` : "",
           useTools
             ? `You have tools: search the web and read pages for anything current, read the project's code, read Hive Drive, create documents (PDF, Word, slides…) whenever someone wants a file, and remember lasting facts about the person.${mcpDefs.length ? " Tools starting with mcp_ come from the team's connected MCP servers (shown in [brackets] in each description)." : ""} Use them when they help; don't narrate tool use at length.`
@@ -458,4 +480,4 @@ function stop(convoId) {
   return !!set;
 }
 
-module.exports = { listConvos, createConvo, convoFor, canSee, messagesOf, send, stop, saveFile, MAX_FILE };
+module.exports = { projectChat, projectContext, listConvos, createConvo, convoFor, canSee, messagesOf, send, stop, saveFile, MAX_FILE };

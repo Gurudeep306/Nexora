@@ -42,7 +42,7 @@ import { HiveLogo } from '../HiveLogo'
 import { ImproveButton } from '../Improve'
 import { projectColor } from '../projectColor'
 import { useHive } from '../store'
-import type { AgentSpec, Bootstrap, ChatToolStep, Convo, ConvoMsg, HiveFile } from '../types'
+import type { AgentSpec, Bootstrap, ChatToolStep, Convo, ConvoMsg, HiveFile, Project } from '../types'
 import { fmtTokens, timeAgo, vendorName } from '../ui'
 
 const fileUrl = (id: string) => apiUrl(`/api/hive/files/${id}`)
@@ -57,6 +57,7 @@ export default function ChatPage() {
   const toast = useToast()
   const [messages, setMessages] = useState<ConvoMsg[]>([])
   const [convo, setConvo] = useState<Convo | null>(null)
+  const chatProject = useMemo(() => (convo?.project_id ? (boot?.projects.find((p) => p.id === convo.project_id) ?? null) : null), [boot, convo?.project_id])
   const [pending, setPending] = useState<Record<string, Pending>>({})
   const [loading, setLoading] = useState(false)
   const [confirm, setConfirm] = useState(false)
@@ -236,6 +237,11 @@ export default function ChatPage() {
             }}
             className="min-w-0 flex-1 truncate bg-transparent text-[14px] font-medium outline-none"
           />
+          {chatProject && (
+            <button type="button" onClick={() => navigate(`/hive/p/${chatProject.id}`)} className="hidden shrink-0 items-center gap-1.5 rounded-full bg-accent-brand/10 px-2.5 py-0.5 text-[11.5px] font-medium text-accent-brand hover:bg-accent-brand/15 sm:inline-flex" title="This chat is about this project: it reads its code and brief">
+              <FolderGit2 className="size-3.5" /> {chatProject.repo_owner ? `${chatProject.repo_owner}/${chatProject.repo_name}` : chatProject.name}
+            </button>
+          )}
           {!mine && convo.owner && <span className="hidden items-center gap-1 rounded-full bg-text-primary/[0.05] px-2 py-0.5 text-[11px] text-text-muted sm:inline-flex">started by @{convo.owner}</span>}
           <span className="hidden text-[11.5px] tabular-nums text-text-muted sm:inline">{fmtTokens(totalTokens)} tokens</span>
           <HeaderBtn label="Instructions for this chat" onClick={() => setInstructions(true)} active={!!convo.system}>
@@ -275,7 +281,7 @@ export default function ChatPage() {
         className="hive-scroll min-h-0 flex-1 overflow-y-auto"
       >
         {!messages.length && !busy && !loading ? (
-          <EmptyChat boot={boot} onPick={(t) => document.dispatchEvent(new CustomEvent('hive:compose', { detail: t }))} />
+          <EmptyChat boot={boot} project={chatProject} onPick={(t) => document.dispatchEvent(new CustomEvent('hive:compose', { detail: t }))} />
         ) : (
           <div className="mx-auto w-full max-w-[860px] px-4 pb-10 pt-6 sm:px-6">
             {loading && <div className="hive-shimmer h-24 rounded-2xl" />}
@@ -362,7 +368,39 @@ const STARTERS = [
   { icon: Wand2, tone: 'var(--color-state-warning)', title: 'Design an API', text: 'Design a REST API for a contest platform: resources, endpoints, auth and errors.' },
 ]
 
-function EmptyChat({ boot, onPick }: { boot: Bootstrap; onPick: (t: string) => void }) {
+const PROJECT_STARTERS = [
+  { icon: FolderGit2, tone: 'var(--color-accent-brand)', title: 'Explain this codebase', text: 'Explain this project: what it does, the stack, how the code is laid out and the main flows. Read the code first.' },
+  { icon: Wrench, tone: 'var(--color-state-info)', title: 'How do I run it?', text: 'How do I install, run and test this project locally? Give the exact commands from its files.' },
+  { icon: Gavel, tone: 'var(--color-state-warning)', title: 'What is unfinished?', text: 'What looks unfinished, broken or risky in this repo? List concrete files and what to do about each.' },
+  { icon: Sparkles, tone: 'var(--color-state-success)', title: 'What should I build next?', text: 'Suggest the 3 most valuable next features or fixes for this project, with where in the code each would go.' },
+]
+
+function EmptyChat({ boot, project, onPick }: { boot: Bootstrap; project?: Project | null; onPick: (t: string) => void }) {
+  if (project) {
+    return (
+      <div className="mx-auto flex h-full max-w-[860px] flex-col items-center justify-center px-6 pb-8 text-center">
+        <span className="hive-tile size-14" style={{ ['--tile' as string]: 'var(--color-accent-brand)' }}>
+          <FolderGit2 className="size-6" />
+        </span>
+        <h1 className="mt-4 text-[26px] font-semibold tracking-[-0.02em]">{project.name}</h1>
+        <p className="mt-1 text-[13px] text-text-muted">{project.repo_owner ? `${project.repo_owner}/${project.repo_name}` : 'Local folder'}</p>
+        <p className="mt-3 max-w-lg text-[14px] text-text-secondary">Ask anything about this project. The chat reads its code and the brief Hive wrote, so answers are about this repo — not in general.</p>
+        <div className="mt-7 grid w-full gap-2.5 sm:grid-cols-2">
+          {PROJECT_STARTERS.map((s) => (
+            <button key={s.title} type="button" onClick={() => onPick(s.text)} className="hive-card hive-card-hover hive-lift flex items-start gap-3 p-4 text-left">
+              <span className="hive-tile size-9 shrink-0" style={{ ['--tile' as string]: s.tone }}>
+                <s.icon className="size-4" />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-[13.5px] font-medium">{s.title}</span>
+                <span className="line-clamp-2 text-[12.5px] text-text-muted">{s.text}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    )
+  }
   const hour = new Date().getHours()
   const hello = hour < 5 ? 'Up late' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
   return (
