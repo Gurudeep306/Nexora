@@ -87,7 +87,7 @@ function cleanSpec(s) {
       keyId: "auto",
       kind: typeof s.kind === "string" ? s.kind.slice(0, 20) : undefined,
       freeOnly: !!s.freeOnly,
-      preference: ["balanced", "quality", "savings"].includes(s.preference) ? s.preference : undefined,
+      preference: ["balanced", "quality", "savings", "fast"].includes(s.preference) ? s.preference : undefined,
       effort: EFFORTS.has(s.effort) ? s.effort : null,
       name: str(s.name, "agent name", { max: 40, optional: true }),
     };

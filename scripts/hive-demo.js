@@ -149,6 +149,18 @@ function startMock() {
             return sseOpenAi(res, { text: "All set — totals now multiply by quantity.", calls: [{ name: "finish", input: { summary: "Cart totals now respect item quantities. Tests pass." } }] });
           }
           if (/principal engineer/.test(msgs[0]?.content || "")) return sseOpenAi(res, { text: JSON.stringify(PLAN) });
+          if (/dispatcher of a team/.test(msgs[0]?.content || ""))
+            return sseOpenAi(res, {
+              text: JSON.stringify({
+                summary: "Quantities in the cart, with tests and docs",
+                review: true,
+                parts: [
+                  { id: "p1", title: "Map the cart code", kind: "reading", size: "s", files: ["src/cart.js"], dependsOn: [], prompt: "Read src/cart.js and summarise how totals are computed." },
+                  { id: "p2", title: "Add quantity support", kind: "coding", size: "m", files: ["src/cart.js"], dependsOn: ["p1"], prompt: "Make totals multiply price by qty (default 1)." },
+                  { id: "p3", title: "Document it", kind: "writing", size: "s", files: ["README.md"], dependsOn: ["p1"], prompt: "Add a short README note about quantities." },
+                ],
+              }),
+            });
           return sseOpenAi(res, { reasoning: "The user wants an overview of the repo. I'll summarise the two modules.", text: REPLY });
         }
         // ── GitHub ──

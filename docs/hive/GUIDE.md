@@ -14,6 +14,8 @@ Hive is the staff-only AI workspace at **/hive** on the site (staff see a **Hive
 | **Sessions** | One piece of work by one or more agents. See below. |
 | **Launchpad** | Describe an idea and get a plan (product, stack, architecture, milestones). **Launch** creates the repo, PLAN.md and project memory, and starts milestone 1. |
 | **Machines** | Computers running the Hive bridge. On a machine, agents work on real folders and run commands, tests and dev servers. |
+| **Dispatcher** | Describe the work. Hive splits it into parts by kind of work (reading, mechanical, coding, writing, review, hard engineering) and puts the cheapest model that can really do each part on it. You see the plan as a graph with each part's model and cost, next to "one premium model for everything". Swap any model, then **Start the team**: independent parts run in parallel, and a reviewer from another lab checks the whole change. |
+| **Agent health** | Every connected agent: working, flaky, cooling down after errors, or down (bad key, no credit). Failing agents are skipped automatically and their work goes to the next best one. Free and plan agents are tested every 4 hours; **Test everything** checks them all now. |
 | **Pipelines** | Relay teams of agents: plan → build → test → review → ship, with gates, fix loops and races judged by the Judge. Describe what you want to the **Architect** and it designs the pipeline. |
 | **Automations** | Recurring work: nightly test fixing, dependency updates, security reviews, docs. They run on schedule, overnight too, and resume after restarts. |
 | **Drive** | The team's file manager. Keep PDFs, designs, docs and data here; agents and chats can read them. Push files to GitHub as a branch or PR when they're done. |
@@ -151,6 +153,21 @@ Tune it in **Plugins → Token Steward**:
 | `triggerTokens` | 24000 | History size at which compaction starts |
 | `keepTokens` | 8000 | Recent turns kept word for word |
 | `maxToolChars` | 12000 | Maximum size of one tool result |
+
+## Speed without losing quality
+
+- **Quality comes first.** Only models that clear the quality bar for the kind of work are considered. A faster model wins only against models of *similar* quality, never against a clearly better one.
+- **Speed decides between equals.** Each model's speed and its measured response time on your keys break ties. Choose **Fastest** in the Dispatcher, or set the Smart router's preference to `fast`, to lean further towards quick models.
+- **No silent waits.** If a model hasn't started answering within 35 seconds (90 s for deep-reasoning models, 2 min for subscription CLIs), chat switches to the next best model and tells you.
+- **Housekeeping never blocks a reply.** The Token Steward refreshes chat summaries in the background.
+- **Parallel work.** The Dispatcher runs independent parts at the same time.
+
+## Work map
+
+In a session, **Work map** shows which model is reading or editing which file:
+- One lane per agent, with the files it owns.
+- Every touched file grouped by folder, with the agents on it. The file an agent is on right now pulses.
+- Files edited by more than one agent are flagged, so overlaps are caught early.
 
 ## Running Hive locally without keys
 

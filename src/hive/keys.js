@@ -344,7 +344,8 @@ async function pickKey(provider, { prefer = "auto", exclude = [] } = {}) {
     const share = (r.token_limit == null ? 1 : 1 - (await usedTokens(r)) / Math.max(1, Number(r.token_limit))) - (r.status === "invalid" || r.status === "error" ? 0.5 : 0);
     const load = (active.get(r.id) || 0) / Math.max(1, r.max_concurrency);
     // Staff can rank keys (e.g. spend the free tier first).
-    const score = share - load + Number(r.priority || 0) / 10;
+    const cool = await require("./health").cooling(r.id, r.default_model || "");
+    const score = share - load + Number(r.priority || 0) / 10 - (cool ? 3 : 0);
     if (score > bestScore) {
       best = r;
       bestScore = score;
