@@ -162,7 +162,8 @@ async function projectSnapshot(projectId) {
 
 async function pickChatKey(spec, exclude = [], prompt = "", useTools = false) {
   if (spec.provider === "auto") {
-    const r = await router.route({ prompt, chat: true, needTools: useTools, kind: spec.kind || null, freeOnly: !!spec.freeOnly, preference: spec.preference || null, exclude: { keys: exclude } }).catch(() => null);
+    // In chat, Auto favours fast models among those of similar quality (quality still decides first).
+    const r = await router.route({ prompt, chat: true, needTools: useTools, kind: spec.kind || null, freeOnly: !!spec.freeOnly, preference: spec.preference || "fast", exclude: { keys: exclude } }).catch(() => null);
     if (!r) return null;
     const key = await keys.keyRow(r.pick.keyId);
     return key ? { key, provider: r.pick.provider, model: r.pick.model, note: r.note } : null;
@@ -335,7 +336,8 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
           controller.signal.addEventListener("abort", relay, { once: true });
           let heard = false;
           let stalled = false;
-          const patience = v.subscription ? 120_000 : /reason|r1\b|o3|o4|-pro|think|opus|fable|qwq/i.test(model) ? 90_000 : 35_000;
+          // A model that hasn't started answering by now gives way to the next best one.
+          const patience = v.subscription ? 120_000 : /reason|r1\b|o3|o4|-pro|think|opus|fable|qwq|magistral/i.test(model) ? 60_000 : 20_000;
           const dog = step === 0 ? setTimeout(() => !heard && ((stalled = true), stepCtl.abort()), patience) : null;
           try {
             res = await v.impl.turn({

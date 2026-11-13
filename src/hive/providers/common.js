@@ -35,7 +35,9 @@ async function failFromResponse(res, label) {
     const body = await res.text();
     const j = JSON.parse(body);
     const e = j?.error ?? j?.[0]?.error;
-    msg = (typeof e === "string" ? e : e?.message) || j?.message || j?.detail?.[0]?.msg || (typeof j?.detail === "string" ? j.detail : null) || msg;
+    // Messages can be nested objects (Mistral: {"object":"error","message":{"detail":[{"msg":…}]}}).
+    const str = (v) => (typeof v === "string" ? v : v == null ? "" : Array.isArray(v?.detail) ? v.detail.map((d) => d?.msg || JSON.stringify(d)).join("; ") : typeof v?.message !== "undefined" ? str(v.message) : typeof v?.detail === "string" ? v.detail : JSON.stringify(v).slice(0, 300));
+    msg = str(e) || str(j?.message) || j?.detail?.[0]?.msg || (typeof j?.detail === "string" ? j.detail : null) || msg;
     if (msg === `${label} ${res.status}` && body) msg = `${label} ${res.status}: ${body.slice(0, 300)}`;
   } catch {}
   throw new ProviderError(msg, { status: res.status, ...classify(res.status, msg) });
