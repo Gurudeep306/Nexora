@@ -63,6 +63,23 @@ const CARDS = [
   c({ id: "gpt-oss-20b", name: "gpt-oss-20b", lab: "OpenAI (open weights)", match: /gpt-oss-20b/, intelligence: 55, coding: 56, reasoning: 60, writing: 56, speed: 5, context: 131, price: [0.05, 0.2], tier: "low", open: true, strengths: ["Small, fast, free on many hosts"], weaknesses: ["Simple tasks only"] }),
 
   // ── Google ─────────────────────────────────────────────────────────────
+  // ── The late-2026 generation of open and fast models. Scores are estimates
+  // from public leaderboards (Artificial Analysis v5, SWE-bench Pro/Verified,
+  // lab model cards) and are refined by Hive's own measurements. ──
+  c({ id: "kimi-k3", name: "Kimi K3", lab: "Moonshot (open weights)", match: /kimi-k3/, intelligence: 84, coding: 88, reasoning: 84, writing: 80, speed: 3, context: 256, price: [0.8, 3.5], tier: "low", open: true, strengths: ["Top open model for agentic coding", "Long tool loops"], weaknesses: ["Big model: slower on free hosts"] }),
+  c({ id: "glm-5", name: "GLM-5.x", lab: "Zhipu (open weights)", match: /glm-?5/, intelligence: 82, coding: 87, reasoning: 81, writing: 78, speed: 3, context: 200, price: [0.6, 2.2], tier: "low", open: true, strengths: ["One of the best open coders (SWE-bench Pro)", "Often free on NVIDIA NIM"], weaknesses: ["Free hosts can queue at busy times"] }),
+  c({ id: "deepseek-v4-pro", name: "DeepSeek V4 Pro", lab: "DeepSeek (open weights)", match: /deepseek-v4(\.\d)?-pro/, intelligence: 83, coding: 86, reasoning: 85, writing: 78, speed: 2, context: 256, price: [0.6, 2.4], tier: "low", open: true, strengths: ["Strong reasoning and coding at low price"], weaknesses: ["Slower than Flash"] }),
+  c({ id: "deepseek-v4-flash", name: "DeepSeek V4 Flash", lab: "DeepSeek (open weights)", match: /deepseek-v4(\.\d)?(-flash)?/, intelligence: 78, coding: 81, reasoning: 79, writing: 74, speed: 4, context: 256, price: [0.15, 0.6], tier: "low", open: true, strengths: ["Best value open model", "Free on several hosts"], weaknesses: ["Less depth than V4 Pro on hard bugs"] }),
+  c({ id: "qwen3.8", name: "Qwen 3.8", lab: "Alibaba (open weights)", match: /qwen-?3\.[6-9]-(max|plus|flash-next|coder|397b|235b)/, intelligence: 80, coding: 84, reasoning: 80, writing: 76, speed: 4, context: 256, price: [0.4, 1.6], tier: "low", open: true, strengths: ["Top open-weights SWE-bench Pro scores", "Fast"], weaknesses: ["Naming varies a lot between hosts"] }),
+  c({ id: "qwen3.6-mid", name: "Qwen 3.5–3.8 (27–35B)", lab: "Alibaba (open weights)", match: /qwen-?3[.-][5-9]-?(27|30|32|35)b/, intelligence: 68, coding: 74, reasoning: 68, writing: 66, speed: 5, context: 128, price: [0.1, 0.4], tier: "low", open: true, strengths: ["Runs on one GPU", "Free on Groq and others"], weaknesses: ["Not for the hardest work"] }),
+  c({ id: "qwen3.5", name: "Qwen 3.5–3.8", lab: "Alibaba (open weights)", match: /qwen-?3[.-][5-9]/, intelligence: 72, coding: 76, reasoning: 72, writing: 70, speed: 4, context: 128, price: [0.2, 0.8], tier: "low", open: true, strengths: ["Good all-rounder"], weaknesses: [] }),
+  c({ id: "minimax-m2.7", name: "MiniMax M2.5–M2.7", lab: "MiniMax (open weights)", match: /minimax-?m2[.-]?[5-9]/, intelligence: 76, coding: 82, reasoning: 74, writing: 72, speed: 4, context: 200, price: [0.3, 1.2], tier: "low", open: true, strengths: ["Fast agentic coding", "Free on ModelScope / OpenCode Zen at times"], weaknesses: [] }),
+  c({ id: "nemotron-3-ultra", name: "Nemotron 3 Ultra", lab: "NVIDIA (open weights)", match: /nemotron-3(\.\d)?-ultra/, intelligence: 76, coding: 76, reasoning: 80, writing: 72, speed: 3, context: 128, price: [0.6, 1.8], tier: "low", open: true, strengths: ["Strong reasoning", "Free on NVIDIA and OpenRouter"], weaknesses: [] }),
+  c({ id: "nemotron-3", name: "Nemotron 3 Super/Nano", lab: "NVIDIA (open weights)", match: /nemotron-3(\.\d)?-(super|nano|lightning)/, intelligence: 64, coding: 64, reasoning: 66, writing: 62, speed: 5, context: 128, price: [0.1, 0.4], tier: "low", open: true, strengths: ["Fast, often free"], weaknesses: ["Light work only"] }),
+  c({ id: "gemini-3.5-flash", name: "Gemini 3.5–3.8 Flash", lab: "Google", match: /gemini-3\.[5-9]-flash(?!-lite)/, intelligence: 82, coding: 81, reasoning: 82, writing: 80, speed: 5, context: 1000, price: [0.3, 2.5], tier: "low", vision: true, strengths: ["Free tier in AI Studio", "Very fast, huge context"], weaknesses: ["Free tier rate limits"] }),
+  c({ id: "grok-4.1-fast", name: "Grok 4.1 Fast", lab: "xAI", match: /grok-4\.[1-9]-fast/, intelligence: 76, coding: 76, reasoning: 78, writing: 74, speed: 5, context: 2000, price: [0.2, 0.5], tier: "low", vision: true, strengths: ["Cheap, fast, 2M context"], weaknesses: [] }),
+  c({ id: "mistral-medium-3.5", name: "Mistral Medium 3.5", lab: "Mistral", match: /mistral-medium-3[.-]5/, intelligence: 72, coding: 74, reasoning: 70, writing: 76, speed: 4, context: 128, price: [0.4, 2], tier: "low", strengths: ["Free experiment tier", "Good European option"], weaknesses: [] }),
+  c({ id: "mimo", name: "MiMo", lab: "Xiaomi (open weights)", match: /mimo/, intelligence: 66, coding: 70, reasoning: 70, writing: 62, speed: 4, context: 128, tier: "low", open: true, strengths: ["Free on OpenCode Zen"], weaknesses: [] }),
   c({ id: "gemini-4", name: "Gemini 4", lab: "Google", match: /gemini-4/, intelligence: 88, coding: 87, reasoning: 90, writing: 86, speed: 3, context: 1000, price: [2.5, 15], tier: "high", vision: true, strengths: ["Frontier reasoning", "Huge context, native PDFs and video"], weaknesses: ["Newer, less tested with Hive tools"] }),
   c({ id: "gemini-3-pro", name: "Gemini 3 Pro", lab: "Google", match: /gemini-3(\.\d)?-pro/, intelligence: 85, coding: 85, reasoning: 86, writing: 84, speed: 3, context: 1000, price: [2, 12], tier: "mid", vision: true, strengths: ["Strong reasoning, 1M context"], weaknesses: [] }),
   c({ id: "gemini-3-flash", name: "Gemini 3 Flash", lab: "Google", match: /gemini-3(\.\d)?-flash(?!-lite)/, intelligence: 76, coding: 77, reasoning: 76, writing: 76, speed: 5, context: 1000, price: [0.3, 2.5], tier: "low", vision: true, strengths: ["Best free-tier model for agents", "Fast, cheap, vision + PDFs"], weaknesses: ["Can rush hard problems"] }),
@@ -202,6 +219,39 @@ function publicCard(card, extra = {}) {
 // often; Hive re-reads every key's live model list twice a day and the
 // router treats a source that is out of quota as unavailable until it resets.
 const FREE_SOURCES = [
+  {
+    vendor: "ollama_cloud",
+    name: "Ollama Cloud",
+    url: "https://ollama.com/settings/keys",
+    how: "Sign in at ollama.com, open Settings → Keys, create a key.",
+    free: "Free tier on big open models (no GPU of your own needed)",
+    limits: "One request at a time; session and weekly limits.",
+    models: ["gpt-oss 120B", "DeepSeek V4 Pro", "Kimi K2", "Qwen3 Coder", "GLM"],
+    bestFor: ["coding", "reading", "writing"],
+    score: 8,
+  },
+  {
+    vendor: "opencode_zen",
+    name: "OpenCode Zen",
+    url: "https://opencode.ai/auth",
+    how: "Sign in at opencode.ai and create an API key.",
+    free: "Rotating free models (DeepSeek V4 Flash, Qwen 3.6 Plus, MiMo, MiniMax…)",
+    limits: "Free models change often; some may use prompts to improve the model.",
+    models: ["DeepSeek V4 Flash", "Qwen 3.6 Plus", "MiMo v2.5"],
+    bestFor: ["coding", "mechanical", "reading"],
+    score: 7,
+  },
+  {
+    vendor: "kilo",
+    name: "Kilo Gateway",
+    url: "https://app.kilo.ai/profile",
+    how: "Sign up at kilo.ai and copy your API key from your profile.",
+    free: "Free models (\":free\") through one gateway",
+    limits: "About 200 requests an hour.",
+    models: ["Nemotron 3 Ultra", "other :free models"],
+    bestFor: ["reading", "chat", "mechanical"],
+    score: 5,
+  },
   {
     vendor: "siliconflow",
     name: "SiliconFlow",

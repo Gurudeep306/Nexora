@@ -43,6 +43,9 @@ const VENDOR: Record<string, { name: string; mark: string; hue: number; chroma?:
   featherless: { name: 'Featherless', mark: 'Fe', hue: 30 },
   minimax: { name: 'MiniMax', mark: 'Mx', hue: 350 },
   upstage: { name: 'Upstage Solar', mark: 'Up', hue: 60 },
+  ollama_cloud: { name: 'Ollama Cloud', mark: 'OC', hue: 0, chroma: 0.01 },
+  opencode_zen: { name: 'OpenCode Zen', mark: 'Zn', hue: 210 },
+  kilo: { name: 'Kilo Gateway', mark: 'Ki', hue: 120 },
   claude_code: { name: 'Claude Code', mark: 'CC', hue: 30 },
   codex: { name: 'Codex', mark: '>_', hue: 160 },
   auto: { name: 'Auto', mark: '✦', hue: 285 },
@@ -140,6 +143,52 @@ export function duration(from: number | null, to: number | null): string {
   return `${Math.floor(s / 3600)}h ${Math.round((s % 3600) / 60)}m`
 }
 
+/** Time until a moment in the future: "4m", "2h", "3d" (null when unknown or past). */
+export function until(t: number | string | null | undefined): string | null {
+  if (t == null || t === '') return null
+  const ms = typeof t === 'number' ? (t < 1e12 ? t * 1000 : t) : Date.parse(t)
+  if (!Number.isFinite(ms)) return null
+  const s = (ms - Date.now()) / 1000
+  if (s <= 0) return null
+  if (s < 60) return `${Math.ceil(s)}s`
+  if (s < 3600) return `${Math.round(s / 60)}m`
+  if (s < 86400) return `${Math.round(s / 3600)}h`
+  return `${Math.round(s / 86400)}d`
+}
+
+export type PlanWindow = { utilization: number; resetsAt: number | null; status: string | null }
+const WINDOW_LABEL: Record<string, string> = { five_hour: '5-hour window', seven_day: 'This week', seven_day_opus: 'This week · Opus', seven_day_sonnet: 'This week · Sonnet', primary: 'Short window', secondary: 'This week' }
+
+/** Subscription plan windows (Claude / ChatGPT): how much of each window is used and when it resets. */
+export function PlanWindows({ windows, compact }: { windows: Record<string, PlanWindow> | null | undefined; compact?: boolean }) {
+  const list = Object.entries(windows ?? {}).sort(([a], [b]) => (a.includes('five') || a === 'primary' ? -1 : 1) - (b.includes('five') || b === 'primary' ? -1 : 1))
+  if (!list.length) return <div className="text-[11.5px] text-text-muted">Plan usage appears after the first run.</div>
+  return (
+    <div className={cn('space-y-2', compact && 'space-y-1.5')}>
+      {list.map(([id, w]) => {
+        const reset = until(w.resetsAt)
+        const used = reset || !w.resetsAt ? Math.max(0, Math.min(1, w.utilization > 1 ? w.utilization / 100 : w.utilization)) : 0
+        const pct = Math.round(used * 100)
+        const tone = w.status === 'rejected' || pct >= 95 ? 'var(--color-state-error)' : pct >= 75 ? 'var(--color-state-warning)' : 'var(--color-state-success)'
+        return (
+          <div key={id}>
+            <div className="mb-1 flex justify-between gap-2 text-[11.5px] tabular-nums text-text-muted">
+              <span>{WINDOW_LABEL[id] ?? id.replace(/_/g, ' ')}</span>
+              <span>
+                <span className="text-text-secondary">{w.status === 'rejected' ? 'limit reached' : `${pct}% used`}</span>
+                {reset ? ` · resets in ${reset}` : ''}
+              </span>
+            </div>
+            <div className="h-1.5 overflow-hidden rounded-full bg-text-primary/[0.07]">
+              <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${pct}%`, background: tone }} />
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 /* ── Budgets ──────────────────────────────────────────────────────────── */
 export function keyShare(k: HiveKey): number | null {
   if (k.tokenLimit == null) return null
@@ -162,7 +211,7 @@ export function TokenMeter({ k, compact }: { k: HiveKey; compact?: boolean }) {
   const share = keyShare(k)
   return (
     <div className={cn('min-w-0', compact ? 'w-20' : 'w-full')}>
-      <Meter value={share ?? 1} color={share == null ? 'color-mix(in oklab, var(--color-text-muted) 40%, transparent)' : shareTone(share)} />
+      <Meter value={share ?? 0} color={share == null ? 'transparent' : shareTone(share)} />
       {!compact && (
         <div className="mt-1.5 flex justify-between gap-2 text-[11.5px] tabular-nums text-text-muted">
           <span>{fmtTokens(k.used)} used</span>
