@@ -234,6 +234,45 @@ const TOOLS = {
     schema: obj({ taskId: str("Session id") }, ["taskId"]),
     run: async (i) => ({ stopped: await require("./runner").stopTask(i.taskId) }),
   },
+  stop_agent: {
+    description: "Stop one agent (it is stuck, unavailable, or going the wrong way). Its edits stay in the working copy.",
+    schema: obj({ agentId: str("Agent id (from session_detail)") }, ["agentId"]),
+    run: async (i) => ({ stopped: require("./runner").stopAgent(i.agentId) }),
+  },
+  swap_agent: {
+    description: `Replace an agent that is failing, stuck or too weak: it stops, and a new agent (the best healthy model for the same kind of work unless you name one) takes over its instructions and edits. ${AGENT_HINT}`,
+    schema: obj({ agentId: str("Agent id (from session_detail)"), agent: str("Optional: who takes over") }, ["agentId"]),
+    run: async (i, ctx) => {
+      const a = await rescueAgent(i.agentId, { username: ctx.username, spec: i.agent ? specFrom(i.agent) : null, reason: "Copilot swapped it" });
+      return a ? { swapped: true, newAgentId: a.id, name: a.name, model: `${a.provider}/${a.model}` } : { swapped: false, note: "No healthy model can take this work right now" };
+    },
+  },
+  verify_models: {
+    description: "Test every model on a key (or on every free key) with a tiny call. Models that don't answer are removed so nobody is offered them again; only working models stay. Runs in the background (a minute or two).",
+    schema: obj({ keyId: str("Optional key id; empty = every free key"), retest: bool("Give previously removed models another chance") }),
+    run: async (i) => {
+      const health = require("./health");
+      const job = i.keyId ? health.verifyKey(i.keyId, { retest: !!i.retest }) : health.verifyAll({});
+      job.then(() => require("./hub").emit("health", { verified: true })).catch(() => {});
+      return { started: true, note: "Results appear on /hive/health; ask agent_health later to see what works" };
+    },
+  },
+  hide_model: {
+    description: "Never offer or use a model again (on every key that has it) — for models that keep failing or give bad results.",
+    schema: obj({ model: str("Model id, e.g. qwen/qwen3-coder"), vendor: str("Optional vendor id to limit it to") }, ["model"]),
+    run: async (i) => {
+      const keys = require("./keys");
+      const rows = await all("SELECT * FROM hive_keys WHERE disabled=0");
+      let n = 0;
+      for (const r of rows) {
+        if (i.vendor && keys.keyVendor(r) !== i.vendor) continue;
+        if (!json(r.models_json, []).includes(i.model) && r.default_model !== i.model) continue;
+        await keys.blockModel(r.id, i.model);
+        n++;
+      }
+      return { hiddenOn: n };
+    },
+  },
   judge_session: {
     description: "Have the Judge (a model from a different lab) rank the finished attempts in a compare session and adopt the best one.",
     schema: obj({ taskId: str("Session id") }, ["taskId"]),
@@ -256,7 +295,7 @@ const TOOLS = {
     run: async (i) => {
       const health = require("./health");
       if (i.testNow) await health.probeAll({});
-      return (await health.board()).map((k) => ({ agent: k.label, vendor: k.vendorLabel, model: k.defaultModel, state: k.state, free: k.free, plan: k.subscription, detail: k.detail || undefined }));
+      return (await health.board()).map((k) => ({ keyId: k.keyId, agent: k.label, vendor: k.vendorLabel, model: k.defaultModel, state: k.state, free: k.free, plan: k.subscription, detail: k.detail || undefined, workingModels: k.verified ? k.verified.ok.length : undefined, removedModels: k.verified ? k.verified.failed.length : undefined }));
     },
   },
   spend_report: {
@@ -479,6 +518,63 @@ Object.assign(TOOLS, {
 });
 
 /* Merge queued PRs once CI is green; auto-answer safe command approvals in watched sessions. */
+/* ── keep work moving: replace agents whose model is down or stuck ─────── */
+const rescued = new Map(); // old agent id → when
+
+async function rescueAgent(agentId, { username, spec = null, reason = "its model is unavailable" }) {
+  const runner = require("./runner");
+  const router = require("./router");
+  const agent = await get("SELECT * FROM hive_agents WHERE id=?", [agentId]);
+  if (!agent) throw new Error("Agent not found");
+  let pick = spec;
+  if (!pick) {
+    const task = await get("SELECT * FROM hive_tasks WHERE id=?", [agent.task_id]);
+    const r = await router
+      .route({ kind: agent.routed_kind || task?.kind || "coding", needTools: true, machineId: task?.machine_id || null, preference: "quality", exclude: { keys: agent.key_id ? [agent.key_id] : [], vendorModels: [`${agent.provider}|${agent.model}`] } })
+      .catch(() => null);
+    if (!r) return null;
+    pick = { provider: r.pick.provider, keyId: r.pick.keyId, model: r.pick.model };
+  }
+  rescued.set(agentId, Date.now());
+  const a = await runner.handoffAgent(agentId, { spec: pick, username: username || agent.started_by || "copilot" });
+  await runner.event(agent.task_id, a.id, "note", { text: `${agent.name} (${agent.model}) was replaced because ${reason}; ${a.name} (${a.model}) continues its work.` }).catch(() => {});
+  return a;
+}
+
+/** Every couple of minutes: a running agent whose model is down/cooling, or that has gone silent, is handed to a healthy model. */
+async function rescueTick({ silentMs = 15 * 60_000 } = {}) {
+  const health = require("./health");
+  const out = [];
+  const t = Date.now();
+  for (const [id, at] of rescued) if (t - at > 3600_000) rescued.delete(id);
+  // Only agents really running in this process (not stale rows from before a restart).
+  const here = new Set(require("./runner").liveAgents().map((x) => x.id));
+  const live = (await all("SELECT * FROM hive_agents WHERE status='running'").catch(() => [])).filter((a) => here.has(a.id));
+  for (const a of live) {
+    if (rescued.has(a.id) || !a.key_id) continue;
+    const v = (() => {
+      try {
+        return require("./providers").providerOf(a.provider);
+      } catch {
+        return null;
+      }
+    })();
+    let why = null;
+    const until = await health.cooling(a.key_id, a.model).catch(() => 0);
+    if (until && until - t > 60_000) why = "its model is failing right now";
+    // Silence: long builds and test runs are normal, so only a long silence counts (not for plan CLIs, which run their own loop).
+    if (!why && !v?.subscription) {
+      const last = await get("SELECT MAX(created_at) AS t FROM hive_events WHERE agent_id=?", [a.id]).catch(() => null);
+      const since = Number(last?.t || a.started_at || t);
+      if (t - since > silentMs) why = `it went silent for ${Math.round((t - since) / 60_000)} minutes`;
+    }
+    if (!why) continue;
+    const n = await rescueAgent(a.id, { reason: why }).catch(() => null);
+    if (n) out.push({ from: a.id, to: n.id, why });
+  }
+  return out;
+}
+
 async function mergeTick() {
   for (const m of await all("SELECT * FROM hive_copilot_merge").catch(() => [])) {
     const s = await brainSettings(m.username);
@@ -616,7 +712,8 @@ How you work:
 - Autonomy: ${settings.autonomy === "assist" ? "ASSIST — propose actions that change things (starting work is fine) and let the person confirm shipping, approvals, automations and settings." : "AUTOPILOT — you act for the person: start work, approve safe agent commands, review, fix, and when the work is verified ship it (ship_session opens a pull request)."} ${settings.canMerge ? "You may merge with merge_when_green once a PR's CI is green." : "You may not merge: when a PR is ready, say so — the person merges (merging can deploy the live site)."}
 - Spend as few tokens as possible yourself: hand reading, summarising and drafting to ask_model (cheapest capable model), read diffs and files as summaries unless you need the exact lines, and never repeat large content back.
 - When unsure about the latest models or facts, research with web_search and read_url, and remember what matters.
-- If an agent or model fails, pick another (check agent_health). Work should not stop.
+- If an agent or model fails, is stuck or unavailable, replace it (swap_agent) with the best healthy model — work must not stop. Hive also does this on its own for running agents whose model goes down.
+- Keep the model list clean: verify_models tests every model and removes those that don't answer; hide_model removes one that keeps failing or does poor work.
 - Ask the person only when a decision is genuinely theirs. Otherwise act, then report what you did with links (paths like /hive/p/… are clickable).
 - Answer in Markdown. Be concise and concrete.
 
@@ -895,4 +992,4 @@ async function currentBrain(username) {
   }
 }
 
-module.exports = { activeWork, DANGEROUS, mergeTick, onApproval, noteAdmin, TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };
+module.exports = { rescueAgent, rescueTick, activeWork, DANGEROUS, mergeTick, onApproval, noteAdmin, TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };

@@ -246,6 +246,8 @@ export const hiveApi = {
   teamChannels: () => api.get<Ok<{ channels: { id: string; lastAt: number; count: number }[] }>>('/api/hive/team/channels'),
   sendTeamChat: (body: { channel: string; body: string; attach?: { type: 'task' | 'convo' | 'drive' | 'pipeline' | 'project'; id: string; title: string }; taskId?: string | null }) => api.post<Ok<{ message: ChatMessage }>>('/api/hive/team/chat', body),
 
+  verifyModels: (body: { keyId?: string; retest?: boolean; includePaid?: boolean }) => api.post<Ok<{ started?: boolean; keys: HealthKey[] }>>('/api/hive/health/verify', body, { timeoutMs: 60000 }),
+  hideModel: (keyId: string, model: string) => api.post<Ok<{ defaultModel: string | null }>>(`/api/hive/keys/${keyId}/hide-model`, { model }),
   health: () => api.get<Ok<{ keys: HealthKey[] }>>('/api/hive/health'),
   probeHealth: (body: { keyId?: string; includePaid?: boolean }) => api.post<Ok<{ results: { keyId: string; ok: boolean; model?: string; latencyMs?: number; error?: string }[]; keys: HealthKey[] }>>('/api/hive/health/probe', body, { timeoutMs: 180000 }),
 

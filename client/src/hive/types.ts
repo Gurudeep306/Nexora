@@ -44,6 +44,17 @@ export interface HiveKey {
   machineId?: string | null
   freeTier?: boolean
   subscription?: boolean
+  verified?: ModelVerification | null
+  untestedModels?: string[]
+}
+
+/** The last "test every model" run on a key: which models really answered. */
+export interface ModelVerification {
+  at: number
+  ok: string[]
+  failed: { model: string; error: string }[]
+  untested: number
+  stoppedBy: string | null
 }
 
 export interface GithubConn {
@@ -899,6 +910,8 @@ export interface HealthKey {
   detail: string | null
   cooldownUntil: number | null
   models: HealthModel[]
+  verified: ModelVerification | null
+  verifying: { done: number; total: number } | null
 }
 export interface DispatchPick {
   provider: string

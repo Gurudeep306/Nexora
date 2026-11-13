@@ -160,6 +160,140 @@ async function probeAll({ includePaid = false, concurrency = 4 } = {}) {
   return out;
 }
 
+/* ── verify every model on a key ───────────────────────────────────────
+ * A provider's /models list is not a promise: free keys list paid-only,
+ * gated and retired models next to the ones that answer. This sends each
+ * listed chat model a tiny "reply OK" and keeps only what really answered:
+ * working models go first, refused ones are dropped (and stay dropped),
+ * slow or rate-limited ones are kept but marked untested.
+ */
+const verifying = new Map(); // keyId → { done, total, startedAt }
+const DEFINITE = new Set(["model", "bad_request"]);
+const PER_VENDOR_CAP = { openrouter: 16, github: 30 }; // OpenRouter free keys get ~50 requests a day
+
+function verifyOrder(models, vendor, catalog) {
+  const { CARDS, baseId, quality } = catalog;
+  const scored = models.map((m, i) => {
+    const card = CARDS.find((c) => c.match.test(baseId(m)));
+    return { m, i, q: card ? quality(card, "coding") : -1 };
+  });
+  return scored.sort((a, b) => b.q - a.q || a.i - b.i).map((x) => x.m);
+}
+
+async function verifyKey(keyId, { limit = 40, retest = false, timeoutMs = 30_000 } = {}) {
+  if (verifying.has(keyId)) return { running: true, ...verifying.get(keyId) };
+  const keys = require("./keys");
+  const { providerOf, keyVendor } = require("./providers");
+  const { isChatModel } = require("./models");
+  const catalog = require("./catalog");
+  const row = await keys.keyRow(keyId);
+  if (!row) throw Object.assign(new Error("Key not found"), { status: 404 });
+  const v = providerOf(keyVendor(row));
+  if (v.subscription) return probe(keyId);
+  const prev = JSON.parse(row.verified_json || "null") || { ok: [], failed: {}, untested: [] };
+  const blocked = JSON.parse(row.blocked_models || "[]");
+  let pool = JSON.parse(row.models_json || "[]").filter(isChatModel);
+  if (retest) pool = [...new Set([...pool, ...blocked.filter(isChatModel)])];
+  // Recently proven by real work: no need to spend a request on it.
+  const proven = new Set((await all("SELECT model FROM hive_health WHERE key_id=? AND ok_count>0 AND consecutive_fails=0 AND last_ok>?", [keyId, Date.now() - 3 * 86_400_000])).map((r) => r.model));
+  const cap = Math.min(limit, PER_VENDOR_CAP[v.id] ?? limit);
+  const order = verifyOrder(pool, v.id, catalog);
+  const todo = order.filter((m) => !proven.has(m)).slice(0, cap);
+  const state = { done: 0, total: todo.length, startedAt: Date.now() };
+  verifying.set(keyId, state);
+  const ok = new Set([...proven].filter((m) => pool.includes(m)));
+  const failed = {};
+  const untested = [];
+  let stop = null;
+  try {
+    let i = 0;
+    const worker = async () => {
+      while (i < todo.length) {
+        const model = todo[i++];
+        if (stop) {
+          untested.push(model);
+          continue;
+        }
+        let tries = 0;
+        for (;;) {
+          try {
+            await v.impl.turn({ secret: keys.secretOf(row), keyRow: row, baseUrl: row.base_url || v.baseUrl, official: !!v.official, vision: false, model, system: "Reply with exactly: OK", messages: [{ role: "user", text: "OK?" }], tools: [], maxTokens: 8, signal: AbortSignal.timeout(timeoutMs) });
+            ok.add(model); // the wrapped turn() already recorded the success and its latency
+          } catch (e) {
+            const kind = e.kind || (e.name === "TimeoutError" || /abort|timeout/i.test(e.message) ? "timeout" : "server");
+            if (kind === "rate" && tries++ < 1) {
+              await new Promise((r) => setTimeout(r, 20_000).unref?.());
+              continue;
+            }
+            if (kind === "rate" || kind === "quota") {
+              stop = kind; // the key is out of requests for now: test the rest later
+              untested.push(model);
+            } else if (kind === "auth" && !ok.size && state.done >= 2) {
+              stop = "auth";
+              failed[model] = e.message.slice(0, 200);
+            } else if (DEFINITE.has(kind) || kind === "auth") failed[model] = String(e.message || kind).slice(0, 200);
+            else untested.push(model); // slow or a server hiccup: not proof it is broken
+          }
+          break;
+        }
+        state.done++;
+      }
+    };
+    await Promise.all([worker(), worker()]);
+  } finally {
+    verifying.delete(keyId);
+  }
+  // Models beyond the cap keep their place after the tested ones.
+  const rest = order.filter((m) => !todo.includes(m) && !proven.has(m));
+  const okList = order.filter((m) => ok.has(m));
+  const untestedList = [...new Set([...untested, ...rest])].filter((m) => !ok.has(m) && !failed[m]);
+  const refused = Object.keys(failed);
+  const fresh = await keys.keyRow(keyId);
+  const allBlocked = [...new Set([...JSON.parse(fresh.blocked_models || "[]").filter((m) => !ok.has(m)), ...refused])].slice(-400);
+  const models = [...okList, ...untestedList];
+  const def = fresh.default_pinned && ok.has(fresh.default_model) ? fresh.default_model : okList[0] || (models.includes(fresh.default_model) ? fresh.default_model : models[0] || null);
+  const verified = { at: Date.now(), ok: okList, failed, untested: untestedList.length, stoppedBy: stop };
+  await run("UPDATE hive_keys SET models_json=?, blocked_models=?, default_model=?, verified_json=?, updated_at=? WHERE id=?", [JSON.stringify(models), JSON.stringify(allBlocked), def, JSON.stringify(verified), now(), keyId]);
+  // A key where nothing answered is flagged, so it stops being offered.
+  if (!okList.length && refused.length && !untestedList.length) await run("UPDATE hive_keys SET status='error', status_detail=? WHERE id=?", ["None of its models answered — " + Object.values(failed)[0], keyId]);
+  try {
+    require("./hub").emit("health", { keyId, verified: true });
+  } catch {
+    /* tests */
+  }
+  return { ok: okList.length, failed: refused.length, untested: untestedList.length, working: okList, defaultModel: def, stoppedBy: stop, prev: prev.ok?.length ?? null };
+}
+
+/** Verify every free key (or every key), a few at a time. */
+async function verifyAll({ includePaid = false, olderThanMs = 0 } = {}) {
+  const { vendorOf, keyVendor } = require("./providers");
+  const rows = await all("SELECT * FROM hive_keys WHERE disabled=0");
+  const todo = rows.filter((r) => {
+    try {
+      const v = vendorOf(keyVendor(r));
+      if (v.subscription) return false;
+      if (!(includePaid || r.free_tier || v.freeTier)) return false;
+      const at = JSON.parse(r.verified_json || "null")?.at || 0;
+      return Date.now() - at >= olderThanMs;
+    } catch {
+      return false;
+    }
+  });
+  const out = [];
+  let i = 0;
+  await Promise.all(
+    Array.from({ length: Math.min(3, todo.length) }, async () => {
+      while (i < todo.length) {
+        const r = todo[i++];
+        out.push({ keyId: r.id, ...(await verifyKey(r.id).catch((e) => ({ error: e.message }))) });
+      }
+    }),
+  );
+  return out;
+}
+
+const verifyProgress = () => Object.fromEntries([...verifying].map(([k, s]) => [k, { done: s.done, total: s.total }]));
+
 /* ── the board ──────────────────────────────────────────────────────── */
 function stateOf(h, t) {
   if (!h) return "unknown";
@@ -213,8 +347,20 @@ async function board() {
       detail: k.status === "invalid" ? k.status_detail : keyLevel && Number(keyLevel.cooldown_until) > t ? keyLevel.last_error : best?.state === "cooling" || best?.state === "down" ? best.lastError : null,
       cooldownUntil: keyLevel && Number(keyLevel.cooldown_until) > t ? Number(keyLevel.cooldown_until) : best?.cooldownUntil || null,
       models,
+      verified: verifiedOf(k),
+      verifying: verifying.has(k.id) ? { done: verifying.get(k.id).done, total: verifying.get(k.id).total } : null,
     };
   });
 }
 
-module.exports = { record, cooling, wrapTurn, probe, probeAll, board, cooldownFor };
+function verifiedOf(row) {
+  try {
+    const v = JSON.parse(row.verified_json || "null");
+    if (!v) return null;
+    return { at: v.at, ok: v.ok || [], failed: Object.entries(v.failed || {}).map(([model, error]) => ({ model, error })), untested: v.untested || 0, stoppedBy: v.stoppedBy || null };
+  } catch {
+    return null;
+  }
+}
+
+module.exports = { record, cooling, wrapTurn, probe, probeAll, verifyKey, verifyAll, verifyProgress, verifiedOf, board, cooldownFor };

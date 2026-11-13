@@ -18,6 +18,15 @@ const periodStart = (period) => (period === "day" ? day() : period === "month" ?
 const active = new Map(); // key id -> running calls
 const usageCache = new Map(); // key id -> { start, tokens }
 
+/** The models a key offers: the tested-and-working ones once it has been tested, else everything listed. */
+function workingModels(row) {
+  const list = json(row.models_json, []);
+  const ok = json(row.verified_json, null)?.ok;
+  if (!ok?.length) return list;
+  const set = new Set(ok);
+  return list.filter((m) => set.has(m));
+}
+
 function publicKey(row, usedTokens = 0, extra = {}) {
   const limit = row.token_limit == null ? null : Number(row.token_limit);
   return {
@@ -28,7 +37,12 @@ function publicKey(row, usedTokens = 0, extra = {}) {
     baseUrl: row.base_url || null,
     priority: Number(row.priority || 0),
     last4: row.last4,
-    models: json(row.models_json, []),
+    // Once a key's models are tested, only the ones that answered are offered.
+    models: workingModels(row),
+    untestedModels: (() => {
+      const w = new Set(workingModels(row));
+      return json(row.models_json, []).filter((m) => !w.has(m));
+    })(),
     defaultModel: row.default_model,
     tokenLimit: limit,
     limitPeriod: row.limit_period,
@@ -45,6 +59,7 @@ function publicKey(row, usedTokens = 0, extra = {}) {
     createdAt: row.created_at,
     machineId: row.machine_id || null,
     freeTier: !!row.free_tier,
+    verified: require("./health").verifiedOf(row),
     subscription: (() => {
       try {
         return !!vendorOf(keyVendor(row)).subscription;
@@ -221,7 +236,12 @@ async function checkKey(id) {
     const blocked = new Set(json(row.blocked_models, []));
     const listed = await p.implModule.listModels({ secret: p.subscription ? optionalSecret(row) : secretOf(row), baseUrl: row.base_url || p.baseUrl, official: !!p.official, modelsUrl: p.modelsUrl, vendor: p.id, cli: p.cli, machineId: row.machine_id });
     // Models the provider still lists but refuses to serve (retired for new users…) stay out.
-    const models = listed.filter((m) => !blocked.has(m));
+    let models = listed.filter((m) => !blocked.has(m));
+    // A free OpenRouter key can only call the ":free" variants.
+    if (p.id === "openrouter" && row.free_tier) models = models.filter((m) => /:free$/.test(m));
+    // Models proven to answer stay first, so pickers and the router try them before untested ones.
+    const proven = json(row.verified_json, null)?.ok || [];
+    if (proven.length) models = [...proven.filter((m) => models.includes(m)), ...models.filter((m) => !proven.includes(m))];
     // Keep a chosen default only while the provider still offers it.
     const keep = !!row.default_pinned && !!row.default_model && (!models.length || models.includes(row.default_model));
     const def = keep ? row.default_model : modelsLib.pickDefault(models, p.suggested);
@@ -253,6 +273,10 @@ async function blockModel(id, model) {
   const def = row.default_model && row.default_model !== model ? row.default_model : modelsLib.pickDefault(models, (p.suggested || []).filter((m) => m !== model));
   await run("UPDATE hive_keys SET blocked_models=?, models_json=?, default_model=?, default_pinned=CASE WHEN default_model=? THEN 0 ELSE default_pinned END, updated_at=? WHERE id=?", [JSON.stringify(blocked), JSON.stringify(models), def, model, now(), id]);
   return def && def !== model ? def : null;
+}
+
+async function saveVerified(id, v) {
+  await run("UPDATE hive_keys SET verified_json=?, updated_at=? WHERE id=?", [JSON.stringify(v), now(), id]);
 }
 
 /**
@@ -450,4 +474,4 @@ async function refreshAll() {
   return fresh;
 }
 
-module.exports = { blockModel, setPlanUsage, explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };
+module.exports = { workingModels, saveVerified, blockModel, setPlanUsage, explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };
