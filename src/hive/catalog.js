@@ -297,6 +297,17 @@ const FREE_SOURCES = [
     score: 6,
   },
   {
+    vendor: "qwen",
+    name: "Alibaba Model Studio (Qwen 3.8 Max)",
+    url: "https://modelstudio.console.alibabacloud.com/",
+    how: "Sign up for Alibaba Cloud (international), open Model Studio in the Singapore region, create an API key. On the model's page, turn on “Free quota only” so you're never billed.",
+    free: "About 1M free tokens per model for 90 days — including Qwen 3.8 Max, Qwen's flagship",
+    limits: "Per-model quota, Singapore region only; it ends after 90 days or when used up.",
+    models: ["Qwen 3.8 Max", "Qwen3 Coder Plus", "Qwen 3.8 Plus", "Qwen 3.8 Flash"],
+    bestFor: ["hard", "coding", "reasoning"],
+    score: 7,
+  },
+  {
     vendor: "modelscope",
     name: "ModelScope (Alibaba)",
     url: "https://modelscope.cn/my/myaccesstoken",
