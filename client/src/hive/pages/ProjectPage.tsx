@@ -16,6 +16,7 @@ import {
   Link2,
   Loader2,
   Lock,
+  MessagesSquare,
   Paperclip,
   Plus,
   Search,
@@ -60,6 +61,7 @@ const GROUPS: { id: string; label: string; match: (t: Task) => boolean }[] = [
 function ProjectHome({ project }: { project: Project }) {
   const { tasks, select, machines, live, online } = useHive()
   const navigate = useNavigate()
+  const toast = useToast()
   const [settings, setSettings] = useState(false)
   const [q, setQ] = useState('')
   const [activity, setActivity] = useState<ProjectActivity | null>(null)
@@ -119,6 +121,17 @@ function ProjectHome({ project }: { project: Project }) {
               <Users className="size-3.5" /> {here.length} here
             </span>
           )}
+          <Button
+            size="sm"
+            onClick={() =>
+              hiveApi
+                .projectChat(project.id)
+                .then((r) => navigate(`/hive/chat/${r.convo.id}`))
+                .catch((e) => toast.error(e instanceof Error ? e.message : String(e)))
+            }
+          >
+            <MessagesSquare /> Chat
+          </Button>
           <Button variant="secondary" size="sm" onClick={() => setSettings(true)}>
             <Settings2 /> Settings
           </Button>

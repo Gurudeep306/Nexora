@@ -18,13 +18,33 @@ const periodStart = (period) => (period === "day" ? day() : period === "month" ?
 const active = new Map(); // key id -> running calls
 const usageCache = new Map(); // key id -> { start, tokens }
 
-/** The models a key offers: the tested-and-working ones once it has been tested, else everything listed. */
+/**
+ * The models a key offers. Only models that answered a real call are offered:
+ * - tested: the ones that answered (none, if none did);
+ * - tested but stopped by a rate limit before any answered: just its default;
+ * - not tested yet: its default and the vendor's suggested models it lists
+ *   (testing starts when the key is added and runs daily).
+ * Subscriptions (Claude Code, Codex, Vibe) keep their short fixed list.
+ */
 function workingModels(row) {
   const list = json(row.models_json, []);
-  const ok = json(row.verified_json, null)?.ok;
-  if (!ok?.length) return list;
-  const set = new Set(ok);
-  return list.filter((m) => set.has(m));
+  let v = null;
+  try {
+    v = vendorOf(keyVendor(row));
+  } catch {
+    /* unknown vendor */
+  }
+  if (v?.subscription) return list;
+  const verified = json(row.verified_json, null);
+  if (verified?.ok?.length) {
+    const set = new Set(verified.ok);
+    return list.filter((m) => set.has(m));
+  }
+  const def = row.default_model && list.includes(row.default_model) ? [row.default_model] : [];
+  if (verified?.at) return verified.stoppedBy === "rate" || verified.stoppedBy === "quota" ? def : [];
+  const suggested = (v?.suggested || []).filter((m) => list.includes(m));
+  const short = [...new Set([...def, ...suggested])];
+  return short.length ? short : list.slice(0, 3);
 }
 
 function publicKey(row, usedTokens = 0, extra = {}) {

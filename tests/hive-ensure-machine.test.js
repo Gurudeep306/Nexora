@@ -76,3 +76,31 @@ test("projects on a GitHub connection whose token died move to a working connect
     repos.clearCache();
   }
 });
+
+test("only models that answered are offered; untested keys show just their defaults; all-failed shows none", () => {
+  const { workingModels } = require("../src/hive/keys");
+  const base = { provider: "openrouter", models_json: JSON.stringify(["a", "b", "c", "openai/gpt-oss-120b:free"]), default_model: "b" };
+  assert.deepEqual(workingModels({ ...base, verified_json: JSON.stringify({ at: 1, ok: ["c"], failed: { a: "x" } }) }), ["c"]);
+  assert.deepEqual(workingModels({ ...base, verified_json: JSON.stringify({ at: 1, ok: [], failed: { a: "x", b: "x", c: "x" } }) }), [], "all failed: nothing to pick");
+  assert.deepEqual(workingModels({ ...base, verified_json: JSON.stringify({ at: 1, ok: [], failed: {}, stoppedBy: "rate" }) }), ["b"], "rate-limited before any answered: just the default");
+  const untested = workingModels(base);
+  assert.ok(untested.includes("b") && untested.length < 4, `untested: short list, got ${untested}`);
+  assert.deepEqual(workingModels({ provider: "claude_code", preset: "claude_code", models_json: JSON.stringify(["default", "opus"]) }), ["default", "opus"]);
+});
+
+test("a project's own chat is reused, and knows the repo and its brief", async () => {
+  const db = require("../src/hive/db");
+  const chat = require("../src/hive/chat");
+  await db.run("UPDATE hive_projects SET instructions=? WHERE id='p1'", ["- Stack: Node + React\n- Run: npm test"]);
+  const a = await chat.projectChat("owner", "p1");
+  assert.equal(a.project_id, "p1");
+  assert.match(a.title, /Nexora/);
+  const b = await chat.projectChat("owner", "p1");
+  assert.equal(b.id, a.id, "the same chat comes back");
+  const c = await chat.projectChat("owner", "p1", { fresh: true });
+  assert.notEqual(c.id, a.id, "a new one on request");
+  const ctx = await chat.projectContext("p1");
+  assert.match(ctx, /me\/Nexora/);
+  assert.match(ctx, /npm test/);
+  assert.equal(await chat.projectContext(null), "");
+});
