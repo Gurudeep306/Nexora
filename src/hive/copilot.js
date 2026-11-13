@@ -784,6 +784,8 @@ async function brainSettings(username) {
     canMerge: !!r?.can_merge,
     admin: !!r?.admin,
     // Claude leads and checks; your GPU farm and free models do the work (on by default).
+    // The parent Claude account: the one that leads (plans and checks). Other Claude accounts are workers.
+    brainKey: r?.brain_key || null,
     saveTokens: r?.save_tokens === undefined || r?.save_tokens === null ? true : !!r.save_tokens,
     // Work that always goes to Claude, so quality never drops where it matters most.
     claudeOnly: (() => {
@@ -803,8 +805,14 @@ async function pickBrain(username, exclude = []) {
   const { keyVendor } = require("./providers");
   const s = await brainSettings(username);
   if (s.brain !== "api") {
-    const subs = (await all("SELECT * FROM hive_keys WHERE disabled=0")).filter((k) => keyVendor(k) === "claude_code" && k.machine_id && machines.isOnline(k.machine_id) && !exclude.includes(k.id));
-    if (subs.length) return { kind: "cli", key: subs[0], vendor: "claude_code", model: s.brain === "claude_code" && s.model ? s.model : subs[0].default_pinned ? subs[0].default_model : "default" };
+    let subs = (await all("SELECT * FROM hive_keys WHERE disabled=0 ORDER BY created_at")).filter((k) => keyVendor(k) === "claude_code" && k.machine_id && machines.isOnline(k.machine_id) && !exclude.includes(k.id));
+    // The parent account leads; if it's at its plan limit, the next Claude account takes over.
+    const health = require("./health");
+    const ready = [];
+    for (const k of subs) if (!(await health.cooling(k.id, k.default_model || "default").catch(() => 0))) ready.push(k);
+    if (ready.length) subs = ready;
+    subs.sort((a, b) => (b.id === s.brainKey) - (a.id === s.brainKey));
+    if (subs.length) return { kind: "cli", key: subs[0], vendor: "claude_code", parent: subs[0].id === s.brainKey, model: s.brain === "claude_code" && s.model ? s.model : subs[0].default_pinned ? subs[0].default_model : "default" };
     if (s.brain === "claude_code" && !exclude.length) throw new Error("Your Claude plan's machine is offline — start the bridge on it, or switch the Copilot's brain to Auto");
   }
   if (s.brain === "api" && s.model && s.model.includes("/") && !exclude.length) {
@@ -1098,7 +1106,7 @@ async function activeWork(username) {
   return rows.map((r) => ({ id: r.id, projectId: r.project_id, title: r.title, status: r.status, prUrl: r.pr_url || null, reviewed: !!r.done, updatedAt: Number(r.updated_at), agents: agents.filter((a) => a.task_id === r.id).map((a) => ({ provider: a.provider, model: a.model, status: a.status })) }));
 }
 
-async function saveSettings(username, { brain, model, autonomy, canMerge, admin, saveTokens, claudeOnly }) {
+async function saveSettings(username, { brain, model, autonomy, canMerge, admin, saveTokens, claudeOnly, brainKey }) {
   const cur = await brainSettings(username);
   const b = ["auto", "claude_code", "api"].includes(brain) ? brain : cur.brain;
   const m = model === undefined ? cur.model : String(model || "").slice(0, 200);
@@ -1106,10 +1114,11 @@ async function saveSettings(username, { brain, model, autonomy, canMerge, admin,
   // Only admins can let the Copilot merge (merging can deploy the live site).
   const cm = canMerge === undefined ? cur.canMerge : !!canMerge && !!admin;
   const st = saveTokens === undefined ? cur.saveTokens : !!saveTokens;
+  const bk = brainKey === undefined ? cur.brainKey : brainKey ? String(brainKey).slice(0, 64) : null;
   const co = Array.isArray(claudeOnly) ? claudeOnly.map((x) => String(x).trim().slice(0, 120)).filter(Boolean).slice(0, 12) : cur.claudeOnly;
   await run(
-    "INSERT INTO hive_copilot_settings(username, brain, model, autonomy, can_merge, admin, save_tokens, claude_only, updated_at) VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(username) DO UPDATE SET brain=excluded.brain, model=excluded.model, autonomy=excluded.autonomy, can_merge=excluded.can_merge, admin=excluded.admin, save_tokens=excluded.save_tokens, claude_only=excluded.claude_only, updated_at=excluded.updated_at",
-    [username, b, m, au, cm ? 1 : 0, admin ? 1 : 0, st ? 1 : 0, JSON.stringify(co), now()],
+    "INSERT INTO hive_copilot_settings(username, brain, model, autonomy, can_merge, admin, save_tokens, claude_only, brain_key, updated_at) VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(username) DO UPDATE SET brain=excluded.brain, model=excluded.model, autonomy=excluded.autonomy, can_merge=excluded.can_merge, admin=excluded.admin, save_tokens=excluded.save_tokens, claude_only=excluded.claude_only, brain_key=excluded.brain_key, updated_at=excluded.updated_at",
+    [username, b, m, au, cm ? 1 : 0, admin ? 1 : 0, st ? 1 : 0, JSON.stringify(co), bk, now()],
   );
   return brainSettings(username);
 }
@@ -1123,7 +1132,7 @@ async function noteAdmin(username, admin) {
 async function currentBrain(username) {
   try {
     const b = await pickBrain(username);
-    return { provider: b.vendor, model: b.model, kind: b.kind, name: b.name || null };
+    return { provider: b.vendor, model: b.model, kind: b.kind, name: b.name || null, keyId: b.key?.id || null, keyLabel: b.key?.label || null, parent: !!b.parent };
   } catch (e) {
     return { error: e.message };
   }

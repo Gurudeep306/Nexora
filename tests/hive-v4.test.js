@@ -260,6 +260,30 @@ test("Your GitHub: every repo is listed, any repo opens as a project in one call
   assert.equal(missing.status, 404);
 });
 
+test("upload a folder: it becomes a private GitHub repo and a project; junk folders are skipped", async () => {
+  const st = await ok("POST", "/api/hive/import/start", { name: "My Folder App" });
+  assert.match(st.repo, /^octo\/my-folder-app/);
+  const fd = new FormData();
+  const add = (path, text) => {
+    fd.append("files", new Blob([text]), path.split("/").pop());
+    fd.append("paths", path);
+  };
+  add("my-folder-app/README.md", "# My app");
+  add("my-folder-app/src/index.js", "console.log(1)");
+  add("my-folder-app/node_modules/x/index.js", "junk");
+  add("my-folder-app/.env", "SECRET=1");
+  const up = await fetch(`${base}/api/hive/import/${st.id}/files`, { method: "POST", headers: { Cookie: cookie, Origin: base }, body: fd });
+  const r = await up.json();
+  assert.equal(up.status, 200, JSON.stringify(r));
+  assert.equal(r.total, 2, "only the real files are kept");
+  assert.equal(r.skipped, 2, "node_modules and .env are skipped");
+  const done = await ok("POST", `/api/hive/import/${st.id}/finish`);
+  assert.equal(done.files, 2);
+  assert.ok(done.project?.id && done.project.repo_name.startsWith("my-folder-app"), JSON.stringify(done.project));
+  const again = await call("POST", `/api/hive/import/${st.id}/finish`);
+  assert.equal(again.status, 409, "finishing twice is refused");
+});
+
 test("the Dispatcher splits a request, assigns each part, and runs the team in dependency waves", async () => {
   const boot = await ok("GET", "/api/hive/bootstrap");
   const project = boot.projects.find((p) => !p.machine_id) || boot.projects[0];

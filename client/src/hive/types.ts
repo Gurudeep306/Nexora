@@ -982,6 +982,10 @@ export interface CopilotBrain {
   kind?: 'cli' | 'api'
   name?: string | null
   error?: string
+  /** Which Claude account is leading right now. */
+  keyId?: string | null
+  keyLabel?: string | null
+  parent?: boolean
 }
 export interface CopilotSettings {
   brain: 'auto' | 'claude_code' | 'api'
@@ -992,6 +996,8 @@ export interface CopilotSettings {
   saveTokens?: boolean
   /** Work that always goes to Claude. */
   claudeOnly?: string[]
+  /** The parent Claude account (leads); the other Claude accounts are workers. */
+  brainKey?: string | null
 }
 
 export interface CopilotWork {

@@ -16,6 +16,7 @@ import { errMsg } from '../Improve'
 import { useHive } from '../store'
 import type { GhRepo } from '../types'
 import { PageTitle, timeAgo } from '../ui'
+import { FolderImport } from '../FolderImport'
 
 // A classic token with these scopes sees every repo you can (yours, collaborations and orgs).
 const TOKEN_URL = 'https://github.com/settings/tokens/new?scopes=repo,workflow,read:org&description=Nexora%20Hive'
@@ -107,6 +108,9 @@ export default function ReposPage() {
         <ConnectGithub onDone={() => refresh().then(() => load(true))} />
       ) : (
         <>
+          <div className="mb-5">
+            <FolderImport compact />
+          </div>
           <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
             <label className="hive-card flex h-11 flex-1 items-center gap-2 rounded-2xl px-3.5">
               <Search className="size-4 text-text-muted" />

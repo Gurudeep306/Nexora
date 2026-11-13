@@ -197,7 +197,7 @@ function Steps({ steps, live }: { steps: CopilotStep[]; live?: boolean }) {
 function BrainPill({ brain, settings, onChange, compact, admin }: { brain: CopilotBrain | null; settings: CopilotSettings | null; onChange: (s: CopilotSettings) => void; compact?: boolean; admin: boolean }) {
   const { boot } = useHive()
   const [spec, setSpec] = useState<AgentSpec | null>(null)
-  const label = !brain ? '…' : brain.error ? 'No brain connected' : brain.kind === 'cli' ? 'Claude · your plan' : brain.name || brain.model
+  const label = !brain ? '…' : brain.error ? 'No brain connected' : brain.kind === 'cli' ? `Claude · ${brain.keyLabel || 'your plan'}` : brain.name || brain.model
   return (
     <Popover>
       <PopoverTrigger asChild>
