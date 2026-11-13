@@ -438,11 +438,22 @@ async function cheap({ prompt, kind = "reading", system = "", username }) {
 Object.assign(TOOLS, {
   ask_model: {
     description: "Delegate a side job to the cheapest model that can do it well (free first): summarise, draft, extract, translate, brainstorm, compare options. Use this instead of doing long reading or writing yourself — it saves tokens.",
-    schema: obj({ prompt: str("The full job, with any text it needs"), kind: { type: "string", enum: ["chat", "mechanical", "reading", "writing", "coding", "review", "hard"], description: "Kind of work (decides how strong the model must be)" } }, ["prompt"]),
+    schema: obj({ prompt: str("The full job, with any text it needs"), kind: { type: "string", enum: ["chat", "mechanical", "reading", "writing", "coding", "review", "hard"], description: "Kind of work (decides how strong the model must be)" }, model: str('Optional: a specific specialist as "vendor/model", e.g. "farm/sarvam-translate" (translation), "farm/nemotron-cascade-2-30b" (maths), "farm/qwen3.8-27b" (UI/scene JSON) — see list_models') }, ["prompt"]),
     run: async (i, ctx) => {
+      if (i.model && String(i.model).includes("/")) {
+        const [provider, ...rest] = String(i.model).split("/");
+        const r = await require("./llm").ask({ kind: i.kind || "reading", prompt: String(i.prompt).slice(0, 60000), spec: { provider, keyId: "auto", model: rest.join("/") }, username: ctx.username });
+        return `(${r.model})\n${r.text}`;
+      }
       const r = await cheap({ prompt: String(i.prompt).slice(0, 60000), kind: i.kind || "reading", username: ctx.username });
       return `(${r.model})\n${r.text}`;
     },
+  },
+  check_session: {
+    description:
+      "Cheap quality check of a finished session, so you don't spend tokens reading whole diffs: a reviewer from a different model family than the authors (your GPU farm or a free model, never your Claude plan) runs the project's tests/build, reads every change against the request and returns a short verdict (pass / fail / unsure, test result, issues with file:line). Use it first; read session_diff yourself only when it fails, is unsure, or the work is in a Claude-only area.",
+    schema: obj({ taskId: str("Session id"), focus: str("Optional: what to check especially") }, ["taskId"]),
+    run: async (i, ctx) => checkSession(i.taskId, { focus: i.focus, username: ctx.username }),
   },
   ship_session: {
     description: "Commit a finished session's changes to a branch and open a pull request (title and description written for reviewers). Do this only after you have reviewed the diff and it meets the request.",
@@ -573,6 +584,46 @@ Object.assign(TOOLS, {
 });
 
 /* Merge queued PRs once CI is green; auto-answer safe command approvals in watched sessions. */
+/* ── cheap quality gate ─────────────────────────────────────────────── */
+/** The best non-Claude reviewer from a different family than the authors that clears the review bar. */
+async function cheapReviewer(taskId) {
+  const router = require("./router");
+  const { cardFor, MIN_QUALITY } = require("./catalog");
+  const authors = await all("SELECT provider, model FROM hive_agents WHERE task_id=? AND role<>'reviewer'", [taskId]);
+  const labs = new Set(authors.map((a) => cardFor(a.model, a.provider).lab));
+  const task = await get("SELECT machine_id FROM hive_tasks WHERE id=?", [taskId]);
+  const all_ = (await router.candidates({ kind: "review", needTools: true, machineId: task?.machine_id || null, noSubscription: true })).filter((c) => c.quality >= MIN_QUALITY.review && !c.cooling);
+  const other = all_.filter((c) => !labs.has(c.card.lab));
+  const pool = other.length ? other : all_;
+  if (!pool.length) return null;
+  const { ranked } = router.rank(pool, "review", "savings");
+  const c = ranked[0];
+  return { spec: { provider: c.vendor, keyId: c.key.id, model: c.model }, name: `${c.card.name} on ${c.vendorLabel}`, crossFamily: other.length > 0 };
+}
+
+async function checkSession(taskId, { focus = "", username = "copilot" } = {}) {
+  const task = await get("SELECT * FROM hive_tasks WHERE id=?", [taskId]);
+  if (!task) throw new Error("Session not found");
+  const rv = await cheapReviewer(taskId);
+  if (!rv) return { verdict: "unsure", note: "No free or farm reviewer clears the quality bar right now — review the diff yourself (session_diff)." };
+  const prompt = `You are the quality gate for this session. Do not change any file.
+1. Run the project's checks that exist (tests, type-check, lint, build — whatever the repo uses; keep it fast).
+2. Read every change (view_changes) against the original request${focus ? ` — focus especially on: ${focus}` : ""}. Look for: wrong behaviour, missing parts of the request, broken edge cases, security problems, things that would make CI fail, UI that breaks on phones or in dark mode.
+3. Finish with ONLY this JSON in your final message:
+{"verdict":"pass"|"fail"|"unsure","tests":"what you ran and the result","issues":[{"file":"path","line":0,"problem":"…","severity":"high"|"medium"|"low"}],"summary":"one sentence"}
+"pass" only if the request is fully met and nothing high or medium is wrong.`;
+  const a = await require("./runner").spawnAndWait(taskId, { spec: rv.spec, prompt, username: `copilot:${username}`, readOnly: true, title: "Quality check", kind: "review" });
+  const text = String(a?.result || a?.error || "");
+  let v = null;
+  try {
+    v = require("./llm").extractJson(text);
+  } catch {
+    v = null;
+  }
+  if (!v || !v.verdict) return { verdict: "unsure", reviewer: rv.name, note: "The reviewer did not return a clear verdict", excerpt: clip(text, 1200) };
+  return { verdict: v.verdict, reviewer: rv.name, crossFamily: rv.crossFamily, tests: v.tests, issues: (v.issues || []).slice(0, 12), summary: v.summary, agentStatus: a?.status };
+}
+
 /* ── keep work moving: replace agents whose model is down or stuck ─────── */
 const rescued = new Map(); // old agent id → when
 
@@ -709,9 +760,10 @@ async function onTask(task, deps) {
       s.autonomy === "autopilot"
         ? `If it is fully done, ship it with ship_session (clear title and description)${s.canMerge ? " and then merge_when_green" : ""}.`
         : "If it is fully done, tell me it is ready to ship.";
+    const gate = s.saveTokens ? "First run check_session (cheap: a reviewer from another model family runs the tests and reads the changes). If it passes and the work is not in a Claude-only area, trust it and skip reading the diff. If it fails, add an agent to fix exactly the issues it lists, then check again; after a second failure hand it to claude_code/default. Only read session_diff yourself when the check is unsure or the work is in a Claude-only area. " : "";
     await send({
       username: w.username,
-      text: `[automatic] Session “${task.title}” (${task.id}) just finished with status “${task.status}”. Review it now: read session_detail and session_diff, judge whether it fully meets the request (correctness, completeness, quality, risks). If something is missing or wrong, fix it by adding an agent with precise instructions (cheapest capable model) and keep watching. ${next} Then give me a short verdict: ✅ done (and shipped?) / ⚠️ needs changes (what you did about it) / ❌ failed (why and what next).`,
+      text: `[automatic] Session “${task.title}” (${task.id}) just finished with status “${task.status}”. ${gate}Review it now: read session_detail${s.saveTokens ? "" : " and session_diff"}, judge whether it fully meets the request (correctness, completeness, quality, risks). If something is missing or wrong, fix it by adding an agent with precise instructions (cheapest capable model) and keep watching. ${next} Then give me a short verdict: ✅ done (and shipped?) / ⚠️ needs changes (what you did about it) / ❌ failed (why and what next).`,
       auto: true,
       deps,
     });
@@ -725,8 +777,23 @@ async function onTask(task, deps) {
 /* ── the brain ─────────────────────────────────────────────────────── */
 async function brainSettings(username) {
   const r = await get("SELECT * FROM hive_copilot_settings WHERE username=?", [username]).catch(() => null);
-  return { brain: r?.brain || "auto", model: r?.model || "", autonomy: r?.autonomy === "assist" ? "assist" : "autopilot", canMerge: !!r?.can_merge, admin: !!r?.admin };
+  return {
+    brain: r?.brain || "auto",
+    model: r?.model || "",
+    autonomy: r?.autonomy === "assist" ? "assist" : "autopilot",
+    canMerge: !!r?.can_merge,
+    admin: !!r?.admin,
+    // Claude leads and checks; your GPU farm and free models do the work (on by default).
+    saveTokens: r?.save_tokens === undefined || r?.save_tokens === null ? true : !!r.save_tokens,
+    // Work that always goes to Claude, so quality never drops where it matters most.
+    claudeOnly: (() => {
+      const v = json(r?.claude_only, null);
+      return Array.isArray(v) ? v : DEFAULT_CLAUDE_ONLY;
+    })(),
+  };
 }
+
+const DEFAULT_CLAUDE_ONLY = ["Landing page, hero sections and signature UI", "Shaders and complex animation", "Architecture, security and data migrations", "Final review before shipping"];
 
 /** Pick who thinks: your Claude plan first, then the best healthy model with tools (free first). */
 async function pickBrain(username, exclude = []) {
@@ -756,6 +823,16 @@ async function pickBrain(username, exclude = []) {
   throw new Error("No model with tool use is connected — add a key (Keys) or connect your Claude plan");
 }
 
+// Claude leads and checks; the GPU farm and free models do the work — without lowering quality.
+const TOKEN_RULES = (settings) => `
+Token budget — you run on the person's Claude plan, which is limited. You lead and check; other models do the work:
+- Do not write code, long text, scene JSON or translations yourself. Give the work to agents ("auto" picks the best non-Claude model that clears the quality bar). Your GPU farm's specialists, when connected: farm/qwen3.8-27b (UI, Nexora scene JSON, motion code, everyday coding), farm/uigen-x-32b (UI layouts), farm/qwen3-coder-next (backend, tests, refactors), farm/nemotron-cascade-2-30b (maths, GATE solutions), farm/devstral-small-2 (design or screenshot to code), farm/paddleocr-vl (reading scans), farm/sarvam-translate (Indian languages). list_models shows which are up.
+- Keep your own reading small: check_session instead of reading whole diffs, session_diff summaries, ask_model for any summarising or extracting.
+Quality floor — never lower quality to save tokens:
+- These always go to Claude (agent "claude_code/default"), from writing to review: ${(settings.claudeOnly || []).map((x) => `"${x}"`).join(", ") || "(none)"}.
+- Everything else: another model's work is accepted only when check_session passes (tests plus a reviewer from a different model family). If it fails, have a model fix exactly the issues it lists; if it fails again, hand the work to "claude_code/default".
+- Hard engineering (architecture, unclear bugs, multi-file refactors) goes to the strongest model the router offers — usually your Claude plan. Never pick a model below the quality bar to save tokens.`;
+
 const SYSTEM = (username, facts, snapshot, settings = {}) => `You are Hive Copilot, @${username}'s chief of staff for software work in Nexora Hive. You run the hive: you decide what needs doing, give work to the right agents, write their prompts, watch progress, judge results, and report back. You can do everything the person can do in Hive through your tools.
 
 How you work:
@@ -773,6 +850,7 @@ How you work:
 - Keep the model list clean: verify_models tests every model and removes those that don't answer; hide_model removes one that keeps failing or does poor work.
 - Ask the person only when a decision is genuinely theirs. Otherwise act, then report what you did with links (paths like /hive/p/… are clickable).
 - Answer in Markdown. Be concise and concrete.
+${settings.saveTokens === false ? "" : TOKEN_RULES(settings)}
 
 Today is ${new Date().toISOString().slice(0, 10)}.
 ${facts.length ? `\nWhat you know about @${username} (saved memory):\n${facts.map((f) => `- ${f}`).join("\n")}\n` : ""}
@@ -1020,16 +1098,18 @@ async function activeWork(username) {
   return rows.map((r) => ({ id: r.id, projectId: r.project_id, title: r.title, status: r.status, prUrl: r.pr_url || null, reviewed: !!r.done, updatedAt: Number(r.updated_at), agents: agents.filter((a) => a.task_id === r.id).map((a) => ({ provider: a.provider, model: a.model, status: a.status })) }));
 }
 
-async function saveSettings(username, { brain, model, autonomy, canMerge, admin }) {
+async function saveSettings(username, { brain, model, autonomy, canMerge, admin, saveTokens, claudeOnly }) {
   const cur = await brainSettings(username);
   const b = ["auto", "claude_code", "api"].includes(brain) ? brain : cur.brain;
   const m = model === undefined ? cur.model : String(model || "").slice(0, 200);
   const au = autonomy === "assist" || autonomy === "autopilot" ? autonomy : cur.autonomy;
   // Only admins can let the Copilot merge (merging can deploy the live site).
   const cm = canMerge === undefined ? cur.canMerge : !!canMerge && !!admin;
+  const st = saveTokens === undefined ? cur.saveTokens : !!saveTokens;
+  const co = Array.isArray(claudeOnly) ? claudeOnly.map((x) => String(x).trim().slice(0, 120)).filter(Boolean).slice(0, 12) : cur.claudeOnly;
   await run(
-    "INSERT INTO hive_copilot_settings(username, brain, model, autonomy, can_merge, admin, updated_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(username) DO UPDATE SET brain=excluded.brain, model=excluded.model, autonomy=excluded.autonomy, can_merge=excluded.can_merge, admin=excluded.admin, updated_at=excluded.updated_at",
-    [username, b, m, au, cm ? 1 : 0, admin ? 1 : 0, now()],
+    "INSERT INTO hive_copilot_settings(username, brain, model, autonomy, can_merge, admin, save_tokens, claude_only, updated_at) VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(username) DO UPDATE SET brain=excluded.brain, model=excluded.model, autonomy=excluded.autonomy, can_merge=excluded.can_merge, admin=excluded.admin, save_tokens=excluded.save_tokens, claude_only=excluded.claude_only, updated_at=excluded.updated_at",
+    [username, b, m, au, cm ? 1 : 0, admin ? 1 : 0, st ? 1 : 0, JSON.stringify(co), now()],
   );
   return brainSettings(username);
 }
@@ -1049,4 +1129,4 @@ async function currentBrain(username) {
   }
 }
 
-module.exports = { modelTotals, rescueAgent, rescueTick, activeWork, DANGEROUS, mergeTick, onApproval, noteAdmin, TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };
+module.exports = { checkSession, cheapReviewer, DEFAULT_CLAUDE_ONLY, modelTotals, rescueAgent, rescueTick, activeWork, DANGEROUS, mergeTick, onApproval, noteAdmin, TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };

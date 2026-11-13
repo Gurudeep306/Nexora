@@ -960,7 +960,7 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     h(async (req, res) => {
       const b = req.body || {};
       if (b.canMerge && !isAdmin(req)) throw new BadInput("Only admins can let the Copilot merge", 403);
-      const s = await copilot.saveSettings(req.hiveUser, { brain: b.brain, model: b.model, autonomy: b.autonomy, canMerge: b.canMerge, admin: isAdmin(req) });
+      const s = await copilot.saveSettings(req.hiveUser, { brain: b.brain, model: b.model, autonomy: b.autonomy, canMerge: b.canMerge, admin: isAdmin(req), saveTokens: b.saveTokens, claudeOnly: b.claudeOnly });
       res.json({ ok: true, settings: s, brain: await copilot.currentBrain(req.hiveUser) });
     }),
   );
