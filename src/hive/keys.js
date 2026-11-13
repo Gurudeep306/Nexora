@@ -218,7 +218,10 @@ async function checkKey(id) {
   if (!row) throw Object.assign(new Error("Key not found"), { status: 404 });
   const p = vendorOf(keyVendor(row));
   try {
-    const models = await p.implModule.listModels({ secret: p.subscription ? optionalSecret(row) : secretOf(row), baseUrl: row.base_url || p.baseUrl, official: !!p.official, modelsUrl: p.modelsUrl, vendor: p.id, cli: p.cli, machineId: row.machine_id });
+    const blocked = new Set(json(row.blocked_models, []));
+    const listed = await p.implModule.listModels({ secret: p.subscription ? optionalSecret(row) : secretOf(row), baseUrl: row.base_url || p.baseUrl, official: !!p.official, modelsUrl: p.modelsUrl, vendor: p.id, cli: p.cli, machineId: row.machine_id });
+    // Models the provider still lists but refuses to serve (retired for new users…) stay out.
+    const models = listed.filter((m) => !blocked.has(m));
     // Keep a chosen default only while the provider still offers it.
     const keep = !!row.default_pinned && !!row.default_model && (!models.length || models.includes(row.default_model));
     const def = keep ? row.default_model : modelsLib.pickDefault(models, p.suggested);
@@ -234,6 +237,22 @@ async function checkKey(id) {
     await run("UPDATE hive_keys SET status=?, status_detail=?, updated_at=? WHERE id=?", [e.kind === "auth" ? "invalid" : "error", String(e.message).slice(0, 300), now(), id]);
     return { ok: false, error: e.message };
   }
+}
+
+/**
+ * A model the key lists but the provider refused to serve ("no longer
+ * available", "not found"…): remember it, drop it from the key's list, and
+ * move the default to the next best model. Returns the new default.
+ */
+async function blockModel(id, model) {
+  const row = await keyRow(id);
+  if (!row || !model) return null;
+  const blocked = [...new Set([...json(row.blocked_models, []), model])].slice(-100);
+  const models = json(row.models_json, []).filter((m) => m !== model);
+  const p = vendorOf(keyVendor(row));
+  const def = row.default_model && row.default_model !== model ? row.default_model : modelsLib.pickDefault(models, (p.suggested || []).filter((m) => m !== model));
+  await run("UPDATE hive_keys SET blocked_models=?, models_json=?, default_model=?, default_pinned=CASE WHEN default_model=? THEN 0 ELSE default_pinned END, updated_at=? WHERE id=?", [JSON.stringify(blocked), JSON.stringify(models), def, model, now(), id]);
+  return def && def !== model ? def : null;
 }
 
 /**
@@ -413,4 +432,4 @@ async function refreshAll() {
   return fresh;
 }
 
-module.exports = { setPlanUsage, explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };
+module.exports = { blockModel, setPlanUsage, explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };

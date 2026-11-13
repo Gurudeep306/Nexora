@@ -178,3 +178,25 @@ test("long chats are compacted into a cached summary by the Token Steward", asyn
   assert.match(notes, /Token Steward folded \d+ earlier messages/);
   await ok("PUT", "/api/hive/plugins/builtin/token_steward", { enabled: true, config: { triggerTokens: 24000, keepTokens: 8000 } });
 });
+
+test("a model the provider retired is skipped: chat moves to the key's next model and never picks it again", async () => {
+  const boot = await ok("GET", "/api/hive/bootstrap");
+  const key = boot.keys[0];
+  const { convo } = await ok("POST", "/api/hive/convos", {});
+  const r = await fetch(`${base}/api/hive/convos/${convo.id}/messages`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Cookie: cookie, Origin: base },
+    body: JSON.stringify({ text: "Hello", agent: { provider: key.provider, keyId: key.id, model: "demo-retired" }, stream: true }),
+  });
+  const events = (await r.text()).trim().split("\n").map((l) => JSON.parse(l));
+  const done = events.find((e) => e.type === "done");
+  assert.ok(done, "a reply finished");
+  assert.ok(!done.data?.error && !done.error, `no error shown: ${JSON.stringify(done)}`);
+  assert.notEqual(done.data?.model ?? done.model, "demo-retired");
+  assert.ok(events.some((e) => e.type === "note" && /isn't available any more/.test(JSON.stringify(e))), "the switch is explained");
+  const after = (await ok("GET", "/api/hive/bootstrap")).keys.find((k) => k.id === key.id);
+  assert.ok(!after.models.includes("demo-retired"), "the retired model is dropped from the key");
+  await ok("POST", `/api/hive/keys/${key.id}/check`).catch(() => null);
+  const rechecked = (await ok("GET", "/api/hive/bootstrap")).keys.find((k) => k.id === key.id);
+  assert.ok(!rechecked.models.includes("demo-retired"), "and stays dropped after the model list is refreshed");
+});

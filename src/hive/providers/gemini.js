@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const { ProviderError, failFromResponse, sse } = require("./common");
 
 const BASE = "https://generativelanguage.googleapis.com/v1beta";
-const SUGGESTED = ["gemini-2.5-pro", "gemini-2.5-flash"];
+const SUGGESTED = ["gemini-3.1-pro-preview", "gemini-3-pro-preview", "gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.5-pro"];
 
 // Gemini accepts an OpenAPI subset: drop keywords it rejects.
 function cleanSchema(s) {

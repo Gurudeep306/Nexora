@@ -128,9 +128,11 @@ function startMock() {
           res.end(JSON.stringify(o));
         };
         // ── AI provider ──
-        if (p.endsWith("/models")) return json(200, { data: [{ id: "demo-coder-large" }, { id: "demo-coder-mini" }, { id: "demo-vision-2" }] });
+        if (p.endsWith("/models")) return json(200, { data: [{ id: "demo-coder-large" }, { id: "demo-coder-mini" }, { id: "demo-vision-2" }, { id: "demo-retired" }] });
         if (p.endsWith("/chat/completions")) {
           const b = JSON.parse(body || "{}");
+          // A model the provider still lists but no longer serves (like Google retiring gemini-2.5-pro).
+          if (b.model === "demo-retired") return json(404, { error: { message: "This model models/demo-retired is no longer available to new users. Please update your code to use a newer model." } });
           const msgs = b.messages || [];
           const toolRounds = msgs.filter((m) => m.role === "tool").length;
           // Chat sends its own tool set (web_search…); agents get the coding tools.
