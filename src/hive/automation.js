@@ -206,9 +206,13 @@ function startLoops(deps) {
   setTimeout(safe(async () => {
     await resumeInterrupted();
     await require("./pipelines").resumeAll();
+    await require("./dispatcher").resumeAll();
   }), 20_000).unref?.();
   setInterval(safe(() => tickSchedules(deps)), 60_000).unref?.();
   setInterval(safe(ciFixTick), 5 * 60_000).unref?.();
+  // Agent health: probe free and subscription models a few times a day (a tiny "reply OK" call).
+  setTimeout(safe(() => require("./health").probeAll()), 3 * 60_000).unref?.();
+  setInterval(safe(() => require("./health").probeAll()), 4 * 60 * 60_000).unref?.();
 }
 
 module.exports = { nextRun, listSchedules, saveSchedule, removeSchedule, tickSchedules, SCHEDULE_TEMPLATES, resumeInterrupted, ciFixTick, startLoops, publicSchedule };

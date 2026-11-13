@@ -1,6 +1,6 @@
 import { api } from '@/lib/api'
 import { API_BASE } from '@/lib/api'
-import type { ArchitectReply, Cap, CatalogInfo, Checkpoint, CliStatus, ConnectedModel, DriveItem, GithubReport, HiveAlert, ImproveResult, Lifecycle, MeasuredStat, Pipeline, PipelineRun, PipelineStage, PipelineTemplate, RouteResult, Schedule, ScheduleTemplate, Spend, StewardAction, StewardPlan, StewardReport, Toolbox, Verdict } from './types'
+import type { ArchitectReply, Cap, CatalogInfo, Checkpoint, CliStatus, ConnectedModel, DriveItem, GithubReport, HiveAlert, ImproveResult, Lifecycle, MeasuredStat, Pipeline, PipelineRun, PipelineStage, PipelineTemplate, RouteResult, Schedule, ScheduleTemplate, Spend, StewardAction, StewardPlan, StewardReport, Toolbox, Verdict, HealthKey, Dispatch } from './types'
 import type { AgentRow, AgentSpec, Approval, Bootstrap, Change, ChatMessage, Check, Convo, ConvoMsg, HiveEvent, HiveFile, Idea, LinkedRepo, LiveAgent, Machine, MarketModel, MemoryItem, Mode, Plugin, PrInfo, Project, ProjectActivity, Task } from './types'
 
 type Ok<T> = T & { ok: boolean }
@@ -245,4 +245,13 @@ export const hiveApi = {
   teamChat: (channel: string, before?: number) => api.get<Ok<{ messages: ChatMessage[] }>>('/api/hive/team/chat', { query: { channel, before } }),
   teamChannels: () => api.get<Ok<{ channels: { id: string; lastAt: number; count: number }[] }>>('/api/hive/team/channels'),
   sendTeamChat: (body: { channel: string; body: string; attach?: { type: 'task' | 'convo' | 'drive' | 'pipeline' | 'project'; id: string; title: string }; taskId?: string | null }) => api.post<Ok<{ message: ChatMessage }>>('/api/hive/team/chat', body),
+
+  health: () => api.get<Ok<{ keys: HealthKey[] }>>('/api/hive/health'),
+  probeHealth: (body: { keyId?: string; includePaid?: boolean }) => api.post<Ok<{ results: { keyId: string; ok: boolean; model?: string; latencyMs?: number; error?: string }[]; keys: HealthKey[] }>>('/api/hive/health/probe', body, { timeoutMs: 180000 }),
+
+  dispatches: (project?: string | null) => api.get<Ok<{ dispatches: Dispatch[] }>>('/api/hive/dispatches', { query: { project: project ?? undefined } }),
+  planDispatch: (body: { projectId: string; request: string; preference?: 'savings' | 'fast' | 'balanced' | 'quality'; freeOnly?: boolean }) => api.post<Ok<{ dispatch: Dispatch }>>('/api/hive/dispatches', body, { timeoutMs: 240000 }),
+  editDispatch: (id: string, body: { partId: string; spec?: { provider: string; keyId?: string; model?: string }; prompt?: string; remove?: boolean }) => api.patch<Ok<{ dispatch: Dispatch }>>(`/api/hive/dispatches/${id}`, body),
+  startDispatch: (id: string) => api.post<Ok<{ dispatch: Dispatch }>>(`/api/hive/dispatches/${id}/start`, {}, { timeoutMs: 120000 }),
+  stopDispatch: (id: string) => api.post<Ok<{ stopped: boolean }>>(`/api/hive/dispatches/${id}/stop`, {}),
 }

@@ -95,7 +95,7 @@ const BUILTINS = [
     category: "Token saver",
     icon: "route",
     default: true,
-    description: "Agents set to “Auto” get the best model for the kind of work — free and subscription models first, strong models only where they are needed. In teams, easy sub-tasks go to cheaper models. Preference: balanced, savings or quality.",
+    description: "Agents set to “Auto” get the best model for the kind of work — free and subscription models first, strong models only where they are needed. In teams, easy sub-tasks go to cheaper models. Preference: balanced, fast (quickest replies), savings or quality.",
     config: { preference: "balanced" },
   },
   {

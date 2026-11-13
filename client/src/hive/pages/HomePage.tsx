@@ -1,17 +1,18 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, ArrowUp, Check, ChevronDown, Cpu, FolderGit2, KeyRound, Lightbulb, Loader2, MessageSquare, Radar, Server, ShieldAlert, Sparkles, Zap } from 'lucide-react'
+import { ArrowRight, ArrowUp, Check, ChevronDown, Cpu, FolderGit2, KeyRound, Lightbulb, Loader2, MessageSquare, Radar, Server, ShieldAlert, Sparkles, Workflow, Zap } from 'lucide-react'
 import { LogoMark } from '@/components/brand/Logo'
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuTrigger, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
 import { AgentChip, defaultSpec } from '../AgentPicker'
 import { HiveLogo } from '../HiveLogo'
+import { HealthStrip, LiveWall } from '../LiveWall'
 import { projectColor } from '../projectColor'
 import { useHive } from '../store'
 import type { AgentSpec, MarketModel, Task } from '../types'
-import { ProviderGlyph, StatusPill, fmtCost, fmtTokens, timeAgo } from '../ui'
+import { StatusPill, fmtCost, fmtTokens, timeAgo } from '../ui'
 
 type OverviewTask = Task & { project_name: string; project_color: string }
 
@@ -144,7 +145,7 @@ export default function HomePage() {
           <Quick to="/hive/nexora" tone="var(--color-accent-brand)" icon={<LogoMark size={18} />} title="Build NexoraGuru" sub="Code → PR → live" />
           <Quick to="/hive/launchpad" tone="var(--color-state-warning)" icon={<Lightbulb className="size-4" />} title="New idea" sub="Plan + repo + agents" />
           <Quick to="/hive/machines" tone="var(--color-state-success)" icon={<Server className="size-4" />} title="Machines" sub={`${machines.filter((m) => m.online).length} online`} />
-          <Quick to="/hive/models" tone="var(--color-state-info)" icon={<Radar className="size-4" />} title="Model radar" sub="What’s new" />
+          <Quick to="/hive/dispatch" tone="var(--color-state-info)" icon={<Workflow className="size-4" />} title="Dispatch a team" sub="Right model per part" />
         </div>
 
         {/* Setup */}
@@ -180,9 +181,16 @@ export default function HomePage() {
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
           <div className="space-y-6">
             {/* Live */}
-            {(live.length > 0 || approvals.length > 0) && (
+            <section>
+              <SectionHead icon={<Zap className="size-3.5 text-accent-brand" />} title="Live now — who's working on what" />
+              <div className="space-y-3">
+                <HealthStrip />
+                <LiveWall />
+              </div>
+            </section>
+            {approvals.length > 0 && (
               <section>
-                <SectionHead icon={<Zap className="size-3.5 text-accent-brand" />} title="Live now" />
+                <SectionHead icon={<ShieldAlert className="size-3.5 text-state-warning" />} title="Waiting for you" />
                 <div className="space-y-2">
                   {approvals.map((a) => (
                     <div key={a.id} className="hive-card flex items-center gap-3 p-3 ring-1 ring-state-warning/30">
@@ -201,19 +209,7 @@ export default function HomePage() {
                       </button>
                     </div>
                   ))}
-                  {live.map((a) => (
-                    <button key={a.id} type="button" onClick={() => navigate(`/hive/p/${a.projectId}/t/${a.taskId}`)} className="hive-card hive-card-hover hive-working flex w-full items-center gap-3 p-3 text-left">
-                      <ProviderGlyph provider={a.provider} size="md" pulse />
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 text-[13px]">
-                          <b>{a.name}</b>
-                          <span className="truncate text-text-muted">{a.taskTitle}</span>
-                        </div>
-                        <div className="truncate text-[12px] text-accent-brand">{a.doing || 'Thinking…'}</div>
-                      </div>
-                      <ArrowRight className="size-4 text-text-muted" />
-                    </button>
-                  ))}
+
                 </div>
               </section>
             )}

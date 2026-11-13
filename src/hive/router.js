@@ -11,6 +11,7 @@ const { all, json } = require("./db");
 const keys = require("./keys");
 const perf = require("./perf");
 const machines = require("./machines");
+const health = require("./health");
 const { vendorOf, keyVendor } = require("./providers");
 const { isChatModel } = require("./models");
 const { KINDS, MIN_QUALITY, CARDS, cardFor, quality, baseId } = require("./catalog");
@@ -85,6 +86,8 @@ function modelsOf(row, vendor) {
  */
 async function candidates({ kind = "coding", needTools = true, machineId = null, chat = false, exclude = {}, freeOnly = false, noSubscription = false } = {}) {
   const rows = await all("SELECT * FROM hive_keys WHERE disabled=0");
+  // Measured response times (from every real call and the health probes).
+  const lat = new Map((await all("SELECT key_id, model, latency_ms FROM hive_health WHERE latency_ms IS NOT NULL").catch(() => [])).map((h) => [`${h.key_id}|${h.model}`, Number(h.latency_ms)]));
   const out = [];
   for (const r of rows) {
     if (exclude.keys?.includes(r.id)) continue;
@@ -116,7 +119,10 @@ async function candidates({ kind = "coding", needTools = true, machineId = null,
       // Save plan windows for real work: light jobs prefer other free options.
       if (v.subscription && LIGHT.has(kind)) q -= 8;
       if (r.status === "error") q -= 5;
-      out.push({ key: r, vendor: v.id, vendorLabel: v.label, model, card, cost, quality: Math.round(q), measured: adj.stat, priority: Number(r.priority || 0) });
+      // Failing right now (rate-limited, erroring, out of credit): only used when nothing else can take the work.
+      const cool = await health.cooling(r.id, model);
+      if (cool) q -= 60;
+      out.push({ key: r, vendor: v.id, vendorLabel: v.label, model, card, cost, quality: Math.round(q), measured: adj.stat, priority: Number(r.priority || 0), cooling: cool || null, latencyMs: lat.get(`${r.id}|${model}`) ?? null });
     }
   }
   return out;
@@ -127,8 +133,30 @@ function rank(list, kind, preference = "balanced") {
   const bar = MIN_QUALITY[kind] ?? 60;
   const good = list.filter((c) => c.quality >= bar);
   const pool = good.length ? good : list;
+  // Speed counts in every mode: the card's speed (1–5) and, once known, the
+  // measured response time on this key (slow answers cost minutes of waiting).
+  const speed = (c) => {
+    const card = ((c.card.speed ?? 3) - 3) * 3;
+    const ms = c.latencyMs;
+    const measured = ms == null ? 0 : ms < 1500 ? 4 : ms < 4000 ? 1 : -Math.min(20, (ms - 4000) / 1000);
+    return card + measured;
+  };
+  // Quality first, always: only models that clear the bar for this kind of
+  // work are considered, and among those, models clearly better than the
+  // rest stay ahead. Speed (and cost) decide between models of similar
+  // quality — a fast model never wins by being worse.
+  const best = Math.max(...pool.map((c) => c.quality));
+  const band = preference === "quality" ? 3 : preference === "fast" ? 8 : 6; // "similar quality" = within this many points of the best
   const score = (c) => {
-    const base = preference === "quality" ? c.quality * 2 - COST_RANK[c.cost] * 3 : preference === "savings" ? c.quality - COST_RANK[c.cost] * 30 : c.quality - COST_RANK[c.cost] * 8;
+    const gap = Math.max(0, best - band - c.quality); // how far below the top band
+    const base =
+      preference === "quality"
+        ? c.quality * 2 - COST_RANK[c.cost] * 3 + speed(c) * 0.5
+        : preference === "savings"
+          ? c.quality - COST_RANK[c.cost] * 30 + speed(c)
+          : preference === "fast"
+            ? c.quality - COST_RANK[c.cost] * 4 + speed(c) * 2 - gap * 6
+            : c.quality - COST_RANK[c.cost] * 8 + speed(c) - gap * 2;
     return base + c.priority; // staff can nudge keys (Keys → priority)
   };
   return { ranked: [...pool].sort((a, b) => score(b) - score(a) || b.quality - a.quality), meetsBar: good.length > 0, bar };

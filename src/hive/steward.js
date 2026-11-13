@@ -24,6 +24,31 @@ async function config(projectId) {
   return { enabled: !!p?.enabled, triggerTokens: Number(p?.config?.triggerTokens) || 24000, keepTokens: Number(p?.config?.keepTokens) || 8000, maxToolChars: Number(p?.config?.maxToolChars) || 12000 };
 }
 
+const refreshing = new Set();
+
+/** Write (or extend) a conversation's running summary with a free model. */
+async function refreshSummary(convo, messages, keepFrom, prev, username) {
+  const from = prev ? prev.upto : 0;
+  const slice = messages
+    .slice(from, keepFrom)
+    .map((m) => `${m.role === "user" ? "USER" : "ASSISTANT"}: ${String(m.text || "").slice(0, 12000)}${m.attachments?.length ? ` [${m.attachments.length} attachment(s)]` : ""}`)
+    .join("\n\n");
+  const llm = require("./llm");
+  const r = await llm.ask({
+    kind: "reading",
+    preference: "fast",
+    freeOnly: true,
+    username,
+    projectId: convo.project_id || "",
+    system:
+      "You maintain the running memory of a long conversation so it can continue without re-reading everything. Write a dense factual summary: goals, decisions, facts, names, numbers, code identifiers, file names, open questions and what was promised next. No pleasantries. Markdown bullets. At most ~900 words.",
+    prompt: `${prev ? `Summary so far:\n${prev.text}\n\n` : ""}New turns to fold in:\n\n${slice.slice(0, 120000)}\n\nWrite the updated summary.`,
+  });
+  const summary = { upto: keepFrom, text: r.text.trim().slice(0, 9000), model: r.model, at: Date.now() };
+  await run("UPDATE hive_convos SET summary_json=? WHERE id=?", [JSON.stringify(summary), convo.id]);
+  return summary;
+}
+
 /**
  * Fold older turns into a cached summary when the history is long.
  * messages: [{role:'user'|'assistant', text, attachments?}] (chat format).
@@ -44,33 +69,18 @@ async function compactHistory(convo, messages, { username = "hive" } = {}) {
   if (keepFrom < 2) return { messages, compacted: null };
 
   const cached = json(convo.summary_json, null);
-  let summary = cached && cached.upto <= keepFrom ? cached : null;
-  let model = summary?.model || null;
-  if (!summary || summary.upto < keepFrom) {
-    const from = summary ? summary.upto : 0;
-    const slice = messages
-      .slice(from, keepFrom)
-      .map((m) => `${m.role === "user" ? "USER" : "ASSISTANT"}: ${String(m.text || "").slice(0, 12000)}${m.attachments?.length ? ` [${m.attachments.length} attachment(s)]` : ""}`)
-      .join("\n\n");
-    const llm = require("./llm");
-    try {
-      const r = await llm.ask({
-        kind: "reading",
-        preference: "savings",
-        freeOnly: true,
-        username,
-        projectId: convo.project_id || "",
-        system:
-          "You maintain the running memory of a long conversation so it can continue without re-reading everything. Write a dense factual summary: goals, decisions, facts, names, numbers, code identifiers, file names, open questions and what was promised next. No pleasantries. Markdown bullets. At most ~900 words.",
-        prompt: `${summary ? `Summary so far:\n${summary.text}\n\n` : ""}New turns to fold in:\n\n${slice.slice(0, 120000)}\n\nWrite the updated summary.`,
-      });
-      model = r.model;
-      summary = { upto: keepFrom, text: r.text.trim().slice(0, 9000), model, at: Date.now() };
-      await run("UPDATE hive_convos SET summary_json=? WHERE id=?", [JSON.stringify(summary), convo.id]);
-    } catch {
-      return { messages, compacted: null }; // never block a reply on housekeeping
-    }
+  // Never make the person wait for housekeeping: use the summary we already
+  // have, and refresh it in the background for the next message.
+  const summary = cached && cached.upto <= keepFrom && cached.upto >= 2 ? cached : null;
+  const stale = !summary || keepFrom - summary.upto >= 4;
+  if (stale && !refreshing.has(convo.id)) {
+    refreshing.add(convo.id);
+    refreshSummary(convo, messages, keepFrom, summary, username)
+      .catch(() => {})
+      .finally(() => refreshing.delete(convo.id));
   }
+  if (!summary) return { messages, compacted: null };
+  const model = summary.model || null;
   const recent = messages.slice(summary.upto);
   const out = [{ role: "user", text: `(Context from earlier in this conversation, summarised to save tokens)\n\n${summary.text}` }, { role: "assistant", text: "Got it — I have the earlier context." }, ...recent];
   const after = out.reduce((n, m) => n + msgTokens(m), 0);

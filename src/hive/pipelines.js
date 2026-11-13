@@ -98,7 +98,7 @@ function cleanStages(stages) {
       const mode = ["auto", "free", "specific"].includes(a?.mode) ? a.mode : "auto";
       const o = { mode };
       if (mode === "specific") Object.assign(o, { provider: String(a.provider || ""), model: a.model ? String(a.model).slice(0, 120) : undefined, keyId: a.keyId ? String(a.keyId) : "auto" });
-      if (["balanced", "quality", "savings"].includes(a?.preference)) o.preference = a.preference;
+      if (["balanced", "quality", "savings", "fast"].includes(a?.preference)) o.preference = a.preference;
       return o;
     });
     const gate = s?.gate && typeof s.gate === "object" ? { fixStage: String(s.gate.fixStage || "").slice(0, 40), maxLoops: Math.max(0, Math.min(5, Number(s.gate.maxLoops) || 1)) } : null;
