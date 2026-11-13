@@ -13,6 +13,10 @@ import {
   ArrowUp,
   Bot,
   BrainCircuit,
+  Clock3,
+  GitMerge,
+  HardDrive,
+  ShieldCheck,
   Check,
   ChevronDown,
   Coins,
@@ -73,6 +77,20 @@ const STEP: Record<string, { icon: typeof Bot; label: (i: Record<string, unknown
   WebFetch: { icon: Globe, label: (i) => `Read ${String(i.url ?? '').replace(/^https?:\/\//, '').slice(0, 40)}` },
   remember: { icon: BrainCircuit, label: () => 'Remembered that' },
   watch_session: { icon: Eye, label: () => 'Watching a session' },
+  ask_model: { icon: Sparkles, label: (i) => `Handed a ${String(i.kind || 'reading')} job to a cheap model` },
+  ship_session: { icon: Rocket, label: (i) => `Shipped “${String(i.title ?? '')}” as a pull request` },
+  pr_status: { icon: Activity, label: () => 'Checked the pull request' },
+  merge_when_green: { icon: GitMerge, label: () => 'Merge when CI is green' },
+  pending_approvals: { icon: ShieldCheck, label: () => 'Checked waiting commands' },
+  answer_approval: { icon: ShieldCheck, label: (i) => (i.approve ? 'Approved a command' : 'Denied a command') },
+  list_pipelines: { icon: Network, label: () => 'Looked at pipelines' },
+  run_pipeline: { icon: Play, label: () => 'Ran a pipeline' },
+  list_automations: { icon: Clock3, label: () => 'Looked at automations' },
+  create_automation: { icon: Clock3, label: (i) => `Scheduled “${String(i.title ?? '')}”` },
+  drive_list: { icon: HardDrive, label: () => 'Looked in Drive' },
+  drive_read: { icon: HardDrive, label: (i) => `Read ${String(i.path ?? '')}` },
+  drive_write: { icon: HardDrive, label: (i) => `Saved ${String(i.path ?? '')}` },
+  change_setting: { icon: Settings2, label: () => 'Changed a Hive setting' },
 }
 
 const SUGGESTIONS = [
@@ -130,7 +148,7 @@ function Steps({ steps, live }: { steps: CopilotStep[]; live?: boolean }) {
   )
 }
 
-function BrainPill({ brain, settings, onChange, compact }: { brain: CopilotBrain | null; settings: CopilotSettings | null; onChange: (s: CopilotSettings) => void; compact?: boolean }) {
+function BrainPill({ brain, settings, onChange, compact, admin }: { brain: CopilotBrain | null; settings: CopilotSettings | null; onChange: (s: CopilotSettings) => void; compact?: boolean; admin: boolean }) {
   const { boot } = useHive()
   const [spec, setSpec] = useState<AgentSpec | null>(null)
   const label = !brain ? '…' : brain.error ? 'No brain connected' : brain.kind === 'cli' ? 'Claude · your plan' : brain.name || brain.model
@@ -176,6 +194,33 @@ function BrainPill({ brain, settings, onChange, compact }: { brain: CopilotBrain
           </div>
         )}
         {brain?.error && <p className="mt-2 rounded-lg bg-state-error/[0.07] p-2 text-[11.5px] text-text-secondary">{brain.error}</p>}
+        <div className="mt-3 border-t hive-line pt-3">
+          <div className="mb-2 text-[12.5px] font-semibold">How much it does on its own</div>
+          <div className="flex gap-1 rounded-xl bg-text-primary/[0.05] p-1 text-[12px]">
+            {(
+              [
+                ['autopilot', 'Autopilot'],
+                ['assist', 'Assist'],
+              ] as const
+            ).map(([k, l]) => (
+              <button key={k} type="button" onClick={() => settings && onChange({ ...settings, autonomy: k })} className={cn('h-8 flex-1 rounded-lg', (settings?.autonomy ?? 'autopilot') === k ? 'bg-bg-surface font-medium shadow-sm' : 'text-text-muted')}>
+                {l}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1.5 text-[11.5px] text-text-muted">
+            {(settings?.autonomy ?? 'autopilot') === 'autopilot'
+              ? 'Acts for you: starts work, approves safe commands, reviews, fixes and ships verified work as pull requests. Never approves destructive commands.'
+              : 'Starts and reviews work, but asks you before shipping, approving commands, scheduling or changing settings.'}
+          </p>
+          <label className={cn('mt-2.5 flex items-start gap-2 rounded-xl p-2', admin ? 'cursor-pointer hover:bg-text-primary/[0.04]' : 'opacity-60')}>
+            <input type="checkbox" disabled={!admin} checked={!!settings?.canMerge} onChange={(e) => settings && onChange({ ...settings, canMerge: e.target.checked })} className="mt-0.5 accent-[var(--color-accent-brand)]" />
+            <span>
+              <span className="block text-[12.5px] font-medium">Let it merge when CI is green</span>
+              <span className="block text-[11.5px] text-text-muted">Merging to the main branch can deploy the live site. {admin ? 'Off until you turn it on.' : 'Only admins can turn this on.'}</span>
+            </span>
+          </label>
+        </div>
       </PopoverContent>
     </Popover>
   )
@@ -187,6 +232,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
   const [msgs, setMsgs] = useState<CopilotMsg[] | null>(null)
   const [settings, setSettings] = useState<CopilotSettings | null>(null)
   const [brain, setBrain] = useState<CopilotBrain | null>(null)
+  const [admin, setAdmin] = useState(false)
   const [text, setText] = useState('')
   const [pending, setPending] = useState<{ text: string; steps: CopilotStep[]; note?: string; brain?: CopilotBrain } | null>(null)
   const ctl = useRef<AbortController | null>(null)
@@ -200,6 +246,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
       setMsgs(r.messages)
       setSettings(r.settings)
       setBrain(r.brain)
+      setAdmin(!!r.admin)
     } catch (e) {
       toast.error(errMsg(e))
     }
@@ -262,6 +309,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
     try {
       const r = await hiveApi.copilotSettings(s)
       setBrain(r.brain)
+      setSettings(r.settings)
     } catch (e) {
       toast.error(errMsg(e))
     }
@@ -270,7 +318,10 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className={cn('flex items-center gap-2 border-b hive-line', compact ? 'px-3 py-2' : 'px-4 py-2.5 sm:px-6')}>
-        <BrainPill brain={brain} settings={settings} onChange={changeBrain} compact={compact} />
+        <BrainPill brain={brain} settings={settings} onChange={changeBrain} compact={compact} admin={admin} />
+        {settings && (
+          <span className={cn('hidden h-6 items-center rounded-full px-2 text-[11px] font-medium sm:inline-flex', settings.autonomy === 'assist' ? 'bg-state-info/12 text-state-info' : 'bg-state-success/12 text-state-success')}>{settings.autonomy === 'assist' ? 'Assist' : 'Autopilot'}</span>
+        )}
         <span className="ml-auto" />
         {!!msgs?.length && (
           <Tooltip label="Start fresh (memory is kept)">
@@ -390,7 +441,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
             </button>
           )}
         </form>
-        {!compact && <p className="mx-auto mt-1.5 max-w-[820px] text-center text-[11px] text-text-muted">The Copilot plans, delegates and reviews; it never ships without you. Sessions it starts are reviewed automatically when they finish.</p>}
+        {!compact && <p className="mx-auto mt-1.5 max-w-[820px] text-center text-[11px] text-text-muted">The Copilot plans, delegates and reviews. On Autopilot it ships verified work as pull requests; it merges only if you allow it. Sessions it starts are reviewed automatically.</p>}
       </div>
     </div>
   )

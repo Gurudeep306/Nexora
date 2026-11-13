@@ -852,6 +852,10 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
   if (!hub.bus.__copilot) {
     hub.bus.__copilot = true;
     hub.bus.on("task", (t) => copilot.onTask(t, copilotDeps(null)).catch((e) => console.error("[hive copilot]", e.message)));
+    // Autopilot: safe command approvals in sessions the Copilot watches are answered for you.
+    hub.bus.on("approval", (a) => copilot.onApproval(a).catch((e) => console.error("[hive copilot]", e.message)));
+    // Queued merges go through once CI is green.
+    setInterval(() => copilot.mergeTick().catch((e) => console.error("[hive copilot merge]", e.message)), 2 * 60_000).unref?.();
   }
   router.post("/api/hive-mcp", (req, res) => {
     copilot.mcpHandle(req, res, copilotDeps(null)).catch((e) => res.status(500).json({ jsonrpc: "2.0", id: req.body?.id ?? null, error: { code: -32603, message: e.message } }));
@@ -859,12 +863,16 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
   router.get("/api/hive-mcp", (_req, res) => res.status(405).end());
   router.get(
     "/api/hive/copilot",
-    h(async (req, res) => res.json({ ok: true, messages: await copilot.messages(req.hiveUser), settings: await copilot.brainSettings(req.hiveUser), brain: await copilot.currentBrain(req.hiveUser) })),
+    h(async (req, res) => {
+      await copilot.noteAdmin(req.hiveUser, isAdmin(req));
+      res.json({ ok: true, messages: await copilot.messages(req.hiveUser), settings: await copilot.brainSettings(req.hiveUser), brain: await copilot.currentBrain(req.hiveUser), admin: isAdmin(req) });
+    }),
   );
   router.post(
     "/api/hive/copilot",
     h(async (req, res) => {
       const text = str(req.body?.text, "message", { max: 20000 });
+      await copilot.noteAdmin(req.hiveUser, isAdmin(req));
       res.status(200).set({ "Content-Type": "application/x-ndjson; charset=utf-8", "Cache-Control": "no-store", "X-Accel-Buffering": "no" });
       res.flushHeaders?.();
       let open = true;
@@ -898,7 +906,9 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
   router.put(
     "/api/hive/copilot/settings",
     h(async (req, res) => {
-      const s = await copilot.saveSettings(req.hiveUser, { brain: req.body?.brain, model: req.body?.model });
+      const b = req.body || {};
+      if (b.canMerge && !isAdmin(req)) throw new BadInput("Only admins can let the Copilot merge", 403);
+      const s = await copilot.saveSettings(req.hiveUser, { brain: b.brain, model: b.model, autonomy: b.autonomy, canMerge: b.canMerge, admin: isAdmin(req) });
       res.json({ ok: true, settings: s, brain: await copilot.currentBrain(req.hiveUser) });
     }),
   );

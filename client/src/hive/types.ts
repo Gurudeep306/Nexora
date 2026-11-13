@@ -973,4 +973,6 @@ export interface CopilotBrain {
 export interface CopilotSettings {
   brain: 'auto' | 'claude_code' | 'api'
   model: string
+  autonomy?: 'autopilot' | 'assist'
+  canMerge?: boolean
 }

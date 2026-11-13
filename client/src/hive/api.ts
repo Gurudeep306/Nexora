@@ -255,9 +255,9 @@ export const hiveApi = {
   startDispatch: (id: string) => api.post<Ok<{ dispatch: Dispatch }>>(`/api/hive/dispatches/${id}/start`, {}, { timeoutMs: 120000 }),
   stopDispatch: (id: string) => api.post<Ok<{ stopped: boolean }>>(`/api/hive/dispatches/${id}/stop`, {}),
 
-  copilot: () => api.get<Ok<{ messages: CopilotMsg[]; settings: CopilotSettings; brain: CopilotBrain }>>('/api/hive/copilot'),
+  copilot: () => api.get<Ok<{ messages: CopilotMsg[]; settings: CopilotSettings; brain: CopilotBrain; admin: boolean }>>('/api/hive/copilot'),
   clearCopilot: () => api.delete<Ok<object>>('/api/hive/copilot'),
-  copilotSettings: (body: CopilotSettings) => api.put<Ok<{ settings: CopilotSettings; brain: CopilotBrain }>>('/api/hive/copilot/settings', body),
+  copilotSettings: (body: Partial<CopilotSettings>) => api.put<Ok<{ settings: CopilotSettings; brain: CopilotBrain }>>('/api/hive/copilot/settings', body),
   sendCopilot: async (text: string, onEvent: (type: string, data: Record<string, unknown>) => void, signal?: AbortSignal) => {
     const res = await fetch(`${API_BASE}/api/hive/copilot`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }), signal })
     if (!res.ok || !res.body) {
