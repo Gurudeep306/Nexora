@@ -865,7 +865,7 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     "/api/hive/copilot",
     h(async (req, res) => {
       await copilot.noteAdmin(req.hiveUser, isAdmin(req));
-      res.json({ ok: true, messages: await copilot.messages(req.hiveUser), settings: await copilot.brainSettings(req.hiveUser), brain: await copilot.currentBrain(req.hiveUser), admin: isAdmin(req) });
+      res.json({ ok: true, messages: await copilot.messages(req.hiveUser), settings: await copilot.brainSettings(req.hiveUser), brain: await copilot.currentBrain(req.hiveUser), admin: isAdmin(req), active: await copilot.activeWork(req.hiveUser) });
     }),
   );
   router.post(
@@ -895,6 +895,10 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
         if (open) res.end();
       }
     }),
+  );
+  router.get(
+    "/api/hive/copilot/active",
+    h(async (req, res) => res.json({ ok: true, active: await copilot.activeWork(req.hiveUser) })),
   );
   router.delete(
     "/api/hive/copilot",

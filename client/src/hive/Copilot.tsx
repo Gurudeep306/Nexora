@@ -6,7 +6,7 @@
    every Hive page.
    ──────────────────────────────────────────────────────────────────────── */
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Activity,
@@ -50,7 +50,7 @@ import { AgentAvatar, AgentMark } from './agents'
 import { hiveApi } from './api'
 import { errMsg } from './Improve'
 import { useHive } from './store'
-import type { AgentSpec, CopilotBrain, CopilotMsg, CopilotSettings, CopilotStep } from './types'
+import type { AgentSpec, CopilotBrain, CopilotMsg, CopilotSettings, CopilotStep, CopilotWork } from './types'
 import { timeAgo, vendorName } from './ui'
 
 const EASE = [0.2, 0.8, 0.2, 1] as const
@@ -101,6 +101,47 @@ const SUGGESTIONS = [
   { icon: HeartPulse, text: 'Which agents are failing and why? Test them all.' },
   { icon: Coins, text: 'How much did we spend this month, and where can we save without losing quality?' },
 ]
+
+const QUICK: { label: string; icon: typeof Bot; send?: string; fill?: string }[] = [
+  { label: 'Status', icon: Eye, send: "Give me a short status: what's running, what finished, what needs me." },
+  { label: 'Build something', icon: Network, fill: 'Build this, using free models where they are good enough: ' },
+  { label: 'Review the last session', icon: Gavel, send: 'Review the most recent session: is it really done? Fix what is missing.' },
+  { label: 'Free models', icon: Sparkles, send: 'Which free models are connected, which are failing, and which free sources should I add next?' },
+  { label: 'Save tokens', icon: Coins, send: 'Where am I spending tokens, and what should change to spend less without losing quality?' },
+]
+
+const WORK_TONE: Record<string, string> = { running: 'var(--color-accent-brand)', queued: 'var(--color-text-muted)', review: 'var(--color-state-success)', pr_open: 'var(--color-state-info)', merged: 'oklch(62% 0.16 300)', committed: 'var(--color-state-info)', failed: 'var(--color-state-error)', stopped: 'var(--color-text-muted)' }
+const WORK_LABEL: Record<string, string> = { running: 'working', queued: 'starting', review: 'ready for review', pr_open: 'PR open', merged: 'merged', committed: 'committed', failed: 'failed', stopped: 'stopped' }
+
+/** What the Copilot is running for you right now. */
+function ActiveWork({ items, compact }: { items: CopilotWork[]; compact?: boolean }) {
+  return (
+    <div className={cn('hive-scroll flex shrink-0 gap-2 overflow-x-auto border-b hive-line', compact ? 'px-3 py-2' : 'px-4 py-2.5 sm:px-6')}>
+      <span className="flex shrink-0 items-center text-[10.5px] font-semibold uppercase tracking-[0.1em] text-text-muted">On it</span>
+      {items.map((w) => {
+        const tone = WORK_TONE[w.status] ?? 'var(--color-text-muted)'
+        const live = w.status === 'running' || w.status === 'queued'
+        return (
+          <Link key={w.id} to={`/hive/p/${w.projectId}/t/${w.id}`} className="flex max-w-[260px] shrink-0 items-center gap-2 rounded-xl border hive-line bg-bg-surface/60 py-1 pl-1.5 pr-2.5 hover:border-[var(--hive-line-strong)]">
+            <span className="flex -space-x-1.5">
+              {w.agents.slice(0, 3).map((a, i) => (
+                <AgentAvatar key={i} provider={a.provider} model={a.model} state={a.status === 'running' ? 'editing' : a.status === 'done' ? 'done' : a.status === 'failed' ? 'failed' : 'queued'} size={22} />
+              ))}
+            </span>
+            <span className="min-w-0">
+              <span className="block truncate text-[12px] font-medium">{w.title}</span>
+              <span className="flex items-center gap-1 text-[10.5px]" style={{ color: tone }}>
+                <span className={cn('size-1.5 rounded-full', live && 'hive-dot-run')} style={{ background: tone }} />
+                {WORK_LABEL[w.status] ?? w.status}
+                {w.reviewed && !live ? ' · reviewed' : ''}
+              </span>
+            </span>
+          </Link>
+        )
+      })}
+    </div>
+  )
+}
 
 /** A link to whatever an action produced (session, team plan). */
 function linkOf(s: CopilotStep): { to: string; label: string } | null {
@@ -233,6 +274,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
   const [settings, setSettings] = useState<CopilotSettings | null>(null)
   const [brain, setBrain] = useState<CopilotBrain | null>(null)
   const [admin, setAdmin] = useState(false)
+  const [active, setActive] = useState<CopilotWork[]>([])
   const [text, setText] = useState('')
   const [pending, setPending] = useState<{ text: string; steps: CopilotStep[]; note?: string; brain?: CopilotBrain } | null>(null)
   const ctl = useRef<AbortController | null>(null)
@@ -247,6 +289,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
       setSettings(r.settings)
       setBrain(r.brain)
       setAdmin(!!r.admin)
+      setActive(r.active ?? [])
     } catch (e) {
       toast.error(errMsg(e))
     }
@@ -263,6 +306,10 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
       }) as never),
     [on, me],
   )
+  useEffect(() => {
+    const refresh = () => hiveApi.copilotActive().then((r) => setActive(r.active)).catch(() => {})
+    return on('task', refresh as never)
+  }, [on])
   useEffect(() => {
     end.current?.scrollIntoView({ block: 'end' })
   }, [msgs?.length, pending?.text.length, pending?.steps.length])
@@ -304,6 +351,19 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
     }
   }
 
+  // A message handed over from Mission control: send it once the thread has loaded.
+  const location = useLocation()
+  const navigate = useNavigate()
+  const handed = useRef(false)
+  useEffect(() => {
+    const st = location.state as { send?: string } | null
+    if (compact || !st?.send || handed.current || !msgs) return
+    handed.current = true
+    navigate(location.pathname, { replace: true, state: null })
+    send(st.send)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [msgs])
+
   const changeBrain = async (s: CopilotSettings) => {
     setSettings(s)
     try {
@@ -336,6 +396,8 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
           </Tooltip>
         )}
       </div>
+
+      {active.length > 0 && <ActiveWork items={active} compact={compact} />}
 
       <div className="hive-scroll min-h-0 flex-1 overflow-y-auto">
         <div className={cn('mx-auto w-full', compact ? 'px-3 py-4' : 'max-w-[820px] px-4 py-6 sm:px-6')}>
@@ -409,12 +471,21 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
       </div>
 
       <div className={cn('shrink-0', compact ? 'p-2.5' : 'px-4 pb-4 sm:px-6')}>
+        {!!msgs?.length && !pending && (
+          <div className={cn('hive-scroll mx-auto mb-2 flex gap-1.5 overflow-x-auto', !compact && 'max-w-[820px]')}>
+            {QUICK.map((q) => (
+              <button key={q.label} type="button" onClick={() => (q.send ? send(q.send) : setText(q.fill ?? ''))} className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full border hive-line bg-bg-surface/60 px-2.5 text-[12px] text-text-secondary hover:border-accent-brand/40 hover:text-text-primary">
+                <q.icon className="size-3.5 text-accent-brand" /> {q.label}
+              </button>
+            ))}
+          </div>
+        )}
         <form
           onSubmit={(e) => {
             e.preventDefault()
             send(text)
           }}
-          className={cn('hive-composer mx-auto flex items-end gap-2 rounded-[20px] p-2 pl-3.5', !compact && 'max-w-[820px]')}
+          className={cn('hive-composer hive-ring mx-auto flex items-end gap-2 rounded-[20px] p-2 pl-3.5', !compact && 'max-w-[820px]')}
         >
           <textarea
             ref={ta}
