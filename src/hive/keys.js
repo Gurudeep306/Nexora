@@ -364,6 +364,47 @@ async function setPlanUsage(keyId, info) {
   await run("UPDATE hive_keys SET rl_json=?, rl_at=? WHERE id=?", [JSON.stringify(out), now(), keyId]);
 }
 
+/**
+ * Ask Anthropic for a Claude plan's usage directly (the numbers Claude Code's
+ * /usage shows), so every connected Claude account has its 5-hour and weekly
+ * bars even before it has run any work. Needs the account's setup token.
+ * Returns the windows, or { error } when the account can't be asked.
+ */
+async function refreshPlanUsage(keyId) {
+  const row = await keyRow(keyId);
+  if (!row) return { error: "Key not found" };
+  if (keyVendor(row) !== "claude_code") return { error: "Only Claude plans report usage this way" };
+  const token = optionalSecret(row);
+  if (!token) return { error: "This account uses the machine's own login — its usage appears after its first run (or add its setup token)" };
+  const base = process.env.HIVE_ANTHROPIC_API || "https://api.anthropic.com";
+  let res;
+  try {
+    res = await fetch(`${base}/api/oauth/usage`, { headers: { Authorization: `Bearer ${token}`, "anthropic-beta": "oauth-2025-04-20", Accept: "application/json" }, signal: AbortSignal.timeout(15000) });
+  } catch (e) {
+    return { error: `Couldn't reach Anthropic: ${e.message}` };
+  }
+  if (!res.ok) return { error: `Anthropic answered ${res.status} — usage fills in after this account's first run` };
+  const j = await res.json().catch(() => null);
+  if (!j || typeof j !== "object") return { error: "Unexpected answer from Anthropic" };
+  // { five_hour: { utilization: 0-100, resets_at }, seven_day: {…}, seven_day_opus: {…}, … }
+  const unifiedWindows = {};
+  for (const [k, w] of Object.entries(j)) {
+    if (!w || typeof w !== "object" || w.utilization == null) continue;
+    unifiedWindows[k] = { utilization: Math.max(0, Math.min(1, Number(w.utilization) / 100)), resetsAt: w.resets_at ? Date.parse(w.resets_at) : null, status: Number(w.utilization) >= 100 ? "rejected" : null };
+  }
+  if (!Object.keys(unifiedWindows).length) return { error: "No usage windows in the answer" };
+  await setPlanUsage(keyId, { unifiedWindows });
+  return { windows: unifiedWindows };
+}
+
+/** Refresh every connected Claude account's plan usage (a few seconds each, no plan usage spent). */
+async function refreshAllPlanUsage() {
+  const rows = (await all("SELECT * FROM hive_keys WHERE disabled=0")).filter((r) => keyVendor(r) === "claude_code");
+  const out = [];
+  for (const r of rows) out.push({ keyId: r.id, ...(await refreshPlanUsage(r.id).catch((e) => ({ error: e.message }))) });
+  return out;
+}
+
 /** Is there budget left on this key? */
 async function hasBudget(row, reserve = 0) {
   if (row.disabled) return false;
@@ -484,4 +525,4 @@ async function refreshAll() {
   return fresh;
 }
 
-module.exports = { workingModels, saveVerified, blockModel, setPlanUsage, explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };
+module.exports = { refreshPlanUsage, refreshAllPlanUsage, workingModels, saveVerified, blockModel, setPlanUsage, explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };

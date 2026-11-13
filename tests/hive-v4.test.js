@@ -298,6 +298,13 @@ test("any number of Claude accounts can join one machine; numbered names; the sa
   const dup = await call("POST", "/api/hive/subscriptions", { provider: "claude_code", machineId: m.id, token: "sk-ant-oat01-test-account-2-xxxxxxxxxxxx" });
   assert.equal(dup.status, 409);
   assert.match(dup.body.error, /already connected/);
+  // Each Claude account shows its own plan usage right away (asked from Anthropic, not only after a run).
+  const k1 = (await ok("GET", "/api/hive/bootstrap")).keys.find((k) => k.id === added[0]);
+  assert.equal(k1.rateLimit?.plan, true, JSON.stringify(k1.rateLimit));
+  assert.equal(Math.round(k1.rateLimit.windows.five_hour.utilization * 100), 42);
+  assert.equal(Math.round(k1.rateLimit.windows.seven_day.utilization * 1000), 135);
+  const again = await ok("POST", "/api/hive/subscriptions/usage", {});
+  assert.ok(again.results.filter((r) => added.includes(r.keyId)).every((r) => r.windows?.five_hour), JSON.stringify(again.results));
   for (const id of added) await ok("DELETE", `/api/hive/keys/${id}`);
 });
 

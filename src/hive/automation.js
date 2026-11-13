@@ -213,6 +213,9 @@ function startLoops(deps) {
   // Agent health: probe free and subscription models a few times a day (a tiny "reply OK" call).
   setTimeout(safe(() => require("./health").probeAll()), 3 * 60_000).unref?.();
   setInterval(safe(() => require("./health").probeAll()), 4 * 60 * 60_000).unref?.();
+  // Claude plans: 5-hour and weekly usage for every connected account, every 10 minutes.
+  setTimeout(safe(() => require("./keys").refreshAllPlanUsage()), 60_000).unref?.();
+  setInterval(safe(() => require("./keys").refreshAllPlanUsage()), 10 * 60_000).unref?.();
   // Every free key's whole model list is re-tested daily (new models appear, old ones retire).
   setTimeout(safe(() => require("./health").verifyAll({ olderThanMs: 20 * 60 * 60_000 })), 5 * 60_000).unref?.();
   setInterval(safe(() => require("./health").verifyAll({ olderThanMs: 20 * 60 * 60_000 })), 60 * 60_000).unref?.();

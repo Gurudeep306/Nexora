@@ -320,7 +320,19 @@ function nextUtcMidnight() {
 export function LimitBar({ k, compact = false }: { k: HiveKey; compact?: boolean }) {
   const rl = k.rateLimit
   const plan = (rl as unknown as { plan?: boolean; windows?: Record<string, PlanWindow> } | null)?.plan ? (rl as unknown as { windows: Record<string, PlanWindow> }).windows : null
-  if (plan) return <PlanWindows windows={plan} compact={compact} />
+  if (plan && Object.keys(plan).length) return <PlanWindows windows={plan} compact={compact} />
+  if (k.subscription) {
+    return (
+      <div className={cn('text-text-muted', compact ? 'text-[11px]' : 'text-[11.5px]')}>
+        <div className="mb-1 flex justify-between gap-2">
+          <span>Plan usage</span>
+          <span className="text-text-secondary">not measured yet</span>
+        </div>
+        <div className="h-1.5 rounded-full bg-text-primary/[0.07]" />
+        <div className="mt-1 text-[10.5px]">{k.provider === 'claude_code' ? 'Press Refresh usage, or it fills in after this account’s first run' : 'Fills in after this account’s first run'}</div>
+      </div>
+    )
+  }
   const fresh = !!rl && !!k.rateLimitAt && Date.now() - k.rateLimitAt < 10 * 60_000 && !(rl.resetAt && Date.parse(rl.resetAt) < Date.now())
   let label = ''
   let left = ''
