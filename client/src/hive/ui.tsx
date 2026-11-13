@@ -44,6 +44,7 @@ const VENDOR: Record<string, { name: string; mark: string; hue: number; chroma?:
   minimax: { name: 'MiniMax', mark: 'Mx', hue: 350 },
   upstage: { name: 'Upstage Solar', mark: 'Up', hue: 60 },
   ollama_cloud: { name: 'Ollama Cloud', mark: 'OC', hue: 0, chroma: 0.01 },
+  oneaiapikey: { name: 'OneAIAPIKey', mark: '1A', hue: 265 },
   farm: { name: 'Your GPU farm', mark: 'GPU', hue: 160, chroma: 0.12 },
   opencode_zen: { name: 'OpenCode Zen', mark: 'Zn', hue: 210 },
   kilo: { name: 'Kilo Gateway', mark: 'Ki', hue: 120 },
