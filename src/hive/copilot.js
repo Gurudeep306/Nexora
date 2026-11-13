@@ -125,13 +125,17 @@ async function sessionDetail(taskId) {
   };
 }
 
-async function sessionDiff(taskId, path) {
+async function sessionDiff(taskId, path, { full = false, username = "hive" } = {}) {
   const runner = require("./runner");
   const tools = require("./tools");
   const ctx = await runner.taskContext(taskId);
   const ws = runner.workspaceOf(ctx, "main");
   const r = await tools.execute("view_changes", path ? { path } : {}, { ws, agent: { name: "copilot" }, maxLines: 2000 });
-  return clip(r.content, 30000);
+  const text = String(r.content || "");
+  // Long diffs are read by a free model first, so the Copilot's own context stays small.
+  if (full || path || text.length < 9000) return clip(text, 30000);
+  const s = await cheap({ kind: "review", username, prompt: `Summarise this code change for a lead engineer who must judge it. Per file: what changed and why it matters. Then list anything that looks wrong, risky, missing (tests, error handling, edge cases) or unrelated to the request. Be specific (file:line).\n\n${text.slice(0, 150000)}` }).catch(() => null);
+  return s ? `Summary by ${s.model} (call with full=true or a path for exact lines):\n${s.text}` : clip(text, 30000);
 }
 
 const TOOLS = {
@@ -151,9 +155,9 @@ const TOOLS = {
     run: (i) => sessionDetail(i.taskId),
   },
   session_diff: {
-    description: "The actual code changes a session made (unified diff), optionally for one file. Read this before judging work.",
-    schema: obj({ taskId: str("Session id"), path: str("Optional file path") }, ["taskId"]),
-    run: (i) => sessionDiff(i.taskId, i.path),
+    description: "The code changes a session made. Big diffs come back as a review summary written by a free model (saves tokens); pass a path or full=true for exact lines. Read this before judging work.",
+    schema: obj({ taskId: str("Session id"), path: str("Optional file path"), full: bool("Exact diff instead of a summary") }, ["taskId"]),
+    run: (i, ctx) => sessionDiff(i.taskId, i.path, { full: !!i.full, username: ctx.username }),
   },
   start_session: {
     description: `Start a session in a project with one agent (or several to compare). Write a precise, self-contained prompt with acceptance criteria. ${AGENT_HINT}`,
@@ -288,6 +292,235 @@ const TOOLS = {
   },
 };
 
+/* ── autonomy: the Copilot acts for you ─────────────────────────────── */
+const DANGEROUS = /\brm\s+-[a-z]*r[a-z]*f?\s+(\/|~|\$HOME|\*)(\s|$)|\bmkfs|\bdd\s+if=|:\(\)\s*\{|\bshutdown\b|\breboot\b|\bchmod\s+-R\s+777\s+\/|\bgit\s+push\s+.*--force|\bcurl\b[^|]*\|\s*(sudo\s+)?(ba)?sh|\bDROP\s+(TABLE|DATABASE)\b/i;
+
+function needs(ctx, what) {
+  if (what === "act" && ctx.autonomy === "assist") throw new Error("You're in Assist mode — ask the person to confirm this, or they can switch the Copilot to Autopilot.");
+  if (what === "merge") {
+    if (!ctx.admin) throw new Error("Only admins can merge (merging can deploy the live site).");
+    if (!ctx.canMerge) throw new Error("Merging is switched off for the Copilot. The person can allow it in the Copilot's settings; until then, tell them the PR is ready to merge.");
+  }
+}
+
+async function ghToken(project) {
+  if (!project.github_id) return null;
+  const cred = await get("SELECT * FROM hive_github WHERE id=?", [project.github_id]);
+  return cred ? require("./vault").open(cred.token_enc) : null;
+}
+
+async function prChecks(taskId) {
+  const gh = require("./github");
+  const task = await get("SELECT * FROM hive_tasks WHERE id=?", [taskId]);
+  if (!task?.pr_number) throw new Error("This session has no pull request yet — ship it first");
+  const project = await require("./runner").effectiveProject(await get("SELECT * FROM hive_projects WHERE id=?", [task.project_id]), task);
+  const token = await ghToken(project);
+  const pr = await gh.pull(token, project.repo_owner, project.repo_name, task.pr_number);
+  const runs = await gh.checkRuns(token, project.repo_owner, project.repo_name, pr.head.sha).catch(() => null);
+  const list = (runs?.check_runs || []).map((c) => ({ name: c.name, status: c.status, conclusion: c.conclusion }));
+  const failed = list.some((c) => ["failure", "timed_out", "cancelled", "action_required"].includes(c.conclusion));
+  const pending = list.some((c) => c.status !== "completed");
+  return { task, project, token, pr, checks: list, state: !list.length ? "none" : failed ? "failure" : pending ? "pending" : "success" };
+}
+
+async function mergeNow(taskId, ctx) {
+  const gh = require("./github");
+  const runner = require("./runner");
+  const c = await prChecks(taskId);
+  if (c.pr.merged) return { merged: true, already: true, url: c.pr.html_url };
+  if (c.state !== "success") return { merged: false, reason: `CI is ${c.state}`, checks: c.checks };
+  const r = await gh.mergePull(c.token, c.project.repo_owner, c.project.repo_name, c.task.pr_number, { merge_method: "squash", commit_title: `${c.task.title} (#${c.task.pr_number})` });
+  await runner.setTask(taskId, { status: "merged", head_sha: r.sha });
+  await runner.event(taskId, null, "merge", { username: `copilot:${ctx.username}`, sha: r.sha, method: "squash", base: c.project.default_branch });
+  return { merged: true, sha: r.sha, url: c.pr.html_url };
+}
+
+/** Ask the cheapest capable model (free first) — the Copilot's way to save its own tokens. */
+async function cheap({ prompt, kind = "reading", system = "", username }) {
+  const r = await require("./llm").ask({ kind, preference: "savings", freeOnly: true, prompt, system, username });
+  return { text: r.text, model: r.model };
+}
+
+Object.assign(TOOLS, {
+  ask_model: {
+    description: "Delegate a side job to the cheapest model that can do it well (free first): summarise, draft, extract, translate, brainstorm, compare options. Use this instead of doing long reading or writing yourself — it saves tokens.",
+    schema: obj({ prompt: str("The full job, with any text it needs"), kind: { type: "string", enum: ["chat", "mechanical", "reading", "writing", "coding", "review", "hard"], description: "Kind of work (decides how strong the model must be)" } }, ["prompt"]),
+    run: async (i, ctx) => {
+      const r = await cheap({ prompt: String(i.prompt).slice(0, 60000), kind: i.kind || "reading", username: ctx.username });
+      return `(${r.model})\n${r.text}`;
+    },
+  },
+  ship_session: {
+    description: "Commit a finished session's changes to a branch and open a pull request (title and description written for reviewers). Do this only after you have reviewed the diff and it meets the request.",
+    schema: obj({ taskId: str("Session id"), title: str("PR title"), description: str("PR description: what changed and how it was verified"), openPr: bool("Open a pull request (default true)") }, ["taskId", "title"]),
+    run: async (i, ctx) => {
+      needs(ctx, "act");
+      const runner = require("./runner");
+      const { commitTask, commitOnMachine } = require("./commit");
+      const tctx = await runner.taskContext(i.taskId);
+      const args = { message: i.title, branch: tctx.task.branch, openPr: i.openPr !== false, prTitle: i.title, prBody: `${i.description || ""}\n\n_Shipped by Hive Copilot for @${ctx.username}_`, author: `copilot:${ctx.username}` };
+      const r = tctx.machine ? await commitOnMachine({ ...tctx, ...args }) : await commitTask({ ...tctx, variant: "main", ...args });
+      const fields = { head_sha: r.sha, branch: r.branch, status: r.pr ? "pr_open" : "committed" };
+      if (r.pr) Object.assign(fields, { pr_url: r.pr.url, pr_number: r.pr.number });
+      await runner.setTask(i.taskId, fields);
+      await runner.event(i.taskId, null, "commit", { username: `copilot:${ctx.username}`, ...r, message: i.title });
+      return { shipped: true, branch: r.branch, sha: r.sha, pullRequest: r.pr?.url || null, link: `/hive/p/${tctx.task.project_id}/t/${i.taskId}` };
+    },
+  },
+  pr_status: {
+    description: "CI checks and mergeability of a session's pull request.",
+    schema: obj({ taskId: str("Session id") }, ["taskId"]),
+    run: async (i) => {
+      const c = await prChecks(i.taskId);
+      return { url: c.pr.html_url, merged: c.pr.merged, mergeable: c.pr.mergeable, ci: c.state, checks: c.checks };
+    },
+  },
+  merge_when_green: {
+    description: "Merge a session's pull request as soon as its CI passes (checked every 2 minutes). Merging can deploy the live site, so this only works when the person has allowed merging.",
+    schema: obj({ taskId: str("Session id") }, ["taskId"]),
+    run: async (i, ctx) => {
+      needs(ctx, "merge");
+      const r = await mergeNow(i.taskId, ctx).catch((e) => ({ merged: false, reason: e.message }));
+      if (r.merged) return r;
+      await run("INSERT INTO hive_copilot_merge(task_id, username, created_at) VALUES(?,?,?) ON CONFLICT(task_id) DO NOTHING", [i.taskId, ctx.username, now()]);
+      return { queued: true, reason: r.reason, note: "I'll merge it when CI is green and tell you." };
+    },
+  },
+  pending_approvals: {
+    description: "Commands agents are waiting to run on machines (they need a yes or no).",
+    schema: obj({}),
+    run: async () => require("./machines").pendingApprovals().map((a) => ({ id: a.id, task: a.taskId, agent: a.agent, machine: a.machine, command: a.command })),
+  },
+  answer_approval: {
+    description: "Approve or deny a command an agent wants to run on a machine. Never approve destructive commands (deleting outside the project, force-pushing, wiping disks, piping downloads into a shell).",
+    schema: obj({ approvalId: str("Approval id"), approve: bool("true to run it"), note: str("Why (shown to the agent)") }, ["approvalId", "approve"]),
+    run: async (i, ctx) => {
+      needs(ctx, "act");
+      const m = require("./machines");
+      const a = m.pendingApprovals().find((x) => x.id === i.approvalId);
+      if (!a) return { answered: false, note: "Not waiting any more" };
+      if (i.approve && DANGEROUS.test(String(a.command || ""))) return { answered: false, note: "That command looks destructive — leaving it for a person to decide" };
+      return { answered: m.answerApproval(i.approvalId, { approved: !!i.approve, by: `copilot:${ctx.username}`, note: i.note }) };
+    },
+  },
+  list_pipelines: {
+    description: "Saved pipelines (relay teams of agents) of a project.",
+    schema: obj({ projectId: str("Project id") }, ["projectId"]),
+    run: async (i) => (await require("./pipelines").list((await projectOf(i.projectId)).id)).map((p) => ({ id: p.id, name: p.name, description: p.description, stages: (p.stages || []).map((s) => s.name) })),
+  },
+  run_pipeline: {
+    description: "Run a saved pipeline on a request.",
+    schema: obj({ pipelineId: str("Pipeline id"), request: str("What to do") }, ["pipelineId", "request"]),
+    run: async (i, ctx) => {
+      needs(ctx, "act");
+      const pl = await get("SELECT * FROM hive_pipelines WHERE id=?", [i.pipelineId]);
+      if (!pl) throw new Error("Pipeline not found");
+      const project = await projectOf(pl.project_id);
+      const r = await require("./pipelines").start({ pipeline: pl, project, request: i.request, username: ctx.username, createTask: ctx.createTask });
+      if (r.taskId) await watch(r.taskId, ctx.username);
+      return { started: true, runId: r.id, sessionId: r.taskId, link: r.taskId ? `/hive/p/${project.id}/t/${r.taskId}` : "/hive/pipelines" };
+    },
+  },
+  list_automations: {
+    description: "Recurring jobs (nightly fixes, dependency updates, reviews…).",
+    schema: obj({ projectId: str("Optional project id") }),
+    run: async (i) => (await require("./automation").listSchedules(i.projectId ? (await projectOf(i.projectId)).id : null)).map((x) => ({ id: x.id, project: x.projectId, title: x.title, every: x.every, hour: x.hour, enabled: x.enabled, nextRun: x.nextRun })),
+  },
+  create_automation: {
+    description: "Schedule recurring work for a project (runs overnight too). Hours are UTC.",
+    schema: obj({ projectId: str("Project id"), title: str("Title"), prompt: str("What should happen each time"), every: { type: "string", enum: ["hourly", "daily", "weekly", "weekdays"] }, hour: int("Hour (UTC) for daily/weekly"), agent: str("Who does it (default free)") }, ["projectId", "title", "prompt"]),
+    run: async (i, ctx) => {
+      needs(ctx, "act");
+      const p = await projectOf(i.projectId);
+      const sch = await require("./automation").saveSchedule({ projectId: p.id, title: i.title, prompt: i.prompt, every: i.every || "daily", hour: i.hour ?? 2, agents: [specFrom(i.agent || "free")] }, `copilot:${ctx.username}`);
+      hub.emit("schedules", { projectId: p.id });
+      return { created: true, id: sch.id, nextRun: sch.nextRun, link: "/hive/automations" };
+    },
+  },
+  drive_list: {
+    description: "Files in Hive Drive (the team's file manager).",
+    schema: obj({ folder: str("Folder, e.g. /docs"), projectId: str("Optional project id") }),
+    run: async (i) => (await require("./drive").list({ folder: i.folder || "/", projectId: i.projectId || null })).slice(0, 200).map((f) => `${f.kind === "folder" ? "📁" : "📄"} ${f.path}${f.size ? ` (${f.size} B)` : ""}`),
+  },
+  drive_read: {
+    description: "Read a text file from Hive Drive (long files come back summarised unless full is true).",
+    schema: obj({ path: str("Drive path"), projectId: str("Optional project id"), full: bool("Return the whole text") }, ["path"]),
+    run: async (i, ctx) => {
+      const t = await require("./drive").readText({ path: i.path, projectId: i.projectId || null });
+      const text = typeof t === "string" ? t : t?.text || t?.content || "";
+      if (i.full || text.length < 8000) return clip(text, 40000);
+      const r = await cheap({ prompt: `Summarise this file for an engineering lead. Keep every decision, number, requirement and open question.\n\n${text.slice(0, 120000)}`, username: ctx.username });
+      return `Summary by ${r.model} (ask with full=true for the raw text):\n${r.text}`;
+    },
+  },
+  drive_write: {
+    description: "Save a text file (Markdown, notes, specs, briefs) to Hive Drive.",
+    schema: obj({ path: str("Drive path, e.g. /docs/plan.md"), content: str("Text"), projectId: str("Optional project id") }, ["path", "content"]),
+    run: async (i, ctx) => {
+      needs(ctx, "act");
+      const d = require("./drive");
+      const f = await d.put({ path: i.path, projectId: i.projectId || null, mime: /\.md$/i.test(i.path) ? "text/markdown" : "text/plain", buffer: Buffer.from(String(i.content), "utf8"), by: `copilot:${ctx.username}` });
+      hub.emit("drive", { path: i.path });
+      return { saved: true, path: f?.path || i.path };
+    },
+  },
+  change_setting: {
+    description: "Change how Hive works: the router's preference (savings | fast | balanced | quality), or switch a built-in plugin on/off (e.g. auto_review, token_steward, judge, escalation, never_stop).",
+    schema: obj({ routerPreference: { type: "string", enum: ["savings", "fast", "balanced", "quality"] }, plugin: str("Built-in plugin id"), enabled: bool("On or off") }),
+    run: async (i, ctx) => {
+      needs(ctx, "act");
+      const { setBuiltin } = require("./plugins");
+      if (i.routerPreference) await setBuiltin("*", "smart_router", { config: { preference: i.routerPreference } }, `copilot:${ctx.username}`);
+      if (i.plugin) await setBuiltin("*", String(i.plugin), { enabled: i.enabled !== false }, `copilot:${ctx.username}`);
+      hub.emit("plugins", { by: ctx.username });
+      return { changed: true };
+    },
+  },
+});
+
+/* Merge queued PRs once CI is green; auto-answer safe command approvals in watched sessions. */
+async function mergeTick() {
+  for (const m of await all("SELECT * FROM hive_copilot_merge").catch(() => [])) {
+    const s = await brainSettings(m.username);
+    const ctx = { username: m.username, ...s };
+    try {
+      needs(ctx, "merge");
+      const r = await mergeNow(m.task_id, ctx);
+      if (r.merged) {
+        await run("DELETE FROM hive_copilot_merge WHERE task_id=?", [m.task_id]);
+        await require("./caps").alert({ kind: "copilot", level: "info", title: "Copilot merged a pull request", body: r.url || m.task_id, ref: "/hive/copilot" }).catch(() => {});
+      } else if (/failure/.test(r.reason || "")) {
+        await run("DELETE FROM hive_copilot_merge WHERE task_id=?", [m.task_id]);
+        await onCiFailed(m, r).catch(() => {});
+      }
+    } catch (e) {
+      if (/switched off|Only admins/.test(e.message)) await run("DELETE FROM hive_copilot_merge WHERE task_id=?", [m.task_id]);
+    }
+  }
+}
+
+async function onCiFailed(m, r) {
+  const task = await get("SELECT id, title FROM hive_tasks WHERE id=?", [m.task_id]);
+  await send({ username: m.username, auto: true, text: `[automatic] CI failed on the pull request of “${task?.title}” (${m.task_id}): ${JSON.stringify(r.checks || []).slice(0, 1500)}. Find out why, bring in an agent to fix it on the same session, ship again and queue the merge again.` });
+}
+
+async function onApproval(info) {
+  if (!info?.taskId) return;
+  const w = await get("SELECT username FROM hive_copilot_watch WHERE task_id=?", [info.taskId]).catch(() => null);
+  if (!w) return;
+  const s = await brainSettings(w.username);
+  if (s.autonomy !== "autopilot") return;
+  const m = require("./machines");
+  if (DANGEROUS.test(String(info.command || ""))) {
+    await require("./caps").alert({ kind: "copilot", level: "warn", title: "A command needs you", body: `Copilot won't approve: ${String(info.command).slice(0, 160)}`, ref: "/hive/machines" }).catch(() => {});
+    return;
+  }
+  m.answerApproval(info.id, { approved: true, by: `copilot:${w.username}`, note: "Approved by Copilot (autopilot)" });
+  await require("./runner")
+    .event(info.taskId, info.agentId || null, "note", { message: `Copilot approved: ${String(info.command).slice(0, 300)}` })
+    .catch(() => {});
+}
+
 const toolDefs = () => Object.entries(TOOLS).map(([name, t]) => ({ name, description: t.description, schema: t.schema }));
 
 async function runTool(name, input, ctx) {
@@ -320,9 +553,14 @@ async function onTask(task, deps) {
   reviewing.add(task.id);
   try {
     await run("UPDATE hive_copilot_watch SET done=1 WHERE task_id=?", [task.id]);
+    const s = await brainSettings(w.username);
+    const next =
+      s.autonomy === "autopilot"
+        ? `If it is fully done, ship it with ship_session (clear title and description)${s.canMerge ? " and then merge_when_green" : ""}.`
+        : "If it is fully done, tell me it is ready to ship.";
     await send({
       username: w.username,
-      text: `[automatic] Session “${task.title}” (${task.id}) just finished with status “${task.status}”. Review it now: read session_detail and session_diff, judge whether it fully meets the request (correctness, completeness, quality, risks). If something is missing or wrong, fix it by adding an agent with precise instructions (cheapest capable model) and keep watching. Then give me a short verdict: ✅ ready to ship / ⚠️ needs changes (what you did about it) / ❌ failed (why and what next).`,
+      text: `[automatic] Session “${task.title}” (${task.id}) just finished with status “${task.status}”. Review it now: read session_detail and session_diff, judge whether it fully meets the request (correctness, completeness, quality, risks). If something is missing or wrong, fix it by adding an agent with precise instructions (cheapest capable model) and keep watching. ${next} Then give me a short verdict: ✅ done (and shipped?) / ⚠️ needs changes (what you did about it) / ❌ failed (why and what next).`,
       auto: true,
       deps,
     });
@@ -336,7 +574,7 @@ async function onTask(task, deps) {
 /* ── the brain ─────────────────────────────────────────────────────── */
 async function brainSettings(username) {
   const r = await get("SELECT * FROM hive_copilot_settings WHERE username=?", [username]).catch(() => null);
-  return { brain: r?.brain || "auto", model: r?.model || "" };
+  return { brain: r?.brain || "auto", model: r?.model || "", autonomy: r?.autonomy === "assist" ? "assist" : "autopilot", canMerge: !!r?.can_merge, admin: !!r?.admin };
 }
 
 /** Pick who thinks: your Claude plan first, then the best healthy model with tools (free first). */
@@ -367,7 +605,7 @@ async function pickBrain(username, exclude = []) {
   throw new Error("No model with tool use is connected — add a key (Keys) or connect your Claude plan");
 }
 
-const SYSTEM = (username, facts, snapshot) => `You are Hive Copilot, @${username}'s chief of staff for software work in Nexora Hive. You run the hive: you decide what needs doing, give work to the right agents, write their prompts, watch progress, judge results, and report back. You can do everything the person can do in Hive through your tools.
+const SYSTEM = (username, facts, snapshot, settings = {}) => `You are Hive Copilot, @${username}'s chief of staff for software work in Nexora Hive. You run the hive: you decide what needs doing, give work to the right agents, write their prompts, watch progress, judge results, and report back. You can do everything the person can do in Hive through your tools.
 
 How you work:
 - Delegate. You plan, write prompts, review and judge; agents do the coding. Keep your own messages short.
@@ -375,7 +613,8 @@ How you work:
 - Small, clear tasks → start_session (one agent, or "compare" for important work so the Judge picks the best). Bigger work with several parts → plan_team, check the plan, then start_team.
 - Every prompt you give an agent is precise and self-contained: goal, relevant files or areas, constraints, acceptance criteria, how to verify (tests/build).
 - After work finishes, review it yourself with session_detail and session_diff before calling it done. If it is not right, add an agent to fix it with exact instructions.
-- Do not merge, ship or deploy on your own: say it is ready and let the person ship it.
+- Autonomy: ${settings.autonomy === "assist" ? "ASSIST — propose actions that change things (starting work is fine) and let the person confirm shipping, approvals, automations and settings." : "AUTOPILOT — you act for the person: start work, approve safe agent commands, review, fix, and when the work is verified ship it (ship_session opens a pull request)."} ${settings.canMerge ? "You may merge with merge_when_green once a PR's CI is green." : "You may not merge: when a PR is ready, say so — the person merges (merging can deploy the live site)."}
+- Spend as few tokens as possible yourself: hand reading, summarising and drafting to ask_model (cheapest capable model), read diffs and files as summaries unless you need the exact lines, and never repeat large content back.
 - When unsure about the latest models or facts, research with web_search and read_url, and remember what matters.
 - If an agent or model fails, pick another (check agent_health). Work should not stop.
 - Ask the person only when a decision is genuinely theirs. Otherwise act, then report what you did with links (paths like /hive/p/… are clickable).
@@ -417,8 +656,12 @@ async function send({ username, text, auto = false, sink = null, deps = {}, sign
   };
   out("user", { message: pub({ ...userMsg, created_at: t, tools_json: "[]" }) });
   out("start", {});
+  const settings = await brainSettings(username);
   const ctx = {
     username,
+    autonomy: settings.autonomy,
+    canMerge: settings.canMerge,
+    admin: settings.admin,
     createTask: deps.createTask || (async () => {
       throw new Error("Starting sessions isn't available here");
     }),
@@ -427,7 +670,7 @@ async function send({ username, text, auto = false, sink = null, deps = {}, sign
     .userMemory(username)
     .catch(() => []);
   const snapshot = await overview().catch(() => ({}));
-  const system = SYSTEM(username, facts, snapshot);
+  const system = SYSTEM(username, facts, snapshot, settings);
   const past = (await history(username, 24)).filter((m) => m.id !== userMsg.id && m.content);
   const tried = [];
   let lastErr = null;
@@ -530,7 +773,7 @@ async function thinkWithPlan({ brain, system, past, text, ctx, reply, out, deps,
   const cli = require("./providers/cli");
   const keys = require("./keys");
   const token = `hcp_${crypto.randomBytes(24).toString("base64url")}`;
-  tokens.set(token, { username: ctx.username, exp: Date.now() + 30 * 60_000, createTask: ctx.createTask });
+  tokens.set(token, { ...ctx, exp: Date.now() + 30 * 60_000 });
   const origin = String(deps.origin || process.env.HIVE_PUBLIC_URL || "https://nexoraguru.in").replace(/\/+$/, "");
   const mcp = JSON.stringify({ mcpServers: { hive: { type: "http", url: `${origin}/api/hive-mcp`, headers: { Authorization: `Bearer ${token}` } } } });
   const transcript = toTranscript(past)
@@ -604,7 +847,7 @@ async function mcpHandle(req, res, deps) {
     case "tools/list":
       return reply({ tools: toolDefs().map((d) => ({ name: d.name, description: d.description, inputSchema: d.schema })) });
     case "tools/call": {
-      const r = await runTool(String(msg.params?.name || ""), msg.params?.arguments || {}, { username: t.username, createTask: t.createTask || deps.createTask });
+      const r = await runTool(String(msg.params?.name || ""), msg.params?.arguments || {}, { ...t, createTask: t.createTask || deps.createTask });
       return reply({ content: [{ type: "text", text: String(r.content) }], isError: !!r.isError });
     }
     default:
@@ -612,10 +855,23 @@ async function mcpHandle(req, res, deps) {
   }
 }
 
-async function saveSettings(username, { brain, model }) {
-  const b = ["auto", "claude_code", "api"].includes(brain) ? brain : "auto";
-  await run("INSERT INTO hive_copilot_settings(username, brain, model, updated_at) VALUES(?,?,?,?) ON CONFLICT(username) DO UPDATE SET brain=excluded.brain, model=excluded.model, updated_at=excluded.updated_at", [username, b, String(model || "").slice(0, 200), now()]);
+async function saveSettings(username, { brain, model, autonomy, canMerge, admin }) {
+  const cur = await brainSettings(username);
+  const b = ["auto", "claude_code", "api"].includes(brain) ? brain : cur.brain;
+  const m = model === undefined ? cur.model : String(model || "").slice(0, 200);
+  const au = autonomy === "assist" || autonomy === "autopilot" ? autonomy : cur.autonomy;
+  // Only admins can let the Copilot merge (merging can deploy the live site).
+  const cm = canMerge === undefined ? cur.canMerge : !!canMerge && !!admin;
+  await run(
+    "INSERT INTO hive_copilot_settings(username, brain, model, autonomy, can_merge, admin, updated_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(username) DO UPDATE SET brain=excluded.brain, model=excluded.model, autonomy=excluded.autonomy, can_merge=excluded.can_merge, admin=excluded.admin, updated_at=excluded.updated_at",
+    [username, b, m, au, cm ? 1 : 0, admin ? 1 : 0, now()],
+  );
   return brainSettings(username);
+}
+
+/** Remember whether this person is an admin (used by background reviews and merges). */
+async function noteAdmin(username, admin) {
+  await run("INSERT INTO hive_copilot_settings(username, brain, model, admin, updated_at) VALUES(?,?,?,?,?) ON CONFLICT(username) DO UPDATE SET admin=excluded.admin", [username, "auto", "", admin ? 1 : 0, now()]).catch(() => {});
 }
 
 /** Which brain would think right now (for the UI). */
@@ -628,4 +884,4 @@ async function currentBrain(username) {
   }
 }
 
-module.exports = { TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };
+module.exports = { DANGEROUS, mergeTick, onApproval, noteAdmin, TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };

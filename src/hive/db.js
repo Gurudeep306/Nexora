@@ -346,6 +346,11 @@ const SCHEMA = [
     done INTEGER NOT NULL DEFAULT 0,
     created_at INTEGER NOT NULL
   )`,
+  `CREATE TABLE IF NOT EXISTS hive_copilot_merge (
+    task_id TEXT PRIMARY KEY,
+    username TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  )`,
   `CREATE TABLE IF NOT EXISTS hive_copilot_settings (
     username TEXT PRIMARY KEY,
     brain TEXT NOT NULL DEFAULT 'auto',
@@ -488,6 +493,9 @@ const COLUMNS = [
   ["hive_convos", "tools INTEGER NOT NULL DEFAULT 1"],
   ["hive_convos", "summary_json TEXT"],
   ["hive_keys", "blocked_models TEXT"],
+  ["hive_copilot_settings", "autonomy TEXT NOT NULL DEFAULT 'autopilot'"],
+  ["hive_copilot_settings", "can_merge INTEGER NOT NULL DEFAULT 0"],
+  ["hive_copilot_settings", "admin INTEGER NOT NULL DEFAULT 0"],
   ["hive_tasks", "pipeline_run TEXT"],
   ["hive_schedules", "pipeline_id TEXT"],
 ];

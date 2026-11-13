@@ -172,7 +172,18 @@ The Copilot can do everything you can do in Hive:
 - **Claude plan only.**
 - **A specific model.**
 
-**It keeps its own token use low.** It plans and judges, and gives the coding to agents, picking cheap or free models for simple parts and strong ones for hard parts (quality first).
+**Autonomy**, set in the brain pill's menu:
+- **Autopilot (default).** It acts for you:
+  - starts work and approves *safe* commands agents want to run (never destructive ones, such as deleting outside the project, force-pushing or piping a download into a shell)
+  - reviews and fixes, then **ships verified work as a pull request**
+  - runs pipelines, schedules automations, writes Drive files and changes Hive settings
+- **Assist.** It starts and reviews work, but asks you before shipping, approving, scheduling or changing settings.
+- **Let it merge when CI is green.** Admins only, and **off by default**, because merging to the main branch can deploy the live site. When it's on, the Copilot queues a merge and completes it once the checks pass. If CI fails, it brings in an agent to fix it and tries again.
+
+**It keeps its own token use low.**
+- It plans and judges, and gives the coding to agents: cheap or free models for simple parts, strong ones for hard parts (quality first).
+- Side jobs such as summarising, drafting and comparing go to the cheapest capable model (`ask_model`).
+- Big diffs and long Drive files are summarised by a free model before the Copilot reads them, and it only asks for exact lines when it needs them.
 
 **It reviews by itself.** Sessions the Copilot starts, or is asked to watch, are reviewed automatically when they finish:
 1. It reads the result and the diff.
