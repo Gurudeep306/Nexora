@@ -159,14 +159,16 @@ test("the Token Steward audits spend, applies a fix in one click and plans a pro
   assert.ok(plan.kind && plan.cheapest && plan.best);
 });
 
-test("long chats are compacted into a cached summary by the Token Steward", async () => {
+test("long chats are compacted into a cached summary by the Token Steward (written in the background)", async () => {
   await ok("PUT", "/api/hive/plugins/builtin/token_steward", { enabled: true, config: { triggerTokens: 600, keepTokens: 250 } });
   const boot = await ok("GET", "/api/hive/bootstrap");
   const key = boot.keys[0];
   const { convo } = await ok("POST", "/api/hive/convos", {});
   const long = "Here are the details of the project we discussed. ".repeat(40);
   let notes = "";
-  for (let i = 0; i < 5; i++) {
+  // The summary is written in the background (never delaying a reply) and used from the next message on.
+  for (let i = 0; i < 8; i++) {
+    await sleep(300);
     const r = await fetch(`${base}/api/hive/convos/${convo.id}/messages`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Cookie: cookie, Origin: base },
@@ -199,4 +201,56 @@ test("a model the provider retired is skipped: chat moves to the key's next mode
   await ok("POST", `/api/hive/keys/${key.id}/check`).catch(() => null);
   const rechecked = (await ok("GET", "/api/hive/bootstrap")).keys.find((k) => k.id === key.id);
   assert.ok(!rechecked.models.includes("demo-retired"), "and stays dropped after the model list is refreshed");
+});
+
+test("agent health: calls are recorded, probes run, and the board reports each agent", async () => {
+  const boot = await ok("GET", "/api/hive/bootstrap");
+  const key = boot.keys[0];
+  const pr = await ok("POST", "/api/hive/health/probe", { keyId: key.id });
+  assert.equal(pr.results[0].ok, true, JSON.stringify(pr.results[0]));
+  const board = (await ok("GET", "/api/hive/health")).keys.find((k) => k.keyId === key.id);
+  assert.equal(board.state, "healthy");
+  assert.ok(board.models.some((m) => m.ok > 0 && m.latencyMs != null));
+});
+
+test("the Dispatcher splits a request, assigns each part, and runs the team in dependency waves", async () => {
+  const boot = await ok("GET", "/api/hive/bootstrap");
+  const project = boot.projects.find((p) => !p.machine_id) || boot.projects[0];
+  const { dispatch } = await ok("POST", "/api/hive/dispatches", { projectId: project.id, request: "Add quantities to the cart, then document it" });
+  assert.equal(dispatch.status, "planned");
+  assert.equal(dispatch.plan.parts.length, 3);
+  assert.deepEqual(dispatch.plan.parts.map((p) => p.kind), ["reading", "coding", "writing"]);
+  assert.ok(dispatch.plan.parts.every((p) => p.pick && p.estimate), "every part has a model and an estimate");
+  assert.deepEqual(dispatch.plan.parts[1].dependsOn, ["p1"]);
+  const edited = (await ok("PATCH", `/api/hive/dispatches/${dispatch.id}`, { partId: "p3", remove: true })).dispatch;
+  assert.equal(edited.plan.parts.length, 2);
+  const started = (await ok("POST", `/api/hive/dispatches/${dispatch.id}/start`, {})).dispatch;
+  assert.equal(started.status, "running");
+  assert.ok(started.taskId);
+  let d;
+  for (let i = 0; i < 160; i++) {
+    await sleep(250);
+    d = (await ok("GET", `/api/hive/dispatches?project=${project.id}`)).dispatches.find((x) => x.id === dispatch.id);
+    if (!["running", "planned"].includes(d.status)) break;
+  }
+  assert.equal(d.status, "done", JSON.stringify(d.error || d.progress));
+  assert.equal(d.progress.p1.status, "done");
+  assert.equal(d.progress.p2.status, "done");
+  const t = await ok("GET", `/api/hive/tasks/${d.taskId}`);
+  const stages = t.events.filter((e) => e.kind === "pipeline").map((e) => e.data.stage);
+  assert.ok(stages.includes("Map the cart code") && stages.includes("Add quantity support"));
+  assert.ok(t.agents.length >= 2);
+});
+
+test("routing keeps quality first: a faster but weaker model never beats a clearly better one", () => {
+  const { rank } = require("../src/hive/router");
+  const mk = (name, quality, speed, latencyMs) => ({ key: { id: name }, vendor: "x", model: name, card: { speed, name }, cost: "free", quality, priority: 0, latencyMs });
+  const strong = mk("strong", 90, 2, 9000);
+  const quick = mk("quick", 72, 5, 600);
+  for (const pref of ["balanced", "fast", "savings", "quality"]) assert.equal(rank([quick, strong], "coding", pref).ranked[0].model, "strong", pref);
+  // Similar quality: the faster one wins.
+  const a = mk("a", 88, 2, 9000);
+  const b = mk("b", 87, 5, 700);
+  assert.equal(rank([a, b], "coding", "fast").ranked[0].model, "b");
+  assert.equal(rank([a, b], "coding", "balanced").ranked[0].model, "b");
 });

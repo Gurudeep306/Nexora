@@ -56,6 +56,7 @@ import { ChangesView } from './ChangesView'
 import { FilesView } from './FilesView'
 import { LiveCode } from './LiveCode'
 import { FloorFeed, TeamFloor } from './TeamFloor'
+import { WorkMap } from './WorkMap'
 import { useHive } from './store'
 import type { AgentRow, AgentSpec, Checkpoint, Check as CheckRun, HiveEvent, PrInfo } from './types'
 import { MODE_INFO, ProviderGlyph, StatusPill, UserDot, duration, fmtCost, fmtTokens, statusColor, timeAgo } from './ui'
@@ -81,8 +82,11 @@ export function Session() {
   const [cps, setCps] = useState<Checkpoint[]>([])
   const [showReads, setShowReads] = useState(true)
   // The team floor (stations) or the detailed stream of every step.
-  const [view, setView] = useState<'floor' | 'stream'>(() => (localStorage.getItem('hive:sessionView') === 'stream' ? 'stream' : 'floor'))
-  const pickView = (v: 'floor' | 'stream') => {
+  const [view, setView] = useState<'floor' | 'map' | 'stream'>(() => {
+    const v = localStorage.getItem('hive:sessionView')
+    return v === 'stream' || v === 'map' ? v : 'floor'
+  })
+  const pickView = (v: 'floor' | 'map' | 'stream') => {
     setView(v)
     try {
       localStorage.setItem('hive:sessionView', v)
@@ -256,10 +260,10 @@ export function Session() {
         <section className="flex min-w-0 flex-1 flex-col">
           <div className="flex items-center gap-2 border-b hive-line px-4 py-1.5">
             <div className="relative flex shrink-0 rounded-full bg-text-primary/[0.06] p-0.5" role="tablist" aria-label="Session view">
-              {(['floor', 'stream'] as const).map((v) => (
+              {(['floor', 'map', 'stream'] as const).map((v) => (
                 <button key={v} type="button" role="tab" aria-selected={view === v} onClick={() => pickView(v)} className={cn('relative h-6 rounded-full px-2.5 text-[11.5px] font-medium transition-colors', view === v ? 'text-text-primary' : 'text-text-muted hover:text-text-secondary')}>
                   {view === v && <motion.span layoutId="hive-view-pill" className="absolute inset-0 rounded-full bg-bg-surface shadow-sm" transition={{ type: 'spring', stiffness: 500, damping: 38 }} />}
-                  <span className="relative">{v === 'floor' ? 'Team' : 'Every step'}</span>
+                  <span className="relative">{v === 'floor' ? 'Team' : v === 'map' ? 'Work map' : 'Every step'}</span>
                 </button>
               ))}
             </div>
@@ -288,6 +292,10 @@ export function Session() {
               <div className="px-4 pb-10 sm:px-6">
                 <FloorFeed events={events} agents={agents} />
               </div>
+            </div>
+          ) : view === 'map' ? (
+            <div className="hive-scroll min-h-0 flex-1 overflow-y-auto">
+              <WorkMap agents={agents} events={events} onFocus={(id) => (setFocus(id), pickView('stream'))} />
             </div>
           ) : (
             <Stream events={events} agents={agents} focus={focus} showReads={showReads} task={task} cps={cps} />

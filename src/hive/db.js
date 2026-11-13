@@ -326,6 +326,37 @@ const SCHEMA = [
     created_by TEXT NOT NULL,
     created_at INTEGER NOT NULL
   )`,
+  // The Dispatcher: a request split into parts, each assigned to the cheapest capable model.
+  `CREATE TABLE IF NOT EXISTS hive_dispatches (
+    id TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL,
+    task_id TEXT,
+    request TEXT NOT NULL,
+    status TEXT NOT NULL,
+    plan_json TEXT,
+    progress_json TEXT,
+    error TEXT,
+    created_by TEXT NOT NULL,
+    started_by TEXT,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  )`,
+  "CREATE INDEX IF NOT EXISTS idx_hive_dispatches ON hive_dispatches(project_id, created_at)",
+  // Agent health: a circuit breaker per (key, model); model '' = the whole key.
+  `CREATE TABLE IF NOT EXISTS hive_health (
+    key_id TEXT NOT NULL,
+    model TEXT NOT NULL DEFAULT '',
+    ok_count INTEGER NOT NULL DEFAULT 0,
+    fail_count INTEGER NOT NULL DEFAULT 0,
+    consecutive_fails INTEGER NOT NULL DEFAULT 0,
+    last_ok INTEGER,
+    last_fail INTEGER,
+    last_error TEXT,
+    last_kind TEXT,
+    latency_ms INTEGER,
+    cooldown_until INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (key_id, model)
+  )`,
   // Things each person wants every chat to know about them.
   `CREATE TABLE IF NOT EXISTS hive_user_memory (
     id TEXT PRIMARY KEY,
