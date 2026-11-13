@@ -528,12 +528,20 @@ function createHiveRouter() {
   router.post(
     "/api/hive/projects/:id/tasks",
     h(async (req, res) => {
-      const p = await projectRow(req.params.id);
+      let p = await projectRow(req.params.id);
       const b = req.body || {};
       const prompt = str(b.prompt, "prompt", { max: 30000 });
       const mode = MODES.has(b.mode) ? b.mode : "solo";
       const specs = (Array.isArray(b.agents) ? b.agents : []).slice(0, 8).map(cleanSpec);
       const lead = b.lead ? cleanSpec(b.lead) : null;
+      // Machine agents (Claude Code, Codex, Vibe) with no machine chosen: copy the repo onto their machine.
+      if (!b.machineId && !b.repoId) {
+        try {
+          p = (await require("../hive/repos").ensureOnMachine(p.id, [...specs, ...(lead ? [lead] : [])].map((s) => s.provider))) || p;
+        } catch (e) {
+          throw new BadInput(e.message);
+        }
+      }
       if (!specs.length && !lead) throw new BadInput("Pick at least one agent");
       if ((mode === "compare" || mode === "review") && !specs.length) throw new BadInput("Pick the agents to run");
       // Where the work happens: a linked repo of the project, and optionally a
