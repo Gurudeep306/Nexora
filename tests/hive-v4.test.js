@@ -213,6 +213,36 @@ test("agent health: calls are recorded, probes run, and the board reports each a
   assert.ok(board.models.some((m) => m.ok > 0 && m.latencyMs != null));
 });
 
+test("verify every model: only models that really answer are kept; a gated model doesn't take the key down", async () => {
+  const key = (await ok("GET", "/api/hive/bootstrap")).keys.find((k) => !k.subscription);
+  const r = await ok("POST", "/api/hive/health/verify", { keyId: key.id, wait: true, retest: true });
+  assert.ok(r.result.working.includes("demo-coder-large"), JSON.stringify(r.result));
+  assert.ok(!r.result.working.includes("demo-gated"));
+  const after = (await ok("GET", "/api/hive/bootstrap")).keys.find((k) => k.id === key.id);
+  assert.ok(!after.models.includes("demo-gated"), "the gated model is no longer offered");
+  assert.ok(!after.models.includes("demo-retired"), "nor the retired one");
+  assert.equal(after.models[0], after.verified.ok[0], "working models come first");
+  assert.ok(after.verified.failed.some((f) => f.model === "demo-gated" && /access/.test(f.error)));
+  // A 403 about one model is that model's problem: the key and its other models stay healthy.
+  const board = (await ok("GET", "/api/hive/health")).keys.find((k) => k.keyId === key.id);
+  assert.notEqual(board.state, "down", JSON.stringify(board));
+  const chat = await ok("POST", "/api/hive/health/probe", { keyId: key.id });
+  assert.equal(chat.results[0].ok, true);
+  // A model-list refresh keeps the gated model out and the working ones first.
+  await ok("POST", `/api/hive/keys/${key.id}/check`);
+  const re = (await ok("GET", "/api/hive/bootstrap")).keys.find((k) => k.id === key.id);
+  assert.ok(!re.models.includes("demo-gated"));
+  assert.equal(re.models[0], after.verified.ok[0]);
+});
+
+test("hide a model: it disappears from the key and Auto never uses it", async () => {
+  const key = (await ok("GET", "/api/hive/bootstrap")).keys.find((k) => !k.subscription && k.models.includes("demo-coder-mini"));
+  await ok("POST", `/api/hive/keys/${key.id}/hide-model`, { model: "demo-coder-mini" });
+  const after = (await ok("GET", "/api/hive/bootstrap")).keys.find((k) => k.id === key.id);
+  assert.ok(!after.models.includes("demo-coder-mini"));
+  assert.notEqual(after.defaultModel, "demo-coder-mini");
+});
+
 test("the Dispatcher splits a request, assigns each part, and runs the team in dependency waves", async () => {
   const boot = await ok("GET", "/api/hive/bootstrap");
   const project = boot.projects.find((p) => !p.machine_id) || boot.projects[0];

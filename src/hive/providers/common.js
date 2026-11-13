@@ -12,7 +12,12 @@ class ProviderError extends Error {
 const BAD_KEY = /api key not valid|invalid api key|incorrect api key|invalid x-api-key|api_key_invalid|unauthorized|invalid authentication|authentication failed/i;
 const NO_MODEL = /model.{0,60}(not found|does not exist|not supported|unknown|is not available|(is )?no longer (available|supported)|not available to new users|decommissioned|deprecated|retired|has been (removed|shut down))|no such model|invalid model|model_not_found/i;
 
+// A 403 about one model (gated, not on this tier, no access) is that model's problem, not the key's.
+const MODEL_ACCESS = /(model|deployment).{0,80}(access|permission|allowed|tier|plan|gated|not enabled|unavailable|restricted|subscribe|upgrade)|(access|permission|allowed|tier|plan|gated).{0,80}model|not available (on|for|in) (your|the free|this)|requires? (a )?(paid|pro|higher)/i;
+
 function classify(status, message = "") {
+  if ((status === 403 || status === 401) && !BAD_KEY.test(message) && MODEL_ACCESS.test(message)) return { kind: "model", retryable: false };
+  if (status === 404) return { kind: "model", retryable: false };
   if (status === 401 || status === 403 || (status === 400 && BAD_KEY.test(message))) return { kind: "auth", retryable: false };
   if ((status === 404 || status === 400) && NO_MODEL.test(message)) return { kind: "model", retryable: false };
   if (status === 429) {

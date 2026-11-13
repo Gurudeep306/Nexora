@@ -57,6 +57,10 @@ const EASE = [0.2, 0.8, 0.2, 1] as const
 
 const STEP: Record<string, { icon: typeof Bot; label: (i: Record<string, unknown>) => string }> = {
   hive_overview: { icon: Eye, label: () => 'Looked over the hive' },
+  stop_agent: { icon: Activity, label: () => 'Stopped an agent' },
+  swap_agent: { icon: Network, label: (i) => `Replaced an agent${i.agent ? ` with ${String(i.agent)}` : ' with the best healthy model'}` },
+  verify_models: { icon: Radar, label: () => 'Tested every model — removing the ones that don’t answer' },
+  hide_model: { icon: Eye, label: (i) => `Hid ${String(i.model || 'a model')}` },
   list_models: { icon: Radar, label: (i) => `Compared models${i.kind ? ` for ${i.kind}` : ''}` },
   session_detail: { icon: Activity, label: () => 'Checked a session' },
   session_diff: { icon: FileDiff, label: (i) => `Read the changes${i.path ? ` in ${String(i.path)}` : ''}` },

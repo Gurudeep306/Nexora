@@ -60,7 +60,7 @@ const LIGHT = new Set(["chat", "mechanical", "reading", "search"]);
 function modelsOf(row, vendor) {
   if (vendor.subscription) return [row.default_pinned && row.default_model ? row.default_model : "default"];
   if (row.default_pinned && row.default_model) return [row.default_model];
-  const list = json(row.models_json, []).filter(isChatModel);
+  const list = keys.workingModels(row).filter(isChatModel);
   const seen = new Set();
   const out = [];
   // One model per catalogue family (the first listed), known families only;

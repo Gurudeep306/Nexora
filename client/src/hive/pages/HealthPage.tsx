@@ -7,7 +7,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Activity, ChevronDown, CircleCheck, CircleOff, Clock, HeartPulse, KeyRound, PauseCircle, RefreshCw, Snowflake, Sparkles, TriangleAlert, Zap } from 'lucide-react'
+import { Activity, ChevronDown, CircleCheck, CircleOff, Clock, EyeOff, FlaskConical, HeartPulse, KeyRound, Loader2, PauseCircle, RefreshCw, Snowflake, Sparkles, TriangleAlert, Zap } from 'lucide-react'
 import { Button, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { AgentMark } from '../agents'
@@ -95,6 +95,46 @@ export default function HealthPage() {
     }
   }
 
+  const verify = async (keyId?: string, retest = false) => {
+    setBusy(keyId ? `v:${keyId}` : 'verify')
+    try {
+      const r = await hiveApi.verifyModels({ keyId, retest })
+      setKeys(r.keys)
+      toast.success(keyId ? 'Testing every model on this key — the ones that fail are removed as it goes' : 'Testing every model on every free key — this takes a minute or two. Failing models are removed.')
+    } catch (e) {
+      toast.error(errMsg(e))
+    } finally {
+      setBusy(null)
+    }
+  }
+  const hide = async (keyId: string, model: string) => {
+    try {
+      await hiveApi.hideModel(keyId, model)
+      toast.success(`${model} won't be offered or used again`)
+      load()
+    } catch (e) {
+      toast.error(errMsg(e))
+    }
+  }
+  const anyVerifying = (keys ?? []).some((k) => k.verifying)
+  useEffect(() => {
+    if (!anyVerifying) return
+    const i = setInterval(load, 2500)
+    return () => clearInterval(i)
+  }, [anyVerifying, load])
+  const modelTotals = useMemo(() => {
+    let ok = 0
+    let failed = 0
+    let tested = 0
+    for (const k of keys ?? [])
+      if (k.verified) {
+        tested++
+        ok += k.verified.ok.length
+        failed += k.verified.failed.length
+      }
+    return { ok, failed, tested }
+  }, [keys])
+
   const counts = useMemo(() => {
     const c: Record<string, number> = {}
     for (const k of keys ?? []) c[k.state] = (c[k.state] ?? 0) + 1
@@ -117,11 +157,14 @@ export default function HealthPage() {
         sub="Hive skips any agent that's failing and gives its work to the next best one — so work never stops. Here's who's working right now."
       >
         <div className="flex flex-wrap gap-2">
+          <Button onClick={() => verify()} loading={busy === 'verify' || anyVerifying}>
+            {busy !== 'verify' && !anyVerifying && <FlaskConical />} {anyVerifying ? 'Testing models…' : 'Test every model'}
+          </Button>
           <Button variant="secondary" onClick={() => testAll(false)} loading={busy === 'free'}>
             {busy !== 'free' && <Sparkles />} Test free agents
           </Button>
-          <Button onClick={() => testAll(true)} loading={busy === 'all'}>
-            {busy !== 'all' && <Zap />} Test everything
+          <Button variant="secondary" onClick={() => testAll(true)} loading={busy === 'all'}>
+            {busy !== 'all' && <Zap />} Test paid too
           </Button>
         </div>
       </PageTitle>
@@ -138,6 +181,12 @@ export default function HealthPage() {
               <span className="text-[18px] text-text-muted">/{total}</span>
             </div>
             <div className="text-[12.5px] text-text-muted">Free and plan agents are tested every 4 hours; every real call also updates this.</div>
+            {modelTotals.tested > 0 && (
+              <div className="mt-2 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl bg-text-primary/[0.04] px-3 py-1.5 text-[12.5px]">
+                <span className="font-medium text-state-success">{modelTotals.ok} models work</span>
+                <span className="text-text-muted" title="Only working models are offered and used">{modelTotals.failed} removed</span>
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {(['healthy', 'cooling', 'down', 'unknown'] as const).map((s) => {
@@ -187,7 +236,7 @@ export default function HealthPage() {
         <motion.div layout className="grid gap-3 md:grid-cols-2">
           <AnimatePresence initial={false}>
             {shown.map((k, i) => (
-              <KeyCard key={k.keyId} k={k} t={t} i={i} busy={busy === k.keyId} onTest={() => testOne(k.keyId)} />
+              <KeyCard key={k.keyId} k={k} t={t} i={i} busy={busy === k.keyId} onTest={() => testOne(k.keyId)} verifying={busy === `v:${k.keyId}`} onVerify={(retest) => verify(k.keyId, retest)} onHide={(m) => hide(k.keyId, m)} />
             ))}
           </AnimatePresence>
         </motion.div>
@@ -210,7 +259,10 @@ function Pulse({ ratio }: { ratio: number }) {
   )
 }
 
-function KeyCard({ k, t, i, busy, onTest }: { k: HealthKey; t: number; i: number; busy: boolean; onTest: () => void }) {
+function KeyCard({ k, t, i, busy, onTest, verifying, onVerify, onHide }: { k: HealthKey; t: number; i: number; busy: boolean; onTest: () => void; verifying: boolean; onVerify: (retest: boolean) => void; onHide: (model: string) => void }) {
+  const [showFailed, setShowFailed] = useState(false)
+  const v = k.verified
+  const running = k.verifying
   const [open, setOpen] = useState(k.state !== 'healthy')
   const H = HEALTH[k.state]
   const cd = left(k.cooldownUntil, t)
@@ -252,11 +304,65 @@ function KeyCard({ k, t, i, busy, onTest }: { k: HealthKey; t: number; i: number
         )}
       </div>
       {k.detail && <div className="mx-3.5 mb-3 rounded-xl bg-state-error/[0.06] px-3 py-2 text-[12px] text-text-secondary">{k.detail}</div>}
+      {!k.subscription && (
+        <div className="mx-3.5 mb-3 rounded-xl bg-text-primary/[0.035] px-3 py-2 text-[12px]">
+          {running ? (
+            <div>
+              <div className="flex items-center gap-2 text-text-secondary">
+                <Loader2 className="size-3.5 animate-spin" /> Testing its models… {running.done}/{running.total}
+              </div>
+              <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-text-primary/[0.07]">
+                <motion.div className="h-full rounded-full bg-state-success" animate={{ width: `${running.total ? (running.done / running.total) * 100 : 0}%` }} />
+              </div>
+            </div>
+          ) : v ? (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span className="font-medium text-state-success">{v.ok.length} working</span>
+              {v.failed.length > 0 && (
+                <button type="button" onClick={() => setShowFailed((x) => !x)} className="text-text-muted underline-offset-2 hover:underline">
+                  {v.failed.length} removed
+                </button>
+              )}
+              {v.untested > 0 && <span className="text-text-muted" title={v.stoppedBy ? `Stopped early: the provider said ${v.stoppedBy === 'rate' ? 'slow down' : v.stoppedBy}` : 'Only the strongest models are tested; the rest stay hidden'}>{v.untested} hidden, not tested</span>}
+              <span className="text-text-muted">· tested {timeAgo(v.at)}</span>
+              <span className="ml-auto flex gap-1">
+                <button type="button" disabled={verifying} onClick={() => onVerify(false)} className="rounded-md px-2 py-0.5 text-accent-brand hover:bg-accent-brand/10">
+                  Test again
+                </button>
+                {v.failed.length > 0 && (
+                  <button type="button" disabled={verifying} onClick={() => onVerify(true)} className="rounded-md px-2 py-0.5 text-text-muted hover:bg-text-primary/[0.06]" title="Removed models get another chance">
+                    Retry removed
+                  </button>
+                )}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-text-muted">Its models haven’t been tested yet.</span>
+              <button type="button" disabled={verifying} onClick={() => onVerify(false)} className="ml-auto inline-flex items-center gap-1 rounded-md px-2 py-0.5 font-medium text-accent-brand hover:bg-accent-brand/10">
+                {verifying ? <Loader2 className="size-3.5 animate-spin" /> : <FlaskConical className="size-3.5" />} Test every model
+              </button>
+            </div>
+          )}
+          {showFailed && v && v.failed.length > 0 && (
+            <ul className="hive-scroll mt-2 max-h-40 space-y-1 overflow-y-auto border-t hive-line pt-2">
+              {v.failed.map((f) => (
+                <li key={f.model} className="flex gap-2 text-[11.5px]">
+                  <CircleOff className="mt-0.5 size-3 shrink-0 text-state-error" />
+                  <span className="min-w-0">
+                    <span className="font-mono">{f.model}</span> <span className="text-text-muted">— {f.error}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
       <AnimatePresence initial={false}>
         {open && k.models.length > 0 && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden border-t hive-line">
             <div className="space-y-1.5 p-3">
-              {k.models.slice(0, 8).map((m) => {
+              {k.models.filter((m) => !v?.failed.some((f) => f.model === m.model)).slice(0, 8).map((m) => {
                 const MH = HEALTH[m.state]
                 const rate = m.successRate ?? 0
                 return (
@@ -272,6 +378,11 @@ function KeyCard({ k, t, i, busy, onTest }: { k: HealthKey; t: number; i: number
                       {m.ok}✓ {m.fail}✕{m.latencyMs != null ? ` · ${m.latencyMs}ms` : ''}
                     </span>
                     <span className="hidden w-20 text-right text-text-muted sm:inline">{m.lastFail && (!m.lastOk || m.lastFail > m.lastOk) ? `failed ${timeAgo(m.lastFail)}` : m.lastOk ? timeAgo(m.lastOk) : ''}</span>
+                    {!k.subscription && (
+                      <button type="button" onClick={() => onHide(m.model)} className="grid size-6 shrink-0 place-items-center rounded-md text-text-muted hover:bg-state-error/10 hover:text-state-error" title="Never offer or use this model" aria-label={`Hide ${m.model}`}>
+                        <EyeOff className="size-3.5" />
+                      </button>
+                    )}
                   </div>
                 )
               })}
