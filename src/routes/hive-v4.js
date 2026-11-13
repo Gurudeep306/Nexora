@@ -199,7 +199,25 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
       if (!["claude_code", "codex"].includes(b.provider)) throw new BadInput("Pick Claude Code or Codex");
       const m = await get("SELECT * FROM hive_machines WHERE id=?", [String(b.machineId || "")]);
       if (!m) throw new BadInput("Pick a connected machine");
-      const label = str(b.label, "name", { max: 60, optional: true }) || `${b.provider === "codex" ? "Codex" : "Claude Code"} on ${m.name}`;
+      // Several accounts on one machine get numbered names unless the person names them.
+      const same = await get("SELECT COUNT(*) AS n FROM hive_keys WHERE preset=? AND machine_id=?", [b.provider, m.id]);
+      const n = Number(same?.n || 0);
+      const label = str(b.label, "name", { max: 60, optional: true }) || `${b.provider === "codex" ? "Codex" : "Claude Code"}${n ? ` ${n + 1}` : ""} on ${m.name}`;
+      // The same setup token twice is the same Claude account — say so instead of adding a duplicate.
+      if (b.token) {
+        const last4 = String(b.token).trim().slice(-4);
+        const dup = await all("SELECT id, label, secret_enc FROM hive_keys WHERE preset=? AND last4=?", [b.provider, last4]);
+        const vault = require("../hive/vault");
+        for (const d of dup) {
+          let same = false;
+          try {
+            same = vault.open(d.secret_enc) === String(b.token).trim();
+          } catch {
+            /* unreadable */
+          }
+          if (same) throw new BadInput(`That token is already connected as “${d.label}”. Log in to claude.ai with the other account (a private window helps), run \`claude setup-token\` again and paste the new token.`, 409);
+        }
+      }
       let id;
       try {
         id = await keys.createKey({ provider: b.provider, label, apiKey: b.token || undefined, machineId: m.id, tokenLimit: b.tokenLimit, limitPeriod: b.limitPeriod || "day", maxConcurrency: b.maxConcurrency || 2 }, req.hiveUser);

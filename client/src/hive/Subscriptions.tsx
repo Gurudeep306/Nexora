@@ -4,7 +4,7 @@
    drives them, shows the plan's usage windows, and hands work to another
    model when a plan limit is hit.
    ──────────────────────────────────────────────────────────────────────── */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Check, Copy, Cpu, ExternalLink, Loader2, Plus, Server, X } from 'lucide-react'
@@ -140,12 +140,21 @@ export function SubscriptionDialog({ sub, onClose }: { sub: Sub | null; onClose:
   const [busy, setBusy] = useState(false)
   const info = sub ? INFO[sub] : null
   const sorted = useMemo(() => [...machines].sort((a, b) => Number(b.online) - Number(a.online)), [machines])
+  // Reset only when the window opens — machines report in every few seconds,
+  // and resetting on each report wiped a token mid-paste.
+  const sortedRef = useRef(sorted)
+  sortedRef.current = sorted
   useEffect(() => {
     if (!sub) return
     setToken('')
     setLabel('')
-    setMachineId(sorted.find((m) => m.online)?.id ?? sorted[0]?.id ?? '')
-  }, [sub, sorted])
+    const list = sortedRef.current
+    setMachineId(list.find((m) => m.online)?.id ?? list[0]?.id ?? '')
+  }, [sub])
+  // A machine that connects while the window is open gets picked if none was.
+  useEffect(() => {
+    if (sub && !machineId && sorted.length) setMachineId(sorted.find((m) => m.online)?.id ?? sorted[0].id)
+  }, [sub, machineId, sorted])
   useEffect(() => {
     if (!sub || !machineId) return setDetect(null)
     let live = true
@@ -236,7 +245,7 @@ export function SubscriptionDialog({ sub, onClose }: { sub: Sub | null; onClose:
               <label className="block">
                 <span className="mb-1 block text-[12px] font-medium text-text-secondary">Account name (optional)</span>
                 <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder={sub === 'claude_code' ? 'e.g. Main, Worker 1, Riya’s Pro' : 'e.g. Main'} maxLength={60} />
-                <span className="mt-1 block text-[11.5px] text-text-muted">Helps tell several accounts apart. Each account needs its own setup token.</span>
+                <span className="mt-1 block text-[11.5px] text-text-muted">Helps tell several accounts apart. Add as many accounts as you have — each needs its own setup token, made while logged in to <b>that</b> account.</span>
               </label>
               {sub === 'claude_code' && (
                 <label className="block">
