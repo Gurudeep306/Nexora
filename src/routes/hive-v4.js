@@ -809,6 +809,33 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     }),
   );
 
+  /* ── Every GitHub repository, one click from being worked on ── */
+  const repos = require("../hive/repos");
+  router.get(
+    "/api/hive/repos",
+    h(async (req, res) => res.json({ ok: true, ...(await repos.allRepos({ force: req.query.refresh === "1" })) })),
+  );
+  router.post(
+    "/api/hive/repos/open",
+    h(async (req, res) => {
+      const ref = str(req.body?.repo, "repository", { max: 200 });
+      try {
+        const r = await repos.openRepo(ref, { username: req.hiveUser });
+        res.json({ ok: true, project: r.project, created: r.created });
+      } catch (e) {
+        throw e.status ? new BadInput(e.message, e.status) : e;
+      }
+    }),
+  );
+  router.post(
+    "/api/hive/projects/:id/brief",
+    h(async (req, res) => {
+      const text = await repos.writeBrief(req.params.id, { force: true });
+      if (!text) throw new BadInput("Couldn't read that repository to write a brief");
+      res.json({ ok: true, instructions: text });
+    }),
+  );
+
   // Test every model on a key (or on every free key) and keep only the ones that answer.
   router.post(
     "/api/hive/health/verify",

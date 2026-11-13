@@ -243,6 +243,23 @@ test("hide a model: it disappears from the key and Auto never uses it", async ()
   assert.notEqual(after.defaultModel, "demo-coder-mini");
 });
 
+test("Your GitHub: every repo is listed, any repo opens as a project in one call, and Hive writes its brief", async () => {
+  const r = await ok("GET", "/api/hive/repos?refresh=1");
+  const names = r.repos.map((x) => x.fullName);
+  assert.ok(names.includes("octo/demo-shop") && names.includes("octo/notes-app"), JSON.stringify(names));
+  assert.ok(r.repos.find((x) => x.fullName === "octo/demo-shop").projectId, "an existing project is marked");
+  const opened = await ok("POST", "/api/hive/repos/open", { repo: "notes-app" });
+  assert.equal(opened.created, true);
+  assert.equal(opened.project.repo_name, "notes-app");
+  const again = await ok("POST", "/api/hive/repos/open", { repo: "https://github.com/octo/notes-app" });
+  assert.equal(again.created, false);
+  assert.equal(again.project.id, opened.project.id, "opening twice returns the same project");
+  const brief = await ok("POST", `/api/hive/projects/${opened.project.id}/brief`);
+  assert.ok(brief.instructions.length > 10, "a brief was written for the agents");
+  const missing = await call("POST", "/api/hive/repos/open", { repo: "no-such-repo" });
+  assert.equal(missing.status, 404);
+});
+
 test("the Dispatcher splits a request, assigns each part, and runs the team in dependency waves", async () => {
   const boot = await ok("GET", "/api/hive/bootstrap");
   const project = boot.projects.find((p) => !p.machine_id) || boot.projects[0];

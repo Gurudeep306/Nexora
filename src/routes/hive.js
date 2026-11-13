@@ -344,6 +344,7 @@ function createHiveRouter() {
         now(),
       ]);
       await audit(req, "hive.github.create", id, { login: me.login });
+      require("../hive/repos").clearCache();
       hub.emit("github", { by: req.hiveUser });
       res.json({ ok: true, id, login: me.login });
     }),
@@ -427,6 +428,8 @@ function createHiveRouter() {
       );
       if (b.machineId || b.ideaId) await run("UPDATE hive_projects SET machine_id=?, folder=?, idea_id=? WHERE id=?", [b.machineId || null, b.machineId ? String(b.folder || "").slice(0, 500) || null : null, b.ideaId || null, id]);
       await audit(req, "hive.project.create", id, { repo: `${info.owner.login}/${info.name}` });
+      // No instructions given: Hive writes a project brief from the repo for every agent.
+      if (!b.instructions && process.env.NODE_ENV !== "test") require("../hive/repos").writeBrief(id).catch(() => {});
       const p = await projectRow(id);
       hub.emit("project", p);
       res.json({ ok: true, project: p });

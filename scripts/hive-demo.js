@@ -183,7 +183,19 @@ function startMock() {
         // ── GitHub ──
         if ((p.startsWith("/user") || p.startsWith("/repos")) && req.headers.authorization !== `Bearer ${GH_TOKEN}`) return json(401, { message: "Bad credentials" });
         if (p === "/user") return json(200, { login: "octo" });
-        if (p === "/user/repos" && req.method === "GET") return json(200, [{ name: "demo-shop", full_name: "octo/demo-shop", owner: { login: "octo" }, default_branch: "main", private: false, description: "Demo shop", pushed_at: new Date().toISOString() }]);
+        if (p === "/user/repos" && req.method === "GET")
+          return json(200, [
+            { name: "demo-shop", full_name: "octo/demo-shop", owner: { login: "octo" }, default_branch: "main", private: false, description: "Demo shop", pushed_at: new Date().toISOString(), permissions: { push: true } },
+            { name: "notes-app", full_name: "octo/notes-app", owner: { login: "octo" }, default_branch: "main", private: true, description: "A notes app", language: "TypeScript", pushed_at: new Date(Date.now() - 86400000).toISOString(), permissions: { push: true } },
+          ]);
+        // A second repository, only ever opened from "Your GitHub" / the Copilot.
+        if (p === "/repos/octo/notes-app") return json(200, { name: "notes-app", owner: { login: "octo" }, default_branch: "main", description: "A notes app", private: true, permissions: { push: true } });
+        if (p.startsWith("/repos/octo/notes-app/commits/")) return json(200, { sha: "d".repeat(40), commit: { tree: { sha: "9".repeat(40) } } });
+        if (p.startsWith("/repos/octo/notes-app/git/trees/")) return json(200, { truncated: false, tree: [{ path: "README.md", type: "blob" }, { path: "package.json", type: "blob" }, { path: "src/app.ts", type: "blob" }] });
+        if (p.startsWith("/repos/octo/notes-app/contents/")) {
+          res.writeHead(200, { "Content-Type": "text/plain" });
+          return res.end(p.endsWith("package.json") ? '{"name":"notes-app","scripts":{"dev":"vite","test":"vitest"}}' : "# Notes app\nA tiny notes app built with Vite and TypeScript.");
+        }
         if (p === "/user/repos" && req.method === "POST") {
           const name = JSON.parse(body).name;
           created.add(name);
