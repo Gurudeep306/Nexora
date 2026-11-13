@@ -186,6 +186,7 @@ export const hiveApi = {
   lifecycle: (projectId: string) => api.get<Ok<Lifecycle>>(`/api/hive/projects/${projectId}/lifecycle`),
   setIsolation: (projectId: string, isolate: boolean) => api.patch<Ok<object>>(`/api/hive/projects/${projectId}/isolation`, { isolate }),
 
+  refreshPlanUsage: (keyId?: string) => api.post<Ok<{ results: { keyId: string; windows?: Record<string, unknown>; error?: string }[] }>>('/api/hive/subscriptions/usage', keyId ? { keyId } : {}, { timeoutMs: 60000 }),
   addSubscription: (body: { provider: 'claude_code' | 'codex'; machineId: string; label?: string; token?: string; tokenLimit?: number | null; limitPeriod?: string }) =>
     api.post<Ok<{ id: string; check: { ok: boolean; error?: string } }>>('/api/hive/subscriptions', body, { timeoutMs: 90000 }),
   machineAgents: (id: string) => api.get<Ok<{ online: boolean; agents: { claude_code?: CliStatus; codex?: CliStatus } }>>(`/api/hive/machines/${id}/agents`, { timeoutMs: 60000 }),

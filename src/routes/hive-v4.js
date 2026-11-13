@@ -192,6 +192,17 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
   );
 
   /* ── subscription agents (Claude Code / Codex) ────────────────────── */
+  // Refresh a Claude plan's usage now (one account, or every account).
+  router.post(
+    "/api/hive/subscriptions/usage",
+    h(async (req, res) => {
+      const id = req.body?.keyId ? String(req.body.keyId) : null;
+      const results = id ? [{ keyId: id, ...(await keys.refreshPlanUsage(id)) }] : await keys.refreshAllPlanUsage();
+      hub.emit("keys", { by: req.hiveUser });
+      res.json({ ok: true, results });
+    }),
+  );
+
   router.post(
     "/api/hive/subscriptions",
     h(async (req, res) => {
@@ -226,6 +237,7 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
       }
       await audit(req, "hive.subscription.create", id, { provider: b.provider, machine: m.name });
       const check = await keys.checkKey(id);
+      if (b.provider === "claude_code") await keys.refreshPlanUsage(id).catch(() => null);
       hub.emit("keys", { by: req.hiveUser });
       res.json({ ok: true, id, check });
     }),
