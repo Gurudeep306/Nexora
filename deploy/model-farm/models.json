@@ -1,0 +1,162 @@
+{
+  "_about": "Which open models the farm serves. Pick a profile with FARM_PROFILE (default: budget). Each model runs in its own vLLM server; the gateway (gateway.py) puts them all behind one OpenAI-compatible address with one key. 'hf' is the Hugging Face repo; farm.sh checks it exists before downloading and skips (with a warning) any it can't find, so a renamed repo never stops the others. 'mem' is the share of each GPU's memory the model may use; 'gpus' how many GPUs it spans (tensor parallel). 'fp8' quantises on the fly (Ada/Hopper GPUs: RTX 4090, L40S, H100…) — about half the memory, near-identical quality. 'tool_parser' turns on tool calling (agents need it); null means the model only chats/answers, which Hive handles (it won't give it agent work).",
+  "models": {
+    "qwen3.8-27b": {
+      "hf": "Qwen/Qwen3.8-27B",
+      "role": "UI, learning animations (Nexora's scene format), motion code, everyday coding — the farm's main worker",
+      "kind": "chat",
+      "fp8": true,
+      "max_len": 65536,
+      "tool_parser": "hermes",
+      "reasoning_parser": "qwen3"
+    },
+    "uigen-x-32b": {
+      "hf": "Tesslate/UIGEN-X-32B-0727",
+      "role": "UI-only specialist (layouts, components, pages)",
+      "kind": "chat",
+      "fp8": true,
+      "max_len": 32768,
+      "tool_parser": "hermes",
+      "reasoning_parser": "qwen3"
+    },
+    "qwen3-coder-next": {
+      "hf": "Qwen/Qwen3-Coder-Next",
+      "role": "Backend and agentic coding (multi-file changes, tests, refactors)",
+      "kind": "chat",
+      "fp8": true,
+      "max_len": 65536,
+      "tool_parser": "qwen3_coder"
+    },
+    "nemotron-cascade-2-30b": {
+      "hf": "nvidia/Nemotron-Cascade-2-30B-A3B",
+      "role": "Maths and CS reasoning (GATE solutions, checking answers)",
+      "kind": "chat",
+      "fp8": true,
+      "max_len": 65536,
+      "tool_parser": null
+    },
+    "devstral-small-2": {
+      "hf": "mistralai/Devstral-Small-2-24B-Instruct-2512",
+      "role": "Design or screenshot to code (takes images); second-opinion reviewer from another model family",
+      "kind": "chat",
+      "fp8": true,
+      "max_len": 65536,
+      "tool_parser": "mistral"
+    },
+    "gemma-4-31b": {
+      "hf": "google/gemma-4-31b-it",
+      "role": "Reviewer from a different family than the coders (catches more), maths",
+      "kind": "chat",
+      "fp8": true,
+      "max_len": 32768,
+      "tool_parser": null
+    },
+    "paddleocr-vl": {
+      "hf": "PaddlePaddle/PaddleOCR-VL",
+      "role": "Reading scanned GATE papers: text, tables and formulas",
+      "kind": "chat",
+      "fp8": false,
+      "max_len": 16384,
+      "extra": [
+        "--trust-remote-code"
+      ],
+      "tool_parser": null
+    },
+    "sarvam-translate": {
+      "hf": "sarvamai/sarvam-translate",
+      "role": "Translation into 22 Indian languages",
+      "kind": "chat",
+      "fp8": true,
+      "max_len": 8192,
+      "tool_parser": null
+    },
+    "qwen3-embedding": {
+      "hf": "Qwen/Qwen3-Embedding-0.6B",
+      "role": "Search and recommendations (embeddings)",
+      "kind": "embed",
+      "fp8": false,
+      "max_len": 8192,
+      "tool_parser": null
+    }
+  },
+  "profiles": {
+    "budget": {
+      "_hardware": "1 GPU with 48 GB (L40S, RTX 6000 Ada, A6000) — about $0.6-0.9/h. The main worker plus the small specialists.",
+      "gpus": 1,
+      "serve": {
+        "qwen3.8-27b": {
+          "mem": 0.62
+        },
+        "paddleocr-vl": {
+          "mem": 0.1
+        },
+        "sarvam-translate": {
+          "mem": 0.14
+        },
+        "qwen3-embedding": {
+          "mem": 0.06
+        }
+      }
+    },
+    "plus": {
+      "_hardware": "1 GPU with 80 GB (A100 80GB, H100) — about $1.2-2/h. Adds the maths/reasoning specialist.",
+      "gpus": 1,
+      "serve": {
+        "qwen3.8-27b": {
+          "mem": 0.4
+        },
+        "nemotron-cascade-2-30b": {
+          "mem": 0.4
+        },
+        "paddleocr-vl": {
+          "mem": 0.06
+        },
+        "qwen3-embedding": {
+          "mem": 0.04
+        }
+      }
+    },
+    "pro": {
+      "_hardware": "2 GPUs with 80 GB each — about $2.5-4/h. The whole team except the UI specialist.",
+      "gpus": 2,
+      "serve": {
+        "qwen3-coder-next": {
+          "mem": 0.55,
+          "gpus": 2
+        },
+        "qwen3.8-27b": {
+          "mem": 0.25,
+          "gpus": 2
+        },
+        "nemotron-cascade-2-30b": {
+          "mem": 0.4,
+          "gpu": 1
+        },
+        "paddleocr-vl": {
+          "mem": 0.05,
+          "gpu": 0
+        },
+        "sarvam-translate": {
+          "mem": 0.08,
+          "gpu": 0
+        },
+        "qwen3-embedding": {
+          "mem": 0.03,
+          "gpu": 0
+        }
+      }
+    },
+    "ui": {
+      "_hardware": "1 GPU with 80 GB. For UI-heavy weeks: the main worker plus the UI specialist.",
+      "gpus": 1,
+      "serve": {
+        "qwen3.8-27b": {
+          "mem": 0.42
+        },
+        "uigen-x-32b": {
+          "mem": 0.48
+        }
+      }
+    }
+  }
+}

@@ -497,6 +497,8 @@ const COLUMNS = [
   ["hive_copilot_settings", "autonomy TEXT NOT NULL DEFAULT 'autopilot'"],
   ["hive_copilot_settings", "can_merge INTEGER NOT NULL DEFAULT 0"],
   ["hive_copilot_settings", "admin INTEGER NOT NULL DEFAULT 0"],
+  ["hive_copilot_settings", "save_tokens INTEGER NOT NULL DEFAULT 1"],
+  ["hive_copilot_settings", "claude_only TEXT"],
   ["hive_tasks", "pipeline_run TEXT"],
   ["hive_schedules", "pipeline_id TEXT"],
 ];
