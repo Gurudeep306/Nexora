@@ -30,6 +30,24 @@ const planOf = (k: HiveKey) => {
 
 export function SubscriptionsPanel({ onConnect }: { onConnect: (s: Sub) => void }) {
   const { boot, machines } = useHive()
+  const toast = useToast()
+  // The parent Claude account leads (the Copilot's brain); the others are workers.
+  const [parent, setParent] = useState<string | null>(null)
+  useEffect(() => {
+    hiveApi
+      .copilot()
+      .then((r) => setParent(r.settings.brainKey ?? null))
+      .catch(() => {})
+  }, [])
+  const makeParent = async (id: string) => {
+    try {
+      const r = await hiveApi.copilotSettings({ brainKey: id })
+      setParent(r.settings.brainKey ?? id)
+      toast.success('That account now leads — the others do the work')
+    } catch (e) {
+      toast.error(errMsg(e))
+    }
+  }
   const keys = boot?.keys ?? []
   const anyMachine = machines.length > 0
   return (
@@ -57,9 +75,17 @@ export function SubscriptionsPanel({ onConnect }: { onConnect: (s: Sub) => void 
                 </Button>
               </div>
               <div className="relative mt-3 space-y-2">
-                {list.map((k) => (
-                  <SubKey key={k.id} k={k} machineName={machines.find((m) => m.id === k.machineId)?.name} online={machines.find((m) => m.id === k.machineId)?.online ?? false} />
+                {list.map((k, idx) => (
+                  <SubKey
+                    key={k.id}
+                    k={k}
+                    machineName={machines.find((m) => m.id === k.machineId)?.name}
+                    online={machines.find((m) => m.id === k.machineId)?.online ?? false}
+                    role={s !== 'claude_code' || list.length < 2 ? null : (parent ? parent === k.id : idx === 0) ? 'parent' : 'worker'}
+                    onMakeParent={s === 'claude_code' && list.length > 1 ? () => makeParent(k.id) : undefined}
+                  />
                 ))}
+                {s === 'claude_code' && list.length > 1 && <p className="px-1 text-[11.5px] text-text-muted">The parent account leads (plans and checks); workers do the tasks. If the parent hits its limit, a worker takes over leading.</p>}
                 {!list.length && (
                   <p className="rounded-xl bg-text-primary/[0.035] p-3 text-[12.5px] text-text-muted">
                     {anyMachine ? `Connect it to a machine where ${INFO[s].name} is installed and logged in.` : 'First connect an always-on machine (a home PC, a mini PC or a small VPS) in Machines — then connect it here.'}
@@ -74,13 +100,24 @@ export function SubscriptionsPanel({ onConnect }: { onConnect: (s: Sub) => void 
   )
 }
 
-function SubKey({ k, machineName, online }: { k: HiveKey; machineName?: string; online: boolean }) {
+function SubKey({ k, machineName, online, role, onMakeParent }: { k: HiveKey; machineName?: string; online: boolean; role?: 'parent' | 'worker' | null; onMakeParent?: () => void }) {
   const plan = planOf(k)
   return (
     <div className="rounded-xl bg-text-primary/[0.035] p-3">
       <div className="flex items-center gap-2 text-[12.5px]">
         <span className={cn('size-2 rounded-full', online ? 'bg-state-success' : 'bg-text-muted/50')} />
         <span className="truncate font-medium">{k.label}</span>
+        {role === 'parent' && <span className="shrink-0 rounded-full bg-accent-brand/15 px-1.5 text-[10.5px] font-semibold text-accent-brand">Parent · leads</span>}
+        {role === 'worker' && (
+          <>
+            <span className="shrink-0 rounded-full bg-text-primary/[0.07] px-1.5 text-[10.5px] font-medium text-text-muted">Worker</span>
+            {onMakeParent && (
+              <button type="button" onClick={onMakeParent} className="shrink-0 rounded-md px-1.5 text-[10.5px] text-accent-brand hover:bg-accent-brand/10">
+                Make parent
+              </button>
+            )}
+          </>
+        )}
         <span className="ml-auto truncate text-text-muted">
           <Server className="mr-1 inline size-3" />
           {machineName ?? 'machine'} · {online ? 'online' : 'offline'}
@@ -98,6 +135,7 @@ export function SubscriptionDialog({ sub, onClose }: { sub: Sub | null; onClose:
   const { machines } = useHive()
   const [machineId, setMachineId] = useState('')
   const [token, setToken] = useState('')
+  const [label, setLabel] = useState('')
   const [detect, setDetect] = useState<{ loading: boolean; status?: CliStatus; online?: boolean } | null>(null)
   const [busy, setBusy] = useState(false)
   const info = sub ? INFO[sub] : null
@@ -105,6 +143,7 @@ export function SubscriptionDialog({ sub, onClose }: { sub: Sub | null; onClose:
   useEffect(() => {
     if (!sub) return
     setToken('')
+    setLabel('')
     setMachineId(sorted.find((m) => m.online)?.id ?? sorted[0]?.id ?? '')
   }, [sub, sorted])
   useEffect(() => {
@@ -125,7 +164,7 @@ export function SubscriptionDialog({ sub, onClose }: { sub: Sub | null; onClose:
     if (!sub || !machineId) return
     setBusy(true)
     try {
-      const r = await hiveApi.addSubscription({ provider: sub, machineId, token: token.trim() || undefined })
+      const r = await hiveApi.addSubscription({ provider: sub, machineId, token: token.trim() || undefined, label: label.trim() || undefined })
       if (r.check?.ok === false) toast.error(`Saved, but the check failed: ${r.check.error ?? 'unknown error'}`)
       else toast.success(`${info?.name} is connected — choose it in any agent picker, or let Auto use it`)
       onClose()
@@ -194,6 +233,11 @@ export function SubscriptionDialog({ sub, onClose }: { sub: Sub | null; onClose:
                   </span>
                 )}
               </div>
+              <label className="block">
+                <span className="mb-1 block text-[12px] font-medium text-text-secondary">Account name (optional)</span>
+                <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder={sub === 'claude_code' ? 'e.g. Main, Worker 1, Riya’s Pro' : 'e.g. Main'} maxLength={60} />
+                <span className="mt-1 block text-[11.5px] text-text-muted">Helps tell several accounts apart. Each account needs its own setup token.</span>
+              </label>
               {sub === 'claude_code' && (
                 <label className="block">
                   <span className="mb-1 block text-[12px] font-medium text-text-secondary">Setup token (optional)</span>

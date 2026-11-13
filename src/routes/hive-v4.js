@@ -827,6 +827,52 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
       }
     }),
   );
+  /* ── Upload a folder → a private GitHub repo → a project agents work on ── */
+  const folderImport = require("../hive/folder-import");
+  const importUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: folderImport.MAX_FILE, files: 60, fieldSize: 1024 * 1024 } });
+  router.post(
+    "/api/hive/import/start",
+    h(async (req, res) => {
+      const b = req.body || {};
+      try {
+        res.json({ ok: true, ...(await folderImport.start({ name: str(b.name, "name", { max: 100 }), githubId: b.githubId || null, isPrivate: b.private !== false, description: b.description, username: req.hiveUser })) });
+      } catch (e) {
+        throw new BadInput(e.message, e.status || 400);
+      }
+    }),
+  );
+  router.post(
+    "/api/hive/import/:id/files",
+    (req, res, next) =>
+      importUpload.array("files", 60)(req, res, (err) => {
+        if (err) return res.status(400).json({ ok: false, error: err.code === "LIMIT_FILE_SIZE" ? "A file is over 95 MB — GitHub can't store it in a repository" : err.message });
+        next();
+      }),
+    h(async (req, res) => {
+      // Relative paths come in a parallel "paths" field (file names can't hold slashes everywhere).
+      const paths = [].concat(req.body?.paths || []);
+      const files = (req.files || []).map((f, i) => ({ path: paths[i] || f.originalname, buffer: f.buffer }));
+      try {
+        res.json({ ok: true, ...(await folderImport.addFiles(req.params.id, files)) });
+      } catch (e) {
+        throw new BadInput(e.message, e.status || 400);
+      }
+    }),
+  );
+  router.post(
+    "/api/hive/import/:id/finish",
+    h(async (req, res) => {
+      try {
+        const r = await folderImport.finish(req.params.id, { username: req.hiveUser });
+        await audit(req, "hive.import.folder", r.project.id, { repo: r.repo, files: r.files });
+        hub.emit("project", r.project);
+        res.json({ ok: true, ...r });
+      } catch (e) {
+        throw new BadInput(e.message, e.status || 400);
+      }
+    }),
+  );
+
   router.post(
     "/api/hive/projects/:id/brief",
     h(async (req, res) => {
@@ -960,7 +1006,7 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     h(async (req, res) => {
       const b = req.body || {};
       if (b.canMerge && !isAdmin(req)) throw new BadInput("Only admins can let the Copilot merge", 403);
-      const s = await copilot.saveSettings(req.hiveUser, { brain: b.brain, model: b.model, autonomy: b.autonomy, canMerge: b.canMerge, admin: isAdmin(req), saveTokens: b.saveTokens, claudeOnly: b.claudeOnly });
+      const s = await copilot.saveSettings(req.hiveUser, { brain: b.brain, model: b.model, autonomy: b.autonomy, canMerge: b.canMerge, admin: isAdmin(req), saveTokens: b.saveTokens, claudeOnly: b.claudeOnly, brainKey: b.brainKey });
       res.json({ ok: true, settings: s, brain: await copilot.currentBrain(req.hiveUser) });
     }),
   );
