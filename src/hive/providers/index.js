@@ -7,8 +7,9 @@
 const anthropic = require("./anthropic");
 const openai = require("./openai");
 const gemini = require("./gemini");
+const cli = require("./cli");
 
-const IMPLS = { anthropic, openai, gemini };
+const IMPLS = { anthropic, openai, gemini, cli };
 
 const caps = (o) => ({ tools: true, vision: false, pdf: false, images: false, ...o });
 
@@ -29,6 +30,17 @@ const VENDORS = [
   { id: "qwen", label: "Qwen", vendor: "Alibaba Cloud", impl: "openai", hue: 290, baseUrl: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1", keyHint: "sk-…", docs: "https://dashscope.console.aliyun.com", suggested: ["qwen3-coder-plus", "qwen-max"], caps: caps({ vision: true }) },
   { id: "zhipu", label: "GLM", vendor: "Zhipu AI", impl: "openai", hue: 245, baseUrl: "https://open.bigmodel.cn/api/paas/v4", keyHint: "API key", docs: "https://open.bigmodel.cn", suggested: ["glm-4.6"], caps: caps() },
   { id: "perplexity", label: "Perplexity", vendor: "Perplexity", impl: "openai", hue: 185, baseUrl: "https://api.perplexity.ai", keyHint: "pplx-…", docs: "https://www.perplexity.ai/settings/api", suggested: ["sonar-pro", "sonar"], caps: caps({ tools: false }) },
+  // Free and open-model hosts (see catalog.FREE_SOURCES for limits and sign-up).
+  { id: "github", label: "GitHub Models", vendor: "GitHub", impl: "openai", hue: 220, chroma: 0.03, baseUrl: "https://models.github.ai/inference", modelsUrl: "https://models.github.ai/catalog/models", keyHint: "github_pat_… (Models: read)", docs: "https://github.com/settings/personal-access-tokens/new", suggested: ["openai/gpt-4.1", "deepseek/deepseek-v3-0324", "meta/llama-4-maverick-17b-128e-instruct-fp8"], freeTier: true, caps: caps({ vision: true }) },
+  { id: "nvidia", label: "NVIDIA NIM", vendor: "NVIDIA", impl: "openai", hue: 135, baseUrl: "https://integrate.api.nvidia.com/v1", keyHint: "nvapi-…", docs: "https://build.nvidia.com", suggested: ["qwen/qwen3-coder-480b-a35b-instruct", "moonshotai/kimi-k2-instruct", "deepseek-ai/deepseek-r1"], freeTier: true, caps: caps() },
+  { id: "sambanova", label: "SambaNova", vendor: "SambaNova", impl: "openai", hue: 25, baseUrl: "https://api.sambanova.ai/v1", keyHint: "API key", docs: "https://cloud.sambanova.ai/apis", suggested: ["DeepSeek-V3-0324", "Llama-4-Maverick-17B-128E-Instruct"], freeTier: true, caps: caps() },
+  { id: "huggingface", label: "Hugging Face", vendor: "Hugging Face", impl: "openai", hue: 55, baseUrl: "https://router.huggingface.co/v1", keyHint: "hf_…", docs: "https://huggingface.co/settings/tokens", suggested: ["Qwen/Qwen3-Coder-480B-A35B-Instruct", "deepseek-ai/DeepSeek-V3-0324"], freeTier: true, caps: caps() },
+  { id: "cloudflare", label: "Workers AI", vendor: "Cloudflare", impl: "openai", hue: 35, keyHint: "API token", baseUrlRequired: true, baseUrlHint: "https://api.cloudflare.com/client/v4/accounts/ACCOUNT_ID/ai/v1", docs: "https://dash.cloudflare.com/profile/api-tokens", suggested: ["@cf/openai/gpt-oss-120b", "@cf/meta/llama-4-scout-17b-16e-instruct"], freeTier: true, caps: caps() },
+  { id: "ollama", label: "Ollama", vendor: "Your own GPU", impl: "openai", hue: 0, chroma: 0, keyHint: "any text (Ollama ignores it)", baseUrlRequired: true, baseUrlHint: "http://YOUR-GPU-HOST:11434/v1", docs: "https://ollama.com/download", suggested: ["qwen3-coder", "gpt-oss:20b"], freeTier: true, caps: caps() },
+  // Subscription agents: Claude Code and Codex running on a connected machine
+  // under your own Claude / ChatGPT plan. The "key" is a connection to a machine.
+  { id: "claude_code", label: "Claude Code", vendor: "Anthropic · your Claude plan", impl: "cli", cli: "claude", hue: 30, keyHint: "Optional: token from `claude setup-token`", docs: "https://docs.claude.com/en/docs/claude-code", suggested: ["default", "opus", "sonnet", "haiku"], subscription: true, needsMachine: true, caps: caps({ vision: true, agentOnly: false }) },
+  { id: "codex", label: "Codex", vendor: "OpenAI · your ChatGPT plan", impl: "cli", cli: "codex", hue: 160, keyHint: "Not needed — sign in on the machine", docs: "https://developers.openai.com/codex", suggested: ["default"], subscription: true, needsMachine: true, caps: caps({ vision: false }) },
   { id: "custom", label: "Custom", vendor: "Any OpenAI-compatible API", impl: "openai", hue: 290, chroma: 0.04, keyHint: "API key", baseUrlRequired: true, suggested: [], caps: caps() },
 ];
 const BY_ID = new Map(VENDORS.map((v) => [v.id, v]));
@@ -68,6 +80,10 @@ function catalogue() {
       baseUrlRequired: !!v.baseUrlRequired,
       caps: v.caps,
       imageModel: v.imageModel || null,
+      freeTier: !!v.freeTier,
+      subscription: !!v.subscription,
+      needsMachine: !!v.needsMachine,
+      baseUrlHint: v.baseUrlHint || null,
     })),
     prices: anthropic.PRICES,
   };

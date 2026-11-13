@@ -279,6 +279,9 @@ test('a GitHub connection and a project can be added', async () => {
 });
 
 test('a Claude agent explores, edits through tools and finishes; changes are reviewable', async () => {
+  // Exact token accounting below: no automatic reviewer adding its own usage.
+  const off = await call('PUT', '/api/hive/plugins/builtin/auto_review', owner, { enabled: false, scope: '*' });
+  assert.equal(off.status, 200, off.text);
   const r = await call('POST', `/api/hive/projects/${projectId}/tasks`, owner, {
     prompt: 'Make greet use a template literal and add src/new.js',
     mode: 'solo',

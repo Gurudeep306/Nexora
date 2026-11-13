@@ -19,6 +19,8 @@ export interface DockItem {
   /** Served by Express, not a client route. */
   external?: boolean
   action?: 'search'
+  /** Only staff and admins see it (Hive, the AI workspace). */
+  staffOnly?: boolean
 }
 
 export const DOCK_ITEMS: DockItem[] = [
@@ -38,6 +40,7 @@ export const DOCK_ITEMS: DockItem[] = [
   { id: 'look', label: 'Theme Centre', hue: 310, to: '/theme' },
   { id: 'settings', label: 'Settings', hue: 260, chroma: 0.02, to: '/settings' },
   { id: 'search', label: 'Search', hue: 260, chroma: 0.02, action: 'search' },
+  { id: 'hive', label: 'Hive', hue: 285, to: '/hive', staffOnly: true },
 ]
 
 export const DOCK_BY_ID = new Map(DOCK_ITEMS.map((i) => [i.id, i]))

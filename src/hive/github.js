@@ -79,6 +79,7 @@ module.exports = {
   },
   createBlob: (t, o, r, content) =>
     gh(t, "POST", `${repoPath(o, r)}/git/blobs`, { body: { content: Buffer.from(content, "utf8").toString("base64"), encoding: "base64" } }),
+  createBlobBase64: (t, o, r, b64) => gh(t, "POST", `${repoPath(o, r)}/git/blobs`, { body: { content: b64, encoding: "base64" } }),
   createTree: (t, o, r, baseTree, tree) => gh(t, "POST", `${repoPath(o, r)}/git/trees`, { body: { base_tree: baseTree, tree } }),
   createCommit: (t, o, r, message, tree, parents) =>
     gh(t, "POST", `${repoPath(o, r)}/git/commits`, { body: { message, tree, parents } }),

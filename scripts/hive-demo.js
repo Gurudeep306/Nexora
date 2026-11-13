@@ -133,7 +133,8 @@ function startMock() {
           const b = JSON.parse(body || "{}");
           const msgs = b.messages || [];
           const toolRounds = msgs.filter((m) => m.role === "tool").length;
-          if (b.tools?.length) {
+          // Chat sends its own tool set (web_search…); agents get the coding tools.
+          if (b.tools?.length && !b.tools.some((t) => t.function?.name === "web_search")) {
             // A tiny agent: read, edit, finish.
             if (toolRounds === 0) return sseOpenAi(res, { reasoning: "Let me read the cart first.", text: "I'll look at the cart module.", calls: [{ name: "read_file", input: { path: "src/cart.js" } }] });
             if (toolRounds === 1)

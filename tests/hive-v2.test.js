@@ -94,7 +94,8 @@ function startMock() {
         if (p === '/v1/chat/completions') {
           const b = JSON.parse(body);
           compatBodies.push(b);
-          if (!b.tools) return compatSSE(res, { text: `chat reply via ${b.model}` });
+          // Chat (no tools, or the chat tool set) answers plainly; agents get tool calls.
+          if (!b.tools || b.tools.some((t) => t.function?.name === 'web_search')) return compatSSE(res, { text: `chat reply via ${b.model}` });
           const turns = b.messages.filter((m) => m.role === 'assistant').length;
           // Turn 1 of the takeover is the old conversation (1 assistant turn) + this one.
           if (/Assigned|takeover-test/.test(JSON.stringify(b.messages[1])) && turns === 0) {
@@ -255,7 +256,7 @@ test('chat: upload a file, ask any model, and generate an image', async () => {
   });
   assert.equal(msgs.convo.title, 'When is the deadline?');
   assert.match(msgs.messages[1].content, /chat reply via deepseek-chat/);
-  const chatReq = compatBodies.filter((b) => !b.tools).pop();
+  const chatReq = compatBodies.filter((b) => !b.tools || b.tools.some((t) => t.function?.name === 'web_search')).pop();
   const parts = JSON.stringify(chatReq.messages);
   assert.match(parts, /SECRET-NOTES/, 'uploaded file content reached the model');
   assert.match(parts, /module\.exports = 1/, 'repo file reached the model');
