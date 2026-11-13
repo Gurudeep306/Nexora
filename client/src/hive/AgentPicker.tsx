@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, ChevronDown, Eye, FileText, Image as ImageIcon, Search, Sparkles, Star, Wrench, X } from 'lucide-react'
+import { Check, ChevronDown, Eye, EyeOff, FileText, Image as ImageIcon, Search, Sparkles, Star, Wrench, X } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import type { AgentSpec, Bootstrap, Effort, HiveKey, ProviderId, ProviderInfo } from './types'
 import { ProviderGlyph, fmtTokens, keyShare, shareTone, vendorName } from './ui'
 import { AgentMark, FAMILY, familyOf } from './agents'
+import { hiveApi } from './api'
+import { useHive } from './store'
 
 const EFFORTS: Effort[] = ['low', 'medium', 'high', 'xhigh', 'max']
 
@@ -177,6 +179,13 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q, vendor, favs, recents, boot])
   const flat = groups.flatMap((g) => g.items)
+  const { refresh } = useHive()
+  // "Never show me this one again": hidden on every key that offers it.
+  const hideModel = async (r: ModelRef) => {
+    const owners = boot.keys.filter((k) => k.provider === r.provider && k.models.includes(r.model))
+    await Promise.all(owners.map((k) => hiveApi.hideModel(k.id, r.model).catch(() => null)))
+    refresh().catch(() => {})
+  }
 
   useEffect(() => setCursor(0), [q, vendor])
   useEffect(() => {
@@ -276,6 +285,9 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
                     </button>
                     <button type="button" onClick={() => toggleFav(r.provider, r.model)} className={cn('grid size-6 shrink-0 place-items-center rounded-md', isFav(r.provider, r.model) ? 'text-state-warning' : 'text-text-muted opacity-0 group-hover/row:opacity-100 hover:text-text-primary')} aria-label="Favourite">
                       <Star className={cn('size-3.5', isFav(r.provider, r.model) && 'fill-current')} />
+                    </button>
+                    <button type="button" onClick={() => hideModel(r)} className="grid size-6 shrink-0 place-items-center rounded-md text-text-muted opacity-0 group-hover/row:opacity-100 hover:text-state-error" title="Hide — never offer or use this model" aria-label={`Hide ${r.model}`}>
+                      <EyeOff className="size-3.5" />
                     </button>
                   </div>
                 )

@@ -208,6 +208,14 @@ function createHiveRouter() {
   );
 
   /* ── provider keys ───────────────────────────────────────────────── */
+  // A new key's models are tested in the background, so only the ones that answer are offered.
+  function autoVerify(id) {
+    if (process.env.NODE_ENV === "test" && process.env.HIVE_TEST_VERIFY !== "1") return;
+    require("../hive/health")
+      .verifyKey(id)
+      .then(() => hub.emit("keys", { verified: id }))
+      .catch((e) => console.error("[hive verify]", e.message));
+  }
   router.post(
     "/api/hive/keys",
     h(async (req, res) => {
@@ -217,7 +225,8 @@ function createHiveRouter() {
         await audit(req, "hive.key.create", id, { provider: b.provider, label: b.label });
         const check = await keys.checkKey(id);
         hub.emit("keys", { by: req.hiveUser });
-        res.json({ ok: true, id, check });
+        if (check.ok) autoVerify(id);
+        res.json({ ok: true, id, check, verifying: check.ok });
       } catch (e) {
         throw e.status ? e : new BadInput(e.message);
       }
@@ -241,7 +250,7 @@ function createHiveRouter() {
         throw e.status ? e : new BadInput(e.message);
       }
       await audit(req, "hive.key.update", req.params.id, { fields: Object.keys(req.body || {}).filter((k) => k !== "apiKey") });
-      if (req.body?.apiKey) await keys.checkKey(req.params.id);
+      if (req.body?.apiKey && (await keys.checkKey(req.params.id)).ok) autoVerify(req.params.id);
       hub.emit("keys", { by: req.hiveUser });
       res.json({ ok: true });
     }),
@@ -255,6 +264,27 @@ function createHiveRouter() {
       await audit(req, "hive.key.delete", row.id, { label: row.label, provider: row.provider });
       hub.emit("keys", { by: req.hiveUser });
       res.json({ ok: true });
+    }),
+  );
+
+  // "Never offer me this model again" — it stays off the key until someone re-tests it.
+  router.post(
+    "/api/hive/keys/:id/hide-model",
+    h(async (req, res) => {
+      const model = String(req.body?.model || "").slice(0, 300);
+      if (!model) throw new BadInput("Which model?");
+      const row = await keys.keyRow(req.params.id);
+      if (!row) throw new BadInput("Key not found", 404);
+      const next = await keys.blockModel(row.id, model);
+      const v = JSON.parse(row.verified_json || "null");
+      if (v?.ok?.includes(model)) {
+        v.ok = v.ok.filter((m) => m !== model);
+        v.failed = { ...(v.failed || {}), [model]: "Hidden by " + req.hiveUser };
+        await keys.saveVerified(row.id, v);
+      }
+      await audit(req, "hive.key.hide_model", row.id, { model });
+      hub.emit("keys", { by: req.hiveUser });
+      res.json({ ok: true, defaultModel: next });
     }),
   );
 

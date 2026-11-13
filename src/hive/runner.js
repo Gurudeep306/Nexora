@@ -892,7 +892,7 @@ async function cheapestSpec() {
       continue;
     }
     if (!v.caps.tools || v.subscription) continue;
-    const models = json(r.models_json, []);
+    const models = require("./keys").workingModels(r);
     const model = [...models].sort((a, b) => modelTier(a) - modelTier(b))[0] || r.default_model;
     if (!model) continue;
     const tier = modelTier(model);
