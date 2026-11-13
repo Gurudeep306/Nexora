@@ -169,7 +169,9 @@ async function probeAll({ includePaid = false, concurrency = 4 } = {}) {
  */
 const verifying = new Map(); // keyId → { done, total, startedAt }
 const DEFINITE = new Set(["model", "bad_request"]);
-const PER_VENDOR_CAP = { openrouter: 16, github: 30 }; // OpenRouter free keys get ~50 requests a day
+const PER_VENDOR_CAP = { openrouter: 16, github: 30, mistral: 90, codestral: 10 }; // OpenRouter free keys get ~50 requests a day
+// Vendors whose free tiers allow about one request a second: test one model at a time, spaced out.
+const PER_VENDOR_PACE = { mistral: 1300, codestral: 1300, cohere: 1000 };
 
 function verifyOrder(models, vendor, catalog) {
   const { CARDS, baseId, quality } = catalog;
@@ -196,7 +198,7 @@ async function verifyKey(keyId, { limit = 40, retest = false, timeoutMs = 30_000
   if (retest) pool = [...new Set([...pool, ...blocked.filter(isChatModel)])];
   // Recently proven by real work: no need to spend a request on it.
   const proven = new Set((await all("SELECT model FROM hive_health WHERE key_id=? AND ok_count>0 AND consecutive_fails=0 AND last_ok>?", [keyId, Date.now() - 3 * 86_400_000])).map((r) => r.model));
-  const cap = Math.min(limit, PER_VENDOR_CAP[v.id] ?? limit);
+  const cap = PER_VENDOR_CAP[v.id] ?? limit;
   const order = verifyOrder(pool, v.id, catalog);
   const todo = order.filter((m) => !proven.has(m)).slice(0, cap);
   const state = { done: 0, total: todo.length, startedAt: Date.now() };
@@ -206,40 +208,49 @@ async function verifyKey(keyId, { limit = 40, retest = false, timeoutMs = 30_000
   const untested = [];
   let stop = null;
   try {
-    let i = 0;
-    const worker = async () => {
-      while (i < todo.length) {
-        const model = todo[i++];
-        if (stop) {
-          untested.push(model);
-          continue;
-        }
-        let tries = 0;
-        for (;;) {
-          try {
-            await v.impl.turn({ secret: keys.secretOf(row), keyRow: row, baseUrl: row.base_url || v.baseUrl, official: !!v.official, vision: false, model, system: "Reply with exactly: OK", messages: [{ role: "user", text: "OK?" }], tools: [], maxTokens: 8, signal: AbortSignal.timeout(timeoutMs) });
-            ok.add(model); // the wrapped turn() already recorded the success and its latency
-          } catch (e) {
-            const kind = e.kind || (e.name === "TimeoutError" || /abort|timeout/i.test(e.message) ? "timeout" : "server");
-            if (kind === "rate" && tries++ < 1) {
-              await new Promise((r) => setTimeout(r, 20_000).unref?.());
-              continue;
-            }
-            if (kind === "rate" || kind === "quota") {
-              stop = kind; // the key is out of requests for now: test the rest later
-              untested.push(model);
-            } else if (kind === "auth" && !ok.size && state.done >= 2) {
-              stop = "auth";
-              failed[model] = e.message.slice(0, 200);
-            } else if (DEFINITE.has(kind) || kind === "auth") failed[model] = String(e.message || kind).slice(0, 200);
-            else untested.push(model); // slow or a server hiccup: not proof it is broken
-          }
-          break;
-        }
-        state.done++;
+    const testOne = async (model) => {
+      if (stop) {
+        untested.push(model);
+        return;
       }
+      let tries = 0;
+      for (;;) {
+        try {
+          await v.impl.turn({ secret: keys.secretOf(row), keyRow: row, baseUrl: row.base_url || v.baseUrl, official: !!v.official, vision: false, model, system: "Reply with exactly: OK", messages: [{ role: "user", text: "OK?" }], tools: [], maxTokens: 8, signal: AbortSignal.timeout(timeoutMs) });
+          ok.add(model); // the wrapped turn() already recorded the success and its latency
+        } catch (e) {
+          const kind = e.kind || (e.name === "TimeoutError" || /abort|timeout/i.test(e.message) ? "timeout" : "server");
+          if (kind === "rate" && tries++ < 1) {
+            await new Promise((r) => setTimeout(r, 20_000).unref?.());
+            continue;
+          }
+          if (kind === "rate" || kind === "quota") {
+            stop = kind; // the key is out of requests for now: test the rest later
+            untested.push(model);
+          } else if (kind === "auth" && !ok.size && state.done >= 2) {
+            stop = "auth";
+            failed[model] = e.message.slice(0, 200);
+          } else if (DEFINITE.has(kind) || kind === "auth") failed[model] = String(e.message || kind).slice(0, 200);
+          else untested.push(model); // slow or a server hiccup: not proof it is broken
+        }
+        break;
+      }
+      state.done++;
     };
-    await Promise.all([worker(), worker()]);
+    const pace = PER_VENDOR_PACE[v.id] || 0;
+    if (pace) {
+      // Free tiers with ~1 request a second: one model at a time with a gap, so the test isn't cut short.
+      for (const [n, model] of todo.entries()) {
+        if (n) await new Promise((r) => setTimeout(r, pace).unref?.());
+        await testOne(model);
+      }
+    } else {
+      let i = 0;
+      const worker = async () => {
+        while (i < todo.length) await testOne(todo[i++]);
+      };
+      await Promise.all([worker(), worker()]);
+    }
   } finally {
     verifying.delete(keyId);
   }
