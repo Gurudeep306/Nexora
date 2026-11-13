@@ -149,6 +149,21 @@ function startMock() {
             return sseOpenAi(res, { text: "All set — totals now multiply by quantity.", calls: [{ name: "finish", input: { summary: "Cart totals now respect item quantities. Tests pass." } }] });
           }
           if (/principal engineer/.test(msgs[0]?.content || "")) return sseOpenAi(res, { text: JSON.stringify(PLAN) });
+          // Hive Copilot: look around, start a session, then report; automatic reviews get a verdict.
+          if (b.tools?.some((t) => t.function?.name === "hive_overview")) {
+            const lastUser = [...msgs].reverse().find((m) => m.role === "user");
+            if (/^\[automatic\]/.test(String(lastUser?.content || ""))) {
+              if (toolRounds === 0) return sseOpenAi(res, { text: "Reviewing the finished session.", calls: [{ name: "session_detail", input: { taskId: (String(lastUser.content).match(/\((tsk_[^)]+)\)/) || [])[1] || "" } }] });
+              return sseOpenAi(res, { text: "✅ Ready to ship — totals now respect quantities." });
+            }
+            if (toolRounds === 0) return sseOpenAi(res, { text: "Let me look at the hive.", calls: [{ name: "hive_overview", input: {} }] });
+            if (toolRounds === 1) {
+              const ov = JSON.parse(msgs.filter((m) => m.role === "tool").pop().content);
+              const proj = ov.projects.find((x) => x.repo && !x.onMachine) || ov.projects[0];
+              return sseOpenAi(res, { text: "Starting a session.", calls: [{ name: "start_session", input: { projectId: proj.id, title: "Cart quantities", prompt: "Make cart totals multiply price by qty (default 1). Acceptance: totals respect qty; tests pass.", agents: ["auto"] } }] });
+            }
+            return sseOpenAi(res, { text: "Started **Cart quantities** — I'll review it when it finishes." });
+          }
           if (/dispatcher of a team/.test(msgs[0]?.content || ""))
             return sseOpenAi(res, {
               text: JSON.stringify({

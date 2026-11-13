@@ -1,0 +1,631 @@
+// Hive Copilot — a personal assistant that runs the hive for you.
+//
+// It talks with you, and it can operate the whole workspace: see what's
+// running, start sessions and teams (the Dispatcher), write and improve the
+// prompts for that work, steer or stop agents, read the changes they made,
+// judge the results, check agent health and spend, and research models on
+// the web. It keeps its own token use low by delegating the heavy lifting
+// to agents (free and cheap ones first) and only planning and judging itself.
+//
+// The brain:
+//   1. Your Claude plan (Claude Code on a worker machine): Hive is exposed to
+//      it as an MCP server, so Opus/Sonnet on your subscription drives Hive
+//      with no API credits.
+//   2. Otherwise the best healthy model with tool use, free first.
+// Sessions the Copilot starts are watched: when they finish it reviews the
+// work by itself and reports back in the thread.
+const crypto = require("crypto");
+const { run, get, all, newId, now, json } = require("./db");
+const hub = require("./hub");
+
+const MAX_STEPS = 14;
+const tokens = new Map(); // MCP bearer token → { username, exp }
+
+/* ── tools ──────────────────────────────────────────────────────────── */
+const str = (description) => ({ type: "string", description });
+const int = (description) => ({ type: "integer", description });
+const bool = (description) => ({ type: "boolean", description });
+const obj = (properties, required = []) => ({ type: "object", properties, required, additionalProperties: false });
+const AGENT_HINT =
+  'Who does the work: "auto" (best model for the kind of work), "free" (best free model), "fast", "quality", or a specific model as "vendor/model" (e.g. "claude_code/default", "gemini/gemini-3-pro-preview", "groq/openai/gpt-oss-120b").';
+
+function specFrom(agent, kind = null) {
+  const a = String(agent || "auto").trim();
+  if (!a || a === "auto") return { provider: "auto", keyId: "auto", model: "", kind };
+  if (a === "free") return { provider: "auto", keyId: "auto", model: "", freeOnly: true, kind };
+  if (["fast", "quality", "savings", "balanced"].includes(a)) return { provider: "auto", keyId: "auto", model: "", preference: a, kind };
+  const i = a.indexOf("/");
+  return i < 0 ? { provider: a, keyId: "auto", model: "" } : { provider: a.slice(0, i), keyId: "auto", model: a.slice(i + 1) };
+}
+
+const clip = (s, n = 12000) => {
+  const t = typeof s === "string" ? s : JSON.stringify(s, null, 1);
+  return t.length > n ? `${t.slice(0, n)}\n… [${t.length - n} more characters]` : t;
+};
+
+async function projectOf(id) {
+  const p = id ? await get("SELECT * FROM hive_projects WHERE id=? OR name=?", [id, id]) : null;
+  if (!p) throw new Error(`Unknown project "${id}". Call hive_overview to see project ids.`);
+  return p;
+}
+
+async function overview() {
+  const projects = await all("SELECT id, name, repo_owner, repo_name, machine_id, folder, description FROM hive_projects ORDER BY updated_at DESC LIMIT 30");
+  const tasks = await all("SELECT id, project_id, title, status, mode, updated_at FROM hive_tasks WHERE archived=0 ORDER BY updated_at DESC LIMIT 15");
+  const agents = tasks.length ? await all(`SELECT task_id, name, provider, model, status FROM hive_agents WHERE task_id IN (${tasks.map(() => "?").join(",")})`, tasks.map((t) => t.id)) : [];
+  const health = await require("./health")
+    .board()
+    .catch(() => []);
+  const dispatches = await all("SELECT id, project_id, status, plan_json, updated_at FROM hive_dispatches ORDER BY updated_at DESC LIMIT 5").catch(() => []);
+  return {
+    projects: projects.map((p) => ({ id: p.id, name: p.name, repo: p.repo_owner ? `${p.repo_owner}/${p.repo_name}` : null, onMachine: !!p.machine_id, description: p.description || undefined })),
+    recentSessions: tasks.map((t) => ({
+      id: t.id,
+      project: projects.find((p) => p.id === t.project_id)?.name || t.project_id,
+      title: t.title,
+      status: t.status,
+      mode: t.mode,
+      updated: new Date(Number(t.updated_at)).toISOString(),
+      agents: agents.filter((a) => a.task_id === t.id).map((a) => `${a.name} (${a.provider}/${a.model}) ${a.status}`),
+    })),
+    teams: dispatches.map((d) => ({ id: d.id, status: d.status, summary: json(d.plan_json, {}).summary })),
+    agents: {
+      connected: health.length,
+      working: health.filter((k) => ["healthy", "flaky", "unknown"].includes(k.state)).map((k) => `${k.vendorLabel}${k.free ? " (free)" : k.subscription ? " (plan)" : ""}: ${k.defaultModel}`),
+      problems: health.filter((k) => ["cooling", "down"].includes(k.state)).map((k) => `${k.label}: ${k.state}${k.detail ? ` — ${k.detail}` : ""}`),
+    },
+  };
+}
+
+async function modelsReport({ kind = null, freeOnly = false }) {
+  const router = require("./router");
+  const { KINDS, CARDS, publicCard } = require("./catalog");
+  const kinds = kind && KINDS[kind] ? [kind] : Object.keys(KINDS);
+  const best = {};
+  for (const k of kinds) {
+    const r = await router.route({ kind: k, needTools: k !== "chat", chat: k === "chat", freeOnly }).catch(() => null);
+    best[k] = r ? { pick: `${r.pick.name} on ${r.pick.provider} (${r.pick.cost})`, why: r.note, alternatives: r.alternatives.map((a) => `${a.name} (${a.cost}, fit ${a.quality})`) } : "nothing connected can do this";
+  }
+  const list = await router.candidates({ kind: kind || "coding", needTools: false, chat: true }).catch(() => []);
+  const connected = [...new Map(list.map((c) => [`${c.vendor}|${c.model}`, c])).values()]
+    .sort((a, b) => b.quality - a.quality)
+    .slice(0, 30)
+    .map((c) => ({ model: `${c.vendor}/${c.model}`, name: c.card.name, lab: c.card.lab, cost: c.cost, fit: c.quality, scores: { intelligence: c.card.intelligence, coding: c.card.coding, reasoning: c.card.reasoning, writing: c.card.writing, speed: c.card.speed }, measured: c.measured?.runs ? `${c.measured.ok}/${c.measured.runs} runs ok` : undefined, latencyMs: c.latencyMs ?? undefined, coolingDown: !!c.cooling || undefined }));
+  const catalogue = CARDS.slice(0, 80).map((c) => {
+    const p = publicCard(c);
+    return `${p.name} (${p.lab}): intel ${p.intelligence}, coding ${p.coding}, reasoning ${p.reasoning}, writing ${p.writing}, speed ${p.speed}/5, ${p.tier}${p.open ? ", open weights" : ""}${p.strengths?.length ? ` — good: ${p.strengths.slice(0, 2).join("; ")}` : ""}`;
+  });
+  return { bestPerKind: best, connected, fullCatalogue: kind ? undefined : catalogue };
+}
+
+async function sessionDetail(taskId) {
+  const task = await get("SELECT * FROM hive_tasks WHERE id=?", [taskId]);
+  if (!task) throw new Error("Session not found");
+  const agents = await all("SELECT id, name, provider, model, status, role, title, result, error, input_tokens, output_tokens FROM hive_agents WHERE task_id=? ORDER BY created_at", [taskId]);
+  const events = await all("SELECT kind, agent_id, data_json, created_at FROM hive_events WHERE task_id=? AND kind IN ('status','note','error','verdict','pipeline','review','handoff','approval') ORDER BY seq DESC LIMIT 30", [taskId]);
+  let changes = [];
+  try {
+    const runner = require("./runner");
+    const ctx = await runner.taskContext(taskId);
+    changes = await runner.workspaceOf(ctx, "main").changes();
+  } catch {
+    /* not available */
+  }
+  return {
+    id: task.id,
+    title: task.title,
+    status: task.status,
+    mode: task.mode,
+    request: clip(task.prompt, 2000),
+    summary: task.summary ? clip(task.summary, 2000) : undefined,
+    prUrl: task.pr_url || undefined,
+    agents: agents.map((a) => ({ id: a.id, name: a.name, model: `${a.provider}/${a.model}`, role: a.title || a.role, status: a.status, result: a.result ? clip(a.result, 1500) : undefined, error: a.error || undefined, tokens: Number(a.input_tokens || 0) + Number(a.output_tokens || 0) })),
+    changedFiles: changes.map((c) => `${c.status} ${c.path} (+${c.additions} -${c.deletions})`),
+    recentEvents: events.reverse().map((e) => `${e.kind}: ${clip(json(e.data_json, {}), 300)}`),
+  };
+}
+
+async function sessionDiff(taskId, path) {
+  const runner = require("./runner");
+  const tools = require("./tools");
+  const ctx = await runner.taskContext(taskId);
+  const ws = runner.workspaceOf(ctx, "main");
+  const r = await tools.execute("view_changes", path ? { path } : {}, { ws, agent: { name: "copilot" }, maxLines: 2000 });
+  return clip(r.content, 30000);
+}
+
+const TOOLS = {
+  hive_overview: {
+    description: "See the whole hive: projects (with ids), recent sessions and their agents, teams, which agents are working and which are failing. Call this first when you need ids or context.",
+    schema: obj({}),
+    run: () => overview(),
+  },
+  list_models: {
+    description: "Every connected model with scores (intelligence, coding, reasoning, writing, speed), cost class (free/plan/$/$$/$$$), measured success and response time, the best pick per kind of work, and the full model catalogue. Use it to choose who should do what.",
+    schema: obj({ kind: str("Optional kind of work: chat, mechanical, reading, search, writing, coding, review, hard"), freeOnly: bool("Only free and plan models") }),
+    run: (i) => modelsReport({ kind: i.kind || null, freeOnly: !!i.freeOnly }),
+  },
+  session_detail: {
+    description: "One session: the request, each agent's model, status and result, the files changed, and recent events.",
+    schema: obj({ taskId: str("Session id") }, ["taskId"]),
+    run: (i) => sessionDetail(i.taskId),
+  },
+  session_diff: {
+    description: "The actual code changes a session made (unified diff), optionally for one file. Read this before judging work.",
+    schema: obj({ taskId: str("Session id"), path: str("Optional file path") }, ["taskId"]),
+    run: (i) => sessionDiff(i.taskId, i.path),
+  },
+  start_session: {
+    description: `Start a session in a project with one agent (or several to compare). Write a precise, self-contained prompt with acceptance criteria. ${AGENT_HINT}`,
+    schema: obj(
+      {
+        projectId: str("Project id"),
+        title: str("Short title"),
+        prompt: str("Full instructions for the agent(s)"),
+        agents: { type: "array", items: { type: "string" }, description: 'One or more agents, e.g. ["auto"] or ["free","claude_code/default"]' },
+        mode: { type: "string", enum: ["solo", "compare", "team"], description: "solo: one agent; compare: each agent tries separately and the Judge picks the best; team: a lead splits the work among the agents" },
+        watch: bool("Review the result automatically when it finishes (default true)"),
+      },
+      ["projectId", "prompt"],
+    ),
+    run: async (i, ctx) => {
+      const p = await projectOf(i.projectId);
+      const runner = require("./runner");
+      const router = require("./router");
+      const kind = router.classify(i.prompt).kind;
+      const list = (Array.isArray(i.agents) && i.agents.length ? i.agents : ["auto"]).slice(0, 4).map((a) => specFrom(a, kind));
+      const mode = ["solo", "compare", "team"].includes(i.mode) ? i.mode : list.length > 1 ? "compare" : "solo";
+      for (const s of list) await runner.resolveSpec(s, { prompt: i.prompt, machineId: p.machine_id || null });
+      const task = await ctx.createTask(p, { title: i.title || String(i.prompt).split("\n")[0].slice(0, 90), prompt: i.prompt });
+      if (mode === "team") await runner.startTask(task, { mode: "team", specs: list.slice(1).length ? list.slice(1) : list, lead: list[0], username: ctx.username });
+      else await runner.startTask(task, { mode, specs: list, username: ctx.username });
+      if (i.watch !== false) await watch(task.id, ctx.username);
+      return { started: true, sessionId: task.id, project: p.name, mode, agents: list.map((s) => (s.provider === "auto" ? `auto${s.freeOnly ? " (free)" : s.preference ? ` (${s.preference})` : ""}` : `${s.provider}/${s.model || "default"}`)), link: `/hive/p/${p.id}/t/${task.id}` };
+    },
+  },
+  plan_team: {
+    description: "Plan a team with the Dispatcher: split a bigger request into parts by kind of work, each given the cheapest model that can really do it, with cost estimates. Returns the plan; call start_team to run it.",
+    schema: obj({ projectId: str("Project id"), request: str("What the team should build"), preference: { type: "string", enum: ["savings", "fast", "balanced", "quality"] }, freeOnly: bool("Free models only") }, ["projectId", "request"]),
+    run: async (i, ctx) => {
+      const d = await require("./dispatcher").create({ project: await projectOf(i.projectId), request: i.request, username: ctx.username, preference: i.preference || "savings", freeOnly: !!i.freeOnly });
+      hub.emit("dispatch", d);
+      return { dispatchId: d.id, summary: d.plan.summary, parts: d.plan.parts.map((p) => ({ id: p.id, title: p.title, kind: p.kind, dependsOn: p.dependsOn, model: p.pick ? `${p.pick.name} (${p.pick.cost})` : "auto", estimate: p.estimate.dollars })), reviewer: d.plan.review?.name, totalDollars: d.plan.totals.dollars, premiumBaselineDollars: d.plan.totals.baseline?.dollars ?? null, link: `/hive/dispatch?d=${d.id}` };
+    },
+  },
+  start_team: {
+    description: "Start a planned team (from plan_team). Optionally swap a part's model first with change_team_part.",
+    schema: obj({ dispatchId: str("Dispatch id from plan_team"), watch: bool("Review automatically when done (default true)") }, ["dispatchId"]),
+    run: async (i, ctx) => {
+      const d = await require("./dispatcher").start(i.dispatchId, { username: ctx.username, createTask: ctx.createTask });
+      if (i.watch !== false && d.taskId) await watch(d.taskId, ctx.username);
+      return { started: true, sessionId: d.taskId, link: `/hive/p/${d.projectId}/t/${d.taskId}` };
+    },
+  },
+  change_team_part: {
+    description: `Before starting a team: give one part a different model, rewrite its prompt, or remove it. ${AGENT_HINT}`,
+    schema: obj({ dispatchId: str("Dispatch id"), partId: str("Part id, e.g. p2"), agent: str("New model for this part"), prompt: str("New prompt"), remove: bool("Remove the part") }, ["dispatchId", "partId"]),
+    run: async (i) => {
+      const s = i.agent ? specFrom(i.agent) : null;
+      const d = await require("./dispatcher").edit(i.dispatchId, { partId: i.partId, spec: s && s.provider !== "auto" ? s : null, prompt: i.prompt, remove: !!i.remove });
+      return { ok: true, parts: d.plan.parts.map((p) => `${p.id} ${p.title} → ${p.pick?.name || "auto"}`) };
+    },
+  },
+  add_agent: {
+    description: `Bring another agent into an existing session with new instructions (e.g. to fix what a review found, or to write tests). ${AGENT_HINT}`,
+    schema: obj({ taskId: str("Session id"), agent: str("Who"), instructions: str("What to do"), readOnly: bool("Only read and report (reviews)") }, ["taskId", "instructions"]),
+    run: async (i, ctx) => {
+      const runner = require("./runner");
+      const a = await runner.addAgent(i.taskId, { spec: specFrom(i.agent || "auto"), prompt: i.instructions, username: ctx.username, readOnly: !!i.readOnly, title: i.readOnly ? "Review" : null });
+      await watch(i.taskId, ctx.username);
+      return { added: true, agentId: a?.id, name: a?.name, model: a ? `${a.provider}/${a.model}` : undefined };
+    },
+  },
+  steer_agent: {
+    description: "Send a running agent a correction or extra instruction.",
+    schema: obj({ agentId: str("Agent id (from session_detail)"), message: str("What to tell it") }, ["agentId", "message"]),
+    run: async (i, ctx) => ({ delivered: await require("./runner").steer(i.agentId, ctx.username, i.message) }),
+  },
+  stop_session: {
+    description: "Stop every agent in a session.",
+    schema: obj({ taskId: str("Session id") }, ["taskId"]),
+    run: async (i) => ({ stopped: await require("./runner").stopTask(i.taskId) }),
+  },
+  judge_session: {
+    description: "Have the Judge (a model from a different lab) rank the finished attempts in a compare session and adopt the best one.",
+    schema: obj({ taskId: str("Session id") }, ["taskId"]),
+    run: async (i, ctx) => {
+      const v = await require("./judge").judgeTask(i.taskId, { by: `copilot:${ctx.username}`, adopt: true });
+      return v || { note: "No finished attempts to compare yet" };
+    },
+  },
+  improve_prompt: {
+    description: "Turn a rough request into a precise brief (goal, context, requirements, acceptance criteria) before giving it to agents.",
+    schema: obj({ prompt: str("Rough request"), projectId: str("Optional project id for context") }, ["prompt"]),
+    run: async (i, ctx) => {
+      const r = await require("./guide").improve({ prompt: i.prompt, mode: "task", projectId: i.projectId || null, username: ctx.username });
+      return { prompt: r.prompt, changes: r.changes, questions: r.questions };
+    },
+  },
+  agent_health: {
+    description: "Which agents are working, cooling down after errors, or down (with reasons). Optionally test them all now.",
+    schema: obj({ testNow: bool("Probe free and plan agents now") }),
+    run: async (i) => {
+      const health = require("./health");
+      if (i.testNow) await health.probeAll({});
+      return (await health.board()).map((k) => ({ agent: k.label, vendor: k.vendorLabel, model: k.defaultModel, state: k.state, free: k.free, plan: k.subscription, detail: k.detail || undefined }));
+    },
+  },
+  spend_report: {
+    description: "Token spend over the last 30 days, by cost class and model, plus savings the Token Steward suggests.",
+    schema: obj({}),
+    run: async () => {
+      const r = await require("./steward").report({ days: 30 });
+      return { totals: r.totals, byTier: r.tiers, topModels: r.models.slice(0, 8).map((m) => `${m.name}: $${m.dollars.toFixed(2)}`), suggestions: r.tips.map((t) => t.title) };
+    },
+  },
+  web_search: {
+    description: "Search the web (model releases, benchmarks, docs, prices). Then read_url the best results.",
+    schema: obj({ query: str("Search query") }, ["query"]),
+    run: async (i, ctx) => (await require("./chattools").execute("web_search", i, ctx)).content,
+  },
+  read_url: {
+    description: "Read a public web page as text.",
+    schema: obj({ url: str("https URL") }, ["url"]),
+    run: async (i, ctx) => (await require("./chattools").execute("read_url", i, ctx)).content,
+  },
+  remember: {
+    description: "Save a lasting fact (the person's preferences, standing instructions, what you learned about models) so every future conversation knows it.",
+    schema: obj({ fact: str("One short sentence") }, ["fact"]),
+    run: async (i, ctx) => (await require("./chattools").execute("remember", i, ctx)).content,
+  },
+  watch_session: {
+    description: "Review a session automatically when it finishes and report back here.",
+    schema: obj({ taskId: str("Session id") }, ["taskId"]),
+    run: async (i, ctx) => {
+      await watch(i.taskId, ctx.username);
+      return { watching: true };
+    },
+  },
+};
+
+const toolDefs = () => Object.entries(TOOLS).map(([name, t]) => ({ name, description: t.description, schema: t.schema }));
+
+async function runTool(name, input, ctx) {
+  const t = TOOLS[name];
+  if (!t) return { content: `Unknown tool ${name}`, isError: true };
+  try {
+    const r = await t.run(input || {}, ctx);
+    return { content: clip(r, 30000) };
+  } catch (e) {
+    return { content: `Error: ${e.message}`, isError: true };
+  }
+}
+
+/* ── watching sessions ─────────────────────────────────────────────── */
+async function watch(taskId, username) {
+  await run("INSERT INTO hive_copilot_watch(task_id, username, created_at) VALUES(?,?,?) ON CONFLICT(task_id) DO UPDATE SET username=excluded.username, done=0", [taskId, username, now()]);
+}
+
+const FINISHED = new Set(["review", "failed", "stopped", "pr_open", "committed"]);
+const reviewing = new Set();
+
+/** Called on every task update: a watched session that finished gets a review turn. */
+async function onTask(task, deps) {
+  if (!task?.id || !FINISHED.has(task.status) || reviewing.has(task.id)) return;
+  const w = await get("SELECT * FROM hive_copilot_watch WHERE task_id=? AND done=0", [task.id]).catch(() => null);
+  if (!w) return;
+  // Wait until no agent of the session is still working.
+  const busy = await get("SELECT COUNT(*) AS n FROM hive_agents WHERE task_id=? AND status IN ('queued','running')", [task.id]);
+  if (Number(busy?.n || 0) > 0) return;
+  reviewing.add(task.id);
+  try {
+    await run("UPDATE hive_copilot_watch SET done=1 WHERE task_id=?", [task.id]);
+    await send({
+      username: w.username,
+      text: `[automatic] Session “${task.title}” (${task.id}) just finished with status “${task.status}”. Review it now: read session_detail and session_diff, judge whether it fully meets the request (correctness, completeness, quality, risks). If something is missing or wrong, fix it by adding an agent with precise instructions (cheapest capable model) and keep watching. Then give me a short verdict: ✅ ready to ship / ⚠️ needs changes (what you did about it) / ❌ failed (why and what next).`,
+      auto: true,
+      deps,
+    });
+  } catch (e) {
+    console.error("[hive copilot] review", e.message);
+  } finally {
+    reviewing.delete(task.id);
+  }
+}
+
+/* ── the brain ─────────────────────────────────────────────────────── */
+async function brainSettings(username) {
+  const r = await get("SELECT * FROM hive_copilot_settings WHERE username=?", [username]).catch(() => null);
+  return { brain: r?.brain || "auto", model: r?.model || "" };
+}
+
+/** Pick who thinks: your Claude plan first, then the best healthy model with tools (free first). */
+async function pickBrain(username, exclude = []) {
+  const keys = require("./keys");
+  const machines = require("./machines");
+  const router = require("./router");
+  const { keyVendor } = require("./providers");
+  const s = await brainSettings(username);
+  if (s.brain !== "api") {
+    const subs = (await all("SELECT * FROM hive_keys WHERE disabled=0")).filter((k) => keyVendor(k) === "claude_code" && k.machine_id && machines.isOnline(k.machine_id) && !exclude.includes(k.id));
+    if (subs.length) return { kind: "cli", key: subs[0], vendor: "claude_code", model: s.brain === "claude_code" && s.model ? s.model : subs[0].default_pinned ? subs[0].default_model : "default" };
+    if (s.brain === "claude_code" && !exclude.length) throw new Error("Your Claude plan's machine is offline — start the bridge on it, or switch the Copilot's brain to Auto");
+  }
+  if (s.brain === "api" && s.model && s.model.includes("/") && !exclude.length) {
+    const [vendor, ...rest] = s.model.split("/");
+    const k = await keys.pickKey(vendor, { exclude });
+    if (k) return { kind: "api", key: k, vendor, model: rest.join("/") || k.default_model };
+  }
+  for (const freeOnly of [true, false]) {
+    const r = await router.route({ kind: "hard", needTools: true, chat: true, preference: "quality", freeOnly, noSubscription: true, exclude: { keys: exclude } }).catch(() => null);
+    if (r) {
+      const key = await keys.keyRow(r.pick.keyId);
+      // Free first, but only if it's genuinely capable of orchestrating.
+      if (key && (!freeOnly || r.pick.quality >= 70)) return { kind: "api", key, vendor: r.pick.provider, model: r.pick.model, name: r.pick.name };
+    }
+  }
+  throw new Error("No model with tool use is connected — add a key (Keys) or connect your Claude plan");
+}
+
+const SYSTEM = (username, facts, snapshot) => `You are Hive Copilot, @${username}'s chief of staff for software work in Nexora Hive. You run the hive: you decide what needs doing, give work to the right agents, write their prompts, watch progress, judge results, and report back. You can do everything the person can do in Hive through your tools.
+
+How you work:
+- Delegate. You plan, write prompts, review and judge; agents do the coding. Keep your own messages short.
+- Right model for each job, quality first: use list_models to see who is good at what. Cheap or free models for mechanical work, reading and docs; strong models for hard engineering and reviews. Never pick a model that is too weak for the job just because it is cheaper or faster.
+- Small, clear tasks → start_session (one agent, or "compare" for important work so the Judge picks the best). Bigger work with several parts → plan_team, check the plan, then start_team.
+- Every prompt you give an agent is precise and self-contained: goal, relevant files or areas, constraints, acceptance criteria, how to verify (tests/build).
+- After work finishes, review it yourself with session_detail and session_diff before calling it done. If it is not right, add an agent to fix it with exact instructions.
+- Do not merge, ship or deploy on your own: say it is ready and let the person ship it.
+- When unsure about the latest models or facts, research with web_search and read_url, and remember what matters.
+- If an agent or model fails, pick another (check agent_health). Work should not stop.
+- Ask the person only when a decision is genuinely theirs. Otherwise act, then report what you did with links (paths like /hive/p/… are clickable).
+- Answer in Markdown. Be concise and concrete.
+
+Today is ${new Date().toISOString().slice(0, 10)}.
+${facts.length ? `\nWhat you know about @${username} (saved memory):\n${facts.map((f) => `- ${f}`).join("\n")}\n` : ""}
+Current state of the hive:
+${clip(snapshot, 6000)}`;
+
+async function history(username, limit = 24) {
+  const rows = (await all("SELECT * FROM hive_copilot_msgs WHERE username=? ORDER BY created_at DESC LIMIT ?", [username, limit])).reverse();
+  return rows;
+}
+
+const pub = (r) => ({ id: r.id, role: r.role, content: r.content, tools: json(r.tools_json, []), provider: r.provider || null, model: r.model || null, auto: !!r.auto, error: r.error || null, createdAt: Number(r.created_at) });
+
+async function messages(username, limit = 80) {
+  return (await history(username, limit)).map(pub);
+}
+
+async function clear(username) {
+  await run("DELETE FROM hive_copilot_msgs WHERE username=?", [username]);
+}
+
+/**
+ * One exchange: store the person's message, think with the brain (using
+ * tools), stream progress to `sink`, store the reply.
+ * deps: { createTask(project, {title, prompt}), origin }
+ */
+async function send({ username, text, auto = false, sink = null, deps = {}, signal = null }) {
+  const t = now();
+  const userMsg = { id: newId("cpm"), role: "user", content: String(text).slice(0, 20000), auto: auto ? 1 : 0 };
+  await run("INSERT INTO hive_copilot_msgs(id, username, role, content, auto, created_at) VALUES(?,?,?,?,?,?)", [userMsg.id, username, "user", userMsg.content, userMsg.auto, t]);
+  const reply = { id: newId("cpm"), role: "assistant", content: "", tools: [], provider: null, model: null, error: null };
+  const out = (type, data) => {
+    sink?.(type, data);
+    hub.emit("copilot", { username, type, id: reply.id, ...data });
+  };
+  out("user", { message: pub({ ...userMsg, created_at: t, tools_json: "[]" }) });
+  out("start", {});
+  const ctx = {
+    username,
+    createTask: deps.createTask || (async () => {
+      throw new Error("Starting sessions isn't available here");
+    }),
+  };
+  const facts = await require("./chattools")
+    .userMemory(username)
+    .catch(() => []);
+  const snapshot = await overview().catch(() => ({}));
+  const system = SYSTEM(username, facts, snapshot);
+  const past = (await history(username, 24)).filter((m) => m.id !== userMsg.id && m.content);
+  const tried = [];
+  let lastErr = null;
+  try {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      let brain;
+      try {
+        brain = await pickBrain(username, tried);
+      } catch (e) {
+        throw lastErr || e;
+      }
+      reply.provider = brain.vendor;
+      reply.model = brain.model;
+      out("brain", { provider: brain.vendor, model: brain.model, kind: brain.kind });
+      try {
+        if (brain.kind === "cli") await thinkWithPlan({ brain, system, past, text: userMsg.content, ctx, reply, out, deps, signal });
+        else await thinkWithApi({ brain, system, past, text: userMsg.content, ctx, reply, out, signal });
+        lastErr = null;
+        break;
+      } catch (e) {
+        if (signal?.aborted) throw e;
+        lastErr = e;
+        tried.push(brain.key.id);
+        out("note", { text: `${brain.vendor === "claude_code" ? "Your Claude plan" : brain.model} couldn't continue (${String(e.message).slice(0, 160)}) — switching brains` });
+        if (reply.content) break; // keep what was said; don't repeat actions
+      }
+    }
+    if (lastErr && !reply.content) throw lastErr;
+  } catch (e) {
+    reply.error = String(e.message || e).slice(0, 600);
+  }
+  await run("INSERT INTO hive_copilot_msgs(id, username, role, content, tools_json, provider, model, error, auto, created_at) VALUES(?,?,?,?,?,?,?,?,?,?)", [reply.id, username, "assistant", reply.content, JSON.stringify(reply.tools.slice(-60)), reply.provider, reply.model, reply.error, auto ? 1 : 0, now()]);
+  const done = pub({ ...reply, tools_json: JSON.stringify(reply.tools), created_at: now(), auto: auto ? 1 : 0 });
+  out("done", { message: done });
+  if (auto) await require("./caps").alert({ kind: "copilot", level: "info", title: "Copilot reviewed a session", body: reply.content.split("\n").find((l) => l.trim())?.slice(0, 200) || "Review ready", ref: "/hive/copilot" }).catch(() => {});
+  return { user: userMsg, reply: done };
+}
+
+function toTranscript(past) {
+  const msgs = [];
+  for (const m of past) {
+    const role = m.role === "user" ? "user" : "assistant";
+    const textOf = m.role === "assistant" && json(m.tools_json, []).length ? `${m.content}\n\n(Actions taken: ${json(m.tools_json, []).map((x) => x.name).join(", ")})` : m.content;
+    const last = msgs[msgs.length - 1];
+    if (last && last.role === role) last.text += `\n\n${textOf}`;
+    else msgs.push({ role, text: textOf });
+  }
+  while (msgs.length && msgs[0].role !== "user") msgs.shift();
+  return msgs;
+}
+
+async function thinkWithApi({ brain, system, past, text, ctx, reply, out, signal }) {
+  const keys = require("./keys");
+  const { providerOf } = require("./providers");
+  const v = providerOf(brain.vendor);
+  const convo = [...toTranscript(past), { role: "user", text }];
+  if (convo.length > 1 && convo[convo.length - 2].role === "user") convo.splice(convo.length - 2, 1);
+  const tools = toolDefs();
+  for (let step = 0; step < MAX_STEPS; step++) {
+    let buf = "";
+    const res = await v.impl.turn({
+      secret: keys.secretOf(brain.key),
+      keyRow: brain.key,
+      baseUrl: brain.key.base_url || v.baseUrl,
+      official: !!v.official,
+      vision: false,
+      model: brain.model,
+      effort: brain.vendor === "anthropic" ? "medium" : null,
+      system,
+      messages: convo,
+      tools,
+      signal,
+      cache: true,
+      onText: (d) => {
+        buf += d;
+        out("delta", { text: d });
+      },
+    });
+    await keys.recordUsage(brain.key.id, ctx.username, { input: res.usage.input, output: res.usage.output, cacheRead: res.usage.cacheRead || 0, costMicros: res.costMicros || 0 }, res.rateLimit, { vendor: brain.vendor, model: res.servedModel || brain.model }).catch(() => {});
+    reply.content += (reply.content && res.text ? "\n\n" : "") + (res.text || "");
+    if (res.stop !== "tool" || !res.toolCalls?.length) return;
+    convo.push({ role: "assistant", text: res.text, toolCalls: res.toolCalls, raw: res.raw });
+    const results = [];
+    for (const call of res.toolCalls) {
+      const step = { id: call.id, name: call.name, input: call.input || {}, status: "running" };
+      reply.tools.push(step);
+      out("tool", { tool: step });
+      const r = call.invalid ? { content: `Arguments were not valid JSON: ${call.rawArgs}`, isError: true } : await runTool(call.name, call.input || {}, ctx);
+      Object.assign(step, { status: r.isError ? "error" : "done", preview: String(r.content).slice(0, 500) });
+      out("tool_done", { tool: step });
+      results.push({ id: call.id, name: call.name, content: String(r.content), isError: !!r.isError });
+    }
+    convo.push({ role: "tool", results });
+    if (buf && !buf.endsWith("\n")) reply.content += "\n";
+  }
+}
+
+/** Claude Code on your plan, driving Hive through its MCP endpoint. */
+async function thinkWithPlan({ brain, system, past, text, ctx, reply, out, deps, signal }) {
+  const cli = require("./providers/cli");
+  const keys = require("./keys");
+  const token = `hcp_${crypto.randomBytes(24).toString("base64url")}`;
+  tokens.set(token, { username: ctx.username, exp: Date.now() + 30 * 60_000, createTask: ctx.createTask });
+  const origin = String(deps.origin || process.env.HIVE_PUBLIC_URL || "https://nexoraguru.in").replace(/\/+$/, "");
+  const mcp = JSON.stringify({ mcpServers: { hive: { type: "http", url: `${origin}/api/hive-mcp`, headers: { Authorization: `Bearer ${token}` } } } });
+  const transcript = toTranscript(past)
+    .map((m) => `${m.role === "user" ? "Person" : "You"}: ${m.text}`)
+    .join("\n\n")
+    .slice(-30000);
+  const prompt = transcript ? `Conversation so far:\n\n${transcript}\n\n---\n\n${text}` : text;
+  const args = ["-p", "--output-format", "stream-json", "--verbose", "--include-partial-messages", "--no-session-persistence", "--mcp-config", mcp, "--strict-mcp-config", "--allowedTools", "mcp__hive", "WebSearch", "WebFetch", "--disallowedTools", "Bash", "Edit", "Write", "MultiEdit", "NotebookEdit", "Task", "--system-prompt", `${system}\n\nYour Hive tools are the mcp__hive__* tools.`];
+  if (brain.model && brain.model !== "default") args.push("--model", brain.model);
+  let failure = null;
+  const steps = new Map();
+  try {
+    const r = await cli.stream({
+      machineId: brain.key.machine_id,
+      folder: null,
+      cli: "claude",
+      args,
+      input: prompt,
+      env: cli.envFor("claude_code", keys.secretOf(brain.key)),
+      hook: false,
+      signal,
+      onEvent: (ev) => {
+        if (ev.kind === "delta") {
+          reply.content += ev.text;
+          out("delta", { text: ev.text });
+        } else if (ev.kind === "tool_call") {
+          const name = String(ev.raw || ev.name || "tool").replace(/^mcp__hive__/, "");
+          const step = { id: ev.id, name, input: ev.input || {}, status: "running" };
+          steps.set(ev.id, step);
+          reply.tools.push(step);
+          out("tool", { tool: step });
+        } else if (ev.kind === "tool_result") {
+          const step = steps.get(ev.id);
+          if (step) {
+            Object.assign(step, { status: ev.isError ? "error" : "done", preview: String(ev.content || "").slice(0, 500) });
+            out("tool_done", { tool: step });
+          }
+        } else if (ev.kind === "session" && ev.model) reply.model = ev.model;
+        else if (ev.kind === "plan_usage") Promise.resolve(keys.setPlanUsage(brain.key.id, ev.info)).catch(() => {});
+        else if (ev.kind === "fail") failure = ev;
+        else if (ev.kind === "limit") failure = { text: ev.message, limit: true };
+        else if (ev.kind === "result" && !ev.ok) failure = ev;
+      },
+    });
+    if (failure) throw Object.assign(new Error(failure.text || failure.message || "Claude Code failed"), { kind: failure.limit ? "quota" : "server" });
+    if (r.exit && r.exit !== 0 && !reply.content) throw new Error(`Claude Code exited with ${r.exit}: ${String(r.stderr || "").trim().slice(-300)}`);
+    await require("./health").record(brain.key.id, brain.model || "default", { ok: true }).catch(() => {});
+  } catch (e) {
+    await require("./health").record(brain.key.id, brain.model || "default", { ok: false, kind: e.kind || "server", error: e.message }).catch(() => {});
+    throw e;
+  } finally {
+    tokens.delete(token);
+  }
+}
+
+/* ── MCP endpoint (Streamable HTTP, JSON replies) ──────────────────── */
+async function mcpHandle(req, res, deps) {
+  const auth = String(req.headers.authorization || "");
+  const tok = auth.replace(/^Bearer\s+/i, "");
+  const t = tokens.get(tok);
+  if (!t || t.exp < Date.now()) return res.status(401).json({ jsonrpc: "2.0", id: null, error: { code: -32001, message: "Invalid or expired token" } });
+  if (req.method !== "POST") return res.status(405).end();
+  const msg = req.body || {};
+  const reply = (result) => res.json({ jsonrpc: "2.0", id: msg.id, result });
+  if (!msg.id && msg.id !== 0) return res.status(202).end(); // notification
+  switch (msg.method) {
+    case "initialize":
+      return reply({ protocolVersion: msg.params?.protocolVersion || "2025-06-18", capabilities: { tools: {} }, serverInfo: { name: "nexora-hive", version: "1.0.0" } });
+    case "ping":
+      return reply({});
+    case "tools/list":
+      return reply({ tools: toolDefs().map((d) => ({ name: d.name, description: d.description, inputSchema: d.schema })) });
+    case "tools/call": {
+      const r = await runTool(String(msg.params?.name || ""), msg.params?.arguments || {}, { username: t.username, createTask: t.createTask || deps.createTask });
+      return reply({ content: [{ type: "text", text: String(r.content) }], isError: !!r.isError });
+    }
+    default:
+      return res.json({ jsonrpc: "2.0", id: msg.id, error: { code: -32601, message: `Unknown method ${msg.method}` } });
+  }
+}
+
+async function saveSettings(username, { brain, model }) {
+  const b = ["auto", "claude_code", "api"].includes(brain) ? brain : "auto";
+  await run("INSERT INTO hive_copilot_settings(username, brain, model, updated_at) VALUES(?,?,?,?) ON CONFLICT(username) DO UPDATE SET brain=excluded.brain, model=excluded.model, updated_at=excluded.updated_at", [username, b, String(model || "").slice(0, 200), now()]);
+  return brainSettings(username);
+}
+
+/** Which brain would think right now (for the UI). */
+async function currentBrain(username) {
+  try {
+    const b = await pickBrain(username);
+    return { provider: b.vendor, model: b.model, kind: b.kind, name: b.name || null };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
+module.exports = { TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };
