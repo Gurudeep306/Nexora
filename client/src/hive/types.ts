@@ -413,7 +413,7 @@ export interface AgentSpec {
   effort?: Effort | null
   name?: string
   freeOnly?: boolean
-  preference?: 'balanced' | 'quality' | 'savings'
+  preference?: 'balanced' | 'quality' | 'savings' | 'fast'
   kind?: TaskKind
 }
 
@@ -654,7 +654,7 @@ export interface StageAgent {
   provider?: string
   model?: string
   keyId?: string
-  preference?: 'balanced' | 'quality' | 'savings'
+  preference?: 'balanced' | 'quality' | 'savings' | 'fast'
 }
 
 export interface PipelineStage {
@@ -870,4 +870,76 @@ export interface StewardPlan {
   cheapest: StewardPick | null
   best: StewardPick | null
   same: boolean
+}
+
+/* ── Agent health & the Dispatcher ─────────────────────────────────── */
+export type HealthState = 'healthy' | 'flaky' | 'cooling' | 'down' | 'paused' | 'unknown'
+export interface HealthModel {
+  model: string
+  state: HealthState
+  ok: number
+  fail: number
+  successRate: number | null
+  latencyMs: number | null
+  lastOk: number | null
+  lastFail: number | null
+  lastError: string | null
+  lastKind: string | null
+  cooldownUntil: number | null
+}
+export interface HealthKey {
+  keyId: string
+  label: string
+  vendor: string
+  vendorLabel: string
+  free: boolean
+  subscription: boolean
+  defaultModel: string | null
+  state: HealthState
+  detail: string | null
+  cooldownUntil: number | null
+  models: HealthModel[]
+}
+export interface DispatchPick {
+  provider: string
+  keyId: string
+  keyLabel?: string
+  model: string
+  quality: number | null
+  cost: CostClass
+  name: string
+  lab?: string
+  note?: string
+  chosen?: boolean
+}
+export interface DispatchPart {
+  id: string
+  title: string
+  kind: TaskKind
+  size: 's' | 'm' | 'l'
+  files: string[]
+  dependsOn: string[]
+  prompt: string
+  pick: DispatchPick | null
+  alternatives?: { provider: string; keyId: string; model: string; name: string; quality: number; cost: CostClass }[]
+  estimate: { input: number; output: number; dollars: number | null }
+}
+export interface DispatchPlan {
+  summary: string
+  parts: DispatchPart[]
+  review: DispatchPick | null
+  totals: { dollars: number | null; baseline: { name: string; provider: string; model: string; cost: CostClass; dollars: number | null } | null; plannedBy: string; preference: string; freeOnly: boolean }
+}
+export interface Dispatch {
+  id: string
+  projectId: string
+  taskId: string | null
+  request: string
+  status: 'planned' | 'running' | 'done' | 'failed' | 'stopped'
+  plan: DispatchPlan | null
+  progress: Record<string, { status: string; message?: string | null; at?: number; agentId?: string; result?: string; provider?: string; model?: string }>
+  error: string | null
+  createdBy: string
+  createdAt: number
+  updatedAt: number
 }

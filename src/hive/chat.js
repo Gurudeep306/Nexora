@@ -122,7 +122,7 @@ async function projectSnapshot(projectId) {
 
 async function pickChatKey(spec, exclude = [], prompt = "", useTools = false) {
   if (spec.provider === "auto") {
-    const r = await router.route({ prompt, chat: true, needTools: useTools, kind: spec.kind || null, freeOnly: !!spec.freeOnly, exclude: { keys: exclude } }).catch(() => null);
+    const r = await router.route({ prompt, chat: true, needTools: useTools, kind: spec.kind || null, freeOnly: !!spec.freeOnly, preference: spec.preference || null, exclude: { keys: exclude } }).catch(() => null);
     if (!r) return null;
     const key = await keys.keyRow(r.pick.keyId);
     return key ? { key, provider: r.pick.provider, model: r.pick.model, note: r.note } : null;
@@ -287,22 +287,42 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
             buf += "\n\n";
             text += "\n\n";
           }
-          res = await v.impl.turn({
-            secret: keys.secretOf(key),
-            keyRow: key,
-            baseUrl: key.base_url || v.baseUrl,
-            official: !!v.official,
-            vision: !!v.caps.vision,
-            model,
-            effort: spec.effort || (provider === "anthropic" ? "medium" : null),
-            system,
-            messages: convoMsgs,
-            tools: toolDefs,
-            signal: controller.signal,
-            cache: plugins.builtins.prompt_cache?.enabled !== false,
-            onText: (d) => ((buf += d), (flushTimer ||= setTimeout(flush, 60))),
-            onThinking: (d) => ((think += d), (flushTimer ||= setTimeout(flush, 60))),
-          });
+          // First-reply watchdog: a model that sends nothing at all for too
+          // long is abandoned and the next healthy model takes over.
+          const stepCtl = new AbortController();
+          const relay = () => stepCtl.abort();
+          controller.signal.addEventListener("abort", relay, { once: true });
+          let heard = false;
+          let stalled = false;
+          const patience = v.subscription ? 120_000 : /reason|r1\b|o3|o4|-pro|think|opus|fable|qwq/i.test(model) ? 90_000 : 35_000;
+          const dog = step === 0 ? setTimeout(() => !heard && ((stalled = true), stepCtl.abort()), patience) : null;
+          try {
+            res = await v.impl.turn({
+              secret: keys.secretOf(key),
+              keyRow: key,
+              baseUrl: key.base_url || v.baseUrl,
+              official: !!v.official,
+              vision: !!v.caps.vision,
+              model,
+              effort: spec.effort || (provider === "anthropic" ? "medium" : null),
+              system,
+              messages: convoMsgs,
+              tools: toolDefs,
+              signal: stepCtl.signal,
+              cache: plugins.builtins.prompt_cache?.enabled !== false,
+              onText: (d) => ((heard = true), (buf += d), (flushTimer ||= setTimeout(flush, 40))),
+              onThinking: (d) => ((heard = true), (think += d), (flushTimer ||= setTimeout(flush, 40))),
+            });
+          } catch (err) {
+            if (stalled && !controller.signal.aborted) {
+              await require("./health").record(key.id, model, { ok: false, kind: "network", error: `No reply within ${patience / 1000}s` }).catch(() => {});
+              throw Object.assign(new Error(`${v.label} · ${model} sent nothing for ${patience / 1000}s`), { kind: "timeout" });
+            }
+            throw err;
+          } finally {
+            clearTimeout(dog);
+            controller.signal.removeEventListener("abort", relay);
+          }
           clearTimeout(flushTimer);
           flush();
           text += res.text || "";
@@ -349,6 +369,16 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
           error = "Stopped";
           finished = true;
           break;
+        }
+        // Too slow to start: switch to the next model straight away.
+        if (e.kind === "timeout" && !reply.content) {
+          lastErr = e;
+          tried.push(key.id);
+          out("note", { id: reply.id, text: `${v.label} hasn't started answering — switching to the next best model` });
+          if (!primary && spec.provider !== "auto" && provider === spec.provider) primary = { e, served: { ...served } };
+          // The next best model of the same quality class (not merely the fastest).
+          if (spec.provider !== "auto") spec = { provider: "auto", kind: null };
+          continue;
         }
         const handoff = spec.provider === "auto" || provider !== spec.provider;
         if (!primary && !handoff) primary = { e, served: { ...served } };

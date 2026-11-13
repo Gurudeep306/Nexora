@@ -23,6 +23,8 @@ const gh = require("../hive/github");
 const catalog = require("../hive/catalog");
 const toolbox = require("../hive/toolbox");
 const steward = require("../hive/steward");
+const health = require("../hive/health");
+const dispatcher = require("../hive/dispatcher");
 const { vendorOf, keyVendor } = require("../hive/providers");
 const { isChatModel } = require("../hive/models");
 
@@ -790,6 +792,58 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
   router.post(
     "/api/hive/steward/ask",
     h(async (req, res) => res.json(await steward.ask({ question: str(req.body?.question, "question", { max: 4000 }), username: req.hiveUser }))),
+  );
+  /* ── Agent health ── */
+  router.get(
+    "/api/hive/health",
+    h(async (_req, res) => res.json({ ok: true, keys: await health.board() })),
+  );
+  router.post(
+    "/api/hive/health/probe",
+    h(async (req, res) => {
+      const b = req.body || {};
+      const results = b.keyId ? [{ keyId: String(b.keyId), ...(await health.probe(String(b.keyId))) }] : await health.probeAll({ includePaid: !!b.includePaid });
+      hub.emit("health", { by: req.hiveUser });
+      res.json({ ok: true, results, keys: await health.board() });
+    }),
+  );
+
+  /* ── The Dispatcher ── */
+  router.get(
+    "/api/hive/dispatches",
+    h(async (req, res) => res.json({ ok: true, dispatches: await dispatcher.list(req.query.project ? String(req.query.project) : null) })),
+  );
+  router.post(
+    "/api/hive/dispatches",
+    h(async (req, res) => {
+      const b = req.body || {};
+      const project = await projectRow(str(b.projectId, "project", { max: 64 }));
+      const d = await dispatcher.create({ project, request: str(b.request, "request", { max: 20000 }), username: req.hiveUser, preference: ["savings", "balanced", "quality", "fast"].includes(b.preference) ? b.preference : "savings", freeOnly: !!b.freeOnly });
+      hub.emit("dispatch", d);
+      res.json({ ok: true, dispatch: d });
+    }),
+  );
+  router.patch(
+    "/api/hive/dispatches/:id",
+    h(async (req, res) => {
+      const b = req.body || {};
+      const d = await dispatcher.edit(req.params.id, { partId: String(b.partId || ""), spec: b.spec && typeof b.spec === "object" ? { provider: String(b.spec.provider || ""), keyId: b.spec.keyId ? String(b.spec.keyId) : "auto", model: b.spec.model ? String(b.spec.model) : "" } : null, prompt: typeof b.prompt === "string" ? b.prompt : undefined, remove: !!b.remove });
+      res.json({ ok: true, dispatch: d });
+    }),
+  );
+  router.post(
+    "/api/hive/dispatches/:id/start",
+    h(async (req, res) => {
+      const row = await get("SELECT project_id FROM hive_dispatches WHERE id=?", [req.params.id]);
+      if (!row) throw new BadInput("Not found", 404);
+      const d = await dispatcher.start(req.params.id, { username: req.hiveUser, createTask: (p, o) => createTaskRow(p, o) });
+      await audit(req, "dispatch.start", req.params.id);
+      res.json({ ok: true, dispatch: d });
+    }),
+  );
+  router.post(
+    "/api/hive/dispatches/:id/stop",
+    h(async (req, res) => res.json({ ok: true, stopped: dispatcher.stop(req.params.id) })),
   );
 }
 
