@@ -302,14 +302,31 @@ async function recordUsage(keyId, username, { input = 0, output = 0, cacheRead =
 /** Live subscription usage windows (Claude Code reports them on every run). */
 async function setPlanUsage(keyId, info) {
   if (!info || typeof info !== "object") return;
-  const windows = info.unifiedWindows || {};
-  const out = {
-    plan: true,
-    status: info.status || null,
-    type: info.rateLimitType || null,
-    resetsAt: info.resetsAt ? info.resetsAt * 1000 : null,
-    windows: Object.fromEntries(Object.entries(windows).map(([k, w]) => [k, { utilization: Number(w.utilization ?? 0), resetsAt: w.resetsAt ? w.resetsAt * 1000 : null, status: w.status || null }])),
-  };
+  const prev = json((await get("SELECT rl_json FROM hive_keys WHERE id=?", [keyId]))?.rl_json, null);
+  const windows = prev?.plan ? { ...(prev.windows || {}) } : {};
+  const ms = (t) => (t == null ? null : Number(t) < 1e12 ? Number(t) * 1000 : Number(t));
+  // 0–1 or 0–100 → 0–1
+  const frac = (v) => (v == null || !Number.isFinite(Number(v)) ? null : Number(v) > 1 ? Math.min(1, Number(v) / 100) : Math.max(0, Number(v)));
+  const fromStatus = (st) => (st === "rejected" ? 1 : st === "allowed_warning" ? 0.85 : null);
+  if (info.codex) {
+    // Codex: { primary: { used_percent, window_minutes, resets_in_seconds | resets_at }, secondary: {…} }
+    for (const [k, w] of Object.entries(info.codex)) {
+      if (!w || typeof w !== "object") continue;
+      const name = w.window_minutes ? (w.window_minutes <= 360 ? "five_hour" : "seven_day") : k;
+      const reset = w.resets_at ? ms(w.resets_at) : w.resets_in_seconds != null ? Date.now() + Number(w.resets_in_seconds) * 1000 : null;
+      windows[name] = { utilization: frac(w.used_percent) ?? 0, resetsAt: reset, status: null };
+    }
+  } else {
+    // Claude Code reports one window per event (rateLimitType), sometimes all of them (unifiedWindows).
+    for (const [k, w] of Object.entries(info.unifiedWindows || {})) windows[k] = { utilization: frac(w.utilization) ?? fromStatus(w.status) ?? 0, resetsAt: ms(w.resetsAt), status: w.status || null };
+    if (info.rateLimitType) {
+      const old = windows[info.rateLimitType] || {};
+      windows[info.rateLimitType] = { utilization: frac(info.utilization) ?? fromStatus(info.status) ?? old.utilization ?? 0, resetsAt: ms(info.resetsAt) ?? old.resetsAt ?? null, status: info.status || null };
+    }
+  }
+  // Windows whose reset time has passed start again from zero.
+  for (const w of Object.values(windows)) if (w.resetsAt && w.resetsAt < Date.now()) Object.assign(w, { utilization: 0, status: null });
+  const out = { plan: true, status: info.status || prev?.status || null, type: info.rateLimitType || prev?.type || null, resetsAt: ms(info.resetsAt) ?? null, windows };
   await run("UPDATE hive_keys SET rl_json=?, rl_at=? WHERE id=?", [JSON.stringify(out), now(), keyId]);
 }
 

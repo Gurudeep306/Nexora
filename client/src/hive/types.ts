@@ -976,3 +976,14 @@ export interface CopilotSettings {
   autonomy?: 'autopilot' | 'assist'
   canMerge?: boolean
 }
+
+export interface CopilotWork {
+  id: string
+  projectId: string
+  title: string
+  status: string
+  prUrl: string | null
+  reviewed: boolean
+  updatedAt: number
+  agents: { provider: string; model: string; status: string }[]
+}
