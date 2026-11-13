@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { SubscriptionDialog, SubscriptionsPanel } from '../Subscriptions'
+import { FreeSetup } from '../FreeSetup'
 import {
   Activity,
   CheckCircle2,
@@ -123,6 +124,9 @@ export default function KeysPage() {
         </label>
       )}
 
+      <div id="free" className="mb-10">
+        <FreeSetup />
+      </div>
       <SubscriptionsPanel onConnect={(sub) => setAdding(sub)} />
 
       {keys.length === 0 && <EmptyVault onAdd={(p) => setAdding(p)} providers={boot.catalogue.providers} />}

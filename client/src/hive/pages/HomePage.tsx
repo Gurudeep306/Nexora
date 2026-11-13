@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, ArrowUp, Check, ChevronDown, Cpu, FolderGit2, KeyRound, Lightbulb, Loader2, MessageSquare, Radar, Server, ShieldAlert, Sparkles, Workflow, Zap } from 'lucide-react'
+import { ArrowRight, ArrowUp, Bot, Check, ChevronDown, Cpu, FolderGit2, KeyRound, Lightbulb, Loader2, MessageSquare, Radar, Server, ShieldAlert, Sparkles, Workflow, Zap } from 'lucide-react'
 import { LogoMark } from '@/components/brand/Logo'
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuTrigger, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -23,7 +23,7 @@ export default function HomePage() {
   const [tasks, setTasks] = useState<OverviewTask[]>([])
   const [today, setToday] = useState<{ tokens: number; requests: number; cost: number } | null>(null)
   const [market, setMarket] = useState<MarketModel[]>([])
-  const [target, setTarget] = useState<string>('chat')
+  const [target, setTarget] = useState<string>('copilot')
   const [text, setText] = useState('')
   const [spec, setSpec] = useState<AgentSpec | null>(() => (boot ? defaultSpec(boot, undefined, undefined) : null))
   const [busy, setBusy] = useState(false)
@@ -63,6 +63,10 @@ export default function HomePage() {
   const go = async () => {
     const body = text.trim()
     if (!body || busy) return
+    if (target === 'copilot') {
+      navigate('/hive/copilot', { state: { send: body } })
+      return
+    }
     if (target === 'chat') {
       navigate('/hive/chat', { state: { send: body, spec } })
       return
@@ -97,7 +101,7 @@ export default function HomePage() {
         </div>
 
         {/* Omni composer */}
-        <div className="hive-composer mx-auto mt-8 max-w-[760px] rounded-[24px] p-3">
+        <div className="hive-composer hive-ring mx-auto mt-8 max-w-[760px] rounded-[24px] p-3">
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -109,19 +113,22 @@ export default function HomePage() {
             }}
             rows={2}
             autoFocus
-            placeholder={target === 'chat' ? 'Ask any model anything…' : `Tell the agents what to build in ${project?.name}…`}
+            placeholder={target === 'copilot' ? 'What should we build today? Your Copilot plans it, picks the models and runs it…' : target === 'chat' ? 'Ask any model anything…' : `Tell the agents what to build in ${project?.name}…`}
             className="block w-full resize-none bg-transparent px-2 py-1.5 text-[16px] leading-relaxed outline-none placeholder:text-text-muted"
           />
           <div className="flex flex-wrap items-center gap-1.5 px-1 pt-1">
             <Menu>
               <MenuTrigger asChild>
                 <button type="button" className="inline-flex h-8 items-center gap-1.5 rounded-full bg-text-primary/[0.06] px-3 text-[12.5px] hover:bg-text-primary/[0.1]">
-                  {project ? <span className="hive-hex size-3" style={{ background: projectColor(project.color) }} /> : <MessageSquare className="size-3.5 text-accent-brand" />}
-                  {project ? project.name : 'Chat'}
+                  {project ? <span className="hive-hex size-3" style={{ background: projectColor(project.color) }} /> : target === 'copilot' ? <Bot className="size-3.5 text-accent-brand" /> : <MessageSquare className="size-3.5 text-accent-brand" />}
+                  {project ? project.name : target === 'copilot' ? 'Copilot' : 'Chat'}
                   <ChevronDown className="size-3 text-text-muted" />
                 </button>
               </MenuTrigger>
               <MenuContent align="start" className="w-64">
+                <MenuItem onSelect={() => setTarget('copilot')}>
+                  <Bot className="size-3.5" /> Copilot — it plans, delegates and reviews
+                </MenuItem>
                 <MenuItem onSelect={() => setTarget('chat')}>
                   <MessageSquare className="size-3.5" /> Chat — just talk to a model
                 </MenuItem>
@@ -133,7 +140,7 @@ export default function HomePage() {
                 ))}
               </MenuContent>
             </Menu>
-            {spec && <AgentChip boot={boot} spec={spec} onChange={setSpec} need={target === 'chat' ? 'chat' : 'tools'} />}
+            {spec && target !== 'copilot' && <AgentChip boot={boot} spec={spec} onChange={setSpec} need={target === 'chat' ? 'chat' : 'tools'} />}
             <button type="button" onClick={go} disabled={!text.trim() || busy} className="ml-auto grid size-9 place-items-center rounded-full bg-accent-brand text-on-accent-brand transition-transform enabled:hover:scale-105 disabled:opacity-35" aria-label="Go">
               {busy ? <Loader2 className="size-4 animate-spin" /> : <ArrowUp className="size-4" strokeWidth={2.4} />}
             </button>

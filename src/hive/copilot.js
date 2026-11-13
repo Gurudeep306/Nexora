@@ -855,6 +855,17 @@ async function mcpHandle(req, res, deps) {
   }
 }
 
+/** Sessions the Copilot is running or reviewing for this person (last 3 days). */
+async function activeWork(username) {
+  const rows = await all(
+    "SELECT t.id, t.project_id, t.title, t.status, t.pr_url, t.updated_at, w.done FROM hive_copilot_watch w JOIN hive_tasks t ON t.id=w.task_id WHERE w.username=? AND (w.done=0 OR t.updated_at>?) ORDER BY t.updated_at DESC LIMIT 8",
+    [username, Date.now() - 3 * 86400e3],
+  ).catch(() => []);
+  const ids = rows.map((r) => r.id);
+  const agents = ids.length ? await all(`SELECT task_id, provider, model, status FROM hive_agents WHERE task_id IN (${ids.map(() => "?").join(",")})`, ids) : [];
+  return rows.map((r) => ({ id: r.id, projectId: r.project_id, title: r.title, status: r.status, prUrl: r.pr_url || null, reviewed: !!r.done, updatedAt: Number(r.updated_at), agents: agents.filter((a) => a.task_id === r.id).map((a) => ({ provider: a.provider, model: a.model, status: a.status })) }));
+}
+
 async function saveSettings(username, { brain, model, autonomy, canMerge, admin }) {
   const cur = await brainSettings(username);
   const b = ["auto", "claude_code", "api"].includes(brain) ? brain : cur.brain;
@@ -884,4 +895,4 @@ async function currentBrain(username) {
   }
 }
 
-module.exports = { DANGEROUS, mergeTick, onApproval, noteAdmin, TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };
+module.exports = { activeWork, DANGEROUS, mergeTick, onApproval, noteAdmin, TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };
