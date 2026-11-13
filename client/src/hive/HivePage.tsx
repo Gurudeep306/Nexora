@@ -20,6 +20,7 @@ import {
   Command,
   CornerDownLeft,
   FolderGit2,
+  GitBranch,
   Home,
   KeyRound,
   Lightbulb,
@@ -71,6 +72,7 @@ const StewardPage = lazy(() => import('./pages/StewardPage'))
 const DispatchPage = lazy(() => import('./pages/DispatchPage'))
 const HealthPage = lazy(() => import('./pages/HealthPage'))
 const CopilotPage = lazy(() => import('./pages/CopilotPage'))
+const ReposPage = lazy(() => import('./pages/ReposPage'))
 
 const store = {
   get: (k: string, d: string) => {
@@ -228,6 +230,7 @@ function Shell() {
               <Route path="dispatch" element={<DispatchPage />} />
               <Route path="health" element={<HealthPage />} />
               <Route path="copilot" element={<CopilotPage />} />
+              <Route path="repos" element={<ReposPage />} />
               <Route path="*" element={<HomePage />} />
             </Routes>
           </Suspense>
@@ -275,6 +278,7 @@ function useNav(): { main: NavItem[]; config: NavItem[]; rail: NavItem[]; groups
     copilot: { to: '/hive/copilot', label: 'Copilot', icon: Bot, hint: '⌘I · your chief of staff — plans, delegates, reviews, ships' },
     chat: { to: '/hive/chat', label: 'Chat', icon: MessageSquare, hint: '⌘J · any model, files, images, side by side' },
     projects: { to: projectHref, label: 'Projects', icon: FolderGit2, match: /^\/hive\/p\//, hint: 'Sessions with agents on your code' },
+    repos: { to: '/hive/repos', label: 'Your GitHub', icon: GitBranch, hint: 'Every repository you can reach — open one, or hand it to the Copilot' },
     dispatch: { to: '/hive/dispatch', label: 'Dispatcher', icon: Network, hint: 'The right model on every part of the work, fewest tokens' },
     pipelines: { to: '/hive/pipelines', label: 'Pipelines', icon: Workflow, hint: 'Relay teams of agents — design one with the Architect' },
     automations: { to: '/hive/automations', label: 'Automations', icon: Clock3, hint: 'Runs on a schedule — overnight too' },
@@ -294,12 +298,12 @@ function useNav(): { main: NavItem[]; config: NavItem[]; rail: NavItem[]; groups
   } satisfies Record<string, NavItem>
   const H = (it: NavItem, hue: number) => ({ to: it.to, label: it.label, icon: it.icon, hint: it.hint, hue, badge: it.badge })
   return {
-    main: [I.home, I.copilot, I.chat, I.projects, I.dispatch, I.pipelines, I.automations, I.launchpad, I.drive, I.machines, I.models],
+    main: [I.home, I.copilot, I.chat, I.repos, I.projects, I.dispatch, I.pipelines, I.automations, I.launchpad, I.drive, I.machines, I.models],
     config: [I.keys, I.health, I.toolbox, I.plugins, I.memory, I.steward, I.budgets, I.usage],
     // The rail: the places used every day. Everything else is one keystroke away in the launcher.
-    rail: [I.home, I.copilot, I.chat, I.projects, I.dispatch, I.models, I.drive],
+    rail: [I.home, I.copilot, I.chat, I.repos, I.projects, I.dispatch, I.models, I.drive],
     groups: [
-      { title: 'Work', blurb: 'Talk, plan and build', items: [H(I.copilot, 285), H(I.chat, 230), H(I.projects, 200), H(I.dispatch, 310), H(I.launchpad, 75), H(I.nexora, 260)] },
+      { title: 'Work', blurb: 'Talk, plan and build', items: [H(I.copilot, 285), H(I.chat, 230), H(I.repos, 250), H(I.projects, 200), H(I.dispatch, 310), H(I.launchpad, 75), H(I.nexora, 260)] },
       { title: 'Run', blurb: 'Teams, schedules and machines', items: [H(I.pipelines, 330), H(I.automations, 160), H(I.machines, 140), H(I.drive, 45), H(I.home, 255)] },
       { title: 'Models', blurb: 'Who does what, and who is up', items: [H(I.models, 210), H(I.health, 150), H(I.keys, 60), H(I.toolbox, 290), H(I.plugins, 20), H(I.memory, 340)] },
       { title: 'Spend', blurb: 'Tokens, money and savings', items: [H(I.steward, 155), H(I.budgets, 95), H(I.usage, 185)] },

@@ -43,10 +43,42 @@ const clip = (s, n = 12000) => {
   return t.length > n ? `${t.slice(0, n)}\n… [${t.length - n} more characters]` : t;
 };
 
-async function projectOf(id) {
-  const p = id ? await get("SELECT * FROM hive_projects WHERE id=? OR name=?", [id, id]) : null;
-  if (!p) throw new Error(`Unknown project "${id}". Call hive_overview to see project ids.`);
-  return p;
+// Any tool that takes a project also takes a GitHub repo: it is opened as a project on the fly.
+const PROJECT = 'Project id or name — or any GitHub repository ("owner/name" or just "name"); a repo is opened as a project automatically';
+
+async function projectOf(id, username = "copilot") {
+  if (!id) throw new Error("Which project or repository? Call list_repos to see every repo.");
+  const p = await get("SELECT * FROM hive_projects WHERE id=? OR lower(name)=lower(?) OR lower(repo_owner || '/' || repo_name)=lower(?)", [id, id, id]);
+  if (p) return p;
+  try {
+    return (await require("./repos").openRepo(id, { username })).project;
+  } catch (e) {
+    throw new Error(`Unknown project or repository "${id}" (${e.message}). Call list_repos or hive_overview.`);
+  }
+}
+
+/** Honest counts: every model the connected keys offer (after testing), not just the shortlist. */
+async function modelTotals() {
+  const keys = require("./keys");
+  const { keyVendor, vendorOf } = require("./providers");
+  const { isChatModel } = require("./models");
+  const rows = await all("SELECT * FROM hive_keys WHERE disabled=0");
+  const byProvider = {};
+  const all_ = new Set();
+  let tested = 0;
+  for (const r of rows) {
+    let v;
+    try {
+      v = vendorOf(keyVendor(r));
+    } catch {
+      continue;
+    }
+    const list = v.subscription ? [r.default_model || "default"] : keys.workingModels(r).filter(isChatModel);
+    if (r.verified_json) tested++;
+    byProvider[v.label] = (byProvider[v.label] || 0) + list.length;
+    for (const m of list) all_.add(`${v.id}/${m}`);
+  }
+  return { totalModels: all_.size, keys: rows.length, keysTested: tested, byProvider };
 }
 
 async function overview() {
@@ -69,6 +101,11 @@ async function overview() {
       agents: agents.filter((a) => a.task_id === t.id).map((a) => `${a.name} (${a.provider}/${a.model}) ${a.status}`),
     })),
     teams: dispatches.map((d) => ({ id: d.id, status: d.status, summary: json(d.plan_json, {}).summary })),
+    models: await modelTotals().catch(() => null),
+    githubRepos: await require("./repos")
+      .allRepos()
+      .then((r) => ({ count: r.repos.length, note: "list_repos shows them; any repo can be used wherever a project is asked for" }))
+      .catch(() => null),
     agents: {
       connected: health.length,
       working: health.filter((k) => ["healthy", "flaky", "unknown"].includes(k.state)).map((k) => `${k.vendorLabel}${k.free ? " (free)" : k.subscription ? " (plan)" : ""}: ${k.defaultModel}`),
@@ -95,7 +132,7 @@ async function modelsReport({ kind = null, freeOnly = false }) {
     const p = publicCard(c);
     return `${p.name} (${p.lab}): intel ${p.intelligence}, coding ${p.coding}, reasoning ${p.reasoning}, writing ${p.writing}, speed ${p.speed}/5, ${p.tier}${p.open ? ", open weights" : ""}${p.strengths?.length ? ` — good: ${p.strengths.slice(0, 2).join("; ")}` : ""}`;
   });
-  return { bestPerKind: best, connected, fullCatalogue: kind ? undefined : catalogue };
+  return { totals: await modelTotals().catch(() => null), note: "totals counts every model the connected keys offer; 'connected' below is only the 30 best fits for this kind of work", bestPerKind: best, connected, fullCatalogue: kind ? undefined : catalogue };
 }
 
 async function sessionDetail(taskId) {
@@ -149,6 +186,24 @@ const TOOLS = {
     schema: obj({ kind: str("Optional kind of work: chat, mechanical, reading, search, writing, coding, review, hard"), freeOnly: bool("Only free and plan models") }),
     run: (i) => modelsReport({ kind: i.kind || null, freeOnly: !!i.freeOnly }),
   },
+  list_repos: {
+    description: "Every GitHub repository the connected GitHub account(s) can reach (not only Hive projects), newest activity first, with whether it is already a project. Any of them can be passed wherever a project is asked for.",
+    schema: obj({ query: str("Optional filter, e.g. part of the name") }),
+    run: async (i) => {
+      const r = await require("./repos").allRepos();
+      const q = String(i.query || "").toLowerCase();
+      const list = r.repos.filter((x) => !q || `${x.fullName} ${x.description}`.toLowerCase().includes(q));
+      return { total: r.repos.length, shown: Math.min(list.length, 60), repos: list.slice(0, 60).map((x) => `${x.fullName}${x.private ? " (private)" : ""}${x.language ? ` · ${x.language}` : ""}${x.projectId ? ` · project ${x.projectId}` : ""}${x.description ? ` — ${x.description.slice(0, 90)}` : ""}`), errors: r.errors.length ? r.errors : undefined };
+    },
+  },
+  open_repo: {
+    description: "Open a GitHub repository as a Hive project (or get the project it already is). Hive writes a project brief from the repo (stack, layout, how to run/test, conventions) for every agent.",
+    schema: obj({ repo: str('"owner/name", "name" or a GitHub URL') }, ["repo"]),
+    run: async (i, ctx) => {
+      const r = await require("./repos").openRepo(i.repo, { username: ctx.username });
+      return { projectId: r.project.id, name: r.project.name, created: r.created, link: `/hive/p/${r.project.id}` };
+    },
+  },
   session_detail: {
     description: "One session: the request, each agent's model, status and result, the files changed, and recent events.",
     schema: obj({ taskId: str("Session id") }, ["taskId"]),
@@ -163,7 +218,7 @@ const TOOLS = {
     description: `Start a session in a project with one agent (or several to compare). Write a precise, self-contained prompt with acceptance criteria. ${AGENT_HINT}`,
     schema: obj(
       {
-        projectId: str("Project id"),
+        projectId: str(PROJECT),
         title: str("Short title"),
         prompt: str("Full instructions for the agent(s)"),
         agents: { type: "array", items: { type: "string" }, description: 'One or more agents, e.g. ["auto"] or ["free","claude_code/default"]' },
@@ -189,7 +244,7 @@ const TOOLS = {
   },
   plan_team: {
     description: "Plan a team with the Dispatcher: split a bigger request into parts by kind of work, each given the cheapest model that can really do it, with cost estimates. Returns the plan; call start_team to run it.",
-    schema: obj({ projectId: str("Project id"), request: str("What the team should build"), preference: { type: "string", enum: ["savings", "fast", "balanced", "quality"] }, freeOnly: bool("Free models only") }, ["projectId", "request"]),
+    schema: obj({ projectId: str(PROJECT), request: str("What the team should build"), preference: { type: "string", enum: ["savings", "fast", "balanced", "quality"] }, freeOnly: bool("Free models only") }, ["projectId", "request"]),
     run: async (i, ctx) => {
       const d = await require("./dispatcher").create({ project: await projectOf(i.projectId), request: i.request, username: ctx.username, preference: i.preference || "savings", freeOnly: !!i.freeOnly });
       hub.emit("dispatch", d);
@@ -444,7 +499,7 @@ Object.assign(TOOLS, {
   },
   list_pipelines: {
     description: "Saved pipelines (relay teams of agents) of a project.",
-    schema: obj({ projectId: str("Project id") }, ["projectId"]),
+    schema: obj({ projectId: str(PROJECT) }, ["projectId"]),
     run: async (i) => (await require("./pipelines").list((await projectOf(i.projectId)).id)).map((p) => ({ id: p.id, name: p.name, description: p.description, stages: (p.stages || []).map((s) => s.name) })),
   },
   run_pipeline: {
@@ -462,12 +517,12 @@ Object.assign(TOOLS, {
   },
   list_automations: {
     description: "Recurring jobs (nightly fixes, dependency updates, reviews…).",
-    schema: obj({ projectId: str("Optional project id") }),
+    schema: obj({ projectId: str("Optional project id, name or GitHub repo") }),
     run: async (i) => (await require("./automation").listSchedules(i.projectId ? (await projectOf(i.projectId)).id : null)).map((x) => ({ id: x.id, project: x.projectId, title: x.title, every: x.every, hour: x.hour, enabled: x.enabled, nextRun: x.nextRun })),
   },
   create_automation: {
     description: "Schedule recurring work for a project (runs overnight too). Hours are UTC.",
-    schema: obj({ projectId: str("Project id"), title: str("Title"), prompt: str("What should happen each time"), every: { type: "string", enum: ["hourly", "daily", "weekly", "weekdays"] }, hour: int("Hour (UTC) for daily/weekly"), agent: str("Who does it (default free)") }, ["projectId", "title", "prompt"]),
+    schema: obj({ projectId: str(PROJECT), title: str("Title"), prompt: str("What should happen each time"), every: { type: "string", enum: ["hourly", "daily", "weekly", "weekdays"] }, hour: int("Hour (UTC) for daily/weekly"), agent: str("Who does it (default free)") }, ["projectId", "title", "prompt"]),
     run: async (i, ctx) => {
       needs(ctx, "act");
       const p = await projectOf(i.projectId);
@@ -478,12 +533,12 @@ Object.assign(TOOLS, {
   },
   drive_list: {
     description: "Files in Hive Drive (the team's file manager).",
-    schema: obj({ folder: str("Folder, e.g. /docs"), projectId: str("Optional project id") }),
+    schema: obj({ folder: str("Folder, e.g. /docs"), projectId: str("Optional project id, name or GitHub repo") }),
     run: async (i) => (await require("./drive").list({ folder: i.folder || "/", projectId: i.projectId || null })).slice(0, 200).map((f) => `${f.kind === "folder" ? "📁" : "📄"} ${f.path}${f.size ? ` (${f.size} B)` : ""}`),
   },
   drive_read: {
     description: "Read a text file from Hive Drive (long files come back summarised unless full is true).",
-    schema: obj({ path: str("Drive path"), projectId: str("Optional project id"), full: bool("Return the whole text") }, ["path"]),
+    schema: obj({ path: str("Drive path"), projectId: str("Optional project id, name or GitHub repo"), full: bool("Return the whole text") }, ["path"]),
     run: async (i, ctx) => {
       const t = await require("./drive").readText({ path: i.path, projectId: i.projectId || null });
       const text = typeof t === "string" ? t : t?.text || t?.content || "";
@@ -494,7 +549,7 @@ Object.assign(TOOLS, {
   },
   drive_write: {
     description: "Save a text file (Markdown, notes, specs, briefs) to Hive Drive.",
-    schema: obj({ path: str("Drive path, e.g. /docs/plan.md"), content: str("Text"), projectId: str("Optional project id") }, ["path", "content"]),
+    schema: obj({ path: str("Drive path, e.g. /docs/plan.md"), content: str("Text"), projectId: str("Optional project id, name or GitHub repo") }, ["path", "content"]),
     run: async (i, ctx) => {
       needs(ctx, "act");
       const d = require("./drive");
@@ -706,6 +761,8 @@ const SYSTEM = (username, facts, snapshot, settings = {}) => `You are Hive Copil
 How you work:
 - Delegate. You plan, write prompts, review and judge; agents do the coding. Keep your own messages short.
 - Right model for each job, quality first: use list_models to see who is good at what. Cheap or free models for mechanical work, reading and docs; strong models for hard engineering and reviews. Never pick a model that is too weak for the job just because it is cheaper or faster.
+- Projects: every GitHub repo the person connected is available (list_repos). When they name a repo or project, just use it — tools accept "owner/name" or a name and open the repo as a project automatically, with a brief written from the code.
+- When asked how many models there are, use the totals from list_models / hive_overview (every model the connected keys offer), not the length of a shortlist.
 - Small, clear tasks → start_session (one agent, or "compare" for important work so the Judge picks the best). Bigger work with several parts → plan_team, check the plan, then start_team.
 - Every prompt you give an agent is precise and self-contained: goal, relevant files or areas, constraints, acceptance criteria, how to verify (tests/build).
 - After work finishes, review it yourself with session_detail and session_diff before calling it done. If it is not right, add an agent to fix it with exact instructions.
@@ -992,4 +1049,4 @@ async function currentBrain(username) {
   }
 }
 
-module.exports = { rescueAgent, rescueTick, activeWork, DANGEROUS, mergeTick, onApproval, noteAdmin, TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };
+module.exports = { modelTotals, rescueAgent, rescueTick, activeWork, DANGEROUS, mergeTick, onApproval, noteAdmin, TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };
