@@ -171,6 +171,19 @@ async function listModels({ secret, baseUrl, official, modelsUrl }) {
   return ids.sort();
 }
 
+/** HTTP status of a 1-token chat call: 404 means there is no chat endpoint at this address. */
+async function probeChat({ secret, baseUrl, model }) {
+  const base = (baseUrl || DEFAULT_BASE).replace(/\/+$/, "");
+  const res = await fetch(`${base}/chat/completions`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${secret}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ model, messages: [{ role: "user", content: "hi" }], max_tokens: 1 }),
+    signal: AbortSignal.timeout(30000),
+  });
+  await res.body?.cancel?.().catch(() => {});
+  return res.status;
+}
+
 /** Text-to-image through an OpenAI-style /images/generations endpoint. */
 async function generateImage({ secret, baseUrl, model, prompt, size }) {
   const base = (baseUrl || DEFAULT_BASE).replace(/\/+$/, "");
@@ -197,4 +210,4 @@ async function generateImage({ secret, baseUrl, model, prompt, size }) {
   return { images: out, text: j.data?.[0]?.revised_prompt || "" };
 }
 
-module.exports = { id: "openai", turn, listModels, generateImage, SUGGESTED, DEFAULT_BASE };
+module.exports = { id: "openai", turn, listModels, probeChat, generateImage, SUGGESTED, DEFAULT_BASE };
