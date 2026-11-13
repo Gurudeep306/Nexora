@@ -108,6 +108,8 @@ function parseCodex(line, state) {
   }
   const out = [];
   const t = j.type || j.msg?.type;
+  const limits = j.rate_limits || j.msg?.rate_limits || j.info?.rate_limits || j.msg?.info?.rate_limits;
+  if (limits && typeof limits === "object") out.push({ kind: "plan_usage", info: { codex: limits } });
   if (t === "thread.started") out.push({ kind: "session", id: j.thread_id || j.session_id || null });
   else if (t === "turn.completed") {
     const u = j.usage || {};
@@ -311,6 +313,7 @@ async function turn({ vendor, secret, model, system, messages, signal, onText, o
         text += (text ? "\n\n" : "") + ev.text;
         onText?.(ev.text);
       } else if (ev.kind === "session" && ev.model) served = ev.model;
+      else if (ev.kind === "plan_usage" && keyRow?.id) require("../keys").setPlanUsage(keyRow.id, ev.info).catch(() => {});
       else if (ev.kind === "result") {
         usage = ev.usage;
         if (!ev.ok) failure = ev;
