@@ -104,3 +104,27 @@ test("a project's own chat is reused, and knows the repo and its brief", async (
   assert.match(ctx, /npm test/);
   assert.equal(await chat.projectContext(null), "");
 });
+
+test("the repo's AGENTS.md (else CLAUDE.md) is the guide every agent gets; a CLAUDE.md that only imports AGENTS.md is skipped", async () => {
+  const { repoGuide } = require("../src/hive/runner");
+  const files = { "AGENTS.md": "# Rules\nNever commit to main." };
+  const read = async (f) => files[f] ?? null;
+  assert.match(await repoGuide(read), /AGENTS\.md.*Never commit to main/s);
+  assert.match(await repoGuide(async (f) => (f === "CLAUDE.md" ? "Use pnpm." : null)), /CLAUDE\.md.*pnpm/s);
+  assert.equal(await repoGuide(async (f) => (f === "CLAUDE.md" ? "@AGENTS.md\n" : null)), "");
+  assert.equal(await repoGuide(async () => { throw new Error("404"); }), "");
+});
+
+test("models failing in real use right now are left out of the picker", async () => {
+  const db = require("../src/hive/db");
+  const keys = require("../src/hive/keys");
+  const vault = require("../src/hive/vault");
+  const t = Date.now();
+  await db.run("INSERT INTO hive_keys(id, provider, label, secret_enc, last4, models_json, owner, created_at, updated_at, verified_json, status) VALUES(?,?,?,?,?,?,?,?,?,?,?)", ["kf", "groq", "Groq", vault.seal("gsk_x"), "x", JSON.stringify(["good", "flaky"]), "owner", t, t, JSON.stringify({ at: t, ok: ["good", "flaky"], failed: {} }), "ok"]);
+  await db.run("INSERT INTO hive_health(key_id, model, fail_count, consecutive_fails, last_fail, last_ok) VALUES(?,?,?,?,?,?)", ["kf", "flaky", 3, 3, t, t - 60_000]);
+  const k = (await keys.listKeys()).find((x) => x.id === "kf");
+  assert.deepEqual(k.models, ["good"]);
+  assert.deepEqual(k.failingModels, ["flaky"]);
+  await db.run("UPDATE hive_health SET consecutive_fails=0, last_ok=? WHERE key_id='kf'", [t + 1000]);
+  assert.deepEqual((await keys.listKeys()).find((x) => x.id === "kf").models, ["good", "flaky"], "it comes back once it answers again");
+});
