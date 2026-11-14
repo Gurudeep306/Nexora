@@ -270,7 +270,6 @@ function Hero({ schedules, loaded, onNew }: { schedules: Schedule[]; loaded: boo
   const active = schedules.filter((s) => s.enabled).length
   return (
     <div className="hive-card relative mb-6 overflow-hidden p-6 sm:p-7">
-      <div className="hive-comb pointer-events-none absolute inset-0" />
       <div className="relative flex flex-wrap items-start gap-5">
         <span className="hive-tile size-12" style={{ ['--tile' as string]: 'oklch(66% 0.15 270)' }}>
           <CalendarClock className="size-5" />
@@ -514,7 +513,6 @@ function Templates({ templates, onPick, compact }: { templates: ScheduleTemplate
             transition={{ duration: 0.2, delay: i * 0.04, ease: EASE }}
             className={cn('hive-card hive-card-hover hive-lift group relative overflow-hidden text-left', compact ? 'p-3' : 'p-4')}
           >
-            <span className="pointer-events-none absolute -right-8 -top-8 size-24 rounded-full opacity-60 blur-2xl" style={{ background: `color-mix(in oklab, ${color} 22%, transparent)` }} />
             <span className="relative flex items-start gap-3">
               <span className={cn('hive-tile', compact ? 'size-8' : 'size-9')} style={{ ['--tile' as string]: color }}>
                 <st.icon className="size-4" />
