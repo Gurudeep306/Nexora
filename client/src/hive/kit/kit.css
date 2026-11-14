@@ -1,0 +1,116 @@
+/* ────────────────────────────────────────────────────────────────────────
+   Hive kit: the semantic layer every new Hive component uses.
+
+   These are aliases onto the site's own tokens (index.css), so a user's
+   NexoraGuru theme, palette and light/dark mode carry straight into Hive.
+   Components use only these names, never raw colours. Two themes come
+   for free: the site's light and dark palettes remap the --color-* roles
+   these point at.
+   ──────────────────────────────────────────────────────────────────────── */
+.hive-root {
+  /* Surfaces: the sidebar sits one step dimmer than the page; cards, hover
+     and menus one step brighter each. Elevation = lighter surface + hairline. */
+  --hv-bg-app: var(--color-bg-app);
+  --hv-bg-sidebar: color-mix(in oklab, var(--color-bg-app) 88%, black);
+  --hv-surface-1: color-mix(in oklab, var(--color-bg-surface) 70%, var(--color-bg-app));
+  --hv-surface-2: color-mix(in oklab, var(--color-bg-surface-2) 85%, var(--color-bg-app));
+  --hv-surface-3: var(--color-bg-surface-3);
+
+  --hv-border-subtle: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
+  --hv-border: color-mix(in oklab, var(--color-text-primary) 10%, transparent);
+  --hv-border-strong: color-mix(in oklab, var(--color-text-primary) 16%, transparent);
+
+  --hv-text-1: var(--color-text-primary);
+  --hv-text-2: var(--color-text-secondary);
+  /* Hints: the site's muted text, which the theme audit keeps at 4.5:1 on surfaces. */
+  --hv-text-3: var(--color-text-muted);
+
+  --hv-accent: var(--color-accent-brand);
+  --hv-accent-hover: var(--color-accent-brand-hover);
+  --hv-accent-fg: var(--color-on-accent-brand);
+  --hv-accent-soft: color-mix(in oklab, var(--color-accent-brand) 14%, transparent);
+
+  --hv-success: var(--color-state-success);
+  --hv-warning: var(--color-state-warning);
+  --hv-danger: var(--color-state-error);
+  --hv-info: var(--color-state-info);
+  --hv-focus-ring: var(--color-focus, var(--color-accent-brand));
+
+  /* Shape and rhythm (4px grid). */
+  --hv-r-chip: 6px;
+  --hv-r-btn: 8px;
+  --hv-r-card: 12px;
+  --hv-r-dialog: 16px;
+  --hv-row-h: 40px;
+
+  /* Motion: only transform and opacity; 120 hover, 180 menus, 240 panels. */
+  --hv-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --hv-d-fast: 120ms;
+  --hv-d-menu: 180ms;
+  --hv-d-panel: 240ms;
+}
+/* Compact density (Settings › Appearance). */
+.hive-root[data-density="compact"] {
+  --hv-row-h: 32px;
+}
+
+/* ── Utilities ─────────────────────────────────────────────────────────── */
+.hv-num { font-variant-numeric: tabular-nums; }
+
+/* A crisp top highlight: a glassy edge without any blur. */
+.hv-card {
+  background: var(--hv-surface-1);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-card);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, white 4%, transparent);
+}
+
+/* Visible focus everywhere (2px ring, 2px offset); never hidden under sticky bars. */
+.hive-root :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--hv-focus-ring);
+  outline-offset: 2px;
+}
+.hive-root :where(a, button, input, textarea, select, [tabindex]) {
+  scroll-margin-block: 72px;
+}
+
+/* A soft live dot: 1.6s opacity pulse. */
+.hv-live {
+  animation: hv-pulse 1.6s ease-in-out infinite;
+}
+@keyframes hv-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* Rows: the whole row is the target; actions show on hover or focus. */
+.hv-row {
+  min-height: var(--hv-row-h);
+  border-radius: var(--hv-r-btn);
+  transition: background-color var(--hv-d-fast) var(--hv-ease);
+}
+.hv-row:hover,
+.hv-row[data-active="true"] { background: var(--hv-surface-2); }
+.hv-row .hv-row-actions { opacity: 0; transition: opacity var(--hv-d-fast) var(--hv-ease); }
+.hv-row:hover .hv-row-actions,
+.hv-row:focus-within .hv-row-actions,
+.hv-row[data-active="true"] .hv-row-actions { opacity: 1; }
+@media (hover: none) {
+  .hv-row .hv-row-actions { opacity: 1; }
+}
+
+/* Long lists: skip rendering off-screen rows. */
+.hv-cv { content-visibility: auto; contain-intrinsic-size: auto var(--hv-row-h); }
+
+/* "Done" check that draws itself in. */
+.hv-draw path { stroke-dasharray: 24; stroke-dashoffset: 24; animation: hv-draw 300ms var(--hv-ease) forwards; }
+@keyframes hv-draw { to { stroke-dashoffset: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-live { animation: none; }
+  .hv-draw path { animation: none; stroke-dashoffset: 0; }
+  .hv-row, .hv-row .hv-row-actions { transition: none; }
+}
+@media (forced-colors: active) {
+  .hv-card { border-color: CanvasText; }
+}
