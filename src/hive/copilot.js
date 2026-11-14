@@ -177,6 +177,11 @@ async function sessionDiff(taskId, path, { full = false, username = "hive" } = {
 }
 
 const TOOLS = {
+  capacity: {
+    description: "What every connected source (API key or plan agent) can take right now: ready / cooling (and when it frees up) / down, calls in flight, today's use against free-tier limits, and what the provider last reported as remaining. Check this before splitting work, and spread parts across ready sources so no single free key hits its limit.",
+    schema: obj({}, []),
+    run: async () => require("./keys").capacity(),
+  },
   hive_overview: {
     description: "See the whole hive: projects (with ids), recent sessions and their agents, teams, which agents are working and which are failing. Call this first when you need ids or context.",
     schema: obj({}),

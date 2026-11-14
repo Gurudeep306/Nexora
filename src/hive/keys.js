@@ -520,7 +520,42 @@ async function pickHandoffKey({ exclude = [], order = [], skipVendor } = {}) {
 }
 
 /** Wait for a slot on a key (per-key concurrency), then return a release fn. */
+// Recent call starts per key, for pacing free tiers below their per-minute limit.
+const recentStarts = new Map(); // keyId -> [ms]
+
+/**
+ * Free tiers publish requests-per-minute and per-day limits. Hive keeps under
+ * them itself: calls wait their turn inside the minute instead of getting a
+ * 429, and a key that has used its day hands the work on at once.
+ */
+async function freeTierGate(row, signal) {
+  if (!row.free_tier) return;
+  const lim = require("./catalog").freeLimitFor(keyVendor(row));
+  if (!lim) return;
+  if (lim.rpd) {
+    const used = await get("SELECT SUM(requests) AS n FROM hive_usage WHERE key_id=? AND day=?", [row.id, day(Date.now())]).catch(() => null);
+    if (Number(used?.n || 0) >= lim.rpd) {
+      const { ProviderError } = require("./providers/common");
+      const d = new Date();
+      throw new ProviderError(`${row.label} has used its ${lim.rpd} free requests for today`, { kind: "quota", retryAt: Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1) });
+    }
+  }
+  if (!lim.rpm) return;
+  for (;;) {
+    const now = Date.now();
+    const list = (recentStarts.get(row.id) || []).filter((t) => now - t < 60_000);
+    recentStarts.set(row.id, list);
+    if (list.length < lim.rpm) {
+      list.push(now);
+      return;
+    }
+    if (signal?.aborted) throw new Error("Stopped");
+    await new Promise((r) => setTimeout(r, Math.min(5000, 60_000 - (now - list[0]) + 50)));
+  }
+}
+
 async function acquire(row, signal) {
+  await freeTierGate(row, signal);
   for (;;) {
     if ((active.get(row.id) || 0) < Math.max(1, row.max_concurrency)) break;
     if (signal?.aborted) throw new Error("Stopped");
@@ -576,4 +611,46 @@ async function refreshAll() {
   return fresh;
 }
 
-module.exports = { refreshPlanUsage, refreshAllPlanUsage, workingModels, saveVerified, blockModel, setPlanUsage, explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };
+/**
+ * What every connected source can take right now, for planning: ready /
+ * cooling (with when it frees up) / down, calls in flight, today's use
+ * against free-tier limits, and the provider's last reported remaining.
+ */
+async function capacity() {
+  const rows = await all("SELECT * FROM hive_keys WHERE disabled=0 ORDER BY created_at");
+  const t = Date.now();
+  const today = day(t);
+  const health = await all("SELECT key_id, model, cooldown_until, last_kind, last_error FROM hive_health").catch(() => []);
+  const used = new Map((await all("SELECT key_id, SUM(requests) AS n, SUM(input_tokens + output_tokens) AS tok FROM hive_usage WHERE day=? GROUP BY key_id", [today]).catch(() => [])).map((r) => [r.key_id, r]));
+  const machines = require("./machines");
+  const { freeLimitFor } = require("./catalog");
+  return rows.map((r) => {
+    const vendor = keyVendor(r);
+    const keyHealth = health.find((h) => h.key_id === r.id && h.model === "");
+    const coolingModels = health.filter((h) => h.key_id === r.id && h.model && Number(h.cooldown_until) > t).map((h) => ({ model: h.model, until: Number(h.cooldown_until), why: h.last_kind }));
+    const down = r.status === "invalid" || (r.machine_id && !machines.isOnline(r.machine_id));
+    const until = Number(keyHealth?.cooldown_until || 0);
+    const lim = r.free_tier ? freeLimitFor(vendor) : null;
+    let rl = null;
+    try {
+      rl = JSON.parse(r.rl_json || "null");
+    } catch {}
+    const u = used.get(r.id);
+    return {
+      keyId: r.id,
+      label: r.label,
+      vendor,
+      plan: !!r.machine_id,
+      state: down ? "down" : until > t ? "cooling" : "ready",
+      freesAt: until > t ? new Date(until).toISOString() : null,
+      why: down ? (r.status === "invalid" ? r.status_detail || "key rejected" : "machine offline") : until > t ? keyHealth?.last_kind || null : null,
+      inFlight: active.get(r.id) || 0,
+      maxConcurrency: Math.max(1, r.max_concurrency || 1),
+      today: { requests: Number(u?.n || 0), tokens: Number(u?.tok || 0), requestLimit: lim?.rpd ?? null, perMinute: lim?.rpm ?? null },
+      reported: rl ? { remainingRequests: rl.remainingRequests ?? rl.requestsRemaining ?? null, remainingTokens: rl.remainingTokens ?? rl.tokensRemaining ?? null, resetsAt: rl.resetAt ?? rl.resetsAt ?? null } : null,
+      coolingModels,
+    };
+  });
+}
+
+module.exports = { capacity, refreshPlanUsage, refreshAllPlanUsage, workingModels, saveVerified, blockModel, setPlanUsage, explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };
