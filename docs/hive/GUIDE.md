@@ -48,6 +48,8 @@ Shortcuts:
   - `/checkpoint`: save the current state
   - `/restore`: restore an earlier state
   - `/ship`: commit, open a PR and merge
+- **Compare (race) on a machine:** each attempt works in its own git worktree on its own branch, so attempts never overwrite each other. When they finish, the Judge runs the repo's tests in each copy (only on machines set to run commands without asking), compares them, and squash-merges the winner into the session. Adopting another attempt by hand does the same. If the session works directly in your own folder, Hive leaves it alone and tells you the winning branch.
+- **Approvals survive restarts:** if Hive restarts after you approved a command but before it ran, the resumed agent isn't asked again (within an hour). Requests left open by a restart are closed.
 - **Checkpoints:** a checkpoint is saved whenever an agent finishes or another one joins, and whenever you save one yourself. If the latest result isn't good, **Restore** an earlier one; the state you're leaving is saved first, so nothing is lost.
 - **Ship:**
   1. Commit to a `hive/…` branch.
@@ -103,6 +105,8 @@ curl -fsSL -H "Authorization: Bearer hvm_…" https://nexoraguru.in/api/hive-bri
   - the provider's live rate limit and its reset time
   - 30-day usage, with cached tokens shown separately
   - today's tokens and estimated spend
+- **Request limits:** open a key's menu → **Budget, limits & model** to set *requests a minute* and *requests a day*. Hive waits instead of hitting the per-minute limit, and moves work to another key when the daily one is used up (until midnight UTC). Free connections use the provider's usual free allowance when nothing is set.
+- **When a key is busy or cooling down,** its card says when it frees up, and the Inbox lists it. The Copilot sees the same view (its `capacity` tool) when it plans work.
 - **Model lists:** every key's model list refreshes twice a day. A default model you picked yourself is kept; automatic defaults move to the best chat model the key currently offers.
 
 ## Subscriptions: Claude Code and Codex without API credits

@@ -53,6 +53,9 @@ export interface HiveKey {
   speed?: Record<string, number>
   /** A free connection's typical allowance (shown when the provider sends no live numbers). */
   freeLimit?: FreeLimit | null
+  /** Pace set on this key (requests a minute / a day); null = the provider's usual free allowance. */
+  rpmLimit?: number | null
+  rpdLimit?: number | null
 }
 
 export interface FreeLimit {
@@ -60,7 +63,8 @@ export interface FreeLimit {
   rpm?: number
   tpd?: number
   tpm?: number
-  note: string
+  note?: string
+  custom?: boolean
 }
 
 /** The last "test every model" run on a key: which models really answered. */

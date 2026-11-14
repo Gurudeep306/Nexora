@@ -384,10 +384,10 @@ export function LimitBar({ k, compact = false }: { k: HiveKey; compact?: boolean
     const byTokens = !k.freeLimit.rpd
     const lim = byTokens ? k.freeLimit.tpd! : k.freeLimit.rpd!
     const u = byTokens ? (k.todayTokens ?? 0) : (k.todayRequests ?? 0)
-    label = 'Free daily limit'
+    label = k.freeLimit.custom ? 'Daily limit (set here)' : 'Free daily limit'
     left = `${fmtTokens(u)} / ${fmtTokens(lim)} ${byTokens ? 'tokens' : 'requests'} today`
     used = u / Math.max(1, lim)
-    foot = `about · resets in ${until(nextUtcMidnight())}${k.freeLimit.rpm ? ` · ${k.freeLimit.rpm}/min` : ''}`
+    foot = `${k.freeLimit.custom ? '' : 'about · '}resets in ${until(nextUtcMidnight())}${k.freeLimit.rpm ? ` · ${k.freeLimit.rpm}/min` : ''}`
   } else if (k.tokenLimit != null) {
     label = 'Your budget'
     left = `${fmtTokens(k.remaining ?? 0)} / ${fmtTokens(k.tokenLimit)} left`
@@ -396,7 +396,7 @@ export function LimitBar({ k, compact = false }: { k: HiveKey; compact?: boolean
   } else if (k.freeLimit) {
     label = 'Free limit'
     left = `${fmtTokens(k.todayRequests ?? 0)} requests today`
-    foot = k.freeLimit.note
+    foot = k.freeLimit.note ?? (k.freeLimit.rpm ? `${k.freeLimit.rpm} requests a minute` : '')
   } else {
     label = 'Limit'
     left = `${fmtTokens(k.todayRequests ?? 0)} requests · ${fmtTokens(k.todayTokens ?? 0)} tokens today`
