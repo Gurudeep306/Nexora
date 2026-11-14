@@ -235,8 +235,19 @@ const TOOLS = {
       const router = require("./router");
       const kind = KINDS[i.kind] ? i.kind : router.classify(i.prompt, { byPerson: false }).kind;
       const list = (Array.isArray(i.agents) && i.agents.length ? i.agents : ["auto"]).slice(0, 4).map((a) => specFrom(a, kind));
-      // Claude Code / Codex / Vibe work in a folder on their machine: copy the repo there first if needed.
-      p = (await require("./repos").ensureOnMachine(p.id, list.map((s) => s.provider))) || p;
+      // Claude Code / Codex / Vibe work in a folder on their machine: pick the machine whose agent
+      // fits best (and is least busy), then copy the repo there if needed.
+      const repos = require("./repos");
+      let vendors = list.map((s) => s.provider);
+      let prefer = null;
+      if (vendors.includes("auto") || vendors.some((v) => ["claude_code", "codex", "vibe"].includes(v))) {
+        const m = await repos.pickMachine({ kind, prompt: i.prompt }).catch(() => null);
+        if (m && ["claude_code", "codex", "vibe"].includes(m.pick.provider)) {
+          prefer = m.machineId;
+          if (vendors.includes("auto")) vendors = [...vendors, m.pick.provider];
+        }
+      }
+      p = (await repos.ensureOnMachine(p.id, vendors, { machineId: prefer })) || p;
       const mode = ["solo", "compare", "team"].includes(i.mode) ? i.mode : list.length > 1 ? "compare" : "solo";
       for (const s of list) await runner.resolveSpec(s, { prompt: i.prompt, machineId: p.machine_id || null });
       const task = await ctx.createTask(p, { title: i.title || String(i.prompt).split("\n")[0].slice(0, 90), prompt: i.prompt, kind });
@@ -394,6 +405,37 @@ const TOOLS = {
 /* ── autonomy: the Copilot acts for you ─────────────────────────────── */
 const DANGEROUS = /\brm\s+-[a-z]*r[a-z]*f?\s+(\/|~|\$HOME|\*)(\s|$)|\bmkfs|\bdd\s+if=|:\(\)\s*\{|\bshutdown\b|\breboot\b|\bchmod\s+-R\s+777\s+\/|\bgit\s+push\s+.*--force|\bcurl\b[^|]*\|\s*(sudo\s+)?(ba)?sh|\bDROP\s+(TABLE|DATABASE)\b/i;
 
+/**
+ * Autopilot approves only commands it can be sure are safe: tests, lint,
+ * type-checks, builds, installs from the lockfile and read-only git/file
+ * commands. Every part of a chained command (&&, ||, ;, |) must qualify, and
+ * nothing may touch secrets or the network. Everything else waits for a person.
+ */
+const SAFE_PART = new RegExp(
+  "^(" +
+    [
+      "(npm|pnpm|yarn|bun)\\s+(test|ci|install|run\\s+(test|lint|build|typecheck|type-check|check|format:check|lint:\\S+|test:\\S+))(\\s+--?[\\w=:.-]+)*",
+      "(npm|pnpm|yarn)\\s+(--prefix\\s+\\S+\\s+)?(ci|install)",
+      "npx\\s+(tsc|oxlint|eslint|vitest|jest|prettier\\s+--check|vite\\s+build|playwright\\s+test)(\\s+[\\w./=:@-]+)*",
+      "node\\s+--test(\\s+[\\w./*-]+)*",
+      "(python3?\\s+-m\\s+)?pytest(\\s+[\\w./:=-]+)*",
+      "go\\s+(test|build|vet)(\\s+[\\w./-]+)*",
+      "cargo\\s+(test|build|check|clippy)(\\s+--?[\\w-]+)*",
+      "make\\s+(test|lint|build|check)",
+      "git\\s+(status|diff|log|show|branch|rev-parse|ls-files|fetch)(\\s+[\\w./:@^~=-]+)*",
+      "(ls|pwd|cat|head|tail|wc|grep|rg|echo|which)(\\s+[\\w./*'\"=:-]+)*",
+      "cd\\s+[\\w./-]+",
+    ].join("|") +
+    ")$",
+  "i",
+);
+const SECRET_OR_NET = /\.env\b|id_rsa|\.ssh|\.aws|\.npmrc|credentials|\btoken\b|\bcurl\b|\bwget\b|\bssh\b|\bscp\b|\bnc\b|>\s*\//i;
+function autoApprovable(command) {
+  const c = String(command || "").trim();
+  if (!c || DANGEROUS.test(c) || SECRET_OR_NET.test(c) || /[`$]\(|\$\{|`/.test(c) || />/.test(c)) return false;
+  return c.split(/&&|\|\||;|\|/).every((part) => SAFE_PART.test(part.trim()));
+}
+
 function needs(ctx, what) {
   if (what === "act" && ctx.autonomy === "assist") throw new Error("You're in Assist mode — ask the person to confirm this, or they can switch the Copilot to Autopilot.");
   if (what === "merge") {
@@ -509,7 +551,7 @@ Object.assign(TOOLS, {
       const m = require("./machines");
       const a = m.pendingApprovals().find((x) => x.id === i.approvalId);
       if (!a) return { answered: false, note: "Not waiting any more" };
-      if (i.approve && DANGEROUS.test(String(a.command || ""))) return { answered: false, note: "That command looks destructive — leaving it for a person to decide" };
+      if (i.approve && !autoApprovable(a.command)) return { answered: false, note: "Only tests, lint, builds, installs from the lockfile and read-only commands are approved automatically — leaving this one for a person" };
       return { answered: m.answerApproval(i.approvalId, { approved: !!i.approve, by: `copilot:${ctx.username}`, note: i.note }) };
     },
   },
@@ -686,6 +728,8 @@ async function rescueTick({ silentMs = 15 * 60_000 } = {}) {
   return out;
 }
 
+const MERGE_WAIT_MS = 2 * 60 * 60 * 1000;
+
 async function mergeTick() {
   for (const m of await all("SELECT * FROM hive_copilot_merge").catch(() => [])) {
     const s = await brainSettings(m.username);
@@ -699,6 +743,10 @@ async function mergeTick() {
       } else if (/failure/.test(r.reason || "")) {
         await run("DELETE FROM hive_copilot_merge WHERE task_id=?", [m.task_id]);
         await onCiFailed(m, r).catch(() => {});
+      } else if (Date.now() - Number(m.created_at || 0) > MERGE_WAIT_MS) {
+        // No checks, or checks stuck pending: stop waiting and say why instead of queueing forever.
+        await run("DELETE FROM hive_copilot_merge WHERE task_id=?", [m.task_id]);
+        await require("./caps").alert({ kind: "copilot", level: "warn", title: "Copilot stopped waiting to merge", body: `${r.reason || "Checks never finished"} after 2 hours — merge it yourself when it's ready.`, ref: "/hive/copilot" }).catch(() => {});
       }
     } catch (e) {
       if (/switched off|Only admins/.test(e.message)) await run("DELETE FROM hive_copilot_merge WHERE task_id=?", [m.task_id]);
@@ -718,8 +766,8 @@ async function onApproval(info) {
   const s = await brainSettings(w.username);
   if (s.autonomy !== "autopilot") return;
   const m = require("./machines");
-  if (DANGEROUS.test(String(info.command || ""))) {
-    await require("./caps").alert({ kind: "copilot", level: "warn", title: "A command needs you", body: `Copilot won't approve: ${String(info.command).slice(0, 160)}`, ref: "/hive/machines" }).catch(() => {});
+  if (!autoApprovable(info.command)) {
+    await require("./caps").alert({ kind: "copilot", level: "warn", title: "A command needs you", body: `Not a test, lint, build or read-only command, so the Copilot left it for you: ${String(info.command).slice(0, 160)}`, ref: "/hive/inbox" }).catch(() => {});
     return;
   }
   m.answerApproval(info.id, { approved: true, by: `copilot:${w.username}`, note: "Approved by Copilot (autopilot)" });
@@ -748,6 +796,7 @@ async function watch(taskId, username) {
 
 const FINISHED = new Set(["review", "failed", "stopped", "pr_open", "committed", "merged", "interrupted"]);
 const reviewing = new Set();
+const reviewRetries = new Map(); // taskId -> failed review attempts
 
 /** Called on every task update: a watched session that finished gets a review turn. */
 async function onTask(task, deps) {
@@ -759,7 +808,6 @@ async function onTask(task, deps) {
   if (Number(busy?.n || 0) > 0) return;
   reviewing.add(task.id);
   try {
-    await run("UPDATE hive_copilot_watch SET done=1 WHERE task_id=?", [task.id]);
     const s = await brainSettings(w.username);
     const next =
       s.autonomy === "autopilot"
@@ -772,8 +820,15 @@ async function onTask(task, deps) {
       auto: true,
       deps,
     });
+    // Only now is the review really done; a failed turn (plan limit, machine offline) is retried.
+    await run("UPDATE hive_copilot_watch SET done=1 WHERE task_id=?", [task.id]);
+    reviewRetries.delete(task.id);
   } catch (e) {
     console.error("[hive copilot] review", e.message);
+    const n = (reviewRetries.get(task.id) || 0) + 1;
+    reviewRetries.set(task.id, n);
+    if (n <= 4) setTimeout(() => onTask(task, deps).catch(() => {}), [2, 5, 15, 60][n - 1] * 60_000).unref?.();
+    else await run("UPDATE hive_copilot_watch SET done=1 WHERE task_id=?", [task.id]).catch(() => {});
   } finally {
     reviewing.delete(task.id);
   }
@@ -1155,4 +1210,5 @@ async function currentBrain(username) {
   }
 }
 
-module.exports = { checkSession, cheapReviewer, DEFAULT_CLAUDE_ONLY, modelTotals, rescueAgent, rescueTick, activeWork, DANGEROUS, mergeTick, onApproval, noteAdmin, TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };
+module.exports = {
+  autoApprovable, checkSession, cheapReviewer, DEFAULT_CLAUDE_ONLY, modelTotals, rescueAgent, rescueTick, activeWork, DANGEROUS, mergeTick, onApproval, noteAdmin, TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };
