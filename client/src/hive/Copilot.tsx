@@ -622,7 +622,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
       <div className={cn('flex items-center gap-2 border-b hive-line', compact ? 'px-3 py-2' : 'px-4 py-2.5 sm:px-6')}>
         <BrainPill brain={brain} settings={settings} onChange={changeBrain} compact={compact} admin={admin} />
         {settings && (
-          <span className={cn('hidden h-6 items-center rounded-full px-2 text-[11px] font-medium sm:inline-flex', settings.autonomy === 'assist' ? 'bg-state-info/12 text-state-info' : 'bg-state-success/12 text-state-success')}>{settings.autonomy === 'assist' ? 'Assist' : 'Autopilot'}</span>
+          <StatusPill status={settings.autonomy === 'assist' ? 'planning' : 'done'} label={settings.autonomy === 'assist' ? 'Assist' : 'Autopilot'} className="max-sm:hidden" />
         )}
         <span className="ml-auto" />
         {!!msgs?.length && (

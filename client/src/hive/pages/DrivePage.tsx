@@ -1737,11 +1737,11 @@ function GithubDialog({ open, onClose, project, items, onSent }: { open: boolean
                 Done
               </Button>
               {result.pr ? (
-                <a href={result.pr.url} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-accent-brand px-3.5 text-[13px] font-medium text-white shadow-sm transition hover:opacity-90 [&_svg]:size-4">
+                <a href={result.pr.url} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-accent-brand px-3.5 text-[13px] font-medium text-on-accent-brand shadow-sm transition hover:opacity-90 [&_svg]:size-4">
                   <ExternalLink /> Open pull request
                 </a>
               ) : (
-                <a href={`https://github.com/${repo}/tree/${encodeURIComponent(result.branch)}`} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-accent-brand px-3.5 text-[13px] font-medium text-white shadow-sm transition hover:opacity-90 [&_svg]:size-4">
+                <a href={`https://github.com/${repo}/tree/${encodeURIComponent(result.branch)}`} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-accent-brand px-3.5 text-[13px] font-medium text-on-accent-brand shadow-sm transition hover:opacity-90 [&_svg]:size-4">
                   <ExternalLink /> View branch
                 </a>
               )}

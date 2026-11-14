@@ -73,7 +73,7 @@ export function StatusPill({ status, label, size = 'md', className }: { status: 
   return (
     <span
       className={cn('inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full font-medium', size === 'sm' ? 'h-5 px-1.5 text-[11px]' : 'h-6 px-2 text-[12px]', className)}
-      style={{ color: m.color, background: `color-mix(in oklab, ${m.color} 13%, transparent)` }}
+      style={{ color: `color-mix(in oklab, ${m.color} 72%, var(--hv-text-1))`, background: `color-mix(in oklab, ${m.color} 12%, transparent)` }}
     >
       {m.Icon ? <m.Icon className={size === 'sm' ? 'size-3' : 'size-3.5'} strokeWidth={2.2} aria-hidden /> : <span className="hv-live size-1.5 rounded-full" style={{ background: m.color }} aria-hidden />}
       {label ?? m.label}

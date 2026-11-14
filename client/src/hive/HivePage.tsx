@@ -381,7 +381,7 @@ function ActivityBar({ onTeam, onPalette, withSidebar }: { onTeam: () => void; o
         <Tooltip label={`Team · ${online.length} online`} side="right">
           <button type="button" onClick={onTeam} className="relative mb-1 grid size-9 place-items-center rounded-[var(--hv-r-btn)] text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary" aria-label="Team">
             <Users className="size-[17px]" strokeWidth={1.8} />
-            {online.length > 0 && <span className="absolute right-0.5 top-0.5 grid min-w-4 place-items-center rounded-full bg-state-success px-1 text-[9px] font-semibold text-white">{online.length}</span>}
+            {online.length > 0 && <span className="absolute right-0.5 top-0.5 grid min-w-4 place-items-center rounded-full bg-state-success px-1 text-[9px] font-semibold text-on-accent-brand">{online.length}</span>}
           </button>
         </Tooltip>
         <Tooltip label="Back to NexoraGuru" side="right">
@@ -505,9 +505,9 @@ function Sidebar() {
           <ProjectSwitcher />
         </div>
         <div className="px-3 pb-2">
-          <label className="flex h-8 items-center gap-2 rounded-lg bg-text-primary/[0.05] px-2.5 text-text-muted focus-within:bg-text-primary/[0.08]">
+          <label className="flex h-8 items-center gap-2 rounded-lg bg-text-primary/[0.05] px-2.5 text-text-muted focus-within:bg-text-primary/[0.08] focus-within:ring-2 focus-within:ring-[var(--hv-focus-ring)]">
             <Search className="size-3.5" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter" className="min-w-0 flex-1 bg-transparent text-[12.5px] outline-none placeholder:text-text-muted" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Filter the menu" placeholder="Filter" className="min-w-0 flex-1 bg-transparent text-[12.5px] outline-none placeholder:text-text-muted" />
           </label>
         </div>
         <nav className="hive-scroll min-h-0 flex-1 overflow-y-auto px-2 pb-4">
@@ -619,7 +619,7 @@ function NavSections({ filter = '' }: { filter?: string }) {
         return (
           <div key={g.title || 'top'} className="mb-1">
             {g.title && (
-              <button type="button" onClick={() => flip(g.title)} className="group mb-0.5 mt-2 flex w-full items-center px-2.5 text-left" aria-expanded={!shut}>
+              <button type="button" onClick={() => flip(g.title)} className="group mb-0.5 mt-1.5 flex min-h-6 w-full items-center px-2.5 text-left" aria-expanded={!shut}>
                 <span className="flex-1 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-muted group-hover:text-text-secondary">{g.title}</span>
                 <ChevronRight className={cn('size-3 text-text-muted transition-transform', !shut && 'rotate-90')} />
               </button>
@@ -873,7 +873,7 @@ function ApprovalsTray() {
               <Server className="size-3" /> {a.machine} · <span className="truncate font-mono">{a.folder}</span>
             </div>
             <div className="mt-3 flex items-center gap-2">
-              <button type="button" onClick={() => answerApproval(a.id, true)} className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-state-success text-[12.5px] font-medium text-white hover:brightness-110">
+              <button type="button" onClick={() => answerApproval(a.id, true)} className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-state-success text-[12.5px] font-medium text-on-accent-brand hover:brightness-110">
                 <Check className="size-3.5" /> Run it
               </button>
               <button type="button" onClick={() => answerApproval(a.id, false)} className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-text-primary/[0.07] text-[12.5px] font-medium hover:bg-state-error/15 hover:text-state-error">

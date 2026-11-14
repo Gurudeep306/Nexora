@@ -205,9 +205,9 @@ export function shareTone(share: number | null): string {
   return share == null ? 'var(--color-text-muted)' : share < 0.1 ? 'var(--color-state-error)' : share < 0.3 ? 'var(--color-state-warning)' : 'var(--color-state-success)'
 }
 
-export function Meter({ value, color, className }: { value: number; color?: string; className?: string }) {
+export function Meter({ value, color, className, label = 'Share' }: { value: number; color?: string; className?: string; label?: string }) {
   return (
-    <div className={cn('h-1 overflow-hidden rounded-full bg-text-primary/8', className)} role="meter" aria-valuenow={Math.round(value * 100)} aria-valuemin={0} aria-valuemax={100}>
+    <div className={cn('h-1 overflow-hidden rounded-full bg-text-primary/8', className)} role="meter" aria-label={label} aria-valuenow={Math.round(value * 100)} aria-valuemin={0} aria-valuemax={100}>
       <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${Math.round(Math.max(0, Math.min(1, value)) * 100)}%`, background: color ?? 'var(--color-accent-brand)' }} />
     </div>
   )
