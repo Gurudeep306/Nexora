@@ -27,7 +27,7 @@ function cooldownFor(kind, consecutive) {
 
 const keyOf = (keyId, model) => `${keyId}|${model || ""}`;
 
-async function record(keyId, model, { ok, kind = null, error = null, latencyMs = null }) {
+async function record(keyId, model, { ok, kind = null, error = null, latencyMs = null, retryAt = null }) {
   if (!keyId) return;
   const m = model || "";
   const t = now();
@@ -46,13 +46,14 @@ async function record(keyId, model, { ok, kind = null, error = null, latencyMs =
   }
   if (kind === "aborted") return;
   const consecutive = (row?.consecutive_fails || 0) + 1;
-  const until = t + cooldownFor(kind, consecutive);
+  // The provider's own reset time wins (a daily cap cools until it resets, not for an hour).
+  const until = retryAt && retryAt > t ? Math.min(retryAt, t + 7 * 24 * 60 * MIN) : t + cooldownFor(kind, consecutive);
   const msg = String(error || "").slice(0, 300);
   if (row) await run("UPDATE hive_health SET fail_count=fail_count+1, consecutive_fails=?, last_fail=?, last_error=?, last_kind=?, cooldown_until=? WHERE key_id=? AND model=?", [consecutive, t, msg, kind, until, keyId, m]);
   else await run("INSERT INTO hive_health(key_id, model, ok_count, fail_count, consecutive_fails, last_fail, last_error, last_kind, cooldown_until) VALUES(?,?,0,1,?,?,?,?,?)", [keyId, m, consecutive, t, msg, kind, until]);
   memo.set(keyOf(keyId, m), { until });
   // Bad key or no credit: the whole key is out, not just this model.
-  if ((kind === "auth" || kind === "quota") && m) await record(keyId, "", { ok: false, kind, error });
+  if ((kind === "auth" || kind === "quota") && m) await record(keyId, "", { ok: false, kind, error, retryAt });
   try {
     require("./hub").emit("health", { keyId, model: m, ok: false, kind });
   } catch {
@@ -85,7 +86,7 @@ function wrapTurn(vendorId, turn) {
       record(args.keyRow?.id, args.model, { ok: true, latencyMs: Date.now() - t0 }).catch(() => {});
       return res;
     } catch (e) {
-      if (!args.signal?.aborted) record(args.keyRow?.id, args.model, { ok: false, kind: e.kind || "server", error: e.message }).catch(() => {});
+      if (!args.signal?.aborted) record(args.keyRow?.id, args.model, { ok: false, kind: e.kind || "server", error: e.message, retryAt: e.retryAt || null }).catch(() => {});
       throw e;
     }
   };

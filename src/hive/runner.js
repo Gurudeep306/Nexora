@@ -300,7 +300,26 @@ function partialField(src, key) {
 }
 
 /* ── the agent loop ─────────────────────────────────────────────────── */
-async function runAgent(agentId, { team = [], delegateFn = null, readOnly = false, title = "" } = {}) {
+/**
+ * Run one agent. Any failure before or around the main loop (machine removed,
+ * GitHub snapshot failed…) marks the agent failed and closes the session, so
+ * nothing is left "running" forever.
+ */
+async function runAgent(agentId, opts = {}) {
+  try {
+    return await runAgentInner(agentId, opts);
+  } catch (e) {
+    const a = await get("SELECT * FROM hive_agents WHERE id=?", [agentId]).catch(() => null);
+    if (!a || ["done", "failed", "stopped", "incomplete"].includes(a.status)) throw e;
+    running.delete(agentId);
+    activity.delete(agentId);
+    await setAgent(agentId, { status: "failed", error: String(e.message || e).slice(0, 500), finished_at: now() }).catch(() => {});
+    await event(a.task_id, agentId, "error", { message: `Couldn't start: ${e.message || e}` }).catch(() => {});
+    await finishTask(a.task_id).catch(() => {});
+  }
+}
+
+async function runAgentInner(agentId, { team = [], delegateFn = null, readOnly = false, title = "" } = {}) {
   let agent = await get("SELECT * FROM hive_agents WHERE id=?", [agentId]);
   const ctx = await taskContext(agent.task_id);
   const { task, project, snap } = ctx;
@@ -367,6 +386,8 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
   const triedKeys = [];
   let step = 0;
   let status = "done";
+  let wrote = false; // did this agent change any file?
+  let nudges = 0;
   let error = null;
   let lastRadar = "";
   let warnedBudget = false;
@@ -655,12 +676,15 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
         if (["auth", "quota", "rate"].includes(e.kind)) {
           if (e.kind === "auth") await run("UPDATE hive_keys SET status='invalid', status_detail=? WHERE id=?", [String(e.message).slice(0, 300), keyRow.id]);
           if (await handoff(`${keyRow.label}: ${e.message}`)) continue;
-          if (e.kind === "rate") {
+          // Short rate limits: wait and retry on the same key, at most 3 times (never all day).
+          if (e.kind === "rate" && (state.rateWaits = (state.rateWaits || 0) + 1) <= 3) {
             triedKeys.pop();
-            await event(task.id, agentId, "system", { message: `Rate limited (${e.message}); retrying in ${Math.round(RETRY_DELAY / 1000)}s` });
-            await new Promise((r) => setTimeout(r, RETRY_DELAY));
+            const wait = e.retryAt && e.retryAt > Date.now() ? Math.min(120_000, e.retryAt - Date.now() + 500) : RETRY_DELAY;
+            await event(task.id, agentId, "system", { message: `Rate limited (${e.message}); retrying in ${Math.round(wait / 1000)}s (try ${state.rateWaits} of 3)` });
+            await new Promise((r) => setTimeout(r, wait));
             continue;
           }
+          if (e.retryAt) e.message = `${e.message} — usable again at ${new Date(e.retryAt).toISOString().slice(11, 16)} UTC`;
         }
         if (e.retryable && !state.retried) {
           state.retried = true;
@@ -672,6 +696,7 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
       }
       release();
       state.retried = false;
+      state.rateWaits = 0;
       flush();
       step++;
       await keys.recordUsage(keyRow.id, agent.started_by, { input: res.usage.input, output: res.usage.output, cacheRead: res.usage.cacheRead || 0, costMicros: res.costMicros || 0 }, res.rateLimit, { projectId: project.id, vendor: agent.provider, model: agent.model });
@@ -694,7 +719,17 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
         messages.push({ role: "tool", results: res.toolCalls.map((c) => ({ id: c.id, name: c.name, content: "Your output was cut off (too long). Split large writes into several edit_file calls.", isError: true })) });
         continue;
       }
-      if (res.stop !== "tool") break;
+      if (res.stop !== "tool") {
+        // A model that just talks ("I will now edit the file…") without calling
+        // finish gets up to two nudges before the loop ends.
+        if (!finished && !readOnly && nudges < 2) {
+          nudges++;
+          messages.push({ role: "user", text: "Continue the work with your tools now, or call finish with a short summary of what you changed and how you checked it." });
+          await event(task.id, agentId, "system", { message: `Reminded to keep working or call finish (${nudges} of 2)` });
+          continue;
+        }
+        break;
+      }
 
       // Run this turn's tool calls concurrently; return all results together.
       const results = await Promise.all(
@@ -727,6 +762,7 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
             meta: out.meta || null,
           });
           if (out.meta?.write) {
+            wrote = true;
             hub.emitTask(task.id, "changes", { variant: agent.variant });
             hub.emitTask(task.id, "code_done", { agentId, path: out.meta.path });
           }
@@ -738,7 +774,15 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
       // Non-Claude providers: trim old tool output to stay within context.
       if (agent.provider !== "anthropic" && on("context_trim")) elide(messages);
     }
-    if (!finished && step >= MAX_STEPS) finished = `${lastText}\n\n(Stopped after ${MAX_STEPS} steps.)`.trim();
+    // Hitting the step limit is not "done": the Copilot, Dispatcher and Judge treat it as unfinished.
+    if (!finished && step >= MAX_STEPS) {
+      status = "incomplete";
+      error = `Stopped after ${MAX_STEPS} steps without calling finish`;
+    } else if (!finished && !readOnly && !viaCli && !wrote) {
+      // Ended without finishing and without changing anything: a failure, so escalation can start.
+      status = "failed";
+      error = "Stopped without finishing and without changing any file";
+    }
   } catch (e) {
     flush();
     if (e.kind === "aborted") status = "stopped";
