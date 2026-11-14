@@ -97,6 +97,38 @@ export function Session() {
   }
   // Phones: the roster and the panel open as full-screen sheets.
   const [sheet, setSheet] = useState<null | 'agents' | 'dock'>(null)
+  const sheetRef = useRef<HTMLDivElement>(null)
+  // A sheet is a dialog: focus moves in, Tab stays inside, Escape closes it.
+  useEffect(() => {
+    if (!sheet) return
+    const back = document.activeElement as HTMLElement | null
+    const el = sheetRef.current
+    el?.querySelector<HTMLElement>('[data-sheet-close]')?.focus()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation()
+        setSheet(null)
+        return
+      }
+      if (e.key !== 'Tab' || !el) return
+      const f = [...el.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter((n) => n.offsetParent !== null)
+      if (!f.length) return
+      const first = f[0]
+      const last = f[f.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+    document.addEventListener('keydown', onKey, true)
+    return () => {
+      document.removeEventListener('keydown', onKey, true)
+      back?.focus?.()
+    }
+  }, [sheet])
   const small = () => typeof window !== 'undefined' && window.innerWidth < 768
   // Wide screens show the agents column; narrower ones use filter chips and a sheet.
   const wide = useMedia('(min-width: 1024px)')
@@ -320,7 +352,7 @@ export function Session() {
 
       <AnimatePresence>
         {sheet && (
-          <motion.div initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 36 }} className="fixed inset-0 z-[960] flex flex-col bg-bg-app md:hidden">
+          <motion.div initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 36 }} ref={sheetRef} role="dialog" aria-modal="true" aria-label={sheet === 'dock' ? 'Session panel' : 'Agents'} className="fixed inset-0 z-[960] flex flex-col bg-bg-app md:hidden">
             <div className="flex items-center gap-2 border-b hive-line px-3 py-2">
               {sheet === 'dock' ? (
                 <div className="hive-scroll flex min-w-0 flex-1 gap-1 overflow-x-auto">
@@ -333,7 +365,7 @@ export function Session() {
               ) : (
                 <span className="flex-1 text-[14px] font-semibold">Agents</span>
               )}
-              <button type="button" onClick={() => setSheet(null)} className="grid size-9 place-items-center rounded-lg text-text-muted" aria-label="Close">
+              <button type="button" data-sheet-close onClick={() => setSheet(null)} className="grid size-9 place-items-center rounded-lg text-text-muted" aria-label="Close">
                 <X className="size-4" />
               </button>
             </div>

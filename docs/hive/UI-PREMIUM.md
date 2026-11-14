@@ -59,10 +59,19 @@ Pages redesigned in v1 (Home, Inbox, Projects, Keys, Models, Spend, Settings) al
 - Screenshots at 1440, 1100 and 390 px with no horizontal scroll.
 - The 13 old addresses still redirect.
 
+## Brief items checked against what Hive has (PR #100)
+
+| Brief item | Decision |
+|---|---|
+| Drive dropzone, image and PDF preview | Already there: drop files anywhere on the Drive page; the preview panel shows images and PDFs inline. |
+| Chat as streamed markdown | Already there: replies stream and render as markdown (`react-markdown`). |
+| Board with drag and drop | Not a fit: the session Board is an activity log and team notes, not a kanban, so there is nothing to drag. Its filter now uses the kit `SegmentedControl`. |
+| Virtualised file tree | Not needed: folders are collapsed by default and only open folders render, so even large repos (Nexora itself) stay fast. |
+| Terminal with xterm.js | Left as is: the bridge runs each command and returns its output (no live PTY), so a terminal emulator would add weight without adding features. Worth doing together with a PTY in the bridge. |
+| vaul drawers | Not added: the phone sheets slide up, are dialogs (focus moves in and stays inside, Escape closes, focus returns), which covers what vaul would bring except swipe-to-close. |
+
 ## Not done yet (honest list)
 
-- **Terminal with xterm.js, Board with dnd-kit, virtualised file tree, vaul drawers, nuqs.** These need new dependencies. The current Terminal, Board, Files tree and mobile sheets work and follow the house style. They were left alone rather than half-replaced. URL state uses React Router's `useSearchParams`, which needs no new dependency.
-- **Chat as streamdown-style conversation, Drive dropzone, lightbox and PDF preview.** These are not started.
 - **Shared-element view transitions** (project avatar → session header) are not started.
 - **Lighthouse on the live site** has not been run, because this session can't reach nexoraguru.in. To run it: open https://nexoraguru.in/hive in Chrome, press F12, open **Lighthouse**, click **Analyze**.
 - **Reading the references.** Several reference sites in the brief are blocked by this session's network policy. Allow them in the environment's network settings to have them read in a later session.
