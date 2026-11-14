@@ -191,14 +191,20 @@ function parseVibe(line, state) {
     return [];
   }
   if (!j || typeof j !== "object") return [];
+  // Some versions wrap each message: {"type":"message","message":{…}} / {"entry":{…}}.
+  if (!j.role && j.message && typeof j.message === "object" && j.message.role) j = j.message;
+  else if (!j.role && j.entry && typeof j.entry === "object" && j.entry.role) j = j.entry;
   const out = [];
   if (!state.announced && (j.session_id || j.sessionId)) {
     state.announced = true;
     out.push({ kind: "session", id: j.session_id || j.sessionId });
   }
   if (j.role === "assistant") {
-    if (j.reasoning_content) out.push({ kind: "thinking", text: String(j.reasoning_content) });
-    if (j.content && String(j.content).trim()) out.push({ kind: "text", text: String(j.content) });
+    // Content can be plain text or a list of typed parts (text / thinking): never stringify an object.
+    const body = splitContent(j.content);
+    const think = [splitContent(j.reasoning_content).text, body.think].filter(Boolean).join("");
+    if (think) out.push({ kind: "thinking", text: think });
+    if (body.text.trim()) out.push({ kind: "text", text: body.text });
     for (const [i, c] of (j.tool_calls || []).entries()) {
       const raw = c.function?.name || "tool";
       const id = c.id || `vibe_${state.n++}_${i}`;
@@ -223,13 +229,15 @@ function parseVibe(line, state) {
     const t = state.tools.get(id) || { name: VIBE_TOOL[j.name] || j.name || "tool", input: {} };
     if (t.name === "plan") return out;
     const o = j.tool_result?.output || {};
-    const content = typeof j.content === "string" ? j.content : JSON.stringify(j.content ?? o).slice(0, 8000);
+    const content = (typeof j.content === "string" ? j.content : splitContent(j.content).text || JSON.stringify(j.content ?? o)).slice(0, 8000);
     const isError = !!(j.tool_result?.cancelled || o.error || o.is_error || /^(error|<tool_error>)/i.test(content.trim()));
     const exit = typeof o.returncode === "number" ? o.returncode : typeof o.exit_code === "number" ? o.exit_code : undefined;
     out.push({ kind: "tool_result", id, name: t.name, isError: isError || (exit != null && exit !== 0), content, exit, path: t.input?.file_path || t.input?.path || o.file_path || o.file || null, write: WRITES.has(t.name) && !isError });
   }
   return out;
 }
+
+const { splitContent } = require("./openai");
 
 const PARSERS = { claude: parseClaude, codex: parseCodex, vibe: parseVibe };
 const CLI_LABEL = { claude: "Claude Code", codex: "Codex", vibe: "Mistral Vibe" };
@@ -350,7 +358,8 @@ async function listModels({ cli, machineId, vendor, secret }) {
     const how = cli === "codex" ? "codex login --device-auth" : cli === "vibe" ? "vibe --setup (sign in with your Le Chat account), or paste your Vibe API key in Hive" : "claude setup-token (then paste the token in Hive), or claude auth login";
     throw new ProviderError(`${label} is installed (${d.version}) but not signed in — on the machine run: ${how}`, { kind: "auth" });
   }
-  if (cli === "vibe") return ["default", "mistral-medium-3.5", "devstral-small"];
+  // Vibe ships one model (Mistral Medium 3.5, "mistral-vibe-cli-latest"); others are added in ~/.vibe/config.toml.
+  if (cli === "vibe") return ["default", "mistral-medium-3.5"];
   return cli === "codex" ? ["default", "gpt-5-codex", "gpt-5"] : ["default", "opus", "sonnet", "haiku", "claude-fable-5-1", "claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
 }
 
