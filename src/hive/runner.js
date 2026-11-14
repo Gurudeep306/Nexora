@@ -16,6 +16,11 @@ const { systemPrompt } = require("./prompts");
 const { resolvePlugins, repoMap, modelTier } = require("./plugins");
 const vault = require("./vault");
 const { pickDefault } = require("./models");
+const router = require("./router");
+const perf = require("./perf");
+const cliMod = require("./providers/cli");
+const { cardFor, quality: qualityFor } = require("./catalog");
+const caps = require("./caps");
 const defaultModelOf = (key, vendor) => key.default_model || pickDefault(json(key.models_json, []), vendor.suggested);
 
 const MAX_AGENTS = Number(process.env.HIVE_MAX_AGENTS || 16);
@@ -127,6 +132,19 @@ async function effectiveProject(project, task) {
   return r ? { ...project, github_id: r.github_id, repo_owner: r.repo_owner, repo_name: r.repo_name, default_branch: r.default_branch } : project;
 }
 
+/** The repo's guide for AI agents (AGENTS.md, else CLAUDE.md), ready for a system prompt. */
+async function repoGuide(read, max = 12000) {
+  for (const f of ["AGENTS.md", "CLAUDE.md"]) {
+    try {
+      const text = await read(f);
+      if (text && String(text).trim() && !/^@AGENTS\.md\s*$/m.test(String(text).trim().split("\n")[0] || "") ) return `The repository's guide for AI agents (${f}) — follow it:\n${String(text).slice(0, max)}`;
+    } catch {
+      /* not there */
+    }
+  }
+  return "";
+}
+
 async function taskContext(taskId) {
   const task = await get("SELECT * FROM hive_tasks WHERE id=?", [taskId]);
   if (!task) throw Object.assign(new Error("Task not found"), { status: 404 });
@@ -188,25 +206,56 @@ async function pickName(taskId, wanted) {
   return name;
 }
 
-/** Resolve an agent spec { provider (vendor), keyId|'auto', model, effort } to a key row. */
-async function resolveSpec(spec) {
+/**
+ * Resolve an agent spec { provider (vendor) | 'auto', keyId|'auto', model,
+ * effort } to a key row. 'auto' asks the router for the best model for this
+ * kind of work; subscription agents (Claude Code, Codex) must be connected on
+ * the machine the task runs on.
+ */
+async function resolveSpec(spec, { prompt = "", machineId = null, kind = null } = {}) {
+  if (spec.provider === "auto") {
+    let r;
+    try {
+      r = await router.route({ prompt, kind: spec.kind || kind, needTools: true, machineId, preference: spec.preference || null, freeOnly: !!spec.freeOnly, exclude: { vendors: spec.excludeVendors || [] } });
+    } catch (e) {
+      // Excluding labs (cross-vendor review) left nothing: allow any lab.
+      if (!spec.excludeVendors?.length) throw e;
+      r = await router.route({ prompt, kind: spec.kind || kind, needTools: true, machineId, preference: spec.preference || null, freeOnly: !!spec.freeOnly });
+    }
+    const key = await keys.keyRow(r.pick.keyId);
+    return { key, model: r.pick.model, provider: r.pick.provider, effort: spec.effort || null, kind: r.kind, note: r.note, quality: r.pick.quality };
+  }
   const vendor = providerOf(spec.provider);
   if (!vendor.caps.tools) throw new Error(`${vendor.label} models can't use tools, so they can only chat — pick another provider for agents`);
-  const key = await keys.pickKey(spec.provider, { prefer: spec.keyId || "auto" });
-  if (!key) throw new Error(await keys.explainNoKey(spec.provider));
+  let key;
+  if (vendor.needsMachine) {
+    const rows = (await all("SELECT * FROM hive_keys WHERE disabled=0")).filter((r) => keys.keyVendor(r) === spec.provider);
+    if (!rows.length) throw new Error(`Connect ${vendor.label} first: Keys & limits → Claude & Codex plans`);
+    if (!machineId) throw new Error(`${vendor.label} works in a folder on a connected machine — start this session on a machine`);
+    key = (spec.keyId && spec.keyId !== "auto" ? rows.find((r) => r.id === spec.keyId) : null) || rows.find((r) => r.machine_id === machineId);
+    if (!key || key.machine_id !== machineId) throw new Error(`${vendor.label} isn't connected on this session's machine — connect it there in Keys & limits → Claude & Codex plans`);
+    if (!machines.isOnline(machineId)) throw new Error("That machine is offline — start the Hive bridge on it");
+  } else {
+    key = await keys.pickKey(spec.provider, { prefer: spec.keyId || "auto" });
+    if (!key) throw new Error(await keys.explainNoKey(spec.provider));
+  }
   const model = spec.model || defaultModelOf(key, vendor);
   if (!model) throw new Error("Choose a model");
-  return { key, model, provider: spec.provider, effort: spec.effort || null };
+  const k = kind || router.classify(prompt).kind;
+  return { key, model, provider: spec.provider, effort: spec.effort || null, kind: k, note: null, quality: qualityFor(cardFor(model, spec.provider), k) };
 }
 
-async function createAgent(task, { role, spec, instructions, variant = "main", parentId = null, startedBy, name, readOnly = false, title = null }) {
-  const r = await resolveSpec(spec);
+async function createAgent(task, { role, spec, instructions, variant = "main", parentId = null, startedBy, name, readOnly = false, title = null, kind = null }) {
+  const want = readOnly ? "review" : kind || (spec.provider === "auto" ? null : task.kind) || null;
+  const r = await resolveSpec(spec, { prompt: instructions, machineId: task.machine_id || null, kind: want });
   const id = newId("ag");
   await run(
     `INSERT INTO hive_agents(id, task_id, parent_id, role, name, key_id, provider, model, effort, variant, instructions, status, started_by, created_at, title)
      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     [id, task.id, parentId, readOnly ? "reviewer" : role, await pickName(task.id, name || spec.name), r.key.id, r.provider, r.model, r.effort, variant === "self" ? id : variant, instructions, "queued", startedBy, now(), title],
   );
+  await run("UPDATE hive_agents SET routed_kind=?, route_note=? WHERE id=?", [r.kind || null, r.note || null, id]);
+  if (r.note) await event(task.id, id, "route", { note: r.note, kind: r.kind, model: r.model, provider: r.provider });
   const a = await get("SELECT * FROM hive_agents WHERE id=?", [id]);
   hub.emitTask(task.id, "agent", a);
   return a;
@@ -277,6 +326,10 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
 
   const ws = workspaceOf(ctx, agent.variant);
   const tools = toolsFor(agent.role === "lead" ? "lead" : "solo", { readOnly, memory: on("shared_memory"), web: on("web_reader"), machine: !!ctx.machine, commands: ctx.machine?.policy !== "read" });
+  // Connected MCP servers (Plugins → Connected tools) — read-only agents only get read-only tools.
+  for (const d of await require("./toolbox").mcpTools({ limit: 40 }).catch(() => [])) {
+    if (!readOnly || d._ro) tools.splice(tools.length - 1, 0, { name: d.name, description: d.description, schema: d.schema });
+  }
   // Commands on a machine: its policy decides whether a human approves each one.
   const approve = async ({ command, kind }) => {
     const m = await get("SELECT policy, name FROM hive_machines WHERE id=?", [ctx.machine.id]);
@@ -290,6 +343,9 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
 
   // Shared context, in the stable system prompt (cache-friendly).
   const extras = [];
+  // The repo's own guide for agents (AGENTS.md, else CLAUDE.md): the same context Claude Code, Codex and Vibe read.
+  const guide = await repoGuide((p) => ws.read(p));
+  if (guide) extras.push(guide);
   if (on("shared_memory")) {
     const mem = await all("SELECT title, body, author FROM hive_memory WHERE project_id=? ORDER BY pinned DESC, created_at DESC LIMIT ?", [project.id, Number(plugins.shared_memory.config.maxItems) || 30]);
     if (mem.length) extras.push(`Project memory (shared by the whole team — trust it, add to it with remember):\n${mem.map((m) => `- ${m.title}: ${m.body}`).join("\n")}`);
@@ -328,22 +384,28 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
   };
   const schedule = () => (flushTimer ||= setTimeout(flush, 80));
 
-  /** Hand the agent to another key (same vendor, then any vendor). */
+  /**
+   * Hand the agent to another key: the same model on another key first, then
+   * (Never stop) the best model for the SAME kind of work, free first.
+   */
   const handoff = async (reason) => {
     if (keyRow) triedKeys.push(keyRow.id);
-    let next = await keys.pickKey(agent.provider, { exclude: triedKeys });
-    let crossVendor = false;
+    const sameVendor = providerOf(agent.provider);
+    let next = sameVendor.subscription ? null : await keys.pickKey(agent.provider, { exclude: triedKeys });
+    let swap = null;
     if (!next && on("never_stop")) {
-      next = await keys.pickHandoffKey({ exclude: triedKeys, order: plugins.never_stop.config.order || [], skipVendor: agent.provider });
-      crossVendor = !!next;
+      const c = await router
+        .continuation({ kind: agent.routed_kind || task.kind || "coding", from: { provider: agent.provider, model: agent.model }, machineId: ctx.machine?.id || null, excludeKeys: triedKeys })
+        .catch(() => null);
+      if (c) {
+        next = await keys.keyRow(c.keyId);
+        swap = c;
+      }
     }
     if (!next) return false;
     const fields = { key_id: next.id, handoffs: (agent.handoffs || 0) + 1 };
-    if (crossVendor) {
-      const vendor = keys.keyVendor(next);
-      Object.assign(fields, { provider: vendor, model: defaultModelOf(next, providerOf(vendor)), effort: null });
-    }
-    await event(task.id, agentId, "handoff", { reason, from: { key: keyRow?.label, provider: agent.provider, model: agent.model }, to: { key: next.label, provider: fields.provider || agent.provider, model: fields.model || agent.model } });
+    if (swap) Object.assign(fields, { provider: swap.provider, model: swap.model, effort: null, route_note: `Continued on ${swap.name} after a limit · ${swap.note}` });
+    await event(task.id, agentId, "handoff", { reason, from: { key: keyRow?.label, provider: agent.provider, model: agent.model }, to: { key: next.label, provider: fields.provider || agent.provider, model: fields.model || agent.model }, note: swap?.note || null });
     keyRow = next;
     agent = await setAgent(agentId, fields);
     const a = activity.get(agentId);
@@ -351,8 +413,173 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
     return true;
   };
 
+  /**
+   * Claude Code / Codex: the CLI runs its own agent loop on the machine; we
+   * stream its events into the session. Steering interrupts the run and
+   * resumes the same CLI session with the message.
+   */
+  const runCliLoop = async () => {
+    const v = providerOf(agent.provider);
+    if (!ctx.machine) throw new Error(`${v.label} works in a folder on a connected machine — start this session on a machine`);
+    if (keyRow.machine_id && keyRow.machine_id !== ctx.machine.id) throw new Error(`${v.label} is connected on another machine — start the session there`);
+    const mrow = await get("SELECT policy FROM hive_machines WHERE id=?", [ctx.machine.id]);
+    const policy = readOnly ? "read" : mrow?.policy || "ask";
+    let session = agent.cli_session || null;
+    let prompt = agent.instructions;
+    let steps = 0;
+    let text = "";
+    for (let round = 0; round < 30; round++) {
+      if (controller.signal.aborted) throw Object.assign(new Error("Stopped"), { kind: "aborted" });
+      const capOk = await caps.check({ projectId: project.id, vendor: agent.provider, model: agent.model, username: agent.started_by });
+      if (!capOk.ok) throw Object.assign(new Error(capOk.reason), { kind: "limit" });
+      const roundCtl = new AbortController();
+      const onAbort = () => roundCtl.abort();
+      controller.signal.addEventListener("abort", onAbort, { once: true });
+      state.interrupt = () => roundCtl.abort();
+      const { args, input, hook } = cliMod.buildArgs({ cli: v.cli, model: agent.model, system, prompt, policy, resume: session });
+      let result = null;
+      let failure = null;
+      let limit = null;
+      const usage = { input: 0, output: 0, cacheRead: 0 };
+      let announced = false;
+      const r = await cliMod.stream({
+        machineId: ctx.machine.id,
+        folder: ctx.machine.folder,
+        cli: v.cli,
+        args,
+        input,
+        env: cliMod.envFor(agent.provider, keys.secretOf(keyRow)),
+        hook,
+        signal: roundCtl.signal,
+        approve: ({ command }) => approve({ command, kind: "command" }),
+        onEvent: async (ev) => {
+          switch (ev.kind) {
+            case "session":
+              if (ev.id && ev.id !== session) {
+                session = ev.id;
+                await setAgent(agentId, { cli_session: session });
+              }
+              if (!announced && (ev.model || ev.permissionMode)) {
+                announced = true;
+                await event(task.id, agentId, "system", { message: `${v.label}${ev.model ? ` · ${ev.model}` : ""} · ${policy === "ask" ? "commands need approval" : policy === "auto" ? "autonomous" : "read-only"}` });
+              }
+              break;
+            case "delta":
+              buf += ev.text;
+              schedule();
+              break;
+            case "thinking":
+              thinkBuf += ev.text;
+              schedule();
+              break;
+            case "text":
+              flush();
+              text = ev.text;
+              lastText = ev.text;
+              await event(task.id, agentId, "text", { text: ev.text, step: steps });
+              break;
+            case "tool_call": {
+              flush();
+              steps++;
+              const a = activity.get(agentId);
+              if (a) a.doing = describe(ev.name, ev.input);
+              await event(task.id, agentId, "tool_call", { id: ev.id, name: ev.name, input: summarizeInput(ev.name, ev.input || {}) });
+              hub.emit("radar", liveAgents());
+              break;
+            }
+            case "tool_result":
+              await event(task.id, agentId, "tool_result", {
+                id: ev.id,
+                name: ev.name,
+                isError: !!ev.isError,
+                preview: String(ev.content || "").slice(0, ev.name === "run_command" ? 8000 : 2500),
+                meta: ev.write ? { path: ev.path, write: true } : ev.name === "run_command" ? { exit: ev.exit ?? null } : null,
+              });
+              if (ev.write) {
+                if (ev.path) activity.get(agentId)?.files.add(ev.path);
+                hub.emitTask(task.id, "changes", { variant: agent.variant });
+                hub.emitTask(task.id, "code_done", { agentId, path: ev.path });
+              }
+              break;
+            case "plan":
+              await event(task.id, agentId, "system", { message: `Plan: ${ev.items.map((x) => `${x.done ? "✓" : "○"} ${x.text}`).join(" · ")}`.slice(0, 2000) });
+              break;
+            case "system":
+              await event(task.id, agentId, "system", { message: ev.message });
+              break;
+            case "plan_usage":
+              await keys.setPlanUsage(keyRow.id, ev.info).catch(() => {});
+              break;
+            case "limit":
+              limit = ev;
+              break;
+            case "turn_done":
+              usage.input += ev.usage.input;
+              usage.output += ev.usage.output;
+              usage.cacheRead += ev.usage.cacheRead;
+              break;
+            case "result":
+              result = ev;
+              if (ev.usage) Object.assign(usage, ev.usage);
+              if (!ev.ok) failure = ev;
+              break;
+            case "fail":
+              failure = ev;
+              break;
+            default:
+              break;
+          }
+        },
+      }).finally(() => {
+        controller.signal.removeEventListener("abort", onAbort);
+        state.interrupt = null;
+      });
+      flush();
+      step = steps;
+      // Every run counts (some CLIs report no token numbers), so plan bars show real use.
+      await keys.recordUsage(keyRow.id, agent.started_by, { ...usage, costMicros: 0 }, null, { projectId: project.id, vendor: agent.provider, model: agent.model });
+      if (usage.input || usage.output) {
+        agent = await setAgent(agentId, { steps, input_tokens: agent.input_tokens + usage.input, output_tokens: agent.output_tokens + usage.output });
+        hub.emit("usage", { keyId: keyRow.id });
+      }
+      if (controller.signal.aborted) throw Object.assign(new Error("Stopped"), { kind: "aborted" });
+      // Interrupted to take a steering message: continue the same CLI session.
+      if (r.stopped && state.steer.length) {
+        const msgs = state.steer.splice(0).map((m) => `Message from @${m.username} (a human on the team): ${m.message}`);
+        prompt = session ? msgs.join("\n\n") : `${agent.instructions}\n\n${msgs.join("\n\n")}`;
+        await event(task.id, agentId, "system", { message: `${v.label} picked up the message and continues` });
+        continue;
+      }
+      if (limit || failure?.limit) throw Object.assign(new Error(limit?.message || failure?.text || failure?.message || `${v.label} hit its plan limit`), { kind: "limit" });
+      if (failure) throw new Error(`${v.label}: ${String(failure.text || failure.message || "failed").slice(0, 600)}`);
+      if (!result && r.exit && r.exit !== 0) {
+        const err = String(r.stderr || "").trim().slice(-600);
+        throw Object.assign(new Error(`${v.label} exited (${r.exit})${err ? `: ${err}` : ""}`), { kind: cliMod.LIMIT_RE.test(err) ? "limit" : /login|logged in|auth|credential|token|api key/i.test(err) ? "auth" : "server" });
+      }
+      return result?.text || text || "Done";
+    }
+    return text || "Done";
+  };
+
   try {
-    while (step < MAX_STEPS && !finished) {
+    let viaCli = providerOf(agent.provider).impl === "cli";
+    if (viaCli) {
+      try {
+        finished = await runCliLoop();
+      } catch (e) {
+        // Plan limit reached (or the CLI broke): keep the work going on the
+        // best API model for the same kind of job, in the same folder.
+        if (e.kind === "aborted" || !on("never_stop") || !["limit", "auth", "server"].includes(e.kind)) throw e;
+        const label = providerOf(agent.provider).label;
+        if (!(await handoff(`${label}: ${e.message}`))) throw e;
+        viaCli = false;
+        messages.push({
+          role: "user",
+          text: `You are taking over from ${label}, which stopped (${e.message}). Its edits are already in the working folder — check view_changes (and run git status) before continuing.${lastText ? `\n\nIts last report:\n${String(lastText).slice(0, 4000)}` : ""}`,
+        });
+      }
+    }
+    while (!viaCli && step < MAX_STEPS && !finished) {
       if (controller.signal.aborted) throw Object.assign(new Error("Stopped"), { kind: "aborted" });
       while (state.steer.length) {
         const s = state.steer.shift();
@@ -384,6 +611,12 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
         if (!(await handoff(`${keyRow?.label || "The key"} reached its token limit`))) {
           throw new Error(`Token limit reached on ${keyRow?.label || "the key"} and no other key has budget — add a key or raise a limit, then use “Continue with…”`);
         }
+      }
+      const capOk = await caps.check({ projectId: project.id, vendor: agent.provider, model: agent.model, username: agent.started_by });
+      if (!capOk.ok) {
+        // A capped model/provider: move the work elsewhere if allowed, else stop.
+        if (!(await handoff(capOk.reason))) throw new Error(capOk.reason);
+        continue;
       }
       const release = await keys.acquire(keyRow, controller.signal);
       let res;
@@ -441,7 +674,7 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
       state.retried = false;
       flush();
       step++;
-      await keys.recordUsage(keyRow.id, agent.started_by, { input: res.usage.input, output: res.usage.output, cacheRead: res.usage.cacheRead || 0, costMicros: res.costMicros || 0 }, res.rateLimit);
+      await keys.recordUsage(keyRow.id, agent.started_by, { input: res.usage.input, output: res.usage.output, cacheRead: res.usage.cacheRead || 0, costMicros: res.costMicros || 0 }, res.rateLimit, { projectId: project.id, vendor: agent.provider, model: agent.model });
       agent = await setAgent(agentId, {
         steps: step,
         input_tokens: agent.input_tokens + res.usage.input,
@@ -471,6 +704,10 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
           await event(task.id, agentId, "tool_call", { id: call.id, name: call.name, input: summarizeInput(call.name, call.input) });
           const out = call.invalid
             ? { content: `Your arguments were not valid JSON: ${call.rawArgs}`, isError: true }
+            : call.name.startsWith("mcp_")
+            ? await require("./toolbox")
+                .callMcpTool(call.name, call.input)
+                .then(async (r) => ({ ...r, content: await require("./steward").clipTool(r.content, project.id) }))
             : await execute(call.name, call.input, {
                 ws,
                 agent,
@@ -521,6 +758,31 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
   board.status(agentId, status);
   agent = await setAgent(agentId, { status, result, error, finished_at: now() });
   await event(task.id, agentId, "status", { status, summary: result ? result.slice(0, 4000) : null, error });
+  const kind = agent.role === "reviewer" ? "review" : agent.routed_kind || task.kind || "coding";
+  if (status !== "stopped") {
+    await perf
+      .recordRun({ vendor: agent.provider, model: agent.model, kind, ok: status === "done", tokens: agent.input_tokens + agent.output_tokens, steps: agent.steps, ms: Date.now() - Number(agent.started_at || Date.now()) })
+      .catch(() => {});
+  }
+  // A routed agent that failed is retried once or twice on a stronger model,
+  // with what went wrong — so a cheap first attempt never costs the task.
+  if (status === "failed" && !agent.parent_id && on("escalation") && Number(agent.escalations || 0) < 2 && !/budget|cap reached|Stopped/i.test(error || "")) {
+    const from = { provider: agent.provider, model: agent.model, quality: qualityFor(cardFor(agent.model, agent.provider), kind) };
+    const next = await router.escalate({ kind, from, machineId: ctx.machine?.id || null }).catch(() => null);
+    if (next) {
+      await event(task.id, agentId, "handoff", { reason: `${agent.name} couldn't finish — escalating to a stronger model`, from: { provider: agent.provider, model: agent.model }, to: { provider: next.provider, model: next.model }, note: `${next.name} · fit ${next.quality}/100` });
+      const a = await addAgent(task.id, {
+        spec: { provider: next.provider, keyId: next.keyId, model: next.model },
+        prompt: `A previous attempt by ${agent.name} (${agent.model}) failed with: ${String(error || "unknown error").slice(0, 1500)}\n\nComplete the original request. Its partial edits (if any) are in the working copy — check view_changes first.`,
+        username: agent.started_by,
+        readOnly,
+        variant: agent.variant,
+        title: `Escalated from ${agent.name}`,
+        kind,
+      }).catch(() => null);
+      if (a) await setAgent(a.id, { escalations: Number(agent.escalations || 0) + 1 });
+    }
+  }
   // Every agent's result is a restore point.
   if (!readOnly) {
     const head = String(result || error || status).split("\n")[0].slice(0, 120);
@@ -584,6 +846,7 @@ function elide(messages) {
 
 /* ── task orchestration ─────────────────────────────────────────────── */
 const reviewed = new Set();
+const judged = new Set();
 
 async function finishTask(taskId) {
   const tops = await all("SELECT status, result FROM hive_agents WHERE task_id=? AND parent_id IS NULL", [taskId]);
@@ -591,6 +854,16 @@ async function finishTask(taskId) {
   const anyOk = tops.some((a) => a.status === "done");
   const summary = tops.map((a) => a.result).filter(Boolean).pop() || null;
   const task = await setTask(taskId, { status: anyOk ? "review" : tops.every((a) => a.status === "stopped") ? "stopped" : "failed", summary });
+  // Compare mode: the Judge ranks the attempts and adopts the best one.
+  if (anyOk && task.mode === "compare" && !judged.has(taskId)) {
+    const plugins = (await resolvePlugins(task.project_id)).builtins;
+    if (plugins.judge?.enabled) {
+      judged.add(taskId);
+      require("./judge")
+        .judgeTask(taskId, { adopt: plugins.judge.config?.autoAdopt !== false })
+        .catch((e) => event(taskId, null, "system", { message: `The Judge couldn't decide: ${e.message}` }));
+    }
+  }
   // Auto review plugin: one read-only reviewer per finished task.
   if (anyOk && !reviewed.has(taskId)) {
     const plugins = (await resolvePlugins(task.project_id)).builtins;
@@ -598,7 +871,18 @@ async function finishTask(taskId) {
     if (plugins.auto_review?.enabled && Number(changes[0]?.n) > 0) {
       reviewed.add(taskId);
       const cfg = plugins.auto_review.config || {};
-      const spec = cfg.provider ? { provider: cfg.provider, model: cfg.model || undefined, keyId: "auto", name: "reviewer" } : await cheapestSpec();
+      let spec = cfg.provider ? { provider: cfg.provider, model: cfg.model || undefined, keyId: "auto", name: "reviewer" } : null;
+      let note = "";
+      if (!spec) {
+        // Cross-vendor review: a different lab than the authors checks the work.
+        const authors = [...new Set((await all("SELECT provider FROM hive_agents WHERE task_id=? AND role <> 'reviewer'", [taskId])).map((r) => r.provider))];
+        const r = await router.reviewer({ authors, machineId: task.machine_id || null }).catch(() => null);
+        if (r) {
+          spec = { provider: r.provider, keyId: r.keyId, model: r.model };
+          note = r.crossVendor ? ` (${r.name}, a different lab than the authors)` : ` (${r.name})`;
+        } else spec = await cheapestSpec();
+      }
+      if (spec) await event(taskId, null, "system", { message: `Auto review starting${note}` });
       if (spec) {
         await addAgent(taskId, {
           spec: { ...spec, name: "reviewer" },
@@ -624,8 +908,8 @@ async function cheapestSpec() {
     } catch {
       continue;
     }
-    if (!v.caps.tools) continue;
-    const models = json(r.models_json, []);
+    if (!v.caps.tools || v.subscription) continue;
+    const models = require("./keys").workingModels(r);
     const model = [...models].sort((a, b) => modelTier(a) - modelTier(b))[0] || r.default_model;
     if (!model) continue;
     const tier = modelTier(model);
@@ -639,6 +923,7 @@ async function cheapestSpec() {
  * lead: spec for the team lead.
  */
 async function startTask(task, { mode, specs, lead, username }) {
+  if (!task.kind) task = await setTask(task.id, { kind: router.classify(task.prompt).kind });
   await setTask(task.id, { status: "running" });
   await event(task.id, null, "system", { message: `@${username} started a ${mode} task`, mode });
   const launches = [];
@@ -738,18 +1023,48 @@ async function joinBrief(taskId, variant = "main") {
 }
 
 /** Add an agent to an existing task (follow-up, extra helper or reviewer). */
-async function addAgent(taskId, { spec, prompt, username, readOnly = false, variant = "main", title = null }) {
+async function addAgent(taskId, { spec, prompt, username, readOnly = false, variant = "main", title = null, kind = null }) {
   const { task, text } = await joinBrief(taskId, variant);
   if (!readOnly) {
     const ctx = await taskContext(taskId).catch(() => null);
     if (ctx) await checkpoints.create(ctx, { variant, label: `Before ${title || "another agent"} joined`, by: username, auto: true }).catch(() => null);
   }
   const instructions = `${text}\n\nNew request from @${username}:\n${prompt}`;
-  const a = await createAgent(task, { role: "solo", spec, instructions, startedBy: username, readOnly, variant, title: title || (readOnly ? "Review" : "Follow-up") });
+  const a = await createAgent(task, { role: "solo", spec, instructions, startedBy: username, readOnly, variant, title: title || (readOnly ? "Review" : "Follow-up"), kind: kind || (spec.provider === "auto" ? router.classify(prompt).kind : null) });
   await setTask(taskId, { status: "running" });
   await event(taskId, a.id, "system", { message: `@${username} added ${a.name}${readOnly ? " (review)" : ""}`, prompt: prompt.slice(0, 2000) });
   runAgent(a.id, { readOnly, title: a.title }).then(() => finishTask(taskId));
   return a;
+}
+
+/**
+ * Run one agent on a task and wait for it (and for any escalation it spawned).
+ * Used by pipelines, which drive stages themselves (no auto review between
+ * stages). Returns the agent row that settled last.
+ */
+async function spawnAndWait(taskId, { spec, prompt, username, readOnly = false, variant = "main", title = null, kind = null, withBrief = true }) {
+  const { task, text } = withBrief ? await joinBrief(taskId, variant) : { task: await get("SELECT * FROM hive_tasks WHERE id=?", [taskId]), text: "" };
+  if (!readOnly && variant === "main") {
+    const ctx = await taskContext(taskId).catch(() => null);
+    if (ctx) await checkpoints.create(ctx, { variant, label: `Before ${title || "the next stage"}`, by: username, auto: true }).catch(() => null);
+  }
+  const instructions = withBrief ? `${text}\n\n${prompt}` : prompt;
+  const a = await createAgent(task, { role: "solo", spec, instructions, startedBy: username, readOnly, variant, title, kind });
+  let done = await runAgent(a.id, { readOnly, title: title || "" });
+  // Follow escalations (a stronger model taking over after a failure).
+  for (let hop = 0; hop < 3 && done.status === "failed"; hop++) {
+    const next = await get("SELECT * FROM hive_agents WHERE task_id=? AND title=? AND created_at>=? ORDER BY created_at DESC LIMIT 1", [taskId, `Escalated from ${done.name}`, done.created_at]);
+    if (!next) break;
+    for (let i = 0; i < 7200; i++) {
+      const row = await get("SELECT * FROM hive_agents WHERE id=?", [next.id]);
+      if (!["queued", "running"].includes(row.status)) {
+        done = row;
+        break;
+      }
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+  }
+  return done;
 }
 
 /**
@@ -811,14 +1126,18 @@ async function steer(agentId, username, message) {
   if (!s) return false;
   s.steer.push({ username, message: String(message).slice(0, 4000) });
   await event(s.taskId, agentId, "steer", { username, message: String(message).slice(0, 4000) });
+  // Claude Code / Codex: interrupt the current run; it resumes with the message.
+  s.interrupt?.();
   return true;
 }
 
 const runningCount = () => running.size;
 
-module.exports = {
+module.exports = { repoGuide,
   startTask,
   addAgent,
+  spawnAndWait,
+  finishTask,
   assign,
   handoffAgent,
   stopAgent,

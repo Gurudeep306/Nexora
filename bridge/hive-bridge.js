@@ -10,13 +10,15 @@
 // • Talks to Hive over HTTPS long-polling: no inbound ports, works behind NAT.
 // • Zero dependencies, Node 18+. Stop it any time with Ctrl+C.
 "use strict";
+// Subscription CLIs Hive may start here (never a shell, never another binary).
+const CLI_BIN = { claude: "claude", codex: "codex", vibe: "vibe" };
 const fs = require("node:fs");
 const fsp = require("node:fs/promises");
 const path = require("node:path");
 const os = require("node:os");
 const { spawn } = require("node:child_process");
 
-const VERSION = "1.0.0";
+const VERSION = "1.2.0";
 const args = process.argv.slice(2);
 const opt = (name, fallback) => {
   const i = args.indexOf(`--${name}`);
@@ -28,11 +30,25 @@ const expand = (p) => path.resolve(String(p).replace(/^~(?=$|[\\/])/, os.homedir
 const SERVER = String(opt("server", "") || "").replace(/\/+$/, "");
 const TOKEN = opt("token", "");
 const ROOTS = (multi("root").length ? multi("root") : [opt("root", process.cwd())]).map(expand);
-if (!SERVER || !TOKEN) {
+// `node hive-bridge.js --hook` is what Claude Code runs before each shell
+// command when the machine's policy is "ask": it asks Hive (a human on the
+// team) and answers Claude Code with allow / deny.
+if (args.includes("--hook")) {
+  runHook().then(
+    (out) => {
+      process.stdout.write(JSON.stringify(out));
+      process.exit(0);
+    },
+    (e) => {
+      process.stdout.write(JSON.stringify({ hookSpecificOutput: { hookEventName: "PreToolUse", permissionDecision: "deny", permissionDecisionReason: `Hive approval failed: ${e.message}` } }));
+      process.exit(0);
+    },
+  );
+} else if (!SERVER || !TOKEN) {
   console.error("Usage: node hive-bridge.js --server https://your-site --token hvm_… [--root ~/code]...");
   process.exit(1);
 }
-for (const r of ROOTS) if (!fs.existsSync(r)) fs.mkdirSync(r, { recursive: true });
+if (!args.includes("--hook")) for (const r of ROOTS) if (!fs.existsSync(r)) fs.mkdirSync(r, { recursive: true });
 
 const MAX_READ = 1_500_000;
 const MAX_OUT = 200_000;
@@ -113,6 +129,7 @@ async function listFiles(folder) {
 const isBinary = (buf) => buf.subarray(0, 8000).includes(0);
 
 const procs = new Map(); // id -> { child, log, cmd, cwd, started }
+const runs = new Map(); // id -> Claude Code / Codex run (JSON-lines output buffer)
 
 const OPS = {
   async info() {
@@ -240,6 +257,152 @@ const OPS = {
   async procs() {
     return { procs: [...procs.entries()].map(([id, p]) => ({ id, cmd: p.cmd, cwd: p.cwd, running: p.exit === null, started: p.started })) };
   },
+  /** Is Claude Code / Codex / Mistral Vibe installed here, and signed in? */
+  async cli_detect({ cli }) {
+    const bin = CLI_BIN[cli] || "claude";
+    const v = await sh(`${bin} --version`, { timeoutMs: 20000 });
+    if (v.code !== 0) return { installed: false, version: null, loggedIn: false, detail: v.output.trim().slice(-300) };
+    let loggedIn = false;
+    let detail = "";
+    if (bin === "claude") {
+      const st = await sh("claude auth status --json", { timeoutMs: 20000 });
+      try {
+        const j = JSON.parse(st.output.slice(st.output.indexOf("{")));
+        loggedIn = !!j.loggedIn;
+        detail = [j.authMethod, j.email || j.account?.email, j.subscriptionType].filter(Boolean).join(" · ");
+      } catch {
+        detail = st.output.trim().slice(-200);
+      }
+    } else if (bin === "vibe") {
+      // `vibe --setup` keeps the key in $VIBE_HOME/.env (default ~/.vibe/.env).
+      const envFile = path.join(process.env.VIBE_HOME || path.join(os.homedir(), ".vibe"), ".env");
+      let saved = "";
+      try {
+        saved = fs.readFileSync(envFile, "utf8");
+      } catch {}
+      loggedIn = !!process.env.MISTRAL_API_KEY || /^\s*MISTRAL_API_KEY\s*=\s*\S+/m.test(saved);
+      detail = loggedIn ? "signed in" : "not signed in — run: vibe --setup";
+    } else {
+      const st = await sh("codex login status", { timeoutMs: 20000 });
+      loggedIn = st.code === 0 && !/not logged in/i.test(st.output);
+      detail = st.output.trim().split("\n").pop().slice(0, 200);
+      if (!loggedIn && fs.existsSync(path.join(os.homedir(), ".codex", "auth.json"))) loggedIn = true;
+    }
+    return { installed: true, version: v.output.trim().split("\n").pop(), loggedIn, detail };
+  },
+  /** Start Claude Code / Codex (no shell) and buffer its JSON-lines output. */
+  async run_start({ folder, cli, args: cliArgs = [], env = {}, input, id, hook }) {
+    if (runs.has(id)) throw new Error("A run with that id already exists");
+    let cwd;
+    if (folder) cwd = safe(folder);
+    else {
+      cwd = path.join(ROOTS[0], ".hive-chat");
+      fs.mkdirSync(cwd, { recursive: true });
+    }
+    const bin = CLI_BIN[cli] || "claude";
+    const argv = cliArgs.map(String);
+    if (hook && bin === "claude") {
+      const self = path.resolve(process.argv[1]);
+      const settings = { hooks: { PreToolUse: [{ matcher: "Bash", hooks: [{ type: "command", command: `"${process.execPath}" "${self}" --hook`, timeout: 900 }] }] } };
+      argv.push("--settings", JSON.stringify(settings));
+    }
+    const childEnv = { ...process.env, ...env, HIVE_RUN: id, HIVE_SERVER: SERVER, HIVE_TOKEN: TOKEN, FORCE_COLOR: "0", CI: "1" };
+    const child = spawn(bin, argv, { cwd, env: childEnv, detached: process.platform !== "win32" });
+    const r = { child, lines: [], base: 0, partial: "", stderr: "", exit: null, started: Date.now(), waiters: [] };
+    const wake = () => {
+      for (const w of r.waiters.splice(0)) w();
+    };
+    child.stdout.on("data", (d) => {
+      r.partial += d;
+      const parts = r.partial.split("\n");
+      r.partial = parts.pop();
+      for (const l of parts) if (l.trim()) r.lines.push(l);
+      // Keep memory bounded: drop the oldest lines the server has surely read.
+      if (r.lines.length > 20000) {
+        r.lines.splice(0, 5000);
+        r.base += 5000;
+      }
+      wake();
+    });
+    child.stderr.on("data", (d) => {
+      r.stderr = (r.stderr + d).slice(-8000);
+    });
+    child.on("error", (e) => {
+      r.stderr += `\n${e.message}`;
+      r.exit = r.exit ?? -1;
+      wake();
+    });
+    child.on("close", (code) => {
+      if (r.partial.trim()) r.lines.push(r.partial);
+      r.partial = "";
+      r.exit = code ?? -1;
+      wake();
+    });
+    if (input != null) child.stdin.end(String(input));
+    else child.stdin.end();
+    runs.set(id, r);
+    return { id, pid: child.pid };
+  },
+  /** Lines since `from` (waits up to ~2 s for new output). */
+  async run_read({ id, from = 0 }) {
+    const r = runs.get(id);
+    if (!r) return { gone: true, lines: [], next: from, done: true, exit: null };
+    const avail = () => r.base + r.lines.length > from || r.exit !== null;
+    if (!avail()) await new Promise((res) => {
+      const t = setTimeout(res, 2000);
+      r.waiters.push(() => (clearTimeout(t), res()));
+    });
+    const start = Math.max(0, from - r.base);
+    const lines = r.lines.slice(start, start + 2000);
+    const next = r.base + start + lines.length;
+    const done = r.exit !== null && next >= r.base + r.lines.length;
+    if (done) setTimeout(() => runs.get(id) === r && runs.delete(id), 10 * 60_000).unref?.();
+    return { lines, next, done, exit: r.exit, stderr: done ? r.stderr.slice(-4000) : undefined };
+  },
+  async run_stop({ id }) {
+    const r = runs.get(id);
+    if (!r || r.exit !== null) return { stopped: false };
+    try {
+      if (process.platform !== "win32") process.kill(-r.child.pid, "SIGTERM");
+      else killTree(r.child);
+    } catch {
+      killTree(r.child);
+    }
+    setTimeout(() => r.exit === null && killTree(r.child), 5000).unref?.();
+    return { stopped: true };
+  },
+  /** A private working copy (git worktree) per task, next to the project folder. */
+  async worktree_add({ folder, name, branch }) {
+    const base = safe(folder);
+    const parent = path.join(path.dirname(base), ".hive-worktrees");
+    const dest = path.join(parent, `${path.basename(base)}-${String(name).replace(/[^\w.-]/g, "-")}`);
+    safe(dest);
+    if (fs.existsSync(dest)) return { path: dest, existed: true };
+    fs.mkdirSync(parent, { recursive: true });
+    const r = await OPS.git({ folder: base, args: ["worktree", "add", "-b", String(branch), dest, "HEAD"] });
+    if (r.code !== 0) {
+      const r2 = await OPS.git({ folder: base, args: ["worktree", "add", dest, String(branch)] });
+      if (r2.code !== 0) throw new Error(r.output.trim().slice(-600) || "git worktree add failed");
+    }
+    // Reuse the main checkout's installed dependencies when there are any.
+    for (const dep of ["node_modules", "client/node_modules"]) {
+      const from = path.join(base, dep);
+      const to = path.join(dest, dep);
+      if (fs.existsSync(from) && !fs.existsSync(to)) {
+        try {
+          fs.mkdirSync(path.dirname(to), { recursive: true });
+          fs.symlinkSync(from, to, "dir");
+        } catch {}
+      }
+    }
+    return { path: dest, existed: false };
+  },
+  async worktree_remove({ folder, path: wt }) {
+    const base = safe(folder);
+    const target = safe(wt);
+    const r = await OPS.git({ folder: base, args: ["worktree", "remove", "--force", target] });
+    return { removed: r.code === 0, output: r.output.slice(-400) };
+  },
   async http_get({ url }) {
     // Fetch a local dev server page (preview / smoke checks). Localhost only.
     const u = new URL(url);
@@ -307,10 +470,37 @@ async function main() {
 
 process.on("SIGINT", () => {
   for (const p of procs.values()) killTree(p.child);
+  for (const r of runs.values()) if (r.exit === null) killTree(r.child);
   console.log("\nBridge stopped.");
   process.exit(0);
 });
-main().catch((e) => {
-  console.error(e.message);
-  process.exit(1);
-});
+async function runHook() {
+  const chunks = [];
+  for await (const c of process.stdin) chunks.push(c);
+  let input = {};
+  try {
+    input = JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}");
+  } catch {}
+  const command = input.tool_input?.command || JSON.stringify(input.tool_input || {}).slice(0, 2000);
+  const res = await fetch(`${SERVER}/api/hive-bridge/approve`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json", "User-Agent": `NexoraHiveBridge/${VERSION}` },
+    body: JSON.stringify({ run: process.env.HIVE_RUN || "", tool: input.tool_name || "Bash", command: String(command).slice(0, 4000) }),
+    signal: AbortSignal.timeout(16 * 60_000),
+  });
+  const j = res.ok ? await res.json() : { approved: false, reason: `HTTP ${res.status}` };
+  return {
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      permissionDecision: j.approved ? "allow" : "deny",
+      permissionDecisionReason: j.approved ? `Approved in Hive${j.by ? ` by @${j.by}` : ""}` : `Not approved in Hive: ${j.reason || "denied"}`,
+    },
+  };
+}
+
+if (!args.includes("--hook")) {
+  main().catch((e) => {
+    console.error(e.message);
+    process.exit(1);
+  });
+}

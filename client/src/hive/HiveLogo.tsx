@@ -2,7 +2,7 @@ import { useId } from 'react'
 import { cn } from '@/lib/utils'
 
 /**
- * The Hive mark: a hexagonal cell (the workspace) holding three connected
+ * The Hive mark: a rounded cell (the workspace) holding three connected
  * nodes (agents) around a core (you). Drawn in the NexoraGuru logo ramp
  * (--ng-c1..3), so it follows every palette and light/dark mode.
  * `live` animates the nodes while agents are working.
@@ -23,8 +23,8 @@ export function HiveLogo({ size = 28, live = false, className }: { size?: number
           <stop offset="1" stopColor="var(--ng-c1, var(--color-accent-brand))" stopOpacity="0" />
         </radialGradient>
       </defs>
-      <path d="M24 3.5 41.8 13.75v20.5L24 44.5 6.2 34.25v-20.5z" fill={`url(#${g}b)`} />
-      <path d="M24 3.5 41.8 13.75v20.5L24 44.5 6.2 34.25v-20.5z" fill="none" stroke={`url(#${g}a)`} strokeWidth="2.6" strokeLinejoin="round" />
+      <rect x="4.5" y="4.5" width="39" height="39" rx="12" fill={`url(#${g}b)`} />
+      <rect x="4.5" y="4.5" width="39" height="39" rx="12" fill="none" stroke={`url(#${g}a)`} strokeWidth="2.6" />
       {/* links: each agent to the core and to its neighbours */}
       <g stroke={`url(#${g}a)`} strokeWidth="1.6" strokeLinecap="round" opacity="0.75">
         <path d="M24 24 24 13.2M24 24 33.4 29.4M24 24 14.6 29.4" />

@@ -19,19 +19,55 @@ const VENDOR: Record<string, { name: string; mark: string; hue: number; chroma?:
   qwen: { name: 'Qwen', mark: 'Q', hue: 290 },
   zhipu: { name: 'GLM', mark: 'Z', hue: 245 },
   perplexity: { name: 'Perplexity', mark: 'P', hue: 185 },
+  github: { name: 'GitHub Models', mark: 'GH', hue: 220, chroma: 0.03 },
+  nvidia: { name: 'NVIDIA NIM', mark: 'N', hue: 135 },
+  sambanova: { name: 'SambaNova', mark: 'S', hue: 25 },
+  huggingface: { name: 'Hugging Face', mark: 'HF', hue: 55 },
+  cloudflare: { name: 'Workers AI', mark: 'CF', hue: 35 },
+  ollama: { name: 'Ollama', mark: 'O', hue: 0, chroma: 0 },
+  siliconflow: { name: 'SiliconFlow', mark: 'SF', hue: 265 },
+  chutes: { name: 'Chutes', mark: 'Ch', hue: 140 },
+  zai: { name: 'Z.ai (GLM)', mark: 'Z', hue: 245 },
+  codestral: { name: 'Codestral', mark: 'Cs', hue: 40 },
+  modelscope: { name: 'ModelScope', mark: 'MS', hue: 290 },
+  ovh: { name: 'OVHcloud AI', mark: 'OV', hue: 225 },
+  cohere: { name: 'Cohere', mark: 'Co', hue: 320 },
+  pollinations: { name: 'Pollinations', mark: 'Po', hue: 100 },
+  llm7: { name: 'LLM7', mark: 'L7', hue: 180 },
+  vercel: { name: 'Vercel AI', mark: '▲', hue: 0, chroma: 0.01 },
+  deepinfra: { name: 'DeepInfra', mark: 'DI', hue: 215 },
+  hyperbolic: { name: 'Hyperbolic', mark: 'Hy', hue: 200 },
+  nebius: { name: 'Nebius', mark: 'Nb', hue: 160 },
+  novita: { name: 'Novita', mark: 'Nv', hue: 150 },
+  scaleway: { name: 'Scaleway', mark: 'Sc', hue: 270 },
+  featherless: { name: 'Featherless', mark: 'Fe', hue: 30 },
+  minimax: { name: 'MiniMax', mark: 'Mx', hue: 350 },
+  upstage: { name: 'Upstage Solar', mark: 'Up', hue: 60 },
+  ollama_cloud: { name: 'Ollama Cloud', mark: 'OC', hue: 0, chroma: 0.01 },
+  oneaiapikey: { name: 'OneAIAPIKey', mark: '1A', hue: 265 },
+  farm: { name: 'Your GPU farm', mark: 'GPU', hue: 160, chroma: 0.12 },
+  opencode_zen: { name: 'OpenCode Zen', mark: 'Zn', hue: 210 },
+  kilo: { name: 'Kilo Gateway', mark: 'Ki', hue: 120 },
+  claude_code: { name: 'Claude Code', mark: 'CC', hue: 30 },
+  vibe: { name: 'Mistral Vibe', mark: 'MV', hue: 50 },
+  codex: { name: 'Codex', mark: '>_', hue: 160 },
+  auto: { name: 'Auto', mark: '✦', hue: 285 },
   custom: { name: 'Custom', mark: '◇', hue: 290, chroma: 0.03 },
   openai_compat: { name: 'Custom', mark: '◇', hue: 290, chroma: 0.03 },
 }
 
 export function vendorStyle(id: string) {
-  const v = VENDOR[id] ?? { name: id, mark: id.slice(0, 1).toUpperCase(), hue: 260, chroma: 0.03 }
+  const key = typeof id === 'string' ? id : ''
+  const v = VENDOR[key] ?? { name: key, mark: key.slice(0, 1).toUpperCase() || '·', hue: 260, chroma: 0.03 }
   return { ...v, color: `oklch(70% ${v.chroma ?? 0.14} ${v.hue})` }
 }
 export const vendorName = (id: string) => vendorStyle(id).name
 
 /** Compatibility alias used across Hive components. */
 export const PROVIDER_STYLE = new Proxy({} as Record<string, { hue: string; short: string; name: string }>, {
-  get: (_t, id: string) => {
+  get: (_t, id: string | symbol) => {
+    // React and dev tools probe objects with symbol keys: those aren't vendors.
+    if (typeof id !== 'string') return undefined
     const v = vendorStyle(id)
     return { hue: v.color, short: v.mark, name: v.name }
   },
@@ -113,6 +149,52 @@ export function duration(from: number | null, to: number | null): string {
   return `${Math.floor(s / 3600)}h ${Math.round((s % 3600) / 60)}m`
 }
 
+/** Time until a moment in the future: "4m", "2h", "3d" (null when unknown or past). */
+export function until(t: number | string | null | undefined): string | null {
+  if (t == null || t === '') return null
+  const ms = typeof t === 'number' ? (t < 1e12 ? t * 1000 : t) : Date.parse(t)
+  if (!Number.isFinite(ms)) return null
+  const s = (ms - Date.now()) / 1000
+  if (s <= 0) return null
+  if (s < 60) return `${Math.ceil(s)}s`
+  if (s < 3600) return `${Math.round(s / 60)}m`
+  if (s < 86400) return `${Math.round(s / 3600)}h`
+  return `${Math.round(s / 86400)}d`
+}
+
+export type PlanWindow = { utilization: number; resetsAt: number | null; status: string | null }
+const WINDOW_LABEL: Record<string, string> = { five_hour: '5-hour window', seven_day: 'This week', seven_day_opus: 'This week · Opus', seven_day_sonnet: 'This week · Sonnet', primary: 'Short window', secondary: 'This week' }
+
+/** Subscription plan windows (Claude / ChatGPT): how much of each window is used and when it resets. */
+export function PlanWindows({ windows, compact }: { windows: Record<string, PlanWindow> | null | undefined; compact?: boolean }) {
+  const list = Object.entries(windows ?? {}).sort(([a], [b]) => (a.includes('five') || a === 'primary' ? -1 : 1) - (b.includes('five') || b === 'primary' ? -1 : 1))
+  if (!list.length) return <div className="text-[11.5px] text-text-muted">Plan usage appears after the first run.</div>
+  return (
+    <div className={cn('space-y-2', compact && 'space-y-1.5')}>
+      {list.map(([id, w]) => {
+        const reset = until(w.resetsAt)
+        const used = reset || !w.resetsAt ? Math.max(0, Math.min(1, w.utilization > 1 ? w.utilization / 100 : w.utilization)) : 0
+        const pct = Math.round(used * 100)
+        const tone = w.status === 'rejected' || pct >= 95 ? 'var(--color-state-error)' : pct >= 75 ? 'var(--color-state-warning)' : 'var(--color-state-success)'
+        return (
+          <div key={id}>
+            <div className="mb-1 flex justify-between gap-2 text-[11.5px] tabular-nums text-text-muted">
+              <span>{WINDOW_LABEL[id] ?? id.replace(/_/g, ' ')}</span>
+              <span>
+                <span className="text-text-secondary">{w.status === 'rejected' ? 'limit reached' : `${pct}% used`}</span>
+                {reset ? ` · resets in ${reset}` : ''}
+              </span>
+            </div>
+            <div className="h-1.5 overflow-hidden rounded-full bg-text-primary/[0.07]">
+              <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${pct}%`, background: tone }} />
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 /* ── Budgets ──────────────────────────────────────────────────────────── */
 export function keyShare(k: HiveKey): number | null {
   if (k.tokenLimit == null) return null
@@ -123,9 +205,9 @@ export function shareTone(share: number | null): string {
   return share == null ? 'var(--color-text-muted)' : share < 0.1 ? 'var(--color-state-error)' : share < 0.3 ? 'var(--color-state-warning)' : 'var(--color-state-success)'
 }
 
-export function Meter({ value, color, className }: { value: number; color?: string; className?: string }) {
+export function Meter({ value, color, className, label = 'Share' }: { value: number; color?: string; className?: string; label?: string }) {
   return (
-    <div className={cn('h-1 overflow-hidden rounded-full bg-text-primary/8', className)} role="meter" aria-valuenow={Math.round(value * 100)} aria-valuemin={0} aria-valuemax={100}>
+    <div className={cn('h-1 overflow-hidden rounded-full bg-text-primary/8', className)} role="meter" aria-label={label} aria-valuenow={Math.round(value * 100)} aria-valuemin={0} aria-valuemax={100}>
       <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${Math.round(Math.max(0, Math.min(1, value)) * 100)}%`, background: color ?? 'var(--color-accent-brand)' }} />
     </div>
   )
@@ -135,7 +217,7 @@ export function TokenMeter({ k, compact }: { k: HiveKey; compact?: boolean }) {
   const share = keyShare(k)
   return (
     <div className={cn('min-w-0', compact ? 'w-20' : 'w-full')}>
-      <Meter value={share ?? 1} color={share == null ? 'color-mix(in oklab, var(--color-text-muted) 40%, transparent)' : shareTone(share)} />
+      <Meter value={share ?? 0} color={share == null ? 'transparent' : shareTone(share)} />
       {!compact && (
         <div className="mt-1.5 flex justify-between gap-2 text-[11.5px] tabular-nums text-text-muted">
           <span>{fmtTokens(k.used)} used</span>
@@ -178,14 +260,18 @@ export function Toggle({ on, onChange, label, disabled }: { on: boolean; onChang
   )
 }
 
-export function PageTitle({ title, sub, children }: { title: ReactNode; sub?: ReactNode; children?: ReactNode }) {
+/** Page title in the site's style: icon badge, display title, subtitle, actions on the right. */
+export function PageTitle({ title, sub, icon, children }: { title: ReactNode; sub?: ReactNode; icon?: ReactNode; children?: ReactNode }) {
   return (
-    <div className="mb-8 flex flex-wrap items-end gap-4">
-      <div className="min-w-0 flex-1">
-        <h1 className="text-[26px] font-semibold tracking-[-0.02em] text-text-primary">{title}</h1>
-        {sub && <p className="mt-1 text-[14px] text-text-muted">{sub}</p>}
+    <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+      <div className="flex min-w-0 flex-[1_1_18rem] items-start gap-4">
+        {icon && <div className="mt-1 hidden size-11 shrink-0 items-center justify-center rounded-[var(--radius-control,12px)] border border-border bg-bg-surface-2 text-accent-brand shadow-[inset_0_1px_0_var(--specular)] sm:flex [&_svg]:size-5">{icon}</div>}
+        <div className="min-w-0">
+          <h1 className="font-display text-[26px] leading-[1.15] font-semibold tracking-[-0.022em] text-text-primary md:text-[30px]">{title}</h1>
+          {sub && <p className="mt-2 mb-0 max-w-2xl text-[14px] leading-relaxed text-text-secondary text-pretty">{sub}</p>}
+        </div>
       </div>
-      {children}
+      {children && <div className="flex flex-wrap items-center gap-2">{children}</div>}
     </div>
   )
 }
@@ -207,4 +293,124 @@ export const MODE_INFO = {
   team: { label: 'Team', hint: 'A lead plans and hands sub-tasks to agents that run in parallel on one working copy.' },
   compare: { label: 'Race', hint: 'The same task goes to every agent, each on its own copy. Keep the best result.' },
   review: { label: 'Review', hint: 'Read-only agents audit the code and report findings.' },
+  pipeline: { label: 'Pipeline', hint: 'Stages of agents run one after another — build, test, review, fix, ship.' },
 } as const
+
+/**
+ * An icon tile like Nexora's feature cards: a rounded square tinted by `hue`
+ * (OKLCH hue angle), with a soft border and the icon in the same colour.
+ */
+export function IconTile({ hue, size = 40, className, children }: { hue: number; size?: number; className?: string; children: ReactNode }) {
+  return (
+    <span
+      className={cn('grid shrink-0 place-items-center rounded-[var(--radius-control,12px)] border [&_svg]:size-[46%]', className)}
+      style={{ width: size, height: size, background: `oklch(62% 0.13 ${hue} / 0.14)`, borderColor: `oklch(62% 0.13 ${hue} / 0.32)`, color: `color-mix(in oklab, oklch(66% 0.15 ${hue}) 82%, var(--color-text-primary))` }}
+    >
+      {children}
+    </span>
+  )
+}
+
+/** Midnight UTC — when most providers' daily free limits reset. */
+function nextUtcMidnight() {
+  const d = new Date()
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1)
+}
+
+/**
+ * The limit of one connection, always: the provider's live numbers when it
+ * sends them, a plan's usage windows for subscriptions, else the free tier's
+ * daily allowance against what Hive used today, else the budget you set.
+ */
+export function LimitBar({ k, compact = false }: { k: HiveKey; compact?: boolean }) {
+  const rl = k.rateLimit
+  const plan = (rl as unknown as { plan?: boolean; windows?: Record<string, PlanWindow> } | null)?.plan ? (rl as unknown as { windows: Record<string, PlanWindow> }).windows : null
+  if (plan && Object.keys(plan).length) return <PlanWindows windows={plan} compact={compact} />
+  // Any connection the provider has stopped for now: say so, with when it frees up.
+  if (k.limitUntil && k.limitUntil > Date.now()) {
+    return (
+      <div className={cn(compact ? 'text-[11px]' : 'text-[11.5px]')}>
+        <div className="mb-1 flex justify-between gap-2">
+          <span className="font-medium text-state-error">Limit reached</span>
+          <span className="text-text-secondary">frees up in {until(k.limitUntil)}</span>
+        </div>
+        <div className="h-1.5 rounded-full bg-state-error/70" />
+        <div className="mt-1 truncate text-[10.5px] text-text-muted" title={k.limitNote ?? ''}>
+          Hive moves work to other models until then{k.limitNote ? ` · ${k.limitNote}` : ''}
+        </div>
+      </div>
+    )
+  }
+  if (k.subscription) {
+    // Claude publishes plan usage (5-hour / weekly windows); Codex and Mistral Vibe don't,
+    // so show what Hive used on this plan today instead of an empty bar.
+    const runs = k.todayRequests ?? 0
+    const toks = k.todayTokens ?? 0
+    const claude = k.provider === 'claude_code'
+    return (
+      <div className={cn('text-text-muted', compact ? 'text-[11px]' : 'text-[11.5px]')}>
+        <div className="mb-1 flex justify-between gap-2">
+          <span>{claude ? 'Plan usage' : 'Used today'}</span>
+          <span className="text-text-secondary">
+            {claude && !runs ? 'not measured yet' : `${fmtTokens(runs)} run${runs === 1 ? '' : 's'}${toks ? ` · ${fmtTokens(toks)} tokens` : ''}`}
+          </span>
+        </div>
+        <div className="h-1.5 overflow-hidden rounded-full bg-text-primary/[0.07]">
+          {runs > 0 && <div className="h-full rounded-full bg-state-success/70" style={{ width: `${Math.min(100, 8 + runs * 4)}%` }} />}
+        </div>
+        <div className="mt-1 text-[10.5px]">
+          {claude
+            ? 'Press Refresh usage, or it fills in after this account’s first run'
+            : `${k.provider === 'vibe' ? 'Mistral' : 'OpenAI'} doesn’t share plan limits — Hive shows its own use, and warns here the moment the plan says stop`}
+        </div>
+      </div>
+    )
+  }
+  const fresh = !!rl && !!k.rateLimitAt && Date.now() - k.rateLimitAt < 10 * 60_000 && !(rl.resetAt && Date.parse(rl.resetAt) < Date.now())
+  let label = ''
+  let left = ''
+  let used: number | null = null
+  let foot = ''
+  if (fresh && (rl!.requestsLimit || rl!.tokensLimit)) {
+    const tok = rl!.tokensLimit != null
+    const lim = tok ? rl!.tokensLimit! : rl!.requestsLimit!
+    const rem = tok ? (rl!.tokensRemaining ?? 0) : (rl!.requestsRemaining ?? 0)
+    label = 'Provider limit (live)'
+    left = `${fmtTokens(rem)} / ${fmtTokens(lim)} ${tok ? 'tokens' : 'requests'} left`
+    used = 1 - rem / Math.max(1, lim)
+    foot = rl!.resetAt ? `resets in ${until(Date.parse(rl!.resetAt))}` : ''
+  } else if (k.freeLimit && (k.freeLimit.rpd || k.freeLimit.tpd)) {
+    const byTokens = !k.freeLimit.rpd
+    const lim = byTokens ? k.freeLimit.tpd! : k.freeLimit.rpd!
+    const u = byTokens ? (k.todayTokens ?? 0) : (k.todayRequests ?? 0)
+    label = 'Free daily limit'
+    left = `${fmtTokens(u)} / ${fmtTokens(lim)} ${byTokens ? 'tokens' : 'requests'} today`
+    used = u / Math.max(1, lim)
+    foot = `about · resets in ${until(nextUtcMidnight())}${k.freeLimit.rpm ? ` · ${k.freeLimit.rpm}/min` : ''}`
+  } else if (k.tokenLimit != null) {
+    label = 'Your budget'
+    left = `${fmtTokens(k.remaining ?? 0)} / ${fmtTokens(k.tokenLimit)} left`
+    used = k.used / Math.max(1, k.tokenLimit)
+    foot = k.periodEnds ? `resets in ${until(k.periodEnds)}` : ''
+  } else if (k.freeLimit) {
+    label = 'Free limit'
+    left = `${fmtTokens(k.todayRequests ?? 0)} requests today`
+    foot = k.freeLimit.note
+  } else {
+    label = 'Limit'
+    left = `${fmtTokens(k.todayRequests ?? 0)} requests · ${fmtTokens(k.todayTokens ?? 0)} tokens today`
+    foot = 'No fixed limit · set a budget to cap it'
+  }
+  const pct = used == null ? null : Math.min(100, Math.max(0, used * 100))
+  const tone = used == null ? 'var(--color-text-muted)' : used > 0.9 ? 'var(--color-state-error)' : used > 0.7 ? 'var(--color-state-warning)' : 'var(--color-state-success)'
+  return (
+    <div title={k.freeLimit?.note}>
+      <div className={cn('mb-1 flex justify-between gap-2 tabular-nums text-text-muted', compact ? 'text-[11px]' : 'text-[11.5px]')}>
+        <span>{label}</span>
+        <span className="truncate text-text-secondary">{left}</span>
+      </div>
+      <div className="h-1.5 overflow-hidden rounded-full bg-text-primary/[0.07]">{pct != null && <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${Math.max(pct, pct > 0 ? 2 : 0)}%`, background: tone }} />}</div>
+      {foot && <div className={cn('mt-1 truncate text-text-muted', compact ? 'text-[10.5px]' : 'text-[10.5px]')}>{foot}</div>}
+    </div>
+  )
+}

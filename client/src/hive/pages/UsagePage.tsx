@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Bar, BarChart, ResponsiveContainer, Tooltip as RTooltip, XAxis } from 'recharts'
+import { StackedBars } from '../kit'
 import { hiveApi } from '../api'
 import { useHive } from '../store'
-import { Meter, PageTitle, ProviderGlyph, UserDot, fmtCost, fmtTokens, keyShare, shareTone, vendorName, vendorStyle } from '../ui'
+import { Meter, ProviderGlyph, UserDot, fmtCost, fmtTokens, keyShare, shareTone, vendorName, vendorStyle } from '../ui'
 
 type Stats = Awaited<ReturnType<typeof hiveApi.stats>>
 
@@ -44,48 +44,46 @@ export default function UsagePage() {
   const all = Object.values(totals).reduce((a, x) => ({ tokens: a.tokens + x.tokens, cost: a.cost + x.cost, requests: a.requests + x.requests }), { tokens: 0, cost: 0, requests: 0 })
 
   return (
-    <div className="mx-auto w-full max-w-[920px] px-8 pb-20 pt-10">
-      <PageTitle title="Usage" sub="Last 14 days, every provider and every person." />
-      <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {[
-          ['Tokens', fmtTokens(all.tokens)],
-          ['Est. cost', fmtCost(all.cost) ?? '—'],
-          ['Requests', all.requests.toLocaleString()],
-          ['Agents now', String(stats?.runningAgents ?? 0)],
-        ].map(([l, v]) => (
-          <div key={l} className="hive-card px-4 py-3">
-            <div className="text-[12px] text-text-muted">{l}</div>
-            <div className="mt-1 text-[22px] font-semibold tabular-nums tracking-tight">{v}</div>
-          </div>
-        ))}
-      </div>
+    <div className="mx-auto w-full max-w-[920px] px-4 pb-20 pt-6 sm:px-6">
+      <h1 className="text-[22px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]">Spend</h1>
+      <p className="mt-1 text-[13px] text-[var(--hv-text-3)]">Last 14 days, every provider and every person.</p>
+      <p className="hv-num mb-6 mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[var(--hv-text-3)]">
+        <span>
+          <b className="font-medium text-[var(--hv-text-1)]">{fmtTokens(all.tokens)}</b> tokens
+        </span>
+        <span>
+          <b className="font-medium text-[var(--hv-text-1)]">{fmtCost(all.cost) ?? '$0'}</b> estimated
+        </span>
+        <span>
+          <b className="font-medium text-[var(--hv-text-1)]">{all.requests.toLocaleString()}</b> requests
+        </span>
+        <span>
+          <b className="font-medium text-[var(--hv-text-1)]">{stats?.runningAgents ?? 0}</b> agents working now
+        </span>
+      </p>
 
-      <div className="hive-card mb-10 p-5">
-        <div className="h-56">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
-              <XAxis dataKey="day" tick={{ fontSize: 11, fill: 'var(--color-text-muted)' }} axisLine={false} tickLine={false} interval={1} />
-              <RTooltip
-                cursor={{ fill: 'color-mix(in oklab, var(--color-text-primary) 5%, transparent)' }}
-                content={({ payload, label }) =>
-                  payload?.length ? (
-                    <div className="pop-surface px-3 py-2 text-[12px]">
-                      <div className="mb-1 font-medium">{label}</div>
-                      {payload.map((p) => (
-                        <div key={String(p.dataKey)} className="flex items-center gap-1.5">
-                          <span className="size-2 rounded-sm" style={{ background: p.color }} />
-                          {vendorName(String(p.dataKey))}: {fmtTokens(Number(p.value))}
-                        </div>
-                      ))}
-                    </div>
-                  ) : null
-                }
-              />
-              {providers.map((p, i) => (
-                <Bar key={p} dataKey={p} stackId="a" fill={vendorStyle(p).color} radius={i === providers.length - 1 ? [4, 4, 0, 0] : 0} isAnimationActive={false} />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
+      <div className="mb-10 rounded-[var(--hv-r-card)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-4 sm:p-5">
+        <div>
+          <StackedBars
+            ariaLabel="Tokens per day, by provider, last 14 days"
+            rows={data}
+            series={providers.map((p) => ({ key: p, label: vendorName(p), color: vendorStyle(p).color }))}
+            value={(d, k) => Number((d as Record<string, unknown>)[k] ?? 0)}
+            label={(d) => String(d.day)}
+            yFormat={fmtTokens}
+            height={224}
+            tip={(d) => (
+              <>
+                <div className="mb-1 font-medium">{String(d.day)}</div>
+                {providers.map((p) => (
+                  <div key={p} className="flex items-center gap-1.5">
+                    <span className="size-2 rounded-sm" style={{ background: vendorStyle(p).color }} />
+                    {vendorName(p)}: {fmtTokens(Number((d as Record<string, unknown>)[p] ?? 0))}
+                  </div>
+                ))}
+              </>
+            )}
+          />
         </div>
         <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
           {providers.map((p) => (

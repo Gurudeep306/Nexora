@@ -10,9 +10,14 @@ class ProviderError extends Error {
 
 // Providers that answer a bad key with 400 (Gemini) or a 404 for an unknown model.
 const BAD_KEY = /api key not valid|invalid api key|incorrect api key|invalid x-api-key|api_key_invalid|unauthorized|invalid authentication|authentication failed/i;
-const NO_MODEL = /model.{0,40}(not found|does not exist|not supported|unknown|is not available|decommissioned|deprecated)|no such model|invalid model|model_not_found/i;
+const NO_MODEL = /model.{0,60}(not found|does not exist|not supported|unknown|is not available|(is )?no longer (available|supported)|not available to new users|decommissioned|deprecated|retired|has been (removed|shut down))|no such model|invalid model|model_not_found/i;
+
+// A 403 about one model (gated, not on this tier, no access) is that model's problem, not the key's.
+const MODEL_ACCESS = /(model|deployment).{0,80}(access|permission|allowed|tier|plan|gated|not enabled|unavailable|restricted|subscribe|upgrade)|(access|permission|allowed|tier|plan|gated).{0,80}model|not available (on|for|in) (your|the free|this)|requires? (a )?(paid|pro|higher)/i;
 
 function classify(status, message = "") {
+  if ((status === 403 || status === 401) && !BAD_KEY.test(message) && MODEL_ACCESS.test(message)) return { kind: "model", retryable: false };
+  if (status === 404) return { kind: "model", retryable: false };
   if (status === 401 || status === 403 || (status === 400 && BAD_KEY.test(message))) return { kind: "auth", retryable: false };
   if ((status === 404 || status === 400) && NO_MODEL.test(message)) return { kind: "model", retryable: false };
   if (status === 429) {
@@ -30,7 +35,9 @@ async function failFromResponse(res, label) {
     const body = await res.text();
     const j = JSON.parse(body);
     const e = j?.error ?? j?.[0]?.error;
-    msg = (typeof e === "string" ? e : e?.message) || j?.message || j?.detail?.[0]?.msg || (typeof j?.detail === "string" ? j.detail : null) || msg;
+    // Messages can be nested objects (Mistral: {"object":"error","message":{"detail":[{"msg":…}]}}).
+    const str = (v) => (typeof v === "string" ? v : v == null ? "" : Array.isArray(v?.detail) ? v.detail.map((d) => d?.msg || JSON.stringify(d)).join("; ") : typeof v?.message !== "undefined" ? str(v.message) : typeof v?.detail === "string" ? v.detail : JSON.stringify(v).slice(0, 300));
+    msg = str(e) || str(j?.message) || j?.detail?.[0]?.msg || (typeof j?.detail === "string" ? j.detail : null) || msg;
     if (msg === `${label} ${res.status}` && body) msg = `${label} ${res.status}: ${body.slice(0, 300)}`;
   } catch {}
   throw new ProviderError(msg, { status: res.status, ...classify(res.status, msg) });

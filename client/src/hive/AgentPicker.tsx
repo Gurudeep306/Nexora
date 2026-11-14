@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, ChevronDown, Eye, FileText, Image as ImageIcon, Search, Sparkles, Star, Wrench, X } from 'lucide-react'
+import { Check, ChevronDown, Eye, EyeOff, FileText, Image as ImageIcon, Search, Sparkles, Star, Wrench, X } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import type { AgentSpec, Bootstrap, Effort, HiveKey, ProviderId, ProviderInfo } from './types'
 import { ProviderGlyph, fmtTokens, keyShare, shareTone, vendorName } from './ui'
+import { AgentMark, FAMILY, familyOf } from './agents'
+import { hiveApi } from './api'
+import { useHive } from './store'
 
 const EFFORTS: Effort[] = ['low', 'medium', 'high', 'xhigh', 'max']
 
@@ -29,7 +32,33 @@ export function modelsFor(boot: Bootstrap, provider: ProviderId, keyId: string):
   return [...first, ...[...set].filter((m) => !first.includes(m)).sort()]
 }
 
+/** Fastest measured reply time for a model across the keys that offer it (ms). */
+export function speedOf(boot: Bootstrap, provider: string, model: string): number | null {
+  let best: number | null = null
+  for (const k of boot.keys) {
+    if (k.provider !== provider || k.disabled) continue
+    const ms = k.speed?.[model]
+    if (typeof ms === 'number' && (best == null || ms < best)) best = ms
+  }
+  return best
+}
+
+export function SpeedBadge({ ms }: { ms: number | null }) {
+  if (ms == null) return null
+  const tone = ms < 1500 ? 'text-state-success bg-state-success/12' : ms < 5000 ? 'text-state-warning bg-state-warning/12' : 'text-state-error bg-state-error/12'
+  return (
+    <span className={cn('shrink-0 rounded-full px-1.5 py-px text-[10.5px] font-medium tabular-nums', tone)} title="Measured reply time">
+      {ms < 1000 ? `${Math.round(ms / 100) / 10}s` : `${(ms / 1000).toFixed(ms < 10_000 ? 1 : 0)}s`}
+    </span>
+  )
+}
+
+/** The smart router: Hive picks the best model for the kind of work. */
+export const AUTO_SPEC: AgentSpec = { provider: 'auto', keyId: 'auto', model: '' }
+
 export function defaultSpec(boot: Bootstrap, provider?: ProviderId, need: 'tools' | 'images' | undefined = 'tools'): AgentSpec | null {
+  // Auto is the default whenever anything usable is connected (not for images).
+  if (!provider && need !== 'images' && usableProviders(boot, need).length) return { ...AUTO_SPEC }
   const recent = readList(RECENT_KEY)[0]
   const usable = usableProviders(boot, need)
   if (!provider && recent && usable.includes(recent.provider) && modelsFor(boot, recent.provider, 'auto').includes(recent.model)) {
@@ -101,12 +130,12 @@ export function AgentChip({
       <span className="group inline-flex items-center rounded-full bg-text-primary/[0.06] transition-colors hover:bg-text-primary/[0.1]">
         <PopoverTrigger asChild>
           <button type="button" className={cn('flex min-w-0 items-center gap-1.5 py-1 pl-1 text-[12.5px] outline-none', onRemove ? 'pr-1' : 'pr-2.5')}>
-            <ProviderGlyph provider={spec.provider} size="sm" className="rounded-full" />
+            <AgentMark provider={spec.provider} model={spec.model} size={20} />
             {label && <span className="text-text-muted">{label}</span>}
-            <span className={cn('truncate font-medium text-text-primary', compact ? 'max-w-28' : 'max-w-48')}>{spec.name || shortModel(spec.model) || 'Choose model'}</span>
+            <span className={cn('truncate font-medium text-text-primary', compact ? 'max-w-28' : 'max-w-48')}>{spec.provider === 'auto' ? (spec.freeOnly ? 'Auto · free' : 'Auto') : spec.name || shortModel(spec.model) || 'Choose model'}</span>
             {spec.name && !compact && <span className="max-w-28 truncate text-text-muted">{shortModel(spec.model)}</span>}
             {spec.effort && spec.provider === 'anthropic' && !compact && <span className="text-[11px] text-text-muted">· {spec.effort}</span>}
-            <span className="size-1.5 shrink-0 rounded-full" style={{ background: shareTone(share) }} title={key ? `${key.label}: ${key.tokenLimit == null ? 'no limit' : `${fmtTokens(key.remaining)} left`}` : ''} />
+            {spec.provider !== 'auto' && <span className="size-1.5 shrink-0 rounded-full" style={{ background: shareTone(share) }} title={key ? `${key.label}: ${key.tokenLimit == null ? 'no limit' : `${fmtTokens(key.remaining)} left`}` : ''} />}
             <ChevronDown className="size-3 text-text-muted transition-transform group-data-[state=open]:rotate-180" />
           </button>
         </PopoverTrigger>
@@ -156,8 +185,25 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
     const match = (p: string, m: string) => !s || `${vendorName(p)} ${m}`.toLowerCase().includes(s)
     const out: { title: string; items: ModelRef[] }[] = []
     if (vendor === 'all' && !s) {
+      // The fastest working models, measured on real replies.
+      const fast = providers
+        .flatMap((p) => modelsFor(boot, p, 'auto').map((m) => ({ provider: p, model: m, ms: speedOf(boot, p, m) })))
+        .filter((x): x is { provider: ProviderId; model: string; ms: number } => x.ms != null && x.ms < 4000)
+        .sort((a, b) => a.ms - b.ms)
+        .slice(0, 5)
+        .map(({ provider, model }) => ({ provider, model }))
+      // Recommended: your plans first (Claude Code, Codex, Vibe), then the fastest model.
+      const rec: ModelRef[] = []
+      for (const p of providers) {
+        const key = bestKey(boot.keys.filter((k) => k.provider === p && k.subscription && !k.disabled))
+        const model = key && (key.defaultModel || modelsFor(boot, p, 'auto')[0])
+        if (model) rec.push({ provider: p, model })
+      }
+      if (fast[0] && !rec.some((r) => r.provider === fast[0].provider && r.model === fast[0].model)) rec.push(fast[0])
+      if (rec.length) out.push({ title: 'Recommended', items: rec.slice(0, 3) })
       const fav = favs.filter((f) => providers.includes(f.provider))
       if (fav.length) out.push({ title: 'Favourites', items: fav })
+      if (fast.length) out.push({ title: 'Fastest right now', items: fast })
       if (recents.length) out.push({ title: 'Recent', items: recents.filter((r) => !isFav(r.provider, r.model)).slice(0, 5) })
     }
     for (const p of providers) {
@@ -171,6 +217,13 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q, vendor, favs, recents, boot])
   const flat = groups.flatMap((g) => g.items)
+  const { refresh } = useHive()
+  // "Never show me this one again": hidden on every key that offers it.
+  const hideModel = async (r: ModelRef) => {
+    const owners = boot.keys.filter((k) => k.provider === r.provider && k.models.includes(r.model))
+    await Promise.all(owners.map((k) => hiveApi.hideModel(k.id, r.model).catch(() => null)))
+    refresh().catch(() => {})
+  }
 
   useEffect(() => setCursor(0), [q, vendor])
   useEffect(() => {
@@ -179,7 +232,7 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
 
   const pick = (r: ModelRef) => {
     const sameVendor = r.provider === spec.provider
-    onChange({ ...spec, provider: r.provider, model: r.model, keyId: sameVendor ? spec.keyId : 'auto', effort: r.provider === 'anthropic' ? (spec.effort ?? 'high') : null }, true)
+    onChange({ ...spec, provider: r.provider, model: r.model, keyId: sameVendor ? spec.keyId : 'auto', effort: r.provider === 'anthropic' ? (spec.effort ?? 'high') : null, freeOnly: undefined }, true)
   }
   const keys = boot.keys.filter((k) => k.provider === spec.provider && !k.disabled)
   const supportsEffort = spec.provider === 'anthropic' || spec.provider === 'openai'
@@ -216,6 +269,27 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
           {!providers.length && <p className="p-2 text-[11.5px] text-text-muted">Add a key in Keys first.</p>}
         </nav>
         <div ref={listRef} className="hive-scroll min-h-0 flex-1 overflow-y-auto p-1.5">
+          {need !== 'images' && vendor === 'all' && !q.trim() && (
+            <div className="mb-1.5">
+              <div className="px-2 pb-1 pt-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-text-muted">Let Hive choose</div>
+              {[
+                { free: false, title: 'Auto', sub: 'The best model for this kind of job — free and plan models first' },
+                { free: true, title: 'Auto · free only', sub: 'Only free models (free tiers and :free models)' },
+              ].map((o) => {
+                const active = spec.provider === 'auto' && !!spec.freeOnly === o.free
+                return (
+                  <button key={o.title} type="button" onClick={() => onChange({ provider: 'auto', keyId: 'auto', model: '', freeOnly: o.free || undefined, name: spec.name }, true)} className={cn('flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left', active ? 'bg-accent-brand/10' : 'hover:bg-text-primary/[0.04]')}>
+                    <AgentMark provider="auto" size={22} />
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[13px] font-medium text-text-primary">{o.title}</span>
+                      <span className="block truncate text-[11px] text-text-muted">{o.sub}</span>
+                    </span>
+                    {active && <Check className="size-3.5 shrink-0 text-accent-brand" />}
+                  </button>
+                )
+              })}
+            </div>
+          )}
           {groups.map((g) => (
             <div key={g.title} className="mb-1.5">
               <div className="px-2 pb-1 pt-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-text-muted">{g.title}</div>
@@ -232,10 +306,12 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
                     className={cn('group/row flex items-center gap-2.5 rounded-lg px-2 py-1.5', idx === cursor ? 'bg-accent-brand/10' : '')}
                   >
                     <button type="button" onClick={() => pick(r)} className="flex min-w-0 flex-1 items-center gap-2.5 text-left">
-                      <ProviderGlyph provider={r.provider} size="xs" />
+                      <AgentMark provider={r.provider} model={r.model} size={22} />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-[13px] text-text-primary">{shortModel(r.model)}</span>
-                        <span className="block truncate font-mono text-[10.5px] text-text-muted">{r.model}</span>
+                        <span className="block truncate text-[10.5px] text-text-muted">
+                          {FAMILY[familyOf(r.provider, r.model)].name} · {vendorName(r.provider)} · <span className="font-mono">{r.model}</span>
+                        </span>
                       </span>
                       <span className="flex shrink-0 items-center gap-1 text-text-muted">
                         {caps?.vision && <Eye className="size-3" aria-label="Sees images" />}
@@ -243,10 +319,14 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
                         {caps?.tools && <Wrench className="size-3" aria-label="Uses tools" />}
                         {caps?.images && <ImageIcon className="size-3" aria-label="Makes images" />}
                       </span>
+                      <SpeedBadge ms={speedOf(boot, r.provider, r.model)} />
                       {active && <Check className="size-3.5 shrink-0 text-accent-brand" />}
                     </button>
                     <button type="button" onClick={() => toggleFav(r.provider, r.model)} className={cn('grid size-6 shrink-0 place-items-center rounded-md', isFav(r.provider, r.model) ? 'text-state-warning' : 'text-text-muted opacity-0 group-hover/row:opacity-100 hover:text-text-primary')} aria-label="Favourite">
                       <Star className={cn('size-3.5', isFav(r.provider, r.model) && 'fill-current')} />
+                    </button>
+                    <button type="button" onClick={() => hideModel(r)} className="grid size-6 shrink-0 place-items-center rounded-md text-text-muted opacity-0 group-hover/row:opacity-100 hover:text-state-error" title="Hide — never offer or use this model" aria-label={`Hide ${r.model}`}>
+                      <EyeOff className="size-3.5" />
                     </button>
                   </div>
                 )
@@ -261,6 +341,7 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
         </div>
       </div>
       <div className="space-y-2.5 border-t hive-line bg-text-primary/[0.02] p-3">
+        {spec.provider !== 'auto' && (
         <div className="flex items-center gap-2">
           <span className="w-16 shrink-0 text-[11px] font-medium text-text-muted">Account</span>
           <div className="hive-scroll flex min-w-0 flex-1 gap-1 overflow-x-auto">
@@ -275,6 +356,7 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
             ))}
           </div>
         </div>
+        )}
         {supportsEffort && need !== 'images' && (
           <div className="flex items-center gap-2">
             <span className="w-16 shrink-0 text-[11px] font-medium text-text-muted">Effort</span>

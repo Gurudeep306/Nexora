@@ -3,18 +3,29 @@ import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-ro
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   BarChart3,
+  Bot,
+  Settings2,
+  HeartPulse,
+  Network,
+  Boxes,
+  Clock3,
+  HardDrive,
+  PiggyBank,
+  Wallet,
+  Workflow,
   Brain,
   Check,
+  ChevronDown,
   ChevronRight,
   Command,
   CornerDownLeft,
   FolderGit2,
   Home,
+  Inbox as InboxIcon,
   KeyRound,
   Lightbulb,
   Menu as MenuIcon,
   MessageSquare,
-  MessagesSquare,
   PanelLeftClose,
   PanelLeftOpen,
   Plus,
@@ -24,22 +35,33 @@ import {
   Server,
   ShieldAlert,
   Terminal,
+  Upload,
   Users,
   X,
 } from 'lucide-react'
 import { LogoMark } from '@/components/brand/Logo'
-import { Tooltip } from '@/components/ui'
+import { Menu, MenuContent, MenuItem, MenuTrigger, Tooltip } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from './api'
-import { StaffChat } from './BoardView'
+import { TeamChat } from './TeamChat'
+import { InboxBell } from './Inbox'
+import { useDensity } from './kit'
+import type { LaunchGroup } from './Launcher'
+import { CopilotDock } from './Copilot'
 import { HiveLogo } from './HiveLogo'
 import { projectColor } from './projectColor'
+import { ModelsAtWork, ProjectSwitcher } from './Showcase'
+import { Go, Sectioned } from './Sections'
+import { ShortcutSheet, useShortcuts } from './Shortcuts'
 import { HiveProvider, useHive } from './store'
 import type { Convo } from './types'
 import { StatusDot, UserDot, timeAgo } from './ui'
 import './hive.css'
+import './kit/kit.css'
 
 const HomePage = lazy(() => import('./pages/HomePage'))
+const InboxPage = lazy(() => import('./pages/InboxPage'))
+const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const ProjectPage = lazy(() => import('./pages/ProjectPage'))
 const ChatPage = lazy(() => import('./pages/ChatPage'))
 const PluginsPage = lazy(() => import('./pages/PluginsPage'))
@@ -50,6 +72,17 @@ const LaunchpadPage = lazy(() => import('./pages/LaunchpadPage'))
 const MachinesPage = lazy(() => import('./pages/MachinesPage'))
 const ModelsPage = lazy(() => import('./pages/ModelsPage'))
 const NexoraGuide = lazy(() => import('./pages/NexoraGuide'))
+const DrivePage = lazy(() => import('./pages/DrivePage'))
+const BudgetsPage = lazy(() => import('./pages/BudgetsPage'))
+const AutomationsPage = lazy(() => import('./pages/AutomationsPage'))
+const PipelinesPage = lazy(() => import('./pages/PipelinesPage'))
+const ToolboxPage = lazy(() => import('./pages/ToolboxPage'))
+const StewardPage = lazy(() => import('./pages/StewardPage'))
+const HealthPage = lazy(() => import('./pages/HealthPage'))
+// Development-only gallery of the Hive kit (not routed in production builds).
+const DevUiPage = import.meta.env.DEV ? lazy(() => import('./pages/DevUiPage')) : null
+const CopilotPage = lazy(() => import('./pages/CopilotPage'))
+const ReposPage = lazy(() => import('./pages/ReposPage'))
 
 const store = {
   get: (k: string, d: string) => {
@@ -91,6 +124,7 @@ export default function HivePage() {
 /* ── Shell ─────────────────────────────────────────────────────────────── */
 function Shell() {
   const { boot, loading, error, noteTasks } = useHive()
+  const density = useDensity()
   const [palette, setPalette] = useState(false)
   const [team, setTeam] = useState(false)
   const navigate = useNavigate()
@@ -125,6 +159,9 @@ function Shell() {
       if (k === 'k') {
         e.preventDefault()
         setPalette((p) => !p)
+      } else if (k === '.') {
+        e.preventDefault()
+        setPalette((p) => !p)
       } else if (k === 'b') {
         e.preventDefault()
         toggleRef.current()
@@ -133,12 +170,25 @@ function Shell() {
         navigate('/hive/chat')
       } else if (k === 'i' && e.shiftKey) {
         e.preventDefault()
-        navigate('/hive/launchpad')
+        navigate('/hive/projects/ideas')
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [navigate])
+  // Single-key shortcuts (never while typing; can be switched off in the shortcut sheet).
+  const [sheet, setSheet] = useState(false)
+  useShortcuts({ onPalette: () => setPalette(true), onSheet: () => setSheet((v) => !v), onToggleSide: () => toggleRef.current() })
+  useEffect(() => {
+    const side = () => toggleRef.current()
+    const keys = () => setSheet(true)
+    window.addEventListener('hive:toggle-side', side)
+    window.addEventListener('hive:shortcuts', keys)
+    return () => {
+      window.removeEventListener('hive:toggle-side', side)
+      window.removeEventListener('hive:shortcuts', keys)
+    }
+  }, [])
   const toggleRef = useRef(() => {})
   toggleRef.current = () => setSide((s) => !s)
 
@@ -169,41 +219,81 @@ function Shell() {
   const toggleSide = () => setSide((s) => !s)
 
   return (
-    <div className="hive-root flex h-dvh overflow-hidden text-text-primary">
-      <ActivityBar onTeam={() => setTeam(true)} onPalette={() => setPalette(true)} />
-      <AnimatePresence initial={false}>
-        {side && (
-          <motion.div key="side" initial={{ width: 0, opacity: 0 }} animate={{ width: 'auto', opacity: 1 }} exit={{ width: 0, opacity: 0 }} transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }} className="hidden overflow-hidden lg:block">
-            <Sidebar />
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className="hive-root flex h-dvh overflow-hidden text-text-primary" data-density={density}>
+      <ActivityBar onTeam={() => setTeam(true)} onPalette={() => setPalette(true)} withSidebar={side} />
+      {side && (
+        <div className="hidden lg:block">
+          <Sidebar />
+        </div>
+      )}
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar side={side} onToggleSide={toggleSide} onMobileNav={() => setMobileNav(true)} onPalette={() => setPalette(true)} onTeam={() => setTeam(true)} />
         <main className="hive-main hive-scroll relative min-h-0 flex-1 overflow-y-auto">
           <Suspense fallback={<PageSkeleton />}>
             <Routes>
               <Route index element={<HomePage />} />
+              <Route path="inbox" element={<InboxPage />} />
+              <Route path="settings" element={<SettingsPage />} />
               <Route path="p/:projectId/*" element={<ProjectPage />} />
               <Route path="chat/:convoId?" element={<ChatPage />} />
-              <Route path="launchpad/:ideaId?" element={<LaunchpadPage />} />
+              <Route path="copilot" element={<CopilotPage />} />
+              {/* Work */}
+              <Route path="projects/ideas/:ideaId" element={<ProjectsSection active="ideas" />} />
+              <Route path="projects/*" element={<ProjectsSection />} />
+              <Route path="pipelines/*" element={<Sectioned base="pipelines" label="Pipelines" tabs={[{ id: 'all', label: 'Pipelines', element: <PipelinesPage /> }, { id: 'schedules', label: 'Schedules', element: <AutomationsPage /> }]} />} />
+              {/* Resources */}
               <Route path="machines" element={<MachinesPage />} />
-              <Route path="models" element={<ModelsPage />} />
-              <Route path="nexora" element={<NexoraGuide />} />
-              <Route path="plugins" element={<PluginsPage />} />
+              <Route path="drive" element={<DrivePage />} />
+              {/* AI setup */}
+              <Route path="models/*" element={<Sectioned base="models" label="Models" tabs={[{ id: 'catalogue', label: 'Catalogue', element: <ModelsPage /> }, { id: 'health', label: 'Health', element: <HealthPage /> }]} />} />
               <Route path="keys" element={<KeysPage />} />
-              <Route path="usage" element={<UsagePage />} />
-              <Route path="memory" element={<MemoryPage />} />
+              <Route path="extensions/*" element={<Sectioned base="extensions" label="Extensions" tabs={[{ id: 'toolbox', label: 'Toolbox', element: <ToolboxPage /> }, { id: 'plugins', label: 'Plugins', element: <PluginsPage /> }, { id: 'memory', label: 'Memory', element: <MemoryPage /> }]} />} />
+              {/* Spend */}
+              <Route path="spend/*" element={<Sectioned base="spend" label="Spend" tabs={[{ id: 'overview', label: 'Overview', element: <UsagePage /> }, { id: 'budgets', label: 'Budgets', element: <BudgetsPage /> }, { id: 'savings', label: 'Savings', element: <StewardPage /> }]} />} />
+              {/* Old addresses → their new homes (query and hash kept) */}
+              <Route path="repos" element={<Go to="/hive/projects" />} />
+              <Route path="launchpad/:ideaId" element={<Go to="/hive/projects/ideas/:ideaId" />} />
+              <Route path="launchpad" element={<Go to="/hive/projects/ideas" />} />
+              <Route path="nexora" element={<Go to="/hive/projects/guide" />} />
+              <Route path="dispatch" element={<Go to="/hive/copilot?mode=team" />} />
+              <Route path="automations" element={<Go to="/hive/pipelines/schedules" />} />
+              <Route path="health" element={<Go to="/hive/models/health" />} />
+              <Route path="toolbox" element={<Go to="/hive/extensions" />} />
+              <Route path="plugins" element={<Go to="/hive/extensions/plugins" />} />
+              <Route path="memory" element={<Go to="/hive/extensions/memory" />} />
+              <Route path="usage" element={<Go to="/hive/spend" />} />
+              <Route path="budgets" element={<Go to="/hive/spend/budgets" />} />
+              <Route path="steward" element={<Go to="/hive/spend/savings" />} />
+              {DevUiPage && <Route path="dev/ui" element={<DevUiPage />} />}
               <Route path="*" element={<HomePage />} />
             </Routes>
           </Suspense>
         </main>
+        <MobileTabs />
       </div>
       <ApprovalsTray />
+      <CopilotDock />
       <TeamDrawer open={team} onClose={() => setTeam(false)} />
       <Palette open={palette} onClose={() => setPalette(false)} />
       <MobileNav open={mobileNav} onClose={() => setMobileNav(false)} />
+      <ShortcutSheet open={sheet} onClose={() => setSheet(false)} />
     </div>
+  )
+}
+
+/** Projects: every repo (some already projects), ideas that become projects, and the NexoraGuru guide. */
+function ProjectsSection({ active }: { active?: string }) {
+  return (
+    <Sectioned
+      base="projects"
+      label="Projects"
+      active={active}
+      tabs={[
+        { id: 'repos', label: 'All projects', element: <ReposPage /> },
+        { id: 'ideas', label: 'Ideas', element: <LaunchpadPage /> },
+        { id: 'guide', label: 'NexoraGuru guide', element: <NexoraGuide /> },
+      ]}
+    />
   )
 }
 
@@ -224,61 +314,88 @@ function PageSkeleton() {
 /* ── Activity bar ─────────────────────────────────────────────────────── */
 type NavItem = { to: string; label: string; icon: typeof Home; end?: boolean; match?: RegExp; badge?: number; tone?: string; hint?: string }
 
-function useNav(): { main: NavItem[]; config: NavItem[] } {
-  const { boot, project, machines, approvals } = useHive()
-  const last = store.get('hive:lastProject', '')
-  const projectHref = `/hive/p/${project?.id ?? (boot?.projects.find((p) => p.id === last) ?? boot?.projects[0])?.id ?? ''}`
+function useNav(): { main: NavItem[]; config: NavItem[]; rail: NavItem[]; groups: LaunchGroup[]; sections: { title: string; items: NavItem[] }[] } {
+  const { machines, approvals } = useHive()
   const online = machines.filter((m) => m.online).length
+  // One place for every destination. Old names stay searchable in ⌘K (see PALETTE_SYNONYMS).
+  const I = {
+    home: { to: '/hive', label: 'Home', icon: Home, end: true, hint: 'What is running and what needs you' },
+    inbox: { to: '/hive/inbox', label: 'Inbox', icon: InboxIcon, hint: 'What needs you, and every alert' },
+    copilot: { to: '/hive/copilot', label: 'Copilot', icon: Bot, hint: 'Plans, delegates and reports back · also "Plan a team"' },
+    chat: { to: '/hive/chat', label: 'Chat', icon: MessageSquare, hint: 'Any model, files, images, side by side' },
+    projects: { to: '/hive/projects', label: 'Projects', icon: FolderGit2, match: /^\/hive\/(projects|p\/)/, hint: 'Every repository, ideas and the NexoraGuru guide' },
+    pipelines: { to: '/hive/pipelines', label: 'Pipelines', icon: Workflow, hint: 'Relay teams of agents, and schedules' },
+    machines: { to: '/hive/machines', label: 'Machines', icon: Server, badge: approvals.length || undefined, tone: approvals.length ? 'var(--color-state-warning)' : undefined, hint: `${online} online · commands, tests, servers` },
+    drive: { to: '/hive/drive', label: 'Drive', icon: HardDrive, hint: 'Files the whole team and every agent can use' },
+    models: { to: '/hive/models', label: 'Models', icon: Radar, hint: 'Who does what, and who is up' },
+    keys: { to: '/hive/keys', label: 'Keys & limits', icon: KeyRound, hint: 'AI accounts, plans, free models, GitHub' },
+    extensions: { to: '/hive/extensions', label: 'Extensions', icon: Puzzle, hint: 'Tools, plugins and shared memory' },
+    spend: { to: '/hive/spend', label: 'Spend', icon: Wallet, hint: 'Tokens, money, budgets and savings' },
+  } satisfies Record<string, NavItem>
+  const H = (it: NavItem, hue: number) => ({ to: it.to, label: it.label, icon: it.icon, hint: it.hint, hue, badge: it.badge })
+  const sections: { title: string; blurb: string; items: [NavItem, number][] }[] = [
+    { title: '', blurb: '', items: [[I.home, 255], [I.inbox, 25]] },
+    { title: 'Work', blurb: 'Ask, build and run teams of agents', items: [[I.copilot, 285], [I.chat, 230], [I.projects, 200], [I.pipelines, 330]] },
+    { title: 'Resources', blurb: 'Machines and files', items: [[I.machines, 140], [I.drive, 45]] },
+    { title: 'AI setup', blurb: 'Models, accounts and extensions', items: [[I.models, 210], [I.keys, 60], [I.extensions, 290]] },
+    { title: 'Spend', blurb: 'Tokens, money and savings', items: [[I.spend, 95]] },
+  ]
+  const all = sections.flatMap((g) => g.items.map(([it]) => it))
   return {
-    main: [
-      { to: '/hive', label: 'Mission control', icon: Home, end: true, hint: 'Everything live across projects' },
-      { to: '/hive/chat', label: 'Chat', icon: MessageSquare, hint: '⌘J · any model, files, images, side by side' },
-      { to: projectHref, label: 'Projects', icon: FolderGit2, match: /^\/hive\/p\//, hint: 'Sessions with agents on your code' },
-      { to: '/hive/launchpad', label: 'Launchpad', icon: Lightbulb, hint: '⌘⇧I · turn an idea into a project' },
-      { to: '/hive/machines', label: 'Machines', icon: Server, badge: approvals.length || undefined, tone: approvals.length ? 'var(--color-state-warning)' : online ? 'var(--color-state-success)' : undefined, hint: `${online} online · run commands, tests, servers` },
-      { to: '/hive/models', label: 'Model radar', icon: Radar, hint: "What's new across AI labs" },
-    ],
-    config: [
-      { to: '/hive/keys', label: 'Keys', icon: KeyRound, hint: 'AI accounts, budgets, GitHub' },
-      { to: '/hive/memory', label: 'Memory', icon: Brain, hint: 'What every agent knows' },
-      { to: '/hive/plugins', label: 'Plugins', icon: Puzzle, hint: 'Behaviours and token savers' },
-      { to: '/hive/usage', label: 'Usage', icon: BarChart3, hint: 'Tokens and spend' },
-    ],
+    main: all,
+    config: [],
+    rail: all,
+    groups: sections.map((g) => ({ title: g.title || 'Home', blurb: g.blurb, items: g.items.map(([it, hue]) => H(it, hue)) })),
+    sections: sections.map((g) => ({ title: g.title, items: g.items.map(([it]) => it) })),
   }
 }
 
-function ActivityBar({ onTeam, onPalette }: { onTeam: () => void; onPalette: () => void }) {
+function ActivityBar({ onTeam, onPalette, withSidebar }: { onTeam: () => void; onPalette: () => void; withSidebar: boolean }) {
   const { online, live } = useHive()
-  const { main, config } = useNav()
+  const { rail } = useNav()
+  // Collapsed: hovering the rail opens the full labelled sidebar as an overlay.
+  const [peek, setPeek] = useState(false)
+  const timer = useRef<number | undefined>(undefined)
+  const enter = () => {
+    window.clearTimeout(timer.current)
+    timer.current = window.setTimeout(() => setPeek(true), 180)
+  }
+  const leave = () => {
+    window.clearTimeout(timer.current)
+    setPeek(false)
+  }
   return (
-    <nav className="hive-rail hidden w-[64px] shrink-0 flex-col items-center border-r hive-line py-3 md:flex" aria-label="Hive">
-      <Link to="/hive" className="mb-3 grid size-11 place-items-center rounded-2xl transition-transform hover:scale-105" aria-label="Hive home">
-        <HiveLogo size={32} live={live.length > 0} />
-      </Link>
-      <button type="button" onClick={onPalette} className="mb-2 grid size-10 place-items-center rounded-xl text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary" aria-label="Search (⌘K)">
-        <Search className="size-[18px]" strokeWidth={1.8} />
-      </button>
-      <div className="flex flex-1 flex-col items-center gap-1">
-        {main.map((it) => (
-          <RailLink key={it.label} it={it} />
-        ))}
-        <div className="my-2 h-px w-7 bg-[var(--hive-line)]" />
-        {config.map((it) => (
-          <RailLink key={it.label} it={it} />
-        ))}
-      </div>
-      <Tooltip label={`Team · ${online.length} online`} side="right">
-        <button type="button" onClick={onTeam} className="relative mb-1 grid size-10 place-items-center rounded-xl text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary" aria-label="Team">
-          <Users className="size-[18px]" strokeWidth={1.8} />
-          {online.length > 0 && <span className="absolute right-1 top-1 grid min-w-4 place-items-center rounded-full bg-state-success px-1 text-[9px] font-semibold text-white">{online.length}</span>}
-        </button>
-      </Tooltip>
-      <Tooltip label="Back to NexoraGuru" side="right">
-        <Link to="/hub" className="grid size-10 place-items-center rounded-xl opacity-80 transition-opacity hover:bg-text-primary/[0.06] hover:opacity-100" aria-label="Back to NexoraGuru">
-          <LogoMark size={22} />
+    <>
+      <nav onMouseEnter={enter} onMouseLeave={leave} className={cn('hive-rail hidden w-[56px] shrink-0 flex-col items-center border-r hive-line py-3 md:flex', withSidebar && 'lg:hidden')} aria-label="Hive">
+        <Link to="/hive" className="mb-3 grid size-10 place-items-center rounded-xl" aria-label="Hive home">
+          <HiveLogo size={28} live={live.length > 0} />
         </Link>
-      </Tooltip>
-    </nav>
+        <button type="button" onClick={onPalette} className="mb-2 grid size-9 place-items-center rounded-[var(--hv-r-btn)] text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary" aria-label="Search or run a command (⌘K)">
+          <Search className="size-[17px]" strokeWidth={1.8} />
+        </button>
+        <div className="hive-scroll flex min-h-0 flex-1 flex-col items-center gap-1 overflow-y-auto">
+          {rail.map((it) => (
+            <RailLink key={it.label} it={it} />
+          ))}
+        </div>
+        <Tooltip label={`Team · ${online.length} online`} side="right">
+          <button type="button" onClick={onTeam} className="relative mb-1 grid size-9 place-items-center rounded-[var(--hv-r-btn)] text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary" aria-label="Team">
+            <Users className="size-[17px]" strokeWidth={1.8} />
+            {online.length > 0 && <span className="absolute right-0.5 top-0.5 grid min-w-4 place-items-center rounded-full bg-state-success px-1 text-[9px] font-semibold text-on-accent-brand">{online.length}</span>}
+          </button>
+        </Tooltip>
+        <Tooltip label="Back to NexoraGuru" side="right">
+          <Link to="/hub" className="grid size-9 place-items-center rounded-[var(--hv-r-btn)] opacity-80 hover:bg-text-primary/[0.06] hover:opacity-100" aria-label="Back to NexoraGuru">
+            <LogoMark size={20} />
+          </Link>
+        </Tooltip>
+      </nav>
+      {peek && (
+        <div onMouseEnter={() => window.clearTimeout(timer.current)} onMouseLeave={leave} className="hv-peek fixed bottom-0 left-0 top-0 z-[850] hidden shadow-[12px_0_32px_-16px_oklch(0_0_0/0.5)] md:block">
+          <Sidebar />
+        </div>
+      )}
+    </>
   )
 }
 
@@ -295,12 +412,12 @@ function RailLink({ it }: { it: NavItem }) {
         </span>
       }
     >
-      <NavLink to={it.to} end={it.end} aria-label={it.label} className="relative">
+      <NavLink to={it.to} end={it.end} aria-label={it.label} viewTransition className="relative">
         {({ isActive }) => {
           const on = forced ?? isActive
           return (
-            <span className={cn('relative grid size-10 place-items-center rounded-xl transition-colors', on ? 'text-accent-brand' : 'text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary')}>
-              {on && <motion.span layoutId="hive-rail-active" className="absolute inset-0 rounded-xl bg-accent-brand/12 ring-1 ring-accent-brand/25" transition={{ type: 'spring', stiffness: 500, damping: 38 }} />}
+            <span className={cn('relative grid size-9 place-items-center rounded-[var(--hv-r-btn)] transition-colors', on ? 'text-accent-brand' : 'text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary')}>
+              {on && <span className="absolute inset-0 rounded-[var(--hv-r-btn)] bg-accent-brand/12 ring-1 ring-accent-brand/25" />}
               <it.icon className="relative size-[18px]" strokeWidth={1.8} />
               {it.badge ? (
                 <span className="absolute -right-0.5 -top-0.5 grid min-w-4 place-items-center rounded-full px-1 text-[9px] font-bold text-white" style={{ background: it.tone }}>
@@ -376,27 +493,26 @@ function Sidebar() {
     <div className="flex h-full">
       <aside className="hive-side flex h-full flex-col border-r hive-line" style={{ width }}>
         <div className="flex items-center gap-2 px-3 pb-2 pt-3">
-          <span className="text-[14px] font-semibold tracking-[-0.01em]">Workspace</span>
-          <span className="ml-auto flex gap-1">
-            <Tooltip label="New chat · ⌘J">
-              <button type="button" onClick={() => navigate('/hive/chat')} className="grid size-7 place-items-center rounded-lg text-text-muted hover:bg-text-primary/[0.07] hover:text-text-primary" aria-label="New chat">
-                <MessageSquare className="size-4" />
-              </button>
-            </Tooltip>
-            <Tooltip label="New idea · ⌘⇧I">
-              <button type="button" onClick={() => navigate('/hive/launchpad')} className="grid size-7 place-items-center rounded-lg text-text-muted hover:bg-text-primary/[0.07] hover:text-text-primary" aria-label="New idea">
-                <Lightbulb className="size-4" />
-              </button>
-            </Tooltip>
+          <Link to="/hive" className="flex items-center gap-2" aria-label="Hive home">
+            <HiveLogo size={24} live={live.length > 0} />
+            <span className="text-[15px] font-semibold tracking-[-0.01em]">Hive</span>
+          </Link>
+          <span className="ml-auto">
+            <NewMenu />
           </span>
         </div>
         <div className="px-3 pb-2">
-          <label className="flex h-8 items-center gap-2 rounded-lg bg-text-primary/[0.05] px-2.5 text-text-muted focus-within:bg-text-primary/[0.08]">
+          <ProjectSwitcher />
+        </div>
+        <div className="px-3 pb-2">
+          <label className="flex h-8 items-center gap-2 rounded-lg bg-text-primary/[0.05] px-2.5 text-text-muted focus-within:bg-text-primary/[0.08] focus-within:ring-2 focus-within:ring-[var(--hv-focus-ring)]">
             <Search className="size-3.5" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter" className="min-w-0 flex-1 bg-transparent text-[12.5px] outline-none placeholder:text-text-muted" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Filter the menu" placeholder="Filter" className="min-w-0 flex-1 bg-transparent text-[12.5px] outline-none placeholder:text-text-muted" />
           </label>
         </div>
         <nav className="hive-scroll min-h-0 flex-1 overflow-y-auto px-2 pb-4">
+          <NavSections filter={s} />
+          <div className="mx-2.5 my-3 h-px bg-[var(--hive-line)]" />
           <SideHeading action={<SideAdd to="/hive/p/new" label="New project" />}>Projects</SideHeading>
           {projects
             .filter((p) => !s || p.name.toLowerCase().includes(s) || (tasksBy.get(p.id) ?? []).some((t) => t.title.toLowerCase().includes(s)))
@@ -452,12 +568,12 @@ function Sidebar() {
               )
             })}
           {!projects.length && (
-            <Link to="/hive/nexora" className="mx-1 mt-1 flex items-center gap-2 rounded-lg border border-dashed hive-line px-2.5 py-2 text-[12px] text-text-muted hover:text-text-primary">
+            <Link to="/hive/projects/guide" className="mx-1 mt-1 flex items-center gap-2 rounded-lg border border-dashed hive-line px-2.5 py-2 text-[12px] text-text-muted hover:text-text-primary">
               <Plus className="size-3.5" /> Set up your first project
             </Link>
           )}
 
-          <SideHeading action={<SideAdd to="/hive/chat" label="New chat" />}>Chats</SideHeading>
+          <SideHeading action={<SideAdd to="/hive/chat" label="New chat" />}>Recent chats</SideHeading>
           {convos
             .filter((c) => !s || c.title.toLowerCase().includes(s))
             .slice(0, 40)
@@ -470,16 +586,156 @@ function Sidebar() {
             ))}
           {!convos.length && <div className="px-2.5 py-1 text-[11.5px] text-text-muted">Your chats appear here.</div>}
         </nav>
-        <Link to="/hive/nexora" className="m-2 flex items-center gap-2.5 rounded-xl border hive-line bg-text-primary/[0.03] px-3 py-2.5 transition-colors hover:bg-text-primary/[0.06]">
-          <LogoMark size={20} />
-          <span className="min-w-0 flex-1">
-            <span className="block text-[12.5px] font-medium">Build NexoraGuru</span>
-            <span className="block truncate text-[11px] text-text-muted">Step-by-step: code → PR → live site</span>
-          </span>
-          <ChevronRight className="size-3.5 text-text-muted" />
-        </Link>
+        <SideFooter />
       </aside>
       <div className="hive-resizer" onPointerDown={onDrag} role="separator" aria-orientation="vertical" aria-label="Resize sidebar" />
+    </div>
+  )
+}
+
+/** Every part of Hive, grouped and always visible in the sidebar. Groups fold; the choice is remembered. */
+function NavSections({ filter = '' }: { filter?: string }) {
+  const { sections } = useNav()
+  const { pathname } = useLocation()
+  const [closed, setClosed] = useState<Record<string, boolean>>(() => {
+    try {
+      return JSON.parse(store.get('hive:navClosed', '{}'))
+    } catch {
+      return {}
+    }
+  })
+  const flip = (t: string) =>
+    setClosed((c) => {
+      const n = { ...c, [t]: !c[t] }
+      store.set('hive:navClosed', JSON.stringify(n))
+      return n
+    })
+  return (
+    <div className="pt-1">
+      {sections.map((g) => {
+        const items = g.items.filter((it) => !filter || `${it.label} ${it.hint ?? ''}`.toLowerCase().includes(filter))
+        if (!items.length) return null
+        const shut = !filter && !!g.title && closed[g.title]
+        return (
+          <div key={g.title || 'top'} className="mb-1">
+            {g.title && (
+              <button type="button" onClick={() => flip(g.title)} className="group mb-0.5 mt-1.5 flex min-h-6 w-full items-center px-2.5 text-left" aria-expanded={!shut}>
+                <span className="flex-1 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-muted group-hover:text-text-secondary">{g.title}</span>
+                <ChevronRight className={cn('size-3 text-text-muted transition-transform', !shut && 'rotate-90')} />
+              </button>
+            )}
+            {!shut &&
+              items.map((it) => {
+                const forced = it.match ? it.match.test(pathname) : undefined
+                return (
+                  <NavLink key={it.label} to={it.to} end={it.end} title={it.hint} viewTransition className="block">
+                    {({ isActive }) => {
+                      const on = forced ?? isActive
+                      return (
+                        <span className={cn('flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] transition-colors', on ? 'bg-accent-brand/10 font-medium text-text-primary' : 'text-text-secondary hover:bg-text-primary/[0.05] hover:text-text-primary')}>
+                          <it.icon className={cn('size-4 shrink-0', on ? 'text-accent-brand' : 'text-text-muted')} strokeWidth={1.9} />
+                          <span className="min-w-0 flex-1 truncate">{it.label}</span>
+                          {it.badge ? (
+                            <span className="grid min-w-4 place-items-center rounded-full px-1 text-[10px] font-bold text-white" style={{ background: it.tone }}>
+                              {it.badge}
+                            </span>
+                          ) : it.tone ? (
+                            <span className="size-1.5 rounded-full" style={{ background: it.tone }} />
+                          ) : null}
+                        </span>
+                      )
+                    }}
+                  </NavLink>
+                )
+              })}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+/** The one strong button in the sidebar: everything you can start. */
+function NewMenu() {
+  const navigate = useNavigate()
+  return (
+    <Menu>
+      <MenuTrigger asChild>
+        <button type="button" className="inline-flex h-7 items-center gap-1 rounded-[var(--hv-r-btn)] bg-[var(--hv-surface-2)] px-2 text-[12.5px] font-medium text-[var(--hv-text-1)] ring-1 ring-[var(--hv-border)] hover:bg-[var(--hv-surface-3)]" aria-label="New">
+          <Plus className="size-3.5" /> New <ChevronDown className="size-3 text-[var(--hv-text-3)]" />
+        </button>
+      </MenuTrigger>
+      <MenuContent align="end" className="w-56">
+        <MenuItem icon={<Bot />} shortcut="C" onSelect={() => navigate('/hive/copilot')}>
+          New task
+        </MenuItem>
+        <MenuItem icon={<MessageSquare />} shortcut="⌘J" onSelect={() => navigate('/hive/chat')}>
+          New chat
+        </MenuItem>
+        <MenuItem icon={<FolderGit2 />} onSelect={() => navigate('/hive/projects')}>
+          New project
+        </MenuItem>
+        <MenuItem icon={<Lightbulb />} onSelect={() => navigate('/hive/projects/ideas')}>
+          From an idea
+        </MenuItem>
+        <MenuItem icon={<Upload />} onSelect={() => navigate('/hive/projects')}>
+          Upload a folder
+        </MenuItem>
+      </MenuContent>
+    </Menu>
+  )
+}
+
+/** Plain-words system status (replaces the unlabelled dot), team, and the way back to the site. */
+/** Phones: the five places people go most, always one tap away. */
+function MobileTabs() {
+  const { pathname } = useLocation()
+  const tabs = [
+    { to: '/hive', label: 'Home', icon: Home, on: pathname === '/hive' || pathname === '/hive/' },
+    { to: '/hive/inbox', label: 'Inbox', icon: InboxIcon, on: pathname.startsWith('/hive/inbox') },
+    { to: '/hive/copilot', label: 'Copilot', icon: Bot, on: pathname.startsWith('/hive/copilot') },
+    { to: '/hive/chat', label: 'Chat', icon: MessageSquare, on: pathname.startsWith('/hive/chat') },
+    { to: '/hive/projects', label: 'Projects', icon: FolderGit2, on: /^\/hive\/(projects|p\/)/.test(pathname) },
+  ]
+  return (
+    <nav aria-label="Main" className="flex shrink-0 border-t border-[var(--hv-border)] bg-[var(--hv-bg-app)] pb-[env(safe-area-inset-bottom)] sm:hidden">
+      {tabs.map((t) => (
+        <Link key={t.to} to={t.to} aria-current={t.on ? 'page' : undefined} className={cn('flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[10.5px]', t.on ? 'text-[var(--hv-accent)]' : 'text-[var(--hv-text-3)]')}>
+          <t.icon className="size-5" strokeWidth={t.on ? 2.2 : 1.8} />
+          {t.label}
+        </Link>
+      ))}
+    </nav>
+  )
+}
+
+function SideFooter() {
+  const { boot, connected, online } = useHive()
+  const now = Date.now()
+  const limited = (boot?.keys ?? []).filter((k) => !k.disabled && ((k.limitUntil ?? 0) > now || k.status === 'invalid')).length
+  const ok = connected && !limited
+  const text = !connected ? 'Reconnecting…' : limited ? `${limited} connection${limited === 1 ? '' : 's'} limited` : 'All systems ok'
+  return (
+    <div className="border-t hive-line px-2 py-2">
+      <Link to="/hive/models/health" className="flex items-center gap-2 rounded-[var(--hv-r-btn)] px-2.5 py-1.5 text-[12px] text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]" title="Open model health">
+        <span className={cn('size-1.5 shrink-0 rounded-full', !connected && 'hv-live')} style={{ background: ok ? 'var(--hv-success)' : 'var(--hv-warning)' }} aria-hidden />
+        <span className="flex-1 truncate">{text}</span>
+      </Link>
+      <div className="flex items-center gap-1 px-1 pt-1">
+        <Link to="/hub" className="flex min-w-0 flex-1 items-center gap-2 rounded-[var(--hv-r-btn)] px-1.5 py-1 text-[12px] text-[var(--hv-text-3)] hover:text-[var(--hv-text-1)]">
+          <LogoMark size={16} /> <span className="truncate">Back to NexoraGuru</span>
+        </Link>
+        <Tooltip label="Settings">
+          <Link to="/hive/settings" className="grid size-7 place-items-center rounded-[var(--hv-r-btn)] text-[var(--hv-text-3)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]" aria-label="Settings">
+            <Settings2 className="size-3.5" />
+          </Link>
+        </Tooltip>
+        <span className="flex -space-x-1.5" title={`${online.length} online`}>
+          {online.slice(0, 3).map((o) => (
+            <UserDot key={o.username} username={o.username} size={5} ring />
+          ))}
+        </span>
+      </div>
     </div>
   )
 }
@@ -506,12 +762,12 @@ function SideAdd({ to, label }: { to: string; label: string }) {
 
 /* ── Top bar: breadcrumbs + live state ─────────────────────────────────── */
 function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: boolean; onToggleSide: () => void; onMobileNav: () => void; onPalette: () => void; onTeam: () => void }) {
-  const { project, detail, online, connected, live, approvals } = useHive()
+  const { project, detail, online, approvals } = useHive()
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const section = useMemo(() => {
     const m = /^\/hive\/([^/]+)/.exec(pathname)?.[1]
-    return { chat: 'Chat', launchpad: 'Launchpad', machines: 'Machines', models: 'Model radar', keys: 'Keys', usage: 'Usage', memory: 'Memory', plugins: 'Plugins', nexora: 'Build NexoraGuru' }[m ?? ''] ?? null
+    return { inbox: 'Inbox', settings: 'Settings', chat: 'Chat', copilot: 'Copilot', projects: 'Projects', pipelines: 'Pipelines', machines: 'Machines', drive: 'Drive', models: 'Models', keys: 'Keys & limits', extensions: 'Extensions', spend: 'Spend' }[m ?? ''] ?? null
   }, [pathname])
   return (
     <header className="flex h-12 shrink-0 items-center gap-2 border-b hive-line px-2 sm:px-3">
@@ -523,6 +779,11 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
           {side ? <PanelLeftClose className="size-4" /> : <PanelLeftOpen className="size-4" />}
         </button>
       </Tooltip>
+      {!side && (
+        <div className="hidden sm:block">
+          <ProjectSwitcher />
+        </div>
+      )}
       <nav className="flex min-w-0 flex-1 items-center gap-1 text-[13px]" aria-label="Breadcrumb">
         <Link to="/hive" className="flex shrink-0 items-center gap-1.5 rounded-md px-1.5 py-1 font-medium text-text-secondary hover:text-text-primary">
           <HiveLogo size={16} /> Hive
@@ -534,13 +795,13 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
           </>
         )}
         {project && (
-          <>
+          <span className="contents sm:hidden">
             <ChevronRight className="size-3.5 shrink-0 text-text-muted" />
             <button type="button" onClick={() => navigate(`/hive/p/${project.id}`)} className={cn('flex min-w-0 items-center gap-1.5 rounded-md px-1.5 py-1 hover:bg-text-primary/[0.05]', detail ? 'text-text-secondary' : 'font-medium text-text-primary')}>
               <span className="hive-hex size-2.5 shrink-0" style={{ background: projectColor(project.color) }} />
               <span className="truncate">{project.name}</span>
             </button>
-          </>
+          </span>
         )}
         {detail && project && (
           <>
@@ -557,18 +818,17 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
           <ShieldAlert className="size-3.5" /> {approvals.length} waiting
         </button>
       )}
-      {live.length > 0 && (
-        <span className="hidden items-center gap-1.5 rounded-full bg-accent-brand/10 px-2.5 py-1 text-[12px] font-medium text-accent-brand md:inline-flex">
-          <span className="hive-dot-run size-1.5 rounded-full bg-accent-brand" /> {live.length} agent{live.length === 1 ? '' : 's'} working
-        </span>
-      )}
-      <button type="button" onClick={onTeam} className="flex items-center -space-x-1.5 px-1" aria-label="Who's online">
+      <ModelsAtWork />
+      <InboxBell />
+      <button type="button" onClick={onTeam} className="flex items-center -space-x-1.5 px-1" aria-label={`Team · ${online.length} online`} title={`Team · ${online.length} online`}>
         {online.slice(0, 4).map((o) => (
           <UserDot key={o.username} username={o.username} size={6} ring />
         ))}
       </button>
-      <Tooltip label={connected ? 'Live — updates stream in real time' : 'Reconnecting…'}>
-        <span className={cn('size-2 rounded-full', connected ? 'bg-state-success' : 'hive-dot-run bg-state-warning')} />
+      <Tooltip label={<span className="inline-flex items-center gap-2">Copilot <span className="hive-kbd">⌘I</span></span>}>
+        <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('hive:copilot-panel'))} className="grid size-8 place-items-center rounded-[var(--hv-r-btn)] text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]" aria-label="Open the Copilot panel (⌘I)">
+          <Bot className="size-4" />
+        </button>
       </Tooltip>
       <button type="button" onClick={onPalette} className="ml-1 hidden h-8 items-center gap-2 rounded-lg border hive-line px-2.5 text-[12.5px] text-text-muted hover:bg-text-primary/[0.05] hover:text-text-primary sm:flex">
         <Search className="size-3.5" /> Search or run a command <span className="hive-kbd">⌘K</span>
@@ -613,7 +873,7 @@ function ApprovalsTray() {
               <Server className="size-3" /> {a.machine} · <span className="truncate font-mono">{a.folder}</span>
             </div>
             <div className="mt-3 flex items-center gap-2">
-              <button type="button" onClick={() => answerApproval(a.id, true)} className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-state-success text-[12.5px] font-medium text-white hover:brightness-110">
+              <button type="button" onClick={() => answerApproval(a.id, true)} className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-state-success text-[12.5px] font-medium text-on-accent-brand hover:brightness-110">
                 <Check className="size-3.5" /> Run it
               </button>
               <button type="button" onClick={() => answerApproval(a.id, false)} className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-text-primary/[0.07] text-[12.5px] font-medium hover:bg-state-error/15 hover:text-state-error">
@@ -634,7 +894,7 @@ function ApprovalsTray() {
 
 /* ── Team drawer (presence + staff chat) ───────────────────────────────── */
 function TeamDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { boot, online, select, project, projectId } = useHive()
+  const { boot, online, select } = useHive()
   if (!boot) return null
   const onlineSet = new Map(online.map((o) => [o.username, o]))
   const nameOf = (id: string | null | undefined) => boot.projects.find((p) => p.id === id)?.name
@@ -643,7 +903,7 @@ function TeamDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
       {open && (
         <div className="fixed inset-0 z-[900] flex justify-end" role="dialog" aria-label="Team">
           <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} type="button" className="absolute inset-0 bg-bg-app/50 backdrop-blur-[2px]" onClick={onClose} aria-label="Close" />
-          <motion.aside initial={{ x: 40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 40, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 36 }} className="relative flex h-full w-full max-w-[380px] flex-col border-l hive-line bg-bg-surface shadow-2xl">
+          <motion.aside initial={{ x: 40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 40, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 36 }} className="relative flex h-full w-full max-w-[420px] flex-col border-l hive-line bg-bg-surface shadow-2xl">
             <div className="flex items-center justify-between px-5 py-4">
               <h2 className="text-[15px] font-semibold">Team</h2>
               <button type="button" onClick={onClose} className="grid size-8 place-items-center rounded-lg text-text-muted hover:bg-text-primary/[0.06]" aria-label="Close">
@@ -679,13 +939,7 @@ function TeamDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
                 })}
             </div>
             <div className="mt-4 flex min-h-0 flex-1 flex-col border-t hive-line">
-              {projectId || project ? (
-                <StaffChat className="rounded-none border-0 bg-transparent" />
-              ) : (
-                <p className="flex items-center gap-2 p-5 text-[13px] text-text-muted">
-                  <MessagesSquare className="size-4" /> Open a project to chat with staff about it.
-                </p>
-              )}
+              <TeamChat />
             </div>
           </motion.aside>
         </div>
@@ -695,7 +949,7 @@ function TeamDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
 }
 
 /* ── Command palette: jump anywhere, or run an action ──────────────────── */
-type PaletteItem = { id: string; group: string; label: string; hint?: string; icon?: ReactNode; run: () => void; keys?: string }
+type PaletteItem = { id: string; group: string; label: string; hint?: string; kw?: string; cmd?: boolean; icon?: ReactNode; run: () => void; keys?: string }
 
 function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { boot, taskIndex } = useHive()
@@ -716,28 +970,66 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
   const go = (to: string) => () => navigate(to)
   const items = useMemo(() => {
     const out: PaletteItem[] = [
-      { id: 'a:chat', group: 'Actions', label: 'New chat', hint: 'Any model, files, images', icon: <MessageSquare className="size-4" />, run: go('/hive/chat'), keys: '⌘J' },
-      { id: 'a:idea', group: 'Actions', label: 'New idea → project', hint: 'Plan, repo, first milestone', icon: <Lightbulb className="size-4" />, run: go('/hive/launchpad'), keys: '⌘⇧I' },
-      { id: 'a:nexora', group: 'Actions', label: 'Work on NexoraGuru', hint: 'Guided: code → PR → live site', icon: <LogoMark size={16} />, run: go('/hive/nexora') },
-      { id: 'a:machine', group: 'Actions', label: 'Connect a machine', hint: 'Run commands, tests and servers', icon: <Server className="size-4" />, run: go('/hive/machines') },
-      { id: 'a:key', group: 'Actions', label: 'Add AI keys', hint: 'One or many per provider', icon: <KeyRound className="size-4" />, run: go('/hive/keys') },
-      { id: 'a:radar', group: 'Actions', label: "What's new in AI models", icon: <Radar className="size-4" />, run: go('/hive/models') },
-      { id: 'n:home', group: 'Go to', label: 'Mission control', icon: <Home className="size-4" />, run: go('/hive') },
-      { id: 'n:memory', group: 'Go to', label: 'Memory', icon: <Brain className="size-4" />, run: go('/hive/memory') },
-      { id: 'n:plugins', group: 'Go to', label: 'Plugins', icon: <Puzzle className="size-4" />, run: go('/hive/plugins') },
-      { id: 'n:usage', group: 'Go to', label: 'Usage', icon: <BarChart3 className="size-4" />, run: go('/hive/usage') },
+      // Create
+      { id: 'a:task', group: 'Create', label: 'New task', hint: 'The Copilot plans, delegates and reports back', icon: <Bot className="size-4" />, run: go('/hive/copilot'), keys: 'C' },
+      { id: 'a:chat', group: 'Create', label: 'New chat', hint: 'Any model, files, images', icon: <MessageSquare className="size-4" />, run: go('/hive/chat'), keys: '⌘J' },
+      { id: 'a:team', group: 'Create', label: 'Plan a team', hint: 'Right model per part, review before it runs', kw: 'dispatcher dispatch', icon: <Network className="size-4" />, run: go('/hive/copilot?mode=team') },
+      { id: 'a:project', group: 'Create', label: 'New project', hint: 'Add a repository or upload a folder', kw: 'repo github upload folder', icon: <FolderGit2 className="size-4" />, run: go('/hive/projects') },
+      { id: 'a:idea', group: 'Create', label: 'New project from an idea', kw: 'launchpad', icon: <Lightbulb className="size-4" />, run: go('/hive/projects/ideas'), keys: '⌘⇧I' },
+      // Go to: every page and tab, with old names as synonyms
+      { id: 'n:home', group: 'Go to', label: 'Home', kw: 'mission control dashboard', icon: <Home className="size-4" />, run: go('/hive') },
+      { id: 'n:settings', group: 'Go to', label: 'Settings', kw: 'appearance theme dark light density compact shortcuts preferences', icon: <Settings2 className="size-4" />, run: go('/hive/settings') },
+      { id: 'n:inbox', group: 'Go to', label: 'Inbox', kw: 'alerts notifications approvals needs you bell', icon: <InboxIcon className="size-4" />, run: go('/hive/inbox') },
+      { id: 'n:copilot', group: 'Go to', label: 'Copilot', kw: 'assistant chief of staff', icon: <Bot className="size-4" />, run: go('/hive/copilot') },
+      { id: 'n:chat', group: 'Go to', label: 'Chat', icon: <MessageSquare className="size-4" />, run: go('/hive/chat') },
+      { id: 'n:projects', group: 'Go to', label: 'Projects', hint: 'Work', kw: 'your github repos repositories', icon: <FolderGit2 className="size-4" />, run: go('/hive/projects') },
+      { id: 'n:ideas', group: 'Go to', label: 'Projects › Ideas', kw: 'launchpad', icon: <Lightbulb className="size-4" />, run: go('/hive/projects/ideas') },
+      { id: 'n:guide', group: 'Go to', label: 'Projects › NexoraGuru guide', kw: 'build nexoraguru', icon: <LogoMark size={16} />, run: go('/hive/projects/guide') },
+      { id: 'n:pipelines', group: 'Go to', label: 'Pipelines', hint: 'Work', kw: 'architect relay', icon: <Workflow className="size-4" />, run: go('/hive/pipelines') },
+      { id: 'n:schedules', group: 'Go to', label: 'Pipelines › Schedules', kw: 'automations cron overnight', icon: <Clock3 className="size-4" />, run: go('/hive/pipelines/schedules') },
+      { id: 'n:machines', group: 'Go to', label: 'Machines', hint: 'Resources', kw: 'worker bridge terminal', icon: <Server className="size-4" />, run: go('/hive/machines') },
+      { id: 'n:drive', group: 'Go to', label: 'Drive', hint: 'Resources', kw: 'files upload', icon: <HardDrive className="size-4" />, run: go('/hive/drive') },
+      { id: 'n:models', group: 'Go to', label: 'Models', hint: 'AI setup', kw: 'catalogue ranking compare', icon: <Radar className="size-4" />, run: go('/hive/models') },
+      { id: 'n:health', group: 'Go to', label: 'Models › Health', kw: 'agent health status cooling down', icon: <HeartPulse className="size-4" />, run: go('/hive/models/health') },
+      { id: 'n:keys', group: 'Go to', label: 'Keys & limits', hint: 'AI setup', kw: 'api key provider connect claude codex vibe plans limits', icon: <KeyRound className="size-4" />, run: go('/hive/keys') },
+      { id: 'n:toolbox', group: 'Go to', label: 'Extensions › Toolbox', kw: 'mcp tools search', icon: <Boxes className="size-4" />, run: go('/hive/extensions') },
+      { id: 'n:plugins', group: 'Go to', label: 'Extensions › Plugins', icon: <Puzzle className="size-4" />, run: go('/hive/extensions/plugins') },
+      { id: 'n:memory', group: 'Go to', label: 'Extensions › Memory', kw: 'what agents know', icon: <Brain className="size-4" />, run: go('/hive/extensions/memory') },
+      { id: 'n:spend', group: 'Go to', label: 'Spend', hint: 'Spend', kw: 'usage tokens cost money', icon: <BarChart3 className="size-4" />, run: go('/hive/spend') },
+      { id: 'n:budgets', group: 'Go to', label: 'Spend › Budgets', kw: 'caps alerts', icon: <Wallet className="size-4" />, run: go('/hive/spend/budgets') },
+      { id: 'n:savings', group: 'Go to', label: 'Spend › Savings', kw: 'token steward', icon: <PiggyBank className="size-4" />, run: go('/hive/spend/savings') },
+      // Commands
+      { id: 'x:sidebar', group: 'Commands', label: 'Show or hide the sidebar', icon: <PanelLeftOpen className="size-4" />, run: () => window.dispatchEvent(new CustomEvent('hive:toggle-side')), keys: '⌘B', cmd: true },
+      { id: 'x:copilot', group: 'Commands', label: 'Open the Copilot panel', icon: <Bot className="size-4" />, run: () => window.dispatchEvent(new CustomEvent('hive:copilot-panel')), keys: '⌘I', cmd: true },
+      { id: 'x:shortcuts', group: 'Commands', label: 'Keyboard shortcuts', icon: <Command className="size-4" />, run: () => window.dispatchEvent(new CustomEvent('hive:shortcuts')), keys: '?', cmd: true },
+      { id: 'x:test', group: 'Commands', label: 'Test every model', kw: 'verify check health', icon: <HeartPulse className="size-4" />, run: go('/hive/models/health'), cmd: true },
+      { id: 'x:machine', group: 'Commands', label: 'Connect a machine', icon: <Server className="size-4" />, run: go('/hive/machines'), cmd: true },
+      { id: 'x:key', group: 'Commands', label: 'Add an AI key', icon: <KeyRound className="size-4" />, run: go('/hive/keys'), cmd: true },
+      { id: 'x:mcp', group: 'Commands', label: 'Connect an MCP server or search engine', icon: <Boxes className="size-4" />, run: go('/hive/extensions?tab=connected'), cmd: true },
     ]
     for (const p of boot?.projects ?? []) out.push({ id: `p:${p.id}`, group: 'Projects', label: p.name, hint: p.repo_owner ? `${p.repo_owner}/${p.repo_name}` : p.folder ?? '', icon: <span className="hive-hex size-3.5" style={{ background: projectColor(p.color) }} />, run: go(`/hive/p/${p.id}`) })
     for (const t of Object.values(taskIndex).sort((a, b) => b.updated_at - a.updated_at)) out.push({ id: `t:${t.id}`, group: 'Sessions', label: t.title, hint: t.project_name ?? t.status, icon: <StatusDot status={t.status} />, run: go(`/hive/p/${t.project_id}/t/${t.id}`) })
     for (const c of convos) out.push({ id: `c:${c.id}`, group: 'Chats', label: c.title, hint: c.model ?? '', icon: <MessageSquare className="size-3.5 text-text-muted" />, run: go(`/hive/chat/${c.id}`) })
-    const s = q.toLowerCase().trim()
-    if (!s) return out.filter((x) => x.group !== 'Sessions' || out.indexOf(x) < 40).slice(0, 60)
-    return out
-      .map((x) => ({ x, score: fuzzy(`${x.label} ${x.hint ?? ''}`.toLowerCase(), s) }))
+    const raw = q.toLowerCase().trim()
+    const cmdOnly = raw.startsWith('>')
+    const projOnly = raw.startsWith('@')
+    const s = raw.replace(/^[>@]\s*/, '')
+    const pool = cmdOnly ? out.filter((x) => x.cmd) : projOnly ? out.filter((x) => x.group === 'Projects') : out
+    if (!s) {
+      if (cmdOnly || projOnly) return pool.slice(0, 60)
+      // Empty: recent work first, then what you can create, then everywhere you can go.
+      const recent = [...out.filter((x) => x.group === 'Sessions').slice(0, 3), ...out.filter((x) => x.group === 'Chats').slice(0, 2)].map((x) => ({ ...x, group: 'Recent' }))
+      return [...recent, ...out.filter((x) => x.group === 'Create' || x.group === 'Go to')]
+    }
+    const hits = pool
+      .map((x) => ({ x, score: fuzzy(`${x.label} ${x.hint ?? ''} ${x.kw ?? ''}`.toLowerCase(), s) }))
       .filter((r) => r.score > 0)
       .sort((a, b) => b.score - a.score)
       .map((r) => r.x)
       .slice(0, 60)
+    // Nothing matches: hand the words to the Copilot.
+    if (!hits.length && !cmdOnly && !projOnly) hits.push({ id: 'ask', group: 'Ask', label: `Ask Copilot: “${q.trim()}”`, icon: <Bot className="size-4" />, run: () => navigate('/hive/copilot', { state: { send: q.trim() } }) })
+    return hits
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boot, taskIndex, convos, q])
   useEffect(() => {
@@ -769,7 +1061,7 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
                   else if (e.key === 'Enter' && items[i]) pick(items[i])
                   else if (e.key === 'Escape') onClose()
                 }}
-                placeholder="Search projects, sessions, chats — or run an action"
+                placeholder="Search pages, projects, chats…  > for commands, @ for projects"
                 className="h-14 flex-1 bg-transparent text-[15px] outline-none placeholder:text-text-muted"
               />
               <span className="hive-kbd">esc</span>
@@ -830,7 +1122,7 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
               </button>
             </div>
             <div className="space-y-0.5 px-2">
-              {[...main, ...config].map((it) => (
+              {[...main, ...config.filter((c) => !main.includes(c))].map((it) => (
                 <NavLink key={it.label} to={it.to} end={it.end} className={({ isActive }) => cn('flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px]', isActive ? 'bg-accent-brand/12 text-accent-brand' : 'text-text-secondary')}>
                   <it.icon className="size-4" /> {it.label}
                   {it.badge ? <span className="ml-auto rounded-full bg-state-warning px-1.5 text-[11px] text-white">{it.badge}</span> : null}

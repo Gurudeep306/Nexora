@@ -1,14 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { SubscriptionDialog, SubscriptionsPanel } from '../Subscriptions'
+import { FreeSetup } from '../FreeSetup'
 import {
-  Activity,
   CheckCircle2,
-  Clock,
   Copy,
-  Database,
   ExternalLink,
   FolderGit2,
   Gauge,
-  KeyRound,
   Loader2,
   MoreHorizontal,
   Pause,
@@ -21,24 +20,24 @@ import {
   Sparkles,
   Trash2,
   TriangleAlert,
-  Wallet,
-  Zap,
 } from 'lucide-react'
-import { Area, AreaChart, ResponsiveContainer, Tooltip as ChartTip } from 'recharts'
 import { Button, ConfirmDialog, Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger, Modal, Tooltip, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
 import { AddGithubDialog, EditKeyDialog, parseLimit } from '../dialogs'
 import { useHive } from '../store'
 import type { HiveKey, ProviderInfo } from '../types'
-import { ProviderGlyph, fmtCost, fmtTokens, keyShare, shareTone, timeAgo, vendorName, vendorStyle } from '../ui'
+import { ProviderGlyph, fmtCost, fmtTokens, keyShare, shareTone, vendorName, vendorStyle, LimitBar } from '../ui'
+import { Empty, Row, RowList, Sparkline, StatusPill } from '../kit'
 
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Something went wrong')
 
 export default function KeysPage() {
   const { boot, refresh } = useHive()
   const toast = useToast()
-  const [adding, setAdding] = useState<string | null>(null) // provider id, or '' for the picker
+  // ?add=<vendor> (from Models → Free sources, the Toolbox or the Token Steward) opens the add dialog for it.
+  const [params, setParams] = useSearchParams()
+  const [adding, setAdding] = useState<string | null>(() => params.get('add')) // provider id, or '' for the picker
   const [addingGh, setAddingGh] = useState(false)
   const [confirmGh, setConfirmGh] = useState<string | null>(null)
   const [q, setQ] = useState('')
@@ -80,96 +79,134 @@ export default function KeysPage() {
 
   return (
     <div className="mx-auto w-full max-w-[1120px] px-5 pb-24 pt-8 sm:px-8">
-      {/* Vault header */}
-      <div className="hive-card relative mb-8 overflow-hidden p-6 sm:p-7">
-        <div className="hive-comb pointer-events-none absolute inset-0 opacity-70" />
-        <div className="relative flex flex-wrap items-start gap-5">
-          <span className="hive-tile size-12" style={{ ['--tile' as string]: 'var(--color-state-warning)' }}>
-            <KeyRound className="size-5" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <h1 className="text-[24px] font-semibold tracking-[-0.02em]">Key vault</h1>
-            <p className="mt-1 max-w-xl text-[13.5px] text-text-muted">
-              Every AI account the team shares. Keys are encrypted at rest and never reach a browser. Add as many accounts per provider as you like: Hive spreads work across them and moves on when one hits its budget or a rate limit.
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="secondary" onClick={refreshAll} loading={refreshing}>
-              {!refreshing && <RefreshCw />} Refresh models
-            </Button>
-            <Button onClick={() => setAdding('')}>
-              <Plus /> Add keys
-            </Button>
-          </div>
+      <div className="flex flex-col items-start gap-3 sm:flex-row">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-[22px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]">Keys & limits</h1>
+          <p className="mt-1 max-w-2xl text-[13px] text-[var(--hv-text-3)]">Every AI account and plan the team shares, with its limits. Keys are encrypted and never reach a browser. Add several accounts per provider: Hive spreads the work and moves on when one hits a limit.</p>
         </div>
-        <div className="relative mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          <Stat icon={KeyRound} label="Keys" value={String(keys.length)} sub={`${totals.healthy} healthy`} tone="var(--color-state-warning)" />
-          <Stat icon={Sparkles} label="Providers" value={String(new Set(keys.map((k) => k.provider)).size)} sub={`${totals.models} models`} tone="var(--color-accent-brand)" />
-          <Stat icon={Activity} label="Today" value={fmtTokens(totals.today)} sub="tokens charged" tone="var(--color-state-info)" />
-          <Stat icon={Database} label="Cache hits" value={fmtTokens(totals.cached)} sub="this period · ~90% off" tone="var(--color-state-success)" />
-          <Stat icon={Wallet} label="Spend" value={fmtCost(totals.cost) ?? '$0'} sub="estimated, this period" tone="var(--color-state-gold)" />
-          <Stat icon={Zap} label="Live calls" value={String(totals.live)} sub="right now" tone="var(--color-accent-brand)" live={totals.live > 0} />
+        <div className="flex flex-wrap gap-1.5">
+          <Button variant="ghost" size="sm" onClick={refreshAll} loading={refreshing}>
+            {!refreshing && <RefreshCw />} Refresh models
+          </Button>
+          <Button size="sm" onClick={() => setAdding('')}>
+            <Plus /> Add keys
+          </Button>
         </div>
       </div>
+      {/* The totals, in one quiet line. */}
+      <p className="hv-num mb-6 mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[var(--hv-text-3)]">
+        <span>
+          <b className="font-medium text-[var(--hv-text-1)]">{keys.length}</b> keys · {totals.healthy} healthy
+        </span>
+        <span>
+          <b className="font-medium text-[var(--hv-text-1)]">{new Set(keys.map((k) => k.provider)).size}</b> providers · {totals.models} models
+        </span>
+        <span>
+          <b className="font-medium text-[var(--hv-text-1)]">{fmtTokens(totals.today)}</b> tokens today
+        </span>
+        <span>
+          <b className="font-medium text-[var(--hv-text-1)]">{fmtTokens(totals.cached)}</b> from cache
+        </span>
+        <span>
+          <b className="font-medium text-[var(--hv-text-1)]">{fmtCost(totals.cost) ?? '$0'}</b> this period
+        </span>
+        {totals.live > 0 && <StatusPill size="sm" status="running" label={`${totals.live} live`} />}
+      </p>
 
       {keys.length > 4 && (
-        <label className="mb-5 flex h-10 max-w-sm items-center gap-2 rounded-xl bg-text-primary/[0.05] px-3 focus-within:bg-text-primary/[0.08]">
+        <label className="mb-4 flex h-9 max-w-sm items-center gap-2 rounded-[var(--hv-r-btn)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] px-3 focus-within:ring-2 focus-within:ring-[var(--hv-accent)]">
           <Search className="size-4 text-text-muted" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter keys, providers, models" className="flex-1 bg-transparent text-[13px] outline-none placeholder:text-text-muted" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Filter keys" placeholder="Filter keys, providers, models" className="flex-1 bg-transparent text-[13px] outline-none placeholder:text-text-muted" />
         </label>
       )}
 
-      {keys.length === 0 && <EmptyVault onAdd={(p) => setAdding(p)} providers={boot.catalogue.providers} />}
-
-      <div className="space-y-6">
-        {grouped.map(([vendor, list]) => (
-          <ProviderGroup key={vendor} vendor={vendor} keys={list} onAdd={() => setAdding(vendor)} />
+      {/* Jump to a part of the page — nothing to dig for. */}
+      <nav aria-label="Parts of this page" className="sticky top-0 z-10 -mx-1 mb-6 flex gap-1 overflow-x-auto border-b border-[var(--hv-border)] bg-[var(--hv-bg-app)] px-1">
+        {(
+          [
+            ['connected', `Your connections${keys.length ? ` · ${keys.length}` : ''}`],
+            ['plans', 'Plans'],
+            ['free', 'Free models'],
+            ['github', 'GitHub'],
+          ] as const
+        ).map(([id, label]) => (
+          <button key={id} type="button" onClick={() => document.getElementById(`keys-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="h-10 shrink-0 border-b-2 border-transparent px-3 text-[13px] text-[var(--hv-text-2)] hover:border-[var(--hv-border-strong)] hover:text-[var(--hv-text-1)]">
+            {label}
+          </button>
         ))}
+      </nav>
+
+      <div id="keys-connected" className="scroll-mt-14">
+        {keys.length === 0 && <EmptyVault onAdd={(p) => setAdding(p)} providers={boot.catalogue.providers} />}
+        <div className="space-y-6">
+          {grouped.map(([vendor, list]) => (
+            <ProviderGroup key={vendor} vendor={vendor} keys={list} onAdd={() => setAdding(vendor)} />
+          ))}
+        </div>
+      </div>
+
+      <div id="keys-plans" className="mt-10 scroll-mt-14">
+        <SubscriptionsPanel onConnect={(sub) => setAdding(sub)} />
+      </div>
+
+      <div id="keys-free" className="mb-10 scroll-mt-14">
+        <div id="free" />
+        <FreeSetup />
       </div>
 
       {/* GitHub */}
-      <section className="mt-12">
-        <div className="mb-3 flex items-center gap-3">
-          <span className="hive-tile size-9" style={{ ['--tile' as string]: 'var(--color-text-primary)' }}>
-            <FolderGit2 className="size-4" />
-          </span>
+      <section id="keys-github" aria-label="GitHub" className="mt-12 scroll-mt-14">
+        <div className="mb-2 flex items-center gap-3 px-2.5">
           <div className="min-w-0 flex-1">
-            <h2 className="text-[15px] font-semibold">GitHub</h2>
-            <p className="text-[12.5px] text-text-muted">Fine-grained tokens with Contents + Pull requests (read & write). Add Administration to let the launchpad create repos.</p>
+            <h2 className="text-[15px] font-semibold text-[var(--hv-text-1)]">GitHub</h2>
+            <p className="text-[12.5px] text-[var(--hv-text-3)]">Fine-grained tokens with Contents + Pull requests (read & write). Add Administration to let Hive create repos from ideas.</p>
           </div>
           <Button variant="secondary" size="sm" onClick={() => setAddingGh(true)}>
             <Plus /> Connect
           </Button>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {boot.github.map((g) => (
-            <div key={g.id} className="hive-card flex items-center gap-3 p-4">
-              <span className="grid size-10 place-items-center rounded-full bg-text-primary/[0.07] text-[14px] font-semibold">{(g.login || '?').slice(0, 1).toUpperCase()}</span>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1.5 text-[14px] font-medium">
-                  @{g.login} <ShieldCheck className="size-3.5 text-state-success" />
-                </div>
-                <div className="truncate text-[12px] text-text-muted">
-                  {g.label} · ····{g.last4} · added by @{g.createdBy}
-                </div>
-              </div>
-              <a href={`https://github.com/${g.login}`} target="_blank" rel="noreferrer" className="grid size-8 place-items-center rounded-lg text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary" aria-label="Open on GitHub">
-                <ExternalLink className="size-4" />
-              </a>
-              <button type="button" onClick={() => setConfirmGh(g.id)} className="grid size-8 place-items-center rounded-lg text-text-muted hover:bg-state-error/10 hover:text-state-error" aria-label="Remove">
-                <Trash2 className="size-4" />
-              </button>
-            </div>
-          ))}
-          {!boot.github.length && (
-            <button type="button" onClick={() => setAddingGh(true)} className="hive-card hive-card-hover flex items-center gap-3 border-dashed p-4 text-left text-[13px] text-text-muted">
-              <Plus className="size-4" /> Connect a GitHub account to work on repositories and open pull requests.
-            </button>
-          )}
-        </div>
+        {boot.github.length ? (
+          <RowList label="GitHub connections">
+            {boot.github.map((g) => (
+              <Row
+                key={g.id}
+                leading={<span className="grid size-6 place-items-center rounded-full bg-[var(--hv-surface-2)] text-[11px] font-semibold text-[var(--hv-text-1)]">{(g.login || '?').slice(0, 1).toUpperCase()}</span>}
+                title={
+                  <span className="inline-flex items-center gap-1.5">
+                    @{g.login} <ShieldCheck className="size-3.5 text-[var(--hv-success)]" aria-label="Verified" />
+                  </span>
+                }
+                meta={`${g.label} · ····${g.last4} · added by @${g.createdBy}`}
+                href={`https://github.com/${g.login}`}
+                actions={
+                  <Button size="sm" variant="ghost" onClick={() => setConfirmGh(g.id)} aria-label={`Remove @${g.login}`}>
+                    <Trash2 /> Remove
+                  </Button>
+                }
+              />
+            ))}
+          </RowList>
+        ) : (
+          <Empty icon={<FolderGit2 />} title="No GitHub account yet" action={<Button size="sm" onClick={() => setAddingGh(true)}><Plus /> Connect GitHub</Button>}>
+            Connect one to work on repositories and open pull requests.
+          </Empty>
+        )}
       </section>
 
-      <AddKeysDialog provider={adding} onClose={() => setAdding(null)} />
+      <SubscriptionDialog
+        sub={adding === 'claude_code' || adding === 'codex' || adding === 'vibe' ? adding : null}
+        onClose={() => {
+          setAdding(null)
+          if (params.has('add')) setParams((p) => (p.delete('add'), p), { replace: true })
+        }}
+      />
+      <AddKeysDialog
+        provider={adding === 'claude_code' || adding === 'codex' || adding === 'vibe' ? null : adding}
+        onClose={() => {
+          setAdding(null)
+          if (params.has('add')) setParams((p) => (p.delete('add'), p), { replace: true })
+        }}
+      />
       <AddGithubDialog open={addingGh} onClose={() => setAddingGh(false)} />
       <ConfirmDialog
         open={!!confirmGh}
@@ -189,19 +226,6 @@ export default function KeysPage() {
         confirmLabel="Remove"
         danger
       />
-    </div>
-  )
-}
-
-function Stat({ icon: Icon, label, value, sub, tone, live }: { icon: typeof KeyRound; label: string; value: string; sub: string; tone: string; live?: boolean }) {
-  return (
-    <div className="rounded-2xl border hive-line bg-bg-app/40 p-3.5 backdrop-blur-sm">
-      <div className="flex items-center gap-2 text-[11.5px] font-medium text-text-muted">
-        <Icon className="size-3.5" style={{ color: tone }} /> {label}
-        {live && <span className="hive-dot-run ml-auto size-1.5 rounded-full" style={{ background: tone }} />}
-      </div>
-      <div className="mt-1.5 text-[22px] font-semibold tabular-nums tracking-[-0.02em]">{value}</div>
-      <div className="truncate text-[11.5px] text-text-muted">{sub}</div>
     </div>
   )
 }
@@ -234,13 +258,13 @@ function ProviderGroup({ vendor, keys, onAdd }: { vendor: string; keys: HiveKey[
   const limit = keys.every((k) => k.tokenLimit != null) ? keys.reduce((s, k) => s + (k.tokenLimit ?? 0), 0) : null
   const live = keys.reduce((s, k) => s + k.active, 0)
   return (
-    <section className="hive-card overflow-hidden">
+    <section aria-label={vendorName(vendor)} className="overflow-hidden rounded-[var(--hv-r-card)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)]">
       <header className="flex flex-wrap items-center gap-3 px-5 pb-3 pt-4">
         <ProviderGlyph provider={vendor} size="lg" pulse={live > 0} />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h2 className="text-[15.5px] font-semibold">{vendorName(vendor)}</h2>
-            <span className="hive-chip h-5 px-2 text-[11px]">{keys.length} account{keys.length === 1 ? '' : 's'}</span>
+            <span className="hv-num text-[12px] text-[var(--hv-text-3)]">{keys.length} account{keys.length === 1 ? '' : 's'}</span>
             {info && (
               <span className="hidden items-center gap-1 text-[11px] text-text-muted sm:flex">
                 {[info.caps.tools && 'agents', info.caps.vision && 'vision', info.caps.pdf && 'PDFs', info.caps.images && 'images'].filter(Boolean).join(' · ')}
@@ -264,10 +288,15 @@ function ProviderGroup({ vendor, keys, onAdd }: { vendor: string; keys: HiveKey[
       <div className="mx-5 mb-3 flex h-1.5 gap-0.5 overflow-hidden rounded-full bg-text-primary/[0.06]">
         {keys.map((k) => {
           const share = keyShare(k)
-          return <div key={k.id} className="h-full transition-[flex-grow] duration-700" style={{ flexGrow: Math.max(1, k.tokenLimit ?? 1), background: share == null ? `color-mix(in oklab, ${color} 45%, transparent)` : shareTone(share), opacity: k.disabled ? 0.3 : 1 }} title={`${k.label}`} />
+          // One equal segment per account: filled by its remaining budget (accounts without a budget show as open).
+          return (
+            <div key={k.id} className="relative h-full flex-1 overflow-hidden bg-text-primary/[0.05]" style={{ opacity: k.disabled ? 0.3 : 1 }} title={`${k.label}: ${share == null ? 'no budget limit' : `${Math.round(share * 100)}% left`}`}>
+              <div className="absolute inset-y-0 left-0 transition-[width] duration-700" style={{ width: share == null ? '100%' : `${Math.round(share * 100)}%`, background: share == null ? `color-mix(in oklab, ${color} 35%, transparent)` : shareTone(share) }} />
+            </div>
+          )
         })}
       </div>
-      <div className="divide-y divide-[var(--hive-line)] border-t hive-line">
+      <div className="divide-y divide-[var(--hv-border-subtle)] border-t border-[var(--hv-border-subtle)]">
         {keys.map((k) => (
           <KeyRow key={k.id} k={k} />
         ))}
@@ -314,10 +343,7 @@ function KeyRow({ k }: { k: HiveKey }) {
   const [confirm, setConfirm] = useState(false)
   const [usage, setUsage] = useState<{ day: string; tokens: number; cached: number }[]>([])
   const canManage = !!boot && (boot.me.admin || boot.me.username === k.owner)
-  const rl = k.rateLimit
   const color = vendorStyle(k.provider).color
-  const rlShare = rl?.tokensLimit ? (rl.tokensRemaining ?? 0) / rl.tokensLimit : rl?.requestsLimit ? (rl.requestsRemaining ?? 0) / rl.requestsLimit : null
-  const fresh = rl && k.rateLimitAt && Date.now() - k.rateLimitAt < 5 * 60_000
 
   useEffect(() => {
     let live = true
@@ -405,32 +431,12 @@ function KeyRow({ k }: { k: HiveKey }) {
           </div>
           {k.tokenLimit != null && k.periodEnds && <div className="mt-1 text-[10.5px] text-text-muted">Resets in {countdown(k.periodEnds)}</div>}
         </div>
-        <div>
-          <div className="mb-1 flex justify-between gap-2 text-[11.5px] tabular-nums text-text-muted">
-            <span className="inline-flex items-center gap-1">
-              <Clock className="size-3" /> Provider rate limit
-            </span>
-            <span>
-              {rl?.tokensLimit != null ? `${fmtTokens(rl.tokensRemaining)} / ${fmtTokens(rl.tokensLimit)} tok` : rl?.requestsLimit != null ? `${fmtTokens(rl.requestsRemaining)} / ${fmtTokens(rl.requestsLimit)} req` : 'reported after the first call'}
-              {rl?.resetAt && fresh ? ` · resets ${countdown(rl.resetAt)}` : ''}
-            </span>
-          </div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-text-primary/[0.07]">
-            {rlShare != null && <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${Math.round(rlShare * 100)}%`, background: shareTone(rlShare), opacity: fresh ? 1 : 0.45 }} />}
-          </div>
-          {rl && k.rateLimitAt && <div className="mt-1 text-[10.5px] text-text-muted">Last reported {timeAgo(k.rateLimitAt)} ago</div>}
-        </div>
+        <LimitBar k={k} />
       </div>
 
       <div className="hidden h-14 lg:block" aria-hidden>
         {usage.length > 1 ? (
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={usage} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
-              <ChartTip cursor={false} contentStyle={{ background: 'var(--color-bg-surface)', border: '1px solid var(--hive-line)', borderRadius: 10, fontSize: 11 }} formatter={(v, n) => [fmtTokens(Number(v)), n === 'cached' ? 'cached' : 'charged']} />
-              <Area type="monotone" dataKey="cached" stroke="var(--color-state-success)" strokeWidth={1} fill="var(--color-state-success)" fillOpacity={0.08} isAnimationActive={false} />
-              <Area type="monotone" dataKey="tokens" stroke={color} strokeWidth={1.6} fill={color} fillOpacity={0.14} isAnimationActive={false} />
-            </AreaChart>
-          </ResponsiveContainer>
+          <Sparkline label={`${k.label}: tokens per day`} points={usage.map((u) => u.tokens)} color={color} second={usage.map((u) => u.cached)} secondColor="var(--color-state-success)" />
         ) : (
           <div className="grid h-full place-items-center text-[11px] text-text-muted">no usage yet</div>
         )}

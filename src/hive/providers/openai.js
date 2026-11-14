@@ -43,6 +43,23 @@ function toOpenAiMessages(system, messages, opts = {}) {
   return out;
 }
 
+/** A delta's content as { text, think }, whether it is a string or a list of typed parts. */
+function splitContent(c) {
+  if (c == null || c === "") return { text: "", think: "" };
+  if (typeof c === "string") return { text: c, think: "" };
+  const list = Array.isArray(c) ? c : [c];
+  let text = "";
+  let think = "";
+  const flat = (v) => (typeof v === "string" ? v : Array.isArray(v) ? v.map(flat).join("") : v && typeof v === "object" ? flat(v.text ?? v.thinking ?? v.content ?? "") : "");
+  for (const p of list) {
+    if (typeof p === "string") text += p;
+    else if (!p || typeof p !== "object") continue;
+    else if (p.type === "thinking" || p.type === "reasoning") think += flat(p.thinking ?? p.reasoning ?? p.text);
+    else if (p.type === "text" || p.text != null) text += flat(p.text);
+  }
+  return { text, think };
+}
+
 const REPLAY_REASONING = new Set(["deepseek", "moonshot"]);
 // Vendors known to accept stream_options (usage in the final chunk).
 const STREAM_USAGE = new Set(["openai", "openrouter", "groq", "together", "fireworks", "cerebras", "deepseek", "xai", "qwen", "moonshot", "zhipu"]);
@@ -98,14 +115,21 @@ async function turnOnce({ secret, baseUrl, model, system, messages, tools, effor
       } catch {
         continue;
       }
-      if (j.error) throw new ProviderError(j.error.message || "Stream error", { kind: "server", retryable: true });
+      if (j.error) throw new ProviderError(errText(j.error.message ?? j.error) || "Stream error", { kind: "server", retryable: true });
       if (j.usage) usage = j.usage;
       const ch = j.choices?.[0];
       if (!ch) continue;
       const d = ch.delta || {};
-      if (d.content) {
-        text += d.content;
-        onText?.(d.content);
+      // Plain text, or (Mistral Magistral and other reasoning models) a list of
+      // parts: {type:"text", text} and {type:"thinking", thinking:[{text}]}.
+      const parts = splitContent(d.content);
+      if (parts.text) {
+        text += parts.text;
+        onText?.(parts.text);
+      }
+      if (parts.think) {
+        reasoning += parts.think;
+        onThinking?.(parts.think);
       }
       const r = d.reasoning_content || d.reasoning;
       if (typeof r === "string" && r) {
@@ -153,16 +177,35 @@ async function turnOnce({ secret, baseUrl, model, system, messages, tools, effor
   };
 }
 
-async function listModels({ secret, baseUrl, official }) {
+async function listModels({ secret, baseUrl, official, modelsUrl }) {
   const base = (baseUrl || DEFAULT_BASE).replace(/\/+$/, "");
-  const res = await fetch(`${base}/models`, { headers: { Authorization: `Bearer ${secret}` } }).catch((e) => {
+  // Some hosts list models elsewhere (GitHub Models: a public catalogue).
+  const res = await fetch(modelsUrl || `${base}/models`, { headers: { Authorization: `Bearer ${secret}`, Accept: "application/json" }, signal: AbortSignal.timeout(30000) }).catch((e) => {
     throw new ProviderError(e.message, { kind: "network" });
   });
   if (!res.ok) await failFromResponse(res, "Models");
   const j = await res.json();
-  let ids = (j.data || j.models || []).map((m) => m.id || m.name).filter(Boolean);
+  const list = Array.isArray(j) ? j : j.data || j.models || [];
+  let ids = list
+    // Hosts that tag model types: keep chat/text models only.
+    .filter((m) => !/embed|image|audio|rerank|speech/i.test(String(m?.type || m?.task || "")))
+    .map((m) => (typeof m === "string" ? m : m.id || m.name))
+    .filter(Boolean);
   if (official) ids = ids.filter((id) => /^(gpt|o\d|chatgpt|codex)/.test(id) && !/(audio|realtime|tts|transcribe|image|embedding|search|moderation|instruct|dall)/.test(id));
   return ids.sort();
+}
+
+/** HTTP status of a 1-token chat call: 404 means there is no chat endpoint at this address. */
+async function probeChat({ secret, baseUrl, model }) {
+  const base = (baseUrl || DEFAULT_BASE).replace(/\/+$/, "");
+  const res = await fetch(`${base}/chat/completions`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${secret}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ model, messages: [{ role: "user", content: "hi" }], max_tokens: 1 }),
+    signal: AbortSignal.timeout(30000),
+  });
+  await res.body?.cancel?.().catch(() => {});
+  return res.status;
 }
 
 /** Text-to-image through an OpenAI-style /images/generations endpoint. */
@@ -191,4 +234,6 @@ async function generateImage({ secret, baseUrl, model, prompt, size }) {
   return { images: out, text: j.data?.[0]?.revised_prompt || "" };
 }
 
-module.exports = { id: "openai", turn, listModels, generateImage, SUGGESTED, DEFAULT_BASE };
+const errText = (v) => (typeof v === "string" ? v : v == null ? "" : v.detail && Array.isArray(v.detail) ? v.detail.map((d) => d.msg || JSON.stringify(d)).join("; ") : v.message ? errText(v.message) : JSON.stringify(v).slice(0, 400));
+
+module.exports = { splitContent, id: "openai", turn, listModels, probeChat, generateImage, SUGGESTED, DEFAULT_BASE };

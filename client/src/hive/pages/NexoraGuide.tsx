@@ -121,7 +121,6 @@ export default function NexoraGuide() {
     <div className="mx-auto w-full max-w-[980px] px-4 pb-24 pt-8 sm:px-8">
       {/* Hero */}
       <div className="hive-card relative overflow-hidden p-7">
-        <div className="hive-comb pointer-events-none absolute inset-0" />
         <div className="relative flex flex-wrap items-center gap-5">
           <div className="flex items-center gap-2">
             <LogoMark size={44} />
@@ -158,7 +157,7 @@ export default function NexoraGuide() {
           return (
             <motion.li key={s.title} layout className={cn('hive-card overflow-hidden transition-shadow', active && 'ring-2 ring-accent-brand/40')}>
               <button type="button" onClick={() => setOpen(active ? -1 : i)} className="flex w-full items-center gap-3 px-5 py-4 text-left">
-                <span className={cn('grid size-8 shrink-0 place-items-center rounded-full text-[12px] font-semibold', s.done ? 'bg-state-success text-white' : active ? 'bg-accent-brand text-on-accent-brand' : 'bg-text-primary/[0.08] text-text-muted')}>{s.done ? <Check className="size-4" /> : i + 1}</span>
+                <span className={cn('grid size-8 shrink-0 place-items-center rounded-full text-[12px] font-semibold', s.done ? 'bg-state-success text-on-accent-brand' : active ? 'bg-accent-brand text-on-accent-brand' : 'bg-text-primary/[0.08] text-text-muted')}>{s.done ? <Check className="size-4" /> : i + 1}</span>
                 <span className="min-w-0 flex-1">
                   <span className={cn('block text-[14.5px] font-medium', s.done && 'text-text-muted')}>{s.title}</span>
                 </span>
