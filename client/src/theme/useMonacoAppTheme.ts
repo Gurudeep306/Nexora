@@ -44,6 +44,11 @@ export function buildMonacoTheme(t: ModeTokens, mode: ThemeMode): editor.IStanda
       'editor.inactiveSelectionBackground': `${hex(t.accent)}22`,
       'editor.lineHighlightBackground': `${hex(t.bg[3])}66`,
       'editor.lineHighlightBorder': '#00000000',
+      // Diffs: soft tints so syntax colours stay readable on changed lines (WCAG 1.4.3).
+      'diffEditor.insertedLineBackground': `${hex(t.success)}14`,
+      'diffEditor.insertedTextBackground': `${hex(t.success)}26`,
+      'diffEditor.removedLineBackground': `${hex(t.danger)}12`,
+      'diffEditor.removedTextBackground': `${hex(t.danger)}22`,
       'editorIndentGuide.background1': hex(t.border),
       'editorIndentGuide.activeBackground1': hex(t.fg[2]),
       'editorBracketMatch.border': `${hex(t.accent)}99`,

@@ -1,5 +1,7 @@
 import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { Group, Panel, Separator, useDefaultLayout } from 'react-resizable-panels'
+import { OverflowTabs } from './kit'
 import {
   AlertCircle,
   ArrowRightLeft,
@@ -77,7 +79,6 @@ export function Session() {
   const [focus, setFocus] = useState<string | null>(null)
   const [dock, setDock] = useState<DockTab>('changes')
   const [dockOpen, setDockOpen] = useState(true)
-  const [dockW, setDockW] = useState(() => Number(localStorage.getItem('hive:dockW') || 480) || 480)
   const [changeCount, setChangeCount] = useState(0)
   const [cps, setCps] = useState<Checkpoint[]>([])
   const [showReads, setShowReads] = useState(true)
@@ -97,6 +98,8 @@ export function Session() {
   // Phones: the roster and the panel open as full-screen sheets.
   const [sheet, setSheet] = useState<null | 'agents' | 'dock'>(null)
   const small = () => typeof window !== 'undefined' && window.innerWidth < 768
+  // Wide screens show the agents column; narrower ones use filter chips and a sheet.
+  const wide = useMedia('(min-width: 1024px)')
   const taskId = detail?.task.id
   const { on } = useHive()
 
@@ -152,26 +155,14 @@ export function Session() {
     { id: 'board', label: 'Board', icon: NotebookPen },
   ]
 
-  const onDrag = (e: React.PointerEvent) => {
-    const start = e.clientX
-    const w0 = dockW
-    const move = (ev: PointerEvent) => setDockW(Math.max(360, Math.min(window.innerWidth * 0.65, w0 - (ev.clientX - start))))
-    const up = () => {
-      window.removeEventListener('pointermove', move)
-      window.removeEventListener('pointerup', up)
-      setDockW((w) => (localStorage.setItem('hive:dockW', String(Math.round(w))), w))
-    }
-    window.addEventListener('pointermove', move)
-    window.addEventListener('pointerup', up)
-  }
 
   return (
     <div className="flex h-full min-h-0 flex-col">
       {/* Header */}
-      <header className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b hive-line px-4 py-3 sm:px-5">
+      <header className="flex items-center gap-x-3 border-b border-[var(--hv-border)] px-4 py-2.5 sm:px-5">
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-[17px] font-semibold tracking-[-0.015em]">{task.title}</h1>
-          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-text-muted">
+          <h1 className="truncate text-[17px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]">{task.title}</h1>
+          <div className="mt-0.5 flex min-w-0 items-center gap-x-3 overflow-hidden whitespace-nowrap text-[12px] text-[var(--hv-text-3)] [&>*]:shrink-0 [&>*:nth-child(3)]:min-w-0 [&>*:nth-child(3)]:shrink">
             <StatusPill status={task.status} />
             <span className="inline-flex items-center gap-1">
               <Users className="size-3.5" /> {MODE_INFO[task.mode].label} · {agents.length} agent{agents.length === 1 ? '' : 's'}
@@ -191,7 +182,7 @@ export function Session() {
                 </span>
               </span>
             )}
-            <span className="tabular-nums">
+            <span className="hidden tabular-nums xl:inline">
               {fmtTokens(tokens)} tokens{cost ? ` · ${cost}` : ''}
             </span>
             {task.pr_url && (
@@ -201,12 +192,12 @@ export function Session() {
             )}
           </div>
         </div>
-        <div className="flex items-center -space-x-1.5">
+        <div className="hidden items-center -space-x-1.5 lg:flex">
           {watchers.map((w) => (
             <UserDot key={w.username} username={w.username} size={6} ring />
           ))}
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-1.5">
           <Tooltip label="Save the current working copy as a checkpoint">
             <Button
               size="sm"
@@ -223,7 +214,7 @@ export function Session() {
           </Tooltip>
           {running && (
             <Button size="sm" variant="secondary" onClick={() => hiveApi.stopTask(task.id).catch((e) => toast.error(errMsg(e)))}>
-              <Square className="fill-current" /> Stop all
+              <Square className="fill-current" /> <span className="hidden sm:inline">Stop all</span>
             </Button>
           )}
           <Button size="sm" onClick={() => (setDock('ship'), setDockOpen(true), small() && setSheet('dock'))}>
@@ -237,9 +228,11 @@ export function Session() {
         </div>
       </header>
 
-      <div className="flex min-h-0 flex-1">
-        {/* Roster */}
-        <aside className="hive-scroll hidden w-[264px] shrink-0 overflow-y-auto border-r hive-line p-3 lg:block">
+      <SessionPanes
+        wide={wide}
+        dockOpen={dockOpen}
+        roster={
+        <aside className="hive-scroll h-full overflow-y-auto border-r border-[var(--hv-border)] p-3" aria-label="Agents">
           <div className="mb-2 flex items-center justify-between px-1">
             <span className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-muted">Agents</span>
             {focus && (
@@ -255,9 +248,9 @@ export function Session() {
           </div>
           <AddAgent taskId={task.id} />
         </aside>
-
-        {/* Stream */}
-        <section className="flex min-w-0 flex-1 flex-col">
+        }
+        stream={
+        <section className="flex h-full min-w-0 flex-col" aria-label="Session stream">
           <div className="flex items-center gap-2 border-b hive-line px-4 py-1.5">
             <div className="relative flex shrink-0 rounded-full bg-text-primary/[0.06] p-0.5" role="tablist" aria-label="Session view">
               {(['floor', 'map', 'stream'] as const).map((v) => (
@@ -267,10 +260,10 @@ export function Session() {
                 </button>
               ))}
             </div>
-            <button type="button" onClick={() => setSheet('agents')} className="inline-flex h-7 shrink-0 items-center gap-1 rounded-full bg-text-primary/[0.07] px-2.5 text-[12px] lg:hidden">
+            <button type="button" onClick={() => setSheet('agents')} className={cn('inline-flex h-7 shrink-0 items-center gap-1 rounded-full bg-text-primary/[0.07] px-2.5 text-[12px]', wide && 'hidden')}>
               <Users className="size-3.5" /> {agents.length}
             </button>
-            <div className="hive-scroll flex min-w-0 flex-1 gap-1 overflow-x-auto">
+            <div className={cn('hive-scroll flex min-w-0 flex-1 gap-1 overflow-x-auto', wide && 'invisible')} aria-hidden={wide || undefined}>
               <FilterChip active={!focus} onClick={() => setFocus(null)}>
                 Everyone
               </FilterChip>
@@ -303,22 +296,12 @@ export function Session() {
           <Timeline agents={agents} events={events} cps={cps} onCheckpoint={() => (setDock('checkpoints'), setDockOpen(true))} start={task.created_at} />
           <CommandBar taskId={task.id} agents={agents} focus={focus} hasMachine={!!task.machine_id} onOpen={(t) => (setDock(t), setDockOpen(true))} />
         </section>
-
-        {/* Dock */}
-        {dockOpen && (
-          <>
-            <div className="hive-resizer hidden md:block" onPointerDown={onDrag} role="separator" aria-label="Resize panel" />
-            <aside className="hidden min-w-0 flex-col md:flex" style={{ width: dockW }}>
-              <nav className="hive-scroll flex items-center gap-0.5 overflow-x-auto border-b hive-line px-2 py-1.5">
-                {tabs.map((t) => (
-                  <button key={t.id} type="button" onClick={() => setDock(t.id)} className={cn('relative inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-[12.5px] transition-colors', dock === t.id ? 'text-text-primary' : 'text-text-muted hover:text-text-secondary')}>
-                    {dock === t.id && <motion.span layoutId="hive-dock-tab" className="absolute inset-0 rounded-lg bg-text-primary/[0.07]" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
-                    <t.icon className="relative size-3.5" />
-                    <span className="relative">{t.label}</span>
-                    {t.count != null && <span className="relative rounded-full bg-accent-brand/15 px-1.5 text-[10.5px] tabular-nums text-accent-brand">{t.count}</span>}
-                  </button>
-                ))}
-              </nav>
+        }
+        dock={
+          <aside className="flex h-full min-w-0 flex-col" aria-label="Session panel">
+            <div className="flex items-center border-b border-[var(--hv-border)] px-2 py-1.5">
+              <OverflowTabs label="Session panel" value={dock} onChange={setDock} tabs={tabs.map((t) => ({ id: t.id, label: t.label, count: t.count, icon: <t.icon /> }))} className="flex-1" />
+            </div>
               <div className="hive-scroll min-h-0 flex-1 overflow-y-auto">
                 {dock === 'changes' && <ChangesView taskId={task.id} agents={agents} />}
                 {dock === 'files' && <FilesView taskId={task.id} />}
@@ -331,10 +314,9 @@ export function Session() {
                   </div>
                 )}
               </div>
-            </aside>
-          </>
-        )}
-      </div>
+          </aside>
+        }
+      />
 
       <AnimatePresence>
         {sheet && (
@@ -752,7 +734,8 @@ function Turn({ agent, events, showReads }: { agent: AgentRow; events: HiveEvent
         <span className="text-[11px] text-text-muted">{timeAgo(events[0]?.created_at)}</span>
       </div>
       <div className="space-y-1.5">
-        {events.map((e) => {
+        {groupReads(events).map((e) => {
+          if (Array.isArray(e)) return showReads ? <ReadGroup key={e[0].id} calls={e} results={results} /> : null
           if (e.kind === 'text' && e.data.text) return <AiMarkdown key={e.id} text={String(e.data.text)} />
           if (e.kind === 'tool_call') {
             const name = String(e.data.name)
@@ -786,6 +769,55 @@ function Turn({ agent, events, showReads }: { agent: AgentRow; events: HiveEvent
           return null
         })}
       </div>
+    </div>
+  )
+}
+
+/**
+ * Back-to-back reads and searches (2 or more, ignoring their results) become one
+ * group, so the stream shows the work, not every file that was opened.
+ */
+function groupReads(events: HiveEvent[]): (HiveEvent | HiveEvent[])[] {
+  const out: (HiveEvent | HiveEvent[])[] = []
+  let run: HiveEvent[] = []
+  const flush = () => {
+    if (run.length >= 2) out.push(run)
+    else out.push(...run)
+    run = []
+  }
+  for (const e of events) {
+    if (e.kind === 'tool_result') continue
+    if (e.kind === 'tool_call' && READS.has(String(e.data.name))) run.push(e)
+    else {
+      flush()
+      out.push(e)
+    }
+  }
+  flush()
+  return out
+}
+
+function ReadGroup({ calls, results }: { calls: HiveEvent[]; results: Map<string, HiveEvent> }) {
+  const [open, setOpen] = useState(false)
+  const files = calls.filter((c) => c.data.name === 'read_file').length
+  const searches = calls.filter((c) => c.data.name === 'search').length
+  const others = calls.length - files - searches
+  const live = calls.some((c) => !results.has(String(c.data.id)))
+  const label = [files && `Read ${files} file${files === 1 ? '' : 's'}`, searches && `searched ${searches} time${searches === 1 ? '' : 's'}`, others && `${others} other look${others === 1 ? '' : 's'}`].filter(Boolean).join(', ')
+  return (
+    <div className="rounded-[var(--hv-r-btn)]">
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="flex w-full items-center gap-2 rounded-[var(--hv-r-btn)] px-2 py-1 text-left text-[12.5px] text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)]">
+        <Search className="size-3.5 shrink-0 text-[var(--hv-text-3)]" />
+        <span className={cn('min-w-0 flex-1 truncate', live && 'hive-shine')}>{label.charAt(0).toUpperCase() + label.slice(1)}</span>
+        <ChevronDown className={cn('size-3.5 shrink-0 text-[var(--hv-text-3)] transition-transform', open && 'rotate-180')} />
+      </button>
+      {open && (
+        <div className="mt-1 space-y-1.5 border-l border-[var(--hv-border)] pl-3">
+          {calls.map((c) => (
+            <ToolCard key={c.id} call={c} result={results.get(String(c.data.id))} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -875,19 +907,23 @@ function ApprovalLine({ ev }: { ev: HiveEvent }) {
   const { approvals, answerApproval, detail } = useHive()
   const pending = approvals.find((a) => a.taskId === detail?.task.id && a.command === ev.data.command)
   return (
-    <div className="rounded-xl border border-state-warning/35 bg-state-warning/[0.06] p-3">
-      <div className="flex items-center gap-1.5 text-[12.5px] font-medium text-state-warning">
-        <ShieldAlert className="size-3.5" /> Wants to {ev.data.kind === 'server' ? 'start a server' : 'run a command'} on {String(ev.data.machine)}
+    <div className={cn('rounded-[var(--hv-r-card)] border p-3', pending ? 'border-[color-mix(in_oklab,var(--hv-warning)_40%,transparent)] bg-[color-mix(in_oklab,var(--hv-warning)_6%,transparent)]' : 'border-[var(--hv-border)]')}>
+      <div className="flex flex-wrap items-center gap-2 text-[12.5px] text-[var(--hv-text-2)]">
+        <ShieldAlert className="size-3.5 text-[var(--hv-warning)]" />
+        <span className="min-w-0 flex-1">
+          Wants to {ev.data.kind === 'server' ? 'start a server' : 'run a command'} on <b className="font-medium text-[var(--hv-text-1)]">{String(ev.data.machine)}</b>
+        </span>
+        {pending ? <StatusPill status="needs" /> : null}
       </div>
-      <pre className="hive-term mt-2 overflow-auto rounded-lg px-3 py-2">$ {String(ev.data.command)}</pre>
+      <pre className="hive-term mt-2 overflow-auto rounded-[var(--hv-r-btn)] px-3 py-2">$ {String(ev.data.command)}</pre>
       {pending && (
-        <div className="mt-2 flex gap-2">
-          <button type="button" onClick={() => answerApproval(pending.id, true)} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-state-success px-3 text-[12.5px] font-medium text-on-accent-brand">
-            <Check className="size-3.5" /> Run it
-          </button>
-          <button type="button" onClick={() => answerApproval(pending.id, false)} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-text-primary/[0.07] px-3 text-[12.5px] font-medium hover:text-state-error">
-            <X className="size-3.5" /> Deny
-          </button>
+        <div className="mt-2 flex justify-end gap-1.5">
+          <Button size="sm" variant="ghost" onClick={() => answerApproval(pending.id, false)}>
+            <X /> Deny
+          </Button>
+          <Button size="sm" onClick={() => answerApproval(pending.id, true)}>
+            <Check /> Run it
+          </Button>
         </div>
       )}
     </div>
@@ -991,9 +1027,11 @@ function Timeline({ agents, events, cps, start, onCheckpoint }: { agents: AgentR
   return (
     <div className="border-t hive-line bg-text-primary/[0.015] px-4 py-2">
       <div className="relative h-3">
-        {cps.map((c) => (
+        {cps.filter((c, i) => i === cps.length - 1 || Math.abs(parseFloat(x(cps[i + 1].created_at)) - parseFloat(x(c.created_at))) > 3).map((c) => (
           <Tooltip key={c.id} label={`${c.label} · ${c.files} files · ${timeAgo(c.created_at)}`}>
-            <button type="button" onClick={onCheckpoint} className="absolute top-0 size-2.5 -translate-x-1/2 rotate-45 rounded-[2px] bg-accent-brand hover:scale-125" style={{ left: x(c.created_at) }} aria-label={c.label} />
+            <button type="button" onClick={onCheckpoint} className="group absolute -top-2 grid size-6 -translate-x-1/2 place-items-center" style={{ left: x(c.created_at) }} aria-label={c.label}>
+              <span className="size-2.5 rotate-45 rounded-[2px] bg-accent-brand transition-transform group-hover:scale-125" />
+            </button>
           </Tooltip>
         ))}
       </div>
@@ -1004,7 +1042,7 @@ function Timeline({ agents, events, cps, start, onCheckpoint }: { agents: AgentR
           const f = a.finished_at ?? (a.status === 'running' ? Date.now() : s)
           return (
             <div key={a.id} className="flex items-center gap-2">
-              <span className="w-16 shrink-0 truncate text-[10.5px] font-medium" style={{ color: agentHue(a) }}>
+              <span className="w-16 shrink-0 truncate text-[10.5px] font-medium" style={{ color: `color-mix(in oklab, ${agentHue(a)} 60%, var(--color-text-primary))` }}>
                 {a.name}
               </span>
               <div className="relative h-2.5 flex-1 rounded-full bg-text-primary/[0.04]">
@@ -1454,3 +1492,57 @@ function TerminalPanel({ machineId, folder }: { machineId: string; folder: strin
 }
 
 export { agentHue, MiniDiff, Search }
+
+/** True while the media query matches (re-renders on change). */
+function useMedia(q: string): boolean {
+  const [on, setOn] = useState(() => typeof window !== 'undefined' && window.matchMedia(q).matches)
+  useEffect(() => {
+    const m = window.matchMedia(q)
+    const f = () => setOn(m.matches)
+    m.addEventListener('change', f)
+    return () => m.removeEventListener('change', f)
+  }, [q])
+  return on
+}
+
+/**
+ * The session's three panes — agents | stream | panel — resizable, with the
+ * sizes remembered per layout. Below md the panel opens as a sheet instead.
+ */
+function SessionPanes({ wide, dockOpen, roster, stream, dock }: { wide: boolean; dockOpen: boolean; roster: ReactNode; stream: ReactNode; dock: ReactNode }) {
+  const md = useMedia('(min-width: 768px)')
+  const showDock = dockOpen && md
+  const ids = [...(wide ? ['roster'] : []), 'stream', ...(showDock ? ['dock'] : [])]
+  const { defaultLayout, onLayoutChanged } = useDefaultLayout({ id: `hive-session-${ids.join('-')}`, panelIds: ids, storage: localStorage })
+  return (
+    <Group key={ids.join('-')} id={`hive-session-${ids.join('-')}`} orientation="horizontal" defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged} resizeTargetMinimumSize={{ fine: 10, coarse: 36 }} className="min-h-0 flex-1">
+      {wide && (
+        <>
+          <Panel id="roster" defaultSize={264} minSize={200} maxSize={380} className="min-w-0">
+            {roster}
+          </Panel>
+          <PaneHandle />
+        </>
+      )}
+      <Panel id="stream" minSize={360} className="min-w-0">
+        {stream}
+      </Panel>
+      {showDock && (
+        <>
+          <PaneHandle />
+          <Panel id="dock" defaultSize={480} minSize={360} maxSize="65%" className="min-w-0">
+            {dock}
+          </Panel>
+        </>
+      )}
+    </Group>
+  )
+}
+
+function PaneHandle() {
+  return (
+    <Separator className="group relative flex w-px shrink-0 items-stretch bg-[var(--hv-border)] outline-none data-[separator=active]:bg-[var(--hv-accent)] hover:bg-[var(--hv-accent)] focus-visible:bg-[var(--hv-accent)]">
+      <span className="absolute inset-y-0 -left-1 -right-1" aria-hidden />
+    </Separator>
+  )
+}
