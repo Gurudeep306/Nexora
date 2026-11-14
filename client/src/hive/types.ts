@@ -46,6 +46,8 @@ export interface HiveKey {
   subscription?: boolean
   verified?: ModelVerification | null
   untestedModels?: string[]
+  /** Measured reply time per model (ms), from real calls and tests. */
+  speed?: Record<string, number>
   /** A free connection's typical allowance (shown when the provider sends no live numbers). */
   freeLimit?: FreeLimit | null
 }

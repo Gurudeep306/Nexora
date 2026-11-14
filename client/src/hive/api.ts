@@ -103,7 +103,14 @@ export const hiveApi = {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...body, stream: true }),
+      // The project in focus (top bar): chats without a project still get its context.
+      body: JSON.stringify({ ...body, stream: true, focusProjectId: (() => {
+        try {
+          return localStorage.getItem('hive:lastProject')
+        } catch {
+          return null
+        }
+      })() }),
       signal,
     })
     if (!res.ok || !res.body) {
