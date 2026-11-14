@@ -200,61 +200,38 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
 }
 .hive-av--done .hive-av-ring, .hive-av--stopped .hive-av-ring, .hive-av--queued .hive-av-ring { box-shadow: 0 0 0 1px var(--hive-line-strong); }
 .hive-av--failed .hive-av-ring { box-shadow: 0 0 0 1.5px color-mix(in oklab, var(--color-state-error) 60%, transparent); }
-.hive-av-halo {
-  background: radial-gradient(closest-side, color-mix(in oklab, var(--av) 30%, transparent), transparent 80%);
-  animation: hive-av-breathe 2.4s ease-in-out infinite;
-  filter: blur(3px);
-}
-@keyframes hive-av-breathe { 0%, 100% { opacity: 0.45; transform: scale(0.94); } 50% { opacity: 1; transform: scale(1.1); } }
-.hive-av-orbit { animation: hive-spin 2.6s linear infinite; }
+/* Live state stays explicit but quiet: no halos, orbits or scan lines. */
+.hive-av-halo, .hive-av-orbit, .hive-av-scan::after { display: none; }
 @keyframes hive-spin { to { transform: rotate(360deg); } }
-.hive-av-scan::after {
-  content: "";
-  position: absolute;
-  left: 0; right: 0; height: 40%;
-  background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--av) 35%, transparent), transparent);
-  animation: hive-av-scan 1.6s ease-in-out infinite;
-}
-@keyframes hive-av-scan { from { top: -40%; } to { top: 100%; } }
 .hive-av-type { animation: hive-av-type 1s ease-in-out infinite; }
 @keyframes hive-av-type { 0%, 100% { transform: translateY(0); opacity: 0.5; } 40% { transform: translateY(-3px); opacity: 1; } }
 .hive-av-spin {
   background: conic-gradient(from 0deg, transparent 0 70%, var(--av) 90%, transparent);
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
-  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1px));
   animation: hive-spin 1.1s linear infinite;
 }
 .hive-av--failed { animation: hive-shake 420ms ease-in-out 1; }
 @keyframes hive-shake { 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
 
 /* ── Team floor ──────────────────────────────────────────────────────── */
-.hive-floor {
-  background:
-    radial-gradient(700px 260px at 50% 0%, color-mix(in oklab, var(--color-accent-brand) 7%, transparent), transparent 75%),
-    linear-gradient(color-mix(in oklab, var(--color-text-primary) 3.5%, transparent) 1px, transparent 1px) 0 0 / 22px 22px,
-    linear-gradient(90deg, color-mix(in oklab, var(--color-text-primary) 3.5%, transparent) 1px, transparent 1px) 0 0 / 22px 22px;
-}
+/* Flat stations: a card with a status border, no grid, glow or lift. */
+.hive-floor { background: var(--color-bg-app); }
 .hive-station {
   position: relative;
-  background: color-mix(in oklab, var(--color-bg-surface) 88%, var(--color-bg-app));
-  border: 1px solid var(--hive-line);
-  border-radius: 18px;
-  transition: border-color 200ms, box-shadow 300ms var(--hive-ease), transform 300ms var(--hive-ease);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border, var(--hive-line-strong));
+  border-radius: var(--radius-card, 12px);
+  box-shadow: var(--elev-1);
+  transition: border-color 120ms var(--hive-ease), box-shadow 120ms var(--hive-ease);
 }
-.hive-station[data-active="true"] {
-  border-color: color-mix(in oklab, var(--st) 45%, var(--hive-line));
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--st) 9%, transparent), 0 18px 40px -24px color-mix(in oklab, var(--st) 70%, transparent);
-}
-.hive-station[data-focus="true"] { transform: translateY(-2px); box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-accent-brand) 50%, transparent); }
-.hive-station-glow {
-  position: absolute; inset: -1px; border-radius: inherit; pointer-events: none;
-  background: linear-gradient(120deg, transparent 30%, color-mix(in oklab, var(--st) 18%, transparent) 50%, transparent 70%) 0 0 / 250% 100%;
-  animation: hive-sheen 2.8s linear infinite;
-}
+.hive-station[data-active="true"] { border-color: color-mix(in oklab, var(--st) 50%, var(--hive-line)); }
+.hive-station[data-focus="true"] { box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-accent-brand) 50%, transparent); }
+.hive-station-glow { display: none; }
 @keyframes hive-sheen { from { background-position: 150% 0; } to { background-position: -100% 0; } }
 .hive-wire { stroke-dasharray: 4 6; animation: hive-wire 1.2s linear infinite; }
 @keyframes hive-wire { to { stroke-dashoffset: -20; } }
-.hive-stage-chip[data-state="active"] { box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-accent-brand) 14%, transparent); }
+.hive-stage-chip[data-state="active"] { box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-accent-brand) 30%, transparent); }
 
 /* Chat: a running step's label breathes (no gradient text). */
 .hive-thinking-text { animation: hive-pulse 1.6s ease-in-out infinite; }
