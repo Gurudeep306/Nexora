@@ -4,7 +4,7 @@
    ──────────────────────────────────────────────────────────────────────── */
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip as RTooltip, XAxis, YAxis } from 'recharts'
+import { StackedBars } from '../kit'
 import { AlertTriangle, Bell, BellOff, CheckCheck, Coins, Gauge, Globe2, Info, Lock, Plus, ShieldAlert, ShieldCheck, Sparkles, Trash2, XCircle, Zap, Wallet } from 'lucide-react'
 import { AnimatedNumber, Button, ConfirmDialog, Input, Modal, Select, Tabs, Tooltip, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -278,54 +278,35 @@ function DailyChart({ spend, days }: { spend: Spend | null; days: number }) {
           </span>
         ))}
       </div>
-      <div className="relative h-60 sm:h-72">
+      <div className="relative min-h-[232px]">
         {!spend ? (
-          <div className="hive-shimmer h-full w-full rounded-xl" />
+          <div className="hive-shimmer h-[232px] w-full rounded-xl" />
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 6, right: 4, bottom: 0, left: -12 }} barCategoryGap={days > 30 ? 1 : '22%'}>
-              <CartesianGrid vertical={false} stroke="color-mix(in oklab, var(--color-text-primary) 7%, transparent)" />
-              <XAxis dataKey="label" tick={{ fontSize: 11, fill: 'var(--color-text-muted)' }} axisLine={false} tickLine={false} minTickGap={18} />
-              <YAxis tick={{ fontSize: 11, fill: 'var(--color-text-muted)' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => fmtTokens(v)} width={48} />
-              <RTooltip
-                cursor={{ fill: 'color-mix(in oklab, var(--color-text-primary) 5%, transparent)' }}
-                content={({ active, payload }) => {
-                  if (!active || !payload?.length) return null
-                  const d = payload[0].payload as (typeof data)[number]
-                  return (
-                    <div className="pop-surface min-w-[180px] px-3 py-2.5 text-[12px]">
-                      <div className="mb-1.5 font-medium text-text-primary">{new Date(`${d.day}T12:00:00Z`).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</div>
-                      {SERIES.map((s) => (
-                        <div key={s.key} className="flex items-center gap-2 text-text-secondary">
-                          <span className="size-2 rounded-sm" style={{ background: s.color }} />
-                          <span className="flex-1">{s.label}</span>
-                          <span className="tabular-nums text-text-primary">{fmtTokens(d[s.key])}</span>
-                        </div>
-                      ))}
-                      <div className="mt-1.5 flex justify-between border-t hive-line pt-1.5 text-text-muted">
-                        <span className="tabular-nums">{d.requests.toLocaleString()} requests</span>
-                        <span className="tabular-nums">{fmtDollars(d.dollars)}</span>
-                      </div>
-                    </div>
-                  )
-                }}
-              />
-              {SERIES.map((s, i) => (
-                <Bar
-                  key={s.key}
-                  dataKey={s.key}
-                  name={s.label}
-                  stackId="t"
-                  fill={s.color}
-                  stroke="var(--color-bg-surface)"
-                  strokeWidth={days > 30 ? 0.5 : 1}
-                  radius={i === SERIES.length - 1 ? [4, 4, 0, 0] : 0}
-                  maxBarSize={28}
-                  animationDuration={500}
-                />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
+          <StackedBars
+            ariaLabel={`Tokens per day, last ${days} days`}
+            rows={data}
+            series={SERIES.map((x) => ({ key: x.key, label: x.label, color: x.color }))}
+            value={(d, k) => Number(d[k as (typeof SERIES)[number]['key']] ?? 0)}
+            label={(d) => d.label}
+            yFormat={fmtTokens}
+            height={232}
+            tip={(d) => (
+              <>
+                <div className="mb-1.5 font-medium text-text-primary">{new Date(`${d.day}T12:00:00Z`).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+                {SERIES.map((x) => (
+                  <div key={x.key} className="flex items-center gap-2 text-text-secondary">
+                    <span className="size-2 rounded-sm" style={{ background: x.color }} />
+                    <span className="flex-1">{x.label}</span>
+                    <span className="tabular-nums text-text-primary">{fmtTokens(d[x.key])}</span>
+                  </div>
+                ))}
+                <div className="mt-1.5 flex justify-between border-t hive-line pt-1.5 text-text-muted">
+                  <span className="tabular-nums">{d.requests.toLocaleString()} requests</span>
+                  <span className="tabular-nums">{fmtDollars(d.dollars)}</span>
+                </div>
+              </>
+            )}
+          />
         )}
         {empty && (
           <div className="absolute inset-0 grid place-items-center">
