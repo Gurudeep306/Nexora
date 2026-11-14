@@ -14,7 +14,7 @@ import { AgentMark, COST_INFO, CostBadge, FAMILY, ScoreBar, familyOf } from '../
 import { shortModel } from '../AgentPicker'
 import { hiveApi } from '../api'
 import { useHive } from '../store'
-import type { CatalogInfo, ConnectedModel, CostClass, ModelCard, RouteResult, TaskKind } from '../types'
+import type { BenchResult, CatalogInfo, ConnectedModel, CostClass, ModelCard, RouteResult, TaskKind } from '../types'
 import { ProviderGlyph, fmtTokens } from '../ui'
 import { DataTable, SegmentedControl, StatusPill, type Column } from '../kit'
 
@@ -342,6 +342,7 @@ function ModelDetail({ m, cat, onClose }: { m: ConnectedModel | null; cat: Catal
             </div>
           </div>
         )}
+        <BenchLine m={m} />
         <div className="flex flex-wrap justify-end gap-2">
           <Button variant="secondary" onClick={() => navigate(`/hive/chat?model=${encodeURIComponent(`${m.vendor}|${m.model}`)}`)}>
             <MessageSquare /> Chat with it
@@ -351,6 +352,63 @@ function ModelDetail({ m, cat, onClose }: { m: ConnectedModel | null; cat: Catal
         {c.guessed ? null : <p className="text-[11px] text-text-muted">Scores are estimates from public leaderboards (Nov 2026); Hive adjusts its choices with what it measures on your own work.</p>}
       </div>
     </Modal>
+  )
+}
+
+/** The model's score on Hive's golden coding tasks, with a button to (re)run them. */
+function BenchLine({ m }: { m: ConnectedModel }) {
+  const [res, setRes] = useState<BenchResult | null | undefined>(undefined)
+  const [tasks, setTasks] = useState(6)
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState<string | null>(null)
+  useEffect(() => {
+    let live = true
+    hiveApi
+      .bench()
+      .then((r) => {
+        if (!live) return
+        setTasks(r.tasks)
+        setRes(r.results.find((x) => x.provider === m.vendor && x.model === m.model) ?? null)
+      })
+      .catch(() => live && setRes(null))
+    return () => {
+      live = false
+    }
+  }, [m.vendor, m.model])
+  const runIt = async () => {
+    setBusy(true)
+    setErr(null)
+    try {
+      setRes((await hiveApi.runBench(m.keyId, m.model)).result)
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'The test could not run')
+    } finally {
+      setBusy(false)
+    }
+  }
+  const full = res?.details.filter((d) => d.passed === d.total).length ?? 0
+  return (
+    <div className="hive-card flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2.5 text-[12.5px]">
+      <div className="min-w-0 flex-1">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">Coding test</div>
+        {res === undefined ? (
+          <span className="text-text-muted">Loading…</span>
+        ) : res?.score != null ? (
+          <span>
+            <b className="tabular-nums text-text-primary">{res.score}</b>
+            <span className="text-text-muted"> / 100 · {full} of {tasks} tasks fully right{res.ranAt ? ` · ${new Date(res.ranAt).toLocaleDateString()}` : ''}</span>
+          </span>
+        ) : res ? (
+          <span className="text-state-warning">It didn’t answer the last test</span>
+        ) : (
+          <span className="text-text-muted">Not tested yet. {tasks} small coding tasks with hidden tests; Hive runs the code safely and scores it.</span>
+        )}
+        {err && <p className="mt-1 text-state-error">{err}</p>}
+      </div>
+      <Button size="sm" variant="ghost" onClick={runIt} loading={busy}>
+        {res ? 'Test again' : 'Run the test'}
+      </Button>
+    </div>
   )
 }
 

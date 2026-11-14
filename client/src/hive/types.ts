@@ -527,6 +527,15 @@ export interface MeasuredStat {
   updatedAt: number
 }
 
+/** A model's latest score on Hive's golden coding tasks (0–100). */
+export interface BenchResult {
+  provider: string
+  model: string
+  score: number | null
+  ranAt?: number
+  details: { task: string; passed: number; total: number; error?: string }[]
+}
+
 export interface ConnectedModel {
   vendor: string
   vendorLabel: string

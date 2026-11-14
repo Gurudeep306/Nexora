@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useDragControls } from 'framer-motion'
 import { Group, Panel, Separator, useDefaultLayout } from 'react-resizable-panels'
 import { OverflowTabs, StatusPill as KitPill } from './kit'
 import {
@@ -98,6 +98,7 @@ export function Session() {
   // Phones: the roster and the panel open as full-screen sheets.
   const [sheet, setSheet] = useState<null | 'agents' | 'dock'>(null)
   const sheetRef = useRef<HTMLDivElement>(null)
+  const sheetDrag = useDragControls()
   // A sheet is a dialog: focus moves in, Tab stays inside, Escape closes it.
   useEffect(() => {
     if (!sheet) return
@@ -193,7 +194,7 @@ export function Session() {
       {/* Header */}
       <header className="flex items-center gap-x-3 border-b border-[var(--hv-border)] px-4 py-2.5 sm:px-5">
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-[17px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]">{task.title}</h1>
+          <h1 className="truncate text-[17px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]" data-vt-session style={{ viewTransitionName: 'hv-session-title' }}>{task.title}</h1>
           <div className="mt-0.5 flex min-w-0 items-center gap-x-3 overflow-hidden whitespace-nowrap text-[12px] text-[var(--hv-text-3)] [&>*]:shrink-0 [&>*:nth-child(3)]:min-w-0 [&>*:nth-child(3)]:shrink">
             <StatusPill status={task.status} />
             <span className="inline-flex items-center gap-1">
@@ -352,7 +353,11 @@ export function Session() {
 
       <AnimatePresence>
         {sheet && (
-          <motion.div initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 36 }} ref={sheetRef} role="dialog" aria-modal="true" aria-label={sheet === 'dock' ? 'Session panel' : 'Agents'} className="fixed inset-0 z-[960] flex flex-col bg-bg-app md:hidden">
+          <motion.div initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 36 }} drag="y" dragListener={false} dragControls={sheetDrag} dragConstraints={{ top: 0, bottom: 0 }} dragElastic={{ top: 0, bottom: 0.7 }} onDragEnd={(_, info) => (info.offset.y > 120 || info.velocity.y > 600) && setSheet(null)} ref={sheetRef} role="dialog" aria-modal="true" aria-label={sheet === 'dock' ? 'Session panel' : 'Agents'} className="fixed inset-0 z-[960] flex flex-col bg-bg-app md:hidden">
+            {/* Drag the top bar down to close (scrolling inside still works). */}
+            <div onPointerDown={(e) => sheetDrag.start(e)} className="flex h-6 shrink-0 touch-none items-center justify-center" aria-hidden>
+              <span className="h-1 w-9 rounded-full bg-text-primary/20" />
+            </div>
             <div className="flex items-center gap-2 border-b hive-line px-3 py-2">
               {sheet === 'dock' ? (
                 <div className="hive-scroll flex min-w-0 flex-1 gap-1 overflow-x-auto">

@@ -90,6 +90,7 @@ with Claude Code, so any agent (or person) can pick up where they left off.
       approve the same command twice. Judge verdicts feed the router's
       measured quality.
 19. **Premium UI v2 (PRs #90–#94).** See `docs/hive/UI-PREMIUM.md`.
+20. **Coding test, view transitions, Lighthouse (PR #101).** Golden coding tasks score each model; the session title glides from the project into the session; phone panels close with a swipe; Hive stops downloading the learning site's pages.
 
 ## Infrastructure the owner set up
 
