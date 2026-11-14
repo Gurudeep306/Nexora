@@ -258,17 +258,19 @@ export function Toggle({ on, onChange, label, disabled }: { on: boolean; onChang
 }
 
 /** Page title in the site's style: icon badge, display title, subtitle, actions on the right. */
-export function PageTitle({ title, sub, icon, children }: { title: ReactNode; sub?: ReactNode; icon?: ReactNode; children?: ReactNode }) {
+/**
+ * The Hive page header (same as the kit's PageHead): a 26px title, one short
+ * line and the page's actions. The icon tile of the old header is gone — the
+ * sidebar already shows where you are.
+ */
+export function PageTitle({ title, sub, children }: { title: ReactNode; sub?: ReactNode; icon?: ReactNode; children?: ReactNode }) {
   return (
-    <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
-      <div className="flex min-w-0 flex-[1_1_18rem] items-start gap-4">
-        {icon && <div className="mt-1 hidden size-11 shrink-0 items-center justify-center rounded-[var(--radius-control,12px)] border border-border bg-bg-surface-2 text-accent-brand shadow-[inset_0_1px_0_var(--specular)] sm:flex [&_svg]:size-5">{icon}</div>}
-        <div className="min-w-0">
-          <h1 className="font-display text-[26px] leading-[1.15] font-semibold tracking-[-0.022em] text-text-primary md:text-[30px]">{title}</h1>
-          {sub && <p className="mt-2 mb-0 max-w-2xl text-[14px] leading-relaxed text-text-secondary text-pretty">{sub}</p>}
-        </div>
+    <div className="mb-8 flex flex-col items-start gap-3 sm:flex-row sm:items-end">
+      <div className="min-w-0 flex-1">
+        <h1 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-[var(--hv-text-1)]">{title}</h1>
+        {sub && <p className="mt-1 max-w-2xl text-[13.5px] text-[var(--hv-text-3)] text-pretty">{sub}</p>}
       </div>
-      {children && <div className="flex flex-wrap items-center gap-2">{children}</div>}
+      {children && <div className="flex flex-wrap items-center gap-1.5">{children}</div>}
     </div>
   )
 }
