@@ -141,3 +141,16 @@ test("a paid key that was never tested gets tested; a tested paid key is left al
   assert.ok(ids.includes("kpaid"), "never tested: tested now");
   assert.ok(!ids.includes("kpaid2"), "tested paid key: not re-tested daily");
 });
+
+test("every key carries each model's measured speed, and chats without a project get the focused project as background", async () => {
+  const db = require("../src/hive/db");
+  const keys = require("../src/hive/keys");
+  const chat = require("../src/hive/chat");
+  await db.run("INSERT OR REPLACE INTO hive_health(key_id, model, ok_count, consecutive_fails, last_ok, latency_ms) VALUES(?,?,?,?,?,?)", ["kf", "good", 4, 0, Date.now(), 850]);
+  const k = (await keys.listKeys()).find((x) => x.id === "kf");
+  assert.equal(k.speed.good, 850);
+  const bg = await chat.projectContext("p1", { background: true });
+  assert.match(bg, /^Background: the person is currently working on the project/);
+  assert.match(bg, /npm test/, "the brief comes along");
+  assert.match(await chat.projectContext("p1"), /^This chat is about the project/);
+});
