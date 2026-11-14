@@ -131,7 +131,6 @@ export default function ToolboxPage() {
         <Stat icon={Sparkles} hue={200} value={ready} label="Ready to connect" sub="MCP, search, models, skills" onClick={() => (setTab('discover'), setFilter('connect'))} />
         <Stat icon={CheckCircle2} hue={145} value={builtin} label="Already in Hive" sub="No install needed" onClick={() => (setTab('discover'), setFilter('builtin'))} />
         <Link to="/hive/spend/savings" className="hive-card hive-card-hover group relative overflow-hidden p-4">
-          <div className="pointer-events-none absolute -right-6 -top-6 size-24 rounded-full opacity-25 blur-2xl" style={{ background: hue(150) }} />
           <PiggyBank className="size-5" style={{ color: hue(150) }} />
           <div className="mt-2 text-[14px] font-semibold text-text-primary">Token Steward</div>
           <div className="text-[12px] text-text-muted">Spend tokens wisely with these tools</div>
@@ -225,7 +224,6 @@ export default function ToolboxPage() {
 function Stat({ icon: Icon, hue: h, value, label, sub, onClick }: { icon: typeof Plug; hue: number; value: number; label: string; sub: string; onClick: () => void }) {
   return (
     <button type="button" onClick={onClick} className="hive-card hive-card-hover relative overflow-hidden p-4 text-left">
-      <div className="pointer-events-none absolute -right-6 -top-6 size-24 rounded-full opacity-25 blur-2xl" style={{ background: hue(h) }} />
       <div className="flex items-center justify-between">
         <Icon className="size-5" style={{ color: hue(h) }} />
         <span className="text-[24px] font-semibold tabular-nums tracking-tight text-text-primary">{value}</span>

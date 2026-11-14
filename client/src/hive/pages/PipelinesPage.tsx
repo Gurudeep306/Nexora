@@ -570,7 +570,6 @@ function EmptyPipelines({ onArchitect, onTemplates, onBlank }: { onArchitect: ()
   ]
   return (
     <div className="hive-card relative overflow-hidden p-6 sm:p-8">
-      <div className="hive-comb pointer-events-none absolute inset-0 opacity-60" />
       <div className="relative grid items-center gap-6 md:grid-cols-[1.1fr_1fr]">
         <div>
           <h3 className="text-[17px] font-semibold tracking-[-0.01em]">Your request in, a pull request out</h3>
@@ -578,7 +577,7 @@ function EmptyPipelines({ onArchitect, onTemplates, onBlank }: { onArchitect: ()
             A pipeline is a relay team of AI agents. You describe what you want once; one agent plans it, another builds it, a third tests and reviews it — sending it back to be fixed if it isn’t right — and the last one opens a pull request. Each stage can use the best model for its job, free models only, or a specific one you trust.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
-            <Button onClick={onArchitect}>
+            <Button variant="secondary" onClick={onArchitect}>
               <Sparkles /> Design with the Architect
             </Button>
             <Button variant="secondary" onClick={onTemplates}>
@@ -990,7 +989,6 @@ function Editor({ draft, kinds, project, onCancel, onSaved }: { draft: Draft; ki
 
       {/* Flow */}
       <div className="hive-card hive-sunken relative overflow-hidden p-4 sm:p-6">
-        <div className="hive-comb pointer-events-none absolute inset-0 opacity-40" />
         <div className="relative mb-3 flex items-center justify-between text-[12px] text-text-muted">
           <span>Work flows from stage to stage. Select one to change it; drag or use the arrows to reorder.</span>
         </div>

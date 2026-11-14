@@ -59,7 +59,6 @@ export default function RadarTab({ embedded = false }: { embedded?: boolean }) {
   return (
     <div className={embedded ? 'w-full pb-16' : 'mx-auto w-full max-w-[1160px] px-4 pb-24 pt-8 sm:px-8'}>
       <div className="hive-card relative overflow-hidden p-6 sm:p-7">
-        <div className="hive-comb pointer-events-none absolute inset-0" />
         <div className="relative flex flex-wrap items-start gap-5">
           <span className="hive-tile size-12" style={{ ['--tile' as string]: 'var(--color-state-info)' }}>
             <Radar className="size-5" />

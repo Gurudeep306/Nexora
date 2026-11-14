@@ -410,25 +410,20 @@ function EmptyChat({ boot, project, onPick }: { boot: Bootstrap; project?: Proje
   const hello = hour < 5 ? 'Up late' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
   return (
     <div className="relative mx-auto flex h-full max-w-[860px] flex-col items-center justify-center px-6 pb-8 text-center">
-      <div className="hive-comb pointer-events-none absolute inset-x-0 top-0 h-80" />
-      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 22 }}>
-        <HiveLogo size={58} />
-      </motion.div>
-      <h1 className="mt-5 text-[30px] font-semibold tracking-[-0.03em]">
-        {hello}, <span className="hive-gradient-text">{boot.me.username}</span>
+      <HiveLogo size={44} />
+      <h1 className="mt-4 text-[24px] font-semibold tracking-[-0.02em] text-[var(--hv-text-1)]">
+        {hello}, {boot.me.username}
       </h1>
-      <p className="mt-2 max-w-lg text-[14px] text-text-muted">Chat with any model you’ve connected. Drop in PDFs, images or code, pull files from a repo, make images — or ask several models at once and compare.</p>
-      <div className="mt-8 grid w-full gap-2.5 sm:grid-cols-2">
-        {STARTERS.map((s, i) => (
-          <motion.button key={s.title} type="button" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * i }} onClick={() => onPick(s.text)} className="hive-card hive-card-hover hive-lift flex items-start gap-3 p-4 text-left">
-            <span className="hive-tile size-9 shrink-0" style={{ ['--tile' as string]: s.tone }}>
-              <s.icon className="size-4" />
-            </span>
+      <p className="mt-2 max-w-lg text-[13.5px] text-[var(--hv-text-3)]">Chat with any model you’ve connected. Drop in PDFs, images or code, pull files from a repo, make images — or ask several models at once and compare.</p>
+      <div className="mt-8 grid w-full gap-2 text-left sm:grid-cols-2">
+        {STARTERS.map((s) => (
+          <button key={s.title} type="button" onClick={() => onPick(s.text)} className="flex items-start gap-3 rounded-[var(--hv-r-card)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-3.5 text-left transition-colors duration-[var(--hv-d-fast)] hover:border-[var(--hv-border-strong)] hover:bg-[var(--hv-surface-2)]">
+            <s.icon className="mt-0.5 size-4 shrink-0 text-[var(--hv-text-2)]" />
             <span className="min-w-0">
-              <span className="block text-[13.5px] font-medium">{s.title}</span>
-              <span className="line-clamp-2 text-[12.5px] text-text-muted">{s.text}</span>
+              <span className="block text-[13.5px] font-medium text-[var(--hv-text-1)]">{s.title}</span>
+              <span className="line-clamp-2 text-[12.5px] text-[var(--hv-text-3)]">{s.text}</span>
             </span>
-          </motion.button>
+          </button>
         ))}
       </div>
     </div>

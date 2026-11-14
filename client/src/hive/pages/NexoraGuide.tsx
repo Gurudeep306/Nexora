@@ -121,7 +121,6 @@ export default function NexoraGuide() {
     <div className="mx-auto w-full max-w-[980px] px-4 pb-24 pt-8 sm:px-8">
       {/* Hero */}
       <div className="hive-card relative overflow-hidden p-7">
-        <div className="hive-comb pointer-events-none absolute inset-0" />
         <div className="relative flex flex-wrap items-center gap-5">
           <div className="flex items-center gap-2">
             <LogoMark size={44} />

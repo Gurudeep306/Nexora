@@ -88,7 +88,6 @@ function NewIdea({ onCreated }: { onCreated: (i: Idea) => void }) {
   }
   return (
     <div className="relative mx-auto max-w-[760px] px-5 pb-20 pt-12">
-      <div className="hive-comb pointer-events-none absolute inset-x-0 top-0 h-72" />
       <div className="relative text-center">
         <span className="hive-tile mx-auto size-14" style={{ ['--tile' as string]: 'var(--color-state-warning)' }}>
           <Lightbulb className="size-6" />
@@ -167,7 +166,6 @@ function IdeaView({ idea, onChanged }: { idea: Idea; onChanged: () => void }) {
   return (
     <div className="mx-auto max-w-[980px] px-5 pb-24 pt-8 sm:px-8">
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="hive-card relative overflow-hidden p-7">
-        <div className="hive-comb pointer-events-none absolute inset-0" />
         <div className="relative flex flex-wrap items-start gap-5">
           <div className="min-w-0 flex-1">
             <div className="text-[11.5px] font-medium uppercase tracking-[0.1em] text-accent-brand">{idea.status === 'launched' ? 'Launched' : 'Plan'}{plan._model ? ` · drafted by ${plan._model}` : ''}</div>
