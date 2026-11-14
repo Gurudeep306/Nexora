@@ -435,8 +435,8 @@ function SectionHead({ icon: Icon, title, count, hint }: { icon: LucideIcon; tit
 /* ── Stage strip (cards, previews, templates) ─────────────────────────── */
 function StageStrip({ stages, states, loops = 0, size = 'sm', className }: { stages: PipelineStage[]; states?: StageState[]; loops?: number; size?: 'sm' | 'md'; className?: string }) {
   return (
-    <div className={cn('hive-scroll -mx-1 overflow-x-auto px-1 py-1.5', className)}>
-      <ol className="flex w-max items-center" aria-label="Stages">
+    <div className={cn('hive-scroll -mx-1 overflow-x-auto px-1 py-1.5', className)} tabIndex={0} role="region" aria-label="Stages">
+      <ol className="flex w-max items-center">
         {stages.map((s, i) => {
           const look = stageLook(s)
           const st = states?.[i]
@@ -739,7 +739,7 @@ function uniqueStagesFromLog(run: PipelineRun): PipelineStage[] {
 /** A progress rail: stages as nodes on a line, the active one breathing. */
 function RunRail({ stages, states, loops }: { stages: PipelineStage[]; states: StageState[]; loops: number }) {
   return (
-    <div className="hive-scroll -mx-1 overflow-x-auto px-1 pb-1 pt-2">
+    <div className="hive-scroll -mx-1 overflow-x-auto px-1 pb-1 pt-2" tabIndex={0} role="region" aria-label="Progress">
       <ol className="flex min-w-full w-max items-start">
         {stages.map((s, i) => {
           const st = states[i] ?? 'pending'

@@ -18,7 +18,7 @@ export function Row({ leading, title, meta, trailing, actions, onOpen, href, act
   )
   const target = 'flex min-w-0 flex-1 items-center gap-3 rounded-[var(--hv-r-btn)] px-2.5 py-1.5 text-left outline-none'
   return (
-    <div className={cn('hv-row hv-cv group flex items-center gap-1 pr-1.5', className)} data-active={active ? 'true' : undefined} data-row>
+    <div role="listitem" className={cn('hv-row hv-cv group flex items-center gap-1 pr-1.5', className)} data-active={active ? 'true' : undefined} data-row>
       {href ? (
         <a href={href} className={target}>
           {body}
