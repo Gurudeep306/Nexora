@@ -46,14 +46,28 @@ async function judgeTask(taskId, { by = "auto", adopt = true, agentIds = null } 
   ].join("");
   const authors = [...new Set(agents.map((a) => a.provider))];
   await runner.event(taskId, null, "system", { message: `The Judge is comparing ${candidates.length} attempts…` });
-  let res;
-  try {
-    res = await llm.ask({ kind: "review", prompt, system: SYSTEM, json: true, preference: "quality", excludeVendors: authors, username: by, projectId: task.project_id });
-  } catch {
-    res = await llm.ask({ kind: "review", prompt, system: SYSTEM, json: true, preference: "quality", username: by, projectId: task.project_id });
+  // Ask a judge from another lab first; a reply that names no valid winner gets
+  // one more judge. Without a clear verdict nothing is adopted (never "A by default").
+  const ask = (extra) => llm.ask({ kind: "review", prompt, system: SYSTEM, json: true, preference: "quality", username: by, projectId: task.project_id, ...extra });
+  const pick = (r) => candidates.find((c) => c.letter === String(r?.data?.winner || "").trim().toUpperCase());
+  let res = null;
+  let firstError = null;
+  for (const extra of [{ excludeVendors: authors }, {}]) {
+    try {
+      const r = await ask({ ...extra, excludeModels: res ? [`${res.provider}|${res.model}`] : [] });
+      res = r;
+      if (pick(r)) break;
+    } catch (e) {
+      firstError = firstError || e;
+    }
+  }
+  const winner = pick(res);
+  if (!winner) {
+    const why = res ? "the judges' replies didn't name a valid winner" : `no judge answered (${firstError?.message || "no model available"})`;
+    await runner.event(taskId, null, "verdict", { winner: null, noVerdict: true, reason: `No verdict: ${why}. Nothing was adopted — compare the attempts yourself, or ask the Copilot to judge again.`, ranking: [], judge: res ? { model: res.model } : null, by });
+    return { winner: null, noVerdict: true };
   }
   const v = res.data || {};
-  const winner = candidates.find((c) => c.letter === String(v.winner || "").trim().toUpperCase()) || candidates[0];
   const ranking = (Array.isArray(v.ranking) ? v.ranking : []).map((r) => {
     const c = candidates.find((x) => x.letter === String(r.candidate || "").trim().toUpperCase());
     return c ? { agentId: c.agent.id, name: c.agent.name, model: c.agent.model, provider: c.agent.provider, score: Number(r.score) || 0, strengths: String(r.strengths || "").slice(0, 600), weaknesses: String(r.weaknesses || "").slice(0, 600) } : null;
