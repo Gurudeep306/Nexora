@@ -639,7 +639,17 @@ async function runAgentInner(agentId, { team = [], delegateFn = null, readOnly =
         if (!(await handoff(capOk.reason))) throw new Error(capOk.reason);
         continue;
       }
-      const release = await keys.acquire(keyRow, controller.signal);
+      let release;
+      try {
+        release = await keys.acquire(keyRow, controller.signal);
+      } catch (e) {
+        // A free key that used its day: record it (cools until reset) and move the work on.
+        if (e.kind === "quota") {
+          await require("./health").record(keyRow.id, "", { ok: false, kind: "quota", error: e.message, retryAt: e.retryAt }).catch(() => {});
+          if (await handoff(`${keyRow.label}: ${e.message}`)) continue;
+        }
+        throw e;
+      }
       let res;
       const p = providerOf(agent.provider);
       try {
