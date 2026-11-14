@@ -45,7 +45,7 @@ import { cn } from '@/lib/utils'
 import { hiveApi } from './api'
 import { TeamChat } from './TeamChat'
 import { InboxBell } from './Inbox'
-import { useDensity } from './kit'
+import { Skeleton, useDensity } from './kit'
 import type { LaunchGroup } from './Launcher'
 import { CopilotDock } from './Copilot'
 import { HiveLogo } from './HiveLogo'
@@ -194,10 +194,14 @@ function Shell() {
 
   if (loading && !boot) {
     return (
-      <div className="hive-root grid h-dvh place-items-center">
+      <div className="hive-root grid h-dvh place-items-center" role="status" aria-label="Loading Hive">
         <div className="flex flex-col items-center gap-4">
           <HiveLogo size={56} live />
-          <span className="hive-shine text-[13px] font-medium">Waking the hive…</span>
+          <span className="text-[15px] font-semibold tracking-[-0.01em] text-text-primary">Hive</span>
+          <span className="hive-boot-bar" aria-hidden="true">
+            <span />
+          </span>
+          <span className="sr-only">Waking the hive…</span>
         </div>
       </div>
     )
@@ -299,14 +303,20 @@ function ProjectsSection({ active }: { active?: string }) {
 
 function PageSkeleton() {
   return (
-    <div className="mx-auto max-w-5xl space-y-4 p-8">
-      <div className="hive-shimmer h-8 w-1/3 rounded-lg" />
-      <div className="hive-shimmer h-40 rounded-2xl" />
-      <div className="grid grid-cols-3 gap-4">
-        <div className="hive-shimmer h-28 rounded-2xl" />
-        <div className="hive-shimmer h-28 rounded-2xl" />
-        <div className="hive-shimmer h-28 rounded-2xl" />
+    <div className="mx-auto max-w-5xl space-y-4 p-8" aria-hidden="true">
+      <div className="flex items-center gap-3">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="ml-auto h-8 w-24" />
       </div>
+      <Skeleton className="h-36 w-full" />
+      <div className="grid grid-cols-3 gap-4">
+        <Skeleton className="h-28" />
+        <Skeleton className="h-28" />
+        <Skeleton className="h-28" />
+      </div>
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-2/3" />
     </div>
   )
 }

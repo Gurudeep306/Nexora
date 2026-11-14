@@ -206,7 +206,7 @@ function DiffPane({ taskId, path, variant, onSaved, version }: { taskId: string;
     () => ({
       readOnly: !editing,
       originalEditable: false,
-      renderSideBySide: typeof window !== 'undefined' && window.innerWidth > 1100,
+      renderSideBySide: false,
       minimap: { enabled: false },
       fontSize: 12.5,
       fontFamily: theme.fontFamily,

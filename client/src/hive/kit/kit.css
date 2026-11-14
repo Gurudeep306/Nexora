@@ -144,3 +144,20 @@
   border-color: var(--hv-accent);
   box-shadow: 0 0 0 1px var(--hv-accent);
 }
+
+/* Loaders: an arc spinner for contained waits, a breathing skeleton block.
+   Both go static under prefers-reduced-motion. */
+.hv-spinner-svg { animation: hv-spin 0.8s linear infinite; }
+@keyframes hv-spin { to { transform: rotate(360deg); } }
+.hv-skeleton {
+  background: color-mix(in oklab, var(--hv-text-1) 8%, transparent);
+  border-radius: var(--hv-r-btn);
+  animation: hv-skel 1.6s ease-in-out infinite;
+}
+@keyframes hv-skel {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hv-spinner-svg, .hv-skeleton { animation: none; }
+}

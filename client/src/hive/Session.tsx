@@ -10,6 +10,7 @@ import {
   ChevronDown,
   ChevronRight,
   Code2,
+  Copy,
   Eye,
   FileDiff,
   FilePen,
@@ -53,6 +54,7 @@ import { hiveApi } from './api'
 import { AgentChip, defaultSpec, shortModel } from './AgentPicker'
 import { BoardView } from './BoardView'
 import { ChangesView } from './ChangesView'
+import { ContextRing } from './kit'
 import { FilesView } from './FilesView'
 import { LiveCode } from './LiveCode'
 import { FloorFeed, TeamFloor } from './TeamFloor'
@@ -743,51 +745,115 @@ function Turn({ agent, events, showReads }: { agent: AgentRow; events: HiveEvent
     return m
   }, [events])
   const hue = agentHue(agent)
+  // Consecutive read-type calls collapse into one "Read N items" row; hidden
+  // entirely when reads are toggled off.
+  const items = useMemo(() => {
+    const out: ({ kind: 'ev'; e: HiveEvent } | { kind: 'reads'; calls: HiveEvent[] })[] = []
+    for (const e of events) {
+      if (e.kind === 'tool_call' && READS.has(String(e.data.name))) {
+        if (!showReads) continue
+        const last = out[out.length - 1]
+        if (last && last.kind === 'reads') last.calls.push(e)
+        else out.push({ kind: 'reads', calls: [e] })
+      } else out.push({ kind: 'ev', e })
+    }
+    return out
+  }, [events, showReads])
+  const [copied, setCopied] = useState(false)
+  const copyTurn = () => {
+    const text = events.filter((e) => e.kind === 'text' && e.data.text).map((e) => String(e.data.text)).join('\n\n')
+    if (!text) return
+    void navigator.clipboard?.writeText(text)
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 1400)
+  }
   return (
-    <div className="hive-in relative mb-5 pl-5">
+    <div className="hive-in group relative mb-5 pl-5">
       <span className="absolute bottom-1 left-[5px] top-6 w-px" style={{ background: `color-mix(in oklab, ${hue} 35%, transparent)` }} />
       <span className="absolute left-0 top-1.5 size-[11px] rounded-full ring-4 ring-[var(--color-bg-app)]" style={{ background: hue }} />
       <div className="mb-1.5 flex items-center gap-2">
         <AgentBadge agent={agent} />
         <span className="text-[11px] text-text-muted">{timeAgo(events[0]?.created_at)}</span>
+        <button
+          type="button"
+          onClick={copyTurn}
+          aria-label={copied ? 'Copied' : 'Copy this reply'}
+          title={copied ? 'Copied' : 'Copy this reply'}
+          className="grid size-6 place-items-center rounded-md text-text-muted opacity-0 transition-opacity hover:bg-text-primary/[0.07] hover:text-text-primary focus-visible:opacity-100 group-hover:opacity-100"
+        >
+          {copied ? <Check className="size-3.5 text-state-success" /> : <Copy className="size-3.5" />}
+        </button>
       </div>
       <div className="space-y-1.5">
-        {events.map((e) => {
-          if (e.kind === 'text' && e.data.text) return <AiMarkdown key={e.id} text={String(e.data.text)} />
-          if (e.kind === 'tool_call') {
-            const name = String(e.data.name)
-            if (!showReads && READS.has(name)) return null
-            return <ToolCard key={e.id} call={e} result={results.get(String(e.data.id))} />
-          }
-          if (e.kind === 'approval') return <ApprovalLine key={e.id} ev={e} />
-          if (e.kind === 'approval_result')
-            return (
-              <div key={e.id} className={cn('flex items-center gap-1.5 text-[12px]', e.data.approved ? 'text-state-success' : 'text-state-error')}>
-                {e.data.approved ? <ShieldCheck className="size-3.5" /> : <XCircle className="size-3.5" />}
-                {e.data.approved ? `Approved${e.data.by ? ` by @${String(e.data.by)}` : ''}` : `Denied — ${String(e.data.reason ?? '')}`}
-              </div>
-            )
-          if (e.kind === 'status' && (e.data.status === 'done' || e.data.status === 'failed' || e.data.status === 'stopped') && (e.data.summary || e.data.error))
-            return <ResultCard key={e.id} agent={agent} ev={e} />
-          if (e.kind === 'error') return <div key={e.id} className="flex items-start gap-1.5 rounded-lg bg-state-error/[0.08] px-3 py-2 text-[12.5px] text-state-error"><AlertCircle className="mt-0.5 size-3.5 shrink-0" />{String(e.data.message)}</div>
-          if (e.kind === 'handoff')
-            return (
-              <div key={e.id} className="flex items-center gap-1.5 text-[12px] text-state-warning">
-                <ArrowRightLeft className="size-3.5" /> {String(e.data.reason ?? 'Handed over')}
-              </div>
-            )
-          if (e.kind === 'steer')
-            return (
-              <div key={e.id} className="rounded-lg bg-state-info/[0.08] px-3 py-2 text-[12.5px]">
-                <span className="font-medium text-state-info">@{String(e.data.username)} steered:</span> {String(e.data.message)}
-              </div>
-            )
-          if (e.kind === 'note') return <div key={e.id} className="text-[12px] italic text-text-muted">{String(e.data.message ?? e.data.text ?? '')}</div>
-          return null
-        })}
+        {items.map((it, i) =>
+          it.kind === 'reads' ? (
+            <ReadGroup key={`r${i}`} calls={it.calls} results={results} />
+          ) : (
+            <EventLine key={it.e.id} e={it.e} agent={agent} results={results} />
+          ),
+        )}
       </div>
     </div>
   )
+}
+
+/** One collapsible row for a run of read/search/list tool calls. */
+function ReadGroup({ calls, results }: { calls: HiveEvent[]; results: Map<string, HiveEvent> }) {
+  const [open, setOpen] = useState(false)
+  const first = String(calls[0]?.data.name ?? '')
+  const Icon = TOOL_ICON[first] ?? Eye
+  const firstMeta = (results.get(String(calls[0]?.data.id))?.data.meta ?? null) as Record<string, unknown> | null
+  return (
+    <div className="overflow-hidden rounded-[var(--hv-r-btn)]">
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-[13px] text-text-secondary">
+        <Icon className="size-3.5 shrink-0 text-text-muted" />
+        <span className="min-w-0 flex-1 truncate">{calls.length === 1 ? toolLine(first, (calls[0].data.input ?? {}) as Record<string, unknown>, firstMeta) : `Read ${calls.length} items`}</span>
+        <ChevronRight className={cn('size-3.5 shrink-0 text-text-muted transition-transform', open && 'rotate-90')} />
+      </button>
+      {open && (
+        <ul className="space-y-1 px-2.5 pb-2 pl-8">
+          {calls.map((c) => {
+            const name = String(c.data.name)
+            const meta = (results.get(String(c.data.id))?.data.meta ?? null) as Record<string, unknown> | null
+            return (
+              <li key={c.id} className="truncate text-[12.5px] text-text-secondary">
+                {toolLine(name, (c.data.input ?? {}) as Record<string, unknown>, meta)}
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </div>
+  )
+}
+
+function EventLine({ e, agent, results }: { e: HiveEvent; agent: AgentRow; results: Map<string, HiveEvent> }) {
+  if (e.kind === 'text' && e.data.text) return <AiMarkdown text={String(e.data.text)} />
+  if (e.kind === 'tool_call') return <ToolCard call={e} result={results.get(String(e.data.id))} />
+  if (e.kind === 'approval') return <ApprovalLine ev={e} />
+  if (e.kind === 'approval_result')
+    return (
+      <div className={cn('flex items-center gap-1.5 text-[12px]', e.data.approved ? 'text-state-success' : 'text-state-error')}>
+        {e.data.approved ? <ShieldCheck className="size-3.5" /> : <XCircle className="size-3.5" />}
+        {e.data.approved ? `Approved${e.data.by ? ` by @${String(e.data.by)}` : ''}` : `Denied — ${String(e.data.reason ?? '')}`}
+      </div>
+    )
+  if (e.kind === 'status' && (e.data.status === 'done' || e.data.status === 'failed' || e.data.status === 'stopped') && (e.data.summary || e.data.error)) return <ResultCard agent={agent} ev={e} />
+  if (e.kind === 'error') return <div className="flex items-start gap-1.5 rounded-lg bg-state-error/[0.08] px-3 py-2 text-[12.5px] text-state-error"><AlertCircle className="mt-0.5 size-3.5 shrink-0" />{String(e.data.message)}</div>
+  if (e.kind === 'handoff')
+    return (
+      <div className="flex items-center gap-1.5 text-[12px] text-state-warning">
+        <ArrowRightLeft className="size-3.5" /> {String(e.data.reason ?? 'Handed over')}
+      </div>
+    )
+  if (e.kind === 'steer')
+    return (
+      <div className="rounded-lg bg-state-info/[0.08] px-3 py-2 text-[12.5px]">
+        <span className="font-medium text-state-info">@{String(e.data.username)} steered:</span> {String(e.data.message)}
+      </div>
+    )
+  if (e.kind === 'note') return <div className="text-[12px] italic text-text-muted">{String(e.data.message ?? e.data.text ?? '')}</div>
+  return null
 }
 
 function ToolCard({ call, result }: { call: HiveEvent; result?: HiveEvent }) {
@@ -1049,6 +1115,7 @@ function CommandBar({ taskId, agents, focus, hasMachine, onOpen }: { taskId: str
   const focusAgent = agents.find((a) => a.id === focus)
   const steering = focusAgent?.status === 'running'
   const slash = text.startsWith('/') && !text.includes(' ') ? COMMANDS.filter((c) => c.cmd.startsWith(text.toLowerCase())) : []
+  const sessionTokens = (detail?.task.agents ?? []).reduce((s, a) => s + (a.input_tokens ?? 0) + (a.output_tokens ?? 0), 0)
   useEffect(() => {
     const el = ta.current
     if (!el) return
@@ -1154,6 +1221,7 @@ function CommandBar({ taskId, agents, focus, hasMachine, onOpen }: { taskId: str
           <span className="hidden whitespace-nowrap text-[11px] text-text-muted sm:inline">
             <span className="hive-kbd">/</span> commands
           </span>
+          {sessionTokens > 0 && <ContextRing used={sessionTokens} label="Tokens used this session" />}
           <button type="button" onClick={run} disabled={!text.trim() || busy} className="ml-auto grid size-8 place-items-center rounded-full bg-accent-brand text-on-accent-brand transition-transform enabled:hover:scale-105 disabled:opacity-35" aria-label="Send">
             {busy ? <Loader2 className="size-4 animate-spin" /> : <ArrowUp className="size-4" strokeWidth={2.4} />}
           </button>
