@@ -50,8 +50,8 @@ export default function HomePage() {
       boot
         ? [
             { id: 'keys', done: boot.keys.length > 0, label: 'Add an AI key', to: '/hive/keys', icon: KeyRound },
-            { id: 'github', done: boot.github.length > 0, label: 'Connect GitHub — every repo becomes available', to: '/hive/repos', icon: FolderGit2 },
-            { id: 'project', done: boot.projects.length > 0, label: 'Open NexoraGuru as a project', to: '/hive/nexora', icon: Sparkles },
+            { id: 'github', done: boot.github.length > 0, label: 'Connect GitHub — every repo becomes available', to: '/hive/projects', icon: FolderGit2 },
+            { id: 'project', done: boot.projects.length > 0, label: 'Open NexoraGuru as a project', to: '/hive/projects/guide', icon: Sparkles },
             { id: 'machine', done: machines.length > 0, label: 'Connect a machine (optional)', to: '/hive/machines', icon: Server },
           ]
         : [],
@@ -138,7 +138,7 @@ export default function HomePage() {
                     <span className="hive-hex size-3.5" style={{ background: projectColor(p.color) }} /> {p.name}
                   </MenuItem>
                 ))}
-                <MenuItem onSelect={() => navigate('/hive/repos')}>
+                <MenuItem onSelect={() => navigate('/hive/projects')}>
                   <FolderGit2 className="size-3.5" /> Any repository on your GitHub…
                 </MenuItem>
               </MenuContent>

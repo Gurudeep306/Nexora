@@ -38,12 +38,12 @@ export default function LaunchpadPage() {
   return (
     <div className="flex h-full min-h-0">
       <aside className="hive-scroll hidden w-[280px] shrink-0 overflow-y-auto border-r hive-line p-3 md:block">
-        <button type="button" onClick={() => navigate('/hive/launchpad')} className={cn('mb-3 flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-[13px] font-medium', !ideaId ? 'bg-accent-brand/12 text-accent-brand' : 'text-text-secondary hover:bg-text-primary/[0.05]')}>
+        <button type="button" onClick={() => navigate('/hive/projects/ideas')} className={cn('mb-3 flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-[13px] font-medium', !ideaId ? 'bg-accent-brand/12 text-accent-brand' : 'text-text-secondary hover:bg-text-primary/[0.05]')}>
           <Plus className="size-4" /> New idea
         </button>
         <div className="px-1 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-muted">Ideas</div>
         {ideas.map((i) => (
-          <button key={i.id} type="button" onClick={() => navigate(`/hive/launchpad/${i.id}`)} className={cn('mb-1 w-full rounded-xl px-3 py-2 text-left', i.id === ideaId ? 'bg-text-primary/[0.07]' : 'hover:bg-text-primary/[0.04]')}>
+          <button key={i.id} type="button" onClick={() => navigate(`/hive/projects/ideas/${i.id}`)} className={cn('mb-1 w-full rounded-xl px-3 py-2 text-left', i.id === ideaId ? 'bg-text-primary/[0.07]' : 'hover:bg-text-primary/[0.04]')}>
             <div className="flex items-center gap-2">
               <span className={cn('size-1.5 rounded-full', i.status === 'launched' ? 'bg-state-success' : i.status === 'failed' ? 'bg-state-error' : i.status === 'planning' ? 'hive-dot-run bg-accent-brand' : 'bg-state-warning')} />
               <span className="truncate text-[13px] font-medium">{i.title}</span>
@@ -55,7 +55,7 @@ export default function LaunchpadPage() {
         ))}
         {!ideas.length && <p className="px-2 text-[12px] text-text-muted">Ideas you plan appear here.</p>}
       </aside>
-      <div className="hive-scroll min-w-0 flex-1 overflow-y-auto">{idea ? <IdeaView idea={idea} onChanged={load} /> : <NewIdea onCreated={(i) => (load(), navigate(`/hive/launchpad/${i.id}`))} />}</div>
+      <div className="hive-scroll min-w-0 flex-1 overflow-y-auto">{idea ? <IdeaView idea={idea} onChanged={load} /> : <NewIdea onCreated={(i) => (load(), navigate(`/hive/projects/ideas/${i.id}`))} />}</div>
     </div>
   )
 }
@@ -291,7 +291,7 @@ function IdeaView({ idea, onChanged }: { idea: Idea; onChanged: () => void }) {
       )}
 
       <LaunchDialog idea={idea} plan={plan} open={launch} onClose={() => setLaunch(false)} onLaunched={(pid, tid) => navigate(`/hive/p/${pid}/t/${tid}`)} />
-      <ConfirmDialog open={del} onClose={() => setDel(false)} onConfirm={() => hiveApi.deleteIdea(idea.id).then(() => navigate('/hive/launchpad'))} title="Delete this idea?" message="The plan is removed. A launched project stays." confirmLabel="Delete" danger />
+      <ConfirmDialog open={del} onClose={() => setDel(false)} onConfirm={() => hiveApi.deleteIdea(idea.id).then(() => navigate('/hive/projects/ideas'))} title="Delete this idea?" message="The plan is removed. A launched project stays." confirmLabel="Delete" danger />
     </div>
   )
 }

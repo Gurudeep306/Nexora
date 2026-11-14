@@ -752,69 +752,51 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
 }
 
 /** The floating Copilot button + panel, on every Hive page except the Copilot page. */
+/**
+ * The Copilot side panel (⌘I, or the Copilot button in the top bar) on every
+ * Hive page except the Copilot page itself. It replaces the old floating
+ * button: it slides in from the right, keeps the page underneath usable, and
+ * knows the project in focus.
+ */
 export function CopilotDock() {
   const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
-  const { live } = useHive()
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'i' && !e.shiftKey) {
         e.preventDefault()
         setOpen((v) => !v)
-      }
+      } else if (e.key === 'Escape') setOpen(false)
     }
+    const toggle = () => setOpen((v) => !v)
     window.addEventListener('keydown', k)
-    return () => window.removeEventListener('keydown', k)
+    window.addEventListener('hive:copilot-panel', toggle)
+    return () => {
+      window.removeEventListener('keydown', k)
+      window.removeEventListener('hive:copilot-panel', toggle)
+    }
   }, [])
-  if (pathname.startsWith('/hive/copilot')) return null
-  // Pages with a composer at the bottom: sit above it.
-  const raised = /^\/hive\/chat|\/t\//.test(pathname)
+  useEffect(() => {
+    if (pathname.startsWith('/hive/copilot')) setOpen(false)
+  }, [pathname])
+  if (!open || pathname.startsWith('/hive/copilot')) return null
   return (
-    <>
-      <AnimatePresence>
-        {open && (
-          <motion.aside
-            initial={{ opacity: 0, y: 16, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.98 }}
-            transition={{ duration: 0.22, ease: EASE }}
-            className={cn('fixed right-3 z-[800] flex', raised ? 'bottom-40' : 'bottom-20', ' h-[min(640px,calc(100dvh-7rem))] w-[min(420px,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-3xl border hive-line bg-bg-surface shadow-2xl')}
-            role="dialog"
-            aria-label="Copilot"
-          >
-            <div className="flex items-center gap-2 border-b hive-line px-3 py-2.5">
-              <span className="grid size-7 place-items-center rounded-full bg-[linear-gradient(135deg,oklch(68%_0.17_285),oklch(70%_0.15_200))] text-white">
-                <Bot className="size-4" />
-              </span>
-              <span className="text-[14px] font-semibold">Copilot</span>
-              <span className="ml-auto" />
-              <Link to="/hive/copilot" onClick={() => setOpen(false)} className="grid size-8 place-items-center rounded-lg text-text-muted hover:bg-text-primary/[0.06]" aria-label="Open full page">
-                <Maximize2 className="size-4" />
-              </Link>
-              <button type="button" onClick={() => setOpen(false)} className="grid size-8 place-items-center rounded-lg text-text-muted hover:bg-text-primary/[0.06]" aria-label="Close">
-                <X className="size-4" />
-              </button>
-            </div>
-            <div className="min-h-0 flex-1">
-              <CopilotThread compact />
-            </div>
-          </motion.aside>
-        )}
-      </AnimatePresence>
-      <Tooltip label="Copilot · ⌘I" side="left">
-        <motion.button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          whileHover={{ scale: 1.06 }}
-          whileTap={{ scale: 0.96 }}
-          className={cn('fixed right-4 z-[800] grid size-13', raised ? 'bottom-28' : 'bottom-4', ' place-items-center rounded-full bg-[linear-gradient(135deg,oklch(64%_0.19_285),oklch(66%_0.16_210))] text-white shadow-[0_10px_30px_-8px_oklch(55%_0.2_285/0.7)]')}
-          aria-label={open ? 'Close Copilot' : 'Open Copilot'}
-          aria-expanded={open}
-        >
-          {live.length > 0 && <span className="absolute inset-0 animate-ping rounded-full bg-accent-brand/30" style={{ animationDuration: '2.4s' }} />}
-          {open ? <X className="relative size-5" /> : <Bot className="relative size-6" />}
-        </motion.button>
-      </Tooltip>
-    </>
+    <aside className="hv-panel fixed bottom-0 right-0 top-12 z-[800] flex w-[min(440px,100vw)] flex-col border-l border-[var(--hv-border)] bg-[var(--hv-surface-1)] shadow-[-12px_0_32px_-16px_oklch(0_0_0/0.45)]" role="complementary" aria-label="Copilot">
+      <div className="flex items-center gap-2 border-b border-[var(--hv-border)] px-3 py-2">
+        <Bot className="size-4 text-[var(--hv-accent)]" aria-hidden />
+        <span className="text-[13.5px] font-semibold">Copilot</span>
+        <span className="hive-kbd ml-1">⌘I</span>
+        <span className="ml-auto" />
+        <Link to="/hive/copilot" className="grid size-8 place-items-center rounded-[var(--hv-r-btn)] text-[var(--hv-text-3)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]" aria-label="Open the full Copilot page" title="Open the full page">
+          <Maximize2 className="size-4" />
+        </Link>
+        <button type="button" onClick={() => setOpen(false)} className="grid size-8 place-items-center rounded-[var(--hv-r-btn)] text-[var(--hv-text-3)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]" aria-label="Close the Copilot panel (Esc)">
+          <X className="size-4" />
+        </button>
+      </div>
+      <div className="min-h-0 flex-1">
+        <CopilotThread compact />
+      </div>
+    </aside>
   )
 }
