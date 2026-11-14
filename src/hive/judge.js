@@ -11,12 +11,12 @@ const { readBase } = require("./snapshot");
 const LETTERS = "ABCDEFGH";
 const clip = (s, n) => (s.length > n ? `${s.slice(0, n)}\n… [${s.length - n} more characters cut]` : s);
 
-const SYSTEM = `You are the Judge in Nexora Hive. Several AI agents attempted the same task independently. Compare their results on correctness first, then completeness, code quality and fit with the codebase, then simplicity. Be specific and fair; do not favour longer answers. Reply with JSON only:
+const SYSTEM = `You are the Judge in Nexora Hive. Several AI agents attempted the same task independently. Compare their results on correctness first, then completeness, code quality and fit with the codebase, then simplicity. Be specific and fair; do not favour longer answers. When Hive ran the tests, an attempt whose tests fail never beats one whose tests pass. Reply with JSON only:
 {"winner":"A","ranking":[{"candidate":"A","score":0-10,"strengths":"…","weaknesses":"…"}],"reason":"two or three sentences on why the winner is best"}`;
 
 async function judgeTask(taskId, { by = "auto", adopt = true, agentIds = null } = {}) {
   const runner = require("./runner");
-  const { adoptVariant } = require("./workspace");
+  const adoptVariant = (id, variant) => runner.adoptAttempt(id, variant);
   const ctx = await runner.taskContext(taskId);
   const { task } = ctx;
   const agents = (await all("SELECT * FROM hive_agents WHERE task_id=? AND variant=id AND status='done' ORDER BY created_at", [taskId])).filter((a) => !agentIds || agentIds.includes(a.id)).slice(0, LETTERS.length);
@@ -32,17 +32,19 @@ async function judgeTask(taskId, { by = "auto", adopt = true, agentIds = null } 
       diff += `\n${unifiedDiff(base, cur, c.path)}`;
       if (diff.length > 24_000) break;
     }
-    candidates.push({ letter: LETTERS[i], agent: a, files: changes.length, diff: clip(diff, 24_000), report: clip(String(a.result || ""), 3000) });
+    candidates.push({ letter: LETTERS[i], agent: a, ws, files: changes.length, diff: clip(diff, 24_000), report: clip(String(a.result || ""), 3000) });
   }
+  // On a machine, run each attempt's tests first: evidence beats reading diffs.
+  if (ctx.machine && candidates.length > 1) await testCandidates(ctx, candidates);
   if (candidates.length === 1) {
     const only = candidates[0];
-    if (adopt) await adoptVariant(taskId, only.agent.variant, "main");
+    if (adopt) await adoptVariant(taskId, only.agent.variant);
     await runner.event(taskId, null, "verdict", { winner: only.agent.id, name: only.agent.name, model: only.agent.model, reason: "Only one attempt finished — adopted it.", ranking: [], judge: null, by });
     return { winner: only.agent.id };
   }
   const prompt = [
     `Task: ${task.title}\n\nRequest:\n${clip(task.prompt, 6000)}`,
-    ...candidates.map((c) => `\n\n=== Candidate ${c.letter} (${c.files} file${c.files === 1 ? "" : "s"} changed) ===\nAgent report:\n${c.report || "(none)"}\n\nChanges:\n${c.diff || "(no changes)"}`),
+    ...candidates.map((c) => `\n\n=== Candidate ${c.letter} (${c.files} file${c.files === 1 ? "" : "s"} changed) ===\nAgent report:\n${c.report || "(none)"}${c.tests ? `\n\nTests (run by Hive): ${c.tests}` : ""}\n\nChanges:\n${c.diff || "(no changes)"}`),
   ].join("");
   const authors = [...new Set(agents.map((a) => a.provider))];
   await runner.event(taskId, null, "system", { message: `The Judge is comparing ${candidates.length} attempts…` });
@@ -72,7 +74,9 @@ async function judgeTask(taskId, { by = "auto", adopt = true, agentIds = null } 
     const c = candidates.find((x) => x.letter === String(r.candidate || "").trim().toUpperCase());
     return c ? { agentId: c.agent.id, name: c.agent.name, model: c.agent.model, provider: c.agent.provider, score: Number(r.score) || 0, strengths: String(r.strengths || "").slice(0, 600), weaknesses: String(r.weaknesses || "").slice(0, 600) } : null;
   }).filter(Boolean);
-  if (adopt) await adoptVariant(taskId, winner.agent.variant, "main");
+  if (adopt) await adoptVariant(taskId, winner.agent.variant);
+  // Verdicts teach the router which models do this kind of work best.
+  await require("./perf").judgeVerdict(task.kind, winner.agent, candidates.filter((c) => c !== winner).map((c) => c.agent)).catch(() => {});
   await runner.setTask(taskId, { summary: winner.agent.result || task.summary });
   await runner.event(taskId, null, "verdict", {
     winner: winner.agent.id,
@@ -87,6 +91,49 @@ async function judgeTask(taskId, { by = "auto", adopt = true, agentIds = null } 
   });
   hub.emitTask(taskId, "changes", { variant: "main" });
   return { winner: winner.agent.id, ranking, reason: v.reason, judge: res.model };
+}
+
+/** The repo's usual test command, from the files it has (null when none is clear). */
+async function testCommand(ws) {
+  const pkg = await ws.read("package.json").catch(() => null);
+  if (pkg) {
+    try {
+      const t = JSON.parse(pkg).scripts?.test;
+      if (t && !/no test specified/.test(t)) return "npm test";
+    } catch {
+      /* not JSON */
+    }
+  }
+  for (const [file, cmd] of [["pytest.ini", "python -m pytest -q"], ["pyproject.toml", "python -m pytest -q"], ["Cargo.toml", "cargo test"], ["go.mod", "go test ./..."]]) {
+    if (await ws.read(file).catch(() => null)) return cmd;
+  }
+  return null;
+}
+
+/**
+ * Runs the tests in each attempt's own copy, one after another (they share
+ * installed dependencies and ports). Only on machines that run commands
+ * without asking: a person shouldn't be asked to approve the Judge's tests.
+ */
+async function testCandidates(ctx, candidates) {
+  const runner = require("./runner");
+  const m = await get("SELECT policy FROM hive_machines WHERE id=?", [ctx.machine.id]);
+  const cmd = await testCommand(candidates[0].ws);
+  if (!cmd) return;
+  if (m?.policy !== "auto") {
+    await runner.event(ctx.task.id, null, "system", { message: `The Judge didn't run tests (this machine asks before every command). Set the machine to run commands without asking to have attempts tested before judging.` });
+    return;
+  }
+  await runner.event(ctx.task.id, null, "system", { message: `The Judge is running \`${cmd}\` in each attempt's copy…` });
+  for (const c of candidates) {
+    if (c.ws.folder === ctx.machine.folder && candidates.some((o) => o !== c && o.ws.folder === c.ws.folder)) {
+      c.tests = "not run (this attempt shared a folder with another one)";
+      continue;
+    }
+    const r = await c.ws.exec(cmd, { timeoutMs: 10 * 60_000 }).catch((e) => ({ code: -1, output: e.message }));
+    const tail = String(r?.output || "").trim().split("\n").slice(-25).join("\n");
+    c.tests = `\`${cmd}\` exited ${r?.code}${r?.code === 0 ? " (passed)" : " (FAILED)"}\n${clip(tail, 1500)}`;
+  }
 }
 
 /** Pick the best of several side-by-side chat answers. */
@@ -117,4 +164,4 @@ async function judgeAnswers(convoId, groupId, username) {
   return verdict;
 }
 
-module.exports = { judgeTask, judgeAnswers };
+module.exports = { judgeTask, judgeAnswers, testCommand };
