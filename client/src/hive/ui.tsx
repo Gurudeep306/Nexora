@@ -101,6 +101,8 @@ const STATUS: Record<string, { label: string; color: string }> = {
   failed: { label: 'Failed', color: 'var(--color-state-error)' },
   stopped: { label: 'Stopped', color: 'var(--color-text-muted)' },
   interrupted: { label: 'Interrupted', color: 'var(--color-state-warning)' },
+  incomplete: { label: 'Incomplete', color: 'var(--color-state-warning)' },
+  merged: { label: 'Merged', color: 'var(--color-state-success)' },
 }
 export const statusColor = (s: string) => STATUS[s]?.color ?? 'var(--color-text-muted)'
 export const statusLabel = (s: string) => STATUS[s]?.label ?? s
