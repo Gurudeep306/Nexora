@@ -527,7 +527,7 @@ function Sidebar() {
                       <ChevronRight className={cn('size-3.5 transition-transform', isOpen && 'rotate-90')} />
                     </button>
                     <button type="button" onClick={() => navigate(`/hive/p/${p.id}`)} className="flex min-w-0 flex-1 items-center gap-2 py-1.5 text-left">
-                      <span className="hive-hex size-3 shrink-0" style={{ background: projectColor(p.color) }} />
+                      <span className="rounded-full size-3 shrink-0" style={{ background: projectColor(p.color) }} />
                       <span className="truncate text-[13px] text-text-primary">{p.name}</span>
                       {p.machine_id && <Terminal className="size-3 shrink-0 text-text-muted" aria-label="On a machine" />}
                     </button>
@@ -798,7 +798,7 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
           <span className="contents sm:hidden">
             <ChevronRight className="size-3.5 shrink-0 text-text-muted" />
             <button type="button" onClick={() => navigate(`/hive/p/${project.id}`)} className={cn('flex min-w-0 items-center gap-1.5 rounded-md px-1.5 py-1 hover:bg-text-primary/[0.05]', detail ? 'text-text-secondary' : 'font-medium text-text-primary')}>
-              <span className="hive-hex size-2.5 shrink-0" style={{ background: projectColor(project.color) }} />
+              <span className="rounded-full size-2.5 shrink-0" style={{ background: projectColor(project.color) }} />
               <span className="truncate">{project.name}</span>
             </button>
           </span>
@@ -1007,7 +1007,7 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
       { id: 'x:key', group: 'Commands', label: 'Add an AI key', icon: <KeyRound className="size-4" />, run: go('/hive/keys'), cmd: true },
       { id: 'x:mcp', group: 'Commands', label: 'Connect an MCP server or search engine', icon: <Boxes className="size-4" />, run: go('/hive/extensions?tab=connected'), cmd: true },
     ]
-    for (const p of boot?.projects ?? []) out.push({ id: `p:${p.id}`, group: 'Projects', label: p.name, hint: p.repo_owner ? `${p.repo_owner}/${p.repo_name}` : p.folder ?? '', icon: <span className="hive-hex size-3.5" style={{ background: projectColor(p.color) }} />, run: go(`/hive/p/${p.id}`) })
+    for (const p of boot?.projects ?? []) out.push({ id: `p:${p.id}`, group: 'Projects', label: p.name, hint: p.repo_owner ? `${p.repo_owner}/${p.repo_name}` : p.folder ?? '', icon: <span className="rounded-full size-3.5" style={{ background: projectColor(p.color) }} />, run: go(`/hive/p/${p.id}`) })
     for (const t of Object.values(taskIndex).sort((a, b) => b.updated_at - a.updated_at)) out.push({ id: `t:${t.id}`, group: 'Sessions', label: t.title, hint: t.project_name ?? t.status, icon: <StatusDot status={t.status} />, run: go(`/hive/p/${t.project_id}/t/${t.id}`) })
     for (const c of convos) out.push({ id: `c:${c.id}`, group: 'Chats', label: c.title, hint: c.model ?? '', icon: <MessageSquare className="size-3.5 text-text-muted" />, run: go(`/hive/chat/${c.id}`) })
     const raw = q.toLowerCase().trim()

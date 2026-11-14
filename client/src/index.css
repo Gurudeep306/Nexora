@@ -78,6 +78,13 @@
   --oklch-cyan: var(--oklch-info);
   --oklch-gold: var(--oklch-warning);
   --hairline: color-mix(in oklab, var(--oklch-border) 80%, transparent);
+  /* Chart series (shadcn-style --chart-1..5): derived from the palette's own
+     roles, so every theme × mode × accent gets a coherent, distinct set. */
+  --chart-1: var(--oklch-accent-0);
+  --chart-2: var(--oklch-info);
+  --chart-3: var(--oklch-success);
+  --chart-4: var(--oklch-warning);
+  --chart-5: color-mix(in oklab, var(--oklch-danger) 70%, var(--oklch-accent-0));
 
   --color-bg-app: var(--oklch-bg-0);
   --color-bg-surface: var(--oklch-bg-1);
