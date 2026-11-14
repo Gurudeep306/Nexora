@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { FolderGit2, Inbox, MoreHorizontal, Plus, RotateCcw } from 'lucide-react'
 import { Button, Kbd, Tooltip } from '@/components/ui'
-import { ContextRing, CopyField, DataTable, Empty, ModelChip, PageHeader, Problem, QuotaMeter, Row, RowList, SegmentedControl, Skeleton, Spinner, StatusPill, friendlyModel, type Status } from '../kit'
+import { ContextRing, CopyField, DataTable, Empty, ModelChip, PageHeader, Panel, PanelGroup, PanelSeparator, Problem, QuotaMeter, Row, RowList, SegmentedControl, Skeleton, Spinner, StatusPill, friendlyModel, type Status } from '../kit'
 
 const STATUSES: Status[] = ['queued', 'planning', 'running', 'needs', 'review', 'done', 'failed', 'stopped', 'limited']
 const MODELS: [string, string][] = [
@@ -139,6 +139,18 @@ export default function DevUiPage() {
 
       <Section title="Page header (title + sub + actions)">
         <PageHeader title="Models" sub="Every brain Hive can use, what each one is best at, what it costs." actions={<Button size="sm"><Plus /> Add key</Button>} />
+      </Section>
+
+      <Section title="Resizable panels (drag the hairline or focus it and use arrow keys; the layout persists)">
+        <PanelGroup id="hive-dev-panels" panelIds={['left', 'right']} className="h-44 overflow-hidden rounded-[var(--hv-r-card)] border border-[var(--hv-border)]">
+          <Panel id="left" minSize="20%" defaultSize="38%" className="hive-scroll overflow-y-auto bg-[var(--hv-surface-1)] p-3 text-[12.5px] leading-relaxed text-[var(--hv-text-2)]">
+            The session view and the app shell use these: a 1px hairline with a 9px hit area, accent on hover and while dragging, full keyboard support via the separator’s arrow keys.
+          </Panel>
+          <PanelSeparator label="Resize demo panel" />
+          <Panel id="right" minSize="20%" className="hive-scroll overflow-y-auto bg-[var(--hv-surface-2)] p-3 text-[12.5px] leading-relaxed text-[var(--hv-text-3)]">
+            Layouts persist per group id in localStorage through react-resizable-panels’ useDefaultLayout — same as the solve workspace.
+          </Panel>
+        </PanelGroup>
       </Section>
 
       <Section title="Loaders (spinner, skeleton, context ring)">

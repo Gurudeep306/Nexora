@@ -702,7 +702,7 @@ function Stream({ events, agents, focus, showReads, task, cps }: { events: HiveE
   }, [items.length, liveLen, pinned])
 
   return (
-    <div ref={ref} onScroll={(e) => setPinned(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - e.currentTarget.clientHeight < 140)} className="hive-scroll relative min-h-0 flex-1 overflow-y-auto">
+    <div ref={ref} onScroll={(e) => setPinned(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - e.currentTarget.clientHeight < 140)} role="log" aria-label="Agent activity" aria-busy={liveAgents.length > 0} className="hive-scroll relative min-h-0 flex-1 overflow-y-auto">
       <div className="mx-auto w-full max-w-[880px] px-4 py-5 sm:px-6">
         {/* The request */}
         <div className="mb-6 flex gap-3">
@@ -1484,7 +1484,7 @@ function TerminalPanel({ machineId, folder }: { machineId: string; folder: strin
           ))}
         </span>
       </div>
-      <div className="hive-term hive-scroll min-h-0 flex-1 overflow-y-auto p-3">
+      <div className="hive-term hive-scroll min-h-0 flex-1 overflow-y-auto p-3" role="log" aria-label="Terminal output">
         {!lines.length && (
           <div className="flex h-full flex-col items-center justify-center gap-2 rounded-[var(--hv-r-card)] border border-dashed hive-line p-6 text-center">
             <SquareTerminal className="size-6 text-text-muted" aria-hidden="true" />
