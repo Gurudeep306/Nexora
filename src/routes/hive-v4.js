@@ -73,8 +73,25 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     if (!t?.machine_id || !t.folder || t.worktree) return;
     const p = await get("SELECT isolate FROM hive_projects WHERE id=?", [t.project_id]);
     if (p && Number(p.isolate) === 0) return;
+    // Start from the latest code on GitHub, not a clone that may be weeks old.
+    let base = "HEAD";
     try {
-      const r = await machines.call(t.machine_id, "worktree_add", { folder: t.folder, name: taskId.slice(-10), branch: t.branch }, { timeoutMs: 120_000 });
+      const ref = t.base_ref || "main";
+      const proj = await get("SELECT github_id FROM hive_projects WHERE id=?", [t.project_id]);
+      const token = proj?.github_id ? await githubToken(proj.github_id).catch(() => undefined) : undefined; // private repos; used for this call only
+      const f = await machines.call(t.machine_id, "git", { folder: t.folder, args: ["fetch", "--quiet", "origin", ref], token }, { timeoutMs: 120_000 });
+      if (f?.code === 0) {
+        const sha = await machines.call(t.machine_id, "git", { folder: t.folder, args: ["rev-parse", `origin/${ref}`] }, { timeoutMs: 30_000 });
+        if (sha?.code === 0 && /^[0-9a-f]{7,40}$/.test(String(sha.output).trim())) {
+          base = `origin/${ref}`;
+          await run("UPDATE hive_tasks SET base_sha=? WHERE id=?", [String(sha.output).trim(), taskId]);
+        }
+      }
+    } catch {
+      /* no remote (a local folder) or offline: use the folder as it is */
+    }
+    try {
+      const r = await machines.call(t.machine_id, "worktree_add", { folder: t.folder, name: taskId.slice(-10), branch: t.branch, base }, { timeoutMs: 120_000 });
       await run("UPDATE hive_tasks SET folder=?, worktree=? WHERE id=?", [r.path, r.path, taskId]);
       await runner.event(taskId, null, "system", { message: `Working in a private copy (git worktree) on branch ${t.branch}, so other sessions can't collide with this one` });
     } catch (e) {
