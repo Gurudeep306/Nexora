@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import {
   BarChart3,
   Bot,
+  Settings2,
   HeartPulse,
   Network,
   Boxes,
@@ -44,6 +45,7 @@ import { cn } from '@/lib/utils'
 import { hiveApi } from './api'
 import { TeamChat } from './TeamChat'
 import { InboxBell } from './Inbox'
+import { useDensity } from './kit'
 import type { LaunchGroup } from './Launcher'
 import { CopilotDock } from './Copilot'
 import { HiveLogo } from './HiveLogo'
@@ -59,6 +61,7 @@ import './kit/kit.css'
 
 const HomePage = lazy(() => import('./pages/HomePage'))
 const InboxPage = lazy(() => import('./pages/InboxPage'))
+const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const ProjectPage = lazy(() => import('./pages/ProjectPage'))
 const ChatPage = lazy(() => import('./pages/ChatPage'))
 const PluginsPage = lazy(() => import('./pages/PluginsPage'))
@@ -121,6 +124,7 @@ export default function HivePage() {
 /* ── Shell ─────────────────────────────────────────────────────────────── */
 function Shell() {
   const { boot, loading, error, noteTasks } = useHive()
+  const density = useDensity()
   const [palette, setPalette] = useState(false)
   const [team, setTeam] = useState(false)
   const navigate = useNavigate()
@@ -215,7 +219,7 @@ function Shell() {
   const toggleSide = () => setSide((s) => !s)
 
   return (
-    <div className="hive-root flex h-dvh overflow-hidden text-text-primary">
+    <div className="hive-root flex h-dvh overflow-hidden text-text-primary" data-density={density}>
       <ActivityBar onTeam={() => setTeam(true)} onPalette={() => setPalette(true)} withSidebar={side} />
       {side && (
         <div className="hidden lg:block">
@@ -229,6 +233,7 @@ function Shell() {
             <Routes>
               <Route index element={<HomePage />} />
               <Route path="inbox" element={<InboxPage />} />
+              <Route path="settings" element={<SettingsPage />} />
               <Route path="p/:projectId/*" element={<ProjectPage />} />
               <Route path="chat/:convoId?" element={<ChatPage />} />
               <Route path="copilot" element={<CopilotPage />} />
@@ -264,6 +269,7 @@ function Shell() {
             </Routes>
           </Suspense>
         </main>
+        <MobileTabs />
       </div>
       <ApprovalsTray />
       <CopilotDock />
@@ -681,6 +687,28 @@ function NewMenu() {
 }
 
 /** Plain-words system status (replaces the unlabelled dot), team, and the way back to the site. */
+/** Phones: the five places people go most, always one tap away. */
+function MobileTabs() {
+  const { pathname } = useLocation()
+  const tabs = [
+    { to: '/hive', label: 'Home', icon: Home, on: pathname === '/hive' || pathname === '/hive/' },
+    { to: '/hive/inbox', label: 'Inbox', icon: InboxIcon, on: pathname.startsWith('/hive/inbox') },
+    { to: '/hive/copilot', label: 'Copilot', icon: Bot, on: pathname.startsWith('/hive/copilot') },
+    { to: '/hive/chat', label: 'Chat', icon: MessageSquare, on: pathname.startsWith('/hive/chat') },
+    { to: '/hive/projects', label: 'Projects', icon: FolderGit2, on: /^\/hive\/(projects|p\/)/.test(pathname) },
+  ]
+  return (
+    <nav aria-label="Main" className="flex shrink-0 border-t border-[var(--hv-border)] bg-[var(--hv-bg-app)] pb-[env(safe-area-inset-bottom)] sm:hidden">
+      {tabs.map((t) => (
+        <Link key={t.to} to={t.to} aria-current={t.on ? 'page' : undefined} className={cn('flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[10.5px]', t.on ? 'text-[var(--hv-accent)]' : 'text-[var(--hv-text-3)]')}>
+          <t.icon className="size-5" strokeWidth={t.on ? 2.2 : 1.8} />
+          {t.label}
+        </Link>
+      ))}
+    </nav>
+  )
+}
+
 function SideFooter() {
   const { boot, connected, online } = useHive()
   const now = Date.now()
@@ -697,6 +725,11 @@ function SideFooter() {
         <Link to="/hub" className="flex min-w-0 flex-1 items-center gap-2 rounded-[var(--hv-r-btn)] px-1.5 py-1 text-[12px] text-[var(--hv-text-3)] hover:text-[var(--hv-text-1)]">
           <LogoMark size={16} /> <span className="truncate">Back to NexoraGuru</span>
         </Link>
+        <Tooltip label="Settings">
+          <Link to="/hive/settings" className="grid size-7 place-items-center rounded-[var(--hv-r-btn)] text-[var(--hv-text-3)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]" aria-label="Settings">
+            <Settings2 className="size-3.5" />
+          </Link>
+        </Tooltip>
         <span className="flex -space-x-1.5" title={`${online.length} online`}>
           {online.slice(0, 3).map((o) => (
             <UserDot key={o.username} username={o.username} size={5} ring />
@@ -734,7 +767,7 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
   const navigate = useNavigate()
   const section = useMemo(() => {
     const m = /^\/hive\/([^/]+)/.exec(pathname)?.[1]
-    return { inbox: 'Inbox', chat: 'Chat', copilot: 'Copilot', projects: 'Projects', pipelines: 'Pipelines', machines: 'Machines', drive: 'Drive', models: 'Models', keys: 'Keys & limits', extensions: 'Extensions', spend: 'Spend' }[m ?? ''] ?? null
+    return { inbox: 'Inbox', settings: 'Settings', chat: 'Chat', copilot: 'Copilot', projects: 'Projects', pipelines: 'Pipelines', machines: 'Machines', drive: 'Drive', models: 'Models', keys: 'Keys & limits', extensions: 'Extensions', spend: 'Spend' }[m ?? ''] ?? null
   }, [pathname])
   return (
     <header className="flex h-12 shrink-0 items-center gap-2 border-b hive-line px-2 sm:px-3">
@@ -945,6 +978,7 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
       { id: 'a:idea', group: 'Create', label: 'New project from an idea', kw: 'launchpad', icon: <Lightbulb className="size-4" />, run: go('/hive/projects/ideas'), keys: '⌘⇧I' },
       // Go to: every page and tab, with old names as synonyms
       { id: 'n:home', group: 'Go to', label: 'Home', kw: 'mission control dashboard', icon: <Home className="size-4" />, run: go('/hive') },
+      { id: 'n:settings', group: 'Go to', label: 'Settings', kw: 'appearance theme dark light density compact shortcuts preferences', icon: <Settings2 className="size-4" />, run: go('/hive/settings') },
       { id: 'n:inbox', group: 'Go to', label: 'Inbox', kw: 'alerts notifications approvals needs you bell', icon: <InboxIcon className="size-4" />, run: go('/hive/inbox') },
       { id: 'n:copilot', group: 'Go to', label: 'Copilot', kw: 'assistant chief of staff', icon: <Bot className="size-4" />, run: go('/hive/copilot') },
       { id: 'n:chat', group: 'Go to', label: 'Chat', icon: <MessageSquare className="size-4" />, run: go('/hive/chat') },
