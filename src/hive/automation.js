@@ -120,7 +120,7 @@ async function resumeInterrupted() {
         prompt: `The server restarted while ${a.name} was working on this. Continue from where it stopped: check the current changes (view_changes / git status) first, then complete the original request.\n\nIts instructions were:\n${String(a.instructions).slice(0, 6000)}`,
         username: a.started_by,
         readOnly: a.role === "reviewer",
-        variant: a.variant === a.id ? "main" : a.variant,
+        variant: a.variant, // a compare attempt resumes on its own copy
         title: `Resumed ${a.name}`,
       });
       n++;
