@@ -86,3 +86,13 @@ test("Vibe is a subscription vendor with its own card below Claude for hard work
   assert.ok(quality(card, "coding") >= MIN_QUALITY.coding, "takes everyday coding");
   assert.ok(quality(card, "hard") < MIN_QUALITY.hard, "hard engineering stays with Claude");
 });
+
+test("Vibe content given as typed parts or wrapped messages never shows as [object Object]", () => {
+  const st = { tools: new Map(), n: 0 };
+  const a = cli.parseVibe(JSON.stringify({ role: "assistant", content: [{ type: "thinking", thinking: [{ type: "text", text: "hmm" }] }, { type: "text", text: "Hello" }] }), st);
+  assert.deepEqual(a.map((e) => e.kind), ["thinking", "text"]);
+  assert.equal(a[1].text, "Hello");
+  const b = cli.parseVibe(JSON.stringify({ type: "message", message: { role: "assistant", content: "Wrapped hi" } }), st);
+  assert.equal(b[0].text, "Wrapped hi");
+  for (const e of [...a, ...b]) assert.ok(!/object Object/.test(e.text));
+});
