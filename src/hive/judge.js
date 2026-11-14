@@ -58,7 +58,7 @@ async function judgeTask(taskId, { by = "auto", adopt = true, agentIds = null } 
       res = r;
       if (pick(r)) break;
     } catch (e) {
-      firstError = firstError || e;
+      firstError = e; // report the last judge's problem (the first may only be "no other lab")
     }
   }
   const winner = pick(res);
