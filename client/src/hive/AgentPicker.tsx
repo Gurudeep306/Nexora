@@ -185,8 +185,6 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
     const match = (p: string, m: string) => !s || `${vendorName(p)} ${m}`.toLowerCase().includes(s)
     const out: { title: string; items: ModelRef[] }[] = []
     if (vendor === 'all' && !s) {
-      const fav = favs.filter((f) => providers.includes(f.provider))
-      if (fav.length) out.push({ title: 'Favourites', items: fav })
       // The fastest working models, measured on real replies.
       const fast = providers
         .flatMap((p) => modelsFor(boot, p, 'auto').map((m) => ({ provider: p, model: m, ms: speedOf(boot, p, m) })))
@@ -194,6 +192,17 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
         .sort((a, b) => a.ms - b.ms)
         .slice(0, 5)
         .map(({ provider, model }) => ({ provider, model }))
+      // Recommended: your plans first (Claude Code, Codex, Vibe), then the fastest model.
+      const rec: ModelRef[] = []
+      for (const p of providers) {
+        const key = bestKey(boot.keys.filter((k) => k.provider === p && k.subscription && !k.disabled))
+        const model = key && (key.defaultModel || modelsFor(boot, p, 'auto')[0])
+        if (model) rec.push({ provider: p, model })
+      }
+      if (fast[0] && !rec.some((r) => r.provider === fast[0].provider && r.model === fast[0].model)) rec.push(fast[0])
+      if (rec.length) out.push({ title: 'Recommended', items: rec.slice(0, 3) })
+      const fav = favs.filter((f) => providers.includes(f.provider))
+      if (fav.length) out.push({ title: 'Favourites', items: fav })
       if (fast.length) out.push({ title: 'Fastest right now', items: fast })
       if (recents.length) out.push({ title: 'Recent', items: recents.filter((r) => !isFav(r.provider, r.model)).slice(0, 5) })
     }
