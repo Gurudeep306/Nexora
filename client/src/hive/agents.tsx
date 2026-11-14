@@ -263,6 +263,7 @@ export function AgentMark({ provider, model, size = 28, className, flat }: { pro
         background: flat ? 'transparent' : `linear-gradient(150deg, color-mix(in oklab, ${c1} 20%, var(--color-bg-surface)), color-mix(in oklab, ${c2} 12%, var(--color-bg-surface)))`,
         boxShadow: flat ? undefined : `inset 0 0 0 1px color-mix(in oklab, ${c1} 26%, transparent), inset 0 1px 0 color-mix(in oklab, white 10%, transparent)`,
       }}
+      role="img"
       aria-label={FAMILY[f].name}
       title={FAMILY[f].name}
     >
@@ -468,7 +469,7 @@ export function AgentAvatar({ provider, model, state, size = 44, className }: { 
       )}
       {state === 'running' && <span className="hive-av-spin absolute inset-0 rounded-[34%]" aria-hidden="true" />}
       {state === 'done' && (
-        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 18 }} className="absolute -bottom-0.5 -right-0.5 grid size-[18px] place-items-center rounded-full bg-state-success text-white ring-2 ring-[var(--color-bg-surface)]">
+        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 18 }} className="absolute -bottom-0.5 -right-0.5 grid size-[18px] place-items-center rounded-full bg-state-success text-on-accent-brand ring-2 ring-[var(--color-bg-surface)]">
           <Check className="size-3" strokeWidth={3} />
         </motion.span>
       )}

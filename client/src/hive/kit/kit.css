@@ -22,7 +22,11 @@
 
   --hv-text-1: var(--color-text-primary);
   --hv-text-2: var(--color-text-secondary);
-  /* Hints: the site's muted text, which the theme audit keeps at 4.5:1 on surfaces. */
+  /* Hints: the site's muted text nudged a quarter of the way toward the main
+     text, so small hints stay at 4.5:1 on Hive's tinted surfaces and inputs
+     in both themes (axe, WCAG 1.4.3). Older Hive classes (text-text-muted)
+     pick this up too. */
+  --color-text-muted: color-mix(in oklab, var(--oklch-fg-2) 75%, var(--color-text-primary));
   --hv-text-3: var(--color-text-muted);
 
   --hv-accent: var(--color-accent-brand);

@@ -882,7 +882,7 @@ function ApprovalLine({ ev }: { ev: HiveEvent }) {
       <pre className="hive-term mt-2 overflow-auto rounded-lg px-3 py-2">$ {String(ev.data.command)}</pre>
       {pending && (
         <div className="mt-2 flex gap-2">
-          <button type="button" onClick={() => answerApproval(pending.id, true)} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-state-success px-3 text-[12.5px] font-medium text-white">
+          <button type="button" onClick={() => answerApproval(pending.id, true)} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-state-success px-3 text-[12.5px] font-medium text-on-accent-brand">
             <Check className="size-3.5" /> Run it
           </button>
           <button type="button" onClick={() => answerApproval(pending.id, false)} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-text-primary/[0.07] px-3 text-[12.5px] font-medium hover:text-state-error">
@@ -1272,7 +1272,7 @@ function ShipPanel() {
         {steps.map((s, i) => (
           <Fragment key={s.label}>
             <li className="flex flex-col items-center gap-1 text-center">
-              <span className={cn('grid size-7 place-items-center rounded-full text-[11px] font-semibold', s.done ? 'bg-state-success text-white' : s.fail ? 'bg-state-error text-white' : s.pending ? 'bg-state-warning/20 text-state-warning' : 'bg-text-primary/[0.07] text-text-muted')}>
+              <span className={cn('grid size-7 place-items-center rounded-full text-[11px] font-semibold', s.done ? 'bg-state-success text-on-accent-brand' : s.fail ? 'bg-state-error text-white' : s.pending ? 'bg-state-warning/20 text-state-warning' : 'bg-text-primary/[0.07] text-text-muted')}>
                 {s.done ? <Check className="size-3.5" /> : s.fail ? <X className="size-3.5" /> : s.pending ? <Loader2 className="size-3.5 animate-spin" /> : i + 1}
               </span>
               <span className="w-16 text-[10.5px] leading-tight text-text-muted">{s.label}</span>

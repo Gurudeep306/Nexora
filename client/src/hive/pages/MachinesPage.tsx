@@ -7,6 +7,7 @@ import { API_BASE } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
 import { useHive } from '../store'
+import { StatusPill } from '../kit'
 import type { Machine } from '../types'
 import { timeAgo } from '../ui'
 
@@ -126,7 +127,7 @@ function MachineCard({ m, onChanged }: { m: Machine; onChanged: () => void }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="truncate text-[15px] font-semibold">{m.name}</span>
-            <span className={cn('rounded-full px-2 py-0.5 text-[10.5px] font-medium', m.online ? 'bg-state-success/15 text-state-success' : 'bg-text-primary/[0.07] text-text-muted')}>{m.online ? 'online' : m.lastSeen ? `seen ${timeAgo(m.lastSeen)} ago` : 'never connected'}</span>
+            <StatusPill size="sm" status={m.online ? 'done' : 'stopped'} label={m.online ? 'Online' : m.lastSeen ? `Seen ${timeAgo(m.lastSeen)} ago` : 'Never connected'} />
           </div>
           <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[11.5px] text-text-muted">
             {m.info.hostname && <span>{m.info.hostname}</span>}
@@ -328,7 +329,7 @@ function AddMachine({ open, onClose }: { open: boolean; onClose: () => void }) {
 }
 
 function Step({ n, done }: { n: number; done?: boolean }) {
-  return <span className={cn('grid size-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold', done ? 'bg-state-success text-white' : 'bg-text-primary/[0.08] text-text-muted')}>{done ? <Check className="size-3.5" /> : n}</span>
+  return <span className={cn('grid size-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold', done ? 'bg-state-success text-on-accent-brand' : 'bg-text-primary/[0.08] text-text-muted')}>{done ? <Check className="size-3.5" /> : n}</span>
 }
 
 function FolderBrowser({ m, open, onClose }: { m: Machine; open: boolean; onClose: () => void }) {

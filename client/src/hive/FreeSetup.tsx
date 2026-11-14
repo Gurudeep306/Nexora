@@ -77,7 +77,7 @@ export function FreeSetup() {
           <p className="text-[12.5px] text-text-muted">Every source here has a free tier. Connect as many as you can — Hive spreads easy work across them and saves paid models for hard work.</p>
         </div>
         {instant.length > 0 && (
-          <button type="button" onClick={addInstant} disabled={!!busy} className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-state-success px-3.5 text-[13px] font-medium text-white shadow-sm hover:opacity-90 disabled:opacity-60">
+          <button type="button" onClick={addInstant} disabled={!!busy} className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-state-success px-3.5 text-[13px] font-medium text-on-accent-brand shadow-sm hover:opacity-90 disabled:opacity-60">
             {busy && instant.includes(busy) ? <Loader2 className="size-4 animate-spin" /> : <Zap className="size-4" />} Add {instant.length} that need no sign-up
           </button>
         )}

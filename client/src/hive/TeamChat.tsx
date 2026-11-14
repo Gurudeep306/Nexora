@@ -119,7 +119,7 @@ export function TeamChat({ className }: { className?: string }) {
           <button key={c.id} type="button" onClick={() => setChannel(c.id)} className={cn('relative flex h-7 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-[12px] transition-colors', channel === c.id ? 'bg-accent-brand/12 font-medium text-text-primary' : 'text-text-muted hover:bg-text-primary/[0.05] hover:text-text-primary')}>
             {c.color ? <span className="hive-hex size-2" style={{ background: projectColor(c.color) }} /> : <Hash className="size-3" />}
             <span className="max-w-[110px] truncate">{c.name}</span>
-            {(unread[c.id] ?? 0) > 0 && <span className="grid min-w-4 place-items-center rounded-full bg-accent-brand px-1 text-[9px] font-bold text-white">{unread[c.id]}</span>}
+            {(unread[c.id] ?? 0) > 0 && <span className="grid min-w-4 place-items-center rounded-full bg-accent-brand px-1 text-[9px] font-bold text-on-accent-brand">{unread[c.id]}</span>}
           </button>
         ))}
       </div>
@@ -171,7 +171,7 @@ export function TeamChat({ className }: { className?: string }) {
           className="hive-scroll max-h-32 min-h-9 flex-1 resize-none bg-transparent py-2 text-[13px] outline-none placeholder:text-text-muted"
           aria-label="Message"
         />
-        <button type="submit" disabled={!text.trim() || busy} className="grid size-8 shrink-0 place-items-center rounded-xl bg-accent-brand text-white transition-opacity disabled:opacity-40" aria-label="Send">
+        <button type="submit" disabled={!text.trim() || busy} className="grid size-8 shrink-0 place-items-center rounded-xl bg-accent-brand text-on-accent-brand transition-opacity disabled:opacity-40" aria-label="Send">
           <Send className="size-3.5" />
         </button>
       </form>

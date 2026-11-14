@@ -123,9 +123,17 @@ changed.
   `state-info`.
 - Light and dark themes must both work. Respect `prefers-reduced-motion`.
   Layouts must work at phone width with no horizontal scroll.
-- Hive uses Nexora cards (`hive-card`), rounded icon tiles (`IconTile`) and
-  page headers (`PageTitle` with an icon). No hexagons, honeycomb patterns,
-  glow blobs or gradient text.
+- Hive screens are built from the Hive kit (`client/src/hive/kit/`):
+  - `--hv-*` tokens
+  - `StatusPill`, `Row`/`RowList`, `DataTable`, `SegmentedControl`,
+    `Composer`, `StackedBars`/`Sparkline`, `Empty`
+  - a plain page header (title plus one short line)
+  - one primary button per page
+  - no raw ids shown to people
+
+  No hexagons, honeycomb patterns, glow blobs or gradient text.
+  `docs/ui-changes.md` has the full rules, the old-URL redirects and how the
+  redesign was checked (axe with 0 violations, keyboard, responsiveness).
 - Animations explain an idea. They are never decoration only.
 
 ## Content authoring
