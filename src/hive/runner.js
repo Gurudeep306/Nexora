@@ -536,8 +536,9 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
       });
       flush();
       step = steps;
+      // Every run counts (some CLIs report no token numbers), so plan bars show real use.
+      await keys.recordUsage(keyRow.id, agent.started_by, { ...usage, costMicros: 0 }, null, { projectId: project.id, vendor: agent.provider, model: agent.model });
       if (usage.input || usage.output) {
-        await keys.recordUsage(keyRow.id, agent.started_by, { ...usage, costMicros: 0 }, null, { projectId: project.id, vendor: agent.provider, model: agent.model });
         agent = await setAgent(agentId, { steps, input_tokens: agent.input_tokens + usage.input, output_tokens: agent.output_tokens + usage.output });
         hub.emit("usage", { keyId: keyRow.id });
       }
