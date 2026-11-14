@@ -47,6 +47,14 @@
   --hv-r-dialog: 16px;
   --hv-row-h: 40px;
 
+  /* Type scale (px): meta 12 · body-sm 12.5 · body 13.5 · emphasis 14 · section 17 · page 26. */
+  --hv-fs-meta: 12px;
+  --hv-fs-sm: 12.5px;
+  --hv-fs-body: 13.5px;
+  --hv-fs-md: 14px;
+  --hv-fs-lg: 17px;
+  --hv-fs-page: 26px;
+
   /* Motion: only transform and opacity; 120 hover, 180 menus, 240 panels. */
   --hv-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --hv-d-fast: 120ms;

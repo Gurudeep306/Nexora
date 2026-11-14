@@ -390,7 +390,7 @@ export function NewProjectDialog({ open, onClose }: { open: boolean; onClose: ()
             )}
             <div className="ml-auto flex items-center gap-1.5">
               {Object.keys(PROJECT_COLORS).map((c) => (
-                <button key={c} type="button" aria-label={c} onClick={() => setColor(c)} className={cn('hive-hex size-5 transition-transform', color === c && 'scale-125')} style={{ background: PROJECT_COLORS[c] }} />
+                <button key={c} type="button" aria-label={c} onClick={() => setColor(c)} className={cn('rounded-full size-5 transition-transform', color === c && 'scale-125')} style={{ background: PROJECT_COLORS[c] }} />
               ))}
             </div>
           </div>
