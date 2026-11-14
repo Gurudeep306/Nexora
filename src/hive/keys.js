@@ -125,6 +125,8 @@ async function listKeys() {
     const today = await get("SELECT COALESCE(SUM(input_tokens + output_tokens),0) AS t, COALESCE(SUM(requests),0) AS n FROM hive_usage WHERE key_id=? AND day=?", [r.id, day()]);
     // Measured reply time per model (from real calls and tests), for the picker's speed badges.
     const speed = Object.fromEntries((await all("SELECT model, latency_ms FROM hive_health WHERE key_id=? AND model<>'' AND latency_ms IS NOT NULL AND ok_count>0", [r.id]).catch(() => [])).map((x) => [x.model, Number(x.latency_ms)]));
+    // A plan or key that said "limit reached": until when, and what it said.
+    const lim = await get("SELECT MAX(cooldown_until) AS until, last_error AS note FROM hive_health WHERE key_id=? AND cooldown_until>? AND last_kind IN ('quota','rate','limit')", [r.id, Date.now()]).catch(() => null);
     const failing = (await all("SELECT model FROM hive_health WHERE key_id=? AND model<>'' AND consecutive_fails>=2 AND last_fail>? AND (last_ok IS NULL OR last_ok<last_fail)", [r.id, Date.now() - 86_400_000]).catch(() => [])).map((x) => x.model);
     out.push(
       publicKey(r, used, {
@@ -139,6 +141,8 @@ async function listKeys() {
         periodEnds: periodEnd(r.limit_period),
         failing,
         speed,
+        limitUntil: lim?.until ? Number(lim.until) : null,
+        limitNote: lim?.until ? String(lim.note || "").slice(0, 200) : null,
       }),
     );
   }

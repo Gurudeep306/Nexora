@@ -323,15 +323,43 @@ export function LimitBar({ k, compact = false }: { k: HiveKey; compact?: boolean
   const rl = k.rateLimit
   const plan = (rl as unknown as { plan?: boolean; windows?: Record<string, PlanWindow> } | null)?.plan ? (rl as unknown as { windows: Record<string, PlanWindow> }).windows : null
   if (plan && Object.keys(plan).length) return <PlanWindows windows={plan} compact={compact} />
+  // Any connection the provider has stopped for now: say so, with when it frees up.
+  if (k.limitUntil && k.limitUntil > Date.now()) {
+    return (
+      <div className={cn(compact ? 'text-[11px]' : 'text-[11.5px]')}>
+        <div className="mb-1 flex justify-between gap-2">
+          <span className="font-medium text-state-error">Limit reached</span>
+          <span className="text-text-secondary">frees up in {until(k.limitUntil)}</span>
+        </div>
+        <div className="h-1.5 rounded-full bg-state-error/70" />
+        <div className="mt-1 truncate text-[10.5px] text-text-muted" title={k.limitNote ?? ''}>
+          Hive moves work to other models until then{k.limitNote ? ` · ${k.limitNote}` : ''}
+        </div>
+      </div>
+    )
+  }
   if (k.subscription) {
+    // Claude publishes plan usage (5-hour / weekly windows); Codex and Mistral Vibe don't,
+    // so show what Hive used on this plan today instead of an empty bar.
+    const runs = k.todayRequests ?? 0
+    const toks = k.todayTokens ?? 0
+    const claude = k.provider === 'claude_code'
     return (
       <div className={cn('text-text-muted', compact ? 'text-[11px]' : 'text-[11.5px]')}>
         <div className="mb-1 flex justify-between gap-2">
-          <span>Plan usage</span>
-          <span className="text-text-secondary">not measured yet</span>
+          <span>{claude ? 'Plan usage' : 'Used today'}</span>
+          <span className="text-text-secondary">
+            {claude && !runs ? 'not measured yet' : `${fmtTokens(runs)} run${runs === 1 ? '' : 's'}${toks ? ` · ${fmtTokens(toks)} tokens` : ''}`}
+          </span>
         </div>
-        <div className="h-1.5 rounded-full bg-text-primary/[0.07]" />
-        <div className="mt-1 text-[10.5px]">{k.provider === 'claude_code' ? 'Press Refresh usage, or it fills in after this account’s first run' : 'Fills in after this account’s first run'}</div>
+        <div className="h-1.5 overflow-hidden rounded-full bg-text-primary/[0.07]">
+          {runs > 0 && <div className="h-full rounded-full bg-state-success/70" style={{ width: `${Math.min(100, 8 + runs * 4)}%` }} />}
+        </div>
+        <div className="mt-1 text-[10.5px]">
+          {claude
+            ? 'Press Refresh usage, or it fills in after this account’s first run'
+            : `${k.provider === 'vibe' ? 'Mistral' : 'OpenAI'} doesn’t share plan limits — Hive shows its own use, and warns here the moment the plan says stop`}
+        </div>
       </div>
     )
   }
