@@ -964,6 +964,12 @@ if (HAS_CLIENT_BUILD) {
       etag: true,
       lastModified: true,
       index: "index.html",
+      // index.html names the current build's files: always check it, so a deploy
+      // shows on the next load. Hashed build files never change: cache them for good.
+      setHeaders(res, filePath) {
+        if (filePath.endsWith("index.html")) res.setHeader("Cache-Control", "no-cache");
+        else if (filePath.includes(`${path.sep}assets${path.sep}`)) res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+      },
     }),
   );
   // Legacy SPA stays reachable at /legacy (its assets resolve from the
@@ -6477,7 +6483,8 @@ io.on("connection", (socket) => {
         .json({ ok: false, error: "API endpoint not found" });
     }
     // SPA fallback — new React client owns client-side routes; fall back to
-    // the legacy SPA when no client build exists.
+    // the legacy SPA when no client build exists. Never served from a stale cache.
+    res.setHeader("Cache-Control", "no-cache");
     res.sendFile(
       HAS_CLIENT_BUILD
         ? path.join(CLIENT_DIST, "index.html")

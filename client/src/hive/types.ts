@@ -53,6 +53,9 @@ export interface HiveKey {
   speed?: Record<string, number>
   /** A free connection's typical allowance (shown when the provider sends no live numbers). */
   freeLimit?: FreeLimit | null
+  /** Pace set on this key (requests a minute / a day); null = the provider's usual free allowance. */
+  rpmLimit?: number | null
+  rpdLimit?: number | null
 }
 
 export interface FreeLimit {
@@ -60,7 +63,8 @@ export interface FreeLimit {
   rpm?: number
   tpd?: number
   tpm?: number
-  note: string
+  note?: string
+  custom?: boolean
 }
 
 /** The last "test every model" run on a key: which models really answered. */
@@ -223,7 +227,7 @@ export interface AgentRow {
   effort: Effort | null
   variant: string
   instructions: string
-  status: 'queued' | 'running' | 'done' | 'failed' | 'stopped' | 'interrupted'
+  status: 'queued' | 'running' | 'done' | 'failed' | 'stopped' | 'interrupted' | 'incomplete'
   title?: string | null
   handoffs?: number
   routed_kind?: TaskKind | null
@@ -521,6 +525,15 @@ export interface MeasuredStat {
   avgSteps: number | null
   avgSeconds: number | null
   updatedAt: number
+}
+
+/** A model's latest score on Hive's golden coding tasks (0–100). */
+export interface BenchResult {
+  provider: string
+  model: string
+  score: number | null
+  ranAt?: number
+  details: { task: string; passed: number; total: number; error?: string }[]
 }
 
 export interface ConnectedModel {

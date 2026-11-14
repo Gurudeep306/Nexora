@@ -120,7 +120,7 @@ async function resumeInterrupted() {
         prompt: `The server restarted while ${a.name} was working on this. Continue from where it stopped: check the current changes (view_changes / git status) first, then complete the original request.\n\nIts instructions were:\n${String(a.instructions).slice(0, 6000)}`,
         username: a.started_by,
         readOnly: a.role === "reviewer",
-        variant: a.variant === a.id ? "main" : a.variant,
+        variant: a.variant, // a compare attempt resumes on its own copy
         title: `Resumed ${a.name}`,
       });
       n++;
@@ -204,12 +204,15 @@ async function ciFixTick() {
 function startLoops(deps) {
   const safe = (fn) => () => fn().catch((e) => console.error("[hive automation]", e.message));
   setTimeout(safe(async () => {
+    await require("./machines").closeStaleApprovals();
     await resumeInterrupted();
     await require("./pipelines").resumeAll();
     await require("./dispatcher").resumeAll();
   }), 20_000).unref?.();
   setInterval(safe(() => tickSchedules(deps)), 60_000).unref?.();
   setInterval(safe(ciFixTick), 5 * 60_000).unref?.();
+  // Free models only, a few per day: objective coding scores for the router.
+  setInterval(safe(() => require("./bench").benchFreeTick({ limit: 3 })), 24 * 3600_000).unref?.();
   // Agent health: probe free and subscription models a few times a day (a tiny "reply OK" call).
   setTimeout(safe(() => require("./health").probeAll()), 3 * 60_000).unref?.();
   setInterval(safe(() => require("./health").probeAll()), 4 * 60 * 60_000).unref?.();

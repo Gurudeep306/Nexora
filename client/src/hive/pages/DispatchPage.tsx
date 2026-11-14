@@ -158,14 +158,14 @@ export default function DispatchPage() {
             <Menu>
               <MenuTrigger asChild>
                 <button type="button" className="inline-flex h-8 items-center gap-1.5 rounded-full bg-text-primary/[0.06] px-3 text-[12.5px] hover:bg-text-primary/[0.1]">
-                  {proj ? <span className="hive-hex size-2.5" style={{ background: projectColor(proj.color) }} /> : <GitBranch className="size-3.5" />}
+                  {proj ? <span className="rounded-full size-2.5" style={{ background: projectColor(proj.color) }} /> : <GitBranch className="size-3.5" />}
                   {proj?.name ?? 'Pick a project'}
                 </button>
               </MenuTrigger>
               <MenuContent align="start">
                 {boot.projects.map((p) => (
                   <MenuItem key={p.id} onSelect={() => setProjectId(p.id)}>
-                    <span className="hive-hex size-2.5" style={{ background: projectColor(p.color) }} /> {p.name}
+                    <span className="rounded-full size-2.5" style={{ background: projectColor(p.color) }} /> {p.name}
                   </MenuItem>
                 ))}
               </MenuContent>

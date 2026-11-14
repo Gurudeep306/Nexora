@@ -18,7 +18,7 @@ const path = require("node:path");
 const os = require("node:os");
 const { spawn } = require("node:child_process");
 
-const VERSION = "1.2.0";
+const VERSION = "1.3.0";
 const args = process.argv.slice(2);
 const opt = (name, fallback) => {
   const i = args.indexOf(`--${name}`);
@@ -372,14 +372,15 @@ const OPS = {
     return { stopped: true };
   },
   /** A private working copy (git worktree) per task, next to the project folder. */
-  async worktree_add({ folder, name, branch }) {
+  async worktree_add({ folder, name, branch, base: from = "HEAD" }) {
     const base = safe(folder);
     const parent = path.join(path.dirname(base), ".hive-worktrees");
     const dest = path.join(parent, `${path.basename(base)}-${String(name).replace(/[^\w.-]/g, "-")}`);
     safe(dest);
     if (fs.existsSync(dest)) return { path: dest, existed: true };
     fs.mkdirSync(parent, { recursive: true });
-    const r = await OPS.git({ folder: base, args: ["worktree", "add", "-b", String(branch), dest, "HEAD"] });
+    // Start from the given base (the server fetches origin first), else the local HEAD.
+    const r = await OPS.git({ folder: base, args: ["worktree", "add", "-b", String(branch), dest, String(from || "HEAD")] });
     if (r.code !== 0) {
       const r2 = await OPS.git({ folder: base, args: ["worktree", "add", dest, String(branch)] });
       if (r2.code !== 0) throw new Error(r.output.trim().slice(-600) || "git worktree add failed");

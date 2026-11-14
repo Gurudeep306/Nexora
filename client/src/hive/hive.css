@@ -5,8 +5,6 @@
 .hive-root {
   --hive-line: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
   --hive-line-strong: color-mix(in oklab, var(--color-text-primary) 14%, transparent);
-  --hive-card: color-mix(in oklab, var(--color-bg-surface) 72%, var(--color-bg-app));
-  --hive-panel: color-mix(in oklab, var(--color-bg-surface) 55%, var(--color-bg-app));
   --hive-sunken: color-mix(in oklab, var(--color-bg-app) 70%, black);
   --hive-accent-soft: color-mix(in oklab, var(--color-accent-brand) 12%, transparent);
   --hive-add: color-mix(in oklab, var(--color-state-success) 16%, transparent);
@@ -22,46 +20,36 @@
   --hive-sunken: color-mix(in oklab, var(--color-bg-app) 92%, black);
 }
 
-.hive-main {
-  background:
-    radial-gradient(1100px 480px at 50% -180px, color-mix(in oklab, var(--color-accent-brand) 8%, transparent), transparent 70%),
-    var(--color-bg-app);
-}
-.hive-rail { background: color-mix(in oklab, var(--color-bg-surface) 50%, var(--color-bg-app)); }
-.hive-side { background: color-mix(in oklab, var(--color-bg-surface) 32%, var(--color-bg-app)); }
-.hive-panel { background: var(--hive-panel); }
+/* Flat app background everywhere: no washes, patterns or glows. */
+.hive-main,
+.hive-rail,
+.hive-side { background: var(--color-bg-app); }
 .hive-sunken { background: var(--hive-sunken); }
 .hive-line { border-color: var(--hive-line); }
 .hive-line-strong { border-color: var(--hive-line-strong); }
 .hive-divide > * + * { border-top: 1px solid var(--hive-line); }
 
+/* Cards are for real objects: surface, hairline, card radius, soft elevation.
+   Hover changes the border and elevation only (nothing moves). */
 .hive-card {
-  background: var(--hive-card);
-  border: 1px solid var(--hive-line);
-  border-radius: 16px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border, var(--hive-line-strong));
+  border-radius: var(--radius-card, 12px);
+  box-shadow: var(--elev-1);
 }
-.hive-card-hover { transition: border-color 160ms, background-color 160ms, transform 200ms var(--hive-ease), box-shadow 200ms; }
-.hive-card-hover:hover {
-  border-color: var(--hive-line-strong);
-  background: color-mix(in oklab, var(--color-bg-surface) 92%, var(--color-bg-app));
-  box-shadow: var(--elev-2);
-}
-.hive-lift:hover { transform: translateY(-1px); }
+.hive-card-hover { transition: border-color 120ms var(--hive-ease), box-shadow 120ms var(--hive-ease); }
+.hive-card-hover:hover { border-color: color-mix(in oklab, var(--color-text-primary) 18%, transparent); box-shadow: var(--elev-2); }
 
 /* Composer: the most used surface — calm, with a focus glow. */
 .hive-composer {
   background: color-mix(in oklab, var(--color-bg-surface) 92%, var(--color-bg-app));
   border: 1px solid var(--hive-line-strong);
-  box-shadow:
-    0 1px 0 color-mix(in oklab, white 5%, transparent) inset,
-    0 24px 60px -30px color-mix(in oklab, black 60%, transparent);
-  transition: border-color 160ms, box-shadow 200ms;
+  box-shadow: var(--elev-1);
+  transition: border-color 120ms, box-shadow 120ms;
 }
 .hive-composer:focus-within {
   border-color: color-mix(in oklab, var(--color-accent-brand) 55%, var(--hive-line));
-  box-shadow:
-    0 0 0 4px color-mix(in oklab, var(--color-accent-brand) 12%, transparent),
-    0 24px 60px -30px color-mix(in oklab, black 60%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent-brand) 12%, transparent), var(--elev-1);
 }
 
 /* Icon tile, like the site's feature cards. */
@@ -152,13 +140,6 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
 }
 @keyframes hive-spin { to { --hive-angle: 360deg; } }
 
-/* Hero backdrop: a faint honeycomb. */
-.hive-comb {
-  background-image:
-    radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--color-text-primary) 9%, transparent) 1px, transparent 0);
-  background-size: 22px 22px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black, transparent 75%);
-}
 
 @keyframes hive-ping {
   0% { transform: scale(1); opacity: 0.9; }
@@ -186,39 +167,20 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
   background: var(--color-accent-brand);
   animation: hive-caret 1s steps(1) infinite;
 }
-@keyframes hive-shimmer {
-  from { background-position: -200% 0; }
-  to { background-position: 200% 0; }
-}
+/* Loading: a quiet opacity pulse (skeletons) — no sweeping sheen. */
+@keyframes hive-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
 .hive-shimmer {
-  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-text-primary) 6%, transparent), transparent) 0 0 / 200% 100%;
-  animation: hive-shimmer 1.8s linear infinite;
+  background: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
+  animation: hive-pulse 1.6s ease-in-out infinite;
 }
-.hive-shine {
-  background: linear-gradient(90deg, var(--color-text-muted) 0%, var(--color-text-primary) 45%, var(--color-text-muted) 90%) 0 0 / 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: hive-shimmer 2.4s linear infinite;
-}
+/* "Thinking…" labels: muted text that breathes (no gradient text). */
+.hive-shine { color: var(--color-text-muted); animation: hive-pulse 1.6s ease-in-out infinite; }
 @keyframes hive-in {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: none; }
 }
 .hive-in { animation: hive-in 280ms var(--hive-ease) both; }
-@keyframes hive-pop {
-  from { opacity: 0; transform: translateY(8px) scale(0.98); }
-  to { opacity: 1; transform: none; }
-}
-.hive-pop { animation: hive-pop 320ms var(--hive-ease) both; }
-.hive-hex { clip-path: polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0 50%); }
 
-.hive-gradient-text {
-  background: linear-gradient(100deg, var(--ng-c1, var(--color-accent-brand)), var(--ng-c2, var(--color-accent-brand)) 55%, var(--ng-c3, var(--color-text-primary)));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
 
 /* Markdown inside chat / transcript. */
 .hive-prose { font-size: 14.5px; line-height: 1.7; color: var(--color-text-primary); }
@@ -238,112 +200,51 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
 }
 .hive-av--done .hive-av-ring, .hive-av--stopped .hive-av-ring, .hive-av--queued .hive-av-ring { box-shadow: 0 0 0 1px var(--hive-line-strong); }
 .hive-av--failed .hive-av-ring { box-shadow: 0 0 0 1.5px color-mix(in oklab, var(--color-state-error) 60%, transparent); }
-.hive-av-halo {
-  background: radial-gradient(closest-side, color-mix(in oklab, var(--av) 30%, transparent), transparent 80%);
-  animation: hive-av-breathe 2.4s ease-in-out infinite;
-  filter: blur(3px);
-}
-@keyframes hive-av-breathe { 0%, 100% { opacity: 0.45; transform: scale(0.94); } 50% { opacity: 1; transform: scale(1.1); } }
-.hive-av-orbit { animation: hive-spin 2.6s linear infinite; }
+/* Live state stays explicit but quiet: no halos, orbits or scan lines. */
+.hive-av-halo, .hive-av-orbit, .hive-av-scan::after { display: none; }
 @keyframes hive-spin { to { transform: rotate(360deg); } }
-.hive-av-scan::after {
-  content: "";
-  position: absolute;
-  left: 0; right: 0; height: 40%;
-  background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--av) 35%, transparent), transparent);
-  animation: hive-av-scan 1.6s ease-in-out infinite;
-}
-@keyframes hive-av-scan { from { top: -40%; } to { top: 100%; } }
 .hive-av-type { animation: hive-av-type 1s ease-in-out infinite; }
 @keyframes hive-av-type { 0%, 100% { transform: translateY(0); opacity: 0.5; } 40% { transform: translateY(-3px); opacity: 1; } }
 .hive-av-spin {
   background: conic-gradient(from 0deg, transparent 0 70%, var(--av) 90%, transparent);
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
-  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1px));
   animation: hive-spin 1.1s linear infinite;
 }
 .hive-av--failed { animation: hive-shake 420ms ease-in-out 1; }
 @keyframes hive-shake { 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
 
 /* ── Team floor ──────────────────────────────────────────────────────── */
-.hive-floor {
-  background:
-    radial-gradient(700px 260px at 50% 0%, color-mix(in oklab, var(--color-accent-brand) 7%, transparent), transparent 75%),
-    linear-gradient(color-mix(in oklab, var(--color-text-primary) 3.5%, transparent) 1px, transparent 1px) 0 0 / 22px 22px,
-    linear-gradient(90deg, color-mix(in oklab, var(--color-text-primary) 3.5%, transparent) 1px, transparent 1px) 0 0 / 22px 22px;
-}
+/* Flat stations: a card with a status border, no grid, glow or lift. */
+.hive-floor { background: var(--color-bg-app); }
 .hive-station {
   position: relative;
-  background: color-mix(in oklab, var(--color-bg-surface) 88%, var(--color-bg-app));
-  border: 1px solid var(--hive-line);
-  border-radius: 18px;
-  transition: border-color 200ms, box-shadow 300ms var(--hive-ease), transform 300ms var(--hive-ease);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border, var(--hive-line-strong));
+  border-radius: var(--radius-card, 12px);
+  box-shadow: var(--elev-1);
+  transition: border-color 120ms var(--hive-ease), box-shadow 120ms var(--hive-ease);
 }
-.hive-station[data-active="true"] {
-  border-color: color-mix(in oklab, var(--st) 45%, var(--hive-line));
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--st) 9%, transparent), 0 18px 40px -24px color-mix(in oklab, var(--st) 70%, transparent);
-}
-.hive-station[data-focus="true"] { transform: translateY(-2px); box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-accent-brand) 50%, transparent); }
-.hive-station-glow {
-  position: absolute; inset: -1px; border-radius: inherit; pointer-events: none;
-  background: linear-gradient(120deg, transparent 30%, color-mix(in oklab, var(--st) 18%, transparent) 50%, transparent 70%) 0 0 / 250% 100%;
-  animation: hive-sheen 2.8s linear infinite;
-}
+.hive-station[data-active="true"] { border-color: color-mix(in oklab, var(--st) 50%, var(--hive-line)); }
+.hive-station[data-focus="true"] { box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-accent-brand) 50%, transparent); }
+.hive-station-glow { display: none; }
 @keyframes hive-sheen { from { background-position: 150% 0; } to { background-position: -100% 0; } }
 .hive-wire { stroke-dasharray: 4 6; animation: hive-wire 1.2s linear infinite; }
 @keyframes hive-wire { to { stroke-dashoffset: -20; } }
-.hive-typewriter { display: inline-block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 100%; vertical-align: bottom; }
-.hive-stage-chip[data-state="active"] { box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-accent-brand) 14%, transparent); }
+.hive-stage-chip[data-state="active"] { box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-accent-brand) 30%, transparent); }
 
-/* Chat: thinking shimmer and tool steps. */
-.hive-thinking-text {
-  background: linear-gradient(90deg, var(--color-text-muted) 0%, var(--color-text-primary) 45%, var(--color-text-muted) 90%) 0 0 / 200% 100%;
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  animation: hive-sheen 2.2s linear infinite;
-}
+/* Chat: a running step's label breathes (no gradient text). */
+.hive-thinking-text { animation: hive-pulse 1.6s ease-in-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
-  .hive-ping::after, .hive-dot-run, .hive-caret::after, .hive-shimmer, .hive-in, .hive-pop, .hive-shine, .hive-working::before, .hive-av-halo, .hive-av-orbit, .hive-av-scan::after, .hive-av-type, .hive-av-spin, .hive-station-glow, .hive-wire, .hive-thinking-text { animation: none; }
+  .hive-ping::after, .hive-dot-run, .hive-caret::after, .hive-shimmer, .hive-in, .hive-shine, .hive-working::before, .hive-av-halo, .hive-av-orbit, .hive-av-scan::after, .hive-av-type, .hive-av-spin, .hive-station-glow, .hive-wire, .hive-thinking-text { animation: none; }
 }
 
-@keyframes hive-ring {
-  0%, 100% { transform: rotate(0); }
-  15% { transform: rotate(14deg); }
-  30% { transform: rotate(-12deg); }
-  45% { transform: rotate(8deg); }
-  60% { transform: rotate(-5deg); }
-  75% { transform: rotate(2deg); }
-}
-
-/* ════════════════════════════════════════════════════════════════════════
-   Hive looks like the rest of NexoraGuru: the site's flat app background,
-   its cards (surface, hairline border, card radius, soft elevation), rounded
-   icon tiles and quiet focus. No patterns, glows or hexagons.
-   ════════════════════════════════════════════════════════════════════════ */
+/* Brand-coloured text sits on tinted chips all over Hive: nudge it toward the
+   main text so it keeps 4.5:1 on those tints in light and dark (WCAG 1.4.3). */
+.hive-root .text-accent-brand { color: color-mix(in oklab, var(--color-accent-brand) 82%, var(--color-text-primary)); }
 .hive-root ::selection { background: color-mix(in oklab, var(--color-accent-brand) 30%, transparent); }
-.hive-main { background: var(--color-bg-app); }
-.hive-card {
-  background: var(--color-bg-surface);
-  border: 1px solid var(--color-border, var(--hive-line-strong));
-  border-radius: var(--radius-card, 16px);
-  box-shadow: var(--elev-1);
-}
-.hive-card-hover:hover { transform: none; border-color: color-mix(in oklab, var(--color-text-primary) 18%, transparent); box-shadow: var(--elev-2); }
-.hive-lift:hover { transform: none; }
-/* The main inputs: a calm border that turns accent on focus (no animated rings). */
-.hive-ring { position: relative; }
-.hive-ring:focus-within { border-color: color-mix(in oklab, var(--color-accent-brand) 55%, transparent); }
-.hive-gradient-text { color: var(--color-text-primary); }
-.hive-comb { display: none; }
-/* Icon tiles: rounded squares tinted by their colour, like Nexora's feature cards. */
-.hive-hex,
-.hive-hex-tile {
-  clip-path: none;
-  border-radius: var(--radius-control, 12px);
-}
-.hive-launcher-tile { transition: background-color 160ms, border-color 160ms; }
-.hive-rail { background: var(--color-bg-app); }
-.hive-side { background: var(--color-bg-app); }
+.hive-launcher-tile { transition: background-color 120ms, border-color 120ms; }
 
 /* Thin, quiet scrollbars */
 .hive-root ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -491,3 +392,9 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
 .hive-root .ai-md blockquote { border-radius: 0 var(--hv-r-chip) var(--hv-r-chip) 0; }
 .hive-root .ai-md hr { border-top-color: var(--hv-border); }
 .hive-root .ai-md a { text-decoration-thickness: 1px; }
+/* Reduced motion: every Hive animation stops (state is still shown by words and icons). */
+@media (prefers-reduced-motion: reduce) {
+  .hive-root *,
+  .hive-root *::before,
+  .hive-root *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}

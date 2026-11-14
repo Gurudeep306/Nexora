@@ -1,6 +1,6 @@
 import { api } from '@/lib/api'
 import { API_BASE } from '@/lib/api'
-import type { ArchitectReply, Cap, CatalogInfo, Checkpoint, CliStatus, ConnectedModel, DriveItem, GithubReport, HiveAlert, ImproveResult, Lifecycle, MeasuredStat, Pipeline, PipelineRun, PipelineStage, PipelineTemplate, RouteResult, Schedule, ScheduleTemplate, Spend, StewardAction, StewardPlan, StewardReport, Toolbox, Verdict, HealthKey, Dispatch, CopilotMsg, CopilotBrain, CopilotSettings, CopilotWork, GhRepo } from './types'
+import type { ArchitectReply, BenchResult, Cap, CatalogInfo, Checkpoint, CliStatus, ConnectedModel, DriveItem, GithubReport, HiveAlert, ImproveResult, Lifecycle, MeasuredStat, Pipeline, PipelineRun, PipelineStage, PipelineTemplate, RouteResult, Schedule, ScheduleTemplate, Spend, StewardAction, StewardPlan, StewardReport, Toolbox, Verdict, HealthKey, Dispatch, CopilotMsg, CopilotBrain, CopilotSettings, CopilotWork, GhRepo } from './types'
 import type { AgentRow, AgentSpec, Approval, Bootstrap, Change, ChatMessage, Check, Convo, ConvoMsg, HiveEvent, HiveFile, Idea, LinkedRepo, LiveAgent, Machine, MarketModel, MemoryItem, Mode, Plugin, PrInfo, Project, ProjectActivity, Task } from './types'
 
 type Ok<T> = T & { ok: boolean }
@@ -189,6 +189,8 @@ export const hiveApi = {
   catalog: () => api.get<Ok<CatalogInfo>>('/api/hive/catalog'),
   connectedModels: () => api.get<Ok<{ models: ConnectedModel[] }>>('/api/hive/models/connected'),
   perf: () => api.get<Ok<{ stats: MeasuredStat[] }>>('/api/hive/perf'),
+  bench: () => api.get<Ok<{ tasks: number; results: BenchResult[] }>>('/api/hive/bench'),
+  runBench: (keyId: string, model: string) => api.post<Ok<{ result: BenchResult }>>('/api/hive/bench', { keyId, model }),
   route: (body: { prompt: string; kind?: string | null; chat?: boolean; machineId?: string | null; freeOnly?: boolean; preference?: string | null }) => api.post<Ok<RouteResult>>('/api/hive/route', body),
   improve: (body: { prompt: string; mode?: 'task' | 'chat' | 'idea'; projectId?: string | null }) => api.post<Ok<ImproveResult>>('/api/hive/improve', body, { timeoutMs: 120000 }),
   lifecycle: (projectId: string) => api.get<Ok<Lifecycle>>(`/api/hive/projects/${projectId}/lifecycle`),

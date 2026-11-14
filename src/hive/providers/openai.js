@@ -1,7 +1,7 @@
 // OpenAI Chat Completions (streaming, function tools). Also serves every
 // OpenAI-compatible API (OpenRouter, Groq, DeepSeek, xAI, Mistral, Together…)
 // through `baseUrl`.
-const { ProviderError, failFromResponse, sse, rateLimitFrom } = require("./common");
+const { ProviderError, failFromResponse, sse, rateLimitFrom, callTimeouts } = require("./common");
 
 const DEFAULT_BASE = "https://api.openai.com/v1";
 const SUGGESTED = ["gpt-5", "gpt-5-mini", "o4-mini", "gpt-4.1"];
@@ -65,14 +65,31 @@ const REPLAY_REASONING = new Set(["deepseek", "moonshot"]);
 const STREAM_USAGE = new Set(["openai", "openrouter", "groq", "together", "fireworks", "cerebras", "deepseek", "xai", "qwen", "moonshot", "zhipu"]);
 const OPTIONAL_FIELD = /stream_options|reasoning_effort|reasoning_content|extra (fields|inputs)|not permitted|unrecognized|unknown (field|parameter|argument)|unsupported (parameter|field)|additional properties/i;
 
+/** Every streamed callback counts as life; our timeouts surface as retryable network errors. */
+function timed(args, run) {
+  const tm = callTimeouts(args.signal, TIMEOUTS);
+  const kick = (fn) => (fn ? (...a) => (tm.kick(), fn(...a)) : () => tm.kick());
+  const a = { ...args, signal: tm.signal, onText: kick(args.onText), onThinking: kick(args.onThinking), onToolInput: kick(args.onToolInput) };
+  return run(a)
+    .catch((e) => {
+      tm.check();
+      throw e;
+    })
+    .finally(() => tm.done());
+}
+// Generous for reasoning models that think silently; still ends a stalled free endpoint.
+const TIMEOUTS = { firstByteMs: 90_000, idleMs: 120_000, totalMs: 600_000 };
+
 async function turn(args) {
-  try {
-    return await turnOnce(args, false);
-  } catch (e) {
-    // A strict OpenAI-compatible API rejecting an optional field: retry bare.
-    if (e instanceof ProviderError && (e.status === 400 || e.status === 422) && OPTIONAL_FIELD.test(e.message)) return turnOnce(args, true);
-    throw e;
-  }
+  return timed(args, async (a) => {
+    try {
+      return await turnOnce(a, false);
+    } catch (e) {
+      // A strict OpenAI-compatible API rejecting an optional field: retry bare.
+      if (e instanceof ProviderError && (e.status === 400 || e.status === 422) && OPTIONAL_FIELD.test(e.message)) return turnOnce(a, true);
+      throw e;
+    }
+  })
 }
 
 async function turnOnce({ secret, baseUrl, model, system, messages, tools, effort, signal, onText, onThinking, onToolInput, official, vision = true, vendor }, bare) {

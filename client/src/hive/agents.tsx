@@ -434,7 +434,7 @@ export function roleOf(a: Pick<AgentRow, 'role' | 'title' | 'routed_kind'>): { l
 export function RoleTag({ a, className }: { a: Pick<AgentRow, 'role' | 'title' | 'routed_kind'>; className?: string }) {
   const r = roleOf(a)
   return (
-    <span className={cn('inline-flex h-[18px] items-center rounded-full px-1.5 text-[10px] font-semibold uppercase tracking-[0.06em]', className)} style={{ color: `oklch(74% 0.12 ${r.hue})`, background: `oklch(70% 0.12 ${r.hue} / 0.13)` }}>
+    <span className={cn('inline-flex h-[18px] items-center rounded-full px-1.5 text-[10px] font-semibold uppercase tracking-[0.06em]', className)} style={{ color: `color-mix(in oklab, oklch(62% 0.13 ${r.hue}) 70%, var(--color-text-primary))`, background: `oklch(70% 0.12 ${r.hue} / 0.13)` }}>
       {r.label}
     </span>
   )

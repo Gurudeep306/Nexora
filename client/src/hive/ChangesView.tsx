@@ -206,7 +206,11 @@ function DiffPane({ taskId, path, variant, change, onSaved, version }: { taskId:
     () => ({
       readOnly: !editing,
       originalEditable: false,
-      renderSideBySide: false,
+      ariaLabel: 'Changed file: new version',
+      // Monaco's newer edit-context input ignores aria labels; the textarea keeps them.
+      editContext: false,
+      originalAriaLabel: 'Changed file: original version',
+      renderSideBySide: typeof window !== 'undefined' && window.innerWidth > 1100,
       minimap: { enabled: false },
       fontSize: 12.5,
       fontFamily: theme.fontFamily,
@@ -280,6 +284,9 @@ function DiffPane({ taskId, path, variant, change, onSaved, version }: { taskId:
             keepCurrentModifiedModel
             onMount={(ed) => {
               editorRef.current = ed
+              // Both sides need a name for screen readers (the option alone misses the original side).
+              ed.getOriginalEditor().updateOptions({ ariaLabel: 'Changed file: original version' })
+              ed.getModifiedEditor().updateOptions({ ariaLabel: 'Changed file: new version' })
               ed.getModifiedEditor().onDidChangeModelContent(() => setDirty(true))
             }}
           />

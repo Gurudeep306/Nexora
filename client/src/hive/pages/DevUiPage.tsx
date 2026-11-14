@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { FolderGit2, Inbox, MoreHorizontal, Plus, RotateCcw } from 'lucide-react'
 import { Button, Kbd, Tooltip } from '@/components/ui'
-import { ContextRing, CopyField, DataTable, Empty, ModelChip, PageHeader, Panel, PanelGroup, PanelSeparator, Problem, QuotaMeter, Row, RowList, SegmentedControl, Skeleton, Spinner, StatusPill, friendlyModel, type Status } from '../kit'
+import { ContextRing, CopyField, DataTable, Empty, ModelChip, OverflowTabs, PageHead, PageHeader, Panel, PanelGroup, PanelSeparator, Problem, QuotaMeter, Row, RowList, SectionLabel, SegmentedControl, Skeleton, Spinner, StatusPill, friendlyModel, type Status } from '../kit'
 
 const STATUSES: Status[] = ['queued', 'planning', 'running', 'needs', 'review', 'done', 'failed', 'stopped', 'limited']
 const MODELS: [string, string][] = [
@@ -22,6 +22,7 @@ const TABLE: Demo[] = [
 
 export default function DevUiPage() {
   const [seg, setSeg] = useState<'fewest' | 'fastest' | 'balanced' | 'best'>('balanced')
+  const [tab, setTab] = useState('changes')
   return (
     <div className="mx-auto max-w-[1100px] space-y-10 px-6 py-8">
       <header>
@@ -29,6 +30,42 @@ export default function DevUiPage() {
         <p className="mt-1 text-[13px] text-[var(--hv-text-2)]">Every primitive, in every state, in the current theme. Development builds only.</p>
       </header>
 
+      <Section title="Page header (title, one line, one primary action)">
+        <PageHead
+          title="Projects"
+          sub="Your projects first, then every repository you can reach."
+          actions={
+            <>
+              <Button size="sm" variant="ghost">Refresh</Button>
+              <Button size="sm"><Plus /> New project</Button>
+            </>
+          }
+        />
+        <SectionLabel className="mt-6">Section label</SectionLabel>
+      </Section>
+      <Section title="Tabs that never scroll (extra tabs go into More)">
+        <div className="max-w-[420px] rounded-[var(--hv-r-card)] border border-[var(--hv-border)] p-1">
+          <OverflowTabs
+            label="Dock"
+            value={tab}
+            onChange={setTab}
+            tabs={[
+              { id: 'changes', label: 'Changes', count: 4 },
+              { id: 'files', label: 'Files' },
+              { id: 'checkpoints', label: 'Checkpoints', count: 2 },
+              { id: 'ship', label: 'Ship' },
+              { id: 'terminal', label: 'Terminal' },
+              { id: 'board', label: 'Board' },
+            ]}
+          />
+        </div>
+      </Section>
+      <Section title="Loading (opacity pulse, no sheen)">
+        <div className="space-y-1.5">
+          <div className="hive-shimmer h-10 rounded-[var(--hv-r-btn)]" />
+          <div className="hive-shimmer h-10 w-2/3 rounded-[var(--hv-r-btn)]" />
+        </div>
+      </Section>
       <Section title="Buttons (one primary per view)">
         <div className="flex flex-wrap items-center gap-2">
           <Button>Plan the team</Button>

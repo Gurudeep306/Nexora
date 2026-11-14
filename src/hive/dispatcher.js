@@ -98,7 +98,7 @@ Use 1 part for a small request and at most ${maxParts} parts. Order parts so dep
     dependsOn: (Array.isArray(p.dependsOn) ? p.dependsOn : []).map(String),
     prompt: String(p.prompt || p.title || request).slice(0, 8000),
   }));
-  if (!parts.length) parts = [{ id: "p1", title: String(request).split("\n")[0].slice(0, 80), kind: router.classify(request).kind, size: "m", files: [], dependsOn: [], prompt: String(request) }];
+  if (!parts.length) parts = [{ id: "p1", title: String(request).split("\n")[0].slice(0, 80), kind: router.classify(request, { byPerson: false }).kind, size: "m", files: [], dependsOn: [], prompt: String(request) }];
   parts = topo(parts);
 
   const machineId = project.machine_id || null;
@@ -190,6 +190,7 @@ async function drive(id) {
   const ctl = { stop: false };
   active.set(id, ctl);
   const runner = require("./runner");
+  const router = require("./router");
   let row = await get("SELECT * FROM hive_dispatches WHERE id=?", [id]);
   const p = json(row.plan_json, {});
   const progress = json(row.progress_json, {});
@@ -206,7 +207,8 @@ async function drive(id) {
       if (ctl.stop) throw Object.assign(new Error("Stopped"), { stopped: true });
       const wave = parts.filter((x) => !done.has(x.id) && x.dependsOn.every((d) => done.has(d)));
       if (!wave.length) throw new Error("The plan's dependencies can't be satisfied");
-      await Promise.all(
+      // The whole wave settles before deciding: one failing part no longer abandons the others.
+      const results = await Promise.allSettled(
         wave.map(async (part) => {
           await note(part, "running", `${part.pick?.name || "Auto"} is on it`);
           const inputs = part.dependsOn
@@ -215,7 +217,16 @@ async function drive(id) {
             .map((d) => `### ${d.title}\n${String(progress[d.id]?.result || "(done)").slice(0, 3000)}`)
             .join("\n\n");
           const prompt = `You are one agent on a team. Your part: **${part.title}** (${KINDS[part.kind]?.label || part.kind}).${part.files?.length ? `\nFocus on: ${part.files.join(", ")}` : ""}\nOther agents work on other parts of the same working copy at the same time — stay inside your part.\n\n${part.prompt}${inputs ? `\n\n## Results from the parts you depend on\n${inputs}` : ""}`;
-          const a = await runner.spawnAndWait(row.task_id, { spec: specOf(part.pick, part), prompt, username: row.started_by || row.created_by, title: part.title, kind: part.kind });
+          const by = row.started_by || row.created_by;
+          let a = await runner.spawnAndWait(row.task_id, { spec: specOf(part.pick, part), prompt, username: by, title: part.title, kind: part.kind });
+          // One retry on a stronger model (a different one) before the part counts as failed.
+          if (a.status !== "done" && a.status !== "stopped" && !ctl.stop) {
+            const next = await router.escalate({ kind: part.kind, from: { provider: a.provider, model: a.model, quality: Number(part.pick?.quality) || 0 }, machineId: null }).catch(() => null);
+            if (next) {
+              await note(part, "running", `Retrying on ${next.name || next.model} after: ${String(a.error || a.status).slice(0, 160)}`);
+              a = await runner.spawnAndWait(row.task_id, { spec: { provider: next.provider, keyId: next.keyId, model: next.model }, prompt: `${prompt}\n\nAn earlier attempt at this part failed: ${String(a.error || a.status).slice(0, 600)}. Check the working copy, then finish the part.`, username: by, title: `${part.title} (retry)`, kind: part.kind });
+            }
+          }
           progress[part.id] = { ...(progress[part.id] || {}), agentId: a.id, result: String(a.result || "").slice(0, 4000), provider: a.provider, model: a.model };
           if (a.status === "done") {
             done.add(part.id);
@@ -226,6 +237,8 @@ async function drive(id) {
           }
         }),
       );
+      const failed = results.filter((r) => r.status === "rejected");
+      if (failed.length) throw new Error(failed.map((r) => r.reason?.message || String(r.reason)).join("; "));
     }
     if (p.review) {
       const rv = { id: "review", title: "Team review", kind: "review" };

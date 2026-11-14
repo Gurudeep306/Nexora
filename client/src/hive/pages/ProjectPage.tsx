@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   AlertTriangle,
@@ -20,6 +20,7 @@ import {
   Paperclip,
   Plus,
   Search,
+  Sparkles,
   Server,
   Settings2,
   Stethoscope,
@@ -36,10 +37,10 @@ import { PROJECT_COLORS } from '../projectColor'
 import { Session } from '../Session'
 import { ProjectAvatar } from '../Showcase'
 import { AgentMark } from '../agents'
-import { PageHeader, Row, RowList } from '../kit'
 import { useHive } from '../store'
 import type { AgentSpec, GithubReport, LinkedRepo, Mode, Project, ProjectActivity, Task } from '../types'
 import { MODE_INFO, ProviderGlyph, StatusPill, fmtTokens, timeAgo } from '../ui'
+import { Empty, PageHeader, Row, RowList, SectionLabel, SegmentedControl, canTransition } from '../kit'
 
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Something went wrong')
 
@@ -63,6 +64,13 @@ const GROUPS: { id: string; label: string; match: (t: Task) => boolean }[] = [
 
 function ProjectHome({ project }: { project: Project }) {
   const { tasks, select, machines, live, online } = useHive()
+  // The session's title glides from its row into the session header (View Transitions, where the browser has them).
+  const openSession = (id: string) => {
+    const el = document.querySelector<HTMLElement>(`[data-vt-title="${CSS.escape(id)}"]`)
+    const vt = canTransition()
+    if (el && vt) el.style.viewTransitionName = 'hv-session-title'
+    select(project.id, id, { viewTransition: vt })
+  }
   const navigate = useNavigate()
   const toast = useToast()
   const [settings, setSettings] = useState(false)
@@ -83,7 +91,24 @@ function ProjectHome({ project }: { project: Project }) {
       .then((r) => setRepos(r.repos))
       .catch(() => {})
   }, [project.id])
-  const shown = q ? tasks.filter((t) => t.title.toLowerCase().includes(q.toLowerCase())) : tasks
+  // Sessions filter lives in the URL (?show=), so a link or reload keeps it.
+  const [params, setParams] = useSearchParams()
+  const show = GROUPS.some((g) => g.id === params.get('show')) ? (params.get('show') as string) : 'all'
+  const setShow = (v: string) =>
+    setParams(
+      (p) => {
+        if (v === 'all') p.delete('show')
+        else p.set('show', v)
+        return p
+      },
+      { replace: true },
+    )
+  const searched = q ? tasks.filter((t) => t.title.toLowerCase().includes(q.toLowerCase())) : tasks
+  const newSession = () => {
+    const el = document.getElementById('hive-session-composer')
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    el?.querySelector('textarea')?.focus({ preventScroll: true })
+  }
 
   return (
     <div className="mx-auto w-full max-w-[1160px] px-4 pb-20 pt-6 sm:px-8">
@@ -151,6 +176,9 @@ function ProjectHome({ project }: { project: Project }) {
               <Button variant="secondary" size="sm" onClick={() => setSettings(true)}>
                 <Settings2 /> Settings
               </Button>
+              <Button size="sm" onClick={newSession}>
+                <Plus /> New session
+              </Button>
             </>
           }
         />
@@ -186,56 +214,73 @@ function ProjectHome({ project }: { project: Project }) {
       </div>
 
       {/* New session */}
-      <SessionComposer project={project} repos={repos} />
+      <div id="hive-session-composer">
+        <SessionComposer project={project} repos={repos} />
+      </div>
 
       {/* Sessions */}
-      <div className="mt-10 flex items-center gap-3">
-        <h2 className="text-[15px] font-semibold">Sessions</h2>
-        <span className="text-[12.5px] text-text-muted">{tasks.length}</span>
-        <label className="ml-auto flex h-8 w-56 items-center gap-2 rounded-lg bg-text-primary/[0.05] px-2.5">
-          <Search className="size-3.5 text-text-muted" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search sessions" className="min-w-0 flex-1 bg-transparent text-[12.5px] outline-none placeholder:text-text-muted" />
+      <div className="mt-10 flex flex-wrap items-center gap-2">
+        <h2 className="mr-1 text-[15px] font-semibold text-[var(--hv-text-1)]">Sessions</h2>
+        <SegmentedControl
+          size="sm"
+          label="Show sessions"
+          value={show}
+          onChange={setShow}
+          options={[{ value: 'all', label: `All ${tasks.length}` }, ...GROUPS.map((g) => ({ value: g.id, label: `${g.label} ${tasks.filter(g.match).length}` }))]}
+        />
+        <label className="ml-auto flex h-8 w-full items-center gap-2 rounded-[var(--hv-r-btn)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] px-2.5 focus-within:ring-2 focus-within:ring-[var(--hv-accent)] sm:w-56">
+          <Search className="size-3.5 text-[var(--hv-text-3)]" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search sessions" placeholder="Search sessions" className="min-w-0 flex-1 bg-transparent text-[12.5px] outline-none placeholder:text-[var(--hv-text-3)]" />
         </label>
       </div>
-      {GROUPS.map((g) => {
-        const list = shown.filter(g.match)
+      {GROUPS.filter((g) => show === 'all' || g.id === show).map((g) => {
+        const list = searched.filter(g.match)
         if (!list.length) return null
         return (
-          <section key={g.id} className="mt-5">
-            <h3 className="mb-1.5 px-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-muted">
-              {g.label} · {list.length}
-            </h3>
-            <RowList label={`${g.label} sessions`} className="hive-card p-1">
-              {list.map((t) => (
-                <Row
-                  key={t.id}
-                  className={cn(t.status === 'running' && 'hive-working')}
-                  title={t.title}
-                  meta={
-                    <>
-                      <span className="mr-1.5 inline-flex -space-x-1 align-[-2px]">
-                        {(t.agents ?? []).slice(0, 5).map((a) => (
-                          <ProviderGlyph key={a.id} provider={a.provider} size="xs" className="rounded-full ring-2 ring-[var(--color-bg-surface)]" />
+          <section key={g.id} className="mt-5" aria-label={g.label}>
+            {show === 'all' && <SectionLabel>{`${g.label} · ${list.length}`}</SectionLabel>}
+            <RowList label={g.label} className="hive-card p-1">
+              {list.map((t) => {
+                const tok = (t.agents ?? []).reduce((n, a) => n + a.input_tokens + a.output_tokens, 0)
+                return (
+                  <Row
+                    key={t.id}
+                    className={cn(t.status === 'running' && 'hive-working')}
+                    onOpen={() => openSession(t.id)}
+                    leading={
+                      <span className="flex w-12 -space-x-1.5">
+                        {(t.agents ?? []).slice(0, 3).map((a) => (
+                          <ProviderGlyph key={a.id} provider={a.provider} size="xs" className="rounded-full ring-2 ring-[var(--hv-bg-app)]" />
                         ))}
                       </span>
-                      {MODE_INFO[t.mode]?.label ?? t.mode} · {fmtTokens((t.agents ?? []).reduce((s, a) => s + a.input_tokens + a.output_tokens, 0))} tok
-                      {t.pr_number && <span className="text-state-success"> · PR #{t.pr_number}</span>}
-                    </>
-                  }
-                  trailing={
-                    <>
-                      <StatusPill status={t.status} />
-                      <span className="text-[11.5px]">{timeAgo(t.updated_at)}</span>
-                    </>
-                  }
-                  onOpen={() => select(project.id, t.id)}
-                />
-              ))}
+                    }
+                    title={<span data-vt-title={t.id}>{t.title}</span>}
+                    meta={[MODE_INFO[t.mode]?.label ?? t.mode, `${(t.agents ?? []).length} agent${(t.agents ?? []).length === 1 ? '' : 's'}`, tok ? `${fmtTokens(tok)} tokens` : ''].filter(Boolean).join(' · ')}
+                    trailing={
+                      <>
+                        {t.pr_number && (
+                          <span className="inline-flex items-center gap-0.5 text-[var(--hv-success)] max-sm:hidden">
+                            <GitPullRequest className="size-3" /> #{t.pr_number}
+                          </span>
+                        )}
+                        <StatusPill status={t.status} />
+                        <span className="w-9 text-right text-[var(--hv-text-3)]">{timeAgo(t.updated_at)}</span>
+                      </>
+                    }
+                  />
+                )
+              })}
             </RowList>
           </section>
         )
       })}
-      {!tasks.length && <p className="mt-4 text-[13px] text-text-muted">No sessions yet — describe what you want above.</p>}
+      {!tasks.length ? (
+        <Empty icon={<Sparkles />} title="No sessions yet" action={<Button size="sm" onClick={newSession}><Plus /> New session</Button>}>
+          Describe what you want in the box above, and agents start on it.
+        </Empty>
+      ) : !GROUPS.some((g) => (show === 'all' || g.id === show) && searched.some(g.match)) ? (
+        <p className="mt-6 px-1 text-[13px] text-[var(--hv-text-3)]">No sessions match.</p>
+      ) : null}
 
       <ProjectSettingsDialog project={project} open={settings} onClose={() => setSettings(false)} />
     </div>
@@ -391,15 +436,7 @@ function SessionComposer({ project, repos }: { project: Project; repos: LinkedRe
           <Paperclip className="size-4" />
           <input type="file" multiple className="hidden" onChange={(e) => e.target.files && up.add(e.target.files)} />
         </label>
-        <div className="grid grid-cols-4 gap-0.5 rounded-full bg-text-primary/[0.06] p-0.5">
-          {(Object.keys(MODE_INFO) as Mode[]).map((m) => (
-            <Tooltip key={m} label={MODE_INFO[m].hint}>
-              <button type="button" onClick={() => setMode(m)} className={cn('h-7 rounded-full px-3 text-[12px] transition-colors', mode === m ? 'bg-bg-surface text-text-primary shadow-sm' : 'text-text-muted hover:text-text-secondary')}>
-                {MODE_INFO[m].label}
-              </button>
-            </Tooltip>
-          ))}
-        </div>
+        <SegmentedControl size="sm" label="How the agents work" value={mode} onChange={(m) => setMode(m as Mode)} options={(Object.keys(MODE_INFO) as Mode[]).map((m) => ({ value: m, label: MODE_INFO[m].label, hint: MODE_INFO[m].hint }))} />
         {agents.map((s, i) => (
           <AgentChip key={i} boot={boot} spec={s} label={mode === 'team' && i === 0 ? 'Lead' : undefined} compact={agents.length > 2} onChange={(n) => setAgents((l) => l.map((x, j) => (j === i ? n : x)))} onRemove={agents.length > 1 ? () => setAgents((l) => l.filter((_, j) => j !== i)) : undefined} />
         ))}
@@ -421,7 +458,7 @@ function SessionComposer({ project, repos }: { project: Project; repos: LinkedRe
           </Tooltip>
         )}
         <span className="mx-1 h-5 w-px bg-[var(--hive-line)]" />
-        <select value={where} onChange={(e) => setWhere(e.target.value)} className="h-7 max-w-56 truncate rounded-full bg-text-primary/[0.06] px-2.5 text-[12px] outline-none">
+        <select value={where} onChange={(e) => setWhere(e.target.value)} aria-label="Where to run" className="h-7 max-w-56 truncate rounded-full bg-text-primary/[0.06] px-2.5 text-[12px] outline-none">
           {project.repo_owner && <option value="gh:primary">☁ {project.repo_name} (safe copy → PR)</option>}
           {repos.map((r) => (
             <option key={r.id} value={`gh:${r.id}`}>
@@ -631,7 +668,7 @@ export function NewProject({ presetOwner, presetRepo, presetName, onCreated }: {
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Project name" className="h-10 w-64 rounded-lg border hive-line bg-transparent px-3 text-[14px] outline-none focus:border-accent-brand/50" />
         <div className="flex gap-1.5">
           {Object.keys(PROJECT_COLORS).map((c) => (
-            <button key={c} type="button" aria-label={c} onClick={() => setColor(c)} className={cn('hive-hex size-6 transition-transform', color === c && 'scale-125')} style={{ background: PROJECT_COLORS[c] }} />
+            <button key={c} type="button" aria-label={c} onClick={() => setColor(c)} className={cn('rounded-full size-6 transition-transform', color === c && 'scale-125')} style={{ background: PROJECT_COLORS[c] }} />
           ))}
         </div>
         <Button className="ml-auto" onClick={create} loading={busy} disabled={kind === 'github' ? !/^[^/\s]+\/[^/\s]+$/.test(target) || !githubId : !folder || !machineId}>

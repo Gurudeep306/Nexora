@@ -114,6 +114,8 @@ export function idlePrefetchCommonRoutes(): void {
       : (cb) => window.setTimeout(cb, 1500)
   const queue = [...COMMON_ROUTES]
   const next = () => {
+    // Hive is staff-only work: the learning pages aren't worth downloading there.
+    if (window.location.pathname.startsWith('/hive')) return
     const to = queue.shift()
     if (!to) return
     prefetchRoute(to)

@@ -17,6 +17,7 @@
 const crypto = require("crypto");
 const { run, get, all, newId, now, json } = require("./db");
 const hub = require("./hub");
+const { KINDS } = require("./catalog");
 
 const MAX_STEPS = 14;
 const tokens = new Map(); // MCP bearer token → { username, exp }
@@ -116,7 +117,7 @@ async function overview() {
 
 async function modelsReport({ kind = null, freeOnly = false }) {
   const router = require("./router");
-  const { KINDS, CARDS, publicCard } = require("./catalog");
+  const { CARDS, publicCard } = require("./catalog");
   const kinds = kind && KINDS[kind] ? [kind] : Object.keys(KINDS);
   const best = {};
   for (const k of kinds) {
@@ -176,6 +177,11 @@ async function sessionDiff(taskId, path, { full = false, username = "hive" } = {
 }
 
 const TOOLS = {
+  capacity: {
+    description: "What every connected source (API key or plan agent) can take right now: ready / cooling (and when it frees up) / down, calls in flight, today's use against free-tier limits, and what the provider last reported as remaining. Check this before splitting work, and spread parts across ready sources so no single free key hits its limit.",
+    schema: obj({}, []),
+    run: async () => require("./keys").capacity(),
+  },
   hive_overview: {
     description: "See the whole hive: projects (with ids), recent sessions and their agents, teams, which agents are working and which are failing. Call this first when you need ids or context.",
     schema: obj({}),
@@ -223,6 +229,7 @@ const TOOLS = {
         prompt: str("Full instructions for the agent(s)"),
         agents: { type: "array", items: { type: "string" }, description: 'One or more agents, e.g. ["auto"] or ["free","claude_code/default"]' },
         mode: { type: "string", enum: ["solo", "compare", "team"], description: "solo: one agent; compare: each agent tries separately and the Judge picks the best; team: a lead splits the work among the agents" },
+        kind: { type: "string", enum: Object.keys(KINDS), description: "The kind of work, so the right worker is picked. Say it: a long, detailed prompt is not 'hard' by itself — use hard only for real architecture or tricky debugging." },
         watch: bool("Review the result automatically when it finishes (default true)"),
       },
       ["projectId", "prompt"],
@@ -231,13 +238,24 @@ const TOOLS = {
       let p = await projectOf(i.projectId);
       const runner = require("./runner");
       const router = require("./router");
-      const kind = router.classify(i.prompt).kind;
+      const kind = KINDS[i.kind] ? i.kind : router.classify(i.prompt, { byPerson: false }).kind;
       const list = (Array.isArray(i.agents) && i.agents.length ? i.agents : ["auto"]).slice(0, 4).map((a) => specFrom(a, kind));
-      // Claude Code / Codex / Vibe work in a folder on their machine: copy the repo there first if needed.
-      p = (await require("./repos").ensureOnMachine(p.id, list.map((s) => s.provider))) || p;
+      // Claude Code / Codex / Vibe work in a folder on their machine: pick the machine whose agent
+      // fits best (and is least busy), then copy the repo there if needed.
+      const repos = require("./repos");
+      let vendors = list.map((s) => s.provider);
+      let prefer = null;
+      if (vendors.includes("auto") || vendors.some((v) => ["claude_code", "codex", "vibe"].includes(v))) {
+        const m = await repos.pickMachine({ kind, prompt: i.prompt }).catch(() => null);
+        if (m && ["claude_code", "codex", "vibe"].includes(m.pick.provider)) {
+          prefer = m.machineId;
+          if (vendors.includes("auto")) vendors = [...vendors, m.pick.provider];
+        }
+      }
+      p = (await repos.ensureOnMachine(p.id, vendors, { machineId: prefer })) || p;
       const mode = ["solo", "compare", "team"].includes(i.mode) ? i.mode : list.length > 1 ? "compare" : "solo";
       for (const s of list) await runner.resolveSpec(s, { prompt: i.prompt, machineId: p.machine_id || null });
-      const task = await ctx.createTask(p, { title: i.title || String(i.prompt).split("\n")[0].slice(0, 90), prompt: i.prompt });
+      const task = await ctx.createTask(p, { title: i.title || String(i.prompt).split("\n")[0].slice(0, 90), prompt: i.prompt, kind });
       if (mode === "team") await runner.startTask(task, { mode: "team", specs: list.slice(1).length ? list.slice(1) : list, lead: list[0], username: ctx.username });
       else await runner.startTask(task, { mode, specs: list, username: ctx.username });
       if (i.watch !== false) await watch(task.id, ctx.username);
@@ -273,10 +291,11 @@ const TOOLS = {
   },
   add_agent: {
     description: `Bring another agent into an existing session with new instructions (e.g. to fix what a review found, or to write tests). ${AGENT_HINT}`,
-    schema: obj({ taskId: str("Session id"), agent: str("Who"), instructions: str("What to do"), readOnly: bool("Only read and report (reviews)") }, ["taskId", "instructions"]),
+    schema: obj({ taskId: str("Session id"), agent: str("Who"), instructions: str("What to do"), readOnly: bool("Only read and report (reviews)"), kind: { type: "string", enum: Object.keys(KINDS), description: "The kind of work (picks the worker)" } }, ["taskId", "instructions"]),
     run: async (i, ctx) => {
       const runner = require("./runner");
-      const a = await runner.addAgent(i.taskId, { spec: specFrom(i.agent || "auto"), prompt: i.instructions, username: ctx.username, readOnly: !!i.readOnly, title: i.readOnly ? "Review" : null });
+      const kind = KINDS[i.kind] ? i.kind : require("./router").classify(i.instructions, { byPerson: false }).kind;
+      const a = await runner.addAgent(i.taskId, { spec: specFrom(i.agent || "auto", kind), prompt: i.instructions, username: ctx.username, readOnly: !!i.readOnly, title: i.readOnly ? "Review" : null, kind });
       await watch(i.taskId, ctx.username);
       return { added: true, agentId: a?.id, name: a?.name, model: a ? `${a.provider}/${a.model}` : undefined };
     },
@@ -390,6 +409,37 @@ const TOOLS = {
 
 /* ── autonomy: the Copilot acts for you ─────────────────────────────── */
 const DANGEROUS = /\brm\s+-[a-z]*r[a-z]*f?\s+(\/|~|\$HOME|\*)(\s|$)|\bmkfs|\bdd\s+if=|:\(\)\s*\{|\bshutdown\b|\breboot\b|\bchmod\s+-R\s+777\s+\/|\bgit\s+push\s+.*--force|\bcurl\b[^|]*\|\s*(sudo\s+)?(ba)?sh|\bDROP\s+(TABLE|DATABASE)\b/i;
+
+/**
+ * Autopilot approves only commands it can be sure are safe: tests, lint,
+ * type-checks, builds, installs from the lockfile and read-only git/file
+ * commands. Every part of a chained command (&&, ||, ;, |) must qualify, and
+ * nothing may touch secrets or the network. Everything else waits for a person.
+ */
+const SAFE_PART = new RegExp(
+  "^(" +
+    [
+      "(npm|pnpm|yarn|bun)\\s+(test|ci|install|run\\s+(test|lint|build|typecheck|type-check|check|format:check|lint:\\S+|test:\\S+))(\\s+--?[\\w=:.-]+)*",
+      "(npm|pnpm|yarn)\\s+(--prefix\\s+\\S+\\s+)?(ci|install)",
+      "npx\\s+(tsc|oxlint|eslint|vitest|jest|prettier\\s+--check|vite\\s+build|playwright\\s+test)(\\s+[\\w./=:@-]+)*",
+      "node\\s+--test(\\s+[\\w./*-]+)*",
+      "(python3?\\s+-m\\s+)?pytest(\\s+[\\w./:=-]+)*",
+      "go\\s+(test|build|vet)(\\s+[\\w./-]+)*",
+      "cargo\\s+(test|build|check|clippy)(\\s+--?[\\w-]+)*",
+      "make\\s+(test|lint|build|check)",
+      "git\\s+(status|diff|log|show|branch|rev-parse|ls-files|fetch)(\\s+[\\w./:@^~=-]+)*",
+      "(ls|pwd|cat|head|tail|wc|grep|rg|echo|which)(\\s+[\\w./*'\"=:-]+)*",
+      "cd\\s+[\\w./-]+",
+    ].join("|") +
+    ")$",
+  "i",
+);
+const SECRET_OR_NET = /\.env\b|id_rsa|\.ssh|\.aws|\.npmrc|credentials|\btoken\b|\bcurl\b|\bwget\b|\bssh\b|\bscp\b|\bnc\b|>\s*\//i;
+function autoApprovable(command) {
+  const c = String(command || "").trim();
+  if (!c || DANGEROUS.test(c) || SECRET_OR_NET.test(c) || /[`$]\(|\$\{|`/.test(c) || />/.test(c)) return false;
+  return c.split(/&&|\|\||;|\|/).every((part) => SAFE_PART.test(part.trim()));
+}
 
 function needs(ctx, what) {
   if (what === "act" && ctx.autonomy === "assist") throw new Error("You're in Assist mode — ask the person to confirm this, or they can switch the Copilot to Autopilot.");
@@ -506,7 +556,7 @@ Object.assign(TOOLS, {
       const m = require("./machines");
       const a = m.pendingApprovals().find((x) => x.id === i.approvalId);
       if (!a) return { answered: false, note: "Not waiting any more" };
-      if (i.approve && DANGEROUS.test(String(a.command || ""))) return { answered: false, note: "That command looks destructive — leaving it for a person to decide" };
+      if (i.approve && !autoApprovable(a.command)) return { answered: false, note: "Only tests, lint, builds, installs from the lockfile and read-only commands are approved automatically — leaving this one for a person" };
       return { answered: m.answerApproval(i.approvalId, { approved: !!i.approve, by: `copilot:${ctx.username}`, note: i.note }) };
     },
   },
@@ -608,8 +658,13 @@ async function checkSession(taskId, { focus = "", username = "copilot" } = {}) {
   if (!task) throw new Error("Session not found");
   const rv = await cheapReviewer(taskId);
   if (!rv) return { verdict: "unsure", note: "No free or farm reviewer clears the quality bar right now — review the diff yourself (session_diff)." };
+  // Only a session on a machine can run anything: say so instead of letting the reviewer guess.
+  const canRun = !!task.machine_id;
+  const step1 = canRun
+    ? "1. Run the project's checks that exist (tests, type-check, lint, build — whatever the repo uses; keep it fast). Report the exact commands and their exit codes."
+    : '1. You cannot run commands here (no machine). Do not claim any test passed: write "tests not run" in "tests".';
   const prompt = `You are the quality gate for this session. Do not change any file.
-1. Run the project's checks that exist (tests, type-check, lint, build — whatever the repo uses; keep it fast).
+${step1}
 2. Read every change (view_changes) against the original request${focus ? ` — focus especially on: ${focus}` : ""}. Look for: wrong behaviour, missing parts of the request, broken edge cases, security problems, things that would make CI fail, UI that breaks on phones or in dark mode.
 3. Finish with ONLY this JSON in your final message:
 {"verdict":"pass"|"fail"|"unsure","tests":"what you ran and the result","issues":[{"file":"path","line":0,"problem":"…","severity":"high"|"medium"|"low"}],"summary":"one sentence"}
@@ -623,7 +678,16 @@ async function checkSession(taskId, { focus = "", username = "copilot" } = {}) {
     v = null;
   }
   if (!v || !v.verdict) return { verdict: "unsure", reviewer: rv.name, note: "The reviewer did not return a clear verdict", excerpt: clip(text, 1200) };
-  return { verdict: v.verdict, reviewer: rv.name, crossFamily: rv.crossFamily, tests: v.tests, issues: (v.issues || []).slice(0, 12), summary: v.summary, agentStatus: a?.status };
+  let verdict = v.verdict;
+  const notes = [];
+  // Without a machine nothing was tested: code changes can't "pass" on a reviewer's word alone.
+  if (!canRun && verdict === "pass") {
+    verdict = "unsure";
+    notes.push("Tests not run (no machine) — ship it as a pull request so CI is the test.");
+  }
+  // A reviewer from the same model family as the author is weaker evidence.
+  if (rv.crossFamily === false) notes.push("The reviewer is from the same model family as the author — treat risky changes as unsure.");
+  return { verdict, reviewer: rv.name, crossFamily: rv.crossFamily, testsRun: canRun, tests: canRun ? v.tests : "tests not run", issues: (v.issues || []).slice(0, 12), summary: v.summary, note: notes.join(" ") || undefined, agentStatus: a?.status };
 }
 
 /* ── keep work moving: replace agents whose model is down or stuck ─────── */
@@ -683,6 +747,8 @@ async function rescueTick({ silentMs = 15 * 60_000 } = {}) {
   return out;
 }
 
+const MERGE_WAIT_MS = 2 * 60 * 60 * 1000;
+
 async function mergeTick() {
   for (const m of await all("SELECT * FROM hive_copilot_merge").catch(() => [])) {
     const s = await brainSettings(m.username);
@@ -696,6 +762,10 @@ async function mergeTick() {
       } else if (/failure/.test(r.reason || "")) {
         await run("DELETE FROM hive_copilot_merge WHERE task_id=?", [m.task_id]);
         await onCiFailed(m, r).catch(() => {});
+      } else if (Date.now() - Number(m.created_at || 0) > MERGE_WAIT_MS) {
+        // No checks, or checks stuck pending: stop waiting and say why instead of queueing forever.
+        await run("DELETE FROM hive_copilot_merge WHERE task_id=?", [m.task_id]);
+        await require("./caps").alert({ kind: "copilot", level: "warn", title: "Copilot stopped waiting to merge", body: `${r.reason || "Checks never finished"} after 2 hours — merge it yourself when it's ready.`, ref: "/hive/copilot" }).catch(() => {});
       }
     } catch (e) {
       if (/switched off|Only admins/.test(e.message)) await run("DELETE FROM hive_copilot_merge WHERE task_id=?", [m.task_id]);
@@ -715,8 +785,8 @@ async function onApproval(info) {
   const s = await brainSettings(w.username);
   if (s.autonomy !== "autopilot") return;
   const m = require("./machines");
-  if (DANGEROUS.test(String(info.command || ""))) {
-    await require("./caps").alert({ kind: "copilot", level: "warn", title: "A command needs you", body: `Copilot won't approve: ${String(info.command).slice(0, 160)}`, ref: "/hive/machines" }).catch(() => {});
+  if (!autoApprovable(info.command)) {
+    await require("./caps").alert({ kind: "copilot", level: "warn", title: "A command needs you", body: `Not a test, lint, build or read-only command, so the Copilot left it for you: ${String(info.command).slice(0, 160)}`, ref: "/hive/inbox" }).catch(() => {});
     return;
   }
   m.answerApproval(info.id, { approved: true, by: `copilot:${w.username}`, note: "Approved by Copilot (autopilot)" });
@@ -743,8 +813,9 @@ async function watch(taskId, username) {
   await run("INSERT INTO hive_copilot_watch(task_id, username, created_at) VALUES(?,?,?) ON CONFLICT(task_id) DO UPDATE SET username=excluded.username, done=0", [taskId, username, now()]);
 }
 
-const FINISHED = new Set(["review", "failed", "stopped", "pr_open", "committed"]);
+const FINISHED = new Set(["review", "failed", "stopped", "pr_open", "committed", "merged", "interrupted"]);
 const reviewing = new Set();
+const reviewRetries = new Map(); // taskId -> failed review attempts
 
 /** Called on every task update: a watched session that finished gets a review turn. */
 async function onTask(task, deps) {
@@ -756,7 +827,6 @@ async function onTask(task, deps) {
   if (Number(busy?.n || 0) > 0) return;
   reviewing.add(task.id);
   try {
-    await run("UPDATE hive_copilot_watch SET done=1 WHERE task_id=?", [task.id]);
     const s = await brainSettings(w.username);
     const next =
       s.autonomy === "autopilot"
@@ -769,8 +839,15 @@ async function onTask(task, deps) {
       auto: true,
       deps,
     });
+    // Only now is the review really done; a failed turn (plan limit, machine offline) is retried.
+    await run("UPDATE hive_copilot_watch SET done=1 WHERE task_id=?", [task.id]);
+    reviewRetries.delete(task.id);
   } catch (e) {
     console.error("[hive copilot] review", e.message);
+    const n = (reviewRetries.get(task.id) || 0) + 1;
+    reviewRetries.set(task.id, n);
+    if (n <= 4) setTimeout(() => onTask(task, deps).catch(() => {}), [2, 5, 15, 60][n - 1] * 60_000).unref?.();
+    else await run("UPDATE hive_copilot_watch SET done=1 WHERE task_id=?", [task.id]).catch(() => {});
   } finally {
     reviewing.delete(task.id);
   }
@@ -889,7 +966,25 @@ async function clear(username) {
  * tools), stream progress to `sink`, store the reply.
  * deps: { createTask(project, {title, prompt}), origin }
  */
-async function send({ username, text, auto = false, sink = null, deps = {}, signal = null, quick = false, projectId = null }) {
+/**
+ * One Copilot turn at a time per person: two sessions finishing together, or
+ * a person typing during an automatic review, used to run turns in parallel
+ * and interleave their history. Turns now queue behind each other.
+ */
+const turnQueues = new Map(); // username -> tail promise
+function send(opts) {
+  const key = opts.username;
+  const prev = turnQueues.get(key) || Promise.resolve();
+  const next = prev.catch(() => {}).then(() => sendNow(opts));
+  const tail = next.catch(() => {});
+  turnQueues.set(key, tail);
+  tail.then(() => {
+    if (turnQueues.get(key) === tail) turnQueues.delete(key);
+  });
+  return next;
+}
+
+async function sendNow({ username, text, auto = false, sink = null, deps = {}, signal = null, quick = false, projectId = null }) {
   const t = now();
   const userMsg = { id: newId("cpm"), role: "user", content: String(text).slice(0, 20000), auto: auto ? 1 : 0 };
   await run("INSERT INTO hive_copilot_msgs(id, username, role, content, auto, created_at) VALUES(?,?,?,?,?,?)", [userMsg.id, username, "user", userMsg.content, userMsg.auto, t]);
@@ -1020,6 +1115,10 @@ async function thinkWithApi({ brain, system, past, text, ctx, reply, out, signal
     convo.push({ role: "tool", results });
     if (buf && !buf.endsWith("\n")) reply.content += "\n";
   }
+  // Out of tool rounds: one last turn without tools, so the person always gets a report.
+  convo.push({ role: "user", text: "You have used all your tool steps for this turn. Without calling tools, report in a few lines what you did, what is still running, and what is left." });
+  const fin = await v.impl.turn({ secret: keys.secretOf(brain.key), keyRow: brain.key, baseUrl: brain.key.base_url || v.baseUrl, official: !!v.official, vision: false, model: brain.model, system, messages: convo, tools: [], signal, cache: true, onText: (d) => out("delta", { text: d }) }).catch(() => null);
+  if (fin?.text) reply.content += (reply.content ? "\n\n" : "") + fin.text;
 }
 
 /** Claude Code on your plan, driving Hive through its MCP endpoint. */
@@ -1089,6 +1188,8 @@ async function mcpHandle(req, res, deps) {
   const tok = auth.replace(/^Bearer\s+/i, "");
   const t = tokens.get(tok);
   if (!t || t.exp < Date.now()) return res.status(401).json({ jsonrpc: "2.0", id: null, error: { code: -32001, message: "Invalid or expired token" } });
+  // A long plan turn keeps its token alive: every call slides the expiry (a token unused for 30 min still expires).
+  t.exp = Math.max(t.exp, Date.now() + 30 * 60_000);
   if (req.method !== "POST") return res.status(405).end();
   const msg = req.body || {};
   const reply = (result) => res.json({ jsonrpc: "2.0", id: msg.id, result });
@@ -1152,4 +1253,5 @@ async function currentBrain(username) {
   }
 }
 
-module.exports = { checkSession, cheapReviewer, DEFAULT_CLAUDE_ONLY, modelTotals, rescueAgent, rescueTick, activeWork, DANGEROUS, mergeTick, onApproval, noteAdmin, TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };
+module.exports = {
+  autoApprovable, checkSession, cheapReviewer, DEFAULT_CLAUDE_ONLY, modelTotals, rescueAgent, rescueTick, activeWork, DANGEROUS, mergeTick, onApproval, noteAdmin, TOOLS, toolDefs, runTool, send, messages, clear, watch, onTask, mcpHandle, brainSettings, saveSettings, currentBrain, specFrom, overview, _tokens: tokens };
