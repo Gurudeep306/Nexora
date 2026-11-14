@@ -1146,7 +1146,6 @@ function DriveEmpty({ scope, onUpload, onFolder, onImport }: { scope: string; on
   ] as const
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.26, ease: EASE }} className="hive-card relative overflow-hidden border-dashed px-6 py-14 text-center">
-      <div className="hive-comb pointer-events-none absolute inset-0" />
       <div className="relative mx-auto mb-6 h-20 w-56">
         {tiles.map((t, i) => (
           <motion.div

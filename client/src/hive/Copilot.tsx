@@ -57,7 +57,6 @@ import type { AgentSpec, CopilotBrain, CopilotMsg, CopilotSettings, CopilotStep,
 import { timeAgo, vendorName } from './ui'
 import { Composer, StatusPill, friendlyModel } from './kit'
 
-const EASE = [0.2, 0.8, 0.2, 1] as const
 
 const STEP: Record<string, { icon: typeof Bot; label: (i: Record<string, unknown>) => string }> = {
   hive_overview: { icon: Eye, label: () => 'Looked over the hive' },
@@ -651,18 +650,15 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
             </div>
           ) : !msgs.length && !pending ? (
             <div className={cn('text-center', compact ? 'py-4' : 'py-10')}>
-              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3, ease: EASE }} className="relative mx-auto mb-4 grid size-16 place-items-center">
-                <span className="absolute inset-0 animate-ping rounded-full bg-accent-brand/20" style={{ animationDuration: '2.6s' }} />
-                <span className="relative grid size-16 place-items-center rounded-full bg-[linear-gradient(135deg,oklch(68%_0.17_285),oklch(70%_0.15_200))] text-white shadow-lg">
-                  <Bot className="size-8" />
-                </span>
-              </motion.div>
-              <h2 className={cn('font-semibold tracking-tight', compact ? 'text-[16px]' : 'text-[22px]')}>Your Copilot runs the hive</h2>
-              <p className="mx-auto mt-1 max-w-md text-[13px] text-text-muted">Say what you want built or checked. It plans the work, writes the prompts, puts the right agents on it, reviews what they did and tells you when it's ready.</p>
+              <span className="mx-auto mb-3 grid size-10 place-items-center rounded-[var(--hv-r-card)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] text-[var(--hv-text-2)]">
+                <Bot className="size-5" />
+              </span>
+              <h2 className={cn('font-semibold tracking-tight text-[var(--hv-text-1)]', compact ? 'text-[16px]' : 'text-[20px]')}>Your Copilot runs the hive</h2>
+              <p className="mx-auto mt-1 max-w-md text-[13px] text-[var(--hv-text-3)]">Say what you want built or checked. It plans the work, writes the prompts, puts the right agents on it, reviews what they did and tells you when it's ready.</p>
               <div className={cn('mx-auto mt-5 grid gap-2 text-left', compact ? '' : 'max-w-2xl sm:grid-cols-2')}>
                 {SUGGESTIONS.slice(0, compact ? 4 : 6).map((s) => (
-                  <button key={s.text} type="button" onClick={() => send(s.text)} className="hive-card hive-card-hover flex items-start gap-2.5 p-3 text-[12.5px] text-text-secondary">
-                    <s.icon className="mt-0.5 size-4 shrink-0 text-accent-brand" />
+                  <button key={s.text} type="button" onClick={() => send(s.text)} className="flex items-start gap-2.5 rounded-[var(--hv-r-card)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-3 text-left text-[12.5px] text-[var(--hv-text-2)] transition-colors duration-[var(--hv-d-fast)] hover:border-[var(--hv-border-strong)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]">
+                    <s.icon className="mt-0.5 size-4 shrink-0 text-[var(--hv-text-3)]" />
                     {s.text}
                   </button>
                 ))}
