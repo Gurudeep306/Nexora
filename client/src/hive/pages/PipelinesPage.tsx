@@ -1474,7 +1474,6 @@ function Architect({ projectId, kinds, onSave, onOpen }: { projectId: string | n
 
   return (
     <section className="hive-card relative overflow-hidden" aria-labelledby="architect-title">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(60%_100%_at_20%_0%,color-mix(in_oklab,var(--color-accent-brand)_16%,transparent),transparent),radial-gradient(50%_100%_at_90%_0%,color-mix(in_oklab,oklch(70%_0.14_330)_12%,transparent),transparent)]" />
       <div className="relative flex flex-wrap items-start gap-4 p-5 sm:p-6">
         <span className="hive-tile size-11" style={{ ['--tile' as string]: 'oklch(68% 0.15 300)' }}>
           <Sparkles className="size-5" />

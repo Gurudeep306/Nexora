@@ -365,7 +365,6 @@ function FreeTab({ cat }: { cat: CatalogInfo | null }) {
   return (
     <>
       <div className="hive-card relative mb-6 overflow-hidden p-5">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(600px_200px_at_0%_0%,oklch(72%_0.14_155/0.14),transparent)]" />
         <div className="relative flex flex-wrap items-center gap-4">
           <span className="hive-tile size-11" style={{ ['--tile' as string]: 'oklch(72% 0.14 155)' }}>
             <Gift className="size-5" />

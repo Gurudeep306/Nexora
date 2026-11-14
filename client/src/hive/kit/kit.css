@@ -40,11 +40,12 @@
   --hv-info: var(--color-state-info);
   --hv-focus-ring: var(--color-focus, var(--color-accent-brand));
 
-  /* Shape and rhythm (4px grid). */
-  --hv-r-chip: 6px;
-  --hv-r-btn: 8px;
-  --hv-r-card: 12px;
-  --hv-r-dialog: 16px;
+  /* Shape and rhythm (4px grid). Sharp edges: tight corners are the premium
+     Hive look — 2px chips, 3px buttons, 4px cards, 6px dialogs. */
+  --hv-r-chip: 2px;
+  --hv-r-btn: 3px;
+  --hv-r-card: 4px;
+  --hv-r-dialog: 6px;
   --hv-row-h: 40px;
 
   /* Motion: only transform and opacity; 120 hover, 180 menus, 240 panels. */
@@ -138,8 +139,8 @@
 @keyframes hv-peek-in { from { transform: translateX(-8px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .hv-peek { animation: none; } }
 
-/* Composer: a quiet accent glow when focused. */
+/* Composer: a crisp 1px accent ring when focused — no glow. */
 .hv-composer:focus-within {
-  border-color: color-mix(in oklab, var(--hv-accent) 70%, transparent);
-  box-shadow: 0 0 0 1px var(--hv-accent), 0 0 24px -8px var(--hv-accent);
+  border-color: var(--hv-accent);
+  box-shadow: 0 0 0 1px var(--hv-accent);
 }

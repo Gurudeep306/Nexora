@@ -362,7 +362,7 @@ function SessionComposer({ project, repos }: { project: Project; repos: LinkedRe
     }
   }
   return (
-    <div className="hive-composer mt-8 rounded-[22px] p-3">
+    <div className="hive-composer mt-8 rounded-2xl p-3">
       <textarea
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}

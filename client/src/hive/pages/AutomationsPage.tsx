@@ -218,7 +218,7 @@ export default function AutomationsPage() {
       {!data ? (
         <div className="mb-10 grid gap-3 md:grid-cols-2">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="hive-shimmer h-44 rounded-[18px]" />
+            <div key={i} className="hive-shimmer h-44 rounded-2xl" />
           ))}
         </div>
       ) : schedules.length ? (
@@ -557,7 +557,7 @@ function Autopilots({ plugins, admin }: { plugins: Plugin[] | null; admin: boole
       <div className="grid gap-3 md:grid-cols-2">
         {!plugins &&
           [0, 1, 2, 3].map((i) => (
-            <div key={i} className="hive-shimmer h-24 rounded-[18px]" />
+            <div key={i} className="hive-shimmer h-24 rounded-2xl" />
           ))}
         {list.map(({ id, icon: Icon, hue, p }, i) => {
           const on = local[id] ?? p!.enabled
