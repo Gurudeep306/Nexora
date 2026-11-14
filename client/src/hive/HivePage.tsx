@@ -20,6 +20,7 @@ import {
   CornerDownLeft,
   FolderGit2,
   Home,
+  Inbox as InboxIcon,
   KeyRound,
   Lightbulb,
   Menu as MenuIcon,
@@ -41,7 +42,8 @@ import { LogoMark } from '@/components/brand/Logo'
 import { Menu, MenuContent, MenuItem, MenuTrigger, Tooltip } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from './api'
-import { AlertsBell, TeamChat } from './TeamChat'
+import { TeamChat } from './TeamChat'
+import { InboxBell } from './Inbox'
 import type { LaunchGroup } from './Launcher'
 import { CopilotDock } from './Copilot'
 import { HiveLogo } from './HiveLogo'
@@ -56,6 +58,7 @@ import './hive.css'
 import './kit/kit.css'
 
 const HomePage = lazy(() => import('./pages/HomePage'))
+const InboxPage = lazy(() => import('./pages/InboxPage'))
 const ProjectPage = lazy(() => import('./pages/ProjectPage'))
 const ChatPage = lazy(() => import('./pages/ChatPage'))
 const PluginsPage = lazy(() => import('./pages/PluginsPage'))
@@ -225,6 +228,7 @@ function Shell() {
           <Suspense fallback={<PageSkeleton />}>
             <Routes>
               <Route index element={<HomePage />} />
+              <Route path="inbox" element={<InboxPage />} />
               <Route path="p/:projectId/*" element={<ProjectPage />} />
               <Route path="chat/:convoId?" element={<ChatPage />} />
               <Route path="copilot" element={<CopilotPage />} />
@@ -310,6 +314,7 @@ function useNav(): { main: NavItem[]; config: NavItem[]; rail: NavItem[]; groups
   // One place for every destination. Old names stay searchable in ⌘K (see PALETTE_SYNONYMS).
   const I = {
     home: { to: '/hive', label: 'Home', icon: Home, end: true, hint: 'What is running and what needs you' },
+    inbox: { to: '/hive/inbox', label: 'Inbox', icon: InboxIcon, hint: 'What needs you, and every alert' },
     copilot: { to: '/hive/copilot', label: 'Copilot', icon: Bot, hint: 'Plans, delegates and reports back · also "Plan a team"' },
     chat: { to: '/hive/chat', label: 'Chat', icon: MessageSquare, hint: 'Any model, files, images, side by side' },
     projects: { to: '/hive/projects', label: 'Projects', icon: FolderGit2, match: /^\/hive\/(projects|p\/)/, hint: 'Every repository, ideas and the NexoraGuru guide' },
@@ -323,7 +328,7 @@ function useNav(): { main: NavItem[]; config: NavItem[]; rail: NavItem[]; groups
   } satisfies Record<string, NavItem>
   const H = (it: NavItem, hue: number) => ({ to: it.to, label: it.label, icon: it.icon, hint: it.hint, hue, badge: it.badge })
   const sections: { title: string; blurb: string; items: [NavItem, number][] }[] = [
-    { title: '', blurb: '', items: [[I.home, 255]] },
+    { title: '', blurb: '', items: [[I.home, 255], [I.inbox, 25]] },
     { title: 'Work', blurb: 'Ask, build and run teams of agents', items: [[I.copilot, 285], [I.chat, 230], [I.projects, 200], [I.pipelines, 330]] },
     { title: 'Resources', blurb: 'Machines and files', items: [[I.machines, 140], [I.drive, 45]] },
     { title: 'AI setup', blurb: 'Models, accounts and extensions', items: [[I.models, 210], [I.keys, 60], [I.extensions, 290]] },
@@ -729,7 +734,7 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
   const navigate = useNavigate()
   const section = useMemo(() => {
     const m = /^\/hive\/([^/]+)/.exec(pathname)?.[1]
-    return { chat: 'Chat', copilot: 'Copilot', projects: 'Projects', pipelines: 'Pipelines', machines: 'Machines', drive: 'Drive', models: 'Models', keys: 'Keys & limits', extensions: 'Extensions', spend: 'Spend' }[m ?? ''] ?? null
+    return { inbox: 'Inbox', chat: 'Chat', copilot: 'Copilot', projects: 'Projects', pipelines: 'Pipelines', machines: 'Machines', drive: 'Drive', models: 'Models', keys: 'Keys & limits', extensions: 'Extensions', spend: 'Spend' }[m ?? ''] ?? null
   }, [pathname])
   return (
     <header className="flex h-12 shrink-0 items-center gap-2 border-b hive-line px-2 sm:px-3">
@@ -781,7 +786,7 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
         </button>
       )}
       <ModelsAtWork />
-      <AlertsBell />
+      <InboxBell />
       <button type="button" onClick={onTeam} className="flex items-center -space-x-1.5 px-1" aria-label={`Team · ${online.length} online`} title={`Team · ${online.length} online`}>
         {online.slice(0, 4).map((o) => (
           <UserDot key={o.username} username={o.username} size={6} ring />
@@ -940,6 +945,7 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
       { id: 'a:idea', group: 'Create', label: 'New project from an idea', kw: 'launchpad', icon: <Lightbulb className="size-4" />, run: go('/hive/projects/ideas'), keys: '⌘⇧I' },
       // Go to: every page and tab, with old names as synonyms
       { id: 'n:home', group: 'Go to', label: 'Home', kw: 'mission control dashboard', icon: <Home className="size-4" />, run: go('/hive') },
+      { id: 'n:inbox', group: 'Go to', label: 'Inbox', kw: 'alerts notifications approvals needs you bell', icon: <InboxIcon className="size-4" />, run: go('/hive/inbox') },
       { id: 'n:copilot', group: 'Go to', label: 'Copilot', kw: 'assistant chief of staff', icon: <Bot className="size-4" />, run: go('/hive/copilot') },
       { id: 'n:chat', group: 'Go to', label: 'Chat', icon: <MessageSquare className="size-4" />, run: go('/hive/chat') },
       { id: 'n:projects', group: 'Go to', label: 'Projects', hint: 'Work', kw: 'your github repos repositories', icon: <FolderGit2 className="size-4" />, run: go('/hive/projects') },

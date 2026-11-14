@@ -1,26 +1,24 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Bot, Check, ChevronDown, FolderGit2, KeyRound, Server, ShieldAlert, Sparkles } from 'lucide-react'
-import { Button, Menu, MenuContent, MenuItem, MenuLabel, MenuTrigger } from '@/components/ui'
+import { ArrowRight, Bot, Check, ChevronDown, FolderGit2, KeyRound, Server, Sparkles } from 'lucide-react'
+import { Menu, MenuContent, MenuItem, MenuLabel, MenuTrigger } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import { hiveApi } from '../api'
 import { AgentChip, defaultSpec } from '../AgentPicker'
 import { HiveLogo } from '../HiveLogo'
 import { projectColor } from '../projectColor'
 import { useHive } from '../store'
-import type { AgentSpec, Task } from '../types'
-import { fmtCost, fmtTokens, timeAgo, vendorName } from '../ui'
+import type { AgentSpec } from '../types'
+import { fmtCost, fmtTokens, timeAgo } from '../ui'
 import { Composer, Row, RowList, SegmentedControl, StatusPill, type Intent } from '../kit'
 import { setFocusProject } from '../Showcase'
-
-type OverviewTask = Task & { project_name: string; project_color: string }
+import { Dot, NeedsList, useNeeds, useOverview } from '../Inbox'
 
 export default function HomePage() {
-  const { boot, live, approvals, machines, answerApproval } = useHive()
+  const { boot, live, machines } = useHive()
   const navigate = useNavigate()
-  const [tasks, setTasks] = useState<OverviewTask[]>([])
-  const [today, setToday] = useState<{ tokens: number; requests: number; cost: number } | null>(null)
+  const { tasks, today } = useOverview()
+  const needs = useNeeds(tasks)
   // The project in focus ("" = any), shared with the top bar and the Copilot.
   const [target, setTarget] = useState<string>(() => {
     try {
@@ -36,16 +34,6 @@ export default function HomePage() {
   const [text, setText] = useState('')
   const [spec, setSpec] = useState<AgentSpec | null>(() => (boot ? defaultSpec(boot, undefined, undefined) : null))
   const busy = false
-
-  useEffect(() => {
-    hiveApi
-      .overview()
-      .then((r) => {
-        setTasks(r.tasks as OverviewTask[])
-        setToday(r.today)
-      })
-      .catch(() => {})
-  }, [live.length])
 
   const hour = new Date().getHours()
   const hello = hour < 5 ? 'Working late' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
@@ -65,14 +53,8 @@ export default function HomePage() {
   if (!boot) return null
   const doneCount = setup.filter((s) => s.done).length
 
-  const DAY = 24 * 3600 * 1000
-  const fresh = (t: OverviewTask) => Date.now() - t.updated_at < DAY
-  const review = tasks.filter((t) => t.status === 'review').slice(0, 5)
-  const failed = tasks.filter((t) => t.status === 'failed' && fresh(t)).slice(0, 3)
-  const limited = boot.keys.filter((k) => !k.disabled && k.limitUntil && k.limitUntil > Date.now())
-  const needs = [...approvals, ...review, ...failed, ...limited]
   const running = tasks.filter((t) => t.status === 'running' || t.status === 'queued')
-  const recent = tasks.filter((t) => !['running', 'queued', 'review'].includes(t.status) && !failed.includes(t)).slice(0, 8)
+  const recent = tasks.filter((t) => !['running', 'queued', 'review'].includes(t.status) && !needs.failed.includes(t)).slice(0, 8)
 
   const go = () => {
     const body = text.trim()
@@ -189,43 +171,9 @@ export default function HomePage() {
 
         <div className="mx-auto mt-10 max-w-[760px] space-y-8">
           {/* Needs you: approvals, finished work to review, failures, limits */}
-          {needs.length > 0 && (
-            <Block title="Needs you" count={needs.length}>
-              <RowList label="Needs you">
-                {approvals.map((a) => (
-                  <Row
-                    key={a.id}
-                    leading={<ShieldAlert className="text-[var(--hv-warning)]" />}
-                    title={
-                      <>
-                        <b className="font-medium">{a.agent}</b> wants to run a command on {a.machine}
-                      </>
-                    }
-                    meta={<span className="font-mono">$ {a.command}</span>}
-                    onOpen={() => navigate('/hive/machines')}
-                    actions={
-                      <>
-                        <Button size="sm" variant="primary" onClick={() => answerApproval(a.id, true)}>
-                          Run
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={() => answerApproval(a.id, false)}>
-                          Deny
-                        </Button>
-                      </>
-                    }
-                    className="[&_.hv-row-actions]:opacity-100"
-                  />
-                ))}
-                {review.map((t) => (
-                  <Row key={t.id} leading={<Dot color={t.project_color} />} title={t.title} meta={`${t.project_name} · finished ${timeAgo(t.updated_at)} — check it and ship`} trailing={<StatusPill size="sm" status="review" />} onOpen={() => navigate(`/hive/p/${t.project_id}/t/${t.id}`)} />
-                ))}
-                {failed.map((t) => (
-                  <Row key={t.id} leading={<Dot color={t.project_color} />} title={t.title} meta={`${t.project_name} · stopped with an error · ${timeAgo(t.updated_at)}`} trailing={<StatusPill size="sm" status="failed" />} onOpen={() => navigate(`/hive/p/${t.project_id}/t/${t.id}`)} />
-                ))}
-                {limited.map((k) => (
-                  <Row key={k.id} leading={<KeyRound />} title={`${k.label || vendorName(k.provider)} reached its limit`} meta={k.limitNote || 'Other models take over until it frees up.'} trailing={<StatusPill size="sm" status="limited" label={`free in ${untilText(k.limitUntil!)}`} />} onOpen={() => navigate('/hive/keys')} />
-                ))}
-              </RowList>
+          {needs.count > 0 && (
+            <Block title="Needs you" count={needs.count}>
+              <NeedsList needs={needs} />
             </Block>
           )}
 
@@ -298,11 +246,3 @@ function LinkBtn({ onClick, children }: { onClick: () => void; children: React.R
   )
 }
 
-function Dot({ color }: { color: string }) {
-  return <span className="size-2.5 rounded-full" style={{ background: projectColor(color) }} aria-hidden />
-}
-
-function untilText(ms: number) {
-  const m = Math.max(1, Math.round((ms - Date.now()) / 60000))
-  return m < 60 ? `${m}m` : `${Math.round(m / 60)}h`
-}
