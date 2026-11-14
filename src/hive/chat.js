@@ -108,13 +108,16 @@ function summarizeTool(name, input = {}) {
 }
 
 /** A project chat knows which repo it is about and its brief (written from the code). */
-async function projectContext(projectId) {
+async function projectContext(projectId, { background = false } = {}) {
   if (!projectId) return "";
   const p = await get("SELECT name, repo_owner, repo_name, default_branch, description, instructions FROM hive_projects WHERE id=?", [projectId]).catch(() => null);
   if (!p) return "";
   const repo = p.repo_owner ? `${p.repo_owner}/${p.repo_name} (branch ${p.default_branch || "main"})` : "a local folder";
   const guide = await guideOf(projectId).catch(() => "");
-  return [`This chat is about the project “${p.name}” — ${repo}.${p.description ? ` ${p.description}` : ""} Answer about this project unless asked otherwise; read its code with the repo tools before answering questions about it.`, p.instructions?.trim() ? `Project brief:\n${p.instructions.trim().slice(0, 6000)}` : "", guide].filter(Boolean).join("\n\n");
+  const lead = background
+    ? `Background: the person is currently working on the project “${p.name}” — ${repo}. Use this context whenever the question relates to it; for anything else, just answer.`
+    : `This chat is about the project “${p.name}” — ${repo}.${p.description ? ` ${p.description}` : ""} Answer about this project unless asked otherwise; read its code with the repo tools before answering questions about it.`;
+  return [lead, p.instructions?.trim() ? `Project brief:\n${p.instructions.trim().slice(0, 6000)}` : "", guide].filter(Boolean).join("\n\n");
 }
 
 // A project's AGENTS.md / CLAUDE.md from its default branch, cached for 10 minutes.
@@ -182,7 +185,7 @@ async function pickChatKey(spec, exclude = [], prompt = "", useTools = false) {
  * Send a message and stream the reply. spec: { provider, keyId, model, effort }.
  * mode 'image' generates an image instead of text.
  */
-async function send(convoId, { text, refs, spec, specs, mode = "text", username, sink }) {
+async function send(convoId, { text, refs, spec, specs, mode = "text", username, sink, focusProjectId = null }) {
   // Several models at once: one user message, one reply per model (side by side).
   const list = Array.isArray(specs) && specs.length ? specs.slice(0, 4) : [spec];
   const convo = await convoFor(convoId, username);
@@ -208,7 +211,7 @@ async function send(convoId, { text, refs, spec, specs, mode = "text", username,
     const reply = { id: newId("m"), convo_id: convoId, role: "assistant", content: "", attachments: [], author: null, created_at: now() + 1 + i, group_id: list.length > 1 ? userMsg.id : null };
     hub.emitConvo(convoId, "convo:start", { id: reply.id, convoId, provider: sp.provider, model: sp.model || null, group: reply.group_id });
     sink?.("start", { id: reply.id, convoId, provider: sp.provider, model: sp.model || null, group: reply.group_id });
-    return { reply, done: generate(convo, reply, { spec: sp, mode, prompt: userMsg.content, username, sink }).catch((e) => {
+    return { reply, done: generate(convo, reply, { spec: sp, mode, prompt: userMsg.content, username, sink, focusProjectId }).catch((e) => {
       console.error("[hive chat]", e.message);
       sink?.("done", { ...reply, error: e.message });
     }) };
@@ -216,7 +219,7 @@ async function send(convoId, { text, refs, spec, specs, mode = "text", username,
   return { user: userMsg, replyId: runs[0].reply.id, replyIds: runs.map((r) => r.reply.id), done: Promise.all(runs.map((r) => r.done)) };
 }
 
-async function generate(convo, reply, { spec: spec0, mode, prompt, username, sink }) {
+async function generate(convo, reply, { spec: spec0, mode, prompt, username, sink, focusProjectId = null }) {
   let spec = spec0;
   let modelRetried = false;
   // Every event goes to the room (other viewers) and to the sender's own
@@ -302,7 +305,7 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
         const system = [
           convo.system || "You are a helpful, precise assistant for a software team working in Nexora Hive. Use Markdown. Put code in fenced blocks with a language.",
           `Today is ${new Date().toISOString().slice(0, 10)}. You are talking with @${username}.`,
-          await projectContext(convo.project_id),
+          await projectContext(convo.project_id || focusProjectId || null, { background: !convo.project_id }),
           facts.length ? `What you know about @${username} (saved memory):\n${facts.map((f) => `- ${f}`).join("\n")}` : "",
           useTools
             ? `You have tools: search the web and read pages for anything current, read the project's code, read Hive Drive, create documents (PDF, Word, slides…) whenever someone wants a file, and remember lasting facts about the person.${mcpDefs.length ? " Tools starting with mcp_ come from the team's connected MCP servers (shown in [brackets] in each description)." : ""} Use them when they help; don't narrate tool use at length.`
