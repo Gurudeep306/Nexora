@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { SecretInput } from './kit'
 import { Check, FolderGit2, Lock, Search, Trash2 } from 'lucide-react'
 import { Button, ConfirmDialog, Input, Modal, Select, Textarea, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -116,7 +117,7 @@ export function AddKeyDialog({ open, onClose }: { open: boolean; onClose: () => 
               ) : undefined
             }
           >
-            <Input value={apiKey} onChange={(e) => setApiKey(e.target.value)} placeholder={info?.keyHint} type="password" autoComplete="off" spellCheck={false} className="font-mono" />
+            <SecretInput value={apiKey} onChange={(e) => setApiKey(e.target.value)} placeholder={info?.keyHint} className="font-mono" />
           </Field>
         </div>
         {(info?.baseUrlRequired || baseUrl) && (
@@ -250,7 +251,7 @@ export function EditKeyDialog({ k, open, onClose }: { k: HiveKey; open: boolean;
           </Field>
         </div>
         <Field label="Rotate key (optional)">
-          <Input value={rotate} onChange={(e) => setRotate(e.target.value)} type="password" placeholder="Paste a new key to replace this one" autoComplete="off" className="font-mono" />
+          <SecretInput value={rotate} onChange={(e) => setRotate(e.target.value)} placeholder="Paste a new key to replace this one" className="font-mono" />
         </Field>
         <div className="flex justify-end gap-2">
           <Button variant="ghost" onClick={onClose}>
@@ -287,7 +288,7 @@ export function AddGithubDialog({ open, onClose }: { open: boolean; onClose: () 
             </span>
           }
         >
-          <Input value={token} onChange={(e) => setToken(e.target.value)} type="password" placeholder="ghp_… or github_pat_…" autoComplete="off" className="font-mono" />
+          <SecretInput value={token} onChange={(e) => setToken(e.target.value)} placeholder="ghp_… or github_pat_…" className="font-mono" />
         </Field>
         <Field label="Name (optional)">
           <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Org bot" maxLength={60} />

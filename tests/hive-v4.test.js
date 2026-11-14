@@ -296,6 +296,13 @@ test("any number of Claude accounts can join one machine; numbered names; the sa
   assert.equal(keys.length, 4, "four accounts connected");
   assert.equal(new Set(keys.map((k) => k.label)).size, 4, `names are distinct: ${keys.map((k) => k.label)}`);
   const dup = await call("POST", "/api/hive/subscriptions", { provider: "claude_code", machineId: m.id, token: "sk-ant-oat01-test-account-2-xxxxxxxxxxxx" });
+  // A browser-autofilled password is refused with a clear message, not saved.
+  const pw = await call("POST", "/api/hive/subscriptions", { provider: "vibe", machineId: m.id, token: "hunter22!" });
+  assert.equal(pw.status, 400);
+  assert.match(pw.body.error, /Mistral API key/);
+  const notClaude = await call("POST", "/api/hive/subscriptions", { provider: "claude_code", machineId: m.id, token: "mypassword123" });
+  assert.equal(notClaude.status, 400);
+  assert.match(notClaude.body.error, /setup token/);
   assert.equal(dup.status, 409);
   assert.match(dup.body.error, /already connected/);
   // Each Claude account shows its own plan usage right away (asked from Anthropic, not only after a run).

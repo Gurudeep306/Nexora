@@ -6,6 +6,7 @@
    worker machine, or open the project. Connected tools are shared by the
    whole staff workspace and show up in chat and in every agent.
    ──────────────────────────────────────────────────────────────────────── */
+import { SecretInput } from '../kit'
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -618,7 +619,7 @@ function ConnectDialog({ state, engines, onClose, onDone }: { state: { kind: 'mc
         )}
         {kind !== 'skill' && (kind === 'mcp' || eng?.needs !== 'url') && (
           <Field label={kind === 'mcp' ? 'Access token (optional)' : eng?.needs === 'key-optional' ? 'API key (optional — higher limits)' : 'API key'}>
-            <Input type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder="Stored encrypted, shared with the team" autoComplete="off" />
+            <SecretInput value={token} onChange={(e) => setToken(e.target.value)} placeholder="Stored encrypted, shared with the team" />
             {kind === 'search' && eng && (
               <a href={eng.docs} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-[12px] text-accent-brand">
                 Get a key <ExternalLink className="size-3" />
