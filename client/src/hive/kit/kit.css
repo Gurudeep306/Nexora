@@ -133,3 +133,9 @@
 .hv-peek { animation: hv-peek-in var(--hv-d-menu) var(--hv-ease); }
 @keyframes hv-peek-in { from { transform: translateX(-8px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .hv-peek { animation: none; } }
+
+/* Composer: a quiet accent glow when focused. */
+.hv-composer:focus-within {
+  border-color: color-mix(in oklab, var(--hv-accent) 70%, transparent);
+  box-shadow: 0 0 0 1px var(--hv-accent), 0 0 24px -8px var(--hv-accent);
+}

@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { useHiveSections } from '../HivePage'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, ArrowUp, Bot, Check, ChevronDown, Cpu, FolderGit2, KeyRound, Loader2, MessageSquare, Radar, Server, ShieldAlert, Sparkles, Zap } from 'lucide-react'
-import { Menu, MenuContent, MenuItem, MenuLabel, MenuTrigger, useToast } from '@/components/ui'
+import { ArrowRight, Bot, Check, ChevronDown, Cpu, FolderGit2, KeyRound, Radar, Server, ShieldAlert, Sparkles, Zap } from 'lucide-react'
+import { Menu, MenuContent, MenuItem, MenuLabel, MenuTrigger } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
 import { AgentChip, defaultSpec } from '../AgentPicker'
@@ -13,20 +13,32 @@ import { projectColor } from '../projectColor'
 import { useHive } from '../store'
 import type { AgentSpec, MarketModel, Task } from '../types'
 import { IconTile, StatusPill, fmtCost, fmtTokens, timeAgo } from '../ui'
+import { Composer, SegmentedControl, type Intent } from '../kit'
+import { setFocusProject } from '../Showcase'
 
 type OverviewTask = Task & { project_name: string; project_color: string }
 
 export default function HomePage() {
   const { boot, live, approvals, machines, answerApproval } = useHive()
   const navigate = useNavigate()
-  const toast = useToast()
   const [tasks, setTasks] = useState<OverviewTask[]>([])
   const [today, setToday] = useState<{ tokens: number; requests: number; cost: number } | null>(null)
   const [market, setMarket] = useState<MarketModel[]>([])
-  const [target, setTarget] = useState<string>('copilot')
+  // The project in focus ("" = any), shared with the top bar and the Copilot.
+  const [target, setTarget] = useState<string>(() => {
+    try {
+      return localStorage.getItem('hive:lastProject') ?? ''
+    } catch {
+      return ''
+    }
+  })
+  const [intent, setIntent] = useState<Intent>('do')
+  const [strategy, setStrategy] = useState<'savings' | 'fast' | 'balanced' | 'quality'>('balanced')
+  const [freeOnly, setFreeOnly] = useState(false)
+  const [quick, setQuick] = useState(false)
   const [text, setText] = useState('')
   const [spec, setSpec] = useState<AgentSpec | null>(() => (boot ? defaultSpec(boot, undefined, undefined) : null))
-  const [busy, setBusy] = useState(false)
+  const busy = false
 
   useEffect(() => {
     hiveApi
@@ -60,29 +72,13 @@ export default function HomePage() {
   if (!boot) return null
   const doneCount = setup.filter((s) => s.done).length
 
-  const go = async () => {
+  const go = () => {
     const body = text.trim()
     if (!body || busy) return
-    if (target === 'copilot') {
-      navigate('/hive/copilot', { state: { send: body } })
-      return
-    }
-    if (target === 'chat') {
-      navigate('/hive/chat', { state: { send: body, spec } })
-      return
-    }
-    if (!project) return
-    const s = defaultSpec(boot)
-    if (!s) return toast.error('Add an AI key that can use tools first')
-    setBusy(true)
-    try {
-      const r = await hiveApi.createTask(project.id, { prompt: body, mode: 'solo', agents: [spec && boot.catalogue.providers.find((p) => p.id === spec.provider)?.caps.tools ? spec : s], machineId: project.machine_id ?? null, folder: project.folder ?? null })
-      navigate(`/hive/p/${project.id}/t/${r.task.id}`)
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Could not start')
-    } finally {
-      setBusy(false)
-    }
+    if (target) setFocusProject(target)
+    if (intent === 'ask') navigate('/hive/chat', { state: { send: body, spec } })
+    else if (intent === 'team') navigate('/hive/copilot?mode=team', { state: { draft: body, preference: strategy, freeOnly, projectId: target || undefined } })
+    else navigate('/hive/copilot', { state: { send: body, quick, projectId: target || undefined } })
   }
 
   return (
@@ -100,54 +96,74 @@ export default function HomePage() {
           <p className="mt-1.5 text-[14.5px] text-text-muted">{live.length ? `${live.length} agent${live.length === 1 ? ' is' : 's are'} working right now.` : 'Ask anything, or put agents to work on a project.'}</p>
         </div>
 
-        {/* Omni composer */}
-        <div className="hive-composer hive-ring mx-auto mt-8 max-w-[760px] rounded-[24px] p-3">
-          <textarea
+        {/* One composer, three intents */}
+        <div className="mx-auto mt-8 max-w-[760px]">
+          <Composer
             value={text}
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                go()
-              }
-            }}
-            rows={2}
+            onChange={setText}
+            onSubmit={go}
+            busy={busy}
+            intent={intent}
+            onIntent={setIntent}
             autoFocus
-            placeholder={target === 'copilot' ? 'What should we build today? Your Copilot plans it, picks the models and runs it…' : target === 'chat' ? 'Ask any model anything…' : `Tell the agents what to build in ${project?.name}…`}
-            className="block w-full resize-none bg-transparent px-2 py-1.5 text-[16px] leading-relaxed outline-none placeholder:text-text-muted"
+            label="What should we build today?"
+            placeholder={intent === 'ask' ? 'Ask any model anything…' : intent === 'team' ? 'Describe the work — Hive splits it and picks a model for each part…' : 'What should we build today? Your Copilot plans it, picks the models and runs it…'}
+            chips={
+              <>
+                <Menu>
+                  <MenuTrigger asChild>
+                    <button type="button" className="inline-flex h-7 max-w-[220px] items-center gap-1.5 rounded-full bg-[var(--hv-surface-2)] px-2.5 text-[12px] text-[var(--hv-text-2)] hover:text-[var(--hv-text-1)]">
+                      {project ? <span className="hive-hex size-2.5 shrink-0" style={{ background: projectColor(project.color) }} /> : <FolderGit2 className="size-3.5" />}
+                      <span className="truncate">{project ? project.name : 'Any project'}</span>
+                      <ChevronDown className="size-3 text-[var(--hv-text-3)]" />
+                    </button>
+                  </MenuTrigger>
+                  <MenuContent align="start" className="w-64">
+                    <MenuItem onSelect={() => setTarget('')}>
+                      <Bot className="size-3.5" /> Any project — I’ll say which
+                    </MenuItem>
+                    {boot.projects.length > 0 && <MenuLabel>Projects</MenuLabel>}
+                    {boot.projects.map((p) => (
+                      <MenuItem key={p.id} onSelect={() => setTarget(p.id)}>
+                        <span className="hive-hex size-3.5" style={{ background: projectColor(p.color) }} /> {p.name}
+                      </MenuItem>
+                    ))}
+                    <MenuItem onSelect={() => navigate('/hive/projects')}>
+                      <FolderGit2 className="size-3.5" /> Any repository on your GitHub…
+                    </MenuItem>
+                  </MenuContent>
+                </Menu>
+                {spec && intent === 'ask' && <AgentChip boot={boot} spec={spec} onChange={setSpec} need="chat" />}
+              </>
+            }
+            options={
+              intent === 'team' ? (
+                <>
+                  <SegmentedControl
+                    size="sm"
+                    label="Cost strategy"
+                    value={strategy}
+                    onChange={setStrategy}
+                    options={[
+                      { value: 'savings', label: 'Fewest tokens' },
+                      { value: 'fast', label: 'Fastest' },
+                      { value: 'balanced', label: 'Balanced' },
+                      { value: 'quality', label: 'Best quality' },
+                    ]}
+                  />
+                  <label className="inline-flex items-center gap-1.5 text-[12px] text-[var(--hv-text-2)]">
+                    <input type="checkbox" checked={freeOnly} onChange={(e) => setFreeOnly(e.target.checked)} className="size-3.5 accent-[var(--hv-accent)]" /> Free models only
+                  </label>
+                </>
+              ) : intent === 'do' ? (
+                <label className="inline-flex items-center gap-1.5 text-[12px] text-[var(--hv-text-2)]">
+                  <input type="checkbox" checked={quick} onChange={(e) => setQuick(e.target.checked)} className="size-3.5 accent-[var(--hv-accent)]" /> Quick answer (a fast model instead of your Claude plan)
+                </label>
+              ) : (
+                <span className="text-[12px] text-[var(--hv-text-3)]">Pick the model with the chip above, or leave it on Auto.</span>
+              )
+            }
           />
-          <div className="flex flex-wrap items-center gap-1.5 px-1 pt-1">
-            <Menu>
-              <MenuTrigger asChild>
-                <button type="button" className="inline-flex h-8 items-center gap-1.5 rounded-full bg-text-primary/[0.06] px-3 text-[12.5px] hover:bg-text-primary/[0.1]">
-                  {project ? <span className="hive-hex size-3" style={{ background: projectColor(project.color) }} /> : target === 'copilot' ? <Bot className="size-3.5 text-accent-brand" /> : <MessageSquare className="size-3.5 text-accent-brand" />}
-                  {project ? project.name : target === 'copilot' ? 'Copilot' : 'Chat'}
-                  <ChevronDown className="size-3 text-text-muted" />
-                </button>
-              </MenuTrigger>
-              <MenuContent align="start" className="w-64">
-                <MenuItem onSelect={() => setTarget('copilot')}>
-                  <Bot className="size-3.5" /> Copilot — it plans, delegates and reviews
-                </MenuItem>
-                <MenuItem onSelect={() => setTarget('chat')}>
-                  <MessageSquare className="size-3.5" /> Chat — just talk to a model
-                </MenuItem>
-                {boot.projects.length > 0 && <MenuLabel>Start a session in…</MenuLabel>}
-                {boot.projects.map((p) => (
-                  <MenuItem key={p.id} onSelect={() => setTarget(p.id)}>
-                    <span className="hive-hex size-3.5" style={{ background: projectColor(p.color) }} /> {p.name}
-                  </MenuItem>
-                ))}
-                <MenuItem onSelect={() => navigate('/hive/projects')}>
-                  <FolderGit2 className="size-3.5" /> Any repository on your GitHub…
-                </MenuItem>
-              </MenuContent>
-            </Menu>
-            {spec && target !== 'copilot' && <AgentChip boot={boot} spec={spec} onChange={setSpec} need={target === 'chat' ? 'chat' : 'tools'} />}
-            <button type="button" onClick={go} disabled={!text.trim() || busy} className="ml-auto grid size-9 place-items-center rounded-full bg-accent-brand text-on-accent-brand transition-transform enabled:hover:scale-105 disabled:opacity-35" aria-label="Go">
-              {busy ? <Loader2 className="size-4 animate-spin" /> : <ArrowUp className="size-4" strokeWidth={2.4} />}
-            </button>
-          </div>
         </div>
 
         <Explore />

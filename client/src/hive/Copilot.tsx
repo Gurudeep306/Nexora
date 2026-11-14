@@ -5,12 +5,11 @@
    a step you can open. Lives on its own page and as a floating panel on
    every Hive page.
    ──────────────────────────────────────────────────────────────────────── */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Activity,
-  ArrowUp,
   Bot,
   BrainCircuit,
   Clock3,
@@ -56,6 +55,7 @@ import { errMsg } from './Improve'
 import { useHive } from './store'
 import type { AgentSpec, CopilotBrain, CopilotMsg, CopilotSettings, CopilotStep, CopilotWork } from './types'
 import { timeAgo, vendorName } from './ui'
+import { Composer, StatusPill, friendlyModel } from './kit'
 
 const EASE = [0.2, 0.8, 0.2, 1] as const
 
@@ -119,36 +119,72 @@ const QUICK: { label: string; icon: typeof Bot; send?: string; fill?: string }[]
   { label: 'Save tokens', icon: Coins, send: 'Where am I spending tokens, and what should change to spend less without losing quality?' },
 ]
 
-const WORK_TONE: Record<string, string> = { running: 'var(--color-accent-brand)', queued: 'var(--color-text-muted)', review: 'var(--color-state-success)', pr_open: 'var(--color-state-info)', merged: 'oklch(62% 0.16 300)', committed: 'var(--color-state-info)', failed: 'var(--color-state-error)', stopped: 'var(--color-text-muted)' }
-const WORK_LABEL: Record<string, string> = { running: 'working', queued: 'starting', review: 'ready for review', pr_open: 'PR open', merged: 'merged', committed: 'committed', failed: 'failed', stopped: 'stopped' }
+const WORK_LABEL: Record<string, string> = { running: 'Working', queued: 'Starting', review: 'Ready for review', pr_open: 'PR open', merged: 'Merged', committed: 'Committed', failed: 'Failed', stopped: 'Stopped' }
+
+/** "4m", "1h 12m": how long a run has been going. */
+function elapsed(since: number, now: number) {
+  const m = Math.max(0, Math.floor((now - since) / 60000))
+  return m < 1 ? 'just now' : m < 60 ? `${m}m` : `${Math.floor(m / 60)}h ${m % 60}m`
+}
 
 /** What the Copilot is running for you right now. */
 function ActiveWork({ items, compact }: { items: CopilotWork[]; compact?: boolean }) {
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 30_000)
+    return () => clearInterval(t)
+  }, [])
   return (
-    <div className={cn('hive-scroll flex shrink-0 gap-2 overflow-x-auto border-b hive-line', compact ? 'px-3 py-2' : 'px-4 py-2.5 sm:px-6')}>
-      <span className="flex shrink-0 items-center text-[10.5px] font-semibold uppercase tracking-[0.1em] text-text-muted">On it</span>
+    <div className={cn('hive-scroll flex shrink-0 gap-2 overflow-x-auto border-b border-[var(--hv-border)]', compact ? 'px-3 py-2' : 'px-4 py-2.5 sm:px-6')} aria-label="Work in progress">
+      <span className="flex shrink-0 items-center text-[11px] font-medium text-[var(--hv-text-3)]">On it</span>
       {items.map((w) => {
-        const tone = WORK_TONE[w.status] ?? 'var(--color-text-muted)'
         const live = w.status === 'running' || w.status === 'queued'
         return (
-          <Link key={w.id} to={`/hive/p/${w.projectId}/t/${w.id}`} className="flex max-w-[260px] shrink-0 items-center gap-2 rounded-xl border hive-line bg-bg-surface/60 py-1 pl-1.5 pr-2.5 hover:border-[var(--hive-line-strong)]">
+          <Link key={w.id} to={`/hive/p/${w.projectId}/t/${w.id}`} className="hv-row flex max-w-[300px] shrink-0 items-center gap-2 rounded-[10px] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] py-1 pl-1.5 pr-2 hover:border-[var(--hv-border-strong)]">
             <span className="flex -space-x-1.5">
               {w.agents.slice(0, 3).map((a, i) => (
                 <AgentAvatar key={i} provider={a.provider} model={a.model} state={a.status === 'running' ? 'editing' : a.status === 'done' ? 'done' : a.status === 'failed' ? 'failed' : 'queued'} size={22} />
               ))}
             </span>
-            <span className="min-w-0">
-              <span className="block truncate text-[12px] font-medium">{w.title}</span>
-              <span className="flex items-center gap-1 text-[10.5px]" style={{ color: tone }}>
-                <span className={cn('size-1.5 rounded-full', live && 'hive-dot-run')} style={{ background: tone }} />
-                {WORK_LABEL[w.status] ?? w.status}
-                {w.reviewed && !live ? ' · reviewed' : ''}
-              </span>
-            </span>
+            <span className="min-w-0 flex-1 truncate text-[12.5px] font-medium text-[var(--hv-text-1)]">{w.title}</span>
+            <StatusPill size="sm" status={w.status === 'review' ? 'review' : w.status} label={(WORK_LABEL[w.status] ?? w.status) + (w.reviewed && !live ? ' · reviewed' : '')} />
+            {live && <span title="Since the last update" className="shrink-0 font-mono text-[11px] tabular-nums text-[var(--hv-text-3)]">{elapsed(w.updatedAt, now)}</span>}
           </Link>
         )
       })}
     </div>
+  )
+}
+
+/**
+ * Replies never show raw ids or internal paths: "/hive/p/prj_…/t/tsk_…" becomes
+ * an "Open result" link, other Hive paths become "Open", and bracketed ids
+ * like "(tsk_abc123)" are dropped.
+ */
+function tidyReply(text: string): string {
+  return text
+    .replace(/(?<![[\w/])(?<!\]\()(\]\()?`?((?:https?:\/\/[^\s/`]+)?\/hive\/[\w\-/?=&.%]+)`?/g, (m, inLink: string | undefined, path: string) => {
+      if (inLink) return m
+      const p = path.replace(/^https?:\/\/[^/]+/, '').replace(/[.,;:]+$/, '')
+      const tail = path.slice(path.replace(/[.,;:]+$/, '').length)
+      const label = /\/t\/tsk_/.test(p) ? 'Open result ↗' : /\/dispatch|mode=team/.test(p) ? 'Open the plan ↗' : 'Open ↗'
+      return `[${label}](${p})${tail}`
+    })
+    .replace(/\s*\((?:id:?\s*)?`?(?:tsk|prj|ses|run|dsp|key|mch|cop)_[A-Za-z0-9]+`?\)/g, '')
+}
+
+/** Open Hive links inside a reply without reloading the page. */
+function useInAppLinks() {
+  const navigate = useNavigate()
+  return useCallback(
+    (e: MouseEvent<HTMLElement>) => {
+      const a = (e.target as HTMLElement).closest('a')
+      const href = a?.getAttribute('href') ?? ''
+      if (!a || !href.startsWith('/hive') || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return
+      e.preventDefault()
+      navigate(href)
+    },
+    [navigate],
   )
 }
 
@@ -486,7 +522,6 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
   }, [])
   const ctl = useRef<AbortController | null>(null)
   const end = useRef<HTMLDivElement>(null)
-  const ta = useRef<HTMLTextAreaElement>(null)
   const me = boot?.me.username
 
   const load = useCallback(async () => {
@@ -520,14 +555,8 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
   useEffect(() => {
     end.current?.scrollIntoView({ block: 'end' })
   }, [msgs?.length, pending?.text.length, pending?.steps.length])
-  useEffect(() => {
-    const el = ta.current
-    if (!el) return
-    el.style.height = 'auto'
-    el.style.height = `${Math.min(200, el.scrollHeight)}px`
-  }, [text])
 
-  const send = async (body: string) => {
+  const send = async (body: string, over: { quick?: boolean; projectId?: string | null } = {}) => {
     const t = body.trim()
     if (!t || pending) return
     setText('')
@@ -549,7 +578,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
           else if (type === 'error') toast.error(String(d.error ?? 'Something went wrong'))
         },
         c.signal,
-        { quick, projectId: focus?.id ?? null },
+        { quick: over.quick ?? quick, projectId: over.projectId !== undefined ? over.projectId : (focus?.id ?? null) },
       )
     } catch (e) {
       if (!c.signal.aborted) toast.error(errMsg(e))
@@ -561,18 +590,20 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
 
   // A message handed over from Mission control: send it once the thread has loaded.
   const location = useLocation()
+  const inAppLink = useInAppLinks()
   const navigate = useNavigate()
   const handed = useRef(false)
   useEffect(() => {
-    const st = location.state as { send?: string; draft?: string; projectId?: string } | null
+    const st = location.state as { send?: string; draft?: string; projectId?: string; quick?: boolean } | null
     if (compact || !(st?.send || st?.draft || st?.projectId) || handed.current || !msgs) return
     handed.current = true
     navigate(location.pathname, { replace: true, state: null })
     // Opened from a repo: that project is in focus.
     if (st.projectId) setFocusId(st.projectId)
     // A draft (e.g. "In owner/repo: ") is put in the box for the person to finish.
+    if (st.quick) setQuick(true)
     if (st.draft) setText(st.draft)
-    else if (st.send) send(st.send)
+    else if (st.send) send(st.send, { quick: st.quick, projectId: st.projectId })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [msgs])
 
@@ -611,7 +642,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
 
       {active.length > 0 && <ActiveWork items={active} compact={compact} />}
 
-      <div className="hive-scroll min-h-0 flex-1 overflow-y-auto">
+      <div className="hive-scroll min-h-0 flex-1 overflow-y-auto" onClick={inAppLink}>
         <div className={cn('mx-auto w-full', compact ? 'px-3 py-4' : 'max-w-[820px] px-4 py-6 sm:px-6')}>
           {!msgs ? (
             <div className="space-y-3">
@@ -653,11 +684,11 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
                       <div className="mb-1 flex items-center gap-2 text-[11.5px] text-text-muted">
                         <span className="font-medium text-text-secondary">Copilot</span>
                         {m.auto && <span className="rounded-full bg-state-info/12 px-1.5 py-0.5 text-[10.5px] font-medium text-state-info">automatic review</span>}
-                        <span className="truncate">{m.provider === 'claude_code' ? 'Claude · your plan' : m.model ? `${vendorName(m.provider ?? '')} · ${m.model}` : ''}</span>
+                        <span className="truncate">{m.provider === 'claude_code' ? 'Claude · your plan' : m.model ? `${vendorName(m.provider ?? '')} · ${friendlyModel(m.model)}` : ''}</span>
                         <span className="ml-auto shrink-0">{timeAgo(m.createdAt)}</span>
                       </div>
                       <Steps steps={m.tools} />
-                      {m.content && <AiMarkdown text={m.content} />}
+                      {m.content && <AiMarkdown text={tidyReply(m.content)} />}
                       {m.error && <div className="mt-1 rounded-xl bg-state-error/[0.07] px-3 py-2 text-[12.5px] text-state-error">{m.error}</div>}
                       <ReplyActions
                         text={m.content}
@@ -685,7 +716,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
                     {pending.note && <div className="mb-2 inline-flex rounded-full bg-state-warning/12 px-2.5 py-0.5 text-[11.5px] text-state-warning">{pending.note}</div>}
                     <LiveStatus pending={pending} />
                     <Steps steps={pending.steps} live />
-                    {pending.text && <AiMarkdown text={pending.text} streaming />}
+                    {pending.text && <AiMarkdown text={tidyReply(pending.text)} streaming />}
                   </div>
                 </div>
               )}
@@ -705,46 +736,27 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
             ))}
           </div>
         )}
-        <div className={cn('mx-auto mb-1.5 flex flex-wrap items-center gap-1.5', !compact && 'max-w-[820px]')}>
-          <ProjectFocus projects={projects} value={focus} onChange={(id) => setFocusId(id)} />
-          <Tooltip label={quick ? 'Quick: a fast model answers right away. Turn off for big jobs — then your Claude plan plans and runs the work.' : 'Quick is off: your Claude plan thinks on your machine (best quality, slower to start). Turn on for fast answers.'}>
-            <button type="button" onClick={() => setQuick((q) => !q)} aria-pressed={quick} className={cn('inline-flex h-7 items-center gap-1 rounded-full border px-2.5 text-[12px] font-medium transition-colors', quick ? 'border-state-warning/40 bg-state-warning/12 text-state-warning' : 'hive-line text-text-muted hover:text-text-primary')}>
-              <Zap className={cn('size-3.5', quick && 'fill-current')} /> Quick
-            </button>
-          </Tooltip>
-        </div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            send(text)
-          }}
-          className={cn('hive-composer hive-ring mx-auto flex items-end gap-2 rounded-[20px] p-2 pl-3.5', !compact && 'max-w-[820px]')}
-        >
-          <textarea
-            ref={ta}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
-                e.preventDefault()
-                send(text)
-              }
-            }}
-            rows={1}
-            placeholder={focus ? `What should happen in ${focus.name}?` : 'Tell your Copilot what you want done…'}
-            className="hive-scroll max-h-[200px] min-h-9 flex-1 resize-none bg-transparent py-2 text-[14px] outline-none placeholder:text-text-muted"
-            aria-label="Message the Copilot"
-          />
-          {pending ? (
-            <button type="button" onClick={() => ctl.current?.abort()} className="grid size-9 shrink-0 place-items-center rounded-full bg-text-primary text-bg-app" aria-label="Stop">
-              <Square className="size-3.5 fill-current" />
-            </button>
-          ) : (
-            <button type="submit" disabled={!text.trim()} className="grid size-9 shrink-0 place-items-center rounded-full bg-accent-brand text-on-accent-brand transition-transform enabled:hover:scale-105 disabled:opacity-35" aria-label="Send">
-              <ArrowUp className="size-4" strokeWidth={2.4} />
-            </button>
-          )}
-        </form>
+        <Composer
+          value={text}
+          onChange={setText}
+          onSubmit={() => send(text)}
+          onStop={() => ctl.current?.abort()}
+          busy={!!pending}
+          size="md"
+          label="Message the Copilot"
+          placeholder={focus ? `What should happen in ${focus.name}?` : 'Tell your Copilot what you want done…'}
+          className={cn('mx-auto', !compact && 'max-w-[820px]')}
+          chips={
+            <>
+              <ProjectFocus projects={projects} value={focus} onChange={(id) => setFocusId(id)} />
+              <Tooltip label={quick ? 'Quick: a fast model answers right away. Turn off for big jobs — then your Claude plan plans and runs the work.' : 'Quick is off: your Claude plan thinks on your machine (best quality, slower to start). Turn on for fast answers.'}>
+                <button type="button" onClick={() => setQuick((q) => !q)} aria-pressed={quick} className={cn('inline-flex h-7 items-center gap-1 rounded-full border px-2.5 text-[12px] font-medium transition-colors', quick ? 'border-state-warning/40 bg-state-warning/12 text-state-warning' : 'border-[var(--hv-border)] text-[var(--hv-text-2)] hover:text-[var(--hv-text-1)]')}>
+                  <Zap className={cn('size-3.5', quick && 'fill-current')} /> Quick
+                </button>
+              </Tooltip>
+            </>
+          }
+        />
         {!compact && <p className="mx-auto mt-1.5 max-w-[820px] text-center text-[11px] text-text-muted">The Copilot plans, delegates and reviews. On Autopilot it ships verified work as pull requests; it merges only if you allow it. Sessions it starts are reviewed automatically.</p>}
       </div>
     </div>
