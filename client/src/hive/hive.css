@@ -220,17 +220,6 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
   color: transparent;
 }
 
-/* Resizer handle between panes. */
-.hive-resizer {
-  position: relative;
-  width: 1px;
-  background: var(--hive-line);
-  cursor: col-resize;
-  flex-shrink: 0;
-}
-.hive-resizer::after { content: ""; position: absolute; inset: 0 -4px; }
-.hive-resizer:hover, .hive-resizer[data-dragging="true"] { background: var(--color-accent-brand); }
-
 /* Markdown inside chat / transcript. */
 .hive-prose { font-size: 14.5px; line-height: 1.7; color: var(--color-text-primary); }
 .hive-prose :where(p, ul, ol, pre, table, blockquote) { margin: 0.6em 0; }
