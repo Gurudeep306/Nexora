@@ -304,11 +304,6 @@ function PageSkeleton() {
 /* ── Activity bar ─────────────────────────────────────────────────────── */
 type NavItem = { to: string; label: string; icon: typeof Home; end?: boolean; match?: RegExp; badge?: number; tone?: string; hint?: string }
 
-/** Every section of Hive, grouped (for the home page's Explore grid). */
-export function useHiveSections() {
-  return useNav().groups
-}
-
 function useNav(): { main: NavItem[]; config: NavItem[]; rail: NavItem[]; groups: LaunchGroup[]; sections: { title: string; items: NavItem[] }[] } {
   const { machines, approvals } = useHive()
   const online = machines.filter((m) => m.online).length
