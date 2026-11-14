@@ -1159,7 +1159,8 @@ async function handoffAgent(agentId, { spec, username }) {
     said.length ? `\nTheir latest notes:\n${said.join("\n---\n").slice(0, 6000)}` : "",
     "\nThe working copy already contains their edits (check view_changes). Continue from where they left off and finish the job.",
   ].join("\n");
-  const variant = old.variant === old.id ? "main" : old.variant;
+  // A compare agent's replacement keeps working on that attempt's copy, so its edits carry over.
+  const variant = old.variant;
   const a = await addAgent(old.task_id, { spec, prompt, username, readOnly: old.role === "reviewer", variant, title: `Continues ${old.name}` });
   await event(old.task_id, a.id, "handoff", { reason: `@${username} handed ${old.name}'s work over`, from: { provider: old.provider, model: old.model }, to: { provider: a.provider, model: a.model } });
   return a;
