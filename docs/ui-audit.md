@@ -85,13 +85,15 @@ All routes are declared in `HivePage.tsx`. The navigation (sidebar, icon rail, l
 |---|---|
 | `/hive/dispatch` | `/hive/copilot?mode=team` |
 | `/hive/repos` | `/hive/projects` |
-| `/hive/launchpad`, `/hive/launchpad/:ideaId` | `/hive/projects?tab=ideas` and `/hive/projects/ideas/:ideaId` |
-| `/hive/nexora` | `/hive/projects/guide` (also pinned in the sidebar) |
-| `/hive/automations` | `/hive/pipelines?tab=schedules` |
-| `/hive/health` | `/hive/models?tab=health` |
-| `/hive/toolbox`, `/hive/plugins`, `/hive/memory` | `/hive/extensions?tab=toolbox`, `?tab=plugins`, `?tab=memory` |
-| `/hive/usage`, `/hive/budgets`, `/hive/steward` | `/hive/spend?tab=overview`, `?tab=budgets`, `?tab=savings` |
+| `/hive/launchpad`, `/hive/launchpad/:ideaId` | `/hive/projects/ideas`, `/hive/projects/ideas/:ideaId` |
+| `/hive/nexora` | `/hive/projects/guide` |
+| `/hive/automations` | `/hive/pipelines/schedules` |
+| `/hive/health` | `/hive/models/health` |
+| `/hive/toolbox`, `/hive/plugins`, `/hive/memory` | `/hive/extensions`, `/hive/extensions/plugins`, `/hive/extensions/memory` |
+| `/hive/usage`, `/hive/budgets`, `/hive/steward` | `/hive/spend`, `/hive/spend/budgets`, `/hive/spend/savings` |
 | `/hive/p/:id/*`, `/hive/chat/:id`, `/hive/copilot` | unchanged |
+
+Merged sections use **path segments** for their tabs (`/hive/models/health`), not `?tab=`, because Models and Toolbox already use `?tab=` for their own views and both must keep working.
 
 Query strings (for example `?add=<vendor>` on Keys, or `?model=` and `?drive=` on Chat) are carried through every redirect. Old names stay as ⌘K keywords: Dispatcher, Launchpad, Token Steward, Your GitHub, repos, Agent health, Automations, Usage and Budgets.
 

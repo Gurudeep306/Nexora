@@ -57,14 +57,17 @@ const VENDOR: Record<string, { name: string; mark: string; hue: number; chroma?:
 }
 
 export function vendorStyle(id: string) {
-  const v = VENDOR[id] ?? { name: id, mark: id.slice(0, 1).toUpperCase(), hue: 260, chroma: 0.03 }
+  const key = typeof id === 'string' ? id : ''
+  const v = VENDOR[key] ?? { name: key, mark: key.slice(0, 1).toUpperCase() || '·', hue: 260, chroma: 0.03 }
   return { ...v, color: `oklch(70% ${v.chroma ?? 0.14} ${v.hue})` }
 }
 export const vendorName = (id: string) => vendorStyle(id).name
 
 /** Compatibility alias used across Hive components. */
 export const PROVIDER_STYLE = new Proxy({} as Record<string, { hue: string; short: string; name: string }>, {
-  get: (_t, id: string) => {
+  get: (_t, id: string | symbol) => {
+    // React and dev tools probe objects with symbol keys: those aren't vendors.
+    if (typeof id !== 'string') return undefined
     const v = vendorStyle(id)
     return { hue: v.color, short: v.mark, name: v.name }
   },

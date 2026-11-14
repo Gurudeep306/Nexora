@@ -665,7 +665,7 @@ export default function DrivePage() {
               A whole folder
             </MenuItem>
             <MenuSeparator />
-            <MenuItem icon={<FolderUp />} onSelect={() => navigate('/hive/repos')}>
+            <MenuItem icon={<FolderUp />} onSelect={() => navigate('/hive/projects')}>
               A code folder to work on (any size)
             </MenuItem>
             <MenuSeparator />

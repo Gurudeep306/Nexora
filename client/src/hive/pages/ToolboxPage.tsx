@@ -130,7 +130,7 @@ export default function ToolboxPage() {
         <Stat icon={Plug} hue={285} value={live} label="Connected now" sub={liveTools ? `${liveTools} tools live in chat & agents` : 'Nothing connected yet'} onClick={() => setTab('connected')} />
         <Stat icon={Sparkles} hue={200} value={ready} label="Ready to connect" sub="MCP, search, models, skills" onClick={() => (setTab('discover'), setFilter('connect'))} />
         <Stat icon={CheckCircle2} hue={145} value={builtin} label="Already in Hive" sub="No install needed" onClick={() => (setTab('discover'), setFilter('builtin'))} />
-        <Link to="/hive/steward" className="hive-card hive-card-hover group relative overflow-hidden p-4">
+        <Link to="/hive/spend/savings" className="hive-card hive-card-hover group relative overflow-hidden p-4">
           <div className="pointer-events-none absolute -right-6 -top-6 size-24 rounded-full opacity-25 blur-2xl" style={{ background: hue(150) }} />
           <PiggyBank className="size-5" style={{ color: hue(150) }} />
           <div className="mt-2 text-[14px] font-semibold text-text-primary">Token Steward</div>
@@ -280,7 +280,7 @@ function ToolCard({ t, i, catLabel, onConnect }: { t: EcoTool; i: number; catLab
     )
   } else if (t.use.how === 'builtin') {
     action = (
-      <Link to="/hive/plugins" className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium text-state-success hover:bg-state-success/10">
+      <Link to="/hive/extensions/plugins" className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium text-state-success hover:bg-state-success/10">
         <CheckCircle2 className="size-3.5" /> In Hive
       </Link>
     )
