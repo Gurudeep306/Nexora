@@ -237,7 +237,7 @@ function Savers({ rep, reload }: { rep: StewardReport; reload: () => void }) {
         <h2 className="flex items-center gap-2 text-[13px] font-medium text-text-secondary">
           <Gauge className="size-4" /> Token savers
         </h2>
-        <Link to="/hive/plugins" className="text-[12px] text-text-muted hover:text-text-primary">
+        <Link to="/hive/extensions/plugins" className="text-[12px] text-text-muted hover:text-text-primary">
           Tune →
         </Link>
       </div>
@@ -249,7 +249,7 @@ function Savers({ rep, reload }: { rep: StewardReport; reload: () => void }) {
           </div>
         ))}
       </div>
-      <Link to="/hive/toolbox?tab=connected" className="mt-3 flex items-center gap-2 rounded-xl bg-text-primary/[0.035] p-2.5 text-[12.5px] text-text-secondary hover:bg-text-primary/[0.06]">
+      <Link to="/hive/extensions?tab=connected" className="mt-3 flex items-center gap-2 rounded-xl bg-text-primary/[0.035] p-2.5 text-[12.5px] text-text-secondary hover:bg-text-primary/[0.06]">
         <Plug className="size-4 text-accent-brand" /> Open-source tools for search, memory, context & gateways
         <ArrowRight className="ml-auto size-3.5" />
       </Link>

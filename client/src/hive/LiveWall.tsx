@@ -41,7 +41,7 @@ export function HealthStrip() {
   const cooling = keys.filter((k) => k.state === 'cooling').length
   const down = keys.filter((k) => k.state === 'down').length
   return (
-    <Link to="/hive/health" className="hive-card hive-card-hover flex items-center gap-3 px-4 py-2.5 text-[12.5px]">
+    <Link to="/hive/models/health" className="hive-card hive-card-hover flex items-center gap-3 px-4 py-2.5 text-[12.5px]">
       <HeartPulse className="size-4 text-state-success" />
       <span className="font-medium">Agents</span>
       <span className="inline-flex items-center gap-1 text-state-success">
@@ -81,7 +81,7 @@ export function LiveWall() {
             <div className="text-[14px] font-semibold">Your team is resting</div>
             <div className="text-[12.5px] text-text-muted">Give the Dispatcher a goal: it splits the work and puts the cheapest capable model on each part.</div>
           </div>
-          <Link to="/hive/dispatch" className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-accent-brand px-3.5 text-[13px] font-medium text-on-accent-brand shadow-sm hover:opacity-90">
+          <Link to="/hive/copilot?mode=team" className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-accent-brand px-3.5 text-[13px] font-medium text-on-accent-brand shadow-sm hover:opacity-90">
             <Workflow className="size-4" /> Dispatch a team
           </Link>
         </div>
