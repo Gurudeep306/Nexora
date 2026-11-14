@@ -214,6 +214,13 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
       const same = await get("SELECT COUNT(*) AS n FROM hive_keys WHERE preset=? AND machine_id=?", [b.provider, m.id]);
       const n = Number(same?.n || 0);
       const label = str(b.label, "name", { max: 60, optional: true }) || `${{ codex: "Codex", vibe: "Mistral Vibe" }[b.provider] || "Claude Code"}${n ? ` ${n + 1}` : ""} on ${m.name}`;
+      // A pasted secret that can't be right (often a browser autofilling a saved
+      // password into the field) is refused here, instead of failing later.
+      if (b.token != null) b.token = String(b.token).trim();
+      if (b.token) {
+        if (b.provider === "vibe" && !/^[A-Za-z0-9]{24,}$/.test(b.token)) throw new BadInput("That doesn't look like a Mistral API key (they are about 32 letters and numbers). If your browser filled in a saved password, clear the box — or leave it empty if `vibe --setup` was run on the machine.");
+        if (b.provider === "claude_code" && !b.token.startsWith("sk-ant-")) throw new BadInput("That doesn't look like a Claude setup token (it starts with sk-ant-). Run `claude setup-token` on the machine and paste what it prints — or leave the box empty if you logged in there.");
+      }
       // The same setup token twice is the same Claude account — say so instead of adding a duplicate.
       if (b.token) {
         const last4 = String(b.token).trim().slice(-4);

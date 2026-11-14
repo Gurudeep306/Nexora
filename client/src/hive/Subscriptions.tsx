@@ -4,6 +4,7 @@
    drives them, shows the plan's usage windows, and hands work to another
    model when a plan limit is hit.
    ──────────────────────────────────────────────────────────────────────── */
+import { SecretInput } from './kit'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -150,6 +151,8 @@ export function SubscriptionDialog({ sub, onClose }: { sub: Sub | null; onClose:
   const toast = useToast()
   const { machines } = useHive()
   const [machineId, setMachineId] = useState('')
+  // True once the person clicks a machine; until then Hive keeps an online one picked.
+  const [picked, setPicked] = useState(false)
   const [token, setToken] = useState('')
   const [label, setLabel] = useState('')
   const [detect, setDetect] = useState<{ loading: boolean; status?: CliStatus; online?: boolean } | null>(null)
@@ -164,13 +167,19 @@ export function SubscriptionDialog({ sub, onClose }: { sub: Sub | null; onClose:
     if (!sub) return
     setToken('')
     setLabel('')
+    setPicked(false)
     const list = sortedRef.current
     setMachineId(list.find((m) => m.online)?.id ?? list[0]?.id ?? '')
   }, [sub])
   // A machine that connects while the window is open gets picked if none was.
+  // and an offline pick moves to an online machine (unless the person chose it).
   useEffect(() => {
-    if (sub && !machineId && sorted.length) setMachineId(sorted.find((m) => m.online)?.id ?? sorted[0].id)
-  }, [sub, machineId, sorted])
+    if (!sub || !sorted.length) return
+    const current = sorted.find((m) => m.id === machineId)
+    const online = sorted.find((m) => m.online)
+    if (!current) setMachineId(online?.id ?? sorted[0].id)
+    else if (!current.online && online && !picked) setMachineId(online.id)
+  }, [sub, machineId, sorted, picked])
   useEffect(() => {
     if (!sub || !machineId) return setDetect(null)
     let live = true
@@ -219,7 +228,7 @@ export function SubscriptionDialog({ sub, onClose }: { sub: Sub | null; onClose:
                 <div className="mb-1.5 text-[12px] font-medium text-text-secondary">Machine</div>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {sorted.map((m) => (
-                    <button key={m.id} type="button" onClick={() => setMachineId(m.id)} className={cn('flex items-center gap-2.5 rounded-xl border p-3 text-left', machineId === m.id ? 'border-accent-brand/50 bg-accent-brand/[0.06]' : 'hive-line hover:bg-text-primary/[0.03]')}>
+                    <button key={m.id} type="button" onClick={() => (setMachineId(m.id), setPicked(true))} className={cn('flex items-center gap-2.5 rounded-xl border p-3 text-left', machineId === m.id ? 'border-accent-brand/50 bg-accent-brand/[0.06]' : 'hive-line hover:bg-text-primary/[0.03]')}>
                       <Cpu className="size-4 text-text-muted" />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-[13px] font-medium">{m.name}</span>
@@ -266,7 +275,7 @@ export function SubscriptionDialog({ sub, onClose }: { sub: Sub | null; onClose:
               {(sub === 'claude_code' || sub === 'vibe') && (
                 <label className="block">
                   <span className="mb-1 block text-[12px] font-medium text-text-secondary">{sub === 'vibe' ? 'Vibe API key (optional)' : 'Setup token (optional)'}</span>
-                  <Input type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder={sub === 'vibe' ? 'Your Vibe key' : 'sk-ant-oat01-…'} autoComplete="off" />
+                  <SecretInput value={token} onChange={(e) => setToken(e.target.value)} placeholder={sub === 'vibe' ? 'Your Vibe key' : 'sk-ant-oat01-…'} />
                   <span className="mt-1 block text-[11.5px] text-text-muted">{info.tokenHint}. Stored encrypted; sent only to that machine.</span>
                 </label>
               )}
