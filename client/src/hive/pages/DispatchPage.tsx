@@ -526,7 +526,6 @@ function PartNode({ d, part, status, delay, editable, onChange }: { d: Dispatch;
       className={cn('hive-card group relative overflow-hidden p-3.5 transition-shadow', status === 'running' && 'hive-working')}
       style={{ boxShadow: `inset 3px 0 0 ${kindColor(part.kind)}${tone ? `, 0 0 0 1px color-mix(in oklab, ${tone} 45%, transparent)` : ''}` }}
     >
-      <div className="pointer-events-none absolute -right-8 -top-8 size-24 rounded-full opacity-20 blur-2xl" style={{ background: kindColor(part.kind) }} />
       <div className="relative">
         <div className="flex items-center gap-1.5">
           <span className="inline-flex h-5 items-center gap-1 rounded-full px-1.5 text-[10.5px] font-semibold" style={{ color: kindColor(part.kind, 50), background: `color-mix(in oklab, ${kindColor(part.kind)} 14%, transparent)` }}>
