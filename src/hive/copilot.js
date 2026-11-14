@@ -961,7 +961,25 @@ async function clear(username) {
  * tools), stream progress to `sink`, store the reply.
  * deps: { createTask(project, {title, prompt}), origin }
  */
-async function send({ username, text, auto = false, sink = null, deps = {}, signal = null, quick = false, projectId = null }) {
+/**
+ * One Copilot turn at a time per person: two sessions finishing together, or
+ * a person typing during an automatic review, used to run turns in parallel
+ * and interleave their history. Turns now queue behind each other.
+ */
+const turnQueues = new Map(); // username -> tail promise
+function send(opts) {
+  const key = opts.username;
+  const prev = turnQueues.get(key) || Promise.resolve();
+  const next = prev.catch(() => {}).then(() => sendNow(opts));
+  const tail = next.catch(() => {});
+  turnQueues.set(key, tail);
+  tail.then(() => {
+    if (turnQueues.get(key) === tail) turnQueues.delete(key);
+  });
+  return next;
+}
+
+async function sendNow({ username, text, auto = false, sink = null, deps = {}, signal = null, quick = false, projectId = null }) {
   const t = now();
   const userMsg = { id: newId("cpm"), role: "user", content: String(text).slice(0, 20000), auto: auto ? 1 : 0 };
   await run("INSERT INTO hive_copilot_msgs(id, username, role, content, auto, created_at) VALUES(?,?,?,?,?,?)", [userMsg.id, username, "user", userMsg.content, userMsg.auto, t]);
@@ -1092,6 +1110,10 @@ async function thinkWithApi({ brain, system, past, text, ctx, reply, out, signal
     convo.push({ role: "tool", results });
     if (buf && !buf.endsWith("\n")) reply.content += "\n";
   }
+  // Out of tool rounds: one last turn without tools, so the person always gets a report.
+  convo.push({ role: "user", text: "You have used all your tool steps for this turn. Without calling tools, report in a few lines what you did, what is still running, and what is left." });
+  const fin = await v.impl.turn({ secret: keys.secretOf(brain.key), keyRow: brain.key, baseUrl: brain.key.base_url || v.baseUrl, official: !!v.official, vision: false, model: brain.model, system, messages: convo, tools: [], signal, cache: true, onText: (d) => out("delta", { text: d }) }).catch(() => null);
+  if (fin?.text) reply.content += (reply.content ? "\n\n" : "") + fin.text;
 }
 
 /** Claude Code on your plan, driving Hive through its MCP endpoint. */
@@ -1161,6 +1183,8 @@ async function mcpHandle(req, res, deps) {
   const tok = auth.replace(/^Bearer\s+/i, "");
   const t = tokens.get(tok);
   if (!t || t.exp < Date.now()) return res.status(401).json({ jsonrpc: "2.0", id: null, error: { code: -32001, message: "Invalid or expired token" } });
+  // A long plan turn keeps its token alive: every call slides the expiry (a token unused for 30 min still expires).
+  t.exp = Math.max(t.exp, Date.now() + 30 * 60_000);
   if (req.method !== "POST") return res.status(405).end();
   const msg = req.body || {};
   const reply = (result) => res.json({ jsonrpc: "2.0", id: msg.id, result });
