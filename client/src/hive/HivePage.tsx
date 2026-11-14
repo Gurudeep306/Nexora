@@ -46,7 +46,7 @@ import { cn } from '@/lib/utils'
 import { hiveApi } from './api'
 import { TeamChat } from './TeamChat'
 import { InboxBell } from './Inbox'
-import { Panel, PanelGroup, PanelSeparator, Skeleton, useDensity, useMedia } from './kit'
+import { Panel, PanelGroup, PanelSeparator, Skeleton, transitionTo, useDensity, useMedia, useNavFade } from './kit'
 import type { LaunchGroup } from './Launcher'
 import { CopilotDock } from './Copilot'
 import { HiveLogo } from './HiveLogo'
@@ -109,9 +109,11 @@ export default function HivePage() {
   const projectId = m?.[1] ?? null
   const taskId = m?.[2] ?? null
   const onSelect = useCallback(
-    (p: string | null, t?: string | null) => {
+    (p: string | null, t?: string | null, opts?: { viewTransition?: boolean }) => {
       if (p) store.set('hive:lastProject', p)
-      navigate(p ? (t ? `/hive/p/${p}/t/${t}` : `/hive/p/${p}`) : '/hive')
+      const url = p ? (t ? `/hive/p/${p}/t/${t}` : `/hive/p/${p}`) : '/hive'
+      if (opts?.viewTransition) transitionTo(() => navigate(url), t ? '[data-vt-session]' : undefined)
+      else navigate(url)
     },
     [navigate],
   )
@@ -440,6 +442,7 @@ function ActivityBar({ onTeam, onPalette, withSidebar }: { onTeam: () => void; o
 }
 
 function RailLink({ it }: { it: NavItem }) {
+  const navFade = useNavFade()
   const { pathname } = useLocation()
   const forced = it.match ? it.match.test(pathname) : undefined
   return (
@@ -452,7 +455,7 @@ function RailLink({ it }: { it: NavItem }) {
         </span>
       }
     >
-      <NavLink to={it.to} end={it.end} aria-label={it.label} viewTransition className="relative">
+      <NavLink to={it.to} end={it.end} aria-label={it.label} onClick={(e) => navFade(e, it.to)} className="relative">
         {({ isActive }) => {
           const on = forced ?? isActive
           return (
@@ -614,6 +617,7 @@ function Sidebar() {
 
 /** Every part of Hive, grouped and always visible in the sidebar. Groups fold; the choice is remembered. */
 function NavSections({ filter = '' }: { filter?: string }) {
+  const navFade = useNavFade()
   const { sections } = useNav()
   const { pathname } = useLocation()
   const [closed, setClosed] = useState<Record<string, boolean>>(() => {
@@ -647,7 +651,7 @@ function NavSections({ filter = '' }: { filter?: string }) {
               items.map((it) => {
                 const forced = it.match ? it.match.test(pathname) : undefined
                 return (
-                  <NavLink key={it.label} to={it.to} end={it.end} title={it.hint} viewTransition className="block">
+                  <NavLink key={it.label} to={it.to} end={it.end} title={it.hint} onClick={(e) => navFade(e, it.to)} className="block">
                     {({ isActive }) => {
                       const on = forced ?? isActive
                       return (
@@ -817,7 +821,7 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
           <span className="contents sm:hidden">
             <ChevronRight className="size-3.5 shrink-0 text-text-muted" />
             <button type="button" onClick={() => navigate(`/hive/p/${project.id}`)} className={cn('flex min-w-0 items-center gap-1.5 rounded-md px-1.5 py-1 hover:bg-text-primary/[0.05]', detail ? 'text-text-secondary' : 'font-medium text-text-primary')}>
-              <span className="hive-hex size-2.5 shrink-0" style={{ background: projectColor(project.color) }} />
+              <span className="rounded-full size-2.5 shrink-0" style={{ background: projectColor(project.color) }} />
               <span className="truncate">{project.name}</span>
             </button>
           </span>
@@ -1026,7 +1030,7 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
       { id: 'x:key', group: 'Commands', label: 'Add an AI key', icon: <KeyRound className="size-4" />, run: go('/hive/keys'), cmd: true },
       { id: 'x:mcp', group: 'Commands', label: 'Connect an MCP server or search engine', icon: <Boxes className="size-4" />, run: go('/hive/extensions?tab=connected'), cmd: true },
     ]
-    for (const p of boot?.projects ?? []) out.push({ id: `p:${p.id}`, group: 'Projects', label: p.name, hint: p.repo_owner ? `${p.repo_owner}/${p.repo_name}` : p.folder ?? '', icon: <span className="hive-hex size-3.5" style={{ background: projectColor(p.color) }} />, run: go(`/hive/p/${p.id}`) })
+    for (const p of boot?.projects ?? []) out.push({ id: `p:${p.id}`, group: 'Projects', label: p.name, hint: p.repo_owner ? `${p.repo_owner}/${p.repo_name}` : p.folder ?? '', icon: <span className="rounded-full size-3.5" style={{ background: projectColor(p.color) }} />, run: go(`/hive/p/${p.id}`) })
     for (const t of Object.values(taskIndex).sort((a, b) => b.updated_at - a.updated_at)) out.push({ id: `t:${t.id}`, group: 'Sessions', label: t.title, hint: t.project_name ?? t.status, icon: <StatusDot status={t.status} />, run: go(`/hive/p/${t.project_id}/t/${t.id}`) })
     for (const c of convos) out.push({ id: `c:${c.id}`, group: 'Chats', label: c.title, hint: c.model ?? '', icon: <MessageSquare className="size-3.5 text-text-muted" />, run: go(`/hive/chat/${c.id}`) })
     const raw = q.toLowerCase().trim()

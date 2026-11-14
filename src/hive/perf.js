@@ -38,6 +38,12 @@ async function judgeTask(taskId, accepted) {
   for (const a of agents) await bump(a.provider, a.model, a.routed_kind || task?.kind || "coding", accepted ? { accepted: 1 } : { rejected: 1 });
 }
 
+/** A Judge verdict: the winning attempt counts as accepted, the others as rejected. */
+async function judgeVerdict(kind, winner, others) {
+  await bump(winner.provider, winner.model, kind || "coding", { accepted: 1 });
+  for (const a of others) if (`${a.provider}|${a.model}` !== `${winner.provider}|${winner.model}`) await bump(a.provider, a.model, kind || "coding", { rejected: 1 });
+}
+
 /** A rated chat answer. */
 function rateChat({ vendor, model, good }) {
   return bump(vendor, model, "chat", { runs: 1, ok: good ? 1 : 0, failed: good ? 0 : 1, accepted: good ? 1 : 0, rejected: good ? 0 : 1 });
@@ -78,4 +84,4 @@ async function summary() {
   }));
 }
 
-module.exports = { recordRun, judgeTask, rateChat, adjustment, summary };
+module.exports = { recordRun, judgeTask, judgeVerdict, rateChat, adjustment, summary };

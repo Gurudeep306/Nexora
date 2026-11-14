@@ -953,7 +953,7 @@ function RepoFilePicker({ onPick }: { onPick: (r: { projectId: string; path: str
         <div className="flex gap-1 overflow-x-auto border-b hive-line p-2">
           {projects.map((p) => (
             <button key={p.id} type="button" onClick={() => setProjectId(p.id)} className={cn('inline-flex shrink-0 items-center gap-1.5 rounded-md px-2 py-1 text-[12px]', p.id === pid ? 'bg-text-primary/[0.08] text-text-primary' : 'text-text-muted')}>
-              <span className="hive-hex size-2.5" style={{ background: projectColor(p.color) }} />
+              <span className="rounded-full size-2.5" style={{ background: projectColor(p.color) }} />
               {p.name}
             </button>
           ))}

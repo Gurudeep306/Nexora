@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { StatusPill as KitStatusPill } from './kit/StatusPill'
 import { cn } from '@/lib/utils'
 import type { AgentRow, HiveKey, ProviderId, TaskStatus } from './types'
 
@@ -100,6 +101,8 @@ const STATUS: Record<string, { label: string; color: string }> = {
   failed: { label: 'Failed', color: 'var(--color-state-error)' },
   stopped: { label: 'Stopped', color: 'var(--color-text-muted)' },
   interrupted: { label: 'Interrupted', color: 'var(--color-state-warning)' },
+  incomplete: { label: 'Incomplete', color: 'var(--color-state-warning)' },
+  merged: { label: 'Merged', color: 'var(--color-state-success)' },
 }
 export const statusColor = (s: string) => STATUS[s]?.color ?? 'var(--color-text-muted)'
 export const statusLabel = (s: string) => STATUS[s]?.label ?? s
@@ -108,13 +111,9 @@ export function StatusDot({ status, className }: { status: string; className?: s
   return <span className={cn('inline-block size-2 shrink-0 rounded-full', status === 'running' && 'hive-dot-run', className)} style={{ background: statusColor(status) }} />
 }
 
+/** One status vocabulary: the kit pill (icon + word + colour), with Hive's own words. */
 export function StatusPill({ status, className }: { status: TaskStatus | AgentRow['status'] | string; className?: string }) {
-  return (
-    <span className={cn('inline-flex items-center gap-1.5 whitespace-nowrap text-[12px] font-medium', className)} style={{ color: statusColor(status) }}>
-      <StatusDot status={status} className="size-1.5" />
-      {statusLabel(status)}
-    </span>
-  )
+  return <KitStatusPill size="sm" status={status} label={STATUS[status]?.label} className={className} />
 }
 
 /* ── Numbers & time ───────────────────────────────────────────────────── */
@@ -261,17 +260,19 @@ export function Toggle({ on, onChange, label, disabled }: { on: boolean; onChang
 }
 
 /** Page title in the site's style: icon badge, display title, subtitle, actions on the right. */
-export function PageTitle({ title, sub, icon, children }: { title: ReactNode; sub?: ReactNode; icon?: ReactNode; children?: ReactNode }) {
+/**
+ * The Hive page header (same as the kit's PageHead): a 26px title, one short
+ * line and the page's actions. The icon tile of the old header is gone — the
+ * sidebar already shows where you are.
+ */
+export function PageTitle({ title, sub, children }: { title: ReactNode; sub?: ReactNode; icon?: ReactNode; children?: ReactNode }) {
   return (
-    <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
-      <div className="flex min-w-0 flex-[1_1_18rem] items-start gap-4">
-        {icon && <div className="mt-1 hidden size-11 shrink-0 items-center justify-center rounded-[var(--radius-control,12px)] border border-border bg-bg-surface-2 text-accent-brand shadow-[inset_0_1px_0_var(--specular)] sm:flex [&_svg]:size-5">{icon}</div>}
-        <div className="min-w-0">
-          <h1 className="font-display text-[26px] leading-[1.15] font-semibold tracking-[-0.022em] text-text-primary md:text-[30px]">{title}</h1>
-          {sub && <p className="mt-2 mb-0 max-w-2xl text-[14px] leading-relaxed text-text-secondary text-pretty">{sub}</p>}
-        </div>
+    <div className="mb-8 flex flex-col items-start gap-3 sm:flex-row sm:items-end">
+      <div className="min-w-0 flex-1">
+        <h1 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-[var(--hv-text-1)]">{title}</h1>
+        {sub && <p className="mt-1 max-w-2xl text-[13.5px] text-[var(--hv-text-3)] text-pretty">{sub}</p>}
       </div>
-      {children && <div className="flex flex-wrap items-center gap-2">{children}</div>}
+      {children && <div className="flex flex-wrap items-center gap-1.5">{children}</div>}
     </div>
   )
 }
@@ -383,10 +384,10 @@ export function LimitBar({ k, compact = false }: { k: HiveKey; compact?: boolean
     const byTokens = !k.freeLimit.rpd
     const lim = byTokens ? k.freeLimit.tpd! : k.freeLimit.rpd!
     const u = byTokens ? (k.todayTokens ?? 0) : (k.todayRequests ?? 0)
-    label = 'Free daily limit'
+    label = k.freeLimit.custom ? 'Daily limit (set here)' : 'Free daily limit'
     left = `${fmtTokens(u)} / ${fmtTokens(lim)} ${byTokens ? 'tokens' : 'requests'} today`
     used = u / Math.max(1, lim)
-    foot = `about · resets in ${until(nextUtcMidnight())}${k.freeLimit.rpm ? ` · ${k.freeLimit.rpm}/min` : ''}`
+    foot = `${k.freeLimit.custom ? '' : 'about · '}resets in ${until(nextUtcMidnight())}${k.freeLimit.rpm ? ` · ${k.freeLimit.rpm}/min` : ''}`
   } else if (k.tokenLimit != null) {
     label = 'Your budget'
     left = `${fmtTokens(k.remaining ?? 0)} / ${fmtTokens(k.tokenLimit)} left`
@@ -395,7 +396,7 @@ export function LimitBar({ k, compact = false }: { k: HiveKey; compact?: boolean
   } else if (k.freeLimit) {
     label = 'Free limit'
     left = `${fmtTokens(k.todayRequests ?? 0)} requests today`
-    foot = k.freeLimit.note
+    foot = k.freeLimit.note ?? (k.freeLimit.rpm ? `${k.freeLimit.rpm} requests a minute` : '')
   } else {
     label = 'Limit'
     left = `${fmtTokens(k.todayRequests ?? 0)} requests · ${fmtTokens(k.todayTokens ?? 0)} tokens today`

@@ -48,6 +48,14 @@
   --hv-r-dialog: 6px;
   --hv-row-h: 40px;
 
+  /* Type scale (px): meta 12 · body-sm 12.5 · body 13.5 · emphasis 14 · section 17 · page 26. */
+  --hv-fs-meta: 12px;
+  --hv-fs-sm: 12.5px;
+  --hv-fs-body: 13.5px;
+  --hv-fs-md: 14px;
+  --hv-fs-lg: 17px;
+  --hv-fs-page: 26px;
+
   /* Motion: only transform and opacity; 120 hover, 180 menus, 240 panels. */
   --hv-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --hv-d-fast: 120ms;
@@ -128,10 +136,18 @@
 ::view-transition-old(root),
 ::view-transition-new(root) { animation-duration: 150ms; animation-timing-function: var(--hv-ease, ease); }
 
+/* Project → session: the session title moves from its row into the header. */
+::view-transition-group(hv-session-title) { animation-duration: 260ms; animation-timing-function: var(--hv-ease, ease); }
+::view-transition-old(hv-session-title),
+::view-transition-new(hv-session-title) { height: 100%; width: auto; object-fit: none; object-position: left center; }
+
 @media (prefers-reduced-motion: reduce) {
   .hv-panel { animation: none; }
   ::view-transition-old(root),
-  ::view-transition-new(root) { animation: none; }
+  ::view-transition-new(root),
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
 }
 
 /* The labelled sidebar peeking over the collapsed rail. */
@@ -160,4 +176,13 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .hv-spinner-svg, .hv-skeleton { animation: none; }
+}
+
+/* Phones: the dense desktop label sizes (10–11.5px) become 12px, so every
+   line stays readable on a small screen (Lighthouse's legibility rule too). */
+@media (max-width: 640px) {
+  .hive-root .text-\[10px\],
+  .hive-root .text-\[10\.5px\],
+  .hive-root .text-\[11px\],
+  .hive-root .text-\[11\.5px\] { font-size: 12px; }
 }

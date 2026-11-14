@@ -125,22 +125,38 @@ function call(machineId, op, args = {}, { timeoutMs = 90_000 } = {}) {
   });
 }
 
+const BOOT_AT = Date.now();
+const REUSE_MS = 60 * 60_000;
+const save = (sql, args) => run(sql, args).catch(() => {}); // history only: never block a command on it
+
 /**
  * Ask a human before running a command (policy "ask"). Resolves true/false.
- * The request is broadcast to Hive; anyone on staff can answer.
+ * The request is broadcast to Hive; anyone on staff can answer. Requests are
+ * stored: if Hive restarts after a person approved a command but before it
+ * ran, the resumed agent's identical request is approved again without asking.
  */
-function requestApproval(info, { timeoutMs = 15 * 60_000 } = {}) {
+async function requestApproval(info, { timeoutMs = 15 * 60_000 } = {}) {
+  if (info.taskId && info.command) {
+    const prior = await get(
+      "SELECT answered_by FROM hive_approvals WHERE task_id=? AND command=? AND status='approved' AND answered_at < ? AND answered_at > ? ORDER BY answered_at DESC LIMIT 1",
+      [info.taskId, String(info.command), BOOT_AT, Date.now() - REUSE_MS],
+    ).catch(() => null);
+    if (prior) return { approved: true, by: prior.answered_by, reason: `Approved by @${prior.answered_by} before Hive restarted` };
+  }
   const id = newId("apr");
+  const at = Date.now();
+  await save("INSERT INTO hive_approvals(id, task_id, agent_id, command, info_json, status, created_at) VALUES(?,?,?,?,?,'pending',?)", [id, info.taskId || null, info.agentId || null, String(info.command || ""), JSON.stringify(info), at]);
   return new Promise((resolve) => {
     const timer = setTimeout(() => {
       approvals.delete(id);
+      save("UPDATE hive_approvals SET status='expired', answered_at=? WHERE id=?", [Date.now(), id]);
       hub.emit("approval_done", { id, approved: false, by: null, timedOut: true });
       resolve({ approved: false, reason: "No one approved it within 15 minutes" });
     }, timeoutMs);
     timer.unref?.();
-    approvals.set(id, { info: { id, ...info, at: Date.now() }, resolve: (v) => (clearTimeout(timer), resolve(v)) });
-    hub.emit("approval", { id, ...info, at: Date.now() });
-    if (info.taskId) hub.emitTask(info.taskId, "approval", { id, ...info, at: Date.now() });
+    approvals.set(id, { info: { id, ...info, at }, resolve: (v) => (clearTimeout(timer), resolve(v)) });
+    hub.emit("approval", { id, ...info, at });
+    if (info.taskId) hub.emitTask(info.taskId, "approval", { id, ...info, at });
   });
 }
 
@@ -148,9 +164,20 @@ function answerApproval(id, { approved, by, note }) {
   const a = approvals.get(id);
   if (!a) return false;
   approvals.delete(id);
+  save("UPDATE hive_approvals SET status=?, answered_by=?, note=?, answered_at=? WHERE id=?", [approved ? "approved" : "denied", by || null, note || null, Date.now(), id]);
   hub.emit("approval_done", { id, approved: !!approved, by, note: note || null });
   a.resolve({ approved: !!approved, by, reason: note || (approved ? null : `Denied by @${by}`) });
   return true;
+}
+
+/** At start-up: requests left open by the last run can't be answered any more. */
+async function closeStaleApprovals() {
+  await save("UPDATE hive_approvals SET status='expired', note='Hive restarted; the agent asks again when it resumes', answered_at=? WHERE status='pending' AND created_at < ?", [Date.now(), BOOT_AT]);
+}
+
+/** Recent answered requests, newest first (the Inbox's history). */
+async function approvalHistory(limit = 50) {
+  return (await all("SELECT * FROM hive_approvals WHERE status<>'pending' ORDER BY answered_at DESC LIMIT ?", [limit])).map((r) => ({ id: r.id, taskId: r.task_id, agentId: r.agent_id, command: r.command, status: r.status, by: r.answered_by, note: r.note, at: r.created_at, answeredAt: r.answered_at }));
 }
 
 const pendingApprovals = () => [...approvals.values()].map((a) => a.info);
@@ -160,10 +187,11 @@ function dropApprovals(match) {
   for (const [id, a] of approvals) {
     if ((match.agentId && a.info.agentId === match.agentId) || (match.taskId && a.info.taskId === match.taskId)) {
       approvals.delete(id);
+      save("UPDATE hive_approvals SET status='expired', note='Stopped', answered_at=? WHERE id=?", [Date.now(), id]);
       hub.emit("approval_done", { id, approved: false, by: null });
       a.resolve({ approved: false, reason: "Stopped" });
     }
   }
 }
 
-module.exports = { createMachine, rotateToken, byToken, listMachines, publicMachine, hello, poll, result, call, isOnline, requestApproval, answerApproval, pendingApprovals, dropApprovals };
+module.exports = { createMachine, rotateToken, byToken, listMachines, publicMachine, hello, poll, result, call, isOnline, requestApproval, answerApproval, pendingApprovals, dropApprovals, closeStaleApprovals, approvalHistory, BOOT_AT };

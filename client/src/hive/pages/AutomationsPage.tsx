@@ -209,7 +209,7 @@ export default function AutomationsPage() {
           </FilterPill>
           {boot.projects.map((p) => (
             <FilterPill key={p.id} on={filter === p.id} onClick={() => setFilter(p.id)}>
-              <span className="hive-hex size-2.5" style={{ background: projectColor(p.color) }} />
+              <span className="rounded-full size-2.5" style={{ background: projectColor(p.color) }} />
               {p.name}
             </FilterPill>
           ))}
@@ -366,7 +366,7 @@ function ScheduleCard({ s, boot, pipelineName, onEdit, onChanged }: { s: Schedul
             <span className="font-medium text-text-secondary">{cadence(s)}</span>
             {project && (
               <span className="inline-flex items-center gap-1 text-text-muted">
-                <span className="hive-hex size-2" style={{ background: projectColor(project.color) }} />
+                <span className="rounded-full size-2" style={{ background: projectColor(project.color) }} />
                 {project.name}
               </span>
             )}

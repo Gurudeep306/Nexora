@@ -72,6 +72,25 @@ with Claude Code, so any agent (or person) can pick up where they left off.
     - The Copilot gets a project picker, a Quick mode, a live status line, and
       copy / ask-again buttons.
 17. **Shared context** (this page and `AGENTS.md`) for every model.
+18. **Flow fixes (PRs #88–#100).**
+    - Mistral Vibe and Claude plan tokens are checked before saving; browsers
+      can no longer autofill a saved password into a key field.
+    - Routing keeps the kind of work the Copilot chose; one broken model no
+      longer throws away a whole key; the Judge never adopts "A by default".
+    - Provider calls time out instead of hanging; daily caps wait until their
+      reset; free tiers are paced below their limits, and staff can set
+      requests a minute / a day on any key.
+    - Work goes to the machine with the best agent, starts from the latest
+      code on GitHub, and Autopilot approves only tests, builds and read-only
+      commands.
+    - Compare attempts on a machine each get their own git worktree; the
+      Judge runs each one's tests (on machines that run commands without
+      asking), and the winner is squash-merged into the session.
+    - Command approvals are stored, so a restart doesn't make a person
+      approve the same command twice. Judge verdicts feed the router's
+      measured quality.
+19. **Premium UI v2 (PRs #90–#94).** See `docs/hive/UI-PREMIUM.md`.
+20. **Coding test, view transitions, Lighthouse (PR #101).** Golden coding tasks score each model; the session title glides from the project into the session; phone panels close with a swipe; Hive stops downloading the learning site's pages.
 
 ## Infrastructure the owner set up
 

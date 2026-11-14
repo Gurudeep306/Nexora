@@ -462,7 +462,7 @@ function KeyRow({ k }: { k: HiveKey }) {
             {canManage && (
               <>
                 <MenuItem onSelect={() => setEditing(true)}>
-                  <Settings2 className="size-3.5" /> Budget, model & priority
+                  <Settings2 className="size-3.5" /> Budget, limits & model
                 </MenuItem>
                 <MenuItem onSelect={() => act(() => hiveApi.updateKey(k.id, { disabled: !k.disabled }), k.disabled ? 'Resumed' : 'Paused')}>
                   {k.disabled ? <Play className="size-3.5" /> : <Pause className="size-3.5" />} {k.disabled ? 'Resume' : 'Pause'}

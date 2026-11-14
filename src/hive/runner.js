@@ -156,7 +156,9 @@ async function taskContext(taskId) {
   if (task.machine_id && task.folder) {
     const m = await get("SELECT * FROM hive_machines WHERE id=?", [task.machine_id]);
     if (!m) throw new Error("This task's machine was removed");
-    return { task, project, token, snap: null, machine: { id: m.id, name: m.name, policy: m.policy, folder: task.folder } };
+    // Compare attempts each have their own copy; look them up by variant.
+    const copies = Object.fromEntries((await all("SELECT id, worktree FROM hive_agents WHERE task_id=? AND variant=id AND worktree IS NOT NULL", [task.id])).map((a) => [a.id, a.worktree]));
+    return { task, project, token, snap: null, machine: { id: m.id, name: m.name, policy: m.policy, folder: task.folder, copies } };
   }
   if (!cred) throw new Error("This project's GitHub connection was removed");
   const snap = await getSnapshot(token, project.repo_owner, project.repo_name, task.base_sha);
@@ -165,7 +167,53 @@ async function taskContext(taskId) {
 
 /** The working copy for a task context (overlay on GitHub, or a machine folder). */
 function workspaceOf(ctx, variant = "main") {
-  return ctx.machine ? machineWorkspace({ machineId: ctx.machine.id, folder: ctx.machine.folder }) : workspace({ task: ctx.task, variant, snap: ctx.snap });
+  if (!ctx.machine) return workspace({ task: ctx.task, variant, snap: ctx.snap });
+  const folder = (variant !== "main" && ctx.machine.copies?.[variant]) || ctx.machine.folder;
+  return machineWorkspace({ machineId: ctx.machine.id, folder });
+}
+
+/**
+ * A compare attempt on a machine gets its own git worktree (branch
+ * <task branch>-<n>), so attempts never overwrite each other and the Judge
+ * sees each one's real diff. Falls back to the shared folder, with a note.
+ */
+async function attemptCopy(task, agentId) {
+  if (!task.machine_id || !task.folder) return null;
+  const base = /^[0-9a-f]{7,40}$/.test(String(task.base_sha || "")) ? task.base_sha : "HEAD";
+  try {
+    const r = await machines.call(task.machine_id, "worktree_add", { folder: task.folder, name: `try-${agentId.slice(-8)}`, branch: `${task.branch}-try-${agentId.slice(-4)}`, base }, { timeoutMs: 120_000 });
+    await run("UPDATE hive_agents SET worktree=? WHERE id=?", [r.path, agentId]);
+    return r.path;
+  } catch (e) {
+    await event(task.id, agentId, "system", { message: `This attempt shares the session's folder (couldn't make its own copy: ${String(e.message).slice(0, 200)})` });
+    return null;
+  }
+}
+
+/**
+ * Make one compare attempt the session's result. On GitHub overlays this
+ * copies its changes; on a machine it commits the attempt's copy and
+ * squash-merges that branch into the session's own worktree.
+ */
+async function adoptAttempt(taskId, variant) {
+  const ctx = await taskContext(taskId);
+  if (!ctx.machine) return require("./workspace").adoptVariant(taskId, variant, "main");
+  const from = ctx.machine.copies?.[variant];
+  if (!from || from === ctx.machine.folder) return; // the attempt already worked in the session's folder
+  const branchOf = await machines.call(ctx.machine.id, "git", { folder: from, args: ["rev-parse", "--abbrev-ref", "HEAD"] }, { timeoutMs: 30_000 });
+  const branch = String(branchOf?.output || "").trim();
+  if (!ctx.task.worktree) {
+    // The session works in the person's own folder: never overwrite it.
+    await event(taskId, null, "system", { message: `The chosen attempt is on branch ${branch || "(unknown)"}. This session works in your own folder, so Hive left it alone — merge that branch when you're ready.` });
+    return;
+  }
+  const g = (folder, args) => machines.call(ctx.machine.id, "git", { folder, args }, { timeoutMs: 120_000 });
+  await g(from, ["add", "-A"]);
+  await g(from, ["-c", "user.name=Hive", "-c", "user.email=hive@localhost", "commit", "-q", "--no-verify", "-m", "Compare attempt"]); // nothing to commit is fine
+  await g(ctx.task.folder, ["reset", "-q", "--hard", "HEAD"]);
+  await g(ctx.task.folder, ["clean", "-fdq"]);
+  const m = await g(ctx.task.folder, ["merge", "--squash", branch]);
+  if (m?.code !== 0) throw new Error(`Couldn't bring the attempt in: ${String(m?.output || "").trim().slice(-300)}`);
 }
 
 async function setTask(taskId, fields) {
@@ -255,6 +303,7 @@ async function createAgent(task, { role, spec, instructions, variant = "main", p
     [id, task.id, parentId, readOnly ? "reviewer" : role, await pickName(task.id, name || spec.name), r.key.id, r.provider, r.model, r.effort, variant === "self" ? id : variant, instructions, "queued", startedBy, now(), title],
   );
   await run("UPDATE hive_agents SET routed_kind=?, route_note=? WHERE id=?", [r.kind || null, r.note || null, id]);
+  if (variant === "self" && task.machine_id) await attemptCopy(task, id);
   if (r.note) await event(task.id, id, "route", { note: r.note, kind: r.kind, model: r.model, provider: r.provider });
   const a = await get("SELECT * FROM hive_agents WHERE id=?", [id]);
   hub.emitTask(task.id, "agent", a);
@@ -300,7 +349,26 @@ function partialField(src, key) {
 }
 
 /* ── the agent loop ─────────────────────────────────────────────────── */
-async function runAgent(agentId, { team = [], delegateFn = null, readOnly = false, title = "" } = {}) {
+/**
+ * Run one agent. Any failure before or around the main loop (machine removed,
+ * GitHub snapshot failed…) marks the agent failed and closes the session, so
+ * nothing is left "running" forever.
+ */
+async function runAgent(agentId, opts = {}) {
+  try {
+    return await runAgentInner(agentId, opts);
+  } catch (e) {
+    const a = await get("SELECT * FROM hive_agents WHERE id=?", [agentId]).catch(() => null);
+    if (!a || ["done", "failed", "stopped", "incomplete"].includes(a.status)) throw e;
+    running.delete(agentId);
+    activity.delete(agentId);
+    await setAgent(agentId, { status: "failed", error: String(e.message || e).slice(0, 500), finished_at: now() }).catch(() => {});
+    await event(a.task_id, agentId, "error", { message: `Couldn't start: ${e.message || e}` }).catch(() => {});
+    await finishTask(a.task_id).catch(() => {});
+  }
+}
+
+async function runAgentInner(agentId, { team = [], delegateFn = null, readOnly = false, title = "" } = {}) {
   let agent = await get("SELECT * FROM hive_agents WHERE id=?", [agentId]);
   const ctx = await taskContext(agent.task_id);
   const { task, project, snap } = ctx;
@@ -336,7 +404,7 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
     if (!m || m.policy === "read") return { approved: false, reason: "This machine is read-only" };
     if (m.policy === "auto") return { approved: true };
     await event(task.id, agentId, "approval", { command, kind, machine: m.name });
-    const r = await machines.requestApproval({ taskId: task.id, agentId, agent: agent.name, projectId: project.id, command, kind, machine: m.name, folder: ctx.machine.folder });
+    const r = await machines.requestApproval({ taskId: task.id, agentId, agent: agent.name, projectId: project.id, command, kind, machine: m.name, folder: ws.folder || ctx.machine.folder });
     await event(task.id, agentId, "approval_result", { command, approved: r.approved, by: r.by || null, reason: r.reason || null });
     return r;
   };
@@ -367,6 +435,8 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
   const triedKeys = [];
   let step = 0;
   let status = "done";
+  let wrote = false; // did this agent change any file?
+  let nudges = 0;
   let error = null;
   let lastRadar = "";
   let warnedBudget = false;
@@ -444,7 +514,7 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
       let announced = false;
       const r = await cliMod.stream({
         machineId: ctx.machine.id,
-        folder: ctx.machine.folder,
+        folder: ws.folder || ctx.machine.folder,
         cli: v.cli,
         args,
         input,
@@ -510,9 +580,13 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
             case "plan_usage":
               await keys.setPlanUsage(keyRow.id, ev.info).catch(() => {});
               break;
-            case "limit":
+            case "limit": {
               limit = ev;
+              // The plan stays out of routing until it resets (not just a short cool-down).
+              const at = Number(ev.resetsAt) ? (Number(ev.resetsAt) > 1e12 ? Number(ev.resetsAt) : Number(ev.resetsAt) * 1000) : null;
+              await require("./health").record(keyRow.id, "", { ok: false, kind: "quota", error: ev.message, retryAt: at && at > Date.now() ? at : null }).catch(() => {});
               break;
+            }
             case "turn_done":
               usage.input += ev.usage.input;
               usage.output += ev.usage.output;
@@ -618,7 +692,17 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
         if (!(await handoff(capOk.reason))) throw new Error(capOk.reason);
         continue;
       }
-      const release = await keys.acquire(keyRow, controller.signal);
+      let release;
+      try {
+        release = await keys.acquire(keyRow, controller.signal);
+      } catch (e) {
+        // A free key that used its day: record it (cools until reset) and move the work on.
+        if (e.kind === "quota") {
+          await require("./health").record(keyRow.id, "", { ok: false, kind: "quota", error: e.message, retryAt: e.retryAt }).catch(() => {});
+          if (await handoff(`${keyRow.label}: ${e.message}`)) continue;
+        }
+        throw e;
+      }
       let res;
       const p = providerOf(agent.provider);
       try {
@@ -655,12 +739,15 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
         if (["auth", "quota", "rate"].includes(e.kind)) {
           if (e.kind === "auth") await run("UPDATE hive_keys SET status='invalid', status_detail=? WHERE id=?", [String(e.message).slice(0, 300), keyRow.id]);
           if (await handoff(`${keyRow.label}: ${e.message}`)) continue;
-          if (e.kind === "rate") {
+          // Short rate limits: wait and retry on the same key, at most 3 times (never all day).
+          if (e.kind === "rate" && (state.rateWaits = (state.rateWaits || 0) + 1) <= 3) {
             triedKeys.pop();
-            await event(task.id, agentId, "system", { message: `Rate limited (${e.message}); retrying in ${Math.round(RETRY_DELAY / 1000)}s` });
-            await new Promise((r) => setTimeout(r, RETRY_DELAY));
+            const wait = e.retryAt && e.retryAt > Date.now() ? Math.min(120_000, e.retryAt - Date.now() + 500) : RETRY_DELAY;
+            await event(task.id, agentId, "system", { message: `Rate limited (${e.message}); retrying in ${Math.round(wait / 1000)}s (try ${state.rateWaits} of 3)` });
+            await new Promise((r) => setTimeout(r, wait));
             continue;
           }
+          if (e.retryAt) e.message = `${e.message} — usable again at ${new Date(e.retryAt).toISOString().slice(11, 16)} UTC`;
         }
         if (e.retryable && !state.retried) {
           state.retried = true;
@@ -672,6 +759,7 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
       }
       release();
       state.retried = false;
+      state.rateWaits = 0;
       flush();
       step++;
       await keys.recordUsage(keyRow.id, agent.started_by, { input: res.usage.input, output: res.usage.output, cacheRead: res.usage.cacheRead || 0, costMicros: res.costMicros || 0 }, res.rateLimit, { projectId: project.id, vendor: agent.provider, model: agent.model });
@@ -694,7 +782,17 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
         messages.push({ role: "tool", results: res.toolCalls.map((c) => ({ id: c.id, name: c.name, content: "Your output was cut off (too long). Split large writes into several edit_file calls.", isError: true })) });
         continue;
       }
-      if (res.stop !== "tool") break;
+      if (res.stop !== "tool") {
+        // A model that just talks ("I will now edit the file…") without calling
+        // finish gets up to two nudges before the loop ends.
+        if (!finished && !readOnly && nudges < 2) {
+          nudges++;
+          messages.push({ role: "user", text: "Continue the work with your tools now, or call finish with a short summary of what you changed and how you checked it." });
+          await event(task.id, agentId, "system", { message: `Reminded to keep working or call finish (${nudges} of 2)` });
+          continue;
+        }
+        break;
+      }
 
       // Run this turn's tool calls concurrently; return all results together.
       const results = await Promise.all(
@@ -727,6 +825,7 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
             meta: out.meta || null,
           });
           if (out.meta?.write) {
+            wrote = true;
             hub.emitTask(task.id, "changes", { variant: agent.variant });
             hub.emitTask(task.id, "code_done", { agentId, path: out.meta.path });
           }
@@ -738,7 +837,15 @@ async function runAgent(agentId, { team = [], delegateFn = null, readOnly = fals
       // Non-Claude providers: trim old tool output to stay within context.
       if (agent.provider !== "anthropic" && on("context_trim")) elide(messages);
     }
-    if (!finished && step >= MAX_STEPS) finished = `${lastText}\n\n(Stopped after ${MAX_STEPS} steps.)`.trim();
+    // Hitting the step limit is not "done": the Copilot, Dispatcher and Judge treat it as unfinished.
+    if (!finished && step >= MAX_STEPS) {
+      status = "incomplete";
+      error = `Stopped after ${MAX_STEPS} steps without calling finish`;
+    } else if (!finished && !readOnly && !viaCli && !wrote) {
+      // Ended without finishing and without changing anything: a failure, so escalation can start.
+      status = "failed";
+      error = "Stopped without finishing and without changing any file";
+    }
   } catch (e) {
     flush();
     if (e.kind === "aborted") status = "stopped";
@@ -867,8 +974,9 @@ async function finishTask(taskId) {
   // Auto review plugin: one read-only reviewer per finished task.
   if (anyOk && !reviewed.has(taskId)) {
     const plugins = (await resolvePlugins(task.project_id)).builtins;
-    const changes = await all("SELECT COUNT(*) AS n FROM hive_changes WHERE task_id=? AND variant='main'", [taskId]);
-    if (plugins.auto_review?.enabled && Number(changes[0]?.n) > 0) {
+    // Count the real changes: machine sessions keep theirs in git, not in hive_changes.
+    const changed = plugins.auto_review?.enabled ? await changedFiles(taskId) : 0;
+    if (plugins.auto_review?.enabled && changed > 0) {
       reviewed.add(taskId);
       const cfg = plugins.auto_review.config || {};
       let spec = cfg.provider ? { provider: cfg.provider, model: cfg.model || undefined, keyId: "auto", name: "reviewer" } : null;
@@ -923,7 +1031,7 @@ async function cheapestSpec() {
  * lead: spec for the team lead.
  */
 async function startTask(task, { mode, specs, lead, username }) {
-  if (!task.kind) task = await setTask(task.id, { kind: router.classify(task.prompt).kind });
+  if (!task.kind) task = await setTask(task.id, { kind: router.classify(task.prompt, { byPerson: false }).kind });
   await setTask(task.id, { status: "running" });
   await event(task.id, null, "system", { message: `@${username} started a ${mode} task`, mode });
   const launches = [];
@@ -934,7 +1042,11 @@ async function startTask(task, { mode, specs, lead, username }) {
       const leadAgent = await createAgent(task, { role: "lead", spec: lead || pool[0], instructions: task.prompt, startedBy: username, title: "Lead" });
       const poolAgents = [];
       for (const s of pool) {
-        const r = await resolveSpec(s).catch(() => null);
+        // Machine agents (Claude Code, Codex, Vibe) need the task's machine to resolve.
+        const r = await resolveSpec(s, { prompt: task.prompt, machineId: task.machine_id || null, kind: task.kind || null }).catch(async (e) => {
+          await event(task.id, null, "system", { message: `Left ${s.name || s.provider} out of the team: ${e.message}`, dropped: s.provider });
+          return null;
+        });
         if (r) poolAgents.push({ spec: s, model: r.model, key: r.key, tier: modelTier(r.model) });
       }
       const team = poolAgents.map((p, i) => ({ name: p.spec.name || `worker-${i + 1}`, model: p.model, note: `${providerOf(p.spec.provider).label}${plugins.smart_router?.enabled ? `, ${["cheap", "balanced", "strong"][p.tier]}` : ""}` }));
@@ -1002,6 +1114,17 @@ async function startTask(task, { mode, specs, lead, username }) {
     throw e;
   }
   Promise.allSettled(launches).then(() => finishTask(task.id));
+}
+
+/** How many files a task has changed so far (GitHub overlay or machine git). */
+async function changedFiles(taskId) {
+  try {
+    const ctx = await taskContext(taskId);
+    if (!ctx.machine) return Number((await get("SELECT COUNT(*) AS n FROM hive_changes WHERE task_id=? AND variant='main'", [taskId]))?.n || 0);
+    return (await workspaceOf(ctx).changes()).length;
+  } catch {
+    return 0;
+  }
 }
 
 /** Context for an agent joining an existing task. */
@@ -1099,7 +1222,8 @@ async function handoffAgent(agentId, { spec, username }) {
     said.length ? `\nTheir latest notes:\n${said.join("\n---\n").slice(0, 6000)}` : "",
     "\nThe working copy already contains their edits (check view_changes). Continue from where they left off and finish the job.",
   ].join("\n");
-  const variant = old.variant === old.id ? "main" : old.variant;
+  // A compare agent's replacement keeps working on that attempt's copy, so its edits carry over.
+  const variant = old.variant;
   const a = await addAgent(old.task_id, { spec, prompt, username, readOnly: old.role === "reviewer", variant, title: `Continues ${old.name}` });
   await event(old.task_id, a.id, "handoff", { reason: `@${username} handed ${old.name}'s work over`, from: { provider: old.provider, model: old.model }, to: { provider: a.provider, model: a.model } });
   return a;
@@ -1145,6 +1269,7 @@ module.exports = { repoGuide,
   steer,
   taskContext,
   workspaceOf,
+  adoptAttempt,
   effectiveProject,
   setTask,
   event,

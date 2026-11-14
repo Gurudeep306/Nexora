@@ -239,7 +239,7 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
   /* ── approvals ─────────────────────────────────────────────────────── */
   router.get(
     "/api/hive/approvals",
-    h(async (_req, res) => res.json({ ok: true, approvals: machines.pendingApprovals() })),
+    h(async (req, res) => res.json({ ok: true, approvals: machines.pendingApprovals(), ...(req.query.history ? { history: await machines.approvalHistory(50) } : {}) })),
   );
   router.post(
     "/api/hive/approvals/:id",

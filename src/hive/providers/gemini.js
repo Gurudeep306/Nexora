@@ -1,7 +1,7 @@
 // Google Gemini (generateContent over SSE, function declarations). Model turns
 // are replayed with their original parts so thought signatures survive.
 const crypto = require("crypto");
-const { ProviderError, failFromResponse, sse } = require("./common");
+const { ProviderError, failFromResponse, sse, callTimeouts } = require("./common");
 
 const BASE = "https://generativelanguage.googleapis.com/v1beta";
 const SUGGESTED = ["gemini-3.1-pro-preview", "gemini-3-pro-preview", "gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.5-pro"];
@@ -58,13 +58,30 @@ function toContents(messages) {
 // Thinking models (2.5 and later); older ones reject thinkingConfig.
 const THINKS = /gemini-(2\.5|[3-9])/;
 
+/** Every streamed callback counts as life; our timeouts surface as retryable network errors. */
+function timed(args, run) {
+  const tm = callTimeouts(args.signal, TIMEOUTS);
+  const kick = (fn) => (fn ? (...a) => (tm.kick(), fn(...a)) : () => tm.kick());
+  const a = { ...args, signal: tm.signal, onText: kick(args.onText), onThinking: kick(args.onThinking), onToolInput: kick(args.onToolInput) };
+  return run(a)
+    .catch((e) => {
+      tm.check();
+      throw e;
+    })
+    .finally(() => tm.done());
+}
+// Generous for reasoning models that think silently; still ends a stalled free endpoint.
+const TIMEOUTS = { firstByteMs: 90_000, idleMs: 120_000, totalMs: 600_000 };
+
 async function turn(args) {
-  try {
-    return await turnOnce(args, THINKS.test(args.model));
-  } catch (e) {
-    if (e.status === 400 && /thinking/i.test(e.message)) return turnOnce(args, false);
-    throw e;
-  }
+  return timed(args, async (a) => {
+    try {
+      return await turnOnce(a, THINKS.test(a.model));
+    } catch (e) {
+      if (e.status === 400 && /thinking/i.test(e.message)) return turnOnce(a, false);
+      throw e;
+    }
+  })
 }
 
 async function turnOnce({ secret, model, system, messages, tools, signal, onText, onThinking, onToolInput }, thinking) {
