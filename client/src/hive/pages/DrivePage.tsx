@@ -55,6 +55,7 @@ import { Button, ConfirmDialog, Input, Menu, MenuContent, MenuItem, MenuLabel, M
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
 import { errMsg } from '../Improve'
+import { PageHeader } from '../kit'
 import { projectColor } from '../projectColor'
 import { useHive } from '../store'
 import type { DriveItem, Project } from '../types'
@@ -527,13 +528,14 @@ export default function DrivePage() {
       <input ref={dirInput} type="file" multiple hidden onChange={onPick} {...({ webkitdirectory: '', directory: '' } as Record<string, string>)} />
 
       {/* Header */}
-      <div className="mb-6 flex flex-wrap items-end gap-4">
-        <div className="min-w-0 flex-1">
-          <h1 className="text-[26px] font-semibold tracking-[-0.02em] text-text-primary">Drive</h1>
-          <p className="mt-1 text-[14px] text-text-muted">Files the whole team and every agent can use — PDFs, designs, docs and data.</p>
-        </div>
-        {usage && <UsageMeter usage={usage} />}
-      </div>
+      <PageHeader
+        className="mb-6"
+        title="Drive"
+        titleClassName="text-[26px] tracking-[-0.02em] text-text-primary"
+        sub="Files the whole team and every agent can use — PDFs, designs, docs and data."
+        subClassName="mt-1 text-[14px] text-text-muted"
+        actions={usage ? <UsageMeter usage={usage} /> : null}
+      />
 
       {/* Scope switcher */}
       <div className="hive-scroll -mx-4 mb-5 flex gap-1.5 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0" role="tablist" aria-label="Which Drive">

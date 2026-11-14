@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { FolderGit2, Inbox, MoreHorizontal, Plus, RotateCcw } from 'lucide-react'
 import { Button, Kbd, Tooltip } from '@/components/ui'
-import { ContextRing, CopyField, DataTable, Empty, ModelChip, Problem, QuotaMeter, Row, RowList, SegmentedControl, Skeleton, Spinner, StatusPill, friendlyModel, type Status } from '../kit'
+import { ContextRing, CopyField, DataTable, Empty, ModelChip, PageHeader, Problem, QuotaMeter, Row, RowList, SegmentedControl, Skeleton, Spinner, StatusPill, friendlyModel, type Status } from '../kit'
 
 const STATUSES: Status[] = ['queued', 'planning', 'running', 'needs', 'review', 'done', 'failed', 'stopped', 'limited']
 const MODELS: [string, string][] = [
@@ -135,6 +135,10 @@ export default function DevUiPage() {
             { key: 'price', header: 'Price', hideBelow: 'sm', render: (r) => (r.free ? 'Free' : 'Paid') },
           ]}
         />
+      </Section>
+
+      <Section title="Page header (title + sub + actions)">
+        <PageHeader title="Models" sub="Every brain Hive can use, what each one is best at, what it costs." actions={<Button size="sm"><Plus /> Add key</Button>} />
       </Section>
 
       <Section title="Loaders (spinner, skeleton, context ring)">
