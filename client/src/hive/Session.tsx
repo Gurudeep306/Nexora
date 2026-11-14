@@ -1,7 +1,7 @@
-import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Group, Panel, Separator, useDefaultLayout } from 'react-resizable-panels'
-import { OverflowTabs } from './kit'
+import { OverflowTabs, StatusPill as KitPill } from './kit'
 import {
   AlertCircle,
   ArrowRightLeft,
@@ -1297,26 +1297,44 @@ function ShipPanel() {
       setBusy(false)
     }
   }
-  const steps = [
-    { label: 'Changes ready', done: true },
-    { label: 'Committed to a branch', done: !!task.head_sha },
-    { label: 'Pull request', done: !!task.pr_number },
-    { label: 'Checks pass', done: pr?.state === 'success', fail: pr?.state === 'failure', pending: pr?.state === 'pending' },
-    { label: 'Merged → deploys', done: pr?.pr.merged || task.status === 'merged' },
+  const merged = !!(pr?.pr.merged || task.status === 'merged')
+  // Ship as a vertical stepper: each step says where it stands, in words, with a link.
+  const steps: { label: string; status: string; word: string; detail?: ReactNode }[] = [
+    { label: 'Changes', status: 'done', word: 'Ready' },
+    { label: 'Commit', status: task.head_sha ? 'done' : 'queued', word: task.head_sha ? 'Committed' : 'Not yet', detail: task.head_sha ? <span className="font-mono">{task.branch} · {task.head_sha.slice(0, 7)}</span> : null },
+    {
+      label: 'Pull request',
+      status: task.pr_number ? 'done' : 'queued',
+      word: task.pr_number ? `#${task.pr_number}` : 'Not opened',
+      detail: task.pr_url ? (
+        <a href={task.pr_url} target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">
+          Open on GitHub
+        </a>
+      ) : null,
+    },
+    { label: 'Checks', status: !task.pr_number ? 'queued' : pr?.state === 'success' ? 'done' : pr?.state === 'failure' ? 'failed' : 'running', word: !task.pr_number ? 'After the PR' : pr?.state === 'success' ? 'Passing' : pr?.state === 'failure' ? 'Failing' : 'Running' },
+    { label: 'Merge', status: merged ? 'done' : 'queued', word: merged ? 'Merged' : 'Waiting' },
+    { label: 'Deploy', status: merged ? 'running' : 'queued', word: merged ? 'Your host deploys it' : 'After merge', detail: merged && project.site_url ? (
+        <a href={project.site_url} target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">
+          {project.site_url.replace(/^https:\/\//, '')}
+        </a>
+      ) : null },
   ]
   return (
     <div className="space-y-5 p-4">
-      <ol className="flex items-center gap-1">
+      <ol className="space-y-0" aria-label="Ship steps">
         {steps.map((s, i) => (
-          <Fragment key={s.label}>
-            <li className="flex flex-col items-center gap-1 text-center">
-              <span className={cn('grid size-7 place-items-center rounded-full text-[11px] font-semibold', s.done ? 'bg-state-success text-on-accent-brand' : s.fail ? 'bg-state-error text-white' : s.pending ? 'bg-state-warning/20 text-state-warning' : 'bg-text-primary/[0.07] text-text-muted')}>
-                {s.done ? <Check className="size-3.5" /> : s.fail ? <X className="size-3.5" /> : s.pending ? <Loader2 className="size-3.5 animate-spin" /> : i + 1}
-              </span>
-              <span className="w-16 text-[10.5px] leading-tight text-text-muted">{s.label}</span>
-            </li>
-            {i < steps.length - 1 && <span className={cn('mb-5 h-px flex-1', s.done ? 'bg-state-success/50' : 'bg-[var(--hive-line)]')} />}
-          </Fragment>
+          <li key={s.label} className="relative flex gap-3 pb-3 last:pb-0">
+            {i < steps.length - 1 && <span className={cn('absolute left-[7px] top-5 bottom-0 w-px', s.status === 'done' ? 'bg-[color-mix(in_oklab,var(--hv-success)_50%,transparent)]' : 'bg-[var(--hv-border)]')} aria-hidden />}
+            <span className={cn('mt-1 size-[15px] shrink-0 rounded-full border-2', s.status === 'done' ? 'border-[var(--hv-success)] bg-[var(--hv-success)]' : s.status === 'failed' ? 'border-[var(--hv-danger)]' : s.status === 'running' ? 'border-[var(--hv-accent)]' : 'border-[var(--hv-border-strong)]')} aria-hidden />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <span className="text-[13px] font-medium text-[var(--hv-text-1)]">{s.label}</span>
+                <KitPill size="sm" status={s.status} label={s.word} />
+              </div>
+              {s.detail && <div className="mt-0.5 truncate text-[12px] text-[var(--hv-text-3)]">{s.detail}</div>}
+            </div>
+          </li>
         ))}
       </ol>
 
