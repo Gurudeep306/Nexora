@@ -11,7 +11,7 @@ export function SegmentedControl<T extends string>({ value, onChange, options, l
     refs.current[n]?.focus()
   }
   return (
-    <div role="radiogroup" aria-label={label} className={cn('inline-flex rounded-[var(--hv-r-btn)] bg-[var(--hv-surface-1)] p-0.5 ring-1 ring-[var(--hv-border)]', className)}>
+    <div role="radiogroup" aria-label={label} className={cn('hive-scroll inline-flex max-w-full overflow-x-auto rounded-[var(--hv-r-btn)] bg-[var(--hv-surface-1)] p-0.5 ring-1 ring-[var(--hv-border)]', className)}>
       {options.map((o, i) => {
         const on = o.value === value
         return (
@@ -36,7 +36,7 @@ export function SegmentedControl<T extends string>({ value, onChange, options, l
               }
             }}
             className={cn(
-              'rounded-[6px] font-medium transition-colors duration-[var(--hv-d-fast)]',
+              'shrink-0 whitespace-nowrap rounded-[6px] font-medium transition-colors duration-[var(--hv-d-fast)]',
               size === 'sm' ? 'h-6 px-2 text-[12px]' : 'h-7 px-3 text-[13px]',
               on ? 'bg-[var(--hv-surface-3)] text-[var(--hv-text-1)] shadow-sm' : 'text-[var(--hv-text-2)] hover:text-[var(--hv-text-1)]',
             )}
