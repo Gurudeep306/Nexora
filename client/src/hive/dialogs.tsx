@@ -176,9 +176,13 @@ export function EditKeyDialog({ k, open, onClose }: { k: HiveKey; open: boolean;
   const [model, setModel] = useState(k.defaultModel ?? '')
   const [priority, setPriority] = useState(String(k.priority ?? 0))
   const [rotate, setRotate] = useState('')
+  const [rpm, setRpm] = useState(k.rpmLimit == null ? '' : String(k.rpmLimit))
+  const [rpd, setRpd] = useState(k.rpdLimit == null ? '' : String(k.rpdLimit))
   const [busy, setBusy] = useState(false)
   useEffect(() => {
     if (!open) return
+    setRpm(k.rpmLimit == null ? '' : String(k.rpmLimit))
+    setRpd(k.rpdLimit == null ? '' : String(k.rpdLimit))
     setLabel(k.label)
     setLimit(k.tokenLimit == null ? '' : String(k.tokenLimit))
     setPeriod(k.limitPeriod)
@@ -188,10 +192,14 @@ export function EditKeyDialog({ k, open, onClose }: { k: HiveKey; open: boolean;
     setRotate('')
   }, [open, k])
   const parsed = parseLimit(limit)
+  const pace = (v: string) => (v.trim() === '' ? null : Number(v))
+  const badPace = [rpm, rpd].some((v) => v.trim() !== '' && !(Number.isInteger(Number(v)) && Number(v) > 0))
+  // What the provider usually allows on its free tier, shown when nothing is set here.
+  const usual = k.freeLimit && !k.freeLimit.custom ? k.freeLimit : null
   const save = async () => {
     setBusy(true)
     try {
-      await hiveApi.updateKey(k.id, { label, tokenLimit: parsed, limitPeriod: period, maxConcurrency: Number(conc), defaultModel: model || null, priority: Number(priority), ...(rotate ? { apiKey: rotate } : {}) })
+      await hiveApi.updateKey(k.id, { label, tokenLimit: parsed, limitPeriod: period, maxConcurrency: Number(conc), defaultModel: model || null, priority: Number(priority), rpmLimit: pace(rpm), rpdLimit: pace(rpd), ...(rotate ? { apiKey: rotate } : {}) })
       toast.success('Key updated')
       await refresh()
       onClose()
@@ -202,7 +210,7 @@ export function EditKeyDialog({ k, open, onClose }: { k: HiveKey; open: boolean;
     }
   }
   return (
-    <Modal open={open} onClose={onClose} title={k.label} description="Budget, default model and how this key is chosen." size="md">
+    <Modal open={open} onClose={onClose} title={k.label} description="Budget, request limits, default model and how this key is chosen." size="md">
       <div className="flex flex-col gap-4">
         <Field label="Name">
           <Input value={label} onChange={(e) => setLabel(e.target.value)} maxLength={60} />
@@ -250,6 +258,16 @@ export function EditKeyDialog({ k, open, onClose }: { k: HiveKey; open: boolean;
             </Select>
           </Field>
         </div>
+        {!k.subscription && (
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Requests a minute" hint={badPace ? <span className="text-state-error">A whole number above 0, or empty</span> : 'Hive waits instead of hitting the limit'}>
+              <Input value={rpm} onChange={(e) => setRpm(e.target.value)} inputMode="numeric" placeholder={usual?.rpm ? `Usual: ${usual.rpm}` : 'No limit'} />
+            </Field>
+            <Field label="Requests a day" hint="After this, work moves to another key until midnight UTC">
+              <Input value={rpd} onChange={(e) => setRpd(e.target.value)} inputMode="numeric" placeholder={usual?.rpd ? `Usual: ${usual.rpd}` : 'No limit'} />
+            </Field>
+          </div>
+        )}
         <Field label="Rotate key (optional)">
           <SecretInput value={rotate} onChange={(e) => setRotate(e.target.value)} placeholder="Paste a new key to replace this one" className="font-mono" />
         </Field>
@@ -257,7 +275,7 @@ export function EditKeyDialog({ k, open, onClose }: { k: HiveKey; open: boolean;
           <Button variant="ghost" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={save} loading={busy} disabled={Number.isNaN(parsed) || !label.trim()}>
+          <Button onClick={save} loading={busy} disabled={Number.isNaN(parsed) || badPace || !label.trim()}>
             Save
           </Button>
         </div>

@@ -197,3 +197,25 @@ test("a key whose check failed is retried after a cool-down, and 'no key' explai
   assert.equal((await keys.pickKey("openai"))?.id, id, "retried after the cool-down");
   assert.match(await keys.explainNoKey("mistral"), /No Mistral key yet/);
 });
+
+test("compare on a machine: each attempt has its own copy, and adopting one brings its code in", async () => {
+  const boot = await ok("GET", "/api/hive/bootstrap");
+  const key = boot.keys[0];
+  const proj = boot.projects.find((p) => p.machine_id);
+  const { task } = await ok("POST", `/api/hive/projects/${proj.id}/tasks`, { prompt: "Support quantities and run the tests", mode: "compare", agents: [{ provider: key.provider, keyId: "auto" }, { provider: key.provider, keyId: "auto", model: "demo-coder-mini" }] });
+  await waitTask(task.id, { approve: true });
+  const t = await ok("GET", `/api/hive/tasks/${task.id}`);
+  const tries = t.agents.filter((a) => a.variant === a.id);
+  assert.equal(tries.length, 2);
+  const copies = tries.map((a) => a.worktree);
+  assert.ok(copies.every(Boolean) && copies[0] !== copies[1] && !copies.includes(t.task.folder), `separate copies: ${copies.join(", ")}`);
+  for (const a of tries) {
+    const ch = await ok("GET", `/api/hive/tasks/${task.id}/changes?variant=${a.id}`);
+    assert.deepEqual(ch.changes.map((c) => c.path), ["src/cart.js"], "each attempt's own diff");
+  }
+  await ok("POST", `/api/hive/tasks/${task.id}/adopt`, { variant: tries[1].id });
+  const main = await ok("GET", `/api/hive/tasks/${task.id}/changes`);
+  assert.deepEqual(main.changes.map((c) => c.path), ["src/cart.js"], "the adopted attempt is now the session's result");
+  const file = await ok("GET", `/api/hive/tasks/${task.id}/file?path=src/cart.js`);
+  assert.match(file.current, /qty/);
+});

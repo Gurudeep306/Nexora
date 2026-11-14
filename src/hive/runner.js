@@ -156,7 +156,9 @@ async function taskContext(taskId) {
   if (task.machine_id && task.folder) {
     const m = await get("SELECT * FROM hive_machines WHERE id=?", [task.machine_id]);
     if (!m) throw new Error("This task's machine was removed");
-    return { task, project, token, snap: null, machine: { id: m.id, name: m.name, policy: m.policy, folder: task.folder } };
+    // Compare attempts each have their own copy; look them up by variant.
+    const copies = Object.fromEntries((await all("SELECT id, worktree FROM hive_agents WHERE task_id=? AND variant=id AND worktree IS NOT NULL", [task.id])).map((a) => [a.id, a.worktree]));
+    return { task, project, token, snap: null, machine: { id: m.id, name: m.name, policy: m.policy, folder: task.folder, copies } };
   }
   if (!cred) throw new Error("This project's GitHub connection was removed");
   const snap = await getSnapshot(token, project.repo_owner, project.repo_name, task.base_sha);
@@ -165,7 +167,53 @@ async function taskContext(taskId) {
 
 /** The working copy for a task context (overlay on GitHub, or a machine folder). */
 function workspaceOf(ctx, variant = "main") {
-  return ctx.machine ? machineWorkspace({ machineId: ctx.machine.id, folder: ctx.machine.folder }) : workspace({ task: ctx.task, variant, snap: ctx.snap });
+  if (!ctx.machine) return workspace({ task: ctx.task, variant, snap: ctx.snap });
+  const folder = (variant !== "main" && ctx.machine.copies?.[variant]) || ctx.machine.folder;
+  return machineWorkspace({ machineId: ctx.machine.id, folder });
+}
+
+/**
+ * A compare attempt on a machine gets its own git worktree (branch
+ * <task branch>-<n>), so attempts never overwrite each other and the Judge
+ * sees each one's real diff. Falls back to the shared folder, with a note.
+ */
+async function attemptCopy(task, agentId) {
+  if (!task.machine_id || !task.folder) return null;
+  const base = /^[0-9a-f]{7,40}$/.test(String(task.base_sha || "")) ? task.base_sha : "HEAD";
+  try {
+    const r = await machines.call(task.machine_id, "worktree_add", { folder: task.folder, name: `try-${agentId.slice(-8)}`, branch: `${task.branch}-try-${agentId.slice(-4)}`, base }, { timeoutMs: 120_000 });
+    await run("UPDATE hive_agents SET worktree=? WHERE id=?", [r.path, agentId]);
+    return r.path;
+  } catch (e) {
+    await event(task.id, agentId, "system", { message: `This attempt shares the session's folder (couldn't make its own copy: ${String(e.message).slice(0, 200)})` });
+    return null;
+  }
+}
+
+/**
+ * Make one compare attempt the session's result. On GitHub overlays this
+ * copies its changes; on a machine it commits the attempt's copy and
+ * squash-merges that branch into the session's own worktree.
+ */
+async function adoptAttempt(taskId, variant) {
+  const ctx = await taskContext(taskId);
+  if (!ctx.machine) return require("./workspace").adoptVariant(taskId, variant, "main");
+  const from = ctx.machine.copies?.[variant];
+  if (!from || from === ctx.machine.folder) return; // the attempt already worked in the session's folder
+  const branchOf = await machines.call(ctx.machine.id, "git", { folder: from, args: ["rev-parse", "--abbrev-ref", "HEAD"] }, { timeoutMs: 30_000 });
+  const branch = String(branchOf?.output || "").trim();
+  if (!ctx.task.worktree) {
+    // The session works in the person's own folder: never overwrite it.
+    await event(taskId, null, "system", { message: `The chosen attempt is on branch ${branch || "(unknown)"}. This session works in your own folder, so Hive left it alone — merge that branch when you're ready.` });
+    return;
+  }
+  const g = (folder, args) => machines.call(ctx.machine.id, "git", { folder, args }, { timeoutMs: 120_000 });
+  await g(from, ["add", "-A"]);
+  await g(from, ["-c", "user.name=Hive", "-c", "user.email=hive@localhost", "commit", "-q", "--no-verify", "-m", "Compare attempt"]); // nothing to commit is fine
+  await g(ctx.task.folder, ["reset", "-q", "--hard", "HEAD"]);
+  await g(ctx.task.folder, ["clean", "-fdq"]);
+  const m = await g(ctx.task.folder, ["merge", "--squash", branch]);
+  if (m?.code !== 0) throw new Error(`Couldn't bring the attempt in: ${String(m?.output || "").trim().slice(-300)}`);
 }
 
 async function setTask(taskId, fields) {
@@ -255,6 +303,7 @@ async function createAgent(task, { role, spec, instructions, variant = "main", p
     [id, task.id, parentId, readOnly ? "reviewer" : role, await pickName(task.id, name || spec.name), r.key.id, r.provider, r.model, r.effort, variant === "self" ? id : variant, instructions, "queued", startedBy, now(), title],
   );
   await run("UPDATE hive_agents SET routed_kind=?, route_note=? WHERE id=?", [r.kind || null, r.note || null, id]);
+  if (variant === "self" && task.machine_id) await attemptCopy(task, id);
   if (r.note) await event(task.id, id, "route", { note: r.note, kind: r.kind, model: r.model, provider: r.provider });
   const a = await get("SELECT * FROM hive_agents WHERE id=?", [id]);
   hub.emitTask(task.id, "agent", a);
@@ -355,7 +404,7 @@ async function runAgentInner(agentId, { team = [], delegateFn = null, readOnly =
     if (!m || m.policy === "read") return { approved: false, reason: "This machine is read-only" };
     if (m.policy === "auto") return { approved: true };
     await event(task.id, agentId, "approval", { command, kind, machine: m.name });
-    const r = await machines.requestApproval({ taskId: task.id, agentId, agent: agent.name, projectId: project.id, command, kind, machine: m.name, folder: ctx.machine.folder });
+    const r = await machines.requestApproval({ taskId: task.id, agentId, agent: agent.name, projectId: project.id, command, kind, machine: m.name, folder: ws.folder || ctx.machine.folder });
     await event(task.id, agentId, "approval_result", { command, approved: r.approved, by: r.by || null, reason: r.reason || null });
     return r;
   };
@@ -465,7 +514,7 @@ async function runAgentInner(agentId, { team = [], delegateFn = null, readOnly =
       let announced = false;
       const r = await cliMod.stream({
         machineId: ctx.machine.id,
-        folder: ctx.machine.folder,
+        folder: ws.folder || ctx.machine.folder,
         cli: v.cli,
         args,
         input,
@@ -531,9 +580,13 @@ async function runAgentInner(agentId, { team = [], delegateFn = null, readOnly =
             case "plan_usage":
               await keys.setPlanUsage(keyRow.id, ev.info).catch(() => {});
               break;
-            case "limit":
+            case "limit": {
               limit = ev;
+              // The plan stays out of routing until it resets (not just a short cool-down).
+              const at = Number(ev.resetsAt) ? (Number(ev.resetsAt) > 1e12 ? Number(ev.resetsAt) : Number(ev.resetsAt) * 1000) : null;
+              await require("./health").record(keyRow.id, "", { ok: false, kind: "quota", error: ev.message, retryAt: at && at > Date.now() ? at : null }).catch(() => {});
               break;
+            }
             case "turn_done":
               usage.input += ev.usage.input;
               usage.output += ev.usage.output;
@@ -1216,6 +1269,7 @@ module.exports = { repoGuide,
   steer,
   taskContext,
   workspaceOf,
+  adoptAttempt,
   effectiveProject,
   setTask,
   event,

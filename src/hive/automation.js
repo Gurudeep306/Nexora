@@ -204,6 +204,7 @@ async function ciFixTick() {
 function startLoops(deps) {
   const safe = (fn) => () => fn().catch((e) => console.error("[hive automation]", e.message));
   setTimeout(safe(async () => {
+    await require("./machines").closeStaleApprovals();
     await resumeInterrupted();
     await require("./pipelines").resumeAll();
     await require("./dispatcher").resumeAll();
