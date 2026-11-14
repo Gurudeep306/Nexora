@@ -170,7 +170,7 @@ export default function ToolboxPage() {
             </div>
             <div className="flex gap-1 overflow-x-auto">
               {FILTERS.map((f) => (
-                <button key={f.id} type="button" onClick={() => setFilter(f.id)} className={cn('h-9 shrink-0 rounded-full px-3 text-[12.5px] font-medium transition-colors', filter === f.id ? 'bg-accent-brand text-white' : 'bg-text-primary/[0.05] text-text-secondary hover:bg-text-primary/[0.08]')}>
+                <button key={f.id} type="button" onClick={() => setFilter(f.id)} className={cn('h-9 shrink-0 rounded-full px-3 text-[12.5px] font-medium transition-colors', filter === f.id ? 'bg-accent-brand text-on-accent-brand' : 'bg-text-primary/[0.05] text-text-secondary hover:bg-text-primary/[0.08]')}>
                   {f.label}
                 </button>
               ))}
@@ -247,7 +247,7 @@ function HowBadge({ how }: { how: ToolHow }) {
   const h = HOW[how]
   return (
     <Tooltip label={h.hint}>
-      <span className="inline-flex h-6 items-center gap-1 rounded-full px-2 text-[11px] font-medium" style={{ color: hue(h.hue, 55, 0.16), background: `color-mix(in oklab, ${hue(h.hue)} 13%, transparent)` }}>
+      <span className="inline-flex h-6 items-center gap-1 rounded-full px-2 text-[11px] font-medium" style={{ color: `color-mix(in oklab, ${hue(h.hue)} 62%, var(--color-text-primary))`, background: `color-mix(in oklab, ${hue(h.hue)} 13%, transparent)` }}>
         <h.icon className="size-3" /> {h.short}
       </span>
     </Tooltip>
@@ -299,7 +299,7 @@ function ToolCard({ t, i, catLabel, onConnect }: { t: EcoTool; i: number; catLab
     >
       <span className="absolute inset-x-0 top-0 h-[2px] opacity-0 transition-opacity group-hover:opacity-100" style={{ background: `linear-gradient(90deg, transparent, ${hue(h.hue)}, transparent)` }} />
       <div className="mb-2 flex items-start gap-3">
-        <span className="grid size-10 shrink-0 place-items-center rounded-xl text-[15px] font-semibold" style={{ color: hue(h.hue, 50, 0.16), background: `color-mix(in oklab, ${hue(h.hue)} 14%, transparent)` }}>
+        <span className="grid size-10 shrink-0 place-items-center rounded-xl text-[15px] font-semibold" style={{ color: `color-mix(in oklab, ${hue(h.hue)} 62%, var(--color-text-primary))`, background: `color-mix(in oklab, ${hue(h.hue)} 14%, transparent)` }}>
           {t.name.replace(/[^A-Za-z0-9]/g, '').slice(0, 2) || '·'}
         </span>
         <div className="min-w-0 flex-1">

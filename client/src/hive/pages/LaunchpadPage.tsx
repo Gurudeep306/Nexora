@@ -212,7 +212,7 @@ function IdeaView({ idea, onChanged }: { idea: Idea; onChanged: () => void }) {
             <ol className="relative space-y-4 border-l hive-line pl-5">
               {(plan.milestones ?? []).map((m, i) => (
                 <motion.li key={i} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }} className="relative">
-                  <span className={cn('absolute -left-[27px] grid size-[14px] place-items-center rounded-full text-[8px] font-bold ring-4 ring-[var(--color-bg-app)]', i === 0 ? 'bg-accent-brand text-white' : 'bg-text-primary/20')}>{i + 1}</span>
+                  <span className={cn('absolute -left-[27px] grid size-[14px] place-items-center rounded-full text-[8px] font-bold ring-4 ring-[var(--color-bg-app)]', i === 0 ? 'bg-accent-brand text-on-accent-brand' : 'bg-text-primary/20')}>{i + 1}</span>
                   <div className="text-[14px] font-semibold">{m.title}</div>
                   {m.goal && <div className="text-[12.5px] text-text-muted">{m.goal}</div>}
                   <ul className="mt-2 space-y-1">
