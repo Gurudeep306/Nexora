@@ -333,7 +333,7 @@ export function ConnectGithub({ onDone }: { onDone?: () => void }) {
                 if (token.trim().length >= 10) connect()
               }}
             >
-              <input type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder="ghp_… or github_pat_…" autoComplete="off" className="h-9 min-w-0 flex-1 rounded-xl border hive-line bg-bg-surface px-3 font-mono text-[12.5px] outline-none focus:border-accent-brand/50" aria-label="GitHub token" />
+              <input type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder="ghp_… or github_pat_…" autoComplete="new-password" data-1p-ignore="" data-lpignore="true" data-bwignore="" className="h-9 min-w-0 flex-1 rounded-xl border hive-line bg-bg-surface px-3 font-mono text-[12.5px] outline-none focus:border-accent-brand/50" aria-label="GitHub token" />
               <Button type="submit" loading={busy} disabled={token.trim().length < 10}>
                 Connect
               </Button>
