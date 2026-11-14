@@ -5,11 +5,11 @@
 // cached-token accounting and the idea launchpad.
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { spawn } = require("node:child_process");
-const path = require("node:path");
 
-const PORT = 3400 + Math.floor(Math.random() * 400);
-const base = `http://localhost:${PORT}`;
+const { startDemo } = require("./helpers/hive-demo");
+
+// The port is picked by the OS when the demo starts (see helpers/hive-demo.js).
+let base = "";
 let demo;
 let cookie = "";
 
@@ -38,23 +38,13 @@ async function waitTask(id, { approve = false } = {}) {
 }
 
 test.before(async () => {
-  demo = spawn(process.execPath, [path.join(__dirname, "..", "scripts", "hive-demo.js")], {
-    env: { ...process.env, PORT: String(PORT), DEMO_POLICY: "ask" },
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-  let out = "";
-  demo.stdout.on("data", (d) => (out += d));
-  demo.stderr.on("data", (d) => (out += d));
-  for (let i = 0; i < 240 && !out.includes("Hive demo ready"); i++) {
-    if (demo.exitCode !== null) throw new Error(`demo exited:\n${out}`);
-    await sleep(250);
-  }
-  assert.ok(out.includes("Hive demo ready"), out);
+  demo = await startDemo({ DEMO_POLICY: "ask" });
+  base = demo.base;
   await ok("POST", "/api/user/login", { username: "owner", password: "owner123" });
 });
 
-test.after(() => {
-  demo?.kill("SIGTERM");
+test.after(async () => {
+  await demo?.stop();
 });
 
 test("chat replies stream on the send request (NDJSON) and side-by-side answers work", async () => {

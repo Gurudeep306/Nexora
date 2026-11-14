@@ -6502,6 +6502,15 @@ io.on("connection", (socket) => {
     });
   });
 
+  // A port that can't be bound must stop the process. Without this the error
+  // reaches the dev-mode uncaughtException handler below, which only logs it,
+  // and a server that serves nothing keeps running while whatever else owns
+  // the port answers its health checks.
+  server.on("error", (err) => {
+    if (server.listening) return console.error("[server] error:", err);
+    console.error(`[server] cannot listen on port ${PORT}: ${err.code || err.message}`);
+    process.exit(1);
+  });
   server.listen(PORT, () => {
     console.log(`\n🚀 NexoraGuru running on ${APP_URL}`);
     console.log(`   NODE_ENV : ${process.env.NODE_ENV || "development"}`);

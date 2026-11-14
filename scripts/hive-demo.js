@@ -257,13 +257,37 @@ async function main() {
   let log = "";
   proc.stdout.on("data", (d) => (log += d));
   proc.stderr.on("data", (d) => (log += d));
-  process.on("SIGINT", () => (proc.kill(), process.exit(0)));
-  process.on("SIGTERM", () => (proc.kill(), process.exit(0)));
+  // Stop the children and wait for them, so the port is free once we exit.
+  let bridge = null;
+  let stopping = false;
+  const stop = async () => {
+    if (stopping) return;
+    stopping = true;
+    for (const child of [bridge, proc]) {
+      if (!child || child.exitCode !== null || child.signalCode !== null) continue;
+      const gone = new Promise((r) => child.once("exit", r));
+      child.kill("SIGTERM");
+      const t = setTimeout(() => child.kill("SIGKILL"), 3000);
+      await gone;
+      clearTimeout(t);
+    }
+    process.exit(0);
+  };
+  process.on("SIGINT", stop);
+  process.on("SIGTERM", stop);
+  process.on("exit", () => {
+    bridge?.kill();
+    proc.kill();
+  });
+  // Ready means OUR server logged that it is listening and then answered.
+  // A health check alone can be answered by another process on the same port.
   for (let i = 0; ; i++) {
-    try {
-      if ((await fetch(`${base}/api/health`)).ok) break;
-    } catch {}
-    if (proc.exitCode !== null || i > 200) throw new Error(`server failed:\n${log}`);
+    if (proc.exitCode !== null || i > 240) throw new Error(`server failed:\n${log}`);
+    if (log.includes("NexoraGuru running on")) {
+      try {
+        if ((await fetch(`${base}/api/health`)).ok) break;
+      } catch {}
+    }
     await new Promise((r) => setTimeout(r, 250));
   }
   let cookie = "";
@@ -290,9 +314,9 @@ async function main() {
   }
   const { execSync } = require("node:child_process");
   execSync('git init -q -b main && git add -A && git -c user.name=demo -c user.email=d@d commit -qm "initial"', { cwd: repoDir });
-  const bridge = spawn(process.execPath, [path.join(__dirname, "..", "bridge", "hive-bridge.js"), "--server", base, "--token", machine.token, "--root", root], { stdio: ["ignore", "pipe", "pipe"] });
+  bridge = spawn(process.execPath, [path.join(__dirname, "..", "bridge", "hive-bridge.js"), "--server", base, "--token", machine.token, "--root", root], { stdio: ["ignore", "pipe", "pipe"] });
   bridge.stdout.on("data", (d) => process.env.DEMO_LOG && process.stdout.write(`[bridge] ${d}`));
-  process.on("exit", () => bridge.kill());
+  bridge.stderr.on("data", (d) => process.env.DEMO_LOG && process.stderr.write(`[bridge] ${d}`));
   await new Promise((r) => setTimeout(r, 1500));
   await call("PATCH", "/api/hive/machines/" + machine.id, { policy: process.env.DEMO_POLICY || "ask" });
   await call("POST", "/api/hive/projects", { name: "Shop (laptop)", machineId: machine.id, folder: repoDir, color: "green" }).catch((e) => console.warn("local project:", e.message));
