@@ -16,7 +16,7 @@ import { hiveApi } from '../api'
 import { useHive } from '../store'
 import type { CatalogInfo, ConnectedModel, CostClass, ModelCard, RouteResult, TaskKind } from '../types'
 import { ProviderGlyph, fmtTokens } from '../ui'
-import { DataTable, SegmentedControl, StatusPill, type Column } from '../kit'
+import { DataTable, PageHeader, SegmentedControl, StatusPill, type Column } from '../kit'
 
 const RadarTab = lazy(() => import('./RadarTab'))
 
@@ -50,12 +50,13 @@ export default function ModelsPage() {
 
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 pb-24 pt-8 sm:px-8">
-      <header className="mb-6 flex flex-wrap items-end gap-4">
-        <div className="min-w-0 flex-1">
-          <h1 className="text-[28px] font-semibold tracking-[-0.025em]">Models</h1>
-          <p className="mt-1 max-w-2xl text-[14px] text-text-muted">Every brain Hive can use, what each one is best at, what it costs and how it has done on your work. Hive’s router uses all of this to give each job the right model.</p>
-        </div>
-      </header>
+      <PageHeader
+        className="mb-6"
+        title="Models"
+        titleClassName="text-[28px] tracking-[-0.025em]"
+        sub="Every brain Hive can use, what each one is best at, what it costs and how it has done on your work. Hive’s router uses all of this to give each job the right model."
+        subClassName="mt-1 max-w-2xl text-[14px] text-text-muted"
+      />
       <nav className="hive-scroll mb-7 flex gap-1 overflow-x-auto border-b hive-line" aria-label="Models sections">
         {tabs.map((t) => (
           <button key={t.id} type="button" onClick={() => setTab(t.id)} className={cn('relative inline-flex h-10 shrink-0 items-center gap-2 px-3 text-[13px] font-medium transition-colors', tab === t.id ? 'text-text-primary' : 'text-text-muted hover:text-text-secondary')}>

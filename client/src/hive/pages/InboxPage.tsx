@@ -4,7 +4,7 @@ import { AlertTriangle, CheckCheck, Inbox, Info, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { hiveApi } from '../api'
 import { NeedsList, useNeeds, useOverview } from '../Inbox'
-import { Empty, Row, RowList } from '../kit'
+import { Empty, PageHeader, Row, RowList } from '../kit'
 import { useHive } from '../store'
 import type { HiveAlert } from '../types'
 import { timeAgo } from '../ui'
@@ -43,8 +43,7 @@ export default function InboxPage() {
 
   return (
     <div className="mx-auto w-full max-w-[760px] px-4 pb-20 pt-8 sm:px-6">
-      <h1 className="text-[22px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]">Inbox</h1>
-      <p className="mt-1 text-[13px] text-[var(--hv-text-3)]">What needs you, and everything Hive told you about.</p>
+      <PageHeader title="Inbox" sub="What needs you, and everything Hive told you about." />
 
       <section aria-label="Needs you" className="mt-8">
         <h2 className="mb-1.5 flex items-center gap-2 px-2.5 text-[13px] font-semibold text-[var(--hv-text-1)]">
