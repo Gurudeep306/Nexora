@@ -527,7 +527,7 @@ Prefer boring, well-supported technology that is cheap to host. 4-8 features, 3-
       const b = req.body || {};
       const specs = (Array.isArray(b.agents) ? b.agents : []).slice(0, 6).map(cleanSpec);
       if (!specs.length) throw new BadInput("Pick the agents that should build it");
-      for (const s of specs) await runner.resolveSpec(s).catch((e) => {
+      for (const s of specs) await runner.resolveSpec(s, { prompt: idea.pitch, machineId: b.machineId || null }).catch((e) => {
         throw new BadInput(e.message);
       });
       const name = String(b.repoName || plan.repoName || plan.name || "new-project").toLowerCase().replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 90) || "new-project";
@@ -599,6 +599,7 @@ Prefer boring, well-supported technology that is cheap to host. 4-8 features, 3-
        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       [id, p.id, title, prompt, mode, "queued", p.default_branch || "main", baseSha, `hive/${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40)}-${id.slice(-4)}`, username, t, t, p.machine_id || null, p.folder || null],
     );
+    if (p.machine_id) await router.hiveIsolate?.(id);
     const task = await get("SELECT * FROM hive_tasks WHERE id=?", [id]);
     hub.emit("task", task);
     const lead = mode === "team" ? specs[0] : null;

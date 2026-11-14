@@ -9,15 +9,22 @@ const vault = require("./vault");
 const gh = require("./github");
 const { providerOf } = require("./providers");
 const { resolvePlugins } = require("./plugins");
+const steward = require("./steward");
 const { getSnapshot, readBase } = require("./snapshot");
 const { fileToAttachment } = require("./runner");
 const { pickDefault } = require("./models");
+const caps = require("./caps");
+const router = require("./router");
+const chatTools = require("./chattools");
+const drive = require("./drive");
 
 const MAX_FILE = 20 * 1024 * 1024;
 const active = new Map(); // convoId -> AbortController
 
-async function canSee(convo, username) {
-  return !!convo && (convo.owner === username || !!convo.shared);
+// One shared workspace: every staff member sees and can continue every chat
+// (only the owner or an admin can rename or delete one).
+async function canSee(convo) {
+  return !!convo;
 }
 
 async function convoFor(id, username) {
@@ -27,7 +34,8 @@ async function convoFor(id, username) {
 }
 
 async function listConvos(username) {
-  return all("SELECT * FROM hive_convos WHERE owner=? OR shared=1 ORDER BY updated_at DESC LIMIT 200", [username]);
+  void username;
+  return all("SELECT * FROM hive_convos ORDER BY pinned DESC, updated_at DESC LIMIT 300");
 }
 
 async function createConvo(username, { title, projectId, provider, keyId, model, system }) {
@@ -42,7 +50,7 @@ async function createConvo(username, { title, projectId, provider, keyId, model,
 
 async function messagesOf(convoId) {
   const rows = await all("SELECT * FROM hive_convo_msgs WHERE convo_id=? ORDER BY created_at, id", [convoId]);
-  return rows.map((r) => ({ ...r, attachments: json(r.attachments_json, []), attachments_json: undefined }));
+  return rows.map((r) => ({ ...r, attachments: json(r.attachments_json, []), attachments_json: undefined, tools: json(r.tools_json, []), tools_json: undefined }));
 }
 
 async function saveFile({ name, mime, buffer, origin = "upload", username }) {
@@ -90,7 +98,79 @@ async function loadAttachments(list) {
   return rows.map(fileToAttachment);
 }
 
-async function pickChatKey(spec, exclude = []) {
+/** A short, readable label for a tool call in the chat. */
+function summarizeTool(name, input = {}) {
+  if (name === "web_search") return { query: String(input.query || "").slice(0, 200) };
+  if (name === "read_url") return { url: String(input.url || "").slice(0, 300) };
+  if (name === "create_document") return { title: input.title, format: input.format };
+  if (name === "remember") return { fact: String(input.fact || "").slice(0, 200) };
+  return Object.fromEntries(Object.entries(input).map(([k, v]) => [k, typeof v === "string" ? v.slice(0, 200) : v]));
+}
+
+/** A project chat knows which repo it is about and its brief (written from the code). */
+async function projectContext(projectId, { background = false } = {}) {
+  if (!projectId) return "";
+  const p = await get("SELECT name, repo_owner, repo_name, default_branch, description, instructions FROM hive_projects WHERE id=?", [projectId]).catch(() => null);
+  if (!p) return "";
+  const repo = p.repo_owner ? `${p.repo_owner}/${p.repo_name} (branch ${p.default_branch || "main"})` : "a local folder";
+  const guide = await guideOf(projectId).catch(() => "");
+  const lead = background
+    ? `Background: the person is currently working on the project “${p.name}” — ${repo}. Use this context whenever the question relates to it; for anything else, just answer.`
+    : `This chat is about the project “${p.name}” — ${repo}.${p.description ? ` ${p.description}` : ""} Answer about this project unless asked otherwise; read its code with the repo tools before answering questions about it.`;
+  return [lead, p.instructions?.trim() ? `Project brief:\n${p.instructions.trim().slice(0, 6000)}` : "", guide].filter(Boolean).join("\n\n");
+}
+
+// A project's AGENTS.md / CLAUDE.md from its default branch, cached for 10 minutes.
+const guideCache = new Map();
+async function guideOf(projectId) {
+  const hit = guideCache.get(projectId);
+  if (hit && Date.now() - hit.at < 10 * 60_000) return hit.text;
+  const p = await get("SELECT * FROM hive_projects WHERE id=?", [projectId]);
+  let text = "";
+  if (p?.github_id && p.repo_owner) {
+    const cred = await get("SELECT * FROM hive_github WHERE id=?", [p.github_id]);
+    if (cred) {
+      const token = vault.open(cred.token_enc);
+      text = await require("./runner").repoGuide((f) => gh.rawFile(token, p.repo_owner, p.repo_name, f, p.default_branch || "main").then((b) => b.toString("utf8")), 8000);
+    }
+  }
+  guideCache.set(projectId, { at: Date.now(), text });
+  return text;
+}
+
+/** The latest chat this person has about a project, or a new one. */
+async function projectChat(username, projectId, { fresh = false } = {}) {
+  const p = await get("SELECT id, name FROM hive_projects WHERE id=?", [projectId]);
+  if (!p) throw Object.assign(new Error("Project not found"), { status: 404 });
+  if (!fresh) {
+    const c = await get("SELECT * FROM hive_convos WHERE project_id=? AND owner=? ORDER BY updated_at DESC LIMIT 1", [projectId, username]);
+    if (c) return c;
+  }
+  const c = await createConvo(username, { title: `${p.name} · chat`, projectId });
+  return c;
+}
+
+/** The attached project's default-branch snapshot (for repo tools). */
+async function projectSnapshot(projectId) {
+  const p = await get("SELECT * FROM hive_projects WHERE id=?", [projectId]);
+  if (!p?.github_id) return null;
+  const cred = await get("SELECT * FROM hive_github WHERE id=?", [p.github_id]);
+  if (!cred) return null;
+  const token = vault.open(cred.token_enc);
+  const head = await gh.commit(token, p.repo_owner, p.repo_name, p.default_branch);
+  const snap = await getSnapshot(token, p.repo_owner, p.repo_name, head.sha);
+  await Promise.race([snap.contentReady, new Promise((r) => setTimeout(r, 20000))]);
+  return { snap, readBase };
+}
+
+async function pickChatKey(spec, exclude = [], prompt = "", useTools = false) {
+  if (spec.provider === "auto") {
+    // In chat, Auto favours fast models among those of similar quality (quality still decides first).
+    const r = await router.route({ prompt, chat: true, needTools: useTools, kind: spec.kind || null, freeOnly: !!spec.freeOnly, preference: spec.preference || "fast", exclude: { keys: exclude } }).catch(() => null);
+    if (!r) return null;
+    const key = await keys.keyRow(r.pick.keyId);
+    return key ? { key, provider: r.pick.provider, model: r.pick.model, note: r.note } : null;
+  }
   const k = await keys.pickKey(spec.provider, { prefer: spec.keyId || "auto", exclude });
   if (k && (await keys.hasBudget(k)) && !exclude.includes(k.id)) return { key: k, provider: spec.provider };
   const same = await keys.pickKey(spec.provider, { exclude: [...exclude, k?.id].filter(Boolean) });
@@ -105,7 +185,7 @@ async function pickChatKey(spec, exclude = []) {
  * Send a message and stream the reply. spec: { provider, keyId, model, effort }.
  * mode 'image' generates an image instead of text.
  */
-async function send(convoId, { text, refs, spec, specs, mode = "text", username, sink }) {
+async function send(convoId, { text, refs, spec, specs, mode = "text", username, sink, focusProjectId = null }) {
   // Several models at once: one user message, one reply per model (side by side).
   const list = Array.isArray(specs) && specs.length ? specs.slice(0, 4) : [spec];
   const convo = await convoFor(convoId, username);
@@ -131,7 +211,7 @@ async function send(convoId, { text, refs, spec, specs, mode = "text", username,
     const reply = { id: newId("m"), convo_id: convoId, role: "assistant", content: "", attachments: [], author: null, created_at: now() + 1 + i, group_id: list.length > 1 ? userMsg.id : null };
     hub.emitConvo(convoId, "convo:start", { id: reply.id, convoId, provider: sp.provider, model: sp.model || null, group: reply.group_id });
     sink?.("start", { id: reply.id, convoId, provider: sp.provider, model: sp.model || null, group: reply.group_id });
-    return { reply, done: generate(convo, reply, { spec: sp, mode, prompt: userMsg.content, username, sink }).catch((e) => {
+    return { reply, done: generate(convo, reply, { spec: sp, mode, prompt: userMsg.content, username, sink, focusProjectId }).catch((e) => {
       console.error("[hive chat]", e.message);
       sink?.("done", { ...reply, error: e.message });
     }) };
@@ -139,7 +219,7 @@ async function send(convoId, { text, refs, spec, specs, mode = "text", username,
   return { user: userMsg, replyId: runs[0].reply.id, replyIds: runs.map((r) => r.reply.id), done: Promise.all(runs.map((r) => r.done)) };
 }
 
-async function generate(convo, reply, { spec: spec0, mode, prompt, username, sink }) {
+async function generate(convo, reply, { spec: spec0, mode, prompt, username, sink, focusProjectId = null }) {
   let spec = spec0;
   let modelRetried = false;
   // Every event goes to the room (other viewers) and to the sender's own
@@ -155,19 +235,29 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
   active.set(convo.id, set);
   const tried = [];
   let lastErr = null; // the provider's own error, shown if every key fails
+  let primary = null; // the first error from the model the person picked — shown even if a handoff also fails
+  let finished = false;
   let error = null;
   let usage = { input: 0, output: 0 };
   let served = { provider: spec.provider, model: spec.model };
   try {
-    for (let attempt = 0; attempt < 4; attempt++) {
-      const pick = await pickChatKey(spec, tried);
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const wantTools = mode !== "image" && convo.tools !== 0;
+      const pick = await pickChatKey(spec, tried, prompt, wantTools);
       if (!pick) {
         if (lastErr) throw lastErr;
-        throw new Error(await keys.explainNoKey(spec.provider));
+        throw new Error(spec.provider === "auto" ? "No connected model can answer right now — add a key (Keys → Free models) or connect a subscription agent" : await keys.explainNoKey(spec.provider));
       }
       const { key, provider } = pick;
       const v = providerOf(provider);
-      const model = provider === spec.provider && spec.model ? spec.model : key.default_model || pickDefault(json(key.models_json, []), v.suggested);
+      const model = pick.model || (provider === spec.provider && spec.model ? spec.model : key.default_model || pickDefault(json(key.models_json, []), v.suggested));
+      if (pick.note && attempt === 0) out("note", { id: reply.id, text: `Auto picked ${pick.note.split(" · ")[0].replace(/^.*→ /, "")}` });
+      const capOk = await caps.check({ projectId: convo.project_id || "", vendor: provider, model, username });
+      if (!capOk.ok) {
+        lastErr = Object.assign(new Error(capOk.reason), { kind: "quota" });
+        tried.push(key.id);
+        continue;
+      }
       served = { provider, model };
       if (provider !== spec.provider || attempt > 0) out("note", { id: reply.id, text: `Continuing with ${v.label} (${key.label})` });
       try {
@@ -182,6 +272,7 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
           reply.content = r.text || "";
           served.model = v.imageModel;
           await keys.recordUsage(key.id, username, { input: 0, output: 0 }, null);
+          finished = true;
           break;
         }
         const history = await messagesOf(convo.id);
@@ -201,7 +292,28 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
         const plugins = await resolvePlugins(convo.project_id);
         const extras = plugins.custom.filter((c) => c.enabled && (c.config.appliesTo || "all") !== "tasks").map((c) => c.config.instructions);
         if (plugins.builtins.terse?.enabled) extras.push("Be concise.");
-        const system = [convo.system || "You are a helpful, precise assistant for a software team. Use Markdown. Put code in fenced blocks with a language.", ...extras].filter(Boolean).join("\n\n");
+        const facts = await chatTools.userMemory(username).catch(() => []);
+        const useTools = wantTools && v.caps.tools && v.impl !== "cli";
+        const mcpDefs = useTools ? (await require("./toolbox").mcpTools().catch(() => [])).map(({ name, description, schema }) => ({ name, description, schema })) : [];
+        const toolDefs = useTools ? [...chatTools.toolsFor({ project: !!convo.project_id, drive: true }), ...mcpDefs] : [];
+        // Token Steward: fold old turns into a cached summary (written by a free model) when the chat is long.
+        const compact = await steward.compactHistory(convo, messages, { username }).catch(() => ({ messages, compacted: null }));
+        if (compact.compacted) {
+          messages.splice(0, messages.length, ...compact.messages);
+          out("note", { id: reply.id, text: `Token Steward folded ${compact.compacted.folded} earlier messages into a summary — saved ~${Math.round(compact.compacted.saved / 1000)}K tokens on this reply` });
+        }
+        const system = [
+          convo.system || "You are a helpful, precise assistant for a software team working in Nexora Hive. Use Markdown. Put code in fenced blocks with a language.",
+          `Today is ${new Date().toISOString().slice(0, 10)}. You are talking with @${username}.`,
+          await projectContext(convo.project_id || focusProjectId || null, { background: !convo.project_id }),
+          facts.length ? `What you know about @${username} (saved memory):\n${facts.map((f) => `- ${f}`).join("\n")}` : "",
+          useTools
+            ? `You have tools: search the web and read pages for anything current, read the project's code, read Hive Drive, create documents (PDF, Word, slides…) whenever someone wants a file, and remember lasting facts about the person.${mcpDefs.length ? " Tools starting with mcp_ come from the team's connected MCP servers (shown in [brackets] in each description)." : ""} Use them when they help; don't narrate tool use at length.`
+            : "",
+          ...extras,
+        ]
+          .filter(Boolean)
+          .join("\n\n");
         let flushTimer = null;
         let buf = "";
         let think = "";
@@ -210,65 +322,159 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
           if (buf) out("delta", { id: reply.id, text: buf }), (buf = "");
           if (think) out("thinking", { id: reply.id, text: think }), (think = "");
         };
-        const res = await v.impl.turn({
-          secret: keys.secretOf(key),
-          baseUrl: key.base_url || v.baseUrl,
-          official: !!v.official,
-          vision: !!v.caps.vision,
-          model,
-          effort: spec.effort || (provider === "anthropic" ? "medium" : null),
-          system,
-          messages,
-          tools: [],
-          signal: controller.signal,
-          cache: plugins.builtins.prompt_cache?.enabled !== false,
-          onText: (d) => ((buf += d), (flushTimer ||= setTimeout(flush, 60))),
-          onThinking: (d) => ((think += d), (flushTimer ||= setTimeout(flush, 60))),
-        });
-        clearTimeout(flushTimer);
-        flush();
-        reply.content = res.text;
+        const toolLog = [];
+        const convoMsgs = [...messages];
+        let text = "";
+        let res;
+        usage = { input: 0, output: 0 };
+        for (let step = 0; step < 10; step++) {
+          if (step > 0 && text && !text.endsWith("\n")) {
+            buf += "\n\n";
+            text += "\n\n";
+          }
+          // First-reply watchdog: a model that sends nothing at all for too
+          // long is abandoned and the next healthy model takes over.
+          const stepCtl = new AbortController();
+          const relay = () => stepCtl.abort();
+          controller.signal.addEventListener("abort", relay, { once: true });
+          let heard = false;
+          let stalled = false;
+          // A model that hasn't started answering by now gives way to the next best one.
+          const patience = v.subscription ? 120_000 : /reason|r1\b|o3|o4|-pro|think|opus|fable|qwq|magistral/i.test(model) ? 60_000 : 20_000;
+          const dog = step === 0 ? setTimeout(() => !heard && ((stalled = true), stepCtl.abort()), patience) : null;
+          try {
+            res = await v.impl.turn({
+              secret: keys.secretOf(key),
+              keyRow: key,
+              baseUrl: key.base_url || v.baseUrl,
+              official: !!v.official,
+              vision: !!v.caps.vision,
+              model,
+              effort: spec.effort || (provider === "anthropic" ? "medium" : null),
+              system,
+              messages: convoMsgs,
+              tools: toolDefs,
+              signal: stepCtl.signal,
+              cache: plugins.builtins.prompt_cache?.enabled !== false,
+              onText: (d) => ((heard = true), (buf += d), (flushTimer ||= setTimeout(flush, 40))),
+              onThinking: (d) => ((heard = true), (think += d), (flushTimer ||= setTimeout(flush, 40))),
+            });
+          } catch (err) {
+            if (stalled && !controller.signal.aborted) {
+              await require("./health").record(key.id, model, { ok: false, kind: "network", error: `No reply within ${patience / 1000}s` }).catch(() => {});
+              throw Object.assign(new Error(`${v.label} · ${model} sent nothing for ${patience / 1000}s`), { kind: "timeout" });
+            }
+            throw err;
+          } finally {
+            clearTimeout(dog);
+            controller.signal.removeEventListener("abort", relay);
+          }
+          clearTimeout(flushTimer);
+          flush();
+          text += res.text || "";
+          usage = { input: usage.input + res.usage.input, output: usage.output + res.usage.output };
+          await keys.recordUsage(key.id, username, { input: res.usage.input, output: res.usage.output, cacheRead: res.usage.cacheRead || 0, costMicros: res.costMicros || 0 }, res.rateLimit, { projectId: convo.project_id || "", vendor: provider, model: res.servedModel || model });
+          hub.emit("usage", { keyId: key.id });
+          if (res.stop !== "tool" || !res.toolCalls?.length || !useTools) break;
+          convoMsgs.push({ role: "assistant", text: res.text, toolCalls: res.toolCalls, raw: res.raw });
+          const results = [];
+          for (const call of res.toolCalls) {
+            const entry = { id: call.id, name: call.name, input: summarizeTool(call.name, call.input), status: "running" };
+            toolLog.push(entry);
+            out("tool", { id: reply.id, tool: entry });
+            const r = call.invalid
+              ? { content: `Arguments were not valid JSON: ${call.rawArgs}`, isError: true }
+              : await chatTools.execute(call.name, call.input || {}, {
+                  username,
+                  projectId: convo.project_id || null,
+                  drive,
+                  projectRepo: convo.project_id ? () => projectSnapshot(convo.project_id) : null,
+                  saveFile: async (name, mime, buffer, folder) => {
+                    const f = await saveFile({ name, mime, buffer, origin: "generated", username });
+                    reply.attachments.push(f);
+                    const dpath = await drive.freePath({ path: `${folder || "/documents"}/${name}`, projectId: convo.project_id || null });
+                    await drive.put({ path: dpath, projectId: convo.project_id || null, mime, buffer, by: username }).catch(() => null);
+                    out("attachment", { id: reply.id, file: f });
+                    return f;
+                  },
+                });
+            Object.assign(entry, { status: r.isError ? "error" : "done", preview: String(r.content).slice(0, 600), meta: r.meta || null });
+            out("tool_done", { id: reply.id, tool: entry });
+            results.push({ id: call.id, name: call.name, content: await steward.clipTool(String(r.content), convo.project_id), isError: !!r.isError });
+          }
+          convoMsgs.push({ role: "tool", results });
+        }
+        reply.content = text;
+        reply.tools = toolLog;
         served.model = res.servedModel || model;
-        usage = res.usage;
-        await keys.recordUsage(key.id, username, { input: res.usage.input, output: res.usage.output, cacheRead: res.usage.cacheRead || 0, costMicros: res.costMicros || 0 }, res.rateLimit);
-        hub.emit("usage", { keyId: key.id });
         if (res.stop === "refusal") error = "The model declined this request";
+        finished = true;
         break;
       } catch (e) {
         if (e.kind === "aborted" || controller.signal.aborted) {
           error = "Stopped";
+          finished = true;
           break;
         }
+        // Too slow to start: switch to the next model straight away.
+        if (e.kind === "timeout" && !reply.content) {
+          lastErr = e;
+          tried.push(key.id);
+          out("note", { id: reply.id, text: `${v.label} hasn't started answering — switching to the next best model` });
+          if (!primary && spec.provider !== "auto" && provider === spec.provider) primary = { e, served: { ...served } };
+          // The next best model of the same quality class (not merely the fastest).
+          if (spec.provider !== "auto") spec = { provider: "auto", kind: null };
+          continue;
+        }
+        const handoff = spec.provider === "auto" || provider !== spec.provider;
+        if (!primary && !handoff) primary = { e, served: { ...served } };
         if (["auth", "quota", "rate"].includes(e.kind)) {
           lastErr = e;
           tried.push(key.id);
           if (e.kind === "auth") keys.checkKey(key.id).catch(() => {});
           continue;
         }
-        // The chosen model is gone or not offered by this key: refresh the
-        // key's model list and continue on its (new) default.
-        if (e.kind === "model" && !modelRetried) {
-          modelRetried = true;
-          const c = await keys.checkKey(key.id).catch(() => null);
-          const next = c?.defaultModel;
-          if (next && next !== model) {
+        // The model is retired or not offered by this key: remember that, so
+        // neither chat nor the router picks it again, and move on to the
+        // key's next best model (or, for Auto and handoffs, the next model).
+        if (e.kind === "model") {
+          const next = await keys.blockModel(key.id, model).catch(() => null);
+          lastErr = e;
+          if (!handoff && next && !modelRetried) {
+            modelRetried = true;
             spec = { ...spec, model: next };
-            out("note", { id: reply.id, text: `${model} isn't available on this key — using ${next}` });
+            out("note", { id: reply.id, text: `${model} isn't available any more — using ${next}` });
             continue;
           }
+          if (handoff) {
+            if (!next) tried.push(key.id);
+            continue;
+          }
+        }
+        // A handoff model that fails for any other reason: try the next one.
+        if (handoff) {
+          lastErr = e;
+          tried.push(key.id);
+          continue;
         }
         throw e;
       }
     }
+    if (!finished) throw lastErr || new Error("No connected model could answer");
   } catch (e) {
-    error = friendlyError(e, served);
+    // Lead with the error from the model the person actually picked; the
+    // handoff's own failure comes second.
+    if (primary && primary.e !== e) {
+      error = `${friendlyError(primary.e, primary.served)}\nHive also tried other models; the last one said: ${String(e.message || "").slice(0, 200)}`;
+      served = primary.served;
+    } else error = friendlyError(e, served);
   } finally {
     set.delete(controller);
     if (!set.size) active.delete(convo.id);
   }
   await run(
-    "INSERT INTO hive_convo_msgs(id, convo_id, role, content, attachments_json, provider, model, input_tokens, output_tokens, error, created_at, group_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
-    [reply.id, convo.id, "assistant", reply.content, JSON.stringify(reply.attachments), served.provider, served.model, usage.input, usage.output, error, reply.created_at, reply.group_id || null],
+    "INSERT INTO hive_convo_msgs(id, convo_id, role, content, attachments_json, provider, model, input_tokens, output_tokens, error, created_at, group_id, tools_json) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    [reply.id, convo.id, "assistant", reply.content, JSON.stringify(reply.attachments), served.provider, served.model, usage.input, usage.output, error, reply.created_at, reply.group_id || null, reply.tools?.length ? JSON.stringify(reply.tools) : null],
   );
   out("done", { ...reply, provider: served.provider, model: served.model, input_tokens: usage.input, output_tokens: usage.output, error });
 }
@@ -298,4 +504,4 @@ function stop(convoId) {
   return !!set;
 }
 
-module.exports = { listConvos, createConvo, convoFor, canSee, messagesOf, send, stop, saveFile, MAX_FILE };
+module.exports = { guideOf, projectChat, projectContext, listConvos, createConvo, convoFor, canSee, messagesOf, send, stop, saveFile, MAX_FILE };

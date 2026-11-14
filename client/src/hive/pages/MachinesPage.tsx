@@ -7,6 +7,7 @@ import { API_BASE } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
 import { useHive } from '../store'
+import { StatusPill } from '../kit'
 import type { Machine } from '../types'
 import { timeAgo } from '../ui'
 
@@ -31,36 +32,31 @@ export default function MachinesPage() {
   const [adding, setAdding] = useState(false)
   return (
     <div className="mx-auto w-full max-w-[1080px] px-4 pb-24 pt-8 sm:px-8">
-      <div className="hive-card relative overflow-hidden p-6 sm:p-7">
-        <div className="hive-comb pointer-events-none absolute inset-0" />
-        <div className="relative flex flex-wrap items-start gap-5">
-          <span className="hive-tile size-12" style={{ ['--tile' as string]: 'var(--color-state-success)' }}>
-            <Server className="size-5" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <h1 className="text-[24px] font-semibold tracking-[-0.02em]">Machines</h1>
-            <p className="mt-1 max-w-2xl text-[13.5px] text-text-muted">
-              Give agents a real computer: your laptop, a home server or a free cloud VM. They read and write real folders, install packages, run tests and dev servers — and you watch and approve from any browser. The bridge is one file, needs Node 18+, and opens no ports.
-            </p>
-          </div>
-          <Button onClick={() => setAdding(true)}>
-            <Plus /> Connect a machine
-          </Button>
+      <div className="flex flex-col items-start gap-3 sm:flex-row">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-[22px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]">Machines</h1>
+          <p className="mt-1 max-w-2xl text-[13px] text-[var(--hv-text-3)]">Give agents a real computer: your laptop, a home server or a free cloud VM. They read and write real folders, install packages, run tests and dev servers, and you approve from any browser. The bridge is one file, needs Node 18+ and opens no ports.</p>
         </div>
-        <div className="relative mt-6 grid gap-3 sm:grid-cols-3">
+        <Button size="sm" onClick={() => setAdding(true)}>
+          <Plus /> Connect a machine
+        </Button>
+      </div>
+      {/* What a machine is for: shown until the first one is connected. */}
+      {machines.length === 0 && (
+        <div className="mt-6 grid gap-2 sm:grid-cols-3">
           {[
             { icon: Laptop, t: 'Your computer', s: 'Work on local folders while you’re at the desk.' },
             { icon: Server, t: 'Always-on server', s: 'Oracle/AWS/GCP free tier — agents keep working when your laptop sleeps.' },
             { icon: MonitorSmartphone, t: 'From anywhere', s: 'Phone or any browser: watch, steer and approve commands.' },
           ].map((x) => (
-            <div key={x.t} className="rounded-2xl border hive-line bg-bg-app/40 p-3.5">
-              <x.icon className="size-4 text-accent-brand" />
-              <div className="mt-1.5 text-[13px] font-medium">{x.t}</div>
-              <div className="text-[12px] text-text-muted">{x.s}</div>
+            <div key={x.t} className="rounded-[var(--hv-r-card)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-3.5">
+              <x.icon className="size-4 text-[var(--hv-text-2)]" />
+              <div className="mt-1.5 text-[13px] font-medium text-[var(--hv-text-1)]">{x.t}</div>
+              <div className="text-[12px] text-[var(--hv-text-3)]">{x.s}</div>
             </div>
           ))}
         </div>
-      </div>
+      )}
 
       {approvals.length > 0 && (
         <section className="mt-8">
@@ -131,7 +127,7 @@ function MachineCard({ m, onChanged }: { m: Machine; onChanged: () => void }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="truncate text-[15px] font-semibold">{m.name}</span>
-            <span className={cn('rounded-full px-2 py-0.5 text-[10.5px] font-medium', m.online ? 'bg-state-success/15 text-state-success' : 'bg-text-primary/[0.07] text-text-muted')}>{m.online ? 'online' : m.lastSeen ? `seen ${timeAgo(m.lastSeen)} ago` : 'never connected'}</span>
+            <StatusPill size="sm" status={m.online ? 'done' : 'stopped'} label={m.online ? 'Online' : m.lastSeen ? `Seen ${timeAgo(m.lastSeen)} ago` : 'Never connected'} />
           </div>
           <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[11.5px] text-text-muted">
             {m.info.hostname && <span>{m.info.hostname}</span>}
@@ -333,7 +329,7 @@ function AddMachine({ open, onClose }: { open: boolean; onClose: () => void }) {
 }
 
 function Step({ n, done }: { n: number; done?: boolean }) {
-  return <span className={cn('grid size-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold', done ? 'bg-state-success text-white' : 'bg-text-primary/[0.08] text-text-muted')}>{done ? <Check className="size-3.5" /> : n}</span>
+  return <span className={cn('grid size-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold', done ? 'bg-state-success text-on-accent-brand' : 'bg-text-primary/[0.08] text-text-muted')}>{done ? <Check className="size-3.5" /> : n}</span>
 }
 
 function FolderBrowser({ m, open, onClose }: { m: Machine; open: boolean; onClose: () => void }) {

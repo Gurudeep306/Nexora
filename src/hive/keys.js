@@ -18,6 +18,35 @@ const periodStart = (period) => (period === "day" ? day() : period === "month" ?
 const active = new Map(); // key id -> running calls
 const usageCache = new Map(); // key id -> { start, tokens }
 
+/**
+ * The models a key offers. Only models that answered a real call are offered:
+ * - tested: the ones that answered (none, if none did);
+ * - tested but stopped by a rate limit before any answered: just its default;
+ * - not tested yet: its default and the vendor's suggested models it lists
+ *   (testing starts when the key is added and runs daily).
+ * Subscriptions (Claude Code, Codex, Vibe) keep their short fixed list.
+ */
+function workingModels(row) {
+  const list = json(row.models_json, []);
+  let v = null;
+  try {
+    v = vendorOf(keyVendor(row));
+  } catch {
+    /* unknown vendor */
+  }
+  if (v?.subscription) return list;
+  const verified = json(row.verified_json, null);
+  if (verified?.ok?.length) {
+    const set = new Set(verified.ok);
+    return list.filter((m) => set.has(m));
+  }
+  const def = row.default_model && list.includes(row.default_model) ? [row.default_model] : [];
+  if (verified?.at) return verified.stoppedBy === "rate" || verified.stoppedBy === "quota" ? def : [];
+  const suggested = (v?.suggested || []).filter((m) => list.includes(m));
+  const short = [...new Set([...def, ...suggested])];
+  return short.length ? short : list.slice(0, 3);
+}
+
 function publicKey(row, usedTokens = 0, extra = {}) {
   const limit = row.token_limit == null ? null : Number(row.token_limit);
   return {
@@ -28,7 +57,14 @@ function publicKey(row, usedTokens = 0, extra = {}) {
     baseUrl: row.base_url || null,
     priority: Number(row.priority || 0),
     last4: row.last4,
-    models: json(row.models_json, []),
+    // Only models that answered a test call, minus any failing in real use right now
+    // (two or more failures in a row in the last day, with no success since).
+    models: row.status === "invalid" ? [] : workingModels(row).filter((m) => !(extra.failing || []).includes(m)),
+    failingModels: extra.failing || [],
+    untestedModels: (() => {
+      const w = new Set(workingModels(row));
+      return json(row.models_json, []).filter((m) => !w.has(m));
+    })(),
     defaultModel: row.default_model,
     tokenLimit: limit,
     limitPeriod: row.limit_period,
@@ -43,6 +79,26 @@ function publicKey(row, usedTokens = 0, extra = {}) {
     remaining: limit == null ? null : Math.max(0, limit - usedTokens),
     active: active.get(row.id) || 0,
     createdAt: row.created_at,
+    machineId: row.machine_id || null,
+    freeTier: !!row.free_tier,
+    verified: require("./health").verifiedOf(row),
+    // Free connections always show a limit: the provider's live numbers when it sends them, else its typical free allowance.
+    freeLimit: (() => {
+      try {
+        const v = vendorOf(keyVendor(row));
+        if (v.subscription || !(row.free_tier || v.freeTier)) return null;
+        return require("./catalog").freeLimitFor(v.id);
+      } catch {
+        return null;
+      }
+    })(),
+    subscription: (() => {
+      try {
+        return !!vendorOf(keyVendor(row)).subscription;
+      } catch {
+        return false;
+      }
+    })(),
     ...extra,
   };
 }
@@ -67,6 +123,11 @@ async function listKeys() {
       [r.id, periodStart(r.limit_period)],
     );
     const today = await get("SELECT COALESCE(SUM(input_tokens + output_tokens),0) AS t, COALESCE(SUM(requests),0) AS n FROM hive_usage WHERE key_id=? AND day=?", [r.id, day()]);
+    // Measured reply time per model (from real calls and tests), for the picker's speed badges.
+    const speed = Object.fromEntries((await all("SELECT model, latency_ms FROM hive_health WHERE key_id=? AND model<>'' AND latency_ms IS NOT NULL AND ok_count>0", [r.id]).catch(() => [])).map((x) => [x.model, Number(x.latency_ms)]));
+    // A plan or key that said "limit reached": until when, and what it said.
+    const lim = await get("SELECT MAX(cooldown_until) AS until, last_error AS note FROM hive_health WHERE key_id=? AND cooldown_until>? AND last_kind IN ('quota','rate','limit')", [r.id, Date.now()]).catch(() => null);
+    const failing = (await all("SELECT model FROM hive_health WHERE key_id=? AND model<>'' AND consecutive_fails>=2 AND last_fail>? AND (last_ok IS NULL OR last_ok<last_fail)", [r.id, Date.now() - 86_400_000]).catch(() => [])).map((x) => x.model);
     out.push(
       publicKey(r, used, {
         periodInput: Number(totals.i),
@@ -78,6 +139,10 @@ async function listKeys() {
         todayRequests: Number(today?.n || 0),
         periodStart: periodStart(r.limit_period),
         periodEnds: periodEnd(r.limit_period),
+        failing,
+        speed,
+        limitUntil: lim?.until ? Number(lim.until) : null,
+        limitNote: lim?.until ? String(lim.note || "").slice(0, 200) : null,
       }),
     );
   }
@@ -88,9 +153,12 @@ async function keyRow(id) {
   return get("SELECT * FROM hive_keys WHERE id=?", [id]);
 }
 
-function validateInput({ provider, label, apiKey, baseUrl, tokenLimit, limitPeriod, maxConcurrency }, { creating }) {
+function validateInput({ provider, label, apiKey, baseUrl, tokenLimit, limitPeriod, maxConcurrency, machineId }, { creating }) {
   const p = vendorOf(provider);
-  if (creating && (!apiKey || typeof apiKey !== "string" || apiKey.trim().length < 8)) throw new Error("Paste a valid API key");
+  if (p.subscription) {
+    if (creating && !machineId) throw new Error(`${p.label} runs on a connected machine — pick one (Hive → Machines)`);
+    if (apiKey && (typeof apiKey !== "string" || apiKey.trim().length < 20)) throw new Error("That doesn't look like a token from `claude setup-token`");
+  } else if (creating && (!apiKey || typeof apiKey !== "string" || apiKey.trim().length < (provider === "ollama" ? 1 : 8))) throw new Error("Paste a valid API key");
   if (label !== undefined && (typeof label !== "string" || !label.trim() || label.length > 60)) throw new Error("Give the key a name (≤ 60 characters)");
   if (p.baseUrlRequired && creating && !baseUrl) throw new Error("This provider needs a base URL");
   if (baseUrl) {
@@ -112,8 +180,8 @@ async function createKey(input, owner) {
   validateInput(input, { creating: true });
   const id = newId("key");
   const t = now();
-  const secret = input.apiKey.trim();
   const v = vendorOf(input.provider);
+  const secret = String(input.apiKey || "").trim();
   const family = v.impl === "openai" && !v.official ? "openai_compat" : v.impl;
   await run(
     `INSERT INTO hive_keys(id, provider, preset, label, base_url, secret_enc, last4, token_limit, limit_period, max_concurrency, owner, default_model, default_pinned, created_at, updated_at)
@@ -124,8 +192,8 @@ async function createKey(input, owner) {
       v.id,
       input.label.trim(),
       input.baseUrl || null,
-      vault.seal(secret),
-      vault.last4(secret),
+      secret ? vault.seal(secret) : "none",
+      secret ? vault.last4(secret) : v.subscription ? "plan" : "",
       input.tokenLimit == null || input.tokenLimit === "" ? null : Math.round(Number(input.tokenLimit)),
       input.limitPeriod || "month",
       Number(input.maxConcurrency || 4),
@@ -136,6 +204,8 @@ async function createKey(input, owner) {
       t,
     ],
   );
+  const freeTier = input.freeTier === undefined ? !!v.freeTier : !!input.freeTier;
+  await run("UPDATE hive_keys SET machine_id=?, free_tier=? WHERE id=?", [v.subscription ? String(input.machineId) : null, freeTier ? 1 : 0, id]);
   return id;
 }
 
@@ -159,6 +229,8 @@ async function updateKey(id, input) {
     set("default_pinned", input.defaultModel ? 1 : 0);
   }
   if (input.baseUrl !== undefined) set("base_url", input.baseUrl || null);
+  if (input.freeTier !== undefined) set("free_tier", input.freeTier ? 1 : 0);
+  if (input.machineId !== undefined && input.machineId) set("machine_id", String(input.machineId));
   if (input.priority !== undefined) set("priority", Math.max(-100, Math.min(100, Math.round(Number(input.priority) || 0))));
   if (input.apiKey) {
     set("secret_enc", vault.seal(input.apiKey.trim()));
@@ -178,10 +250,41 @@ async function deleteKey(id) {
 }
 
 function secretOf(row) {
+  if (row.secret_enc === "none") return null;
   try {
     return vault.open(row.secret_enc);
   } catch {
     throw Object.assign(new Error(`“${row.label}” can't be decrypted — HIVE_SECRET (or SESSION_SECRET) changed since it was saved. Paste the key again in Keys (⋯ → Budget, model & priority → new key).`), { kind: "auth" });
+  }
+}
+
+/** Subscription connections may have no secret (the machine is signed in). */
+function optionalSecret(row) {
+  if (!row.secret_enc || row.secret_enc === "none") return null;
+  try {
+    return vault.open(row.secret_enc);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * List a key's models. Some OpenAI-compatible gateways don't serve
+ * GET /models (404). Then, at the same address only, check the chat endpoint
+ * exists and fall back to the models already on the key plus the vendor's
+ * suggestions; each one is then tested with a real call (health.verifyKey).
+ */
+async function listOrProbe(row, p) {
+  const secret = p.subscription ? optionalSecret(row) : secretOf(row);
+  const base = row.base_url || p.baseUrl;
+  try {
+    return await p.implModule.listModels({ secret, baseUrl: base, official: !!p.official, modelsUrl: p.modelsUrl, vendor: p.id, cli: p.cli, machineId: row.machine_id });
+  } catch (e) {
+    if (p.impl !== "openai" || e.status !== 404 || p.modelsUrl || !p.implModule.probeChat) throw e;
+    const fallback = [...new Set([...json(row.models_json, []), ...(p.suggested || [])])];
+    const status = fallback.length ? await p.implModule.probeChat({ secret, baseUrl: base, model: fallback[0] }).catch(() => null) : null;
+    if (status && status !== 404) return fallback;
+    throw Object.assign(new Error(`Nothing answers at ${base} (model list and chat both 404). Copy the API base URL from the provider's console or docs into the key's Address field.`), { kind: "config" });
   }
 }
 
@@ -191,7 +294,15 @@ async function checkKey(id) {
   if (!row) throw Object.assign(new Error("Key not found"), { status: 404 });
   const p = vendorOf(keyVendor(row));
   try {
-    const models = await p.implModule.listModels({ secret: secretOf(row), baseUrl: row.base_url || p.baseUrl, official: !!p.official });
+    const blocked = new Set(json(row.blocked_models, []));
+    const listed = await listOrProbe(row, p);
+    // Models the provider still lists but refuses to serve (retired for new users…) stay out.
+    let models = listed.filter((m) => !blocked.has(m));
+    // A free OpenRouter key can only call the ":free" variants.
+    if (p.id === "openrouter" && row.free_tier) models = models.filter((m) => /:free$/.test(m));
+    // Models proven to answer stay first, so pickers and the router try them before untested ones.
+    const proven = json(row.verified_json, null)?.ok || [];
+    if (proven.length) models = [...proven.filter((m) => models.includes(m)), ...models.filter((m) => !proven.includes(m))];
     // Keep a chosen default only while the provider still offers it.
     const keep = !!row.default_pinned && !!row.default_model && (!models.length || models.includes(row.default_model));
     const def = keep ? row.default_model : modelsLib.pickDefault(models, p.suggested);
@@ -210,11 +321,31 @@ async function checkKey(id) {
 }
 
 /**
+ * A model the key lists but the provider refused to serve ("no longer
+ * available", "not found"…): remember it, drop it from the key's list, and
+ * move the default to the next best model. Returns the new default.
+ */
+async function blockModel(id, model) {
+  const row = await keyRow(id);
+  if (!row || !model) return null;
+  const blocked = [...new Set([...json(row.blocked_models, []), model])].slice(-100);
+  const models = json(row.models_json, []).filter((m) => m !== model);
+  const p = vendorOf(keyVendor(row));
+  const def = row.default_model && row.default_model !== model ? row.default_model : modelsLib.pickDefault(models, (p.suggested || []).filter((m) => m !== model));
+  await run("UPDATE hive_keys SET blocked_models=?, models_json=?, default_model=?, default_pinned=CASE WHEN default_model=? THEN 0 ELSE default_pinned END, updated_at=? WHERE id=?", [JSON.stringify(blocked), JSON.stringify(models), def, model, now(), id]);
+  return def && def !== model ? def : null;
+}
+
+async function saveVerified(id, v) {
+  await run("UPDATE hive_keys SET verified_json=?, updated_at=? WHERE id=?", [JSON.stringify(v), now(), id]);
+}
+
+/**
  * Record tokens used by one call. Providers count prompt-cache reads inside
  * `input`; those are ~10x cheaper and re-sent every agent step, so they are
  * stored separately and NOT charged against the key's token budget.
  */
-async function recordUsage(keyId, username, { input = 0, output = 0, cacheRead = 0, costMicros = 0 }, rateLimit) {
+async function recordUsage(keyId, username, { input = 0, output = 0, cacheRead = 0, costMicros = 0 }, rateLimit, meta = null) {
   const d = day();
   const cached = Math.max(0, Math.min(input, cacheRead || 0));
   const fresh = Math.max(0, input - cached);
@@ -226,6 +357,103 @@ async function recordUsage(keyId, username, { input = 0, output = 0, cacheRead =
   const c = usageCache.get(keyId);
   if (c) c.tokens += fresh + output;
   if (rateLimit) await run("UPDATE hive_keys SET rl_json=?, rl_at=? WHERE id=?", [JSON.stringify(rateLimit), now(), keyId]);
+  // Per project / vendor / model detail, for budgets and the Usage page.
+  if (meta?.vendor) {
+    let cost = costMicros;
+    if (!cost) {
+      const row = await get("SELECT free_tier, preset, provider FROM hive_keys WHERE id=?", [keyId]);
+      const { cardFor, priceOf } = require("./catalog");
+      const sub = (() => {
+        try {
+          return !!vendorOf(meta.vendor).subscription;
+        } catch {
+          return false;
+        }
+      })();
+      if (row && !row.free_tier && !sub && !/:free$/.test(meta.model || "")) {
+        const usd = priceOf(cardFor(meta.model, meta.vendor), fresh + cached * 0.1, output);
+        cost = usd ? Math.round(usd * 1e6) : 0;
+      }
+    }
+    await run(
+      `INSERT INTO hive_usage_detail(day, project_id, vendor, model, username, input_tokens, output_tokens, cached_tokens, requests, cost_micros) VALUES(?,?,?,?,?,?,?,?,1,?)
+       ON CONFLICT(day, project_id, vendor, model, username) DO UPDATE SET input_tokens=input_tokens+excluded.input_tokens, output_tokens=output_tokens+excluded.output_tokens, cached_tokens=cached_tokens+excluded.cached_tokens, requests=requests+1, cost_micros=cost_micros+excluded.cost_micros`,
+      [d, meta.projectId || "", meta.vendor, meta.model || "", username, fresh, output, cached, cost],
+    );
+    await require("./caps").afterUsage({ projectId: meta.projectId || "", vendor: meta.vendor, model: meta.model || "", username }).catch(() => {});
+  }
+}
+
+/** Live subscription usage windows (Claude Code reports them on every run). */
+async function setPlanUsage(keyId, info) {
+  if (!info || typeof info !== "object") return;
+  const prev = json((await get("SELECT rl_json FROM hive_keys WHERE id=?", [keyId]))?.rl_json, null);
+  const windows = prev?.plan ? { ...(prev.windows || {}) } : {};
+  const ms = (t) => (t == null ? null : Number(t) < 1e12 ? Number(t) * 1000 : Number(t));
+  // 0–1 or 0–100 → 0–1
+  const frac = (v) => (v == null || !Number.isFinite(Number(v)) ? null : Number(v) > 1 ? Math.min(1, Number(v) / 100) : Math.max(0, Number(v)));
+  const fromStatus = (st) => (st === "rejected" ? 1 : st === "allowed_warning" ? 0.85 : null);
+  if (info.codex) {
+    // Codex: { primary: { used_percent, window_minutes, resets_in_seconds | resets_at }, secondary: {…} }
+    for (const [k, w] of Object.entries(info.codex)) {
+      if (!w || typeof w !== "object") continue;
+      const name = w.window_minutes ? (w.window_minutes <= 360 ? "five_hour" : "seven_day") : k;
+      const reset = w.resets_at ? ms(w.resets_at) : w.resets_in_seconds != null ? Date.now() + Number(w.resets_in_seconds) * 1000 : null;
+      windows[name] = { utilization: frac(w.used_percent) ?? 0, resetsAt: reset, status: null };
+    }
+  } else {
+    // Claude Code reports one window per event (rateLimitType), sometimes all of them (unifiedWindows).
+    for (const [k, w] of Object.entries(info.unifiedWindows || {})) windows[k] = { utilization: frac(w.utilization) ?? fromStatus(w.status) ?? 0, resetsAt: ms(w.resetsAt), status: w.status || null };
+    if (info.rateLimitType) {
+      const old = windows[info.rateLimitType] || {};
+      windows[info.rateLimitType] = { utilization: frac(info.utilization) ?? fromStatus(info.status) ?? old.utilization ?? 0, resetsAt: ms(info.resetsAt) ?? old.resetsAt ?? null, status: info.status || null };
+    }
+  }
+  // Windows whose reset time has passed start again from zero.
+  for (const w of Object.values(windows)) if (w.resetsAt && w.resetsAt < Date.now()) Object.assign(w, { utilization: 0, status: null });
+  const out = { plan: true, status: info.status || prev?.status || null, type: info.rateLimitType || prev?.type || null, resetsAt: ms(info.resetsAt) ?? null, windows };
+  await run("UPDATE hive_keys SET rl_json=?, rl_at=? WHERE id=?", [JSON.stringify(out), now(), keyId]);
+}
+
+/**
+ * Ask Anthropic for a Claude plan's usage directly (the numbers Claude Code's
+ * /usage shows), so every connected Claude account has its 5-hour and weekly
+ * bars even before it has run any work. Needs the account's setup token.
+ * Returns the windows, or { error } when the account can't be asked.
+ */
+async function refreshPlanUsage(keyId) {
+  const row = await keyRow(keyId);
+  if (!row) return { error: "Key not found" };
+  if (keyVendor(row) !== "claude_code") return { error: "Only Claude plans report usage this way" };
+  const token = optionalSecret(row);
+  if (!token) return { error: "This account uses the machine's own login — its usage appears after its first run (or add its setup token)" };
+  const base = process.env.HIVE_ANTHROPIC_API || "https://api.anthropic.com";
+  let res;
+  try {
+    res = await fetch(`${base}/api/oauth/usage`, { headers: { Authorization: `Bearer ${token}`, "anthropic-beta": "oauth-2025-04-20", Accept: "application/json" }, signal: AbortSignal.timeout(15000) });
+  } catch (e) {
+    return { error: `Couldn't reach Anthropic: ${e.message}` };
+  }
+  if (!res.ok) return { error: `Anthropic answered ${res.status} — usage fills in after this account's first run` };
+  const j = await res.json().catch(() => null);
+  if (!j || typeof j !== "object") return { error: "Unexpected answer from Anthropic" };
+  // { five_hour: { utilization: 0-100, resets_at }, seven_day: {…}, seven_day_opus: {…}, … }
+  const unifiedWindows = {};
+  for (const [k, w] of Object.entries(j)) {
+    if (!w || typeof w !== "object" || w.utilization == null) continue;
+    unifiedWindows[k] = { utilization: Math.max(0, Math.min(1, Number(w.utilization) / 100)), resetsAt: w.resets_at ? Date.parse(w.resets_at) : null, status: Number(w.utilization) >= 100 ? "rejected" : null };
+  }
+  if (!Object.keys(unifiedWindows).length) return { error: "No usage windows in the answer" };
+  await setPlanUsage(keyId, { unifiedWindows });
+  return { windows: unifiedWindows };
+}
+
+/** Refresh every connected Claude account's plan usage (a few seconds each, no plan usage spent). */
+async function refreshAllPlanUsage() {
+  const rows = (await all("SELECT * FROM hive_keys WHERE disabled=0")).filter((r) => keyVendor(r) === "claude_code");
+  const out = [];
+  for (const r of rows) out.push({ keyId: r.id, ...(await refreshPlanUsage(r.id).catch((e) => ({ error: e.message }))) });
+  return out;
 }
 
 /** Is there budget left on this key? */
@@ -250,6 +478,7 @@ async function pickKey(provider, { prefer = "auto", exclude = [] } = {}) {
   let bestScore = -Infinity;
   for (const r of rows) {
     if (exclude.includes(r.id)) continue;
+    if (r.machine_id && !require("./machines").isOnline(r.machine_id)) continue;
     // A key whose last check failed is retried after a cool-down: listing
     // models can fail (restricted project keys, a provider hiccup) while
     // chatting works. A real auth failure on a call re-marks it.
@@ -258,7 +487,8 @@ async function pickKey(provider, { prefer = "auto", exclude = [] } = {}) {
     const share = (r.token_limit == null ? 1 : 1 - (await usedTokens(r)) / Math.max(1, Number(r.token_limit))) - (r.status === "invalid" || r.status === "error" ? 0.5 : 0);
     const load = (active.get(r.id) || 0) / Math.max(1, r.max_concurrency);
     // Staff can rank keys (e.g. spend the free tier first).
-    const score = share - load + Number(r.priority || 0) / 10;
+    const cool = await require("./health").cooling(r.id, r.default_model || "");
+    const score = share - load + Number(r.priority || 0) / 10 - (cool ? 3 : 0);
     if (score > bestScore) {
       best = r;
       bestScore = score;
@@ -282,7 +512,7 @@ async function pickHandoffKey({ exclude = [], order = [], skipVendor } = {}) {
     } catch {
       continue;
     }
-    if (!v.caps.tools) continue;
+    if (!v.caps.tools || v.subscription) continue;
     const k = await pickKey(vid, { exclude });
     if (k) return k;
   }
@@ -346,4 +576,4 @@ async function refreshAll() {
   return fresh;
 }
 
-module.exports = { explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };
+module.exports = { refreshPlanUsage, refreshAllPlanUsage, workingModels, saveVerified, blockModel, setPlanUsage, explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };

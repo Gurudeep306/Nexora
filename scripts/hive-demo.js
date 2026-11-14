@@ -127,13 +127,23 @@ function startMock() {
           res.writeHead(s, { "Content-Type": "application/json" });
           res.end(JSON.stringify(o));
         };
+        // ── Claude plan usage (what Claude Code's /usage shows) ──
+        if (p === "/api/oauth/usage") {
+          if (!/Bearer sk-ant-oat01-/.test(req.headers.authorization || "")) return json(401, { error: { message: "invalid token" } });
+          return json(200, { five_hour: { utilization: 42, resets_at: new Date(Date.now() + 2 * 3600e3).toISOString() }, seven_day: { utilization: 13.5, resets_at: new Date(Date.now() + 4 * 86400e3).toISOString() } });
+        }
         // ── AI provider ──
-        if (p.endsWith("/models")) return json(200, { data: [{ id: "demo-coder-large" }, { id: "demo-coder-mini" }, { id: "demo-vision-2" }] });
+        if (p.endsWith("/models")) return json(200, { data: [{ id: "demo-coder-large" }, { id: "demo-coder-mini" }, { id: "demo-vision-2" }, { id: "demo-retired" }, { id: "demo-gated" }] });
         if (p.endsWith("/chat/completions")) {
           const b = JSON.parse(body || "{}");
+          // A model the provider still lists but no longer serves (like Google retiring gemini-2.5-pro).
+          if (b.model === "demo-retired") return json(404, { error: { message: "This model models/demo-retired is no longer available to new users. Please update your code to use a newer model." } });
+          // Listed, but not on this key's tier (GitHub Models / Hugging Face style 403).
+          if (b.model === "demo-gated") return json(403, { error: { message: "You don't have access to the model demo-gated on the free tier." } });
           const msgs = b.messages || [];
           const toolRounds = msgs.filter((m) => m.role === "tool").length;
-          if (b.tools?.length) {
+          // Chat sends its own tool set (web_search…); agents get the coding tools.
+          if (b.tools?.length && !b.tools.some((t) => t.function?.name === "web_search")) {
             // A tiny agent: read, edit, finish.
             if (toolRounds === 0) return sseOpenAi(res, { reasoning: "Let me read the cart first.", text: "I'll look at the cart module.", calls: [{ name: "read_file", input: { path: "src/cart.js" } }] });
             if (toolRounds === 1)
@@ -146,12 +156,51 @@ function startMock() {
             return sseOpenAi(res, { text: "All set — totals now multiply by quantity.", calls: [{ name: "finish", input: { summary: "Cart totals now respect item quantities. Tests pass." } }] });
           }
           if (/principal engineer/.test(msgs[0]?.content || "")) return sseOpenAi(res, { text: JSON.stringify(PLAN) });
+          // Hive Copilot: look around, start a session, then report; automatic reviews get a verdict.
+          if (b.tools?.some((t) => t.function?.name === "hive_overview")) {
+            const lastUser = [...msgs].reverse().find((m) => m.role === "user");
+            if (/^\[automatic\]/.test(String(lastUser?.content || ""))) {
+              if (toolRounds === 0) return sseOpenAi(res, { text: "Reviewing the finished session.", calls: [{ name: "session_detail", input: { taskId: (String(lastUser.content).match(/\((tsk_[^)]+)\)/) || [])[1] || "" } }] });
+              return sseOpenAi(res, { text: "✅ Ready to ship — totals now respect quantities." });
+            }
+            if (toolRounds === 0) return sseOpenAi(res, { text: "Let me look at the hive.", calls: [{ name: "hive_overview", input: {} }] });
+            if (toolRounds === 1) {
+              const ov = JSON.parse(msgs.filter((m) => m.role === "tool").pop().content);
+              const proj = ov.projects.find((x) => x.repo && !x.onMachine) || ov.projects[0];
+              return sseOpenAi(res, { text: "Starting a session.", calls: [{ name: "start_session", input: { projectId: proj.id, title: "Cart quantities", prompt: "Make cart totals multiply price by qty (default 1). Acceptance: totals respect qty; tests pass.", agents: ["auto"] } }] });
+            }
+            return sseOpenAi(res, { text: "Started **Cart quantities** — I'll review it when it finishes." });
+          }
+          if (/dispatcher of a team/.test(msgs[0]?.content || ""))
+            return sseOpenAi(res, {
+              text: JSON.stringify({
+                summary: "Quantities in the cart, with tests and docs",
+                review: true,
+                parts: [
+                  { id: "p1", title: "Map the cart code", kind: "reading", size: "s", files: ["src/cart.js"], dependsOn: [], prompt: "Read src/cart.js and summarise how totals are computed." },
+                  { id: "p2", title: "Add quantity support", kind: "coding", size: "m", files: ["src/cart.js"], dependsOn: ["p1"], prompt: "Make totals multiply price by qty (default 1)." },
+                  { id: "p3", title: "Document it", kind: "writing", size: "s", files: ["README.md"], dependsOn: ["p1"], prompt: "Add a short README note about quantities." },
+                ],
+              }),
+            });
           return sseOpenAi(res, { reasoning: "The user wants an overview of the repo. I'll summarise the two modules.", text: REPLY });
         }
         // ── GitHub ──
         if ((p.startsWith("/user") || p.startsWith("/repos")) && req.headers.authorization !== `Bearer ${GH_TOKEN}`) return json(401, { message: "Bad credentials" });
         if (p === "/user") return json(200, { login: "octo" });
-        if (p === "/user/repos" && req.method === "GET") return json(200, [{ name: "demo-shop", full_name: "octo/demo-shop", owner: { login: "octo" }, default_branch: "main", private: false, description: "Demo shop", pushed_at: new Date().toISOString() }]);
+        if (p === "/user/repos" && req.method === "GET")
+          return json(200, [
+            { name: "demo-shop", full_name: "octo/demo-shop", owner: { login: "octo" }, default_branch: "main", private: false, description: "Demo shop", pushed_at: new Date().toISOString(), permissions: { push: true } },
+            { name: "notes-app", full_name: "octo/notes-app", owner: { login: "octo" }, default_branch: "main", private: true, description: "A notes app", language: "TypeScript", pushed_at: new Date(Date.now() - 86400000).toISOString(), permissions: { push: true } },
+          ]);
+        // A second repository, only ever opened from "Your GitHub" / the Copilot.
+        if (p === "/repos/octo/notes-app") return json(200, { name: "notes-app", owner: { login: "octo" }, default_branch: "main", description: "A notes app", private: true, permissions: { push: true } });
+        if (p.startsWith("/repos/octo/notes-app/commits/")) return json(200, { sha: "d".repeat(40), commit: { tree: { sha: "9".repeat(40) } } });
+        if (p.startsWith("/repos/octo/notes-app/git/trees/")) return json(200, { truncated: false, tree: [{ path: "README.md", type: "blob" }, { path: "package.json", type: "blob" }, { path: "src/app.ts", type: "blob" }] });
+        if (p.startsWith("/repos/octo/notes-app/contents/")) {
+          res.writeHead(200, { "Content-Type": "text/plain" });
+          return res.end(p.endsWith("package.json") ? '{"name":"notes-app","scripts":{"dev":"vite","test":"vitest"}}' : "# Notes app\nA tiny notes app built with Vite and TypeScript.");
+        }
         if (p === "/user/repos" && req.method === "POST") {
           const name = JSON.parse(body).name;
           created.add(name);
@@ -164,6 +213,12 @@ function startMock() {
           if (m[2].startsWith("/commits/")) return json(200, { sha: "f".repeat(40), commit: { tree: { sha: "e".repeat(40) } } });
           if (m[2].startsWith("/contents/")) return json(201, { content: {} });
           if (m[2].startsWith("/git/trees/")) return json(200, { truncated: false, tree: [{ path: "README.md", type: "blob", mode: "100644", size: 10 }] });
+          // Folder uploads: blobs, one tree, one commit, move the branch.
+          if (m[2] === "/git/blobs") return json(201, { sha: require("crypto").createHash("sha1").update(body).digest("hex") });
+          if (m[2] === "/git/ref/heads/main") return json(200, { object: { sha: "f".repeat(40) } });
+          if (m[2] === "/git/trees") return json(201, { sha: "7".repeat(40) });
+          if (m[2] === "/git/commits") return json(201, { sha: "8".repeat(40) });
+          if (m[2] === "/git/refs/heads/main" && req.method === "PATCH") return json(200, { object: { sha: JSON.parse(body).sha } });
           if (m[2].startsWith("/tarball/")) {
             res.writeHead(200, { "Content-Type": "application/gzip" });
             return res.end(tarGz({ [`octo-${m[1]}-ffff/README.md`]: `# ${m[1]}\n` }));
@@ -196,7 +251,7 @@ async function main() {
   const base = `http://localhost:${PORT}`;
   const proc = spawn(process.execPath, ["src/server.js"], {
     cwd: path.join(__dirname, ".."),
-    env: { ...process.env, PORT: String(PORT), NODE_ENV: "development", DB_PATH: dbPath, DISABLE_PUPPETEER: "1", DISABLE_SCRAPER: "1", OWNER_USERNAME: OWNER, HIVE_GITHUB_API: mock.url, HIVE_DEMO: "1" },
+    env: { ...process.env, PORT: String(PORT), NODE_ENV: "development", DB_PATH: dbPath, DISABLE_PUPPETEER: "1", DISABLE_SCRAPER: "1", OWNER_USERNAME: OWNER, HIVE_GITHUB_API: mock.url, HIVE_ANTHROPIC_API: mock.url, HIVE_DEMO: "1" },
     stdio: ["ignore", "pipe", "pipe"],
   });
   let log = "";

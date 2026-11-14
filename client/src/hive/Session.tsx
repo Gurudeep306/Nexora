@@ -55,6 +55,8 @@ import { BoardView } from './BoardView'
 import { ChangesView } from './ChangesView'
 import { FilesView } from './FilesView'
 import { LiveCode } from './LiveCode'
+import { FloorFeed, TeamFloor } from './TeamFloor'
+import { WorkMap } from './WorkMap'
 import { useHive } from './store'
 import type { AgentRow, AgentSpec, Checkpoint, Check as CheckRun, HiveEvent, PrInfo } from './types'
 import { MODE_INFO, ProviderGlyph, StatusPill, UserDot, duration, fmtCost, fmtTokens, statusColor, timeAgo } from './ui'
@@ -79,6 +81,19 @@ export function Session() {
   const [changeCount, setChangeCount] = useState(0)
   const [cps, setCps] = useState<Checkpoint[]>([])
   const [showReads, setShowReads] = useState(true)
+  // The team floor (stations) or the detailed stream of every step.
+  const [view, setView] = useState<'floor' | 'map' | 'stream'>(() => {
+    const v = localStorage.getItem('hive:sessionView')
+    return v === 'stream' || v === 'map' ? v : 'floor'
+  })
+  const pickView = (v: 'floor' | 'map' | 'stream') => {
+    setView(v)
+    try {
+      localStorage.setItem('hive:sessionView', v)
+    } catch {
+      /* ignore */
+    }
+  }
   // Phones: the roster and the panel open as full-screen sheets.
   const [sheet, setSheet] = useState<null | 'agents' | 'dock'>(null)
   const small = () => typeof window !== 'undefined' && window.innerWidth < 768
@@ -244,6 +259,14 @@ export function Session() {
         {/* Stream */}
         <section className="flex min-w-0 flex-1 flex-col">
           <div className="flex items-center gap-2 border-b hive-line px-4 py-1.5">
+            <div className="relative flex shrink-0 rounded-full bg-text-primary/[0.06] p-0.5" role="tablist" aria-label="Session view">
+              {(['floor', 'map', 'stream'] as const).map((v) => (
+                <button key={v} type="button" role="tab" aria-selected={view === v} onClick={() => pickView(v)} className={cn('relative h-6 rounded-full px-2.5 text-[11.5px] font-medium transition-colors', view === v ? 'text-text-primary' : 'text-text-muted hover:text-text-secondary')}>
+                  {view === v && <motion.span layoutId="hive-view-pill" className="absolute inset-0 rounded-full bg-bg-surface shadow-sm" transition={{ type: 'spring', stiffness: 500, damping: 38 }} />}
+                  <span className="relative">{v === 'floor' ? 'Team' : v === 'map' ? 'Work map' : 'Every step'}</span>
+                </button>
+              ))}
+            </div>
             <button type="button" onClick={() => setSheet('agents')} className="inline-flex h-7 shrink-0 items-center gap-1 rounded-full bg-text-primary/[0.07] px-2.5 text-[12px] lg:hidden">
               <Users className="size-3.5" /> {agents.length}
             </button>
@@ -263,7 +286,20 @@ export function Session() {
               </button>
             </Tooltip>
           </div>
-          <Stream events={events} agents={agents} focus={focus} showReads={showReads} task={task} cps={cps} />
+          {view === 'floor' ? (
+            <div className="hive-scroll min-h-0 flex-1 overflow-y-auto">
+              <TeamFloor task={task} agents={agents} events={events} focus={focus} onFocus={(id) => (setFocus(id), pickView('stream'))} />
+              <div className="px-4 pb-10 sm:px-6">
+                <FloorFeed events={events} agents={agents} />
+              </div>
+            </div>
+          ) : view === 'map' ? (
+            <div className="hive-scroll min-h-0 flex-1 overflow-y-auto">
+              <WorkMap agents={agents} events={events} onFocus={(id) => (setFocus(id), pickView('stream'))} />
+            </div>
+          ) : (
+            <Stream events={events} agents={agents} focus={focus} showReads={showReads} task={task} cps={cps} />
+          )}
           <Timeline agents={agents} events={events} cps={cps} onCheckpoint={() => (setDock('checkpoints'), setDockOpen(true))} start={task.created_at} />
           <CommandBar taskId={task.id} agents={agents} focus={focus} hasMachine={!!task.machine_id} onOpen={(t) => (setDock(t), setDockOpen(true))} />
         </section>
@@ -846,7 +882,7 @@ function ApprovalLine({ ev }: { ev: HiveEvent }) {
       <pre className="hive-term mt-2 overflow-auto rounded-lg px-3 py-2">$ {String(ev.data.command)}</pre>
       {pending && (
         <div className="mt-2 flex gap-2">
-          <button type="button" onClick={() => answerApproval(pending.id, true)} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-state-success px-3 text-[12.5px] font-medium text-white">
+          <button type="button" onClick={() => answerApproval(pending.id, true)} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-state-success px-3 text-[12.5px] font-medium text-on-accent-brand">
             <Check className="size-3.5" /> Run it
           </button>
           <button type="button" onClick={() => answerApproval(pending.id, false)} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-text-primary/[0.07] px-3 text-[12.5px] font-medium hover:text-state-error">
@@ -1236,7 +1272,7 @@ function ShipPanel() {
         {steps.map((s, i) => (
           <Fragment key={s.label}>
             <li className="flex flex-col items-center gap-1 text-center">
-              <span className={cn('grid size-7 place-items-center rounded-full text-[11px] font-semibold', s.done ? 'bg-state-success text-white' : s.fail ? 'bg-state-error text-white' : s.pending ? 'bg-state-warning/20 text-state-warning' : 'bg-text-primary/[0.07] text-text-muted')}>
+              <span className={cn('grid size-7 place-items-center rounded-full text-[11px] font-semibold', s.done ? 'bg-state-success text-on-accent-brand' : s.fail ? 'bg-state-error text-white' : s.pending ? 'bg-state-warning/20 text-state-warning' : 'bg-text-primary/[0.07] text-text-muted')}>
                 {s.done ? <Check className="size-3.5" /> : s.fail ? <X className="size-3.5" /> : s.pending ? <Loader2 className="size-3.5 animate-spin" /> : i + 1}
               </span>
               <span className="w-16 text-[10.5px] leading-tight text-text-muted">{s.label}</span>

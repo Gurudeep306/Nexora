@@ -256,6 +256,194 @@ const SCHEMA = [
     created_at INTEGER NOT NULL
   )`,
   "CREATE INDEX IF NOT EXISTS idx_hive_checkpoints_task ON hive_checkpoints(task_id, created_at)",
+  // Measured performance: how each model actually does on this team's work.
+  `CREATE TABLE IF NOT EXISTS hive_model_stats (
+    vendor TEXT NOT NULL,
+    model TEXT NOT NULL,
+    kind TEXT NOT NULL,
+    runs INTEGER NOT NULL DEFAULT 0,
+    ok INTEGER NOT NULL DEFAULT 0,
+    failed INTEGER NOT NULL DEFAULT 0,
+    accepted INTEGER NOT NULL DEFAULT 0,
+    rejected INTEGER NOT NULL DEFAULT 0,
+    tokens INTEGER NOT NULL DEFAULT 0,
+    steps INTEGER NOT NULL DEFAULT 0,
+    ms INTEGER NOT NULL DEFAULT 0,
+    updated_at INTEGER NOT NULL,
+    PRIMARY KEY (vendor, model, kind)
+  )`,
+  // Detailed usage (per project / vendor / model / user) for budgets and reports.
+  `CREATE TABLE IF NOT EXISTS hive_usage_detail (
+    day TEXT NOT NULL,
+    project_id TEXT NOT NULL DEFAULT '',
+    vendor TEXT NOT NULL,
+    model TEXT NOT NULL DEFAULT '',
+    username TEXT NOT NULL,
+    input_tokens INTEGER NOT NULL DEFAULT 0,
+    output_tokens INTEGER NOT NULL DEFAULT 0,
+    cached_tokens INTEGER NOT NULL DEFAULT 0,
+    requests INTEGER NOT NULL DEFAULT 0,
+    cost_micros INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (day, project_id, vendor, model, username)
+  )`,
+  // Spending caps: per project, provider, model or person, per day or month.
+  `CREATE TABLE IF NOT EXISTS hive_caps (
+    id TEXT PRIMARY KEY,
+    scope_type TEXT NOT NULL,
+    scope TEXT NOT NULL,
+    tokens INTEGER,
+    dollars REAL,
+    period TEXT NOT NULL DEFAULT 'month',
+    action TEXT NOT NULL DEFAULT 'block',
+    created_by TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS hive_alerts (
+    id TEXT PRIMARY KEY,
+    kind TEXT NOT NULL,
+    level TEXT NOT NULL DEFAULT 'info',
+    title TEXT NOT NULL,
+    body TEXT NOT NULL DEFAULT '',
+    ref TEXT,
+    read INTEGER NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL
+  )`,
+  "CREATE INDEX IF NOT EXISTS idx_hive_alerts ON hive_alerts(created_at)",
+  // Connected tools from the ecosystem: remote MCP servers and search engines.
+  `CREATE TABLE IF NOT EXISTS hive_integrations (
+    id TEXT PRIMARY KEY,
+    kind TEXT NOT NULL,
+    tool_id TEXT,
+    name TEXT NOT NULL,
+    url TEXT,
+    engine TEXT,
+    secret_enc TEXT,
+    enabled INTEGER NOT NULL DEFAULT 1,
+    tools_json TEXT NOT NULL DEFAULT '[]',
+    status TEXT,
+    error TEXT,
+    checked_at INTEGER,
+    created_by TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  )`,
+  // Hive Copilot: one thread per person, sessions it watches, and its brain.
+  `CREATE TABLE IF NOT EXISTS hive_copilot_msgs (
+    id TEXT PRIMARY KEY,
+    username TEXT NOT NULL,
+    role TEXT NOT NULL,
+    content TEXT NOT NULL DEFAULT '',
+    tools_json TEXT,
+    provider TEXT,
+    model TEXT,
+    error TEXT,
+    auto INTEGER NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL
+  )`,
+  "CREATE INDEX IF NOT EXISTS idx_hive_copilot_msgs ON hive_copilot_msgs(username, created_at)",
+  `CREATE TABLE IF NOT EXISTS hive_copilot_watch (
+    task_id TEXT PRIMARY KEY,
+    username TEXT NOT NULL,
+    done INTEGER NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS hive_copilot_merge (
+    task_id TEXT PRIMARY KEY,
+    username TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS hive_copilot_settings (
+    username TEXT PRIMARY KEY,
+    brain TEXT NOT NULL DEFAULT 'auto',
+    model TEXT NOT NULL DEFAULT '',
+    updated_at INTEGER NOT NULL
+  )`,
+  // The Dispatcher: a request split into parts, each assigned to the cheapest capable model.
+  `CREATE TABLE IF NOT EXISTS hive_dispatches (
+    id TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL,
+    task_id TEXT,
+    request TEXT NOT NULL,
+    status TEXT NOT NULL,
+    plan_json TEXT,
+    progress_json TEXT,
+    error TEXT,
+    created_by TEXT NOT NULL,
+    started_by TEXT,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  )`,
+  "CREATE INDEX IF NOT EXISTS idx_hive_dispatches ON hive_dispatches(project_id, created_at)",
+  // Agent health: a circuit breaker per (key, model); model '' = the whole key.
+  `CREATE TABLE IF NOT EXISTS hive_health (
+    key_id TEXT NOT NULL,
+    model TEXT NOT NULL DEFAULT '',
+    ok_count INTEGER NOT NULL DEFAULT 0,
+    fail_count INTEGER NOT NULL DEFAULT 0,
+    consecutive_fails INTEGER NOT NULL DEFAULT 0,
+    last_ok INTEGER,
+    last_fail INTEGER,
+    last_error TEXT,
+    last_kind TEXT,
+    latency_ms INTEGER,
+    cooldown_until INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (key_id, model)
+  )`,
+  // Things each person wants every chat to know about them.
+  `CREATE TABLE IF NOT EXISTS hive_user_memory (
+    id TEXT PRIMARY KEY,
+    username TEXT NOT NULL,
+    fact TEXT NOT NULL,
+    source TEXT NOT NULL DEFAULT 'user',
+    created_at INTEGER NOT NULL
+  )`,
+  "CREATE INDEX IF NOT EXISTS idx_hive_user_memory ON hive_user_memory(username, created_at)",
+  // Automations: recurring tasks and autopilots.
+  `CREATE TABLE IF NOT EXISTS hive_schedules (
+    id TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    prompt TEXT NOT NULL,
+    every TEXT NOT NULL DEFAULT 'daily',
+    hour INTEGER NOT NULL DEFAULT 2,
+    weekday INTEGER NOT NULL DEFAULT 1,
+    agents_json TEXT NOT NULL DEFAULT '[]',
+    mode TEXT NOT NULL DEFAULT 'solo',
+    enabled INTEGER NOT NULL DEFAULT 1,
+    template TEXT,
+    last_run INTEGER,
+    last_task TEXT,
+    next_run INTEGER,
+    created_by TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  )`,
+  // Pipelines: a chain of stages, each with its own agents (or a race judged
+  // by another model), review gates that loop back to fixing, and shipping.
+  `CREATE TABLE IF NOT EXISTS hive_pipelines (
+    id TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    stages_json TEXT NOT NULL DEFAULT '[]',
+    created_by TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS hive_pipeline_runs (
+    id TEXT PRIMARY KEY,
+    pipeline_id TEXT NOT NULL,
+    project_id TEXT NOT NULL,
+    task_id TEXT,
+    request TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'queued',
+    stage_index INTEGER NOT NULL DEFAULT 0,
+    loops INTEGER NOT NULL DEFAULT 0,
+    log_json TEXT NOT NULL DEFAULT '[]',
+    error TEXT,
+    started_by TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  )`,
+  "CREATE INDEX IF NOT EXISTS idx_hive_pipeline_runs ON hive_pipeline_runs(project_id, created_at)",
   // Machines: computers/servers running the Hive bridge (local folders, commands).
   `CREATE TABLE IF NOT EXISTS hive_machines (
     id TEXT PRIMARY KEY,
@@ -289,6 +477,31 @@ const COLUMNS = [
   ["hive_projects", "machine_id TEXT"],
   ["hive_projects", "folder TEXT"],
   ["hive_projects", "site_url TEXT"],
+  // v4: subscription agents, free tiers, routing, sandboxes, measured performance.
+  ["hive_keys", "machine_id TEXT"],
+  ["hive_keys", "free_tier INTEGER NOT NULL DEFAULT 0"],
+  ["hive_agents", "routed_kind TEXT"],
+  ["hive_agents", "route_note TEXT"],
+  ["hive_agents", "escalations INTEGER NOT NULL DEFAULT 0"],
+  ["hive_agents", "cli_session TEXT"],
+  ["hive_tasks", "kind TEXT"],
+  ["hive_tasks", "worktree TEXT"],
+  ["hive_tasks", "schedule_id TEXT"],
+  ["hive_projects", "isolate INTEGER NOT NULL DEFAULT 1"],
+  ["hive_convo_msgs", "rating INTEGER"],
+  ["hive_convo_msgs", "tools_json TEXT"],
+  ["hive_convos", "tools INTEGER NOT NULL DEFAULT 1"],
+  ["hive_convos", "summary_json TEXT"],
+  ["hive_keys", "blocked_models TEXT"],
+  ["hive_keys", "verified_json TEXT"],
+  ["hive_copilot_settings", "autonomy TEXT NOT NULL DEFAULT 'autopilot'"],
+  ["hive_copilot_settings", "can_merge INTEGER NOT NULL DEFAULT 0"],
+  ["hive_copilot_settings", "admin INTEGER NOT NULL DEFAULT 0"],
+  ["hive_copilot_settings", "save_tokens INTEGER NOT NULL DEFAULT 1"],
+  ["hive_copilot_settings", "claude_only TEXT"],
+  ["hive_copilot_settings", "brain_key TEXT"],
+  ["hive_tasks", "pipeline_run TEXT"],
+  ["hive_schedules", "pipeline_id TEXT"],
 ];
 
 let ready = null;

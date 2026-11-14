@@ -80,6 +80,18 @@ function str(v, name, { max = 200, min = 1, optional = false } = {}) {
 
 function cleanSpec(s) {
   if (!s || typeof s !== "object") throw new BadInput("Each agent needs a provider and model");
+  // "auto": the smart router picks the best model for the kind of work.
+  if (s.provider === "auto") {
+    return {
+      provider: "auto",
+      keyId: "auto",
+      kind: typeof s.kind === "string" ? s.kind.slice(0, 20) : undefined,
+      freeOnly: !!s.freeOnly,
+      preference: ["balanced", "quality", "savings", "fast"].includes(s.preference) ? s.preference : undefined,
+      effort: EFFORTS.has(s.effort) ? s.effort : null,
+      name: str(s.name, "agent name", { max: 40, optional: true }),
+    };
+  }
   providerOf(s.provider);
   return {
     provider: s.provider,
@@ -196,6 +208,14 @@ function createHiveRouter() {
   );
 
   /* ── provider keys ───────────────────────────────────────────────── */
+  // A new key's models are tested in the background, so only the ones that answer are offered.
+  function autoVerify(id) {
+    if (process.env.NODE_ENV === "test" && process.env.HIVE_TEST_VERIFY !== "1") return;
+    require("../hive/health")
+      .verifyKey(id)
+      .then(() => hub.emit("keys", { verified: id }))
+      .catch((e) => console.error("[hive verify]", e.message));
+  }
   router.post(
     "/api/hive/keys",
     h(async (req, res) => {
@@ -205,7 +225,8 @@ function createHiveRouter() {
         await audit(req, "hive.key.create", id, { provider: b.provider, label: b.label });
         const check = await keys.checkKey(id);
         hub.emit("keys", { by: req.hiveUser });
-        res.json({ ok: true, id, check });
+        if (check.ok) autoVerify(id);
+        res.json({ ok: true, id, check, verifying: check.ok });
       } catch (e) {
         throw e.status ? e : new BadInput(e.message);
       }
@@ -229,7 +250,7 @@ function createHiveRouter() {
         throw e.status ? e : new BadInput(e.message);
       }
       await audit(req, "hive.key.update", req.params.id, { fields: Object.keys(req.body || {}).filter((k) => k !== "apiKey") });
-      if (req.body?.apiKey) await keys.checkKey(req.params.id);
+      if (req.body?.apiKey && (await keys.checkKey(req.params.id)).ok) autoVerify(req.params.id);
       hub.emit("keys", { by: req.hiveUser });
       res.json({ ok: true });
     }),
@@ -243,6 +264,27 @@ function createHiveRouter() {
       await audit(req, "hive.key.delete", row.id, { label: row.label, provider: row.provider });
       hub.emit("keys", { by: req.hiveUser });
       res.json({ ok: true });
+    }),
+  );
+
+  // "Never offer me this model again" — it stays off the key until someone re-tests it.
+  router.post(
+    "/api/hive/keys/:id/hide-model",
+    h(async (req, res) => {
+      const model = String(req.body?.model || "").slice(0, 300);
+      if (!model) throw new BadInput("Which model?");
+      const row = await keys.keyRow(req.params.id);
+      if (!row) throw new BadInput("Key not found", 404);
+      const next = await keys.blockModel(row.id, model);
+      const v = JSON.parse(row.verified_json || "null");
+      if (v?.ok?.includes(model)) {
+        v.ok = v.ok.filter((m) => m !== model);
+        v.failed = { ...(v.failed || {}), [model]: "Hidden by " + req.hiveUser };
+        await keys.saveVerified(row.id, v);
+      }
+      await audit(req, "hive.key.hide_model", row.id, { model });
+      hub.emit("keys", { by: req.hiveUser });
+      res.json({ ok: true, defaultModel: next });
     }),
   );
 
@@ -302,6 +344,7 @@ function createHiveRouter() {
         now(),
       ]);
       await audit(req, "hive.github.create", id, { login: me.login });
+      require("../hive/repos").clearCache();
       hub.emit("github", { by: req.hiveUser });
       res.json({ ok: true, id, login: me.login });
     }),
@@ -313,8 +356,15 @@ function createHiveRouter() {
       const row = await get("SELECT * FROM hive_github WHERE id=?", [req.params.id]);
       if (!row) throw new BadInput("Not found", 404);
       if (row.created_by !== req.hiveUser && !isAdmin(req)) throw new BadInput("Only the person who added it, or an admin, can remove it", 403);
+      // Projects on this connection move to another connection that can reach their repo.
+      const repos = require("../hive/repos");
+      const { repos: list } = await repos.allRepos({ force: true });
+      for (const p of await all("SELECT id, repo_owner, repo_name FROM hive_projects WHERE github_id=?", [row.id])) {
+        const r = list.find((x) => x.fullName.toLowerCase() === `${p.repo_owner}/${p.repo_name}`.toLowerCase() && x.githubId !== row.id);
+        if (r) await run("UPDATE hive_projects SET github_id=?, updated_at=? WHERE id=?", [r.githubId, now(), p.id]);
+      }
       const used = await get("SELECT COUNT(*) AS n FROM hive_projects WHERE github_id=?", [row.id]);
-      if (Number(used?.n) > 0) throw new BadInput("Projects still use this connection — remove or move them first", 409);
+      if (Number(used?.n) > 0) throw new BadInput("Some projects' repos can only be reached through this connection — connect another GitHub account that can see them first", 409);
       await run("DELETE FROM hive_github WHERE id=?", [row.id]);
       await audit(req, "hive.github.delete", row.id, { login: row.login });
       hub.emit("github", { by: req.hiveUser });
@@ -385,6 +435,8 @@ function createHiveRouter() {
       );
       if (b.machineId || b.ideaId) await run("UPDATE hive_projects SET machine_id=?, folder=?, idea_id=? WHERE id=?", [b.machineId || null, b.machineId ? String(b.folder || "").slice(0, 500) || null : null, b.ideaId || null, id]);
       await audit(req, "hive.project.create", id, { repo: `${info.owner.login}/${info.name}` });
+      // No instructions given: Hive writes a project brief from the repo for every agent.
+      if (!b.instructions && process.env.NODE_ENV !== "test") require("../hive/repos").writeBrief(id).catch(() => {});
       const p = await projectRow(id);
       hub.emit("project", p);
       res.json({ ok: true, project: p });
@@ -483,18 +535,22 @@ function createHiveRouter() {
   router.post(
     "/api/hive/projects/:id/tasks",
     h(async (req, res) => {
-      const p = await projectRow(req.params.id);
+      let p = await projectRow(req.params.id);
       const b = req.body || {};
       const prompt = str(b.prompt, "prompt", { max: 30000 });
       const mode = MODES.has(b.mode) ? b.mode : "solo";
       const specs = (Array.isArray(b.agents) ? b.agents : []).slice(0, 8).map(cleanSpec);
       const lead = b.lead ? cleanSpec(b.lead) : null;
+      // Machine agents (Claude Code, Codex, Vibe) with no machine chosen: copy the repo onto their machine.
+      if (!b.machineId && !b.repoId) {
+        try {
+          p = (await require("../hive/repos").ensureOnMachine(p.id, [...specs, ...(lead ? [lead] : [])].map((s) => s.provider))) || p;
+        } catch (e) {
+          throw new BadInput(e.message);
+        }
+      }
       if (!specs.length && !lead) throw new BadInput("Pick at least one agent");
       if ((mode === "compare" || mode === "review") && !specs.length) throw new BadInput("Pick the agents to run");
-      // Fail fast if a spec can't get a key (no budget / no key for provider).
-      for (const s of [...specs, ...(lead ? [lead] : [])]) await runner.resolveSpec(s).catch((e) => {
-        throw new BadInput(e.message);
-      });
       // Where the work happens: a linked repo of the project, and optionally a
       // folder on a connected machine (real files + commands).
       const repoId = typeof b.repoId === "string" && b.repoId ? b.repoId : null;
@@ -507,6 +563,10 @@ function createHiveRouter() {
         if (!folder) throw new BadInput("Pick a folder on the machine");
         if (!machines.isOnline(machineId)) throw new BadInput("That machine is offline — start the Hive bridge on it", 409);
       } else if (!target.github_id) throw new BadInput("This project has no repository — pick a machine folder to work in");
+      // Fail fast if a spec can't get a model (no key, no budget, wrong machine).
+      for (const s of [...specs, ...(lead ? [lead] : [])]) await runner.resolveSpec(s, { prompt, machineId }).catch((e) => {
+        throw new BadInput(e.message);
+      });
       const baseRef = str(b.baseRef, "base branch", { max: 120, optional: true }) || target.default_branch || "main";
       let base = { sha: "local" };
       if (!machineId) {
@@ -526,6 +586,7 @@ function createHiveRouter() {
         [id, p.id, title, prompt, mode, "queued", baseRef, base.sha, `hive/${slug(title)}-${id.slice(-4)}`, req.hiveUser, t, t],
       );
       if (repoId || machineId) await run("UPDATE hive_tasks SET repo_id=?, machine_id=?, folder=? WHERE id=?", [repoId, machineId, folder, id]);
+      if (machineId && b.isolate !== false) await router.hiveIsolate?.(id);
       const fileIds = (Array.isArray(b.attachments) ? b.attachments : []).map(String).slice(0, 12);
       const budget = Number(b.budgetTokens) > 0 ? Math.round(Number(b.budgetTokens)) : null;
       if (fileIds.length || budget) await run("UPDATE hive_tasks SET attachments_json=?, budget_tokens=? WHERE id=?", [JSON.stringify(fileIds), budget, id]);
@@ -692,7 +753,7 @@ function createHiveRouter() {
       const task = await taskRow(req.params.id);
       const prompt = str(req.body?.prompt, "message", { max: 20000 });
       const spec = cleanSpec(req.body?.agent);
-      await runner.resolveSpec(spec).catch((e) => {
+      await runner.resolveSpec(spec, { prompt, machineId: task.machine_id || null }).catch((e) => {
         throw new BadInput(e.message);
       });
       const variant = typeof req.body?.variant === "string" && req.body.variant ? req.body.variant : "main";
@@ -763,7 +824,7 @@ function createHiveRouter() {
       const instructions = str(b.instructions, "instructions", { max: 20000 });
       const specs = (Array.isArray(b.agents) ? b.agents : []).slice(0, 8).map(cleanSpec);
       if (!specs.length) throw new BadInput("Pick at least one agent");
-      for (const sp of specs) await runner.resolveSpec(sp).catch((e) => {
+      for (const sp of specs) await runner.resolveSpec(sp, { prompt: instructions, machineId: task.machine_id || null }).catch((e) => {
         throw new BadInput(e.message);
       });
       const agents = await runner.assign(task.id, { title: str(b.title, "title", { max: 120, optional: true }), instructions, specs, together: b.together !== false, username: req.hiveUser });
@@ -775,7 +836,8 @@ function createHiveRouter() {
     "/api/hive/agents/:id/handoff",
     h(async (req, res) => {
       const spec = cleanSpec(req.body?.agent);
-      await runner.resolveSpec(spec).catch((e) => {
+      const old = await get("SELECT a.instructions, t.machine_id FROM hive_agents a JOIN hive_tasks t ON t.id=a.task_id WHERE a.id=?", [req.params.id]);
+      await runner.resolveSpec(spec, { prompt: old?.instructions || "", machineId: old?.machine_id || null }).catch((e) => {
         throw new BadInput(e.message);
       });
       const agent = await runner.handoffAgent(req.params.id, { spec, username: req.hiveUser });
@@ -949,6 +1011,14 @@ function createHiveRouter() {
       res.json({ ok: true, convo: await chat.createConvo(req.hiveUser, { title: str(b.title, "title", { max: 120, optional: true }), projectId: b.projectId, system: typeof b.system === "string" ? b.system.slice(0, 8000) : "" }) });
     }),
   );
+  // A project's own chat: the latest one about it, or a new one (?new=1).
+  router.post(
+    "/api/hive/projects/:id/chat",
+    h(async (req, res) => {
+      const p = await projectRow(req.params.id);
+      res.json({ ok: true, convo: await chat.projectChat(req.hiveUser, p.id, { fresh: !!req.body?.fresh }) });
+    }),
+  );
   router.get(
     "/api/hive/convos/:id",
     h(async (req, res) => {
@@ -960,7 +1030,7 @@ function createHiveRouter() {
     "/api/hive/convos/:id",
     h(async (req, res) => {
       const c = await chat.convoFor(req.params.id, req.hiveUser);
-      if (c.owner !== req.hiveUser) throw new BadInput("Only its owner can change this chat", 403);
+      if (c.owner !== req.hiveUser && !isAdmin(req)) throw new BadInput("Only its owner or an admin can rename this chat", 403);
       const b = req.body || {};
       await run("UPDATE hive_convos SET title=?, shared=?, system=?, updated_at=? WHERE id=?", [
         str(b.title, "title", { max: 120, optional: true }) ?? c.title,
@@ -993,7 +1063,7 @@ function createHiveRouter() {
       if (!text.trim() && !(Array.isArray(b.refs) && b.refs.length)) throw new BadInput("Write a message or attach a file");
       const mode = b.mode === "image" ? "image" : "text";
       if (!b.stream) {
-        const r = await chat.send(req.params.id, { text, refs: b.refs, spec, specs, mode, username: req.hiveUser });
+        const r = await chat.send(req.params.id, { text, refs: b.refs, spec, specs, mode, username: req.hiveUser, focusProjectId: typeof b.focusProjectId === "string" ? b.focusProjectId.slice(0, 80) : null });
         return res.json({ ok: true, user: r.user, replyId: r.replyId });
       }
       // Stream the reply on this response (NDJSON, one event per line). The
@@ -1011,7 +1081,7 @@ function createHiveRouter() {
       };
       const ping = setInterval(() => write("ping", {}), 15000);
       try {
-        const r = await chat.send(req.params.id, { text, refs: b.refs, spec, specs, mode, username: req.hiveUser, sink: write });
+        const r = await chat.send(req.params.id, { text, refs: b.refs, spec, specs, mode, username: req.hiveUser, focusProjectId: typeof b.focusProjectId === "string" ? b.focusProjectId.slice(0, 80) : null, sink: write });
         await r.done;
       } catch (e) {
         write("error", { error: e.message || "Something went wrong" });
@@ -1064,6 +1134,8 @@ function createHiveRouter() {
 
   // Machines, approvals, ship pipeline, launchpad, linked repos, terminal.
   require("./hive-ops").mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRow, BadInput, cleanSpec, COLORS, ready });
+  // Routing, subscription agents, budgets, Drive, Judge, pipelines, automations, guide.
+  require("./hive-v4").mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRow, BadInput, ready });
 
   return router;
 }

@@ -6064,10 +6064,8 @@ attachHive(io, {
     if (!verdict.ok || !hasAnyAdminPerm(verdict.access)) return null;
     return user.username;
   },
-  canSeeConvo: async (id, username) => {
-    const c = await get("SELECT owner, shared FROM hive_convos WHERE id=?", [id]);
-    return !!c && (c.owner === username || !!c.shared);
-  },
+  // Hive is one shared staff workspace: every staff member can follow every chat.
+  canSeeConvo: async (id) => !!(await get("SELECT id FROM hive_convos WHERE id=?", [id])),
 });
 
 /** Payloads come straight from the client — never destructure null. */

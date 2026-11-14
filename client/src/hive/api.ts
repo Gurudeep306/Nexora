@@ -1,6 +1,6 @@
 import { api } from '@/lib/api'
 import { API_BASE } from '@/lib/api'
-import type { Checkpoint, GithubReport } from './types'
+import type { ArchitectReply, Cap, CatalogInfo, Checkpoint, CliStatus, ConnectedModel, DriveItem, GithubReport, HiveAlert, ImproveResult, Lifecycle, MeasuredStat, Pipeline, PipelineRun, PipelineStage, PipelineTemplate, RouteResult, Schedule, ScheduleTemplate, Spend, StewardAction, StewardPlan, StewardReport, Toolbox, Verdict, HealthKey, Dispatch, CopilotMsg, CopilotBrain, CopilotSettings, CopilotWork, GhRepo } from './types'
 import type { AgentRow, AgentSpec, Approval, Bootstrap, Change, ChatMessage, Check, Convo, ConvoMsg, HiveEvent, HiveFile, Idea, LinkedRepo, LiveAgent, Machine, MarketModel, MemoryItem, Mode, Plugin, PrInfo, Project, ProjectActivity, Task } from './types'
 
 type Ok<T> = T & { ok: boolean }
@@ -23,6 +23,20 @@ export const hiveApi = {
   repos: (id: string) =>
     api.get<Ok<{ repos: { owner: string; name: string; fullName: string; private: boolean; defaultBranch: string; description: string | null; pushedAt: string }[] }>>(`/api/hive/github/${id}/repos`, { timeoutMs: 45000 }),
 
+  allRepos: (refresh = false) => api.get<Ok<{ repos: GhRepo[]; connections: number; errors: string[] }>>(`/api/hive/repos${refresh ? '?refresh=1' : ''}`, { timeoutMs: 60000 }),
+  projectChat: (projectId: string, fresh = false) => api.post<Ok<{ convo: Convo }>>(`/api/hive/projects/${projectId}/chat`, { fresh }),
+  openRepo: (repo: string) => api.post<Ok<{ project: Project; created: boolean }>>('/api/hive/repos/open', { repo }, { timeoutMs: 45000 }),
+  importStart: (body: { name: string; private?: boolean; githubId?: string }) => api.post<Ok<{ id: string; repo: string; private: boolean; maxFile: number }>>('/api/hive/import/start', body, { timeoutMs: 60000 }),
+  importFiles: (id: string, files: { file: File; path: string }[]) => {
+    const fd = new FormData()
+    for (const f of files) {
+      fd.append('files', f.file, f.file.name)
+      fd.append('paths', f.path)
+    }
+    return api.post<Ok<{ files: { path: string; ok?: boolean; error?: string }[]; skipped: number; total: number }>>(`/api/hive/import/${id}/files`, fd, { timeoutMs: 600000 })
+  },
+  importFinish: (id: string) => api.post<Ok<{ project: Project; repo: string; files: number; skipped: number }>>(`/api/hive/import/${id}/finish`, {}, { timeoutMs: 300000 }),
+  writeBrief: (projectId: string) => api.post<Ok<{ instructions: string }>>(`/api/hive/projects/${projectId}/brief`, {}, { timeoutMs: 120000 }),
   createProject: (body: Record<string, unknown>) => api.post<Ok<{ project: Project }>>('/api/hive/projects', body),
   updateProject: (id: string, body: Record<string, unknown>) => api.patch<Ok<{ project: Project }>>(`/api/hive/projects/${id}`, body),
   deleteProject: (id: string) => api.delete<Ok<object>>(`/api/hive/projects/${id}`),
@@ -89,7 +103,14 @@ export const hiveApi = {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...body, stream: true }),
+      // The project in focus (top bar): chats without a project still get its context.
+      body: JSON.stringify({ ...body, stream: true, focusProjectId: (() => {
+        try {
+          return localStorage.getItem('hive:lastProject')
+        } catch {
+          return null
+        }
+      })() }),
       signal,
     })
     if (!res.ok || !res.body) {
@@ -163,4 +184,130 @@ export const hiveApi = {
 
   chat: (projectId: string) => api.get<Ok<{ messages: ChatMessage[] }>>(`/api/hive/projects/${projectId}/chat`),
   sendChat: (projectId: string, body: string, taskId?: string | null) => api.post<Ok<{ message: ChatMessage }>>(`/api/hive/projects/${projectId}/chat`, { body, taskId }),
+
+  /* ── v4 ─────────────────────────────────────────────────────────────── */
+  catalog: () => api.get<Ok<CatalogInfo>>('/api/hive/catalog'),
+  connectedModels: () => api.get<Ok<{ models: ConnectedModel[] }>>('/api/hive/models/connected'),
+  perf: () => api.get<Ok<{ stats: MeasuredStat[] }>>('/api/hive/perf'),
+  route: (body: { prompt: string; kind?: string | null; chat?: boolean; machineId?: string | null; freeOnly?: boolean; preference?: string | null }) => api.post<Ok<RouteResult>>('/api/hive/route', body),
+  improve: (body: { prompt: string; mode?: 'task' | 'chat' | 'idea'; projectId?: string | null }) => api.post<Ok<ImproveResult>>('/api/hive/improve', body, { timeoutMs: 120000 }),
+  lifecycle: (projectId: string) => api.get<Ok<Lifecycle>>(`/api/hive/projects/${projectId}/lifecycle`),
+  setIsolation: (projectId: string, isolate: boolean) => api.patch<Ok<object>>(`/api/hive/projects/${projectId}/isolation`, { isolate }),
+
+  refreshPlanUsage: (keyId?: string) => api.post<Ok<{ results: { keyId: string; windows?: Record<string, unknown>; error?: string }[] }>>('/api/hive/subscriptions/usage', keyId ? { keyId } : {}, { timeoutMs: 60000 }),
+  addSubscription: (body: { provider: 'claude_code' | 'codex' | 'vibe'; machineId: string; label?: string; token?: string; tokenLimit?: number | null; limitPeriod?: string }) =>
+    api.post<Ok<{ id: string; check: { ok: boolean; error?: string } }>>('/api/hive/subscriptions', body, { timeoutMs: 90000 }),
+  machineAgents: (id: string) => api.get<Ok<{ online: boolean; agents: { claude_code?: CliStatus; codex?: CliStatus; vibe?: CliStatus } }>>(`/api/hive/machines/${id}/agents`, { timeoutMs: 60000 }),
+
+  caps: () => api.get<Ok<{ caps: Cap[] }>>('/api/hive/caps'),
+  addCap: (body: { scopeType: Cap['scopeType']; scope?: string; tokens?: number | null; dollars?: number | null; period: Cap['period']; action: Cap['action'] }) => api.post<Ok<{ id: string }>>('/api/hive/caps', body),
+  deleteCap: (id: string) => api.delete<Ok<object>>(`/api/hive/caps/${id}`),
+  spend: (days = 30) => api.get<Ok<Spend>>('/api/hive/spend', { query: { days } }),
+  alerts: () => api.get<Ok<{ alerts: HiveAlert[]; unread: number }>>('/api/hive/alerts'),
+  readAlerts: () => api.post<Ok<object>>('/api/hive/alerts/read', {}),
+
+  myMemory: () => api.get<Ok<{ facts: { id: string; fact: string; source: string; created_at: number }[] }>>('/api/hive/me/memory'),
+  addMyMemory: (fact: string) => api.post<Ok<{ id: string }>>('/api/hive/me/memory', { fact }),
+  deleteMyMemory: (id: string) => api.delete<Ok<object>>(`/api/hive/me/memory/${id}`),
+
+  judgeChat: (convoId: string, groupId: string) => api.post<Ok<{ verdict: Verdict }>>(`/api/hive/convos/${convoId}/judge`, { groupId }, { timeoutMs: 180000 }),
+  rateMessage: (convoId: string, messageId: string, good: boolean) => api.post<Ok<object>>(`/api/hive/convos/${convoId}/rate`, { messageId, good }),
+  setConvoTools: (convoId: string, tools: boolean) => api.patch<Ok<object>>(`/api/hive/convos/${convoId}/tools`, { tools }),
+  exportConvo: (convoId: string, body: { format: 'pdf' | 'docx' | 'html' | 'md' | 'slides'; messageId?: string }) =>
+    api.post<Ok<{ file: HiveFile; drive: DriveItem | null; note: string | null }>>(`/api/hive/convos/${convoId}/export`, body, { timeoutMs: 120000 }),
+  judgeTask: (taskId: string, adopt = true) => api.post<Ok<{ verdict: Verdict }>>(`/api/hive/tasks/${taskId}/judge`, { adopt }, { timeoutMs: 240000 }),
+
+  drive: (project: string | null, folder = '/') => api.get<Ok<{ items: DriveItem[]; usage: { bytes: number; files: number; limit: number } }>>('/api/hive/drive', { query: { project: project ?? 'shared', folder } }),
+  driveTree: (project: string | null) => api.get<Ok<{ items: DriveItem[] }>>('/api/hive/drive/tree', { query: { project: project ?? 'shared' } }),
+  driveSearch: (project: string | null, q: string) => api.get<Ok<{ items: DriveItem[] }>>('/api/hive/drive/search', { query: { project: project ?? 'shared', q } }),
+  driveUpload: (project: string | null, folder: string, files: File[]) => {
+    const fd = new FormData()
+    fd.append('project', project ?? 'shared')
+    fd.append('folder', folder)
+    for (const f of files) fd.append('files', f, (f as File & { webkitRelativePath?: string }).webkitRelativePath || f.name)
+    return api.post<Ok<{ files: (DriveItem | { error: string; name: string })[] }>>('/api/hive/drive/upload', fd, { timeoutMs: 300000 })
+  },
+  driveMkdir: (project: string | null, path: string) => api.post<Ok<{ folder: DriveItem }>>('/api/hive/drive/folder', { project: project ?? 'shared', path }),
+  driveText: (project: string | null, path: string) => api.get<Ok<{ file: DriveItem; content: string }>>('/api/hive/drive/file', { query: { project: project ?? 'shared', path, as: 'text' } }),
+  driveSave: (project: string | null, path: string, content: string) => api.put<Ok<{ file: DriveItem }>>('/api/hive/drive/file', { project: project ?? 'shared', path, content }),
+  driveUrl: (project: string | null, path: string, download = false) => `${API_BASE}/api/hive/drive/file?project=${encodeURIComponent(project ?? 'shared')}&path=${encodeURIComponent(path)}${download ? '&download=1' : ''}`,
+  driveMove: (project: string | null, from: string, to: string) => api.post<Ok<{ item: DriveItem }>>('/api/hive/drive/move', { project: project ?? 'shared', from, to }),
+  driveDelete: (project: string | null, path: string) => api.delete<Ok<{ removed: number }>>('/api/hive/drive', { query: { project: project ?? 'shared', path } }),
+  driveFromFile: (project: string | null, fileId: string, path?: string) => api.post<Ok<{ file: DriveItem }>>('/api/hive/drive/from-file', { project: project ?? 'shared', fileId, path }),
+  driveToGithub: (body: { projectId: string; paths: string[]; targetDir?: string; branch: string; message?: string; openPr?: boolean }) =>
+    api.post<Ok<{ branch: string; sha: string; files: string[]; pr: { url: string; number: number } | null }>>('/api/hive/drive/github', body, { timeoutMs: 180000 }),
+  driveImport: (body: { projectId: string; paths: string[]; folder?: string }) => api.post<Ok<{ files: DriveItem[] }>>('/api/hive/drive/import', body, { timeoutMs: 120000 }),
+
+  pipelines: (project: string) => api.get<Ok<{ templates: PipelineTemplate[]; pipelines: Pipeline[]; runs: PipelineRun[] }>>('/api/hive/pipelines', { query: { project } }),
+  savePipeline: (body: { projectId: string; name: string; description?: string; stages: PipelineStage[] }) => api.post<Ok<{ pipeline: Pipeline }>>('/api/hive/pipelines', body),
+  updatePipeline: (id: string, body: { name?: string; description?: string; stages?: PipelineStage[] }) => api.patch<Ok<{ pipeline: Pipeline }>>(`/api/hive/pipelines/${id}`, body),
+  deletePipeline: (id: string) => api.delete<Ok<object>>(`/api/hive/pipelines/${id}`),
+  runPipeline: (id: string, body: { request: string; machineId?: string | null; folder?: string | null }) => api.post<Ok<{ run: PipelineRun }>>(`/api/hive/pipelines/${id}/run`, body, { timeoutMs: 90000 }),
+  stopPipelineRun: (id: string) => api.post<Ok<object>>(`/api/hive/pipeline-runs/${id}/stop`, {}),
+  architect: (body: { history: { role: 'user' | 'assistant'; text: string }[]; draft?: unknown; projectId?: string | null }) => api.post<Ok<ArchitectReply>>('/api/hive/architect', body, { timeoutMs: 300000 }),
+
+  schedules: (project?: string | null) => api.get<Ok<{ schedules: Schedule[]; templates: ScheduleTemplate[] }>>('/api/hive/schedules', { query: { project: project ?? undefined } }),
+  saveSchedule: (body: Partial<Schedule> & { projectId?: string }) => api.post<Ok<{ schedule: Schedule }>>('/api/hive/schedules', body),
+  deleteSchedule: (id: string) => api.delete<Ok<object>>(`/api/hive/schedules/${id}`),
+  runSchedule: (id: string) => api.post<Ok<{ schedule: Schedule }>>(`/api/hive/schedules/${id}/run`, {}, { timeoutMs: 120000 }),
+
+  toolbox: () => api.get<Ok<Toolbox>>('/api/hive/toolbox'),
+  connectTool: (body: { kind: 'mcp' | 'search'; name?: string; url?: string; token?: string; engine?: string; toolId?: string | null }) => api.post<Ok<{ id: string; tools?: number }>>('/api/hive/toolbox/connect', body, { timeoutMs: 60000 }),
+  updateIntegration: (id: string, body: { enabled?: boolean; name?: string; token?: string }) => api.patch<Ok<object>>(`/api/hive/toolbox/integrations/${id}`, body),
+  refreshIntegration: (id: string) => api.post<Ok<{ tools: number }>>(`/api/hive/toolbox/integrations/${id}/refresh`, {}, { timeoutMs: 60000 }),
+  callIntegration: (id: string, tool: string, input: Record<string, unknown>) => api.post<{ content: string; isError?: boolean }>(`/api/hive/toolbox/integrations/${id}/call`, { tool, input }, { timeoutMs: 120000 }),
+  removeIntegration: (id: string) => api.delete<Ok<object>>(`/api/hive/toolbox/integrations/${id}`),
+  importSkill: (body: { url: string; projectId?: string | null; appliesTo?: 'all' | 'tasks' | 'chat' }) => api.post<Ok<{ id: string; name: string; description: string; source: string }>>('/api/hive/toolbox/skill', body, { timeoutMs: 120000 }),
+
+  steward: (days = 30) => api.get<Ok<StewardReport>>('/api/hive/steward', { query: { days } }),
+  stewardApply: (action: StewardAction) => api.post<{ ok: boolean; message: string }>('/api/hive/steward/apply', { action }),
+  stewardPlan: (prompt: string, chat = false) => api.post<StewardPlan>('/api/hive/steward/plan', { prompt, chat }, { timeoutMs: 30000 }),
+  stewardAsk: (question: string) => api.post<{ answer: string; model: string; provider: string }>('/api/hive/steward/ask', { question }, { timeoutMs: 180000 }),
+
+  teamChat: (channel: string, before?: number) => api.get<Ok<{ messages: ChatMessage[] }>>('/api/hive/team/chat', { query: { channel, before } }),
+  teamChannels: () => api.get<Ok<{ channels: { id: string; lastAt: number; count: number }[] }>>('/api/hive/team/channels'),
+  sendTeamChat: (body: { channel: string; body: string; attach?: { type: 'task' | 'convo' | 'drive' | 'pipeline' | 'project'; id: string; title: string }; taskId?: string | null }) => api.post<Ok<{ message: ChatMessage }>>('/api/hive/team/chat', body),
+
+  verifyModels: (body: { keyId?: string; retest?: boolean; includePaid?: boolean }) => api.post<Ok<{ started?: boolean; keys: HealthKey[] }>>('/api/hive/health/verify', body, { timeoutMs: 60000 }),
+  hideModel: (keyId: string, model: string) => api.post<Ok<{ defaultModel: string | null }>>(`/api/hive/keys/${keyId}/hide-model`, { model }),
+  health: () => api.get<Ok<{ keys: HealthKey[] }>>('/api/hive/health'),
+  probeHealth: (body: { keyId?: string; includePaid?: boolean }) => api.post<Ok<{ results: { keyId: string; ok: boolean; model?: string; latencyMs?: number; error?: string }[]; keys: HealthKey[] }>>('/api/hive/health/probe', body, { timeoutMs: 180000 }),
+
+  dispatches: (project?: string | null) => api.get<Ok<{ dispatches: Dispatch[] }>>('/api/hive/dispatches', { query: { project: project ?? undefined } }),
+  planDispatch: (body: { projectId: string; request: string; preference?: 'savings' | 'fast' | 'balanced' | 'quality'; freeOnly?: boolean }) => api.post<Ok<{ dispatch: Dispatch }>>('/api/hive/dispatches', body, { timeoutMs: 240000 }),
+  editDispatch: (id: string, body: { partId: string; spec?: { provider: string; keyId?: string; model?: string }; prompt?: string; remove?: boolean }) => api.patch<Ok<{ dispatch: Dispatch }>>(`/api/hive/dispatches/${id}`, body),
+  startDispatch: (id: string) => api.post<Ok<{ dispatch: Dispatch }>>(`/api/hive/dispatches/${id}/start`, {}, { timeoutMs: 120000 }),
+  stopDispatch: (id: string) => api.post<Ok<{ stopped: boolean }>>(`/api/hive/dispatches/${id}/stop`, {}),
+
+  copilot: () => api.get<Ok<{ messages: CopilotMsg[]; settings: CopilotSettings; brain: CopilotBrain; admin: boolean; active: CopilotWork[] }>>('/api/hive/copilot'),
+  copilotActive: () => api.get<Ok<{ active: CopilotWork[] }>>('/api/hive/copilot/active'),
+  clearCopilot: () => api.delete<Ok<object>>('/api/hive/copilot'),
+  copilotSettings: (body: Partial<CopilotSettings>) => api.put<Ok<{ settings: CopilotSettings; brain: CopilotBrain }>>('/api/hive/copilot/settings', body),
+  sendCopilot: async (text: string, onEvent: (type: string, data: Record<string, unknown>) => void, signal?: AbortSignal, opts: { quick?: boolean; projectId?: string | null } = {}) => {
+    const res = await fetch(`${API_BASE}/api/hive/copilot`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, quick: !!opts.quick, projectId: opts.projectId ?? null }), signal })
+    if (!res.ok || !res.body) {
+      const j = await res.json().catch(() => ({}))
+      throw new Error((j as { error?: string }).error || `Request failed (${res.status})`)
+    }
+    const reader = res.body.getReader()
+    const dec = new TextDecoder()
+    let buf = ''
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buf += dec.decode(value, { stream: true })
+      let i
+      while ((i = buf.indexOf('\n')) >= 0) {
+        const line = buf.slice(0, i).trim()
+        buf = buf.slice(i + 1)
+        if (!line) continue
+        try {
+          const ev = JSON.parse(line) as { type: string; data: Record<string, unknown> }
+          onEvent(ev.type, ev.data)
+        } catch {
+          /* partial line */
+        }
+      }
+    }
+  },
 }
