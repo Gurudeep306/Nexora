@@ -7,20 +7,36 @@
    ──────────────────────────────────────────────────────────────────────── */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { ArrowRight, Bot, Check, ExternalLink, FolderGit2, GitBranch, Loader2, Lock, MessagesSquare, Plus, RefreshCw, Search, Star } from 'lucide-react'
+import { Bot, ExternalLink, FolderGit2, Loader2, Lock, MessagesSquare, Plus, RefreshCw, Search, Upload } from 'lucide-react'
 import { Button, useToast } from '@/components/ui'
-import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
 import { errMsg } from '../Improve'
 import { useHive } from '../store'
 import type { GhRepo } from '../types'
-import { IconTile, PageTitle, timeAgo } from '../ui'
+import { timeAgo } from '../ui'
+import { Empty, Row, RowList, SegmentedControl, StatusPill } from '../kit'
+import { projectColor } from '../projectColor'
 import { FolderImport } from '../FolderImport'
 
 // A classic token with these scopes sees every repo you can (yours, collaborations and orgs).
 const TOKEN_URL = 'https://github.com/settings/tokens/new?scopes=repo,workflow,read:org&description=Nexora%20Hive'
-const LANG_HUE: Record<string, number> = { TypeScript: 230, JavaScript: 85, Python: 250, Go: 195, Rust: 35, Java: 25, 'C++': 330, C: 300, Ruby: 15, PHP: 270, Swift: 30, Kotlin: 290, Dart: 200, HTML: 20, CSS: 260, Shell: 140, Vue: 150, Svelte: 20 }
+
+/** One row in the merged list: an open project, a repository, or both. */
+interface Item {
+  key: string
+  owner: string
+  name: string
+  desc: string
+  language: string | null
+  updated: number
+  private: boolean
+  readOnly: boolean
+  stars: number
+  projectId: string | null
+  color: string | null
+  repo: GhRepo | null
+  running: number
+}
 
 export default function ReposPage() {
   const { boot, refresh, select } = useHive()
@@ -32,6 +48,7 @@ export default function ReposPage() {
   const [filter, setFilter] = useState<'all' | 'projects' | 'mine' | 'private'>('all')
   const [busy, setBusy] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [adding, setAdding] = useState<'none' | 'repo' | 'folder'>('none')
   const connected = (boot?.github.length ?? 0) > 0
 
   const load = useCallback(
@@ -56,32 +73,53 @@ export default function ReposPage() {
   }, [load])
 
   const logins = useMemo(() => new Set((boot?.github ?? []).map((g) => g.login.toLowerCase())), [boot])
+  // Projects first (most recent first), then every other repository.
+  const items = useMemo<Item[]>(() => {
+    const projects = boot?.projects ?? []
+    const byId = new Map(projects.map((p) => [p.id, p]))
+    const fromRepos: Item[] = (repos ?? []).map((r) => {
+      const p = r.projectId ? byId.get(r.projectId) : undefined
+      return { key: r.fullName, owner: r.owner, name: r.name, desc: r.description, language: r.language ?? null, updated: Math.max(r.pushedAt ? Date.parse(r.pushedAt) : 0, p?.updated_at ?? 0), private: r.private, readOnly: !r.canPush, stars: r.stars, projectId: r.projectId ?? null, color: p?.color ?? null, repo: r, running: p?.running ?? 0 }
+    })
+    const linked = new Set(fromRepos.map((i) => i.projectId).filter(Boolean))
+    // Projects that aren't in the GitHub list (uploaded folders, machine folders, other accounts).
+    const onlyProjects: Item[] = projects
+      .filter((p) => !linked.has(p.id))
+      .map((p) => ({ key: p.id, owner: p.repo_owner, name: p.repo_name || p.name, desc: p.description, language: null, updated: p.updated_at, private: false, readOnly: false, stars: 0, projectId: p.id, color: p.color, repo: null, running: p.running ?? 0 }))
+    return [...onlyProjects, ...fromRepos].sort((a, b) => Number(!!b.projectId) - Number(!!a.projectId) || b.updated - a.updated)
+  }, [repos, boot])
+
   const shown = useMemo(() => {
     const w = q.toLowerCase().trim()
-    return (repos ?? []).filter((r) => {
+    return items.filter((r) => {
       if (filter === 'projects' && !r.projectId) return false
       if (filter === 'mine' && !logins.has(r.owner.toLowerCase())) return false
       if (filter === 'private' && !r.private) return false
-      return !w || `${r.fullName} ${r.description} ${r.language ?? ''}`.toLowerCase().includes(w)
+      return !w || `${r.owner}/${r.name} ${r.desc} ${r.language ?? ''}`.toLowerCase().includes(w)
     })
-  }, [repos, q, filter, logins])
+  }, [items, q, filter, logins])
 
-  const open = async (r: GhRepo, then: 'project' | 'copilot' | 'chat') => {
-    setBusy(r.fullName + then)
+  const open = async (it: Item, then: 'project' | 'copilot' | 'chat') => {
+    setBusy(it.key + then)
     try {
-      const res = r.projectId ? { project: { id: r.projectId }, created: false } : await hiveApi.openRepo(r.fullName)
-      if (res.created) {
-        toast.success(`${r.name} is a project — Hive is writing a brief for the agents from its code`)
-        await refresh()
-        setRepos((list) => (list ?? []).map((x) => (x.fullName === r.fullName ? { ...x, projectId: res.project.id } : x)))
+      let projectId = it.projectId
+      if (!projectId && it.repo) {
+        const res = await hiveApi.openRepo(it.repo.fullName)
+        projectId = res.project.id
+        if (res.created) {
+          toast.success(`${it.name} is a project — Hive is writing a brief for the agents from its code`)
+          await refresh()
+          setRepos((list) => (list ?? []).map((x) => (x.fullName === it.key ? { ...x, projectId } : x)))
+        }
       }
+      if (!projectId) return
       if (then === 'chat') {
-        const c = await hiveApi.projectChat(res.project.id)
+        const c = await hiveApi.projectChat(projectId)
         navigate(`/hive/chat/${c.convo.id}`)
-      } else if (then === 'copilot') navigate('/hive/copilot', { state: { projectId: res.project.id } })
+      } else if (then === 'copilot') navigate('/hive/copilot', { state: { projectId } })
       else {
-        select(res.project.id)
-        navigate(`/hive/p/${res.project.id}`)
+        select(projectId)
+        navigate(`/hive/p/${projectId}`)
       }
     } catch (e) {
       toast.error(errMsg(e))
@@ -100,6 +138,7 @@ export default function ReposPage() {
       const res = await hiveApi.openRepo(ref)
       toast.success(res.created ? 'Added — Hive is writing a brief from its code' : 'Already a project — opening its chat')
       setAddRef('')
+      setAdding('none')
       await refresh()
       load(true)
       const c = await hiveApi.projectChat(res.project.id)
@@ -111,130 +150,139 @@ export default function ReposPage() {
     }
   }
 
+  const projectCount = items.filter((i) => i.projectId).length
+
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-      <PageTitle
-        icon={<GitBranch />}
-        title="Your GitHub"
-        sub="Every repository you can reach. Open one and it's a project, with a brief Hive writes from the code — or hand it to the Copilot and say what you want."
-      >
+    <div className="mx-auto w-full max-w-[960px] px-4 pb-16 pt-6 sm:px-6">
+      <div className="flex flex-wrap items-start gap-3">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-[22px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]">Projects</h1>
+          <p className="mt-1 text-[13px] text-[var(--hv-text-3)]">Your projects first, then every repository you can reach. Open one and Hive writes a brief from its code for the agents.</p>
+        </div>
         {connected && (
-          <Button variant="secondary" onClick={() => load(true)} loading={loading}>
-            {!loading && <RefreshCw />} Refresh
-          </Button>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Button variant="ghost" size="sm" onClick={() => load(true)} loading={loading} aria-label="Refresh the list from GitHub">
+              {!loading && <RefreshCw />} Refresh
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => setAdding(adding === 'folder' ? 'none' : 'folder')} aria-expanded={adding === 'folder'}>
+              <Upload /> Upload a folder
+            </Button>
+            <Button size="sm" onClick={() => setAdding(adding === 'repo' ? 'none' : 'repo')} aria-expanded={adding === 'repo'}>
+              <Plus /> Add repository
+            </Button>
+          </div>
         )}
-      </PageTitle>
+      </div>
 
       {!connected ? (
-        <ConnectGithub onDone={() => refresh().then(() => load(true))} />
+        <div className="mt-6">
+          <ConnectGithub onDone={() => refresh().then(() => load(true))} />
+        </div>
       ) : (
         <>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              addRepo()
-            }}
-            className="hive-card mb-3 flex flex-col gap-2 p-3.5 sm:flex-row sm:items-center"
-          >
-            <IconTile hue={150}>
-              <Plus />
-            </IconTile>
-            <div className="min-w-0 flex-1">
-              <div className="text-[13.5px] font-semibold">Add any repository</div>
-              <input value={addRef} onChange={(e) => setAddRef(e.target.value)} placeholder="owner/name or a github.com link — yours, your org’s or any public repo" className="mt-1 h-9 w-full rounded-lg bg-text-primary/[0.05] px-3 text-[13.5px] outline-none ring-1 ring-[var(--hive-line)] placeholder:text-text-muted focus:ring-accent-brand/50" />
-            </div>
-            <Button type="submit" loading={busy === 'add'} disabled={!addRef.trim() || (!!busy && busy !== 'add')}>
-              <MessagesSquare /> Add & chat
-            </Button>
-          </form>
-          <div className="mb-5">
-            <FolderImport compact />
-          </div>
-          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
-            <label className="hive-card flex h-11 flex-1 items-center gap-2 rounded-2xl px-3.5">
-              <Search className="size-4 text-text-muted" />
-              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={repos ? `Search ${repos.length} repositories` : 'Loading your repositories…'} className="min-w-0 flex-1 bg-transparent text-[14px] outline-none placeholder:text-text-muted" />
-            </label>
-            <div className="flex gap-1 rounded-xl bg-text-primary/[0.05] p-1">
-              {(
-                [
-                  ['all', 'All'],
-                  ['projects', 'Projects'],
-                  ['mine', 'Mine'],
-                  ['private', 'Private'],
-                ] as const
-              ).map(([k, l]) => (
-                <button key={k} type="button" onClick={() => setFilter(k)} className={cn('h-8 flex-1 rounded-lg px-3 text-[12.5px] sm:flex-none', filter === k ? 'bg-bg-surface font-medium text-text-primary shadow-sm' : 'text-text-muted hover:text-text-primary')}>
-                  {l}
-                </button>
-              ))}
-            </div>
-          </div>
-          {errors.length > 0 && <div className="mb-3 rounded-xl bg-state-warning/[0.08] px-3 py-2 text-[12.5px] text-text-secondary">Some connections couldn’t list repositories: {errors.join(' · ')}</div>}
-          {!repos ? (
-            <div className="grid gap-2.5 md:grid-cols-2">
-              {Array.from({ length: 8 }, (_, i) => (
-                <div key={i} className="hive-shimmer h-[88px] rounded-2xl" />
-              ))}
-            </div>
-          ) : !shown.length ? (
-            <div className="hive-card p-10 text-center text-[13px] text-text-muted">{repos.length ? 'Nothing matches.' : 'This GitHub token can’t see any repositories. Give it access to your repos (or use a classic token with the “repo” scope).'}</div>
-          ) : (
-            <div className="grid gap-2.5 md:grid-cols-2">
-              {shown.slice(0, 200).map((r, i) => (
-                <motion.div key={r.fullName} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0, transition: { delay: Math.min(i, 16) * 0.015 } }} className="hive-card group flex flex-col gap-2 p-3.5">
-                  <div className="flex items-start gap-3">
-                    <IconTile hue={LANG_HUE[r.language ?? ''] ?? 260}>
-                      <FolderGit2 />
-                    </IconTile>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="truncate text-[14px] font-semibold">
-                          <span className="font-normal text-text-muted">{r.owner}/</span>
-                          {r.name}
-                        </span>
-                        {r.private && <Lock className="size-3 text-text-muted" aria-label="Private" />}
-                        {r.projectId && (
-                          <span className="inline-flex items-center gap-0.5 rounded-full bg-state-success/12 px-1.5 text-[10.5px] font-medium text-state-success">
-                            <Check className="size-3" /> project
-                          </span>
-                        )}
-                        {!r.canPush && <span className="rounded-full bg-text-primary/[0.06] px-1.5 text-[10.5px] text-text-muted">read-only</span>}
-                      </div>
-                      <div className="line-clamp-1 text-[12.5px] text-text-muted">{r.description || 'No description'}</div>
-                      <div className="mt-1 flex flex-wrap items-center gap-x-3 text-[11.5px] text-text-muted">
-                        {r.language && (
-                          <span className="inline-flex items-center gap-1">
-                            <span className="size-2 rounded-full" style={{ background: `oklch(65% 0.15 ${LANG_HUE[r.language] ?? 260})` }} /> {r.language}
-                          </span>
-                        )}
-                        {r.stars > 0 && (
-                          <span className="inline-flex items-center gap-0.5">
-                            <Star className="size-3" /> {r.stars}
-                          </span>
-                        )}
-                        {r.pushedAt && <span>updated {timeAgo(Date.parse(r.pushedAt))}</span>}
-                      </div>
-                    </div>
-                    <a href={`https://github.com/${r.fullName}`} target="_blank" rel="noreferrer" className="grid size-7 shrink-0 place-items-center rounded-lg text-text-muted opacity-0 hover:bg-text-primary/[0.06] group-hover:opacity-100" aria-label="Open on GitHub">
-                      <ExternalLink className="size-3.5" />
-                    </a>
-                  </div>
-                  <div className="flex gap-1.5">
-                    <button type="button" disabled={!!busy} onClick={() => open(r, 'chat')} className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-accent-brand text-[12.5px] font-medium text-on-accent-brand disabled:opacity-60">
-                      {busy === r.fullName + 'chat' ? <Loader2 className="size-3.5 animate-spin" /> : <MessagesSquare className="size-3.5" />} Chat
-                    </button>
-                    <button type="button" disabled={!!busy} onClick={() => open(r, 'copilot')} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-text-primary/[0.06] px-3 text-[12.5px] font-medium hover:bg-text-primary/[0.1] disabled:opacity-60" title="Hand it to the Copilot: it plans and runs agents">
-                      {busy === r.fullName + 'copilot' ? <Loader2 className="size-3.5 animate-spin" /> : <Bot className="size-3.5" />} Copilot
-                    </button>
-                    <button type="button" disabled={!!busy} onClick={() => open(r, 'project')} className="inline-flex h-8 items-center gap-1 rounded-lg bg-text-primary/[0.06] px-3 text-[12.5px] font-medium hover:bg-text-primary/[0.1] disabled:opacity-60">
-                      {busy === r.fullName + 'project' ? <Loader2 className="size-3.5 animate-spin" /> : null} {r.projectId ? 'Open' : 'Open as project'} <ArrowRight className="size-3.5" />
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
+          {adding === 'repo' && (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                addRepo()
+              }}
+              className="mt-4 flex flex-col gap-2 rounded-[var(--hv-r-card)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-3 sm:flex-row sm:items-center"
+            >
+              <label className="sr-only" htmlFor="add-repo">
+                Repository
+              </label>
+              <input id="add-repo" autoFocus value={addRef} onChange={(e) => setAddRef(e.target.value)} placeholder="owner/name or a github.com link — yours, your org’s or any public repo" className="h-9 min-w-0 flex-1 rounded-[var(--hv-r-btn)] bg-[var(--hv-surface-2)] px-3 text-[13.5px] text-[var(--hv-text-1)] outline-none placeholder:text-[var(--hv-text-3)] focus-visible:ring-2 focus-visible:ring-[var(--hv-accent)]" />
+              <Button type="submit" size="sm" loading={busy === 'add'} disabled={!addRef.trim() || (!!busy && busy !== 'add')}>
+                <MessagesSquare /> Add & chat
+              </Button>
+            </form>
+          )}
+          {adding === 'folder' && (
+            <div className="mt-4">
+              <FolderImport compact />
             </div>
           )}
+
+          <div className="sticky top-[41px] z-10 -mx-4 mt-5 flex flex-col gap-2 bg-[var(--hv-bg-app)] px-4 py-2 sm:-mx-6 sm:flex-row sm:items-center sm:px-6">
+            <label className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-[var(--hv-r-btn)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] px-3 focus-within:ring-2 focus-within:ring-[var(--hv-accent)]">
+              <Search className="size-4 text-[var(--hv-text-3)]" />
+              <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search projects and repositories" placeholder={repos ? `Search ${items.length} projects and repositories` : 'Loading your repositories…'} className="min-w-0 flex-1 bg-transparent text-[13.5px] text-[var(--hv-text-1)] outline-none placeholder:text-[var(--hv-text-3)]" />
+            </label>
+            <SegmentedControl
+              size="sm"
+              label="Show"
+              value={filter}
+              onChange={setFilter}
+              options={[
+                { value: 'all', label: 'All' },
+                { value: 'projects', label: `Projects${projectCount ? ` · ${projectCount}` : ''}` },
+                { value: 'mine', label: 'Mine' },
+                { value: 'private', label: 'Private' },
+              ]}
+            />
+          </div>
+          {errors.length > 0 && <p className="mt-2 rounded-[var(--hv-r-btn)] bg-[color-mix(in_oklab,var(--hv-warning)_10%,transparent)] px-3 py-2 text-[12.5px] text-[var(--hv-text-2)]">Some connections couldn’t list repositories: {errors.join(' · ')}</p>}
+
+          <div className="mt-2">
+            {!repos && !items.length ? (
+              <div className="space-y-1">
+                {Array.from({ length: 8 }, (_, i) => (
+                  <div key={i} className="hive-shimmer h-10 rounded-[var(--hv-r-btn)]" />
+                ))}
+              </div>
+            ) : !shown.length ? (
+              <Empty icon={<FolderGit2 />} title={items.length ? 'Nothing matches' : 'No repositories yet'}>
+                {items.length ? 'Try another word, or show All.' : 'This GitHub token can’t see any repositories. Give it access to your repos (or use a classic token with the “repo” scope).'}
+              </Empty>
+            ) : (
+              <RowList label="Projects and repositories">
+                {shown.slice(0, 300).map((it) => {
+                  const b = (k: string) => busy === it.key + k
+                  return (
+                    <Row
+                      key={it.key}
+                      leading={it.projectId ? <span className="size-2.5 rounded-full" style={{ background: projectColor(it.color ?? '') }} aria-hidden /> : <FolderGit2 className="text-[var(--hv-text-3)]" />}
+                      title={
+                        <span className="inline-flex max-w-full items-center gap-1.5">
+                          <span className="truncate">
+                            {it.owner && <span className="text-[var(--hv-text-3)]">{it.owner}/</span>}
+                            <span className={it.projectId ? 'font-medium' : ''}>{it.name}</span>
+                          </span>
+                          {it.private && <Lock className="size-3 shrink-0 text-[var(--hv-text-3)]" aria-label="Private" />}
+                        </span>
+                      }
+                      meta={[it.desc || (it.projectId ? '' : 'No description'), it.language, it.stars ? `★ ${it.stars}` : '', it.updated ? `updated ${timeAgo(it.updated)}` : ''].filter(Boolean).join(' · ')}
+                      trailing={
+                        <>
+                          {it.running > 0 && <StatusPill size="sm" status="running" label={`${it.running} running`} />}
+                          {it.projectId ? <StatusPill size="sm" status="done" label="Project" className="max-sm:hidden" /> : null}
+                          {it.readOnly && <span className="text-[11px] text-[var(--hv-text-3)] max-sm:hidden">read-only</span>}
+                        </>
+                      }
+                      onOpen={() => open(it, 'project')}
+                      className="max-sm:[&_.hv-row-actions]:hidden"
+                      actions={
+                        <>
+                          <Button size="sm" variant="ghost" disabled={!!busy} onClick={() => open(it, 'chat')} aria-label={`Chat about ${it.name}`}>
+                            {b('chat') ? <Loader2 className="animate-spin" /> : <MessagesSquare />} Chat
+                          </Button>
+                          <Button size="sm" variant="ghost" disabled={!!busy} onClick={() => open(it, 'copilot')} aria-label={`Hand ${it.name} to the Copilot`} title="The Copilot plans it and runs agents">
+                            {b('copilot') ? <Loader2 className="animate-spin" /> : <Bot />} Copilot
+                          </Button>
+                          {it.repo && (
+                            <a href={`https://github.com/${it.repo.fullName}`} target="_blank" rel="noreferrer" className="grid size-7 place-items-center rounded-[var(--hv-r-btn)] text-[var(--hv-text-3)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]" aria-label={`Open ${it.name} on GitHub`}>
+                              <ExternalLink className="size-3.5" />
+                            </a>
+                          )}
+                        </>
+                      }
+                    />
+                  )
+                })}
+              </RowList>
+            )}
+            {shown.length > 300 && <p className="mt-2 px-2.5 text-[12px] text-[var(--hv-text-3)]">Showing 300 of {shown.length}. Search to narrow it down.</p>}
+          </div>
         </>
       )}
     </div>
