@@ -5,7 +5,7 @@
    kind of work and cost, compared with "one premium model does everything".
    ──────────────────────────────────────────────────────────────────────── */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   ArrowRight,
@@ -68,10 +68,12 @@ export default function DispatchPage() {
   const toast = useToast()
   const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
-  const [projectId, setProjectId] = useState<string>(() => params.get('project') || project?.id || boot?.projects[0]?.id || '')
-  const [request, setRequest] = useState('')
-  const [preference, setPreference] = useState<'savings' | 'fast' | 'balanced' | 'quality'>('savings')
-  const [freeOnly, setFreeOnly] = useState(false)
+  // Handed over from the Home composer ("Plan a team"): the request, strategy and project.
+  const handed = (useLocation().state ?? null) as { draft?: string; preference?: 'savings' | 'fast' | 'balanced' | 'quality'; freeOnly?: boolean; projectId?: string } | null
+  const [projectId, setProjectId] = useState<string>(() => handed?.projectId || params.get('project') || project?.id || boot?.projects[0]?.id || '')
+  const [request, setRequest] = useState(() => handed?.draft ?? '')
+  const [preference, setPreference] = useState<'savings' | 'fast' | 'balanced' | 'quality'>(() => handed?.preference ?? 'savings')
+  const [freeOnly, setFreeOnly] = useState(() => !!handed?.freeOnly)
   const [busy, setBusy] = useState(false)
   const [list, setList] = useState<Dispatch[]>([])
   const openId = params.get('d')

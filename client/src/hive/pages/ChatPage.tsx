@@ -839,9 +839,9 @@ function ChatComposer({
           setDrag(false)
           if (e.dataTransfer.files.length) up.add(e.dataTransfer.files)
         }}
-        className={cn('hive-composer relative mx-auto w-full max-w-[860px] rounded-[22px] p-2.5', drag && 'ring-2 ring-accent-brand/60')}
+        className={cn('hv-composer relative mx-auto w-full max-w-[860px] rounded-[16px] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-2.5 transition-shadow duration-[var(--hv-d-fast)]', drag && 'ring-2 ring-accent-brand/60')}
       >
-        <AnimatePresence>{drag && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-10 grid place-items-center rounded-[22px] bg-accent-brand/10 text-[13px] font-medium text-accent-brand">Drop files to attach</motion.div>}</AnimatePresence>
+        <AnimatePresence>{drag && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-10 grid place-items-center rounded-[16px] bg-accent-brand/10 text-[13px] font-medium text-accent-brand">Drop files to attach</motion.div>}</AnimatePresence>
         {(up.files.length > 0 || repoRefs.length > 0) && (
           <div className="mb-2 flex flex-wrap gap-1.5 px-1.5 pt-1">
             <FileChips files={up.files} onRemove={up.remove} />
