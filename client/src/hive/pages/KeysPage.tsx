@@ -21,7 +21,6 @@ import {
   Trash2,
   TriangleAlert,
 } from 'lucide-react'
-import { Area, AreaChart, ResponsiveContainer, Tooltip as ChartTip } from 'recharts'
 import { Button, ConfirmDialog, Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger, Modal, Tooltip, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
@@ -29,7 +28,7 @@ import { AddGithubDialog, EditKeyDialog, parseLimit } from '../dialogs'
 import { useHive } from '../store'
 import type { HiveKey, ProviderInfo } from '../types'
 import { ProviderGlyph, fmtCost, fmtTokens, keyShare, shareTone, vendorName, vendorStyle, LimitBar } from '../ui'
-import { Empty, Row, RowList, StatusPill } from '../kit'
+import { Empty, Row, RowList, Sparkline, StatusPill } from '../kit'
 
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Something went wrong')
 
@@ -437,13 +436,7 @@ function KeyRow({ k }: { k: HiveKey }) {
 
       <div className="hidden h-14 lg:block" aria-hidden>
         {usage.length > 1 ? (
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={usage} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
-              <ChartTip cursor={false} contentStyle={{ background: 'var(--color-bg-surface)', border: '1px solid var(--hive-line)', borderRadius: 10, fontSize: 11 }} formatter={(v, n) => [fmtTokens(Number(v)), n === 'cached' ? 'cached' : 'charged']} />
-              <Area type="monotone" dataKey="cached" stroke="var(--color-state-success)" strokeWidth={1} fill="var(--color-state-success)" fillOpacity={0.08} isAnimationActive={false} />
-              <Area type="monotone" dataKey="tokens" stroke={color} strokeWidth={1.6} fill={color} fillOpacity={0.14} isAnimationActive={false} />
-            </AreaChart>
-          </ResponsiveContainer>
+          <Sparkline label={`${k.label}: tokens per day`} points={usage.map((u) => u.tokens)} color={color} second={usage.map((u) => u.cached)} secondColor="var(--color-state-success)" />
         ) : (
           <div className="grid h-full place-items-center text-[11px] text-text-muted">no usage yet</div>
         )}
