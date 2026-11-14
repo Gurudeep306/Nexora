@@ -165,7 +165,7 @@ export function ProjectSwitcher() {
           type="button"
           onClick={() => {
             setOpen(false)
-            navigate('/hive/repos')
+            navigate('/hive/projects')
           }}
           className="mt-1 flex w-full items-center gap-2 rounded-lg border-t hive-line px-2 pt-2 pb-1.5 text-[12.5px] font-medium text-accent-brand hover:bg-accent-brand/[0.06]"
         >

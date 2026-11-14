@@ -231,7 +231,7 @@ export function AlertsBell() {
           {alerts.map((a) => {
             const L = LEVEL[a.level] ?? LEVEL.info
             return (
-              <button key={a.id} type="button" onClick={() => a.ref && navigate(a.ref.startsWith('/') ? a.ref : '/hive/budgets')} className={cn('flex w-full gap-2.5 rounded-xl p-2.5 text-left hover:bg-text-primary/[0.04]', !a.read && 'bg-accent-brand/[0.04]')}>
+              <button key={a.id} type="button" onClick={() => a.ref && navigate(a.ref.startsWith('/') ? a.ref : '/hive/spend/budgets')} className={cn('flex w-full gap-2.5 rounded-xl p-2.5 text-left hover:bg-text-primary/[0.04]', !a.read && 'bg-accent-brand/[0.04]')}>
                 <L.icon className="mt-0.5 size-4 shrink-0" style={{ color: L.tone }} />
                 <span className="min-w-0 flex-1">
                   <span className="block text-[12.5px] font-medium text-text-primary">{a.title}</span>

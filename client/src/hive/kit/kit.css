@@ -114,3 +114,22 @@
 @media (forced-colors: active) {
   .hv-card { border-color: CanvasText; }
 }
+
+/* Right panel: slides in (transform + opacity only). */
+.hv-panel { animation: hv-slide-in var(--hv-d-panel) var(--hv-ease); }
+@keyframes hv-slide-in { from { transform: translateX(16px); opacity: 0; } }
+
+/* Route and tab changes: a 150ms cross-fade where View Transitions exist. */
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 150ms; animation-timing-function: var(--hv-ease, ease); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-panel { animation: none; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+}
+
+/* The labelled sidebar peeking over the collapsed rail. */
+.hv-peek { animation: hv-peek-in var(--hv-d-menu) var(--hv-ease); }
+@keyframes hv-peek-in { from { transform: translateX(-8px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .hv-peek { animation: none; } }
