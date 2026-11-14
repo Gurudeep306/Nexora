@@ -17,6 +17,7 @@
 const crypto = require("crypto");
 const { run, get, all, newId, now, json } = require("./db");
 const hub = require("./hub");
+const { KINDS } = require("./catalog");
 
 const MAX_STEPS = 14;
 const tokens = new Map(); // MCP bearer token → { username, exp }
@@ -116,7 +117,7 @@ async function overview() {
 
 async function modelsReport({ kind = null, freeOnly = false }) {
   const router = require("./router");
-  const { KINDS, CARDS, publicCard } = require("./catalog");
+  const { CARDS, publicCard } = require("./catalog");
   const kinds = kind && KINDS[kind] ? [kind] : Object.keys(KINDS);
   const best = {};
   for (const k of kinds) {
@@ -223,6 +224,7 @@ const TOOLS = {
         prompt: str("Full instructions for the agent(s)"),
         agents: { type: "array", items: { type: "string" }, description: 'One or more agents, e.g. ["auto"] or ["free","claude_code/default"]' },
         mode: { type: "string", enum: ["solo", "compare", "team"], description: "solo: one agent; compare: each agent tries separately and the Judge picks the best; team: a lead splits the work among the agents" },
+        kind: { type: "string", enum: Object.keys(KINDS), description: "The kind of work, so the right worker is picked. Say it: a long, detailed prompt is not 'hard' by itself — use hard only for real architecture or tricky debugging." },
         watch: bool("Review the result automatically when it finishes (default true)"),
       },
       ["projectId", "prompt"],
@@ -231,13 +233,13 @@ const TOOLS = {
       let p = await projectOf(i.projectId);
       const runner = require("./runner");
       const router = require("./router");
-      const kind = router.classify(i.prompt).kind;
+      const kind = KINDS[i.kind] ? i.kind : router.classify(i.prompt, { byPerson: false }).kind;
       const list = (Array.isArray(i.agents) && i.agents.length ? i.agents : ["auto"]).slice(0, 4).map((a) => specFrom(a, kind));
       // Claude Code / Codex / Vibe work in a folder on their machine: copy the repo there first if needed.
       p = (await require("./repos").ensureOnMachine(p.id, list.map((s) => s.provider))) || p;
       const mode = ["solo", "compare", "team"].includes(i.mode) ? i.mode : list.length > 1 ? "compare" : "solo";
       for (const s of list) await runner.resolveSpec(s, { prompt: i.prompt, machineId: p.machine_id || null });
-      const task = await ctx.createTask(p, { title: i.title || String(i.prompt).split("\n")[0].slice(0, 90), prompt: i.prompt });
+      const task = await ctx.createTask(p, { title: i.title || String(i.prompt).split("\n")[0].slice(0, 90), prompt: i.prompt, kind });
       if (mode === "team") await runner.startTask(task, { mode: "team", specs: list.slice(1).length ? list.slice(1) : list, lead: list[0], username: ctx.username });
       else await runner.startTask(task, { mode, specs: list, username: ctx.username });
       if (i.watch !== false) await watch(task.id, ctx.username);
@@ -273,10 +275,11 @@ const TOOLS = {
   },
   add_agent: {
     description: `Bring another agent into an existing session with new instructions (e.g. to fix what a review found, or to write tests). ${AGENT_HINT}`,
-    schema: obj({ taskId: str("Session id"), agent: str("Who"), instructions: str("What to do"), readOnly: bool("Only read and report (reviews)") }, ["taskId", "instructions"]),
+    schema: obj({ taskId: str("Session id"), agent: str("Who"), instructions: str("What to do"), readOnly: bool("Only read and report (reviews)"), kind: { type: "string", enum: Object.keys(KINDS), description: "The kind of work (picks the worker)" } }, ["taskId", "instructions"]),
     run: async (i, ctx) => {
       const runner = require("./runner");
-      const a = await runner.addAgent(i.taskId, { spec: specFrom(i.agent || "auto"), prompt: i.instructions, username: ctx.username, readOnly: !!i.readOnly, title: i.readOnly ? "Review" : null });
+      const kind = KINDS[i.kind] ? i.kind : require("./router").classify(i.instructions, { byPerson: false }).kind;
+      const a = await runner.addAgent(i.taskId, { spec: specFrom(i.agent || "auto", kind), prompt: i.instructions, username: ctx.username, readOnly: !!i.readOnly, title: i.readOnly ? "Review" : null, kind });
       await watch(i.taskId, ctx.username);
       return { added: true, agentId: a?.id, name: a?.name, model: a ? `${a.provider}/${a.model}` : undefined };
     },

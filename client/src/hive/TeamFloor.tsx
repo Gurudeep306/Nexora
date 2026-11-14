@@ -398,7 +398,7 @@ function StageRail({ stages }: { stages: { name: string; status: string; message
 
 /* ── The Judge's verdict ──────────────────────────────────────────────── */
 function VerdictBanner({ ev, agents }: { ev: HiveEvent; agents: AgentRow[] }) {
-  const d = ev.data as { winner: string; name?: string; model?: string; reason?: string; ranking?: { agentId: string; name: string; score: number; strengths?: string; weaknesses?: string }[]; judge?: { model: string } | null; adopted?: boolean }
+  const d = ev.data as { winner: string | null; noVerdict?: boolean; name?: string; model?: string; reason?: string; ranking?: { agentId: string; name: string; score: number; strengths?: string; weaknesses?: string }[]; judge?: { model: string } | null; adopted?: boolean }
   const win = agents.find((a) => a.id === d.winner)
   return (
     <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="relative mx-auto mb-8 max-w-3xl overflow-hidden rounded-2xl border border-[oklch(80%_0.14_85/0.35)] bg-[oklch(80%_0.14_85/0.07)] p-4">
@@ -408,7 +408,13 @@ function VerdictBanner({ ev, agents }: { ev: HiveEvent; agents: AgentRow[] }) {
         </span>
         <div className="min-w-0 flex-1">
           <div className="text-[13.5px] font-semibold">
-            The Judge picked {win?.name ?? d.name} <span className="font-normal text-text-muted">({shortModel(win?.model ?? d.model ?? '')})</span>
+            {d.noVerdict ? (
+              'No verdict — nothing was adopted'
+            ) : (
+              <>
+                The Judge picked {win?.name ?? d.name} <span className="font-normal text-text-muted">({shortModel(win?.model ?? d.model ?? '')})</span>
+              </>
+            )}
             {d.adopted && <span className="ml-1.5 text-[11.5px] font-medium text-state-success">· adopted as the result</span>}
           </div>
           {d.reason && <p className="mt-1 text-[12.5px] leading-relaxed text-text-secondary">{d.reason}</p>}
@@ -450,7 +456,7 @@ export function FloorFeed({ events, agents }: { events: HiveEvent[]; agents: Age
           else if (e.kind === 'handoff') text = `continued on ${shortModel(String((e.data.to as { model?: string })?.model ?? ''))} — ${String(e.data.reason ?? '')}`
           else if (e.kind === 'route') text = String(e.data.note ?? '').split(' · ')[0]
           else if (e.kind === 'commit') text = `committed to ${String(e.data.branch)}${e.data.pr ? ' and opened a PR' : ''}`
-          else if (e.kind === 'verdict') text = `the Judge picked ${String(e.data.name)}`
+          else if (e.kind === 'verdict') text = e.data.noVerdict ? 'the Judge gave no verdict' : `the Judge picked ${String(e.data.name)}`
           else if (e.kind === 'approval') text = `asked to run: ${String(e.data.command).slice(0, 80)}`
           else if (e.kind === 'status') text = e.data.status === 'done' ? 'finished' : `stopped: ${String(e.data.error ?? '')}`
           return (

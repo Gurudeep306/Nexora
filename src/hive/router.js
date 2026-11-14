@@ -29,7 +29,12 @@ const RULES = [
 const ORDER = ["chat", "mechanical", "search", "reading", "writing", "coding", "review", "hard"];
 
 /** Classify a request. `agent`: work on a codebase (default kind coding) vs chat. */
-function classify(prompt, { agent = true } = {}) {
+/**
+ * Guess the kind of work from the text. `byPerson` is false for prompts the
+ * Copilot or Dispatcher wrote: those are long and detailed on purpose, so
+ * length must not turn them into "hard" work for the strongest (plan) model.
+ */
+function classify(prompt, { agent = true, byPerson = true } = {}) {
   const text = String(prompt || "");
   const scores = {};
   for (const [kind, w, re] of RULES) {
@@ -46,7 +51,7 @@ function classify(prompt, { agent = true } = {}) {
   }
   // Long, detailed requests touching many files are rarely "simple".
   const files = (text.match(/[\w./-]+\.(js|ts|tsx|jsx|py|go|rs|java|css|html|md|json|sql)\b/g) || []).length;
-  if ((kind === "coding" || kind === "mechanical") && (text.length > 2500 || files >= 5)) kind = "hard";
+  if (byPerson && (kind === "coding" || kind === "mechanical") && (text.length > 2500 || files >= 5)) kind = "hard";
   if (!agent && kind === "coding" && !/```|\bcode\b|function|bug|error|stack trace/i.test(text)) kind = "chat";
   return { kind, label: KINDS[kind].label, confidence: best >= 3 ? "high" : best ? "medium" : "low", scores };
 }
