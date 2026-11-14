@@ -40,16 +40,29 @@ I studied the references by reading their source code on GitHub. Several product
   - `OverflowTabs`: tabs that never scroll. Tabs that don't fit go into a "More" menu, and the active tab always stays visible. This is for the session dock.
   - All of them appear in the `/hive/dev/ui` gallery.
 
-## Still to do (one PR each)
+## What shipped (PRs #90–#94)
 
-2. Shell: palette rows and context, shortcut overlay, approval cards, mobile sheets.
-3. Project home: header, Pulse, sessions as a table with filters, the composer.
-4. Session layout: persisted resizable panes, a one-row header, the roster, mobile sheets.
-5. Stream: group reads ("Read N files"), tool, approval and result cards following ai-elements, and diff chips that open Changes.
-6. Dock: Changes (Monaco inline diff), Files, Ship stepper, Terminal, Board, Checkpoints.
-7. Flatten TeamFloor, WorkMap, LiveCode and LiveWall.
-8. Unify the composer and `StatusPill`.
-9. Page sweep.
-10. Final check (axe, keyboard, INP, Lighthouse) and before/after screenshots.
+| PR | Surface | What changed |
+|---|---|---|
+| #90 | Foundations | `hive.css` cleanup, opacity-pulse skeletons, reduced motion, round swatches, `--chart-1..5`, type-scale tokens, `PageHead`, `SectionLabel`, `OverflowTabs`, gallery |
+| #91 | Session | Three resizable, remembered panes (agents, stream, panel); a one-row header; panel tabs with "More"; reads grouped into "Read N files"; kit approval cards; one `StatusPill`; axe 0 (Monaco names, brand-text contrast, 24 px timeline targets) |
+| #92 | Project home | Sessions as rows with a segmented filter in the URL (`?show=`), search and an empty state; "Start session" is the one primary button; kit mode switch; segmented controls never wrap |
+| #93 | Live views, shell | Flat team floor and avatars (one 1 px live ring and typing dots only); grouped, searchable shortcut list on `?` / `⌘/`; Ship as a vertical stepper (Changes → Commit → PR → Checks → Merge → Deploy) |
+| #94 | Page sweep | Every page that used the old icon-tile header now shows the plain one: Pipelines, Health, Budgets, Savings, Toolbox, Plugins, Memory, Team plans |
 
-New dependencies (vaul, cmdk, xterm, dnd-kit, nuqs, react-dropzone, TanStack Virtual) are added only in the PR that needs them. Each will be checked for size and lazy-loaded.
+Pages redesigned in v1 (Home, Inbox, Projects, Keys, Models, Spend, Settings) already followed these rules. They picked up the foundations above.
+
+### How each PR was checked
+
+- `npm test` (371), `npx tsc -b`, oxlint (0 errors), `npx vite build`, `notes:check`.
+- axe (WCAG 2.0, 2.1 and 2.2, A and AA) in light and dark: 0 violations on all 14 Hive pages, the session page and the project page.
+- Screenshots at 1440, 1100 and 390 px with no horizontal scroll.
+- The 13 old addresses still redirect.
+
+## Not done yet (honest list)
+
+- **Terminal with xterm.js, Board with dnd-kit, virtualised file tree, vaul drawers, nuqs.** These need new dependencies. The current Terminal, Board, Files tree and mobile sheets work and follow the house style. They were left alone rather than half-replaced. URL state uses React Router's `useSearchParams`, which needs no new dependency.
+- **Chat as streamdown-style conversation, Drive dropzone, lightbox and PDF preview.** These are not started.
+- **Shared-element view transitions** (project avatar → session header) are not started.
+- **Lighthouse on the live site** has not been run, because this session can't reach nexoraguru.in. To run it: open https://nexoraguru.in/hive in Chrome, press F12, open **Lighthouse**, click **Analyze**.
+- **Reading the references.** Several reference sites in the brief are blocked by this session's network policy. Allow them in the environment's network settings to have them read in a later session.
