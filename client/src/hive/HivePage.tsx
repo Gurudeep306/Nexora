@@ -52,6 +52,7 @@ import { HiveProvider, useHive } from './store'
 import type { Convo } from './types'
 import { StatusDot, UserDot, timeAgo } from './ui'
 import './hive.css'
+import './kit/kit.css'
 
 const HomePage = lazy(() => import('./pages/HomePage'))
 const ProjectPage = lazy(() => import('./pages/ProjectPage'))
@@ -72,6 +73,8 @@ const ToolboxPage = lazy(() => import('./pages/ToolboxPage'))
 const StewardPage = lazy(() => import('./pages/StewardPage'))
 const DispatchPage = lazy(() => import('./pages/DispatchPage'))
 const HealthPage = lazy(() => import('./pages/HealthPage'))
+// Development-only gallery of the Hive kit (not routed in production builds).
+const DevUiPage = import.meta.env.DEV ? lazy(() => import('./pages/DevUiPage')) : null
 const CopilotPage = lazy(() => import('./pages/CopilotPage'))
 const ReposPage = lazy(() => import('./pages/ReposPage'))
 
@@ -232,6 +235,7 @@ function Shell() {
               <Route path="health" element={<HealthPage />} />
               <Route path="copilot" element={<CopilotPage />} />
               <Route path="repos" element={<ReposPage />} />
+              {DevUiPage && <Route path="dev/ui" element={<DevUiPage />} />}
               <Route path="*" element={<HomePage />} />
             </Routes>
           </Suspense>
