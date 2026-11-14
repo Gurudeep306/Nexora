@@ -10,12 +10,13 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUpRight, Brain, Check, CheckCircle2, Columns3, Eye, Gauge, Gift, Layers, MessageSquare, Plus, Radar, Search, Sparkles, TriangleAlert, Wrench, X, Zap } from 'lucide-react'
 import { Button, Modal, Tooltip } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import { AgentMark, COST_INFO, CostBadge, FAMILY, ScoreBar, ScoreRing, familyColor, familyOf } from '../agents'
+import { AgentMark, COST_INFO, CostBadge, FAMILY, ScoreBar, familyOf } from '../agents'
 import { shortModel } from '../AgentPicker'
 import { hiveApi } from '../api'
 import { useHive } from '../store'
 import type { CatalogInfo, ConnectedModel, CostClass, ModelCard, RouteResult, TaskKind } from '../types'
 import { ProviderGlyph, fmtTokens } from '../ui'
+import { DataTable, SegmentedControl, StatusPill, type Column } from '../kit'
 
 const RadarTab = lazy(() => import('./RadarTab'))
 
@@ -117,45 +118,99 @@ function TeamTab({ models, cat }: { models: ConnectedModel[] | null; cat: Catalo
       </div>
     )
 
+  const fit = (m: ConnectedModel) => (kind === 'all' ? m.card.intelligence : m.card.scores[kind])
+  // A model not in the catalogue has guessed numbers: show "Unrated", never a made-up score.
+  const num = (m: ConnectedModel, v: number) => (m.card.guessed ? null : v)
+  const unrated = <span className="text-[12px] text-[var(--hv-text-3)]">Unrated</span>
+  const columns: Column<ConnectedModel>[] = [
+    {
+      key: 'model',
+      header: 'Model',
+      sortBy: (m) => m.card.name.toLowerCase(),
+      render: (m) => (
+        <span className="flex min-w-0 items-center gap-2.5 py-1.5">
+          <AgentMark provider={m.vendor} model={m.model} size={24} />
+          <span className="min-w-0">
+            <span className="flex items-center gap-1.5">
+              <span className="truncate font-medium text-[var(--hv-text-1)]">{m.card.name}</span>
+              {m.card.open && <span className="text-[10.5px] text-[var(--hv-text-3)]" title="Open weights">open</span>}
+              {!m.card.tools && <span className="text-[10.5px] text-[var(--hv-warning)]" title="Can chat but can't act as an agent">chat only</span>}
+              {!m.online && <StatusPill size="sm" status="stopped" label="Machine offline" />}
+            </span>
+            <span className="block truncate text-[11.5px] text-[var(--hv-text-3)]">
+              {m.vendorLabel} · <span className="font-mono">{shortModel(m.model)}</span>
+            </span>
+          </span>
+        </span>
+      ),
+    },
+    { key: 'fit', header: kind === 'all' ? 'Overall' : 'Fit', align: 'right', width: '84px', sortBy: (m) => num(m, fit(m)), render: (m) => (m.card.guessed ? unrated : fit(m)) },
+    { key: 'coding', header: 'Coding', align: 'right', width: '76px', hideBelow: 'sm', sortBy: (m) => num(m, m.card.coding), render: (m) => (m.card.guessed ? '—' : m.card.coding) },
+    { key: 'reasoning', header: 'Reasoning', align: 'right', width: '88px', hideBelow: 'md', sortBy: (m) => num(m, m.card.reasoning), render: (m) => (m.card.guessed ? '—' : m.card.reasoning) },
+    { key: 'speed', header: 'Speed', align: 'right', width: '80px', hideBelow: 'md', sortBy: (m) => num(m, m.card.speed), render: (m) => (m.card.guessed ? '—' : ['', 'slow', 'steady', 'quick', 'fast', 'instant'][m.card.speed]) },
+    { key: 'context', header: 'Context', align: 'right', width: '80px', hideBelow: 'lg', sortBy: (m) => m.card.context, render: (m) => (m.card.context >= 1000 ? `${m.card.context / 1000}M` : `${m.card.context}k`) },
+    {
+      key: 'cost',
+      header: 'Cost',
+      align: 'right',
+      width: '150px',
+      sortBy: (m) => (m.cost === 'free' || m.cost === 'sub' ? 0 : (m.card.price?.[1] ?? 999)),
+      render: (m) => (
+        <span className="inline-flex items-center justify-end gap-1.5">
+          {m.card.price && m.cost !== 'free' && m.cost !== 'sub' && <span className="text-[11.5px] text-[var(--hv-text-3)]">${m.card.price[0]}/${m.card.price[1]}</span>}
+          <CostBadge cost={m.cost} />
+        </span>
+      ),
+    },
+    { key: 'used', header: 'Used here', align: 'right', width: '150px', hideBelow: 'lg', sortBy: (m) => m.measured.reduce((s, x) => s + x.runs, 0) || null, render: (m) => <span className="text-[12px] text-[var(--hv-text-3)]">{measuredShort(m) ?? '—'}</span> },
+  ]
+
   return (
     <>
-      <WhoDoesWhat cat={cat} />
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <label className="flex h-9 min-w-[200px] flex-1 items-center gap-2 rounded-xl bg-text-primary/[0.05] px-3 text-text-muted focus-within:bg-text-primary/[0.08]">
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <label className="flex h-9 min-w-[200px] flex-1 items-center gap-2 rounded-[var(--hv-r-btn)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] px-3 text-[var(--hv-text-3)] focus-within:ring-2 focus-within:ring-[var(--hv-accent)]">
           <Search className="size-4" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search models, labs, hosts" className="min-w-0 flex-1 bg-transparent text-[13px] text-text-primary outline-none placeholder:text-text-muted" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search models" placeholder={`Search ${models.length} models, labs, hosts`} className="min-w-0 flex-1 bg-transparent text-[13px] text-[var(--hv-text-1)] outline-none placeholder:text-[var(--hv-text-3)]" />
         </label>
-        <div className="flex rounded-xl bg-text-primary/[0.05] p-0.5">
-          {(['all', 'free', 'paid'] as const).map((c) => (
-            <button key={c} type="button" onClick={() => setCost(c)} className={cn('h-8 rounded-lg px-3 text-[12.5px] capitalize', cost === c ? 'bg-bg-surface text-text-primary shadow-sm' : 'text-text-muted')}>
-              {c === 'free' ? 'Free & plan' : c}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          size="sm"
+          label="Cost"
+          value={cost}
+          onChange={setCost}
+          options={[
+            { value: 'all', label: 'All' },
+            { value: 'free', label: 'Free & plan' },
+            { value: 'paid', label: 'Paid' },
+          ]}
+        />
+        <label className="inline-flex h-9 items-center gap-2 rounded-[var(--hv-r-btn)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] px-2.5 text-[12.5px] text-[var(--hv-text-2)]">
+          Best for
+          <select value={kind} onChange={(e) => setKind(e.target.value as TaskKind | 'all')} className="bg-transparent text-[var(--hv-text-1)] outline-none">
+            <option value="all">Anything (overall)</option>
+            {KIND_ORDER.map((k) => (
+              <option key={k} value={k}>
+                {cat?.kinds[k]?.label ?? k}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
-      <div className="hive-scroll mb-5 flex gap-1.5 overflow-x-auto pb-1">
-        <KindChip active={kind === 'all'} onClick={() => setKind('all')} label="Smartest first" />
-        {KIND_ORDER.map((k) => (
-          <KindChip key={k} active={kind === k} onClick={() => setKind(k)} label={`Best for ${cat?.kinds[k]?.label.toLowerCase() ?? k}`} icon={KIND_ICON[k]} />
-        ))}
+      <DataTable
+        key={kind}
+        label="Connected models"
+        rows={list}
+        columns={columns}
+        rowKey={(m) => `${m.vendor}|${m.keyId}|${m.model}`}
+        onOpen={setOpen}
+        initialSort={{ key: 'fit', dir: 'desc' }}
+        empty={<p className="py-10 text-center text-[13px] text-[var(--hv-text-3)]">No model matches.</p>}
+      />
+      <p className="mt-2 px-1 text-[11.5px] text-[var(--hv-text-3)]">Scores are Hive's estimates (0–100) for each model; "Unrated" means it isn't in the catalogue yet and Hive learns it from your results. Click a row for details.</p>
+      <div className="mt-10">
+        <WhoDoesWhat cat={cat} />
       </div>
-      <Grid>
-        {list.map((m, i) => (
-          <ModelTile key={`${m.vendor}|${m.model}`} m={m} index={i} kind={kind === 'all' ? null : kind} onOpen={() => setOpen(m)} />
-        ))}
-      </Grid>
-      {!list.length && <p className="py-10 text-center text-[13px] text-text-muted">No model matches.</p>}
       <ModelDetail m={open} cat={cat} onClose={() => setOpen(null)} />
     </>
-  )
-}
-
-function KindChip({ active, onClick, label, icon: Icon }: { active: boolean; onClick: () => void; label: string; icon?: typeof Brain }) {
-  return (
-    <button type="button" onClick={onClick} className={cn('inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 text-[12.5px] transition-colors', active ? 'bg-accent-brand text-on-accent-brand' : 'bg-text-primary/[0.05] text-text-secondary hover:bg-text-primary/[0.09]')}>
-      {Icon && <Icon className="size-3.5" />}
-      {label}
-    </button>
   )
 }
 
@@ -214,76 +269,11 @@ function WhoDoesWhat({ cat }: { cat: CatalogInfo | null }) {
   )
 }
 
-function measuredLine(m: ConnectedModel) {
+function measuredShort(m: ConnectedModel) {
   const runs = m.measured.reduce((s, x) => s + x.runs, 0)
   if (!runs) return null
   const ok = m.measured.reduce((s, x) => s + x.ok, 0)
-  const acc = m.measured.reduce((s, x) => s + x.accepted, 0)
-  const judged = m.measured.reduce((s, x) => s + x.accepted + x.rejected, 0)
-  return `${runs} run${runs === 1 ? '' : 's'} here · ${Math.round((ok / runs) * 100)}% finished${judged ? ` · ${Math.round((acc / judged) * 100)}% shipped` : ''}`
-}
-
-function ModelTile({ m, index, kind, onOpen }: { m: ConnectedModel; index: number; kind: TaskKind | null; onOpen: () => void }) {
-  const fam = familyOf(m.vendor, m.model)
-  const c = m.card
-  const measured = measuredLine(m)
-  return (
-    <motion.button
-      type="button"
-      layout
-      onClick={onOpen}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, delay: Math.min(index, 12) * 0.025 }}
-      className="hive-card hive-card-hover hive-lift group relative overflow-hidden p-4 text-left"
-    >
-      <span className="pointer-events-none absolute -right-16 -top-16 size-40 rounded-full opacity-[0.12] blur-2xl transition-opacity group-hover:opacity-25" style={{ background: familyColor(fam) }} />
-      <div className="relative flex items-start gap-3">
-        <AgentMark provider={m.vendor} model={m.model} size={42} />
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5">
-            <span className="truncate text-[15px] font-semibold tracking-[-0.01em]">{c.name}</span>
-            {c.open && (
-              <span className="rounded bg-text-primary/[0.07] px-1 text-[9.5px] font-semibold uppercase tracking-wide text-text-muted" title="Open weights">
-                open
-              </span>
-            )}
-          </div>
-          <div className="mt-0.5 flex min-w-0 items-center gap-1.5 text-[11.5px] text-text-muted">
-            <ProviderGlyph provider={m.vendor} size="xs" />
-            <span className="truncate">
-              {m.vendorLabel} · <span className="font-mono">{shortModel(m.model)}</span>
-            </span>
-          </div>
-        </div>
-        <ScoreRing value={kind ? c.scores[kind] : c.intelligence} size={44} hue={FAMILY[fam].hue} label={kind ? `Fit for this kind of job` : 'Intelligence (estimated)'} />
-      </div>
-      <div className="relative mt-3.5 space-y-1.5">
-        <ScoreBar label="Coding" value={c.coding} hue={150} />
-        <ScoreBar label="Reasoning" value={c.reasoning} hue={280} />
-        <ScoreBar label="Writing" value={c.writing} hue={210} />
-        <ScoreBar label="Speed" value={c.speed * 20} hue={70} suffix={['', 'slow', 'steady', 'quick', 'fast', 'instant'][c.speed]} />
-      </div>
-      <div className="relative mt-3.5 flex flex-wrap items-center gap-1.5">
-        <CostBadge cost={m.cost} long />
-        {c.price && m.cost !== 'free' && m.cost !== 'sub' && (
-          <span className="text-[11px] tabular-nums text-text-muted">
-            ${c.price[0]} / ${c.price[1]} per 1M
-          </span>
-        )}
-        <span className="text-[11px] tabular-nums text-text-muted">{c.context >= 1000 ? `${c.context / 1000}M` : `${c.context}k`} context</span>
-        {c.vision && <Eye className="size-3 text-text-muted" aria-label="Sees images" />}
-        {!c.tools && (
-          <span className="text-[10.5px] text-state-warning" title="Can chat but can't act as an agent">
-            chat only
-          </span>
-        )}
-        {!m.online && <span className="text-[10.5px] text-state-warning">machine offline</span>}
-      </div>
-      {measured && <div className="relative mt-2 text-[11.5px] text-state-success">{measured}</div>}
-      {c.guessed && <div className="relative mt-2 text-[11px] text-text-muted">Not in the catalogue yet — Hive learns it from results.</div>}
-    </motion.button>
-  )
+  return `${runs} run${runs === 1 ? '' : 's'} · ${Math.round((ok / runs) * 100)}% ok`
 }
 
 function ModelDetail({ m, cat, onClose }: { m: ConnectedModel | null; cat: CatalogInfo | null; onClose: () => void }) {
