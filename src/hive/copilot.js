@@ -653,8 +653,13 @@ async function checkSession(taskId, { focus = "", username = "copilot" } = {}) {
   if (!task) throw new Error("Session not found");
   const rv = await cheapReviewer(taskId);
   if (!rv) return { verdict: "unsure", note: "No free or farm reviewer clears the quality bar right now — review the diff yourself (session_diff)." };
+  // Only a session on a machine can run anything: say so instead of letting the reviewer guess.
+  const canRun = !!task.machine_id;
+  const step1 = canRun
+    ? "1. Run the project's checks that exist (tests, type-check, lint, build — whatever the repo uses; keep it fast). Report the exact commands and their exit codes."
+    : '1. You cannot run commands here (no machine). Do not claim any test passed: write "tests not run" in "tests".';
   const prompt = `You are the quality gate for this session. Do not change any file.
-1. Run the project's checks that exist (tests, type-check, lint, build — whatever the repo uses; keep it fast).
+${step1}
 2. Read every change (view_changes) against the original request${focus ? ` — focus especially on: ${focus}` : ""}. Look for: wrong behaviour, missing parts of the request, broken edge cases, security problems, things that would make CI fail, UI that breaks on phones or in dark mode.
 3. Finish with ONLY this JSON in your final message:
 {"verdict":"pass"|"fail"|"unsure","tests":"what you ran and the result","issues":[{"file":"path","line":0,"problem":"…","severity":"high"|"medium"|"low"}],"summary":"one sentence"}
@@ -668,7 +673,16 @@ async function checkSession(taskId, { focus = "", username = "copilot" } = {}) {
     v = null;
   }
   if (!v || !v.verdict) return { verdict: "unsure", reviewer: rv.name, note: "The reviewer did not return a clear verdict", excerpt: clip(text, 1200) };
-  return { verdict: v.verdict, reviewer: rv.name, crossFamily: rv.crossFamily, tests: v.tests, issues: (v.issues || []).slice(0, 12), summary: v.summary, agentStatus: a?.status };
+  let verdict = v.verdict;
+  const notes = [];
+  // Without a machine nothing was tested: code changes can't "pass" on a reviewer's word alone.
+  if (!canRun && verdict === "pass") {
+    verdict = "unsure";
+    notes.push("Tests not run (no machine) — ship it as a pull request so CI is the test.");
+  }
+  // A reviewer from the same model family as the author is weaker evidence.
+  if (rv.crossFamily === false) notes.push("The reviewer is from the same model family as the author — treat risky changes as unsure.");
+  return { verdict, reviewer: rv.name, crossFamily: rv.crossFamily, testsRun: canRun, tests: canRun ? v.tests : "tests not run", issues: (v.issues || []).slice(0, 12), summary: v.summary, note: notes.join(" ") || undefined, agentStatus: a?.status };
 }
 
 /* ── keep work moving: replace agents whose model is down or stuck ─────── */
