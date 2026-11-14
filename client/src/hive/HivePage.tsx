@@ -1,4 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { flushSync } from 'react-dom'
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
@@ -128,7 +129,21 @@ function Shell() {
   const [palette, setPalette] = useState(false)
   const [team, setTeam] = useState(false)
   const navigate = useNavigate()
-  const { pathname } = useLocation()
+  const location = useLocation()
+  const { pathname } = location
+  // Route swaps cross-fade through the native View Transitions API where
+  // available; reduced-motion users and older browsers get an instant swap.
+  const [displayLocation, setDisplayLocation] = useState(location)
+  useEffect(() => {
+    if (location.key === displayLocation.key) return
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => void }
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (doc.startViewTransition && !reduce) doc.startViewTransition(() => flushSync(() => setDisplayLocation(location)))
+    else {
+      const t = window.setTimeout(() => setDisplayLocation(location), 0)
+      return () => window.clearTimeout(t)
+    }
+  }, [location, displayLocation])
   // Sessions need the width: the workspace sidebar has its own (default hidden) setting there.
   const inSession = /^\/hive\/p\/[^/]+\/t\//.test(pathname)
   const sideKey = inSession ? 'hive:sideSession' : 'hive:side'
@@ -234,7 +249,7 @@ function Shell() {
         <TopBar side={side} onToggleSide={toggleSide} onMobileNav={() => setMobileNav(true)} onPalette={() => setPalette(true)} onTeam={() => setTeam(true)} />
         <main className="hive-main hive-scroll relative min-h-0 flex-1 overflow-y-auto">
           <Suspense fallback={<PageSkeleton />}>
-            <Routes>
+            <Routes location={displayLocation}>
               <Route index element={<HomePage />} />
               <Route path="inbox" element={<InboxPage />} />
               <Route path="settings" element={<SettingsPage />} />
@@ -1027,8 +1042,16 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
     const pool = cmdOnly ? out.filter((x) => x.cmd) : projOnly ? out.filter((x) => x.group === 'Projects') : out
     if (!s) {
       if (cmdOnly || projOnly) return pool.slice(0, 60)
-      // Empty: recent work first, then what you can create, then everywhere you can go.
-      const recent = [...out.filter((x) => x.group === 'Sessions').slice(0, 3), ...out.filter((x) => x.group === 'Chats').slice(0, 2)].map((x) => ({ ...x, group: 'Recent' }))
+      // Empty: what you ran recently first, then recent work, then create/go.
+      let recentIds: string[] = []
+      try {
+        recentIds = JSON.parse(localStorage.getItem('hive:paletteRecent') ?? '[]') as string[]
+      } catch {
+        /* private mode */
+      }
+      const byId = new Map(out.map((x) => [x.id, x]))
+      const picked = recentIds.map((id) => byId.get(id)).filter((x): x is PaletteItem => !!x).map((x) => ({ ...x, group: 'Recent' }))
+      const recent = picked.length ? picked : [...out.filter((x) => x.group === 'Sessions').slice(0, 3), ...out.filter((x) => x.group === 'Chats').slice(0, 2)].map((x) => ({ ...x, group: 'Recent' }))
       return [...recent, ...out.filter((x) => x.group === 'Create' || x.group === 'Go to')]
     }
     const hits = pool
@@ -1046,6 +1069,12 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
     listRef.current?.querySelector(`[data-i="${i}"]`)?.scrollIntoView({ block: 'nearest' })
   }, [i])
   const pick = (x: PaletteItem) => {
+    try {
+      const recent = JSON.parse(localStorage.getItem('hive:paletteRecent') ?? '[]') as string[]
+      localStorage.setItem('hive:paletteRecent', JSON.stringify([x.id, ...recent.filter((r) => r !== x.id)].slice(0, 5)))
+    } catch {
+      /* private mode */
+    }
     x.run()
     onClose()
   }
@@ -1094,6 +1123,13 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
               })}
               {!items.length && <li className="p-6 text-center text-[13px] text-text-muted">Nothing matches “{q}”.</li>}
             </ul>
+            <div className="flex items-center gap-3 border-t hive-line px-4 py-2 text-[11px] text-text-muted">
+              <span className="flex items-center gap-1"><span className="hive-kbd">↑</span><span className="hive-kbd">↓</span> navigate</span>
+              <span className="flex items-center gap-1"><span className="hive-kbd">↵</span> open</span>
+              <span className="flex items-center gap-1"><span className="hive-kbd">&gt;</span> commands</span>
+              <span className="flex items-center gap-1"><span className="hive-kbd">@</span> projects</span>
+              <span className="ml-auto flex items-center gap-1"><span className="hive-kbd">esc</span> close</span>
+            </div>
           </motion.div>
         </div>
       )}

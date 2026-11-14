@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { FolderGit2, Inbox, MoreHorizontal, Plus, RotateCcw } from 'lucide-react'
 import { Button, Kbd, Tooltip } from '@/components/ui'
-import { CopyField, DataTable, Empty, ModelChip, Problem, QuotaMeter, Row, RowList, SegmentedControl, StatusPill, friendlyModel, type Status } from '../kit'
+import { ContextRing, CopyField, DataTable, Empty, ModelChip, Problem, QuotaMeter, Row, RowList, SegmentedControl, Skeleton, Spinner, StatusPill, friendlyModel, type Status } from '../kit'
 
 const STATUSES: Status[] = ['queued', 'planning', 'running', 'needs', 'review', 'done', 'failed', 'stopped', 'limited']
 const MODELS: [string, string][] = [
@@ -135,6 +135,22 @@ export default function DevUiPage() {
             { key: 'price', header: 'Price', hideBelow: 'sm', render: (r) => (r.free ? 'Free' : 'Paid') },
           ]}
         />
+      </Section>
+
+      <Section title="Loaders (spinner, skeleton, context ring)">
+        <div className="flex flex-wrap items-center gap-4">
+          <Spinner size={14} label="Loading" />
+          <Spinner size={20} label="Loading" />
+          <Spinner size={28} label="Loading" />
+          <ContextRing used={41000} max={128000} />
+          <ContextRing used={110000} max={128000} />
+          <ContextRing used={88000} />
+        </div>
+        <div className="mt-3 max-w-md space-y-2">
+          <Skeleton className="h-8 w-1/3" />
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-8 w-2/3" />
+        </div>
       </Section>
 
       <Section title="Empty and error states">

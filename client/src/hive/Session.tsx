@@ -54,7 +54,7 @@ import { hiveApi } from './api'
 import { AgentChip, defaultSpec, shortModel } from './AgentPicker'
 import { BoardView } from './BoardView'
 import { ChangesView } from './ChangesView'
-import { ContextRing } from './kit'
+import { ContextRing, Spinner } from './kit'
 import { FilesView } from './FilesView'
 import { LiveCode } from './LiveCode'
 import { FloorFeed, TeamFloor } from './TeamFloor'
@@ -1474,7 +1474,14 @@ function TerminalPanel({ machineId, folder }: { machineId: string; folder: strin
         </span>
       </div>
       <div className="hive-term hive-scroll min-h-0 flex-1 overflow-y-auto p-3">
-        {!lines.length && <div className="opacity-60">Commands run in {folder} on {m?.name}. Agents’ commands go through the machine’s approval policy; yours run directly.</div>}
+        {!lines.length && (
+          <div className="flex h-full flex-col items-center justify-center gap-2 rounded-[var(--hv-r-card)] border border-dashed hive-line p-6 text-center">
+            <SquareTerminal className="size-6 text-text-muted" aria-hidden="true" />
+            <p className="max-w-[46ch] text-[12px] leading-relaxed text-text-muted">
+              Commands run in <span className="font-mono">{folder}</span> on {m?.name}. Yours run directly — agents’ commands go through the approval policy.
+            </p>
+          </div>
+        )}
         {lines.map((l, i) => (
           <div key={i} className="mb-3">
             <div>
@@ -1483,7 +1490,11 @@ function TerminalPanel({ machineId, folder }: { machineId: string; folder: strin
             <div className="opacity-90">{l.out}</div>
           </div>
         ))}
-        {busy && <div className="hive-dot-run">running…</div>}
+        {busy && (
+          <div className="flex items-center gap-2 text-text-muted">
+            <Spinner size={12} label="Running command" /> running…
+          </div>
+        )}
         <div ref={end} />
       </div>
       <form
