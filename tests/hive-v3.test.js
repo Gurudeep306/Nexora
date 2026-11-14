@@ -26,9 +26,11 @@ const ok = async (method, url, body) => {
   return r.body;
 };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-async function waitTask(id) {
+async function waitTask(id, { approve = false } = {}) {
   for (let i = 0; i < 80; i++) {
     await sleep(250);
+    // The automatic reviewer on a machine session runs the checks too; approve those.
+    if (approve) for (const a of (await ok("GET", "/api/hive/approvals")).approvals) await ok("POST", `/api/hive/approvals/${a.id}`, { approved: true });
     const t = await ok("GET", `/api/hive/tasks/${id}`);
     if (!["running", "queued"].includes(t.task.status)) return t;
   }
@@ -104,7 +106,15 @@ test("machine task: real files, approval-gated commands, terminal, checkpoints a
     }
   }
   assert.ok(approved, "an approval was requested");
-  const t = await waitTask(task.id);
+  const t = await waitTask(task.id, { approve: true });
+  // Machine sessions get the automatic review too (their changes live in git, not hive_changes).
+  let reviewer = null;
+  for (let i = 0; i < 40 && !reviewer; i++) {
+    reviewer = (await ok("GET", `/api/hive/tasks/${task.id}`)).agents.find((a) => a.name === "reviewer");
+    if (!reviewer) await sleep(250);
+  }
+  assert.ok(reviewer, "the automatic reviewer joined the machine session");
+  await waitTask(task.id, { approve: true });
   const kinds = t.events.map((e) => e.kind);
   assert.ok(kinds.includes("approval") && kinds.includes("approval_result"));
   const run = t.events.find((e) => e.kind === "tool_result" && e.data.name === "run_command");

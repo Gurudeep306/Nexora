@@ -98,7 +98,7 @@ Use 1 part for a small request and at most ${maxParts} parts. Order parts so dep
     dependsOn: (Array.isArray(p.dependsOn) ? p.dependsOn : []).map(String),
     prompt: String(p.prompt || p.title || request).slice(0, 8000),
   }));
-  if (!parts.length) parts = [{ id: "p1", title: String(request).split("\n")[0].slice(0, 80), kind: router.classify(request).kind, size: "m", files: [], dependsOn: [], prompt: String(request) }];
+  if (!parts.length) parts = [{ id: "p1", title: String(request).split("\n")[0].slice(0, 80), kind: router.classify(request, { byPerson: false }).kind, size: "m", files: [], dependsOn: [], prompt: String(request) }];
   parts = topo(parts);
 
   const machineId = project.machine_id || null;

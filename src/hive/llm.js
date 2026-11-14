@@ -23,9 +23,30 @@ function extractJson(text) {
       else if (c === '"') inStr = false;
     } else if (c === '"') inStr = true;
     else if (c === open) depth++;
-    else if (c === close && --depth === 0) return JSON.parse(body.slice(start, i + 1));
+    else if (c === close && --depth === 0) return looseParse(body.slice(start, i + 1));
   }
   throw new Error("The model's JSON was cut off");
+}
+
+/**
+ * Parse JSON the way models write it: tolerate unquoted keys, single-quoted
+ * strings, trailing commas and // comments before giving up.
+ */
+function looseParse(text) {
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    const fixed = text
+      .replace(/^\s*\/\/.*$/gm, "")
+      .replace(/([{,]\s*)([A-Za-z_][\w-]*)\s*:/g, '$1"$2":')
+      .replace(/:\s*'([^'\\]*(?:\\.[^'\\]*)*)'/g, (_, v) => `: ${JSON.stringify(v)}`)
+      .replace(/,\s*([}\]])/g, "$1");
+    try {
+      return JSON.parse(fixed);
+    } catch {
+      throw e;
+    }
+  }
 }
 
 /**
@@ -33,8 +54,9 @@ function extractJson(text) {
  * spec (optional) forces a provider/key/model; otherwise the router picks.
  * Returns { text, data?, model, provider, note }.
  */
-async function ask({ kind = "writing", prompt, system = "", json = false, username = "hive", preference = "quality", excludeVendors = [], spec = null, attachments = [], maxTries = 3, projectId = "", freeOnly = false }) {
-  const tried = [];
+async function ask({ kind = "writing", prompt, system = "", json = false, username = "hive", preference = "quality", excludeVendors = [], spec = null, attachments = [], maxTries = 5, projectId = "", freeOnly = false, excludeModels = [] }) {
+  const tried = []; // whole keys that can't be used (auth, quota)
+  const triedModels = [...excludeModels]; // "vendor|model" pairs that failed (bad reply, rate limit, one model down)
   let lastErr = null;
   for (let attempt = 0; attempt < maxTries; attempt++) {
     let key;
@@ -47,7 +69,7 @@ async function ask({ kind = "writing", prompt, system = "", json = false, userna
       model = spec.model || key?.default_model;
       if (!key) throw new Error(await keys.explainNoKey(spec.provider));
     } else {
-      const pool = async (free) => (await router.candidates({ kind, needTools: false, chat: true, freeOnly: free, exclude: { keys: tried } })).filter((c) => !excludeVendors.includes(c.vendor));
+      const pool = async (free) => (await router.candidates({ kind, needTools: false, chat: true, freeOnly: free, exclude: { keys: tried, vendorModels: triedModels } })).filter((c) => !excludeVendors.includes(c.vendor));
       // freeOnly: Hive's housekeeping (summaries, condensing) prefers free models, falling back to any.
       let list = await pool(freeOnly);
       if (!list.length && freeOnly) list = await pool(false);
@@ -80,11 +102,14 @@ async function ask({ kind = "writing", prompt, system = "", json = false, userna
       return out;
     } catch (e) {
       lastErr = e;
-      tried.push(key.id);
+      // One model failing (bad JSON, a 429 on that model, a 404) must not throw away a
+      // whole key that offers dozens of others; auth and quota problems do.
+      if (["auth", "quota"].includes(e.kind)) tried.push(key.id);
+      else triedModels.push(`${provider}|${model}`);
       if (spec && attempt === 0) spec = null; // fall back to the router
     }
   }
   throw lastErr || new Error("No model is available — connect one in Keys");
 }
 
-module.exports = { ask, extractJson };
+module.exports = { ask, extractJson, looseParse };
