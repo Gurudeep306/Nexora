@@ -211,6 +211,8 @@ function startLoops(deps) {
   }), 20_000).unref?.();
   setInterval(safe(() => tickSchedules(deps)), 60_000).unref?.();
   setInterval(safe(ciFixTick), 5 * 60_000).unref?.();
+  // Free models only, a few per day: objective coding scores for the router.
+  setInterval(safe(() => require("./bench").benchFreeTick({ limit: 3 })), 24 * 3600_000).unref?.();
   // Agent health: probe free and subscription models a few times a day (a tiny "reply OK" call).
   setTimeout(safe(() => require("./health").probeAll()), 3 * 60_000).unref?.();
   setInterval(safe(() => require("./health").probeAll()), 4 * 60 * 60_000).unref?.();

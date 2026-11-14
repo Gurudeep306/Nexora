@@ -135,10 +135,18 @@
 ::view-transition-old(root),
 ::view-transition-new(root) { animation-duration: 150ms; animation-timing-function: var(--hv-ease, ease); }
 
+/* Project → session: the session title moves from its row into the header. */
+::view-transition-group(hv-session-title) { animation-duration: 260ms; animation-timing-function: var(--hv-ease, ease); }
+::view-transition-old(hv-session-title),
+::view-transition-new(hv-session-title) { height: 100%; width: auto; object-fit: none; object-position: left center; }
+
 @media (prefers-reduced-motion: reduce) {
   .hv-panel { animation: none; }
   ::view-transition-old(root),
-  ::view-transition-new(root) { animation: none; }
+  ::view-transition-new(root),
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
 }
 
 /* The labelled sidebar peeking over the collapsed rail. */
@@ -150,4 +158,13 @@
 .hv-composer:focus-within {
   border-color: color-mix(in oklab, var(--hv-accent) 70%, transparent);
   box-shadow: 0 0 0 1px var(--hv-accent), 0 0 24px -8px var(--hv-accent);
+}
+
+/* Phones: the dense desktop label sizes (10–11.5px) become 12px, so every
+   line stays readable on a small screen (Lighthouse's legibility rule too). */
+@media (max-width: 640px) {
+  .hive-root .text-\[10px\],
+  .hive-root .text-\[10\.5px\],
+  .hive-root .text-\[11px\],
+  .hive-root .text-\[11\.5px\] { font-size: 12px; }
 }
