@@ -283,7 +283,7 @@ function ProjectsSection({ active }: { active?: string }) {
       label="Projects"
       active={active}
       tabs={[
-        { id: 'repos', label: 'Repositories', element: <ReposPage /> },
+        { id: 'repos', label: 'All projects', element: <ReposPage /> },
         { id: 'ideas', label: 'Ideas', element: <LaunchpadPage /> },
         { id: 'guide', label: 'NexoraGuru guide', element: <NexoraGuide /> },
       ]}
