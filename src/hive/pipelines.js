@@ -240,6 +240,7 @@ async function drive(runId) {
         const ok = agents.filter((a) => a.status === "done");
         if (!ok.length) throw new Error(`Every agent in ${st.name} failed`);
         const v = await require("./judge").judgeTask(task.id, { adopt: true, agentIds: ok.map((a) => a.id), by: "pipeline" });
+        if (v?.noVerdict) throw new Error(`${st.name}: the Judge gave no verdict, so no attempt was adopted`);
         result = { status: "done", text: (ok.find((a) => a.id === v?.winner) || ok[0]).result };
       } else {
         const a = st.agents[0] || { mode: "auto" };

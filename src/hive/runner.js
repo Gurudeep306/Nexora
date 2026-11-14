@@ -867,8 +867,9 @@ async function finishTask(taskId) {
   // Auto review plugin: one read-only reviewer per finished task.
   if (anyOk && !reviewed.has(taskId)) {
     const plugins = (await resolvePlugins(task.project_id)).builtins;
-    const changes = await all("SELECT COUNT(*) AS n FROM hive_changes WHERE task_id=? AND variant='main'", [taskId]);
-    if (plugins.auto_review?.enabled && Number(changes[0]?.n) > 0) {
+    // Count the real changes: machine sessions keep theirs in git, not in hive_changes.
+    const changed = plugins.auto_review?.enabled ? await changedFiles(taskId) : 0;
+    if (plugins.auto_review?.enabled && changed > 0) {
       reviewed.add(taskId);
       const cfg = plugins.auto_review.config || {};
       let spec = cfg.provider ? { provider: cfg.provider, model: cfg.model || undefined, keyId: "auto", name: "reviewer" } : null;
@@ -923,7 +924,7 @@ async function cheapestSpec() {
  * lead: spec for the team lead.
  */
 async function startTask(task, { mode, specs, lead, username }) {
-  if (!task.kind) task = await setTask(task.id, { kind: router.classify(task.prompt).kind });
+  if (!task.kind) task = await setTask(task.id, { kind: router.classify(task.prompt, { byPerson: false }).kind });
   await setTask(task.id, { status: "running" });
   await event(task.id, null, "system", { message: `@${username} started a ${mode} task`, mode });
   const launches = [];
@@ -934,7 +935,11 @@ async function startTask(task, { mode, specs, lead, username }) {
       const leadAgent = await createAgent(task, { role: "lead", spec: lead || pool[0], instructions: task.prompt, startedBy: username, title: "Lead" });
       const poolAgents = [];
       for (const s of pool) {
-        const r = await resolveSpec(s).catch(() => null);
+        // Machine agents (Claude Code, Codex, Vibe) need the task's machine to resolve.
+        const r = await resolveSpec(s, { prompt: task.prompt, machineId: task.machine_id || null, kind: task.kind || null }).catch(async (e) => {
+          await event(task.id, null, "system", { message: `Left ${s.name || s.provider} out of the team: ${e.message}`, dropped: s.provider });
+          return null;
+        });
         if (r) poolAgents.push({ spec: s, model: r.model, key: r.key, tier: modelTier(r.model) });
       }
       const team = poolAgents.map((p, i) => ({ name: p.spec.name || `worker-${i + 1}`, model: p.model, note: `${providerOf(p.spec.provider).label}${plugins.smart_router?.enabled ? `, ${["cheap", "balanced", "strong"][p.tier]}` : ""}` }));
@@ -1002,6 +1007,17 @@ async function startTask(task, { mode, specs, lead, username }) {
     throw e;
   }
   Promise.allSettled(launches).then(() => finishTask(task.id));
+}
+
+/** How many files a task has changed so far (GitHub overlay or machine git). */
+async function changedFiles(taskId) {
+  try {
+    const ctx = await taskContext(taskId);
+    if (!ctx.machine) return Number((await get("SELECT COUNT(*) AS n FROM hive_changes WHERE task_id=? AND variant='main'", [taskId]))?.n || 0);
+    return (await workspaceOf(ctx).changes()).length;
+  } catch {
+    return 0;
+  }
 }
 
 /** Context for an agent joining an existing task. */

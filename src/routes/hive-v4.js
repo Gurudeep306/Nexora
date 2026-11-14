@@ -42,7 +42,7 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
   const runner = require("../hive/runner");
 
   /* ── task rows for pipelines / schedules (agents started separately) ── */
-  async function createTaskRow(p, { title, prompt, machineId = undefined, folder = undefined }) {
+  async function createTaskRow(p, { title, prompt, machineId = undefined, folder = undefined, kind = null }) {
     const id = newId("tsk");
     const t = now();
     const mId = machineId === undefined ? p.machine_id || null : machineId;
@@ -55,7 +55,7 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     await run(
       `INSERT INTO hive_tasks(id, project_id, title, prompt, mode, status, base_ref, base_sha, branch, created_by, created_at, updated_at, machine_id, folder, kind)
        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-      [id, p.id, String(title).slice(0, 120), prompt, "solo", "queued", p.default_branch || "main", baseSha, `hive/${slug(title)}-${id.slice(-4)}`, "hive", t, t, mId, dir, router_.classify(prompt).kind],
+      [id, p.id, String(title).slice(0, 120), prompt, "solo", "queued", p.default_branch || "main", baseSha, `hive/${slug(title)}-${id.slice(-4)}`, "hive", t, t, mId, dir, kind || router_.classify(prompt).kind],
     );
     await isolate(id);
     const task = await get("SELECT * FROM hive_tasks WHERE id=?", [id]);
