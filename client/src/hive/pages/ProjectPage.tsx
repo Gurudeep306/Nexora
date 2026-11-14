@@ -518,8 +518,12 @@ export function NewProject({ presetOwner, presetRepo, presetName, onCreated }: {
     <div className="mx-auto w-full max-w-[860px] px-4 pb-20 pt-8 sm:px-8">
       {!onCreated && (
         <>
-          <h1 className="text-[26px] font-semibold tracking-[-0.02em]">New project</h1>
-          <p className="mt-1 text-[13.5px] text-text-muted">A project is a codebase agents work on: a GitHub repository (agents edit a safe copy and open PRs) or a folder on one of your machines (real files, commands, tests). You can link more repos later.</p>
+          <PageHeader
+            title="New project"
+            titleClassName="text-[26px] tracking-[-0.02em]"
+            sub="A project is a codebase agents work on: a GitHub repository (agents edit a safe copy and open PRs) or a folder on one of your machines (real files, commands, tests). You can link more repos later."
+            subClassName="text-[13.5px] text-text-muted"
+          />
         </>
       )}
       <div className="mt-6 grid grid-cols-2 gap-2 rounded-2xl bg-text-primary/[0.04] p-1.5">
