@@ -96,7 +96,7 @@ export default function HomePage() {
                 <Menu>
                   <MenuTrigger asChild>
                     <button type="button" className="inline-flex h-7 max-w-[220px] items-center gap-1.5 rounded-full bg-[var(--hv-surface-2)] px-2.5 text-[12px] text-[var(--hv-text-2)] hover:text-[var(--hv-text-1)]">
-                      {project ? <span className="hive-hex size-2.5 shrink-0" style={{ background: projectColor(project.color) }} /> : <FolderGit2 className="size-3.5" />}
+                      {project ? <span className="rounded-full size-2.5 shrink-0" style={{ background: projectColor(project.color) }} /> : <FolderGit2 className="size-3.5" />}
                       <span className="truncate">{project ? project.name : 'Any project'}</span>
                       <ChevronDown className="size-3 text-[var(--hv-text-3)]" />
                     </button>
@@ -108,7 +108,7 @@ export default function HomePage() {
                     {boot.projects.length > 0 && <MenuLabel>Projects</MenuLabel>}
                     {boot.projects.map((p) => (
                       <MenuItem key={p.id} onSelect={() => setTarget(p.id)}>
-                        <span className="hive-hex size-3.5" style={{ background: projectColor(p.color) }} /> {p.name}
+                        <span className="rounded-full size-3.5" style={{ background: projectColor(p.color) }} /> {p.name}
                       </MenuItem>
                     ))}
                     <MenuItem onSelect={() => navigate('/hive/projects')}>

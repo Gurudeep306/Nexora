@@ -619,7 +619,7 @@ export function NewProject({ presetOwner, presetRepo, presetName, onCreated }: {
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Project name" className="h-10 w-64 rounded-lg border hive-line bg-transparent px-3 text-[14px] outline-none focus:border-accent-brand/50" />
         <div className="flex gap-1.5">
           {Object.keys(PROJECT_COLORS).map((c) => (
-            <button key={c} type="button" aria-label={c} onClick={() => setColor(c)} className={cn('hive-hex size-6 transition-transform', color === c && 'scale-125')} style={{ background: PROJECT_COLORS[c] }} />
+            <button key={c} type="button" aria-label={c} onClick={() => setColor(c)} className={cn('rounded-full size-6 transition-transform', color === c && 'scale-125')} style={{ background: PROJECT_COLORS[c] }} />
           ))}
         </div>
         <Button className="ml-auto" onClick={create} loading={busy} disabled={kind === 'github' ? !/^[^/\s]+\/[^/\s]+$/.test(target) || !githubId : !folder || !machineId}>
