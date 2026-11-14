@@ -307,11 +307,33 @@ async function stream({ machineId, folder, cli, args, input, env, hook, signal, 
       m.call(machineId, "run_stop", { id }).catch(() => {});
     };
     signal?.addEventListener("abort", stop, { once: true });
-    for (;;) {
-      const r = await m.call(machineId, "run_read", { id, from }, { timeoutMs: 30_000 });
-      for (const line of r.lines || []) for (const ev of parse(line, state)) await onEvent(ev);
-      from = r.next ?? from;
-      if (r.done || r.gone) return { exit: r.exit, stderr: r.stderr || "", stopped };
+    // A dropped bridge (network blip, a deploy, a slow read) is retried for up to 3 minutes:
+    // the bridge keeps the buffered lines, so resuming from `from` loses nothing.
+    let lostSince = 0;
+    let finished = false;
+    try {
+      for (;;) {
+        let r;
+        try {
+          r = await m.call(machineId, "run_read", { id, from }, { timeoutMs: 30_000 });
+          lostSince = 0;
+        } catch (e) {
+          if (stopped || signal?.aborted) throw e;
+          lostSince ||= Date.now();
+          if (Date.now() - lostSince > 180_000) throw new ProviderError(`Lost the machine for 3 minutes while ${CLI_LABEL[cli] || "the agent"} was working: ${e.message}`, { kind: "network", retryable: true });
+          await new Promise((res) => setTimeout(res, Math.min(15_000, 1000 * 2 ** Math.min(4, Math.floor((Date.now() - lostSince) / 10_000)))));
+          continue;
+        }
+        for (const line of r.lines || []) for (const ev of parse(line, state)) await onEvent(ev);
+        from = r.next ?? from;
+        if (r.done || r.gone) {
+          finished = true;
+          return { exit: r.exit, stderr: r.stderr || "", stopped };
+        }
+      }
+    } finally {
+      // Never leave the CLI running on the machine (and using the plan) after we give up.
+      if (!finished) stop();
     }
   } finally {
     live.delete(id);
