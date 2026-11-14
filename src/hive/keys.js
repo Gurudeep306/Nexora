@@ -69,6 +69,8 @@ function publicKey(row, usedTokens = 0, extra = {}) {
     tokenLimit: limit,
     limitPeriod: row.limit_period,
     maxConcurrency: row.max_concurrency,
+    rpmLimit: row.rpm_limit ?? null,
+    rpdLimit: row.rpd_limit ?? null,
     owner: row.owner,
     disabled: !!row.disabled,
     status: row.status,
@@ -86,7 +88,10 @@ function publicKey(row, usedTokens = 0, extra = {}) {
     freeLimit: (() => {
       try {
         const v = vendorOf(keyVendor(row));
-        if (v.subscription || !(row.free_tier || v.freeTier)) return null;
+        if (v.subscription) return null;
+        const own = limitsOf(row);
+        if (own) return own;
+        if (!(row.free_tier || v.freeTier)) return null;
         return require("./catalog").freeLimitFor(v.id);
       } catch {
         return null;
@@ -223,6 +228,9 @@ async function updateKey(id, input) {
   if (input.tokenLimit !== undefined) set("token_limit", input.tokenLimit == null || input.tokenLimit === "" ? null : Math.round(Number(input.tokenLimit)));
   if (input.limitPeriod !== undefined) set("limit_period", input.limitPeriod);
   if (input.maxConcurrency !== undefined) set("max_concurrency", Number(input.maxConcurrency));
+  const perLimit = (v) => (v == null || v === "" ? null : Math.max(1, Math.min(1_000_000, Math.round(Number(v)) || 1)));
+  if (input.rpmLimit !== undefined) set("rpm_limit", perLimit(input.rpmLimit));
+  if (input.rpdLimit !== undefined) set("rpd_limit", perLimit(input.rpdLimit));
   if (input.disabled !== undefined) set("disabled", input.disabled ? 1 : 0);
   if (input.defaultModel !== undefined) {
     set("default_model", input.defaultModel || null);
@@ -528,16 +536,26 @@ const recentStarts = new Map(); // keyId -> [ms]
  * them itself: calls wait their turn inside the minute instead of getting a
  * 429, and a key that has used its day hands the work on at once.
  */
+/**
+ * The pace a key is held to: limits set on the key itself (Keys & limits →
+ * edit), else the provider's typical free allowance for free connections.
+ */
+function limitsOf(row) {
+  const cat = row.free_tier ? require("./catalog").freeLimitFor(keyVendor(row)) : null;
+  const own = row.rpm_limit != null || row.rpd_limit != null;
+  if (!cat && !own) return null;
+  return { ...(cat || {}), rpm: row.rpm_limit ?? cat?.rpm ?? undefined, rpd: row.rpd_limit ?? cat?.rpd ?? undefined, custom: own };
+}
+
 async function freeTierGate(row, signal) {
-  if (!row.free_tier) return;
-  const lim = require("./catalog").freeLimitFor(keyVendor(row));
+  const lim = limitsOf(row);
   if (!lim) return;
   if (lim.rpd) {
     const used = await get("SELECT SUM(requests) AS n FROM hive_usage WHERE key_id=? AND day=?", [row.id, day(Date.now())]).catch(() => null);
     if (Number(used?.n || 0) >= lim.rpd) {
       const { ProviderError } = require("./providers/common");
       const d = new Date();
-      throw new ProviderError(`${row.label} has used its ${lim.rpd} free requests for today`, { kind: "quota", retryAt: Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1) });
+      throw new ProviderError(lim.custom && row.rpd_limit != null ? `${row.label} has used the ${lim.rpd} requests a day set for it` : `${row.label} has used its ${lim.rpd} free requests for today`, { kind: "quota", retryAt: Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1) });
     }
   }
   if (!lim.rpm) return;
@@ -623,14 +641,13 @@ async function capacity() {
   const health = await all("SELECT key_id, model, cooldown_until, last_kind, last_error FROM hive_health").catch(() => []);
   const used = new Map((await all("SELECT key_id, SUM(requests) AS n, SUM(input_tokens + output_tokens) AS tok FROM hive_usage WHERE day=? GROUP BY key_id", [today]).catch(() => [])).map((r) => [r.key_id, r]));
   const machines = require("./machines");
-  const { freeLimitFor } = require("./catalog");
   return rows.map((r) => {
     const vendor = keyVendor(r);
     const keyHealth = health.find((h) => h.key_id === r.id && h.model === "");
     const coolingModels = health.filter((h) => h.key_id === r.id && h.model && Number(h.cooldown_until) > t).map((h) => ({ model: h.model, until: Number(h.cooldown_until), why: h.last_kind }));
     const down = r.status === "invalid" || (r.machine_id && !machines.isOnline(r.machine_id));
     const until = Number(keyHealth?.cooldown_until || 0);
-    const lim = r.free_tier ? freeLimitFor(vendor) : null;
+    const lim = limitsOf(r);
     let rl = null;
     try {
       rl = JSON.parse(r.rl_json || "null");
@@ -653,4 +670,4 @@ async function capacity() {
   });
 }
 
-module.exports = { capacity, refreshPlanUsage, refreshAllPlanUsage, workingModels, saveVerified, blockModel, setPlanUsage, explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };
+module.exports = { limitsOf, capacity, refreshPlanUsage, refreshAllPlanUsage, workingModels, saveVerified, blockModel, setPlanUsage, explainNoKey, refreshAll, listKeys, keyRow, createKey, updateKey, deleteKey, checkKey, secretOf, recordUsage, hasBudget, pickKey, pickHandoffKey, acquire, usageSeries, publicKey, keyVendor };

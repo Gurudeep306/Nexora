@@ -16,7 +16,7 @@ const gh = require("../hive/github");
 const hub = require("../hive/hub");
 const runner = require("../hive/runner");
 const { catalogue, providerOf } = require("../hive/providers");
-const { workspace, adoptVariant, dropOverlay, cleanPath } = require("../hive/workspace");
+const { workspace, dropOverlay, cleanPath } = require("../hive/workspace");
 const { readBase } = require("../hive/snapshot");
 const { commitTask, commitOnMachine } = require("../hive/commit");
 const machines = require("../hive/machines");
@@ -706,7 +706,7 @@ function createHiveRouter() {
       if (variant === "main") throw new BadInput("Pick a compare result to adopt");
       const agent = await get("SELECT name, model FROM hive_agents WHERE id=? AND task_id=?", [variant, task.id]);
       if (!agent) throw new BadInput("Unknown result", 404);
-      await adoptVariant(task.id, variant, "main");
+      await runner.adoptAttempt(task.id, variant);
       await runner.event(task.id, null, "system", { message: `@${req.hiveUser} adopted ${agent.name}'s result (${agent.model})` });
       hub.emitTask(task.id, "changes", { variant: "main" });
       res.json({ ok: true });

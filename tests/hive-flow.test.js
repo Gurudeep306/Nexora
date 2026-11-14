@@ -166,3 +166,57 @@ test("the capacity view says which sources are ready, cooling or down", async ()
   assert.equal(cap.why, "quota");
   assert.ok(Date.parse(cap.freesAt) >= t + 3500_000);
 });
+
+test("approvals are stored; one a person gave before a restart isn't asked again", async () => {
+  const db = require("../src/hive/db");
+  await db.initHiveDb();
+  const machines = require("../src/hive/machines");
+  // A person approved this command in the last run (before this process started).
+  const before = machines.BOOT_AT - 60_000;
+  await db.run("INSERT INTO hive_approvals(id, task_id, command, status, answered_by, created_at, answered_at) VALUES('apr_old','t_r','npm test','approved','owner',?,?)", [before, before]);
+  await db.run("INSERT INTO hive_approvals(id, task_id, command, status, created_at) VALUES('apr_open','t_r','npm run build','pending',?)", [before]);
+  await machines.closeStaleApprovals();
+  assert.equal((await db.get("SELECT status FROM hive_approvals WHERE id='apr_open'")).status, "expired");
+  const r = await machines.requestApproval({ taskId: "t_r", command: "npm test" });
+  assert.equal(r.approved, true);
+  assert.equal(r.by, "owner");
+  assert.equal(machines.pendingApprovals().length, 0, "nobody was asked");
+  // A new command still asks, and the answer is stored.
+  const p = machines.requestApproval({ taskId: "t_r", command: "npm run lint" });
+  await new Promise((res) => setTimeout(res, 20));
+  const [open] = machines.pendingApprovals();
+  machines.answerApproval(open.id, { approved: false, by: "owner" });
+  assert.equal((await p).approved, false);
+  await new Promise((res) => setTimeout(res, 20));
+  assert.equal((await db.get("SELECT status FROM hive_approvals WHERE id=?", [open.id])).status, "denied");
+  assert.ok((await machines.approvalHistory()).some((h) => h.id === open.id));
+});
+
+test("the Judge finds the repo's test command", async () => {
+  const { testCommand } = require("../src/hive/judge");
+  const ws = (files) => ({ read: async (p) => files[p] ?? null });
+  assert.equal(await testCommand(ws({ "package.json": '{"scripts":{"test":"node --test"}}' })), "npm test");
+  assert.equal(await testCommand(ws({ "package.json": '{"scripts":{"test":"echo \\"Error: no test specified\\" && exit 1"}}' })), null);
+  assert.equal(await testCommand(ws({ "pyproject.toml": "[project]" })), "python -m pytest -q");
+  assert.equal(await testCommand(ws({})), null);
+});
+
+test("limits set on a key are used, even on a paid key", async () => {
+  const db = require("../src/hive/db");
+  await db.initHiveDb();
+  const keys = require("../src/hive/keys");
+  const t = Date.now();
+  await db.run("INSERT INTO hive_keys(id, provider, label, secret_enc, last4, disabled, status, owner, free_tier, created_at, updated_at) VALUES('k_own','openai','Team GPT','x','0000',0,'ok','owner',0,?,?)", [t, t]);
+  assert.equal(keys.limitsOf(await db.get("SELECT * FROM hive_keys WHERE id='k_own'")), null, "no limits unless set");
+  await keys.updateKey("k_own", { rpdLimit: 2, rpmLimit: 30 });
+  const row = await db.get("SELECT * FROM hive_keys WHERE id='k_own'");
+  assert.deepEqual({ rpm: keys.limitsOf(row).rpm, rpd: keys.limitsOf(row).rpd }, { rpm: 30, rpd: 2 });
+  const today = new Date().toISOString().slice(0, 10);
+  const cols = (await db.all("PRAGMA table_info(hive_usage)")).map((c) => c.name);
+  const vals = { key_id: "k_own", day: today, requests: 2, username: "owner", input_tokens: 0, output_tokens: 0 };
+  const use = Object.keys(vals).filter((c) => cols.includes(c));
+  await db.run(`INSERT INTO hive_usage(${use.join(",")}) VALUES(${use.map(() => "?").join(",")})`, use.map((c) => vals[c]));
+  await assert.rejects(keys.acquire(row), (e) => e.kind === "quota" && /set for it/.test(e.message));
+  await keys.updateKey("k_own", { rpdLimit: null, rpmLimit: "" });
+  assert.equal(keys.limitsOf(await db.get("SELECT * FROM hive_keys WHERE id='k_own'")), null, "cleared");
+});

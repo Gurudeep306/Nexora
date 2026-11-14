@@ -6,6 +6,7 @@ import { hiveApi } from './api'
 import { useHive } from './store'
 import type { AgentRow, HiveEvent } from './types'
 import { ProviderGlyph, UserDot, timeAgo } from './ui'
+import { SegmentedControl } from './kit'
 
 export function BoardView({ agents, events }: { agents: AgentRow[]; events: HiveEvent[] }) {
   const byId = useMemo(() => new Map(agents.map((a) => [a.id, a])), [agents])
@@ -23,11 +24,18 @@ export function BoardView({ agents, events }: { agents: AgentRow[]; events: Hive
       <div className="flex min-h-0 flex-col overflow-hidden hive-card">
         <div className="flex items-center gap-1 border-b hive-line px-2 py-1.5">
           <span className="px-1.5 text-xs font-semibold text-text-primary">Activity</span>
-          {(['all', 'edits', 'notes', 'problems'] as const).map((f) => (
-            <button key={f} type="button" onClick={() => setFilter(f)} className={cn('h-6 rounded-md px-2 text-[11px] capitalize', filter === f ? 'bg-text-primary/10 text-text-primary' : 'text-text-muted hover:text-text-secondary')}>
-              {f}
-            </button>
-          ))}
+          <SegmentedControl
+            size="sm"
+            label="Show"
+            value={filter}
+            onChange={setFilter}
+            options={[
+              { value: 'all', label: 'All' },
+              { value: 'edits', label: 'Edits' },
+              { value: 'notes', label: 'Notes' },
+              { value: 'problems', label: 'Problems' },
+            ]}
+          />
           <span className="ml-auto pr-2 text-[11px] text-text-muted">{events.length} events</span>
         </div>
         <ol className="hive-scroll min-h-0 flex-1 space-y-0.5 overflow-y-auto p-2">

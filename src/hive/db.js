@@ -455,6 +455,19 @@ const SCHEMA = [
     last_seen INTEGER,
     created_at INTEGER NOT NULL
   )`,
+  // Command approvals, kept so a restart doesn't lose who approved what.
+  `CREATE TABLE IF NOT EXISTS hive_approvals (
+    id TEXT PRIMARY KEY,
+    task_id TEXT,
+    agent_id TEXT,
+    command TEXT NOT NULL,
+    info_json TEXT NOT NULL DEFAULT '{}',
+    status TEXT NOT NULL DEFAULT 'pending',
+    answered_by TEXT,
+    note TEXT,
+    created_at INTEGER NOT NULL,
+    answered_at INTEGER
+  )`,
 ];
 
 // Columns added after the first release (ALTER fails harmlessly if present).
@@ -493,6 +506,9 @@ const COLUMNS = [
   ["hive_convos", "tools INTEGER NOT NULL DEFAULT 1"],
   ["hive_convos", "summary_json TEXT"],
   ["hive_keys", "blocked_models TEXT"],
+  ["hive_agents", "worktree TEXT"],
+  ["hive_keys", "rpm_limit INTEGER"],
+  ["hive_keys", "rpd_limit INTEGER"],
   ["hive_keys", "verified_json TEXT"],
   ["hive_copilot_settings", "autonomy TEXT NOT NULL DEFAULT 'autopilot'"],
   ["hive_copilot_settings", "can_merge INTEGER NOT NULL DEFAULT 0"],
