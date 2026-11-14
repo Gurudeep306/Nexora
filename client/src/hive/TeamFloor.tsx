@@ -250,7 +250,7 @@ function Station({
             {cost && <CostBadge cost={cost} long />}
           </div>
           <div className="mt-0.5 flex min-w-0 items-center gap-1.5 text-[11.5px] text-text-muted">
-            <span className="font-medium" style={{ color: familyColor(fam, 72) }}>
+            <span className="font-medium" style={{ color: `color-mix(in oklab, ${familyColor(fam, 60)} 65%, var(--color-text-primary))` }}>
               {FAMILY[fam].name}
             </span>
             <span className="truncate font-mono">{shortModel(a.model)}</span>
@@ -280,7 +280,7 @@ function Station({
       </div>
 
       {handoff && (
-        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-2 flex items-center gap-1.5 rounded-lg bg-[oklch(70%_0.14_330/0.1)] px-2.5 py-1.5 text-[11.5px] text-[oklch(74%_0.13_330)]">
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-2 flex items-center gap-1.5 rounded-lg bg-[oklch(70%_0.14_330/0.1)] px-2.5 py-1.5 text-[11.5px] text-[color-mix(in_oklab,oklch(60%_0.13_330)_70%,var(--color-text-primary))]">
           <ArrowRightLeft className="size-3.5 shrink-0" />
           <span className="truncate">
             {String(handoff.data.reason ?? 'Handed over')}

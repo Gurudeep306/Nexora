@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { StatusPill as KitStatusPill } from './kit/StatusPill'
 import { cn } from '@/lib/utils'
 import type { AgentRow, HiveKey, ProviderId, TaskStatus } from './types'
 
@@ -108,13 +109,9 @@ export function StatusDot({ status, className }: { status: string; className?: s
   return <span className={cn('inline-block size-2 shrink-0 rounded-full', status === 'running' && 'hive-dot-run', className)} style={{ background: statusColor(status) }} />
 }
 
+/** One status vocabulary: the kit pill (icon + word + colour), with Hive's own words. */
 export function StatusPill({ status, className }: { status: TaskStatus | AgentRow['status'] | string; className?: string }) {
-  return (
-    <span className={cn('inline-flex items-center gap-1.5 whitespace-nowrap text-[12px] font-medium', className)} style={{ color: statusColor(status) }}>
-      <StatusDot status={status} className="size-1.5" />
-      {statusLabel(status)}
-    </span>
-  )
+  return <KitStatusPill size="sm" status={status} label={STATUS[status]?.label} className={className} />
 }
 
 /* ── Numbers & time ───────────────────────────────────────────────────── */

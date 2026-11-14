@@ -263,6 +263,9 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
   .hive-ping::after, .hive-dot-run, .hive-caret::after, .hive-shimmer, .hive-in, .hive-shine, .hive-working::before, .hive-av-halo, .hive-av-orbit, .hive-av-scan::after, .hive-av-type, .hive-av-spin, .hive-station-glow, .hive-wire, .hive-thinking-text { animation: none; }
 }
 
+/* Brand-coloured text sits on tinted chips all over Hive: nudge it toward the
+   main text so it keeps 4.5:1 on those tints in light and dark (WCAG 1.4.3). */
+.hive-root .text-accent-brand { color: color-mix(in oklab, var(--color-accent-brand) 82%, var(--color-text-primary)); }
 .hive-root ::selection { background: color-mix(in oklab, var(--color-accent-brand) 30%, transparent); }
 .hive-launcher-tile { transition: background-color 120ms, border-color 120ms; }
 
