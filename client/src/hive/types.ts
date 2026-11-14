@@ -223,7 +223,7 @@ export interface AgentRow {
   effort: Effort | null
   variant: string
   instructions: string
-  status: 'queued' | 'running' | 'done' | 'failed' | 'stopped' | 'interrupted'
+  status: 'queued' | 'running' | 'done' | 'failed' | 'stopped' | 'interrupted' | 'incomplete'
   title?: string | null
   handoffs?: number
   routed_kind?: TaskKind | null

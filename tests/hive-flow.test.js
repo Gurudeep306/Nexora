@@ -66,3 +66,34 @@ test("one failing model doesn't throw away the whole key in llm.ask", async () =
     server.close();
   }
 });
+
+test("daily caps are limits until the reset; reset headers are read", () => {
+  const { classify, retryAtFrom } = require("../src/hive/providers/common");
+  assert.equal(classify(429, "Rate limit reached for requests per day (RPD)").kind, "quota");
+  assert.equal(classify(429, "free-models-per-day limit exceeded").kind, "quota");
+  assert.equal(classify(429, "Too many requests, slow down").kind, "rate");
+  assert.equal(classify(404, "Not Found").kind, "bad_request", "a bare 404 is a wrong URL, not a missing model");
+  assert.equal(classify(404, "The model gpt-x does not exist").kind, "model");
+  const now = Date.UTC(2026, 0, 1, 10, 0, 0);
+  const h = (o) => ({ get: (n) => o[n] ?? null });
+  assert.equal(retryAtFrom(h({ "retry-after": "30" }), "rate", now), now + 30_000);
+  assert.equal(retryAtFrom(h({ "x-ratelimit-reset-requests": "1m30s" }), "rate", now), now + 90_000);
+  assert.equal(retryAtFrom(h({}), "quota", now), Date.UTC(2026, 0, 2), "a daily cap with no header resets at midnight UTC");
+  assert.equal(retryAtFrom(h({}), "rate", now), null);
+});
+
+test("a stalled provider call ends with a retryable network error", async () => {
+  const { callTimeouts, ProviderError } = require("../src/hive/providers/common");
+  const tm = callTimeouts(null, { firstByteMs: 30, idleMs: 30, totalMs: 1000 });
+  await new Promise((r) => setTimeout(r, 60));
+  assert.equal(tm.signal.aborted, true);
+  assert.throws(() => tm.check(), (e) => e instanceof ProviderError && e.kind === "network" && e.retryable === true);
+  tm.done();
+  // The caller's own stop is not reported as a timeout.
+  const ctl = new AbortController();
+  const tm2 = callTimeouts(ctl.signal, { firstByteMs: 1000 });
+  ctl.abort();
+  assert.equal(tm2.signal.aborted, true);
+  assert.doesNotThrow(() => tm2.check());
+  tm2.done();
+});

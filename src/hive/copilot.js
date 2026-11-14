@@ -746,7 +746,7 @@ async function watch(taskId, username) {
   await run("INSERT INTO hive_copilot_watch(task_id, username, created_at) VALUES(?,?,?) ON CONFLICT(task_id) DO UPDATE SET username=excluded.username, done=0", [taskId, username, now()]);
 }
 
-const FINISHED = new Set(["review", "failed", "stopped", "pr_open", "committed"]);
+const FINISHED = new Set(["review", "failed", "stopped", "pr_open", "committed", "merged", "interrupted"]);
 const reviewing = new Set();
 
 /** Called on every task update: a watched session that finished gets a review turn. */
