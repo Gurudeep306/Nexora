@@ -455,6 +455,16 @@ const SCHEMA = [
     last_seen INTEGER,
     created_at INTEGER NOT NULL
   )`,
+  // Golden-task benchmark scores, per model.
+  `CREATE TABLE IF NOT EXISTS hive_bench (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    key_id TEXT,
+    provider TEXT NOT NULL,
+    model TEXT NOT NULL,
+    score INTEGER,
+    details_json TEXT NOT NULL DEFAULT '[]',
+    ran_at INTEGER NOT NULL
+  )`,
   // Command approvals, kept so a restart doesn't lose who approved what.
   `CREATE TABLE IF NOT EXISTS hive_approvals (
     id TEXT PRIMARY KEY,

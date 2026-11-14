@@ -106,6 +106,7 @@ curl -fsSL -H "Authorization: Bearer hvm_…" https://nexoraguru.in/api/hive-bri
   - 30-day usage, with cached tokens shown separately
   - today's tokens and estimated spend
 - **Request limits:** open a key's menu → **Budget, limits & model** to set *requests a minute* and *requests a day*. Hive waits instead of hitting the per-minute limit, and moves work to another key when the daily one is used up (until midnight UTC). Free connections use the provider's usual free allowance when nothing is set.
+- **Coding test (Models → click a model):** six small coding tasks with hidden tests. Hive runs the model's code in a locked process (no files, no programs, no secrets) and scores it 0–100. Free models are tested automatically, a few a day; press **Run the test** for any other model. Every result feeds the router's measured quality.
 - **When a key is busy or cooling down,** its card says when it frees up, and the Inbox lists it. The Copilot sees the same view (its `capacity` tool) when it plans work.
 - **Model lists:** every key's model list refreshes twice a day. A default model you picked yourself is kept; automatic defaults move to the best chat model the key currently offers.
 

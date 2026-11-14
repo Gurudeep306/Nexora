@@ -192,6 +192,33 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     h(async (_req, res) => res.json({ ok: true, stats: await perf.summary() })),
   );
 
+  // Golden-task benchmark: latest score per model; run one model on demand.
+  router.get(
+    "/api/hive/bench",
+    h(async (_req, res) => res.json({ ok: true, tasks: require("../hive/bench").GOLDEN.length, results: await require("../hive/bench").results() })),
+  );
+  const benching = new Set();
+  router.post(
+    "/api/hive/bench",
+    h(async (req, res) => {
+      const b = req.body || {};
+      const keyId = str(b.keyId, "keyId", { max: 64 });
+      const model = str(b.model, "model", { max: 200 });
+      const row = await get("SELECT * FROM hive_keys WHERE id=?", [keyId]);
+      if (!row) throw new BadInput("Unknown key", 404);
+      const id = `${keyId}|${model}`;
+      if (benching.has(id)) throw new BadInput("That model is already being tested", 409);
+      benching.add(id);
+      try {
+        const r = await require("../hive/bench").benchModel({ provider: keys.keyVendor(row), keyId, model, username: req.hiveUser });
+        await audit(req, "hive.bench", model, { score: r.score });
+        res.json({ ok: true, result: r });
+      } finally {
+        benching.delete(id);
+      }
+    }),
+  );
+
   // Preview: who would do this, and why.
   router.post(
     "/api/hive/route",

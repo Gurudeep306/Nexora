@@ -68,10 +68,27 @@ Pages redesigned in v1 (Home, Inbox, Projects, Keys, Models, Spend, Settings) al
 | Board with drag and drop | Not a fit: the session Board is an activity log and team notes, not a kanban, so there is nothing to drag. Its filter now uses the kit `SegmentedControl`. |
 | Virtualised file tree | Not needed: folders are collapsed by default and only open folders render, so even large repos (Nexora itself) stay fast. |
 | Terminal with xterm.js | Left as is: the bridge runs each command and returns its output (no live PTY), so a terminal emulator would add weight without adding features. Worth doing together with a PTY in the bridge. |
-| vaul drawers | Not added: the phone sheets slide up, are dialogs (focus moves in and stays inside, Escape closes, focus returns), which covers what vaul would bring except swipe-to-close. |
+| vaul drawers | Not added as a dependency: the phone sheets slide up, are dialogs (focus moves in and stays inside, Escape closes, focus returns) and close with a swipe down on their top bar, which is what vaul brings. |
+
+## View transitions and Lighthouse (PR #101)
+
+- **Project → session.** Opening a session from the project page moves its title from the row into the session header (View Transitions API, 260 ms). Reduced motion turns every view transition off.
+- **The side menu and section tabs cross-fade (150 ms).** These were marked `viewTransition`, but the app uses a plain `BrowserRouter`, which ignores that option, so they never animated. `kit/viewTransition.ts` now starts the transition itself (`transitionTo`, `useNavFade`), keeping ⌘/Ctrl-click as "open in new tab".
+- **Lighthouse** on a local production build of this code (the live site isn't reachable from this session):
+
+| Page | Phone: performance · accessibility · best practices | Computer: performance |
+|---|---|---|
+| `/hive` | 66 · 100 · 100 | 97 |
+| `/hive/keys` | 66 · 100 · 100 | 96 |
+| `/hive/models` | 65 · 100 · 100 | 96 |
+
+  Two fixes came from it:
+  - Hive no longer downloads the learning site's pages in the background (Learn, GATE, Nexus, charts, KaTeX: about 225 KB of unused code).
+  - On phones, label text smaller than 12 px is shown at 12 px.
+
+  The phone performance score is held back by the site-wide startup code that every page shares (about 0.8 s of script work on Lighthouse's slow-phone setting). Splitting that is a site-wide change for its own PR.
 
 ## Not done yet (honest list)
 
-- **Shared-element view transitions** (project avatar → session header) are not started.
-- **Lighthouse on the live site** has not been run, because this session can't reach nexoraguru.in. To run it: open https://nexoraguru.in/hive in Chrome, press F12, open **Lighthouse**, click **Analyze**.
+- **Lighthouse on the live site.** To run it: open https://nexoraguru.in/hive in Chrome, press F12, open **Lighthouse**, click **Analyze**.
 - **Reading the references.** Several reference sites in the brief are blocked by this session's network policy. Allow them in the environment's network settings to have them read in a later session.

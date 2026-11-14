@@ -45,7 +45,7 @@ import { cn } from '@/lib/utils'
 import { hiveApi } from './api'
 import { TeamChat } from './TeamChat'
 import { InboxBell } from './Inbox'
-import { useDensity } from './kit'
+import { transitionTo, useDensity, useNavFade } from './kit'
 import type { LaunchGroup } from './Launcher'
 import { CopilotDock } from './Copilot'
 import { HiveLogo } from './HiveLogo'
@@ -108,9 +108,11 @@ export default function HivePage() {
   const projectId = m?.[1] ?? null
   const taskId = m?.[2] ?? null
   const onSelect = useCallback(
-    (p: string | null, t?: string | null) => {
+    (p: string | null, t?: string | null, opts?: { viewTransition?: boolean }) => {
       if (p) store.set('hive:lastProject', p)
-      navigate(p ? (t ? `/hive/p/${p}/t/${t}` : `/hive/p/${p}`) : '/hive')
+      const url = p ? (t ? `/hive/p/${p}/t/${t}` : `/hive/p/${p}`) : '/hive'
+      if (opts?.viewTransition) transitionTo(() => navigate(url), t ? '[data-vt-session]' : undefined)
+      else navigate(url)
     },
     [navigate],
   )
@@ -400,6 +402,7 @@ function ActivityBar({ onTeam, onPalette, withSidebar }: { onTeam: () => void; o
 }
 
 function RailLink({ it }: { it: NavItem }) {
+  const navFade = useNavFade()
   const { pathname } = useLocation()
   const forced = it.match ? it.match.test(pathname) : undefined
   return (
@@ -412,7 +415,7 @@ function RailLink({ it }: { it: NavItem }) {
         </span>
       }
     >
-      <NavLink to={it.to} end={it.end} aria-label={it.label} viewTransition className="relative">
+      <NavLink to={it.to} end={it.end} aria-label={it.label} onClick={(e) => navFade(e, it.to)} className="relative">
         {({ isActive }) => {
           const on = forced ?? isActive
           return (
@@ -595,6 +598,7 @@ function Sidebar() {
 
 /** Every part of Hive, grouped and always visible in the sidebar. Groups fold; the choice is remembered. */
 function NavSections({ filter = '' }: { filter?: string }) {
+  const navFade = useNavFade()
   const { sections } = useNav()
   const { pathname } = useLocation()
   const [closed, setClosed] = useState<Record<string, boolean>>(() => {
@@ -628,7 +632,7 @@ function NavSections({ filter = '' }: { filter?: string }) {
               items.map((it) => {
                 const forced = it.match ? it.match.test(pathname) : undefined
                 return (
-                  <NavLink key={it.label} to={it.to} end={it.end} title={it.hint} viewTransition className="block">
+                  <NavLink key={it.label} to={it.to} end={it.end} title={it.hint} onClick={(e) => navFade(e, it.to)} className="block">
                     {({ isActive }) => {
                       const on = forced ?? isActive
                       return (
