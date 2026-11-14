@@ -40,7 +40,7 @@ import { AgentMark } from '../agents'
 import { useHive } from '../store'
 import type { AgentSpec, GithubReport, LinkedRepo, Mode, Project, ProjectActivity, Task } from '../types'
 import { MODE_INFO, ProviderGlyph, StatusPill, fmtTokens, timeAgo } from '../ui'
-import { Empty, Row, RowList, SectionLabel, SegmentedControl } from '../kit'
+import { Empty, Row, RowList, SectionLabel, SegmentedControl, canTransition } from '../kit'
 
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Something went wrong')
 
@@ -64,6 +64,13 @@ const GROUPS: { id: string; label: string; match: (t: Task) => boolean }[] = [
 
 function ProjectHome({ project }: { project: Project }) {
   const { tasks, select, machines, live, online } = useHive()
+  // The session's title glides from its row into the session header (View Transitions, where the browser has them).
+  const openSession = (id: string) => {
+    const el = document.querySelector<HTMLElement>(`[data-vt-title="${CSS.escape(id)}"]`)
+    const vt = canTransition()
+    if (el && vt) el.style.viewTransitionName = 'hv-session-title'
+    select(project.id, id, { viewTransition: vt })
+  }
   const navigate = useNavigate()
   const toast = useToast()
   const [settings, setSettings] = useState(false)
@@ -234,7 +241,7 @@ function ProjectHome({ project }: { project: Project }) {
                 return (
                   <Row
                     key={t.id}
-                    onOpen={() => select(project.id, t.id)}
+                    onOpen={() => openSession(t.id)}
                     leading={
                       <span className="flex w-12 -space-x-1.5">
                         {(t.agents ?? []).slice(0, 3).map((a) => (
@@ -242,7 +249,7 @@ function ProjectHome({ project }: { project: Project }) {
                         ))}
                       </span>
                     }
-                    title={t.title}
+                    title={<span data-vt-title={t.id}>{t.title}</span>}
                     meta={[MODE_INFO[t.mode]?.label ?? t.mode, `${(t.agents ?? []).length} agent${(t.agents ?? []).length === 1 ? '' : 's'}`, tok ? `${fmtTokens(tok)} tokens` : ''].filter(Boolean).join(' · ')}
                     trailing={
                       <>

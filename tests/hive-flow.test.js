@@ -220,3 +220,54 @@ test("limits set on a key are used, even on a paid key", async () => {
   await keys.updateKey("k_own", { rpdLimit: null, rpmLimit: "" });
   assert.equal(keys.limitsOf(await db.get("SELECT * FROM hive_keys WHERE id='k_own'")), null, "cleared");
 });
+
+test("golden tasks: correct code passes, wrong code fails, and the sandbox can't touch files", async () => {
+  const { GOLDEN, check, codeOf } = require("../src/hive/bench");
+  const rle = GOLDEN.find((t) => t.id === "rle");
+  const good = codeOf("Here:\n```js\nfunction encode(s){let o='';for(let i=0;i<s.length;){let j=i;while(s[j]===s[i])j++;o+=(j-i>1?j-i:'')+s[i];i=j}return o}\n```");
+  assert.deepEqual(await check(rle, good), { passed: 5, total: 5 });
+  assert.equal((await check(rle, "function encode(s){ return s }")).passed < 5, true);
+  assert.match((await check(rle, "function nope(){}")).error, /no function named encode/);
+  const sneaky = await check(rle, "function encode(s){ return require('fs').readFileSync('/etc/hostname','utf8') }");
+  assert.equal(sneaky.passed, 0, "no file access");
+  const slow = await check(rle, "function encode(s){ for(;;){} }", { timeoutMs: 1500 });
+  assert.equal(slow.passed, 0);
+  const lis = GOLDEN.find((t) => t.id === "lis");
+  const fast = "function lis(a){const t=[];for(const x of a){let l=0,h=t.length;while(l<h){const m=(l+h)>>1;if(t[m]<x)l=m+1;else h=m}t[l]=x}return t.length}";
+  assert.deepEqual(await check(lis, fast), { passed: 5, total: 5 });
+});
+
+test("a benchmark run scores a model and is stored", async () => {
+  const http = require("http");
+  const db = require("../src/hive/db");
+  await db.initHiveDb();
+  const keys = require("../src/hive/keys");
+  const bench = require("../src/hive/bench");
+  const answers = { encode: "function encode(s){let o='';for(let i=0;i<s.length;){let j=i;while(s[j]===s[i])j++;o+=(j-i>1?j-i:'')+s[i];i=j}return o}" };
+  const server = http.createServer((req, res) => {
+    let body = "";
+    req.on("data", (c) => (body += c));
+    req.on("end", () => {
+      const ask = JSON.parse(body).messages.at(-1).content;
+      const fn = /function (\w+)\(/.exec(ask)[1];
+      const text = "```js\n" + (answers[fn] || `function ${fn}(){ return null }`) + "\n```";
+      res.writeHead(200, { "Content-Type": "text/event-stream" });
+      res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: text } }] })}\n\n`);
+      res.end("data: [DONE]\n\n");
+    });
+  });
+  await new Promise((r) => server.listen(0, "127.0.0.1", r));
+  const t = Date.now();
+  await db.run("INSERT INTO hive_keys(id, provider, label, secret_enc, last4, base_url, default_model, disabled, status, owner, created_at, updated_at) VALUES('k_bench','openrouter','Bench','x','0000',?,'m-1',0,'ok','owner',?,?)", [`http://127.0.0.1:${server.address().port}/v1`, t, t]);
+  const orig = keys.secretOf;
+  keys.secretOf = () => "sk-test";
+  try {
+    const r = await bench.benchModel({ provider: "openrouter", keyId: "k_bench", model: "m-1" });
+    assert.equal(r.details.find((d) => d.task === "rle").passed, 5);
+    assert.equal(r.score, Math.round(100 / bench.GOLDEN.length), "one of the tasks fully right");
+    assert.equal((await bench.results()).find((x) => x.model === "m-1").score, r.score);
+  } finally {
+    keys.secretOf = orig;
+    server.close();
+  }
+});
