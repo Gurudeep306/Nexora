@@ -6,14 +6,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { AlertTriangle, Bell, CheckCheck, FileText, FolderGit2, Hash, Info, MessageSquare, Send, Workflow, XCircle } from 'lucide-react'
-import { Popover, PopoverContent, PopoverTrigger, Tooltip, useToast } from '@/components/ui'
+import { FileText, FolderGit2, Hash, MessageSquare, Send, Workflow } from 'lucide-react'
+import { useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from './api'
 import { errMsg } from './Improve'
 import { projectColor } from './projectColor'
 import { useHive } from './store'
-import type { ChatMessage, HiveAlert } from './types'
+import type { ChatMessage } from './types'
 import { UserDot, timeAgo } from './ui'
 
 const LINK_RE = /\[\[(task|convo|drive|pipeline|project):([^|\]]*)\|([^\]]*)\]\]/g
@@ -184,65 +184,3 @@ export async function shareToTeam(attach: { type: 'task' | 'convo' | 'drive' | '
   return hiveApi.sendTeamChat({ channel, body: note, attach })
 }
 
-/* ── Alerts bell ─────────────────────────────────────────────────────── */
-const LEVEL = { info: { icon: Info, tone: 'var(--color-state-info)' }, warn: { icon: AlertTriangle, tone: 'var(--color-state-warning)' }, error: { icon: XCircle, tone: 'var(--color-state-error)' } }
-
-export function AlertsBell() {
-  const { on } = useHive()
-  const navigate = useNavigate()
-  const [alerts, setAlerts] = useState<HiveAlert[]>([])
-  const [unread, setUnread] = useState(0)
-  const load = useCallback(async () => {
-    try {
-      const r = await hiveApi.alerts()
-      setAlerts(r.alerts)
-      setUnread(r.unread)
-    } catch {
-      /* quiet */
-    }
-  }, [])
-  useEffect(() => {
-    load()
-  }, [load])
-  useEffect(() => on('alert', load), [on, load])
-  const markRead = async () => {
-    setUnread(0)
-    await hiveApi.readAlerts().catch(() => {})
-  }
-  return (
-    <Popover onOpenChange={(o) => o && unread > 0 && markRead()}>
-      <Tooltip label={unread ? `${unread} new alert${unread === 1 ? '' : 's'}` : 'Alerts'}>
-        <PopoverTrigger asChild>
-          <button type="button" className="relative grid size-8 place-items-center rounded-lg text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary" aria-label="Alerts">
-            <Bell className={cn('size-4', unread > 0 && 'origin-top animate-[hive-ring_1.2s_ease-in-out_2]')} />
-            {unread > 0 && <span className="absolute right-0.5 top-0.5 grid min-w-3.5 place-items-center rounded-full bg-state-error px-1 text-[9px] font-bold leading-[14px] text-white">{unread}</span>}
-          </button>
-        </PopoverTrigger>
-      </Tooltip>
-      <PopoverContent align="end" className="w-[340px] p-0">
-        <div className="flex items-center justify-between border-b hive-line px-3.5 py-2.5">
-          <span className="text-[13px] font-semibold">Alerts</span>
-          <button type="button" onClick={markRead} className="inline-flex items-center gap-1 text-[11.5px] text-text-muted hover:text-text-primary">
-            <CheckCheck className="size-3.5" /> Mark read
-          </button>
-        </div>
-        <div className="hive-scroll max-h-[380px] overflow-y-auto p-1.5">
-          {!alerts.length && <p className="p-6 text-center text-[12.5px] text-text-muted">All quiet. Budget warnings, plan limits and overnight results land here.</p>}
-          {alerts.map((a) => {
-            const L = LEVEL[a.level] ?? LEVEL.info
-            return (
-              <button key={a.id} type="button" onClick={() => a.ref && navigate(a.ref.startsWith('/') ? a.ref : '/hive/spend/budgets')} className={cn('flex w-full gap-2.5 rounded-xl p-2.5 text-left hover:bg-text-primary/[0.04]', !a.read && 'bg-accent-brand/[0.04]')}>
-                <L.icon className="mt-0.5 size-4 shrink-0" style={{ color: L.tone }} />
-                <span className="min-w-0 flex-1">
-                  <span className="block text-[12.5px] font-medium text-text-primary">{a.title}</span>
-                  {a.body && <span className="mt-0.5 block text-[12px] text-text-muted">{a.body}</span>}
-                  <span className="mt-0.5 block text-[10.5px] text-text-muted">{timeAgo(a.created_at)}</span>
-                </span>
-              </button>
-            )
-          })}
-        </div>
-      </PopoverContent>
-    </Popover>
-  )
-}

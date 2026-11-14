@@ -18,6 +18,7 @@ export function singleKeysOn(): boolean {
 
 const GO: Record<string, { to: string; label: string }> = {
   h: { to: '/hive', label: 'Home' },
+  i: { to: '/hive/inbox', label: 'Inbox' },
   c: { to: '/hive/copilot', label: 'Copilot' },
   t: { to: '/hive/chat', label: 'Chat' },
   p: { to: '/hive/projects', label: 'Projects' },
