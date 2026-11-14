@@ -32,6 +32,27 @@ export function modelsFor(boot: Bootstrap, provider: ProviderId, keyId: string):
   return [...first, ...[...set].filter((m) => !first.includes(m)).sort()]
 }
 
+/** Fastest measured reply time for a model across the keys that offer it (ms). */
+export function speedOf(boot: Bootstrap, provider: string, model: string): number | null {
+  let best: number | null = null
+  for (const k of boot.keys) {
+    if (k.provider !== provider || k.disabled) continue
+    const ms = k.speed?.[model]
+    if (typeof ms === 'number' && (best == null || ms < best)) best = ms
+  }
+  return best
+}
+
+export function SpeedBadge({ ms }: { ms: number | null }) {
+  if (ms == null) return null
+  const tone = ms < 1500 ? 'text-state-success bg-state-success/12' : ms < 5000 ? 'text-state-warning bg-state-warning/12' : 'text-state-error bg-state-error/12'
+  return (
+    <span className={cn('shrink-0 rounded-full px-1.5 py-px text-[10.5px] font-medium tabular-nums', tone)} title="Measured reply time">
+      {ms < 1000 ? `${Math.round(ms / 100) / 10}s` : `${(ms / 1000).toFixed(ms < 10_000 ? 1 : 0)}s`}
+    </span>
+  )
+}
+
 /** The smart router: Hive picks the best model for the kind of work. */
 export const AUTO_SPEC: AgentSpec = { provider: 'auto', keyId: 'auto', model: '' }
 
@@ -166,6 +187,14 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
     if (vendor === 'all' && !s) {
       const fav = favs.filter((f) => providers.includes(f.provider))
       if (fav.length) out.push({ title: 'Favourites', items: fav })
+      // The fastest working models, measured on real replies.
+      const fast = providers
+        .flatMap((p) => modelsFor(boot, p, 'auto').map((m) => ({ provider: p, model: m, ms: speedOf(boot, p, m) })))
+        .filter((x): x is { provider: ProviderId; model: string; ms: number } => x.ms != null && x.ms < 4000)
+        .sort((a, b) => a.ms - b.ms)
+        .slice(0, 5)
+        .map(({ provider, model }) => ({ provider, model }))
+      if (fast.length) out.push({ title: 'Fastest right now', items: fast })
       if (recents.length) out.push({ title: 'Recent', items: recents.filter((r) => !isFav(r.provider, r.model)).slice(0, 5) })
     }
     for (const p of providers) {
@@ -281,6 +310,7 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
                         {caps?.tools && <Wrench className="size-3" aria-label="Uses tools" />}
                         {caps?.images && <ImageIcon className="size-3" aria-label="Makes images" />}
                       </span>
+                      <SpeedBadge ms={speedOf(boot, r.provider, r.model)} />
                       {active && <Check className="size-3.5 shrink-0 text-accent-brand" />}
                     </button>
                     <button type="button" onClick={() => toggleFav(r.provider, r.model)} className={cn('grid size-6 shrink-0 place-items-center rounded-md', isFav(r.provider, r.model) ? 'text-state-warning' : 'text-text-muted opacity-0 group-hover/row:opacity-100 hover:text-text-primary')} aria-label="Favourite">

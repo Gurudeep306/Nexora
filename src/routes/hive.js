@@ -1063,7 +1063,7 @@ function createHiveRouter() {
       if (!text.trim() && !(Array.isArray(b.refs) && b.refs.length)) throw new BadInput("Write a message or attach a file");
       const mode = b.mode === "image" ? "image" : "text";
       if (!b.stream) {
-        const r = await chat.send(req.params.id, { text, refs: b.refs, spec, specs, mode, username: req.hiveUser });
+        const r = await chat.send(req.params.id, { text, refs: b.refs, spec, specs, mode, username: req.hiveUser, focusProjectId: typeof b.focusProjectId === "string" ? b.focusProjectId.slice(0, 80) : null });
         return res.json({ ok: true, user: r.user, replyId: r.replyId });
       }
       // Stream the reply on this response (NDJSON, one event per line). The
@@ -1081,7 +1081,7 @@ function createHiveRouter() {
       };
       const ping = setInterval(() => write("ping", {}), 15000);
       try {
-        const r = await chat.send(req.params.id, { text, refs: b.refs, spec, specs, mode, username: req.hiveUser, sink: write });
+        const r = await chat.send(req.params.id, { text, refs: b.refs, spec, specs, mode, username: req.hiveUser, focusProjectId: typeof b.focusProjectId === "string" ? b.focusProjectId.slice(0, 80) : null, sink: write });
         await r.done;
       } catch (e) {
         write("error", { error: e.message || "Something went wrong" });
