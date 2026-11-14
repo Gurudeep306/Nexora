@@ -154,3 +154,13 @@ test("every key carries each model's measured speed, and chats without a project
   assert.match(bg, /npm test/, "the brief comes along");
   assert.match(await chat.projectContext("p1"), /^This chat is about the project/);
 });
+
+test("a connection the provider stopped shows 'limit reached' with when it frees up", async () => {
+  const db = require("../src/hive/db");
+  const keys = require("../src/hive/keys");
+  const until = Date.now() + 30 * 60_000;
+  await db.run("INSERT OR REPLACE INTO hive_health(key_id, model, fail_count, consecutive_fails, last_fail, last_kind, last_error, cooldown_until) VALUES(?,?,?,?,?,?,?,?)", ["kf", "limited", 1, 1, Date.now(), "quota", "Usage limit reached for your plan", until]);
+  const k = (await keys.listKeys()).find((x) => x.id === "kf");
+  assert.equal(k.limitUntil, until);
+  assert.match(k.limitNote, /Usage limit reached/);
+});
