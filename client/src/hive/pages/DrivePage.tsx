@@ -160,7 +160,7 @@ const isMarkdown = (it: DriveItem) => /\.(md|mdx|markdown)$/i.test(it.name) || i
 function TypeIcon({ item, size = 'md', open }: { item: Pick<DriveItem, 'kind' | 'name' | 'mime'>; size?: 'sm' | 'md' | 'lg'; open?: boolean }) {
   const k = KIND[kindOf(item)]
   const Icon = item.kind === 'folder' && open ? FolderOpen : k.icon
-  const dims = { sm: 'size-7 rounded-[9px] [&_svg]:size-3.5', md: 'size-9 rounded-[11px] [&_svg]:size-4', lg: 'size-14 rounded-2xl [&_svg]:size-6' }[size]
+  const dims = { sm: 'size-7 rounded-md [&_svg]:size-3.5', md: 'size-9 rounded-lg [&_svg]:size-4', lg: 'size-14 rounded-xl [&_svg]:size-6' }[size]
   return (
     <span className={cn('hive-tile shrink-0', dims)} style={{ ['--tile' as string]: k.color }} aria-hidden>
       <Icon />
@@ -615,7 +615,7 @@ export default function DrivePage() {
           </MenuContent>
         </Menu>
 
-        <div className="flex rounded-[10px] bg-text-primary/[0.05] p-0.5" role="radiogroup" aria-label="View">
+        <div className="flex rounded-lg bg-text-primary/[0.05] p-0.5" role="radiogroup" aria-label="View">
           {(
             [
               ['list', List, 'List view'],
@@ -912,7 +912,7 @@ function Check3({ on, some, onClick, label, className }: { on: boolean; some?: b
     >
       <span
         className={cn(
-          'grid size-[18px] place-items-center rounded-[6px] border transition-colors',
+          'grid size-[18px] place-items-center rounded-md border transition-colors',
           on || some ? 'border-accent-brand bg-accent-brand text-on-accent-brand' : 'hive-line-strong bg-bg-surface/60 hover:border-text-muted',
         )}
       >
@@ -1127,7 +1127,7 @@ function Skeletons({ view }: { view: View }) {
     <div className="hive-card hive-divide overflow-hidden">
       {Array.from({ length: 7 }, (_, i) => (
         <div key={i} className="flex items-center gap-3 px-4 py-3">
-          <div className="hive-shimmer size-9 rounded-[11px] bg-text-primary/[0.05]" />
+          <div className="hive-shimmer size-9 rounded-lg bg-text-primary/[0.05]" />
           <div className="flex-1 space-y-2">
             <div className="hive-shimmer h-3 rounded bg-text-primary/[0.05]" style={{ width: `${40 + ((i * 17) % 35)}%` }} />
             <div className="hive-shimmer h-2.5 w-24 rounded bg-text-primary/[0.04]" />
@@ -1198,8 +1198,8 @@ function DropOverlay({ show, target }: { show: boolean; target: string }) {
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.98 }}
             transition={{ duration: 0.22, ease: EASE }}
-            className="relative flex w-full max-w-lg flex-col items-center gap-3 rounded-[28px] border-2 border-dashed border-accent-brand/60 px-8 py-14 text-center"
-            style={{ background: 'color-mix(in oklab, var(--color-accent-brand) 8%, var(--color-bg-surface))', boxShadow: '0 0 0 8px color-mix(in oklab, var(--color-accent-brand) 8%, transparent), 0 40px 80px -40px color-mix(in oklab, var(--color-accent-brand) 50%, transparent)' }}
+            className="relative flex w-full max-w-lg flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-accent-brand/60 px-8 py-14 text-center"
+            style={{ background: 'color-mix(in oklab, var(--color-accent-brand) 8%, var(--color-bg-surface))' }}
           >
             <motion.span animate={{ y: [0, -6, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }} className="hive-tile size-16 rounded-2xl">
               <CloudUpload className="size-7" />
@@ -1329,7 +1329,7 @@ function PreviewPanel({
             transition={{ duration: 0.26, ease: EASE }}
             className={cn(
               'pop-surface fixed z-[960] flex flex-col overflow-hidden shadow-2xl',
-              phone ? 'inset-x-0 bottom-0 top-8 !rounded-b-none !rounded-t-[22px]' : 'bottom-3 right-3 top-3 w-[min(600px,calc(100vw-24px))] !rounded-[20px]',
+              phone ? 'inset-x-0 bottom-0 top-8 !rounded-b-none !rounded-t-xl' : 'bottom-3 right-3 top-3 w-[min(600px,calc(100vw-24px))] !rounded-2xl',
             )}
           >
             <PreviewBody key={item.id + item.updatedAt} item={item} projectId={projectId} onClose={onClose} onDownload={onDownload} onChat={onChat} onDelete={onDelete} onSaved={onSaved} />

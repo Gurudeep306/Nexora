@@ -115,7 +115,7 @@ export function TeamFloor({ task, agents, events, focus, onFocus }: { task: Task
       {/* the brief */}
       <div className="relative mx-auto mb-10 max-w-2xl">
         <motion.div ref={briefRef} layout className="hive-card relative overflow-hidden p-4 shadow-[var(--elev-2)]">
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,var(--color-accent-brand),transparent)] opacity-60" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-accent-brand/50" />
           <div className="flex items-start gap-3">
             <span className="hive-tile size-9 shrink-0" style={{ ['--tile' as string]: 'var(--color-accent-brand)' }}>
               {task.mode === 'pipeline' ? <Workflow className="size-4" /> : <Sparkles className="size-4" />}

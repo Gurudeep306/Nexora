@@ -298,7 +298,7 @@ function ToolCard({ t, i, catLabel, onConnect }: { t: EcoTool; i: number; catLab
       exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.12 } }}
       className="hive-card hive-card-hover group relative flex flex-col overflow-hidden p-4"
     >
-      <span className="absolute inset-x-0 top-0 h-[2px] opacity-0 transition-opacity group-hover:opacity-100" style={{ background: `linear-gradient(90deg, transparent, ${hue(h.hue)}, transparent)` }} />
+      <span className="absolute inset-x-0 top-0 h-[2px] opacity-0 transition-opacity group-hover:opacity-100" style={{ background: hue(h.hue) }} />
       <div className="mb-2 flex items-start gap-3">
         <span className="grid size-10 shrink-0 place-items-center rounded-xl text-[15px] font-semibold" style={{ color: `color-mix(in oklab, ${hue(h.hue)} 62%, var(--color-text-primary))`, background: `color-mix(in oklab, ${hue(h.hue)} 14%, transparent)` }}>
           {t.name.replace(/[^A-Za-z0-9]/g, '').slice(0, 2) || '·'}

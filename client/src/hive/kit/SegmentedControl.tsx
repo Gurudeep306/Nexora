@@ -36,7 +36,7 @@ export function SegmentedControl<T extends string>({ value, onChange, options, l
               }
             }}
             className={cn(
-              'rounded-[6px] font-medium transition-colors duration-[var(--hv-d-fast)]',
+              'rounded-[var(--hv-r-chip)] font-medium transition-colors duration-[var(--hv-d-fast)]',
               size === 'sm' ? 'h-6 px-2 text-[12px]' : 'h-7 px-3 text-[13px]',
               on ? 'bg-[var(--hv-surface-3)] text-[var(--hv-text-1)] shadow-sm' : 'text-[var(--hv-text-2)] hover:text-[var(--hv-text-1)]',
             )}
