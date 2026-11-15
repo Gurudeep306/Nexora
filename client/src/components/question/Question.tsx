@@ -129,6 +129,7 @@ export const OptionRow = forwardRef<HTMLButtonElement, OptionRowProps>(function 
       <span className="qc-letter" aria-hidden="true">
         {state === 'right' ? <Check className="size-3.5" /> : state === 'wrong' ? <X className="size-3.5" /> : letter}
       </span>
+      <span className="sr-only">Option {letter}: </span>
       <span className="qc-option-text">{children}</span>
       {w && <span className="qc-word">{w}</span>}
     </button>

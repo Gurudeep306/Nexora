@@ -51,12 +51,23 @@ export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onClean
   const last = frames.length - 1
   const [i, setI] = useState(0)
   const [playing, setPlaying] = useState(false)
+  // Plays by itself once in view; holds while hovered or focused or off-screen;
+  // once the reader takes the controls, only the controls move it.
+  const [hold, setHold] = useState(false)
+  const [touched, setTouched] = useState(false)
   const sketch = useSketcher(!cleanLines)
   const uid = useId()
   const frame = frames[isStatic ? last : i]!
 
   // Playing stops by itself on the last frame.
-  const running = playing && i < last && !isStatic
+  const running = playing && i < last && !isStatic && !(hold && !touched)
+  useEffect(() => {
+    const el = figRef.current
+    if (!el || isStatic || touched || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(([e]) => setPlaying(e.isIntersecting), { threshold: 0.45 })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [isStatic, touched])
   useEffect(() => {
     if (!running) return
     const t = window.setTimeout(() => setI((n) => Math.min(last, n + 1)), STEP_MS)
@@ -65,16 +76,19 @@ export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onClean
 
   const go = useCallback(
     (n: number) => {
+      setTouched(true)
       setPlaying(false)
       setI(Math.max(0, Math.min(last, n)))
     },
     [last],
   )
   const toggle = () => {
+    setTouched(true)
+    setHold(false)
     if (i >= last) {
       setI(0)
       setPlaying(true)
-    } else setPlaying(!running)
+    } else setPlaying(!(playing && i < last))
   }
 
   const onKey = (e: KeyboardEvent<HTMLElement>) => {
@@ -98,6 +112,10 @@ export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onClean
       aria-roledescription={isStatic ? undefined : 'step-by-step diagram'}
       aria-label={spec.title}
       onKeyDown={onKey}
+      onMouseEnter={() => setHold(true)}
+      onMouseLeave={() => setHold(false)}
+      onFocus={() => setHold(true)}
+      onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && setHold(false)}
     >
       <div className="nxv-stage">
         <VizScene spec={spec} layout={layout} frame={frame} sketch={sketch} titleId={`${uid}-t`} descId={`${uid}-d`} />

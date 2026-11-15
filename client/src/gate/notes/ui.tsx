@@ -139,7 +139,7 @@ export function LessonTree({
 
 export function Crumbs({ items }: { items: { label: string; to?: string }[] }) {
   return (
-    <nav aria-label="Breadcrumb" className="notes-crumbs">
+    <nav aria-label="Notes path" className="notes-crumbs">
       <ol>
         {items.map((it, i) => (
           <li key={i}>

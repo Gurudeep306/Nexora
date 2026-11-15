@@ -133,6 +133,7 @@ export function Nodes({ nodes }: { nodes: Node[] }) {
 
 function NodeView({ n }: { n: Node }) {
   const did = useDomId()
+  const headRow = useId()
   switch (n.t) {
     case 'h': {
       const H = `h${Math.min(6, n.d)}` as 'h2'
@@ -180,16 +181,18 @@ function NodeView({ n }: { n: Node }) {
         </pre>
       )
     case 'math':
-      return <div className="nm-display" dangerouslySetInnerHTML={{ __html: tex(n.v, true) }} />
+      return <div className="nm-display" tabIndex={0} dangerouslySetInnerHTML={{ __html: tex(n.v, true) }} />
     case 'table': {
-      const [head, ...rows] = n.c
+      const [first, ...rows] = n.c
+      // A header row with no text (a layout-only table) is left out.
+      const head = first && first.c.some((cell) => cell.c.length > 0) ? first : undefined
       const align = (i: number) => (n.align[i] ?? undefined) as 'left' | 'center' | 'right' | undefined
       return (
-        <div className="notes-table" tabIndex={0} role="region" aria-label="Table">
+        <div className="notes-table" tabIndex={0} role="region" aria-label={head ? undefined : 'Table'} aria-labelledby={head ? headRow : undefined}>
           <table>
             {head && (
               <thead>
-                <tr>
+                <tr id={headRow}>
                   {head.c.map((cell, i) => (
                     <th key={i} scope="col" style={{ textAlign: align(i) }}>
                       <Inlines nodes={cell.c} />
@@ -257,14 +260,20 @@ function Frame({ node, as: As = 'section', className, icon, kicker, title, child
   const hid = useId()
   const did = useDomId()
   const hasHead = !!(kicker || title)
+  const note = As === 'aside'
+  const named = hasHead && (!!title || note || !!labelledBy)
+  // Notes, asides, tricks and traps sit inside the page's main column, so they
+  // are notes (role="note"), not nested complementary landmarks.
+  const Tag = note ? 'div' : As
   return (
-    <As
+    <Tag
+      role={note ? 'note' : As === 'div' && named ? 'group' : undefined}
       id={did(node.id)}
       data-block={node.name}
       data-block-id={node.id}
       data-depth={node.depth}
       className={cn('nb', `nb-${node.name}`, className)}
-      aria-labelledby={hasHead ? (labelledBy ?? hid) : undefined}
+      aria-labelledby={named ? (labelledBy ?? hid) : undefined}
     >
       {hasHead && (
         <header className="nb-head" id={labelledBy ? undefined : hid}>
@@ -281,7 +290,7 @@ function Frame({ node, as: As = 'section', className, icon, kicker, title, child
         </header>
       )}
       <div className="nb-body">{children}</div>
-    </As>
+    </Tag>
   )
 }
 
@@ -395,7 +404,7 @@ function Check({ node }: { node: DirectiveNode }) {
   const answer = node.c.find((c): c is DirectiveNode => c.t === 'block' && c.name === 'answer')
   const rest = node.c.filter((c) => c !== answer)
   return (
-    <Frame node={node} icon="target" kicker="Check yourself" title={label(node, 'title')}>
+    <Frame node={node} as="div" icon="target" kicker="Check yourself" title={label(node, 'title')}>
       <Nodes nodes={rest} />
       <button type="button" className="nb-reveal" aria-expanded={open} aria-controls={answerId} onClick={() => setOpen((o) => !o)}>
         <Icon name={open ? 'eye-off' : 'eye'} className="size-4" aria-hidden="true" />
@@ -546,7 +555,11 @@ function VizSlot({ node }: { node: DirectiveNode }) {
   const spec = ctx?.viz[node.attrs.spec!]
   if (!spec) return null
   return (
-    <div id={did(node.id)} data-block="viz" data-block-id={node.id} data-depth={node.depth} className="nb nb-viz">
+    <div id={did(node.id)} data-block="viz" data-block-id={node.id} data-depth={node.depth} className="nb nb-viz nr-figure">
+      <p className="nr-figure-label">
+        <span className="nr-fig-no" />
+        {spec.title}
+      </p>
       <VizBlock
         spec={spec}
         mode={node.attrs.mode === 'static' ? 'static' : 'animate'}

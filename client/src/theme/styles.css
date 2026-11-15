@@ -790,3 +790,398 @@ html[data-pattern] body {
     transition-duration: 0ms;
   }
 }
+
+/* ═══ Field Journal — the reader (phase 4) ═════════════════════════════════
+   Lessons and GATE notes read like a printed essay: Newsreader prose at
+   1.2rem / 1.6, a serif title with a label kicker and a mono meta line,
+   figures on the manilla spread, notes in the margin, callouts as a label
+   and one hairline, tables in hairlines, code on ivory. The two animation
+   engines (learn/engine for DSA, viz/ for notes) take journal roles: ivory
+   cells, ink for done, clay for the current step, muted and dashed for
+   discarded. */
+[data-style='journal'] .nr-main {
+  --read-font: 'Newsreader Variable', 'Newsreader Fallback', ui-serif, Georgia, serif;
+  --read-size: 1.2rem;
+  --read-leading: 1.6;
+  --nr-col: 41rem;
+}
+@media (max-width: 639px) {
+  [data-style='journal'] .nr-main {
+    --read-size: 1.125rem;
+  }
+}
+[data-style='journal'] .nr-main .nx-read,
+[data-style='journal'] .notes-root .nr-main .notes-prose {
+  font-family: var(--read-font);
+  font-size: var(--read-size);
+  line-height: var(--read-leading);
+  font-optical-sizing: auto;
+}
+/* Controls inside the prose stay in the UI face. */
+[data-style='journal'] .nr-main :is(.viz-player, .nxv-controls, .nr-sidenote summary, .q-card, [data-ui='button'], button, input, select) {
+  font-family: var(--font-body);
+}
+[data-style='journal'] .nr-kicker {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .nr-title {
+  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2.25rem, 1.5rem + 2.4vw, 3.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+[data-style='journal'] .nr-dek {
+  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-size: 1.25rem;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+[data-style='journal'] .nr-meta {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .nr-head {
+  border-bottom-color: var(--color-border);
+}
+[data-style='journal'] .nr-toc-head,
+[data-style='journal'] .nr-tree-head .nr-tree-subject {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .nr-toc-tick,
+[data-style='journal'] .nr-end-dot.is-current::after {
+  background: var(--ed-clay);
+  border-color: var(--ed-clay);
+}
+[data-style='journal'] .nr-end-dot.is-current::after {
+  background: transparent;
+}
+[data-style='journal'] .nr-end-next:hover .nr-end-title {
+  text-decoration-color: var(--ed-clay);
+}
+[data-style='journal'] .nr-bar-link {
+  border-radius: 12px;
+}
+
+/* Figures: the manilla spread */
+[data-style='journal'] .nr-figure {
+  padding: 1.5rem;
+  border-radius: 24px;
+  background: var(--ed-feature);
+}
+@media (max-width: 639px) {
+  [data-style='journal'] .nr-figure {
+    padding: 1rem;
+    border-radius: 16px;
+  }
+}
+[data-style='journal'] .nr-figure :is(.nr-figure-label, .nr-figure-caption) {
+  color: var(--ed-muted-on-feature, var(--color-text-secondary));
+}
+[data-style='journal'][data-mode='light'] .nr-figure,
+[data-style='journal'] [data-mode='light'] .nr-figure {
+  --ed-muted-on-feature: #5c5b55;
+}
+[data-style='journal'][data-mode='dark'] .nr-figure,
+[data-style='journal'] [data-mode='dark'] .nr-figure {
+  --ed-muted-on-feature: #aaa79e;
+}
+[data-style='journal'] .nr-figure-caption {
+  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-style: italic;
+}
+
+/* Callouts: a label and one hairline, no fill */
+[data-style='journal'] .nx-aside {
+  padding: 0.1rem 0 0.1rem 1.1rem;
+  border: 0;
+  border-left: 2px solid var(--color-border-strong);
+  border-radius: 0;
+  background: none;
+}
+[data-style='journal'] .nx-aside[data-tone='danger'] { border-left-color: var(--color-state-error); }
+[data-style='journal'] .nx-aside[data-tone='good'] { border-left-color: var(--color-state-success); }
+[data-style='journal'] .nx-aside[data-tone='warn'] { border-left-color: var(--color-state-warning); }
+[data-style='journal'] .nx-aside[data-tone='accent'] { border-left-color: var(--ed-clay); }
+[data-style='journal'] .nx-aside-label,
+[data-style='journal'] .nx-aside[data-tone] .nx-aside-label {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+[data-style='journal'] .nr-check > h3 {
+  padding-left: 1.1rem;
+  border-left: 2px solid var(--ed-clay);
+}
+
+/* Sidenotes: italic serif under a hairline */
+[data-style='journal'] .nr-sidenote.is-margin {
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--color-border);
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+[data-style='journal'] .nr-sidenote[data-tone='good'].is-margin { border-top-color: var(--color-state-success); }
+[data-style='journal'] .nr-sidenote[data-tone='accent'].is-margin { border-top-color: var(--ed-clay); }
+
+/* Tables: hairlines only, label headers, tabular figures */
+[data-style='journal'] .nr-main .nx-read :is(table),
+[data-style='journal'] .notes-root .nr-main .notes-prose table {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+[data-style='journal'] .nr-main .nx-read th,
+[data-style='journal'] .notes-root .nr-main .notes-prose th {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  background: none;
+  border-bottom: 1px solid var(--color-text-primary);
+}
+[data-style='journal'] .nr-main .nx-read td,
+[data-style='journal'] .notes-root .nr-main .notes-prose td {
+  background: none;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Code on ivory */
+[data-style='journal'] .nr-main .nx-read pre,
+[data-style='journal'] .nr-main .md-pre {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: none;
+}
+[data-style='journal'] .nr-main .nx-read :not(pre) > code {
+  background: color-mix(in oklab, var(--ed-oat) 70%, transparent);
+  border: 0;
+}
+
+/* ── The DSA animation player (learn/engine/VizPlayer) ─────────────────── */
+[data-style='journal'] .viz-player {
+  --viz-cell: var(--color-bg-surface);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  box-shadow: none;
+}
+[data-style='journal'] .nr-figure .viz-player {
+  border-color: color-mix(in oklab, var(--color-text-primary) 14%, transparent);
+}
+[data-style='journal'] .viz-head,
+[data-style='journal'] .viz-side,
+[data-style='journal'] .viz-note {
+  background: none;
+}
+[data-style='journal'] .viz-head .text-accent-brand {
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .viz-badge {
+  background: none;
+  color: var(--color-text-secondary);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+[data-style='journal'] .viz-stage {
+  background: var(--color-bg-app);
+  background-image: none;
+}
+[data-style='journal'] .viz-cell {
+  background: var(--color-bg-surface);
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+[data-style='journal'] .viz-role-active,
+[data-style='journal'] .viz-range-active { --rc: var(--ed-clay); }
+[data-style='journal'] .viz-role-compare,
+[data-style='journal'] .viz-range-compare { --rc: var(--color-state-warning); }
+[data-style='journal'] .viz-role-swap { --rc: var(--ed-clay-deep); }
+[data-style='journal'] .viz-role-write,
+[data-style='journal'] .viz-role-window,
+[data-style='journal'] .viz-range-window { --rc: var(--color-state-info); }
+[data-style='journal'] .viz-role-pivot { --rc: oklch(0.45 0.08 340); }
+[data-style='journal'][data-mode='dark'] .viz-role-pivot { --rc: oklch(0.72 0.08 340); }
+[data-style='journal'] .viz-role-best,
+[data-style='journal'] .viz-range-best { --rc: var(--ed-clay-deep); }
+[data-style='journal'] .viz-role-new { --rc: var(--color-state-success); }
+[data-style='journal'] .viz-role-removed { --rc: var(--color-state-error); }
+/* done / found: the visited look, ink fill and canvas text */
+[data-style='journal'] .viz-cell:is(.viz-role-done, .viz-role-found) {
+  --rc: var(--color-text-primary);
+  background: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+[data-style='journal'] .viz-cell:is(.viz-role-done, .viz-role-found) .viz-value {
+  color: var(--color-bg-app);
+}
+[data-style='journal'] .viz-range-done { --rc: var(--color-text-primary); }
+/* discarded: muted and dashed, not faded (a fade fails contrast) */
+[data-style='journal'] .viz-cell.viz-role-dim,
+[data-style='journal'] .viz-cell.viz-role-removed {
+  opacity: 1;
+  border-style: dashed;
+  border-color: var(--color-border-strong);
+  background: transparent;
+}
+[data-style='journal'] .viz-cell.viz-role-dim .viz-value,
+[data-style='journal'] .viz-cell.viz-role-removed .viz-value {
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .viz-legend-dot {
+  box-shadow: none;
+  border: 1px solid var(--color-border-strong);
+}
+[data-style='journal'] .viz-pointer-name,
+[data-style='journal'] .viz-var-name {
+  font-family: var(--font-mono);
+}
+[data-style='journal'] .viz-var {
+  background: var(--color-bg-surface);
+}
+[data-style='journal'] .viz-var-changed {
+  background: color-mix(in oklab, var(--ed-clay) 14%, var(--color-bg-surface));
+  border-color: var(--ed-clay);
+}
+/* narration: one serif line that explains why */
+[data-style='journal'] .viz-note p {
+  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-size: 1.08rem;
+  line-height: 1.5;
+}
+[data-style='journal'] .viz-step-chip {
+  background: none;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+/* code: ivory, the active line in oat, journal syntax colours */
+[data-style='journal'] .viz-code {
+  background: var(--color-bg-surface);
+  border-color: var(--color-border);
+}
+[data-style='journal'] .viz-code-bar {
+  background: color-mix(in oklab, var(--ed-oat) 85%, transparent);
+  box-shadow: inset 2px 0 0 var(--ed-clay);
+}
+[data-style='journal'] .tok-kw { color: var(--color-accent-brand-hover, var(--ed-clay-deep)); }
+[data-style='journal'] .tok-str { color: var(--color-state-success); }
+[data-style='journal'] .tok-num { color: var(--color-state-warning); }
+[data-style='journal'] .tok-fn { color: var(--color-text-primary); }
+[data-style='journal'] .tok-com { color: var(--color-text-muted); font-style: italic; }
+/* tabs underlined, not pills */
+[data-style='journal'] .viz-tabs {
+  background: none;
+  box-shadow: none;
+}
+[data-style='journal'] .viz-tab-on {
+  background: none;
+  box-shadow: inset 0 -2px 0 var(--color-text-primary);
+  border-radius: 0;
+}
+/* controls: quiet tool buttons, one clay play */
+[data-style='journal'] .viz-icon-btn {
+  border-radius: 12px;
+}
+[data-style='journal'] .viz-icon-btn:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--ed-oat) 70%, transparent);
+}
+[data-style='journal'] .viz-icon-btn-on {
+  background: none;
+  color: var(--color-text-primary);
+  box-shadow: inset 0 0 0 1px var(--color-text-primary);
+}
+[data-style='journal'] .viz-play {
+  background: var(--ed-clay);
+  color: var(--ed-on-clay, var(--color-text-primary));
+  box-shadow: none;
+  border-radius: 0 0 8px 8px;
+}
+[data-style='journal'] .viz-play:hover {
+  background: var(--ed-clay-deep);
+  transform: none !important;
+}
+[data-style='journal'] .viz-progress > div {
+  background: var(--color-text-primary);
+}
+[data-style='journal'] .viz-scrub {
+  accent-color: var(--color-text-primary);
+}
+[data-style='journal'] .viz-head .font-display {
+  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-weight: 400;
+  font-size: 1.15rem;
+}
+
+/* Phase 4 contrast: clay is never text. Small labels on the manilla figure use
+   the figure's own muted ink; the selected code tab is ink with a clay rule. */
+[data-style='journal'] .nr-figure :is(.viz-addr, .viz-idx) {
+  color: var(--ed-muted-on-feature, var(--color-text-secondary));
+}
+[data-style='journal'] .bg-accent-brand\/15.text-accent-brand {
+  background: transparent;
+  color: var(--color-text-primary);
+  box-shadow: inset 0 -2px 0 var(--ed-clay, var(--color-accent-brand));
+  border-radius: 0;
+}
+[data-style='journal'] .viz-slot {
+  opacity: 1;
+}
+
+/* Field Journal — GATE notes animations (client/src/viz). The figure is the
+   manilla spread (from .nr-figure); the drawing sits on ivory with a hairline;
+   the "current" colour is clay; step labels are ink in label style; the main
+   button is the clay tab with ink text, like the landing player. */
+[data-style='journal'] .nr-figure .nxv {
+  --viz-subject: var(--ed-clay, var(--color-accent-brand));
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+}
+[data-style='journal'] .nr-figure .nxv-stage {
+  max-width: none;
+  padding: 18px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-bg-surface);
+}
+[data-style='journal'] .nxv-step {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--color-text-primary);
+}
+[data-style='journal'] .nxv-btn {
+  border-radius: 8px;
+  border-color: var(--color-border);
+  background: var(--color-bg-surface);
+  box-shadow: 0 0 #0000;
+}
+[data-style='journal'] .nxv-btn--main {
+  border-color: transparent;
+  border-radius: 0 0 8px 8px;
+  background: var(--ed-clay, var(--color-accent-brand));
+  color: var(--ed-on-clay, var(--color-on-accent-brand));
+}
+[data-style='journal'] .nxv-btn--main:hover:not(:disabled) {
+  background: var(--ed-clay-deep, var(--color-accent-brand-hover));
+}
+[data-style='journal'] .nr-figure :is(.nxv-caption, .nxv-figcaption, .nxv-captions) {
+  font-family: var(--font-display);
+  color: var(--ed-muted-on-feature, var(--color-text-secondary));
+}

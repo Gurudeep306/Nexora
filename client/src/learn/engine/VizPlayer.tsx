@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { ChevronLeft, ChevronRight, History, Maximize2, Minimize2, Pause, Play, RotateCcw, Shuffle, SkipBack, SkipForward, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { parsed, tokenize } from './code'
@@ -94,7 +94,7 @@ export function CodePanel({ algo, lang, step }: { algo: Algorithm; lang: Lang; s
   }, [first, lang])
 
   return (
-    <div ref={box} className="viz-code relative max-h-[360px] overflow-auto rounded-xl py-2 font-mono text-[12.5px] leading-[1.75]">
+    <div ref={box} tabIndex={0} role="region" aria-label="Code" className="viz-code relative max-h-[360px] overflow-auto rounded-xl py-2 font-mono text-[12.5px] leading-[1.75]">
       {lines.map((line, i) => (
         <div key={i} data-line={i} className={cn('viz-code-line relative flex pr-3', hot.has(i) && 'viz-code-hot', hot.size > 0 && !hot.has(i) && 'viz-code-cold')}>
           {hot.has(i) &&
@@ -149,7 +149,18 @@ function TraceLog({ frames, idx, onPick }: { frames: Frame[]; idx: number; onPic
  * narrating what happens. Play, pause, step, scrub, change speed, open the
  * step log, go full screen, or change the input and run it again.
  */
-export function VizPlayer({ algo, className, initial }: { algo: Algorithm; className?: string; initial?: Record<string, string> }) {
+export function VizPlayer({
+  algo,
+  className,
+  initial,
+  syncTo,
+}: {
+  algo: Algorithm
+  className?: string
+  initial?: Record<string, string>
+  /** Scroll-sync: a position 0–1 through the steps, set by the text beside the figure (null: off). */
+  syncTo?: number | null
+}) {
   const defaults = useMemo(() => Object.fromEntries(algo.inputs.map((f) => [f.name, initial?.[f.name] ?? f.default])), [algo, initial])
   const [draft, setDraft] = useState<Record<string, string>>(defaults)
   const [applied, setApplied] = useState<Record<string, string>>(defaults)
@@ -161,6 +172,13 @@ export function VizPlayer({ algo, className, initial }: { algo: Algorithm; class
   const [log, setLog] = useState(false)
   const [stageW, setStageW] = useState(760)
   const stageRef = useRef<HTMLDivElement>(null)
+  const rootRef = useRef<HTMLDivElement>(null)
+  // Figures play by themselves once they are in view, and hold still while the
+  // reader hovers or focuses them, scrolls away, asks for less motion, or takes
+  // the controls (after which only the controls move it).
+  const still = useReducedMotion()
+  const [hold, setHold] = useState(false)
+  const [touched, setTouched] = useState(false)
 
   const { frames, error } = useMemo((): { frames: Frame[]; error?: string } => {
     const p = parseInputs(algo, applied)
@@ -176,7 +194,28 @@ export function VizPlayer({ algo, className, initial }: { algo: Algorithm; class
   const at = Math.max(0, Math.min(idx, last))
   const frame = frames[at]
 
-  const running = playing && at < last
+  // Hover and focus only hold the autoplay; once the reader drives, they decide.
+  const running = playing && at < last && !(hold && !touched)
+
+  useEffect(() => {
+    const el = rootRef.current
+    if (!el || still || touched || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(([e]) => setPlaying(e.isIntersecting), { threshold: 0.45 })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [still, touched])
+
+  // Scroll-sync: the paragraph in the middle of the screen picks the step
+  // (adjusted during render when the position changes, not in an effect).
+  const [seen, setSeen] = useState<number | null | undefined>(syncTo)
+  if (syncTo !== seen) {
+    setSeen(syncTo)
+    if (syncTo != null && last >= 0) {
+      setPlaying(false)
+      setIdx(Math.round(Math.max(0, Math.min(1, syncTo)) * last))
+    }
+  }
+
   useEffect(() => {
     if (!running) return
     const t = window.setTimeout(() => setIdx((i) => Math.min(i + 1, last)), 1000 / speed)
@@ -219,12 +258,14 @@ export function VizPlayer({ algo, className, initial }: { algo: Algorithm; class
   }
 
   const run = (next: Record<string, string>) => {
+    setTouched(true)
     setApplied(next)
     setIdx(0)
     setPlaying(false)
   }
 
   const go = (i: number) => {
+    setTouched(true)
     setIdx(Math.max(0, Math.min(last, i)))
     setPlaying(false)
   }
@@ -233,6 +274,7 @@ export function VizPlayer({ algo, className, initial }: { algo: Algorithm; class
     if ((e.target as HTMLElement).tagName === 'INPUT') return
     if (e.key === ' ' || e.key === 'k') {
       e.preventDefault()
+      setTouched(true)
       if (at >= last) {
         setIdx(0)
         setPlaying(true)
@@ -256,8 +298,13 @@ export function VizPlayer({ algo, className, initial }: { algo: Algorithm; class
 
   const body = (
     <div
+      ref={rootRef}
       tabIndex={0}
       onKeyDown={onKey}
+      onMouseEnter={() => setHold(true)}
+      onMouseLeave={() => setHold(false)}
+      onFocus={() => setHold(true)}
+      onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && setHold(false)}
       className={cn('viz-player card overflow-hidden p-0 outline-none', focus && 'viz-focus', className)}
       aria-label={`Animation: ${algo.title}`}
     >
@@ -400,10 +447,12 @@ export function VizPlayer({ algo, className, initial }: { algo: Algorithm; class
             <button
               type="button"
               onClick={() => {
+                setTouched(true)
+                setHold(false)
                 if (at >= last) {
                   setIdx(0)
                   setPlaying(true)
-                } else setPlaying(!running)
+                } else setPlaying(!(playing && at < last))
               }}
               className="viz-play mx-1 flex size-10 cursor-pointer items-center justify-center rounded-full"
               aria-label={running ? 'Pause' : 'Play'}
@@ -424,8 +473,8 @@ export function VizPlayer({ algo, className, initial }: { algo: Algorithm; class
             aria-label="Step"
             style={{ ['--pct' as string]: `${pct}%` }}
           />
-          <span className="font-mono text-[11px] text-text-muted tabular-nums">
-            {frames.length ? at + 1 : 0} / {frames.length}
+          <span className="viz-count font-mono text-[11px] text-text-muted tabular-nums">
+            Step {frames.length ? at + 1 : 0} of {frames.length}
           </span>
           <div className="viz-tabs flex items-center gap-0.5 rounded-lg p-0.5">
             {SPEEDS.map((s) => (
