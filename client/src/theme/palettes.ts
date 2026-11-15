@@ -1032,6 +1032,73 @@ export const PALETTES: Palette[] = [
       syntax: { keyword: '0.711 0.24 7.5', string: '0.879 0.125 103.2', number: '0.704 0.181 298.1', function: '0.841 0.204 127.3', type: '0.827 0.108 212', comment: '0.586 0.029 97.4' },
     },
   },
+  /* ── Made for the design styles (styles.ts) ───────────────────────────── */
+  {
+    id: 'swiss',
+    name: 'Swiss',
+    category: 'minimal',
+    blurb: 'Pure white, true black and one signal red — the International Style.',
+    dark: {
+      bg: ['0.13 0 0', '0.165 0 0', '0.2 0 0', '0.235 0 0', '0.275 0 0'],
+      fg: ['0.975 0 0', '0.81 0 0', '0.68 0 0'],
+      border: '0.33 0 0',
+      accent: '0.7 0.19 27', accent2: '0.74 0.17 35', onAccent: '0.15 0.02 27',
+      success: '0.78 0.15 150', warning: '0.78 0.14 72', danger: '0.78 0.18 25', info: '0.78 0.12 235',
+      syntax: { keyword: '0.8 0.15 27', string: '0.8 0.12 145', number: '0.8 0.13 55', function: '0.86 0 0', type: '0.8 0.1 235', comment: '0.68 0 0' },
+    },
+    light: {
+      bg: ['0.99 0 0', '1 0 0', '0.982 0 0', '0.955 0 0', '0.91 0 0'],
+      fg: ['0.16 0 0', '0.38 0 0', '0.53 0 0'],
+      border: '0.85 0 0',
+      accent: '0.54 0.21 27', accent2: '0.48 0.19 27', onAccent: '1 0 0',
+      success: '0.5 0.15 150', warning: '0.5 0.14 72', danger: '0.5 0.18 25', info: '0.5 0.12 235',
+      syntax: { keyword: '0.5 0.19 27', string: '0.5 0.13 145', number: '0.5 0.14 55', function: '0.22 0 0', type: '0.5 0.12 235', comment: '0.55 0 0' },
+    },
+  },
+  {
+    id: 'blueprint',
+    name: 'Blueprint',
+    category: 'signature',
+    blurb: 'Drafting-table navy with cyan linework, or pale blueprint paper.',
+    dark: {
+      bg: ['0.2 0.045 255', '0.235 0.05 255', '0.27 0.052 255', '0.305 0.054 255', '0.345 0.055 255'],
+      fg: ['0.97 0.012 240', '0.83 0.025 240', '0.72 0.03 240'],
+      border: '0.39 0.055 250',
+      accent: '0.82 0.12 210', accent2: '0.86 0.1 200', onAccent: '0.2 0.045 255',
+      success: '0.8 0.15 150', warning: '0.82 0.14 80', danger: '0.8 0.15 25', info: '0.82 0.11 220',
+      syntax: { keyword: '0.83 0.1 200', string: '0.84 0.12 150', number: '0.84 0.12 70', function: '0.85 0.1 230', type: '0.84 0.09 180', comment: '0.72 0.03 240' },
+    },
+    light: {
+      bg: ['0.965 0.014 240', '0.99 0.007 240', '0.975 0.012 240', '0.945 0.016 240', '0.9 0.02 240'],
+      fg: ['0.25 0.06 255', '0.42 0.05 255', '0.53 0.04 255'],
+      border: '0.845 0.025 240',
+      accent: '0.5 0.16 255', accent2: '0.45 0.15 255', onAccent: '1 0 0',
+      success: '0.5 0.15 150', warning: '0.5 0.14 72', danger: '0.5 0.18 25', info: '0.5 0.12 235',
+      syntax: { keyword: '0.5 0.15 280', string: '0.5 0.13 150', number: '0.5 0.14 55', function: '0.5 0.16 255', type: '0.5 0.11 200', comment: '0.53 0.04 255' },
+    },
+  },
+  {
+    id: 'newsprint',
+    name: 'Newsprint',
+    category: 'signature',
+    blurb: 'Warm newsprint and pressroom black, with an oxblood accent.',
+    dark: {
+      bg: ['0.17 0.006 70', '0.205 0.007 70', '0.24 0.008 70', '0.275 0.009 70', '0.315 0.01 70'],
+      fg: ['0.955 0.012 85', '0.8 0.012 85', '0.69 0.012 85'],
+      border: '0.35 0.01 70',
+      accent: '0.74 0.12 30', accent2: '0.77 0.1 45', onAccent: '0.17 0.03 30',
+      success: '0.78 0.15 150', warning: '0.78 0.14 72', danger: '0.78 0.18 25', info: '0.78 0.12 235',
+      syntax: { keyword: '0.8 0.11 30', string: '0.8 0.12 145', number: '0.8 0.13 60', function: '0.82 0.08 85', type: '0.8 0.1 210', comment: '0.69 0.012 85' },
+    },
+    light: {
+      bg: ['0.965 0.012 85', '0.988 0.008 85', '0.975 0.01 85', '0.945 0.013 85', '0.9 0.016 85'],
+      fg: ['0.2 0.01 60', '0.4 0.012 60', '0.53 0.012 60'],
+      border: '0.85 0.014 85',
+      accent: '0.47 0.15 25', accent2: '0.42 0.14 25', onAccent: '1 0 0',
+      success: '0.5 0.15 150', warning: '0.5 0.14 72', danger: '0.5 0.18 25', info: '0.5 0.12 235',
+      syntax: { keyword: '0.47 0.15 25', string: '0.5 0.13 145', number: '0.5 0.14 55', function: '0.3 0.01 60', type: '0.5 0.11 210', comment: '0.53 0.012 60' },
+    },
+  },
 ]
 
 /** Accent overrides — each pair is tuned to hold contrast on every theme of its mode. */

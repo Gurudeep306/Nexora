@@ -67,7 +67,7 @@ export const HIVE_ITEM: NavItem = { to: '/hive', label: 'Hive · AI workspace', 
 
 export const ACCOUNT_ITEMS: NavItem[] = [
   { to: '/profile', label: 'Profile', icon: 'profile' },
-  { to: '/theme', label: 'Theme Centre', icon: 'palette' },
+  { to: '/theme', label: 'Appearance', icon: 'palette' },
   { to: '/settings', label: 'Settings', icon: 'settings' },
 ]
 

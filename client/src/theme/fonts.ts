@@ -85,6 +85,11 @@ export const UI_FONTS: UiFont[] = [
     note: 'Rounded terminals with an open, legible skeleton — soft but clear.' },
   { id: 'literata', label: 'Literata', family: 'Literata Variable', kind: 'serif', fallback: { local: 'Times New Roman', size: 118.2, ascent: 99.6, descent: 26.1, lineGap: 0 },
     note: 'Google’s e-reading serif — for long-form reading, still crisp in UI.' },
+  { id: 'newsreader', label: 'Newsreader', family: 'Newsreader Variable', kind: 'serif', headingTracking: '-0.015em',
+    fallback: { local: 'Times New Roman', size: 104, ascent: 92, descent: 26, lineGap: 0 },
+    note: 'Production Type’s optical-size serif for news reading — editorial and calm.' },
+  { id: 'inter-tight', label: 'Inter Tight', family: 'Inter Tight Variable', kind: 'grotesk', headingTracking: '-0.035em', fallback: A(102, 94, 24),
+    note: 'Inter with display spacing — tight, disciplined and very Swiss.' },
 ]
 
 export const CODE_FONTS: CodeFont[] = [

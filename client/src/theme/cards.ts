@@ -13,6 +13,8 @@ export const CARD_STYLES = [
   { id: 'gradient', label: 'Gradient border', hint: 'A thin accent-to-secondary gradient rim.' },
   { id: 'inset', label: 'Inset', hint: 'Pressed into the page, like a well.' },
   { id: 'glow', label: 'Glow', hint: 'An accent halo that softly lights the card.' },
+  { id: 'ruled', label: 'Ruled', hint: 'No box at all — a thin rule above, like a column in print.' },
+  { id: 'ink', label: 'Ink', hint: 'A heavy ink outline with a hard offset shadow.' },
 ] as const
 
 export type CardStyleId = (typeof CARD_STYLES)[number]['id']

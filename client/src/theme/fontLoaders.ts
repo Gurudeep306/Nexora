@@ -24,6 +24,8 @@ export const UI_FONT_LOADERS: Record<string, Loader> = {
   atkinson: () => import('@fontsource-variable/atkinson-hyperlegible-next'),
   nunito: () => import('@fontsource-variable/nunito'),
   literata: () => import('@fontsource-variable/literata'),
+  newsreader: () => import('@fontsource-variable/newsreader/opsz.css'),
+  'inter-tight': () => import('@fontsource-variable/inter-tight'),
 }
 
 export const CODE_FONT_LOADERS: Record<string, Loader> = {
