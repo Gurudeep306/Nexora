@@ -197,7 +197,7 @@ const clearCache = () => (cache = { at: 0, repos: null });
  * link the project, so "use vibe on Nexora" just works.
  * `vendors`: vendor ids the session will use. Returns the (updated) project.
  */
-async function ensureOnMachine(projectId, vendors = []) {
+async function ensureOnMachine(projectId, vendors = [], { machineId: prefer = null } = {}) {
   const providers = require("./providers");
   const machines = require("./machines");
   const keys = require("./keys");
@@ -212,9 +212,11 @@ async function ensureOnMachine(projectId, vendors = []) {
   if (!p || !needs.length) return p;
   const rows = (await all("SELECT * FROM hive_keys WHERE disabled=0 ORDER BY created_at")).filter((k) => needs.includes(keys.keyVendor(k)) && k.machine_id);
   const machineIds = [...new Set(rows.map((k) => k.machine_id))];
-  // Already on a machine that is online and has the agent: nothing to do.
-  if (p.machine_id && machineIds.includes(p.machine_id) && machines.isOnline(p.machine_id)) return p;
-  const target = machineIds.find((id) => machines.isOnline(id));
+  // A chosen machine (best agent / least busy) wins; otherwise stay where the project is when it works.
+  const preferred = prefer && machineIds.includes(prefer) && machines.isOnline(prefer) ? prefer : null;
+  if (!preferred && p.machine_id && machineIds.includes(p.machine_id) && machines.isOnline(p.machine_id)) return p;
+  if (preferred && p.machine_id === preferred) return p;
+  const target = preferred || machineIds.find((id) => machines.isOnline(id));
   if (!target) return p; // resolveSpec explains what's missing (not connected / offline)
   if (!p.repo_owner || !p.github_id) throw Object.assign(new Error(`“${p.name}” has no GitHub repository to copy onto the machine — link a folder on the machine to the project instead`), { status: 400 });
   // A project on a dead GitHub token moves to a working connection first.
@@ -239,4 +241,26 @@ async function ensureOnMachine(projectId, vendors = []) {
   return p;
 }
 
-module.exports = { allRepos, findRepo, openRepo, writeBrief, clearCache, ensureOnMachine };
+/**
+ * Which online machine should run this work? Each machine is scored by the
+ * best agent it can offer for this kind of work (plan agents live on
+ * machines; API models work anywhere), then by how few agents it is already
+ * running. Returns { machineId, pick } or null when no machine helps.
+ */
+async function pickMachine({ kind, prompt = "" } = {}) {
+  const machines = require("./machines");
+  const router = require("./router");
+  const ids = [...new Set((await all("SELECT DISTINCT machine_id FROM hive_keys WHERE disabled=0 AND machine_id IS NOT NULL")).map((r) => r.machine_id))].filter((id) => machines.isOnline(id));
+  if (!ids.length) return null;
+  const busy = new Map((await all("SELECT k.machine_id AS m, COUNT(*) AS n FROM hive_agents a JOIN hive_keys k ON k.id=a.key_id WHERE a.status IN ('running','queued') AND k.machine_id IS NOT NULL GROUP BY k.machine_id").catch(() => [])).map((r) => [r.m, Number(r.n)]));
+  let best = null;
+  for (const id of ids) {
+    const r = await router.route({ kind, prompt, machineId: id }).catch(() => null);
+    if (!r) continue;
+    const score = r.pick.quality - (busy.get(id) || 0) * 2;
+    if (!best || score > best.score) best = { machineId: id, pick: r.pick, score };
+  }
+  return best;
+}
+
+module.exports = { allRepos, findRepo, openRepo, writeBrief, clearCache, ensureOnMachine, pickMachine };

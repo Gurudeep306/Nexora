@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { useTheme, type Appearance } from '@/context/ThemeContext'
 import { Button } from '@/components/ui'
-import { SegmentedControl, useDensity, writeDensity, type Density } from '../kit'
+import { PageHeader, SegmentedControl, useDensity, writeDensity, type Density } from '../kit'
 import { singleKeysOn } from '../Shortcuts'
 
 export default function SettingsPage() {
@@ -19,8 +19,7 @@ export default function SettingsPage() {
   }
   return (
     <div className="mx-auto w-full max-w-[720px] px-4 pb-20 pt-6 sm:px-6">
-      <h1 className="text-[22px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]">Settings</h1>
-      <p className="mt-1 text-[13px] text-[var(--hv-text-3)]">How Hive looks and behaves for you, in this browser.</p>
+      <PageHeader title="Settings" sub="How Hive looks and behaves for you, in this browser." />
 
       <Section title="Appearance">
         <Setting label="Theme" hint={modeLocked ? 'Your site theme has a single mode, so this follows it.' : 'System follows your device.'}>

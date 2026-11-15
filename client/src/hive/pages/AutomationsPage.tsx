@@ -7,6 +7,7 @@
    ──────────────────────────────────────────────────────────────────────── */
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { PageHeader } from '../kit'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   ArrowUpRight,
@@ -45,6 +46,14 @@ const DAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const TZ = (() => {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone
+  } catch {
+    return ''
+  }
+})()
+/** Short zone label for chips, e.g. "IST" or "GMT+5:30". */
+const TZ_SHORT = (() => {
+  try {
+    return new Date().toLocaleTimeString([], { timeZoneName: 'short' }).split(' ').pop() || ''
   } catch {
     return ''
   }
@@ -208,7 +217,7 @@ export default function AutomationsPage() {
           </FilterPill>
           {boot.projects.map((p) => (
             <FilterPill key={p.id} on={filter === p.id} onClick={() => setFilter(p.id)}>
-              <span className="hive-hex size-2.5" style={{ background: projectColor(p.color) }} />
+              <span className="rounded-full size-2.5" style={{ background: projectColor(p.color) }} />
               {p.name}
             </FilterPill>
           ))}
@@ -218,7 +227,7 @@ export default function AutomationsPage() {
       {!data ? (
         <div className="mb-10 grid gap-3 md:grid-cols-2">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="hive-shimmer h-44 rounded-[18px]" />
+            <div key={i} className="hive-shimmer h-44 rounded-2xl" />
           ))}
         </div>
       ) : schedules.length ? (
@@ -274,10 +283,14 @@ function Hero({ schedules, loaded, onNew }: { schedules: Schedule[]; loaded: boo
         <span className="hive-tile size-12" style={{ ['--tile' as string]: 'oklch(66% 0.15 270)' }}>
           <CalendarClock className="size-5" />
         </span>
-        <div className="min-w-0 flex-1">
-          <h1 className="text-[26px] font-semibold tracking-[-0.02em] text-text-primary">Automations</h1>
-          <p className="mt-1 text-[14px] text-text-muted">Hive keeps working while you sleep.</p>
-          <div className="mt-3 min-h-7">
+        <PageHeader
+          className="min-w-0 flex-1 sm:items-center"
+          title="Automations"
+          titleClassName="text-[26px] tracking-[-0.02em]"
+          sub="Hive keeps working while you sleep."
+          subClassName="text-[14px] text-text-muted"
+          meta={
+            <div className="mt-3 min-h-7">
             {!loaded ? (
               <div className="hive-shimmer h-7 w-60 rounded-full" />
             ) : next ? (
@@ -299,11 +312,14 @@ function Hero({ schedules, loaded, onNew }: { schedules: Schedule[]; loaded: boo
               </span>
             )}
             {loaded && active > 0 && <span className="ml-2 text-[12px] text-text-muted">{active} active</span>}
-          </div>
-        </div>
-        <Button onClick={onNew}>
-          <Plus /> New automation
-        </Button>
+            </div>
+          }
+          actions={
+            <Button onClick={onNew}>
+              <Plus /> New automation
+            </Button>
+          }
+        />
       </div>
     </div>
   )
@@ -356,9 +372,14 @@ function ScheduleCard({ s, boot, pipelineName, onEdit, onChanged }: { s: Schedul
           </button>
           <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[12.5px]">
             <span className="font-medium text-text-secondary">{cadence(s)}</span>
+            {TZ_SHORT && (
+              <span className="text-[11.5px] text-text-muted" title={TZ ? `Time zone: ${TZ.replace(/_/g, ' ')}` : undefined}>
+                {TZ_SHORT}
+              </span>
+            )}
             {project && (
               <span className="inline-flex items-center gap-1 text-text-muted">
-                <span className="hive-hex size-2" style={{ background: projectColor(project.color) }} />
+                <span className="rounded-full size-2" style={{ background: projectColor(project.color) }} />
                 {project.name}
               </span>
             )}
@@ -405,7 +426,15 @@ function ScheduleCard({ s, boot, pipelineName, onEdit, onChanged }: { s: Schedul
         <div>
           <div className="text-[11px] text-text-muted">Next run</div>
           <div className="tabular-nums text-text-secondary" title={s.nextRun ? new Date(s.nextRun).toLocaleString() : undefined}>
-            {!enabled ? 'Paused' : s.nextRun ? countdown(s.nextRun - now) : '—'}
+            {!enabled ? (
+              'Paused'
+            ) : s.nextRun ? (
+              <>
+                {countdown(s.nextRun - now)} · {new Date(s.nextRun).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+              </>
+            ) : (
+              '—'
+            )}
           </div>
         </div>
       </div>
@@ -557,7 +586,7 @@ function Autopilots({ plugins, admin }: { plugins: Plugin[] | null; admin: boole
       <div className="grid gap-3 md:grid-cols-2">
         {!plugins &&
           [0, 1, 2, 3].map((i) => (
-            <div key={i} className="hive-shimmer h-24 rounded-[18px]" />
+            <div key={i} className="hive-shimmer h-24 rounded-2xl" />
           ))}
         {list.map(({ id, icon: Icon, hue, p }, i) => {
           const on = local[id] ?? p!.enabled

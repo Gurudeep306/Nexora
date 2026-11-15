@@ -86,7 +86,7 @@ export function Composer({
         e.preventDefault()
         if (canSend) onSubmit()
       }}
-      className={cn('hv-composer rounded-[16px] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-2.5 transition-shadow duration-[var(--hv-d-fast)]', className)}
+      className={cn('hv-composer rounded-[var(--hv-r-card)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-2.5 transition-shadow duration-[var(--hv-d-fast)]', className)}
     >
       {intent && onIntent && intents.length > 1 && (
         <div className="mb-1.5 flex flex-wrap items-center gap-2 px-1">

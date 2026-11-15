@@ -55,6 +55,7 @@ export function toStatus(s: string | null | undefined): Status {
       return 'failed'
     case 'stopped':
     case 'interrupted':
+    case 'incomplete':
     case 'cancelled':
       return 'stopped'
     case 'limited':

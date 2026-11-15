@@ -40,6 +40,7 @@ import { FileChips, useUploads } from '../uploads'
 import { AgentAvatar, AgentMark, describeTool } from '../agents'
 import { HiveLogo } from '../HiveLogo'
 import { ImproveButton } from '../Improve'
+import { ThinkingIndicator } from '../kit'
 import { projectColor } from '../projectColor'
 import { setFocusProject } from '../Showcase'
 import { useHive } from '../store'
@@ -491,7 +492,7 @@ function AnswerGroup({ msgs, convoId, onRetry }: { msgs: ConvoMsg[]; convoId: st
       <div className="mb-2 flex flex-wrap items-center gap-2 text-[11.5px] font-medium text-text-muted">
         <Columns3 className="size-3.5" /> {msgs.length} models answered · pick the one the chat continues from
         {groupId && (
-          <button type="button" onClick={judgeNow} disabled={judging} className="ml-auto inline-flex h-7 items-center gap-1.5 rounded-full bg-[linear-gradient(120deg,color-mix(in_oklab,var(--color-accent-brand)_16%,transparent),color-mix(in_oklab,oklch(70%_0.14_60)_14%,transparent))] px-3 text-[12px] font-medium text-text-primary transition-opacity disabled:opacity-60">
+          <button type="button" onClick={judgeNow} disabled={judging} className="ml-auto inline-flex h-7 items-center gap-1.5 rounded-full bg-accent-brand/10 px-3 text-[12px] font-medium text-text-primary transition-opacity hover:bg-accent-brand/15 disabled:opacity-60">
             {judging ? <Loader2 className="size-3.5 animate-spin" /> : <Gavel className="size-3.5" />} {judging ? 'The Judge is reading…' : 'Let the Judge pick'}
           </button>
         )}
@@ -660,7 +661,7 @@ function PendingAnswer({ p, boxed }: { p: Pending; boxed: boolean }) {
         </button>
       )}
       {p.tools && p.tools.length > 0 && <ToolSteps tools={p.tools} live />}
-      {p.text ? <AiMarkdown text={p.text} streaming /> : !p.think && !p.tools?.length && <span className="hive-shine text-[13.5px] font-medium">Thinking…</span>}
+      {p.text ? <AiMarkdown text={p.text} streaming /> : !p.think && !p.tools?.length && <ThinkingIndicator />}
       {p.files && p.files.length > 0 && <Attachments files={p.files} />}
     </div>
   )
@@ -834,9 +835,9 @@ function ChatComposer({
           setDrag(false)
           if (e.dataTransfer.files.length) up.add(e.dataTransfer.files)
         }}
-        className={cn('hv-composer relative mx-auto w-full max-w-[860px] rounded-[16px] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-2.5 transition-shadow duration-[var(--hv-d-fast)]', drag && 'ring-2 ring-accent-brand/60')}
+        className={cn('hv-composer relative mx-auto w-full max-w-[860px] rounded-2xl border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-2.5 transition-shadow duration-[var(--hv-d-fast)]', drag && 'ring-2 ring-accent-brand/60')}
       >
-        <AnimatePresence>{drag && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-10 grid place-items-center rounded-[16px] bg-accent-brand/10 text-[13px] font-medium text-accent-brand">Drop files to attach</motion.div>}</AnimatePresence>
+        <AnimatePresence>{drag && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-10 grid place-items-center rounded-2xl bg-accent-brand/10 text-[13px] font-medium text-accent-brand">Drop files to attach</motion.div>}</AnimatePresence>
         {(up.files.length > 0 || repoRefs.length > 0) && (
           <div className="mb-2 flex flex-wrap gap-1.5 px-1.5 pt-1">
             <FileChips files={up.files} onRemove={up.remove} />
@@ -953,7 +954,7 @@ function RepoFilePicker({ onPick }: { onPick: (r: { projectId: string; path: str
         <div className="flex gap-1 overflow-x-auto border-b hive-line p-2">
           {projects.map((p) => (
             <button key={p.id} type="button" onClick={() => setProjectId(p.id)} className={cn('inline-flex shrink-0 items-center gap-1.5 rounded-md px-2 py-1 text-[12px]', p.id === pid ? 'bg-text-primary/[0.08] text-text-primary' : 'text-text-muted')}>
-              <span className="hive-hex size-2.5" style={{ background: projectColor(p.color) }} />
+              <span className="rounded-full size-2.5" style={{ background: projectColor(p.color) }} />
               {p.name}
             </button>
           ))}

@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { FolderGit2, Inbox, MoreHorizontal, Plus, RotateCcw } from 'lucide-react'
 import { Button, Kbd, Tooltip } from '@/components/ui'
-import { CopyField, DataTable, Empty, ModelChip, Problem, QuotaMeter, Row, RowList, SegmentedControl, StatusPill, friendlyModel, type Status } from '../kit'
+import { ContextRing, CopyField, DataTable, Empty, ModelChip, OverflowTabs, PageHead, PageHeader, Panel, PanelGroup, PanelSeparator, Problem, QuotaMeter, Row, RowList, SectionLabel, SegmentedControl, Skeleton, Spinner, StatusPill, ThinkingIndicator, friendlyModel, type Status } from '../kit'
+import { HiveLogo } from '../HiveLogo'
 
 const STATUSES: Status[] = ['queued', 'planning', 'running', 'needs', 'review', 'done', 'failed', 'stopped', 'limited']
 const MODELS: [string, string][] = [
@@ -22,6 +23,7 @@ const TABLE: Demo[] = [
 
 export default function DevUiPage() {
   const [seg, setSeg] = useState<'fewest' | 'fastest' | 'balanced' | 'best'>('balanced')
+  const [tab, setTab] = useState('changes')
   return (
     <div className="mx-auto max-w-[1100px] space-y-10 px-6 py-8">
       <header>
@@ -29,6 +31,42 @@ export default function DevUiPage() {
         <p className="mt-1 text-[13px] text-[var(--hv-text-2)]">Every primitive, in every state, in the current theme. Development builds only.</p>
       </header>
 
+      <Section title="Page header (title, one line, one primary action)">
+        <PageHead
+          title="Projects"
+          sub="Your projects first, then every repository you can reach."
+          actions={
+            <>
+              <Button size="sm" variant="ghost">Refresh</Button>
+              <Button size="sm"><Plus /> New project</Button>
+            </>
+          }
+        />
+        <SectionLabel className="mt-6">Section label</SectionLabel>
+      </Section>
+      <Section title="Tabs that never scroll (extra tabs go into More)">
+        <div className="max-w-[420px] rounded-[var(--hv-r-card)] border border-[var(--hv-border)] p-1">
+          <OverflowTabs
+            label="Dock"
+            value={tab}
+            onChange={setTab}
+            tabs={[
+              { id: 'changes', label: 'Changes', count: 4 },
+              { id: 'files', label: 'Files' },
+              { id: 'checkpoints', label: 'Checkpoints', count: 2 },
+              { id: 'ship', label: 'Ship' },
+              { id: 'terminal', label: 'Terminal' },
+              { id: 'board', label: 'Board' },
+            ]}
+          />
+        </div>
+      </Section>
+      <Section title="Loading (opacity pulse, no sheen)">
+        <div className="space-y-1.5">
+          <div className="hive-shimmer h-10 rounded-[var(--hv-r-btn)]" />
+          <div className="hive-shimmer h-10 w-2/3 rounded-[var(--hv-r-btn)]" />
+        </div>
+      </Section>
       <Section title="Buttons (one primary per view)">
         <div className="flex flex-wrap items-center gap-2">
           <Button>Plan the team</Button>
@@ -135,6 +173,48 @@ export default function DevUiPage() {
             { key: 'price', header: 'Price', hideBelow: 'sm', render: (r) => (r.free ? 'Free' : 'Paid') },
           ]}
         />
+      </Section>
+
+      <Section title="Page header (title + sub + actions)">
+        <PageHeader title="Models" sub="Every brain Hive can use, what each one is best at, what it costs." actions={<Button size="sm"><Plus /> Add key</Button>} />
+      </Section>
+
+      <Section title="Resizable panels (drag the hairline or focus it and use arrow keys; the layout persists)">
+        <PanelGroup id="hive-dev-panels" panelIds={['left', 'right']} className="h-44 overflow-hidden rounded-[var(--hv-r-card)] border border-[var(--hv-border)]">
+          <Panel id="left" minSize="20%" defaultSize="38%" className="hive-scroll overflow-y-auto bg-[var(--hv-surface-1)] p-3 text-[12.5px] leading-relaxed text-[var(--hv-text-2)]">
+            The session view and the app shell use these: a 1px hairline with a 9px hit area, accent on hover and while dragging, full keyboard support via the separator’s arrow keys.
+          </Panel>
+          <PanelSeparator label="Resize demo panel" />
+          <Panel id="right" minSize="20%" className="hive-scroll overflow-y-auto bg-[var(--hv-surface-2)] p-3 text-[12.5px] leading-relaxed text-[var(--hv-text-3)]">
+            Layouts persist per group id in localStorage through react-resizable-panels’ useDefaultLayout — same as the solve workspace.
+          </Panel>
+        </PanelGroup>
+      </Section>
+
+      <Section title="Brand mark + thinking indicator (live, draw-in, cycling words)">
+        <div className="flex flex-wrap items-center gap-5">
+          <HiveLogo size={20} />
+          <HiveLogo size={28} />
+          <HiveLogo size={40} live />
+          <HiveLogo size={56} draw />
+          <ThinkingIndicator />
+        </div>
+      </Section>
+
+      <Section title="Loaders (spinner, skeleton, context ring)">
+        <div className="flex flex-wrap items-center gap-4">
+          <Spinner size={14} label="Loading" />
+          <Spinner size={20} label="Loading" />
+          <Spinner size={28} label="Loading" />
+          <ContextRing used={41000} max={128000} />
+          <ContextRing used={110000} max={128000} />
+          <ContextRing used={88000} />
+        </div>
+        <div className="mt-3 max-w-md space-y-2">
+          <Skeleton className="h-8 w-1/3" />
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-8 w-2/3" />
+        </div>
       </Section>
 
       <Section title="Empty and error states">

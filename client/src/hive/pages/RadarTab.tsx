@@ -5,6 +5,7 @@ import { ArrowUpRight, Eye, FileText, Loader2, MessageSquare, Music, Radar, Refr
 import { Button, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
+import { PageHeader } from '../kit'
 import { useHive } from '../store'
 import type { MarketModel } from '../types'
 import { ProviderGlyph, fmtTokens, timeAgo, vendorName } from '../ui'
@@ -63,33 +64,34 @@ export default function RadarTab({ embedded = false }: { embedded?: boolean }) {
           <span className="hive-tile size-12" style={{ ['--tile' as string]: 'var(--color-state-info)' }}>
             <Radar className="size-5" />
           </span>
-          <div className="min-w-0 flex-1">
-            <h1 className="text-[24px] font-semibold tracking-[-0.02em]">Model radar</h1>
-            <p className="mt-1 max-w-2xl text-[13.5px] text-text-muted">
-              Hive re-reads every key’s model list twice a day, so new releases show up in the model picker on their own — and retired ones stop being defaults. Below: what just appeared on your keys, and the newest models across all labs.
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="secondary"
-              loading={busy}
-              onClick={async () => {
-                setBusy(true)
-                try {
-                  const r = await hiveApi.refreshModels()
-                  toast.success('Your keys were re-checked', r.fresh.length ? `${r.fresh.length} new models` : 'No new models since the last check')
-                  await refresh()
-                  load()
-                } catch (e) {
-                  toast.error(e instanceof Error ? e.message : 'Failed')
-                } finally {
-                  setBusy(false)
-                }
-              }}
-            >
-              {!busy && <RefreshCw />} Check my keys now
-            </Button>
-          </div>
+          <PageHeader
+            className="min-w-0 flex-1 sm:items-center"
+            title="Model radar"
+            titleClassName="text-[24px] tracking-[-0.02em]"
+            sub="Hive re-reads every key’s model list twice a day, so new releases show up in the model picker on their own — and retired ones stop being defaults. Below: what just appeared on your keys, and the newest models across all labs."
+            subClassName="text-[13.5px] text-text-muted"
+            actions={
+              <Button
+                variant="secondary"
+                loading={busy}
+                onClick={async () => {
+                  setBusy(true)
+                  try {
+                    const r = await hiveApi.refreshModels()
+                    toast.success('Your keys were re-checked', r.fresh.length ? `${r.fresh.length} new models` : 'No new models since the last check')
+                    await refresh()
+                    load()
+                  } catch (e) {
+                    toast.error(e instanceof Error ? e.message : 'Failed')
+                  } finally {
+                    setBusy(false)
+                  }
+                }}
+              >
+                {!busy && <RefreshCw />} Check my keys now
+              </Button>
+            }
+          />
         </div>
         <div className="relative mt-6 flex flex-wrap gap-2">
           {[...yours.entries()].map(([v, set]) => (

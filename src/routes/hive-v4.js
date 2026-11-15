@@ -42,7 +42,7 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
   const runner = require("../hive/runner");
 
   /* ── task rows for pipelines / schedules (agents started separately) ── */
-  async function createTaskRow(p, { title, prompt, machineId = undefined, folder = undefined }) {
+  async function createTaskRow(p, { title, prompt, machineId = undefined, folder = undefined, kind = null }) {
     const id = newId("tsk");
     const t = now();
     const mId = machineId === undefined ? p.machine_id || null : machineId;
@@ -55,7 +55,7 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     await run(
       `INSERT INTO hive_tasks(id, project_id, title, prompt, mode, status, base_ref, base_sha, branch, created_by, created_at, updated_at, machine_id, folder, kind)
        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-      [id, p.id, String(title).slice(0, 120), prompt, "solo", "queued", p.default_branch || "main", baseSha, `hive/${slug(title)}-${id.slice(-4)}`, "hive", t, t, mId, dir, router_.classify(prompt).kind],
+      [id, p.id, String(title).slice(0, 120), prompt, "solo", "queued", p.default_branch || "main", baseSha, `hive/${slug(title)}-${id.slice(-4)}`, "hive", t, t, mId, dir, kind || router_.classify(prompt).kind],
     );
     await isolate(id);
     const task = await get("SELECT * FROM hive_tasks WHERE id=?", [id]);
@@ -73,8 +73,25 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     if (!t?.machine_id || !t.folder || t.worktree) return;
     const p = await get("SELECT isolate FROM hive_projects WHERE id=?", [t.project_id]);
     if (p && Number(p.isolate) === 0) return;
+    // Start from the latest code on GitHub, not a clone that may be weeks old.
+    let base = "HEAD";
     try {
-      const r = await machines.call(t.machine_id, "worktree_add", { folder: t.folder, name: taskId.slice(-10), branch: t.branch }, { timeoutMs: 120_000 });
+      const ref = t.base_ref || "main";
+      const proj = await get("SELECT github_id FROM hive_projects WHERE id=?", [t.project_id]);
+      const token = proj?.github_id ? await githubToken(proj.github_id).catch(() => undefined) : undefined; // private repos; used for this call only
+      const f = await machines.call(t.machine_id, "git", { folder: t.folder, args: ["fetch", "--quiet", "origin", ref], token }, { timeoutMs: 120_000 });
+      if (f?.code === 0) {
+        const sha = await machines.call(t.machine_id, "git", { folder: t.folder, args: ["rev-parse", `origin/${ref}`] }, { timeoutMs: 30_000 });
+        if (sha?.code === 0 && /^[0-9a-f]{7,40}$/.test(String(sha.output).trim())) {
+          base = `origin/${ref}`;
+          await run("UPDATE hive_tasks SET base_sha=? WHERE id=?", [String(sha.output).trim(), taskId]);
+        }
+      }
+    } catch {
+      /* no remote (a local folder) or offline: use the folder as it is */
+    }
+    try {
+      const r = await machines.call(t.machine_id, "worktree_add", { folder: t.folder, name: taskId.slice(-10), branch: t.branch, base }, { timeoutMs: 120_000 });
       await run("UPDATE hive_tasks SET folder=?, worktree=? WHERE id=?", [r.path, r.path, taskId]);
       await runner.event(taskId, null, "system", { message: `Working in a private copy (git worktree) on branch ${t.branch}, so other sessions can't collide with this one` });
     } catch (e) {
@@ -175,6 +192,33 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     h(async (_req, res) => res.json({ ok: true, stats: await perf.summary() })),
   );
 
+  // Golden-task benchmark: latest score per model; run one model on demand.
+  router.get(
+    "/api/hive/bench",
+    h(async (_req, res) => res.json({ ok: true, tasks: require("../hive/bench").GOLDEN.length, results: await require("../hive/bench").results() })),
+  );
+  const benching = new Set();
+  router.post(
+    "/api/hive/bench",
+    h(async (req, res) => {
+      const b = req.body || {};
+      const keyId = str(b.keyId, "keyId", { max: 64 });
+      const model = str(b.model, "model", { max: 200 });
+      const row = await get("SELECT * FROM hive_keys WHERE id=?", [keyId]);
+      if (!row) throw new BadInput("Unknown key", 404);
+      const id = `${keyId}|${model}`;
+      if (benching.has(id)) throw new BadInput("That model is already being tested", 409);
+      benching.add(id);
+      try {
+        const r = await require("../hive/bench").benchModel({ provider: keys.keyVendor(row), keyId, model, username: req.hiveUser });
+        await audit(req, "hive.bench", model, { score: r.score });
+        res.json({ ok: true, result: r });
+      } finally {
+        benching.delete(id);
+      }
+    }),
+  );
+
   // Preview: who would do this, and why.
   router.post(
     "/api/hive/route",
@@ -214,6 +258,13 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
       const same = await get("SELECT COUNT(*) AS n FROM hive_keys WHERE preset=? AND machine_id=?", [b.provider, m.id]);
       const n = Number(same?.n || 0);
       const label = str(b.label, "name", { max: 60, optional: true }) || `${{ codex: "Codex", vibe: "Mistral Vibe" }[b.provider] || "Claude Code"}${n ? ` ${n + 1}` : ""} on ${m.name}`;
+      // A pasted secret that can't be right (often a browser autofilling a saved
+      // password into the field) is refused here, instead of failing later.
+      if (b.token != null) b.token = String(b.token).trim();
+      if (b.token) {
+        if (b.provider === "vibe" && !/^[A-Za-z0-9]{24,}$/.test(b.token)) throw new BadInput("That doesn't look like a Mistral API key (they are about 32 letters and numbers). If your browser filled in a saved password, clear the box — or leave it empty if `vibe --setup` was run on the machine.");
+        if (b.provider === "claude_code" && !b.token.startsWith("sk-ant-")) throw new BadInput("That doesn't look like a Claude setup token (it starts with sk-ant-). Run `claude setup-token` on the machine and paste what it prints — or leave the box empty if you logged in there.");
+      }
       // The same setup token twice is the same Claude account — say so instead of adding a duplicate.
       if (b.token) {
         const last4 = String(b.token).trim().slice(-4);
@@ -318,8 +369,9 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
   );
   router.post(
     "/api/hive/alerts/read",
-    h(async (_req, res) => {
-      await caps.readAlerts();
+    h(async (req, res) => {
+      const id = typeof req.body?.id === "string" && req.body.id ? req.body.id : null;
+      await caps.readAlerts(id);
       res.json({ ok: true });
     }),
   );

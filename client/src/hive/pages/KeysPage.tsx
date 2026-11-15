@@ -28,7 +28,7 @@ import { AddGithubDialog, EditKeyDialog, parseLimit } from '../dialogs'
 import { useHive } from '../store'
 import type { HiveKey, ProviderInfo } from '../types'
 import { ProviderGlyph, fmtCost, fmtTokens, keyShare, shareTone, vendorName, vendorStyle, LimitBar } from '../ui'
-import { Empty, Row, RowList, Sparkline, StatusPill } from '../kit'
+import { Empty, PageHeader, Row, RowList, Sparkline, StatusPill } from '../kit'
 
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Something went wrong')
 
@@ -79,20 +79,20 @@ export default function KeysPage() {
 
   return (
     <div className="mx-auto w-full max-w-[1120px] px-5 pb-24 pt-8 sm:px-8">
-      <div className="flex flex-col items-start gap-3 sm:flex-row">
-        <div className="min-w-0 flex-1">
-          <h1 className="text-[22px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]">Keys & limits</h1>
-          <p className="mt-1 max-w-2xl text-[13px] text-[var(--hv-text-3)]">Every AI account and plan the team shares, with its limits. Keys are encrypted and never reach a browser. Add several accounts per provider: Hive spreads the work and moves on when one hits a limit.</p>
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          <Button variant="ghost" size="sm" onClick={refreshAll} loading={refreshing}>
-            {!refreshing && <RefreshCw />} Refresh models
-          </Button>
-          <Button size="sm" onClick={() => setAdding('')}>
-            <Plus /> Add keys
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title="Keys & limits"
+        sub="Every AI account and plan the team shares, with its limits. Keys are encrypted and never reach a browser. Add several accounts per provider: Hive spreads the work and moves on when one hits a limit."
+        actions={
+          <>
+            <Button variant="ghost" size="sm" onClick={refreshAll} loading={refreshing}>
+              {!refreshing && <RefreshCw />} Refresh models
+            </Button>
+            <Button size="sm" onClick={() => setAdding('')}>
+              <Plus /> Add keys
+            </Button>
+          </>
+        }
+      />
       {/* The totals, in one quiet line. */}
       <p className="hv-num mb-6 mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[var(--hv-text-3)]">
         <span>
@@ -462,7 +462,7 @@ function KeyRow({ k }: { k: HiveKey }) {
             {canManage && (
               <>
                 <MenuItem onSelect={() => setEditing(true)}>
-                  <Settings2 className="size-3.5" /> Budget, model & priority
+                  <Settings2 className="size-3.5" /> Budget, limits & model
                 </MenuItem>
                 <MenuItem onSelect={() => act(() => hiveApi.updateKey(k.id, { disabled: !k.disabled }), k.disabled ? 'Resumed' : 'Paused')}>
                   {k.disabled ? <Play className="size-3.5" /> : <Pause className="size-3.5" />} {k.disabled ? 'Resume' : 'Pause'}

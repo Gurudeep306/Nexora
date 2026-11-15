@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { StackedBars } from '../kit'
+import { PageHeader, StackedBars } from '../kit'
 import { hiveApi } from '../api'
 import { useHive } from '../store'
 import { Meter, ProviderGlyph, UserDot, fmtCost, fmtTokens, keyShare, shareTone, vendorName, vendorStyle } from '../ui'
@@ -45,8 +45,7 @@ export default function UsagePage() {
 
   return (
     <div className="mx-auto w-full max-w-[920px] px-4 pb-20 pt-6 sm:px-6">
-      <h1 className="text-[22px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]">Spend</h1>
-      <p className="mt-1 text-[13px] text-[var(--hv-text-3)]">Last 14 days, every provider and every person.</p>
+      <PageHeader title="Spend" sub="Last 14 days, every provider and every person." />
       <p className="hv-num mb-6 mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[var(--hv-text-3)]">
         <span>
           <b className="font-medium text-[var(--hv-text-1)]">{fmtTokens(all.tokens)}</b> tokens
@@ -92,7 +91,7 @@ export default function UsagePage() {
               {vendorName(p)} <span className="tabular-nums text-text-muted">{fmtTokens(totals[p].tokens)}</span>
             </span>
           ))}
-          {!providers.length && <span className="text-[13px] text-text-muted">No usage yet.</span>}
+          {!providers.length && <span className="text-[13px] text-text-muted">No usage yet — start a chat and it shows up here.</span>}
         </div>
       </div>
 
