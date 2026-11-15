@@ -176,6 +176,17 @@ export function RadialWeb({
     for (const it of items.values()) m.set(it.key, [...it.req, ...it.cx].filter((k) => items.has(k)))
     return m
   }, [items])
+  // How many skills build on each one: keystone ideas are the brightest stars.
+  const magnitude = useMemo(() => {
+    const deps = new Map<string, number>()
+    for (const list of prereqs.values()) for (const k of list) deps.set(k, (deps.get(k) ?? 0) + 1)
+    const max = Math.max(1, ...deps.values())
+    const m = new Map<string, number>()
+    for (const k of items.keys()) m.set(k, 0.78 + 0.52 * (Math.log2(1 + (deps.get(k) ?? 0)) / Math.log2(1 + max)))
+    return { m, deps }
+  }, [items, prereqs])
+  const magRef = useRef(magnitude)
+  magRef.current = magnitude
   const iconNames = useMemo(() => [...new Set([...items.values()].map((it) => nodeIcon(it.node.i)))], [items])
   const sectorOf = useMemo(() => new Map(clusters.map((c) => [c.id, c])), [clusters])
   // Subject → subject connections: how many concept prerequisites cross.
@@ -219,6 +230,8 @@ export function RadialWeb({
   const introOver = useRef(false)
   const view = useRef({ w: 1, h: 1, dpr: 1 })
   const hovered = useRef<string | null>(null)
+  // The star under the pointer, for the hover plate (set only when it changes).
+  const [plate, setPlate] = useState<{ key: string; x: number; y: number } | null>(null)
   const hoverSector = useRef<string | null>(null)
   const focusSector = useRef<string | null>(null)
   const fly = useRef<{ from: Camera; to: Camera; t0: number; dur: number } | null>(null)
@@ -439,6 +452,9 @@ export function RadialWeb({
     const streamArc = new Map(layout.streams.map((x) => [x.id, x]))
     let focusKey: string | null = null
     let related: Set<string> | null = null
+    let focusAt = 0
+    let igniteAt = 0
+    const serif = getComputedStyle(document.documentElement).getPropertyValue('--ed-serif').trim() || "'Newsreader Variable', Georgia, serif"
     let raf = 0
     let lastCam = ''
     if (!introAt.current) introAt.current = performance.now()
@@ -515,8 +531,12 @@ export function RadialWeb({
       if (fk !== focusKey) {
         focusKey = fk
         related = fk ? lineage(prereqs, fk) : null
+        focusAt = now
         dirty.current = true
       }
+      // In the atlas the path to a star draws itself outward from you (600 ms).
+      const drawIn = atlas && related && !reduce ? Math.min(1, (now - focusAt) / 600) : 1
+      if (drawIn < 1) dirty.current = true
       // The opening: one clock (0 … 2000) every layer reads.
       const T0 = introOver.current ? INTRO_CLOCK : introClock(now, introAt.current, introDur)
       const T = fadeOnly ? INTRO_CLOCK : T0
@@ -866,7 +886,9 @@ export function RadialWeb({
       ctx.lineWidth = thin(related ? 1.75 : 1.25)
       // In the atlas the path to the star in focus is drawn in clay.
       if (atlas && related) ctx.strokeStyle = C.accent
+      if (drawIn < 1) ctx.setLineDash([1400 * drawIn, 1e5])
       ctx.stroke(groups.locked.lit)
+      ctx.setLineDash([])
       // open: flowing toward the skill you can take next
       ctx.strokeStyle = atlas ? C.muted : C.primary
       ctx.setLineDash([5, 7])
@@ -876,8 +898,13 @@ export function RadialWeb({
       ctx.stroke(groups.open.dim)
       ctx.globalAlpha = linkIn
       ctx.lineWidth = thin(related ? 2.75 : 2)
-      if (atlas && related) ctx.strokeStyle = C.accent
+      if (atlas && related) {
+        ctx.strokeStyle = C.accent
+        // The path to the star in focus is solid, drawn outward from you.
+        ctx.setLineDash(drawIn < 1 ? [1400 * drawIn, 1e5] : [])
+      }
       ctx.stroke(groups.open.lit)
+      if (atlas && related) ctx.setLineDash([5, 7])
       ctx.globalAlpha = 0.55
       ctx.lineWidth = thin(1.25)
       ctx.stroke(cross)
@@ -907,7 +934,9 @@ export function RadialWeb({
         ctx.globalAlpha = litLinks
         ctx.lineWidth = thin(related ? 2.75 : 2)
         if (atlas && related) ctx.strokeStyle = C.accent
+        if (atlas && drawIn < 1) ctx.setLineDash([1400 * drawIn, 1e5])
         ctx.stroke(g.lit)
+        ctx.setLineDash([])
       }
       ctx.globalAlpha = 1
 
@@ -929,18 +958,25 @@ export function RadialWeb({
         const hov = hovered.current === it.key
         g2.add(it.key, X(it.x), Y(it.y))
         ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
+        const mag = atlas ? (magRef.current.m.get(it.key) ?? 1) : 1
         if (rr < 2.2) {
-          ctx.fillStyle = state === 'done' && lit > 0.5 ? colOf(it) : state === 'open' || state === 'done' ? C.primary : C.strong
-          const d = Math.max(1.6, rr * 1.4) * px
+          ctx.fillStyle = atlas
+            ? state === 'done' && lit > 0.5 ? C.text : state === 'open' ? C.accent : C.strong
+            : state === 'done' && lit > 0.5 ? colOf(it) : state === 'open' || state === 'done' ? C.primary : C.strong
+          const d = Math.max(1.6, rr * 1.4) * px * mag
           if (p.due?.has(it.key)) ctx.fillStyle = '#f59e0b'
-          ctx.fillRect(it.x - d / 2, it.y - d / 2, d, d)
+          if (atlas) {
+            ctx.beginPath()
+            ctx.arc(it.x, it.y, d / 2, 0, Math.PI * 2)
+            ctx.fill()
+          } else ctx.fillRect(it.x - d / 2, it.y - d / 2, d, d)
           continue
         }
         const s = sel ? 1.08 : 1
         const ringR = (R - 2) * s
-        const coreR = 21 * s
+        const coreR = 21 * s * mag
         // A soft shadow under each orb; the hovered one lifts a little.
-        if (rr >= 5) {
+        if (rr >= 5 && !atlas) {
           ctx.globalAlpha = ((dim ? 0.3 : 1) * reveal) * (hov ? 0.16 : 0.24) * (dark() ? 1.4 : 1)
           ctx.fillStyle = '#000'
           ctx.beginPath()
@@ -948,9 +984,23 @@ export function RadialWeb({
           ctx.fill()
           ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         }
-        const lift = hov && !reduce ? 4 : 0
+        const lift = hov && !reduce && !atlas ? 4 : 0
         if (lift) ctx.translate(0, -lift)
-        if (fresh.has(it.key)) {
+        if (fresh.has(it.key) && atlas) {
+          // Newly unlocked: the star ignites once, a hairline ring opening out.
+          if (!igniteAt && T >= INTRO_CLOCK) igniteAt = now
+          const t = reduce ? 1 : igniteAt ? (now - igniteAt) / 1400 : 0
+          if (t < 1) {
+            dirty.current = true
+            ctx.globalAlpha = 0.9 * (1 - t)
+            ctx.strokeStyle = C.accent
+            ctx.lineWidth = Math.max(1.2, 1.2 / c.k)
+            ctx.beginPath()
+            ctx.arc(it.x, it.y, (R + 4) * (1 + 1.4 * t), 0, Math.PI * 2)
+            ctx.stroke()
+            ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
+          }
+        } else if (fresh.has(it.key)) {
           // Newly unlocked: a gentle accent pulse (this visit).
           const t = reduce ? 0.5 : (now % 1800) / 1800
           ctx.globalAlpha = 0.55 * (1 - t)
@@ -961,7 +1011,7 @@ export function RadialWeb({
           ctx.stroke()
           ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         }
-        if (state === 'open' && pulseT >= 0) {
+        if (state === 'open' && pulseT >= 0 && !atlas) {
           const t = Math.min(1, pulseT / 0.8)
           ctx.globalAlpha = ((dim ? 0.3 : 1) * reveal) * 0.7 * (1 - t)
           ctx.strokeStyle = colOf(it)
@@ -1069,11 +1119,11 @@ export function RadialWeb({
           ctx.stroke()
           ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         }
-        if (rr >= 9) {
+        if (rr >= 9 && !atlas) {
           const img = icons.get(`${nodeIcon(n.i)}|${state === 'done' && lit < 0.5 ? 'open' : state}`)
           if (img?.complete && img.naturalWidth) ctx.drawImage(img, it.x - 9.5, it.y - 9.5, 19, 19)
         }
-        if (rr >= 8 && state === 'done' && lit >= 1) {
+        if (rr >= 8 && state === 'done' && lit >= 1 && !atlas) {
           const bx = it.x + R * 0.72
           const by = it.y - R * 0.72
           ctx.fillStyle = C.app
@@ -1092,7 +1142,7 @@ export function RadialWeb({
           ctx.lineTo(bx - 1, by + 2.8)
           ctx.lineTo(bx + 3.8, by - 2.6)
           ctx.stroke()
-        } else if (rr >= 8 && state === 'locked') {
+        } else if (rr >= 8 && state === 'locked' && !atlas) {
           const bx = it.x + R * 0.72
           const by = it.y + R * 0.72
           ctx.fillStyle = C.surface3
@@ -1154,7 +1204,7 @@ export function RadialWeb({
         for (const it of visible) {
           const n = it.node
           ctx.globalAlpha = related && !related.has(it.key) ? 0.3 : 1
-          ctx.font = `600 11.5px ${font}`
+          ctx.font = atlas ? `italic 400 13px ${serif}` : `600 11.5px ${font}`
           ctx.fillStyle = n.s === 0 ? C.muted : C.text
           const words = n.n.split(' ')
           const lines: string[] = []
@@ -1231,7 +1281,7 @@ export function RadialWeb({
         } else if (t >= 1) celebrateAt.current = null
       }
       // A faint inner shading toward the rim: the disc reads as a surface.
-      {
+      if (!atlas) {
         const R0 = (layout.extent + 70) * c.k
         const vg = ctx.createRadialGradient(X(0), Y(0), R0 * 0.55, X(0), Y(0), R0)
         vg.addColorStop(0, 'rgba(0,0,0,0)')
@@ -1313,6 +1363,27 @@ export function RadialWeb({
           ctx.fillStyle = hs === s.id ? C.accent : C.text
           ctx.fillText((s.a1 - s.a0) * r2 * c.k > ctx.measureText(cl.name).width + 8 ? cl.name : cl.short, 0, 0)
           ctx.restore()
+        }
+      }
+      // The atlas names its rings like the declination circles of a star
+      // chart: "3 Kilobyte" in serif italic, up the twelve o'clock line.
+      if (atlas && T >= INTRO_CLOCK) {
+        ctx.textAlign = 'left'
+        ctx.textBaseline = 'middle'
+        ctx.font = `italic 400 12.5px ${serif}`
+        for (const g of layout.rings) {
+          if ((g.r1 - g.r0) * c.k < 18) continue
+          const sx = X(0) + 8
+          const sy = Y(-(g.r0 + g.r1) / 2)
+          if (sy < 12 || sy > h - 12 || sx < 0 || sx > w - 40) continue
+          const label = `${g.level} ${tierFor(g.level).name}`
+          const tw = ctx.measureText(label).width
+          ctx.globalAlpha = 0.9
+          ctx.fillStyle = C.app
+          ctx.fillRect(sx - 4, sy - 9, tw + 8, 18)
+          ctx.globalAlpha = 1
+          ctx.fillStyle = C.muted
+          ctx.fillText(label, sx, sy)
         }
       }
       // Stream names on the outer rim, in their hue.
@@ -1595,6 +1666,10 @@ export function RadialWeb({
             lastMove = { x: p.x, y: p.y, t: t2, vx: lastMove.vx * 0.6 + (((p.x - lastMove.x) / dt) * 0.4) / cam.current.k, vy: lastMove.vy * 0.6 + (((p.y - lastMove.y) / dt) * 0.4) / cam.current.k }
           }
           userMoved.current = true
+          if (hovered.current) {
+            hovered.current = null
+            setPlate(null)
+          }
           cam.current = { ...cam.current, x: drag.cx - (p.x - drag.x) / cam.current.k, y: drag.cy - (p.y - drag.y) / cam.current.k }
           fly.current = null
           dirty.current = true
@@ -1609,7 +1684,8 @@ export function RadialWeb({
         }
         const key = sh ? null : hitNode(p)
         const tilt = tiltRef.current
-        if (tilt && !key && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const journal = document.documentElement.dataset.style === 'journal'
+        if (tilt && !key && !journal && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
           const { w, h } = view.current
           tilt.style.transform = `rotateX(${((0.5 - p.y / h) * 3).toFixed(2)}deg) rotateY(${((p.x / w - 0.5) * 3).toFixed(2)}deg)`
         }
@@ -1620,6 +1696,12 @@ export function RadialWeb({
           // About to open it: warm its page and tree.
           const sid = sec ?? (key ? key.split(':')[0] : null)
           if (sid) prefetchSubjectRoute(`/learn/${sid}`)
+        }
+        if (key !== hovered.current) {
+          const it = key ? items.get(key) : null
+          const { w, h } = view.current
+          const c = cam.current
+          setPlate(it && journal ? { key: it.key, x: (it.x - c.x) * c.k + w / 2, y: (it.y - c.y) * c.k + h / 2 } : null)
         }
         hovered.current = key
         hoverSector.current = sec
@@ -1667,6 +1749,7 @@ export function RadialWeb({
       }
     }
     const leave = () => {
+      setPlate(null)
       hovered.current = null
       hoverSector.current = null
       hoverStream.current = null
@@ -1675,6 +1758,8 @@ export function RadialWeb({
     }
     const wheel = (e: WheelEvent) => {
       e.preventDefault()
+      setPlate(null)
+      hovered.current = null
       zoomAt(local(e), cam.current.k * Math.exp(-e.deltaY * (e.ctrlKey ? 0.012 : 0.0016)))
     }
     const key = (e: KeyboardEvent) => {
@@ -1783,12 +1868,12 @@ export function RadialWeb({
   return (
     <div
       ref={cardRef}
-      className={cn('card relative flex overflow-hidden p-0', fullscreen === 'css' && 'fixed inset-0 z-[60] rounded-none', fullscreen !== 'off' && 'bg-bg-app')}
+      className={cn('nx-chart card relative flex overflow-hidden p-0', fullscreen === 'css' && 'fixed inset-0 z-[60] rounded-none', fullscreen !== 'off' && 'bg-bg-app')}
       style={fullscreen !== 'off' ? { height: '100vh', width: '100vw' } : { height: compact ? 'min(560px, calc(100vw + 120px))' : 'min(720px, max(440px, calc(100vh - 220px)))' }}
       data-fullscreen={fullscreen !== 'off' || undefined}
     >
       <nav
-        className={cn('nx-hud shrink-0 flex-col overflow-y-auto border-r border-border py-2', compact ? 'hidden' : 'flex w-[184px]')}
+        className={cn('nx-hud nx-rail shrink-0 flex-col overflow-y-auto border-r border-border py-2', compact ? 'hidden' : 'flex w-[184px]')}
         style={{ '--nx-hud-d': '60ms' } as CSSProperties}
         aria-label="Zones (rings, outward)"
       >
@@ -1798,7 +1883,7 @@ export function RadialWeb({
             type="button"
             onClick={() => flyToRing(z.level)}
             className="flex min-h-[56px] flex-1 cursor-pointer flex-col justify-center gap-1 px-3 text-left transition-colors hover:bg-bg-surface-2"
-            aria-label={`Zone ${z.level}: ${z.done} of ${z.count} skills mastered`}
+            title={`Fly to ring ${z.level}: ${z.done} of ${z.count} skills mastered`}
           >
             <span className="flex items-center gap-2.5">
               <span className="nx-ring-glyph">
@@ -1837,6 +1922,7 @@ export function RadialWeb({
         />
         <CoreEmblem ref={coreRef} me={me} ignite={intro.mode !== 'fade'} />
         </div>
+        {plate && <StarPlate key={plate.key} at={plate} item={items.get(plate.key)} needs={prereqs.get(plate.key)?.length ?? 0} unlocks={magnitude.deps.get(plate.key) ?? 0} view={view.current} />}
         <div className={cn('nx-hud absolute right-3 flex gap-1.5', compact ? 'bottom-3' : 'top-3')} style={{ '--nx-hud-d': '120ms' } as CSSProperties} role="toolbar" aria-label="Nexus view">
           {nextStep && (
             <Button variant="outline" size="sm" onClick={() => P.current.onSelect(nextStep)} aria-label="Jump to my next step" title="Jump to my next step">
@@ -1925,3 +2011,32 @@ const CoreEmblem = forwardRef<HTMLDivElement, { me: CoreInfo; ignite?: boolean }
     </div>
   )
 })
+
+/**
+ * The hover plate (atlas): a small ivory card beside the star with its name,
+ * constellation and ring, where it stands, and how it connects. It is
+ * positioned once when the pointer arrives (the pointer moving off hides it).
+ */
+function StarPlate({ at, item, needs, unlocks, view }: { at: { x: number; y: number }; item?: Item; needs: number; unlocks: number; view: { w: number; h: number } }) {
+  if (!item) return null
+  const n = item.node
+  const left = at.x + 260 > view.w ? at.x - 248 : at.x + 22
+  const top = Math.max(8, Math.min(view.h - 150, at.y - 40))
+  const stateText = n.s === 2 ? 'Mastered' : n.s === 1 ? (n.p > 0 ? `In progress · ${n.p}%` : 'Open to you') : 'Locked'
+  return (
+    <div className="nx-plate" style={{ left, top }} aria-hidden="true">
+      <p className="nx-plate-kicker">
+        {item.cluster.name} · ring {n.z} {tierFor(n.z).name}
+      </p>
+      <p className="nx-plate-title">{n.n}</p>
+      <p className={cn('nx-plate-state', n.s === 2 && 'is-done', n.s === 1 && 'is-open')}>{stateText}</p>
+      <p className="nx-plate-figs">
+        {n.c ? <span>{n.c}</span> : null}
+        <span>
+          needs {needs} · unlocks {unlocks}
+        </span>
+      </p>
+      <p className="nx-plate-hint">{n.s === 0 ? 'Click to see what it needs' : 'Click to open the lesson'}</p>
+    </div>
+  )
+}
