@@ -230,10 +230,6 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
         <span className="hidden sm:inline">{p.bookmarked ? 'Bookmarked' : 'Bookmark'}</span>
         <span className="sr-only sm:hidden">Bookmark</span>
       </button>
-      <button type="button" className={cn('notes-tool', prefs.cleanFont && 'is-on')} aria-pressed={prefs.cleanFont} onClick={() => setPrefs({ cleanFont: !prefs.cleanFont })}>
-        <Icon name="type" className="size-4" aria-hidden="true" />
-        Clean font
-      </button>
       <button
         type="button"
         className={cn('notes-tool notes-tool--main', p.completed && 'is-on')}

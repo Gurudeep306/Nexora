@@ -273,7 +273,7 @@ function CourseMarkdown({ body, onStops }: { body: string; onStops: (s: Stop[]) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [body])
   return (
-    <div ref={ref} className="nx-lesson-md">
+    <div ref={ref} className="nx-read nx-lesson nx-lesson-md">
       <Markdown md={body} />
     </div>
   )

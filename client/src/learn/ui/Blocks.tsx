@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { AlertTriangle, BriefcaseBusiness, CheckCircle2, ChevronRight, Code2, Info, Lightbulb, Sparkles, Zap } from 'lucide-react'
+import { CheckCircle2, ChevronRight, Code2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import '../algorithms'
 import { getAlgorithm } from '../engine/registry'
@@ -11,13 +11,14 @@ import type { Block, CalloutKind } from '../types'
 import { CodeTabs } from './CodeTabs'
 import { QuestionCard } from './QuestionCard'
 
-const CALLOUT: Record<CalloutKind, { icon: typeof Info; label: string; cls: string }> = {
-  note: { icon: Info, label: 'Note', cls: 'callout-note' },
-  tip: { icon: Lightbulb, label: 'Tip', cls: 'callout-tip' },
-  warn: { icon: AlertTriangle, label: 'Careful', cls: 'callout-warn' },
-  pitfall: { icon: AlertTriangle, label: 'Pitfall', cls: 'callout-warn' },
-  insight: { icon: Sparkles, label: 'Insight', cls: 'callout-insight' },
-  interview: { icon: BriefcaseBusiness, label: 'Interview', cls: 'callout-interview' },
+// Special blocks follow the site's reading design: a label and a margin rule, no box.
+const CALLOUT: Record<CalloutKind, { label: string; tone?: 'accent' | 'warn' | 'danger' | 'good' }> = {
+  note: { label: 'Note' },
+  tip: { label: 'Tip', tone: 'good' },
+  warn: { label: 'Careful', tone: 'warn' },
+  pitfall: { label: 'Pitfall', tone: 'danger' },
+  insight: { label: 'Insight', tone: 'accent' },
+  interview: { label: 'In interviews', tone: 'accent' },
 }
 
 const DIFF: Record<Question['difficulty'], string> = { easy: 'text-state-success', medium: 'text-state-warning', hard: 'text-state-error' }
@@ -76,53 +77,46 @@ export function LessonBlock({ b, bank }: { b: Block; bank: Map<string, Question>
       return <CodeTabs code={b.code} title={b.title} note={b.note} />
     case 'callout': {
       const c = CALLOUT[b.kind]
-      const Icon = c.icon
       return (
-        <aside className={cn('callout rounded-2xl px-4 py-3.5', c.cls)}>
-          <p className="callout-title mb-1 flex items-center gap-2 text-[12px] font-bold tracking-[0.08em] uppercase">
-            <Icon className="size-4" /> {b.title ?? c.label}
-          </p>
-          <Markdown md={b.md} className="!text-[14.5px]" />
+        <aside className="nx-aside" data-tone={c.tone}>
+          <span className="nx-aside-label">{b.title ?? c.label}</span>
+          <Markdown md={b.md} />
         </aside>
       )
     }
     case 'complexity':
       return (
-        <div className="card overflow-hidden p-0">
-          <p className="mb-0 flex items-center gap-2 border-b border-border px-4 py-2.5 text-[13px] font-semibold text-text-primary">
-            <Zap className="size-4 text-accent-brand" /> {b.title ?? 'Complexity'}
-          </p>
+        <section>
+          <h3 className="!mt-0">{b.title ?? 'Complexity'}</h3>
           <div className="overflow-x-auto">
-            <table className="w-full text-[13.5px]">
+            <table>
               <thead>
-                <tr className="text-left text-[11px] tracking-wider text-text-muted uppercase">
-                  <th className="px-4 py-2 font-semibold">Operation</th>
-                  <th className="px-4 py-2 font-semibold">Time</th>
-                  {b.rows.some((r) => r.space) && <th className="px-4 py-2 font-semibold">Space</th>}
-                  <th className="px-4 py-2 font-semibold">Why</th>
+                <tr>
+                  <th>Operation</th>
+                  <th>Time</th>
+                  {b.rows.some((r) => r.space) && <th>Space</th>}
+                  <th>Why</th>
                 </tr>
               </thead>
               <tbody>
                 {b.rows.map((r, i) => (
-                  <tr key={i} className="border-t border-border">
-                    <td className="px-4 py-2 text-text-primary">{r.op}</td>
-                    <td className="px-4 py-2 font-mono font-semibold whitespace-nowrap text-accent-brand">{r.time}</td>
-                    {b.rows.some((x) => x.space) && <td className="px-4 py-2 font-mono whitespace-nowrap text-text-secondary">{r.space ?? ''}</td>}
-                    <td className="px-4 py-2 text-text-muted">{r.note ?? ''}</td>
+                  <tr key={i}>
+                    <td className="text-text-primary">{r.op}</td>
+                    <td className="font-mono whitespace-nowrap text-text-primary">{r.time}</td>
+                    {b.rows.some((x) => x.space) && <td className="font-mono whitespace-nowrap">{r.space ?? ''}</td>}
+                    <td>{r.note ?? ''}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </div>
+        </section>
       )
     case 'check': {
       const qs = b.ids.map((id) => bank.get(id)).filter((q): q is Question => !!q)
       return (
         <section className="space-y-3">
-          <h3 className="mb-0 flex items-center gap-2 text-[17px] font-semibold text-text-primary">
-            <CheckCircle2 className="size-5 text-accent-brand" /> {b.title ?? 'Check yourself'}
-          </h3>
+          <h3 className="!mt-0">{b.title ?? 'Check yourself'}</h3>
           {qs.map((q, i) => (
             <QuestionCard key={q.id} q={q} index={i + 1} />
           ))}
@@ -133,14 +127,11 @@ export function LessonBlock({ b, bank }: { b: Block; bank: Map<string, Question>
       return <PracticeList ids={b.ids} title={b.title} bank={bank} />
     case 'steps':
       return (
-        <ol className="space-y-3">
+        <ol className="nx-steps">
           {b.items.map((s, i) => (
-            <li key={i} className="flex gap-3">
-              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-accent-brand/15 font-mono text-[12px] font-bold text-accent-brand">{i + 1}</span>
-              <div>
-                <p className="mb-0.5 font-semibold text-text-primary">{s.title}</p>
-                <Markdown md={s.md} className="!text-[14.5px]" />
-              </div>
+            <li key={i}>
+              <p className="mb-0.5 font-semibold text-text-primary">{s.title}</p>
+              <Markdown md={s.md} />
             </li>
           ))}
         </ol>
