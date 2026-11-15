@@ -396,3 +396,11 @@
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
+
+/* Two ways to number a chapter: the default style shows digits and a ring;
+   the Field Journal shows an italic roman numeral and hairline rows. */
+.nh-chapter-roman,
+.nh-n-roman,
+.nh-chapter-done {
+  display: none;
+}
