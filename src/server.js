@@ -6075,6 +6075,8 @@ io.on("connection", (socket) => {
   await initDb();
   // Owner from OWNER_USERNAME, first-boot private mode (src/authz/access.js).
   await initAdminSystem();
+  // Admin-chosen AI providers and models (Admin → AI models).
+  require("./ai/settings").startRefresh();
   await Promise.all([_forgeInit, _liveInit]);
   // Give every account its own progress/XP/settings (one-time, idempotent).
   await migratePerUser();
