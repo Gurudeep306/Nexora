@@ -65,7 +65,7 @@ export function ProjectAvatar({ project, size = 28, live = 0 }: { project: Pick<
     <span className="relative inline-grid shrink-0 place-items-center" style={{ width: size, height: size }}>
       <span
         className="grid size-full place-items-center rounded-lg font-semibold text-white"
-        style={{ background: c, fontSize: Math.round(size * 0.38), letterSpacing: '-0.02em' }}
+        style={{ background: `color-mix(in oklab, ${c} 62%, black)`, fontSize: Math.round(size * 0.38), letterSpacing: '-0.02em' }}
       >
         {initials(project.name)}
       </span>

@@ -139,6 +139,104 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
       res.json({ ok: true, ...r });
     }),
   );
+  /* ── live terminals: a real shell on the machine, typed into from the browser ── */
+  const terminal = require("../hive/terminal");
+  const termSize = (b) => ({ cols: Math.max(20, Math.min(500, Math.round(Number(b?.cols)) || 100)), rows: Math.max(5, Math.min(200, Math.round(Number(b?.rows)) || 30)) });
+  router.get(
+    "/api/hive/machines/:id/terms",
+    h(async (req, res) => {
+      const m = await machineRow(req, { manage: true });
+      res.json({ ok: true, terminals: terminal.mine(req.hiveUser).filter((t) => t.machineId === m.id) });
+    }),
+  );
+  router.post(
+    "/api/hive/machines/:id/terms",
+    h(async (req, res) => {
+      const m = await machineRow(req, { manage: true });
+      if (m.policy === "read") throw new BadInput("This machine is read-only, so it has no terminal", 403);
+      const folder = req.body?.folder ? str(req.body.folder, "folder", { max: 500 }) : "";
+      const t = await terminal.open({ machineId: m.id, username: req.hiveUser, folder, ...termSize(req.body) });
+      await audit(req, "hive.machine.terminal", m.id, { folder: t.cwd || folder });
+      res.json({ ok: true, terminal: t });
+    }),
+  );
+  // Output, streamed as NDJSON. Reconnect with ?from=<next> to pick up exactly where it stopped.
+  router.get(
+    "/api/hive/machines/:id/terms/:tid/stream",
+    h(async (req, res) => {
+      const m = await machineRow(req, { manage: true });
+      terminal.own(req.params.tid, m.id, req.hiveUser);
+      let from = Math.max(0, Math.floor(Number(req.query.from) || 0));
+      res.status(200).set({ "Content-Type": "application/x-ndjson; charset=utf-8", "Cache-Control": "no-store", "X-Accel-Buffering": "no" });
+      res.flushHeaders?.();
+      let open = true;
+      req.on("close", () => (open = false));
+      res.on("close", () => (open = false));
+      const send = (o) => {
+        if (!open) return;
+        res.write(JSON.stringify(o) + "\n");
+        res.flush?.(); // compression() buffers otherwise
+      };
+      send({ type: "ready" });
+      let fails = 0;
+      while (open) {
+        let r;
+        try {
+          r = await terminal.read(m.id, req.params.tid, from);
+          fails = 0;
+        } catch (e) {
+          if (++fails >= 3) {
+            send({ type: "error", error: e.message || "Lost the machine" });
+            break;
+          }
+          send({ type: "reconnecting", error: e.message });
+          await new Promise((ok) => setTimeout(ok, 1500));
+          continue;
+        }
+        if (r.gone) {
+          terminal.forget(req.params.tid);
+          send({ type: "exit", code: null, gone: true });
+          break;
+        }
+        if (r.data) send({ type: "data", data: r.data, next: r.next, skipped: !!r.skipped });
+        else if (open) send({ type: "ping" });
+        from = r.next;
+        if (r.exit !== null && r.exit !== undefined && !r.data) {
+          send({ type: "exit", code: r.exit });
+          break;
+        }
+      }
+      if (open) res.end();
+    }),
+  );
+  router.post(
+    "/api/hive/machines/:id/terms/:tid/input",
+    h(async (req, res) => {
+      const m = await machineRow(req, { manage: true });
+      terminal.own(req.params.tid, m.id, req.hiveUser);
+      const data = typeof req.body?.data === "string" ? req.body.data : "";
+      if (data.length > 64_000) throw new BadInput("That paste is too long for the terminal (64 KB at a time)", 413);
+      if (data) await terminal.write(m.id, req.params.tid, data);
+      res.json({ ok: true });
+    }),
+  );
+  router.post(
+    "/api/hive/machines/:id/terms/:tid/resize",
+    h(async (req, res) => {
+      const m = await machineRow(req, { manage: true });
+      terminal.own(req.params.tid, m.id, req.hiveUser);
+      const { cols, rows } = termSize(req.body);
+      res.json({ ok: true, ...(await terminal.resize(m.id, req.params.tid, cols, rows)) });
+    }),
+  );
+  router.delete(
+    "/api/hive/machines/:id/terms/:tid",
+    h(async (req, res) => {
+      const m = await machineRow(req, { manage: true });
+      terminal.own(req.params.tid, m.id, req.hiveUser);
+      res.json({ ok: true, ...(await terminal.close(m.id, req.params.tid)) });
+    }),
+  );
   router.post(
     "/api/hive/machines/:id/procs",
     h(async (req, res) => {

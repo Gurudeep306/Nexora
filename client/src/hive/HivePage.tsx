@@ -4,7 +4,6 @@ import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-ro
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   BarChart3,
-  Bot,
   Settings2,
   HeartPulse,
   Network,
@@ -41,6 +40,7 @@ import {
   Users,
   X,
 } from 'lucide-react'
+import { CopilotMark as Bot } from './marks'
 import { LogoMark } from '@/components/brand/Logo'
 import { Highlight, Menu, MenuContent, MenuItem, MenuTrigger, Tooltip } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -73,6 +73,7 @@ const UsagePage = lazy(() => import('./pages/UsagePage'))
 const MemoryPage = lazy(() => import('./pages/MemoryPage'))
 const LaunchpadPage = lazy(() => import('./pages/LaunchpadPage'))
 const MachinesPage = lazy(() => import('./pages/MachinesPage'))
+const MachineTerminalPage = lazy(() => import('./pages/MachineTerminalPage'))
 const ModelsPage = lazy(() => import('./pages/ModelsPage'))
 const NexoraGuide = lazy(() => import('./pages/NexoraGuide'))
 const DrivePage = lazy(() => import('./pages/DrivePage'))
@@ -216,9 +217,9 @@ function Shell() {
   if (loading && !boot) {
     return (
       <div className="hive-root grid h-dvh place-items-center" role="status" aria-label="Loading Hive">
-        <div className="flex flex-col items-center gap-4">
-          <HiveLogo size={56} draw />
-          <span className="hive-boot-word text-[15px] font-semibold tracking-[-0.01em] text-text-primary">Hive</span>
+        <div className="flex flex-col items-center gap-5">
+          <HiveLogo size={40} draw />
+          <span className="hive-boot-word text-[13px] font-medium tracking-[0.18em] text-text-secondary uppercase">Hive</span>
           <span className="hive-boot-bar" aria-hidden="true">
             <span />
           </span>
@@ -261,6 +262,7 @@ function Shell() {
           <Route path="pipelines/*" element={<Sectioned base="pipelines" label="Pipelines" tabs={[{ id: 'all', label: 'Pipelines', element: <PipelinesPage /> }, { id: 'schedules', label: 'Schedules', element: <AutomationsPage /> }]} />} />
           {/* Resources */}
           <Route path="machines" element={<MachinesPage />} />
+          <Route path="machines/:machineId/terminal" element={<MachineTerminalPage />} />
           <Route path="drive" element={<DrivePage />} />
           {/* AI setup */}
           <Route path="models/*" element={<Sectioned base="models" label="Models" tabs={[{ id: 'catalogue', label: 'Catalogue', element: <ModelsPage /> }, { id: 'health', label: 'Health', element: <HealthPage /> }]} />} />

@@ -26,27 +26,27 @@ export function Skeleton({ className, style }: { className?: string; style?: CSS
 const THINK_WORDS = ['Thinking', 'Planning', 'Searching', 'Writing']
 
 /**
- * The pre-first-token placeholder in chat/agent streams: a phase word that
- * cycles (long waits feel deliberate, not stuck) next to three pulsing dots.
- * No fake progress bar. role="status"; static under reduced motion.
+ * The pre-first-token placeholder in chat/agent streams: a small arc spinner,
+ * a phase word that changes every couple of seconds (a long wait reads as
+ * work, not a hang) and the seconds so far. No bouncing dots, no fake
+ * progress. role="status"; static under reduced motion.
  */
 export function ThinkingIndicator({ words = THINK_WORDS, className }: { words?: string[]; className?: string }) {
-  const [i, setI] = useState(0)
+  const [t0] = useState(() => Date.now())
+  const [, tick] = useState(0)
   useEffect(() => {
-    if (words.length < 2) return
-    const t = setInterval(() => setI((x) => (x + 1) % words.length), 1800)
+    const t = setInterval(() => tick((x) => x + 1), 1000)
     return () => clearInterval(t)
-  }, [words])
+  }, [])
+  const secs = Math.floor((Date.now() - t0) / 1000)
+  const word = words[Math.floor(secs / 2.4) % words.length]
   return (
-    <span role="status" className={cn('inline-flex items-center gap-2 text-[13.5px] font-medium text-text-muted', className)}>
-      <span key={i} className="hive-word-swap">
-        {words[i % words.length]}…
+    <span role="status" className={cn('inline-flex items-center gap-2 text-[13px] text-[var(--hv-text-2)]', className)}>
+      <Spinner size={13} label={word} />
+      <span key={word} className="hive-word-swap font-medium">
+        {word}
       </span>
-      <span className="hive-dots" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-      </span>
+      {secs >= 3 && <span className="tabular-nums text-[var(--hv-text-3)]">{secs}s</span>}
     </span>
   )
 }

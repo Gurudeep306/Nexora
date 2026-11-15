@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { PageHeader, StackedBars } from '../kit'
 import { hiveApi } from '../api'
 import { useHive } from '../store'
-import { Meter, ProviderGlyph, UserDot, fmtCost, fmtTokens, keyShare, shareTone, vendorName, vendorStyle } from '../ui'
+import { Meter, ProviderGlyph, UserDot, fmtCost, fmtTokens, keyShare, shareTone, vendorName } from '../ui'
 
 type Stats = Awaited<ReturnType<typeof hiveApi.stats>>
 
@@ -20,7 +20,12 @@ export default function UsagePage() {
     }
   }, [])
 
-  const providers = useMemo(() => [...new Set((stats?.byProvider ?? []).map((r) => r.provider))], [stats])
+  // Sorted by name, so a provider keeps its colour when others come and go.
+  const providers = useMemo(() => [...new Set((stats?.byProvider ?? []).map((r) => r.provider))].sort(), [stats])
+  const seriesColor = (p: string) => {
+    const i = providers.indexOf(p)
+    return i >= 0 && i < 6 ? `var(--hv-series-${i + 1})` : 'var(--hv-text-3)'
+  }
   const data = useMemo(() => {
     const days: Record<string, Record<string, number | string>> = {}
     for (let i = 13; i >= 0; i--) {
@@ -66,7 +71,7 @@ export default function UsagePage() {
           <StackedBars
             ariaLabel="Tokens per day, by provider, last 14 days"
             rows={data}
-            series={providers.map((p) => ({ key: p, label: vendorName(p), color: vendorStyle(p).color }))}
+            series={providers.map((p) => ({ key: p, label: vendorName(p), color: seriesColor(p) }))}
             value={(d, k) => Number((d as Record<string, unknown>)[k] ?? 0)}
             label={(d) => String(d.day)}
             yFormat={fmtTokens}
@@ -76,7 +81,7 @@ export default function UsagePage() {
                 <div className="mb-1 font-medium">{String(d.day)}</div>
                 {providers.map((p) => (
                   <div key={p} className="flex items-center gap-1.5">
-                    <span className="size-2 rounded-sm" style={{ background: vendorStyle(p).color }} />
+                    <span className="size-2 rounded-[2px]" style={{ background: seriesColor(p) }} />
                     {vendorName(p)}: {fmtTokens(Number((d as Record<string, unknown>)[p] ?? 0))}
                   </div>
                 ))}

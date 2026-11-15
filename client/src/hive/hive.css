@@ -53,13 +53,16 @@
 }
 
 /* Icon tile, like the site's feature cards. */
+/* Icon tiles are neutral: a surface step with a hairline, the icon in
+   secondary ink. Colour is kept for state, never for decoration
+   (--tile is accepted but ignored on purpose). */
 .hive-tile {
   display: inline-grid;
   place-items: center;
   border-radius: 12px;
-  color: var(--tile, var(--color-accent-brand));
-  background: color-mix(in oklab, var(--tile, var(--color-accent-brand)) 13%, var(--color-bg-surface));
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tile, var(--color-accent-brand)) 22%, transparent);
+  color: var(--hv-text-2, var(--color-text-secondary));
+  background: var(--hv-surface-2, var(--color-bg-surface));
+  box-shadow: inset 0 0 0 1px var(--hv-border, rgba(127, 127, 127, 0.2));
 }
 
 .hive-chip {
@@ -334,15 +337,15 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
 /* Composer: flat surface, crisp 1px accent ring on focus, no drop shadow. */
 .hive-composer { box-shadow: none; }
 .hive-composer:focus-within {
-  border-color: var(--color-accent-brand);
-  box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-accent-brand) 65%, transparent);
+  border-color: color-mix(in oklab, var(--color-accent-brand) 55%, var(--hv-border-strong));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent-brand) 10%, transparent);
 }
 
 /* Boot screen: mark + wordmark + a thin indeterminate accent bar. */
 .hive-boot-bar {
-  width: 160px;
-  height: 2px;
-  border-radius: 2px;
+  width: 120px;
+  height: 1px;
+  border-radius: 1px;
   overflow: hidden;
   background: color-mix(in oklab, var(--color-text-primary) 10%, transparent);
 }

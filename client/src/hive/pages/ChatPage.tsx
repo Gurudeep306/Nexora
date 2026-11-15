@@ -305,7 +305,7 @@ export default function ChatPage() {
       </div>
 
       {!pinned && busy && (
-        <button type="button" onClick={() => setPinned(true)} className="absolute bottom-36 left-1/2 z-10 -translate-x-1/2 rounded-full bg-bg-surface px-3 py-1.5 text-[12px] shadow-lg ring-1 ring-[var(--hive-line)]">
+        <button type="button" onClick={() => setPinned(true)} className="hv-jump absolute bottom-36 left-1/2 z-10 -translate-x-1/2">
           ↓ Follow the reply
         </button>
       )}
@@ -437,7 +437,7 @@ function UserBubble({ m }: { m: ConvoMsg }) {
     <div className="hive-in mb-6 flex justify-end">
       <div className="max-w-[85%]">
         {m.attachments.length > 0 && <Attachments files={m.attachments} align="end" />}
-        {m.content && <div className="whitespace-pre-wrap rounded-2xl rounded-br-md bg-accent-brand/[0.12] px-4 py-2.5 text-[14.5px] leading-relaxed text-text-primary ring-1 ring-accent-brand/20">{m.content}</div>}
+        {m.content && <div className="hv-user-msg whitespace-pre-wrap px-4 py-2.5 text-[14.5px] leading-relaxed text-text-primary">{m.content}</div>}
         <div className="mt-1 text-right text-[11px] text-text-muted">
           {m.author ? `@${m.author} · ` : ''}
           {timeAgo(m.created_at)}
@@ -653,10 +653,10 @@ function PendingAnswer({ p, boxed }: { p: Pending; boxed: boolean }) {
         {p.model && <span className="truncate font-mono text-[11px] text-text-muted">{shortModel(p.model)}</span>}
         <span className="ml-auto text-[11px] tabular-nums text-text-muted">{secs}s</span>
       </div>
-      {p.note && <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-state-warning/12 px-2.5 py-0.5 text-[11.5px] text-state-warning">{p.note}</div>}
+      {p.note && <div className="mb-2 border-l-2 border-[var(--hv-warning)] pl-2.5 text-[12px] text-[var(--hv-text-2)]">{p.note}</div>}
       {p.think && (
-        <button type="button" onClick={() => setShowThink((s) => !s)} className="mb-2 flex w-full items-start gap-2 rounded-xl bg-text-primary/[0.04] px-3 py-2 text-left">
-          <Brain className="mt-0.5 size-3.5 shrink-0 text-accent-brand" />
+        <button type="button" onClick={() => setShowThink((s) => !s)} aria-expanded={showThink} className="mb-2 flex w-full items-start gap-2 border-l border-[var(--hv-border-strong)] py-0.5 pl-3 text-left">
+          <Brain className="mt-0.5 size-3.5 shrink-0 text-[var(--hv-text-3)]" />
           <span className={cn('min-w-0 flex-1 text-[12.5px] italic text-text-muted', !showThink && 'line-clamp-2')}>{p.think}</span>
         </button>
       )}

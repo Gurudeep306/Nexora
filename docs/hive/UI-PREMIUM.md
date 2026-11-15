@@ -88,6 +88,30 @@ Pages redesigned in v1 (Home, Inbox, Projects, Keys, Models, Spend, Settings) al
 
   The phone performance score is held back by the site-wide startup code that every page shares (about 0.8 s of script work on Lighthouse's slow-phone setting). Splitting that is a site-wide change for its own PR.
 
+## Premium pass 2 (the "no cartoon" sweep)
+
+Each change below is backed by a screenshot audit of every Hive page (dark, light, phone) before and after.
+
+- **Brand.** The Hive mark is now drawn in the text colour with only the core in the accent; the solid blue tile is gone. The boot screen is the mark, a small spaced wordmark and a 1px indeterminate line.
+- **Copilot mark.** The robot glyph is replaced everywhere by `CopilotMark` (`client/src/hive/marks.tsx`): a core with one satellite on an open orbit. It is built with lucide's `createLucideIcon`, so it takes the same stroke, size and colour as every other icon.
+- **Agent avatars.** A neutral tile with the model family's glyph in one ink. While an agent works, one thin arc travels the tile's edge (a masked conic ring). Finished states leave a 7px dot. There are no bouncing dots, orbiting balls or spring-in check badges. Working states share the accent; only "waiting", "done" and "failed" have their own colours.
+- **Neutral by default.** `.hive-tile`, `IconTile`, `ProviderGlyph`, Drive file-type icons, role badges and cost badges no longer take a hue each. Colour is kept for state (success, warning, danger) and for the one primary action. The Judge's banner, the "Judge's pick" badge and Health's ring and cards follow the same rule.
+- **Charts** (`kit/Charts.tsx`):
+  - Series use `--hv-series-1..6`, the data-viz reference palette in fixed order. It was validated with the palette checker: CVD ΔE ≥ 8.4 and normal-vision ΔE ≥ 19.3 between neighbours, in both modes, with dark steps of their own.
+  - Bars are at most 14px wide. Stacked segments have a 2px gap, and only the top end is rounded.
+  - There are five hairline gridlines and a stronger baseline.
+  - Hovering highlights the column, and the tooltip stays inside the plot.
+  - Sparklines fade from the line down and mark their last point.
+  - Spend colours providers by name, so a provider keeps its colour when others come and go.
+- **Chat and Copilot.**
+  - Your messages sit on a quiet surface, not a coloured bubble.
+  - The thinking state is a small arc spinner, a phase word and the seconds so far.
+  - Notes ("continuing with…") are a hairline-ruled line, not a pill.
+  - A half-typed `**bold**` or `` `code` `` no longer flashes its markers while streaming.
+  - The caret is a 2px line that fades rather than a blue block.
+  - The Copilot follows the reply only while you're at the bottom, with a "Jump to latest" button otherwise. Chat already did this.
+- **Checked:** axe (WCAG 2.0, 2.1 and 2.2 AA) shows 0 violations in light and dark on Home, Copilot, Chat, Spend, Budgets, Health, Keys, Drive, Machines, the terminal, a session, Inbox, Automations, Pipelines, Extensions, Settings and Dispatch. There is no horizontal scroll at 1440 px or on an iPhone 14.
+
 ## Not done yet (honest list)
 
 - **Lighthouse on the live site.** To run it: open https://nexoraguru.in/hive in Chrome, press F12, open **Lighthouse**, click **Analyze**.

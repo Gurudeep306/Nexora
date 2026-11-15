@@ -173,6 +173,11 @@ function MachineCard({ m, onChanged }: { m: Machine; onChanged: () => void }) {
         <p className="mt-1.5 text-[11.5px] text-text-muted">{P.hint}</p>
       </div>
       <div className="flex flex-wrap items-center gap-1.5 border-t hive-line px-4 py-2.5">
+        {canManage && m.policy !== 'read' && (
+          <Button size="sm" variant="ghost" disabled={!m.online} onClick={() => navigate(`/hive/machines/${m.id}/terminal`)}>
+            <SquareTerminal /> Terminal
+          </Button>
+        )}
         <Button size="sm" variant="ghost" disabled={!m.online} onClick={() => setBrowse(true)}>
           <Folder /> Folders & clone
         </Button>
@@ -338,8 +343,7 @@ function FolderBrowser({ m, open, onClose }: { m: Machine; open: boolean; onClos
   const [data, setData] = useState<{ path: string; roots: string[]; dirs: { name: string; path: string; git: boolean }[] } | null>(null)
   const [path, setPath] = useState<string | undefined>(undefined)
   const [cloning, setCloning] = useState<string | null>(null)
-  const [term, setTerm] = useState<{ folder: string; out: string } | null>(null)
-  const [cmd, setCmd] = useState('')
+  const navigate = useNavigate()
   useEffect(() => {
     if (!open) return
     setData(null)
@@ -370,36 +374,13 @@ function FolderBrowser({ m, open, onClose }: { m: Machine; open: boolean; onClos
                   <span className="truncate">{d.name}</span>
                   <ChevronRight className="size-3.5 text-text-muted opacity-0 group-hover:opacity-100" />
                 </button>
-                <button type="button" onClick={() => setTerm({ folder: d.path, out: '' })} className="rounded-md px-2 py-0.5 text-[11px] text-text-muted opacity-0 hover:bg-text-primary/[0.07] hover:text-text-primary group-hover:opacity-100">
+                <button type="button" onClick={() => navigate(`/hive/machines/${m.id}/terminal?folder=${encodeURIComponent(d.path)}`)} className="rounded-md px-2 py-0.5 text-[11px] text-text-muted opacity-0 hover:bg-text-primary/[0.07] hover:text-text-primary focus-visible:opacity-100 group-hover:opacity-100">
                   <SquareTerminal className="inline size-3" /> terminal
                 </button>
               </div>
             ))}
             {data && !data.dirs.length && <p className="p-3 text-[12.5px] text-text-muted">Empty.</p>}
           </div>
-          {term && (
-            <div className="mt-3">
-              <div className="mb-1 truncate font-mono text-[11.5px] text-text-muted">{term.folder}</div>
-              <pre className="hive-term max-h-60 overflow-auto rounded-t-xl p-3">{term.out || 'Ready.'}</pre>
-              <form
-                className="hive-term flex gap-2 rounded-b-xl border-t border-white/10 px-3 py-2"
-                onSubmit={async (e) => {
-                  e.preventDefault()
-                  const c = cmd
-                  setCmd('')
-                  try {
-                    const r = await hiveApi.exec(m.id, { folder: term.folder, command: c })
-                    setTerm((t) => t && { ...t, out: `${t.out}❯ ${c}\n${r.output}\n` })
-                  } catch (err) {
-                    setTerm((t) => t && { ...t, out: `${t.out}❯ ${c}\n${errMsg(err)}\n` })
-                  }
-                }}
-              >
-                <span className="text-state-success">❯</span>
-                <input autoFocus value={cmd} onChange={(e) => setCmd(e.target.value)} className="flex-1 bg-transparent outline-none" placeholder="git status" />
-              </form>
-            </div>
-          )}
         </div>
         <div className="space-y-3">
           <div className="text-[12.5px] font-semibold">Clone a project here</div>

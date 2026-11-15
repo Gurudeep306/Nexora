@@ -10,7 +10,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Activity,
-  Bot,
   BrainCircuit,
   Clock3,
   GitMerge,
@@ -44,7 +43,9 @@ import {
   Wand2,
   X,
   XCircle,
+  ArrowDown,
 } from 'lucide-react'
+import { CopilotMark as Bot } from './marks'
 import { AiMarkdown } from '@/components/ai/AiMarkdown'
 import { Popover, PopoverContent, PopoverTrigger, Tooltip, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -55,7 +56,7 @@ import { errMsg } from './Improve'
 import { useHive } from './store'
 import type { AgentSpec, CopilotBrain, CopilotMsg, CopilotSettings, CopilotStep, CopilotWork } from './types'
 import { timeAgo, vendorName } from './ui'
-import { Composer, StatusPill, friendlyModel } from './kit'
+import { Composer, Spinner, StatusPill, friendlyModel } from './kit'
 
 
 const STEP: Record<string, { icon: typeof Bot; label: (i: Record<string, unknown>) => string }> = {
@@ -400,10 +401,10 @@ function LiveStatus({ pending }: { pending: { text: string; steps: CopilotStep[]
             ? 'Thinking about the results'
             : 'Thinking'
   return (
-    <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-accent-brand/[0.08] px-2.5 py-1 text-[12px] text-text-secondary ring-1 ring-accent-brand/15">
-      <Loader2 className="size-3.5 animate-spin text-accent-brand" />
-      <span className="font-medium">{phase}…</span>
-      <span className="tabular-nums text-text-muted">{secs}s</span>
+    <div className="mb-2 flex items-center gap-2 text-[12.5px] text-[var(--hv-text-2)]" role="status">
+      <Spinner size={13} label={phase} />
+      <span className="hive-thinking-text font-medium">{phase}</span>
+      <span className="tabular-nums text-[var(--hv-text-3)]">{secs}s</span>
       {pending.brain?.kind === 'cli' && secs > 25 && !pending.text && <span className="text-text-muted">· turn on Quick for faster answers</span>}
     </div>
   )
@@ -551,9 +552,11 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
     const refresh = () => hiveApi.copilotActive().then((r) => setActive(r.active)).catch(() => {})
     return on('task', refresh as never)
   }, [on])
+  // Follow the reply only while the reader is at the bottom; scrolling up lets go.
+  const [pinned, setPinned] = useState(true)
   useEffect(() => {
-    end.current?.scrollIntoView({ block: 'end' })
-  }, [msgs?.length, pending?.text.length, pending?.steps.length])
+    if (pinned) end.current?.scrollIntoView({ block: 'end' })
+  }, [msgs?.length, pending?.text.length, pending?.steps.length, pinned])
 
   const send = async (body: string, over: { quick?: boolean; projectId?: string | null } = {}) => {
     const t = body.trim()
@@ -641,7 +644,15 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
 
       {active.length > 0 && <ActiveWork items={active} compact={compact} />}
 
-      <div className="hive-scroll min-h-0 flex-1 overflow-y-auto" onClick={inAppLink}>
+      <div
+        className="hive-scroll min-h-0 flex-1 overflow-y-auto"
+        onClick={inAppLink}
+        onScroll={(e) => {
+          const el = e.currentTarget
+          const near = el.scrollHeight - el.scrollTop - el.clientHeight < 120
+          if (near !== pinned) setPinned(near)
+        }}
+      >
         <div className={cn('mx-auto w-full', compact ? 'px-3 py-4' : 'max-w-[820px] px-4 py-6 sm:px-6')}>
           {!msgs ? (
             <div className="space-y-3">
@@ -670,7 +681,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
                 m.role === 'user' ? (
                   m.auto ? null : (
                     <div key={m.id} className="flex justify-end">
-                      <div className="max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-tr-sm bg-accent-brand/12 px-3.5 py-2 text-[13.5px]">{m.content}</div>
+                      <div className="hv-user-msg max-w-[85%] whitespace-pre-wrap px-3.5 py-2 text-[13.5px]">{m.content}</div>
                     </div>
                   )
                 ) : (
@@ -679,7 +690,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
                     <div className="min-w-0 flex-1">
                       <div className="mb-1 flex items-center gap-2 text-[11.5px] text-text-muted">
                         <span className="font-medium text-text-secondary">Copilot</span>
-                        {m.auto && <span className="rounded-full bg-state-info/12 px-1.5 py-0.5 text-[10.5px] font-medium text-state-info">automatic review</span>}
+                        {m.auto && <span className="text-[var(--hv-text-3)]">· automatic review</span>}
                         <span className="truncate">{m.provider === 'claude_code' ? 'Claude · your plan' : m.model ? `${vendorName(m.provider ?? '')} · ${friendlyModel(m.model)}` : ''}</span>
                         <span className="ml-auto shrink-0">{timeAgo(m.createdAt)}</span>
                       </div>
@@ -709,7 +720,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
                     <div className="mb-1 text-[11.5px] text-text-muted">
                       <span className="font-medium text-text-secondary">Copilot</span> {pending.brain?.kind === 'cli' ? '· Claude · your plan' : pending.brain?.model ? `· ${pending.brain.model}` : ''}
                     </div>
-                    {pending.note && <div className="mb-2 inline-flex rounded-full bg-state-warning/12 px-2.5 py-0.5 text-[11.5px] text-state-warning">{pending.note}</div>}
+                    {pending.note && <div className="mb-2 border-l-2 border-[var(--hv-warning)] pl-2.5 text-[12px] text-[var(--hv-text-2)]">{pending.note}</div>}
                     <LiveStatus pending={pending} />
                     <Steps steps={pending.steps} live />
                     {pending.text && <AiMarkdown text={tidyReply(pending.text)} streaming />}
@@ -722,12 +733,17 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
         </div>
       </div>
 
-      <div className={cn('shrink-0', compact ? 'p-2.5' : 'px-4 pb-4 sm:px-6')}>
+      <div className={cn('relative shrink-0', compact ? 'p-2.5' : 'px-4 pb-4 sm:px-6')}>
+        {!pinned && (
+          <button type="button" onClick={() => setPinned(true)} className="hv-jump absolute -top-11 left-1/2 z-10 -translate-x-1/2">
+            <ArrowDown className="size-3.5" aria-hidden="true" /> {pending ? 'Follow the reply' : 'Jump to latest'}
+          </button>
+        )}
         {!!msgs?.length && !pending && (
           <div className={cn('hive-scroll mx-auto mb-2 flex gap-1.5 overflow-x-auto', !compact && 'max-w-[820px]')}>
             {QUICK.map((q) => (
-              <button key={q.label} type="button" onClick={() => (q.send ? send(q.send) : setText(q.fill ?? ''))} className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full border hive-line bg-bg-surface/60 px-2.5 text-[12px] text-text-secondary hover:border-accent-brand/40 hover:text-text-primary">
-                <q.icon className="size-3.5 text-accent-brand" /> {q.label}
+              <button key={q.label} type="button" onClick={() => (q.send ? send(q.send) : setText(q.fill ?? ''))} className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-[var(--hv-r-btn)] border border-[var(--hv-border)] px-2.5 text-[12px] text-[var(--hv-text-2)] transition-colors duration-[var(--hv-d-fast)] hover:border-[var(--hv-border-strong)] hover:bg-[var(--hv-surface-1)] hover:text-[var(--hv-text-1)]">
+                <q.icon className="size-3.5 text-[var(--hv-text-3)]" /> {q.label}
               </button>
             ))}
           </div>

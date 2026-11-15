@@ -7,7 +7,8 @@
    ──────────────────────────────────────────────────────────────────────── */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Bot, ExternalLink, FolderGit2, Loader2, Lock, MessagesSquare, Plus, RefreshCw, Search, Upload } from 'lucide-react'
+import { ExternalLink, FolderGit2, Loader2, Lock, MessagesSquare, Plus, RefreshCw, Search, Upload } from 'lucide-react'
+import { CopilotMark as Bot } from '../marks'
 import { Button, useToast } from '@/components/ui'
 import { hiveApi } from '../api'
 import { errMsg } from '../Improve'
