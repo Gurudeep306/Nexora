@@ -367,6 +367,7 @@ export function CodeEditor({
   minimal = false,
   onFocusMode,
   focusMode,
+  reveal,
 }: {
   value: string
   language: string
@@ -386,6 +387,8 @@ export function CodeEditor({
   /** When given, the focus button opens the page-level full-screen arena instead */
   onFocusMode?: () => void
   focusMode?: boolean
+  /** Move the cursor to this line (a new `id` re-triggers the same line). */
+  reveal?: { line: number; id: number } | null
 }) {
   const { data } = useApi(() => api.get<{ settings: Record<string, string> }>('/api/settings'), [])
   const settings = data?.settings ?? {}
@@ -428,6 +431,14 @@ export function CodeEditor({
   explainRef.current = onExplain
   const disposers = useRef<{ dispose: () => void }[]>([])
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
+  useEffect(() => {
+    const ed = editorRef.current
+    if (!reveal || !ed) return
+    ed.revealLineInCenter(reveal.line)
+    ed.setPosition({ lineNumber: reveal.line, column: 1 })
+    ed.setSelection({ startLineNumber: reveal.line, startColumn: 1, endLineNumber: reveal.line, endColumn: 1_000 })
+    ed.focus()
+  }, [reveal])
   const monacoRef = useRef<Parameters<OnMount>[1] | null>(null)
   const vimModeRef = useRef<VimMode | null>(null)
   const decorationsRef = useRef<MonacoNs.IEditorDecorationsCollection | null>(null)
@@ -894,7 +905,7 @@ export function CodeEditor({
             aria-label="Keyboard shortcuts"
             className="card-neon absolute right-2 top-10 z-50 w-72 overflow-hidden p-0"
           >
-            <div className="border-b border-border px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-foreground-dim">
+            <div className="border-b border-border px-3 py-2 text-[12px] font-semibold text-foreground-dim">
               Keyboard shortcuts
             </div>
             <dl className="max-h-80 overflow-y-auto px-3 py-2 text-xs">

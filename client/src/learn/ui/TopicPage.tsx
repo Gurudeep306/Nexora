@@ -73,7 +73,7 @@ export default function TopicPage() {
           <ArrowLeft className="size-3.5" /> DSA course
         </Link>
         <div className="card p-4">
-          <p className="mb-0 text-[11px] font-bold tracking-[0.12em] text-accent-brand uppercase">Topic</p>
+          <p className="mb-0 text-[12px] text-text-muted">Topic</p>
           <h1 className="mb-2 !text-[22px] font-bold text-text-primary">{topic.title}</h1>
           <div className="h-1.5 overflow-hidden rounded-full bg-bg-surface-3">
             <div className="h-full rounded-full bg-accent-brand transition-[width] duration-700" style={{ width: `${(read / topic.pages.length) * 100}%` }} />
@@ -129,7 +129,7 @@ export default function TopicPage() {
       <motion.article data-agent-content key={page.id} initial={{ y: 8 }} animate={{ y: 0 }} transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }} className="mx-auto w-full max-w-[820px] min-w-0">
         <header className="mb-7">
           <p className="mb-2 flex items-center gap-3 text-[12px] text-text-muted">
-            <span className="inline-flex items-center gap-1.5 font-semibold tracking-[0.1em] text-accent-brand uppercase">
+            <span className="inline-flex items-center gap-1.5 font-medium text-text-secondary">
               <BookOpen className="size-3.5" /> Page {pageIndex + 1} of {topic.pages.length}
             </span>
             <span className="inline-flex items-center gap-1">
@@ -159,7 +159,7 @@ export default function TopicPage() {
           )}
         </header>
 
-        <div className="space-y-6">
+        <div className="nx-read nx-lesson space-y-6">
           {page.blocks.map((b, i) => (
             <LessonBlock key={i} b={b} bank={bank} />
           ))}

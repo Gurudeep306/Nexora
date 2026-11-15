@@ -229,9 +229,9 @@ const ge = (a, b) => a != null && b != null && a >= b;
 const le = (a, b) => a != null && b != null && a <= b;
 
 /** Cache key for a filter set (NaN kept distinct from "no filter"). */
-function filterKey({ platform, minRating, maxRating, tag, search } = {}) {
+function filterKey({ platform, minRating, maxRating, tag, search, exclude } = {}) {
   const n = (v) => (v == null ? "" : Number.isNaN(v) ? "NaN" : String(v));
-  return [platform || "", n(minRating), n(maxRating), tag || "", search || ""].join("");
+  return [platform || "", n(minRating), n(maxRating), tag || "", search || "", exclude && exclude.size ? [...exclude].sort().join(",") : ""].join("");
 }
 
 /**
@@ -239,8 +239,8 @@ function filterKey({ platform, minRating, maxRating, tag, search } = {}) {
  * per-user status filter). `minRating`/`maxRating` are numbers (NaN = SQL
  * NULL, which matches nothing), `tag`/`search` are raw LIKE needles.
  */
-function filterIndices(catalog, { platform, minRating, maxRating, tag, search } = {}) {
-  const key = filterKey({ platform, minRating, maxRating, tag, search });
+function filterIndices(catalog, { platform, minRating, maxRating, tag, search, exclude } = {}) {
+  const key = filterKey({ platform, minRating, maxRating, tag, search, exclude });
   return memo(catalog, `f:${key}`, () => {
     const tagLike = tag ? likeMatcher(`%${tag}%`) : null;
     const searchLike = search ? likeMatcher(`%${search}%`) : null;
@@ -251,6 +251,7 @@ function filterIndices(catalog, { platform, minRating, maxRating, tag, search } 
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i];
       if (platform && r.platform !== platform) continue;
+      if (exclude && exclude.size && exclude.has(r.platform)) continue;
       if (minR != null && (Number.isNaN(minR) || !ge(num(r.rating), minR))) continue;
       if (maxR != null && (Number.isNaN(maxR) || !le(num(r.rating), maxR))) continue;
       if (tagLike && !tagLike(r.tags)) continue;

@@ -52,6 +52,23 @@ export interface StatementResponse {
   samples: StatementSample[]
   platform: string
   source: 'local' | 'cache' | 'http' | 'live' | 'fallback' | string
+  /** Details beyond the HTML, when the source provides them. */
+  extra?: StatementExtra
+}
+
+export interface StatementExtra {
+  /** 'function' (LeetCode: write a method), 'answer' (Project Euler: one number) — default stdin. */
+  kind?: 'stdin' | 'function' | 'answer'
+  interactive?: boolean
+  /** Non-standard input/output files (old Codeforces rounds). */
+  files?: { input?: string; output?: string }
+  examples?: { input: string; output: string; explanation?: string }[]
+  /** Starter code by language slug (LeetCode: cpp, java, python3, javascript …). */
+  snippets?: Record<string, string>
+  tags?: string[]
+  difficulty?: string
+  pdf?: string
+  points?: number
 }
 
 /* GET /api/languages — bare array (envelope exception) */

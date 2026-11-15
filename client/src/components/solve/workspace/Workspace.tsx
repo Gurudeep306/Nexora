@@ -340,7 +340,7 @@ export function Workspace({
       )}
     >
       <span className="text-primary-bright [&_svg]:size-4">{specs[pane].icon}</span>
-      <span className="min-h-0 flex-1 truncate text-[11px] font-semibold tracking-[0.12em] uppercase [writing-mode:vertical-rl] rotate-180">
+      <span className="min-h-0 flex-1 truncate text-[12px] font-semibold [writing-mode:vertical-rl] rotate-180">
         {specs[pane].title}
       </span>
     </motion.button>
@@ -375,7 +375,7 @@ export function Workspace({
           <div
             onPointerDown={begin(p, 'move')}
             onClick={() => Date.now() - lastDragEnd.current > 250 && setMin(p, false)}
-            className="flex h-9 w-full cursor-grab items-center gap-2 px-3 text-[11px] font-semibold tracking-[0.12em] text-foreground-dim uppercase select-none active:cursor-grabbing"
+            className="flex h-9 w-full cursor-grab items-center gap-2 px-3 text-[12px] font-semibold text-foreground-dim select-none active:cursor-grabbing"
             title="Click to restore · drag to move"
           >
             <span className="text-primary-bright [&_svg]:size-3.5">{specs[p].icon}</span>
@@ -515,7 +515,7 @@ export function Workspace({
                 onClick={() => minimize('tests', false)}
                 aria-label="Restore Tests panel"
                 title="Restore Tests (Alt+2)"
-                className="card-neon flex shrink-0 cursor-pointer items-center gap-2 overflow-hidden px-3 text-[11px] font-semibold tracking-[0.12em] text-foreground-faint uppercase transition-colors hover:border-primary/40 hover:text-foreground"
+                className="card-neon flex shrink-0 cursor-pointer items-center gap-2 overflow-hidden px-3 text-[12px] font-semibold text-foreground-faint transition-colors hover:border-primary/40 hover:text-foreground"
               >
                 <span className="text-primary-bright [&_svg]:size-3.5">{tests.icon}</span>
                 {tests.title}

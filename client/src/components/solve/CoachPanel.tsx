@@ -278,7 +278,7 @@ export function CoachPanel({
 function Stat({ label, value, mono, tone }: { label: string; value: string; mono?: boolean; tone?: 'ok' | 'bad' }) {
   return (
     <div className="rounded-lg border border-hairline/[0.06] bg-bg-field px-2.5 py-2">
-      <p className="text-[10px] tracking-wider text-foreground-faint uppercase">{label}</p>
+      <p className="text-[12px] text-foreground-faint">{label}</p>
       <p className={cn('mt-0.5 truncate text-xs text-foreground', mono && 'font-mono', tone === 'ok' && 'text-success', tone === 'bad' && 'text-state-error')} title={value}>
         {value}
       </p>
@@ -289,7 +289,7 @@ function Stat({ label, value, mono, tone }: { label: string; value: string; mono
 function Section({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
   return (
     <section className="rounded-lg border border-hairline/[0.05] bg-white/[0.015] p-2.5">
-      <h4 className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.08em] text-foreground-dim uppercase">
+      <h4 className="mb-1.5 flex items-center gap-1.5 text-[12px] font-semibold text-foreground-dim">
         {icon} {title}
       </h4>
       {children}

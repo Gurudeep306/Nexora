@@ -1,0 +1,274 @@
+/*
+  GATE notes in the site-wide reading design (src/styles/reading.css).
+  Loaded after notes.css: the notebook look (dotted paper, margin line,
+  handwriting faces, squiggled headings, highlighter, sticky notes, sketched
+  boxes) is replaced by calm editorial type. Labs and embeds are unchanged.
+*/
+
+/* One face for everyone, whatever font was picked before. */
+.notes-root,
+.notes-root[data-notes-font] {
+  --notes-hand: var(--read-font);
+  --notes-size: var(--read-size);
+  --notes-leading: var(--read-leading);
+  --notes-weight: 400;
+  --notes-strong: 600;
+  --notes-head: 650;
+  --notes-variation: normal;
+  --notes-stroke: 0;
+  --notes-ink: var(--read-soft);
+  --notes-math-ink: var(--read-ink);
+  --notes-subject-ink: var(--read-accent);
+}
+
+/* Paper: no dots, no margin line, no card. */
+.notes-root .notes-paper {
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  padding: 0.5rem 0 2rem;
+}
+.notes-root .notes-paper::before {
+  display: none;
+}
+.notes-root .notes-prose {
+  max-width: 760px;
+  margin-inline: auto;
+  font-feature-settings: 'ss01', 'cv11';
+}
+.notes-root .notes-prose > :is(p, ul, ol, blockquote, .notes-h, .nm-display) {
+  max-width: var(--read-measure);
+}
+.notes-root .notes-prose strong {
+  color: var(--read-ink);
+  -webkit-text-stroke: 0;
+}
+
+/* Headings by size and weight; no squiggle. */
+.notes-root .notes-h {
+  color: var(--read-ink);
+  letter-spacing: -0.012em;
+  -webkit-text-stroke: 0;
+}
+.notes-root h2.notes-h {
+  margin-top: 2.2em;
+  font-size: 1.45em;
+}
+.notes-root h3.notes-h {
+  font-size: 1.17em;
+}
+.notes-root .notes-squiggle {
+  display: none;
+}
+
+/* Key terms: weight, not a highlighter. */
+.notes-root .notes-key {
+  padding: 0;
+  margin: 0;
+  background: none;
+  color: var(--read-ink);
+  font-weight: 600;
+}
+
+/* Lists: plain markers. */
+.notes-root .notes-prose ul {
+  list-style: disc;
+}
+.notes-root .notes-prose ul > li::before {
+  content: none;
+}
+.notes-root .notes-prose :is(ul, ol) > li::marker {
+  color: var(--read-faint);
+  font-weight: 400;
+}
+.notes-root .notes-prose hr {
+  border-top: 1px solid var(--read-rule);
+}
+
+/* Code and tables */
+.notes-root .notes-code {
+  background: var(--read-code-bg);
+  font-size: 0.86em;
+}
+.notes-root .notes-pre {
+  background: var(--read-code-bg);
+  border-radius: 10px;
+  font-size: 13.5px;
+}
+.notes-root .notes-table th,
+.notes-root .notes-table td {
+  border-bottom: 1px solid var(--read-rule);
+  padding: 0.55em 0.9em 0.55em 0;
+}
+.notes-root .notes-table th {
+  border-bottom-color: var(--read-rule-strong);
+  font-weight: 600;
+  color: var(--read-ink);
+  -webkit-text-stroke: 0;
+}
+
+/* ── Blocks: a label and a margin rule, never a box ─────────────────── */
+.notes-root :is(.nb-intuition, .nb-definition, .nb-theorem, .nb-proof, .nb-derivation, .nb-example, .nb-check, .nb-trick, .nb-trap, .nb-summary, .nb-note, .nb-aside, .nb-table) {
+  margin: 1.9em 0;
+  padding: 0.1em 0 0.1em 1.15em;
+  border: 0;
+  border-left: 2px solid var(--read-rule-strong);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: inherit;
+  transform: none;
+}
+.notes-root .nb-table {
+  padding-left: 0;
+  border-left: 0;
+}
+.notes-root :is(.nb-definition, .nb-theorem, .nb-intuition, .nb-summary) {
+  border-left-color: var(--read-accent);
+}
+.notes-root .nb-trick {
+  border-left-color: var(--read-warn);
+}
+.notes-root .nb-trap {
+  border-left-color: var(--read-danger);
+}
+.notes-root .nb-check {
+  border-left-color: var(--read-good);
+}
+.notes-root .nb-trick::before {
+  display: none;
+}
+.notes-root .nb-theorem {
+  margin-top: 1.9em;
+}
+.notes-root .nb-theorem > .nb-head {
+  position: static;
+  padding: 0;
+  margin: 0 0 0.35em;
+  background: none;
+  color: inherit;
+  border-radius: 0;
+}
+.notes-root .nb-theorem + .nb-proof {
+  margin-top: -0.9em;
+}
+.notes-root .nb-head {
+  gap: 0.2em 0.5em;
+  margin-bottom: 0.35em;
+}
+.notes-root .nb-kicker,
+.notes-root .nb-theorem > .nb-head .nb-kicker {
+  font-size: 0.82em;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--read-muted);
+  -webkit-text-stroke: 0;
+}
+.notes-root :is(.nb-definition, .nb-theorem, .nb-intuition, .nb-summary) .nb-kicker {
+  color: var(--read-accent);
+}
+.notes-root .nb-trick .nb-kicker {
+  color: var(--read-warn);
+}
+.notes-root .nb-trap .nb-kicker {
+  color: var(--read-danger);
+}
+.notes-root .nb-title {
+  font-size: 1em;
+  font-weight: 600;
+  color: var(--read-ink);
+  -webkit-text-stroke: 0;
+}
+.notes-root .nb-icon,
+.notes-root .nb-emoji {
+  display: none;
+}
+.notes-root .nb-aside,
+.notes-root .nb-aside :is(.nb-kicker, .nb-title) {
+  color: inherit;
+}
+.notes-root .nb-summary ul > li::before {
+  content: none;
+}
+.notes-root .nb-level {
+  border: 0;
+  padding: 0;
+  font-size: 0.82em;
+  font-weight: 600;
+}
+
+/* Answers and worked examples: rules and type, no cards. */
+.notes-root .nb-answer {
+  padding: 0.2em 0 0.2em 0.9em;
+  border-left: 2px solid var(--read-good);
+  border-radius: 0;
+  background: none;
+}
+.notes-root .nb-ex-problem {
+  padding: 0;
+  margin-bottom: 1.1em;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+.notes-root :is(.nb-ex-problem-label, .nb-ex-answer-label) {
+  font-size: 0.82em;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--read-muted);
+  -webkit-text-stroke: 0;
+}
+.notes-root .nb-ex-step {
+  grid-template-columns: 1.6em minmax(0, 1fr);
+  gap: 0.6em;
+}
+.notes-root .nb-ex-n {
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  justify-content: flex-start;
+  font-weight: 600;
+  color: var(--read-faint);
+  font-variant-numeric: tabular-nums;
+}
+.notes-root .nb-ex-step-body {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.notes-root .nb-ex-why {
+  padding-left: 0;
+  border-left: 0;
+  color: var(--read-muted);
+}
+.notes-root .nb-ex-answer {
+  padding: 0.25em 0 0.25em 0.9em;
+  border: 0;
+  border-left: 2px solid var(--read-good);
+  border-radius: 0;
+  background: none;
+  font-size: 1em;
+}
+.notes-root .nb-proof > summary::before {
+  color: var(--read-faint);
+}
+.notes-root .notes-qed {
+  stroke: var(--read-faint);
+}
+
+/* Lesson list: normal-case chapter names. */
+.notes-root .notes-tree-chapter {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--read-muted);
+}
+
+/* The PYQ count pill keeps its light text on the accent. */
+.notes-root .notes-prose .notes-pyqs > summary strong {
+  color: var(--notes-paper);
+}

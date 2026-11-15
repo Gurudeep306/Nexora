@@ -346,6 +346,11 @@ const SCHEMA = [
     done INTEGER NOT NULL DEFAULT 0,
     created_at INTEGER NOT NULL
   )`,
+  `CREATE TABLE IF NOT EXISTS hive_mcp_tokens (
+    token_hash TEXT PRIMARY KEY,
+    ctx_json TEXT NOT NULL,
+    exp INTEGER NOT NULL
+  )`,
   `CREATE TABLE IF NOT EXISTS hive_copilot_merge (
     task_id TEXT PRIMARY KEY,
     username TEXT NOT NULL,

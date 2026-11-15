@@ -292,7 +292,7 @@ async function main() {
   console.log(`\n🚀 Scraping ${problems.length} problems with ${WORKERS} parallel workers...\n`);
 
   const browser = await puppeteer.launch({
-    headless: 'new',
+    headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-blink-features=AutomationControlled',
            '--disable-gpu', '--disable-dev-shm-usage']
   });

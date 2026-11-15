@@ -65,7 +65,7 @@ export function ThinkingPad({ problemId }: { problemId: number }) {
       </div>
       {FIELDS.map((f) => (
         <label key={f.key} className="block">
-          <span className="mb-1.5 block font-display text-[11px] tracking-wider text-primary-bright uppercase">{f.label}</span>
+          <span className="mb-1.5 block font-display text-[12px] text-primary-bright">{f.label}</span>
           <Textarea
             rows={3}
             value={note[f.key]}

@@ -576,3 +576,18 @@ html.dark .gate-figure img {
   background: color-mix(in oklab, var(--color-accent-brand) 20%, transparent);
 }
 
+
+/* ── lessons use the site-wide reading design (src/styles/reading.css) ── */
+.nx-lesson .md { color: var(--read-soft); font-size: var(--read-size); line-height: var(--read-leading); }
+.nx-lesson .md > :is(p, ul, ol, blockquote) { max-width: var(--read-measure); }
+.nx-lesson .md h2 { font-size: 1.45em; font-weight: 650; }
+.nx-lesson .md h3 { font-size: 1.17em; font-weight: 620; }
+.nx-lesson .md h4 { font-size: 1em; font-weight: 620; letter-spacing: 0; text-transform: none; color: var(--read-ink); }
+.nx-lesson .md strong { color: var(--read-ink); font-weight: 600; }
+.nx-lesson .md li::marker { color: var(--read-faint); }
+.nx-lesson .md blockquote { border-left: 2px solid var(--read-rule-strong); color: var(--read-muted); font-style: normal; }
+.nx-lesson .md code { background: var(--read-code-bg); }
+.nx-lesson .md-pre { border: 0; background: var(--read-code-bg); color: var(--read-ink); border-radius: 10px; }
+.nx-lesson .md th { background: none; border: 0; border-bottom: 1px solid var(--read-rule-strong); padding: 0.55em 0.9em 0.55em 0; }
+.nx-lesson .md td { border: 0; border-bottom: 1px solid var(--read-rule); padding: 0.55em 0.9em 0.55em 0; }
+.nx-lesson .md-math .katex { color: var(--read-ink); }

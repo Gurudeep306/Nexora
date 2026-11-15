@@ -204,7 +204,7 @@ export function TranslateBar({
               {(['indian', 'world'] as const).map((g) =>
                 groups[g].length ? (
                   <div key={g}>
-                    <p className="px-2 pt-2 pb-1 text-[10px] font-semibold tracking-[0.12em] text-foreground-faint uppercase">
+                    <p className="px-2 pt-2 pb-1 text-[12px] font-semibold text-foreground-faint">
                       {g === 'indian' ? `Indian languages · ${groups[g].length}` : 'World languages'}
                     </p>
                     {groups[g].map((l) => (
