@@ -158,9 +158,13 @@ changed.
   `theme/styles.css` keyed by `[data-style]`; buttons carry `data-ui="button"`
   and `data-variant` so styles can restyle them. Admins can set the default style
   (Admin → Site).
-- **Sign-in** (`pages/AuthPage.tsx`) is "Liquid Glass": a frosted panel over a
-  slow field of colour from the accent. It is the one page where a soft colour
-  field is allowed (the owner's choice); no product visuals or marketing copy.
+- **Landing and sign-in** (`pages/LandingPage.tsx`, `pages/AuthPage.tsx`) use the
+  editorial "field journal" look (owner's choice, 2026-11): parchment and ivory
+  paper, Newsreader serif for prose, Geist for controls, hairlines instead of
+  shadows, one clay button (bottom-only radius) for the main action. Tokens are
+  `--ed-*` in `components/landing/landing.css` (scope `.lp` / `.ed`), light and
+  dark. Every animation there is a real lesson (binary search, round-robin,
+  BFS) or shows real numbers. Copy stays true to the site: no invented stats.
 - **Notes and lessons** share one reader (`styles/reader.css`): lessons rail that
   collapses to a mini strip, a full-width reading column, a live "On this page"
   outline. GATE notes and DSA lessons both use it.
