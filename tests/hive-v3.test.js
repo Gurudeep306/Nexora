@@ -219,3 +219,57 @@ test("compare on a machine: each attempt has its own copy, and adopting one brin
   const file = await ok("GET", `/api/hive/tasks/${task.id}/file?path=src/cart.js`);
   assert.match(file.current, /qty/);
 });
+
+test("live terminal: a real shell on the machine, typed into from the browser", async () => {
+  const ms = await ok("GET", "/api/hive/machines");
+  const m = ms.machines[0];
+  const boot = await ok("GET", "/api/hive/bootstrap");
+  const folder = boot.projects.find((p) => p.machine_id).folder;
+  const { terminal } = await ok("POST", `/api/hive/machines/${m.id}/terms`, { folder, cols: 90, rows: 24 });
+  assert.ok(terminal.id.startsWith("term"));
+  assert.equal(terminal.mode, "pty", "python3 gives a real pseudo-terminal");
+  assert.equal((await ok("GET", `/api/hive/machines/${m.id}/terms`)).terminals.length, 1);
+  // Read the stream in the background while typing.
+  const ctl = new AbortController();
+  let out = "";
+  let next = 0;
+  const reading = (async () => {
+    const r = await fetch(`${base}/api/hive/machines/${m.id}/terms/${terminal.id}/stream?from=0`, { headers: { Cookie: cookie }, signal: ctl.signal });
+    const dec = new TextDecoder();
+    let buf = "";
+    for await (const chunk of r.body) {
+      buf += dec.decode(chunk, { stream: true });
+      let i;
+      while ((i = buf.indexOf("\n")) >= 0) {
+        const ev = JSON.parse(buf.slice(0, i));
+        buf = buf.slice(i + 1);
+        if (ev.type === "data") {
+          out += ev.data;
+          next = ev.next;
+        }
+      }
+    }
+  })().catch(() => {});
+  await ok("POST", `/api/hive/machines/${m.id}/terms/${terminal.id}/input`, { data: "echo hello-$((40+2)); tput cols; pwd\r" });
+  for (let i = 0; i < 60 && !/hello-42[\s\S]*\b90\b/.test(out); i++) await sleep(150);
+  assert.match(out, /hello-42/, "the shell ran the command");
+  assert.match(out, /\b90\b/, "the shell sees the terminal's width");
+  assert.ok(out.includes(folder), "it starts in the project folder");
+  // Resize, and the shell sees the new size.
+  await ok("POST", `/api/hive/machines/${m.id}/terms/${terminal.id}/resize`, { cols: 132, rows: 40 });
+  await ok("POST", `/api/hive/machines/${m.id}/terms/${terminal.id}/input`, { data: "tput cols\r" });
+  for (let i = 0; i < 60 && !/\b132\b/.test(out); i++) await sleep(150);
+  assert.match(out, /\b132\b/);
+  ctl.abort();
+  await reading;
+  // Reconnecting from an offset replays only what came after it.
+  const again = await fetch(`${base}/api/hive/machines/${m.id}/terms/${terminal.id}/stream?from=0`, { headers: { Cookie: cookie } });
+  const reader = again.body.getReader();
+  let replay = "";
+  for (let i = 0; i < 10 && !replay.includes("hello-42"); i++) replay += new TextDecoder().decode((await reader.read()).value || new Uint8Array());
+  assert.match(replay, /hello-42/, "output is kept for reconnects");
+  await reader.cancel();
+  assert.ok(next > 0);
+  await ok("DELETE", `/api/hive/machines/${m.id}/terms/${terminal.id}`);
+  assert.equal((await call("POST", `/api/hive/machines/${m.id}/terms/${terminal.id}/input`, { data: "x" })).status, 404, "closed terminals take no input");
+});

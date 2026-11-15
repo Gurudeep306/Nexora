@@ -18,7 +18,7 @@ const path = require("node:path");
 const os = require("node:os");
 const { spawn } = require("node:child_process");
 
-const VERSION = "1.3.0";
+const VERSION = "1.4.0";
 const args = process.argv.slice(2);
 const opt = (name, fallback) => {
   const i = args.indexOf(`--${name}`);
@@ -130,6 +130,80 @@ const isBinary = (buf) => buf.subarray(0, 8000).includes(0);
 
 const procs = new Map(); // id -> { child, log, cmd, cwd, started }
 const runs = new Map(); // id -> Claude Code / Codex run (JSON-lines output buffer)
+const ptys = new Map(); // id -> live terminal { child, chunks, base, size, exit, waiters, touched }
+
+// A real terminal without native modules: Python's pty module runs the shell
+// in a pseudo-terminal and relays bytes; window sizes arrive as "rows cols"
+// lines on fd 3, so full-screen programs (vim, htop, less) resize properly.
+const PTY_PY = String.raw`
+import os, pty, sys, select, struct, fcntl, termios, signal
+shell, rows, cols = sys.argv[1], int(sys.argv[2]), int(sys.argv[3])
+pid, fd = pty.fork()
+if pid == 0:
+    os.execvp(shell, [shell, "-l"])
+def resize(r, c):
+    fcntl.ioctl(fd, termios.TIOCSWINSZ, struct.pack("HHHH", r, c, 0, 0))
+resize(rows, cols)
+def put(f, d):
+    while d:
+        n = os.write(f, d)
+        d = d[n:]
+ins, ctl = [0, fd, 3], b""
+while True:
+    try:
+        ready = select.select(ins, [], [])[0]
+    except InterruptedError:
+        continue
+    if fd in ready:
+        try:
+            d = os.read(fd, 65536)
+        except OSError:
+            break
+        if not d:
+            break
+        put(1, d)
+    if 0 in ready:
+        d = os.read(0, 65536)
+        if not d:
+            os.kill(pid, signal.SIGHUP)
+            break
+        put(fd, d)
+    if 3 in ready:
+        d = os.read(3, 4096)
+        if not d:
+            ins.remove(3)
+            continue
+        ctl += d
+        while b"\n" in ctl:
+            line, ctl = ctl.split(b"\n", 1)
+            try:
+                r, c = line.split()
+                resize(int(r), int(c))
+            except Exception:
+                pass
+try:
+    st = os.waitpid(pid, 0)[1]
+    sys.exit(os.waitstatus_to_exitcode(st) if hasattr(os, "waitstatus_to_exitcode") else 0)
+except ChildProcessError:
+    sys.exit(0)
+`;
+const PTY_KEEP = 2_000_000; // bytes of output kept for reconnects
+const PTY_IDLE_MS = 30 * 60_000; // nobody reading or typing for 30 min: close it
+function hasPython() {
+  if (hasPython.v !== undefined) return hasPython.v;
+  try {
+    hasPython.v = require("node:child_process").spawnSync("python3", ["-c", "import pty, termios, fcntl"], { timeout: 5000 }).status === 0;
+  } catch {
+    hasPython.v = false;
+  }
+  return hasPython.v;
+}
+setInterval(() => {
+  for (const [id, t] of ptys) {
+    if (t.exit === null && Date.now() - t.touched > PTY_IDLE_MS) OPS.pty_close({ id });
+    else if (t.exit !== null && Date.now() - t.touched > 10 * 60_000) ptys.delete(id);
+  }
+}, 60_000).unref?.();
 
 const OPS = {
   async info() {
@@ -371,6 +445,118 @@ const OPS = {
     setTimeout(() => r.exit === null && killTree(r.child), 5000).unref?.();
     return { stopped: true };
   },
+  /** Open a live terminal (a login shell in a pseudo-terminal) in a folder. */
+  async pty_open({ id, folder, cols = 100, rows = 30 }) {
+    if (ptys.has(id)) throw new Error("A terminal with that id already exists");
+    if (ptys.size >= 12) throw new Error("Too many terminals are open on this machine — close one first");
+    const cwd = folder ? safe(folder) : ROOTS[0];
+    const c = Math.max(20, Math.min(500, Math.round(Number(cols)) || 100));
+    const r = Math.max(5, Math.min(200, Math.round(Number(rows)) || 30));
+    // The terminal never sees the bridge's own token.
+    const env = { ...process.env, TERM: "xterm-256color", COLORTERM: "truecolor", HIVE_TERMINAL: "1" };
+    delete env.HIVE_TOKEN;
+    let child;
+    let mode;
+    if (process.platform === "win32") {
+      child = spawn("powershell.exe", ["-NoLogo"], { cwd, env, stdio: ["pipe", "pipe", "pipe"] });
+      mode = "pipe";
+    } else if (hasPython()) {
+      const shell = process.env.SHELL && fs.existsSync(process.env.SHELL) ? process.env.SHELL : fs.existsSync("/bin/bash") ? "/bin/bash" : "/bin/sh";
+      child = spawn("python3", ["-c", PTY_PY, shell, String(r), String(c)], { cwd, env, stdio: ["pipe", "pipe", "pipe", "pipe"], detached: true });
+      mode = "pty";
+    } else {
+      // No Python: `script` still gives a real terminal, at a fixed size.
+      child = spawn("script", process.platform === "darwin" ? ["-q", "/dev/null", "/bin/sh", "-l"] : ["-qfec", "/bin/bash -l", "/dev/null"], { cwd, env, stdio: ["pipe", "pipe", "pipe"], detached: true });
+      mode = "script";
+    }
+    const t = { child, mode, chunks: [], base: 0, size: 0, exit: null, waiters: [], touched: Date.now(), cwd };
+    const wake = () => {
+      for (const w of t.waiters.splice(0)) w();
+    };
+    const add = (str) => {
+      t.chunks.push(str);
+      t.size += str.length;
+      while (t.size - t.chunks[0].length > PTY_KEEP && t.chunks.length > 1) {
+        const old = t.chunks.shift();
+        t.size -= old.length;
+        t.base += old.length;
+      }
+      wake();
+    };
+    // setEncoding keeps a character split across two reads in one piece.
+    child.stdout.setEncoding("utf8");
+    child.stderr.setEncoding("utf8");
+    child.stdout.on("data", add);
+    child.stderr.on("data", add);
+    child.on("error", (e) => {
+      add(`\r\n[terminal error: ${e.message}]\r\n`);
+      t.exit = t.exit ?? -1;
+      wake();
+    });
+    child.on("close", (code) => {
+      t.exit = code ?? 0;
+      wake();
+    });
+    ptys.set(id, t);
+    return { id, mode, cwd, cols: c, rows: r, resizable: mode === "pty" };
+  },
+  /** Output since `from` (a character offset); waits up to ~20 s for something new. */
+  async pty_read({ id, from = 0 }) {
+    const t = ptys.get(id);
+    if (!t) return { gone: true, data: "", next: from, exit: null };
+    t.touched = Date.now();
+    const end = () => t.base + t.size;
+    if (end() <= from && t.exit === null)
+      await new Promise((res) => {
+        const timer = setTimeout(res, 20_000);
+        t.waiters.push(() => (clearTimeout(timer), res()));
+      });
+    let start = Math.max(from, t.base);
+    let skipped = start > from; // older output was dropped to keep memory bounded
+    let off = t.base;
+    let data = "";
+    for (const ch of t.chunks) {
+      const chEnd = off + ch.length;
+      if (chEnd > start) data += ch.slice(Math.max(0, start - off));
+      off = chEnd;
+      if (data.length > 256_000) break;
+    }
+    return { data, next: start + data.length, exit: t.exit, skipped };
+  },
+  async pty_write({ id, data }) {
+    const t = ptys.get(id);
+    if (!t || t.exit !== null) return { ok: false };
+    t.touched = Date.now();
+    // Pipe-mode shells (Windows, no pty) get Enter as a newline.
+    t.child.stdin.write(t.mode === "pipe" ? String(data).replace(/\r/g, "\r\n") : String(data));
+    return { ok: true };
+  },
+  async pty_resize({ id, cols, rows }) {
+    const t = ptys.get(id);
+    if (!t || t.exit !== null || t.mode !== "pty") return { ok: false };
+    const c = Math.max(20, Math.min(500, Math.round(Number(cols)) || 100));
+    const r = Math.max(5, Math.min(200, Math.round(Number(rows)) || 30));
+    t.child.stdio[3].write(`${r} ${c}\n`);
+    return { ok: true };
+  },
+  async pty_close({ id }) {
+    const t = ptys.get(id);
+    if (!t) return { closed: false };
+    if (t.exit === null) {
+      try {
+        t.child.stdin.end();
+        if (process.platform !== "win32") process.kill(-t.child.pid, "SIGHUP");
+        else killTree(t.child);
+      } catch {
+        killTree(t.child);
+      }
+      setTimeout(() => t.exit === null && killTree(t.child), 3000).unref?.();
+    }
+    return { closed: true };
+  },
+  async ptys() {
+    return { terminals: [...ptys.entries()].map(([id, t]) => ({ id, cwd: t.cwd, mode: t.mode, exit: t.exit, idleMs: Date.now() - t.touched })) };
+  },
   /** A private working copy (git worktree) per task, next to the project folder. */
   async worktree_add({ folder, name, branch, base: from = "HEAD" }) {
     const base = safe(folder);
@@ -440,7 +626,8 @@ async function handle(job) {
     result = { ok: false, error: String(e.message || e) };
   }
   const label = job.op === "exec" ? `$ ${String(job.args?.command).slice(0, 80)}` : `${job.op} ${job.args?.path || ""}`;
-  console.log(`${result.ok ? "✓" : "✗"} ${label} (${Date.now() - t} ms)`);
+  // Keystrokes and terminal reads are far too chatty to log one by one.
+  if (!/^pty_(read|write|resize)$/.test(job.op) || !result.ok) console.log(`${result.ok ? "✓" : "✗"} ${label} (${Date.now() - t} ms)`);
   for (let i = 0; i < 3; i++) {
     try {
       await api("/result", { jobId: job.id, ...result });
@@ -472,6 +659,7 @@ async function main() {
 process.on("SIGINT", () => {
   for (const p of procs.values()) killTree(p.child);
   for (const r of runs.values()) if (r.exit === null) killTree(r.child);
+  for (const id of ptys.keys()) OPS.pty_close({ id });
   console.log("\nBridge stopped.");
   process.exit(0);
 });

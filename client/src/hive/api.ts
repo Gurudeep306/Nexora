@@ -147,6 +147,47 @@ export const hiveApi = {
   deleteMachine: (id: string) => api.delete<Ok<object>>(`/api/hive/machines/${id}`),
   folders: (id: string, path?: string) => api.get<Ok<{ path: string; roots: string[]; dirs: { name: string; path: string; git: boolean }[] }>>(`/api/hive/machines/${id}/folders`, { query: { path }, timeoutMs: 30000 }),
   clone: (id: string, body: { projectId: string; parent?: string; name?: string }) => api.post<Ok<{ path: string; existed: boolean }>>(`/api/hive/machines/${id}/clone`, body, { timeoutMs: 620000 }),
+  // Live terminals (a real shell on a machine).
+  termOpen: (id: string, body: { folder?: string; cols: number; rows: number }) =>
+    api.post<Ok<{ terminal: { id: string; mode: 'pty' | 'script' | 'pipe'; cwd: string; cols: number; rows: number; resizable: boolean } }>>(`/api/hive/machines/${id}/terms`, body, { timeoutMs: 45000 }),
+  termList: (id: string) => api.get<Ok<{ terminals: { id: string; folder: string; createdAt: number; mode: string }[] }>>(`/api/hive/machines/${id}/terms`),
+  termInput: (id: string, tid: string, data: string) => api.post<Ok<object>>(`/api/hive/machines/${id}/terms/${tid}/input`, { data }, { timeoutMs: 20000 }),
+  termResize: (id: string, tid: string, cols: number, rows: number) => api.post<Ok<object>>(`/api/hive/machines/${id}/terms/${tid}/resize`, { cols, rows }),
+  termClose: (id: string, tid: string) => api.delete<Ok<object>>(`/api/hive/machines/${id}/terms/${tid}`),
+  /** Streams a terminal's output from `from` until it exits or `signal` aborts. */
+  termStream: async (
+    id: string,
+    tid: string,
+    from: number,
+    onEvent: (ev: { type: 'ready' | 'data' | 'exit' | 'error' | 'reconnecting'; data?: string; next?: number; code?: number | null; error?: string; gone?: boolean; skipped?: boolean }) => void,
+    signal: AbortSignal,
+  ) => {
+    const res = await fetch(`${API_BASE}/api/hive/machines/${id}/terms/${tid}/stream?from=${from}`, { credentials: 'include', signal })
+    if (!res.ok || !res.body) {
+      const j = await res.json().catch(() => ({}))
+      throw Object.assign(new Error((j as { error?: string }).error || `Request failed (${res.status})`), { status: res.status })
+    }
+    const reader = res.body.getReader()
+    const dec = new TextDecoder()
+    let buf = ''
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buf += dec.decode(value, { stream: true })
+      let i
+      while ((i = buf.indexOf('\n')) >= 0) {
+        const line = buf.slice(0, i).trim()
+        buf = buf.slice(i + 1)
+        if (!line) continue
+        try {
+          const ev = JSON.parse(line)
+          if (ev.type !== 'ping') onEvent(ev)
+        } catch {
+          /* partial line */
+        }
+      }
+    }
+  },
   exec: (id: string, body: { folder: string; command: string; timeoutMs?: number }) =>
     api.post<Ok<{ code: number | null; signal: string | null; output: string; ms: number }>>(`/api/hive/machines/${id}/exec`, body, { timeoutMs: 620000 }),
   procs: (id: string, body: { op: string; id?: string; folder?: string; command?: string }) =>

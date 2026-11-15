@@ -186,3 +186,68 @@
   .hive-root .text-\[11px\],
   .hive-root .text-\[11\.5px\] { font-size: 12px; }
 }
+
+/* ── Live terminal ─────────────────────────────────────────────────────
+   One calm surface (a step below the page in dark, near-white in light),
+   hairline chrome, tabs like an editor's. No glow, no gradient. */
+.hive-root {
+  --hv-term-bg: color-mix(in oklab, var(--color-bg-app) 82%, black);
+}
+:root[data-mode="light"] .hive-root {
+  --hv-term-bg: color-mix(in oklab, var(--color-bg-app) 70%, white);
+}
+.hv-term {
+  background: var(--hv-term-bg);
+  color: var(--hv-text-1);
+}
+.hv-term-bar { background: color-mix(in oklab, var(--hv-term-bg) 92%, var(--hv-text-1)); }
+.hv-term-tab {
+  position: relative;
+  color: var(--hv-text-3);
+  border-right: 1px solid var(--hv-border-subtle);
+  transition: color var(--hv-d-fast) var(--hv-ease), background-color var(--hv-d-fast) var(--hv-ease);
+}
+.hv-term-tab:hover { color: var(--hv-text-2); }
+.hv-term-tab.is-active { color: var(--hv-text-1); background: var(--hv-term-bg); }
+.hv-term-tab.is-active::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -1px 0;
+  height: 1px;
+  background: var(--hv-term-bg);
+}
+.hv-term-tab.is-active::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1.5px;
+  background: var(--hv-accent);
+}
+.hv-term-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--hv-r-btn);
+  color: var(--hv-text-3);
+  transition: color var(--hv-d-fast) var(--hv-ease), background-color var(--hv-d-fast) var(--hv-ease);
+}
+.hv-term-icon:hover { color: var(--hv-text-1); background: var(--hv-border-subtle); }
+.hv-term-icon:focus-visible, .hv-term-tab button:focus-visible, .hv-term-key:focus-visible { outline: 2px solid var(--hv-focus-ring); outline-offset: -2px; }
+/* Padding sits on .xterm itself: the fit addon subtracts it when sizing. */
+.hv-term-host .xterm { padding: 10px 6px 6px 12px; height: 100%; }
+.hv-term-host .xterm, .hv-term-host .xterm-viewport { background: transparent !important; }
+.hv-term-host .xterm-viewport { scrollbar-width: thin; }
+.hv-term-live { box-shadow: 0 0 0 3px color-mix(in oklab, var(--hv-success) 22%, transparent); }
+.hv-term-key {
+  flex-shrink: 0;
+  min-width: 40px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-btn);
+  font: 500 12px/1 var(--font-mono);
+  color: var(--hv-text-2);
+  background: var(--hv-surface-1);
+}
+.hv-term-key.is-on { color: var(--hv-accent-fg); background: var(--hv-accent); border-color: var(--hv-accent); }
