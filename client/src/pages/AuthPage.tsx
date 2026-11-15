@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'motion/react'
-import { AlertTriangle, Check, Eye, EyeOff, Loader2, ShieldCheck, X } from 'lucide-react'
+import { AlertTriangle, ArrowRight, Check, Eye, EyeOff, Loader2, ShieldCheck, X } from 'lucide-react'
 import { useToast } from '@/components/ui'
-import { SilkArt } from '@/components/auth/SilkArt'
-import { loadUiFont } from '@/theme/fontLoaders'
 import '@/components/auth/auth.css'
 import { LogoMark } from '@/components/brand/Logo'
 import { takeOAuthResult, useAuth } from '@/context/AuthContext'
@@ -85,6 +83,7 @@ function Strength({ password }: { password: string }) {
 function Field({
   id,
   label,
+  n,
   aside,
   trailing,
   hint,
@@ -92,6 +91,7 @@ function Field({
 }: {
   id: string
   label: string
+  n?: string
   aside?: React.ReactNode
   trailing?: React.ReactNode
   hint?: React.ReactNode
@@ -100,7 +100,8 @@ function Field({
   return (
     <div>
       <div className="mb-1.5 flex items-center justify-between">
-        <label htmlFor={id} className="text-[13px] font-medium text-text-secondary">
+        <label htmlFor={id} className="flex items-baseline gap-2.5 text-[13px] font-medium text-text-secondary">
+          {n && <span className="font-mono text-[11px] text-text-muted">{n}</span>}
           {label}
         </label>
         {aside}
@@ -290,80 +291,113 @@ export default function AuthPage() {
   const pwTooShort = mode === 'register' && needsPassword && pwTouched && password.length > 0 && password.length < 6
   const hasOAuth = !oauthPending && providers && (providers.github || providers.google)
 
+  const headline = oauthPending ? ['Almost', 'there.'] : mode === 'login' ? ['Sign', 'in.'] : ['Create', 'account.']
+  const lead =
+    subtitle ??
+    (mode === 'login' ? 'Welcome back. Pick up exactly where you stopped.' : 'One account for every lesson, problem and paper.')
+
+  // The headline's ink brightens under the pointer (CSS vars, no re-render).
+  const onPointer = (e: React.PointerEvent<HTMLElement>) => {
+    if (e.pointerType !== 'mouse') return
+    const el = e.currentTarget
+    const r = el.getBoundingClientRect()
+    el.style.setProperty('--mx', `${e.clientX - r.left}px`)
+    el.style.setProperty('--my', `${e.clientY - r.top}px`)
+  }
+
+  let n = 0
+  const num = () => String(++n).padStart(2, '0')
+
   return (
     <MotionConfig reducedMotion="user">
-      <div className="auth-root relative grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)]">
-        {/* Art: a generative silk ribbon and a line worth reading. Desktop: the right half; phones: a band on top. */}
-        <aside className="auth-art lg:order-2" aria-label="NexoraGuru">
-          <SilkArt className="auth-silk" />
-          <div className="auth-art-grain" aria-hidden="true" />
-          <div className="relative z-10 flex h-full flex-col justify-between p-6 sm:p-8 lg:p-12">
-            <Link to="/" className="flex w-fit items-center gap-2.5 !text-white !no-underline" aria-label="NexoraGuru home">
-              <span className="auth-art-mark">
-                <LogoMark size={26} />
-              </span>
-              <span className="text-[15px] font-semibold tracking-[-0.03em]">
-                Nexora<span className="opacity-60">Guru</span>
-              </span>
-            </Link>
-            <Quotes />
-          </div>
-        </aside>
+      <div className="auth-root" onPointerMove={onPointer}>
+        <div className="auth-rules" aria-hidden="true">
+          {Array.from({ length: 5 }, (_, i) => (
+            <span key={i} />
+          ))}
+        </div>
 
-        <div className="relative flex min-w-0 flex-col lg:order-1">
-        <main className="relative z-10 flex flex-1 items-start justify-center px-5 pt-10 pb-10 lg:items-center lg:pt-10">
+        {/* Top bar */}
+        <header className="auth-top">
+          <Link to="/" className="flex items-center gap-2.5 !no-underline" aria-label="NexoraGuru home">
+            <LogoMark size={24} />
+            <span className="text-[14.5px] font-semibold tracking-[-0.03em] text-text-primary">
+              Nexora<span className="text-text-secondary">Guru</span>
+            </span>
+          </Link>
+          {!oauthPending && (
+            <nav className="auth-tabs" aria-label="Sign in or create an account">
+              {(['login', 'register'] as const).map((m) => (
+                <button key={m} type="button" onClick={() => switchMode(m)} aria-current={mode === m ? 'page' : undefined} className={cn('auth-tab', mode === m && 'is-on')}>
+                  {m === 'login' ? 'Sign in' : 'Create account'}
+                </button>
+              ))}
+            </nav>
+          )}
+          <Clock />
+        </header>
+
+        {/* Headline: the type is the picture */}
+        <section className="auth-hero" aria-hidden="true">
+          <AnimatePresence mode="wait" initial={true}>
+            <motion.p key={headline.join(' ')} className="auth-display m-0" exit={{ opacity: 0, transition: { duration: 0.2 } }}>
+              {headline.map((w, i) => (
+                <span key={w} className="auth-line">
+                  <motion.span
+                    className="block"
+                    initial={{ y: '105%' }}
+                    animate={{ y: '0%' }}
+                    transition={{ duration: 1, delay: 0.08 + i * 0.12, ease: EASE }}
+                  >
+                    {w}
+                  </motion.span>
+                </span>
+              ))}
+            </motion.p>
+          </AnimatePresence>
+        </section>
+
+        {/* The form, anchored to the grid */}
+        <main className="auth-form-col">
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="auth-panel relative w-full max-w-[25rem]"
+            transition={{ duration: 0.8, delay: 0.35, ease: EASE }}
+            className="relative"
           >
             <AnimatePresence>
               {success && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3, ease: EASE }}
-                  className="auth-success absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 rounded-[inherit]"
+                  className="auth-success absolute inset-0 z-30 flex items-center gap-3"
                   role="status"
                 >
-                  <LogoMark size={56} interactive intro />
-                  <span className="text-sm text-text-secondary">{mode === 'login' ? 'Signed in' : 'Account ready'}</span>
+                  <Check className="size-5 text-state-success" aria-hidden="true" />
+                  <span className="text-[15px] text-text-primary">{mode === 'login' ? 'Signed in' : 'Account ready'}</span>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <div>
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={title}
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.2, ease: EASE }}
-                >
-                  <h1 className="m-0 text-[30px] leading-tight font-semibold tracking-[-0.035em] text-text-primary">{title}</h1>
-                  <p className="mt-2 mb-0 text-[14.5px] text-text-secondary">{subtitle ?? (mode === 'login' ? 'Welcome back. Sign in to continue.' : 'It takes less than a minute.')}</p>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+            <h1 className="sr-only">{title}</h1>
+            <p className="auth-lead">{lead}</p>
 
             {hasOAuth && (
               <>
-                <div className="mt-8 grid gap-2.5">
+                <div className="mt-7 grid gap-2.5 sm:grid-cols-2">
                   {(['github', 'google'] as const)
                     .filter((p) => providers?.[p])
                     .map((p) => (
                       <button key={p} type="button" onClick={() => oauth(p)} className="auth-oauth">
                         {p === 'github' ? <GitHubIcon /> : <GoogleIcon />}
-                        Continue with {p === 'github' ? 'GitHub' : 'Google'}
+                        {p === 'github' ? 'GitHub' : 'Google'}
                         {lastUsed === p && <span className="auth-last">Last used</span>}
                       </button>
                     ))}
                 </div>
-                <div className="my-6 flex items-center gap-3" aria-hidden="true">
+                <div className="mt-7 mb-1 flex items-center gap-3" aria-hidden="true">
                   <span className="h-px flex-1 bg-border" />
-                  <span className="text-[12px] text-text-muted">or</span>
+                  <span className="text-[12px] text-text-muted">or with a password</span>
                   <span className="h-px flex-1 bg-border" />
                 </div>
               </>
@@ -373,13 +407,14 @@ export default function AuthPage() {
               key={shake}
               onSubmit={handleSubmit}
               noValidate
-              className={cn('space-y-4', !hasOAuth && 'mt-8')}
+              className="mt-6 space-y-6"
               animate={shake ? { x: [0, -6, 6, -4, 4, 0] } : undefined}
               transition={{ duration: 0.36, ease: EASE }}
             >
               <Field
                 id="auth-username"
                 label="Username"
+                n={num()}
                 trailing={
                   mode === 'register' && availability !== 'idle' ? (
                     <span className="flex size-8 items-center justify-center" aria-hidden="true">
@@ -391,7 +426,7 @@ export default function AuthPage() {
                 }
                 hint={
                   <Reveal show={mode === 'register' && availability !== 'idle' && availability !== 'checking'}>
-                    <p className={cn('m-0 pt-1.5 text-xs', availability === 'available' ? 'text-state-success' : 'text-state-error')} aria-live="polite">
+                    <p className={cn('m-0 pt-2 text-xs', availability === 'available' ? 'text-state-success' : 'text-state-error')} aria-live="polite">
                       {availability === 'available' && `@${username.trim()} is available`}
                       {availability === 'taken' && 'That username is taken'}
                       {availability === 'invalid' && '2–20 letters, numbers or underscores'}
@@ -408,6 +443,7 @@ export default function AuthPage() {
                   autoCapitalize="none"
                   spellCheck={false}
                   maxLength={20}
+                  placeholder="your_handle"
                   aria-invalid={mode === 'register' && (availability === 'taken' || availability === 'invalid')}
                   className="auth-input"
                   required
@@ -415,8 +451,8 @@ export default function AuthPage() {
               </Field>
 
               <Reveal show={mode === 'register'}>
-                <Field id="auth-email" label="Email" aside={<span className="text-[12px] text-text-muted">Optional</span>}>
-                  <input id="auth-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" className="auth-input" />
+                <Field id="auth-email" label="Email" n={mode === 'register' ? num() : '02'} aside={<span className="text-[12px] text-text-muted">Optional</span>}>
+                  <input id="auth-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" placeholder="you@example.com" className="auth-input" />
                 </Field>
               </Reveal>
 
@@ -424,13 +460,14 @@ export default function AuthPage() {
                 <Field
                   id="auth-password"
                   label="Password"
+                  n={num()}
                   trailing={
                     <button
                       type="button"
                       onClick={() => setShowPw((v) => !v)}
                       aria-label={showPw ? 'Hide password' : 'Show password'}
                       aria-pressed={showPw}
-                      className="flex size-8 cursor-pointer items-center justify-center rounded-[var(--radius-control)] text-text-muted transition-colors hover:text-text-primary focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
+                      className="flex h-8 cursor-pointer items-center justify-center px-1 text-[12px] font-medium text-text-muted transition-colors hover:text-text-primary focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
                     >
                       {showPw ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                     </button>
@@ -438,7 +475,7 @@ export default function AuthPage() {
                   hint={
                     <>
                       <Reveal show={capsOn}>
-                        <p className="m-0 flex items-center gap-1.5 pt-1.5 text-xs text-state-warning" role="status">
+                        <p className="m-0 flex items-center gap-1.5 pt-2 text-xs text-state-warning" role="status">
                           <AlertTriangle className="size-3.5" aria-hidden="true" /> Caps Lock is on
                         </p>
                       </Reveal>
@@ -457,6 +494,7 @@ export default function AuthPage() {
                     onKeyDown={(e) => setCapsOn(e.getModifierState?.('CapsLock') ?? false)}
                     onKeyUp={(e) => setCapsOn(e.getModifierState?.('CapsLock') ?? false)}
                     autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                    placeholder={mode === 'login' ? '••••••••' : 'At least 6 characters'}
                     aria-invalid={pwTooShort || undefined}
                     className="auth-input"
                     required
@@ -474,7 +512,7 @@ export default function AuthPage() {
                     transition={{ duration: 0.24, ease: EASE }}
                     className="m-0 overflow-hidden"
                   >
-                    <span className="flex items-start gap-2 pt-1 text-[13px] text-state-error">
+                    <span className="flex items-start gap-2 text-[13px] text-state-error">
                       <AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
                       {error}
                     </span>
@@ -482,87 +520,46 @@ export default function AuthPage() {
                 )}
               </AnimatePresence>
 
-              <button type="submit" className="auth-submit" disabled={submitting || success} aria-busy={submitting || undefined}>
-                {submitting && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
-                {oauthPending ? 'Finish' : mode === 'login' ? 'Continue' : 'Create account'}
+              <button type="submit" className={cn('auth-submit group', submitting && 'is-busy')} disabled={submitting || success} aria-busy={submitting || undefined}>
+                <span className="auth-submit-label">{oauthPending ? 'Finish' : mode === 'login' ? 'Continue' : 'Create account'}</span>
+                <ArrowRight className="auth-submit-arrow size-4" aria-hidden="true" />
+                <span className="auth-submit-line" aria-hidden="true" />
               </button>
             </motion.form>
 
-            <p className="mt-7 mb-0 text-[13.5px] text-text-muted">
-              {oauthPending ? (
-                <button
-                  onClick={() => void api.post('/api/auth/logout').then(() => window.location.reload())}
-                  className="auth-link"
-                >
+            {oauthPending && (
+              <p className="mt-6 mb-0 text-[13.5px] text-text-muted">
+                <button onClick={() => void api.post('/api/auth/logout').then(() => window.location.reload())} className="auth-link">
                   Use a different account
                 </button>
-              ) : mode === 'login' ? (
-                <>
-                  No account?{' '}
-                  <button onClick={() => switchMode('register')} className="auth-link">
-                    Create one
-                  </button>
-                </>
-              ) : (
-                <>
-                  Have an account?{' '}
-                  <button onClick={() => switchMode('login')} className="auth-link">
-                    Sign in
-                  </button>
-                </>
-              )}
-            </p>
+              </p>
+            )}
           </motion.div>
         </main>
 
-        <footer className="relative z-10 px-5 pb-5 text-center text-[12px] lg:text-left lg:px-12 text-text-muted sm:pb-7">
+        {/* Footer rule */}
+        <footer className="auth-foot">
+          <span>© {new Date().getFullYear()} NexoraGuru</span>
           <span className="inline-flex items-center gap-1.5">
-            <ShieldCheck className="size-3.5" aria-hidden="true" /> Passwords are salted and hashed. We never see them.
+            <ShieldCheck className="size-3.5" aria-hidden="true" /> Passwords salted and hashed
           </span>
+          <span className="hidden sm:inline">{mode === 'login' ? 'Sign in' : 'New account'} · {mode === 'login' ? '01' : '02'} / 02</span>
         </footer>
-        </div>
       </div>
     </MotionConfig>
   )
 }
 
-const QUOTES = [
-  { text: 'Simplicity is prerequisite for reliability.', by: 'Edsger W. Dijkstra' },
-  { text: 'Science is what we understand well enough to explain to a computer.', by: 'Donald Knuth' },
-  { text: 'The best way to predict the future is to invent it.', by: 'Alan Kay' },
-  { text: 'What I cannot create, I do not understand.', by: 'Richard Feynman' },
-]
-
-/** A slow rotation of quotes, set large in a serif. */
-function Quotes() {
-  const [i, setI] = useState(0)
-  const reduce = useReducedMotion()
+/** Local time, like the masthead of a printed page. */
+function Clock() {
+  const [now, setNow] = useState(() => new Date())
   useEffect(() => {
-    void loadUiFont('newsreader')
-    if (reduce) return
-    const id = window.setInterval(() => setI((n) => (n + 1) % QUOTES.length), 9000)
+    const id = window.setInterval(() => setNow(new Date()), 15000)
     return () => window.clearInterval(id)
-  }, [reduce])
-  const q = QUOTES[i]
+  }, [])
   return (
-    <figure className="m-0 hidden max-w-[34rem] lg:block">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, y: 8, filter: 'blur(4px)' }}
-          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, y: -6, filter: 'blur(4px)' }}
-          transition={{ duration: 0.9, ease: EASE }}
-        >
-          <blockquote className="auth-quote m-0">“{q.text}”</blockquote>
-          <figcaption className="mt-5 text-[13.5px] text-white/60">{q.by}</figcaption>
-        </motion.div>
-      </AnimatePresence>
-      <div className="mt-8 flex gap-1.5" aria-hidden="true">
-        {QUOTES.map((_, n) => (
-          <span key={n} className={cn('h-[3px] rounded-full transition-all duration-700', n === i ? 'w-6 bg-white/80' : 'w-3 bg-white/25')} />
-        ))}
-      </div>
-    </figure>
+    <span className="auth-clock" aria-hidden="true">
+      {now.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })} · {now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+    </span>
   )
 }
