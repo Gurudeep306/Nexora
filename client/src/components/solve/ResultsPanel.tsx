@@ -13,7 +13,7 @@ const trimLines = (a: string[]) => {
 }
 
 /** First line where expected and actual differ (judge-style: trailing spaces ignored). */
-export function firstMismatch(expected: string, actual: string) {
+function firstMismatch(expected: string, actual: string) {
   const e = trimLines(norm(expected))
   const a = trimLines(norm(actual))
   const n = Math.max(e.length, a.length)
