@@ -1875,3 +1875,30 @@ html[data-pattern] body {
   text-decoration-color: var(--color-border-strong);
   text-underline-offset: 3px;
 }
+
+/* ── Field Journal — phase 5: custom contests as ivory cards ───────────── */
+[data-style='journal'] .cc-heading {
+  font-family: var(--ed-serif);
+  font-weight: 400;
+  font-size: 1.75rem;
+  letter-spacing: -0.015em;
+}
+[data-style='journal'] .cc-card {
+  border-radius: 20px;
+  border-color: var(--color-border);
+  background: var(--color-bg-surface);
+  box-shadow: 0 0 #0000;
+}
+[data-style='journal'] .cc-card.cc-live {
+  border-color: var(--color-border-strong);
+  box-shadow: inset 3px 0 0 var(--ed-clay, var(--color-accent-brand));
+}
+[data-style='journal'] .cc-live-badge {
+  animation: none;
+}
+[data-style='journal'] .cc-title {
+  font-family: var(--ed-serif);
+  font-size: 1.125rem;
+  letter-spacing: -0.005em;
+  text-transform: none;
+}

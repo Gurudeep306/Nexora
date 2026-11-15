@@ -129,7 +129,7 @@ export function CustomContestsSection({ me }: { me: string }) {
     <section aria-labelledby="custom-contests-heading" className="mt-8">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 id="custom-contests-heading" className="font-display text-lg tracking-wide text-foreground glow-text">
+          <h2 id="custom-contests-heading" className="cc-heading font-display text-lg tracking-wide text-foreground">
             NexoraGuru Custom Contests
           </h2>
           <p className="mt-0.5 text-xs text-foreground-dim">
@@ -182,12 +182,12 @@ export function CustomContestsSection({ me }: { me: string }) {
                   interactive
                   glow={phase === 'live'}
                   onClick={() => setActive(d)}
-                  className={cn('flex h-full flex-col p-4', phase === 'live' && 'border-accent/60 glow-box-accent')}
+                  className={cn('cc-card flex h-full flex-col p-4', phase === 'live' && 'cc-live border-accent/60 glow-box-accent')}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex flex-wrap items-center gap-1.5">
                       {phase === 'live' ? (
-                        <Badge variant="accent" className="animate-pulse-glow">Live</Badge>
+                        <Badge variant="accent" className="cc-live-badge animate-pulse-glow">Live</Badge>
                       ) : phase === 'upcoming' ? (
                         <Badge variant="cyan">Upcoming</Badge>
                       ) : (
@@ -200,7 +200,7 @@ export function CustomContestsSection({ me }: { me: string }) {
                       {d.contest.contest_code}
                     </span>
                   </div>
-                  <p className="mt-2.5 line-clamp-2 font-display text-sm tracking-wide text-foreground">
+                  <p className="cc-title mt-2.5 line-clamp-2 font-display text-sm tracking-wide text-foreground">
                     {d.contest.title}
                   </p>
                   <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-foreground-dim">
@@ -254,7 +254,7 @@ export function CustomContestsSection({ me }: { me: string }) {
         {active && (
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2">
-              {contestPhase(active.contest, now) === 'live' && <Badge variant="accent" className="animate-pulse-glow">Live</Badge>}
+              {contestPhase(active.contest, now) === 'live' && <Badge variant="accent" className="cc-live-badge animate-pulse-glow">Live</Badge>}
               {contestPhase(active.contest, now) === 'upcoming' && <Badge variant="cyan">Upcoming</Badge>}
               {contestPhase(active.contest, now) === 'ended' && <Badge variant="default">Ended</Badge>}
               {active.contest.type && <Badge variant="primary">{active.contest.type}</Badge>}
