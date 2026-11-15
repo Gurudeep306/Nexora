@@ -176,8 +176,14 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
    lab strips have roles. A sweep script pattern: list lessons from
    `/api/gate/notes/<subject>`, open each, run axe (see
    `client/scripts/check-page.cjs` for the login and look setup).
-9. ~~Phone overflow~~ **done**: `.qc-text` had no `min-width: 0`, so a code
-   block in a question pushed the card 18px wider than a phone screen.
+9. ~~Phone overflow~~ **done**: question cards could not shrink below their
+   widest maths. Fixes in `components/question/question.css` (`.qc-body`
+   and inner grids are `minmax(0, 1fr)`, `.qc-text` and `.qc-option` have
+   `min-width: 0`), inline maths may break after `,` and `+`
+   (`\allowbreak` added in `tex()` and `math()`), and maths that still
+   cannot wrap is scaled down to fit (`components/question/useFitMaths.ts`,
+   floor 60%). Don't make maths scroll inside an answer button: a focusable
+   scroller inside a button is a nested-interactive error.
 10. Screenshots (desktop light, desktop dark, phone) of every reader route next
     to `/?preview`, then open the **phase 4 PR** (none is open yet for phase 4).
 
