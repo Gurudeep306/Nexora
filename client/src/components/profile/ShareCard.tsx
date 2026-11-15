@@ -78,7 +78,7 @@ export const ShareCard = forwardRef<SVGSVGElement, { profile: PublicProfile; sta
         ))}
       </g>
       <text x={W - 40} y="270" textAnchor="end" fill={paper.muted} fontFamily={mono} fontSize="11">
-        nexoraguru.in/u/{profile.username}
+        {window.location.host}/u/{profile.username}
       </text>
     </svg>
   )

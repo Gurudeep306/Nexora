@@ -19,7 +19,10 @@ const loadClient = () => import(pathToFileURL(path.join(ROOT, 'client', 'src', '
 test('client and server list the same avatars in the same order', async () => {
   const client = await loadClient();
   assert.deepEqual(client.AVATAR_SET.map((a) => a.id), server.AVATAR_SET_IDS);
-  assert.equal(server.AVATAR_SET_IDS.length, 16);
+  assert.equal(server.AVATAR_SET_IDS.length, 32);
+  assert.deepEqual(client.AVATAR_SET.filter((a) => a.group === 'portraits').map((a) => a.id), server.PORTRAIT_IDS);
+  assert.deepEqual(client.AVATAR_SET.filter((a) => a.group === 'clay').map((a) => a.id), server.CLAY_IDS);
+  assert.equal(new Set(server.AVATAR_SET_IDS).size, 32, 'ids are unique');
 });
 
 test('every avatar ships as a clean, small static SVG and nothing else is in the folder', () => {
@@ -41,9 +44,10 @@ test('client and server pick the same default for every username', async () => {
   }
   // Case-insensitive, like usernames themselves.
   assert.equal(server.defaultAvatar('GuruDeep'), server.defaultAvatar('gurudeep'));
-  // Defaults spread over the set rather than piling onto a few.
+  // Defaults are portraits, spread over all 16 rather than piling onto a few.
   const used = new Set(Array.from({ length: 400 }, (_, i) => server.defaultAvatar(`user${i}`)));
   assert.equal(used.size, 16);
+  for (const v of used) assert.ok(server.PORTRAIT_IDS.includes(v.slice(4)), v);
 });
 
 test('old values resolve to the username default; set values are kept', async () => {
