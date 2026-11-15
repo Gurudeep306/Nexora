@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { RefreshCw } from 'lucide-react'
 import {
   Button,
@@ -26,9 +27,11 @@ import { TagRadar } from '@/components/analytics/SkillCharts'
 import { FirstSolvesTimeline } from '@/components/analytics/InsightLists'
 import type { PerformanceResponse, WeaknessResponse } from '@/components/analytics/types'
 import { Icon } from '@/components/icon/Icon'
+import { weekSentence } from '@/components/analytics/sentences'
 
 export default function AnalyticsPage() {
   const c = useChartColors()
+  const [today] = useState(() => new Date())
   const { data, loading, error, refetch } = useApi(
     () =>
       Promise.all([
@@ -42,7 +45,7 @@ export default function AnalyticsPage() {
   if (loading && !data) {
     return (
       <div>
-        <PageHeader icon="analytics" title="Analytics" subtitle="Performance telemetry from the rift" />
+        <PageHeader icon="analytics" eyebrow="The Ledger" title="Analytics" subtitle="Your record of solves, accuracy and pace." />
         <LoadingBlock rows={8} />
       </div>
     )
@@ -50,7 +53,7 @@ export default function AnalyticsPage() {
   if (error || !data) {
     return (
       <div>
-        <PageHeader icon="analytics" title="Analytics" subtitle="Performance telemetry from the rift" />
+        <PageHeader icon="analytics" eyebrow="The Ledger" title="Analytics" subtitle="Your record of solves, accuracy and pace." />
         <ErrorState message={error ?? 'Failed to load analytics'} onRetry={refetch} />
       </div>
     )
@@ -60,11 +63,12 @@ export default function AnalyticsPage() {
   const hasAnyData = perf.submissions > 0 || perf.solved > 0
 
   return (
-    <div>
+    <div className="an-page">
       <PageHeader
         icon="analytics"
+        eyebrow="The Ledger"
         title="Analytics"
-        subtitle="Solve telemetry, weakness intel, and personal records — the observatory has full sight on your grind."
+        subtitle={weekSentence(perf.weeklyProgress, today) ?? 'Your record of solves, accuracy and pace, drawn from every judged submission.'}
         actions={
           <Button variant="outline" size="sm" onClick={refetch} aria-label="Refresh analytics">
             <RefreshCw className="size-3.5" />
@@ -74,11 +78,12 @@ export default function AnalyticsPage() {
       />
 
       {!hasAnyData && (
-        <div className="mb-4 rounded-xl border border-border bg-surface px-4 py-3 text-xs text-foreground-dim">
-          No judged activity yet — head to the problems list and solve something to power these charts.
+        <div className="an-empty mb-4 rounded-xl border border-border bg-surface px-4 py-3 text-xs text-foreground-dim">
+          Nothing judged yet. Solve a problem and these charts fill in.
         </div>
       )}
 
+      <h2 className="sr-only">Your numbers</h2>
       {/* headline stats */}
       <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
         <StatCard label="Solved" value={formatNumber(perf.solved)} icon="target" sub={`${formatNumber(perf.total)} in library`} />
@@ -130,21 +135,21 @@ export default function AnalyticsPage() {
         <div className="flex flex-col">
           <div className="card-neon flex h-full flex-col">
             <div className="border-b border-border px-5 py-4">
-              <h3 className="font-display text-sm tracking-wider text-foreground uppercase">
-                Today&apos;s Session
+              <h3 data-ui="card-title" className="font-display text-sm tracking-wider text-foreground uppercase">
+                Today
               </h3>
             </div>
             <div className="grid flex-1 grid-cols-3 gap-3 px-5 py-5 text-center">
               <div>
-                <p className="font-display text-3xl text-success tabular-nums">{perf.todayStats.solved}</p>
+                <p className="an-today-num font-display text-3xl text-success tabular-nums">{perf.todayStats.solved}</p>
                 <p className="mt-1 text-[10px] tracking-wider text-foreground-faint uppercase">Solved</p>
               </div>
               <div>
-                <p className="font-display text-3xl text-warning tabular-nums">{perf.todayStats.attempted}</p>
+                <p className="an-today-num font-display text-3xl text-warning tabular-nums">{perf.todayStats.attempted}</p>
                 <p className="mt-1 text-[10px] tracking-wider text-foreground-faint uppercase">Attempted</p>
               </div>
               <div>
-                <p className="font-display text-3xl text-primary-bright tabular-nums">{formatNumber(perf.todayStats.xp)}</p>
+                <p className="an-today-num font-display text-3xl text-primary-bright tabular-nums">{formatNumber(perf.todayStats.xp)}</p>
                 <p className="mt-1 text-[10px] tracking-wider text-foreground-faint uppercase">XP Earned</p>
               </div>
             </div>
@@ -157,7 +162,7 @@ export default function AnalyticsPage() {
                   <div key={d.date} className="flex flex-1 flex-col items-center gap-1" title={`${d.date}: ${d.solved} solved`}>
                     <div className="flex h-14 w-full items-end">
                       <div
-                        className={d.solved > 0 ? 'w-full rounded-t-[3px] bg-primary' : 'w-full rounded-t bg-surface-2'}
+                        className={d.solved > 0 ? 'an-day-bar w-full rounded-t-[3px] bg-primary' : 'w-full rounded-t bg-surface-2'}
                         style={{ height: d.solved > 0 ? `${Math.max(12, (d.solved / max) * 100)}%` : '4px' }}
                       />
                     </div>
@@ -169,9 +174,9 @@ export default function AnalyticsPage() {
               })()}
             </div>
             <div className="flex items-center gap-2 border-t border-border px-5 py-3 text-xs text-foreground-dim">
-              <Icon name="sparkles" className="size-3.5 text-gold" aria-hidden="true" />
+              <Icon name="sparkles" className="an-today-icon size-3.5 text-gold" aria-hidden="true" />
               {perf.todayStats.solved === 0 && perf.todayStats.attempted === 0
-                ? 'Nothing logged today yet — one solve keeps the streak alive.'
+                ? 'Nothing logged today yet. One solve keeps the streak alive.'
                 : `${perf.streak.lastWeek.reduce((s, d) => s + d.solved, 0)} solves in the last 7 days`}
             </div>
           </div>
@@ -185,19 +190,19 @@ export default function AnalyticsPage() {
       </div>
 
       {/* weakness intel */}
-      <h2 className="mb-3 font-display text-lg tracking-wide text-foreground glow-text">Weakness Analysis</h2>
+      <h2 className="an-section mb-3 font-display text-lg tracking-wide text-foreground">Where to improve</h2>
       <div className="mb-4">
         {weakness ? (
           <WeaknessPanel data={weakness} />
         ) : (
           <div className="card-neon px-5 py-4 text-xs text-foreground-dim">
-            Weakness intel unavailable right now.
+            Weakness analysis isn't available right now.
           </div>
         )}
       </div>
 
       {/* personal bests */}
-      <h2 className="mb-3 font-display text-lg tracking-wide text-foreground glow-text">Personal Bests</h2>
+      <h2 className="an-section mb-3 font-display text-lg tracking-wide text-foreground">Personal bests</h2>
       <BestsPanel perf={perf} />
     </div>
   )

@@ -134,7 +134,7 @@ export function FeedTab({ me }: { me: string }) {
             <button
               type="button"
               onClick={showFresh}
-              className="ng-pill absolute left-1/2 inline-flex -translate-x-1/2 cursor-pointer items-center gap-2 rounded-full bg-accent-brand px-4 py-2 text-sm font-semibold text-on-accent-brand shadow-lg"
+              className="so-fresh ng-pill absolute left-1/2 inline-flex -translate-x-1/2 cursor-pointer items-center gap-2 rounded-full bg-accent-brand px-4 py-2 text-sm font-semibold text-on-accent-brand shadow-lg"
             >
               <ArrowUp className="size-4" />
               New posts from {fresh.slice(0, 2).join(', ')}
@@ -157,7 +157,7 @@ export function FeedTab({ me }: { me: string }) {
         />
       </div>
 
-      <aside className="hidden space-y-4 lg:block" aria-label="Discover">
+      <aside className="so-aside hidden space-y-4 lg:block" aria-label="Discover">
         <div className="sticky top-[calc(var(--topbar-h,56px)+8px)] space-y-4">
           <SocialSearch />
           <TrendingTags />
