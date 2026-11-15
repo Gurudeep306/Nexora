@@ -24,33 +24,34 @@ export interface SearchInputProps extends InputHTMLAttributes<HTMLInputElement> 
   containerClassName?: string
   /** When provided, a clear (×) button appears while there is text. */
   onClear?: () => void
+  /** A keyboard hint shown at the right while empty (e.g. "/"). */
+  shortcut?: string
 }
 
 /* A themed search field: leading icon that lights up on focus, an optional
    clear button, and the OS's own search "×" suppressed so the look is
    consistent everywhere. Drop-in for `<Input type="search">`. */
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
-  ({ className, containerClassName, onClear, value, ...props }, ref) => {
+  ({ className, containerClassName, onClear, shortcut, value, ...props }, ref) => {
     const hasValue = value != null && String(value).length > 0
     return (
-      <div
-        className={cn(
-          'group/search relative flex items-center rounded-[var(--radius-control)] transition-shadow duration-200',
-          'focus-within:shadow-[0_0_0_3px_color-mix(in_oklab,var(--color-accent-brand)_12%,transparent)]',
-          containerClassName,
-        )}
-      >
+      <div className={cn('group/search relative flex items-center', containerClassName)}>
         <Search
           aria-hidden="true"
-          className="pointer-events-none absolute left-3 z-10 size-4 text-foreground-faint transition-all duration-200 group-focus-within/search:scale-110 group-focus-within/search:text-primary-bright"
+          className="pointer-events-none absolute left-3 z-10 size-4 text-text-muted transition-colors duration-[var(--dur-fast)] group-focus-within/search:text-text-secondary"
         />
         <input
           ref={ref}
           type="search"
           value={value}
-          className={cn(inputBase, 'w-full pl-9', hasValue && onClear && 'pr-9', className)}
+          className={cn('ui-search-input w-full pl-9', (hasValue && onClear) || shortcut ? 'pr-9' : '', className)}
           {...props}
         />
+        {shortcut && !hasValue && (
+          <kbd className="search-field-kbd pointer-events-none absolute right-2.5 z-10" aria-hidden="true">
+            {shortcut}
+          </kbd>
+        )}
         {hasValue && onClear && (
           <button
             type="button"
