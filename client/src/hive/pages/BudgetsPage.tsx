@@ -22,9 +22,9 @@ type Period = (typeof PERIODS)[number]
 
 /* Series colours: one fixed hue per series, never cycled. */
 const SERIES = [
-  { key: 'input', label: 'Input', color: 'var(--chart-1)' },
-  { key: 'output', label: 'Output', color: 'var(--chart-3)' },
-  { key: 'cached', label: 'Cached', color: 'var(--chart-4)' },
+  { key: 'input', label: 'Input', color: 'var(--hv-series-1)' },
+  { key: 'output', label: 'Output', color: 'var(--hv-series-2)' },
+  { key: 'cached', label: 'Cached', color: 'var(--hv-series-3)' },
 ] as const
 
 const tot = (r: Pick<SpendRow, 'input' | 'output' | 'cached'>) => r.input + r.output + r.cached
@@ -798,13 +798,13 @@ function AlertsList({ alerts }: { alerts: HiveAlert[] | null }) {
           return (
             <motion.div key={a.id} layout initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.22, ease: EASE }} className="border-b hive-line last:border-b-0">
               <div className={cn('flex items-start gap-3 px-4 py-3.5', !a.read && 'bg-accent-brand/[0.04]')}>
-                <span className="hive-tile mt-0.5 size-8" style={{ ['--tile' as string]: L.color }} aria-label={L.label}>
+                <span className="hive-tile mt-0.5 size-8" style={{ ['--tile' as string]: L.color }} role="img" aria-label={L.label}>
                   <L.icon className="size-4" />
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start gap-2">
                     <span className={cn('min-w-0 flex-1 text-[13.5px] text-text-primary', !a.read && 'font-medium')}>{a.title}</span>
-                    {!a.read && <span className="mt-1.5 size-2 shrink-0 rounded-full bg-accent-brand" aria-label="Unread" />}
+                    {!a.read && <span className="mt-1.5 size-2 shrink-0 rounded-full bg-accent-brand" role="img" aria-label="Unread" />}
                     <span className="shrink-0 text-[11.5px] tabular-nums text-text-muted" title={new Date(a.created_at).toLocaleString()}>
                       {timeAgo(a.created_at) === 'now' ? 'just now' : `${timeAgo(a.created_at)} ago`}
                     </span>

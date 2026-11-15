@@ -95,6 +95,7 @@ curl -fsSL -H "Authorization: Bearer hvm_…" https://nexoraguru.in/api/hive-bri
   - **Autonomous:** commands run without asking. Only use this on a throwaway VM.
   - **Read-only:** agents can read files but not write or run anything.
 - **Running it 24/7:** run the bridge on a free always-on VM (for example Oracle's free ARM VM) under `pm2` or a systemd service. Agents then keep working when your laptop is off, and you approve commands from your phone.
+- **Live terminal:** Machines → **Terminal** (or a folder's *terminal* button in **Folders & clone**, or a session's **Terminal** tab) opens a real shell on the machine: colours, `vim`/`htop`, Ctrl+C, resizing, several tabs. It needs the bridge 1.4.0 or later and Python 3 on the machine (without Python it still works, at a fixed size). Only the person who added the machine, or an admin, can open one, and never on a read-only machine. If your connection drops, it reconnects and shows what you missed. A shell nobody uses for 30 minutes closes. On a phone, a key row adds Ctrl, Esc, Tab and the arrows. Every terminal opened is in the audit log.
 - **Clone a project onto a machine:** use **Folders & clone**. It uses the project's GitHub token for that one command and never stores it. Pushes from machine sessions also pass the token per call.
 
 ## Keys and budgets

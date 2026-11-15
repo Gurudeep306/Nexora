@@ -235,7 +235,7 @@ function Station({
     >
       {working && <span className="hive-station-glow" aria-hidden="true" />}
       {winner && (
-        <span className="absolute -top-3 left-4 inline-flex items-center gap-1 rounded-full bg-[oklch(80%_0.14_85)] px-2 py-0.5 text-[10.5px] font-bold text-[oklch(30%_0.08_70)] shadow-sm">
+        <span className="absolute -top-3 left-4 inline-flex items-center gap-1 rounded-[var(--hv-r-chip)] border border-[var(--hv-border-strong)] bg-[var(--hv-surface-2)] px-2 py-0.5 text-[10.5px] font-semibold text-[var(--hv-text-1)] shadow-sm">
           <Crown className="size-3" /> Judge’s pick
         </span>
       )}
@@ -280,7 +280,7 @@ function Station({
       </div>
 
       {handoff && (
-        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-2 flex items-center gap-1.5 rounded-lg bg-[oklch(70%_0.14_330/0.1)] px-2.5 py-1.5 text-[11.5px] text-[color-mix(in_oklab,oklch(60%_0.13_330)_70%,var(--color-text-primary))]">
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-2 flex items-center gap-1.5 rounded-lg bg-[var(--hv-surface-2)] px-2.5 py-1.5 text-[11.5px] text-[var(--hv-text-2)]">
           <ArrowRightLeft className="size-3.5 shrink-0" />
           <span className="truncate">
             {String(handoff.data.reason ?? 'Handed over')}
@@ -401,7 +401,7 @@ function VerdictBanner({ ev, agents }: { ev: HiveEvent; agents: AgentRow[] }) {
   const d = ev.data as { winner: string | null; noVerdict?: boolean; name?: string; model?: string; reason?: string; ranking?: { agentId: string; name: string; score: number; strengths?: string; weaknesses?: string }[]; judge?: { model: string } | null; adopted?: boolean }
   const win = agents.find((a) => a.id === d.winner)
   return (
-    <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="relative mx-auto mb-8 max-w-3xl overflow-hidden rounded-2xl border border-[oklch(80%_0.14_85/0.35)] bg-[oklch(80%_0.14_85/0.07)] p-4">
+    <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="relative mx-auto mb-8 max-w-3xl overflow-hidden rounded-2xl border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-4">
       <div className="flex items-start gap-3">
         <span className="hive-tile size-9 shrink-0" style={{ ['--tile' as string]: 'oklch(78% 0.14 80)' }}>
           <Gavel className="size-4" />
@@ -422,7 +422,7 @@ function VerdictBanner({ ev, agents }: { ev: HiveEvent; agents: AgentRow[] }) {
             <div className="mt-2 flex flex-wrap gap-1.5">
               {d.ranking.map((r, i) => (
                 <Tooltip key={r.agentId} label={<span className="block max-w-[320px] text-[12px]">{r.strengths}{r.weaknesses ? ` — but: ${r.weaknesses}` : ''}</span>}>
-                  <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11.5px]', i === 0 ? 'bg-[oklch(80%_0.14_85/0.2)] font-semibold' : 'bg-text-primary/[0.06] text-text-secondary')}>
+                  <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11.5px]', i === 0 ? 'bg-[var(--hv-surface-2)] font-semibold text-[var(--hv-text-1)] ring-1 ring-[var(--hv-border-strong)]' : 'bg-text-primary/[0.06] text-text-secondary')}>
                     {i === 0 && <Crown className="size-3" />} {r.name} · {r.score}/10
                   </span>
                 </Tooltip>

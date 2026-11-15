@@ -151,21 +151,45 @@ export default function LiveTerminal({ machineId, folder, machineName, online = 
   return (
     <div className={cn('hv-term flex h-full min-h-0 flex-col', className)}>
       <div className="hv-term-bar flex h-9 shrink-0 items-stretch gap-0 border-b border-[var(--hv-border-subtle)] pl-1 pr-1.5">
-        <div role="tablist" aria-label="Terminals" className="flex min-w-0 items-stretch overflow-x-auto">
+        <div className="flex min-w-0 items-stretch overflow-x-auto">
+          <div role="tablist" aria-label="Terminals" className="flex items-stretch">
           {tabs.map((t) => {
             const p = phases[t.key] || 'connecting'
             return (
-              <div key={t.key} className={cn('hv-term-tab group flex items-center', t.key === active && 'is-active')}>
-                <button type="button" role="tab" aria-selected={t.key === active} onClick={() => setActive(t.key)} className="flex h-full items-center gap-2 pl-2.5 pr-1 text-[12px]">
-                  <span className="size-1.5 shrink-0 rounded-full" style={{ background: PHASE[p].color }} aria-hidden="true" />
-                  <span className="whitespace-nowrap">{t.title}</span>
-                </button>
-                <button type="button" onClick={() => closeTab(t.key)} aria-label={`Close ${t.title}`} className="hv-term-icon mr-1 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 [.is-active_&]:opacity-60">
+              // The tab itself is the only control in the tab list; Delete on a focused tab
+              // closes it (like an editor), and the × is a mouse shortcut for the same.
+              <button
+                key={t.key}
+                type="button"
+                role="tab"
+                aria-selected={t.key === active}
+                aria-keyshortcuts="Delete"
+                title={`${t.title} — Delete closes it`}
+                onClick={() => setActive(t.key)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Delete' || e.key === 'Backspace') {
+                    e.preventDefault()
+                    closeTab(t.key)
+                  }
+                }}
+                className={cn('hv-term-tab group flex h-full items-center gap-2 pl-2.5 pr-1.5 text-[12px]', t.key === active && 'is-active')}
+              >
+                <span className="size-1.5 shrink-0 rounded-full" style={{ background: PHASE[p].color }} aria-hidden="true" />
+                <span className="whitespace-nowrap">{t.title}</span>
+                <span
+                  aria-hidden="true"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    closeTab(t.key)
+                  }}
+                  className="hv-term-icon !size-5 opacity-0 group-hover:opacity-100 [.is-active_&]:opacity-60"
+                >
                   <X className="size-3" />
-                </button>
-              </div>
+                </span>
+              </button>
             )
           })}
+          </div>
           <button type="button" onClick={addTab} aria-label="New terminal" title="New terminal" className="hv-term-icon my-auto ml-1">
             <Plus className="size-3.5" />
           </button>
