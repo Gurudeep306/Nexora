@@ -43,6 +43,7 @@ import {
   Square,
   SquareTerminal,
   Trash2,
+  TriangleAlert,
   Users,
   Wand2,
   X,
@@ -63,6 +64,7 @@ import { WorkMap } from './WorkMap'
 import { useHive } from './store'
 import type { AgentRow, AgentSpec, Checkpoint, Check as CheckRun, HiveEvent, PrInfo } from './types'
 import { MODE_INFO, ProviderGlyph, StatusPill, UserDot, duration, fmtCost, fmtTokens, statusColor, timeAgo } from './ui'
+import { riskyCommand } from './commandRisk'
 
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Something went wrong')
 type DockTab = 'changes' | 'files' | 'checkpoints' | 'ship' | 'terminal' | 'board'
@@ -903,6 +905,8 @@ function ReadGroup({ calls, results }: { calls: HiveEvent[]; results: Map<string
 }
 
 
+const durMs = (ms: number) => (ms < 1000 ? `${Math.round(ms)}ms` : ms < 60000 ? `${(ms / 1000).toFixed(1)}s` : duration(0, ms))
+
 function ToolCard({ call, result }: { call: HiveEvent; result?: HiveEvent }) {
   const name = String(call.data.name)
   const input = (call.data.input ?? {}) as Record<string, unknown>
@@ -920,6 +924,7 @@ function ToolCard({ call, result }: { call: HiveEvent; result?: HiveEvent }) {
       <button type="button" disabled={!expandable} onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-[13px] text-text-secondary">
         <Icon className={cn('size-3.5 shrink-0', err ? 'text-state-error' : write ? 'text-accent-brand' : cmd ? 'text-state-info' : 'text-text-muted')} />
         <span className="min-w-0 flex-1 truncate">{toolLine(name, input, meta)}</span>
+        {result && <span className="hv-num shrink-0 text-[10.5px] text-text-muted">{durMs(Math.max(0, result.created_at - call.created_at))}</span>}
         {cmd && exit != null && <span className={cn('rounded px-1.5 font-mono text-[10.5px]', exit === 0 ? 'bg-state-success/12 text-state-success' : 'bg-state-error/12 text-state-error')}>exit {String(exit)}</span>}
         {!result ? <Loader2 className="size-3 animate-spin text-text-muted" /> : err ? <AlertCircle className="size-3.5 text-state-error" /> : null}
         {expandable && <ChevronRight className={cn('size-3.5 text-text-muted transition-transform', open && 'rotate-90')} />}
@@ -994,6 +999,11 @@ function ApprovalLine({ ev }: { ev: HiveEvent }) {
         <span className="min-w-0 flex-1">
           Wants to {ev.data.kind === 'server' ? 'start a server' : 'run a command'} on <b className="font-medium text-[var(--hv-text-1)]">{String(ev.data.machine)}</b>
         </span>
+        {riskyCommand(String(ev.data.command)) && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-state-error/12 px-1.5 py-0.5 text-[10.5px] font-medium text-state-error">
+            <TriangleAlert className="size-3" /> destructive
+          </span>
+        )}
         {pending ? <StatusPill status="needs" /> : null}
       </div>
       <pre className="hive-term mt-2 overflow-auto rounded-[var(--hv-r-btn)] px-3 py-2">$ {String(ev.data.command)}</pre>
