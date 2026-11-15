@@ -67,7 +67,7 @@ The owner is the founder. They often work from a phone. They want:
 | 4 | The reader: lessons and GATE notes, viz engine colours and player, sidenotes, scroll-sync, notes index and subject pages | **Built**, pull request open from `claude/clever-babbage-km37j9`, waiting for the owner's "merge". Left-overs in 3.1 (System Design reader, notes dek, footnotes) |
 | 5 | Coding: Problems, Solve (statement, Monaco theme, judging, verdicts, editorials), Contests, Workshop, Submissions, Bookmarks | **In progress** on the same branch (PR #114 is phase 4; phase 5 commits follow it). Done: Problems page. See 3.2 |
 | 6 | Nexus: the star chart ("The Atlas") | **Started** on the same branch. See 3.3 |
-| 7 | Profile and the Ledger: Profile, Analytics, Achievements, Social | To do |
+| 7 | Profile and the Ledger: Profile, Analytics, Achievements, Social | **Started** (profile masthead and colophon CSS written, NOT yet checked in a browser). See 3.4 |
 | 8 | GATE home and the remaining pages: GATE home and subpages (CBT restyle only), Settings, Appearance, Admin, 404, errors, loading | To do |
 | 9 | Polish sweep and docs | To do |
 
@@ -283,6 +283,62 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
     the ring name, e.g. "3 Kilobyte", instead of the hexagon glyphs)
   Do these next. The renderer is large (about 1,900 lines); the drawing
   is in one effect, starting at "/* ── rendering ── */".
+
+### 3.4 Phase 7: progress (stopped mid-way at a usage limit)
+
+- **Profile (`/profile`, `/u/:username`) — first pass written, unchecked.**
+  - Class hooks added: `pf-hero`, `pf-cover`, `pf-hero-body`,
+    `pf-portrait`, `pf-portrait-ring`, `pf-name` in `pages/ProfilePage.tsx`;
+    `pf-colophon`, `pf-fact`, `pf-fact-label`, `pf-fact-value`,
+    `pf-fact-icon` in `components/profile/Showcase.tsx`.
+  - Journal CSS at the end of `theme/styles.css` ("phase 7: Profile as a
+    notebook cover"):
+    - the masthead sits on canvas
+    - the banner is hidden under journal; the chosen cover still shows in
+      other styles
+    - the portrait is mounted in a hairline frame with 12px ivory padding
+    - the serif name is larger
+    - the stats become a hairline-ruled colophon row (label over serif
+      figure, no icons)
+  - **First thing to do:**
+    1. Build.
+    2. Run `node client/scripts/check-page.cjs /profile profile --wait=2500`
+       and look at light, dark and phone. The negative margin on the
+       portrait was removed, so check the masthead layout.
+    3. Run axe, then commit.
+  - Not done (brief 4.10):
+    - rank seal "Level 3 · Kilobyte" next to the name
+    - bio in serif italic
+    - actions as text links
+    - figures counting up, with 30-day sparklines
+    - calendar sentence ("Most active on Sundays…")
+    - difficulty as three small multiples
+    - the shelf of seals
+    - the Bridge (linked judges) as hairline rows
+    - Person structured data on `/u/:username`
+    - the share image card in journal style
+- **Analytics, Achievements, Social (brief 4.11):** not started.
+
+### 3.5 What is left after phase 7
+
+- Phase 8: GATE home + subpages (CBT restyle only), Settings, Appearance,
+  Admin, 404, errors, loading (brief 4.9, 4.12, 4.13).
+- Phase 9: polish sweep of every route (light, dark, phone), then update
+  `docs/ui/premium.md` (house style + "Adding a style") and the Design
+  section of `AGENTS.md`.
+- Left-overs listed in 3.1–3.3: System Design reader, notes dek, Problems
+  pagination as numbers, verdict "paper slip" celebration, Atlas star
+  sizes, side panel, list view, ignite ring, ring tick labels.
+
+### 3.6 Pull request state
+
+- PR #114 (https://github.com/Gurudeep306/Nexora/pull/114) was opened for
+  phase 4. Every later commit (phases 5, 6 and the start of 7) is on the same
+  branch `claude/clever-babbage-km37j9`, so **PR #114 now contains phases
+  4–7 (partial)**. Before the owner merges, update its title and description
+  to list everything. You can also ask the owner whether they want it split.
+  Do not merge without the owner saying "merge".
+- Check its CI first (GitHub Actions on the PR). Fix any failure at the cause.
 
 ## 4. What phases 1–3 built (reuse these; do not rebuild them)
 
