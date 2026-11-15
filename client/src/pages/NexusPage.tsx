@@ -1,3 +1,4 @@
+import { useTheme } from '@/context/ThemeContext'
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { RefreshCw } from 'lucide-react'
@@ -85,13 +86,25 @@ function SelectHint({ text }: { text: string }) {
           <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
             <Icon name="sparkles" className="size-3" aria-hidden="true" /> Legend
           </p>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="nx-legend-badges flex flex-wrap gap-1.5">
             <Badge variant="success">mastered</Badge>
             <Badge variant="primary">unlocked</Badge>
             <Badge variant="default">
               <Icon name="lock" className="size-3" aria-hidden="true" /> locked
             </Badge>
           </div>
+          {/* The atlas key: the three kinds of star, engraved. */}
+          <ul className="nx-legend-stars m-0 list-none p-0">
+            <li>
+              <span className="nx-star is-done" aria-hidden="true" /> mastered
+            </li>
+            <li>
+              <span className="nx-star is-open" aria-hidden="true" /> in progress
+            </li>
+            <li>
+              <span className="nx-star is-locked" aria-hidden="true" /> locked
+            </li>
+          </ul>
           <p className="text-[11px] text-foreground-faint">
             Hover a skill to trace everything it needs and everything it unlocks. Pulsing skills are open to you now; flowing links lead to them. The weekly pool reshuffles every 7 days.
           </p>
@@ -240,11 +253,23 @@ function RadialOverview() {
   }, [state, clusters, mastered, allNodes.length])
   useAgentPageContext({ label: 'Nexus', visibleText: brief })
 
+  // The Field Journal calls the web "The Atlas": every subject a
+  // constellation, every skill a star. Other styles keep "The Nexus".
+  const atlas = useTheme().shown.style === 'journal'
+  const started = (clusters ?? []).filter((c) => c.nodes.some((n) => n.s > 0)).length
+  const pct = allNodes.length ? Math.round((mastered / allNodes.length) * 100) : 0
   const header = (
     <PageHeader
       icon="nexus"
-      title="The Nexus"
-      subtitle="Every subject's skill tree, grown outward from you — open a subject to climb its own tree."
+      eyebrow={atlas ? 'The Atlas' : undefined}
+      title={atlas ? 'Your sky' : 'The Nexus'}
+      subtitle={
+        atlas
+          ? clusters
+            ? `Every idea you master is a star you light. ${mastered} ${mastered === 1 ? 'star' : 'stars'} lit · ${started} of ${clusters.length} constellations started · ${pct}% mastered.`
+            : 'Every idea you master is a star you light.'
+          : "Every subject's skill tree, grown outward from you — open a subject to climb its own tree."
+      }
       actions={
         <Button variant="outline" size="sm" onClick={() => refresh(true)} aria-label="Refresh nexus data">
           <RefreshCw className={cn('size-3.5', refreshing && 'animate-spin')} />

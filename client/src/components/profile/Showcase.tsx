@@ -22,14 +22,14 @@ export function Section({ title, icon, action, children, className }: { title: s
 
 function Stat({ icon, label, value, sub, tone }: { icon: IconName; label: string; value: ReactNode; sub?: ReactNode; tone: string }) {
   return (
-    <div className="relative overflow-hidden rounded-xl border border-border bg-bg-surface-2/50 p-3.5">
-      <div className="flex items-center gap-2 text-xs font-medium text-text-secondary">
-        <span style={{ color: tone }} className="inline-flex">
+    <div className="pf-fact relative overflow-hidden rounded-xl border border-border bg-bg-surface-2/50 p-3.5">
+      <div className="pf-fact-label flex items-center gap-2 text-xs font-medium text-text-secondary">
+        <span style={{ color: tone }} className="pf-fact-icon inline-flex">
           <Icon name={icon} className="size-3.5" />
         </span>
         {label}
       </div>
-      <div className="mt-1.5 font-display text-2xl font-semibold text-text-primary tabular-nums">{value}</div>
+      <div className="pf-fact-value mt-1.5 font-display text-2xl font-semibold text-text-primary tabular-nums">{value}</div>
       {sub && <div className="mt-0.5 text-xs text-text-muted">{sub}</div>}
     </div>
   )
@@ -37,7 +37,7 @@ function Stat({ icon, label, value, sub, tone }: { icon: IconName; label: string
 
 export function StatsGrid({ s }: { s: NonNullable<Showcase['stats']> }) {
   return (
-    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+    <div className="pf-colophon grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
       <Stat icon="bolt" label="XP" value={s.xp.toLocaleString()} sub={`Level ${s.level.level} · ${s.level.name}`} tone="var(--color-accent-brand)" />
       <Stat icon="target" label="Solved" value={s.solved.toLocaleString()} sub={`${s.attempted} attempted`} tone="var(--color-state-success)" />
       <Stat icon="flame" label="Streak" value={`${s.streak.current}d`} sub={`Best ${s.streak.best} days`} tone="var(--color-state-warning)" />

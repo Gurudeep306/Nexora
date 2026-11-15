@@ -296,6 +296,17 @@
   padding: 20px;
   text-decoration: none !important;
 }
+.nh-thumb {
+  display: block;
+  margin: -8px -8px 6px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--color-bg-surface-2);
+  --viz-subject: var(--notes-subject-ink, var(--color-accent-brand));
+}
+.nh-thumb .nxv-svg {
+  max-height: 150px;
+}
 .nh-pct {
   font-family: var(--font-mono);
   font-size: 12px;
@@ -384,4 +395,12 @@
 .nh-next:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
+}
+
+/* Two ways to number a chapter: the default style shows digits and a ring;
+   the Field Journal shows an italic roman numeral and hairline rows. */
+.nh-chapter-roman,
+.nh-n-roman,
+.nh-chapter-done {
+  display: none;
 }

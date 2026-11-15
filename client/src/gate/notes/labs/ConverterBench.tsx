@@ -257,7 +257,7 @@ function SarTool() {
       </div>
       {res && (
         <>
-          <div className="lab-strips" aria-label={`Successive-approximation register after ${k} of ${n} clocks: ${bstr(code, n)}`}>
+          <div className="lab-strips" tabIndex={0} role="img" aria-label={`Successive-approximation register after ${k} of ${n} clocks: ${bstr(code, n)}`}>
             <div className="lab-strip" aria-hidden="true">
               <span className="lab-strip-label">bit</span>
               {Array.from({ length: n }, (_, i) => (
@@ -285,7 +285,7 @@ function SarTool() {
           </div>
           <p className="cb-now">{last ? sentence(k - 1) : `Register cleared. Step 1 will set the MSB, bit ${n - 1}: the DAC then gives half of V_ref${offset ? ' minus half an LSB' : ''}.`}</p>
           <SarChart res={res} k={k} vin={vin!} vref={vref!} />
-          <div className="lab-tt-wrap">
+          <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
             <table className="lab-tt cb-table">
               <caption className="sr-only">Successive-approximation steps so far</caption>
               <thead>
@@ -486,7 +486,7 @@ function DacTool() {
       {L && stairs && (
         <>
           <Ladder L={L} />
-          <div className="lab-tt-wrap">
+          <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
             <table className="lab-tt cb-table">
               <caption className="sr-only">Node voltages and leg currents of the ladder</caption>
               <thead>
@@ -542,7 +542,7 @@ function Ladder({ L }: { L: ReturnType<typeof ladder> }) {
   const x = (i: number) => X0 + i * DX
   const xt = x(n - 1) + DX * 0.62
   return (
-    <div className="cb-scroll">
+    <div className="cb-scroll" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
       <svg
         className="cb-ladder"
         width={W}

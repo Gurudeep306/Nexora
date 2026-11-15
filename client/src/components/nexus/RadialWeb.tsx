@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { ChevronRight, Crosshair, Expand, Maximize2, Minus, Plus, Shrink } from 'lucide-react'
-import { Avatar, Button, RankGlyph } from '@/components/ui'
+import { Avatar, Button, RankGlyph, tierFor } from '@/components/ui'
 import { LogoMark } from '@/components/brand/Logo'
 import { formatNumber } from '@/lib/utils'
 import { cn } from '@/lib/utils'
@@ -362,6 +362,10 @@ export function RadialWeb({
     probe.style.display = 'none'
     wrap.appendChild(probe)
     let C = readColors(probe)
+    // The Field Journal draws the web as an engraved star chart: ink lines,
+    // no hue washes, dashed region boundaries, hollow / clay / solid stars.
+    const isAtlas = () => document.documentElement.dataset.style === 'journal'
+    let atlas = isAtlas()
     const font = getComputedStyle(wrap).fontFamily || 'system-ui, sans-serif'
     const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace'
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -394,10 +398,11 @@ export function RadialWeb({
     buildIcons()
     const themeObs = new MutationObserver(() => {
       C = readColors(probe)
+      atlas = isAtlas()
       buildIcons()
       dirty.current = true
     })
-    themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-mode', 'data-theme', 'class', 'style'] })
+    themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-mode', 'data-theme', 'data-style', 'class', 'style'] })
 
     const resize = () => {
       const r = wrap.getBoundingClientRect()
@@ -567,10 +572,13 @@ export function RadialWeb({
         const a = stagger(i2, layout.streams.length, 300, 820)
         return seg(T, a, a + 360)
       }
+      // In the atlas, colours become ink: names and boundaries in ink-2,
+      // mastered stars in ink, open ones outlined in clay.
+      const colOf = (it: { color: string }) => (atlas ? C.text : it.color)
       // Streams: a quiet wash of the stream's hue behind its subjects.
       for (const st of layout.streams) {
         const hue = streamOf.get(st.id)?.hue
-        if (!hue) continue
+        if (!hue || atlas) continue
         const wp = wipe(st.id)
         if (wp <= 0) continue
         const e1 = st.a0 + (st.a1 - st.a0) * wp
@@ -599,6 +607,7 @@ export function RadialWeb({
         for (const z of cl.zones) {
           const g = ringOf.get(z.level)
           if (!g) continue
+          if (atlas) continue
           ctx.globalAlpha = (z.current ? 0.1 : z.locked ? 0.015 : 0.045) * ringReveal(z.level)
           ctx.fillStyle = z.color
           ctx.beginPath()
@@ -628,9 +637,9 @@ export function RadialWeb({
         if (!hue) continue
         const wp = wipe(st.id)
         if (wp <= 0) continue
-        ctx.strokeStyle = hue
-        ctx.globalAlpha = 0.85
-        ctx.lineWidth = 3 * px
+        ctx.strokeStyle = atlas ? C.muted : hue
+        ctx.globalAlpha = atlas ? 0.9 : 0.85
+        ctx.lineWidth = (atlas ? 1 : 3) * px
         ctx.lineCap = 'round'
         ctx.beginPath()
         ctx.arc(0, 0, layout.extent + 70, st.a0 + 0.004, st.a0 + 0.004 + Math.max(0, st.a1 - st.a0 - 0.008) * wp)
@@ -638,9 +647,15 @@ export function RadialWeb({
         ctx.globalAlpha = 0.25 * wp
         ctx.lineWidth = px
         ctx.beginPath()
+        if (atlas) {
+          // Region boundaries: dashed hairlines, as on an engraved chart.
+          ctx.globalAlpha = 0.7 * wp
+          ctx.setLineDash([5 * px, 5 * px])
+        }
         ctx.moveTo(Math.cos(st.a0) * layout.inner * 0.62, Math.sin(st.a0) * layout.inner * 0.62)
         ctx.lineTo(Math.cos(st.a0) * (layout.extent + 70), Math.sin(st.a0) * (layout.extent + 70))
         ctx.stroke()
+        ctx.setLineDash([])
       }
       ctx.globalAlpha = 1
 
@@ -666,7 +681,7 @@ export function RadialWeb({
         const hr = same ? layout.inner * 0.42 : hubR
         return [Math.cos(a1) * anchorR, Math.sin(a1) * anchorR, Math.cos(h1) * hr, Math.sin(h1) * hr, Math.cos(h2) * hr, Math.sin(h2) * hr, Math.cos(a2) * anchorR, Math.sin(a2) * anchorR]
       }
-      const hueOf = (id: string) => streamOf.get(sectorOf.get(id)?.stream ?? '')?.hue ?? C.primary
+      const hueOf = (id: string) => (atlas ? C.muted : (streamOf.get(sectorOf.get(id)?.stream ?? '')?.hue ?? C.primary))
       const glints: [number, number, string][] = []
       for (const l of subjectLinks) {
         const on = hs ? l.from === hs || l.to === hs : true
@@ -849,9 +864,11 @@ export function RadialWeb({
       ctx.stroke(groups.locked.dim)
       ctx.globalAlpha = (related ? 0.95 : 0.6) * linkIn
       ctx.lineWidth = thin(related ? 1.75 : 1.25)
+      // In the atlas the path to the star in focus is drawn in clay.
+      if (atlas && related) ctx.strokeStyle = C.accent
       ctx.stroke(groups.locked.lit)
       // open: flowing toward the skill you can take next
-      ctx.strokeStyle = C.primary
+      ctx.strokeStyle = atlas ? C.muted : C.primary
       ctx.setLineDash([5, 7])
       ctx.lineDashOffset = animate ? ((now / 1100) * 24) % 24 : 0
       ctx.globalAlpha = 0.08 * linkIn
@@ -859,6 +876,7 @@ export function RadialWeb({
       ctx.stroke(groups.open.dim)
       ctx.globalAlpha = linkIn
       ctx.lineWidth = thin(related ? 2.75 : 2)
+      if (atlas && related) ctx.strokeStyle = C.accent
       ctx.stroke(groups.open.lit)
       ctx.globalAlpha = 0.55
       ctx.lineWidth = thin(1.25)
@@ -867,7 +885,7 @@ export function RadialWeb({
       if (rt) {
         // The goal path traces itself in gold.
         const tr = seg(T, 1300, 1880)
-        ctx.strokeStyle = '#f4b73f'
+        ctx.strokeStyle = (atlas ? C.accent : '#f4b73f')
         ctx.globalAlpha = 0.85 * Math.min(1, tr * 3)
         ctx.lineWidth = thin(2.4)
         if (tr < 1) ctx.setLineDash([900 * tr, 1e5])
@@ -876,15 +894,19 @@ export function RadialWeb({
       }
       // mastered: glowing in the zone colour
       for (const [col, g] of doneByColor) {
-        ctx.strokeStyle = col
+        ctx.strokeStyle = atlas ? C.text : col
         ctx.globalAlpha = 0.08 * litLinks
         ctx.lineWidth = thin(2)
         ctx.stroke(g.dim)
-        ctx.globalAlpha = 0.22 * litLinks
-        ctx.lineWidth = thin(6)
-        ctx.stroke(g.lit)
+        // No glow in the atlas: engraved lines only.
+        if (!atlas) {
+          ctx.globalAlpha = 0.22 * litLinks
+          ctx.lineWidth = thin(6)
+          ctx.stroke(g.lit)
+        }
         ctx.globalAlpha = litLinks
         ctx.lineWidth = thin(related ? 2.75 : 2)
+        if (atlas && related) ctx.strokeStyle = C.accent
         ctx.stroke(g.lit)
       }
       ctx.globalAlpha = 1
@@ -908,7 +930,7 @@ export function RadialWeb({
         g2.add(it.key, X(it.x), Y(it.y))
         ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         if (rr < 2.2) {
-          ctx.fillStyle = state === 'done' && lit > 0.5 ? it.color : state === 'open' || state === 'done' ? C.primary : C.strong
+          ctx.fillStyle = state === 'done' && lit > 0.5 ? colOf(it) : state === 'open' || state === 'done' ? C.primary : C.strong
           const d = Math.max(1.6, rr * 1.4) * px
           if (p.due?.has(it.key)) ctx.fillStyle = '#f59e0b'
           ctx.fillRect(it.x - d / 2, it.y - d / 2, d, d)
@@ -942,7 +964,7 @@ export function RadialWeb({
         if (state === 'open' && pulseT >= 0) {
           const t = Math.min(1, pulseT / 0.8)
           ctx.globalAlpha = ((dim ? 0.3 : 1) * reveal) * 0.7 * (1 - t)
-          ctx.strokeStyle = it.color
+          ctx.strokeStyle = colOf(it)
           ctx.lineWidth = 2
           ctx.beginPath()
           ctx.arc(it.x, it.y, (R + 4) * (0.92 + 0.43 * t), 0, Math.PI * 2)
@@ -956,7 +978,7 @@ export function RadialWeb({
         ctx.arc(it.x, it.y, ringR, 0, Math.PI * 2)
         ctx.stroke()
         ctx.globalAlpha = ((dim ? 0.3 : 1) * reveal) * 0.22
-        ctx.strokeStyle = it.color
+        ctx.strokeStyle = colOf(it)
         ctx.stroke()
         ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         const pct = n.s === 2 ? 100 * lit : n.p * growIn
@@ -975,7 +997,7 @@ export function RadialWeb({
           ctx.fill()
           if (lit > 0) {
             ctx.globalAlpha = ((dim ? 0.3 : 1) * reveal) * 0.6 * (1 - lit)
-            ctx.strokeStyle = it.color
+            ctx.strokeStyle = colOf(it)
             ctx.lineWidth = 2
             ctx.beginPath()
             ctx.arc(it.x, it.y, (R + 3) * (1 + 0.45 * lit), 0, Math.PI * 2)
@@ -987,7 +1009,7 @@ export function RadialWeb({
           // The original: radial-gradient(circle at 35% 30%, zone+white, zone 55%, zone+black).
           const gx = it.x - coreR * 0.3
           const gy = it.y - coreR * 0.4
-          ctx.fillStyle = it.color
+          ctx.fillStyle = colOf(it)
           ctx.beginPath()
           ctx.arc(it.x, it.y, coreR, 0, Math.PI * 2)
           ctx.fill()
@@ -996,20 +1018,41 @@ export function RadialWeb({
           hi.addColorStop(0.35, 'rgba(255,255,255,0)')
           hi.addColorStop(0.62, 'rgba(0,0,0,0)')
           hi.addColorStop(1, 'rgba(0,0,0,0.35)')
-          ctx.fillStyle = hi
-          ctx.fill()
+          if (!atlas) {
+            ctx.fillStyle = hi
+            ctx.fill()
+          } else {
+            // A mastered star: solid ink with a small canvas-coloured spark.
+            const k = coreR * 0.55
+            ctx.strokeStyle = C.app
+            ctx.lineWidth = Math.max(1, coreR * 0.14)
+            ctx.beginPath()
+            ctx.moveTo(it.x - k, it.y)
+            ctx.lineTo(it.x + k, it.y)
+            ctx.moveTo(it.x, it.y - k)
+            ctx.lineTo(it.x, it.y + k)
+            ctx.stroke()
+          }
           if (lit < 1) ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         } else if (state === 'open') {
-          ctx.fillStyle = C.surface3
+          ctx.fillStyle = atlas ? C.app : C.surface3
           ctx.beginPath()
           ctx.arc(it.x, it.y, coreR, 0, Math.PI * 2)
           ctx.fill()
-          ctx.globalAlpha = ((dim ? 0.3 : 1) * reveal) * 0.16
-          ctx.fillStyle = it.color
-          ctx.fill()
+          if (atlas) {
+            // In progress: outlined in clay.
+            ctx.strokeStyle = C.accent
+            ctx.lineWidth = Math.max(1.2, coreR * 0.12)
+            ctx.stroke()
+          } else {
+            ctx.globalAlpha = ((dim ? 0.3 : 1) * reveal) * 0.16
+            ctx.fillStyle = colOf(it)
+            ctx.fill()
+          }
           ctx.globalAlpha = (dim ? 0.3 : 1) * reveal
         } else {
-          ctx.fillStyle = C.surface2
+          // Locked: a hollow hairline circle in the atlas.
+          ctx.fillStyle = atlas ? C.app : C.surface2
           ctx.beginPath()
           ctx.arc(it.x, it.y, coreR, 0, Math.PI * 2)
           ctx.fill()
@@ -1019,7 +1062,7 @@ export function RadialWeb({
         }
         if (hov) {
           ctx.globalAlpha = 0.22
-          ctx.strokeStyle = it.color
+          ctx.strokeStyle = colOf(it)
           ctx.lineWidth = 4
           ctx.beginPath()
           ctx.arc(it.x, it.y, coreR + 2, 0, Math.PI * 2)
@@ -1037,7 +1080,7 @@ export function RadialWeb({
           ctx.beginPath()
           ctx.arc(bx, by, 11, 0, Math.PI * 2)
           ctx.fill()
-          ctx.fillStyle = it.color
+          ctx.fillStyle = colOf(it)
           ctx.beginPath()
           ctx.arc(bx, by, 9, 0, Math.PI * 2)
           ctx.fill()
@@ -1094,7 +1137,7 @@ export function RadialWeb({
         if (it && inView(it.x, it.y)) {
           const t = ((now - beaconAt) % 1600) / 1600
           const r0 = Math.max(R + 6, 9 / c.k)
-          ctx.strokeStyle = '#f4b73f'
+          ctx.strokeStyle = (atlas ? C.accent : '#f4b73f')
           ctx.lineWidth = Math.max(1.6, 1.6 / c.k)
           ctx.globalAlpha = 0.7 * (1 - t)
           ctx.beginPath()
@@ -1152,7 +1195,7 @@ export function RadialWeb({
           ctx.beginPath()
           ctx.arc(sx, sy, 10, 0, Math.PI * 2)
           ctx.fill()
-          ctx.fillStyle = '#f4b73f'
+          ctx.fillStyle = (atlas ? C.accent : '#f4b73f')
           ctx.beginPath()
           ctx.arc(sx, sy, 8.5, 0, Math.PI * 2)
           ctx.fill()
@@ -1178,7 +1221,7 @@ export function RadialWeb({
               const ang = (q / 16) * Math.PI * 2 + q * 0.37
               const dist = (14 + (q % 4) * 7) * (0.25 + t * 1.1)
               ctx.globalAlpha = (1 - t) * 0.9
-              ctx.fillStyle = q % 3 === 0 ? '#f4b73f' : q % 3 === 1 ? it.color : C.accent
+              ctx.fillStyle = q % 3 === 0 ? (atlas ? C.accent : '#f4b73f') : q % 3 === 1 ? colOf(it) : C.accent
               ctx.beginPath()
               ctx.arc(cx0 + Math.cos(ang) * dist, cy0 + Math.sin(ang) * dist - t * 6, 2.2 * (1 - t * 0.6), 0, Math.PI * 2)
               ctx.fill()
@@ -1295,7 +1338,7 @@ export function RadialWeb({
         streamHits.current.push({ id: st.id, x: sx - 70, y: sy - 18, w: 140, h: 36 })
         const rimPx = rr2 * c.k
         const fsz = Math.max(8.5, Math.min(12, rimPx * 0.04))
-        ctx.font = `700 ${fsz}px ${font}`
+        ctx.font = `${atlas ? 600 : 700} ${fsz}px ${font}`
         const chars = [...label]
         const sp = fsz > 10 ? 2.2 : 1.4
         const widths = chars.map((ch) => ctx.measureText(ch).width)
@@ -1304,7 +1347,8 @@ export function RadialWeb({
         const bottom = Math.sin(mid) > 0
         const rad = rr2 * c.k
         let ang = mid + ((bottom ? 1 : -1) * tw) / 2 / rad
-        ctx.fillStyle = info.hue
+        // Region names in spaced small caps: ink-2 in the atlas, the hue elsewhere.
+        ctx.fillStyle = atlas ? C.muted : info.hue
         ctx.globalAlpha = hoverStream.current && hoverStream.current !== st.id ? 0.55 : 1
         // Typed onto the rim as the stream sweeps open.
         const typed = T >= INTRO_CLOCK ? chars.length : (() => {
@@ -1757,10 +1801,16 @@ export function RadialWeb({
             aria-label={`Zone ${z.level}: ${z.done} of ${z.count} skills mastered`}
           >
             <span className="flex items-center gap-2.5">
-              <RankGlyph level={z.level} size={compact ? 30 : 32} animated={z.current} />
+              <span className="nx-ring-glyph">
+                <RankGlyph level={z.level} size={compact ? 30 : 32} animated={z.current} />
+              </span>
+              <span className="nx-ring-no" aria-hidden="true">
+                {z.level}
+              </span>
               {!compact && (
                 <span className="min-w-0">
-                  <span className="block text-[10px] font-semibold tracking-[0.12em] text-text-muted uppercase">Zone {z.level}</span>
+                  <span className="nx-ring-zone block text-[10px] font-semibold tracking-[0.12em] text-text-muted uppercase">Zone {z.level}</span>
+                  <span className="nx-ring-name">{tierFor(z.level).name}</span>
                   <span className="block font-mono text-[10px] text-text-muted tabular-nums">
                     {z.done}/{z.count} nodes · {z.pct}%
                   </span>

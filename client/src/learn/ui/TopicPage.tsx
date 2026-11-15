@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Link, Navigate, useParams } from 'react-router-dom'
 import { motion, useScroll, useSpring } from 'motion/react'
 import { CheckCircle2, ChevronDown, ListChecks, Network, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { ErrorState, LoadingBlock } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useAgentPageContext } from '@/context/AgentContext'
 import { isDone, mark, pageKey, useProgress } from '../progress'
-import { LessonBlock } from './Blocks'
+import { LessonBlock, ScrollyFigure } from './Blocks'
+import { Outline } from '@/components/reader/Outline'
+import { EndOfLesson } from '@/components/reader/EndOfLesson'
+import { DSA_TOPICS } from '../content/dsa/syllabus'
+import type { Block } from '../types'
 import { useTopic } from './useTopic'
 import { readRailHidden, useDomOutline, useScrollSpy, writeRailHidden } from '@/components/reader/outline'
 
@@ -19,7 +23,6 @@ export default function TopicPage() {
   const { topic: topicId, page: pageId } = useParams()
   const { entry, topic, error } = useTopic(topicId)
   const { items } = useProgress()
-  const navigate = useNavigate()
   const end = useRef<HTMLDivElement>(null)
   const article = useRef<HTMLElement>(null)
   const [mini, setMiniState] = useState(readRailHidden)
@@ -57,6 +60,7 @@ export default function TopicPage() {
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
   }, [pageId])
 
+  const chapterNo = Math.max(1, DSA_TOPICS.findIndex((t) => t.id === topicId) + 1)
   const outline = useDomOutline(article, `${topic?.id ?? ''}/${page?.id ?? ''}`)
   const active = useScrollSpy(outline.map((h) => h.id))
 
@@ -154,7 +158,7 @@ export default function TopicPage() {
       {/* Centre: the page */}
       <div className="nr-main">
         <div className="nr-bar">
-          <nav aria-label="Breadcrumb" className="notes-crumbs">
+          <nav aria-label="Lesson path" className="notes-crumbs">
             <ol>
               <li>
                 <Link to="/learn?tab=dsa">DSA course</Link>
@@ -192,10 +196,10 @@ export default function TopicPage() {
         <motion.article ref={article} data-agent-content key={page.id} initial={{ y: 8 }} animate={{ y: 0 }} transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }} className="min-w-0">
           <header className="nr-head">
             <p className="nr-kicker">
-              Page {pageIndex + 1} of {topic.pages.length} · {topic.title}
+              Chapter {roman(chapterNo)} · {topic.title} · Page {pageIndex + 1} of {topic.pages.length}
             </p>
             <h1 className="nr-title">{page.title}</h1>
-            {page.summary && <p className="mt-3 mb-0 text-[16.5px] leading-relaxed text-text-secondary">{page.summary}</p>}
+            {page.summary && <p className="nr-dek">{page.summary}</p>}
             <div className="nr-meta">
               <span>{page.minutes} min</span>
               {vizCount > 0 && (
@@ -216,61 +220,35 @@ export default function TopicPage() {
             </div>
           </header>
 
-          <div className="nx-read nx-lesson nx-read--wide space-y-6">
-            {page.blocks.map((b, i) => (
-              <LessonBlock key={i} b={b} bank={bank} />
-            ))}
+          <div className="nx-read nx-lesson nr-prose space-y-6">
+            {groupFigures(page.blocks).map((g, i) =>
+              g.kind === 'scrolly' ? <ScrollyFigure key={i} viz={g.viz} steps={g.steps} /> : <LessonBlock key={i} b={g.b} bank={bank} />,
+            )}
           </div>
         </motion.article>
 
         <div ref={end} className="h-px" />
 
-        <nav className="nr-pager" aria-label="Page navigation">
-          {prev ? (
-            <Link to={`/learn/dsa/${topic.id}/${prev.id}`} className="nr-pager-link" rel="prev">
-              <span className="nr-pager-dir">Previous</span>
-              <span className="nr-pager-title">{prev.title}</span>
-            </Link>
-          ) : (
-            <span />
-          )}
-          {next ? (
-            <button
-              type="button"
-              onClick={() => {
-                mark(pageKey(topic.id, page.id), 'read')
-                navigate(`/learn/dsa/${topic.id}/${next.id}`)
-              }}
-              className="nr-pager-link is-next cursor-pointer"
-            >
-              <span className="nr-pager-dir">Next</span>
-              <span className="nr-pager-title">{next.title}</span>
-            </button>
-          ) : (
-            <Link to={`/learn/dsa/${topic.id}/practice`} className="nr-pager-link is-next">
-              <span className="nr-pager-dir">Finished</span>
-              <span className="nr-pager-title">Question bank for {topic.title}</span>
-            </Link>
-          )}
-        </nav>
+        <EndOfLesson
+          next={
+            next
+              ? { to: `/learn/dsa/${topic.id}/${next.id}`, title: next.title, onGo: () => mark(pageKey(topic.id, page.id), 'read') }
+              : { to: `/learn/dsa/${topic.id}/practice`, title: `Question bank for ${topic.title}`, kicker: 'Finished the chapter' }
+          }
+          prev={prev ? { to: `/learn/dsa/${topic.id}/${prev.id}`, title: prev.title } : null}
+          dots={topic.pages.map((p, k) => ({
+            to: `/learn/dsa/${topic.id}/${p.id}`,
+            title: p.title,
+            done: isDone(items[pageKey(topic.id, p.id)]),
+            current: k === pageIndex,
+          }))}
+          label={`Pages of ${topic.title}`}
+        />
       </div>
 
       {/* Right: on this page */}
       <aside className="nr-toc" aria-label="On this page">
-        {outline.length > 1 && (
-          <>
-            <p className="nr-toc-head">On this page</p>
-            <ol>
-              {outline.map((h) => (
-                <li key={h.id} className={cn(h.level === 3 && 'is-sub')}>
-                  <a href={`#${h.id}`} className={cn(active === h.id && 'is-active')} aria-current={active === h.id ? 'location' : undefined}>
-                    {h.text}
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </>
-        )}
+        <Outline items={outline} active={active} />
         <div className="nr-toc-progress">
           <span className="nr-toc-bar" aria-hidden="true">
             <span style={{ transform: `scaleX(${pct / 100})` }} />
@@ -285,4 +263,31 @@ export default function TopicPage() {
       </aside>
     </div>
   )
+}
+
+const ROMAN: [number, string][] = [[50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']]
+/** 3 → "III": chapter numbers as in a printed book. */
+function roman(n: number): string {
+  let out = ''
+  for (const [v, r] of ROMAN)
+    while (n >= v) {
+      out += r
+      n -= v
+    }
+  return out || String(n)
+}
+
+type Group = { kind: 'block'; b: Block } | { kind: 'scrolly'; viz: Extract<Block, { t: 'viz' }>; steps: Extract<Block, { t: 'steps' }> }
+/** A figure followed by its step-by-step walkthrough becomes one scroll-synced passage. */
+function groupFigures(blocks: Block[]): Group[] {
+  const out: Group[] = []
+  for (let i = 0; i < blocks.length; i++) {
+    const b = blocks[i]
+    const n = blocks[i + 1]
+    if (b.t === 'viz' && n?.t === 'steps' && n.items.length > 1) {
+      out.push({ kind: 'scrolly', viz: b, steps: n })
+      i++
+    } else out.push({ kind: 'block', b })
+  }
+  return out
 }

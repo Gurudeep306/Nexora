@@ -65,8 +65,9 @@ export default function SubmissionsPage() {
     <div>
       <PageHeader
         icon="submissions"
+        eyebrow="Your record"
         title="Submissions"
-        subtitle="Every verdict the judge ever handed you — filter, inspect, and relive the runtime."
+        subtitle="Every verdict the judge has given you, with the code you sent."
         actions={
           <Button variant="outline" size="sm" onClick={refetch} aria-label="Refresh submissions">
             <RefreshCw className="size-3.5" />
@@ -77,7 +78,7 @@ export default function SubmissionsPage() {
 
       <div className="mb-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
         <StatCard label="Total Runs" value={rows.length} icon="submissions" sub="archived submissions" />
-        <StatCard label="Accepted" value={acCount} icon="check-circle" accent="success" sub="clean kills" />
+        <StatCard label="Accepted" value={acCount} icon="check-circle" accent="success" sub="accepted runs" />
         <StatCard label="Accuracy" value={`${accuracy}%`} icon="crosshair" accent="cyan" sub="AC / total" />
         <StatCard
           label="Last Verdict"
@@ -160,7 +161,9 @@ export default function SubmissionsPage() {
             <Table>
               <THead>
                 <TR className="hover:bg-transparent">
-                  <TH className="w-8" />
+                  <TH className="w-8">
+                    <span className="sr-only">Details</span>
+                  </TH>
                   <TH>Verdict</TH>
                   <TH>Problem</TH>
                   <TH className="hidden md:table-cell">Platform</TH>
@@ -177,14 +180,23 @@ export default function SubmissionsPage() {
                       <TR
                         className={cn('cursor-pointer', open && 'bg-surface-2/80')}
                         onClick={() => setExpanded(open ? null : row.id)}
-                        aria-expanded={open}
                       >
                         <TD className="pr-0 text-foreground-faint">
-                          <ChevronDown
-                            className={cn('size-4 transition-transform duration-200', open && 'rotate-180')}
-                            aria-hidden="true"
-                          />
-                          <span className="sr-only">{open ? 'Collapse' : 'Expand'} submission {row.id}</span>
+                          <button
+                            type="button"
+                            aria-expanded={open}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setExpanded(open ? null : row.id)
+                            }}
+                            className="grid size-6 cursor-pointer place-items-center rounded-md hover:text-text-primary"
+                          >
+                            <ChevronDown
+                              className={cn('size-4 transition-transform duration-200', open && 'rotate-180')}
+                              aria-hidden="true"
+                            />
+                            <span className="sr-only">{open ? 'Hide' : 'Show'} the code of submission {row.id}</span>
+                          </button>
                         </TD>
                         <TD>
                           <VerdictBadge verdict={row.verdict} />

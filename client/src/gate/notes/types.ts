@@ -89,6 +89,8 @@ export interface NotesSubject {
   est_minutes: number
   /** PYQs in this subject's scope, and how many are mapped to lesson blocks. */
   coverage: { total: number; covered: number }
+  /** The animation that stands for the subject, drawn at its first frame on the notes front page. */
+  signature?: { id: string; spec: VizSpec }
 }
 
 export interface LessonRef {

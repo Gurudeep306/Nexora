@@ -223,7 +223,7 @@ function TableTool({ op, setOp }: { op: OpTable; setOp: (o: OpTable) => void }) 
       </p>
       {data && (
         <>
-          <div className="lab-tt-wrap">
+          <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
             <table className="lab-tt">
               <caption className="sr-only">Truth table of {show(f!)}: one row per assignment, one column per sub-formula, the last column is the whole formula</caption>
               <thead>
@@ -323,7 +323,7 @@ function EquivView({ a, b, op }: { a: Formula; b: Formula; op: OpTable }) {
         {verdict}
         {!c.equivalent && ` (they differ on ${c.differ.length} row${c.differ.length > 1 ? 's' : ''})`}
       </p>
-      <div className="lab-tt-wrap">
+      <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
         <table className="lab-tt">
           <caption className="sr-only">Columns of A and B on every assignment; the last column marks the rows where they differ</caption>
           <thead>
@@ -369,7 +369,7 @@ function ArgView({ premises, conclusion, op }: { premises: Formula[]; conclusion
             ? `Valid: the conclusion is true on all ${arg.critical.length} critical row${arg.critical.length === 1 ? '' : 's'}`
             : `Invalid: ${arg.counter.length} counterexample row${arg.counter.length > 1 ? 's' : ''} (premises true, conclusion false)`}
       </p>
-      <div className="lab-tt-wrap">
+      <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
         <table className="lab-tt">
           <caption className="sr-only">Premises and conclusion on every assignment; the last column marks critical rows and counterexamples</caption>
           <thead>

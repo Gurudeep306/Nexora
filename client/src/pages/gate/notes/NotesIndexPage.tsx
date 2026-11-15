@@ -14,6 +14,7 @@ import { NOTES_ROUTES, fmtMinutes, notesApi, subjectStyle, useNotesSubjects } fr
 import { useNotesProgress } from '@/gate/notes/progress'
 import { NotesRoot, SubjectIcon } from '@/gate/notes/ui'
 import type { SearchResult } from '@/gate/notes/types'
+import { VizThumb } from '@/viz/VizThumb'
 
 export default function NotesIndexPage() {
   const subjects = useNotesSubjects()
@@ -125,6 +126,7 @@ export default function NotesIndexPage() {
                 return (
                   <li key={s.id} style={subjectStyle(s.color)}>
                     <Link to={NOTES_ROUTES.subject(s.id)} className="nh-subject card card-interactive">
+                      {s.signature && <VizThumb spec={s.signature.spec} className="nh-thumb" />}
                       <span className="flex items-start justify-between gap-3">
                         <SubjectIcon icon={s.icon} />
                         {s.hidden ? <span className="notes-badge">Staff only</span> : <span className="nh-pct">{pct}%</span>}

@@ -4,6 +4,15 @@ import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
 import { Confetti } from '@/components/ui/Confetti'
 
+/** One line of advice per verdict (general, never about this problem's answer). */
+const ADVICE: Record<string, string> = {
+  WA: 'Try the smallest inputs, equal values and overflow first.',
+  TLE: 'The idea is too slow for these limits. Look for a faster approach.',
+  RE: 'Something crashed. Check array bounds, recursion depth and division by zero.',
+  CE: 'It did not compile. The Result tab shows the compiler message.',
+  MLE: 'It used too much memory. Store less, or reuse what you have.',
+}
+
 export function VerdictBanner({
   verdict,
   xpEarned,
@@ -17,6 +26,7 @@ export function VerdictBanner({
   onDismiss: () => void
 }) {
   const isAc = verdict === 'AC' || verdict === 'OK'
+  const advice = verdict ? ADVICE[verdict.toUpperCase()] : undefined
   return (
     <>
     {verdict === 'AC' && <Confetti key={burstId} burstKey={`${verdict}-${burstId ?? 0}`} />}
@@ -30,11 +40,12 @@ export function VerdictBanner({
           exit={{ opacity: 0, y: -8, transition: { duration: 0.12 } }}
           transition={{ duration: 0.22, ease: [0.34, 1.56, 0.64, 1] }}
           className={cn(
-            'pointer-events-auto absolute inset-x-0 top-3 z-30 mx-auto flex w-fit max-w-[92%] cursor-pointer items-center gap-3 rounded-xl border px-4 py-2.5 backdrop-blur-md',
+            'vb pointer-events-auto absolute inset-x-0 top-3 z-30 mx-auto flex w-fit max-w-[92%] cursor-pointer items-center gap-3 rounded-xl border px-4 py-2.5 backdrop-blur-md',
             isAc
               ? 'border-success/50 bg-success/15 glow-box'
               : 'border-destructive/50 bg-destructive/15',
           )}
+          data-ok={isAc || undefined}
           onClick={onDismiss}
         >
           {isAc ? (
@@ -44,10 +55,11 @@ export function VerdictBanner({
           )}
           <VerdictBadge verdict={verdict} />
           {isAc && xpEarned != null && xpEarned > 0 && (
-            <span className="font-display text-sm tracking-wider text-success glow-text tabular-nums">
+            <span className="vb-xp font-display text-sm tracking-wider text-success glow-text tabular-nums">
               +{xpEarned} XP
             </span>
           )}
+          {!isAc && advice && <span className="vb-advice text-[12.5px] text-foreground-dim">{advice}</span>}
           <span className="text-[10px] text-foreground-faint">click to dismiss</span>
         </motion.div>
       )}

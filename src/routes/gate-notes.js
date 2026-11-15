@@ -76,6 +76,16 @@ function build() {
 }
 
 /** Derived, response-ready shapes for one compiled subject. */
+// The animation that stands for a subject on the notes front page (drawn at
+// its first frame). A subject can name one with `signature_viz` in its
+// _meta.json; otherwise these, otherwise its first animation.
+const SIGNATURE_VIZ = { dl: "gate-symbols", dm: "truth-table-build" };
+function signatureOf(doc) {
+  const viz = doc.viz || {};
+  const id = [doc.subject.signature_viz, SIGNATURE_VIZ[doc.subject.id], Object.keys(viz)[0]].find((k) => k && viz[k]);
+  return id ? { signature: { id, spec: viz[id] } } : {};
+}
+
 function view(doc) {
   const s = doc.subject;
   const order = [];
@@ -115,6 +125,7 @@ function view(doc) {
     lessonCount,
     est_minutes: order.reduce((n, id) => n + (doc.lessons[id].est_minutes || 0), 0),
     coverage: s.coverage || { total: 0, covered: 0 },
+    ...signatureOf(doc),
   };
   const brief = (id) => (id ? { id, title: doc.lessons[id].title, chapter: doc.lessons[id].chapter } : null);
   const lessons = new Map();

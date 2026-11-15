@@ -18,11 +18,13 @@ export function Progress({
   /** Accessible name (screen readers announce "<label>, n%"). */
   label?: string
 }) {
-  const pct = max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0
+  // A missing or NaN value reads as 0 (an absent aria-valuenow is invalid).
+  const now = Number.isFinite(value) ? value : 0
+  const pct = max > 0 ? Math.min(100, Math.max(0, (now / max) * 100)) : 0
   return (
     <div
       role="progressbar"
-      aria-valuenow={value}
+      aria-valuenow={now}
       aria-valuemin={0}
       aria-valuemax={max}
       aria-label={label}

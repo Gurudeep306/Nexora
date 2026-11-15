@@ -29,18 +29,24 @@ function StatusCell({ problem }: { problem: Problem }) {
       </Tooltip>
     )
   }
-  return <span className="block size-4.5" aria-label="Unsolved" />
+  return (
+    <span className="block size-4.5">
+      <span className="sr-only">Unsolved</span>
+    </span>
+  )
 }
 
 export function ProblemTable({ problems, bookmarkedIds, onToggleBookmark, busyBookmarkId }: Props) {
   const navigate = useNavigate()
 
   return (
-    <div className="card-neon overflow-hidden">
+    <div className="card-neon pt-table overflow-hidden">
       <Table aria-label="Problems">
         <THead>
           <TR className="hover:bg-transparent">
-            <TH className="w-10" />
+            <TH className="w-10">
+              <span className="sr-only">Bookmark</span>
+            </TH>
             <TH className="w-10">
               <span className="sr-only">Solve status</span>
             </TH>
@@ -98,9 +104,9 @@ export function ProblemTable({ problems, bookmarkedIds, onToggleBookmark, busyBo
                 <TD>
                   <span className="flex items-center gap-2">
                     <span className="min-w-0">
-                      <span className="block truncate font-medium text-foreground">{p.title}</span>
-                      <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[11px] text-foreground-faint">
-                        <span className="font-mono">{p.problem_id}</span>
+                      <span className="pt-title block truncate font-medium text-foreground">{p.title}</span>
+                      <span className="pt-meta mt-0.5 flex flex-wrap items-center gap-1.5 text-[11px] text-foreground-faint">
+                        <span className="pt-id font-mono">{p.problem_id}</span>
                         {tags.map((t, ti) => (
                           <Badge
                             key={t}
@@ -114,10 +120,10 @@ export function ProblemTable({ problems, bookmarkedIds, onToggleBookmark, busyBo
                     </span>
                   </span>
                 </TD>
-                <TD className="hidden md:table-cell">
+                <TD className="pt-platform hidden md:table-cell">
                   <PlatformBadge platform={p.platform} />
                 </TD>
-                <TD>
+                <TD className="pt-diff">
                   <span className="flex items-center gap-2">
                     {p.rating > 0 ? (
                       <DifficultyBadge rating={p.rating} />
