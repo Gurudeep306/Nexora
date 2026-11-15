@@ -57,9 +57,13 @@ function pagesFiles(apiUrl: string | undefined): Plugin {
 export default defineConfig(({ mode }) => ({
   plugins: [react(), tailwindcss(), themeLayer(), pagesFiles(loadEnv(mode, process.cwd(), 'VITE_').VITE_API_URL)],
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
+    alias: [
+      { find: '@', replacement: path.resolve(__dirname, './src') },
+      // monaco-editor 0.57 only exposes its files through an exports map
+      // ("monaco-editor/editor/editor.api"), but monaco-vim still imports the
+      // old "monaco-editor/esm/vs/..." paths. Point those at the real files.
+      { find: /^monaco-editor\/esm\/vs\/(.*?)(\.js)?$/, replacement: path.resolve(__dirname, 'node_modules/monaco-editor/esm/vs/$1.js') },
+    ],
   },
   server: {
     port: 5173,
