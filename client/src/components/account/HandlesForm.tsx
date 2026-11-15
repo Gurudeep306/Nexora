@@ -44,11 +44,11 @@ export function HandlesForm({
       <CardContent className="py-5">
         <form onSubmit={onSubmit} className="space-y-5">
           <SettingsSection
-            title="Platform handles"
-            description="Used by solved-import sync and profile links. Note: preferences are stored server-side per instance."
+            title="Editor and other profiles"
+            description="Your default language, and a CodeChef link for your profile (CodeChef can't be verified or imported yet)."
             icon={<Link2 />}
           >
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 sm:max-w-64">
               {PLATFORM_HANDLE_KEYS.map((h) => (
                 <Field key={h.key} label={`${h.label} handle`}>
                   <Input
@@ -81,7 +81,7 @@ export function HandlesForm({
           </SettingsSection>
           <div className="flex justify-end">
             <Button type="submit" variant="primary" loading={saving} disabled={saving}>
-              {!saving && <Save aria-hidden="true" />} Save handles
+              {!saving && <Save aria-hidden="true" />} Save
             </Button>
           </div>
         </form>
