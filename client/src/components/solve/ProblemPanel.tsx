@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Check, Copy, ExternalLink, FileDown, FileText, Languages, Loader2, Plug, Sigma } from 'lucide-react'
+import { Check, Copy, ExternalLink, FileDown, FileText, Languages, Loader2, Plug, Sigma, ImageOff } from 'lucide-react'
 import { LoadingBlock, Tabs } from '@/components/ui'
 import { sanitizeHtml } from '@/lib/sanitize'
 import { prepareMathHtml, renderMathIn } from '@/lib/math'
@@ -255,12 +255,35 @@ export function ProblemPanel({
                 {extra.interactive && (
                   <Notice icon={<Plug />}>Interactive problem: your program talks to a judge that answers queries. Samples show one conversation; submit on {sourceName} to be judged.</Notice>
                 )}
+                {extra.figures && (
+                  <Notice icon={<ImageOff />}>
+                    <p>
+                      This problem refers to a picture that isn't in the copy shown here.{' '}
+                      {problem?.url ? (
+                        <a href={problem.url} target="_blank" rel="noopener noreferrer" className="font-medium text-primary-bright underline underline-offset-2">
+                          See it on {sourceName}
+                        </a>
+                      ) : (
+                        <>See it on {sourceName}.</>
+                      )}
+                    </p>
+                  </Notice>
+                )}
                 {extra.files && (
                   <Notice icon={<FileText />}>
                     Reads <span className="font-mono">{extra.files.input || 'standard input'}</span> and writes <span className="font-mono">{extra.files.output || 'standard output'}</span>.
                   </Notice>
                 )}
 
+                {extra.source && (
+                  <p className="mb-2 text-[12px] text-text-muted">
+                    Statement from the open dataset{' '}
+                    <a href={extra.source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-text-secondary">
+                      {extra.source.name}
+                    </a>{' '}
+                    ({extra.source.license}), because {sourceName} doesn't let our server read its page. Judged on the examples and, where the answer is exact, the official tests.
+                  </p>
+                )}
                 <article className="nx-statement">
                   {translated ? (
                     <div dangerouslySetInnerHTML={html(translated.html)} />

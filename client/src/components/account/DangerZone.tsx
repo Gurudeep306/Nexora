@@ -49,11 +49,12 @@ export function DangerZone({ settings }: { settings: Record<string, string> }) {
   const doSyncSolved = async () => {
     setSyncing(true)
     try {
-      const res = await api.post<{ ok: boolean; synced?: number; total?: number; error?: string }>(
+      const res = await api.post<{ ok: boolean; synced?: number; total?: number; error?: string; message?: string }>(
         '/api/sync-solved',
       )
       if (!res?.ok) throw new Error(res?.error ?? 'Sync failed')
-      toast.success('Solved list synced', `Imported ${res.synced ?? 0} of ${res.total ?? 0} solves.`)
+      if (res.message) toast.error('Nothing imported', res.message)
+      else toast.success('Solved list synced', `Imported ${res.synced ?? 0} of ${res.total ?? 0} solves.`)
       await refresh()
     } catch (err) {
       toast.error(

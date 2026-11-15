@@ -11,6 +11,7 @@ import { ProfileForm } from '@/components/account/ProfileForm'
 import { AvatarCard } from '@/components/account/AvatarCard'
 import { PasswordForm } from '@/components/account/PasswordForm'
 import { HandlesForm } from '@/components/account/HandlesForm'
+import { LinkedAccounts } from '@/components/account/LinkedAccounts'
 import { PreferencesForm } from '@/components/account/PreferencesForm'
 import { DangerZone } from '@/components/account/DangerZone'
 import type { LanguageOption, ProfileUser, SettingsResponse } from '@/components/account/types'
@@ -121,11 +122,14 @@ export default function SettingsPage() {
             </>
           )}
           {tab === 'platform' && (
+            <>
+            <LinkedAccounts />
             <HandlesForm
               settings={settings}
               languages={languages}
               onSaved={settingsApi.refetch}
             />
+            </>
           )}
           {tab === 'prefs' && (
             <>

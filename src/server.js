@@ -58,7 +58,6 @@ const { initLiveDb } = require("./live-db");
 const {
   fetchCodeforcesContests,
   fetchCodechefContests,
-  fetchCodeforcesSolved,
   fetchAtcoderContests,
 } = require("./sync");
 const { judge, quickRun, LANG_CONFIG, hasRemote, REMOTE_ONLY } = require("./judge");
@@ -866,6 +865,7 @@ async function _saveStatement(problemId, data) {
       JSON.stringify(data.extra || {}),
     ],
   );
+  keepStatementMedia([data.statement, data.inputSpec, data.outputSpec, data.note].join("\n"));
 }
 
 /* ========== IMAGE PROXY (statement images) ==========
@@ -981,6 +981,38 @@ async function fetchProxiedMedia(startUrl) {
   };
 }
 
+/** Saved copy, else fetch and save. Throws when neither has it. */
+async function loadStatementMedia(url) {
+  const store = require("./media-store");
+  const saved = await store.load(url.toString()).catch(() => null);
+  if (saved) return saved;
+  const entry = await fetchProxiedMedia(url);
+  store.save(url.toString(), entry); // background; never blocks the response
+  return entry;
+}
+
+/**
+ * When a statement is saved, fetch and keep its images at once (a few at a
+ * time, in the background), so the figures are already safe the first time
+ * anyone opens the problem — even if the judge blocks us later.
+ */
+function keepStatementMedia(html) {
+  const store = require("./media-store");
+  const urls = store.mediaUrls(html).filter((u) => isProxyableUrl(u)).slice(0, 24);
+  if (!urls.length) return;
+  (async () => {
+    for (const u of urls) {
+      const key = new URL(u).toString();
+      if (imgCacheGet(key)) continue;
+      try {
+        imgCachePut(key, await loadStatementMedia(new URL(u)));
+      } catch {
+        /* the browser still tries the judge directly, then the proxy again */
+      }
+    }
+  })().catch(() => {});
+}
+
 app.get("/api/imgproxy", async (req, res) => {
   const url = String(req.query.url || "");
   let parsed;
@@ -1017,7 +1049,9 @@ app.get("/api/imgproxy", async (req, res) => {
   try {
     let work = imgInflight.get(key);
     if (!work) {
-      work = fetchProxiedMedia(parsed).finally(() => imgInflight.delete(key));
+      // The saved copy first (it survives the judge moving or blocking the file),
+      // then the judge; a fresh fetch is saved for next time.
+      work = loadStatementMedia(parsed).finally(() => imgInflight.delete(key));
       imgInflight.set(key, work);
     }
     const entry = await work;
@@ -1075,6 +1109,9 @@ app.get("/api/problem-statement/:id", async (req, res) => {
     ]);
     if (!problem)
       return res.status(404).json({ ok: false, error: "Not found" });
+    // Someone is reading a Codeforces problem: get its official tests ready
+    // for their first submission (background, once per problem).
+    if (problem.platform === "codeforces") require("./sources/cf-dataset").fetchTests(problem.problem_id);
 
     // 1. Check local problem_statements table first (instant)
     const local = await get(
@@ -1465,6 +1502,26 @@ async function problemTestcases(problemId) {
     seen.add(k);
     cases.push(c);
   });
+  // Codeforces: the official tests (open dataset, exact-answer problems only),
+  // once they're cached. The first time, they're fetched in the background and
+  // this submission is judged on the examples.
+  const prob = await get("SELECT platform, problem_id FROM problems WHERE id=?", [problemId]);
+  if (prob?.platform === "codeforces") {
+    const ds = require("./sources/cf-dataset");
+    const official = await ds.cachedTests(prob.problem_id).catch(() => null);
+    if (official == null) ds.fetchTests(prob.problem_id);
+    let bytes = cases.reduce((n, c) => n + Buffer.byteLength(c.input), 0);
+    for (const [i, t] of (official || []).entries()) {
+      // Stay inside the judge's limits whatever the user added themselves.
+      if (cases.length >= MAX_JUDGE_TESTCASES || bytes + Buffer.byteLength(t.input) > MAX_JUDGE_INPUT_BYTES) break;
+      bytes += Buffer.byteLength(t.input);
+      const c = toCase({ input: t.input, output: t.output }, { id: undefined, label: `Official test ${i + 1}`, hidden: true });
+      const k = tcKey(c.input, c.expected_output);
+      if (isBlankCase(c) || seen.has(k)) continue;
+      seen.add(k);
+      cases.push(c);
+    }
+  }
   return cases;
 }
 
@@ -1966,69 +2023,122 @@ async function cfHandleOwnedByOther(handle) {
   return !!row;
 }
 
-app.post("/api/sync-solved", async (req, res) => {
-  try {
-    // Only ever the handle linked to the signed-in account — anything in the
-    // request (body/query) is ignored.
-    const cfHandle = (
-      await get("SELECT value FROM settings WHERE username=? AND key='cf_handle'", [me()])
-    )?.value?.trim();
-    if (!cfHandle)
-      return res.json({ ok: true, synced: 0, message: "No CF handle set" });
-    if (!CF_HANDLE_RE.test(cfHandle))
-      return res.status(400).json({ ok: false, error: "Your saved Codeforces handle is not valid" });
-    if (await cfHandleOwnedByOther(cfHandle))
-      return res.status(409).json({
-        ok: false,
-        error: "That Codeforces handle is linked to more than one account — sync is disabled for it",
-      });
-
-    const solvedIds = await fetchCodeforcesSolved(cfHandle);
-    // Codeforces ids resolved in memory, progress read once (by index).
-    const catalog = await getCatalog();
-    const cfIds = new Map();
-    for (const p of catalog.rows) if (p.platform === "codeforces") cfIds.set(p.problem_id, p.id);
-    const progress = await userProgressMap();
-    let synced = 0;
-    let lastSynced = null;
-    for (const pid of solvedIds) {
-      const id = cfIds.get(pid);
-      if (id == null) continue;
-      const prob = { id };
-      const existing = progress.get(prob.id);
-      if (!existing) {
-        const xp = await calcXp(prob.id);
-        await run(
-          `INSERT INTO progress(username,problem_rowid,status,attempts,solved_at,xp_earned) VALUES(?,?,?,?,?,?)`,
-          [me(), prob.id, "solved", 1, new Date().toISOString(), xp],
-        );
-        synced++;
-        lastSynced = prob.id;
-        progress.set(prob.id, { status: "solved" });
-      } else if (existing.status !== "solved") {
-        const xp = await calcXp(prob.id);
-        await run(
-          `UPDATE progress SET status='solved', solved_at=COALESCE(solved_at,?), xp_earned=? WHERE username=? AND problem_rowid=?`,
-          [new Date().toISOString(), xp, me(), prob.id],
-        );
-        synced++;
-        lastSynced = prob.id;
-        progress.set(prob.id, { status: "solved" });
-      }
+/**
+ * Mark catalogue problems solved for the signed-in user (an import from a
+ * verified judge account): new rows get XP, earlier attempts become solved,
+ * achievements catch up once at the end. Returns how many changed.
+ */
+async function markSolvedRows(matched) {
+  const progress = await userProgressMap();
+  let changed = 0;
+  let last = null;
+  for (const { rowId, at } of matched) {
+    const existing = progress.get(rowId);
+    if (existing?.status === "solved") continue;
+    const when = new Date(at && at > 0 ? at : Date.now()).toISOString();
+    const xp = await calcXp(rowId);
+    if (!existing) {
+      await run(`INSERT INTO progress(username,problem_rowid,status,attempts,solved_at,xp_earned) VALUES(?,?,?,?,?,?)`, [me(), rowId, "solved", 1, when, xp]);
+    } else {
+      await run(`UPDATE progress SET status='solved', solved_at=COALESCE(solved_at,?), xp_earned=? WHERE username=? AND problem_rowid=?`, [when, xp, me(), rowId]);
     }
-    // Achievements for the imported solves now (this used to wait for the
-    // next server boot, which scanned all of `progress` to find them).
-    if (lastSynced != null) {
-      await checkAchievements(lastSynced, "AC", { backfill: true }).catch((e) =>
-        console.error("[achievements] sync backfill failed:", e.message),
-      );
-    }
-    invalidateCache();
-    res.json({ ok: true, synced, total: solvedIds.length });
-  } catch (e) {
-    res.status(500).json({ ok: false, error: errMessage(e) });
+    progress.set(rowId, { status: "solved" });
+    changed++;
+    last = rowId;
   }
-});
+  if (last != null) {
+    await checkAchievements(last, "AC", { backfill: true }).catch((e) => console.error("[achievements] import backfill failed:", e.message));
+    invalidateCache();
+  }
+  return changed;
+}
+
+/** Platform badges (solve counts, ratings) from the user's verified accounts. */
+async function awardPlatformBadges() {
+  const accounts = require("./accounts");
+  const list = await accounts.list(me());
+  const now = new Date().toISOString();
+  for (const [id, progress, target] of accounts.badgeProgress(list)) {
+    if (progress <= 0) continue;
+    await run(
+      `INSERT INTO user_achievements(username, achievement_id, progress, unlocked_at) VALUES(?,?,?,?)
+       ON CONFLICT(username, achievement_id) DO UPDATE SET progress = MAX(user_achievements.progress, excluded.progress), unlocked_at = COALESCE(user_achievements.unlocked_at, excluded.unlocked_at)`,
+      [me(), id, Math.min(progress, target), progress >= target ? now : null],
+    );
+  }
+}
+
+/* Linked judge accounts: link → prove it's yours → import (src/accounts.js). */
+{
+  const accounts = require("./accounts");
+  const fail = (res, e) => res.status(e.status && e.status < 600 ? e.status : 500).json({ ok: false, error: errMessage(e) });
+  const needUser = (res) => {
+    if (me()) return false;
+    res.status(401).json({ ok: false, error: "Sign in first" });
+    return true;
+  };
+  app.get("/api/accounts", async (_req, res) => {
+    if (needUser(res)) return;
+    try {
+      res.json({ ok: true, accounts: await accounts.list(me()), judges: Object.values(accounts.PLATFORMS).map((p) => ({ id: p.id, name: p.name })) });
+    } catch (e) {
+      fail(res, e);
+    }
+  });
+  app.post("/api/accounts/:platform/start", async (req, res) => {
+    if (needUser(res)) return;
+    try {
+      res.json({ ok: true, account: await accounts.start(me(), req.params.platform, req.body?.handle) });
+    } catch (e) {
+      fail(res, e);
+    }
+  });
+  app.post("/api/accounts/:platform/check", async (req, res) => {
+    if (needUser(res)) return;
+    try {
+      const r = await accounts.check(me(), req.params.platform);
+      if (r.verified) await awardPlatformBadges().catch(() => {});
+      res.json({ ok: true, ...r });
+    } catch (e) {
+      fail(res, e);
+    }
+  });
+  app.post("/api/accounts/:platform/import", async (req, res) => {
+    if (needUser(res)) return;
+    try {
+      const catalog = await getCatalog();
+      const r = await accounts.importSolved(me(), req.params.platform, { catalog: catalog.rows, markSolved: markSolvedRows });
+      await awardPlatformBadges().catch((e) => console.error("[accounts] badges failed:", e.message));
+      res.json({ ok: true, ...r });
+    } catch (e) {
+      fail(res, e);
+    }
+  });
+  app.delete("/api/accounts/:platform", async (req, res) => {
+    if (needUser(res)) return;
+    try {
+      await accounts.unlink(me(), req.params.platform);
+      res.json({ ok: true });
+    } catch (e) {
+      fail(res, e);
+    }
+  });
+  // The old one-click Codeforces sync now imports only from a verified account
+  // (a typed handle used to import anyone's solves).
+  app.post("/api/sync-solved", async (_req, res) => {
+    if (needUser(res)) return;
+    try {
+      const mine = (await accounts.list(me())).find((a) => a.platform === "codeforces");
+      if (!mine?.verified) return res.json({ ok: true, synced: 0, message: "Link and verify your Codeforces account in Settings → Platforms first" });
+      const catalog = await getCatalog();
+      const r = await accounts.importSolved(me(), "codeforces", { catalog: catalog.rows, markSolved: markSolvedRows });
+      await awardPlatformBadges().catch(() => {});
+      res.json({ ok: true, synced: r.added, total: r.total });
+    } catch (e) {
+      fail(res, e);
+    }
+  });
+}
 
 /* ========== TAGS ========== */
 app.get("/api/tags", async (req, res) => {
