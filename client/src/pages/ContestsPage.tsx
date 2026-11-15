@@ -30,7 +30,7 @@ export default function ContestsPage() {
     [],
   )
 
-  const contests = contestsApi.data?.contests ?? []
+  const contests = useMemo(() => contestsApi.data?.contests ?? [], [contestsApi.data])
   const counts = useMemo(() => {
     const c = { all: contests.length, live: 0, upcoming: 0, past: 0 }
     for (const x of contests) c[contestBucket(x)]++
@@ -45,8 +45,9 @@ export default function ContestsPage() {
     <div>
       <PageHeader
         icon="contests"
-        title="Contest Arena"
-        subtitle="Live Codeforces & CodeChef feeds plus password-gated NexoraGuru custom contests."
+        eyebrow="The Workshop"
+        title="Contests"
+        subtitle="Upcoming rounds on Codeforces and CodeChef, and private contests made on NexoraGuru."
         actions={
           <Button variant="outline" size="sm" onClick={contestsApi.refetch} aria-label="Refresh contests">
             <RefreshCw /> Refresh

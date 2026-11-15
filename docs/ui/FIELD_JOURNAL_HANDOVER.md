@@ -220,7 +220,17 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
   60%, phone tabs Problem · Code · Results, editorial reader style. The demo
   cannot judge code or load statements (no network to judges), so check
   those parts where a judge is available.
-- **Next:** Contests, Workshop, Submissions, Bookmarks (brief 4.7).
+- **Contests, Workshop, Submissions, Bookmarks — partly done.** They
+  already use the journal kit from phase 1 (hairline tables, underlined tabs,
+  stat cards). Done here: plain-voice headers with eyebrows ("The Workshop",
+  "Your record"), plain empty states, and verdicts as italic serif words in
+  their meaning colour (`.verdict-word` on every `VerdictBadge`; clay never
+  used as text). Old lint warnings in these files fixed. Axe 0.
+  **Not done:** contests as a calendar-like list with serif day numerals and
+  a "Remind me" link, custom contests as ivory cards (the demo has no
+  contests to design against; the contests feed needs the network).
+- **Next for phase 5:** the "Not done" items above, then open the phase 5 PR
+  (or add to the open PR if the owner prefers one PR).
 
 ## 4. What phases 1–3 built (reuse these; do not rebuild them)
 

@@ -52,5 +52,5 @@ export function VerdictBadge({ verdict, className }: { verdict?: string; classNa
     label: verdict,
     className: 'border-border bg-surface-2 text-foreground-dim',
   }
-  return <Badge className={cn(meta.className, className)}>{meta.label}</Badge>
+  return <Badge className={cn('verdict-word', meta.className, className)}>{meta.label}</Badge>
 }
