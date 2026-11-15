@@ -33,8 +33,8 @@ jobs:
             package-lock.json
             client/package-lock.json
       - run: npm ci --no-audit --no-fund
-      - name: Dependency audit (critical only)
-        run: npm audit --omit=dev --audit-level=critical
+      - name: Dependency audit (high and critical)
+        run: npm audit --omit=dev --audit-level=high
       - name: Syntax check
         run: for f in src/*.js src/routes/*.js src/middleware/*.js src/hive/*.js src/hive/providers/*.js bridge/*.js scripts/*.js; do node --check "$f"; done
       # The GATE solution validator renders formulas with the client's KaTeX.
@@ -72,6 +72,8 @@ jobs:
           cache: npm
           cache-dependency-path: client/package-lock.json
       - run: npm ci --prefix client --no-audit --no-fund
+      - name: Dependency audit (high and critical)
+        run: npm audit --prefix client --omit=dev --audit-level=high
       - name: Lint
         run: npm run lint --prefix client
       - name: Type-check + build
