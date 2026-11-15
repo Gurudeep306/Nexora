@@ -52,7 +52,7 @@ function PillSelect({ label, value, onChange, children }: { label: string; value
 
 function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/10 py-0.5 pr-1 pl-2.5 text-[11px] text-primary-bright">
+    <span className="pf-chip inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/10 py-0.5 pr-1 pl-2.5 text-[11px] text-primary-bright">
       {label}
       <button
         onClick={onRemove}
