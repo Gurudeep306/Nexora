@@ -53,7 +53,7 @@ export function CustomContestsSection({ me }: { me: string }) {
   const [active, setActive] = useState<CustomContestDetail | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
-  const [now, setNow] = useState(Date.now())
+  const [now, setNow] = useState(() => Date.now())
 
   // Update now every second to keep timing accurate
   useEffect(() => {
@@ -63,8 +63,8 @@ export function CustomContestsSection({ me }: { me: string }) {
     return () => clearInterval(interval)
   }, [])
 
+  // `loading` starts true; a reload after the first one flips it back on.
   const load = useCallback(async (): Promise<CustomContestDetail[]> => {
-    setLoading(true)
     try {
       // Contests I created + contests I joined (ids persisted locally).
       const mine = await api
@@ -93,7 +93,7 @@ export function CustomContestsSection({ me }: { me: string }) {
 
   useEffect(() => {
     void load()
-  }, [me])
+  }, [load])
 
   async function deleteContest() {
     if (!active) return
@@ -133,7 +133,7 @@ export function CustomContestsSection({ me }: { me: string }) {
             NexoraGuru Custom Contests
           </h2>
           <p className="mt-0.5 text-xs text-foreground-dim">
-            Password-gated contests hosted by players. Join with a contest code — or forge your own in the Workshop.
+            Private contests made by students. Join one with its code, or make your own in the Workshop.
           </p>
         </div>
         <div className="flex gap-2">
