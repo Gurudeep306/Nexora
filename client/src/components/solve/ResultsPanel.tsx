@@ -123,7 +123,8 @@ export function RunOutput({ result, expected, caseLabel }: { result: RunResult; 
           <span
             className={cn(
               'rounded-md border px-1.5 py-px text-[12px] font-semibold',
-              match ? 'border-success/30 bg-success/10 text-success' : 'border-destructive/30 bg-destructive/10 text-state-error',
+              // No tinted fill: small coloured text on a tint falls under 4.5:1.
+              match ? 'border-success/40 text-state-success' : 'border-destructive/40 text-state-error',
             )}
           >
             {match ? `matches ${caseLabel ?? 'expected'}` : `differs from ${caseLabel ?? 'expected'}`}
@@ -203,7 +204,7 @@ export function JudgeResults({ result }: { result: JudgeResponse }) {
           </div>
         </div>
       )}
-      <ul className="space-y-1.5" aria-label="Testcase results">
+      <ul className="rp-cases space-y-1.5" aria-label="Testcase results">
         {result.results.map((r, i) => {
           const expanded = open === i
           return (
@@ -212,7 +213,8 @@ export function JudgeResults({ result }: { result: JudgeResponse }) {
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.15, delay: Math.min(i, 12) * 0.025 }}
-              className={cn('overflow-hidden rounded-lg border bg-surface', r.passed ? 'border-success/20' : 'border-destructive/35')}
+              data-passed={r.passed || undefined}
+              className={cn('rp-case overflow-hidden rounded-lg border bg-surface', r.passed ? 'border-success/20' : 'border-destructive/35')}
             >
               <button
                 onClick={() => setOpen(expanded ? null : i)}
