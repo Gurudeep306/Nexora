@@ -43,6 +43,7 @@ import { cachedState, cachedStructure, loadWeb, mergeWeb } from '@/components/ne
 import { INTRO_SKIP, pickIntro } from '@/components/nexus/intro'
 import { Icon } from '@/components/icon/Icon'
 import { AtlasIndex, AtlasLedger, TonightSky } from '@/components/nexus/AtlasIndex'
+import { SkyMap } from '@/components/nexus/SkyMap'
 import { dependents } from '@/components/nexus/atlas-data'
 import '@/components/nexus/atlas.css'
 
@@ -261,6 +262,22 @@ function RadialOverview() {
   // constellation, every skill a star. Other styles keep "The Nexus".
   const atlas = useTheme().shown.style === 'journal'
   const deps = useMemo(() => dependents(clusters ?? []), [clusters])
+  // The sky map is the Atlas's chart; the radial web stays one click away.
+  const [view, setView] = useState<'sky' | 'radial'>(() => {
+    try {
+      return localStorage.getItem('nexus:atlas-view') === 'radial' ? 'radial' : 'sky'
+    } catch {
+      return 'sky'
+    }
+  })
+  const chooseView = (v: 'sky' | 'radial') => {
+    setView(v)
+    try {
+      localStorage.setItem('nexus:atlas-view', v)
+    } catch {
+      /* storage blocked: the choice lasts this visit */
+    }
+  }
   // A constellation is started once one of its stars is lit or begun (open alone isn't started).
   const started = (clusters ?? []).filter((c) => c.nodes.some((n) => n.s === 2 || n.p > 0)).length
   const pct = allNodes.length ? Math.round((mastered / allNodes.length) * 100) : 0
@@ -409,7 +426,17 @@ function RadialOverview() {
           onChange={(id) => setTab(id as 'map' | 'index' | 'ranks')}
         />
         {tab === 'map' && (
-          <div className="flex min-w-0 flex-wrap items-center gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-3">
+            {atlas && (
+              <span className="ax-view" role="group" aria-label="Chart view">
+                <button type="button" aria-pressed={view === 'sky'} onClick={() => chooseView('sky')}>
+                  Sky map
+                </button>
+                <button type="button" aria-pressed={view === 'radial'} onClick={() => chooseView('radial')}>
+                  Radial web
+                </button>
+              </span>
+            )}
             {resume && <ContinueChip name={resume.name} subjectName={resume.subjectName} onClick={() => openSubject(resume.subject, resume.key.split(':').slice(1).join(':'))} />}
             <GoalMenu routes={structure?.routes ?? []} goal={goal} onGoal={setGoal} />
             <Button variant="ghost" size="sm" className="nx-press hidden sm:inline-flex" onClick={() => setPaletteOpen(true)} title="Search the Nexus">
@@ -469,6 +496,9 @@ function RadialOverview() {
           )}
         </div>
       ) : (
+        atlas && view === 'sky' ? (
+          <SkyMap clusters={clusters} streams={structure?.streams ?? []} deps={deps} nextKey={next} onOpen={(id) => openSubject(id)} />
+        ) : (
         <div className={cn('grid grid-cols-[minmax(0,1fr)] gap-4', !atlas && 'xl:grid-cols-[minmax(0,1fr)_380px]')}>
           <div>
             {layout ? (
@@ -529,6 +559,7 @@ function RadialOverview() {
             </div>
           )}
         </div>
+        )
       )}
     </div>
   )
