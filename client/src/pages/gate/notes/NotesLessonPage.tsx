@@ -300,6 +300,8 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
               <div className="nr-meta">
                 <span>{fmtMinutes(lesson.est_minutes)}</span>
                 <span>{DIFFICULTY_LABEL[lesson.difficulty]}</span>
+                {lesson.viz.length > 0 && <span>{lesson.viz.length === 1 ? '1 animation' : `${lesson.viz.length} animations`}</span>}
+                {lesson.practice.length > 0 && <span>{lesson.practice.length === 1 ? '1 question' : `${lesson.practice.length} questions`}</span>}
                 {pyqCount > 0 && <span>{pyqCount} past questions</span>}
                 <span className="nr-meta-actions">
                   <button

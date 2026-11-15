@@ -1,5 +1,6 @@
 import { Fragment, useMemo, type ReactNode } from 'react'
 import katex from 'katex'
+import { mathLabelled } from './mathLabelled'
 import 'katex/dist/katex.min.css'
 import { cn } from '@/lib/utils'
 import { tokenize } from './engine/code'
@@ -20,7 +21,7 @@ function math(src: string, display: boolean) {
   }
 }
 
-export function Inline({ text }: { text: string }) {
+export function Inline({ text, header }: { text: string; header?: boolean }) {
   const nodes: ReactNode[] = []
   // The last two alternatives are the only HTML the (transcribed) GATE
   // papers use for emphasis: <u>underline</u> and <br>. Both become React
@@ -32,10 +33,10 @@ export function Inline({ text }: { text: string }) {
   while ((m = re.exec(text))) {
     if (m.index > last) nodes.push(text.slice(last, m.index))
     const tok = m[0]
-    if (m[1]) nodes.push(<span key={k++} className="md-math" dangerouslySetInnerHTML={{ __html: math(tok.slice(1, -1), false) }} />)
+    if (m[1]) nodes.push(<span key={k++} className="md-math" dangerouslySetInnerHTML={{ __html: header ? mathLabelled(tok.slice(1, -1)) : math(tok.slice(1, -1), false) }} />)
     else if (m[2]) nodes.push(<code key={k++}>{tok.slice(1, -1)}</code>)
-    else if (m[3]) nodes.push(<strong key={k++}><Inline text={tok.slice(2, -2)} /></strong>)
-    else if (m[4]) nodes.push(<em key={k++}><Inline text={tok.slice(1, -1)} /></em>)
+    else if (m[3]) nodes.push(<strong key={k++}><Inline text={tok.slice(2, -2)} header={header} /></strong>)
+    else if (m[4]) nodes.push(<em key={k++}><Inline text={tok.slice(1, -1)} header={header} /></em>)
     else if (m[5]) {
       const [, alt, src] = /^!\[([^\]]*)\]\(([^)]+)\)$/.exec(tok)!
       nodes.push(
@@ -67,6 +68,8 @@ export function Inline({ text }: { text: string }) {
   if (last < text.length) nodes.push(text.slice(last))
   return <>{nodes.map((n, i) => (typeof n === 'string' ? <Fragment key={`t${i}`}>{n}</Fragment> : n))}</>
 }
+
+const MD_NUMBER = /^[\s(`]*[-+−±]?\s*[\d.,]+\s*(%|[kKMG]|ns|ms|s)?[\s)`]*$/
 
 export function CodeBlock({ code, lang }: { code: string; lang: Lang }) {
   return (
@@ -218,16 +221,22 @@ export function Markdown({ md, className }: { md: string; className?: string }) 
             return <CodeBlock key={i} code={n.code} lang={(['cpp', 'java', 'python', 'js', 'c'].includes(n.lang) ? n.lang : 'pseudo') as Lang} />
           case 'math':
             return <div key={i} className="md-display" dangerouslySetInnerHTML={{ __html: math(n.tex, true) }} />
-          case 'table':
+          case 'table': {
+            // Columns of plain numbers line up on the right (tabular figures).
+            const numCols = n.head.map((_, k) => n.rows.length > 0 && n.rows.every((r) => MD_NUMBER.test(r[k] ?? '') && /\d/.test(r[k] ?? '')))
             return (
-              <div key={i} className="md-table-wrap" tabIndex={0} role="region" aria-label="Table">
+              <div key={i} className="md-table-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
                 <table>
                   <thead>
                     <tr>
                       {n.head.map((c, j) => (
-                        <th key={j}>
-                          <Inline text={c} />
-                        </th>
+                        c.trim() ? (
+                          <th key={j} className={numCols[j] ? 'is-num' : undefined}>
+                            <Inline text={c} header />
+                          </th>
+                        ) : (
+                          <td key={j} />
+                        )
                       ))}
                     </tr>
                   </thead>
@@ -235,7 +244,7 @@ export function Markdown({ md, className }: { md: string; className?: string }) 
                     {n.rows.map((r, j) => (
                       <tr key={j}>
                         {r.map((c, k) => (
-                          <td key={k}>
+                          <td key={k} className={numCols[k] ? 'is-num' : undefined}>
                             <Inline text={c} />
                           </td>
                         ))}
@@ -245,6 +254,7 @@ export function Markdown({ md, className }: { md: string; className?: string }) 
                 </table>
               </div>
             )
+          }
           case 'hr':
             return <hr key={i} />
         }

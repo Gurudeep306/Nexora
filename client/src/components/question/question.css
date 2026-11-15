@@ -90,6 +90,7 @@
     line-height: 1.6;
     color: var(--ed-ink);
     max-width: 72ch;
+    min-width: 0;
     overflow-wrap: anywhere;
   }
   @media (min-width: 640px) {

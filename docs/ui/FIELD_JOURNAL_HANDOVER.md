@@ -144,26 +144,33 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
    sit in the column; move definitions/asides/footnotes to the margin with
    `Sidenote` on wide screens like the DSA reader. Footnote numbers should
    show their text on hover or tap (brief 4.4).
-4. **Notes title block**: add the serif dek and match the DSA mono meta line
-   ("55 min · 3 animations · 11 past questions").
-5. **Tables**: numbers right-aligned in tabular figures (brief 4.4) in both
-   readers; display-maths equation numbers (optional).
+4. ~~Notes title block~~ **mostly done**: the mono meta line now reads
+   "55 min · Basic · 3 animations · 3 questions · 11 past questions". There is
+   **no dek** yet because lessons have no one-line summary field; add a `dek`
+   to the lesson front matter (compiler + `Lesson` type) and render it as
+   `.nr-dek`, rather than inventing one.
+5. ~~Tables~~ **done**: columns of plain numbers are right-aligned with
+   tabular figures in both readers (`isNumberCell` in `NotesContent.tsx`,
+   `MD_NUMBER`/`.is-num` in `learn/md.tsx`; an author's own alignment wins).
+   Tables are focusable `role="group"` boxes (not landmarks, since several
+   tables can share header words). Equation numbers: not done (optional).
 6. **Code**: active line in oat when tied to a viz step (DSA player has a code
    bar; check it reads as oat in journal), language tabs underlined
    (CodeTabs active tab is now ink with a clay underline in journal).
 7. **System Design notes reader**
    (`learn/system-design/components/SystemNotesReader.tsx`): give it the same
    reader parts if it is a lesson reader.
-8. **Known open axe issue**: `/gate/notes/dl/multiplexers` has
-   `empty-table-header` on tables whose header cells are **maths only**
-   (KaTeX's visible HTML is `aria-hidden`, the MathML copy is visually
-   hidden, so axe sees no visible text). Fix properly (for example render a
-   visible plain-text fallback for header maths, or make the header a
-   `<td>` row when it is a value row). Run axe across **every** published
-   notes lesson (list them from `/api/gate/notes/<subject>`), not just two.
-9. A sub-pixel (0.78px) overflow showed once on the phone on
-   `/gate/notes/dl/signed-numbers` from a practice question's code block;
-   it reports `overflowX=1` intermittently. Check and fix.
+8. ~~Axe across every notes lesson~~ **done**: all 45 published lessons
+   (dl, dm, demo) pass axe in light (dark and phone were run too — see the
+   phase 4 PR). Fixes: maths-only table headers render KaTeX's visible HTML
+   with the source as the name (`learn/mathLabelled.ts`, used by both
+   readers via `header` on `Inline`/`Inlines`); empty corner header cells are
+   plain cells; lab subheads are h3 (were h4, broke heading order); labelled
+   lab strips have roles. A sweep script pattern: list lessons from
+   `/api/gate/notes/<subject>`, open each, run axe (see
+   `client/scripts/check-page.cjs` for the login and look setup).
+9. ~~Phone overflow~~ **done**: `.qc-text` had no `min-width: 0`, so a code
+   block in a question pushed the card 18px wider than a phone screen.
 10. Screenshots (desktop light, desktop dark, phone) of every reader route next
     to `/?preview`, then open the **phase 4 PR** (none is open yet for phase 4).
 
