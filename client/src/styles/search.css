@@ -1,0 +1,111 @@
+/*
+  One search field for the whole site. Research notes (Raycast, Linear,
+  Vercel, Notion, cmdk): a quiet 36–44px field, the icon inside on the left,
+  a short placeholder, no label text around it, a shortcut chip on the right
+  that steps back on focus, and a focus state that brightens the edge rather
+  than adding a coloured glow.
+
+    <label class="search-field">
+      <svg class="search-field-icon" …/>
+      <input type="search" placeholder="Search problems" />
+      <kbd class="search-field-kbd">/</kbd>        (optional)
+    </label>
+
+  Sizes: default 36px, .is-lg 44px (page-level search), .is-sm 32px.
+*/
+.search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 10px 0 12px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  cursor: text;
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-fast) var(--ease-standard),
+    background-color var(--dur-fast) var(--ease-standard);
+}
+.search-field:hover {
+  border-color: var(--color-border-strong);
+}
+.search-field:focus-within {
+  border-color: color-mix(in oklab, var(--color-text-primary) 45%, var(--color-border));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+}
+.search-field.is-lg {
+  height: 44px;
+  padding-left: 14px;
+  font-size: 15px;
+}
+.search-field.is-sm {
+  height: 32px;
+}
+.search-field-icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-muted);
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+.search-field:focus-within .search-field-icon {
+  color: var(--color-text-secondary);
+}
+.search-field input {
+  min-width: 0;
+  flex: 1;
+  height: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font-size: 14px;
+  box-shadow: none;
+  padding: 0;
+}
+.search-field.is-lg input {
+  font-size: 15px;
+}
+.search-field input::placeholder {
+  color: var(--color-text-muted);
+}
+.search-field input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+.search-field-kbd {
+  flex: none;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 5px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface-2);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-standard);
+}
+.search-field:focus-within .search-field-kbd {
+  opacity: 0;
+}
+.search-field-clear {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+.search-field-clear:hover {
+  background: var(--color-bg-surface-3);
+  color: var(--color-text-primary);
+}

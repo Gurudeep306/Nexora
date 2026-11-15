@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { motion, useScroll, useSpring } from 'motion/react'
-import { CheckCircle2, ChevronDown, ListChecks, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { CheckCircle2, ChevronDown, ListChecks, Network, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { ErrorState, LoadingBlock } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useAgentPageContext } from '@/context/AgentContext'
@@ -164,6 +164,14 @@ export default function TopicPage() {
               </li>
             </ol>
           </nav>
+          <span className="nr-bar-links">
+            <Link to="/learn/dsa" className="nr-bar-link">
+              <Network className="size-3.5" aria-hidden="true" /> Skill tree
+            </Link>
+            <Link to={`/learn/dsa/${topic.id}/practice`} className="nr-bar-link">
+              <ListChecks className="size-3.5" aria-hidden="true" /> Practice
+            </Link>
+          </span>
         </div>
         {/* Phones: the page list as a disclosure */}
         <details className="notes-tree-mobile" open={navOpen} onToggle={(e) => setNavFor((e.target as HTMLDetailsElement).open ? (pageId ?? '') : null)}>
