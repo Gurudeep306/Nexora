@@ -259,7 +259,7 @@ export function MessagesTab({ me, socket }: Props) {
             Conversations
           </h2>
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto p-2">
+        <div tabIndex={0} aria-label="Conversations list" className="min-h-0 flex-1 overflow-y-auto p-2 outline-none focus-visible:ring-2 focus-visible:ring-accent-brand">
           {friendsApi.loading ? (
             <LoadingBlock rows={4} className="p-2" />
           ) : friends.length === 0 ? (
@@ -348,7 +348,7 @@ export function MessagesTab({ me, socket }: Props) {
               {peerTyping && <TypingDots />}
             </div>
 
-            <div ref={scrollRef} className="min-h-0 flex-1 space-y-2.5 overflow-y-auto p-4">
+            <div ref={scrollRef} tabIndex={0} aria-label="Messages" className="min-h-0 flex-1 space-y-2.5 overflow-y-auto p-4 outline-none focus-visible:ring-2 focus-visible:ring-accent-brand">
               {loadingThread ? (
                 <LoadingBlock rows={5} />
               ) : threadError ? (

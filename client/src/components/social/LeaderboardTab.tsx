@@ -133,7 +133,7 @@ export function LeaderboardTab({ me }: { me: string }) {
                     </div>
                     <p className={cn('font-display text-xl tabular-nums', p.cls)}>
                       {formatNumber(meta.value(row))}
-                      <span className="ml-1 text-[10px] tracking-wider uppercase opacity-70">
+                      <span className="ml-1 text-[10px] tracking-wider text-text-muted uppercase">
                         {meta.unit}
                       </span>
                     </p>

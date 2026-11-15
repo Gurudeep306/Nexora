@@ -1777,3 +1777,101 @@ html[data-pattern] body {
   background: transparent;
   padding-inline: 0;
 }
+
+/* ── Field Journal — phase 7: Analytics ("The Ledger") ─────────────────── */
+/* Serif chart titles, figures in ink, today's bars in ink with the latest
+   day in clay; sections as plain serif headings. */
+[data-style='journal'] .an-page [data-ui='card-title'] {
+  font-family: var(--ed-serif);
+  font-weight: 400;
+  font-size: 1.1875rem;
+  letter-spacing: -0.01em;
+  text-transform: none;
+}
+[data-style='journal'] .an-page [data-ui='card-title'] svg,
+[data-style='journal'] .an-today-icon,
+[data-style='journal'] .an-icon {
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .an-today-num {
+  font-family: var(--ed-serif);
+  font-weight: 400;
+  color: var(--color-text-primary);
+}
+[data-style='journal'] .an-day-bar {
+  background: var(--color-text-secondary);
+}
+[data-style='journal'] .an-section {
+  font-family: var(--ed-serif);
+  font-weight: 400;
+  font-size: 1.75rem;
+  letter-spacing: -0.015em;
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
+}
+[data-style='journal'] .an-next {
+  font-family: var(--ed-serif);
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+}
+[data-style='journal'] .an-empty {
+  font-family: var(--ed-serif);
+  font-size: 1rem;
+  border-radius: 0;
+  border-width: 0 0 0 2px;
+  border-color: var(--color-text-primary);
+  background: transparent;
+}
+[data-style='journal'] .an-page .glow-box {
+  border-color: var(--color-border);
+}
+
+/* ── Field Journal — phase 7: Social ───────────────────────────────────── */
+/* One reading column: posts on ivory with the body in serif, reactions as
+   quiet counts, the margin as hairline lists, no floating shadows. */
+[data-style='journal'] .so-body {
+  font-family: var(--ed-serif);
+  font-size: 1.125rem;
+  line-height: 1.55;
+}
+[data-style='journal'] .so-body code,
+[data-style='journal'] .so-body pre {
+  font-family: var(--font-mono);
+}
+[data-style='journal'] .so-act {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+[data-style='journal'] .so-fresh {
+  box-shadow: 0 0 #0000;
+}
+[data-style='journal'] .so-aside .card {
+  border: 0;
+  border-top: 1px solid var(--color-text-primary);
+  border-radius: 0;
+  background: transparent;
+  padding-inline: 0;
+}
+[data-style='journal'] .so-aside .card h2 {
+  font-family: var(--ed-serif);
+  font-weight: 400;
+  font-size: 1.25rem;
+}
+[data-style='journal'] .so-aside .card h2 svg {
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .so-live {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  border-radius: 0;
+  border-width: 0 0 1px;
+}
+/* Mentions and #tags: ink with an underline (clay is never text). */
+[data-style='journal'] .rt-mention,
+[data-style='journal'] .rt-tag {
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--color-border-strong);
+  text-underline-offset: 3px;
+}

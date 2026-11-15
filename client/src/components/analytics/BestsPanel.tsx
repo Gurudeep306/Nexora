@@ -12,24 +12,24 @@ export function NextLevelCard({ perf }: { perf: PerformanceResponse }) {
     <Card glow>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Icon name="rocket" className="size-4 text-cyan" aria-hidden="true" />
-          Next Rift
+          <Icon name="rocket" className="an-icon size-4 text-cyan" aria-hidden="true" />
+          Next level
         </CardTitle>
       </CardHeader>
       <CardContent>
         {nl ? (
           <div className="space-y-2">
-            <p className="font-display text-lg tracking-wide" style={{ color: `color-mix(in oklab, ${nl.color} 60%, var(--color-text-primary))` }}>
-              LVL {nl.level} · {nl.name}
+            <p className="an-next font-display text-lg tracking-wide text-text-primary">
+              Level {nl.level} · {nl.name}
             </p>
             <ul className="space-y-1 text-xs text-foreground-dim">
               <li className="flex justify-between gap-2">
                 <span>XP needed</span>
-                <span className="font-mono text-primary-bright tabular-nums">{formatNumber(nl.xpNeeded)}</span>
+                <span className="font-mono text-text-primary tabular-nums">{formatNumber(nl.xpNeeded)}</span>
               </li>
               <li className="flex justify-between gap-2">
                 <span>Solves needed</span>
-                <span className="font-mono text-cyan tabular-nums">{formatNumber(nl.probsNeeded)}</span>
+                <span className="font-mono text-text-primary tabular-nums">{formatNumber(nl.probsNeeded)}</span>
               </li>
               <li className="flex justify-between gap-2">
                 <span>Estimated time</span>
@@ -41,7 +41,7 @@ export function NextLevelCard({ perf }: { perf: PerformanceResponse }) {
           </div>
         ) : (
           <p className="text-sm text-foreground-dim">
-            Maximum rift reached — you are the <span className="text-gradient font-display">∞ Overflow</span>.
+            Top level reached: you are at <span className="font-display text-text-primary">∞ Overflow</span>.
           </p>
         )}
       </CardContent>

@@ -40,7 +40,7 @@ export function Composer({
   quote,
   autoFocus,
   compact,
-  placeholder = 'Share a win, ask a question, drop a snippet…',
+  placeholder = 'Share what you learned today…',
 }: {
   onPosted: (post: Post) => void
   quote?: Post | null
