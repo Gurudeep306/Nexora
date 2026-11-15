@@ -215,8 +215,8 @@ function Shell() {
     return (
       <div className="hive-root grid h-dvh place-items-center" role="status" aria-label="Loading Hive">
         <div className="flex flex-col items-center gap-4">
-          <HiveLogo size={56} live />
-          <span className="text-[15px] font-semibold tracking-[-0.01em] text-text-primary">Hive</span>
+          <HiveLogo size={56} draw />
+          <span className="hive-boot-word text-[15px] font-semibold tracking-[-0.01em] text-text-primary">Hive</span>
           <span className="hive-boot-bar" aria-hidden="true">
             <span />
           </span>
