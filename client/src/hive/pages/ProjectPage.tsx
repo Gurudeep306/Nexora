@@ -459,10 +459,10 @@ function SessionComposer({ project, repos }: { project: Project; repos: LinkedRe
         )}
         <span className="mx-1 h-5 w-px bg-[var(--hive-line)]" />
         <select value={where} onChange={(e) => setWhere(e.target.value)} aria-label="Where to run" className="h-7 max-w-56 truncate rounded-full bg-text-primary/[0.06] px-2.5 text-[12px] outline-none">
-          {project.repo_owner && <option value="gh:primary">☁ {project.repo_name} (safe copy → PR)</option>}
+          {project.repo_owner && <option value="gh:primary">{project.repo_name} (safe copy → PR)</option>}
           {repos.map((r) => (
             <option key={r.id} value={`gh:${r.id}`}>
-              ☁ {r.repo_name}
+              {r.repo_name}
               {r.role ? ` · ${r.role}` : ''}
             </option>
           ))}

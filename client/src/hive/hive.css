@@ -398,3 +398,52 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
   .hive-root *::before,
   .hive-root *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+/* ── Hive mark: flat app-icon tile; live pulse + boot draw-in ─────────── */
+.hive-mark-live .node { animation: hive-blink 1.6s ease-in-out infinite; }
+.hive-mark-live .node:nth-child(2) { animation-delay: 0.53s; }
+.hive-mark-live .node:nth-child(3) { animation-delay: 1.06s; }
+.hive-mark-live .node-core { animation: none; }
+.hive-mark-draw .hive-mark-links path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: hive-mark-draw 480ms var(--hive-ease) forwards;
+}
+.hive-mark-draw .hive-mark-links path:nth-of-type(2) { animation-delay: 110ms; }
+.hive-mark-draw .hive-mark-links path:nth-of-type(3) { animation-delay: 220ms; }
+.hive-mark-draw .hive-mark-links path:nth-of-type(4) { animation-delay: 330ms; }
+.hive-mark-draw .node { opacity: 0; animation: hive-mark-pop 240ms var(--hive-ease) forwards; }
+.hive-mark-draw .node:nth-child(1) { animation-delay: 240ms; }
+.hive-mark-draw .node:nth-child(2) { animation-delay: 360ms; }
+.hive-mark-draw .node:nth-child(3) { animation-delay: 480ms; }
+.hive-mark-draw .node-core { animation-delay: 600ms; }
+@keyframes hive-mark-draw { to { stroke-dashoffset: 0; } }
+@keyframes hive-mark-pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+.hive-mark .node { transform-box: fill-box; transform-origin: center; }
+
+/* Boot screen: wordmark rises in after the mark draws. */
+.hive-boot-word { animation: hive-boot-in 360ms var(--hive-ease) 420ms both; }
+@keyframes hive-boot-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+/* "Thinking…" placeholder in chat/session: cycling phase word + 3 dots. */
+.hive-word-swap { display: inline-block; animation: hive-word-in 320ms var(--hive-ease) both; }
+@keyframes hive-word-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+.hive-dots { display: inline-flex; align-items: center; gap: 3px; }
+.hive-dots i {
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: currentColor;
+  animation: hive-blink 1.1s ease-in-out infinite;
+}
+.hive-dots i:nth-child(2) { animation-delay: 0.18s; }
+.hive-dots i:nth-child(3) { animation-delay: 0.36s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hive-mark-live .node,
+  .hive-mark-draw .hive-mark-links path,
+  .hive-mark-draw .node,
+  .hive-boot-word,
+  .hive-word-swap,
+  .hive-dots i { animation: none; stroke-dashoffset: 0; opacity: 1; transform: none; }
+}

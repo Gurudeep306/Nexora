@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { FolderGit2, Inbox, MoreHorizontal, Plus, RotateCcw } from 'lucide-react'
 import { Button, Kbd, Tooltip } from '@/components/ui'
-import { ContextRing, CopyField, DataTable, Empty, ModelChip, OverflowTabs, PageHead, PageHeader, Panel, PanelGroup, PanelSeparator, Problem, QuotaMeter, Row, RowList, SectionLabel, SegmentedControl, Skeleton, Spinner, StatusPill, friendlyModel, type Status } from '../kit'
+import { ContextRing, CopyField, DataTable, Empty, ModelChip, OverflowTabs, PageHead, PageHeader, Panel, PanelGroup, PanelSeparator, Problem, QuotaMeter, Row, RowList, SectionLabel, SegmentedControl, Skeleton, Spinner, StatusPill, ThinkingIndicator, friendlyModel, type Status } from '../kit'
+import { HiveLogo } from '../HiveLogo'
 
 const STATUSES: Status[] = ['queued', 'planning', 'running', 'needs', 'review', 'done', 'failed', 'stopped', 'limited']
 const MODELS: [string, string][] = [
@@ -188,6 +189,16 @@ export default function DevUiPage() {
             Layouts persist per group id in localStorage through react-resizable-panels’ useDefaultLayout — same as the solve workspace.
           </Panel>
         </PanelGroup>
+      </Section>
+
+      <Section title="Brand mark + thinking indicator (live, draw-in, cycling words)">
+        <div className="flex flex-wrap items-center gap-5">
+          <HiveLogo size={20} />
+          <HiveLogo size={28} />
+          <HiveLogo size={40} live />
+          <HiveLogo size={56} draw />
+          <ThinkingIndicator />
+        </div>
       </Section>
 
       <Section title="Loaders (spinner, skeleton, context ring)">
