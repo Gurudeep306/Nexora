@@ -1185,3 +1185,13 @@ html[data-pattern] body {
   font-family: var(--font-display);
   color: var(--ed-muted-on-feature, var(--color-text-secondary));
 }
+
+/* Notes front page: the subject's animation on a manilla plate. */
+[data-style='journal'] .nh-thumb {
+  background: var(--ed-feature, var(--color-bg-surface-2));
+  border-radius: 16px;
+  --viz-subject: var(--ed-clay, var(--color-accent-brand));
+}
+[data-style='journal'] .nh-soon li {
+  color: var(--color-text-muted);
+}

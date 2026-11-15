@@ -296,6 +296,17 @@
   padding: 20px;
   text-decoration: none !important;
 }
+.nh-thumb {
+  display: block;
+  margin: -8px -8px 6px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--color-bg-surface-2);
+  --viz-subject: var(--notes-subject-ink, var(--color-accent-brand));
+}
+.nh-thumb .nxv-svg {
+  max-height: 150px;
+}
 .nh-pct {
   font-family: var(--font-mono);
   font-size: 12px;

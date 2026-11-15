@@ -123,12 +123,15 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
   have a name.
 
 **Left for phase 4 (part 2):**
-1. **Notes index** (`/gate/notes`, `pages/gate/notes/NotesIndexPage.tsx`):
-   "Ready to read" as ivory cards, each with a **live first-frame thumbnail**
-   of the subject's signature animation (DSA: sorting; Digital Logic: gates;
-   Discrete Maths: Venn) — reuse the real viz components at frame 0, no
-   pictures; "Being written" as muted rows. It currently passes axe but is the
-   older layout.
+1. ~~Notes index~~ **done**: each "Ready to read" card shows the first frame
+   of the subject's signature animation, drawn live by `viz/VizThumb.tsx`
+   (the real scene renderer, no pictures) on a manilla plate. The server adds
+   `signature: { id, spec }` to each subject card (`signatureOf()` in
+   `src/routes/gate-notes.js`: `signature_viz` in the subject's `_meta.json`,
+   else `SIGNATURE_VIZ` — dl: gate-symbols, dm: truth-table-build — else the
+   first animation). "Being written" rows are muted. Axe 0 in light, dark,
+   phone. (Discrete Maths has no Venn animation yet, so it uses the truth
+   table; switch to a Venn diagram when one is written.)
 2. **Notes subject page** (`/gate/notes/:subject`): the 4.3 pattern (book
    contents, like `components/nexus/SubjectContents.tsx`). Passes axe now.
 3. **Margin sidenotes in GATE notes**: notes/asides are notes now but still
