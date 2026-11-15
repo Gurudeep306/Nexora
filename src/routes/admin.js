@@ -246,6 +246,7 @@ function createAdminRouter(deps) {
         registrationsOpen: s.registrations.open && !priv,
         flags: s.feature_flags,
         maintenance: s.maintenance.enabled ? { message: s.maintenance.message } : null,
+        defaultStyle: s.default_style,
         banners: announcements.filter((x) => x.kind === "banner").slice(0, 3),
         broadcasts: announcements.filter((x) => x.kind === "broadcast").slice(0, 8),
         notices,
@@ -909,6 +910,21 @@ function createAdminRouter(deps) {
       await audit(req, "site.maintenance", { targetType: "site", target: "maintenance", before, after });
       siteChanged();
       res.json({ ok: true, maintenance: after });
+    }),
+  );
+
+  router.put(
+    "/api/admin/site/default-style",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const before = (await getSettings()).default_style;
+      const v = req.body?.style;
+      const after = v === null || v === "" || v === undefined ? null : str(v, { max: 40, field: "style" });
+      if (after !== null && !/^[a-z-]{2,40}$/.test(after)) bad("Unknown style");
+      await setSetting("default_style", after, req.access.username);
+      await audit(req, "site.default_style", { targetType: "site", target: "default_style", before, after });
+      siteChanged();
+      res.json({ ok: true, default_style: after });
     }),
   );
 

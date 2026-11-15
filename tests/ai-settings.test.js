@@ -159,3 +159,20 @@ test('add a provider, list its models, assign them and route AI calls there', as
   assert.deepEqual(del.body.slots, {});
   assert.equal(del.body.active, 'none');
 });
+
+test('site default style and the new section switches', async () => {
+  assert.equal((await call('PUT', '/api/admin/site/default-style', member, { style: 'editorial' })).status, 404);
+  assert.equal((await call('PUT', '/api/admin/site/default-style', owner, { style: '<x>' })).status, 400);
+  assert.equal((await call('PUT', '/api/admin/site/default-style', owner, { style: 'editorial' })).status, 200);
+  assert.equal((await call('GET', '/api/site/status', member)).body.defaultStyle, 'editorial');
+  await call('PUT', '/api/admin/site/default-style', owner, { style: null });
+  assert.equal((await call('GET', '/api/site/status', member)).body.defaultStyle, null);
+
+  // GATE notes can be switched off without switching off GATE practice.
+  assert.equal((await call('PUT', '/api/admin/site/flags', owner, { notes: false })).status, 200);
+  const notes = await call('GET', '/api/gate/notes', member);
+  assert.equal(notes.status, 403);
+  assert.equal(notes.body.feature, 'notes');
+  assert.notEqual((await call('GET', '/api/gate/subjects', member)).body.feature, 'notes');
+  await call('PUT', '/api/admin/site/flags', owner, { notes: true });
+});
