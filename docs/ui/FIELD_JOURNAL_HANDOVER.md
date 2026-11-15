@@ -66,7 +66,7 @@ The owner is the founder. They often work from a phone. They want:
 | 3 | One shared question card on every question surface, GATE solutions restyled, community stats, review queue countdown and stack | **Merged** in PR #113 |
 | 4 | The reader: lessons and GATE notes, viz engine colours and player, sidenotes, scroll-sync, notes index and subject pages | **Built**, pull request open from `claude/clever-babbage-km37j9`, waiting for the owner's "merge". Left-overs in 3.1 (System Design reader, notes dek, footnotes) |
 | 5 | Coding: Problems, Solve (statement, Monaco theme, judging, verdicts, editorials), Contests, Workshop, Submissions, Bookmarks | **In progress** on the same branch (PR #114 is phase 4; phase 5 commits follow it). Done: Problems page. See 3.2 |
-| 6 | Nexus: the star chart ("The Atlas") | To do |
+| 6 | Nexus: the star chart ("The Atlas") | **Started** on the same branch. See 3.3 |
 | 7 | Profile and the Ledger: Profile, Analytics, Achievements, Social | To do |
 | 8 | GATE home and the remaining pages: GATE home and subpages (CBT restyle only), Settings, Appearance, Admin, 404, errors, loading | To do |
 | 9 | Polish sweep and docs | To do |
@@ -246,6 +246,40 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
   **Not done:** custom contests as ivory cards (no data in the demo).
 - **Next for phase 5:** the "Not done" items above, then open the phase 5 PR
   (or add to the open PR if the owner prefers one PR).
+
+### 3.3 Phase 6: progress
+
+- **Atlas mode in the existing renderer — done.**
+  `components/nexus/RadialWeb.tsx` draws on a canvas. Under journal
+  (`document.documentElement.dataset.style === 'journal'`, re-read when the
+  theme changes) it switches to an engraved star chart without changing any
+  behaviour:
+  - `colOf(it)` returns ink instead of the zone hue
+  - `hueOf` returns ink-2
+  - no stream washes or zone tints
+  - the rim is a hairline
+  - region boundaries are dashed
+  - region names are ink-2 small caps
+  - stars: locked = hollow hairline, in progress = clay outline,
+    mastered = solid ink with a canvas spark cross
+  - the gold goal path and beacon become clay
+  Dark mode inverts automatically (ink is the text colour).
+- **Header — done.** Under journal: "The Atlas · Your sky", with the lead
+  line carrying real figures (stars lit, constellations started, mastery %).
+  The legend becomes an engraved key (`.nx-legend-stars`).
+- Axe 0 in light, dark and phone.
+- **Not done (brief 4.8):**
+  - star size by weight (lessons + problems)
+  - the clay path from the centre on hover (it uses ink now)
+  - "ignite" ring for newly unlocked stars (an accent pulse exists)
+  - the side panel as an ivory sheet with "x of y lessons · x of y
+    problems" and Read · Practise · Prerequisites links
+  - list view (default on phones) with constellation headings
+  - zoom-in serif italic names
+  - concentric ring tick labels Bit → ∞ Overflow
+  - the zone list on the left still uses hexagon zone icons
+  Do these next. The renderer is large (about 1,900 lines); the drawing
+  is in one effect, starting at "/* ── rendering ── */".
 
 ## 4. What phases 1–3 built (reuse these; do not rebuild them)
 
