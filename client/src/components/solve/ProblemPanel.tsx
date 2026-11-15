@@ -200,8 +200,34 @@ export function ProblemPanel({
         {tab === 'statement' && (
           <>
             {statementLoading && <LoadingBlock rows={6} />}
-            {statementError && <p className="rounded-lg bg-[color-mix(in_oklab,var(--color-state-error)_10%,transparent)] px-3 py-2 text-[13px] text-state-error">{statementError}</p>}
-            {statement && !statementLoading && (
+            {statementError && (
+              <div className="stmt-away">
+                <h3 className="stmt-away-title">The statement didn&apos;t load</h3>
+                <p className="stmt-away-text">{statementError}</p>
+                {problem?.url && (
+                  <a href={problem.url} target="_blank" rel="noopener noreferrer" className="stmt-away-btn">
+                    Open on {sourceName} <ExternalLink className="size-3.5" aria-hidden="true" />
+                  </a>
+                )}
+              </div>
+            )}
+            {statement?.unavailable && !statementLoading && (
+              <div className="stmt-away">
+                <span className="stmt-away-icon" aria-hidden="true">
+                  <FileText className="size-5" />
+                </span>
+                <h3 className="stmt-away-title">Read this problem on {sourceName}</h3>
+                <p className="stmt-away-text">
+                  {sourceName} doesn&apos;t let other sites load its statements, so it opens there in a new tab. You can still write, run and test your solution here — add the examples as tests.
+                </p>
+                {(statement.url || problem?.url) && (
+                  <a href={statement.url || problem?.url} target="_blank" rel="noopener noreferrer" className="stmt-away-btn">
+                    Open on {sourceName} <ExternalLink className="size-3.5" aria-hidden="true" />
+                  </a>
+                )}
+              </div>
+            )}
+            {statement && !statement.unavailable && !statementLoading && (
               <div ref={bodyRef}>
                 {translating && !custom && (
                   <div className="mb-5">
@@ -294,9 +320,16 @@ export function ProblemPanel({
                 )}
 
                 {extra.pdf && (
-                  <a href={extra.pdf} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-1.5 text-[13px] text-primary-bright hover:underline">
-                    <FileText className="size-4" /> Open the statement PDF
-                  </a>
+                  <div className="mt-5">
+                    <iframe
+                      src={`/api/problem-pdf/${problem.id}`}
+                      title={`${problem.title}: statement (PDF)`}
+                      className="h-[75vh] min-h-[420px] w-full rounded-[var(--radius-card)] border border-border bg-bg-surface"
+                    />
+                    <a href={extra.pdf} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-[13px] text-text-secondary hover:text-text-primary">
+                      <FileText className="size-4" /> Open the PDF in a new tab
+                    </a>
+                  </div>
                 )}
               </div>
             )}

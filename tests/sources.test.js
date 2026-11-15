@@ -285,3 +285,22 @@ test("every source module has the shape the registry expects", () => {
     assert.ok(["stdin", "function", "answer"].includes(m.kind), id);
   }
 });
+
+test('CodeChef tags keep topics only (no author handles, contest codes or difficulty words)', () => {
+  const { topicTags } = require('../src/sources/codechef');
+  assert.deepEqual(topicTags(['cakewalk', 'iceknight1093', 'start187', 'Greedy', 'dp', 'cook142', '2d arrays', 'bfs', 'Greedy'], ['someone']), ['Greedy', 'dp', '2d arrays', 'bfs']);
+  assert.deepEqual(topicTags(['Math', 'tourist'], ['tourist']), ['Math']);
+});
+
+test('a bot-check page is reported as a block, not a bare HTTP error', async () => {
+  const { httpError } = require('../src/sources/common');
+  const res = (status, body, headers = {}) => ({ status, headers: new Headers(headers), text: async () => body });
+  const blocked = await httpError(res(403, '<title>Just a moment...</title>'), 'https://www.spoj.com/problems/x/');
+  assert.equal(blocked.blocked, true);
+  assert.match(blocked.message, /www\.spoj\.com blocks automated access/);
+  const cf = await httpError(res(403, '', { 'cf-mitigated': 'challenge' }), 'https://dmoj.ca/problem/a');
+  assert.equal(cf.blocked, true);
+  const plain = await httpError(res(404, 'not here'), 'https://cses.fi/x');
+  assert.equal(plain.blocked, false);
+  assert.equal(plain.message, 'HTTP 404 from cses.fi');
+});
