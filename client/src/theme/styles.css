@@ -1347,3 +1347,63 @@ html[data-pattern] body {
 [data-style='journal'] .pt-diff [data-ui='badge'][data-variant='destructive'] {
   color: var(--color-state-error);
 }
+
+/* ── Field Journal — phase 5: Solve (statement and verdict) ───────────── */
+[data-style='journal'] .sp-mast,
+[data-style='journal'] .sp-meta {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+}
+[data-style='journal'] .sp-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.4vw, 2rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+/* Statement prose in serif; Input / Output / Note as small-caps labels. */
+[data-style='journal'] .nx-statement {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+[data-style='journal'] :is(.nx-statement :is(.section-title, h1, h2, h3, h4), .sp-label) {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+/* Examples: ivory mono blocks with a hairline */
+[data-style='journal'] .sp-sample {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg-surface);
+}
+/* Verdict: a paper slip; the verdict word in serif, in its meaning colour */
+[data-style='journal'] .vb {
+  border-color: var(--color-border);
+  background: var(--color-bg-surface);
+  box-shadow: 0 0 #0000;
+  backdrop-filter: none;
+}
+[data-style='journal'] .vb [data-ui='badge'] {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+[data-style='journal'] .vb[data-ok] [data-ui='badge'],
+[data-style='journal'] .vb-xp {
+  color: var(--color-state-success);
+  text-shadow: none;
+}
+[data-style='journal'] .vb:not([data-ok]) [data-ui='badge'] {
+  color: var(--color-state-error);
+}
+[data-style='journal'] .vb-xp {
+  font-family: var(--font-mono);
+}

@@ -39,6 +39,8 @@ export function buildMonacoTheme(t: ModeTokens, mode: ThemeMode): editor.IStanda
       'editor.foreground': hex(t.fg[0]),
       'editorLineNumber.foreground': hex(t.fg[2]),
       'editorLineNumber.activeForeground': hex(t.accent),
+      // The number after the last line (final newline): readable, not faded.
+      'editorLineNumber.dimmedForeground': hex(t.fg[2]),
       'editorCursor.foreground': hex(t.accent),
       'editor.selectionBackground': `${hex(t.accent)}40`,
       'editor.inactiveSelectionBackground': `${hex(t.accent)}22`,

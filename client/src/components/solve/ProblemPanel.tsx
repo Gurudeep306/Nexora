@@ -137,7 +137,7 @@ export function ProblemPanel({
     <div className="flex h-full min-h-0 flex-col">
       {mediaLightbox}
       <header className="px-5 pt-4">
-        <p className="flex min-w-0 items-center gap-1.5 text-[12px] text-foreground-faint">
+        <p className="sp-mast flex min-w-0 items-center gap-1.5 text-[12px] text-foreground-faint">
           <span className="truncate">{sourceName}</span>
           {!custom && problem.problem_id && (
             <>
@@ -151,8 +151,8 @@ export function ProblemPanel({
             </a>
           )}
         </p>
-        <h1 className="mt-1.5 text-[20px] leading-tight font-semibold tracking-[-0.01em] text-foreground">{problem.title}</h1>
-        <div className="mt-2.5 flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-[12.5px] text-foreground-dim">
+        <h1 className="sp-title mt-1.5 text-[20px] leading-tight font-semibold tracking-[-0.01em] text-foreground">{problem.title}</h1>
+        <div className="sp-meta mt-2.5 flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-[12.5px] text-foreground-dim">
           <span className="inline-flex items-center gap-1.5">
             <span className={cn('size-2 rounded-full', b.tone)} aria-hidden="true" />
             {extra.difficulty || b.label}
@@ -202,7 +202,7 @@ export function ProblemPanel({
             {statementLoading && <LoadingBlock rows={6} />}
             {statementError && (
               <div className="stmt-away">
-                <h3 className="stmt-away-title">The statement didn&apos;t load</h3>
+                <h2 className="stmt-away-title">The statement didn&apos;t load</h2>
                 <p className="stmt-away-text">{statementError}</p>
                 {problem?.url && (
                   <a href={problem.url} target="_blank" rel="noopener noreferrer" className="stmt-away-btn">
@@ -216,7 +216,7 @@ export function ProblemPanel({
                 <span className="stmt-away-icon" aria-hidden="true">
                   <FileText className="size-5" />
                 </span>
-                <h3 className="stmt-away-title">Read this problem on {sourceName}</h3>
+                <h2 className="stmt-away-title">Read this problem on {sourceName}</h2>
                 <p className="stmt-away-text">
                   {sourceName} doesn&apos;t let other sites load its statements, so it opens there in a new tab. You can still write, run and test your solution here — add the examples as tests.
                 </p>
@@ -299,7 +299,7 @@ export function ProblemPanel({
                 {samples.length > 0 && (
                   <section className="mt-7" aria-label="Examples">
                     <div className="mb-3 flex items-center gap-2">
-                      <h2 className="text-[13.5px] font-semibold text-foreground">Examples</h2>
+                      <h2 className="sp-label text-[13.5px] font-semibold text-foreground">Examples</h2>
                       <button
                         type="button"
                         onClick={onImportAllSamples}
@@ -321,7 +321,7 @@ export function ProblemPanel({
                           </div>
                           <div className="grid gap-2 sm:grid-cols-2">
                             {(['input', 'output'] as const).map((k) => (
-                              <div key={k} className="min-w-0 overflow-hidden rounded-lg bg-[color-mix(in_oklab,var(--color-foreground)_4.5%,transparent)]">
+                              <div key={k} className="sp-sample min-w-0 overflow-hidden rounded-lg bg-[color-mix(in_oklab,var(--color-foreground)_4.5%,transparent)]">
                                 <div className="flex items-center justify-between pr-1 pl-3 pt-1.5 text-[11.5px] text-foreground-faint">
                                   <span>{k === 'input' ? 'Input' : 'Output'}</span>
                                   <CopyButton text={s[k] ?? ''} label={`Copy example ${i + 1} ${k}`} />
