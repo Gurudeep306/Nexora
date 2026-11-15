@@ -1600,3 +1600,57 @@ html[data-pattern] body {
 .cr-link:hover {
   text-decoration-color: var(--ed-clay, var(--color-accent-brand));
 }
+
+/* ── Field Journal — phase 6: the Atlas key ───────────────────────────── */
+.nx-legend-stars {
+  display: none;
+}
+[data-style='journal'] .nx-legend-badges {
+  display: none;
+}
+[data-style='journal'] .nx-legend-stars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+.nx-legend-stars li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.nx-star {
+  position: relative;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-bg-app);
+}
+.nx-star.is-open {
+  border: 1.5px solid var(--color-accent-brand);
+}
+.nx-star.is-done {
+  border-color: var(--color-text-primary);
+  background: var(--color-text-primary);
+}
+.nx-star.is-done::before,
+.nx-star.is-done::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: var(--color-bg-app);
+  translate: -50% -50%;
+}
+.nx-star.is-done::before {
+  width: 6px;
+  height: 1.5px;
+}
+.nx-star.is-done::after {
+  width: 1.5px;
+  height: 6px;
+}
