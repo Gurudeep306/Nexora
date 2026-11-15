@@ -92,7 +92,7 @@ export default function PracticePage() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="w-16 text-[11.5px] font-semibold text-text-muted">Page</span>
-          <select value={page} onChange={(e) => setPage(e.target.value)} className="input-base !py-1.5 !text-[12.5px]">
+          <select value={page} onChange={(e) => setPage(e.target.value)} aria-label="Show questions from" className="input-base !py-1.5 !text-[12.5px]">
             <option value="all">All pages</option>
             {topic.pages.map((p) => (
               <option key={p.id} value={p.id}>
@@ -106,7 +106,7 @@ export default function PracticePage() {
 
       <div className="space-y-4">
         {list.map((q, i) => (
-          <QuestionCard key={q.id} q={q} index={i + 1} />
+          <QuestionCard key={q.id} q={q} index={i + 1} titleAs="h2" />
         ))}
         {!list.length && <p className="py-10 text-center text-text-muted">No questions match these filters.</p>}
       </div>

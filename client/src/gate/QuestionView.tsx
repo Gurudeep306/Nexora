@@ -1,9 +1,11 @@
 import { Suspense, lazy, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { AlertTriangle, CheckCircle2, XCircle, ExternalLink, Eye, EyeOff, Link2, Timer } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { AlertTriangle, ExternalLink, Link2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAgentPageContext } from '@/context/AgentContext'
 import { Markdown } from '@/learn/md'
+import { AnswerField, CheckButton, Masthead, NextQuestion, OptionList, OptionRow, QuestionActions, QuestionCard, QuestionHint, QuestionText, SolutionBlock, TextAction, Verdict, type OptionState } from '@/components/question/Question'
 import { ReconstructedDiagram } from './ReconstructedDiagram'
 import { TYPE_LABEL, TYPE_SHORT, paperLabel, qLabel, type GateQuestion } from './types'
 import { fmtInterval, recordAttempt, releaseAttempt, scheduleLocal, setConfidence, toggleBookmark, useQuestionProgress, type Outcome } from './progress'
@@ -188,6 +190,8 @@ export function QuestionView({
     }
     if (!hasPick) return
     setHasChecked(true)
+    // The reasoning opens by itself on a wrong answer; it stays folded on a right one.
+    if (!isUserCorrect) setShowSolution(true)
     if (!review) record(isUserCorrect ? 'correct' : 'wrong', userPick)
   }
 
@@ -251,282 +255,248 @@ export function QuestionView({
   const negative = q.type === 'MCQ' && q.marks ? `−${(q.marks / 3).toFixed(2)}` : '0'
   const showTimer = !review && !compact
   const clock = fmtClock(answered && myTime != null ? myTime / 1000 : timer.seconds)
+  const keyText = formatKey(q)
+  const practiceHref = `/gate/practice?subject=${encodeURIComponent(q.subject)}`
+  const nextDays = outcome ? scheduleLocal(reviewBefore, outcome === 'correct' ? 'correct' : 'wrong', conf ?? 2).intervalDays : null
+
+  const stateOf = (l: string, isPicked: boolean): OptionState => {
+    if (!revealed) return 'idle'
+    const isKey = isKeyOption(q, l)
+    if (isKey && isPicked) return 'right'
+    if (isKey) return q.type === 'MSQ' && hasChecked ? 'missed' : 'right'
+    if (isPicked) return 'wrong'
+    return 'dim'
+  }
 
   return (
     <div className="space-y-4">
-      <article id={q.id} className="card relative overflow-clip !p-0">
-        {/* ── Card header ── */}
-        <header className="flex flex-col gap-1.5 border-b border-border px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-2">
-            <h2 className="font-mono text-[15px] font-semibold text-text-primary">{qLabel(q)}</h2>
-            <span className="min-w-0 truncate text-[12.5px] text-text-muted">{paperLabel(q)}</span>
-            {position && <span className="hidden text-[12px] text-text-muted sm:inline">· {position}</span>}
-            <span className="ml-auto flex shrink-0 items-center gap-1">
-              {showTimer && (
-                <span
-                  className={cn(
-                    'mr-1 inline-flex h-6 min-w-[3.75rem] items-center justify-center gap-1 rounded-md border px-1.5 font-mono text-[11.5px] tabular-nums',
-                    answered ? 'border-border bg-bg-surface-2 text-text-secondary' : 'border-transparent text-text-muted',
-                  )}
-                  title={answered ? 'Time you took' : 'Time on this question (pauses when you switch tabs)'}
-                  role="timer"
-                  aria-label={`Time on question ${clock}`}
-                >
-                  <Timer className="size-3" aria-hidden="true" />
-                  {clock}
-                </span>
-              )}
-              <OutcomeDot outcome={progress.outcome} className="mr-1" />
-              <BookmarkButton questionId={q.id} />
-              {onOpen && (
-                <button
-                  type="button"
-                  onClick={onOpen}
-                  className="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-bg-surface-2 hover:text-text-primary"
-                  title="Open in practice"
-                  aria-label="Open in practice"
-                >
-                  <Link2 className="size-4" />
-                </button>
-              )}
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span className="rounded-md border border-border bg-bg-surface-2 px-1.5 py-0.5 text-[11px] font-semibold text-text-secondary" title={TYPE_LABEL[q.type]}>
-              {TYPE_SHORT[q.type]}
-            </span>
-            {q.marks != null && (
-              <span className="rounded-md border border-border bg-bg-surface-2 px-1.5 py-0.5 text-[11px] font-semibold text-text-secondary">
-                {q.marks} mark{q.marks === 1 ? '' : 's'}
-              </span>
-            )}
-            <SubjectChip subject={q.subject} topic={q.topic} name={subjectName} topicName={topicName} />
-            {progress.attempts > 0 && !compact && (
-              <span className="ml-auto text-[11.5px] text-text-muted tabular-nums">
-                {progress.correct}/{progress.attempts} correct so far
-              </span>
-            )}
-          </div>
-        </header>
-
-        {/* ── Question body ── */}
-        <div className="space-y-4 p-4 sm:p-6">
-          <div className="gate-q-text text-[15px] leading-relaxed text-text-primary sm:text-[15.5px]">
-            <Markdown md={q.text} />
-          </div>
-
-          {q.figures && q.figures.length > 0 && <ReconstructedDiagram questionId={q.id} figures={q.figures} subject={q.subject} topic={q.topic} />}
-
-          {/* Options */}
-          {options.length > 0 && (
-            <div role={q.type === 'MSQ' ? 'group' : 'radiogroup'} aria-label="Options" className="grid gap-2">
-              {q.type === 'MSQ' && !revealed && <p className="text-[12px] text-text-muted">Select all that apply.</p>}
-              {options.map((o, i) => {
-                const isKey = revealed && isKeyOption(q, o.l)
-                const isPicked = q.type === 'MSQ' ? Array.isArray(userPick) && userPick.includes(o.l) : userPick === o.l
-                const isWrongPick = revealed && isPicked && !isKey
-                return (
-                  <button
-                    key={o.l}
-                    type="button"
-                    data-opt={o.l}
-                    role={q.type === 'MSQ' ? 'checkbox' : 'radio'}
-                    aria-checked={isPicked}
-                    disabled={revealed && !isPicked && !isKey}
-                    onClick={() => handlePickOption(o.l)}
-                    className={cn(
-                      'group flex w-full items-start gap-3 rounded-xl border px-3 py-2.5 text-left transition-colors duration-150 disabled:cursor-default sm:px-3.5 sm:py-3',
-                      !revealed && !isPicked && 'border-border bg-bg-surface hover:border-border-hover hover:bg-bg-surface-2',
-                      !revealed && isPicked && 'border-accent-brand bg-accent-brand/10',
-                      revealed && !isKey && !isWrongPick && 'border-border bg-bg-surface opacity-70',
-                      isKey && 'border-state-success bg-state-success/10',
-                      isWrongPick && 'border-state-error bg-state-error/10',
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        'mt-px flex size-6 shrink-0 items-center justify-center border font-mono text-[12px] font-semibold transition-colors',
-                        q.type === 'MSQ' ? 'rounded-md' : 'rounded-full',
-                        !revealed && !isPicked && 'border-border-strong text-text-secondary group-hover:text-text-primary',
-                        !revealed && isPicked && 'border-accent-brand bg-accent-brand text-on-accent-brand',
-                        revealed && !isKey && !isWrongPick && 'border-border text-text-muted',
-                        isKey && 'border-state-success bg-state-success text-bg-app',
-                        isWrongPick && 'border-state-error bg-state-error text-bg-app',
-                      )}
-                      aria-hidden="true"
-                    >
-                      {o.l.length === 1 ? o.l : i + 1}
-                    </span>
-                    <span className="min-w-0 flex-1 pt-0.5 text-[14.5px] text-text-primary">
-                      <Markdown md={o.t} className="[&_p]:!m-0" />
-                    </span>
-                    {isKey && <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-state-success" aria-label="Correct option" />}
-                    {isWrongPick && <XCircle className="mt-0.5 size-5 shrink-0 text-state-error" aria-label="Your pick" />}
-                  </button>
-                )
-              })}
-            </div>
-          )}
-
-          {/* Numerical answer */}
-          {q.type === 'NAT' && (
-            <form
-              className="flex max-w-sm items-center gap-2"
-              onSubmit={(e) => {
-                e.preventDefault()
-                handleCheckPractice()
-              }}
-            >
-              <label className="sr-only" htmlFor={`nat-${q.id}`}>
-                Your numerical answer
-              </label>
-              <input
-                id={`nat-${q.id}`}
-                type="text"
-                inputMode="decimal"
-                autoComplete="off"
-                value={typeof userPick === 'string' ? userPick : ''}
-                disabled={revealed}
-                onChange={(e) => setUserPick(e.target.value.replace(/[^0-9.eE+-]/g, ''))}
-                placeholder="Your answer"
-                className={cn(
-                  'min-w-0 flex-1 rounded-xl border bg-bg-field px-3.5 py-2 font-mono text-[15px] text-text-primary outline-none placeholder:text-text-muted focus:border-accent-brand focus:ring-2 focus:ring-accent-brand/25 disabled:opacity-90',
-                  hasChecked ? (isUserCorrect ? 'border-state-success' : 'border-state-error') : 'border-border-input',
-                )}
-              />
-            </form>
-          )}
-
-          {/* Feedback */}
-          {hasChecked && !selfCheck && (
-            <div
-              role="status"
-              className={cn(
-                'flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border px-3.5 py-2.5 text-[13.5px]',
-                isUserCorrect ? 'border-state-success/40 bg-state-success/10' : !hasPick ? 'border-border bg-bg-surface-2' : 'border-state-error/40 bg-state-error/10',
-              )}
-            >
-              <span className={cn('inline-flex items-center gap-1.5 font-semibold', isUserCorrect ? 'text-state-success' : !hasPick ? 'text-text-secondary' : 'text-state-error')}>
-                {isUserCorrect ? <CheckCircle2 className="size-4" /> : <XCircle className="size-4" />}
-                {review && !hasPick ? 'Not attempted' : isUserCorrect ? 'Correct' : 'Incorrect'}
-              </span>
-              <span className="text-text-secondary">
-                {isUserCorrect ? `+${q.marks ?? 1}` : hasPick ? negative : '0'} marks
-                {!isUserCorrect && (
+      <QuestionCard
+        id={q.id}
+        masthead={
+          <Masthead
+            parts={[
+              <span key="p">{paperLabel(q)}</span>,
+              <strong key="q">{qLabel(q)}</strong>,
+              q.marks != null ? `${q.marks} mark${q.marks === 1 ? '' : 's'}` : null,
+              <abbr key="t" title={TYPE_LABEL[q.type]} className="no-underline">
+                {TYPE_SHORT[q.type]}
+              </abbr>,
+              <span key="s">
+                <Link to={practiceHref}>{subjectName ?? q.subject.toUpperCase()}</Link>
+                {topicName && q.topic && (
                   <>
-                    {' '}
-                    · Answer: <strong className="font-mono text-text-primary">{formatKey(q)}</strong>
+                    {' / '}
+                    <Link to={`${practiceHref}&topic=${encodeURIComponent(q.topic)}`}>{topicName}</Link>
                   </>
                 )}
-              </span>
-            </div>
-          )}
+              </span>,
+              position ? <span key="pos">{position}</span> : null,
+            ]}
+          />
+        }
+        aside={
+          <>
+            <OutcomeDot outcome={progress.outcome} className="mr-1" />
+            <BookmarkButton questionId={q.id} />
+            {onOpen && (
+              <button type="button" onClick={onOpen} className="ed-icon-btn" title="Open in practice" aria-label="Open in practice">
+                <Link2 className="size-4" />
+              </button>
+            )}
+          </>
+        }
+      >
+        <h2 className="sr-only">
+          {paperLabel(q)}, {qLabel(q)}
+        </h2>
+        <QuestionText className="gate-q-text">
+          <Markdown md={q.text} />
+        </QuestionText>
 
-          {hasChecked && selfCheck && (
-            <div className="space-y-2 rounded-xl border border-border bg-bg-surface-2 px-3.5 py-3 text-[13.5px]" role="status">
-              <div className="text-[11.5px] font-semibold tracking-wide text-text-muted uppercase">Answer key</div>
-              <div className="text-text-primary">
-                <Markdown md={formatKey(q)} className="[&_p]:!m-0" />
-              </div>
-              {!review && (
-                <div className="flex flex-wrap items-center gap-2 pt-1 text-[12.5px] text-text-secondary">
-                  <span>Did you get it?</span>
-                  <button
-                    type="button"
-                    disabled={selfGrade !== null}
-                    onClick={() => grade(true)}
-                    className={cn('rounded-lg border px-2.5 py-1 disabled:cursor-default', selfGrade === true ? 'border-state-success bg-state-success/10 text-state-success' : 'border-border hover:bg-bg-surface-3')}
-                  >
-                    Yes
-                  </button>
-                  <button
-                    type="button"
-                    disabled={selfGrade !== null}
-                    onClick={() => grade(false)}
-                    className={cn('rounded-lg border px-2.5 py-1 disabled:cursor-default', selfGrade === false ? 'border-state-error bg-state-error/10 text-state-error' : 'border-border hover:bg-bg-surface-3')}
-                  >
-                    Not quite
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+        {q.figures && q.figures.length > 0 && <ReconstructedDiagram questionId={q.id} figures={q.figures} subject={q.subject} topic={q.topic} />}
 
-          {/* Confidence (feeds spaced repetition) */}
-          {outcome === 'correct' && !review && (
-            <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-bg-surface-2/60 px-3 py-2" role="group" aria-label="How sure were you?">
-              <span className="mr-1 text-[12.5px] text-text-secondary">How sure were you?</span>
-              {CONFIDENCE.map(({ c, label, hint }) => {
-                const days = scheduleLocal(reviewBefore, 'correct', c).intervalDays
+        {/* Options */}
+        {options.length > 0 && (
+          <div className="grid gap-2">
+            {q.type === 'MSQ' && !revealed && <QuestionHint>Select every option that is true.</QuestionHint>}
+            <OptionList multi={q.type === 'MSQ'}>
+              {options.map((o, i) => {
+                const isPicked = q.type === 'MSQ' ? Array.isArray(userPick) && userPick.includes(o.l) : userPick === o.l
+                const st = stateOf(o.l, isPicked)
                 return (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => rate(c)}
-                    aria-pressed={conf === c}
-                    title={`${hint} — next review in ${days} day${days === 1 ? '' : 's'} (key ${c})`}
-                    className={cn(
-                      'inline-flex h-8 items-center gap-1.5 rounded-lg border px-2.5 text-[12.5px] transition-colors',
-                      conf === c ? 'border-accent-brand bg-accent-brand/10 font-semibold text-accent-brand' : 'border-border bg-bg-surface text-text-secondary hover:border-border-hover hover:text-text-primary',
-                    )}
+                  <OptionRow
+                    key={o.l}
+                    data-opt={o.l}
+                    letter={o.l.length === 1 ? o.l : i + 1}
+                    multi={q.type === 'MSQ'}
+                    selected={isPicked}
+                    state={st}
+                    word={st === 'right' && !hasPick ? 'Answer' : undefined}
+                    disabled={revealed}
+                    onClick={() => handlePickOption(o.l)}
                   >
-                    <span className="hidden font-mono text-[10.5px] text-text-muted sm:inline">{c}</span>
-                    {label}
-                    <span className="font-mono text-[10.5px] text-text-muted">{fmtInterval(days)}</span>
-                  </button>
+                    <Markdown md={o.t} className="[&_p]:!m-0" />
+                  </OptionRow>
                 )
               })}
-            </div>
-          )}
-          {(outcome === 'wrong' || outcome === 'revealed') && !review && mode !== 'test' && <p className="text-[12px] text-text-muted">Queued for review tomorrow.</p>}
+            </OptionList>
+          </div>
+        )}
 
-          {/* Actions */}
-          {!compact && (
-            <div className="flex flex-wrap items-center gap-2 pt-1">
-              {!hasChecked && (
-                <button
-                  type="button"
-                  onClick={handleCheckPractice}
-                  disabled={!selfCheck && !hasPick}
-                  className="btn-primary inline-flex items-center gap-1.5 !px-4 !py-2 !text-[13.5px] disabled:cursor-not-allowed disabled:opacity-50"
-                  title={selfCheck ? 'Show the answer key' : 'Check your answer (Enter)'}
-                >
-                  <CheckCircle2 className="size-4" /> {selfCheck ? 'Show answer' : 'Check answer'}
-                </button>
-              )}
-              <button type="button" onClick={toggleSolution} aria-expanded={showSolution} className="btn-secondary inline-flex items-center gap-1.5 !px-3.5 !py-2 !text-[13.5px]" title="Solution (S)">
-                {showSolution ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                {showSolution ? 'Hide solution' : 'Solution'}
-              </button>
-              {q.sourceUrl && (
-                <a href={q.sourceUrl} target="_blank" rel="noreferrer" className="ml-auto inline-flex items-center gap-1 text-[12.5px] text-text-muted hover:text-accent-brand">
-                  Source <ExternalLink className="size-3" />
-                </a>
-              )}
-            </div>
-          )}
+        {/* Numerical answer */}
+        {q.type === 'NAT' && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleCheckPractice()
+            }}
+          >
+            <AnswerField
+              id={`nat-${q.id}`}
+              label="Your numerical answer"
+              type="text"
+              inputMode="decimal"
+              value={typeof userPick === 'string' ? userPick : ''}
+              disabled={revealed}
+              onChange={(e) => setUserPick(e.target.value.replace(/[^0-9.eE+-]/g, ''))}
+              placeholder="0.00"
+              state={hasChecked ? (isUserCorrect ? 'right' : 'wrong') : 'idle'}
+              hint={!revealed ? 'Digits only; ranges in the key are accepted.' : undefined}
+            />
+          </form>
+        )}
 
-          {/* ── Worked solution (src/gate/solution) ── */}
-          <AnimatePresence initial={false}>
-            {showSolution && (
-              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }}>
-                <Suspense fallback={<div className="mt-4 h-40 animate-pulse rounded-2xl bg-bg-surface-2" />}>
-                  <GateSolution q={q} state={solution} />
-                </Suspense>
-
-                {q.reviewNote && (
-                  <div className="mt-3 flex items-start gap-2 rounded-xl border border-state-warning/30 bg-state-warning/10 p-3 text-[12.5px] text-text-secondary">
-                    <AlertTriangle className="mt-0.5 size-4 shrink-0 text-state-warning" />
-                    <span>{q.reviewNote}</span>
-                  </div>
-                )}
-              </motion.div>
+        {/* Verdict: what you chose, whether it's right, and the answer */}
+        {hasChecked && !selfCheck && (
+          <Verdict
+            tone={isUserCorrect ? 'right' : !hasPick ? 'neutral' : 'wrong'}
+            focus={!review}
+            detail={
+              <span className="ed-mono text-[12px]">
+                {isUserCorrect ? `+${q.marks ?? 1}` : hasPick ? negative : '0'} marks
+              </span>
+            }
+          >
+            {review && !hasPick ? (
+              <>Not attempted. The answer is {keyText}.</>
+            ) : isUserCorrect ? (
+              'Correct.'
+            ) : (
+              <>Not quite. The answer is {keyText}.</>
             )}
-          </AnimatePresence>
+          </Verdict>
+        )}
 
-          {insights && <NoteEditor key={q.id} ref={note} questionId={q.id} className="!mt-5" />}
-        </div>
-      </article>
+        {hasChecked && selfCheck && (
+          <div className="qc-verdict" data-tone="neutral" role="status">
+            <p className="ed-label ed-muted m-0">Answer key</p>
+            <div className="qc-text mt-2">
+              <Markdown md={keyText} className="[&_p]:!m-0" />
+            </div>
+            {!review && (
+              <p className="ed-ui-sm ed-ink-2 mt-3 mb-0 flex flex-wrap items-center gap-x-4 gap-y-1">
+                Did you get it?
+                <TextAction disabled={selfGrade !== null} aria-pressed={selfGrade === true} onClick={() => grade(true)} className={cn(selfGrade === true && 'font-semibold')}>
+                  Yes
+                </TextAction>
+                <TextAction disabled={selfGrade !== null} aria-pressed={selfGrade === false} onClick={() => grade(false)} className={cn(selfGrade === false && 'font-semibold')}>
+                  Not quite
+                </TextAction>
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Confidence (feeds spaced repetition) */}
+        {outcome === 'correct' && !review && (
+          <div className="ed-ui-sm ed-ink-2 flex flex-wrap items-center gap-x-5 gap-y-2" role="group" aria-label="How sure were you?">
+            <span>How sure were you?</span>
+            {CONFIDENCE.map(({ c, label, hint }) => {
+              const days = scheduleLocal(reviewBefore, 'correct', c).intervalDays
+              return (
+                <TextAction
+                  key={c}
+                  onClick={() => rate(c)}
+                  aria-pressed={conf === c}
+                  title={`${hint}: next review in ${days} day${days === 1 ? '' : 's'} (key ${c})`}
+                  className={cn(conf === c && 'font-semibold !text-[var(--ed-ink)] !decoration-current')}
+                >
+                  {label} <span className="ed-mono ed-muted text-[11px] no-underline">{fmtInterval(days)}</span>
+                </TextAction>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Actions */}
+        {!compact && (
+          <QuestionActions
+            timer={
+              showTimer ? (
+                <span role="timer" aria-label={`Time on question ${clock}`} title={answered ? 'Time you took' : 'Time on this question (pauses when you switch tabs)'}>
+                  {clock}
+                </span>
+              ) : undefined
+            }
+          >
+            {!hasChecked && (
+              <CheckButton onClick={handleCheckPractice} disabled={!selfCheck && !hasPick} title={selfCheck ? 'Show the answer key' : 'Check your answer (Enter)'}>
+                {selfCheck ? 'Show answer' : 'Check'}
+              </CheckButton>
+            )}
+            {!answered && onNext && <TextAction onClick={onNext}>Skip</TextAction>}
+            {!hasChecked && (
+              <TextAction onClick={toggleSolution} aria-expanded={showSolution} title="Solution (S)">
+                {showSolution ? 'Hide solution' : 'Show solution'}
+              </TextAction>
+            )}
+            {q.sourceUrl && (
+              <a href={q.sourceUrl} target="_blank" rel="noreferrer" className="qc-text-action inline-flex items-center gap-1">
+                Source <ExternalLink className="size-3" aria-hidden="true" />
+              </a>
+            )}
+          </QuestionActions>
+        )}
+
+        {/* ── Worked solution: open on a wrong answer, folded on a right one ── */}
+        {(showSolution || hasChecked) && (
+          <SolutionBlock open={showSolution} onToggle={() => toggleSolution()} credit={`${paperLabel(q)}, ${qLabel(q)}. Answer key from the official paper.`}>
+            <AnimatePresence initial={false}>
+              {showSolution && (
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}>
+                  <Suspense fallback={<div className="h-40 animate-pulse rounded-2xl bg-bg-surface-2" />}>
+                    <GateSolution q={q} state={solution} />
+                  </Suspense>
+                  {q.reviewNote && (
+                    <p className="ed-ui-sm ed-ink-2 mt-4 mb-0 flex items-start gap-2 border-l-2 border-state-warning pl-3">
+                      <AlertTriangle className="mt-0.5 size-4 shrink-0 text-state-warning" aria-hidden="true" />
+                      <span>{q.reviewNote}</span>
+                    </p>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </SolutionBlock>
+        )}
+
+        {answered && onNext && (
+          <NextQuestion
+            onClick={onNext}
+            note={
+              (outcome === 'wrong' || outcome === 'revealed') && !review && mode !== 'test'
+                ? 'Back in your review queue tomorrow'
+                : nextDays != null && !review && mode !== 'test'
+                  ? `Back in ${fmtInterval(nextDays)}`
+                  : undefined
+            }
+          />
+        )}
+        {answered && !onNext && (outcome === 'wrong' || outcome === 'revealed') && !review && mode !== 'test' && (
+          <p className="qc-hint">Queued for review tomorrow.</p>
+        )}
+
+        {insights && <NoteEditor key={q.id} ref={note} questionId={q.id} className="!mt-2" />}
+      </QuestionCard>
 
       {insights && (
         <>

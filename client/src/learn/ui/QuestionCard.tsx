@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   CircleDot,
   Code2,
-  Eye,
   GripVertical,
   Hash,
   Lightbulb,
@@ -19,11 +18,11 @@ import {
   RotateCcw,
   Shuffle,
   TextCursorInput,
-  XCircle,
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Markdown } from '../md'
+import { AnswerField, CheckButton, Masthead, OptionList, OptionRow, QuestionActions, QuestionCard as Card, QuestionHint, QuestionText, QuestionTitle, SolutionBlock, TextAction, Verdict } from '@/components/question/Question'
 import { codeKey, isDone, mark, qKey, useProgress } from '../progress'
 import { KIND_LABEL, type Question, type QuestionKind } from '../questions/types'
 
@@ -117,7 +116,7 @@ function splitBlanks(code: string): (string | number)[] {
  * same flow — answer, check, see right/wrong with the reasoning — and is
  * saved to the learner's progress. Coding questions hand off to the editor.
  */
-export function QuestionCard({ q, index }: { q: Question; index?: number }) {
+export function QuestionCard({ q, index, titleAs = 'h4' }: { q: Question; index?: number; /** Heading level of the title, to fit the page's outline. */ titleAs?: 'h2' | 'h3' | 'h4' }) {
   const { items } = useProgress()
   const key = q.kind === 'code' ? codeKey(q.slug) : qKey(q.id)
   const state = items[key]
@@ -219,293 +218,281 @@ export function QuestionCard({ q, index }: { q: Question; index?: number }) {
     }
   }
 
+  const verdictLine = result
+    ? tries === 1
+      ? 'Correct, first try.'
+      : 'Correct.'
+    : revealed
+      ? 'Not quite. The answer is marked below.'
+      : 'Not quite. Look at what is marked, then try again.'
+
   return (
-    <div
+    <Card
+      as="div"
       id={q.id}
       tabIndex={-1}
       onKeyDown={onKey}
-      className={cn('q-card card scroll-mt-24 overflow-hidden p-0 outline-none', `q-diff-${q.difficulty}`, result === true && 'q-card-right', result === false && 'q-card-wrong')}
+      className="scroll-mt-24 outline-none"
+      masthead={
+        <Masthead
+          parts={[
+            index != null ? <strong key="i">Q {index}</strong> : null,
+            <span key="k" className="inline-flex items-center gap-1">
+              <KindIcon className="size-3" aria-hidden="true" /> {KIND_LABEL[q.kind]}
+            </span>,
+            <span key="d" className="capitalize">
+              {q.difficulty}
+            </span>,
+            'Check yourself',
+          ]}
+        />
+      }
+      aside={
+        done ? (
+          <span className="ed-ui-sm inline-flex items-center gap-1 text-state-success">
+            <CheckCircle2 className="size-4" aria-hidden="true" /> {q.kind === 'code' ? 'Solved' : 'Done'}
+          </span>
+        ) : state ? (
+          <span className="ed-mono ed-muted text-[11px]">
+            {state.attempts} attempt{state.attempts === 1 ? '' : 's'}
+          </span>
+        ) : null
+      }
     >
-      {/* header */}
-      <div className="q-head flex items-start gap-3 px-4 pt-4 pb-1 sm:px-5">
-        <span className="q-num flex size-9 shrink-0 items-center justify-center rounded-xl">
-          {done ? <CheckCircle2 className="size-[18px]" /> : index != null ? <span className="font-mono text-[13px] font-bold">{index}</span> : <KindIcon className="size-4" />}
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="q-chip inline-flex items-center gap-1">
-              <KindIcon className="size-3" /> {KIND_LABEL[q.kind]}
-            </span>
-            <span className="q-chip q-chip-diff capitalize">{q.difficulty}</span>
-            {done ? (
-              <span className="q-chip q-chip-done">{q.kind === 'code' ? 'Solved' : 'Done'}</span>
-            ) : state ? (
-              <span className="text-[11px] text-text-muted">
-                {state.attempts} attempt{state.attempts === 1 ? '' : 's'}
-              </span>
-            ) : null}
-          </div>
-          <h4 className="mt-1.5 mb-0 text-[15.5px] leading-snug font-semibold text-text-primary">{q.title}</h4>
+      <QuestionTitle as={titleAs}>{q.title}</QuestionTitle>
+      <QuestionText>
+        <Markdown md={q.prompt} className="q-prompt" />
+      </QuestionText>
+
+      {q.kind === 'code' ? (
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-[var(--ed-line)] pt-4">
+          <span className="min-w-0 flex-1">
+            <span className="ed-ui block font-medium">Write and submit code</span>
+            <span className="ed-caption ed-muted block">Judged on hidden tests · C++, Java, Python, JavaScript, C</span>
+          </span>
+          <Link to={`/solve/learn/${q.slug}`} className="ed-btn ed-btn-clay">
+            {done ? 'Open again' : 'Solve'} <ArrowRight className="size-4" aria-hidden="true" />
+          </Link>
         </div>
-      </div>
+      ) : (
+        <>
+          {INSTRUCTION[q.kind] && <QuestionHint>{INSTRUCTION[q.kind]}</QuestionHint>}
 
-      <div className="px-4 pt-2 pb-4 sm:px-5">
-        <Markdown md={q.prompt} className="q-prompt !text-[14.5px]" />
+          {q.kind === 'mcq' && (
+            <OptionList>
+              {q.options.map((o, i) => (
+                <OptionRow
+                  key={i}
+                  letter={String.fromCharCode(65 + i)}
+                  selected={choice === i}
+                  state={show && i === q.answer ? 'right' : locked && choice === i && !result ? 'wrong' : locked && show ? 'dim' : 'idle'}
+                  disabled={locked}
+                  onClick={() => setChoice(i)}
+                >
+                  <Markdown md={o} className="[&_p]:!m-0" />
+                </OptionRow>
+              ))}
+            </OptionList>
+          )}
 
-        {q.kind === 'code' ? (
-          <div className="q-code-cta mt-4 flex flex-wrap items-center gap-3 rounded-xl p-3">
-            <span className="flex size-9 items-center justify-center rounded-lg bg-accent-brand/15 text-accent-brand">
-              <Code2 className="size-[18px]" />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-[13px] font-semibold text-text-primary">Write and submit code</span>
-              <span className="block text-[12px] text-text-muted">Judged on hidden tests · C++, Java, Python, JavaScript, C</span>
-            </span>
-            <Link to={`/solve/learn/${q.slug}`} className="btn-primary inline-flex items-center gap-2 !py-2 !text-[13px]">
-              {done ? 'Open again' : 'Solve'} <ArrowRight className="size-4" />
-            </Link>
-          </div>
-        ) : (
-          <div className="mt-4 space-y-3">
-            {INSTRUCTION[q.kind] && <p className="q-instr mb-0">{INSTRUCTION[q.kind]}</p>}
-
-            {q.kind === 'mcq' && (
-              <div className="grid gap-2" role="radiogroup">
-                {q.options.map((o, i) => (
-                  <button
+          {q.kind === 'multi' && (
+            <OptionList multi>
+              {q.options.map((o, i) => {
+                const on = choices.includes(i)
+                const right = q.answers.includes(i)
+                const st = locked ? (on && right && (show || result) ? 'right' : on && !right ? 'wrong' : !on && right && show ? 'missed' : 'idle') : 'idle'
+                return (
+                  <OptionRow
                     key={i}
-                    type="button"
-                    role="radio"
-                    aria-checked={choice === i}
+                    multi
+                    letter={String.fromCharCode(65 + i)}
+                    selected={on}
+                    state={st}
+                    word={st === 'wrong' ? 'Not correct' : undefined}
                     disabled={locked}
-                    onClick={() => setChoice(i)}
-                    className={cn(
-                      'q-option',
-                      choice === i && 'q-option-on',
-                      show && i === q.answer && 'q-option-right',
-                      locked && choice === i && !result && 'q-option-wrong',
-                    )}
+                    onClick={() => setChoices((c) => (on ? c.filter((x) => x !== i) : [...c, i]))}
                   >
-                    <span className="q-dot">{String.fromCharCode(65 + i)}</span>
-                    <span className="min-w-0 flex-1 text-left">
-                      <Markdown md={o} className="!text-[14px] [&_p]:!m-0" />
-                    </span>
-                    {show && i === q.answer && <CheckCircle2 className="size-4 shrink-0 text-state-success" />}
-                    {locked && choice === i && !result && <XCircle className="size-4 shrink-0 text-state-error" />}
-                  </button>
-                ))}
-              </div>
-            )}
+                    <Markdown md={o} className="[&_p]:!m-0" />
+                  </OptionRow>
+                )
+              })}
+            </OptionList>
+          )}
 
-            {q.kind === 'multi' && (
-              <div className="grid gap-2">
-                {q.options.map((o, i) => {
-                  const on = choices.includes(i)
-                  const right = q.answers.includes(i)
-                  return (
-                    <button
-                      key={i}
-                      type="button"
-                      role="checkbox"
-                      aria-checked={on}
-                      disabled={locked}
-                      onClick={() => setChoices((c) => (on ? c.filter((x) => x !== i) : [...c, i]))}
-                      className={cn('q-option', on && 'q-option-on', show && right && 'q-option-right', locked && !result && on !== right && 'q-option-wrong')}
-                    >
-                      <span className={cn('q-dot !rounded-md', on && 'q-dot-on')}>{on ? '✓' : String.fromCharCode(65 + i)}</span>
-                      <span className="min-w-0 flex-1 text-left">
-                        <Markdown md={o} className="!text-[14px] [&_p]:!m-0" />
-                      </span>
-                      {locked && !result && on !== right && <span className="shrink-0 text-[11px] font-medium text-state-error">{on ? 'not correct' : 'missed'}</span>}
-                    </button>
-                  )
-                })}
-              </div>
-            )}
-
-            {(q.kind === 'numeric' || q.kind === 'text' || q.kind === 'array') && (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  if (canCheck && !locked) check()
-                }}
-              >
-                <div className={cn('q-input-wrap flex max-w-md items-center rounded-xl', locked && (result ? 'q-input-right' : 'q-input-wrong'))}>
-                  <input
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    disabled={locked}
-                    inputMode={q.kind === 'numeric' ? 'decimal' : 'text'}
-                    placeholder={q.kind === 'numeric' ? 'Your answer' : q.kind === 'array' ? (q.placeholder ?? 'e.g. 1 2 3') : (q.placeholder ?? 'Your answer')}
-                    className="min-w-0 flex-1 bg-transparent px-3.5 py-2.5 font-mono text-[14px] text-text-primary outline-none placeholder:text-text-muted"
-                    spellCheck={false}
-                    autoComplete="off"
-                  />
-                  {q.kind === 'numeric' && q.unit && <span className="pr-3.5 text-[12.5px] text-text-muted">{q.unit}</span>}
+          {(q.kind === 'numeric' || q.kind === 'text' || q.kind === 'array') && (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                if (canCheck && !locked) check()
+              }}
+            >
+              <AnswerField
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                disabled={locked}
+                inputMode={q.kind === 'numeric' ? 'decimal' : 'text'}
+                placeholder={q.kind === 'numeric' ? 'Your answer' : q.kind === 'array' ? (q.placeholder ?? 'e.g. 1 2 3') : (q.placeholder ?? 'Your answer')}
+                unit={q.kind === 'numeric' ? q.unit : undefined}
+                state={locked ? (result ? 'right' : 'wrong') : 'idle'}
+              />
+              {q.kind === 'array' && (text.trim() || show) && (
+                <div className="mt-3 space-y-2 overflow-x-auto pb-1">
+                  <CellRow label="yours" values={parseList(text)} against={show ? q.answer.map(String) : undefined} />
+                  {show && !result && <CellRow label="answer" values={q.answer.map(String)} />}
                 </div>
-                {q.kind === 'array' && (text.trim() || show) && (
-                  <div className="mt-3 space-y-2 overflow-x-auto pb-1">
-                    <CellRow label="yours" values={parseList(text)} against={show ? q.answer.map(String) : undefined} />
-                    {show && !result && <CellRow label="answer" values={q.answer.map(String)} />}
-                  </div>
-                )}
-              </form>
-            )}
-
-            {q.kind === 'order' && (
-              <Reorder.Group axis="y" values={order} onReorder={locked ? () => {} : setOrder} className="grid gap-1.5">
-                {order.map((item, i) => (
-                  <Reorder.Item
-                    key={item}
-                    value={item}
-                    dragListener={!locked}
-                    className={cn('q-option !py-2', !locked && 'cursor-grab active:cursor-grabbing', show && order[i] === q.items[i] && 'q-option-right', locked && !result && order[i] !== q.items[i] && 'q-option-wrong')}
-                  >
-                    {!locked && <GripVertical className="size-4 shrink-0 text-text-muted" />}
-                    <span className="q-dot">{i + 1}</span>
-                    <span className="min-w-0 flex-1 text-left">
-                      <Markdown md={item} className="!text-[14px] [&_p]:!m-0" />
-                    </span>
-                    {!locked && (
-                      <span className="flex gap-0.5">
-                        <button type="button" aria-label="Move up" disabled={i === 0} onClick={() => setOrder((o) => { const n = [...o]; [n[i - 1], n[i]] = [n[i], n[i - 1]]; return n })} className="rounded-md p-1 text-text-muted hover:!scale-100 hover:bg-bg-surface-3 hover:text-text-primary disabled:opacity-30"><ArrowUp className="size-3.5" /></button>
-                        <button type="button" aria-label="Move down" disabled={i === order.length - 1} onClick={() => setOrder((o) => { const n = [...o]; [n[i + 1], n[i]] = [n[i], n[i + 1]]; return n })} className="rounded-md p-1 text-text-muted hover:!scale-100 hover:bg-bg-surface-3 hover:text-text-primary disabled:opacity-30"><ArrowDown className="size-3.5" /></button>
-                      </span>
-                    )}
-                  </Reorder.Item>
-                ))}
-              </Reorder.Group>
-            )}
-
-            {q.kind === 'fill' && (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  if (canCheck && !locked) check()
-                }}
-              >
-                <pre className="q-fill overflow-x-auto rounded-xl px-4 py-3 font-mono text-[13px] leading-[2.1]">
-                  {splitBlanks(q.code.replace(/^\n/, '')).map((part, k) =>
-                    typeof part === 'string' ? (
-                      <Fragment key={k}>{part}</Fragment>
-                    ) : (
-                      <input
-                        key={k}
-                        value={blanks[part] ?? ''}
-                        onChange={(e) => setBlanks((b) => b.map((x, j) => (j === part ? e.target.value : x)))}
-                        disabled={locked}
-                        aria-label={`Blank ${part + 1}`}
-                        placeholder={String(part + 1)}
-                        spellCheck={false}
-                        autoComplete="off"
-                        size={Math.max(3, (blanks[part] ?? '').length + 1, ...(show ? [q.blanks[part][0].length + 1] : []))}
-                        className={cn('q-blank', locked && (blankOk(part) ? 'q-blank-right' : 'q-blank-wrong'))}
-                      />
-                    ),
-                  )}
-                </pre>
-                <button type="submit" hidden />
-              </form>
-            )}
-
-            {q.kind === 'match' && (
-              <div className="grid gap-2">
-                {q.left.map((l, i) => {
-                  const ok = pairs[i] === q.right[i]
-                  return (
-                    <div key={i} className={cn('q-option !cursor-default flex-wrap sm:flex-nowrap', show && ok && 'q-option-right', locked && !result && !ok && 'q-option-wrong')}>
-                      <span className="q-dot">{i + 1}</span>
-                      <span className="min-w-0 flex-1 text-left">
-                        <Markdown md={l} className="!text-[14px] [&_p]:!m-0" />
-                      </span>
-                      <ArrowRight className="hidden size-4 shrink-0 text-text-muted sm:block" />
-                      <select
-                        value={pairs[i]}
-                        disabled={locked}
-                        onChange={(e) => setPairs((p) => p.map((x, j) => (j === i ? e.target.value : x)))}
-                        className="q-select w-full font-mono sm:w-auto sm:min-w-[170px]"
-                        aria-label={`Match for ${l}`}
-                      >
-                        <option value="">Choose…</option>
-                        {rightShuffled.map((r) => (
-                          <option key={r} value={r}>
-                            {r}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-
-            {/* hint */}
-            <AnimatePresence initial={false}>
-              {hint && q.hint && !show && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-                  <div className="q-hint flex gap-2.5 rounded-xl px-3.5 py-2.5">
-                    <Lightbulb className="mt-0.5 size-4 shrink-0" />
-                    <Markdown md={q.hint} className="!text-[13.5px]" />
-                  </div>
-                </motion.div>
               )}
-            </AnimatePresence>
+            </form>
+          )}
 
-            {/* actions / feedback */}
-            {result === null ? (
-              <div className="flex flex-wrap items-center gap-2 pt-1">
-                <button type="button" disabled={!canCheck} onClick={check} className="btn-primary inline-flex items-center gap-1.5 !px-4 !py-2 !text-[13px]">
-                  <CheckCircle2 className="size-4" /> Check answer
-                </button>
-                {q.hint && !hint && (
-                  <button type="button" onClick={() => setHint(true)} className="btn-ghost inline-flex items-center gap-1.5 !px-3 !py-2 !text-[12.5px]">
-                    <Lightbulb className="size-3.5" /> Hint
-                  </button>
+          {q.kind === 'order' && (
+            <Reorder.Group axis="y" values={order} onReorder={locked ? () => {} : setOrder} className="qc-options">
+              {order.map((item, i) => (
+                <Reorder.Item
+                  key={item}
+                  value={item}
+                  dragListener={!locked}
+                  data-state={show && order[i] === q.items[i] ? 'right' : locked && !result && order[i] !== q.items[i] ? 'wrong' : 'idle'}
+                  className={cn('qc-option !cursor-default items-center', !locked && '!cursor-grab active:!cursor-grabbing')}
+                >
+                  {!locked && <GripVertical className="size-4 shrink-0 text-text-muted" aria-hidden="true" />}
+                  <span className="qc-letter" aria-hidden="true">
+                    {i + 1}
+                  </span>
+                  <span className="qc-option-text">
+                    <Markdown md={item} className="[&_p]:!m-0" />
+                  </span>
+                  {!locked && (
+                    <span className="flex gap-0.5">
+                      <button type="button" aria-label="Move up" disabled={i === 0} onClick={() => setOrder((o) => { const n = [...o]; [n[i - 1], n[i]] = [n[i], n[i - 1]]; return n })} className="ed-icon-btn disabled:opacity-30"><ArrowUp className="size-3.5" /></button>
+                      <button type="button" aria-label="Move down" disabled={i === order.length - 1} onClick={() => setOrder((o) => { const n = [...o]; [n[i + 1], n[i]] = [n[i], n[i + 1]]; return n })} className="ed-icon-btn disabled:opacity-30"><ArrowDown className="size-3.5" /></button>
+                    </span>
+                  )}
+                </Reorder.Item>
+              ))}
+            </Reorder.Group>
+          )}
+
+          {q.kind === 'fill' && (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                if (canCheck && !locked) check()
+              }}
+            >
+              <pre className="q-fill overflow-x-auto rounded-xl px-4 py-3 font-mono text-[13px] leading-[2.1]">
+                {splitBlanks(q.code.replace(/^\n/, '')).map((part, k) =>
+                  typeof part === 'string' ? (
+                    <Fragment key={k}>{part}</Fragment>
+                  ) : (
+                    <input
+                      key={k}
+                      value={blanks[part] ?? ''}
+                      onChange={(e) => setBlanks((b) => b.map((x, j) => (j === part ? e.target.value : x)))}
+                      disabled={locked}
+                      aria-label={`Blank ${part + 1}`}
+                      placeholder={String(part + 1)}
+                      spellCheck={false}
+                      autoComplete="off"
+                      size={Math.max(3, (blanks[part] ?? '').length + 1, ...(show ? [q.blanks[part][0].length + 1] : []))}
+                      className={cn('q-blank', locked && (blankOk(part) ? 'q-blank-right' : 'q-blank-wrong'))}
+                    />
+                  ),
                 )}
-              </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                className={cn('q-feedback rounded-xl px-4 py-3.5', result ? 'q-feedback-right' : 'q-feedback-wrong')}
-              >
-                <p className="q-feedback-title mb-1 flex items-center gap-2 text-[14.5px] font-semibold">
-                  {result ? <CheckCircle2 className="size-[18px]" /> : <XCircle className="size-[18px]" />}
-                  {result ? (tries === 1 ? 'Correct — first try!' : 'Correct') : 'Not quite'}
-                </p>
-                {!result && !revealed && <p className="mb-0 text-[13px] text-text-secondary">Look at what is marked, then try again — or reveal the answer.</p>}
-                {show && (
-                  <div className="mt-2 space-y-2">
-                    {!result && (
-                      <p className="mb-0 text-[13px] text-text-secondary">
-                        Answer: <span className="font-mono text-text-primary">{answerText(q)}</span>
-                      </p>
-                    )}
-                    <div className="q-why rounded-lg px-3 py-2.5">
-                      <p className="mb-1 text-[10.5px] font-bold tracking-[0.12em] text-text-muted uppercase">Why</p>
-                      <Markdown md={q.explain} className="!text-[14px]" />
-                    </div>
+              </pre>
+              <button type="submit" hidden />
+            </form>
+          )}
+
+          {q.kind === 'match' && (
+            <div className="qc-options">
+              {q.left.map((l, i) => {
+                const ok = pairs[i] === q.right[i]
+                return (
+                  <div
+                    key={i}
+                    data-state={show && ok ? 'right' : locked && !result && !ok ? 'wrong' : 'idle'}
+                    className="qc-option !cursor-default flex-wrap items-center sm:flex-nowrap"
+                  >
+                    <span className="qc-letter" aria-hidden="true">
+                      {i + 1}
+                    </span>
+                    <span className="qc-option-text">
+                      <Markdown md={l} className="[&_p]:!m-0" />
+                    </span>
+                    <ArrowRight className="hidden size-4 shrink-0 text-text-muted sm:block" aria-hidden="true" />
+                    <select
+                      value={pairs[i]}
+                      disabled={locked}
+                      onChange={(e) => setPairs((p) => p.map((x, j) => (j === i ? e.target.value : x)))}
+                      className="q-select w-full font-mono sm:w-auto sm:min-w-[170px]"
+                      aria-label={`Match for ${l}`}
+                    >
+                      <option value="">Choose…</option>
+                      {rightShuffled.map((r) => (
+                        <option key={r} value={r}>
+                          {r}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                )}
-                {!result && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <button type="button" onClick={reset} className="btn-secondary inline-flex items-center gap-1.5 !px-3 !py-1.5 !text-[12.5px]">
-                      <RotateCcw className="size-3.5" /> Try again
-                    </button>
-                    {!revealed && (
-                      <button type="button" onClick={() => setRevealed(true)} className="btn-ghost inline-flex items-center gap-1.5 !px-3 !py-1.5 !text-[12.5px]">
-                        <Eye className="size-3.5" /> Show answer
-                      </button>
-                    )}
-                  </div>
-                )}
+                )
+              })}
+            </div>
+          )}
+
+          {/* hint */}
+          <AnimatePresence initial={false}>
+            {hint && q.hint && !show && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+                <div className="flex gap-2.5 border-l-2 border-[var(--ed-line-strong)] pl-4">
+                  <Lightbulb className="mt-1 size-4 shrink-0 text-text-muted" aria-hidden="true" />
+                  <Markdown md={q.hint} className="ed-body-sm" />
+                </div>
               </motion.div>
             )}
-          </div>
-        )}
-      </div>
-    </div>
+          </AnimatePresence>
+
+          {/* actions, then the verdict and the reasoning */}
+          {result === null ? (
+            <QuestionActions>
+              <CheckButton disabled={!canCheck} onClick={check}>
+                Check
+              </CheckButton>
+              {q.hint && !hint && <TextAction onClick={() => setHint(true)}>Hint</TextAction>}
+            </QuestionActions>
+          ) : (
+            <>
+              <Verdict
+                tone={result ? 'right' : 'wrong'}
+                detail={
+                  show && !result ? (
+                    <>
+                      Answer: <span className="ed-mono ed-ink">{answerText(q)}</span>
+                    </>
+                  ) : undefined
+                }
+              >
+                {verdictLine}
+              </Verdict>
+              {!result && (
+                <QuestionActions>
+                  <TextAction onClick={reset}>
+                    <RotateCcw className="mr-1 inline size-3.5" aria-hidden="true" />
+                    Try again
+                  </TextAction>
+                  {!revealed && <TextAction onClick={() => setRevealed(true)}>Show answer</TextAction>}
+                </QuestionActions>
+              )}
+              {show && (
+                <SolutionBlock kicker="Why" defaultOpen={!result}>
+                  <Markdown md={q.explain} />
+                </SolutionBlock>
+              )}
+            </>
+          )}
+        </>
+      )}
+    </Card>
   )
 }
 
