@@ -1902,3 +1902,19 @@ html[data-pattern] body {
   letter-spacing: -0.005em;
   text-transform: none;
 }
+
+/* ── Field Journal — page changes: an ink line with a clay nib at its tip ── */
+[data-style='journal'] .route-progress {
+  background: var(--color-text-primary);
+  border-radius: 0;
+}
+[data-style='journal'] .route-progress::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ed-clay, var(--color-accent-brand));
+}

@@ -23,7 +23,7 @@ export function RouteProgress() {
         <motion.div
           key={run.key}
           aria-hidden="true"
-          className="pointer-events-none fixed top-0 left-0 z-[1300] h-[2px] origin-left rounded-r-full bg-accent-brand"
+          className="route-progress pointer-events-none fixed top-0 left-0 z-[1300] h-[2px] origin-left rounded-r-full bg-accent-brand"
           style={{ width: '100%' }}
           initial={{ scaleX: 0, opacity: 1 }}
           animate={{ scaleX: 0.82, transition: { duration: 0.42, ease: EASE_EMPHASIZED } }}
