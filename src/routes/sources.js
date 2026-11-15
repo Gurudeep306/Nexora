@@ -9,6 +9,17 @@ function createSourcesRouter({ can, me, invalidateCatalog }) {
   const guard = (req, res, next) => (can(req, "problems.manage") ? next() : res.status(403).json({ ok: false, error: "You need the Problems permission" }));
   const fail = (res, e) => res.status(e.status || 500).json({ ok: false, error: e.message || String(e) });
 
+  // Public: the sources that are switched on, with the names admins gave them.
+  router.get("/api/sources", async (_req, res) => {
+    try {
+      const list = await sources.listSources({ statements: false });
+      res.set("Cache-Control", "public, max-age=60");
+      res.json({ ok: true, sources: list.filter((s) => s.enabled).map((s) => ({ id: s.id, label: s.label, kind: s.kind, problems: s.problems })) });
+    } catch (e) {
+      fail(res, e);
+    }
+  });
+
   router.get("/api/problem-sources", guard, async (_req, res) => {
     try {
       res.json({ ok: true, sources: await sources.listSources() });

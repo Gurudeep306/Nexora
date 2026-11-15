@@ -89,16 +89,36 @@ const pubSource = (row, counts) => {
   };
 };
 
-async function listSources() {
-  await init();
-  const rows = await all("SELECT * FROM problem_sources");
+let stmtCounts = null; // { at, map } — statement counts per platform, refreshed every 10 min
+
+async function countsByPlatform({ statements = true } = {}) {
   const counts = new Map();
-  for (const r of await all("SELECT platform, COUNT(*) AS n FROM problems GROUP BY platform")) counts.set(r.platform, { n: Number(r.n), s: 0 });
-  for (const r of await all("SELECT p.platform, COUNT(*) AS s FROM problem_statements s JOIN problems p ON p.id = s.problem_rowid GROUP BY p.platform").catch(() => [])) {
+  // Problem counts from the in-memory catalog: no table scan (Turso bills every row read).
+  const { getCatalog } = require("../problem-catalog");
+  const cat = await getCatalog().catch(() => null);
+  for (const r of cat?.rows || []) {
     const c = counts.get(r.platform) || { n: 0, s: 0 };
-    c.s = Number(r.s);
+    c.n++;
     counts.set(r.platform, c);
   }
+  if (statements) {
+    if (!stmtCounts || Date.now() - stmtCounts.at > 10 * 60_000) {
+      const rows = await all("SELECT p.platform, COUNT(*) AS s FROM problem_statements s JOIN problems p ON p.id = s.problem_rowid GROUP BY p.platform").catch(() => []);
+      stmtCounts = { at: Date.now(), map: new Map(rows.map((r) => [r.platform, Number(r.s)])) };
+    }
+    for (const [platform, n] of stmtCounts.map) {
+      const c = counts.get(platform) || { n: 0, s: 0 };
+      c.s = n;
+      counts.set(platform, c);
+    }
+  }
+  return counts;
+}
+
+async function listSources({ statements = true } = {}) {
+  await init();
+  const rows = await all("SELECT * FROM problem_sources");
+  const counts = await countsByPlatform({ statements });
   // Known modules in their curated order, then anything else in the table.
   const byId = new Map(rows.map((r) => [r.id, r]));
   const ordered = [...MODULES.map((id) => byId.get(id)).filter(Boolean), ...rows.filter((r) => !SOURCES[r.id])];
@@ -192,6 +212,7 @@ async function syncSource(id, { by = null } = {}) {
       await run("UPDATE problem_sources SET enabled=1, updated_by=?, updated_at=? WHERE id=?", [by || "sync", new Date().toISOString(), id]);
       disabledCache = null;
     }
+    stmtCounts = null;
     return r;
   } catch (e) {
     await run("UPDATE problem_sources SET last_error=? WHERE id=?", [String(e.message || e).slice(0, 400), id]).catch(() => {});
