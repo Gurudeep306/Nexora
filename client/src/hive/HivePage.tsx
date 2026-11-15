@@ -4,7 +4,6 @@ import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-ro
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   BarChart3,
-  Bot,
   Settings2,
   HeartPulse,
   Network,
@@ -41,6 +40,7 @@ import {
   Users,
   X,
 } from 'lucide-react'
+import { CopilotMark as Bot } from './marks'
 import { LogoMark } from '@/components/brand/Logo'
 import { Highlight, Menu, MenuContent, MenuItem, MenuTrigger, Tooltip } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -217,9 +217,9 @@ function Shell() {
   if (loading && !boot) {
     return (
       <div className="hive-root grid h-dvh place-items-center" role="status" aria-label="Loading Hive">
-        <div className="flex flex-col items-center gap-4">
-          <HiveLogo size={56} draw />
-          <span className="hive-boot-word text-[15px] font-semibold tracking-[-0.01em] text-text-primary">Hive</span>
+        <div className="flex flex-col items-center gap-5">
+          <HiveLogo size={40} draw />
+          <span className="hive-boot-word text-[13px] font-medium tracking-[0.18em] text-text-secondary uppercase">Hive</span>
           <span className="hive-boot-bar" aria-hidden="true">
             <span />
           </span>

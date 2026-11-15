@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { AlertCircle, Bot, GitCommitHorizontal, MessageSquare, Pencil, Send, StickyNote, Wrench } from 'lucide-react'
+import { AlertCircle, GitCommitHorizontal, MessageSquare, Pencil, Send, StickyNote, Wrench } from 'lucide-react'
+import { CopilotMark as Bot } from './marks'
 import { Button, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from './api'

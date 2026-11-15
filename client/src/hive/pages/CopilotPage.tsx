@@ -4,7 +4,8 @@
    Dispatcher, still at /hive/dispatch via redirect). */
 import { lazy, Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Bot } from 'lucide-react'
+import {  } from 'lucide-react'
+import { CopilotMark as Bot } from '../marks'
 import { CopilotThread } from '../Copilot'
 import { SegmentedControl } from '../kit'
 

@@ -53,6 +53,14 @@ function stableWhileStreaming(src: string): string {
   const nl = out.lastIndexOf('\n')
   const tail = out.slice(nl + 1)
   if (/^\s*\|/.test(tail)) out = out.slice(0, nl + 1)
+  else if ((out.match(/^\s*```/gm) ?? []).length % 2 === 0) {
+    // A half-typed **bold**, _em_ or `code` on the last line would flash its raw
+    // markers until the closing one arrives: hold the opener back instead.
+    let line = out.slice(nl + 1)
+    if ((line.match(/\*\*/g) ?? []).length % 2 === 1) line = line.replace(/\*\*(?!.*\*\*)/, '')
+    if ((line.replace(/```/g, '').match(/`/g) ?? []).length % 2 === 1) line = line.replace(/`(?!.*`)/, '')
+    out = out.slice(0, nl + 1) + line.replace(/\s*[*_`#>-]+$/, (m) => (/^\s*$/.test(line.slice(0, -m.length)) ? m : ''))
+  }
   return out
 }
 
