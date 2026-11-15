@@ -7,6 +7,8 @@ import { useTheme } from '@/context/ThemeContext'
 import { STYLES } from '@/theme/styles'
 import { PALETTE_BY_ID, resolveMode } from '@/theme/palettes'
 import { styleLook } from '@/components/look/StylesSection'
+import '@fontsource-variable/newsreader/opsz.css'
+import '@/components/landing/landing.css'
 import '@/components/auth/auth.css'
 import { LogoMark } from '@/components/brand/Logo'
 import { takeOAuthResult, useAuth } from '@/context/AuthContext'
@@ -422,7 +424,7 @@ export default function AuthPage() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="auth-root">
+      <div className="auth-root ed">
         {/* A living field of colour, nothing else: four soft lights drifting slowly. */}
         <div className="auth-field" aria-hidden="true">
           <span className="auth-light l1" />
@@ -434,10 +436,8 @@ export default function AuthPage() {
 
         <header className="auth-top">
           <Link to="/" className="flex items-center gap-2.5 !no-underline" aria-label="NexoraGuru home">
-            <LogoMark size={26} />
-            <span className="text-[15px] font-semibold tracking-[-0.03em] text-text-primary">
-              Nexora<span className="text-text-secondary">Guru</span>
-            </span>
+            <LogoMark size={22} />
+            <span className="ed-wordmark text-text-primary">NexoraGuru</span>
           </Link>
           <LookBar />
         </header>
