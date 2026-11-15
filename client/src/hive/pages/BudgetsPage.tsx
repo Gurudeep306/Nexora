@@ -22,9 +22,9 @@ type Period = (typeof PERIODS)[number]
 
 /* Series colours: one fixed hue per series, never cycled. */
 const SERIES = [
-  { key: 'input', label: 'Input', color: 'oklch(64% 0.15 285)' },
-  { key: 'output', label: 'Output', color: 'oklch(70% 0.13 175)' },
-  { key: 'cached', label: 'Cached', color: 'oklch(78% 0.12 80)' },
+  { key: 'input', label: 'Input', color: 'var(--chart-1)' },
+  { key: 'output', label: 'Output', color: 'var(--chart-3)' },
+  { key: 'cached', label: 'Cached', color: 'var(--chart-4)' },
 ] as const
 
 const tot = (r: Pick<SpendRow, 'input' | 'output' | 'cached'>) => r.input + r.output + r.cached
@@ -272,7 +272,7 @@ function DailyChart({ spend, days }: { spend: Spend | null; days: number }) {
         <h2 className="mr-auto text-[14px] font-semibold text-text-primary">Tokens per day</h2>
         {SERIES.map((s) => (
           <span key={s.key} className="inline-flex items-center gap-1.5 text-[12px] text-text-secondary">
-            <span className="size-2.5 rounded-[3px]" style={{ background: s.color }} />
+            <span className="size-2.5 rounded-sm" style={{ background: s.color }} />
             {s.label}
             <span className="tabular-nums text-text-muted">{fmtTokens(totals[s.key])}</span>
           </span>
@@ -340,7 +340,7 @@ function Breakdown({ boot, spend }: { boot: Bootstrap; spend: Spend | null }) {
     if (dim === 'project') {
       const p = boot.projects.find((x) => x.id === key)
       return {
-        icon: <span className="hive-tile size-7" style={{ ['--tile' as string]: p ? projectColor(p.color) : 'var(--color-text-muted)' }}>{p ? <span className="hive-hex size-2.5" style={{ background: projectColor(p.color) }} /> : <Sparkles className="size-3.5" />}</span>,
+        icon: <span className="hive-tile size-7" style={{ ['--tile' as string]: p ? projectColor(p.color) : 'var(--color-text-muted)' }}>{p ? <span className="rounded-full size-2.5" style={{ background: projectColor(p.color) }} /> : <Sparkles className="size-3.5" />}</span>,
         name: projectName(boot, key || null),
       }
     }
@@ -438,7 +438,7 @@ function ScopeIcon({ boot, c }: { boot: Bootstrap; c: Cap }) {
   if (c.scopeType === 'user') return <UserDot username={c.scope} size={5} />
   if (c.scopeType === 'project') {
     const p = boot.projects.find((x) => x.id === c.scope)
-    return <span className="hive-hex size-3" style={{ background: p ? projectColor(p.color) : 'var(--color-text-muted)' }} />
+    return <span className="rounded-full size-3" style={{ background: p ? projectColor(p.color) : 'var(--color-text-muted)' }} />
   }
   return <Globe2 className="size-4 text-accent-brand" />
 }
@@ -451,7 +451,7 @@ function CapsList({ boot, caps, admin, onAdd, onChanged }: { boot: Bootstrap; ca
     return (
       <div className="grid gap-3 md:grid-cols-2">
         {[0, 1].map((i) => (
-          <div key={i} className="hive-shimmer h-24 rounded-[18px]" />
+          <div key={i} className="hive-shimmer h-24 rounded-2xl" />
         ))}
       </div>
     )
@@ -775,7 +775,7 @@ function AlertsList({ alerts }: { alerts: HiveAlert[] | null }) {
     return (
       <div className="space-y-2">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="hive-shimmer h-16 rounded-[18px]" />
+          <div key={i} className="hive-shimmer h-16 rounded-2xl" />
         ))}
       </div>
     )

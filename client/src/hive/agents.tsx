@@ -252,16 +252,15 @@ export function AgentMark({ provider, model, size = 28, className, flat }: { pro
   const f = familyOf(provider, model)
   const gid = `g${useId().replace(/[^a-zA-Z0-9]/g, '')}`
   const c1 = familyColor(f, 72)
-  const c2 = familyColor2(f, 62)
   return (
     <span
       className={cn('relative inline-grid shrink-0 place-items-center', className)}
       style={{
         width: size,
         height: size,
-        borderRadius: size * 0.3,
-        background: flat ? 'transparent' : `linear-gradient(150deg, color-mix(in oklab, ${c1} 20%, var(--color-bg-surface)), color-mix(in oklab, ${c2} 12%, var(--color-bg-surface)))`,
-        boxShadow: flat ? undefined : `inset 0 0 0 1px color-mix(in oklab, ${c1} 26%, transparent), inset 0 1px 0 color-mix(in oklab, white 10%, transparent)`,
+        borderRadius: Math.max(3, Math.round(size * 0.18)),
+        background: flat ? 'transparent' : `color-mix(in oklab, ${c1} 18%, var(--color-bg-surface))`,
+        boxShadow: flat ? undefined : `inset 0 0 0 1px color-mix(in oklab, ${c1} 30%, transparent)`,
       }}
       role="img"
       aria-label={FAMILY[f].name}
@@ -271,7 +270,7 @@ export function AgentMark({ provider, model, size = 28, className, flat }: { pro
         <defs>
           <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor={c1} />
-            <stop offset="1" stopColor={c2} />
+            <stop offset="1" stopColor={c1} />
           </linearGradient>
         </defs>
         <Glyph f={f} gid={gid} />
@@ -435,7 +434,7 @@ export function roleOf(a: Pick<AgentRow, 'role' | 'title' | 'routed_kind'>): { l
 export function RoleTag({ a, className }: { a: Pick<AgentRow, 'role' | 'title' | 'routed_kind'>; className?: string }) {
   const r = roleOf(a)
   return (
-    <span className={cn('inline-flex h-[18px] items-center rounded-full px-1.5 text-[10px] font-semibold uppercase tracking-[0.06em]', className)} style={{ color: `oklch(74% 0.12 ${r.hue})`, background: `oklch(70% 0.12 ${r.hue} / 0.13)` }}>
+    <span className={cn('inline-flex h-[18px] items-center rounded-full px-1.5 text-[10px] font-semibold uppercase tracking-[0.06em]', className)} style={{ color: `color-mix(in oklab, oklch(62% 0.13 ${r.hue}) 70%, var(--color-text-primary))`, background: `oklch(70% 0.12 ${r.hue} / 0.13)` }}>
       {r.label}
     </span>
   )
@@ -447,19 +446,19 @@ export function AgentAvatar({ provider, model, state, size = 44, className }: { 
   const color = STATE_INFO[state].color
   const active = !['done', 'failed', 'stopped', 'queued'].includes(state)
   return (
-    <span className={cn('hive-av relative inline-grid shrink-0 place-items-center', `hive-av--${state}`, className)} style={{ width: size + 10, height: size + 10, ['--av' as string]: color, ['--fam' as string]: familyColor(f) }}>
+    <span className={cn('hive-av relative inline-grid shrink-0 place-items-center', `hive-av--${state}`, className)} style={{ width: size + 10, height: size + 10, borderRadius: Math.max(4, Math.round(size * 0.18)) + 5, ['--av' as string]: color, ['--fam' as string]: familyColor(f) }}>
       {/* halo */}
-      {active && <span className="hive-av-halo absolute inset-0 rounded-[34%]" aria-hidden="true" />}
+      {active && <span className="hive-av-halo absolute inset-0 rounded-[inherit]" aria-hidden="true" />}
       {/* ring */}
-      <span className="hive-av-ring absolute inset-[2px] rounded-[32%]" aria-hidden="true" />
+      <span className="hive-av-ring absolute inset-[2px] rounded-[inherit]" aria-hidden="true" />
       <AgentMark provider={provider} model={model} size={size} />
       {/* state ornaments */}
       {state === 'thinking' && (
         <span className="hive-av-orbit absolute inset-0" aria-hidden="true">
-          <span className="absolute left-1/2 top-0 size-1.5 -translate-x-1/2 rounded-full" style={{ background: color, boxShadow: `0 0 8px ${color}` }} />
+          <span className="absolute left-1/2 top-0 size-1.5 -translate-x-1/2 rounded-full" style={{ background: color }} />
         </span>
       )}
-      {(state === 'reading' || state === 'reviewing') && <span className="hive-av-scan absolute inset-[5px] overflow-hidden rounded-[30%]" aria-hidden="true" />}
+      {(state === 'reading' || state === 'reviewing') && <span className="hive-av-scan absolute inset-[5px] overflow-hidden rounded-[inherit]" aria-hidden="true" />}
       {(state === 'writing' || state === 'editing') && (
         <span className="absolute -bottom-1 left-1/2 flex -translate-x-1/2 gap-[3px] rounded-full bg-bg-surface px-1.5 py-1 shadow-sm ring-1 ring-[var(--hive-line)]" aria-hidden="true">
           {[0, 1, 2].map((i) => (
@@ -467,7 +466,7 @@ export function AgentAvatar({ provider, model, state, size = 44, className }: { 
           ))}
         </span>
       )}
-      {state === 'running' && <span className="hive-av-spin absolute inset-0 rounded-[34%]" aria-hidden="true" />}
+      {state === 'running' && <span className="hive-av-spin absolute inset-0 rounded-[inherit]" aria-hidden="true" />}
       {state === 'done' && (
         <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 18 }} className="absolute -bottom-0.5 -right-0.5 grid size-[18px] place-items-center rounded-full bg-state-success text-on-accent-brand ring-2 ring-[var(--color-bg-surface)]">
           <Check className="size-3" strokeWidth={3} />
@@ -507,8 +506,8 @@ export function ScoreBar({ value, label, hue = 285, max = 100, suffix }: { value
   return (
     <div className="flex items-center gap-2">
       {label && <span className="w-[74px] shrink-0 truncate text-[11px] text-text-muted">{label}</span>}
-      <span className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-text-primary/[0.07]">
-        <motion.span initial={{ width: 0 }} animate={{ width: `${pct * 100}%` }} transition={{ duration: 0.8, ease: [0.2, 0.8, 0.2, 1] }} className="absolute inset-y-0 left-0 rounded-full" style={{ background: `linear-gradient(90deg, oklch(66% 0.13 ${hue}), oklch(76% 0.15 ${hue + 30}))` }} />
+      <span className="relative h-1.5 flex-1 overflow-hidden rounded-[2px] bg-text-primary/[0.07]">
+        <motion.span initial={{ width: 0 }} animate={{ width: `${pct * 100}%` }} transition={{ duration: 0.8, ease: [0.2, 0.8, 0.2, 1] }} className="absolute inset-y-0 left-0 rounded-[2px]" style={{ background: `oklch(66% 0.13 ${hue})` }} />
       </span>
       <span className="w-7 shrink-0 text-right text-[11px] tabular-nums text-text-secondary">{suffix ?? Math.round(value)}</span>
     </div>

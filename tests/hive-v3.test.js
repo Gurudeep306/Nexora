@@ -26,9 +26,11 @@ const ok = async (method, url, body) => {
   return r.body;
 };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-async function waitTask(id) {
+async function waitTask(id, { approve = false } = {}) {
   for (let i = 0; i < 80; i++) {
     await sleep(250);
+    // The automatic reviewer on a machine session runs the checks too; approve those.
+    if (approve) for (const a of (await ok("GET", "/api/hive/approvals")).approvals) await ok("POST", `/api/hive/approvals/${a.id}`, { approved: true });
     const t = await ok("GET", `/api/hive/tasks/${id}`);
     if (!["running", "queued"].includes(t.task.status)) return t;
   }
@@ -104,7 +106,15 @@ test("machine task: real files, approval-gated commands, terminal, checkpoints a
     }
   }
   assert.ok(approved, "an approval was requested");
-  const t = await waitTask(task.id);
+  const t = await waitTask(task.id, { approve: true });
+  // Machine sessions get the automatic review too (their changes live in git, not hive_changes).
+  let reviewer = null;
+  for (let i = 0; i < 40 && !reviewer; i++) {
+    reviewer = (await ok("GET", `/api/hive/tasks/${task.id}`)).agents.find((a) => a.name === "reviewer");
+    if (!reviewer) await sleep(250);
+  }
+  assert.ok(reviewer, "the automatic reviewer joined the machine session");
+  await waitTask(task.id, { approve: true });
   const kinds = t.events.map((e) => e.kind);
   assert.ok(kinds.includes("approval") && kinds.includes("approval_result"));
   const run = t.events.find((e) => e.kind === "tool_result" && e.data.name === "run_command");
@@ -186,4 +196,26 @@ test("a key whose check failed is retried after a cool-down, and 'no key' explai
   await run("UPDATE hive_keys SET updated_at=? WHERE id=?", [Date.now() - 11 * 60_000, id]);
   assert.equal((await keys.pickKey("openai"))?.id, id, "retried after the cool-down");
   assert.match(await keys.explainNoKey("mistral"), /No Mistral key yet/);
+});
+
+test("compare on a machine: each attempt has its own copy, and adopting one brings its code in", async () => {
+  const boot = await ok("GET", "/api/hive/bootstrap");
+  const key = boot.keys[0];
+  const proj = boot.projects.find((p) => p.machine_id);
+  const { task } = await ok("POST", `/api/hive/projects/${proj.id}/tasks`, { prompt: "Support quantities and run the tests", mode: "compare", agents: [{ provider: key.provider, keyId: "auto" }, { provider: key.provider, keyId: "auto", model: "demo-coder-mini" }] });
+  await waitTask(task.id, { approve: true });
+  const t = await ok("GET", `/api/hive/tasks/${task.id}`);
+  const tries = t.agents.filter((a) => a.variant === a.id);
+  assert.equal(tries.length, 2);
+  const copies = tries.map((a) => a.worktree);
+  assert.ok(copies.every(Boolean) && copies[0] !== copies[1] && !copies.includes(t.task.folder), `separate copies: ${copies.join(", ")}`);
+  for (const a of tries) {
+    const ch = await ok("GET", `/api/hive/tasks/${task.id}/changes?variant=${a.id}`);
+    assert.deepEqual(ch.changes.map((c) => c.path), ["src/cart.js"], "each attempt's own diff");
+  }
+  await ok("POST", `/api/hive/tasks/${task.id}/adopt`, { variant: tries[1].id });
+  const main = await ok("GET", `/api/hive/tasks/${task.id}/changes`);
+  assert.deepEqual(main.changes.map((c) => c.path), ["src/cart.js"], "the adopted attempt is now the session's result");
+  const file = await ok("GET", `/api/hive/tasks/${task.id}/file?path=src/cart.js`);
+  assert.match(file.current, /qty/);
 });

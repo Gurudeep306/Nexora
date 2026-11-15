@@ -6,6 +6,7 @@
    worker machine, or open the project. Connected tools are shared by the
    whole staff workspace and show up in chat and in every agent.
    ──────────────────────────────────────────────────────────────────────── */
+import { SecretInput } from '../kit'
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -297,7 +298,7 @@ function ToolCard({ t, i, catLabel, onConnect }: { t: EcoTool; i: number; catLab
       exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.12 } }}
       className="hive-card hive-card-hover group relative flex flex-col overflow-hidden p-4"
     >
-      <span className="absolute inset-x-0 top-0 h-[2px] opacity-0 transition-opacity group-hover:opacity-100" style={{ background: `linear-gradient(90deg, transparent, ${hue(h.hue)}, transparent)` }} />
+      <span className="absolute inset-x-0 top-0 h-[2px] opacity-0 transition-opacity group-hover:opacity-100" style={{ background: hue(h.hue) }} />
       <div className="mb-2 flex items-start gap-3">
         <span className="grid size-10 shrink-0 place-items-center rounded-xl text-[15px] font-semibold" style={{ color: `color-mix(in oklab, ${hue(h.hue)} 62%, var(--color-text-primary))`, background: `color-mix(in oklab, ${hue(h.hue)} 14%, transparent)` }}>
           {t.name.replace(/[^A-Za-z0-9]/g, '').slice(0, 2) || '·'}
@@ -365,7 +366,16 @@ function Connected({ data, reload, onAdd }: { data: Toolbox; reload: () => void;
           {mcp.map((i) => (
             <IntegrationCard key={i.id} i={i} reload={reload} />
           ))}
-          {!mcp.length && <p className="text-[13px] text-text-muted">No MCP servers yet.</p>}
+          {!mcp.length && (
+            <div className="flex flex-col items-center gap-1.5 rounded-xl border border-dashed hive-line px-6 py-8 text-center">
+              <Plug className="size-5 text-text-muted" />
+              <div className="text-[13.5px] font-medium text-text-primary">No MCP servers yet</div>
+              <div className="max-w-xs text-[12.5px] text-text-muted">Connect one to give agents outside tools — databases, browsers, ticket queues.</div>
+              <Button size="sm" variant="secondary" className="mt-1.5" onClick={() => onAdd('mcp')}>
+                <Plus /> Connect MCP server
+              </Button>
+            </div>
+          )}
         </div>
       </section>
       <section>
@@ -618,7 +628,7 @@ function ConnectDialog({ state, engines, onClose, onDone }: { state: { kind: 'mc
         )}
         {kind !== 'skill' && (kind === 'mcp' || eng?.needs !== 'url') && (
           <Field label={kind === 'mcp' ? 'Access token (optional)' : eng?.needs === 'key-optional' ? 'API key (optional — higher limits)' : 'API key'}>
-            <Input type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder="Stored encrypted, shared with the team" autoComplete="off" />
+            <SecretInput value={token} onChange={(e) => setToken(e.target.value)} placeholder="Stored encrypted, shared with the team" />
             {kind === 'search' && eng && (
               <a href={eng.docs} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-[12px] text-accent-brand">
                 Get a key <ExternalLink className="size-3" />

@@ -15,7 +15,7 @@ import { setFocusProject } from '../Showcase'
 import { Dot, NeedsList, useNeeds, useOverview } from '../Inbox'
 
 export default function HomePage() {
-  const { boot, live, machines } = useHive()
+  const { boot, live, machines, approvals } = useHive()
   const navigate = useNavigate()
   const { tasks, today } = useOverview()
   const needs = useNeeds(tasks)
@@ -76,7 +76,12 @@ export default function HomePage() {
           <h1 className="mt-3 text-[26px] font-semibold tracking-[-0.02em] text-[var(--hv-text-1)] sm:text-[30px]">
             {hello}, {boot.me.username}
           </h1>
-          <p className="mt-1.5 text-[14.5px] text-text-muted">{live.length ? `${live.length} agent${live.length === 1 ? ' is' : 's are'} working right now.` : 'Ask anything, or put agents to work on a project.'}</p>
+          <p className="mt-1.5 text-[14.5px] text-text-muted">
+            {new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}
+            {' · '}
+            {live.length ? `${live.length} agent${live.length === 1 ? ' is' : 's are'} working right now` : 'Ask anything, or put agents to work on a project'}
+            {approvals.length > 0 && ` · ${approvals.length} approval${approvals.length === 1 ? '' : 's'} waiting`}
+          </p>
         </div>
 
         {/* One composer, three intents */}
@@ -96,7 +101,7 @@ export default function HomePage() {
                 <Menu>
                   <MenuTrigger asChild>
                     <button type="button" className="inline-flex h-7 max-w-[220px] items-center gap-1.5 rounded-full bg-[var(--hv-surface-2)] px-2.5 text-[12px] text-[var(--hv-text-2)] hover:text-[var(--hv-text-1)]">
-                      {project ? <span className="hive-hex size-2.5 shrink-0" style={{ background: projectColor(project.color) }} /> : <FolderGit2 className="size-3.5" />}
+                      {project ? <span className="rounded-full size-2.5 shrink-0" style={{ background: projectColor(project.color) }} /> : <FolderGit2 className="size-3.5" />}
                       <span className="truncate">{project ? project.name : 'Any project'}</span>
                       <ChevronDown className="size-3 text-[var(--hv-text-3)]" />
                     </button>
@@ -108,7 +113,7 @@ export default function HomePage() {
                     {boot.projects.length > 0 && <MenuLabel>Projects</MenuLabel>}
                     {boot.projects.map((p) => (
                       <MenuItem key={p.id} onSelect={() => setTarget(p.id)}>
-                        <span className="hive-hex size-3.5" style={{ background: projectColor(p.color) }} /> {p.name}
+                        <span className="rounded-full size-3.5" style={{ background: projectColor(p.color) }} /> {p.name}
                       </MenuItem>
                     ))}
                     <MenuItem onSelect={() => navigate('/hive/projects')}>

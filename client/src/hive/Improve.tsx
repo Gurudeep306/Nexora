@@ -58,7 +58,7 @@ export function ImproveButton({
           className={cn(
             'group/imp relative inline-flex h-8 items-center gap-1.5 overflow-hidden rounded-full px-2.5 text-[12px] font-medium transition-all disabled:opacity-40',
             busy ? 'text-accent-brand' : 'text-text-secondary hover:text-text-primary',
-            'bg-[linear-gradient(120deg,color-mix(in_oklab,var(--color-accent-brand)_14%,transparent),color-mix(in_oklab,oklch(70%_0.14_330)_12%,transparent))] hover:shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-accent-brand)_35%,transparent)]',
+            'bg-accent-brand/10 hover:ring-1 hover:ring-inset hover:ring-accent-brand/30',
             className,
           )}
           aria-label="Improve prompt"

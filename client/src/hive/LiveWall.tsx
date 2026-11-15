@@ -98,7 +98,7 @@ export function LiveWall() {
           return (
             <motion.section key={taskId} layout initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.24, ease: EASE }} className="hive-card overflow-hidden">
               <button type="button" onClick={() => navigate(`/hive/p/${agents[0].projectId}/t/${taskId}`)} className="flex w-full items-center gap-2 border-b hive-line px-4 py-2.5 text-left hover:bg-text-primary/[0.03]">
-                {p && <span className="hive-hex size-2.5" style={{ background: projectColor(p.color) }} />}
+                {p && <span className="rounded-full size-2.5" style={{ background: projectColor(p.color) }} />}
                 <span className="text-[11.5px] text-text-muted">{p?.name}</span>
                 <span className="truncate text-[13px] font-semibold">{agents[0].taskTitle}</span>
                 <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-accent-brand/10 px-2 py-0.5 text-[11px] font-medium text-accent-brand">

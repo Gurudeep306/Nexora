@@ -49,7 +49,7 @@ export default function MemoryPage() {
       <div className="mb-8 flex flex-wrap gap-1 rounded-xl bg-text-primary/[0.04] p-1">
         {boot.projects.map((p) => (
           <button key={p.id} type="button" onClick={() => setProjectId(p.id)} className={cn('flex h-8 items-center gap-1.5 rounded-lg px-3 text-[13px]', projectId === p.id ? 'bg-bg-surface text-text-primary shadow-sm' : 'text-text-muted')}>
-            <span className="hive-hex size-2.5" style={{ background: projectColor(p.color) }} />
+            <span className="rounded-full size-2.5" style={{ background: projectColor(p.color) }} />
             {p.name}
           </button>
         ))}

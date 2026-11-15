@@ -14,7 +14,7 @@ import { errMsg } from '../Improve'
 import { useHive } from '../store'
 import type { GhRepo } from '../types'
 import { timeAgo } from '../ui'
-import { Empty, Row, RowList, SegmentedControl, StatusPill } from '../kit'
+import { Empty, PageHeader, Row, RowList, SegmentedControl, StatusPill } from '../kit'
 import { projectColor } from '../projectColor'
 import { FolderImport } from '../FolderImport'
 
@@ -154,25 +154,25 @@ export default function ReposPage() {
 
   return (
     <div className="mx-auto w-full max-w-[960px] px-4 pb-16 pt-6 sm:px-6">
-      <div className="flex flex-wrap items-start gap-3">
-        <div className="min-w-0 flex-1">
-          <h1 className="text-[22px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]">Projects</h1>
-          <p className="mt-1 text-[13px] text-[var(--hv-text-3)]">Your projects first, then every repository you can reach. Open one and Hive writes a brief from its code for the agents.</p>
-        </div>
-        {connected && (
-          <div className="flex flex-wrap items-center gap-1.5">
-            <Button variant="ghost" size="sm" onClick={() => load(true)} loading={loading} aria-label="Refresh the list from GitHub">
-              {!loading && <RefreshCw />} Refresh
-            </Button>
-            <Button variant="secondary" size="sm" onClick={() => setAdding(adding === 'folder' ? 'none' : 'folder')} aria-expanded={adding === 'folder'}>
-              <Upload /> Upload a folder
-            </Button>
-            <Button size="sm" onClick={() => setAdding(adding === 'repo' ? 'none' : 'repo')} aria-expanded={adding === 'repo'}>
-              <Plus /> Add repository
-            </Button>
-          </div>
-        )}
-      </div>
+      <PageHeader
+        title="Projects"
+        sub="Your projects first, then every repository you can reach. Open one and Hive writes a brief from its code for the agents."
+        actions={
+          connected && (
+            <>
+              <Button variant="ghost" size="sm" onClick={() => load(true)} loading={loading} aria-label="Refresh the list from GitHub">
+                {!loading && <RefreshCw />} Refresh
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => setAdding(adding === 'folder' ? 'none' : 'folder')} aria-expanded={adding === 'folder'}>
+                <Upload /> Upload a folder
+              </Button>
+              <Button size="sm" onClick={() => setAdding(adding === 'repo' ? 'none' : 'repo')} aria-expanded={adding === 'repo'}>
+                <Plus /> Add repository
+              </Button>
+            </>
+          )
+        }
+      />
 
       {!connected ? (
         <div className="mt-6">
@@ -333,7 +333,7 @@ export function ConnectGithub({ onDone }: { onDone?: () => void }) {
                 if (token.trim().length >= 10) connect()
               }}
             >
-              <input type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder="ghp_… or github_pat_…" autoComplete="off" className="h-9 min-w-0 flex-1 rounded-xl border hive-line bg-bg-surface px-3 font-mono text-[12.5px] outline-none focus:border-accent-brand/50" aria-label="GitHub token" />
+              <input type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder="ghp_… or github_pat_…" autoComplete="new-password" data-1p-ignore="" data-lpignore="true" data-bwignore="" className="h-9 min-w-0 flex-1 rounded-xl border hive-line bg-bg-surface px-3 font-mono text-[12.5px] outline-none focus:border-accent-brand/50" aria-label="GitHub token" />
               <Button type="submit" loading={busy} disabled={token.trim().length < 10}>
                 Connect
               </Button>

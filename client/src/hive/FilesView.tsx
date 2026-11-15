@@ -97,9 +97,13 @@ export function FilesView({ taskId }: { taskId: string }) {
               <File className="ml-[18px] size-3.5 shrink-0 text-text-muted" />
             )}
             <span className="truncate">{c.name}</span>
-            {dirty && <span className="ml-auto size-1.5 shrink-0 rounded-full bg-state-warning" />}
+            {dirty && <span className="ml-auto size-1.5 shrink-0 rounded-full bg-accent-brand" />}
           </button>
-          {isDir && isOpen && renderNode(c, depth + 1)}
+          {isDir && isOpen && (
+            <div className="border-l border-[var(--hive-line)]" style={{ marginLeft: 6 + depth * 12 + 6 }}>
+              {renderNode(c, depth + 1)}
+            </div>
+          )}
         </div>
       )
     })

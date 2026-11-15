@@ -17,8 +17,7 @@ async function create(ctx, { variant = "main", label, agentId = null, by = null,
   let gitSha = null;
   let files = 0;
   if (ctx.machine) {
-    const { machineWorkspace } = require("./localws");
-    const ws = machineWorkspace({ machineId: ctx.machine.id, folder: ctx.machine.folder });
+    const ws = require("./runner").workspaceOf(ctx, variant || "main");
     await ws.git(["add", "-A"]);
     const r = await ws.git(["stash", "create", `hive checkpoint: ${label || ""}`.slice(0, 200)]);
     await ws.git(["reset", "-q"]);
@@ -59,8 +58,7 @@ async function restore(ctx, cpId, { into, by } = {}) {
   // Save where we are first, so a restore can itself be undone.
   await create(ctx, { variant, label: `Before restoring “${cp.label}”`, by, auto: true }).catch(() => null);
   if (ctx.machine) {
-    const { machineWorkspace } = require("./localws");
-    const ws = machineWorkspace({ machineId: ctx.machine.id, folder: ctx.machine.folder });
+    const ws = require("./runner").workspaceOf(ctx, variant || "main");
     await ws.git(["reset", "-q", "--hard", "HEAD"]);
     await ws.git(["clean", "-fdq"]);
     if (cp.git_sha && cp.git_sha !== "HEAD") {

@@ -139,7 +139,7 @@ function ActiveWork({ items, compact }: { items: CopilotWork[]; compact?: boolea
       {items.map((w) => {
         const live = w.status === 'running' || w.status === 'queued'
         return (
-          <Link key={w.id} to={`/hive/p/${w.projectId}/t/${w.id}`} className="hv-row flex max-w-[300px] shrink-0 items-center gap-2 rounded-[10px] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] py-1 pl-1.5 pr-2 hover:border-[var(--hv-border-strong)]">
+          <Link key={w.id} to={`/hive/p/${w.projectId}/t/${w.id}`} className="hv-row flex max-w-[300px] shrink-0 items-center gap-2 rounded-lg border border-[var(--hv-border)] bg-[var(--hv-surface-1)] py-1 pl-1.5 pr-2 hover:border-[var(--hv-border-strong)]">
             <span className="flex -space-x-1.5">
               {w.agents.slice(0, 3).map((a, i) => (
                 <AgentAvatar key={i} provider={a.provider} model={a.model} state={a.status === 'running' ? 'editing' : a.status === 'done' ? 'done' : a.status === 'failed' ? 'failed' : 'queued'} size={22} />

@@ -6,6 +6,7 @@
 import type { ReactNode } from 'react'
 import { NavLink, Navigate, useLocation, useParams } from 'react-router-dom'
 import { cn } from '@/lib/utils'
+import { useNavFade } from './kit'
 
 export interface SectionTab {
   id: string
@@ -21,6 +22,7 @@ export function Sectioned({ base, label, tabs, active }: { base: string; label: 
   const { '*': rest = '' } = useParams()
   const id = active ?? (rest.split('/')[0] || tabs[0].id)
   const tab = tabs.find((t) => t.id === id) ?? tabs[0]
+  const navFade = useNavFade()
   return (
     <div className="flex min-h-full flex-col">
       <div className="sticky top-0 z-20 border-b border-[var(--hv-border)] bg-[color-mix(in_oklab,var(--hv-bg-app)_92%,transparent)] px-4 sm:px-6">
@@ -33,7 +35,7 @@ export function Sectioned({ base, label, tabs, active }: { base: string; label: 
                 to={i === 0 ? `/hive/${base}` : `/hive/${base}/${t.id}`}
                 role="tab"
                 aria-selected={on}
-                viewTransition
+                onClick={(e) => navFade(e, i === 0 ? `/hive/${base}` : `/hive/${base}/${t.id}`)}
                 className={cn(
                   'relative -mb-px whitespace-nowrap px-3 py-2.5 text-[13px] transition-colors duration-[var(--hv-d-fast)]',
                   on ? 'font-medium text-[var(--hv-text-1)]' : 'text-[var(--hv-text-2)] hover:text-[var(--hv-text-1)]',

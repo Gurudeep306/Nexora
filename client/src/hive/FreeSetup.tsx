@@ -143,7 +143,7 @@ export function FreeSetup() {
                       value={keys[s.vendor] ?? ''}
                       onChange={(e) => setKeys((k) => ({ ...k, [s.vendor]: e.target.value }))}
                       placeholder="Paste key"
-                      autoComplete="off"
+                      autoComplete="new-password" data-1p-ignore="" data-lpignore="true" data-bwignore=""
                       className="h-8 min-w-0 flex-1 rounded-lg border hive-line bg-bg-surface px-2.5 text-[12.5px] outline-none focus:border-accent-brand/50"
                       aria-label={`${s.name} API key`}
                     />

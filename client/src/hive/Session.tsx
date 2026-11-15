@@ -1,5 +1,6 @@
-import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { AnimatePresence, motion, useDragControls } from 'framer-motion'
+import { OverflowTabs, StatusPill as KitPill } from './kit'
 import {
   AlertCircle,
   ArrowRightLeft,
@@ -10,6 +11,7 @@ import {
   ChevronDown,
   ChevronRight,
   Code2,
+  Copy,
   Eye,
   FileDiff,
   FilePen,
@@ -41,6 +43,7 @@ import {
   Square,
   SquareTerminal,
   Trash2,
+  TriangleAlert,
   Users,
   Wand2,
   X,
@@ -53,6 +56,7 @@ import { hiveApi } from './api'
 import { AgentChip, defaultSpec, shortModel } from './AgentPicker'
 import { BoardView } from './BoardView'
 import { ChangesView } from './ChangesView'
+import { ContextRing, Panel, PanelGroup, PanelSeparator, Spinner, ThinkingIndicator, useMedia } from './kit'
 import { FilesView } from './FilesView'
 import { LiveCode } from './LiveCode'
 import { FloorFeed, TeamFloor } from './TeamFloor'
@@ -60,6 +64,7 @@ import { WorkMap } from './WorkMap'
 import { useHive } from './store'
 import type { AgentRow, AgentSpec, Checkpoint, Check as CheckRun, HiveEvent, PrInfo } from './types'
 import { MODE_INFO, ProviderGlyph, StatusPill, UserDot, duration, fmtCost, fmtTokens, statusColor, timeAgo } from './ui'
+import { riskyCommand } from './commandRisk'
 
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Something went wrong')
 type DockTab = 'changes' | 'files' | 'checkpoints' | 'ship' | 'terminal' | 'board'
@@ -77,7 +82,9 @@ export function Session() {
   const [focus, setFocus] = useState<string | null>(null)
   const [dock, setDock] = useState<DockTab>('changes')
   const [dockOpen, setDockOpen] = useState(true)
-  const [dockW, setDockW] = useState(() => Number(localStorage.getItem('hive:dockW') || 480) || 480)
+  const [dockW] = useState(() => Number(localStorage.getItem('hive:dockW') || 480) || 480)
+  const mdUp = useMedia('(min-width: 768px)')
+  const lgUp = useMedia('(min-width: 1024px)')
   const [changeCount, setChangeCount] = useState(0)
   const [cps, setCps] = useState<Checkpoint[]>([])
   const [showReads, setShowReads] = useState(true)
@@ -96,7 +103,41 @@ export function Session() {
   }
   // Phones: the roster and the panel open as full-screen sheets.
   const [sheet, setSheet] = useState<null | 'agents' | 'dock'>(null)
+  const sheetRef = useRef<HTMLDivElement>(null)
+  const sheetDrag = useDragControls()
+  // A sheet is a dialog: focus moves in, Tab stays inside, Escape closes it.
+  useEffect(() => {
+    if (!sheet) return
+    const back = document.activeElement as HTMLElement | null
+    const el = sheetRef.current
+    el?.querySelector<HTMLElement>('[data-sheet-close]')?.focus()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation()
+        setSheet(null)
+        return
+      }
+      if (e.key !== 'Tab' || !el) return
+      const f = [...el.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter((n) => n.offsetParent !== null)
+      if (!f.length) return
+      const first = f[0]
+      const last = f[f.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+    document.addEventListener('keydown', onKey, true)
+    return () => {
+      document.removeEventListener('keydown', onKey, true)
+      back?.focus?.()
+    }
+  }, [sheet])
   const small = () => typeof window !== 'undefined' && window.innerWidth < 768
+  // Wide screens show the agents column; narrower ones use filter chips and a sheet.
   const taskId = detail?.task.id
   const { on } = useHive()
 
@@ -152,26 +193,101 @@ export function Session() {
     { id: 'board', label: 'Board', icon: NotebookPen },
   ]
 
-  const onDrag = (e: React.PointerEvent) => {
-    const start = e.clientX
-    const w0 = dockW
-    const move = (ev: PointerEvent) => setDockW(Math.max(360, Math.min(window.innerWidth * 0.65, w0 - (ev.clientX - start))))
-    const up = () => {
-      window.removeEventListener('pointermove', move)
-      window.removeEventListener('pointerup', up)
-      setDockW((w) => (localStorage.setItem('hive:dockW', String(Math.round(w))), w))
-    }
-    window.addEventListener('pointermove', move)
-    window.addEventListener('pointerup', up)
-  }
+  const groupId = `hive-session-${lgUp ? 'lg' : 'md'}-${dockOpen ? 'dock' : 'closed'}`
+  const panelIds = [...(lgUp ? ['agents'] : []), 'stream', ...(dockOpen ? ['dock'] : [])]
+  const rosterEl = (
+    <aside className="p-3" aria-label="Agents">
+      <div className="mb-2 flex items-center justify-between px-1">
+        <span className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-muted">Agents</span>
+        {focus && (
+          <button type="button" onClick={() => setFocus(null)} className="text-[11px] text-accent-brand hover:underline">
+            Show all
+          </button>
+        )}
+      </div>
+      <div className="space-y-2">
+        {agents.map((a) => (
+          <AgentCard key={a.id} a={a} events={events} focused={focus === a.id} dim={!!focus && focus !== a.id} onFocus={() => setFocus((f) => (f === a.id ? null : a.id))} />
+        ))}
+      </div>
+      <AddAgent taskId={task.id} />
+    </aside>
+  )
+  const streamEl = (
+    <section className="flex h-full min-w-0 flex-col" aria-label="Session stream">
+      <div className="flex items-center gap-2 border-b hive-line px-4 py-1.5">
+        <div className="relative flex shrink-0 rounded-full bg-text-primary/[0.06] p-0.5" role="tablist" aria-label="Session view">
+          {(['floor', 'map', 'stream'] as const).map((v) => (
+            <button key={v} type="button" role="tab" aria-selected={view === v} onClick={() => pickView(v)} className={cn('relative h-6 rounded-full px-2.5 text-[11.5px] font-medium transition-colors', view === v ? 'text-text-primary' : 'text-text-muted hover:text-text-secondary')}>
+              {view === v && <motion.span layoutId="hive-view-pill" className="absolute inset-0 rounded-full bg-bg-surface shadow-sm" transition={{ type: 'spring', stiffness: 500, damping: 38 }} />}
+              <span className="relative">{v === 'floor' ? 'Team' : v === 'map' ? 'Work map' : 'Every step'}</span>
+            </button>
+          ))}
+        </div>
+        <button type="button" onClick={() => setSheet('agents')} className="inline-flex h-7 shrink-0 items-center gap-1 rounded-full bg-text-primary/[0.07] px-2.5 text-[12px] lg:hidden">
+          <Users className="size-3.5" /> {agents.length}
+        </button>
+        <div className="hive-scroll flex min-w-0 flex-1 gap-1 overflow-x-auto">
+          <FilterChip active={!focus} onClick={() => setFocus(null)}>
+            Everyone
+          </FilterChip>
+          {agents.map((a) => (
+            <FilterChip key={a.id} active={focus === a.id} onClick={() => setFocus(a.id)} dot={agentHue(a)}>
+              {a.name}
+            </FilterChip>
+          ))}
+        </div>
+        <Tooltip label={showReads ? 'Hide reads & searches' : 'Show reads & searches'}>
+          <button type="button" onClick={() => setShowReads((v) => !v)} className={cn('grid size-7 place-items-center rounded-md', showReads ? 'text-text-secondary' : 'bg-accent-brand/12 text-accent-brand')} aria-label="Toggle reads">
+            <Eye className="size-3.5" />
+          </button>
+        </Tooltip>
+      </div>
+      {view === 'floor' ? (
+        <div className="hive-scroll min-h-0 flex-1 overflow-y-auto">
+          <TeamFloor task={task} agents={agents} events={events} focus={focus} onFocus={(id) => (setFocus(id), pickView('stream'))} />
+          <div className="px-4 pb-10 sm:px-6">
+            <FloorFeed events={events} agents={agents} />
+          </div>
+        </div>
+      ) : view === 'map' ? (
+        <div className="hive-scroll min-h-0 flex-1 overflow-y-auto">
+          <WorkMap agents={agents} events={events} onFocus={(id) => (setFocus(id), pickView('stream'))} />
+        </div>
+      ) : (
+        <Stream events={events} agents={agents} focus={focus} showReads={showReads} task={task} cps={cps} />
+      )}
+      <Timeline agents={agents} events={events} cps={cps} onCheckpoint={() => (setDock('checkpoints'), setDockOpen(true))} start={task.created_at} />
+      <CommandBar taskId={task.id} agents={agents} focus={focus} hasMachine={!!task.machine_id} onOpen={(t) => (setDock(t), setDockOpen(true))} />
+    </section>
+  )
+  const dockEl = (
+    <aside className="flex h-full min-w-0 flex-col" aria-label="Session panel">
+      <div className="flex items-center border-b hive-line px-2 py-1.5">
+        <OverflowTabs label="Session panel" value={dock} onChange={setDock} tabs={tabs.map((t) => ({ id: t.id, label: t.label, count: t.count, icon: <t.icon /> }))} className="flex-1" />
+      </div>
+      <div className="hive-scroll min-h-0 flex-1 overflow-y-auto">
+        {dock === 'changes' && <ChangesView taskId={task.id} agents={agents} />}
+        {dock === 'files' && <FilesView taskId={task.id} />}
+        {dock === 'checkpoints' && <CheckpointsPanel taskId={task.id} cps={cps} agents={agents} running={running} onChanged={loadCps} />}
+        {dock === 'ship' && <ShipPanel />}
+        {dock === 'terminal' && task.machine_id && <TerminalPanel machineId={task.machine_id} folder={task.folder ?? ''} />}
+        {dock === 'board' && (
+          <div className="p-4">
+            <BoardView agents={agents} events={events} />
+          </div>
+        )}
+      </div>
+    </aside>
+  )
 
   return (
     <div className="flex h-full min-h-0 flex-col">
       {/* Header */}
-      <header className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b hive-line px-4 py-3 sm:px-5">
+      <header className="flex items-center gap-x-3 border-b border-[var(--hv-border)] px-4 py-2.5 sm:px-5">
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-[17px] font-semibold tracking-[-0.015em]">{task.title}</h1>
-          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-text-muted">
+          <h1 className="truncate text-[17px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]" data-vt-session style={{ viewTransitionName: 'hv-session-title' }}>{task.title}</h1>
+          <div className="mt-0.5 flex min-w-0 items-center gap-x-3 overflow-hidden whitespace-nowrap text-[12px] text-[var(--hv-text-3)] [&>*]:shrink-0 [&>*:nth-child(3)]:min-w-0 [&>*:nth-child(3)]:shrink">
             <StatusPill status={task.status} />
             <span className="inline-flex items-center gap-1">
               <Users className="size-3.5" /> {MODE_INFO[task.mode].label} · {agents.length} agent{agents.length === 1 ? '' : 's'}
@@ -191,7 +307,7 @@ export function Session() {
                 </span>
               </span>
             )}
-            <span className="tabular-nums">
+            <span className="hidden tabular-nums xl:inline">
               {fmtTokens(tokens)} tokens{cost ? ` · ${cost}` : ''}
             </span>
             {task.pr_url && (
@@ -201,12 +317,12 @@ export function Session() {
             )}
           </div>
         </div>
-        <div className="flex items-center -space-x-1.5">
+        <div className="hidden items-center -space-x-1.5 lg:flex">
           {watchers.map((w) => (
             <UserDot key={w.username} username={w.username} size={6} ring />
           ))}
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-1.5">
           <Tooltip label="Save the current working copy as a checkpoint">
             <Button
               size="sm"
@@ -223,7 +339,7 @@ export function Session() {
           </Tooltip>
           {running && (
             <Button size="sm" variant="secondary" onClick={() => hiveApi.stopTask(task.id).catch((e) => toast.error(errMsg(e)))}>
-              <Square className="fill-current" /> Stop all
+              <Square className="fill-current" /> <span className="hidden sm:inline">Stop all</span>
             </Button>
           )}
           <Button size="sm" onClick={() => (setDock('ship'), setDockOpen(true), small() && setSheet('dock'))}>
@@ -237,108 +353,39 @@ export function Session() {
         </div>
       </header>
 
-      <div className="flex min-h-0 flex-1">
-        {/* Roster */}
-        <aside className="hive-scroll hidden w-[264px] shrink-0 overflow-y-auto border-r hive-line p-3 lg:block">
-          <div className="mb-2 flex items-center justify-between px-1">
-            <span className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-muted">Agents</span>
-            {focus && (
-              <button type="button" onClick={() => setFocus(null)} className="text-[11px] text-accent-brand hover:underline">
-                Show all
-              </button>
-            )}
-          </div>
-          <div className="space-y-2">
-            {agents.map((a) => (
-              <AgentCard key={a.id} a={a} events={events} focused={focus === a.id} dim={!!focus && focus !== a.id} onFocus={() => setFocus((f) => (f === a.id ? null : a.id))} />
-            ))}
-          </div>
-          <AddAgent taskId={task.id} />
-        </aside>
-
-        {/* Stream */}
-        <section className="flex min-w-0 flex-1 flex-col">
-          <div className="flex items-center gap-2 border-b hive-line px-4 py-1.5">
-            <div className="relative flex shrink-0 rounded-full bg-text-primary/[0.06] p-0.5" role="tablist" aria-label="Session view">
-              {(['floor', 'map', 'stream'] as const).map((v) => (
-                <button key={v} type="button" role="tab" aria-selected={view === v} onClick={() => pickView(v)} className={cn('relative h-6 rounded-full px-2.5 text-[11.5px] font-medium transition-colors', view === v ? 'text-text-primary' : 'text-text-muted hover:text-text-secondary')}>
-                  {view === v && <motion.span layoutId="hive-view-pill" className="absolute inset-0 rounded-full bg-bg-surface shadow-sm" transition={{ type: 'spring', stiffness: 500, damping: 38 }} />}
-                  <span className="relative">{v === 'floor' ? 'Team' : v === 'map' ? 'Work map' : 'Every step'}</span>
-                </button>
-              ))}
-            </div>
-            <button type="button" onClick={() => setSheet('agents')} className="inline-flex h-7 shrink-0 items-center gap-1 rounded-full bg-text-primary/[0.07] px-2.5 text-[12px] lg:hidden">
-              <Users className="size-3.5" /> {agents.length}
-            </button>
-            <div className="hive-scroll flex min-w-0 flex-1 gap-1 overflow-x-auto">
-              <FilterChip active={!focus} onClick={() => setFocus(null)}>
-                Everyone
-              </FilterChip>
-              {agents.map((a) => (
-                <FilterChip key={a.id} active={focus === a.id} onClick={() => setFocus(a.id)} dot={agentHue(a)}>
-                  {a.name}
-                </FilterChip>
-              ))}
-            </div>
-            <Tooltip label={showReads ? 'Hide reads & searches' : 'Show reads & searches'}>
-              <button type="button" onClick={() => setShowReads((v) => !v)} className={cn('grid size-7 place-items-center rounded-md', showReads ? 'text-text-secondary' : 'bg-accent-brand/12 text-accent-brand')} aria-label="Toggle reads">
-                <Eye className="size-3.5" />
-              </button>
-            </Tooltip>
-          </div>
-          {view === 'floor' ? (
-            <div className="hive-scroll min-h-0 flex-1 overflow-y-auto">
-              <TeamFloor task={task} agents={agents} events={events} focus={focus} onFocus={(id) => (setFocus(id), pickView('stream'))} />
-              <div className="px-4 pb-10 sm:px-6">
-                <FloorFeed events={events} agents={agents} />
-              </div>
-            </div>
-          ) : view === 'map' ? (
-            <div className="hive-scroll min-h-0 flex-1 overflow-y-auto">
-              <WorkMap agents={agents} events={events} onFocus={(id) => (setFocus(id), pickView('stream'))} />
-            </div>
-          ) : (
-            <Stream events={events} agents={agents} focus={focus} showReads={showReads} task={task} cps={cps} />
+      {mdUp ? (
+        <PanelGroup key={groupId} id={groupId} panelIds={panelIds}>
+          {lgUp && (
+            <>
+              <Panel id="agents" minSize={208} maxSize={420} defaultSize={264} className="hive-scroll min-w-0 overflow-y-auto border-r hive-line">
+                {rosterEl}
+              </Panel>
+              <PanelSeparator label="Resize agents panel" />
+            </>
           )}
-          <Timeline agents={agents} events={events} cps={cps} onCheckpoint={() => (setDock('checkpoints'), setDockOpen(true))} start={task.created_at} />
-          <CommandBar taskId={task.id} agents={agents} focus={focus} hasMachine={!!task.machine_id} onOpen={(t) => (setDock(t), setDockOpen(true))} />
-        </section>
-
-        {/* Dock */}
-        {dockOpen && (
-          <>
-            <div className="hive-resizer hidden md:block" onPointerDown={onDrag} role="separator" aria-label="Resize panel" />
-            <aside className="hidden min-w-0 flex-col md:flex" style={{ width: dockW }}>
-              <nav className="hive-scroll flex items-center gap-0.5 overflow-x-auto border-b hive-line px-2 py-1.5">
-                {tabs.map((t) => (
-                  <button key={t.id} type="button" onClick={() => setDock(t.id)} className={cn('relative inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-[12.5px] transition-colors', dock === t.id ? 'text-text-primary' : 'text-text-muted hover:text-text-secondary')}>
-                    {dock === t.id && <motion.span layoutId="hive-dock-tab" className="absolute inset-0 rounded-lg bg-text-primary/[0.07]" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
-                    <t.icon className="relative size-3.5" />
-                    <span className="relative">{t.label}</span>
-                    {t.count != null && <span className="relative rounded-full bg-accent-brand/15 px-1.5 text-[10.5px] tabular-nums text-accent-brand">{t.count}</span>}
-                  </button>
-                ))}
-              </nav>
-              <div className="hive-scroll min-h-0 flex-1 overflow-y-auto">
-                {dock === 'changes' && <ChangesView taskId={task.id} agents={agents} />}
-                {dock === 'files' && <FilesView taskId={task.id} />}
-                {dock === 'checkpoints' && <CheckpointsPanel taskId={task.id} cps={cps} agents={agents} running={running} onChanged={loadCps} />}
-                {dock === 'ship' && <ShipPanel />}
-                {dock === 'terminal' && task.machine_id && <TerminalPanel machineId={task.machine_id} folder={task.folder ?? ''} />}
-                {dock === 'board' && (
-                  <div className="p-4">
-                    <BoardView agents={agents} events={events} />
-                  </div>
-                )}
-              </div>
-            </aside>
-          </>
-        )}
-      </div>
+          <Panel id="stream" minSize="32%" className="min-w-0">
+            {streamEl}
+          </Panel>
+          {dockOpen && (
+            <>
+              <PanelSeparator label="Resize panel" />
+              <Panel id="dock" minSize={340} maxSize="62%" defaultSize={dockW} className="min-w-0 border-l hive-line">
+                {dockEl}
+              </Panel>
+            </>
+          )}
+        </PanelGroup>
+      ) : (
+        <div className="flex min-h-0 flex-1">{streamEl}</div>
+      )}
 
       <AnimatePresence>
         {sheet && (
-          <motion.div initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 36 }} className="fixed inset-0 z-[960] flex flex-col bg-bg-app md:hidden">
+          <motion.div initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 36 }} drag="y" dragListener={false} dragControls={sheetDrag} dragConstraints={{ top: 0, bottom: 0 }} dragElastic={{ top: 0, bottom: 0.7 }} onDragEnd={(_, info) => (info.offset.y > 120 || info.velocity.y > 600) && setSheet(null)} ref={sheetRef} role="dialog" aria-modal="true" aria-label={sheet === 'dock' ? 'Session panel' : 'Agents'} className="fixed inset-0 z-[960] flex flex-col bg-bg-app md:hidden">
+            {/* Drag the top bar down to close (scrolling inside still works). */}
+            <div onPointerDown={(e) => sheetDrag.start(e)} className="flex h-6 shrink-0 touch-none items-center justify-center" aria-hidden>
+              <span className="h-1 w-9 rounded-full bg-text-primary/20" />
+            </div>
             <div className="flex items-center gap-2 border-b hive-line px-3 py-2">
               {sheet === 'dock' ? (
                 <div className="hive-scroll flex min-w-0 flex-1 gap-1 overflow-x-auto">
@@ -351,7 +398,7 @@ export function Session() {
               ) : (
                 <span className="flex-1 text-[14px] font-semibold">Agents</span>
               )}
-              <button type="button" onClick={() => setSheet(null)} className="grid size-9 place-items-center rounded-lg text-text-muted" aria-label="Close">
+              <button type="button" data-sheet-close onClick={() => setSheet(null)} className="grid size-9 place-items-center rounded-lg text-text-muted" aria-label="Close">
                 <X className="size-4" />
               </button>
             </div>
@@ -689,7 +736,7 @@ function Stream({ events, agents, focus, showReads, task, cps }: { events: HiveE
   }, [items.length, liveLen, pinned])
 
   return (
-    <div ref={ref} onScroll={(e) => setPinned(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - e.currentTarget.clientHeight < 140)} className="hive-scroll relative min-h-0 flex-1 overflow-y-auto">
+    <div ref={ref} onScroll={(e) => setPinned(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - e.currentTarget.clientHeight < 140)} role="log" aria-label="Agent activity" aria-busy={liveAgents.length > 0} className="hive-scroll relative min-h-0 flex-1 overflow-y-auto">
       <div className="mx-auto w-full max-w-[880px] px-4 py-5 sm:px-6">
         {/* The request */}
         <div className="mb-6 flex gap-3">
@@ -743,16 +790,34 @@ function Turn({ agent, events, showReads }: { agent: AgentRow; events: HiveEvent
     return m
   }, [events])
   const hue = agentHue(agent)
+  const [copied, setCopied] = useState(false)
+  const copyTurn = () => {
+    const text = events.filter((e) => e.kind === 'text' && e.data.text).map((e) => String(e.data.text)).join('\n\n')
+    if (!text) return
+    void navigator.clipboard?.writeText(text)
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 1400)
+  }
   return (
-    <div className="hive-in relative mb-5 pl-5">
+    <div className="hive-in group relative mb-5 pl-5">
       <span className="absolute bottom-1 left-[5px] top-6 w-px" style={{ background: `color-mix(in oklab, ${hue} 35%, transparent)` }} />
       <span className="absolute left-0 top-1.5 size-[11px] rounded-full ring-4 ring-[var(--color-bg-app)]" style={{ background: hue }} />
       <div className="mb-1.5 flex items-center gap-2">
         <AgentBadge agent={agent} />
         <span className="text-[11px] text-text-muted">{timeAgo(events[0]?.created_at)}</span>
+        <button
+          type="button"
+          onClick={copyTurn}
+          aria-label={copied ? 'Copied' : 'Copy this reply'}
+          title={copied ? 'Copied' : 'Copy this reply'}
+          className="grid size-6 place-items-center rounded-md text-text-muted opacity-0 transition-opacity hover:bg-text-primary/[0.07] hover:text-text-primary focus-visible:opacity-100 group-hover:opacity-100"
+        >
+          {copied ? <Check className="size-3.5 text-state-success" /> : <Copy className="size-3.5" />}
+        </button>
       </div>
       <div className="space-y-1.5">
-        {events.map((e) => {
+        {groupReads(events).map((e) => {
+          if (Array.isArray(e)) return showReads ? <ReadGroup key={e[0].id} calls={e} results={results} /> : null
           if (e.kind === 'text' && e.data.text) return <AiMarkdown key={e.id} text={String(e.data.text)} />
           if (e.kind === 'tool_call') {
             const name = String(e.data.name)
@@ -790,6 +855,58 @@ function Turn({ agent, events, showReads }: { agent: AgentRow; events: HiveEvent
   )
 }
 
+/**
+ * Back-to-back reads and searches (2 or more, ignoring their results) become one
+ * group, so the stream shows the work, not every file that was opened.
+ */
+function groupReads(events: HiveEvent[]): (HiveEvent | HiveEvent[])[] {
+  const out: (HiveEvent | HiveEvent[])[] = []
+  let run: HiveEvent[] = []
+  const flush = () => {
+    if (run.length >= 2) out.push(run)
+    else out.push(...run)
+    run = []
+  }
+  for (const e of events) {
+    if (e.kind === 'tool_result') continue
+    if (e.kind === 'tool_call' && READS.has(String(e.data.name))) run.push(e)
+    else {
+      flush()
+      out.push(e)
+    }
+  }
+  flush()
+  return out
+}
+
+function ReadGroup({ calls, results }: { calls: HiveEvent[]; results: Map<string, HiveEvent> }) {
+  const [open, setOpen] = useState(false)
+  const files = calls.filter((c) => c.data.name === 'read_file').length
+  const searches = calls.filter((c) => c.data.name === 'search').length
+  const others = calls.length - files - searches
+  const live = calls.some((c) => !results.has(String(c.data.id)))
+  const label = [files && `Read ${files} file${files === 1 ? '' : 's'}`, searches && `searched ${searches} time${searches === 1 ? '' : 's'}`, others && `${others} other look${others === 1 ? '' : 's'}`].filter(Boolean).join(', ')
+  return (
+    <div className="rounded-[var(--hv-r-btn)]">
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="flex w-full items-center gap-2 rounded-[var(--hv-r-btn)] px-2 py-1 text-left text-[12.5px] text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)]">
+        <Search className="size-3.5 shrink-0 text-[var(--hv-text-3)]" />
+        <span className={cn('min-w-0 flex-1 truncate', live && 'hive-shine')}>{label.charAt(0).toUpperCase() + label.slice(1)}</span>
+        <ChevronDown className={cn('size-3.5 shrink-0 text-[var(--hv-text-3)] transition-transform', open && 'rotate-180')} />
+      </button>
+      {open && (
+        <div className="mt-1 space-y-1.5 border-l border-[var(--hv-border)] pl-3">
+          {calls.map((c) => (
+            <ToolCard key={c.id} call={c} result={results.get(String(c.data.id))} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+
+const durMs = (ms: number) => (ms < 1000 ? `${Math.round(ms)}ms` : ms < 60000 ? `${(ms / 1000).toFixed(1)}s` : duration(0, ms))
+
 function ToolCard({ call, result }: { call: HiveEvent; result?: HiveEvent }) {
   const name = String(call.data.name)
   const input = (call.data.input ?? {}) as Record<string, unknown>
@@ -807,6 +924,7 @@ function ToolCard({ call, result }: { call: HiveEvent; result?: HiveEvent }) {
       <button type="button" disabled={!expandable} onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-[13px] text-text-secondary">
         <Icon className={cn('size-3.5 shrink-0', err ? 'text-state-error' : write ? 'text-accent-brand' : cmd ? 'text-state-info' : 'text-text-muted')} />
         <span className="min-w-0 flex-1 truncate">{toolLine(name, input, meta)}</span>
+        {result && <span className="hv-num shrink-0 text-[10.5px] text-text-muted">{durMs(Math.max(0, result.created_at - call.created_at))}</span>}
         {cmd && exit != null && <span className={cn('rounded px-1.5 font-mono text-[10.5px]', exit === 0 ? 'bg-state-success/12 text-state-success' : 'bg-state-error/12 text-state-error')}>exit {String(exit)}</span>}
         {!result ? <Loader2 className="size-3 animate-spin text-text-muted" /> : err ? <AlertCircle className="size-3.5 text-state-error" /> : null}
         {expandable && <ChevronRight className={cn('size-3.5 text-text-muted transition-transform', open && 'rotate-90')} />}
@@ -875,19 +993,28 @@ function ApprovalLine({ ev }: { ev: HiveEvent }) {
   const { approvals, answerApproval, detail } = useHive()
   const pending = approvals.find((a) => a.taskId === detail?.task.id && a.command === ev.data.command)
   return (
-    <div className="rounded-xl border border-state-warning/35 bg-state-warning/[0.06] p-3">
-      <div className="flex items-center gap-1.5 text-[12.5px] font-medium text-state-warning">
-        <ShieldAlert className="size-3.5" /> Wants to {ev.data.kind === 'server' ? 'start a server' : 'run a command'} on {String(ev.data.machine)}
+    <div className={cn('rounded-[var(--hv-r-card)] border p-3', pending ? 'border-[color-mix(in_oklab,var(--hv-warning)_40%,transparent)] bg-[color-mix(in_oklab,var(--hv-warning)_6%,transparent)]' : 'border-[var(--hv-border)]')}>
+      <div className="flex flex-wrap items-center gap-2 text-[12.5px] text-[var(--hv-text-2)]">
+        <ShieldAlert className="size-3.5 text-[var(--hv-warning)]" />
+        <span className="min-w-0 flex-1">
+          Wants to {ev.data.kind === 'server' ? 'start a server' : 'run a command'} on <b className="font-medium text-[var(--hv-text-1)]">{String(ev.data.machine)}</b>
+        </span>
+        {riskyCommand(String(ev.data.command)) && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-state-error/12 px-1.5 py-0.5 text-[10.5px] font-medium text-state-error">
+            <TriangleAlert className="size-3" /> destructive
+          </span>
+        )}
+        {pending ? <StatusPill status="needs" /> : null}
       </div>
-      <pre className="hive-term mt-2 overflow-auto rounded-lg px-3 py-2">$ {String(ev.data.command)}</pre>
+      <pre className="hive-term mt-2 overflow-auto rounded-[var(--hv-r-btn)] px-3 py-2">$ {String(ev.data.command)}</pre>
       {pending && (
-        <div className="mt-2 flex gap-2">
-          <button type="button" onClick={() => answerApproval(pending.id, true)} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-state-success px-3 text-[12.5px] font-medium text-on-accent-brand">
-            <Check className="size-3.5" /> Run it
-          </button>
-          <button type="button" onClick={() => answerApproval(pending.id, false)} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-text-primary/[0.07] px-3 text-[12.5px] font-medium hover:text-state-error">
-            <X className="size-3.5" /> Deny
-          </button>
+        <div className="mt-2 flex justify-end gap-1.5">
+          <Button size="sm" variant="ghost" onClick={() => answerApproval(pending.id, false)}>
+            <X /> Deny
+          </Button>
+          <Button size="sm" onClick={() => answerApproval(pending.id, true)}>
+            <Check /> Run it
+          </Button>
         </div>
       )}
     </div>
@@ -959,7 +1086,7 @@ function LiveTurn({ agent, text, think, events }: { agent: AgentRow; text: strin
       <span className="absolute left-0 top-1.5 size-[11px] animate-pulse rounded-full ring-4 ring-[var(--color-bg-app)]" style={{ background: agentHue(agent) }} />
       <div className="mb-1.5 flex items-center gap-2">
         <AgentBadge agent={agent} />
-        <span className="hive-shine text-[11.5px] font-medium">{writing ? 'writing code' : text ? 'typing' : 'thinking'}</span>
+        <ThinkingIndicator className="text-[11.5px]" words={writing ? ['Writing code'] : text ? ['Typing'] : ['Thinking', 'Planning', 'Reading']} />
       </div>
       {think && !text && (
         <div className="mb-2 flex items-start gap-2 rounded-xl bg-text-primary/[0.04] px-3 py-2">
@@ -991,9 +1118,11 @@ function Timeline({ agents, events, cps, start, onCheckpoint }: { agents: AgentR
   return (
     <div className="border-t hive-line bg-text-primary/[0.015] px-4 py-2">
       <div className="relative h-3">
-        {cps.map((c) => (
+        {cps.filter((c, i) => i === cps.length - 1 || Math.abs(parseFloat(x(cps[i + 1].created_at)) - parseFloat(x(c.created_at))) > 3).map((c) => (
           <Tooltip key={c.id} label={`${c.label} · ${c.files} files · ${timeAgo(c.created_at)}`}>
-            <button type="button" onClick={onCheckpoint} className="absolute top-0 size-2.5 -translate-x-1/2 rotate-45 rounded-[2px] bg-accent-brand hover:scale-125" style={{ left: x(c.created_at) }} aria-label={c.label} />
+            <button type="button" onClick={onCheckpoint} className="group absolute -top-2 grid size-6 -translate-x-1/2 place-items-center" style={{ left: x(c.created_at) }} aria-label={c.label}>
+              <span className="size-2.5 rotate-45 rounded-[2px] bg-accent-brand transition-transform group-hover:scale-125" />
+            </button>
           </Tooltip>
         ))}
       </div>
@@ -1004,7 +1133,7 @@ function Timeline({ agents, events, cps, start, onCheckpoint }: { agents: AgentR
           const f = a.finished_at ?? (a.status === 'running' ? Date.now() : s)
           return (
             <div key={a.id} className="flex items-center gap-2">
-              <span className="w-16 shrink-0 truncate text-[10.5px] font-medium" style={{ color: agentHue(a) }}>
+              <span className="w-16 shrink-0 truncate text-[10.5px] font-medium" style={{ color: `color-mix(in oklab, ${agentHue(a)} 60%, var(--color-text-primary))` }}>
                 {a.name}
               </span>
               <div className="relative h-2.5 flex-1 rounded-full bg-text-primary/[0.04]">
@@ -1049,6 +1178,7 @@ function CommandBar({ taskId, agents, focus, hasMachine, onOpen }: { taskId: str
   const focusAgent = agents.find((a) => a.id === focus)
   const steering = focusAgent?.status === 'running'
   const slash = text.startsWith('/') && !text.includes(' ') ? COMMANDS.filter((c) => c.cmd.startsWith(text.toLowerCase())) : []
+  const sessionTokens = (detail?.task.agents ?? []).reduce((s, a) => s + (a.input_tokens ?? 0) + (a.output_tokens ?? 0), 0)
   useEffect(() => {
     const el = ta.current
     if (!el) return
@@ -1154,6 +1284,7 @@ function CommandBar({ taskId, agents, focus, hasMachine, onOpen }: { taskId: str
           <span className="hidden whitespace-nowrap text-[11px] text-text-muted sm:inline">
             <span className="hive-kbd">/</span> commands
           </span>
+          {sessionTokens > 0 && <ContextRing used={sessionTokens} label="Tokens used this session" />}
           <button type="button" onClick={run} disabled={!text.trim() || busy} className="ml-auto grid size-8 place-items-center rounded-full bg-accent-brand text-on-accent-brand transition-transform enabled:hover:scale-105 disabled:opacity-35" aria-label="Send">
             {busy ? <Loader2 className="size-4 animate-spin" /> : <ArrowUp className="size-4" strokeWidth={2.4} />}
           </button>
@@ -1259,26 +1390,44 @@ function ShipPanel() {
       setBusy(false)
     }
   }
-  const steps = [
-    { label: 'Changes ready', done: true },
-    { label: 'Committed to a branch', done: !!task.head_sha },
-    { label: 'Pull request', done: !!task.pr_number },
-    { label: 'Checks pass', done: pr?.state === 'success', fail: pr?.state === 'failure', pending: pr?.state === 'pending' },
-    { label: 'Merged → deploys', done: pr?.pr.merged || task.status === 'merged' },
+  const merged = !!(pr?.pr.merged || task.status === 'merged')
+  // Ship as a vertical stepper: each step says where it stands, in words, with a link.
+  const steps: { label: string; status: string; word: string; detail?: ReactNode }[] = [
+    { label: 'Changes', status: 'done', word: 'Ready' },
+    { label: 'Commit', status: task.head_sha ? 'done' : 'queued', word: task.head_sha ? 'Committed' : 'Not yet', detail: task.head_sha ? <span className="font-mono">{task.branch} · {task.head_sha.slice(0, 7)}</span> : null },
+    {
+      label: 'Pull request',
+      status: task.pr_number ? 'done' : 'queued',
+      word: task.pr_number ? `#${task.pr_number}` : 'Not opened',
+      detail: task.pr_url ? (
+        <a href={task.pr_url} target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">
+          Open on GitHub
+        </a>
+      ) : null,
+    },
+    { label: 'Checks', status: !task.pr_number ? 'queued' : pr?.state === 'success' ? 'done' : pr?.state === 'failure' ? 'failed' : 'running', word: !task.pr_number ? 'After the PR' : pr?.state === 'success' ? 'Passing' : pr?.state === 'failure' ? 'Failing' : 'Running' },
+    { label: 'Merge', status: merged ? 'done' : 'queued', word: merged ? 'Merged' : 'Waiting' },
+    { label: 'Deploy', status: merged ? 'running' : 'queued', word: merged ? 'Your host deploys it' : 'After merge', detail: merged && project.site_url ? (
+        <a href={project.site_url} target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">
+          {project.site_url.replace(/^https:\/\//, '')}
+        </a>
+      ) : null },
   ]
   return (
     <div className="space-y-5 p-4">
-      <ol className="flex items-center gap-1">
+      <ol className="space-y-0" aria-label="Ship steps">
         {steps.map((s, i) => (
-          <Fragment key={s.label}>
-            <li className="flex flex-col items-center gap-1 text-center">
-              <span className={cn('grid size-7 place-items-center rounded-full text-[11px] font-semibold', s.done ? 'bg-state-success text-on-accent-brand' : s.fail ? 'bg-state-error text-white' : s.pending ? 'bg-state-warning/20 text-state-warning' : 'bg-text-primary/[0.07] text-text-muted')}>
-                {s.done ? <Check className="size-3.5" /> : s.fail ? <X className="size-3.5" /> : s.pending ? <Loader2 className="size-3.5 animate-spin" /> : i + 1}
-              </span>
-              <span className="w-16 text-[10.5px] leading-tight text-text-muted">{s.label}</span>
-            </li>
-            {i < steps.length - 1 && <span className={cn('mb-5 h-px flex-1', s.done ? 'bg-state-success/50' : 'bg-[var(--hive-line)]')} />}
-          </Fragment>
+          <li key={s.label} className="relative flex gap-3 pb-3 last:pb-0">
+            {i < steps.length - 1 && <span className={cn('absolute left-[7px] top-5 bottom-0 w-px', s.status === 'done' ? 'bg-[color-mix(in_oklab,var(--hv-success)_50%,transparent)]' : 'bg-[var(--hv-border)]')} aria-hidden />}
+            <span className={cn('mt-1 size-[15px] shrink-0 rounded-full border-2', s.status === 'done' ? 'border-[var(--hv-success)] bg-[var(--hv-success)]' : s.status === 'failed' ? 'border-[var(--hv-danger)]' : s.status === 'running' ? 'border-[var(--hv-accent)]' : 'border-[var(--hv-border-strong)]')} aria-hidden />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <span className="text-[13px] font-medium text-[var(--hv-text-1)]">{s.label}</span>
+                <KitPill size="sm" status={s.status} label={s.word} />
+              </div>
+              {s.detail && <div className="mt-0.5 truncate text-[12px] text-[var(--hv-text-3)]">{s.detail}</div>}
+            </div>
+          </li>
         ))}
       </ol>
 
@@ -1405,8 +1554,15 @@ function TerminalPanel({ machineId, folder }: { machineId: string; folder: strin
           ))}
         </span>
       </div>
-      <div className="hive-term hive-scroll min-h-0 flex-1 overflow-y-auto p-3">
-        {!lines.length && <div className="opacity-60">Commands run in {folder} on {m?.name}. Agents’ commands go through the machine’s approval policy; yours run directly.</div>}
+      <div className="hive-term hive-scroll min-h-0 flex-1 overflow-y-auto p-3" role="log" aria-label="Terminal output">
+        {!lines.length && (
+          <div className="flex h-full flex-col items-center justify-center gap-2 rounded-[var(--hv-r-card)] border border-dashed hive-line p-6 text-center">
+            <SquareTerminal className="size-6 text-text-muted" aria-hidden="true" />
+            <p className="max-w-[46ch] text-[12px] leading-relaxed text-text-muted">
+              Commands run in <span className="font-mono">{folder}</span> on {m?.name}. Yours run directly — agents’ commands go through the approval policy.
+            </p>
+          </div>
+        )}
         {lines.map((l, i) => (
           <div key={i} className="mb-3">
             <div>
@@ -1415,7 +1571,11 @@ function TerminalPanel({ machineId, folder }: { machineId: string; folder: strin
             <div className="opacity-90">{l.out}</div>
           </div>
         ))}
-        {busy && <div className="hive-dot-run">running…</div>}
+        {busy && (
+          <div className="flex items-center gap-2 text-text-muted">
+            <Spinner size={12} label="Running command" /> running…
+          </div>
+        )}
         <div ref={end} />
       </div>
       <form
@@ -1454,3 +1614,4 @@ function TerminalPanel({ machineId, folder }: { machineId: string; folder: strin
 }
 
 export { agentHue, MiniDiff, Search }
+

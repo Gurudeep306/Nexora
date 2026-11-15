@@ -95,7 +95,7 @@ function NewIdea({ onCreated }: { onCreated: (i: Idea) => void }) {
         <h1 className="mt-4 text-[30px] font-semibold tracking-[-0.03em]">From idea to running project</h1>
         <p className="mx-auto mt-2 max-w-lg text-[14px] text-text-muted">Describe it like you’d tell a friend. Hive drafts the product, stack, architecture and milestones, creates the repo, and puts agents on milestone 1.</p>
       </div>
-      <div className="hive-composer relative mt-8 rounded-[24px] p-3">
+      <div className="hive-composer relative mt-8 rounded-2xl p-3">
         <textarea value={pitch} onChange={(e) => setPitch(e.target.value)} rows={6} autoFocus disabled={busy} placeholder="I want to build…" className="block w-full resize-y bg-transparent px-2 py-1.5 text-[15.5px] leading-relaxed outline-none placeholder:text-text-muted" />
         <div className="flex items-center gap-2 px-1 pt-1">
           {spec && <AgentChip boot={boot} spec={spec} onChange={setSpec} need="chat" label="Planner" />}

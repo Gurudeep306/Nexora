@@ -25,7 +25,7 @@ export function CopyField({ value, display, max = 28, className, label = 'Copy' 
             setTimeout(() => setDone(false), 1200)
           })
         }
-        className="grid size-6 shrink-0 place-items-center rounded-[6px] text-[var(--hv-text-3)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]"
+        className="grid size-6 shrink-0 place-items-center rounded-[var(--hv-r-chip)] text-[var(--hv-text-3)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]"
         aria-label={done ? 'Copied' : label}
         title={done ? 'Copied' : label}
       >

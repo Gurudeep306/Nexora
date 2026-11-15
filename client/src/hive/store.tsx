@@ -36,7 +36,7 @@ interface HiveValue {
   changesVersion: number
   chat: ChatMessage[]
   emitTyping: () => void
-  select: (projectId: string | null, taskId?: string | null) => void
+  select: (projectId: string | null, taskId?: string | null, opts?: { viewTransition?: boolean }) => void
   /** Agents running anywhere in the hive right now. */
   live: LiveAgent[]
   /** What each agent is typing into a file right now. */
@@ -77,7 +77,7 @@ export function HiveProvider({
 }: {
   projectId: string | null
   taskId: string | null
-  onSelect: (projectId: string | null, taskId?: string | null) => void
+  onSelect: (projectId: string | null, taskId?: string | null, opts?: { viewTransition?: boolean }) => void
   children: ReactNode
 }) {
   const [boot, setBoot] = useState<Bootstrap | null>(null)

@@ -262,7 +262,7 @@ function TopModels({ rep }: { rep: StewardReport }) {
     return (
       <section className="hive-card p-4 text-[13px] text-text-muted">
         <h2 className="mb-1 text-[13px] font-medium text-text-secondary">Models by spend</h2>
-        No usage in this period yet.
+        No usage in this period yet — run a chat and the models you spend on land here.
       </section>
     )
   const max = Math.max(...rep.models.map((m) => m.dollars || 0), 0.0001)
