@@ -26,7 +26,7 @@ export function PlatformBadge({ platform, className }: { platform?: string; clas
     label: platform,
     className: 'border-border bg-surface-2 text-foreground-dim',
   }
-  return <Badge className={cn(meta.className, className)}>{meta.label}</Badge>
+  return <Badge className={cn('platform-word', meta.className, className)}>{meta.label}</Badge>
 }
 
 const VERDICTS: Record<string, { label: string; className: string }> = {
