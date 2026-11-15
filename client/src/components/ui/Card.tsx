@@ -10,6 +10,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ className, children, glow, interactive, ...props }, ref) => (
     <div
       ref={ref}
+      data-ui="card"
       className={cn(
         'card',
         glow && 'glow-box',
@@ -33,6 +34,7 @@ export function CardHeader({ className, ...props }: HTMLAttributes<HTMLDivElemen
 export function CardTitle({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
+      data-ui="card-title"
       className={cn(
         'font-display text-[15px] leading-snug font-semibold tracking-[-0.01em] text-text-primary',
         className,

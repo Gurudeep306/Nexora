@@ -110,7 +110,7 @@ function DockIcon({
   const dot = (
     <span
       className={cn(
-        'absolute -bottom-[7px] left-1/2 size-[5px] -translate-x-1/2 rounded-full transition-opacity duration-300',
+        'dock-dot absolute -bottom-[7px] left-1/2 size-[5px] -translate-x-1/2 rounded-full transition-opacity duration-300',
         active ? 'opacity-100' : 'opacity-0',
       )}
       style={{ background: 'var(--color-text-primary)', boxShadow: '0 0 6px var(--color-text-primary)' }}
@@ -256,7 +256,7 @@ export function Deck() {
           {/* The glass is a sibling layer, not the container: an element with a
               backdrop filter clips the backdrop of everything inside it, which
               would leave the labels and the More menu unfrosted. */}
-          <span aria-hidden="true" className="glass-thick pointer-events-none absolute inset-0 -z-10 rounded-[24px]" />
+          <span aria-hidden="true" className="dock-glass glass-thick pointer-events-none absolute inset-0 -z-10 rounded-[24px]" />
 
           {items.map((item) => (
             <DockIcon
@@ -269,7 +269,7 @@ export function Deck() {
             />
           ))}
 
-          <span className="mx-1 mb-1.5 h-9 w-px self-end bg-border-strong" aria-hidden="true" />
+          <span className="dock-divider mx-1 mb-1.5 h-9 w-px self-end bg-border-strong" aria-hidden="true" />
 
           {/* More: everything not in the Dock, plus Customize */}
           <div className="relative">
@@ -296,7 +296,7 @@ export function Deck() {
                   initial={{ y: 4, scale: 0.985, opacity: 0 }}
                   animate={{ y: 0, scale: 1, opacity: 1 }}
                   transition={tEnter}
-                  className="pop-surface absolute right-0 bottom-full z-10 mb-4 w-64 origin-bottom-right p-2"
+                  className="dock-more pop-surface absolute right-0 bottom-full z-10 mb-4 w-64 origin-bottom-right p-2"
                 >
                   {rest.length > 0 ? (
                     <div className="grid grid-cols-3 gap-1">

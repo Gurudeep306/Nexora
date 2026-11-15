@@ -19,7 +19,7 @@ export const CARD_STYLES = [
 ] as const
 
 export type CardStyleId = (typeof CARD_STYLES)[number]['id']
-export const DEFAULT_CARD_STYLE: CardStyleId = 'soft'
+export const DEFAULT_CARD_STYLE: CardStyleId = 'flat'
 
 export const RADII = [
   { id: 'sharp', label: 'Sharp' },

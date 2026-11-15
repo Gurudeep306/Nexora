@@ -1,4 +1,5 @@
 import { useId, useState, type ReactNode } from 'react'
+import { motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 
 export interface TabItem {
@@ -50,6 +51,8 @@ export function Tabs({
         className,
       )}
       role="tablist"
+      data-ui="tabs"
+      data-variant={pill ? 'pill' : 'underline'}
     >
       {items.map((item, i) => {
         const on = current === item.id
@@ -58,6 +61,7 @@ export function Tabs({
             key={item.id}
             id={`${uid}-${item.id}`}
             role="tab"
+            data-ui="tab"
             aria-selected={on}
             tabIndex={on ? 0 : -1}
             onKeyDown={(e) => onKey(e, i)}
@@ -69,7 +73,7 @@ export function Tabs({
                     on ? 'bg-accent-brand/15 text-accent-brand' : 'text-text-secondary hover:bg-white/[0.04] hover:text-text-primary',
                   )
                 : cn(
-                    'flex shrink-0 cursor-pointer items-center gap-2 border-b-2 border-transparent px-4 py-2 text-sm font-medium whitespace-nowrap text-text-secondary',
+                    'relative flex shrink-0 cursor-pointer items-center gap-2 border-b-2 border-transparent px-4 py-2 text-sm font-medium whitespace-nowrap text-text-secondary',
                     on ? 'border-accent-brand text-text-primary' : 'hover:border-accent-brand/20 hover:text-text-primary',
                   ),
             )}
@@ -83,6 +87,9 @@ export function Tabs({
                 </span>
               )}
             </span>
+            {/* The ink underline that slides between tabs (shown by styles
+                that draw it, such as Field Journal). */}
+            {!pill && on && <motion.span layoutId={`${uid}-ink`} aria-hidden="true" data-ui="tab-ink" className="tab-ink" transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }} />}
           </button>
         )
       })}

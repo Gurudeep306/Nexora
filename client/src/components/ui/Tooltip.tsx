@@ -27,6 +27,7 @@ export function Tooltip({
             side={side}
             sideOffset={4}
             collisionPadding={6}
+            data-ui="tooltip"
             className={cn(
               'pop-surface z-[1200] max-w-xs !rounded-lg px-2.5 py-1.5 text-[12.5px] text-text-primary data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 data-[state=delayed-open]:duration-200 data-[state=delayed-open]:ease-out',
               className,

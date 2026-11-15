@@ -72,7 +72,7 @@ export const CATEGORIES: { id: ThemeCategory; label: string; hint: string }[] = 
   { id: 'accessible', label: 'Accessible', hint: 'High contrast and colour-blind safe' },
 ]
 
-export const DEFAULT_PALETTE = 'midnight'
+export const DEFAULT_PALETTE = 'parchment'
 
 export const PALETTES: Palette[] = [
   {
@@ -1229,6 +1229,34 @@ export const PALETTES: Palette[] = [
       accent: '0.47 0.15 25', accent2: '0.42 0.14 25', onAccent: '1 0 0',
       success: '0.5 0.15 150', warning: '0.5 0.14 72', danger: '0.5 0.18 25', info: '0.5 0.12 235',
       syntax: { keyword: '0.47 0.15 25', string: '0.5 0.13 145', number: '0.5 0.14 55', function: '0.3 0.01 60', type: '0.5 0.11 210', comment: '0.53 0.012 60' },
+    },
+  },
+  {
+    id: 'parchment',
+    name: 'Parchment',
+    category: 'signature',
+    blurb: 'Warm paper, ink and a clay pencil.',
+    // The Field Journal palette (see docs/ui/field-journal.md). bg: canvas,
+    // ivory card, soft oat (chips, hover, code), oat, fill. The manilla
+    // "spread" colour is used once per page, so it lives in journal.css
+    // (--ed-manilla) rather than in a slot hundreds of surfaces share.
+    // accent is a deeper clay that reads as text; the clay fill of the one
+    // primary button is --ed-clay (#d97757) in journal.css.
+    light: {
+      bg: ['0.948 0.011 95', '0.982 0.005 95', '0.925 0.013 90', '0.892 0.021 79', '0.865 0.017 88'],
+      fg: ['0.191 0.002 107', '0.359 0.005 107', '0.5 0.009 99'],
+      border: '0.842 0.004 91',
+      accent: '0.5 0.13 39', accent2: '0.46 0.13 39', onAccent: '0.99 0.004 95',
+      success: '0.52 0.11 145', warning: '0.52 0.11 75', danger: '0.52 0.16 30', info: '0.5 0.08 245',
+      syntax: { keyword: '0.5 0.13 39', string: '0.48 0.11 145', number: '0.5 0.11 70', function: '0.191 0.002 107', type: '0.48 0.08 245', comment: '0.5 0.009 99' },
+    },
+    dark: {
+      bg: ['0.214 0.004 85', '0.248 0.006 92', '0.262 0.007 88', '0.292 0.009 85', '0.32 0.01 88'],
+      fg: ['0.948 0.011 95', '0.86 0.014 93', '0.712 0.013 92'],
+      border: '0.365 0.007 95',
+      accent: '0.672 0.131 39', accent2: '0.717 0.114 40', onAccent: '0.191 0.002 107',
+      success: '0.74 0.12 145', warning: '0.8 0.12 80', danger: '0.72 0.15 30', info: '0.76 0.08 245',
+      syntax: { keyword: '0.717 0.114 40', string: '0.74 0.12 145', number: '0.8 0.12 80', function: '0.948 0.011 95', type: '0.76 0.08 245', comment: '0.712 0.013 92' },
     },
   },
 ]

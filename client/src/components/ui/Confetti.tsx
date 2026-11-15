@@ -1,8 +1,11 @@
 import { useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, useReducedMotion } from 'motion/react'
+import { useTheme } from '@/context/ThemeContext'
 
 const COLORS = ['var(--color-primary-light)', 'var(--color-accent)', 'var(--color-info)', 'var(--color-warning)', 'var(--color-success)']
+/* Field Journal: slips of paper in ink, clay and pencil grey, no glow. */
+const PAPER = ['var(--color-text-primary)', 'var(--ed-clay)', 'var(--color-border-strong)', 'var(--color-text-muted)']
 
 /**
  * One-shot burst of rift shards — plays when you get Accepted.
@@ -24,6 +27,7 @@ function seeded(key: string | number) {
 
 export function Confetti({ burstKey, count = 46 }: { burstKey: string | number; count?: number }) {
   const reduce = useReducedMotion()
+  const paper = useTheme().shown.style === 'journal'
   const pieces = useMemo(
     () => {
       const rand = seeded(burstKey)
@@ -32,6 +36,7 @@ export function Confetti({ burstKey, count = 46 }: { burstKey: string | number; 
         const dist = 160 + rand() * 260
         return {
           id: `${burstKey}-${i}`,
+          i,
           x: Math.cos(angle) * dist,
           y: Math.sin(angle) * dist * 0.75 - 80,
           rot: rand() * 720 - 360,
@@ -52,14 +57,18 @@ export function Confetti({ burstKey, count = 46 }: { burstKey: string | number; 
           <motion.span
             key={p.id}
             className="absolute block"
-            style={{
-              width: p.size,
-              height: p.shape === 1 ? p.size / 2.5 : p.size,
-              background: p.color,
-              borderRadius: p.shape === 0 ? '9999px' : p.shape === 1 ? '2px' : '1px',
-              clipPath: p.shape === 2 ? 'polygon(50% 0, 100% 100%, 0 100%)' : undefined,
-              boxShadow: `0 0 8px ${p.color}`,
-            }}
+            style={
+              paper
+                ? { width: p.size, height: p.size * 0.45, background: PAPER[p.i % PAPER.length], borderRadius: '1px' }
+                : {
+                    width: p.size,
+                    height: p.shape === 1 ? p.size / 2.5 : p.size,
+                    background: p.color,
+                    borderRadius: p.shape === 0 ? '9999px' : p.shape === 1 ? '2px' : '1px',
+                    clipPath: p.shape === 2 ? 'polygon(50% 0, 100% 100%, 0 100%)' : undefined,
+                    boxShadow: `0 0 8px ${p.color}`,
+                  }
+            }
             initial={{ x: 0, y: 0, opacity: 1, rotate: 0, scale: 0.6 }}
             animate={{ x: p.x, y: [0, p.y, p.y + 220], opacity: [1, 1, 0], rotate: p.rot, scale: 1 }}
             transition={{ duration: 1.6, delay: p.delay, ease: 'easeOut', times: [0, 0.45, 1] }}

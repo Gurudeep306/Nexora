@@ -304,11 +304,12 @@ export function CommandPalette() {
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-[1050] flex items-start justify-center p-3 pt-[10vh] sm:p-4 sm:pt-[14vh]" onKeyDown={onKeyDown}>
-          <motion.div className="absolute inset-0 bg-bg-app/60 backdrop-blur-[2px]" {...fadeInOut} onClick={close} />
+          <motion.div data-ui="scrim" className="absolute inset-0 bg-bg-app/60 backdrop-blur-[2px]" {...fadeInOut} onClick={close} />
           <motion.div
             role="dialog"
             aria-modal="true"
             aria-label="Command palette"
+            data-ui="sheet"
             className="pop-surface relative flex max-h-[min(36rem,80vh)] w-full max-w-[640px] flex-col overflow-hidden !rounded-[var(--radius-sheet)]"
             {...popIn}
           >
@@ -353,7 +354,7 @@ export function CommandPalette() {
                   <div key={item.id}>
                     {header && (
                       <div className={cn('flex items-center justify-between px-3 pb-1.5', i === 0 && !noMatches ? 'pt-1.5' : 'pt-4')}>
-                        <span className="text-[11px] font-medium text-text-muted">
+                        <span data-ui="group-title" className="text-[11px] font-medium text-text-muted">
                           {header}
                           {header === 'Problems' && searching && <span className="ml-2 text-text-muted/80">Searching…</span>}
                         </span>

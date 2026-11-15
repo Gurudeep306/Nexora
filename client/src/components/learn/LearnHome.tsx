@@ -173,7 +173,7 @@ export function LearnHome() {
                       <span>Practice</span>
                     </Link>
                   ) : (
-                    <span className="lh-door is-off">
+                    <span className="lh-door is-off" aria-disabled="true" title="No practice set for this subject yet">
                       <PenLine className="size-4" aria-hidden="true" />
                       <span>Practice</span>
                     </span>

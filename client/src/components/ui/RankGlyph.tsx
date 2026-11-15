@@ -135,6 +135,7 @@ export function RankGlyph({
       height={size}
       className={cn('shrink-0', className)}
       style={{ color: tier.color }}
+      data-ui="rank"
       role="img"
       aria-label={title ?? `Rank: ${tier.name}`}
     >
