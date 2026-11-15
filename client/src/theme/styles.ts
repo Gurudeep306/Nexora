@@ -46,6 +46,52 @@ export const STYLES: DesignStyle[] = [
     bundle: { theme: 'midnight', font: 'geist', codeFont: 'jetbrains', radius: 'rounded', cardStyle: 'soft', pattern: 'none' },
   },
   {
+    id: 'glass',
+    name: 'Liquid Glass',
+    tagline: 'Frosted, light, layered',
+    about: 'Translucent frosted panels over a soft wash of colour, with pill-shaped controls.',
+    bundle: { theme: 'glacier', font: 'jakarta', codeFont: 'geist-mono', radius: 'round', cardStyle: 'glass', pattern: 'wash' },
+  },
+  {
+    id: 'luxe',
+    name: 'Noir & Gold',
+    tagline: 'Quiet luxury',
+    about: 'Espresso black, a high-contrast Garamond and gold hairlines. Spaced capitals on every button.',
+    bundle: { theme: 'noir', font: 'hanken', codeFont: 'plex-mono', radius: 'sharp', cardStyle: 'outline', pattern: 'grain' },
+    displayFont: 'cormorant',
+  },
+  {
+    id: 'washi',
+    name: 'Washi',
+    tagline: 'Paper, ink and a seal',
+    about: 'Japanese minimalism: mincho headings, washi paper, sumi ink and one vermilion seal colour.',
+    bundle: { theme: 'washi', font: 'instrument', codeFont: 'plex-mono', radius: 'sharp', cardStyle: 'ruled', pattern: 'grain' },
+    displayFont: 'mincho',
+  },
+  {
+    id: 'signal',
+    name: 'Signal',
+    tagline: 'Dot matrix, black and red',
+    about: 'Dot-matrix headlines, a dot grid, round outlined controls and a single red signal.',
+    bundle: { theme: 'signal', font: 'geist', codeFont: 'geist-mono', radius: 'round', cardStyle: 'outline', pattern: 'dots' },
+    displayFont: 'doto',
+  },
+  {
+    id: 'console',
+    name: 'Console',
+    tagline: 'Built like an instrument',
+    about: 'Warm hardware grey, safety orange, key-cap buttons and small monospaced labels.',
+    bundle: { theme: 'console', font: 'inter-tight', codeFont: 'jetbrains', radius: 'rounded', cardStyle: 'inset', pattern: 'grid' },
+  },
+  {
+    id: 'nordic',
+    name: 'Nordic',
+    tagline: 'Soft daylight',
+    about: 'Airy Scandinavian calm: pale slate, sea-green, rounded forms and soft, low shadows.',
+    bundle: { theme: 'fjord', font: 'figtree', codeFont: 'geist-mono', radius: 'round', cardStyle: 'elevated', pattern: 'none' },
+    displayFont: 'fraunces',
+  },
+  {
     id: 'editorial',
     name: 'Editorial',
     tagline: 'Set like a journal',
@@ -115,7 +161,16 @@ export const PATTERNS = [
   { id: 'columns', label: 'Columns', hint: 'A twelve-column layout grid.' },
   { id: 'lines', label: 'Scan lines', hint: 'Faint horizontal lines.' },
   { id: 'grain', label: 'Grain', hint: 'Paper or film grain.' },
+  { id: 'wash', label: 'Wash', hint: 'A soft wash of the accent colour from the top.' },
 ] as const
+
+/** Heading faces only styles use (loaded on demand; see fontLoaders.ts). */
+export const DISPLAY_FACES: Record<string, string> = {
+  cormorant: "'Cormorant Garamond Variable', ui-serif, Georgia, serif",
+  mincho: "'Shippori Mincho', ui-serif, 'Hiragino Mincho ProN', Georgia, serif",
+  doto: "'Doto Variable', ui-monospace, monospace",
+  fraunces: "'Fraunces Variable', ui-serif, Georgia, serif",
+}
 
 export type PatternId = (typeof PATTERNS)[number]['id']
 export const DEFAULT_PATTERN: PatternId = 'none'
