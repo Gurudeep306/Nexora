@@ -547,7 +547,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
       {/* Visualizer Top Control Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-bg-surface-3/60 px-5 py-3">
         <div className="flex items-center gap-3">
-          <span className="flex size-2.5 rounded-full bg-accent-brand shadow-[0_0_8px_var(--color-accent-brand)] animate-pulse" />
+          <span className="flex size-2.5 rounded-full bg-accent-brand animate-pulse" />
           <span className="text-[12px] font-bold tracking-wider text-text-primary uppercase flex items-center gap-1.5">
             <Radio className="size-3.5 text-accent-brand" /> Live Architecture Visualizer
           </span>
@@ -567,7 +567,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             title="Simulate node crash & network chaos"
             className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-bold transition ${
               chaosMode
-                ? 'bg-rose-500/20 text-rose-400 ring-1 ring-rose-500/50 shadow-[0_0_10px_rgba(244,63,94,0.3)] animate-pulse'
+                ? 'bg-rose-500/20 text-rose-400 ring-1 ring-rose-500/50 animate-pulse'
                 : 'bg-bg-surface-1 text-text-muted hover:text-text-primary ring-1 ring-border'
             }`}
           >
@@ -596,7 +596,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             onClick={handlePlayPause}
             className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-[12px] font-bold transition ${
               isPlaying
-                ? 'bg-amber-500/20 text-amber-400 ring-1 ring-amber-500/50 shadow-[0_0_12px_rgba(245,158,11,0.2)]'
+                ? 'bg-amber-500/20 text-amber-400 ring-1 ring-amber-500/50'
                 : 'bg-accent-brand text-bg-base hover:opacity-90 shadow-md font-extrabold'
             }`}
           >
@@ -680,7 +680,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             title={soundEnabled ? 'Mute Audio Effects' : 'Enable Cyber Audio Synthesizer'}
             className={`flex size-8 items-center justify-center rounded-lg transition ring-1 ${
               soundEnabled
-                ? 'bg-sky-500/20 text-sky-400 ring-sky-500/50 shadow-[0_0_8px_#38bdf8]'
+                ? 'bg-sky-500/20 text-sky-400 ring-sky-500/50'
                 : 'bg-bg-surface-1 text-text-muted hover:text-text-primary ring-border'
             }`}
           >
@@ -693,7 +693,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             title={showTelemetryHud ? 'Hide Telemetry HUD' : 'Show Telemetry HUD'}
             className={`flex size-8 items-center justify-center rounded-lg transition ring-1 ${
               showTelemetryHud
-                ? 'bg-accent-brand/20 text-accent-brand ring-accent-brand/50 shadow-[0_0_8px_var(--color-accent-brand)]'
+                ? 'bg-accent-brand/20 text-accent-brand ring-accent-brand/50'
                 : 'bg-bg-surface-1 text-text-muted hover:text-text-primary ring-border'
             }`}
           >
@@ -736,8 +736,8 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
               <span
                 className={`size-2 rounded-full ${
                   Object.values(failedNodes).some(Boolean)
-                    ? 'bg-rose-500 shadow-[0_0_8px_#f43f5e] animate-ping'
-                    : 'bg-emerald-400 shadow-[0_0_8px_#34d399]'
+                    ? 'bg-rose-500 animate-ping'
+                    : 'bg-emerald-400'
                 }`}
               />
             </div>
@@ -1177,7 +1177,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
               <div
                 className={`relative flex w-[165px] sm:w-[185px] flex-col items-center rounded-2xl p-3 shadow-xl backdrop-blur-md transition-all ${
                   isFailed
-                    ? 'bg-rose-950/85 ring-2 ring-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.4)]'
+                    ? 'bg-rose-950/85 ring-2 ring-rose-500'
                     : isCurrentActive
                     ? 'bg-bg-surface-3 ring-2 ring-accent-brand shadow-accent-brand/30 shadow-2xl'
                     : isSelected
@@ -1229,7 +1229,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                     isFailed
                       ? 'bg-rose-950/60 border-rose-500/40 text-rose-300'
                       : isCurrentActive
-                      ? 'bg-black/90 border-accent-brand/80 text-accent-brand shadow-[0_0_12px_rgba(0,240,255,0.25)]'
+                      ? 'bg-black/90 border-accent-brand/80 text-accent-brand'
                       : 'bg-black/60 border-border/60 text-emerald-400/90 group-hover:border-accent-brand/40'
                   }`}
                 >

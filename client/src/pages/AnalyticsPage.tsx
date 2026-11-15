@@ -157,7 +157,7 @@ export default function AnalyticsPage() {
                   <div key={d.date} className="flex flex-1 flex-col items-center gap-1" title={`${d.date}: ${d.solved} solved`}>
                     <div className="flex h-14 w-full items-end">
                       <div
-                        className={d.solved > 0 ? 'w-full rounded-t bg-gradient-to-t from-primary to-cyan' : 'w-full rounded-t bg-surface-2'}
+                        className={d.solved > 0 ? 'w-full rounded-t-[3px] bg-primary' : 'w-full rounded-t bg-surface-2'}
                         style={{ height: d.solved > 0 ? `${Math.max(12, (d.solved / max) * 100)}%` : '4px' }}
                       />
                     </div>

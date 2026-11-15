@@ -48,6 +48,8 @@ export const DOCK_BY_ID = new Map(DOCK_ITEMS.map((i) => [i.id, i]))
 export const MAX_PINNED = 14
 
 export interface DockPrefs {
+  /** 2 = saved after mono became the default (older saves migrate once). */
+  v?: 2
   pinned: string[]
   /** Icons swell under the pointer, as in the macOS Dock. */
   magnify: boolean
@@ -60,7 +62,7 @@ export interface DockPrefs {
 export const DEFAULT_DOCK: DockPrefs = {
   pinned: ['hub', 'problems', 'contests', 'nexus', 'learn', 'gate', 'analytics', 'social', 'submissions', 'bookmarks', 'search'],
   magnify: true,
-  iconStyle: 'colour',
+  iconStyle: 'mono',
   autoHide: false,
 }
 
@@ -78,9 +80,11 @@ export function sanitizeDock(raw: unknown): DockPrefs {
     ? [...new Set(r.pinned.filter((id): id is string => typeof id === 'string' && DOCK_BY_ID.has(id)))].slice(0, MAX_PINNED)
     : DEFAULT_DOCK.pinned
   return {
+    v: 2,
     pinned: pinned.length ? pinned : DEFAULT_DOCK.pinned,
     magnify: typeof r.magnify === 'boolean' ? r.magnify : DEFAULT_DOCK.magnify,
-    iconStyle: r.iconStyle === 'mono' ? 'mono' : 'colour',
+    // Before v2 the colour tiles were simply the default: move those to mono once.
+    iconStyle: r.v === 2 && r.iconStyle === 'colour' ? 'colour' : 'mono',
     autoHide: typeof r.autoHide === 'boolean' ? r.autoHide : DEFAULT_DOCK.autoHide,
   }
 }

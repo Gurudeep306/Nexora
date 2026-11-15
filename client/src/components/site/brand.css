@@ -12,7 +12,7 @@
   --nx-b1: #2f5bea;
   --nx-b2: #7c3aed;
   --nx-b3: #0d9488;
-  --nx-gold: #b7791f;
+  --nx-gold: #8f5d10;
   --nx-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --nx-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   --nx-hair: color-mix(in oklab, var(--color-text-primary) 9%, transparent);
@@ -33,11 +33,9 @@
   font-optical-sizing: auto;
   letter-spacing: -0.03em;
 }
+/* Emphasis is a second ink, not a gradient. */
 .nx-grad-text {
-  background: linear-gradient(95deg, var(--nx-b1), var(--nx-b2) 55%, var(--nx-b3));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--color-text-secondary);
 }
 .nx-num {
   font-variant-numeric: tabular-nums;
@@ -428,4 +426,21 @@ textarea.nx-input {
   .nx-skel {
     animation: none;
   }
+}
+
+/* ═══ Premium pass (2026) ═══════════════════════════════════════════════════
+   The blue → violet → teal ramp collapses onto the theme's own accent, so
+   every surface that reads --nx-b* is one hue; the coloured light pools and
+   the pointer light are gone (the grain and a faint dot field stay). */
+:root,
+[data-mode='dark'] {
+  --nx-b1: var(--color-accent-brand);
+  --nx-b2: color-mix(in oklab, var(--color-accent-brand) 80%, var(--color-text-primary));
+  --nx-b3: color-mix(in oklab, var(--color-accent-brand) 62%, var(--color-text-primary));
+}
+.nx-atmos::before,
+.nx-atmos .nx-pointer { display: none; }
+.nx-atmos .nx-dots { opacity: 0.35; }
+.nx-panel::before {
+  background: color-mix(in oklab, var(--color-text-primary) 10%, transparent);
 }

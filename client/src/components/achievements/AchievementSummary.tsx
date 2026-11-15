@@ -70,7 +70,7 @@ export function AchievementSummary({ achievements }: { achievements: Achievement
                         </span>
                       </span>
                       <span className="mt-1.5 block">
-                        <Progress value={p} className="h-1.5" barClassName={p > 0 ? 'bg-gradient-to-r from-cyan to-info' : undefined} />
+                        <Progress value={p} className="h-1.5" barClassName={p > 0 ? 'bg-accent-brand' : undefined} />
                       </span>
                     </span>
                   </div>

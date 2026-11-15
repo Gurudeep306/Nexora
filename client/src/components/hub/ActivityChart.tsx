@@ -63,7 +63,7 @@ export function ActivityChart({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="relative h-40" role="img" aria-label="Problems solved in the last 7 days">
+        <div className="relative h-40" role="group" aria-label="Problems solved in the last 7 days">
           {quietWeek && (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-lg bg-surface/70 text-center backdrop-blur-[2px]">
               <Icon name="moon" className="size-5 text-foreground-faint" aria-hidden="true" />

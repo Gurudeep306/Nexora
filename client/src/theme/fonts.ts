@@ -178,7 +178,8 @@ export const SOLUTION_FONTS: SolutionFont[] = [
     note: 'Solutions use the interface font.' },
 ]
 
-export const DEFAULT_SOLUTION_FONT = 'shantell'
+/** Solutions read in the UI font by default; a handwriting face is a Theme Centre choice. */
+export const DEFAULT_SOLUTION_FONT = 'off'
 
 /** CSS font-family stack for a solution font ('off' → the UI font). */
 export function solutionFontStack(f: SolutionFont): string {

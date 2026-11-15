@@ -52,7 +52,7 @@ export function ActivityHeatmap({ days, accent = 'var(--color-accent-brand)' }: 
 
   return (
     <div>
-      <div ref={scroller} className="overflow-x-auto pb-1 [scrollbar-width:thin]">
+      <div ref={scroller} tabIndex={0} aria-label="Activity, scroll sideways for earlier weeks" className="overflow-x-auto rounded-sm pb-1 outline-none [scrollbar-width:thin] focus-visible:ring-2 focus-visible:ring-accent-brand">
         <svg width={W + 24} height={H} role="img" aria-label={`${total} contributions in the last year across ${activeDays} active days`} className="block">
           {months.map((m) => (
             <text key={`${m.col}${m.label}`} x={24 + m.col * (cell + gap)} y={9} className="fill-[var(--color-text-muted)] text-[9px]">

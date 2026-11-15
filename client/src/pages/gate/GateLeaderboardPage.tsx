@@ -141,7 +141,6 @@ function Podium({ rows, isMe }: { rows: LeaderboardRow[]; isMe: (r: LeaderboardR
         return (
           <li key={r.username} className={cn('min-w-0', p.h)}>
             <Card className={cn('relative flex flex-col items-center gap-1.5 overflow-hidden px-2 py-4 text-center sm:px-3', isMe(r) && 'ring-2 ring-accent-brand')}>
-              {i === 0 && <span aria-hidden="true" className="pointer-events-none absolute -top-12 left-1/2 size-28 -translate-x-1/2 rounded-full bg-gold/20 blur-2xl" />}
               <IconBadge name={i === 0 ? 'crown' : 'medal'} tone={p.tone} box="xs" />
               <Avatar size={i === 0 ? 'lg' : 'md'} seed={r.username} avatar={r.avatar} name={r.displayName ?? r.username} />
               <p className="w-full truncate text-[13px] font-semibold text-text-primary">{r.displayName ?? r.username}</p>

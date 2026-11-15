@@ -21,7 +21,9 @@ const T = {
   surface: 'var(--color-bg-surface-3)',
 }
 
-export const COVERS: Record<string, { label: string; a: string; b: string; grid?: boolean }> = {
+export const COVERS: Record<string, { label: string; a: string; b: string; grid?: boolean; still?: boolean }> = {
+  // The default: a calm surface with a hairline grid, no colour and no drift.
+  plain: { label: 'Plain', a: 'none', b: 'none', grid: true, still: true },
   aurora: { label: 'Aurora', a: `${blob(15, 30, T.brand)}, ${blob(80, 20, T.info, 40)}`, b: blob(60, 85, T.success, 50) },
   nebula: { label: 'Nebula', a: `${blob(25, 70, T.brand, 50)}, ${blob(85, 30, T.danger, 35)}`, b: blob(50, 20, T.info, 35) },
   ember: { label: 'Ember', a: `${blob(20, 80, T.danger, 50)}, ${blob(70, 30, T.warning, 45)}`, b: blob(90, 90, T.brand, 30) },
@@ -43,7 +45,7 @@ export const ACCENTS: Record<AccentKey, { label: string; color: string }> = {
 
 export function CoverArt({ cover, className, still }: { cover: string; className?: string; still?: boolean }) {
   const isImage = cover.startsWith('/uploads/')
-  const preset = COVERS[cover] ?? COVERS.aurora
+  const preset = COVERS[cover] ?? COVERS.plain
   if (isImage) {
     return (
       <div className={cn('relative overflow-hidden bg-bg-surface-2', className)}>
@@ -53,9 +55,9 @@ export function CoverArt({ cover, className, still }: { cover: string; className
     )
   }
   return (
-    <div className={cn('ng-cover', still && '[&::after]:!animate-none [&::before]:!animate-none', className)} style={{ '--ng-cover-a': preset.a, '--ng-cover-b': preset.b } as CSSProperties}>
+    <div className={cn('ng-cover', preset.still && 'ng-cover--plain', (still || preset.still) && '[&::after]:!animate-none [&::before]:!animate-none', className)} style={{ '--ng-cover-a': preset.a, '--ng-cover-b': preset.b } as CSSProperties}>
       {preset.grid ? <div className="ng-cover-grid" /> : <div className="ng-cover-grain" />}
-      {!still && <div className="ng-cover-fade" />}
+      {!still && !preset.still && <div className="ng-cover-fade" />}
     </div>
   )
 }

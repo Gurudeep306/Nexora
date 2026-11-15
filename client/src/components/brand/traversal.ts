@@ -58,7 +58,10 @@ export const DIST: Record<NodeId, number> = (() => {
   return d
 })()
 
-/** Brand ramp: blue → violet → teal. `dark` is tuned for dark grounds, `light` for light ones. */
+/**
+ * Legacy three-colour ramp (blue → violet → teal). The current mark is one
+ * colour (see markSvg below); this stays only for code that still reads it.
+ */
 export const RAMP = {
   dark: ['#5b8cff', '#9b6bff', '#2dd4bf'],
   light: ['#2f5bea', '#7c3aed', '#0d9488'],
@@ -110,5 +113,59 @@ export function traversalSvg(o: TraversalSvgOptions): string {
     `</linearGradient>${tileDefs}</defs>${tileBody}` +
     `<g${tr}><path d="${GLYPH_D}" fill="none" stroke="url(#${g})" stroke-width="${w.stroke}" stroke-linecap="round" stroke-linejoin="round"/>` +
     `<g fill="url(#${g})">${beads}</g></g></svg>`
+  )
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   The mark (2026): one solid tile with the NG graph cut out of it.
+
+   One colour, no gradient, no beads: a mass that reads at any size and on any
+   ground, like an app icon. The tile takes the text colour (near-black on
+   light, near-white on dark), so the brand follows every theme. Below ~18 px
+   the G closes up, so tiny renders (the favicon) cut out the N alone.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+export const TILE_R = 7.5
+/** Glyph scale inside the tile (the graph keeps a generous margin). */
+export const MARK_SCALE = 0.62
+/** Cut width in glyph units (before MARK_SCALE); small renders cut heavier. */
+export const markStroke = (small: boolean) => (small ? 4.6 : 3.8)
+/** The N alone, already in tile coordinates, for ≤ 18 px. */
+export const N_ONLY_D = 'M11 22V10L21 22V10'
+export const N_ONLY_STROKE = 3.6
+
+export interface MarkSvgOptions {
+  /** Unique prefix for the mask id. */
+  id: string
+  size?: number
+  /** Tile colour (default currentColor, so it follows the text colour). */
+  ink?: string
+  /** Draw the glyph in this colour instead of cutting it out (for flat exports on a known ground). */
+  glyph?: string
+  /** ≤ 18 px: the N alone. */
+  tiny?: boolean
+  /** ≤ 24 px: a heavier cut. */
+  small?: boolean
+  /** 'bleed' fills the whole square (app icons; the OS rounds it). */
+  shape?: 'rounded' | 'bleed'
+  /** Extra glyph scale (maskable icons keep it in the safe zone). */
+  inset?: number
+  title?: string
+}
+
+export function markSvg(o: MarkSvgOptions): string {
+  const { id, size, ink = 'currentColor', glyph, tiny = false, small = false, shape = 'rounded', inset = 1, title } = o
+  const dims = size ? ` width="${size}" height="${size}"` : ''
+  const rx = shape === 'bleed' ? 0 : TILE_R
+  const k = (tiny ? 1 : MARK_SCALE) * inset
+  const tr = `translate(16 16) scale(${+k.toFixed(4)}) translate(-16 -16)`
+  const d = tiny ? N_ONLY_D : GLYPH_D
+  const sw = tiny ? N_ONLY_STROKE : markStroke(small)
+  const cut = (color: string) => `<path d="${d}" transform="${tr}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>`
+  const head = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"${dims} aria-hidden="true" focusable="false">` + (title ? `<title>${title}</title>` : '')
+  if (glyph) return `${head}<rect width="32" height="32" rx="${rx}" fill="${ink}"/>${cut(glyph)}</svg>`
+  return (
+    `${head}<defs><mask id="${id}m" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32"><rect width="32" height="32" rx="${rx}" fill="#fff"/>${cut('#000')}</mask></defs>` +
+    `<rect width="32" height="32" rx="${rx}" fill="${ink}" mask="url(#${id}m)"/></svg>`
   )
 }

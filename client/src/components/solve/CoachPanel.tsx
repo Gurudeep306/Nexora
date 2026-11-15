@@ -110,7 +110,7 @@ export function CoachPanel({
               <span className="font-mono tabular-nums">{Math.max(0, Math.min(100, Math.round(insight.progress || 0)))}%</span>
             </div>
             <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
-              <div className="h-full rounded-full bg-gradient-to-r from-primary to-cyan transition-[width] duration-700" style={{ width: `${Math.max(3, Math.min(100, insight.progress || 0))}%` }} />
+              <div className="h-full rounded-full bg-primary transition-[width] duration-700" style={{ width: `${Math.max(3, Math.min(100, insight.progress || 0))}%` }} />
             </div>
           </div>
 
