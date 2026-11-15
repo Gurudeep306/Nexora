@@ -28,6 +28,14 @@ export const UI_FONT_LOADERS: Record<string, Loader> = {
   'inter-tight': () => import('@fontsource-variable/inter-tight'),
 }
 
+/* Heading faces used only by design styles (styles.ts DISPLAY_FACES). */
+export const DISPLAY_FONT_LOADERS: Record<string, Loader> = {
+  cormorant: () => import('@fontsource-variable/cormorant-garamond'),
+  mincho: () => Promise.all([import('@fontsource/shippori-mincho/latin-500.css'), import('@fontsource/shippori-mincho/latin-600.css')]),
+  doto: () => import('@fontsource-variable/doto'),
+  fraunces: () => import('@fontsource-variable/fraunces'),
+}
+
 export const CODE_FONT_LOADERS: Record<string, Loader> = {
   'geist-mono': () => import('@fontsource-variable/geist-mono'),
   fira: () => import('@fontsource-variable/fira-code'),
@@ -77,6 +85,6 @@ function load(key: string, loader: Loader | undefined): Promise<unknown> {
   return p
 }
 
-export const loadUiFont = (id: string) => load(`ui:${id}`, UI_FONT_LOADERS[id])
+export const loadUiFont = (id: string) => load(`ui:${id}`, UI_FONT_LOADERS[id] ?? DISPLAY_FONT_LOADERS[id])
 export const loadCodeFont = (id: string) => load(`code:${id}`, CODE_FONT_LOADERS[id])
 export const loadSolutionFont = (id: string) => load(`solution:${id}`, SOLUTION_FONT_LOADERS[id])

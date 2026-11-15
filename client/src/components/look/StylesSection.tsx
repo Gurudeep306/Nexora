@@ -43,31 +43,48 @@ export function StyleSpecimen({ look, mode, className }: { look: Look; mode: The
       aria-hidden="true"
       className={cn('pattern-surface relative block overflow-hidden bg-bg-app text-left text-text-primary', className)}
     >
-      <span className="flex h-full flex-col gap-2.5 p-3.5 sm:p-4">
+      <span className="flex h-full flex-col gap-2 p-3.5 sm:p-4">
         <span className="flex items-center justify-between gap-2">
           <span className="flex items-center gap-1.5">
             <span className="size-3 rounded-[3px] bg-text-primary" />
-            <span className="font-display text-[11px] font-semibold tracking-tight">NexoraGuru</span>
+            <span className="text-[10.5px] font-semibold tracking-tight">NexoraGuru</span>
           </span>
-          <span className="flex gap-1">
-            <span className="h-1.5 w-6 rounded-full bg-text-muted/40" />
-            <span className="h-1.5 w-6 rounded-full bg-text-muted/40" />
-            <span className="h-1.5 w-6 rounded-full bg-accent-brand" />
+          <span className="flex items-center gap-2 text-[9px] text-text-muted">
+            <span>Learn</span>
+            <span className="text-text-primary">Graphs</span>
+            <span>GATE</span>
           </span>
         </span>
-        <span className="block pt-1">
-          <span className="block font-display text-[19px] leading-[1.1] font-semibold text-text-primary sm:text-[21px]" style={{ letterSpacing: 'var(--heading-tracking, -0.02em)' }}>
+        <span className="block pt-1.5">
+          <span className="block text-[8.5px] font-semibold tracking-[0.14em] text-accent-brand uppercase">Chapter 7</span>
+          <span className="sx-h mt-0.5 block font-display text-[21px] leading-[1.08] font-semibold text-text-primary sm:text-[23px]" style={{ letterSpacing: 'var(--heading-tracking, -0.02em)' }}>
             Shortest paths
           </span>
-          <span className="mt-1 block text-[10.5px] leading-snug text-text-secondary">Dijkstra relaxes the nearest vertex first.</span>
+          <span className="mt-1 block text-[10px] leading-snug text-text-secondary">Relax the nearest vertex first, then never look back.</span>
         </span>
         <span className="card mt-auto block p-2.5">
-          <span className="flex items-center justify-between gap-2">
-            <span className="font-mono text-[9.5px] text-text-secondary">dist[v] = d + w</span>
-            <span className="rounded-[var(--radius-control)] bg-accent-brand px-1.5 py-[3px] text-[9px] font-semibold text-on-accent-brand">Run</span>
+          <span className="flex items-center gap-2.5">
+            <svg viewBox="0 0 60 30" className="h-7 w-14 shrink-0" aria-hidden="true">
+              <path d="M6 22 L24 7 L42 20 L56 8" fill="none" stroke="var(--color-border-strong)" strokeWidth="1.2" />
+              <path d="M6 22 L24 7 L42 20" fill="none" stroke="var(--color-accent-brand)" strokeWidth="2" />
+              {[[6, 22], [24, 7], [42, 20], [56, 8]].map(([x, y], i) => (
+                <circle key={i} cx={x} cy={y} r="3.2" fill={i < 3 ? 'var(--color-accent-brand)' : 'var(--color-bg-surface)'} stroke="var(--color-accent-brand)" strokeWidth="1.2" />
+              ))}
+            </svg>
+            <span className="min-w-0 flex-1">
+              <span className="block font-mono text-[9px] text-text-secondary">dist[v] = d + w</span>
+              <span className="mt-1.5 block h-1 overflow-hidden rounded-full bg-text-muted/20">
+                <span className="block h-full w-2/3 rounded-full bg-accent-brand" />
+              </span>
+            </span>
           </span>
-          <span className="mt-2 block h-1 overflow-hidden rounded-full bg-text-muted/20">
-            <span className="block h-full w-2/3 rounded-full bg-accent-brand" />
+          <span className="mt-2.5 flex gap-1.5">
+            <span data-ui="button" data-variant="primary" className="sx-btn inline-flex h-5 items-center rounded-[var(--radius-control)] bg-accent-brand px-2 text-[9px] font-semibold text-on-accent-brand">
+              Start
+            </span>
+            <span data-ui="button" data-variant="secondary" className="sx-btn inline-flex h-5 items-center rounded-[var(--radius-control)] border border-border bg-bg-surface-2 px-2 text-[9px] font-medium text-text-primary">
+              Notes
+            </span>
           </span>
         </span>
       </span>
@@ -127,7 +144,7 @@ export function StylesSection({ onPreview }: { onPreview: (l: Look | null) => vo
               <StyleSpecimen
                 look={l}
                 mode={resolveMode(p, preferredMode)}
-                className="aspect-[16/10] w-full rounded-[var(--radius-card)] shadow-[0_0_0_1px_var(--color-border)] transition-transform duration-300 ease-[var(--ease-smooth)] group-hover:-translate-y-0.5"
+                className="aspect-[5/4] w-full rounded-[var(--radius-card)] shadow-[0_0_0_1px_var(--color-border)] transition-transform duration-300 ease-[var(--ease-smooth)] group-hover:-translate-y-0.5"
               />
               <span className="flex items-start justify-between gap-3 px-1.5 pb-1">
                 <span className="min-w-0">

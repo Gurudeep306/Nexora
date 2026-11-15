@@ -179,7 +179,7 @@ test('the first-paint script sets data-solution-font, and the theme CSS defines 
 
 test('design styles: every bundle is a valid look and round-trips', async () => {
   const { sanitizeLook, DEFAULT_LOOK, LOOK_TABLES } = await theme('look.ts');
-  const { STYLES, PATTERNS, DEFAULT_STYLE } = await theme('styles.ts');
+  const { STYLES, PATTERNS, DEFAULT_STYLE, DISPLAY_FACES } = await theme('styles.ts');
   assert.equal(DEFAULT_LOOK.style, DEFAULT_STYLE);
   assert.equal(new Set(STYLES.map((s) => s.id)).size, STYLES.length, 'style ids are unique');
   for (const s of STYLES) {
@@ -187,7 +187,7 @@ test('design styles: every bundle is a valid look and round-trips', async () => 
     const got = sanitizeLook(want);
     for (const [k, v] of Object.entries(s.bundle)) assert.equal(got[k], v, `${s.id}: ${k}=${v} must be a valid value`);
     assert.equal(got.style, s.id);
-    if (s.displayFont) assert.ok(LOOK_TABLES.fonts.includes(s.displayFont), `${s.id}: display font ${s.displayFont} exists`);
+    if (s.displayFont) assert.ok(LOOK_TABLES.fonts.includes(s.displayFont) || s.displayFont in DISPLAY_FACES, `${s.id}: display font ${s.displayFont} exists`);
   }
   for (const p of PATTERNS) assert.equal(sanitizeLook({ pattern: p.id }).pattern, p.id);
   assert.equal(sanitizeLook({ style: '<x>', pattern: 'nope' }).style, DEFAULT_STYLE);

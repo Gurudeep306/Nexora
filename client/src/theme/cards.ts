@@ -15,6 +15,7 @@ export const CARD_STYLES = [
   { id: 'glow', label: 'Glow', hint: 'An accent halo that softly lights the card.' },
   { id: 'ruled', label: 'Ruled', hint: 'No box at all — a thin rule above, like a column in print.' },
   { id: 'ink', label: 'Ink', hint: 'A heavy ink outline with a hard offset shadow.' },
+  { id: 'glass', label: 'Glass', hint: 'Frosted and translucent — the page shows softly through.' },
 ] as const
 
 export type CardStyleId = (typeof CARD_STYLES)[number]['id']
