@@ -625,3 +625,158 @@
     transform: none;
   }
 }
+
+/* ── Editorial sign-in (2026-11): the landing page's field journal ──────────
+   Flat parchment, one ivory card on a hairline, an editorial serif heading,
+   Geist for every control, and the clay button for the one action. The
+   `.ed` scope (landing.css) supplies the --ed-* tokens in light and dark;
+   here the site's semantic tokens are pointed at them so every utility
+   inside the page (text-text-primary, bg-border…) speaks the same palette. */
+.auth-root.ed {
+  --color-bg-app: var(--ed-canvas);
+  --color-bg-surface: var(--ed-card);
+  --color-text-primary: var(--ed-ink);
+  --color-text-secondary: var(--ed-ink-2);
+  --color-text-muted: var(--ed-muted);
+  --color-border: var(--ed-line);
+  --auth-hair: var(--ed-line);
+  background: var(--ed-canvas);
+  color: var(--ed-ink);
+  font-family: var(--ed-sans);
+}
+.auth-root.ed .auth-field { display: none; }
+.auth-root.ed .auth-top { border-bottom: 1px solid transparent; }
+.auth-root.ed .auth-main { padding-block: 2rem 3rem; }
+
+.auth-root.ed .auth-glass {
+  max-width: 28rem;
+  padding: 2.5rem 2rem 2rem;
+  border-radius: 24px;
+  background: var(--ed-card);
+  border: 1px solid var(--ed-line);
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  transform: none;
+}
+.auth-root.ed .auth-edge { display: none; }
+.auth-root.ed .auth-glass-mark { display: none; }
+.auth-root.ed .auth-success { background: var(--ed-card); border-radius: 24px; }
+
+.auth-root.ed .auth-title {
+  font-family: var(--ed-serif);
+  font-weight: 400;
+  font-size: 2.25rem;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--ed-ink);
+  background: none;
+  -webkit-text-fill-color: currentColor;
+}
+.auth-root.ed .auth-lead {
+  font-family: var(--ed-serif);
+  font-size: 1.0625rem;
+  line-height: 1.45;
+  color: var(--ed-ink-2);
+}
+
+/* Sign in / Create account: two tabs on a hairline, the current one underlined in ink. */
+.auth-root.ed .auth-seg {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: inset 0 -1px 0 var(--ed-line);
+}
+.auth-root.ed .auth-seg-btn { height: 2.75rem; font-size: 14px; font-weight: 500; color: var(--ed-muted); border-radius: 0; }
+.auth-root.ed .auth-seg-btn.is-on { color: var(--ed-ink); }
+.auth-root.ed .auth-seg-pill {
+  inset: auto 0 0 0;
+  height: 2px;
+  border-radius: 0;
+  background: var(--ed-ink);
+  box-shadow: none;
+}
+
+.auth-root.ed .auth-input {
+  height: 3rem;
+  border-radius: 12px;
+  border: 1px solid var(--ed-line);
+  background: var(--ed-canvas);
+  color: var(--ed-ink);
+  font-family: var(--ed-sans);
+  box-shadow: none;
+}
+.auth-root.ed .auth-input::placeholder { color: var(--ed-faint); }
+.auth-root.ed .auth-input:hover { border-color: var(--ed-line-strong); }
+.auth-root.ed .auth-input:focus-visible {
+  outline: none;
+  border-color: var(--ed-ink);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ed-focus) 22%, transparent);
+}
+.auth-root.ed .auth-input[aria-invalid='true'] { border-color: var(--color-state-error); }
+.auth-root.ed .auth-field-icon { color: var(--ed-muted); }
+
+.auth-root.ed .auth-oauth {
+  border-radius: 12px;
+  border: 1px solid var(--ed-line);
+  background: var(--ed-card);
+  color: var(--ed-ink);
+  box-shadow: none;
+}
+.auth-root.ed .auth-oauth:hover { border-color: var(--ed-line-strong); background: var(--ed-canvas); }
+.auth-root.ed .auth-last { background: var(--ed-oat); color: var(--ed-ink-2); box-shadow: none; }
+
+/* The one action: clay, square on top, rounded only at the bottom. */
+.auth-root.ed .auth-submit {
+  height: 3rem;
+  border-radius: 0 0 8px 8px;
+  background: var(--ed-clay);
+  color: var(--ed-on-clay);
+  font-family: var(--ed-sans);
+  box-shadow: none;
+  transition: background-color 300ms var(--ed-ease);
+}
+.auth-root.ed .auth-submit:hover { background: var(--ed-clay-deep); transform: none; }
+.auth-root.ed .auth-submit:active { transform: translateY(1px); }
+.auth-root.ed .auth-submit:focus-visible { outline: 2px solid var(--ed-focus); outline-offset: 3px; }
+.auth-root.ed .auth-submit-line { background: color-mix(in oklab, var(--ed-on-clay) 45%, transparent); }
+
+.auth-root.ed .auth-account {
+  border-radius: 16px;
+  background: var(--ed-canvas);
+  box-shadow: inset 0 0 0 1px var(--ed-line);
+}
+.auth-root.ed .auth-account-main:hover { background: color-mix(in oklab, var(--ed-oat) 60%, transparent); }
+
+.auth-root.ed .auth-link { color: var(--ed-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--ed-line-strong); }
+.auth-root.ed .auth-hint { color: var(--ed-muted); }
+.auth-root.ed .auth-hint kbd { background: var(--ed-canvas); border-color: var(--ed-line); box-shadow: none; }
+
+/* Appearance bar: flat and quiet, like the rest of the masthead. */
+.auth-root.ed .auth-look {
+  background: var(--ed-card);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: inset 0 0 0 1px var(--ed-line);
+}
+.auth-root.ed .auth-look-mode { color: var(--ed-muted); }
+.auth-root.ed .auth-look-mode:hover { color: var(--ed-ink); background: var(--ed-canvas); }
+
+.auth-root.ed .auth-foot { color: var(--ed-muted); border-top: 1px solid var(--ed-line); font-family: var(--ed-sans); }
+
+@media (min-width: 640px) {
+  .auth-root.ed .auth-glass { padding: 3rem 2.75rem 2.5rem; }
+  .auth-root.ed .auth-title { font-size: 2.75rem; }
+}
+
+/* Style dots: a 24px target around each 16px swatch. */
+.auth-root.ed .auth-look-styles { gap: 2px; }
+.auth-root.ed .auth-look-dot {
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  background-clip: content-box !important;
+  box-shadow: inset 0 0 0 4px var(--ed-card), inset 0 0 0 5px var(--ed-line);
+}
+.auth-root.ed .auth-look-dot.is-on { box-shadow: inset 0 0 0 1.5px var(--ed-ink); }
