@@ -92,7 +92,7 @@ export default function PracticePage() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="w-16 text-[11.5px] font-semibold text-text-muted">Page</span>
-          <select value={page} onChange={(e) => setPage(e.target.value)} aria-label="Show questions from" className="input-base !py-1.5 !text-[12.5px]">
+          <select value={page} onChange={(e) => setPage(e.target.value)} aria-label="Show questions from" className="input-base max-w-full min-w-0 !py-1.5 !text-[12.5px]">
             <option value="all">All pages</option>
             {topic.pages.map((p) => (
               <option key={p.id} value={p.id}>
