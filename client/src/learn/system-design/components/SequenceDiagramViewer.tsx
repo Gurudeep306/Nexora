@@ -74,7 +74,7 @@ export const SequenceDiagramViewer: React.FC<SequenceDiagramViewerProps> = ({
                   key={srv.id}
                   className={`flex flex-col items-center rounded-xl p-2.5 text-center ring-1 transition-all ${
                     isActiveInCurrentStep
-                      ? 'bg-sky-500/15 ring-sky-400 shadow-[0_0_15px_rgba(56,189,248,0.25)]'
+                      ? 'bg-sky-500/15 ring-sky-400'
                       : 'bg-bg-surface-2 ring-border'
                   }`}
                 >
@@ -147,7 +147,7 @@ export const SequenceDiagramViewer: React.FC<SequenceDiagramViewerProps> = ({
                       <span
                         className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
                           isCurrent
-                            ? 'bg-sky-400 text-black shadow-[0_0_8px_#38bdf8]'
+                            ? 'bg-sky-400 text-black'
                             : 'bg-bg-surface-2 text-text-muted'
                         }`}
                       >
@@ -180,14 +180,14 @@ export const SequenceDiagramViewer: React.FC<SequenceDiagramViewerProps> = ({
                       {/* Arrow Line */}
                       <div
                         className={`h-0.5 w-full transition-all ${
-                          isCurrent ? 'bg-sky-400 shadow-[0_0_10px_#38bdf8]' : 'bg-border-strong group-hover:bg-sky-400/50'
+                          isCurrent ? 'bg-sky-400' : 'bg-border-strong group-hover:bg-sky-400/50'
                         }`}
                       />
 
                       {/* Directional In-Flight Pulse on Active Step */}
                       {isCurrent && !isSelf && (
                         <div
-                          className="absolute -top-[3px] size-2 rounded-full bg-cyan-300 shadow-[0_0_8px_#22d3ee] animate-pulse pointer-events-none"
+                          className="absolute -top-[3px] size-2 rounded-full bg-cyan-300 animate-pulse pointer-events-none"
                           style={{ left: isLeftToRight ? '65%' : '35%' }}
                         />
                       )}

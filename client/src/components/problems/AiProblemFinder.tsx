@@ -49,14 +49,6 @@ export function AiProblemFinder({
   return (
     <div className="card-neon relative overflow-hidden p-4 sm:p-5">
       {/* ambient accent glow */}
-      <div
-        className="pointer-events-none absolute -top-28 -right-20 size-72 rounded-full bg-primary/8 blur-3xl"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute -bottom-24 -left-16 size-56 rounded-full bg-secondary/5 blur-3xl"
-        aria-hidden="true"
-      />
 
       <div className="relative flex flex-col gap-4">
         {/* header */}

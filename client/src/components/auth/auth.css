@@ -398,3 +398,56 @@
     animation: none !important;
   }
 }
+
+/* ═══ Premium pass (2026) ═══════════════════════════════════════════════════
+   One ink, no light show. The brand ramp collapses onto the theme's own
+   accent (so anything still reading --brand-* stays one hue); the ambient
+   pools, the travelling border beam, the cursor spotlight and the gradient
+   button are gone. The card is a plain raised surface with a hairline; the
+   primary action is a solid ink button (white on dark, black on light). */
+.auth-root,
+[data-mode='dark'] .auth-root {
+  --brand-1: var(--color-accent-brand);
+  --brand-2: color-mix(in oklab, var(--color-accent-brand) 80%, var(--color-text-primary));
+  --brand-3: color-mix(in oklab, var(--color-accent-brand) 62%, var(--color-text-primary));
+}
+.auth-ambient::before,
+.auth-ambient .pointer { display: none; }
+.auth-ambient .dots { opacity: 0.35; }
+.auth-card,
+[data-mode='light'] .auth-card {
+  border-radius: 16px;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--color-bg-surface);
+  box-shadow:
+    0 1px 2px oklch(0 0 0 / 0.18),
+    0 24px 48px -28px oklch(0 0 0 / 0.55);
+}
+[data-mode='light'] .auth-card {
+  background: white;
+  box-shadow:
+    0 1px 2px oklch(0.2 0.01 260 / 0.06),
+    0 24px 48px -28px oklch(0.2 0.01 260 / 0.22);
+}
+.auth-card::before,
+[data-mode='light'] .auth-card::before {
+  background: color-mix(in oklab, var(--color-text-primary) 11%, transparent);
+}
+.auth-card::after { display: none; animation: none; }
+.auth-input { border-radius: 10px; }
+.auth-cta,
+.auth-cta:hover:not(:disabled) {
+  border-radius: 10px;
+  color: var(--color-bg-app);
+  background: var(--color-text-primary);
+  background-size: auto;
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.2);
+}
+.auth-cta:hover:not(:disabled) { background: color-mix(in oklab, var(--color-text-primary) 88%, var(--color-bg-app)); }
+.auth-cta::after { display: none; }
+.auth-brand-text {
+  background: none;
+  color: var(--color-text-secondary);
+  -webkit-text-fill-color: currentColor;
+}

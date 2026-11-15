@@ -22,10 +22,6 @@ export function AiProblemResults({ data, bookmarkedIds, onToggleBookmark, busyBo
     <div className="space-y-3">
       {/* Understanding banner */}
       <div className="card-neon relative overflow-hidden p-4">
-        <div
-          className="pointer-events-none absolute -top-20 -left-10 size-56 rounded-full bg-primary/10 blur-3xl"
-          aria-hidden="true"
-        />
         <div className="relative flex flex-wrap items-start gap-3">
           <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary-bright">
             <Sparkles className="size-4" aria-hidden="true" />

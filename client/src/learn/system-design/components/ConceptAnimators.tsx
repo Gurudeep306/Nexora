@@ -168,7 +168,7 @@ export const CapPartitionAnimator: React.FC = () => {
         {/* Wire 1: Client to Node A */}
         <div className="relative flex-1 h-1 w-full md:w-auto bg-border flex items-center justify-center">
           {inFlightWrite && (
-            <div className="absolute size-3 rounded-full bg-sky-400 shadow-[0_0_12px_#38bdf8] animate-ping" />
+            <div className="absolute size-3 rounded-full bg-sky-400 animate-ping" />
           )}
           <span className="absolute -top-5 text-[10px] font-mono text-text-muted">POST /deposit</span>
         </div>
@@ -195,7 +195,7 @@ export const CapPartitionAnimator: React.FC = () => {
         <div className="relative flex-1 h-1.5 w-full md:w-auto flex items-center justify-center">
           {isPartitioned ? (
             <div className="flex flex-col items-center gap-1">
-              <div className="h-10 w-1 bg-rose-500 animate-pulse shadow-[0_0_12px_#f43f5e]" />
+              <div className="h-10 w-1 bg-rose-500 animate-pulse" />
               <div className="rounded bg-rose-500/20 px-2 py-0.5 text-[10px] font-mono font-bold text-rose-400 ring-1 ring-rose-500/40">
                 PARTITION CUT
               </div>
@@ -362,8 +362,8 @@ export const TwoPhaseCommitAnimator: React.FC = () => {
                 className={`rounded-full px-3 py-1 font-mono text-[10.5px] font-bold transition ${
                   isActive
                     ? p === 'ABORT'
-                      ? 'bg-rose-500 text-white shadow-[0_0_12px_#f43f5e]'
-                      : 'bg-purple-500 text-white shadow-[0_0_12px_#a855f7]'
+                      ? 'bg-rose-500 text-white'
+                      : 'bg-purple-500 text-white'
                     : 'bg-bg-surface-2 text-text-muted'
                 }`}
               >
@@ -966,7 +966,7 @@ export const RaftConsensusAnimator: React.FC = () => {
               key={id}
               className={`relative flex flex-col items-center rounded-2xl p-5 text-center ring-1 transition-all ${
                 isLeader
-                  ? 'bg-amber-500/10 ring-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.2)]'
+                  ? 'bg-amber-500/10 ring-amber-400'
                   : isCandidate
                   ? 'bg-rose-500/20 ring-rose-400 animate-pulse'
                   : 'bg-bg-surface-2 ring-border'
@@ -1097,7 +1097,7 @@ export const RateLimiterTokenBucketAnimator: React.FC = () => {
             {Array.from({ length: tokens }).map((_, i) => (
               <div
                 key={i}
-                className="h-3 w-full rounded bg-cyan-400 shadow-[0_0_8px_#22d3ee] animate-fadeIn transition-all"
+                className="h-3 w-full rounded bg-cyan-400 animate-fadeIn transition-all"
               />
             ))}
           </div>
@@ -1110,9 +1110,9 @@ export const RateLimiterTokenBucketAnimator: React.FC = () => {
           <div
             className={`flex size-16 items-center justify-center rounded-2xl ring-2 transition-all ${
               lastStatus === 'ALLOWED'
-                ? 'bg-emerald-500/20 text-emerald-400 ring-emerald-500 shadow-[0_0_20px_#10b981]'
+                ? 'bg-emerald-500/20 text-emerald-400 ring-emerald-500'
                 : lastStatus === 'REJECTED'
-                ? 'bg-rose-500/20 text-rose-400 ring-rose-500 shadow-[0_0_20px_#f43f5e]'
+                ? 'bg-rose-500/20 text-rose-400 ring-rose-500'
                 : 'bg-bg-surface-2 text-text-muted ring-border'
             }`}
           >
@@ -1910,7 +1910,7 @@ export const DisruptorRingBufferAnimator: React.FC = () => {
                   key={slot.index}
                   className={`rounded-lg p-2 ring-1 text-center font-mono space-y-0.5 transition ${
                     isProducerHead
-                      ? 'bg-cyan-500/20 ring-cyan-500/60 shadow-[0_0_10px_rgba(6,182,212,0.3)]'
+                      ? 'bg-cyan-500/20 ring-cyan-500/60'
                       : isConsumerHead
                       ? 'bg-emerald-500/20 ring-emerald-500/60'
                       : 'bg-bg-surface-1 ring-border/60'
@@ -2201,7 +2201,7 @@ export const UberH3SpatialDispatchAnimator: React.FC = () => {
                 key={d.id}
                 className={`rounded-xl p-2.5 ring-1 transition flex items-center justify-between ${
                   isWinner
-                    ? 'bg-emerald-500/20 ring-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+                    ? 'bg-emerald-500/20 ring-emerald-500'
                     : 'bg-bg-surface-1 ring-border'
                 }`}
               >
@@ -3609,7 +3609,7 @@ export const ZookeeperDistributedLockAnimator: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-[11px]">
         <div className={`rounded-xl p-3 ring-1 transition ${
           lockHolder === 'Worker A'
-            ? 'bg-amber-400/20 ring-amber-400/50 text-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.2)]'
+            ? 'bg-amber-400/20 ring-amber-400/50 text-amber-300'
             : 'bg-bg-surface-1 ring-border text-text-muted line-through opacity-50'
         }`}>
           <div className="flex justify-between items-center text-[10px] uppercase font-bold">
@@ -3622,7 +3622,7 @@ export const ZookeeperDistributedLockAnimator: React.FC = () => {
 
         <div className={`rounded-xl p-3 ring-1 transition ${
           lockHolder === 'Worker B'
-            ? 'bg-emerald-400/20 ring-emerald-400/50 text-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.2)]'
+            ? 'bg-emerald-400/20 ring-emerald-400/50 text-emerald-300'
             : lockHolder === 'Worker A'
             ? 'bg-bg-surface-1 ring-sky-400/30 text-sky-300'
             : 'bg-bg-surface-1 ring-border text-text-muted line-through opacity-50'
@@ -3637,7 +3637,7 @@ export const ZookeeperDistributedLockAnimator: React.FC = () => {
 
         <div className={`rounded-xl p-3 ring-1 transition ${
           lockHolder === 'Worker C'
-            ? 'bg-emerald-400/20 ring-emerald-400/50 text-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.2)]'
+            ? 'bg-emerald-400/20 ring-emerald-400/50 text-emerald-300'
             : 'bg-bg-surface-1 ring-sky-400/30 text-sky-300'
         }`}>
           <div className="flex justify-between items-center text-[10px] uppercase font-bold">

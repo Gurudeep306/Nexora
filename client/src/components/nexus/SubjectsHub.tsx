@@ -81,7 +81,7 @@ export function LearnSubjectsHub() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="mb-0 max-w-[70ch] text-[14px] text-text-secondary">
           {total} subjects, each a course tree you climb lesson by lesson — all of them one web in the{' '}
-          <Link to="/nexus" className="text-accent-brand hover:underline">
+          <Link to="/nexus" className="text-accent-brand underline decoration-accent-brand/40 underline-offset-2 hover:decoration-accent-brand">
             Nexus
           </Link>
           .
@@ -99,7 +99,7 @@ export function LearnSubjectsHub() {
         .filter((x) => x.list.length)
         .map(({ st, list }, si) => (
           <section key={st.id} aria-labelledby={`stream-${st.id}`}>
-            <h2 id={`stream-${st.id}`} className="mb-3 flex items-center gap-2 text-[12px] font-semibold tracking-[0.14em] uppercase" style={{ color: st.hue }}>
+            <h2 id={`stream-${st.id}`} className="mb-3 flex items-center gap-2 text-[12px] font-semibold tracking-[0.14em] text-text-secondary uppercase">
               <span className="size-2 rounded-full" style={{ background: st.hue }} aria-hidden="true" />
               {st.name}
               <span className="font-mono text-[11px] font-normal tracking-normal text-text-muted">{list.length}</span>

@@ -12,7 +12,9 @@ export interface NotesPrefs {
   cleanLines: boolean
   treeHidden: boolean
 }
-const DEFAULTS: NotesPrefs = { cleanFont: false, cleanLines: false, treeHidden: false }
+// Clean type and straight lines by default (2026): the handwriting face and the
+// sketched viz stay one switch away for readers who like the notebook feel.
+const DEFAULTS: NotesPrefs = { cleanFont: true, cleanLines: true, treeHidden: false }
 
 /*
   The handwriting face for notes. One of 'shantell' | 'kalam' | 'patrick'

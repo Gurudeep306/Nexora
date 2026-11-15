@@ -58,7 +58,7 @@ export function ActivityHeatmap({ activity, days = 365 }: { activity: Record<str
 
   return (
     <div>
-      <div ref={scroller} className="overflow-x-auto pb-1 [scrollbar-width:thin]">
+      <div ref={scroller} tabIndex={0} aria-label="Activity, scroll sideways for earlier weeks" className="overflow-x-auto rounded-sm pb-1 outline-none [scrollbar-width:thin] focus-visible:ring-2 focus-visible:ring-accent-brand">
         <div style={{ width: width + 24 }} className="relative">
           <div className="relative ml-6 h-4 text-[10.5px] text-text-muted" aria-hidden="true">
             {months.map((m) => (

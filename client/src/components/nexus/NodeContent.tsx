@@ -461,7 +461,7 @@ export function NodeContent({
                 <>
                   {' '}
                   —{' '}
-                  <Link to={data.lessons[0].href} className="text-accent-brand hover:underline">
+                  <Link to={data.lessons[0].href} className="text-accent-brand underline decoration-accent-brand/40 underline-offset-2 hover:decoration-accent-brand">
                     open it
                   </Link>
                 </>

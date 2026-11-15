@@ -17,7 +17,7 @@ import { CODE_FONTS, DEFAULT_CODE_FONT, DEFAULT_FONT, DEFAULT_SOLUTION_FONT, DEF
 import { CARD_STYLES, DEFAULT_CARD_STYLE, DEFAULT_RADIUS, RADII } from './cards.ts'
 
 export interface Look {
-  v: 2
+  v: 3
   /** Palette id (see palettes.ts). */
   theme: string
   /** 'theme' = the palette's own accent, or an accent override id. */
@@ -55,7 +55,7 @@ export interface LookTables {
 const defaultSet = ICON_SETS.find((s) => s.id === DEFAULT_ICON_SET)!
 
 export const DEFAULT_LOOK: Look = {
-  v: 2,
+  v: 3,
   theme: DEFAULT_PALETTE,
   accent: 'theme',
   font: DEFAULT_FONT,
@@ -138,20 +138,26 @@ export function sanitizeLookWith(raw: unknown, T: LookTables): Look {
   }
   const iconSet = v2(r.iconSet, Object.keys(T.iconSets)) || D.iconSet
   const styles = T.iconSets[iconSet]
+  // v3 (2026): the default icon container became 'quiet'. Looks saved before
+  // then carried the old default ('soft') without anyone choosing it, so they
+  // move to the new default once; anything else someone picked is kept.
+  const before3 = typeof r.v !== 'number' || r.v < 3
+  const container = v2(r.iconContainer, T.iconContainers)
   return {
-    v: 2,
+    v: 3,
     theme: v2(r.theme, T.themes) || v1(r.wallpaper, L.wallpaper, T.themes) || D.theme,
     accent: v2(r.accent, T.accents) || v1(r.accent, L.accent, T.accents) || D.accent,
     font: v2(r.font, T.fonts) || v1(r.fontStyle, L.fontStyle, T.fonts) || D.font,
     codeFont: v2(r.codeFont, T.codeFonts) || D.codeFont,
-    solutionFont: v2(r.solutionFont, T.solutionFonts) || D.solutionFont,
+    // The handwriting default ('shantell') moved to plain text in v3, like the icon container.
+    solutionFont: (before3 && r.solutionFont === 'shantell' ? '' : v2(r.solutionFont, T.solutionFonts)) || D.solutionFont,
     textSize: v2(r.textSize, T.textSizes) || v1(r.fontSize, L.fontSize, T.textSizes) || D.textSize,
     cardStyle: v2(r.cardStyle, T.cardStyles) || v1(r.cardStyle, L.cardStyle, T.cardStyles) || D.cardStyle,
     radius: v2(r.radius, T.radii) || D.radius,
     iconSet,
     iconStyle: v2(r.iconStyle, styles.styles) || styles.def,
     iconContainer:
-      v2(r.iconContainer, T.iconContainers) ||
+      (before3 && container === 'soft' ? D.iconContainer : container) ||
       (r.iconShape === 'free' ? 'none' : v1(r.iconPack, L.iconPack, T.iconContainers)) ||
       D.iconContainer,
     iconShape: v2(r.iconShape, T.iconShapes) || v1(r.iconShape, L.iconShape, T.iconShapes) || D.iconShape,

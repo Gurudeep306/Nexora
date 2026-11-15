@@ -261,3 +261,21 @@
     block-size: var(--ib-glyph);
   }
 }
+
+/* ── Quiet (the default container): a neutral tile, a grey glyph. Hue is
+   ignored on purpose; only meaningful tones (success, warning, error) keep
+   their colour on the glyph. ─────────────────────────────────────────── */
+@layer components {
+  [data-icon-container='quiet'] .icon-badge,
+  [data-icon-container] [data-icon-container='quiet'] .icon-badge,
+  .icon-badge.icon-badge.icon-badge[data-icon-container='quiet'] {
+    --ib-bg: color-mix(in oklab, var(--color-text-primary) 5%, transparent);
+    --ib-fg: var(--color-text-secondary);
+    --ib-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-text-primary) 9%, transparent);
+    --ib-sheen: 0;
+  }
+  [data-icon-container='quiet'] .icon-badge:is([data-tone='success'], [data-tone='warning'], [data-tone='danger']),
+  .icon-badge.icon-badge.icon-badge[data-icon-container='quiet']:is([data-tone='success'], [data-tone='warning'], [data-tone='danger']) {
+    --ib-fg: var(--ib-c);
+  }
+}

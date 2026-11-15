@@ -1,16 +1,15 @@
 /**
  * Favicon + tab-title engine.
  *
- * The tab shows the static Traversal mark (public/brand/ngmark-flat.svg) and
- * costs nothing at rest — no timers, no canvas. Only while code is being
- * judged does a small signal run the mark's graph (the same BFS routes as the
- * logo), and an Accepted verdict gets one bright pass where the whole graph
- * lights up. Then the static icon comes back.
+ * The tab shows the static mark (public/brand/ngmark-flat.svg) and costs
+ * nothing at rest — no timers, no canvas. Only while code is being judged does
+ * a short bright segment travel the mark's graph, and an Accepted verdict
+ * tints the tile green for a moment. Then the static icon comes back.
  *
  * Browsers forbid touching the real tab chrome, so the favicon + document.title
  * are the only surfaces we own; this makes the most of them, cheaply.
  */
-import { BEADS, DIST, GLYPH_D, NODES, RAMP, ROUTES, weights, type NodeId } from '@/components/brand/traversal'
+import { GLYPH_D, MARK_SCALE, TILE_R, markStroke } from '@/components/brand/traversal'
 
 type Mode = 'idle' | 'busy'
 
@@ -19,71 +18,49 @@ const PX = 64 // canvas size — 2× the favicon's largest common render
 const FRAME_MS = 66 // ~15fps is plenty for a 16px icon
 const BASE_TITLE = 'NexoraGuru — Learn computer science, step by step'
 const BURST_MS = 1100
+const TILE = '#16171a'
+const INK = '#f4f4f5'
+const OK = '#2f9e62'
+const GLYPH_LEN = 18 + 20.12 + 18 + 10 + 10 + 8 + 5 // the NG path's length in glyph units
 
 let glyph: Path2D | null = null
 
-/** Point at distance `d` along route `rt` (clamped to its end). */
-function along(rt: readonly NodeId[], d: number): [number, number] {
-  const end = DIST[rt[rt.length - 1]]
-  const dd = Math.min(Math.max(d, 0), end)
-  let k = 1
-  while (k < rt.length - 1 && DIST[rt[k]] < dd) k++
-  const p = NODES[rt[k - 1]], q = NODES[rt[k]]
-  const f = (dd - DIST[rt[k - 1]]) / (DIST[rt[k]] - DIST[rt[k - 1]] || 1)
-  return [p[0] + (q[0] - p[0]) * f, p[1] + (q[1] - p[1]) * f]
-}
-
 /**
- * Paint one frame: the tile, the graph, and a signal at fraction `t` of the
- * longest route (both routes advance together, splitting at the junction).
- * `glow` 0..1 brightens the whole mark (the Accepted burst).
+ * Paint one frame: the tile, the graph drawn faintly, and a bright segment
+ * travelling along it at fraction `t` (the traversal). `ok` 0..1 tints the
+ * tile green for an Accepted verdict, then fades back.
  */
-function draw(ctx: CanvasRenderingContext2D, t: number, glow: number) {
+function draw(ctx: CanvasRenderingContext2D, t: number, ok: number) {
   glyph ??= new Path2D(GLYPH_D)
-  const w = weights(true)
   ctx.clearRect(0, 0, GRID, GRID)
-
-  const bg = ctx.createLinearGradient(0, 0, 26, 32)
-  bg.addColorStop(0, '#171b36')
-  bg.addColorStop(0.6, '#0d0f1f')
-  bg.addColorStop(1, '#08090f')
-  ctx.fillStyle = bg
+  ctx.fillStyle = ok > 0 ? mix(TILE, OK, ok) : TILE
   ctx.beginPath()
-  ctx.roundRect(0, 0, GRID, GRID, 7.2)
+  ctx.roundRect(0, 0, GRID, GRID, TILE_R)
   ctx.fill()
-
-  const ramp = ctx.createLinearGradient(5, 27, 27, 5)
-  ramp.addColorStop(0, RAMP.dark[0])
-  ramp.addColorStop(0.55, RAMP.dark[1])
-  ramp.addColorStop(1, RAMP.dark[2])
   ctx.save()
-  ctx.shadowColor = RAMP.dark[2]
-  ctx.shadowBlur = glow * 6
-  ctx.strokeStyle = ramp
-  ctx.lineWidth = w.stroke
+  ctx.translate(16, 16)
+  ctx.scale(MARK_SCALE, MARK_SCALE)
+  ctx.translate(-16, -16)
+  ctx.lineWidth = markStroke(true)
   ctx.lineCap = 'round'
   ctx.lineJoin = 'round'
+  ctx.strokeStyle = ok > 0 ? INK : 'rgba(244,244,245,0.38)'
   ctx.stroke(glyph)
-  ctx.fillStyle = ramp
-  for (const n of BEADS) {
-    ctx.beginPath()
-    ctx.arc(NODES[n][0], NODES[n][1], w.bead, 0, Math.PI * 2)
-    ctx.fill()
+  if (ok <= 0) {
+    // the signal: a third of the path, moving from the N's foot to the G's spur
+    const seg = GLYPH_LEN / 3
+    ctx.setLineDash([seg, GLYPH_LEN])
+    ctx.lineDashOffset = -t * (GLYPH_LEN + seg) + seg
+    ctx.strokeStyle = INK
+    ctx.stroke(glyph)
   }
   ctx.restore()
+}
 
-  const longest = Math.max(...ROUTES.map((r) => DIST[r[r.length - 1]]))
-  for (const rt of ROUTES) {
-    const [x, y] = along(rt, t * longest)
-    ctx.save()
-    ctx.shadowColor = RAMP.dark[2]
-    ctx.shadowBlur = 8
-    ctx.fillStyle = '#ffffff'
-    ctx.beginPath()
-    ctx.arc(x, y, 2.4, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.restore()
-  }
+function mix(a: string, b: string, f: number) {
+  const p = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16))
+  const [x, y] = [p(a), p(b)]
+  return `rgb(${x.map((v, i) => Math.round(v + (y[i] - v) * f)).join(',')})`
 }
 
 let mode: Mode = 'idle'
