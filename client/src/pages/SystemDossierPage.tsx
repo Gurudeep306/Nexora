@@ -267,7 +267,6 @@ export default function SystemDossierPage() {
               boxShadow: `inset 0 0 0 1px ${domainTheme.color}35`,
             }}
           >
-            <span>{domainTheme.icon}</span>
             <span>{domainTheme.name}</span>
           </span>
           <span className="text-border">/</span>
@@ -316,7 +315,7 @@ export default function SystemDossierPage() {
       <div
         className="relative overflow-hidden rounded-2xl p-6 sm:p-8 ring-1 shadow-2xl mb-6 transition-all"
         style={{
-          background: `linear-gradient(135deg, #131722 0%, ${domainTheme.color}15 50%, #0d1117 100%)`,
+          background: `linear-gradient(135deg, var(--color-bg-surface) 0%, ${domainTheme.color}14 55%, var(--color-bg-surface) 100%)`,
           borderColor: `${domainTheme.color}40`,
           boxShadow: `0 20px 40px -15px ${domainTheme.color}20`,
         }}
@@ -332,8 +331,7 @@ export default function SystemDossierPage() {
                   boxShadow: `inset 0 0 0 1px ${domainTheme.color}50`,
                 }}
               >
-                <span>{domainTheme.icon}</span>
-                <span>{domainTheme.badge}</span>
+                    <span>{domainTheme.badgeText}</span>
               </span>
 
               {meta?.realWorldArchetype && (
@@ -469,7 +467,7 @@ export default function SystemDossierPage() {
                   <span
                     className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded"
                     style={{
-                      backgroundColor: isActive ? `${domainTheme.color}25` : 'rgba(255,255,255,0.05)',
+                      backgroundColor: isActive ? `${domainTheme.color}25` : 'color-mix(in oklab, var(--color-text-primary) 6%, transparent)',
                       color: isActive ? domainTheme.color : undefined,
                     }}
                   >
@@ -1098,14 +1096,13 @@ export default function SystemDossierPage() {
             <div
               className="mt-6 rounded-2xl p-6 ring-1 shadow-2xl relative overflow-hidden transition-all"
               style={{
-                background: `linear-gradient(135deg, ${domainTheme.color}15 0%, #161b22 100%)`,
+                background: `linear-gradient(135deg, ${domainTheme.color}14 0%, var(--color-bg-surface) 100%)`,
                 borderColor: `${domainTheme.color}40`,
               }}
             >
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-base">{domainTheme.icon}</span>
                     <span className="text-xs font-mono font-bold uppercase tracking-wider" style={{ color: domainTheme.color }}>
                       Recommended Next System in {domainTheme.name}
                     </span>
