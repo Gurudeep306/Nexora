@@ -258,7 +258,7 @@ export function Timeline({ items }: { items: NonNullable<Showcase['timeline']> }
     <ol className="relative space-y-3 border-l border-border pl-5">
       {items.map((t, i) => (
         <li key={i} className="relative">
-          <span className="absolute top-0.5 -left-[29px] grid size-[18px] place-items-center rounded-full border border-border bg-bg-surface text-accent-brand">
+          <span className="pf-tl-mark absolute top-0.5 -left-[29px] grid size-[18px] place-items-center rounded-full border border-border bg-bg-surface text-accent-brand">
             <Icon name={TL_ICON[t.kind] ?? 'activity'} className="size-2.5" />
           </span>
           <div className="text-sm">

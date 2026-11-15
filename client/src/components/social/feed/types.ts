@@ -166,6 +166,8 @@ export interface Showcase {
   achievements?: Achievement[]
   pinned?: ({ type: 'post'; post: Post } | { type: 'achievement'; achievement: Achievement })[]
   timeline?: { kind: string; at: number; title: string; meta?: string; link?: string }[]
+  /** Verified judge accounts (Codeforces, AtCoder, LeetCode). */
+  linked?: { platform: string; handle: string; rating: number | null; max_rating: number | null; rank: string | null; solved: number | null; last_import: number | null }[]
 }
 
 export interface Shareables {

@@ -99,6 +99,7 @@ export function UserBadges({
           <span
             key={k}
             title={m.title}
+            data-ui="role-badge"
             className="inline-flex h-6 items-center gap-1.5 rounded-full pr-2.5 pl-1.5 text-xs font-semibold"
             style={{
               color: m.text,
