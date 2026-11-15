@@ -132,8 +132,14 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
    first animation). "Being written" rows are muted. Axe 0 in light, dark,
    phone. (Discrete Maths has no Venn animation yet, so it uses the truth
    table; switch to a Venn diagram when one is written.)
-2. **Notes subject page** (`/gate/notes/:subject`): the 4.3 pattern (book
-   contents, like `components/nexus/SubjectContents.tsx`). Passes axe now.
+2. ~~Notes subject page~~ **done**: under journal the chapters show an italic
+   roman numeral instead of the ring (the ring stays in other styles), a mono
+   meta line with "x of y done", serif chapter titles, hairline lesson rows
+   with mono times, and a clay edge on the next lesson; the chapter index uses
+   roman numerals. Done with paired elements and CSS (`.nh-chapter-roman`,
+   `.nh-n-roman`, `.nh-chapter-done` in `notes-home.css` and the "Notes
+   subject page" block in `theme/styles.css`), so no style branching in TSX.
+   Axe 0 in light, dark, phone; Studio checked unchanged.
 3. **Margin sidenotes in GATE notes**: notes/asides are notes now but still
    sit in the column; move definitions/asides/footnotes to the margin with
    `Sidenote` on wide screens like the DSA reader. Footnote numbers should

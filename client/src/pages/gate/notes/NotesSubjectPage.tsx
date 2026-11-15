@@ -132,7 +132,12 @@ function SubjectHome({ data }: { data: SubjectTree }) {
                 return (
                   <li key={ch.id}>
                     <a href={`#ch-${ch.id}`} className="nh-index-link">
-                      <span className="nh-index-n">{ch.n}</span>
+                      <span className="nh-index-n">
+                        <span className="nh-n-arabic">{ch.n}</span>
+                        <span className="nh-n-roman" aria-hidden="true">
+                          {roman(ch.n)}
+                        </span>
+                      </span>
                       <span className="min-w-0 flex-1 truncate">{ch.title}</span>
                       <span className="nh-index-count">
                         {chDone}/{ch.lessons.length}
@@ -152,9 +157,13 @@ function SubjectHome({ data }: { data: SubjectTree }) {
                 <li key={ch.id} id={`ch-${ch.id}`} className="nh-chapter">
                   <header className="nh-chapter-head">
                     <ProgressRing done={chDone} total={ch.lessons.length} label={`Chapter ${ch.n}: ${chDone} of ${ch.lessons.length} lessons done`} />
+                    <span className="nh-chapter-roman ed-serif-numeral" aria-hidden="true">
+                      {roman(ch.n)}
+                    </span>
                     <div className="min-w-0 flex-1">
-                      <p className="m-0 text-[12.5px] text-text-muted">
+                      <p className="nh-chapter-meta m-0 text-[12.5px] text-text-muted">
                         Chapter {ch.n} · {ch.lessons.length} lessons · {fmtMinutes(mins)}
+                        <span className="nh-chapter-done"> · {chDone} of {ch.lessons.length} done</span>
                       </p>
                       <h2 className="nh-chapter-title">{ch.title}</h2>
                       {ch.summary && <p className="nh-chapter-summary">{ch.summary}</p>}
@@ -192,4 +201,20 @@ function SubjectHome({ data }: { data: SubjectTree }) {
       </NotesRoot>
     </GateShell>
   )
+}
+
+const ROMAN: [number, string][] = [
+  [10, 'x'], [9, 'ix'], [5, 'v'], [4, 'iv'], [1, 'i'],
+]
+/** Chapter numbers as lower-case roman numerals (the journal's chapter style). */
+function roman(n: number): string {
+  let out = ''
+  let left = n
+  for (const [v, r] of ROMAN) {
+    while (left >= v) {
+      out += r
+      left -= v
+    }
+  }
+  return out || String(n)
 }
