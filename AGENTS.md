@@ -151,6 +151,24 @@ changed.
     on dark, black on light). Inside the app, primary buttons use the accent.
   - Back buttons use `BackButton` with no props. It goes to the page you came
     from in this tab, else one level up, and its label names the place.
+- **Design styles (Appearance page).** A look is a *style* (`client/src/theme/styles.ts`:
+  Studio, Liquid Glass, Noir & Gold, Washi, Signal, Console, Nordic, Editorial,
+  Swiss, Blueprint, Atelier, Canvas, Terminal, Manuscript, Poster) plus fine-tuning
+  (colour, type, surfaces, page pattern, icons). Style rules live in
+  `theme/styles.css` keyed by `[data-style]`; buttons carry `data-ui="button"`
+  and `data-variant` so styles can restyle them. Admins can set the default style
+  (Admin → Site).
+- **Sign-in** (`pages/AuthPage.tsx`) is "Liquid Glass": a frosted panel over a
+  slow field of colour from the accent. It is the one page where a soft colour
+  field is allowed (the owner's choice); no product visuals or marketing copy.
+- **Notes and lessons** share one reader (`styles/reader.css`): lessons rail that
+  collapses to a mini strip, a full-width reading column, a live "On this page"
+  outline. GATE notes and DSA lessons both use it.
+- **Search** uses one field style (`styles/search.css`, `SearchInput`,
+  `SearchCombobox`). Keep text around search bars to a minimum.
+- **AI models** are chosen in Admin → AI models (`src/ai/settings.js`): any
+  OpenAI-compatible provider, keys sealed at rest, a model per slot and per
+  feature. The GROQ_* environment applies when nothing is chosen.
 
 ## Content authoring
 

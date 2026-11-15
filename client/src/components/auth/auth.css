@@ -1,272 +1,306 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Sign-in (pages/AuthPage.tsx). One centred column over the GraphField
-   backdrop. Everything reads the semantic roles, so every style and palette,
-   light or dark, gets the same calm page. The primary button is solid ink
-   (white on dark, black on light), as on every marketing page.
+   Sign-in (pages/AuthPage.tsx) — "Liquid Glass".
+
+   The whole screen is a slow field of colour (four soft lights drawn from the
+   theme's accent, drifting) under fine grain; the form sits on one frosted
+   glass panel. No pictures, no product visuals. Research notes: Apple's Liquid
+   Glass (translucent, refractive edge, specular highlight), Vercel's mesh
+   gradient as the only decoration, Stripe's single ink action. Everything
+   reads the semantic roles, so every style and palette, light or dark, works.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .auth-root {
-  background-color: var(--color-bg-app);
-  isolation: isolate;
-}
-
-/* ── The page: a full-bleed editorial grid ─────────────────────────────
-   Research notes (Resend, Cursor, Oura, Superhuman, Bugatti, Vercel, Linear):
-   the type is the picture — a serif display at weight 400 with tight
-   tracking and leading, mono caps for small labels, hairlines instead of
-   shadows, one solid ink action. */
-.auth-root {
-  --auth-hair: color-mix(in oklab, var(--color-text-primary) 9%, transparent);
-  --auth-display: 'Newsreader Variable', 'Newsreader Fallback', ui-serif, Georgia, serif;
+  --auth-hair: color-mix(in oklab, var(--color-text-primary) 12%, transparent);
+  --auth-c1: var(--color-accent-brand);
+  --auth-c2: color-mix(in oklab, var(--color-accent-brand) 55%, oklch(0.7 0.16 330));
+  --auth-c3: color-mix(in oklab, var(--color-accent-brand) 45%, oklch(0.75 0.13 195));
+  --auth-c4: color-mix(in oklab, var(--color-accent-brand) 40%, oklch(0.8 0.12 75));
+  --auth-light: 0.72;
   position: relative;
+  isolation: isolate;
   display: grid;
   min-height: 100dvh;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto 1fr auto;
   overflow: hidden;
+  background: var(--color-bg-app);
 }
-@media (min-width: 1024px) {
-  .auth-root {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    grid-template-rows: auto 1fr auto;
-  }
+[data-mode='light'] .auth-root {
+  --auth-light: 0.42;
 }
 
-/* Faint column rules across the whole page. */
-.auth-rules {
+/* ── The field of colour ─────────────────────────────────────────────── */
+.auth-field {
   position: absolute;
   inset: 0;
-  display: none;
+  z-index: -1;
+  overflow: hidden;
   pointer-events: none;
-  grid-template-columns: repeat(6, 1fr);
 }
-@media (min-width: 1024px) {
-  .auth-rules {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    padding-inline: 2.5rem;
-  }
+.auth-light {
+  position: absolute;
+  width: 62vmax;
+  height: 62vmax;
+  border-radius: 50%;
+  opacity: var(--auth-light);
+  filter: blur(90px);
+  will-change: transform;
 }
-.auth-rules > span {
-  border-left: 1px solid var(--auth-hair);
+.auth-light.l1 {
+  top: -28vmax;
+  left: -14vmax;
+  background: radial-gradient(circle at 50% 50%, var(--auth-c1), transparent 66%);
+  animation: auth-drift-1 26s ease-in-out infinite alternate;
 }
-.auth-rules > span:last-child {
-  border-right: 1px solid var(--auth-hair);
+.auth-light.l2 {
+  top: -18vmax;
+  right: -26vmax;
+  background: radial-gradient(circle at 50% 50%, var(--auth-c2), transparent 66%);
+  animation: auth-drift-2 32s ease-in-out infinite alternate;
+}
+.auth-light.l3 {
+  bottom: -34vmax;
+  left: 8vmax;
+  background: radial-gradient(circle at 50% 50%, var(--auth-c3), transparent 66%);
+  animation: auth-drift-3 29s ease-in-out infinite alternate;
+}
+.auth-light.l4 {
+  bottom: -30vmax;
+  right: -10vmax;
+  width: 48vmax;
+  height: 48vmax;
+  background: radial-gradient(circle at 50% 50%, var(--auth-c4), transparent 66%);
+  animation: auth-drift-4 35s ease-in-out infinite alternate;
+}
+@keyframes auth-drift-1 {
+  to { transform: translate3d(14vmax, 10vmax, 0) scale(1.12); }
+}
+@keyframes auth-drift-2 {
+  to { transform: translate3d(-16vmax, 12vmax, 0) scale(0.92); }
+}
+@keyframes auth-drift-3 {
+  to { transform: translate3d(12vmax, -14vmax, 0) scale(1.08); }
+}
+@keyframes auth-drift-4 {
+  to { transform: translate3d(-12vmax, -8vmax, 0) scale(1.15); }
+}
+.auth-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-mode='light'] .auth-grain {
+  opacity: 0.12;
+  mix-blend-mode: multiply;
 }
 
-.auth-top {
-  position: relative;
-  z-index: 2;
+/* ── Frame ───────────────────────────────────────────────────────────── */
+.auth-top,
+.auth-foot {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1.25rem 1.25rem;
-  border-bottom: 1px solid var(--auth-hair);
+  gap: 0.5rem 1.5rem;
+  padding: 1.25rem;
 }
-@media (min-width: 1024px) {
-  .auth-top {
-    grid-column: 1 / -1;
+@media (min-width: 640px) {
+  .auth-top,
+  .auth-foot {
     padding: 1.5rem 2.5rem;
   }
 }
-.auth-tabs {
-  display: none;
-  gap: 1.75rem;
-}
-@media (min-width: 640px) {
-  .auth-tabs {
-    display: flex;
-  }
-}
-.auth-tab {
-  position: relative;
-  padding: 4px 0;
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+.auth-foot {
+  font-size: 12px;
   color: var(--color-text-muted);
-  cursor: pointer;
-  transition: color var(--dur-fast) var(--ease-standard);
-}
-.auth-tab:hover,
-.auth-tab.is-on {
-  color: var(--color-text-primary);
-}
-.auth-tab.is-on::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 -2px 0;
-  height: 1px;
-  background: currentColor;
-}
-.auth-tab:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 4px;
 }
 .auth-clock {
   font-family: var(--font-mono);
   font-size: 11.5px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
 }
-
-/* The headline: huge serif, ink brightening under the pointer. */
-.auth-hero {
-  position: relative;
-  z-index: 1;
+.auth-main {
   display: flex;
-  align-items: flex-end;
-  padding: 2.5rem 1.25rem 0.5rem;
-  pointer-events: none;
-}
-@media (min-width: 1024px) {
-  .auth-hero {
-    grid-column: 1 / 8;
-    grid-row: 2;
-    padding: 0 2.5rem 2.5rem;
-  }
-}
-.auth-display {
-  font-family: var(--auth-display);
-  font-weight: 400;
-  font-size: clamp(4.5rem, 1rem + 14.5vw, 17rem);
-  line-height: 0.88;
-  letter-spacing: -0.045em;
-  font-optical-sizing: auto;
-  color: transparent;
-  background:
-    radial-gradient(28rem circle at var(--mx, 30%) var(--my, 60%), var(--color-text-primary), color-mix(in oklab, var(--color-text-primary) 72%, transparent) 70%);
-  background-attachment: fixed;
-  -webkit-background-clip: text;
-  background-clip: text;
-}
-.auth-line {
-  display: block;
-  overflow: hidden;
-  padding-bottom: 0.06em;
-}
-.auth-line:nth-child(2) {
-  font-style: italic;
-  padding-left: 0.5em;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.25rem 2rem;
 }
 
-/* The form column. */
-.auth-form-col {
+/* ── The glass panel ─────────────────────────────────────────────────── */
+.auth-glass {
   position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: flex-start;
-  padding: 1.5rem 1.25rem 2.5rem;
-}
-.auth-form-col > div {
   width: 100%;
-  max-width: 26rem;
+  max-width: 27rem;
+  padding: 2rem 1.5rem 1.75rem;
+  border-radius: 28px;
+  background:
+    radial-gradient(120% 80% at var(--gx, 30%) var(--gy, 0%), color-mix(in oklab, white 9%, transparent), transparent 60%),
+    color-mix(in oklab, var(--color-bg-surface) 55%, transparent);
+  -webkit-backdrop-filter: blur(28px) saturate(1.6);
+  backdrop-filter: blur(28px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in oklab, white 22%, transparent),
+    inset 0 0 0 1px color-mix(in oklab, white 9%, transparent),
+    0 1px 2px oklch(0 0 0 / 0.12),
+    0 30px 80px -30px oklch(0 0 0 / 0.55);
 }
-@media (min-width: 1024px) {
-  .auth-form-col {
-    grid-column: 9 / 13;
-    grid-row: 2;
-    align-items: center;
-    padding: 2.5rem 2.5rem 2.5rem 0;
+[data-mode='light'] .auth-glass {
+  background:
+    radial-gradient(120% 80% at var(--gx, 30%) var(--gy, 0%), color-mix(in oklab, white 70%, transparent), transparent 60%),
+    color-mix(in oklab, white 55%, transparent);
+  box-shadow:
+    inset 0 1px 0 0 white,
+    inset 0 0 0 1px color-mix(in oklab, white 70%, transparent),
+    0 1px 2px oklch(0.2 0.02 260 / 0.06),
+    0 30px 70px -30px oklch(0.25 0.05 260 / 0.28);
+}
+@media (min-width: 640px) {
+  .auth-glass {
+    padding: 2.5rem 2.25rem 2.25rem;
   }
+}
+.auth-glass-mark {
+  display: inline-flex;
+  margin-bottom: 1.25rem;
+}
+.auth-title {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.12;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  color: var(--color-text-primary);
 }
 .auth-lead {
-  margin: 0;
-  font-size: 15px;
+  margin: 0.5rem 0 0;
+  font-size: 14.5px;
   line-height: 1.55;
   color: var(--color-text-secondary);
 }
-
-.auth-foot {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 0.5rem 1.5rem;
-  padding: 1rem 1.25rem 1.25rem;
-  border-top: 1px solid var(--auth-hair);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-@media (min-width: 1024px) {
-  .auth-foot {
-    grid-column: 1 / -1;
-    padding: 1.25rem 2.5rem;
-  }
-}
-
-.auth-panel {
-  border-radius: var(--radius-sheet);
-}
-
 .auth-success {
-  background: var(--color-bg-app);
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  border-radius: inherit;
+  background: color-mix(in oklab, var(--color-bg-surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
-/* ── Fields: one hairline, not a box (48px, like Vercel's large form height) ── */
+/* Sign in / Create account */
+.auth-seg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 1.5rem;
+  padding: 4px;
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
+  box-shadow: inset 0 0 0 1px var(--auth-hair);
+}
+.auth-seg-btn {
+  position: relative;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 550;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+.auth-seg-btn:hover,
+.auth-seg-btn.is-on {
+  color: var(--color-text-primary);
+}
+.auth-seg-pill {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--color-bg-surface) 85%, transparent);
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in oklab, white 14%, transparent),
+    0 1px 3px oklch(0 0 0 / 0.18);
+}
+.auth-seg-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* ── Fields ──────────────────────────────────────────────────────────── */
 .auth-input {
   display: block;
   width: 100%;
-  height: 3rem;
-  padding: 0 2.5rem 0 0;
-  border: 0;
-  border-bottom: 1px solid var(--color-border-strong);
-  border-radius: 0;
-  background: transparent;
+  height: 2.875rem;
+  padding: 0 2.75rem 0 0.95rem;
+  border-radius: 12px;
+  border: 1px solid var(--auth-hair);
+  background: color-mix(in oklab, var(--color-bg-app) 45%, transparent);
   color: var(--color-text-primary);
-  font-size: 17px;
-  transition: border-color var(--dur-fast) var(--ease-standard);
+  font-size: 15px;
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-fast) var(--ease-standard),
+    background-color var(--dur-fast) var(--ease-standard);
+}
+[data-mode='light'] .auth-input {
+  background: color-mix(in oklab, white 70%, transparent);
 }
 .auth-input::placeholder {
-  color: color-mix(in oklab, var(--color-text-muted) 70%, transparent);
+  color: color-mix(in oklab, var(--color-text-muted) 75%, transparent);
 }
 .auth-input:hover {
-  border-bottom-color: var(--color-text-secondary);
+  border-color: color-mix(in oklab, var(--color-text-primary) 22%, transparent);
 }
 .auth-input:focus-visible {
   outline: none;
-  border-bottom-color: var(--color-text-primary);
-  box-shadow: 0 1px 0 0 var(--color-text-primary);
+  border-color: color-mix(in oklab, var(--color-accent-brand) 70%, var(--color-text-primary));
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-accent-brand) 18%, transparent);
 }
 .auth-input[aria-invalid='true'] {
-  border-bottom-color: var(--color-state-error);
+  border-color: var(--color-state-error);
 }
 
-/* ── Buttons ────────────────────────────────────────────────────────────── */
+/* ── Buttons ─────────────────────────────────────────────────────────── */
 .auth-submit {
   position: relative;
   display: flex;
   width: 100%;
-  height: 3.25rem;
+  height: 3rem;
   margin-top: 0.75rem;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 1.25rem;
+  justify-content: center;
+  gap: 8px;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 12px;
   background: var(--color-text-primary);
   color: var(--color-bg-app);
   font-size: 15px;
-  font-weight: 550;
+  font-weight: 600;
   cursor: pointer;
-  transition: transform var(--dur-fast) var(--ease-standard);
+  box-shadow: 0 10px 30px -12px color-mix(in oklab, var(--color-text-primary) 45%, transparent);
+  transition:
+    transform var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-fast) var(--ease-standard);
+}
+.auth-submit:hover {
+  box-shadow: 0 14px 36px -12px color-mix(in oklab, var(--color-text-primary) 55%, transparent);
 }
 .auth-submit-arrow {
   transition: transform 300ms var(--ease-smooth);
 }
 .auth-submit:hover .auth-submit-arrow {
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
 .auth-submit:active {
-  transform: scale(0.995);
+  transform: scale(0.99);
 }
 .auth-submit:focus-visible {
   outline: 2px solid var(--color-focus);
@@ -275,7 +309,6 @@
 .auth-submit:disabled {
   cursor: default;
 }
-/* Busy: the label steps back and a line runs along the bottom edge. */
 .auth-submit-line {
   position: absolute;
   inset: auto 0 0 0;
@@ -298,12 +331,6 @@
   50.1% { transform-origin: 100% 50%; }
   100% { transform: scaleX(0); transform-origin: 100% 50%; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .auth-submit.is-busy .auth-submit-line {
-    animation: none;
-    transform: scaleX(1);
-  }
-}
 
 .auth-oauth {
   position: relative;
@@ -311,10 +338,10 @@
   height: 2.75rem;
   align-items: center;
   justify-content: center;
-  gap: 0.625rem;
-  border-radius: var(--radius-control);
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-surface);
+  gap: 0.6rem;
+  border-radius: 12px;
+  border: 1px solid var(--auth-hair);
+  background: color-mix(in oklab, var(--color-bg-surface) 50%, transparent);
   color: var(--color-text-primary);
   font-size: 14px;
   font-weight: 500;
@@ -324,8 +351,8 @@
     background-color var(--dur-fast) var(--ease-standard);
 }
 .auth-oauth:hover {
-  border-color: var(--color-border-strong);
-  background: var(--color-bg-surface-2);
+  border-color: color-mix(in oklab, var(--color-text-primary) 24%, transparent);
+  background: color-mix(in oklab, var(--color-bg-surface) 75%, transparent);
 }
 .auth-oauth:focus-visible {
   outline: 2px solid var(--color-focus);
@@ -333,12 +360,16 @@
 }
 .auth-last {
   position: absolute;
-  right: 0.75rem;
-  font-size: 11px;
+  top: -8px;
+  right: 10px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--color-bg-surface);
+  font-size: 10.5px;
   font-weight: 500;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
+  box-shadow: inset 0 0 0 1px var(--auth-hair);
 }
-
 .auth-link {
   cursor: pointer;
   font-weight: 500;
@@ -347,6 +378,250 @@
   text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
   text-underline-offset: 3px;
 }
-.auth-link:hover {
-  text-decoration-color: currentColor;
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-light {
+    animation: none;
+  }
+  .auth-submit.is-busy .auth-submit-line {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
+
+/* ═══ Craft layer ═════════════════════════════════════════════════════ */
+
+/* The panel leans a little towards the pointer. */
+.auth-main {
+  perspective: 1400px;
+}
+.auth-glass {
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 500ms var(--ease-smooth);
+  transform-style: preserve-3d;
+}
+/* A light that runs slowly around the panel's edge. */
+.auth-edge {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--auth-angle, 0deg),
+    transparent 0deg,
+    color-mix(in oklab, var(--color-accent-brand) 85%, white) 40deg,
+    transparent 90deg,
+    transparent 180deg,
+    color-mix(in oklab, var(--auth-c2) 80%, white) 220deg,
+    transparent 270deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  opacity: 0.7;
+  animation: auth-orbit 9s linear infinite;
+}
+@property --auth-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes auth-orbit {
+  to {
+    --auth-angle: 360deg;
+  }
+}
+.auth-glass > :not(.auth-edge, .auth-success) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Continue as … */
+.auth-account {
+  position: relative;
+  margin-top: 1.25rem;
+}
+.auth-account-main {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 40px 10px 10px;
+  border-radius: 16px;
+  border: 1px solid var(--auth-hair);
+  background: color-mix(in oklab, var(--color-bg-surface) 55%, transparent);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    background-color var(--dur-fast) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-standard);
+}
+.auth-account-main:hover {
+  border-color: color-mix(in oklab, var(--color-accent-brand) 45%, var(--auth-hair));
+  background: color-mix(in oklab, var(--color-bg-surface) 80%, transparent);
+  transform: translateY(-1px);
+}
+.auth-account-x {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+.auth-account-x:hover {
+  background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+  color: var(--color-text-primary);
+}
+.auth-account-main:focus-visible,
+.auth-account-x:focus-visible,
+.auth-look-dot:focus-visible,
+.auth-look-mode:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Field icons */
+.auth-field-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.9rem;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-muted);
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+.auth-field-icon + .auth-input {
+  padding-left: 2.5rem;
+}
+.auth-field-icon:has(+ .auth-input:focus-visible) {
+  color: var(--color-accent-brand);
+}
+
+.auth-hint {
+  margin: 0.25rem 0 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.auth-hint kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 5px;
+  border: 1px solid var(--auth-hair);
+  background: color-mix(in oklab, var(--color-bg-surface) 60%, transparent);
+  vertical-align: -3px;
+}
+@media (hover: none) {
+  .auth-hint {
+    display: none;
+  }
+}
+
+/* Look bar: style swatches and light/dark */
+.auth-look {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 5px 5px 10px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-bg-surface) 45%, transparent);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: inset 0 0 0 1px var(--auth-hair);
+}
+.auth-look-styles {
+  display: flex;
+  gap: 6px;
+}
+.auth-look-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-text-primary) 18%, transparent);
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-standard);
+}
+.auth-look-dot:hover {
+  transform: scale(1.15);
+}
+.auth-look-dot.is-on {
+  box-shadow:
+    0 0 0 2px var(--color-bg-app),
+    0 0 0 3.5px var(--color-text-primary);
+}
+.auth-look-mode {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.auth-look-mode:hover {
+  background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+  color: var(--color-text-primary);
+}
+@media (max-width: 420px) {
+  .auth-look-styles {
+    display: none;
+  }
+  .auth-look {
+    padding-left: 5px;
+  }
+}
+
+/* Live status */
+.auth-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-variant-numeric: tabular-nums;
+}
+.auth-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--color-text-muted);
+}
+.auth-status-dot.is-up {
+  background: var(--color-state-success);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-state-success) 22%, transparent);
+  animation: auth-beat 2.4s ease-in-out infinite;
+}
+.auth-status-dot.is-down {
+  background: var(--color-state-error);
+}
+@keyframes auth-beat {
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in oklab, var(--color-state-success) 8%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-edge,
+  .auth-status-dot.is-up {
+    animation: none;
+  }
+  .auth-glass {
+    transform: none;
+  }
 }
