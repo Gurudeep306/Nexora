@@ -14,6 +14,8 @@
 
 :root {
   --read-font: var(--font-body);
+  /* Headings follow the design style (a serif in Editorial, Noir & Gold, Washi…). */
+  --read-heading: var(--font-display);
   --read-size: 17px;
   --read-leading: 1.75;
   --read-measure: 68ch;
@@ -64,7 +66,7 @@
   text-decoration-color: currentColor;
 }
 .nx-read :is(h1, h2, h3, h4) {
-  font-family: var(--read-font);
+  font-family: var(--read-heading);
   color: var(--read-ink);
   text-transform: none;
   letter-spacing: -0.012em;
