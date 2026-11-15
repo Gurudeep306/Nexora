@@ -44,9 +44,9 @@ export function WeeklyPool({
       <CardContent className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h3 className="font-display text-sm tracking-wider text-foreground uppercase">
+            <h2 className="m-0 font-display text-sm tracking-wider text-foreground uppercase">
               Weekly Practice Pool — Zone {level.level}
-            </h3>
+            </h2>
             <p className="mt-0.5 text-xs text-foreground-dim">
               {level.solvedCount}/{level.totalProblems} solved from this week&apos;s curated pool
             </p>
