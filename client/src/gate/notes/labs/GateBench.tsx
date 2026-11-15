@@ -290,7 +290,7 @@ function TruthTable({ bench, values, onPick }: { bench: Bench; values: Record<st
   const n = bench.inputs.length
   const current = bench.inputs.reduce((acc, i) => acc * 2 + (values[i] ? 1 : 0), 0)
   return (
-    <div className="lab-tt-wrap">
+    <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
       <table className="lab-tt">
         <caption className="sr-only">Truth table of F; select a row to set the inputs</caption>
         <thead>

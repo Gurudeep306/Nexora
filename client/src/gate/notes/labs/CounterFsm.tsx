@@ -470,7 +470,7 @@ function DesignView({ design, ff, step, fmt }: { design: CounterDesign; ff: FfKi
         </ul>
         <p className="lab-hint">Built from the first minimal cover of each input; the unused states then go wherever the chosen don’t-care values send them.</p>
       </div>
-      <div className="lab-col lab-tt-wrap">
+      <div className="lab-col lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
         <table className="lab-tt">
           <caption className="sr-only">Next states: wanted and built</caption>
           <thead>
@@ -798,7 +798,7 @@ function FsmTool() {
         </select>
       </div>
 
-      <div className="lab-tt-wrap">
+      <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
         <table className="lab-tt cf-table">
           <caption className="sr-only">State table ({moore ? 'Moore: one output per state' : 'Mealy: an output per input'})</caption>
           <thead>
@@ -959,7 +959,7 @@ function Minimise({ f, onLoad }: { f: Fsm; onLoad: (rows: [string, FsmRow][], st
       <p className="lab-result is-good">
         P{rounds.length - 1} does not split further: {last.length} state{last.length === 1 ? '' : 's'} (from {f.states.length}).
       </p>
-      <div className="lab-tt-wrap">
+      <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
         <table className="lab-tt">
           <caption className="sr-only">Merged state table</caption>
           <thead>

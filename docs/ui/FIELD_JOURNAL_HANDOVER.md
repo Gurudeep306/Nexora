@@ -64,7 +64,7 @@ The owner is the founder. They often work from a phone. They want:
 | 1 | Foundation: parchment palette, `journal` style as default, look migration v4, `styles/journal.css`, UI kit hooks, shell (top bar, palette, menus), dock skin | **Merged** in PR #112 |
 | 2 | Home rebuilt as "Today", Learn as "The Library", subject pages with a book-style Contents view | **Merged** in PR #112 |
 | 3 | One shared question card on every question surface, GATE solutions restyled, community stats, review queue countdown and stack | **Merged** in PR #113 |
-| 4 | The reader: lessons and GATE notes, viz engine colours and player, sidenotes, scroll-sync, notes index and subject pages | **Part 1 done** on branch `claude/clever-babbage-km37j9` (commit "Field Journal, phase 4 (part 1)"); not merged yet. Part 2 to do (list below) |
+| 4 | The reader: lessons and GATE notes, viz engine colours and player, sidenotes, scroll-sync, notes index and subject pages | **Built**, pull request open from `claude/clever-babbage-km37j9`, waiting for the owner's "merge". Left-overs in 3.1 (System Design reader, notes dek, footnotes) |
 | 5 | Coding: Problems, Solve (statement, Monaco theme, judging, verdicts, editorials), Contests, Workshop, Submissions, Bookmarks | To do |
 | 6 | Nexus: the star chart ("The Atlas") | To do |
 | 7 | Profile and the Ledger: Profile, Analytics, Achievements, Social | To do |
@@ -184,8 +184,11 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
    cannot wrap is scaled down to fit (`components/question/useFitMaths.ts`,
    floor 60%). Don't make maths scroll inside an answer button: a focusable
    scroller inside a button is a nested-interactive error.
-10. Screenshots (desktop light, desktop dark, phone) of every reader route next
-    to `/?preview`, then open the **phase 4 PR** (none is open yet for phase 4).
+10. ~~Checks and PR~~ **done**: all 45 notes lessons pass axe with no
+    sideways scroll in light, dark and phone; DSA lessons, notes front page,
+    subject pages checked the same way; `/hive` unchanged; 441 tests pass.
+    Lab tables and strips that scroll are focusable named groups. Phase 4 PR
+    opened (see the PR list on GitHub).
 
 ## 4. What phases 1–3 built (reuse these; do not rebuild them)
 

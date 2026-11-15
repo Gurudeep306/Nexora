@@ -410,7 +410,7 @@ function ScalingTool() {
         like 2n + 1; carry look-ahead with fan-in 4 grows like log n (about 4 units each time n is multiplied by 4); carry-select with
         fixed 4-bit blocks still grows linearly (2 units per extra block), with a smaller slope than ripple.
       </p>
-      <div className="lab-tt-wrap">
+      <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
         <table className="lab-tt ar-scale">
           <caption className="sr-only">Worst-case adder delay against width</caption>
           <thead>
