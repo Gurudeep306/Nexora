@@ -255,10 +255,11 @@ export default function ProblemsPage() {
     <div>
       <PageHeader
         icon="problems"
-        title="Problem Arena"
-        subtitle="Filter, bookmark and dive into problems across six competitive platforms."
+        eyebrow="The Workshop"
+        title="Problems"
+        subtitle="Problems from six judges in one place. Filter, bookmark and solve them here."
         actions={
-          <Button variant="accent" size="sm" loading={rolling} onClick={() => void surpriseMe()}>
+          <Button variant="ghost" size="sm" loading={rolling} onClick={() => void surpriseMe()}>
             {!rolling && <Dices aria-hidden="true" />} Surprise me
           </Button>
         }
@@ -291,7 +292,7 @@ export default function ProblemsPage() {
             ) : problemsApi.error ? (
               <ErrorState message={problemsApi.error} onRetry={problemsApi.refetch} />
             ) : problems.length === 0 ? (
-              <div className="card-neon">
+              <div className="card-neon pt-empty">
                 <EmptyState
                   icon="search"
                   title="No problems match"

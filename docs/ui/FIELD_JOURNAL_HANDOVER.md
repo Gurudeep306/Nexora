@@ -65,7 +65,7 @@ The owner is the founder. They often work from a phone. They want:
 | 2 | Home rebuilt as "Today", Learn as "The Library", subject pages with a book-style Contents view | **Merged** in PR #112 |
 | 3 | One shared question card on every question surface, GATE solutions restyled, community stats, review queue countdown and stack | **Merged** in PR #113 |
 | 4 | The reader: lessons and GATE notes, viz engine colours and player, sidenotes, scroll-sync, notes index and subject pages | **Built**, pull request open from `claude/clever-babbage-km37j9`, waiting for the owner's "merge". Left-overs in 3.1 (System Design reader, notes dek, footnotes) |
-| 5 | Coding: Problems, Solve (statement, Monaco theme, judging, verdicts, editorials), Contests, Workshop, Submissions, Bookmarks | To do |
+| 5 | Coding: Problems, Solve (statement, Monaco theme, judging, verdicts, editorials), Contests, Workshop, Submissions, Bookmarks | **In progress** on the same branch (PR #114 is phase 4; phase 5 commits follow it). Done: Problems page. See 3.2 |
 | 6 | Nexus: the star chart ("The Atlas") | To do |
 | 7 | Profile and the Ledger: Profile, Analytics, Achievements, Social | To do |
 | 8 | GATE home and the remaining pages: GATE home and subpages (CBT restyle only), Settings, Appearance, Admin, 404, errors, loading | To do |
@@ -189,6 +189,26 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
     subject pages checked the same way; `/hive` unchanged; 441 tests pass.
     Lab tables and strips that scroll are focusable named groups. Phase 4 PR
     opened (see the PR list on GitHub).
+
+### 3.2 Phase 5: progress
+
+- **Problems (`/problems`) — done.** Header "The Workshop · Problems" with a
+  lead line; "Surprise me" is a ghost (tertiary) button. Filters are an
+  underlined row of words (`.pf-pill` under journal), active filters are ink
+  chips (`.pf-chip`). Results are a hairline table: serif titles
+  (`.pt-title`), mono id and tags (`.pt-meta`), platform in mono
+  (`.pt-platform`), difficulty as an italic coloured word (`.pt-diff`, moss /
+  ochre / brick from the badge's `data-variant`). All journal-only CSS in the
+  "phase 5: Problems" block of `theme/styles.css`. Axe 0 in light, dark,
+  phone. Not done: pagination as underlined page numbers (it is still
+  Previous / Next with "Page x / y").
+- **Demo data:** the demo database has no problems. To design against rows,
+  insert a few into the running demo DB (find it with
+  `cat /proc/$(pgrep -f src/server.js)/environ | tr '\0' '\n' | grep DB_PATH`)
+  and bump `catalog_meta` (`update catalog_meta set v=v+1 where k='problems'`)
+  so the in-memory catalog reloads. Never commit that data.
+- **Next:** Solve (`/solve/:id`, brief 5.2), then Contests, Workshop,
+  Submissions, Bookmarks (brief 4.7).
 
 ## 4. What phases 1–3 built (reuse these; do not rebuild them)
 
