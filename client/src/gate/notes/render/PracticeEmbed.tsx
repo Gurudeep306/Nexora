@@ -4,9 +4,8 @@
   local (these are not exam questions); a later step feeds the result into
   the review queue.
 */
-import { useId, useState } from 'react'
-import { Icon } from '@/components/icon/Icon'
-import { cn } from '@/lib/utils'
+import { useState } from 'react'
+import { AnswerField, CheckButton, Masthead, OptionList, OptionRow, QuestionActions, QuestionCard, QuestionHint, QuestionText, SolutionBlock, SolutionSteps, TextAction, Verdict, type OptionState } from '@/components/question/Question'
 import type { PracticeQuestion } from '../types'
 import { Nodes } from './NotesContent'
 
@@ -42,120 +41,119 @@ export function PracticeEmbed({ q }: { q: PracticeQuestion }) {
   const [pick, setPick] = useState<Pick>(q.type === 'MSQ' ? [] : null)
   const [checked, setChecked] = useState(false)
   const [showSolution, setShowSolution] = useState(false)
-  const uid = useId()
   const correct = checked && isCorrect(q, pick)
   const wrong = checked && !correct ? matchWrong(q, pick) : undefined
   const hasPick = pick !== null && pick !== '' && !(Array.isArray(pick) && !pick.length)
+  const keys = [q.answer].flat().map(String)
 
   const choose = (l: string) => {
     if (checked) return
     if (q.type === 'MSQ') setPick((p) => (Array.isArray(p) && p.includes(l) ? p.filter((x) => x !== l) : [...((p as string[]) ?? []), l]))
     else setPick(l)
   }
+  const check = () => {
+    if (!hasPick) return
+    setChecked(true)
+    // The reasoning opens by itself on a wrong answer.
+    if (!isCorrect(q, pick)) setShowSolution(true)
+  }
 
   return (
-    <div className="np">
-      <div className="np-text">
+    <QuestionCard as="div" className="np" masthead={<Masthead parts={[<strong key="p">Practice</strong>, q.type, `${q.marks ?? 1} mark${(q.marks ?? 1) === 1 ? '' : 's'}`, 'Check yourself']} />}>
+      <QuestionText className="np-text">
         <Nodes nodes={q.text} />
-      </div>
+      </QuestionText>
 
       {q.options && (
-        <div className="np-options" role={q.type === 'MSQ' ? 'group' : 'radiogroup'} aria-label="Options">
-          {q.type === 'MSQ' && <p className="np-hint">Select all that apply.</p>}
-          {q.options.map((o) => {
-            const on = Array.isArray(pick) ? pick.includes(o.l) : pick === o.l
-            const key = checked && [q.answer].flat().includes(o.l)
-            return (
-              <button
-                key={o.l}
-                type="button"
-                role={q.type === 'MSQ' ? 'checkbox' : 'radio'}
-                aria-checked={on}
-                disabled={checked}
-                onClick={() => choose(o.l)}
-                className={cn('np-option', on && 'is-on', key && 'is-key', checked && on && !key && 'is-wrong')}
-              >
-                <span className="np-letter" aria-hidden="true">
-                  {o.l}
-                </span>
-                <span className="np-option-text">
+        <div className="grid gap-2">
+          {q.type === 'MSQ' && !checked && <QuestionHint>Select every option that is true.</QuestionHint>}
+          <OptionList multi={q.type === 'MSQ'}>
+            {q.options.map((o) => {
+              const on = Array.isArray(pick) ? pick.includes(o.l) : pick === o.l
+              const key = keys.includes(o.l)
+              const state: OptionState = !checked ? 'idle' : key && on ? 'right' : key ? (q.type === 'MSQ' ? 'missed' : 'right') : on ? 'wrong' : 'dim'
+              return (
+                <OptionRow key={o.l} letter={o.l} multi={q.type === 'MSQ'} selected={on} state={state} disabled={checked} onClick={() => choose(o.l)}>
                   <Nodes nodes={o.c} />
-                </span>
-                {key && <span className="sr-only">(correct answer)</span>}
-              </button>
-            )
-          })}
+                </OptionRow>
+              )
+            })}
+          </OptionList>
         </div>
       )}
 
       {q.type === 'NAT' && (
         <form
-          className="np-nat"
           onSubmit={(e) => {
             e.preventDefault()
-            if (hasPick) setChecked(true)
+            check()
           }}
         >
-          <label htmlFor={`${uid}-nat`}>Your answer</label>
-          <input
-            id={`${uid}-nat`}
+          <AnswerField
             type="text"
             inputMode="decimal"
-            autoComplete="off"
             value={typeof pick === 'string' ? pick : ''}
             disabled={checked}
             onChange={(e) => setPick(e.target.value.replace(/[^0-9.eE+-]/g, ''))}
+            placeholder="0.00"
+            state={checked ? (correct ? 'right' : 'wrong') : 'idle'}
           />
         </form>
       )}
 
-      <div className="np-actions">
-        {!checked ? (
-          <button type="button" className="np-btn np-btn--main" disabled={!hasPick} onClick={() => setChecked(true)}>
-            <Icon name="check" className="size-4" aria-hidden="true" /> Check
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="np-btn"
-            onClick={() => {
-              setChecked(false)
-              setPick(q.type === 'MSQ' ? [] : null)
-            }}
-          >
-            <Icon name="refresh" className="size-4" aria-hidden="true" /> Try again
-          </button>
-        )}
-        <button type="button" className="np-btn" aria-expanded={showSolution} aria-controls={`${uid}-sol`} onClick={() => setShowSolution((s) => !s)}>
-          <Icon name={showSolution ? 'eye-off' : 'eye'} className="size-4" aria-hidden="true" /> {showSolution ? 'Hide solution' : 'Solution'}
-        </button>
-      </div>
-
-      <div role="status" aria-live="polite">
-        {checked && (
-          <div className={cn('np-feedback', correct ? 'is-correct' : 'is-incorrect')}>
-            <strong>{correct ? 'Correct.' : 'Not quite.'}</strong> {!correct && <>The answer is {fmtAnswer(q)}.</>}
-            {wrong && (
+      {checked && (
+        <Verdict
+          tone={correct ? 'right' : 'wrong'}
+          detail={
+            wrong ? (
               <div className="np-why">
                 <Nodes nodes={wrong.why} />
               </div>
-            )}
-          </div>
-        )}
-      </div>
+            ) : undefined
+          }
+        >
+          {correct ? 'Correct.' : <>Not quite. The answer is {fmtAnswer(q)}.</>}
+        </Verdict>
+      )}
 
-      <div id={`${uid}-sol`} className="np-solution" data-concealed={!showSolution || undefined}>
-        <p className="np-concept">
-          <strong>Idea:</strong> {q.concept}
-        </p>
-        <ol>
-          {q.solution.map((step, i) => (
-            <li key={i}>
-              <Nodes nodes={step} />
-            </li>
-          ))}
-        </ol>
-      </div>
-    </div>
+      <QuestionActions>
+        {!checked ? (
+          <CheckButton disabled={!hasPick} onClick={check}>
+            Check
+          </CheckButton>
+        ) : (
+          <TextAction
+            onClick={() => {
+              setChecked(false)
+              setShowSolution(false)
+              setPick(q.type === 'MSQ' ? [] : null)
+            }}
+          >
+            Try again
+          </TextAction>
+        )}
+        {!checked && (
+          <TextAction aria-expanded={showSolution} onClick={() => setShowSolution((s) => !s)}>
+            {showSolution ? 'Hide solution' : 'Show solution'}
+          </TextAction>
+        )}
+      </QuestionActions>
+
+      {(showSolution || checked) && (
+        <SolutionBlock open={showSolution} onToggle={setShowSolution}>
+          <p className="m-0">
+            <span className="ed-label ed-muted mr-2">Idea</span>
+            {q.concept}
+          </p>
+          <div className="mt-4">
+            <SolutionSteps
+              steps={q.solution.map((step, i) => (
+                <Nodes key={i} nodes={step} />
+              ))}
+            />
+          </div>
+        </SolutionBlock>
+      )}
+    </QuestionCard>
   )
 }

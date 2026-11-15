@@ -1,4 +1,3 @@
-import { Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useApi } from '@/hooks/useApi'
 import { gateApi, type QuestionStats } from '../api'
@@ -12,7 +11,7 @@ export const DIFFICULTY_LABEL = ['', 'Easy', 'Moderate', 'Medium', 'Hard', 'Very
 export function DifficultyPips({ level, className }: { level: number | null | undefined; className?: string }) {
   const n = level ?? 0
   return (
-    <span className={cn('inline-flex items-center gap-0.5', className)} aria-label={level ? `Difficulty ${level} of 5: ${DIFFICULTY_LABEL[level]}` : 'Difficulty not rated yet'}>
+    <span role="img" className={cn('inline-flex items-center gap-0.5', className)} aria-label={level ? `Difficulty ${level} of 5: ${DIFFICULTY_LABEL[level]}` : 'Difficulty not rated yet'}>
       {[1, 2, 3, 4, 5].map((i) => (
         <span
           key={i}
@@ -37,69 +36,77 @@ export function QuestionStatsPanel({ q, revealed, myTimeMs, className }: { q: Ga
   const opts = tfOptions(q)
   const enough = s && s.attempts > 0
 
+  const shares = opts.map((o) => {
+    const share = s?.optionShare?.[o.l] ?? 0
+    return { o, pct: Math.round(share * (share <= 1 ? 100 : 1)), key: isKeyOption(q, o.l) }
+  })
+  const top = [...shares].sort((x, y) => y.pct - x.pct)[0]
+
   return (
-    <section className={cn('rounded-xl border border-border bg-bg-surface-2/50 p-3 sm:p-3.5', className)} aria-label="Community stats">
-      <div className="mb-2.5 flex items-center gap-2">
-        <Users className="size-3.5 text-text-muted" />
-        <h3 className="text-[12px] font-semibold tracking-wide text-text-muted uppercase">Community</h3>
-        {s && s.users > 0 && <span className="ml-auto font-mono text-[11.5px] text-text-muted">{s.users.toLocaleString()} solver{s.users === 1 ? '' : 's'}</span>}
+    <section className={cn('border-t border-[var(--ed-line)] pt-5', className)} aria-label="Community stats">
+      <div className="mb-4 flex items-baseline gap-3">
+        <h3 className="ed-label ed-muted m-0">From everyone</h3>
+        {s && s.users > 0 && <span className="ed-mono ed-muted ml-auto text-[12px]">{s.users.toLocaleString()} solver{s.users === 1 ? '' : 's'}</span>}
       </div>
 
       {res.loading && !s ? (
-        <div className="grid grid-cols-3 gap-2" aria-busy="true">
+        <div className="grid grid-cols-3 gap-6" aria-busy="true">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-11 animate-pulse rounded-lg bg-bg-surface-3/60" />
+            <div key={i} className="h-12 animate-pulse rounded-lg bg-bg-surface-3/60" />
           ))}
         </div>
       ) : !enough ? (
-        <p className="text-[12.5px] text-text-muted">No community attempts yet — yours will be among the first.</p>
+        <p className="ed-body-sm ed-ink-2 m-0">No one else has answered this yet. Yours will be among the first.</p>
       ) : (
         <>
-          <dl className="grid grid-cols-3 gap-2">
-            <div className="rounded-lg bg-bg-surface px-2.5 py-1.5">
-              <dt className="text-[10.5px] text-text-muted">Accuracy</dt>
-              <dd className="font-mono text-[15px] font-semibold text-text-primary tabular-nums">{s.accuracy == null ? '—' : `${Math.round(s.accuracy * (s.accuracy <= 1 ? 100 : 1))}%`}</dd>
+          <dl className="m-0 grid grid-cols-3 gap-6">
+            <div>
+              <dt className="ed-caption ed-muted">Accuracy</dt>
+              <dd className="ed-serif m-0 mt-1 text-[1.5rem] leading-none text-text-primary tabular-nums">{s.accuracy == null ? '—' : `${Math.round(s.accuracy * (s.accuracy <= 1 ? 100 : 1))}%`}</dd>
             </div>
-            <div className="rounded-lg bg-bg-surface px-2.5 py-1.5">
-              <dt className="text-[10.5px] text-text-muted">Avg time</dt>
-              <dd className="font-mono text-[15px] font-semibold text-text-primary tabular-nums">
-                {fmtDuration(s.avgTimeMs)}
-                {myTimeMs != null && s.avgTimeMs != null && revealed && (
-                  <span className={cn('ml-1 text-[10.5px] font-normal', myTimeMs <= s.avgTimeMs ? 'text-state-success' : 'text-state-warning')}>
-                    you {fmtDuration(myTimeMs)}
-                  </span>
-                )}
+            <div>
+              <dt className="ed-caption ed-muted">Average time</dt>
+              <dd className="m-0 mt-1">
+                <span className="ed-serif text-[1.5rem] leading-none text-text-primary tabular-nums">{fmtDuration(s.avgTimeMs)}</span>
+                {myTimeMs != null && s.avgTimeMs != null && revealed && <span className="ed-mono ed-muted ml-2 text-[11px]">you {fmtDuration(myTimeMs)}</span>}
               </dd>
             </div>
-            <div className="rounded-lg bg-bg-surface px-2.5 py-1.5">
-              <dt className="text-[10.5px] text-text-muted">Difficulty</dt>
-              <dd className="flex h-[22px] items-center gap-1.5 text-[12px] text-text-secondary">
+            <div>
+              <dt className="ed-caption ed-muted">Difficulty</dt>
+              <dd className="m-0 mt-2 flex items-center gap-2 text-[13px] text-text-secondary">
                 <DifficultyPips level={s.difficulty} />
-                <span className="hidden sm:inline">{s.difficulty ? DIFFICULTY_LABEL[s.difficulty] : '—'}</span>
+                <span>{s.difficulty ? DIFFICULTY_LABEL[s.difficulty] : '—'}</span>
               </dd>
             </div>
           </dl>
 
           {opts.length > 0 && Object.keys(s.optionShare ?? {}).length > 0 && (
-            <div className="mt-3 space-y-1.5">
-              <div className="text-[11px] text-text-muted">{revealed ? 'How others answered' : 'Answer distribution hidden until you check'}</div>
+            <div className="mt-6">
               {revealed ? (
-                opts.map((o) => {
-                  const share = s.optionShare[o.l] ?? 0
-                  const pct = Math.round(share * (share <= 1 ? 100 : 1))
-                  const key = isKeyOption(q, o.l)
-                  return (
-                    <div key={o.l} className="flex items-center gap-2 text-[12px]">
-                      <span className={cn('w-9 shrink-0 font-mono font-semibold', key ? 'text-state-success' : 'text-text-secondary')}>{o.l.length <= 2 ? o.l : o.l.slice(0, 1)}</span>
-                      <span className="relative h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-bg-surface-3">
-                        <span className={cn('absolute inset-y-0 left-0 rounded-full', key ? 'bg-state-success' : 'bg-text-muted/50')} style={{ width: `${pct}%` }} />
-                      </span>
-                      <span className="w-9 shrink-0 text-right font-mono text-text-muted tabular-nums">{pct}%</span>
-                    </div>
-                  )
-                })
+                <>
+                  {top && top.pct > 0 && (
+                    <p className="ed-body-sm m-0 mb-3">
+                      {top.pct}% of students chose {top.o.l}
+                      {top.key ? ', the right answer.' : '.'}
+                    </p>
+                  )}
+                  <ul className="m-0 grid list-none gap-2 p-0">
+                    {shares.map(({ o, pct, key }) => (
+                      <li key={o.l} className="flex items-center gap-3">
+                        <span className={cn('ed-mono w-8 shrink-0 text-[12px]', key ? 'text-state-success' : 'ed-ink-2')}>
+                          {o.l.length <= 2 ? o.l : o.l.slice(0, 1)}
+                          {key && <span className="sr-only"> (correct)</span>}
+                        </span>
+                        <span className="relative h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[var(--ed-oat)]">
+                          <span className={cn('absolute inset-y-0 left-0 rounded-full', key ? 'bg-state-success' : 'bg-[var(--ed-ink-2)]')} style={{ width: `${pct}%` }} />
+                        </span>
+                        <span className="ed-mono ed-muted w-10 shrink-0 text-right text-[12px] tabular-nums">{pct}%</span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
               ) : (
-                <div className="h-2 rounded-full bg-bg-surface-3" />
+                <p className="ed-caption ed-muted m-0">How others answered shows once you check.</p>
               )}
             </div>
           )}
