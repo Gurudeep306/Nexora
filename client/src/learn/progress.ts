@@ -10,6 +10,10 @@ export type ItemStatus = 'correct' | 'wrong' | 'solved' | 'attempted' | 'read'
 export interface ItemState {
   status: ItemStatus
   attempts: number
+  /** When it was first done (ISO), from the server. */
+  doneAt?: string | null
+  /** Last change (ISO), from the server. */
+  updatedAt?: string | null
 }
 
 let items: Record<string, ItemState> = {}
@@ -40,7 +44,16 @@ export const isDone = (s?: ItemState) => !!s && DONE.includes(s.status)
 export function mark(item: string, status: ItemStatus) {
   const prev = items[item]
   const keep = prev && isDone(prev)
-  items = { ...items, [item]: { status: keep ? prev.status : status, attempts: (prev?.attempts ?? 0) + (status === 'read' ? 0 : 1) } }
+  const now = new Date().toISOString()
+  items = {
+    ...items,
+    [item]: {
+      status: keep ? prev.status : status,
+      attempts: (prev?.attempts ?? 0) + (status === 'read' ? 0 : 1),
+      doneAt: prev?.doneAt ?? (DONE.includes(status) ? now : null),
+      updatedAt: now,
+    },
+  }
   emit()
   void api.post('/api/learn/progress', { item, status }).catch(() => {})
 }

@@ -82,7 +82,7 @@ export function CountUp({ to, format = (n) => n.toLocaleString('en-IN'), suffix 
 }
 
 /** The eleven levels, each bar wider than the last, filling one after another as the ladder comes into view. */
-const LEVELS = ['Bit', 'Byte', 'Kilobyte', 'Megabyte', 'Gigabyte', 'Terabyte', 'Petabyte', 'Exabyte', 'Zettabyte', 'Yottabyte', '∞ Overflow']
+export const LEVELS = ['Bit', 'Byte', 'Kilobyte', 'Megabyte', 'Gigabyte', 'Terabyte', 'Petabyte', 'Exabyte', 'Zettabyte', 'Yottabyte', '∞ Overflow']
 export function LevelLadder() {
   const ref = useRef<HTMLOListElement>(null)
   const seen = useInView(ref, { once: true, margin: '0px 0px -20% 0px' })

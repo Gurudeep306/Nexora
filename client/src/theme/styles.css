@@ -357,3 +357,436 @@ html[data-pattern] body {
 [data-style='luxe'] [data-ui='button'].sx-btn {
   font-size: 7.5px;
 }
+
+/* ═══ Field Journal — the house style (docs/ui/field-journal.md) ══════════
+   Parchment and ivory, a Newsreader serif for titles and prose, Geist for
+   controls, hairlines instead of shadows and one clay action per screen.
+   Everything here is keyed on [data-style='journal'], so every other style is
+   untouched. The editorial classes themselves (ed-*) live in
+   styles/journal.css; these rules dress the shared kit (data-ui hooks), the
+   shell and the Dock. */
+
+/* Hooks that only some styles draw. */
+.tab-ink,
+.topbar-wordmark {
+  display: none;
+}
+
+[data-style='journal'][data-font],
+[data-style='journal'] [data-font] {
+  --font-display: 'Newsreader Variable', 'Newsreader Fallback', Charter, Georgia, 'Times New Roman', serif;
+  --heading-tracking: -0.02em;
+}
+
+/* No shadows: elevation is tone and a hairline. Composite shadows can't take
+   `none`, so they get an empty shadow. */
+[data-style='journal'][data-mode],
+[data-style='journal'] [data-mode] {
+  --elev-1: 0 0 #0000;
+  --elev-2: 0 0 #0000;
+  --elev-3: 0 0 #0000;
+  --specular: transparent;
+  --field-shadow: transparent;
+  --focus-ring-color: var(--ed-focus);
+  --shadow-input-focus: 0 0 0 3px color-mix(in oklab, var(--ed-focus) 22%, transparent);
+  --hairline: var(--color-border);
+}
+
+/* Corners: generous cards, 12px controls (when the corners are the style's own). */
+[data-style='journal'][data-radius='rounded'],
+[data-style='journal'] [data-radius='rounded'] {
+  --radius-control: 0.75rem;
+  --radius-card: 1.5rem;
+  --radius-sheet: 1.5rem;
+}
+
+/* ── Type ── */
+/* Headings that use the editorial classes (ed-*) keep their own setting. */
+[data-style='journal'] :is(h1, h2, .sx-h):not([class*='ed-']) {
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-optical-sizing: auto;
+  text-wrap: balance;
+}
+/* Small headings are labels for controls: the sans. */
+[data-style='journal'] :is(h3, h4, h5, h6):not([class*='ed-']) {
+  font-family: var(--font-body);
+  letter-spacing: -0.01em;
+}
+[data-style='journal'] .font-display {
+  font-optical-sizing: auto;
+}
+[data-style='journal'] ::selection {
+  background: var(--color-bg-surface-3);
+  color: var(--color-text-primary);
+}
+[data-style='journal'] .prose-link,
+[data-style='journal'] :where(article, .reading) a:not([class]) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.14em;
+}
+
+/* ── Cards: ivory on parchment, a hairline, no shadow ── */
+[data-style='journal'][data-card-style='flat'],
+[data-style='journal'] [data-card-style='flat'] {
+  --card-bg: var(--color-bg-surface);
+  --card-border: var(--color-border);
+  --card-shadow: 0 0 #0000;
+  --card-hover-border: var(--color-border-strong);
+  --card-hover-shadow: 0 0 #0000;
+}
+[data-style='journal'][data-card-style='flat'] .card-interactive:is(:hover, :focus-visible),
+[data-style='journal'] [data-card-style='flat'] .card-interactive:is(:hover, :focus-visible) {
+  background-color: var(--card-bg);
+  border-color: var(--card-hover-border);
+}
+[data-style='journal'] [data-ui='card-title'] {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ── Buttons: one clay action, ivory tabs, outlined and quiet ── */
+[data-style='journal'] [data-ui='button'] {
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  box-shadow: none;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-style='journal'] [data-ui='button']:is([data-variant='primary'], [data-variant='accent']) {
+  background: var(--ed-clay);
+  color: var(--ed-on-clay);
+  border: 0;
+  border-radius: 0 0 8px 8px;
+  filter: none;
+}
+[data-style='journal'] [data-ui='button']:is([data-variant='primary'], [data-variant='accent']):hover {
+  background: var(--ed-clay-deep);
+}
+[data-style='journal'] [data-ui='button']:is([data-variant='secondary'], [data-variant='subtle']) {
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 0 0 8px 8px;
+}
+[data-style='journal'] [data-ui='button']:is([data-variant='secondary'], [data-variant='subtle']):hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-bg-surface);
+}
+[data-style='journal'] [data-ui='button']:is([data-variant='outline'], [data-variant='ghost']) {
+  border-radius: 12px;
+}
+[data-style='journal'] [data-ui='button'][data-variant='outline'] {
+  border-color: var(--color-border-strong);
+}
+[data-style='journal'] [data-ui='button'][data-variant='outline']:hover {
+  background: var(--color-bg-surface);
+}
+[data-style='journal'] [data-ui='button']:is([data-variant='destructive'], [data-variant='danger'], [data-variant='success']) {
+  border-radius: 0 0 8px 8px;
+}
+[data-style='journal'] [data-ui='button'][data-variant='link'] {
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+[data-style='journal'] [data-ui='button'][data-variant='link']:hover {
+  text-decoration-thickness: 2px;
+}
+[data-style='journal'] [data-ui='button']:active {
+  transform: translateY(1px);
+}
+
+/* ── Fields: ivory, a hairline, a clay ring on focus ── */
+[data-style='journal'] :is(.input-base, .ui-search-input) {
+  background-color: var(--color-bg-surface);
+  border-color: var(--color-border);
+  box-shadow: none;
+  border-radius: 12px;
+}
+[data-style='journal'] :is(.input-base, .ui-search-input):hover {
+  border-color: var(--color-border-strong);
+}
+[data-style='journal'] :is(.input-base, .ui-search-input):focus {
+  background-color: var(--color-bg-surface);
+  border-color: var(--ed-focus);
+  box-shadow: var(--shadow-input-focus);
+}
+
+/* ── Tabs: words with an ink underline that slides ── */
+[data-style='journal'] [data-ui='tabs'][data-variant='underline'] {
+  gap: 1.25rem;
+  border-bottom-color: var(--color-border);
+}
+[data-style='journal'] [data-ui='tabs'][data-variant='underline'] [data-ui='tab'] {
+  border-bottom-color: transparent;
+  padding-inline: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  transition: color 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-style='journal'] [data-ui='tabs'][data-variant='underline'] [data-ui='tab']:hover,
+[data-style='journal'] [data-ui='tabs'] [data-ui='tab'][aria-selected='true'] {
+  color: var(--color-text-primary);
+}
+[data-style='journal'] .tab-ink {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  background: var(--color-text-primary);
+}
+[data-style='journal'] [data-ui='tabs'][data-variant='pill'] [data-ui='tab'] {
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  padding-inline: 0.25rem;
+  margin-inline: 0.5rem;
+}
+[data-style='journal'] [data-ui='tabs'][data-variant='pill'] [data-ui='tab'][aria-selected='true'] {
+  color: var(--color-text-primary);
+  box-shadow: inset 0 -2px 0 var(--color-text-primary);
+}
+[data-style='journal'] [data-ui='tab'] > span > span:last-child:not(:only-child) {
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  padding: 0;
+  margin-left: 0.25rem;
+}
+
+/* ── Badges: plain words with a hairline; state keeps its colour ── */
+[data-style='journal'] [data-ui='badge'] {
+  background: transparent;
+  border-color: var(--color-border);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+[data-style='journal'] [data-ui='badge']:is([data-variant='secondary'], [data-variant='default'], [data-variant='outline']) {
+  color: var(--color-text-secondary);
+}
+[data-style='journal'] [data-ui='badge']:is([data-variant='primary'], [data-variant='accent']) {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+[data-style='journal'] [data-ui='badge']:is([data-variant='success'], [data-variant='warning'], [data-variant='destructive'], [data-variant='danger'], [data-variant='info'], [data-variant='cyan'], [data-variant='gold']) {
+  border-color: color-mix(in oklab, currentColor 40%, transparent);
+}
+
+/* ── Tables: a label-style head, hairline rows ── */
+[data-style='journal'] [data-ui='thead'] th {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+[data-style='journal'] [data-ui='table'] :is(thead, tbody) tr {
+  border-color: var(--color-border);
+}
+[data-style='journal'] [data-ui='table'] tbody tr:hover {
+  background: color-mix(in oklab, var(--color-bg-surface-3) 45%, transparent);
+}
+
+/* ── Sheets, menus, tooltips: ivory paper with a hairline, no blur ── */
+[data-style='journal'] .pop-surface {
+  background-color: var(--color-bg-surface);
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+[data-style='journal'] [data-ui='scrim'] {
+  background: color-mix(in oklab, var(--color-text-primary) 30%, transparent);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+[data-style='journal'] [data-ui='sheet-title'] {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+[data-style='journal'] :is(.glass, .glass-thick) {
+  background-color: var(--color-bg-surface);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+/* Command palette: serif group titles. */
+[data-style='journal'] [data-ui='sheet'] [data-ui='group-title'] {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+[data-style='journal'] [data-ui='kbd'] {
+  box-shadow: none;
+  font-family: var(--font-mono);
+}
+
+/* ── Progress: a 2px ink line, clay once complete ── */
+[data-style='journal'] [data-ui='progress'] {
+  height: 2px;
+  border-radius: 0;
+  background: var(--color-border);
+}
+[data-style='journal'] [data-ui='progress-bar'] {
+  border-radius: 0;
+  background: var(--color-text-primary);
+}
+[data-style='journal'] [data-ui='progress'][data-done] [data-ui='progress-bar'] {
+  background: var(--ed-clay);
+}
+
+/* ── Page header: a serif title, a label above, one line of prose below ── */
+[data-style='journal'] [data-ui='page-title'] {
+  font-weight: 400;
+  font-size: 2rem;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+@media (min-width: 768px) {
+  [data-style='journal'] [data-ui='page-title'] {
+    font-size: 2.5rem;
+  }
+}
+[data-style='journal'] [data-ui='eyebrow'] {
+  color: var(--color-text-muted);
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+}
+[data-style='journal'] [data-ui='page-lead'] {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+[data-style='journal'] [data-ui='page-header'] > div:first-child > :is(.icon-badge, [data-ui='page-icon']) {
+  display: none;
+}
+
+/* ── Stat cards: a label, a serif figure, an optional line of recent days ── */
+[data-style='journal'] [data-ui='stat-label'] {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+[data-style='journal'] [data-ui='stat-value'] {
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-size: 2rem;
+}
+@media (min-width: 640px) {
+  [data-style='journal'] [data-ui='stat-value'] {
+    font-size: 2.25rem;
+  }
+}
+[data-style='journal'] [data-ui='stat'] .icon-badge {
+  display: none;
+}
+
+/* ── Empty states: a serif line ── */
+[data-style='journal'] [data-ui='empty-title'] {
+  font-size: 1.25rem;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+/* ── Ranks: an ink seal ── */
+[data-style='journal'] [data-ui='rank'] {
+  color: var(--color-text-primary) !important;
+}
+
+/* ── The top bar: flat canvas; a hairline once the page scrolls under it ── */
+[data-style='journal'] [data-ui='topbar'] {
+  background-color: var(--color-bg-app);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-bottom-color: transparent;
+  transition: border-color 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-style='journal'] [data-ui='topbar'][data-scrolled] {
+  border-bottom-color: var(--color-border);
+}
+[data-style='journal'] .topbar-wordmark {
+  display: inline;
+  color: var(--color-text-primary);
+}
+[data-style='journal'] [data-ui='crumb-section'] {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── The Dock: same behaviour, journal skin ── */
+[data-style='journal'] .dock-glass {
+  background-color: var(--color-bg-surface);
+  border-color: var(--color-border);
+  border-radius: 24px;
+}
+/* The current page: a short clay tick instead of a dot. */
+[data-style='journal'] .dock-dot {
+  width: 14px;
+  height: 2px;
+  border-radius: 1px;
+  bottom: -6px;
+  background: var(--ed-clay) !important;
+  box-shadow: none !important;
+}
+/* Names float up as an ink slip. */
+[data-style='journal'] .dock-label {
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-app);
+  border-color: transparent;
+  border-radius: 0 0 6px 6px !important;
+  font-family: var(--font-body);
+}
+[data-style='journal'] .dock-divider {
+  background-color: var(--color-border);
+}
+/* Mono icons (the default): a quiet canvas tile with a hairline and an ink-2
+   glyph; the current page's glyph in ink. Coloured tiles stay as chosen. */
+[data-style='journal'] .dock-plate {
+  border-radius: 12px;
+  background-color: var(--color-bg-app);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+[data-style='journal'] .group:hover .dock-plate {
+  background-color: var(--color-bg-surface-3);
+}
+[data-style='journal'] .dock-badge--mono.icon-badge.icon-badge {
+  --ib-c: var(--color-text-secondary);
+}
+[data-style='journal'] .dock-badge--mono.icon-badge.icon-badge[data-tone='accent'] {
+  --ib-c: var(--color-text-primary);
+}
+
+/* ── The phone tab bar: canvas, a top hairline, a clay tick over the current tab ── */
+[data-style='journal'] .tabbar {
+  background-color: var(--color-bg-app);
+  border-top-color: var(--color-border);
+}
+[data-style='journal'] .tabbar-tick {
+  background: var(--ed-clay);
+  height: 2px;
+  border-radius: 0 0 1px 1px;
+}
+[data-style='journal'] .tabbar :is(a, button) {
+  font-family: var(--font-body);
+  font-size: 11px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-style='journal'] :is([data-ui='button'], [data-ui='tab'], [data-ui='topbar']) {
+    transition-duration: 0ms;
+  }
+}

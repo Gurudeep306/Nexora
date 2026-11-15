@@ -1,0 +1,290 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   The Field Journal system (docs/ui/field-journal.md): the editorial classes
+   the landing page introduced, shared by every page.
+
+   Three scopes, one set of classes:
+     .lp / .ed           landing, sign-in, coming soon — fixed parchment values
+     [data-style]        inside the app — every --ed-* variable reads the
+                         semantic tokens, so restructured pages look right in
+                         every design style (the display face, accent and
+                         surfaces of whichever style is on)
+     [data-style=journal][data-palette=parchment]
+                         the house style — the exact clay and manilla
+
+   In the components layer, so Tailwind utilities (spacing) still win.
+   ══════════════════════════════════════════════════════════════════════════ */
+@layer components {
+  /* ── Fixed parchment (marketing pages) ─────────────────────────────── */
+  .lp,
+  .ed {
+    --ed-canvas: #f0eee6; /* page */
+    --ed-card: #faf9f5; /* cards, inputs */
+    --ed-feature: #f5e3c7; /* the one featured spread */
+    --ed-oat: #e3dacc; /* grouped panels */
+    --ed-ink: #141413; /* text, footer */
+    --ed-ink-2: #3d3d3a; /* secondary text */
+    --ed-muted: #6b6a64; /* helper text (darker than the source so small text passes 4.5:1) */
+    --ed-faint: #b0aea5; /* decoration only, never text */
+    --ed-line: #cccbc8; /* hairlines */
+    --ed-line-strong: #87867f; /* outlined buttons */
+    --ed-clay: #d97757; /* the single action colour */
+    --ed-clay-deep: #c6613f;
+    --ed-on-clay: #141413;
+    --ed-inverse: #141413; /* footer band */
+    --ed-on-inverse: #faf9f5;
+    --ed-on-inverse-muted: #b0aea5;
+    --ed-focus: #c6613f;
+    --ed-serif: 'Newsreader Variable', Newsreader, Charter, Georgia, 'Times New Roman', serif;
+    --ed-sans: 'Geist Variable', Geist, ui-sans-serif, system-ui, sans-serif;
+    --ed-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    --ed-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    background: var(--ed-canvas);
+    color: var(--ed-ink);
+    font-family: var(--ed-serif);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  [data-mode='dark'] :is(.lp, .ed) {
+    --ed-canvas: #1a1917;
+    --ed-card: #22211e;
+    --ed-feature: #2c2822;
+    --ed-oat: #2a2824;
+    --ed-ink: #f0eee6;
+    --ed-ink-2: #d4d1c7;
+    --ed-muted: #a5a299;
+    --ed-faint: #5e5c55;
+    --ed-line: #3a3935;
+    --ed-line-strong: #6b6a64;
+    --ed-clay: #d97757;
+    --ed-clay-deep: #e08a6c;
+    --ed-on-clay: #141413;
+    --ed-inverse: #0f0f0e;
+    --ed-on-inverse: #f0eee6;
+    --ed-on-inverse-muted: #a5a299;
+    --ed-focus: #e08a6c;
+  }
+
+  /* ── Inside the app: the tokens of whatever style is on ────────────── */
+  [data-style] {
+    --ed-canvas: var(--color-bg-app);
+    --ed-card: var(--color-bg-surface);
+    --ed-feature: color-mix(in oklab, var(--color-accent-brand) 9%, var(--color-bg-surface));
+    --ed-oat: var(--color-bg-surface-3);
+    --ed-ink: var(--color-text-primary);
+    --ed-ink-2: var(--color-text-secondary);
+    --ed-muted: var(--color-text-muted);
+    --ed-faint: color-mix(in oklab, var(--color-text-muted) 45%, transparent);
+    --ed-line: var(--color-border);
+    --ed-line-strong: var(--color-border-strong);
+    --ed-clay: var(--color-accent-brand);
+    --ed-clay-deep: var(--color-accent-brand-hover, var(--color-accent-brand));
+    --ed-on-clay: var(--color-on-accent-brand);
+    --ed-inverse: var(--color-text-primary);
+    --ed-on-inverse: var(--color-bg-app);
+    --ed-on-inverse-muted: color-mix(in oklab, var(--color-bg-app) 70%, var(--color-text-primary));
+    --ed-focus: var(--color-accent-brand);
+    --ed-serif: var(--font-display);
+    --ed-sans: var(--font-body);
+    --ed-mono: var(--font-mono);
+    --ed-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* The house style on its own paper: the exact manilla and clay. */
+  [data-style='journal'][data-palette='parchment'],
+  [data-style='journal'] [data-palette='parchment'] {
+    --ed-feature: #f5e3c7;
+    --ed-clay: #d97757;
+    --ed-clay-deep: #c6613f;
+    --ed-on-clay: #141413;
+    --ed-focus: #c6613f;
+    --ed-faint: #b0aea5;
+  }
+  [data-style='journal'][data-palette='parchment'][data-mode='dark'],
+  [data-style='journal'][data-mode='dark'] [data-palette='parchment'],
+  [data-mode='dark'] [data-style='journal'][data-palette='parchment'] {
+    --ed-feature: #2c2822;
+    --ed-clay-deep: #e08a6c;
+    --ed-focus: #e08a6c;
+    --ed-faint: #5e5c55;
+  }
+
+  /* ── Type ─────────────────────────────────────────────────────────── */
+  :is(.lp, .ed) :is(h1, h2, h3, h4, h5, h6) {
+    margin: 0;
+    text-wrap: balance;
+  }
+  :is(.lp, .ed) p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+  :is(.lp, .ed, [data-style]) .ed-serif { font-family: var(--ed-serif); }
+  :is(.lp, .ed, [data-style]) .ed-sans { font-family: var(--ed-sans); }
+  :is(.lp, .ed, [data-style]) .ed-mono { font-family: var(--ed-mono); }
+  :is(.lp, .ed, [data-style]) .ed-tabular { font-variant-numeric: tabular-nums; }
+  /* Declarative display: sans, bold, tight. */
+  :is(.lp, .ed, [data-style]) .ed-display-sans { font-family: var(--ed-sans); font-weight: 700; font-size: 2.5rem; line-height: 1.08; letter-spacing: -0.03em; }
+  /* Editorial display: serif, regular. */
+  :is(.lp, .ed, [data-style]) .ed-display-serif { font-family: var(--ed-serif); font-weight: 400; font-size: 2.25rem; line-height: 1.12; letter-spacing: -0.01em; }
+  /* A page title inside the app: serif, a step below display. */
+  :is(.lp, .ed, [data-style]) .ed-title { font-family: var(--ed-serif); font-weight: 400; font-size: 2rem; line-height: 1.12; letter-spacing: -0.02em; text-wrap: balance; }
+  /* A section title: serif. */
+  :is(.lp, .ed, [data-style]) .ed-h2 { font-family: var(--ed-serif); font-weight: 400; font-size: 1.5rem; line-height: 1.2; letter-spacing: -0.015em; text-wrap: balance; }
+  :is(.lp, .ed, [data-style]) .ed-heading { font-family: var(--ed-sans); font-weight: 600; font-size: 1.75rem; line-height: 1.2; letter-spacing: -0.02em; }
+  :is(.lp, .ed, [data-style]) .ed-subheading { font-family: var(--ed-sans); font-weight: 600; font-size: 1.25rem; line-height: 1.3; letter-spacing: -0.01em; }
+  :is(.lp, .ed, [data-style]) .ed-body { font-family: var(--ed-serif); font-size: 1.125rem; line-height: 1.5; }
+  :is(.lp, .ed, [data-style]) .ed-body-sm { font-family: var(--ed-serif); font-size: 1rem; line-height: 1.5; }
+  /* The one line under a page title. */
+  :is(.lp, .ed, [data-style]) .ed-lead { font-family: var(--ed-serif); font-size: 1.0625rem; line-height: 1.45; color: var(--ed-ink-2); text-wrap: pretty; }
+  :is(.lp, .ed, [data-style]) .ed-ui { font-family: var(--ed-sans); font-size: 0.9375rem; line-height: 1.4; letter-spacing: -0.005em; }
+  :is(.lp, .ed, [data-style]) .ed-ui-sm { font-family: var(--ed-sans); font-size: 0.8125rem; line-height: 1.4; letter-spacing: -0.005em; }
+  :is(.lp, .ed, [data-style]) .ed-caption { font-family: var(--ed-sans); font-size: 0.75rem; line-height: 1.4; letter-spacing: -0.01em; }
+  :is(.lp, .ed, [data-style]) .ed-label { font-family: var(--ed-sans); font-size: 0.75rem; line-height: 1; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+  @media (min-width: 768px) {
+    :is(.lp, .ed, [data-style]) .ed-display-sans { font-size: 3.5rem; }
+    :is(.lp, .ed, [data-style]) .ed-display-serif { font-size: 3.25rem; }
+    :is(.lp, .ed, [data-style]) .ed-title { font-size: 2.5rem; }
+    :is(.lp, .ed, [data-style]) .ed-h2 { font-size: 1.75rem; }
+    :is(.lp, .ed, [data-style]) .ed-heading { font-size: 2.25rem; }
+    :is(.lp, .ed, [data-style]) .ed-body { font-size: 1.25rem; line-height: 1.4; }
+    :is(.lp, .ed, [data-style]) .ed-lead { font-size: 1.125rem; }
+  }
+  @media (min-width: 1024px) {
+    :is(.lp, .ed, [data-style]) .ed-display-sans { font-size: 3.8rem; line-height: 1.06; }
+    :is(.lp, .ed, [data-style]) .ed-display-serif { font-size: 4.25rem; line-height: 1.1; }
+  }
+  :is(.lp, .ed, [data-style]) .ed-ink { color: var(--ed-ink); }
+  :is(.lp, .ed, [data-style]) .ed-ink-2 { color: var(--ed-ink-2); }
+  :is(.lp, .ed, [data-style]) .ed-muted { color: var(--ed-muted); }
+
+  /* Inline links: underlined always, like print. Ink, never clay text. */
+  :is(.lp, .ed, [data-style]) .ed-link {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.14em;
+    text-decoration-color: currentColor;
+    transition: text-decoration-color 300ms var(--ed-ease), color 300ms var(--ed-ease);
+  }
+  :is(.lp, .ed, [data-style]) .ed-link:hover { text-decoration-thickness: 2px; }
+
+  /* ── Surfaces: elevation by tone and hairline, never shadow ──────── */
+  :is(.lp, .ed, [data-style]) .ed-card { background: var(--ed-card); border: 1px solid var(--ed-line); border-radius: 24px; }
+  :is(.lp, .ed, [data-style]) .ed-card-sm { background: var(--ed-card); border: 1px solid var(--ed-line); border-radius: 16px; }
+  :is(.lp, .ed, [data-style]) .ed-feature { background: var(--ed-feature); border-radius: 24px; }
+  :is(.lp, .ed, [data-style]) .ed-oat { background: var(--ed-oat); border-radius: 24px; }
+  :is(.lp, .ed, [data-style]) .ed-rule { border-color: var(--ed-line); }
+  :is(.lp, .ed, [data-style]) .ed-hairline { border-top: 1px solid var(--ed-line); }
+  /* Rows separated by hairlines, not boxed. */
+  :is(.lp, .ed, [data-style]) .ed-rows > * + * { border-top: 1px solid var(--ed-line); }
+  /* Muted text sits on the warm spread: one step darker to keep 4.5:1. */
+  :is(.lp, .ed, [data-style='journal'][data-palette='parchment'], [data-style='journal'] [data-palette='parchment']) :is(.ed-feature, .ed-oat) { --ed-muted: #5c5b55; }
+  [data-mode='dark'] :is(.lp, .ed) :is(.ed-feature, .ed-oat),
+  [data-style='journal'][data-palette='parchment'][data-mode='dark'] :is(.ed-feature, .ed-oat) { --ed-muted: #aaa79e; }
+
+  /* ── Buttons ──────────────────────────────────────────────────────── */
+  :is(.lp, .ed, [data-style]) .ed-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: var(--ed-sans);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    line-height: 1.25rem;
+    letter-spacing: -0.005em;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: background-color 300ms var(--ed-ease), color 300ms var(--ed-ease), border-color 300ms var(--ed-ease), transform 300ms var(--ed-ease);
+  }
+  :is(.lp, .ed, [data-style]) .ed-btn:active { transform: translateY(1px); }
+  :is(.lp, .ed, [data-style]) .ed-btn:disabled { opacity: 0.5; cursor: default; }
+  /* The one action: clay, tab-like (square top, rounded bottom). */
+  :is(.lp, .ed, [data-style]) .ed-btn-clay {
+    background: var(--ed-clay);
+    color: var(--ed-on-clay) !important;
+    padding: 12px 24px;
+    border-radius: 0 0 8px 8px;
+  }
+  :is(.lp, .ed, [data-style]) .ed-btn-clay:hover { background: var(--ed-clay-deep); }
+  /* Quiet primary on a page: ivory, tab-like, hairline so it reads on parchment. */
+  :is(.lp, .ed, [data-style]) .ed-btn-ivory {
+    background: var(--ed-card);
+    color: var(--ed-ink) !important;
+    padding: 8px 16px;
+    border: 1px solid var(--ed-line);
+    border-radius: 0 0 8px 8px;
+  }
+  :is(.lp, .ed, [data-style]) .ed-btn-ivory:hover { border-color: var(--ed-line-strong); }
+  :is(.lp, .ed, [data-style]) .ed-btn-outline {
+    color: var(--ed-ink) !important;
+    padding: 8px 16px;
+    border: 1px solid var(--ed-line-strong);
+    border-radius: 12px;
+  }
+  :is(.lp, .ed, [data-style]) .ed-btn-outline:hover { background: var(--ed-card); }
+  :is(.lp, .ed) :is(a, button, summary, input, [tabindex]):focus-visible {
+    outline: 2px solid var(--ed-focus);
+    outline-offset: 3px;
+  }
+  :is(.lp, .ed, [data-style]) .ed-icon-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    color: var(--ed-muted);
+    cursor: pointer;
+    transition: color 300ms var(--ed-ease), background-color 300ms var(--ed-ease);
+  }
+  :is(.lp, .ed, [data-style]) .ed-icon-btn:hover { color: var(--ed-ink); background: var(--ed-card); }
+
+  /* ── Wordmark, figures, numerals ──────────────────────────────────── */
+  :is(.lp, .ed, [data-style]) .ed-wordmark { font-family: var(--ed-serif); font-size: 1.1875rem; line-height: 1; font-weight: 500; letter-spacing: -0.01em; color: inherit; }
+  :is(.lp, .ed, [data-style]) .ed-figure { font-family: var(--ed-serif); font-size: 2.25rem; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: var(--ed-ink); }
+  @media (min-width: 768px) { :is(.lp, .ed, [data-style]) .ed-figure { font-size: 2.75rem; } }
+  :is(.lp, .ed, [data-style]) .ed-serif-numeral { font-family: var(--ed-serif); font-size: 1.5rem; line-height: 1; font-style: italic; }
+
+  /* ── Underlined tab row (no pills) ────────────────────────────────── */
+  :is(.lp, .ed, [data-style]) .ed-tabs { display: flex; gap: 1.5rem; border-bottom: 1px solid var(--ed-line); overflow-x: auto; scrollbar-width: none; }
+  :is(.lp, .ed, [data-style]) .ed-tab {
+    position: relative;
+    padding: 0 0 0.75rem;
+    font-family: var(--ed-sans);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--ed-muted);
+    cursor: pointer;
+    transition: color 300ms var(--ed-ease);
+  }
+  :is(.lp, .ed, [data-style]) .ed-tab::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--ed-ink);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 450ms var(--ed-ease);
+  }
+  :is(.lp, .ed, [data-style]) .ed-tab:hover { color: var(--ed-ink-2); }
+  :is(.lp, .ed, [data-style]) .ed-tab:is([aria-selected='true'], [aria-current='page'], .is-on) { color: var(--ed-ink); }
+  :is(.lp, .ed, [data-style]) .ed-tab:is([aria-selected='true'], [aria-current='page'], .is-on)::after { transform: scaleX(1); }
+
+  /* A 30-day sparkline beside a figure. */
+  :is(.lp, .ed, [data-style]) .ed-spark { display: block; width: 120px; max-width: 100%; height: 28px; overflow: visible; }
+  :is(.lp, .ed, [data-style]) .ed-spark path { fill: none; stroke: var(--ed-ink-2); stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  :is(.lp, .ed, [data-style]) .ed-spark circle { fill: var(--ed-clay); }
+
+  @media (prefers-reduced-motion: reduce) {
+    :is(.lp, .ed) *,
+    :is(.lp, .ed) *::before,
+    :is(.lp, .ed) *::after { transition-duration: 0ms !important; animation: none !important; }
+    .ed-specimen *,
+    .ed-specimen *::before,
+    .ed-specimen *::after { transition-duration: 0ms !important; animation: none !important; }
+    [data-style] :is(.ed-tab, .ed-link, .ed-btn)::after,
+    [data-style] :is(.ed-tab, .ed-link, .ed-btn) { transition-duration: 0ms !important; }
+  }
+}

@@ -37,6 +37,7 @@ export function Modal({
             <div className="fixed inset-0 z-1000 flex items-end justify-center sm:items-center sm:p-4">
               <Dialog.Overlay asChild forceMount>
                 <motion.div
+                  data-ui="scrim"
                   className="absolute inset-0 bg-bg-app/60 backdrop-blur-[2px]"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -46,6 +47,7 @@ export function Modal({
               </Dialog.Overlay>
               <Dialog.Content asChild forceMount>
                 <motion.div
+                  data-ui="sheet"
                   className={cn(
                     'pop-surface relative z-10 flex max-h-[88vh] w-full flex-col overflow-hidden !rounded-b-none !rounded-t-[var(--radius-sheet)] sm:!rounded-[var(--radius-sheet)]',
                     widths[size],
@@ -59,7 +61,7 @@ export function Modal({
                   {title ? (
                     <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
                       <div className="min-w-0">
-                        <Dialog.Title className="mb-0 min-w-0 font-display text-[16px] leading-snug font-semibold tracking-[-0.01em] break-words text-text-primary">
+                        <Dialog.Title data-ui="sheet-title" className="mb-0 min-w-0 font-display text-[16px] leading-snug font-semibold tracking-[-0.01em] break-words text-text-primary">
                           {title}
                         </Dialog.Title>
                         {description && (

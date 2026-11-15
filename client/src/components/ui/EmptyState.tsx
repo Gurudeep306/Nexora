@@ -18,7 +18,7 @@ export function EmptyState({
   className?: string
 }) {
   return (
-    <div className={cn('flex flex-col items-center justify-center px-6 py-14 text-center animate-fade-in', className)}>
+    <div data-ui="empty" className={cn('flex flex-col items-center justify-center px-6 py-14 text-center animate-fade-in', className)}>
       {/* A quiet, neutral well around the glyph: no blurred colour blob. */}
       {typeof icon === 'string' ? (
         <IconBadge name={icon} box="lg" tone="neutral" />
@@ -27,7 +27,7 @@ export function EmptyState({
           {icon}
         </div>
       )}
-      <p className="mt-4 mb-0 font-display text-[15px] font-semibold tracking-[-0.01em] text-text-primary">{title}</p>
+      <p data-ui="empty-title" className="mt-4 mb-0 font-display text-[15px] font-semibold tracking-[-0.01em] text-text-primary">{title}</p>
       {description && <p className="mx-auto mt-1.5 mb-0 max-w-sm text-[13px] leading-relaxed text-text-secondary text-pretty">{description}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>

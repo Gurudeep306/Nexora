@@ -1,0 +1,166 @@
+/* A subject's table of contents (SubjectContents.tsx) and the journal header
+   of the subject page. Tokens only. */
+@layer components {
+  .sx-toc {
+    display: grid;
+    gap: 2.5rem;
+  }
+  @media (min-width: 1024px) {
+    .sx-toc {
+      grid-template-columns: 17rem minmax(0, 1fr);
+      gap: 4rem;
+    }
+  }
+  .sx-toc-index {
+    align-self: start;
+  }
+  @media (min-width: 1024px) {
+    .sx-toc-index {
+      position: sticky;
+      top: 5rem;
+      max-height: calc(100dvh - 7rem);
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+  }
+  @media (max-width: 1023px) {
+    .sx-toc-index ol {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+      column-gap: 1.5rem;
+    }
+  }
+  .sx-toc-link {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.5rem 0 0.5rem 0.875rem;
+    font-family: var(--ed-sans);
+    font-size: 0.875rem;
+    color: var(--ed-muted);
+    text-decoration: none;
+    transition: color 300ms var(--ed-ease);
+  }
+  .sx-toc-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 2px;
+    border-radius: 1px;
+    background: var(--ed-clay);
+    transform: scaleY(0);
+    transition: transform 450ms var(--ed-ease);
+  }
+  .sx-toc-link:hover,
+  .sx-toc-link.is-on {
+    color: var(--ed-ink);
+  }
+  .sx-toc-link.is-on::before {
+    transform: scaleY(1);
+  }
+  .sx-toc-num {
+    width: 2.25rem;
+    flex-shrink: 0;
+    font-size: 1rem;
+  }
+
+  .sx-chapter {
+    scroll-margin-top: 5rem;
+  }
+  .sx-chapter + .sx-chapter {
+    margin-top: 4rem;
+  }
+  .sx-chapter-h {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin: 0;
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+  @media (min-width: 768px) {
+    .sx-chapter-h {
+      font-size: 2.25rem;
+    }
+  }
+  .sx-chapter-num {
+    min-width: 2.5rem;
+    color: var(--ed-muted);
+    font-size: 0.75em;
+  }
+  .sx-lessons {
+    border-top: 1px solid var(--ed-line);
+  }
+  .sx-lessons > li {
+    border-bottom: 1px solid var(--ed-line);
+  }
+  .sx-lesson {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.75rem 0;
+    text-align: left;
+    color: var(--ed-ink);
+    cursor: pointer;
+    background: transparent;
+  }
+  .sx-lesson:hover .ed-ui {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+  .sx-lesson:focus-visible {
+    outline: 2px solid var(--ed-focus);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .sx-lesson.is-locked .ed-ui {
+    color: var(--ed-muted);
+  }
+  .sx-lesson-no {
+    width: 2.75rem;
+    flex-shrink: 0;
+    font-size: 12px;
+  }
+  .sx-lesson-state {
+    display: inline-flex;
+    width: 2.5rem;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    color: var(--ed-muted);
+  }
+  .sx-done {
+    display: inline-grid;
+    place-items: center;
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: 999px;
+    color: var(--color-state-success);
+    box-shadow: inset 0 0 0 1px currentColor;
+  }
+  .sx-next {
+    color: var(--ed-ink-2);
+    font-style: italic;
+  }
+
+  /* The header: kicker, serif title, lead, a progress hairline. */
+  .sx-progress {
+    display: block;
+    height: 2px;
+    max-width: 28rem;
+    background: var(--ed-line);
+  }
+  .sx-progress > span {
+    display: block;
+    height: 100%;
+    background: var(--ed-ink);
+  }
+  .sx-progress.is-done > span {
+    background: var(--ed-clay);
+  }
+}

@@ -1,0 +1,306 @@
+/* Home ("Today"): the journal front page. Tokens only (--ed-* read the theme). */
+@layer components {
+  .today {
+    display: grid;
+    gap: 4rem;
+    padding-bottom: 2rem;
+  }
+  @media (min-width: 768px) {
+    .today {
+      gap: 6rem;
+    }
+  }
+
+  /* 1. Masthead */
+  .today-masthead {
+    padding-top: 0.5rem;
+  }
+  .today-greeting {
+    font-size: 2.25rem;
+    color: var(--ed-ink);
+    text-wrap: balance;
+  }
+  @media (min-width: 768px) {
+    .today-greeting {
+      font-size: 3rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .today-greeting {
+      font-size: 3.5rem;
+    }
+  }
+  .today-next {
+    max-width: 44rem;
+  }
+
+  /* 2. The spread */
+  .today-spread {
+    display: grid;
+    gap: 3rem;
+    padding: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .today-spread {
+      padding: 2.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .today-spread {
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: 4rem;
+      padding: 3rem;
+    }
+  }
+  .today-spread .ed-label {
+    color: var(--ed-muted);
+  }
+  .today-title-link {
+    display: inline-block;
+    margin-top: 0.25rem;
+    color: var(--ed-ink);
+    text-decoration: none;
+  }
+  .today-title-link:hover .ed-h2 {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.14em;
+  }
+  .today-progress {
+    display: block;
+    height: 2px;
+    background: color-mix(in oklab, var(--ed-ink) 14%, transparent);
+  }
+  .today-progress > span {
+    display: block;
+    height: 100%;
+    background: var(--ed-ink);
+  }
+  .today-figure {
+    margin-top: 2.5rem;
+  }
+  .today-figure .lp-cell {
+    background: var(--ed-card);
+  }
+  .today-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    color: var(--ed-ink);
+    text-decoration: none;
+    transition: color 300ms var(--ed-ease);
+  }
+  .today-row > svg {
+    color: var(--ed-muted);
+    transition: transform 300ms var(--ed-ease), color 300ms var(--ed-ease);
+  }
+  .today-row:hover > svg {
+    color: var(--ed-ink);
+    transform: translateX(3px);
+  }
+  .today-done {
+    display: inline-grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    color: var(--color-state-success);
+    box-shadow: inset 0 0 0 1px currentColor;
+    flex-shrink: 0;
+  }
+  .today-spread .ed-rows > * + * {
+    border-color: color-mix(in oklab, var(--ed-ink) 14%, transparent);
+  }
+
+  /* 3. Ledger */
+  .today-figures {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    .today-figures {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 2rem;
+    }
+  }
+  .today-figure-col {
+    border-top: 1px solid var(--ed-line);
+    padding-top: 1rem;
+    min-width: 0;
+  }
+  .today-figure-col .ed-figure {
+    overflow-wrap: anywhere;
+  }
+  .today-rung {
+    display: block;
+    height: 10px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--ed-ink) 7%, transparent);
+    overflow: hidden;
+  }
+  .today-rung-fill {
+    display: block;
+    height: 100%;
+    background: var(--ed-ink-2);
+    transform-origin: left;
+    border-radius: inherit;
+  }
+  .today-rung-fill.is-here {
+    background: var(--ed-clay);
+  }
+
+  /* 4. Week */
+  .today-week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.5rem;
+    max-width: 44rem;
+  }
+  @media (min-width: 640px) {
+    .today-week {
+      gap: 1rem;
+    }
+  }
+  .today-day {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  .today-stack {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 4px;
+    height: 72px;
+    border-bottom: 1px solid var(--ed-line);
+    padding-bottom: 4px;
+  }
+  .today-stack > span,
+  .today-key {
+    display: block;
+    height: 2px;
+    border-radius: 1px;
+    transform-origin: left;
+  }
+  .today-stack .is-solved,
+  .today-key.is-solved {
+    background: var(--ed-ink);
+  }
+  .today-stack .is-read,
+  .today-key.is-read {
+    background: var(--ed-line-strong);
+  }
+  .today-key {
+    width: 18px;
+  }
+  .today-day-label {
+    color: var(--ed-muted);
+    text-align: center;
+    position: relative;
+  }
+  .today-day.is-today .today-day-label {
+    color: var(--ed-ink);
+    font-weight: 600;
+  }
+  .today-day.is-today .today-day-label::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: -0.75rem;
+    width: 14px;
+    height: 2px;
+    margin-left: -7px;
+    background: var(--ed-clay);
+    border-radius: 1px;
+  }
+  .today-day.is-future .today-stack {
+    border-bottom-style: dashed;
+  }
+
+  /* 5. Rooms */
+  .today-rooms {
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 640px) {
+    .today-rooms {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1024px) {
+    .today-rooms {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+  .today-room {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    transition: border-color 300ms var(--ed-ease);
+  }
+  .today-room:hover {
+    border-color: var(--ed-line-strong);
+  }
+  .today-room-name {
+    font-size: 1.625rem;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+  }
+  .today-room-link {
+    color: var(--ed-ink);
+    text-decoration: none;
+  }
+  .today-room-link:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.14em;
+  }
+
+  /* 6. Field notes */
+  .today-note {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.875rem 0;
+    color: var(--ed-ink);
+    text-decoration: none;
+  }
+  .today-note:hover em {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.14em;
+  }
+  .today-note-time {
+    width: 6.5rem;
+    flex-shrink: 0;
+    font-size: 12px;
+  }
+  @media (max-width: 520px) {
+    .today-note {
+      flex-wrap: wrap;
+      gap: 0.25rem 1rem;
+    }
+    .today-note-time {
+      width: 100%;
+    }
+  }
+  .today-verdict {
+    flex-shrink: 0;
+  }
+  .today-verdict.is-success {
+    color: var(--color-state-success);
+  }
+  .today-verdict.is-error {
+    color: var(--color-state-error);
+  }
+  .today-verdict.is-warning {
+    color: var(--color-state-warning);
+  }
+  .today-verdict.is-muted {
+    color: var(--ed-muted);
+  }
+}

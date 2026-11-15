@@ -34,3 +34,4 @@ export {
   PopoverContent,
   PopoverClose,
 } from './Menu'
+export { Sparkline } from './Sparkline'

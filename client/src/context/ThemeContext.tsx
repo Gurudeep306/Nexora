@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { DEFAULT_LOOK, lookAttributes, sanitizeLook, type Look } from '@/theme/look'
+import { DEFAULT_LOOK, hiveLook, isHivePath, lookAttributes, sanitizeLook, type Look } from '@/theme/look'
 import { PALETTE_BY_ID, DEFAULT_PALETTE, resolveMode, type Palette, type ThemeMode } from '@/theme/palettes'
 import { oklchToHex } from '@/theme/color'
 import { loadCodeFont, loadUiFont } from '@/theme/fontLoaders'
@@ -28,6 +28,10 @@ interface ThemeValue {
   /** The mode the user wants (preference resolved against the OS). */
   preferredMode: ThemeMode
   look: Look
+  /** The look actually on the page: `look`, except inside Hive (see hiveLook). */
+  shown: Look
+  /** Hive's route calls this while mounted, so Hive keeps its pre-journal look. */
+  setHiveScope: (on: boolean) => void
   palette: Palette
   /** Change part of the look; the result is validated. */
   setLook: (patch: Partial<Look>) => void
@@ -77,6 +81,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [system, setSystem] = useState<ThemeMode>(systemMode)
   const [look, setLookState] = useState<Look>(readLook)
   const [recentThemes, setRecent] = useState<string[]>(readRecent)
+  const [hiveScope, setHiveScope] = useState(() => isHivePath(window.location.pathname))
+  const shown = useMemo(() => (hiveScope ? hiveLook(look) : look), [hiveScope, look])
 
   useEffect(() => {
     const mq = window.matchMedia?.('(prefers-color-scheme: light)')
@@ -86,33 +92,33 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return () => mq.removeEventListener('change', onChange)
   }, [])
 
-  const palette = PALETTE_BY_ID.get(look.theme) ?? PALETTE_BY_ID.get(DEFAULT_PALETTE)!
+  const palette = PALETTE_BY_ID.get(shown.theme) ?? PALETTE_BY_ID.get(DEFAULT_PALETTE)!
   const preferredMode: ThemeMode = appearance === 'system' ? system : appearance
   const mode = resolveMode(palette, preferredMode)
   const modeLocked = !(palette.dark && palette.light)
 
   useEffect(() => {
     const root = document.documentElement
-    for (const [k, v] of Object.entries(lookAttributes(look, mode))) {
+    for (const [k, v] of Object.entries(lookAttributes(shown, mode))) {
       if (v === undefined) root.removeAttribute(k)
       else root.setAttribute(k, v)
     }
     root.classList.toggle('dark', mode === 'dark')
     const bg = palette[mode]?.bg[0]
     if (bg) document.querySelector('meta[name="theme-color"]')?.setAttribute('content', oklchToHex(bg))
-  }, [look, mode, palette])
+  }, [shown, mode, palette])
 
   useEffect(() => {
-    void loadUiFont(look.font)
-  }, [look.font])
+    void loadUiFont(shown.font)
+  }, [shown.font])
   useEffect(() => {
-    void loadCodeFont(look.codeFont)
-  }, [look.codeFont])
+    void loadCodeFont(shown.codeFont)
+  }, [shown.codeFont])
   // A style can set its headings in a face of its own (Editorial's serif).
   useEffect(() => {
-    const extra = STYLE_BY_ID.get(look.style)?.displayFont
+    const extra = STYLE_BY_ID.get(shown.style)?.displayFont
     if (extra) void loadUiFont(extra)
-  }, [look.style])
+  }, [shown.style])
   // Solutions are a small corner of the app — fetch their face only once a
   // solution actually mounts (gate/solution/GateSolution.tsx), not on every page.
 
@@ -166,13 +172,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       modeLocked,
       preferredMode,
       look,
+      shown,
+      setHiveScope,
       palette,
       setLook,
       applyLook: setLook,
       resetLook,
       recentThemes,
     }),
-    [appearance, setAppearance, cycle, mode, modeLocked, preferredMode, look, palette, setLook, resetLook, recentThemes],
+    [appearance, setAppearance, cycle, mode, modeLocked, preferredMode, look, shown, palette, setLook, resetLook, recentThemes],
   )
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }

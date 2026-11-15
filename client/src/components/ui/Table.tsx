@@ -4,13 +4,13 @@ import { cn } from '@/lib/utils'
 export function Table({ className, ...props }: HTMLAttributes<HTMLTableElement>) {
   return (
     <div className="w-full overflow-x-auto">
-      <table className={cn('w-full border-collapse text-sm', className)} {...props} />
+      <table data-ui="table" className={cn('w-full border-collapse text-sm', className)} {...props} />
     </div>
   )
 }
 
 export function THead({ className, ...props }: HTMLAttributes<HTMLTableSectionElement>) {
-  return <thead className={cn('[&_tr]:border-b [&_tr]:border-border/20', className)} {...props} />
+  return <thead data-ui="thead" className={cn('[&_tr]:border-b [&_tr]:border-border/20', className)} {...props} />
 }
 
 export function TBody({ className, ...props }: HTMLAttributes<HTMLTableSectionElement>) {

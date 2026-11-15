@@ -26,9 +26,10 @@ export default function LearnPage() {
   if (!view || tab === 'subjects')
     return (
       <div>
-        <header className="mb-10">
-          <h1 className="m-0 text-[32px] leading-tight font-semibold tracking-[-0.03em] text-text-primary md:text-[40px]">Learn</h1>
-          <p className="mt-2 mb-0 max-w-[60ch] text-[15px] text-text-secondary">Pick up where you left off, or start a subject: lessons, its skill tree and practice sit together.</p>
+        <header className="mb-12 md:mb-16">
+          <p className="ed-label ed-muted m-0">The Library</p>
+          <h1 className="ed-title mt-3 mb-0">Learn</h1>
+          <p className="ed-lead mt-3 mb-0 max-w-[60ch]">Pick up where you left off, or open a subject: its lessons, skill tree and practice sit together.</p>
         </header>
         <LearnHome />
       </div>
@@ -40,8 +41,9 @@ export default function LearnPage() {
         <div className="mb-3">
           <BackButton />
         </div>
-        <h1 className="m-0 text-[30px] leading-tight font-semibold tracking-[-0.03em] text-text-primary md:text-[36px]">{view.title}</h1>
-        <p className="mt-2 mb-0 max-w-[60ch] text-[15px] text-text-secondary">{view.line}</p>
+        <p className="ed-label ed-muted m-0">The Library</p>
+        <h1 className="ed-title mt-3 mb-0">{view.title}</h1>
+        <p className="ed-lead mt-3 mb-0 max-w-[60ch]">{view.line}</p>
       </header>
       {tab === 'dsa' ? <CourseOverview /> : tab === 'sysdesign' ? <SystemDesignStudio /> : tab === 'tutorials' ? <TutorialsPanel /> : <PathsPanel />}
     </div>
