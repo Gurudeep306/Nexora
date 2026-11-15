@@ -66,7 +66,7 @@ export function CourseOverview() {
                       <div className="min-w-0 flex-1">
                         <p className="mb-0.5 flex items-center gap-2 text-[15px] font-semibold text-text-primary">
                           {t.title}
-                          {!t.load && <span className="rounded-full bg-bg-surface-3 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-text-muted uppercase">In the works</span>}
+                          {!t.load && <span className="rounded-full bg-bg-surface-3 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-text-secondary uppercase">In the works</span>}
                         </p>
                         <p className="mb-0 line-clamp-2 text-[12.5px] leading-snug text-text-muted">{t.blurb}</p>
                       </div>
@@ -91,7 +91,7 @@ export function CourseOverview() {
                     {body}
                   </Link>
                 ) : (
-                  <div key={t.id} className="card p-4 opacity-75">
+                  <div key={t.id} className="card border-dashed p-4" aria-label={`${t.title}, in the works`}>
                     {body}
                   </div>
                 )

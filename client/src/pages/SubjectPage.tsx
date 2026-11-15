@@ -1,14 +1,13 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { ArrowRight, BookOpen, CalendarCheck, ChevronRight, Clock, Lock, PenLine, RefreshCw, RotateCcw, Telescope } from 'lucide-react'
+import { ArrowRight, ChevronRight, Lock, RefreshCw, RotateCcw } from 'lucide-react'
 import { Button, Card, CardContent, ErrorState, LoadingBlock, RankGlyph, Tabs } from '@/components/ui'
 import { prefetchApi, useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 import { useAgentPageContext } from '@/context/AgentContext'
 import { cn, formatNumber } from '@/lib/utils'
-import { Icon } from '@/components/icon/Icon'
 import { SkillGraph } from '@/components/nexus/SkillGraph'
 import { WeeklyPool } from '@/components/nexus/WeeklyPool'
 import { TitleTrack } from '@/components/nexus/TitleTrack'
@@ -19,6 +18,7 @@ import { loadProgress, loadTree, progressNow, quickNexus, treeNow } from '@/comp
 import { NexusPalette } from '@/components/nexus/NexusPalette'
 import { GoalMenu, useGoal, usePaletteHotkey } from '@/components/nexus/extras'
 import { HistorySpark, StudyPlanView, SubjectMiniMap } from '@/components/nexus/SubjectExtras'
+import { SubjectContents } from '@/components/nexus/SubjectContents'
 import { fmtMinutes, nextLesson, studyPlan } from '@/components/nexus/insights'
 import type { NodeInsight } from '@/components/nexus/NodeExtras'
 import { useToast } from '@/components/ui'
@@ -49,6 +49,9 @@ function useSubjectRoute() {
   return { subject: subject ?? (pathname.startsWith('/learn/dsa') ? 'dsa' : ''), node: node ?? null }
 }
 
+type Tab = 'contents' | 'tree' | 'plan' | 'ranks' | 'board'
+const VIEWS: Tab[] = ['contents', 'tree', 'plan', 'ranks', 'board']
+
 export default function SubjectPage() {
   const { subject, node: nodeParam } = useSubjectRoute()
   const reduce = useReducedMotion()
@@ -56,7 +59,8 @@ export default function SubjectPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const username = user?.username ?? ''
-  const [tab, setTab] = useState<'tree' | 'plan' | 'ranks' | 'board'>('tree')
+  // Contents (the table of contents) by default; ?view=tree opens the skill tree.
+  const [tab, setTab] = useState<Tab>(() => (VIEWS.includes(new URLSearchParams(location.search).get('view') as Tab) ? (new URLSearchParams(location.search).get('view') as Tab) : 'contents'))
   const [revision, setRevision] = useState(false)
   const toast = useToast()
 
@@ -282,8 +286,6 @@ export default function SubjectPage() {
   const notesHref = cluster?.gate?.notes && notesOpen.data?.some((x) => x.id === cluster.gate!.notes) ? `/gate/notes/${cluster.gate.notes}` : null
   const roadmap = roadmapApi.data
   const currentZone = isDsa ? player.level : (zones.find((z) => z.current)?.level ?? 1)
-  const R = 30
-  const C = 2 * Math.PI * R
   const minutes = Object.fromEntries(Object.entries(ins?.nodes ?? {}).map(([id, x]) => [id, x.min]))
   const weight = Object.fromEntries(Object.entries(ins?.nodes ?? {}).map(([id, x]) => [id, x.w?.marks ?? 0]))
   const names = Object.fromEntries(nodes.map((n) => [n.id, n.name]))
@@ -356,106 +358,82 @@ export default function SubjectPage() {
       transition={{ duration: reduce ? 0.15 : 0.34, ease: [0.4, 0, 0.2, 1] }}
     >
       {/* Nexus › Stream › Subject */}
-      <nav aria-label="Where you are" className="mb-3 flex flex-wrap items-center gap-1 text-[12px] text-text-muted">
-        <Link to="/nexus" className="hover:text-text-primary">
+      <nav aria-label="Where you are" className="ed-ui-sm ed-muted mb-8 flex flex-wrap items-center gap-1.5">
+        <Link to="/nexus" className="ed-link">
           Nexus
         </Link>
         <ChevronRight className="size-3" aria-hidden="true" />
-        <span className="font-semibold" style={stream ? { color: stream.hue } : undefined}>
-          {stream?.name ?? 'Stream'}
-        </span>
+        <span>{stream?.name ?? 'Stream'}</span>
         <ChevronRight className="size-3" aria-hidden="true" />
-        <span className="text-text-primary">{nexus.subject?.name}</span>
+        <span className="ed-ink" aria-current="page">
+          {nexus.subject?.name}
+        </span>
       </nav>
 
-      {/* Hero */}
-      <header className="mb-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+      {/* Header: kicker, serif title, lead, progress, the one clay action */}
+      <header className="mb-12 grid gap-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
         <div className="min-w-0">
-          {stream && (
-            <span
-              className="mb-2 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold tracking-wider uppercase"
-              style={{ color: stream.hue, borderColor: `color-mix(in oklab, ${stream.hue} 40%, transparent)`, background: `color-mix(in oklab, ${stream.hue} 8%, transparent)` }}
-            >
-              <span className="size-1.5 rounded-full" style={{ background: stream.hue }} aria-hidden="true" />
-              {stream.name}
+          <p className="ed-label ed-muted m-0">{stream?.name ?? (isDsa ? 'The DSA course' : 'Subject')}</p>
+          <h1 className="ed-title mt-3 mb-0">{nexus.subject?.name}</h1>
+          {nexus.subject?.description && <p className="ed-lead mt-3 mb-0 max-w-[68ch]">{nexus.subject.description}</p>}
+          <div className="mt-6">
+            <span className={cn('sx-progress', pct >= 100 && 'is-done')} aria-hidden="true">
+              <span style={{ width: `${pct}%` }} />
             </span>
-          )}
-          <h1 className="mb-2 font-display text-3xl font-semibold tracking-tight text-text-primary sm:text-[34px]">{nexus.subject?.name}</h1>
-          <p className="mb-4 line-clamp-2 max-w-[68ch] text-[15px] leading-relaxed text-text-secondary">{nexus.subject?.description}</p>
-          <div className="flex flex-wrap gap-2">
+            <p className="ed-mono ed-muted mt-2 mb-0 text-[12px]">
+              {done} of {nodes.length} {isDsa ? 'skills' : 'lessons'} mastered · {pct}%
+              {ins ? ` · about ${fmtMinutes(ins.remainingMin)} left` : ''}
+            </p>
+          </div>
+          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
             {nextNode ? (
-              <Button variant="primary" size="md" className="nx-press" onClick={() => setSelectedId(nextNode.id)}>
+              <button type="button" className="ed-btn ed-btn-clay nx-press" onClick={() => setSelectedId(nextNode.id)}>
                 Continue · {nextNode.name} <ArrowRight className="size-4" aria-hidden="true" />
-              </Button>
+              </button>
             ) : (
-              <Button variant="primary" size="md" className="nx-press" disabled>
-                Every skill mastered
-              </Button>
+              <span className="ed-ui ed-ink-2">Every skill mastered.</span>
             )}
-            {notesHref && (
-              <Link to={notesHref}>
-                <Button variant="outline" size="md" className="nx-press">
-                  <BookOpen className="size-4" aria-hidden="true" /> GATE notes
-                </Button>
-              </Link>
-            )}
+            <button type="button" className="ed-link ed-ui cursor-pointer" onClick={() => setTab('tree')}>
+              Skill tree
+            </button>
             {cluster?.gate?.pyq && (
-              <Link to={`/gate/practice?subject=${encodeURIComponent(cluster.gate.pyq)}`}>
-                <Button variant="outline" size="md" className="nx-press">
-                  <PenLine className="size-4" aria-hidden="true" /> PYQs
-                </Button>
+              <Link to={`/gate/practice?subject=${encodeURIComponent(cluster.gate.pyq)}`} className="ed-link ed-ui">
+                Practice
               </Link>
             )}
             {isDsa && (
-              <Link to="/learn?tab=dsa">
-                <Button variant="outline" size="md" className="nx-press">
-                  <BookOpen className="size-4" aria-hidden="true" /> DSA lessons
-                </Button>
+              <Link to="/problems" className="ed-link ed-ui">
+                Practice
+              </Link>
+            )}
+            {notesHref && (
+              <Link to={notesHref} className="ed-link ed-ui">
+                GATE notes
+              </Link>
+            )}
+            {isDsa && (
+              <Link to="/learn?tab=dsa" className="ed-link ed-ui">
+                DSA lessons
               </Link>
             )}
             {todayFirst && todayFirst !== nextNode?.id && (
-              <Button variant="outline" size="md" className="nx-press" onClick={() => setSelectedId(todayFirst)}>
-                <CalendarCheck className="size-4" aria-hidden="true" /> Today
-              </Button>
+              <button type="button" className="ed-link ed-ui cursor-pointer" onClick={() => setSelectedId(todayFirst)}>
+                Today’s plan
+              </button>
             )}
-            <Link to={`/nexus?focus=${encodeURIComponent(subject)}`}>
-              <Button variant="ghost" size="md" className="nx-press">
-                <Telescope className="size-4" aria-hidden="true" /> View in Nexus
-              </Button>
-            </Link>
-            <Button variant="ghost" size="md" className="nx-press" onClick={() => refetch()} aria-label="Refresh">
+            <button type="button" className="ed-icon-btn" onClick={() => refetch()} aria-label="Refresh">
               <RefreshCw className={cn('size-4', loading && 'animate-spin')} aria-hidden="true" />
-            </Button>
+            </button>
           </div>
         </div>
-        {/* The subject rank */}
-        <div className="flex items-center gap-4 lg:justify-end" aria-label="Subject rank">
-          <div className="relative size-[76px] shrink-0">
-            <svg className="absolute inset-0 -rotate-90" width="76" height="76" aria-hidden="true">
-              <circle cx="38" cy="38" r={R} fill="none" stroke="var(--color-border)" strokeWidth="5" />
-              <circle cx="38" cy="38" r={R} fill="none" stroke="var(--color-accent-brand)" strokeWidth="5" strokeLinecap="round" strokeDasharray={`${(C * pct) / 100} ${C}`} className="nx-ring-in" />
-            </svg>
-            <span className="absolute inset-0 flex items-center justify-center font-display text-lg text-text-primary tabular-nums">{pct}%</span>
-          </div>
+        {/* The subject rank: an ink seal and one line */}
+        <div className="flex items-center gap-4 lg:max-w-xs lg:justify-end" aria-label="Subject rank">
+          <RankGlyph level={isDsa ? player.level : (rank?.tierIndex ?? 0) + 1} size={44} animated={false} />
           <div className="min-w-0">
-            <p className="mb-0 flex items-center gap-2 font-display text-[15px] tracking-wide text-text-primary">
-              <RankGlyph level={isDsa ? player.level : (rank?.tierIndex ?? 0) + 1} size={22} animated={false} />
-              {isDsa ? `LVL ${player.level} · ${player.name}` : rank ? `${rank.tier} · ${rank.title}` : nexus.subject?.short}
+            <p className="ed-ui m-0 font-medium">
+              {isDsa ? `Level ${player.level} · ${player.name}` : rank ? `${rank.tier} · ${rank.title}` : nexus.subject?.short}
             </p>
-            <p className="mt-1 mb-0 font-mono text-[12px] text-text-muted tabular-nums">
-              {done}/{nodes.length} skills mastered{isDsa ? ` · ${formatNumber(player.xp)} XP` : ''}
-              {ins ? (
-                <span className="ml-2 inline-flex items-center gap-1">
-                  <Clock className="size-3" aria-hidden="true" /> ≈ {fmtMinutes(ins.remainingMin)} left
-                </span>
-              ) : null}
-            </p>
-            {ins && ins.history.length > 1 && (
-              <div className="mt-1.5">
-                <HistorySpark points={ins.history} />
-              </div>
-            )}
-            <p className="mt-0.5 mb-0 text-[12px] text-text-secondary">
+            <p className="ed-caption ed-muted mt-1 mb-0">
               {isDsa ? (
                 player.xpGated || player.probGated ? (
                   <>Next rift: {player.xpGated ? `${formatNumber(Math.max(0, player.xpForNext - player.xpInLevel))} XP` : ''}{player.xpGated && player.probGated ? ' and ' : ''}{player.probGated ? `${Math.max(0, player.probsForNext - player.probsInLevel)} solves` : ''}</>
@@ -464,29 +442,34 @@ export default function SubjectPage() {
                 )
               ) : rank?.toNext ? (
                 <>
-                  Next: <span className="font-semibold text-text-primary">{rank.toNext.tier}</span> at {rank.toNext.at}% · about {rank.toNext.concepts} concept{rank.toNext.concepts === 1 ? '' : 's'}
+                  Next: {rank.toNext.tier} at {rank.toNext.at}% · about {rank.toNext.concepts} concept{rank.toNext.concepts === 1 ? '' : 's'}
                 </>
               ) : rank?.coreDone ? (
-                'Master — every core skill done.'
+                'Master: every core skill done.'
               ) : (
                 'Top rank reached.'
               )}
             </p>
+            {ins && ins.history.length > 1 && (
+              <div className="mt-2">
+                <HistorySpark points={ins.history} />
+              </div>
+            )}
           </div>
         </div>
       </header>
 
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <Tabs
-          variant="pills"
           items={[
-            { id: 'tree', label: '/tree', icon: <Icon name="map" className="size-3.5" aria-hidden="true" /> },
-            { id: 'plan', label: '/plan', icon: <Icon name="calendar" className="size-3.5" aria-hidden="true" /> },
-            ...(isDsa ? [{ id: 'ranks', label: '/ranks', icon: <Icon name="trophy" className="size-3.5" aria-hidden="true" /> }] : []),
-            { id: 'board', label: '/leaderboard', icon: <Icon name="users" className="size-3.5" aria-hidden="true" /> },
+            { id: 'contents', label: 'Contents' },
+            { id: 'tree', label: 'Skill tree' },
+            { id: 'plan', label: 'Plan' },
+            ...(isDsa ? [{ id: 'ranks', label: 'Ranks' }] : []),
+            { id: 'board', label: 'Leaderboard' },
           ]}
           active={tab}
-          onChange={(id) => setTab(id as 'tree' | 'plan' | 'ranks' | 'board')}
+          onChange={(id) => setTab(id as Tab)}
         />
         {tab === 'tree' && (
           <div className="flex flex-wrap items-center gap-2">
@@ -498,7 +481,17 @@ export default function SubjectPage() {
         )}
       </div>
 
-      {tab === 'plan' ? (
+      {tab === 'contents' ? (
+        <SubjectContents
+          zones={zones}
+          nodes={nodes}
+          minutes={minutes}
+          zoneWord={isDsa ? 'Zone' : 'Chapter'}
+          nextId={nextNode?.id ?? null}
+          onOpen={(id) => setSelectedId(id)}
+          aside={structure ? <div className="ed-card-sm p-5">{<SubjectMiniMap structure={structure} subject={subject} />}</div> : undefined}
+        />
+      ) : tab === 'plan' ? (
         <StudyPlanView subject={subject} nodes={planNodes} names={names} minutes={minutes} weight={weight} examDate={examDate} onPick={(id) => setSelectedId(id)} />
       ) : tab === 'ranks' ? (
         statsApi.data ? <TitleTrack stats={statsApi.data} /> : <LoadingBlock rows={5} />

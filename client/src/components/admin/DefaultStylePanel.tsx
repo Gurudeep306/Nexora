@@ -5,7 +5,7 @@ import { api, ApiError } from '@/lib/api'
 import { useSite } from '@/context/SiteContext'
 import { useTheme } from '@/context/ThemeContext'
 import { cn } from '@/lib/utils'
-import { STYLES } from '@/theme/styles'
+import { DEFAULT_STYLE, STYLES } from '@/theme/styles'
 import { PALETTE_BY_ID, resolveMode } from '@/theme/palettes'
 import { StyleSpecimen, styleLook } from '@/components/look/StylesSection'
 import { Panel } from './kit'
@@ -16,12 +16,13 @@ export function DefaultStylePanel() {
   const { status, refresh } = useSite()
   const { look, preferredMode } = useTheme()
   const [busy, setBusy] = useState<string | null>(null)
-  const current = status?.defaultStyle ?? 'studio'
+  // No setting means the house style (Field Journal).
+  const current = status?.defaultStyle ?? DEFAULT_STYLE
 
   const save = async (id: string) => {
     setBusy(id)
     try {
-      await api.put('/api/admin/site/default-style', { style: id === 'studio' ? null : id })
+      await api.put('/api/admin/site/default-style', { style: id === DEFAULT_STYLE ? null : id })
       toast.success('Default style saved', 'New visitors see it from their next page load.')
       void refresh()
     } catch (e) {

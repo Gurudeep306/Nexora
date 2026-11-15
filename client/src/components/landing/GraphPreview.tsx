@@ -1,3 +1,4 @@
+import './landing.css'
 import { cn } from '@/lib/utils'
 import { Narration, Player } from './player'
 import { useStepper } from './useStepper'

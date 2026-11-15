@@ -39,10 +39,18 @@ export interface DesignStyle {
 
 export const STYLES: DesignStyle[] = [
   {
+    id: 'journal',
+    name: 'Field Journal',
+    tagline: 'Warm paper, set like a journal',
+    about: 'Parchment and ivory, an editorial serif, hairlines instead of shadows and one clay action per screen. The NexoraGuru house style.',
+    bundle: { theme: 'parchment', font: 'geist', codeFont: 'jetbrains', radius: 'rounded', cardStyle: 'flat', pattern: 'none' },
+    displayFont: 'newsreader',
+  },
+  {
     id: 'studio',
     name: 'Studio',
     tagline: 'Precise and quiet',
-    about: 'Hairline edges, neutral ink and nothing in the way. The NexoraGuru default.',
+    about: 'Hairline edges, neutral ink and nothing in the way.',
     bundle: { theme: 'midnight', font: 'geist', codeFont: 'jetbrains', radius: 'rounded', cardStyle: 'soft', pattern: 'none' },
   },
   {
@@ -150,7 +158,7 @@ export const STYLES: DesignStyle[] = [
   },
 ]
 
-export const DEFAULT_STYLE = 'studio'
+export const DEFAULT_STYLE = 'journal'
 export const STYLE_BY_ID = new Map(STYLES.map((s) => [s.id, s]))
 
 export const PATTERNS = [

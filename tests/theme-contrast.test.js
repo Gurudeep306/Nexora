@@ -86,7 +86,7 @@ test('sanitizeLook: defaults, validation, v2 → v3 migration and v3 round-trip'
   assert.deepEqual(sanitizeLook({ theme: 'no-such-theme', font: 42, radius: '<script>' }), DEFAULT_LOOK);
 
   const v2 = {
-    v: 3, style: 'editorial', pattern: 'grain', theme: 'nord', accent: 'teal', font: 'manrope', codeFont: 'fira', solutionFont: 'mali', textSize: 'large',
+    v: 4, style: 'editorial', pattern: 'grain', theme: 'nord', accent: 'teal', font: 'manrope', codeFont: 'fira', solutionFont: 'mali', textSize: 'large',
     cardStyle: 'gradient', radius: 'sharp', iconSet: 'remix', iconStyle: 'fill', iconContainer: 'outline', iconShape: 'circle',
   };
   assert.deepEqual(sanitizeLook(v2), v2);
@@ -123,7 +123,7 @@ test('sanitizeLook: migrates a v1 (wallpaper era) look', async () => {
     iconShape: 'hexagon', fontStyle: 'handwriting-caveat', fontSize: 'huge', fontColor: 'cyan',
   };
   const out = sanitizeLook(v1);
-  assert.equal(out.v, 3);
+  assert.equal(out.v, 4);
   assert.equal(out.theme, 'synthwave');
   assert.equal(out.accent, 'violet');
   assert.equal(out.cardStyle, 'glow');
@@ -137,7 +137,8 @@ test('sanitizeLook: migrates a v1 (wallpaper era) look', async () => {
   }
   // The old default (Aurora wallpaper, multicolour accent) lands on the new default.
   const d = sanitizeLook({ wallpaper: 'aurora', accent: 'multicolor', iconShape: 'free' });
-  assert.equal(d.theme, 'midnight');
+  assert.equal(d.theme, 'parchment');
+  assert.equal(d.style, 'journal');
   assert.equal(d.accent, 'theme');
   assert.equal(d.iconContainer, 'none');
 });
@@ -192,4 +193,43 @@ test('design styles: every bundle is a valid look and round-trips', async () => 
   for (const p of PATTERNS) assert.equal(sanitizeLook({ pattern: p.id }).pattern, p.id);
   assert.equal(sanitizeLook({ style: '<x>', pattern: 'nope' }).style, DEFAULT_STYLE);
   assert.equal(sanitizeLook({ style: '<x>', pattern: 'nope' }).pattern, 'none');
+});
+
+test('look migration v4: the untouched default moves to Field Journal, every choice is kept', async () => {
+  const { sanitizeLook, DEFAULT_LOOK } = await theme('look.ts');
+  assert.equal(DEFAULT_LOOK.style, 'journal');
+  assert.equal(DEFAULT_LOOK.theme, 'parchment');
+  const v3Default = { v: 3, style: 'studio', pattern: 'none', theme: 'midnight', accent: 'theme', font: 'geist', codeFont: 'jetbrains', solutionFont: 'off', textSize: 'large', cardStyle: 'soft', radius: 'rounded', iconSet: 'phosphor', iconStyle: 'regular', iconContainer: 'quiet', iconShape: 'squircle' };
+  const moved = sanitizeLook(v3Default);
+  assert.equal(moved.v, 4);
+  for (const k of ['style', 'theme', 'font', 'codeFont', 'radius', 'cardStyle', 'pattern']) assert.equal(moved[k], DEFAULT_LOOK[k], `untouched default: ${k}`);
+  assert.equal(moved.textSize, 'large', 'fields outside the style bundle are kept');
+  assert.equal(moved.iconSet, 'phosphor');
+  // Anything someone changed keeps their look.
+  for (const [k, v] of [['theme', 'nord'], ['radius', 'round'], ['cardStyle', 'elevated'], ['accent', 'teal'], ['font', 'manrope'], ['pattern', 'dots']]) {
+    const kept = sanitizeLook({ ...v3Default, [k]: v });
+    assert.equal(kept.style, 'studio', `changed ${k} keeps Studio`);
+    assert.equal(kept[k], v);
+  }
+  assert.equal(sanitizeLook({ ...v3Default, style: 'washi', theme: 'washi' }).style, 'washi');
+  // Once on v4, Studio + Midnight is a choice and stays.
+  assert.equal(sanitizeLook({ ...v3Default, v: 4 }).style, 'studio');
+  // Older looks with no style field were on Studio then.
+  assert.equal(sanitizeLook({ v: 2, theme: 'midnight', accent: 'theme', font: 'geist', codeFont: 'jetbrains', radius: 'rounded', cardStyle: 'soft' }).style, 'journal');
+  assert.equal(sanitizeLook({ v: 2, theme: 'dracula' }).style, 'studio', 'a chosen palette keeps the old Studio style');
+  // Idempotent.
+  assert.deepEqual(sanitizeLook(moved), moved);
+});
+
+test('Hive keeps its pre-journal look: journal shows as Studio on Midnight there, other styles unchanged', async () => {
+  const { hiveLook, isHivePath, DEFAULT_LOOK, sanitizeLook } = await theme('look.ts');
+  const shown = hiveLook(DEFAULT_LOOK);
+  assert.equal(shown.style, 'studio');
+  assert.equal(shown.theme, 'midnight');
+  assert.equal(shown.cardStyle, 'soft');
+  assert.equal(shown.textSize, DEFAULT_LOOK.textSize, 'personal settings outside the old default stay');
+  const nord = sanitizeLook({ v: 4, style: 'nordic', theme: 'fjord' });
+  assert.deepEqual(hiveLook(nord), nord);
+  assert.ok(isHivePath('/hive') && isHivePath('/hive/projects/1'));
+  assert.ok(!isHivePath('/hiveminds') && !isHivePath('/hub'));
 });
