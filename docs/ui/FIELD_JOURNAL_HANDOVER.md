@@ -217,7 +217,10 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
   cursor); the faded last line number is now readable. Axe 0.
   **Not done:** tests ticking one by one with a three-column diff, the
   paper-slip celebration (the existing confetti still runs), selection in oat
-  60%, phone tabs Problem · Code · Results, editorial reader style. The demo
+  60%, editorial reader style. (Phone tabs Problem · Code · Results are
+  done: Results hides the editor so tests and verdicts get the screen; Submit
+  stays in the top bar; an sr-only h1 keeps the page titled when the
+  statement tab is hidden; both resize handles carry aria values.) The demo
   cannot judge code or load statements (no network to judges), so check
   those parts where a judge is available.
 - **Contests, Workshop, Submissions, Bookmarks — partly done.** They
