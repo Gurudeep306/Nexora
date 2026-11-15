@@ -246,7 +246,7 @@ export function AiTestsPanel({ problemId, customProblemId, title, statement, sam
                         ).map(([k, v]) => (
                           <div key={k} className="min-w-0">
                             <p className="mb-1 text-[11.5px] text-foreground-faint">{k}</p>
-                            <pre className="max-h-48 overflow-auto rounded-md bg-[color-mix(in_oklab,var(--color-foreground)_4.5%,transparent)] px-2.5 py-1.5 font-mono text-[12px] leading-[1.5]">{v.length > 20000 ? `${v.slice(0, 20000)}\n… (${v.length.toLocaleString()} characters)` : v}</pre>
+                            <pre tabIndex={0} className="max-h-48 overflow-auto rounded-md bg-[color-mix(in_oklab,var(--color-foreground)_4.5%,transparent)] px-2.5 py-1.5 font-mono text-[12px] leading-[1.5]">{v.length > 20000 ? `${v.slice(0, 20000)}\n… (${v.length.toLocaleString()} characters)` : v}</pre>
                           </div>
                         ))}
                       </div>
