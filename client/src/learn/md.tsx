@@ -15,7 +15,9 @@ import type { Lang } from './engine/types'
 
 function math(src: string, display: boolean) {
   try {
-    return katex.renderToString(src, { displayMode: display, throwOnError: false, strict: false })
+    // Long inline maths may wrap after a comma or a plus on narrow screens.
+    const body = display ? src : src.replace(/(?<!\\)([,+])/g, '$1\\allowbreak ')
+    return katex.renderToString(body, { displayMode: display, throwOnError: false, strict: false })
   } catch {
     return src.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   }
@@ -220,7 +222,7 @@ export function Markdown({ md, className }: { md: string; className?: string }) 
           case 'code':
             return <CodeBlock key={i} code={n.code} lang={(['cpp', 'java', 'python', 'js', 'c'].includes(n.lang) ? n.lang : 'pseudo') as Lang} />
           case 'math':
-            return <div key={i} className="md-display" dangerouslySetInnerHTML={{ __html: math(n.tex, true) }} />
+            return <div key={i} className="md-display" tabIndex={0} dangerouslySetInnerHTML={{ __html: math(n.tex, true) }} />
           case 'table': {
             // Columns of plain numbers line up on the right (tabular figures).
             const numCols = n.head.map((_, k) => n.rows.length > 0 && n.rows.every((r) => MD_NUMBER.test(r[k] ?? '') && /\d/.test(r[k] ?? '')))

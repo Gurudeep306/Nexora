@@ -66,6 +66,9 @@
   }
   .qc-body {
     display: grid;
+    /* One column that may shrink below its widest child (long maths scrolls in
+       its own box instead of widening the card past a phone screen). */
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.25rem;
     padding: 1.25rem;
   }
@@ -211,6 +214,18 @@
     font-size: 1.0625rem;
     line-height: 1.5;
     overflow-wrap: anywhere;
+  }
+  /* Grids inside a card (options plus hint) shrink with it; an option's long
+     maths wraps after commas or scrolls in its own box. */
+  .qc-body :where(.grid, .qc-options) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .qc-option {
+    min-width: 0;
+  }
+  .qc-option-text :where(.katex-display) {
+    overflow-x: auto;
+    overflow-y: hidden;
   }
   .qc-option-text :where(p) {
     margin: 0;

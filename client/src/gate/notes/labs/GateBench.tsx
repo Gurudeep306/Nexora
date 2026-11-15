@@ -486,7 +486,7 @@ function SetsTool() {
           {f.error ?? g.error}
         </p>
       )}
-      <div className="lab-strips" role="table" aria-label="Minterm sets, one row per expression">
+      <div className="lab-strips" tabIndex={0} role="table" aria-label="Minterm sets, one row per expression">
         <div className="lab-strip lab-strip--head" role="row">
           <span className="lab-strip-label" role="columnheader">
             row

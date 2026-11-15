@@ -56,7 +56,9 @@ function tex(src: string, display: boolean) {
   let html = texCache.get(key)
   if (html === undefined) {
     try {
-      html = katex.renderToString(src, { displayMode: display, throwOnError: false, strict: 'ignore', output: 'htmlAndMathml' })
+      // Long inline maths may wrap after a comma or a plus on narrow screens.
+      const body = display ? src : src.replace(/(?<!\\)([,+])/g, '$1\\allowbreak ')
+      html = katex.renderToString(body, { displayMode: display, throwOnError: false, strict: 'ignore', output: 'htmlAndMathml' })
     } catch {
       html = src.replace(/&/g, '&amp;').replace(/</g, '&lt;')
     }

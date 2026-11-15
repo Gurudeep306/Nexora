@@ -322,7 +322,7 @@ function RaceView({ run, t }: { run: { res: RaceResult; ops: Ops; from: Ops }; t
           <span style={{ width: `${end ? (100 * t) / end : 100}%` }} />
         </span>
       </div>
-      <div className="lab-strips ar-inputs" role="group" aria-label="Operands entering both adders">
+      <div className="lab-strips ar-inputs" tabIndex={0} role="group" aria-label="Operands entering both adders">
         <Strip label="A" bits={[null, ...idx.map((i) => bitOf(ops.a, i))]} names={['', ...idx.map((i) => `a${i}`)]} />
         <Strip label="B" bits={[null, ...idx.map((i) => bitOf(ops.b, i))]} names={['', ...idx.map((i) => `b${i}`)]} />
         <Strip label={`y = B ⊕ ${ops.K}`} bits={[null, ...idx.map((i) => bitOf(ops.K ? pattern(~ops.b, n) : ops.b, i))]} names={['', ...idx.map((i) => `y${i}`)]} />
@@ -342,7 +342,7 @@ function RaceView({ run, t }: { run: { res: RaceResult; ops: Ops; from: Ops }; t
               <h3 className="ar-name">
                 {NAMES[kind]} <span className="ar-meta">({side.gates} gates, worst case {side.worst})</span>
               </h3>
-              <div className="lab-strips">
+              <div className="lab-strips" tabIndex={0}>
                 <div className="lab-strip" aria-hidden="true">
                   <span className="lab-strip-label">bit</span>
                   {carries.map((i) => (
