@@ -76,7 +76,7 @@ export const PROVIDER_STYLE = new Proxy({} as Record<string, { hue: string; shor
 
 export function ProviderGlyph({ provider, size = 'md', pulse, className }: { provider: ProviderId; size?: 'xs' | 'sm' | 'md' | 'lg'; pulse?: boolean; className?: string }) {
   const v = vendorStyle(provider)
-  const dims = { xs: 'size-4 text-[7.5px] rounded-[5px]', sm: 'size-5 text-[9px] rounded-md', md: 'size-7 text-[10.5px] rounded-lg', lg: 'size-10 text-[13px] rounded-xl' }[size]
+  const dims = { xs: 'size-4 text-[7.5px] rounded-sm', sm: 'size-5 text-[9px] rounded-md', md: 'size-7 text-[10.5px] rounded-lg', lg: 'size-10 text-[13px] rounded-xl' }[size]
   return (
     <span
       className={cn('relative inline-grid shrink-0 place-items-center font-semibold tracking-tight', dims, className)}

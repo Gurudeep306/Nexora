@@ -182,16 +182,16 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
 .hive-in { animation: hive-in 280ms var(--hive-ease) both; }
 
 
-/* Resizer handle between panes. */
-.hive-resizer {
-  position: relative;
-  width: 1px;
-  background: var(--hive-line);
-  cursor: col-resize;
-  flex-shrink: 0;
+/* Markdown inside chat / transcript. */
+.hive-prose { font-size: 14.5px; line-height: 1.7; color: var(--color-text-primary); }
+.hive-prose :where(p, ul, ol, pre, table, blockquote) { margin: 0.6em 0; }
+.hive-prose :where(h1, h2, h3) { margin: 1.1em 0 0.4em; font-weight: 600; letter-spacing: -0.01em; }
+.hive-prose :where(code):not(pre code) {
+  padding: 0.1em 0.35em;
+  border-radius: 5px;
+  font-size: 0.88em;
+  background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
 }
-.hive-resizer::after { content: ""; position: absolute; inset: 0 -4px; }
-.hive-resizer:hover, .hive-resizer[data-dragging="true"] { background: var(--color-accent-brand); }
 
 /* ── Agent avatars: live state rings ─────────────────────────────────── */
 .hive-av-ring {
@@ -255,6 +255,143 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
 .hive-root :is(a, button, [role="button"], [role="tab"], [role="switch"]):focus-visible { outline: 2px solid color-mix(in oklab, var(--color-accent-brand) 70%, transparent); outline-offset: 2px; }
 .hive-root :is(input, textarea):focus-visible { outline: none; }
 
+/* ═══ Premium pass: sharp edges + calm flat canvas, scoped to Hive only ═══
+   Radius and background are re-declared on .hive-root, so every Tailwind
+   rounded-* / bg-* utility and every --hv-* alias inside Hive resolves to
+   these values while the rest of NexoraGuru keeps its own theme. */
+.hive-root {
+  /* Sharp corners: the site's radius vars plus the Tailwind radius scale
+     that rounded-xs…4xl utilities read. */
+  --radius-control: 0.125rem;
+  --radius-card: 0.25rem;
+  --radius-sheet: 0.375rem;
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.1875rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.25rem;
+  --radius-2xl: 0.375rem;
+  --radius-3xl: 0.5rem;
+  --radius-4xl: 0.625rem;
+
+  /* Calm warm-charcoal canvas (dark is the default mode). */
+  --color-bg-app: oklch(0.15 0.004 95);
+  --color-bg-surface: oklch(0.195 0.004 95);
+  --color-bg-surface-2: oklch(0.235 0.005 95);
+  --color-bg-surface-3: oklch(0.275 0.005 95);
+  --color-bg-surface-4: oklch(0.315 0.005 95);
+  --color-bg-field: oklch(0.125 0.004 95);
+  --color-code-bg: oklch(0.235 0.005 95);
+  --color-bg-glass: color-mix(in oklab, oklch(0.235 0.005 95) 88%, transparent);
+  --color-bg-glass-hover: color-mix(in oklab, oklch(0.275 0.005 95) 80%, transparent);
+}
+:root[data-mode="light"] .hive-root,
+.light .hive-root {
+  /* Calm warm-paper canvas. */
+  --color-bg-app: oklch(0.978 0.0035 100);
+  --color-bg-surface: oklch(0.998 0.002 100);
+  --color-bg-surface-2: oklch(0.958 0.004 100);
+  --color-bg-surface-3: oklch(0.935 0.005 100);
+  --color-bg-surface-4: oklch(0.91 0.005 100);
+  --color-bg-field: oklch(0.948 0.004 100);
+  --color-code-bg: oklch(0.958 0.004 100);
+  --color-bg-glass: color-mix(in oklab, oklch(0.958 0.004 100) 88%, transparent);
+  --color-bg-glass-hover: color-mix(in oklab, oklch(0.935 0.005 100) 80%, transparent);
+}
+
+.hive-tile { border-radius: var(--radius-control); }
+.hive-chip { border-radius: var(--hv-r-chip); }
+.hive-kbd { border-radius: 3px; }
+.hive-station { border-radius: var(--radius-card); }
+
+/* Working state: a static 1px accent hairline instead of a travelling glow. */
+.hive-working::before {
+  background: color-mix(in oklab, var(--color-accent-brand) 60%, transparent);
+  animation: none;
+}
+/* Skeletons: a flat block that breathes, no shimmer sweep. */
+.hive-shimmer {
+  background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+  animation: hive-blink 1.5s ease-in-out infinite;
+}
+/* Gradient text stays solid. */
+.hive-shine,
+.hive-thinking-text {
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: var(--color-text-muted);
+  animation: none;
+}
+/* No halo / scan sweep / sheen decorations; the orbit dot keeps its place but
+   stops spinning. */
+.hive-av-halo,
+.hive-av-scan::after,
+.hive-station-glow { display: none; }
+.hive-av-orbit { animation: none; }
+.hive-floor { background: var(--color-bg-app); }
+
+/* Composer: flat surface, crisp 1px accent ring on focus, no drop shadow. */
+.hive-composer { box-shadow: none; }
+.hive-composer:focus-within {
+  border-color: var(--color-accent-brand);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-accent-brand) 65%, transparent);
+}
+
+/* Boot screen: mark + wordmark + a thin indeterminate accent bar. */
+.hive-boot-bar {
+  width: 160px;
+  height: 2px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--color-text-primary) 10%, transparent);
+}
+.hive-boot-bar > span {
+  display: block;
+  width: 40%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-accent-brand);
+  animation: hive-boot-slide 1.1s var(--hive-ease) infinite;
+}
+@keyframes hive-boot-slide {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(410%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hive-boot-bar > span { animation: none; width: 100%; }
+}
+
+/* Chat markdown inside Hive (the shared AiMarkdown): sharp hairline code
+   blocks with a language header + copy, scrollable tables, quiet rules. */
+.hive-root .ai-md :not(pre) > code { border-radius: 3px; }
+.hive-root .ai-code {
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-card);
+  background: var(--hive-sunken);
+  box-shadow: none;
+}
+.hive-root .ai-code-head {
+  padding: 5px 6px 5px 12px;
+  border-bottom: 1px solid var(--hv-border);
+  background: color-mix(in oklab, var(--color-text-primary) 5%, transparent);
+}
+.hive-root .ai-code-lang {
+  font: 600 10.5px/1 var(--font-mono, ui-monospace, monospace);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--hv-text-3);
+}
+.hive-root .ai-code pre { padding: 10px 12px 12px; }
+.hive-root .ai-copy { border-radius: var(--hv-r-chip); }
+.hive-root .ai-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-card);
+}
+.hive-root .ai-md blockquote { border-radius: 0 var(--hv-r-chip) var(--hv-r-chip) 0; }
+.hive-root .ai-md hr { border-top-color: var(--hv-border); }
+.hive-root .ai-md a { text-decoration-thickness: 1px; }
 /* Reduced motion: every Hive animation stops (state is still shown by words and icons). */
 @media (prefers-reduced-motion: reduce) {
   .hive-root *,

@@ -40,7 +40,7 @@ import { AgentMark } from '../agents'
 import { useHive } from '../store'
 import type { AgentSpec, GithubReport, LinkedRepo, Mode, Project, ProjectActivity, Task } from '../types'
 import { MODE_INFO, ProviderGlyph, StatusPill, fmtTokens, timeAgo } from '../ui'
-import { Empty, Row, RowList, SectionLabel, SegmentedControl, canTransition } from '../kit'
+import { Empty, PageHeader, Row, RowList, SectionLabel, SegmentedControl, canTransition } from '../kit'
 
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Something went wrong')
 
@@ -115,98 +115,102 @@ function ProjectHome({ project }: { project: Project }) {
       {/* Header */}
       <div className="flex flex-wrap items-start gap-4">
         <ProjectAvatar project={project} size={56} live={working.length} />
-        <div className="min-w-0 flex-1">
-          <h1 className="text-[26px] font-semibold tracking-[-0.02em]">{project.name}</h1>
-          {working.length > 0 && (
-            <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-              {[...new Map(working.map((a) => [`${a.provider}|${a.model}`, a])).values()].slice(0, 6).map((a) => (
-                <span key={`${a.provider}|${a.model}`} className="inline-flex items-center gap-1.5 rounded-full bg-text-primary/[0.05] py-0.5 pl-0.5 pr-2 text-[11.5px] ring-1 ring-[var(--hive-line)]">
-                  <AgentMark provider={a.provider} model={a.model} size={18} /> {a.model}
+        <PageHeader
+          className="min-w-0 flex-1 sm:items-center"
+          title={project.name}
+          titleClassName="text-[26px] tracking-[-0.02em]"
+          sub={project.description ?? undefined}
+          subClassName="text-[13.5px] text-text-secondary"
+          meta={
+            <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[12.5px] text-text-muted">
+              {working.length > 0 && (
+                <>
+                  {[...new Map(working.map((a) => [`${a.provider}|${a.model}`, a])).values()].slice(0, 6).map((a) => (
+                    <span key={`${a.provider}|${a.model}`} className="inline-flex items-center gap-1.5 rounded-full bg-text-primary/[0.05] py-0.5 pl-0.5 pr-2 text-[11.5px] ring-1 ring-[var(--hive-line)]">
+                      <AgentMark provider={a.provider} model={a.model} size={18} /> {a.model}
+                    </span>
+                  ))}
+                  <span className="text-[11.5px] text-accent-brand">{working.length} working now</span>
+                </>
+              )}
+              {project.repo_owner && (
+                <a href={`https://github.com/${project.repo_owner}/${project.repo_name}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-text-primary">
+                  <FolderGit2 className="size-3.5" /> {project.repo_owner}/{project.repo_name} <ExternalLink className="size-3" />
+                </a>
+              )}
+              {project.repo_owner && (
+                <span className="inline-flex items-center gap-1">
+                  <GitBranch className="size-3.5" /> {project.default_branch}
                 </span>
-              ))}
-              <span className="text-[11.5px] text-accent-brand">{working.length} working now</span>
+              )}
+              {machine && (
+                <span className="inline-flex items-center gap-1">
+                  <Server className={cn('size-3.5', machine.online ? 'text-state-success' : 'text-state-warning')} /> {machine.name}: <span className="font-mono">{project.folder}</span>
+                </span>
+              )}
+              {project.site_url && (
+                <a href={project.site_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-text-primary">
+                  <Globe className="size-3.5" /> {project.site_url.replace(/^https:\/\//, '')}
+                </a>
+              )}
             </div>
-          )}
-          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-text-muted">
-            {project.repo_owner && (
-              <a href={`https://github.com/${project.repo_owner}/${project.repo_name}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-text-primary">
-                <FolderGit2 className="size-3.5" /> {project.repo_owner}/{project.repo_name} <ExternalLink className="size-3" />
-              </a>
-            )}
-            {project.repo_owner && (
-              <span className="inline-flex items-center gap-1">
-                <GitBranch className="size-3.5" /> {project.default_branch}
-              </span>
-            )}
-            {machine && (
-              <span className="inline-flex items-center gap-1">
-                <Server className={cn('size-3.5', machine.online ? 'text-state-success' : 'text-state-warning')} /> {machine.name}: <span className="font-mono">{project.folder}</span>
-              </span>
-            )}
-            {project.site_url && (
-              <a href={project.site_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-text-primary">
-                <Globe className="size-3.5" /> {project.site_url.replace(/^https:\/\//, '')}
-              </a>
-            )}
-          </div>
-          {project.description && <p className="mt-2 max-w-2xl text-[13.5px] text-text-secondary">{project.description}</p>}
-        </div>
-        <div className="flex items-center gap-2">
-          {here.length > 0 && (
-            <span className="inline-flex items-center gap-1 text-[12px] text-text-muted">
-              <Users className="size-3.5" /> {here.length} here
-            </span>
-          )}
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() =>
-              hiveApi
-                .projectChat(project.id)
-                .then((r) => navigate(`/hive/chat/${r.convo.id}`))
-                .catch((e) => toast.error(e instanceof Error ? e.message : String(e)))
-            }
-          >
-            <MessagesSquare /> Chat
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => setSettings(true)}>
-            <Settings2 /> Settings
-          </Button>
-          <Button size="sm" variant="secondary" onClick={newSession}>
-            <Plus /> New session
-          </Button>
-        </div>
+          }
+          actions={
+            <>
+              {here.length > 0 && (
+                <span className="inline-flex items-center gap-1 text-[12px] text-text-muted">
+                  <Users className="size-3.5" /> {here.length} here
+                </span>
+              )}
+              <Button
+                size="sm"
+                onClick={() =>
+                  hiveApi
+                    .projectChat(project.id)
+                    .then((r) => navigate(`/hive/chat/${r.convo.id}`))
+                    .catch((e) => toast.error(e instanceof Error ? e.message : String(e)))
+                }
+              >
+                <MessagesSquare /> Chat
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => setSettings(true)}>
+                <Settings2 /> Settings
+              </Button>
+              <Button size="sm" onClick={newSession}>
+                <Plus /> New session
+              </Button>
+            </>
+          }
+        />
       </div>
 
       {/* Pulse */}
       <Pulse project={project} activity={activity} working={working.length} />
 
       {/* Repositories & where agents can work */}
-      <div className="hive-card mt-3 flex flex-col items-stretch gap-3 p-4 sm:flex-row sm:items-start">
-        <div className="min-w-0 flex-1 space-y-1.5">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text-muted">Repositories</div>
-          {!project.repo_owner && !repos.length && <div className="text-[12.5px] text-text-muted">This project lives in a folder on a machine. Link a GitHub repo to open PRs from Hive.</div>}
-          {project.repo_owner && (
-            <div className="flex items-center gap-2 text-[12.5px]">
-              <FolderGit2 className="size-3.5 text-accent-brand" />
-              <span className="font-mono">
-                {project.repo_owner}/{project.repo_name}
-              </span>
-              <span className="text-text-muted">· primary</span>
-            </div>
-          )}
-          {repos.map((r) => (
-            <RepoRow key={r.id} r={r} project={project} onDone={() => hiveApi.projectRepos(project.id).then((x) => setRepos(x.repos))} />
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-2">
+      <div className="hive-card mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 px-3.5 py-2.5">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text-muted">Repositories</span>
+        {!project.repo_owner && !repos.length && <span className="text-[12.5px] text-text-muted">Lives in a folder on a machine — link a GitHub repo to open PRs from Hive.</span>}
+        {project.repo_owner && (
+          <span className="inline-flex items-center gap-1.5 text-[12.5px]">
+            <FolderGit2 className="size-3.5 text-accent-brand" />
+            <span className="font-mono">
+              {project.repo_owner}/{project.repo_name}
+            </span>
+            <span className="text-text-muted">· primary</span>
+          </span>
+        )}
+        {repos.map((r) => (
+          <RepoRow key={r.id} r={r} project={project} onDone={() => hiveApi.projectRepos(project.id).then((x) => setRepos(x.repos))} />
+        ))}
+        <span className="ml-auto flex flex-wrap items-center gap-2">
           <LinkRepoButton project={project} onDone={() => hiveApi.projectRepos(project.id).then((x) => setRepos(x.repos))} />
           {!project.machine_id && (
             <Button size="sm" variant="secondary" onClick={() => navigate('/hive/machines')}>
               <Server /> Work on a machine
             </Button>
           )}
-        </div>
+        </span>
       </div>
 
       {/* New session */}
@@ -235,12 +239,13 @@ function ProjectHome({ project }: { project: Project }) {
         return (
           <section key={g.id} className="mt-5" aria-label={g.label}>
             {show === 'all' && <SectionLabel>{`${g.label} · ${list.length}`}</SectionLabel>}
-            <RowList label={g.label}>
+            <RowList label={g.label} className="hive-card p-1">
               {list.map((t) => {
                 const tok = (t.agents ?? []).reduce((n, a) => n + a.input_tokens + a.output_tokens, 0)
                 return (
                   <Row
                     key={t.id}
+                    className={cn(t.status === 'running' && 'hive-working')}
                     onOpen={() => openSession(t.id)}
                     leading={
                       <span className="flex w-12 -space-x-1.5">
@@ -410,7 +415,7 @@ function SessionComposer({ project, repos }: { project: Project; repos: LinkedRe
     }
   }
   return (
-    <div className="hive-composer mt-8 rounded-[22px] p-3">
+    <div className="hive-composer mt-8 rounded-2xl p-3">
       <textarea
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
@@ -550,8 +555,12 @@ export function NewProject({ presetOwner, presetRepo, presetName, onCreated }: {
     <div className="mx-auto w-full max-w-[860px] px-4 pb-20 pt-8 sm:px-8">
       {!onCreated && (
         <>
-          <h1 className="text-[26px] font-semibold tracking-[-0.02em]">New project</h1>
-          <p className="mt-1 text-[13.5px] text-text-muted">A project is a codebase agents work on: a GitHub repository (agents edit a safe copy and open PRs) or a folder on one of your machines (real files, commands, tests). You can link more repos later.</p>
+          <PageHeader
+            title="New project"
+            titleClassName="text-[26px] tracking-[-0.02em]"
+            sub="A project is a codebase agents work on: a GitHub repository (agents edit a safe copy and open PRs) or a folder on one of your machines (real files, commands, tests). You can link more repos later."
+            subClassName="text-[13.5px] text-text-muted"
+          />
         </>
       )}
       <div className="mt-6 grid grid-cols-2 gap-2 rounded-2xl bg-text-primary/[0.04] p-1.5">
@@ -730,15 +739,15 @@ export function LinkRepoButton({ project, onDone }: { project: Project; onDone: 
 
 export function RepoRow({ r, project, onDone }: { r: LinkedRepo; project: Project; onDone: () => void }) {
   return (
-    <div className="flex items-center gap-2 text-[12.5px]">
+    <span className="inline-flex items-center gap-1.5 text-[12.5px]">
       <FolderGit2 className="size-3.5 text-text-muted" />
       <span className="font-mono">
         {r.repo_owner}/{r.repo_name}
       </span>
       {r.role && <span className="text-text-muted">· {r.role}</span>}
-      <button type="button" onClick={() => hiveApi.removeProjectRepo(project.id, r.id).then(onDone)} className="ml-auto text-text-muted hover:text-state-error" aria-label="Unlink">
+      <button type="button" onClick={() => hiveApi.removeProjectRepo(project.id, r.id).then(onDone)} className="text-text-muted hover:text-state-error" aria-label="Unlink">
         <X className="size-3.5" />
       </button>
-    </div>
+    </span>
   )
 }
