@@ -277,7 +277,7 @@ export function ProblemPanel({
                                   <span>{k === 'input' ? 'Input' : 'Output'}</span>
                                   <CopyButton text={s[k] ?? ''} label={`Copy example ${i + 1} ${k}`} />
                                 </div>
-                                <pre className="max-h-72 overflow-auto px-3 pt-0.5 pb-2.5 font-mono text-[12.5px] leading-[1.55] text-foreground">{s[k] || ' '}</pre>
+                                <pre tabIndex={0} className="max-h-72 overflow-auto px-3 pt-0.5 pb-2.5 font-mono text-[12.5px] leading-[1.55] text-foreground">{s[k] || ' '}</pre>
                               </div>
                             ))}
                           </div>

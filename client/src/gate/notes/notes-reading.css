@@ -267,3 +267,8 @@
   text-transform: none;
   color: var(--read-muted);
 }
+
+/* The PYQ count pill keeps its light text on the accent. */
+.notes-root .notes-prose .notes-pyqs > summary strong {
+  color: var(--notes-paper);
+}

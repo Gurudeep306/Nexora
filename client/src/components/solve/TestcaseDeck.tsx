@@ -206,7 +206,7 @@ export function TestcaseDeck({ testcases, selectedIndex, onSelect, customInput, 
             ).map(([title, body]) => (
               <div key={title} className="min-w-0">
                 <p className="mb-1 text-[12px] text-foreground-faint">{title}</p>
-                <pre className="max-h-56 overflow-auto rounded-lg bg-[color-mix(in_oklab,var(--color-foreground)_4.5%,transparent)] px-3 py-2 font-mono text-[12.5px] leading-[1.55] text-foreground">{body || (title === 'Expected output' ? '— not set: Run shows the output only' : ' ')}</pre>
+                <pre tabIndex={0} className="max-h-56 overflow-auto rounded-lg bg-[color-mix(in_oklab,var(--color-foreground)_4.5%,transparent)] px-3 py-2 font-mono text-[12.5px] leading-[1.55] text-foreground">{body || (title === 'Expected output' ? '— not set: Run shows the output only' : ' ')}</pre>
               </div>
             ))}
           </div>
