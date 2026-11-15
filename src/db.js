@@ -618,6 +618,10 @@ async function initDb() {
     FOREIGN KEY (problem_rowid) REFERENCES problems(id)
   )`);
 
+  // Per-statement details beyond the HTML: starter code and examples
+  // (LeetCode), interactive / file I/O flags, tags, points.
+  await run("ALTER TABLE problem_statements ADD COLUMN extra TEXT DEFAULT '{}'").catch(() => {});
+
   // Problem statements are static, so translations of them never expire.
   // Caching keeps repeat requests off the (rate-limited) translation APIs.
   await run(`CREATE TABLE IF NOT EXISTS translation_cache (

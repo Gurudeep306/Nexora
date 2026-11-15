@@ -70,6 +70,7 @@ const RULES = [
 
   // ── site-wide actions ──────────────────────────────────────────
   ["POST", /^\/api\/sync$/, { perm: "problems.manage" }],
+  ["GET|PUT|POST", /^\/api\/problem-sources(\/.*)?$/, { perm: "problems.manage" }],
   // Personal settings / reset / Codeforces sync act only on your own data.
   ["POST", /^\/api\/(settings|reset-progress|sync-solved)$/, { login: true }],
 

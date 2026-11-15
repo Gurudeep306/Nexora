@@ -11,7 +11,6 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const path = require("path");
 const fetch = require("node-fetch");
-const cheerio = require("cheerio");
 // NOTE: puppeteer is required lazily inside getBrowser() — its module init can
 // hang in some environments and must never block server startup.
 const http = require("http");
@@ -57,16 +56,10 @@ const { attachHive } = require("./hive/hub");
 const { initForgeDb } = require("./forge-db");
 const { initLiveDb } = require("./live-db");
 const {
-  fetchCodeforcesProblems,
-  fetchCodechefProblems,
   fetchCodeforcesContests,
   fetchCodechefContests,
   fetchCodeforcesSolved,
-  fetchAtcoderProblems,
   fetchAtcoderContests,
-  fetchLeetcodeProblems,
-  fetchSpojProblems,
-  fetchProjectEulerProblems,
 } = require("./sync");
 const { judge, quickRun, LANG_CONFIG, hasRemote, REMOTE_ONLY } = require("./judge");
 const { createAiAssistRouter } = require("./ai-assist");
@@ -92,329 +85,10 @@ const DEPLOY = deployConfig();
 const SCRAPE_UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
-async function scrapePageHTTP(problem) {
-  if (problem.platform === "codeforces") return await _scrapeCF_HTTP(problem);
-  if (problem.platform === "codechef") return await _scrapeCC_HTTP(problem);
-  if (problem.platform === "atcoder") return await _scrapeAC_HTTP(problem);
-  if (problem.platform === "leetcode") return await _scrapeLC_HTTP(problem);
-  if (problem.platform === "spoj") return await _scrapeSPOJ_HTTP(problem);
-  if (problem.platform === "euler") return await _scrapeEuler_HTTP(problem);
-  return null;
-}
-
-/* ========== Statement HTML normalization ==========
-   Scraped statements keep whatever URLs the source site used: AtCoder stores
-   root-relative image paths and Codeforces hotlinks espresso.codeforces.com
-   (which rejects foreign referers). Rewrite every image to our own proxy and
-   make other URLs absolute so statements render identically everywhere. */
-/* Statement media (URL rewriting + the image-proxy allowlist) lives in its own
-   module so it can be unit-tested without booting the server. */
-const { isProxyableHost, normalizeStatement } = require("./statement-media");
-
-function _parseCFStatement($) {
-  const stmt = $(".problem-statement");
-  if (!stmt.length) return null;
-
-  const timeLimit = stmt
-    .find(".time-limit")
-    .text()
-    .replace("time limit per test", "")
-    .trim();
-  const memLimit = stmt
-    .find(".memory-limit")
-    .text()
-    .replace("memory limit per test", "")
-    .trim();
-  const inputSpec = stmt.find(".input-specification").html() || "";
-  const outputSpec = stmt.find(".output-specification").html() || "";
-  const note = stmt.find(".note").html() || "";
-
-  // Clone statement and remove header/specs/samples/note
-  const clone = stmt.clone();
-  clone
-    .find(
-      ".header, .input-specification, .output-specification, .sample-tests, .note",
-    )
-    .remove();
-  const statement = clone.html() || "";
-
-  const samples = [];
-  const inputs = stmt.find(".sample-test .input pre");
-  const outputs = stmt.find(".sample-test .output pre");
-  const preText = (el) => {
-    // Codeforces encodes sample line breaks as <br>; .text() alone collapses them.
-    const node = $(el).clone();
-    node.find("br").replaceWith("\n");
-    return node.text();
-  };
-  inputs.each((i, el) => {
-    samples.push({ input: preText(el), output: preText(outputs.eq(i)) || "" });
-  });
-
-  return {
-    statement,
-    inputSpec,
-    outputSpec,
-    note,
-    timeLimit,
-    memLimit,
-    samples,
-  };
-}
-
-function _cfProblemUrl(problem) {
-  const parts = problem.problem_id.match(/^(\d+)([A-Z]\d?)$/);
-  if (!parts) return null;
-  return `https://codeforces.com/problemset/problem/${parts[1]}/${parts[2]}`;
-}
-
-async function _scrapeCF_HTTP(problem) {
-  const url = _cfProblemUrl(problem);
-  if (!url) return null;
-  const resp = await fetch(url, {
-    headers: { "User-Agent": SCRAPE_UA, "Accept-Language": "en-US,en;q=0.9" },
-    timeout: 15000,
-  });
-  if (!resp.ok) return null;
-  const html = await resp.text();
-  return _parseCFStatement(cheerio.load(html));
-}
-
-/* Cloudflare blocks plain HTTP from most datacenter IPs. The Wayback Machine
-   archives Codeforces statements verbatim (images included), so it is a
-   reliable browser-free source when both the live site and mirrors fail. */
-async function _scrapeCF_Wayback(problem) {
-  const url = _cfProblemUrl(problem);
-  if (!url) return null;
-  const avail = await fetch(
-    `https://archive.org/wayback/available?url=${encodeURIComponent(url)}`,
-    { headers: { "User-Agent": SCRAPE_UA }, signal: AbortSignal.timeout(12000) },
-  );
-  if (!avail.ok) return null;
-  const snap = (await avail.json())?.archived_snapshots?.closest;
-  if (!snap?.available || !snap.url) return null;
-  const resp = await fetch(snap.url, {
-    headers: { "User-Agent": SCRAPE_UA },
-    signal: AbortSignal.timeout(25000),
-  });
-  if (!resp.ok) return null;
-  const $ = cheerio.load(await resp.text());
-  // Strip the Wayback playback toolbar so it never leaks into statements.
-  $('[id^="wm-"], [class^="wm-"], #donato, #playback, #resumePlay').remove();
-  return _parseCFStatement($);
-}
-
-async function _scrapeCC_HTTP(problem) {
-  const url = `https://www.codechef.com/api/contests/PRACTICE/problems/${problem.problem_id}`;
-  const resp = await fetch(url, {
-    headers: { "User-Agent": SCRAPE_UA, Accept: "application/json" },
-    timeout: 15000,
-  });
-  if (!resp.ok) return null;
-  const data = await resp.json();
-  if (!data || data.status === "error") return null;
-
-  const statement =
-    (data.problemComponents?.statement || data.body || "") +
-    (data.problemComponents?.constraints
-      ? "<h3>Constraints</h3>" + data.problemComponents.constraints
-      : "");
-  const inputSpec = data.problemComponents?.inputFormat
-    ? '<div class="section-title">Input</div>' +
-      data.problemComponents.inputFormat
-    : "";
-  const outputSpec = data.problemComponents?.outputFormat
-    ? '<div class="section-title">Output</div>' +
-      data.problemComponents.outputFormat
-    : "";
-  const samples = (data.problemComponents?.sampleTestCases || []).map((tc) => ({
-    input: tc.input,
-    output: tc.output,
-  }));
-
-  return {
-    statement,
-    inputSpec,
-    outputSpec,
-    note: "",
-    timeLimit: data.time_limit || "",
-    memLimit: data.source_size_limit || "",
-    samples,
-  };
-}
-
-async function _scrapeAC_HTTP(problem) {
-  const resp = await fetch(problem.url, {
-    headers: { "User-Agent": SCRAPE_UA },
-    timeout: 15000,
-  });
-  if (!resp.ok) return null;
-  const html = await resp.text();
-  const $ = cheerio.load(html);
-  const taskStmt = $("#task-statement");
-  if (!taskStmt.length) return null;
-
-  const lang = taskStmt.find(".lang-en").length
-    ? taskStmt.find(".lang-en")
-    : taskStmt;
-  const sections = lang.find(".part");
-  let statement = "",
-    inputSpec = "",
-    outputSpec = "",
-    noteText = "";
-  const samples = [];
-
-  sections.each((_, section) => {
-    const heading = $(section).find("h3").first().text().trim();
-    const content = $(section).html() || "";
-    if (
-      /^(problem\s*)?statement$/i.test(heading) ||
-      /^task\s*statement$/i.test(heading)
-    )
-      statement = content;
-    else if (/constraints/i.test(heading)) statement += content;
-    else if (/input/i.test(heading) && !/sample/i.test(heading))
-      inputSpec = content;
-    else if (/output/i.test(heading) && !/sample/i.test(heading))
-      outputSpec = content;
-    else if (/sample\s*input/i.test(heading)) {
-      const pre = $(section).find("pre").first();
-      if (pre.length) samples.push({ input: pre.text(), output: "" });
-    } else if (/sample\s*output/i.test(heading)) {
-      const pre = $(section).find("pre").first();
-      if (pre.length && samples.length > 0)
-        samples[samples.length - 1].output = pre.text();
-    } else if (/note|hint|explanation/i.test(heading)) noteText += content;
-  });
-
-  if (!statement && !inputSpec)
-    statement = lang.html() || taskStmt.html() || "";
-
-  const limitText = taskStmt.parent().text();
-  const timeMatch = limitText.match(/Time Limit\s*:\s*(\d+)\s*sec/i);
-  const memMatch = limitText.match(/Memory Limit\s*:\s*(\d+)\s*MB/i);
-
-  return {
-    statement,
-    inputSpec: inputSpec
-      ? '<div class="section-title">Input</div>' + inputSpec
-      : "",
-    outputSpec: outputSpec
-      ? '<div class="section-title">Output</div>' + outputSpec
-      : "",
-    note: noteText,
-    timeLimit: timeMatch ? timeMatch[1] + " sec" : "",
-    memLimit: memMatch ? memMatch[1] + " MB" : "",
-    samples,
-  };
-}
-
-/* ---------- LeetCode HTTP scraper (GraphQL) ---------- */
-async function _scrapeLC_HTTP(problem) {
-  try {
-    // Extract slug from URL
-    const slugMatch = problem.url.match(/\/problems\/([^/]+)/);
-    if (!slugMatch) return null;
-    const slug = slugMatch[1];
-
-    const query = `query questionData($titleSlug: String!) {
-      question(titleSlug: $titleSlug) {
-        content
-        difficulty
-        exampleTestcaseList
-        sampleTestCase
-      }
-    }`;
-    const resp = await fetch("https://leetcode.com/graphql", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "User-Agent": SCRAPE_UA },
-      body: JSON.stringify({ query, variables: { titleSlug: slug } }),
-      timeout: 15000,
-    });
-    if (!resp.ok) return null;
-    const data = await resp.json();
-    const q = data?.data?.question;
-    if (!q || !q.content) return null;
-
-    return {
-      statement: q.content,
-      inputSpec: "",
-      outputSpec: "",
-      note: "",
-      timeLimit: "",
-      memLimit: "",
-      samples: [],
-    };
-  } catch {
-    return null;
-  }
-}
-
-/* ---------- SPOJ HTTP scraper ---------- */
-async function _scrapeSPOJ_HTTP(problem) {
-  try {
-    const resp = await fetch(problem.url, {
-      headers: { "User-Agent": SCRAPE_UA },
-      timeout: 15000,
-    });
-    if (!resp.ok) return null;
-    const html = await resp.text();
-    const $ = cheerio.load(html);
-    const body = $("#problem-body");
-    if (!body.length) return null;
-
-    const statement = body.html() || "";
-    // Try to extract I/O from typical SPOJ format
-    const samples = [];
-    const inputPre = body.find("pre").eq(0);
-    const outputPre = body.find("pre").eq(1);
-    if (inputPre.length && outputPre.length) {
-      samples.push({ input: inputPre.text(), output: outputPre.text() });
-    }
-
-    return {
-      statement,
-      inputSpec: "",
-      outputSpec: "",
-      note: "",
-      timeLimit: "",
-      memLimit: "",
-      samples,
-    };
-  } catch {
-    return null;
-  }
-}
-
-/* ---------- Project Euler HTTP scraper ---------- */
-async function _scrapeEuler_HTTP(problem) {
-  try {
-    const idMatch = problem.problem_id.match(/PE(\d+)/);
-    if (!idMatch) return null;
-    const id = idMatch[1];
-    const resp = await fetch(`https://projecteuler.net/problem=${id}`, {
-      headers: { "User-Agent": SCRAPE_UA },
-      timeout: 15000,
-    });
-    if (!resp.ok) return null;
-    const html = await resp.text();
-    const $ = cheerio.load(html);
-    const content = $(".problem_content");
-    if (!content.length) return null;
-
-    return {
-      statement: content.html() || "",
-      inputSpec: "",
-      outputSpec: "",
-      note: "",
-      timeLimit: "",
-      memLimit: "",
-      samples: [],
-    };
-  } catch {
-    return null;
-  }
-}
+/* Statement media (URL rewriting + the image-proxy allowlist) and the
+   per-platform math rewrite live in ./statement-media; fetching statements
+   lives in ./sources (one module per judge). */
+const { normalizeStatement } = require("./statement-media");
 
 /* ========== Lazy Puppeteer Browser Pool (fallback only) ========== */
 let _browser = null;
@@ -1033,59 +707,30 @@ function achievementsSql() {
 /* ========== SYNC ========== */
 app.post("/api/sync", async (req, res) => {
   try {
-    const { platform } = req.body; // 'codeforces', 'codechef', or 'all'
+    // 'all' syncs every source that is switched on; a platform id syncs that one.
+    const sources = require("./sources");
+    const { platform } = req.body || {};
+    const off = await sources.disabledPlatforms();
+    const ids = platform === "all" || !platform ? sources.MODULES.filter((id) => !off.has(id)) : [String(platform)];
+    if (!ids.every((id) => sources.SOURCES[id])) return res.status(400).json({ ok: false, error: "Unknown platform" });
     let inserted = 0;
-    const doInsert = async (problems) => {
-      for (const p of problems) {
-        try {
-          await run(
-            `INSERT OR IGNORE INTO problems(platform,problem_id,title,url,rating,tags,category) VALUES(?,?,?,?,?,?,?)`,
-            [
-              p.platform,
-              p.problem_id,
-              p.title,
-              p.url,
-              p.rating,
-              p.tags,
-              p.category,
-            ],
-          );
-          inserted++;
-        } catch {}
+    let updated = 0;
+    const errors = {};
+    for (const id of ids) {
+      try {
+        const r = await sources.syncSource(id, { by: me() });
+        inserted += r.added;
+        updated += r.updated;
+      } catch (e) {
+        errors[id] = e.message;
       }
-    };
-
-    if (platform === "codeforces" || platform === "all") {
-      const cf = await fetchCodeforcesProblems();
-      await doInsert(cf);
     }
-    if (platform === "codechef" || platform === "all") {
-      const cc = await fetchCodechefProblems();
-      await doInsert(cc);
-    }
-    if (platform === "atcoder" || platform === "all") {
-      const ac = await fetchAtcoderProblems();
-      await doInsert(ac);
-    }
-    if (platform === "leetcode" || platform === "all") {
-      const lc = await fetchLeetcodeProblems();
-      await doInsert(lc);
-    }
-    if (platform === "spoj" || platform === "all") {
-      const sp = await fetchSpojProblems();
-      await doInsert(sp);
-    }
-    if (platform === "euler" || platform === "all") {
-      const pe = await fetchProjectEulerProblems();
-      await doInsert(pe);
-    }
-
     const total = (await get("SELECT COUNT(*) as c FROM problems")).c;
     await run(
       `INSERT OR REPLACE INTO settings(key,value) VALUES('last_sync',?)`,
       [new Date().toISOString()],
     );
-    res.json({ ok: true, inserted, total });
+    res.json({ ok: Object.keys(errors).length < ids.length, inserted, updated, total, errors });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
@@ -1118,6 +763,7 @@ app.get("/api/problems", async (req, res) => {
       maxRating: maxRating ? +maxRating : null,
       tag: tag ? String(tag) : "",
       search: search ? String(search) : "",
+      exclude: await require("./sources").disabledPlatforms(),
     };
     const matched = filterIndices(catalog, filters);
     const st = status && status !== "all" ? String(status) : "";
@@ -1205,8 +851,8 @@ app.get("/api/problems/:id", async (req, res) => {
 async function _saveStatement(problemId, data) {
   await run(
     `INSERT OR REPLACE INTO problem_statements
-    (problem_rowid, statement, input_spec, output_spec, note, time_limit, memory_limit, samples, scraped_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    (problem_rowid, statement, input_spec, output_spec, note, time_limit, memory_limit, samples, scraped_at, extra)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       problemId,
       data.statement || "",
@@ -1217,6 +863,7 @@ async function _saveStatement(problemId, data) {
       data.memLimit || "",
       JSON.stringify(data.samples || []),
       new Date().toISOString(),
+      JSON.stringify(data.extra || {}),
     ],
   );
 }
@@ -1418,6 +1065,13 @@ app.get("/api/problem-statement/:id", async (req, res) => {
         timeLimit: local.time_limit,
         memLimit: local.memory_limit,
         samples,
+        extra: (() => {
+          try {
+            return JSON.parse(local.extra || "{}");
+          } catch {
+            return {};
+          }
+        })(),
         platform: problem.platform,
         source: "local",
       });
@@ -1439,49 +1093,22 @@ app.get("/api/problem-statement/:id", async (req, res) => {
       } catch {}
     }
 
-    // 3. FAST: HTTP scrape with fetch+cheerio (<1s)
-    console.log(`[http-scrape] ${problem.platform} ${problem.problem_id}...`);
+    // 3. The platform's source module (API / page / mirror / archive).
     try {
-      const data = await scrapePageHTTP(problem);
-      if (data && (data.statement || "").trim().length > 10) {
+      const data = await require("./sources").fetchStatement(problem);
+      if (data && (data.statement || "").replace(/<[^>]+>/g, "").trim().length > 10) {
         await _saveStatement(problem.id, data);
-        console.log(
-          `[http-scrape] ✅ ${problem.problem_id} saved (${data.samples?.length || 0} samples)`,
-        );
         const norm = normalizeStatement(data, problem);
         return res.json({
           ok: true,
           ...norm,
+          extra: data.extra || {},
           platform: problem.platform,
-          source: "http",
+          source: "live",
         });
       }
     } catch (e) {
-      console.log(`[http-scrape] ✗ ${problem.problem_id}: ${e.message}`);
-    }
-
-    // 3b. ARCHIVE: Wayback Machine (Codeforces sits behind Cloudflare, which
-    //     rejects plain HTTP from most servers; the archive has verbatim copies)
-    if (problem.platform === "codeforces") {
-      console.log(`[wayback] ${problem.problem_id}...`);
-      try {
-        const data = await _scrapeCF_Wayback(problem);
-        if (data && (data.statement || "").trim().length > 10) {
-          await _saveStatement(problem.id, data);
-          console.log(
-            `[wayback] ✅ ${problem.problem_id} saved (${data.samples?.length || 0} samples)`,
-          );
-          const norm = normalizeStatement(data, problem);
-          return res.json({
-            ok: true,
-            ...norm,
-            platform: problem.platform,
-            source: "archive",
-          });
-        }
-      } catch (e) {
-        console.log(`[wayback] ✗ ${problem.problem_id}: ${e.message}`);
-      }
+      console.log(`[statement] ✗ ${problem.platform} ${problem.problem_id}: ${e.message}`);
     }
 
     // 4. SLOW FALLBACK: Puppeteer (for Cloudflare-protected pages)
@@ -1650,6 +1277,7 @@ app.get("/api/activity/:date", async (req, res) => {
 /* ========== TRANSLATE ========== (see src/ai-assist.js) */
 // Translation (with language detection + AI engine) and the coding coach.
 app.use(createAiAssistRouter({ get, all, run, aiLimiter }));
+app.use(require("./routes/sources").createSourcesRouter({ can, me, invalidateCatalog: () => require("./problem-catalog").invalidateCatalog() }));
 
 /* ========== TESTCASES ========== */
 
@@ -6575,7 +6203,8 @@ async function _backgroundScrape() {
     const catalog = await getCatalog();
     // Same priority as before: non-CF (fast HTTP) first, easiest first.
     const byRating = (a, b) => (a.rating ?? -1) - (b.rating ?? -1) || a.id - b.id;
-    const left = catalog.rows.filter((p) => !_bgSeen.has(p.id));
+    const off = await require("./sources").disabledPlatforms();
+    const left = catalog.rows.filter((p) => !_bgSeen.has(p.id) && !off.has(p.platform));
     const httpPending = left.filter((p) => p.platform !== "codeforces").sort(byRating).slice(0, BG_BATCH);
     const cfPending = left
       .filter((p) => p.platform === "codeforces")
@@ -6598,9 +6227,7 @@ async function _backgroundScrape() {
       try {
         // Use fast HTTP for non-CF, Puppeteer for CF
         let data;
-        if (problem.platform !== "codeforces") {
-          data = await scrapePageHTTP(problem);
-        }
+        data = await require("./sources").fetchStatement(problem).catch(() => null);
         if (!data || (data.statement || "").trim().length <= 10) {
           data = await scrapePage(problem);
         }
