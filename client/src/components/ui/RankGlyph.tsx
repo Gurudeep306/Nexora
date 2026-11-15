@@ -1,4 +1,3 @@
-import { useId } from 'react'
 import { cn } from '@/lib/utils'
 
 /**
@@ -115,7 +114,7 @@ export function RankGlyph({
   level,
   size = 32,
   className,
-  animated = true,
+  animated: _animated = true,
   title,
 }: {
   level: number
@@ -124,7 +123,6 @@ export function RankGlyph({
   animated?: boolean
   title?: string
 }) {
-  const id = useId().replace(/:/g, '')
   const tier = tierFor(level)
   // The SVG draws in currentColor and the <svg> sets color to the tier's
   // theme token, so the glyph follows the appearance and accent.
@@ -141,21 +139,8 @@ export function RankGlyph({
       aria-label={title ?? `Rank: ${tier.name}`}
     >
       <title>{title ?? `Rank ${tier.level} · ${tier.name}`}</title>
-      <defs>
-        <radialGradient id={`rg${id}`} cx="0.5" cy="0.4" r="0.7">
-          <stop offset="0" stopColor={c} stopOpacity="0.35" />
-          <stop offset="1" style={{ stopColor: 'var(--rank-ink)' }} stopOpacity="0.95" />
-        </radialGradient>
-        <filter id={`gl${id}`} x="-40%" y="-40%" width="180%" height="180%">
-          <feGaussianBlur stdDeviation={level >= 6 ? 2.2 : 1.2} result="b" />
-          <feMerge>
-            <feMergeNode in="b" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
       {/* Outer frame: hexagon, octagon from Zettabyte up */}
-      <polygon points={polygon(sides, 29, sides === 6 ? -90 : -67.5)} fill={`url(#rg${id})`} stroke={c} strokeWidth="2.5" />
+      <polygon points={polygon(sides, 29, sides === 6 ? -90 : -67.5)} fill={c} fillOpacity="0.1" stroke={c} strokeWidth="2" />
       {level >= 4 && (
         <polygon
           points={polygon(sides, 24, sides === 6 ? -90 : -67.5)}
@@ -165,14 +150,9 @@ export function RankGlyph({
           strokeWidth="1"
         />
       )}
-      {level >= 11 && animated && (
-        <circle cx="32" cy="32" r="27" fill="none" stroke={c} strokeWidth="1.5" strokeDasharray="4 6" opacity="0.8">
-          <animateTransform attributeName="transform" type="rotate" from="0 32 32" to="360 32 32" dur="12s" repeatCount="indefinite" />
-        </circle>
-      )}
-      <g filter={`url(#gl${id})`}>
-        <Core level={tier.level} c={c} />
-      </g>
+      {/* Top tiers: a quiet extra ring (still; no spinning, no glow). */}
+      {level >= 11 && <circle cx="32" cy="32" r="27" fill="none" stroke={c} strokeWidth="1" strokeDasharray="3 5" opacity="0.5" />}
+      <Core level={tier.level} c={c} />
     </svg>
   )
 }

@@ -137,7 +137,9 @@ async function runPiston(code, input, lang, { env = process.env, fetchImpl = glo
   try {
     const res = await fetchImpl(`${pistonUrl(env)}/api/v2/execute`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      // PISTON_TOKEN: sent as a bearer token when Piston sits on another machine
+      // behind a proxy that checks it (docs/ops/fast-judge.md).
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...(env.PISTON_TOKEN ? { Authorization: `Bearer ${env.PISTON_TOKEN}` } : {}) },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(timeout),
     });
