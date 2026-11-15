@@ -1109,6 +1109,9 @@ app.get("/api/problem-statement/:id", async (req, res) => {
     ]);
     if (!problem)
       return res.status(404).json({ ok: false, error: "Not found" });
+    // Someone is reading a Codeforces problem: get its official tests ready
+    // for their first submission (background, once per problem).
+    if (problem.platform === "codeforces") require("./sources/cf-dataset").fetchTests(problem.problem_id);
 
     // 1. Check local problem_statements table first (instant)
     const local = await get(
@@ -1499,6 +1502,26 @@ async function problemTestcases(problemId) {
     seen.add(k);
     cases.push(c);
   });
+  // Codeforces: the official tests (open dataset, exact-answer problems only),
+  // once they're cached. The first time, they're fetched in the background and
+  // this submission is judged on the examples.
+  const prob = await get("SELECT platform, problem_id FROM problems WHERE id=?", [problemId]);
+  if (prob?.platform === "codeforces") {
+    const ds = require("./sources/cf-dataset");
+    const official = await ds.cachedTests(prob.problem_id).catch(() => null);
+    if (official == null) ds.fetchTests(prob.problem_id);
+    let bytes = cases.reduce((n, c) => n + Buffer.byteLength(c.input), 0);
+    for (const [i, t] of (official || []).entries()) {
+      // Stay inside the judge's limits whatever the user added themselves.
+      if (cases.length >= MAX_JUDGE_TESTCASES || bytes + Buffer.byteLength(t.input) > MAX_JUDGE_INPUT_BYTES) break;
+      bytes += Buffer.byteLength(t.input);
+      const c = toCase({ input: t.input, output: t.output }, { id: undefined, label: `Official test ${i + 1}`, hidden: true });
+      const k = tcKey(c.input, c.expected_output);
+      if (isBlankCase(c) || seen.has(k)) continue;
+      seen.add(k);
+      cases.push(c);
+    }
+  }
   return cases;
 }
 

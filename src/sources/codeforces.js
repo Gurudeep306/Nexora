@@ -1,7 +1,7 @@
 // Codeforces: the official API for the problem list (names, ratings, tags,
 // solve counts), the problem page for statements. Codeforces sits behind
-// Cloudflare, which often refuses datacenter IPs, so statements fall back to
-// the mirror at mirror.codeforces.com and then to the Wayback Machine.
+// Cloudflare, which usually refuses servers, so statements fall back to the
+// open dataset (./cf-dataset.js) and then to an archived copy of the page.
 const { getJson, getText, load, preText, normalizeTime, normalizeMemory, blank } = require("./common");
 
 const ORIGIN = "https://codeforces.com";
@@ -74,22 +74,28 @@ function parse(html) {
 }
 
 async function statement(problem) {
+  // 1. The live page (it has the pictures), when Codeforces lets us in — briefly.
+  // 2. The open dataset (open-r1/codeforces, CC BY 4.0): text, maths, examples, limits.
+  // 3. An archived copy of the page, for problems the dataset doesn't have.
+  // The old mirror step is gone: mirror.codeforces.com no longer answers, and
+  // waiting on it made every blocked problem take ~45 s to fail.
   const tries = [
-    () => getText(problemUrl(problem), { timeoutMs: 15000, retries: 1 }),
-    () => getText(problemUrl(problem, "https://mirror.codeforces.com"), { timeoutMs: 15000, retries: 1 }),
+    async () => parse(await getText(problemUrl(problem), { timeoutMs: 10000, retries: 0 })),
+    async () => require("./cf-dataset").statement(problem),
     async () => {
-      const avail = await getJson(`https://archive.org/wayback/available?url=${encodeURIComponent(problemUrl(problem))}`, { timeoutMs: 12000, retries: 1 });
+      const avail = await getJson(`https://archive.org/wayback/available?url=${encodeURIComponent(problemUrl(problem))}`, { timeoutMs: 12000, retries: 0 });
       const snap = avail?.archived_snapshots?.closest;
       if (!snap?.available || !snap.url) throw new Error("No archived copy");
-      return getText(snap.url.replace(/^http:/, "https:"), { timeoutMs: 25000, retries: 1 });
+      return parse(await getText(snap.url.replace(/^http:/, "https:"), { timeoutMs: 20000, retries: 0 }));
     },
   ];
   let firstErr;
   for (const t of tries) {
     try {
-      const data = parse(await t());
+      const data = await t();
       if (data && data.statement.replace(/<[^>]+>/g, "").trim().length > 10) return data;
     } catch (e) {
+      if (process.env.DEBUG_SOURCES) console.error(`[codeforces] ${problem.problem_id} step failed:`, e.message);
       firstErr ||= e; // the problem page's own answer is the one worth reporting
     }
   }

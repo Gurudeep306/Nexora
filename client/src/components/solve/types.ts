@@ -63,6 +63,10 @@ export interface StatementExtra {
   /** 'function' (LeetCode: write a method), 'answer' (Project Euler: one number) — default stdin. */
   kind?: 'stdin' | 'function' | 'answer'
   interactive?: boolean
+  /** Where the text came from when it isn't the judge's own page (with its licence). */
+  source?: { name: string; url: string; license: string; note?: string }
+  /** The statement mentions a picture the copy we have doesn't include. */
+  figures?: boolean
   /** Non-standard input/output files (old Codeforces rounds). */
   files?: { input?: string; output?: string }
   examples?: { input: string; output: string; explanation?: string }[]
