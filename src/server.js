@@ -430,7 +430,7 @@ async function getBrowser() {
   }
   _browserLaunchPromise = require("puppeteer")
     .launch({
-      headless: "new",
+      headless: true,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
