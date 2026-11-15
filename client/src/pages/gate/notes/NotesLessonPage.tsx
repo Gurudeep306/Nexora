@@ -236,24 +236,26 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
         <div className={cn('nr-layout', prefs.treeHidden && 'is-tree-hidden')}>
           {/* Left: the subject's lessons */}
           <nav className="nr-tree" aria-label={`Lessons in ${subject.title}`}>
-            <div className="nr-tree-head">
-              <Link to={NOTES_ROUTES.subject(subject.id)} className="nr-tree-subject">
-                {subject.title}
-              </Link>
-              <button type="button" className="nr-icon" onClick={() => setPrefs({ treeHidden: true })} aria-label="Hide the lesson list" title="Hide lessons">
-                <Icon name="list" className="size-4" aria-hidden="true" />
-              </button>
-            </div>
-            {chapters ? <LessonTree subject={subject.id} chapters={chapters} current={lesson.id} progress={progressMap} /> : <LoadingBlock rows={3} />}
+            {prefs.treeHidden ? (
+              <MiniRail subject={subject.id} chapters={chapters} current={lesson.id} progress={progressMap} onExpand={() => setPrefs({ treeHidden: false })} />
+            ) : (
+              <>
+                <div className="nr-tree-head">
+                  <Link to={NOTES_ROUTES.subject(subject.id)} className="nr-tree-subject">
+                    {subject.title}
+                  </Link>
+                  <button type="button" className="nr-icon" onClick={() => setPrefs({ treeHidden: true })} aria-label="Collapse the lesson list" title="Collapse">
+                    <Icon name="list" className="size-4" aria-hidden="true" />
+                  </button>
+                </div>
+                {chapters ? <LessonTree subject={subject.id} chapters={chapters} current={lesson.id} progress={progressMap} /> : <LoadingBlock rows={3} />}
+              </>
+            )}
           </nav>
 
           {/* Centre: the lesson */}
           <div className="nr-main">
             <div className="nr-bar">
-              <button type="button" className="nr-icon nr-show-tree" onClick={() => setPrefs({ treeHidden: false })} title="Show lessons">
-                <Icon name="list" className="size-4" aria-hidden="true" />
-                <span>Lessons</span>
-              </button>
               <Crumbs
                 items={[
                   { label: 'Notes', to: NOTES_ROUTES.all },
@@ -419,4 +421,65 @@ function useScrollSpy(ids: string[]): string | null {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key])
   return active
+}
+
+/**
+ * The lesson list, collapsed: one ring per chapter (filled by how much of it
+ * is done) and, under the current chapter, a dot per lesson. Every mark is a
+ * link with its title on hover, so the subject stays one click away.
+ */
+function MiniRail({
+  subject,
+  chapters,
+  current,
+  progress,
+  onExpand,
+}: {
+  subject: string
+  chapters: ChapterSummary[] | null
+  current: string
+  progress: ReturnType<typeof useNotesProgress>
+  onExpand: () => void
+}) {
+  return (
+    <div className="nr-mini">
+      <button type="button" className="nr-icon" onClick={onExpand} aria-label="Show the lesson list" title="Show lessons">
+        <Icon name="list" className="size-4" aria-hidden="true" />
+      </button>
+      <ol>
+        {(chapters ?? []).map((ch) => {
+          const done = ch.lessons.filter((l) => progressOf(progress, subject, l.id).completed).length
+          const here = ch.lessons.some((l) => l.id === current)
+          const frac = ch.lessons.length ? done / ch.lessons.length : 0
+          return (
+            <li key={ch.id}>
+              <Link
+                to={NOTES_ROUTES.lesson(subject, (ch.lessons.find((l) => !progressOf(progress, subject, l.id).completed) ?? ch.lessons[0]).id)}
+                className={cn('nr-mini-ch', here && 'is-here')}
+                title={`Chapter ${ch.n}: ${ch.title} (${done}/${ch.lessons.length} done)`}
+                aria-label={`Chapter ${ch.n}: ${ch.title}, ${done} of ${ch.lessons.length} done`}
+                style={{ ['--p' as string]: `${Math.round(frac * 100)}%` }}
+              >
+                <span>{ch.n}</span>
+              </Link>
+              {here && (
+                <span className="nr-mini-lessons">
+                  {ch.lessons.map((l) => (
+                    <Link
+                      key={l.id}
+                      to={NOTES_ROUTES.lesson(subject, l.id)}
+                      className={cn('nr-mini-dot', l.id === current && 'is-current', progressOf(progress, subject, l.id).completed && 'is-done')}
+                      title={l.title}
+                      aria-label={l.title}
+                      aria-current={l.id === current ? 'page' : undefined}
+                    />
+                  ))}
+                </span>
+              )}
+            </li>
+          )
+        })}
+      </ol>
+    </div>
+  )
 }

@@ -287,10 +287,7 @@
     gap: 2.5rem;
   }
   .nr-layout.is-tree-hidden {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .nr-layout.is-tree-hidden > .nr-tree {
-    display: none;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
   }
 }
 @media (min-width: 1280px) {
@@ -299,7 +296,7 @@
     gap: 3rem;
   }
   .nr-layout.is-tree-hidden {
-    grid-template-columns: minmax(0, 1fr) 13.5rem;
+    grid-template-columns: 2.75rem minmax(0, 1fr) 13.5rem;
   }
 }
 
@@ -439,9 +436,22 @@
 .nr-main {
   min-width: 0;
 }
+/* The lesson spreads across the whole column (no narrow measure). */
 .nr-main > * {
-  max-width: 760px;
-  margin-inline: auto;
+  max-width: none;
+}
+.notes-root .nr-main .notes-prose {
+  max-width: none;
+  margin-inline: 0;
+}
+.notes-root .nr-main .notes-prose > :is(p, ul, ol, blockquote, .notes-h, .nm-display),
+.notes-root .nr-main .notes-prose :is(p, ul, ol, blockquote) {
+  max-width: none;
+}
+@media (min-width: 1536px) {
+  .notes-root .nr-main {
+    --read-size: 18px;
+  }
 }
 .nr-bar {
   display: flex;
@@ -644,4 +654,85 @@
   .nr-pager {
     display: none !important;
   }
+}
+
+/* Collapsed lesson list: chapter rings and lesson dots. */
+.nr-mini {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.nr-mini ol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nr-mini li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.nr-mini-ch {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: conic-gradient(var(--color-state-success) var(--p), var(--read-rule) 0);
+  color: var(--color-text-secondary) !important;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none !important;
+}
+.nr-mini-ch > span {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 999px;
+  background: var(--color-bg-app);
+}
+.nr-mini-ch:hover,
+.nr-mini-ch.is-here {
+  color: var(--color-text-primary) !important;
+}
+.nr-mini-ch.is-here > span {
+  box-shadow: inset 0 0 0 1.5px var(--read-accent);
+}
+.nr-mini-lessons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 0 4px;
+}
+.nr-mini-dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--read-rule-strong);
+  transition: transform var(--dur-fast) var(--ease-standard);
+}
+.nr-mini-dot:hover {
+  transform: scale(1.5);
+}
+.nr-mini-dot.is-done {
+  background: var(--color-state-success);
+}
+.nr-mini-dot.is-current {
+  height: 14px;
+  background: var(--read-accent);
+}
+.nr-mini-ch:focus-visible,
+.nr-mini-dot:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
