@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Bot, Pin, PinOff, Plus, Trash2, Brain } from 'lucide-react'
+import { Pin, PinOff, Plus, Trash2, Brain } from 'lucide-react'
+import { CopilotMark as Bot } from '../marks'
 import { Button, Input, Textarea, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'

@@ -80,12 +80,12 @@ export function ProviderGlyph({ provider, size = 'md', pulse, className }: { pro
   return (
     <span
       className={cn('relative inline-grid shrink-0 place-items-center font-semibold tracking-tight', dims, className)}
-      style={{ color: v.color, background: `color-mix(in oklab, ${v.color} 14%, var(--color-bg-surface))` }}
+      style={{ color: 'var(--hv-text-2, var(--color-text-secondary))', background: 'var(--hv-surface-2, var(--color-bg-surface))', boxShadow: 'inset 0 0 0 1px var(--hv-border, rgba(127,127,127,.2))' }}
       aria-label={v.name}
       title={v.name}
     >
       {v.mark}
-      {pulse && <span className="hive-ping absolute -right-0.5 -top-0.5 size-2 rounded-full ring-2 ring-bg-app" style={{ background: v.color }} />}
+      {pulse && <span className="hive-ping absolute -right-0.5 -top-0.5 size-2 rounded-full ring-2 ring-bg-app" style={{ background: 'var(--color-accent-brand)' }} />}
     </span>
   )
 }
@@ -305,7 +305,8 @@ export function IconTile({ hue, size = 40, className, children }: { hue: number;
   return (
     <span
       className={cn('grid shrink-0 place-items-center rounded-[var(--radius-control,12px)] border [&_svg]:size-[46%]', className)}
-      style={{ width: size, height: size, background: `oklch(62% 0.13 ${hue} / 0.14)`, borderColor: `oklch(62% 0.13 ${hue} / 0.32)`, color: `color-mix(in oklab, oklch(66% 0.15 ${hue}) 82%, var(--color-text-primary))` }}
+      data-hue={hue}
+      style={{ width: size, height: size, background: 'var(--hv-surface-2)', borderColor: 'var(--hv-border)', color: 'var(--hv-text-2)' }}
     >
       {children}
     </span>

@@ -7,7 +7,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Activity, ChevronDown, CircleCheck, CircleOff, Clock, EyeOff, FlaskConical, HeartPulse, KeyRound, Loader2, PauseCircle, RefreshCw, Snowflake, Sparkles, TriangleAlert, Zap } from 'lucide-react'
+import { ChevronDown, CircleCheck, CircleOff, Clock, EyeOff, FlaskConical, HeartPulse, KeyRound, Loader2, PauseCircle, RefreshCw, Snowflake, Sparkles, TriangleAlert, Zap } from 'lucide-react'
 import { Button, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { AgentMark } from '../agents'
@@ -241,16 +241,16 @@ export default function HealthPage() {
   )
 }
 
+/** Share of agents working: a thin ring with the percentage inside. No pulse — it isn't alive. */
 function Pulse({ ratio }: { ratio: number }) {
   const tone = ratio > 0.8 ? 'var(--color-state-success)' : ratio > 0.5 ? 'var(--color-state-warning)' : 'var(--color-state-error)'
   return (
-    <div className="relative grid size-24 place-items-center">
-      <span className="absolute inset-0 animate-ping rounded-full opacity-20" style={{ background: tone, animationDuration: '2.4s' }} />
+    <div className="relative grid size-20 place-items-center" role="meter" aria-valuenow={Math.round(ratio * 100)} aria-valuemin={0} aria-valuemax={100} aria-label="Agents working">
       <svg viewBox="0 0 100 100" className="absolute inset-0 -rotate-90">
-        <circle cx="50" cy="50" r="44" fill="none" stroke="color-mix(in oklab, var(--color-text-primary) 8%, transparent)" strokeWidth="8" />
-        <motion.circle cx="50" cy="50" r="44" fill="none" stroke={tone} strokeWidth="8" strokeLinecap="round" strokeDasharray={276.5} initial={{ strokeDashoffset: 276.5 }} animate={{ strokeDashoffset: 276.5 * (1 - ratio) }} transition={{ duration: 0.8, ease: EASE }} />
+        <circle cx="50" cy="50" r="45" fill="none" stroke="var(--hv-chart-grid)" strokeWidth="4" />
+        <motion.circle cx="50" cy="50" r="45" fill="none" stroke={tone} strokeWidth="4" strokeLinecap="round" strokeDasharray={282.7} initial={{ strokeDashoffset: 282.7 }} animate={{ strokeDashoffset: 282.7 * (1 - ratio) }} transition={{ duration: 0.8, ease: EASE }} />
       </svg>
-      <Activity className="relative size-7" style={{ color: tone }} />
+      <span className="relative text-[15px] font-semibold tabular-nums tracking-[-0.01em] text-[var(--hv-text-1)]">{Math.round(ratio * 100)}%</span>
     </div>
   )
 }
@@ -266,7 +266,7 @@ function KeyCard({ k, t, i, busy, onTest, verifying, onVerify, onHide }: { k: He
   const cd = left(k.cooldownUntil, t)
   const best = k.models.find((m) => m.model === k.defaultModel) ?? k.models[0]
   return (
-    <motion.div layout initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0, transition: { delay: Math.min(i, 10) * 0.025, duration: 0.22, ease: EASE } }} exit={{ opacity: 0 }} className="hive-card overflow-hidden" style={{ boxShadow: `inset 3px 0 0 ${H.tone}` }}>
+    <motion.div layout initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0, transition: { delay: Math.min(i, 10) * 0.025, duration: 0.22, ease: EASE } }} exit={{ opacity: 0 }} className="hive-card overflow-hidden" style={{ boxShadow: k.state === 'healthy' ? undefined : `inset 2px 0 0 ${H.tone}` }}>
       <div className="flex items-center gap-3 p-3.5">
         <div className="relative">
           <AgentMark provider={k.vendor} model={k.defaultModel} size={36} />

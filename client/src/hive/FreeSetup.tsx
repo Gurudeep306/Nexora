@@ -77,7 +77,7 @@ export function FreeSetup() {
           <p className="text-[12.5px] text-text-muted">Every source here has a free tier. Connect as many as you can — Hive spreads easy work across them and saves paid models for hard work.</p>
         </div>
         {instant.length > 0 && (
-          <button type="button" onClick={addInstant} disabled={!!busy} className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-state-success px-3.5 text-[13px] font-medium text-on-accent-brand shadow-sm hover:opacity-90 disabled:opacity-60">
+          <button type="button" onClick={addInstant} disabled={!!busy} className="inline-flex h-9 items-center gap-1.5 rounded-[var(--hv-r-btn)] border border-[var(--hv-border-strong)] bg-[var(--hv-surface-2)] px-3.5 text-[13px] font-medium text-[var(--hv-text-1)] transition-colors hover:bg-[var(--hv-surface-3)] disabled:opacity-60">
             {busy && instant.includes(busy) ? <Loader2 className="size-4 animate-spin" /> : <Zap className="size-4" />} Add {instant.length} that need no sign-up
           </button>
         )}
@@ -90,7 +90,7 @@ export function FreeSetup() {
           return (
             <li key={s.vendor} className={cn('flex flex-col gap-3 p-4 sm:flex-row sm:items-center', on && 'bg-state-success/[0.03]')}>
               <div className="flex min-w-0 flex-1 items-start gap-3">
-                <span className="grid size-9 shrink-0 place-items-center rounded-xl text-[12px] font-bold" style={{ color: `oklch(52% 0.14 ${st.hue})`, background: `oklch(70% 0.12 ${st.hue} / 0.14)` }}>
+                <span className="grid size-9 shrink-0 place-items-center rounded-xl text-[12px] font-bold" style={{ color: 'var(--hv-text-2)', background: 'var(--hv-surface-2)', boxShadow: 'inset 0 0 0 1px var(--hv-border)' }}>
                   {st.mark}
                 </span>
                 <div className="min-w-0">

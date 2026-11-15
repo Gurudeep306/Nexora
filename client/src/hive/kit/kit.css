@@ -186,3 +186,146 @@
   .hive-root .text-\[11px\],
   .hive-root .text-\[11\.5px\] { font-size: 12px; }
 }
+
+/* ── Live terminal ─────────────────────────────────────────────────────
+   One calm surface (a step below the page in dark, near-white in light),
+   hairline chrome, tabs like an editor's. No glow, no gradient. */
+.hive-root {
+  --hv-term-bg: color-mix(in oklab, var(--color-bg-app) 82%, black);
+}
+:root[data-mode="light"] .hive-root {
+  --hv-term-bg: color-mix(in oklab, var(--color-bg-app) 70%, white);
+}
+.hv-term {
+  background: var(--hv-term-bg);
+  color: var(--hv-text-1);
+}
+.hv-term-bar { background: color-mix(in oklab, var(--hv-term-bg) 92%, var(--hv-text-1)); }
+.hv-term-tab {
+  position: relative;
+  color: var(--hv-text-3);
+  border-right: 1px solid var(--hv-border-subtle);
+  transition: color var(--hv-d-fast) var(--hv-ease), background-color var(--hv-d-fast) var(--hv-ease);
+}
+.hv-term-tab:hover { color: var(--hv-text-2); }
+.hv-term-tab.is-active { color: var(--hv-text-1); background: var(--hv-term-bg); }
+.hv-term-tab.is-active::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -1px 0;
+  height: 1px;
+  background: var(--hv-term-bg);
+}
+.hv-term-tab.is-active::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1.5px;
+  background: var(--hv-accent);
+}
+.hv-term-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--hv-r-btn);
+  color: var(--hv-text-3);
+  transition: color var(--hv-d-fast) var(--hv-ease), background-color var(--hv-d-fast) var(--hv-ease);
+}
+.hv-term-icon:hover { color: var(--hv-text-1); background: var(--hv-border-subtle); }
+.hv-term-icon:focus-visible, .hv-term-tab:focus-visible, .hv-term-key:focus-visible { outline: 2px solid var(--hv-focus-ring); outline-offset: -2px; }
+/* Padding sits on .xterm itself: the fit addon subtracts it when sizing. */
+.hv-term-host .xterm { padding: 10px 6px 6px 12px; height: 100%; }
+.hv-term-host .xterm, .hv-term-host .xterm-viewport { background: transparent !important; }
+.hv-term-host .xterm-viewport { scrollbar-width: thin; }
+.hv-term-live { box-shadow: 0 0 0 3px color-mix(in oklab, var(--hv-success) 22%, transparent); }
+.hv-term-key {
+  flex-shrink: 0;
+  min-width: 40px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-btn);
+  font: 500 12px/1 var(--font-mono);
+  color: var(--hv-text-2);
+  background: var(--hv-surface-1);
+}
+.hv-term-key.is-on { color: var(--hv-accent-fg); background: var(--hv-accent); border-color: var(--hv-accent); }
+
+/* ── Agent avatar ──────────────────────────────────────────────────────
+   Neutral tile + one-ink glyph. While working, a single thin arc travels
+   the tile's edge (a masked conic ring); finished states leave a 7px dot. */
+.hv-av { isolation: isolate; }
+.hv-av-sweep {
+  position: absolute;
+  inset: -2px;
+  border-radius: calc(var(--r, 6px) + 2px);
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from var(--hv-av-a, 0deg), transparent 0 62%, var(--av) 86%, transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: hv-av-turn 1.4s linear infinite;
+  pointer-events: none;
+}
+@property --hv-av-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes hv-av-turn { to { --hv-av-a: 360deg; } }
+.hv-av-dot {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--av);
+  box-shadow: 0 0 0 2px var(--hv-bg-app, var(--color-bg-app));
+}
+@media (prefers-reduced-motion: reduce) {
+  .hv-av-sweep { animation: none; background: conic-gradient(var(--av) 0 25%, transparent 25%); }
+}
+
+/* ── Chat: your message is a quiet surface, not a coloured bubble ──── */
+.hv-user-msg {
+  background: var(--hv-surface-2);
+  border: 1px solid var(--hv-border-subtle);
+  border-radius: 12px 12px 4px 12px;
+  color: var(--hv-text-1);
+}
+.hv-jump {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--hv-border);
+  background: var(--hv-surface-2);
+  color: var(--hv-text-2);
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: 0 4px 16px -6px rgb(0 0 0 / 0.35);
+  transition: color var(--hv-d-fast) var(--hv-ease), border-color var(--hv-d-fast) var(--hv-ease);
+}
+.hv-jump:hover { color: var(--hv-text-1); border-color: var(--hv-border-strong); }
+
+/* ── Chart series (categorical, fixed order; validated for colour-blind
+   separation in both modes). Dark steps are their own, not a flip. ──── */
+.hive-root {
+  --hv-series-1: #3987e5;
+  --hv-series-2: #d95926;
+  --hv-series-3: #199e70;
+  --hv-series-4: #c98500;
+  --hv-series-5: #d55181;
+  --hv-series-6: #9085e9;
+  --hv-chart-grid: color-mix(in oklab, var(--hv-text-1) 7%, transparent);
+  --hv-chart-axis: color-mix(in oklab, var(--hv-text-1) 16%, transparent);
+}
+:root[data-mode="light"] .hive-root {
+  --hv-series-1: #2a78d6;
+  --hv-series-2: #eb6834;
+  --hv-series-3: #1baf7a;
+  --hv-series-4: #eda100;
+  --hv-series-5: #e87ba4;
+  --hv-series-6: #6250d6;
+}

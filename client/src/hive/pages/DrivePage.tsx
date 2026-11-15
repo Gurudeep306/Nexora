@@ -129,17 +129,17 @@ const EXT: Record<string, Kind> = {
 }
 const KIND: Record<Kind, { icon: typeof FileIcon; color: string; label: string }> = {
   folder: { icon: Folder, color: 'var(--color-accent-brand)', label: 'Folder' },
-  pdf: { icon: FileText, color: 'oklch(64% 0.17 25)', label: 'PDF' },
-  image: { icon: FileImage, color: 'oklch(66% 0.16 295)', label: 'Image' },
-  code: { icon: FileCode, color: 'oklch(70% 0.11 185)', label: 'Code' },
-  data: { icon: FileBraces, color: 'oklch(70% 0.11 200)', label: 'Data' },
-  markdown: { icon: FileText, color: 'oklch(66% 0.14 250)', label: 'Markdown' },
-  doc: { icon: FileText, color: 'oklch(66% 0.14 255)', label: 'Document' },
-  sheet: { icon: FileSpreadsheet, color: 'oklch(68% 0.14 152)', label: 'Spreadsheet' },
-  slides: { icon: Presentation, color: 'oklch(74% 0.14 65)', label: 'Slides' },
-  archive: { icon: FileArchive, color: 'oklch(68% 0.06 60)', label: 'Archive' },
-  audio: { icon: FileMusic, color: 'oklch(68% 0.15 340)', label: 'Audio' },
-  video: { icon: FileVideoCamera, color: 'oklch(66% 0.15 10)', label: 'Video' },
+  pdf: { icon: FileText, color: 'var(--hv-text-2)', label: 'PDF' },
+  image: { icon: FileImage, color: 'var(--hv-text-2)', label: 'Image' },
+  code: { icon: FileCode, color: 'var(--hv-text-2)', label: 'Code' },
+  data: { icon: FileBraces, color: 'var(--hv-text-2)', label: 'Data' },
+  markdown: { icon: FileText, color: 'var(--hv-text-2)', label: 'Markdown' },
+  doc: { icon: FileText, color: 'var(--hv-text-2)', label: 'Document' },
+  sheet: { icon: FileSpreadsheet, color: 'var(--hv-text-2)', label: 'Spreadsheet' },
+  slides: { icon: Presentation, color: 'var(--hv-text-2)', label: 'Slides' },
+  archive: { icon: FileArchive, color: 'var(--hv-text-2)', label: 'Archive' },
+  audio: { icon: FileMusic, color: 'var(--hv-text-2)', label: 'Audio' },
+  video: { icon: FileVideoCamera, color: 'var(--hv-text-2)', label: 'Video' },
   other: { icon: FileIcon, color: 'var(--color-text-muted)', label: 'File' },
 }
 function kindOf(it: Pick<DriveItem, 'kind' | 'name' | 'mime'>): Kind {
@@ -1148,17 +1148,10 @@ function DriveEmpty({ scope, onUpload, onFolder, onImport }: { scope: string; on
   ] as const
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.26, ease: EASE }} className="hive-card relative overflow-hidden border-dashed px-6 py-14 text-center">
-      <div className="relative mx-auto mb-6 h-20 w-56">
-        {tiles.map((t, i) => (
-          <motion.div
-            key={t.item.name}
-            className="absolute left-1/2 top-1/2"
-            initial={{ opacity: 0, x: '-50%', y: '-30%', rotate: 0 }}
-            animate={{ opacity: 1, x: `calc(-50% + ${t.x}px)`, y: `calc(-50% + ${t.y}px)`, rotate: t.r }}
-            transition={{ duration: 0.4, ease: EASE, delay: 0.08 + i * 0.06 }}
-          >
-            <TypeIcon item={t.item} size="lg" />
-          </motion.div>
+      {/* Three file types in a straight row: what the Drive holds, without the toy tilt. */}
+      <div className="relative mx-auto mb-6 flex w-fit items-center gap-2" aria-hidden="true">
+        {tiles.map((t) => (
+          <TypeIcon key={t.item.name} item={t.item} size="lg" />
         ))}
       </div>
       <h2 className="relative text-[17px] font-semibold tracking-[-0.01em]">{scope === 'Shared' ? 'Your team’s Drive is empty' : `No files in ${scope} yet`}</h2>

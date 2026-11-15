@@ -91,6 +91,7 @@ with Claude Code, so any agent (or person) can pick up where they left off.
       measured quality.
 19. **Premium UI v2 (PRs #90–#94).** See `docs/hive/UI-PREMIUM.md`.
 20. **Coding test, view transitions, Lighthouse (PR #101).** Golden coding tasks score each model; the session title glides from the project into the session; phone panels close with a swipe; Hive stops downloading the learning site's pages.
+21. **Live terminal and premium pass.** A real shell on every machine (bridge 1.4.0: a Python pseudo-terminal, no native modules) in the Machines page and the session's Terminal tab, with tabs, reconnect and a phone key row. A one-colour Hive mark and a new Copilot mark replace the blue tile and the robot. Agent avatars became a neutral tile with one thin working arc. Icon tiles, provider glyphs and file icons are neutral. Charts use a validated colour-blind-safe palette with thin bars. Replies stream without raw markdown markers, behind a thin caret. See `docs/hive/UI-PREMIUM.md`.
 
 ## Infrastructure the owner set up
 

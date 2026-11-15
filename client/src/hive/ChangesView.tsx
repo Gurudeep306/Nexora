@@ -131,7 +131,7 @@ export function ChangesView({ taskId, agents }: { taskId: string; agents: AgentR
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-mono text-[11.5px] text-text-primary">{c.path.split('/').pop()}</span>
                     <span className="block truncate text-[10px] text-text-muted">
-                      {c.path.includes('/') ? c.path.slice(0, c.path.lastIndexOf('/')) : '/'} · {c.author.replace(/^agent:/, '🤖 ')}
+                      {c.path.includes('/') ? c.path.slice(0, c.path.lastIndexOf('/')) : '/'} · {c.author.replace(/^agent:/, '')}
                     </span>
                   </span>
                   <span className="font-mono text-[10px] tabular-nums">
