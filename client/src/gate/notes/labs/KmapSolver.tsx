@@ -197,9 +197,9 @@ function MapTool({ values, setValues }: { values: CellValue[]; setValues: (v: Ce
         )}
         {form === 'sop' && cls && (
           <>
-            <h4 className="km-h">
+            <h3 className="km-h">
               Prime implicants ({cls.primes.length}); essential: {cls.essential.length}
-            </h4>
+            </h3>
             <ul className="km-pis">
               {cls.primes.map((p) => (
                 <li key={p}>
@@ -359,7 +359,7 @@ function QmTool({ values }: { values: CellValue[] }) {
         </button>
       </div>
       {round ? (
-        <div className="lab-tt-wrap">
+        <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
           <table className="lab-tt km-qm">
             <thead>
               <tr>
@@ -397,7 +397,7 @@ function PiChart({ ones, primes, essential, vars }: { ones: number[]; primes: st
   const single = new Set([...ch.entries()].filter(([, ps]) => ps.length === 1).map(([m]) => m))
   return (
     <>
-      <div className="lab-tt-wrap">
+      <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
         <table className="lab-tt km-chart">
           <caption className="sr-only">Prime-implicant chart: rows are prime implicants, columns are the 1-cells; × marks a cell the implicant covers.</caption>
           <thead>

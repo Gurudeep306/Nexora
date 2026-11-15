@@ -790,3 +790,953 @@ html[data-pattern] body {
     transition-duration: 0ms;
   }
 }
+
+/* ═══ Field Journal — the reader (phase 4) ═════════════════════════════════
+   Lessons and GATE notes read like a printed essay: Newsreader prose at
+   1.2rem / 1.6, a serif title with a label kicker and a mono meta line,
+   figures on the manilla spread, notes in the margin, callouts as a label
+   and one hairline, tables in hairlines, code on ivory. The two animation
+   engines (learn/engine for DSA, viz/ for notes) take journal roles: ivory
+   cells, ink for done, clay for the current step, muted and dashed for
+   discarded. */
+[data-style='journal'] .nr-main {
+  --read-font: 'Newsreader Variable', 'Newsreader Fallback', ui-serif, Georgia, serif;
+  --read-size: 1.2rem;
+  --read-leading: 1.6;
+  --nr-col: 41rem;
+}
+@media (max-width: 639px) {
+  [data-style='journal'] .nr-main {
+    --read-size: 1.125rem;
+  }
+}
+[data-style='journal'] .nr-main .nx-read,
+[data-style='journal'] .notes-root .nr-main .notes-prose {
+  font-family: var(--read-font);
+  font-size: var(--read-size);
+  line-height: var(--read-leading);
+  font-optical-sizing: auto;
+}
+/* Controls inside the prose stay in the UI face. */
+[data-style='journal'] .nr-main :is(.viz-player, .nxv-controls, .nr-sidenote summary, .q-card, [data-ui='button'], button, input, select) {
+  font-family: var(--font-body);
+}
+[data-style='journal'] .nr-kicker {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .nr-title {
+  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2.25rem, 1.5rem + 2.4vw, 3.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+[data-style='journal'] .nr-dek {
+  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-size: 1.25rem;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+[data-style='journal'] .nr-meta {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .nr-head {
+  border-bottom-color: var(--color-border);
+}
+[data-style='journal'] .nr-toc-head,
+[data-style='journal'] .nr-tree-head .nr-tree-subject {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .nr-toc-tick,
+[data-style='journal'] .nr-end-dot.is-current::after {
+  background: var(--ed-clay);
+  border-color: var(--ed-clay);
+}
+[data-style='journal'] .nr-end-dot.is-current::after {
+  background: transparent;
+}
+[data-style='journal'] .nr-end-next:hover .nr-end-title {
+  text-decoration-color: var(--ed-clay);
+}
+[data-style='journal'] .nr-bar-link {
+  border-radius: 12px;
+}
+
+/* Figures: the manilla spread */
+[data-style='journal'] .nr-figure {
+  padding: 1.5rem;
+  border-radius: 24px;
+  background: var(--ed-feature);
+}
+@media (max-width: 639px) {
+  [data-style='journal'] .nr-figure {
+    padding: 1rem;
+    border-radius: 16px;
+  }
+}
+[data-style='journal'] .nr-figure :is(.nr-figure-label, .nr-figure-caption) {
+  color: var(--ed-muted-on-feature, var(--color-text-secondary));
+}
+[data-style='journal'][data-mode='light'] .nr-figure,
+[data-style='journal'] [data-mode='light'] .nr-figure {
+  --ed-muted-on-feature: #5c5b55;
+}
+[data-style='journal'][data-mode='dark'] .nr-figure,
+[data-style='journal'] [data-mode='dark'] .nr-figure {
+  --ed-muted-on-feature: #aaa79e;
+}
+[data-style='journal'] .nr-figure-caption {
+  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-style: italic;
+}
+
+/* Callouts: a label and one hairline, no fill */
+[data-style='journal'] .nx-aside {
+  padding: 0.1rem 0 0.1rem 1.1rem;
+  border: 0;
+  border-left: 2px solid var(--color-border-strong);
+  border-radius: 0;
+  background: none;
+}
+[data-style='journal'] .nx-aside[data-tone='danger'] { border-left-color: var(--color-state-error); }
+[data-style='journal'] .nx-aside[data-tone='good'] { border-left-color: var(--color-state-success); }
+[data-style='journal'] .nx-aside[data-tone='warn'] { border-left-color: var(--color-state-warning); }
+[data-style='journal'] .nx-aside[data-tone='accent'] { border-left-color: var(--ed-clay); }
+[data-style='journal'] .nx-aside-label,
+[data-style='journal'] .nx-aside[data-tone] .nx-aside-label {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+[data-style='journal'] .nr-check > h3 {
+  padding-left: 1.1rem;
+  border-left: 2px solid var(--ed-clay);
+}
+
+/* Sidenotes: italic serif under a hairline */
+[data-style='journal'] .nr-sidenote.is-margin {
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--color-border);
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+[data-style='journal'] .nr-sidenote[data-tone='good'].is-margin { border-top-color: var(--color-state-success); }
+[data-style='journal'] .nr-sidenote[data-tone='accent'].is-margin { border-top-color: var(--ed-clay); }
+
+/* Tables: hairlines only, label headers, tabular figures */
+[data-style='journal'] .nr-main .nx-read :is(table),
+[data-style='journal'] .notes-root .nr-main .notes-prose table {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+[data-style='journal'] .nr-main .nx-read th,
+[data-style='journal'] .notes-root .nr-main .notes-prose th {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  background: none;
+  border-bottom: 1px solid var(--color-text-primary);
+}
+[data-style='journal'] .nr-main .nx-read td,
+[data-style='journal'] .notes-root .nr-main .notes-prose td {
+  background: none;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Code on ivory */
+[data-style='journal'] .nr-main .nx-read pre,
+[data-style='journal'] .nr-main .md-pre {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: none;
+}
+[data-style='journal'] .nr-main .nx-read :not(pre) > code {
+  background: color-mix(in oklab, var(--ed-oat) 70%, transparent);
+  border: 0;
+}
+
+/* ── The DSA animation player (learn/engine/VizPlayer) ─────────────────── */
+[data-style='journal'] .viz-player {
+  --viz-cell: var(--color-bg-surface);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  box-shadow: none;
+}
+[data-style='journal'] .nr-figure .viz-player {
+  border-color: color-mix(in oklab, var(--color-text-primary) 14%, transparent);
+}
+[data-style='journal'] .viz-head,
+[data-style='journal'] .viz-side,
+[data-style='journal'] .viz-note {
+  background: none;
+}
+[data-style='journal'] .viz-head .text-accent-brand {
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .viz-badge {
+  background: none;
+  color: var(--color-text-secondary);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+[data-style='journal'] .viz-stage {
+  background: var(--color-bg-app);
+  background-image: none;
+}
+[data-style='journal'] .viz-cell {
+  background: var(--color-bg-surface);
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+[data-style='journal'] .viz-role-active,
+[data-style='journal'] .viz-range-active { --rc: var(--ed-clay); }
+[data-style='journal'] .viz-role-compare,
+[data-style='journal'] .viz-range-compare { --rc: var(--color-state-warning); }
+[data-style='journal'] .viz-role-swap { --rc: var(--ed-clay-deep); }
+[data-style='journal'] .viz-role-write,
+[data-style='journal'] .viz-role-window,
+[data-style='journal'] .viz-range-window { --rc: var(--color-state-info); }
+[data-style='journal'] .viz-role-pivot { --rc: oklch(0.45 0.08 340); }
+[data-style='journal'][data-mode='dark'] .viz-role-pivot { --rc: oklch(0.72 0.08 340); }
+[data-style='journal'] .viz-role-best,
+[data-style='journal'] .viz-range-best { --rc: var(--ed-clay-deep); }
+[data-style='journal'] .viz-role-new { --rc: var(--color-state-success); }
+[data-style='journal'] .viz-role-removed { --rc: var(--color-state-error); }
+/* done / found: the visited look, ink fill and canvas text */
+[data-style='journal'] .viz-cell:is(.viz-role-done, .viz-role-found) {
+  --rc: var(--color-text-primary);
+  background: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+[data-style='journal'] .viz-cell:is(.viz-role-done, .viz-role-found) .viz-value {
+  color: var(--color-bg-app);
+}
+[data-style='journal'] .viz-range-done { --rc: var(--color-text-primary); }
+/* discarded: muted and dashed, not faded (a fade fails contrast) */
+[data-style='journal'] .viz-cell.viz-role-dim,
+[data-style='journal'] .viz-cell.viz-role-removed {
+  opacity: 1;
+  border-style: dashed;
+  border-color: var(--color-border-strong);
+  background: transparent;
+}
+[data-style='journal'] .viz-cell.viz-role-dim .viz-value,
+[data-style='journal'] .viz-cell.viz-role-removed .viz-value {
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .viz-legend-dot {
+  box-shadow: none;
+  border: 1px solid var(--color-border-strong);
+}
+[data-style='journal'] .viz-pointer-name,
+[data-style='journal'] .viz-var-name {
+  font-family: var(--font-mono);
+}
+[data-style='journal'] .viz-var {
+  background: var(--color-bg-surface);
+}
+[data-style='journal'] .viz-var-changed {
+  background: color-mix(in oklab, var(--ed-clay) 14%, var(--color-bg-surface));
+  border-color: var(--ed-clay);
+}
+/* narration: one serif line that explains why */
+[data-style='journal'] .viz-note p {
+  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-size: 1.08rem;
+  line-height: 1.5;
+}
+[data-style='journal'] .viz-step-chip {
+  background: none;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+/* code: ivory, the active line in oat, journal syntax colours */
+[data-style='journal'] .viz-code {
+  background: var(--color-bg-surface);
+  border-color: var(--color-border);
+}
+[data-style='journal'] .viz-code-bar {
+  background: color-mix(in oklab, var(--ed-oat) 85%, transparent);
+  box-shadow: inset 2px 0 0 var(--ed-clay);
+}
+[data-style='journal'] .tok-kw { color: var(--color-accent-brand-hover, var(--ed-clay-deep)); }
+[data-style='journal'] .tok-str { color: var(--color-state-success); }
+[data-style='journal'] .tok-num { color: var(--color-state-warning); }
+[data-style='journal'] .tok-fn { color: var(--color-text-primary); }
+[data-style='journal'] .tok-com { color: var(--color-text-muted); font-style: italic; }
+/* tabs underlined, not pills */
+[data-style='journal'] .viz-tabs {
+  background: none;
+  box-shadow: none;
+}
+[data-style='journal'] .viz-tab-on {
+  background: none;
+  box-shadow: inset 0 -2px 0 var(--color-text-primary);
+  border-radius: 0;
+}
+/* controls: quiet tool buttons, one clay play */
+[data-style='journal'] .viz-icon-btn {
+  border-radius: 12px;
+}
+[data-style='journal'] .viz-icon-btn:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--ed-oat) 70%, transparent);
+}
+[data-style='journal'] .viz-icon-btn-on {
+  background: none;
+  color: var(--color-text-primary);
+  box-shadow: inset 0 0 0 1px var(--color-text-primary);
+}
+[data-style='journal'] .viz-play {
+  background: var(--ed-clay);
+  color: var(--ed-on-clay, var(--color-text-primary));
+  box-shadow: none;
+  border-radius: 0 0 8px 8px;
+}
+[data-style='journal'] .viz-play:hover {
+  background: var(--ed-clay-deep);
+  transform: none !important;
+}
+[data-style='journal'] .viz-progress > div {
+  background: var(--color-text-primary);
+}
+[data-style='journal'] .viz-scrub {
+  accent-color: var(--color-text-primary);
+}
+[data-style='journal'] .viz-head .font-display {
+  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-weight: 400;
+  font-size: 1.15rem;
+}
+
+/* Phase 4 contrast: clay is never text. Small labels on the manilla figure use
+   the figure's own muted ink; the selected code tab is ink with a clay rule. */
+[data-style='journal'] .nr-figure :is(.viz-addr, .viz-idx) {
+  color: var(--ed-muted-on-feature, var(--color-text-secondary));
+}
+[data-style='journal'] .bg-accent-brand\/15.text-accent-brand {
+  background: transparent;
+  color: var(--color-text-primary);
+  box-shadow: inset 0 -2px 0 var(--ed-clay, var(--color-accent-brand));
+  border-radius: 0;
+}
+[data-style='journal'] .viz-slot {
+  opacity: 1;
+}
+
+/* Field Journal — GATE notes animations (client/src/viz). The figure is the
+   manilla spread (from .nr-figure); the drawing sits on ivory with a hairline;
+   the "current" colour is clay; step labels are ink in label style; the main
+   button is the clay tab with ink text, like the landing player. */
+[data-style='journal'] .nr-figure .nxv {
+  --viz-subject: var(--ed-clay, var(--color-accent-brand));
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+}
+[data-style='journal'] .nr-figure .nxv-stage {
+  max-width: none;
+  padding: 18px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-bg-surface);
+}
+[data-style='journal'] .nxv-step {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--color-text-primary);
+}
+[data-style='journal'] .nxv-btn {
+  border-radius: 8px;
+  border-color: var(--color-border);
+  background: var(--color-bg-surface);
+  box-shadow: 0 0 #0000;
+}
+[data-style='journal'] .nxv-btn--main {
+  border-color: transparent;
+  border-radius: 0 0 8px 8px;
+  background: var(--ed-clay, var(--color-accent-brand));
+  color: var(--ed-on-clay, var(--color-on-accent-brand));
+}
+[data-style='journal'] .nxv-btn--main:hover:not(:disabled) {
+  background: var(--ed-clay-deep, var(--color-accent-brand-hover));
+}
+[data-style='journal'] .nr-figure :is(.nxv-caption, .nxv-figcaption, .nxv-captions) {
+  font-family: var(--font-display);
+  color: var(--ed-muted-on-feature, var(--color-text-secondary));
+}
+
+/* Notes front page: the subject's animation on a manilla plate. */
+[data-style='journal'] .nh-thumb {
+  background: var(--ed-feature, var(--color-bg-surface-2));
+  border-radius: 16px;
+  --viz-subject: var(--ed-clay, var(--color-accent-brand));
+}
+[data-style='journal'] .nh-soon li {
+  color: var(--color-text-muted);
+}
+
+/* Notes subject page as a book's contents (brief 4.3). */
+[data-style='journal'] .nh-chapter-head .notes-ring,
+[data-style='journal'] .nh-chapter-head > svg,
+[data-style='journal'] .nh-n-arabic {
+  display: none;
+}
+[data-style='journal'] :is(.nh-chapter-roman, .nh-n-roman) {
+  display: inline;
+}
+[data-style='journal'] .nh-chapter-done {
+  display: inline;
+}
+[data-style='journal'] .nh-chapter-roman {
+  min-width: 2.5rem;
+  padding-top: 0.3rem;
+  font-size: 1.6rem;
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .nh-n-roman {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 13px;
+}
+[data-style='journal'] .nh-chapter-meta {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+}
+[data-style='journal'] .nh-chapter-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.75rem;
+  letter-spacing: -0.01em;
+}
+[data-style='journal'] .nh-lessons {
+  border-top: 1px solid var(--color-border);
+  gap: 0 2rem;
+}
+[data-style='journal'] .nh-lesson {
+  margin-inline: 0;
+  padding: 12px 4px;
+  border-radius: 0;
+  border-bottom: 1px solid var(--color-border);
+}
+[data-style='journal'] .nh-lesson:hover {
+  background: var(--color-bg-surface);
+}
+[data-style='journal'] .nh-lesson.is-next {
+  background: transparent;
+  box-shadow: inset 2px 0 0 var(--ed-clay, var(--color-accent-brand));
+  padding-left: 12px;
+}
+[data-style='journal'] .nh-lesson-meta {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+}
+
+/* ── Field Journal — phase 5: Problems ("The Workshop") ───────────────── */
+/* Filters: an underlined row of words, not pills. */
+[data-style='journal'] .pf-pill select {
+  height: 30px;
+  padding: 0 22px 0 0;
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+  font-size: 13.5px;
+}
+[data-style='journal'] .pf-pill select:hover {
+  border-bottom-color: var(--color-text-primary);
+}
+[data-style='journal'] .pf-pill-chev {
+  right: 2px;
+}
+[data-style='journal'] .pf-icon,
+[data-style='journal'] .pf-ask {
+  border-radius: 8px;
+  background: transparent;
+}
+[data-style='journal'] .pf-ask svg {
+  color: var(--color-text-secondary);
+}
+/* Active filters: ink chips with × */
+[data-style='journal'] .pf-chip {
+  border-color: var(--color-text-primary);
+  border-radius: 6px;
+  background: var(--color-text-primary);
+  color: var(--color-bg-app);
+  font-size: 12px;
+}
+[data-style='journal'] .pf-chip button:hover {
+  background: color-mix(in oklab, var(--color-bg-app) 20%, transparent);
+}
+/* Results: a hairline table */
+[data-style='journal'] .pt-table,
+[data-style='journal'] .pt-empty {
+  border: 0;
+  border-top: 1px solid var(--color-text-primary);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: 0 0 #0000;
+}
+[data-style='journal'] .pt-title {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+[data-style='journal'] .pt-meta {
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .pt-meta [data-ui='badge'],
+[data-style='journal'] .pt-platform [data-ui='badge'],
+[data-style='journal'] .pt-diff [data-ui='badge'] {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: 0 0 #0000;
+}
+[data-style='journal'] .pt-meta [data-ui='badge'] {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .pt-meta [data-ui='badge']::before {
+  content: '·';
+  margin-right: 0.4em;
+}
+[data-style='journal'] .pt-platform [data-ui='badge'] {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+/* Difficulty is a coloured word: moss, ochre, brick */
+[data-style='journal'] .pt-diff [data-ui='badge'] {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-style: italic;
+  text-transform: capitalize;
+}
+[data-style='journal'] .pt-diff [data-ui='badge'][data-variant='success'] {
+  color: var(--color-state-success);
+}
+[data-style='journal'] .pt-diff [data-ui='badge'][data-variant='warning'] {
+  color: var(--color-state-warning);
+}
+[data-style='journal'] .pt-diff [data-ui='badge'][data-variant='destructive'] {
+  color: var(--color-state-error);
+}
+
+/* ── Field Journal — phase 5: Solve (statement and verdict) ───────────── */
+[data-style='journal'] .sp-mast,
+[data-style='journal'] .sp-meta {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+}
+[data-style='journal'] .sp-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.4vw, 2rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+/* Statement prose in serif; Input / Output / Note as small-caps labels. */
+[data-style='journal'] .nx-statement {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+[data-style='journal'] :is(.nx-statement :is(.section-title, h1, h2, h3, h4), .sp-label) {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+/* Examples: ivory mono blocks with a hairline */
+[data-style='journal'] .sp-sample {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg-surface);
+}
+/* Verdict: a paper slip; the verdict word in serif, in its meaning colour */
+[data-style='journal'] .vb {
+  border-color: var(--color-border);
+  background: var(--color-bg-surface);
+  box-shadow: 0 0 #0000;
+  backdrop-filter: none;
+}
+[data-style='journal'] .vb [data-ui='badge'] {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+[data-style='journal'] .vb[data-ok] [data-ui='badge'],
+[data-style='journal'] .vb-xp {
+  color: var(--color-state-success);
+  text-shadow: none;
+}
+[data-style='journal'] .vb:not([data-ok]) [data-ui='badge'] {
+  color: var(--color-state-error);
+}
+[data-style='journal'] .vb-xp {
+  font-family: var(--font-mono);
+}
+
+/* ── Field Journal — phase 5: verdicts are words, in their meaning colour ── */
+[data-style='journal'] .verdict-word {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: 0 0 #0000;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-style: italic;
+  font-weight: 400;
+}
+/* Clay is never text: runtime errors read brick, memory limits ink-blue. */
+[data-style='journal'] .verdict-word.text-accent {
+  color: var(--color-state-error);
+}
+[data-style='journal'] .verdict-word.text-cyan {
+  color: var(--color-state-info);
+}
+
+/* ── Field Journal — phase 5: judged tests as hairline rows ───────────── */
+[data-style='journal'] .rp-cases {
+  border-top: 1px solid var(--color-border);
+}
+[data-style='journal'] .rp-cases > * + * {
+  margin-top: 0;
+}
+[data-style='journal'] .rp-case {
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+}
+[data-style='journal'] .rp-case:not([data-passed]) {
+  box-shadow: inset 2px 0 0 var(--color-state-error);
+}
+[data-style='journal'] .verdict-word.text-success {
+  color: var(--color-state-success);
+}
+[data-style='journal'] .verdict-word.text-destructive {
+  color: var(--color-state-error);
+}
+[data-style='journal'] .verdict-word.text-warning {
+  color: var(--color-state-warning);
+}
+[data-style='journal'] .verdict-word.text-info {
+  color: var(--color-state-info);
+}
+/* In tables a platform is a mono word, not a pill. */
+[data-style='journal'] table .platform-word {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: 0 0 #0000;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+/* Editorials (Solve → Solution, Learn problems): reader prose. */
+[data-style='journal'] .learn-prose :is(p, li) {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+[data-style='journal'] .learn-prose h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+  margin-top: 1.75rem;
+}
+
+/* ── Field Journal — phase 5: contests as a calendar list ─────────────── */
+.cr-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-text-primary);
+}
+.cr-row {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  gap: 0.25rem 1.25rem;
+  align-items: center;
+  padding: 1rem 0.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+@media (min-width: 768px) {
+  .cr-row {
+    grid-template-columns: 4.5rem minmax(0, 1fr) 9rem auto;
+  }
+}
+.cr-row[data-bucket='live'] {
+  box-shadow: inset 2px 0 0 var(--ed-clay, var(--color-accent-brand));
+}
+.cr-row[data-bucket='live'] .cr-date {
+  padding-left: 0.5rem;
+}
+.cr-when * {
+  color: var(--color-text-primary);
+}
+.cr-row[data-bucket='past'] .cr-name {
+  color: var(--color-text-secondary);
+}
+.cr-date {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+}
+.cr-day {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.cr-month {
+  margin-top: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+.cr-main {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.cr-name {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  line-height: 1.3;
+}
+.cr-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+}
+.cr-meta .platform-word {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+.cr-live {
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--ed-clay, var(--color-accent-brand));
+  text-underline-offset: 3px;
+}
+.cr-when {
+  grid-column: 2;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+}
+.cr-actions {
+  grid-column: 2;
+  display: flex;
+  gap: 1rem;
+}
+@media (min-width: 768px) {
+  .cr-when,
+  .cr-actions {
+    grid-column: auto;
+  }
+  .cr-actions {
+    justify-content: flex-end;
+  }
+}
+.cr-link {
+  cursor: pointer;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--color-border-strong);
+  text-underline-offset: 3px;
+}
+.cr-link:hover {
+  text-decoration-color: var(--ed-clay, var(--color-accent-brand));
+}
+
+/* ── Field Journal — phase 6: the Atlas key ───────────────────────────── */
+.nx-legend-stars {
+  display: none;
+}
+[data-style='journal'] .nx-legend-badges {
+  display: none;
+}
+[data-style='journal'] .nx-legend-stars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+.nx-legend-stars li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.nx-star {
+  position: relative;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-bg-app);
+}
+.nx-star.is-open {
+  border: 1.5px solid var(--color-accent-brand);
+}
+.nx-star.is-done {
+  border-color: var(--color-text-primary);
+  background: var(--color-text-primary);
+}
+.nx-star.is-done::before,
+.nx-star.is-done::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: var(--color-bg-app);
+  translate: -50% -50%;
+}
+.nx-star.is-done::before {
+  width: 6px;
+  height: 1.5px;
+}
+.nx-star.is-done::after {
+  width: 1.5px;
+  height: 6px;
+}
+/* The zone rail as the chart's ring names (Bit → ∞ Overflow). */
+.nx-ring-no,
+.nx-ring-name {
+  display: none;
+}
+[data-style='journal'] .nx-ring-glyph,
+[data-style='journal'] .nx-ring-zone {
+  display: none;
+}
+[data-style='journal'] .nx-ring-no {
+  display: inline-block;
+  min-width: 1.6rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-style: italic;
+  line-height: 1;
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .nx-ring-name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-text-primary);
+}
+
+/* ── Field Journal — phase 7: Profile as a notebook cover ─────────────── */
+/* Masthead on canvas: no banner (the chosen cover still shows in other
+   styles), the portrait mounted like a photograph, the name in serif. */
+[data-style='journal'] .pf-hero {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: 0 0 #0000;
+}
+[data-style='journal'] .pf-cover {
+  display: none;
+}
+[data-style='journal'] .pf-hero-body {
+  padding-inline: 0;
+  padding-top: 0.5rem;
+}
+[data-style='journal'] .pf-portrait {
+  margin-top: 0;
+}
+[data-style='journal'] .pf-portrait-ring {
+  padding: 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 4px;
+  background: var(--color-bg-surface);
+}
+[data-style='journal'] .pf-portrait-ring > div {
+  padding: 0;
+  background: transparent;
+}
+[data-style='journal'] .pf-name {
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  letter-spacing: -0.015em;
+}
+/* The colophon: one hairline-ruled row of facts, label over serif figure. */
+[data-style='journal'] .pf-colophon {
+  gap: 0;
+  border-top: 1px solid var(--color-text-primary);
+  border-bottom: 1px solid var(--color-border);
+}
+[data-style='journal'] .pf-fact {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0.9rem 1rem 1rem;
+  box-shadow: inset -1px 0 0 var(--color-border);
+}
+[data-style='journal'] .pf-fact-icon {
+  display: none;
+}
+[data-style='journal'] .pf-fact-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .pf-fact-value {
+  font-weight: 400;
+  font-size: 2rem;
+}

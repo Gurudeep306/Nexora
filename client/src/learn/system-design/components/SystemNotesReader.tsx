@@ -421,7 +421,7 @@ Architectural Fix: ${currentWarStory.architecturalFix}
 
         <section>
           <h2 className="!mt-0">From production</h2>
-          <aside className="nx-aside" data-tone="danger">
+          <aside className="nx-aside" data-tone="danger" role="note">
             <span className="nx-aside-label">
               {currentWarStory.company} · {currentWarStory.impactSLA}
             </span>

@@ -156,7 +156,7 @@ function EvaluateTool({ src }: { src: string }) {
           ))}
         </div>
         <div className="lab-col">
-          <div className="lab-tt-wrap">
+          <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
             <table className="lab-tt" aria-label="R(x, y): rows x, columns y">
               <thead>
                 <tr>

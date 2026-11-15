@@ -27,6 +27,8 @@ import { difficultyLabel, parseJson } from '@/components/workshop/types'
 type Tab = 'problems' | 'contests'
 
 export default function WorkshopPage() {
+  // When the page opened: contests are sorted into upcoming / live / ended against it.
+  const [now] = useState(() => Date.now())
   const { user } = useAuth()
   const me = user?.username ?? ''
   const toast = useToast()
@@ -98,7 +100,6 @@ export default function WorkshopPage() {
   }
 
   function phaseOf(c: CustomContestRow): 'upcoming' | 'live' | 'ended' {
-    const now = Date.now()
     const start = new Date(c.start_time).getTime()
     const end = start + (c.duration_mins ?? 60) * 60_000
     if (now < start) return 'upcoming'
@@ -110,8 +111,9 @@ export default function WorkshopPage() {
     <div>
       <PageHeader
         icon="workshop"
+        eyebrow="The Workshop"
         title="Workshop"
-        subtitle="Forge custom problems and host password-gated contests for the community."
+        subtitle="Write your own problems and host private contests with a password."
         actions={
           tab === 'problems' ? (
             <Button variant="accent" size="sm" onClick={() => setProblemModal({ open: true, editing: null })}>
@@ -159,11 +161,11 @@ export default function WorkshopPage() {
           <Card>
             <EmptyState
               icon="workshop"
-              title="The forge is cold"
+              title="No problems written yet"
               description="No custom problems exist yet. Create the first one — statement, samples and judge testcases."
               action={
                 <Button variant="accent" size="sm" onClick={() => setProblemModal({ open: true, editing: null })}>
-                  <Plus /> Forge a problem
+                  <Plus /> Write a problem
                 </Button>
               }
             />

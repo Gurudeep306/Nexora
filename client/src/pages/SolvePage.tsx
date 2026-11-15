@@ -67,7 +67,7 @@ import { Arena, enterBrowserFullscreen } from '@/components/solve/Arena'
 import { AiTestsPanel } from '@/components/solve/AiTestsPanel'
 import { AnalysisPanel } from '@/components/solve/AnalysisPanel'
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from '@/components/ui'
-import { FlaskConical, ScanSearch } from 'lucide-react'
+import { FlaskConical, ListChecks, ScanSearch } from 'lucide-react'
 
 type BottomTab = 'tests' | 'output' | 'aitests' | 'analysis' | 'coach' | 'issues'
 
@@ -244,7 +244,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
   const [banner, setBanner] = useState<{ verdict: string; xp: number | null; id: number } | null>(null)
   const [bottomTab, setBottomTab] = useState<BottomTab>('tests')
   const [reveal, setReveal] = useState<{ line: number; id: number } | null>(null)
-  const [mobilePane, setMobilePane] = useState<'problem' | 'code'>('problem')
+  const [mobilePane, setMobilePane] = useState<'problem' | 'code' | 'results'>('problem')
   const [splitPct, setSplitPct] = useState(46)
   const [problemCollapsed, setProblemCollapsed] = useState(() => localStorage.getItem('nexora:panel:problem') === 'collapsed')
   const [bottomH, setBottomH] = useState(() => {
@@ -980,6 +980,9 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         role="separator"
         aria-orientation="horizontal"
         aria-label="Resize tests panel"
+        aria-valuenow={bottomH}
+        aria-valuemin={0}
+        aria-valuemax={2000}
         tabIndex={0}
         onPointerDown={(e) => {
           bottomDraggingRef.current = true
@@ -1075,15 +1078,18 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         />
       ) : (
       <>
+      {/* On a phone the statement (and its h1) can be hidden behind a tab. */}
+      {mobilePane !== 'problem' && <h1 className="sr-only">{problem?.title ?? 'Solve'}</h1>}
       {/* Mobile pane switch */}
       <Tabs
         variant="pills"
         className="self-start lg:hidden"
         active={mobilePane}
-        onChange={(t) => setMobilePane(t as 'problem' | 'code')}
+        onChange={(t) => setMobilePane(t as 'problem' | 'code' | 'results')}
         items={[
           { id: 'problem', label: 'Problem', icon: <ScrollText className="size-3.5" /> },
           { id: 'code', label: 'Code', icon: <Code2 className="size-3.5" /> },
+          { id: 'results', label: 'Results', icon: <ListChecks className="size-3.5" /> },
         ]}
       />
 
@@ -1137,6 +1143,9 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
             role="separator"
             aria-orientation="vertical"
             aria-label="Resize panes"
+            aria-valuenow={splitPct}
+            aria-valuemin={25}
+            aria-valuemax={75}
             tabIndex={0}
             onPointerDown={(e) => {
               draggingRef.current = true
@@ -1161,10 +1170,10 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
           onPointerLeave={endBottomDrag}
           className={cn(
             'min-h-0 flex-1 flex-col gap-3 lg:flex',
-            mobilePane === 'code' ? 'flex' : 'hidden',
+            mobilePane === 'code' || mobilePane === 'results' ? 'flex' : 'hidden',
           )}
         >
-          <div className="min-h-40 flex-1 overflow-hidden rounded-xl border border-border bg-background">
+          <div className={cn('min-h-40 flex-1 overflow-hidden rounded-xl border border-border bg-background', mobilePane === 'results' && 'max-lg:hidden')}>
             {editorEl}
           </div>
           {bottomPanel}

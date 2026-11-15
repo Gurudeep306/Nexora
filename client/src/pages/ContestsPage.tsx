@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react'
+import { useTheme } from '@/context/ThemeContext'
+import { ContestRow } from '@/components/contests/ContestRow'
 import { LayoutGrid, RefreshCw } from 'lucide-react'
 import {
   Button,
@@ -21,6 +23,8 @@ import { Icon } from '@/components/icon/Icon'
 type Bucket = 'all' | 'live' | 'upcoming' | 'past'
 
 export default function ContestsPage() {
+  // The Field Journal shows contests as a calendar list; other styles keep the cards.
+  const journal = useTheme().shown.style === 'journal'
   const { user } = useAuth()
   const [bucket, setBucket] = useState<Bucket>('all')
 
@@ -30,7 +34,7 @@ export default function ContestsPage() {
     [],
   )
 
-  const contests = contestsApi.data?.contests ?? []
+  const contests = useMemo(() => contestsApi.data?.contests ?? [], [contestsApi.data])
   const counts = useMemo(() => {
     const c = { all: contests.length, live: 0, upcoming: 0, past: 0 }
     for (const x of contests) c[contestBucket(x)]++
@@ -45,8 +49,9 @@ export default function ContestsPage() {
     <div>
       <PageHeader
         icon="contests"
-        title="Contest Arena"
-        subtitle="Live Codeforces & CodeChef feeds plus password-gated NexoraGuru custom contests."
+        eyebrow="The Workshop"
+        title="Contests"
+        subtitle="Upcoming rounds on Codeforces and CodeChef, and private contests made on NexoraGuru."
         actions={
           <Button variant="outline" size="sm" onClick={contestsApi.refetch} aria-label="Refresh contests">
             <RefreshCw /> Refresh
@@ -85,11 +90,19 @@ export default function ContestsPage() {
           />
         </Card>
       ) : (
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {visible.map((c, i) => (
-            <PlatformContestCard key={`${c.platform}-${c.name}-${c.startTime ?? i}`} contest={c} index={i} />
-          ))}
-        </div>
+        journal ? (
+          <ol className="cr-list" aria-label="Contests">
+            {visible.map((c, i) => (
+              <ContestRow key={`${c.platform}-${c.name}-${c.startTime ?? i}`} contest={c} />
+            ))}
+          </ol>
+        ) : (
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {visible.map((c, i) => (
+              <PlatformContestCard key={`${c.platform}-${c.name}-${c.startTime ?? i}`} contest={c} index={i} />
+            ))}
+          </div>
+        )
       )}
 
       {user?.username ? (

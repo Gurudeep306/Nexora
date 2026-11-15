@@ -461,7 +461,7 @@ function ImplTableView({ fn, selIdx, table }: { fn: { n: number; ones: number[];
   }
   const cols = table.res.length
   return (
-    <div className="lab-tt-wrap">
+    <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
       <table className="lab-tt">
         <caption className="sr-only">Implementation table: columns are the data inputs, rows the residue-variable values; a circled minterm is a 1 of f, a dashed one a don’t-care.</caption>
         <thead>

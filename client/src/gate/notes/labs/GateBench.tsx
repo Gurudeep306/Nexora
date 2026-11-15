@@ -290,7 +290,7 @@ function TruthTable({ bench, values, onPick }: { bench: Bench; values: Record<st
   const n = bench.inputs.length
   const current = bench.inputs.reduce((acc, i) => acc * 2 + (values[i] ? 1 : 0), 0)
   return (
-    <div className="lab-tt-wrap">
+    <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
       <table className="lab-tt">
         <caption className="sr-only">Truth table of F; select a row to set the inputs</caption>
         <thead>
@@ -486,7 +486,7 @@ function SetsTool() {
           {f.error ?? g.error}
         </p>
       )}
-      <div className="lab-strips" role="table" aria-label="Minterm sets, one row per expression">
+      <div className="lab-strips" tabIndex={0} role="table" aria-label="Minterm sets, one row per expression">
         <div className="lab-strip lab-strip--head" role="row">
           <span className="lab-strip-label" role="columnheader">
             row

@@ -322,7 +322,7 @@ function RaceView({ run, t }: { run: { res: RaceResult; ops: Ops; from: Ops }; t
           <span style={{ width: `${end ? (100 * t) / end : 100}%` }} />
         </span>
       </div>
-      <div className="lab-strips ar-inputs" aria-label="Operands entering both adders">
+      <div className="lab-strips ar-inputs" tabIndex={0} role="group" aria-label="Operands entering both adders">
         <Strip label="A" bits={[null, ...idx.map((i) => bitOf(ops.a, i))]} names={['', ...idx.map((i) => `a${i}`)]} />
         <Strip label="B" bits={[null, ...idx.map((i) => bitOf(ops.b, i))]} names={['', ...idx.map((i) => `b${i}`)]} />
         <Strip label={`y = B ⊕ ${ops.K}`} bits={[null, ...idx.map((i) => bitOf(ops.K ? pattern(~ops.b, n) : ops.b, i))]} names={['', ...idx.map((i) => `y${i}`)]} />
@@ -339,10 +339,10 @@ function RaceView({ run, t }: { run: { res: RaceResult; ops: Ops; from: Ops }; t
           const sums = idx
           return (
             <section key={kind} className={cn('ar-side', done && 'is-done')} aria-label={NAMES[kind]}>
-              <h4 className="ar-name">
+              <h3 className="ar-name">
                 {NAMES[kind]} <span className="ar-meta">({side.gates} gates, worst case {side.worst})</span>
-              </h4>
-              <div className="lab-strips">
+              </h3>
+              <div className="lab-strips" tabIndex={0}>
                 <div className="lab-strip" aria-hidden="true">
                   <span className="lab-strip-label">bit</span>
                   {carries.map((i) => (
@@ -410,7 +410,7 @@ function ScalingTool() {
         like 2n + 1; carry look-ahead with fan-in 4 grows like log n (about 4 units each time n is multiplied by 4); carry-select with
         fixed 4-bit blocks still grows linearly (2 units per extra block), with a smaller slope than ripple.
       </p>
-      <div className="lab-tt-wrap">
+      <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
         <table className="lab-tt ar-scale">
           <caption className="sr-only">Worst-case adder delay against width</caption>
           <thead>

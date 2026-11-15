@@ -619,3 +619,263 @@
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
+
+/* ═══ The reader, phase 4: one reading column, figures that break out ════════
+   Prose sits in one centred column (--nr-col, about 68 characters of the
+   reading face); figures, tables, code and question sets break out wider, up
+   to 960px (Distill's "outset"). Notes go in the right margin when the reading
+   area is wide enough (Sidenote decides), and a walkthrough beside a figure
+   scroll-syncs with it (ScrollyFigure). These layout rules apply in every
+   style; the journal look is in theme/styles.css. */
+.nr-main {
+  --nr-col: 42rem;
+  --nr-wide: 60rem;
+}
+.nr-main > :is(.nr-bar, .notes-tree-mobile, .nr-end, .nr-pyqs, .nr-done) {
+  max-width: var(--nr-col);
+  margin-inline: auto;
+}
+.nr-main .nr-head {
+  max-width: var(--nr-col);
+  margin-inline: auto;
+}
+.nr-main .nr-prose,
+.notes-root .nr-main .notes-prose {
+  max-width: none;
+  counter-reset: nr-fig;
+}
+.nr-main .nr-prose > *,
+.notes-root .nr-main .notes-prose > * {
+  max-width: var(--nr-col);
+  margin-inline: auto;
+}
+.nr-main .nr-prose > :is(.nr-figure, .nr-scrolly, .nr-table, .nr-check, .card),
+.notes-root .nr-main .notes-prose > :is(.nr-figure, figure, .nxv-slot, .notes-table, .nb-table, .np, .notes-pre, pre, .table-wrap) {
+  max-width: var(--nr-wide);
+}
+
+/* Figures: numbered, captioned, on their own spread. */
+.nr-figure {
+  counter-increment: nr-fig;
+  margin-block: 2.5rem;
+}
+.nr-figure-label {
+  display: block;
+  margin: 0 0 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+.nr-fig-no::before {
+  content: 'Figure ' counter(nr-fig) ' · ';
+}
+.nr-figure-caption {
+  margin: 0.75rem 0 0;
+  font-size: 0.95em;
+  color: var(--color-text-secondary);
+}
+
+/* Sidenotes */
+.nr-sidenote.is-margin {
+  float: right;
+  clear: right;
+  width: 14rem;
+  /* left edge = column edge + 2rem, whatever the reading area's width */
+  margin: 0.35rem calc(50% - var(--nr-col) / 2 - 16rem) 1rem 0 !important;
+  max-width: none !important;
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+.nr-sidenote-label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.nr-sidenote .nr-sidenote-body > :first-child {
+  margin-top: 0;
+}
+.nr-sidenote .nr-sidenote-body > :last-child {
+  margin-bottom: 0;
+}
+.nr-sidenote.is-inline details > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  list-style: none;
+}
+.nr-sidenote.is-inline details > summary::-webkit-details-marker {
+  display: none;
+}
+.nr-sidenote.is-inline details[open] > summary {
+  color: var(--color-text-primary);
+}
+.nr-sidenote.is-inline .nr-sidenote-body {
+  margin-top: 0.6rem;
+  padding-left: 0.9rem;
+  border-left: 1px solid var(--color-border-strong);
+  font-size: 0.95em;
+}
+.nr-sidenote-mark {
+  font-size: 11px;
+}
+.nr-sidenote summary:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Scrollytelling: the figure stays while its walkthrough scrolls past. */
+.nr-scrolly {
+  margin-block: 2.5rem;
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .nr-scrolly {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 2rem;
+    align-items: start;
+  }
+  .nr-scrolly-figure {
+    position: sticky;
+    top: 5.5rem;
+  }
+  .nr-scrolly-figure .nr-figure {
+    margin-block: 0;
+  }
+  .nr-scrolly-text .nx-steps > li {
+    min-height: 38vh;
+    transition: color 300ms var(--ease-smooth);
+  }
+  .nr-scrolly-text .nx-steps > li:not([data-current]) {
+    color: var(--color-text-secondary);
+  }
+}
+
+/* The outline's tick slides to the section being read. */
+.nr-toc-wrap {
+  position: relative;
+}
+.nr-toc-wrap > .nr-toc-list {
+  border-left: 1px solid var(--read-rule);
+}
+.nr-toc-tick {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 2px;
+  background: var(--color-accent-brand);
+  transition:
+    transform 450ms cubic-bezier(0.22, 1, 0.36, 1),
+    height 450ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nr-toc-wrap a.is-active {
+  border-left-color: transparent;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nr-toc-tick {
+    transition: none;
+  }
+}
+
+/* The end of a lesson */
+.nr-end {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--read-rule);
+}
+.nr-end-next {
+  display: block;
+  text-decoration: none !important;
+}
+.nr-end-kicker {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.nr-end-title {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: var(--read-heading);
+  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.25rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+  text-decoration-color: var(--color-border-strong);
+}
+.nr-end-next:hover .nr-end-title {
+  text-decoration-color: var(--color-accent-brand);
+}
+.nr-end-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2rem;
+}
+.nr-end-dot {
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  position: relative;
+}
+.nr-end-dot::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-strong);
+}
+.nr-end-dot.is-done::after {
+  background: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+.nr-end-dot.is-current::after {
+  inset: 6px;
+  border: 2px solid var(--color-accent-brand);
+}
+.nr-end-prev {
+  display: inline-block;
+  margin-top: 1.5rem;
+  font-size: 13.5px;
+  color: var(--color-text-secondary) !important;
+}
+.nr-end-next:focus-visible,
+.nr-end-dot:focus-visible,
+.nr-end-prev:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+/* Kicker, dek and meta line under the title */
+.nr-dek {
+  margin: 0.9rem 0 0;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.nr-meta {
+  font-variant-numeric: tabular-nums;
+}

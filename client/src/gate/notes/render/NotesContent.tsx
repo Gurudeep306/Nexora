@@ -16,6 +16,7 @@ import { Icon, type IconName } from '@/components/icon/Icon'
 import { cn } from '@/lib/utils'
 import { VizBlock } from '@/viz/VizBlock'
 import type { VizSpec } from '@/viz/schema'
+import { mathLabelled } from '@/learn/mathLabelled'
 import type { BlockName, DirectiveNode, Inline, Node, NotesSubject, PracticeQuestion } from '../types'
 import { PracticeEmbed } from './PracticeEmbed'
 import { LABS, type LabName } from '../labs'
@@ -55,7 +56,9 @@ function tex(src: string, display: boolean) {
   let html = texCache.get(key)
   if (html === undefined) {
     try {
-      html = katex.renderToString(src, { displayMode: display, throwOnError: false, strict: 'ignore', output: 'htmlAndMathml' })
+      // Long inline maths may wrap after a comma or a plus on narrow screens.
+      const body = display ? src : src.replace(/(?<!\\)([,+])/g, '$1\\allowbreak ')
+      html = katex.renderToString(body, { displayMode: display, throwOnError: false, strict: 'ignore', output: 'htmlAndMathml' })
     } catch {
       html = src.replace(/&/g, '&amp;').replace(/</g, '&lt;')
     }
@@ -72,17 +75,17 @@ function href(h: string) {
   return i < 0 ? h : `${h.slice(0, i)}#${domId(h.slice(i + 1))}`
 }
 
-export function Inlines({ nodes }: { nodes: Inline[] }) {
+export function Inlines({ nodes, header }: { nodes: Inline[]; header?: boolean }) {
   return (
     <>
       {nodes.map((n, i) => (
-        <InlineNode key={i} n={n} />
+        <InlineNode key={i} n={n} header={header} />
       ))}
     </>
   )
 }
 
-function InlineNode({ n }: { n: Inline }) {
+function InlineNode({ n, header }: { n: Inline; header?: boolean }) {
   if (typeof n === 'string') return <>{n}</>
   switch (n.t) {
     case 'em':
@@ -96,7 +99,7 @@ function InlineNode({ n }: { n: Inline }) {
     case 'code':
       return <code className="notes-code">{n.v}</code>
     case 'im':
-      return <span className="nm" dangerouslySetInnerHTML={{ __html: tex(n.v, false) }} />
+      return <span className="nm" dangerouslySetInnerHTML={{ __html: header ? mathLabelled(n.v) : tex(n.v, false) }} />
     case 'br':
       return <br />
     case 'img':
@@ -180,21 +183,31 @@ function NodeView({ n }: { n: Node }) {
         </pre>
       )
     case 'math':
-      return <div className="nm-display" dangerouslySetInnerHTML={{ __html: tex(n.v, true) }} />
+      return <div className="nm-display" tabIndex={0} dangerouslySetInnerHTML={{ __html: tex(n.v, true) }} />
     case 'table': {
-      const [head, ...rows] = n.c
-      const align = (i: number) => (n.align[i] ?? undefined) as 'left' | 'center' | 'right' | undefined
+      const [first, ...rows] = n.c
+      // A header row with no text (a layout-only table) is left out.
+      const head = first && first.c.some((cell) => cell.c.length > 0) ? first : undefined
+      // Columns of plain numbers line up on the right (tabular figures), unless
+      // the author set an alignment.
+      const numeric = (i: number) => rows.length > 0 && rows.every((r) => isNumberCell(r.c[i]?.c))
+      const align = (i: number) => (n.align[i] ?? (numeric(i) ? 'right' : undefined)) as 'left' | 'center' | 'right' | undefined
       return (
-        <div className="notes-table" tabIndex={0} role="region" aria-label="Table">
+        <div className="notes-table" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
           <table>
             {head && (
               <thead>
                 <tr>
-                  {head.c.map((cell, i) => (
-                    <th key={i} scope="col" style={{ textAlign: align(i) }}>
-                      <Inlines nodes={cell.c} />
-                    </th>
-                  ))}
+                  {head.c.map((cell, i) =>
+                    // An empty corner cell heads nothing: a plain cell, not a header.
+                    cell.c.length === 0 ? (
+                      <td key={i} />
+                    ) : (
+                      <th key={i} scope="col" style={{ textAlign: align(i) }}>
+                        <Inlines nodes={cell.c} header />
+                      </th>
+                    ),
+                  )}
                 </tr>
               </thead>
             )}
@@ -216,6 +229,14 @@ function NodeView({ n }: { n: Node }) {
     case 'block':
       return <Block node={n} />
   }
+}
+
+const NUMBER = /^[\s(]*[-+−±]?\s*[\d.,]+\s*(%|[kKMG]|ns|ms|s)?[\s)]*$/
+/** A table cell that holds just a number (plain text, digits and separators). */
+function isNumberCell(c: Inline[] | undefined): boolean {
+  if (!c || c.length === 0) return false
+  const text = c.map((x) => (typeof x === 'string' ? x : x && typeof x === 'object' && 't' in x && x.t === 'code' ? x.v : '\u0000')).join('')
+  return NUMBER.test(text) && /\d/.test(text)
 }
 
 /* ── Hand-drawn bits ─────────────────────────────────────────────────── */
@@ -257,14 +278,20 @@ function Frame({ node, as: As = 'section', className, icon, kicker, title, child
   const hid = useId()
   const did = useDomId()
   const hasHead = !!(kicker || title)
+  const note = As === 'aside'
+  const named = hasHead && (!!title || note || !!labelledBy)
+  // Notes, asides, tricks and traps sit inside the page's main column, so they
+  // are notes (role="note"), not nested complementary landmarks.
+  const Tag = note ? 'div' : As
   return (
-    <As
+    <Tag
+      role={note ? 'note' : As === 'div' && named ? 'group' : undefined}
       id={did(node.id)}
       data-block={node.name}
       data-block-id={node.id}
       data-depth={node.depth}
       className={cn('nb', `nb-${node.name}`, className)}
-      aria-labelledby={hasHead ? (labelledBy ?? hid) : undefined}
+      aria-labelledby={named ? (labelledBy ?? hid) : undefined}
     >
       {hasHead && (
         <header className="nb-head" id={labelledBy ? undefined : hid}>
@@ -281,7 +308,7 @@ function Frame({ node, as: As = 'section', className, icon, kicker, title, child
         </header>
       )}
       <div className="nb-body">{children}</div>
-    </As>
+    </Tag>
   )
 }
 
@@ -395,7 +422,7 @@ function Check({ node }: { node: DirectiveNode }) {
   const answer = node.c.find((c): c is DirectiveNode => c.t === 'block' && c.name === 'answer')
   const rest = node.c.filter((c) => c !== answer)
   return (
-    <Frame node={node} icon="target" kicker="Check yourself" title={label(node, 'title')}>
+    <Frame node={node} as="div" icon="target" kicker="Check yourself" title={label(node, 'title')}>
       <Nodes nodes={rest} />
       <button type="button" className="nb-reveal" aria-expanded={open} aria-controls={answerId} onClick={() => setOpen((o) => !o)}>
         <Icon name={open ? 'eye-off' : 'eye'} className="size-4" aria-hidden="true" />
@@ -546,7 +573,11 @@ function VizSlot({ node }: { node: DirectiveNode }) {
   const spec = ctx?.viz[node.attrs.spec!]
   if (!spec) return null
   return (
-    <div id={did(node.id)} data-block="viz" data-block-id={node.id} data-depth={node.depth} className="nb nb-viz">
+    <div id={did(node.id)} data-block="viz" data-block-id={node.id} data-depth={node.depth} className="nb nb-viz nr-figure">
+      <p className="nr-figure-label">
+        <span className="nr-fig-no" />
+        {spec.title}
+      </p>
       <VizBlock
         spec={spec}
         mode={node.attrs.mode === 'static' ? 'static' : 'animate'}
