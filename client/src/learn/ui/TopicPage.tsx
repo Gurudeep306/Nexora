@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { motion, useScroll, useSpring } from 'motion/react'
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronDown, Clock, Code2, ListChecks, PlayCircle, HelpCircle } from 'lucide-react'
+import { CheckCircle2, ChevronDown, ListChecks, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { ErrorState, LoadingBlock } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useAgentPageContext } from '@/context/AgentContext'
 import { isDone, mark, pageKey, useProgress } from '../progress'
 import { LessonBlock } from './Blocks'
 import { useTopic } from './useTopic'
+import { readRailHidden, useDomOutline, useScrollSpy, writeRailHidden } from '@/components/reader/outline'
 
 /**
  * A topic, read page by page: a sidebar of pages (with what you have read),
@@ -20,6 +21,12 @@ export default function TopicPage() {
   const { items } = useProgress()
   const navigate = useNavigate()
   const end = useRef<HTMLDivElement>(null)
+  const article = useRef<HTMLElement>(null)
+  const [mini, setMiniState] = useState(readRailHidden)
+  const setMini = (v: boolean) => {
+    setMiniState(v)
+    writeRailHidden(v)
+  }
   const [navFor, setNavFor] = useState<string | null>(null)
   const navOpen = navFor != null && navFor === (pageId ?? '')
   const { scrollYProgress } = useScroll()
@@ -50,6 +57,9 @@ export default function TopicPage() {
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
   }, [pageId])
 
+  const outline = useDomOutline(article, `${topic?.id ?? ''}/${page?.id ?? ''}`)
+  const active = useScrollSpy(outline.map((h) => h.id))
+
   if (!entry) return <Navigate to="/learn" replace />
   if (!entry.load) return <Navigate to="/learn" replace />
   if (error) return <ErrorState message={error} />
@@ -64,116 +74,154 @@ export default function TopicPage() {
   const checkCount = page.blocks.reduce((n, b) => n + (b.t === 'check' ? b.ids.length : 0), 0)
   const practiceCount = page.blocks.reduce((n, b) => n + (b.t === 'practice' ? b.ids.length : 0), 0)
 
+  const pct = Math.round((read / topic.pages.length) * 100)
+
   return (
-    <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8">
+    <div className={cn('nr-layout', mini && 'is-tree-hidden')} style={{ ['--nr-top' as string]: '5rem' }}>
       <motion.div className="learn-readbar fixed inset-x-0 top-0 z-[60] h-[3px] origin-left" style={{ scaleX: readBar }} aria-hidden="true" />
-      {/* sidebar */}
-      <aside className="lg:sticky lg:top-20 lg:max-h-[calc(100dvh-7rem)] lg:self-start lg:overflow-y-auto">
-        <Link to="/learn?tab=dsa" className="mb-3 inline-flex items-center gap-1.5 text-[12.5px] text-text-muted !no-underline hover:text-text-primary">
-          <ArrowLeft className="size-3.5" /> DSA course
-        </Link>
-        <div className="card p-4">
-          <p className="mb-0 text-[12px] text-text-muted">Topic</p>
-          <h1 className="mb-2 !text-[22px] font-bold text-text-primary">{topic.title}</h1>
-          <div className="h-1.5 overflow-hidden rounded-full bg-bg-surface-3">
-            <div className="h-full rounded-full bg-accent-brand transition-[width] duration-700" style={{ width: `${(read / topic.pages.length) * 100}%` }} />
-          </div>
-          <p className="mt-1.5 mb-3 font-mono text-[11px] text-text-muted">
-            {read}/{topic.pages.length} pages read
-          </p>
-          <button
-            type="button"
-            onClick={() => setNavFor(navOpen ? null : (pageId ?? ''))}
-            aria-expanded={navOpen}
-            className="mb-2 flex w-full cursor-pointer items-center gap-2 rounded-xl bg-bg-surface-2 px-3 py-2 text-left text-[13px] text-text-primary ring-1 ring-border hover:!scale-100 lg:hidden"
-          >
-            <span className="font-mono text-[11px] text-accent-brand">{pageIndex + 1}.</span>
-            <span className="min-w-0 flex-1 truncate font-medium">{page.title}</span>
-            <ChevronDown className={cn('size-4 text-text-muted transition-transform', navOpen && 'rotate-180')} />
-          </button>
-          <nav className={cn('-mx-2 space-y-0.5', !navOpen && 'hidden lg:block')} aria-label="Pages">
-            {topic.pages.map((p, i) => {
-              const done = isDone(items[pageKey(topic.id, p.id)])
-              const on = i === pageIndex
-              return (
+
+      {/* Left: the topic's pages (or, collapsed, a dot per page) */}
+      <nav className="nr-tree" aria-label={`Pages in ${topic.title}`}>
+        {mini ? (
+          <div className="nr-mini">
+            <button type="button" className="nr-icon" onClick={() => setMini(false)} aria-label="Show the page list" title="Show pages">
+              <PanelLeftOpen className="size-4" aria-hidden="true" />
+            </button>
+            <span className="nr-mini-ch is-here" style={{ ['--p' as string]: `${pct}%` }} title={`${read} of ${topic.pages.length} pages read`}>
+              <span>{pageIndex + 1}</span>
+            </span>
+            <span className="nr-mini-lessons">
+              {topic.pages.map((p, i) => (
                 <Link
                   key={p.id}
                   to={`/learn/dsa/${topic.id}/${p.id}`}
-                  aria-current={on ? 'page' : undefined}
-                  className={cn(
-                    'flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-[13px] !no-underline transition-colors',
-                    on ? 'bg-accent-brand/12 font-semibold text-text-primary' : 'text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary',
-                  )}
-                >
-                  {done ? (
-                    <CheckCircle2 className="size-4 shrink-0 text-state-success" />
-                  ) : (
-                    <span className={cn('flex size-4 shrink-0 items-center justify-center rounded-full border text-[9px] font-bold', on ? 'border-accent-brand text-accent-brand' : 'border-border-strong text-text-muted')}>{i + 1}</span>
-                  )}
-                  <span className="min-w-0 truncate">{p.title}</span>
-                </Link>
-              )
-            })}
-          </nav>
-          <Link to={`/learn/dsa/${topic.id}/practice`} className="mt-3 flex items-center gap-2 rounded-xl bg-bg-surface-2 px-3 py-2.5 text-[13px] font-medium text-text-primary !no-underline ring-1 ring-border transition-colors hover:bg-bg-surface-3">
-            <ListChecks className="size-4 text-accent-brand" />
-            <span className="flex-1">Question bank</span>
-            <span className="font-mono text-[11px] text-text-muted">
-              {nonCode} + {code}
+                  className={cn('nr-mini-dot', i === pageIndex && 'is-current', isDone(items[pageKey(topic.id, p.id)]) && 'is-done')}
+                  title={`${i + 1}. ${p.title}`}
+                  aria-label={`${i + 1}. ${p.title}`}
+                  aria-current={i === pageIndex ? 'page' : undefined}
+                />
+              ))}
             </span>
-          </Link>
-        </div>
-      </aside>
+            <Link to={`/learn/dsa/${topic.id}/practice`} className="nr-icon" title="Question bank" aria-label="Question bank">
+              <ListChecks className="size-4" aria-hidden="true" />
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div className="nr-tree-head">
+              <Link to="/learn?tab=dsa" className="nr-tree-subject">
+                {topic.title}
+              </Link>
+              <button type="button" className="nr-icon" onClick={() => setMini(true)} aria-label="Collapse the page list" title="Collapse">
+                <PanelLeftClose className="size-4" aria-hidden="true" />
+              </button>
+            </div>
+            <div className="mb-4">
+              <div className="h-1 overflow-hidden rounded-full bg-bg-surface-3">
+                <div className="h-full rounded-full bg-accent-brand transition-[width] duration-700" style={{ width: `${pct}%` }} />
+              </div>
+              <p className="mt-1.5 mb-0 text-[12px] text-text-muted">
+                {read} of {topic.pages.length} pages read
+              </p>
+            </div>
+            <ol className="m-0 list-none space-y-0.5 p-0">
+              {topic.pages.map((p, i) => {
+                const done = isDone(items[pageKey(topic.id, p.id)])
+                const on = i === pageIndex
+                return (
+                  <li key={p.id}>
+                    <Link to={`/learn/dsa/${topic.id}/${p.id}`} aria-current={on ? 'page' : undefined} className={cn('notes-tree-link', on && 'is-current')}>
+                      {done ? (
+                        <CheckCircle2 className="size-4 shrink-0 text-state-success" />
+                      ) : (
+                        <span className="flex size-4 shrink-0 items-center justify-center rounded-full border border-border-strong text-[9px] font-semibold text-text-muted">{i + 1}</span>
+                      )}
+                      <span className="min-w-0">{p.title}</span>
+                    </Link>
+                  </li>
+                )
+              })}
+            </ol>
+            <Link to={`/learn/dsa/${topic.id}/practice`} className="notes-tree-link mt-3 border-t border-border pt-3">
+              <ListChecks className="size-4 shrink-0" aria-hidden="true" />
+              <span className="flex-1">Question bank</span>
+              <span className="font-mono text-[11px] text-text-muted">{nonCode + code}</span>
+            </Link>
+          </>
+        )}
+      </nav>
 
-      {/* lesson */}
-      <motion.article data-agent-content key={page.id} initial={{ y: 8 }} animate={{ y: 0 }} transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }} className="mx-auto w-full max-w-[820px] min-w-0">
-        <header className="mb-7">
-          <p className="mb-2 flex items-center gap-3 text-[12px] text-text-muted">
-            <span className="inline-flex items-center gap-1.5 font-medium text-text-secondary">
-              <BookOpen className="size-3.5" /> Page {pageIndex + 1} of {topic.pages.length}
-            </span>
-            <span className="inline-flex items-center gap-1">
-              <Clock className="size-3.5" /> {page.minutes} min
-            </span>
-          </p>
-          <h2 className="mb-2 !text-[30px] leading-tight font-bold tracking-tight text-text-primary sm:!text-[36px]">{page.title}</h2>
-          <p className="mb-0 text-[16px] leading-relaxed text-text-secondary">{page.summary}</p>
-          {(vizCount > 0 || checkCount > 0 || practiceCount > 0) && (
-            <div className="mt-4 flex flex-wrap gap-2">
+      {/* Centre: the page */}
+      <div className="nr-main">
+        <div className="nr-bar">
+          <nav aria-label="Breadcrumb" className="notes-crumbs">
+            <ol>
+              <li>
+                <Link to="/learn?tab=dsa">DSA course</Link>
+              </li>
+              <li>
+                <span aria-current="page">{topic.title}</span>
+              </li>
+            </ol>
+          </nav>
+        </div>
+        {/* Phones: the page list as a disclosure */}
+        <details className="notes-tree-mobile" open={navOpen} onToggle={(e) => setNavFor((e.target as HTMLDetailsElement).open ? (pageId ?? '') : null)}>
+          <summary>
+            <ChevronDown className="size-4" aria-hidden="true" /> Page {pageIndex + 1} of {topic.pages.length}
+          </summary>
+          <ol className="m-0 list-none space-y-0.5 px-2.5 pb-3">
+            {topic.pages.map((p, i) => (
+              <li key={p.id}>
+                <Link to={`/learn/dsa/${topic.id}/${p.id}`} className={cn('notes-tree-link', i === pageIndex && 'is-current')}>
+                  <span className="font-mono text-[11px] text-text-muted">{i + 1}</span> {p.title}
+                </Link>
+              </li>
+            ))}
+          </ol>
+        </details>
+
+        <motion.article ref={article} data-agent-content key={page.id} initial={{ y: 8 }} animate={{ y: 0 }} transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }} className="min-w-0">
+          <header className="nr-head">
+            <p className="nr-kicker">
+              Page {pageIndex + 1} of {topic.pages.length} · {topic.title}
+            </p>
+            <h1 className="nr-title">{page.title}</h1>
+            {page.summary && <p className="mt-3 mb-0 text-[16.5px] leading-relaxed text-text-secondary">{page.summary}</p>}
+            <div className="nr-meta">
+              <span>{page.minutes} min</span>
               {vizCount > 0 && (
-                <span className="learn-pill">
-                  <PlayCircle className="size-3.5" /> {vizCount} animation{vizCount === 1 ? '' : 's'}
+                <span>
+                  {vizCount} animation{vizCount === 1 ? '' : 's'}
                 </span>
               )}
               {checkCount > 0 && (
-                <span className="learn-pill">
-                  <HelpCircle className="size-3.5" /> {checkCount} question{checkCount === 1 ? '' : 's'}
+                <span>
+                  {checkCount} question{checkCount === 1 ? '' : 's'}
                 </span>
               )}
               {practiceCount > 0 && (
-                <span className="learn-pill">
-                  <Code2 className="size-3.5" /> {practiceCount} coding problem{practiceCount === 1 ? '' : 's'}
+                <span>
+                  {practiceCount} coding problem{practiceCount === 1 ? '' : 's'}
                 </span>
               )}
             </div>
-          )}
-        </header>
+          </header>
 
-        <div className="nx-read nx-lesson space-y-6">
-          {page.blocks.map((b, i) => (
-            <LessonBlock key={i} b={b} bank={bank} />
-          ))}
-        </div>
+          <div className="nx-read nx-lesson nx-read--wide space-y-6">
+            {page.blocks.map((b, i) => (
+              <LessonBlock key={i} b={b} bank={bank} />
+            ))}
+          </div>
+        </motion.article>
 
         <div ref={end} className="h-px" />
 
-        <nav className="mt-10 grid gap-3 border-t border-border pt-6 sm:grid-cols-2" aria-label="Page navigation">
+        <nav className="nr-pager" aria-label="Page navigation">
           {prev ? (
-            <Link to={`/learn/dsa/${topic.id}/${prev.id}`} className="card-interactive card group block p-4 !no-underline">
-              <span className="flex items-center gap-1.5 text-[11.5px] text-text-muted">
-                <ArrowLeft className="size-3.5" /> Previous
-              </span>
-              <span className="mt-1 block text-[15px] font-semibold text-text-primary">{prev.title}</span>
+            <Link to={`/learn/dsa/${topic.id}/${prev.id}`} className="nr-pager-link" rel="prev">
+              <span className="nr-pager-dir">Previous</span>
+              <span className="nr-pager-title">{prev.title}</span>
             </Link>
           ) : (
             <span />
@@ -185,23 +233,48 @@ export default function TopicPage() {
                 mark(pageKey(topic.id, page.id), 'read')
                 navigate(`/learn/dsa/${topic.id}/${next.id}`)
               }}
-              className="card-interactive card group block cursor-pointer p-4 text-right hover:!scale-100"
+              className="nr-pager-link is-next cursor-pointer"
             >
-              <span className="flex items-center justify-end gap-1.5 text-[11.5px] text-text-muted">
-                Next <ArrowRight className="size-3.5" />
-              </span>
-              <span className="mt-1 block text-[15px] font-semibold text-text-primary">{next.title}</span>
+              <span className="nr-pager-dir">Next</span>
+              <span className="nr-pager-title">{next.title}</span>
             </button>
           ) : (
-            <Link to={`/learn/dsa/${topic.id}/practice`} className="card-interactive card group block p-4 text-right !no-underline">
-              <span className="flex items-center justify-end gap-1.5 text-[11.5px] text-text-muted">
-                Finish <ArrowRight className="size-3.5" />
-              </span>
-              <span className="mt-1 block text-[15px] font-semibold text-text-primary">Question bank for {topic.title}</span>
+            <Link to={`/learn/dsa/${topic.id}/practice`} className="nr-pager-link is-next">
+              <span className="nr-pager-dir">Finished</span>
+              <span className="nr-pager-title">Question bank for {topic.title}</span>
             </Link>
           )}
         </nav>
-      </motion.article>
+      </div>
+
+      {/* Right: on this page */}
+      <aside className="nr-toc" aria-label="On this page">
+        {outline.length > 1 && (
+          <>
+            <p className="nr-toc-head">On this page</p>
+            <ol>
+              {outline.map((h) => (
+                <li key={h.id} className={cn(h.level === 3 && 'is-sub')}>
+                  <a href={`#${h.id}`} className={cn(active === h.id && 'is-active')} aria-current={active === h.id ? 'location' : undefined}>
+                    {h.text}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </>
+        )}
+        <div className="nr-toc-progress">
+          <span className="nr-toc-bar" aria-hidden="true">
+            <span style={{ transform: `scaleX(${pct / 100})` }} />
+          </span>
+          <span>
+            {read} of {topic.pages.length} pages read
+          </span>
+        </div>
+        <Link to={`/learn/dsa/${topic.id}/practice`} className="nr-toc-link">
+          <ListChecks className="size-3.5" aria-hidden="true" /> Question bank ({nonCode + code})
+        </Link>
+      </aside>
     </div>
   )
 }
