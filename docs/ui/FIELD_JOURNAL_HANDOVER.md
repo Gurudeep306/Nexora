@@ -270,7 +270,9 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
 - Axe 0 in light, dark and phone.
 - **Not done (brief 4.8):**
   - star size by weight (lessons + problems)
-  - the clay path from the centre on hover (it uses ink now)
+  - the 600ms draw-in of the hover path (the path itself is clay now:
+    focused prerequisite and unlock links stroke in clay, and mastered
+    links have no glow under the atlas)
   - "ignite" ring for newly unlocked stars (an accent pulse exists)
   - the side panel as an ivory sheet with "x of y lessons · x of y
     problems" and Read · Practise · Prerequisites links

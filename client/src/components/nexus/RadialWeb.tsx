@@ -864,9 +864,11 @@ export function RadialWeb({
       ctx.stroke(groups.locked.dim)
       ctx.globalAlpha = (related ? 0.95 : 0.6) * linkIn
       ctx.lineWidth = thin(related ? 1.75 : 1.25)
+      // In the atlas the path to the star in focus is drawn in clay.
+      if (atlas && related) ctx.strokeStyle = C.accent
       ctx.stroke(groups.locked.lit)
       // open: flowing toward the skill you can take next
-      ctx.strokeStyle = C.primary
+      ctx.strokeStyle = atlas ? C.muted : C.primary
       ctx.setLineDash([5, 7])
       ctx.lineDashOffset = animate ? ((now / 1100) * 24) % 24 : 0
       ctx.globalAlpha = 0.08 * linkIn
@@ -874,6 +876,7 @@ export function RadialWeb({
       ctx.stroke(groups.open.dim)
       ctx.globalAlpha = linkIn
       ctx.lineWidth = thin(related ? 2.75 : 2)
+      if (atlas && related) ctx.strokeStyle = C.accent
       ctx.stroke(groups.open.lit)
       ctx.globalAlpha = 0.55
       ctx.lineWidth = thin(1.25)
@@ -891,15 +894,19 @@ export function RadialWeb({
       }
       // mastered: glowing in the zone colour
       for (const [col, g] of doneByColor) {
-        ctx.strokeStyle = col
+        ctx.strokeStyle = atlas ? C.text : col
         ctx.globalAlpha = 0.08 * litLinks
         ctx.lineWidth = thin(2)
         ctx.stroke(g.dim)
-        ctx.globalAlpha = 0.22 * litLinks
-        ctx.lineWidth = thin(6)
-        ctx.stroke(g.lit)
+        // No glow in the atlas: engraved lines only.
+        if (!atlas) {
+          ctx.globalAlpha = 0.22 * litLinks
+          ctx.lineWidth = thin(6)
+          ctx.stroke(g.lit)
+        }
         ctx.globalAlpha = litLinks
         ctx.lineWidth = thin(related ? 2.75 : 2)
+        if (atlas && related) ctx.strokeStyle = C.accent
         ctx.stroke(g.lit)
       }
       ctx.globalAlpha = 1
