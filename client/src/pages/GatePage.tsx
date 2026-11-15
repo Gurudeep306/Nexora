@@ -281,7 +281,7 @@ export default function GatePage() {
           <span className="hidden sm:inline">{focus ? 'Exit focus' : 'Focus'}</span>
         </button>
       )}
-      <Link to={GATE_ROUTES.tests} className="btn-secondary inline-flex items-center gap-2 !px-3 !py-2 !text-[13px]">
+      <Link to={GATE_ROUTES.tests} aria-label="Tests" className="btn-secondary inline-flex items-center gap-2 !px-3 !py-2 !text-[13px]">
         <Icon name="timer" className="size-4" /> <span className="hidden sm:inline">Tests</span>
       </Link>
     </div>

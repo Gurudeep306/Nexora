@@ -335,7 +335,7 @@ const BLOCK_RENDERERS: Record<BlockName, (p: BlockProps) => ReactNode> = {
     </Frame>
   ),
   pyq: ({ node }) => (
-    <Frame node={node} as="div" icon="gate" kicker="Previous-year question">
+    <Frame node={node} as="div" icon="gate" kicker="Previous-year question" className="nb-bare">
       <ConceptChips tests={node.attrs.tests} />
       <Suspense fallback={<div className="nb-loading" aria-busy="true" />}>
         <PyqEmbedSlot id={node.attrs.id!} />
@@ -531,10 +531,12 @@ function PyqEmbedSlot({ id }: { id: string }) {
 function PracticeSlot({ node }: { node: DirectiveNode }) {
   const ctx = useNotes()
   const q = ctx?.practice[node.attrs.id!]
+  const did = useDomId()
+  // The shared question card brings its own masthead, so no frame header here.
   return (
-    <Frame node={node} as="div" icon="practice" kicker="Practice" title={q ? `${q.type} · ${q.marks ?? 1} mark${(q.marks ?? 1) === 1 ? '' : 's'}` : undefined}>
+    <div id={did(node.id)} data-block={node.name} data-block-id={node.id} data-depth={node.depth} className="nb nb-practice nb-bare">
       {q ? <PracticeEmbed q={q} /> : <p className="nb-missing">This question is not available.</p>}
-    </Frame>
+    </div>
   )
 }
 

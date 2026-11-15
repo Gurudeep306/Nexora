@@ -1134,6 +1134,13 @@ h4.notes-h {
   border: 1px solid var(--color-border);
   background: color-mix(in oklab, var(--color-text-primary) 2%, transparent);
 }
+/* Question embeds are the shared question card: no second box around it. */
+.nb.nb-bare {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
 .nb-pyq > .nb-body,
 .nb-practice > .nb-body {
   font-family: var(--font-body);
@@ -1160,21 +1167,7 @@ h4.notes-h {
 }
 
 /* Our own practice question */
-.np {
-  padding: 1em 1.1em;
-  border: 1px solid var(--color-border-strong);
-  border-radius: 14px;
-  background: var(--color-bg-surface);
-}
-.np-text {
-  font-family: var(--notes-hand);
-  font-size: var(--notes-size);
-  font-variation-settings: var(--notes-variation);
-  line-height: 1.55;
-}
-.np-text p {
-  margin: 0 0 0.6em;
-}
+/* Our own practice question: the shared question card (components/question). */
 .np-hint {
   margin: 0 0 4px !important;
   font-size: 12.5px;
