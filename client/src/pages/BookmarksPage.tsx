@@ -45,7 +45,7 @@ export default function BookmarksPage() {
     { skip: !username },
   )
 
-  const problems = bookmarksApi.data?.problems ?? []
+  const problems = useMemo(() => bookmarksApi.data?.problems ?? [], [bookmarksApi.data])
 
   const suggestions = useMemo<ComboboxItem[]>(() => {
     const q = search.trim().toLowerCase()
@@ -119,8 +119,9 @@ export default function BookmarksPage() {
     <div className="space-y-4">
       <PageHeader
         icon="bookmarks"
-        title="Bookmark Vault"
-        subtitle="Problems you saved for later — filter, jump back in, or clear the clutter."
+        eyebrow="Your record"
+        title="Bookmarks"
+        subtitle="Problems you saved for later."
         actions={
           problems.length > 0 ? (
             <span className="text-xs text-foreground-faint">
@@ -195,8 +196,8 @@ export default function BookmarksPage() {
         <div className="card-neon">
           <EmptyState
             icon="star"
-            title="Your vault is empty"
-            description="Star problems in the arena to stash them here for your next session."
+            title="No bookmarks yet"
+            description="Bookmark a problem from the Problems page and it appears here."
             action={
               <Link to="/problems">
                 <Button variant="primary" size="sm">
