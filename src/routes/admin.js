@@ -940,6 +940,162 @@ function createAdminRouter(deps) {
     }),
   );
 
+  /* ═════════════ AI models: providers, keys, per-feature choice ═════════════ */
+
+  const ai = require("../ai/settings");
+  const aiView = async () => {
+    const c = await ai.loadConfig();
+    const { models: envModels } = require("../ai/groq");
+    return {
+      presets: ai.PRESETS,
+      features: ai.FEATURES.map(({ id, name, hint }) => ({ id, name, hint })),
+      providers: c.providers.map(ai.publicProvider),
+      slots: c.slots,
+      assignments: c.features,
+      budget: { dailyTokens: c.budget?.dailyTokens ?? null },
+      env: { configured: !!String(process.env.GROQ_API_KEY || "").trim(), models: envModels() },
+      active: ai.configuredInAdmin() ? "admin" : String(process.env.GROQ_API_KEY || "").trim() ? "env" : "none",
+    };
+  };
+  const findProvider = (c, id) => {
+    const p = c.providers.find((x) => x.id === id);
+    if (!p) bad("No such provider");
+    return p;
+  };
+  const urlOk = (u) => {
+    try {
+      const x = new URL(u);
+      return x.protocol === "https:" || (x.protocol === "http:" && /^(localhost|127\.0\.0\.1)$/.test(x.hostname));
+    } catch {
+      return false;
+    }
+  };
+  const assignment = (c, v, field) => {
+    if (v === null || v === "" || v === undefined) return null;
+    if (typeof v !== "object") bad(`${field} must be { provider, model }`);
+    const provider = str(v.provider, { max: 40, field: `${field}.provider` });
+    const model = str(v.model, { max: 200, field: `${field}.model` });
+    findProvider(c, provider);
+    return { provider, model };
+  };
+
+  router.get(
+    "/api/admin/ai",
+    requirePerm("site.settings"),
+    h(async (_req, res) => res.json({ ok: true, ...(await aiView()) })),
+  );
+
+  router.post(
+    "/api/admin/ai/providers",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const b = req.body || {};
+      const kind = str(b.kind, { max: 20, field: "kind" });
+      if (!ai.PRESETS.some((p) => p.kind === kind)) bad("Unknown provider");
+      const apiKey = str(b.apiKey ?? "", { max: 400, field: "apiKey" });
+      const baseUrl = str(b.baseUrl ?? "", { max: 300, field: "baseUrl" });
+      const p = ai.newProvider({ kind, name: b.name, baseUrl, apiKey });
+      if (!urlOk(p.baseUrl)) bad("Base URL must be an https:// address");
+      const c = await ai.loadConfig();
+      if (c.providers.length >= 20) bad("Up to 20 providers");
+      // Test straight away: the admin sees at once whether the key works.
+      const t = await ai.testProvider(p);
+      p.test = { ok: t.ok, at: Date.now(), ms: t.ms, error: t.error };
+      if (t.ok) p.models = t.models;
+      await ai.saveConfig({ ...c, providers: [...c.providers, p] }, req.access.username);
+      await audit(req, "ai.provider.add", { targetType: "ai", target: p.id, after: { kind: p.kind, name: p.name, baseUrl: p.baseUrl, last4: p.last4 } });
+      res.json({ ok: true, provider: ai.publicProvider(p), ...(await aiView()) });
+    }),
+  );
+
+  router.put(
+    "/api/admin/ai/providers/:id",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const c = await ai.loadConfig();
+      const p = { ...findProvider(c, req.params.id) };
+      const b = req.body || {};
+      const before = ai.publicProvider(p);
+      if (b.name !== undefined) p.name = str(b.name, { max: 60, field: "name" });
+      if (b.baseUrl !== undefined) {
+        const u = str(b.baseUrl, { max: 300, field: "baseUrl" }).replace(/\/+$/, "");
+        if (!urlOk(u)) bad("Base URL must be an https:// address");
+        p.baseUrl = u;
+      }
+      if (b.enabled !== undefined) p.enabled = bool(b.enabled, "enabled");
+      if (b.apiKey) {
+        const fresh = ai.newProvider({ kind: p.kind, baseUrl: p.baseUrl, apiKey: str(b.apiKey, { max: 400, field: "apiKey" }) });
+        p.key = fresh.key;
+        p.last4 = fresh.last4;
+        p.test = null;
+      }
+      await ai.saveConfig({ ...c, providers: c.providers.map((x) => (x.id === p.id ? p : x)) }, req.access.username);
+      await audit(req, "ai.provider.update", { targetType: "ai", target: p.id, before, after: ai.publicProvider(p) });
+      res.json({ ok: true, ...(await aiView()) });
+    }),
+  );
+
+  router.delete(
+    "/api/admin/ai/providers/:id",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const c = await ai.loadConfig();
+      const p = findProvider(c, req.params.id);
+      const drop = (m) => Object.fromEntries(Object.entries(m || {}).filter(([, v]) => v?.provider !== p.id));
+      await ai.saveConfig({ ...c, providers: c.providers.filter((x) => x.id !== p.id), slots: drop(c.slots), features: drop(c.features) }, req.access.username);
+      await audit(req, "ai.provider.remove", { targetType: "ai", target: p.id, before: ai.publicProvider(p) });
+      res.json({ ok: true, ...(await aiView()) });
+    }),
+  );
+
+  router.post(
+    "/api/admin/ai/providers/:id/test",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const c = await ai.loadConfig();
+      const p = { ...findProvider(c, req.params.id) };
+      const t = await ai.testProvider(p);
+      p.test = { ok: t.ok, at: Date.now(), ms: t.ms, error: t.error };
+      if (t.ok) p.models = t.models;
+      await ai.saveConfig({ ...c, providers: c.providers.map((x) => (x.id === p.id ? p : x)) }, req.access.username);
+      res.json({ ok: true, test: p.test, ...(await aiView()) });
+    }),
+  );
+
+  router.post(
+    "/api/admin/ai/providers/:id/try",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const c = await ai.loadConfig();
+      const p = findProvider(c, req.params.id);
+      const model = str(req.body?.model, { max: 200, field: "model" });
+      res.json({ ok: true, result: await ai.tryModel(p, model) });
+    }),
+  );
+
+  router.put(
+    "/api/admin/ai/assignments",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const c = await ai.loadConfig();
+      const b = req.body || {};
+      const slots = { ...c.slots };
+      const features = { ...c.features };
+      for (const k of ai.SLOTS) if (b.slots && k in b.slots) slots[k] = assignment(c, b.slots[k], k);
+      for (const f of ai.FEATURES) if (b.features && f.id in b.features) features[f.id] = assignment(c, b.features[f.id], f.id);
+      let budget = c.budget;
+      if (b.budget && "dailyTokens" in b.budget) {
+        const n = b.budget.dailyTokens === null || b.budget.dailyTokens === "" ? null : Number(b.budget.dailyTokens);
+        if (n !== null && (!Number.isFinite(n) || n < 1000 || n > 50_000_000)) bad("Daily tokens must be between 1,000 and 50,000,000");
+        budget = { dailyTokens: n === null ? null : Math.round(n) };
+      }
+      const clean = (m) => Object.fromEntries(Object.entries(m).filter(([, v]) => v));
+      await ai.saveConfig({ ...c, slots: clean(slots), features: clean(features), budget }, req.access.username);
+      await audit(req, "ai.assignments", { targetType: "ai", target: "assignments", before: { slots: c.slots, features: c.features, budget: c.budget }, after: { slots: clean(slots), features: clean(features), budget } });
+      res.json({ ok: true, ...(await aiView()) });
+    }),
+  );
+
   /* ═════════════ Announcements & broadcasts ═════════════ */
 
   router.get(

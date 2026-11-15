@@ -32,7 +32,16 @@ class AiError extends Error {
 }
 
 const NOT_CONFIGURED = "AI is not configured";
-const isConfigured = () => !!String(process.env.GROQ_API_KEY || "").trim();
+/** Admin-managed providers (src/ai/settings.js), loaded lazily so this module stays light. */
+function adminSettings() {
+  try {
+    // eslint-disable-next-line global-require
+    return require("./settings");
+  } catch {
+    return null;
+  }
+}
+const isConfigured = () => !!String(process.env.GROQ_API_KEY || "").trim() || !!adminSettings()?.configuredInAdmin();
 const supportsReasoning = (model) => /gpt-oss/i.test(String(model || ""));
 const RETRYABLE = new Set([429, 500, 502, 503, 504]);
 
@@ -276,4 +285,26 @@ function groq() {
   return shared.client;
 }
 
-module.exports = { createGroqClient, groq, models, AiError, isConfigured, supportsReasoning, NOT_CONFIGURED, DEFAULT_BASE_URL };
+const adminClients = new Map(); // baseUrl|key hash → client (keeps each provider's breaker)
+
+/**
+ * The client and model a call should use. An admin's choice (Admin → AI
+ * models) wins — per feature, then per slot — and the GROQ_* environment
+ * applies when nothing is chosen. `mode` is the task (modes.js) or "chat".
+ */
+function clientFor({ mode, slot = "main" } = {}) {
+  const r = adminSettings()?.resolve({ mode, slot });
+  if (r) {
+    const id = `${r.baseUrl}|${require("crypto").createHash("sha256").update(r.apiKey).digest("hex").slice(0, 16)}`;
+    let client = adminClients.get(id);
+    if (!client) {
+      client = createGroqClient({ apiKey: r.apiKey, baseUrl: r.baseUrl });
+      adminClients.set(id, client);
+    }
+    return { client, model: r.model, fallbackModel: r.fallback ?? null, source: "admin" };
+  }
+  const m = models();
+  return { client: groq(), model: slot === "fast" ? m.fast : m.main, fallbackModel: undefined, source: "env" };
+}
+
+module.exports = { createGroqClient, groq, clientFor, models, AiError, isConfigured, supportsReasoning, NOT_CONFIGURED, DEFAULT_BASE_URL };

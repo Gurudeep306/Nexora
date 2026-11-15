@@ -16,10 +16,12 @@ import { AnnouncementsPanel, SiteSettingsPanel } from '@/components/admin/SiteSe
 import { ModerationSection } from '@/components/admin/ModerationSection'
 import { AuditSection } from '@/components/admin/AuditSection'
 import { SourcesSection } from '@/components/admin/SourcesSection'
+import { AiSection } from '@/components/admin/AiSection'
+import '@/components/admin/ai.css'
 import NotFoundPage from '@/pages/NotFoundPage'
 import type { AdminMe } from '@/components/admin/types'
 
-type SectionId = 'overview' | 'users' | 'moderation' | 'site' | 'sources' | 'announcements' | 'audit'
+type SectionId = 'overview' | 'users' | 'moderation' | 'site' | 'ai' | 'sources' | 'announcements' | 'audit'
 
 const GROUPS: { label: string; items: { id: SectionId; label: string; icon: IconName; perm: string; title: string; blurb: string }[] }[] = [
   {
@@ -37,6 +39,7 @@ const GROUPS: { label: string; items: { id: SectionId; label: string; icon: Icon
     label: 'Platform',
     items: [
       { id: 'site', label: 'Site', icon: 'globe', perm: 'site.settings', title: 'Site', blurb: 'Private mode, early access, sign-ups, feature flags and maintenance.' },
+      { id: 'ai', label: 'AI models', icon: 'sparkles', perm: 'site.settings', title: 'AI models', blurb: 'Which AI the site uses: providers, keys, a model for each feature, and the daily budget.' },
       { id: 'sources', label: 'Problem sources', icon: 'database', perm: 'problems.manage', title: 'Problem sources', blurb: 'Which judges problems come from, kept in sync and tested live.' },
       { id: 'announcements', label: 'Announcements', icon: 'bell', perm: 'announcements.post', title: 'Announcements', blurb: 'The bar above every page, and notifications to everyone.' },
       { id: 'audit', label: 'Audit log', icon: 'list', perm: 'audit.view', title: 'Audit log', blurb: 'Every admin action — who, what, when, from where.' },
@@ -227,6 +230,7 @@ export default function AdminPage() {
             {current?.id === 'overview' && <OverviewSection key={revision} onOpenUser={setUser} />}
             {current?.id === 'users' && <UsersSection onOpenUser={setUser} revision={revision} />}
             {current?.id === 'site' && <SiteSettingsPanel />}
+            {current?.id === 'ai' && <AiSection />}
             {current?.id === 'sources' && <SourcesSection />}
             {current?.id === 'announcements' && <AnnouncementsPanel me={me} />}
             {current?.id === 'moderation' && <ModerationSection me={me} onOpenUser={setUser} onChanged={refetch} />}
