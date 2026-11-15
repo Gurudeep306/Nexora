@@ -117,10 +117,10 @@ async function testCommand(ws) {
  */
 async function testCandidates(ctx, candidates) {
   const runner = require("./runner");
-  const m = await get("SELECT policy FROM hive_machines WHERE id=?", [ctx.machine.id]);
+  const policy = ctx.machine.policy ?? (await get("SELECT policy FROM hive_machines WHERE id=?", [ctx.machine.id]))?.policy;
   const cmd = await testCommand(candidates[0].ws);
   if (!cmd) return;
-  if (m?.policy !== "auto") {
+  if (policy !== "auto") {
     await runner.event(ctx.task.id, null, "system", { message: `The Judge didn't run tests (this machine asks before every command). Set the machine to run commands without asking to have attempts tested before judging.` });
     return;
   }
@@ -129,6 +129,15 @@ async function testCandidates(ctx, candidates) {
     if (c.ws.folder === ctx.machine.folder && candidates.some((o) => o !== c && o.ws.folder === c.ws.folder)) {
       c.tests = "not run (this attempt shared a folder with another one)";
       continue;
+    }
+    // A fresh copy has no installed packages: install them first, or "npm test" fails for every attempt.
+    if (cmd === "npm test" && !(await c.ws.exists("node_modules/.package-lock.json").catch(() => false))) {
+      const install = (await c.ws.exists("package-lock.json").catch(() => false)) ? "npm ci --no-audit --no-fund" : "npm install --no-audit --no-fund";
+      const ir = await c.ws.exec(install, { timeoutMs: 10 * 60_000 }).catch((e) => ({ code: -1, output: e.message }));
+      if (ir?.code !== 0) {
+        c.tests = `not run (\`${install}\` failed, exit ${ir?.code}): ${clip(String(ir?.output || "").trim().split("\n").slice(-5).join(" "), 400)}`;
+        continue;
+      }
     }
     const r = await c.ws.exec(cmd, { timeoutMs: 10 * 60_000 }).catch((e) => ({ code: -1, output: e.message }));
     const tail = String(r?.output || "").trim().split("\n").slice(-25).join("\n");
@@ -164,4 +173,4 @@ async function judgeAnswers(convoId, groupId, username) {
   return verdict;
 }
 
-module.exports = { judgeTask, judgeAnswers, testCommand };
+module.exports = { judgeTask, judgeAnswers, testCommand, testCandidates };

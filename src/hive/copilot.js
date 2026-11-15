@@ -435,10 +435,19 @@ const SAFE_PART = new RegExp(
   "i",
 );
 const SECRET_OR_NET = /\.env\b|id_rsa|\.ssh|\.aws|\.npmrc|credentials|\btoken\b|\bcurl\b|\bwget\b|\bssh\b|\bscp\b|\bnc\b|>\s*\//i;
+/** An argument that reaches outside the project folder (absolute, home or ../ paths). */
+const leavesFolder = (part) =>
+  part
+    .split(/[ \t]+/)
+    .slice(1)
+    .map((a) => a.replace(/^['"]|['"]$/g, ""))
+    .some((a) => a.startsWith("/") || a.startsWith("~") || /(^|[\/=])\.\.([\/]|$)/.test(a));
 function autoApprovable(command) {
   const c = String(command || "").trim();
-  if (!c || DANGEROUS.test(c) || SECRET_OR_NET.test(c) || /[`$]\(|\$\{|`/.test(c) || />/.test(c)) return false;
-  return c.split(/&&|\|\||;|\|/).every((part) => SAFE_PART.test(part.trim()));
+  // A line break (or other control character) starts another command the shell runs too.
+  if (!c || /[\x00-\x08\x0a-\x1f\x7f]/.test(c)) return false;
+  if (DANGEROUS.test(c) || SECRET_OR_NET.test(c) || /[`$]\(|\$\{|`/.test(c) || />/.test(c)) return false;
+  return c.split(/&&|\|\||;|\|/).every((part) => SAFE_PART.test(part.trim()) && !leavesFolder(part.trim()));
 }
 
 function needs(ctx, what) {
