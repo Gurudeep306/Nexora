@@ -30,6 +30,7 @@ import { domId } from '@/gate/notes/render/ids'
 import type { ChapterSummary, Lesson, LessonPayload, PyqLink } from '@/gate/notes/types'
 import { gateApi } from '@/gate/api'
 import { questionLink } from '@/gate/shell/links'
+import { useScrollSpy } from '@/components/reader/outline'
 
 const BLOCK_LABEL: Record<string, string> = {
   intuition: 'Intuition',
@@ -388,39 +389,6 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
       </NotesRoot>
     </GateShell>
   )
-}
-
-/** The id of the heading the reader is in (the last one above a line 30% down the screen). */
-function useScrollSpy(ids: string[]): string | null {
-  const [active, setActive] = useState<string | null>(null)
-  const key = ids.join('|')
-  useEffect(() => {
-    if (!ids.length) return
-    let raf = 0
-    const measure = () => {
-      raf = 0
-      const line = window.innerHeight * 0.3
-      let cur: string | null = null
-      for (const id of ids) {
-        const el = document.getElementById(id)
-        if (!el) continue
-        if (el.getBoundingClientRect().top <= line) cur = id
-        else break
-      }
-      setActive(cur ?? ids[0])
-    }
-    const on = () => {
-      if (!raf) raf = requestAnimationFrame(measure)
-    }
-    measure()
-    window.addEventListener('scroll', on, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', on)
-      if (raf) cancelAnimationFrame(raf)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key])
-  return active
 }
 
 /**
