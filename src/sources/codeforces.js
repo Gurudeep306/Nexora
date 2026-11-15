@@ -84,16 +84,16 @@ async function statement(problem) {
       return getText(snap.url.replace(/^http:/, "https:"), { timeoutMs: 25000, retries: 1 });
     },
   ];
-  let lastErr;
+  let firstErr;
   for (const t of tries) {
     try {
       const data = parse(await t());
       if (data && data.statement.replace(/<[^>]+>/g, "").trim().length > 10) return data;
     } catch (e) {
-      lastErr = e;
+      firstErr ||= e; // the problem page's own answer is the one worth reporting
     }
   }
-  if (lastErr) throw lastErr;
+  if (firstErr) throw firstErr;
   return null;
 }
 
