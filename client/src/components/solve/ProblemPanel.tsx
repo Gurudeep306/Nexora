@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Brain, Clock, Cpu, FileDown, GitCommitHorizontal, Lightbulb, Loader2, ScrollText } from 'lucide-react'
-import { Badge, DifficultyBadge, LoadingBlock, Tabs } from '@/components/ui'
+import { Check, Copy, ExternalLink, FileDown, FileText, Languages, Loader2, Plug, Sigma } from 'lucide-react'
+import { LoadingBlock, Tabs } from '@/components/ui'
 import { sanitizeHtml } from '@/lib/sanitize'
 import { prepareMathHtml, renderMathIn } from '@/lib/math'
 import { useStatementMedia } from './StatementMedia'
@@ -8,10 +8,12 @@ import { TranslateBar } from './TranslateBar'
 import { ThinkingPad } from './ThinkingPad'
 import { SolutionTab } from './SolutionTab'
 import type { Lang } from '@/learn/engine/types'
-import { PlatformBadge, VerdictBadge } from '@/components/shared/PlatformBadge'
+import { VerdictBadge } from '@/components/shared/PlatformBadge'
+import { sourceLabel } from '@/lib/sources'
 import { cn, timeAgo } from '@/lib/utils'
 import { parseTags } from '@/components/problems/types'
 import type { SolveProblem, StatementResponse, SubmissionRow } from './types'
+import './statement.css'
 
 interface Props {
   problem: SolveProblem | null
@@ -26,19 +28,66 @@ interface Props {
   custom?: boolean
   /** NexoraGuru Learn problems: the written solution, shown in its own tab. */
   learnSolution?: { slug: string; editorial: string | null; solutions: Partial<Record<Lang, string>> }
+  /** Put a source's starter code (LeetCode) into the editor. */
+  onUseStarter?: (code: string, langSlug: string) => void
+  /** The editor's current language, to offer the matching starter code. */
+  language?: string
 }
 
+/** Difficulty band of a rating, for the quiet coloured dot. */
+function band(rating: number): { label: string; tone: string } {
+  if (rating <= 0) return { label: 'Unrated', tone: 'bg-foreground-faint' }
+  if (rating < 1200) return { label: 'Easy', tone: 'bg-state-success' }
+  if (rating < 1600) return { label: 'Medium', tone: 'bg-state-warning' }
+  if (rating < 2000) return { label: 'Hard', tone: 'bg-[oklch(65%_0.17_40)]' }
+  return { label: 'Expert', tone: 'bg-state-error' }
+}
 
-function SpecSection({ title, html }: { title: string; html: string }) {
-  if (!html || !html.trim()) return null
+// The editor's language id → LeetCode's snippet slug.
+const SNIPPET_SLUG: Record<string, string[]> = {
+  cpp: ['cpp'],
+  c: ['c'],
+  java: ['java'],
+  python: ['python3', 'python'],
+  javascript: ['javascript'],
+  typescript: ['typescript'],
+  csharp: ['csharp'],
+  go: ['golang'],
+  rust: ['rust'],
+  kotlin: ['kotlin'],
+  swift: ['swift'],
+  ruby: ['ruby'],
+  php: ['php'],
+  scala: ['scala'],
+  dart: ['dart'],
+}
+
+function CopyButton({ text, label }: { text: string; label: string }) {
+  const [done, setDone] = useState(false)
   return (
-    <section className="mt-5">
-      <h3 className="font-display text-xs tracking-wider text-primary-bright uppercase">{title}</h3>
-      <div
-        className="statement-html mt-2 text-sm leading-relaxed text-foreground-dim"
-        dangerouslySetInnerHTML={{ __html: sanitizeHtml(prepareMathHtml(html)) }}
-      />
-    </section>
+    <button
+      type="button"
+      onClick={() => {
+        void navigator.clipboard?.writeText(text).then(() => {
+          setDone(true)
+          setTimeout(() => setDone(false), 1200)
+        })
+      }}
+      className="inline-flex size-6 cursor-pointer items-center justify-center rounded-md text-foreground-faint transition-colors hover:bg-surface-2 hover:text-foreground"
+      aria-label={label}
+      title={label}
+    >
+      {done ? <Check className="size-3.5 text-state-success" /> : <Copy className="size-3.5" />}
+    </button>
+  )
+}
+
+function Notice({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div className="mb-5 flex gap-2.5 rounded-lg bg-[color-mix(in_oklab,var(--color-primary)_7%,transparent)] px-3 py-2.5 text-[13px] leading-snug text-foreground-dim [&_svg]:mt-0.5 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-primary-bright">
+      {icon}
+      <div className="min-w-0">{children}</div>
+    </div>
   )
 }
 
@@ -53,150 +102,184 @@ export function ProblemPanel({
   importedSampleCount,
   custom = false,
   learnSolution,
+  onUseStarter,
+  language,
 }: Props) {
   const [tab, setTab] = useState('statement')
   const [translated, setTranslated] = useState<{ lang: string; html: string } | null>(null)
-  const statementRef = useRef<HTMLDivElement>(null)
+  const [translating, setTranslating] = useState(false)
+  const [showTopics, setShowTopics] = useState(false)
+  // Every section (statement, input, output, note) lives inside this one root,
+  // so formulas render everywhere — not only in the first block.
+  const bodyRef = useRef<HTMLDivElement>(null)
   const mediaLightbox = useStatementMedia()
 
   useEffect(() => {
-    renderMathIn(statementRef.current)
+    renderMathIn(bodyRef.current)
   }, [statement, translated, tab])
 
   if (!problem) return <LoadingBlock rows={6} className="p-4" />
 
   const tags = parseTags(problem.tags)
   const samples = statement?.samples ?? []
+  const extra = statement?.extra ?? {}
+  const named: Record<string, string> = { Easy: 'bg-state-success', Medium: 'bg-state-warning', Hard: 'bg-state-error' }
+  const b = extra.difficulty && named[extra.difficulty] ? { label: extra.difficulty, tone: named[extra.difficulty] } : band(problem.rating)
+  const html = (s: string | undefined) => ({ __html: sanitizeHtml(prepareMathHtml(s ?? '')) })
+  const starter = (() => {
+    if (!extra.snippets || !language) return null
+    for (const slug of SNIPPET_SLUG[language] ?? [language]) if (extra.snippets[slug]) return { slug, code: extra.snippets[slug] }
+    return null
+  })()
+  const sourceName = problem.platform === 'custom' ? 'Workshop' : problem.platform === 'learn' ? 'NexoraGuru Learn' : sourceLabel(problem.platform)
 
   return (
     <div className="flex h-full min-h-0 flex-col">
       {mediaLightbox}
-      <div className="border-b border-border px-4 pt-3 pb-0">
-        <h1 className="font-display text-base leading-snug tracking-wide text-foreground md:text-lg">
-          {problem.title}
-        </h1>
-        <div className="mt-2 flex flex-wrap items-center gap-1.5">
-          <PlatformBadge platform={problem.platform} />
-          {problem.rating > 0 ? (
-            <DifficultyBadge rating={problem.rating} />
-          ) : (
-            <Badge variant="default">unrated</Badge>
+      <header className="px-5 pt-4">
+        <p className="flex min-w-0 items-center gap-1.5 text-[12px] text-foreground-faint">
+          <span className="truncate">{sourceName}</span>
+          {!custom && problem.problem_id && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span className="font-mono">{problem.problem_id}</span>
+            </>
           )}
-          {problem.rating > 0 && (
-            <span className="font-mono text-xs text-foreground-dim tabular-nums">{problem.rating}</span>
+          {problem.url && (
+            <a href={problem.url} target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Open on ${sourceName}`}>
+              Original <ExternalLink className="size-3" />
+            </a>
           )}
+        </p>
+        <h1 className="mt-1.5 text-[20px] leading-tight font-semibold tracking-[-0.01em] text-foreground">{problem.title}</h1>
+        <div className="mt-2.5 flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-[12.5px] text-foreground-dim">
+          <span className="inline-flex items-center gap-1.5">
+            <span className={cn('size-2 rounded-full', b.tone)} aria-hidden="true" />
+            {extra.difficulty || b.label}
+            {problem.rating > 0 && <span className="font-mono text-foreground-faint tabular-nums">{problem.rating}</span>}
+          </span>
+          {statement?.timeLimit && <span className="tabular-nums">{statement.timeLimit}</span>}
+          {statement?.memLimit && <span className="tabular-nums">{statement.memLimit}</span>}
           {problem.solve_status === 'solved' && <VerdictBadge verdict="AC" />}
-          {problem.solve_status === 'attempted' && <Badge variant="warning">attempted</Badge>}
-          {statement?.timeLimit && (
-            <Badge variant="outline">
-              <Clock aria-hidden="true" /> {statement.timeLimit}
-            </Badge>
+          {problem.solve_status === 'attempted' && <span className="text-state-warning">Attempted</span>}
+          {tags.length > 0 && (
+            <button type="button" onClick={() => setShowTopics((v) => !v)} className="cursor-pointer text-foreground-faint underline-offset-2 hover:text-foreground hover:underline" aria-expanded={showTopics}>
+              {showTopics ? 'Hide topics' : `Topics (${tags.length})`}
+            </button>
           )}
-          {statement?.memLimit && (
-            <Badge variant="outline">
-              <Cpu aria-hidden="true" /> {statement.memLimit}
-            </Badge>
+          {!custom && statement && !statementLoading && (
+            <button type="button" onClick={() => setTranslating((v) => !v)} aria-pressed={translating} className={cn('ml-auto inline-flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground', translating && 'text-foreground')}>
+              <Languages className="size-3.5" /> Translate
+            </button>
           )}
         </div>
+        {showTopics && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {tags.map((t) => (
+              <span key={t} className="rounded-full bg-surface-2 px-2.5 py-0.5 text-[11.5px] text-foreground-dim">
+                {t}
+              </span>
+            ))}
+          </div>
+        )}
         <Tabs
           className="mt-3"
           variant="underline"
           active={tab}
           onChange={setTab}
           items={[
-            { id: 'statement', label: 'Statement', icon: <ScrollText className="size-3.5" /> },
-            ...(custom ? [] : [{ id: 'thinking', label: 'Thinking', icon: <Brain className="size-3.5" /> }]),
-            ...(learnSolution ? [{ id: 'solution', label: 'Solution', icon: <Lightbulb className="size-3.5" /> }] : []),
-            {
-              id: 'submissions',
-              label: 'Submissions',
-              icon: <GitCommitHorizontal className="size-3.5" />,
-              badge: submissions.length || undefined,
-            },
+            { id: 'statement', label: 'Description' },
+            ...(custom ? [] : [{ id: 'thinking', label: 'Notes' }]),
+            ...(learnSolution ? [{ id: 'solution', label: 'Solution' }] : []),
+            { id: 'submissions', label: 'Submissions', badge: submissions.length || undefined },
           ]}
         />
-      </div>
+      </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-8">
         {tab === 'statement' && (
           <>
-            {statementLoading && <LoadingBlock rows={5} />}
-            {statementError && (
-              <p className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
-                {statementError}
-              </p>
-            )}
+            {statementLoading && <LoadingBlock rows={6} />}
+            {statementError && <p className="rounded-lg bg-[color-mix(in_oklab,var(--color-state-error)_10%,transparent)] px-3 py-2 text-[13px] text-state-error">{statementError}</p>}
             {statement && !statementLoading && (
-              <>
-                {!custom && (
-                  <TranslateBar
-                    html={[statement.statement, statement.inputSpec, statement.outputSpec, statement.note].filter(Boolean).join('')}
-                    onResult={(r) => setTranslated(r ? { lang: r.lang, html: r.html } : null)}
-                  />
-                )}
-                {translated ? (
-                  <div
-                    ref={statementRef}
-                    className="statement-html text-sm leading-relaxed text-foreground-dim [&_img]:max-w-full [&_pre]:overflow-x-auto [&_table]:w-full"
-                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(prepareMathHtml(translated.html)) }}
-                  />
-                ) : (
-                  <>
-                    <div
-                      ref={statementRef}
-                      className="statement-html text-sm leading-relaxed text-foreground-dim [&_img]:max-w-full [&_pre]:overflow-x-auto [&_table]:w-full"
-                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(prepareMathHtml(statement.statement)) }}
+              <div ref={bodyRef}>
+                {translating && !custom && (
+                  <div className="mb-5">
+                    <TranslateBar
+                      html={[statement.statement, statement.inputSpec, statement.outputSpec, statement.note].filter(Boolean).join('')}
+                      onResult={(r) => setTranslated(r ? { lang: r.lang, html: r.html } : null)}
                     />
-                    <SpecSection title="Input" html={statement.inputSpec} />
-                    <SpecSection title="Output" html={statement.outputSpec} />
-                    <SpecSection title="Note" html={statement.note} />
-                  </>
+                  </div>
+                )}
+                {extra.kind === 'function' && (
+                  <Notice icon={<Plug />}>
+                    <p>
+                      This is a function problem: {sourceName} calls your method directly, so it can't be judged on stdin here. Write and test it locally, then submit on {sourceName}.
+                    </p>
+                    {starter && onUseStarter && (
+                      <button type="button" onClick={() => onUseStarter(starter.code, starter.slug)} className="mt-1.5 cursor-pointer font-medium text-primary-bright hover:underline">
+                        Insert the starter code
+                      </button>
+                    )}
+                  </Notice>
+                )}
+                {extra.kind === 'answer' && (
+                  <Notice icon={<Sigma />}>The answer is a single value. Compute it with code, then check it on {sourceName}.</Notice>
+                )}
+                {extra.interactive && (
+                  <Notice icon={<Plug />}>Interactive problem: your program talks to a judge that answers queries. Samples show one conversation; submit on {sourceName} to be judged.</Notice>
+                )}
+                {extra.files && (
+                  <Notice icon={<FileText />}>
+                    Reads <span className="font-mono">{extra.files.input || 'standard input'}</span> and writes <span className="font-mono">{extra.files.output || 'standard output'}</span>.
+                  </Notice>
                 )}
 
+                <article className="nx-statement">
+                  {translated ? (
+                    <div dangerouslySetInnerHTML={html(translated.html)} />
+                  ) : (
+                    <>
+                      <div dangerouslySetInnerHTML={html(statement.statement)} />
+                      {statement.inputSpec?.trim() && <div dangerouslySetInnerHTML={html(statement.inputSpec)} />}
+                      {statement.outputSpec?.trim() && <div dangerouslySetInnerHTML={html(statement.outputSpec)} />}
+                    </>
+                  )}
+                </article>
+
                 {samples.length > 0 && (
-                  <section className="mt-6">
-                    <div className="flex items-center justify-between gap-2">
-                      <h3 className="font-display text-xs tracking-wider text-primary-bright uppercase">
-                        Examples
-                      </h3>
+                  <section className="mt-7" aria-label="Examples">
+                    <div className="mb-3 flex items-center gap-2">
+                      <h2 className="text-[13.5px] font-semibold text-foreground">Examples</h2>
                       <button
+                        type="button"
                         onClick={onImportAllSamples}
                         disabled={importedSampleCount >= samples.length}
-                        className={cn(
-                          'inline-flex cursor-pointer items-center gap-1 rounded-md border border-border-glow px-2 py-1 text-[11px] font-semibold text-primary-bright transition-all duration-200 hover:border-primary hover:glow-box disabled:cursor-not-allowed disabled:opacity-40',
-                        )}
+                        className="ml-auto inline-flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-[12px] text-foreground-dim transition-colors hover:bg-surface-2 hover:text-foreground disabled:cursor-default disabled:opacity-50 disabled:hover:bg-transparent"
                       >
-                        <FileDown className="size-3" aria-hidden="true" /> Import all as tests
+                        <FileDown className="size-3.5" aria-hidden="true" />
+                        {importedSampleCount >= samples.length ? 'All in your tests' : 'Add all to tests'}
                       </button>
                     </div>
-                    <div className="mt-2 space-y-3">
+                    <div className="space-y-5">
                       {samples.map((s, i) => (
-                        <div key={i} className="rounded-lg border border-border bg-surface p-3">
-                          <div className="flex items-center justify-between">
-                            <p className="text-[10px] font-semibold tracking-wider text-foreground-faint uppercase">
-                              Example {i + 1}
-                            </p>
-                            <button
-                              onClick={() => onImportSample(i)}
-                              className="cursor-pointer text-[11px] font-semibold text-primary-bright transition-colors hover:text-cyan"
-                              aria-label={`Import example ${i + 1} as testcase`}
-                            >
-                              Import
+                        <div key={i}>
+                          <div className="mb-1.5 flex items-center gap-1 text-[12px] text-foreground-faint">
+                            <span>Example {i + 1}</span>
+                            <button type="button" onClick={() => onImportSample(i)} className="ml-auto cursor-pointer rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Add example ${i + 1} to tests`}>
+                              Add to tests
                             </button>
                           </div>
-                          <div className="mt-2 grid gap-2 md:grid-cols-2">
-                            <div>
-                              <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Input</p>
-                              <pre className="mt-1 overflow-x-auto rounded-md bg-background p-2 font-mono text-xs text-foreground">
-                                {s.input}
-                              </pre>
-                            </div>
-                            <div>
-                              <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Output</p>
-                              <pre className="mt-1 overflow-x-auto rounded-md bg-background p-2 font-mono text-xs text-foreground">
-                                {s.output}
-                              </pre>
-                            </div>
+                          <div className="grid gap-2 sm:grid-cols-2">
+                            {(['input', 'output'] as const).map((k) => (
+                              <div key={k} className="min-w-0 overflow-hidden rounded-lg bg-[color-mix(in_oklab,var(--color-foreground)_4.5%,transparent)]">
+                                <div className="flex items-center justify-between pr-1 pl-3 pt-1.5 text-[11.5px] text-foreground-faint">
+                                  <span>{k === 'input' ? 'Input' : 'Output'}</span>
+                                  <CopyButton text={s[k] ?? ''} label={`Copy example ${i + 1} ${k}`} />
+                                </div>
+                                <pre className="max-h-72 overflow-auto px-3 pt-0.5 pb-2.5 font-mono text-[12.5px] leading-[1.55] text-foreground">{s[k] || ' '}</pre>
+                              </div>
+                            ))}
                           </div>
                         </div>
                       ))}
@@ -204,33 +287,18 @@ export function ProblemPanel({
                   </section>
                 )}
 
-                {tags.length > 0 && (
-                  <div className="mt-5 flex flex-wrap gap-1.5">
-                    {tags.map((t) => (
-                      <Badge key={t} variant="primary">
-                        {t}
-                      </Badge>
-                    ))}
-                  </div>
+                {!translated && statement.note?.trim() && (
+                  <article className="nx-statement mt-7">
+                    <div dangerouslySetInnerHTML={html(statement.note)} />
+                  </article>
                 )}
 
-                <p className="mt-5 text-[10px] text-foreground-faint">
-                  Statement source: {statement.source}
-                  {problem.url && (
-                    <>
-                      {' · '}
-                      <a
-                        href={problem.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="cursor-pointer text-primary-bright underline-offset-2 hover:underline"
-                      >
-                        view on {problem.platform}
-                      </a>
-                    </>
-                  )}
-                </p>
-              </>
+                {extra.pdf && (
+                  <a href={extra.pdf} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-1.5 text-[13px] text-primary-bright hover:underline">
+                    <FileText className="size-4" /> Open the statement PDF
+                  </a>
+                )}
+              </div>
             )}
           </>
         )}
@@ -239,40 +307,25 @@ export function ProblemPanel({
 
         {tab === 'solution' && learnSolution && <SolutionTab {...learnSolution} />}
 
-        {tab === 'submissions' && (
-          <>
-            {submissions.length === 0 ? (
-              <p className="py-8 text-center text-xs text-foreground-faint">
-                No submissions for this problem yet. Your first SUBMIT lands here.
-              </p>
-            ) : (
-              <ul className="space-y-1.5">
-                {submissions.map((s, i) => (
-                  <li
-                    key={s.id}
-                    className={cn(
-                      'flex items-center gap-3 rounded-lg border border-border bg-surface px-3 py-2',
-                      i === 0 && 'border-border-glow',
-                    )}
-                  >
-                    <VerdictBadge verdict={s.verdict} className="w-28 justify-center" />
-                    <span className="font-mono text-xs text-foreground-dim tabular-nums">
-                      {s.exec_time_ms} ms
-                    </span>
-                    <span className="ml-auto text-[11px] text-foreground-faint">
-                      {timeAgo(s.submitted_at)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </>
-        )}
+        {tab === 'submissions' &&
+          (submissions.length === 0 ? (
+            <p className="py-10 text-center text-[13px] text-foreground-faint">No submissions yet. Your first submit lands here.</p>
+          ) : (
+            <ul className="divide-y divide-border/60">
+              {submissions.map((s) => (
+                <li key={s.id} className="flex items-center gap-3 py-2.5">
+                  <VerdictBadge verdict={s.verdict} className="w-28 justify-center" />
+                  <span className="font-mono text-[12px] text-foreground-dim tabular-nums">{s.exec_time_ms} ms</span>
+                  <span className="ml-auto text-[12px] text-foreground-faint">{timeAgo(s.submitted_at)}</span>
+                </li>
+              ))}
+            </ul>
+          ))}
       </div>
 
       {statementLoading && (
-        <p className="flex items-center gap-2 border-t border-border px-4 py-2 text-[11px] text-foreground-faint">
-          <Loader2 className="size-3 animate-spin" aria-hidden="true" /> Fetching statement…
+        <p className="flex items-center gap-2 border-t border-border px-5 py-2 text-[12px] text-foreground-faint">
+          <Loader2 className="size-3 animate-spin" aria-hidden="true" /> Fetching the statement…
         </p>
       )}
     </div>
