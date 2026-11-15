@@ -1427,3 +1427,20 @@ html[data-pattern] body {
 [data-style='journal'] .verdict-word.text-cyan {
   color: var(--color-state-info);
 }
+
+/* ── Field Journal — phase 5: judged tests as hairline rows ───────────── */
+[data-style='journal'] .rp-cases {
+  border-top: 1px solid var(--color-border);
+}
+[data-style='journal'] .rp-cases > * + * {
+  margin-top: 0;
+}
+[data-style='journal'] .rp-case {
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+}
+[data-style='journal'] .rp-case:not([data-passed]) {
+  box-shadow: inset 2px 0 0 var(--color-state-error);
+}

@@ -215,9 +215,14 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
   non-accepted verdicts (`ADVICE` in `VerdictBanner.tsx`). The Monaco "Match
   app theme" was already generated from the palette (oat current line, clay
   cursor); the faded last line number is now readable. Axe 0.
-  **Not done:** tests ticking one by one with a three-column diff, the
-  paper-slip celebration (the existing confetti still runs), selection in oat
-  60%, editorial reader style. (Phone tabs Problem · Code · Results are
+  Judged tests are hairline rows (`.rp-cases`, `.rp-case`, a brick edge on
+  failures); the first failing case already opens with Input · Expected ·
+  Your output and the mismatch line. The "matches / differs" label has no
+  tinted fill (it failed contrast). Checked for real: the demo **can** run
+  and judge C++ locally (Paste many tests, then Run or Submit) — see the
+  Playwright flow described in section 6.
+  **Not done:** the paper-slip celebration (the existing confetti still
+  runs), selection in oat 60%, editorial reader style. (Phone tabs Problem · Code · Results are
   done: Results hides the editor so tests and verdicts get the screen; Submit
   stays in the top bar; an sr-only h1 keeps the page titled when the
   statement tab is hidden; both resize handles carry aria values.) The demo
@@ -429,6 +434,9 @@ node client/scripts/check-page.cjs /hive hive light --noaxe --style=studio
   - nothing scrolls sideways at phone width
   - `/hive` still renders `data-style=studio`, `data-palette=midnight`,
     `data-card-style=soft`
+- To see judging on `/solve/:id` in the demo: click "Paste many tests", fill
+  `1\n---\n1\n===\n3\n---\n4`, click Add, type a program into Monaco
+  (click `.monaco-editor`, Ctrl+A, type), click Submit, wait ~10 s.
 - Take screenshots for each page: desktop light, desktop dark, phone. Put
   them side by side with the landing page at `/?preview`. Send them to the
   owner.
