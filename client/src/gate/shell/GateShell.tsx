@@ -30,6 +30,8 @@ export interface GateShellProps {
   subtitle?: string
   /** Right side of the header (buttons). */
   actions?: ReactNode
+  /** Skip the title row: the page draws its own (the notes reader). */
+  bare?: boolean
   children: ReactNode
 }
 
@@ -109,7 +111,7 @@ function Countdown() {
   )
 }
 
-export function GateShell({ title, subtitle, actions, children }: GateShellProps) {
+export function GateShell({ title, subtitle, actions, bare, children }: GateShellProps) {
   const [exam] = useGateExam()
   const review = useReviewDue()
   const examInfo = GATE_EXAMS.find((x) => x.id === exam)!
@@ -143,6 +145,7 @@ export function GateShell({ title, subtitle, actions, children }: GateShellProps
         <GateNav reviewDue={review.data ?? 0} />
       </div>
 
+      {!bare && (
       <header className="mb-6 flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
         <div className="min-w-0">
           <p className="mb-1 text-[11px] font-semibold tracking-[0.14em] text-accent-brand uppercase">
@@ -153,6 +156,7 @@ export function GateShell({ title, subtitle, actions, children }: GateShellProps
         </div>
         {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
       </header>
+      )}
 
       {children}
     </div>

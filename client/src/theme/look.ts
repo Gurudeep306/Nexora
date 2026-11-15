@@ -15,9 +15,14 @@ import { ICON_CONTAINERS, ICON_SETS, ICON_SHAPES, DEFAULT_ICON_CONTAINER, DEFAUL
 import { ACCENTS, DEFAULT_PALETTE, PALETTES } from './palettes.ts'
 import { CODE_FONTS, DEFAULT_CODE_FONT, DEFAULT_FONT, DEFAULT_SOLUTION_FONT, DEFAULT_TEXT_SIZE, SOLUTION_FONTS, TEXT_SIZES, UI_FONTS } from './fonts.ts'
 import { CARD_STYLES, DEFAULT_CARD_STYLE, DEFAULT_RADIUS, RADII } from './cards.ts'
+import { DEFAULT_PATTERN, DEFAULT_STYLE, PATTERNS, STYLES } from './styles.ts'
 
 export interface Look {
   v: 3
+  /** Design style id (see styles.ts) — the design language. */
+  style: string
+  /** Page pattern behind everything (see styles.ts). */
+  pattern: string
   /** Palette id (see palettes.ts). */
   theme: string
   /** 'theme' = the palette's own accent, or an accent override id. */
@@ -36,6 +41,8 @@ export interface Look {
 }
 
 export interface LookTables {
+  styles: string[]
+  patterns: string[]
   themes: string[]
   accents: string[]
   fonts: string[]
@@ -56,6 +63,8 @@ const defaultSet = ICON_SETS.find((s) => s.id === DEFAULT_ICON_SET)!
 
 export const DEFAULT_LOOK: Look = {
   v: 3,
+  style: DEFAULT_STYLE,
+  pattern: DEFAULT_PATTERN,
   theme: DEFAULT_PALETTE,
   accent: 'theme',
   font: DEFAULT_FONT,
@@ -71,6 +80,8 @@ export const DEFAULT_LOOK: Look = {
 }
 
 export const LOOK_TABLES: LookTables = {
+  styles: STYLES.map((s) => s.id),
+  patterns: PATTERNS.map((p) => p.id),
   themes: PALETTES.map((p) => p.id),
   accents: ['theme', ...ACCENTS.map((a) => a.id)],
   fonts: UI_FONTS.map((f) => f.id),
@@ -145,6 +156,8 @@ export function sanitizeLookWith(raw: unknown, T: LookTables): Look {
   const container = v2(r.iconContainer, T.iconContainers)
   return {
     v: 3,
+    style: v2(r.style, T.styles) || D.style,
+    pattern: v2(r.pattern, T.patterns) || D.pattern,
     theme: v2(r.theme, T.themes) || v1(r.wallpaper, L.wallpaper, T.themes) || D.theme,
     accent: v2(r.accent, T.accents) || v1(r.accent, L.accent, T.accents) || D.accent,
     font: v2(r.font, T.fonts) || v1(r.fontStyle, L.fontStyle, T.fonts) || D.font,
@@ -176,6 +189,8 @@ export function sanitizeLook(raw: unknown): Look {
  */
 export function lookAttributes(look: Look, mode: 'light' | 'dark'): Record<string, string | undefined> {
   return {
+    'data-style': look.style,
+    'data-pattern': look.pattern,
     'data-palette': look.theme,
     'data-mode': mode,
     'data-accent': look.accent === 'theme' ? undefined : look.accent,

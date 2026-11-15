@@ -37,7 +37,7 @@ export const DOCK_ITEMS: DockItem[] = [
   { id: 'submissions', label: 'Submissions', hue: 270, to: '/submissions' },
   { id: 'bookmarks', label: 'Bookmarks', hue: 12, to: '/bookmarks' },
   { id: 'profile', label: 'Profile', hue: 235, to: '/profile' },
-  { id: 'look', label: 'Theme Centre', hue: 310, to: '/theme' },
+  { id: 'look', label: 'Appearance', hue: 310, to: '/theme' },
   { id: 'settings', label: 'Settings', hue: 260, chroma: 0.02, to: '/settings' },
   { id: 'search', label: 'Search', hue: 260, chroma: 0.02, action: 'search' },
   { id: 'hive', label: 'Hive', hue: 285, to: '/hive', staffOnly: true },

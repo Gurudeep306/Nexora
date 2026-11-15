@@ -47,6 +47,7 @@
 
 /* Headings by size and weight; no squiggle. */
 .notes-root .notes-h {
+  font-family: var(--read-heading);
   color: var(--read-ink);
   letter-spacing: -0.012em;
   -webkit-text-stroke: 0;
@@ -272,3 +273,4 @@
 .notes-root .notes-prose .notes-pyqs > summary strong {
   color: var(--notes-paper);
 }
+

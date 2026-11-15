@@ -182,20 +182,19 @@ export function GateFilterStudio({
     <section className="card space-y-3 !p-3 sm:!p-4" aria-label="Find questions">
       {/* Row 1: search + view */}
       <div className="flex items-center gap-2">
-        <label className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-xl border border-border-input bg-bg-field px-3 focus-within:border-accent-brand focus-within:ring-2 focus-within:ring-accent-brand/20">
-          <Search className="size-4 shrink-0 text-text-muted" />
+        <label className="search-field min-w-0 flex-1 !h-10">
+          <Search className="search-field-icon" aria-hidden="true" />
           <span className="sr-only">Search questions</span>
           <input
             type="search"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder={`Search ${meta ? meta.total.toLocaleString() : ''} questions — e.g. "deadlock", paging, B+ tree`}
-            className="min-w-0 flex-1 bg-transparent text-[14px] text-text-primary outline-none placeholder:text-text-muted [&::-webkit-search-cancel-button]:hidden"
+            placeholder={`Search ${meta ? meta.total.toLocaleString() + ' ' : ''}questions`}
             spellCheck={false}
           />
           {searchInput && (
-            <button type="button" onClick={() => setSearchInput('')} className="text-text-muted hover:text-text-primary" aria-label="Clear search">
-              <X className="size-4" />
+            <button type="button" onClick={() => setSearchInput('')} className="search-field-clear" aria-label="Clear search">
+              <X className="size-3.5" />
             </button>
           )}
         </label>

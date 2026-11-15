@@ -1,6 +1,6 @@
 /** Types and helpers for the owner / admin system's site status (see context/SiteContext.tsx). */
 
-export type FeatureFlag = 'gate' | 'contests' | 'social' | 'ai_tutor' | 'practice'
+export type FeatureFlag = 'gate' | 'contests' | 'social' | 'ai_tutor' | 'practice' | 'learn' | 'nexus' | 'notes' | 'workshop'
 export type SiteRole = 'owner' | 'admin' | 'moderator' | 'member' | 'teacher'
 
 export interface Announcement {
@@ -22,6 +22,8 @@ export interface SiteStatus {
   registrationsOpen: boolean
   flags: Record<FeatureFlag, boolean>
   maintenance: { message: string } | null
+  /** The design style new visitors get until they choose their own. */
+  defaultStyle?: string | null
   banners: Announcement[]
   broadcasts: Announcement[]
   notices: { id: number; reason: string; created_at: number }[]
@@ -36,11 +38,15 @@ export interface SiteStatus {
   } | null
 }
 
-export const ALL_ON: Record<FeatureFlag, boolean> = { gate: true, contests: true, social: true, ai_tutor: true, practice: true }
+export const ALL_ON: Record<FeatureFlag, boolean> = { gate: true, contests: true, social: true, ai_tutor: true, practice: true, learn: true, nexus: true, notes: true, workshop: true }
 
 /** Client routes switched off with each feature flag. */
 const FEATURE_PATHS: [FeatureFlag, RegExp][] = [
+  ['notes', /^\/gate\/notes(\/|$)/],
   ['gate', /^\/gate(\/|$)/],
+  ['learn', /^\/learn(\/|$)/],
+  ['nexus', /^\/nexus(\/|$)/],
+  ['workshop', /^\/workshop(\/|$)/],
   ['contests', /^\/contests(\/|$)/],
   ['social', /^\/social(\/|$)/],
   ['practice', /^\/(problems(\/|$)|solve\/(?!learn\/))/],
@@ -56,4 +62,8 @@ export const FEATURE_LABELS: Record<FeatureFlag, string> = {
   social: 'Social',
   ai_tutor: 'AI tutor',
   practice: 'Practice',
+  learn: 'Learn',
+  nexus: 'Nexus',
+  notes: 'GATE notes',
+  workshop: 'Workshop',
 }

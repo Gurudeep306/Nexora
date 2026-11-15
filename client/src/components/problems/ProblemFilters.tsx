@@ -1,9 +1,10 @@
 import { useSources } from '@/lib/sources'
 import { useEffect, useMemo, useRef, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowDownWideNarrow, Swords, X } from 'lucide-react'
-import { Button, SearchCombobox, Select, type ComboboxItem } from '@/components/ui'
+import { ArrowDownWideNarrow, ChevronDown, Loader2, Sparkles, Swords, X } from 'lucide-react'
+import { SearchCombobox, type ComboboxItem } from '@/components/ui'
 import { useProblemSuggestions } from '@/hooks/useProblemSuggestions'
+import './filters.css'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
 import {
@@ -31,30 +32,21 @@ interface Props {
   resultCount?: number
   onSearchInput: (v: string) => void
   onChange: (patch: Partial<ProblemFilterState>) => void
+  /** Ask the AI finder with the search text (the bar doubles as the AI prompt). */
+  onAsk?: (text: string) => void
+  asking?: boolean
+  askError?: string | null
 }
 
-function FilterSelect({
-  label,
-  value,
-  onChange,
-  children,
-  className,
-}: {
-  label: string
-  value: string
-  onChange: (v: string) => void
-  children: ReactNode
-  className?: string
-}) {
+/** A compact filter: a native select dressed as a pill; its label is for assistive tech. */
+function PillSelect({ label, value, onChange, children }: { label: string; value: string; onChange: (v: string) => void; children: ReactNode }) {
   return (
-    <label className={cn('block min-w-0', className)}>
-      <span className="mb-1 block text-[10px] font-semibold tracking-wider text-foreground-faint uppercase">
-        {label}
-      </span>
-      <Select value={value} onChange={(e) => onChange(e.target.value)} aria-label={label}>
+    <span className="pf-pill">
+      <select value={value} onChange={(e) => onChange(e.target.value)} aria-label={label}>
         {children}
-      </Select>
-    </label>
+      </select>
+      <ChevronDown className="pf-pill-chev" aria-hidden="true" />
+    </span>
   )
 }
 
@@ -73,7 +65,7 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
   )
 }
 
-export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onChange }: Props) {
+export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onChange, onAsk, asking, askError }: Props) {
   const sources = useSources()
   const searchRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
@@ -126,118 +118,99 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
   if (filters.tag) chips.push({ label: `#${filters.tag}`, remove: () => onChange({ tag: '' }) })
 
   return (
-    <div className="card-neon relative z-20 p-4">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
+    <div className="pf-bar relative z-20">
+      <div className="flex gap-2">
         <SearchCombobox
           ref={searchRef}
           value={filters.search}
           onValueChange={onSearchInput}
           items={suggestionItems}
           loading={loading}
-          placeholder="Search problems…"
-          emptyText="No problems match."
+          placeholder={onAsk ? 'Search or describe a problem' : 'Search problems'}
+          emptyText="No title matches. Try Ask AI."
           aria-label="Search problems"
           containerClassName="flex-1"
+          className="!h-11 !text-[15px]"
         />
-
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:flex lg:items-end">
-          <FilterSelect
-            label="Platform"
-            value={filters.platform}
-            onChange={(v) => onChange({ platform: v })}
-            className="lg:w-36"
+        {onAsk && (
+          <button
+            type="button"
+            className="pf-ask"
+            disabled={!filters.search.trim() || asking}
+            onClick={() => onAsk(filters.search)}
+            title="Let the AI read your description and pick problems"
           >
-            <option value="all">All platforms</option>
-            {sources.map((p) => (
-              <option key={p.id} value={p.id}>
+            {asking ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : <Sparkles className="size-4" aria-hidden="true" />}
+            <span className="hidden sm:inline">Ask AI</span>
+          </button>
+        )}
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <PillSelect label="Platform" value={filters.platform} onChange={(v) => onChange({ platform: v })}>
+          <option value="all">All platforms</option>
+          {sources.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.label}
+            </option>
+          ))}
+        </PillSelect>
+        <PillSelect label="Difficulty" value={filters.difficulty} onChange={(v) => onChange({ difficulty: v as DifficultyBandId })}>
+          {DIFFICULTY_BANDS.map((b) => (
+            <option key={b.id} value={b.id}>
+              {b.label}
+            </option>
+          ))}
+        </PillSelect>
+        <PillSelect label="Status" value={filters.status} onChange={(v) => onChange({ status: v as StatusFilter })}>
+          <option value="all">Any status</option>
+          <option value="solved">Solved</option>
+          <option value="attempted">Attempted</option>
+          <option value="unsolved">Unsolved</option>
+        </PillSelect>
+        <PillSelect label="Tag" value={filters.tag} onChange={(v) => onChange({ tag: v })}>
+          <option value="">All tags</option>
+          {tags.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </PillSelect>
+        <PillSelect
+          label="Quick set"
+          value=""
+          onChange={(v) => {
+            const p = presets.find((x) => x.label === v)
+            if (p) onChange(p.patch)
+          }}
+        >
+          <option value="">Quick sets</option>
+          {presets
+            .filter((p) => p.show !== false)
+            .map((p) => (
+              <option key={p.label} value={p.label}>
                 {p.label}
               </option>
             ))}
-          </FilterSelect>
-
-          <FilterSelect
-            label="Difficulty"
-            value={filters.difficulty}
-            onChange={(v) => onChange({ difficulty: v as DifficultyBandId })}
-            className="lg:w-44"
+        </PillSelect>
+        <span className="flex items-center gap-1">
+          <PillSelect label="Sort by" value={filters.sort} onChange={(v) => onChange({ sort: v as SortKey })}>
+            <option value="rating">By rating</option>
+            <option value="title">By title</option>
+            <option value="id">By ID</option>
+          </PillSelect>
+          <button
+            type="button"
+            className="pf-icon"
+            aria-label={filters.order === 'asc' ? 'Sort ascending' : 'Sort descending'}
+            title={filters.order === 'asc' ? 'Ascending' : 'Descending'}
+            onClick={() => onChange({ order: filters.order === 'asc' ? 'desc' : 'asc' })}
           >
-            {DIFFICULTY_BANDS.map((b) => (
-              <option key={b.id} value={b.id}>
-                {b.label}
-              </option>
-            ))}
-          </FilterSelect>
-
-          <FilterSelect
-            label="Status"
-            value={filters.status}
-            onChange={(v) => onChange({ status: v as StatusFilter })}
-            className="lg:w-32"
-          >
-            <option value="all">Any status</option>
-            <option value="solved">Solved</option>
-            <option value="attempted">Attempted</option>
-            <option value="unsolved">Unsolved</option>
-          </FilterSelect>
-
-          <FilterSelect
-            label="Tag"
-            value={filters.tag}
-            onChange={(v) => onChange({ tag: v })}
-            className="lg:w-40"
-          >
-            <option value="">All tags</option>
-            {tags.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </FilterSelect>
-
-          <div className="col-span-2 flex items-end gap-2 sm:col-span-1">
-            <FilterSelect
-              label="Sort"
-              value={filters.sort}
-              onChange={(v) => onChange({ sort: v as SortKey })}
-              className="flex-1"
-            >
-              <option value="rating">Rating</option>
-              <option value="title">Title</option>
-              <option value="id">Problem ID</option>
-            </FilterSelect>
-            <Button
-              variant="subtle"
-              size="icon"
-              aria-label={filters.order === 'asc' ? 'Sort ascending' : 'Sort descending'}
-              title={filters.order === 'asc' ? 'Ascending' : 'Descending'}
-              onClick={() => onChange({ order: filters.order === 'asc' ? 'desc' : 'asc' })}
-              className="mb-0.5"
-            >
-              <ArrowDownWideNarrow
-                className={cn('transition-transform duration-200', filters.order === 'desc' && 'rotate-180')}
-              />
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-3 flex flex-wrap items-center gap-1.5">
-        <span className="mr-1 text-[10px] font-semibold tracking-wider text-foreground-faint uppercase">
-          Quick sets
+            <ArrowDownWideNarrow className={cn('size-4 transition-transform duration-200', filters.order === 'desc' && 'rotate-180')} />
+          </button>
         </span>
-        {presets
-          .filter((p) => p.show !== false)
-          .map((p) => (
-            <button
-              key={p.label}
-              onClick={() => onChange(p.patch)}
-              className="cursor-pointer rounded-full border border-border bg-background/60 px-2.5 py-1 text-[11px] text-foreground-dim transition-colors hover:border-accent/60 hover:text-accent"
-            >
-              {p.label}
-            </button>
-          ))}
         {typeof resultCount === 'number' && (
-          <span className="ml-auto text-[11px] text-foreground-faint tabular-nums">
+          <span className="ml-auto text-[12.5px] text-text-muted tabular-nums">
             {resultCount.toLocaleString()} problem{resultCount === 1 ? '' : 's'}
           </span>
         )}
@@ -248,14 +221,12 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
           {chips.map((c) => (
             <FilterChip key={c.label} label={c.label} onRemove={c.remove} />
           ))}
-          <button
-            onClick={() => onChange({ platform: 'all', difficulty: 'all', status: 'all', tag: '' })}
-            className="inline-flex cursor-pointer items-center gap-1 ml-1 text-xs font-semibold text-accent transition-colors hover:text-foreground"
-          >
-            <X className="size-3" aria-hidden="true" /> Clear all
+          <button onClick={() => onChange({ platform: 'all', difficulty: 'all', status: 'all', tag: '' })} className="ml-1 inline-flex cursor-pointer items-center gap-1 text-[12.5px] text-text-secondary transition-colors hover:text-text-primary">
+            <X className="size-3" aria-hidden="true" /> Clear
           </button>
         </div>
       )}
+      {askError && <p className="mt-3 mb-0 text-[13px] text-state-error">{askError}</p>}
     </div>
   )
 }

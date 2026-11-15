@@ -102,3 +102,60 @@
 .nx-statement .sample-tests {
   display: none;
 }
+
+/* The judge keeps its statement to itself: a calm card that opens it there. */
+.stmt-away {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 22px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+}
+.stmt-away-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface-2);
+  color: var(--color-text-secondary);
+}
+.stmt-away-title {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+.stmt-away-text {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+.stmt-away-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  margin-top: 4px;
+  padding: 0 14px;
+  border-radius: var(--radius-control);
+  background: var(--color-accent-brand);
+  color: var(--color-on-accent-brand) !important;
+  font-size: 13.5px;
+  font-weight: 550;
+  text-decoration: none !important;
+}
+.stmt-away-btn:hover {
+  background: var(--color-accent-brand-hover);
+}
+.stmt-away-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}

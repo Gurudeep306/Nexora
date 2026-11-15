@@ -1029,6 +1029,45 @@ app.get("/api/imgproxy", async (req, res) => {
 });
 
 /* ========== PROBLEM STATEMENT (fast HTTP scraping + Puppeteer fallback) ========== */
+// A problem whose statement is a PDF (UVa): relay the judge's public PDF from
+// our origin so the problem page can show it inline (the CSP allows only
+// same-origin frames). Only the judge's own host is ever fetched.
+const PDF_HOSTS = new Set(["onlinejudge.org"]);
+app.get("/api/problem-pdf/:id", async (req, res) => {
+  try {
+    const row = await get(
+      "SELECT p.platform, p.problem_id, s.extra FROM problems p LEFT JOIN problem_statements s ON s.problem_rowid = p.id WHERE p.id = ?",
+      [req.params.id],
+    );
+    let pdf = "";
+    try {
+      pdf = JSON.parse(row?.extra || "{}").pdf || "";
+    } catch {}
+    let u;
+    try {
+      u = new URL(pdf);
+    } catch {
+      return res.status(404).json({ ok: false, error: "No PDF for this problem" });
+    }
+    if (u.protocol !== "https:" || !PDF_HOSTS.has(u.hostname) || !/\.pdf$/i.test(u.pathname)) {
+      return res.status(404).json({ ok: false, error: "No PDF for this problem" });
+    }
+    const { http: fetchSource } = require("./sources/common");
+    const r = await fetchSource(u.href, { timeoutMs: 20000, accept: "application/pdf" });
+    if (!r.ok) return res.status(502).json({ ok: false, error: `The judge answered ${r.status}` });
+    const buf = Buffer.from(await r.arrayBuffer());
+    if (buf.length > 15 * 1024 * 1024 || buf.subarray(0, 4).toString() !== "%PDF") {
+      return res.status(502).json({ ok: false, error: "Not a PDF" });
+    }
+    res.set("Content-Type", "application/pdf");
+    res.set("Content-Disposition", "inline");
+    res.set("Cache-Control", "public, max-age=86400");
+    res.send(buf);
+  } catch (e) {
+    res.status(502).json({ ok: false, error: errMessage(e) });
+  }
+});
+
 app.get("/api/problem-statement/:id", async (req, res) => {
   try {
     const problem = await get("SELECT * FROM problems WHERE id=?", [
@@ -1132,15 +1171,14 @@ app.get("/api/problem-statement/:id", async (req, res) => {
       console.error(`[puppeteer] ✗ ${problem.problem_id}:`, e.message);
     }
 
-    // 5. Final fallback — clean local message (no iframe, no redirect)
+    // 5. The judge wouldn't give us the statement (often a bot check in front
+    // of its pages). Say so plainly; the page shows a card that opens it on
+    // the judge, and the solver still works with the person's own tests.
     res.json({
       ok: true,
-      statement: `<div style="text-align:center;padding:32px 16px">
-        <div style="font-size:48px;margin-bottom:12px;opacity:0.3">📄</div>
-        <p style="font-size:15px;color:var(--text-bright);margin-bottom:8px">Problem statement unavailable</p>
-        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Could not fetch from ${problem.platform}. You can view it on the original site.</p>
-        <a href="${problem.url}" target="_blank" rel="noopener" class="btn btn-outline btn-sm" style="color:var(--brand)">Open on ${problem.platform} →</a>
-      </div>`,
+      unavailable: true,
+      url: problem.url,
+      statement: "",
       samples: [],
       inputSpec: "",
       outputSpec: "",
@@ -1148,7 +1186,7 @@ app.get("/api/problem-statement/:id", async (req, res) => {
       timeLimit: "",
       memLimit: "",
       platform: problem.platform,
-      source: "fallback",
+      source: "unavailable",
     });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
@@ -6075,6 +6113,8 @@ io.on("connection", (socket) => {
   await initDb();
   // Owner from OWNER_USERNAME, first-boot private mode (src/authz/access.js).
   await initAdminSystem();
+  // Admin-chosen AI providers and models (Admin → AI models).
+  require("./ai/settings").startRefresh();
   await Promise.all([_forgeInit, _liveInit]);
   // Give every account its own progress/XP/settings (one-time, idempotent).
   await migratePerUser();

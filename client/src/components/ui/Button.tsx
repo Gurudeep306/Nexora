@@ -51,6 +51,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ref={ref}
       className={cn(buttonVariants({ variant, size }), className)}
       disabled={disabled || loading}
+      data-ui="button"
+      data-variant={variant ?? 'primary'}
       aria-busy={loading || undefined}
       {...props}
     >

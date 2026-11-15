@@ -51,7 +51,10 @@ export interface StatementResponse {
   memLimit: string
   samples: StatementSample[]
   platform: string
-  source: 'local' | 'cache' | 'http' | 'live' | 'fallback' | string
+  source: 'local' | 'cache' | 'http' | 'live' | 'fallback' | 'unavailable' | string
+  /** The judge wouldn't give its statement to other sites: read it there. */
+  unavailable?: boolean
+  url?: string
   /** Details beyond the HTML, when the source provides them. */
   extra?: StatementExtra
 }

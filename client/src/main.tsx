@@ -6,7 +6,10 @@ import '@fontsource-variable/geist'
 import '@fontsource-variable/jetbrains-mono'
 import './index.css'
 import './styles/reading.css'
+import './styles/reader.css'
+import './styles/search.css'
 import 'virtual:nexora-theme.css'
+import './theme/styles.css'
 import { loadCodeFont, loadUiFont } from './theme/fontLoaders'
 import App from './App'
 import { AuthProvider } from './context/AuthContext'
@@ -14,6 +17,7 @@ import { ToastProvider } from './components/ui'
 import { SocketProvider } from './lib/socket'
 import { SiteProvider } from './context/SiteContext'
 import { ThemeProvider } from './context/ThemeContext'
+import { DefaultStyleSync } from './components/look/DefaultStyleSync'
 import { initFaviconFx } from './lib/faviconFx'
 import { initSentry } from './lib/sentry'
 
@@ -32,6 +36,7 @@ createRoot(document.getElementById('root')!).render(
         <ToastProvider>
           <SocketProvider>
             <SiteProvider>
+              <DefaultStyleSync />
               <App />
             </SiteProvider>
           </SocketProvider>

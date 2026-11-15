@@ -30,6 +30,7 @@ import { domId } from '@/gate/notes/render/ids'
 import type { ChapterSummary, Lesson, LessonPayload, PyqLink } from '@/gate/notes/types'
 import { gateApi } from '@/gate/api'
 import { questionLink } from '@/gate/shell/links'
+import { useScrollSpy } from '@/components/reader/outline'
 
 const BLOCK_LABEL: Record<string, string> = {
   intuition: 'Intuition',
@@ -57,6 +58,9 @@ function conceptTitles(lesson: Lesson): Record<string, string> {
   }
   return out
 }
+
+/** GATE notes subject id → its Nexus subject (content/nexus/_hubs.json), where they differ. */
+const NEXUS_OF: Record<string, string> = { db: 'dbms', pds: 'c' }
 
 const DIFF = ['', 'Easy', 'Easy-medium', 'Medium', 'Hard', 'Very hard']
 
@@ -154,7 +158,6 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
   const [prefs, setPrefs] = useNotesPrefs()
   const [treeOpen, setTreeOpen] = useState(false)
   const article = useRef<HTMLElement>(null)
-  const outlineRef = useRef<HTMLDetailsElement>(null)
   const [pct, setPct] = useState(0)
   const { hash } = useLocation()
   const [resumeFrom] = useState(() => (p.completed ? 0 : p.scrollPct))
@@ -212,62 +215,67 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
     window.scrollTo({ top: top + ((el.offsetHeight - window.innerHeight) * resumeFrom) / 100, behavior: 'smooth' })
   }
 
-  const meta = (
-    <>
-      Chapter {chapter.n} · {chapter.title} · {fmtMinutes(lesson.est_minutes)} · {DIFFICULTY_LABEL[lesson.difficulty]}
-    </>
-  )
-
-  const actions = (
-    <>
-      <button
-        type="button"
-        className={cn('notes-tool', p.bookmarked && 'is-on')}
-        aria-pressed={p.bookmarked}
-        onClick={() => setBookmarked(subject.id, lesson.id, !p.bookmarked)}
-      >
-        <Icon name="bookmark" className="size-4" aria-hidden="true" />
-        <span className="hidden sm:inline">{p.bookmarked ? 'Bookmarked' : 'Bookmark'}</span>
-        <span className="sr-only sm:hidden">Bookmark</span>
-      </button>
-      <button
-        type="button"
-        className={cn('notes-tool notes-tool--main', p.completed && 'is-on')}
-        aria-pressed={p.completed}
-        onClick={() => setCompleted(subject.id, lesson.id, !p.completed)}
-      >
-        <Icon name={p.completed ? 'check-circle' : 'check'} className="size-4" aria-hidden="true" />
-        {p.completed ? 'Completed' : 'Mark complete'}
-      </button>
-    </>
-  )
-
   const outline = lesson.outline.filter((h) => h.level <= 3)
+  const active = useScrollSpy(outline.map((h) => domId(h.id)))
+  const pyqCount = lesson.pyqLinks.length
+
+  const completeBtn = (big?: boolean) => (
+    <button
+      type="button"
+      className={cn('nr-btn', !p.completed && 'nr-btn--main', p.completed && 'is-done', big && 'nr-btn--big')}
+      aria-pressed={p.completed}
+      onClick={() => setCompleted(subject.id, lesson.id, !p.completed)}
+    >
+      <Icon name={p.completed ? 'check-circle' : 'check'} className="size-4" aria-hidden="true" />
+      {p.completed ? 'Completed' : big ? 'Mark this lesson complete' : 'Mark complete'}
+    </button>
+  )
 
   return (
-    <GateShell title={lesson.title} actions={actions}>
+    <GateShell title={lesson.title} bare>
       <NotesRoot color={subject.color}>
         <div className="notes-progress" aria-hidden="true">
           <span style={{ transform: `scaleX(${pct / 100})` }} />
         </div>
-        <div className={cn('notes-layout', prefs.treeHidden && 'is-tree-hidden')}>
-          <nav className="notes-tree" aria-label={`Lessons in ${subject.title}`}>
-            <div className="notes-tree-head">
-              <Link to={NOTES_ROUTES.subject(subject.id)} className="notes-tree-subject">
-                <Icon name="learn" className="size-4" aria-hidden="true" />
-                {subject.title}
-              </Link>
-              <button type="button" className="notes-icon-btn" onClick={() => setPrefs({ treeHidden: true })} aria-label="Hide the lesson list">
-                <Icon name="eye-off" className="size-4" aria-hidden="true" />
-              </button>
-            </div>
-            {chapters ? <LessonTree subject={subject.id} chapters={chapters} current={lesson.id} progress={progressMap} /> : <LoadingBlock rows={3} />}
+        <div className={cn('nr-layout', prefs.treeHidden && 'is-tree-hidden')}>
+          {/* Left: the subject's lessons */}
+          <nav className="nr-tree" aria-label={`Lessons in ${subject.title}`}>
+            {prefs.treeHidden ? (
+              <MiniRail subject={subject.id} chapters={chapters} current={lesson.id} progress={progressMap} onExpand={() => setPrefs({ treeHidden: false })} />
+            ) : (
+              <>
+                <div className="nr-tree-head">
+                  <Link to={NOTES_ROUTES.subject(subject.id)} className="nr-tree-subject">
+                    {subject.title}
+                  </Link>
+                  <button type="button" className="nr-icon" onClick={() => setPrefs({ treeHidden: true })} aria-label="Collapse the lesson list" title="Collapse">
+                    <Icon name="list" className="size-4" aria-hidden="true" />
+                  </button>
+                </div>
+                {chapters ? <LessonTree subject={subject.id} chapters={chapters} current={lesson.id} progress={progressMap} /> : <LoadingBlock rows={3} />}
+              </>
+            )}
           </nav>
 
-          <div className="notes-main">
-            <button type="button" className="notes-icon-btn notes-show-tree" onClick={() => setPrefs({ treeHidden: false })}>
-              <Icon name="list" className="size-4" aria-hidden="true" /> Lessons
-            </button>
+          {/* Centre: the lesson */}
+          <div className="nr-main">
+            <div className="nr-bar">
+              <Crumbs
+                items={[
+                  { label: 'Notes', to: NOTES_ROUTES.all },
+                  { label: subject.title, to: NOTES_ROUTES.subject(subject.id) },
+                  { label: `Chapter ${chapter.n}` },
+                ]}
+              />
+              <span className="nr-bar-links">
+                <Link to={`/learn/${NEXUS_OF[subject.id] ?? subject.id}`} className="nr-bar-link">
+                  <Icon name="nexus" className="size-3.5" aria-hidden="true" /> Skill tree
+                </Link>
+                <Link to={`/gate/practice?subject=${encodeURIComponent(subject.id)}`} className="nr-bar-link">
+                  <Icon name="practice" className="size-3.5" aria-hidden="true" /> Practice
+                </Link>
+              </span>
+            </div>
             <details className="notes-tree-mobile" open={treeOpen} onToggle={(e) => setTreeOpen((e.target as HTMLDetailsElement).open)}>
               <summary>
                 <Icon name="list" className="size-4" aria-hidden="true" /> Lessons in {subject.title}
@@ -275,105 +283,182 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
               {chapters && <LessonTree subject={subject.id} chapters={chapters} current={lesson.id} progress={progressMap} onNavigate={() => setTreeOpen(false)} />}
             </details>
 
+            <header className="nr-head">
+              <p className="nr-kicker">
+                Chapter {chapter.n} · {chapter.title}
+              </p>
+              <h1 className="nr-title">{lesson.title}</h1>
+              <div className="nr-meta">
+                <span>{fmtMinutes(lesson.est_minutes)}</span>
+                <span>{DIFFICULTY_LABEL[lesson.difficulty]}</span>
+                {pyqCount > 0 && <span>{pyqCount} past questions</span>}
+                <span className="nr-meta-actions">
+                  <button
+                    type="button"
+                    className={cn('nr-icon', p.bookmarked && 'is-on')}
+                    aria-pressed={p.bookmarked}
+                    aria-label={p.bookmarked ? 'Remove bookmark' : 'Bookmark this lesson'}
+                    title={p.bookmarked ? 'Bookmarked' : 'Bookmark'}
+                    onClick={() => setBookmarked(subject.id, lesson.id, !p.bookmarked)}
+                  >
+                    <Icon name="bookmark" className="size-4" aria-hidden="true" />
+                  </button>
+                  {completeBtn()}
+                </span>
+              </div>
+              {lesson.prerequisites.length > 0 && (
+                <p className="nr-prereq">
+                  Before this:{' '}
+                  {lesson.prerequisites.map((pr, i) => (
+                    <span key={pr.id}>
+                      {i > 0 && ', '}
+                      <Link to={NOTES_ROUTES.lesson(pr.subject, pr.id)}>{pr.title}</Link>
+                    </span>
+                  ))}
+                </p>
+              )}
+              {resumeFrom > 3 && resumeFrom < 97 && (
+                <button type="button" className="notes-resume" onClick={resume}>
+                  <Icon name="play" className="size-3.5" aria-hidden="true" /> Continue where you left off ({resumeFrom}%)
+                </button>
+              )}
+            </header>
+
             <article ref={article} className="notes-paper" aria-label={lesson.title}>
               <div className="notes-prose">
-                <Crumbs
-                  items={[
-                    { label: 'Notes', to: NOTES_ROUTES.all },
-                    { label: subject.title, to: NOTES_ROUTES.subject(subject.id) },
-                    { label: chapter.title },
-                  ]}
-                />
-                <p className="notes-meta">{meta}</p>
-                {lesson.prerequisites.length > 0 && (
-                  <p className="notes-prereq">
-                    <Icon name="route" className="size-4" aria-hidden="true" /> Before this:{' '}
-                    {lesson.prerequisites.map((pr, i) => (
-                      <span key={pr.id}>
-                        {i > 0 && ', '}
-                        <Link to={NOTES_ROUTES.lesson(pr.subject, pr.id)}>{pr.title}</Link>
-                      </span>
-                    ))}
-                  </p>
-                )}
-                {lesson.pyqLinks.length > 0 && <LessonPyqs links={lesson.pyqLinks} concepts={ctx.concepts ?? {}} />}
-                {resumeFrom > 3 && resumeFrom < 97 && (
-                  <button type="button" className="notes-resume" onClick={resume}>
-                    <Icon name="play" className="size-3.5" aria-hidden="true" /> Continue where you left off ({resumeFrom}%)
-                  </button>
-                )}
-
-                {outline.length > 1 && (
-                  <nav className="notes-outline" aria-label="On this page">
-                    <details ref={outlineRef}>
-                      <summary className="notes-icon-btn" title="On this page">
-                        <Icon name="list" className="size-4" aria-hidden="true" />
-                        <span className="sr-only sm:not-sr-only">On this page</span>
-                      </summary>
-                      <div className="notes-outline-panel">
-                        <p>On this page</p>
-                        <ol>
-                          {outline.map((h) => (
-                            <li key={h.id} className={cn(h.level === 3 && 'is-sub')}>
-                              <a href={`#${domId(h.id)}`} onClick={() => outlineRef.current?.removeAttribute('open')}>
-                                {h.text}
-                              </a>
-                            </li>
-                          ))}
-                        </ol>
-                      </div>
-                    </details>
-                  </nav>
-                )}
-
                 <NotesContextProvider value={ctx}>
                   <Nodes nodes={lesson.body} />
                 </NotesContextProvider>
-
-                <div className="notes-done">
-                  <button
-                    type="button"
-                    className={cn('notes-tool notes-tool--main notes-done-btn', p.completed && 'is-on')}
-                    aria-pressed={p.completed}
-                    onClick={() => setCompleted(subject.id, lesson.id, !p.completed)}
-                  >
-                    <Icon name={p.completed ? 'check-circle' : 'check'} className="size-4" aria-hidden="true" />
-                    {p.completed ? 'Completed — nice work' : 'Mark this lesson complete'}
-                  </button>
-                </div>
               </div>
             </article>
 
-            <nav className="notes-pager" aria-label="Previous and next lesson">
+            {pyqCount > 0 && (
+              <section className="nr-pyqs" aria-label="Past questions from this lesson">
+                <LessonPyqs links={lesson.pyqLinks} concepts={ctx.concepts ?? {}} />
+              </section>
+            )}
+
+            <div className="nr-done">{completeBtn(true)}</div>
+
+            <nav className="nr-pager" aria-label="Previous and next lesson">
               {prev ? (
-                <Link to={NOTES_ROUTES.lesson(subject.id, prev.id)} className="notes-pager-link" rel="prev">
-                  <span className="notes-pager-dir">
-                    <span className="inline-flex" style={{ transform: 'scaleX(-1)' }} aria-hidden="true"><Icon name="play" className="size-3" /></span> Previous
-                  </span>
-                  <span className="notes-pager-title">{prev.title}</span>
+                <Link to={NOTES_ROUTES.lesson(subject.id, prev.id)} className="nr-pager-link" rel="prev">
+                  <span className="nr-pager-dir">Previous</span>
+                  <span className="nr-pager-title">{prev.title}</span>
                 </Link>
               ) : (
                 <span />
               )}
               {next ? (
-                <Link to={NOTES_ROUTES.lesson(subject.id, next.id)} className="notes-pager-link is-next" rel="next">
-                  <span className="notes-pager-dir">
-                    Next <Icon name="play" className="size-3" aria-hidden="true" />
-                  </span>
-                  <span className="notes-pager-title">{next.title}</span>
+                <Link to={NOTES_ROUTES.lesson(subject.id, next.id)} className="nr-pager-link is-next" rel="next">
+                  <span className="nr-pager-dir">Next</span>
+                  <span className="nr-pager-title">{next.title}</span>
                 </Link>
               ) : (
-                <Link to={NOTES_ROUTES.subject(subject.id)} className="notes-pager-link is-next">
-                  <span className="notes-pager-dir">
-                    Done <Icon name="check" className="size-3" aria-hidden="true" />
-                  </span>
-                  <span className="notes-pager-title">Back to {subject.title}</span>
+                <Link to={NOTES_ROUTES.subject(subject.id)} className="nr-pager-link is-next">
+                  <span className="nr-pager-dir">Finished</span>
+                  <span className="nr-pager-title">Back to {subject.title}</span>
                 </Link>
               )}
             </nav>
           </div>
+
+          {/* Right: on this page */}
+          <aside className="nr-toc" aria-label="On this page">
+            {outline.length > 1 && (
+              <>
+                <p className="nr-toc-head">On this page</p>
+                <ol>
+                  {outline.map((h) => (
+                    <li key={h.id} className={cn(h.level === 3 && 'is-sub')}>
+                      <a href={`#${domId(h.id)}`} className={cn(active === domId(h.id) && 'is-active')} aria-current={active === domId(h.id) ? 'location' : undefined}>
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </>
+            )}
+            <div className="nr-toc-progress">
+              <span className="nr-toc-bar" aria-hidden="true">
+                <span style={{ transform: `scaleX(${pct / 100})` }} />
+              </span>
+              <span>{Math.round(pct)}% read</span>
+            </div>
+            {pyqCount > 0 && (
+              <a href="#lesson-pyqs" className="nr-toc-link" onClick={(e) => {
+                e.preventDefault()
+                document.querySelector('.nr-pyqs')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                const d = document.querySelector<HTMLDetailsElement>('.nr-pyqs details')
+                if (d) d.open = true
+              }}>
+                <Icon name="gate" className="size-3.5" aria-hidden="true" /> {pyqCount} past questions
+              </a>
+            )}
+          </aside>
         </div>
       </NotesRoot>
     </GateShell>
+  )
+}
+
+/**
+ * The lesson list, collapsed: one ring per chapter (filled by how much of it
+ * is done) and, under the current chapter, a dot per lesson. Every mark is a
+ * link with its title on hover, so the subject stays one click away.
+ */
+function MiniRail({
+  subject,
+  chapters,
+  current,
+  progress,
+  onExpand,
+}: {
+  subject: string
+  chapters: ChapterSummary[] | null
+  current: string
+  progress: ReturnType<typeof useNotesProgress>
+  onExpand: () => void
+}) {
+  return (
+    <div className="nr-mini">
+      <button type="button" className="nr-icon" onClick={onExpand} aria-label="Show the lesson list" title="Show lessons">
+        <Icon name="list" className="size-4" aria-hidden="true" />
+      </button>
+      <ol>
+        {(chapters ?? []).map((ch) => {
+          const done = ch.lessons.filter((l) => progressOf(progress, subject, l.id).completed).length
+          const here = ch.lessons.some((l) => l.id === current)
+          const frac = ch.lessons.length ? done / ch.lessons.length : 0
+          return (
+            <li key={ch.id}>
+              <Link
+                to={NOTES_ROUTES.lesson(subject, (ch.lessons.find((l) => !progressOf(progress, subject, l.id).completed) ?? ch.lessons[0]).id)}
+                className={cn('nr-mini-ch', here && 'is-here')}
+                title={`Chapter ${ch.n}: ${ch.title} (${done}/${ch.lessons.length} done)`}
+                aria-label={`Chapter ${ch.n}: ${ch.title}, ${done} of ${ch.lessons.length} done`}
+                style={{ ['--p' as string]: `${Math.round(frac * 100)}%` }}
+              >
+                <span>{ch.n}</span>
+              </Link>
+              {here && (
+                <span className="nr-mini-lessons">
+                  {ch.lessons.map((l) => (
+                    <Link
+                      key={l.id}
+                      to={NOTES_ROUTES.lesson(subject, l.id)}
+                      className={cn('nr-mini-dot', l.id === current && 'is-current', progressOf(progress, subject, l.id).completed && 'is-done')}
+                      title={l.title}
+                      aria-label={l.title}
+                      aria-current={l.id === current ? 'page' : undefined}
+                    />
+                  ))}
+                </span>
+              )}
+            </li>
+          )
+        })}
+      </ol>
+    </div>
   )
 }

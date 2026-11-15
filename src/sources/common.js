@@ -2,13 +2,15 @@
 // and the small HTML helpers every statement parser needs.
 const cheerio = require("cheerio");
 
-const UA =
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
+// An honest User-Agent: says who we are and where to reach us. Several judges
+// (Project Euler, behind Cloudflare) refuse a datacenter request dressed up as
+// a desktop browser but serve one that identifies itself.
+const UA = "NexoraGuru/2.0 (+https://nexoraguru.in; problem importer)";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /**
- * fetch with a timeout, a browser-like User-Agent and a couple of retries on
+ * fetch with a timeout, an honest User-Agent and a couple of retries on
  * 429 / 5xx / network errors (with backoff that honours Retry-After).
  * Returns the Response; throws when every attempt failed.
  */
@@ -38,15 +40,31 @@ async function http(url, { method = "GET", headers = {}, body, timeoutMs = 20000
   throw last || new Error(`Could not reach ${url}`);
 }
 
+/**
+ * An error for a non-OK answer. A bot check in front of the judge (Cloudflare's
+ * "Just a moment…" page) is named as such: it means the judge doesn't let
+ * servers read that page, which retrying won't change.
+ */
+async function httpError(res, url) {
+  const host = new URL(url).host;
+  let body = "";
+  try {
+    body = (await res.text()).slice(0, 4000);
+  } catch {}
+  const challenged = res.status === 403 && (res.headers.get("cf-mitigated") === "challenge" || /just a moment|challenge-platform|cf-chl/i.test(body));
+  const msg = challenged ? `${host} blocks automated access from this server (bot check)` : `HTTP ${res.status} from ${host}`;
+  return Object.assign(new Error(msg), { status: res.status, blocked: challenged });
+}
+
 async function getText(url, opts) {
   const res = await http(url, opts);
-  if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status} from ${new URL(url).host}`), { status: res.status });
+  if (!res.ok) throw await httpError(res, url);
   return res.text();
 }
 
 async function getJson(url, opts = {}) {
   const res = await http(url, { accept: "application/json", ...opts });
-  if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status} from ${new URL(url).host}`), { status: res.status });
+  if (!res.ok) throw await httpError(res, url);
   const text = await res.text();
   try {
     return JSON.parse(text);
@@ -130,4 +148,4 @@ function markdown(text) {
 /** True when the text already reads as HTML (block tags), not markdown. */
 const looksHtml = (s) => /<(p|div|ul|ol|table|h[1-6]|pre|br)\b/i.test(String(s || ""));
 
-module.exports = { markdown, looksHtml, UA, sleep, http, getText, getJson, load, preText, tidySample, normalizeTime, normalizeMemory, blank, section };
+module.exports = { markdown, looksHtml, UA, sleep, http, httpError, getText, getJson, load, preText, tidySample, normalizeTime, normalizeMemory, blank, section };

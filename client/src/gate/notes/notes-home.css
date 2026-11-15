@@ -1,0 +1,387 @@
+/* Notes front page and subject pages (pages/gate/notes/NotesIndexPage, NotesSubjectPage). */
+.nh-hero {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 2.75rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--read-rule);
+}
+@media (min-width: 1024px) {
+  .nh-hero {
+    grid-template-columns: minmax(0, 1fr) 22rem;
+    align-items: end;
+  }
+}
+.nh-hero .notes-crumbs {
+  margin-bottom: 1rem;
+}
+.nh-title {
+  margin: 0;
+  font-family: var(--read-heading);
+  font-size: clamp(2.2rem, 1.6rem + 2vw, 3.25rem);
+  line-height: 1.05;
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  color: var(--color-text-primary);
+}
+.nh-desc {
+  margin: 0.9rem 0 0;
+  max-width: 62ch;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+.nh-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 1rem 0 0;
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+}
+.nh-stats > span + span::before {
+  content: '·';
+  margin-right: 14px;
+}
+.nh-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 1.5rem;
+}
+.nh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary) !important;
+  font-size: 13.5px;
+  font-weight: 550;
+  text-decoration: none !important;
+  transition: border-color var(--dur-fast) var(--ease-standard);
+}
+.nh-btn:hover {
+  border-color: var(--color-border-strong);
+}
+.nh-btn--main {
+  border-color: transparent;
+  background: var(--color-accent-brand);
+  color: var(--color-on-accent-brand) !important;
+}
+.nh-btn--main:hover {
+  background: var(--color-accent-brand-hover);
+}
+.nh-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+}
+.nh-next {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+  text-decoration: none !important;
+}
+.nh-next-title {
+  font-size: 14px;
+  font-weight: 550;
+  color: var(--color-text-primary);
+}
+.nh-next:hover .nh-next-title {
+  color: var(--color-accent-brand);
+}
+
+/* Subject body: chapter index + chapters */
+.nh-body {
+  display: grid;
+  gap: 2.5rem;
+}
+@media (min-width: 1024px) {
+  .nh-body {
+    grid-template-columns: 15rem minmax(0, 1fr);
+    gap: 3rem;
+  }
+}
+.nh-index {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .nh-index {
+    display: block;
+    position: sticky;
+    top: 7.5rem;
+    align-self: start;
+  }
+}
+.nh-index-head {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.nh-index ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nh-index-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  margin-inline: -8px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--color-text-secondary) !important;
+  text-decoration: none !important;
+}
+.nh-index-link:hover {
+  background: color-mix(in oklab, var(--color-text-primary) 5%, transparent);
+  color: var(--color-text-primary) !important;
+}
+.nh-index-n {
+  width: 18px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+}
+.nh-index-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+.nh-chapters {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 2.75rem;
+}
+.nh-chapter {
+  scroll-margin-top: 8rem;
+}
+.nh-chapter-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 1rem;
+}
+.nh-chapter-title {
+  margin: 2px 0 0;
+  font-family: var(--read-heading);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+}
+.nh-chapter-summary {
+  margin: 6px 0 0;
+  max-width: 80ch;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+.nh-lessons {
+  display: grid;
+  gap: 2px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 768px) {
+  .nh-lessons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.nh-lesson {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  margin-inline: -12px;
+  border-radius: var(--radius-control);
+  text-decoration: none !important;
+  transition: background-color var(--dur-fast) var(--ease-standard);
+}
+.nh-lesson:hover {
+  background: color-mix(in oklab, var(--color-text-primary) 5%, transparent);
+}
+.nh-lesson.is-next {
+  background: color-mix(in oklab, var(--color-accent-brand) 8%, transparent);
+}
+.nh-lesson .notes-status {
+  margin-top: 3px;
+}
+.nh-lesson-title {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+}
+.nh-lesson-n {
+  margin-right: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.nh-lesson-meta {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+
+/* Front page */
+.nh-figures {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 0;
+}
+.nh-figures > div {
+  padding: 14px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+}
+.nh-figures dt {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.nh-figures dd {
+  margin: 4px 0 0;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.nh-section {
+  margin: 0 0 1rem;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+.nh-subjects {
+  display: grid;
+  gap: 16px;
+  margin: 0 0 3rem;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 768px) {
+  .nh-subjects {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1280px) {
+  .nh-subjects {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.nh-subject {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  text-decoration: none !important;
+}
+.nh-pct {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.nh-subject-title {
+  margin-top: 8px;
+  font-family: var(--read-heading);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+}
+.nh-subject-desc {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.nh-subject-meta {
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+.nh-bar {
+  display: block;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--read-rule);
+}
+.nh-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--notes-subject-ink, var(--color-accent-brand));
+}
+.nh-soon {
+  display: grid;
+  gap: 0 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 768px) {
+  .nh-soon {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.nh-soon > li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.nh-soon-name {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+.nh-soon-link {
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  font-size: 12px;
+  color: var(--color-text-secondary) !important;
+  text-decoration: none !important;
+}
+.nh-soon-link:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary) !important;
+}
+.nh-results {
+  margin-bottom: 2.5rem;
+}
+.nh-btn:focus-visible,
+.nh-lesson:focus-visible,
+.nh-index-link:focus-visible,
+.nh-soon-link:focus-visible,
+.nh-next:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
