@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react'
+import { useTheme } from '@/context/ThemeContext'
+import { ContestRow } from '@/components/contests/ContestRow'
 import { LayoutGrid, RefreshCw } from 'lucide-react'
 import {
   Button,
@@ -21,6 +23,8 @@ import { Icon } from '@/components/icon/Icon'
 type Bucket = 'all' | 'live' | 'upcoming' | 'past'
 
 export default function ContestsPage() {
+  // The Field Journal shows contests as a calendar list; other styles keep the cards.
+  const journal = useTheme().shown.style === 'journal'
   const { user } = useAuth()
   const [bucket, setBucket] = useState<Bucket>('all')
 
@@ -86,11 +90,19 @@ export default function ContestsPage() {
           />
         </Card>
       ) : (
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {visible.map((c, i) => (
-            <PlatformContestCard key={`${c.platform}-${c.name}-${c.startTime ?? i}`} contest={c} index={i} />
-          ))}
-        </div>
+        journal ? (
+          <ol className="cr-list" aria-label="Contests">
+            {visible.map((c, i) => (
+              <ContestRow key={`${c.platform}-${c.name}-${c.startTime ?? i}`} contest={c} />
+            ))}
+          </ol>
+        ) : (
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {visible.map((c, i) => (
+              <PlatformContestCard key={`${c.platform}-${c.name}-${c.startTime ?? i}`} contest={c} index={i} />
+            ))}
+          </div>
+        )
       )}
 
       {user?.username ? (

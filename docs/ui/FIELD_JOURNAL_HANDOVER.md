@@ -234,9 +234,16 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
   "Your record"), plain empty states, and verdicts as italic serif words in
   their meaning colour (`.verdict-word` on every `VerdictBadge`; clay never
   used as text). Old lint warnings in these files fixed. Axe 0.
-  **Not done:** contests as a calendar-like list with serif day numerals and
-  a "Remind me" link, custom contests as ivory cards (the demo has no
-  contests to design against; the contests feed needs the network).
+  **Contests list done:** under journal, `/contests` shows a calendar list
+  (`components/contests/ContestRow.tsx`, `.cr-*` CSS): serif day numeral
+  over month and weekday, serif name, platform / length / time in mono, mono
+  countdown, a clay edge on live rounds, and "Remind me", which downloads an
+  `.ics` file with a 30-minute alarm (`contestIcs()` in `contestUtils.ts`) so
+  the student's own calendar reminds them (free, no server). Other styles
+  keep the cards (`useTheme().shown.style`). Fixed a real bug:
+  `fmtDuration` printed `1h ${m}m` literally. Checked with a mocked feed
+  (Playwright route on `/api/contests`) in light, dark, phone: axe 0.
+  **Not done:** custom contests as ivory cards (no data in the demo).
 - **Next for phase 5:** the "Not done" items above, then open the phase 5 PR
   (or add to the open PR if the owner prefers one PR).
 
