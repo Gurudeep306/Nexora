@@ -36,12 +36,13 @@ import {
   Server,
   ShieldAlert,
   Terminal,
+  TriangleAlert,
   Upload,
   Users,
   X,
 } from 'lucide-react'
 import { LogoMark } from '@/components/brand/Logo'
-import { Menu, MenuContent, MenuItem, MenuTrigger, Tooltip } from '@/components/ui'
+import { Highlight, Menu, MenuContent, MenuItem, MenuTrigger, Tooltip } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from './api'
 import { TeamChat } from './TeamChat'
@@ -57,6 +58,7 @@ import { ShortcutSheet, useShortcuts } from './Shortcuts'
 import { HiveProvider, useHive } from './store'
 import type { Convo } from './types'
 import { StatusDot, UserDot, timeAgo } from './ui'
+import { riskyCommand } from './commandRisk'
 import './hive.css'
 import './kit/kit.css'
 
@@ -215,8 +217,8 @@ function Shell() {
     return (
       <div className="hive-root grid h-dvh place-items-center" role="status" aria-label="Loading Hive">
         <div className="flex flex-col items-center gap-4">
-          <HiveLogo size={56} live />
-          <span className="text-[15px] font-semibold tracking-[-0.01em] text-text-primary">Hive</span>
+          <HiveLogo size={56} draw />
+          <span className="hive-boot-word text-[15px] font-semibold tracking-[-0.01em] text-text-primary">Hive</span>
           <span className="hive-boot-bar" aria-hidden="true">
             <span />
           </span>
@@ -885,6 +887,11 @@ function ApprovalsTray() {
             <span className="min-w-0 flex-1 truncate text-[12.5px]">
               <span className="font-semibold">{a.agent ?? 'An agent'}</span> wants to {a.kind === 'server' ? 'start a server' : 'run a command'}
             </span>
+            {riskyCommand(a.command) && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-state-error/12 px-1.5 py-0.5 text-[10.5px] font-medium text-state-error">
+                <TriangleAlert className="size-3" /> destructive
+              </span>
+            )}
             {approvals.length > 1 && <span className="rounded-full bg-state-warning/20 px-1.5 text-[11px] font-semibold text-state-warning">+{approvals.length - 1}</span>}
             <button type="button" onClick={() => setMin(true)} className="grid size-6 place-items-center rounded-md text-text-muted hover:bg-text-primary/[0.07]" aria-label="Minimise">
               <X className="size-3.5" />
@@ -1077,6 +1084,7 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
     onClose()
   }
   let lastGroup = ''
+  const sq = q.replace(/^[>@]\s*/, '').trim()
   return (
     <AnimatePresence>
       {open && (
@@ -1111,7 +1119,7 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
                     {head && <div className="px-2.5 pb-1 pt-2.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-muted">{head}</div>}
                     <button type="button" data-i={j} onMouseMove={() => setI(j)} onClick={() => pick(x)} className={cn('flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left', j === i && 'bg-accent-brand/10')}>
                       <span className="grid size-6 shrink-0 place-items-center text-text-secondary">{x.icon}</span>
-                      <span className="min-w-0 flex-1 truncate text-[13.5px] text-text-primary">{x.label}</span>
+                      <span className="min-w-0 flex-1 truncate text-[13.5px] text-text-primary">{sq ? <Highlight text={x.label} query={sq} /> : x.label}</span>
                       {x.hint && <span className="max-w-[45%] shrink-0 truncate text-[11.5px] text-text-muted">{x.hint}</span>}
                       {x.keys && <span className="hive-kbd">{x.keys}</span>}
                       {j === i && <CornerDownLeft className="size-3.5 text-text-muted" />}

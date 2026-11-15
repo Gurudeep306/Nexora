@@ -369,8 +369,9 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
   );
   router.post(
     "/api/hive/alerts/read",
-    h(async (_req, res) => {
-      await caps.readAlerts();
+    h(async (req, res) => {
+      const id = typeof req.body?.id === "string" && req.body.id ? req.body.id : null;
+      await caps.readAlerts(id);
       res.json({ ok: true });
     }),
   );

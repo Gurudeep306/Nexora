@@ -116,9 +116,14 @@ export function InboxBell() {
   useEffect(() => on('alert', load as never), [on, load])
   useEffect(() => {
     const read = () => setUnread(0)
+    const changed = () => load()
     window.addEventListener('hive:alerts-read', read)
-    return () => window.removeEventListener('hive:alerts-read', read)
-  }, [])
+    window.addEventListener('hive:alerts-changed', changed)
+    return () => {
+      window.removeEventListener('hive:alerts-read', read)
+      window.removeEventListener('hive:alerts-changed', changed)
+    }
+  }, [load])
   const n = needs.count + unread
   const label = n ? `Inbox — ${needs.count ? `${needs.count} need${needs.count === 1 ? 's' : ''} you` : ''}${needs.count && unread ? ', ' : ''}${unread ? `${unread} new alert${unread === 1 ? '' : 's'}` : ''}` : 'Inbox'
   return (

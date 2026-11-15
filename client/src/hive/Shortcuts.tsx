@@ -85,25 +85,54 @@ const GROUPS: { title: string; rows: [string, string][] }[] = [
   {
     title: 'Everywhere',
     rows: [
-      ['⌘K  or  /', 'Search or run a command'],
-      ['⌘I', 'Open or close the Copilot panel'],
-      ['⌘J', 'New chat'],
+      ['⌘+K  or  /', 'Search or run a command'],
+      ['⌘+I', 'Open or close the Copilot panel'],
+      ['⌘+J', 'New chat'],
       ['C', 'New task (Copilot)'],
-      ['⌘B  or  [', 'Show or hide the sidebar'],
-      ['?  or  ⌘/', 'This list'],
+      ['⌘+B  or  [', 'Show or hide the sidebar'],
+      ['?  or  ⌘+/', 'This list'],
     ],
   },
   { title: 'Go to', rows: Object.entries(GO).map(([k, v]): [string, string] => [`G then ${k.toUpperCase()}`, v.label]) },
   {
     title: 'Lists and messages',
     rows: [
-      ['J / K', 'Next / previous item'],
-      ['Enter / Esc', 'Open / close'],
-      ['Enter', 'Send'],
-      ['Shift+Enter', 'New line'],
+      ['J  or  ↓', 'Next item'],
+      ['K  or  ↑', 'Previous item'],
+      ['Enter', 'Open or send'],
+      ['Esc', 'Close'],
+      ['Shift+Enter', 'New line in the composer'],
     ],
   },
 ]
+
+const MAC = typeof navigator !== 'undefined' && /mac/i.test(`${navigator.platform} ${navigator.userAgent}`)
+const keyText = (k: string) => k.replaceAll('⌘', MAC ? '⌘' : 'Ctrl')
+
+/** One shortcut as keycaps: chords with "+", sequences with "then", alternatives with "or". */
+function Kbd({ combo }: { combo: string }) {
+  const alts = combo.split(/\s+or\s+/)
+  return (
+    <span className="inline-flex flex-wrap items-center gap-x-1.5 gap-y-1">
+      {alts.map((alt, i) => (
+        <span key={i} className="inline-flex items-center gap-1">
+          {i > 0 && <span className="text-[var(--hv-text-3)]">or</span>}
+          {alt.split(/\s+then\s+/).map((part, j) => (
+            <span key={j} className="inline-flex items-center gap-1">
+              {j > 0 && <span className="text-[var(--hv-text-3)]">then</span>}
+              {part.split('+').map((k, m) => (
+                <span key={m} className="inline-flex items-center gap-0.5">
+                  {m > 0 && <span className="text-[var(--hv-text-3)]">+</span>}
+                  <span className="hive-kbd whitespace-nowrap">{keyText(k.trim())}</span>
+                </span>
+              ))}
+            </span>
+          ))}
+        </span>
+      ))}
+    </span>
+  )
+}
 
 export function ShortcutSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [on, setOn] = useState(singleKeysOn)
@@ -133,11 +162,11 @@ export function ShortcutSheet({ open, onClose }: { open: boolean; onClose: () =>
           return (
             <section key={g.title} aria-label={g.title}>
               <h3 className="mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[var(--hv-text-3)]">{g.title}</h3>
-              <dl className="grid grid-cols-[minmax(110px,auto)_1fr] gap-x-6 gap-y-1.5 text-[13px]">
+              <dl className="grid grid-cols-[minmax(140px,auto)_1fr] gap-x-6 gap-y-1.5 text-[13px]">
                 {rows.map(([k, v]) => (
                   <div key={k} className="contents">
                     <dt>
-                      <span className="hive-kbd">{k}</span>
+                      <Kbd combo={k} />
                     </dt>
                     <dd className="text-[var(--hv-text-2)]">{v}</dd>
                   </div>
@@ -150,6 +179,7 @@ export function ShortcutSheet({ open, onClose }: { open: boolean; onClose: () =>
       <label className="mt-5 flex items-center gap-2 border-t border-[var(--hv-border)] pt-4 text-[13px]">
         <input type="checkbox" checked={on} onChange={toggle} className="size-4 accent-[var(--hv-accent)]" />
         Single-key shortcuts (C, G then a letter, /, [, ?)
+        {!MAC && <span className="ml-auto text-[11.5px] text-[var(--hv-text-3)]">Ctrl stands in for ⌘ on this device</span>}
       </label>
     </Modal>
   )

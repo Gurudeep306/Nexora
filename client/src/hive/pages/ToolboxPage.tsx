@@ -366,7 +366,16 @@ function Connected({ data, reload, onAdd }: { data: Toolbox; reload: () => void;
           {mcp.map((i) => (
             <IntegrationCard key={i.id} i={i} reload={reload} />
           ))}
-          {!mcp.length && <p className="text-[13px] text-text-muted">No MCP servers yet.</p>}
+          {!mcp.length && (
+            <div className="flex flex-col items-center gap-1.5 rounded-xl border border-dashed hive-line px-6 py-8 text-center">
+              <Plug className="size-5 text-text-muted" />
+              <div className="text-[13.5px] font-medium text-text-primary">No MCP servers yet</div>
+              <div className="max-w-xs text-[12.5px] text-text-muted">Connect one to give agents outside tools — databases, browsers, ticket queues.</div>
+              <Button size="sm" variant="secondary" className="mt-1.5" onClick={() => onAdd('mcp')}>
+                <Plus /> Connect MCP server
+              </Button>
+            </div>
+          )}
         </div>
       </section>
       <section>

@@ -122,8 +122,9 @@ async function alerts(limit = 50) {
   return all("SELECT * FROM hive_alerts ORDER BY created_at DESC LIMIT ?", [limit]);
 }
 
-async function readAlerts() {
-  await run("UPDATE hive_alerts SET read=1 WHERE read=0");
+async function readAlerts(id) {
+  if (id) await run("UPDATE hive_alerts SET read=1 WHERE id=? AND read=0", [id]);
+  else await run("UPDATE hive_alerts SET read=1 WHERE read=0");
 }
 
 /** Spend overview for the Budgets page: by day, vendor, model, project, user. */

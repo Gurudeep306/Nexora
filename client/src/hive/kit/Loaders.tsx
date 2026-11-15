@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { cn } from '@/lib/utils'
 
 /**
@@ -21,4 +21,32 @@ export function Spinner({ size = 16, label = 'Loading', className }: { size?: nu
 
 export function Skeleton({ className, style }: { className?: string; style?: CSSProperties }) {
   return <div aria-hidden="true" className={cn('hv-skeleton', className)} style={style} />
+}
+
+const THINK_WORDS = ['Thinking', 'Planning', 'Searching', 'Writing']
+
+/**
+ * The pre-first-token placeholder in chat/agent streams: a phase word that
+ * cycles (long waits feel deliberate, not stuck) next to three pulsing dots.
+ * No fake progress bar. role="status"; static under reduced motion.
+ */
+export function ThinkingIndicator({ words = THINK_WORDS, className }: { words?: string[]; className?: string }) {
+  const [i, setI] = useState(0)
+  useEffect(() => {
+    if (words.length < 2) return
+    const t = setInterval(() => setI((x) => (x + 1) % words.length), 1800)
+    return () => clearInterval(t)
+  }, [words])
+  return (
+    <span role="status" className={cn('inline-flex items-center gap-2 text-[13.5px] font-medium text-text-muted', className)}>
+      <span key={i} className="hive-word-swap">
+        {words[i % words.length]}…
+      </span>
+      <span className="hive-dots" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+      </span>
+    </span>
+  )
 }

@@ -91,7 +91,7 @@ export default function UsagePage() {
               {vendorName(p)} <span className="tabular-nums text-text-muted">{fmtTokens(totals[p].tokens)}</span>
             </span>
           ))}
-          {!providers.length && <span className="text-[13px] text-text-muted">No usage yet.</span>}
+          {!providers.length && <span className="text-[13px] text-text-muted">No usage yet — start a chat and it shows up here.</span>}
         </div>
       </div>
 
