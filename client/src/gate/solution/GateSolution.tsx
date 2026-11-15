@@ -58,18 +58,18 @@ export default GateSolution
 
 /* ── Building blocks ─────────────────────────────────────────────────────── */
 
+/* Sections are separated by hairlines, not boxed (the journal reads like a page). */
 function Panel({ children, className }: { children: ReactNode; className?: string }) {
-  return <section className={cn('mt-4 rounded-2xl border border-border bg-bg-surface p-4 sm:p-5', className)}>{children}</section>
+  return <section className={cn('mt-4 border-t border-[var(--ed-line)] pt-5', className)}>{children}</section>
 }
 
-function Eyebrow({ icon, children, tone = 'text-text-muted' }: { icon?: IconName; children: ReactNode; tone?: string }) {
-  return (
-    <div className={cn('mb-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.09em]', tone)}>
-      {icon && <Icon name={icon} size={14} />}
-      {children}
-    </div>
-  )
+/** A label above a section. Words, not colour: the icon and tone are kept for the API only. */
+function Eyebrow({ children }: { icon?: IconName; children: ReactNode; tone?: string }) {
+  return <p className="ed-label ed-muted mt-0 mb-3">{children}</p>
 }
+
+const ROMAN = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii', 'xiii', 'xiv', 'xv', 'xvi', 'xvii', 'xviii', 'xix', 'xx']
+const roman = (i: number) => ROMAN[i] ?? String(i + 1)
 
 /*
   Solution prose, set in the reader's chosen handwriting face
@@ -119,15 +119,9 @@ function SolutionV2({ q, sol }: { q: GateQuestion; sol: Solution }) {
           Approach
         </Eyebrow>
         <Prose md={sol.approach} size={14.5} className="!text-text-primary" />
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          {sol.concepts.map((c) => (
-            <span key={c} className="rounded-full border border-border bg-bg-surface-2 px-2.5 py-0.5 text-[11.5px] font-semibold text-text-secondary">
-              {c}
-            </span>
-          ))}
-        </div>
+        {sol.concepts.length > 0 && <p className="ed-caption ed-muted mt-3 mb-0">Ideas used: {sol.concepts.join(' · ')}</p>}
         {sol.given && (
-          <div className="mt-4 rounded-xl border border-border/70 bg-bg-surface-2/60 p-3">
+          <div className="mt-4 border-l-2 border-[var(--ed-line-strong)] pl-4">
             <Eyebrow icon="list">Given</Eyebrow>
             <Prose md={sol.given} />
           </div>
@@ -144,40 +138,15 @@ function AnswerCard({ q, sol }: { q: GateQuestion; sol: Solution }) {
   const a = sol.answer
   const official = q.answerSource === 'official'
   return (
-    <section
-      className="relative overflow-hidden rounded-2xl border p-4 sm:p-5"
-      style={{
-        borderColor: 'color-mix(in oklab, var(--color-state-success) 45%, var(--color-border))',
-        background: 'color-mix(in oklab, var(--color-state-success) 8%, var(--color-bg-surface))',
-      }}
-    >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="mb-1 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.09em] text-state-success">
-            <Icon name="check-circle" size={14} /> Answer
-          </div>
-          <Markdown md={a.value} className="!text-[19px] !font-semibold !leading-snug !text-text-primary [&_strong]:!text-text-primary" />
-        </div>
-        <div className="flex flex-wrap items-center gap-1.5">
-          {a.matchesKey ? (
-            <span
-              className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11.5px] font-bold text-state-success"
-              style={{ background: 'color-mix(in oklab, var(--color-state-success) 14%, transparent)' }}
-            >
-              <Icon name="check" size={13} /> {official ? 'Matches official key' : 'Matches answer key'}
-            </span>
-          ) : (
-            <span
-              className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11.5px] font-bold text-state-warning"
-              style={{ background: 'color-mix(in oklab, var(--color-state-warning) 14%, transparent)' }}
-            >
-              <Icon name="warning" size={13} /> Differs from stored key
-            </span>
-          )}
-        </div>
-      </div>
+    <section className="border-l-2 border-state-success pl-4">
+      <p className="ed-label ed-muted mt-0 mb-2">Answer</p>
+      <Markdown md={a.value} className="ed-serif !text-[1.25rem] !leading-snug !text-text-primary [&_p]:!m-0 [&_strong]:!text-text-primary" />
+      <p className={cn('ed-caption mt-2 mb-0 inline-flex items-center gap-1.5', a.matchesKey ? 'text-state-success' : 'text-state-warning')}>
+        <Icon name={a.matchesKey ? 'check' : 'warning'} size={13} />
+        {a.matchesKey ? (official ? 'Matches the official key' : 'Matches the answer key') : 'Differs from the stored key'}
+      </p>
       {!a.matchesKey && a.keyNote && (
-        <div className="mt-3 rounded-xl border border-border bg-bg-surface p-3 text-[13px] text-text-secondary">
+        <div className="ed-ui-sm ed-ink-2 mt-3">
           <Markdown md={a.keyNote} className="!text-[13px]" />
         </div>
       )}
@@ -255,7 +224,7 @@ function Walkthrough({ sol, frames }: { sol: Solution; frames: (Frame | null)[] 
       tabIndex={0}
       onKeyDown={onKey}
       aria-label="Step-by-step walkthrough. Use left and right arrow keys to move between steps, space to play or pause."
-      className="rounded-2xl border border-border bg-bg-surface p-3 outline-none focus-visible:ring-2 focus-visible:ring-accent-brand/60 sm:p-4"
+      className="ed-feature p-4 outline-none focus-visible:ring-2 focus-visible:ring-[var(--ed-focus)] sm:p-6"
     >
       <div className="mb-3 flex items-center justify-between gap-2 px-1">
         <Eyebrow icon="sparkles" tone="text-accent-brand">
@@ -269,7 +238,7 @@ function Walkthrough({ sol, frames }: { sol: Solution; frames: (Frame | null)[] 
         {/* Canvas (first on phones, right column on wide screens) */}
         <div className="min-w-0 @3xl:order-2">
           <div className="@3xl:sticky @3xl:top-4">
-            <div className="rounded-xl border border-border/80 bg-bg-app/60 p-3 sm:p-4">
+            <div className="rounded-2xl border border-[var(--ed-line)] bg-[var(--ed-card)] p-3 sm:p-4">
               <div className="min-h-[9rem]">{frame && <SceneCanvas frame={frame} />}</div>
             </div>
             <Controls
@@ -348,12 +317,10 @@ function StepHeader({ i, title, active, done }: { i: number; title: string; acti
   return (
     <div className="flex items-start gap-2.5">
       <span
-        className={cn(
-          'mt-px flex size-6 shrink-0 items-center justify-center rounded-lg font-mono text-[12px] font-bold transition-colors',
-          active ? 'bg-accent-brand text-on-accent-brand' : done ? 'bg-bg-surface-3 text-text-secondary' : 'bg-bg-surface-2 text-text-muted',
-        )}
+        className={cn('ed-serif-numeral w-7 shrink-0 text-[1.125rem] leading-[1.4] transition-colors', active ? 'text-text-primary' : done ? 'text-text-secondary' : 'text-text-muted')}
+        aria-label={`Step ${i + 1}`}
       >
-        {i + 1}
+        {roman(i)}
       </span>
       <span className={cn('text-[14px] font-semibold leading-snug', active ? 'text-text-primary' : 'text-text-secondary')}>
         <Prose md={title} title className="[&_p]:!m-0 !text-inherit" />
@@ -430,20 +397,24 @@ function StaticSteps({ sol, frame }: { sol: Solution; frame: Frame | null }) {
         Step-by-step
       </Eyebrow>
       {frame && (
-        <div className="mb-4 rounded-xl border border-border/80 bg-bg-app/60 p-3 sm:p-4">
-          <SceneCanvas frame={frame} />
+        <div className="ed-feature mb-5 p-4 sm:p-6">
+          <div className="rounded-2xl border border-[var(--ed-line)] bg-[var(--ed-card)] p-3 sm:p-4">
+            <SceneCanvas frame={frame} />
+          </div>
         </div>
       )}
-      <ol className="relative space-y-4 border-l-2 border-border/70 pl-5">
+      <ol className="m-0 list-none space-y-5 p-0">
         {sol.steps.map((s, i) => (
-          <li key={i} className="relative">
-            <span className="absolute -left-[31px] top-0 flex size-6 items-center justify-center rounded-lg bg-bg-surface-3 font-mono text-[12px] font-bold text-text-secondary ring-4 ring-bg-surface">
-              {i + 1}
+          <li key={i} className="grid grid-cols-[2.25rem_minmax(0,1fr)] gap-2">
+            <span className="ed-serif-numeral text-[1.125rem] leading-[1.4] text-text-muted" aria-label={`Step ${i + 1}`}>
+              {roman(i)}
             </span>
-            <div className="text-[14px] font-semibold text-text-primary">
-              <Prose md={s.title} title className="[&_p]:!m-0 !text-inherit" />
+            <div className="min-w-0">
+              <div className="text-[14px] font-semibold text-text-primary">
+                <Prose md={s.title} title className="[&_p]:!m-0 !text-inherit" />
+              </div>
+              <Prose md={s.body} className="mt-1.5" />
             </div>
-            <Prose md={s.body} className="mt-1.5" />
           </li>
         ))}
       </ol>
@@ -455,40 +426,32 @@ function StaticSteps({ sol, frame }: { sol: Solution; frame: Frame | null }) {
 
 function OptionAnalysis({ q, sol }: { q: GateQuestion; sol: Solution }) {
   const text = new Map(q.options.map((o) => [o.l, o.t]))
+  const list = [...sol.optionAnalysis!].sort((x, y) => Number(y.correct) - Number(x.correct))
   return (
     <Panel className="!mt-0">
-      <Eyebrow icon="check-circle">Why each option is right or wrong</Eyebrow>
-      <div className="grid gap-2 @2xl:grid-cols-2">
-        {sol.optionAnalysis!.map((o) => (
-          <div
-            key={o.option}
-            className="rounded-xl border p-3"
-            style={{
-              borderColor: o.correct ? 'color-mix(in oklab, var(--color-state-success) 50%, var(--color-border))' : 'var(--color-border)',
-              background: o.correct ? 'color-mix(in oklab, var(--color-state-success) 7%, var(--color-bg-surface))' : 'var(--color-bg-surface)',
-            }}
-          >
-            <div className="flex items-start gap-2.5">
-              <span
-                className="flex size-7 shrink-0 items-center justify-center rounded-lg font-mono text-[13px] font-bold"
-                style={{
-                  background: o.correct ? 'var(--color-state-success)' : 'var(--color-bg-surface-3)',
-                  color: o.correct ? 'var(--color-bg-surface)' : 'var(--color-text-secondary)',
-                }}
-              >
-                {o.option}
-              </span>
-              <div className="min-w-0 flex-1">
-                {text.get(o.option) && <Markdown md={text.get(o.option)!} className="!text-[13.5px] !text-text-primary [&_p]:!m-0" />}
-                <div className={cn('mt-1 flex items-start gap-1.5 text-[13px]', o.correct ? 'text-state-success' : 'text-text-secondary')}>
-                  <Icon name={o.correct ? 'check' : 'x'} size={14} className="mt-0.5 shrink-0" />
-                  <Prose md={o.reason} size={13} className="!text-inherit [&_p]:!m-0" />
-                </div>
+      <Eyebrow>Why the others are wrong</Eyebrow>
+      <ul className="m-0 list-none border-t border-[var(--ed-line)] p-0">
+        {list.map((o) => (
+          <li key={o.option} className={cn('relative flex items-start gap-3 border-b border-[var(--ed-line)] py-3 pr-1 pl-3', o.correct && 'shadow-[inset_2px_0_0_var(--color-state-success)]')}>
+            <span
+              className={cn(
+                'inline-grid size-7 shrink-0 place-items-center rounded-full border font-mono text-[12px]',
+                o.correct ? 'border-state-success bg-state-success text-[var(--ed-card)]' : 'border-[var(--ed-line-strong)] text-text-secondary',
+              )}
+            >
+              {o.option}
+            </span>
+            <div className="min-w-0 flex-1">
+              {text.get(o.option) && <Markdown md={text.get(o.option)!} className="ed-serif !text-[1rem] !text-text-primary [&_p]:!m-0" />}
+              <div className={cn('mt-1 flex items-start gap-1.5 text-[13px]', o.correct ? 'text-state-success' : 'text-text-secondary')}>
+                <Icon name={o.correct ? 'check' : 'x'} size={14} className="mt-0.5 shrink-0" />
+                <span className="sr-only">{o.correct ? 'Correct:' : 'Wrong:'}</span>
+                <Prose md={o.reason} size={13} className="!text-inherit [&_p]:!m-0" />
               </div>
             </div>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </Panel>
   )
 }
@@ -521,7 +484,7 @@ function Extras({ sol }: { sol: Solution }) {
           <ul className="space-y-1.5">
             {sol.pitfalls.map((p, i) => (
               <li key={i} className="flex items-start gap-2 text-[14px] text-text-secondary">
-                <span className="mt-2 size-1.5 shrink-0 rounded-full bg-state-warning" />
+                <span className="mt-[0.7em] h-px w-3 shrink-0 bg-[var(--ed-line-strong)]" aria-hidden="true" />
                 <Prose md={p} className="[&_p]:!m-0" />
               </li>
             ))}

@@ -11,7 +11,7 @@ import { QuestionView, type AttemptEvent } from '@/gate/QuestionView'
 import { addDays, todayISO, useQuestionProgress } from '@/gate/progress'
 import { fetchQuestions } from '@/gate/tests/testsData'
 import { fmtClock, fmtDuration } from '@/gate/useQuestionTimer'
-import { paperLabel, qLabel, type GateList, type GateQuestion } from '@/gate/types'
+import type { GateList, GateQuestion } from '@/gate/types'
 
 /*
  * One question a day, the same for everyone (server pick; a date-seeded pick
@@ -155,7 +155,7 @@ export default function GateDailyPage() {
                   )}
                 </div>
               )}
-              <QuestionView key={q.id} q={q} mode="daily" keyboard reportToAssistant insights position={`${paperLabel(q)} ${qLabel(q)}`} onAttempt={onAttempt} />
+              <QuestionView key={q.id} q={q} mode="daily" keyboard reportToAssistant insights position="Question of the day" onAttempt={onAttempt} />
             </>
           )}
         </div>
@@ -181,6 +181,7 @@ export default function GateDailyPage() {
                         'flex size-7 items-center justify-center rounded-full border text-[10px]',
                         e ? (e.outcome === 'correct' ? 'border-state-success bg-state-success/15 text-state-success' : 'border-border-strong bg-bg-surface-3 text-text-secondary') : 'border-dashed border-border text-text-muted',
                       )}
+                      role="img"
                       aria-label={`${d}: ${e ? (e.outcome === 'correct' ? 'solved' : 'attempted') : 'missed'}`}
                     >
                       {e ? <Icon name={e.outcome === 'correct' ? 'check' : 'x'} className="size-3.5" /> : ''}

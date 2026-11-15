@@ -6,6 +6,7 @@ import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
+import { AnswerField, CheckButton, Masthead, OptionList, OptionRow, QuestionActions, QuestionCard, QuestionText, Verdict, type OptionState } from '@/components/question/Question'
 import { fmtMinutes } from './insights'
 
 /*
@@ -197,7 +198,7 @@ export function TestOut({ subject, node, onClose, onPassed }: { subject: string;
     }
   }
   return (
-    <motion.section initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} aria-label="Test out" className="rounded-xl border border-accent-brand/40 px-3.5 py-3">
+    <motion.section initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} aria-label="Test out" className="border-t border-[var(--ed-line)] pt-4">
       <div className="mb-2 flex items-center justify-between">
         <h3 className={cn(H, 'mb-0')}>
           <GraduationCap className="size-3.5" aria-hidden="true" /> Test out
@@ -214,62 +215,59 @@ export function TestOut({ subject, node, onClose, onPassed }: { subject: string;
         <p className="mb-0 text-[12.5px] text-foreground-dim">Not enough auto-graded questions for this node yet — study it instead.</p>
       ) : (
         <div className="space-y-4">
-          <p className="mb-0 text-[12px] text-foreground-dim">Answer {qs.length} questions; {Math.ceil(qs.length * 0.8)} right masters the node (at 60% of its XP).</p>
+          <p className="ed-ui-sm ed-ink-2 mb-0">Answer {qs.length} questions; {Math.ceil(qs.length * 0.8)} right masters the node (at 60% of its XP).</p>
           {qs.map((q, i) => {
             const r = result?.results.find((x) => x.id === q.id)
+            const keys = r ? (Array.isArray(r.key) ? (r.key as unknown[]).map(String) : [String(r.key)]) : []
+            const multi = q.type === 'MSQ'
             return (
-              <div key={q.id} className="space-y-2">
-                <p className="mb-0 text-[11px] text-foreground-faint">
-                  {i + 1}. {q.exam} {q.year} · {q.marks} mark{q.marks === 1 ? '' : 's'} · {q.type}
-                  {r && (r.correct ? <span className="ml-2 text-success">✓ correct</span> : <span className="ml-2 text-destructive">✗ key: {Array.isArray(r.key) ? r.key.join(', ') : String(r.key)}</span>)}
-                </p>
-                <div className="text-[13.5px] text-foreground">
+              <QuestionCard key={q.id} as="div" masthead={<Masthead parts={[<strong key="n">Q {i + 1}</strong>, `GATE ${q.exam} ${q.year}`, `${q.marks} mark${q.marks === 1 ? '' : 's'}`, q.type, 'Test out']} />}>
+                <QuestionText>
                   <Markdown md={q.text} />
-                </div>
+                </QuestionText>
                 {q.options.length ? (
-                  <div className="grid gap-1.5">
+                  <OptionList multi={multi}>
                     {q.options.map((o) => {
                       const on = Array.isArray(picks[q.id]) ? (picks[q.id] as string[]).includes(o.l) : picks[q.id] === o.l
+                      const key = keys.includes(o.l)
+                      const state: OptionState = !r ? 'idle' : key && on ? 'right' : key ? (multi ? 'missed' : 'right') : on ? 'wrong' : 'dim'
                       return (
-                        <button
-                          key={o.l}
-                          type="button"
-                          disabled={!!result}
-                          onClick={() => set(q.id, o.l, q.type === 'MSQ')}
-                          className={cn('flex cursor-pointer items-start gap-2 rounded-lg border px-2.5 py-1.5 text-left text-[13px] transition-colors', on ? 'border-accent-brand bg-accent-brand/10' : 'border-border hover:border-primary/50')}
-                          aria-pressed={on}
-                        >
-                          <span className="font-mono text-[11.5px] text-foreground-dim">{o.l}</span>
-                          <span className="min-w-0 flex-1">
-                            <Markdown md={o.t} />
-                          </span>
-                        </button>
+                        <OptionRow key={o.l} letter={o.l} multi={multi} selected={on} state={state} disabled={!!result} onClick={() => set(q.id, o.l, multi)}>
+                          <Markdown md={o.t} className="[&_p]:!m-0" />
+                        </OptionRow>
                       )
                     })}
-                  </div>
+                  </OptionList>
                 ) : (
-                  <input
+                  <AnswerField
                     type="text"
                     inputMode="decimal"
                     disabled={!!result}
                     value={typeof picks[q.id] === 'string' ? (picks[q.id] as string) : ''}
                     onChange={(e) => setPicks((p) => ({ ...p, [q.id]: e.target.value }))}
                     placeholder={q.type === 'TF' ? 'True or False' : 'Your answer'}
-                    aria-label={`Answer to question ${i + 1}`}
-                    className="w-40 rounded-lg border border-border bg-transparent px-2.5 py-1.5 font-mono text-[13px] outline-none focus:border-accent-brand"
+                    label={`Answer to question ${i + 1}`}
+                    state={r ? (r.correct ? 'right' : 'wrong') : 'idle'}
                   />
                 )}
-              </div>
+                {r && (
+                  <Verdict tone={r.correct ? 'right' : 'wrong'} focus={false}>
+                    {r.correct ? 'Correct.' : <>Not quite. The answer is {keys.join(', ')}.</>}
+                  </Verdict>
+                )}
+              </QuestionCard>
             )
           })}
           {result ? (
-            <p className={cn('mb-0 text-[13px] font-semibold', result.passed ? 'text-success' : 'text-warning')}>
-              {result.score}/{result.total} — {result.passed ? 'mastered. Nice.' : 'not yet: study it, or try again tomorrow.'}
-            </p>
+            <Verdict tone={result.passed ? 'right' : 'wrong'}>
+              {result.score} of {result.total}. {result.passed ? 'The node is mastered.' : 'Not yet: study it, or try again tomorrow.'}
+            </Verdict>
           ) : (
-            <Button variant="primary" size="sm" className="nx-press" onClick={submit} disabled={busy || Object.keys(picks).length < qs.length}>
-              {busy ? <Loader2 className="size-3.5 animate-spin" aria-hidden="true" /> : <Check className="size-3.5" aria-hidden="true" />} Check answers
-            </Button>
+            <QuestionActions>
+              <CheckButton onClick={submit} disabled={busy || Object.keys(picks).length < qs.length}>
+                {busy ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null} Check answers
+              </CheckButton>
+            </QuestionActions>
           )}
         </div>
       )}

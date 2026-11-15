@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { Masthead, OptionList, OptionRow, QuestionCard, QuestionText, Verdict } from '@/components/question/Question'
 import { THEORY_UNITS, ALL_THEORY_CHAPTERS } from '../data/theoryNotesData'
 import {
   UNIT_WAR_STORIES,
@@ -461,46 +462,43 @@ Architectural Fix: ${currentWarStory.architecturalFix}
         {currentQuiz.length > 0 && (
           <section>
             <h2 className="!mt-0">Check yourself</h2>
-            <ol className="nx-steps">
+            <div className="not-prose grid gap-4">
               {currentQuiz.map((quiz, qIdx) => {
                 const selectedOpt = quizAnswers[qIdx]
                 const hasAnswered = selectedOpt !== undefined
                 const isCorrect = selectedOpt === quiz.answerIndex
                 return (
-                  <li key={qIdx}>
-                    <p className="!mb-2 font-medium text-text-primary">{quiz.question}</p>
-                    <div className="space-y-1">
+                  <QuestionCard key={qIdx} as="div" masthead={<Masthead parts={[<strong key="n">Q {qIdx + 1}</strong>, 'System Design', 'Check yourself']} />}>
+                    <QuestionText>{quiz.question}</QuestionText>
+                    <OptionList>
                       {quiz.options.map((opt, optIdx) => {
                         const right = hasAnswered && optIdx === quiz.answerIndex
                         const wrong = hasAnswered && selectedOpt === optIdx && !right
                         return (
-                          <button
+                          <OptionRow
                             key={optIdx}
-                            type="button"
+                            letter={String.fromCharCode(65 + optIdx)}
+                            selected={selectedOpt === optIdx}
+                            state={right ? 'right' : wrong ? 'wrong' : hasAnswered ? 'dim' : 'idle'}
                             onClick={() => {
                               playStepClickSound()
                               setQuizAnswers((prev) => ({ ...prev, [qIdx]: optIdx }))
                             }}
-                            className={`flex w-full cursor-pointer items-start gap-2.5 rounded-lg px-3 py-2 text-left text-[15px] transition-colors ${
-                              right ? 'bg-state-success/10 text-text-primary' : wrong ? 'bg-state-error/10 text-text-primary' : 'text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary'
-                            }`}
                           >
-                            <span className="w-4 shrink-0 font-medium text-text-muted">{String.fromCharCode(65 + optIdx)}</span>
-                            <span>{opt.replace(/^[A-D]\.\s*/, '')}</span>
-                          </button>
+                            {opt.replace(/^[A-D]\.\s*/, '')}
+                          </OptionRow>
                         )
                       })}
-                    </div>
+                    </OptionList>
                     {hasAnswered && (
-                      <aside className="nx-aside !my-3" data-tone={isCorrect ? 'good' : 'danger'}>
-                        <span className="nx-aside-label">{isCorrect ? 'Correct' : 'Not quite'}</span>
-                        <p className="!m-0">{quiz.staffRationale}</p>
-                      </aside>
+                      <Verdict tone={isCorrect ? 'right' : 'wrong'} detail={<span className="ed-body-sm">{quiz.staffRationale}</span>}>
+                        {isCorrect ? 'Correct.' : `Not quite. The answer is ${String.fromCharCode(65 + quiz.answerIndex)}.`}
+                      </Verdict>
                     )}
-                  </li>
+                  </QuestionCard>
                 )
               })}
-            </ol>
+            </div>
           </section>
         )}
 
