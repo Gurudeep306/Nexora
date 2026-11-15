@@ -135,7 +135,7 @@ export default function SettingsPage() {
                 <CardContent className="flex flex-wrap items-center justify-between gap-4 px-5 py-4">
                   <div>
                     <p className="mb-0 text-sm font-semibold text-text-primary">Theme, fonts, icons and cards</p>
-                    <p className="mb-0 text-[12.5px] text-text-muted">All appearance options live in the Theme Centre.</p>
+                    <p className="mb-0 text-[12.5px] text-text-muted">Styles, colours and fonts live on the Appearance page.</p>
                   </div>
                   <Link to="/theme" className={buttonVariants({ variant: 'secondary', size: 'sm' })}>
                     Open Theme Centre

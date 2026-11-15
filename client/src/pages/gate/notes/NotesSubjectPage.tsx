@@ -9,8 +9,13 @@ import { EmptyState, LoadingBlock } from '@/components/ui'
 import { GateShell } from '@/gate/shell/GateShell'
 import { DIFFICULTY_LABEL, NOTES_ROUTES, fmtMinutes, useSubjectTree } from '@/gate/notes/api'
 import { progressOf, useNotesProgress } from '@/gate/notes/progress'
-import { Crumbs, LessonStatus, NotesRoot, ProgressRing, SubjectIcon } from '@/gate/notes/ui'
+import { Crumbs, LessonStatus, NotesRoot, ProgressRing } from '@/gate/notes/ui'
 import type { SubjectTree } from '@/gate/notes/types'
+import { cn } from '@/lib/utils'
+import '@/gate/notes/notes-home.css'
+
+/** GATE notes subject id → its Nexus subject, where they differ (content/nexus/_hubs.json). */
+const NEXUS_OF: Record<string, string> = { db: 'dbms', pds: 'c' }
 
 export default function NotesSubjectPage() {
   const { subject = '' } = useParams()
@@ -57,111 +62,133 @@ function SubjectHome({ data }: { data: SubjectTree }) {
   }, [lessons, progress, subject.id])
   const verb = done === 0 && !lessons.some((l) => progressOf(progress, subject.id, l.id).scrollPct > 2) ? 'Start' : done === lessons.length ? 'Read again' : 'Continue'
 
-  const action = (
-    <>
-      {/* The subject's skill tree (Nexus) beside its notes. */}
-      <Link to={`/learn/${subject.id}`} className="notes-tool">
-        <Icon name="nexus" className="size-4" aria-hidden="true" />
-        <span>Skill tree</span>
-      </Link>
-      {next && (
-        <Link to={NOTES_ROUTES.lesson(subject.id, next.id)} className="notes-tool notes-tool--main">
-          <Icon name="play" className="size-4" aria-hidden="true" />
-          <span>
-            {verb}
-            <span className="hidden sm:inline">: {next.title}</span>
-          </span>
-        </Link>
-      )}
-    </>
-  )
+  const pct = lessons.length ? Math.round((done / lessons.length) * 100) : 0
+  const cov = subject.coverage ?? { total: 0, covered: 0 }
 
   return (
-    <GateShell title={subject.title} subtitle={subject.description} actions={action}>
+    <GateShell title={subject.title} bare>
       <NotesRoot color={subject.color}>
-        <Crumbs items={[{ label: 'Notes', to: NOTES_ROUTES.all }, { label: subject.title }]} />
-        <section className="notes-overview" aria-label="Overview">
-          <SubjectIcon icon={subject.icon} />
-          <dl>
-            <div>
-              <dt>Chapters</dt>
-              <dd>{chapters.length}</dd>
+        {/* Header: the subject, your place in it, and the three ways in */}
+        <header className="nh-hero">
+          <div className="min-w-0">
+            <Crumbs items={[{ label: 'Notes', to: NOTES_ROUTES.all }, { label: subject.title }]} />
+            <h1 className="nh-title">{subject.title}</h1>
+            {subject.description && <p className="nh-desc">{subject.description}</p>}
+            <p className="nh-stats">
+              <span>
+                {chapters.length} chapters
+              </span>
+              <span>{lessons.length} lessons</span>
+              <span>{fmtMinutes(subject.est_minutes)}</span>
+              {cov.total > 0 && (
+                <span>
+                  {cov.covered}/{cov.total} past questions linked
+                </span>
+              )}
+            </p>
+            <div className="nh-actions">
+              {next && (
+                <Link to={NOTES_ROUTES.lesson(subject.id, next.id)} className="nh-btn nh-btn--main">
+                  <Icon name="play" className="size-4" aria-hidden="true" />
+                  {verb}
+                </Link>
+              )}
+              <Link to={`/learn/${NEXUS_OF[subject.id] ?? subject.id}`} className="nh-btn">
+                <Icon name="nexus" className="size-4" aria-hidden="true" />
+                Skill tree
+              </Link>
+              <Link to={`/gate/practice?subject=${encodeURIComponent(subject.id)}`} className="nh-btn">
+                <Icon name="practice" className="size-4" aria-hidden="true" />
+                Practice questions
+              </Link>
             </div>
-            <div>
-              <dt>Lessons</dt>
-              <dd>{lessons.length}</dd>
-            </div>
-            <div>
-              <dt>Total time</dt>
-              <dd>{fmtMinutes(subject.est_minutes)}</dd>
-            </div>
-            <div>
-              <dt>Left to read</dt>
-              <dd>{fmtMinutes(minutesLeft)}</dd>
-            </div>
-          </dl>
-          <ProgressRing done={done} total={lessons.length} size={64} label={`${done} of ${lessons.length} lessons completed`} />
-        </section>
-        {(subject.coverage?.total ?? 0) > 0 && (
-          <section className="notes-coverage" aria-label="PYQ coverage">
-            <div className="notes-coverage-head">
-              <Icon name="gate" className="size-4" aria-hidden="true" />
-              <strong>
-                {subject.coverage.covered}/{subject.coverage.total} PYQs covered
-              </strong>
-              <span>every past question in this subject, linked to the lesson block that teaches it</span>
-            </div>
-            <span
-              className="notes-coverage-bar"
-              role="progressbar"
-              aria-label="PYQs covered by the notes"
-              aria-valuemin={0}
-              aria-valuemax={subject.coverage.total}
-              aria-valuenow={subject.coverage.covered}
-            >
-              <span style={{ width: `${(subject.coverage.covered / subject.coverage.total) * 100}%` }} />
-            </span>
-          </section>
-        )}
+          </div>
 
-        <ol className="notes-chapters">
-          {chapters.map((ch) => {
-            const chDone = ch.lessons.filter((l) => progressOf(progress, subject.id, l.id).completed).length
-            const mins = ch.lessons.reduce((n, l) => n + l.est_minutes, 0)
-            return (
-              <li key={ch.id} className="notes-chapter">
-                <header>
-                  <ProgressRing done={chDone} total={ch.lessons.length} label={`Chapter ${ch.n}: ${chDone} of ${ch.lessons.length} lessons done`} />
-                  <div className="min-w-0 flex-1">
-                    <h2>
-                      <span className="notes-chapter-n">Chapter {ch.n}</span>
-                      {ch.title}
-                    </h2>
-                    {ch.summary && <p>{ch.summary}</p>}
-                  </div>
-                  <span className="notes-chapter-time">{fmtMinutes(mins)}</span>
-                </header>
-                <ol className="notes-lessons">
-                  {ch.lessons.map((l) => {
-                    const p = progressOf(progress, subject.id, l.id)
-                    return (
-                      <li key={l.id}>
-                        <Link to={NOTES_ROUTES.lesson(subject.id, l.id)} className="notes-lesson-row">
-                          <LessonStatus p={p} />
-                          <span className="notes-lesson-title">{l.title}</span>
-                          <span className="notes-lesson-meta">
-                            {DIFFICULTY_LABEL[l.difficulty]} · {fmtMinutes(l.est_minutes)}
-                            {l.pyqCount > 0 && <> · {l.pyqCount} PYQ</>}
-                          </span>
-                        </Link>
-                      </li>
-                    )
-                  })}
-                </ol>
-              </li>
-            )
-          })}
-        </ol>
+          <aside className="nh-progress card" aria-label="Your progress">
+            <div className="flex items-center gap-4">
+              <ProgressRing done={done} total={lessons.length} size={72} label={`${done} of ${lessons.length} lessons completed`} />
+              <div className="min-w-0">
+                <p className="m-0 text-[13px] text-text-muted">Your progress</p>
+                <p className="m-0 text-[22px] font-semibold tracking-[-0.02em] text-text-primary tabular-nums">{pct}%</p>
+                <p className="m-0 text-[12.5px] text-text-muted">{fmtMinutes(minutesLeft)} left to read</p>
+              </div>
+            </div>
+            {next && (
+              <Link to={NOTES_ROUTES.lesson(subject.id, next.id)} className="nh-next">
+                <span className="text-[12px] text-text-muted">{verb === 'Start' ? 'Start with' : verb === 'Continue' ? 'Up next' : 'Read again'}</span>
+                <span className="nh-next-title">{next.title}</span>
+              </Link>
+            )}
+          </aside>
+        </header>
+
+        {/* Body: a chapter index beside the chapters, lessons across the full width */}
+        <div className="nh-body">
+          <nav className="nh-index" aria-label="Chapters">
+            <p className="nh-index-head">Chapters</p>
+            <ol>
+              {chapters.map((ch) => {
+                const chDone = ch.lessons.filter((l) => progressOf(progress, subject.id, l.id).completed).length
+                return (
+                  <li key={ch.id}>
+                    <a href={`#ch-${ch.id}`} className="nh-index-link">
+                      <span className="nh-index-n">{ch.n}</span>
+                      <span className="min-w-0 flex-1 truncate">{ch.title}</span>
+                      <span className="nh-index-count">
+                        {chDone}/{ch.lessons.length}
+                      </span>
+                    </a>
+                  </li>
+                )
+              })}
+            </ol>
+          </nav>
+
+          <ol className="nh-chapters">
+            {chapters.map((ch) => {
+              const chDone = ch.lessons.filter((l) => progressOf(progress, subject.id, l.id).completed).length
+              const mins = ch.lessons.reduce((n, l) => n + l.est_minutes, 0)
+              return (
+                <li key={ch.id} id={`ch-${ch.id}`} className="nh-chapter">
+                  <header className="nh-chapter-head">
+                    <ProgressRing done={chDone} total={ch.lessons.length} label={`Chapter ${ch.n}: ${chDone} of ${ch.lessons.length} lessons done`} />
+                    <div className="min-w-0 flex-1">
+                      <p className="m-0 text-[12.5px] text-text-muted">
+                        Chapter {ch.n} · {ch.lessons.length} lessons · {fmtMinutes(mins)}
+                      </p>
+                      <h2 className="nh-chapter-title">{ch.title}</h2>
+                      {ch.summary && <p className="nh-chapter-summary">{ch.summary}</p>}
+                    </div>
+                  </header>
+                  <ol className="nh-lessons">
+                    {ch.lessons.map((l, i) => {
+                      const p = progressOf(progress, subject.id, l.id)
+                      return (
+                        <li key={l.id}>
+                          <Link to={NOTES_ROUTES.lesson(subject.id, l.id)} className={cn('nh-lesson', next?.id === l.id && 'is-next')}>
+                            <LessonStatus p={p} />
+                            <span className="min-w-0 flex-1">
+                              <span className="nh-lesson-title">
+                                <span className="nh-lesson-n">
+                                  {ch.n}.{i + 1}
+                                </span>
+                                {l.title}
+                              </span>
+                              <span className="nh-lesson-meta">
+                                {DIFFICULTY_LABEL[l.difficulty]} · {fmtMinutes(l.est_minutes)}
+                                {l.pyqCount > 0 && <> · {l.pyqCount} PYQs</>}
+                              </span>
+                            </span>
+                          </Link>
+                        </li>
+                      )
+                    })}
+                  </ol>
+                </li>
+              )
+            })}
+          </ol>
+        </div>
       </NotesRoot>
     </GateShell>
   )

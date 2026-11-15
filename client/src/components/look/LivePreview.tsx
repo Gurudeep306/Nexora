@@ -26,7 +26,7 @@ export function LivePreview({ look, mode, className }: { look: Look; mode: Theme
     <div
       {...attrs}
       className={cn(
-        'tc-preview relative overflow-hidden rounded-[var(--radius-sheet)] border border-border bg-bg-app text-[13px] text-text-primary shadow-[var(--elev-2)]',
+        'tc-preview pattern-surface relative overflow-hidden rounded-[var(--radius-sheet)] border border-border bg-bg-app text-[13px] text-text-primary shadow-[var(--elev-2)]',
         className,
       )}
       aria-label="Live preview"

@@ -1,6 +1,7 @@
 import { Check } from 'lucide-react'
 import { useTheme } from '@/context/ThemeContext'
 import { CARD_STYLES, RADII } from '@/theme/cards'
+import { PATTERNS } from '@/theme/styles'
 import { cn } from '@/lib/utils'
 import { RadioGroup, Segmented } from './controls'
 import { Section } from './Section'
@@ -9,6 +10,32 @@ export function CardsSection() {
   const { look, setLook } = useTheme()
   return (
     <div className="space-y-10">
+      <Section title="Page pattern" hint="Drawn faintly behind every page, in the theme’s own ink.">
+        <RadioGroup
+          label="Page pattern"
+          items={PATTERNS}
+          value={look.pattern}
+          onChange={(id) => setLook({ pattern: id })}
+          className="grid grid-cols-2 gap-3 min-[560px]:grid-cols-4 xl:grid-cols-7"
+          itemLabel={(p) => `${p.label}: ${p.hint}`}
+          itemClassName={(_, checked) =>
+            cn(
+              'group flex flex-col gap-2 rounded-[calc(var(--radius-card)+4px)] p-1.5 transition-[background-color,box-shadow] duration-200',
+              checked ? 'shadow-[inset_0_0_0_1.5px_var(--color-text-primary)]' : 'hover:bg-bg-surface-2/70',
+            )
+          }
+          renderItem={(p) => (
+            <>
+              <span
+                data-pattern={p.id}
+                className="pattern-surface block aspect-square w-full rounded-[var(--radius-card)] bg-bg-app shadow-[0_0_0_1px_var(--color-border)]"
+              />
+              <span className="block px-1 text-[12.5px] font-medium text-text-primary">{p.label}</span>
+            </>
+          )}
+        />
+      </Section>
+
       <Section title="Corners" hint="Sharp, rounded or round — applies to cards, controls and sheets.">
         <Segmented label="Corner radius" items={RADII} value={look.radius} onChange={(id) => setLook({ radius: id })} />
       </Section>

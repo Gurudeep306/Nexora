@@ -11,7 +11,7 @@
 const crypto = require("crypto");
 const { get, all, run } = require("../db");
 const { runAs, me } = require("../context");
-const { groq, models, AiError, isConfigured, NOT_CONFIGURED } = require("./groq");
+const { clientFor, models, AiError, isConfigured, NOT_CONFIGURED } = require("./groq");
 const { MODES } = require("./modes");
 const P = require("./prompts");
 const tools = require("./tools");
@@ -25,6 +25,9 @@ const HISTORY_TURNS = 20;
 /* ── budget ── */
 const today = () => new Date().toISOString().slice(0, 10);
 const dailyLimit = () => {
+  // eslint-disable-next-line global-require
+  const admin = require("./settings").budgetTokens();
+  if (admin) return admin;
   const n = Number(process.env.AI_DAILY_TOKENS);
   return Number.isFinite(n) && n > 0 ? n : 200000;
 };
@@ -88,11 +91,12 @@ async function runTask(mode, input = {}, { user, signal, client } = {}) {
     if (hit !== undefined) return hit;
   }
 
-  const m = models();
-  const out = await (client || groq()).chat({
-    model: def.model === "fast" ? m.fast : m.main,
+  const slot = def.model === "fast" ? "fast" : "main";
+  const pick = client ? { client, model: slot === "fast" ? models().fast : models().main, fallbackModel: undefined } : clientFor({ mode, slot });
+  const out = await pick.client.chat({
+    model: pick.model,
     // Ghost completions must be fast or useless: don't fall back to a big model.
-    fallbackModel: mode === "complete" ? null : undefined,
+    fallbackModel: mode === "complete" ? null : pick.fallbackModel,
     messages,
     json: !!def.json,
     maxTokens: def.maxTokens,
@@ -262,7 +266,8 @@ async function runChat({ user, conversationId, message, page = {}, animate = fal
   const wantAnim = !ctx.page.examActive && (!!animate || wantsAnimation(text));
   const messages = buildChatMessages({ ctx, history, text, animate: wantAnim });
 
-  const llm = client || groq();
+  const pick = client ? { client, model: models().main } : clientFor({ mode: "chat", slot: "main" });
+  const llm = pick.client;
   const usage = { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
   let reply = "";
 
@@ -270,7 +275,7 @@ async function runChat({ user, conversationId, message, page = {}, animate = fal
     const last = round === MAX_ROUNDS - 1;
     let done = null;
     for await (const ev of llm.chatStream({
-      model: models().main,
+      model: pick.model,
       messages,
       tools: tools.DEFINITIONS,
       toolChoice: last ? "none" : "auto",

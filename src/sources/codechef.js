@@ -7,6 +7,22 @@ const { getJson, markdown, looksHtml, tidySample, normalizeTime, blank, section,
 const ORIGIN = "https://www.codechef.com";
 const JSON_HEADERS = { "X-Requested-With": "XMLHttpRequest" };
 
+/**
+ * CodeChef's tag lists mix real topics with the author's handle, the contest
+ * code ("start187", "cook142") and difficulty words ("cakewalk"). Keep topics.
+ */
+const NOT_TOPICS = new Set(["cakewalk", "simple", "easy", "easy-medium", "medium", "medium-hard", "hard", "challenge", "practice", "rated"]);
+function topicTags(list, authors = []) {
+  const who = new Set(authors.filter(Boolean).map((a) => String(a).toLowerCase()));
+  return [...new Set(list.map((t) => String(t || "").trim()).filter(Boolean))].filter((t) => {
+    const k = t.toLowerCase();
+    if (who.has(k) || NOT_TOPICS.has(k)) return false;
+    if (/^[a-z]{2,10}\d{1,4}[a-z]?$/.test(k)) return false; // contest codes: start187, cook142, ltime99, june21
+    if (/^[a-z0-9_]+$/.test(k) && /\d/.test(k) && !/^\d+d$/.test(k)) return false; // handles like iceknight1093
+    return true;
+  });
+}
+
 const toRow = (p, fallbackCategory = "") => {
   const code = String(p.code || p.problem_code || "").trim();
   if (!code) return null;
@@ -19,7 +35,7 @@ const toRow = (p, fallbackCategory = "") => {
     title: String(p.name || p.problem_name || code).trim(),
     url: `${ORIGIN}/problems/${code}`,
     rating: Math.round(Number(p.difficulty_rating) || 0),
-    tags: JSON.stringify([...new Set(tags)].slice(0, 12)),
+    tags: JSON.stringify(topicTags(tags, [p.author, p.problem_author, p.setter]).slice(0, 12)),
     category: String(p.category || fallbackCategory || "").toLowerCase(),
   };
 };
@@ -87,8 +103,8 @@ function parse(data) {
   // max_timelimit is in seconds; CodeChef doesn't publish a memory limit per problem.
   out.timeLimit = data.max_timelimit ? normalizeTime(`${data.max_timelimit} s`) : "";
   out.memLimit = "";
-  const tags = [...(data.user_tags || []), ...(data.computed_tags || [])].filter((t) => typeof t === "string");
-  if (tags.length) out.extra.tags = [...new Set(tags)];
+  const tags = topicTags([...(data.user_tags || []), ...(data.computed_tags || [])].filter((t) => typeof t === "string"), [data.problem_author, data.author, data.setter]);
+  if (tags.length) out.extra.tags = tags;
   if (data.difficulty_rating) out.extra.rating = Number(data.difficulty_rating) || undefined;
   return out;
 }
@@ -110,6 +126,7 @@ async function statement(problem) {
 }
 
 module.exports = {
+  topicTags,
   id: "codechef",
   name: "CodeChef",
   origin: ORIGIN,

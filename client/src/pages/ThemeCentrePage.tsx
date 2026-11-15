@@ -13,29 +13,33 @@ import { ThemesSection, type PreviewPatch } from '@/components/look/ThemesSectio
 import { TypographySection } from '@/components/look/TypographySection'
 import { IconsSection } from '@/components/look/IconsSection'
 import { CardsSection } from '@/components/look/CardsSection'
+import { StylesSection } from '@/components/look/StylesSection'
+import { STYLE_BY_ID } from '@/theme/styles'
 import '@/components/look/theme-centre.css'
 
 const SECTIONS = [
-  { id: 'themes', label: 'Themes' },
-  { id: 'typography', label: 'Typography' },
+  { id: 'style', label: 'Style' },
+  { id: 'themes', label: 'Colour' },
+  { id: 'typography', label: 'Type' },
+  { id: 'cards', label: 'Surfaces' },
   { id: 'icons', label: 'Icons' },
-  { id: 'cards', label: 'Cards' },
 ] as const
 
 type SectionId = (typeof SECTIONS)[number]['id']
 
 /**
- * The Theme Centre — colour themes, typography, icons and cards, with a live
- * miniature of the app that follows every change (and every hover).
+ * Appearance — design styles first (a whole design language in one choice),
+ * then colour, type, surfaces and icons to fine-tune, with a live miniature
+ * of the app that follows every change (and every hover).
  */
 export default function ThemeCentrePage() {
   const { look, setLook, preferredMode, resetLook } = useTheme()
   const [params, setParams] = useSearchParams()
   const linked = params.get('section')
-  const section: SectionId = SECTIONS.some((s) => s.id === linked) ? (linked as SectionId) : 'themes'
-  const setSection = (id: SectionId) => setParams(id === 'themes' ? {} : { section: id }, { replace: true })
+  const section: SectionId = SECTIONS.some((s) => s.id === linked) ? (linked as SectionId) : 'style'
+  const setSection = (id: SectionId) => setParams(id === 'style' ? {} : { section: id }, { replace: true })
 
-  const [hover, setHover] = useState<PreviewPatch | null>(null)
+  const [hover, setHover] = useState<PreviewPatch | Partial<Look> | null>(null)
   const [showPreview, setShowPreview] = useState(false)
 
   const previewLook: Look = useMemo(() => (hover ? sanitizeLook({ ...look, ...hover }) : look), [look, hover])
@@ -65,10 +69,9 @@ export default function ThemeCentrePage() {
       {/* Header */}
       <header className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
         <div className="min-w-0">
-          <p className="mb-1.5 text-[11px] font-semibold tracking-[0.16em] text-accent-brand uppercase">Appearance</p>
-          <h1 className="mb-0 text-[28px] leading-tight font-semibold tracking-[-0.025em] text-text-primary md:text-[34px]">Theme Centre</h1>
+          <h1 className="mb-0 text-[28px] leading-tight font-semibold tracking-[-0.025em] text-text-primary md:text-[34px]">Appearance</h1>
           <p className="mt-2 mb-0 max-w-xl text-[13.5px] leading-relaxed text-text-secondary">
-            Colour, type, icons and surfaces — every choice applies instantly and follows you to any device you sign in on.
+            Pick a style, then tune it. Changes apply everywhere and follow your account.
           </p>
         </div>
         <div className="flex flex-wrap items-start gap-2.5">
@@ -140,15 +143,15 @@ export default function ThemeCentrePage() {
         >
           <div className="lg:sticky lg:top-32">
             <div className="mb-2.5 flex items-center justify-between px-0.5">
-              <span className="text-[12px] font-semibold tracking-wide text-text-muted uppercase">Live preview</span>
+              <span className="text-[12.5px] font-medium text-text-secondary">Preview</span>
               <span className="truncate text-[12px] text-text-muted" aria-live="polite">
-                {previewPalette.name} · {previewMode === 'dark' ? 'Dark' : 'Light'}
+                {STYLE_BY_ID.get(previewLook.style)?.name ?? 'Studio'} · {previewPalette.name} · {previewMode === 'dark' ? 'Dark' : 'Light'}
                 {hover ? ' · previewing' : ''}
               </span>
             </div>
             <LivePreview look={previewLook} mode={previewMode} />
             <p className="mt-3 mb-0 px-0.5 text-[11.5px] leading-relaxed text-text-muted">
-              Hover or focus a theme to preview it here; click to apply.
+              Hover or focus a choice to preview it here; click to apply.
               {previewPalette.credit && <> Palette: {previewPalette.credit}.</>}
             </p>
           </div>
@@ -161,6 +164,7 @@ export default function ThemeCentrePage() {
           className="tc-panel min-w-0 lg:order-1"
           key={section}
         >
+          {section === 'style' && <StylesSection onPreview={setHover} />}
           {section === 'themes' && <ThemesSection onPreview={setHover} />}
           {section === 'typography' && <TypographySection />}
           {section === 'icons' && <IconsSection />}
