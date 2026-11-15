@@ -1,3 +1,4 @@
+import { useSources } from '@/lib/sources'
 import { useEffect, useMemo, useRef, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowDownWideNarrow, Swords, X } from 'lucide-react'
@@ -7,7 +8,6 @@ import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
 import {
   DIFFICULTY_BANDS,
-  PLATFORM_OPTIONS,
   type DifficultyBandId,
 } from './types'
 
@@ -74,6 +74,7 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
 }
 
 export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onChange }: Props) {
+  const sources = useSources()
   const searchRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
   const { problems: suggestions, loading } = useProblemSuggestions(filters.search)
@@ -147,9 +148,9 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
             className="lg:w-36"
           >
             <option value="all">All platforms</option>
-            {PLATFORM_OPTIONS.map((p) => (
-              <option key={p} value={p}>
-                {p}
+            {sources.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label}
               </option>
             ))}
           </FilterSelect>

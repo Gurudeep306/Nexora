@@ -17,7 +17,7 @@ function comingSoonHtml({ message = "", signInHref = "/auth?owner=1" } = {}) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>NexoraGuru — coming soon</title>
+<title>NexoraGuru</title>
 <style>
   :root { --bg:#f5f6fa; --fg:#12131a; --dim:#5b6070; --mute:#8a8fa0; --line:rgba(18,19,26,.12); --c1:#2f5bea; --c2:#7c3aed; --c3:#0d9488; --grain-op:.1; --grain-blend:multiply; color-scheme: light dark; }
   @media (prefers-color-scheme: dark) { :root { --bg:#08090e; --fg:#eceef6; --dim:#9aa0b4; --mute:#6b7186; --line:rgba(255,255,255,.12); --c1:#5b8cff; --c2:#9b6bff; --c3:#2dd4bf; --grain-op:.07; --grain-blend:overlay; } }

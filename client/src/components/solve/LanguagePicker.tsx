@@ -131,11 +131,11 @@ export function LanguagePicker({
         </div>
         <div ref={listRef} role="listbox" className="max-h-80 overflow-y-auto p-1.5">
           {items.popular.length > 0 && (
-            <p className="px-2 pt-1 pb-1 text-[10px] font-semibold tracking-[0.12em] text-foreground-faint uppercase">Popular</p>
+            <p className="px-2 pt-1 pb-1 text-[12px] font-semibold text-foreground-faint">Popular</p>
           )}
           {items.popular.map((l, i) => row(l, i))}
           {items.rest.length > 0 && (
-            <p className="px-2 pt-2.5 pb-1 text-[10px] font-semibold tracking-[0.12em] text-foreground-faint uppercase">More languages</p>
+            <p className="px-2 pt-2.5 pb-1 text-[12px] font-semibold text-foreground-faint">More languages</p>
           )}
           {items.rest.map((l, i) => row(l, i + items.popular.length))}
           {items.flat.length === 0 && <p className="px-3 py-6 text-center text-xs text-foreground-faint">No language matches “{q}”.</p>}

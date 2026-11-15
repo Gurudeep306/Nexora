@@ -20,7 +20,30 @@ const hub = require("./hub");
 const { KINDS } = require("./catalog");
 
 const MAX_STEPS = 14;
-const tokens = new Map(); // MCP bearer token → { username, exp }
+const tokens = new Map(); // MCP bearer token → { username, exp } (memory cache)
+// Tokens are also stored (hashed) so a plan turn keeps working across a deploy or restart:
+// Claude Code keeps running on the machine and calls back after the server comes up again.
+const tokenHash = (t) => crypto.createHash("sha256").update(String(t)).digest("hex");
+const PERSIST = ["username", "autonomy", "canMerge", "admin"];
+async function saveToken(token, ctx) {
+  tokens.set(token, ctx);
+  const keep = Object.fromEntries(PERSIST.map((k) => [k, ctx[k]]));
+  await run("INSERT INTO hive_mcp_tokens(token_hash, ctx_json, exp) VALUES(?,?,?) ON CONFLICT(token_hash) DO UPDATE SET ctx_json=excluded.ctx_json, exp=excluded.exp", [tokenHash(token), JSON.stringify(keep), ctx.exp]).catch(() => {});
+}
+async function loadToken(token) {
+  if (!token) return null;
+  const hit = tokens.get(token);
+  if (hit) return hit;
+  const row = await get("SELECT ctx_json, exp FROM hive_mcp_tokens WHERE token_hash=?", [tokenHash(token)]).catch(() => null);
+  if (!row) return null;
+  const t = { ...json(row.ctx_json, {}), exp: Number(row.exp) };
+  tokens.set(token, t);
+  return t;
+}
+async function dropToken(token) {
+  tokens.delete(token);
+  await run("DELETE FROM hive_mcp_tokens WHERE token_hash=? OR exp<?", [tokenHash(token), Date.now()]).catch(() => {});
+}
 
 /* ── tools ──────────────────────────────────────────────────────────── */
 const str = (description) => ({ type: "string", description });
@@ -1135,7 +1158,7 @@ async function thinkWithPlan({ brain, system, past, text, ctx, reply, out, deps,
   const cli = require("./providers/cli");
   const keys = require("./keys");
   const token = `hcp_${crypto.randomBytes(24).toString("base64url")}`;
-  tokens.set(token, { ...ctx, exp: Date.now() + 30 * 60_000 });
+  await saveToken(token, { ...ctx, exp: Date.now() + 30 * 60_000 });
   const origin = String(deps.origin || process.env.HIVE_PUBLIC_URL || "https://nexoraguru.in").replace(/\/+$/, "");
   const mcp = JSON.stringify({ mcpServers: { hive: { type: "http", url: `${origin}/api/hive-mcp`, headers: { Authorization: `Bearer ${token}` } } } });
   const transcript = toTranscript(past)
@@ -1187,7 +1210,7 @@ async function thinkWithPlan({ brain, system, past, text, ctx, reply, out, deps,
     await require("./health").record(brain.key.id, brain.model || "default", { ok: false, kind: e.kind || "server", error: e.message }).catch(() => {});
     throw e;
   } finally {
-    tokens.delete(token);
+    await dropToken(token);
   }
 }
 
@@ -1195,10 +1218,12 @@ async function thinkWithPlan({ brain, system, past, text, ctx, reply, out, deps,
 async function mcpHandle(req, res, deps) {
   const auth = String(req.headers.authorization || "");
   const tok = auth.replace(/^Bearer\s+/i, "");
-  const t = tokens.get(tok);
+  const t = await loadToken(tok);
   if (!t || t.exp < Date.now()) return res.status(401).json({ jsonrpc: "2.0", id: null, error: { code: -32001, message: "Invalid or expired token" } });
   // A long plan turn keeps its token alive: every call slides the expiry (a token unused for 30 min still expires).
-  t.exp = Math.max(t.exp, Date.now() + 30 * 60_000);
+  const exp = Math.max(t.exp, Date.now() + 30 * 60_000);
+  if (exp - t.exp > 60_000) await saveToken(tok, { ...t, exp });
+  else t.exp = exp;
   if (req.method !== "POST") return res.status(405).end();
   const msg = req.body || {};
   const reply = (result) => res.json({ jsonrpc: "2.0", id: msg.id, result });

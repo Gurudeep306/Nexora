@@ -15,6 +15,11 @@ const PLATFORM_ORIGIN = {
   leetcode: "https://leetcode.com",
   spoj: "https://www.spoj.com",
   euler: "https://projecteuler.net",
+  cses: "https://cses.fi",
+  dmoj: "https://dmoj.ca",
+  timus: "https://acm.timus.ru",
+  kattis: "https://open.kattis.com",
+  uva: "https://onlinejudge.org",
 };
 
 /* Domains the image proxy may fetch from. Matched by suffix, because problem
@@ -39,6 +44,11 @@ const IMG_PROXY_DOMAINS = [
   "usaco.org",
   "acmicpc.net",
   "e-olymp.com",
+  "cses.fi",
+  "dmoj.ca",
+  "timus.ru",
+  "kattis.com",
+  "onlinejudge.org",
   "web.archive.org",
   "archive.org",
 ];
@@ -181,15 +191,37 @@ function normalizeStatementHtml(html, problem) {
   return out;
 }
 
+/* How each platform writes formulas (see src/sources/math.js). Applied when a
+   statement is served, so statements cached before this existed are fixed too. */
+const PLATFORM_MATH = { atcoder: "var", codechef: "dollar", euler: "dollar", kattis: "dollar", cses: "paren", timus: "paren", dmoj: "tilde" };
+
+/** CodeChef statements cached by the old scraper are raw markdown: render them. */
+function codechefHtml(s) {
+  if (!s) return s;
+  const { looksHtml, markdown } = require("./sources/common");
+  // The old scraper glued "<div class=section-title>…</div>" in front of markdown bodies.
+  const m = String(s).match(/^(\s*<div class="section-title">[^<]*<\/div>)([\s\S]*)$/);
+  if (m) return looksHtml(m[2]) ? s : m[1] + markdown(m[2]);
+  return looksHtml(s) ? s : markdown(s);
+}
+
 /** Apply the rewrite to every rich-text field of a scraped statement. */
 function normalizeStatement(data, problem) {
   if (!data) return data;
+  const platform = problem && problem.platform;
+  const { mathify } = require("./sources/math");
+  const fix = (html) => {
+    let h = html;
+    if (platform === "codechef") h = codechefHtml(h);
+    if (PLATFORM_MATH[platform]) h = mathify(h, PLATFORM_MATH[platform]);
+    return normalizeStatementHtml(h, problem);
+  };
   return {
     ...data,
-    statement: normalizeStatementHtml(data.statement, problem),
-    inputSpec: normalizeStatementHtml(data.inputSpec, problem),
-    outputSpec: normalizeStatementHtml(data.outputSpec, problem),
-    note: normalizeStatementHtml(data.note, problem),
+    statement: fix(data.statement),
+    inputSpec: fix(data.inputSpec),
+    outputSpec: fix(data.outputSpec),
+    note: fix(data.note),
   };
 }
 

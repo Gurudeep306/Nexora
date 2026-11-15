@@ -11,7 +11,6 @@ import {
   ChevronsRight,
   ChevronsUp,
   Code2,
-  History,
   Loader2,
   Play,
   ScrollText,
@@ -39,7 +38,6 @@ import { CodeEditor } from '@/components/solve/CodeEditor'
 import { ProblemPanel } from '@/components/solve/ProblemPanel'
 import { TestcaseDeck } from '@/components/solve/TestcaseDeck'
 import { JudgeResults, RunOutput } from '@/components/solve/ResultsPanel'
-import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { VerdictBanner } from '@/components/solve/VerdictBanner'
 import { agentTask, aiErrorText, plainAiText } from '@/lib/agent'
 import { useAgentContext, useAgentPageContext } from '@/context/AgentContext'
@@ -66,6 +64,12 @@ import { LayoutMenu } from '@/components/solve/workspace/LayoutMenu'
 import { useCoach } from '@/components/solve/coach'
 import { CoachPanel } from '@/components/solve/CoachPanel'
 import { Arena, enterBrowserFullscreen } from '@/components/solve/Arena'
+import { AiTestsPanel } from '@/components/solve/AiTestsPanel'
+import { AnalysisPanel } from '@/components/solve/AnalysisPanel'
+import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from '@/components/ui'
+import { FlaskConical, ScanSearch } from 'lucide-react'
+
+type BottomTab = 'tests' | 'output' | 'aitests' | 'analysis' | 'coach' | 'issues'
 
 function useIsDesktop() {
   const q = '(min-width: 1024px)'
@@ -238,7 +242,8 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
   const [judgeResult, setJudgeResult] = useState<JudgeResponse | null>(null)
   const [runCase, setRunCase] = useState<{ label: string; expected: string } | null>(null)
   const [banner, setBanner] = useState<{ verdict: string; xp: number | null; id: number } | null>(null)
-  const [bottomTab, setBottomTab] = useState<'tests' | 'output' | 'coach' | 'subs' | 'issues'>('tests')
+  const [bottomTab, setBottomTab] = useState<BottomTab>('tests')
+  const [reveal, setReveal] = useState<{ line: number; id: number } | null>(null)
   const [mobilePane, setMobilePane] = useState<'problem' | 'code'>('problem')
   const [splitPct, setSplitPct] = useState(46)
   const [problemCollapsed, setProblemCollapsed] = useState(() => localStorage.getItem('nexora:panel:problem') === 'collapsed')
@@ -630,6 +635,47 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     [id, testcases.length, toast, custom],
   )
 
+  /** Add many tests at once (file / paste / AI import); returns how many were new. */
+  const addManyTestcases = useCallback(
+    async (list: { label: string; input: string; expected_output: string }[]) => {
+      const seen = new Set(testcases.map((t) => sampleKey(t.input ?? '', t.expected_output ?? '')))
+      const fresh = list.filter((t) => {
+        const k = sampleKey(t.input, t.expected_output)
+        if (seen.has(k) || (!t.input.trim() && !t.expected_output.trim())) return false
+        seen.add(k)
+        return true
+      })
+      if (!fresh.length) return 0
+      if (custom) {
+        setTestcases((prev) => [...prev, ...fresh])
+        return fresh.length
+      }
+      let added = 0
+      try {
+        for (let i = 0; i < fresh.length; i += 100) {
+          const res = await api.post<{ added: number }>('/api/testcases/bulk', { problem_rowid: Number(id), testcases: fresh.slice(i, i + 100) })
+          added += res?.added ?? 0
+        }
+      } catch (err) {
+        toast.error('Could not add the tests', err instanceof Error ? err.message : undefined)
+      }
+      problemApi.refetch()
+      return added
+    },
+    [testcases, custom, id, toast, problemApi],
+  )
+
+  /** The largest inputs on hand, to time the code on. */
+  const biggestInputs = useMemo(
+    () =>
+      [...testcases]
+        .filter((t) => (t.input ?? '').length > 0)
+        .sort((a, b) => (b.input ?? '').length - (a.input ?? '').length)
+        .slice(0, 3)
+        .map((t) => ({ label: t.label || 'Test', input: t.input })),
+    [testcases],
+  )
+
   const deleteTestcase = useCallback(
     async (tcId: number) => {
       try {
@@ -680,97 +726,81 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     })
   }, [])
 
-  const toolbar = (
-    <div className="card-neon flex flex-wrap items-center gap-2 px-3 py-2">
-      <span className="hidden min-w-0 items-center gap-2 md:flex">
-        <TerminalSquare className="size-4 shrink-0 text-primary-bright" aria-hidden="true" />
-        <span className="max-w-56 truncate font-display text-xs tracking-wider text-foreground uppercase lg:max-w-96">
-          {problem?.title ?? `Solve #${id}`}
-        </span>
-      </span>
-      {coach.insight && (
-        <Tooltip label={coach.insight.summary}>
-          <button
-            onClick={() => {
-              setBottomTab('coach')
-              workspace.minimize('tests', false)
-            }}
-            className="hidden h-7 max-w-72 cursor-pointer items-center gap-1.5 truncate rounded-full border border-primary/25 bg-primary/10 px-2.5 text-[11px] text-primary-bright transition-colors hover:border-primary/50 xl:flex"
-          >
-            <Bot className="size-3.5 shrink-0" />
-            <span className="truncate">{coach.insight.approach}</span>
-            <span className={cn('font-mono', coach.insight.fits === false ? 'text-state-error' : 'text-foreground-dim')}>{coach.insight.time}</span>
-          </button>
-        </Tooltip>
-      )}
+  const openTab = (t: BottomTab) => {
+    setBottomTab(t)
+    workspace.minimize('tests', false)
+    if (bottomHidden) toggleBottomHidden()
+  }
 
-      <div className="ml-auto flex flex-wrap items-center gap-2">
+  const toolbar = (
+    <div className="flex items-center gap-2 border-b border-border/70 pb-2.5">
+      <span className="hidden min-w-0 items-center gap-2 md:flex">
+        <span className="max-w-64 truncate text-[13.5px] font-medium text-foreground lg:max-w-[28rem]">{problem?.title ?? `Problem ${id}`}</span>
+        {coach.insight && (
+          <Tooltip label={coach.insight.summary}>
+            <button
+              type="button"
+              onClick={() => openTab('coach')}
+              className="hidden h-6 max-w-72 cursor-pointer items-center gap-1.5 truncate rounded-full bg-surface-2 px-2.5 text-[11.5px] text-foreground-dim transition-colors hover:text-foreground xl:flex"
+            >
+              <span className="truncate">{coach.insight.approach}</span>
+              <span className={cn('font-mono', coach.insight.fits === false ? 'text-state-error' : 'text-foreground-faint')}>{coach.insight.time}</span>
+            </button>
+          </Tooltip>
+        )}
+      </span>
+
+      <div className="ml-auto flex min-w-0 items-center gap-1.5">
         {isDesktop && <LayoutMenu api={workspace} />}
-        <Tooltip label="Full-screen arena — just the editor, problem & tests (Alt+4)">
-          <Button variant="ghost" size="icon-sm" onClick={openArena} aria-label="Open full-screen arena">
+        <Tooltip label="Full-screen arena (Alt+4)">
+          <Button variant="ghost" size="icon-sm" onClick={openArena} aria-label="Open full-screen arena" className="hidden sm:inline-flex">
             <Expand aria-hidden="true" />
           </Button>
         </Tooltip>
-        <LanguagePicker
-          languages={languages.length ? languages : [{ id: language, label: language, ext: '', compiled: true }]}
-          value={language}
-          onChange={setLanguage}
-        />
+        <LanguagePicker languages={languages.length ? languages : [{ id: language, label: language, ext: '', compiled: true }]} value={language} onChange={setLanguage} />
 
-        <Tooltip label={aiInline ? 'AI autocomplete on — Tab to accept ghost text' : 'AI autocomplete off'}>
-          <Button
-            variant={aiInline ? 'subtle' : 'ghost'}
-            size="icon-sm"
-            onClick={() => {
-              const next = !aiInline
-              setAiInline(next)
-              localStorage.setItem('nexora:ai-inline', next ? 'on' : 'off')
-            }}
-            aria-pressed={aiInline}
-            aria-label="Toggle AI autocomplete"
-          >
-            <Sparkles aria-hidden="true" className={cn(aiInline && 'text-cyan')} />
-          </Button>
-        </Tooltip>
-        <Tooltip label="AI fix — repair failing code">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => void handleAiFix()}
-            loading={fixing}
-            aria-label="AI fix my code"
-          >
-            {!fixing && <Wand2 aria-hidden="true" />} Fix
-          </Button>
-        </Tooltip>
-        <Tooltip label="AI tutor — hints & explanations">
-          <Button variant="outline" size="sm" onClick={() => openAssistant()} aria-label="Open AI tutor">
-            <Bot aria-hidden="true" /> Tutor
-          </Button>
-        </Tooltip>
+        <Menu>
+          <MenuTrigger asChild>
+            <Button variant="ghost" size="sm" aria-label="AI tools">
+              {fixing ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Sparkles aria-hidden="true" />} <span className="hidden sm:inline">AI</span>
+            </Button>
+          </MenuTrigger>
+          <MenuContent className="w-64">
+            <MenuLabel>AI tools</MenuLabel>
+            <MenuItem icon={<Wand2 />} onSelect={() => void handleAiFix()} disabled={fixing || !code.trim()}>
+              Fix my code
+            </MenuItem>
+            <MenuItem icon={<ScanSearch />} onSelect={() => openTab('analysis')}>
+              Analyse my code
+            </MenuItem>
+            <MenuItem icon={<FlaskConical />} onSelect={() => openTab('aitests')}>
+              Generate tests
+            </MenuItem>
+            <MenuItem icon={<Bot />} onSelect={() => openAssistant()} shortcut="⌘J">
+              Ask the tutor
+            </MenuItem>
+            <MenuSeparator />
+            <MenuItem
+              icon={<Sparkles />}
+              onSelect={(e) => {
+                e.preventDefault()
+                const next = !aiInline
+                setAiInline(next)
+                localStorage.setItem('nexora:ai-inline', next ? 'on' : 'off')
+              }}
+              shortcut={aiInline ? 'On' : 'Off'}
+            >
+              Inline suggestions
+            </MenuItem>
+          </MenuContent>
+        </Menu>
 
-        <Button
-          variant="subtle"
-          size="sm"
-          onClick={() => void handleRun()}
-          loading={running}
-          disabled={submitting}
-          aria-label="Run code against selected input"
-        >
-          {!running && <Play aria-hidden="true" />} RUN
-          <kbd className="ml-1 hidden rounded border border-border bg-background px-1 font-mono text-[9px] text-foreground-faint lg:inline">
-            ⌘↵
-          </kbd>
+        <Button variant="subtle" size="sm" onClick={() => void handleRun()} loading={running} disabled={submitting} aria-label="Run on the selected test">
+          {!running && <Play aria-hidden="true" />} <span className="hidden sm:inline">Run</span>
+          <kbd className="ml-0.5 hidden font-mono text-[10px] text-foreground-faint lg:inline">⌘↵</kbd>
         </Button>
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={() => void handleSubmit()}
-          loading={submitting}
-          disabled={running}
-          aria-label="Submit code to judge"
-        >
-          {!submitting && <Send aria-hidden="true" />} SUBMIT
+        <Button variant="primary" size="sm" onClick={() => void handleSubmit()} loading={submitting} disabled={running} aria-label="Submit to the judge">
+          {!submitting && <Send aria-hidden="true" />} Submit
         </Button>
       </div>
     </div>
@@ -798,6 +828,11 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     onImportAllSamples={() => void importSamples(samples.map((_, i) => i))}
     importedSampleCount={importedSampleCount}
     custom={custom}
+    language={language}
+    onUseStarter={(starter) => {
+      persistCode(starter)
+      toast.success('Starter code inserted')
+    }}
     learnSolution={
       learn && customApi.data?.problem.learn
         ? { slug: String(customApi.data.problem.id), editorial: customApi.data.problem.learn.editorial ?? null, solutions: customApi.data.problem.learn.solutions ?? {} }
@@ -816,6 +851,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       aiInline={aiInline}
       onRecord={recordChange}
       diagnostics={allDiagnostics}
+      reveal={reveal}
       minimal={arena}
       focusMode={arena}
       onFocusMode={arena ? closeArena : openArena}
@@ -832,33 +868,14 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     variant="pills"
     className={className}
     active={bottomTab}
-    onChange={(t) => setBottomTab(t as 'tests' | 'output' | 'coach' | 'subs' | 'issues')}
+    onChange={(t) => setBottomTab(t as BottomTab)}
     items={[
-      { id: 'tests', label: 'test/', icon: <Code2 className="size-3.5" />, badge: testcases.length },
-      {
-        id: 'output',
-        label: 'stdout',
-        icon: <TerminalSquare className="size-3.5" />,
-        badge: runResult || judgeResult ? '•' : undefined,
-      },
-      {
-        id: 'coach',
-        label: 'coach',
-        icon: coach.loading ? <Loader2 className="size-3.5 animate-spin" /> : <Bot className="size-3.5" />,
-        badge: coach.insight?.issues.length ? coach.insight.issues.length : undefined,
-      },
-      {
-        id: 'subs',
-        label: 'subs',
-        icon: <History className="size-3.5" />,
-        badge: submissions.length || undefined,
-      },
-      {
-        id: 'issues',
-        label: 'issues',
-        icon: <AlertTriangle className="size-3.5" />,
-        badge: allDiagnostics.length || undefined,
-      },
+      { id: 'tests', label: 'Tests', badge: testcases.length || undefined },
+      { id: 'output', label: 'Result', badge: running || submitting ? '•' : judgeResult ? judgeResult.verdict : runResult ? (runResult.verdict === 'OK' ? 'OK' : runResult.verdict) : undefined },
+      { id: 'aitests', label: 'AI tests' },
+      { id: 'analysis', label: 'Analysis' },
+      { id: 'coach', label: 'Coach', icon: coach.loading ? <Loader2 className="size-3.5 animate-spin" /> : undefined, badge: coach.insight?.issues.length ? coach.insight.issues.length : undefined },
+      { id: 'issues', label: 'Issues', badge: allDiagnostics.length || undefined },
     ]}
   />
   )
@@ -876,26 +893,31 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         onCustomInput={setCustomInput}
         onAdd={addTestcase}
         onDelete={deleteTestcase}
+        onAddMany={addManyTestcases}
       />
-    ) : bottomTab === 'subs' ? (
-      <div className="space-y-1.5 p-3">
-        {submissions.length === 0 ? (
-          <EmptyState
-            className="py-6"
-            icon={<History />}
-            title="No submissions yet"
-            description="Submit your code and the verdict history lands here."
-          />
-        ) : (
-          submissions.map((s) => (
-            <div key={s.id} className="flex items-center gap-2.5 rounded-lg border border-hairline/[0.05] bg-bg-field px-2.5 py-2 text-xs">
-              <VerdictBadge verdict={s.verdict} />
-              <span className="font-mono text-foreground-dim tabular-nums">{s.exec_time_ms} ms</span>
-              <span className="ml-auto truncate text-foreground-faint">{new Date(s.submitted_at).toLocaleString()}</span>
-            </div>
-          ))
-        )}
-      </div>
+    ) : bottomTab === 'aitests' ? (
+      <AiTestsPanel
+        problemId={custom ? undefined : Number(id)}
+        customProblemId={custom && !learn ? Number(id) : undefined}
+        title={problem?.title ?? ''}
+        statement={coachStatement}
+        samples={samples}
+        code={code}
+        language={language}
+        onAddTests={addManyTestcases}
+      />
+    ) : bottomTab === 'analysis' ? (
+      <AnalysisPanel
+        problemId={custom ? undefined : Number(id)}
+        customProblemId={custom && !learn ? Number(id) : undefined}
+        title={problem?.title ?? ''}
+        statement={coachStatement}
+        code={code}
+        language={language}
+        timeLimit={statementApi.data?.timeLimit}
+        inputs={biggestInputs}
+        onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
+      />
     ) : bottomTab === 'issues' ? (
       <div className="space-y-1.5 p-3">
         {allDiagnostics.length === 0 ? (
@@ -921,7 +943,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     ) : running || submitting ? (
       <div className="flex h-full flex-col items-center justify-center gap-2 text-xs text-foreground-faint">
         <Loader2 className="size-5 animate-spin text-primary-bright" aria-hidden="true" />
-        {submitting ? 'Judging against all testcases…' : 'Running your code…'}
+        {submitting ? `Judging on ${testcases.length || 'all'} tests…` : 'Running your code…'}
       </div>
     ) : judgeResult ? (
       <JudgeResults result={judgeResult} />
@@ -931,8 +953,8 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       <EmptyState
         className="py-6"
         icon={<TerminalSquare />}
-        title="No output yet"
-        description="Hit RUN (⌘/Ctrl + Enter) or SUBMIT to see results here."
+        title="Nothing run yet"
+        description="Run checks the selected test (⌘/Ctrl + Enter). Submit checks them all."
       />
     )}
   </div>
@@ -943,14 +965,14 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       onClick={toggleBottomHidden}
       aria-label="Show tests panel"
       title="Show tests panel"
-      className="card-neon flex h-8 shrink-0 cursor-pointer items-center gap-2 px-3 text-[11px] font-semibold tracking-[0.12em] text-foreground-faint uppercase transition-colors hover:border-primary/40 hover:text-foreground"
+      className="flex h-8 shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-border px-3 text-[12px] text-foreground-faint transition-colors hover:text-foreground"
     >
       <ChevronsUp className="size-3.5 text-primary-bright" aria-hidden="true" />
-      Tests panel hidden — click to show
+      Show the tests panel
     </button>
   ) : (
     <div
-      className="card-neon flex min-h-0 flex-col"
+      className="flex min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-background"
       style={bottomCollapsed ? undefined : { height: bottomH }}
     >
       {/* Vertical resize handle */}
@@ -971,7 +993,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       >
         <span className="h-1 w-10 rounded-full bg-border transition-colors duration-150 group-hover:bg-primary group-active:bg-primary-bright" />
       </div>
-      <div className="flex items-center gap-2 border-b border-hairline/[0.04] bg-white/[0.015] pr-2">
+      <div className="flex items-center gap-2 border-b border-border/70 pr-2">
         {testsTabs('m-2 w-auto self-start')}
         <button
           onClick={toggleBottomHidden}
@@ -1005,7 +1027,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
 
       {arena ? (
         <>
-          <div className="card-neon flex flex-1 flex-col items-center justify-center gap-3 text-sm text-foreground-dim">
+          <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-xl border border-border text-sm text-foreground-dim">
             <Expand className="size-6 text-primary-bright" />
             You're in the full-screen arena.
             <Button variant="subtle" size="sm" onClick={() => workspace.setArena(false)}>
@@ -1025,7 +1047,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
             overlay={<VerdictBanner verdict={banner?.verdict ?? null} xpEarned={banner?.xp} burstId={banner?.id} onDismiss={() => setBanner(null)} />}
             problem={{ title: 'Problem', icon: <ScrollText />, content: <div className="h-full overflow-hidden">{problemContent}</div> }}
             tests={{
-              title: 'Tests',
+              title: 'Console',
               icon: <Code2 />,
               headerExtra: testsTabs('ml-1 flex-nowrap p-0.5 [&_button]:py-1 [&_button]:text-[12px]'),
               content: testsBody,
@@ -1044,7 +1066,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
           overlay={<VerdictBanner verdict={banner?.verdict ?? null} xpEarned={banner?.xp} burstId={banner?.id} onDismiss={() => setBanner(null)} />}
           problem={{ title: 'Problem', icon: <ScrollText />, content: <div className="h-full overflow-hidden">{problemContent}</div> }}
           tests={{
-            title: 'Tests',
+            title: 'Console',
             icon: <Code2 />,
             headerExtra: testsTabs('ml-1 flex-nowrap p-0.5 [&_button]:py-1 [&_button]:text-[12px]'),
             content: testsBody,
@@ -1081,7 +1103,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
             onClick={toggleProblemCollapsed}
             aria-label="Expand problem panel"
             title={problem?.title ?? 'Expand problem panel'}
-            className="card-neon group hidden w-12 shrink-0 flex-col items-center gap-3 overflow-hidden py-4 lg:flex"
+            className="group hidden w-12 shrink-0 flex-col items-center gap-3 overflow-hidden rounded-xl border border-border py-4 lg:flex"
           >
             <ChevronsRight className="size-4 shrink-0 text-foreground-faint transition-colors group-hover:text-primary" />
             <span className="min-h-0 flex-1 truncate text-xs text-foreground-faint [writing-mode:vertical-rl] rotate-180">
@@ -1093,7 +1115,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
           <section
             aria-label="Problem statement"
             className={cn(
-              'card-neon relative min-h-0 flex-col overflow-hidden lg:flex lg:w-[var(--split)]',
+              'relative min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-background lg:flex lg:w-[var(--split)]',
               mobilePane === 'problem' ? 'flex flex-1' : 'hidden',
             )}
           >
@@ -1142,7 +1164,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
             mobilePane === 'code' ? 'flex' : 'hidden',
           )}
         >
-          <div className="card-neon min-h-40 flex-1 overflow-hidden">
+          <div className="min-h-40 flex-1 overflow-hidden rounded-xl border border-border bg-background">
             {editorEl}
           </div>
           {bottomPanel}

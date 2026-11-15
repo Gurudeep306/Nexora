@@ -61,6 +61,11 @@ export const PLATFORM_OPTIONS = [
   'leetcode',
   'spoj',
   'euler',
+  'cses',
+  'dmoj',
+  'timus',
+  'kattis',
+  'uva',
 ] as const
 
 export const DIFFICULTY_BANDS = [

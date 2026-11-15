@@ -13,21 +13,15 @@ import { Markdown } from '@/learn/md'
 import { playStepClickSound, playSuccessChimeSound } from '../utils/audioEffects'
 import {
   Search,
-  CheckCircle2,
   Clock,
   ArrowRight,
   ArrowLeft,
-  Cpu,
-  Sparkles,
   Play,
   Pause,
   Copy,
   Check,
-  Flame,
   Award,
   BookOpenCheck,
-  HelpCircle,
-  FileCode2,
 } from 'lucide-react'
 
 export const SystemNotesReader: React.FC = () => {
@@ -224,7 +218,7 @@ Architectural Fix: ${currentWarStory.architecturalFix}
         {/* Course Mastery Tracker Card */}
         <div className="rounded-2xl bg-bg-surface-2 p-4 ring-1 ring-border shadow-lg space-y-2">
           <div className="flex items-center justify-between text-[11px] font-mono">
-            <span className="flex items-center gap-1.5 font-bold text-accent-brand uppercase">
+            <span className="flex items-center gap-1.5 font-semibold text-text-primary">
               <Award className="size-3.5" /> Course Mastery Meter
             </span>
             <span className="font-bold text-text-primary">
@@ -234,7 +228,7 @@ Architectural Fix: ${currentWarStory.architecturalFix}
 
           <div className="h-2 w-full overflow-hidden rounded-full bg-bg-surface-1 ring-1 ring-border/50">
             <div
-              className="h-full bg-gradient-to-r from-accent-brand via-sky-400 to-emerald-400 transition-all duration-500 rounded-full"
+              className="h-full bg-accent-brand transition-all duration-500 rounded-full"
               style={{ width: `${masteryPercentage}%` }}
             />
           </div>
@@ -314,404 +308,233 @@ Architectural Fix: ${currentWarStory.architecturalFix}
         </div>
       </div>
 
-      {/* Main Chapter Reader Content */}
-      <div className="space-y-7 rounded-2xl bg-bg-surface-2 p-6 sm:p-8 ring-1 ring-border shadow-2xl">
-        {/* Chapter Header */}
-        <div className="border-b border-border pb-6 space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="font-mono text-[11px] font-bold text-accent-brand uppercase tracking-wider">
-              {currentChapter.unitTitle} · Chapter {currentChapter.chapterNumber} of 56
-            </span>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleToggleMastery}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11.5px] font-mono font-bold transition ring-1 ${
-                  isMastered
-                    ? 'bg-emerald-500/20 text-emerald-400 ring-emerald-500/40'
-                    : 'bg-bg-surface-1 text-text-muted hover:text-text-primary ring-border'
-                }`}
-              >
-                <BookOpenCheck className="size-3.5" />
-                {isMastered ? 'Mastered ✓' : 'Mark as Mastered'}
+      {/* Main chapter: the site-wide reading design (src/styles/reading.css) */}
+      <article className="nx-read nx-lesson mx-auto w-full max-w-[780px] min-w-0 space-y-10 py-2">
+        <header className="space-y-3 border-b border-border/70 pb-6">
+          <p className="text-[13px] text-text-muted">
+            {currentChapter.unitTitle} · Chapter {currentChapter.chapterNumber}
+          </p>
+          <h1 className="!m-0 !text-[28px] leading-tight font-semibold tracking-tight text-text-primary sm:!text-[34px]">{currentChapter.title}</h1>
+          <p className="!m-0 text-[17px] leading-relaxed text-text-secondary">{currentChapter.summary}</p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1 text-[13px]">
+            <button type="button" onClick={handleToggleMastery} aria-pressed={isMastered} className={`inline-flex cursor-pointer items-center gap-1.5 ${isMastered ? 'text-state-success' : 'text-text-secondary hover:text-text-primary'}`}>
+              <BookOpenCheck className="size-4" /> {isMastered ? 'Mastered' : 'Mark as mastered'}
+            </button>
+            <button type="button" onClick={handleCopyNotes} className="inline-flex cursor-pointer items-center gap-1.5 text-text-secondary hover:text-text-primary">
+              {copiedNotes ? <Check className="size-4 text-state-success" /> : <Copy className="size-4" />} {copiedNotes ? 'Copied' : 'Copy notes'}
+            </button>
+            <span className="inline-flex items-center gap-1.5 text-text-secondary">
+              <button type="button" onClick={isNarrating ? handleStopNarration : handleStartNarration} className="inline-flex cursor-pointer items-center gap-1.5 hover:text-text-primary" aria-pressed={isNarrating}>
+                {isNarrating ? <Pause className="size-4" /> : <Play className="size-4" />} {isNarrating ? 'Pause' : 'Listen'}
               </button>
-
-              <button
-                onClick={handleCopyNotes}
-                className="flex items-center gap-1.5 rounded-lg bg-bg-surface-1 px-3 py-1.5 text-[11.5px] font-mono font-bold text-text-muted hover:text-text-primary ring-1 ring-border transition"
-              >
-                {copiedNotes ? <Check className="size-3.5 text-emerald-400" /> : <Copy className="size-3.5" />}
-                {copiedNotes ? 'Copied' : 'Export Notes'}
-              </button>
-            </div>
-          </div>
-
-          <h1 className="!text-[24px] sm:!text-[30px] font-extrabold tracking-tight text-text-primary font-mono">
-            {currentChapter.title}
-          </h1>
-
-          <p className="text-[14px] leading-relaxed text-text-secondary">{currentChapter.summary}</p>
-
-          {/* AUDIO WALKTHROUGH NARRATOR BAR */}
-          <div className="rounded-xl bg-gradient-to-r from-bg-surface-1 via-bg-surface-3 to-bg-surface-1 p-3.5 ring-1 ring-border flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={isNarrating ? handleStopNarration : handleStartNarration}
-                className={`flex items-center gap-2 rounded-lg px-3.5 py-1.5 text-[12px] font-mono font-bold transition shadow-sm ${
-                  isNarrating
-                    ? 'bg-rose-500 text-white animate-pulse'
-                    : 'bg-accent-brand text-bg-base hover:opacity-90'
-                }`}
-              >
-                {isNarrating ? <Pause className="size-3.5 fill-current" /> : <Play className="size-3.5 fill-current" />}
-                {isNarrating ? 'Pause Audio Lecture' : '🎧 Listen to Chapter'}
-              </button>
-
-              {isNarrating && (
-                <div className="flex items-center gap-2.5 pl-2.5 border-l border-border/60">
-                  <div className="flex items-end gap-1 h-4 py-0.5">
-                    <span className="w-1 bg-emerald-400 rounded-full animate-bounce [animation-delay:0ms] h-2" />
-                    <span className="w-1 bg-sky-400 rounded-full animate-bounce [animation-delay:150ms] h-4" />
-                    <span className="w-1 bg-accent-brand rounded-full animate-bounce [animation-delay:300ms] h-3.5" />
-                    <span className="w-1 bg-emerald-400 rounded-full animate-bounce [animation-delay:75ms] h-3" />
-                    <span className="w-1 bg-amber-400 rounded-full animate-bounce [animation-delay:225ms] h-4" />
-                  </div>
-                  <span className="text-[11px] font-mono text-emerald-400 font-bold">
-                    Staff+ Voice Narrator Active
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center gap-1.5 text-[11px] font-mono">
-              <span className="text-text-muted mr-1">Speed:</span>
+              <span className="text-text-muted" aria-hidden="true">·</span>
               {[1.0, 1.25, 1.5, 2.0].map((rate) => (
                 <button
                   key={rate}
+                  type="button"
+                  aria-pressed={narrationSpeed === rate}
                   onClick={() => {
                     setNarrationSpeed(rate)
                     if (isNarrating) handleStartNarration()
                   }}
-                  className={`px-2 py-0.5 rounded font-bold ${
-                    narrationSpeed === rate
-                      ? 'bg-sky-400 text-black'
-                      : 'bg-bg-surface-2 text-text-muted hover:text-text-primary ring-1 ring-border'
-                  }`}
+                  className={`cursor-pointer tabular-nums ${narrationSpeed === rate ? 'font-semibold text-text-primary' : 'text-text-muted hover:text-text-primary'}`}
                 >
-                  {rate}x
+                  {rate}×
                 </button>
               ))}
-            </div>
+            </span>
           </div>
-        </div>
+        </header>
 
-        {/* Core Concepts Highlights Card */}
-        <div className="rounded-xl bg-bg-surface-3/60 p-4 sm:p-5 ring-1 ring-border">
-          <h3 className="mb-3 flex items-center gap-2 text-[13px] font-bold tracking-wider text-text-primary uppercase font-mono">
-            <Sparkles className="size-4 text-accent-brand" /> Core Foundational Axioms & Invariants
-          </h3>
-          <ul className="space-y-2 text-[13px] text-text-secondary">
-            {currentChapter.coreConcepts.map((concept, i) => (
-              <li key={i} className="flex items-start gap-2.5">
-                <span className="mt-1 flex size-1.5 shrink-0 rounded-full bg-accent-brand" />
-                <span className="leading-relaxed">{concept}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Interactive Concept Simulator Widget */}
-        <ChapterConceptAnimator
-          unitId={currentChapter.unitId}
-          chapterNumber={currentChapter.chapterNumber}
-        />
-
-        {/* In-Depth Markdown Content */}
-        <div className="rounded-2xl bg-bg-surface-1/80 p-6 sm:p-8 ring-1 ring-border/80 shadow-lg">
-          <div className="flex items-center gap-2 mb-4 text-[11px] font-mono font-bold uppercase tracking-wider text-accent-brand">
-            <Sparkles className="size-3.5" /> Comprehensive Engineering Deep-Dive
-          </div>
-          <Markdown md={currentChapter.deepContentMarkdown} className="leading-relaxed text-text-secondary text-[14px]" />
-        </div>
-
-        {/* Equations & Math Formulas Box */}
-        {currentChapter.equationsAndMath && currentChapter.equationsAndMath.length > 0 && (
-          <div className="rounded-xl bg-[#0a0e14] p-5 ring-1 ring-border space-y-3">
-            <h3 className="flex items-center gap-2 text-[12px] font-mono font-bold tracking-wider text-sky-400 uppercase">
-              <Cpu className="size-4" /> Mathematical Derivations & Formal Proofs
-            </h3>
-            {currentChapter.equationsAndMath.map((eq, i) => (
-              <div key={i} className="rounded-lg bg-bg-surface-1 p-3.5 ring-1 ring-border space-y-1.5 font-mono">
-                <span className="text-[11px] font-semibold text-text-primary">{eq.name}:</span>
-                <div className="rounded bg-black/40 p-2 text-center text-[13px] font-bold text-accent-brand overflow-x-auto">
-                  {eq.formula}
-                </div>
-                <p className="text-[11.5px] text-text-muted">{eq.explanation}</p>
-              </div>
-            ))}
-          </div>
+        {currentChapter.coreConcepts.length > 0 && (
+          <section>
+            <h2 className="!mt-0">Key ideas</h2>
+            <ul>
+              {currentChapter.coreConcepts.map((concept, i) => (
+                <li key={i}>{concept}</li>
+              ))}
+            </ul>
+          </section>
         )}
 
-        {/* Trade-Off Matrix Table */}
+        <ChapterConceptAnimator unitId={currentChapter.unitId} chapterNumber={currentChapter.chapterNumber} />
+
+        <section>
+          <Markdown md={currentChapter.deepContentMarkdown} />
+        </section>
+
+        {currentChapter.equationsAndMath && currentChapter.equationsAndMath.length > 0 && (
+          <section>
+            <h2 className="!mt-0">Formulas</h2>
+            <div className="space-y-5">
+              {currentChapter.equationsAndMath.map((eq, i) => (
+                <div key={i}>
+                  <p className="!mb-1 font-semibold text-text-primary">{eq.name}</p>
+                  <pre className="!my-1">{eq.formula}</pre>
+                  <p className="!mt-1 text-[15px] text-text-secondary">{eq.explanation}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         {currentChapter.tradeoffMatrix && currentChapter.tradeoffMatrix.length > 0 && (
-          <div className="space-y-3 pt-2">
-            <h3 className="text-[13px] font-bold tracking-wider text-text-primary uppercase font-mono">
-              Architectural Trade-Off Analysis
-            </h3>
-            <div className="overflow-x-auto rounded-xl ring-1 ring-border">
-              <table className="w-full text-left text-[12.5px] border-collapse">
-                <thead className="bg-bg-surface-3 text-[11px] font-mono uppercase text-text-muted">
+          <section>
+            <h2 className="!mt-0">Trade-offs</h2>
+            <div className="overflow-x-auto">
+              <table>
+                <thead>
                   <tr>
-                    <th className="p-3">Option</th>
-                    <th className="p-3">Pros</th>
-                    <th className="p-3">Cons</th>
-                    <th className="p-3">Best Used For</th>
+                    <th>Option</th>
+                    <th>Pros</th>
+                    <th>Cons</th>
+                    <th>Best for</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border bg-bg-surface-1">
+                <tbody>
                   {currentChapter.tradeoffMatrix.map((item, i) => (
-                    <tr key={i} className="hover:bg-bg-surface-2/40">
-                      <td className="p-3 font-semibold text-text-primary font-mono">{item.option}</td>
-                      <td className="p-3 text-emerald-400">
-                        <ul className="list-disc pl-4 space-y-0.5">
+                    <tr key={i}>
+                      <td className="font-semibold text-text-primary">{item.option}</td>
+                      <td>
+                        <ul className="!m-0 !pl-4">
                           {item.pros.map((p, idx) => (
                             <li key={idx}>{p}</li>
                           ))}
                         </ul>
                       </td>
-                      <td className="p-3 text-rose-400">
-                        <ul className="list-disc pl-4 space-y-0.5">
+                      <td>
+                        <ul className="!m-0 !pl-4">
                           {item.cons.map((c, idx) => (
                             <li key={idx}>{c}</li>
                           ))}
                         </ul>
                       </td>
-                      <td className="p-3 text-text-secondary">{item.bestFor}</td>
+                      <td>{item.bestFor}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          </div>
+          </section>
         )}
 
-        {/* SECTION: REAL-WORLD FAANG OUTAGE CASE STUDY / WAR STORY */}
-        <div className="rounded-2xl border border-rose-500/30 bg-rose-500/5 p-6 space-y-4 shadow-xl">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-rose-500/20 pb-3">
-            <div className="flex items-center gap-2">
-              <span className="flex size-7 items-center justify-center rounded-lg bg-rose-500/20 text-rose-400 ring-1 ring-rose-500/40">
-                <Flame className="size-4" />
-              </span>
-              <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-rose-400 block">
-                  FAANG Production Post-Mortem & War Story
-                </span>
-                <h4 className="text-[15px] font-bold text-text-primary font-mono">
-                  {currentWarStory.company}: {currentWarStory.incident}
-                </h4>
-              </div>
-            </div>
-            <span className="rounded bg-rose-500/20 px-2 py-0.5 text-[10.5px] font-mono text-rose-300 font-bold">
-              {currentWarStory.impactSLA}
+        <section>
+          <h2 className="!mt-0">From production</h2>
+          <aside className="nx-aside" data-tone="danger">
+            <span className="nx-aside-label">
+              {currentWarStory.company} · {currentWarStory.impactSLA}
             </span>
-          </div>
+            <p className="!mt-0 font-semibold text-text-primary">{currentWarStory.incident}</p>
+            <p>
+              <strong>Root cause.</strong> {currentWarStory.rootCause}
+            </p>
+            <p>
+              <strong>The fix.</strong> {currentWarStory.architecturalFix}
+            </p>
+          </aside>
+        </section>
 
-          <div className="space-y-3 text-[13px] leading-relaxed">
-            <div>
-              <span className="font-mono text-[11px] font-bold text-text-primary uppercase tracking-wider block mb-1">
-                Root Cause Analysis (RCA):
-              </span>
-              <p className="text-text-secondary font-sans">{currentWarStory.rootCause}</p>
-            </div>
-
-            <div className="rounded-xl bg-black/40 p-4 ring-1 ring-rose-500/20 border-l-4 border-rose-500">
-              <span className="font-mono text-[11px] font-bold text-emerald-400 uppercase tracking-wider block mb-1">
-                Staff+ Architectural Solution & Golden Prevention Invariant:
-              </span>
-              <p className="text-text-primary font-sans">{currentWarStory.architecturalFix}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* SECTION: BATTLE-HARDENED PRODUCTION CONFIGURATION */}
-        <div className="rounded-2xl bg-[#0a0e14] p-6 ring-1 ring-border space-y-4 shadow-xl">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
-            <div className="flex items-center gap-2">
-              <FileCode2 className="size-4 text-sky-400" />
-              <div>
-                <span className="text-[10.5px] font-mono text-text-muted block">
-                  Battle-Hardened Production Configuration
-                </span>
-                <span className="text-[13.5px] font-bold text-text-primary font-mono">
-                  {currentConfig.title} ({currentConfig.filename})
-                </span>
-              </div>
-            </div>
-
-            <button
-              onClick={handleCopyConfig}
-              className="flex items-center gap-1.5 rounded-lg bg-bg-surface-1 px-3 py-1.5 text-[11px] font-mono font-bold text-sky-400 hover:text-sky-300 ring-1 ring-sky-500/30 transition shadow-sm"
-            >
-              {copiedConfig ? <Check className="size-3.5 text-emerald-400" /> : <Copy className="size-3.5" />}
-              {copiedConfig ? 'Copied' : 'Copy Config'}
+        <section>
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="!mt-0">
+              {currentConfig.title} <span className="font-mono text-[0.7em] font-normal text-text-muted">{currentConfig.filename}</span>
+            </h2>
+            <button type="button" onClick={handleCopyConfig} className="inline-flex cursor-pointer items-center gap-1.5 text-[13px] text-text-secondary hover:text-text-primary">
+              {copiedConfig ? <Check className="size-4 text-state-success" /> : <Copy className="size-4" />} {copiedConfig ? 'Copied' : 'Copy'}
             </button>
           </div>
-
-          <div className="rounded-xl bg-black/80 p-4 ring-1 ring-border overflow-x-auto text-[12px] font-mono text-emerald-300 leading-relaxed max-h-[300px]">
-            <pre className="whitespace-pre">{currentConfig.content}</pre>
-          </div>
-
+          <pre className="max-h-[340px]">{currentConfig.content}</pre>
           {currentConfig.keyParameters.length > 0 && (
-            <div className="space-y-2 pt-1">
-              <span className="text-[11px] font-mono font-bold text-sky-400 uppercase tracking-wider block">
-                Critical Parameter Engineering Rationale:
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {currentConfig.keyParameters.map((kp, i) => (
-                  <div key={i} className="rounded-lg bg-bg-surface-1 p-2.5 ring-1 ring-border text-[11px] font-mono space-y-1">
-                    <span className="font-bold text-accent-brand block">{kp.param}</span>
-                    <p className="text-text-muted font-sans text-[11.5px] leading-relaxed">{kp.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <dl className="mt-4 space-y-2.5">
+              {currentConfig.keyParameters.map((kp, i) => (
+                <div key={i}>
+                  <dt>
+                    <code>{kp.param}</code>
+                  </dt>
+                  <dd className="!m-0 text-[15px] text-text-secondary">{kp.desc}</dd>
+                </div>
+              ))}
+            </dl>
           )}
-        </div>
+        </section>
 
-        {/* SECTION: STAFF+ LEVEL INTERVIEW DEFENSE QUIZ */}
-        <div className="rounded-2xl border border-sky-500/30 bg-sky-500/5 p-6 space-y-5 shadow-xl">
-          <div className="flex items-center gap-2 border-b border-sky-500/20 pb-3">
-            <HelpCircle className="size-5 text-sky-400" />
-            <div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-sky-400 block">
-                Staff+ System Design Defense Quiz
-              </span>
-              <h4 className="text-[15px] font-bold text-text-primary font-mono">
-                Architectural Trade-Off & Invariant Testing ({currentQuiz.length} Questions)
-              </h4>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            {currentQuiz.map((quiz, qIdx) => {
-              const selectedOpt = quizAnswers[qIdx]
-              const hasAnswered = selectedOpt !== undefined
-              const isCorrect = selectedOpt === quiz.answerIndex
-
-              return (
-                <div key={qIdx} className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-3">
-                  <div className="font-mono text-[13px] font-bold text-text-primary">
-                    <span className="text-sky-400 mr-2">Q{qIdx + 1}:</span>
-                    {quiz.question}
-                  </div>
-
-                  <div className="space-y-2">
-                    {quiz.options.map((opt, optIdx) => {
-                      const isOptionSelected = selectedOpt === optIdx
-                      const isOptionCorrect = optIdx === quiz.answerIndex
-
-                      let btnStyle = 'bg-bg-surface-2 text-text-secondary hover:bg-bg-surface-3 ring-border'
-                      if (hasAnswered) {
-                        if (isOptionCorrect) {
-                          btnStyle = 'bg-emerald-500/20 text-emerald-300 ring-2 ring-emerald-500'
-                        } else if (isOptionSelected) {
-                          btnStyle = 'bg-rose-500/20 text-rose-300 ring-2 ring-rose-500'
-                        }
-                      }
-
-                      return (
-                        <button
-                          key={optIdx}
-                          onClick={() => {
-                            playStepClickSound()
-                            setQuizAnswers((prev) => ({ ...prev, [qIdx]: optIdx }))
-                          }}
-                          className={`w-full text-left rounded-lg p-3 text-[12px] font-mono transition ring-1 flex items-start gap-2.5 ${btnStyle}`}
-                        >
-                          <span className="font-bold shrink-0">{String.fromCharCode(65 + optIdx)}.</span>
-                          <span className="leading-relaxed">{opt.replace(/^[A-D]\.\s*/, '')}</span>
-                        </button>
-                      )
-                    })}
-                  </div>
-
-                  {hasAnswered && (
-                    <div
-                      className={`rounded-lg p-3.5 text-[12px] space-y-1 font-sans leading-relaxed ring-1 ${
-                        isCorrect
-                          ? 'bg-emerald-500/10 text-emerald-300 ring-emerald-500/30'
-                          : 'bg-rose-500/10 text-rose-300 ring-rose-500/30'
-                      }`}
-                    >
-                      <div className="font-mono text-[11px] font-bold uppercase tracking-wider">
-                        {isCorrect ? '✓ Correct Architectural Rationale' : '✗ Incorrect Assumption'}
-                      </div>
-                      <p className="text-text-secondary">{quiz.staffRationale}</p>
+        {currentQuiz.length > 0 && (
+          <section>
+            <h2 className="!mt-0">Check yourself</h2>
+            <ol className="nx-steps">
+              {currentQuiz.map((quiz, qIdx) => {
+                const selectedOpt = quizAnswers[qIdx]
+                const hasAnswered = selectedOpt !== undefined
+                const isCorrect = selectedOpt === quiz.answerIndex
+                return (
+                  <li key={qIdx}>
+                    <p className="!mb-2 font-medium text-text-primary">{quiz.question}</p>
+                    <div className="space-y-1">
+                      {quiz.options.map((opt, optIdx) => {
+                        const right = hasAnswered && optIdx === quiz.answerIndex
+                        const wrong = hasAnswered && selectedOpt === optIdx && !right
+                        return (
+                          <button
+                            key={optIdx}
+                            type="button"
+                            onClick={() => {
+                              playStepClickSound()
+                              setQuizAnswers((prev) => ({ ...prev, [qIdx]: optIdx }))
+                            }}
+                            className={`flex w-full cursor-pointer items-start gap-2.5 rounded-lg px-3 py-2 text-left text-[15px] transition-colors ${
+                              right ? 'bg-state-success/10 text-text-primary' : wrong ? 'bg-state-error/10 text-text-primary' : 'text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary'
+                            }`}
+                          >
+                            <span className="w-4 shrink-0 font-medium text-text-muted">{String.fromCharCode(65 + optIdx)}</span>
+                            <span>{opt.replace(/^[A-D]\.\s*/, '')}</span>
+                          </button>
+                        )
+                      })}
                     </div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        </div>
+                    {hasAnswered && (
+                      <aside className="nx-aside !my-3" data-tone={isCorrect ? 'good' : 'danger'}>
+                        <span className="nx-aside-label">{isCorrect ? 'Correct' : 'Not quite'}</span>
+                        <p className="!m-0">{quiz.staffRationale}</p>
+                      </aside>
+                    )}
+                  </li>
+                )
+              })}
+            </ol>
+          </section>
+        )}
 
-        {/* Interview Keypoints Checklist */}
-        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5 space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="flex items-center gap-2 text-[13px] font-bold text-emerald-400 uppercase tracking-wider font-mono">
-              <CheckCircle2 className="size-4" /> Interview Ready Checklist
-            </h3>
-            <span className="text-[11px] font-mono text-text-muted">Click to mark mastery</span>
-          </div>
+        {currentChapter.interviewKeypoints.length > 0 && (
+          <section>
+            <h2 className="!mt-0">Before an interview, can you…</h2>
+            <ul className="!list-none !pl-0">
+              {currentChapter.interviewKeypoints.map((kp, i) => {
+                const isChecked = !!checkedKeypoints[kp]
+                return (
+                  <li key={i}>
+                    <label className="flex cursor-pointer items-start gap-3 py-1">
+                      <input type="checkbox" checked={isChecked} onChange={() => toggleKeypoint(kp)} className="mt-1.5 size-4 accent-[var(--color-accent-brand)]" />
+                      <span className={isChecked ? 'text-text-muted line-through' : ''}>{kp}</span>
+                    </label>
+                  </li>
+                )
+              })}
+            </ul>
+          </section>
+        )}
 
-          <div className="space-y-2">
-            {currentChapter.interviewKeypoints.map((kp, i) => {
-              const isChecked = !!checkedKeypoints[kp]
-              return (
-                <div
-                  key={i}
-                  onClick={() => toggleKeypoint(kp)}
-                  className={`flex cursor-pointer items-start gap-3 rounded-lg p-2.5 transition ${
-                    isChecked
-                      ? 'bg-emerald-500/10 line-through text-text-muted'
-                      : 'hover:bg-bg-surface-3 text-text-primary'
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={() => {}}
-                    className="mt-0.5 size-4 rounded accent-emerald-500"
-                  />
-                  <span className="text-[12.5px] leading-relaxed">{kp}</span>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Bottom Pagination */}
-        <div className="flex items-center justify-between border-t border-border pt-6">
-          <button
-            onClick={handlePrevChapter}
-            disabled={currentChapterIndex === 0}
-            className="flex items-center gap-2 rounded-xl bg-bg-surface-3 px-4 py-2 text-[12.5px] font-medium text-text-secondary hover:text-text-primary disabled:opacity-40"
-          >
-            <ArrowLeft className="size-4" /> Previous Chapter
+        <nav className="flex items-center justify-between border-t border-border/70 pt-6 text-[14px]" aria-label="Chapters">
+          <button type="button" onClick={handlePrevChapter} disabled={currentChapterIndex === 0} className="inline-flex cursor-pointer items-center gap-2 text-text-secondary hover:text-text-primary disabled:cursor-default disabled:opacity-40">
+            <ArrowLeft className="size-4" /> Previous
           </button>
-
-          <span className="font-mono text-[12px] text-text-muted">
+          <span className="tabular-nums text-text-muted">
             {currentChapterIndex + 1} / {ALL_THEORY_CHAPTERS.length}
           </span>
-
-          <button
-            onClick={handleNextChapter}
-            disabled={currentChapterIndex === ALL_THEORY_CHAPTERS.length - 1}
-            className="flex items-center gap-2 rounded-xl bg-accent-brand px-4 py-2 text-[12.5px] font-semibold text-bg-base hover:opacity-90 disabled:opacity-40"
-          >
-            Next Chapter <ArrowRight className="size-4" />
+          <button type="button" onClick={handleNextChapter} disabled={currentChapterIndex === ALL_THEORY_CHAPTERS.length - 1} className="inline-flex cursor-pointer items-center gap-2 font-medium text-text-primary hover:text-accent-brand disabled:cursor-default disabled:opacity-40">
+            Next <ArrowRight className="size-4" />
           </button>
-        </div>
-      </div>
+        </nav>
+      </article>
     </div>
   )
 }

@@ -44,6 +44,17 @@ export function Avatar({
   const photo = isImageUrl(src) ? src : isImageUrl(avatar) ? avatar : null
   const imgSrc = photo && failed !== photo ? assetUrl(photo) : null
   const id = resolveAvatarId(avatar, seed || name || '')
+  // Someone who picked a set avatar keeps it; everyone else gets their initials.
+  const chosen = /^set:[a-z]+$/.test(avatar ?? '')
+  const label = (name || seed || '').trim()
+  const initials =
+    label
+      .replace(/^@/, '')
+      .split(/[\s._-]+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w) => w[0]!.toUpperCase())
+      .join('') || '?'
 
   return (
     <span className={cn('relative inline-flex shrink-0', className)}>
@@ -58,6 +69,19 @@ export function Avatar({
             ring && 'ring-2 ring-accent-brand/20',
           )}
         />
+      ) : !chosen ? (
+        <span
+          role="img"
+          aria-label={name ? `${name}` : 'avatar'}
+          className={cn(
+            SIZES[size],
+            'flex items-center justify-center rounded-full bg-bg-surface-2 font-medium text-text-secondary select-none shadow-[inset_0_0_0_1px_var(--color-border)]',
+            size === 'xs' ? 'text-[10px]' : size === 'sm' ? 'text-[12px]' : size === 'md' ? 'text-[14px]' : size === 'lg' ? 'text-[16px]' : size === '3xl' ? 'text-[30px]' : 'text-[19px]',
+            ring && 'ring-2 ring-accent-brand/20',
+          )}
+        >
+          {initials}
+        </span>
       ) : (
         <img
           src={avatarSetUrl(id)}

@@ -76,7 +76,7 @@ export function PaneHeader({
       >
         <GripVertical className="size-3.5 shrink-0 opacity-60" aria-hidden="true" />
         <span className="shrink-0 text-primary-bright/90 [&_svg]:size-3.5">{icon}</span>
-        <span className="truncate text-[11px] font-semibold tracking-[0.1em] text-foreground-dim uppercase">{title}</span>
+        <span className="truncate text-[12.5px] font-medium text-foreground">{title}</span>
       </div>
       <div className="flex min-w-0 flex-1 items-center gap-1 self-stretch overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{children}</div>
 

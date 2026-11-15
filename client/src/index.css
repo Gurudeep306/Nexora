@@ -1405,7 +1405,7 @@ input[type='search']::-webkit-search-results-decoration {
   max-width: 78ch;
 }
 .nx-lesson-paper { max-width: none; }
-.nx-lesson-md { max-width: 72ch; font-size: 16px; line-height: 1.75; }
+.nx-lesson-md { max-width: none; font-size: var(--read-size); line-height: var(--read-leading); }
 .nx-coming-soon {
   display: flex;
   gap: 0.9rem;

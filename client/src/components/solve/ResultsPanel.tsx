@@ -57,7 +57,7 @@ function OutputBlock({
   return (
     <div className="group min-w-0">
       <div className="flex items-center gap-1.5">
-        <p className="text-[10px] font-semibold tracking-wider text-foreground-faint uppercase">{label}</p>
+        <p className="text-[12px] font-semibold text-foreground-faint">{label}</p>
         <CopyBtn text={text} />
       </div>
       <pre
@@ -122,7 +122,7 @@ export function RunOutput({ result, expected, caseLabel }: { result: RunResult; 
         {compared && (
           <span
             className={cn(
-              'rounded-md border px-1.5 py-px text-[10.5px] font-semibold uppercase',
+              'rounded-md border px-1.5 py-px text-[12px] font-semibold',
               match ? 'border-success/30 bg-success/10 text-success' : 'border-destructive/30 bg-destructive/10 text-state-error',
             )}
           >
@@ -171,7 +171,7 @@ export function JudgeResults({ result }: { result: JudgeResponse }) {
     <div className="space-y-3 p-3">
       {result.compileError && (
         <div>
-          <p className="mb-1 text-[10px] font-semibold tracking-wider text-info uppercase">Compilation error</p>
+          <p className="mb-1 text-[12px] font-semibold text-info">Compilation error</p>
           <pre className="max-h-60 overflow-auto rounded-md border border-info/40 bg-info/5 p-2 font-mono text-xs whitespace-pre-wrap text-info">
             {result.compileError}
           </pre>

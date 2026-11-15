@@ -8,9 +8,10 @@ import { Icon, type IconName } from '@/components/icon/Icon'
 import { cn } from '@/lib/utils'
 import { NOTES_ROUTES, subjectStyle } from './api'
 import { progressOf } from './progress'
-import { loadNotesFont, NOTES_BODY_FONT, useNotesPrefs, type NotesFontId } from './prefs'
+import { loadNotesFont, type NotesFontId } from './prefs'
 import type { ChapterSummary, LessonProgress, NotesColor } from './types'
 import './notes.css'
+import './notes-reading.css'
 
 /** Wraps notes UI: the handwriting face (or the clean one) and the subject's accent. */
 export function NotesRoot({
@@ -27,11 +28,12 @@ export function NotesRoot({
   style?: CSSProperties
   children: ReactNode
 }) {
-  const [prefs] = useNotesPrefs()
-  const face = font ?? (prefs.cleanFont ? 'clean' : NOTES_BODY_FONT)
+  // Every reader gets the site's reading face (src/styles/reading.css); only the
+  // staff font sample page still loads the old faces, to compare them.
+  const face = font ?? 'clean'
   useEffect(() => {
-    void loadNotesFont(face)
-  }, [face])
+    if (font) void loadNotesFont(font)
+  }, [font])
   return (
     <div className={cn('notes-root', className)} data-notes-font={face} style={{ ...subjectStyle(color), ...style }}>
       {children}
