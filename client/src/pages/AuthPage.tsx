@@ -3,9 +3,10 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'motion/react'
 import { AlertTriangle, Check, Eye, EyeOff, Loader2, ShieldCheck, X } from 'lucide-react'
 import { useToast } from '@/components/ui'
-import { GraphField } from '@/components/auth/GraphField'
+import { SilkArt } from '@/components/auth/SilkArt'
+import { loadUiFont } from '@/theme/fontLoaders'
 import '@/components/auth/auth.css'
-import { LogoMark, Wordmark } from '@/components/brand/Logo'
+import { LogoMark } from '@/components/brand/Logo'
 import { takeOAuthResult, useAuth } from '@/context/AuthContext'
 import { api, apiUrl, ApiError } from '@/lib/api'
 import { useSite } from '@/context/SiteContext'
@@ -291,17 +292,26 @@ export default function AuthPage() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="auth-root relative flex min-h-dvh flex-col">
-        <GraphField className="auth-field" />
+      <div className="auth-root relative grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)]">
+        {/* Art: a generative silk ribbon and a line worth reading. Desktop: the right half; phones: a band on top. */}
+        <aside className="auth-art lg:order-2" aria-label="NexoraGuru">
+          <SilkArt className="auth-silk" />
+          <div className="auth-art-grain" aria-hidden="true" />
+          <div className="relative z-10 flex h-full flex-col justify-between p-6 sm:p-8 lg:p-12">
+            <Link to="/" className="flex w-fit items-center gap-2.5 !text-white !no-underline" aria-label="NexoraGuru home">
+              <span className="auth-art-mark">
+                <LogoMark size={26} />
+              </span>
+              <span className="text-[15px] font-semibold tracking-[-0.03em]">
+                Nexora<span className="opacity-60">Guru</span>
+              </span>
+            </Link>
+            <Quotes />
+          </div>
+        </aside>
 
-        <header className="relative z-10 flex items-center justify-between px-5 pt-5 sm:px-8 sm:pt-7">
-          <Link to="/" className="flex items-center gap-2.5 !no-underline" aria-label="NexoraGuru home">
-            <LogoMark size={26} />
-            <Wordmark className="text-[15px]" />
-          </Link>
-        </header>
-
-        <main className="relative z-10 flex flex-1 items-center justify-center px-5 py-10">
+        <div className="relative flex min-w-0 flex-col lg:order-1">
+        <main className="relative z-10 flex flex-1 items-start justify-center px-5 pt-10 pb-10 lg:items-center lg:pt-10">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -323,7 +333,7 @@ export default function AuthPage() {
               )}
             </AnimatePresence>
 
-            <div className="text-center">
+            <div>
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={title}
@@ -332,8 +342,8 @@ export default function AuthPage() {
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.2, ease: EASE }}
                 >
-                  <h1 className="m-0 text-[26px] leading-tight font-semibold tracking-[-0.03em] text-text-primary">{title}</h1>
-                  {subtitle && <p className="mt-2 mb-0 text-[14px] text-text-secondary">{subtitle}</p>}
+                  <h1 className="m-0 text-[30px] leading-tight font-semibold tracking-[-0.035em] text-text-primary">{title}</h1>
+                  <p className="mt-2 mb-0 text-[14.5px] text-text-secondary">{subtitle ?? (mode === 'login' ? 'Welcome back. Sign in to continue.' : 'It takes less than a minute.')}</p>
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -478,7 +488,7 @@ export default function AuthPage() {
               </button>
             </motion.form>
 
-            <p className="mt-7 mb-0 text-center text-[13.5px] text-text-muted">
+            <p className="mt-7 mb-0 text-[13.5px] text-text-muted">
               {oauthPending ? (
                 <button
                   onClick={() => void api.post('/api/auth/logout').then(() => window.location.reload())}
@@ -505,12 +515,54 @@ export default function AuthPage() {
           </motion.div>
         </main>
 
-        <footer className="relative z-10 px-5 pb-5 text-center text-[12px] text-text-muted sm:pb-7">
+        <footer className="relative z-10 px-5 pb-5 text-center text-[12px] lg:text-left lg:px-12 text-text-muted sm:pb-7">
           <span className="inline-flex items-center gap-1.5">
             <ShieldCheck className="size-3.5" aria-hidden="true" /> Passwords are salted and hashed. We never see them.
           </span>
         </footer>
+        </div>
       </div>
     </MotionConfig>
+  )
+}
+
+const QUOTES = [
+  { text: 'Simplicity is prerequisite for reliability.', by: 'Edsger W. Dijkstra' },
+  { text: 'Science is what we understand well enough to explain to a computer.', by: 'Donald Knuth' },
+  { text: 'The best way to predict the future is to invent it.', by: 'Alan Kay' },
+  { text: 'What I cannot create, I do not understand.', by: 'Richard Feynman' },
+]
+
+/** A slow rotation of quotes, set large in a serif. */
+function Quotes() {
+  const [i, setI] = useState(0)
+  const reduce = useReducedMotion()
+  useEffect(() => {
+    void loadUiFont('newsreader')
+    if (reduce) return
+    const id = window.setInterval(() => setI((n) => (n + 1) % QUOTES.length), 9000)
+    return () => window.clearInterval(id)
+  }, [reduce])
+  const q = QUOTES[i]
+  return (
+    <figure className="m-0 hidden max-w-[34rem] lg:block">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 8, filter: 'blur(4px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, y: -6, filter: 'blur(4px)' }}
+          transition={{ duration: 0.9, ease: EASE }}
+        >
+          <blockquote className="auth-quote m-0">“{q.text}”</blockquote>
+          <figcaption className="mt-5 text-[13.5px] text-white/60">{q.by}</figcaption>
+        </motion.div>
+      </AnimatePresence>
+      <div className="mt-8 flex gap-1.5" aria-hidden="true">
+        {QUOTES.map((_, n) => (
+          <span key={n} className={cn('h-[3px] rounded-full transition-all duration-700', n === i ? 'w-6 bg-white/80' : 'w-3 bg-white/25')} />
+        ))}
+      </div>
+    </figure>
   )
 }

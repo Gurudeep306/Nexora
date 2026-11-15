@@ -10,22 +10,69 @@
   isolation: isolate;
 }
 
-/* The graph backdrop, fading out where the form sits. */
-.auth-field {
-  position: fixed;
+/* The art panel: always a deep ink sheet, whatever the theme, so the silk
+   reads as light. Desktop: the right half, inset and rounded; phones: a band. */
+.auth-art {
+  position: relative;
+  overflow: hidden;
+  margin: 10px 10px 0;
+  height: 190px;
+  border-radius: 22px;
+  background:
+    radial-gradient(120% 90% at 70% 10%, #17171f 0%, #0a0a0f 55%, #060609 100%);
+  color: #fff;
+  isolation: isolate;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+@media (min-width: 1024px) {
+  .auth-art {
+    position: sticky;
+    top: 0;
+    height: calc(100dvh - 20px);
+    margin: 10px 10px 10px 0;
+    border-radius: 26px;
+  }
+}
+.auth-silk {
+  position: absolute;
   inset: 0;
-  z-index: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
-  -webkit-mask-image: radial-gradient(ellipse 34rem 30rem at 50% 50%, transparent 30%, black 78%);
-  mask-image: radial-gradient(ellipse 34rem 30rem at 50% 50%, transparent 30%, black 78%);
+  z-index: 0;
 }
-@media (max-width: 639px) {
-  .auth-field {
-    -webkit-mask-image: linear-gradient(180deg, black 0%, transparent 28%, transparent 82%, black 100%);
-    mask-image: linear-gradient(180deg, black 0%, transparent 28%, transparent 82%, black 100%);
-  }
+.auth-art-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.09;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* Fade the art toward the quote so the type stays crisp. */
+.auth-art::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 55%;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgb(6 6 9 / 0.75));
+}
+.auth-art-mark {
+  display: inline-flex;
+}
+.auth-art-mark .ng-mark {
+  color: #fff;
+}
+.auth-quote {
+  font-family: 'Newsreader Variable', 'Newsreader Fallback', ui-serif, Georgia, serif;
+  font-size: clamp(1.75rem, 1rem + 1.6vw, 2.5rem);
+  line-height: 1.18;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  color: #fff;
+  text-wrap: balance;
 }
 
 .auth-panel {
