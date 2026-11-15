@@ -180,7 +180,7 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
             setOpen(true)
           }}
           onKeyDown={onKeyDown}
-          className={cn('input-base w-full pl-9', hasValue && 'pr-9', className)}
+          className={cn('ui-search-input w-full pl-9', hasValue && 'pr-9', className)}
           {...rest}
         />
         {placeholderNode && !hasValue && (

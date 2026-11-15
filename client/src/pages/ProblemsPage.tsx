@@ -15,6 +15,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useAgentPageContext } from '@/context/AgentContext'
 import {
   DIFFICULTY_BANDS,
+  PLATFORM_OPTIONS,
   type AiFindResponse,
   type BookmarksResponse,
   type ProblemsResponse,
@@ -25,7 +26,7 @@ import {
   ProblemFilters,
   type ProblemFilterState,
 } from '@/components/problems/ProblemFilters'
-import { AiProblemFinder } from '@/components/problems/AiProblemFinder'
+import { aiErrorText, isAiUnavailable } from '@/lib/agent'
 import { AiProblemResults } from '@/components/problems/AiProblemResults'
 import { ProblemTable } from '@/components/problems/ProblemTable'
 import { Pagination } from '@/components/problems/Pagination'
@@ -188,6 +189,34 @@ export default function ProblemsPage() {
 
   const clearAiResults = useCallback(() => setAiResults(null), [])
 
+  /* Ask AI: the search bar's text, read as a description of what to practise. */
+  const [asking, setAsking] = useState(false)
+  const [askError, setAskError] = useState<string | null>(null)
+  const askAi = useCallback(
+    async (raw: string) => {
+      const text = raw.trim()
+      if (!text || asking) return
+      setAsking(true)
+      setAskError(null)
+      try {
+        const res = await api.post<AiFindResponse>(
+          '/api/ai/find-problems',
+          { query: text, platforms: [...PLATFORM_OPTIONS], tags: tagsApi.data?.tags ?? [], limit: 12 },
+          { timeoutMs: 90000 },
+        )
+        if (res.ok) handleAiResults(res)
+        else throw new Error(res.error || 'AI search failed')
+      } catch (err) {
+        const msg = aiErrorText(err)
+        setAskError(isAiUnavailable(err) ? `${msg} The filters still work.` : msg)
+        if (!isAiUnavailable(err)) toast.error('AI search failed', msg)
+      } finally {
+        setAsking(false)
+      }
+    },
+    [asking, handleAiResults, tagsApi.data, toast],
+  )
+
   const filters: ProblemFilterState = {
     search: searchInput,
     platform,
@@ -236,8 +265,6 @@ export default function ProblemsPage() {
       />
 
       <div className="space-y-4">
-        <AiProblemFinder tags={tagsApi.data?.tags ?? []} onResults={handleAiResults} />
-
         {aiResults ? (
           <AiProblemResults
             data={aiResults}
@@ -254,6 +281,9 @@ export default function ProblemsPage() {
               resultCount={problemsApi.data ? total : undefined}
               onSearchInput={setSearchInput}
               onChange={handleFilterChange}
+              onAsk={(t) => void askAi(t)}
+              asking={asking}
+              askError={askError}
             />
 
             {problemsApi.loading ? (

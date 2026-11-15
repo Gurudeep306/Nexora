@@ -109,3 +109,38 @@
   background: var(--color-bg-surface-3);
   color: var(--color-text-primary);
 }
+
+/* The input inside SearchInput / SearchCombobox (components/ui): the same
+   quiet field — 38px, hairline edge, no inset well, a neutral focus ring. */
+.ui-search-input {
+  height: 2.375rem;
+  padding-right: 0.75rem;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: 14px;
+  box-shadow: none;
+  outline: none;
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-fast) var(--ease-standard);
+}
+.ui-search-input:hover {
+  border-color: var(--color-border-strong);
+}
+.ui-search-input:focus,
+.ui-search-input:focus-visible {
+  outline: none;
+  border-color: color-mix(in oklab, var(--color-text-primary) 45%, var(--color-border));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+}
+.ui-search-input::placeholder {
+  color: var(--color-text-muted);
+}
+.ui-search-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+.group\/search:focus-within .search-field-kbd {
+  opacity: 0;
+}
