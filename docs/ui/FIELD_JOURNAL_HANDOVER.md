@@ -140,10 +140,15 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
    `.nh-n-roman`, `.nh-chapter-done` in `notes-home.css` and the "Notes
    subject page" block in `theme/styles.css`), so no style branching in TSX.
    Axe 0 in light, dark, phone; Studio checked unchanged.
-3. **Margin sidenotes in GATE notes**: notes/asides are notes now but still
-   sit in the column; move definitions/asides/footnotes to the margin with
-   `Sidenote` on wide screens like the DSA reader. Footnote numbers should
-   show their text on hover or tap (brief 4.4).
+3. **Margin sidenotes in GATE notes — deliberately not moved.** The notes
+   reader keeps a lessons rail on the left and the outline on the right, and
+   the owner asked for notes content to use the full width, so `.nr-main` is
+   about 770px at a 1440px screen: there is no margin to put notes in, and
+   `Sidenote` would fold every note/aside into a closed "✱ Note" toggle,
+   hiding content. They stay in the column as `role="note"` blocks with the
+   journal hairline. Revisit only if the owner wants the narrow-column look
+   for notes. Footnote hover/tap text: not done (no footnotes in the notes
+   content yet; check `grep -rn '\[\^' content/gate-notes` before building).
 4. ~~Notes title block~~ **mostly done**: the mono meta line now reads
    "55 min · Basic · 3 animations · 3 questions · 11 past questions". There is
    **no dek** yet because lessons have no one-line summary field; add a `dek`
@@ -154,12 +159,14 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
    `MD_NUMBER`/`.is-num` in `learn/md.tsx`; an author's own alignment wins).
    Tables are focusable `role="group"` boxes (not landmarks, since several
    tables can share header words). Equation numbers: not done (optional).
-6. **Code**: active line in oat when tied to a viz step (DSA player has a code
-   bar; check it reads as oat in journal), language tabs underlined
-   (CodeTabs active tab is now ink with a clay underline in journal).
-7. **System Design notes reader**
-   (`learn/system-design/components/SystemNotesReader.tsx`): give it the same
-   reader parts if it is a lesson reader.
+6. ~~Code~~ **done**: the DSA player's active-line bar is oat with a clay
+   inset under journal; code language tabs are ink with a clay underline.
+7. **System Design reader**
+   (`learn/system-design/components/SystemNotesReader.tsx`, inside the
+   System Design studio at `/learn/system-design/:systemId`): its own layout;
+   only its nested `<aside>` was made `role="note"`. Restyle it with the
+   reader parts (`Outline`, `EndOfLesson`, title block) in phase 9's sweep or
+   as part of phase 5 if time allows; run axe on it.
 8. ~~Axe across every notes lesson~~ **done**: all 45 published lessons
    (dl, dm, demo) pass axe in light (dark and phone were run too — see the
    phase 4 PR). Fixes: maths-only table headers render KaTeX's visible HTML
