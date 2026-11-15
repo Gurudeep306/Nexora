@@ -52,6 +52,8 @@
         var modes = P[look.theme] || [1, 1];
         var mode = modes[want === 'dark' ? 0 : 1] ? want : modes[0] ? 'dark' : 'light';
 
+        d.setAttribute('data-style', look.style);
+        d.setAttribute('data-pattern', look.pattern);
         d.setAttribute('data-palette', look.theme);
         d.setAttribute('data-mode', mode);
         d.classList.toggle('dark', mode === 'dark');

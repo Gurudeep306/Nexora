@@ -3,6 +3,7 @@ import { DEFAULT_LOOK, lookAttributes, sanitizeLook, type Look } from '@/theme/l
 import { PALETTE_BY_ID, DEFAULT_PALETTE, resolveMode, type Palette, type ThemeMode } from '@/theme/palettes'
 import { oklchToHex } from '@/theme/color'
 import { loadCodeFont, loadUiFont } from '@/theme/fontLoaders'
+import { STYLE_BY_ID } from '@/theme/styles'
 
 export type Appearance = 'light' | 'dark' | 'system'
 export type { Look }
@@ -107,6 +108,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     void loadCodeFont(look.codeFont)
   }, [look.codeFont])
+  // A style can set its headings in a face of its own (Editorial's serif).
+  useEffect(() => {
+    const extra = STYLE_BY_ID.get(look.style)?.displayFont
+    if (extra) void loadUiFont(extra)
+  }, [look.style])
   // Solutions are a small corner of the app — fetch their face only once a
   // solution actually mounts (gate/solution/GateSolution.tsx), not on every page.
 

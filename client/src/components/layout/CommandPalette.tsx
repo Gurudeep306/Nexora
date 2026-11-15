@@ -135,7 +135,7 @@ export function CommandPalette() {
           setAppearance(mode === 'dark' ? 'light' : 'dark')
         },
       },
-      { id: 'act:themes', group: 'Actions', label: 'Switch theme…', hint: 'Theme Centre', icon: iconComponent('palette'), run: () => go('/theme') },
+      { id: 'act:themes', group: 'Actions', label: 'Change style or theme…', hint: 'Appearance', icon: iconComponent('palette'), run: () => go('/theme') },
       { id: 'act:profile', group: 'Actions', label: 'View my profile', icon: iconComponent('profile'), run: () => go('/profile') },
       { id: 'act:avatar', group: 'Actions', label: 'Change my avatar', icon: iconComponent('settings'), run: () => go('/settings') },
       {
