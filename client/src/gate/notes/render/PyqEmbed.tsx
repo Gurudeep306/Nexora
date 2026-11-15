@@ -16,7 +16,7 @@ export default function PyqEmbed({ id, topics }: { id: string; topics: string[] 
   const r = useApi(() => api.get<GateDetail>(`/api/gate/questions/${encodeURIComponent(id)}`), [id], { cacheKey: `gate:q:${id}` })
   return (
     <div className="npyq">
-      {r.loading && !r.data && <div className="nb-loading" aria-busy="true" aria-label="Loading question" />}
+      {r.loading && !r.data && <div className="nb-loading" role="status" aria-busy="true" aria-label="Loading question" />}
       {r.error && !r.data && <p className="nb-missing">Couldn't load this question ({r.error}).</p>}
       {r.data && <QuestionView q={r.data.question} mode="practice" />}
       <Link to={lessonPracticeLink(topics)} className="npyq-more">
