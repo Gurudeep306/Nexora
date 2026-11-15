@@ -207,8 +207,20 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
   `cat /proc/$(pgrep -f src/server.js)/environ | tr '\0' '\n' | grep DB_PATH`)
   and bump `catalog_meta` (`update catalog_meta set v=v+1 where k='problems'`)
   so the in-memory catalog reloads. Never commit that data.
-- **Next:** Solve (`/solve/:id`, brief 5.2), then Contests, Workshop,
-  Submissions, Bookmarks (brief 4.7).
+- **Solve (`/solve/:id`) — partly done.** Mono masthead and meta
+  (`.sp-mast`, `.sp-meta`), serif display title (`.sp-title`), serif
+  statement prose with small-caps label headings, ivory hairline example
+  blocks (`.sp-sample`), verdict banner as a paper slip with the verdict word
+  in serif and its meaning colour plus one line of general advice for
+  non-accepted verdicts (`ADVICE` in `VerdictBanner.tsx`). The Monaco "Match
+  app theme" was already generated from the palette (oat current line, clay
+  cursor); the faded last line number is now readable. Axe 0.
+  **Not done:** tests ticking one by one with a three-column diff, the
+  paper-slip celebration (the existing confetti still runs), selection in oat
+  60%, phone tabs Problem · Code · Results, editorial reader style. The demo
+  cannot judge code or load statements (no network to judges), so check
+  those parts where a judge is available.
+- **Next:** Contests, Workshop, Submissions, Bookmarks (brief 4.7).
 
 ## 4. What phases 1–3 built (reuse these; do not rebuild them)
 
