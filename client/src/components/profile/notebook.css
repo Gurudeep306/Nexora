@@ -342,3 +342,49 @@
     }
   }
 }
+
+/* ── The portrait medal (journal style): ring, level arc, rim lettering ── */
+@layer components {
+  .pf-medal {
+    position: relative;
+    flex: none;
+    display: grid;
+    place-items: center;
+  }
+  .pf-medal-svg {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+  }
+  .pf-medal-photo {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 124px;
+    height: 124px;
+    border-radius: 999px;
+    overflow: visible;
+  }
+  .pf-medal-ring {
+    fill: none;
+    stroke: var(--color-text-primary);
+    stroke-width: 1;
+  }
+  .pf-medal-track {
+    fill: none;
+    stroke: var(--color-border);
+    stroke-width: 2;
+  }
+  .pf-medal-arc {
+    fill: none;
+    stroke: var(--color-accent-brand);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .pf-medal-text {
+    font-family: var(--font-mono);
+    font-size: 8.4px;
+    letter-spacing: 0.08em;
+    fill: var(--color-text-secondary);
+  }
+}

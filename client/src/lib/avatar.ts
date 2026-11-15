@@ -1,7 +1,8 @@
 /**
- * The NexoraGuru avatar set: 16 hand-drawn "Clay" characters, shipped as
- * static SVGs in client/public/avatars/<id>.svg (source and build script:
- * docs/brand/avatars/src/). A choice is stored in `users.avatar` as
+ * The NexoraGuru avatar set: 16 "Portraits" (flat editorial drawings in the
+ * Field Journal palette, the default for new accounts) and 16 "Clay"
+ * characters, shipped as static SVGs in client/public/avatars/<id>.svg
+ * (source and build script: docs/brand/avatars/src/). A choice is stored in `users.avatar` as
  * "set:<id>". Anything else (old "gen:<style>:<n>" values, legacy preset
  * keys, empty) resolves to a deterministic default picked from the username,
  * so every user always has a picture and it is the same on every device.
@@ -12,22 +13,38 @@
  */
 
 export const AVATAR_SET = [
-  { id: 'mira', name: 'Mira' },
-  { id: 'kai', name: 'Kai' },
-  { id: 'noor', name: 'Noor' },
-  { id: 'arjun', name: 'Arjun' },
-  { id: 'zara', name: 'Zara' },
-  { id: 'leo', name: 'Leo' },
-  { id: 'sana', name: 'Sana' },
-  { id: 'dev', name: 'Dev' },
-  { id: 'ivy', name: 'Ivy' },
-  { id: 'omar', name: 'Omar' },
-  { id: 'hana', name: 'Hana' },
-  { id: 'ravi', name: 'Ravi' },
-  { id: 'ama', name: 'Ama' },
-  { id: 'theo', name: 'Theo' },
-  { id: 'lina', name: 'Lina' },
-  { id: 'jay', name: 'Jay' },
+  { id: 'asha', group: 'portraits' },
+  { id: 'vikram', group: 'portraits' },
+  { id: 'meera', group: 'portraits' },
+  { id: 'rohan', group: 'portraits' },
+  { id: 'fatima', group: 'portraits' },
+  { id: 'kabir', group: 'portraits' },
+  { id: 'priya', group: 'portraits' },
+  { id: 'harpreet', group: 'portraits' },
+  { id: 'tara', group: 'portraits' },
+  { id: 'nikhil', group: 'portraits' },
+  { id: 'ishita', group: 'portraits' },
+  { id: 'yusuf', group: 'portraits' },
+  { id: 'ananya', group: 'portraits' },
+  { id: 'sameer', group: 'portraits' },
+  { id: 'divya', group: 'portraits' },
+  { id: 'raghav', group: 'portraits' },
+  { id: 'mira', group: 'clay' },
+  { id: 'kai', group: 'clay' },
+  { id: 'noor', group: 'clay' },
+  { id: 'arjun', group: 'clay' },
+  { id: 'zara', group: 'clay' },
+  { id: 'leo', group: 'clay' },
+  { id: 'sana', group: 'clay' },
+  { id: 'dev', group: 'clay' },
+  { id: 'ivy', group: 'clay' },
+  { id: 'omar', group: 'clay' },
+  { id: 'hana', group: 'clay' },
+  { id: 'ravi', group: 'clay' },
+  { id: 'ama', group: 'clay' },
+  { id: 'theo', group: 'clay' },
+  { id: 'lina', group: 'clay' },
+  { id: 'jay', group: 'clay' },
 ] as const
 
 export type AvatarId = (typeof AVATAR_SET)[number]['id']
@@ -45,9 +62,17 @@ function hash(str: string): number {
   return h >>> 0
 }
 
+export const AVATAR_GROUPS = [
+  { id: 'portraits', name: 'Portraits' },
+  { id: 'clay', name: 'Clay' },
+] as const
+
+/** New accounts get a portrait (the first group), picked from the username. */
+const DEFAULT_POOL = AVATAR_SET.filter((a) => a.group === 'portraits')
+
 /** The avatar a user gets until they pick one. */
 export function defaultAvatarId(seed: string | null | undefined): AvatarId {
-  return AVATAR_SET[hash(String(seed ?? '').toLowerCase()) % AVATAR_SET.length].id
+  return DEFAULT_POOL[hash(String(seed ?? '').toLowerCase()) % DEFAULT_POOL.length].id
 }
 
 /** The set id a stored `users.avatar` value points at, or the user's default. */
@@ -58,7 +83,8 @@ export function resolveAvatarId(value: string | null | undefined, seed: string |
 
 export const formatAvatar = (id: AvatarId) => `set:${id}`
 
-export const avatarName = (id: AvatarId) => AVATAR_SET.find((a) => a.id === id)?.name ?? id
+/** A neutral label for screen readers (avatars have no names): "Avatar 7". */
+export const avatarName = (id: AvatarId) => `Avatar ${AVATAR_SET.findIndex((a) => a.id === id) + 1}`
 
 export const avatarSetUrl = (id: AvatarId) => `${import.meta.env.BASE_URL}avatars/${id}.svg`
 

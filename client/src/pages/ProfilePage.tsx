@@ -13,6 +13,7 @@ import { ACCENTS, CoverArt } from '@/components/profile/covers'
 import { BadgeCard, LevelBar, Timeline } from '@/components/profile/Showcase'
 import { Bridge, Colophon, DifficultyMultiples, Folio, LanguageList, RankSeal, Seal, Shelf, TopicBars } from '@/components/profile/Notebook'
 import { calendarSentence, usePersonJsonLd } from '@/components/profile/notebook-data'
+import { PortraitMedal } from '@/components/profile/PortraitMedal'
 import { useTheme } from '@/context/ThemeContext'
 import { PostCard } from '@/components/social/feed/PostCard'
 import { FeedEmpty, PostList, usePostList } from '@/components/social/feed/PostList'
@@ -174,6 +175,7 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
   const [confirmBlock, setConfirmBlock] = useState(false)
   const name = p.display_name || p.username
   const accent = ACCENTS[p.accent]?.color ?? ACCENTS.brand.color
+  const journal = useTheme().shown.style === 'journal'
 
   const relate = async (kind: 'mute' | 'block', on: boolean) => {
     try {
@@ -192,14 +194,20 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
       <CoverArt cover={p.cover} className="pf-cover h-36 sm:h-52" />
       <div className="pf-hero-body relative px-4 pb-5 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div className="pf-portrait relative -mt-14 sm:-mt-16">
-            <div className="pf-portrait-ring ng-ring rounded-full p-[3px]" style={{ '--ng-ring-a': accent, '--ng-ring-b': 'var(--color-state-info)', '--ng-ring-c': 'var(--color-state-success)' } as React.CSSProperties}>
-              <div className="rounded-full bg-bg-surface p-[3px]">
-                <Avatar seed={p.username} avatar={p.avatar} src={p.avatar_url} name={name} size="3xl" ring={false} className="[&_img]:size-24 sm:[&_img]:size-28" online={p.status === 'online'} />
+          {journal && stats ? (
+            <PortraitMedal handle={p.username} level={stats.level.level} name={stats.level.name} progress={stats.level.xpForNext ? stats.level.xpInLevel / stats.level.xpForNext : 1}>
+              <Avatar seed={p.username} avatar={p.avatar} src={p.avatar_url} name={name} size="3xl" ring={false} className="[&_img]:size-[124px]" online={p.status === 'online'} />
+            </PortraitMedal>
+          ) : (
+            <div className="pf-portrait relative -mt-14 sm:-mt-16">
+              <div className="pf-portrait-ring ng-ring rounded-full p-[3px]" style={{ '--ng-ring-a': accent, '--ng-ring-b': 'var(--color-state-info)', '--ng-ring-c': 'var(--color-state-success)' } as React.CSSProperties}>
+                <div className="rounded-full bg-bg-surface p-[3px]">
+                  <Avatar seed={p.username} avatar={p.avatar} src={p.avatar_url} name={name} size="3xl" ring={false} className="[&_img]:size-24 sm:[&_img]:size-28" online={p.status === 'online'} />
+                </div>
               </div>
+              {stats && <RankGlyph level={stats.level.level} size={38} className="pf-rank-corner absolute -right-1 -bottom-1" />}
             </div>
-            {stats && <RankGlyph level={stats.level.level} size={38} className="pf-rank-corner absolute -right-1 -bottom-1" />}
-          </div>
+          )}
           <div className="pf-actions flex flex-wrap items-center gap-2 pt-3">
             {isSelf ? (
               <>
@@ -253,7 +261,7 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
             <h1 className="pf-name font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-[28px]">{name}</h1>
             <UserBadges username={p.username} role={p.role} verified={p.verified} variant="full" />
           </div>
-          {stats && (
+          {stats && !journal && (
             <div className="pf-seal-line mt-2">
               <RankSeal level={stats.level.level} name={stats.level.name} />
             </div>
