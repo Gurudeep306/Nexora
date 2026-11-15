@@ -75,7 +75,7 @@ const RULES = [
   ["POST", /^\/api\/(settings|reset-progress|sync-solved)$/, { login: true }],
 
   // ── login required: code execution, AI, personal data writes ────
-  ["POST", /^\/api\/(ai\/find-problems|studio\/ai-assist|translate\/detect|judge|run|translate|decomposition|code-replay|testcases(\/bulk)?|ai-battle\/start|ai-battle\/complete|dashboard-layout)$/, { login: true }],
+  ["POST", /^\/api\/(ai\/testgen|ai\/analyze|ai\/find-problems|studio\/ai-assist|translate\/detect|judge|run|translate|decomposition|code-replay|testcases(\/bulk)?|ai-battle\/start|ai-battle\/complete|dashboard-layout)$/, { login: true }],
   ["PUT|DELETE", /^\/api\/testcases\/[^/]+$/, { login: true }],
   // The AI agent (chat, tasks, private conversation history): own account only.
   ["GET|POST|DELETE", /^\/api\/agent(\/.*)?$/, { login: true }],

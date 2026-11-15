@@ -260,6 +260,113 @@ Explain this verdict so the student can fix it themselves. Use exactly this mark
     post: (raw) => String(raw).trim(),
   },
 
+  /* ── AI test generator: an input generator and two independent references ──
+     The server runs them; an expected output is kept only when the
+     references pass the official samples and agree (see src/testgen.js). */
+  testgen_plan: {
+    model: "main",
+    json: true,
+    maxTokens: 7000,
+    temperature: 0.2,
+    reasoning: "high",
+    timeoutMs: 150000,
+    build: (i) => [
+      {
+        role: "system",
+        content:
+          "You are a meticulous competitive-programming problem setter. You write test data generators and reference solutions that are exactly faithful to a problem's input format and constraints. You never guess: if a constraint is unclear you stay well inside the safe range.",
+      },
+      {
+        role: "user",
+        content: `${problemBlock(i, 9000)}
+${i.samples?.length ? P.data("official-samples", i.samples.slice(0, 4).map((s, k) => `Sample ${k + 1} input:\n${str(s.input, 1500)}\nSample ${k + 1} output:\n${str(s.output, 800)}`).join("\n\n"), 7000) : ""}
+
+Write Python 3 code (standard library only) for testing solutions to this problem.
+
+1. "generator": defines gen(rng, size) returning ONE complete stdin input as a string ending with "\\n". rng is a random.Random; size is one of "tiny", "small", "medium", "large". tiny/small must keep every dimension small (n ≤ 8 and values ≤ 20 where possible) so a brute force finishes instantly; medium ≈ 1e3; large: at most 2e4 elements and under 150 KB of text. If the input has T test cases, keep T small (≤ 3 for medium/large). Obey EVERY constraint: guarantees in the statement (distinct values, sorted, connected graph, valid tree, answer exists…) must hold in every input.
+2. "validator": defines valid(s) returning True when s satisfies the input format and constraints (scaled down as above is fine). Be strict.
+3. "edge_cases": 4–10 hand-written complete inputs for boundary situations: minimum sizes, all equal values, extremes, special structures the statement hints at. Each must be valid.
+4. "brute": a program that reads ALL of stdin (sys.stdin.read() or input(); never sys.stdin.buffer) and prints the answer, written as the most obviously correct method — exhaustive search, simulation — speed does not matter.
+5. "solution": an independent efficient program solving the problem the intended way, same I/O rules. Do not copy the brute force.
+Both programs must print in exactly the required output format. If the problem accepts any of several correct answers (e.g. "print any"), set "multiple_answers": true.
+
+Reply with JSON only:
+{"format": "one sentence describing the input", "multiple_answers": false, "generator": "…", "validator": "…", "edge_cases": ["…"], "brute": "…", "solution": "…", "notes": "anything a tester should know"}`,
+      },
+    ],
+    post: (raw) => {
+      const j = need(parseJson(raw), "The AI's test plan was unreadable — try again");
+      const code = (v) => (typeof v === "string" ? stripFences(v).slice(0, 20000) : "");
+      return {
+        format: str(j.format, 400),
+        multipleAnswers: !!j.multiple_answers,
+        generator: code(j.generator),
+        validator: code(j.validator),
+        edgeCases: (Array.isArray(j.edge_cases) ? j.edge_cases : []).filter((x) => typeof x === "string" && x.length < 20000).slice(0, 12),
+        brute: code(j.brute),
+        solution: code(j.solution),
+        notes: str(j.notes, 600),
+      };
+    },
+  },
+
+  /* ── Code analysis: everything about the student's code ── */
+  code_analysis: {
+    model: "main",
+    json: true,
+    maxTokens: 3500,
+    temperature: 0.1,
+    reasoning: "high",
+    timeoutMs: 120000,
+    build: (i) => [
+      { role: "system", content: P.COACH_RULES + replyLang(i.uiLang) },
+      {
+        role: "user",
+        content: `${problemBlock(i, 6000)}
+${i.limits ? `Limits: ${str(i.limits, 120)}` : ""}
+${P.data("student-code", `${str(i.language, 20)} (line numbers added):\n${numbered(str(i.code, 16000))}`, 18000)}
+${i.metrics ? P.data("measured-metrics", JSON.stringify(i.metrics).slice(0, 1500), 2000) : ""}
+
+Analyse this code exactly as written (not the solution you would write). Be precise, give line numbers (L##), keep every string short. Reply with JSON only:
+{"summary": "what the code does, one sentence",
+ "approach": "standard technique name",
+ "time": {"worst": "Big-O with the problem's variables", "average": "Big-O or same", "best": "Big-O or same", "derivation": ["2-5 short steps: which loops/recursion multiply to give the bound, with L## refs"]},
+ "space": {"auxiliary": "Big-O extra memory", "total": "including input", "derivation": ["1-3 short steps"]},
+ "parts": [{"name": "function or block", "lines": "L10-L24", "time": "Big-O", "note": "short"}],
+ "hotspot": {"lines": "L##-L##", "why": "where most time goes"},
+ "fits": {"verdict": "fits" | "tight" | "too_slow" | "unknown", "operations": "estimated operations at max constraints, e.g. ~4e8", "why": "one sentence vs ~1e8 simple ops/sec"},
+ "memoryFit": {"verdict": "fits" | "tight" | "too_much" | "unknown", "estimate": "e.g. ~80 MB", "why": "one sentence"},
+ "correctness": [{"line": 0, "severity": "error" | "warning" | "info", "issue": "a concrete bug or risk: overflow, off-by-one, uninitialised, wrong edge handling, recursion depth, precision"}],
+ "edgeCases": [{"input": "short concrete case", "risk": "what goes wrong"}],
+ "quality": {"score": 0-100, "readability": "one sentence", "notes": ["naming, structure, duplication, dead code"]},
+ "optimizations": [{"idea": "one concrete improvement (no full code)", "gain": "e.g. O(n^2) → O(n log n)"}],
+ "dataStructures": ["each data structure used and why it matters"],
+ "language": ["language-specific advice: fast I/O, integer types, container costs"]}
+An empty list beats a weak entry.`,
+      },
+    ],
+    post: (raw) => {
+      const j = need(parseJson(raw), "The analysis came back unreadable — try again");
+      const arr = (v, n) => (Array.isArray(v) ? v.slice(0, n) : []);
+      return {
+        summary: str(j.summary, 300),
+        approach: str(j.approach, 80),
+        time: { worst: str(j.time?.worst, 60), average: str(j.time?.average, 60), best: str(j.time?.best, 60), derivation: arr(j.time?.derivation, 6).map((x) => str(x, 240)) },
+        space: { auxiliary: str(j.space?.auxiliary, 60), total: str(j.space?.total, 60), derivation: arr(j.space?.derivation, 4).map((x) => str(x, 240)) },
+        parts: arr(j.parts, 10).map((p) => ({ name: str(p?.name, 60), lines: str(p?.lines, 20), time: str(p?.time, 40), note: str(p?.note, 160) })),
+        hotspot: j.hotspot ? { lines: str(j.hotspot.lines, 20), why: str(j.hotspot.why, 200) } : null,
+        fits: { verdict: ["fits", "tight", "too_slow", "unknown"].includes(j.fits?.verdict) ? j.fits.verdict : "unknown", operations: str(j.fits?.operations, 40), why: str(j.fits?.why, 240) },
+        memoryFit: { verdict: ["fits", "tight", "too_much", "unknown"].includes(j.memoryFit?.verdict) ? j.memoryFit.verdict : "unknown", estimate: str(j.memoryFit?.estimate, 40), why: str(j.memoryFit?.why, 240) },
+        correctness: arr(j.correctness, 10).map((c) => ({ line: Number(c?.line) || 0, severity: ["error", "warning", "info"].includes(c?.severity) ? c.severity : "info", issue: str(c?.issue, 260) })),
+        edgeCases: arr(j.edgeCases, 8).map((e) => ({ input: str(e?.input, 200), risk: str(e?.risk, 200) })),
+        quality: { score: Math.max(0, Math.min(100, Math.round(Number(j.quality?.score) || 0))), readability: str(j.quality?.readability, 240), notes: arr(j.quality?.notes, 6).map((x) => str(x, 200)) },
+        optimizations: arr(j.optimizations, 6).map((o) => ({ idea: str(o?.idea, 260), gain: str(o?.gain, 80) })),
+        dataStructures: arr(j.dataStructures, 8).map((x) => str(x, 200)),
+        language: arr(j.language, 6).map((x) => str(x, 220)),
+      };
+    },
+  },
+
   /* ── Problem finder ── */
   find_problems_intent: {
     model: "main",

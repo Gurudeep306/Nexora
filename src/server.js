@@ -1277,6 +1277,7 @@ app.get("/api/activity/:date", async (req, res) => {
 /* ========== TRANSLATE ========== (see src/ai-assist.js) */
 // Translation (with language detection + AI engine) and the coding coach.
 app.use(createAiAssistRouter({ get, all, run, aiLimiter }));
+app.use(require("./routes/coding").createCodingRouter({ get, me, aiLimiter, judgeLimiter }));
 app.use(require("./routes/sources").createSourcesRouter({ can, me, invalidateCatalog: () => require("./problem-catalog").invalidateCatalog() }));
 
 /* ========== TESTCASES ========== */
@@ -6182,6 +6183,13 @@ io.on("connection", (socket) => {
   // restart often, so it must never cost anything by default.
   if (BG_SCRAPE_ENABLED) {
     _backgroundScrape();
+  }
+
+  // Problem sources an admin marked for daily syncing (checked hourly).
+  if (process.env.NODE_ENV !== "test" && process.env.DISABLE_SCRAPER !== "1") {
+    const sourcesTick = () => require("./sources").autoSyncDue().catch((e) => console.warn("[sources] auto sync:", e.message));
+    setTimeout(sourcesTick, 5 * 60_000).unref?.();
+    setInterval(sourcesTick, 60 * 60_000).unref?.();
   }
 })();
 
