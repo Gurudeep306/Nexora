@@ -19,7 +19,7 @@ import type { NexusWebState, NexusWebStructure, WebCluster } from './types'
  * soon") and PYQs. The mapping is content/nexus/_hubs.json.
  */
 
-function useNexusWeb() {
+export function useNexusWeb() {
   const { user } = useAuth()
   const username = user?.username ?? ''
   const [structure, setStructure] = useState<NexusWebStructure | null>(() => cachedStructure())
@@ -45,7 +45,7 @@ function useNexusWeb() {
   return { structure, state, clusters, error, notes }
 }
 
-const progressOf = (c: WebCluster) => (c.nodes.length ? Math.round(c.nodes.reduce((a, n) => a + n.p, 0) / c.nodes.length) : 0)
+export const progressOf = (c: WebCluster) => (c.nodes.length ? Math.round(c.nodes.reduce((a, n) => a + n.p, 0) / c.nodes.length) : 0)
 
 function Ring({ value, color }: { value: number; color: string }) {
   const r = 15

@@ -59,6 +59,9 @@ function conceptTitles(lesson: Lesson): Record<string, string> {
   return out
 }
 
+/** GATE notes subject id → its Nexus subject (content/nexus/_hubs.json), where they differ. */
+const NEXUS_OF: Record<string, string> = { db: 'dbms', pds: 'c' }
+
 const DIFF = ['', 'Easy', 'Easy-medium', 'Medium', 'Hard', 'Very hard']
 
 /* "PYQs from this lesson": every past question this lesson teaches, with its year, marks and difficulty. */
@@ -264,6 +267,14 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
                   { label: `Chapter ${chapter.n}` },
                 ]}
               />
+              <span className="nr-bar-links">
+                <Link to={`/learn/${NEXUS_OF[subject.id] ?? subject.id}`} className="nr-bar-link">
+                  <Icon name="nexus" className="size-3.5" aria-hidden="true" /> Skill tree
+                </Link>
+                <Link to={`/gate/practice?subject=${encodeURIComponent(subject.id)}`} className="nr-bar-link">
+                  <Icon name="practice" className="size-3.5" aria-hidden="true" /> Practice
+                </Link>
+              </span>
             </div>
             <details className="notes-tree-mobile" open={treeOpen} onToggle={(e) => setTreeOpen((e.target as HTMLDetailsElement).open)}>
               <summary>
