@@ -17,7 +17,7 @@ import './atlas.css'
 const EASE = [0.22, 1, 0.36, 1] as const
 
 /** One subject as a tiny star chart: you at the centre, a ring per zone, a star per skill. */
-export function ConstellationGlyph({ c, deps, size = 76 }: { c: WebCluster; deps: Map<StarKey, number>; size?: number }) {
+export function ConstellationGlyph({ c, deps, size = 76, x, y, draw = size }: { c: WebCluster; deps: Map<StarKey, number>; size?: number; x?: number; y?: number; draw?: number }) {
   const mid = size / 2
   const zones = [...new Set(c.nodes.map((n) => n.z))].sort((a, b) => a - b)
   const zi = new Map(zones.map((z, i) => [z, i]))
@@ -36,7 +36,7 @@ export function ConstellationGlyph({ c, deps, size = 76 }: { c: WebCluster; deps
     })
   }
   return (
-    <svg viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
+    <svg viewBox={`0 0 ${size} ${size}`} x={x} y={y} width={x != null ? draw : undefined} height={x != null ? draw : undefined} aria-hidden="true">
       {zones.map((z) => (
         <circle key={z} cx={mid} cy={mid} r={rOf(z)} className="ax-glyph-ring" />
       ))}

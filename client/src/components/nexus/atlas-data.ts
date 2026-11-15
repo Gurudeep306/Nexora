@@ -47,3 +47,21 @@ export function tally(c: WebCluster): Tally {
   const open = core.filter((n) => n.s === 1).length
   return { total: core.length, mastered, open, pct: core.length ? Math.round((mastered / core.length) * 100) : 0 }
 }
+
+/** Subject → subject links: how many skills in `to` need a skill in `from`. */
+export function subjectLinks(clusters: WebCluster[]): { from: string; to: string; n: number }[] {
+  const ids = new Set(clusters.map((c) => c.id))
+  const w = new Map<string, number>()
+  for (const c of clusters)
+    for (const n of c.nodes)
+      for (const x of n.cx ?? []) {
+        const from = x.split(':')[0]
+        if (from === c.id || !ids.has(from)) continue
+        const k = `${from}>${c.id}`
+        w.set(k, (w.get(k) ?? 0) + 1)
+      }
+  return [...w].map(([k, n]) => {
+    const [from, to] = k.split('>')
+    return { from, to, n }
+  })
+}

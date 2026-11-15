@@ -312,3 +312,149 @@
 [data-style='journal'] .nx-rail {
   display: none;
 }
+
+/* ── The sky map (SkyMap.tsx) ── */
+@layer components {
+  .ax-sky-scroll {
+    overflow-x: auto;
+    outline: none;
+    border-radius: 6px;
+  }
+  .ax-sky-scroll:focus-visible {
+    outline: 2px solid var(--color-accent-brand);
+    outline-offset: 2px;
+  }
+  .ax-sky-plate {
+    position: relative;
+    min-width: 760px;
+  }
+  .ax-sky-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .ax-region {
+    fill: none;
+    stroke: var(--color-border-strong);
+    stroke-width: 1;
+    stroke-dasharray: 5 5;
+  }
+  .ax-region-name {
+    font-family: var(--font-sans, system-ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    fill: var(--color-text-secondary);
+  }
+  .ax-region-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    fill: var(--color-text-muted);
+  }
+  .ax-link {
+    fill: none;
+    stroke: var(--color-text-muted);
+    stroke-opacity: 0.32;
+    transition: stroke-opacity 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .ax-links.is-dim .ax-link {
+    stroke-opacity: 0.08;
+  }
+  .ax-link-hot {
+    fill: none;
+    stroke: var(--color-accent-brand);
+    stroke-linecap: round;
+  }
+  .ax-link-hot.is-need {
+    stroke: var(--color-text-primary);
+  }
+  .ax-hot.is-drawing .ax-link-hot {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: ax-draw 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes ax-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .ax-arrow {
+    fill: var(--color-accent-brand);
+  }
+  .ax-sub {
+    cursor: pointer;
+    outline: none;
+  }
+  .ax-sub-hit {
+    fill: transparent;
+  }
+  .ax-sub:hover .ax-sub-hit,
+  .ax-sub.is-on .ax-sub-hit {
+    fill: var(--color-bg-surface-2);
+  }
+  .ax-sub:focus-visible .ax-sub-hit {
+    fill: var(--color-bg-surface-2);
+    stroke: var(--color-accent-brand);
+    stroke-width: 2;
+  }
+  .ax-sub.is-linked .ax-sub-hit {
+    fill: var(--color-bg-surface);
+    stroke: var(--color-border-strong);
+    stroke-width: 1;
+  }
+  .ax-sub-name {
+    font-family: var(--ed-serif);
+    font-size: 13.5px;
+    fill: var(--color-text-primary);
+  }
+  .ax-sub-meta {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    fill: var(--color-text-muted);
+  }
+  .ax-you {
+    fill: none;
+    stroke: var(--color-accent-brand);
+    stroke-width: 1.6;
+  }
+  .ax-you-label {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    fill: var(--color-text-primary);
+  }
+  .ax-you-key {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 0.4rem;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1.6px var(--color-accent-brand);
+    vertical-align: -1px;
+  }
+  .ax-sky-plate-card {
+    position: absolute;
+  }
+}
+@layer components {
+  .ax-view {
+    display: inline-flex;
+    gap: 1rem;
+    font-size: 13px;
+  }
+  .ax-view button {
+    padding: 0.25rem 0;
+    color: var(--color-text-muted);
+    background: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+  }
+  .ax-view button[aria-pressed='true'] {
+    color: var(--color-text-primary);
+    border-bottom-color: var(--color-text-primary);
+  }
+  .ax-view button:focus-visible {
+    outline: 2px solid var(--color-accent-brand);
+    outline-offset: 2px;
+  }
+}
