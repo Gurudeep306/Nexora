@@ -82,7 +82,6 @@ export interface StatsForProfile {
 }
 
 export const PLATFORM_HANDLE_KEYS = [
-  { key: 'cf_handle', label: 'Codeforces', url: (h: string) => `https://codeforces.com/profile/${h}` },
+  // Codeforces, AtCoder and LeetCode are linked and verified in LinkedAccounts.
   { key: 'cc_handle', label: 'CodeChef', url: (h: string) => `https://www.codechef.com/users/${h}` },
-  { key: 'ac_handle', label: 'AtCoder', url: (h: string) => `https://atcoder.jp/users/${h}` },
 ] as const

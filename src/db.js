@@ -603,6 +603,11 @@ async function initDb() {
       id, title, desc, icon, cat, target, xpReward || 0,
     ]),
   );
+  // Badges for linked judge accounts (Codeforces / AtCoder / LeetCode solves and ratings).
+  await runMany(
+    `INSERT OR IGNORE INTO achievements(id,title,description,icon,category,target,xp_reward) VALUES(?,?,?,?,?,?,?)`,
+    require("./accounts").badgeDefs(),
+  );
 
   // Problem statements table — own local database
   await run(`CREATE TABLE IF NOT EXISTS problem_statements (
