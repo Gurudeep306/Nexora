@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ChevronRight, SearchX } from 'lucide-react'
 import { Icon } from '@/components/icon/Icon'
@@ -114,15 +114,29 @@ export function Topbar() {
   useTrailRecorder()
   const back = useSmartBack()
 
+  // Styles that draw the bar flat (Field Journal) show its hairline only once
+  // the page has scrolled under it.
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 4)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-2 titlebar px-3 md:px-6 animate-fade-in">
+    <header data-ui="topbar" data-scrolled={scrolled || undefined} className="sticky top-0 z-30 flex h-14 items-center gap-2 titlebar px-3 md:px-6 animate-fade-in">
       <Tooltip label="NexoraGuru home" side="bottom">
         <Link
           to="/hub"
           aria-label="NexoraGuru home"
-          className="hidden shrink-0 rounded-lg transition-opacity hover:opacity-85 md:block"
+          className="hidden shrink-0 items-center gap-2 rounded-lg transition-opacity hover:opacity-85 md:flex"
         >
           <LogoMark size={28} interactive />
+          {/* The serif wordmark beside the mark, drawn by styles that use it. */}
+          <span className="topbar-wordmark ed-wordmark" aria-hidden="true">
+            NexoraGuru
+          </span>
         </Link>
       </Tooltip>
 
@@ -133,8 +147,8 @@ export function Topbar() {
       <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">
         {meta.section && (
           <>
-            <span className="hidden text-text-muted sm:inline">{meta.section}</span>
-            <ChevronRight className="hidden size-3.5 text-text-muted sm:inline" aria-hidden="true" />
+            <span data-ui="crumb-section" className="hidden text-text-muted sm:inline">{meta.section}</span>
+            <ChevronRight data-ui="crumb-sep" className="hidden size-3.5 text-text-muted sm:inline" aria-hidden="true" />
           </>
         )}
         <span className="truncate font-medium text-text-primary" aria-current="page">

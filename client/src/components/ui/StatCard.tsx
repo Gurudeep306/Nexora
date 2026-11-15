@@ -22,6 +22,7 @@ export function StatCard({
   value,
   sub,
   accent = 'primary',
+  spark,
   className,
 }: {
   /** A semantic icon name (preferred) or an element. */
@@ -30,18 +31,21 @@ export function StatCard({
   value: ReactNode
   sub?: ReactNode
   accent?: keyof typeof ACCENTS
+  /** Recent values, oldest first (e.g. the last 30 days), drawn as a line under the figure. */
+  spark?: number[]
   className?: string
 }) {
   const tone = ACCENTS[accent]
   return (
-    <Card className={cn('p-4', className)}>
+    <Card data-ui="stat" className={cn('p-4', className)}>
       <div className="relative flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-xs font-medium text-text-secondary uppercase tracking-wider">{label}</p>
-          <p className="mt-1.5 truncate font-display text-2xl sm:text-3xl leading-none font-semibold tracking-tight text-text-primary tabular-nums">
+          <p data-ui="stat-label" className="text-xs font-medium text-text-secondary uppercase tracking-wider">{label}</p>
+          <p data-ui="stat-value" className="mt-1.5 truncate font-display text-2xl sm:text-3xl leading-none font-semibold tracking-tight text-text-primary tabular-nums">
             {typeof value === 'number' ? <AnimatedNumber value={value} /> : value}
           </p>
           {sub && <div className="mt-2 text-xs text-text-secondary">{sub}</div>}
+          {spark && spark.length > 1 && <Sparkline values={spark} />}
         </div>
         {typeof icon === 'string' ? (
           <IconBadge name={icon} tone={tone} />
@@ -54,5 +58,21 @@ export function StatCard({
         )}
       </div>
     </Card>
+  )
+}
+/** A small line of recent values. Decorative: the figure above carries the number. */
+function Sparkline({ values }: { values: number[] }) {
+  const w = 120
+  const h = 28
+  const min = Math.min(...values)
+  const span = Math.max(...values) - min || 1
+  const pts = values.map((v, i) => [(i / (values.length - 1)) * w, h - 2 - ((v - min) / span) * (h - 4)] as const)
+  const d = pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ')
+  const [lx, ly] = pts[pts.length - 1]
+  return (
+    <svg className="ed-spark mt-3" viewBox={`0 0 ${w} ${h}`} aria-hidden="true">
+      <path d={d} />
+      <circle cx={lx} cy={ly} r="2" />
+    </svg>
   )
 }

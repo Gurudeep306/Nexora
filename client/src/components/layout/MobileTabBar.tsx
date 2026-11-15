@@ -28,7 +28,7 @@ export function MobileTabBar() {
   return (
     <nav
       aria-label="Quick navigation"
-      className="fixed inset-x-0 bottom-0 z-40 glass-thick border-x-0 border-b-0 !shadow-none pb-[env(safe-area-inset-bottom)] md:hidden"
+      className="tabbar fixed inset-x-0 bottom-0 z-40 glass-thick border-x-0 border-b-0 !shadow-none pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       <div className="mx-auto grid h-14 max-w-md" style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}>
         {tabs.map((t) =>
@@ -65,7 +65,7 @@ export function MobileTabBar() {
                     <motion.span
                       layoutId="tab-dot"
                       transition={tStandard}
-                      className="absolute top-0 h-0.5 w-7 rounded-b-full bg-accent-brand"
+                      className="tabbar-tick absolute top-0 h-0.5 w-7 rounded-b-full bg-accent-brand"
                     />
                   )}
                   <span className="flex h-7 items-center justify-center">

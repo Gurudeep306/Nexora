@@ -18,7 +18,7 @@ import { CARD_STYLES, DEFAULT_CARD_STYLE, DEFAULT_RADIUS, RADII } from './cards.
 import { DEFAULT_PATTERN, DEFAULT_STYLE, PATTERNS, STYLES } from './styles.ts'
 
 export interface Look {
-  v: 3
+  v: 4
   /** Design style id (see styles.ts) — the design language. */
   style: string
   /** Page pattern behind everything (see styles.ts). */
@@ -55,6 +55,11 @@ export interface LookTables {
   iconContainers: string[]
   iconShapes: string[]
   defaults: Look
+  /**
+   * v4 (2026): Field Journal became the house style. A look still exactly on
+   * the untouched v3 default (`from`) moves to the new default (`to`).
+   */
+  v4: { from: Record<string, string>; to: Record<string, string> }
   /** v1 value → v2 value, per field. */
   legacy: Record<'wallpaper' | 'accent' | 'fontStyle' | 'fontSize' | 'cardStyle' | 'iconShape' | 'iconPack', Record<string, string>>
 }
@@ -62,7 +67,7 @@ export interface LookTables {
 const defaultSet = ICON_SETS.find((s) => s.id === DEFAULT_ICON_SET)!
 
 export const DEFAULT_LOOK: Look = {
-  v: 3,
+  v: 4,
   style: DEFAULT_STYLE,
   pattern: DEFAULT_PATTERN,
   theme: DEFAULT_PALETTE,
@@ -77,6 +82,21 @@ export const DEFAULT_LOOK: Look = {
   iconStyle: defaultSet.defaultStyle,
   iconContainer: DEFAULT_ICON_CONTAINER,
   iconShape: DEFAULT_ICON_SHAPE,
+}
+
+/**
+ * Hive keeps the look it had before Field Journal: while a Hive page is open,
+ * a look on the journal style shows as the old default (Studio on Midnight).
+ * Every other style already looks the same in Hive as before, so it stays.
+ */
+export function hiveLook(look: Look): Look {
+  if (look.style !== 'journal') return look
+  return { ...look, ...(LOOK_TABLES.v4.from as Partial<Look>) }
+}
+
+/** Paths that keep their pre-journal look (see hiveLook). */
+export function isHivePath(pathname: string): boolean {
+  return pathname === '/hive' || pathname.startsWith('/hive/')
 }
 
 export const LOOK_TABLES: LookTables = {
@@ -94,6 +114,10 @@ export const LOOK_TABLES: LookTables = {
   iconContainers: ICON_CONTAINERS.map((c) => c.id),
   iconShapes: ICON_SHAPES.map((s) => s.id),
   defaults: DEFAULT_LOOK,
+  v4: {
+    from: { style: 'studio', theme: 'midnight', accent: 'theme', font: 'geist', codeFont: 'jetbrains', radius: 'rounded', cardStyle: 'soft', pattern: 'none' },
+    to: { style: DEFAULT_LOOK.style, theme: DEFAULT_LOOK.theme, accent: 'theme', font: DEFAULT_LOOK.font, codeFont: DEFAULT_LOOK.codeFont, radius: DEFAULT_LOOK.radius, cardStyle: DEFAULT_LOOK.cardStyle, pattern: DEFAULT_LOOK.pattern },
+  },
   legacy: {
     // v1 wallpapers → the theme closest in colour and mood.
     wallpaper: {
@@ -154,8 +178,8 @@ export function sanitizeLookWith(raw: unknown, T: LookTables): Look {
   // move to the new default once; anything else someone picked is kept.
   const before3 = typeof r.v !== 'number' || r.v < 3
   const container = v2(r.iconContainer, T.iconContainers)
-  return {
-    v: 3,
+  const out: Look = {
+    v: 4,
     style: v2(r.style, T.styles) || D.style,
     pattern: v2(r.pattern, T.patterns) || D.pattern,
     theme: v2(r.theme, T.themes) || v1(r.wallpaper, L.wallpaper, T.themes) || D.theme,
@@ -174,6 +198,32 @@ export function sanitizeLookWith(raw: unknown, T: LookTables): Look {
       (r.iconShape === 'free' ? 'none' : v1(r.iconPack, L.iconPack, T.iconContainers)) ||
       D.iconContainer,
     iconShape: v2(r.iconShape, T.iconShapes) || v1(r.iconShape, L.iconShape, T.iconShapes) || D.iconShape,
+  }
+  // v4: a look saved before Field Journal and still exactly on the old
+  // default moves to the new house style; anything someone changed is kept.
+  const before4 = typeof r.v !== 'number' || r.v < 4
+  if (before4 && T.v4) {
+    const o = out as unknown as Record<string, string>
+    // A field this older look never stored was on the old default then.
+    // (A field it never stored, or stored invalid, was on the old default.)
+    const given: Record<string, string> = {
+      style: v2(r.style, T.styles),
+      theme: v2(r.theme, T.themes) || v1(r.wallpaper, L.wallpaper, T.themes),
+      accent: v2(r.accent, T.accents) || v1(r.accent, L.accent, T.accents),
+      font: v2(r.font, T.fonts) || v1(r.fontStyle, L.fontStyle, T.fonts),
+      codeFont: v2(r.codeFont, T.codeFonts),
+      radius: v2(r.radius, T.radii),
+      cardStyle: v2(r.cardStyle, T.cardStyles) || v1(r.cardStyle, L.cardStyle, T.cardStyles),
+      pattern: v2(r.pattern, T.patterns),
+    }
+    for (const k of Object.keys(T.v4.from)) if (!given[k]) o[k] = T.v4.from[k]
+    const untouched = Object.keys(T.v4.from).every((k) => o[k] === T.v4.from[k])
+    if (untouched) for (const k of Object.keys(T.v4.to)) if (allowedFor(k, T.v4.to[k])) o[k] = T.v4.to[k]
+  }
+  return out
+  function allowedFor(k: string, v: string) {
+    const lists: Record<string, string[]> = { style: T.styles, theme: T.themes, accent: T.accents, font: T.fonts, codeFont: T.codeFonts, radius: T.radii, cardStyle: T.cardStyles, pattern: T.patterns }
+    return (lists[k] || []).indexOf(v) >= 0
   }
 }
 

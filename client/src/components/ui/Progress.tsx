@@ -26,9 +26,12 @@ export function Progress({
       aria-valuemin={0}
       aria-valuemax={max}
       aria-label={label}
+      data-ui="progress"
+      data-done={pct >= 100 || undefined}
       className={cn('h-1.5 w-full overflow-hidden rounded-full bg-border/20', className)}
     >
       <div
+        data-ui="progress-bar"
         className={cn('h-full rounded-full bg-primary/20 transition-[width] duration-500 ease-out', barClassName)}
         style={{ width: `${pct}%` }}
       />
@@ -53,8 +56,9 @@ export function XpBar({ xp, nextLevelXp, level, levelName }: { xp: number; nextL
           {xp.toLocaleString()} / {nextLevelXp.toLocaleString()} XP
         </span>
       </div>
-      <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-border/20">
+      <div data-ui="progress" data-done={pct >= 100 || undefined} className="relative h-2.5 w-full overflow-hidden rounded-full bg-border/20">
         <div
+          data-ui="progress-bar"
           className="h-full rounded-full bg-primary/20 transition-[width] duration-700 ease-[var(--ease-emphasized)]"
           style={{ width: `${pct}%` }}
         />

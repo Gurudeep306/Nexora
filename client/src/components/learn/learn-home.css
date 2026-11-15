@@ -86,7 +86,10 @@
   color: var(--color-accent-brand);
 }
 .lh-door.is-off {
-  opacity: 0.45;
+  /* Not available yet: a dashed edge and muted ink, still readable (4.5:1). */
+  border-style: dashed;
+  color: var(--color-text-muted);
+  background: transparent;
   pointer-events: none;
 }
 .lh-door:focus-visible,

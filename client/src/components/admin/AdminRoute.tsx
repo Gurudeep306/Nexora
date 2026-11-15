@@ -1,6 +1,7 @@
-import { lazy } from 'react'
+import { lazy, useEffect } from 'react'
 import { LoadingBlock } from '@/components/ui'
 import { useSite } from '@/context/SiteContext'
+import { useTheme } from '@/context/ThemeContext'
 import { pageLoaders } from '@/routes'
 
 const AdminPage = lazy(pageLoaders.AdminPage)
@@ -33,6 +34,12 @@ export function AdminRoute() {
  */
 export function HiveRoute() {
   const { status, loading, isStaff } = useSite()
+  // Hive keeps the look it had before Field Journal (theme/look.ts hiveLook).
+  const { setHiveScope } = useTheme()
+  useEffect(() => {
+    setHiveScope(true)
+    return () => setHiveScope(false)
+  }, [setHiveScope])
   if (loading && !status) {
     return (
       <div className="p-8" aria-busy="true">
