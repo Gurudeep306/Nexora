@@ -82,7 +82,26 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Shown until the app renders (React replaces it): the mark, and an
+           ink line drawing beneath it, in the page's own light or dark. -->
+      <style>
+        .boot { position: fixed; inset: 0; display: grid; place-items: center; background: #f0eee6; }
+        [data-mode='dark'] .boot { background: #1a1917; }
+        .boot-in { display: grid; justify-items: center; gap: 18px; }
+        .boot img { width: 44px; height: 44px; }
+        [data-mode='dark'] .boot img { filter: invert(1); }
+        .boot-line { width: 120px; height: 1px; background: rgba(20, 20, 19, 0.14); overflow: hidden; }
+        [data-mode='dark'] .boot-line { background: rgba(240, 238, 230, 0.16); }
+        .boot-line::after { content: ''; display: block; height: 100%; background: #141413; transform-origin: left; animation: boot-draw 1.4s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+        [data-mode='dark'] .boot-line::after { background: #f0eee6; }
+        @keyframes boot-draw { 0% { transform: scaleX(0); } 60% { transform: scaleX(1); } 100% { transform: scaleX(1); opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) { .boot-line::after { animation: none; transform: scaleX(1); } }
+      </style>
+      <div class="boot" role="status" aria-label="Loading NexoraGuru">
+        <div class="boot-in"><img src="/brand/ngmark-flat.svg" alt="" /><div class="boot-line"></div></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

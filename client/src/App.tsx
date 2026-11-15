@@ -3,6 +3,8 @@ import { LegacyGateRedirect } from '@/gate/LegacyGateRedirect'
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { LoadingBlock } from '@/components/ui'
+import { SortingLoader } from '@/components/ui/SortingLoader'
+import { useTheme } from '@/context/ThemeContext'
 import { useAuth } from '@/context/AuthContext'
 import { idlePrefetchCommonRoutes, pageLoaders } from '@/routes'
 import { SiteGate } from '@/components/site/SiteGate'
@@ -59,6 +61,13 @@ function GateSubjectAlias() {
 }
 
 function PageLoader() {
+  const journal = useTheme().shown.style === 'journal'
+  if (journal)
+    return (
+      <div className="grid min-h-[60vh] place-items-center py-12">
+        <SortingLoader />
+      </div>
+    )
   return (
     <div className="mx-auto max-w-4xl space-y-4 py-8" aria-busy="true">
       <div className="skeleton h-9 w-64" />
