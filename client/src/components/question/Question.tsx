@@ -20,6 +20,7 @@ import { forwardRef, useEffect, useId, useRef, useState, type ButtonHTMLAttribut
 import { ArrowRight, Check, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import './question.css'
+import { useFitMaths } from './useFitMaths'
 
 export type OptionState = 'idle' | 'right' | 'wrong' | 'missed' | 'dim'
 
@@ -84,7 +85,13 @@ export function QuestionTitle({ children, as = 'h3' }: { children: ReactNode; as
 }
 
 export function QuestionText({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn('qc-text', className)}>{children}</div>
+  const box = useRef<HTMLDivElement>(null)
+  useFitMaths(box)
+  return (
+    <div ref={box} className={cn('qc-text', className)}>
+      {children}
+    </div>
+  )
 }
 
 /** A short instruction under the question, in caption style. */
@@ -116,6 +123,8 @@ export interface OptionRowProps extends Omit<ButtonHTMLAttributes<HTMLButtonElem
 
 export const OptionRow = forwardRef<HTMLButtonElement, OptionRowProps>(function OptionRow({ letter, multi, selected, state = 'idle', word, children, className, ...rest }, ref) {
   const w = word ?? STATE_WORD[state]
+  const text = useRef<HTMLSpanElement>(null)
+  useFitMaths(text)
   return (
     <button
       ref={ref}
@@ -130,7 +139,9 @@ export const OptionRow = forwardRef<HTMLButtonElement, OptionRowProps>(function 
         {state === 'right' ? <Check className="size-3.5" /> : state === 'wrong' ? <X className="size-3.5" /> : letter}
       </span>
       <span className="sr-only">Option {letter}: </span>
-      <span className="qc-option-text">{children}</span>
+      <span ref={text} className="qc-option-text">
+        {children}
+      </span>
       {w && <span className="qc-word">{w}</span>}
     </button>
   )
