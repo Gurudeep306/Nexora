@@ -418,7 +418,7 @@ function CounterTool() {
           <div className="lab-grid cf-grid">
             <StateGraph n={n} step={machine.step} main={main} lockouts={lockouts} current={cur} fmt={fmt} />
             <div className="lab-col">
-              <h4 className="cf-h">Self-start check</h4>
+              <h3 className="cf-h">Self-start check</h3>
               <p className={cn('lab-result', selfStart ? 'is-good' : 'is-bad')}>
                 {selfStart ? 'Self-starting: every state reaches the main cycle.' : `Not self-starting: ${lockouts.length} lock-out cycle${lockouts.length === 1 ? '' : 's'}.`}
               </p>
@@ -459,7 +459,7 @@ function DesignView({ design, ff, step, fmt }: { design: CounterDesign; ff: FfKi
   return (
     <div className="lab-grid">
       <div className="lab-col">
-        <h4 className="cf-h">Minimal input equations ({ff} flip-flops)</h4>
+        <h3 className="cf-h">Minimal input equations ({ff} flip-flops)</h3>
         <ul className="cf-eqs">
           {design.names.map((k) => (
             <li key={k}>

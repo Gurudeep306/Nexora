@@ -585,3 +585,4 @@ html.dark .gate-figure img {
 .nx-lesson .md th { background: none; border: 0; border-bottom: 1px solid var(--read-rule-strong); padding: 0.55em 0.9em 0.55em 0; }
 .nx-lesson .md td { border: 0; border-bottom: 1px solid var(--read-rule); padding: 0.55em 0.9em 0.55em 0; }
 .nx-lesson .md-math .katex { color: var(--read-ink); }
+.md :is(td, th).is-num { text-align: right; font-variant-numeric: tabular-nums; }

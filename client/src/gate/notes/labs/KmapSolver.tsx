@@ -197,9 +197,9 @@ function MapTool({ values, setValues }: { values: CellValue[]; setValues: (v: Ce
         )}
         {form === 'sop' && cls && (
           <>
-            <h4 className="km-h">
+            <h3 className="km-h">
               Prime implicants ({cls.primes.length}); essential: {cls.essential.length}
-            </h4>
+            </h3>
             <ul className="km-pis">
               {cls.primes.map((p) => (
                 <li key={p}>

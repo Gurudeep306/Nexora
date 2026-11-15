@@ -16,6 +16,7 @@ import { Icon, type IconName } from '@/components/icon/Icon'
 import { cn } from '@/lib/utils'
 import { VizBlock } from '@/viz/VizBlock'
 import type { VizSpec } from '@/viz/schema'
+import { mathLabelled } from '@/learn/mathLabelled'
 import type { BlockName, DirectiveNode, Inline, Node, NotesSubject, PracticeQuestion } from '../types'
 import { PracticeEmbed } from './PracticeEmbed'
 import { LABS, type LabName } from '../labs'
@@ -72,17 +73,17 @@ function href(h: string) {
   return i < 0 ? h : `${h.slice(0, i)}#${domId(h.slice(i + 1))}`
 }
 
-export function Inlines({ nodes }: { nodes: Inline[] }) {
+export function Inlines({ nodes, header }: { nodes: Inline[]; header?: boolean }) {
   return (
     <>
       {nodes.map((n, i) => (
-        <InlineNode key={i} n={n} />
+        <InlineNode key={i} n={n} header={header} />
       ))}
     </>
   )
 }
 
-function InlineNode({ n }: { n: Inline }) {
+function InlineNode({ n, header }: { n: Inline; header?: boolean }) {
   if (typeof n === 'string') return <>{n}</>
   switch (n.t) {
     case 'em':
@@ -96,7 +97,7 @@ function InlineNode({ n }: { n: Inline }) {
     case 'code':
       return <code className="notes-code">{n.v}</code>
     case 'im':
-      return <span className="nm" dangerouslySetInnerHTML={{ __html: tex(n.v, false) }} />
+      return <span className="nm" dangerouslySetInnerHTML={{ __html: header ? mathLabelled(n.v) : tex(n.v, false) }} />
     case 'br':
       return <br />
     case 'img':
@@ -133,7 +134,6 @@ export function Nodes({ nodes }: { nodes: Node[] }) {
 
 function NodeView({ n }: { n: Node }) {
   const did = useDomId()
-  const headRow = useId()
   switch (n.t) {
     case 'h': {
       const H = `h${Math.min(6, n.d)}` as 'h2'
@@ -186,18 +186,26 @@ function NodeView({ n }: { n: Node }) {
       const [first, ...rows] = n.c
       // A header row with no text (a layout-only table) is left out.
       const head = first && first.c.some((cell) => cell.c.length > 0) ? first : undefined
-      const align = (i: number) => (n.align[i] ?? undefined) as 'left' | 'center' | 'right' | undefined
+      // Columns of plain numbers line up on the right (tabular figures), unless
+      // the author set an alignment.
+      const numeric = (i: number) => rows.length > 0 && rows.every((r) => isNumberCell(r.c[i]?.c))
+      const align = (i: number) => (n.align[i] ?? (numeric(i) ? 'right' : undefined)) as 'left' | 'center' | 'right' | undefined
       return (
-        <div className="notes-table" tabIndex={0} role="region" aria-label={head ? undefined : 'Table'} aria-labelledby={head ? headRow : undefined}>
+        <div className="notes-table" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
           <table>
             {head && (
               <thead>
-                <tr id={headRow}>
-                  {head.c.map((cell, i) => (
-                    <th key={i} scope="col" style={{ textAlign: align(i) }}>
-                      <Inlines nodes={cell.c} />
-                    </th>
-                  ))}
+                <tr>
+                  {head.c.map((cell, i) =>
+                    // An empty corner cell heads nothing: a plain cell, not a header.
+                    cell.c.length === 0 ? (
+                      <td key={i} />
+                    ) : (
+                      <th key={i} scope="col" style={{ textAlign: align(i) }}>
+                        <Inlines nodes={cell.c} header />
+                      </th>
+                    ),
+                  )}
                 </tr>
               </thead>
             )}
@@ -219,6 +227,14 @@ function NodeView({ n }: { n: Node }) {
     case 'block':
       return <Block node={n} />
   }
+}
+
+const NUMBER = /^[\s(]*[-+−±]?\s*[\d.,]+\s*(%|[kKMG]|ns|ms|s)?[\s)]*$/
+/** A table cell that holds just a number (plain text, digits and separators). */
+function isNumberCell(c: Inline[] | undefined): boolean {
+  if (!c || c.length === 0) return false
+  const text = c.map((x) => (typeof x === 'string' ? x : x && typeof x === 'object' && 't' in x && x.t === 'code' ? x.v : '\u0000')).join('')
+  return NUMBER.test(text) && /\d/.test(text)
 }
 
 /* ── Hand-drawn bits ─────────────────────────────────────────────────── */

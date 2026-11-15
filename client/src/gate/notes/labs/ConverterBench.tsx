@@ -257,7 +257,7 @@ function SarTool() {
       </div>
       {res && (
         <>
-          <div className="lab-strips" aria-label={`Successive-approximation register after ${k} of ${n} clocks: ${bstr(code, n)}`}>
+          <div className="lab-strips" role="img" aria-label={`Successive-approximation register after ${k} of ${n} clocks: ${bstr(code, n)}`}>
             <div className="lab-strip" aria-hidden="true">
               <span className="lab-strip-label">bit</span>
               {Array.from({ length: n }, (_, i) => (
