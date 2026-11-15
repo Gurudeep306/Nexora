@@ -15,7 +15,7 @@ import { setFocusProject } from '../Showcase'
 import { Dot, NeedsList, useNeeds, useOverview } from '../Inbox'
 
 export default function HomePage() {
-  const { boot, live, machines } = useHive()
+  const { boot, live, machines, approvals } = useHive()
   const navigate = useNavigate()
   const { tasks, today } = useOverview()
   const needs = useNeeds(tasks)
@@ -76,7 +76,12 @@ export default function HomePage() {
           <h1 className="mt-3 text-[26px] font-semibold tracking-[-0.02em] text-[var(--hv-text-1)] sm:text-[30px]">
             {hello}, {boot.me.username}
           </h1>
-          <p className="mt-1.5 text-[14.5px] text-text-muted">{live.length ? `${live.length} agent${live.length === 1 ? ' is' : 's are'} working right now.` : 'Ask anything, or put agents to work on a project.'}</p>
+          <p className="mt-1.5 text-[14.5px] text-text-muted">
+            {new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}
+            {' · '}
+            {live.length ? `${live.length} agent${live.length === 1 ? ' is' : 's are'} working right now` : 'Ask anything, or put agents to work on a project'}
+            {approvals.length > 0 && ` · ${approvals.length} approval${approvals.length === 1 ? '' : 's'} waiting`}
+          </p>
         </div>
 
         {/* One composer, three intents */}

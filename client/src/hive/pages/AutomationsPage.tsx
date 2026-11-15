@@ -7,6 +7,7 @@
    ──────────────────────────────────────────────────────────────────────── */
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { PageHeader } from '../kit'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   ArrowUpRight,
@@ -218,7 +219,7 @@ export default function AutomationsPage() {
       {!data ? (
         <div className="mb-10 grid gap-3 md:grid-cols-2">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="hive-shimmer h-44 rounded-[18px]" />
+            <div key={i} className="hive-shimmer h-44 rounded-2xl" />
           ))}
         </div>
       ) : schedules.length ? (
@@ -274,10 +275,14 @@ function Hero({ schedules, loaded, onNew }: { schedules: Schedule[]; loaded: boo
         <span className="hive-tile size-12" style={{ ['--tile' as string]: 'oklch(66% 0.15 270)' }}>
           <CalendarClock className="size-5" />
         </span>
-        <div className="min-w-0 flex-1">
-          <h1 className="text-[26px] font-semibold tracking-[-0.02em] text-text-primary">Automations</h1>
-          <p className="mt-1 text-[14px] text-text-muted">Hive keeps working while you sleep.</p>
-          <div className="mt-3 min-h-7">
+        <PageHeader
+          className="min-w-0 flex-1 sm:items-center"
+          title="Automations"
+          titleClassName="text-[26px] tracking-[-0.02em]"
+          sub="Hive keeps working while you sleep."
+          subClassName="text-[14px] text-text-muted"
+          meta={
+            <div className="mt-3 min-h-7">
             {!loaded ? (
               <div className="hive-shimmer h-7 w-60 rounded-full" />
             ) : next ? (
@@ -299,11 +304,14 @@ function Hero({ schedules, loaded, onNew }: { schedules: Schedule[]; loaded: boo
               </span>
             )}
             {loaded && active > 0 && <span className="ml-2 text-[12px] text-text-muted">{active} active</span>}
-          </div>
-        </div>
-        <Button onClick={onNew}>
-          <Plus /> New automation
-        </Button>
+            </div>
+          }
+          actions={
+            <Button onClick={onNew}>
+              <Plus /> New automation
+            </Button>
+          }
+        />
       </div>
     </div>
   )
@@ -557,7 +565,7 @@ function Autopilots({ plugins, admin }: { plugins: Plugin[] | null; admin: boole
       <div className="grid gap-3 md:grid-cols-2">
         {!plugins &&
           [0, 1, 2, 3].map((i) => (
-            <div key={i} className="hive-shimmer h-24 rounded-[18px]" />
+            <div key={i} className="hive-shimmer h-24 rounded-2xl" />
           ))}
         {list.map(({ id, icon: Icon, hue, p }, i) => {
           const on = local[id] ?? p!.enabled

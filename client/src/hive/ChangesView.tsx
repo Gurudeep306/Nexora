@@ -145,14 +145,14 @@ export function ChangesView({ taskId, agents }: { taskId: string; agents: AgentR
         </aside>
 
         <div className="min-h-[420px] overflow-hidden hive-card">
-          {selected ? <DiffPane key={`${variant}:${selected}`} taskId={taskId} path={selected} variant={variant} onSaved={load} version={changesVersion} /> : <div className="grid h-full place-items-center text-sm text-text-muted">Select a file to see its diff</div>}
+          {selected ? <DiffPane key={`${variant}:${selected}`} taskId={taskId} path={selected} variant={variant} change={changes.find((c) => c.path === selected) ?? null} onSaved={load} version={changesVersion} /> : <div className="grid h-full place-items-center text-sm text-text-muted">Select a file to see its diff</div>}
         </div>
       </div>
     </div>
   )
 }
 
-function DiffPane({ taskId, path, variant, onSaved, version }: { taskId: string; path: string; variant: string; onSaved: () => void; version: number }) {
+function DiffPane({ taskId, path, variant, change, onSaved, version }: { taskId: string; path: string; variant: string; change: Change | null; onSaved: () => void; version: number }) {
   const toast = useToast()
   const theme = useMonacoAppTheme()
   const [file, setFile] = useState<{ base: string | null; current: string | null; status: string } | null>(null)
@@ -229,6 +229,11 @@ function DiffPane({ taskId, path, variant, onSaved, version }: { taskId: string;
       <div className="flex items-center gap-2 border-b hive-line px-3 py-2">
         <span className="min-w-0 flex-1 truncate font-mono text-xs text-text-primary">{path}</span>
         {file && <span className="text-[11px] capitalize text-text-muted">{file.status}</span>}
+        {change && (
+          <span className="font-mono text-[11px] tabular-nums">
+            <span className="text-state-success">+{change.additions}</span> <span className="text-state-error">−{change.deletions}</span>
+          </span>
+        )}
         {editing ? (
           <>
             <Button size="sm" variant="ghost" onClick={() => (setEditing(false), setDirty(false))}>

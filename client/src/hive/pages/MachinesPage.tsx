@@ -7,7 +7,7 @@ import { API_BASE } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
 import { useHive } from '../store'
-import { StatusPill } from '../kit'
+import { PageHeader, StatusPill } from '../kit'
 import type { Machine } from '../types'
 import { timeAgo } from '../ui'
 
@@ -32,15 +32,15 @@ export default function MachinesPage() {
   const [adding, setAdding] = useState(false)
   return (
     <div className="mx-auto w-full max-w-[1080px] px-4 pb-24 pt-8 sm:px-8">
-      <div className="flex flex-col items-start gap-3 sm:flex-row">
-        <div className="min-w-0 flex-1">
-          <h1 className="text-[22px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]">Machines</h1>
-          <p className="mt-1 max-w-2xl text-[13px] text-[var(--hv-text-3)]">Give agents a real computer: your laptop, a home server or a free cloud VM. They read and write real folders, install packages, run tests and dev servers, and you approve from any browser. The bridge is one file, needs Node 18+ and opens no ports.</p>
-        </div>
-        <Button size="sm" onClick={() => setAdding(true)}>
-          <Plus /> Connect a machine
-        </Button>
-      </div>
+      <PageHeader
+        title="Machines"
+        sub="Give agents a real computer: your laptop, a home server or a free cloud VM. They read and write real folders, install packages, run tests and dev servers, and you approve from any browser. The bridge is one file, needs Node 18+ and opens no ports."
+        actions={
+          <Button size="sm" onClick={() => setAdding(true)}>
+            <Plus /> Connect a machine
+          </Button>
+        }
+      />
       {/* What a machine is for: shown until the first one is connected. */}
       {machines.length === 0 && (
         <div className="mt-6 grid gap-2 sm:grid-cols-3">

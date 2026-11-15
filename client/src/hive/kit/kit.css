@@ -40,11 +40,12 @@
   --hv-info: var(--color-state-info);
   --hv-focus-ring: var(--color-focus, var(--color-accent-brand));
 
-  /* Shape and rhythm (4px grid). */
-  --hv-r-chip: 6px;
-  --hv-r-btn: 8px;
-  --hv-r-card: 12px;
-  --hv-r-dialog: 16px;
+  /* Shape and rhythm (4px grid). Sharp edges: tight corners are the premium
+     Hive look — 2px chips, 3px buttons, 4px cards, 6px dialogs. */
+  --hv-r-chip: 2px;
+  --hv-r-btn: 3px;
+  --hv-r-card: 4px;
+  --hv-r-dialog: 6px;
   --hv-row-h: 40px;
 
   /* Type scale (px): meta 12 · body-sm 12.5 · body 13.5 · emphasis 14 · section 17 · page 26. */
@@ -154,10 +155,27 @@
 @keyframes hv-peek-in { from { transform: translateX(-8px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .hv-peek { animation: none; } }
 
-/* Composer: a quiet accent glow when focused. */
+/* Composer: a crisp 1px accent ring when focused — no glow. */
 .hv-composer:focus-within {
-  border-color: color-mix(in oklab, var(--hv-accent) 70%, transparent);
-  box-shadow: 0 0 0 1px var(--hv-accent), 0 0 24px -8px var(--hv-accent);
+  border-color: var(--hv-accent);
+  box-shadow: 0 0 0 1px var(--hv-accent);
+}
+
+/* Loaders: an arc spinner for contained waits, a breathing skeleton block.
+   Both go static under prefers-reduced-motion. */
+.hv-spinner-svg { animation: hv-spin 0.8s linear infinite; }
+@keyframes hv-spin { to { transform: rotate(360deg); } }
+.hv-skeleton {
+  background: color-mix(in oklab, var(--hv-text-1) 8%, transparent);
+  border-radius: var(--hv-r-btn);
+  animation: hv-skel 1.6s ease-in-out infinite;
+}
+@keyframes hv-skel {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hv-spinner-svg, .hv-skeleton { animation: none; }
 }
 
 /* Phones: the dense desktop label sizes (10–11.5px) become 12px, so every

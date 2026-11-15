@@ -272,7 +272,7 @@ function DailyChart({ spend, days }: { spend: Spend | null; days: number }) {
         <h2 className="mr-auto text-[14px] font-semibold text-text-primary">Tokens per day</h2>
         {SERIES.map((s) => (
           <span key={s.key} className="inline-flex items-center gap-1.5 text-[12px] text-text-secondary">
-            <span className="size-2.5 rounded-[3px]" style={{ background: s.color }} />
+            <span className="size-2.5 rounded-sm" style={{ background: s.color }} />
             {s.label}
             <span className="tabular-nums text-text-muted">{fmtTokens(totals[s.key])}</span>
           </span>
@@ -451,7 +451,7 @@ function CapsList({ boot, caps, admin, onAdd, onChanged }: { boot: Bootstrap; ca
     return (
       <div className="grid gap-3 md:grid-cols-2">
         {[0, 1].map((i) => (
-          <div key={i} className="hive-shimmer h-24 rounded-[18px]" />
+          <div key={i} className="hive-shimmer h-24 rounded-2xl" />
         ))}
       </div>
     )
@@ -775,7 +775,7 @@ function AlertsList({ alerts }: { alerts: HiveAlert[] | null }) {
     return (
       <div className="space-y-2">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="hive-shimmer h-16 rounded-[18px]" />
+          <div key={i} className="hive-shimmer h-16 rounded-2xl" />
         ))}
       </div>
     )
