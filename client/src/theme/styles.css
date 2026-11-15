@@ -1444,3 +1444,27 @@ html[data-pattern] body {
 [data-style='journal'] .rp-case:not([data-passed]) {
   box-shadow: inset 2px 0 0 var(--color-state-error);
 }
+[data-style='journal'] .verdict-word.text-success {
+  color: var(--color-state-success);
+}
+[data-style='journal'] .verdict-word.text-destructive {
+  color: var(--color-state-error);
+}
+[data-style='journal'] .verdict-word.text-warning {
+  color: var(--color-state-warning);
+}
+[data-style='journal'] .verdict-word.text-info {
+  color: var(--color-state-info);
+}
+/* In tables a platform is a mono word, not a pill. */
+[data-style='journal'] table .platform-word {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: 0 0 #0000;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}

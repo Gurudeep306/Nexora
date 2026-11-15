@@ -161,7 +161,9 @@ export default function SubmissionsPage() {
             <Table>
               <THead>
                 <TR className="hover:bg-transparent">
-                  <TH className="w-8" />
+                  <TH className="w-8">
+                    <span className="sr-only">Details</span>
+                  </TH>
                   <TH>Verdict</TH>
                   <TH>Problem</TH>
                   <TH className="hidden md:table-cell">Platform</TH>
@@ -178,14 +180,23 @@ export default function SubmissionsPage() {
                       <TR
                         className={cn('cursor-pointer', open && 'bg-surface-2/80')}
                         onClick={() => setExpanded(open ? null : row.id)}
-                        aria-expanded={open}
                       >
                         <TD className="pr-0 text-foreground-faint">
-                          <ChevronDown
-                            className={cn('size-4 transition-transform duration-200', open && 'rotate-180')}
-                            aria-hidden="true"
-                          />
-                          <span className="sr-only">{open ? 'Collapse' : 'Expand'} submission {row.id}</span>
+                          <button
+                            type="button"
+                            aria-expanded={open}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setExpanded(open ? null : row.id)
+                            }}
+                            className="grid size-6 cursor-pointer place-items-center rounded-md hover:text-text-primary"
+                          >
+                            <ChevronDown
+                              className={cn('size-4 transition-transform duration-200', open && 'rotate-180')}
+                              aria-hidden="true"
+                            />
+                            <span className="sr-only">{open ? 'Hide' : 'Show'} the code of submission {row.id}</span>
+                          </button>
                         </TD>
                         <TD>
                           <VerdictBadge verdict={row.verdict} />
