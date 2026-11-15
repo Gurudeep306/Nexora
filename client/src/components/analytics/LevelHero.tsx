@@ -68,7 +68,7 @@ export function LevelHero({ perf }: { perf: FullPerformanceResponse }) {
                   </div>
                   <Progress
                     value={probPct}
-                    barClassName={lvl.probGated ? 'bg-gradient-to-r from-cyan to-info' : 'bg-success'}
+                    barClassName={lvl.probGated ? 'bg-accent-brand' : 'bg-success'}
                   />
                 </div>
               </>

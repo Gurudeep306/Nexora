@@ -64,10 +64,6 @@ export function GreetingHero({
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, ease: 'easeOut' }}>
       <Card glow className="relative overflow-hidden p-5 md:p-6">
         {/* ambient sweep */}
-        <div
-          className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-primary/15 blur-3xl"
-          aria-hidden="true"
-        />
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex min-w-0 items-center gap-4">
             <Link to="/profile" className="group relative shrink-0" aria-label="Open your profile">

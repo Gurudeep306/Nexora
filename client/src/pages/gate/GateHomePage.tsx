@@ -100,10 +100,6 @@ function Hero({ summary, loading }: { summary: GateSummary | null; loading: bool
 
   return (
     <Card className="relative overflow-hidden p-0">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-accent-brand/10 blur-3xl"
-      />
       <div className="relative grid gap-5 p-5 sm:p-6 md:grid-cols-[1fr_auto] md:items-center">
         <div className="min-w-0">
           <p className="text-[13px] text-text-muted">{greeting()},</p>

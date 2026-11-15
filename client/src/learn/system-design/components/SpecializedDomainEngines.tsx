@@ -412,7 +412,7 @@ export const SnowflakeIdGeneratorEngine: React.FC = () => {
             onClick={handleClockDrift}
             className={`rounded-lg px-2.5 py-1 text-[11px] font-mono font-bold ring-1 transition flex items-center gap-1 ${
               isClockSkew
-                ? 'bg-rose-500/30 text-rose-300 ring-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.4)] animate-pulse'
+                ? 'bg-rose-500/30 text-rose-300 ring-rose-500 animate-pulse'
                 : 'bg-amber-500/20 text-amber-300 ring-amber-500/40 hover:bg-amber-500/30'
             }`}
           >
@@ -437,7 +437,7 @@ export const SnowflakeIdGeneratorEngine: React.FC = () => {
           {/* Timestamp bits (41 bits) */}
           <div className={`col-span-6 rounded p-2 ring-1 transition-all duration-300 ${
             isClockSkew
-              ? 'bg-rose-950/70 ring-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.35)] animate-pulse'
+              ? 'bg-rose-950/70 ring-rose-500 animate-pulse'
               : 'bg-cyan-950/40 ring-cyan-500/40'
           }`}>
             <span className={`text-[9px] block font-bold ${isClockSkew ? 'text-rose-400' : 'text-cyan-400'}`}>

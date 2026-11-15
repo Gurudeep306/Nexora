@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ChevronRight, SearchX } from 'lucide-react'
 import { Icon } from '@/components/icon/Icon'
@@ -14,6 +14,7 @@ import { openAssistantEvent } from '@/context/AgentContext'
 import { UserMenu } from './UserMenu'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { LogoMark } from '@/components/brand/Logo'
+import { useSmartBack, useTrailRecorder } from '@/lib/backNav'
 import { useProblemSearch } from '@/lib/problemSearch'
 import { pushRecentSearch, useRecentSearches } from '@/lib/recentSearches'
 import { describeRecent, pageMatches, usePageEntries, type PageEntry } from './searchSources'
@@ -109,29 +110,9 @@ export function Topbar() {
 
   const noMatches = q.length >= 2 && settled && results.length === 0 && !pages.some((n) => pageMatches(n, q))
 
-  const handleUniversalBack = useCallback(() => {
-    // If browser history has a previous entry in this session, navigate back
-    const hasHistory = typeof window !== 'undefined' && window.history.state && typeof window.history.state.idx === 'number' && window.history.state.idx > 0
-    if (hasHistory) {
-      navigate(-1)
-      return
-    }
-
-    // Contextual hierarchical fallback based on route
-    if (pathname.startsWith('/gate/cbt/')) {
-      navigate('/gate/cbt')
-    } else if (pathname === '/gate/cbt') {
-      navigate('/gate')
-    } else if (pathname.startsWith('/solve/')) {
-      navigate('/problems')
-    } else if (pathname.startsWith('/learn/dsa/')) {
-      navigate('/learn')
-    } else if (pathname.startsWith('/contests/')) {
-      navigate('/contests')
-    } else {
-      navigate('/hub')
-    }
-  }, [navigate, pathname])
+  // Back: the page you came from in this tab, else one level up (see lib/backNav).
+  useTrailRecorder()
+  const back = useSmartBack()
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-2 titlebar px-3 md:px-6 animate-fade-in">
@@ -145,22 +126,8 @@ export function Topbar() {
         </Link>
       </Tooltip>
 
-      {/* Contextual / History-aware back button */}
-      {pathname !== '/hub' && (
-        <BackButton
-          onClick={handleUniversalBack}
-          size="sm"
-          label={
-            pathname.startsWith('/gate/cbt/')
-              ? 'Back to Paper List'
-              : pathname === '/gate/cbt'
-                ? 'Back to Question Bank'
-                : pathname.startsWith('/solve/')
-                  ? 'Back to Problems'
-                  : 'Go Back'
-          }
-        />
-      )}
+      {/* Back, named for where it goes. Hidden at the top (Home). */}
+      {back.target && <BackButton onClick={back.go} size="sm" label={back.label} />}
 
       {/* Breadcrumbs */}
       <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">

@@ -55,7 +55,7 @@ const IMAGE_MAX_BYTES = 2 * 1024 * 1024; // same as avatars (src/routes/auth.js)
 const PAGE = 15;
 const DAY = 86400000;
 const CODE_LANGS = new Set(["cpp", "c", "python", "java", "javascript", "typescript", "go", "rust", "kotlin", "sql", "bash", "text"]);
-const COVER_PRESETS = new Set(["aurora", "nebula", "ember", "lagoon", "orchid", "graphite", "dawn", "matrix"]);
+const COVER_PRESETS = new Set(["plain", "aurora", "nebula", "ember", "lagoon", "orchid", "graphite", "dawn", "matrix"]);
 const ACCENTS = new Set(["brand", "info", "success", "warning", "danger"]);
 const NAME_RE = /^[A-Za-z0-9_]{1,40}$/;
 const TAG_RE = /(^|[^\w&/#])#([A-Za-z][A-Za-z0-9_]{1,39})/g;
@@ -1360,7 +1360,7 @@ function createSocialRouter(deps) {
           verified: !!row.verified,
           created_at: row.created_at,
           last_seen: visible ? row.last_seen : null,
-          cover: row.cover || "aurora",
+          cover: row.cover || "plain",
           accent: row.accent || "brand",
           location: row.location || "",
           pronouns: row.pronouns || "",

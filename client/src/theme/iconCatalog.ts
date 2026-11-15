@@ -93,9 +93,10 @@ export const ICON_SETS: IconSetInfo[] = [
 
 export const DEFAULT_ICON_SET: IconSetId = 'phosphor'
 
-export type IconContainerId = 'none' | 'soft' | 'solid' | 'outline' | 'gradient'
+export type IconContainerId = 'quiet' | 'none' | 'soft' | 'solid' | 'outline' | 'gradient'
 
 export const ICON_CONTAINERS: { id: IconContainerId; label: string }[] = [
+  { id: 'quiet', label: 'Quiet' },
   { id: 'none', label: 'Bare' },
   { id: 'soft', label: 'Soft' },
   { id: 'solid', label: 'Solid' },
@@ -103,7 +104,8 @@ export const ICON_CONTAINERS: { id: IconContainerId; label: string }[] = [
   { id: 'gradient', label: 'Gradient' },
 ]
 
-export const DEFAULT_ICON_CONTAINER: IconContainerId = 'soft'
+/** Quiet: a neutral tile and a grey glyph — colour only where it means something (success, warning, error). */
+export const DEFAULT_ICON_CONTAINER: IconContainerId = 'quiet'
 
 export type IconShapeId = 'circle' | 'squircle' | 'rounded' | 'square'
 

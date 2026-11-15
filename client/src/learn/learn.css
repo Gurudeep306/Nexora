@@ -353,7 +353,7 @@ html:not(.dark) .tok-fn { color: oklch(0.5 0.15 240); }
 .callout-interview { --cc: oklch(0.75 0.13 200); }
 
 /* ── lesson page ── */
-.learn-readbar { background: linear-gradient(90deg, var(--color-accent-brand), oklch(0.72 0.17 300)); }
+.learn-readbar { background: var(--color-accent-brand); }
 .learn-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; color: var(--color-text-secondary); background: var(--color-bg-surface-2); box-shadow: inset 0 0 0 1px var(--color-border); }
 .learn-pill svg { color: var(--color-accent-brand); }
 

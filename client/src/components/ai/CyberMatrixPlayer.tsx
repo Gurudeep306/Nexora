@@ -132,25 +132,25 @@ export function CyberMatrixPlayer({ visualization }: Props) {
   }
 
   const roleColors: Record<string, string> = {
-    active: 'border-cyan text-cyan shadow-[0_0_18px_rgba(6,182,212,0.45)] bg-cyan/10',
-    compare: 'border-amber-400 text-amber-300 shadow-[0_0_22px_rgba(251,191,36,0.55)] bg-amber-400/10',
-    swap: 'border-pink-500 text-pink-300 shadow-[0_0_24px_rgba(236,72,153,0.6)] bg-pink-500/10',
-    done: 'border-emerald-400 text-emerald-300 shadow-[0_0_16px_rgba(52,211,153,0.4)] bg-emerald-400/10',
-    found: 'border-yellow-300 text-yellow-200 shadow-[0_0_28px_rgba(253,224,71,0.7)] bg-yellow-300/15',
+    active: 'border-cyan text-cyan bg-cyan/10',
+    compare: 'border-amber-400 text-amber-300 bg-amber-400/10',
+    swap: 'border-pink-500 text-pink-300 bg-pink-500/10',
+    done: 'border-emerald-400 text-emerald-300 bg-emerald-400/10',
+    found: 'border-yellow-300 text-yellow-200 bg-yellow-300/15',
     idle: 'border-white/10 text-foreground-dim bg-white/[0.03]',
   }
 
   const pointerStyles: Record<string, { bg: string; text: string }> = {
-    left: { bg: 'bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.6)]', text: 'text-white' },
-    low: { bg: 'bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.6)]', text: 'text-white' },
-    right: { bg: 'bg-pink-500 shadow-[0_0_12px_rgba(236,72,153,0.6)]', text: 'text-white' },
-    high: { bg: 'bg-pink-500 shadow-[0_0_12px_rgba(236,72,153,0.6)]', text: 'text-white' },
-    mid: { bg: 'bg-cyan-500 shadow-[0_0_14px_rgba(6,182,212,0.7)]', text: 'text-black' },
-    pivot: { bg: 'bg-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.6)]', text: 'text-black' },
-    i: { bg: 'bg-purple-500 shadow-[0_0_12px_rgba(168,85,247,0.6)]', text: 'text-white' },
-    j: { bg: 'bg-cyan-500 shadow-[0_0_12px_rgba(6,182,212,0.6)]', text: 'text-black' },
-    start: { bg: 'bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.6)]', text: 'text-white' },
-    end: { bg: 'bg-pink-500 shadow-[0_0_12px_rgba(236,72,153,0.6)]', text: 'text-white' },
+    left: { bg: 'bg-indigo-500', text: 'text-white' },
+    low: { bg: 'bg-indigo-500', text: 'text-white' },
+    right: { bg: 'bg-pink-500', text: 'text-white' },
+    high: { bg: 'bg-pink-500', text: 'text-white' },
+    mid: { bg: 'bg-cyan-500', text: 'text-black' },
+    pivot: { bg: 'bg-amber-500', text: 'text-black' },
+    i: { bg: 'bg-purple-500', text: 'text-white' },
+    j: { bg: 'bg-cyan-500', text: 'text-black' },
+    start: { bg: 'bg-indigo-500', text: 'text-white' },
+    end: { bg: 'bg-pink-500', text: 'text-white' },
   }
 
   return (
@@ -158,7 +158,7 @@ export function CyberMatrixPlayer({ visualization }: Props) {
       {/* Header Bar */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
         <div className="flex items-center gap-2">
-          <span className="flex size-7 items-center justify-center rounded-lg border border-cyan/50 bg-cyan/15 text-cyan shadow-[0_0_10px_rgba(6,182,212,0.4)]">
+          <span className="flex size-7 items-center justify-center rounded-lg border border-cyan/50 bg-cyan/15 text-cyan">
             <Sparkles className="size-4 animate-pulse" />
           </span>
           <div>

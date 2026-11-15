@@ -169,7 +169,7 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
           </Group>
           <p className="text-xs text-text-muted">
             Change your photo or avatar in{' '}
-            <Link to="/settings" className="text-accent-brand hover:underline" onClick={onClose}>
+            <Link to="/settings" className="text-accent-brand underline decoration-accent-brand/40 underline-offset-2 hover:decoration-accent-brand" onClick={onClose}>
               Settings
             </Link>
             .
