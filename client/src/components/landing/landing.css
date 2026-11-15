@@ -1,0 +1,195 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   Landing + sign-in visual system (the landing-page-design skill, Part B).
+
+   One typeface (Geist), the named text styles below (each one a Tailwind
+   scale step), flat backgrounds from the approved list, hairline borders all
+   the way round, one motion curve. Scoped to .lp so the app keeps its own
+   theme system; light and dark follow the site's data-mode.
+   ══════════════════════════════════════════════════════════════════════════ */
+/* In the components layer, so Tailwind utilities (spacing, margins) still win. */
+@layer components {
+.lp {
+  --lp-bg: #000000;
+  --lp-s1: #181818;
+  --lp-s2: #1f1f1f;
+  --lp-s3: #272727;
+  --lp-line: rgb(255 255 255 / 0.1);
+  --lp-line-strong: rgb(255 255 255 / 0.16);
+  --lp-text: #ffffff;
+  --lp-dim: #a1a1a1;
+  --lp-muted: #8a8a8a;
+  --lp-ink: #ffffff; /* primary button fill */
+  --lp-on-ink: #000000;
+  --lp-h-from: #ffffff;
+  --lp-h-to: #9b9b9b;
+  --lp-accent: var(--color-accent-brand);
+  --lp-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  background: var(--lp-bg);
+  color: var(--lp-text);
+  font-family: 'Geist Variable', Geist, ui-sans-serif, system-ui, sans-serif;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+[data-mode='light'] .lp {
+  --lp-bg: #ffffff;
+  --lp-s1: #fafafa;
+  --lp-s2: #f4f4f5;
+  --lp-s3: #e9e9eb;
+  --lp-line: rgb(0 0 0 / 0.08);
+  --lp-line-strong: rgb(0 0 0 / 0.14);
+  --lp-text: #000000;
+  --lp-dim: #555555;
+  --lp-muted: #666666;
+  --lp-ink: #000000;
+  --lp-on-ink: #ffffff;
+  --lp-h-from: #000000;
+  --lp-h-to: #666666;
+}
+.lp *,
+.lp *::before,
+.lp *::after {
+  font-style: normal;
+}
+.lp .lp-mono {
+  font-family: 'Geist Mono Variable', 'Geist Mono', ui-monospace, monospace;
+}
+
+/* ── Named text styles (B1) ─────────────────────────────────────────── */
+.lp .heading-1 { font-size: 3.75rem; line-height: 1; font-weight: 600; letter-spacing: -0.035em; }
+.lp .heading-2 { font-size: 3rem; line-height: 1; font-weight: 600; letter-spacing: -0.03em; }
+.lp .heading-3 { font-size: 2.25rem; line-height: 2.5rem; font-weight: 600; letter-spacing: -0.025em; }
+.lp .heading-4 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 600; letter-spacing: -0.02em; }
+.lp .heading-5 { font-size: 1.5rem; line-height: 2rem; font-weight: 600; letter-spacing: -0.015em; }
+.lp .heading-6 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; }
+.lp .title-1 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 500; }
+.lp .title-2 { font-size: 1.125rem; line-height: 1.75rem; font-weight: 500; }
+.lp .title-3 { font-size: 1rem; line-height: 1.5rem; font-weight: 500; }
+.lp .title-4 { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; }
+.lp .title-5 { font-size: 0.75rem; line-height: 1rem; font-weight: 500; }
+.lp .body-1 { font-size: 1rem; line-height: 1.5rem; font-weight: 600; }
+.lp .body-2 { font-size: 1rem; line-height: 1.5rem; font-weight: 500; }
+.lp .body-3 { font-size: 1rem; line-height: 1.5rem; font-weight: 400; }
+.lp .body-4 { font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; }
+.lp .body-5 { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; }
+.lp .body-6 { font-size: 0.875rem; line-height: 1.25rem; font-weight: 400; }
+.lp .button-lg { font-size: 1.125rem; line-height: 1.75rem; font-weight: 600; }
+.lp .button-md { font-size: 1rem; line-height: 1.5rem; font-weight: 600; }
+.lp .button-sm { font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; }
+.lp .caption-1 { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; }
+.lp .caption-2 { font-size: 0.875rem; line-height: 1.25rem; font-weight: 400; }
+.lp .caption-3 { font-size: 0.75rem; line-height: 1rem; font-weight: 600; }
+.lp .caption-4 { font-size: 0.75rem; line-height: 1rem; font-weight: 500; }
+.lp .caption-5 { font-size: 0.75rem; line-height: 1rem; font-weight: 400; }
+.lp :is(h1, h2, h3, h4, h5, h6) { text-wrap: balance; margin: 0; }
+.lp p { text-wrap: pretty; margin: 0; }
+
+/* Hero heading: the one gradient, on text only (B5). */
+.lp .lp-hero-heading {
+  background: linear-gradient(90deg, var(--lp-h-from), var(--lp-h-to));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Surfaces ───────────────────────────────────────────────────────── */
+.lp .lp-card {
+  background: var(--lp-s1);
+  border: 1px solid var(--lp-line);
+}
+.lp .lp-dim { color: var(--lp-dim); }
+.lp .lp-muted { color: var(--lp-muted); }
+
+/* ── Buttons (B2: 8px × 12px; B9: hover, active, focus) ─────────────── */
+.lp .lp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-decoration: none !important;
+  transition: background-color 300ms var(--lp-ease), color 300ms var(--lp-ease), border-color 300ms var(--lp-ease), transform 300ms var(--lp-ease), opacity 300ms var(--lp-ease);
+  outline: none;
+}
+.lp .lp-btn:active { transform: scale(0.98); }
+.lp .lp-btn:focus-visible,
+.lp a:focus-visible,
+.lp button:focus-visible,
+.lp summary:focus-visible { outline: 2px solid var(--lp-accent); outline-offset: 2px; }
+.lp .lp-btn-primary { background: var(--lp-ink); color: var(--lp-on-ink) !important; }
+.lp .lp-btn-primary:hover { opacity: 0.88; }
+.lp .lp-btn-ghost { color: var(--lp-text) !important; border: 1px solid var(--lp-line-strong); }
+.lp .lp-btn-ghost:hover { background: var(--lp-s2); }
+
+/* ── Navigation (B7) ────────────────────────────────────────────────── */
+.lp .lp-nav {
+  background: color-mix(in oklab, var(--lp-bg) 72%, transparent);
+  border: 1px solid var(--lp-line);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+}
+.lp .lp-nav a.lp-nav-link {
+  color: var(--lp-dim);
+  text-decoration: none;
+  transition: color 300ms var(--lp-ease);
+}
+.lp .lp-nav a.lp-nav-link:hover { color: var(--lp-text); }
+.lp .lp-menu-panel {
+  background: color-mix(in oklab, var(--lp-bg) 94%, transparent);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+}
+.lp .lp-burger span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform 500ms var(--lp-ease), opacity 300ms var(--lp-ease);
+}
+.lp .lp-burger span:nth-child(1) { transform: translate(-50%, -4px); }
+.lp .lp-burger span:nth-child(2) { transform: translate(-50%, 3px); }
+.lp .lp-burger[aria-expanded='true'] span:nth-child(1) { transform: translate(-50%, 0) rotate(45deg); }
+.lp .lp-burger[aria-expanded='true'] span:nth-child(2) { transform: translate(-50%, 0) rotate(-45deg); }
+
+/* ── Tagline reveal (B11) ───────────────────────────────────────────── */
+.lp .lp-word {
+  color: color-mix(in oklab, var(--lp-text) 30%, transparent);
+  transition: color 500ms var(--lp-ease);
+}
+.lp .lp-word.is-on { color: var(--lp-text); }
+
+/* ── FAQ ────────────────────────────────────────────────────────────── */
+.lp details > summary { list-style: none; cursor: pointer; }
+.lp details > summary::-webkit-details-marker { display: none; }
+.lp details .lp-faq-mark { transition: transform 500ms var(--lp-ease); }
+.lp details[open] .lp-faq-mark { transform: rotate(45deg); }
+
+/* ── Lesson preview ─────────────────────────────────────────────────── */
+.lp .lp-cell {
+  background: var(--lp-s2);
+  border: 1px solid var(--lp-line);
+  transition: background-color 500ms var(--lp-ease), border-color 500ms var(--lp-ease), opacity 500ms var(--lp-ease), color 500ms var(--lp-ease);
+}
+.lp .lp-cell.is-out { opacity: 0.32; }
+.lp .lp-cell.is-mid { border-color: var(--lp-text); background: var(--lp-s3); }
+.lp .lp-cell.is-found { background: var(--lp-ink); color: var(--lp-on-ink); border-color: var(--lp-ink); }
+.lp .lp-code-line { transition: background-color 300ms var(--lp-ease), color 300ms var(--lp-ease); }
+.lp .lp-code-line.is-on { background: var(--lp-s3); color: var(--lp-text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .lp *,
+  .lp *::before,
+  .lp *::after { transition-duration: 0ms !important; animation: none !important; }
+}
+
+/* Responsive steps for the big styles (the same named styles, larger from md up). */
+@media (min-width: 768px) {
+  .lp .md\:heading-1 { font-size: 3.75rem; line-height: 1; font-weight: 600; letter-spacing: -0.035em; }
+  .lp .md\:heading-2 { font-size: 3rem; line-height: 1; font-weight: 600; letter-spacing: -0.03em; }
+  .lp .md\:heading-3 { font-size: 2.25rem; line-height: 2.5rem; font-weight: 600; letter-spacing: -0.025em; }
+}
+
+}
