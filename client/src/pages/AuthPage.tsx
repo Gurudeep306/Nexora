@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'motion/react'
-import { AlertTriangle, ArrowRight, Check, Eye, EyeOff, Loader2, ShieldCheck, X } from 'lucide-react'
-import { useToast } from '@/components/ui'
+import { AlertTriangle, ArrowRight, AtSign, Check, CornerDownLeft, Eye, EyeOff, KeyRound, Loader2, Mail, Moon, ShieldCheck, Sun, X } from 'lucide-react'
+import { Avatar, useToast } from '@/components/ui'
+import { useTheme } from '@/context/ThemeContext'
+import { STYLES } from '@/theme/styles'
+import { PALETTE_BY_ID, resolveMode } from '@/theme/palettes'
+import { styleLook } from '@/components/look/StylesSection'
 import '@/components/auth/auth.css'
 import { LogoMark } from '@/components/brand/Logo'
 import { takeOAuthResult, useAuth } from '@/context/AuthContext'
@@ -134,6 +138,96 @@ function Reveal({ show, children }: { show: boolean; children: React.ReactNode }
   )
 }
 
+/* ── The last account used on this device (like an account chooser). ── */
+type Remembered = { username: string; name: string | null; avatar: string | null; avatarUrl: string | null }
+const ACCOUNT_KEY = 'nexora:last-account'
+function readAccount(): Remembered | null {
+  try {
+    const v = JSON.parse(localStorage.getItem(ACCOUNT_KEY) || 'null')
+    return v && typeof v.username === 'string' ? v : null
+  } catch {
+    return null
+  }
+}
+function rememberAccount(a: Remembered) {
+  try {
+    localStorage.setItem(ACCOUNT_KEY, JSON.stringify(a))
+  } catch {
+    /* private mode */
+  }
+}
+function forgetAccount() {
+  try {
+    localStorage.removeItem(ACCOUNT_KEY)
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Light / dark and the design styles, before anyone signs in. */
+function LookBar() {
+  const { look, setLook, mode, setAppearance, preferredMode } = useTheme()
+  const picks = STYLES.slice(0, 6)
+  return (
+    <div className="auth-look" role="group" aria-label="Appearance">
+      <div className="auth-look-styles" role="radiogroup" aria-label="Design style">
+        {picks.map((st) => {
+          const l = styleLook(look, st)
+          const p = PALETTE_BY_ID.get(l.theme)!
+          const t = p[resolveMode(p, preferredMode)] ?? p.dark ?? p.light!
+          return (
+            <button
+              key={st.id}
+              type="button"
+              role="radio"
+              aria-checked={look.style === st.id}
+              title={st.name}
+              aria-label={st.name}
+              onClick={() => setLook(l)}
+              className={cn('auth-look-dot', look.style === st.id && 'is-on')}
+              style={{ background: `linear-gradient(135deg, oklch(${t.bg[1]}) 0 50%, oklch(${t.accent}) 50% 100%)` }}
+            />
+          )
+        })}
+      </div>
+      <button type="button" className="auth-look-mode" onClick={() => setAppearance(mode === 'dark' ? 'light' : 'dark')} aria-label={mode === 'dark' ? 'Switch to light' : 'Switch to dark'} title={mode === 'dark' ? 'Light' : 'Dark'}>
+        {mode === 'dark' ? <Sun className="size-4" /> : <Moon className="size-4" />}
+      </button>
+    </div>
+  )
+}
+
+/** A live status dot: the API answered, and how fast. */
+function Status() {
+  const [ms, setMs] = useState<number | null>(null)
+  const [down, setDown] = useState(false)
+  useEffect(() => {
+    let live = true
+    const ping = () => {
+      const t = performance.now()
+      fetch(apiUrl('/api/health'), { cache: 'no-store' })
+        .then((r) => {
+          if (!live) return
+          setDown(!r.ok)
+          setMs(Math.round(performance.now() - t))
+        })
+        .catch(() => live && setDown(true))
+    }
+    ping()
+    const id = window.setInterval(ping, 30000)
+    return () => {
+      live = false
+      window.clearInterval(id)
+    }
+  }, [])
+  return (
+    <span className="auth-status" role="status">
+      <span className={cn('auth-status-dot', down ? 'is-down' : ms == null ? 'is-wait' : 'is-up')} aria-hidden="true" />
+      {down ? 'Service unreachable' : ms == null ? 'Checking service' : `All systems normal · ${ms} ms`}
+    </span>
+  )
+}
+
 export default function AuthPage() {
   const [mode, setMode] = useState<Mode>(() =>
     new URLSearchParams(window.location.search).get('mode') === 'register' ? 'register' : 'login',
@@ -153,6 +247,8 @@ export default function AuthPage() {
   const [providers, setProviders] = useState<{ github?: boolean; google?: boolean } | null>(null)
   const [checked, setChecked] = useState<{ name: string; available: boolean } | null>(null)
   const [lastUsed] = useState(readLast)
+  const [account, setAccount] = useState<Remembered | null>(readAccount)
+  const passRef = useRef<HTMLInputElement>(null)
   const { login, register, user, oauthPending } = useAuth()
   const navigate = useNavigate()
   const site = useSite()
@@ -260,10 +356,12 @@ export default function AuthPage() {
     setHolding(true)
     try {
       if (mode === 'login') {
-        await login(username.trim(), password)
+        const u = await login(username.trim(), password)
+        rememberAccount({ username: u?.username ?? username.trim(), name: typeof u?.display_name === "string" ? u.display_name : null, avatar: typeof u?.avatar === "string" ? u.avatar : null, avatarUrl: typeof u?.avatar_url === "string" ? u.avatar_url : null })
         toast.success('Welcome back', 'Picking up right where you left off.')
       } else {
         const u = await register(username.trim(), email.trim(), password)
+        rememberAccount({ username: u?.username ?? username.trim(), name: typeof u?.display_name === "string" ? u.display_name : null, avatar: typeof u?.avatar === "string" ? u.avatar : null, avatarUrl: typeof u?.avatar_url === "string" ? u.avatar_url : null })
         const you = avatarName(resolveAvatarId(u?.avatar, u?.username ?? username.trim()))
         toast.success('Welcome to NexoraGuru', `Your account is ready and ${you} is your avatar. Pick another any time in Settings.`)
       }
@@ -297,100 +395,134 @@ export default function AuthPage() {
   const pwTooShort = mode === 'register' && needsPassword && pwTouched && password.length > 0 && password.length < 6
   const hasOAuth = !oauthPending && providers && (providers.github || providers.google)
 
-  const headline = oauthPending ? ['Almost', 'there.'] : mode === 'login' ? ['Sign in.'] : ['Create', 'account.']
   const lead =
     subtitle ??
-    (mode === 'login' ? 'Welcome back. Pick up exactly where you stopped.' : 'One account for every lesson, problem and paper.')
+    (mode === 'login' ? 'Sign in to pick up exactly where you stopped.' : 'One account for every lesson, problem and paper.')
 
-  // The headline's ink brightens under the pointer (CSS vars, no re-render).
+  // The glass panel catches a soft highlight where the pointer is and leans
+  // a degree or two towards it (CSS vars, no re-render; off for touch and
+  // reduced motion).
   const onPointer = (e: React.PointerEvent<HTMLElement>) => {
-    if (e.pointerType !== 'mouse') return
+    if (e.pointerType !== 'mouse' || reduce) return
     const el = e.currentTarget
     const r = el.getBoundingClientRect()
-    el.style.setProperty('--mx', `${e.clientX - r.left}px`)
-    el.style.setProperty('--my', `${e.clientY - r.top}px`)
+    const x = (e.clientX - r.left) / r.width
+    const y = (e.clientY - r.top) / r.height
+    el.style.setProperty('--gx', `${x * 100}%`)
+    el.style.setProperty('--gy', `${y * 100}%`)
+    el.style.setProperty('--rx', `${(0.5 - y) * 3}deg`)
+    el.style.setProperty('--ry', `${(x - 0.5) * 4}deg`)
   }
-
-  let n = 0
-  const num = () => String(++n).padStart(2, '0')
+  const onLeave = (e: React.PointerEvent<HTMLElement>) => {
+    e.currentTarget.style.setProperty('--rx', '0deg')
+    e.currentTarget.style.setProperty('--ry', '0deg')
+  }
+  const showAccount = mode === 'login' && !oauthPending && account && username.trim() !== account.username
+  const stagger = (i: number) => ({ initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6, delay: 0.25 + i * 0.07, ease: EASE } })
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="auth-root" onPointerMove={onPointer}>
-        <div className="auth-rules" aria-hidden="true">
-          {Array.from({ length: 5 }, (_, i) => (
-            <span key={i} />
-          ))}
+      <div className="auth-root">
+        {/* A living field of colour, nothing else: four soft lights drifting slowly. */}
+        <div className="auth-field" aria-hidden="true">
+          <span className="auth-light l1" />
+          <span className="auth-light l2" />
+          <span className="auth-light l3" />
+          <span className="auth-light l4" />
+          <span className="auth-grain" />
         </div>
 
-        {/* Top bar */}
         <header className="auth-top">
           <Link to="/" className="flex items-center gap-2.5 !no-underline" aria-label="NexoraGuru home">
-            <LogoMark size={24} />
-            <span className="text-[14.5px] font-semibold tracking-[-0.03em] text-text-primary">
+            <LogoMark size={26} />
+            <span className="text-[15px] font-semibold tracking-[-0.03em] text-text-primary">
               Nexora<span className="text-text-secondary">Guru</span>
             </span>
           </Link>
-          {!oauthPending && (
-            <nav className="auth-tabs" aria-label="Sign in or create an account">
-              {(['login', 'register'] as const).map((m) => (
-                <button key={m} type="button" onClick={() => switchMode(m)} aria-current={mode === m ? 'page' : undefined} className={cn('auth-tab', mode === m && 'is-on')}>
-                  {m === 'login' ? 'Sign in' : 'Create account'}
-                </button>
-              ))}
-            </nav>
-          )}
-          <Clock />
+          <LookBar />
         </header>
 
-        {/* Headline: the type is the picture */}
-        <section className="auth-hero" aria-hidden="true">
-          <AnimatePresence mode="wait" initial={true}>
-            <motion.p key={headline.join(' ')} className="auth-display m-0" exit={{ opacity: 0, transition: { duration: 0.2 } }}>
-              {headline.map((w, i) => (
-                <span key={w} className="auth-line">
-                  <motion.span
-                    className="block"
-                    initial={{ y: '105%' }}
-                    animate={{ y: '0%' }}
-                    transition={{ duration: 1, delay: 0.08 + i * 0.12, ease: EASE }}
-                  >
-                    {w}
-                  </motion.span>
-                </span>
-              ))}
-            </motion.p>
-          </AnimatePresence>
-        </section>
-
-        {/* The form, anchored to the grid */}
-        <main className="auth-form-col">
+        <main className="auth-main">
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.35, ease: EASE }}
-            className="relative"
+            initial={{ opacity: 0, y: 18, scale: 0.985, filter: 'blur(6px)' }}
+            animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+            transition={{ duration: 0.9, ease: EASE }}
+            className="auth-glass"
+            onPointerMove={onPointer}
+            onPointerLeave={onLeave}
           >
+            <span className="auth-edge" aria-hidden="true" />
             <AnimatePresence>
               {success && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="auth-success absolute inset-0 z-30 flex items-center gap-3"
-                  role="status"
-                >
-                  <Check className="size-5 text-state-success" aria-hidden="true" />
-                  <span className="text-[15px] text-text-primary">{mode === 'login' ? 'Signed in' : 'Account ready'}</span>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="auth-success" role="status">
+                  <motion.span initial={{ scale: 0.85 }} animate={{ scale: 1 }} transition={{ duration: 0.6, ease: EASE }}>
+                    <LogoMark size={56} />
+                  </motion.span>
+                  <span className="text-[15px] text-text-secondary">{mode === 'login' ? 'Signed in' : 'Account ready'}</span>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <h1 className="sr-only">{title}</h1>
-            <p className="auth-lead">{lead}</p>
+            <motion.span {...stagger(0)} className="auth-glass-mark" aria-hidden="true">
+              <LogoMark size={40} />
+            </motion.span>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div key={title} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.25, ease: EASE }}>
+                <h1 className="auth-title">{oauthPending ? 'Almost there' : mode === 'login' ? 'Welcome back' : 'Create your account'}</h1>
+                <p className="auth-lead">{lead}</p>
+              </motion.div>
+            </AnimatePresence>
+
+            <AnimatePresence initial={false}>
+              {showAccount && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: EASE }} className="overflow-hidden">
+                  <div className="auth-account">
+                    <button
+                      type="button"
+                      className="auth-account-main"
+                      onClick={() => {
+                        setUsername(account.username)
+                        window.setTimeout(() => passRef.current?.focus(), 30)
+                      }}
+                    >
+                      <Avatar seed={account.username} name={account.name ?? account.username} avatar={account.avatar} src={account.avatarUrl} size="md" />
+                      <span className="min-w-0 flex-1 text-left">
+                        <span className="block truncate text-[14px] font-semibold text-text-primary">Continue as {account.name || account.username}</span>
+                        <span className="block truncate text-[12.5px] text-text-muted">@{account.username} · last used on this device</span>
+                      </span>
+                      <ArrowRight className="size-4 shrink-0 text-text-muted" aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      className="auth-account-x"
+                      aria-label="Forget this account on this device"
+                      title="Forget"
+                      onClick={() => {
+                        forgetAccount()
+                        setAccount(null)
+                      }}
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {!oauthPending && (
+              <motion.div {...stagger(1)} className="auth-seg" role="tablist" aria-label="Sign in or create an account">
+                {(['login', 'register'] as const).map((m) => (
+                  <button key={m} type="button" role="tab" aria-selected={mode === m} onClick={() => switchMode(m)} className={cn('auth-seg-btn', mode === m && 'is-on')}>
+                    {mode === m && <motion.span layoutId="auth-seg" className="auth-seg-pill" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
+                    <span className="relative">{m === 'login' ? 'Sign in' : 'Create account'}</span>
+                  </button>
+                ))}
+              </motion.div>
+            )}
 
             {hasOAuth && (
               <>
-                <div className="mt-7 grid gap-2.5 sm:grid-cols-2">
+                <div className={cn('mt-6 grid gap-2.5', providers?.github && providers?.google && 'sm:grid-cols-2')}>
                   {(['github', 'google'] as const)
                     .filter((p) => providers?.[p])
                     .map((p) => (
@@ -401,10 +533,10 @@ export default function AuthPage() {
                       </button>
                     ))}
                 </div>
-                <div className="mt-7 mb-1 flex items-center gap-3" aria-hidden="true">
-                  <span className="h-px flex-1 bg-border" />
-                  <span className="text-[12px] text-text-muted">or with a password</span>
-                  <span className="h-px flex-1 bg-border" />
+                <div className="my-5 flex items-center gap-3" aria-hidden="true">
+                  <span className="h-px flex-1 bg-[var(--auth-hair)]" />
+                  <span className="text-[12px] text-text-muted">or</span>
+                  <span className="h-px flex-1 bg-[var(--auth-hair)]" />
                 </div>
               </>
             )}
@@ -413,14 +545,13 @@ export default function AuthPage() {
               key={shake}
               onSubmit={handleSubmit}
               noValidate
-              className="mt-6 space-y-6"
+              className={cn('space-y-4', !hasOAuth && 'mt-6')}
               animate={shake ? { x: [0, -6, 6, -4, 4, 0] } : undefined}
               transition={{ duration: 0.36, ease: EASE }}
             >
               <Field
                 id="auth-username"
                 label="Username"
-                n={num()}
                 trailing={
                   mode === 'register' && availability !== 'idle' ? (
                     <span className="flex size-8 items-center justify-center" aria-hidden="true">
@@ -432,7 +563,7 @@ export default function AuthPage() {
                 }
                 hint={
                   <Reveal show={mode === 'register' && availability !== 'idle' && availability !== 'checking'}>
-                    <p className={cn('m-0 pt-2 text-xs', availability === 'available' ? 'text-state-success' : 'text-state-error')} aria-live="polite">
+                    <p className={cn('m-0 pt-1.5 text-xs', availability === 'available' ? 'text-state-success' : 'text-state-error')} aria-live="polite">
                       {availability === 'available' && `@${username.trim()} is available`}
                       {availability === 'taken' && 'That username is taken'}
                       {availability === 'invalid' && '2–20 letters, numbers or underscores'}
@@ -440,6 +571,7 @@ export default function AuthPage() {
                   </Reveal>
                 }
               >
+                <AtSign className="auth-field-icon" aria-hidden="true" />
                 <input
                   ref={userRef}
                   id="auth-username"
@@ -457,7 +589,8 @@ export default function AuthPage() {
               </Field>
 
               <Reveal show={mode === 'register'}>
-                <Field id="auth-email" label="Email" n={mode === 'register' ? num() : '02'} aside={<span className="text-[12px] text-text-muted">Optional</span>}>
+                <Field id="auth-email" label="Email" aside={<span className="text-[12px] text-text-muted">Optional</span>}>
+                  <Mail className="auth-field-icon" aria-hidden="true" />
                   <input id="auth-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" placeholder="you@example.com" className="auth-input" />
                 </Field>
               </Reveal>
@@ -466,14 +599,13 @@ export default function AuthPage() {
                 <Field
                   id="auth-password"
                   label="Password"
-                  n={num()}
                   trailing={
                     <button
                       type="button"
                       onClick={() => setShowPw((v) => !v)}
                       aria-label={showPw ? 'Hide password' : 'Show password'}
                       aria-pressed={showPw}
-                      className="flex h-8 cursor-pointer items-center justify-center px-1 text-[12px] font-medium text-text-muted transition-colors hover:text-text-primary focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
+                      className="flex size-8 cursor-pointer items-center justify-center rounded-[var(--radius-control)] text-text-muted transition-colors hover:text-text-primary focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
                     >
                       {showPw ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                     </button>
@@ -481,7 +613,7 @@ export default function AuthPage() {
                   hint={
                     <>
                       <Reveal show={capsOn}>
-                        <p className="m-0 flex items-center gap-1.5 pt-2 text-xs text-state-warning" role="status">
+                        <p className="m-0 flex items-center gap-1.5 pt-1.5 text-xs text-state-warning" role="status">
                           <AlertTriangle className="size-3.5" aria-hidden="true" /> Caps Lock is on
                         </p>
                       </Reveal>
@@ -491,7 +623,9 @@ export default function AuthPage() {
                     </>
                   }
                 >
+                  <KeyRound className="auth-field-icon" aria-hidden="true" />
                   <input
+                    ref={passRef}
                     id="auth-password"
                     type={showPw ? 'text' : 'password'}
                     value={password}
@@ -510,14 +644,7 @@ export default function AuthPage() {
 
               <AnimatePresence>
                 {error && (
-                  <motion.p
-                    role="alert"
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.24, ease: EASE }}
-                    className="m-0 overflow-hidden"
-                  >
+                  <motion.p role="alert" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.24, ease: EASE }} className="m-0 overflow-hidden">
                     <span className="flex items-start gap-2 text-[13px] text-state-error">
                       <AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
                       {error}
@@ -531,25 +658,32 @@ export default function AuthPage() {
                 <ArrowRight className="auth-submit-arrow size-4" aria-hidden="true" />
                 <span className="auth-submit-line" aria-hidden="true" />
               </button>
+              <p className="auth-hint" aria-hidden="true">
+                Press <kbd>
+                  <CornerDownLeft className="size-3" />
+                </kbd>{' '}
+                to continue
+              </p>
             </motion.form>
 
             {oauthPending && (
-              <p className="mt-6 mb-0 text-[13.5px] text-text-muted">
+              <p className="mt-5 mb-0 text-center text-[13.5px]">
                 <button onClick={() => void api.post('/api/auth/logout').then(() => window.location.reload())} className="auth-link">
                   Use a different account
                 </button>
               </p>
             )}
+            <h2 className="sr-only">{title}</h2>
           </motion.div>
         </main>
 
-        {/* Footer rule */}
         <footer className="auth-foot">
           <span>© {new Date().getFullYear()} NexoraGuru</span>
           <span className="inline-flex items-center gap-1.5">
-            <ShieldCheck className="size-3.5" aria-hidden="true" /> Passwords salted and hashed
+            <ShieldCheck className="size-3.5" aria-hidden="true" /> Passwords are salted and hashed
           </span>
-          <span className="hidden sm:inline">{mode === 'login' ? 'Sign in' : 'New account'} · {mode === 'login' ? '01' : '02'} / 02</span>
+          <Status />
+          <Clock />
         </footer>
       </div>
     </MotionConfig>
