@@ -56,12 +56,9 @@
 }
 
 
-/* Headline text that fades from white into the dim tone (Linear / Vercel style). */
+/* Headline text (formerly a white-to-dim fade): one solid ink. */
 @utility text-heading-fade {
-  background: linear-gradient(180deg, var(--color-text-primary) 30%, color-mix(in srgb, var(--color-text-primary) 55%, transparent));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--color-text-primary);
 }
 
 /* Formerly a sweeping shimmer across text; now a calm "working…" pulse. */
@@ -236,9 +233,8 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background:
-    radial-gradient(900px 520px at 12% -8%, color-mix(in srgb, var(--color-primary) 13%, transparent), transparent 70%),
-    radial-gradient(700px 480px at 100% 110%, color-mix(in srgb, var(--color-cyan) 7%, transparent), transparent 70%);
+  /* (2026) No coloured light behind the app any more: just the film grain below. */
+  background: none;
 }
 .app-ambient::after {
   content: '';
@@ -522,3 +518,7 @@
   border-bottom: 2px solid var(--color-foreground-faint);
   opacity: 0.6;
 }
+
+/* (2026) The drifting colour blobs read as decoration: kept as a class so old
+   markup doesn't break, but they no longer draw. */
+.aurora { display: none; }

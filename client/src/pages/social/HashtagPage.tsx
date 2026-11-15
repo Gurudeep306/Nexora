@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Hash } from 'lucide-react'
-import { BackButton } from '@/components/ui'
 import { api } from '@/lib/api'
 import { FeedEmpty, PostList, usePostList } from '@/components/social/feed/PostList'
 import { TrendingTags, WhoToFollow } from '@/components/social/feed/People'
@@ -20,7 +19,6 @@ export default function HashtagPage() {
   return (
     <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div className="min-w-0 space-y-4">
-        <BackButton />
         <header
           className="ng-cover card overflow-hidden px-5 py-6"
           style={

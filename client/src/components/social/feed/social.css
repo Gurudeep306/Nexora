@@ -43,6 +43,7 @@
   animation-direction: alternate-reverse;
 }
 [data-mode='light'] .ng-cover::after { mix-blend-mode: multiply; opacity: 0.55; }
+.ng-cover--plain { background: var(--color-bg-surface-2); }
 @keyframes ng-drift {
   0% { transform: translate3d(-4%, -3%, 0) rotate(0deg) scale(1); }
   50% { transform: translate3d(3%, 2%, 0) rotate(8deg) scale(1.06); }

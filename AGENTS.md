@@ -137,6 +137,20 @@ changed.
   `docs/ui-changes.md` has the full rules, the old-URL redirects and how the
   redesign was checked (axe with 0 violations, keyboard, responsiveness).
 - Animations explain an idea. They are never decoration only.
+- **Premium look, site-wide (2026).** See `docs/ui/premium.md`:
+  - The NexoraGuru mark is one solid tile in the text colour with the NG cut
+    out (`markSvg` in `client/src/components/brand/traversal.ts`). Don't add
+    gradients, glows or extra colours to it. Regenerate the files with
+    `node scripts/brand/build-brand.mjs && node scripts/brand/render-brand.mjs`.
+  - No gradient text, no coloured glow blobs or "light pools", no neon
+    `shadow-[0_0_…]` glows, no rainbow gradients on bars or buttons.
+  - Colour means something: the accent is for the primary action and the
+    current item; success, warning and error are for state. Icons default to
+    the "quiet" container (a neutral tile and a grey glyph).
+  - Marketing pages (landing, sign-in) use a solid ink primary button (white
+    on dark, black on light). Inside the app, primary buttons use the accent.
+  - Back buttons use `BackButton` with no props. It goes to the page you came
+    from in this tab, else one level up, and its label names the place.
 
 ## Content authoring
 

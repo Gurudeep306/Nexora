@@ -20,7 +20,7 @@ export function AchievementCard({ achievement, index }: { achievement: Achieveme
     >
       <Card
         glow={earned}
-        className={cn('flex h-full flex-col p-4', !earned && 'opacity-70 grayscale-[35%]')}
+        className={cn('flex h-full flex-col p-4', !earned && 'grayscale-[60%]')}
         style={
           earned
             ? { borderColor: rarity.color, boxShadow: `0 0 14px color-mix(in srgb, ${rarity.color} 30%, transparent)` }

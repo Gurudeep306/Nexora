@@ -64,7 +64,7 @@ export function TitleTrack({ stats }: { stats: NexusStatsResponse | null }) {
                 <Progress
                   value={Math.max(0, (stats.title.next.min_problems ?? 0) - stats.title.probsToNext)}
                   max={stats.title.next.min_problems ?? 1}
-                  barClassName="bg-gradient-to-r from-cyan to-info"
+                  barClassName="bg-accent-brand"
                 />
                 <p className="mt-1 font-mono text-[11px] text-foreground-dim tabular-nums">
                   {formatNumber(stats.title.probsToNext)} solves remaining

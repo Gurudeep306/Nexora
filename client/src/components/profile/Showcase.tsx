@@ -23,7 +23,6 @@ export function Section({ title, icon, action, children, className }: { title: s
 function Stat({ icon, label, value, sub, tone }: { icon: IconName; label: string; value: ReactNode; sub?: ReactNode; tone: string }) {
   return (
     <div className="relative overflow-hidden rounded-xl border border-border bg-bg-surface-2/50 p-3.5">
-      <span className={cn('absolute -top-6 -right-6 size-20 rounded-full opacity-25 blur-2xl')} style={{ background: tone }} aria-hidden="true" />
       <div className="flex items-center gap-2 text-xs font-medium text-text-secondary">
         <span style={{ color: tone }} className="inline-flex">
           <Icon name={icon} className="size-3.5" />
@@ -64,7 +63,7 @@ export function LevelBar({ s }: { s: NonNullable<Showcase['stats']> }) {
         </span>
       </div>
       <div className="h-2 overflow-hidden rounded-full bg-bg-surface-3">
-        <motion.div className="h-full rounded-full bg-gradient-to-r from-accent-brand to-state-info" initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.9, ease: [0.2, 0.7, 0.3, 1] }} />
+        <motion.div className="h-full rounded-full bg-accent-brand" initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.9, ease: [0.2, 0.7, 0.3, 1] }} />
       </div>
     </div>
   )
@@ -236,7 +235,7 @@ export function BadgeCard({ a, compact }: { a: Achievement; compact?: boolean })
       title={`${a.title} — ${a.description}`}
       className={cn(
         'ng-tilt relative flex flex-col items-center rounded-xl border p-3 text-center',
-        unlocked ? 'border-state-gold/30 bg-gradient-to-b from-state-gold/10 to-transparent' : 'border-border bg-bg-surface-2/40',
+        unlocked ? 'border-state-gold/30 bg-state-gold/[0.05]' : 'border-border bg-bg-surface-2/40',
       )}
     >
       <span

@@ -120,7 +120,7 @@ export function LaunchGrid() {
                 )}
               >
                 {cat.label}
-                <span className={cn('ml-1.5 text-[10px] tabular-nums', active ? 'opacity-80' : 'text-text-muted')}>{count}</span>
+                <span className={cn('ml-1.5 text-[10px] tabular-nums', active ? '' : 'text-text-muted')}>{count}</span>
               </button>
             )
           })}

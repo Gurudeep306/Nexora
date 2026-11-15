@@ -150,7 +150,7 @@ export default function LandingPage() {
             </Link>
             <Link
               to="/auth?mode=register"
-              className="flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3.5 text-[13px] font-semibold text-on-accent-brand transition-transform hover:scale-[1.03]"
+              className="flex h-9 items-center gap-1.5 rounded-lg bg-foreground px-3.5 text-[13px] font-semibold text-background transition-opacity hover:opacity-90"
             >
               Start learning <ArrowRight className="size-3.5" />
             </Link>
@@ -160,11 +160,11 @@ export default function LandingPage() {
 
       {/* ── Hero ── */}
       <section className="relative isolate overflow-hidden pt-36 pb-20 sm:pt-44">
-        <div className="aurora -z-10 opacity-45" aria-hidden="true">
-          <span className="a1" />
-          <span className="a2" />
-          <span className="a3" />
-        </div>
+        {/* A faint engineering grid behind the hero, fading out: structure, not light. */}
+        <div
+          className="absolute inset-0 -z-10 [background-image:linear-gradient(color-mix(in_oklab,var(--color-text-primary)_6%,transparent)_1px,transparent_1px),linear-gradient(90deg,color-mix(in_oklab,var(--color-text-primary)_6%,transparent)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_30%,black,transparent_75%)]"
+          aria-hidden="true"
+        />
         <div className="absolute inset-x-0 bottom-0 -z-10 h-64 bg-gradient-to-b from-transparent to-background" aria-hidden="true" />
         <div className="mx-auto max-w-6xl px-5 text-center">
           <motion.div
@@ -173,19 +173,19 @@ export default function LandingPage() {
             transition={{ duration: 0.5 }}
             className="mx-auto mb-7 flex w-fit"
           >
-            <LogoMark size={76} interactive replayOnClick className="drop-shadow-[0_10px_30px_rgb(91_140_255/0.25)]" />
+            <LogoMark size={52} interactive />
           </motion.div>
           <motion.a
             href="#curriculum"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="glass mx-auto inline-flex items-center gap-2 rounded-full py-1 pr-3 pl-1 text-xs text-foreground-dim hover:text-foreground"
+            className="mx-auto inline-flex max-w-full items-center gap-2 rounded-full border border-hairline/[0.12] bg-surface/60 py-1 pr-3 pl-1 text-xs text-foreground-dim transition-colors hover:border-hairline/[0.2] hover:text-foreground"
           >
-            <span className="rounded-full bg-gradient-to-r from-primary to-accent px-2 py-0.5 text-[10.5px] font-semibold text-on-accent-brand">
+            <span className="shrink-0 whitespace-nowrap rounded-full border border-hairline/[0.14] px-2 py-0.5 text-[10px] font-semibold tracking-[0.08em] text-foreground">
               END TO END
             </span>
-            One platform for your whole computer science journey
+            <span className="truncate">One platform for your whole computer science journey</span>
             <ArrowRight className="size-3" />
           </motion.a>
           <motion.h1
@@ -196,7 +196,7 @@ export default function LandingPage() {
           >
             Learn computer science
             <br />
-            <span className="bg-gradient-to-r from-primary-bright via-accent to-cyan bg-clip-text text-transparent">by watching it run.</span>
+            <span className="text-foreground-dim">by watching it run.</span>
           </motion.h1>
           <motion.div
             initial={{ opacity: 0, y: 14 }}
@@ -210,7 +210,7 @@ export default function LandingPage() {
             </p>
             <p className="mt-3 flex flex-wrap items-center justify-center gap-x-2 text-foreground">
               <span className="text-foreground-dim">Start with</span>
-              <span className="inline-block w-[11.5rem] text-left font-semibold text-primary-bright sm:w-[13.5rem]">
+              <span className="inline-block w-[11.5rem] text-left font-semibold text-foreground sm:w-[13.5rem]">
                 <RotatingText items={HERO_WORDS} interval={2200} />
               </span>
             </p>
@@ -223,11 +223,11 @@ export default function LandingPage() {
           >
             <Link
               to="/auth?mode=register"
-              className="sheen group flex h-12 items-center gap-2 rounded-xl bg-gradient-to-b from-[#9d74ff] to-primary px-6 text-[15px] font-semibold text-on-accent-brand shadow-[inset_0_1px_0_rgb(255_255_255/0.3),0_0_0_1px_rgb(139_92_246/0.6),0_14px_40px_-10px_rgb(139_92_246/0.9)] transition-transform hover:scale-[1.03]"
+              className="group flex h-11 items-center gap-2 rounded-lg bg-foreground px-5 text-[15px] font-semibold text-background shadow-[0_1px_2px_rgb(0_0_0/0.2)] transition-opacity hover:opacity-90"
             >
               Start learning free <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
-            <a href="#theater" className="glass flex h-12 items-center gap-2 rounded-xl px-6 text-[15px] font-medium text-foreground hover:bg-hairline/[0.06]">
+            <a href="#theater" className="flex h-11 items-center gap-2 rounded-lg border border-hairline/[0.14] px-5 text-[15px] font-medium text-foreground transition-colors hover:bg-hairline/[0.06]">
               <Eye className="size-4" /> See a lesson play
             </a>
           </motion.div>
@@ -267,7 +267,7 @@ export default function LandingPage() {
 
       {/* ── Subjects band ── */}
       <section className="border-y border-hairline/[0.05] bg-hairline/[0.01] py-8" aria-label="Subjects">
-        <p className="mb-5 text-center text-[11px] font-semibold tracking-[0.18em] text-foreground-faint uppercase">
+        <p className="mb-5 text-center text-[11px] font-semibold tracking-[0.18em] text-foreground-dim uppercase">
           From your first array to distributed systems
         </p>
         <SubjectTicker />
@@ -282,7 +282,7 @@ export default function LandingPage() {
         />
         <div data-loop className="relative">
           <div className="absolute top-[30px] right-[12%] left-[12%] hidden h-px bg-hairline/[0.08] md:block" aria-hidden="true">
-            <div data-loop-rail className="h-full origin-left bg-gradient-to-r from-primary via-accent to-cyan" />
+            <div data-loop-rail className="h-full origin-left bg-foreground/70" />
           </div>
           <div data-stagger className="grid gap-5 md:grid-cols-4">
             <LoopStep n={1} icon={<BookOpen />} title="Learn" text="Short lessons written like a good textbook, with quick checks after every idea.">
@@ -314,7 +314,7 @@ export default function LandingPage() {
             {TRACKS.map((t) => (
               <Spotlight key={t.id} className="p-6">
                 <div className="flex items-center gap-3">
-                  <span className={cn('flex size-10 items-center justify-center rounded-xl border bg-gradient-to-b [&_svg]:size-5', t.hue)}>
+                  <span className="flex size-10 items-center justify-center rounded-lg border border-hairline/[0.12] bg-hairline/[0.04] text-foreground-dim [&_svg]:size-5">
                     <t.icon />
                   </span>
                   <div>
@@ -459,7 +459,7 @@ export default function LandingPage() {
                       <span key={k} className={cn('flex items-center gap-1', k < p.stages - 1 && 'flex-1')}>
                         <span
                           data-milestone
-                          className={cn('size-2.5 shrink-0 rounded-full', k < filled ? 'bg-gradient-to-br from-primary-bright to-accent' : 'border border-hairline/[0.15]')}
+                          className={cn('size-2.5 shrink-0 rounded-full', k < filled ? 'bg-foreground' : 'border border-hairline/[0.2]')}
                         />
                         {k < p.stages - 1 && <span className={cn('h-px flex-1', k < filled - 1 ? 'bg-primary/60' : 'bg-hairline/[0.1]')} />}
                       </span>
@@ -497,7 +497,7 @@ export default function LandingPage() {
         <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
           <Link
             to="/auth?mode=register"
-            className="inline-flex h-12 items-center gap-2 rounded-xl bg-primary px-7 text-[15px] font-semibold text-on-accent-brand transition-transform hover:scale-[1.03]"
+            className="inline-flex h-11 items-center gap-2 rounded-lg bg-foreground px-6 text-[15px] font-semibold text-background transition-opacity hover:opacity-90"
           >
             Start learning, it's free <ArrowRight className="size-4" />
           </Link>
@@ -552,7 +552,7 @@ function Spotlight({ className, children }: { className?: string; children: Reac
 function FeatureHead({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
   return (
     <>
-      <div className="mb-4 flex size-10 items-center justify-center rounded-xl border border-primary/25 bg-gradient-to-b from-primary/20 to-primary/5 text-primary-bright [&_svg]:size-5">
+      <div className="mb-4 flex size-10 items-center justify-center rounded-lg border border-hairline/[0.12] bg-hairline/[0.04] text-foreground-dim [&_svg]:size-5">
         {icon}
       </div>
       <h3 className="font-display text-lg font-semibold text-foreground">{title}</h3>
@@ -564,9 +564,9 @@ function FeatureHead({ icon, title, text }: { icon: React.ReactNode; title: stri
 function LoopStep({ n, icon, title, text, children }: { n: number; icon: React.ReactNode; title: string; text: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col items-center text-center">
-      <div className="relative z-10 flex size-[60px] items-center justify-center rounded-2xl border border-primary/30 bg-background/80 text-primary-bright shadow-[0_10px_30px_-10px_rgb(139_92_246/0.7)] backdrop-blur [&_svg]:size-6">
+      <div className="relative z-10 flex size-[60px] items-center justify-center rounded-xl border border-hairline/[0.14] bg-background text-foreground shadow-[0_1px_2px_rgb(0_0_0/0.2)] [&_svg]:size-6">
         {icon}
-        <span className="absolute -top-2 -right-2 flex size-5 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent font-mono text-[10px] font-bold text-on-accent-brand">
+        <span className="absolute -top-2 -right-2 flex size-5 items-center justify-center rounded-full bg-foreground font-mono text-[10px] font-bold text-background">
           {n}
         </span>
       </div>
@@ -621,7 +621,7 @@ function MiniArray() {
       <span className="absolute -bottom-5 left-0 flex w-8 justify-center font-mono text-[10px] font-bold text-primary-bright motion-safe:animate-[ptr-walk_4.8s_steps(1)_infinite]">
         ▲i
       </span>
-      <span className="pointer-events-none absolute top-0 left-0 size-8 rounded-md border-2 border-primary-bright shadow-[0_0_14px_rgb(139_92_246/0.7)] motion-safe:animate-[ptr-walk_4.8s_steps(1)_infinite]" />
+      <span className="pointer-events-none absolute top-0 left-0 size-8 rounded-md border-2 border-primary-bright motion-safe:animate-[ptr-walk_4.8s_steps(1)_infinite]" />
       <style>{`@keyframes ptr-walk{0%{transform:translateX(0)}16.6%{transform:translateX(36px)}33.3%{transform:translateX(72px)}50%{transform:translateX(108px)}66.6%{transform:translateX(144px)}83.3%{transform:translateX(180px)}}`}</style>
     </div>
   )

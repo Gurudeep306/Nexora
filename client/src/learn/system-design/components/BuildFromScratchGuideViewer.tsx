@@ -206,7 +206,6 @@ ${guide.faangInterviewTips.map((tip) => `- ${tip}`).join('\n')}
     <div className="space-y-8 animate-fadeIn">
       {/* Hero Header: From-Scratch Engineering Blueprint */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-bg-surface-2 via-bg-surface-1 to-bg-surface-2 p-6 sm:p-8 ring-1 ring-border shadow-2xl">
-        <div className="absolute right-0 top-0 -mr-16 -mt-16 size-72 rounded-full bg-accent-brand/5 blur-3xl pointer-events-none" />
 
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2 max-w-3xl">

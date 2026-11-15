@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { BackButton, Card, EmptyState } from '@/components/ui'
+import { Card, EmptyState } from '@/components/ui'
 import { api } from '@/lib/api'
 import { PostCard } from '@/components/social/feed/PostCard'
 import { PostSkeleton } from '@/components/social/feed/PostList'
@@ -25,7 +25,6 @@ export default function PostPage() {
   return (
     <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div className="min-w-0 space-y-3">
-        <BackButton />
         {error ? (
           <Card>
             <EmptyState icon="social" title="This post isn't available" description="It may have been deleted or removed, or its author's posts are private." />
