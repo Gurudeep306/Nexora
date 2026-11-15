@@ -17,6 +17,7 @@ import { ToastProvider } from './components/ui'
 import { SocketProvider } from './lib/socket'
 import { SiteProvider } from './context/SiteContext'
 import { ThemeProvider } from './context/ThemeContext'
+import { DefaultStyleSync } from './components/look/DefaultStyleSync'
 import { initFaviconFx } from './lib/faviconFx'
 import { initSentry } from './lib/sentry'
 
@@ -35,6 +36,7 @@ createRoot(document.getElementById('root')!).render(
         <ToastProvider>
           <SocketProvider>
             <SiteProvider>
+              <DefaultStyleSync />
               <App />
             </SiteProvider>
           </SocketProvider>

@@ -16,6 +16,10 @@ const FLAG_META: Record<FeatureFlag, { hint: string; icon: IconName }> = {
   social: { hint: 'Friends, messages, rooms and the feed', icon: 'social' },
   ai_tutor: { hint: 'The AI assistant and AI features', icon: 'sparkles' },
   practice: { hint: 'The problem set and the solver', icon: 'problems' },
+  learn: { hint: 'Learn, subject trees and the DSA course', icon: 'learn' },
+  nexus: { hint: 'The Nexus skill web page', icon: 'nexus' },
+  notes: { hint: 'GATE notes (GATE practice stays on)', icon: 'book' },
+  workshop: { hint: 'The workshop and custom problems', icon: 'workshop' },
 }
 
 const COLORS = [

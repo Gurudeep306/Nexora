@@ -11,7 +11,7 @@ const { all, run, onWrite } = require("../db");
 
 const CACHE_TTL_MS = Number(process.env.SITE_SETTINGS_TTL_MS) || 60_000;
 
-const FEATURE_FLAGS = ["gate", "contests", "social", "ai_tutor", "practice"];
+const FEATURE_FLAGS = ["gate", "contests", "social", "ai_tutor", "practice", "learn", "nexus", "notes", "workshop"];
 
 const DEFAULT_PRIVATE_MESSAGE = "We're putting the finishing touches on NexoraGuru. Check back soon.";
 
@@ -82,6 +82,8 @@ function build(raw) {
     registrations: { open: objectAt(raw, "registrations").open !== false },
     feature_flags: flags,
     maintenance: { enabled: !!maint.enabled, message: String(maint.message || "") },
+    // The design style new visitors see until they pick their own (Admin → Site).
+    default_style: typeof raw.default_style === "string" && /^[a-z-]{2,40}$/.test(raw.default_style) ? raw.default_style : null,
   };
 }
 

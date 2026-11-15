@@ -17,6 +17,7 @@ import { ModerationSection } from '@/components/admin/ModerationSection'
 import { AuditSection } from '@/components/admin/AuditSection'
 import { SourcesSection } from '@/components/admin/SourcesSection'
 import { AiSection } from '@/components/admin/AiSection'
+import { DefaultStylePanel } from '@/components/admin/DefaultStylePanel'
 import '@/components/admin/ai.css'
 import NotFoundPage from '@/pages/NotFoundPage'
 import type { AdminMe } from '@/components/admin/types'
@@ -229,7 +230,12 @@ export default function AdminPage() {
             )}
             {current?.id === 'overview' && <OverviewSection key={revision} onOpenUser={setUser} />}
             {current?.id === 'users' && <UsersSection onOpenUser={setUser} revision={revision} />}
-            {current?.id === 'site' && <SiteSettingsPanel />}
+            {current?.id === 'site' && (
+              <div className="space-y-6">
+                <SiteSettingsPanel />
+                <DefaultStylePanel />
+              </div>
+            )}
             {current?.id === 'ai' && <AiSection />}
             {current?.id === 'sources' && <SourcesSection />}
             {current?.id === 'announcements' && <AnnouncementsPanel me={me} />}

@@ -54,7 +54,11 @@ function isPublicPath(p) {
 
 // Section → API paths switched off with it.
 const FEATURE_ROUTES = [
+  // More specific first: GATE notes can be off while GATE practice stays on.
+  ["notes", /^\/api\/gate\/notes(\/|$)/i],
   ["gate", /^\/api\/gate(\/|$)/i],
+  ["learn", /^\/api\/(learn|learning|nexus)(\/|$)/i],
+  ["workshop", /^\/api\/forge(\/|$)/i],
   ["contests", /^\/api\/(contests|live)(\/|$)/i],
   ["social", /^\/api\/(friends|messages|rooms|feed|social)(\/|$)/i],
   ["ai_tutor", /^\/api\/(agent|ai)(\/|$)/i],
