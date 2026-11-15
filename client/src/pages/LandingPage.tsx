@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { LogoMark } from '@/components/brand/Logo'
 import { Icon } from '@/components/icon/Icon'
@@ -243,8 +243,11 @@ function Nav() {
 export default function LandingPage() {
   const { user, loading, oauthPending } = useAuth()
   const still = useReducedMotion()
+  // Signed-in people normally go straight to the app; "/?preview" shows them the public page.
+  const [params] = useSearchParams()
+  const preview = params.has('preview')
 
-  if (!loading && user) return <Navigate to="/hub" replace />
+  if (!loading && user && !preview) return <Navigate to="/hub" replace />
   // GitHub/Google callbacks land on "/": send them on to finish sign-in.
   let oauthReturn = false
   try {
@@ -252,7 +255,7 @@ export default function LandingPage() {
   } catch {
     /* storage blocked */
   }
-  if (oauthPending || oauthReturn) return <Navigate to="/auth" replace />
+  if (!preview && (oauthPending || oauthReturn)) return <Navigate to="/auth" replace />
 
   const rise = (delay: number) => (still ? {} : { initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8, delay, ease: EASE } })
 
