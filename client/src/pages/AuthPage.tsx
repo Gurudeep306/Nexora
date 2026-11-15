@@ -10,6 +10,7 @@ import { api, apiUrl, ApiError } from '@/lib/api'
 import { useSite } from '@/context/SiteContext'
 import { avatarName, resolveAvatarId } from '@/lib/avatar'
 import { cn } from '@/lib/utils'
+import { loadUiFont } from '@/theme/fontLoaders'
 
 type Mode = 'login' | 'register'
 type Provider = 'github' | 'google'
@@ -160,6 +161,11 @@ export default function AuthPage() {
   const reduce = useReducedMotion()
   const userRef = useRef<HTMLInputElement>(null)
 
+  // The editorial headline face.
+  useEffect(() => {
+    void loadUiFont('newsreader')
+  }, [])
+
   // Returning from GitHub/Google (see AuthContext): show the error, or finish sign-up.
   useEffect(() => {
     const result = takeOAuthResult()
@@ -291,7 +297,7 @@ export default function AuthPage() {
   const pwTooShort = mode === 'register' && needsPassword && pwTouched && password.length > 0 && password.length < 6
   const hasOAuth = !oauthPending && providers && (providers.github || providers.google)
 
-  const headline = oauthPending ? ['Almost', 'there.'] : mode === 'login' ? ['Sign', 'in.'] : ['Create', 'account.']
+  const headline = oauthPending ? ['Almost', 'there.'] : mode === 'login' ? ['Sign in.'] : ['Create', 'account.']
   const lead =
     subtitle ??
     (mode === 'login' ? 'Welcome back. Pick up exactly where you stopped.' : 'One account for every lesson, problem and paper.')
