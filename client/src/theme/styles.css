@@ -1654,3 +1654,27 @@ html[data-pattern] body {
   width: 1.5px;
   height: 6px;
 }
+/* The zone rail as the chart's ring names (Bit → ∞ Overflow). */
+.nx-ring-no,
+.nx-ring-name {
+  display: none;
+}
+[data-style='journal'] .nx-ring-glyph,
+[data-style='journal'] .nx-ring-zone {
+  display: none;
+}
+[data-style='journal'] .nx-ring-no {
+  display: inline-block;
+  min-width: 1.6rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-style: italic;
+  line-height: 1;
+  color: var(--color-text-muted);
+}
+[data-style='journal'] .nx-ring-name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-text-primary);
+}

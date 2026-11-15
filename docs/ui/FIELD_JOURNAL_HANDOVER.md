@@ -278,8 +278,9 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
     problems" and Read · Practise · Prerequisites links
   - list view (default on phones) with constellation headings
   - zoom-in serif italic names
-  - concentric ring tick labels Bit → ∞ Overflow
-  - the zone list on the left still uses hexagon zone icons
+  - concentric ring tick labels Bit → ∞ Overflow on the chart itself (the
+    zone rail on the left now names the rings: italic serif numeral and
+    the ring name, e.g. "3 Kilobyte", instead of the hexagon glyphs)
   Do these next. The renderer is large (about 1,900 lines); the drawing
   is in one effect, starting at "/* ── rendering ── */".
 
