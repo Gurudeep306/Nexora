@@ -2,6 +2,7 @@ import type { ReactElement, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { Card } from './Card'
 import { AnimatedNumber } from './AnimatedNumber'
+import { Sparkline } from './Sparkline'
 import { IconBadge, IconFrame, type IconName, type IconTone } from '@/components/icon/Icon'
 
 /* StatCard accent → icon badge tone. */
@@ -45,7 +46,7 @@ export function StatCard({
             {typeof value === 'number' ? <AnimatedNumber value={value} /> : value}
           </p>
           {sub && <div className="mt-2 text-xs text-text-secondary">{sub}</div>}
-          {spark && spark.length > 1 && <Sparkline values={spark} />}
+          {spark && spark.length > 1 && <Sparkline values={spark} className="mt-3" />}
         </div>
         {typeof icon === 'string' ? (
           <IconBadge name={icon} tone={tone} />
@@ -58,21 +59,5 @@ export function StatCard({
         )}
       </div>
     </Card>
-  )
-}
-/** A small line of recent values. Decorative: the figure above carries the number. */
-function Sparkline({ values }: { values: number[] }) {
-  const w = 120
-  const h = 28
-  const min = Math.min(...values)
-  const span = Math.max(...values) - min || 1
-  const pts = values.map((v, i) => [(i / (values.length - 1)) * w, h - 2 - ((v - min) / span) * (h - 4)] as const)
-  const d = pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ')
-  const [lx, ly] = pts[pts.length - 1]
-  return (
-    <svg className="ed-spark mt-3" viewBox={`0 0 ${w} ${h}`} aria-hidden="true">
-      <path d={d} />
-      <circle cx={lx} cy={ly} r="2" />
-    </svg>
   )
 }

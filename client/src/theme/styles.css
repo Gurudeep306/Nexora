@@ -401,14 +401,15 @@ html[data-pattern] body {
 }
 
 /* ── Type ── */
-[data-style='journal'] :is(h1, h2, .sx-h) {
+/* Headings that use the editorial classes (ed-*) keep their own setting. */
+[data-style='journal'] :is(h1, h2, .sx-h):not([class*='ed-']) {
   font-weight: 400;
   letter-spacing: -0.02em;
   font-optical-sizing: auto;
   text-wrap: balance;
 }
 /* Small headings are labels for controls: the sans. */
-[data-style='journal'] :is(h3, h4, h5, h6) {
+[data-style='journal'] :is(h3, h4, h5, h6):not([class*='ed-']) {
   font-family: var(--font-body);
   letter-spacing: -0.01em;
 }

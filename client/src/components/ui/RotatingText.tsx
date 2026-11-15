@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { cn } from '@/lib/utils'
 
 /**
@@ -17,18 +17,20 @@ export function RotatingText({
   className?: string
 }) {
   const [i, setI] = useState(0)
+  const still = useReducedMotion()
 
   useEffect(() => {
-    if (items.length < 2) return
+    if (items.length < 2 || still) return
     const id = setInterval(() => setI((v) => (v + 1) % items.length), interval)
     return () => clearInterval(id)
-  }, [items.length, interval])
+  }, [items.length, interval, still])
 
   if (items.length === 0) return null
-  if (items.length === 1) return <span className={cn('block truncate', className)}>{items[0]}</span>
+  // A hint only: the field carries its own label, so this stays out of the accessibility tree.
+  if (items.length === 1 || still) return <span className={cn('block truncate', className)} aria-hidden="true">{items[0]}</span>
 
   return (
-    <span className={cn('relative block h-[1.25em] w-full overflow-hidden', className)} aria-live="off">
+    <span className={cn('relative block h-[1.25em] w-full overflow-hidden', className)} aria-hidden="true">
       <AnimatePresence initial={false}>
         <motion.span
           key={items[i]}

@@ -1,39 +1,41 @@
-import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
-import { RefreshCw } from 'lucide-react'
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  ErrorState,
-  LoadingBlock,
-  PageHeader,
-  Skeleton,
-} from '@/components/ui'
+import { useMemo, useState } from 'react'
+import { ErrorState, Skeleton } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { useAuth } from '@/context/AuthContext'
-import { formatNumber } from '@/lib/utils'
-import { HomeHero } from '@/components/hub/HomeHero'
-import { LaunchGrid } from '@/components/hub/LaunchGrid'
-import { ActivityChart } from '@/components/hub/ActivityChart'
-import { DailyChallenges } from '@/components/hub/DailyChallenges'
-import { RecentSubmissions } from '@/components/hub/RecentSubmissions'
-import type { PerformanceResponse, StatsResponse } from '@/components/hub/types'
-import { Icon } from '@/components/icon/Icon'
+import type { StatsResponse } from '@/components/hub/types'
+import type { PlatformContest } from '@/components/contests/types'
+import { useNexusWeb, progressOf } from '@/components/nexus/SubjectsHub'
+import { useProgress } from '@/learn/progress'
+import { DSA_TOPICS } from '@/learn/content/dsa/syllabus'
+import { FieldNotes, Ledger, Masthead, ResetsIn, Rooms, Spread, Week, type Room, type TodayRow } from '@/components/today/Today'
+import { findContinue, nextSteps, until } from '@/components/today/today-data'
 
-function HubSkeleton() {
+/*
+ * Home — "Today". The front page of a field journal on the day you open it:
+ * what to do next, and how you are doing, in five seconds.
+ *
+ *   1. Masthead      date and streak, a greeting, the best next step (clay)
+ *   2. The spread    Continue (with a live figure) · Today's three
+ *   3. Your ledger   four figures with 30-day sparklines, the level ladder
+ *   4. This week     seven small day columns, one sentence
+ *   5. The rooms     six cards that reach every page
+ *   6. Field notes   recent solves and pages read
+ *
+ * Every sentence comes from real data (components/today/today-data.ts).
+ */
+
+function HomeSkeleton() {
   return (
-    <div className="space-y-6" aria-busy="true" aria-label="Loading hub">
-      <Skeleton className="h-44 w-full rounded-3xl" />
-      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+    <div className="space-y-10" aria-busy="true" aria-label="Loading your home page">
+      <Skeleton className="h-6 w-64" />
+      <Skeleton className="h-14 w-full max-w-xl" />
+      <Skeleton className="h-80 w-full rounded-3xl" />
+      <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-24 w-full rounded-2xl" />
+          <Skeleton key={i} className="h-28 w-full" />
         ))}
       </div>
-      <LoadingBlock rows={6} />
     </div>
   )
 }
@@ -41,155 +43,181 @@ function HubSkeleton() {
 export default function HubPage() {
   const { user, refresh } = useAuth()
   const username = user?.username ?? ''
-  const displayName =
-    (typeof user?.display_name === 'string' && user.display_name) || username || 'Commander'
-  const avatarUrl =
-    (typeof user?.avatar_url === 'string' && user.avatar_url) || null
+  const fullName = (typeof user?.display_name === 'string' && user.display_name) || username || 'there'
+  const name = fullName.split(/\s+/)[0]
 
-  const statsApi = useApi<StatsResponse>(
-    () => api.get<StatsResponse>('/api/stats', { query: { username: username || undefined } }),
-    [username],
-    { cacheKey: `stats:${username}` },
-  )
-  const perfApi = useApi<PerformanceResponse>(
-    () => api.get<PerformanceResponse>('/api/performance'),
-    [],
-    { cacheKey: 'performance' },
-  )
-
-  const settingsApi = useApi<{ settings: Record<string, string> }>(
-    () => api.get<{ settings: Record<string, string> }>('/api/settings'),
-    [],
-    { cacheKey: 'settings' },
-  )
+  // Stamped with the time it arrived, so the masthead can say how fresh it is.
+  const statsApi = useApi<StatsResponse & { fetchedAt?: number }>(() => api.get<StatsResponse>('/api/stats', { query: { username: username || undefined } }).then((r) => ({ ...r, fetchedAt: Date.now() })), [username], {
+    cacheKey: `stats:${username}`,
+  })
+  const reviewApi = useApi<{ dueCount: number }>(() => api.get('/api/gate/me/review', { query: { limit: 1 } }), [], { cacheKey: 'gate:me:review:count' })
+  const dailyApi = useApi<{ questionId: string; solvedToday?: boolean }>(() => api.get('/api/gate/daily'), [], { cacheKey: 'gate:daily' })
+  const planApi = useApi<{ plan: { examDate?: string | null } | null }>(() => api.get('/api/gate/me/plan'), [], { cacheKey: 'gate:me:plan' })
+  const accountsApi = useApi<{ accounts: { platform: string; verified: boolean }[]; judges: { id: string }[] }>(() => api.get('/api/accounts'), [], {
+    cacheKey: 'accounts',
+  })
+  const settingsApi = useApi<{ settings: Record<string, string> }>(() => api.get('/api/settings'), [], { cacheKey: 'settings' })
   const dailyGoal = Math.min(Math.max(Number(settingsApi.data?.settings?.daily_goal) || 3, 1), 50)
+  const contestsApi = useApi<{ contests: PlatformContest[] }>(() => api.get('/api/contests', { timeoutMs: 60000 }), [], { cacheKey: 'contests' })
+  const { clusters } = useNexusWeb()
+  const { items } = useProgress()
 
+  // When the numbers on the page were last fetched.
   const stats = statsApi.data
-  const perf = perfApi.data
+  const [now] = useState(() => Date.now())
+  const updatedAt = stats?.fetchedAt ?? null
 
-  const recentSubmissions = useMemo(
-    () => (stats?.recent.length ? stats.recent : (perf?.recent ?? [])),
-    [stats, perf],
-  )
+  const cont = useMemo(() => findContinue(items, clusters), [items, clusters])
+  const reviewDue = reviewApi.data?.dueCount ?? 0
+  const steps = useMemo(() => nextSteps({ cont, stats: stats ?? null, reviewDue, gateDaily: dailyApi.data ?? null }), [cont, stats, reviewDue, dailyApi.data])
 
-  if (statsApi.loading && !stats) return <HubSkeleton />
-
+  if (statsApi.loading && !stats) return <HomeSkeleton />
   if (statsApi.error && !stats) {
     return (
       <div>
-        <PageHeader icon="home" title="Home" subtitle="Your mission control" />
+        <h1 className="ed-title m-0">Today</h1>
         <ErrorState message={statsApi.error} onRetry={statsApi.refetch} />
       </div>
     )
   }
+  if (!stats) return <HomeSkeleton />
 
-  if (!stats) return <HubSkeleton />
+  // Today's three.
+  const challenge = stats.dailyChallenges?.find((c) => !c.completed) ?? stats.dailyChallenges?.[0]
+  const rows: TodayRow[] = [
+    challenge
+      ? {
+          key: 'challenge',
+          line: challenge.completed ? `Today’s challenge, ${challenge.title}, is done.` : `Solve today’s challenge, ${challenge.title}.`,
+          meta: challenge.completed ? `+${challenge.bonus_xp} XP` : <><ResetsIn /> · +{challenge.bonus_xp} XP</>,
+          to: `/solve/${challenge.problem_rowid}`,
+          done: !!challenge.completed,
+        }
+      : { key: 'challenge', line: 'Pick any problem and let the judge check it.', to: '/problems' },
+    {
+      key: 'gate',
+      line: dailyApi.data?.solvedToday ? 'You answered the GATE question of the day.' : 'Answer the GATE question of the day.',
+      meta: dailyApi.data?.solvedToday ? undefined : <ResetsIn />,
+      to: '/gate/daily',
+      done: !!dailyApi.data?.solvedToday,
+    },
+    {
+      key: 'review',
+      line: reviewDue > 0 ? `${reviewDue} ${reviewDue === 1 ? 'card is' : 'cards are'} due in your review queue.` : 'Your review queue is clear.',
+      meta: reviewDue > 0 ? 'spaced repetition · GATE' : undefined,
+      to: '/gate/review',
+      done: reviewDue === 0,
+    },
+  ]
+
+  // The rooms, each with one live line.
+  const nextContest = (contestsApi.data?.contests ?? [])
+    .filter((c) => c.startTime && c.startTime > now && c.phase !== 'FINISHED')
+    .sort((a, b) => (a.startTime ?? 0) - (b.startTime ?? 0))[0]
+  const examDate = planApi.data?.plan?.examDate ? Date.parse(planApi.data.plan.examDate) : NaN
+  const daysToExam = Number.isFinite(examDate) ? Math.ceil((examDate - now) / 86_400_000) : null
+  const mastery = clusters?.length ? Math.round(clusters.reduce((a, c) => a + progressOf(c), 0) / clusters.length) : null
+  const linked = accountsApi.data ? accountsApi.data.accounts.filter((a) => a.verified).length : null
+  const judges = accountsApi.data?.judges.length ?? 0
+  const readyChapters = DSA_TOPICS.filter((t) => t.load).length
+
+  const rooms: Room[] = [
+    {
+      kicker: 'The Library',
+      name: 'Learn',
+      to: '/learn',
+      live: cont?.page
+        ? `${cont.page.of - cont.page.read} ${cont.page.of - cont.page.read === 1 ? 'page' : 'pages'} left in ${cont.title}.`
+        : cont
+          ? `Next in ${cont.subject}: ${cont.title}.`
+          : `${readyChapters} DSA chapters ready to read.`,
+      links: [
+        { label: 'DSA course', to: '/learn?tab=dsa' },
+        { label: 'GATE notes', to: '/gate/notes' },
+        { label: 'Paths', to: '/learn?tab=paths' },
+      ],
+    },
+    {
+      kicker: 'The Workshop',
+      name: 'Problems',
+      to: '/problems',
+      live: nextContest?.startTime
+        ? `Next contest in ${until(nextContest.startTime - now)}: ${nextContest.name}.`
+        : `${stats.solved.toLocaleString('en-IN')} solved of ${stats.attempted.toLocaleString('en-IN')} tried.`,
+      links: [
+        { label: 'Contests', to: '/contests' },
+        { label: 'Workshop', to: '/workshop' },
+        { label: 'Bookmarks', to: '/bookmarks' },
+      ],
+    },
+    {
+      kicker: 'The Exam Hall',
+      name: 'GATE',
+      to: '/gate',
+      live:
+        daysToExam != null && daysToExam >= 0
+          ? `GATE in ${daysToExam} ${daysToExam === 1 ? 'day' : 'days'}${reviewDue ? `, ${reviewDue} cards due today` : ''}.`
+          : reviewDue
+            ? `${reviewDue} review ${reviewDue === 1 ? 'card' : 'cards'} due today.`
+            : 'Past papers with verified solutions, notes and timed tests.',
+      links: [
+        { label: 'Practice', to: '/gate/practice' },
+        { label: 'Tests', to: '/gate/tests' },
+        { label: 'Review', to: '/gate/review' },
+      ],
+    },
+    {
+      kicker: 'The Atlas',
+      name: 'Nexus',
+      to: '/nexus',
+      live: mastery != null && clusters ? `Mastery ${mastery}% across ${clusters.length} subjects.` : 'Every subject as one web of skills.',
+      links: [{ label: 'Every subject', to: '/learn' }],
+    },
+    {
+      kicker: 'The Ledger',
+      name: 'Analytics',
+      to: '/analytics',
+      live: `${Math.round(stats.accuracy)}% accuracy over ${stats.submissions.toLocaleString('en-IN')} submissions.`,
+      links: [
+        { label: 'Achievements', to: '/achievements' },
+        { label: 'Submissions', to: '/submissions' },
+        { label: 'Profile', to: '/profile' },
+      ],
+    },
+    {
+      kicker: 'The Bridge',
+      name: 'Linked accounts',
+      to: '/settings?tab=platform',
+      live: linked != null && judges ? `${linked} of ${judges} judge accounts linked.` : 'Link your judge accounts to bring your solves in.',
+      links: [
+        { label: 'Social', to: '/social' },
+        { label: 'Appearance', to: '/theme' },
+        { label: 'Settings', to: '/settings' },
+      ],
+    },
+  ]
 
   return (
-    <div className="space-y-7">
-      {/* Who you are, today's goal, and the two main doors */}
-      <HomeHero
-        displayName={displayName}
-        username={username}
-        avatar={typeof user?.avatar === 'string' ? user.avatar : null}
-        avatarUrl={avatarUrl}
-        stats={stats}
-        dailyGoal={dailyGoal}
-        actions={
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              statsApi.refetch()
-              perfApi.refetch()
-              void refresh()
-            }}
-            aria-label="Refresh dashboard"
-            className="text-xs"
-          >
-            <RefreshCw
-              className={statsApi.loading || perfApi.loading ? 'animate-spin' : undefined}
-              aria-hidden="true"
-            />
-            Sync
-          </Button>
-        }
+    <div className="today">
+      <Masthead
+        name={name}
+        streak={stats.streak.current}
+        goal={{ done: stats.todayStats.solved, of: dailyGoal }}
+        steps={steps}
+        syncing={statsApi.loading}
+        updatedAt={updatedAt}
+        onSync={() => {
+          statsApi.refetch()
+          reviewApi.refetch()
+          dailyApi.refetch()
+          void refresh()
+        }}
       />
-
-      {/* Every destination, filterable by area */}
-      <LaunchGrid />
-
-      {/* Bento dashboard grid */}
-      <div className="grid gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          {perf ? (
-            <ActivityChart streak={stats.streak} weeklyProgress={perf.weeklyProgress ?? []} />
-          ) : (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Icon name="activity" className="size-4 text-cyan" aria-hidden="true" /> Recent activity
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-40 w-full" />
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        <DailyChallenges challenges={stats.dailyChallenges ?? []} />
-
-        <div className="lg:col-span-2">
-          <RecentSubmissions submissions={recentSubmissions} />
-        </div>
-
-        <div className="space-y-3">
-          <Card>
-            <CardContent className="space-y-3 py-4">
-              <div className="flex items-center justify-between text-[13px]">
-                <span className="text-text-muted">Solves this level</span>
-                <span className="font-semibold text-text-primary tabular-nums">
-                  {stats.level.probsInLevel} / {stats.level.probsForNext}
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-[13px]">
-                <span className="text-text-muted">Consistency</span>
-                <span className="font-semibold text-text-primary tabular-nums">
-                  {perf ? `${perf.consistencyScore}%` : '—'}
-                </span>
-              </div>
-              {perf?.nextLevel && (
-                <p className="mb-0 border-t border-border pt-3 text-[13px] text-text-muted">
-                  <Icon name="trophy" className="mr-1.5 inline size-3.5 text-gold" aria-hidden="true" />
-                  Next level <span className="font-semibold text-text-primary">{perf.nextLevel.name}</span>:{' '}
-                  {formatNumber(perf.nextLevel.xpNeeded)} XP and {perf.nextLevel.probsNeeded} solves
-                  {perf.nextLevel.daysEstimate != null && perf.avgDailyXp > 0 && (
-                    <> · about {perf.nextLevel.daysEstimate} days at your pace</>
-                  )}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="p-4">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="mb-0 text-[15px] font-semibold text-text-primary">Ready for today?</p>
-                <p className="mt-1 mb-0 text-[13px] text-text-muted">
-                  <Icon name="medal" className="mr-1 inline size-3.5 text-gold" aria-hidden="true" />
-                  {stats.todayStats.solved > 0
-                    ? `${stats.todayStats.solved} solved today. Keep the streak going.`
-                    : 'Nothing solved yet today.'}
-                </p>
-              </div>
-              <Link to="/problems" className="btn-primary shrink-0 !px-3.5 !py-2 !text-[13px] !no-underline">
-                Solve one
-              </Link>
-            </div>
-          </Card>
-        </div>
-      </div>
+      <Spread cont={cont} rows={rows} />
+      <Ledger stats={stats} items={items} />
+      <Week stats={stats} items={items} />
+      <Rooms rooms={rooms} />
+      <FieldNotes stats={stats} items={items} />
     </div>
   )
 }

@@ -176,9 +176,9 @@
   /* Rows separated by hairlines, not boxed. */
   :is(.lp, .ed, [data-style]) .ed-rows > * + * { border-top: 1px solid var(--ed-line); }
   /* Muted text sits on the warm spread: one step darker to keep 4.5:1. */
-  :is(.lp, .ed, [data-style='journal'][data-palette='parchment'], [data-style='journal'] [data-palette='parchment']) .ed-feature { --ed-muted: #5c5b55; }
-  [data-mode='dark'] :is(.lp, .ed) .ed-feature,
-  [data-style='journal'][data-palette='parchment'][data-mode='dark'] .ed-feature { --ed-muted: #aaa79e; }
+  :is(.lp, .ed, [data-style='journal'][data-palette='parchment'], [data-style='journal'] [data-palette='parchment']) :is(.ed-feature, .ed-oat) { --ed-muted: #5c5b55; }
+  [data-mode='dark'] :is(.lp, .ed) :is(.ed-feature, .ed-oat),
+  [data-style='journal'][data-palette='parchment'][data-mode='dark'] :is(.ed-feature, .ed-oat) { --ed-muted: #aaa79e; }
 
   /* ── Buttons ──────────────────────────────────────────────────────── */
   :is(.lp, .ed, [data-style]) .ed-btn {
@@ -281,6 +281,9 @@
     :is(.lp, .ed) *,
     :is(.lp, .ed) *::before,
     :is(.lp, .ed) *::after { transition-duration: 0ms !important; animation: none !important; }
+    .ed-specimen *,
+    .ed-specimen *::before,
+    .ed-specimen *::after { transition-duration: 0ms !important; animation: none !important; }
     [data-style] :is(.ed-tab, .ed-link, .ed-btn)::after,
     [data-style] :is(.ed-tab, .ed-link, .ed-btn) { transition-duration: 0ms !important; }
   }

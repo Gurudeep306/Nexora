@@ -1198,7 +1198,8 @@ input[type='search']::-webkit-search-results-decoration {
 /* Chips in the linked subject's stream colour. */
 .nx-need[data-hue] {
   border-color: color-mix(in oklab, var(--nx-chip) 45%, var(--color-border));
-  color: color-mix(in oklab, var(--nx-chip) 75%, var(--color-text-primary));
+  /* 60% hue, 40% ink: readable (4.5:1) on every surface, light and dark. */
+  color: color-mix(in oklab, var(--nx-chip) 60%, var(--color-text-primary));
   background: color-mix(in oklab, var(--nx-chip) 9%, var(--color-bg-surface));
 }
 .nx-need[data-hue]:hover { background: color-mix(in oklab, var(--nx-chip) 18%, var(--color-bg-surface)); border-color: var(--nx-chip); }
