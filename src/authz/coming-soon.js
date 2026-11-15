@@ -1,72 +1,76 @@
 // The page everyone but the owner, admins and early-access users sees while
 // the site is private (direct page loads; the React app draws the same screen
-// itself — client/src/components/site/ComingSoon.tsx). Standalone and tiny:
-// the Traversal mark (client/src/components/brand/traversal.ts) drawing itself
-// and then sending a signal along its two routes, soft brand light and grain
-// like the sign-in page, light and dark from prefers-color-scheme.
+// itself: client/src/components/site/ComingSoon.tsx and coming-soon.css).
+// Standalone and tiny, in the landing page's field-journal look: parchment,
+// one serif line and a binary search finding 23. Light and dark follow
+// prefers-color-scheme.
 const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
-const GRAIN =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
-
 function comingSoonHtml({ message = "", signInHref = "/auth?owner=1" } = {}) {
+  const cells = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
+    .map((v, k) => `<span class="cs-cell ${({ 4: "a", 7: "b", 5: "c" })[k] || ""}">${v}</span>`)
+    .join("");
   return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>NexoraGuru</title>
+<meta name="color-scheme" content="light dark">
+<title>NexoraGuru · Coming soon</title>
 <style>
-  :root { --bg:#f5f6fa; --fg:#12131a; --dim:#5b6070; --mute:#8a8fa0; --line:rgba(18,19,26,.12); --c1:#2f5bea; --c2:#7c3aed; --c3:#0d9488; --grain-op:.1; --grain-blend:multiply; color-scheme: light dark; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#08090e; --fg:#eceef6; --dim:#9aa0b4; --mute:#6b7186; --line:rgba(255,255,255,.12); --c1:#5b8cff; --c2:#9b6bff; --c3:#2dd4bf; --grain-op:.07; --grain-blend:overlay; } }
-  * { box-sizing: border-box; }
-  html, body { height: 100%; margin: 0; }
-  body { background: var(--bg); color: var(--fg); font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; display: grid; place-items: center; padding: 24px 16px; overflow: hidden; -webkit-font-smoothing: antialiased; }
-  .atmos { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
-  .atmos::before { content: ""; position: absolute; inset: -12%; filter: blur(10px);
-    background: radial-gradient(42% 46% at 68% 22%, color-mix(in oklab, var(--c1) 26%, transparent), transparent 70%),
-                radial-gradient(36% 40% at 26% 66%, color-mix(in oklab, var(--c2) 20%, transparent), transparent 70%),
-                radial-gradient(40% 30% at 80% 96%, color-mix(in oklab, var(--c3) 16%, transparent), transparent 70%);
-    animation: breathe 18s cubic-bezier(.16,1,.3,1) infinite alternate; }
-  .atmos::after { content: ""; position: absolute; inset: 0; background-image: ${GRAIN}; background-size: 160px; opacity: var(--grain-op); mix-blend-mode: var(--grain-blend); }
-  .dots { position: absolute; inset: 0; background-image: radial-gradient(color-mix(in oklab, var(--fg) 20%, transparent) 1px, transparent 1.3px); background-size: 22px 22px; background-position: center; -webkit-mask-image: radial-gradient(56% 52% at 50% 46%, #000 10%, transparent 100%); mask-image: radial-gradient(56% 52% at 50% 46%, #000 10%, transparent 100%); opacity: .55; }
-  @keyframes breathe { from { transform: translate3d(-1.5%,0,0) scale(1); } to { transform: translate3d(1.5%,-2%,0) scale(1.06); } }
-  main { position: relative; text-align: center; max-width: 520px; animation: rise .9s cubic-bezier(.16,1,.3,1) both; }
-  @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
-  .mark { position: relative; display: inline-block; }
-  .mark::before { content: ""; position: absolute; inset: -28px; border-radius: 50%; filter: blur(18px); background: radial-gradient(circle, color-mix(in oklab, var(--c2) 30%, transparent), transparent 70%); }
-  svg { position: relative; width: 88px; height: 88px; overflow: visible; }
-  .path { stroke-dasharray: 90; stroke-dashoffset: 90; animation: draw 1.6s cubic-bezier(.65,0,.35,1) .2s forwards; }
-  .sig { stroke-dasharray: 6 84; stroke-dashoffset: 90; opacity: 0; animation: signal 3.2s cubic-bezier(.45,0,.2,1) 2s infinite; }
-  .bead { opacity: 0; animation: pop .45s ease-out forwards; }
-  @keyframes draw { to { stroke-dashoffset: 0; } }
-  @keyframes signal { 0% { stroke-dashoffset: 90; opacity: 0; } 10% { opacity: 1; } 80% { opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
-  @keyframes pop { to { opacity: 1; } }
-  h1 { font-size: clamp(38px, 8vw, 56px); line-height: 1.02; letter-spacing: -.035em; margin: 40px 0 0; font-weight: 650; }
-  .grad { background: linear-gradient(95deg, var(--c1), var(--c2) 55%, var(--c3)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  p { color: var(--dim); margin: 20px auto 0; max-width: 380px; }
-  a { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px; margin-top: 48px; border-radius: 999px; color: var(--dim); font-size: 13px; font-weight: 500; text-decoration: none; box-shadow: inset 0 0 0 1px var(--line); backdrop-filter: blur(10px); transition: color .2s, box-shadow .2s; }
-  a:hover { color: var(--fg); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--c1) 50%, transparent); }
-  @media (prefers-reduced-motion: reduce) { .path, .bead, main, .atmos::before { animation: none; stroke-dashoffset: 0; opacity: 1; } .sig { display: none; } }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+/* The private-mode screen, in the landing page's field-journal look.
+   Kept in step with src/authz/coming-soon.js (the server's copy for direct loads). */
+.cs {
+  --cs-bg: #f0eee6; --cs-card: #faf9f5; --cs-ink: #141413; --cs-ink-2: #3d3d3a; --cs-muted: #6b6a64;
+  --cs-line: #cccbc8; --cs-clay: #d97757; --cs-on-clay: #141413;
+  --cs-serif: 'Newsreader Variable', Newsreader, Georgia, 'Times New Roman', serif;
+  --cs-sans: 'Geist Variable', Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --cs-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+  min-height: 100dvh; display: grid; grid-template-rows: auto 1fr auto; background: var(--cs-bg); color: var(--cs-ink);
+  font-family: var(--cs-sans);
+}
+@media (prefers-color-scheme: dark) { .cs { --cs-bg: #1a1917; --cs-card: #22211e; --cs-ink: #f0eee6; --cs-ink-2: #d4d1c7; --cs-muted: #a5a299; --cs-line: #3a3935; } }
+.cs-top, .cs-foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.25rem 1.5rem; }
+.cs-foot { border-top: 1px solid var(--cs-line); font-size: 12px; color: var(--cs-muted); }
+.cs-brand { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--cs-serif); font-size: 1.1875rem; color: var(--cs-ink); text-decoration: none; }
+.cs-main { display: grid; align-content: center; justify-items: start; width: 100%; max-width: 46rem; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+.cs-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cs-muted); }
+.cs-title { margin: 1.25rem 0 0; font-family: var(--cs-serif); font-weight: 400; font-size: clamp(2.5rem, 7vw, 4.25rem); line-height: 1.04; letter-spacing: -0.02em; text-wrap: balance; }
+.cs-lead { margin: 1.25rem 0 0; max-width: 34rem; font-family: var(--cs-serif); font-size: clamp(1.125rem, 2.4vw, 1.25rem); line-height: 1.45; color: var(--cs-ink-2); }
+.cs-row { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px; width: 100%; max-width: 30rem; margin-top: 2.75rem; }
+.cs-cell { display: grid; place-items: center; aspect-ratio: 1; border-radius: 10px; border: 1px solid var(--cs-line); background: var(--cs-card); font: 500 13px/1 var(--cs-mono); color: var(--cs-muted); }
+.cs-cell.a { animation: cs-a 7s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+.cs-cell.b { animation: cs-b 7s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+.cs-cell.c { animation: cs-c 7s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+@keyframes cs-a { 0%, 4% { border-color: var(--cs-line); color: var(--cs-muted); } 8%, 26% { border-color: var(--cs-ink); color: var(--cs-ink); } 32%, 100% { border-color: var(--cs-line); color: var(--cs-muted); } }
+@keyframes cs-b { 0%, 30% { border-color: var(--cs-line); color: var(--cs-muted); } 34%, 52% { border-color: var(--cs-ink); color: var(--cs-ink); } 58%, 100% { border-color: var(--cs-line); color: var(--cs-muted); } }
+@keyframes cs-c { 0%, 56% { background: var(--cs-card); border-color: var(--cs-line); color: var(--cs-muted); } 62%, 92% { background: var(--cs-clay); border-color: var(--cs-clay); color: var(--cs-on-clay); } 98%, 100% { background: var(--cs-card); border-color: var(--cs-line); color: var(--cs-muted); } }
+.cs-caption { margin-top: 0.75rem; font-size: 12px; color: var(--cs-muted); }
+.cs-link { display: inline-flex; align-items: center; gap: 0.5rem; height: 2.5rem; padding: 0 1.125rem; border: 1px solid var(--cs-line); border-radius: 0 0 8px 8px; background: var(--cs-card); color: var(--cs-ink); font: 500 14px/1 var(--cs-sans); text-decoration: none; cursor: pointer; transition: border-color 300ms; }
+.cs-link:hover { border-color: var(--cs-ink); }
+.cs-link:focus-visible { outline: 2px solid #c6613f; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .cs-cell.a, .cs-cell.b { animation: none; } .cs-cell.c { animation: none; background: var(--cs-clay); border-color: var(--cs-clay); color: var(--cs-on-clay); } }
+
+.cs-mark { width: 22px; height: 22px; color: var(--cs-ink); }
 </style>
 </head>
 <body>
-<div class="atmos" aria-hidden="true"><div class="dots"></div></div>
-<main>
-  <span class="mark">
-    <svg viewBox="0 0 32 32" aria-hidden="true">
-      <defs><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="5" y1="27" x2="27" y2="5"><stop offset="0" style="stop-color:var(--c1)"/><stop offset=".55" style="stop-color:var(--c2)"/><stop offset="1" style="stop-color:var(--c3)"/></linearGradient></defs>
-      <path class="path" d="M7 25V7L15 25V7H25M15 25H25V17H20" fill="none" stroke="url(#g)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-      <path class="sig" d="M7 25V7L15 25V7H25" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-      <g fill="url(#g)"><circle class="bead" cx="7" cy="25" r="2.15" style="animation-delay:.2s"/><circle class="bead" cx="15" cy="25" r="2.15" style="animation-delay:.9s"/><circle class="bead" cx="25" cy="7" r="2.15" style="animation-delay:1.5s"/><circle class="bead" cx="20" cy="17" r="2.15" style="animation-delay:1.7s"/></g>
-    </svg>
-  </span>
-  <h1><span class="grad">NexoraGuru</span><br>is coming soon</h1>
-  ${message ? `<p>${esc(message)}</p>` : ""}
-  <a href="${esc(signInHref)}">Owner sign in <span aria-hidden="true">→</span></a>
-</main>
+<div class="cs">
+  <header class="cs-top"><span class="cs-brand"><svg class="cs-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7.5" fill="currentColor"/><path d="M11 22V10L21 22V10" fill="none" stroke="var(--cs-bg)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>NexoraGuru</span></header>
+  <main class="cs-main">
+    <p class="cs-label" style="margin:0">Coming soon</p>
+    <h1 class="cs-title">Every idea in computer science, set in motion.</h1>
+    <p class="cs-lead">${esc(message || "We are drawing the last few frames. Check back soon.")}</p>
+    <div class="cs-row" aria-hidden="true">${cells}</div>
+    <p class="cs-caption" style="margin:0.75rem 0 0">Binary search, finding 23 in three looks.</p>
+    <p style="margin:3rem 0 0"><a class="cs-link" href="${esc(signInHref)}">Owner sign in <span aria-hidden="true">→</span></a></p>
+  </main>
+  <footer class="cs-foot"><span>© ${new Date().getFullYear()} NexoraGuru</span></footer>
+</div>
 </body>
 </html>`;
 }

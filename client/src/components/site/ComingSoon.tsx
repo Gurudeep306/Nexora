@@ -5,8 +5,11 @@ import '@fontsource-variable/bricolage-grotesque/opsz.css'
 import { LogoMark } from '@/components/brand/Logo'
 import { useAuth } from '@/context/AuthContext'
 import './brand.css'
+import './coming-soon.css'
+import '@fontsource-variable/newsreader/opsz.css'
 
 const EASE = [0.16, 1, 0.3, 1] as const
+const YEAR = new Date().getFullYear()
 
 function Stage({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLElement>(null)
@@ -31,65 +34,58 @@ function Stage({ children }: { children: React.ReactNode }) {
   )
 }
 
+const CELLS = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
+const ROLE: Record<number, string> = { 4: 'a', 7: 'b', 5: 'c' }
+
 /**
  * What everyone but the owner, admins and early-access users sees while the
- * site is private. Quiet on purpose: the mark playing, one line, a way in
- * for the owner. (The server renders the same screen for direct page loads.)
+ * site is private: the landing page's paper, one serif line, and a binary
+ * search quietly finding 23. (The server renders the same screen for direct
+ * page loads: src/authz/coming-soon.js.)
  */
 export function ComingSoon({ message }: { message?: string }) {
   const { user, logout } = useAuth()
   return (
-    <Stage>
-      <div className="relative z-10 flex max-w-lg flex-col items-center text-center">
-        <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9, ease: EASE }} className="relative">
-          <span aria-hidden="true" className="absolute inset-[-28px] rounded-full bg-[radial-gradient(circle,color-mix(in_oklab,var(--nx-b2)_28%,transparent),transparent_70%)] blur-xl" />
-          <LogoMark size={88} interactive className="relative" />
-        </motion.div>
-        <motion.h1
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.25, ease: EASE }}
-          className="nx-display mt-10 text-[40px] leading-[1.02] font-semibold text-text-primary sm:text-[56px]"
-        >
-          <span className="nx-grad-text">NexoraGuru</span>
-          <br />
-          is coming soon
-        </motion.h1>
-        {message && (
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.45, ease: EASE }}
-            className="mt-5 max-w-sm text-[15px] leading-relaxed text-text-secondary"
-          >
-            {message}
-          </motion.p>
-        )}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.7 }} className="mt-12 flex items-center gap-3 text-[13px] text-text-muted">
+    <div className="cs">
+      <header className="cs-top">
+        <span className="cs-brand">
+          <LogoMark size={22} className="!text-[var(--cs-ink)]" />
+          NexoraGuru
+        </span>
+      </header>
+      <motion.main className="cs-main" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE }}>
+        <p className="cs-label m-0">Coming soon</p>
+        <h1 className="cs-title">Every idea in computer science, set in motion.</h1>
+        <p className="cs-lead">{message || 'We are drawing the last few frames. Check back soon.'}</p>
+        <div className="cs-row" aria-hidden="true">
+          {CELLS.map((v, k) => (
+            <span key={v} className={`cs-cell ${ROLE[k] ?? ''}`}>
+              {v}
+            </span>
+          ))}
+        </div>
+        <p className="cs-caption m-0">Binary search, finding 23 in three looks.</p>
+        <div className="mt-12 flex flex-wrap items-center gap-4 text-[13px] text-[var(--cs-muted)]">
           {user ? (
             <>
               <span>
-                Signed in as <span className="font-medium text-text-secondary">@{user.username}</span>
+                Signed in as <span className="font-medium text-[var(--cs-ink-2)]">@{user.username}</span>
               </span>
-              <span aria-hidden="true" className="size-1 rounded-full bg-[color:var(--nx-hair-strong)]" />
-              <button type="button" onClick={() => void logout()} className="cursor-pointer font-medium text-text-secondary transition-colors hover:text-text-primary">
+              <button type="button" onClick={() => void logout()} className="cs-link">
                 Sign out
               </button>
             </>
           ) : (
-            <Link
-              to="/auth?owner=1"
-              className="group inline-flex h-9 items-center gap-2 rounded-full px-4 font-medium text-text-secondary shadow-[inset_0_0_0_1px_var(--nx-hair-strong)] backdrop-blur-md transition-[color,box-shadow] hover:text-text-primary hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--nx-b1)_45%,transparent)]"
-            >
-              Owner sign in
-              <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-0.5">
-                →
-              </span>
+            <Link to="/auth?owner=1" className="cs-link">
+              Owner sign in <span aria-hidden="true">→</span>
             </Link>
           )}
-        </motion.div>
-      </div>
-    </Stage>
+        </div>
+      </motion.main>
+      <footer className="cs-foot">
+        <span>© {YEAR} NexoraGuru</span>
+      </footer>
+    </div>
   )
 }
 

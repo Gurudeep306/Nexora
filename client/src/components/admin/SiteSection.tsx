@@ -96,6 +96,11 @@ export function SiteSettingsPanel() {
               <div>
                 <h3 className="nx-display text-[20px] leading-tight font-semibold text-text-primary">Private mode</h3>
                 <p className="mt-0.5 text-[13px] text-text-secondary">{on ? 'The public sees “coming soon”.' : 'NexoraGuru is open to everyone.'}</p>
+                <p className="mt-1 text-[13px]">
+                  <a href="/?preview" target="_blank" rel="noreferrer" className="font-medium text-text-primary underline underline-offset-2">
+                    Preview the landing page
+                  </a>
+                </p>
               </div>
               <span className="ml-auto">
                 <Toggle label="Private mode" checked={s.private_mode.enabled} disabled={busy === 'private'} onChange={(v) => setConfirmPrivate(v)} />
