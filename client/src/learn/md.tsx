@@ -70,7 +70,7 @@ export function Inline({ text }: { text: string }) {
 
 export function CodeBlock({ code, lang }: { code: string; lang: Lang }) {
   return (
-    <pre className="md-pre">
+    <pre className="md-pre" tabIndex={0}>
       {code.split('\n').map((line, i) => (
         <div key={i}>
           {tokenize(line, lang).map((t, k) => (
@@ -220,7 +220,7 @@ export function Markdown({ md, className }: { md: string; className?: string }) 
             return <div key={i} className="md-display" dangerouslySetInnerHTML={{ __html: math(n.tex, true) }} />
           case 'table':
             return (
-              <div key={i} className="md-table-wrap">
+              <div key={i} className="md-table-wrap" tabIndex={0} role="region" aria-label="Table">
                 <table>
                   <thead>
                     <tr>

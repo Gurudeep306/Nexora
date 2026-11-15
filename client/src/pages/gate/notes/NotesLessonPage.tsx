@@ -30,7 +30,9 @@ import { domId } from '@/gate/notes/render/ids'
 import type { ChapterSummary, Lesson, LessonPayload, PyqLink } from '@/gate/notes/types'
 import { gateApi } from '@/gate/api'
 import { questionLink } from '@/gate/shell/links'
-import { useScrollSpy } from '@/components/reader/outline'
+import { useScrollSpy, type OutlineItem } from '@/components/reader/outline'
+import { Outline } from '@/components/reader/Outline'
+import { EndOfLesson } from '@/components/reader/EndOfLesson'
 
 const BLOCK_LABEL: Record<string, string> = {
   intuition: 'Intuition',
@@ -217,6 +219,13 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
 
   const outline = lesson.outline.filter((h) => h.level <= 3)
   const active = useScrollSpy(outline.map((h) => domId(h.id)))
+  const outlineItems: OutlineItem[] = outline.map((h) => ({ id: domId(h.id), text: h.text, level: h.level === 3 ? 3 : 2 }))
+  const dots = (chapter && chapters ? chapters.find((c) => c.id === chapter.id)?.lessons ?? [] : []).map((l) => ({
+    to: NOTES_ROUTES.lesson(subject.id, l.id),
+    title: l.title,
+    done: progressOf(progressMap, subject.id, l.id).completed,
+    current: l.id === lesson.id,
+  }))
   const pyqCount = lesson.pyqLinks.length
 
   const completeBtn = (big?: boolean) => (
@@ -340,45 +349,21 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
 
             <div className="nr-done">{completeBtn(true)}</div>
 
-            <nav className="nr-pager" aria-label="Previous and next lesson">
-              {prev ? (
-                <Link to={NOTES_ROUTES.lesson(subject.id, prev.id)} className="nr-pager-link" rel="prev">
-                  <span className="nr-pager-dir">Previous</span>
-                  <span className="nr-pager-title">{prev.title}</span>
-                </Link>
-              ) : (
-                <span />
-              )}
-              {next ? (
-                <Link to={NOTES_ROUTES.lesson(subject.id, next.id)} className="nr-pager-link is-next" rel="next">
-                  <span className="nr-pager-dir">Next</span>
-                  <span className="nr-pager-title">{next.title}</span>
-                </Link>
-              ) : (
-                <Link to={NOTES_ROUTES.subject(subject.id)} className="nr-pager-link is-next">
-                  <span className="nr-pager-dir">Finished</span>
-                  <span className="nr-pager-title">Back to {subject.title}</span>
-                </Link>
-              )}
-            </nav>
+            <EndOfLesson
+              label={`Chapter ${chapter.n}`}
+              next={
+                next
+                  ? { to: NOTES_ROUTES.lesson(subject.id, next.id), title: next.title }
+                  : { to: NOTES_ROUTES.subject(subject.id), title: `Back to ${subject.title}`, kicker: 'Finished' }
+              }
+              prev={prev ? { to: NOTES_ROUTES.lesson(subject.id, prev.id), title: prev.title } : null}
+              dots={dots}
+            />
           </div>
 
           {/* Right: on this page */}
           <aside className="nr-toc" aria-label="On this page">
-            {outline.length > 1 && (
-              <>
-                <p className="nr-toc-head">On this page</p>
-                <ol>
-                  {outline.map((h) => (
-                    <li key={h.id} className={cn(h.level === 3 && 'is-sub')}>
-                      <a href={`#${domId(h.id)}`} className={cn(active === domId(h.id) && 'is-active')} aria-current={active === domId(h.id) ? 'location' : undefined}>
-                        {h.text}
-                      </a>
-                    </li>
-                  ))}
-                </ol>
-              </>
-            )}
+            <Outline items={outlineItems} active={active} />
             <div className="nr-toc-progress">
               <span className="nr-toc-bar" aria-hidden="true">
                 <span style={{ transform: `scaleX(${pct / 100})` }} />

@@ -1,4 +1,7 @@
+import { useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { Sidenote } from '@/components/reader/Sidenote'
+import { useScrollSync } from '@/components/reader/useScrollSync'
 import { CheckCircle2, ChevronRight, Code2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import '../algorithms'
@@ -11,14 +14,16 @@ import type { Block, CalloutKind } from '../types'
 import { CodeTabs } from './CodeTabs'
 import { QuestionCard } from './QuestionCard'
 
-// Special blocks follow the site's reading design: a label and a margin rule, no box.
-const CALLOUT: Record<CalloutKind, { label: string; tone?: 'accent' | 'warn' | 'danger' | 'good' }> = {
-  note: { label: 'Note' },
-  tip: { label: 'Tip', tone: 'good' },
+// Special blocks follow the site's reading design: a label and a hairline, no
+// box. Notes, tips and interview asides are sidenotes (in the margin when
+// there is room); the rest stay in the line of the argument.
+const CALLOUT: Record<CalloutKind, { label: string; tone?: 'accent' | 'warn' | 'danger' | 'good'; side?: boolean }> = {
+  note: { label: 'Note', side: true },
+  tip: { label: 'Tip', tone: 'good', side: true },
   warn: { label: 'Careful', tone: 'warn' },
   pitfall: { label: 'Pitfall', tone: 'danger' },
-  insight: { label: 'Insight', tone: 'accent' },
-  interview: { label: 'In interviews', tone: 'accent' },
+  insight: { label: 'Why it works', tone: 'good' },
+  interview: { label: 'In interviews', tone: 'accent', side: true },
 }
 
 const DIFF: Record<Question['difficulty'], string> = { easy: 'text-state-success', medium: 'text-state-warning', hard: 'text-state-error' }
@@ -58,37 +63,73 @@ function PracticeList({ ids, title, bank }: { ids: string[]; title?: string; ban
   )
 }
 
+/** A lesson figure: the animation on a figure spread, numbered, with its caption. */
+function Figure({ b, syncTo }: { b: Extract<Block, { t: 'viz' }>; syncTo?: number | null }) {
+  const algo = getAlgorithm(b.algo)
+  if (!algo) return <p className="text-state-error">Missing animation: {b.algo}</p>
+  return (
+    <figure className="nr-figure">
+      <figcaption className="nr-figure-label">
+        <span className="nr-fig-no" />
+        {algo.title}
+      </figcaption>
+      <VizPlayer algo={algo} initial={b.initial} syncTo={syncTo} />
+      {b.caption && <p className="nr-figure-caption">{b.caption}</p>}
+    </figure>
+  )
+}
+
+/**
+ * Scrollytelling: a figure followed by its step-by-step walkthrough. On wide
+ * screens the figure stays in view while the steps scroll past, and moves to
+ * the step being read; on phones, or with reduced motion, it is a figure and a
+ * list, driven by the figure's own buttons.
+ */
+export function ScrollyFigure({ viz, steps }: { viz: Extract<Block, { t: 'viz' }>; steps: Extract<Block, { t: 'steps' }> }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const pos = useScrollSync(ref, '.nx-steps > li')
+  return (
+    <div ref={ref} className="nr-scrolly">
+      <div className="nr-scrolly-figure">
+        <Figure b={viz} syncTo={pos} />
+      </div>
+      <div className="nr-scrolly-text">
+        <LessonBlock b={steps} bank={EMPTY_BANK} />
+      </div>
+    </div>
+  )
+}
+const EMPTY_BANK = new Map<string, Question>()
+
 /** Renders one lesson block. */
 export function LessonBlock({ b, bank }: { b: Block; bank: Map<string, Question> }) {
   switch (b.t) {
     case 'md':
       return <Markdown md={b.md} />
-    case 'viz': {
-      const algo = getAlgorithm(b.algo)
-      if (!algo) return <p className="text-state-error">Missing animation: {b.algo}</p>
-      return (
-        <figure className="-mx-1 my-2 sm:-mx-4 lg:-mx-10">
-          <VizPlayer algo={algo} initial={b.initial} />
-          {b.caption && <figcaption className="mt-2 px-2 text-center text-[12.5px] text-text-muted">{b.caption}</figcaption>}
-        </figure>
-      )
-    }
+    case 'viz':
+      return <Figure b={b} />
     case 'code':
       return <CodeTabs code={b.code} title={b.title} note={b.note} />
     case 'callout': {
       const c = CALLOUT[b.kind]
+      if (c.side)
+        return (
+          <Sidenote label={b.title ?? c.label} tone={c.tone}>
+            <Markdown md={b.md} />
+          </Sidenote>
+        )
       return (
-        <aside className="nx-aside" data-tone={c.tone}>
+        <div className="nx-aside" role="note" aria-label={b.title ?? c.label} data-tone={c.tone}>
           <span className="nx-aside-label">{b.title ?? c.label}</span>
           <Markdown md={b.md} />
-        </aside>
+        </div>
       )
     }
     case 'complexity':
       return (
-        <section>
+        <section className="nr-table">
           <h3 className="!mt-0">{b.title ?? 'Complexity'}</h3>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto" tabIndex={0} role="region" aria-label={b.title ?? 'Complexity'}>
             <table>
               <thead>
                 <tr>
@@ -115,7 +156,7 @@ export function LessonBlock({ b, bank }: { b: Block; bank: Map<string, Question>
     case 'check': {
       const qs = b.ids.map((id) => bank.get(id)).filter((q): q is Question => !!q)
       return (
-        <section className="space-y-3">
+        <section className="nr-check space-y-3">
           <h3 className="!mt-0">{b.title ?? 'Check yourself'}</h3>
           {qs.map((q, i) => (
             <QuestionCard key={q.id} q={q} index={i + 1} />
