@@ -73,6 +73,7 @@ const UsagePage = lazy(() => import('./pages/UsagePage'))
 const MemoryPage = lazy(() => import('./pages/MemoryPage'))
 const LaunchpadPage = lazy(() => import('./pages/LaunchpadPage'))
 const MachinesPage = lazy(() => import('./pages/MachinesPage'))
+const MachineTerminalPage = lazy(() => import('./pages/MachineTerminalPage'))
 const ModelsPage = lazy(() => import('./pages/ModelsPage'))
 const NexoraGuide = lazy(() => import('./pages/NexoraGuide'))
 const DrivePage = lazy(() => import('./pages/DrivePage'))
@@ -261,6 +262,7 @@ function Shell() {
           <Route path="pipelines/*" element={<Sectioned base="pipelines" label="Pipelines" tabs={[{ id: 'all', label: 'Pipelines', element: <PipelinesPage /> }, { id: 'schedules', label: 'Schedules', element: <AutomationsPage /> }]} />} />
           {/* Resources */}
           <Route path="machines" element={<MachinesPage />} />
+          <Route path="machines/:machineId/terminal" element={<MachineTerminalPage />} />
           <Route path="drive" element={<DrivePage />} />
           {/* AI setup */}
           <Route path="models/*" element={<Sectioned base="models" label="Models" tabs={[{ id: 'catalogue', label: 'Catalogue', element: <ModelsPage /> }, { id: 'health', label: 'Health', element: <HealthPage /> }]} />} />

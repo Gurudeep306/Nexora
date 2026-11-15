@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, useDragControls } from 'framer-motion'
 import { OverflowTabs, StatusPill as KitPill } from './kit'
 import {
@@ -1509,107 +1509,21 @@ function ShipPanel() {
   )
 }
 
-/* ── Terminal (machine sessions) ───────────────────────────────────────── */
+/* ── Terminal (machine sessions): a live shell in the session's own folder ── */
+const LiveTerminal = lazy(() => import('./LiveTerminal'))
 function TerminalPanel({ machineId, folder }: { machineId: string; folder: string }) {
   const { machines } = useHive()
   const m = machines.find((x) => x.id === machineId)
-  const [lines, setLines] = useState<{ cmd: string; out: string; code: number | null; ms: number }[]>([])
-  const [cmd, setCmd] = useState('')
-  const [busy, setBusy] = useState(false)
-  const [hist, setHist] = useState<string[]>([])
-  const [hi, setHi] = useState(-1)
-  const end = useRef<HTMLDivElement>(null)
-  const exec = async (c: string) => {
-    if (!c.trim()) return
-    setBusy(true)
-    setHist((h) => [c, ...h.filter((x) => x !== c)].slice(0, 50))
-    setHi(-1)
-    try {
-      const r = await hiveApi.exec(machineId, { folder, command: c })
-      setLines((l) => [...l, { cmd: c, out: r.output, code: r.code, ms: r.ms }])
-    } catch (e) {
-      setLines((l) => [...l, { cmd: c, out: errMsg(e), code: 1, ms: 0 }])
-    } finally {
-      setBusy(false)
-      setTimeout(() => end.current?.scrollIntoView({ block: 'end' }), 30)
-    }
-  }
-  useEffect(() => {
-    const on = (e: Event) => exec(String((e as CustomEvent).detail || ''))
-    document.addEventListener('hive:terminal', on)
-    return () => document.removeEventListener('hive:terminal', on)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [machineId, folder])
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex items-center gap-2 border-b hive-line px-3 py-2 text-[12px]">
-        <Server className={cn('size-3.5', m?.online ? 'text-state-success' : 'text-state-warning')} />
-        <span className="font-medium">{m?.name ?? 'Machine'}</span>
-        <span className="truncate font-mono text-text-muted">{folder}</span>
-        <span className="ml-auto flex gap-1">
-          {['git status --short', 'npm test', 'npm run build', 'git log --oneline -5'].map((q) => (
-            <button key={q} type="button" onClick={() => exec(q)} className="hidden rounded-md bg-text-primary/[0.05] px-2 py-0.5 font-mono text-[11px] text-text-secondary hover:bg-text-primary/[0.09] xl:inline">
-              {q}
-            </button>
-          ))}
-        </span>
-      </div>
-      <div className="hive-term hive-scroll min-h-0 flex-1 overflow-y-auto p-3" role="log" aria-label="Terminal output">
-        {!lines.length && (
-          <div className="flex h-full flex-col items-center justify-center gap-2 rounded-[var(--hv-r-card)] border border-dashed hive-line p-6 text-center">
-            <SquareTerminal className="size-6 text-text-muted" aria-hidden="true" />
-            <p className="max-w-[46ch] text-[12px] leading-relaxed text-text-muted">
-              Commands run in <span className="font-mono">{folder}</span> on {m?.name}. Yours run directly — agents’ commands go through the approval policy.
-            </p>
-          </div>
-        )}
-        {lines.map((l, i) => (
-          <div key={i} className="mb-3">
-            <div>
-              <span className="text-[var(--color-state-success)]">❯</span> {l.cmd} <span className="opacity-50">· {l.code === 0 ? 'ok' : `exit ${l.code}`} · {(l.ms / 1000).toFixed(1)}s</span>
-            </div>
-            <div className="opacity-90">{l.out}</div>
-          </div>
-        ))}
-        {busy && (
-          <div className="flex items-center gap-2 text-text-muted">
-            <Spinner size={12} label="Running command" /> running…
-          </div>
-        )}
-        <div ref={end} />
-      </div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          const c = cmd
-          setCmd('')
-          exec(c)
-        }}
-        className="hive-term flex items-center gap-2 border-t border-white/10 px-3 py-2"
-      >
-        <span className="text-[var(--color-state-success)]">❯</span>
-        <input
-          value={cmd}
-          onChange={(e) => setCmd(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'ArrowUp' && hist.length) {
-              e.preventDefault()
-              const n = Math.min(hist.length - 1, hi + 1)
-              setHi(n)
-              setCmd(hist[n])
-            } else if (e.key === 'ArrowDown') {
-              e.preventDefault()
-              const n = hi - 1
-              setHi(n)
-              setCmd(n >= 0 ? hist[n] : '')
-            }
-          }}
-          disabled={!m?.online}
-          placeholder={m?.online ? 'Type a command…' : 'Machine offline — start the bridge'}
-          className="min-w-0 flex-1 bg-transparent outline-none placeholder:opacity-50"
-        />
-      </form>
-    </div>
+    <Suspense
+      fallback={
+        <div className="grid h-full place-items-center">
+          <Spinner label="Loading terminal" />
+        </div>
+      }
+    >
+      <LiveTerminal machineId={machineId} machineName={m?.name} folder={folder} online={!!m?.online} />
+    </Suspense>
   )
 }
 
