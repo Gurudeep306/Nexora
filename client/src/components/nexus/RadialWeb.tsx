@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { ChevronRight, Crosshair, Expand, Maximize2, Minus, Plus, Shrink } from 'lucide-react'
-import { Avatar, Button, RankGlyph } from '@/components/ui'
+import { Avatar, Button, RankGlyph, tierFor } from '@/components/ui'
 import { LogoMark } from '@/components/brand/Logo'
 import { formatNumber } from '@/lib/utils'
 import { cn } from '@/lib/utils'
@@ -1801,10 +1801,16 @@ export function RadialWeb({
             aria-label={`Zone ${z.level}: ${z.done} of ${z.count} skills mastered`}
           >
             <span className="flex items-center gap-2.5">
-              <RankGlyph level={z.level} size={compact ? 30 : 32} animated={z.current} />
+              <span className="nx-ring-glyph">
+                <RankGlyph level={z.level} size={compact ? 30 : 32} animated={z.current} />
+              </span>
+              <span className="nx-ring-no" aria-hidden="true">
+                {z.level}
+              </span>
               {!compact && (
                 <span className="min-w-0">
-                  <span className="block text-[10px] font-semibold tracking-[0.12em] text-text-muted uppercase">Zone {z.level}</span>
+                  <span className="nx-ring-zone block text-[10px] font-semibold tracking-[0.12em] text-text-muted uppercase">Zone {z.level}</span>
+                  <span className="nx-ring-name">{tierFor(z.level).name}</span>
                   <span className="block font-mono text-[10px] text-text-muted tabular-nums">
                     {z.done}/{z.count} nodes · {z.pct}%
                   </span>
