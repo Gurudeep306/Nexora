@@ -206,7 +206,7 @@ export const hiveApi = {
   deleteCap: (id: string) => api.delete<Ok<object>>(`/api/hive/caps/${id}`),
   spend: (days = 30) => api.get<Ok<Spend>>('/api/hive/spend', { query: { days } }),
   alerts: () => api.get<Ok<{ alerts: HiveAlert[]; unread: number }>>('/api/hive/alerts'),
-  readAlerts: () => api.post<Ok<object>>('/api/hive/alerts/read', {}),
+  readAlerts: (id?: string) => api.post<Ok<object>>('/api/hive/alerts/read', id ? { id } : {}),
 
   myMemory: () => api.get<Ok<{ facts: { id: string; fact: string; source: string; created_at: number }[] }>>('/api/hive/me/memory'),
   addMyMemory: (fact: string) => api.post<Ok<{ id: string }>>('/api/hive/me/memory', { fact }),

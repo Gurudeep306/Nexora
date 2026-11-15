@@ -50,6 +50,14 @@ const TZ = (() => {
     return ''
   }
 })()
+/** Short zone label for chips, e.g. "IST" or "GMT+5:30". */
+const TZ_SHORT = (() => {
+  try {
+    return new Date().toLocaleTimeString([], { timeZoneName: 'short' }).split(' ').pop() || ''
+  } catch {
+    return ''
+  }
+})()
 
 /* ── Time: UTC on the server, local on screen ─────────────────────────── */
 /** Local clock time and day shift (−1, 0, +1) for a whole UTC hour. */
@@ -364,6 +372,11 @@ function ScheduleCard({ s, boot, pipelineName, onEdit, onChanged }: { s: Schedul
           </button>
           <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[12.5px]">
             <span className="font-medium text-text-secondary">{cadence(s)}</span>
+            {TZ_SHORT && (
+              <span className="text-[11.5px] text-text-muted" title={TZ ? `Time zone: ${TZ.replace(/_/g, ' ')}` : undefined}>
+                {TZ_SHORT}
+              </span>
+            )}
             {project && (
               <span className="inline-flex items-center gap-1 text-text-muted">
                 <span className="rounded-full size-2" style={{ background: projectColor(project.color) }} />
@@ -413,7 +426,15 @@ function ScheduleCard({ s, boot, pipelineName, onEdit, onChanged }: { s: Schedul
         <div>
           <div className="text-[11px] text-text-muted">Next run</div>
           <div className="tabular-nums text-text-secondary" title={s.nextRun ? new Date(s.nextRun).toLocaleString() : undefined}>
-            {!enabled ? 'Paused' : s.nextRun ? countdown(s.nextRun - now) : '—'}
+            {!enabled ? (
+              'Paused'
+            ) : s.nextRun ? (
+              <>
+                {countdown(s.nextRun - now)} · {new Date(s.nextRun).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+              </>
+            ) : (
+              '—'
+            )}
           </div>
         </div>
       </div>
