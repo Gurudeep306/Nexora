@@ -494,7 +494,7 @@ function TablesTool({ kind, setKind }: { kind: Kind; setKind: (k: Kind) => void 
       <div className="lab-grid">
         <div className="lab-col">
           <h3 className="ffs-h">Characteristic table</h3>
-          <div className="lab-tt-wrap">
+          <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
             <table className="lab-tt">
               <caption className="sr-only">Characteristic table of the {kind} flip-flop</caption>
               <thead>
@@ -529,7 +529,7 @@ function TablesTool({ kind, setKind }: { kind: Kind; setKind: (k: Kind) => void 
         </div>
         <div className="lab-col">
           <h3 className="ffs-h">Excitation table</h3>
-          <div className="lab-tt-wrap">
+          <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
             <table className="lab-tt">
               <caption className="sr-only">Excitation table of the {kind} flip-flop (x = don’t care)</caption>
               <thead>

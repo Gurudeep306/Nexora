@@ -359,7 +359,7 @@ function QmTool({ values }: { values: CellValue[] }) {
         </button>
       </div>
       {round ? (
-        <div className="lab-tt-wrap">
+        <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
           <table className="lab-tt km-qm">
             <thead>
               <tr>
@@ -397,7 +397,7 @@ function PiChart({ ones, primes, essential, vars }: { ones: number[]; primes: st
   const single = new Set([...ch.entries()].filter(([, ps]) => ps.length === 1).map(([m]) => m))
   return (
     <>
-      <div className="lab-tt-wrap">
+      <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
         <table className="lab-tt km-chart">
           <caption className="sr-only">Prime-implicant chart: rows are prime implicants, columns are the 1-cells; × marks a cell the implicant covers.</caption>
           <thead>
