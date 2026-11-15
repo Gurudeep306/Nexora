@@ -40,6 +40,7 @@ import { FileChips, useUploads } from '../uploads'
 import { AgentAvatar, AgentMark, describeTool } from '../agents'
 import { HiveLogo } from '../HiveLogo'
 import { ImproveButton } from '../Improve'
+import { ThinkingIndicator } from '../kit'
 import { projectColor } from '../projectColor'
 import { setFocusProject } from '../Showcase'
 import { useHive } from '../store'
@@ -660,7 +661,7 @@ function PendingAnswer({ p, boxed }: { p: Pending; boxed: boolean }) {
         </button>
       )}
       {p.tools && p.tools.length > 0 && <ToolSteps tools={p.tools} live />}
-      {p.text ? <AiMarkdown text={p.text} streaming /> : !p.think && !p.tools?.length && <span className="hive-shine text-[13.5px] font-medium">Thinking…</span>}
+      {p.text ? <AiMarkdown text={p.text} streaming /> : !p.think && !p.tools?.length && <ThinkingIndicator />}
       {p.files && p.files.length > 0 && <Attachments files={p.files} />}
     </div>
   )

@@ -55,7 +55,7 @@ import { hiveApi } from './api'
 import { AgentChip, defaultSpec, shortModel } from './AgentPicker'
 import { BoardView } from './BoardView'
 import { ChangesView } from './ChangesView'
-import { ContextRing, Panel, PanelGroup, PanelSeparator, Spinner, useMedia } from './kit'
+import { ContextRing, Panel, PanelGroup, PanelSeparator, Spinner, ThinkingIndicator, useMedia } from './kit'
 import { FilesView } from './FilesView'
 import { LiveCode } from './LiveCode'
 import { FloorFeed, TeamFloor } from './TeamFloor'
@@ -1076,7 +1076,7 @@ function LiveTurn({ agent, text, think, events }: { agent: AgentRow; text: strin
       <span className="absolute left-0 top-1.5 size-[11px] animate-pulse rounded-full ring-4 ring-[var(--color-bg-app)]" style={{ background: agentHue(agent) }} />
       <div className="mb-1.5 flex items-center gap-2">
         <AgentBadge agent={agent} />
-        <span className="hive-shine text-[11.5px] font-medium">{writing ? 'writing code' : text ? 'typing' : 'thinking'}</span>
+        <ThinkingIndicator className="text-[11.5px]" words={writing ? ['Writing code'] : text ? ['Typing'] : ['Thinking', 'Planning', 'Reading']} />
       </div>
       {think && !text && (
         <div className="mb-2 flex items-start gap-2 rounded-xl bg-text-primary/[0.04] px-3 py-2">
