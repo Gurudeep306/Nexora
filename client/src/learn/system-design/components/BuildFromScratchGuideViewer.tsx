@@ -205,7 +205,7 @@ ${guide.faangInterviewTips.map((tip) => `- ${tip}`).join('\n')}
   return (
     <div className="space-y-8 animate-fadeIn">
       {/* Hero Header: From-Scratch Engineering Blueprint */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-bg-surface-2 via-bg-surface-1 to-bg-surface-2 p-6 sm:p-8 ring-1 ring-border shadow-2xl">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-bg-surface-2 via-bg-surface-1 to-bg-surface-2 p-6 sm:p-8 ring-1 ring-border">
 
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2 max-w-3xl">
@@ -216,7 +216,7 @@ ${guide.faangInterviewTips.map((tip) => `- ${tip}`).join('\n')}
               <span className="rounded-lg bg-accent-brand/10 px-2.5 py-1 font-mono text-[11px] font-bold text-accent-brand ring-1 ring-accent-brand/30">
                 {system.difficulty} Architecture
               </span>
-              <span className="rounded-lg bg-bg-surface-3 px-2.5 py-1 font-mono text-[11px] text-text-muted ring-1 ring-border">
+              <span className="rounded-lg bg-bg-surface-3 px-2.5 py-1 font-mono text-[11px] text-text-secondary ring-1 ring-border">
                 {system.category}
               </span>
             </div>
@@ -287,7 +287,7 @@ ${guide.faangInterviewTips.map((tip) => `- ${tip}`).join('\n')}
             {onSwitchToVisualizer && (
               <button
                 onClick={onSwitchToVisualizer}
-                className="flex items-center gap-2 rounded-xl bg-accent-brand px-4 py-2 text-[12.5px] font-bold text-bg-base transition hover:opacity-95 shadow-md shadow-accent-brand/20 shrink-0"
+                className="flex items-center gap-2 rounded-xl bg-accent-brand px-4 py-2 text-[12.5px] font-bold text-bg-base transition hover:opacity-95 shrink-0"
               >
                 <Zap className="size-4 fill-current" />
                 <span>Launch Simulator</span>
@@ -410,7 +410,7 @@ ${guide.faangInterviewTips.map((tip) => `- ${tip}`).join('\n')}
       <AlgorithmPlayground systemId={system.id} />
 
       {/* Section 3: Interactive Step-by-Step From-Scratch Build Blueprint */}
-      <div className="rounded-2xl bg-bg-surface-2 p-6 sm:p-8 ring-1 ring-border shadow-xl space-y-6">
+      <div className="rounded-2xl bg-bg-surface-2 p-6 sm:p-8 ring-1 ring-border space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
           <div>
             <h3 className="text-[18px] font-bold text-text-primary flex items-center gap-2">
@@ -429,7 +429,7 @@ ${guide.faangInterviewTips.map((tip) => `- ${tip}`).join('\n')}
                 onClick={() => setSelectedStepIdx(idx)}
                 className={`flex size-8 items-center justify-center rounded-lg font-mono text-[12px] font-bold transition ring-1 ${
                   selectedStepIdx === idx
-                    ? 'bg-amber-400 text-black ring-amber-400 shadow-md shadow-amber-400/20'
+                    ? 'bg-amber-400 text-black ring-amber-400'
                     : 'bg-bg-surface-1 text-text-muted ring-border hover:text-text-primary hover:bg-bg-surface-3'
                 }`}
               >

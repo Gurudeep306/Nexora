@@ -482,7 +482,7 @@ export const SnowflakeIdGeneratorEngine: React.FC = () => {
 
         <button
           onClick={handleGenerate}
-          className="rounded-lg bg-accent-brand px-4 py-2 text-[12px] font-bold text-bg-base hover:opacity-90 active:scale-95 shadow-md flex items-center gap-1.5"
+          className="rounded-lg bg-accent-brand px-4 py-2 text-[12px] font-bold text-bg-base hover:opacity-90 active:scale-95 flex items-center gap-1.5"
         >
           <Zap className="size-3.5" /> Generate Next ID
         </button>
@@ -664,7 +664,7 @@ export const DoubleRatchetCryptoEngine: React.FC = () => {
                     fill="#0284c7"
                     stroke="#38bdf8"
                     strokeWidth="1.6"
-                    className="shadow-lg"
+                    
                   />
                   <text
                     x="80"
@@ -692,7 +692,7 @@ export const DoubleRatchetCryptoEngine: React.FC = () => {
                     fill="#7e22ce"
                     stroke="#c084fc"
                     strokeWidth="1.6"
-                    className="shadow-lg"
+                    
                   />
                   <text
                     x="80"

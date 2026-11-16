@@ -409,7 +409,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
   }
 
   return (
-    <div className="rounded-2xl bg-bg-surface-2 p-6 ring-1 ring-border shadow-xl space-y-6">
+    <div className="rounded-2xl bg-bg-surface-2 p-6 ring-1 ring-border space-y-6">
       <div className="flex items-center justify-between border-b border-border/60 pb-3">
         <div className="flex items-center gap-2">
           <Sparkles className="size-5 text-amber-400" />

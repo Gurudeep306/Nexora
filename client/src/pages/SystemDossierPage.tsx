@@ -318,11 +318,7 @@ export default function SystemDossierPage() {
 
       {/* DOMAIN-THEMED HERO BANNER FOR THE SYSTEM */}
       <div
-        className="relative overflow-hidden rounded-2xl p-6 sm:p-8 ring-1 shadow-2xl mb-6 transition-all"
-        style={{
-          background: `color-mix(in oklab, ${domainTheme.color} 6%, var(--color-bg-surface))`,
-          borderColor: `color-mix(in oklab, ${domainTheme.color} 30%, var(--color-border))`,
-        }}
+        className="relative overflow-hidden rounded-2xl bg-bg-surface p-6 sm:p-8 ring-1 ring-border mb-6"
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           <div className="lg:col-span-7 space-y-4">
@@ -345,24 +341,18 @@ export default function SystemDossierPage() {
               )}
 
               {meta?.architecturePattern && (
-                <span className="rounded-full bg-state-warning/10 px-3 py-1 text-[11px] font-mono font-bold text-state-warning ring-1 ring-state-warning/30">
+                <span className="rounded-full bg-bg-surface px-3 py-1 text-[11px] font-mono font-bold text-text-primary ring-1 ring-border-strong">
                   {meta.architecturePattern}
                 </span>
               )}
 
-              <span className="rounded-full bg-state-success/10 px-3 py-1 text-[11px] font-mono font-bold text-state-success ring-1 ring-state-success/30 flex items-center gap-1.5">
-                <Zap className="size-3" /> {dossier.system.throughput}
-              </span>
-              <span className="rounded-full bg-sky-500/10 px-3 py-1 text-[11px] font-mono font-bold text-sky-400 ring-1 ring-sky-500/30 flex items-center gap-1.5">
-                <Clock className="size-3" /> P99 {dossier.system.latency}
-              </span>
             </div>
 
             <div>
               <div className="text-[11px] font-mono uppercase tracking-widest text-text-muted mb-1">
-                Comprehensive Masterclass Dossier • 10 Interactive Chapters
+                System design dossier · 10 chapters
               </div>
-              <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-text-primary leading-tight">
+              <h1 className="ed-title text-text-primary">
                 {dossier.system.name}
               </h1>
             </div>
@@ -372,29 +362,37 @@ export default function SystemDossierPage() {
             </p>
 
             {/* Quick Metrics & Progress Strip */}
-            <div className="pt-4 border-t border-border/50 flex flex-wrap items-center justify-between gap-4 text-xs">
-              <div className="flex flex-wrap items-center gap-6">
+            <div className="pt-4 border-t border-border flex flex-wrap items-end justify-between gap-4 text-xs">
+              <dl className="flex flex-wrap items-start gap-x-6 gap-y-3">
                 <div>
-                  <span className="text-text-muted block text-[10px] uppercase font-mono">Storage Scale</span>
-                  <span className="font-semibold text-text-primary font-mono">{dossier.system.storageScale}</span>
+                  <dt className="text-text-secondary text-[10px] uppercase font-mono">
+                    <Zap className="mr-1 inline size-3 text-state-success" aria-hidden="true" />
+                    Throughput
+                  </dt>
+                  <dd className="font-semibold text-text-primary font-mono">{dossier.system.throughput}</dd>
                 </div>
                 <div>
-                  <span className="text-text-muted block text-[10px] uppercase font-mono">Reading Time</span>
-                  <span className="font-semibold text-text-primary font-mono">{dossier.totalReadingTimeMinutes} mins</span>
+                  <dt className="text-text-secondary text-[10px] uppercase font-mono">
+                    <Clock className="mr-1 inline size-3 text-state-info" aria-hidden="true" />
+                    P99 latency
+                  </dt>
+                  <dd className="font-semibold text-text-primary font-mono">{dossier.system.latency}</dd>
                 </div>
                 <div>
-                  <span className="text-text-muted block text-[10px] uppercase font-mono">Curriculum</span>
-                  <span className="font-semibold font-mono" style={{ color: ink }}>
-                    10 Dedicated Chapters
-                  </span>
+                  <dt className="text-text-secondary text-[10px] uppercase font-mono">Storage</dt>
+                  <dd className="font-semibold text-text-primary font-mono">{dossier.system.storageScale}</dd>
                 </div>
-              </div>
+                <div>
+                  <dt className="text-text-secondary text-[10px] uppercase font-mono">Reading time</dt>
+                  <dd className="font-semibold text-text-primary font-mono">{dossier.totalReadingTimeMinutes} min</dd>
+                </div>
+              </dl>
 
               <div className="flex items-center gap-3">
                 <div className="text-right">
-                  <span className="text-[10px] uppercase font-mono text-text-muted block">Masterclass Progress</span>
-                  <span className="text-xs font-mono font-bold text-state-success">
-                    {(completedChapters[systemId] || []).length} of 10 Chapters ({Math.round(((completedChapters[systemId]?.length || 0) / 10) * 100)}%)
+                  <span className="text-[10px] uppercase font-mono text-text-secondary block">Your progress</span>
+                  <span className="text-xs font-mono font-bold text-text-primary">
+                    {(completedChapters[systemId] || []).length} of 10 chapters read
                   </span>
                 </div>
                 <div className="w-24 h-2 bg-bg-surface-3 rounded-full overflow-hidden ring-1 ring-border">
@@ -419,21 +417,16 @@ export default function SystemDossierPage() {
       </div>
 
       {/* 10-CHAPTER MASTERCLASS CURRICULUM DECK */}
-      <div className="mb-8 rounded-2xl bg-bg-surface-2/95 backdrop-blur-md p-4 ring-1 ring-border shadow-xl">
+      <div className="mb-8 rounded-2xl bg-bg-surface-2 p-4 ring-1 ring-border">
         <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-3">
           <div className="flex items-center gap-2">
             <span className="flex size-6 items-center justify-center rounded-md bg-accent-brand/10 text-accent-brand">
               <BookOpen className="size-3.5" />
             </span>
-            <span className="text-xs font-bold uppercase tracking-wider text-text-primary">
-              Masterclass Curriculum Roadmap
-            </span>
-            <span className="text-[11px] font-mono text-text-muted hidden md:inline">
-              (Click any chapter to jump directly to its dedicated deep dive)
-            </span>
+            <h2 className="text-sm font-semibold text-text-primary">Chapters</h2>
           </div>
           <span className="text-xs font-mono font-bold" style={{ color: ink }}>
-            Chapter {activeChapterIndex + 1} of 10 Active
+            Reading chapter {activeChapterIndex + 1} of 10
           </span>
         </div>
 
@@ -451,7 +444,7 @@ export default function SystemDossierPage() {
                 onClick={() => handleSelectChapter(idx)}
                 className={`group relative flex flex-col items-center text-center p-2.5 rounded-xl transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-bg-surface-3 shadow-lg ring-2 font-bold scale-[1.02] z-10'
+                    ? 'bg-bg-surface-3 ring-2 font-bold scale-[1.02] z-10'
                     : 'bg-bg-surface-1/70 hover:bg-bg-surface-3/60 ring-1 ring-border/50 text-text-muted hover:text-text-primary'
                 }`}
                 style={{
@@ -461,7 +454,7 @@ export default function SystemDossierPage() {
               >
                 {/* Completed checkmark badge */}
                 {isDone && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-state-success text-bg-base rounded-full p-0.5 shadow-sm">
+                  <span className="absolute -top-1.5 -right-1.5 bg-state-success text-bg-base rounded-full p-0.5">
                     <CheckCircle2 className="size-3 text-bg-base fill-current" />
                   </span>
                 )}
@@ -492,9 +485,9 @@ export default function SystemDossierPage() {
                   {metaIcon?.shortTitle || ch.badge}
                 </div>
 
-                <div className="text-[9px] text-text-muted font-mono mt-1 w-full flex items-center justify-between">
+                <div className="text-[9px] text-text-secondary font-mono mt-1 w-full flex items-center justify-between">
                   <span>{ch.estimatedMinutes}m</span>
-                  <span className="hidden lg:inline text-[8px] text-text-muted truncate max-w-[45px]">
+                  <span className="hidden lg:inline text-[8px] text-text-secondary truncate max-w-[45px]">
                     {metaIcon?.tag || ch.badge}
                   </span>
                 </div>
@@ -516,7 +509,7 @@ export default function SystemDossierPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* LEFT COLUMN: CHAPTER SELECTOR SIDEBAR (3 cols) */}
         <div className="lg:col-span-4 space-y-4 sticky top-6">
-          <div className="rounded-xl bg-bg-surface-2 p-4 ring-1 ring-border shadow-lg space-y-3">
+          <div className="rounded-xl bg-bg-surface-2 p-4 ring-1 ring-border space-y-3">
             <div className="flex items-center justify-between border-b border-border/60 pb-3">
               <h2 className="m-0 text-xs font-bold uppercase tracking-wider text-text-secondary flex items-center gap-2">
                 <BookOpen className="size-3.5" style={{ color: ink }} /> Table of Contents
@@ -540,7 +533,7 @@ export default function SystemDossierPage() {
                     onClick={() => handleSelectChapter(idx)}
                     className={`w-full text-left rounded-lg p-2.5 transition flex items-start gap-2.5 text-xs ${
                       isActive
-                        ? 'font-semibold shadow-sm'
+                        ? 'font-semibold'
                         : 'text-text-secondary hover:bg-bg-surface-3 hover:text-text-primary'
                     }`}
                     style={
@@ -575,7 +568,7 @@ export default function SystemDossierPage() {
                         <ChapterIcon className="size-3 shrink-0 opacity-70" />
                         <span className="truncate">{ch.title.replace(/^Chapter \d+:\s*/, '')}</span>
                       </div>
-                      <div className="text-[10px] text-text-muted flex items-center gap-2 mt-0.5">
+                      <div className="text-[10px] text-text-secondary flex items-center gap-2 mt-0.5">
                         <span className="truncate">{metaIcon?.tag || ch.badge}</span>
                         <span>•</span>
                         <span>{ch.estimatedMinutes}m read</span>
@@ -594,7 +587,7 @@ export default function SystemDossierPage() {
         {/* RIGHT COLUMN: CHAPTER CONTENT & INTERACTIVE LAB (8 cols) */}
         <div className="lg:col-span-8 space-y-6">
           {/* CHAPTER HEADER CARD */}
-          <div className="rounded-2xl bg-bg-surface-2 p-6 sm:p-8 ring-1 ring-border shadow-xl space-y-4">
+          <div className="rounded-2xl bg-bg-surface-2 p-6 sm:p-8 ring-1 ring-border space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-4">
               <div>
                 <span className="rounded-md bg-accent-brand/10 px-2.5 py-1 text-[11px] font-mono font-bold text-accent-brand ring-1 ring-accent-brand/30">
@@ -611,10 +604,10 @@ export default function SystemDossierPage() {
               {/* Mark Complete Checkbox Button */}
               <button
                 onClick={() => toggleChapterComplete(currentChapter.chapterNumber)}
-                className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-bold transition shadow-sm ${
+                className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-bold transition ${
                   isCurrentChapterComplete
-                    ? 'bg-state-success/20 text-state-success ring-1 ring-state-success/50'
-                    : 'bg-bg-surface-3 text-text-muted hover:text-text-primary ring-1 ring-border'
+                    ? 'bg-bg-surface text-text-primary ring-1 ring-state-success [&>svg]:text-state-success'
+                    : 'bg-bg-surface-3 text-text-secondary hover:text-text-primary ring-1 ring-border'
                 }`}
               >
                 <CheckCircle2 className="size-4" />
@@ -649,7 +642,7 @@ export default function SystemDossierPage() {
 
           {/* CHAPTER INTERACTIVE MODULE (If applicable) */}
           {currentChapter.interactiveModuleType === 'capacity-calculator' && (
-            <div className="rounded-2xl bg-bg-surface-2 p-6 ring-1 ring-accent-brand/40 shadow-2xl space-y-5">
+            <div className="rounded-2xl bg-bg-surface-2 p-6 ring-1 ring-accent-brand/40 space-y-5">
               <div className="flex items-center justify-between border-b border-border/60 pb-3">
                 <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
                   <Sliders className="size-4 text-accent-brand" /> Interactive Scale & Capacity Simulator
@@ -763,7 +756,7 @@ export default function SystemDossierPage() {
 
           {/* CHAPTER 4: LIVE INTERACTIVE ARCHITECTURAL VISUALIZER & WIRE FLOW SIMULATOR */}
           {activeChapterIndex === 3 && (
-            <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border shadow-2xl space-y-4">
+            <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
                 <div className="flex items-center gap-2">
                   <div className="size-2.5 rounded-full bg-state-success animate-ping" />
@@ -771,7 +764,7 @@ export default function SystemDossierPage() {
                     <Network className="size-4" style={{ color: ink }} /> Live Architectural Topology & Distributed Wire Flow Simulator
                   </h3>
                 </div>
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded border border-state-success/30 bg-state-success/10 text-state-success font-bold">
+                <span className="text-[11px] font-mono px-2 py-0.5 rounded border border-border-strong bg-bg-surface text-text-primary font-bold">
                   {(dossier.system.services || []).length} Microservices • {(dossier.system.animationSteps || []).length} Wire Flow Steps
                 </span>
               </div>
@@ -800,7 +793,7 @@ export default function SystemDossierPage() {
           {activeChapterIndex === 5 && (
             <div className="space-y-6">
               <SpecializedDomainEngines systemId={dossier.system.id} />
-              <div className="rounded-2xl border border-border bg-bg-surface-2 p-5 sm:p-6 shadow-2xl space-y-4">
+              <div className="rounded-2xl border border-border bg-bg-surface-2 p-5 sm:p-6 space-y-4">
                 <div className="flex items-center justify-between border-b border-border/60 pb-3">
                   <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
                     <Zap className="size-4 text-cyan-400" /> Interactive Algorithmic Engine & State Simulator
@@ -816,7 +809,7 @@ export default function SystemDossierPage() {
 
           {/* CHAPTER 7: STORAGE CONSENSUS & DISTRIBUTED STATE ENGINES */}
           {activeChapterIndex === 6 && (
-            <div className="rounded-2xl border border-border bg-bg-surface-2 p-5 sm:p-6 shadow-2xl space-y-4">
+            <div className="rounded-2xl border border-border bg-bg-surface-2 p-5 sm:p-6 space-y-4">
               <div className="flex items-center justify-between border-b border-border/60 pb-3">
                 <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
                   <Sparkles className="size-4 text-state-warning" /> Distributed Consensus & Replication Simulator
@@ -832,7 +825,7 @@ export default function SystemDossierPage() {
           {/* CHAPTER 8: FAULT TOLERANCE, HIGH AVAILABILITY & CHAOS DRILLS */}
           {activeChapterIndex === 7 && (
             <div className="space-y-6">
-              <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-rose-500/40 shadow-2xl space-y-4">
+              <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-rose-500/40 space-y-4">
                 <div className="flex items-center justify-between border-b border-border/60 pb-3">
                   <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
                     <ShieldAlert className="size-4 text-rose-400" /> Chaos Engineering & Resiliency Lab
@@ -846,19 +839,19 @@ export default function SystemDossierPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-bold">
                   <button
                     onClick={() => triggerChaosScenario('kill_db')}
-                    className="rounded-lg bg-rose-500/15 p-2.5 text-rose-400 ring-1 ring-rose-500/40 hover:bg-rose-500/25 transition text-left"
+                    className="rounded-lg bg-rose-500/15 p-2.5 text-text-primary ring-1 ring-rose-500/40 hover:bg-rose-500/25 transition text-left"
                   >
                     💥 Kill DB Primary
                   </button>
                   <button
                     onClick={() => triggerChaosScenario('surge_traffic')}
-                    className="rounded-lg bg-state-warning/15 p-2.5 text-state-warning ring-1 ring-state-warning/40 hover:bg-state-warning/25 transition text-left"
+                    className="rounded-lg bg-state-warning/15 p-2.5 text-text-primary ring-1 ring-state-warning/40 hover:bg-state-warning/25 transition text-left"
                   >
                     🌊 10x Flash Surge
                   </button>
                   <button
                     onClick={() => triggerChaosScenario('split_brain')}
-                    className="rounded-lg bg-purple-500/15 p-2.5 text-purple-400 ring-1 ring-purple-500/40 hover:bg-purple-500/25 transition text-left"
+                    className="rounded-lg bg-purple-500/15 p-2.5 text-text-primary ring-1 ring-purple-500/40 hover:bg-purple-500/25 transition text-left"
                   >
                     ⚡ Network Split-Brain
                   </button>
@@ -875,12 +868,12 @@ export default function SystemDossierPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-text-muted">Circuit Breaker State:</span>
                     <span
-                      className={`font-mono font-bold px-2 py-0.5 rounded text-[11px] ${
+                      className={`font-mono font-bold px-2 py-0.5 rounded text-[11px] text-text-primary ring-1 ${
                         chaosState.breakerStatus === 'CLOSED'
-                          ? 'bg-state-success/20 text-state-success'
+                          ? 'ring-state-success'
                           : chaosState.breakerStatus === 'HALF_OPEN'
-                          ? 'bg-state-warning/20 text-state-warning'
-                          : 'bg-rose-500/20 text-rose-400 animate-pulse'
+                          ? 'ring-state-warning'
+                          : 'ring-state-error motion-safe:animate-pulse'
                       }`}
                     >
                       {chaosState.breakerStatus}
@@ -897,7 +890,7 @@ export default function SystemDossierPage() {
               </div>
 
               {/* Concept Animator for Split Brain / Network Partition */}
-              <div className="rounded-2xl border border-border bg-bg-surface-2 p-5 sm:p-6 shadow-2xl space-y-3">
+              <div className="rounded-2xl border border-border bg-bg-surface-2 p-5 sm:p-6 space-y-3">
                 <ChapterConceptAnimator unitId="unit-1" chapterNumber={1} />
               </div>
             </div>
@@ -908,7 +901,7 @@ export default function SystemDossierPage() {
             {currentChapter.contentSections.map((sec, secIdx) => (
               <div
                 key={secIdx}
-                className="rounded-2xl bg-bg-surface-2 p-6 sm:p-8 ring-1 ring-border shadow-md space-y-4"
+                className="rounded-2xl bg-bg-surface-2 p-6 sm:p-8 ring-1 ring-border space-y-4"
               >
                 <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
                   <Layers className="size-4 text-accent-brand" /> {sec.heading}
@@ -920,7 +913,7 @@ export default function SystemDossierPage() {
 
                 {/* Blueprint Image if present */}
                 {sec.image && (
-                  <div className="rounded-xl overflow-hidden border border-border/80 bg-bg-surface-1 shadow-2xl space-y-2 p-2">
+                  <div className="rounded-xl overflow-hidden border border-border/80 bg-bg-surface-1 space-y-2 p-2">
                     <div className="relative overflow-hidden rounded-lg group">
                       <img
                         src={sec.image.url}
@@ -1012,14 +1005,14 @@ export default function SystemDossierPage() {
 
                 {/* Code block if present */}
                 {sec.codeBlock && (
-                  <div className="rounded-xl overflow-hidden border border-border bg-bg-surface-1 shadow-inner space-y-0">
+                  <div className="rounded-xl overflow-hidden border border-border bg-bg-surface-1 space-y-0">
                     <div className="flex items-center justify-between bg-bg-surface-3 px-4 py-2 border-b border-border text-xs">
                       <span className="font-mono text-accent-brand font-semibold">
                         {sec.codeBlock.filename}
                       </span>
                       <button
                         onClick={() => copyCode(sec.codeBlock!.code, `sec-${secIdx}`)}
-                        className="flex items-center gap-1.5 text-text-muted hover:text-text-primary transition font-mono text-[11px]"
+                        className="flex items-center gap-1.5 text-text-secondary hover:text-text-primary transition font-mono text-[11px]"
                       >
                         {copiedCodeKey === `sec-${secIdx}` ? (
                           <>
@@ -1047,7 +1040,7 @@ export default function SystemDossierPage() {
           </div>
 
           {/* BOTTOM PAGINATION CONTROLS */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl bg-bg-surface-2 p-4 sm:p-5 ring-1 ring-border shadow-xl">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl bg-bg-surface-2 p-4 sm:p-5 ring-1 ring-border">
             <button
               onClick={() => handleSelectChapter(Math.max(0, activeChapterIndex - 1))}
               disabled={activeChapterIndex === 0}
@@ -1069,9 +1062,9 @@ export default function SystemDossierPage() {
             {/* Middle: Mark Complete button */}
             <button
               onClick={() => toggleChapterComplete(currentChapter.chapterNumber)}
-              className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition shadow-sm ${
+              className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
                 isCurrentChapterComplete
-                  ? 'bg-state-success/20 text-state-success ring-1 ring-state-success/50'
+                  ? 'bg-bg-surface text-text-primary ring-1 ring-state-success [&>svg]:text-state-success'
                   : 'bg-bg-surface-3 text-text-secondary hover:text-text-primary ring-1 ring-border'
               }`}
             >
@@ -1093,7 +1086,7 @@ export default function SystemDossierPage() {
             ) : (
               <Link
                 to="/learn?tab=sysdesign"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-state-success px-5 py-2.5 text-xs font-bold text-bg-base hover:bg-emerald-600 transition shadow-lg"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-state-success px-5 py-2.5 text-xs font-bold text-bg-base hover:bg-emerald-600 transition"
               >
                 <span>Complete Masterclass Dossier</span>
                 <CheckCircle2 className="size-3.5" />
@@ -1104,7 +1097,7 @@ export default function SystemDossierPage() {
           {/* On Chapter 10: NEXT SYSTEM IN DOMAIN RECOMMENDATION CARD */}
           {activeChapterIndex === 9 && nextSystemInDomain && (
             <div
-              className="mt-6 rounded-2xl p-6 ring-1 shadow-2xl relative overflow-hidden transition-all"
+              className="mt-6 rounded-2xl p-6 ring-1 relative overflow-hidden transition-all"
               style={{
                 background: `color-mix(in oklab, ${domainTheme.color} 6%, var(--color-bg-surface))`,
                 borderColor: `${domainTheme.color}40`,

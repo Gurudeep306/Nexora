@@ -106,7 +106,7 @@ export const CapPartitionAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl border border-sky-500/20 bg-gradient-to-b from-[#0a0f1d] to-[#070a12] p-6 text-white shadow-xl">
+    <div className="rounded-2xl border border-sky-500/20 bg-gradient-to-b from-[#0a0f1d] to-[#070a12] p-6 text-white">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div>
           <div className="flex items-center gap-2">
@@ -159,7 +159,7 @@ export const CapPartitionAnimator: React.FC = () => {
           <button
             onClick={handleDeposit}
             disabled={inFlightWrite}
-            className="mt-3 flex items-center gap-1.5 rounded-lg bg-sky-500 px-3 py-1.5 text-[11px] font-bold text-black shadow-md hover:bg-sky-400 active:scale-95 disabled:opacity-50"
+            className="mt-3 flex items-center gap-1.5 rounded-lg bg-sky-500 px-3 py-1.5 text-[11px] font-bold text-black hover:bg-sky-400 active:scale-95 disabled:opacity-50"
           >
             <Zap className="size-3.5 fill-current" /> Deposit $50
           </button>
@@ -238,7 +238,7 @@ export const CapPartitionAnimator: React.FC = () => {
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <button
           onClick={handleHealOrCut}
-          className={`flex items-center gap-2 rounded-xl px-4 py-2 text-[12px] font-bold transition shadow-lg ${
+          className={`flex items-center gap-2 rounded-xl px-4 py-2 text-[12px] font-bold transition ${
             isPartitioned
               ? 'bg-emerald-500 text-black hover:bg-emerald-400'
               : 'bg-rose-500 text-white hover:bg-rose-600'
@@ -323,7 +323,7 @@ export const TwoPhaseCommitAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl border border-purple-500/20 bg-gradient-to-b from-[#0e091c] to-[#07050e] p-6 text-white shadow-xl">
+    <div className="rounded-2xl border border-purple-500/20 bg-gradient-to-b from-[#0e091c] to-[#07050e] p-6 text-white">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div>
           <div className="flex items-center gap-2">
@@ -375,7 +375,7 @@ export const TwoPhaseCommitAnimator: React.FC = () => {
 
         {/* Coordinator Node */}
         <div className="flex flex-col items-center">
-          <div className="flex size-14 items-center justify-center rounded-2xl bg-purple-500/20 text-purple-400 ring-1 ring-purple-500/50 shadow-lg">
+          <div className="flex size-14 items-center justify-center rounded-2xl bg-purple-500/20 text-purple-400 ring-1 ring-purple-500/50">
             <Layers className="size-7" />
           </div>
           <span className="mt-1 text-[12px] font-bold">Transaction Coordinator</span>
@@ -450,7 +450,7 @@ export const TwoPhaseCommitAnimator: React.FC = () => {
           <button
             onClick={runTransaction}
             disabled={phase === 'PREPARE' || phase === 'VOTING'}
-            className="flex items-center gap-1.5 rounded-xl bg-purple-500 px-4 py-2 text-[12px] font-bold text-white shadow-lg hover:bg-purple-400 disabled:opacity-50"
+            className="flex items-center gap-1.5 rounded-xl bg-purple-500 px-4 py-2 text-[12px] font-bold text-white hover:bg-purple-400 disabled:opacity-50"
           >
             <Play className="size-3.5 fill-current" /> Execute Distributed Transaction
           </button>
@@ -540,7 +540,7 @@ export const LsmTreeVsBTreeAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-b from-[#091510] to-[#050b08] p-6 text-white shadow-xl">
+    <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-b from-[#091510] to-[#050b08] p-6 text-white">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div>
           <div className="flex items-center gap-2">
@@ -608,7 +608,7 @@ export const LsmTreeVsBTreeAnimator: React.FC = () => {
             <button
               onClick={handleInsert}
               disabled={isFlushing}
-              className="mt-4 w-full rounded-lg bg-emerald-500 py-2 text-[11.5px] font-bold text-black shadow-md hover:bg-emerald-400 disabled:opacity-50"
+              className="mt-4 w-full rounded-lg bg-emerald-500 py-2 text-[11.5px] font-bold text-black hover:bg-emerald-400 disabled:opacity-50"
             >
               + Write New Key-Value Pair (Sequential I/O)
             </button>
@@ -661,7 +661,7 @@ export const LsmTreeVsBTreeAnimator: React.FC = () => {
             {/* Root Page */}
             <div className="flex flex-col items-center">
               <span className="text-[9.5px] font-mono text-text-muted uppercase mb-1">Root Directory Page</span>
-              <div className="flex gap-1.5 rounded-xl bg-sky-500/20 p-2.5 ring-1 ring-sky-500/50 shadow-md">
+              <div className="flex gap-1.5 rounded-xl bg-sky-500/20 p-2.5 ring-1 ring-sky-500/50">
                 {btreeRoot.map((k, i) => (
                   <span key={i} className="rounded bg-sky-500 px-3 py-1 font-mono text-[12px] font-bold text-black shadow">
                     [{k}]
@@ -682,7 +682,7 @@ export const LsmTreeVsBTreeAnimator: React.FC = () => {
             <div className="flex flex-wrap items-center justify-center gap-4">
               {btreeLeaves.map((leaf, leafIdx) => (
                 <div key={leafIdx} className="flex items-center gap-3">
-                  <div className="rounded-xl bg-emerald-500/10 p-3 ring-1 ring-emerald-500/40 text-center space-y-1 shadow-md">
+                  <div className="rounded-xl bg-emerald-500/10 p-3 ring-1 ring-emerald-500/40 text-center space-y-1">
                     <span className="text-[9.5px] font-mono text-emerald-400 block font-bold">
                       Leaf Page #{leafIdx + 1}
                     </span>
@@ -772,7 +772,7 @@ export const CacheEvictionAndStampedeAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-b from-[#161108] to-[#0a0703] p-6 text-white shadow-xl">
+    <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-b from-[#161108] to-[#0a0703] p-6 text-white">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div>
           <div className="flex items-center gap-2">
@@ -931,7 +931,7 @@ export const RaftConsensusAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl border border-rose-500/20 bg-gradient-to-b from-[#170a0d] to-[#0b0507] p-6 text-white shadow-xl">
+    <div className="rounded-2xl border border-rose-500/20 bg-gradient-to-b from-[#170a0d] to-[#0b0507] p-6 text-white">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div>
           <div className="flex items-center gap-2">
@@ -980,7 +980,7 @@ export const RaftConsensusAnimator: React.FC = () => {
               <div
                 className={`flex size-14 items-center justify-center rounded-2xl transition-all ${
                   isLeader
-                    ? 'bg-amber-400 text-black shadow-lg shadow-amber-400/30'
+                    ? 'bg-amber-400 text-black'
                     : isCandidate
                     ? 'bg-rose-500 text-white'
                     : 'bg-bg-surface-3 text-text-muted'
@@ -1011,14 +1011,14 @@ export const RaftConsensusAnimator: React.FC = () => {
           <button
             onClick={triggerElection}
             disabled={isElecting || isReplicating}
-            className="flex items-center gap-1.5 rounded-xl bg-rose-500 px-4 py-2 text-[12px] font-bold text-white shadow-lg hover:bg-rose-400 active:scale-95 disabled:opacity-50"
+            className="flex items-center gap-1.5 rounded-xl bg-rose-500 px-4 py-2 text-[12px] font-bold text-white hover:bg-rose-400 active:scale-95 disabled:opacity-50"
           >
             <Play className="size-3.5 fill-current" /> Trigger Leader Failure & Election
           </button>
           <button
             onClick={handleClientWrite}
             disabled={isElecting || isReplicating || !leaderId}
-            className="flex items-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2 text-[12px] font-bold text-black shadow-lg hover:bg-amber-400 active:scale-95 disabled:opacity-50"
+            className="flex items-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2 text-[12px] font-bold text-black hover:bg-amber-400 active:scale-95 disabled:opacity-50"
           >
             <Zap className="size-3.5 fill-current" /> Client Write (Quorum Log Commit)
           </button>
@@ -1067,7 +1067,7 @@ export const RateLimiterTokenBucketAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl border border-cyan-500/20 bg-gradient-to-b from-[#08131a] to-[#04090d] p-6 text-white shadow-xl">
+    <div className="rounded-2xl border border-cyan-500/20 bg-gradient-to-b from-[#08131a] to-[#04090d] p-6 text-white">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div>
           <div className="flex items-center gap-2">
@@ -1375,7 +1375,7 @@ export const ConsistentHashRingAnimator: React.FC = () => {
                   fill="#F43F5E"
                   stroke="#fff"
                   strokeWidth="2"
-                  className="shadow-xl"
+                  
                 />
                 <g transform={`translate(${keyCoords.x}, ${keyCoords.y})`}>
                   <circle
@@ -2292,7 +2292,7 @@ export const VectorClockAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4 font-mono text-[12px]">
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4 font-mono text-[12px]">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
         <div>
           <span className="font-bold text-[14px] text-text-primary flex items-center gap-2">
@@ -2403,7 +2403,7 @@ export const MvccVisibilityAnimator: React.FC = () => {
   const visibleId = getVisibleVersion()
 
   return (
-    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4 font-mono text-[12px]">
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4 font-mono text-[12px]">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
         <div>
           <span className="font-bold text-[14px] text-text-primary flex items-center gap-2">
@@ -2457,7 +2457,7 @@ export const MvccVisibilityAnimator: React.FC = () => {
                 key={v.id}
                 className={`rounded-xl p-3.5 border transition-all duration-300 ${
                   isVis
-                    ? 'border-emerald-500 bg-emerald-500/15 ring-2 ring-emerald-500/50 shadow-lg'
+                    ? 'border-emerald-500 bg-emerald-500/15 ring-2 ring-emerald-500/50'
                     : 'border-border bg-bg-surface-1 opacity-60'
                 }`}
               >
@@ -2548,7 +2548,7 @@ export const BloomFilterProbabilisticAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4 font-mono text-[12px]">
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4 font-mono text-[12px]">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
         <div>
           <span className="font-bold text-[14px] text-text-primary flex items-center gap-2">
@@ -2678,7 +2678,7 @@ export const L4VsL7LoadBalancerAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4 font-mono text-[12px]">
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4 font-mono text-[12px]">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
         <div>
           <span className="font-bold text-[14px] text-text-primary flex items-center gap-2">
@@ -2803,7 +2803,7 @@ export const GossipProtocolEpidemicAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4 font-mono text-[12px]">
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4 font-mono text-[12px]">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
         <div>
           <span className="font-bold text-[14px] text-text-primary flex items-center gap-2">
@@ -2917,7 +2917,7 @@ export const NtpClockDriftAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
         <div className="flex items-center gap-2">
           <Clock className="size-5 text-amber-400" />
@@ -3100,7 +3100,7 @@ export const SpannerTrueTimeAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
         <div className="flex items-center gap-2">
           <Shield className="size-5 text-sky-400" />
@@ -3259,7 +3259,7 @@ export const ByzantineFaultAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
         <div className="flex items-center gap-2">
           <Shield className="size-5 text-purple-400" />
@@ -3388,7 +3388,7 @@ export const ZeroCopySendfileAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
         <div className="flex items-center gap-2">
           <HardDrive className="size-5 text-emerald-400" />
@@ -3567,7 +3567,7 @@ export const ZookeeperDistributedLockAnimator: React.FC = () => {
   }
 
   return (
-    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
         <div className="flex items-center gap-2">
           <Lock className="size-5 text-amber-400" />

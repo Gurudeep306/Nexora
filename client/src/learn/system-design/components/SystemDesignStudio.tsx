@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react'
 import '../sd-page.css'
 import { Link } from 'react-router-dom'
 import { ALL_SYSTEM_DESIGNS } from '../data/systemsData'
+import { ALL_THEORY_CHAPTERS } from '../data/theoryNotesData'
 import {
   DOMAIN_CATEGORIES,
   DOMAIN_THEMES,
@@ -53,6 +54,9 @@ const TECH_PILLS = [
 ]
 
 const DIFFICULTY_PILLS = ['All', 'Foundational', 'Advanced', 'Staff+']
+
+/** A domain colour as readable text: mixed with the theme's ink, so it passes on light and dark paper. */
+const inkOf = (c: string) => `color-mix(in oklab, ${c} 35%, var(--color-text-primary))`
 
 const renderDomainIcon = (icon: string, className = 'size-5') => {
   switch (icon) {
@@ -161,67 +165,42 @@ export const SystemDesignStudio: React.FC = () => {
 
   return (
     <div className="sd-page space-y-6">
-      {/* Studio Master Header */}
-      <div className="card overflow-hidden p-0 ring-1 ring-border shadow-2xl">
-        <div className="border-b border-border bg-bg-surface-2 p-6 sm:p-8">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="flex size-2 rounded-full bg-accent-brand animate-ping" />
-                <span className="text-[11px] font-bold tracking-widest text-accent-brand uppercase font-mono">
-                  NexoraGuru Distributed Systems Masterclass
-                </span>
-              </div>
-              <h2 className="m-0 !text-[28px] sm:!text-[34px] font-extrabold tracking-tight text-text-primary">
-                System Design Interactive Studio
-              </h2>
-              <p className="mt-1 text-[14.5px] text-text-secondary max-w-3xl leading-relaxed">
-                The ultimate one-stop curriculum: 31 production architectures simulated live with packet transmissions, 56 in-depth theory chapters, from-scratch 0-to-1 blueprints, and live algorithm playgrounds.
-              </p>
-            </div>
-
-            {/* Mode Switcher Buttons */}
-            <div className="flex items-center rounded-xl bg-bg-surface-1 p-1 ring-1 ring-border shadow-md">
-              <button
-                onClick={() => setActiveTab('visualizer')}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-[13px] font-bold transition ${
-                  activeTab === 'visualizer'
-                    ? 'bg-accent-brand text-bg-base shadow-sm'
-                    : 'text-text-muted hover:text-text-primary'
-                }`}
-              >
-                <Cpu className="size-4" /> 31 Interactive Systems
-              </button>
-              <button
-                onClick={() => setActiveTab('notes')}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-[13px] font-bold transition ${
-                  activeTab === 'notes'
-                    ? 'bg-accent-brand text-bg-base shadow-sm'
-                    : 'text-text-muted hover:text-text-primary'
-                }`}
-              >
-                <BookOpen className="size-4" /> 56 Chapter Notes (50+ Pages)
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* Two ways in: the live systems, or the theory chapters. The page header above names the studio. */}
+      <div role="tablist" aria-label="Studio view" className="flex flex-wrap gap-x-6 border-b border-border">
+        {(
+          [
+            ['visualizer', Cpu, `${ALL_SYSTEM_DESIGNS.length} interactive systems`],
+            ['notes', BookOpen, `${ALL_THEORY_CHAPTERS.length} theory chapters`],
+          ] as const
+        ).map(([id, Icon, label]) => (
+          <button
+            key={id}
+            role="tab"
+            aria-selected={activeTab === id}
+            onClick={() => setActiveTab(id)}
+            className={`-mb-px flex items-center gap-2 border-b-2 py-3 text-sm font-semibold transition ${
+              activeTab === id ? 'border-text-primary text-text-primary' : 'border-transparent text-text-secondary hover:text-text-primary'
+            }`}
+          >
+            <Icon className="size-4" aria-hidden="true" /> {label}
+          </button>
+        ))}
       </div>
 
       {activeTab === 'visualizer' ? (
         <div className="space-y-6">
           {/* SECTION 1: ARCHITECTURAL DOMAIN CATEGORY HUB */}
-          <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border shadow-2xl space-y-5">
+          <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border space-y-5">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 pb-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="flex size-2 rounded-full bg-accent-brand animate-ping" />
-                  <span className="text-[10.5px] font-mono font-bold uppercase tracking-wider text-accent-brand">
+                  <span className="text-[10.5px] font-mono font-bold uppercase tracking-wider text-text-secondary">
                     Domain Taxonomy & Core Disciplines
                   </span>
                 </div>
                 <h2 className="m-0 text-lg sm:text-xl font-extrabold text-text-primary flex items-center gap-2 mt-0.5">
-                  <SlidersHorizontal className="size-4.5 text-accent-brand" />
-                  Explore 31 Systems by Architectural Category
+                  <SlidersHorizontal className="size-4.5 text-text-secondary" aria-hidden="true" />
+                  Explore {ALL_SYSTEM_DESIGNS.length} systems by category
                 </h2>
                 <p className="text-xs text-text-muted mt-1 max-w-2xl">
                   Filter distributed systems by their underlying engineering discipline. Each category tackles unique concurrency, consistency, and storage challenges.
@@ -233,7 +212,7 @@ export const SystemDesignStudio: React.FC = () => {
                   onClick={() => setShowCompareModal(true)}
                   className="flex items-center gap-1.5 rounded-lg bg-bg-surface-1 px-3 py-1.5 text-[11.5px] font-mono font-bold text-sky-400 hover:text-sky-300 ring-1 ring-sky-500/30 transition shadow-sm"
                 >
-                  <Table className="size-3.5" /> Compare All 31 Systems
+                  <Table className="size-3.5" /> Compare all {ALL_SYSTEM_DESIGNS.length}
                 </button>
                 <button
                   onClick={() => setSelectedDomainId('all')}
@@ -243,7 +222,7 @@ export const SystemDesignStudio: React.FC = () => {
                       : 'bg-bg-surface-1 text-text-muted ring-border hover:text-text-primary'
                   }`}
                 >
-                  Reset / All 31 Systems
+                  Show all {ALL_SYSTEM_DESIGNS.length}
                 </button>
               </div>
             </div>
@@ -261,7 +240,7 @@ export const SystemDesignStudio: React.FC = () => {
                     onClick={() => setSelectedDomainId(isSelected ? 'all' : domain.id)}
                     className={`group relative cursor-pointer overflow-hidden rounded-2xl p-4 transition-all duration-300 ring-1 flex flex-col justify-between ${
                       isSelected
-                        ? `${theme.activeRing} bg-gradient-to-br ${theme.gradient} shadow-2xl scale-[1.02]`
+                        ? `${theme.activeRing} bg-gradient-to-br ${theme.gradient} scale-[1.02]`
                         : `bg-bg-surface-1/90 ring-border hover:ring-border-strong hover:bg-bg-surface-2 hover:scale-[1.01] ${theme.border}`
                     }`}
                     style={{
@@ -277,7 +256,7 @@ export const SystemDesignStudio: React.FC = () => {
                                 ? 'bg-black/30 text-white shadow-inner ring-1 ring-white/20'
                                 : 'bg-bg-surface-2 text-text-secondary group-hover:text-text-primary'
                             }`}
-                            style={{ color: isSelected ? undefined : theme.color }}
+                            style={{ color: isSelected ? undefined : inkOf(theme.color) }}
                           >
                             {renderDomainIcon(domain.icon, 'size-5')}
                           </span>
@@ -348,7 +327,7 @@ export const SystemDesignStudio: React.FC = () => {
                       : 'bg-bg-surface-1 text-text-muted ring-border hover:text-text-primary'
                   }`}
                 >
-                  <span>🌐 All 31</span>
+                  <span>All {ALL_SYSTEM_DESIGNS.length}</span>
                 </button>
                 {DOMAIN_CATEGORIES.map((domain) => {
                   const theme = DOMAIN_THEMES[domain.id] || DOMAIN_THEMES.core
@@ -374,9 +353,9 @@ export const SystemDesignStudio: React.FC = () => {
 
               {/* System Count Feedback */}
               <div className="text-[11.5px] font-mono text-text-muted">
-                Showing <strong className="text-text-primary">{filteredSystems.length}</strong> of 31 systems
+                Showing <strong className="text-text-primary">{filteredSystems.length}</strong> of {ALL_SYSTEM_DESIGNS.length} systems
                 {selectedDomainId !== 'all' && (
-                  <span className="text-accent-brand ml-1">
+                  <span className="text-text-primary ml-1">
                     in {DOMAIN_THEMES[selectedDomainId]?.shortName || selectedDomainId}
                   </span>
                 )}
@@ -501,14 +480,14 @@ export const SystemDesignStudio: React.FC = () => {
                 return (
                   <div
                     key={domain.id}
-                    className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border shadow-xl space-y-4"
+                    className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border space-y-4"
                   >
                     {/* Domain Category Banner */}
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 pb-3">
                       <div className="flex items-center gap-3">
                         <span
                           className="flex size-9 items-center justify-center rounded-xl bg-bg-surface-1 shadow-sm ring-1 ring-border"
-                          style={{ color: theme.color }}
+                          style={{ color: inkOf(theme.color) }}
                         >
                           {renderDomainIcon(domain.icon, 'size-5')}
                         </span>
@@ -532,7 +511,7 @@ export const SystemDesignStudio: React.FC = () => {
                       </div>
                       <span
                         className="font-mono text-[11px] font-extrabold px-3 py-1 rounded-lg ring-1 shadow-sm"
-                        style={{ backgroundColor: `${theme.color}15`, color: theme.color, borderColor: `${theme.color}40` }}
+                        style={{ backgroundColor: `${theme.color}15`, color: inkOf(theme.color), borderColor: `${theme.color}40` }}
                       >
                         {domainSystems.length} Systems in Category
                       </span>
@@ -547,9 +526,9 @@ export const SystemDesignStudio: React.FC = () => {
                         return (
                           <div
                             key={sys.id}
-                            className={`group rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between ring-1 shadow-md ${
+                            className={`group rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between ring-1 ${
                               isSelected
-                                ? 'ring-2 ring-accent-brand shadow-2xl scale-[1.01] bg-bg-surface-1'
+                                ? 'ring-2 ring-accent-brand scale-[1.01] bg-bg-surface-1'
                                 : 'bg-bg-surface-1/95 ring-border hover:ring-border-strong hover:bg-bg-surface-2 hover:scale-[1.01]'
                             }`}
                           >
@@ -580,7 +559,7 @@ export const SystemDesignStudio: React.FC = () => {
                                   className="my-2 rounded-lg bg-bg-surface-2 p-2.5 text-[11.5px] leading-relaxed text-text-secondary font-sans shadow-inner border-l-4"
                                   style={{ borderLeftColor: theme.color }}
                                 >
-                                  <span className="font-bold text-[10px] uppercase font-mono block mb-0.5" style={{ color: theme.color }}>
+                                  <span className="font-bold text-[10px] uppercase font-mono block mb-0.5" style={{ color: inkOf(theme.color) }}>
                                     What It Does & Core Value:
                                   </span>
                                   {meta?.whatItDoes || sys.tagline}
@@ -599,7 +578,7 @@ export const SystemDesignStudio: React.FC = () => {
                                     {(meta?.technologies || []).slice(0, 4).map((tech, tIdx) => (
                                       <span
                                         key={tIdx}
-                                        className="rounded bg-bg-surface-3 px-1.5 py-0.2 text-[9.5px] font-mono text-text-muted ring-1 ring-border"
+                                        className="rounded bg-bg-surface-3 px-1.5 py-0.2 text-[9.5px] font-mono text-text-secondary ring-1 ring-border"
                                       >
                                         {tech}
                                       </span>
@@ -654,7 +633,7 @@ export const SystemDesignStudio: React.FC = () => {
             </div>
           ) : browseMode === 'catalog' ? (
             /* VIEW MODE B: FLAT BENTO CATALOG VIEW */
-            <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border shadow-xl space-y-4">
+            <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border space-y-4">
               <div className="flex items-center justify-between border-b border-border/50 pb-3">
                 <span className="text-[14px] font-bold text-text-primary font-mono">
                   All Systems Catalog ({filteredSystems.length} Results)
@@ -675,7 +654,7 @@ export const SystemDesignStudio: React.FC = () => {
                       key={sys.id}
                       className={`group rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between ring-1 shadow-sm ${
                         isSelected
-                          ? 'ring-2 ring-accent-brand shadow-lg bg-bg-surface-1'
+                          ? 'ring-2 ring-accent-brand bg-bg-surface-1'
                           : 'bg-bg-surface-1/95 ring-border hover:ring-border-strong hover:bg-bg-surface-3'
                       }`}
                     >
@@ -706,7 +685,7 @@ export const SystemDesignStudio: React.FC = () => {
                             className="my-1.5 rounded-lg bg-bg-surface-2 p-2 text-[11px] leading-relaxed text-text-secondary font-sans border-l-4"
                             style={{ borderLeftColor: theme.color }}
                           >
-                            <span className="font-bold text-[9.5px] uppercase font-mono block mb-0.5" style={{ color: theme.color }}>
+                            <span className="font-bold text-[9.5px] uppercase font-mono block mb-0.5" style={{ color: inkOf(theme.color) }}>
                               What It Does:
                             </span>
                             {meta?.whatItDoes || sys.tagline}
@@ -753,7 +732,7 @@ export const SystemDesignStudio: React.FC = () => {
             </div>
           ) : (
             /* VIEW MODE C: HIGH-DENSITY ARCHITECTURE COMPARISON TABLE VIEW */
-            <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
+            <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4">
               <div className="flex items-center justify-between border-b border-border/50 pb-3">
                 <div>
                   <span className="text-[14px] font-bold text-text-primary font-mono block">
@@ -855,17 +834,17 @@ export const SystemDesignStudio: React.FC = () => {
           )}
 
           {/* SECTION 3: ACTIVE SYSTEM HERO BANNER & DEEP OVERVIEW */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-bg-surface-2 via-bg-surface-1 to-bg-surface-2 p-6 sm:p-7 ring-1 ring-border shadow-2xl space-y-5">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-bg-surface-2 via-bg-surface-1 to-bg-surface-2 p-6 sm:p-7 ring-1 ring-border space-y-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="space-y-2 max-w-3xl">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="rounded-lg bg-amber-400/10 px-2.5 py-1 font-mono text-[11px] font-bold text-amber-400 ring-1 ring-amber-400/30">
                     ⚡ Production Archetype: {currentMeta?.realWorldArchetype || currentSystem.name}
                   </span>
-                  <span className="rounded-lg bg-accent-brand/10 px-2.5 py-1 font-mono text-[11px] font-bold text-accent-brand ring-1 ring-accent-brand/30">
+                  <span className="rounded-lg bg-bg-surface px-2.5 py-1 font-mono text-[11px] font-bold text-text-primary ring-1 ring-border-strong">
                     {currentSystem.difficulty}
                   </span>
-                  <span className="rounded-lg bg-bg-surface-3 px-2.5 py-1 font-mono text-[11px] text-text-muted ring-1 ring-border">
+                  <span className="rounded-lg bg-bg-surface-3 px-2.5 py-1 font-mono text-[11px] text-text-secondary ring-1 ring-border">
                     {currentMeta?.domain || currentSystem.category}
                   </span>
                 </div>
@@ -932,7 +911,7 @@ export const SystemDesignStudio: React.FC = () => {
               </div>
               <Link
                 to={`/learn/system-design/${currentSystem.id}/1`}
-                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent-brand to-amber-500 px-5 py-2.5 text-xs font-bold text-bg-base shadow-lg hover:opacity-90 transition shrink-0"
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent-brand to-amber-500 px-5 py-2.5 text-xs font-bold text-bg-base hover:opacity-90 transition shrink-0"
               >
                 <BookOpen className="size-4" />
                 Open 10-Chapter Masterclass Dossier (Individual Page) ↗
@@ -945,9 +924,9 @@ export const SystemDesignStudio: React.FC = () => {
             <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-bg-surface-2 p-1 ring-1 ring-border text-[12px] font-mono shadow-sm">
               <Link
                 to={`/learn/system-design/${currentSystem.id}/1`}
-                className="flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 bg-gradient-to-r from-accent-brand/20 to-amber-500/20 text-accent-brand ring-1 ring-accent-brand/40 font-bold hover:bg-accent-brand/30 transition shadow-sm"
+                className="flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 bg-bg-surface text-text-primary ring-1 ring-border-strong font-bold hover:bg-bg-surface-3 transition"
               >
-                <BookOpen className="size-3.5" /> 📖 Full 10-Chapter Dossier ↗
+                <BookOpen className="size-3.5" aria-hidden="true" /> Open the 10-chapter dossier
               </Link>
               <button
                 onClick={() => setSystemView('simulation')}
@@ -1096,12 +1075,12 @@ export const SystemDesignStudio: React.FC = () => {
       {/* MODAL: COMPARISON MATRIX TABLE OF ALL 31 SYSTEMS */}
       {showCompareModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
-          <div className="w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-2xl bg-bg-surface-2 ring-1 ring-border shadow-2xl flex flex-col">
+          <div className="w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-2xl bg-bg-surface-2 ring-1 ring-border flex flex-col">
             <div className="flex items-center justify-between border-b border-border p-5">
               <div className="flex items-center gap-2">
                 <Table className="size-5 text-accent-brand" />
                 <h3 className="font-extrabold text-[18px] text-text-primary font-mono">
-                  FAANG Architectural Comparison Matrix (All 31 Systems)
+                  Comparison of all {ALL_SYSTEM_DESIGNS.length} systems
                 </h3>
               </div>
               <button

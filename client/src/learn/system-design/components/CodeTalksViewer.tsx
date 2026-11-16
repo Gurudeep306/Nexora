@@ -133,7 +133,7 @@ export const CodeTalksViewer: React.FC<CodeTalksViewerProps> = ({ system, curren
                 {/* Line Number */}
                 <span
                   className={`inline-block w-8 shrink-0 select-none text-right pr-3 font-mono text-[11px] ${
-                    isHighlighted ? 'text-accent-brand font-bold' : 'text-neutral-600'
+                    isHighlighted ? 'text-accent-brand font-bold' : 'text-neutral-400'
                   }`}
                 >
                   {lineNum}
