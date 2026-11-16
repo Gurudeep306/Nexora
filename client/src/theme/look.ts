@@ -1,31 +1,29 @@
 /*
-  The Look (v2) — what the Theme Centre stores in localStorage
-  ('nexora:look') and syncs to the account (settings key 'ui_look').
+  The Look (v5) — what the Appearance page stores in localStorage
+  ('nexora:look') and syncs to the account (settings key 'ui_look'): one of
+  the ten themes plus a few personal settings.
 
   sanitizeLookWith() is the one validator. It is deliberately
   self-contained (it reads nothing but its arguments) because vite.config.ts
   injects its source, together with LOOK_TABLES, into the first-paint script
   in index.html — so the page and the app can never disagree about what a
-  valid look is. It also migrates the v1 look (wallpapers, glass, icon packs…)
-  to the nearest v2 equivalent.
+  valid look is. It also migrates every older look (v1 wallpapers, the v2–v4
+  style pack) to the nearest of the ten themes.
 
   Keep this module dependency-light and type-strippable (node tests run it).
 */
-import { ICON_CONTAINERS, ICON_SETS, ICON_SHAPES, DEFAULT_ICON_CONTAINER, DEFAULT_ICON_SET, DEFAULT_ICON_SHAPE } from './iconCatalog.ts'
-import { ACCENTS, DEFAULT_PALETTE, PALETTES } from './palettes.ts'
-import { CODE_FONTS, DEFAULT_CODE_FONT, DEFAULT_FONT, DEFAULT_SOLUTION_FONT, DEFAULT_TEXT_SIZE, SOLUTION_FONTS, TEXT_SIZES, UI_FONTS } from './fonts.ts'
-import { CARD_STYLES, DEFAULT_CARD_STYLE, DEFAULT_RADIUS, RADII } from './cards.ts'
-import { DEFAULT_PATTERN, DEFAULT_STYLE, PATTERNS, STYLES } from './styles.ts'
+import { CODE_FONTS, DEFAULT_SOLUTION_FONT, DEFAULT_TEXT_SIZE, SOLUTION_FONTS, TEXT_SIZES } from './fonts.ts'
+import { DEFAULT_STYLE, STYLES, THEMES } from './styles.ts'
 
 export interface Look {
-  v: 4
-  /** Design style id (see styles.ts) — the design language. */
+  v: 5
+  /** Theme id (see styles.ts THEMES) — the whole design. */
   style: string
-  /** Page pattern behind everything (see styles.ts). */
+  /* Everything below the style comes from its bundle; only textSize,
+     codeFont and solutionFont are personal choices on top of a theme. */
   pattern: string
-  /** Palette id (see palettes.ts). */
+  /** Palette id (see palettes.ts): the theme's own. */
   theme: string
-  /** 'theme' = the palette's own accent, or an accent override id. */
   accent: string
   font: string
   codeFont: string
@@ -40,60 +38,50 @@ export interface Look {
   iconShape: string
 }
 
+type Bundle = Omit<Look, 'v' | 'style' | 'accent' | 'solutionFont' | 'textSize'>
+
 export interface LookTables {
+  /** The ten themes people can choose. */
   styles: string[]
   /** style id → page kit (styles without one are absent). */
   kits: Record<string, string>
-  patterns: string[]
-  themes: string[]
-  accents: string[]
-  fonts: string[]
+  /** Each theme's full design. */
+  bundles: Record<string, Bundle>
   codeFonts: string[]
   solutionFonts: string[]
   textSizes: string[]
-  cardStyles: string[]
-  radii: string[]
-  iconSets: Record<string, { styles: string[]; def: string }>
-  iconContainers: string[]
-  iconShapes: string[]
   defaults: Look
+  /** Hive's own look (Studio on Midnight), shown on /hive whatever the theme. */
+  hive: Bundle & { style: string }
   /**
-   * v4 (2026): Field Journal became the house style. A look still exactly on
-   * the untouched v3 default (`from`) moves to the new default (`to`).
+   * v5 (2026): the old style pack (16 styles × 55 palettes) folded into the
+   * ten themes. An accessibility palette always moves to Clear; a palette
+   * chosen on the old default style moves by mood; otherwise the old style
+   * decides.
    */
-  v4: { from: Record<string, string>; to: Record<string, string> }
-  /** v1 value → v2 value, per field. */
-  legacy: Record<'wallpaper' | 'accent' | 'fontStyle' | 'fontSize' | 'cardStyle' | 'iconShape' | 'iconPack', Record<string, string>>
+  v5: { styles: Record<string, string>; accessible: string[]; palettes: Record<string, string> }
+  /** v1 text sizes (the only v1 setting that still maps to something). */
+  legacyFontSize: Record<string, string>
 }
 
-const defaultSet = ICON_SETS.find((s) => s.id === DEFAULT_ICON_SET)!
+const bundleOf = (id: string): Bundle => {
+  const b = (STYLES.find((s) => s.id === id) ?? STYLES[0]).bundle
+  return { pattern: b.pattern, theme: b.theme, font: b.font, codeFont: b.codeFont, cardStyle: b.cardStyle, radius: b.radius, iconSet: b.iconSet, iconStyle: b.iconStyle, iconContainer: b.iconContainer, iconShape: b.iconShape }
+}
 
 export const DEFAULT_LOOK: Look = {
-  v: 4,
+  v: 5,
   style: DEFAULT_STYLE,
-  pattern: DEFAULT_PATTERN,
-  theme: DEFAULT_PALETTE,
+  ...bundleOf(DEFAULT_STYLE),
   accent: 'theme',
-  font: DEFAULT_FONT,
-  codeFont: DEFAULT_CODE_FONT,
   solutionFont: DEFAULT_SOLUTION_FONT,
   textSize: DEFAULT_TEXT_SIZE,
-  cardStyle: DEFAULT_CARD_STYLE,
-  radius: DEFAULT_RADIUS,
-  iconSet: DEFAULT_ICON_SET,
-  iconStyle: defaultSet.defaultStyle,
-  iconContainer: DEFAULT_ICON_CONTAINER,
-  iconShape: DEFAULT_ICON_SHAPE,
 }
 
-/**
- * Hive keeps the look it had before Field Journal: while a Hive page is open,
- * a look on the journal style shows as the old default (Studio on Midnight).
- * Every other style already looks the same in Hive as before, so it stays.
- */
+/** Hive keeps its own look (Studio on Midnight) whatever theme is on. */
 export function hiveLook(look: Look): Look {
   if (!LOOK_TABLES.kits[look.style]) return look
-  return { ...look, ...(LOOK_TABLES.v4.from as Partial<Look>) }
+  return { ...look, ...LOOK_TABLES.hive, accent: 'theme' }
 }
 
 /** Paths that keep their pre-journal look (see hiveLook). */
@@ -102,59 +90,38 @@ export function isHivePath(pathname: string): boolean {
 }
 
 export const LOOK_TABLES: LookTables = {
-  styles: STYLES.map((s) => s.id),
+  styles: THEMES.map((s) => s.id),
   kits: Object.fromEntries(STYLES.filter((s) => s.kit).map((s) => [s.id, s.kit as string])),
-  patterns: PATTERNS.map((p) => p.id),
-  themes: PALETTES.map((p) => p.id),
-  accents: ['theme', ...ACCENTS.map((a) => a.id)],
-  fonts: UI_FONTS.map((f) => f.id),
+  bundles: Object.fromEntries(THEMES.map((s) => [s.id, bundleOf(s.id)])),
   codeFonts: CODE_FONTS.map((f) => f.id),
   solutionFonts: SOLUTION_FONTS.map((f) => f.id),
   textSizes: TEXT_SIZES.map((s) => s.id),
-  cardStyles: CARD_STYLES.map((c) => c.id),
-  radii: RADII.map((r) => r.id),
-  iconSets: Object.fromEntries(ICON_SETS.map((s) => [s.id, { styles: s.styles.map((x) => x.id), def: s.defaultStyle }])),
-  iconContainers: ICON_CONTAINERS.map((c) => c.id),
-  iconShapes: ICON_SHAPES.map((s) => s.id),
   defaults: DEFAULT_LOOK,
-  v4: {
-    from: { style: 'studio', theme: 'midnight', accent: 'theme', font: 'geist', codeFont: 'jetbrains', radius: 'rounded', cardStyle: 'soft', pattern: 'none' },
-    to: { style: DEFAULT_LOOK.style, theme: DEFAULT_LOOK.theme, accent: 'theme', font: DEFAULT_LOOK.font, codeFont: DEFAULT_LOOK.codeFont, radius: DEFAULT_LOOK.radius, cardStyle: DEFAULT_LOOK.cardStyle, pattern: DEFAULT_LOOK.pattern },
-  },
-  legacy: {
-    // v1 wallpapers → the theme closest in colour and mood.
-    wallpaper: {
-      none: 'midnight', aurora: 'midnight', lagoon: 'mint', blossom: 'sakura', ember: 'ember', dunes: 'sandstone',
-      nebula: 'lavender', graphite: 'graphite',
-      'ghibli-meadow': 'forest', 'your-name-dusk': 'synthwave', 'demon-slayer-wisteria': 'lavender',
-      'solo-leveling-monarch': 'obsidian', 'anime-shrine': 'ember', 'cherry-blossom-night': 'sakura',
-      'pikachu-volt': 'saffron', 'charizard-core': 'ember', 'cyberpunk-edgerunners': 'neon-city', 'elden-tree': 'saffron',
-      'lavender-fog': 'lavender', 'pallet-dusk': 'forest', 'interstellar-gargantua': 'ember',
-      'spider-verse-multiverse': 'synthwave', 'matrix-digital-rain': 'phosphor', 'arcane-hextech': 'ocean',
-      'hyperspace-jump': 'cobalt', 'carina-cliffs': 'ocean', 'pillars-creation': 'ember', 'deep-space': 'obsidian',
-      'lunar-orbit': 'slate', 'milky-way': 'obsidian', 'cyber-tokyo': 'neon-city', 'cyber-grid': 'electric',
-      'synthwave-grid': 'synthwave', 'liquid-chrome': 'carbon', 'prism-flow': 'vaporwave', 'quantum-mesh': 'cobalt',
-      'dark-geometry': 'carbon', 'alpine-mirror': 'slate', 'borealis-fjord': 'aurora', 'fuji-sakura': 'sakura',
-      'deep-surf': 'ocean',
+  hive: { style: 'studio', ...bundleOf('studio') },
+  v5: {
+    styles: {
+      journal: 'journal', studio: 'journal', editorial: 'journal', manuscript: 'journal',
+      glass: 'sakura', washi: 'sakura',
+      luxe: 'observatory', atelier: 'observatory',
+      signal: 'arcade', poster: 'arcade',
+      console: 'terminal', terminal: 'terminal',
+      nordic: 'greenhouse',
+      swiss: 'blueprint', blueprint: 'blueprint',
+      canvas: 'sketchbook',
     },
-    accent: {
-      multicolor: 'theme', blue: 'blue', purple: 'violet', pink: 'pink', red: 'red', orange: 'orange',
-      yellow: 'amber', green: 'green', graphite: 'graphite', cyan: 'teal', ice: 'teal', plasma: 'pink',
-    },
-    fontStyle: {
-      'space-grotesk': 'space-grotesk', modern: 'space-grotesk', syne: 'sora', orbitron: 'sora', bricolage: 'bricolage',
-      unbounded: 'outfit', retro: 'outfit', cyber: 'geist', cinzel: 'literata', serif: 'literata',
-      handwriting: 'nunito', 'handwriting-caveat': 'nunito', 'handwriting-kalam': 'nunito',
-      'handwriting-architect': 'nunito', 'handwriting-indie': 'nunito',
-    },
-    fontSize: { normal: 'default', comfortable: 'default', large: 'large', huge: 'xl' },
-    cardStyle: { glass: 'soft', neon: 'glow', minimal: 'flat', holo: 'elevated', gradient: 'gradient' },
-    iconShape: { squircle: 'squircle', circle: 'circle', pill: 'circle', hexagon: 'rounded', diamond: 'rounded', shield: 'rounded', free: 'squircle' },
-    iconPack: {
-      vibrant: 'gradient', anime: 'gradient', clay: 'solid', neon: 'outline', glitch: 'outline', retro: 'outline',
-      emerald: 'outline', crystal: 'soft', duotone: 'soft', minimal: 'soft',
+    accessible: ['contrast-dark', 'contrast-light', 'colour-safe', 'tritan-safe', 'e-ink'],
+    palettes: {
+      sakura: 'sakura', lavender: 'sakura', 'rose-pine': 'sakura', 'rose-pine-moon': 'sakura', 'rose-pine-dawn': 'sakura', 'catppuccin-latte': 'sakura', 'catppuccin-frappe': 'sakura',
+      forest: 'greenhouse', mint: 'greenhouse', everforest: 'greenhouse',
+      synthwave: 'arcade', 'neon-city': 'arcade', vaporwave: 'arcade', electric: 'arcade', dracula: 'arcade', 'catppuccin-mocha': 'arcade', 'catppuccin-macchiato': 'arcade',
+      phosphor: 'terminal', carbon: 'terminal', monokai: 'terminal', gruvbox: 'terminal',
+      ocean: 'observatory', cobalt: 'observatory', nord: 'observatory', 'tokyo-night': 'observatory', 'tokyo-storm': 'observatory', kanagawa: 'observatory', obsidian: 'observatory', noir: 'observatory', aurora: 'observatory',
+      ember: 'blockprint', saffron: 'blockprint', crimson: 'blockprint', citrus: 'blockprint',
+      glacier: 'blueprint', fjord: 'greenhouse', swiss: 'blueprint', blueprint: 'blueprint', 'tokyo-day': 'blueprint', slate: 'blueprint',
+      console: 'terminal', signal: 'arcade', washi: 'sakura',
     },
   },
+  legacyFontSize: { normal: 'default', comfortable: 'default', large: 'large', huge: 'xl' },
 }
 
 /**
@@ -164,69 +131,41 @@ export const LOOK_TABLES: LookTables = {
 export function sanitizeLookWith(raw: unknown, T: LookTables): Look {
   const r: Record<string, unknown> = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {}
   const D = T.defaults
-  const L = T.legacy
   const str = (v: unknown) => (typeof v === 'string' ? v : '')
-  /** A current (v2) value, or '' when it isn't one. */
-  const v2 = (v: unknown, allowed: string[]) => (allowed.indexOf(str(v)) >= 0 ? str(v) : '')
-  /** A v1 value mapped to its v2 equivalent, or ''. */
-  const v1 = (v: unknown, map: Record<string, string>, allowed: string[]) => {
-    const s = str(v)
-    const m = Object.prototype.hasOwnProperty.call(map, s) ? map[s] : ''
-    return allowed.indexOf(m) >= 0 ? m : ''
+  const own = (map: Record<string, string>, k: string) => (Object.prototype.hasOwnProperty.call(map, k) ? map[k] : '')
+  const ok = (v: string) => (T.styles.indexOf(v) >= 0 ? v : '')
+  const before5 = typeof r.v !== 'number' || r.v < 5
+  const oldStyle = str(r.style)
+  const oldPalette = str(r.theme)
+  // An accessibility palette from before v5 always lands on Clear.
+  let style = before5 && T.v5.accessible.indexOf(oldPalette) >= 0 ? 'clear' : ok(oldStyle)
+  if (!style) {
+    // A palette picked on the old default style says more than the style does.
+    if (!oldStyle || oldStyle === 'studio') style = ok(own(T.v5.palettes, oldPalette)) || ok(own(T.v5.styles, oldStyle))
+    else style = ok(own(T.v5.styles, oldStyle)) || ok(own(T.v5.palettes, oldPalette))
+    if (!style) style = D.style
   }
-  const iconSet = v2(r.iconSet, Object.keys(T.iconSets)) || D.iconSet
-  const styles = T.iconSets[iconSet]
-  // v3 (2026): the default icon container became 'quiet'. Looks saved before
-  // then carried the old default ('soft') without anyone choosing it, so they
-  // move to the new default once; anything else someone picked is kept.
+  const b = T.bundles[style]
+  // The handwriting default ('shantell') moved to plain text in v3.
   const before3 = typeof r.v !== 'number' || r.v < 3
-  const container = v2(r.iconContainer, T.iconContainers)
-  const out: Look = {
-    v: 4,
-    style: v2(r.style, T.styles) || D.style,
-    pattern: v2(r.pattern, T.patterns) || D.pattern,
-    theme: v2(r.theme, T.themes) || v1(r.wallpaper, L.wallpaper, T.themes) || D.theme,
-    accent: v2(r.accent, T.accents) || v1(r.accent, L.accent, T.accents) || D.accent,
-    font: v2(r.font, T.fonts) || v1(r.fontStyle, L.fontStyle, T.fonts) || D.font,
-    codeFont: v2(r.codeFont, T.codeFonts) || D.codeFont,
-    // The handwriting default ('shantell') moved to plain text in v3, like the icon container.
-    solutionFont: (before3 && r.solutionFont === 'shantell' ? '' : v2(r.solutionFont, T.solutionFonts)) || D.solutionFont,
-    textSize: v2(r.textSize, T.textSizes) || v1(r.fontSize, L.fontSize, T.textSizes) || D.textSize,
-    cardStyle: v2(r.cardStyle, T.cardStyles) || v1(r.cardStyle, L.cardStyle, T.cardStyles) || D.cardStyle,
-    radius: v2(r.radius, T.radii) || D.radius,
-    iconSet,
-    iconStyle: v2(r.iconStyle, styles.styles) || styles.def,
-    iconContainer:
-      (before3 && container === 'soft' ? D.iconContainer : container) ||
-      (r.iconShape === 'free' ? 'none' : v1(r.iconPack, L.iconPack, T.iconContainers)) ||
-      D.iconContainer,
-    iconShape: v2(r.iconShape, T.iconShapes) || v1(r.iconShape, L.iconShape, T.iconShapes) || D.iconShape,
-  }
-  // v4: a look saved before Field Journal and still exactly on the old
-  // default moves to the new house style; anything someone changed is kept.
-  const before4 = typeof r.v !== 'number' || r.v < 4
-  if (before4 && T.v4) {
-    const o = out as unknown as Record<string, string>
-    // A field this older look never stored was on the old default then.
-    // (A field it never stored, or stored invalid, was on the old default.)
-    const given: Record<string, string> = {
-      style: v2(r.style, T.styles),
-      theme: v2(r.theme, T.themes) || v1(r.wallpaper, L.wallpaper, T.themes),
-      accent: v2(r.accent, T.accents) || v1(r.accent, L.accent, T.accents),
-      font: v2(r.font, T.fonts) || v1(r.fontStyle, L.fontStyle, T.fonts),
-      codeFont: v2(r.codeFont, T.codeFonts),
-      radius: v2(r.radius, T.radii),
-      cardStyle: v2(r.cardStyle, T.cardStyles) || v1(r.cardStyle, L.cardStyle, T.cardStyles),
-      pattern: v2(r.pattern, T.patterns),
-    }
-    for (const k of Object.keys(T.v4.from)) if (!given[k]) o[k] = T.v4.from[k]
-    const untouched = Object.keys(T.v4.from).every((k) => o[k] === T.v4.from[k])
-    if (untouched) for (const k of Object.keys(T.v4.to)) if (allowedFor(k, T.v4.to[k])) o[k] = T.v4.to[k]
-  }
-  return out
-  function allowedFor(k: string, v: string) {
-    const lists: Record<string, string[]> = { style: T.styles, theme: T.themes, accent: T.accents, font: T.fonts, codeFont: T.codeFonts, radius: T.radii, cardStyle: T.cardStyles, pattern: T.patterns }
-    return (lists[k] || []).indexOf(v) >= 0
+  const solution = before3 && r.solutionFont === 'shantell' ? '' : str(r.solutionFont)
+  return {
+    v: 5,
+    style,
+    pattern: b.pattern,
+    theme: b.theme,
+    accent: 'theme',
+    font: b.font,
+    // Before v5 the code font came with the old style: start from the theme's own.
+    codeFont: (!before5 && T.codeFonts.indexOf(str(r.codeFont)) >= 0 ? str(r.codeFont) : '') || b.codeFont,
+    solutionFont: (T.solutionFonts.indexOf(solution) >= 0 ? solution : '') || D.solutionFont,
+    textSize: (T.textSizes.indexOf(str(r.textSize)) >= 0 ? str(r.textSize) : '') || own(T.legacyFontSize, str(r.fontSize)) || D.textSize,
+    cardStyle: b.cardStyle,
+    radius: b.radius,
+    iconSet: b.iconSet,
+    iconStyle: b.iconStyle,
+    iconContainer: b.iconContainer,
+    iconShape: b.iconShape,
   }
 }
 

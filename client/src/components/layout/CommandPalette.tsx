@@ -19,7 +19,7 @@ import { describeRecent, pageMatches, usePageEntries } from './searchSources'
 import { ClearRecents } from './ClearRecents'
 // Theme entries (Theme Centre)
 import { useTheme } from '@/context/ThemeContext'
-import { PALETTES } from '@/theme/palettes'
+import { THEMES } from '@/theme/styles'
 
 type Group = 'Recent' | 'Go to' | 'Pages' | 'Problems' | 'Themes' | 'Actions' | 'Try instead'
 
@@ -101,7 +101,7 @@ export function CommandPalette() {
   const lower = q.toLowerCase()
   const pageHits = useMemo(() => (q ? pages.filter((n) => pageMatches(n, q)) : pages), [pages, q])
   const themeHits = useMemo(
-    () => (q.length >= 2 ? PALETTES.filter((p) => p.name.toLowerCase().includes(lower)).slice(0, 5) : []),
+    () => (q.length >= 2 ? THEMES.filter((t) => `${t.name} ${t.tagline} ${t.forWho ?? ''}`.toLowerCase().includes(lower)).slice(0, 5) : []),
     [q, lower],
   )
 
@@ -266,11 +266,11 @@ export function CommandPalette() {
       id: `theme:${p.id}`,
       group: 'Themes',
       label: `Use theme: ${p.name}`,
-      hint: p.dark && p.light ? 'Light & dark' : p.dark ? 'Dark' : 'Light',
+      hint: p.tagline,
       icon: iconComponent('palette'),
       run: () => {
         close()
-        setLook({ theme: p.id })
+        setLook({ style: p.id })
       },
     }))
     const actionItems = [...actions.filter((i) => i.label.toLowerCase().includes(lower) || i.hint?.toLowerCase().includes(lower)), askAi]

@@ -114,10 +114,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     void loadCodeFont(shown.codeFont)
   }, [shown.codeFont])
-  // A style can set its headings in a face of its own (Editorial's serif).
+  // A theme can set its headings and its long reading in faces of its own.
   useEffect(() => {
-    const extra = STYLE_BY_ID.get(shown.style)?.displayFont
-    if (extra) void loadUiFont(extra)
+    const st = STYLE_BY_ID.get(shown.style)
+    if (st?.displayFont) void loadUiFont(st.displayFont)
+    if (st?.readFont) void loadUiFont(st.readFont)
   }, [shown.style])
   // Solutions are a small corner of the app — fetch their face only once a
   // solution actually mounts (gate/solution/GateSolution.tsx), not on every page.

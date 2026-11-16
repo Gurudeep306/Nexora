@@ -1,19 +1,12 @@
 import { useEffect } from 'react'
 import { Check } from 'lucide-react'
 import { useTheme } from '@/context/ThemeContext'
-import { CODE_FONTS, SOLUTION_FONTS, TEXT_SIZES, UI_FONTS } from '@/theme/fonts'
-import { CODE_FONT_LOADERS, SOLUTION_FONT_LOADERS, UI_FONT_LOADERS, loadCodeFont, loadSolutionFont, loadUiFont } from '@/theme/fontLoaders'
+import { CODE_FONTS, SOLUTION_FONTS, TEXT_SIZES } from '@/theme/fonts'
+import { CODE_FONT_LOADERS, SOLUTION_FONT_LOADERS, loadCodeFont, loadSolutionFont } from '@/theme/fontLoaders'
 import { cn } from '@/lib/utils'
 import { RadioGroup, Segmented } from './controls'
 import { Section } from './Section'
 
-const KIND: Record<string, string> = {
-  grotesk: 'Grotesk',
-  geometric: 'Geometric',
-  humanist: 'Humanist',
-  serif: 'Serif',
-  rounded: 'Rounded',
-}
 
 const cardClass = (checked: boolean) =>
   cn(
@@ -31,12 +24,12 @@ function Tick() {
   )
 }
 
-export function TypographySection() {
+/** The settings that sit on top of any theme: text size, code font, solution handwriting. */
+export function FineTuneSection() {
   const { look, setLook } = useTheme()
 
   // Specimens need every face; this is the one place that loads them all.
   useEffect(() => {
-    Object.keys(UI_FONT_LOADERS).forEach((id) => void loadUiFont(id))
     Object.keys(CODE_FONT_LOADERS).forEach((id) => void loadCodeFont(id))
     Object.keys(SOLUTION_FONT_LOADERS).forEach((id) => void loadSolutionFont(id))
   }, [])
@@ -45,39 +38,6 @@ export function TypographySection() {
     <div className="space-y-10">
       <Section title="Text size" hint="Scales the whole interface — text, spacing and controls together.">
         <Segmented label="Text size" items={TEXT_SIZES} value={look.textSize} onChange={(id) => setLook({ textSize: id })} />
-      </Section>
-
-      <Section title="Interface font" hint="Every face here is chosen for clarity at small sizes, each with its own personality.">
-        <RadioGroup
-          label="Interface font"
-          items={UI_FONTS}
-          value={look.font}
-          onChange={(id) => setLook({ font: id })}
-          className="grid grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-3"
-          itemLabel={(f) => f.label}
-          itemClassName="rounded-[var(--radius-card)]"
-          renderItem={(f, checked) => (
-            <span data-font={f.id} className={cardClass(checked)}>
-              {checked && <Tick />}
-              <span className="flex items-end gap-3">
-                <span
-                  className="text-[40px] leading-none font-semibold text-text-primary"
-                  style={{ fontFamily: 'var(--font-display)', letterSpacing: 'var(--heading-tracking, -0.02em)' }}
-                >
-                  Aa
-                </span>
-                <span className="min-w-0 pb-0.5">
-                  <span className="block truncate text-[15px] font-semibold text-text-primary">{f.label}</span>
-                  <span className="block text-[11px] tracking-wide text-text-muted uppercase">{KIND[f.kind]}</span>
-                </span>
-              </span>
-              <span className="mt-3 block text-[13.5px] leading-snug text-text-secondary">
-                Quick zephyrs blow, vexing daft Jim — 0O 1lI 2048
-              </span>
-              <span className="mt-2 block text-[11.5px] leading-relaxed text-text-muted">{f.note}</span>
-            </span>
-          )}
-        />
       </Section>
 
       <Section title="Code font" hint="Used in the editor, code blocks and anywhere code appears.">

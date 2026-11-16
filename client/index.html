@@ -47,10 +47,10 @@
         var look = T.defaults;
         try { if (sanitize) look = sanitize(raw, T); } catch (e) {}
         /* Hive keeps its pre-journal look (theme/look.ts hiveLook). */
-        if (T.kits && T.kits[look.style] && T.v4 && /^\/hive(\/|$)/.test(location.pathname)) {
+        if (T.kits && T.kits[look.style] && T.hive && /^\/hive(\/|$)/.test(location.pathname)) {
           var h = {};
           for (var k in look) h[k] = look[k];
-          for (var j in T.v4.from) h[j] = T.v4.from[j];
+          for (var j in T.hive) h[j] = T.hive[j];
           look = h;
         }
         var system = 'dark';
