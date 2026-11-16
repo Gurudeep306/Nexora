@@ -64,7 +64,21 @@ Contents:
   `claude/fervent-curie-vjgcd8`. Waiting for the owner's "merge".
 - **Item 1 (live check) needs the owner**: the site is private, so only the
   owner can sign in and press Dry run on the live site in each language.
-- **Next for the agent: section 6, item 3** — dry run for Go, Rust, C#,
+- **Dry run for Go — done (session 4)**, in the same PR:
+  `src/dryrun/go.js` + `go-runtime.go`. Reflection-based runtime; imports
+  added (aliased) on the package line; a deferred `__nxDone` per function
+  reports a panic on its line and re-panics, so the program behaves exactly
+  as before; output counted by wrapping `fmt.Print*` and the `os.Stdout`
+  handed to writers (no goroutines, nothing can be lost); `byte`s shown as
+  characters; maps drawn sorted (Go's order is random); only `package main`
+  types become objects; `Len/Less/Swap/String/Error` methods not traced.
+  Picture-picker: Go stacks (`st = append(st, x)` + `st[:len(st)-1]`),
+  queues (`q = q[1:]`), `container/heap`, edge lists (`edges` of pairs),
+  field names matched without case (`Val`, `Next`, `Left`). Checked: 10
+  classic programs print exactly the same traced and untraced
+  (`node scripts/dryrun-trace.mjs <file> go`), `tests/dryrun-go.test.js`.
+  Not yet checked through Wandbox (the live runner).
+- **Next for the agent: section 6, item 3** — dry run for Rust, then C#,
   Kotlin, Swift (then Ruby, PHP, Lua, Perl; then functional languages).
 - The owner said **no for now** to the ideas in section 6, item 7.
 
