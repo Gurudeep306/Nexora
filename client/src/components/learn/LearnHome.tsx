@@ -39,6 +39,7 @@ const FILTERS: { id: Filter; label: string }[] = [
 ]
 
 function Figure({ kind }: { kind: ReturnType<typeof figureFor> }) {
+  if (kind === 'none') return null
   return <div className="ed-specimen lh-figure">{kind === 'schedule' ? <SchedulerPreview /> : kind === 'graph' ? <GraphPreview /> : <LessonPreview />}</div>
 }
 

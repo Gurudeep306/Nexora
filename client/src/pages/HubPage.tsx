@@ -10,6 +10,7 @@ import { useProgress } from '@/learn/progress'
 import { DSA_TOPICS } from '@/learn/content/dsa/syllabus'
 import { FieldNotes, Ledger, Masthead, ResetsIn, Rooms, Spread, Week, type Room, type TodayRow } from '@/components/today/Today'
 import { findContinue, nextSteps, until } from '@/components/today/today-data'
+import { Bookshelf } from '@/components/today/Bookshelf'
 
 /*
  * Home — "Today". The front page of a field journal on the day you open it:
@@ -206,6 +207,7 @@ export default function HubPage() {
         steps={steps}
         syncing={statsApi.loading}
         updatedAt={updatedAt}
+        level={stats.level?.level}
         onSync={() => {
           statsApi.refetch()
           reviewApi.refetch()
@@ -214,6 +216,10 @@ export default function HubPage() {
         }}
       />
       <Spread cont={cont} rows={rows} />
+      <Bookshelf items={items} homeOf={(id) => {
+        const c = clusters?.find((x) => x.gate?.notes === id)
+        return c ? `/learn/${c.id}` : `/gate/notes/${id}`
+      }} />
       <Ledger stats={stats} items={items} />
       <Week stats={stats} items={items} />
       <Rooms rooms={rooms} />
