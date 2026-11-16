@@ -12,6 +12,7 @@ import { progressOf, useNotesProgress } from '@/gate/notes/progress'
 import { Crumbs, LessonStatus, NotesRoot, ProgressRing } from '@/gate/notes/ui'
 import type { SubjectTree } from '@/gate/notes/types'
 import { cn } from '@/lib/utils'
+import { useNexusStructure } from '@/lib/lessonSearch'
 import '@/gate/notes/notes-home.css'
 
 /** GATE notes subject id → its Nexus subject, where they differ (content/nexus/_hubs.json). */
@@ -62,6 +63,10 @@ function SubjectHome({ data }: { data: SubjectTree }) {
   }, [lessons, progress, subject.id])
   const verb = done === 0 && !lessons.some((l) => progressOf(progress, subject.id, l.id).scrollPct > 2) ? 'Start' : done === lessons.length ? 'Read again' : 'Continue'
 
+  // Only subjects that have a Nexus subject get a skill tree link (not the demo).
+  const nexusId = NEXUS_OF[subject.id] ?? subject.id
+  const hasTree = !!useNexusStructure()?.clusters.some((c) => c.id === nexusId)
+
   const pct = lessons.length ? Math.round((done / lessons.length) * 100) : 0
   const cov = subject.coverage ?? { total: 0, covered: 0 }
 
@@ -93,10 +98,12 @@ function SubjectHome({ data }: { data: SubjectTree }) {
                   {verb}
                 </Link>
               )}
-              <Link to={`/learn/${NEXUS_OF[subject.id] ?? subject.id}`} className="nh-btn">
-                <Icon name="nexus" className="size-4" aria-hidden="true" />
-                Skill tree
-              </Link>
+              {hasTree && (
+                <Link to={`/learn/${nexusId}?view=tree`} className="nh-btn">
+                  <Icon name="nexus" className="size-4" aria-hidden="true" />
+                  Skill tree
+                </Link>
+              )}
               <Link to={`/gate/practice?subject=${encodeURIComponent(subject.id)}`} className="nh-btn">
                 <Icon name="practice" className="size-4" aria-hidden="true" />
                 Practice questions
