@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const R = require('../../src/remote-exec');
-const { TRACERS, parseTrace } = require('../../src/dryrun');
+const { TRACERS, parseTrace, forRunner } = require('../../src/dryrun');
 
 (async () => {
   const [lang, engine] = process.argv.slice(2);
@@ -15,7 +15,7 @@ const { TRACERS, parseTrace } = require('../../src/dryrun');
     const inFile = path.join(dir, name.replace(/\.[^.]+$/, '.in'));
     const input = fs.existsSync(inFile) ? fs.readFileSync(inFile, 'utf8') : '';
     const plain = await R.runChain(code, input, lang, chain);
-    const r = await R.runChain(await TRACERS[lang].wrap(code), input, lang, chain);
+    const r = await R.runChain(forRunner(lang, await TRACERS[lang].wrap(code)), input, lang, chain);
     const t = parseTrace(r.stderr);
     const ok = plain.stdout === r.stdout && t.events.length > 0;
     console.log(`${ok ? 'OK ' : 'BAD'} ${name.padEnd(22)} ${r.engine} ${r.verdict || 'OK'} steps ${t.events.length}${ok ? '' : `\n    plain:  ${JSON.stringify(plain.stdout).slice(0, 120)}\n    traced: ${JSON.stringify(r.stdout).slice(0, 120)}\n    ${String(r.stderr).slice(0, 400)}`}`);
