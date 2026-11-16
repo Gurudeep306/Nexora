@@ -2,7 +2,7 @@ import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { Ban, CalendarDays, Flag, Link2, Lock, MapPin, MessageSquare, MoreHorizontal, PenLine, QrCode, VolumeX } from 'lucide-react'
-import { Avatar, Button, Card, ConfirmDialog, EmptyState, ErrorState, Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger, Modal, RankGlyph, Skeleton, useToast } from '@/components/ui'
+import { Avatar, Button, Card, ConfirmDialog, EmptyState, ErrorState, Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger, Modal, RankBadge, RankGlyph, Skeleton, useToast } from '@/components/ui'
 import { UserBadges } from '@/components/shared/UserBadges'
 import { useAuth } from '@/context/AuthContext'
 import { useAgentPageContext } from '@/context/AgentContext'
@@ -267,6 +267,7 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
               <RankSeal level={stats.level.level} name={stats.level.name} />
             </div>
           )}
+          {stats && journal && <RankBadge level={stats.level.level} size="sm" className="mt-2" />}
           <p className="pf-handle mt-0.5 flex flex-wrap items-center gap-2 text-sm text-text-muted">
             <span>@{p.username}</span>
             {p.pronouns && <span>· {p.pronouns}</span>}

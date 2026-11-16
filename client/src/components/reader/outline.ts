@@ -79,19 +79,3 @@ export function useDomOutline(root: RefObject<HTMLElement | null>, key: string):
   }, [root, key])
   return items
 }
-
-/** A remembered on/off for collapsing the lessons rail (shared by every reader). */
-export function readRailHidden(): boolean {
-  try {
-    return localStorage.getItem('nexora:reader-rail') === 'mini'
-  } catch {
-    return false
-  }
-}
-export function writeRailHidden(v: boolean) {
-  try {
-    localStorage.setItem('nexora:reader-rail', v ? 'mini' : 'full')
-  } catch {
-    /* private mode */
-  }
-}

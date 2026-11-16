@@ -1,129 +1,92 @@
-import { motion } from 'motion/react'
-import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, Progress } from '@/components/ui'
+import { Check, Lock } from 'lucide-react'
+import { EmptyState, RankGlyph, RIFT_TIERS } from '@/components/ui'
 import { cn, formatNumber } from '@/lib/utils'
 import type { NexusStatsResponse } from './types'
-import { Icon } from '@/components/icon/Icon'
+import './title-track.css'
 
 /**
- * Rank progression track over the player-title ladder.
- * Consumes the snake_case `allTitles` from GET /api/stats (NOT the camelCase one from /api/performance).
+ * The rank ladder: where you stand (a large badge, its name and motto, and
+ * two hairlines to the next rank), then all eleven ranks from Bit to
+ * ∞ Overflow, each with its badge and what it takes.
+ * Consumes the snake_case `allTitles` from GET /api/stats.
  */
 export function TitleTrack({ stats }: { stats: NexusStatsResponse | null }) {
-  if (!stats) {
-    return (
-      <Card>
-        <CardContent className="py-10">
-          <EmptyState icon="crown" title="No rank data" description="Sign in to see your rank progression." />
-        </CardContent>
-      </Card>
-    )
-  }
+  if (!stats) return <EmptyState icon="crown" title="No rank data" description="Sign in to see your rank progression." />
 
   const currentTitle = stats.title.current.title
-  const reachedIdx = stats.allTitles.findIndex((t) => t.title === currentTitle)
+  const reachedIdx = Math.max(0, stats.allTitles.findIndex((t) => t.title === currentTitle))
+  const level = reachedIdx + 1
+  const tier = RIFT_TIERS[Math.min(reachedIdx, RIFT_TIERS.length - 1)]
+  const next = stats.title.next
+  const xpPct = next ? Math.round((Math.max(0, next.min_xp - stats.title.xpToNext) / Math.max(1, next.min_xp)) * 100) : 100
+  const solvePct = next && next.min_problems ? Math.round((Math.max(0, next.min_problems - stats.title.probsToNext) / Math.max(1, next.min_problems)) * 100) : 100
 
   return (
-    <div className="space-y-4">
-      {/* Current rank + next gate */}
-      <Card glow>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Icon name="crown" className="size-4 text-gold" aria-hidden="true" /> Current rank
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="font-display text-2xl tracking-wide text-gradient">{stats.title.current.title}</p>
-            {stats.title.next ? (
-              <Badge variant="gold">
-                next: {stats.title.next.title} · {formatNumber(stats.title.next.min_xp)} XP
-                {stats.title.next.min_problems != null && ` · ${formatNumber(stats.title.next.min_problems)} solves`}
-              </Badge>
-            ) : (
-              <Badge variant="gold">max rank</Badge>
-            )}
-          </div>
-          {stats.title.next && (
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <p className="mb-1 text-[10px] font-semibold tracking-wider text-foreground-faint uppercase">
-                  XP to next rank
-                </p>
-                <Progress
-                  value={Math.max(0, stats.title.next.min_xp - stats.title.xpToNext)}
-                  max={stats.title.next.min_xp}
-                />
-                <p className="mt-1 font-mono text-[11px] text-foreground-dim tabular-nums">
-                  {formatNumber(stats.title.xpToNext)} XP remaining
-                </p>
-              </div>
-              <div>
-                <p className="mb-1 text-[10px] font-semibold tracking-wider text-foreground-faint uppercase">
-                  Solves to next rank
-                </p>
-                <Progress
-                  value={Math.max(0, (stats.title.next.min_problems ?? 0) - stats.title.probsToNext)}
-                  max={stats.title.next.min_problems ?? 1}
-                  barClassName="bg-accent-brand"
-                />
-                <p className="mt-1 font-mono text-[11px] text-foreground-dim tabular-nums">
-                  {formatNumber(stats.title.probsToNext)} solves remaining
-                </p>
-              </div>
+    <div className="tt">
+      {/* Where you stand */}
+      <section className="tt-now" aria-labelledby="tt-now-h" style={{ ['--tier' as string]: tier.color }}>
+        <RankGlyph level={level} size={112} animated={false} className="tt-now-glyph" />
+        <div className="min-w-0 flex-1">
+          <p className="ed-label ed-muted m-0">
+            Rank {level} of {stats.allTitles.length}
+          </p>
+          <h2 id="tt-now-h" className="tt-now-name">
+            {currentTitle}
+          </h2>
+          <p className="tt-now-motto m-0">{tier.motto}</p>
+          {next ? (
+            <div className="tt-meters">
+              <Meter label="XP" pct={xpPct} line={`${formatNumber(stats.title.xpToNext)} XP to ${next.title}`} />
+              {next.min_problems != null && <Meter label="Solves" pct={solvePct} line={`${formatNumber(stats.title.probsToNext)} solves to ${next.title}`} />}
             </div>
+          ) : (
+            <p className="tt-now-top m-0">The top rank. Nothing above it.</p>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </section>
 
-      {/* Ladder */}
-      <ol className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3" aria-label="Rank ladder">
+      {/* The ladder */}
+      <ol className="tt-ladder" aria-label="All ranks">
         {stats.allTitles.map((t, i) => {
           const reached = i <= reachedIdx
-          const isCurrent = t.title === currentTitle
+          const isCurrent = i === reachedIdx
+          const rt = RIFT_TIERS[Math.min(i, RIFT_TIERS.length - 1)]
           return (
-            <motion.li
-              key={t.title}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2, delay: Math.min(i * 0.04, 0.4), ease: [0.34, 1.56, 0.64, 1] }}
-            >
-              <Card
-                className={cn(
-                  'flex items-center gap-3 p-3',
-                  isCurrent && 'border-gold/50 glow-box',
-                  !reached && 'opacity-55',
-                )}
-              >
-                <span
-                  className={cn(
-                    'flex size-10 shrink-0 items-center justify-center rounded-xl border bg-surface-2',
-                    isCurrent ? 'border-gold/50 text-gold' : reached ? 'border-success/40 text-success' : 'border-border text-foreground-faint',
-                  )}
-                  style={!isCurrent && reached ? { borderColor: t.color, color: t.color } : undefined}
-                  aria-hidden="true"
-                >
-                  {isCurrent ? <Icon name="crown" className="size-5" /> : reached ? <Icon name="check" className="size-4" /> : <Icon name="lock" className="size-4" />}
+            <li key={t.title} className={cn('tt-step', isCurrent && 'is-current', !reached && 'is-ahead')} style={{ ['--tier' as string]: rt.color }}>
+              <span className="tt-step-no ed-mono">{String(i + 1).padStart(2, '0')}</span>
+              <RankGlyph level={i + 1} size={44} animated={false} className="tt-step-glyph" />
+              <span className="min-w-0 flex-1">
+                <span className="tt-step-name block">
+                  {t.title}
+                  {isCurrent && <span className="tt-you">You</span>}
                 </span>
-                <span className="min-w-0 flex-1">
-                  <span className="flex items-center gap-2">
-                    <span
-                      className="truncate font-display text-xs tracking-wider"
-                      style={{ color: reached ? t.color : undefined }}
-                    >
-                      {t.title}
-                    </span>
-                    {isCurrent && <Badge variant="gold">you</Badge>}
-                  </span>
-                  <span className="mt-0.5 block font-mono text-[10px] text-foreground-faint tabular-nums">
-                    {formatNumber(t.min_xp)} XP
-                    {t.min_problems != null && ` · ${formatNumber(t.min_problems)} solves`}
-                  </span>
-                </span>
-              </Card>
-            </motion.li>
+                <span className="tt-step-motto block">{rt.motto}</span>
+              </span>
+              <span className="tt-step-need ed-mono">
+                {i === 0 ? 'Start' : `${formatNumber(t.min_xp)} XP${t.min_problems != null ? ` · ${formatNumber(t.min_problems)} solves` : ''}`}
+              </span>
+              <span className="tt-step-state" aria-label={isCurrent ? 'Your rank' : reached ? 'Reached' : 'Ahead'}>
+                {reached ? <Check className="size-4" aria-hidden="true" /> : <Lock className="size-3.5" aria-hidden="true" />}
+              </span>
+            </li>
           )
         })}
       </ol>
+    </div>
+  )
+}
+
+function Meter({ label, pct, line }: { label: string; pct: number; line: string }) {
+  return (
+    <div className="tt-meter">
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="ed-label ed-muted">{label}</span>
+        <span className="ed-mono text-[12px] text-text-secondary">{pct}%</span>
+      </div>
+      <span className="tt-meter-line" role="progressbar" aria-label={`${label} towards the next rank`} aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+        <span style={{ width: `${pct}%` }} />
+      </span>
+      <p className="ed-caption ed-muted m-0 mt-1.5">{line}</p>
     </div>
   )
 }

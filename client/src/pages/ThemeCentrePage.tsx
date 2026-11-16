@@ -8,7 +8,7 @@ import { THEMES } from '@/theme/styles'
 import { loadUiFont } from '@/theme/fontLoaders'
 import { ModeControl } from '@/components/look/controls'
 import { ThemeCard } from '@/components/look/ThemeCard'
-import { FineTuneSection } from '@/components/look/FineTuneSection'
+import { MakeItYours } from '@/components/look/MakeItYours'
 import '@/components/look/theme-centre.css'
 
 /**
@@ -98,10 +98,10 @@ export default function ThemeCentrePage() {
       <section aria-labelledby="tc-tune" className="mt-16">
         <p className="ed-label">On top of any theme</p>
         <h2 id="tc-tune" className="ed-h2 mt-2">
-          Fine-tune
+          Make it yours
         </h2>
-        <p className="ed-body-sm mt-1 mb-6 max-w-2xl text-text-secondary">These three follow you from theme to theme.</p>
-        <FineTuneSection />
+        <p className="ed-body-sm mt-1 mb-8 max-w-2xl text-text-secondary">Your colours, fonts, corners and Dock. They follow you from theme to theme and to every device you sign in on.</p>
+        <MakeItYours />
       </section>
     </div>
   )

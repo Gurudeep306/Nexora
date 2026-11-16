@@ -1,0 +1,225 @@
+/* The GATE question page (GateFocusDeck.tsx): one navigation bar with a
+   hairline of where you are, a quiet queue in hairlines, larger question
+   text. Tokens only; works in every theme. */
+@layer components {
+  .gq-nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.25rem 0 0.75rem;
+  }
+  .gq-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    height: 2.25rem;
+    padding: 0 0.875rem;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    box-shadow: inset 0 0 0 1px var(--color-border);
+    cursor: pointer;
+    transition: box-shadow 160ms ease, background-color 160ms ease;
+  }
+  .gq-nav-btn:hover:not(:disabled) {
+    box-shadow: inset 0 0 0 1px var(--color-text-primary);
+  }
+  .gq-nav-btn.is-next {
+    background: var(--color-text-primary);
+    color: var(--color-bg-app);
+    box-shadow: none;
+  }
+  .gq-nav-btn.is-next:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--color-text-primary) 85%, var(--color-bg-app));
+  }
+  .gq-nav-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .gq-nav-btn:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 2px;
+  }
+  .gq-nav-mid {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.375rem;
+    min-width: 0;
+  }
+  .gq-nav-pos {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .gq-nav-pos > span {
+    color: var(--color-text-muted);
+  }
+  .gq-nav-line {
+    display: block;
+    width: min(100%, 22rem);
+    height: 2px;
+    border-radius: 1px;
+    background: var(--color-border);
+    overflow: hidden;
+  }
+  .gq-nav-line > span {
+    display: block;
+    height: 100%;
+    background: var(--color-text-primary);
+  }
+
+  /* The queue: hairline rows, the current one with an ink tick. */
+  .gq-queue {
+    border-top: 1px solid var(--color-text-primary);
+  }
+  .gq-queue-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0.75rem 0.25rem 0.5rem;
+  }
+  .gq-queue-list {
+    flex: 1;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+  .gq-queue-list > li {
+    border-bottom: 1px solid var(--color-border);
+  }
+  .gq-queue-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 100%;
+    padding: 0.625rem 0.5rem 0.625rem 0.875rem;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 160ms ease;
+  }
+  .gq-queue-item:hover {
+    background: var(--color-bg-surface-3);
+  }
+  .gq-queue-item.is-on {
+    background: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
+  }
+  .gq-queue-item.is-on::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 2px;
+    border-radius: 1px;
+    background: var(--color-accent-brand);
+  }
+  .gq-queue-item:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: -2px;
+  }
+  .gq-queue-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.375rem 0;
+    font-size: 12px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* The question itself reads larger on this page. */
+  .gq-keys {
+    padding-top: 0.5rem;
+  }
+  .gq-keys {
+    padding-top: 0.5rem;
+  }
+}
+
+/* The page head: title and count on one line, actions at the right. */
+@layer components {
+  .gq-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .gq-title {
+    margin: 0;
+    font-family: var(--kit-display, var(--font-display));
+    font-size: 1.875rem;
+    line-height: 1.1;
+    font-weight: var(--kit-heading-weight, 500);
+    letter-spacing: var(--kit-heading-tracking, -0.02em);
+    color: var(--color-text-primary);
+  }
+  .gq-sub {
+    margin: 0.375rem 0 0;
+    font-size: 13.5px;
+    color: var(--color-text-secondary);
+  }
+  .gq-filters-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 2.25rem;
+    padding: 0 0.875rem;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    box-shadow: inset 0 0 0 1px var(--color-border);
+    cursor: pointer;
+  }
+  .gq-filters-btn:hover,
+  .gq-filters-btn.is-on {
+    box-shadow: inset 0 0 0 1px var(--color-text-primary);
+  }
+  .gq-filters-btn:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 2px;
+  }
+  .gq-filters-n {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.3125rem;
+    border-radius: 999px;
+    background: var(--color-text-primary);
+    color: var(--color-bg-app);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .gq-active {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--color-text-primary);
+  }
+}
+
+/* The question reads larger on this page (outside the layer, so it wins
+   over the shared question card's size). */
+.gq-card .qc .qc-text {
+  font-size: 1.25rem;
+  line-height: 1.6;
+}
+@media (min-width: 1280px) {
+  .gq-card .qc .qc-text {
+    font-size: 1.3125rem;
+  }
+}
+@media (max-width: 639px) {
+  .gq-card .qc .qc-text {
+    font-size: 1.125rem;
+  }
+}

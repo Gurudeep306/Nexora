@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Search } from 'lucide-react'
-import { LoadingBlock } from '@/components/ui'
+import { LoadingBlock, SubjectRankGlyph } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useNexusWeb, progressOf } from '@/components/nexus/SubjectsHub'
 import { subjectHref } from '@/components/nexus/course'
@@ -39,6 +39,7 @@ const FILTERS: { id: Filter; label: string }[] = [
 ]
 
 function Figure({ kind }: { kind: ReturnType<typeof figureFor> }) {
+  if (kind === 'none') return null
   return <div className="ed-specimen lh-figure">{kind === 'schedule' ? <SchedulerPreview /> : kind === 'graph' ? <GraphPreview /> : <LessonPreview />}</div>
 }
 
@@ -151,7 +152,10 @@ export function LearnHome() {
                 : `${lessons || c.nodes.length} ${lessons ? 'lessons' : 'skills'}${c.gate?.pyq ? ' · GATE past questions' : ''}`
             return (
               <li key={c.id} className="ed-card lh-card">
-                <p className="ed-label ed-muted m-0">{p > 0 ? `${p}% mastered` : 'Not started'}</p>
+                <p className="ed-label ed-muted m-0 flex items-center gap-2">
+                  <SubjectRankGlyph tier={c.rank?.tierIndex ?? 0} size={22} title={c.rank ? `${c.rank.tier} in ${nameOf(c)}` : undefined} />
+                  {p > 0 ? `${c.rank?.tier ?? ''}${c.rank ? ' · ' : ''}${p}% mastered` : 'Not started'}
+                </p>
                 <h3 className="ed-serif lh-card-title mt-3 mb-0">
                   <Link to={subjectHref(c)} {...prefetchHandlers(subjectHref(c))} className="lh-card-link">
                     {nameOf(c)}

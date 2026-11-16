@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import '@/gate/gate-question.css'
 import { Icon } from '@/components/icon/Icon'
 import { EmptyState, ErrorState, LoadingBlock } from '@/components/ui'
 import { api } from '@/lib/api'
@@ -103,6 +104,26 @@ export default function GatePage() {
       return false
     }
   })
+  // The filter studio folds away in practice so the question comes first;
+  // the list view opens with it. Remembered on this device.
+  const [filtersPick, setFiltersPick] = useState<boolean | null>(() => {
+    try {
+      const v = localStorage.getItem('nexora:gate-filters-open')
+      return v === '1' ? true : v === '0' ? false : null
+    } catch {
+      return null
+    }
+  })
+  const filtersOpen = filtersPick ?? viewMode === 'list'
+  const toggleFilters = () => {
+    const next = !filtersOpen
+    setFiltersPick(next)
+    try {
+      localStorage.setItem('nexora:gate-filters-open', next ? '1' : '0')
+    } catch {
+      /* ignore */
+    }
+  }
   const setFocus = useCallback((v: boolean) => {
     setFocusState(v)
     try {
@@ -263,6 +284,24 @@ export default function GatePage() {
     [questions, session],
   )
 
+  // What the folded filters are showing, in words.
+  const STATUS_WORD: Record<string, string> = { unseen: 'unseen', wrong: 'wrong', correct: 'solved', bookmarked: 'bookmarked', note: 'with notes', due: 'due for review' }
+  const activeParts = [
+    f.q && `“${f.q}”`,
+    f.subject.length && f.subject.map(subjectName).join(', '),
+    f.topic.length && `${f.topic.length} topic${f.topic.length === 1 ? '' : 's'}`,
+    f.exam.length && f.exam.join(', '),
+    f.paper.length && `${f.paper.length} paper${f.paper.length === 1 ? '' : 's'}`,
+    f.year.length && f.year.join(', '),
+    f.type.length && f.type.join(', '),
+    f.marks.length && `${f.marks.join(' or ')} mark`,
+    f.section.length && f.section.join(', '),
+    f.hasFigure && 'with figures',
+    f.status && STATUS_WORD[f.status],
+  ].filter(Boolean) as string[]
+  const activeCount = activeParts.length
+  const activeSummary = activeParts.join(' · ')
+
   const subtitle = meta.data
     ? `${meta.data.total.toLocaleString()} past-year questions from ${meta.data.papers.length} papers, 1991–2026${attempted ? ` · ${solved} solved of ${attempted} attempted` : ''}`
     : 'Past-year questions, 1991–2026'
@@ -288,9 +327,26 @@ export default function GatePage() {
   )
 
   return (
-    <GateShell title="Practice" subtitle={subtitle} actions={actions}>
+    <GateShell title="Practice" subtitle={subtitle} actions={actions} bare cta={false}>
       <div className="space-y-5 pb-28">
-        {!focus && (
+        {/* A compact head: the title and count on one line, the actions at the right. */}
+        <header data-ui="page-header" className="gq-head">
+          <div className="min-w-0">
+            <h1 className="gq-title">Practice</h1>
+            <p className="gq-sub">{subtitle}</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {!focus && (
+              <button type="button" className={cn('gq-filters-btn', filtersOpen && 'is-on')} onClick={() => toggleFilters()} aria-expanded={filtersOpen} aria-controls="gq-filters">
+                <Icon name="sliders" className="size-4" aria-hidden="true" />
+                Filters{activeCount ? <span className="gq-filters-n">{activeCount}</span> : null}
+              </button>
+            )}
+            {actions}
+          </div>
+        </header>
+        {!focus && filtersOpen && (
+          <div id="gq-filters">
           <GateFilterStudio
             f={f}
             searchInput={searchInput}
@@ -307,6 +363,7 @@ export default function GatePage() {
             savedCount={savedCount}
             statusCounts={statusCounts}
           />
+          </div>
         )}
 
         {customIds.length > 0 && (
@@ -344,6 +401,15 @@ export default function GatePage() {
                 <>
                   <strong className="font-semibold text-text-primary">{total.toLocaleString()}</strong> question{total === 1 ? '' : 's'}
                   {unseen && ' not attempted yet'}
+                  {!filtersOpen && activeCount > 0 && (
+                    <>
+                      {' '}
+                      · <span className="text-text-primary">{activeSummary}</span>{' '}
+                      <button type="button" className="ed-link ml-1 cursor-pointer text-text-secondary" onClick={clearAll}>
+                        Clear
+                      </button>
+                    </>
+                  )}
                 </>
               )}
             </span>

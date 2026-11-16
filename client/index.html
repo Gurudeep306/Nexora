@@ -65,7 +65,7 @@
         d.setAttribute('data-palette', look.theme);
         d.setAttribute('data-mode', mode);
         d.classList.toggle('dark', mode === 'dark');
-        if (look.accent && look.accent !== 'theme') d.setAttribute('data-accent', look.accent);
+        if (look.accent && look.accent !== 'theme') d.setAttribute('data-accent', look.accent); else d.removeAttribute('data-accent');
         d.setAttribute('data-font', look.font);
         d.setAttribute('data-code-font', look.codeFont);
         d.setAttribute('data-solution-font', look.solutionFont);
@@ -76,6 +76,9 @@
         d.setAttribute('data-icon-style', look.iconStyle);
         d.setAttribute('data-icon-container', look.iconContainer);
         d.setAttribute('data-icon-shape', look.iconShape);
+        /* Personal choices on top of the theme (v6); 'theme' = none. */
+        var own = { 'data-ink': look.ink, 'data-ui-font': look.uiFont, 'data-heading-font': look.headingFont, 'data-read-font': look.readFont, 'data-corners': look.corners };
+        for (var a in own) { if (own[a] && own[a] !== 'theme') d.setAttribute(a, own[a]); else d.removeAttribute(a); }
         var color = modes[mode === 'dark' ? 0 : 1];
         var meta = document.querySelector('meta[name="theme-color"]');
         if (meta && typeof color === 'string') meta.setAttribute('content', color);

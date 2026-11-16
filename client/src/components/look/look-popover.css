@@ -1,0 +1,195 @@
+/* The top-bar theme menu (LookPopover.tsx): a swatch book that opens with an
+   ink wipe from the button, its strips fanning out one after another. */
+
+.lp-sheet {
+  overflow: hidden;
+  transform-origin: var(--radix-popover-content-transform-origin);
+}
+.lp-sheet[data-state='open'] {
+  animation: lp-wipe 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.lp-sheet[data-state='closed'] {
+  animation: lp-unwipe 220ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+/* The circle grows from the top-right corner, where the button is. */
+@keyframes lp-wipe {
+  from { clip-path: circle(0% at calc(100% - 22px) 0); }
+  to { clip-path: circle(150% at calc(100% - 22px) 0); }
+}
+@keyframes lp-unwipe {
+  from { clip-path: circle(150% at calc(100% - 22px) 0); opacity: 1; }
+  to { clip-path: circle(0% at calc(100% - 22px) 0); opacity: 0.6; }
+}
+
+.lp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.875rem 0.875rem 0.625rem 1rem;
+}
+.lp-kicker {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* The book: ten strips. */
+.lp-book {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0.375rem;
+}
+.lp-strip {
+  display: block;
+  width: 100%;
+  border-radius: calc(var(--radius-control) - 2px);
+  transition: background-color 160ms ease;
+}
+.lp-strip:hover {
+  background-color: var(--color-bg-surface-3);
+}
+.lp-strip.is-on {
+  background-color: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
+}
+.lp-strip-in {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.3125rem 0.5rem 0.3125rem 0.3125rem;
+}
+.lp-sheet[data-state='open'] .lp-strip-in {
+  animation: lp-fan 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(80ms + var(--i, 0) * 28ms);
+}
+@keyframes lp-fan {
+  from { opacity: 0; transform: translateY(-10px) rotate(-1.5deg); transform-origin: 0 0; }
+  to { opacity: 1; transform: none; }
+}
+
+/* A swatch: the theme's own paper, ink, heading face and accent. */
+.lp-swatch {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.75rem;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  background: var(--oklch-bg-0);
+  color: var(--oklch-fg-0);
+  box-shadow: inset 0 0 0 1px var(--oklch-border);
+  overflow: hidden;
+}
+.lp-swatch::after {
+  /* the card the theme sets on its paper */
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 42%;
+  height: 100%;
+  background: var(--oklch-bg-1);
+  border-left: 1px solid var(--oklch-border);
+}
+.lp-swatch-aa {
+  position: relative;
+  z-index: 1;
+  margin-right: 0.875rem;
+  font-family: var(--kit-display, var(--font-display));
+  font-size: 1.0625rem;
+  line-height: 1;
+  font-weight: 500;
+}
+.lp-swatch-dot {
+  position: absolute;
+  z-index: 1;
+  right: 0.3125rem;
+  bottom: 0.3125rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--oklch-accent-0);
+}
+.lp-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.lp-tag {
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+}
+.lp-check {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1.25rem;
+  color: var(--color-text-primary);
+}
+
+/* Accent colours */
+.lp-accents {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem 0.875rem;
+  border-top: 1px solid var(--color-border);
+}
+.lp-accent-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.125rem;
+  margin-top: 0.625rem;
+}
+.lp-accent {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+}
+.lp-accent.is-on {
+  box-shadow: 0 0 0 1.5px var(--color-text-primary);
+}
+.lp-accent:hover .lp-accent-dot {
+  transform: scale(1.12);
+}
+.lp-accent-dot {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  background: var(--oklch-accent-0);
+  transition: transform 160ms ease;
+}
+/* The theme's own: half its accent, half its paper. */
+.lp-accent-dot.is-own {
+  background: linear-gradient(135deg, var(--oklch-accent-0) 50%, var(--oklch-bg-2) 50%);
+  box-shadow: inset 0 0 0 1px var(--oklch-border);
+}
+
+.lp-more {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  transition: background-color 160ms ease;
+}
+.lp-more:hover {
+  background-color: var(--color-bg-surface-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-sheet[data-state='open'],
+  .lp-sheet[data-state='closed'],
+  .lp-sheet[data-state='open'] .lp-strip-in {
+    animation: none;
+  }
+}

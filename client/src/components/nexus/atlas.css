@@ -309,7 +309,7 @@
   background: transparent;
   box-shadow: 0 0 #0000;
 }
-[data-kit='journal'] .nx-rail {
+[data-kit='journal'] .nx-rail:not(.nx-bloom > .nx-rail) {
   display: none;
 }
 
@@ -456,5 +456,72 @@
   .ax-view button:focus-visible {
     outline: 2px solid var(--color-accent-brand);
     outline-offset: 2px;
+  }
+}
+
+/* ── 2026-11: the rank badge on the ledger; bands; lessons ready ── */
+@layer components {
+  .ax-ledger-main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+  }
+  .ax-ledger-main .ax-bar {
+    max-width: 32rem;
+  }
+  /* A stream's band: a hairline with its lit share drawn over it in ink. */
+  .ax-band-rule {
+    stroke: var(--color-border);
+    stroke-width: 1;
+  }
+  .ax-band-lit {
+    stroke: var(--color-text-primary);
+    stroke-width: 2;
+  }
+  .ax-sub-track {
+    fill: none;
+    stroke: var(--color-border);
+    stroke-width: 1;
+  }
+  .ax-sub-arc {
+    fill: none;
+    stroke: var(--color-accent-brand);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .ax-sub-ready {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    fill: var(--color-text-primary);
+    font-weight: 600;
+  }
+  /* Lessons ready: the subjects you can read now, as links. */
+  .ax-ready-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.875rem;
+    margin: 0.125rem 0 0.125rem;
+  }
+  .ax-ready-link {
+    padding: 0;
+    font-family: var(--kit-display, var(--ed-serif));
+    font-size: 1.0625rem;
+    color: var(--color-text-primary);
+    text-decoration: underline;
+    text-decoration-color: var(--color-border-strong);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+    background: none;
+    border: 0;
+  }
+  .ax-ready-link:hover {
+    text-decoration-color: var(--color-text-primary);
+  }
+  .ax-ready-link:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 }

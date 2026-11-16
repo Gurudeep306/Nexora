@@ -190,3 +190,61 @@ export const DEFAULT_SOLUTION_FONT = 'off'
 export function solutionFontStack(f: SolutionFont): string {
   return f.family ? `'${f.family}', '${f.label} Fallback', var(--font-body)` : 'var(--font-body)'
 }
+
+/*
+  Heading and reading faces people can put on any theme (Appearance → Make
+  it yours). 'theme' (not listed) keeps the theme's own faces. Each id is a
+  UI font above or one of the heading faces the themes use, so fontLoaders
+  can fetch it.
+*/
+export interface Face {
+  id: string
+  label: string
+  kind: 'serif' | 'sans' | 'display'
+  note: string
+  /** Heading tracking that suits the face. */
+  tracking?: string
+}
+
+const FACE_STACKS: Record<string, string> = {
+  newsreader: "'Newsreader Variable', 'Newsreader Fallback', Charter, Georgia, serif",
+  literata: "'Literata Variable', 'Literata Fallback', Charter, Georgia, serif",
+  fraunces: "'Fraunces Variable', ui-serif, Georgia, serif",
+  cormorant: "'Cormorant Garamond Variable', ui-serif, Georgia, serif",
+  'young-serif': "'Young Serif', ui-serif, Georgia, serif",
+  geist: "'Geist Variable', 'Geist Fallback', ui-sans-serif, system-ui, sans-serif",
+  'inter-tight': "'Inter Tight Variable', 'Inter Tight Fallback', ui-sans-serif, system-ui, sans-serif",
+  bricolage: "'Bricolage Grotesque Variable', 'Bricolage Grotesque Fallback', ui-sans-serif, system-ui, sans-serif",
+  'space-grotesk': "'Space Grotesk Variable', 'Space Grotesk Fallback', ui-sans-serif, system-ui, sans-serif",
+  sora: "'Sora Variable', 'Sora Fallback', ui-sans-serif, system-ui, sans-serif",
+  atkinson: "'Atkinson Hyperlegible Next Variable', 'Atkinson Hyperlegible Fallback', ui-sans-serif, system-ui, sans-serif",
+  lexend: "'Lexend Variable', 'Lexend Fallback', ui-sans-serif, system-ui, sans-serif",
+  plex: "'IBM Plex Sans Variable', 'IBM Plex Sans Fallback', ui-sans-serif, system-ui, sans-serif",
+}
+export const faceStack = (id: string): string => FACE_STACKS[id] ?? FACE_STACKS.geist
+
+export const HEADING_FACES: Face[] = [
+  { id: 'newsreader', label: 'Newsreader', kind: 'serif', note: 'Editorial serif' },
+  { id: 'fraunces', label: 'Fraunces', kind: 'serif', note: 'Soft, warm serif', tracking: '-0.02em' },
+  { id: 'literata', label: 'Literata', kind: 'serif', note: 'Bookish serif' },
+  { id: 'cormorant', label: 'Cormorant', kind: 'display', note: 'Elegant, high contrast', tracking: '-0.01em' },
+  { id: 'young-serif', label: 'Young Serif', kind: 'display', note: 'Chunky, friendly serif', tracking: '-0.01em' },
+  { id: 'bricolage', label: 'Bricolage', kind: 'sans', note: 'Characterful grotesque', tracking: '-0.035em' },
+  { id: 'space-grotesk', label: 'Space Grotesk', kind: 'sans', note: 'Technical grotesque', tracking: '-0.025em' },
+  { id: 'sora', label: 'Sora', kind: 'sans', note: 'Wide geometric', tracking: '-0.03em' },
+  { id: 'inter-tight', label: 'Inter Tight', kind: 'sans', note: 'Tight and modern', tracking: '-0.035em' },
+  { id: 'geist', label: 'Geist', kind: 'sans', note: 'Clean and neutral', tracking: '-0.025em' },
+]
+
+export const READ_FACES: Face[] = [
+  { id: 'newsreader', label: 'Newsreader', kind: 'serif', note: 'A newspaper serif for long reading' },
+  { id: 'literata', label: 'Literata', kind: 'serif', note: 'Made for reading books on screens' },
+  { id: 'fraunces', label: 'Fraunces', kind: 'serif', note: 'Soft and warm' },
+  { id: 'atkinson', label: 'Atkinson Hyperlegible', kind: 'sans', note: 'Every letter easy to tell apart' },
+  { id: 'lexend', label: 'Lexend', kind: 'sans', note: 'Wide spacing, for easier reading' },
+  { id: 'plex', label: 'IBM Plex Sans', kind: 'sans', note: 'Clear, technical sans' },
+  { id: 'geist', label: 'Geist', kind: 'sans', note: 'The interface font' },
+]
+
+/** UI fonts offered on Appearance (all of UI_FONTS stay valid). */
+export const UI_FONT_PICKS = ['geist', 'inter-tight', 'manrope', 'figtree', 'jakarta', 'plex', 'atkinson', 'lexend', 'nunito', 'space-grotesk', 'sora', 'outfit']
