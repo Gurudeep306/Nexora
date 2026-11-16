@@ -1,5 +1,7 @@
 import type { ReactElement, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
+import { useTheme } from '@/context/ThemeContext'
+import './loading.css'
 import { Skeleton } from './Progress'
 import { IconBadge, type IconName } from '@/components/icon/Icon'
 
@@ -34,7 +36,18 @@ export function EmptyState({
   )
 }
 
+const ROW_WIDTHS = [62, 48, 71, 39, 56, 66, 44, 58]
+
 export function LoadingBlock({ rows = 4, className }: { rows?: number; className?: string }) {
+  // The journal style writes ruled lines instead of grey blocks.
+  if (useTheme().shown.style === 'journal')
+    return (
+      <div className={cn('lb-rows', className)} role="status" aria-label="Loading">
+        {Array.from({ length: rows }).map((_, i) => (
+          <span key={i} className="lb-row block" style={{ '--lb-w': `${ROW_WIDTHS[i % ROW_WIDTHS.length]}%`, '--lb-d': `${i * 0.18}s` } as React.CSSProperties} />
+        ))}
+      </div>
+    )
   return (
     <div className={cn('space-y-3', className)} aria-busy="true" aria-label="Loading">
       {Array.from({ length: rows }).map((_, i) => (

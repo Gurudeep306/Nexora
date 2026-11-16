@@ -53,13 +53,13 @@ function inline(text: string, keyBase: string): ReactNode[] {
       )
     } else if (mention) {
       out.push(
-        <Link key={k} to={profilePath(mention.slice(1))} className="font-medium text-accent-brand hover:underline" onClick={(e) => e.stopPropagation()}>
+        <Link key={k} to={profilePath(mention.slice(1))} className="rt-mention font-medium text-accent-brand hover:underline" onClick={(e) => e.stopPropagation()}>
           {mention}
         </Link>,
       )
     } else if (tag) {
       out.push(
-        <Link key={k} to={tagPath(tag.slice(1))} className="font-medium text-state-info hover:underline" onClick={(e) => e.stopPropagation()}>
+        <Link key={k} to={tagPath(tag.slice(1))} className="rt-tag font-medium text-state-info hover:underline" onClick={(e) => e.stopPropagation()}>
           {tag}
         </Link>,
       )

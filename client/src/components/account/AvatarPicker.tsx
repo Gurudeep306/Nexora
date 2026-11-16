@@ -56,8 +56,7 @@ export function AvatarPicker({
             type="button"
             role="radio"
             aria-checked={selected}
-            aria-label={a.name}
-            title={a.name}
+            aria-label={`Avatar ${i + 1}`}
             tabIndex={i === Math.max(0, focusIndex) ? 0 : -1}
             onClick={() => onChange(a.id)}
             onKeyDown={(e) => onKeyDown(e, i)}

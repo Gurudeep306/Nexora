@@ -14,6 +14,8 @@ import { api } from '@/lib/api'
 import { useSessionUser } from '@/components/profile/useSessionUser'
 import { AchievementCard } from '@/components/achievements/AchievementCard'
 import { CATEGORY_LABELS, type AchievementRow } from '@/components/achievements/achievementMeta'
+import { SealCard } from '@/components/achievements/SealCard'
+import { useTheme } from '@/context/ThemeContext'
 
 interface StatsResponse {
   ok: boolean
@@ -26,6 +28,7 @@ export default function AchievementsPage() {
   const { username } = useSessionUser()
   const [status, setStatus] = useState<StatusFilter>('all')
   const [category, setCategory] = useState('all')
+  const journal = useTheme().shown.style === 'journal'
 
   const { data, loading, error, refetch } = useApi(
     () => api.get<StatsResponse>('/api/stats', { query: username ? { username } : undefined }),
@@ -56,8 +59,9 @@ export default function AchievementsPage() {
     <div>
       <PageHeader
         icon="achievements"
+        eyebrow="The Ledger"
         title="Achievements"
-        subtitle="Trophies from the rift — earned glow, locked stay in the shadows until you unlock them."
+        subtitle={earned.length ? `${earned.length} of ${achievements.length} seals earned. Each one says what it takes.` : 'Seals you earn by solving, keeping streaks and climbing ratings. Each one says what it takes.'}
         actions={
           <Button variant="outline" size="sm" onClick={refetch} aria-label="Refresh achievements">
             <RefreshCw className="size-3.5" />
@@ -66,6 +70,7 @@ export default function AchievementsPage() {
         }
       />
 
+      <h2 className="sr-only">Summary</h2>
       <div className="mb-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
         <StatCard label="Unlocked" value={earned.length} icon="medal" accent="success" sub={`of ${achievements.length} · ${completion}%`} />
         <StatCard label="Trophy XP" value={earnedXp.toLocaleString()} icon="award" accent="accent" sub="earned from achievements" />
@@ -111,17 +116,47 @@ export default function AchievementsPage() {
             <EmptyState
               icon="award"
               title="No achievements here"
-              description="Try a different filter — or go solve something to forge new trophies."
+              description="Try a different filter, or solve something to earn a new one."
             />
-          ) : (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-              {filtered.map((a, i) => (
-                <AchievementCard key={a.id} achievement={a} index={i} />
+          ) : journal ? (
+            <div className="ac-groups">
+              {groups(filtered).map(([cat, list]) => (
+                <section key={cat} aria-labelledby={`ac-${cat}`}>
+                  <header className="ac-group-head">
+                    <h2 id={`ac-${cat}`} className="ac-group-title">
+                      {CATEGORY_LABELS[cat] ?? cat}
+                    </h2>
+                    <span className="ac-group-count">
+                      {list.filter((a) => a.unlocked_at).length} of {list.length} earned
+                    </span>
+                  </header>
+                  <div className="ac-seals">
+                    {list.map((a) => (
+                      <SealCard key={a.id} a={a} />
+                    ))}
+                  </div>
+                </section>
               ))}
             </div>
+          ) : (
+            <>
+              <h2 className="sr-only">Achievements</h2>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                {filtered.map((a, i) => (
+                  <AchievementCard key={a.id} achievement={a} index={i} />
+                ))}
+              </div>
+            </>
           )}
         </>
       )}
     </div>
   )
+}
+
+/** Achievements grouped by category, earned first inside each group. */
+function groups(list: AchievementRow[]): [string, AchievementRow[]][] {
+  const by = new Map<string, AchievementRow[]>()
+  for (const a of list) by.set(a.category, [...(by.get(a.category) ?? []), a])
+  return [...by.entries()].map(([k, v]) => [k, v.slice().sort((x, y) => Number(!!y.unlocked_at) - Number(!!x.unlocked_at))])
 }

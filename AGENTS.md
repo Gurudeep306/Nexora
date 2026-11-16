@@ -138,9 +138,15 @@ changed.
   redesign was checked (axe with 0 violations, keyboard, responsiveness).
 - Animations explain an idea. They are never decoration only.
 - **Premium look, site-wide (2026).** See `docs/ui/premium.md`:
-  - The NexoraGuru mark is one solid tile in the text colour with the NG cut
-    out (`markSvg` in `client/src/components/brand/traversal.ts`). Don't add
-    gradients, glows or extra colours to it. Regenerate the files with
+  - The NexoraGuru mark is "One line": the N and G written by hand in one
+    line of ink with a shared stem, and a clay full stop where the pen stops
+    (`MARK_N`, `MARK_G`, `MARK_DOT` and `markSvg` in
+    `client/src/components/brand/traversal.ts`). The ink takes the text colour;
+    the full stop is clay. It is drawn to be animated: `LogoMark interactive`
+    writes it once (top bar, landing, sign-in), `LogoMark write` writes it on
+    mount, and `MarkLoader` keeps writing it (the page loader); the boot screen
+    in `client/index.html` writes it in plain CSS. Don't add gradients, glows
+    or extra colours. Regenerate the files with
     `node scripts/brand/build-brand.mjs && node scripts/brand/render-brand.mjs`.
   - No gradient text, no coloured glow blobs or "light pools", no neon
     `shadow-[0_0_…]` glows, no rainbow gradients on bars or buttons.

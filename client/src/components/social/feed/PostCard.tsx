@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'
+import { forwardRef, memo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import {
@@ -198,7 +198,7 @@ function PostCardImpl({ post, repostedBy, onChange, onRemove, onCreated, onHideA
       onClick={open}
       aria-label={`Post by ${displayName(post.author)}`}
       className={cn(
-        'card group/post relative px-4 pt-3.5 pb-2 transition-colors sm:px-5',
+        'so-post card group/post relative px-4 pt-3.5 pb-2 transition-colors sm:px-5',
         !expanded && 'cursor-pointer hover:border-border-strong',
         post.removed && 'border-state-error/40',
         post.featured && 'border-accent-brand/35',
@@ -326,7 +326,7 @@ function PostCardImpl({ post, repostedBy, onChange, onRemove, onCreated, onHideA
                 </div>
               </div>
             ) : (
-              post.body && <RichText text={post.body} />
+              post.body && <RichText text={post.body} className="so-body space-y-2 break-words text-[15px] leading-relaxed text-text-primary" />
             )}
             {post.code && <CodeBlock lang={post.code.lang} source={post.code.source} maxLines={expanded ? 200 : 14} />}
             {post.images.length > 0 && <ImageGrid images={post.images} onOpen={setLightbox} />}
@@ -341,11 +341,9 @@ function PostCardImpl({ post, repostedBy, onChange, onRemove, onCreated, onHideA
             </Action>
             <Menu>
               <MenuTrigger asChild>
-                <span>
-                  <Action label={post.me.reposted ? 'Undo repost' : 'Repost'} count={post.counts.reposts} tone="success" active={post.me.reposted}>
-                    <Repeat2 />
-                  </Action>
-                </span>
+                <Action label={post.me.reposted ? 'Undo repost' : 'Repost'} count={post.counts.reposts} tone="success" active={post.me.reposted}>
+                  <Repeat2 />
+                </Action>
               </MenuTrigger>
               <MenuContent align="start">
                 <MenuItem icon={<Repeat2 />} onSelect={repost}>
@@ -435,37 +433,38 @@ const TONES = {
 }
 const ACTIVE = { info: 'text-state-info', success: 'text-state-success', error: 'text-state-error', brand: 'text-accent-brand' }
 
-function Action({
-  label,
-  count,
-  onClick,
-  children,
-  tone,
-  active,
-}: {
-  label: string
-  count?: number
-  onClick?: () => void
-  children: React.ReactNode
-  tone: keyof typeof TONES
-  active?: boolean
-}) {
+/** A quiet reaction button. Forwards its ref and extra props so it can be a menu trigger itself. */
+const Action = forwardRef<
+  HTMLButtonElement,
+  {
+    label: string
+    count?: number
+    onClick?: () => void
+    children: React.ReactNode
+    tone: keyof typeof TONES
+    active?: boolean
+  } & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'children'>
+>(function Action({ label, count, onClick, children, tone, active, className, ...rest }, ref) {
+  const slotClick = (rest as { onClick?: React.MouseEventHandler<HTMLButtonElement> }).onClick
   return (
     <button
+      ref={ref}
       type="button"
+      {...rest}
       aria-label={count ? `${label} (${count})` : label}
-      aria-pressed={active}
+      aria-pressed={rest['aria-haspopup'] ? undefined : active}
       onClick={(e) => {
         e.stopPropagation()
+        slotClick?.(e)
         onClick?.()
       }}
-      className={cn('group/act inline-flex h-9 min-w-9 cursor-pointer items-center gap-1 rounded-full px-2 text-[13px] text-text-muted transition-colors [&_svg]:size-[18px]', TONES[tone], active && ACTIVE[tone])}
+      className={cn('so-act group/act inline-flex h-9 min-w-9 cursor-pointer items-center gap-1 rounded-full px-2 text-[13px] text-text-muted transition-colors [&_svg]:size-[18px]', TONES[tone], active && ACTIVE[tone], className)}
     >
       {children}
       {count != null && count > 0 && <span className="tabular-nums">{compact(count)}</span>}
     </button>
   )
-}
+})
 
 function Burst() {
   const dots = Array.from({ length: 8 }, (_, i) => {

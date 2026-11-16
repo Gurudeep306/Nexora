@@ -1388,7 +1388,7 @@ function createSocialRouter(deps) {
       // This user's progress is read ONCE (by index) and joined with the
       // in-memory problem catalog for the totals, difficulty split, topics
       // and recent solves (was four passes over progress + a lookup per row).
-      const [progRows, catalog, heat, gate, gateTests, contests, langs, achievements, prof, recentPosts, feed, streak] = await Promise.all([
+      const [progRows, catalog, heat, gate, gateTests, contests, langs, achievements, prof, recentPosts, feed, streak, linked] = await Promise.all([
         all("SELECT problem_rowid, status, solved_at, xp_earned FROM progress WHERE username = ?", [u]),
         getCatalog(),
         all(
@@ -1433,6 +1433,12 @@ function createSocialRouter(deps) {
         ),
         all(`SELECT id, type, content, created_at FROM activity_feed WHERE username = ? ORDER BY id DESC LIMIT 8`, [u]),
         calcStreak(u),
+        // Verified judge accounts only (the owner proved them; handles are public on the judges).
+        all(
+          `SELECT platform, handle, rating, max_rating, rank, solved, last_import FROM linked_accounts
+           WHERE username = ? AND verified_at IS NOT NULL ORDER BY platform`,
+          [u],
+        ).catch(() => []),
       ]);
       const totals = { xp: 0, solved: 0, attempted: progRows.length };
       const solvedRows = [];
@@ -1528,6 +1534,7 @@ function createSocialRouter(deps) {
         achievements,
         pinned,
         timeline,
+        linked: linked.map((l) => ({ platform: l.platform, handle: l.handle, rating: l.rating ?? null, max_rating: l.max_rating ?? null, rank: l.rank || null, solved: l.solved ?? null, last_import: l.last_import ?? null })),
       });
     }),
   );

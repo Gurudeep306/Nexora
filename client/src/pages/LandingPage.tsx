@@ -177,7 +177,7 @@ function Nav() {
       <header className={`ed-nav sticky top-0 z-50 ${scrolled || open ? 'is-scrolled' : ''}`}>
         <nav aria-label="Main" className="mx-auto flex h-16 max-w-[1280px] items-center gap-6 px-6 md:px-10">
           <Link to="/" className="flex items-center gap-2.5 !no-underline" aria-label="NexoraGuru home">
-            <LogoMark size={22} />
+            <LogoMark size={22} interactive />
             <span className="ed-wordmark">NexoraGuru</span>
           </Link>
           <div className="ml-6 hidden items-center gap-7 md:flex">

@@ -85,7 +85,7 @@ export function Avatar({
       ) : (
         <img
           src={avatarSetUrl(id)}
-          alt={name ? `${name}'s avatar` : `${avatarName(id)} avatar`}
+          alt={name ? `${name}'s avatar` : avatarName(id)}
           decoding="async"
           draggable={false}
           className={cn(SIZES[size], 'rounded-full bg-bg-surface-2 select-none', ring && 'ring-2 ring-accent-brand/20')}

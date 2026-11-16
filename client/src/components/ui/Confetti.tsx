@@ -8,7 +8,8 @@ const COLORS = ['var(--color-primary-light)', 'var(--color-accent)', 'var(--colo
 const PAPER = ['var(--color-text-primary)', 'var(--ed-clay)', 'var(--color-border-strong)', 'var(--color-text-muted)']
 
 /**
- * One-shot burst of rift shards — plays when you get Accepted.
+ * One-shot burst of rift shards — plays when you get Accepted (in the
+ * journal style, paper slips falling from the top instead).
  * Change `burstKey` to fire again. Skipped entirely for reduced-motion users.
  */
 /** Small seeded PRNG so a burst is deterministic for its key (keeps render pure). */
@@ -50,6 +51,37 @@ export function Confetti({ burstKey, count = 46 }: { burstKey: string | number; 
     [burstKey, count],
   )
   if (reduce) return null
+  if (paper) {
+    // Field Journal: slips of paper fall from the top of the page, drifting
+    // and turning over as they go (no burst, no glow).
+    const rand = seeded(`${burstKey}-paper`)
+    const slips = Array.from({ length: Math.round(count * 0.6) }, (_, i) => ({
+      id: `${burstKey}-p${i}`,
+      left: rand() * 100,
+      w: 7 + rand() * 9,
+      drift: (rand() - 0.5) * 160,
+      spin: (rand() - 0.5) * 540,
+      flip: 180 + rand() * 360,
+      delay: rand() * 0.5,
+      dur: 1.9 + rand() * 1.1,
+      color: PAPER[i % PAPER.length],
+    }))
+    return createPortal(
+      <div className="pointer-events-none fixed inset-0 z-[90] overflow-hidden" aria-hidden="true">
+        {slips.map((p) => (
+          <motion.span
+            key={p.id}
+            className="absolute top-0 block"
+            style={{ left: `${p.left}%`, width: p.w, height: p.w * 0.42, background: p.color, borderRadius: '1px' }}
+            initial={{ y: -24, x: 0, rotate: 0, rotateX: 0, opacity: 1 }}
+            animate={{ y: '105vh', x: [0, p.drift * 0.6, p.drift], rotate: p.spin, rotateX: p.flip, opacity: [1, 1, 0] }}
+            transition={{ duration: p.dur, delay: p.delay, ease: [0.3, 0.1, 0.4, 1], times: [0, 0.8, 1] }}
+          />
+        ))}
+      </div>,
+      document.body,
+    )
+  }
   return createPortal(
     <div className="pointer-events-none fixed inset-0 z-[90] overflow-hidden" aria-hidden="true">
       <div className="absolute top-1/3 left-1/2">

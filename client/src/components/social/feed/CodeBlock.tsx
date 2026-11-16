@@ -122,7 +122,7 @@ export function CodeBlock({ source, lang = 'text', className, maxLines = 18 }: {
           {copied ? 'Copied' : 'Copy'}
         </button>
       </div>
-      <pre className="overflow-x-auto px-3.5 py-3 font-mono text-[12.5px] leading-[1.6] text-text-primary [tab-size:4]">
+      <pre tabIndex={0} aria-label={`${lang} code`} className="overflow-x-auto px-3.5 py-3 outline-none focus-visible:ring-2 focus-visible:ring-accent-brand font-mono text-[12.5px] leading-[1.6] text-text-primary [tab-size:4]">
         <code>{nodes}</code>
       </pre>
       {clipped && (

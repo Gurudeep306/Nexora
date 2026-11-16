@@ -1,13 +1,18 @@
 /*
- * Minimal QR Code encoder (byte mode, error correction level M, versions
- * 1–10 → up to 213 bytes, plenty for a profile URL). Follows the structure of
+ * Minimal QR Code encoder (byte mode, error correction level M or H,
+ * versions 1–10 → up to 213 bytes at M and 119 at H, plenty for a profile
+ * URL). Level H survives about 30% damage, which is what lets the styled
+ * code carry the NexoraGuru mark in its centre. Follows the structure of
  * Project Nayuki's reference implementation, trimmed to what we need.
  * Returns a square matrix of booleans (true = dark module).
  */
 
-const ECC_PER_BLOCK = [-1, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26]
-const NUM_BLOCKS = [-1, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5]
-const ECL_FORMAT_BITS = 0 // level M
+export type QrLevel = 'M' | 'H'
+// Per version 1–10 (index 0 unused), from the QR specification.
+const ECC: Record<QrLevel, { perBlock: number[]; blocks: number[]; format: number }> = {
+  M: { perBlock: [-1, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26], blocks: [-1, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5], format: 0 },
+  H: { perBlock: [-1, 17, 28, 22, 16, 22, 28, 26, 26, 24, 28], blocks: [-1, 1, 1, 2, 4, 4, 4, 5, 6, 8, 8], format: 2 },
+}
 
 function rawDataModules(ver: number): number {
   let r = (16 * ver + 128) * ver + 64
@@ -18,7 +23,7 @@ function rawDataModules(ver: number): number {
   }
   return r
 }
-const dataCodewords = (ver: number) => Math.floor(rawDataModules(ver) / 8) - ECC_PER_BLOCK[ver] * NUM_BLOCKS[ver]
+const dataCodewords = (ver: number, lv: QrLevel) => Math.floor(rawDataModules(ver) / 8) - ECC[lv].perBlock[ver] * ECC[lv].blocks[ver]
 
 function gfMul(x: number, y: number): number {
   let z = 0
@@ -60,12 +65,12 @@ function alignmentPositions(ver: number, size: number): number[] {
   return out
 }
 
-export function encodeQr(text: string): boolean[][] {
+export function encodeQr(text: string, level: QrLevel = 'M'): boolean[][] {
   const bytes = Array.from(new TextEncoder().encode(text))
   let ver = 1
   for (; ver <= 10; ver++) {
     const ccBits = ver <= 9 ? 8 : 16
-    if (4 + ccBits + bytes.length * 8 <= dataCodewords(ver) * 8) break
+    if (4 + ccBits + bytes.length * 8 <= dataCodewords(ver, level) * 8) break
   }
   if (ver > 10) throw new Error('Text too long for QR')
   const ccBits = ver <= 9 ? 8 : 16
@@ -78,7 +83,7 @@ export function encodeQr(text: string): boolean[][] {
   push(0b0100, 4)
   push(bytes.length, ccBits)
   bytes.forEach((b) => push(b, 8))
-  const capacity = dataCodewords(ver) * 8
+  const capacity = dataCodewords(ver, level) * 8
   push(0, Math.min(4, capacity - bits.length))
   push(0, (8 - (bits.length % 8)) % 8)
   for (let pad = 0xec; bits.length < capacity; pad ^= 0xec ^ 0x11) push(pad, 8)
@@ -86,8 +91,8 @@ export function encodeQr(text: string): boolean[][] {
   for (let i = 0; i < bits.length; i += 8) data.push(bits.slice(i, i + 8).reduce((a, b) => (a << 1) | b, 0))
 
   // Split into blocks, add ECC, interleave.
-  const numBlocks = NUM_BLOCKS[ver]
-  const eccLen = ECC_PER_BLOCK[ver]
+  const numBlocks = ECC[level].blocks[ver]
+  const eccLen = ECC[level].perBlock[ver]
   const rawCodewords = Math.floor(rawDataModules(ver) / 8)
   const numShort = numBlocks - (rawCodewords % numBlocks)
   const shortLen = Math.floor(rawCodewords / numBlocks)
@@ -139,7 +144,7 @@ export function encodeQr(text: string): boolean[][] {
     }),
   )
   const drawFormat = (mask: number) => {
-    const d = (ECL_FORMAT_BITS << 3) | mask
+    const d = (ECC[level].format << 3) | mask
     let rem = d
     for (let i = 0; i < 10; i++) rem = (rem << 1) ^ ((rem >>> 9) * 0x537)
     const b = ((d << 10) | rem) ^ 0x5412
@@ -250,4 +255,43 @@ export function qrPath(matrix: boolean[][], quiet = 2): { d: string; size: numbe
     }),
   )
   return { d, size: matrix.length + quiet * 2 }
+}
+
+/**
+ * The QR drawn as a printed tag: rounded ink dots for data, rounded "eyes"
+ * for the three finders, and a clear centre for the mark. Returns SVG markup
+ * (viewBox in modules, quiet zone included); `centre` is the side of the
+ * cleared square in modules (0 for none). Use level H when there's a centre.
+ */
+export function qrArt(matrix: boolean[][], { quiet = 3, ink = '#1C1B19', paper = '#FFFFFF', centre = 0, mark = '' } = {}): { svg: string; size: number } {
+  const n = matrix.length
+  const size = n + quiet * 2
+  const c0 = Math.floor((n - centre) / 2)
+  const inCentre = (x: number, y: number) => centre > 0 && x >= c0 - 1 && x <= c0 + centre && y >= c0 - 1 && y <= c0 + centre
+  const inFinder = (x: number, y: number) => (x < 8 && y < 8) || (x >= n - 8 && y < 8) || (x < 8 && y >= n - 8)
+  let dots = ''
+  let joins = ''
+  matrix.forEach((row, y) =>
+    row.forEach((dark, x) => {
+      if (!dark || inFinder(x, y) || inCentre(x, y)) return
+      // Each dark module is a dot; runs are joined into strokes (a separate
+      // path, so overlapping shapes can't cancel each other out).
+      const r = 0.44
+      dots += `M${x + quiet + 0.5 - r} ${y + quiet + 0.5}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`
+      if (row[x + 1] && !inFinder(x + 1, y) && !inCentre(x + 1, y)) joins += `M${x + quiet + 0.5} ${y + quiet + 0.5 - r}h1v${2 * r}h-1z`
+      if (matrix[y + 1]?.[x] && !inFinder(x, y + 1) && !inCentre(x, y + 1)) joins += `M${x + quiet + 0.5 - r} ${y + quiet + 0.5}h${2 * r}v1h${-2 * r}z`
+    }),
+  )
+  const eye = (fx: number, fy: number) => {
+    const x = fx + quiet
+    const y = fy + quiet
+    return `<rect x="${x + 0.5}" y="${y + 0.5}" width="6" height="6" rx="1.9" fill="none" stroke="${ink}" stroke-width="1"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3" rx="0.9" fill="${ink}"/>`
+  }
+  const centreArt =
+    centre > 0
+      ? `<rect x="${c0 + quiet - 0.5}" y="${c0 + quiet - 0.5}" width="${centre + 1}" height="${centre + 1}" rx="${(centre + 1) * 0.24}" fill="${paper}"/>` +
+        mark.replace('<svg ', `<svg x="${c0 + quiet + 0.35}" y="${c0 + quiet + 0.35}" width="${centre - 0.7}" height="${centre - 0.7}" `)
+      : ''
+  const svg = `<rect width="${size}" height="${size}" fill="${paper}"/><path d="${dots}" fill="${ink}"/><path d="${joins}" fill="${ink}"/>${eye(0, 0)}${eye(n - 7, 0)}${eye(0, n - 7)}${centreArt}`
+  return { svg, size }
 }

@@ -1,0 +1,390 @@
+/* The profile as a notebook (components/profile/Notebook.tsx).
+   Token-based so it reads well in every style; the journal style's paper
+   details (serif figures, no cards) live in theme/styles.css "phase 7". */
+@layer components {
+  /* ── Rank seal ── */
+  .pf-seal {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-primary);
+  }
+  .pf-seal-mark {
+    width: 30px;
+    height: 30px;
+    flex: none;
+  }
+  .pf-seal-num {
+    font-family: var(--ed-serif, Georgia, serif);
+    font-size: 16px;
+    fill: currentColor;
+  }
+  .pf-seal-text {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+
+  /* ── Colophon: one ruled row of figures ── */
+  .pf-colophon {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--color-text-primary);
+    border-bottom: 1px solid var(--color-border);
+  }
+  @media (min-width: 768px) {
+    .pf-colophon {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1100px) {
+    .pf-colophon {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+  .pf-colophon .pf-fact {
+    position: relative;
+    min-width: 0;
+    padding: 0.9rem 1rem 1rem;
+    box-shadow: inset -1px 0 0 var(--color-border), inset 0 -1px 0 var(--color-border);
+  }
+  .pf-colophon .pf-fact-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .pf-colophon .pf-fact-value {
+    margin-top: 0.4rem;
+    font-family: var(--ed-serif, var(--font-display));
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--color-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .pf-unit {
+    font-size: 0.6em;
+    margin-left: 0.08em;
+    color: var(--color-text-secondary);
+  }
+  .pf-fact-sub {
+    margin-top: 0.35rem;
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+  .pf-fact-spark {
+    display: block;
+    margin-top: 0.5rem;
+    max-width: 100%;
+  }
+
+  /* ── Folios: kicker + serif title, no card ── */
+  .pf-folio {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-border);
+  }
+  .pf-folio-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .pf-folio-title {
+    margin: 0.35rem 0 0;
+    font-family: var(--ed-serif, var(--font-display));
+    font-weight: 400;
+    font-size: 1.5rem;
+    line-height: 1.15;
+    color: var(--color-text-primary);
+  }
+  .pf-folio-link {
+    font-size: 13px;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  .pf-note {
+    margin: 0.5rem 0 0;
+    font-size: 14px;
+    color: var(--color-text-muted);
+  }
+  .pf-calendar-line {
+    margin: 0.75rem 0 0;
+    font-family: var(--ed-serif, inherit);
+    font-size: 1.0625rem;
+    color: var(--color-text-secondary);
+  }
+
+  /* ── Small multiples: difficulty, topics, languages ── */
+  .pf-multiples {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .pf-multiple {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 0.25rem 0.5rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--color-border);
+  }
+  .pf-multiple-word {
+    font-family: var(--ed-serif, inherit);
+    font-style: italic;
+    font-size: 15px;
+  }
+  .pf-multiple-word.is-easy {
+    color: var(--color-state-success);
+  }
+  .pf-multiple-word.is-medium {
+    color: var(--color-state-warning);
+  }
+  .pf-multiple-word.is-hard {
+    color: var(--color-state-error);
+  }
+  .pf-multiple-num {
+    font-family: var(--ed-serif, var(--font-display));
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--color-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .pf-bar {
+    grid-column: 1 / -1;
+    display: block;
+    height: 3px;
+    background: var(--color-bg-surface-3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .pf-bar-fill {
+    display: block;
+    height: 100%;
+    background: var(--color-text-secondary);
+    transform-origin: left;
+  }
+  .pf-bar-fill.is-easy {
+    background: var(--color-state-success);
+  }
+  .pf-bar-fill.is-medium {
+    background: var(--color-state-warning);
+  }
+  .pf-bar-fill.is-hard {
+    background: var(--color-state-error);
+  }
+  .pf-topics {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .pf-topic {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.3rem 0.75rem;
+    align-items: baseline;
+  }
+  .pf-topic-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    text-transform: capitalize;
+  }
+  .pf-topic-num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── The shelf of seals ── */
+  .pf-shelf {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+    gap: 1.25rem 1rem;
+  }
+  .pf-shelf-item {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    text-align: center;
+  }
+  .pf-seal-disc {
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+    box-shadow: inset 0 0 0 1px var(--color-border-strong), inset 0 0 0 5px var(--color-bg-surface), inset 0 0 0 6px var(--color-border);
+  }
+  .pf-shelf-item.is-earned .pf-seal-disc {
+    box-shadow: inset 0 0 0 2px var(--color-accent-brand), inset 0 0 0 5px var(--color-bg-surface), inset 0 0 0 6px var(--color-text-primary);
+  }
+  .pf-shelf-item.is-locked .pf-seal-disc {
+    background: var(--color-bg-surface-3);
+    color: var(--color-text-muted);
+    box-shadow: inset 0 1px 0 0 var(--color-border-strong), inset 0 0 0 1px var(--color-border);
+  }
+  .pf-shelf-item figcaption {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .pf-shelf-name {
+    font-family: var(--ed-serif, inherit);
+    font-size: 15px;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+  }
+  .pf-shelf-item.is-locked .pf-shelf-name {
+    color: var(--color-text-secondary);
+  }
+  .pf-shelf-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pf-shelf-item.is-earned .pf-seal-disc {
+      animation: pf-stamp 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+  }
+  @keyframes pf-stamp {
+    from {
+      transform: scale(1.18) rotate(-8deg);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  /* ── The Bridge ── */
+  .pf-bridge {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-border);
+  }
+  .pf-bridge-row {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr) auto;
+    gap: 0.25rem 1rem;
+    align-items: baseline;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .pf-bridge-judge {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+  .pf-bridge-handle {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-text-primary);
+    text-decoration: underline;
+    text-decoration-color: var(--color-border-strong);
+    text-underline-offset: 3px;
+  }
+  .pf-bridge-figs {
+    display: flex;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+  .pf-bridge-verified {
+    grid-column: 2 / -1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+  .pf-bridge-verified svg {
+    color: var(--color-state-success);
+  }
+  @media (max-width: 560px) {
+    .pf-bridge-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .pf-bridge-judge {
+      grid-column: 1 / -1;
+    }
+    .pf-bridge-verified {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* ── Craft row ── */
+  .pf-craft {
+    display: grid;
+    gap: 2rem;
+  }
+  @media (min-width: 900px) {
+    .pf-craft {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}
+
+/* ── The portrait medal (journal style): ring, level arc, rim lettering ── */
+@layer components {
+  .pf-medal {
+    position: relative;
+    flex: none;
+    display: grid;
+    place-items: center;
+  }
+  .pf-medal-svg {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+  }
+  .pf-medal-photo {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 124px;
+    height: 124px;
+    border-radius: 999px;
+    overflow: visible;
+  }
+  .pf-medal-ring {
+    fill: none;
+    stroke: var(--color-text-primary);
+    stroke-width: 1;
+  }
+  .pf-medal-track {
+    fill: none;
+    stroke: var(--color-border);
+    stroke-width: 2;
+  }
+  .pf-medal-arc {
+    fill: none;
+    stroke: var(--color-accent-brand);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .pf-medal-text {
+    font-family: var(--font-mono);
+    font-size: 8.4px;
+    letter-spacing: 0.08em;
+    fill: var(--color-text-secondary);
+  }
+}

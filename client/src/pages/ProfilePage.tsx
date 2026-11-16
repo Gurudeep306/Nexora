@@ -10,7 +10,11 @@ import { api } from '@/lib/api'
 import { cn, formatDate } from '@/lib/utils'
 import { ActivityHeatmap } from '@/components/profile/ActivityHeatmap'
 import { ACCENTS, CoverArt } from '@/components/profile/covers'
-import { BadgeCard, DifficultyBreakdown, Languages, LevelBar, Section, StatsGrid, Timeline, TopicRadar } from '@/components/profile/Showcase'
+import { BadgeCard, LevelBar, Timeline } from '@/components/profile/Showcase'
+import { Bridge, Colophon, DifficultyMultiples, Folio, LanguageList, RankSeal, Seal, Shelf, TopicBars } from '@/components/profile/Notebook'
+import { calendarSentence, usePersonJsonLd } from '@/components/profile/notebook-data'
+import { PortraitMedal } from '@/components/profile/PortraitMedal'
+import { useTheme } from '@/context/ThemeContext'
 import { PostCard } from '@/components/social/feed/PostCard'
 import { FeedEmpty, PostList, usePostList } from '@/components/social/feed/PostList'
 import { FollowButton, UserRow } from '@/components/social/feed/People'
@@ -39,6 +43,8 @@ export default function ProfilePage() {
   const [show, setShow] = useState<Showcase | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [tab, setTab] = useState<TabId>('overview')
+  // A public profile page describes a person for search engines (not for private or blocked profiles).
+  usePersonJsonLd(data?.profile, !!param && !!data && !data.locked && !show?.locked && !data.relation.blocksMe && data.profile.visibility !== 'followers')
 
   const load = useCallback(async () => {
     setError(null)
@@ -85,7 +91,7 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-5">
-      <ProfileHero data={data} stats={show?.stats} isSelf={isSelf} onChanged={load} />
+      <ProfileHero data={data} stats={show?.stats} days={show?.heatmap} isSelf={isSelf} onChanged={load} />
 
       {blocked ? (
         <Card>
@@ -117,17 +123,17 @@ export default function ProfilePage() {
           </div>
           <AnimatePresence mode="wait">
             <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.18 }}>
-              {tab === 'overview' && show && <Overview show={show} accent={ACCENTS[data.profile.accent]?.color} />}
+              {tab === 'overview' && show && <Overview show={show} accent={ACCENTS[data.profile.accent]?.color} isSelf={isSelf} onAll={() => setTab('achievements')} />}
               {(tab === 'posts' || tab === 'media') && <UserPosts username={data.profile.username} tab={tab} pinned={show?.pinned} />}
               {tab === 'replies' && <UserReplies username={data.profile.username} />}
               {tab === 'achievements' && show?.achievements && (
-                <Section title="Achievements" icon="trophy" action={<span className="text-xs text-text-muted">{show.achievements.filter((a) => a.unlocked_at).length} / {show.achievements.length} unlocked</span>}>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                <Folio kicker="The shelf" title={`${show.achievements.filter((a) => a.unlocked_at).length} of ${show.achievements.length} seals earned`}>
+                  <div className="pf-shelf">
                     {show.achievements.map((a) => (
-                      <BadgeCard key={a.id} a={a} />
+                      <Seal key={a.id} a={a} />
                     ))}
                   </div>
-                </Section>
+                </Folio>
               )}
             </motion.div>
           </AnimatePresence>
@@ -157,7 +163,7 @@ function ProfileSkeleton() {
   )
 }
 
-function ProfileHero({ data, stats, isSelf, onChanged }: { data: ProfileResponse; stats?: Showcase['stats']; isSelf: boolean; onChanged: () => void }) {
+function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileResponse; stats?: Showcase['stats']; days?: Showcase['heatmap']; isSelf: boolean; onChanged: () => void }) {
   const { profile: p, relation } = data
   const toast = useToast()
   const navigate = useNavigate()
@@ -169,6 +175,7 @@ function ProfileHero({ data, stats, isSelf, onChanged }: { data: ProfileResponse
   const [confirmBlock, setConfirmBlock] = useState(false)
   const name = p.display_name || p.username
   const accent = ACCENTS[p.accent]?.color ?? ACCENTS.brand.color
+  const journal = useTheme().shown.style === 'journal'
 
   const relate = async (kind: 'mute' | 'block', on: boolean) => {
     try {
@@ -187,15 +194,21 @@ function ProfileHero({ data, stats, isSelf, onChanged }: { data: ProfileResponse
       <CoverArt cover={p.cover} className="pf-cover h-36 sm:h-52" />
       <div className="pf-hero-body relative px-4 pb-5 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div className="pf-portrait relative -mt-14 sm:-mt-16">
-            <div className="pf-portrait-ring ng-ring rounded-full p-[3px]" style={{ '--ng-ring-a': accent, '--ng-ring-b': 'var(--color-state-info)', '--ng-ring-c': 'var(--color-state-success)' } as React.CSSProperties}>
-              <div className="rounded-full bg-bg-surface p-[3px]">
-                <Avatar seed={p.username} avatar={p.avatar} src={p.avatar_url} name={name} size="3xl" ring={false} className="[&_img]:size-24 sm:[&_img]:size-28" online={p.status === 'online'} />
+          {journal && stats ? (
+            <PortraitMedal handle={p.username} level={stats.level.level} name={stats.level.name} progress={stats.level.xpForNext ? stats.level.xpInLevel / stats.level.xpForNext : 1}>
+              <Avatar seed={p.username} avatar={p.avatar} src={p.avatar_url} name={name} size="3xl" ring={false} className="[&_img]:size-[124px]" online={p.status === 'online'} />
+            </PortraitMedal>
+          ) : (
+            <div className="pf-portrait relative -mt-14 sm:-mt-16">
+              <div className="pf-portrait-ring ng-ring rounded-full p-[3px]" style={{ '--ng-ring-a': accent, '--ng-ring-b': 'var(--color-state-info)', '--ng-ring-c': 'var(--color-state-success)' } as React.CSSProperties}>
+                <div className="rounded-full bg-bg-surface p-[3px]">
+                  <Avatar seed={p.username} avatar={p.avatar} src={p.avatar_url} name={name} size="3xl" ring={false} className="[&_img]:size-24 sm:[&_img]:size-28" online={p.status === 'online'} />
+                </div>
               </div>
+              {stats && <RankGlyph level={stats.level.level} size={38} className="pf-rank-corner absolute -right-1 -bottom-1" />}
             </div>
-            {stats && <RankGlyph level={stats.level.level} size={38} className="absolute -right-1 -bottom-1" />}
-          </div>
-          <div className="flex flex-wrap items-center gap-2 pt-3">
+          )}
+          <div className="pf-actions flex flex-wrap items-center gap-2 pt-3">
             {isSelf ? (
               <>
                 <Button variant="subtle" size="sm" className="rounded-full" onClick={() => setSharing(true)}>
@@ -248,7 +261,12 @@ function ProfileHero({ data, stats, isSelf, onChanged }: { data: ProfileResponse
             <h1 className="pf-name font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-[28px]">{name}</h1>
             <UserBadges username={p.username} role={p.role} verified={p.verified} variant="full" />
           </div>
-          <p className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-text-muted">
+          {stats && !journal && (
+            <div className="pf-seal-line mt-2">
+              <RankSeal level={stats.level.level} name={stats.level.name} />
+            </div>
+          )}
+          <p className="pf-handle mt-0.5 flex flex-wrap items-center gap-2 text-sm text-text-muted">
             <span>@{p.username}</span>
             {p.pronouns && <span>· {p.pronouns}</span>}
             {relation.followsMe && <span className="rounded-md bg-bg-surface-3 px-1.5 py-0.5 text-[11px] font-medium text-text-secondary">Follows you</span>}
@@ -259,10 +277,10 @@ function ProfileHero({ data, stats, isSelf, onChanged }: { data: ProfileResponse
             )}
           </p>
           {p.bio ? (
-            <RichText text={p.bio} className="mt-3 max-w-2xl space-y-1 text-[15px] leading-relaxed text-text-primary" />
+            <RichText text={p.bio} className="pf-bio mt-3 max-w-2xl space-y-1 text-[15px] leading-relaxed text-text-primary" />
           ) : (
             isSelf && (
-              <button type="button" onClick={() => setEditing(true)} className="mt-3 cursor-pointer text-sm text-text-muted italic hover:text-accent-brand">
+              <button type="button" onClick={() => setEditing(true)} className="pf-bio-empty mt-3 cursor-pointer text-sm text-text-muted italic hover:text-text-primary hover:underline">
                 Add a bio — tell people what you're learning.
               </button>
             )
@@ -283,11 +301,11 @@ function ProfileHero({ data, stats, isSelf, onChanged }: { data: ProfileResponse
                 {l.label || l.url.replace(/^https?:\/\//, '')}
               </a>
             ))}
-            <span className="inline-flex items-center gap-1.5">
+            <span className="pf-joined inline-flex items-center gap-1.5">
               <CalendarDays className="size-4 text-text-muted" /> Joined {formatDate(p.created_at)}
             </span>
           </div>
-          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
+          <div className="pf-counts mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
             {socialOn && (
               <>
                 <button type="button" onClick={() => setPeople('following')} className="cursor-pointer hover:underline" disabled={data.locked}>
@@ -310,7 +328,7 @@ function ProfileHero({ data, stats, isSelf, onChanged }: { data: ProfileResponse
 
       <Suspense fallback={null}>
         {editing && <EditProfileSheet open={editing} onClose={() => setEditing(false)} profile={p} onSaved={onChanged} />}
-        {sharing && <ShareProfileDialog open={sharing} onClose={() => setSharing(false)} profile={p} stats={stats} />}
+        {sharing && <ShareProfileDialog open={sharing} onClose={() => setSharing(false)} profile={p} stats={stats} days={days} />}
       </Suspense>
       <PeopleModal username={p.username} list={people} onClose={() => setPeople(null)} />
       <ReportDialog open={reporting} onClose={() => setReporting(false)} contentType="profile" contentId={p.username} targetUser={p.username} />
@@ -358,13 +376,20 @@ function PeopleModal({ username, list, onClose }: { username: string; list: null
   )
 }
 
-function Overview({ show, accent }: { show: Showcase; accent?: string }) {
+function Overview({ show, accent, isSelf, onAll }: { show: Showcase; accent?: string; isSelf: boolean; onAll: () => void }) {
   const s = show.stats
-  const unlocked = (show.achievements ?? []).filter((a) => a.unlocked_at)
+  const journal = useTheme().shown.style === 'journal'
   const [pinned, setPinned] = useState(show.pinned ?? [])
   useEffect(() => setPinned(show.pinned ?? []), [show.pinned])
+  // "Today" for the 30-day sparklines, fixed when the profile loads.
+  const [today] = useState(() => {
+    const d = new Date()
+    d.setUTCHours(0, 0, 0, 0)
+    return d
+  })
+  const sentence = calendarSentence(show.heatmap, s?.streak.best ?? 0)
   return (
-    <div className="space-y-5">
+    <div className="space-y-8">
       {pinned.length > 0 && (
         <section aria-label="Pinned" className="space-y-3">
           {pinned.map((p, i) =>
@@ -376,7 +401,7 @@ function Overview({ show, accent }: { show: Showcase; accent?: string }) {
                   <BadgeCard a={p.achievement} compact />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold tracking-wider text-state-gold uppercase">Pinned achievement</p>
+                  <p className="text-xs font-semibold tracking-wider text-text-muted uppercase">Pinned achievement</p>
                   <p className="font-display text-lg font-semibold text-text-primary">{p.achievement.title}</p>
                   <p className="text-sm text-text-secondary">{p.achievement.description}</p>
                 </div>
@@ -386,47 +411,37 @@ function Overview({ show, accent }: { show: Showcase; accent?: string }) {
         </section>
       )}
       {s && (
-        <>
-          <StatsGrid s={s} />
-          <Card className="p-4">
+        <div className="space-y-4">
+          <Colophon s={s} days={show.heatmap} today={today} />
+          <Card className="pf-level p-4">
             <LevelBar s={s} />
           </Card>
-        </>
+        </div>
       )}
       {show.heatmap && (
-        <Section title="Activity" icon="activity">
-          <ActivityHeatmap days={show.heatmap} accent={accent} />
-        </Section>
+        <Folio kicker="Practice calendar" title="A year of work, day by day">
+          <ActivityHeatmap days={show.heatmap} accent={journal ? undefined : accent} />
+          <p className="pf-calendar-line">{sentence ?? 'Every day you solve a problem or answer a GATE question fills a square.'}</p>
+        </Folio>
       )}
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="pf-craft">
         {s && (
-          <Section title="Problems by difficulty" icon="target">
-            <DifficultyBreakdown d={s.difficulty} />
-          </Section>
+          <Folio kicker="Craft" title="Problems by difficulty">
+            <DifficultyMultiples d={s.difficulty} />
+          </Folio>
         )}
-        <Section title="Topic mastery" icon="brain">
-          <TopicRadar topics={show.topics ?? []} />
-        </Section>
+        <Folio kicker="Craft" title="Topics">
+          <TopicBars topics={show.topics ?? []} />
+        </Folio>
+        <Folio kicker="Craft" title="Languages">
+          <LanguageList langs={show.languages ?? []} />
+        </Folio>
       </div>
-      <Section title="Badges" icon="trophy" action={<span className="text-xs text-text-muted">{unlocked.length} unlocked</span>}>
-        {unlocked.length ? (
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-            {unlocked.slice(0, 12).map((a) => (
-              <BadgeCard key={a.id} a={a} />
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-text-muted">No badges yet — the first solve unlocks one.</p>
-        )}
-      </Section>
-      <div className="grid gap-5 md:grid-cols-2">
-        <Section title="Top languages" icon="code">
-          <Languages langs={show.languages ?? []} />
-        </Section>
-        <Section title="Recent activity" icon="clock">
-          <Timeline items={show.timeline ?? []} />
-        </Section>
-      </div>
+      <Shelf achievements={show.achievements ?? []} onAll={onAll} />
+      <Bridge linked={show.linked ?? []} isSelf={isSelf} />
+      <Folio kicker="Field notes" title="Recent activity">
+        <Timeline items={show.timeline ?? []} />
+      </Folio>
     </div>
   )
 }

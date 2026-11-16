@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui'
+import './pagination.css'
 
 export function Pagination({
   total,
@@ -25,7 +26,7 @@ export function Pagination({
       <p className="text-xs text-foreground-dim">
         Showing <span className="font-mono text-foreground tabular-nums">{from}</span>–
         <span className="font-mono text-foreground tabular-nums">{to}</span> of{' '}
-        <span className="font-mono text-primary-bright tabular-nums">{total.toLocaleString()}</span> problems
+        <span className="font-mono text-foreground tabular-nums">{total.toLocaleString()}</span> problems
       </p>
       <div className="flex items-center gap-2">
         <Button
@@ -37,10 +38,27 @@ export function Pagination({
         >
           <ChevronLeft aria-hidden="true" /> Prev
         </Button>
-        <span className="min-w-20 text-center text-xs text-foreground-dim">
-          Page <span className="font-mono text-foreground tabular-nums">{page}</span> /{' '}
-          <span className="font-mono tabular-nums">{pages.toLocaleString()}</span>
-        </span>
+        <ol className="pg-pages m-0 flex list-none items-center gap-0.5 p-0" aria-label="Pages">
+          {pageList(page, pages).map((n, i) =>
+            n === 0 ? (
+              <li key={`gap${i}`} aria-hidden="true" className="px-1 text-xs text-text-muted">
+                …
+              </li>
+            ) : (
+              <li key={n}>
+                <button
+                  type="button"
+                  className="pg-num"
+                  aria-current={n === page ? 'page' : undefined}
+                  aria-label={`Page ${n}`}
+                  onClick={() => n !== page && onPageChange((n - 1) * limit)}
+                >
+                  {n.toLocaleString()}
+                </button>
+              </li>
+            ),
+          )}
+        </ol>
         <Button
           variant="subtle"
           size="sm"
@@ -53,4 +71,16 @@ export function Pagination({
       </div>
     </nav>
   )
+}
+
+/** Page numbers to show: first, last, and two either side of the current one (0 marks a gap). */
+function pageList(page: number, pages: number): number[] {
+  const want = new Set([1, pages, page - 2, page - 1, page, page + 1, page + 2].filter((n) => n >= 1 && n <= pages))
+  const sorted = [...want].sort((a, b) => a - b)
+  const out: number[] = []
+  sorted.forEach((n, i) => {
+    if (i && n - sorted[i - 1] > 1) out.push(0)
+    out.push(n)
+  })
+  return out
 }

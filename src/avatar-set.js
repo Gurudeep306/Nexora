@@ -1,13 +1,19 @@
 // The NexoraGuru avatar set (server copy). Users store "set:<id>" in
 // users.avatar; anything else (old "gen:<style>:<n>" values, legacy preset
 // keys such as "coder", emoji, empty) maps to a deterministic default picked
-// from the username. Must match client/src/lib/avatar.ts — the order of IDS
+// from the username (a portrait). Must match client/src/lib/avatar.ts — the order of IDS
 // and the hash decide everyone's default. tests/avatar-set.test.js checks.
 
-const AVATAR_SET_IDS = [
+// Portraits first: they are the pool new accounts' defaults come from.
+const PORTRAIT_IDS = [
+  "asha", "vikram", "meera", "rohan", "fatima", "kabir", "priya", "harpreet",
+  "tara", "nikhil", "ishita", "yusuf", "ananya", "sameer", "divya", "raghav",
+];
+const CLAY_IDS = [
   "mira", "kai", "noor", "arjun", "zara", "leo", "sana", "dev",
   "ivy", "omar", "hana", "ravi", "ama", "theo", "lina", "jay",
 ];
+const AVATAR_SET_IDS = [...PORTRAIT_IDS, ...CLAY_IDS];
 const IDS = new Set(AVATAR_SET_IDS);
 
 // FNV-1a over the lower-cased username.
@@ -22,7 +28,7 @@ function hash(str) {
 
 function defaultAvatar(username) {
   const s = String(username ?? "").toLowerCase();
-  return `set:${AVATAR_SET_IDS[hash(s) % AVATAR_SET_IDS.length]}`;
+  return `set:${PORTRAIT_IDS[hash(s) % PORTRAIT_IDS.length]}`;
 }
 
 function isSetAvatar(value) {
@@ -36,4 +42,4 @@ function normalizeAvatar(value, username) {
   return isSetAvatar(value) ? value : defaultAvatar(username);
 }
 
-module.exports = { AVATAR_SET_IDS, defaultAvatar, isSetAvatar, normalizeAvatar };
+module.exports = { AVATAR_SET_IDS, PORTRAIT_IDS, CLAY_IDS, defaultAvatar, isSetAvatar, normalizeAvatar };

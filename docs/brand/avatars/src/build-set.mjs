@@ -8,7 +8,11 @@
 import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { AVATAR_SET } from './clay-set.mjs'
+import { AVATAR_SET as CLAY } from './clay-set.mjs'
+import { PORTRAIT_SET } from './portraits-set.mjs'
+
+// Portraits first (the default for new accounts), then the Clay characters.
+const AVATAR_SET = [...PORTRAIT_SET, ...CLAY]
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(HERE, '..', '..', '..', '..')
@@ -24,10 +28,10 @@ for (const a of AVATAR_SET) {
 console.log(`wrote ${AVATAR_SET.length} avatars to ${PUB} (${(bytes / 1024).toFixed(1)} KB total)`)
 
 const uri = (s) => `data:image/svg+xml;utf8,${encodeURIComponent(s)}`
-const img = (a, px) => `<img src="${uri(a.svg)}" width="${px}" height="${px}" alt="${a.name}">`
+const img = (a, px) => `<img src="${uri(a.svg)}" width="${px}" height="${px}" alt="">`
 const panel = (theme) => `
   <div class="panel ${theme}">
-    <div class="grid">${AVATAR_SET.map((a) => `<figure>${img(a, 96)}<figcaption>${a.name}</figcaption></figure>`).join('')}</div>
+    <div class="grid">${AVATAR_SET.map((a) => `<figure>${img(a, 96)}</figure>`).join('')}</div>
     <div class="strip">${AVATAR_SET.map((a) => img(a, 32)).join('')}</div>
     <div class="strip">${AVATAR_SET.map((a) => img(a, 24)).join('')}</div>
   </div>`
@@ -52,8 +56,8 @@ img{display:block;border-radius:50%;box-shadow:0 0 0 2px rgba(110,107,245,.2)}
 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
 @media (max-width:900px){.pair{grid-template-columns:1fr}body{padding:16px}}
 </style></head><body>
-<h1>NexoraGuru avatars · Clay set</h1>
-<p>${AVATAR_SET.length} hand-drawn characters, shipped as static SVGs in client/public/avatars/. Shown at 96, 32 and 24 px.</p>
+<h1>NexoraGuru avatars · Portraits and Clay</h1>
+<p>${AVATAR_SET.length} avatars (16 Portraits, then 16 Clay characters), shipped as static SVGs in client/public/avatars/. Shown at 96, 32 and 24 px.</p>
 <div class="pair">${panel('dark')}${panel('light')}</div>
 </body></html>
 `,

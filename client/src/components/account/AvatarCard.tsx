@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import { Check, ImageUp, Sparkles, Trash2 } from 'lucide-react'
 import { Avatar, Button, Card, CardContent, useToast } from '@/components/ui'
-import { avatarName, formatAvatar, resolveAvatarId, type AvatarId } from '@/lib/avatar'
+import { formatAvatar, resolveAvatarId, type AvatarId } from '@/lib/avatar'
 import { api } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 import { SettingsSection } from './SettingsPrimitives'
@@ -74,7 +74,7 @@ export function AvatarCard({ user }: { user: ProfileUser }) {
         avatarUrl: '',
       })
       await refresh()
-      toast.success('Photo removed', `You're ${avatarName(current)} again.`)
+      toast.success('Photo removed', 'Your avatar is back.')
     } catch (err) {
       toast.error('Could not remove photo', err instanceof Error ? err.message : undefined)
     } finally {
@@ -92,7 +92,7 @@ export function AvatarCard({ user }: { user: ProfileUser }) {
       })
       await refresh()
       setPicked(false)
-      toast.success('Avatar updated', `You're ${avatarName(draft)} now, everywhere on NexoraGuru.`)
+      toast.success('Avatar updated', 'Your new avatar shows everywhere on NexoraGuru.')
     } catch (err) {
       toast.error('Could not save avatar', err instanceof Error ? err.message : undefined)
     } finally {
@@ -132,7 +132,7 @@ export function AvatarCard({ user }: { user: ProfileUser }) {
                 />
               </motion.div>
               <p className="text-sm font-semibold text-foreground" aria-live="polite">
-                {showPhoto ? 'Your photo' : avatarName(draft)}
+                {showPhoto ? 'Your photo' : 'Your avatar'}
               </p>
               <div className="flex flex-wrap justify-center gap-2">
                 <Button variant="outline" size="sm" loading={uploading} onClick={() => inputRef.current?.click()}>
