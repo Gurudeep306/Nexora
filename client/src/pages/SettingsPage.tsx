@@ -66,6 +66,8 @@ export default function SettingsPage() {
     [],
   )
 
+  // A fallback join date for accounts without one, stamped once.
+  const [nowIso] = useState(() => new Date().toISOString())
   const profileUser = useMemo<ProfileUser | null>(() => {
     if (!user) return null
     const str = (v: unknown) => (typeof v === 'string' ? v : null)
@@ -80,9 +82,9 @@ export default function SettingsPage() {
       auth_provider: str(user.auth_provider) ?? 'manual',
       email: str(user.email),
       last_seen: str(user.last_seen),
-      created_at: str(user.created_at) ?? new Date().toISOString(),
+      created_at: str(user.created_at) ?? nowIso,
     }
-  }, [user])
+  }, [user, nowIso])
 
   const settings = settingsApi.data?.settings ?? {}
   const languages = languagesApi.data ?? []
