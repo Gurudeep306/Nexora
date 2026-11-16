@@ -21,7 +21,7 @@ import { Icon } from '@/components/icon/Icon'
 import { EmptyState, LoadingBlock } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { GateShell } from '@/gate/shell/GateShell'
-import { cachedStructure } from '@/components/nexus/data'
+import { useNexusStructure } from '@/lib/lessonSearch'
 import { DIFFICULTY_LABEL, NOTES_ROUTES, fmtMinutes, useLesson, useSubjectTree } from '@/gate/notes/api'
 import { flushScroll, progressOf, reportScroll, setBookmarked, setCompleted, useNotesProgress } from '@/gate/notes/progress'
 import { useNotesPrefs } from '@/gate/notes/prefs'
@@ -161,7 +161,11 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
   // The subject's home on Learn, and the skill this lesson teaches (from the
   // Nexus map this browser already holds; the tree when it has none yet).
   const nexusId = NEXUS_OF[subject.id] ?? subject.id
-  const skill = useMemo(() => cachedStructure()?.clusters.find((c) => c.id === nexusId)?.nodes.find((n) => n.ls?.includes(lesson.id)) ?? null, [nexusId, lesson.id])
+  const structure = useNexusStructure()
+  const cluster = structure?.clusters.find((c) => c.id === nexusId) ?? null
+  const skill = useMemo(() => cluster?.nodes.find((n) => n.ls?.includes(lesson.id)) ?? null, [cluster, lesson.id])
+  // Subjects with no Nexus home (or before the map loads) go to their notes page.
+  const homeHref = cluster ? `/learn/${nexusId}` : NOTES_ROUTES.subject(subject.id)
   const [prefs, setPrefs] = useNotesPrefs()
   const [treeOpen, setTreeOpen] = useState(false)
   const article = useRef<HTMLElement>(null)
@@ -277,14 +281,16 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
               <Crumbs
                 items={[
                   { label: 'Learn', to: '/learn' },
-                  { label: subject.title, to: `/learn/${nexusId}` },
+                  { label: subject.title, to: homeHref },
                   { label: `Chapter ${chapter.n}` },
                 ]}
               />
               <span className="nr-bar-links">
-                <Link to={skill ? `/learn/${nexusId}/${skill.id}` : `/learn/${nexusId}?view=tree`} className="nr-bar-link" title={skill ? `The skill this lesson teaches: ${skill.n}` : undefined}>
-                  <Icon name="nexus" className="size-3.5" aria-hidden="true" /> {skill ? 'Skill' : 'Skill tree'}
-                </Link>
+                {cluster && (
+                  <Link to={skill ? `/learn/${nexusId}/${skill.id}` : `/learn/${nexusId}?view=tree`} className="nr-bar-link" title={skill ? `The skill this lesson teaches: ${skill.n}` : undefined}>
+                    <Icon name="nexus" className="size-3.5" aria-hidden="true" /> {skill ? 'Skill' : 'Skill tree'}
+                  </Link>
+                )}
                 <Link to={`/gate/practice?subject=${encodeURIComponent(subject.id)}`} className="nr-bar-link">
                   <Icon name="practice" className="size-3.5" aria-hidden="true" /> Practice
                 </Link>
@@ -361,7 +367,7 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
               next={
                 next
                   ? { to: NOTES_ROUTES.lesson(subject.id, next.id), title: next.title }
-                  : { to: `/learn/${nexusId}`, title: `Back to ${subject.title}`, kicker: 'Finished' }
+                  : { to: homeHref, title: `Back to ${subject.title}`, kicker: 'Finished' }
               }
               prev={prev ? { to: NOTES_ROUTES.lesson(subject.id, prev.id), title: prev.title } : null}
               dots={dots}

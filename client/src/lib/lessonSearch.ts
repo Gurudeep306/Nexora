@@ -31,7 +31,7 @@ type Cluster = NexusWebStructure['clusters'][number]
 
 let structureLoad: Promise<NexusWebStructure | null> | null = null
 /** The Nexus map: this browser's copy, else fetched once. */
-function useStructure(enabled: boolean) {
+export function useNexusStructure(enabled = true) {
   const [s, setS] = useState<NexusWebStructure | null>(() => cachedStructure())
   useEffect(() => {
     if (!enabled || s) return
@@ -66,7 +66,7 @@ const nameOf = (c: Pick<Cluster, 'engine' | 'name'>) => (c.engine === 'dsa' ? 'D
 
 export function useLessonSearch(query: string, { enabled = true, limit = 6 }: { enabled?: boolean; limit?: number } = {}) {
   const q = query.trim().toLowerCase()
-  const structure = useStructure(enabled)
+  const structure = useNexusStructure(enabled)
 
   // Full-text notes search on the server, a beat after typing stops.
   const [notes, setNotes] = useState<{ q: string; results: SearchResult[] }>({ q: '', results: [] })
