@@ -136,14 +136,20 @@ function written(seen: Map<string, Unset>, key: string, now: string[], cell?: (i
 }
 
 const uses = (f: CodeFacts, name: string, re: string) => new RegExp(String.raw`\b${esc(name)}\s*\.\s*${re}`).test(f.src)
+/** Go has no push / pop: `st = append(st, x)` and `st = st[:len(st)-1]`. */
+const goPush = (f: CodeFacts, name: string) => new RegExp(String.raw`\b${esc(name)}\s*=\s*append\s*\(\s*${esc(name)}\s*,`).test(f.src)
+const goPopBack = (f: CodeFacts, name: string) => new RegExp(String.raw`\b${esc(name)}\s*=\s*${esc(name)}\s*\[\s*:\s*len\s*\(\s*${esc(name)}\s*\)\s*-\s*1\s*\]`).test(f.src)
+const goPopFront = (f: CodeFacts, name: string) => new RegExp(String.raw`\b${esc(name)}\s*=\s*${esc(name)}\s*\[\s*1\s*:\s*\]`).test(f.src)
 const stackish = (f: CodeFacts, name: string) =>
   (uses(f, name, String.raw`(append|push|push_back|add|addLast|offerLast)\s*\(`) && uses(f, name, String.raw`(pop|pop_back|removeLast|pollLast)\s*\(\s*\)`)) ||
+  (goPush(f, name) && goPopBack(f, name)) ||
   /^(stack|stk|st)$/i.test(name)
 const queueMethods = String.raw`(popleft|appendleft|pop\s*\(\s*0\s*\)|poll|offer|shift|unshift|pop_front|push_front|front|peekFirst|pollFirst)`
 const queueish = (f: CodeFacts, name: string, v: ListTV) =>
   // A Java ArrayDeque used only with push / pop is a stack.
   (v.t === 'deque' && !(uses(f, name, String.raw`push\s*\(`) && uses(f, name, String.raw`pop\s*\(\s*\)`) && !uses(f, name, queueMethods))) ||
   uses(f, name, queueMethods) ||
+  goPopFront(f, name) ||
   /^(queue|q|dq|bfs)$/i.test(name)
 const graphish = (f: CodeFacts, name: string) =>
   /^(adj|adjacency|graph|g|edges|nbrs?|neighbou?rs|children|tree)$/i.test(name) || new RegExp(String.raw`for\s*\(?.*\b(in|of|:)\s*${esc(name)}\s*\[`).test(f.src) || new RegExp(String.raw`\b${esc(name)}\s*\[[^\]]+\]\s*\.\s*forEach\s*\(`).test(f.src)
@@ -318,6 +324,24 @@ function gridOf(key: string, name: string, v: ListTV, ctx: Ctx, prev?: GridState
 }
 
 /** An adjacency list (list of lists, or dict of lists) as a graph. */
+/** `edges` holding pairs (u, v) or triples (u, v, w): an edge list. */
+const edgeListish = (name: string, v: ListTV) =>
+  /^(edges?|edge_list|edgelist|es|roads|connections|links|pairs)$/i.test(name) &&
+  v.i.length > 0 &&
+  v.i.every((x) => isList(x) && (x.i.length === 2 || x.i.length === 3) && x.i.every((y) => typeof y === 'number'))
+
+function edgeListGraphOf(key: string, name: string, v: ListTV, ctx: Ctx): GraphState | null {
+  const nodes = new Map<string, { id: string; label: string }>()
+  const add = (x: Scalar) => {
+    const id = `n${String(x)}`
+    if (!nodes.has(id)) nodes.set(id, { id, label: String(x) })
+    return id
+  }
+  const edges = (v.i as ListTV[]).slice(0, 60).map((e) => ({ from: add(scalar(e.i[0], ctx.heap)), to: add(scalar(e.i[1], ctx.heap)), ...(e.i.length === 3 ? { w: scalar(e.i[2], ctx.heap) } : {}) }))
+  if (nodes.size > MAX_NODES) return null
+  return { kind: 'graph', id: `${key}:edges`, label: `${name} (edge list)`, nodes: [...nodes.values()], edges, directed: false, pointers: {} }
+}
+
 function graphOf(key: string, name: string, v: ListTV | DictTV, ctx: Ctx): GraphState | null {
   const pairs: [Scalar, TV][] = isList(v) ? v.i.map((x, i) => [i, x]) : v.k.map(([a, b]) => [scalar(a, ctx.heap), b])
   if (pairs.length > MAX_NODES) return null
@@ -359,20 +383,54 @@ function mapOf(key: string, name: string, v: DictTV, ctx: Ctx, prev?: MapState):
 }
 
 /* ── objects: linked lists and trees ── */
+/**
+ * An object's fields, looked up without caring about case: Go and C# write
+ * `Next` and `Left`, Python and Java `next` and `left`. Names are still shown
+ * as the code writes them; only the structural lookups ignore case.
+ */
+const lowered = new WeakMap<HeapObj, Record<string, TV>>()
+function lf(o: HeapObj): Record<string, TV> {
+  let low = lowered.get(o)
+  if (!low) {
+    const m: Record<string, TV> = {}
+    for (const [k, x] of Object.entries(o.f)) if (!(k.toLowerCase() in m)) m[k.toLowerCase()] = x
+    low = new Proxy(m, {
+      get: (t, k) => (typeof k === 'string' ? t[k.toLowerCase()] : undefined),
+      has: (t, k) => typeof k === 'string' && k.toLowerCase() in t,
+    })
+    lowered.set(o, low)
+  }
+  return low
+}
+
 const LINK = ['next', 'nxt', 'link']
 const VAL = ['val', 'value', 'v', 'data', 'key', 'item']
 function valueOf(o: HeapObj, heap: Map<number, HeapObj>): Scalar {
-  for (const f of VAL) if (f in o.f && !isObj(o.f[f])) return scalar(o.f[f], heap)
+  for (const f of VAL) if (f in lf(o) && !isObj(lf(o)[f])) return scalar(lf(o)[f], heap)
   const first = Object.values(o.f).find((x) => !isObj(x))
   return first === undefined ? o.c : scalar(first, heap)
 }
 const refId = (v: TV | undefined) => (isRef(v) ? v.id : null)
 
 function linkedOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string): ListState | null {
-  const isNode = (id: number | null) => id !== null && !!heap.get(id) && LINK.some((f) => f in heap.get(id)!.f)
+  const isNode = (id: number | null) => id !== null && !!heap.get(id) && LINK.some((f) => f in lf(heap.get(id)!))
   const starts = vars.filter(([, v]) => isNode(refId(v)))
   if (!starts.length) return null
-  starts.sort(([a], [b]) => Number(!/^(head|first|root|start|dummy|l1)$/i.test(a)) - Number(!/^(head|first|root|start|dummy|l1)$/i.test(b)))
+  // Lay the list out from the variable whose chain reaches the most nodes
+  // (after a reversal that is `prev`, not `head`), then head-like names first.
+  const reach = (id: number | null) => {
+    let n = 0
+    const been = new Set<number>()
+    while (id !== null && isNode(id) && !been.has(id) && n < MAX_NODES) {
+      been.add(id)
+      n++
+      const o = heap.get(id)!
+      id = refId(LINK.map((f) => lf(o)[f]).find((x) => x !== undefined))
+    }
+    return n
+  }
+  const headish = (a: string) => Number(!/^(head|first|root|start|dummy|l1)$/i.test(a))
+  starts.sort(([a, x], [b, y]) => reach(refId(y)) - reach(refId(x)) || headish(a) - headish(b))
   const order: number[] = []
   const seen = new Set<number>()
   // Circular only when one walk comes back to where it started (two walks
@@ -385,14 +443,14 @@ function linkedOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string)
       seen.add(id)
       order.push(id)
       const o = heap.get(id)!
-      id = refId(LINK.map((f) => o.f[f]).find((x) => x !== undefined))
+      id = refId(LINK.map((f) => lf(o)[f]).find((x) => x !== undefined))
       if (id !== null && id === first && order.length > 1) circular = true
     }
   }
-  const doubly = order.some((id) => 'prev' in heap.get(id)!.f)
+  const doubly = order.some((id) => 'prev' in lf(heap.get(id)!))
   const nodes = order.map((id) => {
     const o = heap.get(id)!
-    const nx = refId(LINK.map((f) => o.f[f]).find((x) => x !== undefined))
+    const nx = refId(LINK.map((f) => lf(o)[f]).find((x) => x !== undefined))
     const pv = refId(o.f.prev)
     return { id: `o${id}`, v: valueOf(o, heap), next: nx !== null && seen.has(nx) ? `o${nx}` : null, ...(doubly ? { prev: pv !== null && seen.has(pv) ? `o${pv}` : null } : {}) }
   })
@@ -402,7 +460,7 @@ function linkedOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string)
 }
 
 function treeOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string): TreeState | null {
-  const isNode = (id: number | null) => id !== null && !!heap.get(id) && ('left' in heap.get(id)!.f || 'right' in heap.get(id)!.f)
+  const isNode = (id: number | null) => id !== null && !!heap.get(id) && ('left' in lf(heap.get(id)!) || 'right' in lf(heap.get(id)!))
   const starts = vars.filter(([, v]) => isNode(refId(v)))
   if (!starts.length) return null
   const seen = new Set<number>()
@@ -412,7 +470,7 @@ function treeOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string): 
     seen.add(id)
     const o = heap.get(id)!
     for (const f of ['left', 'right']) {
-      const c = refId(o.f[f])
+      const c = refId(lf(o)[f])
       if (c !== null) {
         childOf.add(c)
         walk(c)
@@ -423,7 +481,7 @@ function treeOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string): 
   const nodes = [...seen].map((id) => {
     const o = heap.get(id)!
     const kid = (f: string) => {
-      const c = refId(o.f[f])
+      const c = refId(lf(o)[f])
       return c !== null && seen.has(c) ? `o${c}` : null
     }
     return { id: `o${id}`, v: valueOf(o, heap), children: [kid('left'), kid('right')] }
@@ -437,7 +495,9 @@ function treeOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string): 
 
 /* ── more structures: heaps, union-find, segment trees, matrices, N-ary trees, tries, graph objects ── */
 const heapish = (f: CodeFacts, name: string) =>
-  /^(heap|h|pq|minheap|maxheap|min_heap|max_heap|frontier|open|events)$/i.test(name) || new RegExp(String.raw`\b(heappush|heappop|heapify|heappushpop|heapreplace|nlargest|nsmallest)\s*\(\s*${esc(name)}\b`).test(f.src)
+  /^(heap|h|pq|minheap|maxheap|min_heap|max_heap|frontier|open|events)$/i.test(name) || new RegExp(String.raw`\b(heappush|heappop|heapify|heappushpop|heapreplace|nlargest|nsmallest)\s*\(\s*${esc(name)}\b`).test(f.src) ||
+  // Go's container/heap: heap.Push(&h, x), heap.Init(&h)
+  new RegExp(String.raw`\bheap\.(Push|Pop|Init|Fix|Remove)\s*\(\s*&?\s*${esc(name)}\b`).test(f.src)
 const parentish = (name: string) => /^(parent|parents|par|fa|uf|dsu|leader|boss|link|root|roots)$/i.test(name)
 const segish = (name: string) => /^(seg|segtree|seg_tree|segment|segment_tree|tree|st|t)$/i.test(name)
 
@@ -497,7 +557,7 @@ function naryOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string): 
   const KIDS = ['children', 'child', 'kids', 'next', 'nxt', 'links', 'edges']
   const kidsOf = (o: HeapObj): { label: string | null; id: number }[] | null => {
     for (const f of KIDS) {
-      const c = o.f[f]
+      const c = lf(o)[f]
       if (isDict(c) && c.k.every(([, b]) => isRef(b) || b === null)) return c.k.filter(([, b]) => isRef(b)).map(([a, b]) => ({ label: String(scalar(a, heap)), id: (b as { id: number }).id }))
       if (isList(c) && c.i.length && c.i.every((b) => isRef(b) || b === null) && (f === 'children' || f === 'child' || f === 'kids' || c.i.length > 2)) return c.i.map((b, i) => (isRef(b) ? { label: c.i.length > 2 && f !== 'children' && f !== 'kids' ? String.fromCharCode(97 + i) : null, id: b.id } : null)).filter((x): x is { label: string | null; id: number } => !!x)
     }
@@ -518,11 +578,11 @@ function naryOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string): 
   }
   starts.forEach(([, v]) => walk(refId(v)!))
   const trie = [...seen].some((id) => (kidsOf(heap.get(id)!) ?? []).some((k) => k.label !== null))
-  const endFlag = (o: HeapObj) => ['end', 'is_end', 'isEnd', 'is_word', 'isWord', 'word', 'terminal', 'leaf'].find((f) => o.f[f] === true)
+  const endFlag = (o: HeapObj) => ['end', 'is_end', 'isEnd', 'is_word', 'isWord', 'word', 'terminal', 'leaf'].find((f) => lf(o)[f] === true)
   const nodes = [...seen].map((id) => {
     const o = heap.get(id)!
     const ks = (kidsOf(o) ?? []).filter((k) => seen.has(k.id))
-    const val = VAL.map((f) => o.f[f]).find((x) => x !== undefined && !isObj(x as TV))
+    const val = VAL.map((f) => lf(o)[f]).find((x) => x !== undefined && !isObj(x as TV))
     return {
       id: `o${id}`,
       v: (val !== undefined ? scalar(val as TV, heap) : trie ? (endFlag(o) ? '●' : '') : o.c) as Scalar,
@@ -542,7 +602,7 @@ function objGraphOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: strin
   const NB = ['neighbors', 'neighbours', 'adj', 'adjacent', 'edges', 'out']
   const nbOf = (o: HeapObj) => {
     for (const f of NB) {
-      const c = o.f[f]
+      const c = lf(o)[f]
       if (isList(c) && c.i.every((b) => isRef(b))) return c.i.map((b) => (b as { id: number }).id)
     }
     return null
@@ -729,7 +789,8 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
           // Items small enough to sit in a box: values, pairs like (node, dist), objects.
           const smallItems = v.i.every((x) => isScalarTV(x) || isRef(x) || (isList(x) && x.i.length <= 3 && x.i.every(isScalarTV)))
           if (allLists && graphish(facts, name)) {
-            const g = matrixGraphOf(key, label, v) ?? graphOf(key, label, v, ctx)
+            // A list of (u, v) or (u, v, w) pairs is an edge list, not an adjacency list.
+            const g = (edgeListish(name, v) ? edgeListGraphOf(key, label, v, ctx) : null) ?? matrixGraphOf(key, label, v) ?? graphOf(key, label, v, ctx)
             if (g) {
               if (g.id.endsWith(':graph')) {
                 const grid = gridOf(key, label, v, ctx, lastGrid.get(key))
@@ -778,7 +839,7 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
         else if (!global && !isRef(v)) cards[name] = scalar(v, s.heap)
         else if (!global && isRef(v)) {
           const o = s.heap.get(v.id)
-          const structural = o && (LINK.some((l) => l in o.f) || 'left' in o.f || 'right' in o.f || ['children', 'child', 'kids', 'neighbors', 'neighbours', 'adj', 'edges'].some((f) => f in o.f))
+          const structural = o && (LINK.some((l) => l in lf(o)) || 'left' in lf(o) || 'right' in lf(o) || ['children', 'child', 'kids', 'neighbors', 'neighbours', 'adj', 'edges'].some((f) => f in lf(o)))
           if (o && !structural) cards[name] = `${o.c}(${Object.entries(o.f).slice(0, 4).map(([k, x]) => `${k}=${show(x, s.heap)}`).join(', ')})`
         }
       }

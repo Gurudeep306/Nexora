@@ -42,10 +42,10 @@ interface Props {
 }
 
 /** Languages the dry run traces today (src/dryrun/index.js TRACERS). */
-export const DRY_RUN_LANGS = new Set(['python', 'cpp', 'c', 'java', 'javascript', 'typescript'])
+export const DRY_RUN_LANGS = new Set(['python', 'cpp', 'c', 'java', 'javascript', 'typescript', 'go', 'rust', 'csharp'])
 
 const CODE_LANG: Record<string, Lang> = { python: 'python', cpp: 'cpp', c: 'c', java: 'java', javascript: 'js', typescript: 'js' }
-const LANG_NAME: Record<string, string> = { python: 'Python', cpp: 'C++', c: 'C', java: 'Java', javascript: 'JavaScript', typescript: 'TypeScript' }
+const LANG_NAME: Record<string, string> = { python: 'Python', cpp: 'C++', c: 'C', java: 'Java', javascript: 'JavaScript', typescript: 'TypeScript', go: 'Go', rust: 'Rust', csharp: 'C#', kotlin: 'Kotlin', swift: 'Swift' }
 
 type Status = { state: 'idle' } | { state: 'running' } | { state: 'done'; res: DryRunResponse; code: string; input: string } | { state: 'failed'; message: string }
 

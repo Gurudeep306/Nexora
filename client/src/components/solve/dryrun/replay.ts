@@ -71,6 +71,9 @@ const WORDS: Record<string, [string, string, string]> = {
   python: ['None', 'True', 'False'],
   cpp: ['nullptr', 'true', 'false'],
   c: ['NULL', 'true', 'false'],
+  go: ['nil', 'true', 'false'],
+  rust: ['None', 'true', 'false'],
+  csharp: ['null', 'true', 'false'],
 }
 let words = WORDS.python
 export function setLanguage(lang: string) {

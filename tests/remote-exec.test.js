@@ -196,6 +196,7 @@ test('every common language has at least two independent sandboxes', () => {
     assert.equal(new Set(chain).size, chain.length, `${lang} lists a sandbox twice`);
   }
   assert.deepEqual(engineChain('cpp'), ['wandbox', 'godbolt', 'paiza']);
+  assert.deepEqual(engineChain('csharp'), ['godbolt', 'wandbox', 'paiza'], 'modern .NET first; Mono cannot build local functions or top-level programs');
   assert.deepEqual(engineChain('elixir'), ['paiza'], 'Elixir runs on Paiza, the one free runner for it');
   assert.deepEqual(engineChain('tcl'), []);
 });

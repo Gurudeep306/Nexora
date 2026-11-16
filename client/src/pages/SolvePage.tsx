@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties }
 import { useParams } from 'react-router-dom'
 import { motion } from 'motion/react'
 import {
-  AlertTriangle,
   Bot,
   Expand,
   ChevronsDown,
@@ -18,7 +17,7 @@ import {
   TerminalSquare,
   Wand2,
   Sparkles,
-  X, Cpu, Footprints } from 'lucide-react'
+  X, Footprints, Lightbulb, MessageCircleQuestion, MoreHorizontal, LayoutTemplate } from 'lucide-react'
 import {
   Button,
   EmptyState,
@@ -59,7 +58,7 @@ import { DEFAULT_CODE } from '@/lib/templates'
 import { LanguagePicker } from '@/components/solve/LanguagePicker'
 import { Workspace } from '@/components/solve/workspace/Workspace'
 import { useWorkspace } from '@/components/solve/workspace/useWorkspace'
-import { LayoutMenu } from '@/components/solve/workspace/LayoutMenu'
+import { PRESETS as LAYOUT_PRESETS } from '@/components/solve/workspace/state'
 import { useCoach } from '@/components/solve/coach'
 import { CoachPanel } from '@/components/solve/CoachPanel'
 import { Arena, enterBrowserFullscreen } from '@/components/solve/Arena'
@@ -68,7 +67,7 @@ import { AnalysisPanel } from '@/components/solve/AnalysisPanel'
 import { JourneyPanel } from '@/components/solve/journey/JourneyPanel'
 import { DryRunPanel } from '@/components/solve/dryrun/DryRunPanel'
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from '@/components/ui'
-import { FlaskConical, ListChecks, ScanSearch } from 'lucide-react'
+import { ListChecks } from 'lucide-react'
 
 type BottomTab = 'tests' | 'output' | 'dryrun' | 'aitests' | 'analysis' | 'journey' | 'coach' | 'issues'
 
@@ -397,14 +396,14 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     [storageId, language],
   )
 
-  const handleRun = useCallback(async () => {
+  const handleRun = useCallback(async (only?: { input: string; label: string; expected: string }) => {
     if (running || submitting || !code.trim()) return
     setRunning(true)
     setBottomTab('output')
     setRunResult(null)
-    const tc = selectedTest >= 0 ? testcases[selectedTest] : undefined
-    const input = tc ? tc.input : customInput
-    setRunCase(tc ? { label: tc.label || `Test ${selectedTest + 1}`, expected: tc.expected_output ?? '' } : null)
+    const tc = only ? undefined : selectedTest >= 0 ? testcases[selectedTest] : undefined
+    const input = only ? only.input : tc ? tc.input : customInput
+    setRunCase(only ? { label: only.label, expected: only.expected } : tc ? { label: tc.label || `Test ${selectedTest + 1}`, expected: tc.expected_output ?? '' } : null)
     try {
       const res = await api.post<RunResult>(
         '/api/run',
@@ -731,7 +730,24 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
   // area (never smaller than the height you chose; your saved height is kept).
   const [roomForTests, setRoomForTests] = useState(0)
   const roomForDryRun = useCallback(() => setRoomForTests((n) => n + 1), [])
-  const openTab = (t: BottomTab) => {
+  // The dry run's cases: every test, then the custom input. "Dry run this"
+  // on an example remounts the panel on that case.
+  const dryRunCases = useMemo(
+    () => [...testcases.map((t, i) => ({ label: t.label || `Test ${i + 1}`, input: t.input })), ...(customInput.trim() ? [{ label: 'Custom input', input: customInput }] : [])],
+    [testcases, customInput],
+  )
+  const [dryRunFocus, setDryRunFocus] = useState(0)
+  const [dryRunPick, setDryRunPick] = useState<number | null>(null)
+  const dryRunStart = dryRunPick ?? (selectedTest >= 0 ? selectedTest : testcases.length)
+
+  // The results panel has four tabs; the older views live inside them.
+  const [subView, setSubView] = useState<{ tests: 'cases' | 'ai'; dryrun: 'watch' | 'hood'; coach: 'hints' | 'analysis' }>({ tests: 'cases', dryrun: 'watch', coach: 'hints' })
+  const openTab = (requested: BottomTab) => {
+    const t: BottomTab = requested === 'aitests' ? 'tests' : requested === 'analysis' ? 'coach' : requested === 'journey' ? 'dryrun' : requested === 'issues' ? 'output' : requested
+    if (requested === 'aitests') setSubView((v) => ({ ...v, tests: 'ai' }))
+    if (requested === 'analysis') setSubView((v) => ({ ...v, coach: 'analysis' }))
+    if (requested === 'journey') setSubView((v) => ({ ...v, dryrun: 'hood' }))
+    if (requested === 'dryrun') setSubView((v) => ({ ...v, dryrun: 'watch' }))
     setBottomTab(t)
     // On a phone the results live behind their own tab: go there.
     setMobilePane('results')
@@ -739,6 +755,68 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     if (bottomHidden) toggleBottomHidden()
     if (t === 'dryrun') roomForDryRun()
   }
+  // Alt+D opens the dry run.
+  const openTabRef = useRef(openTab)
+  openTabRef.current = openTab
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.altKey && !e.metaKey && !e.ctrlKey && e.code === 'KeyD') {
+        e.preventDefault()
+        openTabRef.current('dryrun')
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  // The three actions on the code. They sit in the top bar on a computer and
+  // in a bar at the bottom of the screen on a phone (thumb reach).
+  const actions = (compact: boolean) => (
+    <>
+      <Button variant="subtle" size="sm" onClick={() => openTab('dryrun')} aria-label="Dry run: watch your code run step by step (Alt+D)" title="Dry run: watch your code run step by step (Alt+D)" className={compact ? 'flex-1' : undefined}>
+        <Footprints aria-hidden="true" /> <span className={compact ? undefined : 'hidden sm:inline'}>Dry run</span>
+      </Button>
+      <Button variant="subtle" size="sm" onClick={() => void handleRun()} loading={running} disabled={submitting} aria-label="Run on the selected test (Ctrl+Enter)" className={compact ? 'flex-1' : undefined}>
+        {!running && <Play aria-hidden="true" />} <span className={compact ? undefined : 'hidden sm:inline'}>Run</span>
+        {!compact && <kbd className="ml-0.5 hidden font-mono text-[10px] text-foreground-faint lg:inline">⌘↵</kbd>}
+      </Button>
+      <Button variant="primary" size="sm" onClick={() => void handleSubmit()} loading={submitting} disabled={running} aria-label="Submit to the judge (Ctrl+Shift+Enter)" className={compact ? 'flex-1' : undefined}>
+        {!submitting && <Send aria-hidden="true" />} Submit
+      </Button>
+    </>
+  )
+
+  const lastErrorShown = (judgeResult && judgeResult.verdict !== 'AC') || (runResult && runResult.verdict !== 'OK')
+
+  // AI help, in one menu in the editor header (not repeating the tabs).
+  const helpMenu = (
+    <Menu>
+      <Tooltip label="AI help (⌘J asks the tutor)">
+        <MenuTrigger asChild>
+          <button type="button" aria-label="AI help" className="inline-flex h-7 cursor-pointer items-center gap-1 rounded-md px-2 text-[12px] text-foreground-dim transition-colors hover:bg-surface-2 hover:text-foreground">
+            {fixing ? <Loader2 className="size-3.5 animate-spin" aria-hidden="true" /> : <Sparkles className="size-3.5" aria-hidden="true" />} Help
+          </button>
+        </MenuTrigger>
+      </Tooltip>
+      <MenuContent className="w-64">
+        <MenuLabel>AI help</MenuLabel>
+        <MenuItem icon={<Lightbulb />} onSelect={() => { setSubView((v) => ({ ...v, coach: 'hints' })); openTab('coach') }}>
+          Give me a hint
+        </MenuItem>
+        {lastErrorShown && (
+          <MenuItem icon={<MessageCircleQuestion />} onSelect={() => openAssistant(`Explain this result in simple words and point to the line that causes it, without giving the full solution:\n${lastError.slice(0, 1500)}`)}>
+            Explain my error
+          </MenuItem>
+        )}
+        <MenuItem icon={<Wand2 />} onSelect={() => void handleAiFix()} disabled={fixing || !code.trim()}>
+          Fix my code
+        </MenuItem>
+        <MenuItem icon={<Bot />} onSelect={() => openAssistant()} shortcut="⌘J">
+          Ask the tutor
+        </MenuItem>
+      </MenuContent>
+    </Menu>
+  )
 
   const toolbar = (
     <div className="flex items-center gap-2 border-b border-border/70 pb-2.5">
@@ -759,63 +837,50 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       </span>
 
       <div className="ml-auto flex min-w-0 items-center gap-1.5">
-        {isDesktop && <LayoutMenu api={workspace} />}
-        <Tooltip label="Full-screen arena (Alt+4)">
-          <Button variant="ghost" size="icon-sm" onClick={openArena} aria-label="Open full-screen arena" className="hidden sm:inline-flex">
-            <Expand aria-hidden="true" />
-          </Button>
-        </Tooltip>
         <LanguagePicker languages={languages.length ? languages : [{ id: language, label: language, ext: '', compiled: true }]} value={language} onChange={setLanguage} />
-
+        <span className="hidden items-center gap-1.5 lg:flex">{actions(false)}</span>
         <Menu>
-          <MenuTrigger asChild>
-            <Button variant="ghost" size="sm" aria-label="AI tools">
-              {fixing ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Sparkles aria-hidden="true" />} <span className="hidden sm:inline">AI</span>
-            </Button>
-          </MenuTrigger>
-          <MenuContent className="w-64">
-            <MenuLabel>AI tools</MenuLabel>
-            <MenuItem icon={<Wand2 />} onSelect={() => void handleAiFix()} disabled={fixing || !code.trim()}>
-              Fix my code
+          <Tooltip label="Layout and full screen">
+            <MenuTrigger asChild>
+              <Button variant="ghost" size="icon-sm" aria-label="More: layout and full screen">
+                <MoreHorizontal aria-hidden="true" />
+              </Button>
+            </MenuTrigger>
+          </Tooltip>
+          <MenuContent className="w-72">
+            <MenuItem icon={<Expand />} onSelect={openArena} shortcut="Alt+4">
+              Full-screen arena
             </MenuItem>
-            <MenuItem icon={<ScanSearch />} onSelect={() => openTab('analysis')}>
-              Analyse my code
-            </MenuItem>
-            <MenuItem icon={<Cpu />} onSelect={() => openTab('journey')}>
-              See how it runs
-            </MenuItem>
-            <MenuItem icon={<FlaskConical />} onSelect={() => openTab('aitests')}>
-              Generate tests
-            </MenuItem>
-            <MenuItem icon={<Bot />} onSelect={() => openAssistant()} shortcut="⌘J">
-              Ask the tutor
-            </MenuItem>
+            {isDesktop && (
+              <>
+                <MenuSeparator />
+                <MenuLabel>Layout</MenuLabel>
+                {Object.entries(LAYOUT_PRESETS).map(([k, p]) => (
+                  <MenuItem key={k} icon={<LayoutTemplate />} onSelect={() => workspace.applyPreset(k)}>
+                    <span className="block text-foreground">{p.label}</span>
+                    <span className="block text-[11px] text-foreground-faint">{p.hint}</span>
+                  </MenuItem>
+                ))}
+              </>
+            )}
             <MenuSeparator />
-            <MenuItem
-              icon={<Sparkles />}
-              onSelect={(e) => {
-                e.preventDefault()
-                const next = !aiInline
-                setAiInline(next)
-                localStorage.setItem('nexora:ai-inline', next ? 'on' : 'off')
-              }}
-              shortcut={aiInline ? 'On' : 'Off'}
-            >
-              Inline suggestions
-            </MenuItem>
+            <MenuLabel>Keys</MenuLabel>
+            <div className="space-y-1 px-2.5 pb-2 text-[11.5px] text-foreground-dim">
+              {[
+                ['Run', 'Ctrl/⌘ + Enter'],
+                ['Submit', 'Ctrl/⌘ + Shift + Enter'],
+                ['Dry run', 'Alt + D'],
+                ['Full screen', 'Alt + 4'],
+                ['Ask the tutor', 'Ctrl/⌘ + J'],
+              ].map(([k, v]) => (
+                <div key={k} className="flex items-center justify-between gap-3">
+                  <span>{k}</span>
+                  <kbd className="rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[10.5px] text-foreground">{v}</kbd>
+                </div>
+              ))}
+            </div>
           </MenuContent>
         </Menu>
-
-        <Button variant="subtle" size="sm" onClick={() => openTab('dryrun')} aria-label="Dry run: watch your code run step by step" title="Dry run: watch your code run step by step">
-          <Footprints aria-hidden="true" /> <span className="hidden sm:inline">Dry run</span>
-        </Button>
-        <Button variant="subtle" size="sm" onClick={() => void handleRun()} loading={running} disabled={submitting} aria-label="Run on the selected test">
-          {!running && <Play aria-hidden="true" />} <span className="hidden sm:inline">Run</span>
-          <kbd className="ml-0.5 hidden font-mono text-[10px] text-foreground-faint lg:inline">⌘↵</kbd>
-        </Button>
-        <Button variant="primary" size="sm" onClick={() => void handleSubmit()} loading={submitting} disabled={running} aria-label="Submit to the judge">
-          {!submitting && <Send aria-hidden="true" />} Submit
-        </Button>
       </div>
     </div>
   )
@@ -843,6 +908,20 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     importedSampleCount={importedSampleCount}
     custom={custom}
     language={language}
+    onRunSample={(i) => void handleRun({ input: samples[i]?.input ?? '', label: `Example ${i + 1}`, expected: samples[i]?.output ?? '' })}
+    onDryRunSample={(i) => {
+      const input = samples[i]?.input ?? ''
+      const at = testcases.findIndex((t) => t.input.trim() === input.trim())
+      if (at >= 0) {
+        setSelectedTest(at)
+        setDryRunPick(at)
+      } else {
+        setCustomInput(input)
+        setDryRunPick(testcases.length)
+      }
+      setDryRunFocus((n) => n + 1)
+      openTab('dryrun')
+    }}
     onUseStarter={(starter) => {
       persistCode(starter)
       toast.success('Starter code inserted')
@@ -863,6 +942,12 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       onRunShortcut={() => void handleRun()}
       onSubmitShortcut={() => void handleSubmit()}
       aiInline={aiInline}
+      onAiInlineChange={(on) => {
+        setAiInline(on)
+        localStorage.setItem('nexora:ai-inline', on ? 'on' : 'off')
+      }}
+      headerExtra={helpMenu}
+      onIssuesClick={() => openTab('output')}
       onRecord={recordChange}
       diagnostics={allDiagnostics}
       reveal={reveal}
@@ -882,101 +967,37 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     variant="pills"
     className={className}
     active={bottomTab}
-    onChange={(t) => {
-      setBottomTab(t as BottomTab)
-      if (t === 'dryrun') roomForDryRun()
-    }}
+    onChange={(t) => openTab(t as BottomTab)}
     items={[
       { id: 'tests', label: 'Tests', badge: testcases.length || undefined },
-      { id: 'output', label: 'Result', badge: running || submitting ? '•' : judgeResult ? judgeResult.verdict : runResult ? (runResult.verdict === 'OK' ? 'OK' : runResult.verdict) : undefined },
+      { id: 'output', label: 'Result', badge: running || submitting ? '•' : judgeResult ? judgeResult.verdict : runResult ? (runResult.verdict === 'OK' ? 'OK' : runResult.verdict) : allDiagnostics.length || undefined },
       { id: 'dryrun', label: 'Dry run' },
-      { id: 'aitests', label: 'AI tests' },
-      { id: 'analysis', label: 'Analysis' },
-      { id: 'journey', label: 'How it runs' },
       { id: 'coach', label: 'Coach', icon: coach.loading ? <Loader2 className="size-3.5 animate-spin" /> : undefined, badge: coach.insight?.issues.length ? coach.insight.issues.length : undefined },
-      { id: 'issues', label: 'Issues', badge: allDiagnostics.length || undefined },
     ]}
   />
   )
 
-  const testsBody = (
-  <div className="h-full min-h-0 flex-1 overflow-y-auto">
-    {bottomTab === 'coach' ? (
-      <CoachPanel coach={coach} judgeResult={judgeResult} onAddTest={addTestcase} />
-    ) : bottomTab === 'tests' ? (
-      <TestcaseDeck
-        testcases={testcases}
-        selectedIndex={selectedTest}
-        onSelect={setSelectedTest}
-        customInput={customInput}
-        onCustomInput={setCustomInput}
-        onAdd={addTestcase}
-        onDelete={deleteTestcase}
-        onAddMany={addManyTestcases}
-      />
-    ) : bottomTab === 'aitests' ? (
-      <AiTestsPanel
-        problemId={custom ? undefined : Number(id)}
-        customProblemId={custom && !learn ? Number(id) : undefined}
-        title={problem?.title ?? ''}
-        statement={coachStatement}
-        samples={samples}
-        code={code}
-        language={language}
-        onAddTests={addManyTestcases}
-      />
-    ) : bottomTab === 'analysis' ? (
-      <AnalysisPanel
-        problemId={custom ? undefined : Number(id)}
-        customProblemId={custom && !learn ? Number(id) : undefined}
-        title={problem?.title ?? ''}
-        statement={coachStatement}
-        code={code}
-        language={language}
-        timeLimit={statementApi.data?.timeLimit}
-        inputs={biggestInputs}
-        onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
-      />
-    ) : bottomTab === 'dryrun' ? (
-      <DryRunPanel
-        code={code}
-        language={language}
-        cases={[...testcases.map((t, i) => ({ label: t.label || `Test ${i + 1}`, input: t.input })), ...(customInput.trim() ? [{ label: 'Custom input', input: customInput }] : [])]}
-        initialCase={selectedTest >= 0 ? selectedTest : testcases.length}
-        onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
-      />
-    ) : bottomTab === 'journey' ? (
-      <JourneyPanel
-        code={code}
-        language={language}
-        input={selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].input : customInput}
-        inputLabel={selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].label || `Test ${selectedTest + 1}` : 'your custom input'}
-        onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
-      />
-    ) : bottomTab === 'issues' ? (
-      <div className="space-y-1.5 p-3">
-        {allDiagnostics.length === 0 ? (
-          <EmptyState
-            className="py-6"
-            icon={<AlertTriangle />}
-            title="No issues"
-            description="Compile errors and coach warnings surface here as soon as they appear."
-          />
-        ) : (
-          allDiagnostics.map((d, i) => (
-            <div key={i} className="flex items-start gap-2 rounded-lg border border-hairline/[0.05] bg-bg-field px-2.5 py-2 text-xs">
-              <span
-                className={cn('mt-1 size-1.5 shrink-0 rounded-full', d.severity === 'error' ? 'bg-destructive' : 'bg-warning')}
-                aria-hidden="true"
-              />
-              <span className="shrink-0 font-mono text-foreground-faint tabular-nums">Ln {d.line}</span>
-              <span className="min-w-0 text-foreground-dim">{d.message}</span>
-            </div>
-          ))
-        )}
-      </div>
-    ) : running || submitting ? (
-      <div className="flex h-full flex-col items-center justify-center gap-2 text-xs text-foreground-faint">
+  const issuesList = allDiagnostics.length > 0 && (
+    <ul className="m-0 list-none space-y-1.5 p-0" aria-label="Issues in your code">
+      {allDiagnostics.map((d, i) => (
+        <li key={i}>
+          <button
+            type="button"
+            onClick={() => setReveal({ line: d.line, id: Date.now() })}
+            className="flex w-full cursor-pointer items-start gap-2 rounded-lg border border-hairline/[0.05] bg-bg-field px-2.5 py-2 text-left text-xs transition-colors hover:border-border"
+          >
+            <span className={cn('mt-1 size-1.5 shrink-0 rounded-full', d.severity === 'error' ? 'bg-destructive' : 'bg-warning')} aria-hidden="true" />
+            <span className="shrink-0 font-mono text-foreground-faint tabular-nums">Ln {d.line}</span>
+            <span className="min-w-0 text-foreground-dim">{d.message}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  )
+
+  const resultBody =
+    running || submitting ? (
+      <div className="flex h-full flex-col items-center justify-center gap-2 py-6 text-xs text-foreground-faint">
         <Loader2 className="size-5 animate-spin text-primary-bright" aria-hidden="true" />
         {submitting ? `Judging on ${testcases.length || 'all'} tests…` : 'Running your code…'}
       </div>
@@ -984,13 +1005,116 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       <JudgeResults result={judgeResult} />
     ) : runResult ? (
       <RunOutput result={runResult} expected={runCase?.expected} caseLabel={runCase?.label} />
+    ) : allDiagnostics.length ? null : (
+      <EmptyState className="py-6" icon={<TerminalSquare />} title="Nothing run yet" description="Run checks the selected test (⌘/Ctrl + Enter). Submit checks them all." />
+    )
+
+  const testsBody = (
+  <div className="h-full min-h-0 flex-1 overflow-y-auto">
+    {bottomTab === 'coach' ? (
+      <div>
+        <SubSwitch
+          label="Coach view"
+          value={subView.coach}
+          onChange={(v) => setSubView((s) => ({ ...s, coach: v }))}
+          options={[
+            { id: 'hints', label: 'Hints' },
+            { id: 'analysis', label: 'Analysis' },
+          ]}
+        />
+        {subView.coach === 'hints' ? (
+          <CoachPanel coach={coach} judgeResult={judgeResult} onAddTest={addTestcase} />
+        ) : (
+          <AnalysisPanel
+            problemId={custom ? undefined : Number(id)}
+            customProblemId={custom && !learn ? Number(id) : undefined}
+            title={problem?.title ?? ''}
+            statement={coachStatement}
+            code={code}
+            language={language}
+            timeLimit={statementApi.data?.timeLimit}
+            inputs={biggestInputs}
+            onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
+          />
+        )}
+      </div>
+    ) : bottomTab === 'tests' ? (
+      <div>
+        <SubSwitch
+          label="Tests view"
+          value={subView.tests}
+          onChange={(v) => setSubView((s) => ({ ...s, tests: v }))}
+          options={[
+            { id: 'cases', label: 'Your tests' },
+            { id: 'ai', label: 'Generate with AI' },
+          ]}
+        />
+        {subView.tests === 'cases' ? (
+          <TestcaseDeck
+            testcases={testcases}
+            selectedIndex={selectedTest}
+            onSelect={setSelectedTest}
+            customInput={customInput}
+            onCustomInput={setCustomInput}
+            onAdd={addTestcase}
+            onDelete={deleteTestcase}
+            onAddMany={addManyTestcases}
+          />
+        ) : (
+          <AiTestsPanel
+            problemId={custom ? undefined : Number(id)}
+            customProblemId={custom && !learn ? Number(id) : undefined}
+            title={problem?.title ?? ''}
+            statement={coachStatement}
+            samples={samples}
+            code={code}
+            language={language}
+            onAddTests={addManyTestcases}
+          />
+        )}
+      </div>
+    ) : bottomTab === 'dryrun' ? (
+      <div>
+        <SubSwitch
+          label="Dry run view"
+          value={subView.dryrun}
+          onChange={(v) => setSubView((s) => ({ ...s, dryrun: v }))}
+          options={[
+            { id: 'watch', label: 'Watch it run' },
+            { id: 'hood', label: 'Under the hood' },
+          ]}
+        />
+        {subView.dryrun === 'watch' ? (
+          <DryRunPanel
+            key={dryRunFocus}
+            code={code}
+            language={language}
+            cases={dryRunCases}
+            initialCase={dryRunStart}
+            onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
+          />
+        ) : (
+          <JourneyPanel
+            code={code}
+            language={language}
+            input={selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].input : customInput}
+            inputLabel={selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].label || `Test ${selectedTest + 1}` : 'your custom input'}
+            onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
+          />
+        )}
+      </div>
     ) : (
-      <EmptyState
-        className="py-6"
-        icon={<TerminalSquare />}
-        title="Nothing run yet"
-        description="Run checks the selected test (⌘/Ctrl + Enter). Submit checks them all."
-      />
+      <div className="space-y-3">
+        {allDiagnostics.length > 0 && (
+          <div className="px-3 pt-3">
+            <p className="mb-1.5 text-[12px] font-semibold text-foreground-faint">
+              {allDiagnostics.length} issue{allDiagnostics.length === 1 ? '' : 's'} in your code — click one to jump to its line
+            </p>
+            {issuesList}
+          </div>
+        )}
+        {resultBody}
+      </div>
     )}
   </div>
   )
@@ -1221,8 +1345,37 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         </section>
       </div>
 
+      {/* Phone: the actions on the code, within thumb reach. */}
+      <div className="solve-actionbar sticky bottom-0 z-30 -mx-1 mt-2 flex items-center gap-2 border-t border-border bg-background px-1 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:hidden">
+        {actions(true)}
+      </div>
+
       </>
       )}
     </motion.div>
+  )
+}
+
+/** A two-way switch inside a results tab (Tests / Generate with AI, …). */
+function SubSwitch<T extends string>({ label, value, options, onChange }: { label: string; value: T; options: { id: T; label: string }[]; onChange: (v: T) => void }) {
+  return (
+    <div className="sticky top-0 z-10 flex items-center border-b border-border bg-surface px-3 py-1.5">
+      <div role="group" aria-label={label} className="inline-flex items-center gap-0.5 rounded-lg border border-border p-0.5">
+        {options.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            aria-pressed={value === o.id}
+            onClick={() => onChange(o.id)}
+            className={cn(
+              'cursor-pointer rounded-md px-2.5 py-1 text-[12px] transition-colors',
+              value === o.id ? 'bg-surface-2 font-medium text-foreground' : 'text-foreground-dim hover:text-foreground',
+            )}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
   )
 }
