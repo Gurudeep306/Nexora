@@ -38,7 +38,7 @@ const PROGRAMS = {
   powershell: '$d = ([Console]::In.ReadToEnd()).Split([char[]]" `n`r`t", [StringSplitOptions]::RemoveEmptyEntries)\n$s = 0\nfor ($i = 1; $i -lt $d.Length; $i++) { $s += [long]$d[$i] }\nWrite-Output $s',
   clojure: '(let [d (map #(Long/parseLong %) (re-seq #"-?\\d+" (slurp *in*)))] (println (reduce + (rest d))))',
   scheme: '(define n (read))\n(let loop ((i 0) (s 0)) (if (= i n) (begin (display s) (newline)) (loop (+ i 1) (+ s (read)))))',
-  elixir: 'IO.read(:stdio, :eof) |> String.split() |> Enum.map(&String.to_integer/1) |> tl() |> Enum.sum() |> IO.puts()',
+  elixir: 'IO.read(:stdio, :all) |> String.split() |> Enum.map(&String.to_integer/1) |> tl() |> Enum.sum() |> IO.puts()',
   tcl: 'set d [read stdin]\nset s 0\nforeach x [lrange $d 1 end] { incr s $x }\nputs $s',
 };
 

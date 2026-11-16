@@ -2,12 +2,20 @@
  * Remote code execution backends.
  *
  * The hosted server never runs user code on its own box (JUDGE_MODE=remote), so
- * every run goes to a public sandbox. Three are wired up:
+ * every run goes to a sandbox. Every language has a chain of independent
+ * sandboxes, tried in order, so one service being down or overloaded never
+ * stops a run:
  *
- *   • Wandbox           — ~25 languages, the workhorse
- *   • Compiler Explorer — Swift / Dart / F# / OCaml / Crystal / Objective-C,
- *                         whose Wandbox images are broken
- *   • Kotlin Playground — Kotlin only
+ *   • Piston            — our own server, first when configured (piston.js)
+ *   • Wandbox           — ~25 languages
+ *   • Compiler Explorer — ~20 languages (godbolt.org's execution sandbox)
+ *   • Kotlin Playground — Kotlin
+ *   • Paiza.io          — ~24 languages, through its public "guest" API key
+ *
+ * A sandbox that just failed (busy, 5xx, container fault, no answer) is set
+ * aside for a while — 30s, doubling to 5 minutes while it keeps failing — so
+ * the next runs go straight to one that works (see `health` below). Only a
+ * real answer from a sandbox (a verdict about the code) ends a run.
  *
  * Everything here returns the same shape so judge.js does not care which one
  * answered:
@@ -80,8 +88,11 @@ const WANDBOX_MAP = {
   commonlisp: { compiler: 'clisp-2.49' },
 };
 
-/* Wandbox's Swift, OCaml, Crystal and .NET images are broken (checked Sep 2026),
-   so these run on Compiler Explorer's execution sandbox instead. */
+/* Compiler Explorer's execution sandbox. The first six are primary (their
+   Wandbox images are broken, checked Sep 2026); the rest are backups, each
+   checked with the self-test program and real stdin (Nov 2026). Scala's
+   runtime there lacks the standard library and Clojure has no runnable Main,
+   so neither is listed. */
 const GODBOLT_MAP = {
   swift:      { id: 'swift633',              lang: 'swift',   args: '-O' },
   dart:       { id: 'dart373',               lang: 'dart' },
@@ -89,14 +100,60 @@ const GODBOLT_MAP = {
   ocaml:      { id: 'ocaml5200',             lang: 'ocaml' },
   crystal:    { id: 'crystal192',            lang: 'crystal', args: '--release' },
   objectivec: { id: 'objcg650',              lang: 'objc',    args: '-std=gnu11 -O2' },
+  cpp:        { id: 'g142',                  lang: 'c++',     args: '-O2 -std=c++20' },
+  c:          { id: 'cg142',                 lang: 'c',       args: '-O2 -std=c17 -lm' },
+  python:     { id: 'python312',             lang: 'python' },
+  java:       { id: 'java2101',              lang: 'java' },
+  csharp:     { id: 'dotnet90csharpcoreclr', lang: 'csharp' },
+  go:         { id: 'gl1238',                lang: 'go' },
+  rust:       { id: 'r1820',                 lang: 'rust',    args: '-O' },
+  ruby:       { id: 'ruby347',               lang: 'ruby' },
+  lua:        { id: 'lua547',                lang: 'lua' },
+  perl:       { id: 'perl5422',              lang: 'perl' },
+  haskell:    { id: 'ghc9102',               lang: 'haskell', args: '-O2' },
+  julia:      { id: 'julia_1_11_2',          lang: 'julia' },
+  zig:        { id: 'z0140',                 lang: 'zig' },
+  kotlin:     { id: 'kotlinc2310',           lang: 'kotlin' },
+  d:          { id: 'ldc1_41',               lang: 'd',       args: '-O' },
+  pascal:     { id: 'fpc322',                lang: 'pascal' },
 };
 
-/** The public sandbox for a language (Piston's fallback), or null. */
+/* Paiza.io's public API (api_key "guest", documented by Paiza for free use).
+   Checked with the self-test program (Nov 2026). Its Objective-C compiles in
+   C89 mode and its Clojure times out on JVM start-up, so neither is listed.
+   It is the only free runner for Scheme and Elixir. */
+const PAIZA_MAP = {
+  cpp: 'cpp', c: 'c', java: 'java', kotlin: 'kotlin', scala: 'scala', swift: 'swift',
+  csharp: 'csharp', go: 'go', haskell: 'haskell', perl: 'perl', python: 'python3',
+  ruby: 'ruby', php: 'php', shell: 'bash', r: 'r', javascript: 'javascript',
+  fsharp: 'fsharp', d: 'd', elixir: 'elixir', rust: 'rust', scheme: 'scheme',
+  commonlisp: 'commonlisp', typescript: 'typescript',
+};
+
+/**
+ * The public sandboxes for a language, in the order they are tried (before
+ * any reordering by health). Empty when nothing can run it.
+ */
+function publicChain(lang) {
+  const chain = [];
+  if (GODBOLT_PRIMARY.has(lang)) chain.push('godbolt');
+  if (lang === 'kotlin') chain.push('kotlin');
+  if (WANDBOX_MAP[lang]) chain.push('wandbox');
+  if (GODBOLT_MAP[lang] && !chain.includes('godbolt')) chain.push('godbolt');
+  if (PAIZA_MAP[lang]) chain.push('paiza');
+  return chain;
+}
+const GODBOLT_PRIMARY = new Set(['swift', 'dart', 'fsharp', 'ocaml', 'crystal', 'objectivec']);
+
+/** Every sandbox for a language, our own Piston first when it serves it. */
+function engineChain(lang) {
+  const pub = publicChain(lang);
+  return usesPiston(lang) ? ['piston', ...pub] : pub;
+}
+
+/** The first public sandbox for a language (Piston's fallback), or null. */
 function publicEngineFor(lang) {
-  if (WANDBOX_MAP[lang]) return 'wandbox';
-  if (lang === 'kotlin') return 'kotlin';
-  if (GODBOLT_MAP[lang]) return 'godbolt';
-  return null;
+  return publicChain(lang)[0] || null;
 }
 
 /**
@@ -104,8 +161,7 @@ function publicEngineFor(lang) {
  * JUDGE_MODE=piston puts the self-hosted Piston first (see piston.js).
  */
 function engineFor(lang) {
-  if (usesPiston(lang)) return 'piston';
-  return publicEngineFor(lang);
+  return engineChain(lang)[0] || null;
 }
 
 /** Languages that can run with no local toolchain at all. */
@@ -113,11 +169,53 @@ function hasRemote(lang) {
   return engineFor(lang) !== null;
 }
 
+/* ────────────────────────── sandbox health ────────────────────────── */
+
+/**
+ * Per-sandbox failure memory. A sandbox that fails for reasons outside the
+ * user's code is set aside: 30s after the first failure, doubling while it
+ * keeps failing, at most 5 minutes. The chain is then tried healthy-first,
+ * so a run does not wait on a sandbox that just failed someone else.
+ */
+const HEALTH_BASE_MS = 30_000;
+const HEALTH_MAX_MS = 5 * 60_000;
+const health = new Map(); // engine -> { fails, until }
+
+function markFailed(engine, now = Date.now()) {
+  const h = health.get(engine) || { fails: 0, until: 0 };
+  h.fails += 1;
+  h.until = now + Math.min(HEALTH_BASE_MS * 2 ** (h.fails - 1), HEALTH_MAX_MS);
+  health.set(engine, h);
+}
+function markHealthy(engine) {
+  health.delete(engine);
+}
+function isResting(engine, now = Date.now()) {
+  const h = health.get(engine);
+  return !!h && h.until > now;
+}
+/** The chain with resting sandboxes moved to the back (soonest-back first). */
+function orderByHealth(chain, now = Date.now()) {
+  const up = chain.filter((e) => !isResting(e, now));
+  const down = chain.filter((e) => isResting(e, now)).sort((a, b) => health.get(a).until - health.get(b).until);
+  return [...up, ...down];
+}
+/** For the admin page: which sandboxes are resting and until when. */
+function sandboxHealth(now = Date.now()) {
+  const out = {};
+  for (const [engine, h] of health) out[engine] = { fails: h.fails, restingFor: Math.max(0, h.until - now) };
+  return out;
+}
+function resetHealth() {
+  health.clear();
+}
+
 /* Keep-alive agents: a cold TLS handshake per testcase was costing ~300ms each. */
 const AGENTS = {
   wandbox: new https.Agent({ keepAlive: true, maxSockets: 12, timeout: SLOW_REQUEST_TIMEOUT }),
   godbolt: new https.Agent({ keepAlive: true, maxSockets: 8, timeout: SLOW_REQUEST_TIMEOUT }),
   kotlin:  new https.Agent({ keepAlive: true, maxSockets: 8, timeout: SLOW_REQUEST_TIMEOUT }),
+  paiza:   new https.Agent({ keepAlive: true, maxSockets: 4, timeout: SLOW_REQUEST_TIMEOUT }),
 };
 
 /* ────────────────────────── HTTP plumbing ────────────────────────── */
@@ -126,9 +224,9 @@ const AGENTS = {
  * POST JSON and resolve `{ ok, status, body, timeMs, error, transient }`.
  * Never rejects: callers branch on `ok`.
  */
-function postJson({ hostname, path, payload, agent, headers, timeout = REQUEST_TIMEOUT }) {
+function postJson({ hostname, path, payload, agent, headers, timeout = REQUEST_TIMEOUT, method = 'POST' }) {
   return new Promise((resolve) => {
-    const body = Buffer.from(payload, 'utf8');
+    const body = Buffer.from(payload || '', 'utf8');
     const start = Date.now();
     let settled = false;
     const done = (v) => { if (!settled) { settled = true; resolve({ timeMs: Date.now() - start, ...v }); } };
@@ -136,7 +234,7 @@ function postJson({ hostname, path, payload, agent, headers, timeout = REQUEST_T
     const req = https.request({
       hostname,
       path,
-      method: 'POST',
+      method,
       agent,
       timeout,
       headers: {
@@ -192,13 +290,13 @@ function preprocess(code, lang) {
   return code;
 }
 
-async function runWandbox(code, input, lang) {
+async function runWandbox(code, input, lang, budget) {
   const wb = WANDBOX_MAP[lang];
   const res = await postJson({
     hostname: 'wandbox.org',
     path: '/api/compile.json',
     agent: AGENTS.wandbox,
-    timeout: timeoutFor(lang),
+    timeout: budget || timeoutFor(lang),
     payload: JSON.stringify({
       code: preprocess(code, lang),
       compiler: wb.compiler,
@@ -266,15 +364,16 @@ function classifyWandbox(r, timeMs) {
   return { stdout, stderr, exitCode: 0, timeMs, verdict: null, engine: 'wandbox' };
 }
 
-async function runGodbolt(code, input, lang) {
+async function runGodbolt(code, input, lang, budget) {
   const gb = GODBOLT_MAP[lang];
   const res = await postJson({
     hostname: 'godbolt.org',
     path: `/api/compiler/${encodeURIComponent(gb.id)}/compile`,
     agent: AGENTS.godbolt,
-    timeout: timeoutFor(lang),
+    timeout: budget || timeoutFor(lang),
     payload: JSON.stringify({
-      source: code,
+      // Its Java compiles example.java, so a public class would not compile either.
+      source: lang === 'java' ? preprocess(code, lang) : code,
       lang: gb.lang,
       options: {
         userArguments: gb.args || '',
@@ -316,7 +415,8 @@ function classifyKotlin(r, timeMs) {
 /** Turn a Compiler Explorer response into a verdict. */
 function classifyGodbolt(r, timeMs) {
   const join = (arr) => (arr || []).map((x) => x.text).join('\n');
-  const strip = (v) => v.replace(/\x1b\[[0-9;]*m/g, '');
+  // Terminal colour and erase codes (\x1b[…m, \x1b[K), and its internal file name.
+  const strip = (v) => v.replace(/\x1b\[[0-9;]*[A-Za-z]/g, '').replace(/\/app\/output\.s/g, '<source>');
   if (!r.didExecute) {
     const msg = strip(join(r.buildResult && r.buildResult.stderr) || join(r.stderr) || 'Build failed')
       .replace(/^Build failed\n?/, '').trim();
@@ -351,12 +451,12 @@ function injectKotlinStdin(code, input) {
   return [...lines.slice(0, i), pre, ...lines.slice(i)].join('\n').replace(/System\.`in`/g, '__nxIn');
 }
 
-async function runKotlin(code, input) {
+async function runKotlin(code, input, budget) {
   const res = await postJson({
     hostname: 'api.kotlinlang.org',
     path: '/api/2.1.20/compiler/run',
     agent: AGENTS.kotlin,
-    timeout: timeoutFor('kotlin'),
+    timeout: budget || timeoutFor('kotlin'),
     payload: JSON.stringify({
       args: '',
       confType: 'java',
@@ -367,13 +467,70 @@ async function runKotlin(code, input) {
   return classifyKotlin(res.body, res.timeMs);
 }
 
+/**
+ * Paiza.io runs asynchronously: create a runner, then poll for its result.
+ * The poll is quick at first (most programs finish in under two seconds).
+ */
+async function runPaiza(code, input, lang, limit) {
+  const budget = limit || timeoutFor(lang);
+  const start = Date.now();
+  const created = await postJson({
+    hostname: 'api.paiza.io',
+    path: '/runners/create',
+    agent: AGENTS.paiza,
+    timeout: Math.min(budget, 30000),
+    payload: JSON.stringify({ source_code: preprocessPaiza(code, lang), language: PAIZA_MAP[lang], input: input || '', api_key: 'guest' }),
+  });
+  if (!created.ok) return httpFailure(created, 'paiza', lang);
+  const id = created.body && created.body.id;
+  if (!id) {
+    return { stdout: '', stderr: `Remote execution failed: ${(created.body && created.body.error) || 'paiza gave no runner id'}`, exitCode: -1, timeMs: created.timeMs, verdict: 'RE', engine: 'paiza', _transient: true };
+  }
+  for (let i = 0; ; i++) {
+    await sleep(i < 6 ? 350 : 1000);
+    const left = budget - (Date.now() - start);
+    if (left <= 0) return httpFailure({ timedOut: true, timeMs: Date.now() - start }, 'paiza', lang);
+    const res = await postJson({
+      hostname: 'api.paiza.io',
+      path: `/runners/get_details?id=${encodeURIComponent(id)}&api_key=guest`,
+      method: 'GET',
+      agent: AGENTS.paiza,
+      timeout: Math.min(left, 20000),
+    });
+    if (!res.ok) return httpFailure(res, 'paiza', lang);
+    if (res.body && res.body.status === 'completed') return classifyPaiza(res.body, Date.now() - start);
+  }
+}
+
+/** Paiza wants a public Main class in Java (Wandbox wants none). */
+function preprocessPaiza(code, lang) {
+  if (lang === 'java' && !/public\s+class\s+Main\b/.test(code)) return code.replace(/(^|\n)\s*class\s+Main\b/, '$1public class Main');
+  return code;
+}
+
+/** Turn a Paiza.io runner's details into a verdict. */
+function classifyPaiza(r, timeMs) {
+  const stdout = (r.stdout || '').trimEnd();
+  const stderr = (r.stderr || '').trim();
+  if (r.build_result === 'failure') {
+    return { stdout: '', stderr: (r.build_stderr || r.build_stdout || 'Build failed').trim(), exitCode: 1, timeMs, verdict: 'CE', engine: 'paiza' };
+  }
+  const ran = r.time != null && r.time !== '' ? Math.round(Number(r.time) * 1000) : timeMs;
+  if (r.result === 'timeout') return { stdout, stderr, exitCode: -1, timeMs: ran, verdict: 'TLE', engine: 'paiza', _ownLimit: true };
+  const code = parseInt(r.exit_code, 10);
+  if (r.result === 'failure' || (Number.isFinite(code) && code !== 0)) {
+    return { stdout, stderr: stderr || `Exited with code ${Number.isFinite(code) ? code : 1}`, exitCode: Number.isFinite(code) && code > 0 ? code : 1, timeMs: ran, verdict: 'RE', engine: 'paiza' };
+  }
+  return { stdout, stderr, exitCode: 0, timeMs: ran, verdict: null, engine: 'paiza' };
+}
+
 /** Turn a failed HTTP exchange into a judge result. */
 function httpFailure(res, engine, lang) {
   if (res.timedOut) {
     return {
       stdout: '',
       stderr: `The ${engine} sandbox did not answer within ${Math.round(timeoutFor(lang) / 1000)}s — the program may be stuck in a loop.`,
-      exitCode: -1, timeMs: res.timeMs, verdict: 'TLE', engine, _transient: false,
+      exitCode: -1, timeMs: res.timeMs, verdict: 'TLE', engine, _transient: false, _noAnswer: true,
     };
   }
   return {
@@ -416,9 +573,6 @@ function clearCache() { cache.clear(); inflight.clear(); }
 
 /* ────────────────────────── public entry point ────────────────────────── */
 
-// Transient failures retry with backoff; the last wait gives an overloaded
-// sandbox time to recover.
-const RETRY_DELAYS = [400, 1500, 4000];
 
 /**
  * Process-wide cap on remote executions. judge.js bounds the fan-out of one
@@ -449,19 +603,102 @@ function remoteLoad() {
   return { active: remoteActive, queued: remoteWaiters.length, max: MAX_REMOTE_CONCURRENT };
 }
 
-async function dispatch(code, input, lang, engine) {
-  if (engine === 'piston') {
-    const r = await runPiston(code, input, lang);
-    if (!r._pistonFailed) return r;
-    // Piston is down / lacks the runtime: answer from the public sandbox.
-    const fallback = publicEngineFor(lang);
-    if (!fallback) { delete r._pistonFailed; return r; }
-    console.warn(`[judge] ${r.stderr} — falling back to ${fallback} for ${lang}`);
-    return dispatch(code, input, lang, fallback);
+/** Run once on one sandbox. Never throws. */
+async function dispatch(code, input, lang, engine, budget) {
+  try {
+    if (engine === 'piston') {
+      const r = await runPiston(code, input, lang);
+      // Piston down or missing the runtime: let the chain move on.
+      if (r._pistonFailed) { delete r._pistonFailed; return { ...r, engine: 'piston', _transient: true }; }
+      return r;
+    }
+    if (engine === 'wandbox') return await runWandbox(code, input, lang, budget);
+    if (engine === 'godbolt') return await runGodbolt(code, input, lang, budget);
+    if (engine === 'paiza') return await runPaiza(code, input, lang, budget);
+    return await runKotlin(code, input, budget);
+  } catch (e) {
+    return { stdout: '', stderr: `Remote execution failed: ${e.message}`, exitCode: -1, timeMs: 0, verdict: 'RE', engine, _transient: true };
   }
-  if (engine === 'wandbox') return runWandbox(code, input, lang);
-  if (engine === 'godbolt') return runGodbolt(code, input, lang);
-  return runKotlin(code, input);
+}
+
+/** Gentle per-sandbox limits, so a burst never hammers one free service. */
+const ENGINE_MAX = { wandbox: 12, godbolt: 6, kotlin: 6, paiza: 4, piston: 32 };
+const engineActive = new Map();
+const engineWaiters = new Map();
+async function enterEngine(engine) {
+  const max = ENGINE_MAX[engine] || 6;
+  const n = engineActive.get(engine) || 0;
+  if (n < max) { engineActive.set(engine, n + 1); return; }
+  await new Promise((resolve) => {
+    const q = engineWaiters.get(engine) || [];
+    q.push(resolve);
+    engineWaiters.set(engine, q);
+  });
+}
+function leaveEngine(engine) {
+  const q = engineWaiters.get(engine);
+  const next = q && q.shift();
+  if (next) next();
+  else engineActive.set(engine, Math.max(0, (engineActive.get(engine) || 1) - 1));
+}
+
+/** The whole run must answer inside the client's 180s ceiling. */
+const RUN_DEADLINE = 165_000;
+/**
+ * How long one sandbox gets while another is still waiting behind it. A busy
+ * sandbox can hang for minutes; the next one runs the same code anyway, so a
+ * slow-but-working compile loses nothing but the wait.
+ */
+const FAILOVER_BUDGET = 25_000;
+
+/**
+ * Try every sandbox in the chain (healthy ones first) until one gives a real
+ * answer about the code. A sandbox fault, busy reply, network error or a
+ * sandbox that never answers moves on to the next one at once; after a full
+ * round with no answer, wait a moment and go round once more.
+ */
+async function runChain(code, input, lang, chain, deadline = Date.now() + RUN_DEADLINE, run = dispatch, pause = 1500) {
+  let last = null;
+  for (let round = 0; round < 2; round++) {
+    const order = orderByHealth(chain);
+    for (let i = 0; i < order.length; i++) {
+      const engine = order[i];
+      if (Date.now() >= deadline) break;
+      await enterEngine(engine);
+      let r;
+      try {
+        const isLast = i === order.length - 1 && round === 1;
+        const left = deadline - Date.now();
+        const budget = Math.max(1000, Math.min(isLast ? timeoutFor(lang) : FAILOVER_BUDGET, left));
+        r = await run(code, input, lang, engine, budget);
+      } finally {
+        leaveEngine(engine);
+      }
+      const moreToTry = i < order.length - 1 || round === 0;
+      // No answer at all is a sandbox problem when another one can still say
+      // what the program does; with nothing left, it stands as TLE.
+      const failedOver = r._transient || (r._noAnswer && moreToTry);
+      if (!failedOver) {
+        markHealthy(engine);
+        delete r._transient; delete r._noAnswer; delete r._ownLimit;
+        return r;
+      }
+      markFailed(engine);
+      last = r;
+    }
+    if (round === 0 && Date.now() + pause < deadline) await sleep(pause);
+  }
+  if (last) { delete last._transient; delete last._noAnswer; delete last._ownLimit; }
+  return {
+    stdout: '',
+    stderr: last && last._noAnswer
+      ? last.stderr
+      : 'Every code runner for this language is busy right now. This is not a problem with your code — run it again in a minute.',
+    exitCode: -1,
+    timeMs: last ? last.timeMs : 0,
+    verdict: last && last.verdict === 'TLE' ? 'TLE' : 'RE',
+    engine: last ? last.engine : null,
+  };
 }
 
 /**
@@ -472,15 +709,16 @@ async function dispatch(code, input, lang, engine) {
  * pages) are retried with backoff before giving up.
  */
 async function remoteRun(code, input, lang, opts = {}) {
-  const engine = engineFor(lang);
-  if (!engine) {
+  const chain = engineChain(lang);
+  if (!chain.length) {
     return {
       stdout: '', stderr: `No sandbox can run ${lang} — pick another language.`,
       exitCode: -1, timeMs: 0, verdict: 'CE', engine: null,
     };
   }
 
-  const key = cacheKey(engine, lang, code, input);
+  // One cache across sandboxes: any of them answering is the answer.
+  const key = cacheKey('any', lang, code, input);
   if (!opts.noCache) {
     const hit = cacheGet(key);
     if (hit) return hit;
@@ -492,18 +730,11 @@ async function remoteRun(code, input, lang, opts = {}) {
     if (!(await acquireSlot())) {
       return {
         stdout: '', stderr: 'The judge is busy right now — try again in a moment.',
-        exitCode: -1, timeMs: 0, verdict: 'RE', engine,
+        exitCode: -1, timeMs: 0, verdict: 'RE', engine: chain[0],
       };
     }
     try {
-      let result;
-      for (let attempt = 0; ; attempt++) {
-        result = await dispatch(code, input, lang, engine);
-        if (!result._transient || attempt >= RETRY_DELAYS.length) break;
-        await sleep(RETRY_DELAYS[attempt]);
-      }
-      delete result._transient;
-      return result;
+      return await runChain(code, input, lang, chain);
     } finally {
       releaseSlot();
     }
@@ -524,9 +755,19 @@ async function remoteRun(code, input, lang, opts = {}) {
 
 module.exports = {
   remoteRun,
+  runChain,
   classifyWandbox,
   classifyKotlin,
   classifyGodbolt,
+  classifyPaiza,
+  engineChain,
+  publicChain,
+  orderByHealth,
+  markFailed,
+  markHealthy,
+  sandboxHealth,
+  resetHealth,
+  PAIZA_MAP,
   hasRemote,
   engineFor,
   publicEngineFor,

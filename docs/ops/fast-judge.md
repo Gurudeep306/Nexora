@@ -7,8 +7,11 @@ busy. Nexora already supports a faster option: **Piston**, an open-source code
 runner, on a machine you control. Compiles then take about a second, and
 nothing leaves your servers.
 
-The site keeps working without it: every language falls back to the public
-sandboxes whenever Piston is off, down or doesn't have that language.
+The site keeps working without it. Every language has a chain of runners
+(`src/remote-exec.js`): Piston first when it is set up, then the free public
+sandboxes — Wandbox, Compiler Explorer, the Kotlin playground and Paiza.io —
+in turn. A runner that fails (busy, down, no answer) is skipped for a while,
+so one service going down never stops a run.
 
 ## What you need
 
@@ -40,7 +43,7 @@ sandboxes whenever Piston is off, down or doesn't have that language.
    way `deploy/oracle/setup.sh` does (needs `jq`: `sudo apt install -y jq`):
 
    ```bash
-   INDEX=$(curl -s localhost:2000/api/v2/packages); for p in gcc python java node typescript mono go rust kotlin ruby php perl lua bash; do v=$(echo "$INDEX" | jq -r --arg n $p '[.[]|select(.language==$n)|.language_version]|.[]' | sort -V | tail -1); [ -n "$v" ] && curl -s -m 900 -X POST localhost:2000/api/v2/packages -H 'Content-Type: application/json' -d "{\"language\":\"$p\",\"version\":\"$v\"}" && echo " $p $v"; done
+   INDEX=$(curl -s localhost:2000/api/v2/packages); for p in gcc python java node typescript mono go rust kotlin ruby php perl lua bash rscript scala swift dart pwsh julia dotnet clojure freepascal elixir haskell ocaml dmd nim zig crystal groovy sbcl; do v=$(echo "$INDEX" | jq -r --arg n $p '[.[]|select(.language==$n)|.language_version]|.[]' | sort -V | tail -1); [ -n "$v" ] && curl -s -m 900 -X POST localhost:2000/api/v2/packages -H 'Content-Type: application/json' -d "{\"language\":\"$p\",\"version\":\"$v\"}" && echo " $p $v"; done
    ```
 
 4. Make a long random password for the runner and keep it:
@@ -71,7 +74,7 @@ sandboxes whenever Piston is off, down or doesn't have that language.
    | `JUDGE_MODE` | `piston` |
    | `PISTON_URL` | `https://run.nexoraguru.in` |
    | `PISTON_TOKEN` | the password from step 4 |
-   | `PISTON_LANGUAGES` | `cpp,c,python,java,javascript,typescript,go,rust,kotlin` |
+   | `PISTON_LANGUAGES` | leave empty to use Piston for every language it has (`deploy/oracle/setup.sh` writes the list that passed its smoke test) |
 
    Save; Render restarts the site.
 

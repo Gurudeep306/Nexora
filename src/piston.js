@@ -55,6 +55,12 @@ const PISTON_MAP = {
 const PISTON_PACKAGES = [
   'gcc', 'python', 'java', 'node', 'typescript', 'mono', 'go', 'rust',
   'kotlin', 'ruby', 'php', 'perl', 'lua', 'bash',
+  // Every other language the judge offers, so our own runner covers them
+  // all (Clojure, PowerShell, Groovy and Nim have no free public runner).
+  // A name the package index does not list is skipped by setup.sh.
+  'rscript', 'scala', 'swift', 'dart', 'pwsh', 'julia', 'dotnet', 'clojure',
+  'freepascal', 'elixir', 'haskell', 'ocaml', 'dmd', 'nim', 'zig', 'crystal',
+  'groovy', 'sbcl',
 ];
 
 function pistonEnabled(env = process.env) {
