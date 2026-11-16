@@ -157,13 +157,15 @@ changed.
     on dark, black on light). Inside the app, primary buttons use the accent.
   - Back buttons use `BackButton` with no props. It goes to the page you came
     from in this tab, else one level up, and its label names the place.
-- **Design styles (Appearance page).** A look is a *style* (`client/src/theme/styles.ts`:
-  Studio, Liquid Glass, Noir & Gold, Washi, Signal, Console, Nordic, Editorial,
-  Swiss, Blueprint, Atelier, Canvas, Terminal, Manuscript, Poster) plus fine-tuning
-  (colour, type, surfaces, page pattern, icons). Style rules live in
-  `theme/styles.css` keyed by `[data-style]`; buttons carry `data-ui="button"`
-  and `data-variant` so styles can restyle them. Admins can set the default style
-  (Admin → Site).
+- **Ten themes (Appearance page, `/theme`).** A look is one of ten themes
+  (`client/src/theme/styles.ts`): Field Journal (default), Sakura, Arcade,
+  Greenhouse, Observatory, Blueprint, Sketchbook, Block Print, Terminal and
+  Clear. Each brings its own palette (light and dark), type, shapes, icons and
+  drawn pattern; people can only add text size, code font and solution
+  handwriting on top. All themes dress the same page kit, so build pages with
+  the kit (`ed-*` classes, `data-ui` hooks, tokens) and they work in every
+  theme. Theme rules live in `theme/themes.css`; see `docs/ui/premium.md`
+  ("Adding a theme"). Admins can set the default theme (Admin → Site).
 - **Landing and sign-in** (`pages/LandingPage.tsx`, `pages/AuthPage.tsx`) use the
   editorial "field journal" look (owner's choice, 2026-11): parchment and ivory
   paper, Newsreader serif for prose, Geist for controls, hairlines instead of
@@ -172,8 +174,10 @@ changed.
 - **Field Journal is the house style and the default** (rollout in phases,
   2026-11). It carries the landing look into the app: `journal` style +
   `parchment` palette, the shared `ed-*` classes in `styles/journal.css`, kit
-  and shell rules under `[data-style='journal']` in `theme/styles.css`. Hive
-  keeps its old look (`hiveLook` in `theme/look.ts`). See
+  and shell rules under `[data-kit='journal']` in `theme/styles.css` (every
+  theme sets `data-kit="journal"`; to branch in code use `isJournalKit()`).
+  Clay is never text; one clay action per screen; no shadows, glows or
+  gradients. Hive keeps its old look (`hiveLook` in `theme/look.ts`). See
   `docs/ui/field-journal.md`. Every animation there is a real lesson (binary search, round-robin,
   BFS) or shows real numbers. Copy stays true to the site: no invented stats.
 - **Notes and lessons** share one reader (`styles/reader.css`): lessons rail that
