@@ -9,8 +9,10 @@ import { useNexusWeb, progressOf } from '@/components/nexus/SubjectsHub'
 import { useProgress } from '@/learn/progress'
 import { DSA_TOPICS } from '@/learn/content/dsa/syllabus'
 import { FieldNotes, Ledger, Masthead, ResetsIn, Rooms, Spread, Week, type Room, type TodayRow } from '@/components/today/Today'
-import { findContinue, nextSteps, until } from '@/components/today/today-data'
+import { alsoInProgress, findContinue, nextSteps, until } from '@/components/today/today-data'
 import { Bookshelf } from '@/components/today/Bookshelf'
+import { ForYou, type TodayPicks } from '@/components/today/ForYou'
+import { useNotesProgress } from '@/gate/notes/progress'
 
 /*
  * Home — "Today". The front page of a field journal on the day you open it:
@@ -62,6 +64,10 @@ export default function HubPage() {
   const contestsApi = useApi<{ contests: PlatformContest[] }>(() => api.get('/api/contests', { timeoutMs: 60000 }), [], { cacheKey: 'contests' })
   const { clusters } = useNexusWeb()
   const { items } = useProgress()
+  // "For you today": real picks that change every day, and on Shuffle.
+  const [shuffle, setShuffle] = useState(0)
+  const picksApi = useApi<TodayPicks & { ok: boolean }>(() => api.get(`/api/today/picks?shuffle=${shuffle}`), [shuffle], { cacheKey: `today-picks:${shuffle}` })
+  const notesProgress = useNotesProgress('*')
 
   // When the numbers on the page were last fetched.
   const stats = statsApi.data
@@ -69,6 +75,7 @@ export default function HubPage() {
   const updatedAt = stats?.fetchedAt ?? null
 
   const cont = useMemo(() => findContinue(items, clusters), [items, clusters])
+  const also = useMemo(() => alsoInProgress(items, clusters, cont), [items, clusters, cont])
   const reviewDue = reviewApi.data?.dueCount ?? 0
   const steps = useMemo(() => nextSteps({ cont, stats: stats ?? null, reviewDue, gateDaily: dailyApi.data ?? null }), [cont, stats, reviewDue, dailyApi.data])
 
@@ -215,7 +222,16 @@ export default function HubPage() {
           void refresh()
         }}
       />
-      <Spread cont={cont} rows={rows} />
+      <Spread cont={cont} rows={rows} also={also} />
+      <ForYou
+        picks={picksApi.data ?? null}
+        items={items}
+        clusters={clusters}
+        notesProgress={notesProgress}
+        shuffle={shuffle}
+        onShuffle={() => setShuffle((n) => n + 1)}
+        loading={picksApi.loading}
+      />
       <Bookshelf items={items} homeOf={(id) => {
         const c = clusters?.find((x) => x.gate?.notes === id)
         return c ? `/learn/${c.id}` : `/gate/notes/${id}`

@@ -5755,6 +5755,7 @@ app.get(
 );
 
 app.use(createLearnRouter({ get, all, run }));
+app.use(require("./routes/today").createTodayRouter({ all }));
 
 // GATE CSE / IT / DA past-year question bank
 app.use(createGateRouter());
