@@ -271,7 +271,8 @@ async function instrumentJava(code) {
     const rtype = field(m, 'type')?.text ?? 'void';
     current = { cast: /^(byte|short|char)$/.test(rtype) ? `(${rtype}) ` : '' };
     const outer = [...visible, ...params];
-    add(b.startIndex + 1, ` __Nx.F __nx_f = __Nx.call("${name}", ${lineOf(m)}, ${vars(outer)}); try {`);
+    // The call shows its arguments; fields appear from its first step.
+    add(b.startIndex + 1, ` __Nx.F __nx_f = __Nx.call("${name}", ${lineOf(m)}, ${vars(params)}); try {`);
     block(b, outer);
     add(b.endIndex - 1, ` } catch (Throwable __nx_t) { __nx_f.exc(__nx_t); throw __nx_t; } finally { __nx_f.end(${vars(outer)}); __nx_f.exit(); } `);
   }

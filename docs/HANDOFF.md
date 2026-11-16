@@ -153,14 +153,41 @@ stack (recursion, return values), output.
    Limits: 3000 events, 1.5 MB, lists capped at 80 items, strings 300 chars.
    - Python: done (`sys.settrace`; class bodies and comprehensions skipped;
      call ids from a counter; heap sent as deltas).
-   - JavaScript / TypeScript: plan — instrument with a parser and run on the
-     same runners (or in a browser Web Worker), same events.
-   - C++, C, Java, Go, Rust, C#, Kotlin, Swift…: plan — parse the student's
-     code with tree-sitter (web-tree-sitter, wasm grammars, runs in Node),
-     insert after each statement a call that prints the in-scope variables
-     as one event (a small per-language helper prints vectors, maps, sets,
-     strings, arrays with known size, structs). Run the instrumented copy on
-     the normal runners. Same events, so nothing else changes.
+   - C++, C, Java, JavaScript, TypeScript: done (session 3). Each is
+     parsed with tree-sitter (`web-tree-sitter` + `tree-sitter-wasms`,
+     pinned versions; `src/dryrun/treesitter.js`) and instrumented ON THE
+     SAME LINES, so compiler messages keep their line numbers:
+     `src/dryrun/cpp.js` + `cpp-runtime.h`, `c.js` + `c-runtime.h`,
+     `java.js` + `java-runtime.java` (appended as a non-public class),
+     `js.js` + `js-runtime.js` (joined onto line 1; for TypeScript loaded
+     through `eval` of a string because Wandbox compiles TS down to old JS).
+     The student's own `#define` macros are expanded first (`macros.js`).
+     Rules learnt the hard way:
+     - a step is sent BEFORE each statement and reports the previous line
+       (so a declared variable is visible); a loop's end-of-pass step runs
+       before its update (`j++`), else pointers show one box too far;
+     - Java: only read variables that are surely assigned, never add a
+       statement after return/break (unreachable = compile error), keep
+       steps before a label, methods run in try/catch/finally;
+     - the judge swaps `<bits/stdc++.h>` on clang, so the C++ runtime lists
+       exact headers; it must build with GCC and Clang;
+     - big arrays are scanned only at their start per step (sieves);
+     - C/C++ local arrays declared without a value hold leftover memory:
+       the client draws only the part written (`CodeFacts.unset`);
+     - crashes (SIGSEGV/SIGFPE/SIGABRT, Java/JS exceptions) stop on the
+       line that crashed with a plain reason;
+     - if the traced copy fails to compile but the student's code compiles,
+       the panel says so honestly (`dryRun` in `src/dryrun/index.js`).
+     Checked: every Learn solution (193 each) in C++ (GCC and Clang), C
+     (GCC and Clang), Java, JavaScript and TypeScript prints exactly the
+     expected answer when traced; all five also run through Wandbox.
+     Harness scripts used: scratchpad `_cx.mjs` / `_jx.mjs` style (instrument,
+     compile, replay, print frames) and corpus sweeps; tests in
+     `tests/dryrun-{cpp,c,java,js}.test.js`.
+   - Go, Rust, C#, Kotlin, Swift and the rest: not done. Same approach
+     (a tree-sitter instrumenter + a small runtime per language). The
+     grammars are in `tree-sitter-wasms`. The local box has no compilers for
+     them, so test through Wandbox (`remoteRun` in `src/remote-exec.js`).
    - Functional languages (Haskell, Lisp, OCaml): show calls and values, no
      boxes; say so on screen.
 2. **Frames** (client, `client/src/components/solve/dryrun/`, to write):
@@ -220,8 +247,8 @@ inside). "How it runs" becomes a second view inside it ("Under the hood").
    Script: `scratchpad/ax/dry.cjs` style (Solve page, `STEP=mid FOCUS=1`).
 5. Solve page redesign (section "Solve page redesign — every button in its
    best place").
-6. Dry run for C++, Java, C, JavaScript (tree-sitter instrumentation),
-   then Go, Rust, C#, Kotlin, Swift and the rest.
+6. Dry run for Go, Rust, C#, Kotlin, Swift and the rest (C++, C, Java,
+   JavaScript and TypeScript are done — see the Trace layer above).
 7. Admin → Compilers (see below).
 8. Then the older requests, in full detail in "Older requests": A (the
    unfinished compiler/editor items, coding analysis, +XP), B problem
