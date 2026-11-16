@@ -18,10 +18,23 @@
  * in the heap `h`: { id: { c: class, f: { field: value } } }), { t: 'big'|'num'|'str', s }.
  */
 const { wrapPython, MARK } = require('./python');
+const { instrumentCpp } = require('./cpp');
+const { instrumentC } = require('./c');
+const { instrumentJava } = require('./java');
+const { instrumentJs } = require('./js');
 
-/** Languages the dry run can trace today, and how. */
+/**
+ * Languages the dry run can trace today, and how. `wrap` returns the code to
+ * run; a compiled language's instrumented copy is checked against the
+ * student's own code when it does not compile (see dryRun).
+ */
 const TRACERS = {
-  python: { wrap: (code) => wrapPython(code), runAs: 'python' },
+  python: { wrap: async (code) => wrapPython(code), runAs: 'python' },
+  cpp: { wrap: async (code) => (await instrumentCpp(code)).code, runAs: 'cpp', compiled: true },
+  c: { wrap: async (code) => (await instrumentC(code)).code, runAs: 'c', compiled: true },
+  java: { wrap: async (code) => (await instrumentJava(code)).code, runAs: 'java', compiled: true },
+  javascript: { wrap: async (code) => (await instrumentJs(code)).code, runAs: 'javascript' },
+  typescript: { wrap: async (code) => (await instrumentJs(code, { typescript: true })).code, runAs: 'typescript', compiled: true },
 };
 
 function supported(lang) {
@@ -65,7 +78,32 @@ function parseTrace(stderr) {
 async function dryRun(code, lang, input, run) {
   const t = TRACERS[lang];
   if (!t) return { ok: false, supported: false, events: [], error: null };
-  const res = await run(t.wrap(code), input, t.runAs);
+  let wrapped;
+  try {
+    wrapped = await t.wrap(code);
+  } catch (e) {
+    return { ok: false, supported: true, events: [], stdout: '', stderr: '', verdict: 'OK', error: `The dry run could not read this program (${e.message}).` };
+  }
+  const res = await run(wrapped, input, t.runAs);
+  if (t.compiled && res.verdict === 'CE') {
+    // Is it the student's code that does not compile, or our copy of it?
+    const plain = await run(code, input, t.runAs);
+    if (plain.verdict === 'CE') {
+      return { ok: false, supported: true, events: [], stdout: '', stderr: String(plain.error || plain.stderr || ''), verdict: 'CE', timeMs: null, engine: plain.engine || null, capped: false, error: 'Your code does not compile yet. Fix the error below, then try the dry run again.' };
+    }
+    return {
+      ok: false,
+      supported: true,
+      events: [],
+      stdout: plain.output || '',
+      stderr: '',
+      verdict: plain.verdict || 'OK',
+      timeMs: plain.timeMs ?? null,
+      engine: plain.engine || null,
+      capped: false,
+      error: "The dry run can't follow this program yet: it uses something the step tracer does not understand. Your code itself compiles and runs, so Run still works. Please tell us which program it was.",
+    };
+  }
   const { events, errors, capped } = parseTrace(res.stderr);
   const verdict = res.verdict || (res.ok ? 'OK' : 'RE');
   const noTrace = events.length === 0;
