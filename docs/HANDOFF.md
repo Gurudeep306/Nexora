@@ -208,9 +208,16 @@ inside). "How it runs" becomes a second view inside it ("Under the hood").
 
 1. (done) map / calls views. 2. (done) replay + toFrames.
 3. (done in code) FramePlayer; still to check DSA chapters in a browser.
-4. (done) `DryRunPanel.tsx` and the Known issues. Still to do: check in a browser bubble sort, two pointers, a stack, a dict
-   count, recursion (fib), a linked list, a BFS on an adjacency list, a 2D
-   DP, a heap, a trie — light, dark, phone, axe 0.
+4. (done) `DryRunPanel.tsx`, the Known issues, and the browser check of 14
+   real programs (bubble, two pointers, sliding window, next-greater stack,
+   BFS, dict count, fib, permutations, linked-list reversal, BST insert,
+   dict trie, Dijkstra, union-find, LCS 2D DP) — light, dark, phone, axe 0.
+   Fixed on the way: role colours were wiped by the journal kit on every
+   player (DSA too); recursion now draws a recursion tree; a dict of dicts
+   is a trie tree with the walking variable on its node; `10**9`-style
+   infinity shows as ∞ when the code uses one; long values widen their box;
+   a weight `w` is not a graph pointer; full screen is a labelled dialog.
+   Script: `scratchpad/ax/dry.cjs` style (Solve page, `STEP=mid FOCUS=1`).
 5. Solve page redesign (section "Solve page redesign — every button in its
    best place").
 6. Dry run for C++, Java, C, JavaScript (tree-sitter instrumentation),
