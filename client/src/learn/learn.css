@@ -66,7 +66,7 @@
 .viz-cell[class*='viz-role-'] {
   background: color-mix(in oklab, var(--rc) 26%, var(--viz-cell));
   border-color: var(--rc);
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--rc) 22%, transparent), 0 6px 18px -6px color-mix(in oklab, var(--rc) 70%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--rc) 22%, transparent); /* a ring, no glow */
 }
 .viz-cell.viz-role-removed { opacity: 0.55; }
 .viz-role-dim { --rc: transparent; }
@@ -105,11 +105,12 @@
   margin-top: 1px;
   padding: 0 6px;
   border-radius: 6px;
-  background: var(--pc);
+  /* A deep tone of the pointer's hue so white text passes 4.5:1 on every
+     theme, light or dark; no glow. */
+  background: oklch(0.46 0.15 var(--ph, 255));
   color: #fff;
   font: 700 11px var(--font-mono);
   line-height: 16px;
-  box-shadow: 0 2px 8px -2px color-mix(in oklab, var(--pc) 70%, transparent);
   white-space: nowrap;
 }
 
@@ -144,11 +145,11 @@
 html:not(.dark) .tok-kw { color: oklch(0.5 0.2 300); }
 html:not(.dark) .tok-str { color: oklch(0.5 0.14 150); }
 html:not(.dark) .tok-num { color: oklch(0.55 0.15 55); }
-html:not(.dark) .tok-fn { color: oklch(0.5 0.15 240); }
+html:not(.dark) .tok-fn { color: oklch(0.45 0.15 240); } /* passes 4.5:1 on the lit line too */
 
 /* player chrome */
 .viz-player { border-radius: 20px; }
-.viz-head { background: linear-gradient(180deg, color-mix(in oklab, var(--color-accent-brand) 6%, transparent), transparent); }
+.viz-head { background: transparent; }
 .viz-badge { background: color-mix(in oklab, var(--color-accent-brand) 16%, transparent); color: var(--color-accent-brand); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-accent-brand) 30%, transparent); }
 .viz-stage {
   background-color: color-mix(in oklab, var(--color-background) 55%, transparent);
@@ -227,7 +228,7 @@ html:not(.dark) .tok-fn { color: oklch(0.5 0.15 240); }
 /* cost meter */
 .viz-meter-value { font: 700 20px var(--font-mono); color: var(--color-text-primary); font-variant-numeric: tabular-nums; }
 .viz-meter-track { background: var(--color-bg-surface-3); box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.25); }
-.viz-meter-fill { --rc: var(--color-accent-brand); background: linear-gradient(90deg, color-mix(in oklab, var(--rc) 60%, transparent), var(--rc)); box-shadow: 0 0 14px -2px color-mix(in oklab, var(--rc) 70%, transparent); }
+.viz-meter-fill { --rc: var(--color-accent-brand); background: var(--rc); } /* flat: no gradient, no glow */
 .viz-meter-mark { background: var(--color-text-muted); opacity: 0.8; }
 .viz-meter-mark-label { font: 500 10.5px var(--font-mono); color: var(--color-text-muted); transition: color 200ms; }
 .viz-meter-mark-passed { color: var(--color-state-warning); }
@@ -240,7 +241,11 @@ html:not(.dark) .tok-fn { color: oklch(0.5 0.15 240); }
 .viz-focus .viz-code { max-height: 52vh; }
 
 /* code: dim the lines that are not running */
-.viz-code-cold { opacity: 0.62; transition: opacity 200ms; }
+/* Lines away from the current one are quieter in colour, not faded:
+   transparency drops them under 4.5:1 contrast. */
+.viz-code-cold { transition: color 200ms; }
+:root .viz-code .viz-code-cold,
+:root .viz-code .viz-code-cold * { color: var(--color-text-muted); }
 
 /* ── lesson typography ── */
 .md { color: var(--color-text-secondary); font-size: 15.5px; line-height: 1.75; }
@@ -373,7 +378,7 @@ html:not(.dark) .tok-fn { color: oklch(0.5 0.15 240); }
 /* pointer tags drawn inside SVG (lists, trees, graphs) */
 .viz-ptr-svg { --pc: oklch(0.68 0.17 var(--ph, 255)); }
 .viz-ptr-svg-arrow { fill: var(--pc); }
-.viz-ptr-svg-name { font: 700 11px var(--font-mono); fill: var(--pc); paint-order: stroke; stroke: var(--color-background); stroke-width: 3px; stroke-linejoin: round; }
+.viz-ptr-svg-name { font: 700 11px var(--font-mono); fill: oklch(0.44 0.15 var(--ph, 255)); paint-order: stroke; stroke: var(--color-background); stroke-width: 3px; stroke-linejoin: round; }
 .viz-null-ptrs { margin-top: 4px; text-align: center; font: 600 11px var(--font-mono); color: var(--color-text-muted); }
 
 /* trees */
@@ -610,3 +615,6 @@ html.dark .gate-figure img {
 .viz-mark-call { background: var(--color-text-primary); }
 .viz-mark-error { background: var(--color-state-error); opacity: 1; width: 3px; }
 .viz-mark-output { background: var(--color-state-success); }
+
+/* Pointer names drawn as text on the page need a lighter ink on dark paper. */
+[data-mode='dark'] .viz-ptr-svg-name { fill: oklch(0.8 0.12 var(--ph, 255)); }

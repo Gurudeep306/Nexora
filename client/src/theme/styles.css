@@ -773,11 +773,11 @@
   background: color-mix(in oklab, var(--ed-oat) 85%, transparent);
   box-shadow: inset 2px 0 0 var(--ed-clay);
 }
-[data-kit='journal'] .tok-kw { color: var(--color-accent-brand-hover, var(--ed-clay-deep)); }
-[data-kit='journal'] .tok-str { color: var(--color-state-success); }
-[data-kit='journal'] .tok-num { color: var(--color-state-warning); }
-[data-kit='journal'] .tok-fn { color: var(--color-text-primary); }
-[data-kit='journal'] .tok-com { color: var(--color-text-muted); font-style: italic; }
+:root[data-kit='journal'] .tok-kw { color: var(--color-accent-brand-hover, var(--ed-clay-deep)); }
+:root[data-kit='journal'] .tok-str { color: var(--color-state-success); }
+:root[data-kit='journal'] .tok-num { color: var(--color-state-warning); }
+:root[data-kit='journal'] .tok-fn { color: var(--color-text-primary); }
+:root[data-kit='journal'] .tok-com { color: var(--color-text-muted); font-style: italic; }
 /* tabs underlined, not pills */
 [data-kit='journal'] .viz-tabs {
   background: none;

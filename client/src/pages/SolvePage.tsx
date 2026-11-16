@@ -727,10 +727,17 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     })
   }, [])
 
+  // The dry run needs room to read: it opens at about two-thirds of the code
+  // area (never smaller than the height you chose; your saved height is kept).
+  const [roomForTests, setRoomForTests] = useState(0)
+  const roomForDryRun = useCallback(() => setRoomForTests((n) => n + 1), [])
   const openTab = (t: BottomTab) => {
     setBottomTab(t)
+    // On a phone the results live behind their own tab: go there.
+    setMobilePane('results')
     workspace.minimize('tests', false)
     if (bottomHidden) toggleBottomHidden()
+    if (t === 'dryrun') roomForDryRun()
   }
 
   const toolbar = (
@@ -875,7 +882,10 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     variant="pills"
     className={className}
     active={bottomTab}
-    onChange={(t) => setBottomTab(t as BottomTab)}
+    onChange={(t) => {
+      setBottomTab(t as BottomTab)
+      if (t === 'dryrun') roomForDryRun()
+    }}
     items={[
       { id: 'tests', label: 'Tests', badge: testcases.length || undefined },
       { id: 'output', label: 'Result', badge: running || submitting ? '•' : judgeResult ? judgeResult.verdict : runResult ? (runResult.verdict === 'OK' ? 'OK' : runResult.verdict) : undefined },
@@ -997,8 +1007,13 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     </button>
   ) : (
     <div
-      className="flex min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-background"
-      style={bottomCollapsed ? undefined : { height: bottomH }}
+      className={cn(
+        'flex min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-background',
+        // On a phone's Results tab the panel is the whole screen; elsewhere it
+        // keeps the height you chose.
+        !bottomCollapsed && (mobilePane === 'results' ? 'h-[var(--bh)] max-lg:h-auto max-lg:flex-1' : 'h-[var(--bh)]'),
+      )}
+      style={bottomCollapsed ? undefined : ({ '--bh': `${bottomH}px` } as React.CSSProperties)}
     >
       {/* Vertical resize handle */}
       <div
@@ -1091,6 +1106,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       ) : isDesktop ? (
         <Workspace
           api={workspace}
+          roomForTests={roomForTests}
           overlay={<VerdictBanner verdict={banner?.verdict ?? null} xpEarned={banner?.xp} burstId={banner?.id} onDismiss={() => setBanner(null)} />}
           problem={{ title: 'Problem', icon: <ScrollText />, content: <div className="h-full overflow-hidden">{problemContent}</div> }}
           tests={{
