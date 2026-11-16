@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useInView, useReducedMotion } from 'motion/react'
-import { ArrowRight, Check } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import { RankBadge, RankGlyph, Sparkline } from '@/components/ui'
 import { CountUp, LEVELS } from '@/components/landing/motifs'
 import { LessonPreview } from '@/components/landing/LessonPreview'
@@ -26,6 +26,7 @@ import {
   type Step,
 } from './today-data'
 import './today.css'
+import { LiveFigure } from './LiveFigure'
 
 const EASE = [0.22, 1, 0.36, 1] as const
 
@@ -103,7 +104,7 @@ export function Masthead({ name, streak, goal, steps, onSync, syncing, updatedAt
 }
 
 /* ── 2. The spread: Continue and Today's three ── */
-function FigureFor({ figure }: { figure: Figure }) {
+export function FigureFor({ figure }: { figure: Figure }) {
   if (figure === 'none') return null
   return <div className="ed-specimen today-figure">{figure === 'schedule' ? <SchedulerPreview /> : figure === 'graph' ? <GraphPreview /> : <LessonPreview />}</div>
 }
@@ -116,7 +117,81 @@ export interface TodayRow {
   done?: boolean
 }
 
-export function Spread({ cont, rows }: { cont: Continue | null; rows: TodayRow[] }) {
+/**
+ * Everything in progress, one at a time: the title, how far along, and a real
+ * animation from that chapter or lesson. It moves on by itself every few
+ * seconds (not under reduced motion), holds while hovered or focused, and has
+ * buttons to step through by hand.
+ */
+function ContinueRotator({ items }: { items: Continue[] }) {
+  const [at, setAt] = useState(0)
+  const [hold, setHold] = useState(false)
+  const still = useReducedMotion()
+  const n = items.length
+  const i = n ? at % n : 0
+  useEffect(() => {
+    if (n < 2 || hold || still) return
+    const t = window.setTimeout(() => setAt((x) => x + 1), 9000)
+    return () => window.clearTimeout(t)
+  }, [n, hold, still, at])
+  const cur = items[i]
+  if (!cur) return null
+  const pct = cur.page ? (cur.page.of ? (cur.page.read / cur.page.of) * 100 : 0) : (cur.pct ?? 0)
+  return (
+    <div
+      className="today-rotator"
+      onMouseEnter={() => setHold(true)}
+      onMouseLeave={() => setHold(false)}
+      onFocus={() => setHold(true)}
+      onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && setHold(false)}
+      aria-roledescription="carousel"
+      aria-label="In progress"
+    >
+      <div key={cur.to} className="today-rotator-slide" aria-live={hold ? 'polite' : 'off'}>
+        <p className="ed-ui-sm ed-muted mt-4 mb-0">{cur.subject}</p>
+        <Link to={cur.to} {...prefetchHandlers(cur.to)} className="today-title-link">
+          <span className="ed-h2">{cur.title}</span>
+        </Link>
+        <div className="mt-5">
+          <span className="today-progress" aria-hidden="true">
+            <span style={{ width: `${pct}%` }} />
+          </span>
+          <p className="ed-mono ed-muted mt-2 mb-0 text-[12px]">
+            {cur.page ? `page ${Math.min(cur.page.read + 1, cur.page.of)} of ${cur.page.of}` : `${cur.pct ?? 0}% of the subject mastered`}
+          </p>
+        </div>
+        <LiveFigure item={cur} />
+      </div>
+      {n > 1 && (
+        <div className="today-rotator-nav">
+          <button type="button" className="ed-icon-btn" aria-label="Previous in progress" onClick={() => setAt((x) => (x - 1 + n) % n)}>
+            <ArrowLeft className="size-4" aria-hidden="true" />
+          </button>
+          <span className="today-rotator-dots" role="group" aria-label="Choose what to continue">
+            {items.map((it, k) => (
+              <button
+                key={it.to}
+                type="button"
+                className={cn('today-rotator-dot', k === i && 'is-on')}
+                aria-label={`${it.title}, ${it.subject}`}
+                aria-current={k === i ? 'true' : undefined}
+                onClick={() => setAt(k)}
+              />
+            ))}
+          </span>
+          <button type="button" className="ed-icon-btn" aria-label="Next in progress" onClick={() => setAt((x) => (x + 1) % n)}>
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </button>
+          <span className="ed-mono ed-muted text-[12px]">
+            {i + 1} of {n}
+          </span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export function Spread({ cont, rows, also = [] }: { cont: Continue | null; rows: TodayRow[]; also?: Continue[] }) {
   const path = startHere()
   return (
     <Reveal className="ed-feature today-spread" aria-labelledby="today-continue">
@@ -125,21 +200,7 @@ export function Spread({ cont, rows }: { cont: Continue | null; rows: TodayRow[]
           {cont ? 'Continue' : 'Start here'}
         </h2>
         {cont ? (
-          <>
-            <p className="ed-ui-sm ed-muted mt-4 mb-0">{cont.subject}</p>
-            <Link to={cont.to} {...prefetchHandlers(cont.to)} className="today-title-link">
-              <span className="ed-h2">{cont.title}</span>
-            </Link>
-            <div className="mt-5">
-              <span className="today-progress" aria-hidden="true">
-                <span style={{ width: `${cont.page ? (cont.page.of ? (cont.page.read / cont.page.of) * 100 : 0) : (cont.pct ?? 0)}%` }} />
-              </span>
-              <p className="ed-mono ed-muted mt-2 mb-0 text-[12px]">
-                {cont.page ? `page ${Math.min(cont.page.read + 1, cont.page.of)} of ${cont.page.of}` : `${cont.pct ?? 0}% of the subject mastered`}
-              </p>
-            </div>
-            <FigureFor figure={cont.figure} />
-          </>
+          <ContinueRotator items={[cont, ...also].slice(0, 6)} />
         ) : (
           <>
             <p className="ed-body-sm ed-ink-2 mt-4 mb-0">Three first chapters of the DSA course. Every idea is animated step by step.</p>

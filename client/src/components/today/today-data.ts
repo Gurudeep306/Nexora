@@ -106,6 +106,30 @@ export function findContinue(items: Record<string, ItemState>, clusters: WebClus
   return rest
 }
 
+/**
+ * Everything else in progress besides `cont`: partly read DSA chapters and
+ * subjects with some mastery, most recently touched first. Lets Home show all
+ * the courses someone is on, not only the latest one.
+ */
+export function alsoInProgress(items: Record<string, ItemState>, clusters: WebCluster[] | null, cont: Continue | null, now = Date.now()): (Continue & { days: number })[] {
+  const out: (Continue & { days: number })[] = []
+  for (const t of DSA_TOPICS) {
+    if (!t.load || !t.pages) continue
+    const keys = Object.keys(items).filter((k) => k.startsWith(`page:${t.id}/`) && isDone(items[k]))
+    if (!keys.length || keys.length >= t.pages) continue
+    const at = Math.max(...keys.map((k) => Date.parse(items[k].doneAt ?? items[k].updatedAt ?? '') || 0))
+    out.push({ subject: 'Data Structures & Algorithms', title: t.title, to: `/learn/dsa/${t.id}`, figure: 'search', page: { read: keys.length, of: t.pages }, days: at ? (now - at) / DAY : Infinity })
+  }
+  for (const c of clusters ?? []) {
+    if (c.engine === 'dsa' || progressOf(c) === 0) continue
+    const nx = nextNode(c)
+    if (!nx) continue
+    const lesson = c.gate?.notes && nx.ls?.length ? `/gate/notes/${c.gate.notes}/${nx.ls[0]}` : null
+    out.push({ subject: c.name, title: nx.n, to: lesson ?? subjectHref(c, nx.id), figure: figureFor(c), pct: progressOf(c), days: lastStudied(c) })
+  }
+  return out.filter((x) => x.to !== cont?.to && !(cont && x.subject === cont.subject && x.subject !== 'Data Structures & Algorithms')).sort((a, b) => a.days - b.days)
+}
+
 /** The first three ready DSA chapters: the "Start here" path. */
 export function startHere() {
   return DSA_TOPICS.filter((t) => t.load).slice(0, 3).map((t) => ({ title: t.title, blurb: t.blurb, to: `/learn/dsa/${t.id}`, pages: t.pages ?? 0 }))
