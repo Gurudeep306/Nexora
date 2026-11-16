@@ -47,6 +47,7 @@ import {
   type CellValue,
   type Target,
 } from './combLogic'
+import { Select } from '@/components/ui'
 
 export type CombTab = 'mux' | 'implement' | 'decoder'
 
@@ -221,11 +222,11 @@ function MuxTool() {
       <div className="lab-col">
         <div className="lab-row">
           <label htmlFor={`${u}-size`}>MUX</label>
-          <select id={`${u}-size`} className="lab-select" value={k} onChange={(e) => resize(Number(e.target.value))}>
+          <Select id={`${u}-size`} className="lab-select" value={k} onChange={(e) => resize(Number(e.target.value))}>
             <option value={1}>2:1 (one select line)</option>
             <option value={2}>4:1 (two select lines)</option>
             <option value={3}>8:1 (three select lines)</option>
-          </select>
+          </Select>
         </div>
         <p className="lab-hint">Data inputs (click to set 0 or 1):</p>
         <div className="lab-inputs" role="group" aria-label="Data inputs">
@@ -327,14 +328,14 @@ function ImplementTool() {
     <div>
       <div className="lab-row">
         <label htmlFor={`${u}-n`}>Variables</label>
-        <select id={`${u}-n`} className="lab-select" value={n} onChange={(e) => setN(Number(e.target.value))}>
+        <Select id={`${u}-n`} className="lab-select" value={n} onChange={(e) => setN(Number(e.target.value))}>
           <option value={3}>3 (A, B, C)</option>
           <option value={4}>4 (A, B, C, D)</option>
-        </select>
+        </Select>
         <label className="sr-only" htmlFor={`${u}-preset`}>
           Load a preset
         </label>
-        <select
+        <Select
           id={`${u}-preset`}
           className="lab-select"
           value=""
@@ -353,7 +354,7 @@ function ImplementTool() {
               {p.label}
             </option>
           ))}
-        </select>
+        </Select>
         <button type="button" className="lab-btn" onClick={() => setValues(values.map(() => '0'))}>
           Clear
         </button>
@@ -405,13 +406,13 @@ function ImplementTool() {
               <label htmlFor={`${u}-s${j}`} style={MONO}>
                 S{k - 1 - j} =
               </label>
-              <select id={`${u}-s${j}`} className="lab-select" value={v} onChange={(e) => pickSel(j, Number(e.target.value))}>
+              <Select id={`${u}-s${j}`} className="lab-select" value={v} onChange={(e) => pickSel(j, Number(e.target.value))}>
                 {vars.map((name, i) => (
                   <option key={i} value={i}>
                     {name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </span>
           ))}
           <span className="lab-hint" style={{ margin: 0 }}>
@@ -744,13 +745,13 @@ function DecoderTool() {
           ))}
         </div>
         <label htmlFor={`${u}-size`}>Size</label>
-        <select id={`${u}-size`} className="lab-select" value={n} onChange={(e) => setN(Number(e.target.value))}>
+        <Select id={`${u}-size`} className="lab-select" value={n} onChange={(e) => setN(Number(e.target.value))}>
           {sizes.map((k) => (
             <option key={k} value={k}>
               {sizeLabel(k)}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
       {body}
       <p className="lab-result" role="status" aria-live="polite">

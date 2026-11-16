@@ -21,6 +21,7 @@
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { cn } from '@/lib/utils'
 import { bitsText, pattern, race, scaling, signed, type Kind, type RaceResult } from './adderLogic'
+import { Select } from '@/components/ui'
 
 export type RaceTab = 'race' | 'scaling'
 
@@ -172,15 +173,15 @@ function RaceTool() {
     <div>
       <div className="lab-row">
         <label htmlFor={`${u}-n`}>Width</label>
-        <select id={`${u}-n`} className="lab-select" value={n} onChange={(e) => resize(Number(e.target.value))}>
+        <Select id={`${u}-n`} className="lab-select" value={n} onChange={(e) => resize(Number(e.target.value))}>
           {[4, 8, 16].map((k) => (
             <option key={k} value={k}>
               {k} bits
             </option>
           ))}
-        </select>
+        </Select>
         <label htmlFor={`${u}-x`}>XOR delay</label>
-        <select
+        <Select
           id={`${u}-x`}
           className="lab-select"
           value={xorDelay}
@@ -193,7 +194,7 @@ function RaceTool() {
         >
           <option value={1}>1 gate delay</option>
           <option value={2}>2 gate delays</option>
-        </select>
+        </Select>
       </div>
       <div className="lab-row">
         <label htmlFor={`${u}-a`}>A</label>
