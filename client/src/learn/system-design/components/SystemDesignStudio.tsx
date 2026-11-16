@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react'
+import '../sd-page.css'
 import { Link } from 'react-router-dom'
 import { ALL_SYSTEM_DESIGNS } from '../data/systemsData'
 import {
@@ -159,10 +160,10 @@ export const SystemDesignStudio: React.FC = () => {
   }, [])
 
   return (
-    <div className="space-y-6">
+    <div className="sd-page space-y-6">
       {/* Studio Master Header */}
       <div className="card overflow-hidden p-0 ring-1 ring-border shadow-2xl">
-        <div className="border-b border-border bg-gradient-to-r from-bg-surface-2 via-bg-surface-3/60 to-bg-surface-2 p-6 sm:p-8">
+        <div className="border-b border-border bg-bg-surface-2 p-6 sm:p-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-2">
@@ -171,9 +172,9 @@ export const SystemDesignStudio: React.FC = () => {
                   NexoraGuru Distributed Systems Masterclass
                 </span>
               </div>
-              <h1 className="!text-[28px] sm:!text-[34px] font-extrabold tracking-tight text-text-primary">
+              <h2 className="m-0 !text-[28px] sm:!text-[34px] font-extrabold tracking-tight text-text-primary">
                 System Design Interactive Studio
-              </h1>
+              </h2>
               <p className="mt-1 text-[14.5px] text-text-secondary max-w-3xl leading-relaxed">
                 The ultimate one-stop curriculum: 31 production architectures simulated live with packet transmissions, 56 in-depth theory chapters, from-scratch 0-to-1 blueprints, and live algorithm playgrounds.
               </p>
@@ -218,10 +219,10 @@ export const SystemDesignStudio: React.FC = () => {
                     Domain Taxonomy & Core Disciplines
                   </span>
                 </div>
-                <h3 className="text-lg sm:text-xl font-extrabold text-text-primary flex items-center gap-2 mt-0.5">
+                <h2 className="m-0 text-lg sm:text-xl font-extrabold text-text-primary flex items-center gap-2 mt-0.5">
                   <SlidersHorizontal className="size-4.5 text-accent-brand" />
                   Explore 31 Systems by Architectural Category
-                </h3>
+                </h2>
                 <p className="text-xs text-text-muted mt-1 max-w-2xl">
                   Filter distributed systems by their underlying engineering discipline. Each category tackles unique concurrency, consistency, and storage challenges.
                 </p>
@@ -284,9 +285,9 @@ export const SystemDesignStudio: React.FC = () => {
                             <span className={`font-mono text-[10px] font-bold uppercase tracking-wider block ${theme.accentText}`}>
                               {theme.shortName}
                             </span>
-                            <h4 className="font-extrabold text-[15px] text-text-primary leading-tight font-mono">
+                            <h3 className="font-extrabold text-[15px] text-text-primary leading-tight font-mono">
                               {domain.name.split('&')[0].trim()}
-                            </h4>
+                            </h3>
                           </div>
                         </div>
 
@@ -464,7 +465,7 @@ export const SystemDesignStudio: React.FC = () => {
                 {/* Search Bar */}
                 <div className="relative w-full sm:w-56">
                   <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-text-muted" />
-                  <input
+                  <input aria-label="Search systems by name, tech or pattern"
                     type="text"
                     placeholder="Search name, tech, pattern..."
                     value={systemSearch}
@@ -521,9 +522,9 @@ export const SystemDesignStudio: React.FC = () => {
                               {theme.badgeText}
                             </span>
                           </div>
-                          <h4 className="font-extrabold text-[17px] text-text-primary font-mono leading-tight">
+                          <h3 className="font-extrabold text-[17px] text-text-primary font-mono leading-tight">
                             {domain.name}
-                          </h4>
+                          </h3>
                           <p className="text-[12px] text-text-muted mt-0.5">
                             {domain.description}
                           </p>
@@ -569,9 +570,9 @@ export const SystemDesignStudio: React.FC = () => {
                                   <span className="text-[11px] font-mono text-amber-400 font-bold block mb-0.5">
                                     ⚡ Modeled on: {meta?.realWorldArchetype || sys.name}
                                   </span>
-                                  <h5 className="font-extrabold text-[16px] text-text-primary font-mono leading-snug">
+                                  <h4 className="font-extrabold text-[16px] text-text-primary font-mono leading-snug">
                                     {sys.name}
-                                  </h5>
+                                  </h4>
                                 </div>
 
                                 {/* WHAT IT DOES CALLOUT (Core value explanation with domain color bar) */}
@@ -695,9 +696,9 @@ export const SystemDesignStudio: React.FC = () => {
                             <span className="text-[10.5px] font-mono text-amber-400 font-bold block mb-0.5">
                               ⚡ Modeled on: {meta?.realWorldArchetype || sys.name}
                             </span>
-                            <h4 className="font-bold text-[15px] text-text-primary font-mono leading-snug">
+                            <h3 className="font-bold text-[15px] text-text-primary font-mono leading-snug">
                               {sys.name}
-                            </h4>
+                            </h3>
                           </div>
 
                           {/* WHAT IT DOES CALLOUT */}
@@ -764,7 +765,7 @@ export const SystemDesignStudio: React.FC = () => {
                 </div>
               </div>
 
-              <div className="overflow-x-auto rounded-xl ring-1 ring-border max-h-[600px]">
+              <div tabIndex={0} role="group" aria-label="Comparison table" className="overflow-x-auto rounded-xl ring-1 ring-border max-h-[600px]">
                 <table className="w-full text-left text-[12px] border-collapse font-mono">
                   <thead className="bg-bg-surface-3 text-text-muted uppercase text-[10px] tracking-wider sticky top-0 z-10">
                     <tr>

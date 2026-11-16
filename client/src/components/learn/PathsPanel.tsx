@@ -75,18 +75,18 @@ export function PathsPanel() {
                     <div className="flex items-start gap-3">
                       <span
                         className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-surface-2"
-                        style={{ color: p.color, boxShadow: `0 0 14px ${p.color}26` }}
+                        style={{ color: p.color }}
                         aria-hidden="true"
                       >
                         <Icon className="size-5" />
                       </span>
                       <div className="min-w-0">
-                        <h3 className="font-display text-sm tracking-wide text-foreground">{p.title}</h3>
+                        <h2 className="m-0 font-display text-sm tracking-wide text-foreground">{p.title}</h2>
                         <p className="mt-0.5 text-[11px] text-foreground-faint tabular-nums">
                           {p.milestones.length} stages · {p.totalTopics} topics
                         </p>
                       </div>
-                      <span className="ml-auto font-display text-lg tabular-nums" style={{ color: p.color }}>
+                      <span className="ml-auto font-display text-lg tabular-nums" style={{ color: `color-mix(in oklab, ${p.color} 45%, var(--color-text-primary))` }}>
                         {p.progress}%
                       </span>
                     </div>

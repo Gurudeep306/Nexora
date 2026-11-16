@@ -213,7 +213,7 @@ export const MockInterviewSimulator: React.FC<MockInterviewSimulatorProps> = ({ 
               Scale Estimation Check: What is the estimated peak write/read throughput?
             </span>
             <div className="flex gap-3">
-              <input
+              <input aria-label="Your estimate of peak throughput"
                 type="text"
                 placeholder={`e.g. ${system.throughput}`}
                 value={qpsGuess}

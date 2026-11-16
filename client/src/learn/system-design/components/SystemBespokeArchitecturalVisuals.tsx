@@ -1033,7 +1033,7 @@ export const SystemHeroBlueprint: React.FC<{
             className="flex size-8 items-center justify-center rounded-xl font-mono text-xs font-bold shadow-lg"
             style={{
               backgroundColor: `${domainColor}25`,
-              color: domainColor,
+              color: `color-mix(in oklab, ${domainColor} 35%, var(--color-text-primary))`,
               boxShadow: `0 0 14px ${domainColor}40`,
             }}
           >
@@ -1105,7 +1105,7 @@ export const SystemHeroBlueprint: React.FC<{
                           backgroundColor: `${domainColor}15`,
                           borderColor: domainColor,
                           boxShadow: `0 0 16px -2px ${domainColor}50`,
-                          color: domainColor,
+                          color: `color-mix(in oklab, ${domainColor} 35%, var(--color-text-primary))`,
                         }
                       : undefined
                   }
@@ -1203,7 +1203,7 @@ export const SystemHeroBlueprint: React.FC<{
             <strong className="text-text-primary">Footprint:</strong> {config.specs.memoryFootprint}
           </span>
         </div>
-        <div className="flex items-center gap-1.5" style={{ color: domainColor }}>
+        <div className="flex items-center gap-1.5" style={{ color: `color-mix(in oklab, ${domainColor} 35%, var(--color-text-primary))` }}>
           <Sparkles className="size-3" />
           <span className="font-semibold">{config.specs.failureGuarantee}</span>
         </div>
@@ -1280,7 +1280,7 @@ export const SystemInternalEngineDiagram: React.FC<{
             style={{ backgroundColor: domainColor }}
           />
           <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
-            <Cpu className="size-4" style={{ color: domainColor }} /> {config.diagramTitle}
+            <Cpu className="size-4" style={{ color: `color-mix(in oklab, ${domainColor} 35%, var(--color-text-primary))` }} /> {config.diagramTitle}
           </h3>
         </div>
         <span
@@ -1288,7 +1288,7 @@ export const SystemInternalEngineDiagram: React.FC<{
           style={{
             borderColor: `${domainColor}40`,
             backgroundColor: `${domainColor}15`,
-            color: domainColor,
+            color: `color-mix(in oklab, ${domainColor} 35%, var(--color-text-primary))`,
           }}
         >
           {config.lldDiagramType.toUpperCase()} ARCHETYPE
@@ -2385,9 +2385,9 @@ export const SystemTopologyMiniRadar: React.FC<{
   return (
     <div className="rounded-xl bg-bg-surface-2 p-4 ring-1 ring-border shadow-md space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-xs font-bold text-text-primary flex items-center gap-2">
+        <h3 className="m-0 text-xs font-bold text-text-primary flex items-center gap-2">
           <Radio className="size-3.5 text-emerald-400 animate-pulse" /> Live Cluster Topology Radar
-        </h4>
+        </h3>
         <button
           onClick={triggerPing}
           className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500/30 transition"

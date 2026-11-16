@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import '@/learn/system-design/sd-page.css'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAgentPageContext } from '@/context/AgentContext'
 import {
@@ -65,6 +66,9 @@ export default function SystemDossierPage() {
     () => getDomainThemeByNameOrId(meta?.domain || dossier.system.category),
     [meta, dossier.system.category]
   )
+  // The system's colour mixed with the page ink: still its hue, but readable
+  // (4.5:1) as text in every theme and mode, even on its own tinted chips.
+  const ink = `color-mix(in oklab, ${domainTheme.color} 35%, var(--color-text-primary))`
 
   const summariesByDomain = useMemo(() => {
     const groups: Record<string, typeof allSummaries> = {}
@@ -248,7 +252,7 @@ export default function SystemDossierPage() {
   }
 
   return (
-    <div className={`min-h-screen ${isFullscreen ? 'p-2 sm:p-4 bg-bg-base' : 'pb-24'}`}>
+    <div className={`sd-page min-h-screen ${isFullscreen ? 'p-2 sm:p-4 bg-bg-base' : 'pb-24'}`}>
       {/* TOP HEADER / BREADCRUMB NAVIGATION */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-border/60 pb-4">
         <div className="flex flex-wrap items-center gap-2.5 text-xs">
@@ -263,7 +267,7 @@ export default function SystemDossierPage() {
             className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono font-bold uppercase tracking-wider"
             style={{
               backgroundColor: `${domainTheme.color}15`,
-              color: domainTheme.color,
+              color: ink,
               boxShadow: `inset 0 0 0 1px ${domainTheme.color}35`,
             }}
           >
@@ -282,7 +286,8 @@ export default function SystemDossierPage() {
             <select
               value={systemId}
               onChange={(e) => navigate(`/learn/system-design/${e.target.value}/1`)}
-              className="rounded-lg bg-bg-surface-2 px-3 py-1.5 text-xs font-semibold text-text-primary ring-1 ring-border focus:ring-accent-brand focus:outline-none cursor-pointer"
+              aria-label="Switch to another system"
+              className="max-w-[10.5rem] truncate sm:max-w-xs rounded-lg bg-bg-surface-2 px-3 py-1.5 text-xs font-semibold text-text-primary ring-1 ring-border focus:ring-accent-brand focus:outline-none cursor-pointer"
             >
               {DOMAIN_CATEGORIES.map((cat) => {
                 const sysList = summariesByDomain[cat.name] || []
@@ -315,9 +320,8 @@ export default function SystemDossierPage() {
       <div
         className="relative overflow-hidden rounded-2xl p-6 sm:p-8 ring-1 shadow-2xl mb-6 transition-all"
         style={{
-          background: `linear-gradient(135deg, var(--color-bg-surface) 0%, ${domainTheme.color}14 55%, var(--color-bg-surface) 100%)`,
-          borderColor: `${domainTheme.color}40`,
-          boxShadow: `0 20px 40px -15px ${domainTheme.color}20`,
+          background: `color-mix(in oklab, ${domainTheme.color} 6%, var(--color-bg-surface))`,
+          borderColor: `color-mix(in oklab, ${domainTheme.color} 30%, var(--color-border))`,
         }}
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
@@ -327,7 +331,7 @@ export default function SystemDossierPage() {
                 className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-mono font-bold"
                 style={{
                   backgroundColor: `${domainTheme.color}20`,
-                  color: domainTheme.color,
+                  color: ink,
                   boxShadow: `inset 0 0 0 1px ${domainTheme.color}50`,
                 }}
               >
@@ -380,7 +384,7 @@ export default function SystemDossierPage() {
                 </div>
                 <div>
                   <span className="text-text-muted block text-[10px] uppercase font-mono">Curriculum</span>
-                  <span className="font-semibold font-mono" style={{ color: domainTheme.color }}>
+                  <span className="font-semibold font-mono" style={{ color: ink }}>
                     10 Dedicated Chapters
                   </span>
                 </div>
@@ -428,7 +432,7 @@ export default function SystemDossierPage() {
               (Click any chapter to jump directly to its dedicated deep dive)
             </span>
           </div>
-          <span className="text-xs font-mono font-bold" style={{ color: domainTheme.color }}>
+          <span className="text-xs font-mono font-bold" style={{ color: ink }}>
             Chapter {activeChapterIndex + 1} of 10 Active
           </span>
         </div>
@@ -452,7 +456,6 @@ export default function SystemDossierPage() {
                 }`}
                 style={{
                   borderColor: isActive ? domainTheme.color : undefined,
-                  boxShadow: isActive ? `0 0 15px -3px ${domainTheme.color}40` : undefined,
                 }}
                 title={`Chapter ${ch.chapterNumber}: ${ch.title}`}
               >
@@ -467,8 +470,8 @@ export default function SystemDossierPage() {
                   <span
                     className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded"
                     style={{
-                      backgroundColor: isActive ? `${domainTheme.color}25` : 'color-mix(in oklab, var(--color-text-primary) 6%, transparent)',
-                      color: isActive ? domainTheme.color : undefined,
+                      backgroundColor: isActive ? `color-mix(in oklab, ${domainTheme.color} 12%, transparent)` : 'color-mix(in oklab, var(--color-text-primary) 6%, transparent)',
+                      color: isActive ? ink : undefined,
                     }}
                   >
                     Ch.{ch.chapterNumber.toString().padStart(2, '0')}
@@ -477,7 +480,7 @@ export default function SystemDossierPage() {
                     className={`size-3.5 transition-colors ${
                       isActive ? '' : 'text-text-muted group-hover:text-text-primary'
                     }`}
-                    style={{ color: isActive ? domainTheme.color : undefined }}
+                    style={{ color: isActive ? ink : undefined }}
                   />
                 </div>
 
@@ -515,10 +518,10 @@ export default function SystemDossierPage() {
         <div className="lg:col-span-4 space-y-4 sticky top-6">
           <div className="rounded-xl bg-bg-surface-2 p-4 ring-1 ring-border shadow-lg space-y-3">
             <div className="flex items-center justify-between border-b border-border/60 pb-3">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-text-muted flex items-center gap-2">
-                <BookOpen className="size-3.5" style={{ color: domainTheme.color }} /> Table of Contents
-              </h3>
-              <span className="text-xs font-mono font-bold" style={{ color: domainTheme.color }}>
+              <h2 className="m-0 text-xs font-bold uppercase tracking-wider text-text-secondary flex items-center gap-2">
+                <BookOpen className="size-3.5" style={{ color: ink }} /> Table of Contents
+              </h2>
+              <span className="text-xs font-mono font-bold" style={{ color: ink }}>
                 Chapter {activeChapterIndex + 1} of 10
               </span>
             </div>
@@ -544,7 +547,7 @@ export default function SystemDossierPage() {
                       isActive
                         ? {
                             backgroundColor: `${domainTheme.color}15`,
-                            color: domainTheme.color,
+                            color: ink,
                             boxShadow: `inset 0 0 0 1px ${domainTheme.color}50`,
                           }
                         : undefined
@@ -557,8 +560,8 @@ export default function SystemDossierPage() {
                         <div
                           className="size-4 rounded-full border flex items-center justify-center text-[10px] font-mono"
                           style={{
-                            borderColor: isActive ? domainTheme.color : 'var(--color-border, #333)',
-                            color: isActive ? domainTheme.color : 'var(--color-text-muted, #888)',
+                            borderColor: isActive ? domainTheme.color : 'var(--color-border)',
+                            color: isActive ? ink : 'var(--color-text-secondary)',
                             fontWeight: isActive ? 700 : 400,
                           }}
                         >
@@ -627,9 +630,9 @@ export default function SystemDossierPage() {
 
             {/* Key Takeaways Grid */}
             <div className="space-y-2 pt-2">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-text-muted">
+              <h3 className="m-0 text-xs font-bold uppercase tracking-wider text-text-secondary">
                 Key Architectural Takeaways:
-              </h4>
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {currentChapter.keyTakeaways.map((takeaway, i) => (
                   <div
@@ -669,6 +672,8 @@ export default function SystemDossierPage() {
                     max="500"
                     value={calcDau}
                     onChange={(e) => setCalcDau(Number(e.target.value))}
+                    aria-label="Daily active users, in millions"
+                    aria-valuetext={`${calcDau} million`}
                     className="w-full accent-accent-brand cursor-pointer"
                   />
                 </div>
@@ -684,6 +689,8 @@ export default function SystemDossierPage() {
                     max="100"
                     value={calcReqsPerUser}
                     onChange={(e) => setCalcReqsPerUser(Number(e.target.value))}
+                    aria-label="Requests per user per day"
+                    aria-valuetext={`${calcReqsPerUser} requests`}
                     className="w-full accent-accent-brand cursor-pointer"
                   />
                 </div>
@@ -700,6 +707,8 @@ export default function SystemDossierPage() {
                     step="0.5"
                     value={calcPayloadKb}
                     onChange={(e) => setCalcPayloadKb(Number(e.target.value))}
+                    aria-label="Average payload size, in kilobytes"
+                    aria-valuetext={`${calcPayloadKb} KB`}
                     className="w-full accent-accent-brand cursor-pointer"
                   />
                 </div>
@@ -715,6 +724,8 @@ export default function SystemDossierPage() {
                     max="100"
                     value={calcReadRatio}
                     onChange={(e) => setCalcReadRatio(Number(e.target.value))}
+                    aria-label="Read-to-write ratio"
+                    aria-valuetext={`${calcReadRatio} to 1`}
                     className="w-full accent-accent-brand cursor-pointer"
                   />
                 </div>
@@ -757,7 +768,7 @@ export default function SystemDossierPage() {
                 <div className="flex items-center gap-2">
                   <div className="size-2.5 rounded-full bg-state-success animate-ping" />
                   <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
-                    <Network className="size-4" style={{ color: domainTheme.color }} /> Live Architectural Topology & Distributed Wire Flow Simulator
+                    <Network className="size-4" style={{ color: ink }} /> Live Architectural Topology & Distributed Wire Flow Simulator
                   </h3>
                 </div>
                 <span className="text-[11px] font-mono px-2 py-0.5 rounded border border-state-success/30 bg-state-success/10 text-state-success font-bold">
@@ -968,7 +979,7 @@ export default function SystemDossierPage() {
 
                 {/* Tables if present */}
                 {sec.table && (
-                  <div className="overflow-x-auto rounded-xl border border-border">
+                  <div tabIndex={0} role="group" aria-label="Table" className="overflow-x-auto rounded-xl border border-border">
                     <table className="w-full text-left text-xs">
                       <thead className="bg-bg-surface-1 border-b border-border text-text-primary font-bold uppercase tracking-wider text-[11px]">
                         <tr>
@@ -1021,7 +1032,7 @@ export default function SystemDossierPage() {
                         )}
                       </button>
                     </div>
-                    <pre className="p-4 text-xs font-mono text-text-primary overflow-x-auto leading-relaxed bg-bg-base/90">
+                    <pre tabIndex={0} role="group" aria-label="Code" className="p-4 text-xs font-mono text-text-primary overflow-x-auto leading-relaxed bg-bg-base/90">
                       <code>{sec.codeBlock.code}</code>
                     </pre>
                     {sec.codeBlock.explanation && (
@@ -1071,11 +1082,10 @@ export default function SystemDossierPage() {
             {activeChapterIndex < 9 ? (
               <button
                 onClick={() => handleSelectChapter(activeChapterIndex + 1)}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold text-bg-base hover:opacity-90 transition shadow-lg cursor-pointer"
-                style={{ backgroundColor: domainTheme.color }}
+                className="ed-btn ed-btn-clay w-full sm:w-auto"
               >
                 <span>
-                  Next: <span className="font-mono opacity-90">Ch.{activeChapterIndex + 2}</span>{' '}
+                  Next: <span className="font-mono">Ch.{activeChapterIndex + 2}</span>{' '}
                   {CHAPTER_META_ICONS[activeChapterIndex + 2]?.shortTitle}
                 </span>
                 <ArrowRight className="size-3.5" />
@@ -1096,14 +1106,14 @@ export default function SystemDossierPage() {
             <div
               className="mt-6 rounded-2xl p-6 ring-1 shadow-2xl relative overflow-hidden transition-all"
               style={{
-                background: `linear-gradient(135deg, ${domainTheme.color}14 0%, var(--color-bg-surface) 100%)`,
+                background: `color-mix(in oklab, ${domainTheme.color} 6%, var(--color-bg-surface))`,
                 borderColor: `${domainTheme.color}40`,
               }}
             >
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-bold uppercase tracking-wider" style={{ color: domainTheme.color }}>
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider" style={{ color: ink }}>
                       Recommended Next System in {domainTheme.name}
                     </span>
                   </div>
@@ -1115,8 +1125,7 @@ export default function SystemDossierPage() {
 
                 <Link
                   to={`/learn/system-design/${nextSystemInDomain.id}/1`}
-                  className="shrink-0 flex items-center gap-2 rounded-xl px-5 py-3 text-xs font-bold text-bg-base hover:opacity-90 transition shadow-xl"
-                  style={{ backgroundColor: domainTheme.color }}
+                  className="ed-btn ed-btn-ivory shrink-0"
                 >
                   <span>Launch {nextSystemInDomain.name} Masterclass</span>
                   <ArrowRight className="size-4" />

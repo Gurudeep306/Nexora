@@ -131,7 +131,7 @@ export const WirePacketHexView: React.FC<WirePacketHexViewProps> = ({ currentSte
         </div>
       ) : (
         /* Raw Hexdump */
-        <div className="rounded-lg bg-black p-2.5 ring-1 ring-border/60 overflow-x-auto space-y-0.5 text-[10px]">
+        <div tabIndex={0} role="group" aria-label="Packet bytes" className="rounded-lg bg-black p-2.5 ring-1 ring-border/60 overflow-x-auto space-y-0.5 text-[10px]">
           {hexLines.map((row, i) => (
             <div key={i} className="flex gap-3 leading-relaxed hover:bg-white/5 px-1 rounded">
               <span className="text-sky-400 select-none font-bold">{row.offset}</span>

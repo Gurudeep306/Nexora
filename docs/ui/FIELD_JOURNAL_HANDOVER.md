@@ -420,8 +420,40 @@ PRs #114 and #117 and two dependency updates were merged first (owner said
 - Prose classes use `--ed-prose` (the theme's reading face): a display face
   like Pixelify Sans is fine for titles, not for paragraphs.
 
+**Sweep finished (2026-11-16, on top of PR #118):** every route in light,
+dark and phone passes axe with no sideways scroll, including all 10 chapters
+of a System Design dossier in Field Journal, Terminal and Arcade (and spot
+checks in Sakura, Clear, Greenhouse, Observatory, Blueprint, Sketchbook and
+Block Print). Fixes:
+- **System Design pages** (`.sd-page` on `SystemDossierPage` and
+  `SystemDesignStudio`, rules in `learn/system-design/sd-page.css`, light mode
+  only):
+  - dark code/terminal panels become solid "dark islands" with the theme
+    variables redefined inside them
+  - pale Tailwind accent shades (200–500) and white text keep their hue but
+    are mixed with the theme's ink
+  - solid 500 fills deepen to 700 under white text
+- **System colour as text:** it is mixed with ink (`ink` in
+  `SystemDossierPage`, `domainColor` text in
+  `SystemBespokeArchitecturalVisuals`).
+- **Removed decoration:** gradient and glow backgrounds are gone. "Next
+  chapter" is the clay button; "Launch next system" is ivory.
+- **Accessibility:**
+  - heading levels fixed (studio, dossier, radar, simulator)
+  - every input and select in the System Design components is named
+  - scrolling code and table boxes are focusable `role="group"`s
+  - the per-line code scrollers are removed
+  - the system switcher is capped on phones
+- **Learn tabs:** Paths colour text is mixed with ink; the Tutorials cards no
+  longer nest a button inside a button; card titles are `h2`.
+- **GATE:** the Tests "Official papers" link and the test result's "New test,
+  same settings" are named on phones.
+
 **Left / ideas:**
-- System Design reader restyle; notes `dek` field (from 3.5).
+- System Design reader: accessible and readable in every theme now, but its
+  visual language (bright pills, dense dashboards) is still the old one; a
+  journal restyle with the reader parts (`Outline`, `EndOfLesson`, title
+  block) is the next big piece. Notes `dek` field (from 3.5).
 - The bigger cards inside account forms (AvatarCard, ProfileForm…) still use
   their card-title labels in caps; they work in every theme but could take a
   serif title.

@@ -396,7 +396,7 @@ ${guide.faangInterviewTips.map((tip) => `- ${tip}`).join('\n')}
                   <span className="text-sky-400 font-bold">{ds.spaceComplexity}</span>
                 </div>
                 {ds.asciiDiagram && (
-                  <div className="mt-2 rounded bg-black/60 p-2 text-[10px] text-amber-300 overflow-x-auto whitespace-pre">
+                  <div tabIndex={0} role="group" aria-label="Output" className="mt-2 rounded bg-black/60 p-2 text-[10px] text-amber-300 overflow-x-auto whitespace-pre">
                     {ds.asciiDiagram}
                   </div>
                 )}
@@ -479,7 +479,7 @@ ${guide.faangInterviewTips.map((tip) => `- ${tip}`).join('\n')}
                 </button>
               </div>
 
-              <div className="max-h-[380px] overflow-y-auto p-4 text-[12px] font-mono leading-relaxed text-emerald-300">
+              <div tabIndex={0} role="group" aria-label="Output" className="max-h-[380px] overflow-y-auto p-4 text-[12px] font-mono leading-relaxed text-emerald-300">
                 <pre className="whitespace-pre">
                   {currentStep.codeSnippet.split('\n').map((line, idx) => (
                     <div key={idx} className="flex hover:bg-white/5 px-1 rounded">
