@@ -21,7 +21,7 @@ export function MenuContent({
         sideOffset={sideOffset}
         collisionPadding={8}
         className={cn(
-          'pop-surface z-[1100] min-w-52 origin-[var(--radix-dropdown-menu-content-transform-origin)] p-1.5 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:duration-200 data-[state=open]:ease-out',
+          'pop-surface z-[1100] min-w-52 origin-[var(--radix-dropdown-menu-content-transform-origin)] max-h-[var(--radix-dropdown-menu-content-available-height)] overflow-y-auto overscroll-contain p-1.5 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:duration-200 data-[state=open]:ease-out',
           className,
         )}
         {...props}
@@ -86,7 +86,7 @@ export function PopoverContent({
         sideOffset={sideOffset}
         collisionPadding={8}
         className={cn(
-          'pop-surface z-[1100] origin-[var(--radix-popover-content-transform-origin)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:duration-200 data-[state=open]:ease-out',
+          'pop-surface z-[1100] origin-[var(--radix-popover-content-transform-origin)] max-h-[var(--radix-popover-content-available-height)] overflow-y-auto overscroll-contain data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:duration-200 data-[state=open]:ease-out',
           className,
         )}
         {...props}

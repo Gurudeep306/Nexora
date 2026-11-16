@@ -951,6 +951,14 @@ async function initDb() {
     "CREATE INDEX IF NOT EXISTS idx_contest_parts ON contest_participants(contest_id)",
   );
 
+  // System Design was removed from the site (2026-11): drop its tutorials and
+  // their progress from databases seeded before that. Cheap and repeat-safe.
+  await run(
+    "DELETE FROM tutorial_progress WHERE tutorial_id IN (SELECT id FROM tutorials WHERE category='sysdesign')",
+  );
+  await run("DELETE FROM tutorials WHERE category='sysdesign'");
+  await run("DELETE FROM forge_progress WHERE path_id='system-design'");
+
   // ===== SEED TUTORIALS =====
   // Seeding is helpful for local dev, but can make automated tests time out.
   if (!IS_TEST) {

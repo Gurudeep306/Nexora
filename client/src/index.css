@@ -328,7 +328,7 @@ html[data-text-size='xl'] { font-size: 112.5%; }
   --color-warning-dark: var(--oklch-warning);
   --color-streak: oklch(0.72 0.18 50);
   --color-ring: var(--oklch-accent-0);
-  /* Aliases used by the System Design module (bg-bg-surface-1, text-bg-base). */
+  /* Aliases a few GATE charts use (bg-bg-surface-1, text-bg-base). */
   --color-bg-surface-1: var(--oklch-bg-1);
   --color-bg-base: var(--oklch-bg-0);
 

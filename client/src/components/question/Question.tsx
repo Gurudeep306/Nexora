@@ -1,7 +1,7 @@
 /*
  * One question design for every question on the site (brief §5): GATE PYQs in
  * practice, daily, review and notes, lesson "check yourself" questions, notes
- * practice, Nexus test-outs and System Design quizzes all build from these.
+ * practice and Nexus test-outs all build from these.
  *
  *   QuestionCard     the card: a mono masthead line, then the body
  *   QuestionText     the question in serif

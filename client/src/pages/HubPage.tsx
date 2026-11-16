@@ -132,7 +132,7 @@ export default function HubPage() {
           ? `Next in ${cont.subject}: ${cont.title}.`
           : `${readyChapters} DSA chapters ready to read.`,
       links: [
-        { label: 'DSA course', to: '/learn?tab=dsa' },
+        { label: 'DSA course', to: '/learn/dsa' },
         { label: 'GATE notes', to: '/gate/notes' },
         { label: 'Paths', to: '/learn?tab=paths' },
       ],

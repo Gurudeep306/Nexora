@@ -183,8 +183,15 @@ changed.
 - **Notes and lessons** share one reader (`styles/reader.css`): lessons rail that
   collapses to a mini strip, a full-width reading column, a live "On this page"
   outline. GATE notes and DSA lessons both use it.
-- **Search** uses one field style (`styles/search.css`, `SearchInput`,
-  `SearchCombobox`). Keep text around search bars to a minimum.
+- **Search** uses one field style, the "ledger line" (`styles/search.css`,
+  `SearchInput`, `SearchCombobox`; `variant="bar"` is the top bar's pill): a
+  hairline, an italic serif hint, an ink line drawn on focus. Keep text around
+  search bars to a minimum. Lessons, subjects and skills are found through one
+  index, `lib/lessonSearch.ts` (top bar, ⌘K palette, `LessonFinder` on Learn).
+- **Subject pages** (`/learn/<subject>`) open on **Lessons** (`SubjectBook.tsx`:
+  the GATE notes or DSA chapters, each one click from the reader, never locked);
+  Skills, Skill tree, Plan and Leaderboard are tabs. Link to a subject's home,
+  not to `/gate/notes/<id>` or `/learn?tab=dsa` (that one redirects).
 - **AI models** are chosen in Admin → AI models (`src/ai/settings.js`): any
   OpenAI-compatible provider, keys sealed at rest, a model per slot and per
   feature. The GROQ_* environment applies when nothing is chosen.

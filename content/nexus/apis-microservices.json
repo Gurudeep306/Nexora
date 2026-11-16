@@ -252,8 +252,7 @@
       ],
       "kind": "concept",
       "requires": [
-        "rest-design",
-        "sysd:scalability-basics"
+        "rest-design"
       ],
       "xpReward": 100
     },
@@ -293,8 +292,7 @@
       ],
       "kind": "concept",
       "requires": [
-        "microservices-intro",
-        "sysd:message-queues"
+        "microservices-intro"
       ],
       "xpReward": 100
     },

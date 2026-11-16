@@ -29,7 +29,16 @@ export default function ThemeCentrePage() {
     const t = THEMES[i]
     if (!t || t.id === look.style) return
     const before = look
+    // A new theme brings new type, so everything above the card can change
+    // height. Keep the card you clicked exactly where it was on screen.
+    const card = document.querySelectorAll<HTMLElement>('.tc-grid [role="radio"]')[i]
+    const top = card?.getBoundingClientRect().top
     setLook({ style: t.id })
+    if (card && top != null) {
+      const settle = () => window.scrollBy(0, card.getBoundingClientRect().top - top)
+      requestAnimationFrame(() => requestAnimationFrame(settle))
+      void document.fonts?.ready.then(() => requestAnimationFrame(settle))
+    }
     toast(`${t.name} is on`, { description: t.tagline, action: { label: 'Undo', onClick: () => setLook(before) } })
   }
   // A radio group: arrows move between themes.

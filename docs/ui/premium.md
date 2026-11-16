@@ -152,4 +152,3 @@ Hive keeps its own look (Studio on Midnight) whatever theme is on
 
 - **An "initials" avatar option** (neutral monogram), to offer alongside the illustrated set.
 - **Rank and level chips** (Bit, Byte…) and the Nexus subject colours keep their colours. They carry meaning (tier, subject), but could be quieter.
-- **The System Design course animations** still use bright fixed colours inside their diagrams. The glows are gone; the palettes could move onto the theme tokens.
