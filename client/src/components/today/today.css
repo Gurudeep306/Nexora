@@ -586,3 +586,44 @@
 .today-live--wait {
   min-height: 14rem;
 }
+
+/* Home shows a preview, not the full player: the drawing and its step line.
+   The whole player (code, controls, inputs) is one tap away in the lesson. */
+.today-live .nxv-svg {
+  max-height: 220px;
+}
+.today-live :is(.nxv-controls, .nxv-alt, .nxv-captions, .nxv-figcaption) {
+  display: none;
+}
+.today-live :is(.viz-side, .viz-code, .viz-tabs, .viz-log, .viz-controls, .viz-progress, .viz-head) {
+  display: none !important;
+}
+.today-live .viz-stage {
+  max-height: 240px;
+  overflow: hidden;
+}
+/* One column: the hidden code panel leaves no empty half. */
+.today-live .viz-player > .grid {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+.today-live .viz-stage {
+  min-height: 0;
+  max-height: 200px;
+  padding-block: 1rem;
+}
+.today-live .viz-note {
+  padding: 0.75rem 1rem;
+}
+.today-live .viz-note p {
+  font-size: 15px !important;
+  line-height: 1.45;
+}
+@media (max-width: 640px) {
+  .today-live {
+    padding: 0.75rem;
+  }
+  .today-live .viz-stage,
+  .today-live .nxv-svg {
+    max-height: 170px;
+  }
+}
