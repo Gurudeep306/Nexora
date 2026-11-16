@@ -134,6 +134,27 @@ const PAIZA_MAP = {
  * The public sandboxes for a language, in the order they are tried (before
  * any reordering by health). Empty when nothing can run it.
  */
+/**
+ * Admin choices (src/compilers.js registers them): a service turned off, and
+ * the compiler version each service uses for a language. Without them every
+ * service is on and uses the built-in versions above.
+ */
+let choices = { off: () => false, pick: () => null };
+function useCompilerChoices(c) {
+  choices = { off: c.off || (() => false), pick: c.pick || (() => null) };
+}
+const KOTLIN_VERSION = '2.1.20';
+/** The compiler a service uses for a language: an explicit one, the admin's choice, or the built-in one. */
+function compilerFor(engine, lang, explicit) {
+  if (explicit) return explicit;
+  const chosen = choices.pick(engine, lang);
+  if (chosen) return chosen;
+  if (engine === 'wandbox') return WANDBOX_MAP[lang]?.compiler ?? null;
+  if (engine === 'godbolt') return GODBOLT_MAP[lang]?.id ?? null;
+  if (engine === 'kotlin') return KOTLIN_VERSION;
+  return null;
+}
+
 function publicChain(lang) {
   const chain = [];
   if (GODBOLT_PRIMARY.has(lang)) chain.push('godbolt');
@@ -141,7 +162,7 @@ function publicChain(lang) {
   if (WANDBOX_MAP[lang]) chain.push('wandbox');
   if (GODBOLT_MAP[lang] && !chain.includes('godbolt')) chain.push('godbolt');
   if (PAIZA_MAP[lang]) chain.push('paiza');
-  return chain;
+  return chain.filter((e) => !choices.off(e));
 }
 // Compiler Explorer goes first where it has the modern toolchain: C# there is
 // .NET 9 (what Codeforces and LeetCode use); Wandbox's Mono cannot build
@@ -293,7 +314,7 @@ function preprocess(code, lang) {
   return code;
 }
 
-async function runWandbox(code, input, lang, budget) {
+async function runWandbox(code, input, lang, budget, compiler) {
   const wb = WANDBOX_MAP[lang];
   const res = await postJson({
     hostname: 'wandbox.org',
@@ -302,7 +323,7 @@ async function runWandbox(code, input, lang, budget) {
     timeout: budget || timeoutFor(lang),
     payload: JSON.stringify({
       code: preprocess(code, lang),
-      compiler: wb.compiler,
+      compiler: compilerFor('wandbox', lang, compiler),
       stdin: input || '',
       // Wandbox expects one compiler option per line, not space-separated.
       'compiler-option-raw': (wb.options || '').split(/\s+/).filter(Boolean).join('\n'),
@@ -367,11 +388,11 @@ function classifyWandbox(r, timeMs) {
   return { stdout, stderr, exitCode: 0, timeMs, verdict: null, engine: 'wandbox' };
 }
 
-async function runGodbolt(code, input, lang, budget) {
+async function runGodbolt(code, input, lang, budget, compiler) {
   const gb = GODBOLT_MAP[lang];
   const res = await postJson({
     hostname: 'godbolt.org',
-    path: `/api/compiler/${encodeURIComponent(gb.id)}/compile`,
+    path: `/api/compiler/${encodeURIComponent(compilerFor('godbolt', lang, compiler))}/compile`,
     agent: AGENTS.godbolt,
     timeout: budget || timeoutFor(lang),
     payload: JSON.stringify({
@@ -493,10 +514,10 @@ function injectKotlinStdin(code, input) {
   return [...lines.slice(0, i), pre, ...lines.slice(i)].join('\n').replace(/System\.`in`/g, '__nxIn');
 }
 
-async function runKotlin(code, input, budget) {
+async function runKotlin(code, input, budget, version) {
   const res = await postJson({
     hostname: 'api.kotlinlang.org',
-    path: '/api/2.1.20/compiler/run',
+    path: `/api/${encodeURIComponent(compilerFor('kotlin', 'kotlin', version))}/compiler/run`,
     agent: AGENTS.kotlin,
     timeout: budget || timeoutFor('kotlin'),
     payload: JSON.stringify({
@@ -646,7 +667,7 @@ function remoteLoad() {
 }
 
 /** Run once on one sandbox. Never throws. */
-async function dispatch(code, input, lang, engine, budget) {
+async function dispatch(code, input, lang, engine, budget, compiler) {
   try {
     const server = pistonIndex(engine);
     if (server >= 0) {
@@ -655,10 +676,10 @@ async function dispatch(code, input, lang, engine, budget) {
       if (r._pistonFailed) { delete r._pistonFailed; return { ...r, engine, _transient: true }; }
       return { ...r, engine };
     }
-    if (engine === 'wandbox') return await runWandbox(code, input, lang, budget);
-    if (engine === 'godbolt') return await runGodbolt(code, input, lang, budget);
+    if (engine === 'wandbox') return await runWandbox(code, input, lang, budget, compiler);
+    if (engine === 'godbolt') return await runGodbolt(code, input, lang, budget, compiler);
     if (engine === 'paiza') return await runPaiza(code, input, lang, budget);
-    return await runKotlin(code, input, budget);
+    return await runKotlin(code, input, budget, compiler);
   } catch (e) {
     return { stdout: '', stderr: `Remote execution failed: ${e.message}`, exitCode: -1, timeMs: 0, verdict: 'RE', engine, _transient: true };
   }
@@ -796,8 +817,28 @@ async function remoteRun(code, input, lang, opts = {}) {
   }
 }
 
+/**
+ * Run once on one service with one exact compiler (Admin → Code runners tests
+ * a new version this way before using it). No cache, no queue, no failover,
+ * and the service's health is left alone.
+ */
+async function runOn(code, input, lang, engine, compiler, budget = 45_000) {
+  await enterEngine(engine);
+  try {
+    const r = await dispatch(code, input, lang, engine, budget, compiler);
+    delete r._transient; delete r._noAnswer; delete r._ownLimit;
+    return r;
+  } finally {
+    leaveEngine(engine);
+  }
+}
+
 module.exports = {
   remoteRun,
+  runOn,
+  useCompilerChoices,
+  compilerFor,
+  KOTLIN_VERSION,
   runChain,
   classifyWandbox,
   classifyKotlin,
