@@ -25,6 +25,8 @@ const { instrumentJs } = require('./js');
 const { instrumentGo } = require('./go');
 const { instrumentRust } = require('./rust');
 const { instrumentCSharp } = require('./csharp');
+const { instrumentKotlin } = require('./kotlin');
+const { instrumentSwift } = require('./swift');
 
 /**
  * Languages the dry run can trace today, and how. `wrap` returns the code to
@@ -41,6 +43,8 @@ const TRACERS = {
   go: { wrap: async (code) => (await instrumentGo(code)).code, runAs: 'go', compiled: true },
   rust: { wrap: async (code) => (await instrumentRust(code)).code, runAs: 'rust', compiled: true },
   csharp: { wrap: async (code) => (await instrumentCSharp(code)).code, runAs: 'csharp', compiled: true },
+  kotlin: { wrap: async (code) => (await instrumentKotlin(code)).code, runAs: 'kotlin', compiled: true },
+  swift: { wrap: async (code) => (await instrumentSwift(code)).code, runAs: 'swift', compiled: true },
 };
 
 function supported(lang) {
