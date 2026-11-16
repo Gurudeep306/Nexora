@@ -676,7 +676,9 @@ async function runLang(code, input, lang = 'cpp') {
     throw remoteUnavailable(lang);
   }
   try {
-    const result = await _runLangLocal(code, input, lang);
+    // `code` may differ per runner (the dry run sizes its trace to each one's
+    // output limit); a local run takes the full-size copy.
+    const result = await _runLangLocal(typeof code === 'function' ? code(null) : code, input, lang);
     // If local runtime was not found, try remote
     if (result.verdict === 'RUNTIME_NOT_FOUND' && hasRemote(lang)) {
       return await remoteRun(code, input, lang);

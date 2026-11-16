@@ -78,7 +78,10 @@ test('dryRun reports unsupported languages honestly and passes the run through',
   assert.equal(none.supported, false);
   const r = await dryRun('print(1)', 'python', '', async (code, input, lang) => {
     assert.equal(lang, 'python');
-    assert.match(code, /settrace/);
+    // The traced program comes per runner, sized to each one's output limit.
+    assert.equal(typeof code, 'function');
+    assert.match(code(null), /settrace/);
+    assert.equal(code('piston'), code(null), 'our own runners get the full trace');
     return { ok: true, verdict: 'OK', output: '1\n', stderr: '\u001eNXT {"e":"line","l":1,"k":1,"o":2}\nwarning: x\n', timeMs: 5, engine: 'godbolt' };
   });
   assert.equal(r.ok, true);
