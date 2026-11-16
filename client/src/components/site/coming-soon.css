@@ -31,25 +31,68 @@
 .cs-link:focus-visible { outline: 2px solid #c6613f; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .cs-cell.a, .cs-cell.b { animation: none; } .cs-cell.c { animation: none; background: var(--cs-clay); border-color: var(--cs-clay); color: var(--cs-on-clay); } }
 
-/* Only the mark: centred on the theme's page colour, nothing written. */
+/* The mark, "Coming soon" and the way in: centred on the theme's page. */
 .cs.cs-only-mark {
   display: grid;
   min-height: 100dvh;
   place-items: center;
+  padding: 2rem 1.5rem;
   background: var(--color-bg-app);
   color: var(--color-text-primary);
 }
-.cs-mark-link {
+.cs-stack {
   display: grid;
-  place-items: center;
-  padding: 1.5rem;
-  border: 0;
-  border-radius: 24px;
-  background: none;
-  color: inherit;
+  justify-items: center;
+  gap: 1.25rem;
+  text-align: center;
+}
+.cs-soon {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 6vw, 3rem);
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+.cs-note {
+  margin: 0;
+  max-width: 28rem;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  color: var(--color-text-secondary);
+}
+.cs-way {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  font-size: 13.5px;
+  color: var(--color-text-secondary);
+}
+.cs-way strong {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+.cs-way .cs-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.5rem;
+  padding: 0 1.125rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font: 500 14px/1 var(--font-body);
+  text-decoration: none;
   cursor: pointer;
 }
-.cs-mark-link:focus-visible {
+.cs-way .cs-link:hover {
+  border-color: var(--color-text-primary);
+}
+.cs-way .cs-link:focus-visible {
   outline: 2px solid var(--color-accent-brand);
-  outline-offset: 4px;
+  outline-offset: 3px;
 }

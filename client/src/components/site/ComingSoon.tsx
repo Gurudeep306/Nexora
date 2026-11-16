@@ -35,27 +35,35 @@ function Stage({ children }: { children: React.ReactNode }) {
 
 /**
  * What everyone but the owner, admins and early-access users sees while the
- * site is private: nothing but the NG mark writing itself, in the chosen
- * theme. The mark is also the way in: it opens the owner sign-in (or signs a
- * signed-in visitor out). No visible words. (The server draws the same screen
- * for direct page loads: src/authz/coming-soon.js.)
+ * site is private: the NG mark writing itself, "Coming soon", and the way in
+ * for the owner and staff (or, when signed in, who you are and sign out).
+ * In the chosen theme. (The server draws the same screen for direct page
+ * loads: src/authz/coming-soon.js.)
  */
 export function ComingSoon({ message }: { message?: string }) {
   const { user, logout } = useAuth()
-  const mark = <LogoMark size={128} loop />
   return (
-    <main className="cs cs-only-mark" aria-label={message ? `NexoraGuru is coming soon. ${message}` : 'NexoraGuru is coming soon'}>
-      <h1 className="sr-only">NexoraGuru · Coming soon</h1>
-      <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9, ease: EASE }}>
-        {user ? (
-          <button type="button" onClick={() => void logout()} className="cs-mark-link" aria-label={`Signed in as @${user.username}. Sign out`}>
-            {mark}
-          </button>
-        ) : (
-          <Link to="/auth?owner=1" className="cs-mark-link" aria-label="Owner sign in">
-            {mark}
-          </Link>
-        )}
+    <main className="cs cs-only-mark">
+      <motion.div className="cs-stack" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE }}>
+        <LogoMark size={128} loop />
+        <h1 className="cs-soon">Coming soon</h1>
+        {message && <p className="cs-note">{message}</p>}
+        <div className="cs-way">
+          {user ? (
+            <>
+              <span>
+                Signed in as <strong>@{user.username}</strong>
+              </span>
+              <button type="button" onClick={() => void logout()} className="cs-link">
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Link to="/auth?owner=1" className="cs-link">
+              Owner &amp; staff sign in <span aria-hidden="true">→</span>
+            </Link>
+          )}
+        </div>
       </motion.div>
     </main>
   )
