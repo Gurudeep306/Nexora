@@ -9,6 +9,7 @@ import { ArrayView } from './views/ArrayView'
 import { roleClass } from './views/format'
 import { GridView, MeterView, OutputView, QueueView, StackView, VarsView } from './views/Others'
 import { GraphView, HashView, ListView, TreeView } from './views/Linked'
+import { CallsView, MapView } from './views/MapCalls'
 import { ROLE_LABEL, StageContext, rolesIn, type StageInfo } from './views/stage'
 
 const LANG_KEY = 'nexora:learn-lang'
@@ -73,6 +74,10 @@ export function StructureView({ s }: { s: Structure }) {
       return <GraphView s={s} />
     case 'hash':
       return <HashView s={s} />
+    case 'map':
+      return <MapView s={s} />
+    case 'calls':
+      return <CallsView s={s} />
   }
 }
 
