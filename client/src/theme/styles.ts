@@ -35,6 +35,12 @@ export interface DesignStyle {
   bundle: StyleBundle
   /** Extra font the style's CSS uses for headings (loaded with the style). */
   displayFont?: string
+  /**
+   * The page kit the style dresses. 'journal' = the editorial kit (ed-*
+   * classes and data-ui hooks in styles.css under [data-kit='journal']); every
+   * NexoraGuru theme builds on it and adds its own type, shapes and drawings.
+   */
+  kit?: 'journal'
 }
 
 export const STYLES: DesignStyle[] = [
@@ -45,6 +51,7 @@ export const STYLES: DesignStyle[] = [
     about: 'Parchment and ivory, an editorial serif, hairlines instead of shadows and one clay action per screen. The NexoraGuru house style.',
     bundle: { theme: 'parchment', font: 'geist', codeFont: 'jetbrains', radius: 'rounded', cardStyle: 'flat', pattern: 'none' },
     displayFont: 'newsreader',
+    kit: 'journal',
   },
   {
     id: 'studio',
@@ -160,6 +167,11 @@ export const STYLES: DesignStyle[] = [
 
 export const DEFAULT_STYLE = 'journal'
 export const STYLE_BY_ID = new Map(STYLES.map((s) => [s.id, s]))
+
+/** True when a style dresses the editorial page kit (see DesignStyle.kit). */
+export function isJournalKit(styleId: string | undefined): boolean {
+  return !!styleId && STYLE_BY_ID.get(styleId)?.kit === 'journal'
+}
 
 export const PATTERNS = [
   { id: 'none', label: 'None', hint: 'A plain page.' },

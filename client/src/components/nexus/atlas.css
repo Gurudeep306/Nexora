@@ -302,14 +302,14 @@
 
 /* The chart is the page's hero: on the canvas, not in a card. Ring names
    are drawn on the chart itself, so the zone rail steps aside. */
-[data-style='journal'] .nx-chart {
+[data-kit='journal'] .nx-chart {
   border-width: 1px 0;
   border-color: var(--color-border);
   border-radius: 0;
   background: transparent;
   box-shadow: 0 0 #0000;
 }
-[data-style='journal'] .nx-rail {
+[data-kit='journal'] .nx-rail {
   display: none;
 }
 

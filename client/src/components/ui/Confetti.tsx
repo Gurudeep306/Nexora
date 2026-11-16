@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import { useTheme } from '@/context/ThemeContext'
+import { isJournalKit } from '@/theme/styles'
 
 const COLORS = ['var(--color-primary-light)', 'var(--color-accent)', 'var(--color-info)', 'var(--color-warning)', 'var(--color-success)']
 /* Field Journal: slips of paper in ink, clay and pencil grey, no glow. */
@@ -28,7 +29,7 @@ function seeded(key: string | number) {
 
 export function Confetti({ burstKey, count = 46 }: { burstKey: string | number; count?: number }) {
   const reduce = useReducedMotion()
-  const paper = useTheme().shown.style === 'journal'
+  const paper = isJournalKit(useTheme().shown.style)
   const pieces = useMemo(
     () => {
       const rand = seeded(burstKey)
