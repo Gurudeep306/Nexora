@@ -134,3 +134,92 @@ test('remote-exec routes mapped languages to Piston; a dead Piston fails cleanly
   assert.equal(pw.exitCode, -1);
   assert.equal('_pistonFailed' in pw, false);
 });
+
+/* ── several of our own servers, each a backup for the others ── */
+test('PISTON_URL can list several servers, with one shared or per-server tokens', () => {
+  const multi = { JUDGE_MODE: 'piston', PISTON_URL: 'https://a.example/, https://b.example', PISTON_TOKEN: 'one' };
+  assert.deepEqual(piston.pistonServers(multi), [
+    { url: 'https://a.example', token: 'one', languages: null },
+    { url: 'https://b.example', token: 'one', languages: null },
+  ]);
+  assert.deepEqual(piston.pistonEngines(multi), ['piston', 'piston2']);
+  const own = { ...multi, PISTON_TOKEN: 'ta,tb' };
+  assert.deepEqual(piston.pistonServers(own).map((s) => s.token), ['ta', 'tb']);
+  assert.equal(piston.pistonIndex('piston'), 0);
+  assert.equal(piston.pistonIndex('piston3'), 2);
+  assert.equal(piston.pistonIndex('wandbox'), -1);
+  assert.deepEqual(piston.pistonServers({ JUDGE_MODE: 'piston' }), [{ url: 'http://127.0.0.1:2000', token: '', languages: null }]);
+  assert.deepEqual(piston.pistonServers({ JUDGE_MODE: 'remote', PISTON_URL: 'https://x.example' }), [], 'the environment list needs JUDGE_MODE=piston');
+});
+
+test('each server gets its own address and token', async () => {
+  const env = { JUDGE_MODE: 'piston', PISTON_URL: 'https://a.example,https://b.example', PISTON_TOKEN: 'ta,tb' };
+  const seen = [];
+  const fetchImpl = async (url, opts) => {
+    seen.push([url, opts.headers.Authorization]);
+    return { ok: true, status: 200, json: async () => ({ run: { stdout: 'ok', stderr: '', code: 0, signal: null } }) };
+  };
+  await piston.runPiston('x', '', 'python', { env, fetchImpl, server: 1 });
+  assert.deepEqual(seen, [['https://b.example/api/v2/execute', 'Bearer tb']]);
+  const none = await piston.runPiston('x', '', 'python', { env, fetchImpl, server: 5 });
+  assert.equal(none._pistonFailed, true);
+});
+
+test('with several servers, every one comes before the public sandboxes', () => {
+  const { execFileSync } = require('node:child_process');
+  const out = execFileSync(process.execPath, ['-e', "console.log(JSON.stringify(require('./src/remote-exec').engineChain('cpp')))"], {
+    env: { ...process.env, JUDGE_MODE: 'piston', PISTON_URL: 'https://a.example,https://b.example,https://c.example', PISTON_LANGUAGES: '' },
+  });
+  assert.deepEqual(JSON.parse(String(out)), ['piston', 'piston2', 'piston3', 'wandbox', 'godbolt', 'paiza']);
+});
+
+test('a runtime built for another CPU passes the run on instead of blaming the code', () => {
+  const r = piston.classifyPiston({ run: { stdout: '', stderr: '/piston/packages/x/run: line 3: ./a.out: cannot execute binary file: Exec format error', code: 126, signal: null } });
+  assert.equal(r._pistonFailed, true);
+});
+
+test('the runner setup script installs exactly the packages the judge expects', () => {
+  const fs = require('node:fs');
+  const sh = fs.readFileSync(require('node:path').join(__dirname, '..', 'deploy', 'runner', 'setup.sh'), 'utf8');
+  const m = /^PACKAGES="([^"]+)"/m.exec(sh);
+  assert.ok(m, 'PACKAGES line present');
+  assert.deepEqual(m[1].split(/\s+/), piston.PISTON_PACKAGES);
+});
+
+test('a compiler built for another CPU is not a compile error', () => {
+  const r = piston.classifyPiston({ compile: { code: 126, stderr: 'g++: Exec format error', signal: null }, run: { stdout: '', stderr: '', code: 0 } });
+  assert.equal(r._pistonFailed, true);
+});
+
+test('runners added by an admin join the chain, each only for the languages it has', () => {
+  piston.setExtraServers(() => [
+    { url: 'https://oracle.example', token: 't1', name: 'Oracle', languages: ['c++', 'gcc', 'python'] },
+    { url: 'https://other.example', token: 't2', name: 'Other', languages: null },
+  ]);
+  try {
+    const env = { JUDGE_MODE: 'remote' };
+    assert.equal(piston.usesPiston('cpp', env), true);
+    assert.deepEqual(piston.pistonEngines(env, 'cpp'), ['piston', 'piston2']);
+    assert.deepEqual(piston.pistonEngines(env, 'haskell'), ['piston2'], 'Oracle has no Haskell; the unknown one is tried');
+    const both = { JUDGE_MODE: 'piston', PISTON_URL: 'https://env.example' };
+    assert.deepEqual(piston.pistonServers(both).map((s) => s.url), ['https://env.example', 'https://oracle.example', 'https://other.example']);
+  } finally {
+    piston.setExtraServers(null);
+  }
+  assert.equal(piston.usesPiston('cpp', { JUDGE_MODE: 'remote' }), false);
+});
+
+test('an admin runner\'s requests go to its own address with its own password', async () => {
+  piston.setExtraServers(() => [{ url: 'https://oracle.example', token: 'secret1', languages: null }]);
+  try {
+    const seen = [];
+    const fetchImpl = async (url, opts) => {
+      seen.push([url, opts.headers.Authorization]);
+      return { ok: true, status: 200, json: async () => ({ run: { stdout: '1', stderr: '', code: 0, signal: null } }) };
+    };
+    await piston.runPiston('print(1)', '', 'python', { env: { JUDGE_MODE: 'remote' }, fetchImpl, server: 0 });
+    assert.deepEqual(seen, [['https://oracle.example/api/v2/execute', 'Bearer secret1']]);
+  } finally {
+    piston.setExtraServers(null);
+  }
+});

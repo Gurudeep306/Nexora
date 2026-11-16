@@ -3,7 +3,7 @@ import { motion } from 'motion/react'
 import { Check, CheckCircle2, ChevronDown, Clock, Copy, Terminal, XCircle } from 'lucide-react'
 import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
-import type { JudgeResponse, RunResult } from './types'
+import { engineLabel, type JudgeResponse, type RunResult } from './types'
 
 const norm = (s: string) => s.replace(/\r/g, '').split('\n').map((l) => l.trimEnd())
 const trimLines = (a: string[]) => {
@@ -91,22 +91,14 @@ function Mismatch({ expected, actual }: { expected: string; actual: string }) {
   )
 }
 
-/** Which sandbox produced a result — handy when a language silently falls back. */
-const ENGINE_LABEL: Record<string, string> = {
-  wandbox: 'Wandbox',
-  godbolt: 'Compiler Explorer',
-  kotlin: 'Kotlin Playground',
-  local: 'local judge',
-}
-
 function EngineChip({ engine, cached }: { engine?: string; cached?: boolean }) {
   if (!engine) return null
   return (
     <span
       className="rounded border border-border px-1.5 py-px font-mono text-[10px] text-foreground-faint"
-      title={cached ? 'Served from the judge cache — this exact code and input ran moments ago' : `Executed on ${ENGINE_LABEL[engine] ?? engine}`}
+      title={cached ? 'Served from the judge cache — this exact code and input ran moments ago' : `Executed on ${engineLabel(engine)}`}
     >
-      {ENGINE_LABEL[engine] ?? engine}
+      {engineLabel(engine)}
       {cached ? ' · cached' : ''}
     </span>
   )

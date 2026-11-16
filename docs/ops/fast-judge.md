@@ -1,85 +1,123 @@
-# Make code run fast: your own Piston runner
+# Our own code runners (Piston): fast, and backed up
 
-Today every Run and Submit goes to free public sandboxes (Wandbox, Compiler
-Explorer). Each test is a fresh compile on a shared machine, so C++ takes
-several seconds and Rust or Haskell can take 40 seconds when those sites are
-busy. Nexora already supports a faster option: **Piston**, an open-source code
-runner, on a machine you control. Compiles then take about a second, and
-nothing leaves your servers.
+Every Run and Submit goes through a chain of runners (`src/remote-exec.js`):
 
-The site keeps working without it: every language falls back to the public
-sandboxes whenever Piston is off, down or doesn't have that language.
+1. **Our own runners** (Piston), when set up. You can have several:
+   Oracle, Hetzner and AWS at once. Each one backs up the others.
+2. **Free public sandboxes**: Wandbox, Compiler Explorer, the Kotlin
+   Playground and Paiza.io.
 
-## What you need
+A runner that is busy, down or silent is skipped and rested for a while
+(30 s, doubling to 5 min), so one machine going down never stops a run. A
+real verdict (wrong answer, compile error, crash, time limit) is never
+re-run elsewhere. If every runner is down, the student is told it is not
+their code.
 
-- A small Linux machine that is always on, **separate from the machine where
-  your Claude and Mistral accounts are logged in** (user code must never run
-  next to your logins). 2 vCPU and 4 GB RAM is enough; an AWS t3.medium or
-  any cheap VPS works.
-- A domain name for it, e.g. `run.nexoraguru.in`, pointing at its IP address.
+Without our own runners, 31 of 36 languages work (checked 2026-11-16).
+Our own runners add Clojure, PowerShell, Groovy and Nim, and make every
+language fast (about 1 s to compile instead of 5–40 s). Tcl is not offered
+by Piston, so it stays unavailable.
 
-## Steps
+## Which machines (honest costs)
 
-1. On the new machine, install Docker:
+| Where | Machine | Cost | Notes |
+|---|---|---|---|
+| Oracle Cloud | Always Free, Ampere A1 (ARM), 2 OCPU / 12 GB | Free | Needs a card to sign up (not charged). Free machines can be hard to get in busy regions, and Oracle may reclaim one that sits idle. A few Piston packages are x86-only; those languages just pass to the next runner. |
+| Hetzner | CX22, 2 vCPU / 4 GB, x86 | about €4–5 a month | Cheapest paid machine that runs every language. |
+| AWS | t3.small, 2 vCPU / 2 GB, x86 | about $15 a month | Must be a **new** machine, never `hive-worker`: student code must not run next to the AI logins. |
 
-   ```bash
-   curl -fsSL https://get.docker.com | sh
-   ```
+The prices are what the providers listed in late 2026. The order page shows
+the real price before you pay. Nothing here is set up without the owner's yes.
 
-2. Start Piston with the same limits Nexora's own setup uses
-   (`deploy/oracle/piston-compose.yml` in this repo). Copy that file to the
-   machine, then:
+## Setting up one runner (same for every provider)
 
-   ```bash
-   sudo mkdir -p /opt/piston/packages && sudo docker compose -f piston-compose.yml up -d
-   ```
+You need: a fresh **Ubuntu 24.04** machine with ports **22, 80 and 443** open.
 
-   It listens only on the machine itself (127.0.0.1:2000).
-
-3. Install the languages. This picks the newest version of each, the same
-   way `deploy/oracle/setup.sh` does (needs `jq`: `sudo apt install -y jq`):
+1. Open a terminal on the machine (each provider has a "Console" or "SSH" button).
+2. Paste these two lines:
 
    ```bash
-   INDEX=$(curl -s localhost:2000/api/v2/packages); for p in gcc python java node typescript mono go rust kotlin ruby php perl lua bash; do v=$(echo "$INDEX" | jq -r --arg n $p '[.[]|select(.language==$n)|.language_version]|.[]' | sort -V | tail -1); [ -n "$v" ] && curl -s -m 900 -X POST localhost:2000/api/v2/packages -H 'Content-Type: application/json' -d "{\"language\":\"$p\",\"version\":\"$v\"}" && echo " $p $v"; done
+   curl -fsSL https://raw.githubusercontent.com/Gurudeep306/Nexora/main/deploy/runner/setup.sh -o setup.sh
    ```
-
-4. Make a long random password for the runner and keep it:
 
    ```bash
-   openssl rand -hex 32
+   sudo bash setup.sh
    ```
 
-5. Put Caddy in front so only Nexora (holding that password) can use it.
-   Install Caddy (`sudo apt install caddy`), then replace `/etc/caddy/Caddyfile` with:
+3. Wait 10–30 minutes. At the end it prints two lines, `PISTON_URL` and
+   `PISTON_TOKEN`. Keep them. (Show the password again: `sudo cat /opt/piston/token`.)
 
-   ```
-   run.nexoraguru.in {
-     @ok header Authorization "Bearer PASTE_THE_PASSWORD_HERE"
-     handle @ok {
-       reverse_proxy 127.0.0.1:2000
-     }
-     respond 401
-   }
-   ```
+The script installs Docker, Piston, every judge language, and HTTPS with a
+password check. It needs no domain: it uses the free `<ip>.sslip.io` name.
+Running it again is safe.
 
-   Then `sudo systemctl reload caddy`. Caddy gets the HTTPS certificate by itself.
+### Oracle (free)
 
-6. In Render → the `nexora` service → Environment, set:
+1. Sign up at cloud.oracle.com → choose your home region (pick one close to
+   India, e.g. Mumbai or Hyderabad).
+2. Menu → Compute → Instances → **Create instance**.
+3. Image: **Canonical Ubuntu 24.04**. Shape: **Ampere → VM.Standard.A1.Flex**,
+   2 OCPU, 12 GB memory.
+4. Networking: keep "Assign a public IPv4 address". Add your SSH key (or let
+   it make one and download it). **Create**.
+5. Open the ports: on the instance page click the **subnet** → the **Default
+   Security List** → **Add Ingress Rules**: Source `0.0.0.0/0`, TCP,
+   destination port `80,443`.
+6. Click **Cloud Shell** or SSH in, and run the two lines above.
 
-   | Name | Value |
-   | --- | --- |
-   | `JUDGE_MODE` | `piston` |
-   | `PISTON_URL` | `https://run.nexoraguru.in` |
-   | `PISTON_TOKEN` | the password from step 4 |
-   | `PISTON_LANGUAGES` | `cpp,c,python,java,javascript,typescript,go,rust,kotlin` |
+If it says "Out of capacity", try again later or another availability domain.
 
-   Save; Render restarts the site.
+### Hetzner (about €4–5 a month)
 
-7. Check it: open any problem, pick C++, press Run. The result shows which
-   engine ran it; it should say `piston`.
+1. Sign up at hetzner.com/cloud → **New project** → **Add server**.
+2. Location: any (Helsinki or Falkenstein are fine; Singapore is closest to India
+   but costs more). Image: **Ubuntu 24.04**. Type: **Shared vCPU → x86 → CX22**.
+3. Add your SSH key. **Create & Buy now**.
+4. Hetzner has no firewall on by default, so ports are already open.
+5. Click **>_ Console** on the server, log in, and run the two lines above.
+
+### AWS (about $15 a month)
+
+1. AWS console → region **Asia Pacific (Mumbai)** → **EC2** → **Launch instance**.
+2. Name `nexora-runner`. Image: **Ubuntu Server 24.04**. Type: **t3.small**.
+3. Key pair: create or choose one. Network settings: tick **Allow HTTPS** and
+   **Allow HTTP** from the internet. Storage: 30 GB.
+4. **Launch**. Then **Connect → EC2 Instance Connect → Connect**, and run the
+   two lines above.
+
+Do not reuse `hive-worker`.
+
+## Tell Nexora about the runners
+
+**Easiest: Admin → Code runners → Add runner.** Paste the address and the
+password the script printed. Nexora tests it at once (lists its languages and
+runs a tiny program), keeps the password encrypted, and starts using it within
+seconds — no redeploy. Add as many as you like, put them in order, turn one
+off, or replace its password. Each runner only gets the languages it has.
+
+Or, set them on the server instead (tried before the admin's list):
+
+Render → the `nexora` service → **Environment**:
+
+| Name | Value |
+| --- | --- |
+| `JUDGE_MODE` | `piston` |
+| `PISTON_URL` | every runner's address, joined by commas, fastest first: `https://1-2-3-4.sslip.io,https://5-6-7-8.sslip.io` |
+| `PISTON_TOKEN` | the passwords in the same order, joined by commas: `tokenA,tokenB` |
+| `PISTON_LANGUAGES` | leave empty (each runner passes on any language it lacks) |
+
+Save; Render restarts the site.
+
+## Check it
+
+- Open any problem, pick C++, press **Run**. The result shows which runner
+  answered: "Nexora runner", "Nexora runner 2", … or a public sandbox.
+- Admin: `GET /api/admin/judge-selftest` runs every language and shows each
+  language's runner chain and which runners are resting.
 
 ## If something goes wrong
 
-- Piston down or the password wrong: runs quietly fall back to the public
-  sandboxes, so the site keeps working — just slower.
-- To turn it off, set `JUDGE_MODE` back to `remote` in Render.
+- A runner down or its password wrong: runs pass to the next runner, then the
+  public sandboxes. The site keeps working, just slower.
+- To stop using our runners, set `JUDGE_MODE` back to `remote` in Render.
+- To remove one runner, delete its address and password from both lists.
