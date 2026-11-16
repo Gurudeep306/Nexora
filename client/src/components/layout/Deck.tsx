@@ -290,12 +290,15 @@ export function Deck() {
   // drifted away from its edge.
   const hidden = autoHide && !revealed && !moreOpen && !editing
   // Off-screen towards its own edge when hidden.
+  // Always set both axes: the Dock can change edge after it mounts (the saved
+  // setting arrives from the account), and a stale offset would push it off centre.
   const off = (d: number, gone: boolean) =>
-    position === 'bottom' ? { y: d, opacity: gone ? 0 : 1 } : { x: position === 'left' ? -d : d, opacity: gone ? 0 : 1 }
+    position === 'bottom' ? { x: 0, y: d, opacity: gone ? 0 : 1 } : { x: position === 'left' ? -d : d, y: 0, opacity: gone ? 0 : 1 }
 
   return (
     <>
       <motion.nav
+        key={position}
         aria-label="Dock"
         aria-hidden={hidden || undefined}
         data-position={position}
