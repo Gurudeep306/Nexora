@@ -1,6 +1,7 @@
 # Handoff — continue the owner's current work
 
-Read this first in a new session, then `AGENTS.md` and `CLAUDE.md`. Keep this
+Read this first in a new session, then `AGENTS.md` and `CLAUDE.md`.
+The exact prompt to start the next session is in `docs/NEXT_SESSION_PROMPT.md`. Keep this
 file current: before you stop for any reason (usage limit, end of session,
 the owner interrupts), update **"Where it stands"** and **"Next, in order"**
 and push it with your work. Short, plain sentences; exact paths.
@@ -92,8 +93,26 @@ pushed so far:
   timeline marks above the scrubber (`[` / `]` jump between them), a
   footnote slot, `resetKey`, `autoplay`. **Check DSA chapters in the
   browser after this refactor** (not yet done).
-- Not built yet: `DryRunPanel.tsx` (the Solve-page UI), the Solve-page
-  tidy, other languages, Admin → Compilers.
+- Solve page UI: `client/src/components/solve/dryrun/DryRunPanel.tsx`,
+  a **Dry run** tab and a **Dry run** button next to Run / Submit
+  (`client/src/pages/SolvePage.tsx`). Sample picker (every test + custom
+  input), "Run again" / "Run my latest code", honest messages for an
+  unsupported language, no code, no input, runner busy, program error,
+  capped trace. Checked in a browser (bubble sort in Python, light and
+  dark): real values, pointers `j` and `j+1`, variables, code line, marks.
+- **Known issues to fix first next session:**
+  1. axe colour-contrast on the pointer-name chips (`.viz-pointer-name`
+     in `client/src/learn/engine/views/ArrayView.tsx`, colours from
+     `ptrHue` in `views/stage.ts`). This is in the shared view, so the DSA
+     chapters have it too. Fix the colours (text on the chip ≥ 4.5:1 in
+     light and dark, all ten themes) and re-run axe.
+  2. The Solve page's bottom panel is short; the dry run reads best in
+     full screen. Make the Dry run open taller (or offer "open large").
+  3. Not yet checked: the dry run on a phone; DSA chapters in dark mode
+     and on a phone after the FramePlayer refactor; `learn.css` still has
+     a gradient + glow on `.viz-meter-fill` (against the house rules).
+- Not built yet: the rest of the Solve-page tidy, other languages,
+  Admin → Compilers.
 
 ## The visual dry run — full design (build exactly this)
 
@@ -192,28 +211,79 @@ inside). "How it runs" becomes a second view inside it ("Under the hood").
 
 1. (done) map / calls views. 2. (done) replay + toFrames.
 3. (done in code) FramePlayer; still to check DSA chapters in a browser.
-4. `DryRunPanel.tsx`: sample picker, calls `/api/dryrun`, plays frames.
-   Check bubble sort, two pointers, a stack, a dict count, recursion
-   (fib), a linked list, a BFS on an adjacency list, a 2D DP — light,
-   dark, phone, axe 0.
-5. Solve page tidy (task list in "Owner-approved Solve page changes").
+4. (done) `DryRunPanel.tsx`. Still to do: fix the "Known issues" above,
+   then check in a browser bubble sort, two pointers, a stack, a dict
+   count, recursion (fib), a linked list, a BFS on an adjacency list, a 2D
+   DP, a heap, a trie — light, dark, phone, axe 0.
+5. Solve page redesign (section "Solve page redesign — every button in its
+   best place").
 6. Dry run for C++, Java, C, JavaScript (tree-sitter instrumentation),
    then Go, Rust, C#, Kotlin, Swift and the rest.
 7. Admin → Compilers (see below).
 8. Then the older list: problem pipeline, staff problem editor, social,
    contests, linked platforms (section "Older requests").
 
-### Owner-approved Solve page changes
+### Solve page redesign — every button in its best place (owner's request)
 
-- A **Dry run** button next to Run and Submit.
-- Bottom tabs 7 → 4: Tests (with "Generate tests with AI" inside), Result
-  (Issues folded in), Dry run (with "Under the hood"), Coach (Analysis
-  inside).
-- Editor toolbar: keep Snippets, Format, Template, Full screen visible;
-  move theme, font size, wrap, minimap, Vim, copy, download, shortcuts into
-  a "⋯ More" menu; drop the Undo / Redo buttons (keys still work); move the
-  session timer and character count from the status bar into More.
-  Nothing is deleted (AGENTS.md: every advanced feature stays).
+**The owner's words (keep to them):** "i want the buttons not everything at
+the bottom part i want it to uniquely place all buttons and remove all
+unnecessary features … by analyzing what to place where to make it look the
+best and show case best … all buttons not just dry run".
+
+**What is there today (counted 2026-11-16)** — too much, much of it twice:
+- Top bar: layout menu, full-screen arena, language picker, an "AI tools"
+  menu (Fix my code, Analyse my code, See how it runs, Generate tests, Ask
+  the assistant, Inline suggestions), Dry run, Run, Submit.
+- Editor toolbar (15): editor theme, font −/+, word wrap, minimap, Vim,
+  snippets, template, copy, download, undo, redo, keyboard shortcuts, focus.
+- Editor status bar: Ln/Col, language, indent width, line/char count,
+  session timer, wrap state, issue count, saved state, theme name.
+- Bottom panel, 8 tabs: Tests, Result, Dry run, AI tests, Analysis, How it
+  runs, Coach, Issues. Three of these are also in the AI menu.
+- Problem panel: Description / Submissions, examples with copy and "Add to
+  tests", translate bar.
+
+**The plan — each control lives where it is used, nothing appears twice:**
+
+1. **Top bar = the three actions on the code, nothing else.**
+   Left: problem title + difficulty. Right, in this order:
+   language picker · **Dry run** · **Run** · **Submit** (the only clay
+   button) · one "⋯" (layout, full-screen arena, shortcuts, reset layout).
+   The AI menu goes away from here (see 4).
+2. **Actions on a sample sit on the sample.** In the Problem panel, each
+   example gets two small inline actions beside its copy button: "Run this"
+   and "Dry run this" (they select that case and act). "Add to tests"
+   stays. This is the unique placement: you act on the case you are reading.
+3. **The editor header is slim.** File chip (`main.py`, with the saved dot)
+   on the left; on the right only: Format, Snippets, Reset to template, and
+   "⋯ Editor settings" (theme, font size, wrap, minimap, Vim, indent, inline
+   AI suggestions, copy, download, shortcuts). Remove the Undo / Redo
+   buttons (Ctrl+Z / Ctrl+Y stay), the session timer, the char count, the
+   theme name and the wrap label from the status bar. Status bar keeps
+   Ln/Col, language and the issue count — clicking the count jumps to the
+   first error and opens Result.
+4. **AI help in one place.** One "Help" button at the top right of the
+   editor (or the existing ⌘J assistant) opens one drawer with: Hint, Fix my
+   code, Explain my error (only when there is one), Ask. "Analyse my code",
+   "See how it runs" and "Generate tests" move into the tabs they open (not
+   menu items).
+5. **Results panel: 4 tabs, each with its own tools inside.**
+   - **Tests** — the cases, the custom input, "Paste many tests",
+     "Generate tests with AI".
+   - **Result** — run / judge results; compile errors with the plain-
+     English explanation and line links (the old Issues tab folds in).
+   - **Dry run** — the visual dry run; a switch "Under the hood" shows the
+     How-it-runs view (tokens, compiler, assembly / bytecode).
+   - **Coach** — hints and issues found, plus Analysis (complexity, what
+     to improve).
+6. **Phone:** Problem / Code / Results tabs at the top (as now) and a
+   sticky bottom action bar with Dry run · Run · Submit within thumb reach.
+7. **Keys:** Ctrl/⌘+Enter Run, Ctrl/⌘+Shift+Enter Submit, Alt+D Dry run;
+   list them in "⋯ → Shortcuts".
+8. **Nothing is lost:** every advanced feature stays reachable (AGENTS.md:
+   "simple, but every advanced feature stays"); only duplicates and noise
+   go. Check: axe 0, light / dark / phone, no sideways scroll at 360 px, and
+   every old feature can still be reached in at most two clicks.
 
 ### Admin → Compilers (approved)
 

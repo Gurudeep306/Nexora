@@ -663,5 +663,7 @@ function noteFor(s: Snapshot, lineText: string, top: CallFrame, changed: string[
     const r = st && 'roles' in st && st.roles ? Object.values(st.roles) : []
     parts.push(r.includes('swap') ? `${n}: two values swap` : r.includes('new') ? `${n} grows` : `${n} changes`)
   }
-  return `Line ${s.line}: ${short || '(end)'}${parts.length ? ` — ${parts.join(', ')}` : ''}.`
+  const text = `Line ${s.line}: ${short || '(end)'}${parts.length ? ` — ${parts.join(', ')}` : ''}`
+  // No full stop after code that already ends in punctuation ("for …:", "x = 1;").
+  return /[.:;{}]$/.test(text) ? text : `${text}.`
 }
