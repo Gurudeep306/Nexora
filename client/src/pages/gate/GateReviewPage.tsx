@@ -122,7 +122,7 @@ export default function GateReviewPage() {
         ) : done ? (
           <Card className="space-y-5 p-4 sm:p-5">
             <div className="flex items-center gap-3">
-              <span className="flex size-11 items-center justify-center rounded-2xl bg-state-success/12 text-state-success">
+              <span className="flex size-11 items-center justify-center rounded-2xl shadow-[inset_0_0_0_1px_currentColor] text-state-success">
                 <Icon name="check-circle" className="size-6" />
               </span>
               <div>

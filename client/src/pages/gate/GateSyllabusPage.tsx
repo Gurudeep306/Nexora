@@ -159,7 +159,7 @@ export default function GateSyllabusPage() {
                         aria-expanded={isOpen}
                         aria-controls={`syl-${s.id}`}
                         onClick={() => toggle(s.id)}
-                        className="flex w-full cursor-pointer items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand focus-visible:ring-inset sm:px-5"
+                        className="flex w-full cursor-pointer items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary focus-visible:ring-inset sm:px-5"
                       >
                         <span className="min-w-0 flex-1">
                           <span className="flex flex-wrap items-baseline gap-x-2">
@@ -187,9 +187,9 @@ export default function GateSyllabusPage() {
                             <li key={t.id}>
                               <Link
                                 to={practiceLink({ exam, subject: s.id, topic: t.id })}
-                                className="group grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 px-4 py-2.5 transition-colors hover:bg-bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand focus-visible:ring-inset sm:grid-cols-[1fr_70px_90px_120px_auto] sm:px-5"
+                                className="group grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 px-4 py-2.5 transition-colors hover:bg-bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary focus-visible:ring-inset sm:grid-cols-[1fr_70px_90px_120px_auto] sm:px-5"
                               >
-                                <span className="min-w-0 truncate text-[13.5px] text-text-primary group-hover:text-accent-brand">{t.name}</span>
+                                <span className="min-w-0 truncate text-[13.5px] text-text-primary group-hover:underline group-hover:underline-offset-2">{t.name}</span>
                                 <span className="text-right text-[12px] text-text-muted tabular-nums sm:text-left">
                                   {t.pyqs} <span className="sm:hidden">PYQs</span>
                                   <span className="hidden sm:inline">PYQs</span>
@@ -200,7 +200,7 @@ export default function GateSyllabusPage() {
                                 <span className="col-span-1">
                                   <MasteryLabel level={t.level as MasteryLevel} />
                                 </span>
-                                <span className="hidden text-[12px] font-medium text-accent-brand opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 sm:inline">
+                                <span className="hidden text-[12px] font-medium text-text-primary underline underline-offset-2 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 sm:inline">
                                   Practise →
                                 </span>
                               </Link>
@@ -268,7 +268,7 @@ function WeightageTrends({ inputs }: { inputs: ReturnType<typeof usePlanInputs> 
                   onClick={() => setPick(r.id)}
                   aria-pressed={r.id === sel}
                   className={cn(
-                    'grid w-full cursor-pointer grid-cols-[110px_1fr_36px] items-center gap-2 rounded-md px-1 py-0.5 text-left text-[12px] transition-colors hover:bg-bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand',
+                    'grid w-full cursor-pointer grid-cols-[110px_1fr_36px] items-center gap-2 rounded-md px-1 py-0.5 text-left text-[12px] transition-colors hover:bg-bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary',
                     r.id === sel && 'bg-bg-surface-2',
                   )}
                 >
@@ -330,11 +330,11 @@ function MostAsked({ inputs }: { inputs: ReturnType<typeof usePlanInputs> }) {
             <li key={`${r.sid}/${r.tid}`}>
               <Link
                 to={practiceLink({ exam, subject: r.sid, topic: r.tid })}
-                className="group grid grid-cols-[20px_1fr_auto] items-center gap-2 rounded-md py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
+                className="group grid grid-cols-[20px_1fr_auto] items-center gap-2 rounded-md py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary"
               >
                 <span className="text-[11.5px] text-text-muted tabular-nums">{i + 1}</span>
                 <span className="min-w-0">
-                  <span className="block truncate text-[12.5px] text-text-primary group-hover:text-accent-brand">{inputs.topicName(r.sid, r.tid)}</span>
+                  <span className="block truncate text-[12.5px] text-text-primary group-hover:underline group-hover:underline-offset-2">{inputs.topicName(r.sid, r.tid)}</span>
                   <span className="mt-0.5 block h-1 overflow-hidden rounded-full bg-bg-surface-3">
                     <span className="block h-full rounded-full bg-gold/70" style={{ width: `${(r.n / max) * 100}%` }} />
                   </span>

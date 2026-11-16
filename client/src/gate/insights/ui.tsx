@@ -2,7 +2,9 @@
 import { useId, type KeyboardEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Card, Skeleton } from '@/components/ui'
-import { Icon, IconBadge, type IconName, type IconTone } from '@/components/icon/Icon'
+import { Icon, type IconName, type IconTone } from '@/components/icon/Icon'
+import { Sparkline } from '@/components/ui/Sparkline'
+import './exam-hall.css'
 import { cn } from '@/lib/utils'
 import { MASTERY, type MasteryLevel } from './format'
 
@@ -29,11 +31,11 @@ export function Panel({
 }) {
   const hid = useId()
   return (
-    <Card className={cn('flex min-w-0 flex-col', className)} aria-labelledby={hid} role="region" id={id}>
+    <Card className={cn('gp flex min-w-0 flex-col', className)} aria-labelledby={hid} role="region" id={id}>
       <div className="flex items-start justify-between gap-3 px-4 pt-4 pb-2 sm:px-5">
         <div className="min-w-0">
-          <h2 id={hid} className="flex items-center gap-2 text-[14.5px] font-semibold text-text-primary">
-            {icon && <Icon name={icon} className="size-4 text-accent-brand" />}
+          <h2 id={hid} className="ed-serif gp-title flex items-center gap-2 text-text-primary">
+            {icon && <Icon name={icon} className="size-4 shrink-0 text-text-muted" />}
             {title}
           </h2>
           {subtitle && <p className="mt-0.5 text-[12.5px] text-text-muted">{subtitle}</p>}
@@ -49,10 +51,10 @@ export function PanelLink({ to, children }: { to: string; children: ReactNode })
   return (
     <Link
       to={to}
-      className="inline-flex items-center gap-1 rounded-md text-[12.5px] font-medium text-accent-brand hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
+      className="gp-link inline-flex items-center gap-1 rounded-md text-[12.5px] font-medium text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary"
     >
       {children}
-      <Icon name="external" className="size-3" />
+      <span aria-hidden="true">→</span>
     </Link>
   )
 }
@@ -66,27 +68,25 @@ export function Kpi({
   icon,
   tone = 'accent',
   loading,
+  spark,
 }: {
   label: string
   value: ReactNode
   sub?: ReactNode
+  /** Kept as data for callers; the figure has no icon tile. */
   icon: IconName
   tone?: IconTone
   loading?: boolean
+  /** Real per-day values (oldest first) for a word-sized line under the figure. */
+  spark?: number[]
 }) {
   return (
-    <Card className="flex items-start justify-between gap-3 p-4">
-      <div className="min-w-0">
-        <p className="text-[11px] font-medium tracking-wider text-text-muted uppercase">{label}</p>
-        {loading ? (
-          <Skeleton className="mt-2 h-7 w-16" />
-        ) : (
-          <p className="mt-1 truncate font-display text-[26px] leading-none font-semibold tracking-tight text-text-primary tabular-nums">{value}</p>
-        )}
-        {sub && <div className="mt-1.5 truncate text-[12px] text-text-muted">{sub}</div>}
-      </div>
-      <IconBadge name={icon} tone={tone} box="sm" />
-    </Card>
+    <div className="gk min-w-0" data-icon={icon} data-tone={tone}>
+      <p className="ed-label">{label}</p>
+      {loading ? <Skeleton className="mt-2 h-9 w-16" /> : <p className="gk-n">{value}</p>}
+      {sub && <div className="gk-sub">{sub}</div>}
+      {spark && spark.length > 1 && <Sparkline values={spark} className="gk-spark" />}
+    </div>
   )
 }
 
@@ -207,7 +207,7 @@ export function Segmented<T extends string>({
     requestAnimationFrame(() => document.getElementById(`${uid}-${next.id}`)?.focus())
   }
   return (
-    <div role="radiogroup" aria-label={label} onKeyDown={onKey} className={cn('inline-flex h-8 items-center rounded-lg border border-border bg-bg-surface-2 p-0.5', className)}>
+    <div role="radiogroup" aria-label={label} onKeyDown={onKey} className={cn('gseg inline-flex items-center', className)}>
       {options.map((o) => {
         const on = o.id === value
         return (
@@ -219,10 +219,7 @@ export function Segmented<T extends string>({
             aria-checked={on}
             tabIndex={on ? 0 : -1}
             onClick={() => onChange(o.id)}
-            className={cn(
-              'h-full cursor-pointer rounded-md px-2.5 text-[12.5px] font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand',
-              on ? 'bg-bg-surface-4 text-text-primary shadow-sm' : 'text-text-muted hover:text-text-primary',
-            )}
+            className="gseg-btn"
           >
             {o.label}
           </button>
@@ -248,10 +245,10 @@ export function EmptyHint({
   className?: string
 }) {
   return (
-    <div className={cn('flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border px-4 py-8 text-center', className)}>
-      <IconBadge name={icon} box="sm" tone="neutral" />
-      <p className="text-[13.5px] font-semibold text-text-primary">{title}</p>
-      {children && <p className="max-w-sm text-[12.5px] text-text-muted">{children}</p>}
+    <div className={cn('gempty flex flex-col items-center justify-center gap-2 px-4 py-8 text-center', className)}>
+      <Icon name={icon} className="size-5 text-text-muted" />
+      <p className="ed-serif text-[18px] text-text-primary">{title}</p>
+      {children && <p className="max-w-sm text-[13px] text-text-secondary">{children}</p>}
       {action}
     </div>
   )
@@ -271,16 +268,7 @@ export function LinkButton({
   className?: string
 }) {
   return (
-    <Link
-      to={to}
-      className={cn(
-        'inline-flex h-8 items-center justify-center gap-1.5 rounded-lg px-3 text-[13px] font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand',
-        variant === 'primary' && 'bg-accent-brand text-on-accent-brand hover:brightness-110',
-        variant === 'secondary' && 'border border-border bg-bg-surface-2 text-text-primary hover:bg-bg-surface-3',
-        variant === 'ghost' && 'text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary',
-        className,
-      )}
-    >
+    <Link to={to} data-variant={variant} className={cn('gbtn', className)}>
       {icon && <Icon name={icon} className="size-3.5" />}
       {children}
     </Link>
@@ -291,7 +279,7 @@ export function LinkButton({
 export function OfflineNote({ what }: { what: string }) {
   return (
     <p className="flex items-center gap-2 rounded-lg border border-border bg-bg-surface-2 px-3 py-2 text-[12.5px] text-text-muted" role="status">
-      <Icon name="info" className="size-3.5 shrink-0 text-accent-brand" />
+      <Icon name="info" className="size-3.5 shrink-0 text-text-muted" />
       {what} will appear here once you start practising.
     </p>
   )

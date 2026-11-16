@@ -108,7 +108,7 @@ export default function GatePlannerPage() {
                       min={todayKey}
                       value={plan.examDate ?? ''}
                       onChange={(e) => update({ examDate: e.target.value || null })}
-                      className="h-9 min-w-0 flex-1 rounded-lg border border-border bg-bg-surface-2 px-3 text-[13.5px] text-text-primary [color-scheme:light_dark] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
+                      className="h-9 min-w-0 flex-1 rounded-lg border border-border bg-bg-surface-2 px-3 text-[13.5px] text-text-primary [color-scheme:light_dark] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary"
                     />
                     {plan.examDate && (
                       <Button variant="ghost" size="sm" onClick={() => update({ examDate: null })} aria-label="Clear exam date">
@@ -152,8 +152,8 @@ export default function GatePlannerPage() {
                           aria-pressed={on}
                           onClick={() => update({ days: on ? plan.days.filter((x) => x !== i) : [...plan.days, i].sort() })}
                           className={cn(
-                            'h-9 cursor-pointer rounded-lg border text-[12px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand',
-                            on ? 'border-accent-brand/50 bg-accent-brand/12 text-text-primary' : 'border-border text-text-muted hover:bg-bg-surface-2',
+                            'h-9 cursor-pointer rounded-lg border text-[12px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary',
+                            on ? 'border-text-primary bg-bg-surface-3 text-text-primary' : 'border-border text-text-muted hover:bg-bg-surface-2',
                           )}
                         >
                           {d}
@@ -277,18 +277,18 @@ function TaskCard({ t }: { t: PlanTask }) {
   return (
     <Link
       to={taskHref(t)}
-      className="group flex h-full items-center gap-3 rounded-xl border border-border p-3 transition-colors hover:border-accent-brand/40 hover:bg-bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
+      className="group flex h-full items-center gap-3 rounded-xl border border-border p-3 transition-colors hover:border-accent-brand/40 hover:bg-bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary"
     >
       <span
         className={cn(
           'flex size-9 shrink-0 items-center justify-center rounded-lg',
-          t.kind === 'mock' ? 'bg-gold/15 text-gold' : t.kind === 'revise' ? 'bg-info/15 text-info' : 'bg-accent-brand/12 text-accent-brand',
+          t.kind === 'mock' ? 'shadow-[inset_0_0_0_1px_var(--color-border-strong)] text-text-secondary' : t.kind === 'revise' ? 'shadow-[inset_0_0_0_1px_var(--color-border-strong)] text-text-secondary' : 'shadow-[inset_0_0_0_1px_var(--color-border-strong)] text-text-secondary',
         )}
       >
         <Icon name={t.kind === 'mock' ? 'monitor' : t.kind === 'revise' ? 'refresh' : 'book'} className="size-4" />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[13.5px] font-medium text-text-primary group-hover:text-accent-brand">{title}</span>
+        <span className="block truncate text-[13.5px] font-medium text-text-primary group-hover:underline group-hover:underline-offset-2">{title}</span>
         <span className="block truncate text-[12px] text-text-muted">
           {t.subjectName ?? (t.kind === 'mock' ? 'GATE CBT · 65 questions' : 'Spaced review')} · {t.hours}h{t.kind !== 'mock' ? ` · ${t.questions} PYQs` : ''}
         </span>
@@ -298,22 +298,22 @@ function TaskCard({ t }: { t: PlanTask }) {
 }
 
 const PHASE = {
-  learn: { label: 'Learn', cls: 'bg-accent-brand/12 text-accent-brand' },
-  revise: { label: 'Revise', cls: 'bg-info/15 text-info' },
-  mock: { label: 'Mocks', cls: 'bg-gold/15 text-gold' },
+  learn: { label: 'Learn', cls: 'shadow-[inset_0_0_0_1px_var(--color-border-strong)] text-text-secondary' },
+  revise: { label: 'Revise', cls: 'shadow-[inset_0_0_0_1px_var(--color-border-strong)] text-text-secondary' },
+  mock: { label: 'Mocks', cls: 'shadow-[inset_0_0_0_1px_var(--color-border-strong)] text-text-secondary' },
 } as const
 
 function WeekRow({ w, current }: { w: PlanWeek; current: boolean }) {
   const [open, setOpen] = useState(current)
   const id = `week-${w.start}`
   return (
-    <li className={cn('min-w-0 rounded-xl border', current ? 'border-accent-brand/45 bg-accent-brand/5' : 'border-border')}>
+    <li className={cn('min-w-0 rounded-xl border', current ? 'border-text-primary' : 'border-border')}>
       <button
         type="button"
         aria-expanded={open}
         aria-controls={id}
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
+        className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary"
       >
         <span className="w-12 shrink-0 text-[12px] font-semibold text-text-muted tabular-nums">W{w.index}</span>
         <span className="min-w-0 flex-1">
@@ -322,7 +322,7 @@ function WeekRow({ w, current }: { w: PlanWeek; current: boolean }) {
               {fmtDate(w.start)} – {fmtDate(w.end)}
             </span>
             <span className={cn('rounded-md px-1.5 py-0.5 text-[10.5px] font-semibold', PHASE[w.phase].cls)}>{PHASE[w.phase].label}</span>
-            {current && <span className="text-[11px] font-semibold text-accent-brand">This week</span>}
+            {current && <span className="text-[11px] font-semibold text-text-primary underline decoration-2 underline-offset-4">This week</span>}
           </span>
           <span className="mt-0.5 block truncate text-[12px] text-text-muted">{w.subjects.map(shortSubject).join(' · ') || 'Full mocks and revision'}</span>
         </span>
@@ -335,7 +335,7 @@ function WeekRow({ w, current }: { w: PlanWeek; current: boolean }) {
         <ul id={id} className="min-w-0 space-y-2 border-t border-border px-3 py-3">
           {w.days.map((d) => (
             <li key={d.date} className="grid min-w-0 grid-cols-1 gap-1 sm:grid-cols-[96px_minmax(0,1fr)]">
-              <span className={cn('text-[12px] font-medium', d.date === dayKey() ? 'text-accent-brand' : 'text-text-muted')}>
+              <span className={cn('text-[12px] font-medium', d.date === dayKey() ? 'font-semibold text-text-primary' : 'text-text-secondary')}>
                 {fmtDate(d.date, { weekday: 'short', day: 'numeric', month: 'short' })}
               </span>
               <span className="flex min-w-0 flex-wrap gap-1.5">
@@ -344,12 +344,12 @@ function WeekRow({ w, current }: { w: PlanWeek; current: boolean }) {
                     key={i}
                     to={taskHref(t)}
                     className={cn(
-                      'inline-flex max-w-full items-center gap-1 rounded-md px-2 py-0.5 text-[12px] transition-colors hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand',
+                      'inline-flex max-w-full items-center gap-1 rounded-md px-2 py-0.5 text-[12px] transition-colors hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary',
                       PHASE[t.kind === 'learn' ? 'learn' : t.kind === 'mock' ? 'mock' : 'revise'].cls,
                     )}
                   >
                     <span className="min-w-0 truncate">{t.kind === 'mock' ? 'Mock test' : (t.topicName ?? 'Revision')}</span>
-                    <span className="opacity-70 tabular-nums">{t.hours}h</span>
+                    <span className="font-mono tabular-nums">{t.hours}h</span>
                   </Link>
                 ))}
               </span>

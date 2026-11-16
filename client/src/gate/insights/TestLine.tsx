@@ -22,10 +22,10 @@ export function TestLine({ t }: { t: GateTest }) {
   return (
     <Link
       to={GATE_ROUTES.test(t.id)}
-      className="group flex items-center gap-3 rounded-md py-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
+      className="group flex items-center gap-3 rounded-md py-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary"
     >
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[13.5px] font-medium text-text-primary group-hover:text-accent-brand">{t.title}</span>
+        <span className="block truncate text-[13.5px] font-medium text-text-primary group-hover:underline group-hover:underline-offset-2">{t.title}</span>
         <span className="block truncate text-[12px] text-text-muted">
           {t.questionIds.length} Qs · {t.config.durationMin} min · {timeAgo(t.submittedAt ?? t.createdAt)}
         </span>
@@ -41,7 +41,7 @@ export function TestLine({ t }: { t: GateTest }) {
           </span>
         </span>
       ) : (
-        <span className="shrink-0 rounded-md bg-state-warning/12 px-2 py-0.5 text-[11.5px] font-medium text-state-warning">Resume</span>
+        <span className="shrink-0 rounded-md px-2 py-0.5 text-[11.5px] font-medium text-state-warning shadow-[inset_0_0_0_1px_currentColor]">Resume</span>
       )}
     </Link>
   )
