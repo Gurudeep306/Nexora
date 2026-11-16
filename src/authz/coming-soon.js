@@ -1,9 +1,9 @@
 // The page everyone but the owner, admins and early-access users sees while
 // the site is private (direct page loads; the React app draws the same screen
-// itself: client/src/components/site/ComingSoon.tsx). Nothing but the NG mark
-// writing itself, over a faint copy so it never disappears; no visible words.
-// The mark is the link to the owner sign-in. Light and dark follow
-// prefers-color-scheme (the server cannot know the visitor's theme).
+// itself: client/src/components/site/ComingSoon.tsx). The NG mark writing
+// itself over a faint copy (so it never disappears), "Coming soon", and the
+// owner & staff sign-in. Light and dark follow prefers-color-scheme (the
+// server cannot know the visitor's theme).
 const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
@@ -12,7 +12,6 @@ const N = "M6.6 25.4V6.9L16.1 25.4";
 const G = "M26 11.2C25.2 8.4 22.9 6.9 20.2 6.9H16.1V25.4H21.2C24.2 25.4 26 23.5 26 20.7V17.4H21.4";
 
 function comingSoonHtml({ message = "", signInHref = "/auth?owner=1" } = {}) {
-  const label = message ? `NexoraGuru is coming soon. ${message}` : "NexoraGuru is coming soon";
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -23,11 +22,15 @@ function comingSoonHtml({ message = "", signInHref = "/auth?owner=1" } = {}) {
 <title>NexoraGuru · Coming soon</title>
 <style>
 html, body { margin: 0; }
-.cs { --bg: #f0eee6; --ink: #141413; --clay: #d97757; min-height: 100dvh; display: grid; place-items: center; background: var(--bg); color: var(--ink); }
-@media (prefers-color-scheme: dark) { .cs { --bg: #1a1917; --ink: #f0eee6; } }
+.cs { --bg: #f0eee6; --card: #faf9f5; --ink: #141413; --ink-2: #3d3d3a; --line: #87867f; --clay: #d97757; min-height: 100dvh; display: grid; place-items: center; padding: 2rem 1.5rem; box-sizing: border-box; background: var(--bg); color: var(--ink); font-family: 'Geist Variable', Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; }
+@media (prefers-color-scheme: dark) { .cs { --bg: #1a1917; --card: #22211e; --ink: #f0eee6; --ink-2: #d4d1c7; --line: #6b6a64; } }
+.cs-stack { display: grid; justify-items: center; gap: 1.25rem; text-align: center; }
+.cs-soon { margin: 0.5rem 0 0; font-family: 'Newsreader Variable', Newsreader, Georgia, 'Times New Roman', serif; font-weight: 400; font-size: clamp(2rem, 6vw, 3rem); letter-spacing: -0.01em; }
+.cs-note { margin: 0; max-width: 28rem; font-family: 'Newsreader Variable', Newsreader, Georgia, serif; font-size: 1.0625rem; color: var(--ink-2); }
+.cs-signin { display: inline-flex; align-items: center; gap: 0.5rem; height: 2.5rem; margin-top: 1rem; padding: 0 1.125rem; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font-family: inherit; font-size: 14px; font-weight: 500; line-height: 1; text-decoration: none; }
+.cs-signin:hover { border-color: var(--ink); }
+.cs-signin:focus-visible { outline: 2px solid var(--clay); outline-offset: 3px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.cs-link { display: grid; place-items: center; padding: 1.5rem; border-radius: 24px; color: inherit; }
-.cs-link:focus-visible { outline: 2px solid var(--clay); outline-offset: 4px; }
 .cs-mark { width: 128px; height: 128px; overflow: visible; }
 .cs-ghost { opacity: 0.16; }
 .cs-ink path { stroke-dasharray: 1 2; stroke-dashoffset: 1.02; } /* gap > length: no round cap left behind */
@@ -41,9 +44,8 @@ html, body { margin: 0; }
 </style>
 </head>
 <body>
-<main class="cs" aria-label="${esc(label)}">
-  <h1 class="sr">NexoraGuru · Coming soon</h1>
-  <a class="cs-link" href="${esc(signInHref)}" aria-label="Owner sign in">
+<main class="cs">
+  <div class="cs-stack">
     <svg class="cs-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
       <g fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
         <g class="cs-ghost"><path d="${N}"/><path d="${G}"/></g>
@@ -51,7 +53,10 @@ html, body { margin: 0; }
       </g>
       <circle class="cs-dot" cx="21.4" cy="17.4" r="2.4" fill="var(--clay)"/>
     </svg>
-  </a>
+    <h1 class="cs-soon">Coming soon</h1>
+    ${message ? `<p class="cs-note">${esc(message)}</p>` : ""}
+    <a class="cs-signin" href="${esc(signInHref)}">Owner &amp; staff sign in <span aria-hidden="true">→</span></a>
+  </div>
 </main>
 </body>
 </html>`;
