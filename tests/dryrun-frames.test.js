@@ -124,3 +124,88 @@ test('huge lists are drawn in part and say so', () => {
   assert.equal(arr.cells.length, 40);
   assert.match(arr.label, /first 40 of 100/);
 });
+
+/* ── every kind of data structure, named as in the code ── */
+
+test('a heapq list is drawn as the array and as the heap tree, named after the variable', () => {
+  const frames = framesOf('import heapq\npq = []\nfor x in [5, 3, 8, 1]:\n    heapq.heappush(pq, x)\n');
+  const last = frames[frames.length - 1];
+  assert.deepEqual(find(last, 'array', 'pq').cells.map((c) => c.v), [1, 3, 8, 5]);
+  const t = last.structures.find((s) => s.kind === 'tree' && s.id.endsWith(':pq:tree'));
+  assert.ok(t, 'heap tree present');
+  assert.match(t.label, /^pq as a heap \(top = 1\)/);
+  assert.equal(t.nodes.length, 4);
+  assert.equal(t.roots.length, 1);
+});
+
+test('a union-find parent array becomes a forest of sets', () => {
+  const frames = framesOf('parent = list(range(4))\ndef find(x):\n    while parent[x] != x:\n        x = parent[x]\n    return x\nparent[find(1)] = find(0)\nparent[find(3)] = find(2)\n');
+  const f = frames[frames.length - 1].structures.find((s) => s.id.endsWith(':forest'));
+  assert.ok(f, 'forest present');
+  assert.equal(f.roots.length, 2, 'two sets: {0,1} and {2,3}');
+  assert.match(f.label, /^parent as sets/);
+});
+
+test('an adjacency matrix named like a graph is drawn as the grid and as the graph', () => {
+  const frames = framesOf('graph = [[0, 1, 1], [1, 0, 0], [1, 0, 0]]\nx = 0\n');
+  const last = frames[frames.length - 1];
+  assert.ok(find(last, 'grid', 'graph'));
+  const g = last.structures.find((s) => s.kind === 'graph');
+  assert.equal(g.label, 'graph as a graph');
+  assert.equal(g.edges.length, 2);
+  assert.equal(g.directed, false);
+});
+
+test('a BFS queue of (node, distance) pairs is a queue, not a grid', () => {
+  const frames = framesOf('from collections import deque\nq = deque([(0, 0)])\nq.append((1, 1))\nq.popleft()\n');
+  const f = frames.find((x) => x.line === 3);
+  const q = find(f, 'queue', 'q');
+  assert.ok(q, 'queue present');
+  assert.deepEqual(q.items.map((c) => c.v), ['(0, 0)', '(1, 1)']);
+});
+
+test('a trie is drawn with its letters on the edges and ● on word ends', () => {
+  const code = 'class T:\n    def __init__(self):\n        self.children = {}\n        self.end = False\nroot = T()\nfor w in ["at", "an"]:\n    node = root\n    for ch in w:\n        if ch not in node.children:\n            node.children[ch] = T()\n        node = node.children[ch]\n    node.end = True\n';
+  const frames = framesOf(code);
+  const t = frames[frames.length - 1].structures.find((s) => s.kind === 'tree');
+  assert.match(t.label, /^root \(trie/);
+  const r = t.nodes.find((n) => n.id === t.roots[0]);
+  assert.deepEqual(r.edgeLabels, ['a']);
+  assert.equal(t.nodes.filter((n) => n.v === '●').length, 2);
+});
+
+test('graph objects with neighbors are drawn as a graph named after the variable', () => {
+  const code = 'class G:\n    def __init__(self, v):\n        self.val = v\n        self.neighbors = []\na, b = G(1), G(2)\na.neighbors.append(b)\nb.neighbors.append(a)\nstart = a\n';
+  const frames = framesOf(code);
+  const g = frames[frames.length - 1].structures.find((s) => s.kind === 'graph');
+  assert.ok(g, 'graph present');
+  assert.equal(g.nodes.length, 2);
+  assert.equal(g.directed, false);
+});
+
+test('the list and the tree are named after the code\'s variables; a circular list says so', () => {
+  const frames = framesOf('class N:\n    def __init__(s, v):\n        s.val = v\n        s.next = None\nhead = N(1)\nhead.next = N(2)\nhead.next.next = head\n');
+  const l = find(frames[frames.length - 1], 'list');
+  assert.match(l.label, /^head \(circular/);
+});
+
+test('a sliding window is drawn as a band between its bounds', () => {
+  const frames = framesOf('a = [1, 2, 3, 4]\nl, r = 0, 0\ns = 0\nwhile r < len(a):\n    s += a[r]\n    while s > 5:\n        s -= a[l]\n        l += 1\n    r += 1\n');
+  const withBand = frames.map((f) => find(f, 'array', 'a')).find((a) => a && a.ranges && a.ranges.length);
+  assert.ok(withBand, 'a window band appears');
+  assert.equal(withBand.ranges[0].label, 'l … r');
+});
+
+test('a bitmask is shown in binary; objects show their fields', () => {
+  const frames = framesOf('mask = 0\nmask |= 1 << 2\nclass P:\n    def __init__(s):\n        s.x = 1\n        s.y = 2\np = P()\n');
+  const last = frames[frames.length - 1];
+  const vars = find(last, 'vars');
+  assert.equal(vars.vars.mask, '4 = 0b100');
+  assert.equal(vars.vars.p, 'P(x=1, y=2)');
+});
+
+test('__slots__ node classes are traced like any other', () => {
+  const frames = framesOf('class N:\n    __slots__ = ("val", "next")\n    def __init__(s, v):\n        s.val = v\n        s.next = None\nhead = N(7)\nhead.next = N(8)\n');
+  const l = find(frames[frames.length - 1], 'list');
+  assert.deepEqual(l.nodes.map((n) => n.v), [7, 8]);
+});

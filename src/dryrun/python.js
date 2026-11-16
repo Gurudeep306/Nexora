@@ -54,6 +54,11 @@ def _ser(v, heap, depth=0):
     if isinstance(v, (_t.FunctionType, _t.BuiltinFunctionType, _t.ModuleType, type)) or callable(v) and not hasattr(v, "__dict__"):
         return None
     d = getattr(v, "__dict__", None)
+    if not isinstance(d, dict):
+        # Classes with __slots__ (common in fast node classes) have no __dict__.
+        names = [n for c in type(v).__mro__ for n in getattr(c, "__slots__", ()) if isinstance(n, str)]
+        if names:
+            d = {n: getattr(v, n) for n in names if hasattr(v, n)}
     if isinstance(d, dict):
         i = _oid(v)
         if i not in heap and len(heap) < 300:

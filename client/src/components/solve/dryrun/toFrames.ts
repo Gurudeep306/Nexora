@@ -197,13 +197,27 @@ function arrayOf(key: string, name: string, v: ListTV, ctx: Ctx, label?: string)
   for (const at of touched(name, ctx.line, ctx.ints)) if (at >= 0 && at < cells.length && !rl[at]) rl[at] = looked
   const total = v.n
   const tag = v.t === 'set' ? 'set' : v.t === 'tuple' ? 'tuple' : null
+  const pointers = v.t === 'set' ? {} : pointersFor(name, cells.length, ctx)
+  // A window between two bounds that both index this array (l … r, lo … hi).
+  const ranges = []
+  for (const [a, b] of WINDOWS) {
+    const x = ctx.ints.get(a)
+    const y = ctx.ints.get(b)
+    const named = [...(ctx.facts.index.get(name) ?? [])]
+    const usesBoth = named.some((e) => e.startsWith(a)) && named.some((e) => e.startsWith(b))
+    if (x !== undefined && y !== undefined && usesBoth && x <= y && x >= 0 && y < cells.length && !(a === 'i' && b === 'j')) {
+      ranges.push({ from: x, to: y, role: 'window' as Role, label: `${a} … ${b}` })
+      break
+    }
+  }
   return {
     kind: 'array',
     id: key,
     label: `${label ?? name}${tag ? ` · ${tag}` : ''}${total > shown.length ? ` · first ${shown.length} of ${total}` : ''}`,
     cells,
     roles: rl,
-    pointers: v.t === 'set' ? {} : pointersFor(name, cells.length, ctx),
+    pointers,
+    ranges,
   }
 }
 
@@ -309,7 +323,11 @@ function linkedOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string)
   })
   const pointers: Record<string, string | null> = {}
   for (const [n, v] of starts) pointers[n] = `o${refId(v)}`
-  return { kind: 'list', id: key, label: 'linked list', nodes, doubly, pointers }
+  const circular = order.length > 1 && (() => {
+    const o = heap.get(order[order.length - 1])!
+    return refId(LINK.map((f) => o.f[f]).find((x) => x !== undefined)) === order[0]
+  })()
+  return { kind: 'list', id: key, label: `${starts[0][0]}${doubly ? ' (doubly linked)' : ''}${circular ? ' (circular: the last node points back to the first)' : ''}`, nodes, doubly, pointers }
 }
 
 function treeOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string): TreeState | null {
@@ -342,13 +360,153 @@ function treeOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string): 
   const roots = [...seen].filter((id) => !childOf.has(id)).map((id) => `o${id}`)
   const pointers: Record<string, string | null> = {}
   for (const [n, v] of starts) pointers[n] = `o${refId(v)}`
-  return { kind: 'tree', id: key, label: 'tree', nodes, roots, binary: true, pointers }
+  const rootName = starts.find(([, v]) => roots.includes(`o${refId(v)}`))?.[0] ?? starts[0][0]
+  return { kind: 'tree', id: key, label: rootName, nodes, roots, binary: true, pointers }
 }
+
+/* ── more structures: heaps, union-find, segment trees, matrices, N-ary trees, tries, graph objects ── */
+const heapish = (f: CodeFacts, name: string) =>
+  /^(heap|h|pq|minheap|maxheap|min_heap|max_heap|frontier|open|events)$/i.test(name) || new RegExp(String.raw`\b(heappush|heappop|heapify|heappushpop|heapreplace|nlargest|nsmallest)\s*\(\s*${esc(name)}\b`).test(f.src)
+const parentish = (name: string) => /^(parent|parents|par|fa|uf|dsu|leader|boss|link|root|roots)$/i.test(name)
+const segish = (name: string) => /^(seg|segtree|seg_tree|segment|segment_tree|tree|st|t)$/i.test(name)
+
+/** A list stored as a binary heap, drawn as the tree it stands for: children of i are 2i+1 and 2i+2. */
+function heapTreeOf(key: string, name: string, v: ListTV, ctx: Ctx, oneBased = false): TreeState | null {
+  const vals = v.i.slice(0, 31)
+  const start = oneBased ? 1 : 0
+  if (vals.length - start < 1) return null
+  const id = (i: number) => `${key}:h${i}`
+  const nodes = []
+  for (let i = start; i < vals.length; i++) {
+    const l = oneBased ? 2 * i : 2 * i + 1
+    const r = l + 1
+    nodes.push({ id: id(i), v: scalar(vals[i], ctx.heap), children: [l < vals.length ? id(l) : null, r < vals.length ? id(r) : null], note: `[${i}]` })
+  }
+  const roles: Record<string, Role> = {}
+  for (const at of touched(name, ctx.line, ctx.ints)) if (at >= start && at < vals.length) roles[id(at)] = hasCompare(ctx.line) ? 'compare' : 'active'
+  return { kind: 'tree', id: `${key}:tree`, label: oneBased ? `${name} as a tree (node i has children 2i, 2i+1)` : `${name} as a heap (top = ${show(vals[0], ctx.heap)})`, nodes, roots: [id(start)], binary: true, roles }
+}
+
+/** A union-find parent array as the forest it stands for. */
+function forestOf(key: string, name: string, v: ListTV, ctx: Ctx): TreeState | null {
+  const n = Math.min(v.i.length, MAX_NODES)
+  const par = v.i.slice(0, n)
+  if (!par.every((x) => typeof x === 'number' && Number.isInteger(x) && x >= 0 && x < v.i.length)) return null
+  const kids = new Map<number, number[]>()
+  const roots: string[] = []
+  par.forEach((p, i) => {
+    if (p === i || (p as number) >= n) roots.push(`${key}:u${i}`)
+    else kids.set(p as number, [...(kids.get(p as number) ?? []), i])
+  })
+  if (!roots.length) return null
+  const nodes = par.map((_, i) => ({ id: `${key}:u${i}`, v: i as Scalar, children: (kids.get(i) ?? []).map((c) => `${key}:u${c}`) }))
+  const roles: Record<string, Role> = {}
+  for (const at of touched(name, ctx.line, ctx.ints)) if (at >= 0 && at < n) roles[`${key}:u${at}`] = 'active'
+  const pointers: Record<string, string | null> = {}
+  for (const [k, val] of ctx.ints) if (/^(x|y|a|b|u|v|i|j|node|rx|ry|ra|rb|px|py)$/.test(k) && val >= 0 && val < n) pointers[k] = `${key}:u${val}`
+  return { kind: 'tree', id: `${key}:forest`, label: `${name} as sets (each tree is one set; its root is the leader)`, nodes, roots, roles, pointers }
+}
+
+/** A square 0/1 (or weight) matrix named like a graph, as the graph it stands for. */
+function matrixGraphOf(key: string, name: string, v: ListTV): GraphState | null {
+  const n = v.i.length
+  if (n < 2 || n > MAX_NODES || !v.i.every((r) => isList(r) && r.i.length === n && r.i.every((x) => typeof x === 'number' || typeof x === 'boolean'))) return null
+  const nodes = Array.from({ length: n }, (_, i) => ({ id: `n${i}`, label: String(i) }))
+  const edges: { from: string; to: string; w?: Scalar }[] = []
+  const rows = v.i as ListTV[]
+  const weighted = rows.some((r) => r.i.some((x) => typeof x === 'number' && x !== 0 && x !== 1))
+  rows.forEach((r, i) => r.i.forEach((x, j) => x && x !== 0 && i !== j && edges.push({ from: `n${i}`, to: `n${j}`, ...(weighted ? { w: x as Scalar } : {}) })))
+  const has = new Set(edges.map((e) => `${e.from}>${e.to}`))
+  const directed = edges.some((e) => !has.has(`${e.to}>${e.from}`))
+  return { kind: 'graph', id: `${key}:graph`, label: `${name} as a graph`, nodes, edges: directed ? edges : edges.filter((e) => Number(e.from.slice(1)) < Number(e.to.slice(1))), directed }
+}
+
+/** Objects with a `children` list or dict (N-ary trees, tries), named after the variable that holds the root. */
+function naryOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string): TreeState | null {
+  const KIDS = ['children', 'child', 'kids', 'next', 'nxt', 'links', 'edges']
+  const kidsOf = (o: HeapObj): { label: string | null; id: number }[] | null => {
+    for (const f of KIDS) {
+      const c = o.f[f]
+      if (isDict(c) && c.k.every(([, b]) => isRef(b) || b === null)) return c.k.filter(([, b]) => isRef(b)).map(([a, b]) => ({ label: String(scalar(a, heap)), id: (b as { id: number }).id }))
+      if (isList(c) && c.i.length && c.i.every((b) => isRef(b) || b === null) && (f === 'children' || f === 'child' || f === 'kids' || c.i.length > 2)) return c.i.map((b, i) => (isRef(b) ? { label: c.i.length > 2 && f !== 'children' && f !== 'kids' ? String.fromCharCode(97 + i) : null, id: b.id } : null)).filter((x): x is { label: string | null; id: number } => !!x)
+    }
+    return null
+  }
+  const isNode = (id: number | null) => id !== null && !!heap.get(id) && kidsOf(heap.get(id)!) !== null
+  const starts = vars.filter(([, v]) => isNode(refId(v)))
+  if (!starts.length) return null
+  const seen = new Set<number>()
+  const childOf = new Set<number>()
+  const walk = (id: number) => {
+    if (seen.has(id) || seen.size >= MAX_NODES * 2 || !heap.get(id)) return
+    seen.add(id)
+    for (const k of kidsOf(heap.get(id)!) ?? []) {
+      childOf.add(k.id)
+      walk(k.id)
+    }
+  }
+  starts.forEach(([, v]) => walk(refId(v)!))
+  const trie = [...seen].some((id) => (kidsOf(heap.get(id)!) ?? []).some((k) => k.label !== null))
+  const endFlag = (o: HeapObj) => ['end', 'is_end', 'isEnd', 'is_word', 'isWord', 'word', 'terminal', 'leaf'].find((f) => o.f[f] === true)
+  const nodes = [...seen].map((id) => {
+    const o = heap.get(id)!
+    const ks = (kidsOf(o) ?? []).filter((k) => seen.has(k.id))
+    const val = VAL.map((f) => o.f[f]).find((x) => x !== undefined && !isObj(x as TV))
+    return {
+      id: `o${id}`,
+      v: (val !== undefined ? scalar(val as TV, heap) : trie ? (endFlag(o) ? '●' : '') : o.c) as Scalar,
+      children: ks.map((k) => `o${k.id}`),
+      edgeLabels: ks.map((k) => k.label),
+    }
+  })
+  const roots = [...seen].filter((id) => !childOf.has(id)).map((id) => `o${id}`)
+  const pointers: Record<string, string | null> = {}
+  for (const [n, v] of starts) pointers[n] = `o${refId(v)}`
+  const rootName = starts.find(([, v]) => roots.includes(`o${refId(v)}`))?.[0] ?? starts[0][0]
+  return { kind: 'tree', id: key, label: trie ? `${rootName} (trie; ● ends a word)` : rootName, nodes, roots, pointers }
+}
+
+/** Objects that list their neighbours (`neighbors`, `adj`, `edges`) as a graph. */
+function objGraphOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string): GraphState | null {
+  const NB = ['neighbors', 'neighbours', 'adj', 'adjacent', 'edges', 'out']
+  const nbOf = (o: HeapObj) => {
+    for (const f of NB) {
+      const c = o.f[f]
+      if (isList(c) && c.i.every((b) => isRef(b))) return c.i.map((b) => (b as { id: number }).id)
+    }
+    return null
+  }
+  const starts = vars.filter(([, v]) => isRef(v) && heap.get(v.id) && nbOf(heap.get(v.id)!))
+  if (!starts.length) return null
+  const seen = new Set<number>()
+  const queue = starts.map(([, v]) => refId(v)!)
+  while (queue.length && seen.size < MAX_NODES) {
+    const id = queue.shift()!
+    if (seen.has(id) || !heap.get(id)) continue
+    seen.add(id)
+    queue.push(...(nbOf(heap.get(id)!) ?? []))
+  }
+  const nodes = [...seen].map((id) => ({ id: `o${id}`, label: String(valueOf(heap.get(id)!, heap)) }))
+  const edges = [...seen].flatMap((id) => (nbOf(heap.get(id)!) ?? []).filter((t) => seen.has(t)).map((t) => ({ from: `o${id}`, to: `o${t}` })))
+  const has = new Set(edges.map((e) => `${e.from}>${e.to}`))
+  const directed = edges.some((e) => !has.has(`${e.to}>${e.from}`))
+  const pointers: Record<string, string | null> = {}
+  for (const [n, v] of starts) pointers[n] = `o${refId(v)}`
+  return { kind: 'graph', id: key, label: starts[0][0], nodes, edges: directed ? edges : edges.filter((e) => e.from < e.to), directed, pointers }
+}
+
+/** Two variables that bound a window over an array (l … r, lo … hi). */
+const WINDOWS: [string, string][] = [['l', 'r'], ['lo', 'hi'], ['low', 'high'], ['left', 'right'], ['start', 'end'], ['begin', 'end'], ['i', 'j'], ['s', 'e']]
+
+/** A bitmask shown in binary next to its value. */
+const maskish = (name: string) => /^(mask|bits?|bitmask|flags?|state|subset|visited_mask|used)$/i.test(name)
 
 /* ── one frame per snapshot ── */
 export interface DryFrame extends Frame {
   line: number
   kind: Snapshot['kind']
+  /** Characters printed by the end of this step. */
+  out: number
 }
 
 export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFrame[] {
@@ -378,21 +536,40 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
         if (isList(v)) {
           const allScalar = v.i.every(isScalarTV)
           const allLists = v.i.length > 0 && v.i.every((x) => isList(x))
+          // Items small enough to sit in a box: values, pairs like (node, dist), objects.
+          const smallItems = v.i.every((x) => isScalarTV(x) || isRef(x) || (isList(x) && x.i.length <= 3 && x.i.every(isScalarTV)))
           if (allLists && graphish(facts, name)) {
-            const g = graphOf(key, label, v, ctx)
+            const g = matrixGraphOf(key, label, v) ?? graphOf(key, label, v, ctx)
             if (g) {
+              if (g.id.endsWith(':graph')) {
+                const grid = gridOf(key, label, v, ctx, lastGrid.get(key))
+                lastGrid.set(key, grid)
+                stage.push(grid)
+              }
               stage.push(g)
               continue
             }
           }
-          if (allLists && v.i.every((x) => isList(x) && x.i.every(isScalarTV))) {
+          if (allLists && v.i.every((x) => isList(x) && x.i.every(isScalarTV)) && !((queueish(facts, name, v) || stackish(facts, name) || heapish(facts, name)) && v.i.every((x) => isList(x) && x.i.length <= 3))) {
             const g = gridOf(key, label, v, ctx, lastGrid.get(key))
             lastGrid.set(key, g)
             stage.push(g)
-          } else if (allScalar && (queueish(facts, name, v) || stackish(facts, name))) {
+          } else if (smallItems && !heapish(facts, name) && (queueish(facts, name, v) || stackish(facts, name))) {
             stage.push(stackOf(key, label, v, ctx, queueish(facts, name, v)))
-          } else if (allScalar || v.i.every((x) => isScalarTV(x) || isRef(x))) stage.push(arrayOf(key, name, v, ctx, label))
-          else if (!global) cards[name] = show(v, s.heap)
+          } else if (smallItems) {
+            stage.push(arrayOf(key, name, v, ctx, label))
+            // The same list read as the structure it encodes.
+            if (heapish(facts, name)) {
+              const t = heapTreeOf(key, name, v, ctx)
+              if (t) stage.push(t)
+            } else if (parentish(name) && allScalar) {
+              const t = forestOf(key, name, v, ctx)
+              if (t) stage.push(t)
+            } else if (segish(name) && allScalar && v.i.length >= 3 && v.i.length <= 63) {
+              const t = heapTreeOf(key, name, v, ctx, /\b(2\s*\*\s*\w+|\w+\s*\*\s*2|\w+\s*<<\s*1)\b/.test(facts.src) && !/2\s*\*\s*\w+\s*\+\s*2/.test(facts.src))
+              if (t) stage.push(t)
+            }
+          } else if (!global) cards[name] = show(v, s.heap)
         } else if (isDict(v)) {
           const g = graphish(facts, name) && v.k.every(([, b]) => isList(b)) ? graphOf(key, label, v, ctx) : null
           if (g) stage.push(g)
@@ -403,10 +580,12 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
           }
         } else if (typeof v === 'string' && facts.index.has(name) && v.length <= MAX_CELLS) {
           stage.push(arrayOf(key, name, { t: 'list', n: v.length, i: [...v] }, ctx, `${label} · text`))
-        } else if (!global && !isRef(v)) cards[name] = scalar(v, s.heap)
+        } else if (!global && typeof v === 'number' && Number.isInteger(v) && v >= 0 && maskish(name)) cards[name] = `${v} = 0b${v.toString(2)}`
+        else if (!global && !isRef(v)) cards[name] = scalar(v, s.heap)
         else if (!global && isRef(v)) {
           const o = s.heap.get(v.id)
-          if (o && !LINK.some((l) => l in o.f) && !('left' in o.f || 'right' in o.f)) cards[name] = show(v, s.heap)
+          const structural = o && (LINK.some((l) => l in o.f) || 'left' in o.f || 'right' in o.f || ['children', 'child', 'kids', 'neighbors', 'neighbours', 'adj', 'edges'].some((f) => f in o.f))
+          if (o && !structural) cards[name] = `${o.c}(${Object.entries(o.f).slice(0, 4).map(([k, x]) => `${k}=${show(x, s.heap)}`).join(', ')})`
         }
       }
     }
@@ -420,11 +599,15 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
       place({ ...main, order: main.order.filter((n) => !own.has(n)) }, true)
     }
 
+    // Objects: named after the variable that holds them (head, root, node…).
+    // Inside a function, the main body's objects stay visible too.
     const refVars: [string, TV][] = [...top.vars.entries()].filter(([, v]) => isRef(v))
-    const list = linkedOf(refVars, s.heap, `${top.k}:list`)
-    if (list) stage.push(list)
+    if (s.stack.length > 1) for (const [n, v] of s.stack[0].vars) if (isRef(v) && !top.vars.has(n)) refVars.push([n, v])
     const tree = treeOf(refVars, s.heap, `${top.k}:tree`)
-    if (tree) stage.push(tree)
+    const nary = tree ? null : naryOf(refVars, s.heap, `${top.k}:nary`)
+    const graphObj = tree || nary ? null : objGraphOf(refVars, s.heap, `${top.k}:graphobj`)
+    const list = tree || nary || graphObj ? null : linkedOf(refVars, s.heap, `${top.k}:list`)
+    for (const st of [list, tree, nary, graphObj]) if (st) stage.push(st)
 
     // Variable cards, with the value each changed one had before this step.
     const before = lastVars.get(top.k)
@@ -460,7 +643,7 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
       side.push(out)
     }
 
-    frames.push({ step: `L${s.line}`, line: s.line, kind: s.kind, note: noteFor(s, lineText, top, changed, prev, cards, stage), structures: [...stage, ...side] })
+    frames.push({ step: `L${s.line}`, line: s.line, kind: s.kind, out: s.out, note: noteFor(s, lineText, top, changed, prev, cards, stage), structures: [...stage, ...side] })
   }
   return frames
 }

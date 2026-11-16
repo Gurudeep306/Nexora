@@ -66,17 +66,34 @@ Done and pushed in PR #127:
    languages have a real listing; the rest say so honestly. Checked: axe 0 in
    light, dark and full screen. **Not yet checked on a phone.**
 
-In progress (not committed when this was written — see git status):
+In progress — **visual dry run** (the owner's top request). Built and
+pushed so far:
 
-6. **Visual dry run** — the owner's top request now. See the full design
-   below. Done so far:
-   - `src/dryrun/python.js` — Python tracer (sys.settrace), tested.
-   - `src/dryrun/index.js` — shared trace parser + `dryRun()`.
-   - `/api/dryrun` in `src/server.js`.
-   - `tests/dryrun.test.js` — 6 tests, pass.
-   - `client/src/learn/engine/types.ts` — new structure kinds `map` and
-     `calls` (views not written yet; `StructureView` must handle them or the
-     typecheck fails).
+- Layer 1, trace: `src/dryrun/python.js` (Python, `sys.settrace`; class
+  bodies / comprehensions skipped; `__slots__` objects read; heap sent as
+  deltas), `src/dryrun/index.js` (shared parser, `dryRun()`),
+  `/api/dryrun` in `src/server.js`. Tests: `tests/dryrun.test.js` (6).
+- Layer 2, frames: `client/src/components/solve/dryrun/replay.ts` and
+  `toFrames.ts`. Covers, named as in the code: arrays (index pointers incl.
+  `j+1`, compare / write / new / gliding swap, sliding-window band l … r),
+  strings as characters, sets, tuples, stacks and queues (also of pairs),
+  heaps (array + heap tree), union-find (forest of sets), segment trees
+  (array + tree), grids / DP tables, adjacency lists and matrices (graph),
+  dicts (map, new / changed keys), linked lists (singly, doubly, circular,
+  named after `head`), binary trees (named after `root`), N-ary trees and
+  tries (edge letters, ● for word ends), graph objects (`neighbors`),
+  bitmasks in binary, objects as `P(x=1, y=2)`, call stack with return
+  values, variables with "was", output. Tests: `tests/dryrun-frames.test.js`
+  (19, run real Python traces through the converter; Node runs the client
+  TypeScript directly).
+- Layer 3, player: `client/src/learn/engine/FramePlayer.tsx` is now the one
+  player (DSA chapters + dry run). `VizPlayer.tsx` = the chapter's input form
+  + FramePlayer. New: `map` and `calls` views (`views/MapCalls.tsx`),
+  timeline marks above the scrubber (`[` / `]` jump between them), a
+  footnote slot, `resetKey`, `autoplay`. **Check DSA chapters in the
+  browser after this refactor** (not yet done).
+- Not built yet: `DryRunPanel.tsx` (the Solve-page UI), the Solve-page
+  tidy, other languages, Admin → Compilers.
 
 ## The visual dry run — full design (build exactly this)
 
@@ -86,6 +103,25 @@ DSA chapters: an array appears as boxes, values drop in, `i`/`j` ride under
 the boxes, swaps slide, the current line is lit, the output grows. It must be
 better than the current DSA player, and the DSA chapters must use the same
 improved player so the site is uniform. It must never fail silently.
+
+**The owner's words (keep to them):** "work on all types of datastructure
+and as best a spossible with proper naming present as per the code i want
+the best work here". So: every data structure a student can write gets a
+proper picture, and every picture, pointer and card is named exactly as the
+variable / field is named in the student's code (the list is "head", not
+"linked list"; the window is "l … r").
+
+**Data structures to cover (status in "Where it stands"):** array / list,
+string (as characters when indexed), tuple, set, dict / map (Counter,
+defaultdict, OrderedDict), stack (append + pop, monotonic stacks too),
+queue / deque (BFS, with tuples), heap / priority queue (heapq: array + the
+binary-heap tree), 2D grid / matrix / DP table, adjacency list (list or
+dict), adjacency matrix, edge list, graph objects (`neighbors`), singly /
+doubly / circular linked list, binary tree / BST, N-ary tree (`children`
+list), trie (`children` dict, edge letters), union-find (`parent` array as
+a forest), segment tree / Fenwick (array + tree), sliding window / two
+pointers (a range band between l and r), bitmasks (binary form), the call
+stack (recursion, return values), output.
 
 **Pipeline (three layers):**
 
@@ -154,11 +190,8 @@ inside). "How it runs" becomes a second view inside it ("Under the hood").
 
 ## Next, in order
 
-1. Write the `map` and `calls` views (`client/src/learn/engine/views/`),
-   add them to `StructureView`; typecheck.
-2. Write `client/src/components/solve/dryrun/replay.ts` and `toFrames.ts`
-   (layer 2 above).
-3. Extract `FramePlayer` from `VizPlayer.tsx`; VizPlayer keeps working.
+1. (done) map / calls views. 2. (done) replay + toFrames.
+3. (done in code) FramePlayer; still to check DSA chapters in a browser.
 4. `DryRunPanel.tsx`: sample picker, calls `/api/dryrun`, plays frames.
    Check bubble sort, two pointers, a stack, a dict count, recursion
    (fib), a linked list, a BFS on an adjacency list, a 2D DP — light,
