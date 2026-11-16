@@ -38,6 +38,7 @@ import {
   type ChallengeResult,
   type GateType,
 } from './benchLogic'
+import { Select } from '@/components/ui'
 
 export type GateBenchTab = 'bench' | 'challenge' | 'sets'
 
@@ -131,20 +132,20 @@ function GateEditor({ bench, setBench, palette }: { bench: Bench; setBench: (b: 
               <label className="sr-only" htmlFor={`${u}-${g.id}-type`}>
                 Type of {g.id}
               </label>
-              <select id={`${u}-${g.id}-type`} className="lab-select" value={g.type} onChange={(e) => update(i, { type: e.target.value as GateType })}>
+              <Select id={`${u}-${g.id}-type`} className="lab-select" value={g.type} onChange={(e) => update(i, { type: e.target.value as GateType })}>
                 {palette.map((t) => (
                   <option key={t} value={t}>
                     {t}
                   </option>
                 ))}
-              </select>
+              </Select>
               <span className="lab-of">of</span>
               {g.in.map((s, k) => (
                 <span key={k}>
                   <label className="sr-only" htmlFor={`${u}-${g.id}-in${k}`}>
                     Input {k + 1} of {g.id}
                   </label>
-                  <select
+                  <Select
                     id={`${u}-${g.id}-in${k}`}
                     className="lab-select"
                     value={s}
@@ -155,7 +156,7 @@ function GateEditor({ bench, setBench, palette }: { bench: Bench; setBench: (b: 
                         {x}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </span>
               ))}
               <button type="button" className="lab-x" aria-label={`Remove ${g.id}`} onClick={() => setBench(removeGate(bench, g.id))}>
@@ -168,13 +169,13 @@ function GateEditor({ bench, setBench, palette }: { bench: Bench; setBench: (b: 
       {bench.gates.length > 0 && (
         <div className="lab-out">
           <label htmlFor={`${u}-out`}>Output F =</label>
-          <select id={`${u}-out`} className="lab-select" value={bench.output} onChange={(e) => setBench({ ...bench, output: e.target.value })}>
+          <Select id={`${u}-out`} className="lab-select" value={bench.output} onChange={(e) => setBench({ ...bench, output: e.target.value })}>
             {[...bench.inputs, ...bench.gates.map((g) => g.id)].map((x) => (
               <option key={x} value={x}>
                 {x}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       )}
     </div>
@@ -339,7 +340,7 @@ function BenchTool() {
       <div className="lab-col">
         <div className="lab-row">
           <label htmlFor={`${u}-preset`}>Start from</label>
-          <select
+          <Select
             id={`${u}-preset`}
             className="lab-select"
             defaultValue={PRESETS[0]!.id}
@@ -355,7 +356,7 @@ function BenchTool() {
             ))}
             <option value="empty2">Empty bench, inputs A, B</option>
             <option value="empty3">Empty bench, inputs A, B, C</option>
-          </select>
+          </Select>
         </div>
         <InputToggles inputs={bench.inputs} values={values} setValues={setValues} />
         <GateEditor bench={bench} setBench={setBench} palette={GATE_TYPES} />
@@ -396,18 +397,18 @@ function ChallengeTool() {
       <div className="lab-col">
         <div className="lab-row">
           <label htmlFor={`${u}-target`}>Build</label>
-          <select id={`${u}-target`} className="lab-select" value={cid} onChange={(e) => restart(e.target.value, family)}>
+          <Select id={`${u}-target`} className="lab-select" value={cid} onChange={(e) => restart(e.target.value, family)}>
             {CHALLENGES.map((x) => (
               <option key={x.id} value={x.id}>
                 {x.label}
               </option>
             ))}
-          </select>
+          </Select>
           <label htmlFor={`${u}-family`}>using only</label>
-          <select id={`${u}-family`} className="lab-select" value={family} onChange={(e) => restart(cid, e.target.value as 'NAND' | 'NOR')}>
+          <Select id={`${u}-family`} className="lab-select" value={family} onChange={(e) => restart(cid, e.target.value as 'NAND' | 'NOR')}>
             <option value="NAND">2-input NAND</option>
             <option value="NOR">2-input NOR</option>
-          </select>
+          </Select>
         </div>
         <p className="lab-hint">
           Target: {c.label} = {target}. Tie both inputs of a gate to one signal to make an inverter.
@@ -466,10 +467,10 @@ function SetsTool() {
     <div className="lab-sets">
       <div className="lab-row">
         <label htmlFor={`${u}-n`}>Variables</label>
-        <select id={`${u}-n`} className="lab-select" value={n} onChange={(e) => setN(Number(e.target.value))}>
+        <Select id={`${u}-n`} className="lab-select" value={n} onChange={(e) => setN(Number(e.target.value))}>
           <option value={3}>3 (rows 0–7)</option>
           <option value={4}>4 (rows 0–15)</option>
-        </select>
+        </Select>
       </div>
       <div className="lab-row">
         <label htmlFor={`${u}-f`}>f = Σm(</label>

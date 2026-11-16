@@ -118,9 +118,9 @@ export function DifficultyMultiples({ d }: { d: Stats['difficulty'] }) {
           <li key={r.k} className="pf-multiple">
             <span className={cn('pf-multiple-word', `is-${r.tone}`)}>{r.k}</span>
             <span className="pf-multiple-num">{r.v.toLocaleString()}</span>
-            <span className="pf-bar" aria-hidden="true">
+            <span className="pf-meter" aria-hidden="true">
               <motion.span
-                className={cn('pf-bar-fill', `is-${r.tone}`)}
+                className={cn('pf-meter-fill', `is-${r.tone}`)}
                 initial={{ scaleX: still ? r.v / max : 0 }}
                 whileInView={{ scaleX: r.v / max }}
                 viewport={{ once: true }}
@@ -146,8 +146,8 @@ export function TopicBars({ topics }: { topics: { topic: string; solved: number 
         <li key={t.topic} className="pf-topic">
           <span className="pf-topic-name">{t.topic}</span>
           <span className="pf-topic-num">{t.solved}</span>
-          <span className="pf-bar" aria-hidden="true">
-            <motion.span className="pf-bar-fill" initial={{ scaleX: still ? t.solved / max : 0 }} whileInView={{ scaleX: t.solved / max }} viewport={{ once: true }} transition={{ duration: 0.8, ease: EASE }} />
+          <span className="pf-meter" aria-hidden="true">
+            <motion.span className="pf-meter-fill" initial={{ scaleX: still ? t.solved / max : 0 }} whileInView={{ scaleX: t.solved / max }} viewport={{ once: true }} transition={{ duration: 0.8, ease: EASE }} />
           </span>
         </li>
       ))}
@@ -167,8 +167,8 @@ export function LanguageList({ langs }: { langs: NonNullable<Showcase['languages
           <li key={l.language} className="pf-topic">
             <span className="pf-topic-name">{l.language}</span>
             <span className="pf-topic-num">{pct}%</span>
-            <span className="pf-bar" aria-hidden="true">
-              <span className="pf-bar-fill" style={{ transform: `scaleX(${pct / 100})` }} />
+            <span className="pf-meter" aria-hidden="true">
+              <span className="pf-meter-fill" style={{ transform: `scaleX(${pct / 100})` }} />
             </span>
           </li>
         )

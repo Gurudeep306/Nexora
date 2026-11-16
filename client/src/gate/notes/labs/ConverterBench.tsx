@@ -42,6 +42,7 @@ import {
   staircase,
   type Q,
 } from './convLogic'
+import { Select } from '@/components/ui'
 
 export type BenchTab = 'sar' | 'dac'
 
@@ -162,7 +163,7 @@ function SarTool() {
     <div>
       <div className="lab-row">
         <label htmlFor={`${u}-n`}>Bits</label>
-        <select
+        <Select
           id={`${u}-n`}
           className="lab-select"
           value={n}
@@ -176,7 +177,7 @@ function SarTool() {
               {b} bits
             </option>
           ))}
-        </select>
+        </Select>
         <label htmlFor={`${u}-vref`}>V_ref (V)</label>
         <input
           id={`${u}-vref`}
@@ -421,13 +422,13 @@ function DacTool() {
     <div>
       <div className="lab-row">
         <label htmlFor={`${u}-n`}>Bits</label>
-        <select id={`${u}-n`} className="lab-select" value={n} onChange={(e) => resize(Number(e.target.value))}>
+        <Select id={`${u}-n`} className="lab-select" value={n} onChange={(e) => resize(Number(e.target.value))}>
           {[1, 2, 3, 4, 5, 6, 7, 8].map((b) => (
             <option key={b} value={b}>
               {b} bit{b > 1 ? 's' : ''}
             </option>
           ))}
-        </select>
+        </Select>
         <label htmlFor={`${u}-vref`}>V_ref (V)</label>
         <input id={`${u}-vref`} className="lab-input cb-num" inputMode="decimal" value={vrefText} aria-invalid={!pos(vref, 1000)} aria-describedby={`${u}-warn`} onChange={(e) => setVrefText(e.target.value)} />
         <label htmlFor={`${u}-r`}>R (kΩ)</label>

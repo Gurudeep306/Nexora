@@ -61,6 +61,7 @@ import {
   type Fsm,
   type FsmRow,
 } from './seqLogic'
+import { Select } from '@/components/ui'
 
 export type CounterTab = 'counter' | 'fsm'
 
@@ -250,17 +251,17 @@ function CounterTool() {
     <div>
       <div className="lab-row">
         <label htmlFor={`${u}-kind`}>Circuit</label>
-        <select id={`${u}-kind`} className="lab-select" value={kind} onChange={(e) => resetAll(() => setKind(e.target.value as CKind))}>
+        <Select id={`${u}-kind`} className="lab-select" value={kind} onChange={(e) => resetAll(() => setKind(e.target.value as CKind))}>
           {CKINDS.map(([k, l]) => (
             <option key={k} value={k}>
               {l}
             </option>
           ))}
-        </select>
+        </Select>
         {kind !== 'design' && (
           <>
             <label htmlFor={`${u}-n`}>Width</label>
-            <select
+            <Select
               id={`${u}-n`}
               className="lab-select"
               value={width}
@@ -278,17 +279,17 @@ function CounterTool() {
                   {k} flip-flops
                 </option>
               ))}
-            </select>
+            </Select>
           </>
         )}
         <label htmlFor={`${u}-init`}>Initial state</label>
-        <select id={`${u}-init`} className="lab-select" value={init} onChange={(e) => setInit(Number(e.target.value))}>
+        <Select id={`${u}-init`} className="lab-select" value={init} onChange={(e) => setInit(Number(e.target.value))}>
           {all.map((s) => (
             <option key={s} value={s}>
               {fmt(s)} ({s})
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       {kind === 'lfsr' && (
@@ -330,24 +331,24 @@ function CounterTool() {
       {(kind === 'up' || kind === 'down') && (
         <div className="lab-row">
           <label htmlFor={`${u}-tpd`}>t_pd per stage</label>
-          <select id={`${u}-tpd`} className="lab-select" value={tpd} onChange={(e) => setTpd(Number(e.target.value))}>
+          <Select id={`${u}-tpd`} className="lab-select" value={tpd} onChange={(e) => setTpd(Number(e.target.value))}>
             {[1, 2, 3].map((k) => (
               <option key={k} value={k}>
                 {k} ns
               </option>
             ))}
-          </select>
+          </Select>
           {kind === 'up' && (
             <>
               <label htmlFor={`${u}-clr`}>Asynchronous clear at</label>
-              <select id={`${u}-clr`} className="lab-select" value={clear ?? ''} onChange={(e) => setClear(e.target.value === '' ? null : Number(e.target.value))}>
+              <Select id={`${u}-clr`} className="lab-select" value={clear ?? ''} onChange={(e) => setClear(e.target.value === '' ? null : Number(e.target.value))}>
                 <option value="">none</option>
                 {all.slice(2).map((s) => (
                   <option key={s} value={s}>
                     {fmt(s)} (mod {s})
                   </option>
                 ))}
-              </select>
+              </Select>
             </>
           )}
         </div>
@@ -369,16 +370,16 @@ function CounterTool() {
               spellCheck={false}
             />
             <label htmlFor={`${u}-ff`}>Flip-flops</label>
-            <select id={`${u}-ff`} className="lab-select" value={ff} onChange={(e) => setFf(e.target.value as FfKind)}>
+            <Select id={`${u}-ff`} className="lab-select" value={ff} onChange={(e) => setFf(e.target.value as FfKind)}>
               <option value="D">D</option>
               <option value="T">T</option>
               <option value="JK">JK</option>
-            </select>
+            </Select>
             <label htmlFor={`${u}-un`}>Unused states</label>
-            <select id={`${u}-un`} className="lab-select" value={unused} onChange={(e) => setUnused(e.target.value as 'dc' | '0')}>
+            <Select id={`${u}-un`} className="lab-select" value={unused} onChange={(e) => setUnused(e.target.value as 'dc' | '0')}>
               <option value="dc">don’t-cares</option>
               <option value="0">forced to 0</option>
-            </select>
+            </Select>
           </div>
           <p className="lab-warn" id={`${u}-seqwarn`} role="alert">
             {parsed.error}
@@ -789,13 +790,13 @@ function FsmTool() {
           </button>
         </div>
         <label htmlFor={`${u}-start`}>Start state</label>
-        <select id={`${u}-start`} className="lab-select" value={startRow.id} onChange={(e) => (setStartId(Number(e.target.value)), setPos(0))}>
+        <Select id={`${u}-start`} className="lab-select" value={startRow.id} onChange={(e) => (setStartId(Number(e.target.value)), setPos(0))}>
           {rows.map((row) => (
             <option key={row.id} value={row.id}>
               {row.name || '(unnamed)'}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       <div className="lab-tt-wrap" tabIndex={0} role="group" aria-label="Table, scrolls sideways">
@@ -827,18 +828,19 @@ function FsmTool() {
                 </td>
                 {(['n0', 'n1'] as const).map((k, x) => (
                   <td key={k}>
-                    <select className="lab-select" value={row[k]} aria-label={`Next state of ${row.name} for X = ${x}`} onChange={(e) => edit(row.id, { [k]: Number(e.target.value) })}>
+                    <Select variant="pill" className="lab-select" value={row[k]} aria-label={`Next state of ${row.name} for X = ${x}`} onChange={(e) => edit(row.id, { [k]: Number(e.target.value) })}>
                       {rows.map((t) => (
                         <option key={t.id} value={t.id}>
                           {t.name || '(unnamed)'}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </td>
                 ))}
                 {(moore ? (['o0'] as const) : (['o0', 'o1'] as const)).map((k, x) => (
                   <td key={k}>
-                    <select
+                    <Select
+                      variant="pill"
                       className="lab-select"
                       value={row[k]}
                       aria-label={moore ? `Output of ${row.name}` : `Output of ${row.name} for X = ${x}`}
@@ -846,7 +848,7 @@ function FsmTool() {
                     >
                       <option value={0}>0</option>
                       <option value={1}>1</option>
-                    </select>
+                    </Select>
                   </td>
                 ))}
                 <td>

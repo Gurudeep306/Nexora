@@ -11,7 +11,8 @@ import { MARK_DOT, MARK_G, MARK_N, markWeight } from './traversal'
  * The mark is the NG written by hand in one line of ink, with a clay full
  * stop where the pen stops (geometry in ./traversal.ts). The ink follows the
  * text colour in every theme. `interactive` writes it once the first time the
- * page shows it; `loop` keeps writing it (MarkLoader, the page loader).
+ * page shows it; `loop` keeps writing it (MarkLoader, the page loader) over a
+ * faint copy of itself, so the mark is always visible.
  */
 
 let introPlayed = false // once per page load, not on every remount
@@ -155,6 +156,14 @@ export function LogoMark({
   return (
     <span aria-hidden="true" className={cn('ng-mark inline-block shrink-0 align-middle leading-[0] text-text-primary', className)} style={{ width: size, height: size }}>
       <svg viewBox="0 0 32 32" width={size} height={size} focusable="false" style={{ overflow: 'visible' }}>
+        {play && (
+          // While it writes (and between loops) a faint copy of the mark stays
+          // underneath, so the NG never disappears mid-animation.
+          <g className="ng-mark-ghost" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" opacity={0.16}>
+            <path d={MARK_N} />
+            <path d={MARK_G} />
+          </g>
+        )}
         <path ref={nRef} d={MARK_N} fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" style={hidden} />
         <path ref={gRef} d={MARK_G} fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" style={hidden} />
         <circle ref={dotRef} cx={MARK_DOT[0]} cy={MARK_DOT[1]} r={r} fill="var(--ed-clay, #D97757)" style={play ? { opacity: 0 } : undefined} />

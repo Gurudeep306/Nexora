@@ -38,6 +38,7 @@ import {
   zerosOf,
   type CellValue,
 } from './kmapLogic'
+import { Select } from '@/components/ui'
 
 export type KmapTab = 'map' | 'qm'
 
@@ -89,17 +90,17 @@ function FunctionBar({ values, setValues }: { values: CellValue[]; setValues: (v
   return (
     <div className="lab-row">
       <label htmlFor={`${u}-n`}>Variables</label>
-      <select id={`${u}-n`} className="lab-select" value={spec.n} onChange={(e) => setValues(resize(values, Number(e.target.value)))}>
+      <Select id={`${u}-n`} className="lab-select" value={spec.n} onChange={(e) => setValues(resize(values, Number(e.target.value)))}>
         {[2, 3, 4, 5].map((k) => (
           <option key={k} value={k}>
             {k} ({VARS[k]!.join(', ')})
           </option>
         ))}
-      </select>
+      </Select>
       <label className="sr-only" htmlFor={`${u}-preset`}>
         Load a preset
       </label>
-      <select
+      <Select
         id={`${u}-preset`}
         className="lab-select"
         value=""
@@ -114,7 +115,7 @@ function FunctionBar({ values, setValues }: { values: CellValue[]; setValues: (v
             {p.label}
           </option>
         ))}
-      </select>
+      </Select>
       <button type="button" className="lab-btn" onClick={() => setValues(values.map(() => '0'))}>
         Clear
       </button>

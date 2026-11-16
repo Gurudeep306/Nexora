@@ -25,6 +25,7 @@ import { Markdown } from '../md'
 import { AnswerField, CheckButton, Masthead, OptionList, OptionRow, QuestionActions, QuestionCard as Card, QuestionHint, QuestionText, QuestionTitle, SolutionBlock, TextAction, Verdict } from '@/components/question/Question'
 import { codeKey, isDone, mark, qKey, useProgress } from '../progress'
 import { KIND_LABEL, type Question, type QuestionKind } from '../questions/types'
+import { Select } from '@/components/ui'
 
 const KIND_ICON: Record<QuestionKind, LucideIcon> = {
   mcq: CircleDot,
@@ -420,7 +421,7 @@ export function QuestionCard({ q, index, titleAs = 'h4' }: { q: Question; index?
                       <Markdown md={l} className="[&_p]:!m-0" />
                     </span>
                     <ArrowRight className="hidden size-4 shrink-0 text-text-muted sm:block" aria-hidden="true" />
-                    <select
+                    <Select
                       value={pairs[i]}
                       disabled={locked}
                       onChange={(e) => setPairs((p) => p.map((x, j) => (j === i ? e.target.value : x)))}
@@ -433,7 +434,7 @@ export function QuestionCard({ q, index, titleAs = 'h4' }: { q: Question; index?
                           {r}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                 )
               })}
