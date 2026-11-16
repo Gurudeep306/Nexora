@@ -270,3 +270,129 @@
     transition: none;
   }
 }
+
+/* ── 2026-11: the syllabus ledger, the trio ── */
+@layer components {
+  .gh-syl-rows {
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-text-primary);
+  }
+  .gh-syl-row {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.5rem 1rem;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  @media (min-width: 900px) {
+    .gh-syl-row {
+      grid-template-columns: 2.25rem minmax(0, 1.4fr) minmax(8rem, 1fr) 15rem;
+      gap: 1.5rem;
+    }
+  }
+  .gh-syl-no {
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
+  .gh-syl-name {
+    display: block;
+    font-family: var(--kit-display, var(--font-display));
+    font-size: 1.125rem;
+    line-height: 1.25;
+    color: var(--color-text-primary);
+    text-decoration: none;
+  }
+  a.gh-syl-name:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+  .gh-syl-meta {
+    display: block;
+    margin-top: 0.125rem;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--color-text-muted);
+  }
+  .gh-syl-bar {
+    grid-column: 2;
+    display: block;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--color-border);
+    overflow: hidden;
+  }
+  @media (min-width: 900px) {
+    .gh-syl-bar {
+      grid-column: auto;
+    }
+  }
+  .gh-syl-bar > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-text-primary);
+  }
+  .gh-syl-bar > span[data-level='4'] {
+    background: var(--ed-clay, var(--color-accent-brand));
+  }
+  .gh-syl-links {
+    grid-column: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+  @media (min-width: 900px) {
+    .gh-syl-links {
+      grid-column: auto;
+      justify-content: flex-end;
+    }
+  }
+  .gh-syl-link {
+    display: inline-flex;
+    align-items: center;
+    height: 1.75rem;
+    padding: 0 0.75rem;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    box-shadow: inset 0 0 0 1px var(--color-border);
+    transition: box-shadow 160ms ease, background-color 160ms ease;
+  }
+  a.gh-syl-link:hover {
+    box-shadow: inset 0 0 0 1px var(--color-text-primary);
+  }
+  .gh-syl-link.is-read {
+    background: var(--color-text-primary);
+    color: var(--color-bg-app);
+    box-shadow: none;
+  }
+  .gh-syl-link.is-read:hover {
+    background: color-mix(in oklab, var(--color-text-primary) 85%, var(--color-bg-app));
+  }
+  .gh-syl-link.is-soon {
+    color: var(--color-text-muted);
+    box-shadow: inset 0 0 0 1px var(--color-border);
+    border: 0;
+  }
+  .gh-syl-link:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 2px;
+  }
+
+  .gh-trio {
+    display: grid;
+    gap: 2rem;
+  }
+  @media (min-width: 1100px) {
+    .gh-trio {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+    }
+  }
+}
