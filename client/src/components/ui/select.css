@@ -1,0 +1,15 @@
+/* The shared dropdown (Select.tsx). Layered, so utilities still win. */
+@layer components {
+  .ui-select-pill {
+    height: 2rem;
+    padding: 0 0.75rem;
+    font-size: 13px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .ui-select-pill .ui-select-chev {
+    right: 0.5rem;
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+}

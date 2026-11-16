@@ -35,6 +35,7 @@ import {
   type Formula,
   type OpTable,
 } from './logicLogic'
+import { Select } from '@/components/ui'
 
 export type TruthTab = 'table' | 'compare'
 
@@ -190,7 +191,7 @@ function TableTool({ op, setOp }: { op: OpTable; setOp: (o: OpTable) => void }) 
         <label className="sr-only" htmlFor={pid}>
           Load a preset
         </label>
-        <select
+        <Select
           id={pid}
           className="lab-select"
           value=""
@@ -208,7 +209,7 @@ function TableTool({ op, setOp }: { op: OpTable; setOp: (o: OpTable) => void }) 
               {p.label}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
       <FormulaInput value={src} onChange={setSrc} label="Formula" invalid={!!err} />
       <OpEditor op={op} setOp={setOp} />

@@ -156,7 +156,7 @@
     color: var(--color-text-primary);
     font-variant-numeric: tabular-nums;
   }
-  .pf-bar {
+  .pf-meter {
     grid-column: 1 / -1;
     display: block;
     height: 3px;
@@ -164,19 +164,19 @@
     border-radius: 2px;
     overflow: hidden;
   }
-  .pf-bar-fill {
+  .pf-meter-fill {
     display: block;
     height: 100%;
     background: var(--color-text-secondary);
     transform-origin: left;
   }
-  .pf-bar-fill.is-easy {
+  .pf-meter-fill.is-easy {
     background: var(--color-state-success);
   }
-  .pf-bar-fill.is-medium {
+  .pf-meter-fill.is-medium {
     background: var(--color-state-warning);
   }
-  .pf-bar-fill.is-hard {
+  .pf-meter-fill.is-hard {
     background: var(--color-state-error);
   }
   .pf-topics {

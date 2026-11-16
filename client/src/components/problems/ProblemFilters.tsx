@@ -1,8 +1,8 @@
 import { useSources } from '@/lib/sources'
 import { useEffect, useMemo, useRef, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowDownWideNarrow, ChevronDown, Loader2, Sparkles, Swords, X } from 'lucide-react'
-import { SearchCombobox, type ComboboxItem } from '@/components/ui'
+import { ArrowDownWideNarrow, Loader2, Sparkles, Swords, X } from 'lucide-react'
+import { SearchCombobox, Select, type ComboboxItem } from '@/components/ui'
 import { useProblemSuggestions } from '@/hooks/useProblemSuggestions'
 import './filters.css'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
@@ -38,15 +38,12 @@ interface Props {
   askError?: string | null
 }
 
-/** A compact filter: a native select dressed as a pill; its label is for assistive tech. */
+/** A compact filter: the site's dropdown in its pill size; the label is for assistive tech. */
 function PillSelect({ label, value, onChange, children }: { label: string; value: string; onChange: (v: string) => void; children: ReactNode }) {
   return (
-    <span className="pf-pill">
-      <select value={value} onChange={(e) => onChange(e.target.value)} aria-label={label}>
-        {children}
-      </select>
-      <ChevronDown className="pf-pill-chev" aria-hidden="true" />
-    </span>
+    <Select variant="pill" value={value} onValueChange={onChange} aria-label={label}>
+      {children}
+    </Select>
   )
 }
 

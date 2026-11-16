@@ -9,7 +9,6 @@ import './coming-soon.css'
 import '@fontsource-variable/newsreader/opsz.css'
 
 const EASE = [0.16, 1, 0.3, 1] as const
-const YEAR = new Date().getFullYear()
 
 function Stage({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLElement>(null)
@@ -34,58 +33,31 @@ function Stage({ children }: { children: React.ReactNode }) {
   )
 }
 
-const CELLS = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
-const ROLE: Record<number, string> = { 4: 'a', 7: 'b', 5: 'c' }
-
 /**
  * What everyone but the owner, admins and early-access users sees while the
- * site is private: the landing page's paper, one serif line, and a binary
- * search quietly finding 23. (The server renders the same screen for direct
- * page loads: src/authz/coming-soon.js.)
+ * site is private: nothing but the NG mark writing itself, in the chosen
+ * theme. The mark is also the way in: it opens the owner sign-in (or signs a
+ * signed-in visitor out). No visible words. (The server draws the same screen
+ * for direct page loads: src/authz/coming-soon.js.)
  */
 export function ComingSoon({ message }: { message?: string }) {
   const { user, logout } = useAuth()
+  const mark = <LogoMark size={128} loop />
   return (
-    <div className="cs">
-      <header className="cs-top">
-        <span className="cs-brand">
-          <LogoMark size={22} className="!text-[var(--cs-ink)]" />
-          NexoraGuru
-        </span>
-      </header>
-      <motion.main className="cs-main" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE }}>
-        <p className="cs-label m-0">Coming soon</p>
-        <h1 className="cs-title">Every idea in computer science, set in motion.</h1>
-        <p className="cs-lead">{message || 'We are drawing the last few frames. Check back soon.'}</p>
-        <div className="cs-row" aria-hidden="true">
-          {CELLS.map((v, k) => (
-            <span key={v} className={`cs-cell ${ROLE[k] ?? ''}`}>
-              {v}
-            </span>
-          ))}
-        </div>
-        <p className="cs-caption m-0">Binary search, finding 23 in three looks.</p>
-        <div className="mt-12 flex flex-wrap items-center gap-4 text-[13px] text-[var(--cs-muted)]">
-          {user ? (
-            <>
-              <span>
-                Signed in as <span className="font-medium text-[var(--cs-ink-2)]">@{user.username}</span>
-              </span>
-              <button type="button" onClick={() => void logout()} className="cs-link">
-                Sign out
-              </button>
-            </>
-          ) : (
-            <Link to="/auth?owner=1" className="cs-link">
-              Owner sign in <span aria-hidden="true">→</span>
-            </Link>
-          )}
-        </div>
-      </motion.main>
-      <footer className="cs-foot">
-        <span>© {YEAR} NexoraGuru</span>
-      </footer>
-    </div>
+    <main className="cs cs-only-mark" aria-label={message ? `NexoraGuru is coming soon. ${message}` : 'NexoraGuru is coming soon'}>
+      <h1 className="sr-only">NexoraGuru · Coming soon</h1>
+      <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9, ease: EASE }}>
+        {user ? (
+          <button type="button" onClick={() => void logout()} className="cs-mark-link" aria-label={`Signed in as @${user.username}. Sign out`}>
+            {mark}
+          </button>
+        ) : (
+          <Link to="/auth?owner=1" className="cs-mark-link" aria-label="Owner sign in">
+            {mark}
+          </Link>
+        )}
+      </motion.div>
+    </main>
   )
 }
 
