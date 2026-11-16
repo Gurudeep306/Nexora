@@ -1,0 +1,100 @@
+/* Settings as a book (pages/SettingsPage.tsx): contents on the left with
+   roman numerals and an ink tick, parts on the right with hairlines. */
+@layer components {
+  .sb-book {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  @media (min-width: 1024px) {
+    .sb-book {
+      grid-template-columns: 13rem minmax(0, 1fr);
+      gap: 3.5rem;
+    }
+  }
+  .sb-toc {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .sb-toc {
+      display: block;
+      position: sticky;
+      top: 5.5rem;
+      align-self: start;
+    }
+  }
+  .sb-toc-label {
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .sb-toc ol {
+    margin-top: 0.75rem;
+  }
+  .sb-toc-item {
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.4rem 0 0.4rem 0.875rem;
+    text-align: left;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: color 300ms var(--ed-ease);
+  }
+  .sb-toc-item:hover,
+  .sb-toc-item[aria-current='true'] {
+    color: var(--color-text-primary);
+  }
+  .sb-toc-item[aria-current='true']::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55rem;
+    bottom: 0.55rem;
+    width: 2px;
+    background: var(--color-text-primary);
+  }
+  .sb-toc-num {
+    width: 1.75rem;
+    flex-shrink: 0;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-style: italic;
+    color: var(--color-text-muted);
+  }
+  .sb-toc-item[aria-current='true'] .sb-toc-num {
+    color: var(--color-text-primary);
+  }
+  .sb-toc-name {
+    font-family: var(--font-display);
+    font-size: 18px;
+    line-height: 1.25;
+  }
+  .sb-toc-item:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 2px;
+  }
+  .sb-part {
+    scroll-margin-top: 6rem;
+  }
+  .sb-part + .sb-part {
+    margin-top: 4rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--color-border);
+  }
+  .sb-part-title {
+    margin-top: 0.375rem;
+  }
+  .sb-part-lead {
+    margin-top: 0.375rem;
+    max-width: 40rem;
+    color: var(--color-text-secondary);
+  }
+  .sb-stack {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+}

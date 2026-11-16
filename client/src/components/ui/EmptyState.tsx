@@ -5,6 +5,7 @@ import './loading.css'
 import { Skeleton } from './Progress'
 import { IconBadge, type IconName } from '@/components/icon/Icon'
 import { isJournalKit } from '@/theme/styles'
+import { LogoMark } from '@/components/brand/Logo'
 
 export function EmptyState({
   icon,
@@ -20,6 +21,19 @@ export function EmptyState({
   action?: ReactNode
   className?: string
 }) {
+  // Under the journal kit (every NexoraGuru theme) an empty page is a brand
+  // moment: the mark writes itself once, then a serif line says what's next.
+  if (isJournalKit(useTheme().shown.style))
+    return (
+      <div data-ui="empty" className={cn('flex flex-col items-center justify-center px-6 py-14 text-center', className)}>
+        <LogoMark size={40} write className="text-text-primary" />
+        <p data-ui="empty-title" className="ed-serif mt-5 mb-0 text-[22px] leading-snug text-text-primary text-balance">
+          {title}
+        </p>
+        {description && <p className="mx-auto mt-2 mb-0 max-w-md text-[14px] leading-relaxed text-text-secondary text-pretty">{description}</p>}
+        {action && <div className="mt-6">{action}</div>}
+      </div>
+    )
   return (
     <div data-ui="empty" className={cn('flex flex-col items-center justify-center px-6 py-14 text-center animate-fade-in', className)}>
       {/* A quiet, neutral well around the glyph: no blurred colour blob. */}
