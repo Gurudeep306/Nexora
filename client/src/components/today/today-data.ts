@@ -35,12 +35,14 @@ export function lastStudied(c: WebCluster): number {
 }
 
 /** Which landing figure fits a subject best (all three are real lessons). */
-export type Figure = 'search' | 'schedule' | 'graph'
+export type Figure = 'search' | 'schedule' | 'graph' | 'none'
 export function figureFor(subject: { id: string; name: string; domain?: string }): Figure {
   const s = `${subject.id} ${subject.name} ${subject.domain ?? ''}`.toLowerCase()
   if (/operating|\bos\b|process|schedul/.test(s)) return 'schedule'
   if (/graph|network|discrete|topolog|route/.test(s)) return 'graph'
-  return 'search'
+  if (/algorithm|data struct|\bdsa\b|search|sort/.test(s)) return 'search'
+  // No real lesson figure for this subject: show none rather than a wrong one.
+  return 'none'
 }
 
 export interface Continue {

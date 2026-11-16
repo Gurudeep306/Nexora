@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useInView, useReducedMotion } from 'motion/react'
 import { ArrowRight, Check } from 'lucide-react'
-import { Sparkline } from '@/components/ui'
+import { RankBadge, RankGlyph, Sparkline } from '@/components/ui'
 import { CountUp, LEVELS } from '@/components/landing/motifs'
 import { LessonPreview } from '@/components/landing/LessonPreview'
 import { SchedulerPreview } from '@/components/landing/SchedulerPreview'
@@ -50,7 +50,7 @@ export function Reveal({ children, className, as = 'section', ...rest }: { child
 }
 
 /* ── 1. Masthead ── */
-export function Masthead({ name, streak, goal, steps, onSync, syncing, updatedAt }: { name: string; streak: number; goal: { done: number; of: number }; steps: Step[]; onSync: () => void; syncing: boolean; updatedAt: number | null }) {
+export function Masthead({ name, streak, goal, steps, onSync, syncing, updatedAt, level }: { name: string; streak: number; goal: { done: number; of: number }; steps: Step[]; onSync: () => void; syncing: boolean; updatedAt: number | null; level?: number }) {
   const [now] = useState(() => new Date())
   const date = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })
   const [first, second] = steps
@@ -68,9 +68,16 @@ export function Masthead({ name, streak, goal, steps, onSync, syncing, updatedAt
           Change goal
         </Link>
       </p>
-      <h1 className="ed-display-sans today-greeting mt-5 mb-0">
-        {greeting(now)}, {name}.
-      </h1>
+      <div className="mt-5 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+        <h1 className="ed-display-sans today-greeting m-0">
+          {greeting(now)}, {name}.
+        </h1>
+        {level != null && (
+          <Link to="/nexus?tab=ranks" className="today-rank" aria-label="Your rank: see every rank">
+            <RankBadge level={level} size="lg" sub={`Level ${level} of 11 · see the ladder`} />
+          </Link>
+        )}
+      </div>
       {first && <p className="ed-lead today-next mt-3 mb-0">{first.line}</p>}
       <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
         {first && (
@@ -97,6 +104,7 @@ export function Masthead({ name, streak, goal, steps, onSync, syncing, updatedAt
 
 /* ── 2. The spread: Continue and Today's three ── */
 function FigureFor({ figure }: { figure: Figure }) {
+  if (figure === 'none') return null
   return <div className="ed-specimen today-figure">{figure === 'schedule' ? <SchedulerPreview /> : figure === 'graph' ? <GraphPreview /> : <LessonPreview />}</div>
 }
 
@@ -187,28 +195,36 @@ function Ladder({ level }: { level: StatsResponse['level'] }) {
   const still = useReducedMotion()
   const cur = Math.max(0, Math.min(LEVELS.length - 1, level.level - 1))
   const part = level.xpForNext > 0 ? Math.min(1, level.xpInLevel / level.xpForNext) : 1
+  // The eleven badges in a row: yours lit and larger, the ones behind you in
+  // colour, the ones ahead faint. A line under them fills to where you are.
   return (
-    <ol ref={ref} className="m-0 grid list-none gap-2 p-0" aria-label={`Your level: ${level.name}, ${cur + 1} of ${LEVELS.length}`}>
-      {LEVELS.map((name, k) => {
-        const fill = k < cur ? 1 : k === cur ? Math.max(part, 0.04) : 0
-        return (
-          <li key={name} className="grid grid-cols-[6.5rem_minmax(0,1fr)] items-center gap-4">
-            <span className={cn('ed-ui-sm', k === cur ? 'ed-ink font-semibold' : 'ed-muted')}>
+    <div className="today-badges">
+      <ol ref={ref} className="today-badge-row m-0 list-none p-0" aria-label={`Your level: ${level.name}, ${cur + 1} of ${LEVELS.length}`}>
+        {LEVELS.map((name, k) => (
+          <motion.li
+            key={name}
+            className={cn('today-badge', k === cur && 'is-here', k > cur && 'is-ahead')}
+            initial={still ? false : { opacity: 0, y: 8 }}
+            animate={seen || still ? { opacity: 1, y: 0 } : undefined}
+            transition={{ duration: 0.5, ease: EASE, delay: still ? 0 : 0.05 + k * 0.05 }}
+          >
+            <RankGlyph level={k + 1} size={k === cur ? 64 : 40} animated={false} />
+            <span className={cn('today-badge-name', k === cur ? 'ed-ink font-semibold' : 'ed-muted')}>
               {name}
               {k === cur && <span className="sr-only"> (you are here)</span>}
             </span>
-            <span className="today-rung" style={{ width: `${18 + k * 8.2}%` }}>
-              <motion.span
-                className={cn('today-rung-fill', k === cur && 'is-here')}
-                initial={{ scaleX: still ? fill : 0 }}
-                animate={{ scaleX: seen || still ? fill : 0 }}
-                transition={{ duration: 0.7, ease: EASE, delay: still ? 0 : 0.15 + k * 0.07 }}
-              />
-            </span>
-          </li>
-        )
-      })}
-    </ol>
+          </motion.li>
+        ))}
+      </ol>
+      <span className="today-badge-track" aria-hidden="true">
+        <motion.span
+          className="today-badge-fill"
+          initial={{ scaleX: still ? (cur + part) / LEVELS.length : 0 }}
+          animate={{ scaleX: seen || still ? (cur + Math.max(part, 0.02)) / LEVELS.length : 0 }}
+          transition={{ duration: 1, ease: EASE, delay: still ? 0 : 0.4 }}
+        />
+      </span>
+    </div>
   )
 }
 

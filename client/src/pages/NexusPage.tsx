@@ -150,7 +150,12 @@ function RadialOverview() {
   const [params] = useSearchParams()
   const navigate = useNavigate()
   // Phones open on the Index (the chart is one tap away); wider screens on the chart.
-  const [tab, setTab] = useState<'map' | 'index' | 'ranks'>(() => (typeof window !== 'undefined' && window.innerWidth < 640 && document.documentElement.dataset.kit === 'journal' ? 'index' : 'map'))
+  const [tab, setTab] = useState<'map' | 'index' | 'ranks'>(() => {
+    // ?tab=ranks (Home's rank badge) opens the ladder.
+    const asked = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tab') : null
+    if (asked === 'ranks' || asked === 'index' || asked === 'map') return asked
+    return typeof window !== 'undefined' && window.innerWidth < 640 && document.documentElement.dataset.kit === 'journal' ? 'index' : 'map'
+  })
   // The opening animation: full on the first open this session, short after.
   const [intro] = useState(() => pickIntro(typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches))
   const [introState, setIntroState] = useState<string>(intro.mode)
