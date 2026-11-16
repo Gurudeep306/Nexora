@@ -100,17 +100,14 @@ pushed so far:
   unsupported language, no code, no input, runner busy, program error,
   capped trace. Checked in a browser (bubble sort in Python, light and
   dark): real values, pointers `j` and `j+1`, variables, code line, marks.
-- **Known issues to fix first next session:**
-  1. axe colour-contrast on the pointer-name chips (`.viz-pointer-name`
-     in `client/src/learn/engine/views/ArrayView.tsx`, colours from
-     `ptrHue` in `views/stage.ts`). This is in the shared view, so the DSA
-     chapters have it too. Fix the colours (text on the chip ≥ 4.5:1 in
-     light and dark, all ten themes) and re-run axe.
-  2. The Solve page's bottom panel is short; the dry run reads best in
-     full screen. Make the Dry run open taller (or offer "open large").
-  3. Not yet checked: the dry run on a phone; DSA chapters in dark mode
-     and on a phone after the FramePlayer refactor; `learn.css` still has
-     a gradient + glow on `.viz-meter-fill` (against the house rules).
+- **Known issues: fixed (session 3).** Pointer chips are a deep tint with
+  white text (`.viz-pointer-name`, `.viz-ptr-svg-name`, light and dark);
+  the language badge, `.tok-fn` and cold code lines pass contrast; the
+  meter fill is solid accent (no gradient or glow). Opening the Dry run tab
+  grows the results panel to about 62% (`roomForTests` in `Workspace.tsx`),
+  and on a phone the Results tab fills the screen. Checked: axe 0 on the
+  Solve dry run (light, dark, phone) and on `/learn/dsa/arrays/6` in all
+  ten themes, light and dark; no sideways scroll at phone width.
 - Not built yet: the rest of the Solve-page tidy, other languages,
   Admin → Compilers.
 
@@ -211,10 +208,16 @@ inside). "How it runs" becomes a second view inside it ("Under the hood").
 
 1. (done) map / calls views. 2. (done) replay + toFrames.
 3. (done in code) FramePlayer; still to check DSA chapters in a browser.
-4. (done) `DryRunPanel.tsx`. Still to do: fix the "Known issues" above,
-   then check in a browser bubble sort, two pointers, a stack, a dict
-   count, recursion (fib), a linked list, a BFS on an adjacency list, a 2D
-   DP, a heap, a trie — light, dark, phone, axe 0.
+4. (done) `DryRunPanel.tsx`, the Known issues, and the browser check of 14
+   real programs (bubble, two pointers, sliding window, next-greater stack,
+   BFS, dict count, fib, permutations, linked-list reversal, BST insert,
+   dict trie, Dijkstra, union-find, LCS 2D DP) — light, dark, phone, axe 0.
+   Fixed on the way: role colours were wiped by the journal kit on every
+   player (DSA too); recursion now draws a recursion tree; a dict of dicts
+   is a trie tree with the walking variable on its node; `10**9`-style
+   infinity shows as ∞ when the code uses one; long values widen their box;
+   a weight `w` is not a graph pointer; full screen is a labelled dialog.
+   Script: `scratchpad/ax/dry.cjs` style (Solve page, `STEP=mid FOCUS=1`).
 5. Solve page redesign (section "Solve page redesign — every button in its
    best place").
 6. Dry run for C++, Java, C, JavaScript (tree-sitter instrumentation),

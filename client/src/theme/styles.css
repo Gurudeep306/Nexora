@@ -702,6 +702,13 @@
   border-color: var(--color-border);
   box-shadow: none;
 }
+/* A cell with a role keeps its colour: a light tint and a ring in the role's
+   colour (the plain rule above must not wipe it). */
+[data-kit='journal'] .viz-cell[class*='viz-role-'] {
+  background: color-mix(in oklab, var(--rc) 16%, var(--color-bg-surface));
+  border-color: var(--rc);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--rc) 22%, transparent);
+}
 [data-kit='journal'] .viz-role-active,
 [data-kit='journal'] .viz-range-active { --rc: var(--ed-clay); }
 [data-kit='journal'] .viz-role-compare,
@@ -738,6 +745,11 @@
 [data-kit='journal'] .viz-cell.viz-role-removed .viz-value {
   color: var(--color-text-muted);
 }
+/* Edge letters (a trie's characters) are ink: clay is never text. */
+[data-kit='journal'] .viz-tedge-label {
+  fill: var(--color-text-primary);
+  stroke: var(--color-bg-app);
+}
 [data-kit='journal'] .viz-legend-dot {
   box-shadow: none;
   border: 1px solid var(--color-border-strong);
@@ -773,11 +785,11 @@
   background: color-mix(in oklab, var(--ed-oat) 85%, transparent);
   box-shadow: inset 2px 0 0 var(--ed-clay);
 }
-[data-kit='journal'] .tok-kw { color: var(--color-accent-brand-hover, var(--ed-clay-deep)); }
-[data-kit='journal'] .tok-str { color: var(--color-state-success); }
-[data-kit='journal'] .tok-num { color: var(--color-state-warning); }
-[data-kit='journal'] .tok-fn { color: var(--color-text-primary); }
-[data-kit='journal'] .tok-com { color: var(--color-text-muted); font-style: italic; }
+:root[data-kit='journal'] .tok-kw { color: var(--color-accent-brand-hover, var(--ed-clay-deep)); }
+:root[data-kit='journal'] .tok-str { color: var(--color-state-success); }
+:root[data-kit='journal'] .tok-num { color: var(--color-state-warning); }
+:root[data-kit='journal'] .tok-fn { color: var(--color-text-primary); }
+:root[data-kit='journal'] .tok-com { color: var(--color-text-muted); font-style: italic; }
 /* tabs underlined, not pills */
 [data-kit='journal'] .viz-tabs {
   background: none;

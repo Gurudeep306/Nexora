@@ -209,3 +209,44 @@ test('__slots__ node classes are traced like any other', () => {
   const l = find(frames[frames.length - 1], 'list');
   assert.deepEqual(l.nodes.map((n) => n.v), [7, 8]);
 });
+
+test('recursion is drawn as a tree of calls, with returned values under each call', () => {
+  const frames = framesOf('def fib(k):\n    if k < 2:\n        return k\n    return fib(k - 1) + fib(k - 2)\nprint(fib(3))\n');
+  const last = frames[frames.length - 1];
+  const t = find(last, 'tree', 'recursion');
+  assert.equal(t.label, 'Recursion tree');
+  assert.deepEqual(t.nodes.map((n) => n.v).sort(), ['fib(0)', 'fib(1)', 'fib(1)', 'fib(2)', 'fib(3)']);
+  const root = t.nodes.find((n) => n.v === 'fib(3)');
+  assert.equal(root.children.length, 2);
+  assert.equal(root.note, '= 2');
+  const mid = frames.find((f) => f.kind === 'call' && find(f, 'tree', 'recursion')?.nodes.length === 3);
+  const running = find(mid, 'tree', 'recursion');
+  assert.equal(Object.values(running.roles).filter((r) => r === 'active').length, 1, 'only the running call is lit');
+  // A function that does not call itself gets no recursion tree.
+  const plain = framesOf('def sq(x):\n    return x * x\nprint(sq(2) + sq(3))\n');
+  assert.ok(plain.every((f) => !find(f, 'tree', 'recursion')));
+});
+
+test('a trie written as a dict of dicts is a tree; the walking variable rides on its node', () => {
+  const frames = framesOf('trie = {}\nfor word in ["cat", "car"]:\n    node = trie\n    for ch in word:\n        node = node.setdefault(ch, {})\n    node["$"] = True\nx = 0\n');
+  const last = frames[frames.length - 1];
+  const t = find(last, 'tree', 'trie');
+  assert.match(t.label, /ends a word/);
+  const ids = t.nodes.map((n) => n.id.split(':').pop());
+  for (const p of ['/c', '/c/a', '/c/a/t', '/c/a/r']) assert.ok(ids.includes(p), p);
+  assert.equal(t.nodes.find((n) => n.id.endsWith('/c/a/r')).v, '●');
+  const walk = frames.filter((f) => f.line === 5).map((f) => find(f, 'tree', 'trie')?.pointers?.node?.split(':').pop());
+  assert.deepEqual(walk.slice(3, 6), ['/c', '/c/a', '/c/a/r'], 'node follows the second word, not the equal "cat" branch');
+  assert.ok(!find(last, 'map', 'node'), 'node is a pointer, not its own table');
+});
+
+test('an "infinity" the code uses is drawn as ∞; a weight w is not a node pointer', () => {
+  const frames = framesOf('INF = 10**9\ndist = [0, INF, INF]\nadj = [[(1, 2)], [(2, 1)], []]\nu, w = 0, 1\nx = 0\n');
+  const last = frames[frames.length - 1];
+  assert.deepEqual(find(last, 'array', 'dist').cells.map((c) => c.v), [0, '∞', '∞']);
+  const g = find(last, 'graph');
+  assert.deepEqual(g.pointers, { u: 'n0' });
+  // Without an infinity in the code, a big number stays a number.
+  const plain = framesOf('a = [1000000000, 2]\nx = 0\n');
+  assert.equal(find(plain[plain.length - 1], 'array', 'a').cells[0].v, 1000000000);
+});
