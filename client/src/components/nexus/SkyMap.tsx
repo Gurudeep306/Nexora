@@ -17,14 +17,13 @@ import './atlas.css'
  */
 
 const W = 1200
-const COLS = 3
-const PAD = 14
-const COL_W = W / COLS
-const CELL_W = 124
-const CELL_H = 150
-const HEAD = 52
-const GAP = 18
-const PER_ROW = 3
+const PAD = 8
+const CELL_H = 158
+const HEAD = 64
+const GAP = 28
+/** Subjects per row in a stream's band. */
+const PER_ROW = 8
+const CELL_W = (W - PAD * 2) / PER_ROW
 
 interface Place {
   c: WebCluster
@@ -47,31 +46,33 @@ export function SkyMap({
   deps,
   nextKey,
   onOpen,
+  ready,
 }: {
   clusters: WebCluster[]
   streams: WebStream[]
   deps: Map<StarKey, number>
   nextKey: string | null
   onOpen: (id: string) => void
+  /** Subjects with lessons written (marked with a small book). */
+  ready?: Set<string>
 }) {
   const still = useReducedMotion()
   const [hot, setHot] = useState<string | null>(null)
 
+  // Each stream is a band across the whole plate: a ruled heading with its
+  // progress, then its subjects in rows of eight.
   const { regions, places, H } = useMemo(() => {
     const maxStars = Math.max(1, ...clusters.map((c) => c.nodes.length))
-    const heights = new Array(COLS).fill(0)
     const regions: { st: WebStream; x: number; y: number; w: number; h: number; lit: number; all: number }[] = []
     const places = new Map<string, Place>()
+    let y = PAD
     for (const st of [...streams].sort((a, b) => a.order - b.order)) {
       const list = clusters.filter((c) => c.stream === st.id).sort((a, b) => a.order - b.order)
       if (!list.length) continue
       const rows = Math.ceil(list.length / PER_ROW)
-      const h = HEAD + rows * CELL_H + 8
-      const col = heights.indexOf(Math.min(...heights))
-      const x = col * COL_W + PAD
-      const y = heights[col] + (heights[col] ? GAP : PAD)
-      heights[col] = y + h
-      const w = COL_W - PAD * 2
+      const h = HEAD + rows * CELL_H
+      const x = PAD
+      const w = W - PAD * 2
       let lit = 0
       let all = 0
       list.forEach((c, i) => {
@@ -79,14 +80,13 @@ export function SkyMap({
         lit += t.mastered
         all += t.total
         const row = Math.floor(i / PER_ROW)
-        const inRow = Math.min(PER_ROW, list.length - row * PER_ROW)
         const colIn = i % PER_ROW
-        const x0 = x + (w - inRow * CELL_W) / 2
-        places.set(c.id, { c, x: x0 + colIn * CELL_W + CELL_W / 2, y: y + HEAD + row * CELL_H + 48, r: 30 + 16 * Math.sqrt(c.nodes.length / maxStars) })
+        places.set(c.id, { c, x: x + colIn * CELL_W + CELL_W / 2, y: y + HEAD + row * CELL_H + 46, r: 28 + 12 * Math.sqrt(c.nodes.length / maxStars) })
       })
       regions.push({ st, x, y, w, h, lit, all })
+      y += h + GAP
     }
-    return { regions, places, H: Math.max(...heights) + PAD }
+    return { regions, places, H: y - GAP + PAD }
   }, [clusters, streams])
 
   const links = useMemo(() => subjectLinks(clusters).filter((l) => places.has(l.from) && places.has(l.to)), [clusters, places])
@@ -125,12 +125,13 @@ export function SkyMap({
             </defs>
             {regions.map((r) => (
               <g key={r.st.id}>
-                <rect x={r.x} y={r.y} width={r.w} height={r.h} rx={18} className="ax-region" />
-                <text x={r.x + 18} y={r.y + 30} className="ax-region-name">
+                <line x1={r.x} x2={r.x + r.w} y1={r.y} y2={r.y} className="ax-band-rule" />
+                <line x1={r.x} x2={r.x + (r.w * r.lit) / Math.max(1, r.all)} y1={r.y} y2={r.y} className="ax-band-lit" />
+                <text x={r.x} y={r.y + 30} className="ax-region-name">
                   {r.st.name.toUpperCase()}
                 </text>
-                <text x={r.x + r.w - 18} y={r.y + 30} textAnchor="end" className="ax-region-count">
-                  {r.lit}/{r.all} lit
+                <text x={r.x + r.w} y={r.y + 30} textAnchor="end" className="ax-region-count">
+                  {r.lit} of {r.all} lit · {Math.round((r.lit / Math.max(1, r.all)) * 100)}%
                 </text>
               </g>
             ))}
@@ -151,7 +152,7 @@ export function SkyMap({
                   key={p.c.id}
                   href={`/learn/${p.c.id}`}
                   className={cn('ax-sub', on && 'is-on', linked && 'is-linked')}
-                  aria-label={`${lines.join(' ')} ${t.mastered}/${t.total} stars lit${lines.join(' ') !== p.c.name ? ` (${p.c.name})` : ''}`}
+                  aria-label={`${lines.join(' ')} ${t.mastered}/${t.total} stars lit${ready?.has(p.c.id) ? ', lessons ready' : ''}${lines.join(' ') !== p.c.name ? ` (${p.c.name})` : ''}`}
                   onClick={(e) => {
                     e.preventDefault()
                     onOpen(p.c.id)
@@ -162,7 +163,12 @@ export function SkyMap({
                   onBlur={() => setHot((h) => (h === p.c.id ? null : h))}
                 >
                   <circle cx={p.x} cy={p.y} r={p.r + 8} className="ax-sub-hit" />
-                  {nextSubject === p.c.id && <circle cx={p.x} cy={p.y} r={p.r + 5} className="ax-you" />}
+                  {nextSubject === p.c.id && <circle cx={p.x} cy={p.y} r={p.r + 9} className="ax-you" />}
+                  {/* How much of it is lit: an arc round the constellation. */}
+                  <circle cx={p.x} cy={p.y} r={p.r + 4} className="ax-sub-track" />
+                  {t.pct > 0 && (
+                    <circle cx={p.x} cy={p.y} r={p.r + 4} className="ax-sub-arc" pathLength={100} strokeDasharray={`${t.pct} 100`} transform={`rotate(-90 ${p.x} ${p.y})`} />
+                  )}
                   <ConstellationGlyph c={p.c} deps={deps} x={p.x - p.r} y={p.y - p.r} draw={p.r * 2} />
                   <text textAnchor="middle">
                     {lines.map((ln, i) => (
@@ -173,6 +179,11 @@ export function SkyMap({
                     <tspan x={p.x} y={p.y + 50 + 9 + lines.length * 15 + 1} className="ax-sub-meta">
                       {`${t.mastered}/${t.total}`}
                     </tspan>
+                    {ready?.has(p.c.id) && (
+                      <tspan className="ax-sub-ready" dx="6">
+                        · lessons
+                      </tspan>
+                    )}
                   </text>
                 </a>
               )

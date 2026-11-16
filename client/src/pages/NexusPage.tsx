@@ -21,6 +21,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useAgentPageContext } from '@/context/AgentContext'
 import { cn, formatNumber } from '@/lib/utils'
 import { TitleTrack } from '@/components/nexus/TitleTrack'
+import { useNotesSubjects } from '@/gate/notes/api'
 import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
 import { RadialWeb, type Camera } from '@/components/nexus/RadialWeb'
 import { getLayout, layoutNow } from '@/components/nexus/layoutCache'
@@ -234,6 +235,12 @@ function RadialOverview() {
   const resume = useMemo(() => (clusters ? continueFrom(clusters) : null), [clusters])
   const celebrate = useCelebration(clusters, !refreshing && !!state)
   const [paletteOpen, setPaletteOpen] = useState(false)
+  // Subjects whose lessons are written: DSA, and the GATE notes subjects.
+  const notesOpen = useNotesSubjects()
+  const ready = useMemo(() => {
+    const notes = new Set((notesOpen.data ?? []).map((x) => x.id))
+    return (clusters ?? []).filter((c) => c.engine === 'dsa' || (!!c.gate?.notes && notes.has(c.gate.notes))).sort((a, b) => (a.engine === 'dsa' ? -1 : b.engine === 'dsa' ? 1 : a.order - b.order))
+  }, [clusters, notesOpen.data])
   usePaletteHotkey(() => setPaletteOpen(true))
   const run = (cmd: string) => window.dispatchEvent(new CustomEvent('nexus:command', { detail: cmd }))
   const commands: PaletteCommand[] = [
@@ -474,7 +481,7 @@ function RadialOverview() {
         onConcept={(k) => setSel(k)}
       />
 
-      {tab === 'map' && atlas && <TonightSky clusters={clusters} deps={deps} next={next} due={due} onOpen={setSel} />}
+      {tab === 'map' && atlas && <TonightSky clusters={clusters} deps={deps} next={next} due={due} onOpen={setSel} ready={ready} onSubject={(id) => openSubject(id)} />}
 
       {tab === 'index' ? (
         <AtlasIndex
@@ -500,7 +507,7 @@ function RadialOverview() {
         </div>
       ) : (
         atlas && view === 'sky' ? (
-          <SkyMap clusters={clusters} streams={structure?.streams ?? []} deps={deps} nextKey={next} onOpen={(id) => openSubject(id)} />
+          <SkyMap clusters={clusters} streams={structure?.streams ?? []} deps={deps} nextKey={next} onOpen={(id) => openSubject(id)} ready={new Set(ready.map((c) => c.id))} />
         ) : (
         <div className={cn('grid grid-cols-[minmax(0,1fr)] gap-4', !atlas && 'xl:grid-cols-[minmax(0,1fr)_380px]')}>
           <div>
