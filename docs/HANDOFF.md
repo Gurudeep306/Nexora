@@ -97,22 +97,27 @@ The earlier UI rollout has its own finished handover:
 ### Judge language status (tested 2026-11-16 through the real remote path)
 
 Run it yourself: `GET /api/admin/judge-selftest` on the live site as an
-admin (needs `problems.manage`), or locally with outbound requests routed
+admin (needs `problems.manage`; it also returns each language's runner
+chain and the sandbox health), or locally with outbound requests routed
 through the agent proxy (the demo server cannot reach the internet).
 
-- Pass: cpp, c, python, java, javascript, typescript, csharp, rust, kotlin,
-  ruby, php, shell, r, swift, dart, fsharp, objectivec, haskell, ocaml, d,
-  nim, crystal (and go, perl, lua, scala, julia, pascal, zig, groovy,
-  commonlisp pass when Wandbox is not overloaded — their failures were
-  Wandbox "OCI runtime error" / HTTP 504, now reported honestly).
-- Broken upstream: elixir (Wandbox image crashes: "File size limit
-  exceeded"), so it is NOT mapped.
-- No free runner anywhere: powershell, clojure, scheme, tcl — shown as
-  unavailable on the hosted server (`available:false` from /api/languages).
-- Real fix for reliability: self-host Piston (`src/piston.js`,
-  `JUDGE_MODE=piston`, `deploy/`). That needs a server (not free on Render);
-  tell the owner the cost plainly or use a free VM (Oracle Always Free /
-  the existing AWS worker) if they agree.
+Every language now has a chain of free sandboxes (`engineChain` in
+`src/remote-exec.js`): Wandbox, Compiler Explorer (Godbolt), the Kotlin
+Playground and Paiza.io. A busy or silent sandbox is skipped and remembered
+(rests 30 s, doubling to 5 min); a real CE/WA/RE/TLE is never retried. If
+every runner is down the student sees "busy, not your code" (exitCode -1,
+never cached).
+
+- Before: 14 of 36 passed in 487 s (Wandbox overloaded).
+- After: 31 of 36 pass in 69 s. Most languages have 2–3 backups
+  (cpp/c/java/python/go/rust/csharp/kotlin/haskell/ruby/perl/d/swift/fsharp
+  each verified forced onto every backup).
+- Newly available via Paiza: elixir, scheme.
+- One runner only (Wandbox): groovy, nim — fail when Wandbox is busy.
+- No free runner anywhere: clojure, powershell, tcl — shown unavailable.
+- Real "never fails" fix: self-host Piston (`JUDGE_MODE=piston`, steps in
+  `docs/ops/fast-judge.md`); it goes first in every chain and the public
+  sandboxes stay as backups. Needs the owner's yes on a server and its cost.
 
 ## How to check your work
 

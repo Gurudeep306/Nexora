@@ -1705,6 +1705,9 @@ app.get("/api/languages", (req, res) => {
       id,
       ...cfg,
       available: REMOTE_ONLY ? hasRemote(id) : true,
+      // The runners tried in order (our own Piston first when set up), so the
+      // editor can say how many backups a language has.
+      runners: REMOTE_ONLY ? require("./remote-exec").engineChain(id) : ["local"],
     })),
   );
 });
@@ -1723,7 +1726,13 @@ async (req, res) => {
     const { selfTest } = require("./judge-selftest");
     const only = typeof req.query.langs === "string" && req.query.langs ? req.query.langs.split(",") : null;
     const results = await selfTest({ judge, LANG_CONFIG, hasRemote, REMOTE_ONLY }, only);
-    res.json({ ok: true, remote: REMOTE_ONLY, passed: results.filter((r) => r.ok).length, total: results.length, results });
+    const remote = require("./remote-exec");
+    res.json({
+      ok: true, remote: REMOTE_ONLY, passed: results.filter((r) => r.ok).length, total: results.length, results,
+      // Which runners each language has, and which are resting after failing.
+      runners: Object.fromEntries(Object.keys(LANG_CONFIG).map((l) => [l, remote.engineChain(l)])),
+      health: remote.sandboxHealth(),
+    });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }

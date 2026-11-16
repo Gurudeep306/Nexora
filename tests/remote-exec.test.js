@@ -4,7 +4,7 @@
 // misread as the wrong verdict.
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { classifyWandbox, classifyKotlin, classifyGodbolt, engineFor, hasRemote, injectKotlinStdin } = require('../src/remote-exec');
+const { classifyWandbox, classifyKotlin, classifyGodbolt, classifyPaiza, engineFor, hasRemote, injectKotlinStdin, engineChain, orderByHealth, markFailed, markHealthy, resetHealth, runChain } = require('../src/remote-exec');
 
 /* ────────────────────────── Wandbox ────────────────────────── */
 
@@ -135,7 +135,7 @@ test('Compiler Explorer: timedOut is a TLE and a non-zero exit is an RE', () => 
 
 /* ────────────────────────── routing ────────────────────────── */
 
-test('each language is routed to exactly one sandbox', () => {
+test('each language starts on its primary sandbox', () => {
   assert.equal(engineFor('cpp'), 'wandbox');
   assert.equal(engineFor('kotlin'), 'kotlin');
   assert.equal(engineFor('swift'), 'godbolt');
@@ -167,4 +167,104 @@ test('a real compile error stays a compile error', () => {
   }, 12);
   assert.equal(r.verdict, 'CE');
   assert.ok(!r._transient);
+});
+
+/* ────────────────────────── backups and failover ────────────────────────── */
+
+test('Paiza.io: shapes captured from api.paiza.io become the right verdicts', () => {
+  // Captured (Nov 2026): a clean python3 run.
+  const ok = classifyPaiza({ status: 'completed', build_result: null, stdout: '42\n', stderr: '', exit_code: '0', time: '0.01', result: 'success' }, 900);
+  assert.equal(ok.verdict, null);
+  assert.equal(ok.stdout, '42');
+  assert.equal(ok.timeMs, 10, 'the program\'s own time, not the round trip');
+  // A C++ build failure.
+  const ce = classifyPaiza({ status: 'completed', build_result: 'failure', build_stderr: "Main.cpp:1:20: error: use of undeclared identifier 'x'", stdout: '', exit_code: '1', result: null }, 900);
+  assert.equal(ce.verdict, 'CE');
+  assert.match(ce.stderr, /undeclared identifier/);
+  // An endless loop.
+  assert.equal(classifyPaiza({ status: 'completed', build_result: 'success', stdout: '', stderr: '', exit_code: '137', result: 'timeout' }, 3000).verdict, 'TLE');
+  // A crash with an empty stderr still says what happened.
+  const re = classifyPaiza({ status: 'completed', build_result: 'success', stdout: '', stderr: '', exit_code: '1', result: 'failure' }, 2000);
+  assert.equal(re.verdict, 'RE');
+  assert.match(re.stderr, /code 1/);
+});
+
+test('every common language has at least two independent sandboxes', () => {
+  for (const lang of ['cpp', 'c', 'python', 'java', 'javascript', 'typescript', 'go', 'rust', 'kotlin', 'csharp', 'ruby', 'php', 'swift', 'haskell', 'scala']) {
+    const chain = engineChain(lang);
+    assert.ok(chain.length >= 2, `${lang} has only ${chain.join(', ')}`);
+    assert.equal(new Set(chain).size, chain.length, `${lang} lists a sandbox twice`);
+  }
+  assert.deepEqual(engineChain('cpp'), ['wandbox', 'godbolt', 'paiza']);
+  assert.deepEqual(engineChain('elixir'), ['paiza'], 'Elixir runs on Paiza, the one free runner for it');
+  assert.deepEqual(engineChain('tcl'), []);
+});
+
+test('a sandbox that just failed is tried last, then forgiven', () => {
+  resetHealth();
+  const now = 1_000_000;
+  markFailed('wandbox', now);
+  assert.deepEqual(orderByHealth(['wandbox', 'godbolt', 'paiza'], now + 1000), ['godbolt', 'paiza', 'wandbox']);
+  assert.deepEqual(orderByHealth(['wandbox', 'godbolt', 'paiza'], now + 31_000), ['wandbox', 'godbolt', 'paiza'], 'back after 30s');
+  markFailed('wandbox', now);
+  markFailed('wandbox', now);
+  assert.deepEqual(orderByHealth(['wandbox', 'godbolt'], now + 100_000), ['godbolt', 'wandbox'], 'the rest doubles while it keeps failing');
+  markHealthy('wandbox');
+  assert.deepEqual(orderByHealth(['wandbox', 'godbolt'], now), ['wandbox', 'godbolt']);
+  resetHealth();
+});
+
+test('a busy sandbox moves the run to the next one at once', async () => {
+  resetHealth();
+  const tried = [];
+  const run = async (code, input, lang, engine) => {
+    tried.push(engine);
+    if (engine === 'wandbox') return { stdout: '', stderr: 'overloaded', exitCode: -1, timeMs: 5, verdict: 'RE', engine, _transient: true };
+    return { stdout: '15', stderr: '', exitCode: 0, timeMs: 5, verdict: null, engine };
+  };
+  const r = await runChain('x', '', 'cpp', ['wandbox', 'godbolt', 'paiza'], Date.now() + 10_000, run, 0);
+  assert.equal(r.stdout, '15');
+  assert.equal(r.engine, 'godbolt');
+  assert.deepEqual(tried, ['wandbox', 'godbolt']);
+  // The next run skips the sandbox that just failed.
+  tried.length = 0;
+  await runChain('y', '', 'cpp', ['wandbox', 'godbolt', 'paiza'], Date.now() + 10_000, run, 0);
+  assert.deepEqual(tried, ['godbolt']);
+  resetHealth();
+});
+
+test('a sandbox that never answers hands the run on; the last one decides', async () => {
+  resetHealth();
+  const run = async (code, input, lang, engine) =>
+    engine === 'wandbox'
+      ? { stdout: '', stderr: 'no answer', exitCode: -1, timeMs: 25_000, verdict: 'TLE', engine, _noAnswer: true }
+      : { stdout: '', stderr: 'Killed', exitCode: -1, timeMs: 2000, verdict: 'TLE', engine };
+  const r = await runChain('loop', '', 'cpp', ['wandbox', 'godbolt'], Date.now() + 10_000, run, 0);
+  assert.equal(r.verdict, 'TLE');
+  assert.equal(r.engine, 'godbolt', 'the real time-limit verdict comes from a sandbox that ran the program');
+  resetHealth();
+});
+
+test('a real verdict about the code is never retried elsewhere', async () => {
+  resetHealth();
+  const tried = [];
+  const run = async (code, input, lang, engine) => {
+    tried.push(engine);
+    return { stdout: '', stderr: "error: expected ';'", exitCode: 1, timeMs: 5, verdict: 'CE', engine };
+  };
+  const r = await runChain('bad', '', 'cpp', ['wandbox', 'godbolt', 'paiza'], Date.now() + 10_000, run, 0);
+  assert.equal(r.verdict, 'CE');
+  assert.deepEqual(tried, ['wandbox']);
+  resetHealth();
+});
+
+test('when every sandbox is down the student is told plainly, never a fake verdict', async () => {
+  resetHealth();
+  const run = async (code, input, lang, engine) => ({ stdout: '', stderr: 'HTTP 503', exitCode: -1, timeMs: 5, verdict: 'RE', engine, _transient: true });
+  const r = await runChain('x', '', 'cpp', ['wandbox', 'godbolt', 'paiza'], Date.now() + 10_000, run, 0);
+  assert.equal(r.exitCode, -1, 'our failure: never cached');
+  assert.match(r.stderr, /not a problem with your code/);
+  assert.notEqual(r.verdict, 'CE');
+  assert.notEqual(r.verdict, 'WA');
+  resetHealth();
 });

@@ -96,6 +96,8 @@ const ENGINE_LABEL: Record<string, string> = {
   wandbox: 'Wandbox',
   godbolt: 'Compiler Explorer',
   kotlin: 'Kotlin Playground',
+  paiza: 'Paiza.io',
+  piston: 'Nexora runner',
   local: 'local judge',
 }
 
