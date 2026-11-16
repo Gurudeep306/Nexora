@@ -91,7 +91,32 @@ DO NEXT, in this order (one finished, tested, pushed piece at a time):
      and the compilers it offers; key-based services only where their terms
      allow (check each); the compiler list refreshes by itself every few
      hours and updates each language's chain; on/off per service.
-  6. Then the older list in docs/HANDOFF.md ("Older requests").
+  6. Then my OLDER REQUESTS (full detail in docs/HANDOFF.md, "Older
+     requests"), each as its own finished PR, "add as many features to
+     each as possible":
+     A. The unfinished compiler/editor items: plain-English error
+        explanations on the exact line for every runner's error format;
+        live syntax checks while typing; Format for every language; a
+        cheat sheet per language; a Playwright test per language; a coding
+        analysis page (by difficulty, tag, language, verdict trend, time to
+        solve, weak tags) and per-problem analysis; "+XP" and level progress
+        on Accepted, and the Profile explaining how the level is earned.
+     B. Problem pipeline: every source imports full statements, all
+        samples, limits, tags, rating and images (stored by us, never
+        hot-linked); an audit script and an Admin page of gaps with
+        re-import; never bypass bot protection.
+     C. Staff-only "Add a coding problem" editor: statement (maths,
+        images), samples + hidden tests, limits, checker, tags, rating,
+        editorial, solutions in 5 languages run on the judge before
+        publishing; uses src/authz.
+     D. Social: DMs, groups, typing, read receipts, attachments,
+        reactions, search; rich share cards for problems, solutions,
+        contests and GATE questions.
+     E. Contests from anywhere; custom coding and GATE questions with every
+        feature; teacher GATE contests with marks, analysis and export.
+     F. Linked platforms: more sites, ownership proof by a one-time code,
+        import solves; real OAuth only for GitHub; never a fake permission
+        screen.
 
 RULES (never break):
   - Never commit to main. Push only to your session's branch. One PR per

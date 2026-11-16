@@ -220,8 +220,10 @@ inside). "How it runs" becomes a second view inside it ("Under the hood").
 6. Dry run for C++, Java, C, JavaScript (tree-sitter instrumentation),
    then Go, Rust, C#, Kotlin, Swift and the rest.
 7. Admin → Compilers (see below).
-8. Then the older list: problem pipeline, staff problem editor, social,
-   contests, linked platforms (section "Older requests").
+8. Then the older requests, in full detail in "Older requests": A (the
+   unfinished compiler/editor items, coding analysis, +XP), B problem
+   pipeline, C staff problem editor, D social, E contests, F linked
+   platforms.
 
 ### Solve page redesign — every button in its best place (owner's request)
 
@@ -297,20 +299,79 @@ service's compiler list (`/api/list.json`, `/api/compilers`,
 itself; new versions appear without code changes; broken ones are skipped.
 Per-language view of the chain, on/off per service.
 
-## Older requests (not started)
+## Older requests (from the owner's first brief, 2026-11-16) — still to do
 
-- Problem pipeline (`src/sources/*.js`): full statements, all samples,
-  images saved locally; audit script + Admin report. Do not bypass bot
-  protection.
-- Staff-only "Add a coding problem" editor (statement, tests, limits,
-  checker, editorial, 5-language solutions run on the judge first).
-- Social: DMs, groups, typing, read receipts, attachments, share cards.
-- Contests from anywhere; custom coding and GATE questions; teacher GATE
-  contests with marks, analysis, export.
-- Linked platforms: more sites, ownership proof by a one-time code. Only
-  GitHub has real OAuth; never fake a permission screen.
-- Coding analysis page and "+XP / level progress" on Accepted (Problem XP
-  is the whole Rift level, `calcLevel`; a quarter of the Nexus rank).
+These are the owner's earlier asks. They are not forgotten; do them after
+the dry run, the Solve page redesign and Admin → Compilers, each as its own
+finished, tested PR. "Add as many features to each as possible."
+
+**A. Compiler and editor — the parts not finished yet**
+- Plain-English error explanations: rewrite `client/src/lib/diagnostics.ts`
+  against the real error formats from every runner (collected this session:
+  gcc/clang `<source>:L:C`, javac `Main.java:L:`, Go `./prog.go:L:C`, Rust
+  `--> file:L:C`, C#/TypeScript/F# `file(L,C):`, D/Nim/Pascal `file(L)`,
+  Python `File "…", line L`, Ruby `file:L:`, PHP `on line L`, Perl
+  `at file line L`, Lua `file:L:`, OCaml `File "…", line L, characters`,
+  Crystal `In file:L:C`, Groovy `@ line L, column C`, Scheme `at line L`,
+  Node `file:L` + `(file:L:C)` frames, Java/Kotlin `(File.java:L)` frames).
+  Accept only the student's own file names (`<source>`, `prog.*`, `Main.*`,
+  `main.*`, `example.*`, `File.kt`, `/workspace/Main.*`,
+  `/home/wandbox/prog.*`, `arena_*`), never system headers. Add a short
+  "What it means" line for common errors (undeclared name, missing `;`,
+  unmatched brackets, indentation, type mismatch, index out of range,
+  division by zero, null/None, bad number input, reading past the input,
+  recursion too deep, missing return, code outside a function, Java public
+  class, duplicate name, out of memory). Show it in the marker, the Result
+  tab and the status bar.
+- Live syntax check while typing for every language: unmatched brackets
+  and unterminated strings (comment- and string-aware), Python mixed
+  tabs/spaces. JS/TS keep Monaco's own checks.
+- Format for every language: JS/TS through Monaco; brace languages
+  re-indented by brace depth (strings and comments respected); others:
+  trailing spaces and tabs only. Say plainly which languages get a full
+  formatter.
+- A cheat sheet per language (read a line, read n numbers, fast I/O, print,
+  arrays, maps, sort, common mistakes), opened from the editor.
+- Playwright test per language: open Solve, pick the language, type, check
+  completions, signature help, hover docs and the cheat sheet appear.
+- Coding analysis page (`client/src/pages/AnalyticsPage.tsx`, `/api/stats`):
+  by difficulty, tag, language, verdict trend, time to solve, weak tags
+  with links; plus per-problem analysis.
+- Levels: show "+XP" and level progress on Accepted, and explain on the
+  Profile how the level is earned (Problem XP is the whole Rift level,
+  `calcLevel`; a quarter of the Nexus web rank, `src/nexus/ranks.js`).
+
+**B. Problem pipeline** (`src/sources/*.js`): every source imports the full
+statement, all samples, limits, tags, rating and images (saved and served by
+us, never hot-linked). An audit script and an Admin page listing gaps per
+source and per problem, with a re-import button. Never bypass a site's bot
+protection; use official APIs / open datasets (`src/sources/cf-dataset.js`).
+
+**C. Staff-only "Add a coding problem" editor** (uses `src/authz`):
+statement with maths and images, samples and hidden tests (paste / upload /
+generate), limits, a custom checker, tags, rating, editorial, solutions in
+5 languages that are run on the judge against every test before the
+problem can be published; preview as a student.
+
+**D. Social** (`src/routes/social.js`, `/api/rooms`, `/api/messages`,
+`client/src/components/social/*`): direct messages, groups (create, invite,
+roles), typing indicator, read receipts, attachments, reactions, search;
+rich share cards for problems, solutions, contests and GATE questions in
+chats and the feed.
+
+**E. Contests** (`/api/contests/*` in `src/server.js`,
+`client/src/components/contests/*`, `pages/WorkshopPage.tsx`): make a
+contest from anywhere (a problem page, a GATE question, a set); choose
+questions and timeline; share a link. Contest makers write custom questions
+with every feature (coding: statement, samples, hidden tests, limits,
+editorial; GATE: MCQ / MSQ / NAT with marks, negative marks, figures,
+solutions). Teacher GATE contests: share with students, marks list,
+analysis per question / per student / time, export (CSV).
+
+**F. Linked platforms** (`src/accounts.js`): more sites; proof of ownership
+by a one-time code the user puts on their profile there; import solves and
+achievements. Real OAuth only where it exists (GitHub). Never build a fake
+"allow this site" permission screen.
 
 ## How to check your work
 
