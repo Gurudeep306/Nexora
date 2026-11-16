@@ -177,8 +177,9 @@ template <class T> bool blank(const T& v) {
   else return false;
 }
 template <class T, size_t N> size_t lastUsed(const T (&a)[N]) {
+  // Look at the first 10 000 only: a sieve of a million is not read whole on every step.
   size_t k = 0;
-  for (size_t i = 0; i < N; i++) if (!blank(a[i])) k = i + 1;
+  for (size_t i = 0; i < N && i < 10000; i++) if (!blank(a[i])) k = i + 1;
   return k;
 }
 /** A big fixed array (int a[200005]) shows the part in use; one still all zeros shows its first 10. */
