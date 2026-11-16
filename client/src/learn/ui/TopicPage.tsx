@@ -113,7 +113,7 @@ export default function TopicPage() {
         ) : (
           <>
             <div className="nr-tree-head">
-              <Link to="/learn?tab=dsa" className="nr-tree-subject">
+              <Link to="/learn/dsa" className="nr-tree-subject">
                 {topic.title}
               </Link>
               <button type="button" className="nr-icon" onClick={() => setMini(true)} aria-label="Collapse the page list" title="Collapse">
@@ -161,7 +161,7 @@ export default function TopicPage() {
           <nav aria-label="Lesson path" className="notes-crumbs">
             <ol>
               <li>
-                <Link to="/learn?tab=dsa">DSA course</Link>
+                <Link to="/learn/dsa">DSA course</Link>
               </li>
               <li>
                 <span aria-current="page">{topic.title}</span>
@@ -169,7 +169,7 @@ export default function TopicPage() {
             </ol>
           </nav>
           <span className="nr-bar-links">
-            <Link to="/learn/dsa" className="nr-bar-link">
+            <Link to="/learn/dsa?view=tree" className="nr-bar-link">
               <Network className="size-3.5" aria-hidden="true" /> Skill tree
             </Link>
             <Link to={`/learn/dsa/${topic.id}/practice`} className="nr-bar-link">

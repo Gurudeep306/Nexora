@@ -440,11 +440,13 @@ function RadialOverview() {
             )}
             {resume && <ContinueChip name={resume.name} subjectName={resume.subjectName} onClick={() => openSubject(resume.subject, resume.key.split(':').slice(1).join(':'))} />}
             <GoalMenu routes={structure?.routes ?? []} goal={goal} onGoal={setGoal} />
-            <Button variant="ghost" size="sm" className="nx-press hidden sm:inline-flex" onClick={() => setPaletteOpen(true)} title="Search the Nexus">
-              <Icon name="search" className="size-3.5" aria-hidden="true" />
-              <span className="sr-only">Search the Nexus</span>
-              <kbd className="font-mono text-[10.5px] text-text-muted">⌘K</kbd>
-            </Button>
+            <button type="button" className="search-field is-sm w-full cursor-pointer text-left sm:w-60" onClick={() => setPaletteOpen(true)} aria-haspopup="dialog">
+              <Icon name="search" className="search-field-icon" aria-hidden="true" />
+              <span className="ui-search-hint min-w-0 flex-1 truncate text-[14px]">Find a subject or skill</span>
+              <kbd className="search-field-kbd hidden sm:inline-block" aria-hidden="true">
+                ⌘K
+              </kbd>
+            </button>
           </div>
         )}
       </div>

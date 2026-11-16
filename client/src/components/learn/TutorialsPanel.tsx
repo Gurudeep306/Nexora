@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'motion/react'
-import { Badge, Card, CardContent, EmptyState, ErrorState, LoadingBlock, Progress, Select, StatCard } from '@/components/ui'
+import { Badge, Card, CardContent, EmptyState, ErrorState, LoadingBlock, Progress, SearchInput, Select, StatCard } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { TutorialReader } from './TutorialReader'
@@ -11,6 +11,7 @@ import { Icon } from '@/components/icon/Icon'
 export function TutorialsPanel() {
   const [category, setCategory] = useState('cp')
   const [openId, setOpenId] = useState<number | null>(null)
+  const [q, setQ] = useState('')
 
   const tutorials = useApi<Tutorial[]>(
     () => api.get<{ ok: boolean; tutorials: Tutorial[] }>('/api/tutorials').then((r) => r.tutorials ?? []),
@@ -29,7 +30,11 @@ export function TutorialsPanel() {
     return m
   }, [tutorials.data])
 
-  const current = byCategory.get(category) ?? []
+  // Typing searches every chapter, in every category.
+  const needle = q.trim().toLowerCase()
+  const current = needle
+    ? (tutorials.data ?? []).filter((t) => `${t.title} ${categoryLabel(t.category)}`.toLowerCase().includes(needle))
+    : (byCategory.get(category) ?? [])
   const openTutorial = openId != null ? (tutorials.data?.find((t) => t.id === openId) ?? null) : null
   const knownCategories = useMemo(() => new Set(CATEGORY_GROUPS.flatMap((g) => g.categories.map((c) => c.id))), [])
   const extraCategories = useMemo(
@@ -77,6 +82,7 @@ export function TutorialsPanel() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[240px_1fr]">
           {/* Category rail (desktop) / select (mobile) */}
           <div className="space-y-3">
+            <SearchInput value={q} onChange={(e) => setQ(e.target.value)} onClear={() => setQ('')} placeholder="Find a chapter" aria-label="Search tutorials" />
             <Select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -163,7 +169,7 @@ export function TutorialsPanel() {
           {/* Chapter list */}
           <div>
             {current.length === 0 ? (
-              <EmptyState icon="book" title="No chapters here yet" description="Pick another category from the rail." />
+              <EmptyState icon="book" title={needle ? `No chapters match “${q.trim()}”` : 'No chapters here yet'} description={needle ? 'Check the spelling, or clear the search.' : 'Pick another category from the rail.'} />
             ) : (
               <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2">
                 {current.map((t, i) => (

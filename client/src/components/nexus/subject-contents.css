@@ -164,3 +164,67 @@
     background: var(--ed-clay);
   }
 }
+
+/* The book view (SubjectBook.tsx): a "continue reading" line, rows that link. */
+@layer components {
+  a.sx-lesson {
+    text-decoration: none;
+  }
+  .sx-lesson .sx-go {
+    color: var(--ed-muted);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition:
+      opacity 250ms var(--ed-ease),
+      transform 250ms var(--ed-ease);
+  }
+  .sx-lesson:hover .sx-go,
+  .sx-lesson:focus-visible .sx-go {
+    opacity: 1;
+    transform: none;
+  }
+  @media (hover: none) {
+    .sx-lesson .sx-go {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  div.sx-lesson.is-locked {
+    cursor: default;
+  }
+  .sx-resume {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--ed-ink);
+    border-bottom: 1px solid var(--ed-line);
+    color: var(--ed-ink);
+    text-decoration: none;
+  }
+  .sx-resume-title {
+    font-size: 1.375rem;
+    line-height: 1.25;
+  }
+  .sx-resume:hover .sx-resume-title {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+  .sx-resume:focus-visible {
+    outline: 2px solid var(--ed-focus);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+  @media (max-width: 480px) {
+    .sx-resume .ed-mono {
+      display: none;
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sx-lesson .sx-go {
+    transition: none;
+  }
+}

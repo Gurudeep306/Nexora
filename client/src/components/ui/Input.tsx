@@ -35,20 +35,17 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   ({ className, containerClassName, onClear, shortcut, value, ...props }, ref) => {
     const hasValue = value != null && String(value).length > 0
     return (
-      <div className={cn('group/search relative flex items-center', containerClassName)}>
-        <Search
-          aria-hidden="true"
-          className="pointer-events-none absolute left-3 z-10 size-4 text-text-muted transition-colors duration-[var(--dur-fast)] group-focus-within/search:text-text-secondary"
-        />
+      <div className={cn('ui-search group/search relative flex items-center', containerClassName)}>
+        <Search aria-hidden="true" className="ui-search-icon pointer-events-none absolute left-0.5 z-10 size-[17px]" />
         <input
           ref={ref}
           type="search"
           value={value}
-          className={cn('ui-search-input w-full pl-9', (hasValue && onClear) || shortcut ? 'pr-9' : '', className)}
+          className={cn('ui-search-input w-full pl-8', (hasValue && onClear) || shortcut ? 'pr-9' : '', className)}
           {...props}
         />
         {shortcut && !hasValue && (
-          <kbd className="search-field-kbd pointer-events-none absolute right-2.5 z-10" aria-hidden="true">
+          <kbd className="search-field-kbd pointer-events-none absolute right-1 z-10" aria-hidden="true">
             {shortcut}
           </kbd>
         )}
@@ -57,7 +54,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             type="button"
             onClick={onClear}
             aria-label="Clear search"
-            className="absolute right-2 z-10 flex size-6 cursor-pointer items-center justify-center rounded-full text-foreground-faint transition-all duration-150 hover:scale-105 hover:bg-foreground/10 hover:text-foreground active:scale-95"
+            className="search-field-clear absolute right-0.5 z-10"
           >
             <X className="size-3.5" aria-hidden="true" />
           </button>
