@@ -22,7 +22,7 @@
       "id": "interviews",
       "name": "Interviews",
       "description": "Data structures, algorithms, contests, design and OOP.",
-      "subjects": ["dsa", "algo", "cp", "oop-patterns", "sysd"]
+      "subjects": ["dsa", "algo", "cp", "oop-patterns"]
     }
   ]
 }

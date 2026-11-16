@@ -32,7 +32,6 @@
     }
   },
   "learn": [
-    { "course": "dsa", "name": "DSA Course", "href": "/learn?tab=dsa", "nexus": "dsa" },
-    { "course": "sysdesign", "name": "System Design Studio", "href": "/learn?tab=sysdesign", "nexus": "sysd" }
+    { "course": "dsa", "name": "DSA Course", "href": "/learn?tab=dsa", "nexus": "dsa" }
   ]
 }

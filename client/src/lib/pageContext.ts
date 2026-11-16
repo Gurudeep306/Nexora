@@ -7,7 +7,6 @@ export type PageKind =
   | 'solve'
   | 'problems'
   | 'learn'
-  | 'system-design'
   | 'gate'
   | 'gate-exam'
   | 'nexus'
@@ -22,7 +21,6 @@ export type PageKind =
 export function pageKind(path: string): PageKind {
   if (/^\/solve\//.test(path)) return 'solve'
   if (/^\/problems(\/|$)/.test(path)) return 'problems'
-  if (/^\/learn\/system-design\//.test(path)) return 'system-design'
   if (/^\/learn(\/|$)/.test(path)) return 'learn'
   if (/^\/gate\/cbt\/[^/]+/.test(path)) return 'gate-exam'
   if (/^\/gate(\/|$)/.test(path)) return 'gate'
@@ -77,7 +75,6 @@ export function summarizePage(path: string, ctx: Partial<AgentPage> | null): Pag
   if (c.label) label = c.label
   else if (kind === 'solve') label = c.title || 'Problem'
   else if (kind === 'learn') label = c.learnTopic ? `Learn · ${c.learnTopic}` : 'Learn'
-  else if (kind === 'system-design') label = `System design · ${c.title || titleCase(path.split('/')[3] ?? '')}`
   else if (kind === 'gate-exam') label = examActive ? 'GATE mock · exam in progress' : 'GATE mock · review'
   else if (kind === 'gate') label = c.gateQuestionId ? `GATE · ${c.title || c.gateQuestionId}` : c.title || 'GATE practice'
   else label = c.title ? `${section} · ${c.title}` : section
@@ -91,8 +88,6 @@ export function chipsFor(s: PageSummary): string[] {
       return ['Explain this problem', 'Give me a hint', 'Why is my code failing?', 'Analyze complexity']
     case 'learn':
       return ['Explain this topic simply', 'Quiz me on this', 'Give an example']
-    case 'system-design':
-      return ['Explain this chapter simply', 'Quiz me like an interviewer', 'What are the trade-offs here?']
     case 'gate-exam':
       return s.examActive
         ? ['Explain a concept (no answers)', 'How should I pace this paper?', 'How does the virtual calculator work?']

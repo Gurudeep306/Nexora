@@ -118,7 +118,6 @@ export const CATEGORY_GROUPS: { group: string; categories: { id: string; label: 
   {
     group: 'Design & More',
     categories: [
-      { id: 'sysdesign', label: 'System Design' },
       { id: 'web', label: 'Web Dev' },
       { id: 'se', label: 'Software Engineering' },
       { id: 'cloud', label: 'Cloud' },

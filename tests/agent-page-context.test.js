@@ -36,7 +36,8 @@ test.before(async () => {
 test('page kind comes from the path, not from the client', () => {
   assert.equal(P.pageKind('/solve/42'), 'solve');
   assert.equal(P.pageKind('/learn/dsa/graphs/bfs'), 'learn');
-  assert.equal(P.pageKind('/learn/system-design/tinyurl/3'), 'system-design');
+  // System Design was removed; an old link is just a Learn page now.
+  assert.equal(P.pageKind('/learn/system-design/tinyurl/3'), 'learn');
   assert.equal(P.pageKind('/gate'), 'gate');
   assert.equal(P.pageKind('/gate/cbt'), 'gate');
   assert.equal(P.pageKind('/gate/cbt/cse-2024-1'), 'gate-exam');

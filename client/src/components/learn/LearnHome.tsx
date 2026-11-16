@@ -54,8 +54,8 @@ export function LearnHome() {
 
   if (!clusters || !structure) return error ? <p className="ed-body-sm ed-ink-2">{error}</p> : <LoadingBlock rows={8} />
 
-  const hasLessons = (c: WebCluster) => c.engine === 'dsa' || c.id === 'sysd' || (!!c.gate?.notes && notes.has(c.gate.notes))
-  const lessonsHref = (c: WebCluster) => (c.engine === 'dsa' ? '/learn?tab=dsa' : c.id === 'sysd' ? '/learn?tab=sysdesign' : `/gate/notes/${c.gate?.notes}`)
+  const hasLessons = (c: WebCluster) => c.engine === 'dsa' || (!!c.gate?.notes && notes.has(c.gate.notes))
+  const lessonsHref = (c: WebCluster) => (c.engine === 'dsa' ? '/learn?tab=dsa' : `/gate/notes/${c.gate?.notes}`)
   const practiceHref = (c: WebCluster) => (c.engine === 'dsa' ? '/problems' : c.gate?.pyq ? `/gate/practice?subject=${encodeURIComponent(c.gate.pyq)}` : null)
   const nameOf = (c: WebCluster) => (c.engine === 'dsa' ? 'Data Structures & Algorithms' : c.name)
 
@@ -251,7 +251,6 @@ export function LearnHome() {
         <ul className="ed-rows lh-more mt-6 mb-0 list-none p-0">
           {[
             { to: '/learn?tab=dsa', title: 'DSA course map', text: `All ${DSA_TOPICS.length} chapters, unit by unit.` },
-            { to: '/learn?tab=sysdesign', title: 'System Design Studio', text: 'Build real architectures and watch them under load.' },
             { to: '/learn?tab=tutorials', title: 'Tutorials', text: 'Deep dives on single topics.' },
             { to: '/learn?tab=paths', title: 'Paths', text: 'Guided journeys across subjects.' },
             { to: '/nexus', title: 'Nexus', text: 'Every subject as one web of skills.' },

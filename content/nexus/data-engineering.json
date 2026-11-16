@@ -377,8 +377,7 @@
       ],
       "kind": "lesson",
       "requires": [
-        "distributed-storage",
-        "sysd:message-queues"
+        "distributed-storage"
       ],
       "xpReward": 140
     },

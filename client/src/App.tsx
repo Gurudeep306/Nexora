@@ -22,7 +22,6 @@ const AchievementsPage = lazy(pageLoaders.AchievementsPage)
 const LearnPage = lazy(pageLoaders.LearnPage)
 const LearnTopicPage = lazy(pageLoaders.LearnTopicPage)
 const LearnPracticePage = lazy(pageLoaders.LearnPracticePage)
-const SystemDossierPage = lazy(pageLoaders.SystemDossierPage)
 const GatePage = lazy(pageLoaders.GatePage)
 const GateCbtPage = lazy(pageLoaders.GateCbtPage)
 const GateHomePage = lazy(pageLoaders.GateHomePage)
@@ -112,8 +111,8 @@ export default function App() {
             {/* AI Lab was retired; AI courses live under Learn. Keep old links working. */}
             <Route path="/ailab/*" element={<Navigate to="/learn" replace />} />
             <Route path="/learn" element={<LearnPage />} />
-            <Route path="/learn/system-design/:systemId/:chapterNumber" element={<SystemDossierPage />} />
-            <Route path="/learn/system-design/:systemId" element={<SystemDossierPage />} />
+            {/* System Design was removed (2026-11): old links land on Learn. */}
+            <Route path="/learn/system-design/*" element={<Navigate to="/learn" replace />} />
             <Route path="/learn/dsa/:topic/practice" element={<LearnPracticePage />} />
             <Route path="/learn/dsa/:topic/:page?" element={<LearnTopicPage />} />
             {/* Every Nexus subject's one page: its course tree; a node opens its lesson in place. */}

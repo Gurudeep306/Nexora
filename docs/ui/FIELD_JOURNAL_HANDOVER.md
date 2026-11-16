@@ -450,10 +450,14 @@ Block Print). Fixes:
   same settings" are named on phones.
 
 **Left / ideas:**
-- System Design reader: accessible and readable in every theme now, but its
-  visual language (bright pills, dense dashboards) is still the old one; a
-  journal restyle with the reader parts (`Outline`, `EndOfLesson`, title
-  block) is the next big piece. Notes `dek` field (from 3.5).
+- **System Design is removed** (owner's decision, 2026-11-16: it looked worse
+  than the rest of the site). Gone: the studio tab, every system's pages
+  (`/learn/system-design/*` now redirects to `/learn`), the System Design
+  path, its four tutorials (deleted from existing databases at startup in
+  `src/db.js`), the `sysd` Nexus subject and its cross-links, and the AI
+  tutor's System Design page role. Older notes in this file that mention it
+  are history. Do not bring it back unless the owner asks.
+- Notes `dek` field (from 3.5).
 - The bigger cards inside account forms (AvatarCard, ProfileForm…) still use
   their card-title labels in caps; they work in every theme but could take a
   serif title.
