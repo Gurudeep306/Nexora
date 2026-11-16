@@ -1112,6 +1112,131 @@ function createAdminRouter(deps) {
     }),
   );
 
+  /* ═════════════ Code runners: our own Piston servers ═════════════ */
+
+  const runners = require("../runners");
+  const runnerView = async () => {
+    const list = await runners.loadRunners();
+    const piston = require("../piston");
+    const remote = require("../remote-exec");
+    const envCount = piston.pistonServers(process.env).length - runners.judgeServers().length;
+    const health = remote.sandboxHealth();
+    let slot = envCount;
+    return {
+      hosts: runners.HOSTS,
+      max: runners.MAX_RUNNERS,
+      envRunners: Math.max(0, envCount),
+      runners: list.map((r) => {
+        const pub = runners.publicRunner(r);
+        // The judge's name for it, to show whether it is resting after failures.
+        const engine = pub.enabled ? piston.pistonEngineName(slot++) : null;
+        const h = engine && health[engine];
+        return { ...pub, resting: !!(h && h.restingFor > 0), restingFor: h ? h.restingFor || 0 : 0 };
+      }),
+    };
+  };
+  const findRunner = (list, id) => {
+    const r = list.find((x) => x.id === id);
+    if (!r) bad("No such runner");
+    return r;
+  };
+
+  router.get(
+    "/api/admin/runners",
+    requirePerm("site.settings"),
+    h(async (_req, res) => res.json({ ok: true, ...(await runnerView()) })),
+  );
+
+  router.post(
+    "/api/admin/runners",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const b = req.body || {};
+      const url = runners.cleanUrl(str(b.url, { max: 300, field: "url" }));
+      if (!runners.urlOk(url)) bad("The address must start with https://");
+      const token = str(b.token ?? "", { max: 400, field: "token" });
+      const r = runners.newRunner({ name: str(b.name ?? "", { max: 60, field: "name" }), host: str(b.host ?? "other", { max: 20, field: "host" }), url, token });
+      const list = await runners.loadRunners();
+      if (list.length >= runners.MAX_RUNNERS) bad(`Up to ${runners.MAX_RUNNERS} runners`);
+      if (list.some((x) => x.url === r.url)) bad("That runner is already added");
+      // Test straight away: the admin sees at once whether it works.
+      const t = await runners.testRunner(r);
+      r.test = { ok: t.ok, at: Date.now(), ms: t.ms, error: t.error, languages: t.languages, runtimes: t.runtimes || 0 };
+      await runners.saveRunners([...list, r], req.access.username);
+      await audit(req, "runner.add", { targetType: "runner", target: r.id, after: { name: r.name, host: r.host, url: r.url, last4: r.last4 } });
+      res.json({ ok: true, runner: runners.publicRunner(r), ...(await runnerView()) });
+    }),
+  );
+
+  router.put(
+    "/api/admin/runners/:id",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const list = await runners.loadRunners();
+      const r = { ...findRunner(list, req.params.id) };
+      const before = runners.publicRunner(r);
+      const b = req.body || {};
+      if (b.name !== undefined) r.name = str(b.name, { max: 60, field: "name" }) || r.name;
+      if (b.enabled !== undefined) r.enabled = bool(b.enabled, "enabled");
+      if (b.url !== undefined) {
+        const u = runners.cleanUrl(str(b.url, { max: 300, field: "url" }));
+        if (!runners.urlOk(u)) bad("The address must start with https://");
+        r.url = u;
+        r.test = null;
+      }
+      if (b.token) {
+        const fresh = runners.newRunner({ url: r.url, token: str(b.token, { max: 400, field: "token" }) });
+        r.token = fresh.token;
+        r.last4 = fresh.last4;
+        r.test = null;
+      }
+      await runners.saveRunners(list.map((x) => (x.id === r.id ? r : x)), req.access.username);
+      await audit(req, "runner.update", { targetType: "runner", target: r.id, before, after: runners.publicRunner(r) });
+      res.json({ ok: true, ...(await runnerView()) });
+    }),
+  );
+
+  router.post(
+    "/api/admin/runners/:id/move",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const list = [...(await runners.loadRunners())];
+      const i = list.findIndex((x) => x.id === req.params.id);
+      if (i < 0) bad("No such runner");
+      const j = req.body?.direction === "up" ? i - 1 : i + 1;
+      if (j >= 0 && j < list.length) [list[i], list[j]] = [list[j], list[i]];
+      await runners.saveRunners(list, req.access.username);
+      res.json({ ok: true, ...(await runnerView()) });
+    }),
+  );
+
+  router.delete(
+    "/api/admin/runners/:id",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const list = await runners.loadRunners();
+      const r = findRunner(list, req.params.id);
+      await runners.saveRunners(list.filter((x) => x.id !== r.id), req.access.username);
+      await audit(req, "runner.remove", { targetType: "runner", target: r.id, before: runners.publicRunner(r) });
+      res.json({ ok: true, ...(await runnerView()) });
+    }),
+  );
+
+  router.post(
+    "/api/admin/runners/:id/test",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const list = await runners.loadRunners();
+      const r = { ...findRunner(list, req.params.id) };
+      const t = await runners.testRunner(r);
+      r.test = { ok: t.ok, at: Date.now(), ms: t.ms, error: t.error, languages: t.languages, runtimes: t.runtimes || 0 };
+      await runners.saveRunners(list.map((x) => (x.id === r.id ? r : x)), req.access.username);
+      // A runner that works again should not sit out its rest.
+      if (t.ok) require("../remote-exec").resetHealth();
+      res.json({ ok: true, test: r.test, ...(await runnerView()) });
+    }),
+  );
+
   /* ═════════════ Announcements & broadcasts ═════════════ */
 
   router.get(

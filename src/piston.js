@@ -63,26 +63,49 @@ const PISTON_PACKAGES = [
   'groovy', 'sbcl',
 ];
 
-function pistonEnabled(env = process.env) {
-  return env.JUDGE_MODE === 'piston';
+/**
+ * Runners added in Admin → Code runners (src/runners.js), registered by the
+ * server at start-up. Each is { url, token, name, languages } where
+ * `languages` (Piston names and aliases) is null when not yet known.
+ */
+let extraServers = () => [];
+function setExtraServers(fn) {
+  extraServers = typeof fn === 'function' ? fn : () => [];
 }
 
 const splitList = (v) => String(v || '').split(',').map((x) => x.trim()).filter(Boolean);
 
 /**
- * Our own runners, in order. PISTON_URL may list several servers separated by
- * commas (say Oracle, Hetzner and AWS); each one backs up the others, and the
- * free public sandboxes stay behind them all. PISTON_TOKEN may list one token
- * per server in the same order, or a single token shared by every server.
+ * Runners set in the environment: JUDGE_MODE=piston with PISTON_URL, which
+ * may list several servers separated by commas (each backs up the others).
+ * PISTON_TOKEN may list one token per server in the same order, or a single
+ * token shared by every server.
  */
-function pistonServers(env = process.env) {
+function envServers(env = process.env) {
+  if (env.JUDGE_MODE !== 'piston') return [];
   const urls = splitList(env.PISTON_URL);
   if (!urls.length) urls.push('http://127.0.0.1:2000');
   const tokens = splitList(env.PISTON_TOKEN);
   return urls.map((u, i) => ({
     url: u.replace(/\/+$/, ''),
     token: tokens.length === 1 ? tokens[0] : tokens[i] || '',
+    languages: null,
   }));
+}
+
+/** Every runner of ours, in order: the environment's, then the admin's. */
+function pistonServers(env = process.env) {
+  let extra = [];
+  try {
+    extra = extraServers() || [];
+  } catch {
+    extra = [];
+  }
+  return [...envServers(env), ...extra];
+}
+
+function pistonEnabled(env = process.env) {
+  return pistonServers(env).length > 0;
 }
 
 /** Engine name of server i: 'piston', then 'piston2', 'piston3', … */
@@ -95,13 +118,22 @@ function pistonIndex(engine) {
   return m[1] ? Number(m[1]) - 1 : 0;
 }
 
-/** The Piston engine names for the current env, in order. */
-function pistonEngines(env = process.env) {
-  return pistonServers(env).map((_, i) => pistonEngineName(i));
+/** Does this server have the runtime for an app language (unknown = try it)? */
+function serves(server, lang) {
+  if (!lang || !server.languages) return true;
+  const p = PISTON_MAP[lang];
+  return !!p && server.languages.includes(p.language);
+}
+
+/** Engine names of our runners, in order; with a language, only those that have it. */
+function pistonEngines(env = process.env, lang = null) {
+  return pistonServers(env)
+    .map((s, i) => (serves(s, lang) ? pistonEngineName(i) : null))
+    .filter(Boolean);
 }
 
 function pistonUrl(env = process.env) {
-  return pistonServers(env)[0].url;
+  return (pistonServers(env)[0] || { url: 'http://127.0.0.1:2000' }).url;
 }
 
 /** The app languages Piston may answer for under the current env. */
@@ -112,7 +144,7 @@ function pistonLanguages(env = process.env) {
 }
 
 function usesPiston(lang, env = process.env) {
-  return pistonEnabled(env) && pistonLanguages(env).includes(lang);
+  return pistonLanguages(env).includes(lang) && pistonEngines(env, lang).length > 0;
 }
 
 /** Request body for POST /api/v2/execute. */
@@ -206,6 +238,7 @@ module.exports = {
   pistonEnabled,
   pistonUrl,
   pistonServers,
+  setExtraServers,
   pistonEngines,
   pistonEngineName,
   pistonIndex,

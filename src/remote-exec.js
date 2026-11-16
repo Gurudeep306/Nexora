@@ -148,7 +148,7 @@ const GODBOLT_PRIMARY = new Set(['swift', 'dart', 'fsharp', 'ocaml', 'crystal', 
 /** Every sandbox for a language, our own Piston servers first when they serve it. */
 function engineChain(lang) {
   const pub = publicChain(lang);
-  return usesPiston(lang) ? [...pistonEngines(), ...pub] : pub;
+  return usesPiston(lang) ? [...pistonEngines(process.env, lang), ...pub] : pub;
 }
 
 /** The first public sandbox for a language (Piston's fallback), or null. */

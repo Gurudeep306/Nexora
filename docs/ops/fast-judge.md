@@ -89,6 +89,14 @@ Do not reuse `hive-worker`.
 
 ## Tell Nexora about the runners
 
+**Easiest: Admin → Code runners → Add runner.** Paste the address and the
+password the script printed. Nexora tests it at once (lists its languages and
+runs a tiny program), keeps the password encrypted, and starts using it within
+seconds — no redeploy. Add as many as you like, put them in order, turn one
+off, or replace its password. Each runner only gets the languages it has.
+
+Or, set them on the server instead (tried before the admin's list):
+
 Render → the `nexora` service → **Environment**:
 
 | Name | Value |
