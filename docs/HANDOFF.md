@@ -103,6 +103,15 @@ Contents:
      the allowed ones, with keys sealed like AI keys
      (`src/hive/vault.js`). Say plainly in the admin page which are not
      allowed and why.
+     **Session 5 findings:** Judge0 is GPL-3.0 (github.com/judge0/judge0
+     LICENSE); running it on our own server is allowed ("run … covered
+     works that you do not convey, without conditions"; network use is not
+     conveying). Judge0's hosted cloud is through RapidAPI or a paid plan;
+     their terms were not read. JDoodle, glot.io and Coliru could **not** be
+     read: this cloud environment's network blocks jdoodle.com, glot.io
+     and coliru.stacked-crooked.com. Read their terms from a machine that can
+     reach them (or allow those hosts) before adding any of them. Do not
+     guess.
   3. ~~Screenshots and axe~~ **DONE (session 5):** axe 0 and no sideways
      scroll in light, dark and phone; Admin → AI models and Site also
      re-checked after the shared `Panel` change.
