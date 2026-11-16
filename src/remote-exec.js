@@ -414,7 +414,8 @@ function classifyKotlin(r, timeMs, shimAt = -1) {
   }
   const text = r.text || '';
   const stdout = text.replace(/<errStream>[\s\S]*?<\/errStream>/g, '').replace(/<\/?outStream>/g, '').trimEnd();
-  const stderr = (text.match(/<errStream>([\s\S]*?)<\/errStream>/)?.[1] || '').trim();
+  // stderr comes in one block per stretch between stdout writes: keep them all.
+  const stderr = [...text.matchAll(/<errStream>([\s\S]*?)<\/errStream>/g)].map((m) => m[1]).join('').trim();
   if (r.exception) {
     const x = r.exception;
     const ex = [x.fullName, x.message].filter(Boolean).join(': ') || 'Runtime exception';

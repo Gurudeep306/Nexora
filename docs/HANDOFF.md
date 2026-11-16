@@ -117,7 +117,22 @@ Contents:
 - **C# now runs on .NET 9 first** (Compiler Explorer), Mono as fallback.
   Before, Run/Submit went to Wandbox's Mono first, which gave a false
   compile error for local functions, top-level programs and PriorityQueue.
-- **Next for the agent: section 6, item 3** — dry run for Kotlin, Swift
+- **Kotlin dry run: DONE** (`src/dryrun/kotlin.js` + `kotlin-runtime.kt`).
+  Block and `= expr` functions (the latter wrapped in `.let { try … }` so
+  the type is still inferred), local functions, classes and objects (their
+  readable properties; not lateinit, lazy or custom getters), labels,
+  `val x: Int` set later. Output is counted by file-level print/println and
+  `System.out` → `__Nx.out` (no System.setOut, which the Playground may
+  block). The grammar leaves a body written on the next line (`for (…)` ⏎
+  body) as the next statement: it is re-attached, so no step goes between.
+  5 programs print exactly the same on the Kotlin Playground; tests replay
+  recorded traces (`tests/fixtures/dryrun-kotlin-*.json`).
+- **Kotlin stderr fix:** the Playground sends stderr in one block per stretch
+  between stdout writes; only the first was kept. Now all are joined.
+- **Known:** Compiler Explorer's Kotlin (kotlinc 2.3.10) crashes with a
+  StackOverflowError even on plain programs (seen 2026-11-16). The Playground
+  is first in the chain, so students are not affected unless it is down.
+- **Next for the agent: section 6, item 3** — dry run for Swift
   (no local compilers: test through the remote runners with the proxy
   preload), then Ruby, PHP, Lua, Perl; then functional languages.
 - The owner said **no for now** to the ideas in section 6, item 7.
@@ -417,7 +432,7 @@ by analyzing what to place where to make it look the best and show case best
 
 ### 3. Dry run for the other languages
 
-- **Go, Rust, C# are done. Kotlin, Swift:** the same approach — a tree-sitter
+- **Go, Rust, C#, Kotlin are done. Swift:** the same approach — a tree-sitter
   instrumenter + a small runtime that writes the same events, on the same
   lines.
   - The grammars are in `tree-sitter-wasms`.
