@@ -585,6 +585,21 @@ function callTree(snaps: Snapshot[]): Map<number, CallNode> | null {
 function recursionTreeOf(calls: Map<number, CallNode>, idx: number, stack: CallFrame[], ret: boolean): TreeState {
   const live = new Set(stack.map((f) => f.k))
   let shown = [...calls.values()].filter((c) => c.fn !== 'main' && c.at <= idx)
+  // Several separate calls from the main program (insert(5), insert(1)…):
+  // show the one running now, or else the latest, not a row of small trees.
+  const rootOf = (c: CallNode): CallNode => {
+    let r = c
+    while (r.parent !== null && calls.get(r.parent) && calls.get(r.parent)!.fn !== 'main') r = calls.get(r.parent)!
+    return r
+  }
+  const tops = new Set(shown.map((c) => rootOf(c).k))
+  let only = false
+  if (tops.size > 1) {
+    const running = stack.length > 1 ? stack[1].k : null
+    const pick = running !== null && tops.has(running) ? running : Math.max(...tops)
+    shown = shown.filter((c) => rootOf(c).k === pick)
+    only = true
+  }
   let partial = false
   if (shown.length > 40) {
     // Too many to read: the calls still running and their children.
@@ -606,7 +621,8 @@ function recursionTreeOf(calls: Map<number, CallNode>, idx: number, stack: CallF
     }
   })
   const roots = shown.filter((c) => c.parent === null || !ids.has(c.parent)).map((c) => `r${c.k}`)
-  return { kind: 'tree', id: 'recursion', label: partial ? 'Recursion tree · the calls still running' : 'Recursion tree', nodes, roots, roles, edgeRoles }
+  const label = partial ? 'Recursion tree · the calls still running' : only ? 'Recursion tree · this call from the main program' : 'Recursion tree'
+  return { kind: 'tree', id: 'recursion', label, nodes, roots, roles, edgeRoles }
 }
 
 /** Two variables that bound a window over an array (l … r, lo … hi). */

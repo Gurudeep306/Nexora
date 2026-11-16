@@ -66,12 +66,23 @@ export function isObj(v: TV): v is Exclude<TV, number | string | boolean | null>
   return typeof v === 'object' && v !== null
 }
 
+/** How the student's language writes "nothing", true and false. */
+const WORDS: Record<string, [string, string, string]> = {
+  python: ['None', 'True', 'False'],
+  cpp: ['nullptr', 'true', 'false'],
+  c: ['NULL', 'true', 'false'],
+}
+let words = WORDS.python
+export function setLanguage(lang: string) {
+  words = WORDS[lang] ?? ['null', 'true', 'false']
+}
+
 /** A short, readable form of any value (for notes and cards). */
 export function show(v: TV, heap?: Map<number, HeapObj>, depth = 0): string {
-  if (v === null) return 'None'
+  if (v === null) return words[0]
   if (typeof v === 'string') return JSON.stringify(v)
   if (typeof v === 'number') return Number.isInteger(v) ? String(v) : String(Math.round(v * 1e4) / 1e4)
-  if (typeof v === 'boolean') return v ? 'True' : 'False'
+  if (typeof v === 'boolean') return v ? words[1] : words[2]
   if (depth > 2) return '…'
   switch (v.t) {
     case 'list':
@@ -86,6 +97,12 @@ export function show(v: TV, heap?: Map<number, HeapObj>, depth = 0): string {
     case 'ref': {
       const o = heap?.get(v.id)
       if (!o) return 'object'
+      const entries = Object.entries(o.f)
+      // A plain record of a few values (Edge {u, v, w}) shows them all.
+      const linky = entries.some(([k, x]) => /^(next|nxt|prev|left|right|child|children|kids|parent|link|links|up|down)$/i.test(k) || (isObj(x) && (x as { t: string }).t === 'ref'))
+      if (entries.length && entries.length <= 3 && !linky)
+        return `${o.c}(${entries.map(([k, x]) => `${k}=${show(x, heap, depth + 1)}`).join(', ')})`
+      // A node (it links to others) is named by its value.
       const val = ['val', 'value', 'v', 'data', 'key'].map((f) => o.f[f]).find((x) => x !== undefined && !isObj(x as TV))
       return val !== undefined ? `${o.c}(${show(val as TV, heap, depth + 1)})` : o.c
     }
@@ -143,7 +160,7 @@ export function replay(events: TraceEvent[]): Snapshot[] {
     if (typeof ev.o === 'number') out = ev.o
     mergeHeap(ev.h)
     if (ev.e === 'call') {
-      const f: CallFrame = { k: ev.k ?? stack.length + 1, fn: ev.f ?? '?', args: '', vars: new Map(), order: [], line: ev.l ?? 0 }
+      const f: CallFrame = { k: ev.k ?? stack.length + 1, fn: (ev.f ?? '?').replace(/\(\)$/, ''), args: '', vars: new Map(), order: [], line: ev.l ?? 0 }
       apply(f, ev.v)
       f.args = [...f.vars.entries()]
         .filter(([n]) => n !== 'self')
