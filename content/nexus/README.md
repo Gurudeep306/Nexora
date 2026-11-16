@@ -192,7 +192,6 @@ the structure (`hubs`), and the hubs read it:
 | Backend Frameworks: Node/Django/Spring (`backend-frameworks`) | Web & App | `/learn/backend-frameworks` | All subjects | — | Course coming soon |
 | Android Development (`android`) | Web & App | `/learn/android` | All subjects | — | Course coming soon |
 | iOS Development (`ios`) | Web & App | `/learn/ios` | All subjects | — | Course coming soon |
-| System Design (`sysd`) | Software Engineering | `/learn/sysd` | All subjects · [System Design Studio](/learn?tab=sysdesign) | — | Course coming soon |
 | OOP & Design Patterns (`oop-patterns`) | Software Engineering | `/learn/oop-patterns` | All subjects | — | Course coming soon |
 | Software Engineering & Testing (`software-engineering`) | Software Engineering | `/learn/software-engineering` | All subjects | — | Course coming soon |
 | APIs & Microservices (`apis-microservices`) | Software Engineering | `/learn/apis-microservices` | All subjects | — | Course coming soon |

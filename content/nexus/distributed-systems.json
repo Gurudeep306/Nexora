@@ -190,8 +190,7 @@
       ],
       "kind": "concept",
       "requires": [
-        "replication",
-        "sysd:cap-consistency"
+        "replication"
       ],
       "xpReward": 80
     },

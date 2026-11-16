@@ -27,7 +27,6 @@ export const pageLoaders = {
   SubjectPage: () => import('@/pages/SubjectPage'),
   LearnTopicPage: () => import('@/learn/ui/TopicPage'),
   LearnPracticePage: () => import('@/learn/ui/PracticePage'),
-  SystemDossierPage: () => import('@/pages/SystemDossierPage'),
   GatePage: () => import('@/pages/GatePage'),
   GateCbtPage: () => import('@/pages/GateCbtPage'),
   GateHomePage: () => import('@/pages/gate/GateHomePage'),

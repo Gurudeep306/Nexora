@@ -26,7 +26,6 @@ const ROUTES = [
   /^\/analytics$/,
   /^\/achievements$/,
   /^\/learn$/,
-  /^\/learn\/system-design\/[a-z0-9-]{1,60}(\/\d{1,3})?$/,
   /^\/learn\/dsa\/[a-z0-9-]{1,60}\/practice$/,
   /^\/learn\/dsa\/[a-z0-9-]{1,60}(\/[a-z0-9-]{1,60})?$/,
   /^\/gate(\/(practice|review|daily|tests|analytics|syllabus|planner|notebook|leaderboard))?$/,

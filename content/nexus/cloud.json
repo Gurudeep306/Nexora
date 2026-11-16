@@ -249,8 +249,7 @@
       ],
       "kind": "concept",
       "requires": [
-        "vpc",
-        "sysd:load-balancing"
+        "vpc"
       ],
       "xpReward": 80
     },
