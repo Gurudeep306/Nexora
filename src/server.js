@@ -1697,6 +1697,23 @@ app.post("/api/run", judgeLimiter, async (req, res) => {
   }
 });
 
+/* ========== HOW YOUR CODE RUNS ========== */
+// The real translation of a program (assembly or bytecode), each instruction
+// tied to its source line, for the animated "How it runs" view.
+app.post("/api/explain-run", judgeLimiter, async (req, res) => {
+  try {
+    const { code, language, optimise } = req.body || {};
+    if (!LANG_CONFIG[language]) return res.status(400).json({ ok: false, error: "Unknown language" });
+    const src = String(code || "");
+    if (!src.trim()) return res.status(400).json({ ok: false, error: "Write some code first" });
+    if (Buffer.byteLength(src) > 64 * 1024) return res.status(400).json({ ok: false, error: "The code is too long to explain (max 64 KB)" });
+    const explain = require("./explain-run");
+    res.json(await explain.translate(src, language, { optimise: optimise !== false }));
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
 /* ========== LANGUAGES ========== */
 app.get("/api/languages", (req, res) => {
   // On the hosted server only languages with a remote sandbox can run.

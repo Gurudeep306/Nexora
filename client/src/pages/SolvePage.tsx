@@ -18,8 +18,7 @@ import {
   TerminalSquare,
   Wand2,
   Sparkles,
-  X,
-} from 'lucide-react'
+  X, Cpu } from 'lucide-react'
 import {
   Button,
   EmptyState,
@@ -66,10 +65,11 @@ import { CoachPanel } from '@/components/solve/CoachPanel'
 import { Arena, enterBrowserFullscreen } from '@/components/solve/Arena'
 import { AiTestsPanel } from '@/components/solve/AiTestsPanel'
 import { AnalysisPanel } from '@/components/solve/AnalysisPanel'
+import { JourneyPanel } from '@/components/solve/journey/JourneyPanel'
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from '@/components/ui'
 import { FlaskConical, ListChecks, ScanSearch } from 'lucide-react'
 
-type BottomTab = 'tests' | 'output' | 'aitests' | 'analysis' | 'coach' | 'issues'
+type BottomTab = 'tests' | 'output' | 'aitests' | 'analysis' | 'journey' | 'coach' | 'issues'
 
 function useIsDesktop() {
   const q = '(min-width: 1024px)'
@@ -773,6 +773,9 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
             <MenuItem icon={<ScanSearch />} onSelect={() => openTab('analysis')}>
               Analyse my code
             </MenuItem>
+            <MenuItem icon={<Cpu />} onSelect={() => openTab('journey')}>
+              See how it runs
+            </MenuItem>
             <MenuItem icon={<FlaskConical />} onSelect={() => openTab('aitests')}>
               Generate tests
             </MenuItem>
@@ -874,6 +877,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       { id: 'output', label: 'Result', badge: running || submitting ? '•' : judgeResult ? judgeResult.verdict : runResult ? (runResult.verdict === 'OK' ? 'OK' : runResult.verdict) : undefined },
       { id: 'aitests', label: 'AI tests' },
       { id: 'analysis', label: 'Analysis' },
+      { id: 'journey', label: 'How it runs' },
       { id: 'coach', label: 'Coach', icon: coach.loading ? <Loader2 className="size-3.5 animate-spin" /> : undefined, badge: coach.insight?.issues.length ? coach.insight.issues.length : undefined },
       { id: 'issues', label: 'Issues', badge: allDiagnostics.length || undefined },
     ]}
@@ -916,6 +920,14 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         language={language}
         timeLimit={statementApi.data?.timeLimit}
         inputs={biggestInputs}
+        onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
+      />
+    ) : bottomTab === 'journey' ? (
+      <JourneyPanel
+        code={code}
+        language={language}
+        input={selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].input : customInput}
+        inputLabel={selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].label || `Test ${selectedTest + 1}` : 'your custom input'}
         onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
       />
     ) : bottomTab === 'issues' ? (

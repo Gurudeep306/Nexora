@@ -190,3 +190,17 @@ export interface CustomProblemResponse {
   ok: boolean
   problem: CustomProblemDetail
 }
+
+/** A runner's name for people (the judge reports an engine id). */
+const ENGINE_NAMES: Record<string, string> = {
+  wandbox: 'Wandbox',
+  godbolt: 'Compiler Explorer',
+  kotlin: 'Kotlin Playground',
+  paiza: 'Paiza.io',
+  piston: 'Nexora runner',
+  local: 'local judge',
+}
+export function engineLabel(engine: string): string {
+  const own = /^piston(\d+)$/.exec(engine)
+  return ENGINE_NAMES[engine] ?? (own ? `Nexora runner ${own[1]}` : engine)
+}

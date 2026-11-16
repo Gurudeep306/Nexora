@@ -29,28 +29,13 @@ import { agentTask, isAiUnavailable } from '@/lib/agent'
 import { cn } from '@/lib/utils'
 import { TEMPLATES, LANG_EXT } from '@/lib/templates'
 import { snippetsFor } from '@/lib/snippets'
+import { MONACO_LANG } from '@/lib/monacoLang'
 import { entryFor, intelFor, signatureFor, type IntelEntry } from '@/lib/langIntel'
 import type { Diag } from '@/lib/diagnostics'
 import type { ReplayEvent } from '@/components/submissions/replay'
 import { Select } from '@/components/ui'
 
 /* Maps backend language ids to Monaco language ids where they differ */
-const MONACO_LANG: Record<string, string> = {
-  shell: 'shell',
-  csharp: 'csharp',
-  objectivec: 'objective-c',
-  pascal: 'pascal',
-  scheme: 'scheme',
-  // No dedicated Monaco grammar — borrow the closest one for highlighting.
-  ocaml: 'fsharp',
-  crystal: 'ruby',
-  groovy: 'java',
-  d: 'cpp',
-  zig: 'rust',
-  nim: 'python',
-  commonlisp: 'clojure',
-  haskell: 'plaintext',
-}
 
 /* ── Themes ─────────────────────────────────────────────────────────── */
 interface ThemeDef {

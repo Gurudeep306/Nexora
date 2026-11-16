@@ -1,0 +1,409 @@
+/*
+ * "How your code runs" — the Field Journal look: hairlines, ink, one clay
+ * dot for "you are here". No glows, gradients or shadows. Every colour is a
+ * token, so all ten themes dress it (light and dark).
+ */
+.jr {
+  --jr-ink: var(--ed-ink, var(--color-text-primary));
+  --jr-muted: var(--color-text-muted);
+  --jr-soft: var(--color-text-secondary);
+  --jr-line: var(--ed-line, var(--color-border));
+  --jr-line-strong: var(--ed-line-strong, var(--color-border-strong, var(--color-border)));
+  --jr-paper: var(--color-bg-surface);
+  --jr-field: var(--color-bg-field, var(--color-bg-app));
+  --jr-dot: var(--ed-clay, var(--color-accent-brand));
+  --jr-serif: var(--ed-serif, var(--font-display));
+  --jr-mono: var(--ed-mono, var(--font-mono));
+  color: var(--jr-ink);
+}
+
+/* ── the route: five stops on one inked line ── */
+.jr-route {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.jr-route::before,
+.jr-route-ink {
+  content: '';
+  position: absolute;
+  top: 11px;
+  left: 10%;
+  height: 1px;
+  background: var(--jr-line-strong);
+}
+.jr-route::before {
+  right: 10%;
+}
+.jr-route-ink {
+  background: var(--jr-ink);
+  transition: width 420ms var(--ed-ease, cubic-bezier(0.2, 0.7, 0.2, 1));
+}
+.jr-stop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0 2px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--jr-muted);
+  font: inherit;
+  text-align: center;
+}
+.jr-stop:focus-visible {
+  outline: 2px solid var(--ed-focus, var(--color-accent-brand));
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+.jr-stop[aria-current='step'],
+.jr-stop[data-done] {
+  color: var(--jr-ink);
+}
+.jr-stop-mark {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 23px;
+  height: 23px;
+  border-radius: 999px;
+  border: 1px solid var(--jr-line-strong);
+  background: var(--jr-paper);
+  font-family: var(--jr-mono);
+  font-size: 10.5px;
+}
+.jr-stop[data-done] .jr-stop-mark {
+  border-color: var(--jr-ink);
+  background: var(--jr-ink);
+  color: var(--jr-paper);
+}
+.jr-stop[aria-current='step'] .jr-stop-mark {
+  border-color: var(--jr-ink);
+  color: var(--jr-ink);
+}
+/* The one clay mark: where you are. */
+.jr-here {
+  position: absolute;
+  inset: 5px;
+  border-radius: 999px;
+  background: var(--jr-dot);
+}
+.jr-stop-name {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.jr-stop-sub {
+  font-size: 11px;
+  line-height: 1.25;
+  color: var(--jr-muted);
+}
+@media (max-width: 520px) {
+  .jr-stop-sub {
+    display: none;
+  }
+}
+
+/* ── the page under the route ── */
+.jr-lede {
+  margin: 0;
+  font-family: var(--jr-serif);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--jr-soft);
+  max-width: 72ch;
+}
+.jr-lede strong {
+  color: var(--jr-ink);
+  font-weight: 600;
+}
+.jr-card {
+  border: 1px solid var(--jr-line);
+  border-radius: var(--radius-card, 12px);
+  background: var(--jr-paper);
+  min-width: 0;
+}
+.jr-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--jr-line);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--jr-soft);
+}
+.jr-scroll {
+  max-height: 340px;
+  overflow: auto;
+}
+.jr-scroll:focus-visible {
+  outline: 2px solid var(--ed-focus, var(--color-accent-brand));
+  outline-offset: -2px;
+}
+
+/* code and listing rows */
+.jr-code {
+  margin: 0;
+  padding: 6px 0;
+  font-family: var(--jr-mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+.jr-row {
+  display: flex;
+  gap: 10px;
+  padding: 0 12px 0 0;
+  border-left: 2px solid transparent;
+  white-space: pre;
+}
+.jr-row[data-on] {
+  border-left-color: var(--jr-ink);
+  background: color-mix(in srgb, var(--jr-ink) 8%, transparent);
+}
+.jr-row[data-dim] {
+  color: var(--jr-soft);
+}
+.jr-row[data-dim] .jr-op {
+  font-weight: 500;
+}
+.jr-row[data-click] {
+  cursor: pointer;
+}
+.jr-num {
+  flex: none;
+  width: 3.2em;
+  text-align: right;
+  color: var(--jr-muted);
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+.jr-txt {
+  min-width: 0;
+}
+.jr-label {
+  padding: 6px 12px 2px 14px;
+  font-family: var(--jr-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--jr-soft);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.jr-op {
+  font-weight: 650;
+}
+.jr-cmt {
+  color: var(--jr-muted);
+}
+.jr-tag {
+  flex: none;
+  width: 2.8em;
+  text-align: right;
+  font-size: 10.5px;
+  color: var(--jr-muted);
+  font-variant-numeric: tabular-nums;
+}
+.jr-row[data-on] .jr-tag {
+  color: var(--jr-ink);
+  font-weight: 650;
+}
+
+/* tokens */
+.jr-tokens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.jr-token {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 5px 9px 4px;
+  border: 1px solid var(--jr-line-strong);
+  border-radius: 8px;
+  background: var(--jr-paper);
+}
+.jr-token code {
+  font-family: var(--jr-mono);
+  font-size: 13px;
+  color: var(--jr-ink);
+  white-space: pre;
+}
+.jr-token span {
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: var(--jr-muted);
+}
+.jr-token[data-kind='keyword'] {
+  border-color: var(--jr-ink);
+}
+.jr-token[data-kind='keyword'] code {
+  font-weight: 650;
+}
+
+/* margin notes */
+.jr-note {
+  border-left: 2px solid var(--jr-line-strong);
+  padding: 2px 0 2px 12px;
+  font-family: var(--jr-serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--jr-soft);
+}
+.jr-note b {
+  font-family: var(--jr-mono);
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--jr-ink);
+}
+.jr-defs {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 13px;
+}
+.jr-defs dt {
+  font-family: var(--jr-mono);
+  font-weight: 650;
+  color: var(--jr-ink);
+}
+.jr-defs dd {
+  margin: 0;
+  color: var(--jr-soft);
+}
+
+/* the run: input → program → output */
+.jr-flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: 10px;
+}
+@media (max-width: 720px) {
+  .jr-flow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .jr-arrow {
+    transform: rotate(90deg);
+    justify-self: center;
+  }
+}
+.jr-arrow {
+  align-self: center;
+  color: var(--jr-muted);
+}
+.jr-pre {
+  margin: 0;
+  padding: 8px 12px;
+  max-height: 180px;
+  overflow: auto;
+  font-family: var(--jr-mono);
+  font-size: 12.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.jr-machine {
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  padding: 12px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--jr-soft);
+}
+
+/* controls */
+.jr-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.jr-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--jr-line-strong);
+  border-radius: var(--radius-control, 8px);
+  background: var(--jr-paper);
+  color: var(--jr-ink);
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.jr-btn:hover:not(:disabled) {
+  background: var(--jr-field);
+}
+.jr-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.jr-btn:focus-visible {
+  outline: 2px solid var(--ed-focus, var(--color-accent-brand));
+  outline-offset: 1px;
+}
+.jr-btn--main {
+  background: var(--color-accent-brand);
+  border-color: var(--color-accent-brand);
+  color: var(--color-on-accent-brand);
+}
+.jr-btn--main:hover:not(:disabled) {
+  background: var(--color-accent-brand-hover, var(--color-accent-brand));
+}
+.jr-icon {
+  width: 30px;
+  padding: 0;
+  justify-content: center;
+}
+.jr-seg {
+  display: inline-flex;
+  border: 1px solid var(--jr-line-strong);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.jr-seg button {
+  height: 28px;
+  padding: 0 10px;
+  border: 0;
+  background: none;
+  color: var(--jr-soft);
+  font-size: 12px;
+  cursor: pointer;
+}
+.jr-seg button[aria-pressed='true'] {
+  background: var(--jr-ink);
+  color: var(--jr-paper);
+}
+.jr-seg button:focus-visible {
+  outline: 2px solid var(--ed-focus, var(--color-accent-brand));
+  outline-offset: -2px;
+}
+.jr-stat {
+  font-family: var(--jr-mono);
+  font-size: 11.5px;
+  color: var(--jr-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* full screen */
+.jr-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  overflow: auto;
+  background: var(--color-bg-app);
+}
+.jr-overlay .jr-scroll {
+  max-height: min(62vh, 640px);
+}
