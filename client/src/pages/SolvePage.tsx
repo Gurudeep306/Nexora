@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties }
 import { useParams } from 'react-router-dom'
 import { motion } from 'motion/react'
 import {
-  AlertTriangle,
   Bot,
   Expand,
   ChevronsDown,
@@ -397,14 +396,14 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     [storageId, language],
   )
 
-  const handleRun = useCallback(async () => {
+  const handleRun = useCallback(async (only?: { input: string; label: string; expected: string }) => {
     if (running || submitting || !code.trim()) return
     setRunning(true)
     setBottomTab('output')
     setRunResult(null)
-    const tc = selectedTest >= 0 ? testcases[selectedTest] : undefined
-    const input = tc ? tc.input : customInput
-    setRunCase(tc ? { label: tc.label || `Test ${selectedTest + 1}`, expected: tc.expected_output ?? '' } : null)
+    const tc = only ? undefined : selectedTest >= 0 ? testcases[selectedTest] : undefined
+    const input = only ? only.input : tc ? tc.input : customInput
+    setRunCase(only ? { label: only.label, expected: only.expected } : tc ? { label: tc.label || `Test ${selectedTest + 1}`, expected: tc.expected_output ?? '' } : null)
     try {
       const res = await api.post<RunResult>(
         '/api/run',
@@ -731,7 +730,24 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
   // area (never smaller than the height you chose; your saved height is kept).
   const [roomForTests, setRoomForTests] = useState(0)
   const roomForDryRun = useCallback(() => setRoomForTests((n) => n + 1), [])
-  const openTab = (t: BottomTab) => {
+  // The dry run's cases: every test, then the custom input. "Dry run this"
+  // on an example remounts the panel on that case.
+  const dryRunCases = useMemo(
+    () => [...testcases.map((t, i) => ({ label: t.label || `Test ${i + 1}`, input: t.input })), ...(customInput.trim() ? [{ label: 'Custom input', input: customInput }] : [])],
+    [testcases, customInput],
+  )
+  const [dryRunFocus, setDryRunFocus] = useState(0)
+  const [dryRunPick, setDryRunPick] = useState<number | null>(null)
+  const dryRunStart = dryRunPick ?? (selectedTest >= 0 ? selectedTest : testcases.length)
+
+  // The results panel has four tabs; the older views live inside them.
+  const [subView, setSubView] = useState<{ tests: 'cases' | 'ai'; dryrun: 'watch' | 'hood'; coach: 'hints' | 'analysis' }>({ tests: 'cases', dryrun: 'watch', coach: 'hints' })
+  const openTab = (requested: BottomTab) => {
+    const t: BottomTab = requested === 'aitests' ? 'tests' : requested === 'analysis' ? 'coach' : requested === 'journey' ? 'dryrun' : requested === 'issues' ? 'output' : requested
+    if (requested === 'aitests') setSubView((v) => ({ ...v, tests: 'ai' }))
+    if (requested === 'analysis') setSubView((v) => ({ ...v, coach: 'analysis' }))
+    if (requested === 'journey') setSubView((v) => ({ ...v, dryrun: 'hood' }))
+    if (requested === 'dryrun') setSubView((v) => ({ ...v, dryrun: 'watch' }))
     setBottomTab(t)
     // On a phone the results live behind their own tab: go there.
     setMobilePane('results')
@@ -843,6 +859,20 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     importedSampleCount={importedSampleCount}
     custom={custom}
     language={language}
+    onRunSample={(i) => void handleRun({ input: samples[i]?.input ?? '', label: `Example ${i + 1}`, expected: samples[i]?.output ?? '' })}
+    onDryRunSample={(i) => {
+      const input = samples[i]?.input ?? ''
+      const at = testcases.findIndex((t) => t.input.trim() === input.trim())
+      if (at >= 0) {
+        setSelectedTest(at)
+        setDryRunPick(at)
+      } else {
+        setCustomInput(input)
+        setDryRunPick(testcases.length)
+      }
+      setDryRunFocus((n) => n + 1)
+      openTab('dryrun')
+    }}
     onUseStarter={(starter) => {
       persistCode(starter)
       toast.success('Starter code inserted')
@@ -882,101 +912,37 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     variant="pills"
     className={className}
     active={bottomTab}
-    onChange={(t) => {
-      setBottomTab(t as BottomTab)
-      if (t === 'dryrun') roomForDryRun()
-    }}
+    onChange={(t) => openTab(t as BottomTab)}
     items={[
       { id: 'tests', label: 'Tests', badge: testcases.length || undefined },
-      { id: 'output', label: 'Result', badge: running || submitting ? '•' : judgeResult ? judgeResult.verdict : runResult ? (runResult.verdict === 'OK' ? 'OK' : runResult.verdict) : undefined },
+      { id: 'output', label: 'Result', badge: running || submitting ? '•' : judgeResult ? judgeResult.verdict : runResult ? (runResult.verdict === 'OK' ? 'OK' : runResult.verdict) : allDiagnostics.length || undefined },
       { id: 'dryrun', label: 'Dry run' },
-      { id: 'aitests', label: 'AI tests' },
-      { id: 'analysis', label: 'Analysis' },
-      { id: 'journey', label: 'How it runs' },
       { id: 'coach', label: 'Coach', icon: coach.loading ? <Loader2 className="size-3.5 animate-spin" /> : undefined, badge: coach.insight?.issues.length ? coach.insight.issues.length : undefined },
-      { id: 'issues', label: 'Issues', badge: allDiagnostics.length || undefined },
     ]}
   />
   )
 
-  const testsBody = (
-  <div className="h-full min-h-0 flex-1 overflow-y-auto">
-    {bottomTab === 'coach' ? (
-      <CoachPanel coach={coach} judgeResult={judgeResult} onAddTest={addTestcase} />
-    ) : bottomTab === 'tests' ? (
-      <TestcaseDeck
-        testcases={testcases}
-        selectedIndex={selectedTest}
-        onSelect={setSelectedTest}
-        customInput={customInput}
-        onCustomInput={setCustomInput}
-        onAdd={addTestcase}
-        onDelete={deleteTestcase}
-        onAddMany={addManyTestcases}
-      />
-    ) : bottomTab === 'aitests' ? (
-      <AiTestsPanel
-        problemId={custom ? undefined : Number(id)}
-        customProblemId={custom && !learn ? Number(id) : undefined}
-        title={problem?.title ?? ''}
-        statement={coachStatement}
-        samples={samples}
-        code={code}
-        language={language}
-        onAddTests={addManyTestcases}
-      />
-    ) : bottomTab === 'analysis' ? (
-      <AnalysisPanel
-        problemId={custom ? undefined : Number(id)}
-        customProblemId={custom && !learn ? Number(id) : undefined}
-        title={problem?.title ?? ''}
-        statement={coachStatement}
-        code={code}
-        language={language}
-        timeLimit={statementApi.data?.timeLimit}
-        inputs={biggestInputs}
-        onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
-      />
-    ) : bottomTab === 'dryrun' ? (
-      <DryRunPanel
-        code={code}
-        language={language}
-        cases={[...testcases.map((t, i) => ({ label: t.label || `Test ${i + 1}`, input: t.input })), ...(customInput.trim() ? [{ label: 'Custom input', input: customInput }] : [])]}
-        initialCase={selectedTest >= 0 ? selectedTest : testcases.length}
-        onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
-      />
-    ) : bottomTab === 'journey' ? (
-      <JourneyPanel
-        code={code}
-        language={language}
-        input={selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].input : customInput}
-        inputLabel={selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].label || `Test ${selectedTest + 1}` : 'your custom input'}
-        onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
-      />
-    ) : bottomTab === 'issues' ? (
-      <div className="space-y-1.5 p-3">
-        {allDiagnostics.length === 0 ? (
-          <EmptyState
-            className="py-6"
-            icon={<AlertTriangle />}
-            title="No issues"
-            description="Compile errors and coach warnings surface here as soon as they appear."
-          />
-        ) : (
-          allDiagnostics.map((d, i) => (
-            <div key={i} className="flex items-start gap-2 rounded-lg border border-hairline/[0.05] bg-bg-field px-2.5 py-2 text-xs">
-              <span
-                className={cn('mt-1 size-1.5 shrink-0 rounded-full', d.severity === 'error' ? 'bg-destructive' : 'bg-warning')}
-                aria-hidden="true"
-              />
-              <span className="shrink-0 font-mono text-foreground-faint tabular-nums">Ln {d.line}</span>
-              <span className="min-w-0 text-foreground-dim">{d.message}</span>
-            </div>
-          ))
-        )}
-      </div>
-    ) : running || submitting ? (
-      <div className="flex h-full flex-col items-center justify-center gap-2 text-xs text-foreground-faint">
+  const issuesList = allDiagnostics.length > 0 && (
+    <ul className="m-0 list-none space-y-1.5 p-0" aria-label="Issues in your code">
+      {allDiagnostics.map((d, i) => (
+        <li key={i}>
+          <button
+            type="button"
+            onClick={() => setReveal({ line: d.line, id: Date.now() })}
+            className="flex w-full cursor-pointer items-start gap-2 rounded-lg border border-hairline/[0.05] bg-bg-field px-2.5 py-2 text-left text-xs transition-colors hover:border-border"
+          >
+            <span className={cn('mt-1 size-1.5 shrink-0 rounded-full', d.severity === 'error' ? 'bg-destructive' : 'bg-warning')} aria-hidden="true" />
+            <span className="shrink-0 font-mono text-foreground-faint tabular-nums">Ln {d.line}</span>
+            <span className="min-w-0 text-foreground-dim">{d.message}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  )
+
+  const resultBody =
+    running || submitting ? (
+      <div className="flex h-full flex-col items-center justify-center gap-2 py-6 text-xs text-foreground-faint">
         <Loader2 className="size-5 animate-spin text-primary-bright" aria-hidden="true" />
         {submitting ? `Judging on ${testcases.length || 'all'} tests…` : 'Running your code…'}
       </div>
@@ -984,13 +950,116 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       <JudgeResults result={judgeResult} />
     ) : runResult ? (
       <RunOutput result={runResult} expected={runCase?.expected} caseLabel={runCase?.label} />
+    ) : allDiagnostics.length ? null : (
+      <EmptyState className="py-6" icon={<TerminalSquare />} title="Nothing run yet" description="Run checks the selected test (⌘/Ctrl + Enter). Submit checks them all." />
+    )
+
+  const testsBody = (
+  <div className="h-full min-h-0 flex-1 overflow-y-auto">
+    {bottomTab === 'coach' ? (
+      <div>
+        <SubSwitch
+          label="Coach view"
+          value={subView.coach}
+          onChange={(v) => setSubView((s) => ({ ...s, coach: v }))}
+          options={[
+            { id: 'hints', label: 'Hints' },
+            { id: 'analysis', label: 'Analysis' },
+          ]}
+        />
+        {subView.coach === 'hints' ? (
+          <CoachPanel coach={coach} judgeResult={judgeResult} onAddTest={addTestcase} />
+        ) : (
+          <AnalysisPanel
+            problemId={custom ? undefined : Number(id)}
+            customProblemId={custom && !learn ? Number(id) : undefined}
+            title={problem?.title ?? ''}
+            statement={coachStatement}
+            code={code}
+            language={language}
+            timeLimit={statementApi.data?.timeLimit}
+            inputs={biggestInputs}
+            onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
+          />
+        )}
+      </div>
+    ) : bottomTab === 'tests' ? (
+      <div>
+        <SubSwitch
+          label="Tests view"
+          value={subView.tests}
+          onChange={(v) => setSubView((s) => ({ ...s, tests: v }))}
+          options={[
+            { id: 'cases', label: 'Your tests' },
+            { id: 'ai', label: 'Generate with AI' },
+          ]}
+        />
+        {subView.tests === 'cases' ? (
+          <TestcaseDeck
+            testcases={testcases}
+            selectedIndex={selectedTest}
+            onSelect={setSelectedTest}
+            customInput={customInput}
+            onCustomInput={setCustomInput}
+            onAdd={addTestcase}
+            onDelete={deleteTestcase}
+            onAddMany={addManyTestcases}
+          />
+        ) : (
+          <AiTestsPanel
+            problemId={custom ? undefined : Number(id)}
+            customProblemId={custom && !learn ? Number(id) : undefined}
+            title={problem?.title ?? ''}
+            statement={coachStatement}
+            samples={samples}
+            code={code}
+            language={language}
+            onAddTests={addManyTestcases}
+          />
+        )}
+      </div>
+    ) : bottomTab === 'dryrun' ? (
+      <div>
+        <SubSwitch
+          label="Dry run view"
+          value={subView.dryrun}
+          onChange={(v) => setSubView((s) => ({ ...s, dryrun: v }))}
+          options={[
+            { id: 'watch', label: 'Watch it run' },
+            { id: 'hood', label: 'Under the hood' },
+          ]}
+        />
+        {subView.dryrun === 'watch' ? (
+          <DryRunPanel
+            key={dryRunFocus}
+            code={code}
+            language={language}
+            cases={dryRunCases}
+            initialCase={dryRunStart}
+            onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
+          />
+        ) : (
+          <JourneyPanel
+            code={code}
+            language={language}
+            input={selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].input : customInput}
+            inputLabel={selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].label || `Test ${selectedTest + 1}` : 'your custom input'}
+            onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
+          />
+        )}
+      </div>
     ) : (
-      <EmptyState
-        className="py-6"
-        icon={<TerminalSquare />}
-        title="Nothing run yet"
-        description="Run checks the selected test (⌘/Ctrl + Enter). Submit checks them all."
-      />
+      <div className="space-y-3">
+        {allDiagnostics.length > 0 && (
+          <div className="px-3 pt-3">
+            <p className="mb-1.5 text-[12px] font-semibold text-foreground-faint">
+              {allDiagnostics.length} issue{allDiagnostics.length === 1 ? '' : 's'} in your code — click one to jump to its line
+            </p>
+            {issuesList}
+          </div>
+        )}
+        {resultBody}
+      </div>
     )}
   </div>
   )
@@ -1224,5 +1293,29 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       </>
       )}
     </motion.div>
+  )
+}
+
+/** A two-way switch inside a results tab (Tests / Generate with AI, …). */
+function SubSwitch<T extends string>({ label, value, options, onChange }: { label: string; value: T; options: { id: T; label: string }[]; onChange: (v: T) => void }) {
+  return (
+    <div className="sticky top-0 z-10 flex items-center border-b border-border bg-surface px-3 py-1.5">
+      <div role="group" aria-label={label} className="inline-flex items-center gap-0.5 rounded-lg border border-border p-0.5">
+        {options.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            aria-pressed={value === o.id}
+            onClick={() => onChange(o.id)}
+            className={cn(
+              'cursor-pointer rounded-md px-2.5 py-1 text-[12px] transition-colors',
+              value === o.id ? 'bg-surface-2 font-medium text-foreground' : 'text-foreground-dim hover:text-foreground',
+            )}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
   )
 }

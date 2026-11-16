@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Check, Copy, ExternalLink, FileDown, FileText, Languages, Loader2, Plug, Sigma, ImageOff } from 'lucide-react'
+import { Check, Copy, ExternalLink, FileDown, FileText, Languages, Loader2, Plug, Sigma, ImageOff, Play, Footprints } from 'lucide-react'
 import { LoadingBlock, Tabs } from '@/components/ui'
 import { sanitizeHtml } from '@/lib/sanitize'
 import { prepareMathHtml, renderMathIn } from '@/lib/math'
@@ -32,6 +32,10 @@ interface Props {
   onUseStarter?: (code: string, langSlug: string) => void
   /** The editor's current language, to offer the matching starter code. */
   language?: string
+  /** Run the code on example i (acts on the case being read). */
+  onRunSample?: (index: number) => void
+  /** Open the dry run on example i. */
+  onDryRunSample?: (index: number) => void
 }
 
 /** Difficulty band of a rating, for the quiet coloured dot. */
@@ -104,6 +108,8 @@ export function ProblemPanel({
   learnSolution,
   onUseStarter,
   language,
+  onRunSample,
+  onDryRunSample,
 }: Props) {
   const [tab, setTab] = useState('statement')
   const [translated, setTranslated] = useState<{ lang: string; html: string } | null>(null)
@@ -315,9 +321,22 @@ export function ProblemPanel({
                         <div key={i}>
                           <div className="mb-1.5 flex items-center gap-1 text-[12px] text-foreground-faint">
                             <span>Example {i + 1}</span>
-                            <button type="button" onClick={() => onImportSample(i)} className="ml-auto cursor-pointer rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Add example ${i + 1} to tests`}>
-                              Add to tests
-                            </button>
+                            {/* Act on the case you are reading. */}
+                            <span className="ml-auto flex items-center gap-0.5">
+                              {onRunSample && (
+                                <button type="button" onClick={() => onRunSample(i)} className="inline-flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Run your code on example ${i + 1}`}>
+                                  <Play className="size-3" aria-hidden="true" /> Run this
+                                </button>
+                              )}
+                              {onDryRunSample && (
+                                <button type="button" onClick={() => onDryRunSample(i)} className="inline-flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Dry run your code on example ${i + 1}`}>
+                                  <Footprints className="size-3" aria-hidden="true" /> Dry run this
+                                </button>
+                              )}
+                              <button type="button" onClick={() => onImportSample(i)} className="cursor-pointer rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Add example ${i + 1} to tests`}>
+                                Add to tests
+                              </button>
+                            </span>
                           </div>
                           <div className="grid gap-2 sm:grid-cols-2">
                             {(['input', 'output'] as const).map((k) => (
