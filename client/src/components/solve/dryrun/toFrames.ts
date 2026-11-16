@@ -582,7 +582,7 @@ function callTree(snaps: Snapshot[]): Map<number, CallNode> | null {
   const recursive = [...calls.values()].some((c) => c.fn !== 'main' && c.parent !== null && calls.get(c.parent)?.fn === c.fn)
   return recursive ? calls : null
 }
-function recursionTreeOf(calls: Map<number, CallNode>, idx: number, stack: CallFrame[], ret: boolean): TreeState {
+function recursionTreeOf(calls: Map<number, CallNode>, idx: number, stack: CallFrame[], ret: boolean): TreeState | null {
   const live = new Set(stack.map((f) => f.k))
   let shown = [...calls.values()].filter((c) => c.fn !== 'main' && c.at <= idx)
   // Several separate calls from the main program (insert(5), insert(1)…):
@@ -600,6 +600,8 @@ function recursionTreeOf(calls: Map<number, CallNode>, idx: number, stack: CallF
     shown = shown.filter((c) => rootOf(c).k === pick)
     only = true
   }
+  // Only a call that recurses gets a tree (not compare(…) or a helper called once).
+  if (!shown.some((c) => c.parent !== null && calls.get(c.parent)?.fn === c.fn)) return null
   let partial = false
   if (shown.length > 40) {
     // Too many to read: the calls still running and their children.
@@ -773,7 +775,8 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
     }
 
     // Recursion: the tree of calls so far, with the running one lit.
-    if (calls) stage.push(recursionTreeOf(calls, idx, s.stack, s.kind === 'ret'))
+    const rec = calls ? recursionTreeOf(calls, idx, s.stack, s.kind === 'ret') : null
+    if (rec) stage.push(rec)
 
     // Variable cards, with the value each changed one had before this step.
     const before = lastVars.get(top.k)

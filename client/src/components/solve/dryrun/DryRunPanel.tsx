@@ -42,7 +42,7 @@ interface Props {
 }
 
 /** Languages the dry run traces today (src/dryrun/index.js TRACERS). */
-export const DRY_RUN_LANGS = new Set(['python', 'cpp'])
+export const DRY_RUN_LANGS = new Set(['python', 'cpp', 'c', 'java'])
 
 const CODE_LANG: Record<string, Lang> = { python: 'python', cpp: 'cpp', c: 'c', java: 'java', javascript: 'js', typescript: 'js' }
 const LANG_NAME: Record<string, string> = { python: 'Python', cpp: 'C++', c: 'C', java: 'Java', javascript: 'JavaScript', typescript: 'TypeScript' }
@@ -125,7 +125,7 @@ export function DryRunPanel({ code, language, cases, initialCase = 0, onJumpToLi
   if (!supported) {
     return (
       <Notice title={`Dry run for ${LANG_NAME[language] ?? language} is coming`}>
-        The dry run draws your own program running, step by step. It works today for {[...DRY_RUN_LANGS].map((l) => LANG_NAME[l] ?? l).join(' and ')}; more languages
+        The dry run draws your own program running, step by step. It works today for {new Intl.ListFormat('en', { type: 'conjunction' }).format([...DRY_RUN_LANGS].map((l) => LANG_NAME[l] ?? l))}; more languages
         are on the way. Switch the language to one of these to try it now.
       </Notice>
     )

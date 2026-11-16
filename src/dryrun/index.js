@@ -19,6 +19,8 @@
  */
 const { wrapPython, MARK } = require('./python');
 const { instrumentCpp } = require('./cpp');
+const { instrumentC } = require('./c');
+const { instrumentJava } = require('./java');
 
 /**
  * Languages the dry run can trace today, and how. `wrap` returns the code to
@@ -28,6 +30,8 @@ const { instrumentCpp } = require('./cpp');
 const TRACERS = {
   python: { wrap: async (code) => wrapPython(code), runAs: 'python' },
   cpp: { wrap: async (code) => (await instrumentCpp(code)).code, runAs: 'cpp', compiled: true },
+  c: { wrap: async (code) => (await instrumentC(code)).code, runAs: 'c', compiled: true },
+  java: { wrap: async (code) => (await instrumentJava(code)).code, runAs: 'java', compiled: true },
 };
 
 function supported(lang) {
