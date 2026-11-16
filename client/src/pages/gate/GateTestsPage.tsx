@@ -180,7 +180,7 @@ export default function GateTestsPage() {
       title="Tests"
       subtitle="Timed tests from past papers, in the real exam console — with a full analysis after."
       actions={
-        <Link to={GATE_ROUTES.cbt} className="btn-secondary inline-flex items-center gap-2 !px-3 !py-2 !text-[13px]">
+        <Link to={GATE_ROUTES.cbt} aria-label="Official papers" className="btn-secondary inline-flex items-center gap-2 !px-3 !py-2 !text-[13px]">
           <Icon name="trophy" className="size-4" /> <span className="hidden sm:inline">Official papers</span>
         </Link>
       }

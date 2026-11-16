@@ -434,7 +434,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
               <label className="text-[11px] font-mono font-bold uppercase text-text-muted">
                 Input Database Numeric ID:
               </label>
-              <input
+              <input aria-label="Database numeric ID"
                 type="number"
                 value={urlId}
                 onChange={(e) => setUrlId(e.target.value)}
@@ -536,7 +536,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
               <span className="font-mono text-[12px] text-text-muted">Worker Node ID:</span>
-              <input
+              <input aria-label="Worker node ID"
                 type="number"
                 min="0"
                 max="1023"
@@ -581,7 +581,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <label className="text-[11px] font-mono text-text-muted block">Cache Key:</label>
-              <input
+              <input aria-label="Cache key"
                 type="text"
                 value={hashKey}
                 onChange={(e) => setHashKey(e.target.value)}
@@ -648,7 +648,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="text-[10px] font-mono text-text-muted block">Price ($):</label>
-                  <input
+                  <input aria-label="Price in dollars"
                     type="number"
                     step="0.1"
                     value={orderPrice}
@@ -658,7 +658,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
                 </div>
                 <div>
                   <label className="text-[10px] font-mono text-text-muted block">Quantity:</label>
-                  <input
+                  <input aria-label="Quantity"
                     type="number"
                     value={orderQty}
                     onChange={(e) => setOrderQty(e.target.value)}
@@ -728,7 +728,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="text-[10px] font-mono text-text-muted block">Cache Key:</label>
-                  <input
+                  <input aria-label="Cache key"
                     type="text"
                     value={lruKeyInput}
                     onChange={(e) => setLruKeyInput(e.target.value)}
@@ -737,7 +737,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
                 </div>
                 <div>
                   <label className="text-[10px] font-mono text-text-muted block">Value:</label>
-                  <input
+                  <input aria-label="Value"
                     type="text"
                     value={lruValInput}
                     onChange={(e) => setLruValInput(e.target.value)}
@@ -851,7 +851,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Search className="size-4 text-text-muted" />
-              <input
+              <input aria-label="Search the corpus"
                 type="text"
                 value={bm25Query}
                 onChange={(e) => setBm25Query(e.target.value)}
@@ -912,7 +912,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
 
             <div className="grid gap-2 sm:grid-cols-2 pt-2">
               <div className="flex gap-2">
-                <input
+                <input aria-label="URL to add"
                   type="text"
                   value={bloomInputUrl}
                   onChange={(e) => setBloomInputUrl(e.target.value)}
@@ -927,7 +927,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
               </div>
 
               <div className="flex gap-2">
-                <input
+                <input aria-label="URL to test"
                   type="text"
                   value={bloomTestUrl}
                   onChange={(e) => setBloomTestUrl(e.target.value)}
@@ -977,7 +977,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
 
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-[11px] font-mono text-text-muted">Insert Character:</span>
-              <input
+              <input aria-label="Character to insert"
                 type="text"
                 maxLength={1}
                 value={crdtInsertVal}
@@ -985,7 +985,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
                 className="w-12 text-center rounded bg-bg-surface-2 py-1 font-mono text-[13px] ring-1 ring-border font-bold"
               />
               <span className="text-[11px] font-mono text-text-muted">Peer:</span>
-              <select
+              <select aria-label="Peer"
                 value={crdtInsertPeer}
                 onChange={(e) => setCrdtInsertPeer(e.target.value as 'Alice' | 'Bob')}
                 className="rounded bg-bg-surface-2 px-2 py-1 font-mono text-[12px] ring-1 ring-border"

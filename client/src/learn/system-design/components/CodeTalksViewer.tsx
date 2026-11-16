@@ -117,7 +117,7 @@ export const CodeTalksViewer: React.FC<CodeTalksViewerProps> = ({ system, curren
       )}
 
       {/* Code Body with Line Numbering & Dynamic Range Highlighting */}
-      <div className="max-h-[380px] overflow-auto bg-[#0d1117] p-4 font-mono text-[12px] leading-relaxed select-text">
+      <div tabIndex={0} role="group" aria-label="Code" className="max-h-[380px] overflow-auto bg-[#0d1117] p-4 font-mono text-[12px] leading-relaxed select-text">
         <pre className="relative">
           {codeLines.map((line, idx) => {
             const lineNum = idx + 1
@@ -141,7 +141,7 @@ export const CodeTalksViewer: React.FC<CodeTalksViewerProps> = ({ system, curren
 
                 {/* Code Line */}
                 <span
-                  className={`flex-1 overflow-x-auto whitespace-pre ${
+                  className={`flex-1 whitespace-pre ${
                     isHighlighted ? 'text-sky-200 font-medium' : 'text-neutral-300'
                   }`}
                 >

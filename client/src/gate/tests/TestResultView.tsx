@@ -67,7 +67,7 @@ export function TestResultView({ test, questions, subjectName }: { test: GateTes
           <Link to={GATE_ROUTES.tests} className="btn-secondary !px-3 !py-2 !text-[13px]">
             All tests
           </Link>
-          <button type="button" onClick={sameAgain} disabled={busy} className="btn-secondary inline-flex items-center gap-1.5 !px-3 !py-2 !text-[13px] disabled:opacity-60">
+          <button type="button" onClick={sameAgain} disabled={busy} aria-label="New test, same settings" className="btn-secondary inline-flex items-center gap-1.5 !px-3 !py-2 !text-[13px] disabled:opacity-60">
             <Icon name="refresh" className="size-4" /> <span className="hidden sm:inline">New test, same settings</span>
             <span className="sm:hidden">Again</span>
           </button>
