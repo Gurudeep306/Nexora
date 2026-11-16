@@ -55,14 +55,18 @@ Contents:
 - `git add -A` also picks up helper worktrees under `.claude/worktrees/`.
   Add that folder to `.git/info/exclude` first.
 
-## 3. Where it stands (2026-11-16, end of session 4)
+## 3. Where it stands (2026-11-16, session 5)
 
 - **Merged and live:** #127, #128, #129 (dry run: Python, C++, C, Java,
   JavaScript, TypeScript), **#130** (Solve page redesign + dry run for Go,
   Rust, C#; C# runs on .NET 9 first), **#131** (dry run for Kotlin and Swift;
   Kotlin stderr no longer cut short). The dry run works in 11 languages.
-- **Open PR: Admin → Compilers (section 6, item 5)**, branch
-  `claude/fervent-curie-vjgcd8`. Waiting for CI and the owner's "merge".
+- **Open PR: Admin → Compilers (section 6, item 5)**, first on branch
+  `claude/fervent-curie-vjgcd8` (#132). Session 5 checked it and continued on
+  `claude/clever-keller-vgi9vo` (the same work plus a phone fix: admin
+  `Panel` headers now wrap their button under the text, so the description
+  is no longer squeezed into a thin column at 360px). Waiting for the
+  owner's "merge".
   What it does:
   - `src/compilers.js`: the free public runners (Wandbox, Compiler Explorer,
     Kotlin Playground, Paiza.io) can be turned off; each one's compiler
@@ -99,8 +103,9 @@ Contents:
      the allowed ones, with keys sealed like AI keys
      (`src/hive/vault.js`). Say plainly in the admin page which are not
      allowed and why.
-  3. Axe 0 / light / dark / phone screenshots of Admin → Code runners with
-     the new panels (not yet taken: the session ended).
+  3. ~~Screenshots and axe~~ **DONE (session 5):** axe 0 and no sideways
+     scroll in light, dark and phone; Admin → AI models and Site also
+     re-checked after the shared `Panel` change.
 - **Dry-run test programs are in the repo now:** `scripts/dryrun-suites/<lang>/`
   (Go 10, Rust 11, C# 7, Kotlin 5, Swift 6; `<name>.in` is the input) and
   `scripts/dryrun-suites/run.js <lang> [engine]` runs them plain and traced
@@ -508,7 +513,7 @@ by analyzing what to place where to make it look the best and show case best
   - The local box has no compilers for them. Test through Wandbox
     (`remoteRun` in `src/remote-exec.js`, via the demo proxy) and against
     the Learn corpus where solutions exist.
-- **Then the rest:**
+- **Then the rest — NOT NOW (owner, 2026-11-16).** Do not start these:
   - Ruby, PHP, Lua and Perl have built-in trace hooks (like Python's
     `settrace`).
   - Haskell, OCaml, Clojure, Scheme and the other functional languages:
