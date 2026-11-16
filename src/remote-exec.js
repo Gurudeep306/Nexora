@@ -818,6 +818,8 @@ module.exports = {
   kotlinLine,
   WANDBOX_MAP,
   GODBOLT_MAP,
+  postJson,
+  preprocess,
   REQUEST_TIMEOUT,
   SLOW_REQUEST_TIMEOUT,
   timeoutFor,
