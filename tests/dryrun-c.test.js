@@ -191,3 +191,14 @@ test('C Learn solutions still print exactly the same answers when traced (one pe
     assert.ok(events.length > 0, p.slug);
   }
 });
+
+test('C/C++ local arrays declared without a value show only the part the program has written', async () => {
+  const code = '#include <stdio.h>\nint main(void) {\n    int n = 3;\n    int a[100];\n    for (int i = 0; i < n; i++) a[i] = 7 * (i + 1);\n    printf("%d\\n", a[2]);\n    return 0;\n}\n';
+  const { frames, stdout } = await trace(code);
+  assert.equal(stdout, '21\n');
+  const declared = frames.find((f) => find(f, 'array', 'a'));
+  assert.equal(find(declared, 'array', 'a').cells.length, 0, 'nothing written yet: no leftover memory drawn');
+  const last = find(frames[frames.length - 1], 'array', 'a');
+  assert.deepEqual(last.cells.map((c) => c.v), [7, 14, 21]);
+  assert.match(last.label, /3 of 100 set/);
+});

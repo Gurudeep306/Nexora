@@ -84,6 +84,7 @@ int main() {
   const mid = frames.find((f) => f.line === 12 && find(f, 'list'));
   const list = find(mid, 'list');
   assert.ok(list.pointers.cur && list.pointers.prev, 'cur and prev ride on nodes');
+  assert.doesNotMatch(list.label, /circular/, 'two walks meeting mid-reversal is not a loop');
   const names = frames.flatMap((f) => (f.kind === 'call' ? [f.note] : []));
   assert.ok(names.some((n) => /Call Node\(/.test(n)), 'the constructor is a call, named Node');
 });

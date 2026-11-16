@@ -81,6 +81,12 @@ export interface CodeFacts {
   index: Map<string, Set<string>>
   /** name → [row expr, col expr] pairs: dp[i][j]. */
   index2: Map<string, Set<string>>
+  /**
+   * C / C++ arrays declared inside a function with no value (`int a[100];`):
+   * until the program writes them they hold leftover memory, so only the
+   * part it has written is drawn.
+   */
+  unset: Set<string>
   src: string
 }
 
@@ -99,17 +105,48 @@ export function codeFacts(src: string): CodeFacts {
     if (!index2.has(m[1])) index2.set(m[1], new Set())
     index2.get(m[1])!.add(`${norm(m[2])},${norm(m[3])}`)
   }
-  return { lines: src.split('\n'), index, index2, src }
+  const unset = new Set<string>()
+  const DECL = /^\s+(?!(?:return|delete|throw|goto|case|else|static)\b)(?:(?:const|unsigned|signed|long|short|struct)\s+)*[A-Za-z_][\w:]*(?:<[^;=]*>)?\s+\**\s*[A-Za-z_]\w*\s*(?:\[[^\]]*\])+(?:\s*,\s*\**\s*[A-Za-z_]\w*\s*(?:\[[^\]]*\])*)*\s*;\s*(?:\/\/.*)?$/
+  for (const line of src.split('\n')) if (DECL.test(line)) for (const m of line.matchAll(/([A-Za-z_]\w*)\s*\[/g)) unset.add(m[1])
+  return { lines: src.split('\n'), index, index2, unset, src }
+}
+
+/** What an unset array (see CodeFacts.unset) looked like when it appeared, and how far the program has written it. */
+interface Unset {
+  first: string[]
+  used: number
+  cols: number
+}
+function written(seen: Map<string, Unset>, key: string, now: string[], cell?: (i: number) => string[]): Unset {
+  const u = seen.get(key)
+  if (!u) {
+    const fresh = { first: now, used: 0, cols: 0 }
+    seen.set(key, fresh)
+    return fresh
+  }
+  now.forEach((x, i) => {
+    if (x === u.first[i]) return
+    u.used = Math.max(u.used, i + 1)
+    if (cell) {
+      const before = JSON.parse(u.first[i] ?? '[]') as unknown[]
+      cell(i).forEach((c, j) => c !== JSON.stringify(before[j]) && (u.cols = Math.max(u.cols, j + 1)))
+    }
+  })
+  return u
 }
 
 const uses = (f: CodeFacts, name: string, re: string) => new RegExp(String.raw`\b${esc(name)}\s*\.\s*${re}`).test(f.src)
 const stackish = (f: CodeFacts, name: string) =>
   (uses(f, name, String.raw`(append|push|push_back|add|addLast|offerLast)\s*\(`) && uses(f, name, String.raw`(pop|pop_back|removeLast|pollLast)\s*\(\s*\)`)) ||
   /^(stack|stk|st)$/i.test(name)
+const queueMethods = String.raw`(popleft|appendleft|pop\s*\(\s*0\s*\)|poll|offer|shift|unshift|pop_front|push_front|front|peekFirst|pollFirst)`
 const queueish = (f: CodeFacts, name: string, v: ListTV) =>
-  v.t === 'deque' || uses(f, name, String.raw`(popleft|appendleft|pop\s*\(\s*0\s*\)|poll|offer|shift|pop_front|push_front|front)`) || /^(queue|q|dq|bfs)$/i.test(name)
+  // A Java ArrayDeque used only with push / pop is a stack.
+  (v.t === 'deque' && !(uses(f, name, String.raw`push\s*\(`) && uses(f, name, String.raw`pop\s*\(\s*\)`) && !uses(f, name, queueMethods))) ||
+  uses(f, name, queueMethods) ||
+  /^(queue|q|dq|bfs)$/i.test(name)
 const graphish = (f: CodeFacts, name: string) =>
-  /^(adj|adjacency|graph|g|edges|nbrs?|neighbou?rs|children|tree)$/i.test(name) || new RegExp(String.raw`for\s*\(?.*\b(in|:)\s*${esc(name)}\s*\[`).test(f.src)
+  /^(adj|adjacency|graph|g|edges|nbrs?|neighbou?rs|children|tree)$/i.test(name) || new RegExp(String.raw`for\s*\(?.*\b(in|of|:)\s*${esc(name)}\s*\[`).test(f.src) || new RegExp(String.raw`\b${esc(name)}\s*\[[^\]]+\]\s*\.\s*forEach\s*\(`).test(f.src)
 
 /** Evaluate "i", "j+1", "mid-1" against the integer variables in scope. */
 function evalIndex(expr: string, ints: Map<string, number>): number | null {
@@ -177,6 +214,8 @@ const hasCompare = (line: string) => /[<>]=?|==|!=|\bis\b|\bin\b/.test(line.repl
 
 interface Ctx {
   facts: CodeFacts
+  /** Unset arrays seen so far, by structure key. */
+  unset: Map<string, Unset>
   ids: Ids
   heap: Map<number, HeapObj>
   line: string
@@ -205,7 +244,13 @@ function touched(name: string, line: string, ints: Map<string, number>): number[
 }
 
 function arrayOf(key: string, name: string, v: ListTV, ctx: Ctx, label?: string): ArrayState {
-  const shown = v.i.slice(0, MAX_CELLS)
+  let shown = v.i.slice(0, MAX_CELLS)
+  let setNote = ''
+  if (ctx.facts.unset.has(name)) {
+    const u = written(ctx.unset, key, shown.map((x) => JSON.stringify(x)))
+    shown = shown.slice(0, u.used)
+    setNote = ` · ${u.used} of ${v.n} set`
+  }
   const { ids, roles } = ctx.ids.follow(key, shown.map((x) => JSON.stringify(x)))
   const cells: Cell[] = shown.map((x, i) => ({ id: ids[i], v: scalar(x, ctx.heap) }))
   const rl: Record<number, Role> = Object.fromEntries(roles)
@@ -229,7 +274,7 @@ function arrayOf(key: string, name: string, v: ListTV, ctx: Ctx, label?: string)
   return {
     kind: 'array',
     id: key,
-    label: `${label ?? name}${tag ? ` · ${tag}` : ''}${total > shown.length ? ` · first ${shown.length} of ${total}` : ''}`,
+    label: `${label ?? name}${tag ? ` · ${tag}` : ''}${setNote || (total > shown.length ? ` · first ${shown.length} of ${total}` : '')}`,
     cells,
     roles: rl,
     pointers,
@@ -247,7 +292,14 @@ function stackOf(key: string, name: string, v: ListTV, ctx: Ctx, queue: boolean)
 }
 
 function gridOf(key: string, name: string, v: ListTV, ctx: Ctx, prev?: GridState): GridState {
-  const rows = v.i.slice(0, 20).map((r) => (isList(r) ? r.i.slice(0, 20).map((x) => scalar(x, ctx.heap)) : [scalar(r, ctx.heap)]))
+  let rows = v.i.slice(0, 20).map((r) => (isList(r) ? r.i.slice(0, 20).map((x) => scalar(x, ctx.heap)) : [scalar(r, ctx.heap)]))
+  let setNote = ''
+  if (ctx.facts.unset.has(name)) {
+    const cells = (i: number) => rows[i].map((x) => JSON.stringify(x))
+    const u = written(ctx.unset, key, rows.map((r) => JSON.stringify(r)), cells)
+    rows = rows.slice(0, u.used).map((r) => r.slice(0, u.cols))
+    setNote = ` · ${u.used} of ${v.n} rows set`
+  }
   const roles: Record<string, Role> = {}
   rows.forEach((r, i) =>
     r.forEach((x, j) => {
@@ -261,7 +313,7 @@ function gridOf(key: string, name: string, v: ListTV, ctx: Ctx, prev?: GridState
     const c = evalIndex(m[2].replace(/\s+/g, ''), ctx.ints)
     if (r !== null && c !== null && !roles[`${r},${c}`]) roles[`${r},${c}`] = hasCompare(ctx.line) ? 'compare' : 'active'
   }
-  const more = v.n > rows.length ? ` · first ${rows.length} of ${v.n} rows` : ''
+  const more = setNote || (v.n > rows.length ? ` · first ${rows.length} of ${v.n} rows` : '')
   return { kind: 'grid', id: key, label: `${name}${more}`, rows, roles, rowLabels: rows.map((_, i) => String(i)) }
 }
 
@@ -323,13 +375,18 @@ function linkedOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string)
   starts.sort(([a], [b]) => Number(!/^(head|first|root|start|dummy|l1)$/i.test(a)) - Number(!/^(head|first|root|start|dummy|l1)$/i.test(b)))
   const order: number[] = []
   const seen = new Set<number>()
+  // Circular only when one walk comes back to where it started (two walks
+  // meeting, as after a reversal, is not a loop).
+  let circular = false
   for (const [, v] of starts) {
-    let id = refId(v)
+    const first = refId(v)
+    let id = first
     while (id !== null && isNode(id) && !seen.has(id) && order.length < MAX_NODES) {
       seen.add(id)
       order.push(id)
       const o = heap.get(id)!
       id = refId(LINK.map((f) => o.f[f]).find((x) => x !== undefined))
+      if (id !== null && id === first && order.length > 1) circular = true
     }
   }
   const doubly = order.some((id) => 'prev' in heap.get(id)!.f)
@@ -341,10 +398,6 @@ function linkedOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string)
   })
   const pointers: Record<string, string | null> = {}
   for (const [n, v] of starts) pointers[n] = `o${refId(v)}`
-  const circular = order.length > 1 && (() => {
-    const o = heap.get(order[order.length - 1])!
-    return refId(LINK.map((f) => o.f[f]).find((x) => x !== undefined)) === order[0]
-  })()
   return { kind: 'list', id: key, label: `${starts[0][0]}${doubly ? ' (doubly linked)' : ''}${circular ? ' (circular: the last node points back to the first)' : ''}`, nodes, doubly, pointers }
 }
 
@@ -650,6 +703,7 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
   const lastVars = new Map<number, Map<string, TV>>()
   const lastTree = new Map<string, Set<string>>()
   const lastPtr = new Map<string, string>()
+  const unset = new Map<string, Unset>()
   const calls = callTree(snaps)
   const frames: DryFrame[] = []
 
@@ -659,7 +713,7 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
     const lineText = facts.lines[s.line - 1] ?? ''
     const ints = new Map<string, number>()
     for (const [n, v] of top.vars) if (typeof v === 'number' && Number.isInteger(v)) ints.set(n, v)
-    const ctx: Ctx = { facts, ids, heap: s.heap, line: lineText, ints }
+    const ctx: Ctx = { facts, unset, ids, heap: s.heap, line: lineText, ints }
     const stage: Structure[] = []
     const cards: Record<string, Scalar> = {}
 
