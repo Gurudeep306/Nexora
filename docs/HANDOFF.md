@@ -61,12 +61,12 @@ Contents:
   JavaScript, TypeScript), **#130** (Solve page redesign + dry run for Go,
   Rust, C#; C# runs on .NET 9 first), **#131** (dry run for Kotlin and Swift;
   Kotlin stderr no longer cut short). The dry run works in 11 languages.
-- **Open PR: Admin → Compilers (section 6, item 5)**, first on branch
+- **Admin → Compilers (section 6, item 5) — MERGED**, first on branch
   `claude/fervent-curie-vjgcd8` (#132). Session 5 checked it and continued on
   `claude/clever-keller-vgi9vo` (the same work plus a phone fix: admin
   `Panel` headers now wrap their button under the text, so the description
-  is no longer squeezed into a thin column at 360px). Waiting for the
-  owner's "merge".
+  is no longer squeezed into a thin column at 360px). **Merged as #133**
+  (the owner said "merge", 2026-11-16); #132 was closed in its favour.
   What it does:
   - `src/compilers.js`: the free public runners (Wandbox, Compiler Explorer,
     Kotlin Playground, Paiza.io) can be turned off; each one's compiler

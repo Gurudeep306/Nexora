@@ -16,27 +16,29 @@ STEP 0 — Read first, in this order:
   3. docs/ui/field-journal.md and docs/ui/premium.md — the look.
   Only I say "merge"; merging deploys the live site.
 
-STEP 1 — The open PR "Admin → Compilers" (branch claude/fervent-curie-vjgcd8):
-  - Check its CI. If it is red, find the cause and fix it (never skip a test).
-  - Take screenshots of Admin → Code runners (desktop light, desktop dark,
-    phone 360px) with the new "Public runners" and "Languages" panels, run
-    axe (must be 0) and check there is no sideways scroll. Fix anything off.
-  - Then tell me it is ready, and wait for my "merge".
+STEP 1 — Admin → Compilers is merged (PR #133, which replaced #132).
+  Check that the live deploy finished and the site works. Nothing else here.
 
 STEP 2 — Finish Admin → Compilers (docs/HANDOFF.md section 3, "Not done"):
-  a. After it is merged and the live updater has picked newer compiler
-     versions (GCC 16, Rust 1.99, Java 27, .NET 10, Swift 6.4, Kotlin 2.4…),
-     check the dry run still works on them, for every traced language:
+  a. The live updater has now picked newer compiler versions (GCC 16,
+     Rust 1.99, Java 27, .NET 10, Swift 6.4, Kotlin 2.4…). Check that the
+     dry run still works on them, for every traced language:
        NODE_OPTIONS="-r <proxy preload>" node scripts/dryrun-suites/run.js <lang> [engine]
      for go, rust, csharp, kotlin, swift (and the older suites for python,
      cpp, c, java, javascript, typescript: node scripts/dryrun-trace.mjs
      --corpus <lang>). If a tracer breaks on a new version, fix the tracer;
      until it is fixed, pin the old version in Admin → Code runners.
-  b. Key-based code runners: check each service's terms first (self-hosted
-     Judge0, JDoodle free tier, Glot.io, Coliru). Add only the ones whose
-     terms allow it, with keys sealed like AI keys (src/hive/vault.js),
-     on/off and health like the others. Say plainly on the admin page which
-     ones are not allowed and why. Never suggest breaking a provider's terms.
+  b. Key-based code runners. Session 5 found (handoff section 3):
+       - Judge0 is GPL-3.0; running it on our own server is allowed.
+         Its hosted cloud (RapidAPI / paid plan): terms not read yet.
+       - JDoodle, Glot.io, Coliru: their terms could NOT be read, because
+         the cloud session's network blocks jdoodle.com, glot.io and
+         coliru.stacked-crooked.com. First ask me (with the environment
+         tool) to allow exactly those hosts, then read their terms.
+     Add only the ones whose terms allow it, with keys sealed like AI keys
+     (src/hive/vault.js), on/off and health like the others. Say plainly on
+     the admin page which ones are not allowed and why. Never guess terms
+     and never suggest breaking a provider's terms.
 
 STEP 3 — Then docs/HANDOFF.md section 6, item 6 (my older requests), in this
 order, one finished, tested, pushed PR per item:
