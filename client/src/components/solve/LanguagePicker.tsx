@@ -26,7 +26,9 @@ export function LangBadge({ id, className }: { id: string; className?: string })
   return (
     <span
       className={cn('inline-flex h-5 min-w-6 items-center justify-center rounded px-1 font-mono text-[10px] font-bold', className)}
-      style={{ color: `color-mix(in oklab, ${b.c} 62%, var(--color-text-primary))`, background: `${b.c}1f`, boxShadow: `inset 0 0 0 1px ${b.c}33` }}
+      // Text is always ink (readable on every theme); the language's colour is
+      // only the tile's tint and edge.
+      style={{ color: 'var(--color-text-primary)', background: `color-mix(in oklab, ${b.c} 16%, var(--color-bg-surface))`, boxShadow: `inset 0 0 0 1px color-mix(in oklab, ${b.c} 55%, transparent)` }}
     >
       {b.t}
     </span>
@@ -94,7 +96,7 @@ export function LanguagePicker({
       <PopoverTrigger asChild>
         <button
           aria-label={`Language: ${current?.label ?? value}`}
-          className="flex h-8 min-w-36 cursor-pointer items-center gap-2 rounded-lg border border-border bg-surface-2 pr-2 pl-1.5 text-xs text-foreground transition-colors hover:border-border-strong data-[state=open]:border-primary/60"
+          className="flex h-8 min-w-0 cursor-pointer sm:min-w-36 items-center gap-2 rounded-lg border border-border bg-surface-2 pr-2 pl-1.5 text-xs text-foreground transition-colors hover:border-border-strong data-[state=open]:border-primary/60"
         >
           <LangBadge id={value} />
           <span className="flex-1 truncate text-left font-medium">{current?.label ?? value}</span>
