@@ -1714,6 +1714,25 @@ app.post("/api/explain-run", judgeLimiter, async (req, res) => {
   }
 });
 
+/* ========== DRY RUN ========== */
+// Run the student's program once with a tracer and return every step, for
+// the animated dry run (src/dryrun/).
+app.post("/api/dryrun", judgeLimiter, async (req, res) => {
+  try {
+    const { code, input, language } = req.body || {};
+    if (!LANG_CONFIG[language]) return res.status(400).json({ ok: false, error: "Unknown language" });
+    const src = String(code || "");
+    if (!src.trim()) return res.status(400).json({ ok: false, error: "Write some code first" });
+    if (Buffer.byteLength(src) > 64 * 1024) return res.status(400).json({ ok: false, error: "The code is too long to trace (max 64 KB)" });
+    const stdin = input == null ? "" : String(input);
+    if (Buffer.byteLength(stdin) > 64 * 1024) return res.status(400).json({ ok: false, error: "The input is too long to trace (max 64 KB)" });
+    const dry = require("./dryrun");
+    res.json(await dry.dryRun(src, language, stdin, quickRun));
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
 /* ========== LANGUAGES ========== */
 app.get("/api/languages", (req, res) => {
   // On the hosted server only languages with a remote sandbox can run.

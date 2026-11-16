@@ -227,6 +227,27 @@ export interface MeterState {
   role?: Role
 }
 
+/** A map / dictionary as a two-column table: keys on the left, values on the right. */
+export interface MapState {
+  kind: 'map'
+  id: string
+  label?: string
+  /** Entries keep their id while their value changes, so an update flashes in place. */
+  entries: { id: string; k: Scalar; v: Scalar }[]
+  roles?: Record<string, Role> // entry id → role
+  /** How many entries there really are (when only the first few are drawn). */
+  total?: number
+}
+
+/** The call stack: one card per active call, the newest on top. */
+export interface CallsState {
+  kind: 'calls'
+  id: string
+  label?: string
+  /** Oldest first. */
+  frames: { id: string; name: string; args?: string; line?: number; ret?: string }[]
+}
+
 export interface OutputState {
   kind: 'output'
   id: string
@@ -246,6 +267,8 @@ export type Structure =
   | TreeState
   | GraphState
   | HashState
+  | MapState
+  | CallsState
 
 export interface Frame {
   /** Step id; code lines tagged `@step` light up. */
