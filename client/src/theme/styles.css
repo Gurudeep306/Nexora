@@ -702,6 +702,13 @@
   border-color: var(--color-border);
   box-shadow: none;
 }
+/* A cell with a role keeps its colour: a light tint and a ring in the role's
+   colour (the plain rule above must not wipe it). */
+[data-kit='journal'] .viz-cell[class*='viz-role-'] {
+  background: color-mix(in oklab, var(--rc) 16%, var(--color-bg-surface));
+  border-color: var(--rc);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--rc) 22%, transparent);
+}
 [data-kit='journal'] .viz-role-active,
 [data-kit='journal'] .viz-range-active { --rc: var(--ed-clay); }
 [data-kit='journal'] .viz-role-compare,
@@ -737,6 +744,11 @@
 [data-kit='journal'] .viz-cell.viz-role-dim .viz-value,
 [data-kit='journal'] .viz-cell.viz-role-removed .viz-value {
   color: var(--color-text-muted);
+}
+/* Edge letters (a trie's characters) are ink: clay is never text. */
+[data-kit='journal'] .viz-tedge-label {
+  fill: var(--color-text-primary);
+  stroke: var(--color-bg-app);
 }
 [data-kit='journal'] .viz-legend-dot {
   box-shadow: none;

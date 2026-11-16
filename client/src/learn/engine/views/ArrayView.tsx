@@ -29,9 +29,15 @@ export function ArrayView({ s }: { s: ArrayState }) {
   const { width: stageW, prev, tick } = useStage()
   const slots = Math.max(s.cells.length, s.capacity ?? 0, 1)
   const CELL = cellSize(slots, stageW)
-  const PITCH = CELL + GAP
-  const width = slots * PITCH - GAP
   const small = CELL < 44
+  // A long value (1000000000, a pair like (4, 1)) gets a wider box, never spills out.
+  const longest = Math.max(1, ...s.cells.map((c) => fmt(c.v).length))
+  const room = Math.floor((stageW - 24 + GAP) / slots) - GAP
+  const CW = Math.max(CELL, Math.min(140, room, Math.round(longest * (small ? 7.8 : 9.4) + 16)))
+  // Still too long for the room there is: a smaller font, not a value cut off.
+  const fs = Math.max(9, Math.min(small ? 12.5 : 15, (CW - 10) / (longest * 0.62)))
+  const PITCH = CW + GAP
+  const width = slots * PITCH - GAP
 
   const pointers = Object.entries(s.pointers ?? {})
   const lanes = new Map<number, number>()
@@ -59,7 +65,7 @@ export function ArrayView({ s }: { s: ArrayState }) {
   const cellsTop = padTop + barsH
 
   return (
-    <div className="viz-array" style={{ ['--viz-fs' as string]: small ? '12.5px' : '15px' }}>
+    <div className="viz-array" style={{ ['--viz-fs' as string]: `${fs}px` }}>
       {s.label && <p className="viz-label">{s.label}</p>}
       <div className="relative mx-auto" style={{ width, paddingTop: padTop, paddingBottom: pointers.length ? 30 + maxLane * 22 : 4 }}>
         {s.bars && (
@@ -69,7 +75,7 @@ export function ArrayView({ s }: { s: ArrayState }) {
                 <motion.div
                   key={c.id}
                   initial={false}
-                  animate={{ left: i * PITCH + CELL * 0.16, height: 6 + (Math.abs(typeof c.v === 'number' ? c.v : 0) / maxAbs) * 82 }}
+                  animate={{ left: i * PITCH + (CW - CELL * 0.68) / 2, height: 6 + (Math.abs(typeof c.v === 'number' ? c.v : 0) / maxAbs) * 82 }}
                   transition={spring}
                   className={cn('viz-bar absolute bottom-0 rounded-t-md', roleClass(s.roles?.[i]))}
                   style={{ width: CELL * 0.68 }}
@@ -95,8 +101,8 @@ export function ArrayView({ s }: { s: ArrayState }) {
         {arrows.length > 0 && (
           <svg className="viz-arrows pointer-events-none absolute left-0" width={width} height={arcTop + 2} style={{ top: cellsTop - arcTop - 2, overflow: 'visible' }} aria-hidden="true">
             {arrows.map((a, k) => {
-              const x1 = a.from * PITCH + CELL / 2 + (a.to > a.from ? 4 : -4)
-              const x2 = a.to * PITCH + CELL / 2 + (a.to > a.from ? -4 : 4)
+              const x1 = a.from * PITCH + CW / 2 + (a.to > a.from ? 4 : -4)
+              const x2 = a.to * PITCH + CW / 2 + (a.to > a.from ? -4 : 4)
               const y = arcTop + 2
               const h = arcHeight(a)
               const mx = (x1 + x2) / 2
@@ -125,7 +131,7 @@ export function ArrayView({ s }: { s: ArrayState }) {
 
         <div className="relative" style={{ height: CELL + 18 }}>
           {Array.from({ length: slots }, (_, i) => (
-            <div key={`slot${i}`} className="viz-slot absolute rounded-[10px]" style={{ left: i * PITCH, width: CELL, height: CELL }}>
+            <div key={`slot${i}`} className="viz-slot absolute rounded-[10px]" style={{ left: i * PITCH, width: CW, height: CELL }}>
               {s.address && <span className="viz-addr">0x{(s.address.base + i * s.address.size).toString(16)}</span>}
               <span className="viz-index">{i}</span>
             </div>
@@ -146,7 +152,7 @@ export function ArrayView({ s }: { s: ArrayState }) {
                   exit={{ scale: 0.5, opacity: 0, y: 26, transition: { duration: 0.25 } }}
                   transition={{ ...spring, y: hop ? { duration: 0.5, times: [0, 0.45, 1], ease: 'easeInOut' } : spring }}
                   className={cn('viz-cell absolute flex items-center justify-center rounded-[10px]', roleClass(role))}
-                  style={{ width: CELL, height: CELL, top: 0, zIndex: hop ? 3 : undefined }}
+                  style={{ width: CW, height: CELL, top: 0, zIndex: hop ? 3 : undefined }}
                 >
                   <motion.span key={String(c.v)} className="viz-value" initial={{ scale: 1.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3 }}>
                     {fmt(c.v)}
@@ -162,7 +168,7 @@ export function ArrayView({ s }: { s: ArrayState }) {
             key={name}
             className="viz-pointer absolute flex flex-col items-center"
             initial={false}
-            animate={{ left: idx * PITCH + CELL / 2, top: cellsTop + CELL + 22 + ptrLane[name] * 22 }}
+            animate={{ left: idx * PITCH + CW / 2, top: cellsTop + CELL + 22 + ptrLane[name] * 22 }}
             transition={spring}
             style={{ ['--ph' as string]: ptrHue(name) }}
           >

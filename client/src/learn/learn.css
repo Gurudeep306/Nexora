@@ -47,6 +47,7 @@
   font: 600 var(--viz-fs, 15px) var(--font-mono);
   color: var(--color-text-primary);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .viz-grid-cell { min-width: 38px; height: 34px; padding: 0 6px; }
 .viz-grid-cell .viz-value { font-size: 13px; }
