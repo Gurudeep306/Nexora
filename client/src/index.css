@@ -1397,6 +1397,12 @@ input[type='search']::-webkit-search-results-decoration {
 @media (min-width: 1024px) {
   .nx-bloom { grid-template-columns: 236px minmax(0, 1fr); }
 }
+/* Each part keeps its own column, whatever else is shown. */
+@media (min-width: 1024px) {
+  .nx-bloom > .nx-rail { grid-column: 1; grid-row: 1; }
+  .nx-bloom > main { grid-column: 2; grid-row: 1; }
+  .nx-bloom > .nx-meta { grid-column: 3; grid-row: 1; }
+}
 @media (min-width: 1440px) {
   .nx-bloom { grid-template-columns: 236px minmax(0, 1fr) 300px; }
 }
