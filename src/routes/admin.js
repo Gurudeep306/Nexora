@@ -1237,6 +1237,86 @@ function createAdminRouter(deps) {
     }),
   );
 
+  /* ═════════════ Public runners and their compiler versions ═════════════ */
+
+  const compilers = require("../compilers");
+  const LANG_ID = /^[a-z][a-z0-9]{0,20}$/;
+  const engineOf = (b) => {
+    const e = str(b.engine, { max: 20, field: "engine" });
+    if (!compilers.SERVICES.some((x) => x.id === e)) bad("No such service");
+    return e;
+  };
+  const langOf = (b) => {
+    const l = str(b.lang, { max: 21, field: "lang" });
+    if (!LANG_ID.test(l)) bad("No such language");
+    return l;
+  };
+
+  router.get(
+    "/api/admin/compilers",
+    requirePerm("site.settings"),
+    h(async (_req, res) => res.json({ ok: true, ...(await compilers.view()) })),
+  );
+
+  router.put(
+    "/api/admin/compilers/services/:id",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const id = req.params.id;
+      if (!compilers.SERVICES.some((x) => x.id === id)) bad("No such service");
+      const on = bool(req.body?.on, "on");
+      await compilers.setService(id, on, req.access.username);
+      await audit(req, on ? "compilers.service.on" : "compilers.service.off", { targetType: "runner", target: id });
+      res.json({ ok: true, ...(await compilers.view()) });
+    }),
+  );
+
+  // Keep the version in use (it will not be updated), or let the updater choose again.
+  router.put(
+    "/api/admin/compilers/pin",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const b = req.body || {};
+      const engine = engineOf(b);
+      const lang = langOf(b);
+      const keep = bool(b.keep, "keep");
+      const id = b.id === undefined ? null : str(b.id, { max: 80, field: "id" });
+      const current = require("../remote-exec").compilerFor(engine, lang);
+      if (!current) bad("That service does not run this language");
+      await compilers.setPin(engine, lang, keep ? id || current : null, req.access.username);
+      await audit(req, keep ? "compilers.pin" : "compilers.unpin", { targetType: "runner", target: `${engine}:${lang}`, after: { id: keep ? id || current : null } });
+      res.json({ ok: true, ...(await compilers.view()) });
+    }),
+  );
+
+  router.post(
+    "/api/admin/compilers/reset",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const b = req.body || {};
+      const engine = engineOf(b);
+      const lang = langOf(b);
+      await compilers.reset(engine, lang, req.access.username);
+      await audit(req, "compilers.reset", { targetType: "runner", target: `${engine}:${lang}` });
+      res.json({ ok: true, ...(await compilers.view()) });
+    }),
+  );
+
+  // Look for newer versions now. It runs in the background (a minute or two);
+  // the page asks again until it is done.
+  router.post(
+    "/api/admin/compilers/sync",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      if (!compilers.isSyncing()) {
+        compilers.sync({ by: req.access.username }).catch(() => {});
+        await audit(req, "compilers.sync", { targetType: "runner", target: "all" });
+      }
+      const v = await compilers.view();
+      res.json({ ok: true, ...v, sync: { ...v.sync, running: true } });
+    }),
+  );
+
   /* ═════════════ Announcements & broadcasts ═════════════ */
 
   router.get(
