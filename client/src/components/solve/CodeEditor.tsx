@@ -5,23 +5,19 @@ import Editor, { type BeforeMount, type OnMount } from '@monaco-editor/react'
 import type { editor as MonacoNs } from 'monaco-editor'
 import { initVimMode, type VimMode } from 'monaco-vim'
 import {
+  AlignLeft,
   Minus,
   Plus,
   Braces,
   Check,
   ClipboardCopy,
-  Columns2,
   Download,
   FileCode2,
   Keyboard,
-  Map as MapIcon,
   Maximize2,
   Minimize2,
-  Redo2,
   Search,
-  Terminal,
-  Timer,
-  Undo2,
+  Settings2,
 } from 'lucide-react'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
@@ -30,10 +26,13 @@ import { cn } from '@/lib/utils'
 import { TEMPLATES, LANG_EXT } from '@/lib/templates'
 import { snippetsFor } from '@/lib/snippets'
 import { MONACO_LANG } from '@/lib/monacoLang'
+import { Select, Tooltip } from '@/components/ui'
+
+/** Monaco has a real formatter for these; other languages show no Format button. */
+const FORMATTABLE = new Set(['javascript', 'typescript', 'json', 'css', 'html'])
 import { entryFor, intelFor, signatureFor, type IntelEntry } from '@/lib/langIntel'
 import type { Diag } from '@/lib/diagnostics'
 import type { ReplayEvent } from '@/components/submissions/replay'
-import { Select } from '@/components/ui'
 
 /* Maps backend language ids to Monaco language ids where they differ */
 
@@ -488,6 +487,9 @@ export function CodeEditor({
   onFocusMode,
   focusMode,
   reveal,
+  headerExtra,
+  onAiInlineChange,
+  onIssuesClick,
 }: {
   value: string
   language: string
@@ -509,6 +511,12 @@ export function CodeEditor({
   focusMode?: boolean
   /** Move the cursor to this line (a new `id` re-triggers the same line). */
   reveal?: { line: number; id: number } | null
+  /** Placed in the header, before the settings button (the page's AI Help). */
+  headerExtra?: React.ReactNode
+  /** Turns the AI's ghost suggestions on or off (shown in Editor settings). */
+  onAiInlineChange?: (on: boolean) => void
+  /** The issue count in the status bar was clicked. */
+  onIssuesClick?: () => void
 }) {
   const { data } = useApi(() => api.get<{ settings: Record<string, string> }>('/api/settings'), [])
   const settings = data?.settings ?? {}
@@ -527,10 +535,10 @@ export function CodeEditor({
   const [vim, setVim] = useState(() => localStorage.getItem('nexora:editor-vim') === 'on')
   const [zen, setZen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [snipOpen, setSnipOpen] = useState(false)
   const [snipQuery, setSnipQuery] = useState('')
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle')
-  const [secs, setSecs] = useState(0)
   const [indent, setIndent] = useState(4)
   const [fontSize, setFontSize] = useState(() => Number(localStorage.getItem('nexora:editor-font')) || 14)
   const [wrap, setWrap] = useState(() => localStorage.getItem('nexora:editor-wrap') !== 'off')
@@ -601,12 +609,7 @@ export function CodeEditor({
     editorRef.current?.updateOptions({ fontFamily: appTheme.fontFamily, fontLigatures: appTheme.ligatures })
   }, [appTheme.fontFamily, appTheme.ligatures])
 
-  /* Session timer + autosave pulse + code stats */
-  useEffect(() => {
-    const t = setInterval(() => setSecs((s) => s + 1), 1000)
-    return () => clearInterval(t)
-  }, [])
-
+  /* Autosave pulse */
   const firstValue = useRef(true)
   useEffect(() => {
     if (firstValue.current) {
@@ -623,28 +626,12 @@ export function CodeEditor({
     if (t) setIndent(t)
   }, [settings.tab_size])
 
-  const stats = useMemo(() => {
-    const lines = value.split('\n').length
-    const chars = value.length
-    const words = (value.match(/\S+/g) ?? []).length
-    return { lines, chars, words }
-  }, [value])
-
   const filteredSnips = useMemo(() => {
     const all = snippetsFor(language)
     const q = snipQuery.trim().toLowerCase()
     if (!q) return all
     return all.filter((s) => s.label.toLowerCase().includes(q) || s.detail.toLowerCase().includes(q))
   }, [language, snipQuery])
-
-  const sessionTime = useMemo(() => {
-    const h = Math.floor(secs / 3600)
-    const m = Math.floor((secs % 3600) / 60)
-    const s = secs % 60
-    const mm = String(m).padStart(2, '0')
-    const ss = String(s).padStart(2, '0')
-    return h > 0 ? `${h}:${mm}:${ss}` : `${m}:${ss}`
-  }, [secs])
 
   const cycleIndent = () => {
     const next = indent === 4 ? 2 : indent === 2 ? 8 : 4
@@ -900,125 +887,128 @@ export function CodeEditor({
 
   return (
     <div className={cn('relative flex h-full min-h-0 flex-col', zen && 'fixed inset-0 z-[100] bg-background')}>
-      {/* ── Editor toolbar (one row; scrolls sideways when narrow so nothing gets cut off) ── */}
+      {/* ── Editor header: the file, and only the tools used while writing.
+            Everything else lives in "Editor settings". ── */}
       {!minimal && (
-      <div className="flex shrink-0 flex-nowrap items-center gap-1.5 overflow-x-auto border-b border-border bg-surface px-2 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>*]:shrink-0">
-        <Select
-          variant="pill"
-          value={theme}
-          onChange={(e) => {
-            const pinned = e.target.value !== APP_EDITOR_THEME
-            try { localStorage.setItem('nexora:editor-theme-pinned', pinned ? '1' : '0') } catch { /* storage off */ }
-            setTheme(e.target.value)
-          }}
-          aria-label="Editor theme"
-          className="h-7 cursor-pointer rounded-md border border-border bg-background pr-6 pl-2 text-[11px] text-foreground-dim outline-none hover:text-foreground"
-        >
-          <option value={APP_EDITOR_THEME}>Match app theme</option>
-          {Object.entries(THEMES).map(([id, t]) => (
-            <option key={id} value={id}>
-              {t.label}
-            </option>
-          ))}
-        </Select>
-
-        <div className="flex items-center rounded-lg border border-border/60 bg-background/40 px-0.5 py-0.5">
-          <button className={toolBtn} onClick={() => setFontSize((f) => Math.max(10, f - 1))} aria-label="Decrease font size" title="Smaller font">
-            <Minus className="size-3.5" aria-hidden="true" />
-          </button>
-          <span className="w-6 text-center font-mono text-[10px] text-foreground-faint tabular-nums">{fontSize}</span>
-          <button className={toolBtn} onClick={() => setFontSize((f) => Math.min(24, f + 1))} aria-label="Increase font size" title="Larger font">
-            <Plus className="size-3.5" aria-hidden="true" />
-          </button>
+        <div className="flex shrink-0 items-center gap-1.5 border-b border-border bg-surface px-2 py-1.5">
+          <span className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1 font-mono text-[11.5px] text-foreground-dim" title={saveState === 'saving' ? 'Saving…' : 'Saved on this device'}>
+            <span className={cn('size-1.5 shrink-0 rounded-full', saveState === 'saving' ? 'bg-warning' : 'bg-state-success')} aria-hidden="true" />
+            <span className="truncate">{language === 'java' ? 'Main.java' : `main.${LANG_EXT[language] ?? language}`}</span>
+          </span>
+          <div className="ml-auto flex items-center gap-0.5">
+            {FORMATTABLE.has(MONACO_LANG[language] ?? language) && (
+              <Tooltip label="Format the code (Shift+Alt+F)">
+                <button type="button" className={toolBtn} aria-label="Format the code" onClick={() => void editorRef.current?.getAction('editor.action.formatDocument')?.run()}>
+                  <AlignLeft className="size-3.5" aria-hidden="true" />
+                </button>
+              </Tooltip>
+            )}
+            <Tooltip label="Snippets">
+              <button type="button" className={cn(toolBtn, snipOpen && 'bg-surface-2 text-primary-bright')} onClick={() => setSnipOpen((v) => !v)} aria-pressed={snipOpen} aria-label="Snippets">
+                <Braces className="size-3.5" aria-hidden="true" />
+              </button>
+            </Tooltip>
+            <Tooltip label="Reset to the starter template">
+              <button type="button" className={toolBtn} onClick={insertTemplate} aria-label="Reset to the starter template">
+                <FileCode2 className="size-3.5" aria-hidden="true" />
+              </button>
+            </Tooltip>
+            {headerExtra}
+            <Tooltip label="Editor settings">
+              <button type="button" className={cn(toolBtn, settingsOpen && 'bg-surface-2 text-foreground')} onClick={() => setSettingsOpen((v) => !v)} aria-pressed={settingsOpen} aria-label="Editor settings">
+                <Settings2 className="size-3.5" aria-hidden="true" />
+              </button>
+            </Tooltip>
+          </div>
         </div>
+      )}
 
-        <div className="flex items-center rounded-lg border border-border/60 bg-background/40 px-0.5 py-0.5">
-          <button
-            className={cn(toolBtn, wrap && 'bg-surface-2 text-primary-bright')}
-            onClick={() => setWrap((w) => !w)}
-            aria-pressed={wrap}
-            title="Word wrap"
-          >
-            <Columns2 className="size-3.5" aria-hidden="true" />
-          </button>
-          <button
-            className={cn(toolBtn, minimap && 'bg-surface-2 text-primary-bright')}
-            onClick={() => setMinimap((m) => !m)}
-            aria-pressed={minimap}
-            title="Minimap"
-          >
-            <MapIcon className="size-3.5" aria-hidden="true" />
-          </button>
-          <button
-            className={cn(toolBtn, vim && 'bg-surface-2 text-cyan')}
-            onClick={() => setVim((v) => !v)}
-            aria-pressed={vim}
-            title="Vim keybindings"
-          >
-            <Terminal className="size-3.5" aria-hidden="true" />
-          </button>
-        </div>
-
-        <div className="flex items-center rounded-lg border border-border/60 bg-background/40 px-0.5 py-0.5">
-          <button
-            className={cn(toolBtn, snipOpen && 'bg-surface-2 text-primary-bright')}
-            onClick={() => setSnipOpen((s) => !s)}
-            aria-pressed={snipOpen}
-            aria-label="Snippet library"
-            title="Snippet library"
-          >
-            <Braces className="size-3.5" aria-hidden="true" />
-          </button>
-          <button className={toolBtn} onClick={insertTemplate} title="Insert starter template">
-            <FileCode2 className="size-3.5" aria-hidden="true" />
-          </button>
-          <button className={toolBtn} onClick={copyCode} title="Copy code">
-            <ClipboardCopy className="size-3.5" aria-hidden="true" />
-          </button>
-          <button className={toolBtn} onClick={downloadCode} title="Download file">
-            <Download className="size-3.5" aria-hidden="true" />
-          </button>
-        </div>
-
-        <div className="flex items-center rounded-lg border border-border/60 bg-background/40 px-0.5 py-0.5">
-          <button
-            className={toolBtn}
-            onClick={() => editorRef.current?.trigger('toolbar', 'undo', null)}
-            aria-label="Undo"
-            title="Undo"
-          >
-            <Undo2 className="size-3.5" aria-hidden="true" />
-          </button>
-          <button
-            className={toolBtn}
-            onClick={() => editorRef.current?.trigger('toolbar', 'redo', null)}
-            aria-label="Redo"
-            title="Redo"
-          >
-            <Redo2 className="size-3.5" aria-hidden="true" />
-          </button>
-        </div>
-
-        <div className="sticky right-0 z-10 ml-auto flex items-center rounded-lg border border-border/60 bg-surface px-0.5 py-0.5 shadow-[-10px_0_10px_-2px_var(--color-surface)]">
-          <button
-            className={cn(toolBtn, helpOpen && 'bg-surface-2 text-primary-bright')}
-            onClick={() => setHelpOpen((h) => !h)}
-            aria-pressed={helpOpen}
-            aria-label="Keyboard shortcuts"
-            title="Keyboard shortcuts"
-          >
-            <Keyboard className="size-3.5" aria-hidden="true" />
-          </button>
-          <button
-            className={cn(toolBtn, (focusMode ?? zen) && 'text-primary-bright')}
-            onClick={() => (onFocusMode ? onFocusMode() : setZen((z) => !z))}
-            aria-label={(focusMode ?? zen) ? 'Exit full screen' : 'Full-screen arena'}
-            title={onFocusMode ? 'Full-screen arena (Alt+4)' : 'Focus mode'}
-          >
-            {(focusMode ?? zen) ? <Minimize2 className="size-3.5" aria-hidden="true" /> : <Maximize2 className="size-3.5" aria-hidden="true" />}
-          </button>
-        </div>
-      </div>
+      {settingsOpen && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setSettingsOpen(false)} aria-hidden="true" />
+          <div role="dialog" aria-label="Editor settings" className="card-neon absolute top-11 right-2 z-50 w-72 overflow-hidden p-0">
+            <div className="border-b border-border px-3 py-2 text-[12px] font-semibold text-foreground-dim">Editor settings</div>
+            <div className="space-y-3 px-3 py-3 text-[12.5px]">
+              <label className="flex items-center justify-between gap-3">
+                <span className="text-foreground-dim">Theme</span>
+                <Select
+                  variant="pill"
+                  value={theme}
+                  onChange={(e) => {
+                    const pinned = e.target.value !== APP_EDITOR_THEME
+                    try { localStorage.setItem('nexora:editor-theme-pinned', pinned ? '1' : '0') } catch { /* storage off */ }
+                    setTheme(e.target.value)
+                  }}
+                  aria-label="Editor theme"
+                  className="h-7 max-w-40 cursor-pointer rounded-md border border-border bg-background pr-6 pl-2 text-[11.5px] text-foreground outline-none"
+                >
+                  <option value={APP_EDITOR_THEME}>Match app theme</option>
+                  {Object.entries(THEMES).map(([id, t]) => (
+                    <option key={id} value={id}>
+                      {t.label}
+                    </option>
+                  ))}
+                </Select>
+              </label>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-foreground-dim">Font size</span>
+                <span className="flex items-center rounded-lg border border-border">
+                  <button type="button" className={toolBtn} onClick={() => setFontSize((f) => Math.max(10, f - 1))} aria-label="Smaller font">
+                    <Minus className="size-3.5" aria-hidden="true" />
+                  </button>
+                  <span className="w-7 text-center font-mono text-[11px] tabular-nums">{fontSize}</span>
+                  <button type="button" className={toolBtn} onClick={() => setFontSize((f) => Math.min(24, f + 1))} aria-label="Larger font">
+                    <Plus className="size-3.5" aria-hidden="true" />
+                  </button>
+                </span>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-foreground-dim">Indent</span>
+                <button type="button" onClick={cycleIndent} className="rounded-md border border-border px-2 py-1 font-mono text-[11.5px] text-foreground hover:bg-surface-2" title="4 → 2 → 8 spaces">
+                  {indent} spaces
+                </button>
+              </div>
+              {(
+                [
+                  ['Word wrap', wrap, () => setWrap((w) => !w)],
+                  ['Minimap', minimap, () => setMinimap((m) => !m)],
+                  ['Vim keys', vim, () => setVim((v) => !v)],
+                  ...(onAiInlineChange ? ([['AI suggestions while typing', aiInline, () => onAiInlineChange(!aiInline)]] as const) : []),
+                ] as const
+              ).map(([label, on, toggle]) => (
+                <button key={label} type="button" role="switch" aria-checked={on} onClick={toggle} className="flex w-full cursor-pointer items-center justify-between gap-3 text-left">
+                  <span className="text-foreground-dim">{label}</span>
+                  <span className={cn('relative inline-flex h-5 w-9 shrink-0 rounded-full border transition-colors', on ? 'border-transparent bg-accent-brand' : 'border-border bg-surface-2')} aria-hidden="true">
+                    <span className={cn('absolute top-0.5 size-3.5 rounded-full transition-all', on ? 'left-[18px] bg-[var(--color-on-accent-brand)]' : 'left-0.5 bg-foreground-faint')} />
+                  </span>
+                </button>
+              ))}
+            </div>
+            <div className="grid grid-cols-2 gap-1 border-t border-border p-2">
+              {(
+                [
+                  [<ClipboardCopy key="c" className="size-3.5" />, 'Copy code', copyCode],
+                  [<Download key="d" className="size-3.5" />, 'Download file', downloadCode],
+                  [<Keyboard key="k" className="size-3.5" />, 'Shortcuts', () => setHelpOpen(true)],
+                  [(focusMode ?? zen) ? <Minimize2 key="m" className="size-3.5" /> : <Maximize2 key="m" className="size-3.5" />, (focusMode ?? zen) ? 'Exit full screen' : 'Full screen', () => (onFocusMode ? onFocusMode() : setZen((z) => !z))],
+                ] as const
+              ).map(([icon, label, act]) => (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => {
+                    setSettingsOpen(false)
+                    act()
+                  }}
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-[12px] text-foreground-dim hover:bg-surface-2 hover:text-foreground"
+                >
+                  {icon}
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
       )}
 
       {helpOpen && (
@@ -1128,54 +1118,30 @@ export function CodeEditor({
         />
       </div>
 
-      {/* ── Status bar ── */}
-      <div className="flex shrink-0 flex-nowrap items-center gap-x-3 overflow-hidden border-t border-border bg-surface px-3 py-1 font-mono text-[10px] whitespace-nowrap text-foreground-faint">
+      {/* ── Status bar: where you are, the language, problems, saved ── */}
+      <div className="flex shrink-0 flex-nowrap items-center gap-x-3 overflow-hidden border-t border-border bg-surface px-3 py-1 font-mono text-[10.5px] whitespace-nowrap text-foreground-faint">
         <span className="tabular-nums">
           Ln {cursor.line}, Col {cursor.col}
-          {cursor.sel > 0 && <span className="text-primary-bright"> ({cursor.sel} selected)</span>}
+          {cursor.sel > 0 && <span className="text-foreground-dim"> ({cursor.sel} selected)</span>}
         </span>
         <span className="uppercase">{language}</span>
-        <button
-          onClick={cycleIndent}
-          title="Cycle indent width (4 → 2 → 8)"
-          className="rounded px-0.5 transition-colors hover:text-foreground"
-        >
-          Spaces: {indent}
-        </button>
-        <span className="hidden tabular-nums sm:inline">
-          {stats.lines} ln · {stats.chars} ch
-        </span>
-        <span className="hidden items-center gap-1 tabular-nums md:flex" title="Session time">
-          <Timer className="size-3" aria-hidden="true" />
-          {sessionTime}
-        </span>
-        <span className="hidden lg:inline">{wrap ? 'wrap on' : 'wrap off'}</span>
         {vim && (
-          <div ref={vimStatusRef} className="text-cyan">
+          <div ref={vimStatusRef} className="text-foreground-dim">
             VIM
           </div>
         )}
         {diagnostics.length > 0 && (
-          <span className="text-destructive">
+          <button type="button" onClick={onIssuesClick} className="cursor-pointer text-state-error underline-offset-2 hover:underline" title="Show the issues">
             {diagnostics.length} issue{diagnostics.length > 1 ? 's' : ''}
-          </span>
+          </button>
         )}
-        {saveState !== 'idle' && (
-          <span
-            className={cn(
-              'flex items-center gap-1',
-              saveState === 'saving' ? 'text-warning' : 'text-state-success',
-            )}
-          >
-            {saveState === 'saved' ? (
-              <Check className="size-3" aria-hidden="true" />
-            ) : (
-              <span className="size-1.5 animate-pulse rounded-full bg-current" aria-hidden="true" />
-            )}
-            {saveState}
-          </span>
-        )}
-        <span className="ml-auto hidden md:inline">{THEMES[theme]?.label ?? 'App theme'}</span>
+        <span className={cn('ml-auto flex items-center gap-1', saveState === 'saving' ? 'text-foreground-dim' : 'text-foreground-faint')}>
+          {saveState === 'saving' ? 'saving…' : saveState === 'saved' ? (
+            <>
+              <Check className="size-3" aria-hidden="true" /> saved
+            </>
+          ) : null}
+        </span>
       </div>
     </div>
   )

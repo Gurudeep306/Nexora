@@ -324,16 +324,16 @@ export function ProblemPanel({
                             {/* Act on the case you are reading. */}
                             <span className="ml-auto flex items-center gap-0.5">
                               {onRunSample && (
-                                <button type="button" onClick={() => onRunSample(i)} className="inline-flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Run your code on example ${i + 1}`}>
+                                <button type="button" onClick={() => onRunSample(i)} className="inline-flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Run this: example ${i + 1}`}>
                                   <Play className="size-3" aria-hidden="true" /> Run this
                                 </button>
                               )}
                               {onDryRunSample && (
-                                <button type="button" onClick={() => onDryRunSample(i)} className="inline-flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Dry run your code on example ${i + 1}`}>
+                                <button type="button" onClick={() => onDryRunSample(i)} className="inline-flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Dry run this: example ${i + 1}`}>
                                   <Footprints className="size-3" aria-hidden="true" /> Dry run this
                                 </button>
                               )}
-                              <button type="button" onClick={() => onImportSample(i)} className="cursor-pointer rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Add example ${i + 1} to tests`}>
+                              <button type="button" onClick={() => onImportSample(i)} className="cursor-pointer rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Add to tests: example ${i + 1}`}>
                                 Add to tests
                               </button>
                             </span>
