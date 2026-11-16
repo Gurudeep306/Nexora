@@ -242,7 +242,7 @@ function UserDetailBody({ username, me, onChanged, onDeleted }: { username: stri
                   <span
                     key={day}
                     title={day}
-                    className={cn('h-6 flex-1 rounded-[4px]', activeDays.has(day) ? 'bg-[linear-gradient(180deg,var(--nx-b1),var(--nx-b2))]' : 'bg-[color-mix(in_oklab,var(--color-text-primary)_7%,transparent)]')}
+                    className={cn('h-6 flex-1 rounded-[4px]', activeDays.has(day) ? 'bg-text-primary' : 'bg-[color-mix(in_oklab,var(--color-text-primary)_7%,transparent)]')}
                   />
                 ))}
               </div>
@@ -371,7 +371,7 @@ function UserDetailBody({ username, me, onChanged, onDeleted }: { username: stri
 
             {me.isOwner && u.role !== 'owner' && (
               <Section title="Danger zone">
-                <div className="flex items-center justify-between gap-4 rounded-xl bg-[color-mix(in_oklab,var(--color-state-error)_6%,transparent)] px-4 py-3 shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-state-error)_22%,transparent)]">
+                <div className="flex items-center justify-between gap-4 rounded-xl px-4 py-3 shadow-[inset_0_0_0_1px_var(--color-state-error)]">
                   <span>
                     <span className="block text-[13.5px] font-medium text-text-primary">Delete account</span>
                     <span className="block text-xs text-text-muted">Permanent. Owner only.</span>
@@ -408,7 +408,7 @@ function UserDetailBody({ username, me, onChanged, onDeleted }: { username: stri
             {can('users.ban') && (
               <Section title={activeBan ? 'Current ban' : 'Ban or suspend'} hint={activeBan ? undefined : 'Signs them out everywhere. The reason is shown to them.'}>
                 {activeBan ? (
-                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-[color-mix(in_oklab,var(--color-state-error)_6%,transparent)] px-4 py-3 shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-state-error)_22%,transparent)]">
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl px-4 py-3 shadow-[inset_0_0_0_1px_var(--color-state-error)]">
                     <div className="min-w-0 text-sm">
                       <p className="font-medium text-text-primary">{activeBan.expires_at ? `Suspended until ${when(activeBan.expires_at)}` : 'Banned indefinitely'}</p>
                       <p className="mt-0.5 text-xs text-text-secondary">
@@ -421,7 +421,7 @@ function UserDetailBody({ username, me, onChanged, onDeleted }: { username: stri
                   </div>
                 ) : (
                   <div className="space-y-2.5">
-                    <div className="grid grid-cols-2 gap-1 rounded-xl bg-bg-surface-2 p-1 shadow-[inset_0_0_0_1px_var(--nx-hair)]">
+                    <div className="desk-seg">
                       {(['suspend', 'ban'] as const).map((k) => (
                         <button
                           key={k}
@@ -429,10 +429,7 @@ function UserDetailBody({ username, me, onChanged, onDeleted }: { username: stri
                           aria-pressed={banKind === k}
                           disabled={!canAct}
                           onClick={() => setBanKind(k)}
-                          className={cn(
-                            'h-8 cursor-pointer rounded-lg text-[13px] font-medium capitalize transition-colors disabled:cursor-not-allowed',
-                            banKind === k ? 'bg-bg-surface text-text-primary shadow-[0_1px_2px_oklch(0_0_0/0.15),inset_0_0_0_1px_var(--nx-hair)]' : 'text-text-muted hover:text-text-secondary',
-                          )}
+                          className="desk-seg-btn capitalize disabled:cursor-not-allowed"
                         >
                           {k}
                         </button>
@@ -454,7 +451,7 @@ function UserDetailBody({ username, me, onChanged, onDeleted }: { username: stri
                             onClick={() => setBanHours(h)}
                             className={cn(
                               'h-7 cursor-pointer rounded-full px-3 text-xs font-medium transition-shadow',
-                              banHours === h ? 'text-[var(--nx-b1)] shadow-[inset_0_0_0_1.5px_color-mix(in_oklab,var(--nx-b1)_55%,transparent)]' : 'text-text-secondary shadow-[inset_0_0_0_1px_var(--nx-hair-strong)]',
+                              banHours === h ? 'text-text-primary shadow-[inset_0_0_0_1.5px_var(--color-text-primary)]' : 'text-text-secondary shadow-[inset_0_0_0_1px_var(--nx-hair-strong)]',
                             )}
                           >
                             {l}
