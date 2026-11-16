@@ -850,6 +850,7 @@
   padding: 0;
 }
 [data-kit='journal'] .nr-figure .nxv-stage {
+  /* The frame may span the figure; the drawing inside stays capped (viz.css). */
   max-width: none;
   padding: 18px 16px;
   border: 1px solid var(--color-border);
