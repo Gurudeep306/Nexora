@@ -46,6 +46,7 @@ import { AtlasIndex, AtlasLedger, TonightSky } from '@/components/nexus/AtlasInd
 import { SkyMap } from '@/components/nexus/SkyMap'
 import { dependents } from '@/components/nexus/atlas-data'
 import '@/components/nexus/atlas.css'
+import { isJournalKit } from '@/theme/styles'
 
 /*
  * The Nexus.
@@ -148,7 +149,7 @@ function RadialOverview() {
   const [params] = useSearchParams()
   const navigate = useNavigate()
   // Phones open on the Index (the chart is one tap away); wider screens on the chart.
-  const [tab, setTab] = useState<'map' | 'index' | 'ranks'>(() => (typeof window !== 'undefined' && window.innerWidth < 640 && document.documentElement.dataset.style === 'journal' ? 'index' : 'map'))
+  const [tab, setTab] = useState<'map' | 'index' | 'ranks'>(() => (typeof window !== 'undefined' && window.innerWidth < 640 && document.documentElement.dataset.kit === 'journal' ? 'index' : 'map'))
   // The opening animation: full on the first open this session, short after.
   const [intro] = useState(() => pickIntro(typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches))
   const [introState, setIntroState] = useState<string>(intro.mode)
@@ -260,7 +261,7 @@ function RadialOverview() {
 
   // The Field Journal calls the web "The Atlas": every subject a
   // constellation, every skill a star. Other styles keep "The Nexus".
-  const atlas = useTheme().shown.style === 'journal'
+  const atlas = isJournalKit(useTheme().shown.style)
   const deps = useMemo(() => dependents(clusters ?? []), [clusters])
   // The sky map is the Atlas's chart; the radial web stays one click away.
   const [view, setView] = useState<'sky' | 'radial'>(() => {

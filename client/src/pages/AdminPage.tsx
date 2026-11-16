@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import '@fontsource-variable/bricolage-grotesque/opsz.css'
 import '@/components/site/brand.css'
+import '@/components/admin/desk.css'
 import { Icon, type IconName } from '@/components/icon/Icon'
+import { MarkLoader } from '@/components/brand/Logo'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { refreshBadges } from '@/lib/badges'
 import { useSite } from '@/context/SiteContext'
-import { cn } from '@/lib/utils'
-import { Failed, RolePill, Skeleton } from '@/components/admin/kit'
+import { Failed } from '@/components/admin/kit'
+import { deskSentence, toRoman } from '@/components/admin/desk'
+import type { Overview } from '@/components/admin/types'
 import { OverviewSection } from '@/components/admin/OverviewSection'
 import { UsersSection } from '@/components/admin/UsersSection'
 import { UserDrawer } from '@/components/admin/UserDrawer'
@@ -55,20 +57,14 @@ export default function AdminPage() {
   const [revision, setRevision] = useState(0)
   const { previewAsMember, setPreviewAsMember, status } = useSite()
   const navigate = useNavigate()
+  // The header's live sentence reads the same overview the front page shows (one shared request).
+  const canInsights = !!me && (me.isOwner || me.permissions.includes('analytics.view'))
+  const { data: overview } = useApi(() => (canInsights ? api.get<Overview>('/api/admin/overview') : Promise.resolve(null)), [canInsights], { cacheKey: canInsights ? 'admin:overview' : undefined })
 
   if (loading && !me) {
     return (
-      <div className="grid gap-6 pt-2 lg:grid-cols-[236px_minmax(0,1fr)]">
-        <Skeleton className="hidden h-80 lg:block" />
-        <div className="space-y-4">
-          <Skeleton className="h-24" />
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            {[0, 1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-36" />
-            ))}
-          </div>
-          <Skeleton className="h-64" />
-        </div>
+      <div className="desk grid min-h-[50vh] place-items-center">
+        <MarkLoader label="Opening the editor's desk" />
       </div>
     )
   }
@@ -100,132 +96,103 @@ export default function AdminPage() {
     refreshBadges()
   }
 
+  const sentence = deskSentence({ overview: overview ?? null, openReports: me.counts.openReports })
+  const numberOf = (id: SectionId) => toRoman(visible.findIndex((s) => s.id === id) + 1)
+
   return (
-    <div className="pb-12">
-      {/* ── header ── */}
-      <header className="nx-panel relative isolate mb-6 overflow-hidden !rounded-[20px] px-5 py-5 sm:px-6">
-        <div className="nx-atmos" aria-hidden="true" />
-        <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex min-w-0 items-center gap-4">
-            <span
-              className={cn(
-                'flex size-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.3),0_8px_24px_-10px_var(--glow)]',
-                me.isOwner ? 'bg-[linear-gradient(160deg,#ffd66b,#e09a1a)] [--glow:#e09a1a]' : 'bg-[linear-gradient(140deg,#3a63f0,#6d3df0_60%,#0e9488)] [--glow:#6d3df0]',
-              )}
-            >
-              <Icon name={me.isOwner ? 'crown' : 'shield'} className="size-6" />
-            </span>
-            <div className="min-w-0">
-              <h1 className="nx-display text-[28px] leading-none font-semibold text-text-primary sm:text-[32px]">Admin</h1>
-              <p className="mt-2 flex flex-wrap items-center gap-2 text-[13px] text-text-secondary">
-                <span>@{me.username}</span>
-                <RolePill role={me.role} />
-                {status && (
-                  <span className="nx-chip" data-tone={status.private ? 'warning' : 'success'}>
-                    <span className={cn('size-1.5 rounded-full', status.private ? 'bg-state-warning' : 'bg-state-success')} />
-                    {status.private ? 'Private — coming soon' : 'Public'}
-                  </span>
-                )}
-              </p>
-            </div>
-          </div>
-          {me.isOwner && (
-            <button
-              type="button"
-              className="nx-btn"
-              onClick={() => {
-                setPreviewAsMember(!previewAsMember)
-                navigate('/hub')
-              }}
-            >
-              <Icon name="eye" /> View as member
-            </button>
-          )}
+    <div className="desk pb-12">
+      {/* ── the desk's masthead: one live sentence, the site's state as an ink label ── */}
+      <header className="desk-head">
+        <div className="min-w-0">
+          <p className="ed-label desk-kicker">
+            The editor&rsquo;s desk
+            {status && (
+              <span className="desk-state" data-state={status.private ? 'private' : 'public'}>
+                {status.private ? 'Private · coming soon' : 'Public'}
+              </span>
+            )}
+          </p>
+          <h1 className="ed-title desk-title">Admin</h1>
+          {sentence && <p className="ed-lead desk-lead">{sentence}</p>}
+          <p className="desk-meta">
+            @{me.username} · {me.role}
+            {me.isOwner && ' · sees every section'}
+          </p>
         </div>
+        {me.isOwner && (
+          <button
+            type="button"
+            className="ed-btn ed-btn-outline desk-preview"
+            onClick={() => {
+              setPreviewAsMember(!previewAsMember)
+              navigate('/hub')
+            }}
+          >
+            <Icon name="eye" /> View as member
+          </button>
+        )}
       </header>
 
       {visible.length === 0 ? (
-        <div className="nx-panel">
-          <Failed message="Your permissions don't include any admin sections yet." />
-        </div>
+        <Failed message="Your permissions don't include any admin sections yet." />
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[236px_minmax(0,1fr)]">
-          {/* ── sidebar ── */}
-          <nav aria-label="Admin sections" className="min-w-0 lg:sticky lg:top-20 lg:self-start">
-            {/* phones / tablets: one scrollable row */}
-            <ul className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] lg:hidden">
+        <div className="desk-grid">
+          {/* ── contents: roman numerals, serif names, an ink tick on the current one ── */}
+          <nav aria-label="Admin sections" className="desk-toc">
+            {/* phones and tablets: one scrollable row of underlined words */}
+            <ul className="desk-toc-row">
               {visible.map((s) => (
-                <li key={s.id} className="shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => go(s.id)}
-                    aria-current={s.id === current?.id ? 'page' : undefined}
-                    className={cn(
-                      'flex h-9 cursor-pointer items-center gap-2 rounded-full px-3.5 text-[13px] font-medium transition-colors',
-                      s.id === current?.id
-                        ? 'bg-[color-mix(in_oklab,var(--nx-b1)_14%,transparent)] text-text-primary shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--nx-b1)_35%,transparent)]'
-                        : 'text-text-secondary shadow-[inset_0_0_0_1px_var(--nx-hair)]',
-                    )}
-                  >
-                    <Icon name={s.icon} className="size-4" />
+                <li key={s.id}>
+                  <button type="button" onClick={() => go(s.id)} aria-current={s.id === current?.id ? 'page' : undefined} className="desk-toc-tab">
                     {s.label}
-                    {s.id === 'moderation' && !!me.counts.openReports && <span className="nx-chip !h-4.5 !px-1.5 nx-num" data-tone="warning">{me.counts.openReports}</span>}
+                    {s.id === 'moderation' && !!me.counts.openReports && <span className="desk-count">{me.counts.openReports}</span>}
                   </button>
                 </li>
               ))}
             </ul>
-            {/* desktop: grouped rail */}
-            <div className="nx-panel hidden p-2 lg:block">
+            {/* desktop: a table of contents */}
+            <div className="desk-toc-book">
+              <p className="ed-label desk-toc-label">Contents</p>
               {GROUPS.map((g) => {
                 const items = g.items.filter((s) => can(s.perm))
                 if (!items.length) return null
                 return (
-                  <div key={g.label} className="py-1.5 first:pt-1">
-                    <p className="px-2.5 pb-1.5 text-[10.5px] font-semibold tracking-[0.14em] text-text-muted uppercase">{g.label}</p>
-                    {items.map((s) => {
-                      const on = s.id === current?.id
-                      return (
-                        <button
-                          key={s.id}
-                          type="button"
-                          onClick={() => go(s.id)}
-                          aria-current={on ? 'page' : undefined}
-                          className={cn(
-                            'relative flex w-full cursor-pointer items-center gap-2.5 rounded-[10px] px-2.5 py-2 text-left text-[13.5px] font-medium transition-colors',
-                            on ? 'bg-[color-mix(in_oklab,var(--nx-b1)_10%,transparent)] text-text-primary' : 'text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary',
-                          )}
-                        >
-                          {on && <span aria-hidden="true" className="absolute top-2 bottom-2 left-0 w-[3px] rounded-full bg-[linear-gradient(180deg,var(--nx-b1),var(--nx-b2),var(--nx-b3))]" />}
-                          <Icon name={s.icon} className={cn('size-4 shrink-0', on ? 'text-[var(--nx-b1)]' : 'text-text-muted')} />
-                          <span className="flex-1">{s.label}</span>
-                          {s.id === 'moderation' && !!me.counts.openReports && (
-                            <span className="nx-chip nx-num !h-5 !px-1.5" data-tone="warning">
-                              {me.counts.openReports}
-                            </span>
-                          )}
-                        </button>
-                      )
-                    })}
+                  <div key={g.label} className="desk-toc-group">
+                    <p className="desk-toc-part">{g.label}</p>
+                    <ol>
+                      {items.map((s) => {
+                        const on = s.id === current?.id
+                        return (
+                          <li key={s.id}>
+                            <button type="button" onClick={() => go(s.id)} aria-current={on ? 'page' : undefined} className="desk-toc-item">
+                              <span className="desk-toc-num" aria-hidden="true">
+                                {numberOf(s.id)}
+                              </span>
+                              <span className="desk-toc-name">{s.label}</span>
+                              {s.id === 'moderation' && !!me.counts.openReports && (
+                                <span className="desk-count" aria-label={`${me.counts.openReports} open`}>
+                                  {me.counts.openReports}
+                                </span>
+                              )}
+                            </button>
+                          </li>
+                        )
+                      })}
+                    </ol>
                   </div>
                 )
               })}
-              {me.isOwner && (
-                <div className="mx-1 mt-2 mb-1 rounded-xl bg-[linear-gradient(160deg,color-mix(in_oklab,#f5c451_14%,transparent),transparent_70%)] p-3 shadow-[inset_0_0_0_1px_color-mix(in_oklab,#e09a1a_25%,transparent)]">
-                  <p className="flex items-center gap-1.5 text-[12px] font-semibold text-[var(--nx-gold)]">
-                    <Icon name="crown" className="size-3.5" /> Owner
-                  </p>
-                  <p className="mt-1 text-[11.5px] leading-snug text-text-secondary">Untouchable, sees every section, makes admins and grants site settings.</p>
-                </div>
-              )}
+              {me.isOwner && <p className="desk-toc-note">As the owner you can&rsquo;t be banned or demoted, you see every section, and only you make admins or grant site settings.</p>}
             </div>
           </nav>
 
-          {/* ── section ── */}
+          {/* ── the section ── */}
           <div className="min-w-0">
             {current && (
-              <div className="mb-4 hidden sm:block">
-                <h2 className="nx-display text-[22px] leading-tight font-semibold text-text-primary">{current.title}</h2>
-                <p className="mt-1 text-[13px] text-text-secondary">{current.blurb}</p>
+              <div className="desk-section-head">
+                <p className="ed-label">Section {numberOf(current.id)}</p>
+                <h2 className="ed-h2 desk-section-title">{current.title}</h2>
+                <p className="ed-body-sm desk-section-blurb">{current.blurb}</p>
               </div>
             )}
             {current?.id === 'overview' && <OverviewSection key={revision} onOpenUser={setUser} />}

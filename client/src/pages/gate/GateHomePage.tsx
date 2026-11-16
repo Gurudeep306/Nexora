@@ -1,28 +1,32 @@
 /*
-  GATE home — the command centre. Everything a student needs to decide what
-  to do next, at a glance:
+  GATE home — "The Exam Hall": your exam desk.
 
-    hero      greeting · countdown · streak · today's goal · primary actions
-    kpis      attempted · accuracy · review due · papers
-    left      today's plan · 365-day activity · subject mastery rings
-    right     continue · weak topics · quick start · recent tests
+    the desk      countdown in serif numerals · streak · today's goal
+                  and, on a manilla spread, today's plan with the one clay
+                  action (start practising, or review what is due)
+    figures       attempted (with 30 days of real activity) · accuracy ·
+                  review due · papers
+    left          subject mastery as small multiples · the year of activity
+                  · every subject's skill tree, notes and PYQs
+    right         weak topics as sentences · continue · quick start · tests
 
-  Works with zero data: every panel has a calm empty state with a next step.
+  Works with zero data: every part has a calm empty state with a next step.
+  Nothing is invented: a figure without data says so.
 */
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
-import { Card, Skeleton } from '@/components/ui'
-import { Icon, IconBadge, type IconName, type IconTone } from '@/components/icon/Icon'
-import { cn } from '@/lib/utils'
+import { LoadingBlock } from '@/components/ui/EmptyState'
+import { Icon, type IconName, type IconTone } from '@/components/icon/Icon'
 import { GATE_ROUTES, type GateSummary } from '@/gate/api'
 import { GateShell } from '@/gate/shell/GateShell'
 import { useGateExam } from '@/gate/shell/examStore'
+import '@/gate/insights/gate-home.css'
 import { useGateDaily, useGateSummary, useGateTests, useQuestionsByIds, useReviewDue } from '@/gate/shell/useGateData'
 import { practiceLink, testLink } from '@/gate/shell/links'
 import { ActivityHeatmap } from '@/gate/insights/ActivityHeatmap'
-import { EmptyHint, Kpi, LinkButton, MasteryLabel, Panel, PanelLink, Ring } from '@/gate/insights/ui'
-import { dayKey, daysUntil, fmtPct, fmtTime, greeting, masteryOf, masteryScore, pct, timeAgo } from '@/gate/insights/format'
+import { EmptyHint, Kpi, LinkButton, Panel, PanelLink } from '@/gate/insights/ui'
+import { MASTERY, dayKey, daysUntil, fmtPct, fmtTime, greeting, masteryOf, masteryScore, pct, timeAgo } from '@/gate/insights/format'
 import { generatePlan, type PlanTask } from '@/gate/insights/planner'
 import { usePlanInputs, useStudyPlan } from '@/gate/insights/planInputs'
 import { shortSubject, useSubjects } from '@/gate/insights/subjects'
@@ -40,8 +44,9 @@ export default function GateHomePage() {
 
   return (
     <GateShell
-      title="Command centre"
-      subtitle="Your plan, progress and next best step — in one place."
+      title="Your exam desk"
+      subtitle="Today's plan, your numbers and where to look next."
+      cta={false}
       actions={
         <>
           <LinkButton to={GATE_ROUTES.analytics} icon="chart" variant="ghost">
@@ -53,24 +58,23 @@ export default function GateHomePage() {
         </>
       }
     >
-      <div className="space-y-5">
-        <Hero summary={s} loading={loading} />
+      <div className="gh">
+        <ExamDesk summary={s} loading={loading} />
         <KpiRow summary={s} loading={loading} />
 
-        <div className="grid gap-5 lg:grid-cols-3">
-          <div className="min-w-0 space-y-5 lg:col-span-2">
-            <TodayPlan summary={s} />
-            <Panel title="Activity" icon="activity" subtitle="Questions attempted per day over the last year">
-              {loading ? <Skeleton className="h-28 w-full rounded-lg" /> : <ActivityHeatmap activity={s?.activity ?? {}} />}
-            </Panel>
+        <div className="gh-cols">
+          <div className="min-w-0 space-y-12">
             <SubjectRings summary={s} loading={loading} />
+            <Panel title="Activity" icon="activity" subtitle="Questions attempted per day over the last year">
+              {loading ? <LoadingBlock rows={3} /> : <ActivityHeatmap activity={s?.activity ?? {}} />}
+            </Panel>
             <Panel title="Subjects" icon="map" subtitle={`Every GATE ${exam} subject as a skill tree: lessons, notes and PYQs in one place`} action={<PanelLink to="/learn">All subjects</PanelLink>}>
               <GateSubjectsPanel exam={exam} />
             </Panel>
           </div>
-          <div className="min-w-0 space-y-5">
-            <ContinuePanel summary={s} loading={loading} />
+          <div className="min-w-0 space-y-12">
             <WeakTopics summary={s} loading={loading} />
+            <ContinuePanel summary={s} loading={loading} />
             <QuickStart />
             <RecentTests />
           </div>
@@ -83,9 +87,10 @@ export default function GateHomePage() {
   )
 }
 
-/* ── Hero ───────────────────────────────────────────────────────────────── */
+/* ── The desk: countdown and today's plan ──────────────────────────────── */
 
-function Hero({ summary, loading }: { summary: GateSummary | null; loading: boolean }) {
+function ExamDesk({ summary, loading }: { summary: GateSummary | null; loading: boolean }) {
+  const [exam] = useGateExam()
   const { user } = useAuth()
   const { plan } = useStudyPlan()
   const review = useReviewDue()
@@ -93,86 +98,74 @@ function Hero({ summary, loading }: { summary: GateSummary | null; loading: bool
   const days = daysUntil(plan?.examDate ?? null)
   const goal = Math.max(5, Math.round((plan?.hoursPerDay ?? 2) * QUESTIONS_PER_HOUR))
   const today = summary?.activity?.[dayKey()] ?? 0
-  const goalPct = Math.min(1, today / goal)
   const streak = summary?.streak
   const dueN = review.data ?? summary?.totals.reviewDue ?? 0
-  const name = user?.username ?? 'there'
+  const examDay = plan?.examDate ? new Date(`${plan.examDate}T00:00:00`).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : null
 
   return (
-    <Card className="relative overflow-hidden p-0">
-      <div className="relative grid gap-5 p-5 sm:p-6 md:grid-cols-[1fr_auto] md:items-center">
-        <div className="min-w-0">
-          <p className="text-[13px] text-text-muted">{greeting()},</p>
-          <h2 className="mt-0.5 truncate font-display text-[22px] font-semibold tracking-tight text-text-primary sm:text-[26px]">
-            {name}
-          </h2>
-          <p className="mt-1.5 max-w-xl text-[13.5px] text-text-secondary">
-            {days != null && days >= 0 ? (
-              <>
-                <span className="font-semibold text-text-primary">{days} days</span> until GATE.{' '}
-                {today >= goal ? "Today's goal is done — bank a few more or review." : `Solve ${goal - today} more to hit today's goal.`}
-              </>
-            ) : (
-              <>
-                Set your exam date in the{' '}
-                <Link to={GATE_ROUTES.planner} className="font-medium text-accent-brand hover:underline">
-                  planner
-                </Link>{' '}
-                for a countdown and a week-by-week plan.
-              </>
-            )}
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <LinkButton to={dueN > 0 ? GATE_ROUTES.review : practiceLink()} variant="primary" icon={dueN > 0 ? 'brain' : 'play'}>
-              {dueN > 0 ? `Review ${dueN} due` : 'Start practising'}
-            </LinkButton>
-            <LinkButton to={daily.data?.questionId ? GATE_ROUTES.daily : GATE_ROUTES.daily} icon="sunrise">
-              {daily.data?.solvedToday ? 'Daily solved ✓' : 'Daily challenge'}
-            </LinkButton>
-            <LinkButton to={testLink({ preset: 'random', count: 10, durationMin: 20 })} icon="timer" variant="ghost">
-              10-question sprint
-            </LinkButton>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-4 sm:gap-6">
-          <Ring value={goalPct} size={92} stroke={8} label={`Today's goal: ${today} of ${goal} questions`}>
-            <div className="text-center leading-none">
-              {loading ? (
-                <Skeleton className="mx-auto h-5 w-8" />
-              ) : (
-                <p className="font-display text-[20px] font-semibold text-text-primary tabular-nums">{today}</p>
-              )}
-              <p className="mt-1 text-[10.5px] text-text-muted">of {goal} today</p>
-            </div>
-          </Ring>
-          <div className="space-y-3">
-            <Stat icon="flame" tone="streak" label="Streak" value={loading ? '…' : `${streak?.current ?? 0}d`} hint={`Best ${streak?.best ?? 0}d`} />
-            <Stat
-              icon="timer"
-              tone="accent"
-              label="Countdown"
-              value={days != null && days >= 0 ? `${days}d` : '—'}
-              hint={plan?.examDate ? new Date(`${plan.examDate}T00:00:00`).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : 'No date set'}
-            />
-          </div>
-        </div>
-      </div>
-    </Card>
-  )
-}
-
-function Stat({ icon, tone, label, value, hint }: { icon: IconName; tone: IconTone; label: string; value: string; hint: string }) {
-  return (
-    <div className="flex items-center gap-2.5">
-      <IconBadge name={icon} tone={tone} box="sm" />
-      <div className="leading-tight">
-        <p className="text-[11px] tracking-wide text-text-muted uppercase">{label}</p>
-        <p className="font-display text-[17px] font-semibold text-text-primary tabular-nums">
-          {value} <span className="text-[11.5px] font-normal text-text-muted">{hint}</span>
+    <section className="gh-desk" aria-label="Your exam desk">
+      {/* Countdown in serif numerals, with the streak and today's goal beneath. */}
+      <div className="gh-count">
+        <p className="ed-label">
+          {greeting()}, {user?.username ?? 'there'}
         </p>
+        {days != null && days >= 0 ? (
+          <>
+            <p className="gh-days">
+              <span className="gh-days-n">{days}</span>
+              <span className="gh-days-w">{days === 1 ? 'day' : 'days'} until GATE {exam}</span>
+            </p>
+            <p className="gh-date">{examDay}</p>
+          </>
+        ) : (
+          <>
+            <p className="gh-days">
+              <span className="gh-days-w gh-days-none">No exam date yet.</span>
+            </p>
+            <p className="gh-date">
+              Set it in the{' '}
+              <Link to={GATE_ROUTES.planner} className="gp-link text-text-primary">
+                planner
+              </Link>{' '}
+              for a countdown and a week-by-week plan.
+            </p>
+          </>
+        )}
+        <dl className="gh-readings">
+          <div>
+            <dt>Today</dt>
+            <dd>
+              {loading ? '…' : today} <span>of {goal} questions</span>
+            </dd>
+          </div>
+          <div>
+            <dt>Streak</dt>
+            <dd>
+              {loading ? '…' : streak?.current ?? 0} <span>{(streak?.current ?? 0) === 1 ? 'day' : 'days'} · best {streak?.best ?? 0}</span>
+            </dd>
+          </div>
+        </dl>
+        <div className="gh-goal" role="meter" aria-label="Today's goal" aria-valuemin={0} aria-valuemax={goal} aria-valuenow={Math.min(today, goal)}>
+          <span style={{ width: `${Math.min(100, (today / goal) * 100)}%` }} />
+        </div>
       </div>
-    </div>
+
+      {/* Today's plan on the page's one manilla spread, with its one clay action. */}
+      <div className="gh-plan ed-feature">
+        <TodayPlan summary={summary} />
+        <div className="gh-plan-actions">
+          <LinkButton to={dueN > 0 ? GATE_ROUTES.review : practiceLink({ exam })} variant="primary" icon={dueN > 0 ? 'brain' : 'play'}>
+            {dueN > 0 ? `Review ${dueN} due` : 'Start practising'}
+          </LinkButton>
+          <LinkButton to={GATE_ROUTES.daily} icon="sunrise">
+            {daily.data?.solvedToday ? 'Daily solved ✓' : 'Daily challenge'}
+          </LinkButton>
+          <LinkButton to={testLink({ preset: 'random', count: 10, durationMin: 20 })} icon="timer" variant="ghost">
+            10-question sprint
+          </LinkButton>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -182,14 +175,18 @@ function KpiRow({ summary, loading }: { summary: GateSummary | null; loading: bo
   const t = summary?.totals
   const review = useReviewDue()
   const coverage = t && t.questionsInBank ? Math.round((t.attempted / t.questionsInBank) * 100) : 0
+  // Questions attempted on each of the last 30 days, from the real activity log.
+  const [now] = useState(() => Date.now())
+  const last30 = useMemo(() => Array.from({ length: 30 }, (_, i) => summary?.activity?.[dayKey(now - (29 - i) * 86_400_000)] ?? 0), [summary, now])
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <div className="gh-figures" role="group" aria-label="Your numbers">
       <Kpi
         label="Attempted"
         icon="target"
         loading={loading}
         value={(t?.attempted ?? 0).toLocaleString()}
         sub={t?.questionsInBank ? `${coverage}% of ${t.questionsInBank.toLocaleString()} PYQs` : 'Across the PYQ bank'}
+        spark={last30.some(Boolean) ? last30 : undefined}
       />
       <Kpi
         label="Accuracy"
@@ -205,7 +202,7 @@ function KpiRow({ summary, loading }: { summary: GateSummary | null; loading: bo
         tone="info"
         loading={loading && review.loading}
         value={review.data ?? t?.reviewDue ?? 0}
-        sub={<Link to={GATE_ROUTES.review} className="hover:text-accent-brand">Spaced repetition →</Link>}
+        sub={<Link to={GATE_ROUTES.review}>Spaced repetition</Link>}
       />
       <Kpi
         label="Papers done"
@@ -252,55 +249,49 @@ function TodayPlan({ summary }: { summary: GateSummary | null }) {
     return g.days.find((d) => d.date >= key) ?? null
   }, [plan, inputs, summary])
 
+  const when = today && today.date !== dayKey() ? `Next study day: ${new Date(`${today.date}T00:00:00`).toLocaleDateString(undefined, { weekday: 'long' })}` : 'From your study plan'
   return (
-    <Panel
-      title="Today's plan"
-      icon="list"
-      subtitle={today && today.date !== dayKey() ? `Next study day: ${new Date(`${today.date}T00:00:00`).toLocaleDateString(undefined, { weekday: 'long' })}` : 'Generated from your study plan'}
-      action={<PanelLink to={GATE_ROUTES.planner}>Full plan</PanelLink>}
-    >
+    <div className="gh-plan-body">
+      <div className="gh-plan-head">
+        <div>
+          <p className="ed-label">Today&rsquo;s plan</p>
+          <p className="gh-plan-when">{when}</p>
+        </div>
+        <PanelLink to={GATE_ROUTES.planner}>Full plan</PanelLink>
+      </div>
       {!plan ? (
-        <EmptyHint
-          icon="calendar"
-          title="No study plan yet"
-          action={<LinkButton to={GATE_ROUTES.planner} variant="primary" icon="sparkles">Build my plan</LinkButton>}
-        >
-          Tell us your exam date and hours — we&rsquo;ll split the syllabus by weightage and your weak spots.
-        </EmptyHint>
+        <div className="gh-plan-empty">
+          <p className="ed-serif text-[20px] text-text-primary">No study plan yet.</p>
+          <p className="mt-1 max-w-md text-[13.5px] text-text-secondary">
+            Tell the planner your exam date and hours, and it splits the syllabus by weightage and your weak spots.{' '}
+            <Link to={GATE_ROUTES.planner} className="gp-link font-semibold text-text-primary">
+              Build my plan
+            </Link>
+          </p>
+        </div>
       ) : !today ? (
-        <p className="text-[13px] text-text-muted">Nothing scheduled — enjoy the break or add study days in the planner.</p>
+        <p className="gh-plan-empty text-[13.5px] text-text-secondary">Nothing scheduled. Enjoy the break, or add study days in the planner.</p>
       ) : (
-        <ol className="divide-y divide-border">
+        <ol className="gh-tasks">
           {today.tasks.map((t, i) => (
             <li key={i}>
-              <Link
-                to={taskLink(t)}
-                className="group flex items-center gap-3 rounded-md py-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
-              >
-                <span
-                  className={cn(
-                    'flex size-8 shrink-0 items-center justify-center rounded-lg',
-                    t.kind === 'mock' ? 'bg-gold/15 text-gold' : t.kind === 'revise' ? 'bg-info/15 text-info' : 'bg-accent-brand/12 text-accent-brand',
-                  )}
-                >
-                  <Icon name={t.kind === 'mock' ? 'monitor' : t.kind === 'revise' ? 'refresh' : 'book'} className="size-4" />
+              <Link to={taskLink(t)} className="gh-task group">
+                <span className="gh-task-n" aria-hidden="true">
+                  {i + 1}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[13.5px] font-medium text-text-primary group-hover:text-accent-brand">{taskLabel(t)}</span>
-                  <span className="block truncate text-[12px] text-text-muted">
-                    {t.kind === 'learn' ? t.subjectName : t.kind === 'mock' ? '65 questions · 3 hours' : t.subjectName ?? 'Spaced review'}
-                  </span>
+                  <span className="gh-task-name">{taskLabel(t)}</span>
+                  <span className="gh-task-meta">{t.kind === 'learn' ? t.subjectName : t.kind === 'mock' ? '65 questions · 3 hours' : t.subjectName ?? 'Spaced review'}</span>
                 </span>
-                <span className="shrink-0 text-right text-[12px] text-text-muted tabular-nums">
-                  <span className="block font-semibold text-text-primary">{t.hours}h</span>
-                  {t.kind !== 'mock' && <span>{t.questions} Qs</span>}
+                <span className="gh-task-time">
+                  {t.hours}h{t.kind !== 'mock' && <span> · {t.questions} Qs</span>}
                 </span>
               </Link>
             </li>
           ))}
         </ol>
       )}
-    </Panel>
+    </div>
   )
 }
 
@@ -320,36 +311,27 @@ function SubjectRings({ summary, loading }: { summary: GateSummary | null; loadi
       action={<PanelLink to={GATE_ROUTES.syllabus}>Syllabus</PanelLink>}
     >
       {loading || (subjects.meta.loading && !list.length) ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
-          {Array.from({ length: 8 }, (_, i) => (
-            <Skeleton key={i} className="h-[88px] rounded-xl" />
-          ))}
-        </div>
+        <LoadingBlock rows={6} />
       ) : !list.length ? (
         <EmptyHint icon="layers" title="Syllabus unavailable">The subject list couldn&rsquo;t be loaded. Try again shortly.</EmptyHint>
       ) : (
-        <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 xl:grid-cols-4">
+        /* Small multiples: one bar per subject on the same scale, serif names, the numbers in mono. */
+        <ul className="gh-multiples">
           {list.map((sub) => {
             const st = stats.get(sub.id)
             const att = st?.attempted ?? 0
             const level = masteryOf(att, st?.accuracy)
+            const score = masteryScore(att, st?.accuracy)
             return (
               <li key={sub.id}>
-                <Link
-                  to={practiceLink({ exam, subject: sub.id })}
-                  className="flex h-full items-center gap-3 rounded-xl border border-border p-2.5 transition-colors hover:border-accent-brand/40 hover:bg-bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
-                >
-                  <Ring value={masteryScore(att, st?.accuracy)} size={46} stroke={5} label={`${sub.name}: ${att ? `${pct(st?.accuracy)}% over ${att}` : 'not started'}`}>
-                    <span className="text-[11px] font-semibold text-text-primary tabular-nums">{att ? pct(st?.accuracy) : '–'}</span>
-                  </Ring>
-                  <span className="min-w-0">
-                    <span className="block truncate text-[12.5px] font-semibold text-text-primary" title={sub.name}>
-                      {shortSubject(sub.name)}
-                    </span>
-                    <span className="mt-0.5 block">
-                      <MasteryLabel level={level} />
-                    </span>
+                <Link to={practiceLink({ exam, subject: sub.id })} className="gh-multiple" title={sub.name}>
+                  <span className="gh-multiple-name">
+                    {shortSubject(sub.name)}
                   </span>
+                  <span className="gh-multiple-bar" aria-hidden="true">
+                    <span style={{ width: `${Math.round(score * 100)}%` }} data-level={level} />
+                  </span>
+                  <span className="gh-multiple-n">{att ? `${pct(st?.accuracy)}% · ${att} Qs` : MASTERY[0].label}</span>
                 </Link>
               </li>
             )
@@ -376,9 +358,9 @@ function ContinuePanel({ summary, loading }: { summary: GateSummary | null; load
   return (
     <Panel title="Continue" icon="play" subtitle="Pick up where you left off">
       {loading ? (
-        <Skeleton className="h-24 w-full rounded-lg" />
+        <LoadingBlock rows={3} />
       ) : !last ? (
-        <EmptyHint icon="rocket" title="Your first question awaits" action={<LinkButton to={practiceLink({ exam })} variant="primary" icon="play">Open the PYQ bank</LinkButton>}>
+        <EmptyHint icon="rocket" title="Your first question awaits" action={<LinkButton to={practiceLink({ exam })} icon="play">Open the PYQ bank</LinkButton>}>
           Every attempt feeds your analytics, mastery and review queue.
         </EmptyHint>
       ) : (
@@ -429,33 +411,25 @@ function WeakTopics({ summary, loading }: { summary: GateSummary | null; loading
       action={weak.length ? <PanelLink to={testLink({ focus: 'weak', count: 15, durationMin: 30 })}>Weak-topic test</PanelLink> : undefined}
     >
       {loading ? (
-        <Skeleton className="h-28 w-full rounded-lg" />
+        <LoadingBlock rows={3} />
       ) : !weak.length ? (
-        <p className="text-[13px] text-text-muted">Attempt a few questions per topic and your weakest areas will surface here — with one-tap drills.</p>
+        <p className="text-[13.5px] text-text-secondary">Attempt a few questions per topic and your weakest areas will surface here, each with a one-tap drill.</p>
       ) : (
-        <ul className="space-y-2.5">
-          {weak.map((t) => {
-            const a = pct(t.accuracy)
-            return (
-              <li key={`${t.subject}/${t.topic}`}>
-                <Link
-                  to={practiceLink({ exam, subject: t.subject, topic: t.topic })}
-                  className="group block rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
-                >
-                  <span className="flex items-baseline justify-between gap-2 text-[13px]">
-                    <span className="min-w-0 truncate font-medium text-text-primary group-hover:text-accent-brand">{subjects.topicName(t.subject, t.topic)}</span>
-                    <span className="shrink-0 text-[12px] text-text-muted tabular-nums">
-                      {t.correct}/{t.attempted} · <span className="font-semibold text-state-error">{a}%</span>
-                    </span>
-                  </span>
-                  <span className="mt-1 block h-1.5 overflow-hidden rounded-full bg-bg-surface-3">
-                    <span className="block h-full rounded-full bg-state-error/70" style={{ width: `${Math.max(4, a)}%` }} />
-                  </span>
-                  <span className="mt-0.5 block truncate text-[11.5px] text-text-muted">{subjects.subjectName(t.subject)}</span>
+        <ul className="gh-weak">
+          {weak.map((t) => (
+            <li key={`${t.subject}/${t.topic}`}>
+              <p>
+                <span className="font-semibold text-text-primary">{subjects.topicName(t.subject, t.topic)}</span> in {subjects.subjectName(t.subject)}:{' '}
+                <span className="font-mono text-text-primary">
+                  {t.correct} of {t.attempted}
+                </span>{' '}
+                right ({pct(t.accuracy)}%).{' '}
+                <Link to={practiceLink({ exam, subject: t.subject, topic: t.topic })} className="gp-link font-semibold text-text-primary">
+                  Drill it
                 </Link>
-              </li>
-            )
-          })}
+              </p>
+            </li>
+          ))}
         </ul>
       )}
     </Panel>
@@ -476,17 +450,17 @@ function QuickStart() {
   ]
   return (
     <Panel title="Quick start" icon="bolt">
-      <ul className="grid grid-cols-2 gap-2">
+      <ul className="gh-quick">
         {tiles.map((t) => (
           <li key={t.title}>
-            <Link
-              to={t.to}
-              className="flex h-full items-center gap-2.5 rounded-xl border border-border p-2.5 transition-colors hover:border-accent-brand/40 hover:bg-bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
-            >
-              <IconBadge name={t.icon} tone={t.tone} box="xs" />
-              <span className="min-w-0 leading-tight">
-                <span className="block truncate text-[13px] font-semibold text-text-primary">{t.title}</span>
-                <span className="block truncate text-[11.5px] text-text-muted">{t.hint}</span>
+            <Link to={t.to} className="gh-quick-row group" data-tone={t.tone}>
+              <Icon name={t.icon} className="size-4 shrink-0 text-text-muted" />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[13.5px] font-semibold text-text-primary">{t.title}</span>
+                <span className="block truncate text-[12px] text-text-muted">{t.hint}</span>
+              </span>
+              <span aria-hidden="true" className="text-text-muted transition-transform group-hover:translate-x-0.5">
+                →
               </span>
             </Link>
           </li>
@@ -504,7 +478,7 @@ function RecentTests() {
   return (
     <Panel title="Recent tests" icon="timer" action={<PanelLink to={GATE_ROUTES.tests}>All tests</PanelLink>}>
       {tests.loading && !tests.data ? (
-        <Skeleton className="h-24 w-full rounded-lg" />
+        <LoadingBlock rows={3} />
       ) : !list.length ? (
         <EmptyHint icon="timer" title="No tests yet" action={<LinkButton to={GATE_ROUTES.tests} icon="add">Create a test</LinkButton>}>
           Timed tests with GATE marking show your percentile against everyone who took the same set.

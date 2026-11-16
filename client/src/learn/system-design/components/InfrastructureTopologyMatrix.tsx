@@ -62,7 +62,7 @@ export const InfrastructureTopologyMatrix: React.FC<TopologyMatrixProps> = ({
 
           <div className="relative w-48">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-text-muted" />
-            <input
+            <input aria-label="Filter the matrix"
               type="text"
               placeholder="Filter matrix..."
               value={filterQuery}
@@ -74,7 +74,7 @@ export const InfrastructureTopologyMatrix: React.FC<TopologyMatrixProps> = ({
       </div>
 
       {/* Systems Grid Table */}
-      <div className="overflow-x-auto rounded-xl ring-1 ring-border">
+      <div tabIndex={0} role="group" aria-label="Topology table" className="overflow-x-auto rounded-xl ring-1 ring-border">
         <table className="w-full text-left text-[12px] border-collapse">
           <thead className="bg-bg-surface-3/80 font-mono text-[10.5px] uppercase tracking-wider text-text-muted">
             <tr>

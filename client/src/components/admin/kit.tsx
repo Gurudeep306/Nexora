@@ -1,8 +1,8 @@
-import { useId, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Dialog } from 'radix-ui'
 import { AnimatePresence, motion } from 'motion/react'
 import { X } from 'lucide-react'
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip as RTooltip, XAxis, YAxis } from 'recharts'
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip as RTooltip, XAxis, YAxis } from 'recharts'
 import { Modal } from '@/components/ui'
 import { Icon, type IconName } from '@/components/icon/Icon'
 import { cn, formatCompact, formatNumber } from '@/lib/utils'
@@ -127,66 +127,48 @@ export function Failed({ message, onRetry }: { message: string; onRetry?: () => 
   )
 }
 
-export function Delta({ value, suffix = 'vs prev. 7d' }: { value: number | null; suffix?: string }) {
-  if (value === null) return <span className="nx-chip" data-tone="success">new</span>
+/** The last 7 days against the 7 before, in words. */
+export function Delta({ value, suffix = 'on the week before' }: { value: number | null; suffix?: string }) {
+  if (value === null) return <span className="desk-delta">none the week before</span>
+  if (value === 0) return <span className="desk-delta">same as the week before</span>
   const up = value > 0
-  const flat = value === 0
   return (
-    <span className="inline-flex items-center gap-1.5 text-[11.5px] text-text-muted">
-      <span className="nx-chip !h-5 !px-1.5 nx-num" data-tone={flat ? undefined : up ? 'success' : 'danger'}>
-        {flat ? '–' : up ? '↑' : '↓'} {Math.abs(value)}%
-      </span>
-      {suffix}
+    <span className="desk-delta" data-trend={up ? 'up' : 'down'}>
+      <span className="desk-delta-n">{`${up ? '↑' : '↓'} ${Math.abs(value)}%`}</span> {suffix}
     </span>
   )
 }
 
-const TONES = {
-  brand: 'var(--nx-b1)',
-  violet: 'var(--nx-b2)',
-  teal: 'var(--nx-b3)',
-  warning: 'var(--color-state-warning)',
-  danger: 'var(--color-state-error)',
-  success: 'var(--color-state-success)',
-} as const
-export type Tone = keyof typeof TONES
+/** Chart ink: every line is the text colour; the latest point is the theme's clay. */
+export const INK = 'var(--color-text-primary)'
+export const NIB = 'var(--ed-clay, var(--color-accent-brand))'
 
-/** A KPI tile: label, big number, trend delta and a 30-day sparkline. */
+/** A front-page figure: label, a serif number, the week's change and a 30-day sparkline. */
 export function Kpi({
   label,
   value,
-  icon,
   hint,
   series,
   days,
-  tone = 'brand',
   unit,
 }: {
   label: string
   value: number | null | undefined
-  icon: IconName
+  /** Kept for callers; the figure has no icon tile. */
+  icon?: IconName
   hint?: ReactNode
   series?: number[]
   days?: string[]
-  tone?: Tone
+  /** Kept for callers; every line is ink. */
+  tone?: string
   unit?: string
 }) {
-  const color = TONES[tone]
   return (
-    <div className="nx-panel flex min-w-0 flex-col overflow-hidden px-4 pt-4 pb-3">
-      <div className="flex items-center gap-2">
-        <span className="flex size-6 items-center justify-center rounded-md" style={{ color, background: `color-mix(in oklab, ${color} 13%, transparent)` }}>
-          <Icon name={icon} className="size-3.5" />
-        </span>
-        <p className="truncate text-[12px] font-medium text-text-secondary">{label}</p>
-      </div>
-      <p className="nx-display nx-num mt-3 text-[30px] leading-none font-semibold text-text-primary">{value == null ? '—' : formatCompact(value)}</p>
-      <div className="mt-2 min-h-5">{series ? <Delta value={delta(series)} /> : hint ? <span className="text-[11.5px] text-text-muted">{hint}</span> : null}</div>
-      {series && days ? (
-        <Spark series={series} days={days} color={color} unit={unit ?? label.toLowerCase()} />
-      ) : (
-        <div className="mt-auto h-9" />
-      )}
+    <div className="desk-figure">
+      <p className="ed-label desk-figure-label">{label}</p>
+      <p className="desk-figure-n">{value == null ? '—' : formatCompact(value)}</p>
+      <div className="desk-figure-note">{series ? <Delta value={delta(series)} /> : hint ? <span>{hint}</span> : null}</div>
+      {series && days ? <Spark series={series} days={days} unit={unit ?? label.toLowerCase()} /> : null}
     </div>
   )
 }
@@ -209,59 +191,45 @@ function TrendTip({ active, payload, unit }: TipProps & { unit: string }) {
   )
 }
 
-function Gradient({ id, color }: { id: string; color: string }) {
-  return (
-    <defs>
-      <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stopColor={color} stopOpacity={0.3} />
-        <stop offset="1" stopColor={color} stopOpacity={0} />
-      </linearGradient>
-    </defs>
-  )
+/** The last point of a series, drawn as a clay nib (other points draw nothing). */
+function lastDot(len: number, r: number) {
+  return function LastDot(props: { cx?: number; cy?: number; index?: number }) {
+    if (props.index !== len - 1 || props.cx == null || props.cy == null) return <g />
+    return <circle cx={props.cx} cy={props.cy} r={r} fill={NIB} stroke="var(--color-bg-surface)" strokeWidth={1.5} />
+  }
 }
 
-/** 30-day sparkline (single series) with a hover tooltip. */
-export function Spark({ series, days, color, unit }: { series: number[]; days: string[]; color: string; unit: string }) {
-  const id = `s${useId().replace(/[^a-zA-Z0-9]/g, '')}`
+/** 30-day sparkline: one ink line, the latest day in clay, a hover tooltip. */
+export function Spark({ series, days, unit }: { series: number[]; days: string[]; color?: string; unit: string }) {
   const data = series.map((v, i) => ({ v, d: days[i] }))
   return (
-    <div className="-mx-4 mt-2 h-10" role="img" aria-label={`${unit}, last 30 days`}>
+    <div className="desk-spark" role="img" aria-label={`${unit}, last 30 days: ${series[series.length - 1] ?? 0} on the latest day`}>
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
-          <Gradient id={id} color={color} />
+        <LineChart data={data} margin={{ top: 5, right: 5, bottom: 3, left: 2 }}>
           <XAxis dataKey="d" hide />
-          <RTooltip content={<TrendTip unit={unit} />} cursor={{ stroke: 'var(--nx-hair-strong)', strokeWidth: 1 }} />
-          <Area type="monotone" dataKey="v" stroke={color} strokeWidth={1.75} fill={`url(#${id})`} isAnimationActive={false} activeDot={{ r: 3.5, strokeWidth: 2, stroke: 'var(--color-bg-surface)' }} />
-        </AreaChart>
+          <RTooltip content={<TrendTip unit={unit} />} cursor={{ stroke: 'var(--color-border)', strokeWidth: 1 }} />
+          <Line type="monotone" dataKey="v" stroke={INK} strokeWidth={1.25} dot={lastDot(data.length, 2.75)} isAnimationActive={false} activeDot={{ r: 3, strokeWidth: 1.5, stroke: 'var(--color-bg-surface)', fill: INK }} />
+        </LineChart>
       </ResponsiveContainer>
     </div>
   )
 }
 
-/** A full chart: one series over 30 days, with axes, grid and tooltip. */
-export function TrendChart({ series, days, color, unit, height = 200 }: { series: number[]; days: string[]; color: string; unit: string; height?: number }) {
-  const id = `t${useId().replace(/[^a-zA-Z0-9]/g, '')}`
+/** A full chart: one ink line over 30 days, hairline grid, mono axis numbers, the latest day in clay. */
+export function TrendChart({ series, days, unit, height = 200 }: { series: number[]; days: string[]; color?: string; unit: string; height?: number }) {
   const data = series.map((v, i) => ({ v, d: days[i] }))
   const fmt = (d: string) => new Date(`${d}T00:00:00`).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+  const tick = { fill: 'var(--color-text-muted)', fontSize: 11, fontFamily: 'var(--font-mono)' }
   return (
     <div style={{ height }} role="img" aria-label={`${unit} per day, last 30 days`}>
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 8, right: 4, bottom: 0, left: -18 }}>
-          <Gradient id={id} color={color} />
-          <CartesianGrid vertical={false} stroke="var(--nx-hair)" strokeDasharray="3 4" />
-          <XAxis
-            dataKey="d"
-            tickFormatter={fmt}
-            interval={6}
-            tickLine={false}
-            axisLine={false}
-            tick={{ fill: 'var(--color-text-muted)', fontSize: 11 }}
-            dy={6}
-          />
-          <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={44} tick={{ fill: 'var(--color-text-muted)', fontSize: 11 }} tickFormatter={(v: number) => formatCompact(v)} />
-          <RTooltip content={<TrendTip unit={unit} />} cursor={{ stroke: 'var(--nx-hair-strong)', strokeWidth: 1 }} />
-          <Area type="monotone" dataKey="v" stroke={color} strokeWidth={2} fill={`url(#${id})`} isAnimationActive={false} activeDot={{ r: 4, strokeWidth: 2, stroke: 'var(--color-bg-surface)' }} />
-        </AreaChart>
+        <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -18 }}>
+          <CartesianGrid vertical={false} stroke="var(--color-border)" strokeWidth={0.75} />
+          <XAxis dataKey="d" tickFormatter={fmt} interval={6} tickLine={false} axisLine={{ stroke: 'var(--color-border)' }} tick={tick} dy={6} />
+          <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={44} tick={tick} tickFormatter={(v: number) => formatCompact(v)} />
+          <RTooltip content={<TrendTip unit={unit} />} cursor={{ stroke: 'var(--color-border)', strokeWidth: 1 }} />
+          <Line type="monotone" dataKey="v" stroke={INK} strokeWidth={1.5} dot={lastDot(data.length, 3.5)} isAnimationActive={false} activeDot={{ r: 3.5, strokeWidth: 1.5, stroke: 'var(--color-bg-surface)', fill: INK }} />
+        </LineChart>
       </ResponsiveContainer>
     </div>
   )
@@ -276,11 +244,11 @@ export function Drawer({ open, onClose, title, children }: { open: boolean; onCl
           <Dialog.Portal forceMount>
             <div className="fixed inset-0 z-1000">
               <Dialog.Overlay asChild forceMount>
-                <motion.div className="absolute inset-0 bg-bg-app/60 backdrop-blur-[3px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
+                <motion.div className="absolute inset-0 bg-bg-app/70" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
               </Dialog.Overlay>
               <Dialog.Content asChild forceMount aria-describedby={undefined}>
-                <motion.aside
-                  className="absolute inset-y-0 right-0 flex w-full max-w-[600px] flex-col overflow-hidden bg-bg-surface shadow-[-30px_0_80px_-30px_oklch(0_0_0/0.45)] sm:border-l sm:border-[color:var(--nx-hair-strong)]"
+                <motion.div
+                  className="absolute inset-y-0 right-0 flex w-full max-w-[600px] flex-col overflow-hidden bg-bg-surface sm:border-l sm:border-[color:var(--color-border-strong)]"
                   initial={{ x: 48, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: 48, opacity: 0, transition: { duration: 0.16 } }}
@@ -294,7 +262,7 @@ export function Drawer({ open, onClose, title, children }: { open: boolean; onCl
                     <X className="size-4" />
                   </Dialog.Close>
                   <div className="flex-1 overflow-y-auto overscroll-contain">{children}</div>
-                </motion.aside>
+                </motion.div>
               </Dialog.Content>
             </div>
           </Dialog.Portal>

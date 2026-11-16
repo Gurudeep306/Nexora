@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'motion/react'
-import { Badge, Button, Card, CardContent, EmptyState, ErrorState, LoadingBlock, Progress, Select, StatCard } from '@/components/ui'
+import { Badge, Card, CardContent, EmptyState, ErrorState, LoadingBlock, Progress, Select, StatCard } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { TutorialReader } from './TutorialReader'
@@ -200,7 +200,7 @@ export function TutorialsPanel() {
                             {t.completed ? <Icon name="check-circle" className="size-4" aria-label="Completed" /> : t.order_index + 1}
                           </span>
                           <div className="min-w-0 flex-1">
-                            <h3 className="font-display text-[13px] tracking-wide text-foreground">{t.title}</h3>
+                            <h2 className="m-0 font-display text-[13px] tracking-wide text-foreground">{t.title}</h2>
                             {t.description && (
                               <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-foreground-dim">{t.description}</p>
                             )}
@@ -214,9 +214,10 @@ export function TutorialsPanel() {
                           {t.completed ? (
                             <Badge variant="success" className="ml-auto">Done</Badge>
                           ) : (
-                            <Button variant="link" size="sm" className="ml-auto h-auto p-0 text-[11px]" tabIndex={-1} aria-hidden="true">
+                            /* A hint only: the whole card is the button, so no nested control. */
+                            <span className="ml-auto text-[11px] font-medium text-text-primary underline underline-offset-2" aria-hidden="true">
                               Read →
-                            </Button>
+                            </span>
                           )}
                         </div>
                       </CardContent>

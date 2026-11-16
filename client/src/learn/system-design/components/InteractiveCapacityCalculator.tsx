@@ -80,7 +80,7 @@ export const InteractiveCapacityCalculator: React.FC<CapacityCalculatorProps> = 
             <span className="text-text-muted">Write Requests/sec:</span>
             <span className="font-bold text-sky-400">{writeQps.toLocaleString()} QPS</span>
           </div>
-          <input
+          <input aria-label="Write requests per second"
             type="range"
             min={100}
             max={50000}
@@ -102,7 +102,7 @@ export const InteractiveCapacityCalculator: React.FC<CapacityCalculatorProps> = 
             <span className="text-text-muted">Read-to-Write Ratio:</span>
             <span className="font-bold text-purple-400">{readRatio}:1</span>
           </div>
-          <input
+          <input aria-label="Read-to-write ratio"
             type="range"
             min={1}
             max={100}
@@ -124,7 +124,7 @@ export const InteractiveCapacityCalculator: React.FC<CapacityCalculatorProps> = 
             <span className="text-text-muted">Avg Record Size:</span>
             <span className="font-bold text-emerald-400">{payloadSizeKb} KB</span>
           </div>
-          <input
+          <input aria-label="Average record size"
             type="range"
             min={0.5}
             max={50}
@@ -146,7 +146,7 @@ export const InteractiveCapacityCalculator: React.FC<CapacityCalculatorProps> = 
             <span className="text-text-muted">Retention Horizon:</span>
             <span className="font-bold text-amber-400">{retentionYears} Years</span>
           </div>
-          <input
+          <input aria-label="Retention horizon in years"
             type="range"
             min={1}
             max={10}

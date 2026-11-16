@@ -51,8 +51,8 @@ export default function GateCbtPage() {
       title="Official mock papers"
       subtitle="Sit a past paper as a timed computer-based test — the exam console’s palette, mark for review, calculator and official negative marking. Answers open after you submit."
       actions={
-        <Link to={GATE_ROUTES.tests} className="btn-secondary inline-flex items-center gap-2 !px-3 !py-2 !text-[13px]">
-          <Icon name="sliders" className="size-4" /> <span className="hidden sm:inline">Custom test</span>
+        <Link to={GATE_ROUTES.tests} aria-label="Custom test" className="btn-secondary inline-flex items-center gap-2 !px-3 !py-2 !text-[13px]">
+          <Icon name="sliders" className="size-4" /> <span className="hidden sm:inline" aria-hidden="true">Custom test</span>
         </Link>
       }
     >

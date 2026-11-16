@@ -30,7 +30,7 @@ export function QuestionRow({
     <li className={cn('group flex items-start gap-3 py-3', className)}>
       <Link
         to={questionLink(id)}
-        className="min-w-0 flex-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
+        className="min-w-0 flex-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary"
       >
         <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11.5px] text-text-muted">
           {q ? (
@@ -50,7 +50,7 @@ export function QuestionRow({
         {loading && !q ? (
           <Skeleton className="mt-1.5 h-4 w-4/5" />
         ) : (
-          <p className="mt-0.5 line-clamp-2 text-[13.5px] leading-snug text-text-primary group-hover:text-accent-brand">
+          <p className="mt-0.5 line-clamp-2 text-[13.5px] leading-snug text-text-primary group-hover:underline group-hover:underline-offset-2">
             {q ? snippet(q.text) || 'Open question' : 'Open question'}
           </p>
         )}

@@ -1,0 +1,190 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   The Exam Hall — the GATE pages in the journal kit.
+
+   Shared by every GATE page through the shell (gate/shell) and the insight
+   blocks (gate/insights/ui.tsx): serif panel titles, figures as serif
+   numerals with a word-sized line, ink links with an underline, underlined
+   tabs and choices, and one clay action. Every value is a theme role, so all
+   ten themes dress it their own way. The CBT console keeps its own layout.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@layer components {
+  /* ── panels ── */
+  .gp-title {
+    font-size: 19px;
+    font-weight: var(--kit-heading-weight, 400);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  .gp-link {
+    text-decoration: underline;
+    text-decoration-color: var(--color-border-strong);
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color 300ms var(--ed-ease);
+  }
+  .gp-link:hover {
+    text-decoration-color: var(--ed-clay);
+  }
+
+  /* ── figures: a label, a serif numeral, a note and (with real data) a sparkline ── */
+  .gk {
+    padding: 1rem 0 0.25rem;
+    border-top: 1px solid var(--color-text-primary);
+  }
+  .gk-n {
+    margin-top: 0.5rem;
+    font-family: var(--font-display);
+    font-weight: var(--kit-heading-weight, 400);
+    font-size: clamp(2.25rem, 4vw, 3rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--color-text-primary);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+  .gk-sub {
+    margin-top: 0.5rem;
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+  }
+  .gk-sub a {
+    color: var(--color-text-primary);
+    text-decoration: underline;
+    text-decoration-color: var(--color-border-strong);
+    text-underline-offset: 0.2em;
+  }
+  .gk-spark {
+    display: block;
+    margin-top: 0.625rem;
+    color: var(--color-text-primary);
+  }
+
+  /* ── underlined choices (CSE / DA, analytics ranges) ── */
+  .gseg {
+    gap: 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .gseg-btn {
+    position: relative;
+    min-height: 2rem;
+    padding: 0 0.125rem;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: color 300ms var(--ed-ease);
+  }
+  .gseg-btn:hover {
+    color: var(--color-text-primary);
+  }
+  .gseg-btn[aria-checked='true'] {
+    color: var(--color-text-primary);
+  }
+  .gseg-btn[aria-checked='true']::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 -1px;
+    height: 2px;
+    background: var(--color-text-primary);
+  }
+  .gseg-btn:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 2px;
+  }
+
+  /* ── empty states: a quiet glyph and a serif line, no dashed box ── */
+  .gempty {
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* ── buttons: one clay action, ivory tools, underlined text ── */
+  .gbtn {
+    display: inline-flex;
+    height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0 0.875rem;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    border-radius: var(--kit-tool-radius, 8px);
+    color: var(--color-text-primary);
+    transition:
+      background-color 300ms var(--ed-ease),
+      text-decoration-color 300ms var(--ed-ease);
+  }
+  .gbtn svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+  .gbtn[data-variant='primary'] {
+    background: var(--ed-clay);
+    color: var(--ed-on-clay);
+    border-radius: var(--kit-btn-radius, 0 0 8px 8px);
+  }
+  .gbtn[data-variant='primary']:hover {
+    background: var(--ed-clay-deep);
+  }
+  .gbtn[data-variant='secondary'] {
+    background: var(--color-bg-surface);
+    box-shadow: inset 0 0 0 1px var(--color-border-strong);
+    border-radius: var(--kit-btn-radius, 0 0 8px 8px);
+  }
+  .gbtn[data-variant='secondary']:hover {
+    background: var(--color-bg-surface-3);
+  }
+  .gbtn[data-variant='ghost'] {
+    padding: 0 0.25rem;
+    text-decoration: underline;
+    text-decoration-color: var(--color-border-strong);
+    text-underline-offset: 0.2em;
+  }
+  .gbtn[data-variant='ghost']:hover {
+    text-decoration-color: var(--color-text-primary);
+  }
+  .gbtn:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 2px;
+  }
+
+  /* ── the section tabs: words with an ink underline ── */
+  .gnav-tab {
+    position: relative;
+    display: flex;
+    height: 2.75rem;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0 0.625rem;
+    font-size: 13.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--color-text-secondary);
+    transition: color 300ms var(--ed-ease);
+  }
+  .gnav-tab:hover {
+    color: var(--color-text-primary);
+  }
+  .gnav-icon {
+    color: var(--color-text-muted);
+  }
+  .gnav-tab[aria-current='page'] {
+    color: var(--color-text-primary);
+  }
+  .gnav-tab[aria-current='page'] .gnav-icon {
+    color: var(--color-text-primary);
+  }
+  .gnav-tab[aria-current='page']::after {
+    content: '';
+    position: absolute;
+    left: 0.625rem;
+    right: 0.625rem;
+    bottom: -1px;
+    height: 2px;
+    background: var(--color-text-primary);
+  }
+  .gnav-tab:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: -2px;
+  }
+}

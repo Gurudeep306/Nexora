@@ -31,9 +31,12 @@ export const UI_FONT_LOADERS: Record<string, Loader> = {
 /* Heading faces used only by design styles (styles.ts DISPLAY_FACES). */
 export const DISPLAY_FONT_LOADERS: Record<string, Loader> = {
   cormorant: () => import('@fontsource-variable/cormorant-garamond'),
-  mincho: () => Promise.all([import('@fontsource/shippori-mincho/latin-500.css'), import('@fontsource/shippori-mincho/latin-600.css')]),
-  doto: () => import('@fontsource-variable/doto'),
   fraunces: () => import('@fontsource-variable/fraunces'),
+  pixelify: () => import('@fontsource-variable/pixelify-sans'),
+  'young-serif': () => import('@fontsource/young-serif/400.css'),
+  rozha: () => import('@fontsource/rozha-one/400.css'),
+  kalam: () => Promise.all([import('@fontsource/kalam/400.css'), import('@fontsource/kalam/700.css')]),
+  martian: () => import('@fontsource-variable/martian-mono'),
 }
 
 export const CODE_FONT_LOADERS: Record<string, Loader> = {

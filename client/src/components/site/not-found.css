@@ -1,0 +1,107 @@
+/* 404 and the page error screen (pages/NotFoundPage.tsx, PageErrorBoundary). */
+@layer components {
+  .nf {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: clamp(2rem, 7vw, 5rem) 0 4rem;
+  }
+  .nf-mark {
+    color: var(--color-text-primary);
+  }
+  .nf-title {
+    margin-top: 0.75rem;
+    text-wrap: balance;
+  }
+  .nf-lead {
+    margin-top: 1rem;
+    max-width: 38rem;
+  }
+  .nf-path {
+    padding: 0.05em 0.35em;
+    border-radius: 4px;
+    background: var(--color-bg-surface-3);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+  .nf-search {
+    margin-top: 2.5rem;
+    padding: 1.25rem;
+    border-radius: var(--kit-card-radius, 1.5rem);
+    background: var(--ed-feature);
+  }
+  .nf-cells {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.375rem;
+  }
+  @media (min-width: 640px) {
+    .nf-cells {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+  }
+  .nf-cell {
+    overflow: hidden;
+    padding: 0.5rem 0.25rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 6px;
+    background: var(--color-bg-surface);
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-primary);
+    transition:
+      background-color 450ms var(--ed-ease),
+      border-color 450ms var(--ed-ease);
+  }
+  /* Discarded halves: muted ink and a dashed edge (never faded text). */
+  .nf-cell[data-state='gone'] {
+    border-style: dashed;
+    border-color: var(--color-border);
+    background: transparent;
+    color: var(--ed-muted);
+  }
+  /* The middle being compared: the theme's clay. */
+  .nf-cell[data-state='mid'] {
+    border-color: var(--ed-clay);
+    background: var(--ed-clay);
+    color: var(--ed-on-clay);
+    font-weight: 600;
+  }
+  .nf-note {
+    margin-top: 1rem;
+    font-family: var(--ed-prose, var(--font-display));
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: var(--color-text-primary);
+  }
+  .nf-step {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ed-muted);
+  }
+  .nf-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+  }
+  .nf-id {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px var(--color-border-strong);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--color-text-primary);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nf-cell {
+    transition: none;
+  }
+}

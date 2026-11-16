@@ -264,6 +264,7 @@ export const LimitOrderBookEngine: React.FC = () => {
                 <select
                   value={orderType}
                   onChange={(e) => setOrderType(e.target.value as any)}
+                  aria-label="Order type"
                   className="w-full rounded bg-bg-surface-2 px-2 py-1 text-text-primary ring-1 ring-border"
                 >
                   <option value="LIMIT">Limit Order</option>
@@ -277,6 +278,7 @@ export const LimitOrderBookEngine: React.FC = () => {
                   type="number"
                   value={orderQty}
                   onChange={(e) => setOrderQty(e.target.value)}
+                  aria-label="Quantity"
                   className="w-full rounded bg-bg-surface-2 px-2 py-1 text-text-primary ring-1 ring-border"
                 />
               </div>
@@ -290,6 +292,7 @@ export const LimitOrderBookEngine: React.FC = () => {
                   step="0.05"
                   value={orderPrice}
                   onChange={(e) => setOrderPrice(e.target.value)}
+                  aria-label="Limit price in dollars"
                   className="w-full rounded bg-bg-surface-2 px-2 py-1 text-text-primary ring-1 ring-border font-mono text-[11px]"
                 />
               </div>
@@ -498,6 +501,7 @@ export const SnowflakeIdGeneratorEngine: React.FC = () => {
             max="31"
             value={datacenterId}
             onChange={(e) => setDatacenterId(parseInt(e.target.value))}
+            aria-label="Datacenter ID, 0 to 31"
             className="w-full accent-purple-500"
           />
         </div>
@@ -513,6 +517,7 @@ export const SnowflakeIdGeneratorEngine: React.FC = () => {
             max="31"
             value={workerId}
             onChange={(e) => setWorkerId(parseInt(e.target.value))}
+            aria-label="Worker node ID, 0 to 31"
             className="w-full accent-emerald-500"
           />
         </div>

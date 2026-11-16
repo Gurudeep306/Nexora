@@ -18,9 +18,9 @@ import { createTest, savedResponses } from './testsData'
  */
 
 const OUTCOME_STYLE: Record<string, string> = {
-  correct: 'bg-state-success/12 text-state-success',
-  wrong: 'bg-state-error/12 text-state-error',
-  partial: 'bg-state-warning/12 text-state-warning',
+  correct: 'shadow-[inset_0_0_0_1px_currentColor] text-state-success',
+  wrong: 'shadow-[inset_0_0_0_1px_currentColor] text-state-error',
+  partial: 'shadow-[inset_0_0_0_1px_currentColor] text-state-warning',
   skipped: 'bg-bg-surface-3 text-text-muted',
   revealed: 'bg-bg-surface-3 text-text-muted',
 }
@@ -67,7 +67,7 @@ export function TestResultView({ test, questions, subjectName }: { test: GateTes
           <Link to={GATE_ROUTES.tests} className="btn-secondary !px-3 !py-2 !text-[13px]">
             All tests
           </Link>
-          <button type="button" onClick={sameAgain} disabled={busy} className="btn-secondary inline-flex items-center gap-1.5 !px-3 !py-2 !text-[13px] disabled:opacity-60">
+          <button type="button" onClick={sameAgain} disabled={busy} aria-label="New test, same settings" className="btn-secondary inline-flex items-center gap-1.5 !px-3 !py-2 !text-[13px] disabled:opacity-60">
             <Icon name="refresh" className="size-4" /> <span className="hidden sm:inline">New test, same settings</span>
             <span className="sm:hidden">Again</span>
           </button>
@@ -106,8 +106,8 @@ export function TestResultView({ test, questions, subjectName }: { test: GateTes
         </Card>
 
         {wrongIds.length > 0 && (
-          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-accent-brand/30 bg-accent-brand/8 px-4 py-3">
-            <Icon name="target" className="size-5 text-accent-brand" />
+          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border-strong bg-bg-surface px-4 py-3">
+            <Icon name="target" className="size-5 text-text-secondary" />
             <p className="min-w-0 flex-1 text-[13.5px] text-text-secondary">
               <strong className="font-semibold text-text-primary">{wrongIds.length}</strong> question{wrongIds.length === 1 ? '' : 's'} to revisit ({r.wrong} wrong, {r.skipped} skipped). Wrong answers are already queued for review tomorrow.
             </p>

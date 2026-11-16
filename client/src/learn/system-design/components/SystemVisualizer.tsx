@@ -1287,7 +1287,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
         <div className="p-5 space-y-3">
           <div className="flex items-center gap-2">
             <span className="flex size-2 rounded-full bg-accent-brand animate-pulse" />
-            <h4 className="font-bold text-text-primary text-[14.5px]">{currentStep.title}</h4>
+            <h3 className="m-0 font-bold text-text-primary text-[14.5px]">{currentStep.title}</h3>
           </div>
           <p className="text-[13px] text-text-secondary leading-relaxed">{currentStep.description}</p>
 
@@ -1342,7 +1342,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
 
           {/* Conditional Packet Inspector View */}
           {packetInspectorMode === 'json' ? (
-            <div className="relative rounded-xl bg-black/70 p-3 ring-1 ring-border text-[11px] font-mono text-emerald-300 overflow-x-auto max-h-[140px]">
+            <div tabIndex={0} role="group" aria-label="Packet payload" className="relative rounded-xl bg-black/70 p-3 ring-1 ring-border text-[11px] font-mono text-emerald-300 overflow-x-auto max-h-[140px]">
               <pre className="whitespace-pre">{JSON.stringify(currentStep.payload, null, 2)}</pre>
             </div>
           ) : (
@@ -1569,7 +1569,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                       <span className="text-text-muted">Roundtrip Latency:</span>
                       <span className="text-accent-brand font-bold">{testRpcResult.latencyMs}ms</span>
                     </div>
-                    <pre className="text-emerald-300 pt-1 overflow-x-auto">
+                    <pre tabIndex={0} role="group" aria-label="Payload" className="text-emerald-300 pt-1 overflow-x-auto">
                       {JSON.stringify(testRpcResult.responsePayload, null, 2)}
                     </pre>
                   </div>
@@ -1822,7 +1822,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
 
         {/* TAB 2: NETWORK CONNECTIONS & RPC CONTRACTS TABLE */}
         {activeShowcaseTab === 'connections' && (
-          <div className="overflow-x-auto rounded-xl ring-1 ring-border">
+          <div tabIndex={0} role="group" aria-label="Table" className="overflow-x-auto rounded-xl ring-1 ring-border">
             <table className="w-full text-left text-[12px] font-mono border-collapse">
               <thead className="bg-bg-surface-2 text-[10.5px] uppercase text-text-muted border-b border-border">
                 <tr>
@@ -1997,7 +1997,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                         <div>Partition Key: <strong className="text-amber-400">{ds.partitionKey}</strong></div>
                       </div>
 
-                      <div className="rounded-lg bg-black/60 p-2.5 text-[10.5px] text-sky-200 overflow-x-auto ring-1 ring-border/40 font-mono">
+                      <div tabIndex={0} role="group" aria-label="Payload" className="rounded-lg bg-black/60 p-2.5 text-[10.5px] text-sky-200 overflow-x-auto ring-1 ring-border/40 font-mono">
                         {ds.schemaDefinition}
                       </div>
 
