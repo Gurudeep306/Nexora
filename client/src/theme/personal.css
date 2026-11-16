@@ -1,0 +1,40 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Personal choices on top of any theme (Appearance → Make it yours).
+
+   Colours (accent, ink) and faces (interface, headings, reading) are
+   generated from palettes.ts and fonts.ts into virtual:nexora-theme.css.
+   This file holds the rest. Each rule names two attributes, so it wins over
+   a theme's own [data-style='…'] setting whatever the file order.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Corners ── */
+[data-corners='sharp'][data-mode] {
+  --kit-card-radius: 0.25rem;
+  --kit-card-radius-sm: 0.2rem;
+  --kit-control-radius: 0.25rem;
+  --kit-btn-radius: 0.25rem;
+  --kit-tool-radius: 0.25rem;
+}
+[data-corners='soft'][data-mode] {
+  --kit-card-radius: 0.875rem;
+  --kit-card-radius-sm: 0.625rem;
+  --kit-control-radius: 0.5rem;
+  --kit-btn-radius: 0.5rem;
+  --kit-tool-radius: 0.5rem;
+}
+[data-corners='round'][data-mode] {
+  --kit-card-radius: 1.75rem;
+  --kit-card-radius-sm: 1.25rem;
+  --kit-control-radius: 1rem;
+  --kit-btn-radius: 999px;
+  --kit-tool-radius: 999px;
+}
+
+/* ── An accent of your own replaces the theme's clay everywhere ── */
+[data-kit='journal'][data-accent][data-mode],
+[data-kit='journal'] [data-accent][data-mode] {
+  --ed-clay: var(--color-accent-brand);
+  --ed-clay-deep: var(--color-accent-brand-hover, var(--color-accent-brand));
+  --ed-on-clay: var(--color-on-accent-brand, var(--on-accent));
+  --ed-focus: var(--color-accent-brand);
+}

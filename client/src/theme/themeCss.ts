@@ -10,8 +10,8 @@
 
   The selectors work on any element, so previews can scope a theme.
 */
-import { ACCENTS, DEFAULT_PALETTE, PALETTES, type ModeTokens } from './palettes.ts'
-import { CODE_FONTS, SOLUTION_FONTS, UI_FONTS, codeFontStack, solutionFontStack, uiFontStacks, type FallbackMetrics } from './fonts.ts'
+import { ACCENTS, DEFAULT_PALETTE, INKS, PALETTES, type ModeTokens } from './palettes.ts'
+import { CODE_FONTS, HEADING_FACES, READ_FACES, SOLUTION_FONTS, UI_FONTS, codeFontStack, faceStack, solutionFontStack, uiFontStacks, type FallbackMetrics } from './fonts.ts'
 
 const ok = (s: string) => `oklch(${s})`
 
@@ -66,6 +66,14 @@ export function buildThemeCss(): string {
       out.push(`[data-accent="${a.id}"][data-mode="${mode}"]{--oklch-accent-0:${ok(t.accent)};--oklch-accent-1:${ok(t.accent2)};--on-accent:${ok(t.onAccent)}}`)
     }
   }
+  // Personal choices on top of a theme (Appearance → Make it yours). Two
+  // attributes each, so they win over a theme's own [data-style] rules.
+  for (const ink of INKS) {
+    for (const mode of ['dark', 'light'] as const) {
+      const [a, b, c] = ink[mode]
+      out.push(`[data-ink="${ink.id}"][data-mode="${mode}"]{--oklch-fg-0:${ok(a)};--oklch-fg-1:${ok(b)};--oklch-fg-2:${ok(c)}}`)
+    }
+  }
 
   for (const f of UI_FONTS) {
     out.push(fallbackFace(`${f.label} Fallback`, f.fallback))
@@ -74,6 +82,15 @@ export function buildThemeCss(): string {
     const tracking = f.headingTracking ? `;--heading-tracking:${f.headingTracking}` : ''
     out.push(`[data-font="${f.id}"]{--font-body:${s.body};--font-display:${s.display}${tracking}}`)
   }
+  for (const f of UI_FONTS) {
+    out.push(`[data-ui-font="${f.id}"][data-mode]{--font-body:${uiFontStacks(f).body}}`)
+  }
+  // A chosen heading face sets the big page titles (the hero) too.
+  for (const f of HEADING_FACES) {
+    const t = f.tracking ?? '-0.015em'
+    out.push(`[data-heading-font="${f.id}"][data-mode]{--kit-display:${faceStack(f.id)};--kit-heading-tracking:${t};--kit-hero:${faceStack(f.id)};--kit-hero-weight:${f.kind === 'sans' ? 700 : 560};--kit-hero-tracking:${t}}`)
+  }
+  for (const f of READ_FACES) out.push(`[data-read-font="${f.id}"][data-mode]{--kit-read:${faceStack(f.id)}}`)
   for (const f of CODE_FONTS) {
     out.push(fallbackFace(`${f.label} Fallback`, f.fallback))
     out.push(`[data-code-font="${f.id}"]{--font-mono:${codeFontStack(f)};--code-ligatures:${f.ligatures ? 'normal' : 'none'}}`)

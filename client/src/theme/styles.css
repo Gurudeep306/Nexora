@@ -403,10 +403,15 @@
   width: 14px;
   height: 2px;
   border-radius: 1px;
-  bottom: -6px;
   background: var(--ed-clay) !important;
   box-shadow: none !important;
 }
+[data-kit='journal'] .dock-dot[data-side='bottom'] { bottom: -6px; }
+[data-kit='journal'] .dock-dot:not([data-side='bottom']) { width: 2px; height: 14px; }
+[data-kit='journal'] .dock-dot[data-side='left'] { left: -6px; }
+[data-kit='journal'] .dock-dot[data-side='right'] { right: -6px; }
+/* An ink Dock: the current page's tick in the page colour. */
+[data-kit='journal'] .dock[data-surface='ink'] .dock-dot { background: var(--color-bg-app) !important; }
 /* Names float up as an ink slip. */
 [data-kit='journal'] .dock-label {
   background-color: var(--color-text-primary);

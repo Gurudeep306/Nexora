@@ -1277,16 +1277,59 @@ input[type='search']::-webkit-search-results-decoration {
 /* Bare glyphs fill less of a big Dock tile than they do inline. */
 .dock-tile.icon-badge[data-icon-container='none'],
 [data-icon-container='none'] .dock-tile.icon-badge { --ib-glyph: 58%; }
-/* The name floats up into view on hover or keyboard focus. */
+/* The name floats out from the Dock on hover or keyboard focus: up from a
+   bottom Dock, sideways from a side one. */
 .dock-label {
   opacity: 0;
-  translate: -50% 4px;
   transition: opacity 160ms var(--ease-smooth), translate 200ms var(--ease-smooth);
 }
+.dock-label[data-side='bottom'] { bottom: 100%; left: 50%; margin-bottom: 0.75rem; translate: -50% 4px; }
+.dock-label[data-side='left'] { left: 100%; top: 50%; margin-left: 0.875rem; translate: -4px -50%; }
+.dock-label[data-side='right'] { right: 100%; top: 50%; margin-right: 0.875rem; translate: 4px -50%; }
 .group:hover > div > .dock-label,
 .group:focus-visible > div > .dock-label {
   opacity: 1;
-  translate: -50% 0;
+}
+.group:hover > div > .dock-label[data-side='bottom'],
+.group:focus-visible > div > .dock-label[data-side='bottom'] { translate: -50% 0; }
+.group:hover > div > .dock-label:not([data-side='bottom']),
+.group:focus-visible > div > .dock-label:not([data-side='bottom']) { translate: 0 -50%; }
+/* The current page's mark sits on the Dock's edge side. */
+.dock-dot[data-side='bottom'] { bottom: -7px; left: 50%; translate: -50% 0; }
+.dock-dot[data-side='left'] { left: -7px; top: 50%; translate: 0 -50%; }
+.dock-dot[data-side='right'] { right: -7px; top: 50%; translate: 0 -50%; }
+/* Names always shown: a small caption under each icon. */
+.dock-caption {
+  font-size: 10.5px;
+  line-height: 1.1;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+.group[aria-current='page'] .dock-caption { color: var(--color-text-primary); }
+/* Bar styles: paper (the theme's surface), tinted with the accent, or ink. */
+.dock[data-surface='tinted'] .dock-glass {
+  background-color: color-mix(in oklab, var(--color-accent-brand) 12%, var(--color-bg-surface)) !important;
+  border-color: color-mix(in oklab, var(--color-accent-brand) 30%, var(--color-border)) !important;
+}
+.dock[data-surface='ink'] .dock-glass {
+  background-color: var(--color-text-primary) !important;
+  border-color: transparent !important;
+}
+.dock[data-surface='ink'] .dock-badge--mono.icon-badge.icon-badge { --ib-c: color-mix(in oklab, var(--color-bg-app) 78%, var(--color-text-primary)); }
+.dock[data-surface='ink'] .dock-badge--mono.icon-badge.icon-badge[data-tone='accent'] { --ib-c: var(--color-bg-app); }
+.dock[data-surface='ink'] .dock-plate { background-color: transparent !important; box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-bg-app) 22%, transparent) !important; }
+.dock[data-surface='ink'] .group:hover .dock-plate,
+.dock[data-surface='ink'] .group[aria-current='page'] .dock-plate { background-color: color-mix(in oklab, var(--color-bg-app) 14%, transparent) !important; }
+.dock[data-surface='ink'] .dock-caption { color: color-mix(in oklab, var(--color-bg-app) 80%, var(--color-text-primary)); }
+.dock[data-surface='ink'] .group[aria-current='page'] .dock-caption { color: var(--color-bg-app); }
+.dock[data-surface='ink'] .dock-divider { background-color: color-mix(in oklab, var(--color-bg-app) 30%, transparent) !important; }
+.dock[data-surface='ink'] [aria-label='More destinations'] { color: var(--color-bg-app); }
+.dock[data-surface='ink'] [aria-label='More destinations']:hover { background-color: color-mix(in oklab, var(--color-bg-app) 14%, transparent); }
+/* The page leaves room on the Dock's side (wide screens only; Deck.tsx sets
+   --dock-room from the Dock's size). */
+@media (min-width: 768px) {
+  html[data-dock='left'] #main-content { padding-left: calc(var(--dock-room, 80px) + 0.75rem); padding-bottom: 3rem; }
+  html[data-dock='right'] #main-content { padding-right: calc(var(--dock-room, 80px) + 0.75rem); padding-bottom: 3rem; }
 }
 
 /* ── NexoraGuru mark (components/brand/Logo.tsx) ──
