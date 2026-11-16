@@ -148,3 +148,23 @@ test('the Kotlin stdin shim escapes dollar signs so templates do not expand', ()
   const out = injectKotlinStdin('fun main(){}', 'a$b\n');
   assert.ok(out.includes('${"$"}'), 'a raw $ would be read as a string template');
 });
+
+test('a Wandbox container failure is a transient sandbox fault, not a compile error', () => {
+  const r = classifyWandbox({
+    compiler_error: 'Error: OCI runtime error: crun: clone: Resource temporarily unavailable',
+    program_output: '', program_error: '', program_message: '', status: '1',
+  }, 12);
+  assert.equal(r._transient, true);
+  assert.equal(r.exitCode, -1, 'marked as our failure, so it is never cached');
+  assert.notEqual(r.verdict, 'CE');
+  assert.match(r.stderr, /not a problem with your code/);
+});
+
+test('a real compile error stays a compile error', () => {
+  const r = classifyWandbox({
+    compiler_error: "prog.cc:1:1: error: expected ';' before '}' token",
+    program_output: '', program_error: '', program_message: '', status: '1',
+  }, 12);
+  assert.equal(r.verdict, 'CE');
+  assert.ok(!r._transient);
+});

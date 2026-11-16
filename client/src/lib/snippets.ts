@@ -238,9 +238,49 @@ const rust: Snippet[] = [
   },
 ]
 
+/* C has no std::, templates or cin: its own templates. */
+const c: Snippet[] = [
+  {
+    id: 'c-main',
+    label: 'main',
+    detail: 'A C program that reads n numbers',
+    body: '#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nint main(void) {\n    int n;\n    if (scanf("%d", &n) != 1) return 0;\n    $0\n    return 0;\n}',
+  },
+  {
+    id: 'c-fori',
+    label: 'fori',
+    detail: 'for loop over 0..n-1',
+    body: 'for (int ${1:i} = 0; $1 < ${2:n}; $1++) {\n    $0\n}',
+  },
+  {
+    id: 'c-readarr',
+    label: 'readarr',
+    detail: 'Read n long longs into an array',
+    body: 'long long *${1:a} = malloc(sizeof(long long) * ${2:n});\nfor (int i = 0; i < $2; i++) scanf("%lld", &$1[i]);\n$0',
+  },
+  {
+    id: 'c-qsortcmp',
+    label: 'qsortcmp',
+    detail: 'qsort comparator for long long',
+    body: 'int cmp(const void *x, const void *y) {\n    long long a = *(const long long *)x, b = *(const long long *)y;\n    return (a > b) - (a < b);\n}\n$0',
+  },
+  {
+    id: 'c-gcd',
+    label: 'gcd',
+    detail: 'Greatest common divisor',
+    body: 'long long gcd(long long a, long long b) { return b ? gcd(b, a % b) : a; }\n$0',
+  },
+  {
+    id: 'c-modpow',
+    label: 'modpow',
+    detail: 'Fast modular power',
+    body: 'long long modpow(long long b, long long e, long long m) {\n    long long r = 1 % m; b %= m;\n    while (e) { if (e & 1) r = r * b % m; b = b * b % m; e >>= 1; }\n    return r;\n}\n$0',
+  },
+]
+
 const SNIPPETS: Record<string, Snippet[]> = {
   cpp,
-  c: cpp,
+  c,
   python: python,
   java,
   javascript: js,

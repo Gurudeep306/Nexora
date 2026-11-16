@@ -29,6 +29,7 @@ import { agentTask, isAiUnavailable } from '@/lib/agent'
 import { cn } from '@/lib/utils'
 import { TEMPLATES, LANG_EXT } from '@/lib/templates'
 import { snippetsFor } from '@/lib/snippets'
+import { intelFor, signatureFor, type IntelEntry } from '@/lib/langIntel'
 import type { Diag } from '@/lib/diagnostics'
 import type { ReplayEvent } from '@/components/submissions/replay'
 import { Select } from '@/components/ui'
@@ -355,6 +356,111 @@ function registerSnippets(monaco: Parameters<BeforeMount>[0], getLang: () => str
   })
 }
 
+/*
+ * The language's own knowledge (lib/langIntel.ts): keywords, standard-library
+ * functions with signatures, and methods after "." / "->" / "::". Functions
+ * insert with their parentheses and the cursor inside.
+ */
+function registerLangIntel(monaco: Parameters<BeforeMount>[0], getLang: () => string) {
+  return monaco.languages.registerCompletionItemProvider('*', {
+    triggerCharacters: ['.', '>', ':'],
+    provideCompletionItems: (
+      model: { getWordUntilPosition(p: EditorPosition): { word: string }; getLineContent(n: number): string },
+      position: EditorPosition,
+    ) => {
+      const lang = getLang()
+      // JavaScript and TypeScript already have Monaco's full IntelliSense.
+      if (lang === 'javascript' || lang === 'typescript') return { suggestions: [] }
+      const intel = intelFor(lang)
+      if (!intel) return { suggestions: [] }
+      const word = model.getWordUntilPosition(position)
+      const before = model.getLineContent(position.lineNumber).slice(0, position.column - 1 - word.word.length)
+      const range = {
+        startLineNumber: position.lineNumber,
+        startColumn: position.column - word.word.length,
+        endLineNumber: position.lineNumber,
+        endColumn: position.column,
+      }
+      const K = monaco.languages.CompletionItemKind
+      const asSnippet = monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+      const call = (e: IntelEntry, label: string) => {
+        const takesArgs = /\(/.test(e.signature)
+        const empty = /\(\s*\)/.test(e.signature)
+        return takesArgs && !label.endsWith('!') ? `${label}(${empty ? '' : '$1'})$0` : label
+      }
+      // After "x." (or "->" / "::" in C++): methods.
+      if (/(\.|->|::)$/.test(before)) {
+        return {
+          suggestions: intel.members.map((e) => ({
+            label: e.name,
+            kind: /\(/.test(e.signature) ? K.Method : K.Field,
+            detail: e.signature,
+            documentation: e.doc,
+            insertText: call(e, e.name),
+            insertTextRules: asSnippet,
+            range,
+            sortText: 'b' + e.name,
+          })),
+        }
+      }
+      const globals = intel.globals.map((e) => {
+        const label = e.name.split('.').pop() === e.name ? e.name : e.name
+        return {
+          label,
+          kind: /^[A-Z]/.test(label) || /<|new /.test(e.signature) ? K.Class : K.Function,
+          detail: e.signature,
+          documentation: e.doc,
+          insertText: call(e, label),
+          insertTextRules: asSnippet,
+          range,
+          sortText: 'c' + label,
+        }
+      })
+      const keywords = intel.keywords.map((k) => ({ label: k, kind: K.Keyword, insertText: k, range, sortText: 'd' + k }))
+      return { suggestions: [...globals, ...keywords] }
+    },
+  })
+}
+
+/* Parameter hints: the signature of the call the cursor is inside. */
+function registerSignatureHelp(monaco: Parameters<BeforeMount>[0], getLang: () => string) {
+  return monaco.languages.registerSignatureHelpProvider('*', {
+    signatureHelpTriggerCharacters: ['(', ','],
+    signatureHelpRetriggerCharacters: [','],
+    provideSignatureHelp: (model: EditorModel & { getValueInRange(r: object): string }, position: EditorPosition) => {
+      const text = model.getValueInRange({ startLineNumber: Math.max(1, position.lineNumber - 3), startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column })
+      // Walk back to the unclosed "(" and count commas at that depth.
+      let depth = 0
+      let commas = 0
+      let i = text.length - 1
+      for (; i >= 0; i--) {
+        const ch = text[i]
+        if (ch === ')' || ch === ']' || ch === '}') depth++
+        else if (ch === '(' || ch === '[' || ch === '{') {
+          if (depth === 0) break
+          depth--
+        } else if (ch === ',' && depth === 0) commas++
+      }
+      if (i < 0 || text[i] !== '(') return null
+      const callee = /([A-Za-z_][\w.:]*(?:->\w+)?!?)\s*$/.exec(text.slice(0, i))?.[1]
+      if (!callee) return null
+      const lang = getLang()
+      if (lang === 'javascript' || lang === 'typescript') return null
+      const e = signatureFor(lang, callee)
+      if (!e) return null
+      const params = (/\(([^)]*)\)/.exec(e.signature)?.[1] ?? '').split(',').map((p) => p.trim()).filter(Boolean)
+      return {
+        value: {
+          signatures: [{ label: e.signature, documentation: e.doc, parameters: params.map((p) => ({ label: p })) }],
+          activeSignature: 0,
+          activeParameter: Math.min(commas, Math.max(0, params.length - 1)),
+        },
+        dispose: () => {},
+      }
+    },
+  })
+}
+
 export function CodeEditor({
   value,
   language,
@@ -676,6 +782,8 @@ export function CodeEditor({
     }
     disposers.current.push(registerWordCompletions(monaco))
     disposers.current.push(registerSnippets(monaco, () => langRef.current))
+    disposers.current.push(registerLangIntel(monaco, () => langRef.current))
+    disposers.current.push(registerSignatureHelp(monaco, () => langRef.current))
 
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => runRef.current())
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => submitRef.current())
