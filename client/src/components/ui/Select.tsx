@@ -144,7 +144,7 @@ export function Select({
           sideOffset={6}
           collisionPadding={8}
           className={cn(
-            'pop-surface z-[1100] max-h-[min(22rem,var(--radix-select-content-available-height)] min-w-[var(--radix-select-trigger-width)] overflow-hidden p-1.5',
+            'pop-surface z-[1100] max-h-[min(22rem,var(--radix-select-content-available-height))] min-w-[var(--radix-select-trigger-width)] overflow-hidden p-1.5',
             'origin-[var(--radix-select-content-transform-origin)]',
             'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:duration-200 data-[state=open]:ease-out',
             contentClassName,
