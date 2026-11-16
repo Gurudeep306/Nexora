@@ -35,6 +35,11 @@ const PROGRAMS = {
   crystal: 'd=STDIN.gets_to_end.split.map(&.to_i64)\nputs d[1..].sum',
   groovy: 'def d=System.in.text.split().collect{it as long}\nprintln d.drop(1).sum()',
   commonlisp: '(let ((n (read))) (format t "~a~%" (loop repeat n sum (read))))',
+  powershell: '$d = ([Console]::In.ReadToEnd()).Split([char[]]" `n`r`t", [StringSplitOptions]::RemoveEmptyEntries)\n$s = 0\nfor ($i = 1; $i -lt $d.Length; $i++) { $s += [long]$d[$i] }\nWrite-Output $s',
+  clojure: '(let [d (map #(Long/parseLong %) (re-seq #"-?\\d+" (slurp *in*)))] (println (reduce + (rest d))))',
+  scheme: '(define n (read))\n(let loop ((i 0) (s 0)) (if (= i n) (begin (display s) (newline)) (loop (+ i 1) (+ s (read)))))',
+  elixir: 'IO.read(:stdio, :eof) |> String.split() |> Enum.map(&String.to_integer/1) |> tl() |> Enum.sum() |> IO.puts()',
+  tcl: 'set d [read stdin]\nset s 0\nforeach x [lrange $d 1 end] { incr s $x }\nputs $s',
 };
 
 const CONCURRENCY = Number(process.env.SELFTEST_CONCURRENCY) || 8;

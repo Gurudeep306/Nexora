@@ -228,12 +228,26 @@ async function runWandbox(code, input, lang) {
  * What actually distinguishes a build failure is that the compiler reported an
  * *error* and the program produced nothing at all.
  */
+/** Messages from a sandbox's own container runtime, never from a user's program. */
+const SANDBOX_FAULT = /OCI runtime error|\bcrun: |\brunc\b.*(?:create|init)|Resource temporarily unavailable|fork: retry|cannot fork/i;
+
 function classifyWandbox(r, timeMs) {
   const compilerErr = (r.compiler_error || '').trim();
   const stdout = (r.program_output || '').trimEnd();
   const stderr = (r.program_error || '').trim();
   const programMsg = (r.program_message || '').trim();
   const status = parseInt(r.status, 10) || 0;
+
+  // Wandbox's own machine failing to start the container (it is overloaded)
+  // is not the user's compile error: mark it transient so it is retried and
+  // never cached, and say plainly what happened if it keeps failing.
+  if (SANDBOX_FAULT.test(`${compilerErr}\n${stderr}\n${programMsg}`) && !stdout) {
+    return {
+      stdout: '',
+      stderr: 'The Wandbox sandbox is overloaded right now. This is not a problem with your code — run it again in a moment.',
+      exitCode: -1, timeMs, verdict: 'RE', engine: 'wandbox', _transient: true,
+    };
+  }
 
   const producedNothing = !stdout && !stderr && !programMsg;
   const looksLikeError = /\b(error|fatal|panic)\b/i.test(compilerErr);
@@ -402,7 +416,9 @@ function clearCache() { cache.clear(); inflight.clear(); }
 
 /* ────────────────────────── public entry point ────────────────────────── */
 
-const RETRY_DELAYS = [400, 1200];
+// Transient failures retry with backoff; the last wait gives an overloaded
+// sandbox time to recover.
+const RETRY_DELAYS = [400, 1500, 4000];
 
 /**
  * Process-wide cap on remote executions. judge.js bounds the fan-out of one
