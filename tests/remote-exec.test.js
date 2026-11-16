@@ -104,6 +104,16 @@ test('Kotlin: stdout and stderr streams are separated', () => {
   assert.equal(r.stderr, 'err');
 });
 
+test('Kotlin: stderr written between stdout lines is kept whole, in order', () => {
+  // The playground opens a new errStream block after each stretch of stdout.
+  const r = classifyKotlin({
+    errors: {}, exception: null,
+    text: '<errStream>a\n</errStream><outStream>1\n</outStream><errStream>b\n</errStream><outStream>2\n</outStream><errStream>c\n</errStream>',
+  }, 10);
+  assert.equal(r.stdout, '1\n2');
+  assert.equal(r.stderr, 'a\nb\nc');
+});
+
 /* ────────────────────────── Compiler Explorer ────────────────────────── */
 
 test('Compiler Explorer: a successful run reports the program time, not the round trip', () => {
