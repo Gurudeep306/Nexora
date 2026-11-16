@@ -6,6 +6,7 @@ import { api, ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { Chip, Failed, Panel, Skeleton, Toggle } from './kit'
 import { ago } from './format'
+import { CompilersPanels } from './CompilersPanels'
 
 /*
   Admin → Code runners. Our own Piston servers: each one is tried first, in
@@ -228,6 +229,8 @@ export function RunnersSection() {
           </ol>
         )}
       </Panel>
+
+      <CompilersPanels />
 
       <Panel title="Set up a runner" description="Any Ubuntu 24.04 machine with ports 80 and 443 open. Takes 10–30 minutes." icon="code">
         <ol className={cn('m-0 list-decimal space-y-3 pl-5 text-[13.5px] text-text-secondary')}>
