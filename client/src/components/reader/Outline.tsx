@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react'
+import { PanelRightClose } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { OutlineItem } from './outline'
 
@@ -6,7 +7,7 @@ import type { OutlineItem } from './outline'
  * "On this page": the lesson's headings, with a clay tick that slides to the
  * section being read (the scroll spy's `active` id).
  */
-export function Outline({ items, active }: { items: OutlineItem[]; active: string | null }) {
+export function Outline({ items, active, onFold }: { items: OutlineItem[]; active: string | null; onFold?: () => void }) {
   const list = useRef<HTMLOListElement>(null)
   const [tick, setTick] = useState<{ top: number; height: number } | null>(null)
 
@@ -20,7 +21,14 @@ export function Outline({ items, active }: { items: OutlineItem[]; active: strin
   if (items.length < 2) return null
   return (
     <>
-      <p className="nr-toc-head">On this page</p>
+      <div className="nr-toc-top">
+        <p className="nr-toc-head">On this page</p>
+        {onFold && (
+          <button type="button" className="nr-icon" onClick={onFold} aria-label="Fold On this page" title="Fold On this page  ]">
+            <PanelRightClose className="size-4" aria-hidden="true" />
+          </button>
+        )}
+      </div>
       <div className="nr-toc-wrap">
         {tick && <span className="nr-toc-tick" aria-hidden="true" style={{ transform: `translateY(${tick.top}px)`, height: tick.height }} />}
         <ol ref={list} className="nr-toc-list">

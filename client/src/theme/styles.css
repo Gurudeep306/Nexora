@@ -470,7 +470,35 @@
   --read-font: var(--kit-read);
   --read-size: var(--kit-read-size, 1.2rem);
   --read-leading: 1.6;
-  --nr-col: 41rem;
+  /* The column grows with the window, and again when a side panel folds;
+     figures, tables and code break out to --nr-wide. */
+  --nr-col: clamp(36rem, 48vw, 48rem);
+  --nr-wide: min(100%, 68rem);
+}
+[data-kit='journal'] .nr-layout:is(.is-tree-hidden, .is-toc-hidden) .nr-main {
+  --nr-col: clamp(40rem, 54vw, 56rem);
+  --nr-wide: min(100%, 78rem);
+}
+[data-kit='journal'] .nr-layout.is-tree-hidden.is-toc-hidden .nr-main {
+  --nr-col: clamp(44rem, 60vw, 62rem);
+  --nr-wide: 100%;
+}
+/* One column for text, headings, lists and the boxed blocks, so their left
+   edges line up; figures, animations, tables and code break out wider. */
+[data-kit='journal'] .nr-main {
+  --read-measure: var(--nr-col);
+}
+[data-kit='journal'] .nr-main :is(.notes-prose, .nr-prose) > *,
+[data-kit='journal'] .nr-main.nr-main :is(.notes-prose, .nr-prose) > :is(p, ul, ol, blockquote, h2, h3, h4, .notes-h, .nm-display, .nb:not(.nb-viz), .notes-table, .table-wrap) {
+  max-width: var(--nr-col);
+  margin-inline: auto;
+}
+[data-kit='journal'] .nr-main.nr-main .notes-prose {
+  max-width: none;
+}
+[data-kit='journal'] .nr-main .notes-prose > :is(figure:not(.nb-table), .nr-figure, .nb-viz, .nxv-slot, pre, .notes-pre, .np, .nr-scrolly),
+[data-kit='journal'] .nr-main .nr-prose > :is(figure, .nr-figure, .nr-scrolly, .nr-table, .nr-check, .card, pre, .table-wrap) {
+  max-width: var(--nr-wide);
 }
 @media (max-width: 639px) {
   [data-kit='journal'] .nr-main {

@@ -186,9 +186,14 @@ changed.
   gradients. Hive keeps its old look (`hiveLook` in `theme/look.ts`). See
   `docs/ui/field-journal.md`. Every animation there is a real lesson (binary search, round-robin,
   BFS) or shows real numbers. Copy stays true to the site: no invented stats.
-- **Notes and lessons** share one reader (`styles/reader.css`): lessons rail that
-  collapses to a mini strip, a full-width reading column, a live "On this page"
-  outline. GATE notes and DSA lessons both use it.
+- **Notes and lessons** share one reader (`styles/reader.css`): a lesson list on
+  the left and "On this page" on the right, each folding to a slim strip (the
+  shared `components/reader/panels.ts`, keys `[` and `]`), and one reading
+  column in between that grows with the window and when a panel folds
+  (`--nr-col` in `theme/styles.css`; figures, animations and code break out
+  to `--nr-wide`). Reading pages use the whole window (`isReaderRoute`), with
+  no GATE frame and no Dock. GATE notes and DSA lessons both use it, and a
+  skill with written notes opens them here (the skill card is `?card=1`).
 - **Search** uses one field style, the "ledger line" (`styles/search.css`,
   `SearchInput`, `SearchCombobox`; `variant="bar"` is the top bar's pill): a
   hairline, an italic serif hint, an ink line drawn on focus. Keep text around

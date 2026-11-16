@@ -22,6 +22,8 @@ import { EmptyState, LoadingBlock } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { GateShell } from '@/gate/shell/GateShell'
 import { useNexusStructure } from '@/lib/lessonSearch'
+import { useReaderPanels } from '@/components/reader/panels'
+import { PanelLeftClose, PanelRightOpen } from 'lucide-react'
 import { DIFFICULTY_LABEL, NOTES_ROUTES, fmtMinutes, useLesson, useSubjectTree } from '@/gate/notes/api'
 import { flushScroll, progressOf, reportScroll, setBookmarked, setCompleted, useNotesProgress } from '@/gate/notes/progress'
 import { useNotesPrefs } from '@/gate/notes/prefs'
@@ -157,6 +159,7 @@ export default function NotesLessonPage() {
 function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSummary[] | null }) {
   const { lesson, subject, chapter, prev, next } = data
   const progressMap = useNotesProgress(subject.id)
+  const panels = useReaderPanels()
   const p = progressOf(progressMap, subject.id, lesson.id)
   // The subject's home on Learn, and the skill this lesson teaches (from the
   // Nexus map this browser already holds; the tree when it has none yet).
@@ -250,24 +253,24 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
   )
 
   return (
-    <GateShell title={lesson.title} bare>
+    <div className="nr-page">
       <NotesRoot color={subject.color}>
         <div className="notes-progress" aria-hidden="true">
           <span style={{ transform: `scaleX(${pct / 100})` }} />
         </div>
-        <div className={cn('nr-layout', prefs.treeHidden && 'is-tree-hidden')}>
+        <div className={cn('nr-layout', panels.left && 'is-tree-hidden', panels.right && 'is-toc-hidden')}>
           {/* Left: the subject's lessons */}
           <nav className="nr-tree" aria-label={`Lessons in ${subject.title}`}>
-            {prefs.treeHidden ? (
-              <MiniRail subject={subject.id} chapters={chapters} current={lesson.id} progress={progressMap} onExpand={() => setPrefs({ treeHidden: false })} />
+            {panels.left ? (
+              <MiniRail subject={subject.id} chapters={chapters} current={lesson.id} progress={progressMap} onExpand={panels.toggleLeft} />
             ) : (
               <>
                 <div className="nr-tree-head">
                   <Link to={NOTES_ROUTES.subject(subject.id)} className="nr-tree-subject">
                     {subject.title}
                   </Link>
-                  <button type="button" className="nr-icon" onClick={() => setPrefs({ treeHidden: true })} aria-label="Collapse the lesson list" title="Collapse">
-                    <Icon name="list" className="size-4" aria-hidden="true" />
+                  <button type="button" className="nr-icon" onClick={panels.toggleLeft} aria-label="Fold the lesson list" title="Fold the lesson list  [">
+                    <PanelLeftClose className="size-4" aria-hidden="true" />
                   </button>
                 </div>
                 {chapters ? <LessonTree subject={subject.id} chapters={chapters} current={lesson.id} progress={progressMap} /> : <LoadingBlock rows={3} />}
@@ -374,9 +377,21 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
             />
           </div>
 
-          {/* Right: on this page */}
-          <aside className="nr-toc" aria-label="On this page">
-            <Outline items={outlineItems} active={active} />
+          {/* Right: on this page (folds to a strip with the reading meter) */}
+          <aside className={cn('nr-toc', panels.right && 'is-folded')} aria-label="On this page">
+            {panels.right ? (
+              <div className="nr-toc-mini">
+                <button type="button" className="nr-icon" onClick={panels.toggleRight} aria-label="Show On this page" title="Show On this page  ]">
+                  <PanelRightOpen className="size-4" aria-hidden="true" />
+                </button>
+                <span className="nr-toc-meter" aria-label={`${Math.round(pct)}% read`} role="img">
+                  <span style={{ transform: `scaleY(${pct / 100})` }} />
+                </span>
+                <span className="nr-toc-meter-no">{Math.round(pct)}%</span>
+              </div>
+            ) : (
+            <>
+            <Outline items={outlineItems} active={active} onFold={panels.toggleRight} />
             <div className="nr-toc-progress">
               <span className="nr-toc-bar" aria-hidden="true">
                 <span style={{ transform: `scaleX(${pct / 100})` }} />
@@ -393,10 +408,12 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
                 <Icon name="gate" className="size-3.5" aria-hidden="true" /> {pyqCount} past questions
               </a>
             )}
+            </>
+            )}
           </aside>
         </div>
       </NotesRoot>
-    </GateShell>
+    </div>
   )
 }
 

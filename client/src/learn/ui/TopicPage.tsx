@@ -1,18 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { motion, useScroll, useSpring } from 'motion/react'
-import { CheckCircle2, ChevronDown, ListChecks, Network, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { CheckCircle2, ChevronDown, ListChecks, Network, PanelLeftClose, PanelLeftOpen, PanelRightOpen } from 'lucide-react'
 import { ErrorState, LoadingBlock } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useAgentPageContext } from '@/context/AgentContext'
 import { isDone, mark, pageKey, useProgress } from '../progress'
 import { LessonBlock, ScrollyFigure } from './Blocks'
+import { useReaderPanels } from '@/components/reader/panels'
 import { Outline } from '@/components/reader/Outline'
 import { EndOfLesson } from '@/components/reader/EndOfLesson'
 import { DSA_TOPICS } from '../content/dsa/syllabus'
 import type { Block } from '../types'
 import { useTopic } from './useTopic'
-import { readRailHidden, useDomOutline, useScrollSpy, writeRailHidden } from '@/components/reader/outline'
+import { useDomOutline, useScrollSpy } from '@/components/reader/outline'
 
 /**
  * A topic, read page by page: a sidebar of pages (with what you have read),
@@ -25,11 +26,10 @@ export default function TopicPage() {
   const { items } = useProgress()
   const end = useRef<HTMLDivElement>(null)
   const article = useRef<HTMLElement>(null)
-  const [mini, setMiniState] = useState(readRailHidden)
-  const setMini = (v: boolean) => {
-    setMiniState(v)
-    writeRailHidden(v)
-  }
+  // The side panels fold the same way in every reader (components/reader/panels).
+  const panels = useReaderPanels()
+  const mini = panels.left
+  const setMini = (v: boolean) => panels.setPanels({ left: v })
   const [navFor, setNavFor] = useState<string | null>(null)
   const navOpen = navFor != null && navFor === (pageId ?? '')
   const { scrollYProgress } = useScroll()
@@ -81,7 +81,7 @@ export default function TopicPage() {
   const pct = Math.round((read / topic.pages.length) * 100)
 
   return (
-    <div className={cn('nr-layout', mini && 'is-tree-hidden')} style={{ ['--nr-top' as string]: '5rem' }}>
+    <div className={cn('nr-layout', mini && 'is-tree-hidden', panels.right && 'is-toc-hidden')} style={{ ['--nr-top' as string]: '5rem' }}>
       <motion.div className="learn-readbar fixed inset-x-0 top-0 z-[60] h-[3px] origin-left" style={{ scaleX: readBar }} aria-hidden="true" />
 
       {/* Left: the topic's pages (or, collapsed, a dot per page) */}
@@ -116,7 +116,7 @@ export default function TopicPage() {
               <Link to="/learn/dsa" className="nr-tree-subject">
                 {topic.title}
               </Link>
-              <button type="button" className="nr-icon" onClick={() => setMini(true)} aria-label="Collapse the page list" title="Collapse">
+              <button type="button" className="nr-icon" onClick={() => setMini(true)} aria-label="Fold the page list" title="Fold the page list  [">
                 <PanelLeftClose className="size-4" aria-hidden="true" />
               </button>
             </div>
@@ -247,8 +247,20 @@ export default function TopicPage() {
       </div>
 
       {/* Right: on this page */}
-      <aside className="nr-toc" aria-label="On this page">
-        <Outline items={outline} active={active} />
+      <aside className={cn('nr-toc', panels.right && 'is-folded')} aria-label="On this page">
+        {panels.right ? (
+          <div className="nr-toc-mini">
+            <button type="button" className="nr-icon" onClick={panels.toggleRight} aria-label="Show On this page" title="Show On this page  ]">
+              <PanelRightOpen className="size-4" aria-hidden="true" />
+            </button>
+            <span className="nr-toc-meter" role="img" aria-label={`${read} of ${topic.pages.length} pages read`}>
+              <span style={{ transform: `scaleY(${pct / 100})` }} />
+            </span>
+            <span className="nr-toc-meter-no">{pct}%</span>
+          </div>
+        ) : (
+        <>
+        <Outline items={outline} active={active} onFold={panels.toggleRight} />
         <div className="nr-toc-progress">
           <span className="nr-toc-bar" aria-hidden="true">
             <span style={{ transform: `scaleX(${pct / 100})` }} />
@@ -260,6 +272,8 @@ export default function TopicPage() {
         <Link to={`/learn/dsa/${topic.id}/practice`} className="nr-toc-link">
           <ListChecks className="size-3.5" aria-hidden="true" /> Question bank ({nonCode + code})
         </Link>
+        </>
+        )}
       </aside>
     </div>
   )
