@@ -4,6 +4,7 @@ import { useTheme } from '@/context/ThemeContext'
 import './loading.css'
 import { Skeleton } from './Progress'
 import { IconBadge, type IconName } from '@/components/icon/Icon'
+import { isJournalKit } from '@/theme/styles'
 
 export function EmptyState({
   icon,
@@ -40,7 +41,7 @@ const ROW_WIDTHS = [62, 48, 71, 39, 56, 66, 44, 58]
 
 export function LoadingBlock({ rows = 4, className }: { rows?: number; className?: string }) {
   // The journal style writes ruled lines instead of grey blocks.
-  if (useTheme().shown.style === 'journal')
+  if (isJournalKit(useTheme().shown.style))
     return (
       <div className={cn('lb-rows', className)} role="status" aria-label="Loading">
         {Array.from({ length: rows }).map((_, i) => (

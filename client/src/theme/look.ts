@@ -42,6 +42,8 @@ export interface Look {
 
 export interface LookTables {
   styles: string[]
+  /** style id → page kit (styles without one are absent). */
+  kits: Record<string, string>
   patterns: string[]
   themes: string[]
   accents: string[]
@@ -90,7 +92,7 @@ export const DEFAULT_LOOK: Look = {
  * Every other style already looks the same in Hive as before, so it stays.
  */
 export function hiveLook(look: Look): Look {
-  if (look.style !== 'journal') return look
+  if (!LOOK_TABLES.kits[look.style]) return look
   return { ...look, ...(LOOK_TABLES.v4.from as Partial<Look>) }
 }
 
@@ -101,6 +103,7 @@ export function isHivePath(pathname: string): boolean {
 
 export const LOOK_TABLES: LookTables = {
   styles: STYLES.map((s) => s.id),
+  kits: Object.fromEntries(STYLES.filter((s) => s.kit).map((s) => [s.id, s.kit as string])),
   patterns: PATTERNS.map((p) => p.id),
   themes: PALETTES.map((p) => p.id),
   accents: ['theme', ...ACCENTS.map((a) => a.id)],
@@ -240,6 +243,7 @@ export function sanitizeLook(raw: unknown): Look {
 export function lookAttributes(look: Look, mode: 'light' | 'dark'): Record<string, string | undefined> {
   return {
     'data-style': look.style,
+    'data-kit': LOOK_TABLES.kits[look.style],
     'data-pattern': look.pattern,
     'data-palette': look.theme,
     'data-mode': mode,

@@ -89,8 +89,8 @@
     --ed-ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
   /* The house style on its own paper: the exact manilla and clay. */
-  [data-style='journal'][data-palette='parchment'],
-  [data-style='journal'] [data-palette='parchment'] {
+  [data-kit='journal'][data-palette='parchment'],
+  [data-kit='journal'] [data-palette='parchment'] {
     --ed-feature: #f5e3c7;
     --ed-clay: #d97757;
     --ed-clay-deep: #c6613f;
@@ -98,9 +98,9 @@
     --ed-focus: #c6613f;
     --ed-faint: #b0aea5;
   }
-  [data-style='journal'][data-palette='parchment'][data-mode='dark'],
-  [data-style='journal'][data-mode='dark'] [data-palette='parchment'],
-  [data-mode='dark'] [data-style='journal'][data-palette='parchment'] {
+  [data-kit='journal'][data-palette='parchment'][data-mode='dark'],
+  [data-kit='journal'][data-mode='dark'] [data-palette='parchment'],
+  [data-mode='dark'] [data-kit='journal'][data-palette='parchment'] {
     --ed-feature: #2c2822;
     --ed-clay-deep: #e08a6c;
     --ed-focus: #e08a6c;
@@ -176,9 +176,9 @@
   /* Rows separated by hairlines, not boxed. */
   :is(.lp, .ed, [data-style]) .ed-rows > * + * { border-top: 1px solid var(--ed-line); }
   /* Muted text sits on the warm spread: one step darker to keep 4.5:1. */
-  :is(.lp, .ed, [data-style='journal'][data-palette='parchment'], [data-style='journal'] [data-palette='parchment']) :is(.ed-feature, .ed-oat) { --ed-muted: #5c5b55; }
+  :is(.lp, .ed, [data-kit='journal'][data-palette='parchment'], [data-kit='journal'] [data-palette='parchment']) :is(.ed-feature, .ed-oat) { --ed-muted: #5c5b55; }
   [data-mode='dark'] :is(.lp, .ed) :is(.ed-feature, .ed-oat),
-  [data-style='journal'][data-palette='parchment'][data-mode='dark'] :is(.ed-feature, .ed-oat) { --ed-muted: #aaa79e; }
+  [data-kit='journal'][data-palette='parchment'][data-mode='dark'] :is(.ed-feature, .ed-oat) { --ed-muted: #aaa79e; }
 
   /* ── Buttons ──────────────────────────────────────────────────────── */
   :is(.lp, .ed, [data-style]) .ed-btn {

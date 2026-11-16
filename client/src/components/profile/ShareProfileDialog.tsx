@@ -10,10 +10,11 @@ import { ShareCard } from './ShareCard'
 import { paperColours } from './paper'
 import { downloadSvgAsPng, qrTagSvg } from './qrTag'
 import { useTheme } from '@/context/ThemeContext'
+import { isJournalKit } from '@/theme/styles'
 
 /** Share the profile: a share card (image), the link, and a printed-tag QR code with the NexoraGuru mark. */
 export default function ShareProfileDialog({ open, onClose, profile, stats, days }: { open: boolean; onClose: () => void; profile: PublicProfile; stats?: Showcase['stats']; days?: Showcase['heatmap'] }) {
-  const journal = useTheme().shown.style === 'journal'
+  const journal = isJournalKit(useTheme().shown.style)
   const card = useRef<SVGSVGElement>(null)
   // Paper colours and "today" are read once when the dialog opens.
   const [paper] = useState(paperColours)

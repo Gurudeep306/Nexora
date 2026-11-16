@@ -47,7 +47,7 @@
         var look = T.defaults;
         try { if (sanitize) look = sanitize(raw, T); } catch (e) {}
         /* Hive keeps its pre-journal look (theme/look.ts hiveLook). */
-        if (look.style === 'journal' && T.v4 && /^\/hive(\/|$)/.test(location.pathname)) {
+        if (T.kits && T.kits[look.style] && T.v4 && /^\/hive(\/|$)/.test(location.pathname)) {
           var h = {};
           for (var k in look) h[k] = look[k];
           for (var j in T.v4.from) h[j] = T.v4.from[j];
@@ -60,6 +60,7 @@
         var mode = modes[want === 'dark' ? 0 : 1] ? want : modes[0] ? 'dark' : 'light';
 
         d.setAttribute('data-style', look.style);
+        if (T.kits && T.kits[look.style]) d.setAttribute('data-kit', T.kits[look.style]); else d.removeAttribute('data-kit');
         d.setAttribute('data-pattern', look.pattern);
         d.setAttribute('data-palette', look.theme);
         d.setAttribute('data-mode', mode);

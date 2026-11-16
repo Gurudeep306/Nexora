@@ -16,6 +16,7 @@ import { AchievementCard } from '@/components/achievements/AchievementCard'
 import { CATEGORY_LABELS, type AchievementRow } from '@/components/achievements/achievementMeta'
 import { SealCard } from '@/components/achievements/SealCard'
 import { useTheme } from '@/context/ThemeContext'
+import { isJournalKit } from '@/theme/styles'
 
 interface StatsResponse {
   ok: boolean
@@ -28,7 +29,7 @@ export default function AchievementsPage() {
   const { username } = useSessionUser()
   const [status, setStatus] = useState<StatusFilter>('all')
   const [category, setCategory] = useState('all')
-  const journal = useTheme().shown.style === 'journal'
+  const journal = isJournalKit(useTheme().shown.style)
 
   const { data, loading, error, refetch } = useApi(
     () => api.get<StatsResponse>('/api/stats', { query: username ? { username } : undefined }),
