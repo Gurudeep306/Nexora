@@ -83,23 +83,23 @@
   </head>
   <body>
     <div id="root">
-      <!-- Shown until the app renders (React replaces it): the mark, and an
-           ink line drawing beneath it, in the page's own light or dark. -->
+      <!-- Shown until the app renders (React replaces it): the mark writing
+           itself, N then G, ending on the clay full stop; light or dark. -->
       <style>
-        .boot { position: fixed; inset: 0; display: grid; place-items: center; background: #f0eee6; }
-        [data-mode='dark'] .boot { background: #1a1917; }
-        .boot-in { display: grid; justify-items: center; gap: 18px; }
-        .boot img { width: 44px; height: 44px; }
-        [data-mode='dark'] .boot img { filter: invert(1); }
-        .boot-line { width: 120px; height: 1px; background: rgba(20, 20, 19, 0.14); overflow: hidden; }
-        [data-mode='dark'] .boot-line { background: rgba(240, 238, 230, 0.16); }
-        .boot-line::after { content: ''; display: block; height: 100%; background: #141413; transform-origin: left; animation: boot-draw 1.4s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
-        [data-mode='dark'] .boot-line::after { background: #f0eee6; }
-        @keyframes boot-draw { 0% { transform: scaleX(0); } 60% { transform: scaleX(1); } 100% { transform: scaleX(1); opacity: 0; } }
-        @media (prefers-reduced-motion: reduce) { .boot-line::after { animation: none; transform: scaleX(1); } }
+        .boot { position: fixed; inset: 0; display: grid; place-items: center; background: #f0eee6; color: #141413; }
+        [data-mode='dark'] .boot { background: #1a1917; color: #f0eee6; }
+        .boot svg { width: 64px; height: 64px; overflow: visible; }
+        .boot path { fill: none; stroke: currentColor; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 2; stroke-dashoffset: 1.05; }
+        .boot .bn { animation: boot-n 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
+        .boot .bg { animation: boot-g 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
+        .boot circle { fill: #d97757; transform-origin: 21.4px 17.4px; animation: boot-dot 2.4s ease infinite; }
+        @keyframes boot-n { 0% { stroke-dashoffset: 1.05; } 25% { stroke-dashoffset: 0; } 80% { stroke-dashoffset: 0; opacity: 1; } 95%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+        @keyframes boot-g { 0%, 30% { stroke-dashoffset: 1.05; } 60% { stroke-dashoffset: 0; } 80% { stroke-dashoffset: 0; opacity: 1; } 95%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+        @keyframes boot-dot { 0%, 58% { transform: scale(0); } 66% { transform: scale(1.35); } 72%, 80% { transform: scale(1); opacity: 1; } 95%, 100% { transform: scale(1); opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) { .boot path, .boot circle { animation: none; stroke-dashoffset: 0; transform: none; } }
       </style>
       <div class="boot" role="status" aria-label="Loading NexoraGuru">
-        <div class="boot-in"><img src="/brand/ngmark-flat.svg" alt="" /><div class="boot-line"></div></div>
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path class="bn" pathLength="1" d="M6.6 25.4V6.9L16.1 25.4"/><path class="bg" pathLength="1" d="M26 11.2C25.2 8.4 22.9 6.9 20.2 6.9H16.1V25.4H21.2C24.2 25.4 26 23.5 26 20.7V17.4H21.4"/><circle cx="21.4" cy="17.4" r="2.1"/></svg>
       </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>
