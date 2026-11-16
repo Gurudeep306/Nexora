@@ -68,8 +68,9 @@ The owner is the founder. They often work from a phone. They want:
 | 5 | Coding: Problems, Solve (statement, Monaco theme, judging, verdicts, editorials), Contests, Workshop, Submissions, Bookmarks | **In progress** on the same branch (PR #114 is phase 4; phase 5 commits follow it). Done: Problems page. See 3.2 |
 | 6 | Nexus: the star chart ("The Atlas") | **Started** on the same branch. See 3.3 |
 | 7 | Profile and the Ledger: Profile, Analytics, Achievements, Social | **Done** on `claude/clever-keller-vgi9vo` (plus new Portrait avatars and the QR tag). See 3.4 |
-| 8 | GATE home and the remaining pages: GATE home and subpages (CBT restyle only), Settings, Appearance, Admin, 404, errors, loading | To do |
-| 9 | Polish sweep and docs | To do |
+| 8 | GATE home and the remaining pages: GATE home and subpages (CBT restyle only), Settings, Appearance, Admin, 404, errors, loading | **Done** on `claude/blissful-hawking-9djkzg`, PR #118. See 3.7 |
+| 9 | Polish sweep and docs | **Done** in PR #118 (sweep of every route, `docs/ui/premium.md`, AGENTS.md Design). See 3.7 |
+| + | Ten themes in place of the old style pack (owner's request) | **Done** in PR #118. See 3.7 |
 
 Start by **finishing phase 4** (section 3.1). Before you begin, fetch the
 branch `claude/clever-babbage-km37j9` and `main`; if `main` has moved on, merge
@@ -373,10 +374,95 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
    section of `AGENTS.md` (the mark section is already updated).
 - Left from earlier: System Design reader restyle, notes dek field.
 
+### 3.7 Phase 8, phase 9 and the ten themes (session on `claude/blissful-hawking-9djkzg`, PR #118)
+
+PRs #114 and #117 and two dependency updates were merged first (owner said
+"merge all").
+
+**Done:**
+- **Admin, "the editor's desk"** (`pages/AdminPage.tsx`, `components/admin/desk.css`,
+  `desk.ts`): masthead sentence from live data (`deskSentence`), Public/Private
+  ink label, table-of-contents rail (roman numerals, ink tick), Overview as a
+  front page (`OverviewSection.tsx`: serif figures, ink sparklines with a clay
+  last point via `Spark`/`TrendChart` in `kit.tsx`, a "site weather" box with
+  the database budget `DbBudget`, "On the wire"). Every section restyled
+  through the shared `nx-*` blocks (journal-kit rules at the end of
+  `desk.css`, which also restyle site banners and the report dialog).
+- **Ten themes** (`theme/styles.ts` `THEMES`, `theme/palettes.ts`,
+  `theme/themes.css`): Field Journal, Sakura, Arcade, Greenhouse,
+  Observatory, Blueprint, Sketchbook, Block Print, Terminal, Clear. Look
+  model v5 (`theme/look.ts`): the theme decides everything except text size,
+  code font and solution handwriting; every old style and palette migrates
+  (`LOOK_TABLES.v5`). The kit is switched on by `data-kit="journal"`
+  (`isJournalKit()` in TS). Appearance rebuilt (`pages/ThemeCentrePage.tsx`,
+  `components/look/ThemeCard.tsx` specimens, `FineTuneSection.tsx`). How to
+  add one: `docs/ui/premium.md`.
+- **GATE, "The Exam Hall"**: shell (`gate/shell/GateShell.tsx`, `GateNav.tsx`),
+  shared blocks (`gate/insights/ui.tsx` + `exam-hall.css`), home rebuilt
+  (`pages/gate/GateHomePage.tsx` + `gate-home.css`), every subpage cleaned
+  (no clay text, no tinted pills), leaderboard serif numerals, CBT restyle only.
+- **Settings as a book** (`pages/SettingsPage.tsx`, `components/account/settings-book.css`).
+- **404** (`pages/NotFoundPage.tsx`: binary search over real addresses),
+  **error boundary** (`PageErrorBoundary.tsx`: apology, reference, Retry),
+  **empty states** write the mark (`components/ui/EmptyState.tsx`).
+
+**Lessons learned:**
+- A link's accessible name must contain its visible words
+  (`label-content-name-mismatch`): don't put a longer `aria-label` on a link
+  whose text is a short name.
+- Opacity on text (e.g. `opacity-70`) fails contrast: use a solid colour.
+- Two sections with the same accessible name break `landmark-unique`: if a
+  child already labels itself, wrap it in a plain `div`.
+- Patterns are SVG masks over `var(--pattern-ink)`: anything filled in the
+  SVG shows as ink (a white fill is not a hole).
+- Hard-coded journal colours (`#5c5b55`, `#aaa79e`) must be scoped to
+  `[data-palette='parchment']`, or they leak into other themes.
+- Prose classes use `--ed-prose` (the theme's reading face): a display face
+  like Pixelify Sans is fine for titles, not for paragraphs.
+
+**Sweep finished (2026-11-16, on top of PR #118):** every route in light,
+dark and phone passes axe with no sideways scroll, including all 10 chapters
+of a System Design dossier in Field Journal, Terminal and Arcade (and spot
+checks in Sakura, Clear, Greenhouse, Observatory, Blueprint, Sketchbook and
+Block Print). Fixes:
+- **System Design pages** (`.sd-page` on `SystemDossierPage` and
+  `SystemDesignStudio`, rules in `learn/system-design/sd-page.css`, light mode
+  only):
+  - dark code/terminal panels become solid "dark islands" with the theme
+    variables redefined inside them
+  - pale Tailwind accent shades (200–500) and white text keep their hue but
+    are mixed with the theme's ink
+  - solid 500 fills deepen to 700 under white text
+- **System colour as text:** it is mixed with ink (`ink` in
+  `SystemDossierPage`, `domainColor` text in
+  `SystemBespokeArchitecturalVisuals`).
+- **Removed decoration:** gradient and glow backgrounds are gone. "Next
+  chapter" is the clay button; "Launch next system" is ivory.
+- **Accessibility:**
+  - heading levels fixed (studio, dossier, radar, simulator)
+  - every input and select in the System Design components is named
+  - scrolling code and table boxes are focusable `role="group"`s
+  - the per-line code scrollers are removed
+  - the system switcher is capped on phones
+- **Learn tabs:** Paths colour text is mixed with ink; the Tutorials cards no
+  longer nest a button inside a button; card titles are `h2`.
+- **GATE:** the Tests "Official papers" link and the test result's "New test,
+  same settings" are named on phones.
+
+**Left / ideas:**
+- System Design reader: accessible and readable in every theme now, but its
+  visual language (bright pills, dense dashboards) is still the old one; a
+  journal restyle with the reader parts (`Outline`, `EndOfLesson`, title
+  block) is the next big piece. Notes `dek` field (from 3.5).
+- The bigger cards inside account forms (AvatarCard, ProfileForm…) still use
+  their card-title labels in caps; they work in every theme but could take a
+  serif title.
+
 ### 3.6 Pull request state
 
-- PR #117 (https://github.com/Gurudeep306/Nexora/pull/117) holds phase 7
-  and everything listed in 3.5; it waits for the owner's "merge".
+- PR #117 (phase 7 and 3.5) was merged. PR #118
+  (https://github.com/Gurudeep306/Nexora/pull/118) holds 3.7 and waits for
+  the owner's "merge".
 - PR #114 (https://github.com/Gurudeep306/Nexora/pull/114) was opened for
   phase 4. Every later commit (phases 5, 6 and the start of 7) is on the same
   branch `claude/clever-babbage-km37j9`, so **PR #114 now contains phases

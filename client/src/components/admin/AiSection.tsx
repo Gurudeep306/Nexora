@@ -46,11 +46,12 @@ const SLOTS = [
 
 const key = (p: Pick) => (p ? `${p.provider}::${p.model}` : '')
 
-function ModelSelect({ value, providers, onChange, allowNone, noneLabel }: { value: Pick; providers: Provider[]; onChange: (p: Pick) => void; allowNone?: boolean; noneLabel?: string }) {
+function ModelSelect({ value, providers, onChange, allowNone, noneLabel, label }: { value: Pick; providers: Provider[]; onChange: (p: Pick) => void; allowNone?: boolean; noneLabel?: string; label: string }) {
   const usable = providers.filter((p) => p.enabled && p.models.length)
   return (
     <select
       className="ai-select"
+      aria-label={label}
       value={key(value)}
       onChange={(e) => {
         const v = e.target.value
@@ -281,7 +282,7 @@ export function AiSection() {
                 <p className="m-0 text-[12.5px] text-text-muted">{s.hint}</p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <ModelSelect value={data.slots[s.id]} providers={data.providers} allowNone noneLabel={data.env.configured ? `Environment: ${data.env.models[s.id as 'main']}` : 'Not set'} onChange={(p) => void assign({ slots: { [s.id]: p } })} />
+                <ModelSelect label={`Model for ${s.name}`} value={data.slots[s.id]} providers={data.providers} allowNone noneLabel={data.env.configured ? `Environment: ${data.env.models[s.id as 'main']}` : 'Not set'} onChange={(p) => void assign({ slots: { [s.id]: p } })} />
                 <TryButton p={data.slots[s.id]} />
               </div>
             </li>
@@ -298,7 +299,7 @@ export function AiSection() {
                 <p className="m-0 text-[12.5px] text-text-muted">{f.hint}</p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <ModelSelect value={data.assignments[f.id]} providers={data.providers} allowNone noneLabel="Same as main" onChange={(p) => void assign({ features: { [f.id]: p } })} />
+                <ModelSelect label={`Model for ${f.name}`} value={data.assignments[f.id]} providers={data.providers} allowNone noneLabel="Same as main" onChange={(p) => void assign({ features: { [f.id]: p } })} />
                 <TryButton p={data.assignments[f.id]} />
               </div>
             </li>

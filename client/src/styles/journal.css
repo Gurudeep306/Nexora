@@ -38,6 +38,15 @@
     --ed-sans: 'Geist Variable', Geist, ui-sans-serif, system-ui, sans-serif;
     --ed-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, Menlo, monospace;
     --ed-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    /* The landing, sign-in and coming-soon pages are the reference: no theme reshapes them. */
+    --kit-hero: var(--ed-sans);
+    --kit-hero-weight: 700;
+    --kit-hero-tracking: -0.03em;
+    --kit-heading-weight: 400;
+    --kit-btn-radius: 0 0 8px 8px;
+    --kit-card-radius: 24px;
+    --kit-card-radius-sm: 16px;
+    --ed-prose: var(--ed-serif);
     background: var(--ed-canvas);
     color: var(--ed-ink);
     font-family: var(--ed-serif);
@@ -84,13 +93,15 @@
     --ed-on-inverse-muted: color-mix(in oklab, var(--color-bg-app) 70%, var(--color-text-primary));
     --ed-focus: var(--color-accent-brand);
     --ed-serif: var(--font-display);
+    /* Prose (leads, body copy): the theme's reading face, which may differ from its display face. */
+    --ed-prose: var(--kit-read, var(--font-display));
     --ed-sans: var(--font-body);
     --ed-mono: var(--font-mono);
     --ed-ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
   /* The house style on its own paper: the exact manilla and clay. */
-  [data-style='journal'][data-palette='parchment'],
-  [data-style='journal'] [data-palette='parchment'] {
+  [data-kit='journal'][data-palette='parchment'],
+  [data-kit='journal'] [data-palette='parchment'] {
     --ed-feature: #f5e3c7;
     --ed-clay: #d97757;
     --ed-clay-deep: #c6613f;
@@ -98,9 +109,9 @@
     --ed-focus: #c6613f;
     --ed-faint: #b0aea5;
   }
-  [data-style='journal'][data-palette='parchment'][data-mode='dark'],
-  [data-style='journal'][data-mode='dark'] [data-palette='parchment'],
-  [data-mode='dark'] [data-style='journal'][data-palette='parchment'] {
+  [data-kit='journal'][data-palette='parchment'][data-mode='dark'],
+  [data-kit='journal'][data-mode='dark'] [data-palette='parchment'],
+  [data-mode='dark'] [data-kit='journal'][data-palette='parchment'] {
     --ed-feature: #2c2822;
     --ed-clay-deep: #e08a6c;
     --ed-focus: #e08a6c;
@@ -121,19 +132,19 @@
   :is(.lp, .ed, [data-style]) .ed-mono { font-family: var(--ed-mono); }
   :is(.lp, .ed, [data-style]) .ed-tabular { font-variant-numeric: tabular-nums; }
   /* Declarative display: sans, bold, tight. */
-  :is(.lp, .ed, [data-style]) .ed-display-sans { font-family: var(--ed-sans); font-weight: 700; font-size: 2.5rem; line-height: 1.08; letter-spacing: -0.03em; }
+  :is(.lp, .ed, [data-style]) .ed-display-sans { font-family: var(--kit-hero, var(--ed-sans)); font-weight: var(--kit-hero-weight, 700); font-size: 2.5rem; line-height: 1.08; letter-spacing: var(--kit-hero-tracking, -0.03em); }
   /* Editorial display: serif, regular. */
-  :is(.lp, .ed, [data-style]) .ed-display-serif { font-family: var(--ed-serif); font-weight: 400; font-size: 2.25rem; line-height: 1.12; letter-spacing: -0.01em; }
+  :is(.lp, .ed, [data-style]) .ed-display-serif { font-family: var(--ed-serif); font-weight: var(--kit-heading-weight, 400); font-size: 2.25rem; line-height: 1.12; letter-spacing: -0.01em; }
   /* A page title inside the app: serif, a step below display. */
-  :is(.lp, .ed, [data-style]) .ed-title { font-family: var(--ed-serif); font-weight: 400; font-size: 2rem; line-height: 1.12; letter-spacing: -0.02em; text-wrap: balance; }
+  :is(.lp, .ed, [data-style]) .ed-title { font-family: var(--ed-serif); font-weight: var(--kit-heading-weight, 400); font-size: 2rem; line-height: 1.12; letter-spacing: -0.02em; text-wrap: balance; }
   /* A section title: serif. */
-  :is(.lp, .ed, [data-style]) .ed-h2 { font-family: var(--ed-serif); font-weight: 400; font-size: 1.5rem; line-height: 1.2; letter-spacing: -0.015em; text-wrap: balance; }
+  :is(.lp, .ed, [data-style]) .ed-h2 { font-family: var(--ed-serif); font-weight: var(--kit-heading-weight, 400); font-size: 1.5rem; line-height: 1.2; letter-spacing: -0.015em; text-wrap: balance; }
   :is(.lp, .ed, [data-style]) .ed-heading { font-family: var(--ed-sans); font-weight: 600; font-size: 1.75rem; line-height: 1.2; letter-spacing: -0.02em; }
   :is(.lp, .ed, [data-style]) .ed-subheading { font-family: var(--ed-sans); font-weight: 600; font-size: 1.25rem; line-height: 1.3; letter-spacing: -0.01em; }
-  :is(.lp, .ed, [data-style]) .ed-body { font-family: var(--ed-serif); font-size: 1.125rem; line-height: 1.5; }
-  :is(.lp, .ed, [data-style]) .ed-body-sm { font-family: var(--ed-serif); font-size: 1rem; line-height: 1.5; }
+  :is(.lp, .ed, [data-style]) .ed-body { font-family: var(--ed-prose, var(--ed-serif)); font-size: 1.125rem; line-height: 1.5; }
+  :is(.lp, .ed, [data-style]) .ed-body-sm { font-family: var(--ed-prose, var(--ed-serif)); font-size: 1rem; line-height: 1.5; }
   /* The one line under a page title. */
-  :is(.lp, .ed, [data-style]) .ed-lead { font-family: var(--ed-serif); font-size: 1.0625rem; line-height: 1.45; color: var(--ed-ink-2); text-wrap: pretty; }
+  :is(.lp, .ed, [data-style]) .ed-lead { font-family: var(--ed-prose, var(--ed-serif)); font-size: 1.0625rem; line-height: 1.45; color: var(--ed-ink-2); text-wrap: pretty; }
   :is(.lp, .ed, [data-style]) .ed-ui { font-family: var(--ed-sans); font-size: 0.9375rem; line-height: 1.4; letter-spacing: -0.005em; }
   :is(.lp, .ed, [data-style]) .ed-ui-sm { font-family: var(--ed-sans); font-size: 0.8125rem; line-height: 1.4; letter-spacing: -0.005em; }
   :is(.lp, .ed, [data-style]) .ed-caption { font-family: var(--ed-sans); font-size: 0.75rem; line-height: 1.4; letter-spacing: -0.01em; }
@@ -167,18 +178,18 @@
   :is(.lp, .ed, [data-style]) .ed-link:hover { text-decoration-thickness: 2px; }
 
   /* ── Surfaces: elevation by tone and hairline, never shadow ──────── */
-  :is(.lp, .ed, [data-style]) .ed-card { background: var(--ed-card); border: 1px solid var(--ed-line); border-radius: 24px; }
-  :is(.lp, .ed, [data-style]) .ed-card-sm { background: var(--ed-card); border: 1px solid var(--ed-line); border-radius: 16px; }
-  :is(.lp, .ed, [data-style]) .ed-feature { background: var(--ed-feature); border-radius: 24px; }
-  :is(.lp, .ed, [data-style]) .ed-oat { background: var(--ed-oat); border-radius: 24px; }
+  :is(.lp, .ed, [data-style]) .ed-card { background: var(--ed-card); border: 1px solid var(--ed-line); border-radius: var(--kit-card-radius, 24px); }
+  :is(.lp, .ed, [data-style]) .ed-card-sm { background: var(--ed-card); border: 1px solid var(--ed-line); border-radius: var(--kit-card-radius-sm, 16px); }
+  :is(.lp, .ed, [data-style]) .ed-feature { background: var(--ed-feature); border-radius: var(--kit-card-radius, 24px); }
+  :is(.lp, .ed, [data-style]) .ed-oat { background: var(--ed-oat); border-radius: var(--kit-card-radius, 24px); }
   :is(.lp, .ed, [data-style]) .ed-rule { border-color: var(--ed-line); }
   :is(.lp, .ed, [data-style]) .ed-hairline { border-top: 1px solid var(--ed-line); }
   /* Rows separated by hairlines, not boxed. */
   :is(.lp, .ed, [data-style]) .ed-rows > * + * { border-top: 1px solid var(--ed-line); }
   /* Muted text sits on the warm spread: one step darker to keep 4.5:1. */
-  :is(.lp, .ed, [data-style='journal'][data-palette='parchment'], [data-style='journal'] [data-palette='parchment']) :is(.ed-feature, .ed-oat) { --ed-muted: #5c5b55; }
+  :is(.lp, .ed, [data-kit='journal'][data-palette='parchment'], [data-kit='journal'] [data-palette='parchment']) :is(.ed-feature, .ed-oat) { --ed-muted: #5c5b55; }
   [data-mode='dark'] :is(.lp, .ed) :is(.ed-feature, .ed-oat),
-  [data-style='journal'][data-palette='parchment'][data-mode='dark'] :is(.ed-feature, .ed-oat) { --ed-muted: #aaa79e; }
+  [data-kit='journal'][data-palette='parchment'][data-mode='dark'] :is(.ed-feature, .ed-oat) { --ed-muted: #aaa79e; }
 
   /* ── Buttons ──────────────────────────────────────────────────────── */
   :is(.lp, .ed, [data-style]) .ed-btn {
@@ -202,7 +213,7 @@
     background: var(--ed-clay);
     color: var(--ed-on-clay) !important;
     padding: 12px 24px;
-    border-radius: 0 0 8px 8px;
+    border-radius: var(--kit-btn-radius, 0 0 8px 8px);
   }
   :is(.lp, .ed, [data-style]) .ed-btn-clay:hover { background: var(--ed-clay-deep); }
   /* Quiet primary on a page: ivory, tab-like, hairline so it reads on parchment. */
@@ -211,7 +222,7 @@
     color: var(--ed-ink) !important;
     padding: 8px 16px;
     border: 1px solid var(--ed-line);
-    border-radius: 0 0 8px 8px;
+    border-radius: var(--kit-btn-radius, 0 0 8px 8px);
   }
   :is(.lp, .ed, [data-style]) .ed-btn-ivory:hover { border-color: var(--ed-line-strong); }
   :is(.lp, .ed, [data-style]) .ed-btn-outline {

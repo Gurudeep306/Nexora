@@ -1435,7 +1435,7 @@ export const ConsistentHashRingAnimator: React.FC = () => {
             </div>
 
             <div className="flex gap-2 pt-1">
-              <input
+              <input aria-label="Custom key name"
                 type="text"
                 placeholder="Custom key name..."
                 value={customInput}
@@ -1709,7 +1709,7 @@ export const KafkaPartitionRebalanceAnimator: React.FC = () => {
 
       <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
         <div className="flex items-center gap-2">
-          <input
+          <input aria-label="Key"
             type="text"
             value={selectedKey}
             onChange={(e) => setSelectedKey(e.target.value)}
@@ -2590,7 +2590,7 @@ export const BloomFilterProbabilisticAnimator: React.FC = () => {
         <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border space-y-2">
           <span className="text-[10.5px] uppercase font-bold text-text-muted block">Insert Key into SSTable:</span>
           <div className="flex gap-1.5">
-            <input
+            <input aria-label="Key to insert into the SSTable"
               type="text"
               value={testKey}
               onChange={(e) => setTestKey(e.target.value)}
@@ -2961,7 +2961,7 @@ export const NtpClockDriftAnimator: React.FC = () => {
             <span>Quartz Drift Rate</span>
             <span className="text-amber-400 font-bold">±{driftPpm} PPM</span>
           </div>
-          <input
+          <input aria-label="Quartz drift rate"
             type="range"
             min={10}
             max={100}
@@ -3155,7 +3155,7 @@ export const SpannerTrueTimeAnimator: React.FC = () => {
             <span>TrueTime Uncertainty (ε)</span>
             <span className="text-sky-400 font-bold">±{uncertaintyEpsilonMs} ms</span>
           </div>
-          <input
+          <input aria-label="TrueTime uncertainty"
             type="range"
             min={1}
             max={12}

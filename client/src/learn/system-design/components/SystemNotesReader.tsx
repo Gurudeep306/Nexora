@@ -238,7 +238,7 @@ Architectural Fix: ${currentWarStory.architecturalFix}
         {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-text-muted" />
-          <input
+          <input aria-label="Search chapters, RFCs and formulas"
             type="text"
             placeholder="Search 56 chapters, RFCs, formulas..."
             value={searchQuery}
@@ -382,7 +382,7 @@ Architectural Fix: ${currentWarStory.architecturalFix}
         {currentChapter.tradeoffMatrix && currentChapter.tradeoffMatrix.length > 0 && (
           <section>
             <h2 className="!mt-0">Trade-offs</h2>
-            <div className="overflow-x-auto">
+            <div tabIndex={0} role="group" aria-label="Table" className="overflow-x-auto">
               <table>
                 <thead>
                   <tr>

@@ -143,8 +143,8 @@ function Bookmarks({
         aria-pressed={active === id}
         onClick={() => setActive(id)}
         className={cn(
-          'flex h-8 w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-2.5 text-left text-[13px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand',
-          active === id ? 'bg-accent-brand/12 font-medium text-text-primary' : 'text-text-secondary hover:bg-bg-surface-2',
+          'flex h-8 w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-2.5 text-left text-[13px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary',
+          active === id ? 'bg-bg-surface-3 font-medium text-text-primary' : 'text-text-secondary hover:bg-bg-surface-2',
         )}
       >
         <span className="truncate">{label}</span>
@@ -175,7 +175,7 @@ function Bookmarks({
                   type="button"
                   aria-label={`Delete collection ${c.name}`}
                   onClick={() => setDoomed(c)}
-                  className="ml-0.5 flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-muted hover:bg-state-error/10 hover:text-state-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
+                  className="ml-0.5 flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-muted hover:bg-bg-surface-3 hover:text-state-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary"
                 >
                   <Icon name="delete" className="size-3.5" />
                 </button>,
@@ -227,7 +227,7 @@ function Bookmarks({
                     type="button"
                     onClick={() => unbookmark(id)}
                     aria-label="Remove bookmark"
-                    className="flex size-8 cursor-pointer items-center justify-center rounded-lg text-accent-brand transition-colors hover:bg-bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
+                    className="flex size-8 cursor-pointer items-center justify-center rounded-lg text-text-primary transition-colors hover:bg-bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary"
                   >
                     <Icon name="bookmark" className="size-4 fill-current" />
                   </button>
@@ -305,7 +305,7 @@ function Notes({ notes, loading }: { notes: NoteEntry[]; loading: boolean }) {
                       type="button"
                       onClick={() => setOpen(isOpen ? null : n.questionId)}
                       aria-expanded={isOpen}
-                      className="cursor-pointer rounded font-medium text-accent-brand hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
+                      className="cursor-pointer rounded font-medium text-text-primary underline decoration-border-strong underline-offset-2 hover:decoration-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary"
                     >
                       {isOpen ? 'Show less' : 'Show more'}
                     </button>
@@ -351,8 +351,8 @@ function Mistakes({ rows, loading }: { rows: [string, QuestionProgress][]; loadi
                 aria-pressed={subject === id}
                 onClick={() => setSubject(id)}
                 className={cn(
-                  'flex h-8 w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-2.5 text-left text-[13px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand',
-                  subject === id ? 'bg-accent-brand/12 font-medium text-text-primary' : 'text-text-secondary hover:bg-bg-surface-2',
+                  'flex h-8 w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-2.5 text-left text-[13px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary',
+                  subject === id ? 'bg-bg-surface-3 font-medium text-text-primary' : 'text-text-secondary hover:bg-bg-surface-2',
                 )}
               >
                 <span className="truncate">{id === 'all' ? 'All mistakes' : shortSubject(subjects.subjectName(id))}</span>

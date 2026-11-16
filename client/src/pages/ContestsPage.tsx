@@ -19,12 +19,13 @@ import { contestBucket } from '@/components/contests/contestUtils'
 import { CustomContestsSection } from '@/components/contests/CustomContestsSection'
 import type { PlatformContest } from '@/components/contests/types'
 import { Icon } from '@/components/icon/Icon'
+import { isJournalKit } from '@/theme/styles'
 
 type Bucket = 'all' | 'live' | 'upcoming' | 'past'
 
 export default function ContestsPage() {
   // The Field Journal shows contests as a calendar list; other styles keep the cards.
-  const journal = useTheme().shown.style === 'journal'
+  const journal = isJournalKit(useTheme().shown.style)
   const { user } = useAuth()
   const [bucket, setBucket] = useState<Bucket>('all')
 

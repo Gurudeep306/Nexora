@@ -299,7 +299,7 @@ function BreakdownTable({
         <button
           type="button"
           onClick={() => setSort({ key, dir: on ? ((-sort.dir) as 1 | -1) : key === 'name' ? 1 : -1 })}
-          className={cn('inline-flex cursor-pointer items-center gap-1 rounded hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand', on && 'text-text-primary')}
+          className={cn('inline-flex cursor-pointer items-center gap-1 rounded hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary', on && 'text-text-primary')}
         >
           {label}
           <Icon name="sort" className={cn('size-3', on ? 'opacity-100' : 'opacity-40')} />
@@ -365,7 +365,7 @@ function BreakdownTable({
                     <td className="max-w-[260px] py-2 pr-2 pl-4 sm:pl-5">
                       <Link
                         to={practiceLink({ exam, subject: r.subject, topic })}
-                        className="block truncate font-medium text-text-primary hover:text-accent-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
+                        className="block truncate font-medium text-text-primary hover:underline hover:underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary"
                       >
                         {r.name}
                       </Link>
@@ -463,11 +463,11 @@ function StrongWeak({
           <li key={`${t.subject}/${t.topic}`}>
             <Link
               to={practiceLink({ exam, subject: t.subject, topic: t.topic })}
-              className="group flex items-center gap-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand"
+              className="group flex items-center gap-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary"
             >
               <span className="w-4 text-[12px] text-text-muted tabular-nums">{i + 1}</span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13px] font-medium text-text-primary group-hover:text-accent-brand">{topicName(t.subject, t.topic)}</span>
+                <span className="block truncate text-[13px] font-medium text-text-primary group-hover:underline group-hover:underline-offset-2">{topicName(t.subject, t.topic)}</span>
                 <span className="block truncate text-[11.5px] text-text-muted">{subjectName(t.subject)}</span>
               </span>
               <span className={cn('text-[13px] font-semibold tabular-nums', good ? 'text-state-success' : 'text-state-error')}>{pct(t.accuracy)}%</span>

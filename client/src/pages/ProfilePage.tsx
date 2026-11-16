@@ -24,6 +24,7 @@ import { errorText, useSocialPerms } from '@/components/social/feed/lib'
 import type { FeedPage, Post, ProfileResponse, Showcase, SocialUser } from '@/components/social/feed/types'
 import { postPath } from '@/components/social/feed/types'
 import '@/components/social/feed/social.css'
+import { isJournalKit } from '@/theme/styles'
 
 const EditProfileSheet = lazy(() => import('@/components/profile/EditProfileSheet'))
 const ShareProfileDialog = lazy(() => import('@/components/profile/ShareProfileDialog'))
@@ -175,7 +176,7 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
   const [confirmBlock, setConfirmBlock] = useState(false)
   const name = p.display_name || p.username
   const accent = ACCENTS[p.accent]?.color ?? ACCENTS.brand.color
-  const journal = useTheme().shown.style === 'journal'
+  const journal = isJournalKit(useTheme().shown.style)
 
   const relate = async (kind: 'mute' | 'block', on: boolean) => {
     try {
@@ -378,7 +379,7 @@ function PeopleModal({ username, list, onClose }: { username: string; list: null
 
 function Overview({ show, accent, isSelf, onAll }: { show: Showcase; accent?: string; isSelf: boolean; onAll: () => void }) {
   const s = show.stats
-  const journal = useTheme().shown.style === 'journal'
+  const journal = isJournalKit(useTheme().shown.style)
   const [pinned, setPinned] = useState(show.pinned ?? [])
   useEffect(() => setPinned(show.pinned ?? []), [show.pinned])
   // "Today" for the 30-day sparklines, fixed when the profile loads.

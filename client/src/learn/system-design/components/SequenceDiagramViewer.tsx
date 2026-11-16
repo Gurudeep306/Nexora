@@ -60,7 +60,7 @@ export const SequenceDiagramViewer: React.FC<SequenceDiagramViewerProps> = ({
       </div>
 
       {/* Lifeline Headers (Service Columns) */}
-      <div className="overflow-x-auto pb-4">
+      <div tabIndex={0} role="group" aria-label="Sequence diagram" className="overflow-x-auto pb-4">
         <div className="min-w-[640px]">
           {/* Lifeline Node Headers */}
           <div className="grid gap-2 border-b border-border/80 pb-3" style={{ gridTemplateColumns: `repeat(${services.length}, minmax(0, 1fr))` }}>

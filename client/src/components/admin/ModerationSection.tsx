@@ -47,7 +47,7 @@ export function ModerationSection({ me, onOpenUser, onChanged }: { me: AdminMe; 
 
   return (
     <div className="space-y-3">
-      <div role="tablist" className="inline-flex gap-1 rounded-xl bg-bg-surface-2 p-1 shadow-[inset_0_0_0_1px_var(--nx-hair)]">
+      <div role="tablist" aria-label="Reports" className="desk-seg">
         {tabs.map((t) => (
           <button
             key={t.id}
@@ -55,10 +55,7 @@ export function ModerationSection({ me, onOpenUser, onChanged }: { me: AdminMe; 
             role="tab"
             aria-selected={status === t.id}
             onClick={() => setStatus(t.id)}
-            className={cn(
-              'flex h-8 cursor-pointer items-center gap-1.5 rounded-lg px-3 text-[13px] font-medium transition-colors',
-              status === t.id ? 'bg-bg-surface text-text-primary shadow-[0_1px_2px_oklch(0_0_0/0.15),inset_0_0_0_1px_var(--nx-hair)]' : 'text-text-muted hover:text-text-secondary',
-            )}
+            className="desk-seg-btn"
           >
             {t.label}
             {!!t.count && <span className="nx-num text-[11px] text-text-muted">{t.count}</span>}

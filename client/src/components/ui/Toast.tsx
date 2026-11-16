@@ -2,6 +2,7 @@ import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import { Toaster, toast as sonner } from 'sonner'
 import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react'
 import { useTheme } from '@/context/ThemeContext'
+import { isJournalKit } from '@/theme/styles'
 
 type ToastKind = 'success' | 'error' | 'warning' | 'info'
 
@@ -19,7 +20,7 @@ const ToastContext = createContext<ToastApi | null>(null)
 export function ToastProvider({ children }: { children: ReactNode }) {
   const { mode, shown } = useTheme()
   // Field Journal sets toasts as an ink slip at the bottom left.
-  const journal = shown.style === 'journal'
+  const journal = isJournalKit(shown.style)
   const api = useMemo<ToastApi>(() => {
     const toast = (kind: ToastKind, title: string, description?: string) => sonner[kind](title, { description })
     return {

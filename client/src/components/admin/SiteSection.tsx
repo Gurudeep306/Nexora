@@ -86,15 +86,12 @@ export function SiteSettingsPanel() {
           <div>
             <div className="flex items-center gap-3">
               <span
-                className={cn(
-                  'flex size-11 items-center justify-center rounded-2xl text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.3)]',
-                  on ? 'bg-[linear-gradient(140deg,#3a63f0,#6d3df0_60%,#0e9488)]' : 'bg-[linear-gradient(160deg,color-mix(in_oklab,var(--color-state-success)_85%,white),var(--color-state-success))]',
-                )}
+                className="desk-glyph" data-on={on || undefined}
               >
                 <Icon name={on ? 'lock' : 'globe'} className="size-5" />
               </span>
               <div>
-                <h3 className="nx-display text-[20px] leading-tight font-semibold text-text-primary">Private mode</h3>
+                <h3 className="ed-serif text-[22px] leading-tight text-text-primary">Private mode</h3>
                 <p className="mt-0.5 text-[13px] text-text-secondary">{on ? 'The public sees “coming soon”.' : 'NexoraGuru is open to everyone.'}</p>
                 <p className="mt-1 text-[13px]">
                   <a href="/?preview" target="_blank" rel="noreferrer" className="font-medium text-text-primary underline underline-offset-2">
@@ -215,7 +212,7 @@ export function SiteSettingsPanel() {
         <ul className="-my-1 divide-y divide-[color:var(--nx-hair)]">
           {(Object.keys(FEATURE_LABELS) as FeatureFlag[]).map((f) => (
             <li key={f} className="flex items-center gap-3 py-2.5">
-              <span className={cn('flex size-8 items-center justify-center rounded-lg transition-colors', s.feature_flags[f] ? 'bg-[color-mix(in_oklab,var(--nx-b1)_11%,transparent)] text-[var(--nx-b1)]' : 'bg-bg-surface-2 text-text-muted')}>
+              <span className="desk-glyph desk-glyph-sm" data-on={s.feature_flags[f] || undefined}>
                 <Icon name={FLAG_META[f].icon} className="size-4" />
               </span>
               <span className="min-w-0 flex-1">
@@ -332,17 +329,14 @@ export function AnnouncementsPanel({ me }: { me: AdminMe }) {
             )
           }}
         >
-          <div className="grid grid-cols-2 gap-1 rounded-xl bg-bg-surface-2 p-1 shadow-[inset_0_0_0_1px_var(--nx-hair)]">
+          <div className="desk-seg">
             {(['banner', 'broadcast'] as const).map((k) => (
               <button
                 key={k}
                 type="button"
                 onClick={() => setKind(k)}
                 aria-pressed={kind === k}
-                className={cn(
-                  'flex h-8 cursor-pointer items-center justify-center gap-1.5 rounded-lg text-[13px] font-medium capitalize transition-colors',
-                  kind === k ? 'bg-bg-surface text-text-primary shadow-[0_1px_2px_oklch(0_0_0/0.15),inset_0_0_0_1px_var(--nx-hair)]' : 'text-text-muted hover:text-text-secondary',
-                )}
+                className="desk-seg-btn capitalize"
               >
                 <Icon name={k === 'banner' ? 'flag' : 'bell'} className="size-3.5" />
                 {k}

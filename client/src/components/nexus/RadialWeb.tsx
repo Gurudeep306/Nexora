@@ -377,7 +377,7 @@ export function RadialWeb({
     let C = readColors(probe)
     // The Field Journal draws the web as an engraved star chart: ink lines,
     // no hue washes, dashed region boundaries, hollow / clay / solid stars.
-    const isAtlas = () => document.documentElement.dataset.style === 'journal'
+    const isAtlas = () => document.documentElement.dataset.kit === 'journal'
     let atlas = isAtlas()
     const font = getComputedStyle(wrap).fontFamily || 'system-ui, sans-serif'
     const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace'
@@ -415,7 +415,7 @@ export function RadialWeb({
       buildIcons()
       dirty.current = true
     })
-    themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-mode', 'data-theme', 'data-style', 'class', 'style'] })
+    themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-mode', 'data-theme', 'data-style', 'data-kit', 'class', 'style'] })
 
     const resize = () => {
       const r = wrap.getBoundingClientRect()
@@ -1684,7 +1684,7 @@ export function RadialWeb({
         }
         const key = sh ? null : hitNode(p)
         const tilt = tiltRef.current
-        const journal = document.documentElement.dataset.style === 'journal'
+        const journal = document.documentElement.dataset.kit === 'journal'
         if (tilt && !key && !journal && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
           const { w, h } = view.current
           tilt.style.transform = `rotateX(${((0.5 - p.y / h) * 3).toFixed(2)}deg) rotateY(${((p.x / w - 0.5) * 3).toFixed(2)}deg)`
