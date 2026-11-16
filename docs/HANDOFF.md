@@ -55,15 +55,18 @@ Contents:
 - `git add -A` also picks up helper worktrees under `.claude/worktrees/`.
   Add that folder to `.git/info/exclude` first.
 
-## 3. Where it stands (2026-11-16, end of session 3)
+## 3. Where it stands (2026-11-16, session 4)
 
-- Merged: #127 (judge, runners, editor help, How it runs, Python dry run)
-  and #128 (dry-run known issues, 14 real programs checked).
-- **PR #129** — the dry run for C++, C, Java, JavaScript and TypeScript, plus
-  this handoff, the two check scripts and more fixes. The owner said "merge"
-  once CI is green.
-- Next: section 6, item 1 (check the live site after the deploy), then item 2
-  (the Solve page redesign).
+- Merged: #127 (judge, runners, editor help, How it runs, Python dry run),
+  #128 (dry-run known issues), **#129** (dry run for C++, C, Java,
+  JavaScript, TypeScript). The dry run works in 6 languages.
+- **Open PR: the Solve page redesign (section 6, item 2) — done**, branch
+  `claude/fervent-curie-vjgcd8`. Waiting for the owner's "merge".
+- **Item 1 (live check) needs the owner**: the site is private, so only the
+  owner can sign in and press Dry run on the live site in each language.
+- **Next for the agent: section 6, item 3** — dry run for Go, Rust, C#,
+  Kotlin, Swift (then Ruby, PHP, Lua, Perl; then functional languages).
+- The owner said **no for now** to the ideas in section 6, item 7.
 
 ## 4. What is done (all sessions)
 
@@ -276,7 +279,29 @@ Each item is one finished, tested PR. Report to the owner after each.
   is too slow, say so and offer a faster path. Our own Piston runner has
   `tsx`; the owner must create one, see `docs/ops/fast-judge.md`.
 
-### 2. Solve page redesign — every button in its best place
+### 2. Solve page redesign — every button in its best place — DONE (session 4)
+
+What was built (`client/src/pages/SolvePage.tsx`, `components/solve/CodeEditor.tsx`,
+`ProblemPanel.tsx`, `LanguagePicker.tsx`):
+
+- Top bar: language · Dry run · Run · Submit (the one clay button) · ⋯ (full-
+  screen arena, layout presets, the key list). The old AI menu is gone.
+- Examples: "Run this", "Dry run this", "Add to tests" on each example.
+- Editor header: file chip with the saved dot; Format (only JS/TS/JSON/CSS/
+  HTML, where Monaco has a real formatter); Snippets; Reset to template;
+  **Help** (AI: hint, explain my error, fix my code, ask the tutor ⌘J); ⋯
+  Editor settings (theme, font size, indent, wrap, minimap, Vim, AI
+  suggestions, copy, download, shortcuts, full screen). Undo/Redo buttons,
+  the timer, char count, wrap label and theme name are gone.
+- Status bar: Ln/Col, language, issue count (click → Result), saved.
+- Results: 4 tabs — Tests (+ "Generate with AI"), Result (issues listed on
+  top, click → line), Dry run ("Watch it run" / "Under the hood"), Coach
+  (Hints / Analysis). Old links (`openTab('analysis')` etc.) still land in
+  the right tab and view.
+- Phone: Dry run · Run · Submit bar at the bottom. Alt+D opens the dry run.
+- Checked: axe 0 and no sideways scroll in light, dark and phone; 533 tests.
+
+The plan that was followed:
 
 **The owner's words:** "i want the buttons not everything at the bottom part i
 want it to uniquely place all buttons and remove all unnecessary features …
