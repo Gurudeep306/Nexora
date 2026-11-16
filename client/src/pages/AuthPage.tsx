@@ -4,9 +4,9 @@ import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'motion/
 import { AlertTriangle, ArrowRight, AtSign, Check, CornerDownLeft, Eye, EyeOff, KeyRound, Loader2, Mail, Moon, ShieldCheck, Sun, X } from 'lucide-react'
 import { Avatar, useToast } from '@/components/ui'
 import { useTheme } from '@/context/ThemeContext'
-import { STYLES } from '@/theme/styles'
+import { THEMES } from '@/theme/styles'
 import { PALETTE_BY_ID, resolveMode } from '@/theme/palettes'
-import { styleLook } from '@/components/look/StylesSection'
+import { themeLook } from '@/components/look/themeLook'
 import '@fontsource-variable/newsreader/opsz.css'
 import '@/components/landing/landing.css'
 import '@/components/auth/auth.css'
@@ -168,12 +168,12 @@ function forgetAccount() {
 /** Light / dark and the design styles, before anyone signs in. */
 function LookBar() {
   const { look, setLook, mode, setAppearance, preferredMode } = useTheme()
-  const picks = STYLES.slice(0, 6)
+  const picks = THEMES.slice(0, 6)
   return (
     <div className="auth-look" role="group" aria-label="Appearance">
       <div className="auth-look-styles" role="radiogroup" aria-label="Design style">
         {picks.map((st) => {
-          const l = styleLook(look, st)
+          const l = themeLook(look, st)
           const p = PALETTE_BY_ID.get(l.theme)!
           const t = p[resolveMode(p, preferredMode)] ?? p.dark ?? p.light!
           return (

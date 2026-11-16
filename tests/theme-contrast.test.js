@@ -20,18 +20,37 @@ const { pathToFileURL } = require('node:url');
 
 const theme = (f) => import(pathToFileURL(path.join(__dirname, '..', 'client', 'src', 'theme', f)).href);
 
-test('there are 45+ distinct themes across all five categories', async () => {
-  const { PALETTES, CATEGORIES } = await theme('palettes.ts');
-  assert.ok(PALETTES.length >= 45, `only ${PALETTES.length} themes`);
-  const ids = new Set(PALETTES.map((p) => p.id));
-  assert.equal(ids.size, PALETTES.length, 'theme ids must be unique');
-  for (const c of CATEGORIES) {
-    assert.ok(PALETTES.some((p) => p.category === c.id), `no theme in category ${c.id}`);
+test('ten themes, each a whole design with its own palette in both modes', async () => {
+  const { PALETTES, PALETTE_BY_ID } = await theme('palettes.ts');
+  const { THEMES, STYLES, PATTERNS, DISPLAY_FACES } = await theme('styles.ts');
+  const { UI_FONTS, CODE_FONTS } = await theme('fonts.ts');
+  assert.equal(THEMES.length, 10, 'there are exactly ten themes');
+  assert.equal(new Set(THEMES.map((t) => t.id)).size, 10, 'theme ids are unique');
+  assert.equal(THEMES[0].id, 'journal', 'Field Journal comes first');
+  assert.equal(new Set(PALETTES.map((p) => p.id)).size, PALETTES.length, 'palette ids are unique');
+  const usedPalettes = new Set();
+  for (const t of THEMES) {
+    assert.match(t.id, /^[a-z0-9-]+$/, `${t.id} is not a safe attribute value`);
+    assert.equal(t.kit, 'journal', `${t.id} dresses the page kit`);
+    const p = PALETTE_BY_ID.get(t.bundle.theme);
+    assert.ok(p, `${t.id}: palette ${t.bundle.theme} exists`);
+    assert.ok(p.light && p.dark, `${t.id}: has a light and a dark mode`);
+    assert.ok(!usedPalettes.has(p.id), `${t.id}: its palette is its own`);
+    usedPalettes.add(p.id);
+    assert.ok(PATTERNS.some((x) => x.id === t.bundle.pattern), `${t.id}: pattern ${t.bundle.pattern} exists`);
+    assert.ok(UI_FONTS.some((f) => f.id === t.bundle.font), `${t.id}: font ${t.bundle.font} exists`);
+    assert.ok(CODE_FONTS.some((f) => f.id === t.bundle.codeFont), `${t.id}: code font ${t.bundle.codeFont} exists`);
+    for (const f of [t.displayFont, t.readFont].filter(Boolean)) {
+      assert.ok(UI_FONTS.some((u) => u.id === f) || f in DISPLAY_FACES, `${t.id}: face ${f} exists`);
+    }
+    assert.ok(t.tagline && t.about && t.forWho, `${t.id}: has words for the theme card`);
   }
-  for (const p of PALETTES) {
-    assert.ok(p.dark || p.light, `${p.id} has no mode`);
-    assert.match(p.id, /^[a-z0-9-]+$/, `${p.id} is not a safe attribute value`);
-  }
+  // The ten look different: no two share a display face and a pattern and an icon set.
+  const signature = THEMES.map((t) => `${t.displayFont}|${t.bundle.pattern}|${t.bundle.iconSet}/${t.bundle.iconStyle}`);
+  assert.equal(new Set(signature).size, 10, 'every theme has its own type, drawing and icons');
+  // Hive's own look stays available but is never offered.
+  const studio = STYLES.find((s) => s.id === 'studio');
+  assert.ok(studio && studio.hidden && !THEMES.includes(studio));
 });
 
 test('every theme meets the contrast rules in both of its modes', async () => {
@@ -48,25 +67,16 @@ test('every theme meets the contrast rules in both of its modes', async () => {
       }
     }
   }
-  assert.ok(checks > 1000, `suspiciously few checks (${checks})`);
+  // About 33 rules per mode; every theme has two modes.
+  assert.ok(checks >= PALETTES.length * 2 * 30, `suspiciously few checks (${checks})`);
   assert.deepEqual(failures, [], `\n${failures.join('\n')}`);
 });
 
-test('every accent override holds contrast on every theme', async () => {
-  const { PALETTES, ACCENTS } = await theme('palettes.ts');
-  const { auditMode } = await theme('audit.ts');
-  const failures = [];
-  for (const a of ACCENTS) {
-    for (const p of PALETTES) {
-      for (const mode of ['dark', 'light']) {
-        if (!p[mode]) continue;
-        for (const r of auditMode(p[mode], a[mode])) {
-          if (!r.ok) failures.push(`${a.id} on ${p.id}/${mode}: ${r.rule} = ${r.ratio} (needs ${r.min})`);
-        }
-      }
-    }
-  }
-  assert.deepEqual(failures, [], `\n${failures.join('\n')}`);
+test('accent overrides are retired: each theme owns its accent', async () => {
+  const { ACCENTS } = await theme('palettes.ts');
+  const { sanitizeLook } = await theme('look.ts');
+  assert.deepEqual(ACCENTS, []);
+  assert.equal(sanitizeLook({ v: 4, style: 'studio', theme: 'midnight', accent: 'violet' }).accent, 'theme');
 });
 
 test('colour maths: known WCAG ratios', async () => {
@@ -79,68 +89,84 @@ test('colour maths: known WCAG ratios', async () => {
   assert.equal(oklchToHex(hexToOklch('#3a7bd5')), '#3a7bd5');
 });
 
-test('sanitizeLook: defaults, validation, v2 → v3 migration and v3 round-trip', async () => {
-  const { sanitizeLook, DEFAULT_LOOK } = await theme('look.ts');
+test('sanitizeLook: defaults, validation and a v5 round-trip', async () => {
+  const { sanitizeLook, DEFAULT_LOOK, LOOK_TABLES } = await theme('look.ts');
+  const { THEMES } = await theme('styles.ts');
   assert.deepEqual(sanitizeLook(null), DEFAULT_LOOK);
   assert.deepEqual(sanitizeLook('nope'), DEFAULT_LOOK);
-  assert.deepEqual(sanitizeLook({ theme: 'no-such-theme', font: 42, radius: '<script>' }), DEFAULT_LOOK);
-
-  const v2 = {
-    v: 4, style: 'editorial', pattern: 'grain', theme: 'nord', accent: 'teal', font: 'manrope', codeFont: 'fira', solutionFont: 'mali', textSize: 'large',
-    cardStyle: 'gradient', radius: 'sharp', iconSet: 'remix', iconStyle: 'fill', iconContainer: 'outline', iconShape: 'circle',
-  };
-  assert.deepEqual(sanitizeLook(v2), v2);
-  assert.deepEqual(sanitizeLook(sanitizeLook(v2)), v2, 'idempotent');
-  // A v2 look keeps what someone chose, but the old defaults (soft icons, handwritten solutions) move to the new ones once.
-  assert.deepEqual(sanitizeLook({ ...v2, v: 2 }), v2, 'chosen values survive the migration');
-  const old = sanitizeLook({ ...v2, v: 2, iconContainer: 'soft', solutionFont: 'shantell' });
-  assert.equal(old.iconContainer, DEFAULT_LOOK.iconContainer);
-  assert.equal(old.solutionFont, DEFAULT_LOOK.solutionFont);
-  const kept = sanitizeLook({ ...v2, iconContainer: 'soft', solutionFont: 'shantell' });
-  assert.equal(kept.iconContainer, 'soft', 'a v3 choice of soft is kept');
-  assert.equal(kept.solutionFont, 'shantell', 'a v3 choice of handwriting is kept');
-
-  // Every offered solution font round-trips; a missing or unknown one is the default.
-  const { SOLUTION_FONTS, DEFAULT_SOLUTION_FONT } = await theme('fonts.ts');
-  assert.equal(DEFAULT_LOOK.solutionFont, 'off');
-  assert.equal(DEFAULT_SOLUTION_FONT, 'off');
-  assert.deepEqual(SOLUTION_FONTS.map((f) => f.id), ['shantell', 'patrick', 'architects', 'mali', 'off']);
-  for (const f of SOLUTION_FONTS) assert.equal(sanitizeLook({ ...v2, solutionFont: f.id }).solutionFont, f.id);
-  const { solutionFont: _omit, ...older } = v2;
-  assert.equal(sanitizeLook(older).solutionFont, 'off', 'looks saved before the field existed get the default');
-  for (const bad of ['caveat', 'Shantell', '', 7, null, '<script>']) {
-    assert.equal(sanitizeLook({ ...v2, solutionFont: bad }).solutionFont, 'off');
+  assert.deepEqual(sanitizeLook({ v: 5, style: '<script>', textSize: 42, codeFont: 'no-such-font' }), DEFAULT_LOOK);
+  assert.equal(DEFAULT_LOOK.style, 'journal');
+  assert.equal(DEFAULT_LOOK.theme, 'parchment');
+  for (const t of THEMES) {
+    const look = sanitizeLook({ v: 5, style: t.id, textSize: 'large', codeFont: 'fira', solutionFont: 'mali' });
+    assert.equal(look.style, t.id);
+    for (const [k, v] of Object.entries(t.bundle)) {
+      if (k === 'codeFont') continue;
+      assert.equal(look[k], v, `${t.id}: ${k} comes from the theme`);
+    }
+    assert.equal(look.textSize, 'large', 'text size is a personal choice');
+    assert.equal(look.codeFont, 'fira', 'the code font is a personal choice');
+    assert.equal(look.solutionFont, 'mali', 'the solution handwriting is a personal choice');
+    assert.equal(look.accent, 'theme');
+    assert.deepEqual(sanitizeLook(look), look, `${t.id}: idempotent`);
+    assert.deepEqual(sanitizeLook({ v: 5, style: t.id }).codeFont, t.bundle.codeFont, `${t.id}: default code font`);
   }
+  // A theme can't be bent: stored palette, fonts or shapes are ignored.
+  const bent = sanitizeLook({ v: 5, style: 'sakura', theme: 'parchment', font: 'geist', radius: 'sharp', pattern: 'pixels', iconSet: 'remix' });
+  assert.equal(bent.theme, 'sakura');
+  assert.equal(bent.font, 'nunito');
+  assert.equal(bent.radius, 'round');
+  assert.equal(bent.pattern, 'petals');
+  assert.equal(bent.iconSet, 'phosphor');
+  // Solution fonts: every offered one round-trips; unknown ones are the default.
+  const { SOLUTION_FONTS } = await theme('fonts.ts');
+  assert.deepEqual(SOLUTION_FONTS.map((f) => f.id), ['shantell', 'patrick', 'architects', 'mali', 'off']);
+  for (const f of SOLUTION_FONTS) assert.equal(sanitizeLook({ v: 5, solutionFont: f.id }).solutionFont, f.id);
+  for (const bad of ['caveat', 'Shantell', '', 7, null, '<script>']) assert.equal(sanitizeLook({ v: 5, solutionFont: bad }).solutionFont, 'off');
+  assert.ok(!LOOK_TABLES.styles.includes('studio'), 'Hive\'s internal look is never stored');
+});
 
-  // A style that doesn't exist in the chosen set falls back to the set's default.
-  assert.equal(sanitizeLook({ ...v2, iconSet: 'remix', iconStyle: 'duotone' }).iconStyle, 'line');
+test('look migration v5: the old style pack folds into the ten themes', async () => {
+  const { sanitizeLook } = await theme('look.ts');
+  const style = (raw) => sanitizeLook(raw).style;
+  // The untouched old default and the house style land on Field Journal.
+  assert.equal(style({ v: 3, style: 'studio', theme: 'midnight' }), 'journal');
+  assert.equal(style({ v: 4, style: 'journal', theme: 'parchment' }), 'journal');
+  assert.equal(style({ v: 2 }), 'journal');
+  // Each old style goes to the theme nearest in spirit.
+  const expect = {
+    editorial: 'journal', manuscript: 'journal', glass: 'sakura', washi: 'sakura', luxe: 'observatory', atelier: 'observatory',
+    signal: 'arcade', poster: 'arcade', console: 'terminal', terminal: 'terminal', nordic: 'greenhouse', swiss: 'blueprint',
+    blueprint: 'blueprint', canvas: 'sketchbook',
+  };
+  for (const [from, to] of Object.entries(expect)) assert.equal(style({ v: 4, style: from, theme: 'midnight' }), to, `${from} → ${to}`);
+  // A palette picked on the old default style says more than the style.
+  assert.equal(style({ v: 4, style: 'studio', theme: 'dracula' }), 'arcade');
+  assert.equal(style({ v: 4, style: 'studio', theme: 'everforest' }), 'greenhouse');
+  assert.equal(style({ v: 4, style: 'studio', theme: 'tokyo-night' }), 'observatory');
+  assert.equal(style({ v: 4, style: 'studio', theme: 'rose-pine' }), 'sakura');
+  assert.equal(style({ v: 4, style: 'studio', theme: 'phosphor' }), 'terminal');
+  // Accessibility palettes always move to Clear, whatever the style was.
+  for (const p of ['contrast-dark', 'contrast-light', 'colour-safe', 'tritan-safe', 'e-ink']) {
+    assert.equal(style({ v: 4, style: 'washi', theme: p }), 'clear', `${p} → clear`);
+  }
+  // Personal settings survive; the old style's code font gives way to the theme's.
+  const moved = sanitizeLook({ v: 4, style: 'washi', theme: 'washi', textSize: 'xl', solutionFont: 'patrick', codeFont: 'plex-mono' });
+  assert.equal(moved.v, 5);
+  assert.equal(moved.textSize, 'xl');
+  assert.equal(moved.solutionFont, 'patrick');
+  assert.equal(moved.codeFont, 'victor', 'Sakura\'s own code font');
+  assert.deepEqual(sanitizeLook(moved), moved, 'idempotent');
 });
 
 test('sanitizeLook: migrates a v1 (wallpaper era) look', async () => {
   const { sanitizeLook } = await theme('look.ts');
-  const v1 = {
-    wallpaper: 'synthwave-grid', accent: 'purple', glass: 'frosted', cardStyle: 'neon', iconPack: 'clay',
-    iconShape: 'hexagon', fontStyle: 'handwriting-caveat', fontSize: 'huge', fontColor: 'cyan',
-  };
-  const out = sanitizeLook(v1);
-  assert.equal(out.v, 4);
-  assert.equal(out.theme, 'synthwave');
-  assert.equal(out.accent, 'violet');
-  assert.equal(out.cardStyle, 'glow');
-  assert.equal(out.iconContainer, 'solid');
-  assert.equal(out.iconShape, 'rounded');
-  assert.equal(out.font, 'nunito');
-  assert.equal(out.textSize, 'xl');
-  assert.equal(out.solutionFont, 'off');
-  for (const gone of ['wallpaper', 'glass', 'iconPack', 'fontStyle', 'fontSize', 'fontColor']) {
-    assert.ok(!(gone in out), `${gone} should not survive migration`);
-  }
-  // The old default (Aurora wallpaper, multicolour accent) lands on the new default.
-  const d = sanitizeLook({ wallpaper: 'aurora', accent: 'multicolor', iconShape: 'free' });
-  assert.equal(d.theme, 'parchment');
-  assert.equal(d.style, 'journal');
-  assert.equal(d.accent, 'theme');
-  assert.equal(d.iconContainer, 'none');
+  const out = sanitizeLook({ wallpaper: 'synthwave-grid', accent: 'purple', glass: 'frosted', cardStyle: 'neon', iconPack: 'clay', fontStyle: 'handwriting-caveat', fontSize: 'huge', solutionFont: 'shantell' });
+  assert.equal(out.v, 5);
+  assert.equal(out.style, 'journal');
+  assert.equal(out.textSize, 'xl', 'the v1 text size is kept');
+  assert.equal(out.solutionFont, 'off', 'the old handwriting default moves to plain text');
+  for (const gone of ['wallpaper', 'glass', 'iconPack', 'fontStyle', 'fontSize', 'fontColor']) assert.ok(!(gone in out), `${gone} should not survive migration`);
 });
 
 test('the validator survives serialisation into the first-paint script', async () => {
@@ -151,16 +177,14 @@ test('the validator survives serialisation into the first-paint script', async (
   const samples = [
     {},
     { wallpaper: 'deep-space', accent: 'ice', fontStyle: 'cinzel' },
-    { theme: 'dracula', accent: 'theme', iconSet: 'phosphor', iconStyle: 'fill' },
-    { theme: 'gruvbox', iconSet: 'lucide', iconStyle: 'fill' },
-    { theme: 'nord', solutionFont: 'architects' },
-    { solutionFont: 'off' },
+    { v: 4, style: 'studio', theme: 'dracula' },
+    { v: 4, style: 'washi', theme: 'contrast-light' },
+    { v: 5, style: 'observatory', textSize: 'large', codeFont: 'fira' },
+    { v: 5, style: 'nope' },
     { solutionFont: 'comic-sans' },
   ];
   for (const s of samples) assert.deepEqual(fn(s, T), sanitizeLookWith(s, LOOK_TABLES));
-  assert.deepEqual(T.solutionFonts, ['shantell', 'patrick', 'architects', 'mali', 'off']);
-  assert.equal(fn({ solutionFont: 'architects' }, T).solutionFont, 'architects');
-  assert.equal(fn({ solutionFont: 'comic-sans' }, T).solutionFont, 'off');
+  assert.equal(fn({ v: 5, style: 'arcade' }, T).pattern, 'pixels');
 });
 
 test('the first-paint script sets data-solution-font, and the theme CSS defines every solution font', async () => {
@@ -178,58 +202,17 @@ test('the first-paint script sets data-solution-font, and the theme CSS defines 
   assert.match(css, /\[data-solution-font="off"\]\{--font-solution:var\(--font-body\)/);
 });
 
-test('design styles: every bundle is a valid look and round-trips', async () => {
-  const { sanitizeLook, DEFAULT_LOOK, LOOK_TABLES } = await theme('look.ts');
-  const { STYLES, PATTERNS, DEFAULT_STYLE, DISPLAY_FACES } = await theme('styles.ts');
-  assert.equal(DEFAULT_LOOK.style, DEFAULT_STYLE);
-  assert.equal(new Set(STYLES.map((s) => s.id)).size, STYLES.length, 'style ids are unique');
-  for (const s of STYLES) {
-    const want = { ...DEFAULT_LOOK, style: s.id, ...s.bundle };
-    const got = sanitizeLook(want);
-    for (const [k, v] of Object.entries(s.bundle)) assert.equal(got[k], v, `${s.id}: ${k}=${v} must be a valid value`);
-    assert.equal(got.style, s.id);
-    if (s.displayFont) assert.ok(LOOK_TABLES.fonts.includes(s.displayFont) || s.displayFont in DISPLAY_FACES, `${s.id}: display font ${s.displayFont} exists`);
-  }
-  for (const p of PATTERNS) assert.equal(sanitizeLook({ pattern: p.id }).pattern, p.id);
-  assert.equal(sanitizeLook({ style: '<x>', pattern: 'nope' }).style, DEFAULT_STYLE);
-  assert.equal(sanitizeLook({ style: '<x>', pattern: 'nope' }).pattern, 'none');
-});
-
-test('look migration v4: the untouched default moves to Field Journal, every choice is kept', async () => {
-  const { sanitizeLook, DEFAULT_LOOK } = await theme('look.ts');
-  assert.equal(DEFAULT_LOOK.style, 'journal');
-  assert.equal(DEFAULT_LOOK.theme, 'parchment');
-  const v3Default = { v: 3, style: 'studio', pattern: 'none', theme: 'midnight', accent: 'theme', font: 'geist', codeFont: 'jetbrains', solutionFont: 'off', textSize: 'large', cardStyle: 'soft', radius: 'rounded', iconSet: 'phosphor', iconStyle: 'regular', iconContainer: 'quiet', iconShape: 'squircle' };
-  const moved = sanitizeLook(v3Default);
-  assert.equal(moved.v, 4);
-  for (const k of ['style', 'theme', 'font', 'codeFont', 'radius', 'cardStyle', 'pattern']) assert.equal(moved[k], DEFAULT_LOOK[k], `untouched default: ${k}`);
-  assert.equal(moved.textSize, 'large', 'fields outside the style bundle are kept');
-  assert.equal(moved.iconSet, 'phosphor');
-  // Anything someone changed keeps their look.
-  for (const [k, v] of [['theme', 'nord'], ['radius', 'round'], ['cardStyle', 'elevated'], ['accent', 'teal'], ['font', 'manrope'], ['pattern', 'dots']]) {
-    const kept = sanitizeLook({ ...v3Default, [k]: v });
-    assert.equal(kept.style, 'studio', `changed ${k} keeps Studio`);
-    assert.equal(kept[k], v);
-  }
-  assert.equal(sanitizeLook({ ...v3Default, style: 'washi', theme: 'washi' }).style, 'washi');
-  // Once on v4, Studio + Midnight is a choice and stays.
-  assert.equal(sanitizeLook({ ...v3Default, v: 4 }).style, 'studio');
-  // Older looks with no style field were on Studio then.
-  assert.equal(sanitizeLook({ v: 2, theme: 'midnight', accent: 'theme', font: 'geist', codeFont: 'jetbrains', radius: 'rounded', cardStyle: 'soft' }).style, 'journal');
-  assert.equal(sanitizeLook({ v: 2, theme: 'dracula' }).style, 'studio', 'a chosen palette keeps the old Studio style');
-  // Idempotent.
-  assert.deepEqual(sanitizeLook(moved), moved);
-});
-
-test('Hive keeps its pre-journal look: journal shows as Studio on Midnight there, other styles unchanged', async () => {
+test('Hive keeps its own look (Studio on Midnight) whatever theme is on', async () => {
   const { hiveLook, isHivePath, DEFAULT_LOOK, sanitizeLook } = await theme('look.ts');
-  const shown = hiveLook(DEFAULT_LOOK);
-  assert.equal(shown.style, 'studio');
-  assert.equal(shown.theme, 'midnight');
-  assert.equal(shown.cardStyle, 'soft');
-  assert.equal(shown.textSize, DEFAULT_LOOK.textSize, 'personal settings outside the old default stay');
-  const nord = sanitizeLook({ v: 4, style: 'nordic', theme: 'fjord' });
-  assert.deepEqual(hiveLook(nord), nord);
+  const { THEMES } = await theme('styles.ts');
+  for (const t of THEMES) {
+    const shown = hiveLook(sanitizeLook({ v: 5, style: t.id, textSize: 'large' }));
+    assert.equal(shown.style, 'studio', `${t.id} shows as Studio in Hive`);
+    assert.equal(shown.theme, 'midnight');
+    assert.equal(shown.cardStyle, 'soft');
+    assert.equal(shown.textSize, 'large', 'personal settings stay');
+  }
+  assert.equal(hiveLook(DEFAULT_LOOK).style, 'studio');
   assert.ok(isHivePath('/hive') && isHivePath('/hive/projects/1'));
   assert.ok(!isHivePath('/hiveminds') && !isHivePath('/hub'));
 });

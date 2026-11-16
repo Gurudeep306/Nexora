@@ -208,7 +208,7 @@
     margin-top: 1.5rem;
     padding-top: 1rem;
     border-top: 1px solid var(--ed-line);
-    font-family: var(--ed-serif);
+    font-family: var(--ed-prose, var(--ed-serif));
     font-size: 14px;
     font-style: italic;
     line-height: 1.5;
@@ -341,7 +341,7 @@
   }
   .desk-weather-line {
     margin-top: 0.625rem;
-    font-family: var(--ed-serif);
+    font-family: var(--ed-prose, var(--ed-serif));
     font-size: 17px;
     line-height: 1.45;
     color: var(--ed-ink-2);
@@ -557,7 +557,7 @@
   }
   .desk-wire-empty {
     padding: 1.25rem 0;
-    font-family: var(--ed-serif);
+    font-family: var(--ed-prose, var(--ed-serif));
     font-style: italic;
     font-size: 16px;
     color: var(--ed-muted);

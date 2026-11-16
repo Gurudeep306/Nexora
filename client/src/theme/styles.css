@@ -9,360 +9,18 @@
    style and pattern works with every palette, light or dark.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Page patterns ────────────────────────────────────────────────────────── */
-[data-pattern] {
-  --pattern-ink: color-mix(in oklab, var(--color-text-primary) 9%, transparent);
-  --pattern-ink-strong: color-mix(in oklab, var(--color-text-primary) 15%, transparent);
-  --pattern-image: none;
-  --pattern-size: auto;
-}
-[data-mode='light'][data-pattern],
-[data-mode='light'] [data-pattern] {
-  --pattern-ink: color-mix(in oklab, var(--color-text-primary) 7%, transparent);
-  --pattern-ink-strong: color-mix(in oklab, var(--color-text-primary) 12%, transparent);
-}
-[data-pattern='dots'] {
-  --pattern-image: radial-gradient(var(--pattern-ink-strong) 1px, transparent 1.25px);
-  --pattern-size: 22px 22px;
-}
-[data-pattern='grid'] {
-  --pattern-image:
-    linear-gradient(var(--pattern-ink) 1px, transparent 1px),
-    linear-gradient(90deg, var(--pattern-ink) 1px, transparent 1px);
-  --pattern-size: 28px 28px;
-}
-[data-pattern='blueprint'] {
-  --bp-minor: color-mix(in oklab, var(--color-accent-brand) 7%, transparent);
-  --bp-major: color-mix(in oklab, var(--color-accent-brand) 15%, transparent);
-  --pattern-image:
-    linear-gradient(var(--bp-major) 1px, transparent 1px),
-    linear-gradient(90deg, var(--bp-major) 1px, transparent 1px),
-    linear-gradient(var(--bp-minor) 1px, transparent 1px),
-    linear-gradient(90deg, var(--bp-minor) 1px, transparent 1px);
-  --pattern-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
-}
-[data-pattern='columns'] {
-  --pattern-image: linear-gradient(90deg, var(--pattern-ink) 1px, transparent 1px);
-  --pattern-size: calc(100% / 12) 100%;
-}
-[data-pattern='lines'] {
-  --pattern-image: repeating-linear-gradient(0deg, var(--pattern-ink) 0 1px, transparent 1px 4px);
-  --pattern-size: auto;
-}
-[data-pattern='grain'] {
-  --pattern-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  --pattern-size: 180px 180px;
-}
-[data-pattern='lines'] { --pattern-ink: color-mix(in oklab, var(--color-text-primary) 4%, transparent); }
-
-[data-pattern='wash'] {
-  --pattern-image:
-    radial-gradient(120% 60% at 50% -12%, color-mix(in oklab, var(--color-accent-brand) 20%, transparent), transparent 72%),
-    linear-gradient(180deg, color-mix(in oklab, var(--color-accent-brand) 5%, transparent), transparent 55%);
-  --pattern-size: 100% 100%;
-  --pattern-repeat: no-repeat;
-}
-
-html[data-pattern] body,
-.pattern-surface {
-  background-image: var(--pattern-image);
-  background-size: var(--pattern-size);
-  background-repeat: var(--pattern-repeat, repeat);
-}
-html[data-pattern] body {
-  background-attachment: fixed;
-}
-
-/* ── Studio: the default — nothing extra. ─────────────────────────────── */
-
-/* ── Editorial ─────────────────────────────────────────────────────────── */
-[data-style='editorial'][data-font],
-[data-style='editorial'] [data-font] {
-  --font-display: 'Newsreader Variable', 'Newsreader Fallback', ui-serif, Georgia, 'Times New Roman', serif;
-  --heading-tracking: -0.012em;
-}
-[data-style='editorial'] :is(h1, h2, h3, .sx-h) {
-  font-weight: 500;
-  font-optical-sizing: auto;
-}
-[data-style='editorial'] :is(h1, h2, .sx-h) {
-  letter-spacing: -0.02em;
-}
-[data-style='editorial'] .prose-link,
-[data-style='editorial'] :where(article, .reading) a:not([class]) {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-}
-
-/* ── Swiss ─────────────────────────────────────────────────────────────── */
-[data-style='swiss'] :is(h1, h2, h3, .sx-h) {
-  font-weight: 700;
-  letter-spacing: -0.04em;
-}
-[data-style='swiss'] :is(h4, h5, h6) {
-  font-weight: 650;
-  letter-spacing: -0.02em;
-}
-[data-style='swiss'][data-palette],
-[data-style='swiss'] [data-palette] {
-  --hairline: color-mix(in oklab, var(--color-text-primary) 22%, transparent);
-}
-
-/* ── Blueprint ─────────────────────────────────────────────────────────── */
-[data-style='blueprint'] :is(h1, h2, h3, .sx-h) {
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-[data-style='blueprint'] :is(.eyebrow, [class*='tracking-['][class*='uppercase']) {
-  font-family: var(--font-mono);
-  letter-spacing: 0.08em;
-}
-[data-style='blueprint'][data-card-style]:not([data-card-style='ink'], [data-card-style='ruled'], [data-card-style='flat']) {
-  --card-border: color-mix(in oklab, var(--color-accent-brand) 30%, var(--color-border));
-}
-
-/* ── Atelier ───────────────────────────────────────────────────────────── */
-[data-style='atelier'] :is(h1, h2, h3, .sx-h) {
-  font-weight: 600;
-  letter-spacing: -0.035em;
-}
-
-/* ── Canvas ────────────────────────────────────────────────────────────── */
-[data-style='canvas'] :is(h1, h2, h3, .sx-h) {
-  font-weight: 650;
-}
-
-/* ── Terminal: one monospaced face for everything ─────────────────────── */
-[data-style='terminal'][data-font],
-[data-style='terminal'] [data-font] {
-  --font-body: var(--font-mono);
-  --font-display: var(--font-mono);
-  --heading-tracking: -0.01em;
-}
-[data-style='terminal'] body,
-[data-style='terminal'].pattern-surface {
-  letter-spacing: 0;
-}
-[data-style='terminal'] :is(h1, h2, h3, .sx-h) {
-  font-weight: 600;
-}
-
-/* ── Manuscript ────────────────────────────────────────────────────────── */
-[data-style='manuscript'] :is(h1, h2, h3, .sx-h) {
-  font-weight: 500;
-}
-[data-style='manuscript'] body {
-  letter-spacing: 0;
-}
-
-/* ── Poster ────────────────────────────────────────────────────────────── */
-[data-style='poster'] :is(h1, h2, h3, .sx-h) {
-  font-weight: 700;
-  letter-spacing: -0.04em;
-}
-
-/* ── New card styles (cards.ts) ───────────────────────────────────────── */
-/* Ruled — no box: a rule above, like a column in a printed page. */
-[data-card-style='ruled'] {
-  --card-bg: transparent;
-  --card-border: transparent;
-  --card-shadow: inset 0 1px 0 0 var(--color-border-strong);
-  --card-hover-border: transparent;
-  --card-hover-shadow: inset 0 2px 0 0 var(--color-text-primary);
-}
-/* Ink — a heavy outline with a hard offset shadow. */
-[data-card-style='ink'] {
-  --card-bg: var(--color-bg-surface);
-  --card-border: var(--color-text-primary);
-  --card-shadow: 4px 4px 0 0 var(--color-text-primary);
-  --card-hover-border: var(--color-text-primary);
-  --card-hover-shadow: 6px 6px 0 0 var(--color-text-primary);
-}
-[data-card-style='ink'] :is(.card, .card-neon) {
-  border-width: 1.5px;
-}
-[data-card-style='ink'] :is(.card, .card-neon) :is(.card, .card-neon) {
-  border-width: 1px;
-  box-shadow: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html[data-pattern] body {
-    background-attachment: scroll;
-  }
-}
-
-/* A ruled column has square ends. */
-[data-card-style='ruled'] :is(.card, .card-neon) {
-  border-radius: 0;
-}
-
-/* ═══ Styles added in the second set ═════════════════════════════════════ */
-
-/* Glass card: frosted and translucent. */
-[data-card-style='glass'] {
-  --card-bg: color-mix(in oklab, var(--color-bg-surface) 56%, transparent);
-  --card-border: color-mix(in oklab, var(--color-text-primary) 11%, transparent);
-  --card-shadow: inset 0 1px 0 0 color-mix(in oklab, white 16%, transparent), 0 12px 32px -16px oklch(0 0 0 / 0.35);
-  --card-hover-border: color-mix(in oklab, var(--color-text-primary) 20%, transparent);
-  --card-hover-shadow: inset 0 1px 0 0 color-mix(in oklab, white 20%, transparent), 0 18px 40px -16px oklch(0 0 0 / 0.42);
-}
-[data-mode='light'][data-card-style='glass'],
-[data-mode='light'] [data-card-style='glass'] {
-  --card-bg: color-mix(in oklab, white 62%, transparent);
-  --card-border: color-mix(in oklab, white 70%, var(--color-border));
-  --card-shadow: inset 0 1px 0 0 white, 0 10px 30px -16px oklch(0.3 0.03 250 / 0.22);
-}
-[data-card-style='glass'] :is(.card, .card-neon) {
-  -webkit-backdrop-filter: blur(22px) saturate(1.5);
-  backdrop-filter: blur(22px) saturate(1.5);
-}
-
-/* ── Liquid Glass ──────────────────────────────────────────────────────── */
-[data-style='glass'] :is(h1, h2, h3, .sx-h) {
-  font-weight: 650;
-  letter-spacing: -0.03em;
-}
-[data-style='glass'] [data-ui='button'] {
-  border-radius: 999px;
-}
-[data-style='glass'] [data-ui='button']:is([data-variant='secondary'], [data-variant='subtle'], [data-variant='outline']) {
-  background-color: color-mix(in oklab, var(--color-bg-surface) 50%, transparent);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
-  backdrop-filter: blur(16px) saturate(1.4);
-}
-
-/* ── Noir & Gold ───────────────────────────────────────────────────────── */
-[data-style='luxe'][data-font],
-[data-style='luxe'] [data-font] {
-  --font-display: 'Cormorant Garamond Variable', ui-serif, Georgia, serif;
-  --heading-tracking: -0.005em;
-}
-[data-style='luxe'] :is(h1, h2, h3, h4, .sx-h) {
-  font-weight: 500;
-  font-size-adjust: 0.5;
-}
-[data-style='luxe'][data-card-style]:not([data-card-style='ink']) {
-  --card-border: color-mix(in oklab, var(--color-accent-brand) 30%, transparent);
-  --card-hover-border: color-mix(in oklab, var(--color-accent-brand) 60%, transparent);
-}
-[data-style='luxe'] [data-ui='button'] {
-  border-radius: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 0.72rem;
-  font-weight: 600;
-}
-[data-style='luxe'] [data-ui='button']:is([data-variant='secondary'], [data-variant='subtle'], [data-variant='outline']) {
-  background: transparent;
-  border-color: color-mix(in oklab, var(--color-accent-brand) 45%, transparent);
-  box-shadow: none;
-}
-[data-style='luxe'] ::selection {
-  background: color-mix(in oklab, var(--color-accent-brand) 35%, transparent);
-}
-
-/* ── Washi ─────────────────────────────────────────────────────────────── */
-[data-style='washi'][data-font],
-[data-style='washi'] [data-font] {
-  --font-display: 'Shippori Mincho', ui-serif, 'Hiragino Mincho ProN', Georgia, serif;
-  --heading-tracking: 0.005em;
-}
-[data-style='washi'] :is(h1, h2, h3, h4, .sx-h) {
-  font-weight: 600;
-}
-[data-style='washi'] [data-ui='button'] {
-  border-radius: 2px;
-  letter-spacing: 0.04em;
-}
-
-/* ── Signal ────────────────────────────────────────────────────────────── */
-[data-style='signal'][data-font],
-[data-style='signal'] [data-font] {
-  --font-display: 'Doto Variable', ui-monospace, monospace;
-  --heading-tracking: 0;
-}
-[data-style='signal'] :is(h1, h2, .sx-h) {
-  font-weight: 800;
-}
-[data-style='signal'] :is(h3, h4, h5, h6) {
-  font-family: var(--font-body);
-  letter-spacing: -0.02em;
-}
-[data-style='signal'] [data-ui='button'] {
-  border-radius: 999px;
-}
-[data-style='signal'] [data-ui='button']:is([data-variant='secondary'], [data-variant='subtle']) {
-  background: transparent;
-  border-color: color-mix(in oklab, var(--color-text-primary) 35%, transparent);
-  box-shadow: none;
-}
-[data-style='signal'] :is(.eyebrow, [class*='tracking-['][class*='uppercase']) {
-  font-family: var(--font-mono);
-}
-
-/* ── Console ───────────────────────────────────────────────────────────── */
-[data-style='console'] :is(h1, h2, h3, .sx-h) {
-  font-weight: 650;
-  letter-spacing: -0.035em;
-}
-[data-style='console'] :is(.eyebrow, [class*='tracking-['][class*='uppercase']) {
-  font-family: var(--font-mono);
-  letter-spacing: 0.06em;
-}
-[data-style='console'] [data-ui='button'] {
-  box-shadow:
-    inset 0 -2px 0 0 color-mix(in oklab, var(--shadow-ink) 22%, transparent),
-    inset 0 1px 0 0 color-mix(in oklab, white 25%, transparent),
-    0 1px 2px color-mix(in oklab, var(--shadow-ink) 18%, transparent);
-}
-[data-style='console'] [data-ui='button']:active {
-  box-shadow: inset 0 1px 2px color-mix(in oklab, var(--shadow-ink) 25%, transparent);
-  transform: translateY(1px);
-}
-
-/* ── Nordic ────────────────────────────────────────────────────────────── */
-[data-style='nordic'][data-font],
-[data-style='nordic'] [data-font] {
-  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif;
-  --heading-tracking: -0.02em;
-}
-[data-style='nordic'] :is(h1, h2, h3, .sx-h) {
-  font-weight: 560;
-  font-variation-settings: 'SOFT' 100, 'WONK' 0;
-}
-[data-style='nordic'] [data-ui='button'] {
-  border-radius: 999px;
-}
-
-/* ── Poster and Swiss buttons ─────────────────────────────────────────── */
-[data-style='poster'] [data-ui='button'][data-variant='primary'] {
-  box-shadow: 3px 3px 0 0 var(--color-text-primary);
-  border: 1.5px solid var(--color-text-primary);
-}
-[data-style='poster'] [data-ui='button'][data-variant='primary']:hover {
-  box-shadow: 4px 4px 0 0 var(--color-text-primary);
-  transform: translate(-1px, -1px);
-}
-[data-style='swiss'] [data-ui='button'] {
-  border-radius: 0;
-  font-weight: 600;
-}
-
-/* Specimen buttons stay specimen-sized in styles that restyle button type. */
+/* Page patterns (the drawings behind each theme) and each theme's own
+   rules live in theme/themes.css. Specimen buttons stay specimen-sized. */
 [data-ui='button'].sx-btn {
   font-size: 9px;
-}
-[data-style='luxe'] [data-ui='button'].sx-btn {
-  font-size: 7.5px;
 }
 
 /* ═══ Field Journal — the house style (docs/ui/field-journal.md) ══════════
    Parchment and ivory, a Newsreader serif for titles and prose, Geist for
    controls, hairlines instead of shadows and one clay action per screen.
-   Everything here is keyed on [data-kit='journal'], so every other style is
-   untouched. The editorial classes themselves (ed-*) live in
+   Everything here is keyed on [data-kit='journal']: every NexoraGuru theme
+   dresses this kit, and theme/themes.css adds each theme's own type, shapes
+   and drawings on top. The editorial classes themselves (ed-*) live in
    styles/journal.css; these rules dress the shared kit (data-ui hooks), the
    shell and the Dock. */
 
@@ -372,10 +30,16 @@ html[data-pattern] body {
   display: none;
 }
 
+/* Each theme names its heading and reading faces (theme/themes.css);
+   Field Journal's are Newsreader. */
+[data-kit='journal'] {
+  --kit-display: 'Newsreader Variable', 'Newsreader Fallback', Charter, Georgia, 'Times New Roman', serif;
+  --kit-read: 'Newsreader Variable', 'Newsreader Fallback', Charter, Georgia, 'Times New Roman', serif;
+}
 [data-kit='journal'][data-font],
 [data-kit='journal'] [data-font] {
-  --font-display: 'Newsreader Variable', 'Newsreader Fallback', Charter, Georgia, 'Times New Roman', serif;
-  --heading-tracking: -0.02em;
+  --font-display: var(--kit-display);
+  --heading-tracking: var(--kit-heading-tracking, -0.02em);
 }
 
 /* No shadows: elevation is tone and a hairline. Composite shadows can't take
@@ -392,18 +56,18 @@ html[data-pattern] body {
   --hairline: var(--color-border);
 }
 
-/* Corners: generous cards, 12px controls (when the corners are the style's own). */
-[data-kit='journal'][data-radius='rounded'],
-[data-kit='journal'] [data-radius='rounded'] {
-  --radius-control: 0.75rem;
-  --radius-card: 1.5rem;
-  --radius-sheet: 1.5rem;
+/* Corners: generous cards and 12px controls, unless the theme sets its own. */
+[data-kit='journal'][data-radius],
+[data-kit='journal'] [data-radius] {
+  --radius-control: var(--kit-control-radius, 0.75rem);
+  --radius-card: var(--kit-card-radius, 1.5rem);
+  --radius-sheet: var(--kit-card-radius, 1.5rem);
 }
 
 /* ── Type ── */
 /* Headings that use the editorial classes (ed-*) keep their own setting. */
 [data-kit='journal'] :is(h1, h2, .sx-h):not([class*='ed-']) {
-  font-weight: 400;
+  font-weight: var(--kit-heading-weight, 400);
   letter-spacing: -0.02em;
   font-optical-sizing: auto;
   text-wrap: balance;
@@ -459,7 +123,7 @@ html[data-pattern] body {
   background: var(--ed-clay);
   color: var(--ed-on-clay);
   border: 0;
-  border-radius: 0 0 8px 8px;
+  border-radius: var(--kit-btn-radius, 0 0 8px 8px);
   filter: none;
 }
 [data-kit='journal'] [data-ui='button']:is([data-variant='primary'], [data-variant='accent']):hover {
@@ -469,7 +133,7 @@ html[data-pattern] body {
   background: var(--color-bg-surface);
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
-  border-radius: 0 0 8px 8px;
+  border-radius: var(--kit-btn-radius, 0 0 8px 8px);
 }
 [data-kit='journal'] [data-ui='button']:is([data-variant='secondary'], [data-variant='subtle']):hover {
   border-color: var(--color-border-strong);
@@ -485,7 +149,7 @@ html[data-pattern] body {
   background: var(--color-bg-surface);
 }
 [data-kit='journal'] [data-ui='button']:is([data-variant='destructive'], [data-variant='danger'], [data-variant='success']) {
-  border-radius: 0 0 8px 8px;
+  border-radius: var(--kit-btn-radius, 0 0 8px 8px);
 }
 [data-kit='journal'] [data-ui='button'][data-variant='link'] {
   color: var(--color-text-primary);
@@ -800,8 +464,8 @@ html[data-pattern] body {
    cells, ink for done, clay for the current step, muted and dashed for
    discarded. */
 [data-kit='journal'] .nr-main {
-  --read-font: 'Newsreader Variable', 'Newsreader Fallback', ui-serif, Georgia, serif;
-  --read-size: 1.2rem;
+  --read-font: var(--kit-read);
+  --read-size: var(--kit-read-size, 1.2rem);
   --read-leading: 1.6;
   --nr-col: 41rem;
 }
@@ -830,7 +494,7 @@ html[data-pattern] body {
   color: var(--color-text-muted);
 }
 [data-kit='journal'] .nr-title {
-  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-family: var(--kit-display);
   font-weight: 400;
   font-size: clamp(2.25rem, 1.5rem + 2.4vw, 3.25rem);
   line-height: 1.05;
@@ -838,7 +502,7 @@ html[data-pattern] body {
   text-wrap: balance;
 }
 [data-kit='journal'] .nr-dek {
-  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-family: var(--kit-read);
   font-size: 1.25rem;
   line-height: 1.45;
   color: var(--color-text-secondary);
@@ -889,16 +553,17 @@ html[data-pattern] body {
 [data-kit='journal'] .nr-figure :is(.nr-figure-label, .nr-figure-caption) {
   color: var(--ed-muted-on-feature, var(--color-text-secondary));
 }
-[data-kit='journal'][data-mode='light'] .nr-figure,
-[data-kit='journal'] [data-mode='light'] .nr-figure {
+/* Field Journal's own manilla: the exact muted ink that holds 4.5:1 on it. */
+[data-kit='journal'][data-palette='parchment'][data-mode='light'] .nr-figure,
+[data-kit='journal'][data-palette='parchment'] [data-mode='light'] .nr-figure {
   --ed-muted-on-feature: #5c5b55;
 }
-[data-kit='journal'][data-mode='dark'] .nr-figure,
-[data-kit='journal'] [data-mode='dark'] .nr-figure {
+[data-kit='journal'][data-palette='parchment'][data-mode='dark'] .nr-figure,
+[data-kit='journal'][data-palette='parchment'] [data-mode='dark'] .nr-figure {
   --ed-muted-on-feature: #aaa79e;
 }
 [data-kit='journal'] .nr-figure-caption {
-  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-family: var(--kit-read);
   font-style: italic;
 }
 
@@ -1059,7 +724,7 @@ html[data-pattern] body {
 }
 /* narration: one serif line that explains why */
 [data-kit='journal'] .viz-note p {
-  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-family: var(--kit-read);
   font-size: 1.08rem;
   line-height: 1.5;
 }
@@ -1108,7 +773,7 @@ html[data-pattern] body {
   background: var(--ed-clay);
   color: var(--ed-on-clay, var(--color-text-primary));
   box-shadow: none;
-  border-radius: 0 0 8px 8px;
+  border-radius: var(--kit-btn-radius, 0 0 8px 8px);
 }
 [data-kit='journal'] .viz-play:hover {
   background: var(--ed-clay-deep);
@@ -1121,7 +786,7 @@ html[data-pattern] body {
   accent-color: var(--color-text-primary);
 }
 [data-kit='journal'] .viz-head .font-display {
-  font-family: 'Newsreader Variable', ui-serif, Georgia, serif;
+  font-family: var(--kit-read);
   font-weight: 400;
   font-size: 1.15rem;
 }
@@ -1174,7 +839,7 @@ html[data-pattern] body {
 }
 [data-kit='journal'] .nxv-btn--main {
   border-color: transparent;
-  border-radius: 0 0 8px 8px;
+  border-radius: var(--kit-btn-radius, 0 0 8px 8px);
   background: var(--ed-clay, var(--color-accent-brand));
   color: var(--ed-on-clay, var(--color-on-accent-brand));
 }
