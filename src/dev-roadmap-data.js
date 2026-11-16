@@ -177,55 +177,6 @@ const FORGE_PATHS = [
     ]
   },
 
-  /* ==================== 4. SYSTEM DESIGN ==================== */
-  {
-    id: 'system-design',
-    title: 'System Design',
-    icon: 'graph',
-    color: '#a855f7',
-    description: 'Design large-scale distributed systems that handle millions of users.',
-    milestones: [
-      {
-        id: 'sd-fundamentals',
-        title: 'Core Concepts',
-        topics: [
-          { id: 'scalability', title: 'Scalability', desc: 'Horizontal vs vertical scaling, stateless design, auto-scaling, capacity planning, and bottleneck analysis.', time: '4 hrs', difficulty: 'intermediate' },
-          { id: 'load-balancing', title: 'Load Balancing', desc: 'Round-robin, least connections, consistent hashing, L4/L7 load balancers, health checks, and session affinity.', time: '3 hrs', difficulty: 'intermediate' },
-          { id: 'caching', title: 'Caching Strategies', desc: 'Cache-aside, write-through, write-behind, TTL, eviction policies (LRU, LFU), CDN caching, and cache invalidation.', time: '4 hrs', difficulty: 'intermediate' },
-          { id: 'cap-theorem', title: 'CAP Theorem & Consistency', desc: 'Consistency, availability, partition tolerance trade-offs, eventual consistency, strong consistency, and PACELC theorem.', time: '3 hrs', difficulty: 'advanced' },
-        ]
-      },
-      {
-        id: 'sd-patterns',
-        title: 'Design Patterns',
-        topics: [
-          { id: 'design-patterns', title: 'Software Design Patterns', desc: 'Creational (Singleton, Factory, Builder), Structural (Adapter, Proxy, Decorator), Behavioral (Observer, Strategy, Command).', time: '8 hrs', difficulty: 'intermediate' },
-          { id: 'api-patterns', title: 'API Design Patterns', desc: 'Rate limiting, circuit breakers, retries with backoff, bulkhead, saga pattern, and API versioning strategies.', time: '5 hrs', difficulty: 'intermediate' },
-          { id: 'event-driven', title: 'Event-Driven Architecture', desc: 'Event sourcing, CQRS, domain events, eventual consistency, and building event-driven microservices.', time: '6 hrs', difficulty: 'advanced' },
-        ]
-      },
-      {
-        id: 'sd-data',
-        title: 'Data Systems',
-        topics: [
-          { id: 'data-partitioning', title: 'Data Partitioning & Sharding', desc: 'Hash-based, range-based, geographic partitioning, resharding strategies, and cross-shard queries.', time: '5 hrs', difficulty: 'advanced' },
-          { id: 'replication', title: 'Replication & Consensus', desc: 'Leader-follower, multi-leader, leaderless replication, Raft, Paxos, and quorum-based systems.', time: '5 hrs', difficulty: 'advanced' },
-          { id: 'search', title: 'Search Systems', desc: 'Elasticsearch, inverted indexes, full-text search, ranking algorithms, and search relevance tuning.', time: '4 hrs', difficulty: 'advanced' },
-        ]
-      },
-      {
-        id: 'sd-case-studies',
-        title: 'Real-World Case Studies',
-        topics: [
-          { id: 'url-shortener', title: 'Design a URL Shortener', desc: 'Base62 encoding, hash collisions, analytics, rate limiting, and scaling to billions of URLs.', time: '3 hrs', difficulty: 'intermediate' },
-          { id: 'chat-system', title: 'Design a Chat System', desc: 'WebSocket connections, message ordering, delivery guarantees, presence system, and group chat architecture.', time: '4 hrs', difficulty: 'advanced' },
-          { id: 'newsfeed', title: 'Design a News Feed', desc: 'Fan-out on write vs read, ranking algorithms, real-time updates, and content moderation at scale.', time: '4 hrs', difficulty: 'advanced' },
-          { id: 'video-platform', title: 'Design a Video Streaming Platform', desc: 'Video transcoding, adaptive bitrate streaming, CDN, recommendation engine, and content delivery at scale.', time: '5 hrs', difficulty: 'advanced' },
-        ]
-      }
-    ]
-  },
-
   /* ==================== 5. MOBILE DEVELOPMENT ==================== */
   {
     id: 'mobile',

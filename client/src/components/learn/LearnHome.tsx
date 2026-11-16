@@ -54,8 +54,7 @@ export function LearnHome() {
 
   if (!clusters || !structure) return error ? <p className="ed-body-sm ed-ink-2">{error}</p> : <LoadingBlock rows={8} />
 
-  const hasLessons = (c: WebCluster) => c.engine === 'dsa' || c.id === 'sysd' || (!!c.gate?.notes && notes.has(c.gate.notes))
-  const lessonsHref = (c: WebCluster) => (c.engine === 'dsa' ? '/learn?tab=dsa' : c.id === 'sysd' ? '/learn?tab=sysdesign' : `/gate/notes/${c.gate?.notes}`)
+  const hasLessons = (c: WebCluster) => c.engine === 'dsa' || (!!c.gate?.notes && notes.has(c.gate.notes))
   const practiceHref = (c: WebCluster) => (c.engine === 'dsa' ? '/problems' : c.gate?.pyq ? `/gate/practice?subject=${encodeURIComponent(c.gate.pyq)}` : null)
   const nameOf = (c: WebCluster) => (c.engine === 'dsa' ? 'Data Structures & Algorithms' : c.name)
 
@@ -109,7 +108,7 @@ export function LearnHome() {
                 </Link>
                 {spreadCluster && (
                   <Link to={subjectHref(spreadCluster)} {...prefetchHandlers(subjectHref(spreadCluster))} className="ed-link ed-ui">
-                    Table of contents
+                    All lessons
                   </Link>
                 )}
               </div>
@@ -154,7 +153,7 @@ export function LearnHome() {
               <li key={c.id} className="ed-card lh-card">
                 <p className="ed-label ed-muted m-0">{p > 0 ? `${p}% mastered` : 'Not started'}</p>
                 <h3 className="ed-serif lh-card-title mt-3 mb-0">
-                  <Link to={subjectHref(c, nx?.id)} {...prefetchHandlers(subjectHref(c))} className="lh-card-link">
+                  <Link to={subjectHref(c)} {...prefetchHandlers(subjectHref(c))} className="lh-card-link">
                     {nameOf(c)}
                   </Link>
                 </h3>
@@ -167,9 +166,6 @@ export function LearnHome() {
                   </p>
                 )}
                 <p className="ed-ui-sm mt-auto mb-0 flex flex-wrap gap-x-4 gap-y-1 pt-5">
-                  <Link to={lessonsHref(c)} className="ed-link">
-                    Lessons
-                  </Link>
                   <Link to={`${subjectHref(c)}?view=tree`} {...prefetchHandlers(subjectHref(c))} className="ed-link">
                     Skill tree
                   </Link>
@@ -250,8 +246,7 @@ export function LearnHome() {
         </h2>
         <ul className="ed-rows lh-more mt-6 mb-0 list-none p-0">
           {[
-            { to: '/learn?tab=dsa', title: 'DSA course map', text: `All ${DSA_TOPICS.length} chapters, unit by unit.` },
-            { to: '/learn?tab=sysdesign', title: 'System Design Studio', text: 'Build real architectures and watch them under load.' },
+            { to: '/learn/dsa', title: 'DSA course map', text: `All ${DSA_TOPICS.length} chapters, unit by unit.` },
             { to: '/learn?tab=tutorials', title: 'Tutorials', text: 'Deep dives on single topics.' },
             { to: '/learn?tab=paths', title: 'Paths', text: 'Guided journeys across subjects.' },
             { to: '/nexus', title: 'Nexus', text: 'Every subject as one web of skills.' },

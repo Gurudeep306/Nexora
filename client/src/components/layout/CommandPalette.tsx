@@ -17,11 +17,12 @@ import { useProblemSearch } from '@/lib/problemSearch'
 import { pushRecentSearch, useRecentSearches } from '@/lib/recentSearches'
 import { describeRecent, pageMatches, usePageEntries } from './searchSources'
 import { ClearRecents } from './ClearRecents'
+import { LESSON_GROUP, LESSON_ICON, useLessonSearch } from '@/lib/lessonSearch'
 // Theme entries (Theme Centre)
 import { useTheme } from '@/context/ThemeContext'
 import { THEMES } from '@/theme/styles'
 
-type Group = 'Recent' | 'Go to' | 'Pages' | 'Problems' | 'Themes' | 'Actions' | 'Try instead'
+type Group = 'Recent' | 'Go to' | 'Lessons' | 'Subjects' | 'Skills' | 'Pages' | 'Problems' | 'Themes' | 'Actions' | 'Try instead'
 
 type Item = {
   id: string
@@ -54,7 +55,9 @@ export function CommandPalette() {
   const pages = usePageEntries()
   const recents = useRecentSearches()
   const q = query.trim()
-  const { results, loading: searching, settled } = useProblemSearch(query, { enabled: open })
+  const { results, loading: problemsLoading, settled } = useProblemSearch(query, { enabled: open })
+  const lessonSearch = useLessonSearch(query, { enabled: open })
+  const searching = problemsLoading || lessonSearch.loading
 
   const close = useCallback(() => {
     setOpen(false)
@@ -200,6 +203,8 @@ export function CommandPalette() {
     q.length >= 2 &&
     settled &&
     results.length === 0 &&
+    !lessonSearch.loading &&
+    lessonSearch.hits.length === 0 &&
     pageHits.length === 0 &&
     themeHits.length === 0 &&
     !actions.some((i) => i.label.toLowerCase().includes(lower))
@@ -233,6 +238,17 @@ export function CommandPalette() {
     if (noMatches) {
       return [{ ...searchAll, group: 'Try instead' }, { ...askAi, group: 'Try instead' }]
     }
+    const lessonItems = lessonSearch.hits.map<Item>((h) => ({
+      id: h.id,
+      group: LESSON_GROUP[h.kind] as Group,
+      label: h.label,
+      hint: h.hint,
+      icon: iconComponent(LESSON_ICON[h.kind]),
+      run: () => {
+        pushRecentSearch({ kind: 'page', label: h.label, to: h.to, icon: LESSON_ICON[h.kind] })
+        go(h.to)
+      },
+    }))
     const pageItems = pageHits.map<Item>((n) => ({
       id: `page:${n.to}`,
       group: 'Pages',
@@ -274,10 +290,10 @@ export function CommandPalette() {
       },
     }))
     const actionItems = [...actions.filter((i) => i.label.toLowerCase().includes(lower) || i.hint?.toLowerCase().includes(lower)), askAi]
-    return [...pageItems, ...problemItems, ...themeItems, ...actionItems]
-  }, [q, lower, recents, pages, pageHits, results, themeHits, actions, askAi, searchAll, noMatches, go, close, setLook])
+    return [...lessonItems, ...pageItems, ...problemItems, ...themeItems, ...actionItems]
+  }, [q, lower, recents, pages, pageHits, results, themeHits, actions, askAi, searchAll, noMatches, go, close, setLook, lessonSearch.hits])
 
-  useEffect(() => setActive(0), [q, results.length, noMatches])
+  useEffect(() => setActive(0), [q, results.length, lessonSearch.hits.length, noMatches])
 
   useEffect(() => {
     listRef.current?.querySelector<HTMLElement>(`[data-index="${active}"]`)?.scrollIntoView({ block: 'nearest' })
@@ -323,7 +339,7 @@ export function CommandPalette() {
                 ref={inputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search problems, pages, actions…"
+                placeholder="Find a lesson, problem, page or action…"
                 aria-label="Command palette search"
                 role="combobox"
                 aria-expanded="true"
@@ -341,7 +357,7 @@ export function CommandPalette() {
                   </span>
                   <p className="mt-3 mb-0 text-sm font-medium text-text-primary">No results for “{q}”</p>
                   <p className="mt-1 mb-0 max-w-xs text-[13px] text-text-secondary">
-                    Nothing in pages, problem titles, themes or actions. Check the spelling, or try one of these.
+                    Nothing in lessons, pages, problem titles, themes or actions. Check the spelling, or try one of these.
                   </p>
                 </div>
               )}
@@ -383,7 +399,7 @@ export function CommandPalette() {
                           <PlatformBadge platform={item.problem.platform} />
                         </>
                       ) : (
-                        item.hint && <span className="shrink-0 text-[12px] text-text-muted">{item.hint}</span>
+                        item.hint && <span className="max-w-[42%] min-w-0 shrink truncate text-[12px] text-text-muted">{item.hint}</span>
                       )}
                       <CornerDownLeft
                         className={cn('size-3.5 shrink-0 text-text-muted', isActive ? 'opacity-100' : 'opacity-0')}

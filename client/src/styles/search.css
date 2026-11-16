@@ -1,59 +1,100 @@
 /*
-  One search field for the whole site. Research notes (Raycast, Linear,
-  Vercel, Notion, cmdk): a quiet 36–44px field, the icon inside on the left,
-  a short placeholder, no label text around it, a shortcut chip on the right
-  that steps back on focus, and a focus state that brightens the edge rather
-  than adding a coloured glow.
+  One search field for the whole site — the "ledger line".
 
-    <label class="search-field">
+  No box. The field sits on a hairline, like a line in a notebook; the
+  magnifier and the text sit on it, and the placeholder is an italic serif
+  ("Find a lesson…"). Focus draws an ink line over the hairline from the
+  left, and the icon turns to ink. Results drop as a paper sheet below.
+  The top bar takes a quieter variant, a soft pill (.is-bar), because a bare
+  line would not read as a field among the bar's buttons.
+
+    <label class="search-field">                 (or SearchInput / SearchCombobox)
       <svg class="search-field-icon" …/>
       <input type="search" placeholder="Search problems" />
       <kbd class="search-field-kbd">/</kbd>        (optional)
     </label>
 
-  Sizes: default 36px, .is-lg 44px (page-level search), .is-sm 32px.
+  Sizes: default 40px, .is-lg 52px (page-level search), .is-sm 34px.
+  Tokens only; it follows every theme, light and dark.
 */
-.search-field {
+.search-field,
+.ui-search {
+  --sf-ink: var(--ed-ink, var(--color-text-primary));
+  --sf-line: var(--ed-line, var(--color-border));
+  --sf-muted: var(--ed-muted, var(--color-text-muted));
+  --sf-serif: var(--ed-serif, var(--font-display, Georgia, serif));
+  --sf-ease: var(--ed-ease, cubic-bezier(0.22, 1, 0.36, 1));
   position: relative;
+}
+
+/* The line under the field, and the ink line drawn over it on focus. */
+.search-field::before,
+.search-field::after,
+.ui-search::before,
+.ui-search::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  pointer-events: none;
+}
+.search-field::before,
+.ui-search::before {
+  background: var(--sf-line);
+  transition: background-color 200ms var(--sf-ease);
+}
+.search-field::after,
+.ui-search::after {
+  height: 1.5px;
+  background: var(--sf-ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 500ms var(--sf-ease);
+}
+.search-field:hover::before,
+.ui-search:hover::before {
+  background: color-mix(in oklab, var(--sf-ink) 35%, var(--sf-line));
+}
+.search-field:focus-within::after,
+.ui-search:focus-within::after {
+  transform: scaleX(1);
+}
+
+/* ── The label form (pages that build the field by hand) ── */
+.search-field {
   display: flex;
   align-items: center;
-  gap: 8px;
-  height: 36px;
-  padding: 0 10px 0 12px;
-  border-radius: var(--radius-control);
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-surface);
-  color: var(--color-text-primary);
+  gap: 10px;
+  height: 40px;
+  padding: 0 2px;
+  color: var(--sf-ink);
   cursor: text;
-  transition:
-    border-color var(--dur-fast) var(--ease-standard),
-    box-shadow var(--dur-fast) var(--ease-standard),
-    background-color var(--dur-fast) var(--ease-standard);
-}
-.search-field:hover {
-  border-color: var(--color-border-strong);
-}
-.search-field:focus-within {
-  border-color: color-mix(in oklab, var(--color-text-primary) 45%, var(--color-border));
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-text-primary) 8%, transparent);
 }
 .search-field.is-lg {
-  height: 44px;
-  padding-left: 14px;
-  font-size: 15px;
+  height: 52px;
+  gap: 12px;
 }
 .search-field.is-sm {
-  height: 32px;
+  height: 34px;
 }
 .search-field-icon {
   flex: none;
-  width: 16px;
-  height: 16px;
-  color: var(--color-text-muted);
-  transition: color var(--dur-fast) var(--ease-standard);
+  width: 17px;
+  height: 17px;
+  color: var(--sf-muted);
+  transition:
+    color 200ms var(--sf-ease),
+    transform 400ms var(--sf-ease);
+}
+.search-field.is-lg .search-field-icon {
+  width: 20px;
+  height: 20px;
 }
 .search-field:focus-within .search-field-icon {
-  color: var(--color-text-secondary);
+  color: var(--sf-ink);
+  transform: rotate(-8deg);
 }
 .search-field input {
   min-width: 0;
@@ -63,84 +104,145 @@
   outline: none;
   background: transparent;
   color: inherit;
-  font-size: 14px;
+  font-size: 15px;
   box-shadow: none;
   padding: 0;
 }
 .search-field.is-lg input {
+  font-size: 18px;
+}
+
+/* ── SearchInput / SearchCombobox: the same line around their input ── */
+.ui-search-input {
+  height: 2.5rem;
+  padding-right: 0.25rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--sf-ink, var(--color-text-primary));
   font-size: 15px;
+  box-shadow: none;
+  outline: none;
 }
-.search-field input::placeholder {
-  color: var(--color-text-muted);
+.ui-search-input:focus,
+.ui-search-input:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
-.search-field input::-webkit-search-cancel-button {
+.ui-search .ui-search-icon {
+  color: var(--sf-muted);
+  transition:
+    color 200ms var(--sf-ease),
+    transform 400ms var(--sf-ease);
+}
+.ui-search:focus-within .ui-search-icon {
+  color: var(--sf-ink);
+  transform: rotate(-8deg);
+}
+
+/* The placeholder: an italic serif, quieter than the text you type. */
+.search-field input::placeholder,
+.ui-search-input::placeholder,
+.ui-search-hint {
+  color: var(--sf-muted, var(--color-text-muted));
+  font-family: var(--sf-serif, Georgia, serif);
+  font-style: italic;
+  font-size: 1.06em;
+  letter-spacing: 0;
+  opacity: 1;
+}
+.search-field input::-webkit-search-cancel-button,
+.ui-search-input::-webkit-search-cancel-button {
   -webkit-appearance: none;
 }
+
+/* ── The top bar: a soft pill, the line only as a focus mark ── */
+.ui-search.is-bar {
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-text-primary) 5%, transparent);
+  transition: background-color 200ms var(--sf-ease);
+}
+.ui-search.is-bar::before {
+  display: none;
+}
+.ui-search.is-bar::after {
+  left: 18px;
+  right: 18px;
+  bottom: 5px;
+  height: 1px;
+}
+.ui-search.is-bar:hover {
+  background: color-mix(in oklab, var(--color-text-primary) 7.5%, transparent);
+}
+.ui-search.is-bar:focus-within {
+  background: var(--color-bg-surface);
+  box-shadow: inset 0 0 0 1px var(--sf-line);
+}
+.ui-search.is-bar .ui-search-input {
+  height: 2.375rem;
+  font-size: 14px;
+}
+
+/* ── Small parts ── */
 .search-field-kbd {
   flex: none;
   min-width: 20px;
   height: 20px;
   padding: 0 5px;
-  border-radius: 5px;
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-surface-2);
-  color: var(--color-text-muted);
+  border-radius: 4px;
+  border: 1px solid var(--sf-line, var(--color-border));
+  background: transparent;
+  color: var(--sf-muted, var(--color-text-muted));
   font-family: var(--font-mono);
   font-size: 11px;
   line-height: 18px;
   text-align: center;
   pointer-events: none;
-  transition: opacity var(--dur-fast) var(--ease-standard);
+  transition: opacity 200ms ease;
 }
-.search-field:focus-within .search-field-kbd {
+.search-field:focus-within .search-field-kbd,
+.ui-search:focus-within .search-field-kbd {
   opacity: 0;
 }
 .search-field-clear {
   flex: none;
   display: grid;
   place-items: center;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 999px;
-  color: var(--color-text-muted);
+  color: var(--sf-muted, var(--color-text-muted));
   cursor: pointer;
 }
 .search-field-clear:hover {
-  background: var(--color-bg-surface-3);
-  color: var(--color-text-primary);
+  background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+  color: var(--sf-ink, var(--color-text-primary));
+}
+.search-field-clear:focus-visible {
+  outline: 2px solid var(--color-text-primary);
+  outline-offset: 1px;
 }
 
-/* The input inside SearchInput / SearchCombobox (components/ui): the same
-   quiet field — 38px, hairline edge, no inset well, a neutral focus ring. */
-.ui-search-input {
-  height: 2.375rem;
-  padding-right: 0.75rem;
-  border-radius: var(--radius-control);
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-surface);
-  color: var(--color-text-primary);
-  font-size: 14px;
-  box-shadow: none;
-  outline: none;
-  transition:
-    border-color var(--dur-fast) var(--ease-standard),
-    box-shadow var(--dur-fast) var(--ease-standard);
+/* ── The results sheet under a search ── */
+.ui-search-panel [role='option'] {
+  transition: background-color 120ms ease;
 }
-.ui-search-input:hover {
-  border-color: var(--color-border-strong);
+.ui-search-panel .ui-search-group {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
-.ui-search-input:focus,
-.ui-search-input:focus-visible {
-  outline: none;
-  border-color: color-mix(in oklab, var(--color-text-primary) 45%, var(--color-border));
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-text-primary) 8%, transparent);
-}
-.ui-search-input::placeholder {
-  color: var(--color-text-muted);
-}
-.ui-search-input::-webkit-search-cancel-button {
-  -webkit-appearance: none;
-}
-.group\/search:focus-within .search-field-kbd {
-  opacity: 0;
+
+@media (prefers-reduced-motion: reduce) {
+  .search-field::after,
+  .ui-search::after,
+  .search-field-icon,
+  .ui-search .ui-search-icon {
+    transition: none;
+  }
+  .search-field:focus-within .search-field-icon,
+  .ui-search:focus-within .ui-search-icon {
+    transform: none;
+  }
 }

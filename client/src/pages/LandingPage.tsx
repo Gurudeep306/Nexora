@@ -52,7 +52,7 @@ const SPECIMENS = [
 ]
 
 const SUBJECTS: string[][] = [
-  ['Data Structures & Algorithms', 'Operating Systems', 'Computer Networks', 'Theory of Computation', 'Compiler Design', 'Databases', 'Digital Logic', 'Computer Organisation', 'Discrete Mathematics', 'Graph Theory', 'Number Theory', 'Competitive Programming', 'System Design', 'Distributed Systems', 'Parallel & Concurrent Programming', 'Complexity Theory'],
+  ['Data Structures & Algorithms', 'Operating Systems', 'Computer Networks', 'Theory of Computation', 'Compiler Design', 'Databases', 'Digital Logic', 'Computer Organisation', 'Discrete Mathematics', 'Graph Theory', 'Number Theory', 'Competitive Programming', 'Distributed Systems', 'Parallel & Concurrent Programming', 'Complexity Theory'],
   ['Machine Learning', 'Deep Learning', 'Generative AI & LLMs', 'Computer Vision', 'Natural Language Processing', 'Reinforcement Learning', 'Cryptography', 'Cybersecurity', 'Quantum Computing', 'Computer Graphics', 'Robotics', 'Cloud Computing', 'Docker & Kubernetes', 'Rust', 'Go', 'TypeScript', 'Linear Algebra', 'Probability & Statistics'],
 ]
 
