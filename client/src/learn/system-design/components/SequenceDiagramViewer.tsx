@@ -39,7 +39,7 @@ export const SequenceDiagramViewer: React.FC<SequenceDiagramViewerProps> = ({
   const steps = system.animationSteps
 
   return (
-    <div className="rounded-2xl border border-sky-500/20 bg-gradient-to-b from-[#0a0f1d] to-[#04070e] p-6 text-white shadow-2xl space-y-6 overflow-hidden">
+    <div className="rounded-2xl border border-sky-500/20 bg-gradient-to-b from-[#0a0f1d] to-[#04070e] p-6 text-white space-y-6 overflow-hidden">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div>
@@ -137,7 +137,7 @@ export const SequenceDiagramViewer: React.FC<SequenceDiagramViewerProps> = ({
                   }}
                   className={`group relative cursor-pointer rounded-xl p-3.5 transition-all ${
                     isCurrent
-                      ? 'bg-sky-500/10 ring-1 ring-sky-400/60 shadow-lg'
+                      ? 'bg-sky-500/10 ring-1 ring-sky-400/60'
                       : 'hover:bg-bg-surface-2/60 bg-black/30 ring-1 ring-border/40'
                   }`}
                 >

@@ -441,7 +441,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
   const isSelfNode = currentStep?.fromNode === currentStep?.toNode
 
   return (
-    <div className="flex flex-col rounded-2xl bg-bg-surface-2 ring-1 ring-border shadow-2xl overflow-hidden">
+    <div className="flex flex-col rounded-2xl bg-bg-surface-2 ring-1 ring-border overflow-hidden">
       {/* SECTION A: SYSTEM ARCHITECTURE OVERVIEW & INVARIANT HERO BANNER */}
       <div className="border-b border-border bg-gradient-to-r from-bg-surface-1 via-bg-surface-2 to-bg-surface-1 p-5 sm:p-6 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -597,7 +597,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-[12px] font-bold transition ${
               isPlaying
                 ? 'bg-amber-500/20 text-amber-400 ring-1 ring-amber-500/50'
-                : 'bg-accent-brand text-bg-base hover:opacity-90 shadow-md font-extrabold'
+                : 'bg-accent-brand text-bg-base hover:opacity-90 font-extrabold'
             }`}
           >
             {isPlaying ? (
@@ -727,7 +727,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
 
         {/* Floating Telemetry HUD */}
         {showTelemetryHud && (
-          <div className="absolute top-3 right-3 z-30 rounded-xl bg-black/80 p-2.5 ring-1 ring-border/80 backdrop-blur-md font-mono text-[10.5px] space-y-1.5 shadow-2xl min-w-[210px] pointer-events-auto">
+          <div className="absolute top-3 right-3 z-30 rounded-xl bg-black/80 p-2.5 ring-1 ring-border/80 backdrop-blur-md font-mono text-[10.5px] space-y-1.5 min-w-[210px] pointer-events-auto">
             <div className="flex items-center justify-between border-b border-border/40 pb-1">
               <span className="flex items-center gap-1.5 text-text-muted font-bold uppercase text-[9.5px]">
                 <Activity className={`size-3 ${Object.values(failedNodes).some(Boolean) ? 'text-rose-400 animate-pulse' : 'text-accent-brand'}`} />
@@ -1014,7 +1014,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                       fill="var(--color-bg-surface-3)"
                       stroke={protoTheme.badgeBorder}
                       strokeWidth="1.4"
-                      className="shadow-lg"
+                      
                     />
                     <text
                       x="32"
@@ -1073,7 +1073,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                   r="5"
                   fill="#00F0FF"
                   filter="url(#laserGlow)"
-                  className="shadow-lg"
+                  
                 />
                 <circle
                   cx={44 * Math.cos(flowTick * 3 + Math.PI)}
@@ -1081,7 +1081,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                   r="3.5"
                   fill="#38bdf8"
                   filter="url(#laserGlow)"
-                  className="shadow-lg"
+                  
                 />
                 {/* In-Memory Local Badge */}
                 <g transform="translate(-36, -48)">
@@ -1092,7 +1092,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                     fill="var(--color-bg-surface-3)"
                     stroke="#38bdf8"
                     strokeWidth="1.3"
-                    className="shadow-lg"
+                    
                   />
                   <text
                     x="36"
@@ -1175,13 +1175,13 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
 
               {/* Node Card */}
               <div
-                className={`relative flex w-[165px] sm:w-[185px] flex-col items-center rounded-2xl p-3 shadow-xl backdrop-blur-md transition-all ${
+                className={`relative flex w-[165px] sm:w-[185px] flex-col items-center rounded-2xl p-3 backdrop-blur-md transition-all ${
                   isFailed
                     ? 'bg-rose-950/85 ring-2 ring-rose-500'
                     : isCurrentActive
-                    ? 'bg-bg-surface-3 ring-2 ring-accent-brand shadow-accent-brand/30 shadow-2xl'
+                    ? 'bg-bg-surface-3 ring-2 ring-accent-brand'
                     : isSelected
-                    ? 'bg-bg-surface-2 ring-2 ring-sky-400 shadow-sky-500/20 shadow-lg'
+                    ? 'bg-bg-surface-2 ring-2 ring-sky-400'
                     : 'bg-bg-surface-2/95 ring-1 ring-border hover:ring-border-strong hover:bg-bg-surface-2'
                 }`}
               >
@@ -1207,7 +1207,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                       isFailed
                         ? 'bg-rose-500/20 text-rose-400'
                         : isCurrentActive
-                        ? 'bg-accent-brand text-bg-base shadow-md'
+                        ? 'bg-accent-brand text-bg-base'
                         : 'bg-bg-surface-1 text-text-secondary group-hover:text-accent-brand group-hover:bg-bg-surface-3'
                     }`}
                   >
@@ -1374,7 +1374,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             {/* Header */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 pb-3">
               <div className="flex items-center gap-3">
-                <div className="flex size-9 items-center justify-center rounded-xl bg-accent-brand text-bg-base shadow-md">
+                <div className="flex size-9 items-center justify-center rounded-xl bg-accent-brand text-bg-base">
                   {ICON_MAP[selectedNode.icon] || <Server className="size-5" />}
                 </div>
                 <div>
@@ -1536,7 +1536,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                     <button
                       onClick={() => handleTestRpc(selectedNode)}
                       disabled={testRpcLoading}
-                      className="flex items-center gap-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 px-3 py-1.5 font-mono text-[11.5px] font-bold text-black transition shadow-md disabled:opacity-50"
+                      className="flex items-center gap-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 px-3 py-1.5 font-mono text-[11.5px] font-bold text-black transition disabled:opacity-50"
                     >
                       <Zap className="size-3.5 fill-current" />
                       {testRpcLoading ? 'Invoking RPC...' : '⚡ Send Test RPC Call'}
@@ -1734,7 +1734,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                       key={node.id}
                       className={`rounded-xl p-4 transition-all duration-200 flex flex-col justify-between ring-1 ${
                         isSelected
-                          ? 'bg-accent-brand/10 ring-2 ring-accent-brand shadow-lg'
+                          ? 'bg-accent-brand/10 ring-2 ring-accent-brand'
                           : isNodeCrashed
                           ? 'bg-rose-500/10 ring-1 ring-rose-500/40'
                           : 'bg-bg-surface-2 ring-border hover:bg-bg-surface-3 hover:ring-border-strong'

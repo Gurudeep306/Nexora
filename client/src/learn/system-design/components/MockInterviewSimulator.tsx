@@ -116,7 +116,7 @@ export const MockInterviewSimulator: React.FC<MockInterviewSimulatorProps> = ({ 
   }
 
   return (
-    <div className="space-y-6 rounded-2xl bg-bg-surface-2 p-6 sm:p-8 ring-1 ring-border shadow-2xl">
+    <div className="space-y-6 rounded-2xl bg-bg-surface-2 p-6 sm:p-8 ring-1 ring-border">
       {/* Interview Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div>

@@ -217,7 +217,7 @@ Architectural Fix: ${currentWarStory.architecturalFix}
       {/* Sidebar Table of Contents */}
       <div className="space-y-4">
         {/* Course Mastery Tracker Card */}
-        <div className="rounded-2xl bg-bg-surface-2 p-4 ring-1 ring-border shadow-lg space-y-2">
+        <div className="rounded-2xl bg-bg-surface-2 p-4 ring-1 ring-border space-y-2">
           <div className="flex items-center justify-between text-[11px] font-mono">
             <span className="flex items-center gap-1.5 font-semibold text-text-primary">
               <Award className="size-3.5" /> Course Mastery Meter
@@ -289,7 +289,7 @@ Architectural Fix: ${currentWarStory.architecturalFix}
                 }}
                 className={`w-full text-left rounded-xl p-3 transition-all ${
                   isSelected
-                    ? 'bg-accent-brand/10 ring-1 ring-accent-brand/40 text-text-primary shadow-md'
+                    ? 'bg-accent-brand/10 ring-1 ring-accent-brand/40 text-text-primary'
                     : 'bg-bg-surface-2/60 hover:bg-bg-surface-3 text-text-secondary hover:text-text-primary'
                 }`}
               >

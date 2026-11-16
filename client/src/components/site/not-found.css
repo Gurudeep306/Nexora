@@ -40,6 +40,17 @@
       grid-template-columns: repeat(8, minmax(0, 1fr));
     }
   }
+  /* Four across on a phone: a little smaller so "achievements" fits whole. */
+  @media (max-width: 639px) {
+    .nf-cells {
+      gap: 0.25rem;
+    }
+    .nf-cells .nf-cell {
+      padding-inline: 1px;
+      font-size: 10px;
+      letter-spacing: -0.02em;
+    }
+  }
   .nf-cell {
     overflow: hidden;
     padding: 0.5rem 0.25rem;

@@ -52,7 +52,7 @@ export const InteractiveCapacityCalculator: React.FC<CapacityCalculatorProps> = 
   const serversNeeded = Math.max(2, Math.ceil(peakQps / 10000))
 
   return (
-    <div className="rounded-2xl border border-sky-500/20 bg-gradient-to-b from-[#0a0f1d] via-[#070b14] to-[#04060b] p-6 text-white shadow-xl space-y-6">
+    <div className="rounded-2xl border border-sky-500/20 bg-gradient-to-b from-[#0a0f1d] via-[#070b14] to-[#04060b] p-6 text-white space-y-6">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div>

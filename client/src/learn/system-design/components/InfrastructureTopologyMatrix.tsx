@@ -27,7 +27,7 @@ export const InfrastructureTopologyMatrix: React.FC<TopologyMatrixProps> = ({
   })
 
   return (
-    <div className="rounded-2xl border border-purple-500/20 bg-gradient-to-b from-[#0e091b] via-[#090611] to-[#040207] p-6 text-white shadow-xl space-y-5">
+    <div className="rounded-2xl border border-purple-500/20 bg-gradient-to-b from-[#0e091b] via-[#090611] to-[#040207] p-6 text-white space-y-5">
       {/* Top Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div>

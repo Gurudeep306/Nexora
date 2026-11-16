@@ -1016,7 +1016,7 @@ export const SystemHeroBlueprint: React.FC<{
   }, [])
 
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden border border-border/80 bg-bg-surface-1/95 p-4 shadow-2xl flex flex-col justify-between space-y-3">
+    <div className="relative w-full rounded-2xl overflow-hidden border border-border/80 bg-bg-surface-1/95 p-4 flex flex-col justify-between space-y-3">
       {/* Background Cybernetic Blueprint Grid */}
       <div
         className="absolute inset-0 opacity-15 pointer-events-none"
@@ -1030,7 +1030,7 @@ export const SystemHeroBlueprint: React.FC<{
       <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
         <div className="flex items-center gap-2.5">
           <span
-            className="flex size-8 items-center justify-center rounded-xl font-mono text-xs font-bold shadow-lg"
+            className="flex size-8 items-center justify-center rounded-xl font-mono text-xs font-bold"
             style={{
               backgroundColor: `${domainColor}25`,
               color: `color-mix(in oklab, ${domainColor} 35%, var(--color-text-primary))`,
@@ -1096,7 +1096,7 @@ export const SystemHeroBlueprint: React.FC<{
                   key={i}
                   className={`relative flex flex-col items-center text-center p-2.5 rounded-xl border transition-all duration-300 ${
                     isPulsing
-                      ? 'scale-105 shadow-lg'
+                      ? 'scale-105'
                       : 'bg-bg-surface-2/80 border-border/70 text-text-muted hover:border-border'
                   }`}
                   style={
@@ -1272,7 +1272,7 @@ export const SystemInternalEngineDiagram: React.FC<{
   }
 
   return (
-    <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border shadow-2xl space-y-5">
+    <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
         <div className="flex items-center gap-2">
           <div
@@ -1538,7 +1538,7 @@ export const SystemInternalEngineDiagram: React.FC<{
                   }`}
                 >
                   <div>{i === 2 ? 'Center Rider' : `Ring-${(i % 2) + 1}`}</div>
-                  <div className="truncate text-[9px] text-text-muted mt-1">{hex}</div>
+                  <div className="truncate text-[9px] text-text-secondary mt-1">{hex}</div>
                 </div>
               )
             )}
@@ -2383,7 +2383,7 @@ export const SystemTopologyMiniRadar: React.FC<{
   }
 
   return (
-    <div className="rounded-xl bg-bg-surface-2 p-4 ring-1 ring-border shadow-md space-y-3">
+    <div className="rounded-xl bg-bg-surface-2 p-4 ring-1 ring-border space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="m-0 text-xs font-bold text-text-primary flex items-center gap-2">
           <Radio className="size-3.5 text-emerald-400 animate-pulse" /> Live Cluster Topology Radar
