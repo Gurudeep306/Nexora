@@ -365,10 +365,7 @@
   letter-spacing: -0.015em;
 }
 
-/* ── Ranks: an ink seal ── */
-[data-kit='journal'] [data-ui='rank'] {
-  color: var(--color-text-primary) !important;
-}
+/* Ranks wear their tier colour (--rank-N, index.css): the colour says the tier. */
 
 /* ── The top bar: flat canvas; a hairline once the page scrolls under it ── */
 [data-kit='journal'] [data-ui='topbar'] {
