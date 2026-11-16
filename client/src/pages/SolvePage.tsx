@@ -18,7 +18,7 @@ import {
   TerminalSquare,
   Wand2,
   Sparkles,
-  X, Cpu } from 'lucide-react'
+  X, Cpu, Footprints } from 'lucide-react'
 import {
   Button,
   EmptyState,
@@ -66,10 +66,11 @@ import { Arena, enterBrowserFullscreen } from '@/components/solve/Arena'
 import { AiTestsPanel } from '@/components/solve/AiTestsPanel'
 import { AnalysisPanel } from '@/components/solve/AnalysisPanel'
 import { JourneyPanel } from '@/components/solve/journey/JourneyPanel'
+import { DryRunPanel } from '@/components/solve/dryrun/DryRunPanel'
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from '@/components/ui'
 import { FlaskConical, ListChecks, ScanSearch } from 'lucide-react'
 
-type BottomTab = 'tests' | 'output' | 'aitests' | 'analysis' | 'journey' | 'coach' | 'issues'
+type BottomTab = 'tests' | 'output' | 'dryrun' | 'aitests' | 'analysis' | 'journey' | 'coach' | 'issues'
 
 function useIsDesktop() {
   const q = '(min-width: 1024px)'
@@ -798,6 +799,9 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
           </MenuContent>
         </Menu>
 
+        <Button variant="subtle" size="sm" onClick={() => openTab('dryrun')} aria-label="Dry run: watch your code run step by step" title="Dry run: watch your code run step by step">
+          <Footprints aria-hidden="true" /> <span className="hidden sm:inline">Dry run</span>
+        </Button>
         <Button variant="subtle" size="sm" onClick={() => void handleRun()} loading={running} disabled={submitting} aria-label="Run on the selected test">
           {!running && <Play aria-hidden="true" />} <span className="hidden sm:inline">Run</span>
           <kbd className="ml-0.5 hidden font-mono text-[10px] text-foreground-faint lg:inline">⌘↵</kbd>
@@ -875,6 +879,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     items={[
       { id: 'tests', label: 'Tests', badge: testcases.length || undefined },
       { id: 'output', label: 'Result', badge: running || submitting ? '•' : judgeResult ? judgeResult.verdict : runResult ? (runResult.verdict === 'OK' ? 'OK' : runResult.verdict) : undefined },
+      { id: 'dryrun', label: 'Dry run' },
       { id: 'aitests', label: 'AI tests' },
       { id: 'analysis', label: 'Analysis' },
       { id: 'journey', label: 'How it runs' },
@@ -920,6 +925,14 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         language={language}
         timeLimit={statementApi.data?.timeLimit}
         inputs={biggestInputs}
+        onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
+      />
+    ) : bottomTab === 'dryrun' ? (
+      <DryRunPanel
+        code={code}
+        language={language}
+        cases={[...testcases.map((t, i) => ({ label: t.label || `Test ${i + 1}`, input: t.input })), ...(customInput.trim() ? [{ label: 'Custom input', input: customInput }] : [])]}
+        initialCase={selectedTest >= 0 ? selectedTest : testcases.length}
         onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
       />
     ) : bottomTab === 'journey' ? (
