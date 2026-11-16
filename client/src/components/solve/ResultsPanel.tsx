@@ -98,6 +98,8 @@ const ENGINE_LABEL: Record<string, string> = {
   kotlin: 'Kotlin Playground',
   paiza: 'Paiza.io',
   piston: 'Nexora runner',
+  piston2: 'Nexora runner 2',
+  piston3: 'Nexora runner 3',
   local: 'local judge',
 }
 

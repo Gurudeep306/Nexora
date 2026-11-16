@@ -115,9 +115,14 @@ never cached).
 - Newly available via Paiza: elixir, scheme.
 - One runner only (Wandbox): groovy, nim — fail when Wandbox is busy.
 - No free runner anywhere: clojure, powershell, tcl — shown unavailable.
-- Real "never fails" fix: self-host Piston (`JUDGE_MODE=piston`, steps in
-  `docs/ops/fast-judge.md`); it goes first in every chain and the public
-  sandboxes stay as backups. Needs the owner's yes on a server and its cost.
+- Real "never fails" fix: our own Piston runners. `PISTON_URL` and
+  `PISTON_TOKEN` take comma lists, so Oracle (free), Hetzner (~€4–5/mo) and
+  AWS (~$15/mo) can all run at once, each backing up the others, ahead of
+  the public sandboxes. One script sets up any of them:
+  `deploy/runner/setup.sh` (no domain needed, uses `<ip>.sslip.io`).
+  Click-by-click steps: `docs/ops/fast-judge.md`. The owner said yes to all
+  three (2026-11-16); creating the accounts and machines is on the owner
+  (we have no cloud logins).
 
 ## How to check your work
 

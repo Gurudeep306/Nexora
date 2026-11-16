@@ -32,7 +32,7 @@
  */
 const https = require('https');
 const crypto = require('crypto');
-const { usesPiston, runPiston } = require('./piston');
+const { usesPiston, runPiston, pistonEngines, pistonIndex } = require('./piston');
 
 /* ────────────────────────── configuration ────────────────────────── */
 
@@ -145,10 +145,10 @@ function publicChain(lang) {
 }
 const GODBOLT_PRIMARY = new Set(['swift', 'dart', 'fsharp', 'ocaml', 'crystal', 'objectivec']);
 
-/** Every sandbox for a language, our own Piston first when it serves it. */
+/** Every sandbox for a language, our own Piston servers first when they serve it. */
 function engineChain(lang) {
   const pub = publicChain(lang);
-  return usesPiston(lang) ? ['piston', ...pub] : pub;
+  return usesPiston(lang) ? [...pistonEngines(), ...pub] : pub;
 }
 
 /** The first public sandbox for a language (Piston's fallback), or null. */
@@ -243,7 +243,7 @@ function postJson({ hostname, path, payload, agent, headers, timeout = REQUEST_T
         Connection: 'keep-alive',
         Accept: 'application/json',
         'User-Agent': 'Nexora-Judge/2',
-        ...(headers || {}),
+        ...headers,
       },
     }, (res) => {
       const chunks = [];
@@ -416,7 +416,8 @@ function classifyKotlin(r, timeMs) {
 function classifyGodbolt(r, timeMs) {
   const join = (arr) => (arr || []).map((x) => x.text).join('\n');
   // Terminal colour and erase codes (\x1b[…m, \x1b[K), and its internal file name.
-  const strip = (v) => v.replace(/\x1b\[[0-9;]*[A-Za-z]/g, '').replace(/\/app\/output\.s/g, '<source>');
+  const ANSI = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*[A-Za-z]`, 'g');
+  const strip = (v) => v.replace(ANSI, '').replace(/\/app\/output\.s/g, '<source>');
   if (!r.didExecute) {
     const msg = strip(join(r.buildResult && r.buildResult.stderr) || join(r.stderr) || 'Build failed')
       .replace(/^Build failed\n?/, '').trim();
@@ -606,11 +607,12 @@ function remoteLoad() {
 /** Run once on one sandbox. Never throws. */
 async function dispatch(code, input, lang, engine, budget) {
   try {
-    if (engine === 'piston') {
-      const r = await runPiston(code, input, lang);
+    const server = pistonIndex(engine);
+    if (server >= 0) {
+      const r = await runPiston(code, input, lang, { server });
       // Piston down or missing the runtime: let the chain move on.
-      if (r._pistonFailed) { delete r._pistonFailed; return { ...r, engine: 'piston', _transient: true }; }
-      return r;
+      if (r._pistonFailed) { delete r._pistonFailed; return { ...r, engine, _transient: true }; }
+      return { ...r, engine };
     }
     if (engine === 'wandbox') return await runWandbox(code, input, lang, budget);
     if (engine === 'godbolt') return await runGodbolt(code, input, lang, budget);
@@ -626,7 +628,7 @@ const ENGINE_MAX = { wandbox: 12, godbolt: 6, kotlin: 6, paiza: 4, piston: 32 };
 const engineActive = new Map();
 const engineWaiters = new Map();
 async function enterEngine(engine) {
-  const max = ENGINE_MAX[engine] || 6;
+  const max = ENGINE_MAX[pistonIndex(engine) >= 0 ? 'piston' : engine] || 6;
   const n = engineActive.get(engine) || 0;
   if (n < max) { engineActive.set(engine, n + 1); return; }
   await new Promise((resolve) => {

@@ -96,7 +96,7 @@ export interface RunResult {
   stderr: string
   timeMs: number
   error?: string
-  /** Which runner answered: 'piston' | 'wandbox' | 'godbolt' | 'kotlin' | 'paiza' | 'local'. */
+  /** Which runner answered: 'piston' (or 'piston2', … for our backup servers) | 'wandbox' | 'godbolt' | 'kotlin' | 'paiza' | 'local'. */
   engine?: string
   /** True when the result came back from the judge's cache instead of a fresh run. */
   cached?: boolean
