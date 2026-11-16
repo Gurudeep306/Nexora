@@ -15,6 +15,7 @@
 import { useId, useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { ELEMENTS, PRESETS, counterModel, evaluate, freeVars, model, parse, perElement, predicates, show, tuples, type Interp, type PForm } from './predLogic'
+import { Select } from '@/components/ui'
 
 export type QuantTab = 'evaluate' | 'models'
 
@@ -63,7 +64,7 @@ export default function QuantifierLab({ tab: initial = 'evaluate', title }: { ta
         <label className="sr-only" htmlFor={pid}>
           Load a preset
         </label>
-        <select
+        <Select
           id={pid}
           className="lab-select"
           value=""
@@ -78,7 +79,7 @@ export default function QuantifierLab({ tab: initial = 'evaluate', title }: { ta
               {p.label}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
       <div className="lab-row">
         <label htmlFor={fid}>Formula</label>
@@ -127,7 +128,7 @@ function EvaluateTool({ src }: { src: string }) {
     <>
       <div className="lab-row">
         <label htmlFor={nid}>Domain size</label>
-        <select id={nid} className="lab-select" value={n} onChange={(e) => setN(Number(e.target.value))}>
+        <Select id={nid} className="lab-select" value={n} onChange={(e) => setN(Number(e.target.value))}>
           {[2, 3, 4, 5].map((k) => (
             <option key={k} value={k}>
               {k}: {'{'}
@@ -135,7 +136,7 @@ function EvaluateTool({ src }: { src: string }) {
               {'}'}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
       <div className="lab-grid">
         <div className="lab-col">

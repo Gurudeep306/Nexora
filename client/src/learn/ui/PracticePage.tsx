@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
-import { ErrorState, LoadingBlock, PageHeader } from '@/components/ui'
+import { ErrorState, LoadingBlock, PageHeader, Select } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useAgentPageContext } from '@/context/AgentContext'
 import { codeKey, isDone, qKey, useProgress } from '../progress'
@@ -92,14 +92,14 @@ export default function PracticePage() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="w-16 text-[11.5px] font-semibold text-text-muted">Page</span>
-          <select value={page} onChange={(e) => setPage(e.target.value)} aria-label="Show questions from" className="input-base max-w-full min-w-0 !py-1.5 !text-[12.5px]">
+          <Select variant="pill" value={page} onChange={(e) => setPage(e.target.value)} aria-label="Show questions from" className="max-w-full min-w-0 !text-[12.5px]">
             <option value="all">All pages</option>
             {topic.pages.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.title}
               </option>
             ))}
-          </select>
+          </Select>
           <span className="ml-auto font-mono text-[11.5px] text-text-muted">{list.length} shown</span>
         </div>
       </div>

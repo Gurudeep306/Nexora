@@ -6,6 +6,7 @@ import { fmtMinutes, studyPlan, type PlanNode } from './insights'
 import { subjectHref } from './course'
 import { prefetchSubjectRoute } from '@/routes'
 import type { NexusWebStructure } from './types'
+import { Select } from '@/components/ui'
 
 /*
  * The subject page's advanced parts: where the subject sits in the whole
@@ -190,7 +191,7 @@ export function StudyPlanView({
       <div className="flex flex-wrap items-end gap-4">
         <label className="text-[12px] text-text-secondary">
           <span className="mb-1 block text-[11px] font-semibold tracking-wider text-text-muted uppercase">Time a day</span>
-          <select
+          <Select
             value={perDay}
             onChange={(e) => {
               setPerDay(Number(e.target.value))
@@ -203,7 +204,7 @@ export function StudyPlanView({
                 {fmtMinutes(m)}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
         <label className="text-[12px] text-text-secondary">
           <span className="mb-1 block text-[11px] font-semibold tracking-wider text-text-muted uppercase">{examDate ? 'GATE exam date' : 'Target date'}</span>

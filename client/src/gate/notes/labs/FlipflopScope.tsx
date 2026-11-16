@@ -40,6 +40,7 @@ import {
   type Mode,
   type ScopeResult,
 } from './seqLogic'
+import { Select } from '@/components/ui'
 
 export type ScopeTab = 'scope' | 'tables'
 
@@ -177,13 +178,13 @@ function ScopeTool({ kind, setKind }: { kind: Kind; setKind: (k: Kind) => void }
   const sel = (id: string, label: string, value: string | number, opts: [string | number, string][], on: (v: string) => void, disabled = false) => (
     <span className="ffs-field">
       <label htmlFor={`${u}-${id}`}>{label}</label>
-      <select id={`${u}-${id}`} className="lab-select" value={value} disabled={disabled} onChange={(e) => on(e.target.value)}>
+      <Select id={`${u}-${id}`} className="lab-select" value={value} disabled={disabled} onChange={(e) => on(e.target.value)}>
         {opts.map(([v, l]) => (
           <option key={v} value={v}>
             {l}
           </option>
         ))}
-      </select>
+      </Select>
     </span>
   )
 
@@ -483,13 +484,13 @@ function TablesTool({ kind, setKind }: { kind: Kind; setKind: (k: Kind) => void 
     <div>
       <div className="lab-row">
         <label htmlFor={`${u}-k`}>Flip-flop</label>
-        <select id={`${u}-k`} className="lab-select" value={kind} onChange={(e) => setKind(e.target.value as Kind)}>
+        <Select id={`${u}-k`} className="lab-select" value={kind} onChange={(e) => setKind(e.target.value as Kind)}>
           {KINDS.map((k) => (
             <option key={k} value={k}>
               {k}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
       <div className="lab-grid">
         <div className="lab-col">
@@ -564,21 +565,21 @@ function TablesTool({ kind, setKind }: { kind: Kind; setKind: (k: Kind) => void 
       <h3 className="ffs-h">Build one flip-flop from another</h3>
       <div className="lab-row">
         <label htmlFor={`${u}-t`}>Build</label>
-        <select id={`${u}-t`} className="lab-select" value={target} onChange={(e) => setTarget(e.target.value as Kind)}>
+        <Select id={`${u}-t`} className="lab-select" value={target} onChange={(e) => setTarget(e.target.value as Kind)}>
           {KINDS.map((k) => (
             <option key={k} value={k}>
               {k}
             </option>
           ))}
-        </select>
+        </Select>
         <label htmlFor={`${u}-h`}>from</label>
-        <select id={`${u}-h`} className="lab-select" value={have} onChange={(e) => setHave(e.target.value as Kind)}>
+        <Select id={`${u}-h`} className="lab-select" value={have} onChange={(e) => setHave(e.target.value as Kind)}>
           {KINDS.map((k) => (
             <option key={k} value={k}>
               {k}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
       {conv ? (
         <div className="km-result" aria-live="polite">

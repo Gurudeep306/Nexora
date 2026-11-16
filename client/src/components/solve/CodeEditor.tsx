@@ -31,6 +31,7 @@ import { TEMPLATES, LANG_EXT } from '@/lib/templates'
 import { snippetsFor } from '@/lib/snippets'
 import type { Diag } from '@/lib/diagnostics'
 import type { ReplayEvent } from '@/components/submissions/replay'
+import { Select } from '@/components/ui'
 
 /* Maps backend language ids to Monaco language ids where they differ */
 const MONACO_LANG: Record<string, string> = {
@@ -780,7 +781,8 @@ export function CodeEditor({
       {/* ── Editor toolbar (one row; scrolls sideways when narrow so nothing gets cut off) ── */}
       {!minimal && (
       <div className="flex shrink-0 flex-nowrap items-center gap-1.5 overflow-x-auto border-b border-border bg-surface px-2 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>*]:shrink-0">
-        <select
+        <Select
+          variant="pill"
           value={theme}
           onChange={(e) => {
             const pinned = e.target.value !== APP_EDITOR_THEME
@@ -788,7 +790,7 @@ export function CodeEditor({
             setTheme(e.target.value)
           }}
           aria-label="Editor theme"
-          className="h-7 cursor-pointer rounded-md border border-border bg-background px-1.5 text-[11px] text-foreground-dim outline-none hover:text-foreground"
+          className="h-7 cursor-pointer rounded-md border border-border bg-background pr-6 pl-2 text-[11px] text-foreground-dim outline-none hover:text-foreground"
         >
           <option value={APP_EDITOR_THEME}>Match app theme</option>
           {Object.entries(THEMES).map(([id, t]) => (
@@ -796,7 +798,7 @@ export function CodeEditor({
               {t.label}
             </option>
           ))}
-        </select>
+        </Select>
 
         <div className="flex items-center rounded-lg border border-border/60 bg-background/40 px-0.5 py-0.5">
           <button className={toolBtn} onClick={() => setFontSize((f) => Math.max(10, f - 1))} aria-label="Decrease font size" title="Smaller font">

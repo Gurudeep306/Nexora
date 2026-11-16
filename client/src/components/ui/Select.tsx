@@ -7,6 +7,7 @@ import {
 import { Select as RS } from 'radix-ui'
 import { Check, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import './select.css'
 
 /* A premium, fully-themed dropdown built on Radix Select.
  *
@@ -73,6 +74,12 @@ export interface SelectProps {
   'aria-label'?: string
   'aria-describedby'?: string
   'aria-invalid'?: boolean
+  /**
+   * `field` (default) is a full-width form control. `pill` is the compact
+   * filter-row control: as wide as its value, 32px tall. Every style
+   * restyles both through `data-ui="select"` / `data-variant`.
+   */
+  variant?: 'field' | 'pill'
 }
 
 export function Select({
@@ -88,6 +95,7 @@ export function Select({
   name,
   required,
   id,
+  variant = 'field',
   ...aria
 }: SelectProps) {
   const groups = parseOptions(children)
@@ -110,24 +118,28 @@ export function Select({
       <RS.Trigger
         id={id}
         {...aria}
+        data-ui="select"
+        data-variant={variant}
         className={cn(
-          'input-base group relative flex w-full cursor-pointer items-center text-left',
+          'input-base group relative flex cursor-pointer items-center text-left',
+          variant === 'pill' ? 'ui-select-pill w-auto max-w-full' : 'w-full',
           'data-[state=open]:border-accent-brand data-[state=open]:[box-shadow:var(--shadow-input-focus)]',
           'disabled:cursor-not-allowed disabled:opacity-50',
           className,
         )}
       >
-        <span className="flex-1 truncate pr-6">
+        <span className={cn('min-w-0 flex-1 truncate', variant === 'pill' ? 'pr-5' : 'pr-6')}>
           <RS.Value placeholder={placeholder} />
         </span>
         <ChevronDown
           aria-hidden="true"
-          className="pointer-events-none absolute right-3 size-4 shrink-0 text-foreground-faint transition-transform duration-200 ease-out group-data-[state=open]:rotate-180 group-data-[state=open]:text-primary-bright"
+          className="ui-select-chev pointer-events-none absolute right-3 size-4 shrink-0 text-foreground-faint transition-transform duration-200 ease-out group-data-[state=open]:rotate-180 group-data-[state=open]:text-primary-bright"
         />
       </RS.Trigger>
 
       <RS.Portal>
         <RS.Content
+          data-ui="select-content"
           position="popper"
           sideOffset={6}
           collisionPadding={8}
@@ -146,6 +158,7 @@ export function Select({
             {groups.map((group, gi) => {
               const items = group.items.map((item) => (
                 <RS.Item
+                  data-ui="select-item"
                   key={item.value + String(gi)}
                   value={item.value}
                   disabled={item.disabled}

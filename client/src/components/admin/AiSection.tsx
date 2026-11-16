@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { ExternalLink, Loader2, Plus, RefreshCw, Trash2 } from 'lucide-react'
-import { useToast } from '@/components/ui'
+import { useToast, Select } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api, ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
@@ -49,7 +49,7 @@ const key = (p: Pick) => (p ? `${p.provider}::${p.model}` : '')
 function ModelSelect({ value, providers, onChange, allowNone, noneLabel, label }: { value: Pick; providers: Provider[]; onChange: (p: Pick) => void; allowNone?: boolean; noneLabel?: string; label: string }) {
   const usable = providers.filter((p) => p.enabled && p.models.length)
   return (
-    <select
+    <Select
       className="ai-select"
       aria-label={label}
       value={key(value)}
@@ -71,7 +71,7 @@ function ModelSelect({ value, providers, onChange, allowNone, noneLabel, label }
           ))}
         </optgroup>
       ))}
-    </select>
+    </Select>
   )
 }
 
@@ -180,14 +180,14 @@ export function AiSection() {
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="ai-field">
                 <span>Provider</span>
-                <select className="ai-select" value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value, baseUrl: '' })}>
+                <Select className="ai-select" value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value, baseUrl: '' })}>
                   {data.presets.map((p) => (
                     <option key={p.kind} value={p.kind}>
                       {p.name}
                       {p.free ? ' — free tier' : ''}
                     </option>
                   ))}
-                </select>
+                </Select>
               </label>
               <label className="ai-field">
                 <span>Name (optional)</span>

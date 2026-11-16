@@ -3,7 +3,8 @@
    the landing page introduced, shared by every page.
 
    Three scopes, one set of classes:
-     .lp / .ed           landing, sign-in, coming soon — fixed parchment values
+     .lp / .ed           landing, sign-in, coming soon — the chosen theme (fixed
+                         parchment only before any theme is set)
      [data-style]        inside the app — every --ed-* variable reads the
                          semantic tokens, so restructured pages look right in
                          every design style (the display face, accent and
@@ -14,9 +15,19 @@
    In the components layer, so Tailwind utilities (spacing) still win.
    ══════════════════════════════════════════════════════════════════════════ */
 @layer components {
-  /* ── Fixed parchment (marketing pages) ─────────────────────────────── */
+  /* ── Marketing pages (landing, sign-in, coming soon) ───────────────── */
+  /* They follow the chosen theme like every other page: the variables come
+     from [data-style] on <html> below. The fixed parchment values are only a
+     fallback for a page drawn before any theme is set. */
   .lp,
   .ed {
+    background: var(--ed-canvas);
+    color: var(--ed-ink);
+    font-family: var(--ed-serif);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  :root:not([data-style]) :is(.lp, .ed) {
     --ed-canvas: #f0eee6; /* page */
     --ed-card: #faf9f5; /* cards, inputs */
     --ed-feature: #f5e3c7; /* the one featured spread */
@@ -38,22 +49,9 @@
     --ed-sans: 'Geist Variable', Geist, ui-sans-serif, system-ui, sans-serif;
     --ed-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, Menlo, monospace;
     --ed-ease: cubic-bezier(0.22, 1, 0.36, 1);
-    /* The landing, sign-in and coming-soon pages are the reference: no theme reshapes them. */
-    --kit-hero: var(--ed-sans);
-    --kit-hero-weight: 700;
-    --kit-hero-tracking: -0.03em;
-    --kit-heading-weight: 400;
-    --kit-btn-radius: 0 0 8px 8px;
-    --kit-card-radius: 24px;
-    --kit-card-radius-sm: 16px;
     --ed-prose: var(--ed-serif);
-    background: var(--ed-canvas);
-    color: var(--ed-ink);
-    font-family: var(--ed-serif);
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
   }
-  [data-mode='dark'] :is(.lp, .ed) {
+  :root:not([data-style])[data-mode='dark'] :is(.lp, .ed) {
     --ed-canvas: #1a1917;
     --ed-card: #22211e;
     --ed-feature: #2c2822;
@@ -64,9 +62,7 @@
     --ed-faint: #5e5c55;
     --ed-line: #3a3935;
     --ed-line-strong: #6b6a64;
-    --ed-clay: #d97757;
     --ed-clay-deep: #e08a6c;
-    --ed-on-clay: #141413;
     --ed-inverse: #0f0f0e;
     --ed-on-inverse: #f0eee6;
     --ed-on-inverse-muted: #a5a299;
