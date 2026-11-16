@@ -67,7 +67,7 @@ The owner is the founder. They often work from a phone. They want:
 | 4 | The reader: lessons and GATE notes, viz engine colours and player, sidenotes, scroll-sync, notes index and subject pages | **Built**, pull request open from `claude/clever-babbage-km37j9`, waiting for the owner's "merge". Left-overs in 3.1 (System Design reader, notes dek, footnotes) |
 | 5 | Coding: Problems, Solve (statement, Monaco theme, judging, verdicts, editorials), Contests, Workshop, Submissions, Bookmarks | **In progress** on the same branch (PR #114 is phase 4; phase 5 commits follow it). Done: Problems page. See 3.2 |
 | 6 | Nexus: the star chart ("The Atlas") | **Started** on the same branch. See 3.3 |
-| 7 | Profile and the Ledger: Profile, Analytics, Achievements, Social | **Started** (profile masthead and colophon CSS written, NOT yet checked in a browser). See 3.4 |
+| 7 | Profile and the Ledger: Profile, Analytics, Achievements, Social | **Done** on `claude/clever-keller-vgi9vo` (plus new Portrait avatars and the QR tag). See 3.4 |
 | 8 | GATE home and the remaining pages: GATE home and subpages (CBT restyle only), Settings, Appearance, Admin, 404, errors, loading | To do |
 | 9 | Polish sweep and docs | To do |
 
@@ -284,54 +284,99 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
   Do these next. The renderer is large (about 1,900 lines); the drawing
   is in one effect, starting at "/* ── rendering ── */".
 
-### 3.4 Phase 7: progress (stopped mid-way at a usage limit)
+### 3.4 Phase 7: done (session on branch `claude/clever-keller-vgi9vo`)
 
-- **Profile (`/profile`, `/u/:username`) — first pass written, unchecked.**
-  - Class hooks added: `pf-hero`, `pf-cover`, `pf-hero-body`,
-    `pf-portrait`, `pf-portrait-ring`, `pf-name` in `pages/ProfilePage.tsx`;
-    `pf-colophon`, `pf-fact`, `pf-fact-label`, `pf-fact-value`,
-    `pf-fact-icon` in `components/profile/Showcase.tsx`.
-  - Journal CSS at the end of `theme/styles.css` ("phase 7: Profile as a
-    notebook cover"):
-    - the masthead sits on canvas
-    - the banner is hidden under journal; the chosen cover still shows in
-      other styles
-    - the portrait is mounted in a hairline frame with 12px ivory padding
-    - the serif name is larger
-    - the stats become a hairline-ruled colophon row (label over serif
-      figure, no icons)
-  - **First thing to do:**
-    1. Build.
-    2. Run `node client/scripts/check-page.cjs /profile profile --wait=2500`
-       and look at light, dark and phone. The negative margin on the
-       portrait was removed, so check the masthead layout.
-    3. Run axe, then commit.
-  - Not done (brief 4.10):
-    - rank seal "Level 3 · Kilobyte" next to the name
-    - bio in serif italic
-    - actions as text links
-    - figures counting up, with 30-day sparklines
-    - calendar sentence ("Most active on Sundays…")
-    - difficulty as three small multiples
-    - the shelf of seals
-    - the Bridge (linked judges) as hairline rows
-    - Person structured data on `/u/:username`
-    - the share image card in journal style
-- **Analytics, Achievements, Social (brief 4.11):** not started.
+- **Profile (`/profile`, `/u/:username`) — done**, axe 0 light/dark/phone:
+  - `components/profile/Notebook.tsx` (+ `notebook.css`, layered):
+    `Colophon` (six figures, count-up, 30-day sparklines from the heatmap),
+    `Folio` (kicker + serif title, no card), `DifficultyMultiples`,
+    `TopicBars`, `LanguageList`, `Seal` / `Shelf` (earned = clay rim, locked
+    = debossed, stamp once), `Bridge` (verified judge accounts), `RankSeal`.
+  - `notebook-data.ts`: `lastDays`, `calendarSentence`, `usePersonJsonLd`
+    (schema.org ProfilePage/Person on public, visible profiles only).
+  - `PortraitMedal.tsx`: under journal the portrait is a round medal (ink
+    ring, clay arc = real progress through the level, "@handle · LEVEL n ·
+    NAME" round the rim). The owner rejected the square frame.
+  - Share dialog: `ShareCard.tsx` (journal paper card, PNG download),
+    `qrTag.ts` (printed-tag QR: rounded dots, eyes, NG mark in the centre;
+    `qr.ts` now supports level H), PNG/SVG download. Verified with jsQR on
+    the rendered page (install with `npm i --no-save --prefix /tmp/qr jsqr`).
+  - Server: the showcase returns `linked` (verified accounts only, no
+    tokens), with a test in `tests/social.test.js`.
+- **Avatars — new Portraits set.** 16 flat editorial people
+  (`docs/brand/avatars/src/portraits-set.mjs`, built with Clay by
+  `build-set.mjs`). New accounts default to a portrait; existing users keep
+  theirs. **The owner wants no names on avatars**: no tooltips/toasts with
+  names; screen readers get "Avatar N" (`avatarName`). The owner rejected a
+  set of CS "emblem" coins: avatars must be people.
+- **Analytics — done**: week sentence (`components/analytics/sentences.ts`,
+  `weekKey` matches SQLite `%W`), serif chart titles, ink figures, plain
+  section names, next-level card without gradient text.
+- **Achievements — done**: under journal, seals grouped by category
+  (`components/achievements/SealCard.tsx`, `seals.css`); "platforms" =
+  "Judge accounts".
+- **Social — done**: serif post bodies, quiet counts, hairline margin,
+  ink tags/mentions, composer "Share what you learned today…". Fixed: repost
+  trigger was a span (now the button, `Action` forwards ref), focusable code
+  blocks and message lists, leaderboard unit contrast.
+- Demo data for design (never commit): `scratchpad/seed.py` pattern —
+  insert `daily_activity`, `linked_accounts`, `user_achievements` rows into
+  the running demo DB; posts via `POST /api/social/posts`. The demo server
+  must be restarted after server-side changes (it does not watch files).
 
-### 3.5 What is left after phase 7
+### 3.5 Done since phase 7, and what is left (session on `claude/clever-keller-vgi9vo`)
 
-- Phase 8: GATE home + subpages (CBT restyle only), Settings, Appearance,
-  Admin, 404, errors, loading (brief 4.9, 4.12, 4.13).
-- Phase 9: polish sweep of every route (light, dark, phone), then update
-  `docs/ui/premium.md` (house style + "Adding a style") and the Design
-  section of `AGENTS.md`.
-- Left-overs listed in 3.1–3.3: System Design reader, notes dek, Problems
-  pagination as numbers, verdict "paper slip" celebration, Atlas star
-  sizes, side panel, list view, ignite ring, ring tick labels.
+**Done (all pushed, all in PR #117):**
+- **Nexus / the Atlas** (journal style): the radial wheel is replaced by a
+  **sky map** (`components/nexus/SkyMap.tsx`): streams as dashed regions,
+  each subject drawn as its own small constellation (`ConstellationGlyph` in
+  `AtlasIndex.tsx`), hover/focus draws needs (ink) and unlocks (clay) with a
+  paper plate; "you are here" clay ring on your next star's subject. The
+  owner rejected the circle. "Radial web" stays one click away (saved in
+  localStorage `nexus:atlas-view`). Also: Chart / Index / Ranks tabs, the
+  Index (every subject as a small multiple, default on phones), Tonight's
+  sky (next star, keystone, due), the ledger line (`AtlasLedger`), and
+  radial-chart polish (star size by dependents, hover plate, path draw-in,
+  ignite once, ring names, serif names). Data helpers: `atlas-data.ts`.
+- **Phase 5 left-overs:** numbered pagination (`problems/Pagination.tsx`),
+  falling paper slips on Accepted (`ui/Confetti.tsx`), custom contests as
+  ivory cards.
+- **Loading:** `MarkLoader` (the new mark writing itself on a loop) is the
+  page loader; `LoadingBlock` under journal is ruled lines being written
+  (`ui/loading.css`); boot screen in `client/index.html` writes the mark in
+  CSS; the route bar is ink with a clay nib.
+- **New brand mark "One line"** (owner asked for a unique, animatable
+  mark): NG written in one line of ink with a shared stem and a clay full
+  stop. Geometry `MARK_N`, `MARK_G`, `MARK_DOT`, `markSvg` in
+  `components/brand/traversal.ts`; `LogoMark` (`interactive` writes once,
+  `write` on mount, `loop`), all brand files regenerated
+  (`build-brand.mjs` + `render-brand.mjs`). The owner rejected a
+  quarter-disc seal; a wedge "mouth" read as Pac-Man, avoid it.
+
+**Left (do next, in this order):**
+1. **Admin panel ("the editor's desk")** — the owner wants it "really
+   cool". Plan (not started): `pages/AdminPage.tsx` header as one live
+   sentence from real data (online now, open reports, errors 24h) with
+   Public/Private as an ink label, no gradient crown tile; the left rail as a
+   table of contents (roman numerals, serif names, ink tick for the current
+   one) — the rail tick and owner box currently use gradients, which the
+   journal rules forbid; Overview (`components/admin/OverviewSection.tsx`,
+   `kit.tsx` `Kpi`, `Spark`, `TrendChart`) as a front page: serif figures,
+   ink lines with a clay last point, no gradient area fills, no coloured
+   icon tiles; a "weather box" for health (errors, DB budget) and a
+   hairline "On the wire" list (recent sign-ups, online now). Admin passes
+   axe today; keep it that way.
+2. **Phase 8 rest:** GATE home and subpages (CBT restyle only), Settings,
+   Appearance, 404, error boundary (brief 4.9, 4.12, 4.13).
+3. **Phase 9:** sweep every route in light, dark and phone; update
+   `docs/ui/premium.md` (house style + "Adding a style") and the Design
+   section of `AGENTS.md` (the mark section is already updated).
+- Left from earlier: System Design reader restyle, notes dek field.
 
 ### 3.6 Pull request state
 
+- PR #117 (https://github.com/Gurudeep306/Nexora/pull/117) holds phase 7
+  and everything listed in 3.5; it waits for the owner's "merge".
 - PR #114 (https://github.com/Gurudeep306/Nexora/pull/114) was opened for
   phase 4. Every later commit (phases 5, 6 and the start of 7) is on the same
   branch `claude/clever-babbage-km37j9`, so **PR #114 now contains phases

@@ -360,3 +360,19 @@ test('the social feature flag switches the API off', async () => {
   ok(await call('GET', `/api/profiles/${ANA}`, c[BEN]), 'profiles stay up');
   ok(await call('PUT', '/api/admin/site/flags', c.owner, { social: true }));
 });
+
+test('showcase: lists verified judge accounts only (the Bridge)', async () => {
+  const { DatabaseSync } = require('node:sqlite');
+  const db = new DatabaseSync(DB, { timeout: 10000 }); // wait for the server's write lock instead of failing
+  try {
+    db.exec(`CREATE TABLE IF NOT EXISTS linked_accounts (username TEXT NOT NULL, platform TEXT NOT NULL, handle TEXT NOT NULL, token TEXT, token_at INTEGER, verified_at INTEGER, rating INTEGER, max_rating INTEGER, rank TEXT, solved INTEGER, imported INTEGER, last_import INTEGER, last_error TEXT, stats_json TEXT NOT NULL DEFAULT '{}', PRIMARY KEY (username, platform))`);
+    db.prepare('INSERT OR REPLACE INTO linked_accounts(username, platform, handle, token, verified_at, rating, max_rating, solved) VALUES(?,?,?,?,?,?,?,?)').run(ANA, 'codeforces', 'ana_cf', null, Date.now(), 1500, 1620, 300);
+    db.prepare('INSERT OR REPLACE INTO linked_accounts(username, platform, handle, token, verified_at) VALUES(?,?,?,?,?)').run(ANA, 'atcoder', 'ana_ac', 'nexora-secret', null);
+  } finally {
+    db.close();
+  }
+  const r = await call('GET', `/api/profiles/${ANA}/showcase`, c[BEN]);
+  ok(r);
+  assert.deepEqual(r.body.linked.map((l) => [l.platform, l.handle, l.rating, l.solved]), [['codeforces', 'ana_cf', 1500, 300]]);
+  assert.ok(!JSON.stringify(r.body.linked).includes('nexora-secret'), 'proof tokens never leave the server');
+});

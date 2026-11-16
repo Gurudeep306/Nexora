@@ -63,4 +63,5 @@ export const CATEGORY_LABELS: Record<string, string> = {
   special: 'Special',
   daily: 'Daily',
   general: 'General',
+  platforms: 'Judge accounts',
 }

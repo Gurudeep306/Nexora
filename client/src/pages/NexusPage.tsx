@@ -42,6 +42,10 @@ import type {
 import { cachedState, cachedStructure, loadWeb, mergeWeb } from '@/components/nexus/data'
 import { INTRO_SKIP, pickIntro } from '@/components/nexus/intro'
 import { Icon } from '@/components/icon/Icon'
+import { AtlasIndex, AtlasLedger, TonightSky } from '@/components/nexus/AtlasIndex'
+import { SkyMap } from '@/components/nexus/SkyMap'
+import { dependents } from '@/components/nexus/atlas-data'
+import '@/components/nexus/atlas.css'
 
 /*
  * The Nexus.
@@ -143,7 +147,8 @@ function SubjectRedirect({ subject, node }: { subject: string; node: string | nu
 function RadialOverview() {
   const [params] = useSearchParams()
   const navigate = useNavigate()
-  const [tab, setTab] = useState<'map' | 'ranks'>('map')
+  // Phones open on the Index (the chart is one tap away); wider screens on the chart.
+  const [tab, setTab] = useState<'map' | 'index' | 'ranks'>(() => (typeof window !== 'undefined' && window.innerWidth < 640 && document.documentElement.dataset.style === 'journal' ? 'index' : 'map'))
   // The opening animation: full on the first open this session, short after.
   const [intro] = useState(() => pickIntro(typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches))
   const [introState, setIntroState] = useState<string>(intro.mode)
@@ -256,7 +261,25 @@ function RadialOverview() {
   // The Field Journal calls the web "The Atlas": every subject a
   // constellation, every skill a star. Other styles keep "The Nexus".
   const atlas = useTheme().shown.style === 'journal'
-  const started = (clusters ?? []).filter((c) => c.nodes.some((n) => n.s > 0)).length
+  const deps = useMemo(() => dependents(clusters ?? []), [clusters])
+  // The sky map is the Atlas's chart; the radial web stays one click away.
+  const [view, setView] = useState<'sky' | 'radial'>(() => {
+    try {
+      return localStorage.getItem('nexus:atlas-view') === 'radial' ? 'radial' : 'sky'
+    } catch {
+      return 'sky'
+    }
+  })
+  const chooseView = (v: 'sky' | 'radial') => {
+    setView(v)
+    try {
+      localStorage.setItem('nexus:atlas-view', v)
+    } catch {
+      /* storage blocked: the choice lasts this visit */
+    }
+  }
+  // A constellation is started once one of its stars is lit or begun (open alone isn't started).
+  const started = (clusters ?? []).filter((c) => c.nodes.some((n) => n.s === 2 || n.p > 0)).length
   const pct = allNodes.length ? Math.round((mastered / allNodes.length) * 100) : 0
   const header = (
     <PageHeader
@@ -305,7 +328,22 @@ function RadialOverview() {
       <div className="nx-hud" style={hud(0)}>
         {header}
       </div>
-      {/* The web rank, in the original player card. */}
+      {atlas ? (
+        <div className="nx-hud" style={hud(70)}>
+          <AtlasLedger
+            level={player.level}
+            name={player.name}
+            xpInLevel={player.xpInLevel}
+            xpForNext={player.xpForNext}
+            toNext={player.xpToNext ? `about ${player.conceptsToNext} more ${player.conceptsToNext === 1 ? 'star' : 'stars'} to the next level` : 'top rank reached'}
+            mastered={mastered}
+            total={allNodes.length}
+            week={week}
+            streak={statsApi.data?.streak.current}
+          />
+        </div>
+      ) : (
+      /* The web rank, in the original player card. */
       <Card glow className="nx-hud mb-4" style={hud(70)}>
         <CardContent className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
           <div className="space-y-2">
@@ -367,23 +405,43 @@ function RadialOverview() {
           </div>
         </CardContent>
       </Card>
+      )}
 
       <div className="nx-hud mb-4 flex flex-wrap items-end justify-between gap-3" style={hud(140)}>
         <Tabs
           variant="pills"
-          items={[
-            { id: 'map', label: '/web', icon: <Icon name="map" className="size-3.5" aria-hidden="true" /> },
-            { id: 'ranks', label: '/ranks', icon: <Icon name="trophy" className="size-3.5" aria-hidden="true" />, badge: statsApi.data ? statsApi.data.allTitles.length : undefined },
-          ]}
+          items={
+            atlas
+              ? [
+                  { id: 'map', label: 'Chart' },
+                  { id: 'index', label: 'Index' },
+                  { id: 'ranks', label: 'Ranks' },
+                ]
+              : [
+                  { id: 'map', label: '/web', icon: <Icon name="map" className="size-3.5" aria-hidden="true" /> },
+                  { id: 'ranks', label: '/ranks', icon: <Icon name="trophy" className="size-3.5" aria-hidden="true" />, badge: statsApi.data ? statsApi.data.allTitles.length : undefined },
+                ]
+          }
           active={tab}
-          onChange={(id) => setTab(id as 'map' | 'ranks')}
+          onChange={(id) => setTab(id as 'map' | 'index' | 'ranks')}
         />
         {tab === 'map' && (
-          <div className="flex min-w-0 flex-wrap items-center gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-3">
+            {atlas && (
+              <span className="ax-view" role="group" aria-label="Chart view">
+                <button type="button" aria-pressed={view === 'sky'} onClick={() => chooseView('sky')}>
+                  Sky map
+                </button>
+                <button type="button" aria-pressed={view === 'radial'} onClick={() => chooseView('radial')}>
+                  Radial web
+                </button>
+              </span>
+            )}
             {resume && <ContinueChip name={resume.name} subjectName={resume.subjectName} onClick={() => openSubject(resume.subject, resume.key.split(':').slice(1).join(':'))} />}
             <GoalMenu routes={structure?.routes ?? []} goal={goal} onGoal={setGoal} />
-            <Button variant="ghost" size="sm" className="nx-press hidden sm:inline-flex" onClick={() => setPaletteOpen(true)} aria-label="Search the Nexus (⌘K)">
+            <Button variant="ghost" size="sm" className="nx-press hidden sm:inline-flex" onClick={() => setPaletteOpen(true)} title="Search the Nexus">
               <Icon name="search" className="size-3.5" aria-hidden="true" />
+              <span className="sr-only">Search the Nexus</span>
               <kbd className="font-mono text-[10.5px] text-text-muted">⌘K</kbd>
             </Button>
           </div>
@@ -413,7 +471,20 @@ function RadialOverview() {
         onConcept={(k) => setSel(k)}
       />
 
-      {tab === 'ranks' ? (
+      {tab === 'map' && atlas && <TonightSky clusters={clusters} deps={deps} next={next} due={due} onOpen={setSel} />}
+
+      {tab === 'index' ? (
+        <AtlasIndex
+          clusters={clusters}
+          streams={structure?.streams ?? []}
+          deps={deps}
+          onOpen={(id) => openSubject(id)}
+          onShow={(id) => {
+            setTab('map')
+            navigate(`/nexus?focus=${encodeURIComponent(id)}`, { replace: true })
+          }}
+        />
+      ) : tab === 'ranks' ? (
         <div className="space-y-4">
           <WebLeaderboard />
           {statsApi.loading && !statsApi.data ? (
@@ -425,7 +496,10 @@ function RadialOverview() {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
+        atlas && view === 'sky' ? (
+          <SkyMap clusters={clusters} streams={structure?.streams ?? []} deps={deps} nextKey={next} onOpen={(id) => openSubject(id)} />
+        ) : (
+        <div className={cn('grid grid-cols-[minmax(0,1fr)] gap-4', !atlas && 'xl:grid-cols-[minmax(0,1fr)_380px]')}>
           <div>
             {layout ? (
               <RadialWeb
@@ -459,13 +533,33 @@ function RadialOverview() {
             ) : (
               <RadialSkeleton />
             )}
+            {atlas && (
+              <p className="ax-legend" aria-label="Key">
+                <span>
+                  <span className="nx-star is-done" aria-hidden="true" />
+                  mastered
+                </span>
+                <span>
+                  <span className="nx-star is-open" aria-hidden="true" />
+                  open to you
+                </span>
+                <span>
+                  <span className="nx-star is-locked" aria-hidden="true" />
+                  locked
+                </span>
+                <span>Bigger stars unlock more ideas. Hover a star to trace its path from you.</span>
+              </p>
+            )}
           </div>
-          <div>
+          {!atlas && (
+            <div>
               <div className="nx-hud sticky top-4" style={hud(260)}>
                 <SelectHint text="Every subject is a sector, its zones are rings outward from you. Click a subject's name to open its course tree, or any skill to open its lesson." />
               </div>
-          </div>
+            </div>
+          )}
         </div>
+        )
       )}
     </div>
   )

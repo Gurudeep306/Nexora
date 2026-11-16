@@ -1,0 +1,460 @@
+/* The Atlas: the journal style's Nexus page (NexusPage, AtlasIndex, the
+   RadialWeb hover plate). Layered so utilities still win for spacing. */
+@layer components {
+  /* ── Hover plate ── */
+  .nx-plate {
+    position: absolute;
+    z-index: 5;
+    width: 226px;
+    padding: 0.8rem 0.95rem 0.75rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 14px;
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+    pointer-events: none;
+    animation: nx-plate-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes nx-plate-in {
+    from {
+      transform: translateY(4px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nx-plate {
+      animation: none;
+    }
+  }
+  .nx-plate p {
+    margin: 0;
+  }
+  .nx-plate-kicker {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .nx-plate-title {
+    margin-top: 0.3rem !important;
+    font-family: var(--ed-serif);
+    font-size: 1.1875rem;
+    line-height: 1.2;
+  }
+  .nx-plate-state {
+    margin-top: 0.35rem !important;
+    font-family: var(--ed-serif);
+    font-style: italic;
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+  }
+  .nx-plate-state.is-done::before,
+  .nx-plate-state.is-open::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 0.4rem;
+    border-radius: 999px;
+    vertical-align: 1px;
+  }
+  .nx-plate-state.is-done::before {
+    background: var(--color-text-primary);
+  }
+  .nx-plate-state.is-open::before {
+    box-shadow: inset 0 0 0 1.5px var(--color-accent-brand);
+  }
+  .nx-plate-figs {
+    margin-top: 0.5rem !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-secondary);
+  }
+  .nx-plate-hint {
+    margin-top: 0.55rem !important;
+    padding-top: 0.45rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
+
+  /* ── Ledger line (replaces the rank card) ── */
+  .ax-ledger {
+    display: grid;
+    gap: 0.6rem 2rem;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0.9rem 0;
+    border-top: 1px solid var(--color-text-primary);
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 1.5rem;
+  }
+  @media (min-width: 900px) {
+    .ax-ledger {
+      grid-template-columns: minmax(0, 1.4fr) repeat(3, auto);
+      align-items: end;
+    }
+  }
+  .ax-ledger-rank {
+    font-family: var(--ed-serif);
+    font-size: 1.375rem;
+    line-height: 1.1;
+  }
+  .ax-ledger-sub {
+    margin-top: 0.3rem;
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+  .ax-bar {
+    position: relative;
+    height: 2px;
+    margin-top: 0.55rem;
+    background: var(--color-border);
+  }
+  .ax-bar > span {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: var(--color-accent-brand);
+  }
+  .ax-fig dt {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .ax-fig dd {
+    margin: 0.2rem 0 0;
+    font-family: var(--ed-serif);
+    font-size: 1.75rem;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Tonight's sky ── */
+  .ax-tonight {
+    display: grid;
+    gap: 0;
+    grid-template-columns: minmax(0, 1fr);
+    margin-bottom: 1rem;
+    border-top: 1px solid var(--color-border);
+  }
+  @media (min-width: 900px) {
+    .ax-tonight {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .ax-tonight-item {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.85rem 1rem 0.9rem 0;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    background: none;
+    cursor: pointer;
+    color: inherit;
+  }
+  @media (min-width: 900px) {
+    .ax-tonight-item + .ax-tonight-item {
+      padding-left: 1rem;
+      box-shadow: inset 1px 0 0 var(--color-border);
+    }
+  }
+  .ax-tonight-item:hover .ax-tonight-title {
+    text-decoration: underline;
+    text-decoration-color: var(--color-border-strong);
+    text-underline-offset: 3px;
+  }
+  .ax-tonight-item:focus-visible {
+    outline: 2px solid var(--color-accent-brand);
+    outline-offset: 2px;
+  }
+  .ax-tonight-kicker {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .ax-tonight-title {
+    font-family: var(--ed-serif);
+    font-size: 1.1875rem;
+    line-height: 1.25;
+  }
+  .ax-tonight-why {
+    font-size: 12.5px;
+    color: var(--color-text-secondary);
+  }
+
+  /* ── Legend under the chart ── */
+  .ax-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 1.25rem;
+    margin-top: 0.75rem;
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+  .ax-legend .nx-star {
+    margin-right: 0.35rem;
+  }
+
+  /* ── The Index: constellations as small multiples ── */
+  .ax-index {
+    display: grid;
+    gap: 2.25rem;
+  }
+  .ax-stream-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.9rem;
+    margin-bottom: 0.9rem;
+    border-top: 1px solid var(--color-text-primary);
+  }
+  .ax-stream-title {
+    margin: 0;
+    font-family: var(--ed-serif);
+    font-weight: 400;
+    font-size: 1.625rem;
+    letter-spacing: -0.01em;
+  }
+  .ax-stream-count {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+  .ax-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
+    gap: 0.25rem 1.25rem;
+  }
+  .ax-const {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 0.85rem;
+    align-items: center;
+    padding: 0.6rem 0.25rem;
+    border-radius: 12px;
+    text-align: left;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    transition: background-color 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .ax-const:hover {
+    background: var(--color-bg-surface-2);
+  }
+  .ax-const:focus-visible {
+    outline: 2px solid var(--color-accent-brand);
+    outline-offset: 1px;
+  }
+  .ax-const svg {
+    width: 76px;
+    height: 76px;
+  }
+  .ax-const-name {
+    font-family: var(--ed-serif);
+    font-size: 1.0625rem;
+    line-height: 1.2;
+  }
+  .ax-const-meta {
+    margin-top: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
+  .ax-const .ax-bar {
+    margin-top: 0.45rem;
+  }
+  .ax-glyph-ring {
+    fill: none;
+    stroke: var(--color-border);
+    stroke-width: 0.6;
+  }
+  .ax-glyph-done {
+    fill: var(--color-text-primary);
+  }
+  .ax-glyph-open {
+    fill: var(--color-bg-app);
+    stroke: var(--color-accent-brand);
+    stroke-width: 1;
+  }
+  .ax-glyph-locked {
+    fill: none;
+    stroke: var(--color-text-muted);
+    stroke-width: 0.6;
+  }
+  .ax-glyph-core {
+    fill: var(--color-text-primary);
+  }
+  .ax-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* The chart is the page's hero: on the canvas, not in a card. Ring names
+   are drawn on the chart itself, so the zone rail steps aside. */
+[data-style='journal'] .nx-chart {
+  border-width: 1px 0;
+  border-color: var(--color-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: 0 0 #0000;
+}
+[data-style='journal'] .nx-rail {
+  display: none;
+}
+
+/* ── The sky map (SkyMap.tsx) ── */
+@layer components {
+  .ax-sky-scroll {
+    overflow-x: auto;
+    outline: none;
+    border-radius: 6px;
+  }
+  .ax-sky-scroll:focus-visible {
+    outline: 2px solid var(--color-accent-brand);
+    outline-offset: 2px;
+  }
+  .ax-sky-plate {
+    position: relative;
+    min-width: 760px;
+  }
+  .ax-sky-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .ax-region {
+    fill: none;
+    stroke: var(--color-border-strong);
+    stroke-width: 1;
+    stroke-dasharray: 5 5;
+  }
+  .ax-region-name {
+    font-family: var(--font-sans, system-ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    fill: var(--color-text-secondary);
+  }
+  .ax-region-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    fill: var(--color-text-muted);
+  }
+  .ax-link {
+    fill: none;
+    stroke: var(--color-text-muted);
+    stroke-opacity: 0.32;
+    transition: stroke-opacity 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .ax-links.is-dim .ax-link {
+    stroke-opacity: 0.08;
+  }
+  .ax-link-hot {
+    fill: none;
+    stroke: var(--color-accent-brand);
+    stroke-linecap: round;
+  }
+  .ax-link-hot.is-need {
+    stroke: var(--color-text-primary);
+  }
+  .ax-hot.is-drawing .ax-link-hot {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: ax-draw 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes ax-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .ax-arrow {
+    fill: var(--color-accent-brand);
+  }
+  .ax-sub {
+    cursor: pointer;
+    outline: none;
+  }
+  .ax-sub-hit {
+    fill: transparent;
+  }
+  .ax-sub:hover .ax-sub-hit,
+  .ax-sub.is-on .ax-sub-hit {
+    fill: var(--color-bg-surface-2);
+  }
+  .ax-sub:focus-visible .ax-sub-hit {
+    fill: var(--color-bg-surface-2);
+    stroke: var(--color-accent-brand);
+    stroke-width: 2;
+  }
+  .ax-sub.is-linked .ax-sub-hit {
+    fill: var(--color-bg-surface);
+    stroke: var(--color-border-strong);
+    stroke-width: 1;
+  }
+  .ax-sub-name {
+    font-family: var(--ed-serif);
+    font-size: 13.5px;
+    fill: var(--color-text-primary);
+  }
+  .ax-sub-meta {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    fill: var(--color-text-muted);
+  }
+  .ax-you {
+    fill: none;
+    stroke: var(--color-accent-brand);
+    stroke-width: 1.6;
+  }
+  .ax-you-label {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    fill: var(--color-text-primary);
+  }
+  .ax-you-key {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 0.4rem;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1.6px var(--color-accent-brand);
+    vertical-align: -1px;
+  }
+  .ax-sky-plate-card {
+    position: absolute;
+  }
+}
+@layer components {
+  .ax-view {
+    display: inline-flex;
+    gap: 1rem;
+    font-size: 13px;
+  }
+  .ax-view button {
+    padding: 0.25rem 0;
+    color: var(--color-text-muted);
+    background: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+  }
+  .ax-view button[aria-pressed='true'] {
+    color: var(--color-text-primary);
+    border-bottom-color: var(--color-text-primary);
+  }
+  .ax-view button:focus-visible {
+    outline: 2px solid var(--color-accent-brand);
+    outline-offset: 2px;
+  }
+}

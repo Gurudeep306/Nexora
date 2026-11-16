@@ -59,13 +59,13 @@ export default function SocialPage() {
       <PageHeader
         icon="social"
         title="Community"
-        subtitle="Share wins, follow learners, swap snippets and solve together — live."
+        subtitle="Share what you learned, follow other learners and solve problems together."
         actions={
           <span
             className={
               socket?.connected
-                ? 'inline-flex items-center gap-1.5 rounded-full border border-state-success/30 bg-state-success/10 px-2.5 py-1 text-[11px] font-semibold text-state-success'
-                : 'inline-flex items-center gap-1.5 rounded-full border border-state-warning/30 bg-state-warning/10 px-2.5 py-1 text-[11px] font-semibold text-state-warning'
+                ? 'so-live inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-text-secondary [&_svg]:text-state-success'
+                : 'so-live inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-text-secondary [&_svg]:text-state-warning'
             }
             role="status"
           >

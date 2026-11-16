@@ -60,7 +60,7 @@ html, body { margin: 0; }
 </head>
 <body>
 <div class="cs">
-  <header class="cs-top"><span class="cs-brand"><svg class="cs-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7.5" fill="currentColor"/><path d="M11 22V10L21 22V10" fill="none" stroke="var(--cs-bg)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>NexoraGuru</span></header>
+  <header class="cs-top"><span class="cs-brand"><svg class="cs-mark" viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 25.4V6.9L16.1 25.4"/><path d="M26 11.2C25.2 8.4 22.9 6.9 20.2 6.9H16.1V25.4H21.2C24.2 25.4 26 23.5 26 20.7V17.4H21.4"/></g><circle cx="21.4" cy="17.4" r="2.4" fill="#D97757"/></svg>NexoraGuru</span></header>
   <main class="cs-main">
     <p class="cs-label" style="margin:0">Coming soon</p>
     <h1 class="cs-title">Every idea in computer science, set in motion.</h1>

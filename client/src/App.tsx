@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect } from 'react'
 import { LegacyGateRedirect } from '@/gate/LegacyGateRedirect'
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { LoadingBlock } from '@/components/ui'
+import { MarkLoader } from '@/components/brand/Logo'
 import { useAuth } from '@/context/AuthContext'
 import { idlePrefetchCommonRoutes, pageLoaders } from '@/routes'
 import { SiteGate } from '@/components/site/SiteGate'
@@ -59,10 +59,10 @@ function GateSubjectAlias() {
 }
 
 function PageLoader() {
+  // The mark writing itself, on a loop, while the page arrives.
   return (
-    <div className="mx-auto max-w-4xl space-y-4 py-8" aria-busy="true">
-      <div className="skeleton h-9 w-64" />
-      <LoadingBlock rows={6} />
+    <div className="grid min-h-[60vh] place-items-center py-12">
+      <MarkLoader />
     </div>
   )
 }
