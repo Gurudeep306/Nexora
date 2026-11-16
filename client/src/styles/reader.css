@@ -7,26 +7,41 @@
    Docs-style three columns. The reading column is centred and keeps the
    measure; the side rails are sticky and scroll on their own. */
 .nr-layout {
+  /* The two side panels, each folding to a slim strip (components/reader/panels). */
+  --nr-left: 16.5rem;
+  --nr-right: 15rem;
   display: grid;
   gap: 2rem;
 }
+.nr-layout.is-tree-hidden {
+  --nr-left: 3rem;
+}
+.nr-layout.is-toc-hidden {
+  --nr-right: 3rem;
+}
 @media (min-width: 1024px) {
   .nr-layout {
-    grid-template-columns: 15rem minmax(0, 1fr);
+    grid-template-columns: var(--nr-left) minmax(0, 1fr);
     gap: 2.5rem;
-  }
-  .nr-layout.is-tree-hidden {
-    grid-template-columns: 2.75rem minmax(0, 1fr);
+    transition: grid-template-columns 360ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 @media (min-width: 1280px) {
   .nr-layout {
-    grid-template-columns: 15rem minmax(0, 1fr) 13.5rem;
+    grid-template-columns: var(--nr-left) minmax(0, 1fr) var(--nr-right);
     gap: 3rem;
   }
-  .nr-layout.is-tree-hidden {
-    grid-template-columns: 2.75rem minmax(0, 1fr) 13.5rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nr-layout {
+    transition: none;
   }
+}
+/* A reading page uses the whole window (AppLayout drops the page width cap). */
+.nr-page {
+  --nr-top: 4.75rem;
+  max-width: 120rem;
+  margin-inline: auto;
 }
 
 /* Rails */
@@ -166,18 +181,6 @@
 /* Centre column */
 .nr-main {
   min-width: 0;
-}
-/* The lesson spreads across the whole column (no narrow measure). */
-.nr-main > * {
-  max-width: none;
-}
-.notes-root .nr-main .notes-prose {
-  max-width: none;
-  margin-inline: 0;
-}
-.notes-root .nr-main .notes-prose > :is(p, ul, ol, blockquote, .notes-h, .nm-display),
-.notes-root .nr-main .notes-prose :is(p, ul, ol, blockquote) {
-  max-width: none;
 }
 @media (min-width: 1536px) {
   .notes-root .nr-main {
@@ -628,8 +631,19 @@
    scroll-syncs with it (ScrollyFigure). These layout rules apply in every
    style; the journal look is in theme/styles.css. */
 .nr-main {
-  --nr-col: 42rem;
-  --nr-wide: 60rem;
+  /* The measure grows a little with the window, and more when a panel is
+     folded; figures, tables and code break out wider still. */
+  --nr-col: clamp(40rem, 44vw, 46rem);
+  --nr-wide: min(100%, 64rem);
+}
+.nr-layout.is-tree-hidden .nr-main,
+.nr-layout.is-toc-hidden .nr-main {
+  --nr-col: clamp(42rem, 50vw, 50rem);
+  --nr-wide: min(100%, 72rem);
+}
+.nr-layout.is-tree-hidden.is-toc-hidden .nr-main {
+  --nr-col: clamp(44rem, 52vw, 54rem);
+  --nr-wide: min(100%, 80rem);
 }
 .nr-main > :is(.nr-bar, .notes-tree-mobile, .nr-end, .nr-pyqs, .nr-done) {
   max-width: var(--nr-col);
@@ -878,4 +892,80 @@
 }
 .nr-meta {
   font-variant-numeric: tabular-nums;
+}
+
+
+/* ── "On this page", folded: a strip with a reading meter ── */
+.nr-toc-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.nr-toc-top .nr-toc-head {
+  margin: 0;
+}
+.nr-toc-mini {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.nr-toc-meter {
+  position: relative;
+  display: block;
+  width: 3px;
+  height: 9rem;
+  border-radius: 2px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+.nr-toc-meter > span {
+  position: absolute;
+  inset: 0;
+  background: var(--read-accent, var(--color-accent-brand));
+  transform-origin: top center;
+  transition: transform 200ms linear;
+}
+.nr-toc-meter-no {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+.nr-toc.is-folded {
+  align-items: center;
+}
+
+
+/* ═══ One reading column, everywhere (2026-11) ═══════════════════════════════
+   Text, headings, lists and the boxed blocks (intuition, definition…) share
+   one column, centred in the reading area, so their left edges line up.
+   Figures, animations, tables and code break out wider. The column grows as
+   the window does and again when a side panel is folded (--nr-col above).
+   Higher specificity than the older per-block rules, on purpose. */
+.nr-main .notes-prose.notes-prose,
+.nr-main .nr-prose.nr-prose {
+  max-width: none;
+  margin-inline: 0;
+}
+.nr-main .notes-prose.notes-prose > *,
+.nr-main .nr-prose.nr-prose > * {
+  max-width: var(--nr-col);
+  margin-inline: auto;
+}
+.nr-main .notes-prose.notes-prose > :is(figure, .nr-figure, .nb-viz, .nxv-slot, .nb-table, .notes-table, .table-wrap, pre, .notes-pre, .np, .nr-scrolly),
+.nr-main .nr-prose.nr-prose > :is(figure, .nr-figure, .nr-scrolly, .nr-table, .nr-check, .card, pre, .table-wrap) {
+  max-width: var(--nr-wide);
+}
+/* The page head and the end of the lesson keep the same column. */
+.nr-main > :is(.nr-head, .nr-bar, .notes-tree-mobile, .nr-end, .nr-pyqs, .nr-done) {
+  max-width: var(--nr-col);
+  margin-inline: auto;
+}
+/* Reading size follows the space: a touch larger on wide screens. */
+@media (min-width: 1600px) {
+  .notes-root .nr-main,
+  .nr-main {
+    --read-size: 1.25rem;
+  }
 }

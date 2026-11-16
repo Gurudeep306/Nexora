@@ -100,6 +100,8 @@ export const DEFAULT_DOCK: DockPrefs = {
 export const DOCK_FOCUS_PREFIXES = ['/solve', '/learn/dsa', '/gate/cbt']
 
 export function isDockFocusRoute(pathname: string): boolean {
+  // A lesson open in the GATE notes reader is a focus surface too.
+  if (/^\/gate\/notes\/[^/]+\/[^/_][^/]*\/?$/.test(pathname)) return true
   return DOCK_FOCUS_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))
 }
 

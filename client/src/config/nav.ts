@@ -74,6 +74,9 @@ export const ACCOUNT_ITEMS: NavItem[] = [
 /** Section + label for the current path — used by the topbar breadcrumbs. */
 export function navMeta(pathname: string): { section?: string; label: string } {
   if (pathname.startsWith('/solve')) return { section: 'Play', label: 'Solve' }
+  // GATE is reached from the dock and Learn rather than the nav sections.
+  if (pathname.startsWith('/gate/notes')) return { section: 'Grow', label: 'Notes' }
+  if (pathname === '/gate' || pathname.startsWith('/gate/')) return { section: 'Grow', label: 'GATE' }
   if (pathname.startsWith('/profile/')) return { section: 'Players', label: decodeURIComponent(pathname.split('/')[2] ?? '') }
   for (const sec of [...NAV_SECTIONS, CREATE_SECTION, { title: 'Account', items: ACCOUNT_ITEMS }]) {
     const hit = sec.items.find((i) => pathname === i.to || pathname.startsWith(`${i.to}/`))
