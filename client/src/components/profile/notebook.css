@@ -388,3 +388,16 @@
     fill: var(--color-text-secondary);
   }
 }
+
+/* The rank badge on the portrait medal, set on a disc of paper. */
+.pf-medal-badge {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  background: var(--color-bg-app);
+}

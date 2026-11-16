@@ -1,3 +1,4 @@
+import { RankGlyph } from '@/components/ui/RankGlyph'
 import { useId, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 
@@ -44,6 +45,10 @@ export function PortraitMedal({ children, handle, level, name, progress }: { chi
         </text>
       </svg>
       <div className="pf-medal-photo">{children}</div>
+      {/* The rank badge, pinned to the rim like a medal's seal. */}
+      <span className="pf-medal-badge">
+        <RankGlyph level={level} size={46} animated={false} />
+      </span>
     </div>
   )
 }

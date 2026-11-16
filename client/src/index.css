@@ -43,6 +43,18 @@
   --field: color-mix(in oklab, var(--oklch-bg-0) 82%, oklch(0 0 0));
   --field-shadow: oklch(0 0 0 / 0.3);
   --rank-ink: color-mix(in oklab, var(--oklch-bg-0) 80%, oklch(0 0 0));
+  /* Rank tiers (components/ui/RankGlyph.tsx): ≥3.2:1 on every theme's page and card. */
+  --rank-1: oklch(0.68 0 0);
+  --rank-2: oklch(0.68 0.07 250);
+  --rank-3: oklch(0.67 0.09 195);
+  --rank-4: oklch(0.66 0.12 150);
+  --rank-5: oklch(0.69 0.11 60);
+  --rank-6: oklch(0.69 0.13 35);
+  --rank-7: oklch(0.69 0.13 18);
+  --rank-8: oklch(0.69 0.13 305);
+  --rank-9: oklch(0.68 0.13 272);
+  --rank-10: oklch(0.68 0.13 85);
+  --rank-11: var(--oklch-accent-0);
   --shadow-ink: oklch(0 0 0);
   /* Elevation: a tight contact shadow plus one soft ambient layer. Dark
      surfaces separate by tone, so the ambient layer stays short. */
@@ -58,6 +70,18 @@
   --field: var(--oklch-bg-1);
   --field-shadow: oklch(0 0 0 / 0.06);
   --rank-ink: var(--oklch-bg-1);
+  /* Rank tiers: ≥3.2:1 on every theme's page and card. */
+  --rank-1: oklch(0.55 0 0);
+  --rank-2: oklch(0.55 0.07 250);
+  --rank-3: oklch(0.54 0.09 195);
+  --rank-4: oklch(0.54 0.12 150);
+  --rank-5: oklch(0.56 0.11 60);
+  --rank-6: oklch(0.56 0.13 35);
+  --rank-7: oklch(0.57 0.16 18);
+  --rank-8: oklch(0.56 0.15 305);
+  --rank-9: oklch(0.56 0.15 272);
+  --rank-10: oklch(0.55 0.13 85);
+  --rank-11: var(--oklch-accent-0);
   --shadow-ink: color-mix(in oklab, var(--oklch-fg-0) 70%, oklch(0 0 0));
   --elev-1: 0 1px 2px oklch(0 0 0 / 0.05), 0 1px 4px -1px oklch(0 0 0 / 0.05);
   --elev-2: 0 1px 2px oklch(0 0 0 / 0.05), 0 8px 24px -10px oklch(0 0 0 / 0.13);
@@ -1568,4 +1592,31 @@ a.nx-hub-chip:hover { color: var(--color-text-primary); border-color: var(--colo
    is pulled a little toward the text ink so it keeps 4.5:1 (WCAG 1.4.3). ── */
 [data-mode='light'] .text-accent-brand {
   color: color-mix(in oklab, var(--color-accent-brand) 80%, var(--color-text-primary));
+}
+
+/* ── A rank as a pill (RankBadge in components/ui/RankGlyph.tsx) ── */
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--tier) 9%, var(--color-bg-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tier) 28%, var(--color-border));
+}
+.rank-badge.is-sm { gap: 0.375rem; padding: 0.125rem 0.625rem 0.125rem 0.125rem; }
+.rank-badge.is-lg { gap: 0.75rem; padding: 0.375rem 1.25rem 0.375rem 0.375rem; }
+.rank-badge-name {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+.rank-badge.is-sm .rank-badge-name { font-size: 12px; }
+.rank-badge.is-lg .rank-badge-name { font-size: 16px; }
+.rank-badge-sub {
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--color-text-muted);
 }
