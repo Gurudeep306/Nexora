@@ -1,7 +1,7 @@
 // Trace a program locally and print what the dry run would draw — the tool
 // used to build every language's tracer (docs/HANDOFF.md, "Visual dry run").
 //
-//   node scripts/dryrun-trace.mjs <file> <lang> [input]       lang: python cpp c java javascript typescript
+//   node scripts/dryrun-trace.mjs <file> <lang> [input]       lang: python cpp c java javascript typescript go rust
 //   node scripts/dryrun-trace.mjs --corpus <lang>             every Learn solution in that language:
 //                                                             traced output must equal the expected output
 // Env: AT=<n> N=<k>  print frames n … n+k (what each step draws)
@@ -45,6 +45,20 @@ async function runTraced(code, lang, input) {
       const c = sh('javac', ['-nowarn', f])
       if (c.status) return { error: c.stderr }
       return sh('java', ['-Xss64m', '-cp', dir, cls])
+    }
+    if (lang === 'go') {
+      const f = path.join(dir, 'main.go')
+      fs.writeFileSync(f, src)
+      const c = sh('go', ['build', '-o', path.join(dir, 'm'), f], { env: { ...process.env, GOFLAGS: '-mod=mod', GO111MODULE: 'off' } })
+      if (c.status) return { error: c.stderr }
+      return sh(path.join(dir, 'm'), [])
+    }
+    if (lang === 'rust') {
+      const f = path.join(dir, 'main.rs')
+      fs.writeFileSync(f, src)
+      const c = sh('rustc', ['--edition', '2021', '-O', '-A', 'warnings', '-o', path.join(dir, 'm'), f])
+      if (c.status) return { error: c.stderr }
+      return sh(path.join(dir, 'm'), [])
     }
     if (lang === 'python') {
       const f = path.join(dir, 'm.py')

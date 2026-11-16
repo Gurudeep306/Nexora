@@ -55,15 +55,72 @@ Contents:
 - `git add -A` also picks up helper worktrees under `.claude/worktrees/`.
   Add that folder to `.git/info/exclude` first.
 
-## 3. Where it stands (2026-11-16, end of session 3)
+## 3. Where it stands (2026-11-16, session 4)
 
-- Merged: #127 (judge, runners, editor help, How it runs, Python dry run)
-  and #128 (dry-run known issues, 14 real programs checked).
-- **PR #129** — the dry run for C++, C, Java, JavaScript and TypeScript, plus
-  this handoff, the two check scripts and more fixes. The owner said "merge"
-  once CI is green.
-- Next: section 6, item 1 (check the live site after the deploy), then item 2
-  (the Solve page redesign).
+- Merged: #127 (judge, runners, editor help, How it runs, Python dry run),
+  #128 (dry-run known issues), **#129** (dry run for C++, C, Java,
+  JavaScript, TypeScript). The dry run works in 6 languages.
+- **Open PR: the Solve page redesign (section 6, item 2) — done**, branch
+  `claude/fervent-curie-vjgcd8`. Waiting for the owner's "merge".
+- **Item 1 (live check) needs the owner**: the site is private, so only the
+  owner can sign in and press Dry run on the live site in each language.
+- **Dry run for Go — done (session 4)**, in the same PR:
+  `src/dryrun/go.js` + `go-runtime.go`. Reflection-based runtime; imports
+  added (aliased) on the package line; a deferred `__nxDone` per function
+  reports a panic on its line and re-panics, so the program behaves exactly
+  as before; output counted by wrapping `fmt.Print*` and the `os.Stdout`
+  handed to writers (no goroutines, nothing can be lost); `byte`s shown as
+  characters; maps drawn sorted (Go's order is random); only `package main`
+  types become objects; `Len/Less/Swap/String/Error` methods not traced.
+  Picture-picker: Go stacks (`st = append(st, x)` + `st[:len(st)-1]`),
+  queues (`q = q[1:]`), `container/heap`, edge lists (`edges` of pairs),
+  field names matched without case (`Val`, `Next`, `Left`). Checked: 10
+  classic programs print exactly the same traced and untraced
+  (`node scripts/dryrun-trace.mjs <file> go`), `tests/dryrun-go.test.js`.
+  Also checked through the live runners (Wandbox, Compiler Explorer,
+  Paiza.io): same output, same steps.
+- **Dry run for Rust — done (session 4)**, same PR: `src/dryrun/rust.js` +
+  `rust-runtime.rs`. Values through a `__nx_rt::S` trait with "autoref
+  specialisation" (S if the type has it, else short Debug text, else
+  nothing — never a compile error); the student's non-generic structs get
+  an `S` impl (objects by address: `Option<Box<Node>>` lists,
+  `Rc<RefCell<TreeNode>>` trees); frame `Drop` sends `ret` (also while
+  unwinding); a panic hook reports the line and message, then Rust's own
+  message is printed; output counted by wrapping println!/print!/
+  writeln!/write!. **Borrow-checker rules** (the hard part): a step only
+  reads variables that are surely readable — not after a move (passed /
+  assigned / returned / iterated / stored by value, consumed by
+  `into_iter`/`unwrap`…, bound by value in `if let`/`while let`/`match`;
+  `x = f(x)` makes x readable again), not while lent out as `&mut`
+  (`&mut x`, `iter_mut`, `get_mut`, `entry`… for as long as the binding
+  lives; in `if let`/`match`/`for` bodies), not a `let x;` before its value;
+  Copy values (numbers, bools, chars, refs) are always readable. Iterators
+  and IO plumbing are left out. `impl Trait for X` methods (Ord, Display,
+  Iterator…) are not traced; nor are closures. If the traced copy still
+  does not compile, `dryRun()` says so honestly (Run still works). Checked:
+  11 programs print exactly the same traced and untraced (incl. moves,
+  `&mut` loans, `let x;`, linked lists, Rc<RefCell> BST, BinaryHeap with
+  Reverse, VecDeque, HashMap, BufWriter + writeln!, labels, tuple structs),
+  `tests/dryrun-rust.test.js`, and through Compiler Explorer.
+- **Loops without an update** (Rust `for`/`loop`, Go `range`): the
+  end-of-pass step is added at the end of the body, so `j` is not shown one
+  box too far.
+- **C# dry run: DONE** (`src/dryrun/csharp.js` + `csharp-runtime.cs`).
+  Classic `Main`, top-level programs, local functions and `=>` bodies (the
+  `=>` and `;` are commented out so lines stay put); List/arrays (1D, 2D,
+  jagged), Dictionary, Stack, Queue, HashSet, PriorityQueue, linked lists,
+  exceptions on their line. ToString/Equals/CompareTo and IO helpers are not
+  traced. 7 programs print exactly the same traced and untraced on Compiler
+  Explorer (.NET 9). CI has no dotnet, so `tests/dryrun-csharp.test.js`
+  checks the instrumented code and replays traces recorded from a real run
+  (`tests/fixtures/dryrun-csharp-*.json`).
+- **C# now runs on .NET 9 first** (Compiler Explorer), Mono as fallback.
+  Before, Run/Submit went to Wandbox's Mono first, which gave a false
+  compile error for local functions, top-level programs and PriorityQueue.
+- **Next for the agent: section 6, item 3** — dry run for Kotlin, Swift
+  (no local compilers: test through the remote runners with the proxy
+  preload), then Ruby, PHP, Lua, Perl; then functional languages.
+- The owner said **no for now** to the ideas in section 6, item 7.
 
 ## 4. What is done (all sessions)
 
@@ -276,7 +333,29 @@ Each item is one finished, tested PR. Report to the owner after each.
   is too slow, say so and offer a faster path. Our own Piston runner has
   `tsx`; the owner must create one, see `docs/ops/fast-judge.md`.
 
-### 2. Solve page redesign — every button in its best place
+### 2. Solve page redesign — every button in its best place — DONE (session 4)
+
+What was built (`client/src/pages/SolvePage.tsx`, `components/solve/CodeEditor.tsx`,
+`ProblemPanel.tsx`, `LanguagePicker.tsx`):
+
+- Top bar: language · Dry run · Run · Submit (the one clay button) · ⋯ (full-
+  screen arena, layout presets, the key list). The old AI menu is gone.
+- Examples: "Run this", "Dry run this", "Add to tests" on each example.
+- Editor header: file chip with the saved dot; Format (only JS/TS/JSON/CSS/
+  HTML, where Monaco has a real formatter); Snippets; Reset to template;
+  **Help** (AI: hint, explain my error, fix my code, ask the tutor ⌘J); ⋯
+  Editor settings (theme, font size, indent, wrap, minimap, Vim, AI
+  suggestions, copy, download, shortcuts, full screen). Undo/Redo buttons,
+  the timer, char count, wrap label and theme name are gone.
+- Status bar: Ln/Col, language, issue count (click → Result), saved.
+- Results: 4 tabs — Tests (+ "Generate with AI"), Result (issues listed on
+  top, click → line), Dry run ("Watch it run" / "Under the hood"), Coach
+  (Hints / Analysis). Old links (`openTab('analysis')` etc.) still land in
+  the right tab and view.
+- Phone: Dry run · Run · Submit bar at the bottom. Alt+D opens the dry run.
+- Checked: axe 0 and no sideways scroll in light, dark and phone; 533 tests.
+
+The plan that was followed:
 
 **The owner's words:** "i want the buttons not everything at the bottom part i
 want it to uniquely place all buttons and remove all unnecessary features …
@@ -338,7 +417,7 @@ by analyzing what to place where to make it look the best and show case best
 
 ### 3. Dry run for the other languages
 
-- **Go, Rust, C#, Kotlin, Swift:** the same approach — a tree-sitter
+- **Go, Rust, C# are done. Kotlin, Swift:** the same approach — a tree-sitter
   instrumenter + a small runtime that writes the same events, on the same
   lines.
   - The grammars are in `tree-sitter-wasms`.
@@ -471,7 +550,7 @@ by analyzing what to place where to make it look the best and show case best
 - Import solves and achievements.
 - Real OAuth only where it exists (GitHub). Never a fake permission screen.
 
-### 7. Ideas never started — only with the owner's agreement
+### 7. Ideas never started — the owner said NO for now (2026-11-16): do not start them
 
 - Fine-tuned Nexora models trained on our own data (GATE solutions,
   animation scenes).

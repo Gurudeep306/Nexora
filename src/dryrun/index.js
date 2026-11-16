@@ -22,6 +22,9 @@ const { instrumentCpp } = require('./cpp');
 const { instrumentC } = require('./c');
 const { instrumentJava } = require('./java');
 const { instrumentJs } = require('./js');
+const { instrumentGo } = require('./go');
+const { instrumentRust } = require('./rust');
+const { instrumentCSharp } = require('./csharp');
 
 /**
  * Languages the dry run can trace today, and how. `wrap` returns the code to
@@ -35,6 +38,9 @@ const TRACERS = {
   java: { wrap: async (code) => (await instrumentJava(code)).code, runAs: 'java', compiled: true },
   javascript: { wrap: async (code) => (await instrumentJs(code)).code, runAs: 'javascript' },
   typescript: { wrap: async (code) => (await instrumentJs(code, { typescript: true })).code, runAs: 'typescript', compiled: true },
+  go: { wrap: async (code) => (await instrumentGo(code)).code, runAs: 'go', compiled: true },
+  rust: { wrap: async (code) => (await instrumentRust(code)).code, runAs: 'rust', compiled: true },
+  csharp: { wrap: async (code) => (await instrumentCSharp(code)).code, runAs: 'csharp', compiled: true },
 };
 
 function supported(lang) {
@@ -107,6 +113,13 @@ async function dryRun(code, lang, input, run) {
   const { events, errors, capped } = parseTrace(res.stderr);
   const verdict = res.verdict || (res.ok ? 'OK' : 'RE');
   const noTrace = events.length === 0;
+  // Output the tracer could not count (written straight to the output stream,
+  // or flushed only at exit) still appears: by the end, all of it is printed.
+  const stdout = res.output || '';
+  if (!capped && events.length && stdout) {
+    const last = events[events.length - 1];
+    if ((last.o ?? 0) < stdout.length) last.o = stdout.length;
+  }
   return {
     ok: !noTrace,
     supported: true,

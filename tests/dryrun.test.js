@@ -86,3 +86,9 @@ test('dryRun reports unsupported languages honestly and passes the run through',
   assert.equal(r.stderr, 'warning: x');
   assert.equal(r.stdout, '1\n');
 });
+
+test('output the tracer could not count still shows by the end of the run', async () => {
+  const r = await dryRun('x', 'python', '', async () => ({ ok: true, verdict: 'OK', output: 'abc\n', stderr: '\u001eNXT {"e":"line","l":1,"k":1,"o":0}\n\u001eNXT {"e":"ret","k":1,"l":1,"o":0}\n', timeMs: 1, engine: 'local' }));
+  assert.equal(r.events[0].o, 0, 'earlier steps keep what was counted');
+  assert.equal(r.events[1].o, 4, 'the last step shows everything printed');
+});
