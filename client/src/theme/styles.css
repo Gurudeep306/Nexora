@@ -164,17 +164,18 @@
   transform: translateY(1px);
 }
 
-/* ── Fields: ivory, a hairline, a clay ring on focus ── */
-[data-kit='journal'] :is(.input-base, .ui-search-input) {
+/* ── Fields: ivory, a hairline, a clay ring on focus. (Search fields are the
+   ledger line of styles/search.css: their focus is the ink line.) ── */
+[data-kit='journal'] .input-base {
   background-color: var(--color-bg-surface);
   border-color: var(--color-border);
   box-shadow: none;
   border-radius: 12px;
 }
-[data-kit='journal'] :is(.input-base, .ui-search-input):hover {
+[data-kit='journal'] .input-base:hover {
   border-color: var(--color-border-strong);
 }
-[data-kit='journal'] :is(.input-base, .ui-search-input):focus {
+[data-kit='journal'] .input-base:focus {
   background-color: var(--color-bg-surface);
   border-color: var(--ed-focus);
   box-shadow: var(--shadow-input-focus);

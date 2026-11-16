@@ -19,6 +19,7 @@ import { NexusPalette } from '@/components/nexus/NexusPalette'
 import { GoalMenu, useGoal, usePaletteHotkey } from '@/components/nexus/extras'
 import { HistorySpark, StudyPlanView, SubjectMiniMap } from '@/components/nexus/SubjectExtras'
 import { SubjectContents } from '@/components/nexus/SubjectContents'
+import { DsaBook, NotesBook } from '@/components/nexus/SubjectBook'
 import { fmtMinutes, nextLesson, studyPlan } from '@/components/nexus/insights'
 import type { NodeInsight } from '@/components/nexus/NodeExtras'
 import { useToast } from '@/components/ui'
@@ -49,8 +50,8 @@ function useSubjectRoute() {
   return { subject: subject ?? (pathname.startsWith('/learn/dsa') ? 'dsa' : ''), node: node ?? null }
 }
 
-type Tab = 'contents' | 'tree' | 'plan' | 'ranks' | 'board'
-const VIEWS: Tab[] = ['contents', 'tree', 'plan', 'ranks', 'board']
+type Tab = 'lessons' | 'contents' | 'tree' | 'plan' | 'ranks' | 'board'
+const VIEWS: Tab[] = ['lessons', 'contents', 'tree', 'plan', 'ranks', 'board']
 
 export default function SubjectPage() {
   const { subject, node: nodeParam } = useSubjectRoute()
@@ -59,8 +60,9 @@ export default function SubjectPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const username = user?.username ?? ''
-  // Contents (the table of contents) by default; ?view=tree opens the skill tree.
-  const [tab, setTab] = useState<Tab>(() => (VIEWS.includes(new URLSearchParams(location.search).get('view') as Tab) ? (new URLSearchParams(location.search).get('view') as Tab) : 'contents'))
+  // The written lessons by default (the skill list where a subject has none);
+  // ?view=tree opens the skill tree, ?view=contents the skills.
+  const [tabPick, setTab] = useState<Tab>(() => (VIEWS.includes(new URLSearchParams(location.search).get('view') as Tab) ? (new URLSearchParams(location.search).get('view') as Tab) : 'lessons'))
   const [revision, setRevision] = useState(false)
   const toast = useToast()
 
@@ -284,6 +286,9 @@ export default function SubjectPage() {
   const pct = isDsa ? Math.round((done / Math.max(1, nodes.length)) * 100) : (rank?.progress ?? 0)
   const selZone = selectedNode ? zones.find((z) => z.level === selectedNode.zone) : null
   const notesHref = cluster?.gate?.notes && notesOpen.data?.some((x) => x.id === cluster.gate!.notes) ? `/gate/notes/${cluster.gate.notes}` : null
+  const notesId = notesHref ? cluster!.gate!.notes! : null
+  const hasBook = isDsa || !!notesId
+  const tab: Tab = tabPick === 'lessons' && !hasBook ? 'contents' : tabPick
   const roadmap = roadmapApi.data
   const currentZone = isDsa ? player.level : (zones.find((z) => z.current)?.level ?? 1)
   const minutes = Object.fromEntries(Object.entries(ins?.nodes ?? {}).map(([id, x]) => [id, x.min]))
@@ -381,7 +386,7 @@ export default function SubjectPage() {
               <span style={{ width: `${pct}%` }} />
             </span>
             <p className="ed-mono ed-muted mt-2 mb-0 text-[12px]">
-              {done} of {nodes.length} {isDsa ? 'skills' : 'lessons'} mastered · {pct}%
+              {done} of {nodes.length} skills mastered · {pct}%
               {ins ? ` · about ${fmtMinutes(ins.remainingMin)} left` : ''}
             </p>
           </div>
@@ -404,16 +409,6 @@ export default function SubjectPage() {
             {isDsa && (
               <Link to="/problems" className="ed-link ed-ui">
                 Practice
-              </Link>
-            )}
-            {notesHref && (
-              <Link to={notesHref} className="ed-link ed-ui">
-                GATE notes
-              </Link>
-            )}
-            {isDsa && (
-              <Link to="/learn?tab=dsa" className="ed-link ed-ui">
-                DSA lessons
               </Link>
             )}
             {todayFirst && todayFirst !== nextNode?.id && (
@@ -462,7 +457,8 @@ export default function SubjectPage() {
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <Tabs
           items={[
-            { id: 'contents', label: 'Contents' },
+            ...(hasBook ? [{ id: 'lessons', label: 'Lessons' }] : []),
+            { id: 'contents', label: hasBook ? 'Skills' : 'Contents' },
             { id: 'tree', label: 'Skill tree' },
             { id: 'plan', label: 'Plan' },
             ...(isDsa ? [{ id: 'ranks', label: 'Ranks' }] : []),
@@ -481,7 +477,13 @@ export default function SubjectPage() {
         )}
       </div>
 
-      {tab === 'contents' ? (
+      {tab === 'lessons' ? (
+        isDsa ? (
+          <DsaBook aside={structure ? <div className="ed-card-sm p-5"><SubjectMiniMap structure={structure} subject={subject} /></div> : undefined} />
+        ) : (
+          <NotesBook notesId={notesId!} aside={structure ? <div className="ed-card-sm p-5"><SubjectMiniMap structure={structure} subject={subject} /></div> : undefined} />
+        )
+      ) : tab === 'contents' ? (
         <SubjectContents
           zones={zones}
           nodes={nodes}

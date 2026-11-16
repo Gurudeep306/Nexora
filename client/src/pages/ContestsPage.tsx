@@ -9,6 +9,7 @@ import {
   ErrorState,
   LoadingBlock,
   PageHeader,
+  SearchInput,
   Tabs,
 } from '@/components/ui'
 import { api } from '@/lib/api'
@@ -28,6 +29,7 @@ export default function ContestsPage() {
   const journal = isJournalKit(useTheme().shown.style)
   const { user } = useAuth()
   const [bucket, setBucket] = useState<Bucket>('all')
+  const [q, setQ] = useState('')
 
   // Live scrape of Codeforces + CodeChef — can be slow; generous timeout.
   const contestsApi = useApi<{ contests: PlatformContest[] }>(
@@ -43,8 +45,9 @@ export default function ContestsPage() {
   }, [contests])
 
   const visible = useMemo(() => {
-    return bucket === 'all' ? contests : contests.filter((c) => contestBucket(c) === bucket)
-  }, [contests, bucket])
+    const needle = q.trim().toLowerCase()
+    return contests.filter((c) => (bucket === 'all' || contestBucket(c) === bucket) && (!needle || `${c.name} ${c.platform}`.toLowerCase().includes(needle)))
+  }, [contests, bucket, q])
 
   return (
     <div>
@@ -60,18 +63,20 @@ export default function ContestsPage() {
         }
       />
 
-      <Tabs
-        variant="pills"
-        className="mb-5"
-        items={[
-          { id: 'all', label: 'All', icon: <LayoutGrid className="size-3.5" />, badge: counts.all },
-          { id: 'live', label: 'Live', icon: <Icon name="live" className="size-3.5" />, badge: counts.live },
-          { id: 'upcoming', label: 'Upcoming', icon: <Icon name="calendar" className="size-3.5" />, badge: counts.upcoming },
-          { id: 'past', label: 'Past', icon: <Icon name="submissions" className="size-3.5" />, badge: counts.past },
-        ]}
-        active={bucket}
-        onChange={(id) => setBucket(id as Bucket)}
-      />
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+        <Tabs
+          variant="pills"
+          items={[
+            { id: 'all', label: 'All', icon: <LayoutGrid className="size-3.5" />, badge: counts.all },
+            { id: 'live', label: 'Live', icon: <Icon name="live" className="size-3.5" />, badge: counts.live },
+            { id: 'upcoming', label: 'Upcoming', icon: <Icon name="calendar" className="size-3.5" />, badge: counts.upcoming },
+            { id: 'past', label: 'Past', icon: <Icon name="submissions" className="size-3.5" />, badge: counts.past },
+          ]}
+          active={bucket}
+          onChange={(id) => setBucket(id as Bucket)}
+        />
+        <SearchInput value={q} onChange={(e) => setQ(e.target.value)} onClear={() => setQ('')} placeholder="Find a contest" aria-label="Search contests" containerClassName="w-full sm:w-64" />
+      </div>
 
       {contestsApi.loading ? (
         <LoadingBlock rows={5} />
@@ -86,8 +91,8 @@ export default function ContestsPage() {
         <Card>
           <EmptyState
             icon="trophy"
-            title={bucket === 'all' ? 'No contests found' : `No ${bucket} contests`}
-            description="Check back soon — or host your own contest below."
+            title={q.trim() ? `No contests match “${q.trim()}”` : bucket === 'all' ? 'No contests found' : `No ${bucket} contests`}
+            description={q.trim() ? 'Check the spelling, or clear the search.' : 'Check back soon — or host your own contest below.'}
           />
         </Card>
       ) : (

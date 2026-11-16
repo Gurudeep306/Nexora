@@ -55,6 +55,8 @@ export interface SearchComboboxProps {
   className?: string
   panelClassName?: string
   inputRef?: React.Ref<HTMLInputElement>
+  /** "line" (a ledger line, for pages) or "bar" (a soft pill, for the top bar). */
+  variant?: 'line' | 'bar'
   'aria-label'?: string
 }
 
@@ -84,6 +86,7 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
     className,
     panelClassName,
     inputRef,
+    variant = 'line',
     ...rest
   },
   forwardedRef,
@@ -159,11 +162,8 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
 
   return (
     <div ref={rootRef} className={cn('group/search relative', containerClassName)}>
-      <div className="relative flex items-center">
-        <Search
-          aria-hidden="true"
-          className="pointer-events-none absolute left-3 z-10 size-4 text-text-muted transition-colors duration-[var(--dur-fast)] group-focus-within/search:text-text-primary"
-        />
+      <div className={cn('ui-search relative flex items-center', variant === 'bar' && 'is-bar')}>
+        <Search aria-hidden="true" className={cn('ui-search-icon pointer-events-none absolute z-10 size-[17px]', variant === 'bar' ? 'left-3.5' : 'left-0.5')} />
         <input
           ref={setRefs}
           type="search"
@@ -180,11 +180,11 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
             setOpen(true)
           }}
           onKeyDown={onKeyDown}
-          className={cn('ui-search-input w-full pl-9', hasValue && 'pr-9', className)}
+          className={cn('ui-search-input w-full', variant === 'bar' ? 'pl-10' : 'pl-8', hasValue && 'pr-9', className)}
           {...rest}
         />
         {placeholderNode && !hasValue && (
-          <span className="pointer-events-none absolute top-1/2 right-3 left-9 z-10 -translate-y-1/2 truncate text-[13px] text-text-muted">
+          <span className={cn('ui-search-hint pointer-events-none absolute top-1/2 right-3 z-10 -translate-y-1/2 truncate text-[14px]', variant === 'bar' ? 'left-10' : 'left-8')}>
             {placeholderNode}
           </span>
         )}
@@ -196,7 +196,7 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
               innerRef.current?.focus()
             }}
             aria-label="Clear search"
-            className="absolute right-2 z-10 flex size-6 cursor-pointer items-center justify-center rounded-full text-text-muted transition-colors hover:bg-text-primary/8 hover:text-text-primary"
+            className={cn('search-field-clear absolute z-10', variant === 'bar' ? 'right-2' : 'right-0.5')}
           >
             <X className="size-3.5" aria-hidden="true" />
           </button>
@@ -208,7 +208,7 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
           <motion.div
             {...popIn}
             className={cn(
-              'pop-surface absolute top-[calc(100%+6px)] left-0 z-[60] flex max-h-[min(26rem,70vh)] w-full origin-top flex-col overflow-hidden',
+              'ui-search-panel pop-surface absolute top-[calc(100%+8px)] left-0 z-[60] flex max-h-[min(26rem,70vh)] w-full origin-top flex-col overflow-hidden',
               panelClassName,
             )}
           >
@@ -243,7 +243,7 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
                   <div key={item.id}>
                     {header && (
                       <div className={cn('flex items-center justify-between px-2.5 pb-1', i === 0 ? 'pt-1.5' : 'pt-3')}>
-                        <span className="text-[11px] font-medium text-text-muted">{header}</span>
+                        <span className="ui-search-group text-text-muted">{header}</span>
                         {groupActions?.[header]}
                       </div>
                     )}
@@ -267,7 +267,7 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
                       {item.trailing ? (
                         item.trailing
                       ) : (
-                        item.hint && <span className="shrink-0 text-[11.5px] text-text-muted">{item.hint}</span>
+                        item.hint && <span className="max-w-[42%] min-w-0 shrink truncate text-[11.5px] text-text-muted">{item.hint}</span>
                       )}
                       <CornerDownLeft
                         className={cn('size-3.5 shrink-0 text-text-muted transition-opacity', isActive ? 'opacity-100' : 'opacity-0')}

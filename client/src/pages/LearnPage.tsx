@@ -1,26 +1,27 @@
-import { useSearchParams } from 'react-router-dom'
+import { Navigate, useSearchParams } from 'react-router-dom'
+import { LessonFinder } from '@/components/learn/LessonFinder'
 import { BackButton } from '@/components/ui/BackButton'
-import { CourseOverview } from '@/learn/ui/CourseOverview'
 import { TutorialsPanel } from '@/components/learn/TutorialsPanel'
 import { PathsPanel } from '@/components/learn/PathsPanel'
 import { LearnHome } from '@/components/learn/LearnHome'
 import '@/components/learn/learn-home.css'
 
 const VIEWS: Record<string, { title: string; line: string }> = {
-  dsa: { title: 'DSA course', line: 'Thirty chapters, unit by unit. Every idea animated, every problem in five languages.' },
   tutorials: { title: 'Tutorials', line: 'Deep dives on single topics.' },
   paths: { title: 'Paths', line: 'Guided journeys across subjects.' },
 }
 
 /**
- * /learn — one page to start from (LearnHome). The deeper views (?tab=dsa,
- * tutorials, paths) keep their links and open with a way back.
+ * /learn — one page to start from (LearnHome). The deeper views (?tab=tutorials,
+ * paths) keep their links and open with a way back.
  */
 export default function LearnPage() {
   const [params] = useSearchParams()
   const tab = params.get('tab') ?? ''
   const view = VIEWS[tab]
 
+  // The DSA course map lives on the DSA subject page now (its Lessons tab).
+  if (tab === 'dsa') return <Navigate to="/learn/dsa" replace />
   if (!view || tab === 'subjects')
     return (
       <div>
@@ -28,6 +29,7 @@ export default function LearnPage() {
           <p className="ed-label ed-muted m-0">The Library</p>
           <h1 className="ed-title mt-3 mb-0">Learn</h1>
           <p className="ed-lead mt-3 mb-0 max-w-[60ch]">Pick up where you left off, or open a subject: its lessons, skill tree and practice sit together.</p>
+          <LessonFinder className="mt-8 max-w-2xl" />
         </header>
         <LearnHome />
       </div>
@@ -43,7 +45,7 @@ export default function LearnPage() {
         <h1 className="ed-title mt-3 mb-0">{view.title}</h1>
         <p className="ed-lead mt-3 mb-0 max-w-[60ch]">{view.line}</p>
       </header>
-      {tab === 'dsa' ? <CourseOverview /> : tab === 'tutorials' ? <TutorialsPanel /> : <PathsPanel />}
+      {tab === 'tutorials' ? <TutorialsPanel /> : <PathsPanel />}
     </div>
   )
 }

@@ -21,6 +21,7 @@ import { Icon } from '@/components/icon/Icon'
 import { EmptyState, LoadingBlock } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { GateShell } from '@/gate/shell/GateShell'
+import { cachedStructure } from '@/components/nexus/data'
 import { DIFFICULTY_LABEL, NOTES_ROUTES, fmtMinutes, useLesson, useSubjectTree } from '@/gate/notes/api'
 import { flushScroll, progressOf, reportScroll, setBookmarked, setCompleted, useNotesProgress } from '@/gate/notes/progress'
 import { useNotesPrefs } from '@/gate/notes/prefs'
@@ -157,6 +158,10 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
   const { lesson, subject, chapter, prev, next } = data
   const progressMap = useNotesProgress(subject.id)
   const p = progressOf(progressMap, subject.id, lesson.id)
+  // The subject's home on Learn, and the skill this lesson teaches (from the
+  // Nexus map this browser already holds; the tree when it has none yet).
+  const nexusId = NEXUS_OF[subject.id] ?? subject.id
+  const skill = useMemo(() => cachedStructure()?.clusters.find((c) => c.id === nexusId)?.nodes.find((n) => n.ls?.includes(lesson.id)) ?? null, [nexusId, lesson.id])
   const [prefs, setPrefs] = useNotesPrefs()
   const [treeOpen, setTreeOpen] = useState(false)
   const article = useRef<HTMLElement>(null)
@@ -271,14 +276,14 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
             <div className="nr-bar">
               <Crumbs
                 items={[
-                  { label: 'Notes', to: NOTES_ROUTES.all },
-                  { label: subject.title, to: NOTES_ROUTES.subject(subject.id) },
+                  { label: 'Learn', to: '/learn' },
+                  { label: subject.title, to: `/learn/${nexusId}` },
                   { label: `Chapter ${chapter.n}` },
                 ]}
               />
               <span className="nr-bar-links">
-                <Link to={`/learn/${NEXUS_OF[subject.id] ?? subject.id}`} className="nr-bar-link">
-                  <Icon name="nexus" className="size-3.5" aria-hidden="true" /> Skill tree
+                <Link to={skill ? `/learn/${nexusId}/${skill.id}` : `/learn/${nexusId}?view=tree`} className="nr-bar-link" title={skill ? `The skill this lesson teaches: ${skill.n}` : undefined}>
+                  <Icon name="nexus" className="size-3.5" aria-hidden="true" /> {skill ? 'Skill' : 'Skill tree'}
                 </Link>
                 <Link to={`/gate/practice?subject=${encodeURIComponent(subject.id)}`} className="nr-bar-link">
                   <Icon name="practice" className="size-3.5" aria-hidden="true" /> Practice
@@ -356,7 +361,7 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
               next={
                 next
                   ? { to: NOTES_ROUTES.lesson(subject.id, next.id), title: next.title }
-                  : { to: NOTES_ROUTES.subject(subject.id), title: `Back to ${subject.title}`, kicker: 'Finished' }
+                  : { to: `/learn/${nexusId}`, title: `Back to ${subject.title}`, kicker: 'Finished' }
               }
               prev={prev ? { to: NOTES_ROUTES.lesson(subject.id, prev.id), title: prev.title } : null}
               dots={dots}

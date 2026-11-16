@@ -18,6 +18,7 @@ import { useSmartBack, useTrailRecorder } from '@/lib/backNav'
 import { useProblemSearch } from '@/lib/problemSearch'
 import { pushRecentSearch, useRecentSearches } from '@/lib/recentSearches'
 import { describeRecent, pageMatches, usePageEntries, type PageEntry } from './searchSources'
+import { LESSON_GROUP, LESSON_ICON, useLessonSearch } from '@/lib/lessonSearch'
 import { ClearRecents } from './ClearRecents'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
@@ -34,6 +35,7 @@ export function Topbar() {
   const recents = useRecentSearches()
   const q = query.trim()
   const { results, loading: searching, settled } = useProblemSearch(query)
+  const lessonSearch = useLessonSearch(query, { limit: 5 })
 
   const items = useMemo<ComboboxItem[]>(() => {
     const openPage = (n: PageEntry) => {
@@ -75,6 +77,17 @@ export function Topbar() {
         icon: iconComponent(n.icon),
         onSelect: () => openPage(n),
       }))
+    const lessonHits = lessonSearch.hits.map<ComboboxItem>((h) => ({
+      id: h.id,
+      group: LESSON_GROUP[h.kind],
+      label: h.label,
+      hint: h.hint,
+      icon: iconComponent(LESSON_ICON[h.kind]),
+      onSelect: () => {
+        pushRecentSearch({ kind: 'page', label: h.label, to: h.to, icon: LESSON_ICON[h.kind] })
+        navigate(h.to)
+      },
+    }))
     const problems: ComboboxItem[] =
       q.length >= 2
         ? results.map((p) => ({
@@ -105,10 +118,10 @@ export function Topbar() {
             },
           ]
         : []
-    return [...pageHits, ...problems, ...tail]
-  }, [q, results, pages, recents, navigate])
+    return [...lessonHits, ...pageHits, ...problems, ...tail]
+  }, [q, results, pages, recents, navigate, lessonSearch.hits])
 
-  const noMatches = q.length >= 2 && settled && results.length === 0 && !pages.some((n) => pageMatches(n, q))
+  const noMatches = q.length >= 2 && settled && !lessonSearch.loading && lessonSearch.hits.length === 0 && results.length === 0 && !pages.some((n) => pageMatches(n, q))
 
   // Back: the page you came from in this tab, else one level up (see lib/backNav).
   useTrailRecorder()
@@ -161,24 +174,25 @@ export function Topbar() {
         value={query}
         onValueChange={setQuery}
         onSelect={() => setQuery('')}
-        loading={searching}
-        emptyText="Nothing matches. Try a problem name or page."
+        loading={searching || lessonSearch.loading}
+        emptyText="Nothing matches. Try a lesson, subject, problem or page."
         groupActions={{ Recent: <ClearRecents /> }}
         notice={
           noMatches ? (
             <div className="flex items-start gap-2.5 px-2.5 pt-2 pb-2.5">
               <SearchX className="mt-0.5 size-4 shrink-0 text-text-muted" aria-hidden="true" />
               <p className="mb-0 text-[12.5px] leading-snug text-text-secondary">
-                No pages or problem titles match <span className="font-medium text-text-primary">“{q}”</span>.
+                No lessons, pages or problems match <span className="font-medium text-text-primary">“{q}”</span>.
                 <span className="block text-text-muted">Check the spelling, or search the full library below.</span>
               </p>
             </div>
           ) : null
         }
-        placeholderNode={<RotatingText items={['Search problems…', 'Jump to a page…', 'Find a topic…', 'Run an action…']} />}
+        placeholderNode={<RotatingText items={['Find a lesson…', 'Search problems…', 'Jump to a subject…', 'Go to a page…']} />}
+        variant="bar"
         containerClassName="mx-auto hidden w-full max-w-md md:block"
         className="text-[13px]"
-        aria-label="Search problems and pages"
+        aria-label="Search lessons, problems and pages"
         footer={
           <button
             type="button"
