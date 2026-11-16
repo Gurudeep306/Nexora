@@ -132,9 +132,21 @@ Contents:
 - **Known:** Compiler Explorer's Kotlin (kotlinc 2.3.10) crashes with a
   StackOverflowError even on plain programs (seen 2026-11-16). The Playground
   is first in the chain, so students are not affected unless it is down.
-- **Next for the agent: section 6, item 3** — dry run for Swift
-  (no local compilers: test through the remote runners with the proxy
-  preload), then Ruby, PHP, Lua, Perl; then functional languages.
+- **Swift dry run: DONE** (`src/dryrun/swift.js` + `swift-runtime.swift`).
+  Functions get a frame closed by `defer`; a one-expression body (implicit
+  return) becomes `return __nx_f.ret(…)`, but an if/switch that returns from
+  its branches stays a statement. Top-level code is the "main" frame.
+  Methods read stored properties (not lazy/computed/static; init is not
+  traced). `if let`/`guard let`/`while let`/`catch let` bindings, labels,
+  `let x: Int` set later. A crash (index out of range, `!` on nil) is a
+  signal: reported on its line, then the program stops as before. 6 programs
+  print exactly the same on Compiler Explorer and Paiza; tests replay
+  recorded traces (`tests/fixtures/dryrun-swift-*.json`).
+- **All 10 compiled/typed languages now have the dry run:** Python, C++, C,
+  Java, JavaScript, TypeScript, Go, Rust, C#, Kotlin, Swift.
+- **Next for the agent: section 6, item 3** — Ruby, PHP, Lua, Perl (they
+  have built-in trace hooks; test through the remote runners with the proxy
+  preload), then functional languages.
 - The owner said **no for now** to the ideas in section 6, item 7.
 
 ## 4. What is done (all sessions)
@@ -432,7 +444,7 @@ by analyzing what to place where to make it look the best and show case best
 
 ### 3. Dry run for the other languages
 
-- **Go, Rust, C#, Kotlin are done. Swift:** the same approach — a tree-sitter
+- **Go, Rust, C#, Kotlin, Swift: DONE.** The approach — a tree-sitter
   instrumenter + a small runtime that writes the same events, on the same
   lines.
   - The grammars are in `tree-sitter-wasms`.
@@ -447,6 +459,10 @@ by analyzing what to place where to make it look the best and show case best
 - Add each language to `TRACERS` and `DRY_RUN_LANGS`.
 
 ### 4. Dry run polish (smaller, can go with item 3)
+
+- **Swift and C# structs** show as one line of text (`UF(p: [0, 0, 2, 3])`):
+  draw their fields (as objects without identity) so a union-find's array
+  is a real array.
 
 - **JavaScript:** trace async functions and `sort` comparators.
 - **C:** pointers into arrays.
