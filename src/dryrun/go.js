@@ -102,10 +102,13 @@ async function instrumentGo(code) {
   }
 
   /** A loop or branch body; a loop's body starts by sending the loop line. */
-  function body(node, scope, loop) {
+  function body(node, scope, loop, endLine) {
     if (!node) return;
     if (loop) add(node.startIndex + 1, ` if __nxOn { __nx_f.head(${args(scope).slice(2)}) };`);
     block(node, scope);
+    // A range loop has no update of its own: the end-of-pass step goes at the
+    // end of the body, before the loop variables move on.
+    if (endLine) add(node.endIndex - 1, `; if __nxOn { __nx_f.at(${endLine}${args(scope)}) }; `);
   }
 
   /** Function literals inside an expression are traced as their own calls. */
@@ -197,7 +200,7 @@ async function instrumentGo(code) {
           const inner = [...scope];
           // for i, x := range a: the loop's own variables.
           if (/:=/.test(clause.text)) for (const n of named(field(clause, 'left'))) if (n.type === 'identifier') inner.push(v(n.text));
-          body(b, inner, true);
+          body(b, inner, true, lineOf(node));
           return scope;
         }
         if (clause) {

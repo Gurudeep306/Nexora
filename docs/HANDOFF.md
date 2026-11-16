@@ -79,8 +79,35 @@ Contents:
   (`node scripts/dryrun-trace.mjs <file> go`), `tests/dryrun-go.test.js`.
   Also checked through the live runners (Wandbox, Compiler Explorer,
   Paiza.io): same output, same steps.
-- **Next for the agent: section 6, item 3** — dry run for Rust, then C#,
-  Kotlin, Swift (then Ruby, PHP, Lua, Perl; then functional languages).
+- **Dry run for Rust — done (session 4)**, same PR: `src/dryrun/rust.js` +
+  `rust-runtime.rs`. Values through a `__nx_rt::S` trait with "autoref
+  specialisation" (S if the type has it, else short Debug text, else
+  nothing — never a compile error); the student's non-generic structs get
+  an `S` impl (objects by address: `Option<Box<Node>>` lists,
+  `Rc<RefCell<TreeNode>>` trees); frame `Drop` sends `ret` (also while
+  unwinding); a panic hook reports the line and message, then Rust's own
+  message is printed; output counted by wrapping println!/print!/
+  writeln!/write!. **Borrow-checker rules** (the hard part): a step only
+  reads variables that are surely readable — not after a move (passed /
+  assigned / returned / iterated / stored by value, consumed by
+  `into_iter`/`unwrap`…, bound by value in `if let`/`while let`/`match`;
+  `x = f(x)` makes x readable again), not while lent out as `&mut`
+  (`&mut x`, `iter_mut`, `get_mut`, `entry`… for as long as the binding
+  lives; in `if let`/`match`/`for` bodies), not a `let x;` before its value;
+  Copy values (numbers, bools, chars, refs) are always readable. Iterators
+  and IO plumbing are left out. `impl Trait for X` methods (Ord, Display,
+  Iterator…) are not traced; nor are closures. If the traced copy still
+  does not compile, `dryRun()` says so honestly (Run still works). Checked:
+  11 programs print exactly the same traced and untraced (incl. moves,
+  `&mut` loans, `let x;`, linked lists, Rc<RefCell> BST, BinaryHeap with
+  Reverse, VecDeque, HashMap, BufWriter + writeln!, labels, tuple structs),
+  `tests/dryrun-rust.test.js`, and through Compiler Explorer.
+- **Loops without an update** (Rust `for`/`loop`, Go `range`): the
+  end-of-pass step is added at the end of the body, so `j` is not shown one
+  box too far.
+- **Next for the agent: section 6, item 3** — dry run for C#, Kotlin, Swift
+  (no local compilers: test through the remote runners with the proxy
+  preload), then Ruby, PHP, Lua, Perl; then functional languages.
 - The owner said **no for now** to the ideas in section 6, item 7.
 
 ## 4. What is done (all sessions)
