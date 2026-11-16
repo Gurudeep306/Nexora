@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
-import { SearchInput, tierFor } from '@/components/ui'
+import { RankGlyph, SearchInput, tierFor } from '@/components/ui'
 import type { WebCluster, WebStream } from './types'
 import { keyOf, keystone, tally, type StarKey } from './atlas-data'
 import './atlas.css'
@@ -119,12 +119,17 @@ export function TonightSky({
   next,
   due,
   onOpen,
+  ready = [],
+  onSubject,
 }: {
   clusters: WebCluster[]
   deps: Map<StarKey, number>
   next: string | null
   due: Set<string>
   onOpen: (key: string) => void
+  /** Subjects with lessons written to read now. */
+  ready?: WebCluster[]
+  onSubject?: (id: string) => void
 }) {
   const find = (k: string | null) => {
     if (!k) return null
@@ -158,16 +163,29 @@ export function TonightSky({
       why: due.size > 1 ? `and ${due.size - 1} more ${due.size - 1 === 1 ? 'star' : 'stars'} to revisit` : `${df.c.name} · keep it lit`,
     },
   ].filter(Boolean) as { key: string; kicker: string; title: string; why: string }[]
-  if (!items.length) return null
+  if (!items.length && !ready.length) return null
   return (
     <section className="ax-tonight" aria-label="Tonight's sky">
-      {items.map((it) => (
+      {items.slice(0, ready.length ? 2 : 3).map((it) => (
         <button key={it.kicker} type="button" className="ax-tonight-item" onClick={() => onOpen(it.key)}>
           <span className="ax-tonight-kicker">{it.kicker}</span>
           <span className="ax-tonight-title">{it.title}</span>
           <span className="ax-tonight-why">{it.why}</span>
         </button>
       ))}
+      {ready.length > 0 && (
+        <div className="ax-tonight-item ax-ready">
+          <span className="ax-tonight-kicker">Lessons ready to read</span>
+          <span className="ax-ready-list">
+            {ready.map((c) => (
+              <button key={c.id} type="button" className="ax-ready-link" onClick={() => onSubject?.(c.id)}>
+                {c.engine === 'dsa' ? 'Data Structures & Algorithms' : c.name}
+              </button>
+            ))}
+          </span>
+          <span className="ax-tonight-why">Every chapter written, animated and one tap away</span>
+        </div>
+      )}
     </section>
   )
 }
@@ -197,7 +215,9 @@ export function AtlasLedger({
   const pct = xpForNext ? Math.min(100, Math.round((xpInLevel / xpForNext) * 100)) : 100
   return (
     <section className="ax-ledger" aria-label="Your rank">
-      <div>
+      <div className="ax-ledger-main">
+        <RankGlyph level={level} size={58} animated={false} className="ax-ledger-glyph" />
+        <div className="min-w-0 flex-1">
         <p className="ax-tonight-kicker m-0">Web rank</p>
         <p className="ax-ledger-rank m-0 mt-1">
           Level {level} · {name}
@@ -208,6 +228,7 @@ export function AtlasLedger({
         <p className="ax-ledger-sub m-0">
           {xpInLevel} of {xpForNext} XP{toNext ? ` · ${toNext}` : ''}
         </p>
+        </div>
       </div>
       <dl className="ax-fig m-0">
         <dt>Stars lit</dt>
