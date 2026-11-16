@@ -309,7 +309,7 @@
   background: transparent;
   box-shadow: 0 0 #0000;
 }
-[data-kit='journal'] .nx-rail {
+[data-kit='journal'] .nx-rail:not(.nx-bloom > .nx-rail) {
   display: none;
 }
 

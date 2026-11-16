@@ -287,7 +287,7 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
               />
               <span className="nr-bar-links">
                 {cluster && (
-                  <Link to={skill ? `/learn/${nexusId}/${skill.id}` : `/learn/${nexusId}?view=tree`} className="nr-bar-link" title={skill ? `The skill this lesson teaches: ${skill.n}` : undefined}>
+                  <Link to={skill ? `/learn/${nexusId}/${skill.id}?card=1` : `/learn/${nexusId}?view=tree`} className="nr-bar-link" title={skill ? `The skill this lesson teaches: ${skill.n}` : undefined}>
                     <Icon name="nexus" className="size-3.5" aria-hidden="true" /> {skill ? 'Skill' : 'Skill tree'}
                   </Link>
                 )}

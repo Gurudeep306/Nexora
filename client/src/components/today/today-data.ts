@@ -92,7 +92,9 @@ export function findContinue(items: Record<string, ItemState>, clusters: WebClus
     const nx = nextNode(c)
     if (!nx) continue
     if (!nexusPick || days < nexusPick.days) {
-      nexusPick = { subject: c.name, title: nx.n, to: subjectHref(c, nx.id), figure: figureFor(c), pct: progressOf(c), days }
+      // A skill with written notes opens them in the full reader.
+      const lesson = c.gate?.notes && nx.ls?.length ? `/gate/notes/${c.gate.notes}/${nx.ls[0]}` : null
+      nexusPick = { subject: c.name, title: nx.n, to: lesson ?? subjectHref(c, nx.id), figure: figureFor(c), pct: progressOf(c), days }
     }
   }
   const pick = !dsaPick ? nexusPick : !nexusPick ? dsaPick : dsaPick.days <= nexusPick.days ? dsaPick : nexusPick
