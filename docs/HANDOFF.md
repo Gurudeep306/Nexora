@@ -24,7 +24,7 @@ The earlier UI rollout has its own finished handover:
    today" (`/api/today/picks`, `src/routes/today.js`,
    `client/src/components/today/ForYou.tsx`, `LiveFigure.tsx`), animation
    sizes capped site-wide (`viz/viz.css` `.nxv-svg`).
-2. **Coding** — IN PROGRESS:
+2. **Coding** — IN PROGRESS (part 1 pushed, see "Where it stands"):
    - Levels: already true. Problem XP (judge solves and imported solves,
      `markSolved` in `src/server.js`) is the whole Rift level (`calcLevel`)
      and a quarter of the Nexus web rank (`src/nexus/ranks.js`). Tell the
@@ -71,13 +71,48 @@ The earlier UI rollout has its own finished handover:
    OAuth "allow this site" screen to third parties; only GitHub does. Never
    build a fake permission screen.
 
-## Where it stands
+## Where it stands (updated 2026-11-16, end of session)
 
-- Merged: #124 (Problems search back, one dropdown everywhere, themed
-  marketing pages, NG mark never vanishes), #125 (dropdowns scroll, private
-  page "Coming soon" + "Owner & staff sign in").
-- PR #126 (Home) — merged on the owner's "merge" once CI is green.
-- Next: request 2 (coding).
+- Merged to main: #124, #125, #126 (Home rotation, "For you today",
+  animation sizes, handoff file).
+- On branch `claude/clever-babbage-km37j9`, pushed, **no PR yet**: request 2
+  part 1 (commit "Coding: editor knows each language; judge stops blaming
+  students for sandbox faults"):
+  - `client/src/lib/langIntel.ts`: curated keywords / std-library / methods
+    with signatures for C++, C, Python, Java, Go, Rust, Kotlin, C#;
+    keywords only for Ruby, PHP, Swift, Scala, Haskell, Lua.
+  - `CodeEditor.tsx`: `registerLangIntel` (completions, triggers `.` `->`
+    `::`) and `registerSignatureHelp` (parameter hints). Checked in a
+    browser: `lower_` → lower_bound with signature; `v.` → methods;
+    `sort(v.begin(), ` → hint with the 2nd parameter highlighted.
+  - `lib/snippets.ts`: C has its own templates (was sharing C++'s).
+  - `src/remote-exec.js`: `SANDBOX_FAULT` — Wandbox container failures are
+    transient (retried 0.4s/1.5s/4s, never cached) and reported as "sandbox
+    overloaded, not your code" instead of CE. Tests in
+    `tests/remote-exec.test.js`. 448 tests pass.
+  - `src/judge-selftest.js`: programs for PowerShell, Clojure, Scheme,
+    Elixir, Tcl (all 36 languages now have one).
+  Open a PR for this first.
+
+### Judge language status (tested 2026-11-16 through the real remote path)
+
+Run it yourself: `GET /api/admin/judge-selftest` on the live site as an
+admin (needs `problems.manage`), or locally with outbound requests routed
+through the agent proxy (the demo server cannot reach the internet).
+
+- Pass: cpp, c, python, java, javascript, typescript, csharp, rust, kotlin,
+  ruby, php, shell, r, swift, dart, fsharp, objectivec, haskell, ocaml, d,
+  nim, crystal (and go, perl, lua, scala, julia, pascal, zig, groovy,
+  commonlisp pass when Wandbox is not overloaded — their failures were
+  Wandbox "OCI runtime error" / HTTP 504, now reported honestly).
+- Broken upstream: elixir (Wandbox image crashes: "File size limit
+  exceeded"), so it is NOT mapped.
+- No free runner anywhere: powershell, clojure, scheme, tcl — shown as
+  unavailable on the hosted server (`available:false` from /api/languages).
+- Real fix for reliability: self-host Piston (`src/piston.js`,
+  `JUDGE_MODE=piston`, `deploy/`). That needs a server (not free on Render);
+  tell the owner the cost plainly or use a free VM (Oracle Always Free /
+  the existing AWS worker) if they agree.
 
 ## How to check your work
 
