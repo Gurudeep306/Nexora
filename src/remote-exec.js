@@ -391,14 +391,21 @@ async function runGodbolt(code, input, lang, budget) {
 }
 
 /** Turn a Kotlin Playground response into a verdict. */
-function classifyKotlin(r, timeMs) {
+function classifyKotlin(r, timeMs, shimAt = -1) {
   // `errors` carries warnings too ("Variable is unused", severity WARNING).
   // Treating the array's mere presence as a compile error used to fail
   // perfectly good programs.
   const errors = Object.values(r.errors || {}).flat().filter((e) => !e.severity || e.severity === 'ERROR');
   if (errors.length) {
+    // "File.kt:LINE:COL: error: …" (the playground counts from 0), on the
+    // student's own lines, so the editor can mark the exact spot.
+    const where = (e) => {
+      const st = e.interval && e.interval.start;
+      if (!st || !Number.isFinite(st.line)) return '';
+      return `File.kt:${kotlinLine(st.line + 1, shimAt)}:${(st.ch || 0) + 1}: error: `;
+    };
     return {
-      stdout: '', stderr: errors.map((e) => e.message || JSON.stringify(e)).join('\n'),
+      stdout: '', stderr: errors.map((e) => where(e) + (e.message || JSON.stringify(e))).join('\n'),
       exitCode: 1, timeMs, verdict: 'CE', engine: 'kotlin',
     };
   }
@@ -406,8 +413,11 @@ function classifyKotlin(r, timeMs) {
   const stdout = text.replace(/<errStream>[\s\S]*?<\/errStream>/g, '').replace(/<\/?outStream>/g, '').trimEnd();
   const stderr = (text.match(/<errStream>([\s\S]*?)<\/errStream>/)?.[1] || '').trim();
   if (r.exception) {
-    const ex = r.exception.fullName || r.exception.message || 'Runtime exception';
-    return { stdout, stderr: stderr || ex, exitCode: 1, timeMs, verdict: 'RE', engine: 'kotlin' };
+    const x = r.exception;
+    const ex = [x.fullName, x.message].filter(Boolean).join(': ') || 'Runtime exception';
+    const frame = (x.stackTrace || []).find((f) => f && f.fileName === 'File.kt' && Number.isFinite(f.lineNumber));
+    const at = frame ? `\n    at ${frame.className || 'FileKt'}.${frame.methodName || 'main'}(File.kt:${kotlinLine(frame.lineNumber, shimAt)})` : '';
+    return { stdout, stderr: (stderr ? `${stderr}\n` : '') + ex + at, exitCode: 1, timeMs, verdict: 'RE', engine: 'kotlin' };
   }
   return { stdout, stderr, exitCode: 0, timeMs, verdict: null, engine: 'kotlin' };
 }
@@ -419,12 +429,24 @@ function classifyGodbolt(r, timeMs) {
   const ANSI = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*[A-Za-z]`, 'g');
   const strip = (v) => v.replace(ANSI, '').replace(/\/app\/output\.s/g, '<source>');
   if (!r.didExecute) {
-    const msg = strip(join(r.buildResult && r.buildResult.stderr) || join(r.stderr) || 'Build failed')
-      .replace(/^Build failed\n?/, '').trim();
+    const b = r.buildResult || {};
+    const tidy = (v) => strip(v).replace(/^Build failed\n?/, '').trim();
+    // Most compilers report on stderr; its C# compiler reports on stdout.
+    const msg = tidy(join(b.stderr) || join(r.stderr)) || tidy(join(b.stdout)) || 'The program did not compile.';
     return { stdout: '', stderr: msg, exitCode: 1, timeMs, verdict: 'CE', engine: 'godbolt' };
   }
   const stdout = join(r.stdout).trimEnd();
   const stderr = strip(join(r.stderr)).trim();
+  // Julia hit an error while loading the code, then the sandbox killed it
+  // while it was still printing the details: not a time limit. Another
+  // runner can print the full message.
+  if (/^ERROR: LoadError/m.test(stderr) && (r.timedOut || /Killed|SIGKILL/.test(stderr))) {
+    return {
+      stdout,
+      stderr: 'Your program stopped with an error while loading (often a syntax error or a name that does not exist), but this runner was cut off before it printed the details. Check the code near the top, or run again.',
+      exitCode: 1, timeMs, verdict: 'RE', engine: 'godbolt', _noAnswer: true,
+    };
+  }
   if (r.timedOut) return { stdout, stderr, exitCode: -1, timeMs, verdict: 'TLE', engine: 'godbolt' };
   if (r.code !== 0) return { stdout, stderr, exitCode: r.code, timeMs, verdict: 'RE', engine: 'godbolt' };
   // execTime is the program's own runtime, not our round trip — far more useful.
@@ -437,6 +459,22 @@ function classifyGodbolt(r, timeMs) {
  * (Scanner, BufferedReader, …) all read from it. The declarations must land
  * *after* the import block — Kotlin rejects imports that follow a declaration.
  */
+/** How many lines the stdin shim adds, and the 0-based line it goes at. */
+const KOTLIN_SHIM_LINES = 5;
+function kotlinShimAt(code) {
+  const lines = String(code || '').split('\n');
+  let i = 0;
+  while (i < lines.length && /^\s*(package\s|import\s|@file:|\/\/|$)/.test(lines[i])) i++;
+  return i;
+}
+
+/** A 1-based line of the shimmed file, as a line of the student's own code. */
+function kotlinLine(line1, shimAt) {
+  if (shimAt < 0) return line1;
+  if (line1 > shimAt + KOTLIN_SHIM_LINES) return line1 - KOTLIN_SHIM_LINES;
+  return Math.min(line1, shimAt + 1);
+}
+
 function injectKotlinStdin(code, input) {
   const lit = JSON.stringify(input || '').replace(/\$/g, '${"$"}');
   const pre = [
@@ -447,8 +485,7 @@ function injectKotlinStdin(code, input) {
     'private fun readlnOrNull(): String? = __nxR.readLine()',
   ].join('\n');
   const lines = code.split('\n');
-  let i = 0;
-  while (i < lines.length && /^\s*(package\s|import\s|@file:|\/\/|$)/.test(lines[i])) i++;
+  const i = kotlinShimAt(code);
   return [...lines.slice(0, i), pre, ...lines.slice(i)].join('\n').replace(/System\.`in`/g, '__nxIn');
 }
 
@@ -465,7 +502,7 @@ async function runKotlin(code, input, budget) {
     }),
   });
   if (!res.ok) return httpFailure(res, 'kotlin', 'kotlin');
-  return classifyKotlin(res.body, res.timeMs);
+  return classifyKotlin(res.body, res.timeMs, kotlinShimAt(code));
 }
 
 /**
@@ -777,6 +814,8 @@ module.exports = {
   remoteLoad,
   MAX_REMOTE_CONCURRENT,
   injectKotlinStdin,
+  kotlinShimAt,
+  kotlinLine,
   WANDBOX_MAP,
   GODBOLT_MAP,
   REQUEST_TIMEOUT,
