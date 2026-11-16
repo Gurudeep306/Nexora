@@ -1697,6 +1697,42 @@ app.post("/api/run", judgeLimiter, async (req, res) => {
   }
 });
 
+/* ========== HOW YOUR CODE RUNS ========== */
+// The real translation of a program (assembly or bytecode), each instruction
+// tied to its source line, for the animated "How it runs" view.
+app.post("/api/explain-run", judgeLimiter, async (req, res) => {
+  try {
+    const { code, language, optimise } = req.body || {};
+    if (!LANG_CONFIG[language]) return res.status(400).json({ ok: false, error: "Unknown language" });
+    const src = String(code || "");
+    if (!src.trim()) return res.status(400).json({ ok: false, error: "Write some code first" });
+    if (Buffer.byteLength(src) > 64 * 1024) return res.status(400).json({ ok: false, error: "The code is too long to explain (max 64 KB)" });
+    const explain = require("./explain-run");
+    res.json(await explain.translate(src, language, { optimise: optimise !== false }));
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
+/* ========== DRY RUN ========== */
+// Run the student's program once with a tracer and return every step, for
+// the animated dry run (src/dryrun/).
+app.post("/api/dryrun", judgeLimiter, async (req, res) => {
+  try {
+    const { code, input, language } = req.body || {};
+    if (!LANG_CONFIG[language]) return res.status(400).json({ ok: false, error: "Unknown language" });
+    const src = String(code || "");
+    if (!src.trim()) return res.status(400).json({ ok: false, error: "Write some code first" });
+    if (Buffer.byteLength(src) > 64 * 1024) return res.status(400).json({ ok: false, error: "The code is too long to trace (max 64 KB)" });
+    const stdin = input == null ? "" : String(input);
+    if (Buffer.byteLength(stdin) > 64 * 1024) return res.status(400).json({ ok: false, error: "The input is too long to trace (max 64 KB)" });
+    const dry = require("./dryrun");
+    res.json(await dry.dryRun(src, language, stdin, quickRun));
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
 /* ========== LANGUAGES ========== */
 app.get("/api/languages", (req, res) => {
   // On the hosted server only languages with a remote sandbox can run.
@@ -1705,6 +1741,9 @@ app.get("/api/languages", (req, res) => {
       id,
       ...cfg,
       available: REMOTE_ONLY ? hasRemote(id) : true,
+      // The runners tried in order (our own Piston first when set up), so the
+      // editor can say how many backups a language has.
+      runners: REMOTE_ONLY ? require("./remote-exec").engineChain(id) : ["local"],
     })),
   );
 });
@@ -1723,7 +1762,13 @@ async (req, res) => {
     const { selfTest } = require("./judge-selftest");
     const only = typeof req.query.langs === "string" && req.query.langs ? req.query.langs.split(",") : null;
     const results = await selfTest({ judge, LANG_CONFIG, hasRemote, REMOTE_ONLY }, only);
-    res.json({ ok: true, remote: REMOTE_ONLY, passed: results.filter((r) => r.ok).length, total: results.length, results });
+    const remote = require("./remote-exec");
+    res.json({
+      ok: true, remote: REMOTE_ONLY, passed: results.filter((r) => r.ok).length, total: results.length, results,
+      // Which runners each language has, and which are resting after failing.
+      runners: Object.fromEntries(Object.keys(LANG_CONFIG).map((l) => [l, remote.engineChain(l)])),
+      health: remote.sandboxHealth(),
+    });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
@@ -6226,6 +6271,9 @@ io.on("connection", (socket) => {
   await initAdminSystem();
   // Admin-chosen AI providers and models (Admin → AI models).
   require("./ai/settings").startRefresh();
+  // Our own code runners (Admin → Code runners) join the judge's chain.
+  require("./runners").startRefresh();
+  require("./piston").setExtraServers(require("./runners").judgeServers);
   await Promise.all([_forgeInit, _liveInit]);
   // Give every account its own progress/XP/settings (one-time, idempotent).
   await migratePerUser();

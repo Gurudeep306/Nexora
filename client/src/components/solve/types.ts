@@ -96,7 +96,7 @@ export interface RunResult {
   stderr: string
   timeMs: number
   error?: string
-  /** Which sandbox ran this: 'wandbox' | 'godbolt' | 'kotlin' | 'local'. */
+  /** Which runner answered: 'piston' (or 'piston2', … for our backup servers) | 'wandbox' | 'godbolt' | 'kotlin' | 'paiza' | 'local'. */
   engine?: string
   /** True when the result came back from the judge's cache instead of a fresh run. */
   cached?: boolean
@@ -189,4 +189,18 @@ export interface CustomProblemDetail {
 export interface CustomProblemResponse {
   ok: boolean
   problem: CustomProblemDetail
+}
+
+/** A runner's name for people (the judge reports an engine id). */
+const ENGINE_NAMES: Record<string, string> = {
+  wandbox: 'Wandbox',
+  godbolt: 'Compiler Explorer',
+  kotlin: 'Kotlin Playground',
+  paiza: 'Paiza.io',
+  piston: 'Nexora runner',
+  local: 'local judge',
+}
+export function engineLabel(engine: string): string {
+  const own = /^piston(\d+)$/.exec(engine)
+  return ENGINE_NAMES[engine] ?? (own ? `Nexora runner ${own[1]}` : engine)
 }

@@ -13,9 +13,10 @@ test('remote-only mode exposes only languages that have a sandbox', () => {
     { env },
   );
   const langs = JSON.parse(String(out));
-  for (const l of ['cpp', 'c', 'python', 'java', 'javascript', 'typescript', 'kotlin', 'swift', 'go', 'rust', 'haskell', 'dart'])
+  for (const l of ['cpp', 'c', 'python', 'java', 'javascript', 'typescript', 'kotlin', 'swift', 'go', 'rust', 'haskell', 'dart', 'elixir', 'scheme'])
     assert.ok(langs.includes(l), `${l} should run remotely`);
-  for (const l of ['elixir', 'powershell', 'tcl']) assert.ok(!langs.includes(l), `${l} has no working sandbox`);
+  // Elixir and Scheme run on Paiza.io (checked Nov 2026); these have no free runner.
+  for (const l of ['clojure', 'powershell', 'tcl']) assert.ok(!langs.includes(l), `${l} has no working sandbox`);
 });
 
 let proc;
@@ -58,7 +59,9 @@ test('/api/languages flags unavailable languages', async () => {
   const langs = await (await fetch(`${base}/api/languages`)).json();
   const by = Object.fromEntries(langs.map((l) => [l.id, l]));
   assert.equal(by.cpp.available, true);
-  assert.equal(by.elixir.available, false);
+  assert.equal(by.elixir.available, true, 'Elixir runs on Paiza.io');
+  assert.equal(by.tcl.available, false);
+  assert.equal(by.clojure.available, false);
   assert.equal(by.swift.available, true);
 });
 
@@ -93,7 +96,7 @@ test('every runnable language is routed to a named sandbox', () => {
   const { LANG_CONFIG, hasRemote, engineFor } = judgeMod;
   for (const lang of Object.keys(LANG_CONFIG)) {
     if (!hasRemote(lang)) continue;
-    assert.ok(['wandbox', 'godbolt', 'kotlin'].includes(engineFor(lang)), `${lang} -> ${engineFor(lang)}`);
+    assert.ok(['wandbox', 'godbolt', 'kotlin', 'paiza'].includes(engineFor(lang)), `${lang} -> ${engineFor(lang)}`);
   }
   assert.equal(engineFor('kotlin'), 'kotlin');
   assert.equal(engineFor('swift'), 'godbolt');
