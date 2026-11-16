@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { useTheme } from '@/context/ThemeContext'
-import './sorting-loader.css'
+import './loading.css'
 import { Skeleton } from './Progress'
 import { IconBadge, type IconName } from '@/components/icon/Icon'
 

@@ -434,7 +434,7 @@ export default function AuthPage() {
 
         <header className="auth-top">
           <Link to="/" className="flex items-center gap-2.5 !no-underline" aria-label="NexoraGuru home">
-            <LogoMark size={22} />
+            <LogoMark size={22} interactive />
             <span className="ed-wordmark text-text-primary">NexoraGuru</span>
           </Link>
           <LookBar />
@@ -454,7 +454,7 @@ export default function AuthPage() {
               {success && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="auth-success" role="status">
                   <motion.span initial={{ scale: 0.85 }} animate={{ scale: 1 }} transition={{ duration: 0.6, ease: EASE }}>
-                    <LogoMark size={56} />
+                    <LogoMark size={56} write />
                   </motion.span>
                   <span className="text-[15px] text-text-secondary">{mode === 'login' ? 'Signed in' : 'Account ready'}</span>
                 </motion.div>

@@ -151,21 +151,48 @@ export interface MarkSvgOptions {
   /** Extra glyph scale (maskable icons keep it in the safe zone). */
   inset?: number
   title?: string
+  /** The full stop's colour (default clay). */
+  clay?: string
 }
 
+/* ═════════════════════════════════════════════════════════════════════
+   The mark (2026-11): "One line" — the NG written by hand.
+
+   N and G share one stem. Read as handwriting: the pen writes the N (up,
+   then down the diagonal to the foot of the shared stem), lifts, and
+   writes the G in one sweep (round the shoulder, down the stem, along the
+   foot, up the side, in along the bar). Where the pen stops it leaves a
+   clay full stop. Ink strokes take the text colour; the full stop is clay.
+   The same paths drive the writing animation (Logo.tsx, MarkLoader) and
+   every exported file (scripts/brand/build-brand.mjs).
+   ═════════════════════════════════════════════════════════════════════ */
+
+/** The N: up the left stem, down the diagonal to the foot of the shared stem. */
+export const MARK_N = 'M6.6 25.4V6.9L16.1 25.4'
+/** The G: from the top terminal round the shoulder, down the shared stem, along the foot, up the side, in along the bar. */
+export const MARK_G = 'M26 11.2C25.2 8.4 22.9 6.9 20.2 6.9H16.1V25.4H21.2C24.2 25.4 26 23.5 26 20.7V17.4H21.4'
+/** Where the pen stops: the clay full stop. */
+export const MARK_DOT = [21.4, 17.4] as const
+export const MARK_CLAY = '#D97757'
+/** Stroke weight by rendered size: small renders get a heavier line. */
+export const markWeight = (px?: number) => (px == null ? 3.2 : px <= 20 ? 3.8 : px <= 24 ? 3.5 : 3.2)
+
 export function markSvg(o: MarkSvgOptions): string {
-  const { id, size, ink = 'currentColor', glyph, tiny = false, small = false, shape = 'rounded', inset = 1, title } = o
+  const { size, ink = 'currentColor', glyph, tiny = false, small = false, shape = 'rounded', inset, title, clay = MARK_CLAY } = o
   const dims = size ? ` width="${size}" height="${size}"` : ''
-  const rx = shape === 'bleed' ? 0 : TILE_R
-  const k = (tiny ? 1 : MARK_SCALE) * inset
-  const tr = `translate(16 16) scale(${+k.toFixed(4)}) translate(-16 -16)`
-  const d = tiny ? N_ONLY_D : GLYPH_D
-  const sw = tiny ? N_ONLY_STROKE : markStroke(small)
-  const cut = (color: string) => `<path d="${d}" transform="${tr}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>`
+  const sw = tiny ? 3.8 : small ? 3.5 : 3.2
   const head = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"${dims} aria-hidden="true" focusable="false">` + (title ? `<title>${title}</title>` : '')
-  if (glyph) return `${head}<rect width="32" height="32" rx="${rx}" fill="${ink}"/>${cut(glyph)}</svg>`
-  return (
-    `${head}<defs><mask id="${id}m" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32"><rect width="32" height="32" rx="${rx}" fill="#fff"/>${cut('#000')}</mask></defs>` +
-    `<rect width="32" height="32" rx="${rx}" fill="${ink}" mask="url(#${id}m)"/></svg>`
-  )
+  const strokes = (color: string) =>
+    `<path d="${MARK_N}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>` +
+    `<path d="${MARK_G}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>` +
+    `<circle cx="${MARK_DOT[0]}" cy="${MARK_DOT[1]}" r="${+(sw * 0.66).toFixed(2)}" fill="${clay}"/>`
+  // On a tile (favicons, app icons): the tile in `ink`, the strokes in `glyph`.
+  if (glyph) {
+    const k = inset ?? (shape === 'bleed' ? 0.72 : 0.78)
+    const tr = `translate(16 16) scale(${+k.toFixed(4)}) translate(-16 -16)`
+    return `${head}<rect width="32" height="32" rx="${shape === 'bleed' ? 0 : TILE_R}" fill="${ink}"/><g transform="${tr}">${strokes(glyph)}</g></svg>`
+  }
+  const k = inset ?? 1
+  const g = k === 1 ? strokes(ink) : `<g transform="translate(16 16) scale(${+k.toFixed(4)}) translate(-16 -16)">${strokes(ink)}</g>`
+  return `${head}${g}</svg>`
 }
