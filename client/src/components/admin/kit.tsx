@@ -32,8 +32,8 @@ export function Panel({
   return (
     <section className={cn('nx-panel', className)}>
       {(title || actions) && (
-        <header className={cn('flex items-start justify-between gap-4 px-4 py-3.5 sm:px-5', hasBody && 'border-b border-[color:var(--nx-hair)]')}>
-          <div className="flex min-w-0 items-start gap-3">
+        <header className={cn('flex flex-wrap items-start justify-between gap-x-4 gap-y-3 px-4 py-3.5 sm:px-5', hasBody && 'border-b border-[color:var(--nx-hair)]')}>
+          <div className="flex min-w-0 flex-1 basis-64 items-start gap-3">
             {icon && (
               <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-[color-mix(in_oklab,var(--nx-b1)_10%,transparent)] text-[var(--nx-b1)] shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--nx-b1)_22%,transparent)]">
                 <Icon name={icon} className="size-3.5" />
@@ -44,7 +44,7 @@ export function Panel({
               {description && <p className="mt-0.5 text-[12.5px] leading-snug text-text-secondary">{description}</p>}
             </div>
           </div>
-          {actions && <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">{actions}</div>}
+          {actions && <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">{actions}</div>}
         </header>
       )}
       {hasBody && <div className={cn('p-4 sm:p-5', bodyClassName)}>{children}</div>}
