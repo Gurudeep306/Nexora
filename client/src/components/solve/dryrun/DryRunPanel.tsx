@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { CodeLines, FramePlayer, type TimelineMark } from '@/learn/engine/FramePlayer'
 import type { Lang } from '@/learn/engine/types'
 import { engineLabel } from '../types'
-import { replay, type TraceEvent } from './replay'
+import { replay, setLanguage, type TraceEvent } from './replay'
 import { toFrames, type DryFrame } from './toFrames'
 
 /*
@@ -42,7 +42,7 @@ interface Props {
 }
 
 /** Languages the dry run traces today (src/dryrun/index.js TRACERS). */
-export const DRY_RUN_LANGS = new Set(['python'])
+export const DRY_RUN_LANGS = new Set(['python', 'cpp'])
 
 const CODE_LANG: Record<string, Lang> = { python: 'python', cpp: 'cpp', c: 'c', java: 'java', javascript: 'js', typescript: 'js' }
 const LANG_NAME: Record<string, string> = { python: 'Python', cpp: 'C++', c: 'C', java: 'Java', javascript: 'JavaScript', typescript: 'TypeScript' }
@@ -77,11 +77,12 @@ export function DryRunPanel({ code, language, cases, initialCase = 0, onJumpToLi
   const frames = useMemo<DryFrame[]>(() => {
     if (!done?.res.ok) return []
     try {
+      setLanguage(language)
       return toFrames(replay(done.res.events), done.code, done.res.stdout)
     } catch {
       return []
     }
-  }, [done])
+  }, [done, language])
   const marks = useMemo<TimelineMark[]>(() => {
     const out: TimelineMark[] = []
     frames.forEach((f, i) => {
@@ -124,8 +125,8 @@ export function DryRunPanel({ code, language, cases, initialCase = 0, onJumpToLi
   if (!supported) {
     return (
       <Notice title={`Dry run for ${LANG_NAME[language] ?? language} is coming`}>
-        The dry run draws your own program running, step by step. It works for Python today; C++, Java, C and JavaScript are next, then the other languages. Switch the
-        language to Python to try it now.
+        The dry run draws your own program running, step by step. It works today for {[...DRY_RUN_LANGS].map((l) => LANG_NAME[l] ?? l).join(' and ')}; more languages
+        are on the way. Switch the language to one of these to try it now.
       </Notice>
     )
   }

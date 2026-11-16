@@ -137,7 +137,7 @@
   background: color-mix(in oklab, var(--color-accent-brand) 20%, transparent);
   box-shadow: inset 3px 0 0 var(--color-accent-brand);
 }
-.viz-code-no { color: color-mix(in oklab, var(--color-text-muted) 70%, transparent); }
+.viz-code-no { color: var(--color-text-secondary); }
 .tok-kw { color: oklch(0.75 0.15 300); }
 .tok-str { color: oklch(0.78 0.13 150); }
 .tok-num { color: oklch(0.82 0.13 70); }
@@ -246,7 +246,7 @@ html:not(.dark) .tok-fn { color: oklch(0.45 0.15 240); } /* passes 4.5:1 on the 
    transparency drops them under 4.5:1 contrast. */
 .viz-code-cold { transition: color 200ms; }
 :root .viz-code .viz-code-cold,
-:root .viz-code .viz-code-cold * { color: var(--color-text-muted); }
+:root .viz-code .viz-code-cold * { color: var(--color-text-secondary); }
 
 /* ── lesson typography ── */
 .md { color: var(--color-text-secondary); font-size: 15.5px; line-height: 1.75; }
