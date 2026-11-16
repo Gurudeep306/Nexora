@@ -143,7 +143,10 @@ function publicChain(lang) {
   if (PAIZA_MAP[lang]) chain.push('paiza');
   return chain;
 }
-const GODBOLT_PRIMARY = new Set(['swift', 'dart', 'fsharp', 'ocaml', 'crystal', 'objectivec']);
+// Compiler Explorer goes first where it has the modern toolchain: C# there is
+// .NET 9 (what Codeforces and LeetCode use); Wandbox's Mono cannot build
+// local functions, top-level programs or PriorityQueue, so it is the fallback.
+const GODBOLT_PRIMARY = new Set(['csharp', 'swift', 'dart', 'fsharp', 'ocaml', 'crystal', 'objectivec']);
 
 /** Every sandbox for a language, our own Piston servers first when they serve it. */
 function engineChain(lang) {

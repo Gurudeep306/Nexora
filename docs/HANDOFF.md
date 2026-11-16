@@ -105,7 +105,19 @@ Contents:
 - **Loops without an update** (Rust `for`/`loop`, Go `range`): the
   end-of-pass step is added at the end of the body, so `j` is not shown one
   box too far.
-- **Next for the agent: section 6, item 3** — dry run for C#, Kotlin, Swift
+- **C# dry run: DONE** (`src/dryrun/csharp.js` + `csharp-runtime.cs`).
+  Classic `Main`, top-level programs, local functions and `=>` bodies (the
+  `=>` and `;` are commented out so lines stay put); List/arrays (1D, 2D,
+  jagged), Dictionary, Stack, Queue, HashSet, PriorityQueue, linked lists,
+  exceptions on their line. ToString/Equals/CompareTo and IO helpers are not
+  traced. 7 programs print exactly the same traced and untraced on Compiler
+  Explorer (.NET 9). CI has no dotnet, so `tests/dryrun-csharp.test.js`
+  checks the instrumented code and replays traces recorded from a real run
+  (`tests/fixtures/dryrun-csharp-*.json`).
+- **C# now runs on .NET 9 first** (Compiler Explorer), Mono as fallback.
+  Before, Run/Submit went to Wandbox's Mono first, which gave a false
+  compile error for local functions, top-level programs and PriorityQueue.
+- **Next for the agent: section 6, item 3** — dry run for Kotlin, Swift
   (no local compilers: test through the remote runners with the proxy
   preload), then Ruby, PHP, Lua, Perl; then functional languages.
 - The owner said **no for now** to the ideas in section 6, item 7.
@@ -405,7 +417,7 @@ by analyzing what to place where to make it look the best and show case best
 
 ### 3. Dry run for the other languages
 
-- **Go, Rust, C#, Kotlin, Swift:** the same approach — a tree-sitter
+- **Go, Rust, C# are done. Kotlin, Swift:** the same approach — a tree-sitter
   instrumenter + a small runtime that writes the same events, on the same
   lines.
   - The grammars are in `tree-sitter-wasms`.
