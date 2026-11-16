@@ -604,3 +604,9 @@ html.dark .gate-figure img {
 .viz-call-args { font-weight: 400; }
 .viz-call-line { flex: none; font-size: 11px; color: var(--color-text-muted); }
 .viz-call-ret { flex: none; font-size: 11.5px; font-weight: 600; color: var(--color-state-success); }
+
+/* timeline marks above the scrubber: calls, returns, errors, output */
+.viz-mark { background: var(--color-text-muted); opacity: 0.7; }
+.viz-mark-call { background: var(--color-text-primary); }
+.viz-mark-error { background: var(--color-state-error); opacity: 1; width: 3px; }
+.viz-mark-output { background: var(--color-state-success); }
