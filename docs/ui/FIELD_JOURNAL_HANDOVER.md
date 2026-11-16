@@ -324,19 +324,59 @@ renders unchanged; 441 server tests pass; typecheck and build clean:**
   the running demo DB; posts via `POST /api/social/posts`. The demo server
   must be restarted after server-side changes (it does not watch files).
 
-### 3.5 What is left after phase 7
+### 3.5 Done since phase 7, and what is left (session on `claude/clever-keller-vgi9vo`)
 
-- Phase 8: GATE home + subpages (CBT restyle only), Settings, Appearance,
-  Admin, 404, errors, loading (brief 4.9, 4.12, 4.13).
-- Phase 9: polish sweep of every route (light, dark, phone), then update
-  `docs/ui/premium.md` (house style + "Adding a style") and the Design
-  section of `AGENTS.md`.
-- Left-overs listed in 3.1–3.3: System Design reader, notes dek, Problems
-  pagination as numbers, verdict "paper slip" celebration, Atlas star
-  sizes, side panel, list view, ignite ring, ring tick labels.
+**Done (all pushed, all in PR #117):**
+- **Nexus / the Atlas** (journal style): the radial wheel is replaced by a
+  **sky map** (`components/nexus/SkyMap.tsx`): streams as dashed regions,
+  each subject drawn as its own small constellation (`ConstellationGlyph` in
+  `AtlasIndex.tsx`), hover/focus draws needs (ink) and unlocks (clay) with a
+  paper plate; "you are here" clay ring on your next star's subject. The
+  owner rejected the circle. "Radial web" stays one click away (saved in
+  localStorage `nexus:atlas-view`). Also: Chart / Index / Ranks tabs, the
+  Index (every subject as a small multiple, default on phones), Tonight's
+  sky (next star, keystone, due), the ledger line (`AtlasLedger`), and
+  radial-chart polish (star size by dependents, hover plate, path draw-in,
+  ignite once, ring names, serif names). Data helpers: `atlas-data.ts`.
+- **Phase 5 left-overs:** numbered pagination (`problems/Pagination.tsx`),
+  falling paper slips on Accepted (`ui/Confetti.tsx`), custom contests as
+  ivory cards.
+- **Loading:** `MarkLoader` (the new mark writing itself on a loop) is the
+  page loader; `LoadingBlock` under journal is ruled lines being written
+  (`ui/loading.css`); boot screen in `client/index.html` writes the mark in
+  CSS; the route bar is ink with a clay nib.
+- **New brand mark "One line"** (owner asked for a unique, animatable
+  mark): NG written in one line of ink with a shared stem and a clay full
+  stop. Geometry `MARK_N`, `MARK_G`, `MARK_DOT`, `markSvg` in
+  `components/brand/traversal.ts`; `LogoMark` (`interactive` writes once,
+  `write` on mount, `loop`), all brand files regenerated
+  (`build-brand.mjs` + `render-brand.mjs`). The owner rejected a
+  quarter-disc seal; a wedge "mouth" read as Pac-Man, avoid it.
+
+**Left (do next, in this order):**
+1. **Admin panel ("the editor's desk")** — the owner wants it "really
+   cool". Plan (not started): `pages/AdminPage.tsx` header as one live
+   sentence from real data (online now, open reports, errors 24h) with
+   Public/Private as an ink label, no gradient crown tile; the left rail as a
+   table of contents (roman numerals, serif names, ink tick for the current
+   one) — the rail tick and owner box currently use gradients, which the
+   journal rules forbid; Overview (`components/admin/OverviewSection.tsx`,
+   `kit.tsx` `Kpi`, `Spark`, `TrendChart`) as a front page: serif figures,
+   ink lines with a clay last point, no gradient area fills, no coloured
+   icon tiles; a "weather box" for health (errors, DB budget) and a
+   hairline "On the wire" list (recent sign-ups, online now). Admin passes
+   axe today; keep it that way.
+2. **Phase 8 rest:** GATE home and subpages (CBT restyle only), Settings,
+   Appearance, 404, error boundary (brief 4.9, 4.12, 4.13).
+3. **Phase 9:** sweep every route in light, dark and phone; update
+   `docs/ui/premium.md` (house style + "Adding a style") and the Design
+   section of `AGENTS.md` (the mark section is already updated).
+- Left from earlier: System Design reader restyle, notes dek field.
 
 ### 3.6 Pull request state
 
+- PR #117 (https://github.com/Gurudeep306/Nexora/pull/117) holds phase 7
+  and everything listed in 3.5; it waits for the owner's "merge".
 - PR #114 (https://github.com/Gurudeep306/Nexora/pull/114) was opened for
   phase 4. Every later commit (phases 5, 6 and the start of 7) is on the same
   branch `claude/clever-babbage-km37j9`, so **PR #114 now contains phases
