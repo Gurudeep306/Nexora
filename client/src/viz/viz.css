@@ -23,6 +23,11 @@
   display: block;
   width: 100%;
   height: auto;
+  /* Never larger than a comfortable reading size, whatever the column or
+     screen: at most 680px wide and about 58% of the screen tall, centred. */
+  max-width: 680px;
+  max-height: min(440px, 58vh);
+  margin: 0 auto;
   overflow: visible;
 }
 .nxv--placeholder .nxv-stage {
