@@ -9,6 +9,7 @@
  * running language servers for every judge language is not possible on the
  * free host. Each entry is "name|signature|what it does".
  */
+import { MORE_INTEL } from './langIntelMore'
 
 export interface IntelEntry {
   name: string
@@ -465,20 +466,16 @@ const INTEL: Record<string, LangIntel> = {
   csharp: CSHARP,
 }
 
-/** Keywords for languages without a curated reference (still worth offering). */
-const KEYWORDS_ONLY: Record<string, string> = {
-  ruby: 'begin break case class def do else elsif end ensure false for if in module next nil not or puts redo rescue retry return self super then true unless until when while yield',
-  php: 'abstract array as break case catch class const continue declare default do echo else elseif empty extends final for foreach function global if implements include isset list namespace new print private protected public require return static switch throw try unset use var while',
-  swift: 'break case class continue default defer do else enum extension false for func guard if import in init let nil protocol return self struct switch true var where while',
-  scala: 'abstract case catch class def do else extends false final for if implicit import lazy match new null object override package private protected return sealed super this throw trait true try type val var while with yield',
-  haskell: 'case class data deriving do else if import in infix instance let module newtype of then type where',
-  lua: 'and break do else elseif end false for function goto if in local nil not or repeat return then true until while',
+export function intelFor(lang: string): LangIntel | null {
+  return INTEL[lang] ?? MORE_INTEL[lang] ?? null
 }
 
-export function intelFor(lang: string): LangIntel | null {
-  if (INTEL[lang]) return INTEL[lang]
-  const kw = KEYWORDS_ONLY[lang]
-  return kw ? { keywords: words(kw), globals: [], members: [] } : null
+/** The entry for a word under the mouse (for hover docs), or null. */
+export function entryFor(lang: string, word: string, afterDot = false): IntelEntry | null {
+  const intel = intelFor(lang)
+  if (!intel || !word) return null
+  const pick = (list: IntelEntry[]) => list.find((e) => e.name === word) ?? list.find((e) => e.name.split(/::|\.|\//).pop() === word)
+  return (afterDot ? pick(intel.members) ?? pick(intel.globals) : pick(intel.globals) ?? pick(intel.members)) ?? null
 }
 
 /** The entry for a call such as "lower_bound(" or "Math.max(" (for parameter hints). */

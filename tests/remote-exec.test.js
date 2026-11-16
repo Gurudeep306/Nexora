@@ -268,3 +268,30 @@ test('when every sandbox is down the student is told plainly, never a fake verdi
   assert.notEqual(r.verdict, 'WA');
   resetHealth();
 });
+
+test('Kotlin errors point at the student\'s own line, past the stdin shim', () => {
+  const R = require('../src/remote-exec');
+  const code = 'import java.util.*\n\nfun main() {\n  println(zzq)\n}';
+  const at = R.kotlinShimAt(code);
+  assert.equal(at, 2);
+  // Playground lines count from 0 in the shimmed file (5 shim lines added).
+  const ce = R.classifyKotlin({ errors: { 'File.kt': [{ interval: { start: { line: 3 + 5, ch: 10 } }, message: "Unresolved reference 'zzq'.", severity: 'ERROR' }] } }, 10, at);
+  assert.equal(ce.stderr, "File.kt:4:11: error: Unresolved reference 'zzq'.");
+  const re = R.classifyKotlin({ text: '', exception: { fullName: 'java.lang.ArithmeticException', message: '/ by zero', stackTrace: [{ fileName: 'File.kt', lineNumber: 9, className: 'FileKt', methodName: 'main' }] } }, 10, at);
+  assert.equal(re.verdict, 'RE');
+  assert.match(re.stderr, /ArithmeticException: \/ by zero\n {4}at FileKt\.main\(File\.kt:4\)/);
+});
+
+test('Compiler Explorer C# errors (reported on stdout) are not lost', () => {
+  const { classifyGodbolt } = require('../src/remote-exec');
+  const r = classifyGodbolt({ didExecute: false, stderr: [{ text: 'Build failed' }], buildResult: { stderr: [], stdout: [{ text: '<source>(2,7): error CS1001: Identifier expected' }] } }, 5);
+  assert.equal(r.verdict, 'CE');
+  assert.equal(r.stderr, '<source>(2,7): error CS1001: Identifier expected');
+});
+
+test('a Julia load error cut off by the sandbox is not called a time limit', () => {
+  const { classifyGodbolt } = require('../src/remote-exec');
+  const r = classifyGodbolt({ didExecute: true, code: 143, stdout: [], stderr: [{ text: 'ERROR: LoadError: ' }, { text: 'Killed - processing time exceeded' }] }, 5);
+  assert.equal(r.verdict, 'RE');
+  assert.equal(r._noAnswer, true, 'another runner may print the full message');
+});

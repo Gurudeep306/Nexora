@@ -29,7 +29,7 @@ import { agentTask, isAiUnavailable } from '@/lib/agent'
 import { cn } from '@/lib/utils'
 import { TEMPLATES, LANG_EXT } from '@/lib/templates'
 import { snippetsFor } from '@/lib/snippets'
-import { intelFor, signatureFor, type IntelEntry } from '@/lib/langIntel'
+import { entryFor, intelFor, signatureFor, type IntelEntry } from '@/lib/langIntel'
 import type { Diag } from '@/lib/diagnostics'
 import type { ReplayEvent } from '@/components/submissions/replay'
 import { Select } from '@/components/ui'
@@ -384,8 +384,11 @@ function registerLangIntel(monaco: Parameters<BeforeMount>[0], getLang: () => st
       const K = monaco.languages.CompletionItemKind
       const asSnippet = monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
       const call = (e: IntelEntry, label: string) => {
-        const takesArgs = /\(/.test(e.signature)
-        const empty = /\(\s*\)/.test(e.signature)
+        // Only "name(…)"-style signatures get parentheses: not Lisp's
+        // "(read-line)", Haskell's "f :: a -> b" or Ruby's "map { … }".
+        const sig = e.signature.startsWith(e.name) ? e.signature.slice(e.name.length) : ''
+        const takesArgs = /^[^\s(]{0,12}\(/.test(sig) && !/^[^\s(]*!/.test(sig)
+        const empty = /\(\s*\)/.test(sig)
         return takesArgs && !label.endsWith('!') ? `${label}(${empty ? '' : '$1'})$0` : label
       }
       // After "x." (or "->" / "::" in C++): methods.
@@ -418,6 +421,31 @@ function registerLangIntel(monaco: Parameters<BeforeMount>[0], getLang: () => st
       })
       const keywords = intel.keywords.map((k) => ({ label: k, kind: K.Keyword, insertText: k, range, sortText: 'd' + k }))
       return { suggestions: [...globals, ...keywords] }
+    },
+  })
+}
+
+/* Hover docs: what a standard-library name does, for every language. */
+function registerHoverDocs(monaco: Parameters<BeforeMount>[0], getLang: () => string) {
+  return monaco.languages.registerHoverProvider('*', {
+    provideHover: (
+      model: { getWordAtPosition(p: EditorPosition): { word: string; startColumn: number; endColumn: number } | null; getLineContent(n: number): string },
+      position: EditorPosition,
+    ) => {
+      const lang = getLang()
+      if (lang === 'javascript' || lang === 'typescript') return null
+      const w = model.getWordAtPosition(position)
+      if (!w) return null
+      const line = model.getLineContent(position.lineNumber)
+      const before = line.slice(0, w.startColumn - 1)
+      // "Math.max", "std::sort", "Enum.map": try the qualified name first.
+      const qual = /([A-Za-z_][\w.]*(?:::|\.|\/))$/.exec(before)?.[1] ?? ''
+      const e = (qual && entryFor(lang, qual + w.word)) || entryFor(lang, w.word, /(\.|->|::)$/.test(before))
+      if (!e) return null
+      return {
+        range: { startLineNumber: position.lineNumber, startColumn: w.startColumn, endLineNumber: position.lineNumber, endColumn: w.endColumn },
+        contents: [{ value: '```' + (MONACO_LANG[lang] ?? lang) + '\n' + e.signature + '\n```' }, { value: e.doc }],
+      }
     },
   })
 }
@@ -784,6 +812,7 @@ export function CodeEditor({
     disposers.current.push(registerSnippets(monaco, () => langRef.current))
     disposers.current.push(registerLangIntel(monaco, () => langRef.current))
     disposers.current.push(registerSignatureHelp(monaco, () => langRef.current))
+    disposers.current.push(registerHoverDocs(monaco, () => langRef.current))
 
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => runRef.current())
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => submitRef.current())
