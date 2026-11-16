@@ -471,7 +471,7 @@ by analyzing what to place where to make it look the best and show case best
 - Import solves and achievements.
 - Real OAuth only where it exists (GitHub). Never a fake permission screen.
 
-### 7. Ideas never started — only with the owner's agreement
+### 7. Ideas never started — the owner said NO for now (2026-11-16): do not start them
 
 - Fine-tuned Nexora models trained on our own data (GATE solutions,
   animation scenes).

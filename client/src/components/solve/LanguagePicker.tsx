@@ -95,10 +95,12 @@ export function LanguagePicker({
     >
       <PopoverTrigger asChild>
         <button
-          aria-label={`Language: ${current?.label ?? value}`}
+          aria-label={`${current?.label ?? value} (language)`}
           className="flex h-8 min-w-0 cursor-pointer sm:min-w-36 items-center gap-2 rounded-lg border border-border bg-surface-2 pr-2 pl-1.5 text-xs text-foreground transition-colors hover:border-border-strong data-[state=open]:border-primary/60"
         >
-          <LangBadge id={value} />
+          <span aria-hidden="true" className="contents">
+            <LangBadge id={value} />
+          </span>
           <span className="flex-1 truncate text-left font-medium">{current?.label ?? value}</span>
           <ChevronsUpDown className="size-3.5 text-foreground-faint" />
         </button>
