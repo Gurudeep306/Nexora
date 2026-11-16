@@ -6235,6 +6235,9 @@ io.on("connection", (socket) => {
   await initAdminSystem();
   // Admin-chosen AI providers and models (Admin → AI models).
   require("./ai/settings").startRefresh();
+  // Our own code runners (Admin → Code runners) join the judge's chain.
+  require("./runners").startRefresh();
+  require("./piston").setExtraServers(require("./runners").judgeServers);
   await Promise.all([_forgeInit, _liveInit]);
   // Give every account its own progress/XP/settings (one-time, idempotent).
   await migratePerUser();
