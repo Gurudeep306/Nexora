@@ -328,8 +328,47 @@ export const PALETTES: Palette[] = [
   },
 ]
 
-/** Accent overrides — retired in v5: each theme owns its accent. Kept as a type for old data. */
-export const ACCENTS: AccentOverride[] = []
+/**
+ * Accent colours people can put on any theme (Appearance → Make it yours).
+ * Tuned so every one passes the accent rules in audit.ts on all ten themes,
+ * in light and dark (tests/theme-contrast.test.js checks it).
+ */
+export const ACCENTS: AccentOverride[] = [
+  { id: 'clay', label: 'Clay', light: { accent: '0.48 0.14 40', accent2: '0.42 0.14 40', onAccent: '1 0 0' }, dark: { accent: '0.78 0.14 40', accent2: '0.83 0.14 40', onAccent: '0.2 0.04 40' } },
+  { id: 'crimson', label: 'Crimson', light: { accent: '0.49 0.17 25', accent2: '0.43 0.17 25', onAccent: '1 0 0' }, dark: { accent: '0.79 0.14 25', accent2: '0.84 0.14 25', onAccent: '0.2 0.04 25' } },
+  { id: 'rose', label: 'Rose', light: { accent: '0.49 0.15 355', accent2: '0.43 0.15 355', onAccent: '1 0 0' }, dark: { accent: '0.79 0.14 355', accent2: '0.84 0.14 355', onAccent: '0.2 0.04 355' } },
+  { id: 'plum', label: 'Plum', light: { accent: '0.49 0.14 330', accent2: '0.43 0.14 330', onAccent: '1 0 0' }, dark: { accent: '0.79 0.14 330', accent2: '0.84 0.14 330', onAccent: '0.2 0.04 330' } },
+  { id: 'violet', label: 'Violet', light: { accent: '0.48 0.16 295', accent2: '0.42 0.16 295', onAccent: '1 0 0' }, dark: { accent: '0.78 0.14 295', accent2: '0.83 0.14 295', onAccent: '0.2 0.04 295' } },
+  { id: 'indigo', label: 'Indigo', light: { accent: '0.48 0.15 270', accent2: '0.42 0.15 270', onAccent: '1 0 0' }, dark: { accent: '0.77 0.14 270', accent2: '0.82 0.14 270', onAccent: '0.2 0.04 270' } },
+  { id: 'ocean', label: 'Ocean', light: { accent: '0.47 0.13 245', accent2: '0.41 0.13 245', onAccent: '1 0 0' }, dark: { accent: '0.77 0.13 245', accent2: '0.82 0.13 245', onAccent: '0.2 0.04 245' } },
+  { id: 'teal', label: 'Teal', light: { accent: '0.46 0.1 195', accent2: '0.4 0.1 195', onAccent: '1 0 0' }, dark: { accent: '0.76 0.1 195', accent2: '0.81 0.1 195', onAccent: '0.2 0.04 195' } },
+  { id: 'forest', label: 'Forest', light: { accent: '0.45 0.13 150', accent2: '0.39 0.13 150', onAccent: '1 0 0' }, dark: { accent: '0.76 0.13 150', accent2: '0.81 0.13 150', onAccent: '0.2 0.04 150' } },
+  { id: 'amber', label: 'Amber', light: { accent: '0.48 0.13 65', accent2: '0.42 0.13 65', onAccent: '1 0 0' }, dark: { accent: '0.78 0.13 65', accent2: '0.83 0.13 65', onAccent: '0.2 0.04 65' } },
+  { id: 'graphite', label: 'Graphite', light: { accent: '0.47 0.015 260', accent2: '0.41 0.015 260', onAccent: '1 0 0' }, dark: { accent: '0.77 0.015 260', accent2: '0.82 0.015 260', onAccent: '0.2 0.015 260' } },
+]
+
+export interface Ink {
+  id: string
+  label: string
+  /** A few words on the card. */
+  note: string
+  /** Text, secondary text and muted text, as OKLCH. */
+  light: [string, string, string]
+  dark: [string, string, string]
+}
+
+/**
+ * Text inks: the colour of the words, on top of any theme. Every level
+ * (muted text too) keeps 4.5:1 on the page and card surfaces of all ten
+ * themes (tests/theme-contrast.test.js).
+ */
+export const INKS: Ink[] = [
+  { id: 'neutral', label: 'Graphite', note: 'Plain grey ink', light: ['0.22 0 0', '0.38 0 0', '0.46 0 0'], dark: ['0.95 0 0', '0.86 0 0', '0.77 0 0'] },
+  { id: 'warm', label: 'Sepia', note: 'Warm brown ink, easy on the eyes', light: ['0.24 0.03 60', '0.38 0.03 60', '0.46 0.03 60'], dark: ['0.95 0.018 80', '0.86 0.03 75', '0.77 0.03 70'] },
+  { id: 'cool', label: 'Slate', note: 'Cool blue-grey ink', light: ['0.22 0.03 250', '0.38 0.03 250', '0.45 0.03 250'], dark: ['0.95 0.018 250', '0.86 0.03 250', '0.77 0.03 250'] },
+  { id: 'deep', label: 'High contrast', note: 'The darkest ink in light, the brightest in dark', light: ['0.12 0 0', '0.28 0 0', '0.4 0 0'], dark: ['0.99 0 0', '0.92 0 0', '0.84 0 0'] },
+]
+export const INK_BY_ID = new Map(INKS.map((i) => [i.id, i]))
 
 export const PALETTE_BY_ID = new Map(PALETTES.map((p) => [p.id, p]))
 export const ACCENT_BY_ID = new Map(ACCENTS.map((a) => [a.id, a]))

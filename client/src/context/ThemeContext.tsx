@@ -120,6 +120,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (st?.displayFont) void loadUiFont(st.displayFont)
     if (st?.readFont) void loadUiFont(st.readFont)
   }, [shown.style])
+  // Personal heading and reading faces.
+  useEffect(() => {
+    if (shown.headingFont !== 'theme') void loadUiFont(shown.headingFont)
+    if (shown.readFont !== 'theme') void loadUiFont(shown.readFont)
+  }, [shown.headingFont, shown.readFont])
   // Solutions are a small corner of the app — fetch their face only once a
   // solution actually mounts (gate/solution/GateSolution.tsx), not on every page.
 

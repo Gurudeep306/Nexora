@@ -7,6 +7,7 @@ import { CommandPalette } from './CommandPalette'
 import { ShortcutsDialog } from './ShortcutsDialog'
 import { MobileTabBar } from './MobileTabBar'
 import { Deck } from './Deck'
+import { isReaderRoute } from '@/components/reader/panels'
 import { RouteProgress } from './RouteProgress'
 import { LookSync } from '../look/LookSync'
 import { DockSync } from './DockSync'
@@ -22,7 +23,8 @@ import { DUR, EASE_EMPHASIZED } from '@/lib/motion'
 export function AppLayout() {
   const location = useLocation()
   // Workspace pages (the solver) use the full width; everything else sits in a centred column.
-  const wide = location.pathname.startsWith('/solve')
+  // Solving and reading use the whole window.
+  const wide = location.pathname.startsWith('/solve') || isReaderRoute(location.pathname)
   // Sections an admin switched off (feature flags) render a notice instead.
   const { featureOn } = useSite()
   const flag = featureForPath(location.pathname)

@@ -1,0 +1,150 @@
+/* The rank ladder (TitleTrack.tsx). Tokens only; each rank's colour is its
+   tier token (--rank-N), passed in as --tier. */
+
+.tt {
+  display: grid;
+  gap: 2.5rem;
+}
+
+/* ── Where you stand ── */
+.tt-now {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.75rem 2.25rem;
+  padding: 1.75rem;
+  border-radius: var(--radius-card);
+  background: color-mix(in oklab, var(--tier) 6%, var(--color-bg-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tier) 22%, var(--color-border));
+}
+@media (min-width: 768px) {
+  .tt-now {
+    padding: 2.25rem 2.5rem;
+  }
+}
+.tt-now-name {
+  margin: 0.375rem 0 0.25rem;
+  font-family: var(--kit-display, var(--font-display));
+  font-size: 2.25rem;
+  line-height: 1.05;
+  font-weight: var(--kit-heading-weight, 500);
+  letter-spacing: var(--kit-heading-tracking, -0.02em);
+  color: var(--color-text-primary);
+}
+.tt-now-motto {
+  font-family: var(--kit-read, var(--font-body));
+  font-style: italic;
+  font-size: 15px;
+  color: var(--color-text-secondary);
+}
+.tt-now-top {
+  margin-top: 1rem;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.tt-meters {
+  display: grid;
+  gap: 1rem 2rem;
+  margin-top: 1.25rem;
+  max-width: 40rem;
+}
+@media (min-width: 640px) {
+  .tt-meters {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.tt-meter-line {
+  display: block;
+  height: 3px;
+  margin-top: 0.5rem;
+  border-radius: 2px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+.tt-meter-line > span {
+  display: block;
+  height: 100%;
+  background: var(--tier);
+  border-radius: inherit;
+}
+
+/* ── The ladder ── */
+.tt-ladder {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+.tt-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.tt-step.is-current {
+  background: color-mix(in oklab, var(--tier) 7%, transparent);
+}
+.tt-step.is-current::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.625rem;
+  bottom: 0.625rem;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--tier);
+}
+.tt-step-no {
+  width: 1.75rem;
+  flex: none;
+  padding-left: 0.5rem;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+.tt-step.is-ahead .tt-step-glyph {
+  opacity: 0.5;
+}
+.tt-step-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.tt-step.is-ahead .tt-step-name {
+  color: var(--color-text-secondary);
+}
+.tt-you {
+  margin-left: 0.5rem;
+  padding: 0.0625rem 0.5rem;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  box-shadow: inset 0 0 0 1px var(--color-text-primary);
+}
+.tt-step-motto {
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+.tt-step-need {
+  flex: none;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  text-align: right;
+}
+.tt-step-state {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1.5rem;
+  color: var(--color-text-muted);
+}
+.tt-step:not(.is-ahead) .tt-step-state {
+  color: var(--color-state-success);
+}
+@media (max-width: 560px) {
+  .tt-step-need {
+    display: none;
+  }
+}

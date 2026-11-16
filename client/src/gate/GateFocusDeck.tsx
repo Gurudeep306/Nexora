@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { ChevronLeft, ChevronRight, Image as ImageIcon, Bookmark } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import './gate-question.css'
 import { Kbd } from '@/components/ui'
 import { OutcomeDot, QuestionView, type AttemptEvent } from './QuestionView'
 import { useGateProgress } from './progress'
@@ -76,33 +77,40 @@ export function GateFocusDeck({ questions, subjectName, topicName, index, onInde
 
   if (!q) return null
 
+  // One bar above the question: previous, where you are (with a hairline
+  // filled to it), next. The verdict's "Next question" covers the bottom.
   const nav = (
-    <div className="flex items-center gap-2">
-      <button type="button" onClick={() => go(-1)} disabled={!hasPrev} className="btn-secondary inline-flex items-center gap-1 !px-3 !py-1.5 !text-[13px] disabled:opacity-40" aria-label="Previous question">
-        <ChevronLeft className="size-4" />
+    <div className="gq-nav">
+      <button type="button" onClick={() => go(-1)} disabled={!hasPrev} className="gq-nav-btn" aria-label="Previous question">
+        <ChevronLeft className="size-4" aria-hidden="true" />
         <span className="hidden sm:inline">Previous</span>
       </button>
-      <span className="min-w-0 flex-1 text-center font-mono text-[12.5px] tabular-nums text-text-muted">
-        {globalIndex.toLocaleString()} / {total.toLocaleString()}
+      <span className="gq-nav-mid">
+        <span className="gq-nav-pos">
+          {globalIndex.toLocaleString()} <span>of {total.toLocaleString()}</span>
+        </span>
+        <span className="gq-nav-line" aria-hidden="true">
+          <span style={{ width: `${Math.min(100, (globalIndex / Math.max(1, total)) * 100)}%` }} />
+        </span>
       </span>
-      <button type="button" onClick={() => go(1)} disabled={!hasNext} className="btn-primary inline-flex items-center gap-1 !px-3 !py-1.5 !text-[13px] disabled:opacity-40" aria-label="Next question">
+      <button type="button" onClick={() => go(1)} disabled={!hasNext} className="gq-nav-btn is-next" aria-label="Next question">
         <span className="hidden sm:inline">Next</span>
-        <ChevronRight className="size-4" />
+        <ChevronRight className="size-4" aria-hidden="true" />
       </button>
     </div>
   )
 
   return (
-    <div className={cn('grid items-start gap-5', focus ? 'mx-auto max-w-3xl' : 'lg:grid-cols-[minmax(0,280px)_minmax(0,1fr)]')}>
+    <div className={cn('grid items-start gap-5', focus ? 'mx-auto max-w-3xl' : 'lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] xl:gap-10')}>
       {/* Queue (wide screens) */}
-      <aside className={cn('card sticky top-20 hidden max-h-[calc(100vh-7rem)] flex-col overflow-hidden !p-0', !focus && 'lg:flex')} aria-label="Questions on this page">
-        <div className="flex items-baseline justify-between border-b border-border px-4 py-2.5">
-          <span className="text-[12.5px] font-semibold text-text-primary">This page</span>
+      <aside className={cn('gq-queue sticky top-20 hidden max-h-[calc(100vh-7rem)] flex-col overflow-hidden', !focus && 'lg:flex')} aria-label="Questions on this page">
+        <div className="gq-queue-head">
+          <span className="ed-label ed-muted">This page</span>
           <span className="font-mono text-[11.5px] text-text-muted">
             {((page - 1) * pageSize + 1).toLocaleString()}–{Math.min(page * pageSize, total).toLocaleString()}
           </span>
         </div>
-        <ol className={cn('flex-1 overflow-y-auto p-1.5', loading && 'opacity-60')}>
+        <ol className={cn('gq-queue-list', loading && 'opacity-60')}>
           {questions.map((x, k) => {
             const p = progress[x.id]
             const active = k === i
@@ -112,13 +120,10 @@ export function GateFocusDeck({ questions, subjectName, topicName, index, onInde
                   type="button"
                   onClick={() => onIndex(k)}
                   aria-current={active ? 'true' : undefined}
-                  className={cn(
-                    'flex w-full flex-col gap-0.5 rounded-lg px-2.5 py-2 text-left transition-colors',
-                    active ? 'bg-accent-brand/10 ring-1 ring-accent-brand/40' : 'hover:bg-bg-surface-2',
-                  )}
+                  className={cn('gq-queue-item', active && 'is-on')}
                 >
                   <span className="flex items-center gap-1.5 text-[12px]">
-                    <span className={cn('font-mono font-semibold', active ? 'text-accent-brand' : 'text-text-primary')}>{qLabel(x)}</span>
+                    <span className="font-mono font-semibold text-text-primary">{qLabel(x)}</span>
                     <span className="truncate text-text-muted">
                       {x.exam} {x.year}
                       {x.set ? `·${x.set}` : ''}
@@ -135,7 +140,7 @@ export function GateFocusDeck({ questions, subjectName, topicName, index, onInde
             )
           })}
         </ol>
-        <div className="flex items-center justify-between border-t border-border px-2 py-1.5 text-[12px]">
+        <div className="gq-queue-foot">
           <button type="button" disabled={page <= 1} onClick={() => onPageChange(page - 1)} className="rounded-md px-2 py-1 text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary disabled:opacity-40">
             ← Previous page
           </button>
@@ -172,7 +177,7 @@ export function GateFocusDeck({ questions, subjectName, topicName, index, onInde
 
         {nav}
 
-        <div className={cn('transition-opacity', loading && 'opacity-60')}>
+        <div className={cn('gq-card transition-opacity', loading && 'opacity-60')}>
           <QuestionView
             key={q.id}
             q={q}
@@ -188,9 +193,8 @@ export function GateFocusDeck({ questions, subjectName, topicName, index, onInde
           />
         </div>
 
-        {nav}
 
-        <p className="hidden flex-wrap items-center justify-center gap-1.5 text-[12px] text-text-muted md:flex">
+        <p className="gq-keys hidden flex-wrap items-center justify-center gap-1.5 text-[12px] text-text-muted md:flex">
           <Kbd>←</Kbd>
           <Kbd>→</Kbd> move · <Kbd>1</Kbd>–<Kbd>4</Kbd> pick · <Kbd>Enter</Kbd> check · <Kbd>S</Kbd> solution · <Kbd>B</Kbd> bookmark · <Kbd>N</Kbd> note · <Kbd>C</Kbd> confidence · <Kbd>F</Kbd> focus
         </p>

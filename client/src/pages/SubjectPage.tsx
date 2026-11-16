@@ -2,7 +2,7 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } fro
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { ArrowRight, ChevronRight, Lock, RefreshCw, RotateCcw } from 'lucide-react'
-import { Button, Card, CardContent, ErrorState, LoadingBlock, RankGlyph, Tabs } from '@/components/ui'
+import { Button, Card, CardContent, ErrorState, LoadingBlock, RankGlyph, SubjectRankGlyph, Tabs } from '@/components/ui'
 import { prefetchApi, useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
@@ -423,7 +423,7 @@ export default function SubjectPage() {
         </div>
         {/* The subject rank: an ink seal and one line */}
         <div className="flex items-center gap-4 lg:max-w-xs lg:justify-end" aria-label="Subject rank">
-          <RankGlyph level={isDsa ? player.level : (rank?.tierIndex ?? 0) + 1} size={44} animated={false} />
+          {isDsa ? <RankGlyph level={player.level} size={48} animated={false} /> : <SubjectRankGlyph tier={rank?.tierIndex ?? 0} size={48} />}
           <div className="min-w-0">
             <p className="ed-ui m-0 font-medium">
               {isDsa ? `Level ${player.level} · ${player.name}` : rank ? `${rank.tier} · ${rank.title}` : nexus.subject?.short}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { ArrowLeft, ArrowRight, BookOpen, Check, ChevronDown, CircleCheck, GraduationCap, Link2, ListChecks, Lock, MessageSquareText, PenLine, Sparkles } from 'lucide-react'
 import { Badge, Button, LoadingBlock, useToast } from '@/components/ui'
@@ -280,6 +280,8 @@ function CourseMarkdown({ body, onStops }: { body: string; onStops: (s: Stop[]) 
 }
 
 export function CourseLesson(p: LessonProps) {
+  const location = useLocation()
+  const wantsCard = new URLSearchParams(location.search).has('card')
   const toast = useToast()
   const agent = useAgentContext()
   const reduce = useReducedMotion()
@@ -362,6 +364,13 @@ export function CourseLesson(p: LessonProps) {
       toast.error('Could not load the questions')
     }
   }
+
+  // A skill with written notes opens them in the full notes reader — the
+  // first one not finished yet. ?card=1 (the reader's "Skill" link) shows
+  // this card instead: mastery, exam insight, flashcards and the quick check.
+  const readable = lessons.filter((l) => l.readable)
+  const readFirst = readable.find((l) => !progressOf(notesProgress, l.href.split('/')[3], l.id).completed) ?? readable[0]
+  if (readFirst && !notesGone && !wantsCard) return <Navigate to={readFirst.href} replace />
 
   const meta = (
     <div className="space-y-6">

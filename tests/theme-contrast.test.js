@@ -72,10 +72,77 @@ test('every theme meets the contrast rules in both of its modes', async () => {
   assert.deepEqual(failures, [], `\n${failures.join('\n')}`);
 });
 
-test('accent overrides are retired: each theme owns its accent', async () => {
-  const { ACCENTS } = await theme('palettes.ts');
-  const { sanitizeLook } = await theme('look.ts');
-  assert.deepEqual(ACCENTS, []);
+test('every accent colour passes the accent rules on all ten themes, light and dark', async () => {
+  const { ACCENTS, PALETTE_BY_ID } = await theme('palettes.ts');
+  const { THEMES } = await theme('styles.ts');
+  const { auditMode } = await theme('audit.ts');
+  assert.ok(ACCENTS.length >= 10, 'a real choice of accents');
+  assert.equal(new Set(ACCENTS.map((a) => a.id)).size, ACCENTS.length, 'accent ids are unique');
+  const failures = [];
+  for (const a of ACCENTS) {
+    assert.match(a.id, /^[a-z0-9-]+$/);
+    for (const t of THEMES) {
+      const p = PALETTE_BY_ID.get(t.bundle.theme);
+      for (const mode of ['dark', 'light']) {
+        for (const r of auditMode(p[mode], a[mode])) if (!r.ok) failures.push(`${a.id} on ${t.id}/${mode}: ${r.rule} = ${r.ratio}`);
+      }
+    }
+  }
+  assert.deepEqual(failures, [], `\n${failures.join('\n')}`);
+});
+
+test('every text ink keeps 4.5:1 (muted text too) on all ten themes, light and dark', async () => {
+  const { INKS, PALETTE_BY_ID } = await theme('palettes.ts');
+  const { THEMES } = await theme('styles.ts');
+  const { contrast, mixOklab, formatOklch } = await theme('color.ts');
+  assert.ok(INKS.length >= 4);
+  const failures = [];
+  for (const ink of INKS) {
+    for (const t of THEMES) {
+      const p = PALETTE_BY_ID.get(t.bundle.theme);
+      for (const mode of ['dark', 'light']) {
+        const m = p[mode];
+        const [fg0, fg1, fg2] = ink[mode];
+        // Text on every surface it sits on, including the hover surface.
+        for (const bg of m.bg.slice(0, 4)) if (contrast(fg0, bg) < 4.5) failures.push(`${ink.id} on ${t.id}/${mode}: text ${contrast(fg0, bg).toFixed(2)}`);
+        for (const bg of m.bg.slice(0, 3)) {
+          if (contrast(fg1, bg) < 4.5) failures.push(`${ink.id} on ${t.id}/${mode}: secondary ${contrast(fg1, bg).toFixed(2)}`);
+          if (contrast(fg2, bg) < 4.5) failures.push(`${ink.id} on ${t.id}/${mode}: muted ${contrast(fg2, bg).toFixed(2)}`);
+        }
+        const selection = formatOklch(mixOklab(m.accent, m.bg[1], 0.2));
+        if (contrast(fg0, selection) < 4.5) failures.push(`${ink.id} on ${t.id}/${mode}: text on selection`);
+      }
+    }
+  }
+  assert.deepEqual(failures, [], `\n${failures.join('\n')}`);
+});
+
+test('sanitizeLook v6: personal choices on top of a theme', async () => {
+  const { sanitizeLook, DEFAULT_LOOK, lookAttributes } = await theme('look.ts');
+  const own = { accent: 'theme', ink: 'theme', uiFont: 'theme', headingFont: 'theme', readFont: 'theme', corners: 'theme', drawings: 'theme' };
+  for (const [k, v] of Object.entries(own)) assert.equal(DEFAULT_LOOK[k], v, `${k} defaults to the theme's own`);
+  const mine = sanitizeLook({ v: 6, style: 'sakura', accent: 'ocean', ink: 'warm', uiFont: 'lexend', headingFont: 'cormorant', readFont: 'literata', corners: 'sharp', drawings: 'off' });
+  assert.equal(mine.accent, 'ocean');
+  assert.equal(mine.ink, 'warm');
+  assert.equal(mine.uiFont, 'lexend');
+  assert.equal(mine.font, 'lexend', 'the interface font replaces the theme\'s');
+  assert.equal(mine.headingFont, 'cormorant');
+  assert.equal(mine.readFont, 'literata');
+  assert.equal(mine.corners, 'sharp');
+  assert.equal(mine.pattern, 'none', 'drawings off hides the theme\'s pattern');
+  assert.deepEqual(sanitizeLook(mine), mine, 'idempotent');
+  const attrs = lookAttributes(mine, 'light');
+  assert.equal(attrs['data-accent'], 'ocean');
+  assert.equal(attrs['data-ink'], 'warm');
+  assert.equal(attrs['data-heading-font'], 'cormorant');
+  assert.equal(attrs['data-corners'], 'sharp');
+  // Unknown or hostile values fall back to the theme's own.
+  const bad = sanitizeLook({ v: 6, style: 'sakura', accent: '<script>', ink: 'red', uiFont: 'comic', headingFont: 7, readFont: null, corners: 'blob', drawings: 'maybe' });
+  for (const [k, v] of Object.entries(own)) assert.equal(bad[k], v, `${k} rejects a bad value`);
+  assert.equal(bad.font, 'nunito');
+  assert.equal(bad.pattern, 'petals');
+  assert.equal(lookAttributes(bad, 'dark')['data-ink'], undefined, 'no attribute when it is the theme\'s own');
+  // Accents saved by the old style pack (before v5) reset.
   assert.equal(sanitizeLook({ v: 4, style: 'studio', theme: 'midnight', accent: 'violet' }).accent, 'theme');
 });
 
@@ -152,7 +219,7 @@ test('look migration v5: the old style pack folds into the ten themes', async ()
   }
   // Personal settings survive; the old style's code font gives way to the theme's.
   const moved = sanitizeLook({ v: 4, style: 'washi', theme: 'washi', textSize: 'xl', solutionFont: 'patrick', codeFont: 'plex-mono' });
-  assert.equal(moved.v, 5);
+  assert.equal(moved.v, 6);
   assert.equal(moved.textSize, 'xl');
   assert.equal(moved.solutionFont, 'patrick');
   assert.equal(moved.codeFont, 'victor', 'Sakura\'s own code font');
@@ -162,7 +229,7 @@ test('look migration v5: the old style pack folds into the ten themes', async ()
 test('sanitizeLook: migrates a v1 (wallpaper era) look', async () => {
   const { sanitizeLook } = await theme('look.ts');
   const out = sanitizeLook({ wallpaper: 'synthwave-grid', accent: 'purple', glass: 'frosted', cardStyle: 'neon', iconPack: 'clay', fontStyle: 'handwriting-caveat', fontSize: 'huge', solutionFont: 'shantell' });
-  assert.equal(out.v, 5);
+  assert.equal(out.v, 6);
   assert.equal(out.style, 'journal');
   assert.equal(out.textSize, 'xl', 'the v1 text size is kept');
   assert.equal(out.solutionFont, 'off', 'the old handwriting default moves to plain text');
@@ -212,6 +279,9 @@ test('Hive keeps its own look (Studio on Midnight) whatever theme is on', async 
     assert.equal(shown.cardStyle, 'soft');
     assert.equal(shown.textSize, 'large', 'personal settings stay');
   }
+  // Personal colours, faces and corners don't reach Hive either.
+  const mine = hiveLook(sanitizeLook({ v: 6, style: 'sakura', accent: 'ocean', ink: 'warm', uiFont: 'lexend', headingFont: 'cormorant', readFont: 'literata', corners: 'sharp', drawings: 'off' }));
+  for (const k of ['accent', 'ink', 'uiFont', 'headingFont', 'readFont', 'corners', 'drawings']) assert.equal(mine[k], 'theme', `Hive ignores the personal ${k}`);
   assert.equal(hiveLook(DEFAULT_LOOK).style, 'studio');
   assert.ok(isHivePath('/hive') && isHivePath('/hive/projects/1'));
   assert.ok(!isHivePath('/hiveminds') && !isHivePath('/hub'));

@@ -12,11 +12,12 @@
 
   Keep this module dependency-light and type-strippable (node tests run it).
 */
-import { CODE_FONTS, DEFAULT_SOLUTION_FONT, DEFAULT_TEXT_SIZE, SOLUTION_FONTS, TEXT_SIZES } from './fonts.ts'
+import { CODE_FONTS, DEFAULT_SOLUTION_FONT, DEFAULT_TEXT_SIZE, HEADING_FACES, READ_FACES, SOLUTION_FONTS, TEXT_SIZES, UI_FONTS } from './fonts.ts'
+import { ACCENTS, INKS } from './palettes.ts'
 import { DEFAULT_STYLE, STYLES, THEMES } from './styles.ts'
 
 export interface Look {
-  v: 5
+  v: 6
   /** Theme id (see styles.ts THEMES) — the whole design. */
   style: string
   /* Everything below the style comes from its bundle; only textSize,
@@ -36,9 +37,23 @@ export interface Look {
   iconStyle: string
   iconContainer: string
   iconShape: string
+  /* v6: personal choices on top of the theme ('theme' = the theme's own). */
+  /** Text ink (palettes.ts INKS). */
+  ink: string
+  /** Interface font (fonts.ts UI_FONTS). */
+  uiFont: string
+  /** Heading face (fonts.ts HEADING_FACES). */
+  headingFont: string
+  /** Long-reading face for lessons and notes (fonts.ts READ_FACES). */
+  readFont: string
+  /** Corners: 'theme' | 'sharp' | 'soft' | 'round'. */
+  corners: string
+  /** The theme's drawings behind the page: 'theme' (on) or 'off'. */
+  drawings: string
 }
 
-type Bundle = Omit<Look, 'v' | 'style' | 'accent' | 'solutionFont' | 'textSize'>
+type Personal = 'v' | 'style' | 'accent' | 'solutionFont' | 'textSize' | 'ink' | 'uiFont' | 'headingFont' | 'readFont' | 'corners' | 'drawings'
+type Bundle = Omit<Look, Personal>
 
 export interface LookTables {
   /** The ten themes people can choose. */
@@ -50,9 +65,15 @@ export interface LookTables {
   codeFonts: string[]
   solutionFonts: string[]
   textSizes: string[]
+  accents: string[]
+  inks: string[]
+  uiFonts: string[]
+  headingFonts: string[]
+  readFonts: string[]
+  corners: string[]
   defaults: Look
   /** Hive's own look (Studio on Midnight), shown on /hive whatever the theme. */
-  hive: Bundle & { style: string }
+  hive: Bundle & { style: string; accent: string; ink: string; uiFont: string; headingFont: string; readFont: string; corners: string; drawings: string }
   /**
    * v5 (2026): the old style pack (16 styles × 55 palettes) folded into the
    * ten themes. An accessibility palette always moves to Clear; a palette
@@ -69,11 +90,14 @@ const bundleOf = (id: string): Bundle => {
   return { pattern: b.pattern, theme: b.theme, font: b.font, codeFont: b.codeFont, cardStyle: b.cardStyle, radius: b.radius, iconSet: b.iconSet, iconStyle: b.iconStyle, iconContainer: b.iconContainer, iconShape: b.iconShape }
 }
 
+/** The personal choices, all at "the theme's own". */
+const OWN = { accent: 'theme', ink: 'theme', uiFont: 'theme', headingFont: 'theme', readFont: 'theme', corners: 'theme', drawings: 'theme' }
+
 export const DEFAULT_LOOK: Look = {
-  v: 5,
+  v: 6,
   style: DEFAULT_STYLE,
   ...bundleOf(DEFAULT_STYLE),
-  accent: 'theme',
+  ...OWN,
   solutionFont: DEFAULT_SOLUTION_FONT,
   textSize: DEFAULT_TEXT_SIZE,
 }
@@ -81,7 +105,7 @@ export const DEFAULT_LOOK: Look = {
 /** Hive keeps its own look (Studio on Midnight) whatever theme is on. */
 export function hiveLook(look: Look): Look {
   if (!LOOK_TABLES.kits[look.style]) return look
-  return { ...look, ...LOOK_TABLES.hive, accent: 'theme' }
+  return { ...look, ...LOOK_TABLES.hive }
 }
 
 /** Paths that keep their pre-journal look (see hiveLook). */
@@ -96,8 +120,14 @@ export const LOOK_TABLES: LookTables = {
   codeFonts: CODE_FONTS.map((f) => f.id),
   solutionFonts: SOLUTION_FONTS.map((f) => f.id),
   textSizes: TEXT_SIZES.map((s) => s.id),
+  accents: ACCENTS.map((a) => a.id),
+  inks: INKS.map((i) => i.id),
+  uiFonts: UI_FONTS.map((f) => f.id),
+  headingFonts: HEADING_FACES.map((f) => f.id),
+  readFonts: READ_FACES.map((f) => f.id),
+  corners: ['sharp', 'soft', 'round'],
   defaults: DEFAULT_LOOK,
-  hive: { style: 'studio', ...bundleOf('studio') },
+  hive: { style: 'studio', ...bundleOf('studio'), ...OWN },
   v5: {
     styles: {
       journal: 'journal', studio: 'journal', editorial: 'journal', manuscript: 'journal',
@@ -149,13 +179,18 @@ export function sanitizeLookWith(raw: unknown, T: LookTables): Look {
   // The handwriting default ('shantell') moved to plain text in v3.
   const before3 = typeof r.v !== 'number' || r.v < 3
   const solution = before3 && r.solutionFont === 'shantell' ? '' : str(r.solutionFont)
+  // v6 personal choices: a known id, else the theme's own.
+  const pick = (v: unknown, list: string[]) => (list.indexOf(str(v)) >= 0 ? str(v) : 'theme')
+  const uiFont = pick(r.uiFont, T.uiFonts)
+  const drawings = str(r.drawings) === 'off' ? 'off' : 'theme'
   return {
-    v: 5,
+    v: 6,
     style,
-    pattern: b.pattern,
+    pattern: drawings === 'off' ? 'none' : b.pattern,
     theme: b.theme,
-    accent: 'theme',
-    font: b.font,
+    // Accents chosen before v5 belonged to the old style pack: they reset.
+    accent: before5 ? 'theme' : pick(r.accent, T.accents),
+    font: uiFont === 'theme' ? b.font : uiFont,
     // Before v5 the code font came with the old style: start from the theme's own.
     codeFont: (!before5 && T.codeFonts.indexOf(str(r.codeFont)) >= 0 ? str(r.codeFont) : '') || b.codeFont,
     solutionFont: (T.solutionFonts.indexOf(solution) >= 0 ? solution : '') || D.solutionFont,
@@ -166,6 +201,12 @@ export function sanitizeLookWith(raw: unknown, T: LookTables): Look {
     iconStyle: b.iconStyle,
     iconContainer: b.iconContainer,
     iconShape: b.iconShape,
+    ink: pick(r.ink, T.inks),
+    uiFont,
+    headingFont: pick(r.headingFont, T.headingFonts),
+    readFont: pick(r.readFont, T.readFonts),
+    corners: pick(r.corners, T.corners),
+    drawings,
   }
 }
 
@@ -197,5 +238,10 @@ export function lookAttributes(look: Look, mode: 'light' | 'dark'): Record<strin
     'data-icon-style': look.iconStyle,
     'data-icon-container': look.iconContainer,
     'data-icon-shape': look.iconShape,
+    'data-ink': look.ink === 'theme' ? undefined : look.ink,
+    'data-ui-font': look.uiFont === 'theme' ? undefined : look.uiFont,
+    'data-heading-font': look.headingFont === 'theme' ? undefined : look.headingFont,
+    'data-read-font': look.readFont === 'theme' ? undefined : look.readFont,
+    'data-corners': look.corners === 'theme' ? undefined : look.corners,
   }
 }

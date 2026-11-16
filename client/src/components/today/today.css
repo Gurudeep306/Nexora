@@ -304,3 +304,155 @@
     color: var(--ed-muted);
   }
 }
+
+/* ── 2026-11: the rank on the masthead, the badge ladder, the bookshelf ── */
+@layer components {
+  .today-rank {
+    text-decoration: none;
+    border-radius: 999px;
+  }
+  .today-rank:hover .rank-badge {
+    box-shadow: inset 0 0 0 1px var(--tier);
+  }
+  .today-rank:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 3px;
+  }
+
+  /* The ladder: eleven badges in a row, a line under them. */
+  .today-badges {
+    position: relative;
+  }
+  .today-badge-row {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 1.25rem 0.5rem;
+    align-items: end;
+  }
+  @media (min-width: 900px) {
+    .today-badge-row {
+      grid-template-columns: repeat(11, minmax(0, 1fr));
+    }
+  }
+  .today-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  .today-badge.is-ahead svg {
+    opacity: 0.4;
+  }
+  .today-badge-name {
+    font-size: 11.5px;
+    line-height: 1.2;
+  }
+  .today-badge-track {
+    display: none;
+  }
+  @media (min-width: 900px) {
+    .today-badge-track {
+      display: block;
+      height: 2px;
+      margin-top: 1rem;
+      border-radius: 1px;
+      background: var(--color-border);
+      overflow: hidden;
+    }
+    .today-badge-fill {
+      display: block;
+      height: 100%;
+      background: var(--color-text-primary);
+      transform-origin: left center;
+    }
+  }
+
+  /* The bookshelf: each subject with lessons, as a book. */
+  .shelf {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  }
+  .shelf-book {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-card);
+    background: var(--color-bg-surface);
+    box-shadow: inset 0 0 0 1px var(--color-border);
+    overflow: hidden;
+    transition: box-shadow 200ms ease;
+  }
+  .shelf-book:hover {
+    box-shadow: inset 0 0 0 1px var(--color-border-strong);
+  }
+  .shelf-cover {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    padding: 1.5rem 1.5rem 1.25rem 2rem;
+    color: inherit;
+    text-decoration: none;
+  }
+  /* The spine: a band of the subject's colour down the left edge. */
+  .shelf-spine {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: var(--book);
+  }
+  .shelf-title {
+    font-size: 1.5rem;
+    line-height: 1.15;
+    color: var(--color-text-primary);
+  }
+  .shelf-cover:hover .shelf-title {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+  .shelf-blurb {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .shelf-bar {
+    display: block;
+    height: 3px;
+    margin-top: 0.5rem;
+    border-radius: 2px;
+    background: var(--color-border);
+    overflow: hidden;
+  }
+  .shelf-bar > span {
+    display: block;
+    height: 100%;
+    background: var(--book);
+  }
+  .shelf-next {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.5rem 0.875rem 2rem;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    transition: background-color 160ms ease;
+  }
+  .shelf-next:hover {
+    background: var(--color-bg-surface-3);
+  }
+  .shelf-cover:focus-visible,
+  .shelf-next:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: -3px;
+  }
+}

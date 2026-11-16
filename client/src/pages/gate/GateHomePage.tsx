@@ -29,10 +29,11 @@ import { EmptyHint, Kpi, LinkButton, Panel, PanelLink } from '@/gate/insights/ui
 import { MASTERY, dayKey, daysUntil, fmtPct, fmtTime, greeting, masteryOf, masteryScore, pct, timeAgo } from '@/gate/insights/format'
 import { generatePlan, type PlanTask } from '@/gate/insights/planner'
 import { usePlanInputs, useStudyPlan } from '@/gate/insights/planInputs'
-import { shortSubject, useSubjects } from '@/gate/insights/subjects'
+import { useSubjects } from '@/gate/insights/subjects'
 import { QuestionRow } from '@/gate/insights/QuestionRow'
 import { OutcomeDot, TestLine } from '@/gate/insights/TestLine'
-import { GateSubjectsPanel } from '@/components/nexus/SubjectsHub'
+import { useNexusWeb } from '@/components/nexus/SubjectsHub'
+import { subjectHref } from '@/components/nexus/course'
 
 const QUESTIONS_PER_HOUR = 6
 
@@ -43,41 +44,29 @@ export default function GateHomePage() {
   const loading = summary.loading && !s
 
   return (
-    <GateShell
-      title="Your exam desk"
-      subtitle="Today's plan, your numbers and where to look next."
-      cta={false}
-      actions={
-        <>
-          <LinkButton to={GATE_ROUTES.analytics} icon="chart" variant="ghost">
-            Analytics
-          </LinkButton>
-          <LinkButton to={GATE_ROUTES.planner} icon="calendar">
-            Planner
-          </LinkButton>
-        </>
-      }
-    >
+    <GateShell title="Your exam desk" cta={false} bare>
       <div className="gh">
         <ExamDesk summary={s} loading={loading} />
         <KpiRow summary={s} loading={loading} />
 
+        {/* The syllabus: every subject once, with your mastery and where to go. */}
+        <SyllabusLedger summary={s} loading={loading} />
+
         <div className="gh-cols">
-          <div className="min-w-0 space-y-12">
-            <SubjectRings summary={s} loading={loading} />
+          <div className="min-w-0">
             <Panel title="Activity" icon="activity" subtitle="Questions attempted per day over the last year">
               {loading ? <LoadingBlock rows={3} /> : <ActivityHeatmap activity={s?.activity ?? {}} />}
             </Panel>
-            <Panel title="Subjects" icon="map" subtitle={`Every GATE ${exam} subject as a skill tree: lessons, notes and PYQs in one place`} action={<PanelLink to="/learn">All subjects</PanelLink>}>
-              <GateSubjectsPanel exam={exam} />
-            </Panel>
           </div>
-          <div className="min-w-0 space-y-12">
-            <WeakTopics summary={s} loading={loading} />
-            <ContinuePanel summary={s} loading={loading} />
+          <div className="min-w-0">
             <QuickStart />
-            <RecentTests />
           </div>
+        </div>
+
+        <div className="gh-trio">
+          <WeakTopics summary={s} loading={loading} />
+          <ContinuePanel summary={s} loading={loading} />
+          <RecentTests />
         </div>
         <p className="sr-only" aria-live="polite">
           {summary.error ? `Personal progress is unavailable right now. Showing ${exam} defaults.` : ''}
@@ -107,25 +96,24 @@ function ExamDesk({ summary, loading }: { summary: GateSummary | null; loading: 
       {/* Countdown in serif numerals, with the streak and today's goal beneath. */}
       <div className="gh-count">
         <p className="ed-label">
-          {greeting()}, {user?.username ?? 'there'}
+          The Exam Hall · GATE {exam} · {greeting()}, {user?.username ?? 'there'}
         </p>
         {days != null && days >= 0 ? (
           <>
-            <p className="gh-days">
+            <h1 className="gh-days">
               <span className="gh-days-n">{days}</span>
               <span className="gh-days-w">{days === 1 ? 'day' : 'days'} until GATE {exam}</span>
-            </p>
+            </h1>
             <p className="gh-date">{examDay}</p>
           </>
         ) : (
           <>
-            <p className="gh-days">
-              <span className="gh-days-w gh-days-none">No exam date yet.</span>
-            </p>
+            <h1 className="gh-days">
+              <span className="gh-days-w gh-days-none">Your exam desk</span>
+            </h1>
             <p className="gh-date">
-              Set it in the{' '}
               <Link to={GATE_ROUTES.planner} className="gp-link text-text-primary">
-                planner
+                Set your exam date
               </Link>{' '}
               for a countdown and a week-by-week plan.
             </p>
@@ -295,50 +283,88 @@ function TodayPlan({ summary }: { summary: GateSummary | null }) {
   )
 }
 
-/* ── Subject mastery rings ──────────────────────────────────────────────── */
+/* ── The syllabus: every subject once ──────────────────────────────────── */
 
-function SubjectRings({ summary, loading }: { summary: GateSummary | null; loading: boolean }) {
+function SyllabusLedger({ summary, loading }: { summary: GateSummary | null; loading: boolean }) {
   const [exam] = useGateExam()
   const subjects = useSubjects(exam)
+  const web = useNexusWeb()
   const stats = new Map((summary?.bySubject ?? []).map((x) => [x.subject, x]))
+  const hubs = web.structure?.hubs?.gate?.[exam === 'DA' ? 'DA' : 'CSE'] ?? []
+  const nexusOf = new Map(hubs.map((h) => [h.bank, h.nexus]))
+  const clusterOf = new Map((web.clusters ?? []).map((c) => [c.id, c]))
   const list = subjects.list.filter((x) => !x.legacy)
 
   return (
-    <Panel
-      title="Subject mastery"
-      icon="layers"
-      subtitle="Accuracy weighted by how much you've practised"
-      action={<PanelLink to={GATE_ROUTES.syllabus}>Syllabus</PanelLink>}
-    >
+    <section className="gh-syl" aria-labelledby="gh-syl-h">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="ed-label ed-muted m-0">The syllabus</p>
+          <h2 id="gh-syl-h" className="ed-h2 mt-3 mb-0">
+            Every subject, where you stand
+          </h2>
+        </div>
+        <Link to={GATE_ROUTES.syllabus} className="ed-link ed-ui">
+          Full syllabus
+        </Link>
+      </div>
       {loading || (subjects.meta.loading && !list.length) ? (
         <LoadingBlock rows={6} />
       ) : !list.length ? (
         <EmptyHint icon="layers" title="Syllabus unavailable">The subject list couldn&rsquo;t be loaded. Try again shortly.</EmptyHint>
       ) : (
-        /* Small multiples: one bar per subject on the same scale, serif names, the numbers in mono. */
-        <ul className="gh-multiples">
-          {list.map((sub) => {
+        <ol className="gh-syl-rows">
+          {list.map((sub, i) => {
             const st = stats.get(sub.id)
             const att = st?.attempted ?? 0
             const level = masteryOf(att, st?.accuracy)
             const score = masteryScore(att, st?.accuracy)
+            const c = clusterOf.get(nexusOf.get(sub.id) ?? '')
+            const notes = c?.gate?.notes && web.notes.has(c.gate.notes)
+            const home = c ? subjectHref(c) : null
             return (
-              <li key={sub.id}>
-                <Link to={practiceLink({ exam, subject: sub.id })} className="gh-multiple" title={sub.name}>
-                  <span className="gh-multiple-name">
-                    {shortSubject(sub.name)}
-                  </span>
-                  <span className="gh-multiple-bar" aria-hidden="true">
-                    <span style={{ width: `${Math.round(score * 100)}%` }} data-level={level} />
-                  </span>
-                  <span className="gh-multiple-n">{att ? `${pct(st?.accuracy)}% · ${att} Qs` : MASTERY[0].label}</span>
-                </Link>
+              <li key={sub.id} className="gh-syl-row">
+                <span className="gh-syl-no ed-mono" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span className="min-w-0">
+                  {home ? (
+                    <Link to={home} className="gh-syl-name">
+                      {sub.name}
+                    </Link>
+                  ) : (
+                    <span className="gh-syl-name">{sub.name}</span>
+                  )}
+                  <span className="gh-syl-meta">{att ? `${pct(st?.accuracy)}% right · ${att} questions tried` : MASTERY[0].label}</span>
+                </span>
+                <span className="gh-syl-bar" role="meter" aria-label={`${sub.name} mastery`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(score * 100)}>
+                  <span style={{ width: `${Math.max(Math.round(score * 100), att ? 3 : 0)}%` }} data-level={level} />
+                </span>
+                <span className="gh-syl-links">
+                  {home && notes ? (
+                    <Link to={home} className="gh-syl-link is-read">
+                      Read
+                    </Link>
+                  ) : (
+                    <span className="gh-syl-link is-soon" title="Notes are being written; the skill tree and PYQs are ready">
+                      Notes soon
+                    </span>
+                  )}
+                  {c && (
+                    <Link to={`${subjectHref(c)}?view=tree`} className="gh-syl-link">
+                      Tree
+                    </Link>
+                  )}
+                  <Link to={practiceLink({ exam, subject: sub.id })} className="gh-syl-link">
+                    PYQs
+                  </Link>
+                </span>
               </li>
             )
           })}
-        </ul>
+        </ol>
       )}
-    </Panel>
+    </section>
   )
 }
 

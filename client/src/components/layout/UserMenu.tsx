@@ -36,7 +36,7 @@ export function UserMenu({ children, side = 'top', align = 'start' }: { children
               <UserBadges username={user.username} role={typeof user.role === 'string' ? user.role : undefined} />
             </p>
           </div>
-          <RankGlyph level={level} size={30} animated={false} />
+          <RankGlyph level={level} size={34} animated={false} />
         </div>
         <MenuSeparator />
         {isStaff && (

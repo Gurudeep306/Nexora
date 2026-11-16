@@ -43,6 +43,18 @@
   --field: color-mix(in oklab, var(--oklch-bg-0) 82%, oklch(0 0 0));
   --field-shadow: oklch(0 0 0 / 0.3);
   --rank-ink: color-mix(in oklab, var(--oklch-bg-0) 80%, oklch(0 0 0));
+  /* Rank tiers (components/ui/RankGlyph.tsx): ≥3.2:1 on every theme's page and card. */
+  --rank-1: oklch(0.68 0 0);
+  --rank-2: oklch(0.68 0.07 250);
+  --rank-3: oklch(0.67 0.09 195);
+  --rank-4: oklch(0.66 0.12 150);
+  --rank-5: oklch(0.69 0.11 60);
+  --rank-6: oklch(0.69 0.13 35);
+  --rank-7: oklch(0.69 0.13 18);
+  --rank-8: oklch(0.69 0.13 305);
+  --rank-9: oklch(0.68 0.13 272);
+  --rank-10: oklch(0.68 0.13 85);
+  --rank-11: var(--oklch-accent-0);
   --shadow-ink: oklch(0 0 0);
   /* Elevation: a tight contact shadow plus one soft ambient layer. Dark
      surfaces separate by tone, so the ambient layer stays short. */
@@ -58,6 +70,18 @@
   --field: var(--oklch-bg-1);
   --field-shadow: oklch(0 0 0 / 0.06);
   --rank-ink: var(--oklch-bg-1);
+  /* Rank tiers: ≥3.2:1 on every theme's page and card. */
+  --rank-1: oklch(0.55 0 0);
+  --rank-2: oklch(0.55 0.07 250);
+  --rank-3: oklch(0.54 0.09 195);
+  --rank-4: oklch(0.54 0.12 150);
+  --rank-5: oklch(0.56 0.11 60);
+  --rank-6: oklch(0.56 0.13 35);
+  --rank-7: oklch(0.57 0.16 18);
+  --rank-8: oklch(0.56 0.15 305);
+  --rank-9: oklch(0.56 0.15 272);
+  --rank-10: oklch(0.55 0.13 85);
+  --rank-11: var(--oklch-accent-0);
   --shadow-ink: color-mix(in oklab, var(--oklch-fg-0) 70%, oklch(0 0 0));
   --elev-1: 0 1px 2px oklch(0 0 0 / 0.05), 0 1px 4px -1px oklch(0 0 0 / 0.05);
   --elev-2: 0 1px 2px oklch(0 0 0 / 0.05), 0 8px 24px -10px oklch(0 0 0 / 0.13);
@@ -1277,16 +1301,59 @@ input[type='search']::-webkit-search-results-decoration {
 /* Bare glyphs fill less of a big Dock tile than they do inline. */
 .dock-tile.icon-badge[data-icon-container='none'],
 [data-icon-container='none'] .dock-tile.icon-badge { --ib-glyph: 58%; }
-/* The name floats up into view on hover or keyboard focus. */
+/* The name floats out from the Dock on hover or keyboard focus: up from a
+   bottom Dock, sideways from a side one. */
 .dock-label {
   opacity: 0;
-  translate: -50% 4px;
   transition: opacity 160ms var(--ease-smooth), translate 200ms var(--ease-smooth);
 }
+.dock-label[data-side='bottom'] { bottom: 100%; left: 50%; margin-bottom: 0.75rem; translate: -50% 4px; }
+.dock-label[data-side='left'] { left: 100%; top: 50%; margin-left: 0.875rem; translate: -4px -50%; }
+.dock-label[data-side='right'] { right: 100%; top: 50%; margin-right: 0.875rem; translate: 4px -50%; }
 .group:hover > div > .dock-label,
 .group:focus-visible > div > .dock-label {
   opacity: 1;
-  translate: -50% 0;
+}
+.group:hover > div > .dock-label[data-side='bottom'],
+.group:focus-visible > div > .dock-label[data-side='bottom'] { translate: -50% 0; }
+.group:hover > div > .dock-label:not([data-side='bottom']),
+.group:focus-visible > div > .dock-label:not([data-side='bottom']) { translate: 0 -50%; }
+/* The current page's mark sits on the Dock's edge side. */
+.dock-dot[data-side='bottom'] { bottom: -7px; left: 50%; translate: -50% 0; }
+.dock-dot[data-side='left'] { left: -7px; top: 50%; translate: 0 -50%; }
+.dock-dot[data-side='right'] { right: -7px; top: 50%; translate: 0 -50%; }
+/* Names always shown: a small caption under each icon. */
+.dock-caption {
+  font-size: 10.5px;
+  line-height: 1.1;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+.group[aria-current='page'] .dock-caption { color: var(--color-text-primary); }
+/* Bar styles: paper (the theme's surface), tinted with the accent, or ink. */
+.dock[data-surface='tinted'] .dock-glass {
+  background-color: color-mix(in oklab, var(--color-accent-brand) 12%, var(--color-bg-surface)) !important;
+  border-color: color-mix(in oklab, var(--color-accent-brand) 30%, var(--color-border)) !important;
+}
+.dock[data-surface='ink'] .dock-glass {
+  background-color: var(--color-text-primary) !important;
+  border-color: transparent !important;
+}
+.dock[data-surface='ink'] .dock-badge--mono.icon-badge.icon-badge { --ib-c: color-mix(in oklab, var(--color-bg-app) 78%, var(--color-text-primary)); }
+.dock[data-surface='ink'] .dock-badge--mono.icon-badge.icon-badge[data-tone='accent'] { --ib-c: var(--color-bg-app); }
+.dock[data-surface='ink'] .dock-plate { background-color: transparent !important; box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-bg-app) 22%, transparent) !important; }
+.dock[data-surface='ink'] .group:hover .dock-plate,
+.dock[data-surface='ink'] .group[aria-current='page'] .dock-plate { background-color: color-mix(in oklab, var(--color-bg-app) 14%, transparent) !important; }
+.dock[data-surface='ink'] .dock-caption { color: color-mix(in oklab, var(--color-bg-app) 80%, var(--color-text-primary)); }
+.dock[data-surface='ink'] .group[aria-current='page'] .dock-caption { color: var(--color-bg-app); }
+.dock[data-surface='ink'] .dock-divider { background-color: color-mix(in oklab, var(--color-bg-app) 30%, transparent) !important; }
+.dock[data-surface='ink'] [aria-label='More destinations'] { color: var(--color-bg-app); }
+.dock[data-surface='ink'] [aria-label='More destinations']:hover { background-color: color-mix(in oklab, var(--color-bg-app) 14%, transparent); }
+/* The page leaves room on the Dock's side (wide screens only; Deck.tsx sets
+   --dock-room from the Dock's size). */
+@media (min-width: 768px) {
+  html[data-dock='left'] #main-content { padding-left: calc(var(--dock-room, 80px) + 0.75rem); padding-bottom: 3rem; }
+  html[data-dock='right'] #main-content { padding-right: calc(var(--dock-room, 80px) + 0.75rem); padding-bottom: 3rem; }
 }
 
 /* ── NexoraGuru mark (components/brand/Logo.tsx) ──
@@ -1329,6 +1396,12 @@ input[type='search']::-webkit-search-results-decoration {
 }
 @media (min-width: 1024px) {
   .nx-bloom { grid-template-columns: 236px minmax(0, 1fr); }
+}
+/* Each part keeps its own column, whatever else is shown. */
+@media (min-width: 1024px) {
+  .nx-bloom > .nx-rail { grid-column: 1; grid-row: 1; }
+  .nx-bloom > main { grid-column: 2; grid-row: 1; }
+  .nx-bloom > .nx-meta { grid-column: 3; grid-row: 1; }
 }
 @media (min-width: 1440px) {
   .nx-bloom { grid-template-columns: 236px minmax(0, 1fr) 300px; }
@@ -1525,4 +1598,31 @@ a.nx-hub-chip:hover { color: var(--color-text-primary); border-color: var(--colo
    is pulled a little toward the text ink so it keeps 4.5:1 (WCAG 1.4.3). ── */
 [data-mode='light'] .text-accent-brand {
   color: color-mix(in oklab, var(--color-accent-brand) 80%, var(--color-text-primary));
+}
+
+/* ── A rank as a pill (RankBadge in components/ui/RankGlyph.tsx) ── */
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--tier) 9%, var(--color-bg-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tier) 28%, var(--color-border));
+}
+.rank-badge.is-sm { gap: 0.375rem; padding: 0.125rem 0.625rem 0.125rem 0.125rem; }
+.rank-badge.is-lg { gap: 0.75rem; padding: 0.375rem 1.25rem 0.375rem 0.375rem; }
+.rank-badge-name {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+.rank-badge.is-sm .rank-badge-name { font-size: 12px; }
+.rank-badge.is-lg .rank-badge-name { font-size: 16px; }
+.rank-badge-sub {
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--color-text-muted);
 }
