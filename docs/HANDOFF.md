@@ -77,7 +77,8 @@ Contents:
   field names matched without case (`Val`, `Next`, `Left`). Checked: 10
   classic programs print exactly the same traced and untraced
   (`node scripts/dryrun-trace.mjs <file> go`), `tests/dryrun-go.test.js`.
-  Not yet checked through Wandbox (the live runner).
+  Also checked through the live runners (Wandbox, Compiler Explorer,
+  Paiza.io): same output, same steps.
 - **Next for the agent: section 6, item 3** — dry run for Rust, then C#,
   Kotlin, Swift (then Ruby, PHP, Lua, Perl; then functional languages).
 - The owner said **no for now** to the ideas in section 6, item 7.
