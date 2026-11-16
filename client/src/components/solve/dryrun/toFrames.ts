@@ -31,6 +31,7 @@ import type {
   Scalar,
   StackState,
   Structure,
+  TreeNode,
   TreeState,
   VarsState,
 } from '@/learn/engine/types'
@@ -48,11 +49,26 @@ const isDict = (v: TV | undefined): v is DictTV => isObj(v as TV) && (v as DictT
 const isRef = (v: TV | undefined): v is { t: 'ref'; id: number } => isObj(v as TV) && (v as { t: string }).t === 'ref'
 const isScalarTV = (v: TV) => !isObj(v) || ['big', 'num', 'str'].includes((v as { t: string }).t)
 
+/**
+ * "Infinity" as programs write it (float('inf'), 10**9, 1e18, INT_MAX…) is
+ * drawn as ∞ — only when the code itself uses such a value, so a real
+ * 1000000000 in someone's data stays a number.
+ */
+const INF_NUMS = new Set(['inf', '1000000000', '1000000000000000000', '2147483647', '9223372036854775807', '4611686018427387903'])
+const INF_CODE = /float\(\s*['"]-?inf['"]\s*\)|math\.inf|\bINF\b|\binf\b|10\s*\*\*\s*(9|18)\b|\b1e(9|18)\b|maxsize|INT_MAX|LLONG_MAX|MAX_VALUE|Infinity/i
+let infinityInCode = false
+function inf(x: string): Scalar | undefined {
+  if (!infinityInCode) return undefined
+  const neg = x.startsWith('-')
+  return INF_NUMS.has(neg ? x.slice(1) : x) ? (neg ? '-∞' : '∞') : undefined
+}
+
 /** A tracer value as a plain scalar for a box or card. */
 function scalar(v: TV, heap: Map<number, HeapObj>): Scalar {
-  if (v === null || typeof v === 'number' || typeof v === 'boolean') return v
+  if (v === null || typeof v === 'boolean') return v
+  if (typeof v === 'number') return (Number.isInteger(v) && inf(String(v))) || v
   if (typeof v === 'string') return v
-  if ('s' in v) return v.s
+  if ('s' in v) return inf(v.s) ?? v.s
   return show(v, heap)
 }
 
@@ -275,7 +291,9 @@ function graphOf(key: string, name: string, v: ListTV | DictTV, ctx: Ctx): Graph
   const shown = directed ? edges : edges.filter((e) => e.from <= e.to)
   // Variables holding a node right now ride on it (u, v, node, cur…).
   const pointers: Record<string, string | null> = {}
-  for (const [n, val] of ctx.ints) if (/^(u|v|node|cur|curr|nxt|next|nb|neighbou?r|start|src|s|target|dst|w)$/i.test(n) && nodes.has(`n${val}`)) pointers[n] = `n${val}`
+  // With weighted edges, w is a weight, not a node.
+  const weighted = edges.some((e) => e.w !== undefined)
+  for (const [n, val] of ctx.ints) if (/^(u|v|node|cur|curr|nxt|next|nb|neighbou?r|start|src|s|target|dst|w)$/i.test(n) && !(weighted && /^w$/i.test(n)) && nodes.has(`n${val}`)) pointers[n] = `n${val}`
   return { kind: 'graph', id: key, label: name, nodes: [...nodes.values()], edges: shown, directed, pointers }
 }
 
@@ -495,6 +513,102 @@ function objGraphOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: strin
   return { kind: 'graph', id: key, label: starts[0][0], nodes, edges: directed ? edges : edges.filter((e) => e.from < e.to), directed, pointers }
 }
 
+/* ── nested dicts (tries written as dicts of dicts) ── */
+const END_KEYS = ['$', '#', '*', 'end', '_end', 'is_end', 'isEnd', 'END', '__end__']
+const isNested = (v: DictTV) => v.k.some(([, b]) => isDict(b))
+
+/** A dict of dicts as a tree: each key is an edge, a word's end mark (`$`, `end`…) puts ● on the node. */
+function dictTreeOf(key: string, name: string, v: DictTV, heap: Map<number, HeapObj>, prev?: Set<string>): TreeState {
+  const nodes: TreeNode[] = []
+  const paths = new Map<string, string>()
+  let ended = false
+  const walk = (d: DictTV, id: string) => {
+    const node: TreeNode = { id, v: '', children: [], edgeLabels: [] }
+    nodes.push(node)
+    paths.set(id, JSON.stringify(d))
+    for (const [a, b] of d.k) {
+      const k = String(scalar(a, heap))
+      if (END_KEYS.includes(k) && !isDict(b)) {
+        if (b !== false && b !== null && b !== 0) {
+          node.v = '●'
+          ended = true
+        }
+        continue
+      }
+      if (nodes.length >= MAX_NODES * 2) break
+      const cid = `${id}/${k}`
+      node.children.push(cid)
+      node.edgeLabels!.push(k)
+      if (isDict(b)) walk(b, cid)
+      else nodes.push({ id: cid, v: scalar(b, heap), children: [] })
+    }
+  }
+  walk(v, `${key}:`)
+  const roles: Record<string, Role> = {}
+  if (prev) for (const n of nodes) if (!prev.has(n.id)) roles[n.id] = 'new'
+  return { kind: 'tree', id: key, label: ended ? `${name} (● ends a word)` : name, nodes, roots: [`${key}:`], roles, _paths: paths } as TreeState & { _paths: Map<string, string> }
+}
+
+/* ── recursion: every call so far as a tree ── */
+interface CallNode {
+  k: number
+  fn: string
+  label: string
+  parent: number | null
+  kids: number[]
+  at: number
+  retAt?: number
+  ret?: string
+}
+function callTree(snaps: Snapshot[]): Map<number, CallNode> | null {
+  const calls = new Map<number, CallNode>()
+  snaps.forEach((s, idx) => {
+    s.stack.forEach((f, i) => {
+      if (calls.has(f.k)) return
+      const args = f.args.replace(/(^|, )\w+=/g, '$1')
+      const label = `${f.fn}(${args.length > 16 ? `${args.slice(0, 15)}…` : args})`
+      const parent = i ? s.stack[i - 1].k : null
+      calls.set(f.k, { k: f.k, fn: f.fn, label, parent, kids: [], at: idx })
+      if (parent !== null) calls.get(parent)?.kids.push(f.k)
+    })
+    const top = s.stack[s.stack.length - 1]
+    if (s.kind === 'ret' && s.ret && top && calls.has(top.k)) {
+      const c = calls.get(top.k)!
+      c.retAt = idx
+      c.ret = show(s.ret.value, s.heap)
+    }
+  })
+  // Only worth drawing when a function calls itself.
+  const recursive = [...calls.values()].some((c) => c.fn !== 'main' && c.parent !== null && calls.get(c.parent)?.fn === c.fn)
+  return recursive ? calls : null
+}
+function recursionTreeOf(calls: Map<number, CallNode>, idx: number, stack: CallFrame[], ret: boolean): TreeState {
+  const live = new Set(stack.map((f) => f.k))
+  let shown = [...calls.values()].filter((c) => c.fn !== 'main' && c.at <= idx)
+  let partial = false
+  if (shown.length > 40) {
+    // Too many to read: the calls still running and their children.
+    shown = shown.filter((c) => live.has(c.k) || (c.parent !== null && live.has(c.parent)))
+    partial = true
+  }
+  const ids = new Set(shown.map((c) => c.k))
+  const top = stack[stack.length - 1]?.k
+  const roles: Record<string, Role> = {}
+  const edgeRoles: Record<string, Role> = {}
+  const nodes: TreeNode[] = shown.map((c) => {
+    if (c.k === top) roles[`r${c.k}`] = ret ? 'write' : 'active'
+    if (c.parent !== null && live.has(c.k) && ids.has(c.parent)) edgeRoles[`r${c.parent}>r${c.k}`] = 'active'
+    return {
+      id: `r${c.k}`,
+      v: c.label,
+      children: c.kids.filter((k) => ids.has(k)).map((k) => `r${k}`),
+      ...(c.retAt !== undefined && c.retAt <= idx ? { note: `= ${c.ret}` } : {}),
+    }
+  })
+  const roots = shown.filter((c) => c.parent === null || !ids.has(c.parent)).map((c) => `r${c.k}`)
+  return { kind: 'tree', id: 'recursion', label: partial ? 'Recursion tree · the calls still running' : 'Recursion tree', nodes, roots, roles, edgeRoles }
+}
+
 /** Two variables that bound a window over an array (l … r, lo … hi). */
 const WINDOWS: [string, string][] = [['l', 'r'], ['lo', 'hi'], ['low', 'high'], ['left', 'right'], ['start', 'end'], ['begin', 'end'], ['i', 'j'], ['s', 'e']]
 
@@ -511,13 +625,17 @@ export interface DryFrame extends Frame {
 
 export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFrame[] {
   const facts = codeFacts(src)
+  infinityInCode = INF_CODE.test(src)
   const ids = new Ids()
   const lastGrid = new Map<string, GridState>()
   const lastMap = new Map<string, MapState>()
   const lastVars = new Map<number, Map<string, TV>>()
+  const lastTree = new Map<string, Set<string>>()
+  const lastPtr = new Map<string, string>()
+  const calls = callTree(snaps)
   const frames: DryFrame[] = []
 
-  for (const s of snaps) {
+  for (const [idx, s] of snaps.entries()) {
     const top = s.stack[s.stack.length - 1]
     if (!top) continue
     const lineText = facts.lines[s.line - 1] ?? ''
@@ -573,7 +691,11 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
         } else if (isDict(v)) {
           const g = graphish(facts, name) && v.k.every(([, b]) => isList(b)) ? graphOf(key, label, v, ctx) : null
           if (g) stage.push(g)
-          else {
+          else if (isNested(v)) {
+            const t = dictTreeOf(key, label, v, s.heap, lastTree.get(key))
+            lastTree.set(key, new Set(t.nodes.map((n) => n.id)))
+            stage.push(t)
+          } else {
             const m = mapOf(key, label, v, ctx, lastMap.get(key))
             lastMap.set(key, m)
             stage.push(m)
@@ -608,6 +730,34 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
     const graphObj = tree || nary ? null : objGraphOf(refVars, s.heap, `${top.k}:graphobj`)
     const list = tree || nary || graphObj ? null : linkedOf(refVars, s.heap, `${top.k}:list`)
     for (const st of [list, tree, nary, graphObj]) if (st) stage.push(st)
+
+    // A variable holding part of a nested dict (node = node[ch]) rides on
+    // that node of the tree instead of being drawn on its own.
+    const dictTrees = stage.filter((x): x is TreeState & { _paths: Map<string, string> } => x.kind === 'tree' && '_paths' in x)
+    if (dictTrees.length) {
+      for (const f of [top, ...(s.stack.length > 1 ? [s.stack[0]] : [])])
+        for (const [n, v] of f.vars) {
+          if (!isDict(v)) continue
+          const js = JSON.stringify(v)
+          for (const t of dictTrees) {
+            if (t.id === `${f.k}:${n}`) continue
+            let hits = [...t._paths].filter(([, p]) => p === js).map(([id]) => id)
+            // Equal sub-dicts ("cat" and "car" both end in {"$": True}): keep
+            // the one that follows on from where this variable just was.
+            const was = lastPtr.get(`${t.id}>${n}`)
+            if (hits.length > 1 && was) hits = hits.filter((id) => id === was || (id.startsWith(`${was}/`) && !id.slice(was.length + 1).includes('/')))
+            if (hits.length !== 1) continue
+            lastPtr.set(`${t.id}>${n}`, hits[0])
+            t.pointers = { ...t.pointers, [n]: hits[0] }
+            const own = stage.findIndex((x) => x.id === `${f.k}:${n}`)
+            if (own >= 0) stage.splice(own, 1)
+          }
+        }
+      for (const t of dictTrees) delete (t as Partial<typeof t>)._paths
+    }
+
+    // Recursion: the tree of calls so far, with the running one lit.
+    if (calls) stage.push(recursionTreeOf(calls, idx, s.stack, s.kind === 'ret'))
 
     // Variable cards, with the value each changed one had before this step.
     const before = lastVars.get(top.k)

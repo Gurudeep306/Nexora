@@ -38,7 +38,8 @@ def _ser(v, heap, depth=0):
     if isinstance(v, float):
         return v if v == v and v not in (float("inf"), float("-inf")) else {"t": "num", "s": str(v)}
     if isinstance(v, str): return v if len(v) <= 300 else v[:300] + "…"
-    if depth > 6: return {"t": "more"}
+    # Dicts nest deeper so a trie written as a dict of dicts keeps whole words.
+    if depth > (16 if isinstance(v, dict) else 6): return {"t": "more"}
     if isinstance(v, (list, tuple)):
         return {"t": "list" if isinstance(v, list) else "tuple", "n": len(v), "i": [_ser(x, heap, depth + 1) for x in v[:80]]}
     if isinstance(v, (set, frozenset)):

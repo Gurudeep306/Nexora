@@ -229,7 +229,9 @@ export function TreeView({ s }: { s: TreeState }) {
   const ptrs = lanes(s.pointers)
   const maxLane = Math.max(0, ...[...ptrs.entries()].filter(([k]) => k !== '∅').map(([, v]) => v.length))
   const hasNotes = s.nodes.some((n) => n.note)
-  const LH = hasNotes ? 74 : 64
+  // Edge letters sit halfway up an edge; a pointer above the child must clear them.
+  const edgeText = s.nodes.some((n) => n.edgeLabels?.some(Boolean))
+  const LH = Math.max(hasNotes ? 74 : 64, edgeText && maxLane ? 2 * (R + 12 + maxLane * 15) + 8 : 0)
   const padTop = 16 + maxLane * 15
   const W = slots * SW + 12
   const H = padTop + maxDepth * LH + 2 * R + (hasNotes ? 22 : 8)

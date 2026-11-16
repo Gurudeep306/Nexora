@@ -416,7 +416,7 @@ export function FramePlayer({ id, kicker = 'Visualizer', title, blurb, frames, e
 
   if (!focus) return body
   return createPortal(
-    <div className="viz-overlay fixed inset-0 z-[80] overflow-y-auto p-2 sm:p-6" onMouseDown={(e) => e.target === e.currentTarget && setFocus(false)}>
+    <div role="dialog" aria-modal="true" aria-label={`${title}, full screen`} className="viz-overlay fixed inset-0 z-[80] overflow-y-auto p-2 sm:p-6" onMouseDown={(e) => e.target === e.currentTarget && setFocus(false)}>
       <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="mx-auto max-w-[1500px]" data-player={id}>
         {body}
       </motion.div>

@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { Group, Panel, Separator, useDefaultLayout } from 'react-resizable-panels'
+import { Group, Panel, Separator, useDefaultLayout, usePanelRef } from 'react-resizable-panels'
 import { ArrowDownToLine, ArrowLeftToLine, ArrowRightToLine, PictureInPicture2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { tStandard } from '@/lib/motion'
@@ -74,6 +74,7 @@ export function Workspace({
   editor,
   overlay,
   immersive = false,
+  roomForTests = 0,
 }: {
   api: WorkspaceApi
   problem: PaneSpec
@@ -81,6 +82,9 @@ export function Workspace({
   editor: ReactNode
   overlay?: ReactNode
   immersive?: boolean
+  /** Changes whenever the tests pane should open roomy (the dry run): docked
+   *  at the bottom it grows to about 62% of the column if it is smaller. */
+  roomForTests?: number
 }) {
   const { ws, dock, setFloat, minimize, toggleMax, setImmersive } = api
   const rootRef = useRef<HTMLDivElement>(null)
@@ -93,6 +97,12 @@ export function Workspace({
   const [bounds, setBounds] = useState({ w: 0, h: 0 })
   const [maxFloat, setMaxFloat] = useState<PaneId | null>(null)
   const specs: Record<PaneId, PaneSpec> = { problem, tests }
+  const testsPanel = usePanelRef()
+  useEffect(() => {
+    if (!roomForTests) return
+    const p = testsPanel.current
+    if (p && p.getSize().asPercentage < 60) p.resize('62%')
+  }, [roomForTests, testsPanel])
 
   useLayoutEffect(() => {
     const el = rootRef.current
@@ -498,7 +508,7 @@ export function Workspace({
             {testsBottom && (
               <>
                 <ResizeHandle orientation="horizontal" />
-                <Panel id="tests" minSize={120} defaultSize="36%" className="card-neon overflow-hidden">
+                <Panel id="tests" panelRef={testsPanel} minSize={120} defaultSize="36%" className="card-neon overflow-hidden">
                   {paneBody('tests')}
                 </Panel>
               </>
