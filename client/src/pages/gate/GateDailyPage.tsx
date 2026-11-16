@@ -140,7 +140,7 @@ export default function GateDailyPage() {
                   role="status"
                   className={cn(
                     'flex flex-wrap items-center gap-3 rounded-xl border px-4 py-3 text-[13.5px]',
-                    today?.outcome === 'correct' || solvedEarlier ? 'border-state-success/40 bg-state-success/10' : 'border-border bg-bg-surface-2',
+                    today?.outcome === 'correct' || solvedEarlier ? 'border-state-success' : 'border-border bg-bg-surface-2',
                   )}
                 >
                   <Icon name={today?.outcome === 'correct' || solvedEarlier ? 'check-circle' : 'flag'} className={cn('size-5', today?.outcome === 'correct' || solvedEarlier ? 'text-state-success' : 'text-text-muted')} />
@@ -149,7 +149,7 @@ export default function GateDailyPage() {
                     {today && <span className="text-text-muted"> · {fmtDuration(today.timeMs)}</span>}
                   </span>
                   {today && (
-                    <button type="button" onClick={share} className="ml-auto inline-flex items-center gap-1.5 text-[12.5px] font-medium text-accent-brand hover:underline">
+                    <button type="button" onClick={share} className="ml-auto inline-flex items-center gap-1.5 text-[12.5px] font-medium text-text-primary underline decoration-border-strong underline-offset-2 hover:decoration-text-primary">
                       <Icon name={copied ? 'check' : 'share'} className="size-3.5" /> {copied ? 'Copied' : 'Share'}
                     </button>
                   )}
@@ -163,7 +163,7 @@ export default function GateDailyPage() {
         <aside className="space-y-4 lg:sticky lg:top-20">
           <Card className="space-y-4 p-4 sm:p-5">
             <div className="flex items-center gap-3">
-              <span className="flex size-11 items-center justify-center rounded-2xl bg-state-warning/12 text-state-warning">
+              <span className="flex size-11 items-center justify-center rounded-2xl shadow-[inset_0_0_0_1px_currentColor] text-state-warning">
                 <Icon name="flame" className="size-6" />
               </span>
               <div>
@@ -179,7 +179,7 @@ export default function GateDailyPage() {
                     <span
                       className={cn(
                         'flex size-7 items-center justify-center rounded-full border text-[10px]',
-                        e ? (e.outcome === 'correct' ? 'border-state-success bg-state-success/15 text-state-success' : 'border-border-strong bg-bg-surface-3 text-text-secondary') : 'border-dashed border-border text-text-muted',
+                        e ? (e.outcome === 'correct' ? 'border-state-success shadow-[inset_0_0_0_1px_currentColor] text-state-success' : 'border-border-strong bg-bg-surface-3 text-text-secondary') : 'border-dashed border-border text-text-muted',
                       )}
                       role="img"
                       aria-label={`${d}: ${e ? (e.outcome === 'correct' ? 'solved' : 'attempted') : 'missed'}`}

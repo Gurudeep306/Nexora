@@ -72,7 +72,7 @@ function Chip({ on, onClick, children, title }: { on: boolean; onClick: () => vo
       title={title}
       className={cn(
         'inline-flex h-8 items-center gap-1.5 rounded-lg border px-2.5 text-[12.5px] transition-colors',
-        on ? 'border-accent-brand bg-accent-brand/10 font-semibold text-accent-brand' : 'border-border bg-bg-surface text-text-secondary hover:border-border-hover hover:text-text-primary',
+        on ? 'border-text-primary bg-bg-surface-3 font-semibold text-text-primary' : 'border-border bg-bg-surface text-text-secondary hover:border-border-hover hover:text-text-primary',
       )}
     >
       {children}
@@ -220,7 +220,7 @@ export default function GateTestsPage() {
                 className="flex min-h-[104px] flex-col gap-2 !p-3.5 sm:!p-4"
               >
                 <span className="flex items-center justify-between">
-                  <span className="flex size-9 items-center justify-center rounded-xl bg-accent-brand/12 text-accent-brand">
+                  <span className="flex size-9 items-center justify-center rounded-xl shadow-[inset_0_0_0_1px_var(--color-border-strong)] text-text-secondary">
                     <Icon name={p.icon as IconName} className="size-[18px]" />
                   </span>
                   {busy === p.id ? <span className="size-4 animate-spin rounded-full border-2 border-accent-brand border-t-transparent" /> : <ChevronRight className="size-4 text-text-muted" />}
@@ -370,7 +370,7 @@ export default function GateTestsPage() {
               </button>
             </div>
             {error && (
-              <p role="alert" className="rounded-lg border border-state-error/40 bg-state-error/10 px-3 py-2 text-[13px] text-text-primary">
+              <p role="alert" className="rounded-lg border border-state-error px-3 py-2 text-[13px] text-text-primary">
                 {error}
               </p>
             )}
@@ -412,7 +412,7 @@ function HistoryRow({ t }: { t: GateTest }) {
   return (
     <Link to={GATE_ROUTES.test(t.id)} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-bg-surface-2/60">
       <span
-        className={cn('flex size-10 shrink-0 items-center justify-center rounded-xl font-mono text-[12px] font-semibold tabular-nums', r ? 'bg-accent-brand/10 text-accent-brand' : 'bg-state-warning/12 text-state-warning')}
+        className={cn('flex size-10 shrink-0 items-center justify-center rounded-xl font-mono text-[12px] font-semibold tabular-nums', r ? 'shadow-[inset_0_0_0_1px_var(--color-border-strong)] text-text-primary' : 'shadow-[inset_0_0_0_1px_currentColor] text-state-warning')}
         aria-hidden="true"
       >
         {r ? `${Math.round(pct * 100)}%` : <Icon name="play" className="size-4" />}
@@ -432,7 +432,7 @@ function HistoryRow({ t }: { t: GateTest }) {
           <span className="block text-[11.5px] text-text-muted">{acc == null ? '—' : `${Math.round(acc * 100)}% accuracy`}</span>
         </span>
       ) : (
-        <span className="text-[12.5px] font-medium text-accent-brand">Resume</span>
+        <span className="text-[12.5px] font-semibold text-text-primary underline underline-offset-2">Resume</span>
       )}
       <ChevronRight className="size-4 shrink-0 text-text-muted" />
     </Link>

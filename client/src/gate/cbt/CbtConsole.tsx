@@ -485,7 +485,7 @@ export function CbtConsole({
               aria-current={active ? 'true' : undefined}
               className={cn(
                 'inline-flex h-8 shrink-0 items-center gap-2 rounded-lg px-3 text-[13px] transition-colors',
-                active ? 'bg-accent-brand/12 font-semibold text-accent-brand' : 'text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary',
+                active ? 'bg-bg-surface-3 font-semibold text-text-primary shadow-[inset_0_-2px_0_var(--color-text-primary)]' : 'text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary',
               )}
             >
               {sec.title}
@@ -599,7 +599,7 @@ export function CbtConsole({
       {paletteOpen && (
         <div className="fixed inset-0 z-[120] lg:hidden" role="dialog" aria-modal="true" aria-label="Question palette">
           <button type="button" className="absolute inset-0 bg-bg-app/60 backdrop-blur-[2px]" onClick={() => setPaletteOpen(false)} aria-label="Close palette" />
-          <div className="absolute inset-y-0 right-0 w-[min(88vw,340px)] border-l border-border bg-bg-surface shadow-2xl">{palette}</div>
+          <div className="absolute inset-y-0 right-0 w-[min(88vw,340px)] border-l border-border bg-bg-surface">{palette}</div>
         </div>
       )}
 
@@ -612,7 +612,7 @@ export function CbtConsole({
               <div className="flex items-center justify-between text-[12.5px]">
                 <button
                   type="button"
-                  className="font-semibold text-accent-brand hover:underline"
+                  className="font-semibold text-text-primary underline underline-offset-2"
                   onClick={() => {
                     setShowPaper(false)
                     jumpToQuestion(i)
@@ -701,13 +701,13 @@ export function CbtConsole({
       />
 
       {(isSubmitting || submitError) && (
-        <div className="fixed inset-x-0 bottom-4 z-[130] mx-auto w-fit max-w-[92vw] rounded-xl border border-border bg-bg-surface px-4 py-2.5 text-[13px] shadow-xl" role="status">
+        <div className="fixed inset-x-0 bottom-4 z-[130] mx-auto w-fit max-w-[92vw] rounded-xl border border-border bg-bg-surface px-4 py-2.5 text-[13px]" role="status">
           {isSubmitting ? (
             'Evaluating your responses…'
           ) : (
             <span className="flex items-center gap-3">
               <span className="text-state-error">{submitError}</span>
-              <button type="button" className="font-semibold text-accent-brand" onClick={handleSubmitExam}>
+              <button type="button" className="font-semibold text-text-primary underline underline-offset-2" onClick={handleSubmitExam}>
                 Retry
               </button>
             </span>

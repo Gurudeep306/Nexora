@@ -81,17 +81,9 @@ export function GateNav({ reviewDue = 0 }: { reviewDue?: number }) {
                     to={item.to}
                     aria-current={on ? 'page' : undefined}
                     title={item.hint}
-                    className={cn(
-                      'group relative flex h-9 items-center gap-1.5 rounded-lg px-3 text-[13.5px] font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand',
-                      on
-                        ? 'bg-accent-brand/12 text-text-primary shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--color-accent-brand)_28%,transparent)]'
-                        : 'text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary',
-                    )}
+                    className="gnav-tab group"
                   >
-                    <Icon
-                      name={item.icon}
-                      className={cn('size-4', on ? 'text-accent-brand' : 'text-text-muted group-hover:text-text-secondary')}
-                    />
+                    <Icon name={item.icon} className="gnav-icon size-4" />
                     {item.label}
                     {item.id === 'review' && <Badge n={reviewDue} active={on} />}
                     {item.id === 'review' && reviewDue > 0 && <span className="sr-only"> ({reviewDue} due)</span>}
@@ -137,12 +129,12 @@ export function GateNav({ reviewDue = 0 }: { reviewDue?: number }) {
                   onClick={() => setSheet(false)}
                   aria-current={on ? 'page' : undefined}
                   className={cn(
-                    'flex h-full flex-col gap-1 rounded-xl border p-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand',
-                    on ? 'border-accent-brand/40 bg-accent-brand/10' : 'border-border hover:bg-bg-surface-2',
+                    'flex h-full flex-col gap-1 rounded-xl border p-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary',
+                    on ? 'border-text-primary' : 'border-border hover:bg-bg-surface-2',
                   )}
                 >
                   <span className="flex items-center gap-2 text-sm font-semibold text-text-primary">
-                    <Icon name={item.icon} className="size-4 text-accent-brand" />
+                    <Icon name={item.icon} className="size-4 text-text-muted" />
                     {item.label}
                     {item.id === 'review' && <Badge n={reviewDue} />}
                   </span>

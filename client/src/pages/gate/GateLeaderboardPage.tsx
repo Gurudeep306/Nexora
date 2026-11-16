@@ -5,7 +5,7 @@
 */
 import { useState } from 'react'
 import { Avatar, Card, Skeleton } from '@/components/ui'
-import { Icon, IconBadge } from '@/components/icon/Icon'
+import { Icon } from '@/components/icon/Icon'
 import { useAuth } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
 import { useApi } from '@/hooks/useApi'
@@ -99,15 +99,15 @@ export default function GateLeaderboardPage() {
 
 function Row({ r, me }: { r: LeaderboardRow; me: boolean }) {
   return (
-    <tr className={cn('transition-colors', me ? 'bg-accent-brand/8' : 'hover:bg-bg-surface-2')} aria-current={me ? 'true' : undefined}>
-      <td className="py-2.5 pl-4 font-semibold text-text-muted tabular-nums sm:pl-5">{r.rank}</td>
+    <tr className={cn('transition-colors', me ? 'bg-bg-surface-3' : 'hover:bg-bg-surface-2')} aria-current={me ? 'true' : undefined}>
+      <td className="py-2.5 pl-4 font-mono font-semibold text-text-muted tabular-nums sm:pl-5">{r.rank}</td>
       <td className="py-2.5">
         <span className="flex min-w-0 items-center gap-2.5">
           <Avatar size="sm" seed={r.username} avatar={r.avatar} name={r.displayName ?? r.username} ring={false} />
           <span className="min-w-0">
             <span className="block truncate font-medium text-text-primary">
               {r.displayName ?? r.username}
-              {me && <span className="ml-1.5 rounded bg-accent-brand px-1.5 py-px text-[10.5px] font-semibold text-on-accent-brand">You</span>}
+              {me && <span className="ml-1.5 rounded px-1.5 py-px font-mono text-[10.5px] font-semibold text-text-primary shadow-[inset_0_0_0_1px_var(--color-text-primary)]">You</span>}
             </span>
             {r.displayName && <span className="block truncate text-[11.5px] text-text-muted">@{r.username}</span>}
           </span>
@@ -118,15 +118,15 @@ function Row({ r, me }: { r: LeaderboardRow; me: boolean }) {
         <span className="text-text-muted">/{r.attempted}</span>
       </td>
       <td className="py-2.5 text-right text-text-secondary tabular-nums">{pct(r.accuracy)}%</td>
-      <td className="py-2.5 pr-4 text-right font-display text-[14.5px] font-semibold text-text-primary tabular-nums sm:pr-5">{Math.round(r.score * 100) / 100}</td>
+      <td className="py-2.5 pr-4 text-right font-mono text-[14px] font-semibold text-text-primary tabular-nums sm:pr-5">{Math.round(r.score * 100) / 100}</td>
     </tr>
   )
 }
 
 const PODIUM = [
-  { tone: 'gold' as const, h: 'sm:pt-2', label: '1st' },
-  { tone: 'neutral' as const, h: 'sm:mt-6', label: '2nd' },
-  { tone: 'streak' as const, h: 'sm:mt-10', label: '3rd' },
+  { h: 'sm:pt-2', label: '1st' },
+  { h: 'sm:mt-6', label: '2nd' },
+  { h: 'sm:mt-10', label: '3rd' },
 ]
 
 function Podium({ rows, isMe }: { rows: LeaderboardRow[]; isMe: (r: LeaderboardRow) => boolean }) {
@@ -140,17 +140,20 @@ function Podium({ rows, isMe }: { rows: LeaderboardRow[]; isMe: (r: LeaderboardR
         const p = PODIUM[i]!
         return (
           <li key={r.username} className={cn('min-w-0', p.h)}>
-            <Card className={cn('relative flex flex-col items-center gap-1.5 overflow-hidden px-2 py-4 text-center sm:px-3', isMe(r) && 'ring-2 ring-accent-brand')}>
-              <IconBadge name={i === 0 ? 'crown' : 'medal'} tone={p.tone} box="xs" />
+            <Card className={cn('relative flex flex-col items-center gap-1.5 overflow-hidden px-2 py-4 text-center sm:px-3', isMe(r) && 'ring-2 ring-text-primary')}>
+              {/* The place as a serif numeral; first place is underlined in clay. */}
+              <span className={cn('ed-serif text-[2.5rem] leading-none text-text-primary', i === 0 && 'underline decoration-[var(--ed-clay)] decoration-2 underline-offset-[6px]')} aria-hidden="true">
+                {i + 1}
+              </span>
               <Avatar size={i === 0 ? 'lg' : 'md'} seed={r.username} avatar={r.avatar} name={r.displayName ?? r.username} />
               <p className="w-full truncate text-[13px] font-semibold text-text-primary">{r.displayName ?? r.username}</p>
-              <p className="font-display text-[20px] leading-none font-semibold text-text-primary tabular-nums">{Math.round(r.score * 100) / 100}</p>
+              <p className="font-mono text-[16px] leading-none font-semibold text-text-primary tabular-nums">{Math.round(r.score * 100) / 100}</p>
               <p className="text-[11px] text-text-muted tabular-nums">
                 <span className="sr-only">{p.label} place · </span>
                 {pct(r.accuracy)}% · {r.correct} solved
               </p>
               {isMe(r) && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-accent-brand">
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-text-primary">
                   <Icon name="star" className="size-3" /> You
                 </span>
               )}
