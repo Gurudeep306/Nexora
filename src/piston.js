@@ -67,8 +67,41 @@ function pistonEnabled(env = process.env) {
   return env.JUDGE_MODE === 'piston';
 }
 
+const splitList = (v) => String(v || '').split(',').map((x) => x.trim()).filter(Boolean);
+
+/**
+ * Our own runners, in order. PISTON_URL may list several servers separated by
+ * commas (say Oracle, Hetzner and AWS); each one backs up the others, and the
+ * free public sandboxes stay behind them all. PISTON_TOKEN may list one token
+ * per server in the same order, or a single token shared by every server.
+ */
+function pistonServers(env = process.env) {
+  const urls = splitList(env.PISTON_URL);
+  if (!urls.length) urls.push('http://127.0.0.1:2000');
+  const tokens = splitList(env.PISTON_TOKEN);
+  return urls.map((u, i) => ({
+    url: u.replace(/\/+$/, ''),
+    token: tokens.length === 1 ? tokens[0] : tokens[i] || '',
+  }));
+}
+
+/** Engine name of server i: 'piston', then 'piston2', 'piston3', … */
+const pistonEngineName = (i) => (i === 0 ? 'piston' : `piston${i + 1}`);
+
+/** Server index of a Piston engine name, or -1. */
+function pistonIndex(engine) {
+  const m = /^piston(\d*)$/.exec(String(engine || ''));
+  if (!m) return -1;
+  return m[1] ? Number(m[1]) - 1 : 0;
+}
+
+/** The Piston engine names for the current env, in order. */
+function pistonEngines(env = process.env) {
+  return pistonServers(env).map((_, i) => pistonEngineName(i));
+}
+
 function pistonUrl(env = process.env) {
-  return (env.PISTON_URL || 'http://127.0.0.1:2000').replace(/\/+$/, '');
+  return pistonServers(env)[0].url;
 }
 
 /** The app languages Piston may answer for under the current env. */
@@ -109,6 +142,7 @@ function classifyPiston(r, timeMs = 0) {
   const c = r.compile;
   if (c && (c.code !== 0 || c.signal || (c.status && c.status !== 'OK'))) {
     if (c.status === 'XX') return failed(c.message || 'internal error while compiling', timeMs);
+    if (/Exec format error/i.test(c.stderr || c.output || '')) return failed('this compiler does not run on this server', timeMs);
     const msg = (c.stderr || c.output || c.message || 'Compilation failed').trim();
     if (c.status === 'TO') {
       return { stdout: '', stderr: msg || 'Compilation timed out', exitCode: -1, timeMs, verdict: 'TLE', engine: 'piston' };
@@ -120,6 +154,11 @@ function classifyPiston(r, timeMs = 0) {
   const stderr = (run.stderr || '').trim();
   const t = Number.isFinite(run.wall_time) ? run.wall_time : timeMs;
   if (run.status === 'XX') return failed(run.message || 'internal error', timeMs);
+  // A runtime built for another CPU (an x86-only package on an ARM runner) is
+  // the runner's fault, not the student's: let the next runner take it.
+  if (/Exec format error/i.test(stderr)) {
+    return failed('this runtime does not run on this server', timeMs);
+  }
   // Older Piston builds have no `status`; a SIGKILL there is the time limit.
   if (run.status === 'TO' || (!run.status && run.signal === 'SIGKILL')) {
     return { stdout, stderr: stderr || 'Time limit exceeded', exitCode: -1, timeMs: t, verdict: 'TLE', engine: 'piston' };
@@ -135,17 +174,19 @@ function classifyPiston(r, timeMs = 0) {
  * Run on Piston. Never throws; `_pistonFailed` marks "Piston could not do
  * it" (network, HTTP error, unknown runtime) so the caller can fall back.
  */
-async function runPiston(code, input, lang, { env = process.env, fetchImpl = globalThis.fetch } = {}) {
+async function runPiston(code, input, lang, { env = process.env, fetchImpl = globalThis.fetch, server = 0 } = {}) {
+  const target = pistonServers(env)[server];
+  if (!target) return failed(`no server number ${server + 1}`, 0);
   const body = buildPistonRequest(code, input, lang, env);
   if (!body) return failed(`no runtime mapping for ${lang}`, 0);
   const start = Date.now();
   const timeout = body.compile_timeout + body.run_timeout + 15000;
   try {
-    const res = await fetchImpl(`${pistonUrl(env)}/api/v2/execute`, {
+    const res = await fetchImpl(`${target.url}/api/v2/execute`, {
       method: 'POST',
       // PISTON_TOKEN: sent as a bearer token when Piston sits on another machine
       // behind a proxy that checks it (docs/ops/fast-judge.md).
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...(env.PISTON_TOKEN ? { Authorization: `Bearer ${env.PISTON_TOKEN}` } : {}) },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...(target.token ? { Authorization: `Bearer ${target.token}` } : {}) },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(timeout),
     });
@@ -164,6 +205,10 @@ module.exports = {
   PISTON_PACKAGES,
   pistonEnabled,
   pistonUrl,
+  pistonServers,
+  pistonEngines,
+  pistonEngineName,
+  pistonIndex,
   pistonLanguages,
   usesPiston,
   buildPistonRequest,
