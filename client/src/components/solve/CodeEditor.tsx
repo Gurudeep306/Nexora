@@ -926,7 +926,7 @@ export function CodeEditor({
       {settingsOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setSettingsOpen(false)} aria-hidden="true" />
-          <div role="dialog" aria-label="Editor settings" className="card-neon absolute top-11 right-2 z-50 w-72 overflow-hidden p-0">
+          <div role="dialog" aria-label="Editor settings" className="card-neon absolute top-11 right-2 z-50 max-h-[calc(100%-3.25rem)] w-72 overflow-y-auto overscroll-contain p-0">
             <div className="border-b border-border px-3 py-2 text-[12px] font-semibold text-foreground-dim">Editor settings</div>
             <div className="space-y-3 px-3 py-3 text-[12.5px]">
               <label className="flex items-center justify-between gap-3">
