@@ -131,7 +131,7 @@ test('private mode turns ON at the first boot with the owner account', async () 
   const page = await call('GET', '/hub', null, null, { Accept: 'text/html' });
   assert.equal(page.status, 403);
   assert.match(page.text, /coming soon/i);
-  assert.match(page.text, /Owner sign in/);
+  assert.match(page.text, /Owner &amp; staff sign in/);
   const auth = await call('GET', '/auth', null, null, { Accept: 'text/html' });
   assert.notEqual(auth.status, 403, 'the sign-in page still loads');
   const status = await call('GET', '/api/site/status');
