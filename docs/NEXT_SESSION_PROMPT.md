@@ -1,91 +1,51 @@
 # Prompt for the next session
 
 Copy everything inside the box below into a new Claude Code session on the
-Nexora repository.
+Nexora repository (use the "Nexora" cloud environment, so the judges' and
+code runners' sites can be reached).
 
 ````text
 You are continuing work on NexoraGuru (GitHub repo Gurudeep306/Nexora, live at
 https://nexoraguru.in). Work with the highest, most professional quality
-possible: it must never fail in any case, it must look like the rest of the
-site, and you must be honest about anything that is not possible.
+possible: it must never fail, it must look like the rest of the site, and you
+must be honest about anything that is not possible.
 
 STEP 0 — Read first, in this order:
-  1. docs/HANDOFF.md — section 3 "Where it stands" (what is merged, what PR
-     is open, what is not done yet) and section 6 "What is left, in order".
-  2. AGENTS.md and CLAUDE.md — the project rules.
-  3. docs/ui/field-journal.md and docs/ui/premium.md — the look.
-  Only I say "merge"; merging deploys the live site.
+  1. AGENTS.md and CLAUDE.md (the project rules).
+  2. docs/HANDOFF.md section 3 "Where it stands" (session 8: everything up to
+     #145 is merged, no PR is open) and section 6 "What is left".
+  3. docs/ui/field-journal.md and docs/ui/premium.md (the look).
 
-STEP 1 — Admin → Compilers is merged (PR #133, which replaced #132).
-  Check that the live deploy finished and the site works. Nothing else here.
+BRANCH: work only on your session's own branch. Never commit to main.
 
-STEP 2 — Finish Admin → Compilers (docs/HANDOFF.md section 3, "Not done"):
-  a. The live updater has now picked newer compiler versions (GCC 16,
-     Rust 1.99, Java 27, .NET 10, Swift 6.4, Kotlin 2.4…). Check that the
-     dry run still works on them, for every traced language:
-       NODE_OPTIONS="-r <proxy preload>" node scripts/dryrun-suites/run.js <lang> [engine]
-     for go, rust, csharp, kotlin, swift (and the older suites for python,
-     cpp, c, java, javascript, typescript: node scripts/dryrun-trace.mjs
-     --corpus <lang>). If a tracer breaks on a new version, fix the tracer;
-     until it is fixed, pin the old version in Admin → Code runners.
-  b. Key-based code runners. Session 5 found (handoff section 3):
-       - Judge0 is GPL-3.0; running it on our own server is allowed.
-         Its hosted cloud (RapidAPI / paid plan): terms not read yet.
-       - JDoodle, Glot.io, Coliru: their terms could NOT be read, because
-         the cloud session's network blocks jdoodle.com, glot.io and
-         coliru.stacked-crooked.com. First ask me (with the environment
-         tool) to allow exactly those hosts, then read their terms.
-     Add only the ones whose terms allow it, with keys sealed like AI keys
-     (src/hive/vault.js), on/off and health like the others. Say plainly on
-     the admin page which ones are not allowed and why. Never guess terms
-     and never suggest breaking a provider's terms.
+MERGING (standing permission from me): squash-merge each finished PR
+yourself once CI is green, there are no conflicts, and all of these pass:
+  - npm test
+  - cd client && npx tsc -b
+  - npx oxlint on the files you touched (no new warnings)
+  - cd client && npx vite build
+  - axe 0 in light, dark and phone (360 px), with no sideways scroll
+    (client/scripts/check-page.cjs against the demo: node scripts/hive-demo.js,
+    sign in owner / owner123).
+After a merge, restart your branch from the new main.
 
-STEP 3 — Then docs/HANDOFF.md section 6, item 6 (my older requests), in this
-order, one finished, tested, pushed PR per item:
-  A1. Plain-English error explanations on the exact line, for every runner's
-      error format (the full list is in the handoff), shown in the editor
-      marker, the Result tab and the status bar.
-  A2. Live syntax check while typing, Format for every language, a cheat
-      sheet per language, a Playwright test per language.
-  A3. Coding analysis page (/api/stats) and "+XP / level progress" on
-      Accepted, with the Profile explaining how the level is earned.
-  B.  Problem pipeline: full statements, samples, limits, tags, images
-      (stored by us), an audit script and an Admin gaps page.
-  C.  Staff-only "Add a coding problem" editor (statement, tests, limits,
-      checker, editorial, solutions in 5 languages judged before publish,
-      preview as a student).
-  D.  Improve social. E. Improve contests. F. Linked platforms.
-  "Add as many features to each as possible."
-  Also section 6, item 4: dry-run polish (Swift and C# structs drawn as
-  objects, not text; the other items listed there).
-
-NOT NOW (my decision, 2026-11-16): dry run for Ruby, PHP, Lua, Perl and for
-functional languages; the ideas in section 6, item 7.
-
-When independent pieces can be built at the same time, use helper agents in
-their own worktrees, then check and integrate their work yourself.
+WORK, in order (one finished, tested PR each, with a HANDOFF section 3 update):
+  1. Dry run: a "first k of N" label when a vector or list is capped, so it
+     is clear that only part of it is drawn (HANDOFF section 6, item 4).
+     Every traced language, light/dark/phone, with tests.
+  2. Then go through the whole site page by page as a student would (Learn,
+     GATE, Practice/Solve, Contests, Messages, Profile, Settings) and fix
+     anything broken, confusing or off-style. Report what you found.
+  3. Then stop and ask me what to build next, with 3 short suggestions.
 
 RULES (never break):
-  - Never commit to main. Push only to your session's branch. One PR per
-    finished piece. No force-push. Only I say "merge". If a push is refused
-    because of already-merged history: git fetch origin <branch> &&
-    git merge -s ours FETCH_HEAD, then push.
-  - No secrets, and no model names in commits, PRs or code comments.
-  - Never skip, disable or delete a test.
-  - Hive (client/src/hive/**, --hv-* tokens) stays untouched.
-  - Tokens only, no raw colours; clay is never text; no glows or gradients.
-  - Light and dark, reduced motion, no sideways scroll at 360px.
-  - Never show made-up data. Be honest about anything not done or not
-    possible. Never suggest breaking a provider's terms.
-  - Never send my or users' personal data to outside services.
-  - Before every push: npm test, cd client && npx tsc -b, oxlint on touched
-    files (no new warnings), npx vite build, axe 0 on touched routes
-    (light, dark, phone).
-  - Keep docs/HANDOFF.md (sections 3 and 6) current and pushed before you
-    stop for any reason; commit and push often (I interrupt with new
-    messages).
-
-HOW TO REPORT TO ME: short, simple sentences (I read on my phone): what
-changed, what you checked, and what is not done and why, with screenshots
-(desktop light, desktop dark, phone).
+  - Field Journal look: design tokens only, clay is never text, no glows or
+    gradients. Light and dark must both work, respect reduced motion, no
+    sideways scroll at 360 px.
+  - Never show made-up data. Never put model names in commits, PRs or code
+    comments. Never skip, disable or delete a test.
+  - Leave Hive untouched (client/src/hive/**, --hv-* tokens).
+  - No force-push. No secrets in commits. Never send my or users' personal
+    data to outside services. Never suggest breaking a provider's terms.
+  - Be honest about limits. Explain to me in short, simple sentences.
 ````
