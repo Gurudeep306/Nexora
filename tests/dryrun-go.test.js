@@ -290,3 +290,11 @@ outer:
   assert.ok(frames.some((f) => f.structures.some((s) => s.kind === 'tree' && /^h as a heap/.test(s.label))), 'the heap is drawn as a tree too');
   assert.ok(last);
 });
+
+test('Go: a vector of 100 is drawn in part and says "first 40 of 100"', async () => {
+  const { frames } = await trace('package main\n\nimport "fmt"\n\nfunc main() {\n\ta := make([]int, 100)\n\tfor i := range a {\n\t\ta[i] = i\n\t}\n\tfmt.Println(len(a))\n}\n');
+  const arr = [...frames].reverse().map((f) => find(f, 'array', 'a')).find(Boolean);
+  assert.ok(arr, 'the array is drawn');
+  assert.equal(arr.cells.length, 40);
+  assert.match(arr.label, /first 40 of 100/);
+});

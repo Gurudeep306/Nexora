@@ -167,3 +167,11 @@ fn main() {
   assert.equal(events[events.length - 1].o, 8, 'writeln! output is counted');
   assert.ok(!frames.some((f) => f.structures.some((s) => s.kind === 'vars' && 'w' in s.vars)), 'the BufWriter is not drawn');
 });
+
+test('Rust: a vector of 100 is drawn in part and says "first 40 of 100"', async () => {
+  const { frames } = await trace('fn main() {\n    let a: Vec<i32> = (0..100).collect();\n    println!("{}", a.len());\n}\n');
+  const arr = [...frames].reverse().map((f) => find(f, 'array', 'a')).find(Boolean);
+  assert.ok(arr, 'the array is drawn');
+  assert.equal(arr.cells.length, 40);
+  assert.match(arr.label, /first 40 of 100/);
+});
