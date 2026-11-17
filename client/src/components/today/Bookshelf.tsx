@@ -99,7 +99,7 @@ export function Bookshelf({ items, homeOf }: { items: Record<string, ItemState>;
     }
   }, [items])
   // Hidden only means not on the GATE notes index; written lessons belong on the shelf.
-  const notes = (subjects.data ?? []).filter((s) => s.lessonCount > 0 && s.id !== 'demo')
+  const notes = (subjects.data ?? []).filter((s) => s.lessonCount > 0)
 
   return (
     <Reveal aria-labelledby="today-shelf">
