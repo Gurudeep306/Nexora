@@ -87,12 +87,28 @@ Contents:
   - **Java tracer**: no shutdown-hook thread any more (Compiler Explorer
     cannot start threads; Java printed a warning into the output).
   - **New compiler versions** (`scripts/dryrun-suites/newest.js`, runs what
-    the updater would pick): Python 3.14 / 3.15, GCC 16.2 (C++ and C), Java
-    27 pass after the fixes above; the full 11-language run is in progress —
-    see the PR description for the final table.
-- **Next (session 6, in parallel, helper agents in worktrees):** A1 error
-  explanations, A3 coding analysis + XP, B problem pipeline. Then A2 (after
-  A1: both touch the editor), C, D, E, F and the dry-run polish (item 4).
+    the updater would pick), all passing traced and plain: Python 3.14 /
+    3.15, GCC 16.2 (C++ and C), Java 27, Go 1.26, Rust 1.99, .NET 10, Swift
+    6.4.2, Kotlin 2.4.21 (Kotlin Playground). No version needs pinning.
+  - **Kotlin on Compiler Explorer** cannot read input on any version (its JVM
+    overflows its own class loader). `jvmSandboxFault` in
+    `src/remote-exec.js` now calls that the runner's fault, so the chain moves
+    on to Paiza instead of blaming the student.
+  - **Dry-run polish (item 4), done here:** Swift and C# structs come as
+    records (`{t:'rec'}`), and any plain object (no links) in any language
+    draws its lists/maps as `uf.p` and numbers as `uf.count`; `p` with a
+    `find(` is a union-find forest; the step note names the exact change
+    (`a[1]: 5 → 9`, `a[0] ↔ a[1]`, `st gets 7`, `cnt["x"]: 1 → 2`).
+- **Built by helpers, waiting to be integrated as their own PRs** (worktrees
+  under `.claude/worktrees/`, not committed): **B** problem pipeline
+  (`agent-a66b67d0…`: 9 of 11 sources full, images stored in the database,
+  audit script, Admin "What is missing" panel, re-import; SPOJ and DMOJ are
+  bot-checked and stay missing), **A3** coding analysis + real XP / level
+  progress + Profile "How your level is earned" (`agent-ac32da41…`).
+  **A1** error explanations still running (`agent-a029dae8…`).
+- **Next:** integrate B, A3, A1 (one PR each, after this PR merges), then A2
+  (after A1: both touch the editor), C, D, E, F, and the rest of item 4
+  (JS async/sort tracing, C pointers into arrays, linked-list pointer lanes).
 - **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and
   functional languages is **later**; the ideas in section 6, item 7 are
   **no for now**.
