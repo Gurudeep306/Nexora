@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { Plus, DoorOpen, Users, Code2, ArrowLeft, Trash2, Radio } from 'lucide-react'
 import type { Socket } from 'socket.io-client'
@@ -30,7 +31,9 @@ interface Props {
 }
 
 export function RoomsTab({ me, socket }: Props) {
-  const [activeRoomId, setActiveRoomId] = useState<string | null>(null)
+  // ?room=ID (a "Solve together" card in Messages) opens that room.
+  const [params] = useSearchParams()
+  const [activeRoomId, setActiveRoomId] = useState<string | null>(() => params.get('room'))
 
   const roomsApi = useApi<{ rooms: Room[] }>(() => api.get('/api/rooms'), [])
 

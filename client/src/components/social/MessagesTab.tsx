@@ -1,488 +1,381 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { motion } from 'motion/react'
-import { Send, SmilePlus, ArrowLeft } from 'lucide-react'
+import { BellOff, Bookmark, Loader2, PenSquare, Settings2 } from 'lucide-react'
 import type { Socket } from 'socket.io-client'
-import {
-  Avatar,
-  Badge,
-  Button,
-  Card,
-  EmptyState,
-  ErrorState,
-  LoadingBlock,
-  Textarea,
-  useToast,
-} from '@/components/ui'
+import { Avatar, SearchInput, useToast } from '@/components/ui'
 import { api, ApiError } from '@/lib/api'
-import { useApi } from '@/hooks/useApi'
-import { cn, timeAgo } from '@/lib/utils'
-import type { Friend, Message, Reactions, UnreadCount } from './types'
-import { UserBadges } from '@/components/shared/UserBadges'
-import { avatarSrc } from './types'
+import { cn } from '@/lib/utils'
+import { Thread } from './chat/Thread'
+import { JoinDialog, NewChatDialog, SavedDialog, SettingsDialog } from './chat/dialogs'
+import { listTime, nameOf, otherOf, previewText, titleOf, type Conversation, type Message, type People, type Preview } from './chat/types'
+import './chat/chat.css'
+
+/*
+  Messages: direct conversations and groups (src/chat.js). A list on the
+  left, the open conversation on the right (one at a time on a phone).
+  The URL holds the open conversation (?c=), a person to message (?peer=)
+  and an invite link to join (?join=).
+*/
 
 interface Props {
   me: string
   socket: Socket | null
 }
 
-const QUICK_EMOJIS = ['👍', '❤️', '😂', '🔥']
-const TYPING_IDLE_MS = 1500
-
-function TypingDots() {
-  return (
-    <span className="inline-flex items-center gap-1" aria-label="typing">
-      {[0, 1, 2].map((i) => (
-        <motion.span
-          key={i}
-          className="size-1.5 rounded-full bg-primary-bright"
-          animate={{ opacity: [0.3, 1, 0.3], y: [0, -2, 0] }}
-          transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.15 }}
-        />
-      ))}
-    </span>
-  )
-}
+type Filter = 'all' | 'unread' | 'groups' | 'requests'
+type Hit = Preview & { conversationId: number }
 
 export function MessagesTab({ me, socket }: Props) {
   const toast = useToast()
-  const [params] = useSearchParams()
-  const [peer, setPeer] = useState<string | null>(params.get('peer'))
-  const [messages, setMessages] = useState<Message[] | null>(null)
-  const [loadingThread, setLoadingThread] = useState(false)
-  const [threadError, setThreadError] = useState<string | null>(null)
-  const [draft, setDraft] = useState('')
-  const [sending, setSending] = useState(false)
-  const [peerTyping, setPeerTyping] = useState(false)
-  const [reactions, setReactions] = useState<Record<number, Reactions>>({})
-  const [reactingTo, setReactingTo] = useState<number | null>(null)
-  const [busyReact, setBusyReact] = useState<number | null>(null)
-  const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const typingActive = useRef(false)
-  const scrollRef = useRef<HTMLDivElement | null>(null)
-  const peerRef = useRef<string | null>(null)
-  peerRef.current = peer
+  const [params, setParams] = useSearchParams()
+  const [conversations, setConversations] = useState<Conversation[]>([])
+  const [people, setPeople] = useState<People>({})
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [filter, setFilter] = useState<Filter>('all')
+  const [q, setQ] = useState('')
+  const [found, setHits] = useState<Hit[] | null>(null)
+  const [typing, setTyping] = useState<Record<number, string[]>>({})
+  const [focus, setFocus] = useState<{ id: number; n: number } | null>(null)
+  const [dialog, setDialog] = useState<null | 'new' | 'settings' | 'saved'>(null)
+  const openId = Number(params.get('c')) || null
+  const joinToken = params.get('join')
+  const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const appRef = useRef<HTMLDivElement>(null)
 
-  const friendsApi = useApi<{ friends: Friend[] }>(
-    () => api.get('/api/friends/' + encodeURIComponent(me)),
-    [me],
-  )
-  const unreadApi = useApi<{ counts?: UnreadCount[]; total?: number }>(
-    () => api.get('/api/messages/unread/' + encodeURIComponent(me)),
-    [me],
-  )
-
-  const unreadMap = new Map<string, number>()
-  for (const c of unreadApi.data?.counts ?? []) unreadMap.set(c.from_user, c.count)
-
-  const loadThread = useCallback(
-    async (other: string) => {
-      setLoadingThread(true)
-      setThreadError(null)
-      setMessages(null)
-      try {
-        // Gotcha: this endpoint silently marks incoming messages as read.
-        const d = await api.get<{ messages: Message[] }>(
-          `/api/messages/${encodeURIComponent(me)}/${encodeURIComponent(other)}`,
-        )
-        setMessages(d.messages ?? [])
-        unreadApi.refetch()
-        // Push read receipts to the author in realtime (REST GET only updates the DB).
-        socket?.emit('mark-messages-read', { from: other })
-        // Reactions live in server memory — fetch for the most recent messages.
-        const recent = (d.messages ?? []).slice(-30)
-        const entries = await Promise.all(
-          recent.map(async (m) => {
-            try {
-              const r = await api.get<{ reactions: Reactions }>(`/api/messages/${m.id}/reactions`)
-              return [m.id, r.reactions ?? {}] as const
-            } catch {
-              return [m.id, {}] as const
-            }
-          }),
-        )
-        setReactions(Object.fromEntries(entries.filter(([, r]) => Object.keys(r).length > 0)))
-      } catch (err) {
-        setThreadError(err instanceof ApiError ? err.message : 'Failed to load conversation')
-      } finally {
-        setLoadingThread(false)
+  // Opening a conversation brings the whole messages box into view, so the
+  // box to type in is on screen without scrolling the page. On a phone the
+  // floating assistant button would sit on Send, so it steps aside.
+  useEffect(() => {
+    if (!openId) return
+    document.documentElement.dataset.chatOpen = ''
+    // After the page above has laid out (its header loads with the list).
+    const t = window.setTimeout(() => {
+      const el = appRef.current
+      if (el && el.getBoundingClientRect().top > 80) {
+        const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        el.scrollIntoView({ block: 'start', behavior: still ? 'auto' : 'smooth' })
       }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [me, socket],
-  )
-
-  function openThread(other: string) {
-    setPeer(other)
-    setDraft('')
-    setReactions({})
-  }
-
-  useEffect(() => {
-    if (peer) void loadThread(peer)
-  }, [peer, loadThread])
-
-  // Scroll thread to bottom on new messages
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
-  }, [messages, peerTyping])
-
-  const stopTyping = useCallback(() => {
-    if (typingActive.current && peerRef.current) {
-      socket?.emit('typing-stop', { to: peerRef.current })
+    }, 120)
+    return () => {
+      window.clearTimeout(t)
+      delete document.documentElement.dataset.chatOpen
     }
-    typingActive.current = false
-    if (typingTimer.current) clearTimeout(typingTimer.current)
-  }, [socket, me])
+  }, [openId, loading])
 
-  // Socket wiring: incoming DMs, typing indicators, read receipts
+  const setParam = useCallback(
+    (patch: Record<string, string | null>) => {
+      const next = new URLSearchParams(params)
+      next.set('tab', 'messages')
+      for (const [k, v] of Object.entries(patch)) {
+        if (v == null) next.delete(k)
+        else next.set(k, v)
+      }
+      setParams(next, { replace: false })
+    },
+    [params, setParams],
+  )
+  const open = useCallback((id: number | null, at?: number) => {
+    setFocus(at ? { id: at, n: Date.now() } : null)
+    setParam({ c: id ? String(id) : null, peer: null })
+  }, [setParam])
+
+  const load = useCallback(async () => {
+    try {
+      const r = await api.get<{ conversations: Conversation[]; people: People }>('/api/chat/conversations')
+      setConversations(r.conversations)
+      setPeople((p) => ({ ...p, ...r.people }))
+      setError(null)
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : 'Could not load your messages')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+  // Several events in a row cause one reload.
+  const refresh = useCallback(() => {
+    if (refreshTimer.current) clearTimeout(refreshTimer.current)
+    refreshTimer.current = setTimeout(() => void load(), 250)
+  }, [load])
+  useEffect(() => {
+    const t = setTimeout(() => void load(), 0)
+    return () => clearTimeout(t)
+  }, [load])
+
+  // ?peer=name (from a profile's "Message" button): open or start that conversation.
+  const peer = params.get('peer')
+  useEffect(() => {
+    if (!peer || peer === me) return
+    let live = true
+    api
+      .post<{ id: number }>('/api/chat/dm', { username: peer })
+      .then((r) => {
+        if (!live) return
+        void load()
+        open(r.id)
+      })
+      .catch((e) => {
+        if (!live) return
+        toast.error(e instanceof ApiError ? e.message : 'Could not open the conversation')
+        setParam({ peer: null })
+      })
+    return () => {
+      live = false
+    }
+  }, [peer, me, load, open, setParam, toast])
+
+  /* ── live list ── */
   useEffect(() => {
     if (!socket) return
-    const onNewMessage = ({ message }: { message: Message }) => {
-      if (message.to_user !== me) return
-      const other = message.from_user
-      if (other === peerRef.current) {
-        setMessages((prev) =>
-          prev && !prev.some((m) => m.id === message.id) ? [...prev, message] : prev,
-        )
-        // Reading the thread: mark read so the sender gets a receipt.
-        // Server semantics: {from: author of messages being read}; the reader is the session user.
-        socket.emit('mark-messages-read', { from: message.from_user })
-      } else {
-        unreadApi.refetch()
-      }
-    }
-    const onMessageSent = ({ message }: { message: Message }) => {
-      if (message.from_user === me && message.to_user === peerRef.current) {
-        setMessages((prev) =>
-          prev && !prev.some((m) => m.id === message.id) ? [...prev, message] : prev,
-        )
-      }
-    }
-    const onTyping = ({ from }: { from: string }) => {
-      if (from === peerRef.current) setPeerTyping(true)
-    }
-    const onStoppedTyping = ({ from }: { from: string }) => {
-      if (from === peerRef.current) setPeerTyping(false)
-    }
-    const onMessagesRead = ({ by }: { by: string }) => {
-      if (by === peerRef.current) {
-        setMessages((prev) =>
-          prev
-            ? prev.map((m) => (m.from_user === me && m.to_user === by ? { ...m, read: 1 } : m))
-            : prev,
-        )
-      }
-    }
-    socket.on('new-message', onNewMessage)
-    socket.on('message-sent', onMessageSent)
-    socket.on('user-typing', onTyping)
-    socket.on('user-stopped-typing', onStoppedTyping)
-    socket.on('messages-read', onMessagesRead)
-    return () => {
-      socket.off('new-message', onNewMessage)
-      socket.off('message-sent', onMessageSent)
-      socket.off('user-typing', onTyping)
-      socket.off('user-stopped-typing', onStoppedTyping)
-      socket.off('messages-read', onMessagesRead)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket, me])
-
-  // Cleanup typing on unmount / peer switch
-  useEffect(() => stopTyping, [stopTyping])
-  useEffect(() => stopTyping, [peer, stopTyping])
-
-  async function send() {
-    const content = draft.trim()
-    if (!content || !peer) return
-    setSending(true)
-    stopTyping()
-    try {
-      if (socket?.connected) {
-        // Server persists + relays; confirmation arrives via `message-sent`.
-        // The sender is the session user — the server ignores any `from`.
-        socket.emit('direct-message', { to: peer, content })
-      } else {
-        const d = await api.post<{ message: Message }>('/api/messages', {
-          to: peer,
-          content,
-        })
-        setMessages((prev) =>
-          prev && !prev.some((m) => m.id === d.message.id) ? [...prev, d.message] : prev,
-        )
-      }
-      setDraft('')
-    } catch (err) {
-      toast.error('Message failed', err instanceof ApiError ? err.message : 'Unknown error')
-    } finally {
-      setSending(false)
-    }
-  }
-
-  function onDraftChange(value: string) {
-    setDraft(value.slice(0, 2000))
-    if (!peer) return
-    if (!typingActive.current) {
-      typingActive.current = true
-      socket?.emit('typing-start', { to: peer })
-    }
-    if (typingTimer.current) clearTimeout(typingTimer.current)
-    typingTimer.current = setTimeout(stopTyping, TYPING_IDLE_MS)
-  }
-
-  async function toggleReaction(msgId: number, emoji: string) {
-    setBusyReact(msgId)
-    try {
-      const d = await api.post<{ reactions: Reactions }>(`/api/messages/${msgId}/react`, {
-        username: me,
-        emoji,
+    const onMessage = ({ message }: { message: Message }) => {
+      setTyping((t) => ({ ...t, [message.conversationId]: (t[message.conversationId] ?? []).filter((u) => u !== message.username) }))
+      setConversations((cs) => {
+        const c = cs.find((x) => x.id === message.conversationId)
+        if (!c) {
+          refresh()
+          return cs
+        }
+        const viewing = message.conversationId === openId && document.visibilityState === 'visible'
+        const updated: Conversation = {
+          ...c,
+          last: { id: message.id, username: message.username, kind: message.kind, body: message.poll ? '' : message.body, deleted: false, attachment: message.attachment?.kind ?? null, share: message.share?.type ?? null, poll: message.poll?.question ?? null, createdAt: message.createdAt },
+          lastMessageAt: message.createdAt,
+          unread: message.username !== me && !viewing && message.kind !== 'system' ? (c.unread ?? 0) + 1 : c.unread,
+        }
+        return [updated, ...cs.filter((x) => x.id !== c.id)]
       })
-      setReactions((prev) => ({ ...prev, [msgId]: d.reactions }))
-    } catch (err) {
-      toast.error('Reaction failed', err instanceof ApiError ? err.message : 'Unknown error')
-    } finally {
-      setBusyReact(null)
-      setReactingTo(null)
     }
-  }
+    const onTyping = (p: { conversationId: number; username: string; typing: boolean }) => {
+      setTyping((t) => {
+        const cur = (t[p.conversationId] ?? []).filter((u) => u !== p.username)
+        return { ...t, [p.conversationId]: p.typing ? [...cur, p.username] : cur }
+      })
+    }
+    const onMention = (p: { conversationId: number; from: string }) => {
+      if (p.conversationId !== openId) toast.success(`${p.from} mentioned you`)
+    }
+    socket.on('chat:message', onMessage)
+    socket.on('chat:typing', onTyping)
+    socket.on('chat:conversation', refresh)
+    socket.on('chat:mention', onMention)
+    socket.on('connect', refresh)
+    return () => {
+      socket.off('chat:message', onMessage)
+      socket.off('chat:typing', onTyping)
+      socket.off('chat:conversation', refresh)
+      socket.off('chat:mention', onMention)
+      socket.off('connect', refresh)
+    }
+  }, [socket, me, openId, refresh, toast])
 
-  const friends = friendsApi.data?.friends ?? []
-  const thread = messages ?? []
+  // Search messages (server) as you type.
+  useEffect(() => {
+    const text = q.trim()
+    if (text.length < 2) return
+    let live = true
+    const t = setTimeout(() => {
+      api
+        .get<{ results: Hit[] }>(`/api/chat/search?q=${encodeURIComponent(text)}`)
+        .then((r) => live && setHits(r.results))
+        .catch(() => live && setHits([]))
+    }, 250)
+    return () => {
+      live = false
+      clearTimeout(t)
+    }
+  }, [q])
+
+  const hits = q.trim().length >= 2 ? found : null
+  const requests = conversations.filter((c) => c.request)
+  const shown = useMemo(() => {
+    const text = q.trim().toLowerCase()
+    return conversations.filter((c) => {
+      if (filter === 'requests' ? !c.request : c.request) return false
+      if (filter === 'unread' && !c.unread) return false
+      if (filter === 'groups' && c.kind !== 'group') return false
+      if (text && !titleOf(c, me, people).toLowerCase().includes(text) && !c.members.some((m) => m.username.toLowerCase().includes(text))) return false
+      return true
+    })
+  }, [conversations, filter, q, me, people])
+
+  const FILTERS: { id: Filter; label: string; n?: number }[] = [
+    { id: 'all', label: 'All' },
+    { id: 'unread', label: 'Unread', n: conversations.filter((c) => !c.request && c.unread).length },
+    { id: 'groups', label: 'Groups' },
+    { id: 'requests', label: 'Requests', n: requests.length },
+  ]
 
   return (
-    <div className="grid h-[calc(100vh-15rem)] min-h-[420px] grid-cols-1 gap-5 md:grid-cols-[280px_1fr]">
-      {/* ── Conversation list ── */}
-      <Card className="flex min-h-0 flex-col overflow-hidden">
-        <div className="border-b border-border px-4 py-3">
-          <h2 className="font-display text-xs tracking-wider text-foreground uppercase">
-            Conversations
-          </h2>
+    <div ref={appRef} className={cn('chat-app', openId && 'has-open')}>
+      <aside className="chat-side" aria-label="Conversations">
+        <div className="chat-side-head">
+          <h2 className="m-0 text-[17px] font-semibold text-text-primary">Messages</h2>
+          <span className="ml-auto flex items-center gap-0.5">
+            <button type="button" className="chat-act" aria-label="Saved messages" onClick={() => setDialog('saved')}>
+              <Bookmark className="size-4" aria-hidden="true" />
+            </button>
+            <button type="button" className="chat-act" aria-label="Who can message you" onClick={() => setDialog('settings')}>
+              <Settings2 className="size-4" aria-hidden="true" />
+            </button>
+            <button type="button" className="chat-new" onClick={() => setDialog('new')}>
+              <PenSquare className="size-4" aria-hidden="true" /> New
+            </button>
+          </span>
         </div>
-        <div tabIndex={0} aria-label="Conversations list" className="min-h-0 flex-1 overflow-y-auto p-2 outline-none focus-visible:ring-2 focus-visible:ring-accent-brand">
-          {friendsApi.loading ? (
-            <LoadingBlock rows={4} className="p-2" />
-          ) : friends.length === 0 ? (
-            <EmptyState
-              className="py-10"
-              icon="messages"
-              title="No friends yet"
-              description="Add friends to start chatting."
-            />
+        <div className="px-3 pb-2">
+          <SearchInput value={q} onChange={(e) => setQ(e.target.value)} onClear={() => setQ('')} placeholder="Search people and messages" aria-label="Search people and messages" />
+        </div>
+        <div className="chat-filters" role="tablist" aria-label="Show">
+          {FILTERS.map((f) => (
+            <button key={f.id} type="button" role="tab" aria-selected={filter === f.id} className={cn('chat-filter', filter === f.id && 'is-on')} onClick={() => setFilter(f.id)}>
+              {f.label}
+              {!!f.n && <span className="chat-count">{f.n}</span>}
+            </button>
+          ))}
+        </div>
+        <div className="chat-side-list">
+          {loading ? (
+            <div className="chat-center py-8">
+              <Loader2 className="size-5 animate-spin text-text-muted" aria-label="Loading" />
+            </div>
+          ) : error ? (
+            <p className="px-4 py-6 text-[13px] text-text-secondary">
+              {error}{' '}
+              <button type="button" className="chat-link-btn" onClick={() => void load()}>
+                Try again
+              </button>
+            </p>
           ) : (
-            <ul className="space-y-1">
-              {friends.map((f) => (
-                <li key={f.username}>
-                  <button
-                    onClick={() => openThread(f.username)}
-                    aria-current={peer === f.username}
-                    className={cn(
-                      'flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors duration-200',
-                      peer === f.username
-                        ? 'border border-primary/50 bg-primary/10'
-                        : 'border border-transparent hover:bg-surface-2',
-                    )}
-                  >
-                    <Avatar
-                      seed={f.username}
-                      avatar={f.avatar}
-                      src={avatarSrc(f)}
-                      name={f.display_name || f.username}
-                      size="sm"
-                      online={f.status === 'online'}
-                    />
-                    <span className="min-w-0 flex-1">
-                      <span className="flex items-center gap-1.5 truncate text-sm font-semibold text-foreground">
-                        <span className="truncate">{f.display_name || f.username}</span>
-                        <UserBadges username={f.username} />
-                      </span>
-                      <span className="block truncate text-xs text-foreground-faint">
-                        @{f.username}
-                      </span>
-                    </span>
-                    {(unreadMap.get(f.username) ?? 0) > 0 && (
-                      <Badge variant="accent" className="tabular-nums">
-                        {unreadMap.get(f.username)}
-                      </Badge>
-                    )}
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <>
+              {shown.length === 0 && !hits?.length && (
+                <p className="px-4 py-6 text-[13px] text-text-secondary">
+                  {filter === 'requests' ? 'No message requests.' : q ? 'No conversations match.' : 'No conversations yet. Start one with New.'}
+                </p>
+              )}
+              <ul className="chat-convs">
+                {shown.map((c) => {
+                  const other = otherOf(c, me)
+                  const tp = (typing[c.id] ?? []).filter((u) => u !== me)
+                  const p = other ? people[other] : null
+                  return (
+                    <li key={c.id}>
+                      <button type="button" className={cn('chat-conv', c.id === openId && 'is-open', !!c.unread && 'is-unread')} aria-current={c.id === openId ? 'true' : undefined} onClick={() => open(c.id)}>
+                        {other ? (
+                          <Avatar size="md" seed={other} avatar={p?.avatar} src={p?.avatar_url} name={nameOf(people, other)} online={p?.status === 'online'} />
+                        ) : (
+                          <span className="chat-group-badge is-lg" aria-hidden="true">{(c.title || 'G').slice(0, 1).toUpperCase()}</span>
+                        )}
+                        <span className="min-w-0 flex-1 text-left">
+                          <span className="flex items-baseline gap-2">
+                            <span className="truncate font-medium text-text-primary">{titleOf(c, me, people)}</span>
+                            <span className="ml-auto shrink-0 text-[11.5px] text-text-muted">{listTime(c.last?.createdAt ?? c.lastMessageAt)}</span>
+                          </span>
+                          <span className="flex items-center gap-2">
+                            <span className={cn('truncate text-[12.5px]', c.unread ? 'text-text-primary' : 'text-text-muted')}>
+                              {tp.length ? `${nameOf(people, tp[0])} is typing…` : c.request ? (c.kind === 'group' ? 'Invited you to the group' : 'Wants to message you') : previewText(c.last, me, people, c.kind === 'group')}
+                            </span>
+                            {c.muted && <BellOff className="ml-auto size-3.5 shrink-0 text-text-muted" aria-label="Muted" />}
+                            {!!c.unread && (
+                              <span className={cn('chat-count', !c.muted && 'ml-auto', c.muted && 'is-muted')} aria-label={`${c.unread} unread`}>
+                                {c.unread > 99 ? '99+' : c.unread}
+                              </span>
+                            )}
+                          </span>
+                        </span>
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+              {hits && hits.length > 0 && (
+                <section aria-label="Messages found" className="pb-3">
+                  <h3 className="chat-side-sub">Messages</h3>
+                  <ul className="chat-convs">
+                    {hits.map((h) => {
+                      const c = conversations.find((x) => x.id === h.conversationId)
+                      return (
+                        <li key={h.id}>
+                          <button type="button" className="chat-conv" onClick={() => open(h.conversationId, h.id)}>
+                            <span className="min-w-0 flex-1 text-left">
+                              <span className="flex items-baseline gap-2">
+                                <span className="truncate text-[12.5px] font-medium text-text-primary">{c ? titleOf(c, me, people) : 'Conversation'}</span>
+                                <span className="ml-auto shrink-0 text-[11.5px] text-text-muted">{listTime(h.createdAt)}</span>
+                              </span>
+                              <span className="block truncate text-[12.5px] text-text-secondary">
+                                {h.username === me ? 'You' : nameOf(people, h.username)}: <Mark text={h.body} q={q.trim()} />
+                              </span>
+                            </span>
+                          </button>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </section>
+              )}
+            </>
           )}
         </div>
-      </Card>
+      </aside>
 
-      {/* ── Thread ── */}
-      <Card className="flex min-h-0 flex-col overflow-hidden">
-        {!peer ? (
-          <div className="flex flex-1 items-center justify-center">
-            <EmptyState
-              icon="messages"
-              title="Select a conversation"
-              description="Pick a friend on the left to open the encrypted-ish rift channel."
-            />
-          </div>
+      <div className="chat-main">
+        {openId ? (
+          <Thread
+            key={openId}
+            convId={openId}
+            me={me}
+            people={people}
+            socket={socket}
+            focus={focus}
+            conversations={conversations}
+            onBack={() => open(null)}
+            onChanged={refresh}
+            onLeft={() => {
+              open(null)
+              void load()
+            }}
+          />
         ) : (
-          <>
-            <div className="flex items-center gap-3 border-b border-border px-4 py-3">
-              <Button
-                size="icon-sm"
-                variant="ghost"
-                className="md:hidden"
-                aria-label="Close conversation"
-                onClick={() => setPeer(null)}
-              >
-                <ArrowLeft />
-              </Button>
-              <Avatar seed={peer} name={peer} size="sm" />
-              <div className="min-w-0 flex-1">
-                <p className="flex items-center gap-1.5 truncate font-display text-sm tracking-wider text-foreground">
-                  @{peer}
-                  <UserBadges username={peer} />
-                </p>
-                <p className="text-[11px] text-foreground-faint">
-                  {peerTyping ? 'typing…' : socket?.connected ? 'realtime channel open' : 'offline mode — REST fallback'}
-                </p>
-              </div>
-              {peerTyping && <TypingDots />}
-            </div>
-
-            <div ref={scrollRef} tabIndex={0} aria-label="Messages" className="min-h-0 flex-1 space-y-2.5 overflow-y-auto p-4 outline-none focus-visible:ring-2 focus-visible:ring-accent-brand">
-              {loadingThread ? (
-                <LoadingBlock rows={5} />
-              ) : threadError ? (
-                <ErrorState message={threadError} onRetry={() => peer && void loadThread(peer)} />
-              ) : thread.length === 0 ? (
-                <EmptyState
-                  className="py-10"
-                  title="No messages yet"
-                  description={`Say hi to @${peer} — the rift is listening.`}
-                />
-              ) : (
-                thread.map((m) => {
-                  const mine = m.from_user === me
-                  const msgReactions = reactions[m.id] ?? {}
-                  return (
-                    <div
-                      key={m.id}
-                      className={cn('group flex items-end gap-2', mine && 'flex-row-reverse')}
-                    >
-                      <div className={cn('max-w-[78%] sm:max-w-[65%]', mine && 'text-right')}>
-                        <div
-                          className={cn(
-                            'rounded-xl px-3.5 py-2 text-sm break-words',
-                            mine
-                              ? 'rounded-br-sm bg-primary/25 text-foreground border border-primary/40'
-                              : 'rounded-bl-sm bg-surface-2 text-foreground border border-border',
-                          )}
-                        >
-                          <p className="whitespace-pre-wrap text-left">{m.content}</p>
-                        </div>
-                        <div
-                          className={cn(
-                            'mt-0.5 flex items-center gap-1.5 px-1 text-[10px] text-foreground-faint',
-                            mine && 'justify-end',
-                          )}
-                        >
-                          <span className="tabular-nums">{timeAgo(m.created_at)}</span>
-                          {mine && (
-                            <span aria-label={m.read ? 'read' : 'delivered'}>
-                              {m.read ? (
-                                <span className="text-cyan">✓✓</span>
-                              ) : (
-                                <span>✓</span>
-                              )}
-                            </span>
-                          )}
-                        </div>
-                        {Object.keys(msgReactions).length > 0 && (
-                          <div
-                            className={cn('mt-1 flex flex-wrap gap-1', mine && 'justify-end')}
-                          >
-                            {Object.entries(msgReactions).map(([emoji, users]) => (
-                              <span
-                                key={emoji}
-                                title={users.join(', ')}
-                                className={cn(
-                                  'inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[11px] tabular-nums',
-                                  users.includes(me)
-                                    ? 'border-primary/60 bg-primary/15'
-                                    : 'border-border bg-surface-2',
-                                )}
-                              >
-                                {emoji} {users.length}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <div className="relative shrink-0">
-                        <button
-                          onClick={() => setReactingTo(reactingTo === m.id ? null : m.id)}
-                          disabled={busyReact === m.id}
-                          aria-label={`React to message`}
-                          className="cursor-pointer rounded-md p-1 text-foreground-faint opacity-0 transition-opacity duration-200 group-hover:opacity-100 hover:text-primary-bright focus-visible:opacity-100"
-                        >
-                          <SmilePlus className="size-4" />
-                        </button>
-                        {reactingTo === m.id && (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.9, y: 4 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            transition={{ duration: 0.15 }}
-                            className="absolute bottom-6 left-0 z-10 flex gap-1 rounded-lg border border-border bg-surface p-1 shadow-lg"
-                          >
-                            {QUICK_EMOJIS.map((e) => (
-                              <button
-                                key={e}
-                                onClick={() => void toggleReaction(m.id, e)}
-                                aria-label={`React with ${e}`}
-                                className="cursor-pointer rounded p-1 text-base transition-transform duration-150 hover:scale-125"
-                              >
-                                {e}
-                              </button>
-                            ))}
-                          </motion.div>
-                        )}
-                      </div>
-                    </div>
-                  )
-                })
-              )}
-            </div>
-
-            <div className="border-t border-border p-3">
-              <div className="flex items-end gap-2">
-                <Textarea
-                  value={draft}
-                  onChange={(e) => onDraftChange(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault()
-                      void send()
-                    }
-                  }}
-                  rows={1}
-                  maxLength={2000}
-                  placeholder={`Message @${peer}… (Enter to send)`}
-                  aria-label="Message text"
-                  className="min-h-10 max-h-32 flex-1 resize-none"
-                />
-                <Button
-                  variant="accent"
-                  size="icon"
-                  onClick={() => void send()}
-                  disabled={!draft.trim() || sending}
-                  aria-label="Send message"
-                >
-                  <Send />
-                </Button>
-              </div>
-            </div>
-          </>
+          <div className="chat-empty">
+            <p className="ed-h3 m-0">Your messages</p>
+            <p className="m-0 max-w-sm text-[13.5px] text-text-secondary">Talk one to one or in study groups. Share problems, solutions, contests and GATE questions, and run code right in the chat.</p>
+            <button type="button" className="chat-new mt-2" onClick={() => setDialog('new')}>
+              <PenSquare className="size-4" aria-hidden="true" /> New message
+            </button>
+          </div>
         )}
-      </Card>
+      </div>
+
+      <NewChatDialog
+        open={dialog === 'new'}
+        onClose={() => setDialog(null)}
+        me={me}
+        onOpened={(id) => {
+          void load()
+          open(id)
+        }}
+      />
+      <SettingsDialog open={dialog === 'settings'} onClose={() => setDialog(null)} />
+      <SavedDialog open={dialog === 'saved'} onClose={() => setDialog(null)} me={me} people={people} conversations={conversations} onJump={(c, id) => open(c, id)} />
+      <JoinDialog
+        token={joinToken}
+        onClose={() => setParam({ join: null })}
+        onJoined={(id) => {
+          void load()
+          setParam({ join: null, c: String(id) })
+        }}
+      />
     </div>
+  )
+}
+
+function Mark({ text, q }: { text: string; q: string }) {
+  const i = text.toLowerCase().indexOf(q.toLowerCase())
+  if (i < 0 || !q) return <>{text}</>
+  return (
+    <>
+      {text.slice(0, i)}
+      <mark className="chat-hit">{text.slice(i, i + q.length)}</mark>
+      {text.slice(i + q.length)}
+    </>
   )
 }

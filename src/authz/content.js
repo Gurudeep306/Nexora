@@ -22,6 +22,7 @@ function registerContentType(name, def = {}) {
 }
 
 registerContentType("message", { table: "messages", id: "id", text: "content", owner: "from_user", label: "Direct message" });
+registerContentType("chat_message", { table: "chat_messages", id: "id", text: "body", owner: "username", label: "Message" });
 registerContentType("room_message", { table: "room_messages", id: "id", text: "content", owner: "username", label: "Room message" });
 registerContentType("profile", { table: "users", id: "username", text: "bio", owner: "username", label: "Profile bio" });
 registerContentType("custom_problem", { table: "custom_problems", id: "id", text: "statement", owner: "creator", label: "Workshop problem" });
