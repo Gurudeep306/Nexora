@@ -203,7 +203,7 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
 
   return (
     <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }} className="pf-hero card overflow-hidden" aria-label={`${name}'s profile`}>
-      <CoverArt cover={p.cover} className="pf-cover h-36 sm:h-52" />
+      <CoverArt cover={p.cover} seed={p.username} accent={p.accent} className="pf-cover h-36 sm:h-52" />
       <div className="pf-hero-body relative px-4 pb-5 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
           {journal && stats ? (
