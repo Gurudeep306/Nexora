@@ -141,8 +141,8 @@ test('a member given one section opens Admin for that section only; nothing leak
   assert.equal((await call('GET', '/api/admin/me', c[MEM])).status, 404, 'back to a plain member');
 });
 
-test('only the owner and top admins open Staff access; top admins stay below their own rank and level', async () => {
-  assert.equal((await call('GET', '/api/admin/staff-access', c[ADA])).status, 403, 'an admin is not a top admin');
+test('only the owner, and admins the owner allows, open Staff access; they stay below their own rank and level', async () => {
+  assert.equal((await call('GET', '/api/admin/staff-access', c[ADA])).status, 403, 'admins need the owner to allow it');
   assert.equal((await call('PUT', `/api/admin/staff-access/${ADA}/top`, c[ADA], { on: true })).status, 403, 'nobody makes themselves one');
   ok(await call('PUT', `/api/admin/staff-access/${ADA}/top`, c[OWNER], { on: true }));
   const list = await call('GET', '/api/admin/staff-access', c[ADA]);
@@ -151,10 +151,13 @@ test('only the owner and top admins open Staff access; top admins stay below the
   const mod = list.body.people.find((p) => p.username === MOD);
   assert.equal(mod.editable, true);
   assert.equal(mod.chosen.site, 'view');
-  assert.ok(!list.body.people.some((p) => p.username === OWNER), 'the owner is never listed');
+  const owner = list.body.people.find((p) => p.username === OWNER);
+  assert.equal(owner.role, 'owner', 'the owner heads the list');
+  assert.equal(owner.editable, false);
+  assert.equal(list.body.people[0].username, OWNER, 'listed by rank, owner first');
   assert.equal(list.body.people.find((p) => p.username === BEA).editable, false, 'not another admin');
 
-  ok(await set(ADA, MOD, 'users', 'view'), 'a top admin sets a moderator');
+  ok(await set(ADA, MOD, 'users', 'view'), 'an allowed admin sets a moderator');
   assert.equal((await set(ADA, BEA, 'users', 'view')).status, 403, 'not another admin');
   assert.equal((await set(ADA, ADA, 'users', 'none')).status, 400, 'not themselves');
   const more = await set(ADA, MOD, 'site', 'edit');
@@ -169,5 +172,24 @@ test('only the owner and top admins open Staff access; top admins stay below the
   const audit = await call('GET', '/api/admin/audit', c[OWNER]);
   const actions = (audit.body.entries || audit.body.rows || audit.body.log || []).map((e) => e.action);
   assert.ok(actions.includes('staff.section'), JSON.stringify(Object.keys(audit.body)));
-  assert.ok(actions.includes('staff.top_admin.grant'));
+  assert.ok(actions.includes('staff.manage.grant'));
+});
+
+test('team titles: set by the owner (or an allowed admin for people below them), shown on the profile', async () => {
+  const title = (who, user, t) => call('PUT', `/api/admin/staff-access/${user}/title`, c[who], { title: t });
+  ok(await title(OWNER, OWNER, 'Founder'), 'the owner titles themselves');
+  ok(await title(OWNER, MOD, '  Head of   GATE content '));
+  const p = await call('GET', `/api/profiles/${MOD}`, c[ZED]);
+  assert.equal(p.body.profile.team_title, 'Head of GATE content', 'spaces tidied, shown to everyone');
+  assert.equal((await call('GET', `/api/profiles/${OWNER}`, c[ZED])).body.profile.team_title, 'Founder');
+  assert.equal((await title(OWNER, MOD, 'x'.repeat(41))).status, 400);
+  assert.equal((await title(OWNER, MOD, '<b>hi</b>')).status, 400);
+  assert.equal((await title(MOD, MOD, 'Boss')).status, 403, 'moderators cannot set titles');
+  assert.equal((await call('PUT', `/api/admin/staff-access/${MOD}/top`, c[OWNER], { on: true })).status, 400, 'only admins can be allowed to manage staff');
+  ok(await call('PUT', `/api/admin/staff-access/${ADA}/top`, c[OWNER], { on: true }));
+  ok(await title(ADA, MOD, 'GATE editor'), 'an allowed admin titles a moderator');
+  assert.equal((await title(ADA, BEA, 'Nope')).status, 403, 'but not another admin');
+  assert.equal((await title(ADA, ADA, 'Boss')).status, 400, 'nor themselves');
+  ok(await title(OWNER, MOD, ''), 'cleared');
+  assert.equal((await call('GET', `/api/profiles/${MOD}`, c[ZED])).body.profile.team_title, null);
 });
