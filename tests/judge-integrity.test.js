@@ -78,6 +78,9 @@ test.before(async () => {
     };
     bare = add('9001A', 800);
     stored = add('9001B', 1500);
+    // Codeforces' official tests (as the open dataset supplies them): only a full check counts as solved (owner's rule, session 10).
+    db.exec('CREATE TABLE IF NOT EXISTS cf_dataset_tests (id TEXT PRIMARY KEY, tests TEXT NOT NULL, exact INTEGER NOT NULL, fetched_at INTEGER NOT NULL)');
+    db.prepare('INSERT OR REPLACE INTO cf_dataset_tests(id, tests, exact, fetched_at) VALUES(?,?,1,?)').run('9001/B', JSON.stringify([{ input: '21', output: '42' }]), Date.now());
     sampled = add('9001C', 900);
     db.prepare("INSERT INTO problem_statements(problem_rowid, samples, scraped_at) VALUES(?,?,datetime('now'))")
       .run(sampled, JSON.stringify([{ input: '4\n', output: '8\n' }]));

@@ -9,6 +9,7 @@ import type { BookmarkedProblem } from './types'
 
 const STATUS_META: Record<string, { label: string; variant: 'success' | 'warning' | 'default' }> = {
   solved: { label: 'Solved', variant: 'success' },
+  examples: { label: 'Passed the examples', variant: 'default' },
   attempted: { label: 'Attempted', variant: 'warning' },
   unsolved: { label: 'Unsolved', variant: 'default' },
 }

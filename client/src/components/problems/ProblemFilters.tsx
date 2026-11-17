@@ -14,7 +14,7 @@ import {
 
 export type SortKey = 'rating' | 'title' | 'id'
 export type SortOrder = 'asc' | 'desc'
-export type StatusFilter = 'all' | 'solved' | 'attempted' | 'unsolved'
+export type StatusFilter = 'all' | 'solved' | 'examples' | 'attempted' | 'unsolved'
 
 export interface ProblemFilterState {
   search: string
@@ -162,6 +162,7 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
         <PillSelect label="Status" value={filters.status} onChange={(v) => onChange({ status: v as StatusFilter })}>
           <option value="all">Any status</option>
           <option value="solved">Solved</option>
+          <option value="examples">Passed the examples</option>
           <option value="attempted">Attempted</option>
           <option value="unsolved">Unsolved</option>
         </PillSelect>

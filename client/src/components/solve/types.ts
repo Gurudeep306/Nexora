@@ -174,7 +174,10 @@ export interface LevelState {
 
 export interface XpReport {
   gainedXp: number
+  /** A full check passed for the first time: the problem is now solved. */
   firstSolve: boolean
+  /** Only the examples ran: XP counts, but the problem shows "Passed the examples", not solved. */
+  examplesOnly?: boolean
   before: LevelState
   after: LevelState
   solved: number
