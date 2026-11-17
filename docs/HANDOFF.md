@@ -55,7 +55,7 @@ Contents:
 - `git add -A` also picks up helper worktrees under `.claude/worktrees/`.
   Add that folder to `.git/info/exclude` first.
 
-## 3. Where it stands (2026-11-17, session 7)
+## 3. Where it stands (2026-11-17, session 8)
 
 - **Owner's standing instruction (2026-11-17):** "merge everything as any
   work is done i want no issues". Each finished PR is merged by the agent
@@ -197,7 +197,7 @@ Contents:
     the Solve page shows Description / Solution. Axe 0 and no sideways scroll
     on the list and all six tabs, light, dark and phone.
   - Tests: `tests/authoring.test.js` (4), `tests/authoring-routes.test.js` (5).
-- **D, Messages — pushed on `claude/fervent-curie-vjgcd8`, NOT merged yet (no PR yet).**
+- **D, Messages — PR opened (session 8), merged by the agent once CI is green.**
   The owner asked for "the best system possible" with more features (2026-11-17).
   - **Server**: `src/chat.js` (rules) + `src/routes/chat.js` (`/api/chat/*`).
     Tables `chat_conversations`, `chat_members` (role, last_read_id, muted,
@@ -236,16 +236,27 @@ Contents:
     request showed "Sent" until accepted then "Seen", typing live, reaction
     live, group invite under Requests, poll vote live, @mention highlighted,
     search found the message.
-  - **Still to do before the PR**: phone and dark screenshots, axe 0 (light,
-    dark, phone) on `/social?tab=messages` with a conversation open; then PR
-    and merge.
+  - **Final check (session 8)** on the demo with 3 users (a DM with a
+    reply, a reaction, a code block and an @mention; a group with a poll):
+    axe 0 and no sideways scroll on `/social?tab=messages`, the list and
+    both conversations, light, dark and phone. Fixed on the way:
+    - the conversation box fills the screen under the top bar and scrolls
+      into view when opened, so the box to type in is always on screen
+      (it was below the fold on a phone);
+    - on a phone the floating assistant button steps aside while a chat is
+      open (it covered Send: `:root[data-chat-open] .ai-fab`);
+    - on a touch screen a message's actions show for the message you tap,
+      and a tap elsewhere puts them away (they showed under every message);
+    - a reply's quote shows code as "[code]", not raw ``` marks
+      (`quoteText` in `chat/types.ts`);
+    - day and "New messages" lines are plain list items (axe "list").
 - **Owner asked (2026-11-17) where "How it runs" went**: since the Solve
   redesign it is Dry run tab → "Under the hood". Offered: its own tab again,
   or a top-bar button. Waiting for the owner's choice.
 - **Lost work, rebuilt from the plan:** session 6 built B (problem pipeline)
   and A3 (coding analysis + XP) in helper worktrees on its own machine and
   never pushed them. They are not recoverable here and are rebuilt next.
-- **Next, in order:** finish D (axe + PR), then E (contests), F (linked platforms), then
+- **Next, in order:** E (contests), F (linked platforms), then
   the rest of item 4 (JS async/sort tracing, C pointers into arrays,
   linked-list pointer lanes).
 - **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and

@@ -561,12 +561,12 @@ function FragmentRow({ day, unread, children }: { day: string | null; unread: bo
   return (
     <>
       {day && (
-        <li className="chat-day" role="separator">
+        <li className="chat-day">
           <span>{day}</span>
         </li>
       )}
       {unread && (
-        <li className="chat-unread" id="chat-unread-line" role="separator">
+        <li className="chat-unread" id="chat-unread-line">
           <span>New messages</span>
         </li>
       )}
