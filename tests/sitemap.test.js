@@ -245,3 +245,17 @@ test('Admin sections and Social tabs are parts too; the owner can keep an Admin 
   assert.equal(st.body.flags.social, true, 'Social itself stays on');
   ok(await call('PUT', '/api/admin/sitemap/social.messages', c[OWNER], { mode: 'visible' }));
 });
+
+test('Hive parts have two choices: admins and the owner (full access, whatever else was chosen), or the owner only', () => {
+  const sitemap = require('../src/sitemap');
+  const part = sitemap.BY_ID.get('hive.copilot');
+  const admin = { owner: false, staff: true, hive: true };
+  const moderator = { owner: false, staff: true, hive: false };
+  const owner = { owner: true, staff: true, hive: true };
+  for (const mode of ['visible', 'staff', 'soon']) {
+    assert.equal(sitemap.allowed(mode, admin, part), true, `admins have full access (${mode})`);
+    assert.equal(sitemap.allowed(mode, moderator, part), false, `never for anyone else (${mode})`);
+  }
+  assert.equal(sitemap.allowed('hidden', admin, part), false, 'owner only');
+  assert.equal(sitemap.allowed('hidden', owner, part), true);
+});
