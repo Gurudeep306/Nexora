@@ -135,6 +135,8 @@ python3 scripts/gate-notes/inventory.py --notes GATE_NOTES   # must print the 13
 The DL and DM digests made earlier (if the owner had them on disk) arrive in
 `content/gate-notes/_digest/`; reuse the DM ones, write new ones for the other
 subjects. How the owner sets up the private repo: [`owner-setup.md`](owner-setup.md).
+The Digital Logic digests (`_digest/dl/A.md` … `E.md`, with `C` in three parts) are the
+model for every new digest: ask the owner for them if they are not in `GATE_NOTES/digests/dl/`.
 
 **If `GATE_NOTES/` is not available**, do not stop and do not guess what the
 notes say. Write the digest stage from the official syllabus, the PYQs and the
@@ -151,6 +153,26 @@ pdftoppm -r 200 -f 120 -l 130 -png GATE_NOTES/<file>.pdf /tmp/toc-A   # pages 12
 ```
 
 ---
+
+## 3b. How Digital Logic was actually built (copy this rhythm)
+
+From the git history of `content/gate-notes/dl` (2026-10-16 → 10-23):
+
+1. **Inventory** of all sets (N0), then **digests** of every set, page by page.
+2. **Checkpoint A:** the master outline (every PYQ assigned), the **pilot
+   chapter's plan**, and the errata file, in one commit.
+3. **Pilot chapter, one lesson per commit**, each with its check script; a new
+   viz primitive was added the moment a lesson needed it (`arc` in lesson 1).
+4. A **deepening pass** on the pilot lessons, then a **second-pass review** by
+   independent reviewers, fixes, and only then **publish** the chapter.
+5. Every later chapter: **plan** (lessons, block ids, PYQ map, viz list, lab) →
+   the **Live Lab and any viz primitive** (`gate`, `:::lab`, Gate Bench) →
+   **lesson drafts** one per commit → **all the chapter's PYQ solutions** →
+   the **viz generator and its check** → **examiner review fixes** in pairs of
+   lessons → **publish** with "N/N PYQs covered" in the commit.
+6. Owner feedback changed the structure twice (IEEE-754 moved into Chapter 1;
+   arithmetic circuits before building blocks). Such moves keep lesson ids and
+   slugs, and update the outline, plans and practice ids in the same commit.
 
 ## 4. The stages
 
@@ -176,11 +198,49 @@ stage starts. Record each stage in `content/gate-notes/_progress.json`
 the DL lessons above in full.
 
 ### N1 — Digests and master outline (Checkpoint A)
-1. **Digests (internal, never committed):** for every set, page by page, write
-   `content/gate-notes/_digest/<s>/<set>.md`: topics, definitions, theorems,
-   tricks, typical examples (in your own words), and errors you find (these go
-   to `_errata/<s>.md`, which is committed). Digests are a checklist of *what*
-   to cover, never text to reuse.
+1. **Digests (internal, never committed)**: one file per set,
+   `content/gate-notes/_digest/<s>/<SET>.md`, written exactly the way the Digital
+   Logic digests were (ask the owner for `_digest/dl/` as the model):
+   - **Read every page as an image.** Render with `pdftoppm` at the dpi in
+     `_quality.json` (200–250; two-up "spreads"/"dense" scans need 250–300 and
+     each half read separately). Text extraction is useless for handwriting.
+   - **Big sets go in parts** of about 60–80 pages: `C.part1.md`,
+     `C.part2.md`, … then merge them into `C.md`. Each file's **first line**
+     is `Progress: pages read so far: <first>–<last> (complete|in progress)`,
+     so a session that stops can resume at the exact page.
+   - **Sections, in this order, in every digest:**
+     1. `# Set <X> digest (pages a–b)`
+     2. `## Topic map`: every topic with its page range, in page order, front
+        matter included.
+     3. `## Key points by topic`: `### <Topic> (pp. a–b)` then the facts,
+        definitions, formulas and rules on those pages, in our own words.
+     4. `## Tricks and shortcuts`: each one tagged **CORRECT**,
+        **CORRECT-WITH-CAVEAT** (say the caveat) or **WRONG** (say why), with
+        the reason it works.
+     5. `## Diagrams`: every figure, described in words (what is drawn, what it
+        shows, page). This is the seed list for our own Viz scenes; never trace
+        or copy the figure.
+     6. `## Worked examples / PYQs solved in the set`: each example with page,
+        the question in short, the set's answer, and **"Verified."** once you
+        have re-derived it (by hand or script). Tag any GATE year the set marks.
+        If the set's answer is wrong or unfinished, give the correct one.
+     7. `## Unclear or illegible`: page-by-page notes on anything you could not
+        read with certainty (cut margins, overwriting, bleed-through).
+     8. `## Errors noticed`: each error with page, what the set says, the
+        correct version, and a derivation or counterexample (e.g. "7 − (−2) = 9
+        overflows in 4 bits although the operands have opposite signs").
+     9. `## Pages read`: how pages were rendered, the exact page ranges read
+        and the count (it must equal the set's page count in `_inventory.md`),
+        which pages are non-content, and coverage gaps (topics the set skips).
+   - Digests are a checklist of *what* to cover and *where sets go wrong*. Never
+     reuse their wording, examples or figures in lessons.
+   - Then write **`_errata/<s>.md` (committed)** like `_errata/dl.md`: a legend
+     (E = one set's error, X = sets disagree, B = question-bank note), a table
+     of cross-set disagreements with the correct version, then each set's
+     errors. Lessons teach the correct version, and classic slips become
+     `:::trap` blocks.
+   - Gate for digests: every page of every set accounted for in `Pages read`;
+     every example re-derived; every error has a correction.
 2. **Master outline** `content/gate-notes/<s>/_outline.md`, in the exact format
    of `dl/_outline.md` and `dm/_outline.md`:
    - how the map was built (official syllabus + every set + every PYQ);
