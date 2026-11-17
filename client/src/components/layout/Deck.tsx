@@ -15,7 +15,6 @@ import { prefetchHandlers } from '@/routes'
 import { cn } from '@/lib/utils'
 import { DUR, EASE_EMPHASIZED, tEnter } from '@/lib/motion'
 import { useSite } from '@/context/SiteContext'
-import { featureForPath } from '@/lib/site'
 import { openCommandPalette } from './CommandPalette'
 import { DockBadge } from './DockBadge'
 import { DockEditor } from './DockEditor'
@@ -222,12 +221,13 @@ export function Deck() {
   const reduce = useReducedMotion()
 
   // Sections switched off by an admin (feature flags) leave the dock.
-  const { featureOn, isStaff } = useSite()
-  const enabled = (i: DockItem) => (!i.staffOnly || isStaff) && featureOn(featureForPath(i.to ?? ''))
+  const { pathOn, isStaff, mayHive } = useSite()
+  const enabled = (i: DockItem) => (!i.staffOnly || isStaff) && (!i.hiveOnly || mayHive) && pathOn(i.to ?? '')
   const pinnedItems = dock.pinned.map((id) => DOCK_BY_ID.get(id)).filter((i): i is DockItem => !!i && enabled(i))
-  // Staff always get Hive (the AI workspace) in the Dock, even if they never pinned it.
+  // Admins and the owner always get Hive (the AI workspace) in the Dock, even if
+  // they never pinned it. Nobody else ever sees it.
   const hive = DOCK_BY_ID.get('hive')
-  const items = isStaff && hive && !pinnedItems.includes(hive) ? [...pinnedItems, hive] : pinnedItems
+  const items = mayHive && hive && enabled(hive) && !pinnedItems.includes(hive) ? [...pinnedItems, hive] : pinnedItems
   const rest = DOCK_ITEMS.filter((i) => !items.includes(i) && enabled(i))
   const slot = (showLabel ? 24 : 0) + (showLabel ? 10 : 7)
   const fit = vertical ? Math.floor((vh - 120) / (items.length + 1) - slot) : chosen.base

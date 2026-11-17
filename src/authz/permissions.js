@@ -174,6 +174,12 @@ function hasAnyAdminPerm(subject) {
   return false;
 }
 
+/** Hive (the team's AI workspace) is for admins and the owner only. */
+function mayUseHive(subject) {
+  const a = accessOf(subject);
+  return !!a && (a.role === "owner" || a.role === "admin");
+}
+
 /** Owner, admins and early_access holders may use the site while it is private. */
 function mayEnterPrivateSite(subject) {
   const a = accessOf(subject);
@@ -252,6 +258,7 @@ module.exports = {
   hasAnyAdminPerm,
   isOwnerName,
   mayEnterPrivateSite,
+  mayUseHive,
   ownerUsername,
   permissionsFor,
   rankOf,

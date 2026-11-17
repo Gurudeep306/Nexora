@@ -15,6 +15,7 @@ const SECTIONS = [
   { id: "users", label: "Users", group: "People", perms: ["users.view", "users.manage", "users.ban", "users.verify"], paths: [/^\/api\/admin\/(users|set-role)(\/|$)/] },
   { id: "moderation", label: "Moderation", group: "People", perms: ["content.moderate"], paths: [/^\/api\/admin\/(reports|content)(\/|$)/] },
   { id: "site", label: "Site", group: "Platform", perms: ["site.settings"], paths: [/^\/api\/admin\/site(\/|$)/] },
+  { id: "sitemap", label: "Site map", group: "Platform", perms: ["site.settings"], paths: [/^\/api\/admin\/sitemap(\/|$)/] },
   { id: "ai", label: "AI models", group: "Platform", perms: ["ai.manage"], paths: [/^\/api\/admin\/ai(\/|$)/] },
   { id: "runners", label: "Code runners", group: "Platform", perms: ["runners.manage"], paths: [/^\/api\/admin\/(runners|compilers)(\/|$)/] },
   { id: "sources", label: "Problem sources", group: "Platform", perms: ["problems.manage"], paths: [/^\/api\/problem-sources(\/|$)/, /^\/api\/admin\/judge-selftest(\/|$)/] },

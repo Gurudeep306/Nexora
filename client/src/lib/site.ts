@@ -21,6 +21,8 @@ export interface SiteStatus {
   allowed: boolean
   registrationsOpen: boolean
   flags: Record<FeatureFlag, boolean>
+  /** Parts of the site this viewer can't use (Admin → Site map), with their page paths. */
+  parts?: BlockedPart[]
   maintenance: { message: string } | null
   /** The design style new visitors get until they choose their own. */
   defaultStyle?: string | null
@@ -34,8 +36,19 @@ export interface SiteStatus {
     permissions: string[]
     isOwner: boolean
     isStaff: boolean
+    /** Admins and the owner: may open Hive. */
+    mayHive?: boolean
     verified: boolean
   } | null
+}
+
+export type PartMode = 'visible' | 'staff' | 'soon' | 'hidden'
+export interface BlockedPart {
+  id: string
+  label: string
+  mode: PartMode
+  /** A regular expression (source) for the part's page paths, or null for API-only parts. */
+  pages: string | null
 }
 
 export const ALL_ON: Record<FeatureFlag, boolean> = { gate: true, contests: true, social: true, ai_tutor: true, practice: true, learn: true, nexus: true, notes: true, workshop: true }

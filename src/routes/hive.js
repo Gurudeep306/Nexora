@@ -8,7 +8,7 @@
 const express = require("express");
 const rateLimit = require("express-rate-limit");
 const { getSessionUser } = require("../middleware/auth");
-const { hasAnyAdminPerm } = require("../authz/permissions");
+const { mayUseHive } = require("../authz/permissions");
 const { initHiveDb, newId, now, json, run, get, all } = require("../hive/db");
 const keys = require("../hive/keys");
 const vault = require("../hive/vault");
@@ -36,9 +36,10 @@ class BadInput extends Error {
   }
 }
 
+/** Hive is for admins and the owner only (moderators and other staff get 404). */
 function isStaff(req) {
   const u = getSessionUser(req);
-  return !!u?.username && hasAnyAdminPerm(req);
+  return !!u?.username && mayUseHive(req);
 }
 
 /** Admins and the owner can manage anything; other staff manage what they added. */

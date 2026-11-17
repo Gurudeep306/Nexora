@@ -48,7 +48,7 @@ export function AuthorRoute() {
  * the chunk; the API and socket namespace refuse them too.
  */
 export function HiveRoute() {
-  const { status, loading, isStaff } = useSite()
+  const { status, loading, isStaff, previewAsMember } = useSite()
   // Hive keeps the look it had before Field Journal (theme/look.ts hiveLook).
   const { setHiveScope } = useTheme()
   useEffect(() => {
@@ -62,6 +62,7 @@ export function HiveRoute() {
       </div>
     )
   }
-  if (!isStaff) return <NotFoundPage />
+  // Admins and the owner only (the server answers 404 to anyone else too).
+  if (!isStaff || previewAsMember || !status?.me?.mayHive) return <NotFoundPage />
   return <HivePage />
 }

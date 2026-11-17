@@ -45,7 +45,6 @@
     "passport-github2": "^0.1.12",
     "passport-google-oauth20": "^2.0.0",
     "socket.io": "^4.8.4",
-    "sqlite3": "^6.0.1",
     "tree-sitter-wasms": "0.1.13",
     "web-tree-sitter": "0.25.10"
   },
@@ -54,5 +53,8 @@
   },
   "optionalDependencies": {
     "puppeteer": "^25.17.0"
+  },
+  "devDependencies": {
+    "sqlite3": "^6.0.1"
   }
 }
