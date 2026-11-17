@@ -338,7 +338,7 @@ Contents:
     dry runs (C two pointers, Python linked list) axe 0 in light, dark and
     phone. `client/scripts/check-dryrun.cjs` now clicks the visible Dry run
     button (on a phone it is in the bottom bar).
-- **F, linked platforms — PR opened (session 8), merged once CI is green.**
+- **F, linked platforms — merged (#144).**
   The owner allowed the network: a personal environment "Nexora" (this
   repo) can reach the judges, GitHub and the code runners. Node's own
   `fetch` needs `NODE_USE_ENV_PROXY=1 NODE_EXTRA_CA_CERTS=/root/.ccr/ca-bundle.crt`
@@ -381,14 +381,19 @@ Contents:
   - **Not checkable here**: a full GitHub connect needs the live site's OAuth
     app (it is covered by the route and unit tests with GitHub's documented
     answers).
-- **Owner asked (2026-11-17) where "How it runs" went**: since the Solve
-  redesign it is Dry run tab → "Under the hood". Offered: its own tab again,
-  or a top-bar button. Waiting for the owner's choice.
+- **"How it runs" is its own tab again (owner's choice, 2026-11-17)**. The
+  Solve page's results tabs are now Tests · Result · Dry run · How it runs.
+  To make room the owner chose to remove Coach → Hints (it duplicated Help →
+  Hint / Ask the tutor): Help → "Give me a hint" now asks the tutor for one
+  small next step. Analysis moved under Result (Result | Analysis). The
+  coach's live check still runs: its issues are marked in the editor
+  ("AI check: …") and its approach · complexity chip opens Result →
+  Analysis. Old links (`openTab('coach' | 'analysis' | 'journey')`) land in
+  the right place. `CoachPanel.tsx` was deleted.
 - **Lost work, rebuilt from the plan:** session 6 built B (problem pipeline)
   and A3 (coding analysis + XP) in helper worktrees on its own machine and
   never pushed them. They are not recoverable here and are rebuilt next.
-- **Next:** the "first k of N" label on a capped vector (item 4); the
-  owner's answer on where "How it runs" goes.
+- **Next:** the "first k of N" label on a capped vector (item 4).
 - **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and
   functional languages is **later**; the ideas in section 6, item 7 are
   **no for now**.
