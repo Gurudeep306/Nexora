@@ -1262,6 +1262,8 @@ async function initSocialTables() {
  * Idempotent: CREATE … IF NOT EXISTS + guarded ALTERs, one batch on Turso. */
 async function initAdminTables() {
   await run("ALTER TABLE users ADD COLUMN verified INTEGER DEFAULT 0").catch(() => {});
+  // A team member's job title ("Head of GATE content"), set in Admin → Staff access.
+  await run("ALTER TABLE users ADD COLUMN team_title TEXT").catch(() => {});
   await runBatch([
     // Staff access per Admin section (src/authz/sections.js): level is
     // 'none' | 'view' | 'edit'; no row = follow role and permissions.

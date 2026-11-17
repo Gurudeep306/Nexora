@@ -151,9 +151,18 @@ something pattern type or animated type, import from internet").
 
 ## 3. Staff access (Admin → Staff access)
 
-- **Who opens it:** the owner, and "top admins": admins the owner switches
-  on there (permission `staff.access`, owner-grant only like `site.settings`;
-  admins don't get it by default).
+- **The owner's choice (2026-11-17):** keep the roles (Owner → Admin →
+  Moderator → Member, each manages only the roles below it), no "top admin"
+  label, and give every team member a **team title** ("Head of GATE
+  content", "Founder"). The page lists people by rank: Owner, Admins,
+  Moderators, Others with access.
+- **Who opens it:** the owner, and admins the owner switches on there ("Can
+  manage staff access": permission `staff.access`, owner-grant only like
+  `site.settings`, admins only; admins don't get it by default).
+- **Team titles:** `users.team_title` (40 characters, no `<` `>`), set with
+  `PUT /api/admin/staff-access/:username/title`; shown in Admin and next to
+  the role badge on the profile (`team_title` in `/api/profiles/:username`).
+  The owner can title themselves; nobody else can.
 - **What it sets:** for each person and each Admin section (Overview, Users,
   Moderation, Site, AI models, Code runners, Problem sources, Add a problem,
   Announcements, Audit log): **Role default** (no row: follows role and
@@ -176,13 +185,14 @@ something pattern type or animated type, import from internet").
 - **Rules:** nobody changes the owner or themselves; a top admin changes only
   people below their own role and can't give more than they have in a
   section. Every change is in the audit log (`staff.section`,
-  `staff.top_admin.grant` / `.revoke`).
+  `staff.title`, `staff.manage.grant` / `.revoke`).
 - **Screens:** Admin's contents and tabs now follow each section's level
   (`/api/admin/me` returns `sections` and `canStaff`); a see-only section
   shows "You can see this section but not change it".
 - Tests: `tests/staff-access.test.js` (role default unchanged, hide and
   see-only enforced, a member's single section opens Admin without leaking
-  the same permission elsewhere, top-admin rules, audit rows).
+  the same permission elsewhere, who may manage staff, team titles, audit
+  rows).
 - Checked: axe 0 and no sideways scroll on Admin → Staff access (a person
   opened) in light, dark and phone, and on a see-only section as a moderator.
 

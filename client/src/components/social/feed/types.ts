@@ -116,6 +116,8 @@ export interface PublicProfile {
   status: string
   role: string
   verified: boolean
+  /** Staff: their job title on the team (Admin → Staff access). */
+  team_title?: string | null
   created_at: string
   last_seen: string | null
   cover: string

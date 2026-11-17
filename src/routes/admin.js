@@ -349,17 +349,17 @@ function createAdminRouter(deps) {
 
   /* ═════════════ Staff access (src/authz/sections.js) ═════════════ */
 
-  // Only the owner, and admins the owner gave "staff.access", may open it.
+  // Only the owner, and admins the owner allows ("staff.access"), may open it.
   const requireStaffAccess = (req, res, next) => {
     if (req.access?.role === "owner" || req.access?.perms.has("staff.access")) return next();
-    return res.status(403).json({ ok: false, code: "forbidden", error: "Only the owner and top admins can change staff access" });
+    return res.status(403).json({ ok: false, code: "forbidden", error: "Only the owner, and admins the owner allows, can change staff access" });
   };
-  const STAFF_SQL = `SELECT u.username, u.display_name, u.avatar, u.avatar_url, ${P.ACCESS_COLUMNS}
+  const STAFF_SQL = `SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.team_title, ${P.ACCESS_COLUMNS}
     FROM users u
     WHERE u.role IN ('admin', 'moderator', 'owner')
        OR EXISTS (SELECT 1 FROM user_permissions p WHERE p.username = u.username AND p.granted = 1 AND p.perm <> 'early_access')
        OR EXISTS (SELECT 1 FROM staff_section_access s WHERE s.username = u.username)
-    ORDER BY u.username COLLATE NOCASE`;
+    ORDER BY CASE u.role WHEN 'owner' THEN 0 WHEN 'admin' THEN 1 WHEN 'moderator' THEN 2 ELSE 3 END, u.username COLLATE NOCASE`;
 
   function staffRow(req, row) {
     const a = P.buildAccess(row.username, row);
@@ -369,11 +369,14 @@ function createAdminRouter(deps) {
       avatar: row.avatar || defaultAvatar(row.username),
       avatar_url: row.avatar_url || null,
       role: a.role,
+      title: row.team_title || null,
       chosen: a.sections,
       effective: S.levelsFor(a),
-      topAdmin: a.role === "owner" || a.perms.has("staff.access"),
+      managesStaff: a.role === "owner" || a.perms.has("staff.access"),
       // You can't change the owner, yourself, or anyone at or above your role.
       editable: a.role !== "owner" && !sameUser(req, row.username) && P.canActOn(req, row.username, a.role),
+      // The owner may title themselves too ("Founder").
+      titleEditable: (a.role !== "owner" && !sameUser(req, row.username) && P.canActOn(req, row.username, a.role)) || (req.access.role === "owner" && a.role === "owner"),
     };
   }
   const sameUser = (req, u) => String(req.access?.username || "").toLowerCase() === String(u).toLowerCase();
@@ -386,7 +389,7 @@ function createAdminRouter(deps) {
       res.json({
         ok: true,
         sections: S.SECTIONS.map(({ id, label, group, perms }) => ({ id, label, group, perms })),
-        people: rows.map((r) => staffRow(req, r)).filter((r) => r.role !== "owner"),
+        people: rows.map((r) => staffRow(req, r)),
         isOwner: req.access.role === "owner",
       });
     }),
@@ -417,12 +420,35 @@ function createAdminRouter(deps) {
           [t.username, section, level, req.access.username, Date.now()],
         );
       await audit(req, "staff.section", { targetType: "user", target: t.username, before: { section, level: before }, after: { section, level } });
-      const row = await get(`SELECT u.username, u.display_name, u.avatar, u.avatar_url, ${P.ACCESS_COLUMNS} FROM users u WHERE u.username = ?`, [t.username]);
+      const row = await get(`SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.team_title, ${P.ACCESS_COLUMNS} FROM users u WHERE u.username = ?`, [t.username]);
       res.json({ ok: true, person: staffRow(req, row) });
     }),
   );
 
-  // Make someone a top admin (they may open Staff access). The owner only.
+  // A team member's job title, shown on their profile and in Admin.
+  router.put(
+    "/api/admin/staff-access/:username/title",
+    requireStaffAccess,
+    h(async (req, res) => {
+      const t = await loadTarget(req, res);
+      if (!t) return;
+      if (!(req.access.role === "owner" && t.role === "owner")) {
+        if (sameUser(req, t.username)) bad("You can't change your own title");
+        if (!guardTarget(req, res, t)) return;
+      }
+      const raw = typeof req.body?.title === "string" ? req.body.title : "";
+      const title = raw.replace(/\s+/g, " ").trim();
+      if (title.length > 40) bad("Keep the title to 40 characters");
+      if (/[<>]/.test(title)) bad("Titles can't contain < or >");
+      const before = (await get("SELECT team_title FROM users WHERE username = ?", [t.username]))?.team_title || null;
+      await run("UPDATE users SET team_title = ? WHERE username = ?", [title || null, t.username]);
+      await audit(req, "staff.title", { targetType: "user", target: t.username, before: { title: before }, after: { title: title || null } });
+      const row = await get(`SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.team_title, ${P.ACCESS_COLUMNS} FROM users u WHERE u.username = ?`, [t.username]);
+      res.json({ ok: true, person: staffRow(req, row) });
+    }),
+  );
+
+  // Let an admin open Staff access too (for people below them). The owner only.
   router.put(
     "/api/admin/staff-access/:username/top",
     requireOwner,
@@ -431,6 +457,7 @@ function createAdminRouter(deps) {
       if (!t) return;
       if (t.role === "owner") bad("The owner already has every permission");
       const on = bool(req.body?.on, "on");
+      if (on && t.role !== "admin") bad("Only admins can be allowed to manage staff access");
       if (on) {
         await run(
           `INSERT INTO user_permissions(username, perm, granted, granted_by, created_at) VALUES(?, 'staff.access', 1, ?, ?)
@@ -438,8 +465,8 @@ function createAdminRouter(deps) {
           [t.username, req.access.username, Date.now()],
         );
       } else await run("DELETE FROM user_permissions WHERE username = ? AND perm = 'staff.access'", [t.username]);
-      await audit(req, on ? "staff.top_admin.grant" : "staff.top_admin.revoke", { targetType: "user", target: t.username });
-      const row = await get(`SELECT u.username, u.display_name, u.avatar, u.avatar_url, ${P.ACCESS_COLUMNS} FROM users u WHERE u.username = ?`, [t.username]);
+      await audit(req, on ? "staff.manage.grant" : "staff.manage.revoke", { targetType: "user", target: t.username });
+      const row = await get(`SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.team_title, ${P.ACCESS_COLUMNS} FROM users u WHERE u.username = ?`, [t.username]);
       res.json({ ok: true, person: staffRow(req, row) });
     }),
   );

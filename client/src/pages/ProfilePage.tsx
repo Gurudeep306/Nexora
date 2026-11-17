@@ -387,6 +387,7 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="pf-name font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-[28px]">{name}</h1>
             <UserBadges username={p.username} role={p.role} verified={p.verified} variant="full" />
+            {p.team_title && <span className="pf-team">{p.team_title}</span>}
           </div>
           {stats && !journal && (
             <div className="pf-seal-line mt-2">

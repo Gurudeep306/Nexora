@@ -28,7 +28,7 @@ const PERMISSIONS = [
   { key: "problems.manage", label: "Problems", group: "Platform", description: "Problem sync, Creator Studio, the judge self-test, any Workshop problem." },
   { key: "gate.manage", label: "GATE", group: "Platform", description: "Manage GATE content." },
   { key: "early_access", label: "Early access", group: "Access", description: "May use the site while it is private." },
-  { key: "staff.access", label: "Staff access", group: "Site", description: "Open Admin → Staff access and choose which Admin sections each staff member can see or change. Owner grants only." },
+  { key: "staff.access", label: "Staff access", group: "Site", description: "Open Admin → Staff access: set team titles and choose which Admin sections each person below them can see or change. Owner grants only." },
 ];
 const PERMISSION_KEYS = PERMISSIONS.map((p) => p.key);
 const PERMISSION_SET = new Set(PERMISSION_KEYS);
