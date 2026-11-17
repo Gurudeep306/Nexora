@@ -23,11 +23,12 @@ import { AiSection } from '@/components/admin/AiSection'
 import { RunnersSection } from '@/components/admin/RunnersSection'
 import { DefaultStylePanel } from '@/components/admin/DefaultStylePanel'
 import { StaffAccessSection } from '@/components/admin/StaffAccessSection'
+import { SiteMapSection } from '@/components/admin/SiteMapSection'
 import '@/components/admin/ai.css'
 import NotFoundPage from '@/pages/NotFoundPage'
 import type { AdminMe } from '@/components/admin/types'
 
-type SectionId = 'overview' | 'users' | 'staff' | 'moderation' | 'site' | 'ai' | 'runners' | 'sources' | 'authored' | 'announcements' | 'audit'
+type SectionId = 'overview' | 'users' | 'staff' | 'moderation' | 'site' | 'sitemap' | 'ai' | 'runners' | 'sources' | 'authored' | 'announcements' | 'audit'
 
 const GROUPS: { label: string; items: { id: SectionId; label: string; icon: IconName; perm: string; title: string; blurb: string }[] }[] = [
   {
@@ -46,6 +47,7 @@ const GROUPS: { label: string; items: { id: SectionId; label: string; icon: Icon
     label: 'Platform',
     items: [
       { id: 'site', label: 'Site', icon: 'globe', perm: 'site.settings', title: 'Site', blurb: 'Private mode, early access, sign-ups, feature flags and maintenance.' },
+      { id: 'sitemap', label: 'Site map', icon: 'map', perm: 'site.settings', title: 'Site map', blurb: 'Every part of the site: who sees it, and where its code lives.' },
       { id: 'ai', label: 'AI models', icon: 'sparkles', perm: 'ai.manage', title: 'AI models', blurb: 'Which AI the site uses: providers, keys, a model for each feature, and the daily budget.' },
       { id: 'runners', label: 'Code runners', icon: 'server', perm: 'runners.manage', title: 'Code runners', blurb: 'Our own servers that run code first, each backing up the others, with the free public runners behind them.' },
       { id: 'sources', label: 'Problem sources', icon: 'database', perm: 'problems.manage', title: 'Problem sources', blurb: 'Which judges problems come from, kept in sync and tested live.' },
@@ -218,6 +220,7 @@ export default function AdminPage() {
                 <DefaultStylePanel />
               </div>
             )}
+            {current?.id === 'sitemap' && <SiteMapSection />}
             {current?.id === 'ai' && <AiSection />}
             {current?.id === 'runners' && <RunnersSection />}
             {current?.id === 'sources' && <SourcesSection />}
