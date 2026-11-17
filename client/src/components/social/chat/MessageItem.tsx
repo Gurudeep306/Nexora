@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import { Avatar } from '@/components/ui'
 import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger, Popover, PopoverContent, PopoverTrigger } from '@/components/ui/Menu'
-import { assetUrl } from '@/lib/api'
+import { api, assetUrl } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { CodeBlock, RichText } from './RichText'
 import { clock, fileSize, nameOf, quoteText, type Conversation, type Message, type People, type ShareCard } from './types'
@@ -46,8 +46,78 @@ export interface MessageActions {
 const VERDICT: Record<string, string> = { AC: 'Accepted', WA: 'Wrong answer', TLE: 'Time limit', RE: 'Runtime error', CE: 'Compile error', MLE: 'Memory limit' }
 const PLATFORM: Record<string, string> = { codeforces: 'Codeforces', atcoder: 'AtCoder', codechef: 'CodeChef', leetcode: 'LeetCode', nexora: 'NexoraGuru', cses: 'CSES', spoj: 'SPOJ', euler: 'Project Euler', dmoj: 'DMOJ', timus: 'Timus', kattis: 'Kattis', uva: 'UVa', learn: 'NexoraGuru Learn' }
 
-function ShareView({ card }: { card: ShareCard }) {
+/** How long after the invite someone solved it: "4 min", "1 h 20 min", "2 days". */
+function took(from: string | undefined, to: string | null): string {
+  if (!from || !to) return ''
+  const mins = Math.max(0, Math.round((new Date(to).getTime() - new Date(from).getTime()) / 60000))
+  if (mins < 60) return `${mins} min`
+  if (mins < 48 * 60) return `${Math.floor(mins / 60)} h${mins % 60 ? ` ${mins % 60} min` : ''}`
+  return `${Math.round(mins / 1440)} days`
+}
+
+/** "Invite to solve": the problem, a Solve button, and who has solved it so far (real times). */
+function InviteView({ card, me }: { card: ShareCard; me: string }) {
+  const people = card.people ?? []
+  const done = people.filter((p) => p.solvedAt && p.how !== 'earlier')
+  const mineDone = people.find((p) => p.username === me)?.solvedAt
+  const kicker = `${card.race ? 'Race' : 'Invite'} to solve · ${PLATFORM[card.platform ?? ''] ?? card.platform ?? ''}${card.rating ? ` · ${card.rating}` : ''}`
+  return (
+    <div className="chat-card chat-invite" data-type="invite">
+      <p className="chat-card-kicker">{kicker}</p>
+      <p className="chat-card-title">{card.title}</p>
+      <p className="chat-card-meta">
+        {done.length ? `${done.length} of ${people.length} solved it` : `${people.length} invited · no one has solved it yet`}
+      </p>
+      {people.length > 0 && (
+        <ol className="chat-invite-people" aria-label="Who has solved it">
+          {people.map((p) => {
+            const place = card.race && p.solvedAt && p.how !== 'earlier' ? done.indexOf(p) + 1 : 0
+            const status = !p.solvedAt
+              ? 'Not yet'
+              : p.how === 'earlier'
+                ? 'Solved before the invite'
+                : `${p.how === 'examples' ? 'Passed the examples' : 'Solved'} in ${took(card.startedAt, p.solvedAt)}`
+            return (
+              <li key={p.username} className="chat-invite-person" data-done={p.solvedAt ? '' : undefined}>
+                <span className="chat-invite-place" aria-hidden={!place}>
+                  {place ? `${place}.` : ''}
+                </span>
+                <Avatar size="xs" seed={p.username} avatar={p.avatar} src={p.avatarUrl} name={p.displayName} />
+                <span className="chat-invite-name">{p.username === me ? 'You' : p.displayName}</span>
+                <span className="chat-invite-status">{status}</span>
+              </li>
+            )
+          })}
+        </ol>
+      )}
+      <div className="chat-card-actions">
+        <Link to={card.link} className="chat-card-link">
+          {mineDone ? 'Open the problem' : 'Solve it'}
+        </Link>
+      </div>
+    </div>
+  )
+}
+
+function ShareView({ card, me, messageId }: { card: ShareCard; me: string; messageId: number }) {
   const [showCode, setShowCode] = useState(false)
+  const [code, setCode] = useState<string | null>(card.code ?? null)
+  const [revealing, setRevealing] = useState(false)
+  const [revealError, setRevealError] = useState<string | null>(null)
+  if (card.type === 'invite') return <InviteView card={card} me={me} />
+  const reveal = async () => {
+    setRevealing(true)
+    setRevealError(null)
+    try {
+      const r = await api.post<{ code: string }>(`/api/chat/messages/${messageId}/reveal`)
+      setCode(r.code)
+      setShowCode(true)
+    } catch (e) {
+      setRevealError(e instanceof Error ? e.message : "Couldn't show the code")
+    } finally {
+      setRevealing(false)
+    }
+  }
   const kicker =
     card.type === 'problem' ? `Problem · ${PLATFORM[card.platform ?? ''] ?? card.platform ?? ''}${card.rating ? ` · ${card.rating}` : ''}`
       : card.type === 'submission' ? `Solution · ${card.language ?? ''} · ${VERDICT[card.verdict ?? ''] ?? card.verdict ?? ''}${card.timeMs ? ` · ${card.timeMs} ms` : ''}`
@@ -66,17 +136,32 @@ function ShareView({ card }: { card: ShareCard }) {
         </p>
       )}
       {card.type === 'room' && card.problem && <p className="chat-card-meta">On {card.problem}</p>}
+      {card.type === 'submission' && card.locked && code == null && (
+        <p className="chat-card-meta">
+          {card.lines ? `${card.lines} ${card.lines === 1 ? 'line' : 'lines'} of code, hidden` : 'The code is hidden'} because you haven&rsquo;t solved this problem yet.
+        </p>
+      )}
       <div className="chat-card-actions">
         <Link to={card.link} className="chat-card-link">
           {action}
         </Link>
-        {card.code && card.type === 'submission' && (
+        {card.type === 'submission' && code != null && (
           <button type="button" className="chat-card-link" aria-expanded={showCode} onClick={() => setShowCode((v) => !v)}>
             {showCode ? 'Hide the code' : 'Show the code'}
           </button>
         )}
+        {card.type === 'submission' && card.locked && code == null && (
+          <button type="button" className="chat-card-link" onClick={reveal} disabled={revealing}>
+            {revealing ? 'Showing…' : 'Reveal the code'}
+          </button>
+        )}
       </div>
-      {showCode && card.code && <CodeBlock code={card.code} lang={card.language ?? ''} />}
+      {revealError && (
+        <p className="chat-card-meta" role="alert">
+          {revealError}
+        </p>
+      )}
+      {showCode && code != null && <CodeBlock code={code} lang={card.language ?? ''} />}
     </div>
   )
 }
@@ -249,7 +334,7 @@ export const MessageItem = memo(function MessageItem({
             <>
               {m.attachment && <AttachmentView a={m.attachment} actions={actions} />}
               {m.poll ? <PollView m={m} me={me} actions={actions} canClose={mine || manager} /> : m.body && <RichText text={m.body} me={me} />}
-              {m.share && <ShareView card={m.share} />}
+              {m.share && <ShareView card={m.share} me={me} messageId={m.id} />}
             </>
           )}
           <p className="chat-meta">

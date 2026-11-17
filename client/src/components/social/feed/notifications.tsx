@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { AtSign, Check, Heart, MessageCircle, Quote, Repeat2, Reply, UserCheck, UserPlus } from 'lucide-react'
+import { AtSign, Check, CircleCheckBig, Heart, MessageCircle, Quote, Repeat2, Reply, Swords, UserCheck, UserPlus } from 'lucide-react'
 import { Avatar, Button, Card, EmptyState, ErrorState, Skeleton, useToast } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useSocket } from '@/lib/socket'
@@ -21,6 +21,8 @@ export const NOTIF_META: Record<NotificationType, { icon: typeof Heart; cls: str
   follow_accepted: { icon: UserCheck, cls: 'bg-state-success/12 text-state-success', verb: () => 'accepted your follow request' },
   repost: { icon: Repeat2, cls: 'bg-state-success/12 text-state-success', verb: () => 'reposted your post' },
   quote: { icon: Quote, cls: 'bg-state-success/12 text-state-success', verb: () => 'quoted your post' },
+  invite_solve: { icon: Swords, cls: 'bg-accent-brand/12 text-accent-brand', verb: () => 'invited you to solve a problem' },
+  invite_solved: { icon: CircleCheckBig, cls: 'bg-state-success/12 text-state-success', verb: () => 'solved the problem you invited them to' },
 }
 
 /** "Ana", "Ana and Ben", "Ana and 3 others" */
@@ -36,6 +38,7 @@ export const plainSnippet = (s: string) =>
   s.replace(/```[\s\S]*?(```|$)/g, ' ').replace(/(\*\*|__|\*|`)/g, '').replace(/\s+/g, ' ').trim()
 
 export function notifLink(g: NotificationGroup) {
+  if (g.link && g.link.startsWith('/') && !g.link.startsWith('//')) return g.link
   if (g.type === 'follow' || g.type === 'follow_request' || g.type === 'follow_accepted') return profilePath(g.actors[0]?.username ?? '')
   return g.post_id ? postPath(g.post_id) : '/social?tab=notifications'
 }

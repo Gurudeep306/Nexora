@@ -10,6 +10,8 @@ import { ThinkingPad } from './ThinkingPad'
 import { SolutionTab } from './SolutionTab'
 import type { Lang } from '@/learn/engine/types'
 import { VerdictBadge } from '@/components/shared/PlatformBadge'
+import { InviteToSolve } from '@/components/social/InviteToSolve'
+import { useAuth } from '@/context/AuthContext'
 import { sourceLabel } from '@/lib/sources'
 import { cn, timeAgo } from '@/lib/utils'
 import { parseTags } from '@/components/problems/types'
@@ -158,6 +160,7 @@ export function ProblemPanel({
   // so formulas render everywhere — not only in the first block.
   const bodyRef = useRef<HTMLDivElement>(null)
   const mediaLightbox = useStatementMedia()
+  const { user } = useAuth()
 
   useEffect(() => {
     renderMathIn(bodyRef.current)
@@ -176,6 +179,8 @@ export function ProblemPanel({
     for (const slug of SNIPPET_SLUG[language] ?? [language]) if (extra.snippets[slug]) return { slug, code: extra.snippets[slug] }
     return null
   })()
+  // Invite friends to solve it (catalog problems; signed in).
+  const canInvite = !custom && !!user && problem.platform !== 'learn' && Number(problem.id) > 0
   const sourceName = problem.platform === 'custom' ? 'Workshop' : problem.platform === 'learn' ? 'NexoraGuru Learn' : sourceLabel(problem.platform)
 
   return (
@@ -190,8 +195,11 @@ export function ProblemPanel({
               <span className="font-mono">{problem.problem_id}</span>
             </>
           )}
+          {canInvite && (
+            <InviteToSolve problemId={Number(problem.id)} title={problem.title} className="ml-auto" />
+          )}
           {problem.url && (
-            <a href={problem.url} target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Original, on ${sourceName} (opens in a new tab)`}>
+            <a href={problem.url} target="_blank" rel="noopener noreferrer" className={cn(!canInvite && 'ml-auto', 'inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground')} aria-label={`Original, on ${sourceName} (opens in a new tab)`}>
               Original <ExternalLink className="size-3" aria-hidden="true" />
             </a>
           )}

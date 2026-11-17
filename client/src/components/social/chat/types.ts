@@ -58,7 +58,7 @@ export interface Attachment {
   height?: number
 }
 
-export type ShareType = 'problem' | 'submission' | 'contest' | 'gate' | 'room'
+export type ShareType = 'problem' | 'submission' | 'contest' | 'gate' | 'room' | 'invite'
 export interface ShareCard {
   type: ShareType
   id: number | string
@@ -77,6 +77,18 @@ export interface ShareCard {
   exam?: string
   year?: number
   marks?: number
+  /* a solution ('submission'): its code is a spoiler until you solve it or choose Reveal */
+  problemId?: number
+  by?: string
+  memoryKb?: number
+  locked?: boolean
+  lines?: number
+  /* an invite to solve ('invite'): read fresh from the server each time */
+  inviteId?: number
+  race?: boolean
+  inviter?: string
+  startedAt?: string
+  people?: InvitePerson[]
   subject?: string
   questionType?: string
   problem?: string | null
@@ -152,7 +164,19 @@ export function previewText(p: Preview | null | undefined, me: string, people: P
   return p.username === me || group ? `${who}: ${what}` : what
 }
 
+/** One person in an invite to solve: when they solved it, if they have. */
+export interface InvitePerson {
+  username: string
+  displayName: string
+  avatar: string | null
+  avatarUrl: string | null
+  solvedAt: string | null
+  /** 'solved' (a full check), 'examples' (only the examples ran), 'earlier' (solved before the invite). */
+  how: 'solved' | 'examples' | 'earlier' | null
+}
+
 export const SHARE_LABEL: Record<ShareType, string> = {
+  invite: 'An invite to solve',
   problem: 'A problem',
   submission: 'A solution',
   contest: 'A contest',
