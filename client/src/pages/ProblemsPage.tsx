@@ -15,7 +15,6 @@ import { useAuth } from '@/context/AuthContext'
 import { useAgentPageContext } from '@/context/AgentContext'
 import {
   DIFFICULTY_BANDS,
-  PLATFORM_OPTIONS,
   type AiFindResponse,
   type BookmarksResponse,
   type ProblemsResponse,
@@ -30,6 +29,7 @@ import { aiErrorText, isAiUnavailable } from '@/lib/agent'
 import { AiProblemResults } from '@/components/problems/AiProblemResults'
 import { ProblemTable } from '@/components/problems/ProblemTable'
 import { parseTopicParam, topicLabel } from '@/lib/topics'
+import { useSources } from '@/lib/sources'
 import { Pagination } from '@/components/problems/Pagination'
 
 const PAGE_SIZE = 50
@@ -50,6 +50,8 @@ export default function ProblemsPage() {
     return s === 'solved' || s === 'examples' || s === 'attempted' || s === 'unsolved' ? s : 'all'
   })
   const [tag, setTag] = useState('')
+  // The sources an admin has switched on (the AI finder searches only these).
+  const sources = useSources()
   const [sort, setSort] = useState<ProblemFilterState['sort']>('rating')
   const [order, setOrder] = useState<ProblemFilterState['order']>('asc')
   const [offset, setOffset] = useState(0)
@@ -222,7 +224,7 @@ export default function ProblemsPage() {
       try {
         const res = await api.post<AiFindResponse>(
           '/api/ai/find-problems',
-          { query: text, platforms: [...PLATFORM_OPTIONS], tags: tagsApi.data?.tags ?? [], limit: 12 },
+          { query: text, platforms: sources.map((s) => s.id), tags: tagsApi.data?.tags ?? [], limit: 12 },
           { timeoutMs: 90000 },
         )
         if (res.ok) handleAiResults(res)
@@ -235,7 +237,7 @@ export default function ProblemsPage() {
         setAsking(false)
       }
     },
-    [asking, handleAiResults, tagsApi.data, toast],
+    [asking, handleAiResults, tagsApi.data, toast, sources],
   )
 
   const filters: ProblemFilterState = {

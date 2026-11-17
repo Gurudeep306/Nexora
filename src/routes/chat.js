@@ -158,7 +158,7 @@ function createChatRouter({ realtime, isTrustedOrigin, catalog, gate }) {
     const { all } = require("../db");
     if (kind === "problem") {
       if (q.length >= 2) {
-        const c = await catalog.getCatalog();
+        const c = await catalog.getOpenCatalog();
         const idx = catalog.filterIndices(c, { search: q }).slice(0, 12);
         return res.json({ ok: true, items: idx.map((i) => c.rows[i]).map((p) => ({ id: p.id, title: p.title, platform: p.platform, rating: p.rating })) });
       }

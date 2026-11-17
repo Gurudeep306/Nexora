@@ -3,7 +3,7 @@ const { errMessage } = require("../http-error");
 const forgePaths = require('../dev-roadmap-data');
 const { me, meSql } = require('../context');
 const { sharedCache } = require('../shared-cache');
-const { getCatalog, likeMatcher } = require('../problem-catalog');
+const { getOpenCatalog: getCatalog, likeMatcher } = require('../problem-catalog'); // sources that are off stay out
 
 // Tutorial rows are site content (edited only in the Studio): read once and
 // kept until a write to `tutorials` (or 10 minutes).
