@@ -139,6 +139,11 @@ THE REFERENCE NOTES (GATE_NOTES/)
 - Read scans as images: pdftoppm -r 200 -f <first> -l <last> -png <pdf> /tmp/<name>
   (use the dpi in content/gate-notes/_quality.json; page ranges per set in
   content/gate-notes/_inventory.md).
+- Write digests EXACTLY in the format of README §4 N1 step 1 (the Digital
+  Logic digests are the model): Progress line first, topic map with pages,
+  key points, tricks tagged CORRECT / CORRECT-WITH-CAVEAT / WRONG, diagrams,
+  worked examples each "Verified.", unclear pages, errors with corrections,
+  pages read with counts. Big sets in parts of 60–80 pages.
 - If the clone fails, do not stop: build the digests from the official
   syllabus, all PYQs and the textbooks in the subject file, and record
   "digests": "textbook-only" in _progress.json.
