@@ -66,6 +66,9 @@ test.before(async () => {
       ['c', 'codeforces', `S${stamp}C`, 'Unpublished One', '__hidden'],
       ['w', 'cses', `CSES9${stamp}1`, 'Weird Start', 'Introductory Problems'],
       ['x', 'cses', `CSES9${stamp}2`, 'Sorting Things', 'Sorting and Searching'],
+      // In the built-in library: Blind 75 starts with Contains Duplicate; KEYENCE's first contest with Last Card.
+      ['lc', 'leetcode', 'LC217', 'Contains Duplicate', null],
+      ['ac', 'atcoder', 'abc227_a', 'Last Card', null],
     ]) {
       add.run(platform, id, title, 'https://x', 1300, '[]', cat);
       pid[k] = Number(d.prepare('SELECT id FROM problems WHERE problem_id=?').get(id).id);
@@ -159,6 +162,32 @@ test('the CSES series is built live from the catalog, in sections', async () => 
   } finally {
     ok(await call('PUT', '/api/problem-sources/cses', c[OWNER], { enabled: true }));
   }
+});
+
+test('the built-in library: famous series and one set per company, named just the company', async () => {
+  const lib = require('../content/problem-sets/library.json');
+  assert.ok(lib.series.length >= 15 && lib.companies.length >= 40, 'many sets');
+  for (const co of lib.companies) {
+    assert.equal(co.title, co.company, 'a company set is titled with the company name only');
+    assert.ok(co.sourceUrl && co.sections.length, co.company);
+  }
+  const series = (await call('GET', '/api/problem-sets?tab=series', c[CAT])).body.sets;
+  const blind = series.find((x) => x.id === 'blind-75');
+  assert.ok(blind && blind.builtIn && blind.count === lib.series.find((x) => x.id === 'blind-75').sections.flatMap((x) => x.items).length);
+  const b = (await call('GET', '/api/problem-sets/blind-75', c[CAT])).body;
+  assert.equal(b.items[0].problem.id, pid.lc, 'matched to our catalog');
+  assert.ok(b.items[1].link && /^https:\/\/leetcode\.com\//.test(b.items[1].link.url), 'a problem we lack is a link to the original');
+  assert.equal(b.canEdit, false);
+  const cos = (await call('GET', '/api/problem-sets?tab=company', c[CAT])).body.sets;
+  const key = cos.find((x) => x.id === 'company:KEYENCE');
+  assert.ok(key && key.title === 'KEYENCE' && key.kind === 'company');
+  assert.ok(!cos.some((x) => /asked at/i.test(x.title)));
+  const k = (await call('GET', '/api/problem-sets/company/KEYENCE', c[CAT])).body;
+  assert.equal(k.set.title, 'KEYENCE');
+  assert.equal(k.items[0].problem.id, pid.ac);
+  assert.equal((await call('GET', '/api/problem-sets/company/keyence', c[CAT])).body.set.title, 'KEYENCE', 'any letter case');
+  const found = (await call('GET', '/api/problem-sets?tab=company&q=toyota', c[CAT])).body.sets;
+  assert.ok(found.length && found.every((x) => /toyota/i.test(`${x.title} ${x.description}`)));
 });
 
 test('series and company sets are staff-only, and must cite a public source', async () => {

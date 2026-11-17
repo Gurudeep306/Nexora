@@ -101,7 +101,7 @@ export default function ProblemSetPage() {
       <BackButton />
       <PageHeader
         icon="problems"
-        eyebrow={set.kind === 'series' ? 'Famous series' : set.kind === 'company' ? `Company · ${set.company}` : set.visibility === 'private' ? 'Your private set' : set.owner ? `A set by @${set.owner}` : 'Problem set'}
+        eyebrow={set.kind === 'series' ? 'Famous series' : set.kind === 'company' ? 'Company' : set.visibility === 'private' ? 'Your private set' : set.owner ? `A set by @${set.owner}` : 'Problem set'}
         title={set.title}
         subtitle={set.description || undefined}
         actions={
