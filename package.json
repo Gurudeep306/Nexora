@@ -23,8 +23,7 @@
     "scrape:hard": "node src/scraper.js --rating 1800 3500 --limit 200",
     "db:push-to-cloud": "node scripts/migrate-to-turso.js",
     "db:backup": "node scripts/backup-turso.js",
-    "user:set-password": "node scripts/set-password.js",
-    "seed:problem-sets": "node scripts/seed-problem-sets.js"
+    "user:set-password": "node scripts/set-password.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",
