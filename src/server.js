@@ -20,7 +20,7 @@ const GitHubStrategy = require("passport-github2").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const { Server: SocketServer } = require("socket.io");
 const { run, get, all, runBatch, initDb, dbInfo, migratePerUser } = require("./db");
-const { getCatalog, topicPool, filterIndices, filterKey, sortIndices, tagList, randomPick, likeMatcher } = require("./problem-catalog");
+const { getCatalog, getOpenCatalog, topicPool, filterIndices, filterKey, sortIndices, tagList, randomPick, likeMatcher } = require("./problem-catalog");
 const dbStats = require("./db-stats");
 const { sharedCache } = require("./shared-cache");
 const { requestContext, me, meSql, runAs, queryCount } = require("./context");
@@ -2417,7 +2417,7 @@ async function awardPlatformBadges() {
 /* ========== TAGS ========== */
 app.get("/api/tags", async (req, res) => {
   try {
-    res.json({ ok: true, tags: tagList(await getCatalog()) });
+    res.json({ ok: true, tags: tagList(await getOpenCatalog()) });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
@@ -2924,7 +2924,7 @@ async function getDailyChallenges() {
   for (const diff of difficulties) {
     // Same three picks for everyone each day (a shared daily challenge),
     // drawn from the in-memory catalog instead of ORDER BY RANDOM().
-    const prob = randomPick(await getCatalog(), diff.minR, diff.maxR);
+    const prob = randomPick(await getOpenCatalog(), diff.minR, diff.maxR);
     if (prob) {
       await run(
         `INSERT OR IGNORE INTO daily_challenges(date,problem_rowid,difficulty,bonus_xp) VALUES(?,?,?,?)`,
@@ -5137,7 +5137,7 @@ app.get("/api/level-roadmap", async (req, res) => {
     const [totals, progressRows, catalog] = await Promise.all([
       myTotals(),
       all("SELECT problem_rowid, status, attempts FROM progress WHERE username=?", [me()]),
-      getCatalog(),
+      getOpenCatalog(),
     ]);
     res.json(buildLevelRoadmap(catalog, progressRows, calcLevel(totals.xp, totals.solved)));
   } catch (e) {
@@ -5289,7 +5289,7 @@ app.get("/api/skill-tree/:nodeId/problems", async (req, res) => {
 
     const [minDiff, maxDiff] = skill.difficulty || [0, 9999];
     // Matching problems from the in-memory catalog (was a LIKE scan + COUNT).
-    const catalog = await getCatalog();
+    const catalog = await getOpenCatalog();
     const likes = skill.tags.map((t) => likeMatcher(`%${t}%`));
     const matching = [];
     for (const p of catalog.rows) {

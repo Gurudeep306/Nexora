@@ -5,7 +5,7 @@
 // problem, GATE question or notes lesson.
 const express = require("express");
 const { me } = require("../context");
-const { getCatalog } = require("../problem-catalog");
+const { getOpenCatalog: getCatalog } = require("../problem-catalog"); // sources that are off stay out
 const { loadGateBank } = require("./gate");
 const { loadGateNotes } = require("./gate-notes");
 const { hasAnyAdminPerm } = require("../authz/permissions");
