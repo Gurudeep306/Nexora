@@ -1,6 +1,6 @@
 // Admin → Staff access (src/authz/sections.js, /api/admin/staff-access):
 // per staff member and Admin section, hidden / see only / change, enforced on
-// the server; only the owner and top admins can set it.
+// the server; only the owner, and admins the owner allows, can set it.
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
