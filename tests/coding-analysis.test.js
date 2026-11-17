@@ -64,6 +64,9 @@ test.before(async () => {
     pid = Number(db.prepare("SELECT id FROM problems WHERE problem_id='9101A'").get().id);
     db.prepare("INSERT INTO problem_statements(problem_rowid, samples, scraped_at) VALUES(?,?,datetime('now'))")
       .run(pid, JSON.stringify([{ input: '4\n', output: '8\n' }, { input: '5\n', output: '10\n' }]));
+    // Codeforces' official tests (as the open dataset supplies them): only a full check counts as solved (owner's rule, session 10).
+    db.exec('CREATE TABLE IF NOT EXISTS cf_dataset_tests (id TEXT PRIMARY KEY, tests TEXT NOT NULL, exact INTEGER NOT NULL, fetched_at INTEGER NOT NULL)');
+    db.prepare('INSERT OR REPLACE INTO cf_dataset_tests(id, tests, exact, fetched_at) VALUES(?,?,1,?)').run('9101/A', JSON.stringify([{ input: '4\n', output: '8\n' }, { input: '5\n', output: '10\n' }]), Date.now());
   });
   alice = await signup(`an${stamp}`);
   bob = await signup(`bn${stamp}`);

@@ -43,7 +43,11 @@ export default function ProblemsPage() {
   const [searchInput, setSearchInput] = useState(qParam)
   const [platform, setPlatform] = useState('all')
   const [difficulty, setDifficulty] = useState<ProblemFilterState['difficulty']>('all')
-  const [status, setStatus] = useState<ProblemFilterState['status']>('all')
+  // ?status=examples (or solved, attempted, unsolved) opens the list filtered.
+  const [status, setStatus] = useState<ProblemFilterState['status']>(() => {
+    const s = searchParams.get('status')
+    return s === 'solved' || s === 'examples' || s === 'attempted' || s === 'unsolved' ? s : 'all'
+  })
   const [tag, setTag] = useState('')
   const [sort, setSort] = useState<ProblemFilterState['sort']>('rating')
   const [order, setOrder] = useState<ProblemFilterState['order']>('asc')

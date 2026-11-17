@@ -9,7 +9,7 @@ export interface Problem {
   rating: number
   tags: string // JSON string, e.g. '["dp","math"]'
   category: string
-  solve_status: 'solved' | 'attempted' | 'unsolved' | string
+  solve_status: 'solved' | 'examples' | 'attempted' | 'unsolved' | string
   attempts: number | null
   xp_earned: number | null
   solved_at: string | null
