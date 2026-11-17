@@ -458,6 +458,52 @@ function pollView(p, votes) {
   return { question: p.question, multi: !!p.multi, closed: !!p.closed, options: p.options.map((o) => ({ id: o.id, text: o.text, voters: votes[o.id] || [] })) };
 }
 
+function withInvite(share, invites) {
+  if (share?.type !== "invite") return share;
+  const state = invites.get(Number(share.inviteId));
+  return state ? { ...share, ...state } : share;
+}
+
+/**
+ * A shared solution's code is a spoiler: only the person who wrote it, and
+ * people who have solved the problem themselves, see it straight away.
+ * Everyone else gets the card without the code and a "Reveal" button (see
+ * revealCode). The writer is the card's `by` (kept when it is forwarded);
+ * older cards without it fall back to the message's sender.
+ */
+async function viewMany(viewer, msgs) {
+  const list = Array.isArray(msgs) ? msgs : [];
+  const locked = list.filter((m) => m?.share?.type === "submission" && m.share.code != null && (m.share.by || m.username) !== viewer);
+  if (!locked.length || !viewer) return viewer ? list : list.map((m) => (locked.includes(m) ? lockCode(m) : m));
+  const pids = [...new Set(locked.map((m) => problemOf(m.share)).filter(Boolean))];
+  const solved = pids.length
+    ? new Set((await all(`SELECT problem_rowid FROM progress WHERE username=? AND status='solved' AND problem_rowid IN (${ph(pids.length)})`, [viewer, ...pids])).map((r) => r.problem_rowid))
+    : new Set();
+  return list.map((m) => (locked.includes(m) && !solved.has(problemOf(m.share)) ? lockCode(m) : m));
+}
+async function viewFor(viewer, msg) {
+  return (await viewMany(viewer, [msg]))[0];
+}
+function problemOf(share) {
+  const n = Number(share?.problemId) || Number(/\/solve\/(\d+)/.exec(String(share?.link || ""))?.[1]);
+  return n || null;
+}
+function lockCode(m) {
+  const lines = String(m.share.code || "").split("\n").length;
+  return { ...m, share: { ...m.share, code: null, locked: true, lines } };
+}
+
+/** "Reveal": a member asks for a hidden solution's code, knowing it's a spoiler. */
+async function revealCode(me, messageId) {
+  await init();
+  const msg = await get("SELECT * FROM chat_messages WHERE id=?", [Number(messageId)]);
+  if (!msg || msg.deleted) fail(404, "Message not found");
+  await membership(msg.conversation_id, me);
+  const share = parse(msg.share);
+  if (share?.type !== "submission" || share.code == null) fail(400, "There is no code to show");
+  return { code: share.code };
+}
+
 async function hydrate(rows) {
   if (!rows.length) return [];
   const ids = rows.map((r) => r.id);
@@ -473,6 +519,9 @@ async function hydrate(rows) {
     (m[v.option_id] ||= []).push(v.username);
     votesBy.set(v.message_id, m);
   }
+  // "Invite to solve" cards show who has solved it so far, read fresh each time.
+  const inviteIds = rows.map((r) => (r.deleted ? null : parse(r.share))).filter((x) => x?.type === "invite").map((x) => x.inviteId);
+  const invites = inviteIds.length ? await require("./solve-invites").live(inviteIds) : new Map();
   const reactBy = new Map();
   for (const r of reacts) {
     const m = reactBy.get(r.message_id) || {};
@@ -486,7 +535,7 @@ async function hydrate(rows) {
     kind: r.kind,
     body: r.deleted ? "" : r.body,
     attachment: r.deleted ? null : parse(r.attachment),
-    share: r.deleted ? null : parse(r.share),
+    share: r.deleted ? null : withInvite(parse(r.share), invites),
     replyTo: r.reply_to ? replyBy.get(r.reply_to) || { id: r.reply_to, deleted: true } : null,
     reactions: reactBy.get(r.id) || {},
     editedAt: r.edited_at,
@@ -668,7 +717,7 @@ async function search(me, q) {
   const like = `%${text.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
   const rows = await all(
     `SELECT cm.* FROM chat_messages cm JOIN chat_members m ON m.conversation_id = cm.conversation_id AND m.username = ?
-     WHERE cm.deleted = 0 AND cm.kind = 'text' AND (cm.body LIKE ? ESCAPE '\\' OR cm.attachment LIKE ? ESCAPE '\\' OR cm.share LIKE ? ESCAPE '\\')
+     WHERE cm.deleted = 0 AND cm.kind = 'text' AND (cm.body LIKE ? ESCAPE '\\' OR cm.attachment LIKE ? ESCAPE '\\' OR json_extract(cm.share, '$.title') LIKE ? ESCAPE '\\')
      ORDER BY cm.id DESC LIMIT 40`,
     [me, like, like, like],
   );
@@ -758,6 +807,12 @@ async function closePoll(me, id) {
 
 /* ── forward, saved ── */
 
+/** An invite's race belongs to the people it was sent to: forwarded, it's just the problem. */
+function forwardable(share) {
+  if (share?.type !== "invite") return share;
+  return { type: "problem", id: share.problemId, title: share.title, platform: share.platform, rating: share.rating || null, link: share.link };
+}
+
 async function forward(me, id, conversationIds) {
   const { msg } = await messageFor(me, id);
   if (msg.deleted || msg.kind !== "text") fail(400, "You can't forward that");
@@ -766,7 +821,7 @@ async function forward(me, id, conversationIds) {
   const out = [];
   for (const t of targets) {
     await membership(t, me);
-    out.push(await send(me, t, { body: msg.body, attachment: parse(msg.attachment), share: null, forwardedShare: parse(msg.share) }, async () => null, { forwarded: true }));
+    out.push(await send(me, t, { body: msg.body, attachment: parse(msg.attachment), share: null, forwardedShare: forwardable(parse(msg.share)) }, async () => null, { forwarded: true }));
   }
   return out;
 }
@@ -852,6 +907,10 @@ async function mute(me, convId, on) {
 }
 
 module.exports = {
+  viewMany,
+  viewFor,
+  revealCode,
+  hydrateIds: async (ids) => hydrate(ids.length ? await all(`SELECT * FROM chat_messages WHERE id IN (${ph(ids.length)})`, ids) : []),
   settingsFor,
   setSettings,
   accept,

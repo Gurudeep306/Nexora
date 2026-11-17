@@ -273,6 +273,19 @@ function createSocialRouter(deps) {
           pollIds.length ? all(`SELECT post_id, option FROM social_poll_votes WHERE username = ? AND post_id IN (${ph(pollIds.length)})`, [viewer, ...pollIds]) : [],
         ])
       : [[], [], [], [], []];
+    // Shared solutions are spoilers: the code shows only to its writer and to
+    // people who solved the problem; everyone else gets "Reveal".
+    const solutionPids = [...new Set([...contentRows.values(), ...quotes.values()].map((r) => parseJson(r.share)).filter((x) => x?.type === "submission").map((x) => Number(x.problemId)).filter(Boolean))];
+    const solvedHere = new Set(
+      viewer && solutionPids.length
+        ? (await all(`SELECT problem_rowid FROM progress WHERE username = ? AND status = 'solved' AND problem_rowid IN (${ph(solutionPids.length)})`, [viewer, ...solutionPids])).map((x) => x.problem_rowid)
+        : [],
+    );
+    const shareFor = (r) => {
+      const sh = parseJson(r.share);
+      if (sh?.type !== "submission" || sh.code == null || r.username === viewer || solvedHere.has(Number(sh.problemId))) return sh;
+      return { ...sh, code: null, locked: true, lines: String(sh.code).split("\n").length };
+    };
     const liked = new Set(likes.map((r) => r.post_id));
     const marked = new Set(marks.map((r) => r.post_id));
     const reposted = new Set(reposts.map((r) => r.repost_of));
@@ -305,7 +318,7 @@ function createSocialRouter(deps) {
         code: r.code ? { lang: r.code_lang || "text", source: r.code } : null,
         images: parseJson(r.images, []) || [],
         poll: pollOut,
-        share: parseJson(r.share),
+        share: shareFor(r),
         quote: q ? serialize(q, false) : r.quote_of ? { unavailable: true } : null,
         created_at: r.created_at,
         edited_at: r.edited_at || null,
@@ -384,6 +397,33 @@ function createSocialRouter(deps) {
       if (!row) bad("You haven't solved that problem yet");
       return { type, title: row.title, subtitle: `${row.platform || "Problem"}${row.rating ? ` · ${row.rating}` : ""}`, stat: "Solved", link: `/solve/${row.id}`, at: row.solved_at };
     }
+    if (type === "submission") {
+      // Your own Accepted solution, as a card; its code is hidden from people
+      // who haven't solved the problem until they choose "Reveal".
+      const row = await get(
+        `SELECT s.id, s.language, s.verdict, s.exec_time_ms, s.memory_kb, s.code, s.submitted_at, pb.id AS pid, pb.title, pb.platform, pb.category
+         FROM submissions s JOIN problems pb ON pb.id = s.problem_rowid WHERE s.id = ? AND s.username = ?`,
+        [intParam(s.id), u],
+      );
+      if (!row || row.category === "__hidden") bad("You can only share your own solutions");
+      if (row.verdict !== "AC") bad("Share a solution once it's Accepted");
+      return {
+        type,
+        id: row.id,
+        by: u,
+        problemId: row.pid,
+        title: row.title,
+        subtitle: `${row.platform || "Problem"} · ${row.language}`,
+        stat: "Accepted",
+        language: row.language,
+        verdict: row.verdict,
+        timeMs: row.exec_time_ms || 0,
+        memoryKb: row.memory_kb || 0,
+        code: String(row.code || "").slice(0, 6000),
+        link: `/solve/${row.pid}`,
+        at: row.submitted_at,
+      };
+    }
     if (type === "gate_test") {
       const row = await get(
         `SELECT id, title, score, json_extract(result, '$.maxScore') AS max, json_extract(result, '$.percentile') AS pct, submitted_at
@@ -431,7 +471,7 @@ function createSocialRouter(deps) {
     requireMe,
     h(async (req, res) => {
       const u = me(req);
-      const [solved, tests, lessons, achievements, streak] = await Promise.all([
+      const [solved, tests, lessons, achievements, streak, solutions] = await Promise.all([
         all(
           `SELECT pb.id, pb.title, pb.rating, pb.platform FROM progress pr JOIN problems pb ON pb.id = pr.problem_rowid
            WHERE pr.username = ? AND pr.status = 'solved' ORDER BY pr.solved_at DESC LIMIT 8`,
@@ -453,8 +493,16 @@ function createSocialRouter(deps) {
           [u],
         ),
         calcStreak(u),
+        // Accepted solutions, newest first, one per problem (the code is shared as a spoiler).
+        all(
+          `SELECT s.id, s.language, s.exec_time_ms AS time_ms, pb.title, pb.platform FROM submissions s JOIN problems pb ON pb.id = s.problem_rowid
+           WHERE s.username = ? AND s.verdict = 'AC' AND COALESCE(pb.category, '') <> '__hidden'
+             AND s.id = (SELECT MAX(s2.id) FROM submissions s2 WHERE s2.username = s.username AND s2.problem_rowid = s.problem_rowid AND s2.verdict = 'AC')
+           ORDER BY s.id DESC LIMIT 6`,
+          [u],
+        ).catch(() => []),
       ]);
-      res.json({ ok: true, solved, tests, lessons, achievements, streak: { current: streak.current, best: streak.best } });
+      res.json({ ok: true, solved, tests, lessons, achievements, solutions, streak: { current: streak.current, best: streak.best } });
     }),
   );
 
@@ -594,6 +642,18 @@ function createSocialRouter(deps) {
     if (!row || row.kind === "repost") bad("Post not found", 404);
     return row;
   }
+
+  // "Reveal" a shared solution's code: anyone who can see the post may choose to.
+  router.post(
+    "/api/social/posts/:id/reveal",
+    requireMe,
+    h(async (req, res) => {
+      const row = await interactable(req, intParam(req.params.id));
+      const sh = parseJson(row.share);
+      if (sh?.type !== "submission" || sh.code == null) bad("There is no code to show");
+      res.json({ ok: true, code: sh.code });
+    }),
+  );
 
   // Likes, bookmarks and reposts are idempotent PUT/DELETE (safe for optimistic UI).
   router.put(
@@ -1240,6 +1300,15 @@ function createSocialRouter(deps) {
   /* ═════════════ notifications (grouped) ═════════════ */
 
   const GROUPED = new Set(["like", "repost", "follow", "comment_like"]);
+  /** A notification's own target (invites to solve): only paths on this site. */
+  const refOf = (r) => {
+    try {
+      const x = JSON.parse(r.ref || "null");
+      return { link: typeof x?.link === "string" && /^\/(?!\/)/.test(x.link) ? x.link : null, title: typeof x?.title === "string" ? x.title : null };
+    } catch {
+      return {};
+    }
+  };
 
   router.get(
     "/api/social/notifications",
@@ -1270,7 +1339,8 @@ function createSocialRouter(deps) {
             actor_count: 0,
             created_at: r.created_at,
             read: !!r.read_at,
-            snippet: String(r.comment_body ?? r.post_body ?? "").slice(0, 140),
+            snippet: String(r.comment_body ?? r.post_body ?? refOf(r).title ?? "").slice(0, 140),
+            link: refOf(r).link || null,
           };
           byKey.set(key, g);
           groups.push(g);
