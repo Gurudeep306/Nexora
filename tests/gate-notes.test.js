@@ -6,7 +6,7 @@
     (the same --check CI relies on).
   - The validator reports authoring mistakes with file:line.
   - The API serves subjects / trees / lessons / search from the compiled
-    JSON, hides the staff-only demo, never exposes `sources`, and keeps
+    JSON, hides a subject the Site map makes staff-only, never exposes `sources`, and keeps
     per-user progress private to its owner.
 */
 const test = require('node:test');
@@ -310,57 +310,84 @@ test('API', async (t) => {
   const ana = await signup(`nana${Date.now().toString(36)}`);
   const ben = await signup(`nben${Date.now().toString(36)}`);
 
-  await t.test('the demo subject is staff-only', async () => {
-    const pub = await call('GET', '/api/gate/notes', ana);
-    assert.equal(pub.status, 200);
-    assert.ok(!pub.body.subjects.some((s) => s.id === 'demo'));
-    assert.equal((await call('GET', '/api/gate/notes/demo', ana)).status, 404);
-    assert.equal((await call('GET', '/api/gate/notes/demo/place-value', ana)).status, 404);
-    assert.deepEqual((await call('GET', '/api/gate/notes/search?q=radix', ana)).body.results, []);
+  // Admin → Site map decides who sees a subject (gate.notes.<id>). Digital
+  // Logic is open to everyone by default; set to "staff only", members get
+  // "not found" everywhere (tree, lesson, search, PYQ teaching, progress).
+  const setPart = async (mode) => {
+    const r = await call('PUT', '/api/admin/sitemap/gate.notes.dl', owner, { mode });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    assert.equal(r.body.effective['gate.notes.dl'], mode);
+  };
 
-    const staff = await call('GET', '/api/gate/notes', owner);
-    const demo = staff.body.subjects.find((s) => s.id === 'demo');
-    assert.ok(demo && demo.hidden && demo.lessonCount === 1);
+  await t.test('a subject set to "staff only" in the Site map is hidden from members', async () => {
+    const open = await call('GET', '/api/gate/notes', ana);
+    assert.equal(open.status, 200);
+    const card = open.body.subjects.find((s) => s.id === 'dl');
+    assert.ok(card && !card.hidden, 'Digital Logic is open to members by default');
+
+    await setPart('staff');
+    try {
+      const pub = await call('GET', '/api/gate/notes', ana);
+      assert.ok(!pub.body.subjects.some((s) => s.id === 'dl'));
+      // The Site map gate answers the part's own API with 403 feature_disabled
+      // (src/sitemap.js); the app shows "not found".
+      for (const u of ['/api/gate/notes/dl', '/api/gate/notes/dl/place-value']) {
+        const r = await call('GET', u, ana);
+        assert.equal(r.status, 403, u);
+        assert.equal(r.body.code, 'feature_disabled', u);
+        assert.ok(!JSON.stringify(r.body).includes('Place value'), 'nothing of the lesson leaks');
+      }
+      assert.ok(!(await call('GET', '/api/gate/notes/search?q=radix', ana)).body.results.some((r) => r.subject === 'dl'));
+      assert.deepEqual((await call('GET', '/api/gate/questions/cse-2023-cs-22/teaching', ana)).body.teaching, []);
+      // Members cannot write progress to a subject they cannot see.
+      assert.equal((await call('PUT', '/api/gate/me/notes-progress/dl/place-value', ana, { completed: true })).status, 404);
+
+      const staff = await call('GET', '/api/gate/notes', owner);
+      const dl = staff.body.subjects.find((s) => s.id === 'dl');
+      assert.ok(dl && dl.lessonCount === (await call('GET', '/api/gate/notes/dl', owner)).body.chapters.reduce((n, c) => n + c.lessons.length, 0));
+      assert.equal((await call('GET', '/api/gate/notes/dl/place-value', owner)).status, 200, 'staff still see it');
+    } finally {
+      await setPart('visible');
+    }
+    assert.equal((await call('GET', '/api/gate/notes/dl/place-value', ana)).status, 200, 'open again for members');
   });
 
-  await t.test('tree, lesson and search for staff', async () => {
-    const tree = await call('GET', '/api/gate/notes/demo', owner);
+  await t.test('tree, lesson and search', async () => {
+    const tree = await call('GET', '/api/gate/notes/dl', ana);
     assert.equal(tree.status, 200);
     assert.equal(tree.body.chapters[0].lessons[0].id, 'place-value');
 
-    const r = await call('GET', '/api/gate/notes/demo/place-value', owner);
+    const r = await call('GET', '/api/gate/notes/dl/place-value', ana);
     assert.equal(r.status, 200);
     assert.equal(r.body.lesson.title, 'Place value and changing bases');
     assert.ok(Array.isArray(r.body.lesson.body) && r.body.lesson.body.length > 5);
-    assert.ok(r.body.practice['nx-demo-01-01-q01']);
-    assert.ok(r.body.viz['binary-place-values']);
+    assert.ok(r.body.practice['nx-dl-01-01-q01']);
+    assert.ok(r.body.viz['odometer-rollover']);
     assert.ok(!JSON.stringify(r.body).includes('"sources"'));
-    assert.equal((await call('GET', '/api/gate/notes/demo/nope', owner)).status, 404);
+    assert.equal((await call('GET', '/api/gate/notes/dl/nope', ana)).status, 404);
 
-    const s = await call('GET', '/api/gate/notes/search?q=radix', owner);
-    assert.equal(s.body.results[0].lesson, 'place-value');
+    const s = await call('GET', '/api/gate/notes/search?q=radix', ana);
+    assert.ok(s.body.results.some((x) => x.subject === 'dl' && x.lesson === 'place-value'));
 
-    // The coverage map: which blocks teach a PYQ (staff-only demo here).
-    const teach = await call('GET', '/api/gate/questions/cse-2023-cs-22/teaching', owner);
-    assert.deepEqual(teach.body.teaching[0].blocks.map((b) => b.id), ['place-value-def', 'expansion']);
-    assert.deepEqual((await call('GET', '/api/gate/questions/cse-2023-cs-22/teaching', ana)).body.teaching, []);
+    // The coverage map: which blocks teach a PYQ.
+    const teach = await call('GET', '/api/gate/questions/cse-2023-cs-22/teaching', ana);
+    assert.deepEqual(teach.body.teaching[0].blocks.map((b) => b.id), ['expansion', 'repeated-division']);
     assert.ok(tree.body.subject.coverage.total >= tree.body.subject.coverage.covered);
   });
 
   await t.test('progress needs auth, validates input and stays per user', async () => {
     assert.equal((await call('GET', '/api/gate/me/notes-progress')).status, 401);
-    assert.equal((await call('PUT', '/api/gate/me/notes-progress/demo/place-value', null, { completed: true })).status, 401);
-    // Members cannot write to the hidden demo.
-    assert.equal((await call('PUT', '/api/gate/me/notes-progress/demo/place-value', ana, { completed: true })).status, 404);
-    assert.equal((await call('PUT', '/api/gate/me/notes-progress/demo/place-value', owner, { scrollPct: 140 })).status, 400);
-    assert.equal((await call('PUT', '/api/gate/me/notes-progress/demo/place-value', owner, { completed: 'yes' })).status, 400);
-    assert.equal((await call('PUT', '/api/gate/me/notes-progress/demo/place-value', owner, {})).status, 400);
+    assert.equal((await call('PUT', '/api/gate/me/notes-progress/dl/place-value', null, { completed: true })).status, 401);
+    assert.equal((await call('PUT', '/api/gate/me/notes-progress/dl/nope', ana, { completed: true })).status, 404);
+    assert.equal((await call('PUT', '/api/gate/me/notes-progress/dl/place-value', ana, { scrollPct: 140 })).status, 400);
+    assert.equal((await call('PUT', '/api/gate/me/notes-progress/dl/place-value', ana, { completed: 'yes' })).status, 400);
+    assert.equal((await call('PUT', '/api/gate/me/notes-progress/dl/place-value', ana, {})).status, 400);
 
-    assert.equal((await call('PUT', '/api/gate/me/notes-progress/demo/place-value', owner, { scrollPct: 42.4 })).status, 200);
-    assert.equal((await call('PUT', '/api/gate/me/notes-progress/demo/place-value', owner, { completed: true, bookmarked: true })).status, 200);
-    const mine = await call('GET', '/api/gate/me/notes-progress?subject=demo', owner);
+    assert.equal((await call('PUT', '/api/gate/me/notes-progress/dl/place-value', ana, { scrollPct: 42.4 })).status, 200);
+    assert.equal((await call('PUT', '/api/gate/me/notes-progress/dl/place-value', ana, { completed: true, bookmarked: true })).status, 200);
+    const mine = await call('GET', '/api/gate/me/notes-progress?subject=dl', ana);
     assert.deepEqual(
-      { ...mine.body.progress['demo/place-value'], updatedAt: 0 },
+      { ...mine.body.progress['dl/place-value'], updatedAt: 0 },
       { completed: true, scrollPct: 42, bookmarked: true, updatedAt: 0 },
     );
     assert.deepEqual((await call('GET', '/api/gate/me/notes-progress', ben)).body.progress, {});

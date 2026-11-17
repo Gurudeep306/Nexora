@@ -281,11 +281,14 @@ function Frame({ node, as: As = 'section', className, icon, kicker, title, child
   const note = As === 'aside'
   const named = hasHead && (!!title || note || !!labelledBy)
   // Notes, asides, tricks and traps sit inside the page's main column, so they
-  // are notes (role="note"), not nested complementary landmarks.
-  const Tag = note ? 'div' : As
+  // are notes (role="note"), not nested complementary landmarks. When a page
+  // shows the lesson more than once (idPrefix: the font samples), named
+  // sections are groups, so the same region doesn't repeat.
+  const repeated = !!useNotes()?.idPrefix && As === 'section'
+  const Tag = note || repeated ? 'div' : As
   return (
     <Tag
-      role={note ? 'note' : As === 'div' && named ? 'group' : undefined}
+      role={note ? 'note' : (As === 'div' || repeated) && named ? 'group' : undefined}
       id={did(node.id)}
       data-block={node.name}
       data-block-id={node.id}
