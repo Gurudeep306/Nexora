@@ -57,6 +57,26 @@ Contents:
 
 ## 3. Where it stands (2026-11-17, session 8)
 
+- **Session 8 in one line:** everything asked for is merged and live —
+  A1 #136, A3 #137, B #138, A2 #139, C #140, D Messages #141, E Contests
+  #142, dry-run polish #143, F linked platforms #144, "How it runs" tab #145.
+  No PR is open. The only item left from the plan is the "first k of N"
+  label (section 6, item 4); then the owner chooses what comes next.
+- **Cloud environment "Nexora"** (made 2026-11-17, owner approved): this
+  repo's sessions can reach codeforces.com, atcoder.jp, kenkoooo.com,
+  leetcode.com, codechef.com, dmoj.ca, github.com, api.github.com,
+  open.kattis.com, spoj.com, yukicoder.me, cses.fi, hackerrank.com,
+  geeksforgeeks.org and the code runners (wandbox.org, godbolt.org,
+  api.paiza.io, api.kotlinlang.org). Start the demo through the proxy like
+  this (Node's own `fetch` ignores the proxy without the first variable):
+  `NODE_USE_ENV_PROXY=1 NODE_EXTRA_CA_CERTS=/root/.ccr/ca-bundle.crt
+  NODE_OPTIONS="-r <scratch>/proxy/preload.js" PORT=3300 node scripts/hive-demo.js`
+  (the preload patches `https` with `https-proxy-agent@7`; v9 is ESM-only).
+- **To do on the live site (owner):** set `GITHUB_CLIENT_ID` and
+  `GITHUB_CLIENT_SECRET` on Render and add the callback
+  `<API_URL>/auth/github/callback/link` (API_URL, else the app URL; on the
+  live site that is `https://nexoraguru.in/...`) to the GitHub OAuth app,
+  or "Connect GitHub" stays switched off (it says so on the page).
 - **Owner's standing instruction (2026-11-17):** "merge everything as any
   work is done i want no issues". Each finished PR is merged by the agent
   once CI is green, there are no conflicts, and the checks below are clean
@@ -197,7 +217,7 @@ Contents:
     the Solve page shows Description / Solution. Axe 0 and no sideways scroll
     on the list and all six tabs, light, dark and phone.
   - Tests: `tests/authoring.test.js` (4), `tests/authoring-routes.test.js` (5).
-- **D, Messages — PR opened (session 8), merged by the agent once CI is green.**
+- **D, Messages — merged (#141).**
   The owner asked for "the best system possible" with more features (2026-11-17).
   - **Server**: `src/chat.js` (rules) + `src/routes/chat.js` (`/api/chat/*`).
     Tables `chat_conversations`, `chat_members` (role, last_read_id, muted,
@@ -250,7 +270,6 @@ Contents:
     - a reply's quote shows code as "[code]", not raw ``` marks
       (`quoteText` in `chat/types.ts`);
     - day and "New messages" lines are plain list items (axe "list").
-- **D, Messages — merged (#141).**
 - **E, Contests — merged (#142).**
   - **Server**: `src/contests.js` (rules, pure and tested) + `src/routes/hosted-contests.js`
     (`/api/hosted/*`). It keeps `custom_contests` (old contests still work; their
@@ -381,7 +400,7 @@ Contents:
   - **Not checkable here**: a full GitHub connect needs the live site's OAuth
     app (it is covered by the route and unit tests with GitHub's documented
     answers).
-- **"How it runs" is its own tab again (owner's choice, 2026-11-17)**. The
+- **"How it runs" is its own tab again — merged (#145)** (owner's choice, 2026-11-17). The
   Solve page's results tabs are now Tests · Result · Dry run · How it runs.
   To make room the owner chose to remove Coach → Hints (it duplicated Help →
   Hint / Ask the tutor): Help → "Give me a hint" now asks the tutor for one
@@ -393,7 +412,12 @@ Contents:
 - **Lost work, rebuilt from the plan:** session 6 built B (problem pipeline)
   and A3 (coding analysis + XP) in helper worktrees on its own machine and
   never pushed them. They are not recoverable here and are rebuilt next.
-- **Next:** the "first k of N" label on a capped vector (item 4).
+- **Next:**
+  1. The "first k of N" label on a capped vector (section 6, item 4).
+  2. Then ask the owner. Open ideas from this session: SPOJ, Kattis,
+     CSES and yukicoder in Linked platforms are left out on purpose
+     (bot check, no public profile API or no proof field), so don't add
+     them; Messages has no calls or link previews (honest limits).
 - **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and
   functional languages is **later**; the ideas in section 6, item 7 are
   **no for now**.
@@ -778,8 +802,8 @@ What was built (`client/src/pages/SolvePage.tsx`, `components/solve/CodeEditor.t
   the timer, char count, wrap label and theme name are gone.
 - Status bar: Ln/Col, language, issue count (click → Result), saved.
 - Results: 4 tabs — Tests (+ "Generate with AI"), Result (issues listed on
-  top, click → line), Dry run ("Watch it run" / "Under the hood"), Coach
-  (Hints / Analysis). Old links (`openTab('analysis')` etc.) still land in
+  top, click → line; Result | Analysis), Dry run ("Watch it run" / "Under
+  the hood"), How it runs (since #145; Coach → Hints was removed then). Old links (`openTab('analysis')` etc.) still land in
   the right tab and view.
 - Phone: Dry run · Run · Submit bar at the bottom. Alt+D opens the dry run.
 - Checked: axe 0 and no sideways scroll in light, dark and phone; 533 tests.
@@ -842,7 +866,8 @@ by analyzing what to place where to make it look the best and show case best
 8. **Nothing is lost.** Every advanced feature is reachable in at most two
    clicks; only duplicates and noise go.
    - Check: axe 0 in light, dark and phone, no sideways scroll at 360 px.
-   - Check "How it runs" on a phone (never done yet).
+   - "How it runs" on a phone: checked in #145 (axe 0; it is the last tab,
+     so on a narrow phone it shows once the tab row is swiped).
 
 ### 3. Dry run for the other languages
 
