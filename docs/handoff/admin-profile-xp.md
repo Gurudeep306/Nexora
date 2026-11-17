@@ -28,7 +28,7 @@ file current as each part lands; each part is its own pull request.
 
 | Part | Status | Pull request |
 |---|---|---|
-| 1. XP rule ("Passed the examples") | Built, tested; PR open, waiting for CI to merge | https://github.com/Gurudeep306/Nexora/pull/149 |
+| 1. XP rule ("Passed the examples") | Done, merged to main | https://github.com/Gurudeep306/Nexora/pull/149 |
 | 2. Avatar inside Edit profile | Next — plan below, no code yet | — |
 | 3. Staff permissions per Admin part | Not started | — |
 | 4. Site map tree (show/hide, GitHub links) | Not started | — |
