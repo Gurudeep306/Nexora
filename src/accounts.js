@@ -1,5 +1,6 @@
-// Linked judge accounts: prove a Codeforces / AtCoder / LeetCode handle is
-// yours, then import what you solved there.
+// Linked accounts: prove a Codeforces / AtCoder / LeetCode / DMOJ / CodeChef
+// handle is yours (or connect GitHub through GitHub's own OAuth), then import
+// what you solved there.
 //
 // What the judges make public (and so what Nexora can honestly import):
 //   Codeforces  every submission (official API: user.status, user.info)
@@ -44,6 +45,9 @@ const HANDLE_RE = {
   codeforces: /^[A-Za-z0-9_.-]{3,24}$/,
   atcoder: /^[A-Za-z0-9_]{3,16}$/,
   leetcode: /^[A-Za-z0-9_-]{2,30}$/,
+  dmoj: /^[A-Za-z0-9_]{2,30}$/,
+  codechef: /^[A-Za-z0-9_.]{3,30}$/,
+  github: /^[A-Za-z0-9-]{1,39}$/,
 };
 
 /* ── Codeforces ──────────────────────────────────────────────────────────── */
@@ -162,7 +166,166 @@ const leetcode = {
   },
 };
 
-const PLATFORMS = { codeforces, atcoder, leetcode };
+/* ── DMOJ ────────────────────────────────────────────────────────────────── */
+/** DMOJ's official API (v2): a user's self-description and every problem they solved. */
+async function dmojUser(handle) {
+  const d = await getJson(`https://dmoj.ca/api/v2/user/${encodeURIComponent(handle)}`).catch((e) => {
+    if (e.status === 404) throw Object.assign(new Error("DMOJ didn't recognise that username"), { status: 404 });
+    throw e;
+  });
+  const u = d?.data?.object;
+  if (!u) throw Object.assign(new Error(d?.error?.message || "DMOJ didn't recognise that username"), { status: 404 });
+  return u;
+}
+const dmoj = {
+  id: "dmoj",
+  name: "DMOJ",
+  profileUrl: (h) => `https://dmoj.ca/user/${encodeURIComponent(h)}`,
+  howToVerify: (c) => `On DMOJ open Edit profile, put ${c.token} in Self-description, save, then press Check. You can remove it afterwards.`,
+  async verify(handle, challenge) {
+    return String((await dmojUser(handle)).about || "").includes(challenge.token);
+  },
+  async profile(handle) {
+    const u = await dmojUser(handle);
+    return { handle: u.username || handle, rating: u.rating ?? null, maxRating: null, rank: null, maxRank: null };
+  },
+  async solved(handle) {
+    const u = await dmojUser(handle);
+    const list = Array.isArray(u.solved_problems) ? u.solved_problems : [];
+    return { complete: true, problems: list.map((code) => ({ id: String(code), at: 0, rating: null })) };
+  },
+};
+
+/* ── CodeChef ──────────────────────────────────────────────────────────────
+ * CodeChef has no public API now; its public profile page shows the name,
+ * the rating and stars, and how many problems were solved (not which). So
+ * the proof is the code in the profile's name for a moment, and the import
+ * is the count and the rating.
+ */
+const decodeHtml = (s) => String(s || "").replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n))).replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, " ");
+function codechefProfile(html) {
+  const h = String(html || "");
+  const name = /<h1 class="h2-style">([^<]*)<\/h1>/.exec(h);
+  const rating = /class="rating-number">\s*(\d+)/.exec(h);
+  const highest = /<strong>CodeChef Rating<\/strong><\/a>\s*<small>\(Highest Rating (\d+)\)/.exec(h);
+  const stars = /class="rating-star">([\s\S]*?)<\/div>/.exec(h);
+  const solved = /Total Problems Solved:\s*(\d+)/.exec(h);
+  if (!name && !solved) return null;
+  return {
+    name: name ? decodeHtml(name[1]).trim() : "",
+    rating: rating ? Number(rating[1]) : null,
+    maxRating: highest ? Number(highest[1]) || null : null,
+    stars: stars ? (stars[1].match(/&#9733;|★/g) || []).length || null : null,
+    solved: solved ? Number(solved[1]) : null,
+  };
+}
+async function codechefUser(handle) {
+  const html = await getText(`https://www.codechef.com/users/${encodeURIComponent(handle)}`);
+  const p = codechefProfile(html);
+  if (!p) throw Object.assign(new Error("CodeChef didn't recognise that username"), { status: 404 });
+  return p;
+}
+const codechef = {
+  id: "codechef",
+  name: "CodeChef",
+  profileUrl: (h) => `https://www.codechef.com/users/${encodeURIComponent(h)}`,
+  howToVerify: (c) => `On CodeChef open Edit profile, add ${c.token} to the end of your Name, save, then press Check. Change your name back straight after; CodeChef has no bio field, so the name is the only place a code can go.`,
+  async verify(handle, challenge) {
+    return (await codechefUser(handle)).name.includes(challenge.token);
+  },
+  async profile(handle) {
+    const p = await codechefUser(handle);
+    return { handle, rating: p.rating, maxRating: p.maxRating, rank: p.stars ? `${p.stars}★` : null, maxRank: null };
+  },
+  /** Only the total is public: the count is exact, no problem list. */
+  async solved(handle) {
+    const p = await codechefUser(handle);
+    return { complete: false, total: p.solved ?? 0, byDifficulty: null, problems: [] };
+  },
+};
+
+/* ── GitHub ────────────────────────────────────────────────────────────────
+ * The one site here with real OAuth: GitHub itself confirms the account is
+ * yours. We read your login, public repositories, followers and
+ * contributions in the last year, then revoke the token at once: nothing that
+ * could act for you is kept. Refresh reads the public numbers again;
+ * contributions need a fresh Connect (they are only readable with a token).
+ */
+const GH_API = "https://api.github.com";
+const ghHeaders = (token) => ({ Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", ...(token ? { Authorization: `Bearer ${token}` } : {}) });
+const github = {
+  id: "github",
+  name: "GitHub",
+  oauth: true,
+  profileUrl: (h) => `https://github.com/${encodeURIComponent(h)}`,
+  howToVerify: () => "Press Connect with GitHub: GitHub confirms the account is yours.",
+  async verify() {
+    return false;
+  },
+  async profile(handle) {
+    const u = await getJson(`${GH_API}/users/${encodeURIComponent(handle)}`, { headers: ghHeaders() });
+    return { handle: u.login, rating: null, maxRating: null, rank: null, maxRank: null, repos: u.public_repos ?? 0, followers: u.followers ?? 0, id: u.id };
+  },
+};
+
+/** Where to send someone to connect GitHub (state ties the answer to their session). */
+function githubAuthorizeUrl({ clientId, redirectUri, state }) {
+  const q = new URLSearchParams({ client_id: clientId, redirect_uri: redirectUri, state, scope: "read:user", allow_signup: "false" });
+  return `https://github.com/login/oauth/authorize?${q}`;
+}
+
+/** Finish connecting: swap the code for a token, read the account, revoke the token, store what we read. */
+async function githubLink(username, { code, clientId, clientSecret, redirectUri }) {
+  await init();
+  const tok = await getJson("https://github.com/login/oauth/access_token", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, code, redirect_uri: redirectUri }),
+  });
+  if (!tok?.access_token) throw bad(tok?.error_description || "GitHub did not confirm the account", 400);
+  const token = tok.access_token;
+  try {
+    const u = await getJson(`${GH_API}/user`, { headers: ghHeaders(token) });
+    let contributions = null;
+    try {
+      const g = await getJson(`${GH_API}/graphql`, { method: "POST", headers: { ...ghHeaders(token), "Content-Type": "application/json" }, body: JSON.stringify({ query: "query { viewer { contributionsCollection { contributionCalendar { totalContributions } } } }" }) });
+      contributions = g?.data?.viewer?.contributionsCollection?.contributionCalendar?.totalContributions ?? null;
+    } catch {
+      /* the numbers below still come across */
+    }
+    const taken = await get("SELECT username FROM linked_accounts WHERE platform='github' AND LOWER(handle)=LOWER(?) AND username<>?", [u.login, username]);
+    if (taken) throw bad("That GitHub account is already linked to another Nexora account", 409);
+    const now = Date.now();
+    const stats = { repos: u.public_repos ?? 0, followers: u.followers ?? 0, contributions, contributionsAt: contributions == null ? null : now, since: u.created_at || null, githubId: u.id };
+    await run(
+      `INSERT INTO linked_accounts(username, platform, handle, token, token_at, verified_at, stats_json, last_import, last_error) VALUES(?, 'github', ?, NULL, NULL, ?, ?, ?, NULL)
+       ON CONFLICT(username, platform) DO UPDATE SET handle=excluded.handle, token=NULL, token_at=NULL, verified_at=excluded.verified_at, stats_json=excluded.stats_json, last_import=excluded.last_import, last_error=NULL`,
+      [username, u.login, now, JSON.stringify(stats), now],
+    );
+    return pub(await get("SELECT * FROM linked_accounts WHERE username=? AND platform='github'", [username]));
+  } finally {
+    // Revoke it: we only needed to read once.
+    fetchImpl(`${GH_API}/applications/${encodeURIComponent(clientId)}/token`, {
+      method: "DELETE",
+      headers: { ...ghHeaders(), "Content-Type": "application/json", Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`, "User-Agent": UA },
+      body: JSON.stringify({ access_token: token }),
+      signal: AbortSignal.timeout(10000),
+    }).catch(() => {});
+  }
+}
+
+/** Refresh a connected GitHub account's public numbers (no token needed). */
+async function githubRefresh(username) {
+  await init();
+  const row = await get("SELECT * FROM linked_accounts WHERE username=? AND platform='github'", [username]);
+  if (!row?.verified_at) throw bad("Connect GitHub first", 404);
+  const p = await github.profile(row.handle);
+  const stats = { ...(JSON.parse(row.stats_json || "{}") || {}), repos: p.repos, followers: p.followers };
+  await run("UPDATE linked_accounts SET handle=?, stats_json=?, last_import=?, last_error=NULL WHERE username=? AND platform='github'", [p.handle, JSON.stringify(stats), Date.now(), username]);
+  return pub(await get("SELECT * FROM linked_accounts WHERE username=? AND platform='github'", [username]));
+}
+
+const PLATFORMS = { codeforces, atcoder, leetcode, dmoj, codechef, github };
 
 /* ── Storage ─────────────────────────────────────────────────────────────── */
 let ready = null;
@@ -232,6 +395,7 @@ async function start(username, platform, rawHandle) {
   await init();
   const p = PLATFORMS[platform];
   if (!p) throw bad("Unknown judge");
+  if (p.oauth) throw bad(`Use Connect with ${p.name}: it confirms the account through ${p.name} itself`);
   const handle = String(rawHandle || "").trim();
   if (!HANDLE_RE[platform].test(handle)) throw bad(`That doesn't look like a ${p.name} handle`);
   const taken = await get("SELECT username FROM linked_accounts WHERE platform=? AND LOWER(handle)=LOWER(?) AND verified_at IS NOT NULL AND username<>?", [platform, handle, username]);
@@ -279,6 +443,7 @@ async function importSolved(username, platform, { catalog, markSolved }) {
   const row = await get("SELECT * FROM linked_accounts WHERE username=? AND platform=?", [username, platform]);
   if (!p || !row) throw bad("Link the account first", 404);
   if (!row.verified_at) throw bad("Verify the account first — imports only come from accounts you've proved are yours", 403);
+  if (p.oauth) return { added: 0, matched: 0, total: 0, account: await githubRefresh(username) };
   try {
     const [prof, res] = await Promise.all([p.profile(row.handle).catch(() => null), p.solved(row.handle)]);
     // Match against Nexora's catalogue for this platform.
@@ -325,6 +490,7 @@ const TIERS = [
 function badgeDefs() {
   const out = [];
   for (const p of Object.values(PLATFORMS)) {
+    if (p.oauth) continue;
     for (const [n, label] of TIERS) {
       out.push([`${p.id}_solved_${n}`, `${p.name} ${label}`, `Solve ${n} problems on ${p.name} (linked account)`, "trophy", "platforms", n, Math.round(n * 1.5)]);
     }
@@ -333,6 +499,10 @@ function badgeDefs() {
   out.push(["codeforces_rated_1900", "Codeforces Candidate Master", "Reach a 1900 rating on Codeforces", "medal_purple", "platforms", 1, 400]);
   out.push(["atcoder_rated_1200", "AtCoder Cyan", "Reach a 1200 rating on AtCoder", "medal_green", "platforms", 1, 300]);
   out.push(["multi_judge", "Multi-judge", "Link and verify accounts on three judges", "globe", "platforms", 3, 150]);
+  out.push(["codechef_rated_1800", "CodeChef 4★", "Reach a 1800 rating on CodeChef", "medal_blue", "platforms", 1, 300]);
+  out.push(["github_linked", "On GitHub", "Connect your GitHub account", "globe", "platforms", 1, 50]);
+  out.push(["github_repos_10", "Builder", "Have 10 public repositories on GitHub", "trophy", "platforms", 10, 150]);
+  out.push(["github_contrib_100", "Contributor", "Make 100 contributions on GitHub in a year", "trophy", "platforms", 100, 200]);
   return out;
 }
 /** [achievementId, progress, target] for one user's verified accounts. */
@@ -340,6 +510,12 @@ function badgeProgress(accounts) {
   const out = [];
   const verified = accounts.filter((a) => a.verified);
   for (const a of verified) {
+    if (a.platform === "github") {
+      out.push(["github_linked", 1, 1]);
+      out.push(["github_repos_10", Number(a.stats?.repos) || 0, 10]);
+      out.push(["github_contrib_100", Number(a.stats?.contributions) || 0, 100]);
+      continue;
+    }
     for (const [n] of TIERS) out.push([`${a.platform}_solved_${n}`, Number(a.solved) || 0, n]);
     const best = Math.max(Number(a.maxRating) || 0, Number(a.rating) || 0);
     if (a.platform === "codeforces") {
@@ -347,9 +523,10 @@ function badgeProgress(accounts) {
       out.push(["codeforces_rated_1900", best >= 1900 ? 1 : 0, 1]);
     }
     if (a.platform === "atcoder") out.push(["atcoder_rated_1200", best >= 1200 ? 1 : 0, 1]);
+    if (a.platform === "codechef") out.push(["codechef_rated_1800", best >= 1800 ? 1 : 0, 1]);
   }
-  out.push(["multi_judge", verified.length, 3]);
+  out.push(["multi_judge", verified.filter((a) => a.platform !== "github").length, 3]);
   return out;
 }
 
-module.exports = { PLATFORMS, CF_VERIFY, CHALLENGE_MS, setFetch, list, start, check, unlink, importSolved, badgeDefs, badgeProgress, atcoderAffiliation, init };
+module.exports = { PLATFORMS, CF_VERIFY, CHALLENGE_MS, setFetch, list, start, check, unlink, importSolved, badgeDefs, badgeProgress, atcoderAffiliation, codechefProfile, githubAuthorizeUrl, githubLink, githubRefresh, init };
