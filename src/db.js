@@ -1263,6 +1263,16 @@ async function initSocialTables() {
 async function initAdminTables() {
   await run("ALTER TABLE users ADD COLUMN verified INTEGER DEFAULT 0").catch(() => {});
   await runBatch([
+    // Staff access per Admin section (src/authz/sections.js): level is
+    // 'none' | 'view' | 'edit'; no row = follow role and permissions.
+    [`CREATE TABLE IF NOT EXISTS staff_section_access (
+      username TEXT NOT NULL,
+      section TEXT NOT NULL,
+      level TEXT NOT NULL,
+      updated_by TEXT,
+      updated_at INTEGER NOT NULL,
+      PRIMARY KEY (username, section)
+    )`],
     // Per-user permission overrides: granted=1 adds a permission on top of
     // the role's defaults, granted=0 takes one away.
     [`CREATE TABLE IF NOT EXISTS user_permissions (

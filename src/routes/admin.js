@@ -11,6 +11,7 @@ const rateLimit = require("express-rate-limit");
 const { errMessage } = require("../http-error");
 const { getSessionUser } = require("../middleware/auth");
 const P = require("../authz/permissions");
+const S = require("../authz/sections");
 const { errorCount } = require("../authz/access");
 const content = require("../authz/content");
 const dbStats = require("../db-stats");
@@ -333,6 +334,9 @@ function createAdminRouter(deps) {
         role: a.role,
         isOwner: a.role === "owner",
         permissions: [...a.perms],
+        // What this person gets in each Admin section (Staff access).
+        sections: S.levelsFor(a),
+        canStaff: a.role === "owner" || a.perms.has("staff.access"),
         catalog: P.PERMISSIONS,
         roles: P.ASSIGNABLE_ROLES,
         roleDefaults: P.ROLE_DEFAULTS,
@@ -340,6 +344,103 @@ function createAdminRouter(deps) {
         contentTypes: content.contentTypes(),
         flags: FEATURE_FLAGS,
       });
+    }),
+  );
+
+  /* ═════════════ Staff access (src/authz/sections.js) ═════════════ */
+
+  // Only the owner, and admins the owner gave "staff.access", may open it.
+  const requireStaffAccess = (req, res, next) => {
+    if (req.access?.role === "owner" || req.access?.perms.has("staff.access")) return next();
+    return res.status(403).json({ ok: false, code: "forbidden", error: "Only the owner and top admins can change staff access" });
+  };
+  const STAFF_SQL = `SELECT u.username, u.display_name, u.avatar, u.avatar_url, ${P.ACCESS_COLUMNS}
+    FROM users u
+    WHERE u.role IN ('admin', 'moderator', 'owner')
+       OR EXISTS (SELECT 1 FROM user_permissions p WHERE p.username = u.username AND p.granted = 1 AND p.perm <> 'early_access')
+       OR EXISTS (SELECT 1 FROM staff_section_access s WHERE s.username = u.username)
+    ORDER BY u.username COLLATE NOCASE`;
+
+  function staffRow(req, row) {
+    const a = P.buildAccess(row.username, row);
+    return {
+      username: row.username,
+      display_name: row.display_name || null,
+      avatar: row.avatar || defaultAvatar(row.username),
+      avatar_url: row.avatar_url || null,
+      role: a.role,
+      chosen: a.sections,
+      effective: S.levelsFor(a),
+      topAdmin: a.role === "owner" || a.perms.has("staff.access"),
+      // You can't change the owner, yourself, or anyone at or above your role.
+      editable: a.role !== "owner" && !sameUser(req, row.username) && P.canActOn(req, row.username, a.role),
+    };
+  }
+  const sameUser = (req, u) => String(req.access?.username || "").toLowerCase() === String(u).toLowerCase();
+
+  router.get(
+    "/api/admin/staff-access",
+    requireStaffAccess,
+    h(async (req, res) => {
+      const rows = await all(STAFF_SQL);
+      res.json({
+        ok: true,
+        sections: S.SECTIONS.map(({ id, label, group, perms }) => ({ id, label, group, perms })),
+        people: rows.map((r) => staffRow(req, r)).filter((r) => r.role !== "owner"),
+        isOwner: req.access.role === "owner",
+      });
+    }),
+  );
+
+  router.put(
+    "/api/admin/staff-access/:username",
+    requireStaffAccess,
+    h(async (req, res) => {
+      const t = await loadTarget(req, res);
+      if (!t) return;
+      if (sameUser(req, t.username)) bad("You can't change your own access");
+      if (!guardTarget(req, res, t)) return;
+      const section = str(req.body?.section, { max: 40, field: "section" });
+      if (!S.SECTION_IDS.includes(section)) bad("Unknown section");
+      const level = str(req.body?.level, { max: 10, field: "level" });
+      if (level !== "default" && !S.LEVELS.includes(level)) bad("Level must be default, none, view or edit");
+      // You can hand out only what you have yourself.
+      if (req.access.role !== "owner" && level !== "default" && S.RANK[level] > S.RANK[S.levelFor(req.access, section)]) {
+        bad("You can't give more access than you have yourself");
+      }
+      const before = (await get("SELECT level FROM staff_section_access WHERE username = ? AND section = ?", [t.username, section]))?.level || "default";
+      if (level === "default") await run("DELETE FROM staff_section_access WHERE username = ? AND section = ?", [t.username, section]);
+      else
+        await run(
+          `INSERT INTO staff_section_access(username, section, level, updated_by, updated_at) VALUES(?,?,?,?,?)
+           ON CONFLICT(username, section) DO UPDATE SET level = excluded.level, updated_by = excluded.updated_by, updated_at = excluded.updated_at`,
+          [t.username, section, level, req.access.username, Date.now()],
+        );
+      await audit(req, "staff.section", { targetType: "user", target: t.username, before: { section, level: before }, after: { section, level } });
+      const row = await get(`SELECT u.username, u.display_name, u.avatar, u.avatar_url, ${P.ACCESS_COLUMNS} FROM users u WHERE u.username = ?`, [t.username]);
+      res.json({ ok: true, person: staffRow(req, row) });
+    }),
+  );
+
+  // Make someone a top admin (they may open Staff access). The owner only.
+  router.put(
+    "/api/admin/staff-access/:username/top",
+    requireOwner,
+    h(async (req, res) => {
+      const t = await loadTarget(req, res);
+      if (!t) return;
+      if (t.role === "owner") bad("The owner already has every permission");
+      const on = bool(req.body?.on, "on");
+      if (on) {
+        await run(
+          `INSERT INTO user_permissions(username, perm, granted, granted_by, created_at) VALUES(?, 'staff.access', 1, ?, ?)
+           ON CONFLICT(username, perm) DO UPDATE SET granted = 1, granted_by = excluded.granted_by, created_at = excluded.created_at`,
+          [t.username, req.access.username, Date.now()],
+        );
+      } else await run("DELETE FROM user_permissions WHERE username = ? AND perm = 'staff.access'", [t.username]);
+      await audit(req, on ? "staff.top_admin.grant" : "staff.top_admin.revoke", { targetType: "user", target: t.username });
+      const row = await get(`SELECT u.username, u.display_name, u.avatar, u.avatar_url, ${P.ACCESS_COLUMNS} FROM users u WHERE u.username = ?`, [t.username]);
+      res.json({ ok: true, person: staffRow(req, row) });
     }),
   );
 
@@ -804,6 +905,7 @@ function createAdminRouter(deps) {
       await runBatch(
         [
           "user_permissions",
+          "staff_section_access",
           "user_warnings",
           "bookmarks",
           "ai_user_chats",

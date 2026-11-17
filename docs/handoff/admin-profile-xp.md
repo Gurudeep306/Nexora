@@ -29,10 +29,11 @@ file current as each part lands; each part is its own pull request.
 | Part | Status | Pull request |
 |---|---|---|
 | 1. XP rule ("Passed the examples") | Done, merged to main | https://github.com/Gurudeep306/Nexora/pull/149 |
-| 2. Avatar inside Edit profile | Done (with part 5) | see section 2 |
-| 3. Staff permissions per Admin part | Next | — |
-| 4. Site map tree (show/hide, GitHub links) | Not started | — |
-| 5. Register: optional avatar, bio, … step | Done (with part 2) | see section 2 |
+| 2. Avatar inside Edit profile | Done, merged to main (with part 5 and the new covers) | https://github.com/Gurudeep306/Nexora/pull/151 |
+| 3. Staff permissions per Admin part | Done (Admin → Staff access) | see section 3 |
+| 4. Site map tree (show/hide, GitHub links) | Next | — |
+| Extra: Admin clean-up and finer permissions (owner's ask) | Next, after part 3 | — |
+| 5. Register: optional avatar, bio, … step | Done, merged to main (with part 2) | https://github.com/Gurudeep306/Nexora/pull/151 |
 
 ## 1. XP rule — how it works
 
@@ -147,6 +148,43 @@ something pattern type or animated type, import from internet").
   `tests/social.test.js` (new and old cover ids accepted, unknown refused).
 - Checked: axe 0 and no sideways scroll on the profile with each cover and on
   Edit profile, light, dark and phone.
+
+## 3. Staff access (Admin → Staff access)
+
+- **Who opens it:** the owner, and "top admins": admins the owner switches
+  on there (permission `staff.access`, owner-grant only like `site.settings`;
+  admins don't get it by default).
+- **What it sets:** for each person and each Admin section (Overview, Users,
+  Moderation, Site, AI models, Code runners, Problem sources, Add a problem,
+  Announcements, Audit log): **Role default** (no row: follows role and
+  permissions, exactly as before), **Hidden**, **See** (read only) or
+  **Change**. "Add person" gives access to someone who isn't staff yet (a
+  member can be given just one section).
+- **Where it lives:** table `staff_section_access(username, section, level,
+  updated_by, updated_at)`; the section list with each section's API paths
+  and permissions is `src/authz/sections.js` (add a section there when Admin
+  gets one). Loaded with the user's access on every request
+  (`ACCESS_COLUMNS`, `session-store.js` row cache, cleared on any write to
+  the table).
+- **How the server enforces it:** `sectionGate` (mounted right after the
+  access control in `src/server.js`) finds the section for the request path.
+  Hidden → 403 `section_hidden`; See + any write → 403 `section_read_only`;
+  See/Change → the section's permissions count for **that request only**
+  (`req.sectionGrant`, read by `permissions.can`). So giving a member
+  "Problem sources" doesn't also open "Add a problem", although both use the
+  `problems.manage` permission. Owner-only routes stay owner-only.
+- **Rules:** nobody changes the owner or themselves; a top admin changes only
+  people below their own role and can't give more than they have in a
+  section. Every change is in the audit log (`staff.section`,
+  `staff.top_admin.grant` / `.revoke`).
+- **Screens:** Admin's contents and tabs now follow each section's level
+  (`/api/admin/me` returns `sections` and `canStaff`); a see-only section
+  shows "You can see this section but not change it".
+- Tests: `tests/staff-access.test.js` (role default unchanged, hide and
+  see-only enforced, a member's single section opens Admin without leaking
+  the same permission elsewhere, top-admin rules, audit rows).
+- Checked: axe 0 and no sideways scroll on Admin → Staff access (a person
+  opened) in light, dark and phone, and on a see-only section as a moderator.
 
 ## Plan for parts 3–4 (written before the work; 2 and 5 are done above)
 

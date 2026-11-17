@@ -467,6 +467,8 @@ app.use(passport.session());
 // (pages and API) — see src/authz/access.js. Before requestContext so a banned
 // user's request already runs signed out.
 app.use(createAccessControl());
+// Admin → Staff access: hidden / read-only / editable per Admin section.
+app.use(require("./authz/sections").sectionGate);
 // Remember who is making each request (per-user progress queries read it).
 app.use(requestContext(getSessionUser));
 // DB_QUERY_STATS=1 logs DB round trips + wall time per API request (perf tooling).
