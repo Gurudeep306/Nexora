@@ -29,6 +29,7 @@ import {
 import { aiErrorText, isAiUnavailable } from '@/lib/agent'
 import { AiProblemResults } from '@/components/problems/AiProblemResults'
 import { ProblemTable } from '@/components/problems/ProblemTable'
+import { parseTopicParam, topicLabel } from '@/lib/topics'
 import { Pagination } from '@/components/problems/Pagination'
 
 const PAGE_SIZE = 50
@@ -81,12 +82,16 @@ export default function ProblemsPage() {
   }, [searchInput, qParam, setSearchParams])
 
   const band = DIFFICULTY_BANDS.find((b) => b.id === difficulty) ?? DIFFICULTY_BANDS[0]
+  // ?topic=dp,graphs: chosen topics live in the URL, so a filtered list can be shared.
+  const topicKey = parseTopicParam(searchParams.get('topic')).join(',')
+  const topics = topicKey ? topicKey.split(',') : []
 
   const filterQuery = {
     platform: platform === 'all' ? undefined : platform,
     minRating: band.min,
     maxRating: band.max,
     tag: tag || undefined,
+    topic: topicKey || undefined,
     status: status === 'all' ? undefined : status,
     search: qParam || undefined,
   }
@@ -102,8 +107,8 @@ export default function ProblemsPage() {
         },
         timeoutMs: 15000,
       }),
-    [platform, band.min, band.max, tag, status, qParam, sort, order, offset],
-    { cacheKey: `problems:${JSON.stringify([platform, band.min, band.max, tag, status, qParam, sort, order, offset])}` },
+    [platform, band.min, band.max, tag, topicKey, status, qParam, sort, order, offset],
+    { cacheKey: `problems:${JSON.stringify([platform, band.min, band.max, tag, topicKey, status, qParam, sort, order, offset])}` },
   )
 
   /* Tell the floating assistant what's listed, so it can recommend from it. */
@@ -113,6 +118,7 @@ export default function ProblemsPage() {
     difficulty !== 'all' && band.label,
     status !== 'all' && `status ${status}`,
     tag && `tag ${tag}`,
+    topics.length > 0 && `topics ${topics.map(topicLabel).join(', ')}`,
     `sorted by ${sort} ${order}`,
   ]
     .filter(Boolean)
@@ -180,10 +186,21 @@ export default function ProblemsPage() {
     if (patch.difficulty !== undefined) setDifficulty(patch.difficulty)
     if (patch.status !== undefined) setStatus(patch.status)
     if (patch.tag !== undefined) setTag(patch.tag)
+    const ids = patch.topics
+    if (ids !== undefined)
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          if (ids.length) next.set('topic', ids.join(','))
+          else next.delete('topic')
+          return next
+        },
+        { replace: true },
+      )
     if (patch.sort !== undefined) setSort(patch.sort)
     if (patch.order !== undefined) setOrder(patch.order)
     setOffset(0)
-  }, [])
+  }, [setSearchParams])
 
   /* AI finder returns real, re-ranked problems — shown as their own result set */
   const handleAiResults = useCallback((res: AiFindResponse) => {
@@ -227,6 +244,7 @@ export default function ProblemsPage() {
     difficulty,
     status,
     tag,
+    topics,
     sort,
     order,
   }
@@ -298,7 +316,7 @@ export default function ProblemsPage() {
             ) : problems.length === 0 ? (
               <div className="card-neon pt-empty">
                 {/* With no filter set, an empty list means nothing has been imported yet. */}
-                {!qParam && platform === 'all' && band === DIFFICULTY_BANDS[0] && !tag && status === 'all' ? (
+                {!qParam && platform === 'all' && band === DIFFICULTY_BANDS[0] && !tag && !topics.length && status === 'all' ? (
                   <EmptyState icon="problems" title="No problems yet" description="Problems appear here once they are imported from the judges. Try again in a little while." />
                 ) : (
                   <EmptyState
@@ -315,6 +333,9 @@ export default function ProblemsPage() {
                   bookmarkedIds={bookmarkedIds}
                   onToggleBookmark={toggleBookmark}
                   busyBookmarkId={busyBookmarkId}
+                  onPickTopic={(id) => {
+                    if (!topics.includes(id)) handleFilterChange({ topics: [...topics, id] })
+                  }}
                 />
                 <Pagination total={total} limit={PAGE_SIZE} offset={offset} onPageChange={setOffset} />
               </>

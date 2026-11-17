@@ -785,6 +785,7 @@ app.get("/api/problems", async (req, res) => {
       minRating,
       maxRating,
       tag,
+      topic,
       status,
       search,
       sort,
@@ -792,6 +793,11 @@ app.get("/api/problems", async (req, res) => {
       limit,
       offset,
     } = req.query;
+    // Topics: ?topic=dp,graphs (all must match), and in the search box
+    // `topic:dp` or a topic's whole name ("dynamic programming").
+    const topicMod = require("./topics");
+    const asked = topicMod.topicsInQuery(search ? String(search) : "");
+    const topicIds = [...new Set([...String(topic || "").split(",").map((t) => topicMod.findTopic(t, true)).filter(Boolean), ...asked.ids])];
     // Clamp both: LIMIT -1 means "no limit" to SQLite, and NaN binds as NULL.
     const lim = Math.min(Math.max(Math.trunc(+limit) || 50, 1), 200);
     const off = Math.max(Math.trunc(+offset) || 0, 0);
@@ -803,8 +809,10 @@ app.get("/api/problems", async (req, res) => {
       minRating: minRating ? +minRating : null,
       maxRating: maxRating ? +maxRating : null,
       tag: tag ? String(tag) : "",
-      search: search ? String(search) : "",
+      search: asked.rest,
       exclude: await require("./sources").disabledPlatforms(),
+      topics: topicIds,
+      searchTopic: asked.orTopic,
     };
     const matched = filterIndices(catalog, filters);
     const st = status && status !== "all" ? String(status) : "";
@@ -832,13 +840,14 @@ app.get("/api/problems", async (req, res) => {
       const pr = progress.get(p.id);
       return {
         ...p,
+        topics: topicList(p.topics),
         solve_status: pr?.status ?? "unsolved",
         attempts: pr ? pr.attempts : null,
         xp_earned: pr ? pr.xp_earned : null,
         solved_at: pr ? pr.solved_at : null,
       };
     });
-    res.json({ ok: true, total: indices.length, problems, limit: lim, offset: off });
+    res.json({ ok: true, total: indices.length, problems, limit: lim, offset: off, ...(topicIds.length ? { topics: topicIds } : {}) });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
@@ -866,8 +875,9 @@ async function userProgressMap(ids) {
 app.get("/api/problems/:id", async (req, res) => {
   try {
     const problem = await get(
-      `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status, pr.attempts, pr.xp_earned, pr.notes
-      FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE p.id=?`,
+      `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status, pr.attempts, pr.xp_earned, pr.notes, pt.ids AS topics
+      FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
+      LEFT JOIN problem_topics pt ON pt.problem_rowid=p.id WHERE p.id=?`,
       [req.params.id],
     );
     if (!problem || (problem.category === "__hidden" && !can(req, "problems.manage")))
@@ -925,11 +935,23 @@ app.get("/api/problems/:id", async (req, res) => {
         bestMs: summary.bestMs,
       };
     }
+    problem.topics = topicList(problem.topics);
     res.json({ ok: true, problem, testcases, submissions, analysis });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
+
+/** A catalog row's topic ids as a list (stored as a JSON string). */
+function topicList(raw) {
+  if (Array.isArray(raw)) return raw;
+  try {
+    const a = JSON.parse(raw || "[]");
+    return Array.isArray(a) ? a : [];
+  } catch {
+    return [];
+  }
+}
 
 /* ========== Save scraped statement helper ========== */
 async function _saveStatement(problemId, data) {
@@ -955,6 +977,9 @@ async function _saveStatement(problemId, data) {
   const row = await get("SELECT platform FROM problems WHERE id=?", [problemId]).catch(() => null);
   const { normalizeStatementHtml } = require("./statement-media");
   keepStatementMedia(normalizeStatementHtml([data.statement, data.inputSpec, data.outputSpec, data.note].join("\n"), { platform: row?.platform }));
+  // The statement makes the topics surer (its words count too): reclassify,
+  // in the background (it never delays the page).
+  require("./topics").classifyProblem(problemId).catch((e) => console.warn("[topics]", e.message));
 }
 // Admin re-imports (src/sources/audit.js) save through the same path.
 require("./sources/audit").useSaver((id, data) => _saveStatement(id, data), (html) => keepStatementMedia(html));
@@ -1446,6 +1471,8 @@ app.get("/api/activity/:date", async (req, res) => {
 app.use(createAiAssistRouter({ get, all, run, aiLimiter }));
 app.use(require("./routes/coding").createCodingRouter({ get, me, aiLimiter, judgeLimiter }));
 app.use(require("./routes/sources").createSourcesRouter({ can, me, invalidateCatalog: () => require("./problem-catalog").invalidateCatalog() }));
+// Topics of every problem: the list, each problem's topics, staff corrections, the backfill (src/topics.js).
+app.use(require("./routes/topics").createTopicsRouter({ can, me }));
 // Staff: "Add a coding problem" (official NexoraGuru problems).
 app.use(
   require("./routes/authoring").createAuthoringRouter({
@@ -3468,8 +3495,8 @@ app.post("/api/custom-problems", async (req, res) => {
     const creator = me();
     if (!creator) return res.status(401).json({ ok: false, error: "Please sign in first" });
     const r = await run(
-      `INSERT INTO custom_problems(creator,title,statement,input_spec,output_spec,difficulty,tags,samples,testcases,time_limit,memory_limit,created_at,editorial)
-      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      `INSERT INTO custom_problems(creator,title,statement,input_spec,output_spec,difficulty,tags,samples,testcases,time_limit,memory_limit,created_at,editorial,topics)
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       [
         creator,
         title,
@@ -3484,6 +3511,8 @@ app.post("/api/custom-problems", async (req, res) => {
         memory_limit || "256 MB",
         new Date().toISOString(),
         String(editorial || "").slice(0, 50000),
+        // Its topics, found from its title, tags and statement (src/topics.js).
+        JSON.stringify(require("./topics").customTopics({ title, tags, statement, input_spec, output_spec })),
       ],
     );
     res.json({ ok: true, id: r.lastID });
@@ -3508,7 +3537,7 @@ app.put("/api/custom-problems/:id", async (req, res) => {
     } = req.body;
     await run(
       `UPDATE custom_problems SET title=?,statement=?,input_spec=?,output_spec=?,difficulty=?,
-      tags=?,samples=?,testcases=?,time_limit=?,memory_limit=?,updated_at=?,editorial=? WHERE id=?`,
+      tags=?,samples=?,testcases=?,time_limit=?,memory_limit=?,updated_at=?,editorial=?,topics=? WHERE id=?`,
       [
         title,
         statement || "",
@@ -3522,6 +3551,7 @@ app.put("/api/custom-problems/:id", async (req, res) => {
         memory_limit || "256 MB",
         new Date().toISOString(),
         String(editorial || "").slice(0, 50000),
+        JSON.stringify(require("./topics").customTopics({ title, tags, statement, input_spec, output_spec })),
         req.params.id,
       ],
     );
@@ -6719,6 +6749,12 @@ io.on("connection", (socket) => {
     // Warm the in-memory problem catalog so the first Nexus visit doesn't pay for it.
     if (process.env.NODE_ENV !== "test") {
       getCatalog().catch((e) => console.warn("[catalog] warm-up failed:", e.message));
+    }
+    // A minute after start, problems with no topics yet get theirs (src/topics.js):
+    // 200 at a time with a pause, so it never crowds out real requests.
+    // TOPICS_STARTUP=0 turns it off.
+    if (process.env.TOPICS_STARTUP !== "0") {
+      setTimeout(() => require("./topics").classifyNew({ by: "startup" }), 60_000).unref();
     }
   });
 

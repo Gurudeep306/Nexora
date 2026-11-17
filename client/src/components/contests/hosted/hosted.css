@@ -580,3 +580,15 @@ a.hc-title:hover {
   font-size: 13.5px;
   color: var(--color-text-primary);
 }
+
+/* The picker's search with the Topic filter beside it (it wraps on a phone). */
+.hc-search-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.hc-search-row > :first-child {
+  flex: 1 1 14rem;
+  min-width: 0;
+}

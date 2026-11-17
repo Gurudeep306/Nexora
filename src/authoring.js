@@ -380,6 +380,8 @@ async function publish(id, { by, markdown }) {
   }
   await run("INSERT OR REPLACE INTO problem_checkers(problem_rowid, checker) VALUES(?,?)", [rowid, JSON.stringify(d.checker)]);
   await run("UPDATE authored_problems SET status='published', problem_rowid=?, updated_by=?, updated_at=? WHERE id=?", [rowid, by, new Date().toISOString(), p.id]);
+  // Its topics, from its tags and statement (a staff correction is kept).
+  await require("./topics").classifyProblem(rowid).catch((e) => console.warn("[topics]", e.message));
   return load(p.id);
 }
 

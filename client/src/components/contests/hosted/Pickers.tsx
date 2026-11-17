@@ -6,6 +6,7 @@ import { api, ApiError } from '@/lib/api'
 import { stripMarkdown } from './text'
 import { PHASE_LABEL, when, type ContestSummary, type Kind } from './api'
 import { useLoaded } from './useLoaded'
+import { TopicChips, TopicFilterButton } from '@/components/topics/TopicChips'
 import './hosted.css'
 
 /*
@@ -14,9 +15,10 @@ import './hosted.css'
   problem or GATE question page can open.
 */
 
-type Found = { key: string; kind: Kind; ref: string; title: string; sub: string }
+type Found = { key: string; kind: Kind; ref: string; title: string; sub: string; topics?: string[] }
 
-function useSearch(kind: 'problem' | 'gate' | 'workshop', q: string, me?: string) {
+function useSearch(kind: 'problem' | 'gate' | 'workshop', q: string, me?: string, topics: string[] = []) {
+  const topicKey = topics.join(',')
   const [items, setItems] = useState<Found[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   useEffect(() => {
@@ -25,8 +27,11 @@ function useSearch(kind: 'problem' | 'gate' | 'workshop', q: string, me?: string
       try {
         let out: Found[] = []
         if (kind === 'problem') {
-          const r = await api.get<{ problems: { id: number; title: string; platform: string; problem_id: string; rating: number | null }[] }>('/api/problems', { query: { search: q, limit: 30, sort: q ? undefined : 'rating' } })
-          out = r.problems.map((p) => ({ key: `p${p.id}`, kind: 'problem', ref: String(p.id), title: p.title, sub: `${p.platform} ${p.problem_id}${p.rating ? ` · rating ${p.rating}` : ''}` }))
+          // Search by name, or by topic: a topic's name, `topic:dp`, or the Topic filter.
+          const r = await api.get<{ problems: { id: number; title: string; platform: string; problem_id: string; rating: number | null; topics?: string[] }[] }>('/api/problems', {
+            query: { search: q, topic: topicKey || undefined, limit: 30, sort: q ? undefined : 'rating' },
+          })
+          out = r.problems.map((p) => ({ key: `p${p.id}`, kind: 'problem', ref: String(p.id), title: p.title, sub: `${p.platform} ${p.problem_id}${p.rating ? ` · rating ${p.rating}` : ''}`, topics: p.topics }))
         } else if (kind === 'gate') {
           const r = await api.get<{ questions: { id: string; text: string; exam: string; year: number; set: number | null; number: string; type: string; marks: number | null }[] }>('/api/gate/questions', {
             query: { q, type: 'MCQ,MSQ,NAT', answered: 'yes', limit: 30 },
@@ -51,7 +56,7 @@ function useSearch(kind: 'problem' | 'gate' | 'workshop', q: string, me?: string
       live = false
       clearTimeout(t)
     }
-  }, [kind, q, me])
+  }, [kind, q, me, topicKey])
   return { items, error }
 }
 
@@ -75,10 +80,21 @@ export function ItemPicker({
 }) {
   const [q, setQ] = useState('')
   const [busy, setBusy] = useState<string | null>(null)
-  const { items, error } = useSearch(kind, open ? q : '__closed__', me)
+  const [topics, setTopics] = useState<string[]>([])
+  const { items, error } = useSearch(kind, open ? q : '__closed__', me, kind === 'problem' ? topics : [])
   return (
     <Modal open={open} onClose={onClose} title={PICKER_TITLE[kind]} description={kind === 'gate' ? 'Only questions with a checked answer (MCQ, MSQ, NAT). Past papers are public, answers included: for a graded test, write your own questions.' : undefined} size="lg">
-      <SearchInput value={q} onChange={(e) => setQ(e.target.value)} onClear={() => setQ('')} placeholder={kind === 'gate' ? 'Search by words, subject or year' : 'Search by name'} aria-label="Search" autoFocus />
+      <div className="hc-search-row">
+        <SearchInput
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          onClear={() => setQ('')}
+          placeholder={kind === 'gate' ? 'Search by words, subject or year' : kind === 'problem' ? 'Search by name or topic' : 'Search by name'}
+          aria-label="Search"
+          autoFocus
+        />
+        {kind === 'problem' && <TopicFilterButton value={topics} onChange={setTopics} />}
+      </div>
       <div className="mt-3 max-h-[60vh] overflow-y-auto" tabIndex={0} aria-label="Results">
         {error ? (
           <p className="hc-note text-state-error">{error}</p>
@@ -95,6 +111,7 @@ export function ItemPicker({
                   <div className="min-w-0">
                     <span className="hc-title">{it.title}</span>
                     <span className="hc-sub">{it.sub}</span>
+                    {it.topics && it.topics.length > 0 && <TopicChips topics={it.topics} className="mt-1" />}
                   </div>
                   <Button
                     size="sm"

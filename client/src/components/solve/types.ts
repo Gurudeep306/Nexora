@@ -1,6 +1,8 @@
 /* Types for the solve view (verified against src/server.js handlers) */
 
 export interface SolveProblem {
+  /** Topic ids (src/topics.js), or their JSON text for a Workshop problem. */
+  topics?: string[] | string
   id: number
   platform: string
   problem_id: string
