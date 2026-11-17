@@ -18,6 +18,8 @@
 //
 // Tables: problem_sets, problem_set_items, problem_set_likes, problem_asked.
 const express = require("express");
+const fs = require("fs");
+const path = require("path");
 const { all, get, run } = require("../db");
 const { getOpenCatalog, byId } = require("../problem-catalog");
 const library = require("../problem-set-library");
@@ -104,6 +106,28 @@ const httpUrl = (v) => {
     return null;
   }
 };
+
+/* ── Built-in company sources (content/problem-sets/companies.json) ──
+   A public page about each company's interviews, cited on its set. A company
+   gets a card once it has problems (contest set or 2+ reports); never empty. */
+const CONTENT_DIR = path.join(__dirname, "..", "..", "content", "problem-sets");
+function loadContent(file) {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(CONTENT_DIR, file), "utf8"));
+  } catch {
+    return null;
+  }
+}
+let builtinCompaniesCache = null;
+function builtinCompanies() {
+  if (builtinCompaniesCache === null) {
+    const d = loadContent("companies.json");
+    builtinCompaniesCache = Array.isArray(d?.companies)
+      ? d.companies.filter((c) => c && companyName(c.company) && httpUrl(c.sourceUrl)).map((c) => ({ company: companyName(c.company), sourceUrl: httpUrl(c.sourceUrl) }))
+      : [];
+  }
+  return builtinCompaniesCache;
+}
 
 function createProblemSetsRouter({ me, can }) {
   const router = express.Router();
@@ -266,7 +290,15 @@ function createProblemSetsRouter({ me, can }) {
     const out = { ok: true, tab, sets };
     if (tab === "company") {
       // Companies people reported that have no built-in set yet (those with one show the reports on it).
-      out.reported = (await companies()).filter((c) => !library.findCompany(c.company) && (!q || c.company.toLowerCase().includes(q)));
+      // Companies with reports but no contest set: a card when there's a public source to cite, else a chip.
+      const stats = await companyReportStats();
+      for (const c of builtinCompanies()) {
+        const st = stats.get(c.company);
+        if (!st || library.findCompany(c.company) || (q && !c.company.toLowerCase().includes(q))) continue;
+        sets.push({ id: `company:${c.company}`, title: c.company, description: `Problems people here reported being asked at ${c.company} (each by at least ${MIN_REPORTS} people).`, kind: "company", visibility: "public", owner: null, company: c.company, sourceUrl: c.sourceUrl, likes: null, liked: false, count: st.count, solved: st.solved, builtIn: true });
+      }
+      const carded = new Set(sets.map((x) => x.company).filter(Boolean));
+      out.reported = (await companies()).filter((c) => !carded.has(c.company) && !library.findCompany(c.company) && (!q || c.company.toLowerCase().includes(q)));
     }
     res.json(out);
   }));
@@ -308,11 +340,28 @@ function createProblemSetsRouter({ me, can }) {
     }
   };
 
+  /** Reported-problem counts per company (2+ reports), with how many you solved. */
+  async function companyReportStats() {
+    const rows = await all(`SELECT company, problem_rowid, COUNT(*) AS n FROM problem_asked GROUP BY company, problem_rowid HAVING COUNT(*) >= ?`, [MIN_REPORTS]);
+    const catalog = await getOpenCatalog();
+    const st = await statuses(rows.map((r) => r.problem_rowid));
+    const by = new Map();
+    for (const r of rows) {
+      if (!byId(catalog, r.problem_rowid)) continue;
+      const c = by.get(r.company) || { count: 0, solved: 0 };
+      c.count++;
+      if (st.get(r.problem_rowid) === "solved") c.solved++;
+      by.set(r.company, c);
+    }
+    return by;
+  }
+
   router.get("/api/problem-sets/company/:name", h(async (req, res) => {
     const raw = decodeURIComponent(req.params.name);
     const built = library.findCompany(raw);
     const company = built ? built.company : companyName(raw);
     if (!company) fail(404, "Unknown company");
+    const sourced = builtinCompanies().find((c) => c.company === company)?.sourceUrl || null;
     const rows = await all(
       `SELECT problem_rowid, COUNT(*) AS n, MAX(year) AS year FROM problem_asked WHERE company=? GROUP BY problem_rowid HAVING COUNT(*) >= ? ORDER BY n DESC`,
       [company, MIN_REPORTS],
@@ -340,7 +389,7 @@ function createProblemSetsRouter({ me, can }) {
         visibility: "public",
         owner: null,
         company,
-        sourceUrl: built?.sourceUrl || null,
+        sourceUrl: built?.sourceUrl || sourced,
         likes: null,
         liked: false,
         builtIn: true,

@@ -69,6 +69,7 @@ test.before(async () => {
       // In the built-in library: Blind 75 starts with Contains Duplicate; KEYENCE's first contest with Last Card.
       ['lc', 'leetcode', 'LC217', 'Contains Duplicate', null],
       ['ac', 'atcoder', 'abc227_a', 'Last Card', null],
+      ['l', 'leetcode', 'LC1', 'Two Sum', null],
     ]) {
       add.run(platform, id, title, 'https://x', 1300, '[]', cat);
       pid[k] = Number(d.prepare('SELECT id FROM problems WHERE problem_id=?').get(id).id);
@@ -238,4 +239,38 @@ test('"Add to a set" lists your sets with whether this problem is in each; delet
   ok(await call('DELETE', `/api/problem-sets/${mine}`, c[ANA]));
   assert.equal((await call('GET', `/api/problem-sets/${mine}`, c[ANA])).status, 404);
   assert.equal((await call('PUT', `/api/problem-sets/${mine}/like`, c[BEN])).status, 404);
+});
+
+test('built-in famous series ship with the app: listed, resolved live, links for what we lack', async () => {
+  const lib = require('../content/problem-sets/library.json');
+  const ncLen = lib.series.find((x) => x.id === 'neetcode-150').sections.flatMap((x) => x.items).length;
+  const list = (await call('GET', '/api/problem-sets?tab=series', c[CAT])).body.sets;
+  const nc = list.find((x) => x.id === 'neetcode-150');
+  assert.ok(nc && nc.builtIn, 'NeetCode 150 is listed without any database seed');
+  assert.match(nc.sourceUrl, /^https:\/\/neetcode\.io\//);
+  assert.equal(nc.count, ncLen, 'every free entry: our problems plus links to the original');
+  assert.ok(list.every((x) => x.count > 0), 'no empty series');
+  const s = (await call('GET', '/api/problem-sets/neetcode-150', c[CAT])).body;
+  assert.equal(s.canEdit, false);
+  assert.equal(s.items.length, ncLen);
+  assert.ok(s.items.every((i, idx) => i.position === idx), 'positions are 0..n-1');
+  const twoSum = s.items.find((i) => i.problem?.title === 'Two Sum');
+  assert.ok(twoSum && twoSum.problem.platform === 'leetcode' && twoSum.problem.id === pid.l, 'LC1 matched to our catalog row');
+  const linked = s.items.find((i) => i.link);
+  assert.ok(linked && /^https:\/\/leetcode\.com\/problems\//.test(linked.link.url), 'entries we do not have stay as links to the original');
+  assert.equal((await call('GET', '/api/problem-sets/nope-404', c[CAT])).status, 404);
+});
+
+test('company sources: cited on the company page; a card only once it has problems, titled with the name', async () => {
+  const list = (await call('GET', '/api/problem-sets?tab=company', c[CAT])).body;
+  assert.ok(!list.sets.some((x) => x.id === 'company:Google'), 'no empty card');
+  assert.ok(list.sets.filter((x) => x.builtIn).every((x) => x.count > 0 && x.title === x.company), 'never empty, name only');
+  const s = (await call('GET', '/api/problem-sets/company/Google', c[CAT])).body;
+  assert.equal(s.set.title, 'Google');
+  assert.equal(s.set.sourceUrl, 'https://www.geeksforgeeks.org/google-interview-questions/');
+  assert.deepEqual(s.items, []);
+  assert.equal(s.canEdit, false);
+  // A report-driven company with no built-in source still works and has none.
+  const u = (await call('GET', '/api/problem-sets/company/Globex', c[CAT])).body;
+  assert.equal(u.set.sourceUrl, null);
 });
