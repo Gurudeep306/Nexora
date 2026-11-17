@@ -11,6 +11,11 @@ const rateLimit = require("express-rate-limit");
 const { errMessage } = require("../http-error");
 const { getSessionUser } = require("../middleware/auth");
 const P = require("../authz/permissions");
+/** Drop live Hive connections of people who may no longer use Hive. */
+function recheckHive(req) {
+  const may = req.app?.locals?.mayJoinHive;
+  if (may) require("../hive/hub").recheck(may).catch(() => {});
+}
 const S = require("../authz/sections");
 const sitemap = require("../sitemap");
 const fs = require("fs");
@@ -448,6 +453,7 @@ function createAdminRouter(deps) {
       if (part.flag) await setSetting("feature_flags", { ...s.feature_flags, [part.flag]: mode !== "hidden" }, req.access.username);
       await audit(req, "site.part", { targetType: "part", target: part.id, before: { mode: before }, after: { mode } });
       siteChanged();
+      if (sitemap.isHive(part)) recheckHive(req);
       const next = await getSettings();
       res.json({ ok: true, effective: sitemap.effectiveModes(next), chosen: sitemap.chosenModes(next) });
     }),
@@ -805,6 +811,7 @@ function createAdminRouter(deps) {
     await run("UPDATE users SET role = ? WHERE username = ?", [role, t.username]);
     await audit(req, "user.role", { targetType: "user", target: t.username, before: { role: t.role }, after: { role } });
     invalidateBadges();
+    recheckHive(req);
     res.json({ ok: true, role });
   }
   router.post("/api/admin/users/:username/role", requirePerm("users.manage"), h(changeRole));

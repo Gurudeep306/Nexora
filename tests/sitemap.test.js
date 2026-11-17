@@ -221,6 +221,174 @@ test('Hive: admins and the owner only — everyone else finds nothing, not even 
   ok(await call('PUT', '/api/admin/sitemap/hive.drive', c[OWNER], { mode: 'visible' }));
 });
 
+test('Hive "owner only" also shuts its live connection: admins cannot join, and those already in are dropped', async () => {
+  // A tiny socket.io client (EIO=4, polling) for the /hive namespace.
+  const join = async (who) => {
+    const headers = { Cookie: c[who] };
+    const open = await fetch(`${base}/socket.io/?EIO=4&transport=polling`, { headers });
+    const { sid } = JSON.parse((await open.text()).slice(1));
+    const url = `${base}/socket.io/?EIO=4&transport=polling&sid=${sid}`;
+    const send = (packet) => fetch(url, { method: 'POST', headers: { ...headers, 'Content-Type': 'text/plain' }, body: packet });
+    const poll = async () => {
+      const text = await (await fetch(url, { headers, signal: AbortSignal.timeout(8000) })).text();
+      const out = [];
+      for (const pk of text.split('\x1e')) {
+        if (pk === '2') await send('3');
+        else out.push(pk);
+      }
+      return out;
+    };
+    await send('40/hive,');
+    for (;;) {
+      const packets = await poll();
+      const reply = packets.find((pk) => pk.startsWith('40/hive,') || pk.startsWith('44/hive,'));
+      if (!reply) continue;
+      if (reply.startsWith('44')) return { ok: false };
+      const s = { connected: true };
+      // Keep polling: a "41/hive," (namespace disconnect) or a closed transport means dropped.
+      s.dropped = (async () => {
+        for (let i = 0; i < 20; i++) {
+          let pk;
+          try { pk = await poll(); } catch { continue; }
+          if (pk.some((x) => x.startsWith('41/hive') || x === '1' || x.startsWith('{"code"'))) return (s.connected = false), true;
+        }
+        return false;
+      })();
+      s.close = () => send('1').catch(() => {});
+      return { ok: true, s };
+    }
+  };
+  const dropped = (sock) => Promise.race([sock.dropped, new Promise((r) => setTimeout(() => r(false), 6000))]);
+
+  assert.equal((await join(MEM)).ok, false, 'members never');
+  const ada = await join(ADA);
+  assert.equal(ada.ok, true, 'admins join while Hive is for admins and the owner');
+  const own = await join(OWNER);
+  assert.equal(own.ok, true);
+
+  ok(await call('PUT', '/api/admin/sitemap/hive', c[OWNER], { mode: 'hidden' }));
+  try {
+    assert.equal(await dropped(ada.s), true, 'an admin already connected is dropped');
+    assert.equal((await join(ADA)).ok, false, 'and cannot join again');
+    assert.equal(own.s.connected, true, 'the owner stays');
+    const again = await join(OWNER);
+    assert.equal(again.ok, true, 'the owner can still join');
+    again.s.close();
+  } finally {
+    ok(await call('PUT', '/api/admin/sitemap/hive', c[OWNER], { mode: 'visible' }));
+    ada.s.close();
+    own.s.close();
+  }
+  const back = await join(ADA);
+  assert.equal(back.ok, true, 'admins join again once Hive is back');
+  // An admin made a member while in Hive is dropped too.
+  ok(await call('POST', `/api/admin/users/${ADA}/role`, c[OWNER], { role: 'member' }));
+  try {
+    assert.equal(await dropped(back.s), true, 'a demoted admin is dropped');
+    assert.equal((await join(ADA)).ok, false);
+  } finally {
+    ok(await call('POST', `/api/admin/users/${ADA}/role`, c[OWNER], { role: 'admin' }));
+    back.s.close();
+  }
+});
+
+test('a Learn subject that is staff only drops out of every shared list for members, not only its own page', async () => {
+  const plain = (await call('GET', '/api/nexus/structure', c[MEM])).body;
+  assert.ok(plain.clusters.some((x) => x.id === 'os'));
+  ok(await call('PUT', '/api/admin/sitemap/learn.os', c[OWNER], { mode: 'staff' }));
+  try {
+    const st = await call('GET', '/api/nexus/structure', c[MEM]);
+    ok(st);
+    assert.ok(!st.body.clusters.some((x) => x.id === 'os'), 'not in the web');
+    assert.ok(!st.body.routes.some((r) => r.subjects.includes('os')), 'not in any route');
+    assert.ok(!JSON.stringify(st.body.hubs || {}).includes('"nexus":"os"'), 'not linked from the GATE hub');
+    assert.notEqual(st.body.version, plain.version, 'a different version, so a device copy is not reused');
+    const web = await call('GET', '/api/nexus/web', c[MEM]);
+    ok(web);
+    assert.ok(!('os' in web.body.state.subjects) && !('os' in web.body.ranks));
+    assert.equal(web.body.state.version, st.body.version, 'state lines up with the structure');
+    assert.equal((await call('GET', '/api/nexus?subject=os', c[MEM])).status, 404, 'not through ?subject= either');
+    assert.ok(!(await call('GET', '/api/nexus', c[MEM])).body.subjects.some((x) => x.id === 'os'));
+    assert.equal((await call('GET', '/api/nexus/leaderboard?scope=subject&subject=os', c[MEM])).status, 404);
+    assert.equal((await call('GET', '/api/nexus/tree/os', c[MEM])).status, 403);
+    // Staff still see all of it.
+    const staff = await call('GET', '/api/nexus/structure', c[MOD]);
+    assert.ok(staff.body.clusters.some((x) => x.id === 'os'));
+    assert.equal(staff.body.version, plain.version);
+    ok(await call('GET', '/api/nexus?subject=os', c[MOD]));
+  } finally {
+    ok(await call('PUT', '/api/admin/sitemap/learn.os', c[OWNER], { mode: 'visible' }));
+  }
+  assert.ok((await call('GET', '/api/nexus/structure', c[MEM])).body.clusters.some((x) => x.id === 'os'), 'back for everyone');
+});
+
+test('a DSA chapter set to staff only takes its problems with it', async () => {
+  const before = (await call('GET', '/api/learn/problems', c[MEM])).body.problems;
+  const mine = before.filter((p) => p.topic === 'arrays');
+  assert.ok(mine.length > 0, 'the arrays chapter has problems');
+  ok(await call('PUT', '/api/admin/sitemap/learn.dsa.arrays', c[OWNER], { mode: 'staff' }));
+  try {
+    const list = (await call('GET', '/api/learn/problems', c[MEM])).body.problems;
+    assert.ok(!list.some((p) => p.topic === 'arrays'), 'not listed for members');
+    assert.equal(list.length, before.length - mine.length, 'every other chapter stays');
+    assert.equal((await call('GET', `/api/learn/problems/${mine[0].slug}`, c[MEM])).status, 404);
+    ok(await call('GET', `/api/learn/problems/${mine[0].slug}`, c[MOD]), 'staff still open it');
+    assert.ok((await call('GET', '/api/learn/problems', c[MOD])).body.problems.some((p) => p.topic === 'arrays'));
+  } finally {
+    ok(await call('PUT', '/api/admin/sitemap/learn.dsa.arrays', c[OWNER], { mode: 'visible' }));
+  }
+  ok(await call('GET', `/api/learn/problems/${mine[0].slug}`, c[MEM]), 'open again');
+});
+
+test('Messages switched off also stops direct messages sent over the live connection', async () => {
+  // A tiny socket.io client (EIO=4, polling) on the default namespace.
+  const connect = async (who) => {
+    const headers = { Cookie: c[who] };
+    const { sid } = JSON.parse((await (await fetch(`${base}/socket.io/?EIO=4&transport=polling`, { headers })).text()).slice(1));
+    const url = `${base}/socket.io/?EIO=4&transport=polling&sid=${sid}`;
+    const send = (packet) => fetch(url, { method: 'POST', headers: { ...headers, 'Content-Type': 'text/plain' }, body: packet });
+    const queue = [];
+    const next = async () => {
+      while (!queue.length) {
+        const text = await (await fetch(url, { headers, signal: AbortSignal.timeout(10000) })).text();
+        for (const pk of text.split('\x1e')) {
+          if (pk === '2') await send('3');
+          else if (pk.startsWith('4')) queue.push(pk.slice(1));
+        }
+      }
+      return queue.shift();
+    };
+    await send('40');
+    while (!(await next()).startsWith('0')) {}
+    const waitFor = async (names) => {
+      for (;;) {
+        const pk = await next();
+        if (!pk.startsWith('2')) continue;
+        const [name, data] = JSON.parse(pk.slice(1));
+        if (names.includes(name)) return { name, data };
+      }
+    };
+    return { emit: (e, d) => send(`42${JSON.stringify([e, d])}`), waitFor, close: () => send('1').catch(() => {}) };
+  };
+  const sock = await connect(MEM);
+  try {
+    ok(await call('PUT', '/api/admin/sitemap/social.messages', c[OWNER], { mode: 'hidden' }));
+    await sock.emit('direct-message', { to: MOD, content: 'should not arrive' });
+    const r = await sock.waitFor(['social-error', 'message-sent']);
+    assert.equal(r.name, 'social-error', 'refused while Messages is off');
+    assert.match(r.data.error, /switched off/);
+
+    ok(await call('PUT', '/api/admin/sitemap/social.messages', c[OWNER], { mode: 'visible' }));
+    await sock.emit('direct-message', { to: MOD, content: 'hello again' });
+    const r2 = await sock.waitFor(['social-error', 'message-sent']);
+    assert.equal(r2.name, 'message-sent', `works again once it is back: ${JSON.stringify(r2.data)}`);
+    assert.ok(!JSON.stringify(r2.data).includes('should not arrive'));
+  } finally {
+    ok(await call('PUT', '/api/admin/sitemap/social.messages', c[OWNER], { mode: 'visible' }));
+    sock.close();
+  }
+});
+
 test('Admin sections and Social tabs are parts too; the owner can keep an Admin section to themselves', async () => {
   for (const id of ['admin.users', 'admin.moderation', 'admin.audit', 'admin.staff', 'social.messages', 'social.rooms', 'contests.hosted']) assert.ok(sitemap.BY_ID.get(id), id);
   assert.equal(sitemap.partForApi('/api/admin/reports').id, 'admin.moderation');
