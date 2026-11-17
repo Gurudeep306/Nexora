@@ -158,7 +158,7 @@ Contents:
     Format, cheat sheet — all pass in 14 languages.
   - Accessibility: Monaco's touch-screen "show the keyboard" field is named.
   - Tests: `tests/syntax-check.test.js`, `tests/cheatsheets.test.js`.
-- **C, "Add a coding problem" for staff — this PR** (branch `claude/fervent-curie-vjgcd8`):
+- **C, "Add a coding problem" for staff — merged (#140):**
   - **Where**: Admin → Add a problem (`components/admin/AuthoredSection.tsx`,
     permission `problems.manage`) lists drafts and published problems;
     "New problem" opens the editor at `/admin/problems/:id`
@@ -197,13 +197,55 @@ Contents:
     the Solve page shows Description / Solution. Axe 0 and no sideways scroll
     on the list and all six tabs, light, dark and phone.
   - Tests: `tests/authoring.test.js` (4), `tests/authoring-routes.test.js` (5).
+- **D, Messages — pushed on `claude/fervent-curie-vjgcd8`, NOT merged yet (no PR yet).**
+  The owner asked for "the best system possible" with more features (2026-11-17).
+  - **Server**: `src/chat.js` (rules) + `src/routes/chat.js` (`/api/chat/*`).
+    Tables `chat_conversations`, `chat_members` (role, last_read_id, muted,
+    accepted), `chat_messages` (body, attachment, share, reply_to, poll,
+    pinned, forwarded, edited, deleted), `chat_reactions`, `chat_poll_votes`,
+    `chat_saved`, `chat_settings` (who can message me). Live socket events
+    to every member: `chat:message`, `chat:update`, `chat:reaction`,
+    `chat:read`, `chat:typing`, `chat:conversation`, `chat:mention`.
+  - **Features**: DMs; groups with owner/admin/member (add, remove, rename,
+    description, hand-over, leave); message requests (strangers wait,
+    receipts hidden until accepted, at most 3 messages before acceptance);
+    privacy (everyone / people I follow / nobody); blocking (social_blocks);
+    typing; Seen / Seen by; replies, edits, deletes, reactions, pins; polls;
+    forward (up to 5 chats); saved messages; invite links (on/off);
+    search; @mentions (still counted in muted chats); mute; report
+    (`reports`, content type `chat_message`, Admin → Moderation);
+    attachments up to 5 MB checked by bytes (images, PDF, text/code saved as
+    .txt, voice notes webm/ogg/m4a/mp3; no SVG/HTML); share cards built by
+    the server (problem, own submission with code, contest, GATE question
+    without the answer, solve room); a pasted nexoraguru.in /solve/<id> or
+    /gate/practice?ids= link becomes a card; code blocks coloured with Copy
+    and Run (/api/run); "Solve together" makes a room (`/social?tab=rooms&room=`).
+  - **Old DMs**: the `messages` table is copied in once (`chat_meta.migrated`);
+    `POST /api/messages` and the `direct-message` socket still work and also
+    write to the new chat.
+  - **Client**: `client/src/components/social/MessagesTab.tsx` (list, filters
+    All/Unread/Groups/Requests, search, ?c= ?peer= ?join=) and
+    `client/src/components/social/chat/` (Thread, MessageItem, Composer,
+    RichText, dialogs, types, chat.css). Top-bar bell and the Messages tab
+    badge use `/api/chat/unread`.
+  - **Honest limits**: not end-to-end encrypted (the privacy dialog says so);
+    no voice/video calls; no previews of other websites (would be an SSRF risk).
+  - **Checked**: `tests/chat.test.js` (10) and `tests/chat-routes.test.js` (5);
+    `npm test` 658 passed; `tsc -b` and `vite build` clean; no new lint
+    warnings. A 3-user Playwright run on the demo passed: run code printed 42,
+    request showed "Sent" until accepted then "Seen", typing live, reaction
+    live, group invite under Requests, poll vote live, @mention highlighted,
+    search found the message.
+  - **Still to do before the PR**: phone and dark screenshots, axe 0 (light,
+    dark, phone) on `/social?tab=messages` with a conversation open; then PR
+    and merge.
 - **Owner asked (2026-11-17) where "How it runs" went**: since the Solve
   redesign it is Dry run tab → "Under the hood". Offered: its own tab again,
   or a top-bar button. Waiting for the owner's choice.
 - **Lost work, rebuilt from the plan:** session 6 built B (problem pipeline)
   and A3 (coding analysis + XP) in helper worktrees on its own machine and
   never pushed them. They are not recoverable here and are rebuilt next.
-- **Next, in order:** D (social), E (contests), F (linked platforms), then
+- **Next, in order:** finish D (axe + PR), then E (contests), F (linked platforms), then
   the rest of item 4 (JS async/sort tracing, C pointers into arrays,
   linked-list pointer lanes).
 - **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and
@@ -772,7 +814,7 @@ by analyzing what to place where to make it look the best and show case best
   publishing.
 - Preview as a student.
 
-**D. Social** (`src/routes/social.js`, `client/src/components/social/*`)
+**D. Social** (`src/routes/social.js`, `client/src/components/social/*`) — BUILT (session 7, see section 3; PR still to open)
 
 - DMs, and groups (create, invite, roles).
 - Typing indicator, read receipts, attachments, reactions, search.

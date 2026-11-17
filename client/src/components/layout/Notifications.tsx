@@ -10,7 +10,9 @@ import { useSocket } from '@/lib/socket'
 import { setFaviconBadge } from '@/lib/faviconFx'
 import { useSite } from '@/context/SiteContext'
 import { Icon } from '@/components/icon/Icon'
-import type { FriendRequest, UnreadCount } from '@/components/social/types'
+import type { FriendRequest } from '@/components/social/types'
+
+type ChatUnread = { total: number; requests: number; conversations: { id: number; kind: 'dm' | 'group'; title: string; count: number; from: string }[] }
 import { SocialActivity } from '@/components/social/feed/BellActivity'
 import { useSocialUnread } from '@/components/social/feed/notifications'
 
@@ -24,18 +26,20 @@ export function Notifications() {
   const { data, loading, error, refetch } = useApi(async () => {
     const [requests, messages] = await Promise.all([
       api.get<{ incoming: FriendRequest[] }>(`/api/friends/${encodeURIComponent(username)}/requests`),
-      api.get<{ counts: UnreadCount[]; total: number }>(`/api/messages/unread/${encodeURIComponent(username)}`),
+      api.get<ChatUnread>('/api/chat/unread').catch(() => ({ total: 0, requests: 0, conversations: [] }) as ChatUnread),
     ])
-    return { requests: requests.incoming, messages: messages.counts, total: requests.incoming.length + messages.total }
+    return { requests: requests.incoming, messages: messages.conversations, chatRequests: messages.requests, total: requests.incoming.length + messages.total + messages.requests }
   }, [username, open, location.key], { skip: !username })
 
   useEffect(() => {
     if (!socket) return
     socket.on('friend-request-received', refetch)
-    socket.on('new-message', refetch)
+    socket.on('chat:message', refetch)
+    socket.on('chat:read', refetch)
     return () => {
       socket.off('friend-request-received', refetch)
-      socket.off('new-message', refetch)
+      socket.off('chat:message', refetch)
+      socket.off('chat:read', refetch)
     }
   }, [socket, refetch])
 
@@ -132,10 +136,9 @@ export function Notifications() {
                   </span>
                 </Link>
               ))}
-              {(data?.messages ?? []).map((m) => (
+              {!!data?.chatRequests && (
                 <Link
-                  key={m.from_user}
-                  to={`/social?tab=messages&peer=${encodeURIComponent(m.from_user)}`}
+                  to="/social?tab=messages"
                   onClick={() => setOpen(false)}
                   className="flex items-start gap-3 rounded-lg px-2.5 py-2.5 text-[13px] transition-colors hover:bg-bg-app/5"
                 >
@@ -143,7 +146,22 @@ export function Notifications() {
                     <MessageSquare className="size-4" />
                   </span>
                   <span className="min-w-0 text-text-secondary">
-                    <strong className="font-semibold text-text-primary">{m.from_user}</strong> sent {m.count} {m.count === 1 ? 'message' : 'messages'}
+                    {data.chatRequests} message {data.chatRequests === 1 ? 'request' : 'requests'} waiting
+                  </span>
+                </Link>
+              )}
+              {(data?.messages ?? []).map((m) => (
+                <Link
+                  key={m.id}
+                  to={`/social?tab=messages&c=${m.id}`}
+                  onClick={() => setOpen(false)}
+                  className="flex items-start gap-3 rounded-lg px-2.5 py-2.5 text-[13px] transition-colors hover:bg-bg-app/5"
+                >
+                  <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-accent-brand/15 text-accent-brand">
+                    <MessageSquare className="size-4" />
+                  </span>
+                  <span className="min-w-0 text-text-secondary">
+                    <strong className="font-semibold text-text-primary">{m.title || m.from}</strong> · {m.count} new {m.count === 1 ? 'message' : 'messages'}
                   </span>
                 </Link>
               ))}

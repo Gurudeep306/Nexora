@@ -5231,6 +5231,8 @@ app.use(adminApi.router);
 
 /* ── Social network + public profiles: /api/social/*, /api/profiles/* ── */
 app.use(createSocialRouter({ all, get, run, realtime, isTrustedOrigin, calcLevel, calcStreak }).router);
+// Messages: direct and group conversations (src/chat.js, src/routes/chat.js).
+app.use(require("./routes/chat").createChatRouter({ realtime, isTrustedOrigin, catalog: require("./problem-catalog"), gate: require("./routes/gate") }));
 
 app.get("/api/user/search", async (req, res) => {
   try {
@@ -5378,10 +5380,21 @@ async function insertDirectMessage(from, to, content) {
   ]);
   if (!recipient) return null;
   const sanitized = String(content).trim().substring(0, 2000);
+  // Messages live in src/chat.js now; it copies this old table in once, so
+  // make sure that copy has happened before adding here, then add it there too.
+  const chat = require("./chat");
+  await chat.init().catch(() => {});
   const { lastID } = await run(
     "INSERT INTO messages(from_user,to_user,content,created_at) VALUES(?,?,?,?)",
     [from, to, sanitized, new Date().toISOString()],
   );
+  try {
+    const conv = await chat.openDm(from, to);
+    const message = await chat.send(from, conv, { body: sanitized }, async () => null);
+    for (const n of [from, to]) emitToUser(n, "chat:message", { message });
+  } catch {
+    /* blocked, or messages unavailable: the old table still has it */
+  }
   return get("SELECT * FROM messages WHERE id=?", [lastID]);
 }
 
@@ -6259,6 +6272,20 @@ io.on("connection", (socket) => {
     const { to } = payloadOf(p);
     if (!isId(to) || to === me) return;
     emitToUser(to, "user-typing", { from: me });
+  });
+
+  // Messages (src/chat.js): "typing…" goes to the conversation's other members.
+  socket.on("chat:typing", async (p) => {
+    const { conversationId, typing } = payloadOf(p);
+    const id = Number(conversationId);
+    if (!Number.isInteger(id) || id <= 0) return;
+    try {
+      const chat = require("./chat");
+      await chat.membership(id, me);
+      for (const n of await chat.memberNames(id)) if (n !== me) emitToUser(n, "chat:typing", { conversationId: id, username: me, typing: !!typing });
+    } catch {
+      /* not a member: say nothing */
+    }
   });
 
   socket.on("typing-stop", (p) => {
