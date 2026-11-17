@@ -343,9 +343,18 @@ function createAdminRouter(deps) {
         role: a.role,
         isOwner: a.role === "owner",
         permissions: [...a.perms],
-        // What this person gets in each Admin section (Staff access).
-        sections: S.levelsFor(a),
-        canStaff: a.role === "owner" || a.perms.has("staff.access"),
+        // What this person gets in each Admin section (Staff access), with
+        // any section the owner keeps to themselves (Site map) closed.
+        ...(await (async () => {
+          const levels = S.levelsFor(a);
+          let canStaff = a.role === "owner" || a.perms.has("staff.access");
+          if (a.role !== "owner") {
+            const eff = sitemap.effectiveModes(await getSettings());
+            for (const id of Object.keys(levels)) if (eff[`admin.${id}`] === "hidden") levels[id] = "none";
+            if (eff["admin.staff"] === "hidden") canStaff = false;
+          }
+          return { sections: levels, canStaff };
+        })()),
         catalog: P.PERMISSIONS,
         roles: P.ASSIGNABLE_ROLES,
         roleDefaults: P.ROLE_DEFAULTS,
@@ -411,6 +420,7 @@ function createAdminRouter(deps) {
           label: p.label,
           parent: p.parent || null,
           core: !!p.core,
+          adminSection: !!p.adminSection,
           pages: p.pages || null,
           api: p.api || null,
           mode: chosen[p.id],

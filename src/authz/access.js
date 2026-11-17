@@ -184,7 +184,7 @@ function createAccessControl() {
         return res.status(403).json({
           ok: false,
           code: "feature_disabled",
-          feature: part.flag || part.id,
+          feature: sitemap.flagOf(part) || part.id,
           part: part.id,
           mode,
           error: mode === "soon" ? `${part.label} is coming soon` : "This section is switched off right now",
