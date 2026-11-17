@@ -421,6 +421,7 @@ function createAdminRouter(deps) {
           parent: p.parent || null,
           core: !!p.core,
           adminSection: !!p.adminSection,
+          hiveSection: sitemap.isHive(p),
           pages: p.pages || null,
           api: p.api || null,
           mode: chosen[p.id],

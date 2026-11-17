@@ -217,7 +217,9 @@ function effectiveModes(settings) {
 /** May this viewer use a part in this mode? who: { owner, staff, hive } */
 function allowed(mode, who, part) {
   if (who.owner) return true;
-  if (part && isHive(part) && !who.hive) return false; // admins and the owner only
+  // Hive has two choices, like Admin's own sections: admins and the owner
+  // (the default: full access), or the owner only ("hidden"). Members never.
+  if (part && isHive(part)) return !!who.hive && mode !== "hidden";
   if (part?.adminSection) return mode !== "hidden"; // the team (by permission), or the owner only
   if (mode === "visible") return true;
   if (mode === "hidden") return false;

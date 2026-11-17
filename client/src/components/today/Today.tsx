@@ -26,6 +26,8 @@ import {
   type Step,
 } from './today-data'
 import './today.css'
+import { Discover } from './Discover'
+import type { DiscoverPick } from '@/lib/discover'
 import { LiveFigure } from './LiveFigure'
 
 const EASE = [0.22, 1, 0.36, 1] as const
@@ -74,7 +76,7 @@ export function Masthead({ name, streak, goal, steps, onSync, syncing, updatedAt
           {greeting(now)}, {name}.
         </h1>
         {level != null && (
-          <Link to="/nexus?tab=ranks" className="today-rank" aria-label="Your rank: see every rank">
+          <Link to="/nexus?tab=ranks" className="today-rank">
             <RankBadge level={level} size="lg" sub={`Level ${level} of 11 · see the ladder`} />
           </Link>
         )}
@@ -191,34 +193,24 @@ function ContinueRotator({ items }: { items: Continue[] }) {
   )
 }
 
-export function Spread({ cont, rows, also = [] }: { cont: Continue | null; rows: TodayRow[]; also?: Continue[] }) {
+export function Spread({ cont, rows, also = [], pool = [] }: { cont: Continue | null; rows: TodayRow[]; also?: Continue[]; pool?: DiscoverPick[] }) {
+  // A newcomer (nothing to continue) gets three picks from across the site
+  // that change every few hours — never the same fixed chapters.
   const path = startHere()
+  const fallback: DiscoverPick[] = path.map((p) => ({ key: `dsa:${p.to}`, kind: 'chapter', title: p.title, line: `${p.pages} pages, animated step by step.`, to: p.to, area: 'DSA course' }))
   return (
     <Reveal className="ed-feature today-spread" aria-labelledby="today-continue">
       <div className="min-w-0">
-        <h2 id="today-continue" className="ed-label m-0">
-          {cont ? 'Continue' : 'Start here'}
-        </h2>
         {cont ? (
-          <ContinueRotator items={[cont, ...also].slice(0, 6)} />
-        ) : (
           <>
-            <p className="ed-body-sm ed-ink-2 mt-4 mb-0">Three first chapters of the DSA course. Every idea is animated step by step.</p>
-            <ol className="today-path ed-rows mt-6 mb-0 list-none p-0">
-              {path.map((p, i) => (
-                <li key={p.to}>
-                  <Link to={p.to} {...prefetchHandlers(p.to)} className="today-row">
-                    <span className="ed-serif-numeral ed-muted w-8 shrink-0">{['i', 'ii', 'iii'][i]}</span>
-                    <span className="min-w-0 flex-1">
-                      <span className="ed-ui block font-medium">{p.title}</span>
-                      <span className="ed-caption ed-muted block">{p.pages} pages</span>
-                    </span>
-                    <ArrowRight className="size-4 shrink-0" aria-hidden="true" />
-                  </Link>
-                </li>
-              ))}
-            </ol>
+            <h2 id="today-continue" className="ed-label m-0">
+              Continue
+            </h2>
+            <ContinueRotator items={[cont, ...also].slice(0, 6)} />
+            {pool.length > 0 && <Discover pool={pool} n={1} scope="home-more" label="Or try something new" className="mt-8" />}
           </>
+        ) : (
+          <Discover pool={pool.length ? pool : fallback} scope="home" headingId="today-continue" />
         )}
       </div>
 
