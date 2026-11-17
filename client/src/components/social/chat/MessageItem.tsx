@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'
+import { memo, useEffect, useRef, useState, type MouseEvent } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Bookmark,
@@ -22,7 +22,7 @@ import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger, Popover, Popov
 import { assetUrl } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { CodeBlock, RichText } from './RichText'
-import { clock, fileSize, nameOf, type Conversation, type Message, type People, type ShareCard } from './types'
+import { clock, fileSize, nameOf, quoteText, type Conversation, type Message, type People, type ShareCard } from './types'
 
 const QUICK = ['👍', '❤️', '😂', '🔥', '🎉', '🤔']
 const MORE = ['👏', '🙏', '💯', '✅', '❌', '😮', '😢', '😡', '🚀', '🧠', '👀', '💡', '📌', '⏰', '🤝', '🙌', '😅', '🥳']
@@ -195,6 +195,17 @@ export const MessageItem = memo(function MessageItem({
   highlight: boolean
   actions: MessageActions
 }) {
+  const [picked, setPicked] = useState(false)
+  const rowRef = useRef<HTMLLIElement>(null)
+  // A tap anywhere else puts the actions away again.
+  useEffect(() => {
+    if (!picked) return
+    const away = (e: PointerEvent) => {
+      if (!rowRef.current?.contains(e.target as Node)) setPicked(false)
+    }
+    document.addEventListener('pointerdown', away)
+    return () => document.removeEventListener('pointerdown', away)
+  }, [picked])
   if (m.kind === 'system') {
     return (
       <li className="chat-system" id={`msg-${m.id}`}>
@@ -210,8 +221,13 @@ export const MessageItem = memo(function MessageItem({
   const canDelete = mine || manager
   const reacted = Object.entries(m.reactions)
   const live = !m.pending && !m.failed && !m.deleted
+  // On a touch screen the actions show for the message you tap, not all at once.
+  const pick = (e: MouseEvent<HTMLLIElement>) => {
+    if ((e.target as HTMLElement).closest('a, button, input, textarea, audio, video, pre, [role="menu"]')) return
+    setPicked((v) => !v)
+  }
   return (
-    <li id={`msg-${m.id}`} className={cn('chat-msg', mine && 'is-mine', grouped && 'is-grouped', highlight && 'is-highlight')}>
+    <li ref={rowRef} id={`msg-${m.id}`} onClick={pick} className={cn('chat-msg', mine && 'is-mine', grouped && 'is-grouped', highlight && 'is-highlight', picked && 'is-picked')}>
       {!mine && conv.kind === 'group' && (grouped ? <span className="chat-avatar-gap" aria-hidden="true" /> : <Avatar size="sm" seed={m.username} avatar={people[m.username]?.avatar} src={people[m.username]?.avatar_url} name={nameOf(people, m.username)} className="chat-avatar" />)}
       <div className="chat-col">
         {!mine && conv.kind === 'group' && !grouped && <p className="chat-author">{nameOf(people, m.username)}</p>}
@@ -224,7 +240,7 @@ export const MessageItem = memo(function MessageItem({
           {m.replyTo && !m.deleted && (
             <button type="button" className="chat-reply-quote" onClick={() => m.replyTo && !m.replyTo.deleted && actions.jump(m.replyTo.id)}>
               <span className="font-medium">{m.replyTo.deleted ? 'A deleted message' : m.replyTo.username === me ? 'You' : nameOf(people, m.replyTo.username)}</span>
-              {!m.replyTo.deleted && <span className="block truncate">{m.replyTo.body || (m.replyTo.attachment ? 'Attachment' : m.replyTo.share ? 'Shared card' : m.replyTo.poll ? `Poll: ${m.replyTo.poll}` : '')}</span>}
+              {!m.replyTo.deleted && <span className="block truncate">{quoteText(m.replyTo.body) || (m.replyTo.attachment ? 'Attachment' : m.replyTo.share ? 'Shared card' : m.replyTo.poll ? `Poll: ${m.replyTo.poll}` : '')}</span>}
             </button>
           )}
           {m.deleted ? (

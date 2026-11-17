@@ -41,6 +41,27 @@ export function MessagesTab({ me, socket }: Props) {
   const openId = Number(params.get('c')) || null
   const joinToken = params.get('join')
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const appRef = useRef<HTMLDivElement>(null)
+
+  // Opening a conversation brings the whole messages box into view, so the
+  // box to type in is on screen without scrolling the page. On a phone the
+  // floating assistant button would sit on Send, so it steps aside.
+  useEffect(() => {
+    if (!openId) return
+    document.documentElement.dataset.chatOpen = ''
+    // After the page above has laid out (its header loads with the list).
+    const t = window.setTimeout(() => {
+      const el = appRef.current
+      if (el && el.getBoundingClientRect().top > 80) {
+        const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        el.scrollIntoView({ block: 'start', behavior: still ? 'auto' : 'smooth' })
+      }
+    }, 120)
+    return () => {
+      window.clearTimeout(t)
+      delete document.documentElement.dataset.chatOpen
+    }
+  }, [openId, loading])
 
   const setParam = useCallback(
     (patch: Record<string, string | null>) => {
@@ -185,7 +206,7 @@ export function MessagesTab({ me, socket }: Props) {
   ]
 
   return (
-    <div className={cn('chat-app', openId && 'has-open')}>
+    <div ref={appRef} className={cn('chat-app', openId && 'has-open')}>
       <aside className="chat-side" aria-label="Conversations">
         <div className="chat-side-head">
           <h2 className="m-0 text-[17px] font-semibold text-text-primary">Messages</h2>

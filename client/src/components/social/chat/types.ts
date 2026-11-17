@@ -126,6 +126,11 @@ export function titleOf(c: Conversation, me: string, people: People): string {
 }
 export const otherOf = (c: Conversation, me: string) => (c.kind === 'dm' ? (c.members.find((m) => m.username !== me)?.username ?? null) : null)
 
+/** A message as one short line: code blocks become "[code]", spaces fold. */
+export function quoteText(body: string | null | undefined): string {
+  return (body || '').replace(/```[\s\S]*?(```|$)/g, '[code]').replace(/\s+/g, ' ').trim()
+}
+
 export function previewText(p: Preview | null | undefined, me: string, people: People, group: boolean): string {
   if (!p) return 'No messages yet'
   const who = p.username === me ? 'You' : nameOf(people, p.username)
@@ -134,7 +139,7 @@ export function previewText(p: Preview | null | undefined, me: string, people: P
   const what = p.poll
     ? `Poll: ${p.poll}`
     : p.body.trim()
-      ? p.body.replace(/```[\s\S]*?```/g, '[code]').replace(/\s+/g, ' ')
+      ? quoteText(p.body)
       : p.attachment === 'image'
         ? 'Photo'
         : p.attachment === 'audio'

@@ -3,8 +3,9 @@
 .chat-app {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  height: min(80dvh, 56rem);
-  min-height: 30rem;
+  /* The screen under the top bar, less room for the Dock. */
+  height: clamp(30rem, calc(100dvh - 10.5rem), 56rem);
+  scroll-margin-top: 4.5rem;
   overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
@@ -20,8 +21,14 @@
   .chat-app:not(.has-open) .chat-main {
     display: none;
   }
+  /* A phone: the top bar (56px) and the tab bar (64px) stay on screen. */
   .chat-app {
-    height: calc(100dvh - 11rem);
+    height: calc(100dvh - 8.25rem - env(safe-area-inset-bottom));
+    min-height: 24rem;
+    scroll-margin-top: 4rem;
+  }
+  :root[data-chat-open] .ai-fab {
+    display: none;
   }
 }
 @media (min-width: 900px) {
@@ -685,11 +692,17 @@
 @media (hover: none) {
   .chat-actions {
     position: static;
+    display: none;
     align-self: center;
     border: 0;
     background: transparent;
     opacity: 1;
     pointer-events: auto;
+  }
+  .chat-msg.is-picked .chat-actions,
+  .chat-msg:focus-within .chat-actions,
+  .chat-actions:has([data-state='open']) {
+    display: flex;
   }
   .chat-actions .chat-act-emoji {
     display: none;
