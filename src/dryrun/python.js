@@ -31,6 +31,11 @@ def _oid(o):
     k = id(o)
     if k not in _ids: _ids[k] = len(_ids) + 1
     return _ids[k]
+_hq = []
+def _drain(heap):
+    while _hq:
+        i, n, d = _hq.pop(0)
+        heap[i] = {"c": n, "f": {k: _ser(x, heap, 1) for k, x in list(d.items())[:20] if not k.startswith("__")}}
 def _ser(v, heap, depth=0):
     if v is None or isinstance(v, bool): return v
     if isinstance(v, int):
@@ -63,12 +68,13 @@ def _ser(v, heap, depth=0):
     if isinstance(d, dict):
         i = _oid(v)
         if i not in heap and len(heap) < 300:
+            # Queued, not nested: a long linked list costs no extra depth (or stack).
             heap[i] = None
-            heap[i] = {"c": n, "f": {k: _ser(x, heap, depth + 1) for k, x in list(d.items())[:20] if not k.startswith("__")}}
+            _hq.append((i, n, d))
         return {"t": "ref", "id": i}
     return {"t": "str", "s": repr(v)[:120]}
 def _skip(k, v):
-    return k.startswith("__") or k.startswith("_") and k[1:2] in ("s", "j", "b", "t") and len(k) <= 3 or isinstance(v, (_t.ModuleType, _t.FunctionType, type, _t.BuiltinFunctionType)) or k in ("_Out", "_SRC", "_MAXEV", "_MAXB", "_err", "_st", "_ids", "_oid", "_ser", "_skip", "_emit", "_last", "_tr", "_frames", "_pending", "_code", "_g", "_heapsent", "_hdelta")
+    return k.startswith("__") or k.startswith("_") and k[1:2] in ("s", "j", "b", "t") and len(k) <= 3 or isinstance(v, (_t.ModuleType, _t.FunctionType, type, _t.BuiltinFunctionType)) or k in ("_Out", "_SRC", "_MAXEV", "_MAXB", "_err", "_st", "_ids", "_oid", "_ser", "_skip", "_emit", "_last", "_tr", "_frames", "_pending", "_hq", "_drain", "_code", "_g", "_heapsent", "_hdelta")
 _last = {}
 _heapsent = {}
 _frames = {}
@@ -105,6 +111,7 @@ def _vars(fr):
         sv = _ser(v, heap)
         if sv is None and v is not None: continue
         cur[name] = sv
+    _drain(heap)
     ch = {}
     for name, sv in cur.items():
         js = _j.dumps(sv, sort_keys=True, default=str)
@@ -160,6 +167,7 @@ def _tr(fr, event, arg):
         heap = {}
         ev = {"e": "ret", "k": _frames.get(k, 0), "l": fr.f_lineno, "o": _st["out"]}
         rv = _ser(arg, heap)
+        _drain(heap)
         if arg is not None and rv is not None: ev["r"] = rv
         if heap: ev["h"] = heap
         _emit(ev)

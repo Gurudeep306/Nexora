@@ -87,7 +87,11 @@ export function GridView({ s }: { s: GridState }) {
   const cy = (r: number) => colLab + r * (CH + GAP) + CH / 2
   const arrows = s.arrows ?? []
   return (
-    <div className="viz-grid overflow-x-auto">
+    // Wider than the stage, it scrolls sideways: then it must be reachable by keyboard too.
+    <div
+      className="viz-grid overflow-x-auto rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
+      {...(W > stageW ? { tabIndex: 0, role: 'region', 'aria-label': `${s.label ?? 'Grid'} (scrolls sideways)` } : {})}
+    >
       {s.label && <p className="viz-label">{s.label}</p>}
       <div className="relative mx-auto" style={{ width: W, height: Ht }}>
         {s.colLabels?.map((c, i) => (

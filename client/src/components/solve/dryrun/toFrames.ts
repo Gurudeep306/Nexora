@@ -39,6 +39,8 @@ import { isObj, show, type CallFrame, type HeapObj, type Snapshot, type TV } fro
 
 /** How many boxes / rows / nodes are drawn at most, so the stage stays readable. */
 export const MAX_CELLS = 40
+/** Said on anything drawn in part: " · first 40 of 100" (nothing when it all fits). */
+export const capNote = (shown: number, total: number, unit = '', which = 'first') => (total > shown ? ` · ${which} ${shown} of ${total}${unit ? ` ${unit}` : ''}` : '')
 const MAX_NODES = 30
 
 type ListTV = Extract<TV, { t: 'list' | 'tuple' | 'set' | 'deque' }>
@@ -260,8 +262,9 @@ function arrayOf(key: string, name: string, v: ListTV, ctx: Ctx, label?: string)
   let setNote = ''
   if (ctx.facts.unset.has(name)) {
     const u = written(ctx.unset, key, shown.map((x) => JSON.stringify(x)))
+    // Every drawn cell set: the array is only cut for room ("first 40 of 100").
+    if (u.used < shown.length) setNote = ` · ${u.used} of ${v.n} set`
     shown = shown.slice(0, u.used)
-    setNote = ` · ${u.used} of ${v.n} set`
   }
   const { ids, roles } = ctx.ids.follow(key, shown.map((x) => JSON.stringify(x)))
   const cells: Cell[] = shown.map((x, i) => ({ id: ids[i], v: scalar(x, ctx.heap) }))
@@ -289,7 +292,7 @@ function arrayOf(key: string, name: string, v: ListTV, ctx: Ctx, label?: string)
   return {
     kind: 'array',
     id: key,
-    label: `${label ?? name}${tag ? ` · ${tag}` : ''}${setNote || (total > shown.length ? ` · first ${shown.length} of ${total}` : '')}`,
+    label: `${label ?? name}${tag ? ` · ${tag}` : ''}${setNote || capNote(shown.length, total)}`,
     cells,
     roles: rl,
     pointers,
@@ -302,7 +305,7 @@ function stackOf(key: string, name: string, v: ListTV, ctx: Ctx, queue: boolean)
   const { ids, roles } = ctx.ids.follow(key, shown.map((x) => JSON.stringify(x)))
   const items = shown.map((x, i) => ({ id: ids[i], v: scalar(x, ctx.heap) }))
   const rl: Record<number, Role> = Object.fromEntries([...roles].filter(([, r]) => r !== 'swap'))
-  const label = `${name}${v.n > shown.length ? ` · ${shown.length} of ${v.n}` : ''}`
+  const label = `${name}${capNote(shown.length, v.n, '', queue ? 'first' : 'top')}`
   return queue ? { kind: 'queue', id: key, label, items, roles: rl } : { kind: 'stack', id: key, label, items, roles: rl }
 }
 
@@ -312,8 +315,8 @@ function gridOf(key: string, name: string, v: ListTV, ctx: Ctx, prev?: GridState
   if (ctx.facts.unset.has(name)) {
     const cells = (i: number) => rows[i].map((x) => JSON.stringify(x))
     const u = written(ctx.unset, key, rows.map((r) => JSON.stringify(r)), cells)
+    if (u.used < rows.length) setNote = ` · ${u.used} of ${v.n} rows set`
     rows = rows.slice(0, u.used).map((r) => r.slice(0, u.cols))
-    setNote = ` · ${u.used} of ${v.n} rows set`
   }
   const roles: Record<string, Role> = {}
   rows.forEach((r, i) =>
@@ -328,7 +331,9 @@ function gridOf(key: string, name: string, v: ListTV, ctx: Ctx, prev?: GridState
     const c = evalIndex(m[2].replace(/\s+/g, ''), ctx.ints)
     if (r !== null && c !== null && !roles[`${r},${c}`]) roles[`${r},${c}`] = hasCompare(ctx.line) ? 'compare' : 'active'
   }
-  const more = setNote || (v.n > rows.length ? ` · first ${rows.length} of ${v.n} rows` : '')
+  const widest = Math.max(0, ...v.i.slice(0, rows.length).map((r) => (isList(r) ? r.n : 1)))
+  const drawnCols = Math.max(0, ...rows.map((r) => r.length))
+  const more = setNote || `${capNote(rows.length, v.n, 'rows')}${capNote(drawnCols, widest, 'columns')}`
   return { kind: 'grid', id: key, label: `${name}${more}`, rows, roles, rowLabels: rows.map((_, i) => String(i)) }
 }
 
@@ -348,7 +353,7 @@ function edgeListGraphOf(key: string, name: string, v: ListTV, ctx: Ctx): GraphS
   }
   const edges = (v.i as ListTV[]).slice(0, 60).map((e) => ({ from: add(scalar(e.i[0], ctx.heap)), to: add(scalar(e.i[1], ctx.heap)), ...(e.i.length === 3 ? { w: scalar(e.i[2], ctx.heap) } : {}) }))
   if (nodes.size > MAX_NODES) return null
-  return { kind: 'graph', id: `${key}:edges`, label: `${name} (edge list)`, nodes: [...nodes.values()], edges, directed: false, pointers: {} }
+  return { kind: 'graph', id: `${key}:edges`, label: `${name} (edge list)${capNote(edges.length, v.n, 'edges')}`, nodes: [...nodes.values()], edges, directed: false, pointers: {} }
 }
 
 function graphOf(key: string, name: string, v: ListTV | DictTV, ctx: Ctx): GraphState | null {
@@ -379,7 +384,10 @@ function graphOf(key: string, name: string, v: ListTV | DictTV, ctx: Ctx): Graph
   // With weighted edges, w is a weight, not a node.
   const weighted = edges.some((e) => e.w !== undefined)
   for (const [n, val] of ctx.ints) if (/^(u|v|node|cur|curr|nxt|next|nb|neighbou?r|start|src|s|target|dst|w)$/i.test(n) && !(weighted && /^w$/i.test(n)) && nodes.has(`n${val}`)) pointers[n] = `n${val}`
-  return { kind: 'graph', id: key, label: name, nodes: [...nodes.values()], edges: shown, directed, pointers }
+  // A neighbour list longer than the trace carries is drawn in part.
+  const cut = pairs.map(([, l]) => l as ListTV).filter((l) => l.n > l.i.length)
+  const cutNote = cut.length ? ` · ${cut.length === 1 ? 'one node shows' : `${cut.length} nodes show`} only the first ${Math.min(...cut.map((l) => l.i.length))} neighbours` : ''
+  return { kind: 'graph', id: key, label: `${name}${cutNote}`, nodes: [...nodes.values()], edges: shown, directed, pointers }
 }
 
 function mapOf(key: string, name: string, v: DictTV, ctx: Ctx, prev?: MapState): MapState {
@@ -456,6 +464,23 @@ function linkedOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string)
       if (id !== null && id === first && order.length > 1) circular = true
     }
   }
+  // Every node the variables reach (no cap), to say when only part is drawn.
+  // A link to an object the trace didn't carry means the list goes on: "300+".
+  const all = new Set<number>()
+  let beyond = false
+  for (const [, v] of starts) {
+    let id = refId(v)
+    while (id !== null && isNode(id) && !all.has(id) && all.size < 100000) {
+      all.add(id)
+      const o = heap.get(id)!
+      const link = LINK.map((f) => lf(o)[f]).find((x) => x !== undefined)
+      // Past its depth limit the tracer sends { t: 'more' } instead of the next node.
+      if (isObj(link as TV) && (link as { t?: string }).t === 'more') beyond = true
+      id = refId(link)
+    }
+    if (id !== null && !heap.has(id)) beyond = true
+  }
+  const nodesNote = all.size > order.length || beyond ? ` · first ${order.length} of ${all.size}${beyond ? '+' : ''} nodes` : ''
   const doubly = order.some((id) => 'prev' in lf(heap.get(id)!))
   const nodes = order.map((id) => {
     const o = heap.get(id)!
@@ -465,7 +490,7 @@ function linkedOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string)
   })
   const pointers: Record<string, string | null> = {}
   for (const [n, v] of starts) pointers[n] = `o${refId(v)}`
-  return { kind: 'list', id: key, label: `${starts[0][0]}${doubly ? ' (doubly linked)' : ''}${circular ? ' (circular: the last node points back to the first)' : ''}`, nodes, doubly, pointers }
+  return { kind: 'list', id: key, label: `${starts[0][0]}${doubly ? ' (doubly linked)' : ''}${circular ? ' (circular: the last node points back to the first)' : ''}${nodesNote}`, nodes, doubly, pointers }
 }
 
 function treeOf(vars: [string, TV][], heap: Map<number, HeapObj>, key: string): TreeState | null {
@@ -524,7 +549,7 @@ function heapTreeOf(key: string, name: string, v: ListTV, ctx: Ctx, oneBased = f
   }
   const roles: Record<string, Role> = {}
   for (const at of touched(name, ctx.line, ctx.ints)) if (at >= start && at < vals.length) roles[id(at)] = hasCompare(ctx.line) ? 'compare' : 'active'
-  return { kind: 'tree', id: `${key}:tree`, label: oneBased ? `${name} as a tree (node i has children 2i, 2i+1)` : `${name} as a heap (top = ${show(vals[0], ctx.heap)})`, nodes, roots: [id(start)], binary: true, roles }
+  return { kind: 'tree', id: `${key}:tree`, label: `${oneBased ? `${name} as a tree (node i has children 2i, 2i+1)` : `${name} as a heap (top = ${show(vals[0], ctx.heap)})`}${capNote(vals.length, v.n, 'items')}`, nodes, roots: [id(start)], binary: true, roles }
 }
 
 /** A union-find parent array as the forest it stands for. */
@@ -544,7 +569,7 @@ function forestOf(key: string, name: string, v: ListTV, ctx: Ctx, label = name):
   for (const at of touched(name, ctx.line, ctx.ints)) if (at >= 0 && at < n) roles[`${key}:u${at}`] = 'active'
   const pointers: Record<string, string | null> = {}
   for (const [k, val] of ctx.ints) if (/^(x|y|a|b|u|v|i|j|node|rx|ry|ra|rb|px|py)$/.test(k) && val >= 0 && val < n) pointers[k] = `${key}:u${val}`
-  return { kind: 'tree', id: `${key}:forest`, label: `${label} as sets (each tree is one set; its root is the leader)`, nodes, roots, roles, pointers }
+  return { kind: 'tree', id: `${key}:forest`, label: `${label} as sets (each tree is one set; its root is the leader)${capNote(n, v.n, 'items')}`, nodes, roots, roles, pointers }
 }
 
 /** A square 0/1 (or weight) matrix named like a graph, as the graph it stands for. */
