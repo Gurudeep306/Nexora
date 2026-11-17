@@ -50,11 +50,11 @@ const code = fs.readFileSync(file, 'utf8')
   }, [lang, code, mode, style])
   await p.goto(`${BASE}/solve/custom/1`, { waitUntil: 'networkidle' })
   await p.waitForTimeout(3000)
-  await p.locator('button:has-text("Dry run")').first().click().catch((e) => errs.push('click ' + e.message.split('\n')[0]))
+  await p.locator('button:has-text("Dry run"):visible').first().click().catch((e) => errs.push('click ' + e.message.split('\n')[0]))
   await p.waitForTimeout(+(process.env.WAIT || 12000))
   if (process.env.STEP) {
     await p
-      .locator('input[aria-label="Step"]')
+      .locator('input[aria-label="Step"]:visible')
       .first()
       .evaluate((el, v) => {
         if (v === 'mid') v = String(Math.floor(Number(el.max) * 0.6))
@@ -66,7 +66,7 @@ const code = fs.readFileSync(file, 'utf8')
     await p.waitForTimeout(1200)
   }
   if (process.env.FOCUS) {
-    await p.locator('button[aria-label="Full screen"]').first().click().catch((e) => errs.push('focus ' + e.message.split('\n')[0]))
+    await p.locator('button[aria-label="Full screen"]:visible').first().click().catch((e) => errs.push('focus ' + e.message.split('\n')[0]))
     await p.waitForTimeout(900)
   }
   const shot = path.join(OUT, `dry-${name}-${mode}${process.env.STEP ? '-s' + process.env.STEP : ''}${process.env.FOCUS ? '-f' : ''}.png`)

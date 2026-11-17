@@ -18,6 +18,8 @@ export type TV =
   | { t: 'rec'; c: string; f: Record<string, TV> }
   | { t: 'big' | 'num' | 'str'; s: string }
   | { t: 'more' }
+  /** A pointer walked along an array (C's p++): it points at a[i]. */
+  | { t: 'at'; a: string; i: number }
 
 export interface HeapObj {
   c: string
@@ -123,6 +125,8 @@ export function show(v: TV, heap?: Map<number, HeapObj>, depth = 0): string {
       return v.s
     case 'more':
       return '…'
+    case 'at':
+      return `&${v.a}[${v.i}]`
   }
 }
 
@@ -135,11 +139,16 @@ export function replay(events: TraceEvent[]): Snapshot[] {
   const heap = new Map<number, HeapObj>()
   let out = 0
 
+  // The call running now. With async code (JavaScript's await) it can be below
+  // calls that are waiting: those are off the stack until they resume.
+  let running: CallFrame | null = null
   const snap = (kind: Snapshot['kind'], line: number, changed: string[], extra?: Partial<Snapshot>) => {
+    const upto = running ? stack.indexOf(running) : -1
+    const live = upto >= 0 ? stack.slice(0, upto + 1) : stack
     snaps.push({
       kind,
       line,
-      stack: stack.map((f) => ({ ...f, vars: new Map(f.vars), order: [...f.order] })),
+      stack: live.map((f) => ({ ...f, vars: new Map(f.vars), order: [...f.order] })),
       heap: new Map(heap),
       out,
       changed,
@@ -178,21 +187,26 @@ export function replay(events: TraceEvent[]): Snapshot[] {
         .map(([n, val]) => `${n}=${show(val, heap)}`)
         .join(', ')
       stack.push(f)
+      running = f
       // The program's own start is not a step worth showing.
       if (stack.length > 1) snap('call', f.line, [])
     } else if (ev.e === 'line') {
       const f = frameOf(ev.k)
       if (!f) continue
+      running = f
       const changed = apply(f, ev.v, ev.x)
       f.line = ev.l ?? f.line
       snap('line', f.line, changed)
     } else if (ev.e === 'ret') {
       const f = frameOf(ev.k)
       if (!f) continue
+      running = f
       // The program ending is shown as its last line, not as a "return".
       if (stack.length > 1) snap('ret', ev.l ?? f.line, [], { ret: { fn: f.fn, value: ev.r === undefined ? null : ev.r } })
       const at = stack.lastIndexOf(f)
       if (at >= 0) stack.splice(at, 1)
+      // Back in the caller (or, after an await, whatever runs next reports itself).
+      running = at > 0 ? stack[at - 1] : (stack[stack.length - 1] ?? null)
     } else if (ev.e === 'exc') {
       const f = frameOf(ev.k)
       // Python reports an error again in every call it passes through; show it once.

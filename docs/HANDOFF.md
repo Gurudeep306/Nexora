@@ -251,7 +251,7 @@ Contents:
       (`quoteText` in `chat/types.ts`);
     - day and "New messages" lines are plain list items (axe "list").
 - **D, Messages — merged (#141).**
-- **E, Contests — PR opened (session 8), merged by the agent once CI is green.**
+- **E, Contests — merged (#142).**
   - **Server**: `src/contests.js` (rules, pure and tested) + `src/routes/hosted-contests.js`
     (`/api/hosted/*`). It keeps `custom_contests` (old contests still work; their
     Workshop problem list becomes items once) and adds `contest_items`
@@ -308,15 +308,50 @@ Contents:
     (host and student), the paper (console instructions, the exam, the
     review), results (4 tabs), the Solve page with the contest bar, and
     "Add to a contest" from a problem and a GATE question.
+- **Dry-run polish (section 6, item 4) — PR opened (session 8), merged once CI is green.**
+  - **JavaScript sort comparators** (`src/dryrun/js.js`, `comparator`): the
+    function given to `sort` / `toSorted`, `(a, b) => a - b` included, is a
+    short call "compare" with its two values and its answer ("compare returns
+    -3"). Only the first 40 comparisons of each sort are drawn (`__nx.call`
+    takes a limit; past it the frame is a no-op), so a big sort keeps its
+    steps for the program.
+  - **JavaScript async functions**: traced now (they were skipped). Each
+    `await x` becomes `__nx_f.resume(await __nx_f.pause(x))`: the call steps
+    off the stack while other code runs and back when it resumes; the line
+    that was running is reported first, so lines stay in the order they
+    ran. The replay (`replay.ts`, `running`) shows the stack only up to the
+    call that is running. Generators and `for await` are still skipped.
+    `applyEdits` takes an order key `o` for closers at the same place.
+  - **C pointers into arrays** (`c.js` `walker`, `c-runtime.h` `__NX_PAT`,
+    `__nx_inside`): a pointer to numbers the program never subscripts
+    (`p++`, `*p`, `*(p+1)`) is sent as `{t:'at', a:'a', i:2}` and drawn as a
+    chip under `a[2]`, shown as `&a[2]`; `*p` lights the cell it reads or
+    writes. Arrays are remembered with their names; a malloc'd block is
+    named by the pointer that holds its start. A pointer used with `[]`
+    (a parameter `int *arr`) stays an array, as before. C++ is unchanged.
+  - **Linked lists and trees** (`learn/engine/views/Linked.tsx`): several
+    pointers on one node stack in lanes with one arrow (it landed on the
+    name above).
+  - **Checked**: corpora still 193/193 for JavaScript, C and C++, 192/193 for
+    TypeScript (the known top-level `return`); tests added to
+    `tests/dryrun-js.test.js` (2) and `tests/dryrun-c.test.js` (1); browser
+    dry runs (C two pointers, Python linked list) axe 0 in light, dark and
+    phone. `client/scripts/check-dryrun.cjs` now clicks the visible Dry run
+    button (on a phone it is in the bottom bar).
+- **F, linked platforms — not started: this session's network allows only
+  package registries** (Codeforces, AtCoder, LeetCode and GitHub are
+  refused by the environment's network policy). Building new sites without
+  checking their real answers would be guesswork. The owner can allow the
+  hosts (environment settings → Network access) or start a session with
+  open network; then build F as planned in section 6.
 - **Owner asked (2026-11-17) where "How it runs" went**: since the Solve
   redesign it is Dry run tab → "Under the hood". Offered: its own tab again,
   or a top-bar button. Waiting for the owner's choice.
 - **Lost work, rebuilt from the plan:** session 6 built B (problem pipeline)
   and A3 (coding analysis + XP) in helper worktrees on its own machine and
   never pushed them. They are not recoverable here and are rebuilt next.
-- **Next, in order:** F (linked platforms), then
-  the rest of item 4 (JS async/sort tracing, C pointers into arrays,
-  linked-list pointer lanes).
+- **Next, in order:** F (linked platforms, needs network). Item 4 is done
+  except the "first k of N" label on a capped vector.
 - **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and
   functional languages is **later**; the ideas in section 6, item 7 are
   **no for now**.
@@ -783,7 +818,7 @@ by analyzing what to place where to make it look the best and show case best
     show calls and values, no boxes, and say so on screen.
 - Add each language to `TRACERS` and `DRY_RUN_LANGS`.
 
-### 4. Dry run polish (smaller, can go with item 3)
+### 4. Dry run polish (smaller, can go with item 3) — DONE (session 8) except the "first k of N" label
 
 - **Swift and C# structs** show as one line of text (`UF(p: [0, 0, 2, 3])`):
   draw their fields (as objects without identity) so a union-find's array
