@@ -134,8 +134,12 @@ something pattern type or animated type, import from internet").
   (CC BY 4.0)" under the covers (`CoverCredit`). Keep that line.
 - **Motion:** a cover only moves while on screen and the tab is visible;
   reduced motion and the small swatches stay still.
-- **Field Journal:** the profile now shows a chosen cover (a hairline frame
-  above the portrait); "Plain" stays hidden as before (`theme/styles.css`).
+- **The profile stage** (owner's ask): a chosen cover is the top of the
+  profile. The portrait sits fully on the pattern (on a paper disc), the
+  buttons (Share, Edit profile / Message, Follow, More) sit top-right on a
+  paper strip, and a paper note card on the pattern holds the bio, place,
+  website, links, joined date and the Following / Followers / Posts / Friends
+  counts (`pf-stage*` in `covers.css`). "Plain" keeps the old quiet layout.
 - **Saved choices:** `COVER_PRESETS` in `src/routes/social.js` takes the new
   ids; the old ids (aurora, nebula, …) stay valid and show the closest new
   cover (`LEGACY` in covers.tsx).
