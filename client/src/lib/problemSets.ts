@@ -46,3 +46,22 @@ export interface SetDetail {
 }
 
 export const setPath = (id: string) => (id.startsWith('company:') ? `/problems/sets/company/${encodeURIComponent(id.slice(8))}` : `/problems/sets/${encodeURIComponent(id)}`)
+
+/** One of your sets, for "Add to a set" (GET /api/problem-sets-for/:problemId). */
+export interface SetForProblem {
+  id: string
+  title: string
+  visibility: 'public' | 'private'
+  /** This problem is already in it. */
+  has: boolean
+}
+
+/** "Asked at" reports on one problem (GET /api/problems/:id/asked). */
+export interface AskedReport {
+  /** Companies at least `minReports` people named. */
+  companies: { company: string; reports: number; year: number | null; shown: boolean }[]
+  /** Companies named by fewer people: counted, not named. */
+  waiting: number
+  mine: { company: string; year: number | null }[]
+  minReports: number
+}

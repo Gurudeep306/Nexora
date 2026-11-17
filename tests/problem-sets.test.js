@@ -198,6 +198,9 @@ test('"asked at" reports: a company shows a problem only once two people reporte
   assert.deepEqual(asked.mine.map((m) => m.company), ['Globex']);
   ok(await call('DELETE', `/api/problems/${pid.b}/asked/Globex`, c[BEN]));
   assert.equal((await call('GET', `/api/problem-sets/company/Globex`, c[CAT])).body.items.length, 0, 'back under two reports');
+  const after = (await call('GET', `/api/problems/${pid.b}/asked`, c[CAT])).body;
+  assert.deepEqual([after.companies, after.waiting], [[], 1], 'one report is counted, not named');
+  assert.ok(!JSON.stringify(after).includes('Globex'), 'the name stays hidden from others');
 });
 
 test('"Add to a set" lists your sets with whether this problem is in each; deleting a set removes it', async () => {

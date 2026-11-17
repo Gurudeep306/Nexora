@@ -438,7 +438,9 @@ function createProblemSetsRouter({ me, can }) {
     const rows = await all("SELECT company, COUNT(*) AS n, MAX(year) AS year FROM problem_asked WHERE problem_rowid=? GROUP BY company ORDER BY n DESC", [pid]);
     const u = me();
     const mine = u ? (await all("SELECT company, year FROM problem_asked WHERE problem_rowid=? AND username=?", [pid, u])) : [];
-    res.json({ ok: true, companies: rows.map((r) => ({ company: r.company, reports: r.n, year: r.year || null, shown: r.n >= MIN_REPORTS })), mine, minReports: MIN_REPORTS });
+    // A company named by only one person is counted, never named: one report is not yet a fact.
+    const shown = rows.filter((r) => r.n >= MIN_REPORTS);
+    res.json({ ok: true, companies: shown.map((r) => ({ company: r.company, reports: r.n, year: r.year || null, shown: true })), waiting: rows.length - shown.length, mine, minReports: MIN_REPORTS });
   }));
 
   router.post("/api/problems/:id/asked", h(async (req, res) => {
