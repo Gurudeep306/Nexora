@@ -1,3 +1,4 @@
+import { useSite } from '@/context/SiteContext'
 import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { DoorOpen, PlugZap, Rss } from 'lucide-react'
@@ -48,8 +49,11 @@ export default function SocialPage() {
   const { user } = useAuth()
   const socket = useSocket()
   const [params, setParams] = useSearchParams()
+  // Tabs closed in Admin → Site map (social.messages…) leave the row.
+  const { pathOn } = useSite()
+  const tabOn = (id: string) => id === 'feed' || id === 'search' || pathOn(`/social?tab=${id}`)
   const requested = params.get('tab') ?? 'feed'
-  const tab = TAB_IDS.has(requested) ? requested : 'feed'
+  const tab = TAB_IDS.has(requested) && tabOn(requested) ? requested : 'feed'
   const me = user?.username ?? ''
   const { unread, clear } = useSocialUnread(!!me)
   const chatUnread = useChatUnread(me, socket)
@@ -102,7 +106,7 @@ export default function SocialPage() {
         }
       />
 
-      <Tabs items={TABS} active={tab === 'search' ? 'feed' : tab} onChange={selectTab} className="mb-5" />
+      <Tabs items={TABS.filter((t) => tabOn(t.id))} active={tab === 'search' ? 'feed' : tab} onChange={selectTab} className="mb-5" />
 
       {tab === 'feed' && <FeedTab me={me} />}
       {tab === 'search' && <SearchResults q={params.get('q') ?? ''} />}
