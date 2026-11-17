@@ -104,7 +104,7 @@ Contents:
   - Accessibility fixes found on the way: the "Original" link's name now
     starts with its visible word; the problem's scroll area is focusable.
   - Tests: `tests/coding-analysis.test.js`.
-- **B, problem pipeline — this PR** (branch `claude/fervent-curie-vjgcd8`):
+- **B, problem pipeline — merged (#138):**
   - **Images are ours, never hot-linked**: `normalizeStatementHtml`
     (`src/statement-media.js`) now points every judge image, video and
     poster at `/api/imgproxy`, which answers from the stored copy
@@ -132,10 +132,39 @@ Contents:
     ones blocked); every Euler and Kattis figure stored and served by us.
   - Tests: `tests/sources-audit.test.js`; `tests/statement-media.test.js`
     now checks that judge media is served by us (it checked hot-linking).
+- **A2, the editor — this PR** (branch `claude/fervent-curie-vjgcd8`):
+  - **Live syntax check while typing** (`client/src/lib/syntaxCheck.ts`,
+    amber squiggles + "Ln 4: Brackets" in the status bar, click to jump):
+    unclosed / extra / mismatched brackets and unclosed strings in 31
+    languages, Python's mixed tabs and spaces. Comment, string, char-literal,
+    regex, raw-string, template and Lisp-character aware; shell and Perl are
+    left alone (too irregular to scan safely). 0 false alarms on 1,042 real
+    programs (Learn solutions, self-tests, dry-run suites).
+  - **Format for every language** (same scanner): JS/TS/JSON/CSS/HTML use
+    Monaco's full formatter; 17 brace languages are re-indented by bracket
+    depth (case bodies, Go tabs and gofmt-style cases, chains, preprocessor
+    lines; text inside multi-line strings never touched); the rest only lose
+    trailing spaces. The button's label says which. One undo step.
+  - **Cheat sheet per language** (`client/src/lib/cheatsheets.ts`, book icon
+    in the editor header): read a line, read n numbers, fast I/O, print,
+    arrays, maps, sort, common mistakes, and a whole program — for C++, C,
+    Java, Python, JS, TS, Go, Rust, C#, Kotlin, Swift, Ruby, PHP, Lua. Every
+    whole program printed 15 for "3 / 4 5 6" on the real judges.
+  - **Suggestions after a library name**: `Integer.`, `fmt.`, `Console.`
+    now offer that library's own functions (they offered only generic
+    methods).
+  - **Playwright per language** (`client/scripts/check-editor.cjs`, run
+    against the demo): suggestions, parameter hints, hover, live check,
+    Format, cheat sheet — all pass in 14 languages.
+  - Accessibility: Monaco's touch-screen "show the keyboard" field is named.
+  - Tests: `tests/syntax-check.test.js`, `tests/cheatsheets.test.js`.
+- **Owner asked (2026-11-17) where "How it runs" went**: since the Solve
+  redesign it is Dry run tab → "Under the hood". Offered: its own tab again,
+  or a top-bar button. Waiting for the owner's choice.
 - **Lost work, rebuilt from the plan:** session 6 built B (problem pipeline)
   and A3 (coding analysis + XP) in helper worktrees on its own machine and
   never pushed them. They are not recoverable here and are rebuilt next.
-- **Next, in order:** A2 (editor: live syntax check, Format,
+- **Next, in order:** C, D, E, F (then the rest of item 4). Done before: A2 (editor: live syntax check, Format,
   cheat sheet, Playwright), C, D, E, F, the rest of item 4 (JS async/sort
   tracing, C pointers into arrays, linked-list pointer lanes).
 - **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and
