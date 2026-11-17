@@ -15,6 +15,8 @@ The four subjects to build now, in this order:
 
 The rules for animations and Live Labs are in [`animations.md`](animations.md).
 The prompt for the agent that does the work is in [`VIBE_PROMPT.md`](VIBE_PROMPT.md).
+**Discrete Mathematics has its own job book and prompt:** [`dm.md`](dm.md) and
+[`VIBE_PROMPT_DM.md`](VIBE_PROMPT_DM.md). Use those for `dm`.
 
 ---
 

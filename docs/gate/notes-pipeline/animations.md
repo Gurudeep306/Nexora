@@ -57,8 +57,11 @@ Two tools:
 element ids, can curve), `line` (polyline), `table` (header, highlighted
 cells), `grid`, `bits` (bit strings with labels), `arc` (rings and sectors),
 `gate` (logic-gate symbols). Steps patch any property (`tone`, `fill`,
-`hidden`, `label`, `text`, `rows`, `x`/`y`…). Position changes animate with a
-CSS transition (`viz.css`), so moving a box *is* an animation.
+`hidden`, `label`, `text`, `rows`, `x`/`y`…). **Today only opacity, fill and
+stroke fade between steps (`viz.css`); position and size changes jump.** `arrow`
+ends given as element ids are re-snapped every frame, so edges stay attached to
+moving vertices. Smooth motion (gliding, morphing) is the engine job "motion"
+below, and `dm.md` job E1.
 
 ## 3. Engine upgrades to build first (one PR each, before the chapters that need them)
 
@@ -69,6 +72,10 @@ geometry), drawing in `VizScene.tsx` (+ `geometry.ts` for anchor points so
 `arrow` can snap to it), styles in `viz.css` with tokens only, a test in
 `tests/` that validates a sample scene and rejects bad ones, and a sample in
 the dev gallery if one exists. Keep old scenes valid (no breaking changes).
+
+**First, motion:** tween every numeric geometry property between frames (450 ms,
+`requestAnimationFrame`, arrows recomputed per tick, none under reduced motion or
+print). Full spec: `dm.md` job E1.
 
 | Element | Needed by | What it draws | Key props |
 |---|---|---|---|
