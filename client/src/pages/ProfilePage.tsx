@@ -11,6 +11,7 @@ import { cn, formatDate } from '@/lib/utils'
 import { ActivityHeatmap } from '@/components/profile/ActivityHeatmap'
 import { ACCENTS, CoverArt } from '@/components/profile/covers'
 import { BadgeCard, LevelBar, Timeline } from '@/components/profile/Showcase'
+import { LevelRules } from '@/components/profile/LevelRules'
 import { Bridge, Colophon, DifficultyMultiples, Folio, LanguageList, RankSeal, Seal, Shelf, TopicBars } from '@/components/profile/Notebook'
 import { calendarSentence, usePersonJsonLd } from '@/components/profile/notebook-data'
 import { PortraitMedal } from '@/components/profile/PortraitMedal'
@@ -417,6 +418,7 @@ function Overview({ show, accent, isSelf, onAll }: { show: Showcase; accent?: st
           <Colophon s={s} days={show.heatmap} today={today} />
           <Card className="pf-level p-4">
             <LevelBar s={s} />
+            <LevelRules currentLevel={s.level.level} />
           </Card>
         </div>
       )}

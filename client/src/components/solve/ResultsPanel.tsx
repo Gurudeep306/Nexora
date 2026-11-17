@@ -3,7 +3,7 @@ import { motion } from 'motion/react'
 import { Check, CheckCircle2, ChevronDown, Clock, Copy, Terminal, XCircle } from 'lucide-react'
 import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
-import { engineLabel, type JudgeResponse, type RunResult } from './types'
+import { engineLabel, type JudgeResponse, type RunResult, type XpReport } from './types'
 
 const norm = (s: string) => s.replace(/\r/g, '').split('\n').map((l) => l.trimEnd())
 const trimLines = (a: string[]) => {
@@ -152,6 +152,62 @@ export function RunOutput({ result, expected, caseLabel }: { result: RunResult; 
   )
 }
 
+/** What an Accepted earned: "+25 XP" and how far the next level is. */
+export function XpGain({ x }: { x: XpReport }) {
+  if (!x.firstSolve) {
+    return (
+      <p className="m-0 rounded-lg border border-border px-3 py-2 text-xs text-foreground-dim" role="status">
+        Accepted again. XP counts once per problem, so this one adds none.
+      </p>
+    )
+  }
+  const a = x.after
+  const leveled = a.level > x.before.level
+  const pct = (n: number, d: number) => (d > 0 ? Math.max(0, Math.min(100, Math.round((n / d) * 100))) : 100)
+  const bars: [string, number, number, string][] = [
+    ['XP', a.xpInLevel, a.xpForNext, `${a.xpInLevel} / ${a.xpForNext} XP`],
+    ['Problems', a.probsInLevel, a.probsForNext, `${a.probsInLevel} / ${a.probsForNext} solved`],
+  ]
+  const xpLeft = Math.max(0, a.xpForNext - a.xpInLevel)
+  const probLeft = Math.max(0, a.probsForNext - a.probsInLevel)
+  const needs = [a.xpGated && `${xpLeft} XP`, a.probGated && `${probLeft} more ${probLeft === 1 ? 'problem' : 'problems'}`].filter(Boolean).join(' and ')
+  return (
+    <section className="rounded-lg border border-border px-3 py-2.5" role="status" aria-label="XP earned">
+      <p className="m-0 flex flex-wrap items-baseline gap-x-2 text-sm text-foreground">
+        <span className="font-mono font-semibold tabular-nums">+{x.gainedXp} XP</span>
+        <span className="text-xs text-foreground-dim">
+          {leveled
+            ? `Level up: you are now level ${a.level}, ${a.badge} ${a.name}.`
+            : `Level ${a.level} ${a.name}${needs ? ` · ${needs} to level ${a.level + 1}` : ''}`}
+        </span>
+      </p>
+      <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
+        {bars.map(([label, n, d, text]) => (
+          <div key={label}>
+            <div className="mb-0.5 flex justify-between text-[11px] text-foreground-faint">
+              <span>{label}</span>
+              <span className="font-mono tabular-nums">{text}</span>
+            </div>
+            <div
+              className="h-1.5 overflow-hidden rounded-full bg-surface-2"
+              role="progressbar"
+              aria-label={`${label} toward the next level`}
+              aria-valuemin={0}
+              aria-valuemax={d}
+              aria-valuenow={Math.min(n, d)}
+            >
+              <div className="h-full rounded-full bg-primary" style={{ width: `${pct(n, d)}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+      <a href="/profile#levels" className="mt-1.5 inline-block text-[11px] text-foreground-dim underline underline-offset-2 hover:text-foreground">
+        How levels are earned
+      </a>
+    </section>
+  )
+}
+
 export function JudgeResults({ result }: { result: JudgeResponse }) {
   const passedCount = result.results.filter((r) => r.passed).length
   const total = result.results.length
@@ -162,6 +218,7 @@ export function JudgeResults({ result }: { result: JudgeResponse }) {
   })
   return (
     <div className="space-y-3 p-3">
+      {result.xp && <XpGain x={result.xp} />}
       {result.compileError && (
         <div>
           <p className="mb-1 text-[12px] font-semibold text-info">Compilation error</p>
