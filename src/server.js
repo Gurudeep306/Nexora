@@ -24,6 +24,7 @@ const { getCatalog, topicPool, filterIndices, filterKey, sortIndices, tagList, r
 const dbStats = require("./db-stats");
 const { sharedCache } = require("./shared-cache");
 const { requestContext, me, meSql, runAs, queryCount } = require("./context");
+const { recordContestRun, canSeeContestProblem } = require("./routes/hosted-contests");
 const { DbSessionStore } = require("./session-store");
 const { isSetAvatar, normalizeAvatar } = require("./avatar-set");
 const { restoreUploads } = require("./upload-store");
@@ -1610,7 +1611,7 @@ function customProblemTestcases(problem) {
 
 app.post("/api/judge", judgeLimiter, async (req, res) => {
   try {
-    const { problem_id, custom_problem_id, code, testcases, language } = req.body || {};
+    const { problem_id, custom_problem_id, code, testcases, language, contest_id } = req.body || {};
     const lang = LANG_CONFIG[language] ? language : "cpp";
     if (testcases != null && (!Array.isArray(testcases) || testcases.length > MAX_JUDGE_TESTCASES)) {
       return res.status(400).json({ ok: false, error: `testcases must be a list of at most ${MAX_JUDGE_TESTCASES}` });
@@ -1635,8 +1636,8 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
       // With nothing stored there is nothing to check, so nothing to record.
       if (cases.length) recordFor = prob.id;
     } else if (custom_problem_id) {
-      const p = await get("SELECT creator, samples, testcases FROM custom_problems WHERE id=?", [custom_problem_id]);
-      if (!p) return res.status(404).json({ ok: false, error: "Problem not found" });
+      const p = await get("SELECT id, creator, samples, testcases, contest_only FROM custom_problems WHERE id=?", [custom_problem_id]);
+      if (!p || !(await canSeeContestProblem(p, me(), can(req, "contests.manage")))) return res.status(404).json({ ok: false, error: "Problem not found" });
       redactHidden = !canSeeHiddenTests(req, p);
       // Stored cases always run; the solver's own extra cases ride along.
       cases = customProblemTestcases(p);
@@ -1757,9 +1758,25 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
       invalidateCache();
     }
 
+    // A run inside a contest counts there too (only while the person's time runs).
+    let contest = null;
+    if (contest_id && (problem_id || custom_problem_id)) {
+      contest = await recordContestRun({
+        contestId: contest_id,
+        username: me(),
+        problemRowid: problem_id ? Number(problem_id) : null,
+        workshopId: problem_id ? null : Number(custom_problem_id),
+        verdict: result.verdict,
+        passed: result.results.filter((r) => r.passed).length,
+        total: result.results.length,
+        language: lang,
+      }).catch((e) => ({ counted: false, reason: errMessage(e) }));
+    }
+
     res.json({
       ok: true,
       ...result,
+      ...(contest ? { contest } : {}),
       recorded: !!recordFor,
       ...(xpReport ? { xp: xpReport } : {}),
       ...(problem_id && !recordFor
@@ -3323,8 +3340,10 @@ function withoutHiddenTests(req, problem) {
 }
 app.get("/api/custom-problems", async (req, res) => {
   try {
+    // Problems written only for contests stay out of the Workshop list (their author still sees them).
     const problems = await all(
-      "SELECT * FROM custom_problems ORDER BY created_at DESC",
+      "SELECT * FROM custom_problems WHERE COALESCE(contest_only,0)=0 OR creator=? ORDER BY created_at DESC",
+      [me() || ""],
     );
     res.json({ ok: true, problems: problems.map((p) => withoutHiddenTests(req, p)) });
   } catch (e) {
@@ -3336,7 +3355,7 @@ app.get("/api/custom-problems/:id", async (req, res) => {
     const problem = await get("SELECT * FROM custom_problems WHERE id=?", [
       req.params.id,
     ]);
-    if (!problem)
+    if (!problem || !(await canSeeContestProblem(problem, me(), can(req, "contests.manage"))))
       return res.status(404).json({ ok: false, error: "Not found" });
     res.json({ ok: true, problem: withoutHiddenTests(req, problem) });
   } catch (e) {
@@ -3356,6 +3375,7 @@ app.post("/api/custom-problems", async (req, res) => {
       testcases,
       time_limit,
       memory_limit,
+      editorial,
     } = req.body;
     if (!title || typeof title !== "string")
       return res.status(400).json({ ok: false, error: "Title required" });
@@ -3364,8 +3384,8 @@ app.post("/api/custom-problems", async (req, res) => {
     const creator = me();
     if (!creator) return res.status(401).json({ ok: false, error: "Please sign in first" });
     const r = await run(
-      `INSERT INTO custom_problems(creator,title,statement,input_spec,output_spec,difficulty,tags,samples,testcases,time_limit,memory_limit,created_at)
-      VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
+      `INSERT INTO custom_problems(creator,title,statement,input_spec,output_spec,difficulty,tags,samples,testcases,time_limit,memory_limit,created_at,editorial)
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       [
         creator,
         title,
@@ -3379,6 +3399,7 @@ app.post("/api/custom-problems", async (req, res) => {
         time_limit || "2 seconds",
         memory_limit || "256 MB",
         new Date().toISOString(),
+        String(editorial || "").slice(0, 50000),
       ],
     );
     res.json({ ok: true, id: r.lastID });
@@ -3399,10 +3420,11 @@ app.put("/api/custom-problems/:id", async (req, res) => {
       testcases,
       time_limit,
       memory_limit,
+      editorial,
     } = req.body;
     await run(
       `UPDATE custom_problems SET title=?,statement=?,input_spec=?,output_spec=?,difficulty=?,
-      tags=?,samples=?,testcases=?,time_limit=?,memory_limit=?,updated_at=? WHERE id=?`,
+      tags=?,samples=?,testcases=?,time_limit=?,memory_limit=?,updated_at=?,editorial=? WHERE id=?`,
       [
         title,
         statement || "",
@@ -3415,6 +3437,7 @@ app.put("/api/custom-problems/:id", async (req, res) => {
         time_limit || "2 seconds",
         memory_limit || "256 MB",
         new Date().toISOString(),
+        String(editorial || "").slice(0, 50000),
         req.params.id,
       ],
     );
@@ -5233,6 +5256,8 @@ app.use(adminApi.router);
 app.use(createSocialRouter({ all, get, run, realtime, isTrustedOrigin, calcLevel, calcStreak }).router);
 // Messages: direct and group conversations (src/chat.js, src/routes/chat.js).
 app.use(require("./routes/chat").createChatRouter({ realtime, isTrustedOrigin, catalog: require("./problem-catalog"), gate: require("./routes/gate") }));
+// Hosted contests: made from anywhere on the site, coding and GATE questions, marks and analysis.
+app.use(require("./routes/hosted-contests").createHostedContestsRouter({ gate: require("./routes/gate"), hashPassword, verifyPassword }));
 
 app.get("/api/user/search", async (req, res) => {
   try {

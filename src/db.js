@@ -714,6 +714,13 @@ async function initDb() {
   try {
     await run("ALTER TABLE custom_problems ADD COLUMN creator TEXT DEFAULT ''");
   } catch (e) {}
+  // Hosted contests (src/contests.js): an editorial, and problems written only for contests.
+  try {
+    await run("ALTER TABLE custom_problems ADD COLUMN editorial TEXT DEFAULT ''");
+  } catch (e) {}
+  try {
+    await run("ALTER TABLE custom_problems ADD COLUMN contest_only INTEGER DEFAULT 0");
+  } catch (e) {}
 
   // Skill tree progress
   await run(`CREATE TABLE IF NOT EXISTS skill_progress (

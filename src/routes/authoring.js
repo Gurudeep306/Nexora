@@ -62,12 +62,7 @@ function createAuthoringRouter({ can, me, audit, invalidateCatalog }) {
   // in the database too, so it survives a redeploy (src/upload-store.js).
   const multer = require("multer");
   const imageUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 2 * 1024 * 1024, files: 1 } });
-  const kindOf = (b) =>
-    b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47 ? "png"
-      : b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff ? "jpg"
-        : b.subarray(0, 4).toString("latin1") === "GIF8" ? "gif"
-          : b.subarray(0, 4).toString("latin1") === "RIFF" && b.subarray(8, 12).toString("latin1") === "WEBP" ? "webp"
-            : null;
+  const kindOf = require("../image-kind").imageKind;
   router.post("/api/authoring/:id/image", guard, (req, res) => {
     imageUpload.single("file")(req, res, async (err) => {
       try {
