@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { DoorOpen, PlugZap, Rss } from 'lucide-react'
 import { Card, EmptyState, PageHeader, Tabs } from '@/components/ui'
@@ -18,6 +18,32 @@ import { Icon } from '@/components/icon/Icon'
 
 const TAB_IDS = new Set(['feed', 'notifications', 'friends', 'messages', 'rooms', 'leaderboard', 'search'])
 
+/** Unread messages and requests, for the Messages tab's badge. */
+function useChatUnread(me: string, socket: ReturnType<typeof useSocket>) {
+  const [n, setN] = useState(0)
+  useEffect(() => {
+    if (!me) return
+    let live = true
+    const load = () =>
+      api
+        .get<{ total: number; requests: number }>('/api/chat/unread')
+        .then((r) => live && setN(r.total + r.requests))
+        .catch(() => {})
+    const t = setTimeout(load, 0)
+    socket?.on('chat:message', load)
+    socket?.on('chat:read', load)
+    socket?.on('chat:conversation', load)
+    return () => {
+      live = false
+      clearTimeout(t)
+      socket?.off('chat:message', load)
+      socket?.off('chat:read', load)
+      socket?.off('chat:conversation', load)
+    }
+  }, [me, socket])
+  return n
+}
+
 export default function SocialPage() {
   const { user } = useAuth()
   const socket = useSocket()
@@ -26,12 +52,13 @@ export default function SocialPage() {
   const tab = TAB_IDS.has(requested) ? requested : 'feed'
   const me = user?.username ?? ''
   const { unread, clear } = useSocialUnread(!!me)
+  const chatUnread = useChatUnread(me, socket)
 
   const TABS = [
     { id: 'feed', label: 'Feed', icon: <Rss className="size-3.5" /> },
     { id: 'notifications', label: 'Notifications', icon: <Icon name="bell" className="size-3.5" />, badge: unread > 0 ? (unread > 99 ? '99+' : unread) : undefined },
     { id: 'friends', label: 'Friends', icon: <Icon name="users" className="size-3.5" /> },
-    { id: 'messages', label: 'Messages', icon: <Icon name="messages" className="size-3.5" /> },
+    { id: 'messages', label: 'Messages', icon: <Icon name="messages" className="size-3.5" />, badge: chatUnread > 0 ? (chatUnread > 99 ? '99+' : chatUnread) : undefined },
     { id: 'rooms', label: 'Solve Rooms', icon: <DoorOpen className="size-3.5" /> },
     { id: 'leaderboard', label: 'Leaderboard', icon: <Icon name="trophy" className="size-3.5" /> },
   ]
