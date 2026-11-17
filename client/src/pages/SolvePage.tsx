@@ -1,4 +1,5 @@
 import { codeKey, mark as markLearn } from '@/learn/progress'
+import { judgeOf } from '@/lib/sources'
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { ContestBar } from '@/components/contests/hosted/ContestBar'
@@ -120,7 +121,9 @@ function adaptCustom(res: CustomProblemResponse): { detail: ProblemDetailRespons
     .filter((x) => (x.input ?? '') !== '' || (x.expected_output ?? x.output ?? '') !== '')
   const testcases: Testcase[] = [
     ...samples.map((x, i) => ({ label: `Sample ${i + 1}`, input: x.input, expected_output: x.output })),
-    ...hidden.map((x, i) => ({ label: `Hidden ${i + 1}`, input: x.input ?? '', expected_output: x.expected_output ?? x.output ?? '' })),
+    // A course problem's tests are open practice (its solutions are public too), so they
+    // are not "hidden"; a Workshop problem's hidden tests reach only its author.
+    ...hidden.map((x, i) => ({ label: p.learn ? `Test ${i + 1}` : `Hidden ${i + 1}`, input: x.input ?? '', expected_output: x.expected_output ?? x.output ?? '' })),
   ]
   return {
     detail: {
@@ -250,7 +253,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
   const [runResult, setRunResult] = useState<RunResult | null>(null)
   const [judgeResult, setJudgeResult] = useState<JudgeResponse | null>(null)
   const [runCase, setRunCase] = useState<{ label: string; expected: string } | null>(null)
-  const [banner, setBanner] = useState<{ verdict: string; xp: number | null; id: number } | null>(null)
+  const [banner, setBanner] = useState<{ verdict: string; xp: number | null; id: number; examplesOnly?: boolean } | null>(null)
   const [bottomTab, setBottomTab] = useState<BottomTab>('tests')
   const [reveal, setReveal] = useState<{ line: number; id: number } | null>(null)
   const [mobilePane, setMobilePane] = useState<'problem' | 'code' | 'results'>('problem')
@@ -484,12 +487,15 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       setJudgeResult(res)
       if (contestId && res.contest && !res.contest.counted) toast.info('Not counted in the contest', res.contest.reason)
       if (!custom) void saveReplay(code)
-      const xp = res.verdict === 'AC' && !alreadySolved && !custom ? XP_BY_RATING(problem?.rating ?? 0) : null
-      setBanner({ verdict: res.verdict, xp, id: Date.now() })
+      const xp = res.xp ? res.xp.gainedXp || null : res.verdict === 'AC' && !alreadySolved && !custom ? XP_BY_RATING(problem?.rating ?? 0) : null
+      // Only the examples (and your own tests) ran: say so, never "Accepted".
+      const examplesOnly = res.verdict === 'AC' && !!res.coverage && !res.coverage.full
+      setBanner({ verdict: res.verdict, xp, id: Date.now(), examplesOnly })
       if (learn && id) markLearn(codeKey(id), res.verdict === 'AC' ? 'solved' : 'attempted')
       if (res.verdict === 'AC') {
         celebrateFavicon()
-        toast.success('Accepted!', xp ? `+${xp} XP awarded — nice solve.` : learn ? 'All tests pass — marked solved in your course.' : custom ? 'All workshop tests pass.' : 'Solved again — clean.')
+        if (examplesOnly) toast.success('Passed the examples', `${judgeOf(res.coverage!.judge)} full tests are not here${res.coverage!.pending ? ' yet' : ''}: see the Result tab.`)
+        else toast.success('Accepted!', xp ? `+${xp} XP awarded — nice solve.` : learn ? 'All tests pass — marked solved in your course.' : custom ? 'All workshop tests pass.' : 'Solved again — clean.')
         if (!custom) {
           void refresh()
           problemApi.refetch()
@@ -1225,7 +1231,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
                 onChange={setLanguage}
               />
             }
-            overlay={<VerdictBanner verdict={banner?.verdict ?? null} xpEarned={banner?.xp} burstId={banner?.id} onDismiss={() => setBanner(null)} />}
+            overlay={<VerdictBanner verdict={banner?.verdict ?? null} examplesOnly={banner?.examplesOnly} xpEarned={banner?.xp} burstId={banner?.id} onDismiss={() => setBanner(null)} />}
             problem={{ title: 'Problem', icon: <ScrollText />, content: <div className="h-full overflow-hidden">{problemContent}</div> }}
             tests={{
               title: 'Console',
@@ -1245,7 +1251,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         <Workspace
           api={workspace}
           roomForTests={roomForTests}
-          overlay={<VerdictBanner verdict={banner?.verdict ?? null} xpEarned={banner?.xp} burstId={banner?.id} onDismiss={() => setBanner(null)} />}
+          overlay={<VerdictBanner verdict={banner?.verdict ?? null} examplesOnly={banner?.examplesOnly} xpEarned={banner?.xp} burstId={banner?.id} onDismiss={() => setBanner(null)} />}
           problem={{ title: 'Problem', icon: <ScrollText />, content: <div className="h-full overflow-hidden">{problemContent}</div> }}
           tests={{
             title: 'Console',
@@ -1280,7 +1286,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         onPointerUp={() => (draggingRef.current = false)}
         onPointerLeave={() => (draggingRef.current = false)}
       >
-        <VerdictBanner verdict={banner?.verdict ?? null} xpEarned={banner?.xp} burstId={banner?.id} onDismiss={() => setBanner(null)} />
+        <VerdictBanner verdict={banner?.verdict ?? null} examplesOnly={banner?.examplesOnly} xpEarned={banner?.xp} burstId={banner?.id} onDismiss={() => setBanner(null)} />
 
         {/* Problem pane: full panel or minimized rail */}
         {problemCollapsed ? (
