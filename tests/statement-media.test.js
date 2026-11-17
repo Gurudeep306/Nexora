@@ -19,13 +19,21 @@ test('relative statement URLs become absolute against the source platform', () =
   assert.equal(absolutizeUrl('data:image/png;base64,AA', 'https://codeforces.com'), 'data:image/png;base64,AA');
 });
 
-test('images load direct with no referrer and carry a proxy fallback', () => {
+test('images load from our stored copy, never from the judge; the judge’s URL is kept', () => {
   const out = normalizeStatementHtml('<p><img src="/predownloaded/a/b.png" alt="fig"></p>', CF);
-  assert.match(out, /src="https:\/\/codeforces\.com\/predownloaded\/a\/b\.png"/);
-  assert.match(out, /referrerpolicy="no-referrer"/);
+  assert.match(out, /src="\/api\/imgproxy\?url=https%3A%2F%2Fcodeforces\.com%2Fpredownloaded%2Fa%2Fb\.png"/);
+  assert.match(out, /data-origin="https:\/\/codeforces\.com\/predownloaded\/a\/b\.png"/);
+  assert.match(out, /data-via-proxy="1"/, 'the client knows this is already the final URL');
+  assert.ok(!/src="https:\/\/codeforces\.com/.test(out), 'no hot-linking');
   assert.match(out, /loading="lazy"/);
-  assert.match(out, /data-proxy="\/api\/imgproxy\?url=https%3A%2F%2Fcodeforces\.com%2Fpredownloaded%2Fa%2Fb\.png"/);
   assert.match(out, /alt="fig"/, 'other attributes survive');
+});
+
+test('media on a host we never fetch from stays put, with no referrer (the audit lists it)', () => {
+  const out = normalizeStatementHtml('<img src="https://example.org/x.png">', CF);
+  assert.match(out, /src="https:\/\/example\.org\/x\.png"/);
+  assert.match(out, /referrerpolicy="no-referrer"/);
+  assert.ok(!/imgproxy/.test(out));
 });
 
 test('srcset is dropped — its candidates are relative to the source page', () => {
@@ -38,12 +46,13 @@ test('the rewriter is idempotent', () => {
   assert.equal(normalizeStatementHtml(once, CF), once);
 });
 
-test('video and audio get controls, absolute URLs and a proxy fallback', () => {
+test('video and audio get controls, and their files and posters come from our copy', () => {
   const out = normalizeStatementHtml('<video src="/m/clip.mp4" poster="/m/p.jpg"></video>', CF);
   assert.match(out, /<video[^>]*\scontrols/);
-  assert.match(out, /src="https:\/\/codeforces\.com\/m\/clip\.mp4"/);
-  assert.match(out, /poster="https:\/\/codeforces\.com\/m\/p\.jpg"/);
-  assert.match(out, /data-proxy="\/api\/imgproxy\?url=https%3A%2F%2Fcodeforces\.com%2Fm%2Fclip\.mp4"/);
+  assert.match(out, /src="\/api\/imgproxy\?url=https%3A%2F%2Fcodeforces\.com%2Fm%2Fclip\.mp4"/);
+  assert.match(out, /poster="\/api\/imgproxy\?url=https%3A%2F%2Fcodeforces\.com%2Fm%2Fp\.jpg"/);
+  assert.match(out, /<video[^>]*data-via-proxy="1"/);
+  assert.equal(normalizeStatementHtml(out, CF), out, 'idempotent for media too');
 });
 
 test('<source> inside a video is rewritten too', () => {
@@ -51,7 +60,7 @@ test('<source> inside a video is rewritten too', () => {
     '<video><source src="https://img.atcoder.jp/a/b.webm" type="video/webm"></video>',
     { platform: 'atcoder' },
   );
-  assert.match(out, /<source[^>]*data-proxy="\/api\/imgproxy\?url=https%3A%2F%2Fimg\.atcoder\.jp%2Fa%2Fb\.webm"/);
+  assert.match(out, /<source[^>]*src="\/api\/imgproxy\?url=https%3A%2F%2Fimg\.atcoder\.jp%2Fa%2Fb\.webm"/);
   assert.match(out, /type="video\/webm"/);
 });
 

@@ -7,6 +7,7 @@ import { api, ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { Chip, Failed, Panel, Skeleton, Toggle } from './kit'
 import { ago } from './format'
+import { SourceGapsPanel } from './SourceGapsPanel'
 
 type TestReport = {
   at: string
@@ -163,6 +164,8 @@ export function SourcesSection() {
           ))}
         </ul>
       </Panel>
+
+      <SourceGapsPanel />
     </div>
   )
 }

@@ -109,10 +109,23 @@ function mediaUrls(html) {
   return [...out];
 }
 
+/** Which of these URLs already have a saved copy (one indexed read per 200). */
+async function storedSet(urls) {
+  await init();
+  const keys = [...new Set(urls.map((u) => keyOf(u)))];
+  const have = new Set();
+  for (let i = 0; i < keys.length; i += 200) {
+    const part = keys.slice(i, i + 200);
+    const rows = await all(`SELECT key FROM statement_media WHERE key IN (${part.map(() => "?").join(",")})`, part);
+    for (const r of rows) have.add(r.key);
+  }
+  return new Set(urls.filter((u) => have.has(keyOf(u))));
+}
+
 async function stats() {
   await init();
   const r = await get("SELECT COUNT(*) AS n, COALESCE(SUM(size),0) AS bytes FROM statement_media");
   return { items: Number(r?.n || 0), bytes: Number(r?.bytes || 0), budget: BUDGET };
 }
 
-module.exports = { load, save, mediaUrls, stats, init, keyOf };
+module.exports = { load, save, mediaUrls, storedSet, stats, init, keyOf };
