@@ -1473,6 +1473,8 @@ app.use(require("./routes/coding").createCodingRouter({ get, me, aiLimiter, judg
 app.use(require("./routes/sources").createSourcesRouter({ can, me, invalidateCatalog: () => require("./problem-catalog").invalidateCatalog() }));
 // Topics of every problem: the list, each problem's topics, staff corrections, the backfill (src/topics.js).
 app.use(require("./routes/topics").createTopicsRouter({ can, me }));
+// Problem sets: your own, public ones by likes, famous series and company lists (src/routes/problem-sets.js).
+app.use(require("./routes/problem-sets").createProblemSetsRouter({ can, me }));
 // Staff: "Add a coding problem" (official NexoraGuru problems).
 app.use(
   require("./routes/authoring").createAuthoringRouter({
