@@ -44,8 +44,15 @@ const PARTS = [
   { id: "practice.submissions", parent: "practice", label: "Submissions", pages: "^/submissions(/|$)", files: ["client/src/pages/SubmissionsPage.tsx", "client/src/components/submissions/"] },
 
   { id: "contests", label: "Contests", pages: "^/contests(/|$)", api: "^/api/(contests|live|hosted)(/|$)", flag: "contests", files: ["client/src/pages/ContestsPage.tsx", "client/src/pages/contests/", "client/src/components/contests/", "src/routes/hosted-contests.js", "src/routes/live.js", "src/contests.js"] },
+  { id: "contests.hosted", parent: "contests", label: "Make your own contest", pages: "^/contests/(new|c/|\\d+/)", api: "^/api/hosted(/|$)", files: ["client/src/pages/contests/", "client/src/components/contests/hosted/", "src/routes/hosted-contests.js", "src/contests.js"] },
+  { id: "contests.live", parent: "contests", label: "Live classes", api: "^/api/live(/|$)", files: ["src/routes/live.js"] },
 
   { id: "social", label: "Social", pages: "^/social(/|$)", api: "^/api/(friends|messages|rooms|feed|social|chat)(/|$)", flag: "social", files: ["client/src/pages/SocialPage.tsx", "client/src/pages/social/", "client/src/components/social/", "src/routes/social.js", "src/routes/chat.js", "src/chat.js"] },
+  // Social's sections are tabs in the address (/social?tab=messages).
+  { id: "social.friends", parent: "social", label: "Friends", pages: "^/social\\?(.*&)?tab=friends(&|$)", api: "^/api/friends(/|$)", files: ["client/src/components/social/FriendsTab.tsx"] },
+  { id: "social.messages", parent: "social", label: "Messages", pages: "^/social\\?(.*&)?tab=messages(&|$)", api: "^/api/(chat|messages)(/|$)", files: ["client/src/components/social/MessagesTab.tsx", "client/src/components/social/chat/", "src/routes/chat.js", "src/chat.js"] },
+  { id: "social.rooms", parent: "social", label: "Solve rooms", pages: "^/social\\?(.*&)?tab=rooms(&|$)", api: "^/api/rooms(/|$)", files: ["client/src/components/social/RoomsTab.tsx"] },
+  { id: "social.leaderboard", parent: "social", label: "Leaderboard", pages: "^/social\\?(.*&)?tab=leaderboard(&|$)", files: ["client/src/components/social/LeaderboardTab.tsx"] },
 
   { id: "ai_tutor", label: "AI tutor", api: "^/api/(agent|ai)(/|$)", flag: "ai_tutor", files: ["client/src/components/agent/", "src/routes/agent.js"] },
 
@@ -123,7 +130,7 @@ function subjectParts() {
       const id = m[1];
       const files = [`client/src/learn/content/dsa/${id}/`];
       if (fs.existsSync(path.join(ROOT, `src/learn/problems/${id}.json`))) files.push(`src/learn/problems/${id}.json`);
-      out.push({ id: `learn.dsa.${id}`, parent: "learn.dsa", label: m[2].replace(/\\'/g, "'"), order: order++, pages: `^/learn/dsa/(skill/)?${id}(/|$)`, files });
+      out.push({ id: `learn.dsa.${id}`, parent: "learn.dsa", label: m[2].replace(/\\'/g, "'"), order: order++, pages: `^/learn/dsa/(${id}|skill/${id})(/|$)`, files });
     }
   } catch {
     /* no syllabus */
@@ -131,6 +138,44 @@ function subjectParts() {
   return out.sort((a, b) => a.order - b.order);
 }
 PARTS.push(...subjectParts());
+
+/* ── Admin's own sections, one part each (Admin → Staff access says who may
+   use each; here the owner can keep any of them to themselves). Their only
+   choices are "team" (visible: whoever has the permission) and "owner only"
+   (hidden). ──────────────────────────────────────────────────────────── */
+const ADMIN_FILES = {
+  overview: ["client/src/components/admin/OverviewSection.tsx"],
+  users: ["client/src/components/admin/UsersSection.tsx", "client/src/components/admin/UserDrawer.tsx"],
+  staff: ["client/src/components/admin/StaffAccessSection.tsx", "src/authz/sections.js"],
+  moderation: ["client/src/components/admin/ModerationSection.tsx", "src/authz/content.js"],
+  site: ["client/src/components/admin/SiteSection.tsx", "src/authz/site-settings.js"],
+  sitemap: ["client/src/components/admin/SiteMapSection.tsx", "src/sitemap.js"],
+  ai: ["client/src/components/admin/AiSection.tsx", "src/ai/"],
+  runners: ["client/src/components/admin/RunnersSection.tsx", "client/src/components/admin/CompilersPanels.tsx", "src/runners.js"],
+  sources: ["client/src/components/admin/SourcesSection.tsx", "src/routes/sources.js", "src/sources/"],
+  authored: ["client/src/components/admin/AuthoredSection.tsx", "client/src/pages/AuthorProblemPage.tsx", "src/routes/authoring.js", "src/authoring.js"],
+  announcements: ["client/src/components/admin/SiteSection.tsx"],
+  audit: ["client/src/components/admin/AuditSection.tsx"],
+};
+{
+  const { SECTIONS } = require("./authz/sections");
+  const list = [
+    ...SECTIONS.slice(0, 2),
+    { id: "staff", label: "Staff access", paths: [/^\/api\/admin\/staff-access(\/|$)/] },
+    ...SECTIONS.slice(2),
+  ];
+  for (const sec of list) {
+    PARTS.push({
+      id: `admin.${sec.id}`,
+      parent: "admin",
+      label: sec.label,
+      adminSection: true,
+      pages: `^/admin\\?(.*&)?section=${sec.id}(&|$)`,
+      api: sec.paths.map((re) => `(?:${re.source})`).join("|"),
+      files: ADMIN_FILES[sec.id] || ["client/src/pages/AdminPage.tsx"],
+    });
+  }
+}
 
 const BY_ID = new Map(PARTS.map((p) => [p.id, p]));
 const COMPILED = PARTS.map((p) => ({ ...p, pagesRe: p.pages ? new RegExp(p.pages, "i") : null, apiRe: p.api ? new RegExp(p.api, "i") : null }));
@@ -173,10 +218,13 @@ function effectiveModes(settings) {
 function allowed(mode, who, part) {
   if (who.owner) return true;
   if (part && isHive(part) && !who.hive) return false; // admins and the owner only
+  if (part?.adminSection) return mode !== "hidden"; // the team (by permission), or the owner only
   if (mode === "visible") return true;
   if (mode === "hidden") return false;
   return !!who.staff; // staff and soon
 }
+/** The old feature flag a part falls under (its own, or its nearest parent's). */
+const flagOf = (p) => (p.flag ? p.flag : p.parent ? flagOf(BY_ID.get(p.parent)) : null);
 const isHive = (p) => (p.hiveOnly ? true : p.parent ? isHive(BY_ID.get(p.parent)) : false);
 
 function partForApi(path) {
@@ -201,4 +249,4 @@ function viewerParts(settings, who) {
   return { blocked, flags };
 }
 
-module.exports = { MODES, PARTS, BY_ID, chosenModes, effectiveModes, allowed, isHive, partForApi, viewerParts };
+module.exports = { MODES, PARTS, BY_ID, chosenModes, effectiveModes, allowed, isHive, flagOf, partForApi, viewerParts };

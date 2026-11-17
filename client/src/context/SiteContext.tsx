@@ -159,7 +159,11 @@ export function SiteProvider({ children }: { children: ReactNode }) {
       .filter((p) => p.pages)
       .map((p) => ({ part: p, re: new RegExp(p.pages as string, 'i') }))
       .sort((a, b) => b.part.id.split('.').length - a.part.id.split('.').length)
-    const blockedFor = (path: string) => blocked.find((b) => b.re.test(path))?.part ?? null
+    // A part may name a tab in the address (/social?tab=messages); the rest match the path alone.
+    const blockedFor = (path: string) => {
+      const bare = path.split('?')[0]
+      return blocked.find((b) => b.re.test(path) || b.re.test(bare))?.part ?? null
+    }
     return {
       status,
       loading,
@@ -173,7 +177,7 @@ export function SiteProvider({ children }: { children: ReactNode }) {
       featureOn: (flag) => !flag || flags[flag] !== false || (isOwner && !preview),
       blockedPart: (path) => blockedFor(path),
       pathOn: (path) => {
-        const flag = featureForPath(path)
+        const flag = featureForPath(path.split('?')[0])
         return (!flag || flags[flag] !== false || (isOwner && !preview)) && !blockedFor(path)
       },
       previewAsMember: preview,

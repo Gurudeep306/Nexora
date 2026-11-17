@@ -11,9 +11,10 @@ import './sitemap.css'
 
 /*
   Admin → Site map (GET/PUT /api/admin/sitemap, src/sitemap.js): every part
-  of the site as a tree. For each part: who sees it (everyone, staff only,
-  coming soon, hidden), its pages and API, and its code with "Open on GitHub"
-  links. The server enforces every choice.
+  of the site, grouped by area, with every part inside it listed and its own
+  buttons. Who sees each part (everyone, staff only, coming soon, hidden; for
+  Admin's own sections: the team or the owner only), its pages and API, and
+  its code with "Open on GitHub" links. The server enforces every choice.
 */
 
 type Mode = 'visible' | 'staff' | 'soon' | 'hidden'
@@ -29,6 +30,7 @@ interface Part {
   label: string
   parent: string | null
   core: boolean
+  adminSection: boolean
   pages: string | null
   api: string | null
   mode: Mode
@@ -45,11 +47,28 @@ const MODES: { id: Mode; label: string; hint: string }[] = [
   { id: 'soon', label: 'Coming soon', hint: 'Staff can use it; everyone else sees “coming soon”.' },
   { id: 'hidden', label: 'Hidden', hint: 'Switched off. Only you can still open it, to check it.' },
 ]
+// Admin's own sections: the team (by their permissions and Staff access) or you alone.
+const ADMIN_MODES: { id: Mode; label: string; hint: string }[] = [
+  { id: 'visible', label: 'Team', hint: 'Staff with the permission (see Staff access).' },
+  { id: 'hidden', label: 'Owner only', hint: 'Only you.' },
+]
 const WORD: Record<Mode, string> = { visible: 'Everyone', staff: 'Staff only', soon: 'Coming soon', hidden: 'Hidden' }
+
+/** The areas the top-level parts are grouped into, in this order. */
+const AREAS: { title: string; ids: string[] }[] = [
+  { title: 'Learning', ids: ['learn', 'nexus', 'gate'] },
+  { title: 'Practice and contests', ids: ['practice', 'contests'] },
+  { title: 'Community', ids: ['social', 'profiles'] },
+  { title: 'Your space', ids: ['hub', 'analytics', 'achievements', 'bookmarks', 'ai_tutor', 'settings', 'auth'] },
+  { title: 'Admin', ids: ['admin'] },
+  { title: 'Hive', ids: ['hive'] },
+]
 
 /** "^/(learn/dsa|solve/learn)(/|$)" → "/learn/dsa, /solve/learn" (readable, not exact). */
 function readablePaths(re: string | null): string | null {
   if (!re) return null
+  if (re.includes('section=')) return `/admin · ${/section=([a-z-]+)/.exec(re)?.[1] ?? ''}`
+  if (re.includes('tab=')) return `/social · ${/tab=([a-z-]+)/.exec(re)?.[1] ?? ''} tab`
   const body = re.replace(/^\^/, '').split('(/|$)').join('').replace(/\(\?![^)]*\)/g, '').replace(/\\/g, '')
   const g = /\(([^()]+)\)/.exec(body)
   if (!g) return body
@@ -63,14 +82,19 @@ export function SiteMapSection() {
   const toast = useToast()
   const { refresh } = useSite()
   const { data, error, loading, refetch, setData } = useApi(() => api.get<Data>('/api/admin/sitemap'), [])
-  const [open, setOpen] = useState<Set<string>>(new Set())
+  // Everything is open by default; these are the parts folded away.
+  const [folded, setFolded] = useState<Set<string>>(new Set())
+  const [codeOpen, setCodeOpen] = useState<string | null>(null)
   const [busy, setBusy] = useState<string | null>(null)
   const [q, setQ] = useState('')
 
   if (error && !data) return <Failed message={error} onRetry={refetch} />
   if (!data) return loading ? <Skeleton className="h-96" /> : null
 
-  // A search shows the matching parts and the parts they sit in, opened.
+  const kidsOf = (id: string) => data.parts.filter((p) => p.parent === id)
+  const withKids = data.parts.filter((p) => kidsOf(p.id).length > 0).map((p) => p.id)
+
+  // A search shows the matching parts and the parts they sit in.
   const needle = q.trim().toLowerCase()
   const keep = new Set<string>()
   if (needle) {
@@ -83,20 +107,22 @@ export function SiteMapSection() {
       }
     }
   }
-  const children = (id: string | null) => data.parts.filter((p) => p.parent === id && (!needle || keep.has(p.id)))
-  const toggle = (id: string) => setOpen((s) => {
-    const n = new Set(s)
-    if (n.has(id)) n.delete(id)
-    else n.add(id)
-    return n
-  })
+  const shown = (p: Part) => !needle || keep.has(p.id)
+
+  const fold = (id: string) =>
+    setFolded((s) => {
+      const n = new Set(s)
+      if (n.has(id)) n.delete(id)
+      else n.add(id)
+      return n
+    })
 
   const choose = async (p: Part, mode: Mode) => {
     setBusy(p.id)
     try {
       const r = await api.put<{ effective: Record<string, Mode>; chosen: Record<string, Mode> }>(`/api/admin/sitemap/${encodeURIComponent(p.id)}`, { mode })
       setData((d) => (d ? { ...d, parts: d.parts.map((x) => ({ ...x, mode: r.chosen[x.id] ?? x.mode, effective: r.effective[x.id] ?? x.effective })) } : d))
-      toast.success(`${p.label}: ${WORD[mode]}`)
+      toast.success(`${p.label}: ${p.adminSection ? (mode === 'hidden' ? 'Owner only' : 'Team') : WORD[mode]}`)
       void refresh()
     } catch (e) {
       toast.error('Could not change it', e instanceof ApiError ? e.message : undefined)
@@ -107,48 +133,61 @@ export function SiteMapSection() {
 
   const changed = data.parts.filter((p) => p.mode !== 'visible')
 
-  const node = (p: Part) => {
-    const kids = children(p.id)
-    const isOpen = open.has(p.id)
-    const inside = data.parts.filter((x) => x.parent === p.id).length
-    // While searching, every part with a match inside shows its children.
-    const showKids = !!needle || isOpen
+  const row = (p: Part, depth: number): React.ReactNode => {
+    const kids = kidsOf(p.id).filter(shown)
+    const isFolded = !needle && folded.has(p.id)
     const pages = readablePaths(p.pages)
-    const inherited = p.effective !== p.mode
     const parent = p.parent ? data.parts.find((x) => x.id === p.parent) : null
+    const inherited = p.effective !== p.mode && parent
+    const modes = p.adminSection ? ADMIN_MODES : MODES
+    const showCode = codeOpen === p.id
     return (
-      <li key={p.id} className="sm-node">
+      <li key={p.id} className="sm-node" data-depth={depth}>
         <div className="sm-row">
-          <button type="button" className="sm-name" aria-expanded={isOpen} onClick={() => toggle(p.id)}>
-            <span className="sm-twist" aria-hidden="true">
-              {isOpen ? '−' : '+'}
-            </span>
+          <div className="sm-name">
+            {kidsOf(p.id).length > 0 ? (
+              <button type="button" className="sm-twist" aria-expanded={!isFolded} aria-label={`${isFolded ? 'Show' : 'Hide'} the parts inside ${p.label}`} onClick={() => fold(p.id)}>
+                {isFolded ? '+' : '−'}
+              </button>
+            ) : (
+              <span className="sm-twist sm-leaf" aria-hidden="true">
+                ·
+              </span>
+            )}
             <span className="min-w-0">
               <span className="flex flex-wrap items-center gap-2">
-                <span className="font-medium text-text-primary">{p.label}</span>
-                {inside > 0 && <span className="text-xs text-text-secondary">{inside} inside</span>}
-                {p.core ? <Chip>Always on</Chip> : p.effective !== 'visible' && <Chip tone={p.effective === 'hidden' ? 'danger' : 'warning'}>{WORD[p.effective]}</Chip>}
+                <span className={cn('text-text-primary', depth === 0 ? 'font-semibold' : 'font-medium')}>{p.label}</span>
+                {kidsOf(p.id).length > 0 && <span className="text-xs text-text-secondary">{kidsOf(p.id).length} inside</span>}
+                {p.core ? <Chip>Always on</Chip> : p.effective !== 'visible' && <Chip tone={p.effective === 'hidden' ? 'danger' : 'warning'}>{p.adminSection ? 'Owner only' : WORD[p.effective]}</Chip>}
               </span>
-              <span className="block truncate font-mono text-xs text-text-secondary">{pages ?? 'No pages · API only'}</span>
+              <span className="block truncate font-mono text-xs text-text-secondary">{pages ?? 'No pages · works behind the scenes'}</span>
             </span>
-          </button>
-          {!p.core && (
-            <fieldset className="sm-modes" disabled={busy === p.id}>
-              <legend className="sr-only">Who sees {p.label}</legend>
-              <span className="sa-seg">
-                {MODES.map((m) => (
-                  <label key={m.id} className={cn('sa-opt', p.mode === m.id && 'is-on')} title={m.hint}>
-                    <input type="radio" name={`sm-${p.id}`} value={m.id} checked={p.mode === m.id} onChange={() => void choose(p, m.id)} className="sr-only" />
-                    {m.label}
-                  </label>
-                ))}
-              </span>
-            </fieldset>
-          )}
+          </div>
+          <div className="sm-actions">
+            {!p.core && (
+              <fieldset className="sm-modes" disabled={busy === p.id}>
+                <legend className="sr-only">Who sees {p.label}</legend>
+                <span className="sa-seg">
+                  {modes.map((m) => {
+                    const on = p.adminSection ? (m.id === 'hidden') === (p.mode === 'hidden') : p.mode === m.id
+                    return (
+                      <label key={m.id} className={cn('sa-opt', on && 'is-on')} title={m.hint}>
+                        <input type="radio" name={`sm-${p.id}`} value={m.id} checked={on} onChange={() => void choose(p, m.id)} className="sr-only" />
+                        {m.label}
+                      </label>
+                    )
+                  })}
+                </span>
+              </fieldset>
+            )}
+            <button type="button" className="sm-code-btn" aria-expanded={showCode} onClick={() => setCodeOpen(showCode ? null : p.id)}>
+              <Icon name="code" className="size-3.5" /> Code
+            </button>
+          </div>
         </div>
-        {inherited && parent && <p className="sm-note">Shown as “{WORD[p.effective]}” because {parent.label} is {WORD[parent.effective].toLowerCase()}.</p>}
+        {inherited && <p className="sm-note">Shown as “{WORD[p.effective]}” because {parent!.label} is {WORD[parent!.effective].toLowerCase()}.</p>}
 
-        {isOpen && (
+        {showCode && (
           <div className="sm-detail">
             <p className="sm-label">Code</p>
             <ul className="sm-files">
@@ -165,21 +204,19 @@ export function SiteMapSection() {
                 </li>
               ))}
             </ul>
-            {p.api && (
-              <p className="mt-3 text-xs text-text-secondary">
-                API: <span className="font-mono">{readablePaths(p.api)}</span>
-              </p>
-            )}
           </div>
         )}
-        {kids.length > 0 && showKids && <ul className="sm-kids">{kids.map(node)}</ul>}
+        {kids.length > 0 && !isFolded && <ul className="sm-kids">{kids.map((k) => row(k, depth + 1))}</ul>}
       </li>
     )
   }
 
+  const byId = new Map(data.parts.map((p) => [p.id, p]))
+  const areas = AREAS.map((a) => ({ ...a, parts: a.ids.map((id) => byId.get(id)).filter((p): p is Part => !!p && shown(p)) })).filter((a) => a.parts.length)
+
   return (
     <div className="space-y-6">
-      <Panel title="Who sees what" description="Every part of NexoraGuru. Pick who can use each one; parts inside another are never more open than it. The server holds to it, so a hidden part stays shut even if someone types its address.">
+      <Panel title="Who sees what" description="Every part of NexoraGuru and every part inside it, each with its own buttons. Parts inside another are never more open than it. The server holds to every choice, so a hidden part stays shut even if someone types its address.">
         <dl className="sm-legend">
           {MODES.map((m) => (
             <div key={m.id}>
@@ -188,18 +225,40 @@ export function SiteMapSection() {
             </div>
           ))}
         </dl>
-        <p className="mt-3 text-xs text-text-secondary">{changed.length ? `${changed.length} part${changed.length === 1 ? '' : 's'} not open to everyone.` : 'Everything is open to everyone.'} Open a part to see its code.</p>
+        <p className="mt-3 text-xs text-text-secondary">
+          Admin&rsquo;s own sections have two choices: <strong className="font-semibold text-text-primary">Team</strong> (staff with the permission) or <strong className="font-semibold text-text-primary">Owner only</strong>. Hive is for admins and you only.
+        </p>
+        <p className="mt-2 text-xs text-text-secondary">{changed.length ? `${changed.length} part${changed.length === 1 ? '' : 's'} not open to everyone.` : 'Everything is open to everyone.'}</p>
       </Panel>
-      <label className="block max-w-md">
-        <span className="mb-1.5 block text-sm font-medium text-text-primary">Find a part</span>
-        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Digital Logic, Contests, Hive Drive…" />
-      </label>
+
+      <div className="sm-tools">
+        <label className="min-w-0 flex-1 basis-64">
+          <span className="mb-1.5 block text-sm font-medium text-text-primary">Find a part</span>
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Digital Logic, Messages, Moderation…" />
+        </label>
+        <div className="flex gap-2">
+          <button type="button" className="nx-btn" data-size="sm" onClick={() => setFolded(new Set())}>
+            Expand all
+          </button>
+          <button type="button" className="nx-btn" data-size="sm" onClick={() => setFolded(new Set(withKids))}>
+            Collapse all
+          </button>
+        </div>
+      </div>
+
       {needle && keep.size === 0 ? (
         <p className="text-sm text-text-secondary">No part matches &ldquo;{q.trim()}&rdquo;.</p>
       ) : (
-        <ul className="sm-tree" aria-label="Site map">
-          {children(null).map(node)}
-        </ul>
+        <div className="sm-areas">
+          {areas.map((a) => (
+            <section key={a.title} aria-labelledby={`sm-area-${a.title.replace(/\W+/g, '-')}`}>
+              <h3 id={`sm-area-${a.title.replace(/\W+/g, '-')}`} className="sm-area">
+                {a.title}
+              </h3>
+              <ul className="sm-tree">{a.parts.map((p) => row(p, 0))}</ul>
+            </section>
+          ))}
+        </div>
       )}
     </div>
   )
