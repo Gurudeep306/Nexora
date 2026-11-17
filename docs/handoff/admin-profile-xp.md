@@ -265,6 +265,21 @@ something pattern type or animated type, import from internet").
   hidden from pages, list and search, Hive admins-only), plus the client
   checks in `tests/admin.test.js`.
 
+## Dependency audit (2026-11-17, owner's choice)
+
+- A new high advisory for `picomatch` (GHSA-fc5q-39xc-vjpf, ReDoS) covers
+  every version, including the newest (4.0.7), so no fix exists yet. It
+  turned CI's "Dependency audit (high and critical)" red on every PR.
+- It only came in through build tools, so (owner approved) those are now
+  dev dependencies: `@tailwindcss/vite` in `client/package.json` (it pulled
+  in Vite) and `sqlite3` in the root `package.json` (its node-gyp build
+  tooling). Render installs dev dependencies for the client build
+  (`--include=dev`), and the live server uses Turso; `src/db.js` already
+  falls back to Node's built-in SQLite when `sqlite3` isn't installed
+  (checked).
+- When picomatch publishes a fixed version, run `npm audit` without
+  `--omit=dev` too; nothing else needs to change.
+
 ## Plan for parts 3–4 (written before the work; 2 and 5 are done above)
 
 **Part 2 + 5 (avatar inside Edit profile; optional step after sign-up)**
