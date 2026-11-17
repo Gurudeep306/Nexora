@@ -55,7 +55,40 @@ Contents:
 - `git add -A` also picks up helper worktrees under `.claude/worktrees/`.
   Add that folder to `.git/info/exclude` first.
 
-## 3. Where it stands (2026-11-16, session 6)
+## 3. Where it stands (2026-11-17, session 7)
+
+- **Owner's standing instruction (2026-11-17):** "merge everything as any
+  work is done i want no issues". Each finished PR is merged by the agent
+  once CI is green, there are no conflicts, and the checks below are clean
+  (tests, typecheck, build, no new lint warnings, axe 0 light/dark/phone).
+- **Merged and live:** #127–#131, #133 (Admin → Compilers), **#134**
+  (Judge0 runners, key-based services' terms on the admin page, traces sized
+  to each runner, Java/Kotlin runner faults, dry-run polish: structs drawn
+  field by field, step notes say what changed). Details of #134 below.
+- **A1, plain-English error explanations — this PR** (branch
+  `claude/fervent-curie-vjgcd8`): `client/src/lib/diagnostics.ts` rewritten
+  against real output from every runner (`tests/fixtures/diagnostics-real.json`,
+  16 languages, compile error + crash each). Only the student's own file is
+  marked (`isStudentFile`). Each common error gets a label and a "What it
+  means" line (`explainError`, 19 rules: unknown name, missing import,
+  missing `;`, brackets, indentation, outside a function, missing return,
+  declared twice, index out of range, division by zero, empty value, empty
+  list, not a number, read past the input, recursion too deep, out of memory,
+  wrong type, Java public class, syntax). Shown in the editor marker (hover),
+  the inline lens, the Result tab (and a "What it means" box when the runner
+  gives no line), and the status bar ("1 issue · Ln 4: Missing ;").
+  Tests: `tests/diagnostics.test.js`.
+- **Lost work, rebuilt from the plan:** session 6 built B (problem pipeline)
+  and A3 (coding analysis + XP) in helper worktrees on its own machine and
+  never pushed them. They are not recoverable here and are rebuilt next.
+- **Next, in order:** A3, B, A2 (editor: live syntax check, Format,
+  cheat sheet, Playwright), C, D, E, F, the rest of item 4 (JS async/sort
+  tracing, C pointers into arrays, linked-list pointer lanes).
+- **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and
+  functional languages is **later**; the ideas in section 6, item 7 are
+  **no for now**.
+
+### #134 in detail (session 6)
 
 - **Merged and live:** #127–#131, #133 (Admin → Compilers). Live check,
   2026-11-16: `https://nexoraguru.in/api/health` answers OK on commit
