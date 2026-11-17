@@ -62,7 +62,6 @@ import { Workspace } from '@/components/solve/workspace/Workspace'
 import { useWorkspace } from '@/components/solve/workspace/useWorkspace'
 import { PRESETS as LAYOUT_PRESETS } from '@/components/solve/workspace/state'
 import { useCoach } from '@/components/solve/coach'
-import { CoachPanel } from '@/components/solve/CoachPanel'
 import { Arena, enterBrowserFullscreen } from '@/components/solve/Arena'
 import { AiTestsPanel } from '@/components/solve/AiTestsPanel'
 import { AnalysisPanel } from '@/components/solve/AnalysisPanel'
@@ -72,6 +71,10 @@ import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } fr
 import { ListChecks, Trophy } from 'lucide-react'
 
 type BottomTab = 'tests' | 'output' | 'dryrun' | 'aitests' | 'analysis' | 'journey' | 'coach' | 'issues'
+const RESULT_VIEWS = [
+  { id: 'result' as const, label: 'Result' },
+  { id: 'analysis' as const, label: 'Analysis' },
+]
 
 function useIsDesktop() {
   const q = '(min-width: 1024px)'
@@ -621,7 +624,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
   const allDiagnostics = useMemo((): Diag[] => {
     const ai = (coach.insight?.issues ?? [])
       .filter((i) => i.line && i.line > 0 && i.severity !== 'info')
-      .map((i) => ({ line: i.line as number, column: 1, message: `Coach: ${i.message}`, severity: i.severity === 'error' ? ('error' as const) : ('warning' as const) }))
+      .map((i) => ({ line: i.line as number, column: 1, message: `AI check: ${i.message}`, severity: i.severity === 'error' ? ('error' as const) : ('warning' as const) }))
     return [...diagnostics, ...ai]
   }, [diagnostics, coach.insight])
 
@@ -754,20 +757,21 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
   const [dryRunPick, setDryRunPick] = useState<number | null>(null)
   const dryRunStart = dryRunPick ?? (selectedTest >= 0 ? selectedTest : testcases.length)
 
-  // The results panel has four tabs; the older views live inside them.
-  const [subView, setSubView] = useState<{ tests: 'cases' | 'ai'; dryrun: 'watch' | 'hood'; coach: 'hints' | 'analysis' }>({ tests: 'cases', dryrun: 'watch', coach: 'hints' })
+  // The results panel has four tabs: Tests, Result (with Analysis), Dry run
+  // and How it runs. Older names (aitests, analysis, coach, issues) still land
+  // in the right place.
+  const [subView, setSubView] = useState<{ tests: 'cases' | 'ai'; output: 'result' | 'analysis' }>({ tests: 'cases', output: 'result' })
   const openTab = (requested: BottomTab) => {
-    const t: BottomTab = requested === 'aitests' ? 'tests' : requested === 'analysis' ? 'coach' : requested === 'journey' ? 'dryrun' : requested === 'issues' ? 'output' : requested
+    const t: BottomTab = requested === 'aitests' ? 'tests' : requested === 'analysis' || requested === 'coach' || requested === 'issues' ? 'output' : requested
     if (requested === 'aitests') setSubView((v) => ({ ...v, tests: 'ai' }))
-    if (requested === 'analysis') setSubView((v) => ({ ...v, coach: 'analysis' }))
-    if (requested === 'journey') setSubView((v) => ({ ...v, dryrun: 'hood' }))
-    if (requested === 'dryrun') setSubView((v) => ({ ...v, dryrun: 'watch' }))
+    if (requested === 'analysis' || requested === 'coach') setSubView((v) => ({ ...v, output: 'analysis' }))
+    if (requested === 'output' || requested === 'issues') setSubView((v) => ({ ...v, output: 'result' }))
     setBottomTab(t)
     // On a phone the results live behind their own tab: go there.
     setMobilePane('results')
     workspace.minimize('tests', false)
     if (bottomHidden) toggleBottomHidden()
-    if (t === 'dryrun') roomForDryRun()
+    if (t === 'dryrun' || t === 'journey') roomForDryRun()
   }
   // Alt+D opens the dry run.
   const openTabRef = useRef(openTab)
@@ -814,7 +818,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       </Tooltip>
       <MenuContent className="w-64">
         <MenuLabel>AI help</MenuLabel>
-        <MenuItem icon={<Lightbulb />} onSelect={() => { setSubView((v) => ({ ...v, coach: 'hints' })); openTab('coach') }}>
+        <MenuItem icon={<Lightbulb />} onSelect={() => openAssistant('Give me one small hint for this problem, the next step only. Do not give the solution or code.')}>
           Give me a hint
         </MenuItem>
         {lastErrorShown && (
@@ -840,7 +844,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
           <Tooltip label={coach.insight.summary}>
             <button
               type="button"
-              onClick={() => openTab('coach')}
+              onClick={() => openTab('analysis')}
               className="hidden h-6 max-w-72 cursor-pointer items-center gap-1.5 truncate rounded-full bg-surface-2 px-2.5 text-[11.5px] text-foreground-dim transition-colors hover:text-foreground xl:flex"
             >
               <span className="truncate">{coach.insight.approach}</span>
@@ -994,7 +998,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       { id: 'tests', label: 'Tests', badge: testcases.length || undefined },
       { id: 'output', label: 'Result', badge: running || submitting ? '•' : judgeResult ? judgeResult.verdict : runResult ? (runResult.verdict === 'OK' ? 'OK' : runResult.verdict) : allDiagnostics.length || undefined },
       { id: 'dryrun', label: 'Dry run' },
-      { id: 'coach', label: 'Coach', icon: coach.loading ? <Loader2 className="size-3.5 animate-spin" /> : undefined, badge: coach.insight?.issues.length ? coach.insight.issues.length : undefined },
+      { id: 'journey', label: 'How it runs' },
     ]}
   />
   )
@@ -1037,34 +1041,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
 
   const testsBody = (
   <div className="h-full min-h-0 flex-1 overflow-y-auto">
-    {bottomTab === 'coach' ? (
-      <div>
-        <SubSwitch
-          label="Coach view"
-          value={subView.coach}
-          onChange={(v) => setSubView((s) => ({ ...s, coach: v }))}
-          options={[
-            { id: 'hints', label: 'Hints' },
-            { id: 'analysis', label: 'Analysis' },
-          ]}
-        />
-        {subView.coach === 'hints' ? (
-          <CoachPanel coach={coach} judgeResult={judgeResult} onAddTest={addTestcase} />
-        ) : (
-          <AnalysisPanel
-            problemId={custom ? undefined : Number(id)}
-            customProblemId={custom && !learn ? Number(id) : undefined}
-            title={problem?.title ?? ''}
-            statement={coachStatement}
-            code={code}
-            language={language}
-            timeLimit={statementApi.data?.timeLimit}
-            inputs={biggestInputs}
-            onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
-          />
-        )}
-      </div>
-    ) : bottomTab === 'tests' ? (
+    {bottomTab === 'tests' ? (
       <div>
         <SubSwitch
           label="Tests view"
@@ -1100,37 +1077,40 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         )}
       </div>
     ) : bottomTab === 'dryrun' ? (
+      <DryRunPanel
+        key={dryRunFocus}
+        code={code}
+        language={language}
+        cases={dryRunCases}
+        initialCase={dryRunStart}
+        onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
+      />
+    ) : bottomTab === 'journey' ? (
+      <JourneyPanel
+        code={code}
+        language={language}
+        input={selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].input : customInput}
+        inputLabel={selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].label || `Test ${selectedTest + 1}` : 'your custom input'}
+        onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
+      />
+    ) : subView.output === 'analysis' ? (
       <div>
-        <SubSwitch
-          label="Dry run view"
-          value={subView.dryrun}
-          onChange={(v) => setSubView((s) => ({ ...s, dryrun: v }))}
-          options={[
-            { id: 'watch', label: 'Watch it run' },
-            { id: 'hood', label: 'Under the hood' },
-          ]}
+        <SubSwitch label="Result view" value={subView.output} onChange={(v) => setSubView((s) => ({ ...s, output: v }))} options={RESULT_VIEWS} />
+        <AnalysisPanel
+          problemId={custom ? undefined : Number(id)}
+          customProblemId={custom && !learn ? Number(id) : undefined}
+          title={problem?.title ?? ''}
+          statement={coachStatement}
+          code={code}
+          language={language}
+          timeLimit={statementApi.data?.timeLimit}
+          inputs={biggestInputs}
+          onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
         />
-        {subView.dryrun === 'watch' ? (
-          <DryRunPanel
-            key={dryRunFocus}
-            code={code}
-            language={language}
-            cases={dryRunCases}
-            initialCase={dryRunStart}
-            onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
-          />
-        ) : (
-          <JourneyPanel
-            code={code}
-            language={language}
-            input={selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].input : customInput}
-            inputLabel={selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].label || `Test ${selectedTest + 1}` : 'your custom input'}
-            onJumpToLine={(line) => setReveal({ line, id: Date.now() })}
-          />
-        )}
       </div>
     ) : (
       <div className="space-y-3">
+        <SubSwitch label="Result view" value={subView.output} onChange={(v) => setSubView((s) => ({ ...s, output: v }))} options={RESULT_VIEWS} />
         {errorHint && !running && !submitting && (
           <div className="mx-3 mt-3 rounded-lg border border-hairline/[0.05] bg-bg-field px-3 py-2 text-xs" role="note">
             <p className="m-0 font-semibold text-foreground">What it means: {errorHint.label}</p>
