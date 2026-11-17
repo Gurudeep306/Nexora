@@ -6,6 +6,7 @@ import type { editor as MonacoNs } from 'monaco-editor'
 import { initVimMode, type VimMode } from 'monaco-vim'
 import {
   AlignLeft,
+  BookOpen,
   Minus,
   Plus,
   Braces,
@@ -26,6 +27,8 @@ import { cn } from '@/lib/utils'
 import { TEMPLATES, LANG_EXT } from '@/lib/templates'
 import { snippetsFor } from '@/lib/snippets'
 import { MONACO_LANG } from '@/lib/monacoLang'
+import { checkSyntax, formatCode, formatKind } from '@/lib/syntaxCheck'
+import { cheatSheetFor } from '@/lib/cheatsheets'
 import { Select, Tooltip } from '@/components/ui'
 
 /** Monaco has a real formatter for these; other languages show no Format button. */
@@ -375,10 +378,29 @@ function registerLangIntel(monaco: Parameters<BeforeMount>[0], getLang: () => st
         const empty = /\(\s*\)/.test(sig)
         return takesArgs && !label.endsWith('!') ? `${label}(${empty ? '' : '$1'})$0` : label
       }
-      // After "x." (or "->" / "::" in C++): methods.
+      // After "x." (or "->" / "::" in C++): methods — and, after a library
+      // name ("Integer.", "fmt.", "Console."), that library's own functions first.
       if (/(\.|->|::)$/.test(before)) {
+        const qual = /([A-Za-z_][\w.]*(?:\.|::))$/.exec(before)?.[1] ?? ''
+        const qualified = qual
+          ? intel.globals
+              .filter((e) => e.name.startsWith(qual) && e.name.length > qual.length)
+              .map((e) => {
+                const label = e.name.slice(qual.length)
+                return {
+                  label,
+                  kind: /^[A-Z]/.test(label) ? K.Class : K.Function,
+                  detail: e.signature,
+                  documentation: e.doc,
+                  insertText: call({ ...e, name: label, signature: e.signature.startsWith(e.name) ? label + e.signature.slice(e.name.length) : e.signature }, label),
+                  insertTextRules: asSnippet,
+                  range,
+                  sortText: 'a' + label,
+                }
+              })
+          : []
         return {
-          suggestions: intel.members.map((e) => ({
+          suggestions: [...qualified, ...intel.members.map((e) => ({
             label: e.name,
             kind: /\(/.test(e.signature) ? K.Method : K.Field,
             detail: e.signature,
@@ -387,7 +409,7 @@ function registerLangIntel(monaco: Parameters<BeforeMount>[0], getLang: () => st
             insertTextRules: asSnippet,
             range,
             sortText: 'b' + e.name,
-          })),
+          }))],
         }
       }
       const globals = intel.globals.map((e) => {
@@ -544,6 +566,12 @@ export function CodeEditor({
   const [wrap, setWrap] = useState(() => localStorage.getItem('nexora:editor-wrap') !== 'off')
   const [minimap, setMinimap] = useState(() => localStorage.getItem('nexora:editor-minimap') === 'on')
   const [cursor, setCursor] = useState({ line: 1, col: 1, sel: 0 })
+  // The live syntax check (brackets, strings, Python indentation) while typing.
+  const [syntax, setSyntax] = useState<Diag[]>([])
+  const syntaxTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [formatNote, setFormatNote] = useState('')
+  const [cheatOpen, setCheatOpen] = useState(false)
+  const cheat = cheatSheetFor(language)
 
   const runRef = useRef(onRunShortcut)
   runRef.current = onRunShortcut
@@ -720,9 +748,20 @@ export function CodeEditor({
     monacoRef.current = monaco
     decorationsRef.current = editor.createDecorationsCollection()
     monaco.editor.setTheme(theme)
+    // On touch screens Monaco adds a "show the keyboard" field with no name;
+    // it appears after mount, so name it whenever it does.
+    const host = editor.getDomNode()
+    if (host) {
+      const nameIt = () => host.querySelectorAll('.iPadShowKeyboard:not([aria-label])').forEach((el) => el.setAttribute('aria-label', 'Show the keyboard'))
+      nameIt()
+      const mo = new MutationObserver(nameIt)
+      mo.observe(host, { childList: true, subtree: true })
+      disposers.current.push({ dispose: () => mo.disconnect() })
+    }
     const started = Date.now()
     disposers.current.push(
       editor.onDidChangeModelContent((e) => {
+        scheduleSyntax()
         recordRef.current?.(
           {
             t: Date.now() - started,
@@ -848,6 +887,69 @@ export function CodeEditor({
     })
   }
 
+  /** Run the syntax check now and mark what it finds (amber, apart from the judge's errors). */
+  const runSyntax = () => {
+    const editor = editorRef.current
+    const monaco = monacoRef.current
+    const model = editor?.getModel()
+    if (!editor || !monaco || !model) return
+    const found = checkSyntax(model.getValue(), langRef.current)
+    setSyntax(found)
+    monaco.editor.setModelMarkers(
+      model,
+      'nexora-syntax',
+      found
+        .filter((d) => d.line <= model.getLineCount())
+        .map((d) => ({
+          severity: monaco.MarkerSeverity.Warning,
+          startLineNumber: d.line,
+          startColumn: d.column,
+          endLineNumber: d.line,
+          endColumn: d.column + 1,
+          message: d.hint ? `${d.message}\n\nWhat it means: ${d.hint.text}` : d.message,
+        })),
+    )
+  }
+  const scheduleSyntax = () => {
+    if (syntaxTimer.current) clearTimeout(syntaxTimer.current)
+    syntaxTimer.current = setTimeout(runSyntax, 500)
+  }
+  useEffect(() => {
+    scheduleSyntax()
+    return () => {
+      if (syntaxTimer.current) clearTimeout(syntaxTimer.current)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language])
+
+  /** Format: Monaco's full formatter where it has one, else indentation by brackets, else trailing spaces. */
+  const fullFormatter = FORMATTABLE.has(MONACO_LANG[language] ?? language)
+  const formatLabel = fullFormatter
+    ? 'Format the code (Shift+Alt+F)'
+    : formatKind(language) === 'indent'
+      ? 'Fix the indentation and trailing spaces'
+      : 'Trim trailing spaces (the indentation is part of the code here, so it stays)'
+  const format = () => {
+    const editor = editorRef.current
+    const model = editor?.getModel()
+    if (!editor || !model) return
+    if (fullFormatter) {
+      void editor.getAction('editor.action.formatDocument')?.run()
+      return
+    }
+    const before = model.getValue()
+    const after = formatCode(before, language, ' '.repeat(indent))
+    if (after === before) {
+      setFormatNote('Already tidy')
+    } else {
+      editor.pushUndoStop()
+      editor.executeEdits('nexora-format', [{ range: model.getFullModelRange(), text: after }])
+      editor.pushUndoStop()
+      setFormatNote(formatKind(language) === 'indent' ? 'Indentation fixed' : 'Trailing spaces trimmed')
+    }
+    setTimeout(() => setFormatNote(''), 2500)
+  }
+
   const insertTemplate = () => {
     const tpl = TEMPLATES[language]
     const editor = editorRef.current
@@ -896,10 +998,15 @@ export function CodeEditor({
             <span className="truncate">{language === 'java' ? 'Main.java' : `main.${LANG_EXT[language] ?? language}`}</span>
           </span>
           <div className="ml-auto flex items-center gap-0.5">
-            {FORMATTABLE.has(MONACO_LANG[language] ?? language) && (
-              <Tooltip label="Format the code (Shift+Alt+F)">
-                <button type="button" className={toolBtn} aria-label="Format the code" onClick={() => void editorRef.current?.getAction('editor.action.formatDocument')?.run()}>
-                  <AlignLeft className="size-3.5" aria-hidden="true" />
+            <Tooltip label={formatLabel}>
+              <button type="button" className={toolBtn} aria-label={formatLabel} onClick={format}>
+                <AlignLeft className="size-3.5" aria-hidden="true" />
+              </button>
+            </Tooltip>
+            {cheat && (
+              <Tooltip label="Cheat sheet: reading input, printing, sorting…">
+                <button type="button" className={cn(toolBtn, cheatOpen && 'bg-surface-2 text-foreground')} onClick={() => setCheatOpen((v) => !v)} aria-pressed={cheatOpen} aria-label="Cheat sheet">
+                  <BookOpen className="size-3.5" aria-hidden="true" />
                 </button>
               </Tooltip>
             )}
@@ -921,6 +1028,46 @@ export function CodeEditor({
             </Tooltip>
           </div>
         </div>
+      )}
+
+      {cheatOpen && cheat && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setCheatOpen(false)} aria-hidden="true" />
+          <div
+            role="dialog"
+            aria-label={`Cheat sheet for ${language}`}
+            className="card-neon absolute top-11 right-2 z-50 max-h-[calc(100%-3.25rem)] w-[min(30rem,calc(100%-1rem))] overflow-y-auto overscroll-contain p-0"
+            onKeyDown={(e) => e.key === 'Escape' && setCheatOpen(false)}
+          >
+            <div className="sticky top-0 flex items-center border-b border-border bg-surface px-3 py-2">
+              <h2 className="m-0 text-[12px] font-semibold text-foreground-dim">Cheat sheet</h2>
+              <button type="button" className="ml-auto cursor-pointer text-[12px] text-foreground-faint hover:text-foreground" onClick={() => setCheatOpen(false)}>
+                Close
+              </button>
+            </div>
+            <div className="space-y-3 px-3 py-3 text-[12.5px]">
+              {cheat.items.map((it) => (
+                <section key={it.title}>
+                  <h3 className="m-0 mb-1 text-[12.5px] font-semibold text-foreground">{it.title}</h3>
+                  <CheatCode code={it.code} label={it.title} />
+                  {it.note && <p className="m-0 mt-1 text-[12px] text-foreground-dim">{it.note}</p>}
+                </section>
+              ))}
+              <section>
+                <h3 className="m-0 mb-1 text-[12.5px] font-semibold text-foreground">Common mistakes</h3>
+                <ul className="m-0 list-disc space-y-0.5 pl-4 text-[12px] text-foreground-dim">
+                  {cheat.mistakes.map((m) => (
+                    <li key={m}>{m}</li>
+                  ))}
+                </ul>
+              </section>
+              <section>
+                <h3 className="m-0 mb-1 text-[12.5px] font-semibold text-foreground">A whole program: read n numbers, print their sum</h3>
+                <CheatCode code={cheat.template} label="the whole program" />
+              </section>
+            </div>
+          </div>
+        </>
       )}
 
       {settingsOpen && (
@@ -1130,6 +1277,27 @@ export function CodeEditor({
             VIM
           </div>
         )}
+        {diagnostics.length === 0 && syntax.length > 0 && (
+          <button
+            type="button"
+            className="min-w-0 cursor-pointer truncate text-state-warning underline-offset-2 hover:underline"
+            title={syntax[0].hint ? `Line ${syntax[0].line}: ${syntax[0].hint.text}` : syntax[0].message}
+            onClick={() => {
+              const ed = editorRef.current
+              if (!ed) return
+              ed.revealLineInCenter(syntax[0].line)
+              ed.setPosition({ lineNumber: syntax[0].line, column: syntax[0].column })
+              ed.focus()
+            }}
+          >
+            Ln {syntax[0].line}: {syntax[0].hint?.label ?? syntax[0].message}
+          </button>
+        )}
+        {formatNote && (
+          <span className="text-foreground-dim" role="status">
+            {formatNote}
+          </span>
+        )}
         {diagnostics.length > 0 && (
           <button
             type="button"
@@ -1149,6 +1317,31 @@ export function CodeEditor({
           ) : null}
         </span>
       </div>
+    </div>
+  )
+}
+
+/** A code sample in the cheat sheet, with a copy button. */
+function CheatCode({ code, label }: { code: string; label: string }) {
+  const [copied, setCopied] = useState(false)
+  return (
+    <div className="relative">
+      <pre className="m-0 overflow-x-auto rounded-md border border-border bg-background px-2.5 py-2 pr-9 font-mono text-[11.5px] leading-[1.5] text-foreground" tabIndex={0}>
+        {code}
+      </pre>
+      <button
+        type="button"
+        className="absolute top-1.5 right-1.5 cursor-pointer rounded p-1 text-foreground-faint hover:bg-surface-2 hover:text-foreground"
+        aria-label={`Copy ${label}`}
+        onClick={() => {
+          void navigator.clipboard?.writeText(code).then(() => {
+            setCopied(true)
+            setTimeout(() => setCopied(false), 1200)
+          })
+        }}
+      >
+        {copied ? <Check className="size-3.5" aria-hidden="true" /> : <ClipboardCopy className="size-3.5" aria-hidden="true" />}
+      </button>
     </div>
   )
 }
