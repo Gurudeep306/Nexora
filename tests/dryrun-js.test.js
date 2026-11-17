@@ -225,3 +225,54 @@ console.log(it.v);
   assert.ok(t.nodes.some((n) => n.note === '= 6'));
   assert.ok(events.some((e) => e.e === 'ret'));
 });
+
+test('JS sort: each comparison shows its two values and its answer; only the first 40 are drawn', async () => {
+  const code = `const a = [5, 2, 9, 1];
+a.sort((x, y) => x - y);
+const big = Array.from({ length: 200 }, (_, i) => (i * 37) % 200);
+big.sort(function (p, q) {
+  return p - q;
+});
+console.log(a.join(' '), big[0], big[199]);
+`;
+  const { events, frames, stdout } = await trace(code);
+  assert.equal(stdout, '1 2 5 9 0 199\n', 'sorting still works');
+  const first = events.find((e) => e.e === 'call' && e.f === 'compare');
+  assert.ok(first, 'a comparison is a call');
+  assert.deepEqual(Object.keys(first.v), ['x', 'y']);
+  const ret = events.find((e) => e.e === 'ret' && e.k === first.k);
+  assert.equal(ret.r, first.v.x - first.v.y, 'it returns what the comparator answered');
+  const bigCalls = events.filter((e) => e.e === 'call' && e.f === 'compare' && e.l === 4);
+  assert.equal(bigCalls.length, 40, 'a big sort draws its first 40 comparisons only');
+  assert.ok(frames.some((f) => /compare returns/.test(f.note)), 'the step says what it returned');
+});
+
+test('JS async: an await steps off the call stack and back; lines stay in the order they ran', async () => {
+  const code = `const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+async function load(n) {
+  const got = [];
+  for (let i = 0; i < n; i++) {
+    await wait(1);
+    got.push(i * i);
+  }
+  return got;
+}
+async function main() {
+  const first = await load(3);
+  console.log(first.reduce((s, x) => s + x, 0));
+}
+main();
+console.log('started');
+`;
+  const { events, frames, stdout } = await trace(code);
+  assert.equal(stdout, 'started\n5\n');
+  assert.ok(events.some((e) => e.e === 'call' && e.f === 'load'), 'the async function is a call');
+  const order = events.filter((e) => e.e === 'line' && [5, 6, 15].includes(e.l)).map((e) => e.l);
+  assert.equal(order.indexOf(15) < order.indexOf(6), true, "'started' prints before load resumes");
+  const top = frames.find((f) => f.line === 15);
+  assert.ok(!top.structures.some((s) => s.kind === 'vars' && /in load/.test(s.label)), 'while the top level runs, load (waiting) is not the running call');
+  const back = frames.find((f) => f.line === 6);
+  assert.ok(back.structures.some((s) => s.kind === 'vars' && /in load/.test(s.label)), 'after the await, load runs again');
+  const loadRet = events.find((e) => e.e === 'ret' && events.find((c) => c.e === 'call' && c.f === 'load' && c.k === e.k));
+  assert.deepEqual(loadRet.r.i, [0, 1, 4], 'and returns its list');
+});

@@ -24,10 +24,15 @@ function lanes(pointers: Record<string, string | null> | undefined) {
   return by
 }
 
-function PointerTag({ name, x, y, up = false }: { name: string; x: number; y: number; up?: boolean }) {
+/**
+ * A pointer's name under (or above) its node. Several names on one node stack
+ * in their own lanes: only the one next to the node carries the arrow, so
+ * no arrowhead lands on the name before it (prev and cur on one node).
+ */
+function PointerTag({ name, x, y, up = false, arrow = true }: { name: string; x: number; y: number; up?: boolean; arrow?: boolean }) {
   return (
     <motion.g initial={false} animate={{ x, y }} transition={spring} style={{ ['--ph' as string]: ptrHue(name) }} className="viz-ptr-svg">
-      <path d={up ? 'M -5 8 L 5 8 L 0 14 z' : 'M -5 -6 L 5 -6 L 0 -12 z'} className="viz-ptr-svg-arrow" />
+      {arrow && <path d={up ? 'M -5 8 L 5 8 L 0 14 z' : 'M -5 -6 L 5 -6 L 0 -12 z'} className="viz-ptr-svg-arrow" />}
       <text y={up ? 2 : 6} textAnchor="middle" className="viz-ptr-svg-name">
         {name}
       </text>
@@ -138,6 +143,7 @@ export function ListView({ s }: { s: ListState }) {
                   name={name}
                   x={target === '∅' ? left - 34 : xOf(target) + LV / 2}
                   y={top + LH + below + 16 + k * 16}
+                  arrow={k === 0}
                 />
               )),
             )}
@@ -312,7 +318,7 @@ export function TreeView({ s }: { s: TreeState }) {
             ? null
             : names.map((name, k) => {
                 const { x, y } = P(target)
-                return <PointerTag key={name} name={name} x={x} y={y - R - 12 - k * 15} up />
+                return <PointerTag key={name} name={name} x={x} y={y - R - 12 - k * 15} up arrow={k === 0} />
               }),
         )}
       </svg>
@@ -429,7 +435,7 @@ export function GraphView({ s }: { s: GraphState }) {
             ? null
             : names.map((name, k) => {
                 const p = pos.get(target)!
-                return <PointerTag key={name} name={name} x={p.x} y={p.y + R + 18 + k * 15} />
+                return <PointerTag key={name} name={name} x={p.x} y={p.y + R + 18 + k * 15} arrow={k === 0} />
               }),
         )}
       </svg>
