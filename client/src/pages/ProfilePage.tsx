@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { Ban, CalendarDays, Flag, Link2, Lock, MapPin, MessageSquare, MoreHorizontal, PenLine, QrCode, VolumeX } from 'lucide-react'
 import { Avatar, Button, Card, ConfirmDialog, EmptyState, ErrorState, Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger, Modal, RankBadge, RankGlyph, Skeleton, useToast } from '@/components/ui'
@@ -170,7 +170,17 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
   const toast = useToast()
   const navigate = useNavigate()
   const { socialOn } = useSocialPerms()
-  const [editing, setEditing] = useState(false)
+  // /u/<you>?edit=1 (Settings → "Edit profile") opens the form straight away.
+  const [params, setParams] = useSearchParams()
+  const [editing, setEditingState] = useState(() => isSelf && params.get('edit') === '1')
+  const setEditing = (open: boolean) => {
+    setEditingState(open)
+    if (!open && params.has('edit')) {
+      const next = new URLSearchParams(params)
+      next.delete('edit')
+      setParams(next, { replace: true })
+    }
+  }
   const [sharing, setSharing] = useState(false)
   const [people, setPeople] = useState<null | 'followers' | 'following'>(null)
   const [reporting, setReporting] = useState(false)

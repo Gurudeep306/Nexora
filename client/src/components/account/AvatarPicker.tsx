@@ -6,7 +6,8 @@ import { cn } from '@/lib/utils'
 /**
  * Grid of the avatar set as a single radio group: Tab lands on the selected
  * avatar, arrow keys move (and select) across and between rows, Home/End jump
- * to the ends. Hover lifts the tile; the selected one gets a ring and a check.
+ * to the ends. Hover lifts the tile; the selected one gets an accent ring and a
+ * check (no shadows or glows).
  */
 export function AvatarPicker({
   value,
@@ -44,7 +45,7 @@ export function AvatarPicker({
   }
 
   return (
-    <div role="radiogroup" aria-label="Choose your avatar" className={cn('grid max-w-2xl grid-cols-4 gap-3 sm:grid-cols-8', className)}>
+    <div role="radiogroup" aria-label="Choose your avatar" className={cn('grid max-w-2xl grid-cols-6 gap-2.5 sm:grid-cols-8 sm:gap-3', className)}>
       {AVATAR_SET.map((a, i) => {
         const selected = a.id === value
         return (
@@ -62,8 +63,8 @@ export function AvatarPicker({
             onKeyDown={(e) => onKeyDown(e, i)}
             className={cn(
               'group relative aspect-square cursor-pointer rounded-full outline-none',
-              'transition-transform duration-200 ease-[cubic-bezier(.34,1.56,.64,1)] motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-[1.06] motion-safe:active:scale-95',
-              'focus-visible:ring-2 focus-visible:ring-primary-bright focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
+              'transition-transform duration-200 ease-out motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-95',
+              'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent-brand',
             )}
           >
             <img
@@ -71,14 +72,12 @@ export function AvatarPicker({
               alt=""
               draggable={false}
               className={cn(
-                'size-full rounded-full transition-[box-shadow,filter] duration-200',
-                selected
-                  ? 'shadow-[0_0_0_2.5px_var(--color-primary-bright),0_6px_18px_-6px_var(--color-primary)]'
-                  : 'shadow-[0_0_0_1px_var(--color-border)] group-hover:shadow-[0_0_0_2px_color-mix(in_oklab,var(--color-primary)_55%,transparent),0_8px_18px_-10px_rgb(0_0_0/.45)]',
+                'size-full rounded-full ring-offset-2 ring-offset-bg-surface transition-[box-shadow] duration-200',
+                selected ? 'ring-2 ring-accent-brand' : 'ring-1 ring-border group-hover:ring-border-strong',
               )}
             />
             {selected && (
-              <span className="absolute -right-0.5 -bottom-0.5 flex size-5 items-center justify-center rounded-full bg-primary text-on-primary shadow-sm ring-2 ring-surface">
+              <span className="absolute -right-0.5 -bottom-0.5 flex size-5 items-center justify-center rounded-full bg-accent-brand text-on-accent-brand ring-2 ring-bg-surface">
                 <Check className="size-3" strokeWidth={3} aria-hidden="true" />
               </span>
             )}
