@@ -16,16 +16,20 @@ const { parseSections } = require("./sections");
 
 const PERMISSIONS = [
   { key: "users.view", label: "View users", group: "Users", description: "Search users and open their admin profile." },
-  { key: "users.manage", label: "Manage users", group: "Users", description: "Change roles and permissions, verify, reset profiles, sign users out." },
+  { key: "users.manage", label: "Manage users", group: "Users", description: "Change roles and permissions, reset profiles, sign users out." },
   { key: "users.ban", label: "Ban & suspend", group: "Users", description: "Ban or suspend users and lift bans." },
+  { key: "users.verify", label: "Verify & early access", group: "Users", description: "Give or remove the verified badge and early access." },
   { key: "content.moderate", label: "Moderate content", group: "Content", description: "Work the reports queue, remove and restore content, warn users." },
   { key: "content.feature", label: "Feature content", group: "Content", description: "Feature content and use the ForgeBuilder page editor." },
   { key: "announcements.post", label: "Announcements", group: "Site", description: "Post the announcement bar and broadcast notifications." },
   { key: "site.settings", label: "Site settings", group: "Site", description: "Private mode, registrations, feature flags, maintenance banner. Owner grants only." },
+  { key: "ai.manage", label: "AI models", group: "Site", description: "AI providers and their keys, a model for each feature, the daily budget. Owner grants only." },
+  { key: "runners.manage", label: "Code runners", group: "Site", description: "Our code runners, their keys, and which compiler versions are used. Owner grants only." },
   { key: "analytics.view", label: "Analytics", group: "Site", description: "See the admin overview: totals, trends and activity." },
   { key: "audit.view", label: "Audit log", group: "Site", description: "Read the audit log of admin actions (below your own role)." },
   { key: "contests.manage", label: "Contests & live", group: "Platform", description: "Delete any contest and manage live classes." },
-  { key: "problems.manage", label: "Problems", group: "Platform", description: "Problem sync, Creator Studio, the judge self-test, any Workshop problem." },
+  { key: "problems.manage", label: "Problems", group: "Platform", description: "Problem sources and sync, the judge self-test, any Workshop problem." },
+  { key: "problems.author", label: "Write problems", group: "Platform", description: "Admin → Add a problem: write, check and publish our own coding problems." },
   { key: "gate.manage", label: "GATE", group: "Platform", description: "Manage GATE content." },
   { key: "early_access", label: "Early access", group: "Access", description: "May use the site while it is private." },
   { key: "staff.access", label: "Staff access", group: "Site", description: "Open Admin → Staff access: set team titles and choose which Admin sections each person below them can see or change. Owner grants only." },
@@ -34,7 +38,7 @@ const PERMISSION_KEYS = PERMISSIONS.map((p) => p.key);
 const PERMISSION_SET = new Set(PERMISSION_KEYS);
 
 /** Only the owner may grant these. */
-const OWNER_GRANT_ONLY = new Set(["site.settings", "staff.access"]);
+const OWNER_GRANT_ONLY = new Set(["site.settings", "ai.manage", "runners.manage", "staff.access"]);
 
 const ROLES = ["member", "moderator", "admin", "owner"];
 /** Roles that can be assigned through the API (the owner comes from env/CLI). */

@@ -46,10 +46,10 @@ const GROUPS: { label: string; items: { id: SectionId; label: string; icon: Icon
     label: 'Platform',
     items: [
       { id: 'site', label: 'Site', icon: 'globe', perm: 'site.settings', title: 'Site', blurb: 'Private mode, early access, sign-ups, feature flags and maintenance.' },
-      { id: 'ai', label: 'AI models', icon: 'sparkles', perm: 'site.settings', title: 'AI models', blurb: 'Which AI the site uses: providers, keys, a model for each feature, and the daily budget.' },
-      { id: 'runners', label: 'Code runners', icon: 'server', perm: 'site.settings', title: 'Code runners', blurb: 'Our own servers that run code first, each backing up the others, with the free public runners behind them.' },
+      { id: 'ai', label: 'AI models', icon: 'sparkles', perm: 'ai.manage', title: 'AI models', blurb: 'Which AI the site uses: providers, keys, a model for each feature, and the daily budget.' },
+      { id: 'runners', label: 'Code runners', icon: 'server', perm: 'runners.manage', title: 'Code runners', blurb: 'Our own servers that run code first, each backing up the others, with the free public runners behind them.' },
       { id: 'sources', label: 'Problem sources', icon: 'database', perm: 'problems.manage', title: 'Problem sources', blurb: 'Which judges problems come from, kept in sync and tested live.' },
-      { id: 'authored', label: 'Add a problem', icon: 'code', perm: 'problems.manage', title: 'Add a problem', blurb: 'Coding problems we write ourselves: statement, tests, checker, editorial and a solution in five languages.' },
+      { id: 'authored', label: 'Add a problem', icon: 'code', perm: 'problems.author', title: 'Add a problem', blurb: 'Coding problems we write ourselves: statement, tests, checker, editorial and a solution in five languages.' },
       { id: 'announcements', label: 'Announcements', icon: 'bell', perm: 'announcements.post', title: 'Announcements', blurb: 'The bar above every page, and notifications to everyone.' },
       { id: 'audit', label: 'Audit log', icon: 'list', perm: 'audit.view', title: 'Audit log', blurb: 'Every admin action — who, what, when, from where.' },
     ],
@@ -191,7 +191,7 @@ export default function AdminPage() {
                   </div>
                 )
               })}
-              {me.isOwner && <p className="desk-toc-note">As the owner you can&rsquo;t be banned or demoted, you see every section, and only you make admins or grant site settings.</p>}
+              {me.isOwner && <p className="desk-toc-note">As the owner you can&rsquo;t be banned or demoted, you see every section, and only you make admins or grant the owner-only permissions.</p>}
             </div>
           </nav>
 

@@ -111,7 +111,7 @@ function UserDetailBody({ username, me, onChanged, onDeleted }: { username: stri
 
   const tabs: { id: Tab; label: string; icon: IconName; show: boolean }[] = [
     { id: 'overview', label: 'Overview', icon: 'user', show: true },
-    { id: 'access', label: 'Access', icon: 'key', show: can('users.manage') },
+    { id: 'access', label: 'Access', icon: 'key', show: can('users.manage') || can('users.verify') },
     { id: 'moderation', label: 'Moderation', icon: 'shield', show: can('users.ban') || can('content.moderate') },
     { id: 'activity', label: 'Activity', icon: 'activity', show: true },
   ]
@@ -258,7 +258,7 @@ function UserDetailBody({ username, me, onChanged, onDeleted }: { username: stri
           </>
         )}
 
-        {tab === 'access' && can('users.manage') && (
+        {tab === 'access' && (can('users.manage') || can('users.verify')) && (
           <>
             <Section title="Role" hint={me.isOwner ? 'Only you can make admins.' : 'You can assign roles below your own.'}>
               <Select
@@ -269,7 +269,7 @@ function UserDetailBody({ username, me, onChanged, onDeleted }: { username: stri
                     title: `Make @${u.username} ${role === 'admin' ? 'an admin' : role === 'moderator' ? 'a moderator' : 'a member'}?`,
                     body:
                       role === 'admin'
-                        ? 'Admins get every permission except site settings, and can manage moderators and members.'
+                        ? 'Admins get every permission except the owner-only ones (site settings, AI models, code runners, staff access), and can manage moderators and members.'
                         : role === 'moderator'
                           ? 'Moderators can look up users, ban members and work the reports queue.'
                           : 'They lose the defaults of their current role (individual grants stay).',
@@ -289,6 +289,7 @@ function UserDetailBody({ username, me, onChanged, onDeleted }: { username: stri
               </Select>
             </Section>
 
+            {can('users.manage') && (
             <Section title="Permissions" hint="Role defaults, plus individual grants and revocations.">
               <div className="space-y-4">
                 {groups.map((g) => (
@@ -336,8 +337,11 @@ function UserDetailBody({ username, me, onChanged, onDeleted }: { username: stri
               </div>
             </Section>
 
+            )}
+
             <Section title="Account">
               <div className="divide-y divide-[color:var(--nx-hair)]">
+                {can('users.verify') && (
                 <Row title="Verified badge" hint="A blue seal next to their name everywhere.">
                   <Toggle
                     label="Verified badge"
@@ -346,7 +350,8 @@ function UserDetailBody({ username, me, onChanged, onDeleted }: { username: stri
                     onChange={(v) => act('verify', () => api.post(`${base}/verify`, { verified: v }), v ? 'Verified' : 'Verification removed').then(refreshBadges)}
                   />
                 </Row>
-                {u.role !== 'owner' && u.role !== 'admin' && (
+                )}
+                {can('users.verify') && u.role !== 'owner' && u.role !== 'admin' && (
                   <Row title="Early access" hint="May use the site while it is private.">
                     <Toggle
                       label="Early access"
@@ -356,6 +361,7 @@ function UserDetailBody({ username, me, onChanged, onDeleted }: { username: stri
                     />
                   </Row>
                 )}
+                {can('users.manage') && (
                 <Row title="Profile" hint="Reset a broken or abusive avatar or bio.">
                   <span className="flex gap-1.5">
                     <button type="button" className="nx-btn" data-size="sm" disabled={!(canAct || isSelfOwner) || busy === 'avatar'} onClick={() => act('avatar', () => api.post(`${base}/reset`, { fields: ['avatar'] }), 'Avatar reset')}>
@@ -366,6 +372,7 @@ function UserDetailBody({ username, me, onChanged, onDeleted }: { username: stri
                     </button>
                   </span>
                 </Row>
+                )}
               </div>
             </Section>
 
