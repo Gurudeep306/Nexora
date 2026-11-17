@@ -1861,6 +1861,8 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
       // Check achievements
       // Achievements are for solved problems: a full check, not the examples alone.
       await checkAchievements(problem_id, fullPass ? "AC" : result.verdict === "AC" ? "EX" : result.verdict);
+      // "Invite to solve": mark this person in open invites and refresh the cards.
+      if (accepted) await require("./solve-invites").afterSolve(realtime, me(), Number(problem_id), { full: fullPass });
       invalidateCache();
     }
 

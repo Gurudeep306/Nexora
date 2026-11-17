@@ -15,13 +15,22 @@ export interface PollOption {
 }
 
 export interface ShareCard {
-  type: 'solved' | 'gate_test' | 'streak' | 'lesson' | 'achievement'
+  type: 'solved' | 'gate_test' | 'streak' | 'lesson' | 'achievement' | 'submission'
   title: string
   subtitle?: string
   stat?: string
   link?: string
   icon?: string
   at?: string | number
+  /* a shared solution ('submission'): the code is a spoiler */
+  language?: string
+  timeMs?: number
+  problemId?: number
+  by?: string
+  code?: string | null
+  /** The code is held back until you choose Reveal (you haven't solved it). */
+  locked?: boolean
+  lines?: number
 }
 
 export interface Post {
@@ -80,6 +89,8 @@ export type NotificationType =
   | 'repost'
   | 'quote'
   | 'comment_like'
+  | 'invite_solve'
+  | 'invite_solved'
 
 export interface NotificationGroup {
   id: number
@@ -91,6 +102,8 @@ export interface NotificationGroup {
   created_at: number
   read: boolean
   snippet: string
+  /** Where it opens when it isn't a post (invites to solve): a path on this site. */
+  link?: string | null
 }
 
 export interface Relation {
@@ -178,6 +191,8 @@ export interface Shareables {
   lessons: { id: number; title: string; category: string }[]
   achievements: { id: string; title: string; icon: string }[]
   streak: { current: number; best: number }
+  /** Accepted solutions, newest first (one per problem). */
+  solutions?: { id: number; title: string; platform: string; language: string; time_ms: number | null }[]
 }
 
 export const profilePath = (username: string) => `/u/${encodeURIComponent(username)}`

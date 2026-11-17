@@ -63,13 +63,14 @@ export function Notifications() {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
-          aria-label={total ? `Notifications (${total} unread)` : 'Notifications'}
+          aria-label={total ? `Notifications, ${total} unread` : 'Notifications'}
           className="relative flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-bg-app/5 hover:text-text-primary data-[state=open]:bg-bg-app/8 data-[state=open]:text-text-primary"
         >
           <Bell className="size-[17px]" />
           <AnimatePresence>
             {total > 0 && (
               <motion.span
+                aria-hidden="true"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
