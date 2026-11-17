@@ -69,7 +69,8 @@ import { AnalysisPanel } from '@/components/solve/AnalysisPanel'
 import { JourneyPanel } from '@/components/solve/journey/JourneyPanel'
 import { DryRunPanel } from '@/components/solve/dryrun/DryRunPanel'
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from '@/components/ui'
-import { ListChecks, Trophy } from 'lucide-react'
+import { Building2, ListChecks, ListPlus, Trophy } from 'lucide-react'
+import { AddToSetDialog, AskedAtDialog } from '@/components/problems/sets/SetDialogs'
 
 type BottomTab = 'tests' | 'output' | 'dryrun' | 'aitests' | 'analysis' | 'journey' | 'coach' | 'issues'
 const RESULT_VIEWS = [
@@ -182,6 +183,8 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
   // Opened from a hosted contest: submits also count there (src/routes/hosted-contests.js).
   const contestId = learn ? null : Number(searchParams.get('contest')) || null
   const [addToContest, setAddToContest] = useState(false)
+  const [addToSet, setAddToSet] = useState(false)
+  const [askedAt, setAskedAt] = useState(false)
   const { refresh } = useAuth()
   const toast = useToast()
 
@@ -873,7 +876,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         <Menu>
           <Tooltip label="More">
             <MenuTrigger asChild>
-              <Button variant="ghost" size="icon-sm" aria-label="More: contests and keys">
+              <Button variant="ghost" size="icon-sm" aria-label="More: sets, contests and keys">
                 <MoreHorizontal aria-hidden="true" />
               </Button>
             </MenuTrigger>
@@ -883,6 +886,18 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
               <MenuItem icon={<Trophy />} onSelect={() => setAddToContest(true)}>
                 Add to a contest
               </MenuItem>
+            )}
+            {!custom && (
+              <>
+                <MenuSeparator />
+                <MenuLabel>Sets</MenuLabel>
+                <MenuItem icon={<ListPlus />} onSelect={() => setAddToSet(true)}>
+                  Add to a set
+                </MenuItem>
+                <MenuItem icon={<Building2 />} onSelect={() => setAskedAt(true)}>
+                  I was asked this at…
+                </MenuItem>
+              </>
             )}
             <MenuSeparator />
             <MenuLabel>Keys</MenuLabel>
@@ -1203,6 +1218,8 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       {contestId && <ContestBar id={contestId} />}
       {toolbar}
       {!learn && <AddToContest open={addToContest} onClose={() => setAddToContest(false)} kind={custom ? 'workshop' : 'problem'} refId={id} title={problem?.title || 'This problem'} />}
+      {!custom && addToSet && <AddToSetDialog problemId={Number(id)} title={problem?.title || `Problem ${id}`} onClose={() => setAddToSet(false)} />}
+      {!custom && askedAt && <AskedAtDialog problemId={Number(id)} title={problem?.title || `Problem ${id}`} onClose={() => setAskedAt(false)} />}
 
       {arena ? (
         <>
