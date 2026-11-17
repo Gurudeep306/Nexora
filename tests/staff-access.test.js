@@ -127,6 +127,26 @@ test('the owner hides a section, makes one see-only, and the server holds to it'
   ok(await call('GET', '/api/admin/reports', c[MOD]), 'back to the role default');
 });
 
+test('a hidden or see-only section holds however the address is written (case, slashes)', async () => {
+  // Express matches routes case-insensitively and ignores a trailing slash,
+  // so the section rule must too, or "/api/ADMIN/reports" walks past it.
+  ok(await set(OWNER, MOD, 'moderation', 'none'));
+  for (const p of ['/api/ADMIN/reports', '/api/admin/Reports', '/API/admin/reports', '/api/admin/reports/', '/api/admin//reports']) {
+    const r = await call('GET', p, c[MOD]);
+    assert.notEqual(r.status, 200, `${p} must not open a hidden section`);
+    if (r.status === 403) assert.equal(r.body.code, 'section_hidden', p);
+  }
+  ok(await set(OWNER, MOD, 'moderation', 'default'));
+
+  assert.equal((await call('GET', '/api/admin/me', c[MOD])).body.sections.site, 'view', 'Site is see-only from the test above');
+  for (const p of ['/api/ADMIN/site/maintenance', '/api/Admin/Site/maintenance', '/api/admin/site/maintenance/']) {
+    const w = await call('PUT', p, c[MOD], { enabled: true, message: 'x' });
+    assert.notEqual(w.status, 200, `${p} must not change a see-only section`);
+  }
+  assert.equal((await call('GET', '/api/admin/site', c[OWNER])).body.settings?.maintenance?.enabled ?? false, false, 'maintenance stayed off');
+  // Leave Site as the earlier test set it (see only); later tests read it.
+});
+
 test('a member given one section opens Admin for that section only; nothing leaks', async () => {
   ok(await set(OWNER, MEM, 'sources', 'edit'));
   const me = await call('GET', '/api/admin/me', c[MEM]);

@@ -79,4 +79,25 @@ function attachHive(io, { authorize, canSeeConvo }) {
   return nsp;
 }
 
-module.exports = { attachHive, emit, emitTask, emitConvo, roster, bus };
+/**
+ * Drop every live Hive connection whose person may no longer use Hive (the
+ * owner set Hive to "Owner only" in Admin → Site map, or a role changed).
+ * stillAllowed(username) → Promise<boolean>.
+ */
+async function recheck(stillAllowed) {
+  if (!nsp) return 0;
+  let dropped = 0;
+  for (const socket of nsp.sockets.values()) {
+    let okay = false;
+    try {
+      okay = await stillAllowed(socket.data.username);
+    } catch {}
+    if (!okay) {
+      socket.disconnect(true);
+      dropped++;
+    }
+  }
+  return dropped;
+}
+
+module.exports = { attachHive, emit, emitTask, emitConvo, roster, bus, recheck };
