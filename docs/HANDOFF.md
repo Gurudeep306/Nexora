@@ -55,14 +55,13 @@ Contents:
 - `git add -A` also picks up helper worktrees under `.claude/worktrees/`.
   Add that folder to `.git/info/exclude` first.
 
-## 3. Where it stands (2026-11-16, session 6)
+## 3. Where it stands (2026-11-17, session 6)
 
 - **Merged and live:** #127–#131, #133 (Admin → Compilers). Live check,
   2026-11-16: `https://nexoraguru.in/api/health` answers OK on commit
   `42d29e1` (#133); the private "coming soon" page shows. Signing in and
   pressing Dry run on the live site needs the owner (the site is private).
-- **On branch `claude/clever-babbage-km37j9` (pushed, PR not opened yet):
-  finishing Admin → Compilers.**
+- **Merged #134** (2026-11-17): Admin → Compilers finished (below).
   - **Judge0** (`src/judge0.js`): add it in Admin → Code runners as a second
     kind of runner next to Piston — our own Judge0 server (GPL-3.0, allowed)
     or a Judge0 Cloud / RapidAPI key (Judge0 sells it for programming and
@@ -112,6 +111,12 @@ Contents:
 - **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and
   functional languages is **later**; the ideas in section 6, item 7 are
   **no for now**.
+
+- **Open now: problem pipeline (item 6 B)** on `claude/clever-babbage-km37j9`.
+  Waiting locally for their own PRs after it: **A3** (local branch `int-a3`,
+  two commits: coding analysis + real XP; wrong-answer colour fix). Helpers
+  still building: **A1** error explanations, **C** staff problem editor,
+  **D** social (worktrees `agent-a029…`, `agent-a703…`, `agent-a5b6…`).
 
 ## 4. What is done (all sessions)
 
