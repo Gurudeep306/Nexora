@@ -836,11 +836,54 @@ app.get("/api/problems/:id", async (req, res) => {
       "SELECT * FROM testcases WHERE problem_rowid=? AND username=? ORDER BY id",
       [req.params.id, me()],
     );
-    const submissions = await all(
-      "SELECT id,verdict,exec_time_ms,submitted_at FROM submissions WHERE username=? AND problem_rowid=? ORDER BY submitted_at DESC LIMIT 20",
-      [me(), req.params.id],
-    );
-    res.json({ ok: true, problem, testcases, submissions });
+    const [rows, summary] = await Promise.all([
+      all(
+        "SELECT id,verdict,exec_time_ms,submitted_at,language,test_results FROM submissions WHERE username=? AND problem_rowid=? ORDER BY submitted_at DESC LIMIT 20",
+        [me(), req.params.id],
+      ),
+      get(
+        `SELECT COUNT(*) as attempts, MIN(submitted_at) as firstAt,
+           MIN(CASE WHEN verdict='AC' THEN submitted_at END) as firstAcAt,
+           MIN(CASE WHEN verdict='AC' THEN exec_time_ms END) as bestMs,
+           COUNT(CASE WHEN verdict='AC' THEN 1 END) as accepted,
+           COUNT(DISTINCT language) as languages
+         FROM submissions WHERE username=? AND problem_rowid=?`,
+        [me(), req.params.id],
+      ),
+    ]);
+    // Tests passed out of tests run, from the stored results (not sent whole).
+    const submissions = rows.map(({ test_results, ...r }) => {
+      let passed = null;
+      let total = null;
+      try {
+        const t = JSON.parse(test_results || "[]");
+        if (Array.isArray(t) && t.length) {
+          total = t.length;
+          passed = t.filter((x) => x && x.passed).length;
+        }
+      } catch {
+        /* an old row without results */
+      }
+      return { ...r, passed, total };
+    });
+    // Attempts before the first Accepted, and how long it took from the first try.
+    let analysis = null;
+    if (summary && summary.attempts) {
+      const before = summary.firstAcAt
+        ? (await get("SELECT COUNT(*) as c FROM submissions WHERE username=? AND problem_rowid=? AND submitted_at < ?", [me(), req.params.id, summary.firstAcAt]))?.c || 0
+        : null;
+      analysis = {
+        attempts: summary.attempts,
+        accepted: summary.accepted,
+        languages: summary.languages,
+        firstAt: summary.firstAt,
+        firstAcAt: summary.firstAcAt,
+        triesToAccept: before === null ? null : before + 1,
+        minutesToAccept: summary.firstAcAt ? Math.max(0, Math.round((Date.parse(summary.firstAcAt) - Date.parse(summary.firstAt)) / 60000)) : null,
+        bestMs: summary.bestMs,
+      };
+    }
+    res.json({ ok: true, problem, testcases, submissions, analysis });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
@@ -1589,6 +1632,7 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
     }
 
     // Record submission
+    let xpReport = null;
     if (recordFor) {
       const problem_id = recordFor;
       await run(
@@ -1615,6 +1659,18 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
       );
       const firstSolve = result.verdict === "AC" && existing?.status !== "solved";
       const gainedXp = firstSolve ? await calcXp(problem_id) : 0;
+      // What this submit did to the level: the same calcLevel the Profile shows.
+      if (result.verdict === "AC") {
+        const before = await myTotals();
+        const after = { xp: before.xp + gainedXp, solved: before.solved + (firstSolve ? 1 : 0) };
+        xpReport = {
+          gainedXp,
+          firstSolve,
+          before: calcLevel(before.xp, before.solved),
+          after: calcLevel(after.xp, after.solved),
+          solved: after.solved,
+        };
+      }
       if (!existing) {
         await run(
           `INSERT INTO progress(username,problem_rowid,status,attempts,solved_at,xp_earned) VALUES(?,?,?,?,?,?)`,
@@ -1674,6 +1730,7 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
       ok: true,
       ...result,
       recorded: !!recordFor,
+      ...(xpReport ? { xp: xpReport } : {}),
       ...(problem_id && !recordFor
         ? { message: "This problem has no testcases yet — import the samples or add one, then submit." }
         : {}),
@@ -1900,6 +1957,17 @@ app.get("/api/stats", async (req, res) => {
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
+});
+
+/* How levels are earned: the real rules, for the Profile (no user data). */
+app.get("/api/levels/rules", (_req, res) => {
+  const ranks = require("./nexus/ranks");
+  res.json({
+    ok: true,
+    xpByRating: XP_BY_RATING,
+    problemLevels: RIFT_LEVELS.map((r) => ({ level: r.level, name: r.name, badge: r.badge, xp: r.xp, minProblems: r.minProblems })),
+    web: { dsaShare: ranks.DSA_XP_SHARE, lessonXp: ranks.XP_PER_LESSON, pyqXp: ranks.XP_PER_PYQ },
+  });
 });
 
 /* ========== ROADMAP ========== */
@@ -2195,18 +2263,25 @@ app.get("/api/tags", async (req, res) => {
 });
 
 /* ========== HELPERS ========== */
+/** XP for a first solve, by the problem's rating ("below" null: every rating above). */
+const XP_BY_RATING = [
+  { below: 1000, xp: 10 },
+  { below: 1200, xp: 15 },
+  { below: 1400, xp: 25 },
+  { below: 1600, xp: 40 },
+  { below: 1800, xp: 60 },
+  { below: 2000, xp: 80 },
+  { below: 2200, xp: 100 },
+  { below: null, xp: 150 },
+];
+function xpForRating(rating) {
+  const r = rating || 800;
+  return XP_BY_RATING.find((b) => b.below === null || r < b.below).xp;
+}
 async function calcXp(problemId) {
   const prob = await get("SELECT rating FROM problems WHERE id=?", [problemId]);
   if (!prob) return 10;
-  const r = prob.rating || 800;
-  if (r < 1000) return 10;
-  if (r < 1200) return 15;
-  if (r < 1400) return 25;
-  if (r < 1600) return 40;
-  if (r < 1800) return 60;
-  if (r < 2000) return 80;
-  if (r < 2200) return 100;
-  return 150;
+  return xpForRating(prob.rating);
 }
 
 /* ── Unified Rift Levels — single progression system ──
@@ -2869,6 +2944,35 @@ app.get("/api/code-replay/:submissionId", async (req, res) => {
   }
 });
 
+/**
+ * Twelve weeks of verdicts, oldest first, each week named by its Monday:
+ * [{ week, AC, WA, TLE, RE, CE, other, total }]. Weeks with no submission
+ * are kept (as zeros), so the chart's spacing stays true to time.
+ */
+function buildVerdictTrend(rows, now) {
+  const monday = (d) => {
+    const x = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+    x.setUTCDate(x.getUTCDate() - ((x.getUTCDay() + 6) % 7));
+    return x;
+  };
+  const start = monday(now);
+  const weeks = [];
+  for (let i = 11; i >= 0; i--) {
+    const w = new Date(start);
+    w.setUTCDate(w.getUTCDate() - 7 * i);
+    weeks.push({ week: w.toISOString().slice(0, 10), AC: 0, WA: 0, TLE: 0, RE: 0, CE: 0, other: 0, total: 0 });
+  }
+  const byWeek = new Map(weeks.map((w) => [w.week, w]));
+  for (const r of rows || []) {
+    const w = byWeek.get(r.week);
+    if (!w) continue;
+    const key = ["AC", "WA", "TLE", "RE", "CE"].includes(r.verdict) ? r.verdict : "other";
+    w[key] += r.count;
+    w.total += r.count;
+  }
+  return weeks;
+}
+
 /* ========== ADVANCED PERFORMANCE ANALYTICS ========== */
 app.get("/api/performance", async (req, res) => {
   try {
@@ -2893,6 +2997,13 @@ app.get("/api/performance", async (req, res) => {
 
       /* ── Parallel independent queries (all at once) ── */
       const today = new Date().toISOString().slice(0, 10);
+      // Verdicts week by week (12 weeks), each week named by its Monday.
+      const verdictTrendP = all(
+        `SELECT date(substr(submitted_at,1,10),'weekday 0','-6 days') as week, verdict, COUNT(*) as count
+         FROM submissions WHERE username=${meSql()} AND submitted_at >= date('now','-84 days')
+         GROUP BY week, verdict ORDER BY week`,
+      );
+      verdictTrendP.catch(() => {});
       const [
         streak,
         ratingDist,
@@ -3100,6 +3211,8 @@ app.get("/api/performance", async (req, res) => {
           )
         : null;
 
+      const verdictTrend = buildVerdictTrend(await verdictTrendP, new Date());
+
       /* ── Consistency score (0-100) ── */
       const last30 = heatmap.slice(-30);
       const activeDays30 = last30.filter((d) => d.problems_solved > 0).length;
@@ -3145,6 +3258,7 @@ app.get("/api/performance", async (req, res) => {
         hardestSolved,
         mostAttempted,
         firstSolves,
+        verdictTrend,
       };
     }); // end cachedResponse
     res.json(result);

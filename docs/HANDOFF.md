@@ -65,8 +65,7 @@ Contents:
   (Judge0 runners, key-based services' terms on the admin page, traces sized
   to each runner, Java/Kotlin runner faults, dry-run polish: structs drawn
   field by field, step notes say what changed). Details of #134 below.
-- **A1, plain-English error explanations — this PR** (branch
-  `claude/fervent-curie-vjgcd8`): `client/src/lib/diagnostics.ts` rewritten
+- **A1, plain-English error explanations — merged (#136):** `client/src/lib/diagnostics.ts` rewritten
   against real output from every runner (`tests/fixtures/diagnostics-real.json`,
   16 languages, compile error + crash each). Only the student's own file is
   marked (`isStudentFile`). Each common error gets a label and a "What it
@@ -78,10 +77,38 @@ Contents:
   the inline lens, the Result tab (and a "What it means" box when the runner
   gives no line), and the status bar ("1 issue · Ln 4: Missing ;").
   Tests: `tests/diagnostics.test.js`.
+- **A3, coding analysis and levels — this PR** (branch
+  `claude/fervent-curie-vjgcd8`):
+  - **"+XP" on Accepted**: `POST /api/judge` returns `xp: { gainedXp,
+    firstSolve, before, after, solved }` (both levels from the same
+    `calcLevel` the Profile uses). The Result tab shows `XpGain`
+    (`ResultsPanel.tsx`): "+40 XP · Level 1 Bit · 760 XP and 99 more problems
+    to level 2", XP and problems progress bars, a level-up line, a link to
+    `/profile#levels`; a repeat Accepted says XP counts once per problem.
+  - **Profile, "How levels are earned"** (`components/profile/LevelRules.tsx`,
+    `GET /api/levels/rules`): the XP per rating table and every level's XP +
+    problems, from the server's own `XP_BY_RATING` and `RIFT_LEVELS` (so it
+    cannot drift), and the Nexus web rank: concepts + 15 XP per GATE lesson +
+    5 XP per PYQ + 25% of problem XP. Opens by itself at `#levels`.
+    Note: the old handoff said it the other way round ("problem XP plus a
+    quarter of the web rank"); the code adds 25% of problem XP to the web
+    rank, and that is what the page says.
+  - **Analytics, "Verdicts over time"** (`VerdictTrendChart`,
+    `verdictTrend` in `/api/performance`, `buildVerdictTrend`): 12 weeks of
+    stacked verdicts and "Accepted N% in the last 4 weeks (M% in the 8
+    before)". Wrong answers are drawn in the site's error colour (they used
+    the accent, green in some themes) — new `error` chart colour.
+  - **Per problem**: `GET /api/problems/:id` adds `analysis` (tries, first
+    Accepted, tries to accept, minutes to accept, languages, fastest) and
+    each submission's language and tests passed; the Submissions tab shows
+    "Accepted on try 2, …" and the numbers. Only the signed-in user's rows.
+  - Accessibility fixes found on the way: the "Original" link's name now
+    starts with its visible word; the problem's scroll area is focusable.
+  - Tests: `tests/coding-analysis.test.js`.
 - **Lost work, rebuilt from the plan:** session 6 built B (problem pipeline)
   and A3 (coding analysis + XP) in helper worktrees on its own machine and
   never pushed them. They are not recoverable here and are rebuilt next.
-- **Next, in order:** A3, B, A2 (editor: live syntax check, Format,
+- **Next, in order:** B, A2 (editor: live syntax check, Format,
   cheat sheet, Playwright), C, D, E, F, the rest of item 4 (JS async/sort
   tracing, C pointers into arrays, linked-list pointer lanes).
 - **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and

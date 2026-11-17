@@ -27,6 +27,22 @@ export interface SubmissionRow {
   verdict: string
   exec_time_ms: number
   submitted_at: string
+  language?: string
+  /** Tests passed out of tests run (null for old rows). */
+  passed?: number | null
+  total?: number | null
+}
+
+/** Your record on one problem (all your submissions, not only the last 20). */
+export interface ProblemAnalysis {
+  attempts: number
+  accepted: number
+  languages: number
+  firstAt: string
+  firstAcAt: string | null
+  triesToAccept: number | null
+  minutesToAccept: number | null
+  bestMs: number | null
 }
 
 export interface ProblemDetailResponse {
@@ -34,6 +50,7 @@ export interface ProblemDetailResponse {
   problem: SolveProblem
   testcases: Testcase[]
   submissions: SubmissionRow[]
+  analysis?: ProblemAnalysis | null
 }
 
 export interface StatementSample {
@@ -127,6 +144,29 @@ export interface JudgeResponse {
   recorded?: boolean
   /** Explanation when nothing could be judged */
   message?: string
+  /** On Accepted: the XP this solve earned and the level before and after. */
+  xp?: XpReport
+}
+
+export interface LevelState {
+  level: number
+  xp: number
+  name: string
+  badge: string
+  xpInLevel: number
+  xpForNext: number
+  probsInLevel: number
+  probsForNext: number
+  xpGated: boolean
+  probGated: boolean
+}
+
+export interface XpReport {
+  gainedXp: number
+  firstSolve: boolean
+  before: LevelState
+  after: LevelState
+  solved: number
 }
 
 export const XP_BY_RATING = (rating: number): number => {
