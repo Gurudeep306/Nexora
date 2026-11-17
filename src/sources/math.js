@@ -42,7 +42,13 @@ function mathify(html, style) {
   if (!html) return html || "";
   const rules = STYLES[style] || [];
   if (!rules.length) return String(html);
-  return outsideCode(String(html), (seg) => {
+  let src = String(html);
+  // AtCoder writes each input format as <pre><var>N \ K</var></pre>: <var> is
+  // always maths (samples never use it), so it is converted inside <pre> too.
+  if (rules.includes("var")) src = src.replace(/<var>([\s\S]*?)<\/var>/g, (_m, tex) => inline(tex.replace(/<[^>]+>/g, "")));
+  // Kattis marks every formula with this span and wraps long ones over lines.
+  if (rules.includes("dollar")) src = src.replace(/(<span class="tex2jax_process">)([\s\S]*?)(<\/span>)/g, (_m, a, body, b) => a + body.replace(/\s*\n\s*/g, " ") + b);
+  return outsideCode(src, (seg) => {
     let s = seg;
     // DMOJ ships each formula pre-rendered: <span class="inline-math"><img …><span class="tex-text">~x~</span></span>
     if (rules.includes("tilde")) {
@@ -53,7 +59,13 @@ function mathify(html, style) {
         })
         .replace(/~([^~\n<>]{1,400}?)~/g, (_m, tex) => inline(tex));
     }
-    if (rules.includes("var")) s = s.replace(/<var>([\s\S]*?)<\/var>/g, (_m, tex) => inline(tex.replace(/<[^>]+>/g, "")));
+    // CSES now ships pandoc's spans: <span class="math math-inline">n=3</span>, math-display.
+    if (rules.includes("paren")) {
+      s = s.replace(/<span class="math math-(inline|display)"[^>]*>([\s\S]*?)<\/span>/g, (_m, kind, tex) => {
+        const t = tex.replace(/<[^>]+>/g, "");
+        return kind === "display" ? display(t) : inline(t);
+      });
+    }
     if (rules.includes("paren") || rules.includes("dollar")) {
       s = s.replace(/\\\[([\s\S]+?)\\\]/g, (_m, tex) => display(tex)).replace(/\\\(([\s\S]+?)\\\)/g, (_m, tex) => inline(tex));
     }
@@ -63,6 +75,8 @@ function mathify(html, style) {
       s = s
         .replace(/(?<![\\$])\$\$(?!\$)([\s\S]+?)(?<!\\)\$\$(?!\$)/g, (_m, tex) => display(tex))
         .replace(/(?<![\\$\w])\$(?![\s$])([^$\n]{1,600}?)(?<![\s\\])\$(?![\w$])/g, (_m, tex) => inline(tex))
+        // "$\operatorname{OP}$s", "$k$th": a letter may follow when the inside is clearly a formula.
+        .replace(/(?<![\\$\w])\$(?![\s$])((?:[^$\n]{0,600}?[\\^_{}][^$\n]{0,600}?)|[A-Za-z])(?<![\s\\])\$(?=[A-Za-z])/g, (_m, tex) => inline(tex))
         .replace(/\\\$/g, "$");
     }
     return s;

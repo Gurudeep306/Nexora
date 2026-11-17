@@ -15,11 +15,14 @@ const ADVICE: Record<string, string> = {
 
 export function VerdictBanner({
   verdict,
+  examplesOnly = false,
   xpEarned,
   burstId,
   onDismiss,
 }: {
   verdict: string | null
+  /** Accepted on the examples only (the judge's own tests are not here). */
+  examplesOnly?: boolean
   xpEarned?: number | null
   /** Changes once per new judge result so a repeat AC fires a fresh burst. */
   burstId?: number
@@ -29,7 +32,7 @@ export function VerdictBanner({
   const advice = verdict ? ADVICE[verdict.toUpperCase()] : undefined
   return (
     <>
-    {verdict === 'AC' && <Confetti key={burstId} burstKey={`${verdict}-${burstId ?? 0}`} />}
+    {verdict === 'AC' && !examplesOnly && <Confetti key={burstId} burstKey={`${verdict}-${burstId ?? 0}`} />}
     <AnimatePresence>
       {verdict && (
         <motion.div
@@ -53,7 +56,7 @@ export function VerdictBanner({
           ) : (
             <Zap className="size-5 text-destructive" aria-hidden="true" />
           )}
-          <VerdictBadge verdict={verdict} />
+          {examplesOnly ? <span className="text-[13px] font-semibold text-success">Passed the examples</span> : <VerdictBadge verdict={verdict} />}
           {isAc && xpEarned != null && xpEarned > 0 && (
             <span className="vb-xp font-display text-sm tracking-wider text-success glow-text tabular-nums">
               +{xpEarned} XP

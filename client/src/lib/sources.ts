@@ -46,4 +46,9 @@ export function useSources(): SiteSource[] {
   return list
 }
 
+/** "Codeforces' tests", "AtCoder's tests": the possessive of a judge's name. */
+export const judgeOf = (id: string) => {
+  const n = sourceLabel(id)
+  return /s$/i.test(n) ? `${n}'` : `${n}'s`
+}
 export const sourceLabel = (id: string) => cache?.find((s) => s.id === id)?.label ?? FALLBACK_LABELS[id] ?? id

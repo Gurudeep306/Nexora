@@ -181,15 +181,32 @@ const inflight = new Map();
  * Fetch and cache one problem's official tests (exact-answer problems only,
  * within the judge's limits). Safe to call often: one download per problem.
  */
+/** Problems whose test download failed lately (it is tried again after a while). */
+const failedAt = new Map();
+const RETRY_MS = 10 * 60 * 1000;
+/** "fetching", "failed" (lately) or null: whether "being fetched now" is true. */
+function testsState(problemId) {
+  const id = datasetId(problemId);
+  if (!id) return null;
+  if (inflight.has(id)) return "fetching";
+  const at = failedAt.get(id);
+  return at && Date.now() - at < RETRY_MS ? "failed" : null;
+}
+
 function fetchTests(problemId) {
   const id = datasetId(problemId);
   if (!id) return Promise.resolve(null);
   if (inflight.has(id)) return inflight.get(id);
+  if (testsState(problemId) === "failed") return Promise.resolve(null);
   const p = (async () => {
     await init();
     if (await get("SELECT 1 FROM cf_dataset_tests WHERE id=?", [id])) return cachedTests(problemId);
     const head = await readRow(problemId, ["id", "description", "output_format", "interaction_format", "input_mode", "generated_checker"]);
-    if (!head) return null;
+    if (!head) {
+      // Not in the dataset: remembered, so it isn't looked up on every submit.
+      await run("INSERT OR REPLACE INTO cf_dataset_tests(id, tests, exact, fetched_at) VALUES(?,?,?,?)", [id, "[]", 0, Date.now()]);
+      return [];
+    }
     let tests = [];
     const exact = exactAnswer(head);
     if (exact) {
@@ -208,8 +225,13 @@ function fetchTests(problemId) {
     await run("INSERT OR REPLACE INTO cf_dataset_tests(id, tests, exact, fetched_at) VALUES(?,?,?,?)", [id, JSON.stringify(tests), exact ? 1 : 0, Date.now()]);
     return exact ? tests : [];
   })()
+    .then((r) => {
+      failedAt.delete(id);
+      return r;
+    })
     .catch((e) => {
       console.error(`[cf-dataset] tests for ${id} failed:`, e.message);
+      failedAt.set(id, Date.now());
       return null;
     })
     .finally(() => inflight.delete(id));
@@ -217,4 +239,4 @@ function fetchTests(problemId) {
   return p;
 }
 
-module.exports = { statement, cachedTests, fetchTests, datasetId, exactAnswer, toHtml, setFetch, getIndex, ATTRIBUTION, init };
+module.exports = { statement, cachedTests, fetchTests, testsState, datasetId, exactAnswer, toHtml, setFetch, getIndex, ATTRIBUTION, init };

@@ -3,6 +3,7 @@ import { motion } from 'motion/react'
 import { Check, CheckCircle2, ChevronDown, Clock, Copy, Terminal, XCircle } from 'lucide-react'
 import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
+import { judgeOf, sourceLabel } from '@/lib/sources'
 import { engineLabel, type JudgeResponse, type RunResult, type XpReport } from './types'
 
 const norm = (s: string) => s.replace(/\r/g, '').split('\n').map((l) => l.trimEnd())
@@ -216,8 +217,27 @@ export function JudgeResults({ result }: { result: JudgeResponse }) {
     const i = result.results.findIndex((r) => !r.passed)
     return i >= 0 ? i : null
   })
+  const cov = result.coverage
+  const examplesOnly = result.verdict === 'AC' && !!cov && !cov.full
   return (
     <div className="space-y-3 p-3">
+      {examplesOnly && cov && (
+        <div className="rounded-lg border border-border bg-surface-2 p-3 text-[12.5px] text-foreground-dim" role="note">
+          <p className="m-0 font-semibold text-foreground">Passed the examples, not {judgeOf(cov.judge)} full tests</p>
+          <p className="m-0 mt-1">
+            {cov.pending
+              ? `${judgeOf(cov.judge)} full tests are being fetched now. Submit again in a minute to be checked on all of them.`
+              : cov.failed
+                ? `${judgeOf(cov.judge)} full tests could not be fetched just now, so only the examples and your own tests ran. A wrong idea can still pass them.`
+                : `${judgeOf(cov.judge)} full tests are not available here for this problem, so only the examples and your own tests ran. A wrong idea can still pass them.`}{' '}
+            {cov.url && !cov.pending && (
+              <a href={cov.url} target="_blank" rel="noopener noreferrer" className="font-medium text-foreground underline underline-offset-2">
+                Submit on {sourceLabel(cov.judge)} for the real verdict
+              </a>
+            )}
+          </p>
+        </div>
+      )}
       {result.xp && <XpGain x={result.xp} />}
       {result.compileError && (
         <div>
