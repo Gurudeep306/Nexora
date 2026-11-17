@@ -341,9 +341,11 @@ export function Workspace({
       animate={{ opacity: 1, width: 36 }}
       exit={{ opacity: 0, width: 0 }}
       transition={tStandard}
-      onClick={() => setMin(pane, false)}
+      // A minimized panel still moves: drag the strip to another side, or out to float it.
+      onPointerDown={begin(pane, 'move')}
+      onClick={() => Date.now() - lastDragEnd.current > 250 && setMin(pane, false)}
       aria-label={`Restore ${specs[pane].title} panel`}
-      title={`Restore ${specs[pane].title} (Alt+${pane === 'problem' ? 1 : 2})`}
+      title={`Click to restore ${specs[pane].title} (Alt+${pane === 'problem' ? 1 : 2}) · drag to move it`}
       className={cn(
         'card-neon group flex shrink-0 cursor-pointer flex-col items-center gap-3 overflow-hidden py-3 text-foreground-faint transition-colors hover:border-primary/40 hover:text-foreground',
         side === 'left' ? 'mr-2.5' : 'ml-2.5',
@@ -522,9 +524,10 @@ export function Workspace({
                 animate={{ opacity: 1, height: 36, marginTop: 10 }}
                 exit={{ opacity: 0, height: 0, marginTop: 0 }}
                 transition={tStandard}
-                onClick={() => minimize('tests', false)}
-                aria-label="Restore Tests panel"
-                title="Restore Tests (Alt+2)"
+                onPointerDown={begin('tests', 'move')}
+                onClick={() => Date.now() - lastDragEnd.current > 250 && minimize('tests', false)}
+                aria-label={`Restore ${tests.title} panel`}
+                title={`Click to restore ${tests.title} (Alt+2) · drag to move it`}
                 className="card-neon flex shrink-0 cursor-pointer items-center gap-2 overflow-hidden px-3 text-[12px] font-semibold text-foreground-faint transition-colors hover:border-primary/40 hover:text-foreground"
               >
                 <span className="text-primary-bright [&_svg]:size-3.5">{tests.icon}</span>

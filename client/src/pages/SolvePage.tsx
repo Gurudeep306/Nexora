@@ -20,7 +20,7 @@ import {
   TerminalSquare,
   Wand2,
   Sparkles,
-  X, Footprints, Lightbulb, MessageCircleQuestion, MoreHorizontal, LayoutTemplate } from 'lucide-react'
+  X, Footprints, Lightbulb, MessageCircleQuestion, MoreHorizontal } from 'lucide-react'
 import {
   Button,
   EmptyState,
@@ -61,9 +61,9 @@ import { DEFAULT_CODE } from '@/lib/templates'
 import { LanguagePicker } from '@/components/solve/LanguagePicker'
 import { Workspace } from '@/components/solve/workspace/Workspace'
 import { useWorkspace } from '@/components/solve/workspace/useWorkspace'
-import { PRESETS as LAYOUT_PRESETS } from '@/components/solve/workspace/state'
 import { useCoach } from '@/components/solve/coach'
 import { Arena, enterBrowserFullscreen } from '@/components/solve/Arena'
+import { LayoutMenu } from '@/components/solve/workspace/LayoutMenu'
 import { AiTestsPanel } from '@/components/solve/AiTestsPanel'
 import { AnalysisPanel } from '@/components/solve/AnalysisPanel'
 import { JourneyPanel } from '@/components/solve/journey/JourneyPanel'
@@ -863,34 +863,26 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       <div className="ml-auto flex min-w-0 items-center gap-1.5">
         <LanguagePicker languages={languages.length ? languages : [{ id: language, label: language, ext: '', compiled: true }]} value={language} onChange={setLanguage} />
         <span className="hidden items-center gap-1.5 lg:flex">{actions(false)}</span>
+        {/* Layout and full screen, always in sight (they were inside the … menu). */}
+        {isDesktop && <LayoutMenu api={workspace} />}
+        <Tooltip label="Full screen (Alt+4)">
+          <Button variant="ghost" size="icon-sm" aria-label="Full screen" onClick={openArena}>
+            <Expand aria-hidden="true" />
+          </Button>
+        </Tooltip>
         <Menu>
-          <Tooltip label="Layout and full screen">
+          <Tooltip label="More">
             <MenuTrigger asChild>
-              <Button variant="ghost" size="icon-sm" aria-label="More: layout and full screen">
+              <Button variant="ghost" size="icon-sm" aria-label="More: contests and keys">
                 <MoreHorizontal aria-hidden="true" />
               </Button>
             </MenuTrigger>
           </Tooltip>
           <MenuContent className="w-72">
-            <MenuItem icon={<Expand />} onSelect={openArena} shortcut="Alt+4">
-              Full-screen arena
-            </MenuItem>
             {!learn && (
               <MenuItem icon={<Trophy />} onSelect={() => setAddToContest(true)}>
                 Add to a contest
               </MenuItem>
-            )}
-            {isDesktop && (
-              <>
-                <MenuSeparator />
-                <MenuLabel>Layout</MenuLabel>
-                {Object.entries(LAYOUT_PRESETS).map(([k, p]) => (
-                  <MenuItem key={k} icon={<LayoutTemplate />} onSelect={() => workspace.applyPreset(k)}>
-                    <span className="block text-foreground">{p.label}</span>
-                    <span className="block text-[11px] text-foreground-faint">{p.hint}</span>
-                  </MenuItem>
-                ))}
-              </>
             )}
             <MenuSeparator />
             <MenuLabel>Keys</MenuLabel>
