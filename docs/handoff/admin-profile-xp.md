@@ -182,7 +182,7 @@ something pattern type or animated type, import from internet").
   (`req.sectionGrant`, read by `permissions.can`). So giving a member
   "Problem sources" doesn't also open "Add a problem", although both use the
   `problems.manage` permission. Owner-only routes stay owner-only.
-- **Rules:** nobody changes the owner or themselves; a top admin changes only
+- **Rules:** nobody changes the owner or themselves; an allowed admin changes only
   people below their own role and can't give more than they have in a
   section. Every change is in the audit log (`staff.section`,
   `staff.title`, `staff.manage.grant` / `.revoke`).
