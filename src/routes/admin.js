@@ -858,7 +858,7 @@ function createAdminRouter(deps) {
 
   router.post(
     "/api/admin/users/:username/verify",
-    requirePerm("users.manage"),
+    requirePerm("users.verify"),
     h(async (req, res) => {
       const t = await loadTarget(req, res);
       if (!t) return;
@@ -878,7 +878,7 @@ function createAdminRouter(deps) {
 
   router.post(
     "/api/admin/users/:username/early-access",
-    requirePerm("users.manage"),
+    requirePerm("users.verify"),
     h(async (req, res) => {
       const t = await loadTarget(req, res);
       if (!t) return;
@@ -1126,13 +1126,13 @@ function createAdminRouter(deps) {
 
   router.get(
     "/api/admin/ai",
-    requirePerm("site.settings"),
+    requirePerm("ai.manage"),
     h(async (_req, res) => res.json({ ok: true, ...(await aiView()) })),
   );
 
   router.post(
     "/api/admin/ai/providers",
-    requirePerm("site.settings"),
+    requirePerm("ai.manage"),
     h(async (req, res) => {
       const b = req.body || {};
       const kind = str(b.kind, { max: 20, field: "kind" });
@@ -1155,7 +1155,7 @@ function createAdminRouter(deps) {
 
   router.put(
     "/api/admin/ai/providers/:id",
-    requirePerm("site.settings"),
+    requirePerm("ai.manage"),
     h(async (req, res) => {
       const c = await ai.loadConfig();
       const p = { ...findProvider(c, req.params.id) };
@@ -1182,7 +1182,7 @@ function createAdminRouter(deps) {
 
   router.delete(
     "/api/admin/ai/providers/:id",
-    requirePerm("site.settings"),
+    requirePerm("ai.manage"),
     h(async (req, res) => {
       const c = await ai.loadConfig();
       const p = findProvider(c, req.params.id);
@@ -1195,7 +1195,7 @@ function createAdminRouter(deps) {
 
   router.post(
     "/api/admin/ai/providers/:id/test",
-    requirePerm("site.settings"),
+    requirePerm("ai.manage"),
     h(async (req, res) => {
       const c = await ai.loadConfig();
       const p = { ...findProvider(c, req.params.id) };
@@ -1209,7 +1209,7 @@ function createAdminRouter(deps) {
 
   router.post(
     "/api/admin/ai/providers/:id/try",
-    requirePerm("site.settings"),
+    requirePerm("ai.manage"),
     h(async (req, res) => {
       const c = await ai.loadConfig();
       const p = findProvider(c, req.params.id);
@@ -1220,7 +1220,7 @@ function createAdminRouter(deps) {
 
   router.put(
     "/api/admin/ai/assignments",
-    requirePerm("site.settings"),
+    requirePerm("ai.manage"),
     h(async (req, res) => {
       const c = await ai.loadConfig();
       const b = req.body || {};
@@ -1277,13 +1277,13 @@ function createAdminRouter(deps) {
 
   router.get(
     "/api/admin/runners",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (_req, res) => res.json({ ok: true, ...(await runnerView()) })),
   );
 
   router.post(
     "/api/admin/runners",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const b = req.body || {};
       const url = runners.cleanUrl(str(b.url, { max: 300, field: "url" }));
@@ -1306,7 +1306,7 @@ function createAdminRouter(deps) {
 
   router.put(
     "/api/admin/runners/:id",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const list = await runners.loadRunners();
       const r = { ...findRunner(list, req.params.id) };
@@ -1334,7 +1334,7 @@ function createAdminRouter(deps) {
 
   router.post(
     "/api/admin/runners/:id/move",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const list = [...(await runners.loadRunners())];
       const i = list.findIndex((x) => x.id === req.params.id);
@@ -1348,7 +1348,7 @@ function createAdminRouter(deps) {
 
   router.delete(
     "/api/admin/runners/:id",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const list = await runners.loadRunners();
       const r = findRunner(list, req.params.id);
@@ -1360,7 +1360,7 @@ function createAdminRouter(deps) {
 
   router.post(
     "/api/admin/runners/:id/test",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const list = await runners.loadRunners();
       const r = { ...findRunner(list, req.params.id) };
@@ -1390,13 +1390,13 @@ function createAdminRouter(deps) {
 
   router.get(
     "/api/admin/compilers",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (_req, res) => res.json({ ok: true, ...(await compilers.view()) })),
   );
 
   router.put(
     "/api/admin/compilers/services/:id",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const id = req.params.id;
       if (!compilers.SERVICES.some((x) => x.id === id)) bad("No such service");
@@ -1410,7 +1410,7 @@ function createAdminRouter(deps) {
   // Keep the version in use (it will not be updated), or let the updater choose again.
   router.put(
     "/api/admin/compilers/pin",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const b = req.body || {};
       const engine = engineOf(b);
@@ -1427,7 +1427,7 @@ function createAdminRouter(deps) {
 
   router.post(
     "/api/admin/compilers/reset",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const b = req.body || {};
       const engine = engineOf(b);
@@ -1442,7 +1442,7 @@ function createAdminRouter(deps) {
   // the page asks again until it is done.
   router.post(
     "/api/admin/compilers/sync",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       if (!compilers.isSyncing()) {
         compilers.sync({ by: req.access.username }).catch(() => {});

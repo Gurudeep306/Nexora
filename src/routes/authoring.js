@@ -5,7 +5,7 @@ const authoring = require("../authoring");
 
 function createAuthoringRouter({ can, me, audit, invalidateCatalog }) {
   const router = express.Router();
-  const guard = (req, res, next) => (can(req, "problems.manage") ? next() : res.status(403).json({ ok: false, error: "You need the Problems permission" }));
+  const guard = (req, res, next) => (can(req, "problems.author") ? next() : res.status(403).json({ ok: false, error: "You need the Write problems permission" }));
   const fail = (res, e) => res.status(e.status || 500).json({ ok: false, error: e.message || String(e) });
   const h = (fn) => async (req, res) => {
     try {
