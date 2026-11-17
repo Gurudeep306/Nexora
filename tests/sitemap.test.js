@@ -109,7 +109,7 @@ test('a child is never more open than its parent; old flags still count', () => 
   assert.equal(eff.learn, 'visible');
   assert.equal(sitemap.effectiveModes({ site_parts: { social: 'visible' }, feature_flags: { social: false } }).social, 'visible', 'a Site map choice wins');
   assert.equal(sitemap.partForApi('/api/gate/notes/x').id, 'gate.notes', 'the most specific part');
-  assert.equal(sitemap.partForApi('/api/hosted/mine').id, 'contests');
+  assert.equal(sitemap.partForApi('/api/hosted/mine').id, 'contests.hosted', 'the most specific part');
   assert.equal(sitemap.partForApi('/api/user/login'), null);
 });
 
@@ -219,4 +219,29 @@ test('Hive: admins and the owner only — everyone else finds nothing, not even 
   assert.equal((await call('GET', '/api/hive/drive/tree', c[ADA])).status, 403, 'a hidden Hive part shuts for admins too');
   ok(await call('GET', '/api/hive/overview', c[ADA]), 'the rest of Hive stays open');
   ok(await call('PUT', '/api/admin/sitemap/hive.drive', c[OWNER], { mode: 'visible' }));
+});
+
+test('Admin sections and Social tabs are parts too; the owner can keep an Admin section to themselves', async () => {
+  for (const id of ['admin.users', 'admin.moderation', 'admin.audit', 'admin.staff', 'social.messages', 'social.rooms', 'contests.hosted']) assert.ok(sitemap.BY_ID.get(id), id);
+  assert.equal(sitemap.partForApi('/api/admin/reports').id, 'admin.moderation');
+  assert.equal(sitemap.partForApi('/api/chat/conversations').id, 'social.messages');
+  assert.ok(new RegExp(sitemap.BY_ID.get('social.messages').pages).test('/social?tab=messages'));
+  assert.ok(!new RegExp(sitemap.BY_ID.get('social.messages').pages).test('/social?tab=friends'));
+
+  ok(await call('GET', '/api/admin/reports', c[MOD]), 'moderators moderate');
+  ok(await call('PUT', '/api/admin/sitemap/admin.moderation', c[OWNER], { mode: 'hidden' }));
+  assert.equal((await call('GET', '/api/admin/reports', c[MOD])).status, 403, 'owner only now');
+  assert.equal((await call('GET', '/api/admin/me', c[MOD])).body.sections.moderation, 'none', 'and gone from their Admin');
+  ok(await call('GET', '/api/admin/reports', c[OWNER]));
+  ok(await call('PUT', '/api/admin/sitemap/admin.moderation', c[OWNER], { mode: 'visible' }));
+  ok(await call('GET', '/api/admin/reports', c[MOD]), 'back');
+
+  // A Social tab on its own: Messages staff only, the rest of Social open.
+  ok(await call('PUT', '/api/admin/sitemap/social.messages', c[OWNER], { mode: 'staff' }));
+  assert.equal((await call('GET', '/api/chat/unread', c[MEM])).status, 403);
+  ok(await call('GET', '/api/chat/unread', c[MOD]));
+  const st = await call('GET', '/api/site/status', c[MEM]);
+  assert.ok(st.body.parts.some((p) => p.id === 'social.messages'));
+  assert.equal(st.body.flags.social, true, 'Social itself stays on');
+  ok(await call('PUT', '/api/admin/sitemap/social.messages', c[OWNER], { mode: 'visible' }));
 });

@@ -29,7 +29,7 @@ export function AppLayout() {
   const { featureOn, blockedPart } = useSite()
   // Admin → Site map: parts hidden, staff only or coming soon for this viewer
   // (it says which); the older flag notice only when no part is known.
-  const partOff = blockedPart(location.pathname)
+  const partOff = blockedPart(location.pathname + location.search)
   const flag = featureForPath(location.pathname)
   const sectionOff = !partOff && flag && !featureOn(flag) ? flag : null
 

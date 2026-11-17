@@ -223,7 +223,7 @@ something pattern type or animated type, import from internet").
 
 ## 4. Site map (Admin → Site map) and Hive for admins only
 
-- **The tree** (`src/sitemap.js`): every part of the site (137 parts today):
+- **The tree** (`src/sitemap.js`): every part of the site (155 parts today):
   Home, Learn (every Learn subject from `content/nexus/*.json`, and the DSA
   course with every chapter from `client/src/learn/content/dsa/syllabus.ts`),
   Nexus, GATE CSE (Practice, Notes with every subject from
@@ -264,6 +264,24 @@ something pattern type or animated type, import from internet").
   flags, owner-only changes, soon / staff / hidden enforced, a notes subject
   hidden from pages, list and search, Hive admins-only), plus the client
   checks in `tests/admin.test.js`.
+
+## Site map, round 2: every sub-part, well structured (owner's ask)
+
+- **More parts:** each Admin section is its own part under Admin (Overview,
+  Users, Staff access, Moderation, Site, Site map, AI models, Code runners,
+  Problem sources, Add a problem, Announcements, Audit log), each Social tab
+  (Friends, Messages, Solve rooms, Leaderboard; matched on `?tab=`), and
+  Contests' "Make your own contest" and "Live classes". 155 parts today.
+- **Admin sections** have two choices: **Team** (staff with the permission,
+  as set in Staff access) or **Owner only**. `/api/admin/me` closes a section
+  kept to the owner for everyone else, and the server refuses its API.
+- **The screen:** grouped by area (Learning, Practice and contests,
+  Community, Your space, Admin, Hive); every part and sub-part open with its
+  own buttons; "Expand all" / "Collapse all"; a separate "Code" button per
+  part opens its files with "Open on GitHub".
+- In the app, closed Social tabs leave the tab row (`SocialPage`), and the
+  "switched off" reply still names the old flag (`flagOf`) so the app reads
+  it as before.
 
 ## Dependency audit (2026-11-17, owner's choice)
 
