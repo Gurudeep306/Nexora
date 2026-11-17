@@ -74,6 +74,11 @@ Contents:
     object one level deeper. Objects are now queued (`_hq`/`_drain` in
     `src/dryrun/python.js`), so a 20-node list is drawn whole (measured: C,
     C++, Java, JS, Go and Rust already drew all 20).
+  - **Python 3.12 changed traced programs**: reading `f_locals` at module
+    level inside an inlined list comprehension set its loop variables to None
+    (a CPython 3.12 bug; 3.13 is fine), so `[(i, j) for …]` produced
+    `(None, 2)`. The tracer reads the module's globals there instead. CI runs
+    Python 3.12; the regression test runs on every Python installed.
   - **Accessibility**: a grid wider than the stage scrolls sideways; it is now
     a focusable, named region (axe `scrollable-region-focusable`).
   - **Tests**: `tests/dryrun-frames.test.js` (+6: grid columns, stack top /

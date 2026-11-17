@@ -106,7 +106,11 @@ def _vars(fr):
     prev = _last.setdefault(k, {})
     heap = {}
     cur = {}
-    for name, v in list(fr.f_locals.items()):
+    # Module level, locals are the globals dict: read it directly. Reading
+    # f_locals there in Python 3.12 sets an inlined comprehension's loop
+    # variables to None (a CPython 3.12 bug), changing the program's results.
+    loc = fr.f_globals if fr.f_code.co_name == "<module>" else fr.f_locals
+    for name, v in list(loc.items()):
         if _skip(name, v): continue
         sv = _ser(v, heap)
         if sv is None and v is not None: continue
