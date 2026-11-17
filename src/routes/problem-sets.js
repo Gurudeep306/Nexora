@@ -257,6 +257,9 @@ function createProblemSetsRouter({ me, can }) {
       const solved = await solvedSet();
       const lib = tab === "series" ? library.library().series : library.library().companies;
       const built = lib.filter(matches).map((s) => libCard(s, tab, catalog, solved)).filter((c) => c.count > 0);
+      // A stored set with a built-in set's title (e.g. an older seed of "Blind 75") would show twice.
+      const titles = new Set(lib.map((s) => s.title.toLowerCase()));
+      sets = sets.filter((s) => !titles.has(s.title.toLowerCase()));
       const cses = tab === "series" ? await csesCard() : null;
       sets = [...(cses && matches(cses) ? [cses] : []), ...built, ...sets];
     }
