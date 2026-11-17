@@ -29,6 +29,9 @@ const CHECK_MS = Number(process.env.CATALOG_CHECK_MS ?? (IS_TEST ? 0 : 5000));
 const FALLBACK_TTL_MS = 10 * 60 * 1000;
 const SNAPSHOT_PART = 400 * 1024; // base64 chars per snapshot row
 const COLUMNS = ["id", "platform", "problem_id", "title", "url", "rating", "tags", "category"];
+// The snapshot also keeps each problem's topic ids (src/topics.js), read from
+// problem_topics, so a cold start needs neither table.
+const SNAP_COLUMNS = [...COLUMNS, "topics"];
 
 const PROBLEM_WRITE =
   /^\s*(?:INSERT(?:\s+OR\s+\w+)?\s+INTO|REPLACE\s+INTO|UPDATE(?:\s+OR\s+\w+)?|DELETE\s+FROM|DROP\s+TABLE(?:\s+IF\s+EXISTS)?|ALTER\s+TABLE)\s+["`]?problems["`]?(?![\w])/i;
@@ -104,8 +107,8 @@ async function readSnapshot(version) {
 
 async function writeSnapshot(rows, version) {
   if (version == null) return;
-  const data = rows.map((r) => COLUMNS.map((c) => r[c]));
-  const b64 = zlib.gzipSync(JSON.stringify({ columns: COLUMNS, data }), { level: 9 }).toString("base64");
+  const data = rows.map((r) => SNAP_COLUMNS.map((c) => r[c] ?? null));
+  const b64 = zlib.gzipSync(JSON.stringify({ columns: SNAP_COLUMNS, data }), { level: 9 }).toString("base64");
   const stmts = [["DELETE FROM catalog_snapshot"]];
   for (let i = 0, part = 0; i < b64.length; i += SNAPSHOT_PART, part++) {
     stmts.push(["INSERT INTO catalog_snapshot(part, version, data) VALUES(?,?,?)", [part, version, b64.slice(i, i + SNAPSHOT_PART)]]);
@@ -120,6 +123,14 @@ async function load() {
     // An unpublished NexoraGuru problem keeps its row (submissions point at it) but leaves the catalog.
     // (Filtered here, not in SQL: this one full read stays the plain query tests/db-usage.test.js allows.)
     rows = (await all(`SELECT ${COLUMNS.join(", ")} FROM problems ORDER BY id`)).filter((r) => r.category !== "__hidden");
+    // Each problem's topic ids (src/topics.js), from their own table: one read
+    // only when the catalog is rebuilt, never per request.
+    try {
+      const byRow = new Map((await all("SELECT problem_rowid, ids FROM problem_topics")).map((t) => [t.problem_rowid, t.ids]));
+      for (const r of rows) r.topics = byRow.get(r.id) || "[]";
+    } catch {
+      for (const r of rows) r.topics = "[]";
+    }
     // Best effort: the next cold start (any process) reads ~5 rows instead.
     writeSnapshot(rows, version).catch((e) => console.warn("[catalog] snapshot write failed:", e.message));
   }
@@ -167,6 +178,19 @@ async function getCatalog() {
 /** Drop the cached catalog (tests). */
 function invalidateCatalog() {
   localVersion++;
+}
+
+/**
+ * Something the catalog shows changed outside `problems` (topics): bump the
+ * stored version (so every process reloads) and this process's own.
+ */
+async function bumpVersion() {
+  localVersion++;
+  try {
+    await runBatch([["UPDATE catalog_meta SET v = v + 1 WHERE k = 'problems'"]]);
+  } catch {
+    /* a bare test database has no version table: the local bump is enough */
+  }
 }
 
 /** Memoise a value derived from one catalog version. */
@@ -231,9 +255,9 @@ const ge = (a, b) => a != null && b != null && a >= b;
 const le = (a, b) => a != null && b != null && a <= b;
 
 /** Cache key for a filter set (NaN kept distinct from "no filter"). */
-function filterKey({ platform, minRating, maxRating, tag, search, exclude } = {}) {
+function filterKey({ platform, minRating, maxRating, tag, search, exclude, topics, searchTopic } = {}) {
   const n = (v) => (v == null ? "" : Number.isNaN(v) ? "NaN" : String(v));
-  return [platform || "", n(minRating), n(maxRating), tag || "", search || "", exclude && exclude.size ? [...exclude].sort().join(",") : ""].join("");
+  return [platform || "", n(minRating), n(maxRating), tag || "", search || "", exclude && exclude.size ? [...exclude].sort().join(",") : "", topics && topics.length ? [...topics].sort().join(",") : "", searchTopic || ""].join("");
 }
 
 /**
@@ -241,8 +265,12 @@ function filterKey({ platform, minRating, maxRating, tag, search, exclude } = {}
  * per-user status filter). `minRating`/`maxRating` are numbers (NaN = SQL
  * NULL, which matches nothing), `tag`/`search` are raw LIKE needles.
  */
-function filterIndices(catalog, { platform, minRating, maxRating, tag, search, exclude } = {}) {
-  const key = filterKey({ platform, minRating, maxRating, tag, search, exclude });
+function filterIndices(catalog, { platform, minRating, maxRating, tag, search, exclude, topics, searchTopic } = {}) {
+  const key = filterKey({ platform, minRating, maxRating, tag, search, exclude, topics, searchTopic });
+  // Topics (src/topics.js): every chosen topic id must be on the problem.
+  const needTopics = topics && topics.length ? topics.map((id) => `"${id}"`) : null;
+  // A search that is a topic's whole name ("graphs") also finds that topic's problems.
+  const orTopic = searchTopic ? `"${searchTopic}"` : null;
   return memo(catalog, `f:${key}`, () => {
     const tagLike = tag ? likeMatcher(`%${tag}%`) : null;
     const searchLike = search ? likeMatcher(`%${search}%`) : null;
@@ -257,7 +285,8 @@ function filterIndices(catalog, { platform, minRating, maxRating, tag, search, e
       if (minR != null && (Number.isNaN(minR) || !ge(num(r.rating), minR))) continue;
       if (maxR != null && (Number.isNaN(maxR) || !le(num(r.rating), maxR))) continue;
       if (tagLike && !tagLike(r.tags)) continue;
-      if (searchLike && !searchLike(r.title) && !searchLike(r.problem_id)) continue;
+      if (searchLike && !searchLike(r.title) && !searchLike(r.problem_id) && !(orTopic && r.topics && r.topics.includes(orTopic))) continue;
+      if (needTopics && !(r.topics && needTopics.every((t) => r.topics.includes(t)))) continue;
       out.push(i);
     }
     return out;
@@ -339,6 +368,7 @@ function byId(catalog, id) {
 }
 
 module.exports = {
+  bumpVersion,
   PROBLEM_WRITE,
   byId,
   filterIndices,

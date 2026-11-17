@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { Chip, Failed, Panel, Skeleton, Toggle } from './kit'
 import { ago } from './format'
 import { SourceGaps } from './SourceGaps'
+import { SourceTopics } from './SourceTopics'
 
 type TestReport = {
   at: string
@@ -166,6 +167,8 @@ export function SourcesSection() {
       </Panel>
 
       <SourceGaps />
+
+      <SourceTopics />
     </div>
   )
 }

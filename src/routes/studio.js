@@ -749,6 +749,8 @@ function createStudioRouter(deps) {
           ]);
         }
       }
+      // New title, tags or statement: its topics again (a staff correction is kept).
+      if (metaFields.length || statement != null) await require('../topics').classifyProblem(Number(req.params.id)).catch((e) => console.warn('[topics]', e.message));
       res.json({ ok: true });
     } catch (e) {
       res.status(500).json({ ok: false, error: errMessage(e) });
