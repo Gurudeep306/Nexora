@@ -1,6 +1,6 @@
 import { Swords } from 'lucide-react'
 import { Card, CardContent, SearchCombobox, Select, type ComboboxItem } from '@/components/ui'
-import { PLATFORM_OPTIONS } from '@/components/problems/types'
+import { useSources } from '@/lib/sources'
 import { useProblemSuggestions } from '@/hooks/useProblemSuggestions'
 import { DAY_RANGES, VERDICT_OPTIONS } from './types'
 
@@ -21,6 +21,7 @@ export function SubmissionsFilters({
   languages: string[]
   onChange: (patch: Partial<SubmissionFilterState>) => void
 }) {
+  const sources = useSources()
   const { problems, loading } = useProblemSuggestions(filters.search)
   const items: ComboboxItem[] = problems.map((p) => ({
     id: `problem:${p.id}`,
@@ -60,9 +61,10 @@ export function SubmissionsFilters({
           aria-label="Filter by platform"
         >
           <option value="all">All platforms</option>
-          {PLATFORM_OPTIONS.map((p) => (
-            <option key={p} value={p}>
-              {p}
+          {/* Only the sources an admin has switched on, with their names. */}
+          {sources.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.label}
             </option>
           ))}
         </Select>

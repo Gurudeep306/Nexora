@@ -4,7 +4,7 @@
    see the signed-in student's own progress. */
 const { get, all } = require("../db");
 const { me, meSql } = require("../context");
-const { getCatalog, likeMatcher } = require("../problem-catalog");
+const { getCatalog, getOpenCatalog, likeMatcher } = require("../problem-catalog");
 
 /** The current user's progress as Map(problem id -> status), by index. */
 async function myStatuses() {
@@ -54,7 +54,7 @@ const slimProblem = (p) => ({
 // Problem lookups run against the in-memory catalog (src/problem-catalog.js):
 // the LIKE/ORDER BY queries they replace walked large parts of `problems`.
 async function searchProblems({ query, tags, minRating, maxRating, platform, status, limit } = {}) {
-  const [catalog, statuses] = await Promise.all([getCatalog(), myStatuses()]);
+  const [catalog, statuses] = await Promise.all([getOpenCatalog(), myStatuses()]);
   const plat = platform && platform !== "all" ? String(platform) : null;
   const min = Number.isFinite(+minRating) && minRating !== null && minRating !== "" ? +minRating : null;
   const max = Number.isFinite(+maxRating) && maxRating !== null && maxRating !== "" ? +maxRating : null;
@@ -153,7 +153,7 @@ async function weaknessAnalysis({ recommend = true } = {}) {
     .sort((a, b) => a.solveRate - b.solveRate);
   const recommendations = [];
   if (recommend) {
-    const [catalog, statuses] = await Promise.all([getCatalog(), myStatuses()]);
+    const [catalog, statuses] = await Promise.all([getOpenCatalog(), myStatuses()]);
     for (const wt of analysis.filter((a) => a.solveRate < 70).slice(0, 5)) {
       const m = likeMatcher(`%${wt.tag}%`);
       const probs = catalog.rows
@@ -175,7 +175,7 @@ async function recommendProblems({ tag, count } = {}) {
      WHERE pr.username=${meSql()} AND pr.status='solved' AND p.rating>0`,
   );
   const target = Math.round((avg?.r || 1000) / 100) * 100;
-  const [catalog, statuses] = await Promise.all([getCatalog(), myStatuses()]);
+  const [catalog, statuses] = await Promise.all([getOpenCatalog(), myStatuses()]);
   const m = tag ? likeMatcher(`%${String(tag).slice(0, 40)}%`) : null;
   const pool = catalog.rows.filter(
     (p) => statuses.get(p.id) !== "solved" && p.rating != null && p.rating >= target - 100 && p.rating <= target + 300 && (!m || m(p.tags)),

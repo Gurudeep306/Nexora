@@ -331,11 +331,13 @@ function createAiAssistRouter({ get, all, run, aiLimiter }) {
     try {
       const query = String(req.body?.query || "").trim().slice(0, 500);
       if (!query) return res.status(400).json({ ok: false, error: "Describe what you want to practice first" });
-      const platforms = Array.isArray(req.body?.platforms) ? req.body.platforms.map(String) : [];
+      // Sources an admin switched off are never searched, whatever the request lists.
+      const off = await require("./sources").disabledPlatforms();
+      const platforms = (Array.isArray(req.body?.platforms) ? req.body.platforms.map(String) : []).filter((p) => !off.has(p));
       const vocab = Array.isArray(req.body?.tags) ? req.body.tags.map(String) : [];
       const want = Math.min(Math.max(+(req.body?.limit || 12) || 12, 1), 24);
 
-      const cacheKey = crypto.createHash("sha1").update(`${meSql()}::${want}::${query.toLowerCase()}`).digest("hex");
+      const cacheKey = crypto.createHash("sha1").update(`${meSql()}::${want}::${query.toLowerCase()}::${[...off].sort().join(",")}`).digest("hex");
       const cached = findCache.get(cacheKey);
       if (cached) return res.json({ ok: true, ...cached, cached: true });
 
@@ -376,6 +378,10 @@ function createAiAssistRouter({ get, all, run, aiLimiter }) {
 
       const where = ["1=1"];
       const whereParams = [];
+      if (off.size) {
+        where.push(`p.platform NOT IN (${[...off].map(() => "?").join(",")})`);
+        whereParams.push(...off);
+      }
       if (platform !== "all") {
         where.push("p.platform=?");
         whereParams.push(platform);

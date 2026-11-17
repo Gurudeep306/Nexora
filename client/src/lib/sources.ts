@@ -35,7 +35,9 @@ function load(): Promise<SiteSource[]> {
 
 /** The problem sources an admin has switched on, with the names they gave them. */
 export function useSources(): SiteSource[] {
-  const [list, setList] = useState<SiteSource[]>(cache ?? FALLBACK)
+  // Empty until the server answers, so a source an admin switched off never
+  // flashes in a dropdown; the built-in list is only for when the server can't be reached.
+  const [list, setList] = useState<SiteSource[]>(cache ?? [])
   useEffect(() => {
     let alive = true
     void load().then((l) => alive && setList(l))

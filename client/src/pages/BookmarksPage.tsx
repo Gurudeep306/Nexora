@@ -20,7 +20,7 @@ import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { useAuth } from '@/context/AuthContext'
-import { PLATFORM_OPTIONS } from '@/components/problems/types'
+import { useSources } from '@/lib/sources'
 import { BookmarkCard } from '@/components/library/BookmarkCard'
 import type { BookmarkedProblem, BookmarksResponse } from '@/components/library/types'
 
@@ -30,6 +30,7 @@ export default function BookmarksPage() {
   const { user } = useAuth()
   const username = user?.username ?? ''
   const toast = useToast()
+  const sources = useSources()
   const navigate = useNavigate()
 
   const [search, setSearch] = useState('')
@@ -156,9 +157,9 @@ export default function BookmarksPage() {
               aria-label="Filter by platform"
             >
               <option value="all">All platforms</option>
-              {PLATFORM_OPTIONS.map((p) => (
-                <option key={p} value={p}>
-                  {p}
+              {sources.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.label}
                 </option>
               ))}
             </Select>

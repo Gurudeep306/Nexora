@@ -362,12 +362,44 @@ function randomPick(catalog, minR, maxR) {
 }
 
 /** Catalog row by id (or undefined). */
+/**
+ * The catalog students see: the same rows without sources an admin switched
+ * off (Admin → Problem sources). Every student-facing search, pick and count
+ * reads this, so a source that is off shows nowhere (Problems, search, the
+ * daily challenge, recommendations, practice lists, the assistant). Built
+ * once per catalog version and on/off set, then shared like the catalog.
+ */
+async function getOpenCatalog() {
+  const catalog = await getCatalog();
+  const off = await require("./sources").disabledPlatforms();
+  if (!off.size) return catalog;
+  const key = `open:${[...off].sort().join(",")}`;
+  if (!catalog.memo.has(key)) {
+    const keep = [];
+    catalog.rows.forEach((r, i) => {
+      if (!off.has(r.platform)) keep.push(i);
+    });
+    const rows = keep.map((i) => catalog.rows[i]);
+    catalog.memo.set(key, {
+      ...catalog,
+      rows,
+      lowerTags: keep.map((i) => catalog.lowerTags[i]),
+      byId: new Map(rows.map((r, i) => [r.id, i])),
+      pools: new Map(),
+      memo: new Map(),
+      open: true,
+    });
+  }
+  return catalog.memo.get(key);
+}
+
 function byId(catalog, id) {
   const i = catalog.byId.get(Number(id));
   return i == null ? undefined : catalog.rows[i];
 }
 
 module.exports = {
+  getOpenCatalog,
   bumpVersion,
   PROBLEM_WRITE,
   byId,
