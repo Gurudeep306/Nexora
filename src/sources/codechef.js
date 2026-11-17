@@ -132,6 +132,8 @@ module.exports = {
   origin: ORIGIN,
   math: "dollar",
   kind: "stdin",
+  // CodeChef publishes a time limit per problem, but no memory limit.
+  publishes: { memoryLimit: false },
   description: "CodeChef practice problems with their difficulty ratings and tags.",
   list,
   statement,

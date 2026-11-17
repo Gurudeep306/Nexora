@@ -77,8 +77,7 @@ Contents:
   the inline lens, the Result tab (and a "What it means" box when the runner
   gives no line), and the status bar ("1 issue · Ln 4: Missing ;").
   Tests: `tests/diagnostics.test.js`.
-- **A3, coding analysis and levels — this PR** (branch
-  `claude/fervent-curie-vjgcd8`):
+- **A3, coding analysis and levels — merged (#137):**
   - **"+XP" on Accepted**: `POST /api/judge` returns `xp: { gainedXp,
     firstSolve, before, after, solved }` (both levels from the same
     `calcLevel` the Profile uses). The Result tab shows `XpGain`
@@ -105,10 +104,38 @@ Contents:
   - Accessibility fixes found on the way: the "Original" link's name now
     starts with its visible word; the problem's scroll area is focusable.
   - Tests: `tests/coding-analysis.test.js`.
+- **B, problem pipeline — this PR** (branch `claude/fervent-curie-vjgcd8`):
+  - **Images are ours, never hot-linked**: `normalizeStatementHtml`
+    (`src/statement-media.js`) now points every judge image, video and
+    poster at `/api/imgproxy`, which answers from the stored copy
+    (`src/media-store.js`); only hosts we may not fetch keep a direct link.
+    `_saveStatement` stores a statement's media at once, from absolute URLs
+    (relative ones like `/predownloaded/…` were missed before).
+  - **"What is missing"** (`src/sources/audit.js`, Admin → Problem sources,
+    `node scripts/problems-audit.js [--json | --gaps <source> <field>]`): per
+    source, statements not fetched, samples, limits, tags, rating, images not
+    stored. A field the judge does not publish is "n/a", never a gap (no
+    rated problem → ratings n/a; answer-only → no samples; modules declare
+    the rest with `publishes`: CodeChef has no memory limit, UVa statements
+    are PDFs). Click a number to see the problems; re-import up to 25, 1.5 s
+    apart (`POST /api/problem-sources/reimport`), or store their images.
+  - **Honest fetching**: the old scraper's desktop-Chrome User-Agent and
+    Chrome's anti-detection flag are gone; every fetch says who we are. A bot
+    check is reported ("blocks automated access"), never worked around.
+  - **Codeforces titles**: the list now asks for `lang=en` (a live sync
+    stored Russian titles without it).
+  - **Live run, 2026-11-17** (all sources synced in the demo through the
+    proxy): Codeforces 11,526, CodeChef 5,781, AtCoder 9,959, LeetCode 3,324,
+    CSES 400, Project Euler 1,019, DMOJ 5,274, Timus 1,243, Kattis 100, UVa
+    5,009. SPOJ's list and DMOJ's problem pages are behind a bot check (stay
+    missing). Re-importing 2 problems per source: 18 of 20 saved (the 2 DMOJ
+    ones blocked); every Euler and Kattis figure stored and served by us.
+  - Tests: `tests/sources-audit.test.js`; `tests/statement-media.test.js`
+    now checks that judge media is served by us (it checked hot-linking).
 - **Lost work, rebuilt from the plan:** session 6 built B (problem pipeline)
   and A3 (coding analysis + XP) in helper worktrees on its own machine and
   never pushed them. They are not recoverable here and are rebuilt next.
-- **Next, in order:** B, A2 (editor: live syntax check, Format,
+- **Next, in order:** A2 (editor: live syntax check, Format,
   cheat sheet, Playwright), C, D, E, F, the rest of item 4 (JS async/sort
   tracing, C pointers into arrays, linked-list pointer lanes).
 - **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and
