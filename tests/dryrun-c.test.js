@@ -236,3 +236,20 @@ int main(void) {
   assert.deepEqual(find(qStep, 'array', 'b').pointers, { q: 1 }, 'a pointer into a malloc block, named after b');
   assert.ok(Array.isArray(events.find((e) => e.e === 'line' && e.v && e.v.b)?.v.b.i), 'b (used with []) is still drawn as an array');
 });
+
+test('C: a vector of 100 is drawn in part and says "first 40 of 100"', async () => {
+  const { frames } = await trace('#include <stdio.h>\nint main(void) {\n    int a[100];\n    for (int i = 0; i < 100; i++) a[i] = i;\n    printf("%d\\n", a[99]);\n    return 0;\n}\n');
+  const arr = [...frames].reverse().map((f) => find(f, 'array', 'a')).find(Boolean);
+  assert.ok(arr, 'the array is drawn');
+  assert.equal(arr.cells.length, 40);
+  assert.match(arr.label, /first 40 of 100/);
+});
+
+test('C: a 2D array filled with more rows than are drawn says "first 20 of 21 rows", not "rows set"', async () => {
+  const { frames } = await trace('#include <stdio.h>\nint main(void) {\n    int dp[21][2];\n    for (int i = 0; i < 21; i++)\n        for (int j = 0; j < 2; j++) dp[i][j] = i + j;\n    printf("%d\\n", dp[20][1]);\n    return 0;\n}\n');
+  const grid = [...frames].reverse().map((f) => find(f, 'grid', 'dp')).find(Boolean);
+  assert.ok(grid, 'the grid is drawn');
+  assert.match(grid.label, /first 20 of 21 rows/);
+  assert.doesNotMatch(grid.label, /columns/, 'both columns fit');
+  assert.doesNotMatch(grid.label, /set/);
+});

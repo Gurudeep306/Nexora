@@ -164,3 +164,11 @@ test('C++ macros are expanded line for line, so rep(i, 0, n) is a real loop', as
   assert.equal(stdout, '3');
   assert.ok(frames.some((f) => f.line === 5 && /i/.test(JSON.stringify(f.structures))), 'the loop variable is seen');
 });
+
+test('C++: a vector of 100 is drawn in part and says "first 40 of 100"', async () => {
+  const { frames } = await trace('#include <bits/stdc++.h>\nusing namespace std;\nint main() {\n    vector<int> a(100);\n    iota(a.begin(), a.end(), 0);\n    cout << a.size() << endl;\n}\n');
+  const arr = [...frames].reverse().map((f) => find(f, 'array', 'a')).find(Boolean);
+  assert.ok(arr, 'the array is drawn');
+  assert.equal(arr.cells.length, 40);
+  assert.match(arr.label, /first 40 of 100/);
+});

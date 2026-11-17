@@ -276,3 +276,11 @@ console.log('started');
   const loadRet = events.find((e) => e.e === 'ret' && events.find((c) => c.e === 'call' && c.f === 'load' && c.k === e.k));
   assert.deepEqual(loadRet.r.i, [0, 1, 4], 'and returns its list');
 });
+
+test('JavaScript: a vector of 100 is drawn in part and says "first 40 of 100"', async () => {
+  const { frames } = await trace('const a = Array.from({ length: 100 }, (_, i) => i);\nconsole.log(a.length);\n');
+  const arr = [...frames].reverse().map((f) => find(f, 'array', 'a')).find(Boolean);
+  assert.ok(arr, 'the array is drawn');
+  assert.equal(arr.cells.length, 40);
+  assert.match(arr.label, /first 40 of 100/);
+});

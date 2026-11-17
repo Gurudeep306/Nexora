@@ -96,3 +96,11 @@ test('recorded Kotlin collections: stack, queue, map, linked list, grid and recu
   const calls = fr[fr.length - 1].structures.find((s) => s.id === 'recursion');
   assert.ok(calls.nodes.some((n) => n.v === 'fib(6)'));
 });
+
+test('Kotlin: a list of 100 (recorded from a real run) is drawn in part and says "first 40 of 100"', () => {
+  const { frames: fr } = frames('big');
+  const arr = [...fr].reverse().map((f) => find(f, 'array', 'a')).find(Boolean);
+  assert.ok(arr, 'the array is drawn');
+  assert.equal(arr.cells.length, 40);
+  assert.match(arr.label, /first 40 of 100/);
+});

@@ -55,8 +55,37 @@ Contents:
 - `git add -A` also picks up helper worktrees under `.claude/worktrees/`.
   Add that folder to `.git/info/exclude` first.
 
-## 3. Where it stands (2026-11-17, session 8)
+## 3. Where it stands (2026-11-17, session 9)
 
+- **Session 9 — "first k of N" (this PR, branch `claude/fervent-curie-vjgcd8`):**
+  - One note for anything the dry run draws in part (`capNote` in
+    `client/src/components/solve/dryrun/toFrames.ts`): arrays "first 40 of
+    100", stacks "top 40 of 60" (a stack shows its top), queues "first 40 of
+    49", grids "first 20 of 30 rows · first 20 of 25 columns" (columns were
+    cut silently), linked lists "first 30 of 45 nodes" ("of 300+" when the
+    list goes on past what the trace carries), heaps drawn as trees and
+    union-find forests "first 31 of 50 items", edge lists "first 60 of 66
+    edges", adjacency lists "one node shows only the first 80 neighbours".
+    Nothing that fits whole carries a note. Maps already said "and N more".
+  - **C/C++ "set" wording**: an array (or grid) whose drawn cells are all set
+    said "40 of 100 set" even when all 100 were set; now "first 40 of 100".
+    "k of N set" stays for arrays only partly written.
+  - **Python linked lists stopped 7 nodes deep**: the tracer nested each
+    object one level deeper. Objects are now queued (`_hq`/`_drain` in
+    `src/dryrun/python.js`), so a 20-node list is drawn whole (measured: C,
+    C++, Java, JS, Go and Rust already drew all 20).
+  - **Accessibility**: a grid wider than the stage scrolls sideways; it is now
+    a focusable, named region (axe `scrollable-region-focusable`).
+  - **Tests**: `tests/dryrun-frames.test.js` (+6: grid columns, stack top /
+    queue front, 20-node list whole, 50-node list "first 30 of 50", heap /
+    union-find / edge list, nothing whole has a note); a 100-item vector in
+    every traced language (C, C++, Java, JS, Go, Rust run here; C#, Kotlin,
+    Swift replay new traces recorded from real runs:
+    `tests/fixtures/dryrun-{csharp,kotlin,swift}-big.json`); a C 2D array
+    test. `npm test`: 698 passed.
+  - **Checked on the real Solve page** (demo, Learn problem, Python):
+    "STACK · TOP 40 OF 60", "GRID · FIRST 20 OF 25 COLUMNS", "HEAD · FIRST
+    30 OF 45 NODES" in light, dark and phone; axe 0; no sideways scroll.
 - **Session 8 in one line:** everything asked for is merged and live —
   A1 #136, A3 #137, B #138, A2 #139, C #140, D Messages #141, E Contests
   #142, dry-run polish #143, F linked platforms #144, "How it runs" tab #145.
@@ -885,7 +914,7 @@ by analyzing what to place where to make it look the best and show case best
     show calls and values, no boxes, and say so on screen.
 - Add each language to `TRACERS` and `DRY_RUN_LANGS`.
 
-### 4. Dry run polish (smaller, can go with item 3) — DONE (session 8) except the "first k of N" label
+### 4. Dry run polish (smaller, can go with item 3) — DONE (sessions 8 and 9)
 
 - **Swift and C# structs** show as one line of text (`UF(p: [0, 0, 2, 3])`):
   draw their fields (as objects without identity) so a union-find's array
