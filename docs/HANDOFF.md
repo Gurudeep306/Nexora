@@ -250,13 +250,71 @@ Contents:
     - a reply's quote shows code as "[code]", not raw ``` marks
       (`quoteText` in `chat/types.ts`);
     - day and "New messages" lines are plain list items (axe "list").
+- **D, Messages — merged (#141).**
+- **E, Contests — PR opened (session 8), merged by the agent once CI is green.**
+  - **Server**: `src/contests.js` (rules, pure and tested) + `src/routes/hosted-contests.js`
+    (`/api/hosted/*`). It keeps `custom_contests` (old contests still work; their
+    Workshop problem list becomes items once) and adds `contest_items`
+    (kind `problem` | `workshop` | `gate` | `question`, ref, marks),
+    `contest_questions` (the host's own MCQ/MSQ/NAT: text with $maths$,
+    options, answer, marks, negative marks, up to 6 figures, solution),
+    `contest_responses` (the paper, graded once) and `contest_runs` (coding
+    runs counted by `/api/judge` when it gets `contest_id`). New columns:
+    `custom_contests.status/settings/updated_at`,
+    `contest_participants.started_at/ends_at/finished_at/paper_at`,
+    `custom_problems.editorial/contest_only` (added in `src/db.js`).
+  - **Rules**: anyone signed in can host (staff with `contests.manage` can
+    manage any). Timing "fixed" (everyone together) or "window" (open until a
+    close time; each person gets the duration from Start). Access by link,
+    or link + password. Marks list live / after the end / only the host
+    (teacher mode). Answers and solutions after the end, or after each person
+    finishes. Questions are fixed once anyone has started. Coding: marks per
+    solve, ties by minutes to solve + penalty per wrong try before Accepted
+    (compile errors free). Past-paper MCQs: GATE's −1/3, scaled to the
+    contest's marks (can be turned off). A problem written for a contest
+    (`contest_only`) is hidden from the Workshop list, and opens only for its
+    author, staff, and people in one of its contests once their time starts.
+  - **Host's analysis** (`/contests/:id/results`): marks list with every
+    question's marks, highest/average/median/lowest; by question (right, tried,
+    average marks, average time, the options picked with the right one in
+    green, how well it separates the top 27% from the bottom 27%); by student
+    (every answer, time, coding runs); over time (right/wrong per slice, how
+    long people took); CSV export (Excel-safe: no formulas, BOM).
+  - **Client**: `pages/contests/` — `HostedBuilderPage` (`/contests/new`,
+    `/contests/:id/edit`: Questions / Timing & rules / Share & publish),
+    `HostedContestPage` (`/contests/c/:code`: join, clock, questions, marks
+    list), `HostedPaperPage` (`/contests/:id/paper`: the GATE exam console
+    with the contest's deadline, then the review), `HostedResultsPage`.
+    `components/contests/hosted/` (api, pickers, `AddToContest`,
+    `QuestionEditor`, `ContestBar`, `HostedSection`, `useLoaded`, hosted.css).
+    **From anywhere**: "Add to a contest" in the Solve page's ⋯ menu and on
+    every gradable GATE question (trophy icon); Contests page "Hosted on
+    NexoraGuru" (New contest, Join with a code); the Workshop's contests tab.
+    The Solve page with `?contest=ID` shows a bar with the clock and counts
+    every Submit there. The Workshop problem form has an Editorial field.
+  - **Shared console fixes** (`gate/cbt/CbtConsole.tsx`): a `deadline` prop
+    (the clock never passes it, reloads included); the console is a modal
+    dialog with no second `<header>`/`<main>` (axe landmark rules), one label
+    darker. GATE mock exams pass too.
+  - **Honest limits**: GATE past-paper questions and their answers are public
+    on the site, so the builder says to write your own questions for a graded
+    test. Run (not Submit) never counts. No proctoring.
+  - **Checked**: `tests/contests.test.js` (8) and `tests/contests-routes.test.js`
+    (7); `npm test` 673 passed. On the demo with real runners: a class test
+    with a coding problem written for it, a GATE question and three own
+    questions; Ravi's WA and Asha's AC counted; both papers graded. Axe 0 and
+    no sideways scroll in light, dark and phone on: Contests, the builder
+    (3 tabs, question editor open, GATE picker), the lobby, the contest page
+    (host and student), the paper (console instructions, the exam, the
+    review), results (4 tabs), the Solve page with the contest bar, and
+    "Add to a contest" from a problem and a GATE question.
 - **Owner asked (2026-11-17) where "How it runs" went**: since the Solve
   redesign it is Dry run tab → "Under the hood". Offered: its own tab again,
   or a top-bar button. Waiting for the owner's choice.
 - **Lost work, rebuilt from the plan:** session 6 built B (problem pipeline)
   and A3 (coding analysis + XP) in helper worktrees on its own machine and
   never pushed them. They are not recoverable here and are rebuilt next.
-- **Next, in order:** E (contests), F (linked platforms), then
+- **Next, in order:** F (linked platforms), then
   the rest of item 4 (JS async/sort tracing, C pointers into arrays,
   linked-list pointer lanes).
 - **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and
@@ -825,14 +883,14 @@ by analyzing what to place where to make it look the best and show case best
   publishing.
 - Preview as a student.
 
-**D. Social** (`src/routes/social.js`, `client/src/components/social/*`) — BUILT (session 7, see section 3; PR still to open)
+**D. Social** (`src/routes/social.js`, `client/src/components/social/*`) — DONE (#141)
 
 - DMs, and groups (create, invite, roles).
 - Typing indicator, read receipts, attachments, reactions, search.
 - Rich share cards for problems, solutions, contests and GATE questions.
 
 **E. Contests** (`/api/contests/*`, `client/src/components/contests/*`,
-`pages/WorkshopPage.tsx`)
+`pages/WorkshopPage.tsx`) — DONE (session 8, see section 3)
 
 - Make a contest from anywhere: pick questions and timeline, share a link.
 - Custom questions with every feature:

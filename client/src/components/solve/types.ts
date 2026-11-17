@@ -148,6 +148,8 @@ export interface JudgeResponse {
   message?: string
   /** On Accepted: the XP this solve earned and the level before and after. */
   xp?: XpReport
+  /** Sent with contest_id: whether this run counted in that hosted contest. */
+  contest?: { counted: boolean; reason?: string; contestId?: number; item?: number }
 }
 
 export interface LevelState {

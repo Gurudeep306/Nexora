@@ -51,7 +51,15 @@ function createHostedContestsRouter({ gate, hashPassword, verifyPassword }) {
 
   /* ── what each item is ── */
 
-  const stripMd = (s) => String(s || "").replace(/\$+[^$]*\$+/g, "…").replace(/[#*_`>[\]()!]/g, "").replace(/\s+/g, " ").trim();
+  // One plain line: display maths becomes "…", inline maths keeps its symbols ($n = 6$ → n = 6).
+  const stripMd = (s) =>
+    String(s || "")
+      .replace(/\$\$[\s\S]*?\$\$/g, "…")
+      .replace(/\$([^$\n]*)\$/g, (_m, x) => x.replace(/\\[a-z]+/gi, "").replace(/[{}^_]/g, ""))
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+      .replace(/[#*_`>[\]()!]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
   async function describe(items, questions, { forHost }) {
     const probIds = items.filter((i) => i.kind === "problem").map((i) => Number(i.ref));
     const wsIds = items.filter((i) => i.kind === "workshop").map((i) => Number(i.ref));
@@ -78,7 +86,7 @@ function createHostedContestsRouter({ gate, hashPassword, verifyPassword }) {
       return {
         ...base,
         title: q ? stripMd(q.text).slice(0, 120) || "Untitled question" : "A question that was removed",
-        source: "Your question",
+        source: "",
         type: q?.type || null,
         missing: !q,
         ...(forHost && q ? { question: q, problems: C.questionProblems(q) } : {}),
