@@ -14,6 +14,8 @@ const LandingPage = lazy(pageLoaders.LandingPage)
 const HubPage = lazy(pageLoaders.HubPage)
 const SubjectPage = lazy(pageLoaders.SubjectPage)
 const ProblemsPage = lazy(pageLoaders.ProblemsPage)
+const ProblemSetsPage = lazy(pageLoaders.ProblemSetsPage)
+const ProblemSetPage = lazy(pageLoaders.ProblemSetPage)
 const SolvePage = lazy(pageLoaders.SolvePage)
 const ContestsPage = lazy(pageLoaders.ContestsPage)
 const HostedBuilderPage = lazy(pageLoaders.HostedBuilderPage)
@@ -107,6 +109,9 @@ export default function App() {
           <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
             <Route path="/hub" element={<HubPage />} />
             <Route path="/problems" element={<ProblemsPage />} />
+            <Route path="/problems/sets" element={<ProblemSetsPage />} />
+            <Route path="/problems/sets/company/:company" element={<ProblemSetPage />} />
+            <Route path="/problems/sets/:id" element={<ProblemSetPage />} />
             <Route path="/solve/custom/:id" element={<SolvePage custom />} />
             <Route path="/solve/learn/:id" element={<SolvePage learn />} />
             <Route path="/solve/:id" element={<SolvePage />} />

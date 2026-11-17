@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Dices } from 'lucide-react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Dices, ListChecks } from 'lucide-react'
 import {
   Button,
+  buttonVariants,
   EmptyState,
   ErrorState,
   LoadingBlock,
@@ -283,9 +284,14 @@ export default function ProblemsPage() {
         title="Problems"
         subtitle="Problems from Codeforces, CodeChef, AtCoder, LeetCode, CSES and more, in one place. Filter, bookmark and solve them here."
         actions={
-          <Button variant="ghost" size="sm" loading={rolling} onClick={() => void surpriseMe()}>
-            {!rolling && <Dices aria-hidden="true" />} Surprise me
-          </Button>
+          <span className="flex items-center gap-1">
+            <Link to="/problems/sets" className={buttonVariants({ variant: 'ghost', size: 'sm' })}>
+              <ListChecks aria-hidden="true" /> Problem sets
+            </Link>
+            <Button variant="ghost" size="sm" loading={rolling} onClick={() => void surpriseMe()}>
+              {!rolling && <Dices aria-hidden="true" />} Surprise me
+            </Button>
+          </span>
         }
       />
 
