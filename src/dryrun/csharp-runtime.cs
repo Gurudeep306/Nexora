@@ -182,18 +182,22 @@ static class __Nx {
         }
         if (UserType(t)) {
             if (t.IsValueType) {
-                // A small record (a struct): its fields, the language's way.
-                var sb = new System.Text.StringBuilder("{");
+                // A struct: its fields, inline (a value has no identity to link to).
+                if (depth > 6) return false;
+                w.Append("{\"t\":\"rec\",\"c\":");
+                Str(w, t.Name);
+                w.Append(",\"f\":{");
                 bool first = true;
                 foreach (var f in t.GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)) {
-                    if (!first) sb.Append(", ");
+                    var fv = new System.Text.StringBuilder();
+                    try { if (!Ser(fv, f.GetValue(v), depth + 1)) continue; } catch { continue; }
+                    if (!first) w.Append(',');
                     first = false;
-                    sb.Append(f.Name).Append(": ").Append(System.Convert.ToString(f.GetValue(v), System.Globalization.CultureInfo.InvariantCulture));
+                    // An auto-property's field (<Val>k__BackingField) goes by the property's name.
+                    Str(w, f.Name.StartsWith("<") ? f.Name.Substring(1, f.Name.IndexOf('>') - 1) : f.Name);
+                    w.Append(':').Append(fv);
                 }
-                sb.Append('}');
-                w.Append("{\"t\":\"str\",\"s\":");
-                Str(w, sb.ToString());
-                w.Append('}');
+                w.Append("}}");
                 return true;
             }
             return Ref(w, v);

@@ -126,3 +126,12 @@ test('dry run: each runner gets a trace sized to its output limit, in every lang
   const own = 'int main(){ long long x = 1500000; return 0; }';
   assert.match(withBudget('cpp', await TRACERS.cpp.wrap(own), 8500), /x = 1500000/);
 });
+
+test('a JVM crash inside the sandbox itself is the runner’s fault, a crash in the student’s code is not', () => {
+  const { jvmSandboxFault } = require('../src/remote-exec');
+  const sandbox = 'Exception in thread "main" java.lang.StackOverflowError\n\tat java.base/java.lang.String.startsWith(String.java:2386)\n\tat java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:528)';
+  assert.equal(jvmSandboxFault({ stderr: sandbox }), true);
+  const student = 'Exception in thread "main" java.lang.StackOverflowError\n\tat FileKt.dfs(File.kt:3)\n\tat FileKt.dfs(File.kt:3)';
+  assert.equal(jvmSandboxFault({ stderr: student }), false, 'deep recursion in the student’s code stays their error');
+  assert.equal(jvmSandboxFault({ stderr: 'Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException\n\tat java.base/x.y(Z.java:1)' }), false);
+});
