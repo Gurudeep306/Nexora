@@ -40,7 +40,7 @@ const SESSION_WITH_USER_SQL = `SELECT s.sess, s.expires,
 // Writes that change who is signed in or what they may do: drop every cached
 // session (they are cheap to re-read; these writes are rare).
 const ACCESS_WRITE = [
-  /\b(user_permissions|user_bans)\b/i,
+  /\b(user_permissions|user_bans|staff_section_access)\b/i,
   /^\s*DELETE\s+FROM\s+["`]?(users|sessions)["`]?\b/i,
   /^\s*(?:INSERT|REPLACE)\b[\s\S]*?\bINTO\s+["`]?users["`]?\s*\(/i,
   /^\s*UPDATE(?:\s+OR\s+\w+)?\s+["`]?users["`]?\s+SET\b[\s\S]*\b(role|verified|username)\s*=/i,
@@ -141,7 +141,7 @@ class DbSessionStore extends session.Store {
           this.userRows.set(sid, {
             username: row.sess_user,
             row: row.user_found
-              ? { role: row.role, verified: row.verified, perms: row.perms, ban: row.ban }
+              ? { role: row.role, verified: row.verified, perms: row.perms, sections: row.sections, ban: row.ban }
               : null,
             at: Date.now(),
           });
@@ -153,7 +153,7 @@ class DbSessionStore extends session.Store {
   }
 
   /**
-   * The `users` access row (`{ role, verified, perms, ban }`, or null when
+   * The `users` access row (`{ role, verified, perms, sections, ban }`, or null when
    * the account no longer exists) read alongside this request's session, if it was for `username`
    * and is only moments old. Consumed on read; undefined when unavailable.
    */
