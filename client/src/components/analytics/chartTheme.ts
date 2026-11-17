@@ -6,6 +6,8 @@ export interface ChartColors {
   cyan: string;
   accent: string;
   success: string;
+  /** The site's error colour (state-error): wrong answers, failures. */
+  error: string;
   warning: string;
   info: string;
   gold: string;
@@ -23,6 +25,7 @@ const FALLBACK: ChartColors = {
   cyan: "#22d3ee",
   accent: "#f43f5e",
   success: "#34d399",
+  error: "#ef4444",
   warning: "#fbbf24",
   info: "#38bdf8",
   gold: "#facc15",
@@ -50,6 +53,7 @@ export function useChartColors(): ChartColors {
         cyan: get("--color-cyan", FALLBACK.cyan),
         accent: get("--color-accent", FALLBACK.accent),
         success: get("--color-success", FALLBACK.success),
+        error: get("--color-state-error", FALLBACK.error),
         warning: get("--color-warning", FALLBACK.warning),
         info: get("--color-info", FALLBACK.info),
         gold: get("--color-gold", FALLBACK.gold),

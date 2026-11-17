@@ -62,6 +62,8 @@ export interface PerformanceResponse {
   hardestSolved: { id: number; title: string; problem_id: string; platform: string; rating: number; attempts: number; solved_at: string }[]
   mostAttempted: { id: number; title: string; problem_id: string; platform: string; rating: number; attempts: number; solve_status: string }[]
   firstSolves: { bracket: string; firstDate: string; firstTitle: string }[]
+  /** Twelve weeks of verdicts, oldest first, each week named by its Monday. */
+  verdictTrend?: { week: string; AC: number; WA: number; TLE: number; RE: number; CE: number; other: number; total: number }[]
 }
 
 export interface WeaknessResponse {

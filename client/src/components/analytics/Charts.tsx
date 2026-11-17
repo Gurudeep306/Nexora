@@ -184,6 +184,55 @@ export function WeeklyProgressChart({
   )
 }
 
+/* ── verdicts week by week: are wrong answers getting rarer? ── */
+
+export function VerdictTrendChart({
+  data,
+  c,
+}: {
+  data: { week: string; AC: number; WA: number; TLE: number; RE: number; CE: number; other: number; total: number }[]
+  c: ChartColors
+}) {
+  const rows = data.map((d) => ({
+    ...d,
+    label: new Date(`${d.week}T00:00:00Z`).toLocaleDateString(undefined, { day: 'numeric', month: 'short', timeZone: 'UTC' }),
+  }))
+  const quiet = rows.every((w) => w.total === 0)
+  const series: [keyof (typeof rows)[number], string, string][] = [
+    ['AC', 'Accepted', c.success],
+    ['WA', 'Wrong answer', c.error],
+    ['TLE', 'Too slow', c.warning],
+    ['RE', 'Crashed', c.info],
+    ['CE', "Didn't compile", c.dim],
+    ['other', 'Other', c.faint],
+  ]
+  const recent = rows.slice(-4).reduce((a, w) => ({ ac: a.ac + w.AC, all: a.all + w.total }), { ac: 0, all: 0 })
+  const earlier = rows.slice(0, 8).reduce((a, w) => ({ ac: a.ac + w.AC, all: a.all + w.total }), { ac: 0, all: 0 })
+  const rate = (x: { ac: number; all: number }) => (x.all ? Math.round((x.ac / x.all) * 100) : null)
+  const now = rate(recent)
+  const before = rate(earlier)
+  const sub =
+    now !== null && before !== null
+      ? `Accepted ${now}% of submissions in the last 4 weeks (${before}% in the 8 before)`
+      : 'Every submission, week by week (last 12 weeks)'
+  return (
+    <ChartFrame title="Verdicts over time" sub={sub} empty={quiet} emptyText="No submissions in the last 12 weeks." height={230}>
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={rows} margin={{ top: 8, right: 0, bottom: 0, left: -18 }}>
+          <CartesianGrid stroke={c.border} strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="label" {...axisProps(c)} minTickGap={12} />
+          <YAxis {...axisProps(c)} allowDecimals={false} width={40} />
+          <Tooltip {...tooltipStyle} cursor={{ fill: `${c.primary}18` }} />
+          <Legend wrapperStyle={{ fontSize: 11, color: c.dim, fontFamily: 'var(--font-body)' }} />
+          {series.map(([key, name, fill]) => (
+            <Bar key={key} dataKey={key} name={name} stackId="v" fill={fill} animationDuration={500} />
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
+    </ChartFrame>
+  )
+}
+
 /* ── difficulty distribution ── */
 
 const TIER_COLORS = (c: ChartColors): Record<string, string> => ({
@@ -256,7 +305,7 @@ export function PlatformDonut({ data, c }: { data: { platform: string; count: nu
 export function VerdictDonut({ data, c }: { data: { verdict: string; count: number }[]; c: ChartColors }) {
   const vc: Record<string, string> = {
     AC: c.success,
-    WA: c.accent,
+    WA: c.error,
     TLE: c.warning,
     RE: c.info,
     CE: c.dim,
