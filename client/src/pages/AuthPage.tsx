@@ -363,11 +363,13 @@ export default function AuthPage() {
       } else {
         const u = await register(username.trim(), email.trim(), password)
         rememberAccount({ username: u?.username ?? username.trim(), name: typeof u?.display_name === "string" ? u.display_name : null, avatar: typeof u?.avatar === "string" ? u.avatar : null, avatarUrl: typeof u?.avatar_url === "string" ? u.avatar_url : null })
-        toast.success('Welcome to NexoraGuru', 'Your account is ready, with an avatar picked for you. Choose another any time in Settings.')
+        toast.success('Welcome to NexoraGuru', 'Your account is ready.')
       }
       if (!oauthPending) writeLast('password')
       setSuccess(true)
-      window.setTimeout(() => navigate(from, { replace: true }), reduce ? 0 : 1100)
+      // A new account gets the short, optional "Make it yours" step first.
+      const created = mode === 'register'
+      window.setTimeout(() => (created ? navigate('/welcome', { replace: true, state: { next: from } }) : navigate(from, { replace: true })), reduce ? 0 : 1100)
     } catch (err) {
       setHolding(false)
       fail(err instanceof ApiError ? err.message : 'Something went wrong — try again')

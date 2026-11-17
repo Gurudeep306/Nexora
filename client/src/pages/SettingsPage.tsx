@@ -8,7 +8,7 @@ import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { useAuth } from '@/context/AuthContext'
 import { ProfileForm } from '@/components/account/ProfileForm'
-import { AvatarCard } from '@/components/account/AvatarCard'
+import { PictureCard } from '@/components/account/PictureCard'
 import { PasswordForm } from '@/components/account/PasswordForm'
 import { HandlesForm } from '@/components/account/HandlesForm'
 import { LinkedAccounts } from '@/components/account/LinkedAccounts'
@@ -160,7 +160,7 @@ export default function SettingsPage() {
               <div id="settings-account" className="sb-part">
                 {part('account')}
                 <div className="sb-stack">
-                  <AvatarCard user={profileUser} />
+                  <PictureCard user={profileUser} />
                   <ProfileForm user={profileUser} />
                   <PasswordForm user={profileUser} />
                 </div>

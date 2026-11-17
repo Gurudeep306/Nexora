@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { Check, Globe2, ImagePlus, Loader2, Lock, MapPin, Plus, X } from 'lucide-react'
 import { Avatar, Button, Input, Modal, Textarea, useToast } from '@/components/ui'
 import { UserBadges } from '@/components/shared/UserBadges'
@@ -9,6 +8,9 @@ import { errorText, uploadImage } from '@/components/social/feed/lib'
 import { RichText } from '@/components/social/feed/RichText'
 import type { AccentKey, ProfileLink, PublicProfile } from '@/components/social/feed/types'
 import { ACCENTS, COVERS, COVER_IDS, CoverArt } from './covers'
+import { AvatarChooser, type Picture } from '@/components/account/AvatarChooser'
+import { formatAvatar, resolveAvatarId } from '@/lib/avatar'
+import { useAuth } from '@/context/AuthContext'
 
 type Draft = Pick<PublicProfile, 'display_name' | 'bio' | 'pronouns' | 'location' | 'website' | 'links' | 'cover' | 'accent' | 'visibility'>
 
@@ -26,6 +28,11 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
     accent: profile.accent,
     visibility: profile.visibility,
   })
+  const { refresh } = useAuth()
+  const startPicture: Picture = { avatar: resolveAvatarId(profile.avatar, profile.username), photo: profile.avatar_url || null }
+  const [pic, setPic] = useState<Picture>(startPicture)
+  const [picBusy, setPicBusy] = useState(false)
+  const picChanged = pic.avatar !== startPicture.avatar || pic.photo !== startPicture.photo
   const [busy, setBusy] = useState(false)
   const [uploading, setUploading] = useState(false)
   const file = useRef<HTMLInputElement>(null)
@@ -34,7 +41,13 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
   const save = async () => {
     setBusy(true)
     try {
-      await api.put('/api/profiles/me', { ...d, links: d.links.filter((l) => l.url.trim()) })
+      await api.put('/api/profiles/me', {
+        ...d,
+        links: d.links.filter((l) => l.url.trim()),
+        ...(picChanged ? { avatar: formatAvatar(pic.avatar), avatar_url: pic.photo ?? '' } : {}),
+      })
+      // The top bar and menus show the new picture straight away.
+      if (picChanged) await refresh()
       toast.success('Profile updated')
       onSaved()
       onClose()
@@ -63,6 +76,10 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         {/* Form */}
         <div className="order-2 space-y-5 lg:order-1">
+          <Group title="Picture">
+            <AvatarChooser username={profile.username} value={pic} onChange={setPic} onBusy={setPicBusy} />
+          </Group>
+
           <Group title="Cover">
             <div className="grid grid-cols-4 gap-2">
               {COVER_IDS.map((id) => (
@@ -167,13 +184,6 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
               ))}
             </div>
           </Group>
-          <p className="text-xs text-text-muted">
-            Change your photo or avatar in{' '}
-            <Link to="/settings" className="text-accent-brand underline decoration-accent-brand/40 underline-offset-2 hover:decoration-accent-brand" onClick={onClose}>
-              Settings
-            </Link>
-            .
-          </p>
         </div>
 
         {/* Live preview */}
@@ -183,7 +193,7 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
             <CoverArt cover={d.cover} className="h-24" />
             <div className="px-4 pb-4">
               <div className="-mt-8 inline-flex rounded-full p-[3px]" style={{ background: accent }}>
-                <Avatar seed={profile.username} avatar={profile.avatar} src={profile.avatar_url} name={name} size="xl" ring={false} className="rounded-full ring-2 ring-bg-surface" />
+                <Avatar seed={profile.username} avatar={formatAvatar(pic.avatar)} src={pic.photo} name={name} size="xl" ring={false} className="rounded-full ring-2 ring-bg-surface" />
               </div>
               <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                 <span className="font-display text-base font-semibold text-text-primary">{name}</span>
@@ -213,7 +223,7 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
         <Button variant="ghost" onClick={onClose}>
           Cancel
         </Button>
-        <Button onClick={() => void save()} loading={busy}>
+        <Button onClick={() => void save()} loading={busy} disabled={picBusy}>
           Save profile
         </Button>
       </div>

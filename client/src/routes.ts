@@ -54,6 +54,7 @@ export const pageLoaders = {
   BookmarksPage: () => import('@/pages/BookmarksPage'),
   ProfilePage: () => import('@/pages/ProfilePage'),
   SettingsPage: () => import('@/pages/SettingsPage'),
+  WelcomePage: () => import('@/pages/WelcomePage'),
   ThemeCentrePage: () => import('@/pages/ThemeCentrePage'),
   NotFoundPage: () => import('@/pages/NotFoundPage'),
   AdminPage: () => import('@/pages/AdminPage'),

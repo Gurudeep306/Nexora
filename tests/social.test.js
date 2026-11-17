@@ -308,6 +308,32 @@ test('rate limits: posting is capped per user', async () => {
   ok(await call('POST', '/api/social/posts', c[BEN], { body: 'others unaffected' }));
 });
 
+test('profiles: the picture is saved with Edit profile', async () => {
+  const { AVATAR_SET_IDS } = require('../src/avatar-set');
+  const pick = `set:${AVATAR_SET_IDS[2]}`;
+  // A tiny PNG, staged: stored, but not used until the form is saved.
+  const png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+  const up = await call('POST', '/api/user/avatar', c[EVE], { username: EVE, image: png, stage: true });
+  ok(up, 'staged upload');
+  assert.equal(up.body.staged, true);
+  assert.match(up.body.avatar_url, new RegExp(`^/uploads/${EVE}_\\d+\\.png$`));
+  let st = await call('GET', '/api/auth/status', c[EVE]);
+  assert.equal(st.body.user.avatar_url, null, 'a staged photo is not used yet');
+  // Saving uses it; only a photo this account uploaded is accepted.
+  assert.equal((await call('PUT', '/api/profiles/me', c[EVE], { avatar_url: `/uploads/${FAY}_123.png` })).status, 400, "someone else's photo");
+  assert.equal((await call('PUT', '/api/profiles/me', c[EVE], { avatar_url: 'https://evil.example/a.png' })).status, 400);
+  assert.equal((await call('PUT', '/api/profiles/me', c[EVE], { avatar: 'set:not-real' })).status, 400, 'unknown avatar');
+  ok(await call('PUT', '/api/profiles/me', c[EVE], { avatar: pick, avatar_url: up.body.avatar_url }));
+  st = await call('GET', '/api/auth/status', c[EVE]);
+  assert.equal(st.body.user.avatar_url, up.body.avatar_url, 'the session shows it at once');
+  assert.equal(st.body.user.avatar, pick);
+  // "" removes the photo; the chosen avatar shows.
+  ok(await call('PUT', '/api/profiles/me', c[EVE], { avatar_url: '' }));
+  const p = await call('GET', `/api/profiles/${EVE}`, c[DAN]);
+  assert.equal(p.body.profile.avatar_url ?? null, null);
+  assert.equal(p.body.profile.avatar, pick);
+});
+
 test('profiles: editing, validation, pins and the showcase', async () => {
   assert.equal((await call('PUT', '/api/profiles/me', c[ANA], { links: [{ label: 'x', url: 'javascript:alert(1)' }] })).status, 400, 'no javascript: links');
   assert.equal((await call('PUT', '/api/profiles/me', c[ANA], { cover: 'https://evil.example/c.png' })).status, 400);

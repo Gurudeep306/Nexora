@@ -1,0 +1,246 @@
+/* "Make it yours" (pages/WelcomePage.tsx): the Field Journal look. Paper,
+   hairlines, serif headings, one clay action; no shadows, glows or gradients. */
+
+.wl {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+.wl-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px clamp(16px, 4vw, 40px);
+  border-bottom: 1px solid var(--ed-line);
+  font-family: var(--ed-sans);
+}
+.wl-skip {
+  font-size: 0.875rem;
+  color: var(--ed-ink-2);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 6px 2px;
+}
+.wl-main {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: clamp(24px, 5vw, 56px) clamp(16px, 4vw, 40px) 48px;
+}
+.wl-head {
+  max-width: 40rem;
+  display: grid;
+  gap: 12px;
+}
+.wl-grid {
+  margin-top: 32px;
+  display: grid;
+  gap: 32px;
+}
+@media (min-width: 900px) {
+  .wl-grid {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    align-items: start;
+  }
+  .wl-card {
+    position: sticky;
+    top: 24px;
+  }
+}
+.wl-form {
+  min-width: 0;
+  font-family: var(--ed-sans);
+}
+.wl-part {
+  padding: 24px 0;
+  border-top: 1px solid var(--ed-line);
+}
+.wl-part:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.wl-part-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0 0 16px;
+  font-family: var(--ed-serif);
+  font-size: 1.375rem;
+  font-weight: var(--kit-heading-weight, 400);
+  line-height: 1.2;
+  color: var(--ed-ink);
+}
+.wl-num {
+  min-width: 1.75rem;
+  font-family: var(--ed-serif);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--ed-muted);
+}
+.wl-field {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ed-ink);
+}
+.wl-focus {
+  display: grid;
+  gap: 10px;
+}
+@media (min-width: 560px) {
+  .wl-focus {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.wl-choice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  text-align: left;
+  padding: 14px 16px;
+  background: var(--ed-card);
+  border: 1px solid var(--ed-line);
+  border-radius: var(--kit-card-radius-sm, 16px);
+  color: var(--ed-ink);
+  cursor: pointer;
+  transition: border-color 250ms var(--ed-ease), background-color 250ms var(--ed-ease);
+}
+.wl-choice:hover {
+  border-color: var(--ed-line-strong);
+}
+.wl-choice.is-on {
+  border-color: var(--ed-ink);
+  outline: 1px solid var(--ed-ink);
+  outline-offset: -2px;
+}
+.wl-choice-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--ed-muted);
+}
+.wl-choice.is-on .wl-choice-icon {
+  color: var(--ed-ink);
+}
+.wl-choice-title {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+.wl-choice-text {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  color: var(--ed-ink-2);
+}
+.wl-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid var(--ed-line);
+}
+.wl-card {
+  padding: 24px;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 4px;
+}
+.wl-card-pic {
+  margin: 16px 0 12px;
+}
+.wl-card-name {
+  margin: 0;
+  font-family: var(--ed-serif);
+  font-size: 1.5rem;
+  line-height: 1.2;
+  color: var(--ed-ink);
+  overflow-wrap: anywhere;
+}
+.wl-card-handle {
+  margin: 0;
+  font-family: var(--ed-sans);
+  font-size: 0.875rem;
+  color: var(--ed-muted);
+  overflow-wrap: anywhere;
+}
+.wl-card-bio {
+  margin: 12px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--ed-line);
+  width: 100%;
+  font-family: var(--ed-prose, var(--ed-serif));
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--ed-ink-2);
+  overflow-wrap: anywhere;
+}
+.wl-card-bio.is-empty {
+  font-style: italic;
+  color: var(--ed-muted);
+}
+.wl-card-focus {
+  margin: 12px 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ed-sans);
+  font-size: 0.8125rem;
+  color: var(--ed-ink-2);
+}
+.wl-foot {
+  margin-top: 32px;
+  font-family: var(--ed-sans);
+  font-size: 0.875rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wl-choice {
+    transition: none;
+  }
+}
+
+/* On a phone the card comes first, so you see what you change. */
+@media (max-width: 899px) {
+  .wl-card {
+    order: -1;
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-items: start;
+    text-align: left;
+    column-gap: 16px;
+    row-gap: 2px;
+    padding: 16px;
+  }
+  .wl-card > .ed-label,
+  .wl-card-bio,
+  .wl-card-focus {
+    grid-column: 1 / -1;
+  }
+  .wl-card-pic {
+    grid-row: 2 / span 2;
+    margin: 8px 0 0;
+  }
+  .wl-card-pic :is(img, [role='img']) {
+    width: 4rem;
+    height: 4rem;
+  }
+  .wl-card-name {
+    align-self: end;
+    margin-top: 8px;
+    font-size: 1.25rem;
+  }
+  .wl-card-handle {
+    align-self: start;
+  }
+  .wl-card-bio {
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+}
