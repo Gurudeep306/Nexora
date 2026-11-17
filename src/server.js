@@ -6274,6 +6274,7 @@ io.on("connection", (socket) => {
   // Our own code runners (Admin → Code runners) join the judge's chain.
   require("./runners").startRefresh();
   require("./piston").setExtraServers(require("./runners").judgeServers);
+  require("./judge0").setServers(require("./runners").judge0Servers);
   // Public runners turned on/off and their compiler versions, kept up to date
   // by themselves every few hours (Admin → Code runners).
   await require("./compilers").load(true).catch(() => {});

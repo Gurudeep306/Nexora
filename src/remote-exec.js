@@ -33,6 +33,7 @@
 const https = require('https');
 const crypto = require('crypto');
 const { usesPiston, runPiston, pistonEngines, pistonIndex } = require('./piston');
+const { judge0Engines, judge0Index, runJudge0 } = require('./judge0');
 
 /* ────────────────────────── configuration ────────────────────────── */
 
@@ -172,7 +173,10 @@ const GODBOLT_PRIMARY = new Set(['csharp', 'swift', 'dart', 'fsharp', 'ocaml', '
 /** Every sandbox for a language, our own Piston servers first when they serve it. */
 function engineChain(lang) {
   const pub = publicChain(lang);
-  return usesPiston(lang) ? [...pistonEngines(process.env, lang), ...pub] : pub;
+  // Our own runners first (Piston, then Judge0 — self-hosted or a Judge0
+  // Cloud key added in Admin → Code runners), then the free public ones.
+  const own = [...(usesPiston(lang) ? pistonEngines(process.env, lang) : []), ...judge0Engines(lang)];
+  return [...own, ...pub];
 }
 
 /** The first public sandbox for a language (Piston's fallback), or null. */
@@ -676,8 +680,21 @@ async function dispatch(code, input, lang, engine, budget, compiler) {
       if (r._pistonFailed) { delete r._pistonFailed; return { ...r, engine, _transient: true }; }
       return { ...r, engine };
     }
+    const j0 = judge0Index(engine);
+    if (j0 >= 0) {
+      const r = await runJudge0(code, input, lang, { server: j0, timeoutMs: Math.max(budget, 20000) });
+      // The runner is down, its key was refused or its plan is used up: next runner.
+      if (r._judge0Failed) { delete r._judge0Failed; return { ...r, engine, _transient: true }; }
+      return { ...r, engine };
+    }
     if (engine === 'wandbox') return await runWandbox(code, input, lang, budget, compiler);
-    if (engine === 'godbolt') return await runGodbolt(code, input, lang, budget, compiler);
+    if (engine === 'godbolt') {
+      const r = await runGodbolt(code, input, lang, budget, compiler);
+      // Seen 2026-11-16: Compiler Explorer's JVM overflows its own class loader
+      // when a Kotlin program reads input. Not the student's fault: next runner.
+      if (jvmSandboxFault(r)) return { ...r, stderr: 'Compiler Explorer could not run this JVM program (its sandbox failed while loading classes).', _transient: true };
+      return r;
+    }
     if (engine === 'paiza') return await runPaiza(code, input, lang, budget);
     return await runKotlin(code, input, budget, compiler);
   } catch (e) {
@@ -685,12 +702,23 @@ async function dispatch(code, input, lang, engine, budget, compiler) {
   }
 }
 
+/**
+ * A JVM crash that is the sandbox's, not the program's: a StackOverflowError
+ * whose every frame is inside the JDK (no class of the student's at all).
+ */
+function jvmSandboxFault(r) {
+  const err = String((r && r.stderr) || '');
+  if (!/StackOverflowError/.test(err)) return false;
+  const frames = err.split('\n').filter((l) => /^\s+at /.test(l));
+  return frames.length > 0 && frames.every((l) => /^\s+at (java\.base\/|jdk\.|sun\.|java\.)/.test(l));
+}
+
 /** Gentle per-sandbox limits, so a burst never hammers one free service. */
-const ENGINE_MAX = { wandbox: 12, godbolt: 6, kotlin: 6, paiza: 4, piston: 32 };
+const ENGINE_MAX = { wandbox: 12, godbolt: 6, kotlin: 6, paiza: 4, piston: 32, judge0: 8 };
 const engineActive = new Map();
 const engineWaiters = new Map();
 async function enterEngine(engine) {
-  const max = ENGINE_MAX[pistonIndex(engine) >= 0 ? 'piston' : engine] || 6;
+  const max = ENGINE_MAX[pistonIndex(engine) >= 0 ? 'piston' : judge0Index(engine) >= 0 ? 'judge0' : engine] || 6;
   const n = engineActive.get(engine) || 0;
   if (n < max) { engineActive.set(engine, n + 1); return; }
   await new Promise((resolve) => {
@@ -734,7 +762,7 @@ async function runChain(code, input, lang, chain, deadline = Date.now() + RUN_DE
         const isLast = i === order.length - 1 && round === 1;
         const left = deadline - Date.now();
         const budget = Math.max(1000, Math.min(isLast ? timeoutFor(lang) : FAILOVER_BUDGET, left));
-        r = await run(code, input, lang, engine, budget);
+        r = await run(typeof code === 'function' ? code(engine) : code, input, lang, engine, budget);
       } finally {
         leaveEngine(engine);
       }
@@ -781,8 +809,10 @@ async function remoteRun(code, input, lang, opts = {}) {
     };
   }
 
-  // One cache across sandboxes: any of them answering is the answer.
-  const key = cacheKey('any', lang, code, input);
+  // One cache across sandboxes: any of them answering is the answer. `code`
+  // may be a function of the runner (one copy per runner, as the dry run
+  // sends); its full-size copy names the cache entry.
+  const key = cacheKey('any', lang, typeof code === 'function' ? code(null) : code, input);
   if (!opts.noCache) {
     const hit = cacheGet(key);
     if (hit) return hit;
@@ -860,6 +890,7 @@ module.exports = {
   MAX_REMOTE_CONCURRENT,
   injectKotlinStdin,
   kotlinShimAt,
+  jvmSandboxFault,
   kotlinLine,
   WANDBOX_MAP,
   GODBOLT_MAP,
