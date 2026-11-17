@@ -271,3 +271,75 @@ test('the step note says exactly what changed in a list or a map', () => {
   assert.match(note(6), /cnt\["x"\] = 1/);
   assert.match(note(7), /cnt\["x"\]: 1 → 2/);
 });
+
+/* ── anything drawn in part says so ("first k of N") ── */
+
+test('a grid wider than it is drawn says how many columns', () => {
+  const frames = framesOf('grid = [[0] * 30 for _ in range(3)]\ngrid[0][0] = 1\n');
+  const g = find(frames[frames.length - 1], 'grid', 'grid');
+  assert.equal(g.rows[0].length, 20);
+  assert.match(g.label, /first 20 of 30 columns/);
+  assert.doesNotMatch(g.label, /rows/, 'all 3 rows fit, so rows are not mentioned');
+});
+
+test('a long stack shows its top, a long queue its front, and each says so', () => {
+  const st = find(framesOf('stack = []\nfor i in range(50):\n    stack.append(i)\nstack.pop()\n').at(-1), 'stack');
+  assert.match(st.label, /top 40 of 49/);
+  assert.equal(st.items.at(-1).v, 48, 'the top is drawn');
+  const q = find(framesOf('from collections import deque\nq = deque(range(50))\nq.popleft()\n').at(-1), 'queue');
+  assert.match(q.label, /first 40 of 49/);
+  assert.equal(q.items[0].v, 1, 'the front is drawn');
+});
+
+const NODES = (n) => `class Node:\n    def __init__(s, v, n=None):\n        s.val = v\n        s.next = n\nhead = None\nfor i in range(${n}):\n    head = Node(i, head)\nprint(1)\n`;
+test('a linked list of 20 is drawn whole (the tracer no longer stops 7 nodes deep)', () => {
+  const l = find(framesOf(NODES(20)).at(-1), 'list');
+  assert.equal(l.nodes.length, 20);
+  assert.doesNotMatch(l.label, /first/);
+});
+test('a linked list longer than is drawn says how many nodes it has', () => {
+  const l = find(framesOf(NODES(50)).at(-1), 'list');
+  assert.equal(l.nodes.length, 30);
+  assert.match(l.label, /first 30 of 50 nodes/);
+});
+
+test('heaps, union-find and edge lists drawn in part say so', () => {
+  const heap = framesOf('import heapq\nh = list(range(50, 0, -1))\nheapq.heapify(h)\nprint(h[0])\n').at(-1).structures.find((s) => s.kind === 'tree');
+  assert.match(heap.label, /first 31 of 50 items/);
+  const uf = framesOf('parent = list(range(40))\nparent[3] = 1\nprint(1)\n').at(-1).structures.find((s) => s.kind === 'tree');
+  assert.match(uf.label, /first 30 of 40 items/);
+  const g = framesOf('import itertools\nedges = list(itertools.combinations(range(12), 2))\nprint(len(edges))\n').at(-1).structures.find((s) => s.kind === 'graph');
+  assert.equal(g.edges.length, 60);
+  assert.match(g.label, /first 60 of 66 edges/);
+});
+
+test('nothing that fits whole carries a "first k of N" note', () => {
+  const f = framesOf('a = list(range(10))\nstack = [1, 2]\ngrid = [[1, 2], [3, 4]]\nprint(a)\n').at(-1);
+  for (const s of f.structures) assert.doesNotMatch(s.label ?? '', /first|top \d+ of/, `${s.kind} ${s.label}`);
+});
+
+test('tracing never changes what a program computes (a module-level comprehension on every Python here)', () => {
+  // CPython 3.12: reading f_locals at module level inside an inlined
+  // comprehension set its loop variables to None. The tracer reads the
+  // module's globals instead; this runs on each Python found.
+  const code = 'edges = [(i, j) for i in range(4) for j in range(i + 1, 4)]\nprint(edges)\n';
+  const want = '[(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]';
+  let tried = 0;
+  for (const py of ['python3', 'python3.11', 'python3.12', 'python3.13']) {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nx-py-'));
+    try {
+      fs.writeFileSync(path.join(dir, 'main.py'), wrapPython(code));
+      const r = spawnSync(py, [path.join(dir, 'main.py')], { encoding: 'utf8' });
+      if (r.error) continue; // not installed
+      tried++;
+      assert.equal(r.stdout.trim(), want, `${py}: the traced program prints the same`);
+      assert.doesNotMatch(r.stderr, /RuntimeWarning/, `${py}: no "assigning None" warning`);
+      const frames = toFrames(replay(parseTrace(r.stderr).events), code, r.stdout);
+      const g = frames.at(-1).structures.find((s) => s.kind === 'graph');
+      assert.ok(g && /edge list/.test(g.label), `${py}: drawn as an edge list`);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  }
+  assert.ok(tried > 0, 'at least one Python ran');
+});

@@ -123,3 +123,11 @@ test('Java instance methods see their fields (a DSU parent array inside find)', 
   const inFind = frames.find((f) => f.line === 4 && find(f, 'array', 'parent'));
   assert.deepEqual(find(inFind, 'array', 'parent').cells.map((c) => c.v), [1, 1, 2]);
 });
+
+test('Java: a vector of 100 is drawn in part and says "first 40 of 100"', async () => {
+  const { frames } = await trace('import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> a = new ArrayList<>();\n        for (int i = 0; i < 100; i++) a.add(i);\n        System.out.println(a.size());\n    }\n}\n');
+  const arr = [...frames].reverse().map((f) => find(f, 'array', 'a')).find(Boolean);
+  assert.ok(arr, 'the array is drawn');
+  assert.equal(arr.cells.length, 40);
+  assert.match(arr.label, /first 40 of 100/);
+});
