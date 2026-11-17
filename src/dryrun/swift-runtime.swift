@@ -174,7 +174,22 @@ enum __Nx {
                 if s.count <= 60 { str(&w, s); return true }
                 return false
             }
-            str(&w, String(describing: v))
+            if m.displayStyle == .enum { str(&w, String(describing: v)); return true }
+            // A struct: its fields, inline (a value has no identity to link to).
+            w += "{\"t\":\"rec\",\"c\":"
+            str(&w, String(describing: type(of: v)))
+            w += ",\"f\":{"
+            var first = true
+            for c in m.children {
+                guard let label = c.label, !label.hasPrefix("$"), !label.hasPrefix("_") else { continue }
+                var t = ""
+                if !ser(&t, c.value) { continue }
+                if !first { w += "," }
+                first = false
+                str(&w, label)
+                w += ":" + t
+            }
+            w += "}}"
             return true
         default:
             return false

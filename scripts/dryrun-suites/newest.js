@@ -73,7 +73,9 @@ function programs(lang) {
       const list = programs(lang);
       for (const p of list) {
         const plain = await R.runOn(p.code, p.input, lang, engine, best.id);
-        if (plain.verdict && plain.verdict !== 'OK') {
+        // A program written to crash (04_crash) must crash the same way traced.
+        const crashes = /crash/.test(p.name);
+        if (plain.verdict && plain.verdict !== 'OK' && !crashes) {
           fails.push(`${p.name}: the plain program fails on this version (${plain.verdict}: ${String(plain.stderr || '').split('\n')[0].slice(0, 120)})`);
           continue;
         }

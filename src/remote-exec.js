@@ -688,12 +688,29 @@ async function dispatch(code, input, lang, engine, budget, compiler) {
       return { ...r, engine };
     }
     if (engine === 'wandbox') return await runWandbox(code, input, lang, budget, compiler);
-    if (engine === 'godbolt') return await runGodbolt(code, input, lang, budget, compiler);
+    if (engine === 'godbolt') {
+      const r = await runGodbolt(code, input, lang, budget, compiler);
+      // Seen 2026-11-16: Compiler Explorer's JVM overflows its own class loader
+      // when a Kotlin program reads input. Not the student's fault: next runner.
+      if (jvmSandboxFault(r)) return { ...r, stderr: 'Compiler Explorer could not run this JVM program (its sandbox failed while loading classes).', _transient: true };
+      return r;
+    }
     if (engine === 'paiza') return await runPaiza(code, input, lang, budget);
     return await runKotlin(code, input, budget, compiler);
   } catch (e) {
     return { stdout: '', stderr: `Remote execution failed: ${e.message}`, exitCode: -1, timeMs: 0, verdict: 'RE', engine, _transient: true };
   }
+}
+
+/**
+ * A JVM crash that is the sandbox's, not the program's: a StackOverflowError
+ * whose every frame is inside the JDK (no class of the student's at all).
+ */
+function jvmSandboxFault(r) {
+  const err = String((r && r.stderr) || '');
+  if (!/StackOverflowError/.test(err)) return false;
+  const frames = err.split('\n').filter((l) => /^\s+at /.test(l));
+  return frames.length > 0 && frames.every((l) => /^\s+at (java\.base\/|jdk\.|sun\.|java\.)/.test(l));
 }
 
 /** Gentle per-sandbox limits, so a burst never hammers one free service. */
@@ -873,6 +890,7 @@ module.exports = {
   MAX_REMOTE_CONCURRENT,
   injectKotlinStdin,
   kotlinShimAt,
+  jvmSandboxFault,
   kotlinLine,
   WANDBOX_MAP,
   GODBOLT_MAP,

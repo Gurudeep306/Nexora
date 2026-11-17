@@ -47,6 +47,8 @@ type DictTV = Extract<TV, { t: 'dict' }>
 const isList = (v: TV | undefined): v is ListTV => isObj(v as TV) && ['list', 'tuple', 'set', 'deque'].includes((v as ListTV).t)
 const isDict = (v: TV | undefined): v is DictTV => isObj(v as TV) && (v as DictTV).t === 'dict'
 const isRef = (v: TV | undefined): v is { t: 'ref'; id: number } => isObj(v as TV) && (v as { t: string }).t === 'ref'
+/** A value record without identity (a Swift or C# struct): its class and fields, inline. */
+const isRec = (v: TV | undefined): v is { t: 'rec'; c: string; f: Record<string, TV> } => isObj(v as TV) && (v as { t: string }).t === 'rec'
 const isScalarTV = (v: TV) => !isObj(v) || ['big', 'num', 'str'].includes((v as { t: string }).t)
 
 /**
@@ -519,7 +521,7 @@ function heapTreeOf(key: string, name: string, v: ListTV, ctx: Ctx, oneBased = f
 }
 
 /** A union-find parent array as the forest it stands for. */
-function forestOf(key: string, name: string, v: ListTV, ctx: Ctx): TreeState | null {
+function forestOf(key: string, name: string, v: ListTV, ctx: Ctx, label = name): TreeState | null {
   const n = Math.min(v.i.length, MAX_NODES)
   const par = v.i.slice(0, n)
   if (!par.every((x) => typeof x === 'number' && Number.isInteger(x) && x >= 0 && x < v.i.length)) return null
@@ -535,7 +537,7 @@ function forestOf(key: string, name: string, v: ListTV, ctx: Ctx): TreeState | n
   for (const at of touched(name, ctx.line, ctx.ints)) if (at >= 0 && at < n) roles[`${key}:u${at}`] = 'active'
   const pointers: Record<string, string | null> = {}
   for (const [k, val] of ctx.ints) if (/^(x|y|a|b|u|v|i|j|node|rx|ry|ra|rb|px|py)$/.test(k) && val >= 0 && val < n) pointers[k] = `${key}:u${val}`
-  return { kind: 'tree', id: `${key}:forest`, label: `${name} as sets (each tree is one set; its root is the leader)`, nodes, roots, roles, pointers }
+  return { kind: 'tree', id: `${key}:forest`, label: `${label} as sets (each tree is one set; its root is the leader)`, nodes, roots, roles, pointers }
 }
 
 /** A square 0/1 (or weight) matrix named like a graph, as the graph it stands for. */
@@ -777,12 +779,12 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
     const stage: Structure[] = []
     const cards: Record<string, Scalar> = {}
 
-    const place = (f: CallFrame, global: boolean) => {
-      for (const name of f.order) {
-        const v = f.vars.get(name)
-        if (v === undefined) continue
-        const key = `${f.k}:${name}`
-        const label = global ? `${name} (main)` : name
+    /**
+     * Draw one variable. `name` drives the picture (pointers, stack or queue,
+     * union-find…); `cardName` names its card — a record's field is drawn as
+     * `uf.p` from the field `p`.
+     */
+    const drawOne = (name: string, v: TV, key: string, label: string, global: boolean, cardName = name, depth = 0): void => {
         if (isList(v)) {
           const allScalar = v.i.every(isScalarTV)
           const allLists = v.i.length > 0 && v.i.every((x) => isList(x))
@@ -798,7 +800,7 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
                 stage.push(grid)
               }
               stage.push(g)
-              continue
+              return
             }
           }
           if (allLists && v.i.every((x) => isList(x) && x.i.every(isScalarTV)) && !((queueish(facts, name, v) || stackish(facts, name) || heapish(facts, name)) && v.i.every((x) => isList(x) && x.i.length <= 3))) {
@@ -813,14 +815,14 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
             if (heapish(facts, name)) {
               const t = heapTreeOf(key, name, v, ctx)
               if (t) stage.push(t)
-            } else if (parentish(name) && allScalar) {
-              const t = forestOf(key, name, v, ctx)
+            } else if ((parentish(name) || (/^(p|pa|f|fa)$/i.test(name) && /\bfind\s*\(/i.test(facts.src))) && allScalar) {
+              const t = forestOf(key, name, v, ctx, label)
               if (t) stage.push(t)
             } else if (segish(name) && allScalar && v.i.length >= 3 && v.i.length <= 63) {
               const t = heapTreeOf(key, name, v, ctx, /\b(2\s*\*\s*\w+|\w+\s*\*\s*2|\w+\s*<<\s*1)\b/.test(facts.src) && !/2\s*\*\s*\w+\s*\+\s*2/.test(facts.src))
               if (t) stage.push(t)
             }
-          } else if (!global) cards[name] = show(v, s.heap)
+          } else if (!global) cards[cardName] = show(v, s.heap)
         } else if (isDict(v)) {
           const g = graphish(facts, name) && v.k.every(([, b]) => isList(b)) ? graphOf(key, label, v, ctx) : null
           if (g) stage.push(g)
@@ -835,13 +837,37 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
           }
         } else if (typeof v === 'string' && facts.index.has(name) && v.length <= MAX_CELLS) {
           stage.push(arrayOf(key, name, { t: 'list', n: v.length, i: [...v] }, ctx, `${label} · text`))
-        } else if (!global && typeof v === 'number' && Number.isInteger(v) && v >= 0 && maskish(name)) cards[name] = `${v} = 0b${v.toString(2)}`
-        else if (!global && !isRef(v)) cards[name] = scalar(v, s.heap)
-        else if (!global && isRef(v)) {
+        } else if (!global && typeof v === 'number' && Number.isInteger(v) && v >= 0 && maskish(name)) cards[cardName] = `${v} = 0b${v.toString(2)}`
+        else if (!global && !isRef(v)) cards[cardName] = scalar(v, s.heap)
+        else if (isRec(v)) record(cardName, v.c, v.f, key, label, global, depth)
+        else if (isRef(v)) {
           const o = s.heap.get(v.id)
           const structural = o && (LINK.some((l) => l in lf(o)) || 'left' in lf(o) || 'right' in lf(o) || ['children', 'child', 'kids', 'neighbors', 'neighbours', 'adj', 'edges'].some((f) => f in lf(o)))
-          if (o && !structural) cards[name] = `${o.c}(${Object.entries(o.f).slice(0, 4).map(([k, x]) => `${k}=${show(x, s.heap)}`).join(', ')})`
+          if (o && !structural) record(cardName, o.c, o.f, key, label, global, depth)
         }
+    }
+
+    /**
+     * A plain record (a struct, or an object with no links: a union-find, a
+     * point, a counter): its lists and maps are drawn as themselves, named
+     * `uf.p`, and its numbers as cards — not one line of text.
+     */
+    const record = (name: string, cls: string, fields: Record<string, TV>, key: string, label: string, global: boolean, depth: number) => {
+      const entries = Object.entries(fields)
+      const containers = entries.filter(([, x]) => isList(x) || isDict(x))
+      if (!containers.length || depth > 1) {
+        if (!global) cards[name] = `${cls}(${entries.slice(0, 4).map(([k, x]) => `${k}=${show(x, s.heap)}`).join(', ')})`
+        return
+      }
+      const base = label.replace(/ \(main\)$/, '')
+      for (const [k, x] of entries) drawOne(k, x, `${key}.${k}`, `${base}.${k}${global ? ' (main)' : ''}`, global, `${name}.${k}`, depth + 1)
+    }
+
+    const place = (f: CallFrame, global: boolean) => {
+      for (const name of f.order) {
+        const v = f.vars.get(name)
+        if (v === undefined) continue
+        drawOne(name, v, `${f.k}:${name}`, global ? `${name} (main)` : name, global)
       }
     }
 
@@ -927,13 +953,55 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
       side.push(out)
     }
 
-    frames.push({ step: `L${s.line}`, line: s.line, kind: s.kind, out: s.out, note: noteFor(s, lineText, top, changed, prev, cards, stage), structures: [...stage, ...side] })
+    frames.push({ step: `L${s.line}`, line: s.line, kind: s.kind, out: s.out, note: noteFor(s, lineText, top, changed, prev, cards, stage, before), structures: [...stage, ...side] })
   }
   return frames
 }
 
 /** One plain sentence for the step. */
-function noteFor(s: Snapshot, lineText: string, top: CallFrame, changed: string[], prev: Record<string, Scalar>, cards: Record<string, Scalar>, stage: Structure[]): string {
+/**
+ * What changed in a list or map, in the student's own terms: "a[1]: 4 → 2",
+ * "a[0] ↔ a[1]", "st gets 5", "q loses 3", "freq[x]: 1 → 2". Null when it is
+ * more than a simple change (then the note just says it changed).
+ */
+function whatChanged(n: string, b: TV | undefined, c: TV | undefined, heap: Map<number, HeapObj>): string | null {
+  const v = (x: TV) => show(x, heap)
+  if (isList(b) && isList(c)) {
+    const bi = b.i.map((x) => JSON.stringify(x))
+    const ci = c.i.map((x) => JSON.stringify(x))
+    if (c.n === b.n + 1) {
+      if (ci.slice(0, bi.length).join() === bi.join()) return `${n} gets ${v(c.i[c.i.length - 1])}`
+      if (ci.slice(1).join() === bi.join()) return `${n} gets ${v(c.i[0])} at the front`
+    }
+    if (c.n === b.n - 1) {
+      if (bi.slice(0, ci.length).join() === ci.join()) return `${n} loses ${v(b.i[b.i.length - 1])}`
+      if (bi.slice(1).join() === ci.join()) return `${n} loses ${v(b.i[0])} from the front`
+    }
+    if (c.n !== b.n || bi.length !== ci.length) return null
+    const diff = ci.map((x, i) => (x === bi[i] ? -1 : i)).filter((i) => i >= 0)
+    if (diff.length === 1) return `${n}[${diff[0]}]: ${v(b.i[diff[0]])} → ${v(c.i[diff[0]])}`
+    if (diff.length === 2 && ci[diff[0]] === bi[diff[1]] && ci[diff[1]] === bi[diff[0]]) return `${n}[${diff[0]}] ↔ ${n}[${diff[1]}]`
+    if (diff.length === 2) return `${n}[${diff[0]}], ${n}[${diff[1]}] change`
+    return null
+  }
+  if (isDict(b) && isDict(c)) {
+    const bm = new Map(b.k.map(([k, x]) => [JSON.stringify(k), x]))
+    const out: string[] = []
+    for (const [k, x] of c.k) {
+      const key = JSON.stringify(k)
+      if (!bm.has(key)) out.push(`${n}[${v(k)}] = ${v(x)}`)
+      else if (JSON.stringify(bm.get(key)) !== JSON.stringify(x)) out.push(`${n}[${v(k)}]: ${v(bm.get(key)!)} → ${v(x)}`)
+    }
+    if (c.n < b.n) {
+      const ck = new Set(c.k.map(([k]) => JSON.stringify(k)))
+      for (const [k] of b.k) if (!ck.has(JSON.stringify(k))) out.push(`${n} loses ${v(k)}`)
+    }
+    return out.length && out.length <= 2 ? out.join(', ') : null
+  }
+  return null
+}
+
+function noteFor(s: Snapshot, lineText: string, top: CallFrame, changed: string[], prev: Record<string, Scalar>, cards: Record<string, Scalar>, stage: Structure[], before?: Map<string, TV>): string {
   const code = lineText.trim().replace(/\s+/g, ' ')
   const short = code.length > 60 ? `${code.slice(0, 57)}…` : code
   if (s.kind === 'call') return `Call ${top.fn}(${top.args}).`
@@ -945,7 +1013,8 @@ function noteFor(s: Snapshot, lineText: string, top: CallFrame, changed: string[
   for (const n of moved.slice(0, 2)) {
     const st = stage.find((x) => x.id === `${top.k}:${n}`)
     const r = st && 'roles' in st && st.roles ? Object.values(st.roles) : []
-    parts.push(r.includes('swap') ? `${n}: two values swap` : r.includes('new') ? `${n} grows` : `${n} changes`)
+    const exact = whatChanged(n, before?.get(n), top.vars.get(n), s.heap)
+    parts.push(exact ?? (r.includes('swap') ? `${n}: two values swap` : r.includes('new') ? `${n} grows` : `${n} changes`))
   }
   const text = `Line ${s.line}: ${short || '(end)'}${parts.length ? ` — ${parts.join(', ')}` : ''}`
   // No full stop after code that already ends in punctuation ("for …:", "x = 1;").
