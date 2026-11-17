@@ -129,7 +129,7 @@ export default function ProblemSetPage() {
         </div>
         {set.sourceUrl && (
           <a href={set.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-text-primary underline underline-offset-[3px]">
-            The original <ExternalLink className="size-3.5" aria-hidden="true" />
+            {set.kind === 'company' ? 'The public source' : 'The original'} <ExternalLink className="size-3.5" aria-hidden="true" />
             <span className="sr-only">(opens in a new tab)</span>
           </a>
         )}
