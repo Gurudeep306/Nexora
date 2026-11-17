@@ -202,3 +202,37 @@ test('C/C++ local arrays declared without a value show only the part the program
   assert.deepEqual(last.cells.map((c) => c.v), [7, 14, 21]);
   assert.match(last.label, /3 of 100 set/);
 });
+
+test('C pointers walked along an array ride its cells as &a[i]; a pointer used with [] stays an array', async () => {
+  const code = `#include <stdio.h>
+#include <stdlib.h>
+int main(void) {
+    int a[5] = {4, 8, 15, 16, 23};
+    int *lo = a, *hi = a + 4;
+    while (lo < hi) {
+        int t = *lo; *lo = *hi; *hi = t;
+        lo++; hi--;
+    }
+    int *b = malloc(3 * sizeof(int));
+    for (int i = 0; i < 3; i++) b[i] = i * 10;
+    int *q = b + 1;
+    *q = 99;
+    printf("%d %d %d\\n", a[0], a[4], b[1]);
+    free(b);
+    return 0;
+}
+`;
+  const { frames, events, stdout } = await trace(code);
+  assert.equal(stdout, '23 4 99\n');
+  const first = events.find((e) => e.e === 'line' && e.v && e.v.lo);
+  assert.deepEqual(first.v.lo, { t: 'at', a: 'a', i: 0 });
+  assert.deepEqual(first.v.hi, { t: 'at', a: 'a', i: 4 });
+  const swap = frames.find((f) => f.line === 7 && find(f, 'array', 'a')?.cells[0].v === 23);
+  assert.ok(swap, 'the swap through *lo and *hi');
+  assert.deepEqual(find(swap, 'array', 'a').pointers, { lo: 0, hi: 4 }, 'lo and hi under their cells');
+  const vars = swap.structures.find((s) => s.kind === 'vars');
+  assert.equal(vars.vars.lo, '&a[0]');
+  const qStep = frames.find((f) => f.line === 12 && find(f, 'array', 'b'));
+  assert.deepEqual(find(qStep, 'array', 'b').pointers, { q: 1 }, 'a pointer into a malloc block, named after b');
+  assert.ok(Array.isArray(events.find((e) => e.e === 'line' && e.v && e.v.b)?.v.b.i), 'b (used with []) is still drawn as an array');
+});

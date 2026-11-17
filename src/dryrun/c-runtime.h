@@ -25,7 +25,7 @@
 #endif
 #endif
 
-enum { __NX_SKIP, __NX_I, __NX_U, __NX_F, __NX_BOOL, __NX_CHAR, __NX_STR, __NX_CSTR, __NX_ARR, __NX_PARR, __NX_PTR, __NX_STRUCT };
+enum { __NX_SKIP, __NX_I, __NX_U, __NX_F, __NX_BOOL, __NX_CHAR, __NX_STR, __NX_CSTR, __NX_ARR, __NX_PARR, __NX_PTR, __NX_STRUCT, __NX_PAT };
 typedef struct __nx_ty __nx_ty;
 typedef struct __nx_fd { const char* name; size_t off; const __nx_ty* ty; } __nx_fd;
 struct __nx_ty {
@@ -87,11 +87,25 @@ static __attribute__((unused)) void __nx_untrack(const void* p) {
 }
 /* Bytes known to start at p (a malloc'd block, or an array the program declared); 0 if unknown. */
 #define __NX_RG 512
-static struct { const void* p; size_t n; } __nx_arrays[__NX_RG];
+static struct { const void* p; size_t n; const char* name; } __nx_arrays[__NX_RG];
 static int __nx_arrayAt = 0;
-static __attribute__((unused)) void __nx_register(const void* p, size_t n) {
-  for (int i = 0; i < __NX_RG; i++) if (__nx_arrays[i].p == p) { __nx_arrays[i].n = n; return; }
-  __nx_arrays[__nx_arrayAt].p = p; __nx_arrays[__nx_arrayAt].n = n; __nx_arrayAt = (__nx_arrayAt + 1) % __NX_RG;
+/* An array (or a block) the program has, by its first byte; `name` is the variable that holds it, if known. */
+static __attribute__((unused)) void __nx_register(const void* p, size_t n, const char* name) {
+  for (int i = 0; i < __NX_RG; i++) if (__nx_arrays[i].p == p) { __nx_arrays[i].n = n; if (name && !__nx_arrays[i].name) __nx_arrays[i].name = name; return; }
+  __nx_arrays[__nx_arrayAt].p = p; __nx_arrays[__nx_arrayAt].n = n; __nx_arrays[__nx_arrayAt].name = name; __nx_arrayAt = (__nx_arrayAt + 1) % __NX_RG;
+}
+/* The named array a pointer is inside (one past the end counts, as C allows): its index in `*at`. */
+static __attribute__((unused)) const char* __nx_inside(const void* q, size_t esz, size_t* at) {
+  if (!q || !esz) return 0;
+  for (int i = 0; i < __NX_RG; i++) {
+    const char* b = (const char*)__nx_arrays[i].p;
+    if (!b || !__nx_arrays[i].name || (const char*)q < b || (const char*)q > b + __nx_arrays[i].n) continue;
+    size_t off = (size_t)((const char*)q - b);
+    if (off % esz) continue;
+    *at = off / esz;
+    return __nx_arrays[i].name;
+  }
+  return 0;
 }
 static __attribute__((unused)) size_t __nx_known(const void* p) {
   if (!p) return 0;
@@ -301,6 +315,16 @@ static __attribute__((unused)) int __nx_ser(__nx_w* w, const void* p, const __nx
       __nx_list(w, q, n, s, n);
       return 1;
     }
+    case __NX_PAT: {
+      /* A pointer walked along an array (p++, *p): where it points, as name[i]. */
+      const char* q = *(const char* const*)p;
+      if (!q) { __nx_puts_(w, "null"); return 1; }
+      size_t at = 0;
+      const char* arr = __nx_inside(q, t->elem ? t->elem->esz : 0, &at);
+      if (!arr) return 0;
+      char b[160]; snprintf(b, sizeof b, "{\"t\":\"at\",\"a\":\"%s\",\"i\":%zu}", arr, at); __nx_puts_(w, b);
+      return 1;
+    }
     case __NX_STRUCT: return __nx_ref(w, p, t);
     default: return 0;
   }
@@ -359,8 +383,10 @@ static __attribute__((unused)) void __nx_clear(void) { for (int i = 0; i < __nx_
 /** Add one variable to the step being collected; always 0, so it can sit in an expression. */
 static __attribute__((unused)) int __nx_v(const char* name, const void* p, const __nx_ty* t) {
   if (!__nx_on || !t || t->k == __NX_SKIP) return 0;
-  if (t->k == __NX_ARR) __nx_register(p, t->n * (t->elem ? t->elem->esz : 1));
-  if (t->k == __NX_STR) __nx_register(p, t->n);
+  if (t->k == __NX_ARR) __nx_register(p, t->n * (t->elem ? t->elem->esz : 1), name);
+  if (t->k == __NX_STR) __nx_register(p, t->n, name);
+  /* A pointer to the start of a malloc'd block names the block (int *a = malloc(…)). */
+  if (t->k == __NX_PARR) { const void* q = *(const void* const*)p; size_t n = __nx_known(q); if (n) __nx_register(q, n, name); }
   __nx_w w = {0, 0, 0};
   if (!__nx_ser(&w, p, t)) { free(w.s); return 0; }
   for (int i = 0; i < __nx_nnow; i++) if (strcmp(__nx_now[i].n, name) == 0) { free(__nx_now[i].js); __nx_now[i].js = w.s; return 0; }
