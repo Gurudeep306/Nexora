@@ -12,11 +12,14 @@
 //      `feature_disabled` (the owner keeps access to everything).
 const { get, run } = require("../db");
 const { comingSoonHtml } = require("./coming-soon");
+const sitemap = require("../sitemap");
 const {
   ACCESS_COLUMNS,
   attachAccess,
   buildAccess,
+  hasAnyAdminPerm,
   mayEnterPrivateSite,
+  mayUseHive,
 } = require("./permissions");
 const { getSettings, ownerSource, privateModeActive, setSetting, DEFAULT_PRIVATE_MESSAGE } = require("./site-settings");
 
@@ -169,14 +172,24 @@ function createAccessControl() {
       return res.status(403).type("text").send("NexoraGuru is private right now");
     }
 
-    const flag = isApi(p) && featureFor(p);
-    if (flag && !settings.feature_flags[flag] && req.access?.role !== "owner") {
-      return res.status(403).json({
-        ok: false,
-        code: "feature_disabled",
-        feature: flag,
-        error: "This section is switched off right now",
-      });
+    // Admin → Site map (src/sitemap.js): parts switched off, staff only or
+    // coming soon. The older feature flags are the same switch.
+    const part = isApi(p) && sitemap.partForApi(canon(p));
+    if (part) {
+      const mode = sitemap.effectiveModes(settings)[part.id];
+      const who = { owner: req.access?.role === "owner", staff: hasAnyAdminPerm(req), hive: mayUseHive(req) };
+      // Hive doesn't exist to anyone but admins and the owner: the plain 404.
+      if (sitemap.isHive(part) && !who.hive && !who.owner) return res.status(404).json({ ok: false, error: "API endpoint not found" });
+      if (!sitemap.allowed(mode, who, part)) {
+        return res.status(403).json({
+          ok: false,
+          code: "feature_disabled",
+          feature: part.flag || part.id,
+          part: part.id,
+          mode,
+          error: mode === "soon" ? `${part.label} is coming soon` : "This section is switched off right now",
+        });
+      }
     }
     next();
   };

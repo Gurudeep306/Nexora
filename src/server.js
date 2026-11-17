@@ -6150,14 +6150,14 @@ io.use(async (socket, next) => {
 });
 
 // Hive's realtime namespace: same session, origin, ban and private-mode checks
-// as the default namespace, plus the staff permission (src/hive/hub.js).
+// as the default namespace; admins and the owner only (src/hive/hub.js).
 attachHive(io, {
   authorize: async (socket) => {
     if (!isAllowedSocketOrigin(socket.request)) return null;
     const user = getSessionUser(socket.request);
     if (!user?.username) return null;
     const verdict = await socketAccess(user.username);
-    if (!verdict.ok || !hasAnyAdminPerm(verdict.access)) return null;
+    if (!verdict.ok || !require("./authz/permissions").mayUseHive(verdict.access)) return null;
     return user.username;
   },
   // Hive is one shared staff workspace: every staff member can follow every chat.

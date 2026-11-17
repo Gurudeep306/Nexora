@@ -454,7 +454,15 @@ test('client: /admin is gated before its chunk loads, and admin UI is staff-only
   // Search (top bar and palette) builds its page list in one place.
   const sources = read('components/layout/searchSources.ts');
   assert.match(sources, /isStaff \? \[\{ \.\.\.ADMIN_ITEM/);
-  assert.match(sources, /featureOn\(featureForPath/);
+  // Pages hidden by the section flags or the Site map leave search too
+  // (pathOn = the flag check plus the Site map, in SiteContext).
+  assert.match(sources, /pathOn\(i\.to\)/);
+  assert.match(read('context/SiteContext.tsx'), /pathOn: \(path\) => \{[\s\S]*featureForPath\(path\)[\s\S]*blockedFor\(path\)/);
+  // Hive leaves no trace for anyone but admins and the owner: menu, search, Dock, route.
+  assert.match(sources, /mayHive \? \[\{ \.\.\.HIVE_ITEM/);
+  assert.match(read('components/layout/UserMenu.tsx'), /mayHive && \(/);
+  assert.match(read('components/layout/Deck.tsx'), /!i\.hiveOnly \|\| mayHive/);
+  assert.match(gate, /!status\?\.me\?\.mayHive\) return <NotFoundPage \/>/);
   assert.match(read('components/layout/CommandPalette.tsx'), /usePageEntries\(\)/);
   assert.match(read('context/SiteContext.tsx'), /isStaff: !preview/);
 });

@@ -31,8 +31,8 @@ file current as each part lands; each part is its own pull request.
 | 1. XP rule ("Passed the examples") | Done, merged to main | https://github.com/Gurudeep306/Nexora/pull/149 |
 | 2. Avatar inside Edit profile | Done, merged to main (with part 5 and the new covers) | https://github.com/Gurudeep306/Nexora/pull/151 |
 | 3. Staff permissions per Admin part | Done, merged to main | https://github.com/Gurudeep306/Nexora/pull/152 |
-| 4. Site map tree (show/hide, GitHub links) | Next | — |
-| Extra: Admin clean-up and finer permissions (owner's ask) | Done (see below) | — |
+| 4. Site map tree (show/hide, GitHub links) | Done (see section 4) | — |
+| Extra: Admin clean-up and finer permissions (owner's ask) | Done, merged to main | https://github.com/Gurudeep306/Nexora/pull/153 |
 | 5. Register: optional avatar, bio, … step | Done, merged to main (with part 2) | https://github.com/Gurudeep306/Nexora/pull/151 |
 
 ## 1. XP rule — how it works
@@ -220,6 +220,65 @@ something pattern type or animated type, import from internet").
   Verify, profile resets need Manage users.
 - Tests: `tests/staff-access.test.js` (+2: new permissions and their
   defaults, owner-only grants, the one-time copy and that it runs once).
+
+## 4. Site map (Admin → Site map) and Hive for admins only
+
+- **The tree** (`src/sitemap.js`): every part of the site (137 parts today):
+  Home, Learn (every Learn subject from `content/nexus/*.json`, and the DSA
+  course with every chapter from `client/src/learn/content/dsa/syllabus.ts`),
+  Nexus, GATE CSE (Practice, Notes with every subject from
+  `content/gate-notes/<id>/_meta.json` — Digital Logic, Discrete
+  Mathematics…, Mock tests, Review, Daily, Leaderboard, Planner, Notebook,
+  Analytics, Syllabus), Problems (Workshop, Submissions), Contests, Social,
+  AI tutor, Analytics, Achievements, Bookmarks, Profiles, Hive (Copilot,
+  Chat, Projects, Pipelines, Machines, Drive, Models, Keys, Extensions,
+  Spend, Inbox), and the always-on parts (Settings, Sign-in, Admin).
+  Subjects are read from the content, so a new subject appears by itself.
+- **Per part:** Everyone / Staff only ("page not found" for others) /
+  Coming soon (staff can use it; others see "coming soon") / Hidden (only
+  the owner, to check it). A part inside another is never more open than it.
+  Stored as `site_settings.site_parts`; needs Site settings to change; every
+  change is audited (`site.part`).
+- **Enforced on the server:** the access control (`src/authz/access.js`)
+  finds the most specific part for each API call and refuses it (403
+  `feature_disabled` with `mode`). GATE notes subjects also leave the notes
+  list and notes search. **In the app:** `/api/site/status` sends this
+  viewer's closed parts; `AppLayout` shows "coming soon" or "page not
+  found"; the Dock, the phone tab bar, search and GATE's own tabs drop them
+  (`pathOn` in `SiteContext`).
+- **The old feature flags** (Admin → Site) are the same switch: a part with
+  no Site map choice follows its flag, and the flags route updates the Site
+  map. The Site page now links to the Site map instead of its own switches.
+- **Code:** each part lists its real files and folders with "Open on
+  GitHub" links (folders show how many files). `tests/sitemap.test.js`
+  checks every listed path exists.
+- **Hive is for admins and the owner only** (owner's ask): `mayUseHive`
+  (`src/authz/permissions.js`) gates the Hive API, its realtime connection
+  and the `/hive` page. Moderators, other staff and members never see it:
+  no Dock icon, no menu item, no search result, `/hive` is the normal "page
+  not found", the API answers a plain 404, and the Site map doesn't list
+  Hive to anyone who can't use it. Hive's own parts can still be hidden from
+  admins. Honest limit: the repository is public, so Hive's code can be read
+  on GitHub; on the website itself there is no trace.
+- Tests: `tests/sitemap.test.js` (patterns and files, inheritance and old
+  flags, owner-only changes, soon / staff / hidden enforced, a notes subject
+  hidden from pages, list and search, Hive admins-only), plus the client
+  checks in `tests/admin.test.js`.
+
+## Dependency audit (2026-11-17, owner's choice)
+
+- A new high advisory for `picomatch` (GHSA-fc5q-39xc-vjpf, ReDoS) covers
+  every version, including the newest (4.0.7), so no fix exists yet. It
+  turned CI's "Dependency audit (high and critical)" red on every PR.
+- It only came in through build tools, so (owner approved) those are now
+  dev dependencies: `@tailwindcss/vite` in `client/package.json` (it pulled
+  in Vite) and `sqlite3` in the root `package.json` (its node-gyp build
+  tooling). Render installs dev dependencies for the client build
+  (`--include=dev`), and the live server uses Turso; `src/db.js` already
+  falls back to Node's built-in SQLite when `sqlite3` isn't installed
+  (checked).
+- When picomatch publishes a fixed version, run `npm audit` without
+  `--omit=dev` too; nothing else needs to change.
 
 ## Plan for parts 3–4 (written before the work; 2 and 5 are done above)
 

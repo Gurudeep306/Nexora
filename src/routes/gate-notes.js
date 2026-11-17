@@ -3,7 +3,9 @@ const fs = require("fs");
 const path = require("path");
 const { all, run } = require("../db");
 const { requireAuthenticatedUser } = require("../middleware/auth");
-const { hasAnyAdminPerm } = require("../authz/permissions");
+const { hasAnyAdminPerm, mayUseHive } = require("../authz/permissions");
+const sitemap = require("../sitemap");
+const { peekSettings } = require("../authz/site-settings");
 const { invalidateNexusUser } = require("../nexus/user-cache");
 
 /*
@@ -154,11 +156,20 @@ function load() {
   return store;
 }
 
+/** May this visitor see this subject in Admin → Site map (gate.notes.<id>)? */
+function partOpen(req, id) {
+  const part = sitemap.BY_ID.get(`gate.notes.${id}`);
+  if (!part) return true;
+  const mode = sitemap.effectiveModes(peekSettings())[part.id];
+  return sitemap.allowed(mode, { owner: req.access?.role === "owner", staff: hasAnyAdminPerm(req), hive: mayUseHive(req) }, part);
+}
+
 /** Visible subject view, or null (unknown, or hidden from this visitor). */
 function subjectFor(req, id) {
   const s = load().subjects.get(String(id || ""));
   if (!s) return null;
   if (s.card.hidden && !hasAnyAdminPerm(req)) return null;
+  if (!partOpen(req, s.card.id ?? id)) return null;
   return s;
 }
 
@@ -230,7 +241,7 @@ function createGateNotesRouter() {
     const staff = hasAnyAdminPerm(req);
     const subjects = [...load().subjects.values()]
       .map((s) => s.card)
-      .filter((c) => staff || !c.hidden)
+      .filter((c) => (staff || !c.hidden) && partOpen(req, c.id))
       .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));
     res.json({ ok: true, subjects });
   });
@@ -243,6 +254,7 @@ function createGateNotesRouter() {
     const results = [];
     for (const e of search) {
       if (e.hidden && !staff) continue;
+      if (!partOpen(req, e.s)) continue;
       if (!words.every((w) => e._hay.includes(w))) continue;
       const s = subjects.get(e.s);
       if (!s) continue;

@@ -12,6 +12,9 @@ const { errMessage } = require("../http-error");
 const { getSessionUser } = require("../middleware/auth");
 const P = require("../authz/permissions");
 const S = require("../authz/sections");
+const sitemap = require("../sitemap");
+const fs = require("fs");
+const path = require("path");
 const { errorCount } = require("../authz/access");
 const content = require("../authz/content");
 const dbStats = require("../db-stats");
@@ -245,7 +248,11 @@ function createAdminRouter(deps) {
         privateMessage: priv ? s.private_mode.message : "",
         allowed: !priv || P.mayEnterPrivateSite(req),
         registrationsOpen: s.registrations.open && !priv,
-        flags: s.feature_flags,
+        // The old section flags and the Site map's blocked parts, for this viewer.
+        ...(() => {
+          const v = sitemap.viewerParts(s, { owner: a?.role === "owner", staff: !!a && P.hasAnyAdminPerm(a), hive: !!a && P.mayUseHive(a) });
+          return { flags: v.flags, parts: v.blocked };
+        })(),
         maintenance: s.maintenance.enabled ? { message: s.maintenance.message } : null,
         defaultStyle: s.default_style,
         banners: announcements.filter((x) => x.kind === "banner").slice(0, 3),
@@ -259,6 +266,8 @@ function createAdminRouter(deps) {
               permissions: [...a.perms],
               isOwner: a.role === "owner",
               isStaff: P.hasAnyAdminPerm(a),
+              // Hive is for admins and the owner only.
+              mayHive: P.mayUseHive(a),
               verified: a.verified,
             }
           : null,
@@ -344,6 +353,92 @@ function createAdminRouter(deps) {
         contentTypes: content.contentTypes(),
         flags: FEATURE_FLAGS,
       });
+    }),
+  );
+
+  /* ═════════════ Site map (src/sitemap.js) ═════════════ */
+
+  const REPO = "https://github.com/Gurudeep306/Nexora";
+  const ROOT = path.join(__dirname, "..", "..");
+  function countFiles(dir, limit = 5000) {
+    let n = 0;
+    const walk = (d) => {
+      for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+        if (n >= limit) return;
+        if (e.isDirectory()) walk(path.join(d, e.name));
+        else n++;
+      }
+    };
+    try {
+      walk(dir);
+    } catch {
+      /* unreadable: counted as 0 */
+    }
+    return n;
+  }
+  function fileInfo(rel) {
+    const abs = path.join(ROOT, rel);
+    let stat = null;
+    try {
+      stat = fs.statSync(abs);
+    } catch {
+      /* missing on this server */
+    }
+    const dir = rel.endsWith("/");
+    return {
+      path: rel,
+      kind: dir ? "folder" : "file",
+      exists: !!stat,
+      files: dir && stat ? countFiles(abs) : undefined,
+      url: `${REPO}/${dir ? "tree" : "blob"}/main/${rel.replace(/\/$/, "")}`,
+    };
+  }
+
+  router.get(
+    "/api/admin/sitemap",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const s = await getSettings();
+      const chosen = sitemap.chosenModes(s);
+      // Hive isn't even listed for someone who can't use it.
+      const seesHive = P.mayUseHive(req);
+      const effective = sitemap.effectiveModes(s);
+      res.json({
+        ok: true,
+        modes: sitemap.MODES,
+        parts: sitemap.PARTS.filter((p) => seesHive || !sitemap.isHive(p)).map((p) => ({
+          id: p.id,
+          label: p.label,
+          parent: p.parent || null,
+          core: !!p.core,
+          pages: p.pages || null,
+          api: p.api || null,
+          mode: chosen[p.id],
+          effective: effective[p.id],
+          files: p.files.map(fileInfo),
+        })),
+      });
+    }),
+  );
+
+  router.put(
+    "/api/admin/sitemap/:id",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const part = sitemap.BY_ID.get(String(req.params.id));
+      if (!part || (sitemap.isHive(part) && !P.mayUseHive(req))) return res.status(404).json({ ok: false, error: "Unknown part" });
+      if (part.core) bad(`${part.label} is always on`);
+      const mode = str(req.body?.mode, { max: 10, field: "mode" });
+      if (!sitemap.MODES.includes(mode)) bad("Mode must be visible, staff, soon or hidden");
+      const s = await getSettings();
+      const before = sitemap.chosenModes(s)[part.id];
+      await setSetting("site_parts", { ...s.site_parts, [part.id]: mode }, req.access.username);
+      // Keep the older on/off flag in step for parts that carry one.
+      if (part.flag) await setSetting("feature_flags", { ...s.feature_flags, [part.flag]: mode !== "hidden" }, req.access.username);
+      await audit(req, "site.part", { targetType: "part", target: part.id, before: { mode: before }, after: { mode } });
+      siteChanged();
+      const next = await getSettings();
+      res.json({ ok: true, effective: sitemap.effectiveModes(next), chosen: sitemap.chosenModes(next) });
     }),
   );
 
@@ -1020,6 +1115,11 @@ function createAdminRouter(deps) {
       }
       if (!touched) bad(`send at least one of ${FEATURE_FLAGS.join(", ")}`);
       await setSetting("feature_flags", after, req.access.username);
+      // The Site map is the same switch: an on/off here sets the part too.
+      const s0 = await getSettings();
+      const parts = { ...s0.site_parts };
+      for (const p of sitemap.PARTS) if (p.flag && b[p.flag] !== undefined) parts[p.id] = after[p.flag] ? "visible" : "hidden";
+      await setSetting("site_parts", parts, req.access.username);
       await audit(req, "site.feature_flags", { targetType: "site", target: "feature_flags", before, after });
       siteChanged();
       res.json({ ok: true, feature_flags: after });
