@@ -642,4 +642,4 @@ function createGateRouter() {
   return router;
 }
 
-module.exports = { createGateRouter, loadGateBank: load, sortPaperQuestions, strip, findGateQuestion, searchGateQuestions, getGateSolution, solutionText };
+module.exports = { createGateRouter, loadGateBank: load, sortPaperQuestions, strip, stripForExam, findGateQuestion, searchGateQuestions, getGateSolution, solutionText };
