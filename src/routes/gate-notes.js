@@ -22,7 +22,8 @@ const { invalidateNexusUser } = require("../nexus/user-cache");
  *   GET /api/gate/questions/:id/teaching      the lesson blocks that teach a PYQ
  *                                             (from the coverage map, _coverage.json)
  *
- * Subjects marked hidden (the pipeline demo) exist only for staff. Lesson
+ * Subjects marked hidden in _meta.json exist only for staff; Admin → Site map
+ * (gate.notes.<id>) decides who else sees each subject. Lesson
  * `sources` never reach the compiled files, so they cannot leak from here.
  *
  * Per-user study state (signed in only, scoped to the session user):

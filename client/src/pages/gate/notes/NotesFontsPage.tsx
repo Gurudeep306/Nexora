@@ -1,6 +1,6 @@
 /*
-  Staff-only font sample: /gate/notes/_fonts — the same section of the demo
-  lesson in each handwriting candidate, side by side, so the owner can pick
+  Staff-only font sample: /gate/notes/_fonts — the same section of a real
+  lesson (Digital Logic, place value) in each handwriting candidate, side by side, so the owner can pick
   one. The pick is one line: NOTES_BODY_FONT in src/gate/notes/prefs.ts.
 */
 import { useMemo } from 'react'
@@ -22,20 +22,19 @@ export default function NotesFontsPage() {
   return <Samples />
 }
 
-/** The opening of the demo lesson (headings, body, maths, intuition, definition, aside, derivation), its first worked example, trick and trap. */
+/** The opening of the sample lesson without its animations (headings, body, maths, intuition, definition, aside), its first worked example, trick and trap. */
 function sampleNodes(body: Node[]): Node[] {
-  const cut = body.findIndex((n) => n.t === 'block' && n.name === 'viz')
-  const opening = body.slice(0, cut > 0 ? cut : 8)
+  const opening = body.filter((n) => !(n.t === 'block' && (n.name === 'viz' || n.name === 'example'))).slice(0, 8)
   const example = body.find((n) => n.t === 'block' && n.name === 'example')
   const extra = body.filter((n) => n.t === 'block' && (n.name === 'trick' || n.name === 'trap'))
   return [...opening, ...(example ? [example] : []), ...extra]
 }
 
 function Samples() {
-  const r = useLesson('demo', 'place-value')
+  const r = useLesson('dl', 'place-value')
   const [prefs, setPrefs] = useNotesPrefs()
   const nodes = useMemo(() => (r.data ? sampleNodes(r.data.lesson.body) : []), [r.data])
-  if (r.error && !r.data) return <EmptyState title="Couldn't load the demo lesson" description={r.error} />
+  if (r.error && !r.data) return <EmptyState title="Couldn't load the sample lesson" description={r.error} />
   if (!r.data)
     return (
       <GateShell title="Notes fonts">

@@ -1,0 +1,2258 @@
+diff --git a/client/src/components/admin/SourceTopics.tsx b/client/src/components/admin/SourceTopics.tsx
+new file mode 100644
+index 0000000..2680c08
+--- /dev/null
++++ b/client/src/components/admin/SourceTopics.tsx
+@@ -0,0 +1,307 @@
++import { useEffect, useState } from 'react'
++import { Loader2, RefreshCw } from 'lucide-react'
++import { SearchInput, useToast } from '@/components/ui'
++import { useApi } from '@/hooks/useApi'
++import { api, ApiError } from '@/lib/api'
++import { topicLabel } from '@/lib/topics'
++import { TopicChooser } from '@/components/topics/TopicChips'
++import { Chip, Failed, Panel, Skeleton } from './kit'
++import { ago } from './format'
++
++/*
++  Admin → Problem sources → Topics (src/topics.js). How many problems have
++  topics and how many are unsure; run the pipeline for new problems or all of
++  them (optionally asking the site's AI model about unsure ones that have a
++  statement); and correct one problem's topics. A correction is kept for good:
++  the pipeline never changes it, until "Back to automatic".
++*/
++
++type Summary = { total: number; classified: number; sure: number; unsure: number; locked: number; withText: number }
++type Job = {
++  running: boolean
++  done: number
++  total: number
++  sure: number
++  unsure: number
++  startedAt: number
++  finishedAt: number
++  error: string | null
++  ai: { asked: number; helped: number; error: string | null }
++}
++type Detail = { id: string; conf: number; from: 'tags' | 'text' | 'ai' | 'staff' }
++type ProblemTopics = { topics: Detail[]; locked: boolean; sure: boolean; classified: boolean; updatedBy: string | null; updatedAt: number | null }
++type Found = { id: number; title: string; platform: string; problem_id: string }
++
++const fmt = (n: number) => n.toLocaleString()
++const FROM: Record<Detail['from'], string> = { tags: 'from its tags', text: 'from its words', ai: 'from the AI', staff: 'set by staff' }
++
++export function SourceTopics() {
++  const toast = useToast()
++  const { data, loading, error, refetch } = useApi(() => api.get<{ summary: Summary; job: Job }>('/api/problem-sources/topics'), [])
++  const [heard, setJob] = useState<Job | undefined>(undefined)
++  const job = heard ?? data?.job ?? null
++  const [ai, setAi] = useState(false)
++  const [busy, setBusy] = useState(false)
++
++  // While a run is going, ask how it is going.
++  useEffect(() => {
++    if (!job?.running) return
++    const t = setInterval(async () => {
++      try {
++        const r = await api.get<{ summary: Summary; job: Job }>('/api/problem-sources/topics')
++        setJob(r.job)
++        if (!r.job.running) void refetch()
++      } catch {
++        /* the next tick tries again */
++      }
++    }, 2500)
++    return () => clearInterval(t)
++  }, [job?.running, refetch])
++
++  const start = async (all: boolean) => {
++    setBusy(true)
++    try {
++      const r = await api.post<{ job: Job }>('/api/problem-sources/topics/backfill', { all, ai })
++      setJob(r.job)
++      toast.success(all ? 'Finding topics for every problem' : 'Finding topics for new problems', 'Corrections made by staff are kept.')
++    } catch (e) {
++      toast.error(e instanceof ApiError ? e.message : 'Could not start')
++    } finally {
++      setBusy(false)
++    }
++  }
++  const stop = async () => {
++    try {
++      const r = await api.post<{ job: Job }>('/api/problem-sources/topics/stop', {})
++      setJob(r.job)
++    } catch (e) {
++      toast.error(e instanceof ApiError ? e.message : 'Could not stop')
++    }
++  }
++
++  if (loading && !data) return <Skeleton className="h-48" />
++  if (error || !data) return <Failed message={error ?? 'Could not load topics'} onRetry={refetch} />
++  const s = data.summary
++
++  return (
++    <Panel
++      icon="tag"
++      title="Topics"
++      description="Each problem's topics come from its tags, then its title and statement. Staff corrections are kept for good."
++      actions={
++        <button type="button" className="ai-btn" onClick={() => void refetch()} disabled={loading}>
++          {loading ? <Loader2 className="size-3.5 animate-spin" /> : <RefreshCw className="size-3.5" />} Check again
++        </button>
++      }
++    >
++      <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
++        {[
++          ['With topics', `${fmt(s.classified)} of ${fmt(s.total)}`],
++          ['Sure', fmt(s.sure)],
++          ['Unsure', fmt(s.unsure)],
++          ['Set by staff', fmt(s.locked)],
++        ].map(([k, v]) => (
++          <div key={k}>
++            <dt className="text-[11.5px] text-text-muted">{k}</dt>
++            <dd className="nx-num mt-0.5 text-[16px] font-semibold text-text-primary">{v}</dd>
++          </div>
++        ))}
++      </dl>
++
++      {job && (job.running || job.finishedAt > 0) && (
++        <p className="m-0 mt-3 flex flex-wrap items-center gap-2 text-[13px] text-text-secondary" role="status">
++          <Chip tone={job.running ? 'info' : job.error ? 'warning' : 'success'}>{job.running ? 'Running' : 'Last run'}</Chip>
++          {fmt(job.done)} of {fmt(job.total)} · {fmt(job.sure)} sure · {fmt(job.unsure)} unsure
++          {job.ai.asked > 0 && ` · AI asked about ${job.ai.asked}, helped ${job.ai.helped}`}
++          {!job.running && job.finishedAt > 0 && <span className="text-text-muted">· {ago(job.finishedAt)}</span>}
++        </p>
++      )}
++      {job?.error && <p className="m-0 mt-1 text-[12.5px] text-state-error">{job.error}</p>}
++      {job?.ai.error && <p className="m-0 mt-1 text-[12.5px] text-state-warning">AI: {job.ai.error}</p>}
++
++      <div className="mt-3 flex flex-wrap items-center gap-2">
++        {job?.running ? (
++          <button type="button" className="ai-btn" onClick={() => void stop()}>
++            Stop
++          </button>
++        ) : (
++          <>
++            <button type="button" className="ai-btn" disabled={busy} onClick={() => void start(false)}>
++              Find topics for new problems
++            </button>
++            <button type="button" className="ai-btn" disabled={busy} onClick={() => void start(true)}>
++              Run again for all
++            </button>
++          </>
++        )}
++        <label className="inline-flex items-center gap-2 text-[13px] text-text-secondary">
++          <input type="checkbox" checked={ai} onChange={(e) => setAi(e.target.checked)} disabled={job?.running} />
++          Also ask the AI about up to 30 unsure problems (uses your AI allowance)
++        </label>
++      </div>
++      <p className="m-0 mt-2 text-[12px] text-text-muted">
++        New problems get topics by themselves: when a source syncs, when a statement is fetched and when staff save a problem. {fmt(s.withText)} have a statement to read.
++      </p>
++
++      <Correct />
++    </Panel>
++  )
++}
++
++/** Find a problem by name and set its topics by hand. */
++function Correct() {
++  const toast = useToast()
++  const [q, setQ] = useState('')
++  const [found, setFound] = useState<Found[]>([])
++  const [pick, setPick] = useState<Found | null>(null)
++  const [current, setCurrent] = useState<ProblemTopics | null>(null)
++  const [choosing, setChoosing] = useState(false)
++  const [draft, setDraft] = useState<string[]>([])
++  const [busy, setBusy] = useState(false)
++
++  useEffect(() => {
++    if (!q.trim()) {
++      setFound([])
++      return
++    }
++    let live = true
++    const t = setTimeout(async () => {
++      try {
++        const r = await api.get<{ problems: Found[] }>('/api/problems', { query: { search: q.trim(), limit: 8 } })
++        if (live) setFound(r.problems)
++      } catch {
++        if (live) setFound([])
++      }
++    }, 250)
++    return () => {
++      live = false
++      clearTimeout(t)
++    }
++  }, [q])
++
++  const open = async (p: Found) => {
++    setPick(p)
++    setCurrent(null)
++    try {
++      setCurrent(await api.get<ProblemTopics>(`/api/problems/${p.id}/topics`))
++    } catch (e) {
++      toast.error(e instanceof ApiError ? e.message : 'Could not load its topics')
++    }
++  }
++  const save = async (ids: string[]) => {
++    if (!pick) return
++    setBusy(true)
++    try {
++      await api.put(`/api/problem-sources/topics/${pick.id}`, { topics: ids })
++      setCurrent(await api.get<ProblemTopics>(`/api/problems/${pick.id}/topics`))
++      toast.success('Topics saved', 'Kept for good: the pipeline will not change them.')
++    } catch (e) {
++      toast.error(e instanceof ApiError ? e.message : 'Could not save')
++    } finally {
++      setBusy(false)
++    }
++  }
++  const automatic = async () => {
++    if (!pick) return
++    setBusy(true)
++    try {
++      await api.delete(`/api/problem-sources/topics/${pick.id}/lock`)
++      setCurrent(await api.get<ProblemTopics>(`/api/problems/${pick.id}/topics`))
++      toast.success('Back to automatic')
++    } catch (e) {
++      toast.error(e instanceof ApiError ? e.message : 'Could not change it')
++    } finally {
++      setBusy(false)
++    }
++  }
++
++  return (
++    <section className="mt-4 border-t border-[color:var(--nx-hair)] pt-3" aria-label="Correct a problem's topics">
++      <p className="m-0 mb-2 text-[13.5px] font-semibold text-text-primary">Correct a problem’s topics</p>
++      <SearchInput value={q} onChange={(e) => setQ(e.target.value)} onClear={() => setQ('')} placeholder="Find a problem by name" aria-label="Find a problem by name" />
++      {found.length > 0 && !pick && (
++        <ul className="m-0 mt-2 list-none space-y-1 p-0">
++          {found.map((p) => (
++            <li key={p.id}>
++              <button type="button" className="flex w-full min-w-0 cursor-pointer items-baseline gap-2 rounded px-1 py-0.5 text-left text-[13px] hover:bg-bg-surface-2" onClick={() => void open(p)}>
++                <span className="truncate text-text-primary">{p.title}</span>
++                <span className="shrink-0 text-[12px] text-text-muted">
++                  {p.platform} {p.problem_id}
++                </span>
++              </button>
++            </li>
++          ))}
++        </ul>
++      )}
++      {pick && (
++        <div className="mt-3">
++          <div className="flex flex-wrap items-baseline gap-2">
++            <a href={`/solve/${pick.id}`} className="text-[13.5px] font-medium text-text-primary hover:underline">
++              {pick.title}
++            </a>
++            <span className="text-[12px] text-text-muted">
++              {pick.platform} {pick.problem_id}
++            </span>
++            <button type="button" className="ml-auto cursor-pointer text-[12.5px] text-text-secondary hover:text-text-primary" onClick={() => setPick(null)}>
++              Pick another
++            </button>
++          </div>
++          {!current ? (
++            <Skeleton className="mt-2 h-10" />
++          ) : (
++            <>
++              {current.topics.length ? (
++                <ul className="m-0 mt-2 list-none space-y-0.5 p-0 text-[13px]">
++                  {current.topics.map((t) => (
++                    <li key={t.id} className="flex flex-wrap gap-x-2">
++                      <span className="text-text-primary">{topicLabel(t.id)}</span>
++                      <span className="text-text-muted">
++                        {FROM[t.from] ?? t.from}
++                        {t.from !== 'staff' && ` · ${Math.round(t.conf * 100)}% sure`}
++                      </span>
++                    </li>
++                  ))}
++                </ul>
++              ) : (
++                <p className="m-0 mt-2 text-[13px] text-text-muted">{current.classified ? 'No topic found.' : 'Not looked at yet.'}</p>
++              )}
++              {current.locked && current.updatedAt && (
++                <p className="m-0 mt-1 text-[12px] text-text-muted">
++                  Set by {current.updatedBy || 'staff'} · {ago(current.updatedAt)}
++                </p>
++              )}
++              <div className="mt-2 flex flex-wrap gap-2">
++                <button
++                  type="button"
++                  className="ai-btn"
++                  disabled={busy}
++                  onClick={() => {
++                    setDraft(current.topics.map((t) => t.id))
++                    setChoosing(true)
++                  }}
++                >
++                  Change topics
++                </button>
++                {current.locked && (
++                  <button type="button" className="ai-btn" disabled={busy} onClick={() => void automatic()}>
++                    Back to automatic
++                  </button>
++                )}
++              </div>
++            </>
++          )}
++          <TopicChooser
++            open={choosing}
++            value={draft}
++            onChange={setDraft}
++            onClose={() => setChoosing(false)}
++            onDone={() => {
++              setChoosing(false)
++              void save(draft)
++            }}
++          />
++        </div>
++      )}
++    </section>
++  )
++}
+diff --git a/client/src/components/admin/SourcesSection.tsx b/client/src/components/admin/SourcesSection.tsx
+index 6bbd694..3a98675 100644
+--- a/client/src/components/admin/SourcesSection.tsx
++++ b/client/src/components/admin/SourcesSection.tsx
+@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
+ import { Chip, Failed, Panel, Skeleton, Toggle } from './kit'
+ import { ago } from './format'
+ import { SourceGaps } from './SourceGaps'
++import { SourceTopics } from './SourceTopics'
+ 
+ type TestReport = {
+   at: string
+@@ -166,6 +167,8 @@ export function SourcesSection() {
+       </Panel>
+ 
+       <SourceGaps />
++
++      <SourceTopics />
+     </div>
+   )
+ }
+diff --git a/client/src/components/contests/hosted/Pickers.tsx b/client/src/components/contests/hosted/Pickers.tsx
+index a8793dd..502a402 100644
+--- a/client/src/components/contests/hosted/Pickers.tsx
++++ b/client/src/components/contests/hosted/Pickers.tsx
+@@ -6,6 +6,7 @@ import { api, ApiError } from '@/lib/api'
+ import { stripMarkdown } from './text'
+ import { PHASE_LABEL, when, type ContestSummary, type Kind } from './api'
+ import { useLoaded } from './useLoaded'
++import { TopicChips, TopicFilterButton } from '@/components/topics/TopicChips'
+ import './hosted.css'
+ 
+ /*
+@@ -14,9 +15,10 @@ import './hosted.css'
+   problem or GATE question page can open.
+ */
+ 
+-type Found = { key: string; kind: Kind; ref: string; title: string; sub: string }
++type Found = { key: string; kind: Kind; ref: string; title: string; sub: string; topics?: string[] }
+ 
+-function useSearch(kind: 'problem' | 'gate' | 'workshop', q: string, me?: string) {
++function useSearch(kind: 'problem' | 'gate' | 'workshop', q: string, me?: string, topics: string[] = []) {
++  const topicKey = topics.join(',')
+   const [items, setItems] = useState<Found[] | null>(null)
+   const [error, setError] = useState<string | null>(null)
+   useEffect(() => {
+@@ -25,8 +27,11 @@ function useSearch(kind: 'problem' | 'gate' | 'workshop', q: string, me?: string
+       try {
+         let out: Found[] = []
+         if (kind === 'problem') {
+-          const r = await api.get<{ problems: { id: number; title: string; platform: string; problem_id: string; rating: number | null }[] }>('/api/problems', { query: { search: q, limit: 30, sort: q ? undefined : 'rating' } })
+-          out = r.problems.map((p) => ({ key: `p${p.id}`, kind: 'problem', ref: String(p.id), title: p.title, sub: `${p.platform} ${p.problem_id}${p.rating ? ` · rating ${p.rating}` : ''}` }))
++          // Search by name, or by topic: a topic's name, `topic:dp`, or the Topic filter.
++          const r = await api.get<{ problems: { id: number; title: string; platform: string; problem_id: string; rating: number | null; topics?: string[] }[] }>('/api/problems', {
++            query: { search: q, topic: topicKey || undefined, limit: 30, sort: q ? undefined : 'rating' },
++          })
++          out = r.problems.map((p) => ({ key: `p${p.id}`, kind: 'problem', ref: String(p.id), title: p.title, sub: `${p.platform} ${p.problem_id}${p.rating ? ` · rating ${p.rating}` : ''}`, topics: p.topics }))
+         } else if (kind === 'gate') {
+           const r = await api.get<{ questions: { id: string; text: string; exam: string; year: number; set: number | null; number: string; type: string; marks: number | null }[] }>('/api/gate/questions', {
+             query: { q, type: 'MCQ,MSQ,NAT', answered: 'yes', limit: 30 },
+@@ -51,7 +56,7 @@ function useSearch(kind: 'problem' | 'gate' | 'workshop', q: string, me?: string
+       live = false
+       clearTimeout(t)
+     }
+-  }, [kind, q, me])
++  }, [kind, q, me, topicKey])
+   return { items, error }
+ }
+ 
+@@ -75,10 +80,21 @@ export function ItemPicker({
+ }) {
+   const [q, setQ] = useState('')
+   const [busy, setBusy] = useState<string | null>(null)
+-  const { items, error } = useSearch(kind, open ? q : '__closed__', me)
++  const [topics, setTopics] = useState<string[]>([])
++  const { items, error } = useSearch(kind, open ? q : '__closed__', me, kind === 'problem' ? topics : [])
+   return (
+     <Modal open={open} onClose={onClose} title={PICKER_TITLE[kind]} description={kind === 'gate' ? 'Only questions with a checked answer (MCQ, MSQ, NAT). Past papers are public, answers included: for a graded test, write your own questions.' : undefined} size="lg">
+-      <SearchInput value={q} onChange={(e) => setQ(e.target.value)} onClear={() => setQ('')} placeholder={kind === 'gate' ? 'Search by words, subject or year' : 'Search by name'} aria-label="Search" autoFocus />
++      <div className="hc-search-row">
++        <SearchInput
++          value={q}
++          onChange={(e) => setQ(e.target.value)}
++          onClear={() => setQ('')}
++          placeholder={kind === 'gate' ? 'Search by words, subject or year' : kind === 'problem' ? 'Search by name or topic' : 'Search by name'}
++          aria-label="Search"
++          autoFocus
++        />
++        {kind === 'problem' && <TopicFilterButton value={topics} onChange={setTopics} />}
++      </div>
+       <div className="mt-3 max-h-[60vh] overflow-y-auto" tabIndex={0} aria-label="Results">
+         {error ? (
+           <p className="hc-note text-state-error">{error}</p>
+@@ -95,6 +111,7 @@ export function ItemPicker({
+                   <div className="min-w-0">
+                     <span className="hc-title">{it.title}</span>
+                     <span className="hc-sub">{it.sub}</span>
++                    {it.topics && it.topics.length > 0 && <TopicChips topics={it.topics} max={4} className="mt-1" />}
+                   </div>
+                   <Button
+                     size="sm"
+diff --git a/client/src/components/contests/hosted/hosted.css b/client/src/components/contests/hosted/hosted.css
+index 31cf375..5a4d6ca 100644
+--- a/client/src/components/contests/hosted/hosted.css
++++ b/client/src/components/contests/hosted/hosted.css
+@@ -580,3 +580,15 @@ a.hc-title:hover {
+   font-size: 13.5px;
+   color: var(--color-text-primary);
+ }
++
++/* The picker's search with the Topic filter beside it (it wraps on a phone). */
++.hc-search-row {
++  display: flex;
++  flex-wrap: wrap;
++  align-items: center;
++  gap: 8px;
++}
++.hc-search-row > :first-child {
++  flex: 1 1 14rem;
++  min-width: 0;
++}
+diff --git a/client/src/components/problems/ProblemFilters.tsx b/client/src/components/problems/ProblemFilters.tsx
+index afdf6a4..bd58f75 100644
+--- a/client/src/components/problems/ProblemFilters.tsx
++++ b/client/src/components/problems/ProblemFilters.tsx
+@@ -7,6 +7,8 @@ import { useProblemSuggestions } from '@/hooks/useProblemSuggestions'
+ import './filters.css'
+ import { PlatformBadge } from '@/components/shared/PlatformBadge'
+ import { cn } from '@/lib/utils'
++import { topicLabel } from '@/lib/topics'
++import { TopicFilterButton } from '@/components/topics/TopicChips'
+ import {
+   DIFFICULTY_BANDS,
+   type DifficultyBandId,
+@@ -22,6 +24,8 @@ export interface ProblemFilterState {
+   difficulty: DifficultyBandId
+   status: StatusFilter
+   tag: string
++  /** Topic ids (src/topics.js); a problem must have all of them. */
++  topics: string[]
+   sort: SortKey
+   order: SortOrder
+ }
+@@ -113,6 +117,8 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
+   if (filters.status !== 'all')
+     chips.push({ label: filters.status, remove: () => onChange({ status: 'all' }) })
+   if (filters.tag) chips.push({ label: `#${filters.tag}`, remove: () => onChange({ tag: '' }) })
++  for (const id of filters.topics)
++    chips.push({ label: topicLabel(id), remove: () => onChange({ topics: filters.topics.filter((x) => x !== id) }) })
+ 
+   return (
+     <div className="pf-bar relative z-20">
+@@ -123,7 +129,7 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
+           onValueChange={onSearchInput}
+           items={suggestionItems}
+           loading={loading}
+-          placeholder={onAsk ? 'Search or describe a problem' : 'Search problems'}
++          placeholder={onAsk ? 'Search, a topic, or describe a problem' : 'Search by name or topic'}
+           emptyText="No title matches. Try Ask AI."
+           aria-label="Search problems"
+           containerClassName="flex-1"
+@@ -166,6 +172,7 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
+           <option value="attempted">Attempted</option>
+           <option value="unsolved">Unsolved</option>
+         </PillSelect>
++        <TopicFilterButton value={filters.topics} onChange={(ids) => onChange({ topics: ids })} />
+         <PillSelect label="Tag" value={filters.tag} onChange={(v) => onChange({ tag: v })}>
+           <option value="">All tags</option>
+           {tags.map((t) => (
+@@ -219,7 +226,7 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
+           {chips.map((c) => (
+             <FilterChip key={c.label} label={c.label} onRemove={c.remove} />
+           ))}
+-          <button onClick={() => onChange({ platform: 'all', difficulty: 'all', status: 'all', tag: '' })} className="ml-1 inline-flex cursor-pointer items-center gap-1 text-[12.5px] text-text-secondary transition-colors hover:text-text-primary">
++          <button onClick={() => onChange({ platform: 'all', difficulty: 'all', status: 'all', tag: '', topics: [] })} className="ml-1 inline-flex cursor-pointer items-center gap-1 text-[12.5px] text-text-secondary transition-colors hover:text-text-primary">
+             <X className="size-3" aria-hidden="true" /> Clear
+           </button>
+         </div>
+diff --git a/client/src/components/problems/ProblemTable.tsx b/client/src/components/problems/ProblemTable.tsx
+index f72eeeb..186420d 100644
+--- a/client/src/components/problems/ProblemTable.tsx
++++ b/client/src/components/problems/ProblemTable.tsx
+@@ -6,12 +6,16 @@ import { DifficultyBadge } from '@/components/ui'
+ import { PlatformBadge } from '@/components/shared/PlatformBadge'
+ import { cn } from '@/lib/utils'
+ import { parseTags, type Problem } from './types'
++import { TopicChips } from '@/components/topics/TopicChips'
++import { topicIds } from '@/lib/topics'
+ 
+ interface Props {
+   problems: Problem[]
+   bookmarkedIds: Set<number>
+   onToggleBookmark: (problem: Problem) => void
+   busyBookmarkId: number | null
++  /** Filter by a topic (a click on a row's topic chip). */
++  onPickTopic?: (id: string) => void
+ }
+ 
+ function StatusCell({ problem }: { problem: Problem }) {
+@@ -43,7 +47,7 @@ function StatusCell({ problem }: { problem: Problem }) {
+   )
+ }
+ 
+-export function ProblemTable({ problems, bookmarkedIds, onToggleBookmark, busyBookmarkId }: Props) {
++export function ProblemTable({ problems, bookmarkedIds, onToggleBookmark, busyBookmarkId, onPickTopic }: Props) {
+   const navigate = useNavigate()
+ 
+   return (
+@@ -66,7 +70,9 @@ export function ProblemTable({ problems, bookmarkedIds, onToggleBookmark, busyBo
+         <TBody>
+           {problems.map((p, i) => {
+             const bookmarked = bookmarkedIds.has(p.id)
+-            const tags = parseTags(p.tags).slice(0, 3)
++            // Topics when the pipeline found some; the judge's raw tags otherwise.
++            const hasTopics = topicIds(p.topics).length > 0
++            const tags = hasTopics ? [] : parseTags(p.tags).slice(0, 3)
+             return (
+               <motion.tr
+                 key={p.id}
+@@ -114,6 +120,7 @@ export function ProblemTable({ problems, bookmarkedIds, onToggleBookmark, busyBo
+                       <span className="pt-title block truncate font-medium text-foreground">{p.title}</span>
+                       <span className="pt-meta mt-0.5 flex flex-wrap items-center gap-1.5 text-[11px] text-foreground-faint">
+                         <span className="pt-id font-mono">{p.problem_id}</span>
++                        {hasTopics && <TopicChips topics={p.topics} max={3} onPick={onPickTopic} />}
+                         {tags.map((t, ti) => (
+                           <Badge
+                             key={t}
+diff --git a/client/src/components/problems/types.ts b/client/src/components/problems/types.ts
+index ec2c637..675a5f5 100644
+--- a/client/src/components/problems/types.ts
++++ b/client/src/components/problems/types.ts
+@@ -9,6 +9,8 @@ export interface Problem {
+   rating: number
+   tags: string // JSON string, e.g. '["dp","math"]'
+   category: string
++  /** Topic ids (src/topics.js), e.g. ['dp', 'graphs']. */
++  topics?: string[]
+   solve_status: 'solved' | 'examples' | 'attempted' | 'unsolved' | string
+   attempts: number | null
+   xp_earned: number | null
+diff --git a/client/src/components/solve/ProblemPanel.tsx b/client/src/components/solve/ProblemPanel.tsx
+index 26ad1f4..bb2e9d7 100644
+--- a/client/src/components/solve/ProblemPanel.tsx
++++ b/client/src/components/solve/ProblemPanel.tsx
+@@ -1,4 +1,5 @@
+ import { useEffect, useRef, useState } from 'react'
++import { TopicChips } from '@/components/topics/TopicChips'
+ import { Check, Copy, ExternalLink, FileDown, FileText, Languages, Loader2, Plug, Sigma, ImageOff, Play, Footprints } from 'lucide-react'
+ import { LoadingBlock, Tabs } from '@/components/ui'
+ import { sanitizeHtml } from '@/lib/sanitize'
+@@ -196,6 +197,8 @@ export function ProblemPanel({
+           )}
+         </p>
+         <h1 className="sp-title mt-1.5 text-[20px] leading-tight font-semibold tracking-[-0.01em] text-foreground">{problem.title}</h1>
++        {/* Which kind of problem this is (src/topics.js), always shown. */}
++        <TopicChips topics={problem.topics} max={5} className="mt-2" />
+         <div className="sp-meta mt-2.5 flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-[12.5px] text-foreground-dim">
+           <span className="inline-flex items-center gap-1.5">
+             <span className={cn('size-2 rounded-full', b.tone)} aria-hidden="true" />
+@@ -209,7 +212,7 @@ export function ProblemPanel({
+           {problem.solve_status === 'attempted' && <span className="text-state-warning">Attempted</span>}
+           {tags.length > 0 && (
+             <button type="button" onClick={() => setShowTopics((v) => !v)} className="cursor-pointer text-foreground-faint underline-offset-2 hover:text-foreground hover:underline" aria-expanded={showTopics}>
+-              {showTopics ? 'Hide topics' : `Topics (${tags.length})`}
++              {showTopics ? 'Hide tags' : `Tags (${tags.length})`}
+             </button>
+           )}
+           {!custom && statement && !statementLoading && (
+diff --git a/client/src/components/solve/types.ts b/client/src/components/solve/types.ts
+index 40cb909..94fb2c1 100644
+--- a/client/src/components/solve/types.ts
++++ b/client/src/components/solve/types.ts
+@@ -1,6 +1,8 @@
+ /* Types for the solve view (verified against src/server.js handlers) */
+ 
+ export interface SolveProblem {
++  /** Topic ids (src/topics.js), or their JSON text for a Workshop problem. */
++  topics?: string[] | string
+   id: number
+   platform: string
+   problem_id: string
+diff --git a/client/src/components/topics/TopicChips.tsx b/client/src/components/topics/TopicChips.tsx
+new file mode 100644
+index 0000000..9fcc44b
+--- /dev/null
++++ b/client/src/components/topics/TopicChips.tsx
+@@ -0,0 +1,126 @@
++import { useState } from 'react'
++import { Check, ChevronDown } from 'lucide-react'
++import { Button, Modal } from '@/components/ui'
++import { cn } from '@/lib/utils'
++import { TOPICS, TOPIC_GROUPS, topicIds, topicLabel } from '@/lib/topics'
++import './topics.css'
++
++/*
++  Topics on a problem: small quiet chips (a hairline, muted text). Shown on
++  Problems rows, the Solve page header and the contest problem picker. A chip
++  with `onPick` is a button that filters by that topic.
++*/
++export function TopicChips({
++  topics,
++  max = 3,
++  className,
++  onPick,
++}: {
++  /** Topic ids, or their JSON text. */
++  topics: unknown
++  /** Show at most this many; the rest become "+n". */
++  max?: number
++  className?: string
++  onPick?: (id: string) => void
++}) {
++  const ids = topicIds(topics)
++  if (!ids.length) return null
++  const shown = ids.slice(0, max)
++  const more = ids.length - shown.length
++  return (
++    <span className={cn('tp-chips', className)} aria-label={`Topics: ${ids.map(topicLabel).join(', ')}`}>
++      {shown.map((id) =>
++        onPick ? (
++          <button
++            key={id}
++            type="button"
++            className="tp-chip tp-chip-btn"
++            title={`Show ${topicLabel(id)} problems`}
++            onClick={(e) => {
++              e.stopPropagation()
++              onPick(id)
++            }}
++          >
++            {topicLabel(id)}
++          </button>
++        ) : (
++          <span key={id} className="tp-chip" aria-hidden="true">
++            {topicLabel(id)}
++          </span>
++        ),
++      )}
++      {more > 0 && (
++        <span className="tp-chip tp-more" title={ids.slice(max).map(topicLabel).join(', ')} aria-hidden="true">
++          +{more}
++        </span>
++      )}
++    </span>
++  )
++}
++
++/** The pill that opens the topic chooser, in the filter row's size. */
++export function TopicFilterButton({ value, onChange }: { value: string[]; onChange: (ids: string[]) => void }) {
++  const [open, setOpen] = useState(false)
++  const label = !value.length ? 'All topics' : value.length === 1 ? topicLabel(value[0]) : `${value.length} topics`
++  return (
++    <>
++      <button type="button" className="tp-pill input-base" aria-haspopup="dialog" aria-label={`Topic: ${label}`} onClick={() => setOpen(true)} data-active={value.length ? '' : undefined}>
++        <span className="truncate">{label}</span>
++        <ChevronDown className="tp-pill-chev" aria-hidden="true" />
++      </button>
++      <TopicChooser open={open} value={value} onClose={() => setOpen(false)} onChange={onChange} />
++    </>
++  )
++}
++
++/** Choose any number of topics; a problem must have all of them. */
++export function TopicChooser({
++  open,
++  value,
++  onClose,
++  onChange,
++  onDone,
++}: {
++  open: boolean
++  value: string[]
++  onClose: () => void
++  onChange: (ids: string[]) => void
++  /** "Done" (defaults to closing): e.g. save, where closing alone should not. */
++  onDone?: () => void
++}) {
++  const toggle = (id: string) => onChange(value.includes(id) ? value.filter((x) => x !== id) : [...value, id])
++  return (
++    <Modal
++      open={open}
++      onClose={onClose}
++      title="Topics"
++      description="Pick one or more. A problem must have every topic you pick."
++      size="lg"
++    >
++      <div className="tp-groups">
++        {TOPIC_GROUPS.map((g) => (
++          <fieldset key={g} className="tp-group">
++            <legend className="tp-legend">{g}</legend>
++            <div className="tp-options">
++              {TOPICS.filter((t) => t.group === g).map((t) => {
++                const on = value.includes(t.id)
++                return (
++                  <button key={t.id} type="button" className="tp-option" aria-pressed={on} onClick={() => toggle(t.id)}>
++                    {on && <Check aria-hidden="true" />}
++                    {t.label}
++                  </button>
++                )
++              })}
++            </div>
++          </fieldset>
++        ))}
++      </div>
++      <div className="tp-actions">
++        <Button variant="ghost" onClick={() => onChange([])} disabled={!value.length}>
++          Clear
++        </Button>
++        <Button onClick={onDone ?? onClose}>Done</Button>
++      </div>
++    </Modal>
++  )
++}
+diff --git a/client/src/components/topics/topics.css b/client/src/components/topics/topics.css
+new file mode 100644
+index 0000000..7f3f4f4
+--- /dev/null
++++ b/client/src/components/topics/topics.css
+@@ -0,0 +1,130 @@
++/* Topics (TopicChips.tsx): quiet chips, the filter pill and the chooser. Tokens only. */
++.tp-chips {
++  display: inline-flex;
++  flex-wrap: wrap;
++  align-items: center;
++  gap: 4px;
++  min-width: 0;
++}
++.tp-chip {
++  display: inline-flex;
++  align-items: center;
++  max-width: 12rem;
++  overflow: hidden;
++  padding: 1px 7px;
++  border: 1px solid var(--color-border);
++  border-radius: 999px;
++  background: transparent;
++  color: var(--color-text-secondary);
++  font-size: 11px;
++  line-height: 1.5;
++  white-space: nowrap;
++  text-overflow: ellipsis;
++}
++.tp-more {
++  color: var(--color-text-muted);
++}
++.tp-chip-btn {
++  cursor: pointer;
++  transition:
++    border-color var(--dur-fast) var(--ease-standard),
++    color var(--dur-fast) var(--ease-standard);
++}
++.tp-chip-btn:hover {
++  border-color: var(--color-border-strong);
++  color: var(--color-text-primary);
++}
++.tp-chip-btn:focus-visible,
++.tp-pill:focus-visible,
++.tp-option:focus-visible {
++  outline: 2px solid var(--color-focus);
++  outline-offset: 2px;
++}
++
++/* The filter pill: the same size as the other filter pills. */
++.tp-pill {
++  position: relative;
++  display: inline-flex;
++  align-items: center;
++  width: auto;
++  max-width: 14rem;
++  height: 2rem;
++  padding: 0 1.75rem 0 0.75rem;
++  font-size: 13px;
++  line-height: 1;
++  white-space: nowrap;
++  cursor: pointer;
++}
++.tp-pill-chev {
++  position: absolute;
++  right: 0.5rem;
++  width: 0.875rem;
++  height: 0.875rem;
++  color: var(--color-text-muted);
++}
++
++/* The chooser */
++.tp-groups {
++  display: grid;
++  gap: 14px;
++  max-height: 60vh;
++  overflow-y: auto;
++}
++.tp-group {
++  margin: 0;
++  padding: 0;
++  border: 0;
++  min-width: 0;
++}
++.tp-legend {
++  margin-bottom: 6px;
++  padding: 0;
++  color: var(--color-text-muted);
++  font-size: 12px;
++  font-weight: 600;
++}
++.tp-options {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 6px;
++}
++.tp-option {
++  display: inline-flex;
++  align-items: center;
++  gap: 4px;
++  min-height: 32px;
++  padding: 0 11px;
++  border: 1px solid var(--color-border);
++  border-radius: 999px;
++  background: var(--color-bg-surface);
++  color: var(--color-text-primary);
++  font-size: 13px;
++  cursor: pointer;
++  transition:
++    border-color var(--dur-fast) var(--ease-standard),
++    background-color var(--dur-fast) var(--ease-standard);
++}
++.tp-option svg {
++  width: 14px;
++  height: 14px;
++}
++.tp-option:hover {
++  border-color: var(--color-border-strong);
++}
++.tp-option[aria-pressed='true'] {
++  border-color: var(--color-text-primary);
++  background: var(--color-bg-surface-2);
++  font-weight: 550;
++}
++.tp-actions {
++  display: flex;
++  justify-content: flex-end;
++  gap: 8px;
++  margin-top: 16px;
++}
++@media (prefers-reduced-motion: reduce) {
++  .tp-chip-btn,
++  .tp-option {
++    transition: none;
++  }
++}
+diff --git a/client/src/lib/topics.ts b/client/src/lib/topics.ts
+new file mode 100644
+index 0000000..5567a7a
+--- /dev/null
++++ b/client/src/lib/topics.ts
+@@ -0,0 +1,90 @@
++/*
++  Topics: which kind of problem each question is (Arrays, Graphs, DP…).
++  The same fixed list as the server (src/topics.js); tests/topics.test.js
++  checks the two stay equal. Each problem from /api/problems carries
++  `topics`, a list of these ids.
++*/
++
++export interface Topic {
++  id: string
++  label: string
++  group: string
++}
++
++export const TOPICS: Topic[] = [
++  { id: 'arrays', label: 'Arrays', group: 'Basics' },
++  { id: 'strings', label: 'Strings', group: 'Basics' },
++  { id: 'implementation', label: 'Implementation', group: 'Basics' },
++  { id: 'simulation', label: 'Simulation', group: 'Basics' },
++  { id: 'math', label: 'Math', group: 'Math' },
++  { id: 'number-theory', label: 'Number theory', group: 'Math' },
++  { id: 'combinatorics', label: 'Combinatorics', group: 'Math' },
++  { id: 'probability', label: 'Probability', group: 'Math' },
++  { id: 'geometry', label: 'Geometry', group: 'Math' },
++  { id: 'game-theory', label: 'Game theory', group: 'Math' },
++  { id: 'matrices', label: 'Matrices', group: 'Math' },
++  { id: 'bit-manipulation', label: 'Bit manipulation', group: 'Math' },
++  { id: 'hashing', label: 'Hashing', group: 'Techniques' },
++  { id: 'two-pointers', label: 'Two pointers', group: 'Techniques' },
++  { id: 'sliding-window', label: 'Sliding window', group: 'Techniques' },
++  { id: 'prefix-sums', label: 'Prefix sums', group: 'Techniques' },
++  { id: 'sorting', label: 'Sorting', group: 'Techniques' },
++  { id: 'binary-search', label: 'Binary search', group: 'Techniques' },
++  { id: 'greedy', label: 'Greedy', group: 'Techniques' },
++  { id: 'recursion', label: 'Recursion', group: 'Techniques' },
++  { id: 'backtracking', label: 'Backtracking', group: 'Techniques' },
++  { id: 'divide-and-conquer', label: 'Divide and conquer', group: 'Techniques' },
++  { id: 'brute-force', label: 'Brute force', group: 'Techniques' },
++  { id: 'constructive', label: 'Constructive', group: 'Techniques' },
++  { id: 'interactive', label: 'Interactive', group: 'Techniques' },
++  { id: 'stack', label: 'Stack', group: 'Data structures' },
++  { id: 'queue', label: 'Queue / deque', group: 'Data structures' },
++  { id: 'linked-list', label: 'Linked list', group: 'Data structures' },
++  { id: 'heap', label: 'Heap', group: 'Data structures' },
++  { id: 'trees', label: 'Trees', group: 'Data structures' },
++  { id: 'bst', label: 'Binary search tree', group: 'Data structures' },
++  { id: 'trie', label: 'Trie', group: 'Data structures' },
++  { id: 'segment-tree', label: 'Segment tree / Fenwick', group: 'Data structures' },
++  { id: 'union-find', label: 'Union-find', group: 'Data structures' },
++  { id: 'data-structures', label: 'Data structures', group: 'Data structures' },
++  { id: 'graphs', label: 'Graphs', group: 'Graphs' },
++  { id: 'bfs-dfs', label: 'BFS / DFS', group: 'Graphs' },
++  { id: 'shortest-paths', label: 'Shortest paths', group: 'Graphs' },
++  { id: 'mst', label: 'Minimum spanning tree', group: 'Graphs' },
++  { id: 'topological-sort', label: 'Topological sort', group: 'Graphs' },
++  { id: 'flows', label: 'Flows and matching', group: 'Graphs' },
++  { id: 'dp', label: 'Dynamic programming', group: 'Dynamic programming' },
++  { id: 'dp-bitmask', label: 'Bitmask DP', group: 'Dynamic programming' },
++  { id: 'dp-trees', label: 'DP on trees', group: 'Dynamic programming' },
++  { id: 'dp-digits', label: 'Digit DP', group: 'Dynamic programming' },
++  { id: 'string-algorithms', label: 'String algorithms', group: 'Advanced' },
++  { id: 'fft', label: 'FFT', group: 'Advanced' },
++  { id: 'database', label: 'Database (SQL)', group: 'Other' },
++]
++
++export const TOPIC_BY_ID = new Map(TOPICS.map((t) => [t.id, t]))
++
++/** The groups in list order (Basics, Math, Techniques, …). */
++export const TOPIC_GROUPS = [...new Set(TOPICS.map((t) => t.group))]
++
++export function topicLabel(id: string): string {
++  return TOPIC_BY_ID.get(id)?.label ?? id.replace(/-/g, ' ')
++}
++
++/** Known topic ids from a list (or its JSON text); unknown ids are dropped. */
++export function topicIds(raw: unknown): string[] {
++  let list: unknown = raw
++  if (typeof raw === 'string') {
++    try {
++      list = JSON.parse(raw)
++    } catch {
++      return []
++    }
++  }
++  return Array.isArray(list) ? list.filter((x): x is string => typeof x === 'string' && TOPIC_BY_ID.has(x)) : []
++}
++
++/** Topic ids from a URL value like 'dp,graphs'. */
++export function parseTopicParam(v: string | null): string[] {
++  return [...new Set((v ?? '').split(',').map((s) => s.trim()).filter((s) => TOPIC_BY_ID.has(s)))]
++}
+diff --git a/client/src/pages/ProblemsPage.tsx b/client/src/pages/ProblemsPage.tsx
+index af4ae40..25304f5 100644
+--- a/client/src/pages/ProblemsPage.tsx
++++ b/client/src/pages/ProblemsPage.tsx
+@@ -29,6 +29,7 @@ import {
+ import { aiErrorText, isAiUnavailable } from '@/lib/agent'
+ import { AiProblemResults } from '@/components/problems/AiProblemResults'
+ import { ProblemTable } from '@/components/problems/ProblemTable'
++import { parseTopicParam, topicLabel } from '@/lib/topics'
+ import { Pagination } from '@/components/problems/Pagination'
+ 
+ const PAGE_SIZE = 50
+@@ -49,6 +50,23 @@ export default function ProblemsPage() {
+     return s === 'solved' || s === 'examples' || s === 'attempted' || s === 'unsolved' ? s : 'all'
+   })
+   const [tag, setTag] = useState('')
++  // ?topic=dp,graphs: chosen topics live in the URL, so a filtered list can be shared.
++  const topicParam = searchParams.get('topic')
++  const topics = useMemo(() => parseTopicParam(topicParam), [topicParam])
++  const topicKey = topics.join(',')
++  const setTopics = useCallback(
++    (ids: string[]) =>
++      setSearchParams(
++        (prev) => {
++          const next = new URLSearchParams(prev)
++          if (ids.length) next.set('topic', ids.join(','))
++          else next.delete('topic')
++          return next
++        },
++        { replace: true },
++      ),
++    [setSearchParams],
++  )
+   const [sort, setSort] = useState<ProblemFilterState['sort']>('rating')
+   const [order, setOrder] = useState<ProblemFilterState['order']>('asc')
+   const [offset, setOffset] = useState(0)
+@@ -87,6 +105,7 @@ export default function ProblemsPage() {
+     minRating: band.min,
+     maxRating: band.max,
+     tag: tag || undefined,
++    topic: topicKey || undefined,
+     status: status === 'all' ? undefined : status,
+     search: qParam || undefined,
+   }
+@@ -102,8 +121,8 @@ export default function ProblemsPage() {
+         },
+         timeoutMs: 15000,
+       }),
+-    [platform, band.min, band.max, tag, status, qParam, sort, order, offset],
+-    { cacheKey: `problems:${JSON.stringify([platform, band.min, band.max, tag, status, qParam, sort, order, offset])}` },
++    [platform, band.min, band.max, tag, topicKey, status, qParam, sort, order, offset],
++    { cacheKey: `problems:${JSON.stringify([platform, band.min, band.max, tag, topicKey, status, qParam, sort, order, offset])}` },
+   )
+ 
+   /* Tell the floating assistant what's listed, so it can recommend from it. */
+@@ -113,6 +132,7 @@ export default function ProblemsPage() {
+     difficulty !== 'all' && band.label,
+     status !== 'all' && `status ${status}`,
+     tag && `tag ${tag}`,
++    topics.length > 0 && `topics ${topics.map(topicLabel).join(', ')}`,
+     `sorted by ${sort} ${order}`,
+   ]
+     .filter(Boolean)
+@@ -180,10 +200,11 @@ export default function ProblemsPage() {
+     if (patch.difficulty !== undefined) setDifficulty(patch.difficulty)
+     if (patch.status !== undefined) setStatus(patch.status)
+     if (patch.tag !== undefined) setTag(patch.tag)
++    if (patch.topics !== undefined) setTopics(patch.topics)
+     if (patch.sort !== undefined) setSort(patch.sort)
+     if (patch.order !== undefined) setOrder(patch.order)
+     setOffset(0)
+-  }, [])
++  }, [setTopics])
+ 
+   /* AI finder returns real, re-ranked problems — shown as their own result set */
+   const handleAiResults = useCallback((res: AiFindResponse) => {
+@@ -227,6 +248,7 @@ export default function ProblemsPage() {
+     difficulty,
+     status,
+     tag,
++    topics,
+     sort,
+     order,
+   }
+@@ -298,7 +320,7 @@ export default function ProblemsPage() {
+             ) : problems.length === 0 ? (
+               <div className="card-neon pt-empty">
+                 {/* With no filter set, an empty list means nothing has been imported yet. */}
+-                {!qParam && platform === 'all' && band === DIFFICULTY_BANDS[0] && !tag && status === 'all' ? (
++                {!qParam && platform === 'all' && band === DIFFICULTY_BANDS[0] && !tag && !topics.length && status === 'all' ? (
+                   <EmptyState icon="problems" title="No problems yet" description="Problems appear here once they are imported from the judges. Try again in a little while." />
+                 ) : (
+                   <EmptyState
+@@ -315,6 +337,9 @@ export default function ProblemsPage() {
+                   bookmarkedIds={bookmarkedIds}
+                   onToggleBookmark={toggleBookmark}
+                   busyBookmarkId={busyBookmarkId}
++                  onPickTopic={(id) => {
++                    if (!topics.includes(id)) handleFilterChange({ topics: [...topics, id] })
++                  }}
+                 />
+                 <Pagination total={total} limit={PAGE_SIZE} offset={offset} onPageChange={setOffset} />
+               </>
+diff --git a/src/ai/modes.js b/src/ai/modes.js
+index 2174912..ed6a357 100644
+--- a/src/ai/modes.js
++++ b/src/ai/modes.js
+@@ -440,6 +440,28 @@ An empty list beats a weak entry.`,
+     ],
+     post: (raw) => String(raw).trim(),
+   },
++
++  /* Topics of one problem (src/topics.js), only when the tags and the text
++     leave it unsure. Public statement text only — nothing about any user. */
++  topic_classify: {
++    model: "main",
++    json: true,
++    maxTokens: 120,
++    temperature: 0,
++    cache: true,
++    build: (i) => [
++      {
++        role: "system",
++        content: `${P.DATA_RULE}\nYou label competitive-programming problems by topic. Choose 1 to 3 topics from this list only, the ones a strong solver would use to solve it (not words that merely appear in the story). Answer JSON only: {"topics":["id", …]} using the ids exactly as listed.\n${(i.topics || []).slice(0, 80).join("\n")}`,
++      },
++      { role: "user", content: problemBlock(i, 4000) },
++    ],
++    post: (raw) => {
++      const j = parseJson(raw);
++      const list = Array.isArray(j) ? j : j && Array.isArray(j.topics) ? j.topics : [];
++      return list.map(String).slice(0, 3);
++    },
++  },
+ };
+ 
+ module.exports = { MODES, parseJson, stripFences };
+diff --git a/src/authoring.js b/src/authoring.js
+index 338b550..5773443 100644
+--- a/src/authoring.js
++++ b/src/authoring.js
+@@ -380,6 +380,8 @@ async function publish(id, { by, markdown }) {
+   }
+   await run("INSERT OR REPLACE INTO problem_checkers(problem_rowid, checker) VALUES(?,?)", [rowid, JSON.stringify(d.checker)]);
+   await run("UPDATE authored_problems SET status='published', problem_rowid=?, updated_by=?, updated_at=? WHERE id=?", [rowid, by, new Date().toISOString(), p.id]);
++  // Its topics, from its tags and statement (a staff correction is kept).
++  await require("./topics").classifyProblem(rowid).catch((e) => console.warn("[topics]", e.message));
+   return load(p.id);
+ }
+ 
+diff --git a/src/db.js b/src/db.js
+index 5954c2c..9eb2a7d 100644
+--- a/src/db.js
++++ b/src/db.js
+@@ -1073,6 +1073,8 @@ async function initDb() {
+   // Catalog version (triggers) + snapshot — src/problem-catalog.js.
+   // eslint-disable-next-line global-require
+   await require("./problem-catalog").initCatalogTables();
++  // Topics of every problem (src/topics.js).
++  await require("./topics").init();
+ }
+ 
+ /* ===== Per-user totals for the leaderboard =====
+diff --git a/src/problem-catalog.js b/src/problem-catalog.js
+index 8bcc206..eee377a 100644
+--- a/src/problem-catalog.js
++++ b/src/problem-catalog.js
+@@ -29,6 +29,9 @@ const CHECK_MS = Number(process.env.CATALOG_CHECK_MS ?? (IS_TEST ? 0 : 5000));
+ const FALLBACK_TTL_MS = 10 * 60 * 1000;
+ const SNAPSHOT_PART = 400 * 1024; // base64 chars per snapshot row
+ const COLUMNS = ["id", "platform", "problem_id", "title", "url", "rating", "tags", "category"];
++// The snapshot also keeps each problem's topic ids (src/topics.js), read from
++// problem_topics, so a cold start needs neither table.
++const SNAP_COLUMNS = [...COLUMNS, "topics"];
+ 
+ const PROBLEM_WRITE =
+   /^\s*(?:INSERT(?:\s+OR\s+\w+)?\s+INTO|REPLACE\s+INTO|UPDATE(?:\s+OR\s+\w+)?|DELETE\s+FROM|DROP\s+TABLE(?:\s+IF\s+EXISTS)?|ALTER\s+TABLE)\s+["`]?problems["`]?(?![\w])/i;
+@@ -104,8 +107,8 @@ async function readSnapshot(version) {
+ 
+ async function writeSnapshot(rows, version) {
+   if (version == null) return;
+-  const data = rows.map((r) => COLUMNS.map((c) => r[c]));
+-  const b64 = zlib.gzipSync(JSON.stringify({ columns: COLUMNS, data }), { level: 9 }).toString("base64");
++  const data = rows.map((r) => SNAP_COLUMNS.map((c) => r[c] ?? null));
++  const b64 = zlib.gzipSync(JSON.stringify({ columns: SNAP_COLUMNS, data }), { level: 9 }).toString("base64");
+   const stmts = [["DELETE FROM catalog_snapshot"]];
+   for (let i = 0, part = 0; i < b64.length; i += SNAPSHOT_PART, part++) {
+     stmts.push(["INSERT INTO catalog_snapshot(part, version, data) VALUES(?,?,?)", [part, version, b64.slice(i, i + SNAPSHOT_PART)]]);
+@@ -120,6 +123,14 @@ async function load() {
+     // An unpublished NexoraGuru problem keeps its row (submissions point at it) but leaves the catalog.
+     // (Filtered here, not in SQL: this one full read stays the plain query tests/db-usage.test.js allows.)
+     rows = (await all(`SELECT ${COLUMNS.join(", ")} FROM problems ORDER BY id`)).filter((r) => r.category !== "__hidden");
++    // Each problem's topic ids (src/topics.js), from their own table: one read
++    // only when the catalog is rebuilt, never per request.
++    try {
++      const byRow = new Map((await all("SELECT problem_rowid, ids FROM problem_topics")).map((t) => [t.problem_rowid, t.ids]));
++      for (const r of rows) r.topics = byRow.get(r.id) || "[]";
++    } catch {
++      for (const r of rows) r.topics = "[]";
++    }
+     // Best effort: the next cold start (any process) reads ~5 rows instead.
+     writeSnapshot(rows, version).catch((e) => console.warn("[catalog] snapshot write failed:", e.message));
+   }
+@@ -169,6 +180,19 @@ function invalidateCatalog() {
+   localVersion++;
+ }
+ 
++/**
++ * Something the catalog shows changed outside `problems` (topics): bump the
++ * stored version (so every process reloads) and this process's own.
++ */
++async function bumpVersion() {
++  localVersion++;
++  try {
++    await runBatch([["UPDATE catalog_meta SET v = v + 1 WHERE k = 'problems'"]]);
++  } catch {
++    /* a bare test database has no version table: the local bump is enough */
++  }
++}
++
+ /** Memoise a value derived from one catalog version. */
+ function memo(catalog, key, fn) {
+   if (!catalog.memo.has(key)) catalog.memo.set(key, fn());
+@@ -231,9 +255,9 @@ const ge = (a, b) => a != null && b != null && a >= b;
+ const le = (a, b) => a != null && b != null && a <= b;
+ 
+ /** Cache key for a filter set (NaN kept distinct from "no filter"). */
+-function filterKey({ platform, minRating, maxRating, tag, search, exclude } = {}) {
++function filterKey({ platform, minRating, maxRating, tag, search, exclude, topics, searchTopic } = {}) {
+   const n = (v) => (v == null ? "" : Number.isNaN(v) ? "NaN" : String(v));
+-  return [platform || "", n(minRating), n(maxRating), tag || "", search || "", exclude && exclude.size ? [...exclude].sort().join(",") : ""].join("");
++  return [platform || "", n(minRating), n(maxRating), tag || "", search || "", exclude && exclude.size ? [...exclude].sort().join(",") : "", topics && topics.length ? [...topics].sort().join(",") : "", searchTopic || ""].join("");
+ }
+ 
+ /**
+@@ -241,8 +265,12 @@ function filterKey({ platform, minRating, maxRating, tag, search, exclude } = {}
+  * per-user status filter). `minRating`/`maxRating` are numbers (NaN = SQL
+  * NULL, which matches nothing), `tag`/`search` are raw LIKE needles.
+  */
+-function filterIndices(catalog, { platform, minRating, maxRating, tag, search, exclude } = {}) {
+-  const key = filterKey({ platform, minRating, maxRating, tag, search, exclude });
++function filterIndices(catalog, { platform, minRating, maxRating, tag, search, exclude, topics, searchTopic } = {}) {
++  const key = filterKey({ platform, minRating, maxRating, tag, search, exclude, topics, searchTopic });
++  // Topics (src/topics.js): every chosen topic id must be on the problem.
++  const needTopics = topics && topics.length ? topics.map((id) => `"${id}"`) : null;
++  // A search that is a topic's whole name ("graphs") also finds that topic's problems.
++  const orTopic = searchTopic ? `"${searchTopic}"` : null;
+   return memo(catalog, `f:${key}`, () => {
+     const tagLike = tag ? likeMatcher(`%${tag}%`) : null;
+     const searchLike = search ? likeMatcher(`%${search}%`) : null;
+@@ -257,7 +285,8 @@ function filterIndices(catalog, { platform, minRating, maxRating, tag, search, e
+       if (minR != null && (Number.isNaN(minR) || !ge(num(r.rating), minR))) continue;
+       if (maxR != null && (Number.isNaN(maxR) || !le(num(r.rating), maxR))) continue;
+       if (tagLike && !tagLike(r.tags)) continue;
+-      if (searchLike && !searchLike(r.title) && !searchLike(r.problem_id)) continue;
++      if (searchLike && !searchLike(r.title) && !searchLike(r.problem_id) && !(orTopic && r.topics && r.topics.includes(orTopic))) continue;
++      if (needTopics && !(r.topics && needTopics.every((t) => r.topics.includes(t)))) continue;
+       out.push(i);
+     }
+     return out;
+@@ -339,6 +368,7 @@ function byId(catalog, id) {
+ }
+ 
+ module.exports = {
++  bumpVersion,
+   PROBLEM_WRITE,
+   byId,
+   filterIndices,
+diff --git a/src/routes/studio.js b/src/routes/studio.js
+index 4b18c41..e1a822f 100644
+--- a/src/routes/studio.js
++++ b/src/routes/studio.js
+@@ -749,6 +749,8 @@ function createStudioRouter(deps) {
+           ]);
+         }
+       }
++      // New title, tags or statement: its topics again (a staff correction is kept).
++      if (metaFields.length || statement != null) await require('../topics').classifyProblem(Number(req.params.id)).catch((e) => console.warn('[topics]', e.message));
+       res.json({ ok: true });
+     } catch (e) {
+       res.status(500).json({ ok: false, error: errMessage(e) });
+diff --git a/src/routes/topics.js b/src/routes/topics.js
+new file mode 100644
+index 0000000..fb5d66c
+--- /dev/null
++++ b/src/routes/topics.js
+@@ -0,0 +1,129 @@
++// Topics (src/topics.js): the list with counts, each problem's topics, staff
++// corrections, and the backfill (Admin → Problem sources → Topics).
++// Staff routes live under /api/problem-sources/ so the Problems permission
++// and the "Problem sources" staff section (src/authz/sections.js) cover them.
++const express = require("express");
++const topics = require("../topics");
++const { getCatalog } = require("../problem-catalog");
++const { run } = require("../db");
++
++/** One audit_log row, the same shape Admin writes (src/routes/admin.js). */
++async function audit(req, action, { targetType = null, target = null, before, after } = {}) {
++  const j = (v) => (v === undefined ? null : JSON.stringify(v));
++  try {
++    await run(
++      `INSERT INTO audit_log(actor, actor_role, action, target_type, target, before, after, ip, created_at) VALUES(?,?,?,?,?,?,?,?,?)`,
++      [req.access?.username || "?", req.access?.role || null, action, targetType, target, j(before), j(after), req.ip || null, Date.now()],
++    );
++  } catch (e) {
++    console.warn("[topics] audit failed:", e.message);
++  }
++}
++
++function createTopicsRouter({ can, me }) {
++  const router = express.Router();
++  const guard = (req, res, next) => (can(req, "problems.manage") ? next() : res.status(403).json({ ok: false, error: "You need the Problems permission" }));
++  const fail = (res, e) => res.status(500).json({ ok: false, error: String((e && e.message) || e) });
++
++  /** Every topic, with how many problems in the catalog have it. */
++  router.get("/api/topics", async (_req, res) => {
++    try {
++      const catalog = await getCatalog();
++      const counts = new Map();
++      for (const r of catalog.rows) {
++        if (!r.topics || r.topics === "[]") continue;
++        try {
++          for (const id of JSON.parse(r.topics)) counts.set(id, (counts.get(id) || 0) + 1);
++        } catch {
++          /* skip a bad row */
++        }
++      }
++      res.json({ ok: true, topics: topics.TOPICS.map((t) => ({ ...t, count: counts.get(t.id) || 0 })) });
++    } catch (e) {
++      fail(res, e);
++    }
++  });
++
++  /** One problem's topics, with where each came from. */
++  router.get("/api/problems/:id/topics", async (req, res) => {
++    const id = Number(req.params.id);
++    if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ ok: false, error: "Bad problem id" });
++    try {
++      const t = await topics.topicsFor(id);
++      res.json({ ok: true, ...t, canEdit: can(req, "problems.manage") });
++    } catch (e) {
++      fail(res, e);
++    }
++  });
++
++  /** A staff correction: kept for good, the pipeline never changes it. */
++  router.put("/api/problem-sources/topics/:id", guard, async (req, res) => {
++    const id = Number(req.params.id);
++    if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ ok: false, error: "Bad problem id" });
++    const list = Array.isArray(req.body?.topics) ? req.body.topics : null;
++    if (!list) return res.status(400).json({ ok: false, error: "Send topics: a list of topic ids" });
++    const unknown = list.filter((x) => !topics.TOPICS.some((t) => t.id === x));
++    if (unknown.length) return res.status(400).json({ ok: false, error: `Unknown topic: ${unknown.slice(0, 3).join(", ")}` });
++    try {
++      const before = await topics.topicsFor(id);
++      const detail = await topics.setTopics(id, list, me());
++      await audit(req, "problem.topics", { targetType: "problem", target: String(id), before: { topics: before.topics.map((t) => t.id) }, after: { topics: list } });
++      res.json({ ok: true, topics: detail, locked: true });
++    } catch (e) {
++      fail(res, e);
++    }
++  });
++
++  /** Undo a correction: back to what the pipeline finds. */
++  router.delete("/api/problem-sources/topics/:id/lock", guard, async (req, res) => {
++    const id = Number(req.params.id);
++    if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ ok: false, error: "Bad problem id" });
++    try {
++      const r = await topics.unlock(id);
++      await audit(req, "problem.topics.unlock", { targetType: "problem", target: String(id) });
++      res.json({ ok: true, ...(r || { topics: [] }), locked: false });
++    } catch (e) {
++      fail(res, e);
++    }
++  });
++
++  /** Counts and the backfill's progress. */
++  router.get("/api/problem-sources/topics", guard, async (_req, res) => {
++    try {
++      res.json({ ok: true, summary: await topics.summary(), job: topics.status() });
++    } catch (e) {
++      fail(res, e);
++    }
++  });
++
++  /**
++   * Run the pipeline now: problems with no topics yet (default) or all of
++   * them except staff-locked ones (`all`). `ai: true` also asks the site's AI
++   * model about unsure problems whose statement we have (up to `aiLimit`,
++   * counted against this admin's own AI budget).
++   */
++  router.post("/api/problem-sources/topics/backfill", guard, async (req, res) => {
++    const b = req.body || {};
++    if (topics.status().running) return res.status(409).json({ ok: false, error: "Already running", job: topics.status() });
++    let ai = null;
++    if (b.ai) {
++      const { isConfigured } = require("../ai/groq");
++      if (!isConfigured()) return res.status(400).json({ ok: false, error: "No AI model is set up (Admin → AI models)" });
++      const { runTask } = require("../ai/agent");
++      ai = {
++        user: { username: me() },
++        limit: Math.max(1, Math.min(100, Number(b.aiLimit) || 30)),
++        ask: (input, user) => runTask("topic_classify", input, { user }),
++      };
++    }
++    topics.backfill({ all: !!b.all, by: me(), ai }).catch(() => {});
++    await audit(req, "problem.topics.backfill", { targetType: "topics", target: b.all ? "all" : "new", after: { ai: !!b.ai } });
++    res.json({ ok: true, job: topics.status() });
++  });
++
++  router.post("/api/problem-sources/topics/stop", guard, (_req, res) => res.json({ ok: true, job: topics.stopBackfill() }));
++
++  return router;
++}
++
++module.exports = { createTopicsRouter };
+diff --git a/src/scraper.js b/src/scraper.js
+index 75837a5..97cfec0 100644
+--- a/src/scraper.js
++++ b/src/scraper.js
+@@ -254,6 +254,8 @@ async function saveStatement(problemId, data) {
+     JSON.stringify(data.samples || []),
+     new Date().toISOString()
+   ]);
++  // The statement's words make the topics surer (src/topics.js).
++  require('./topics').classifyProblem(problemId).catch((e) => console.warn('[topics]', e.message));
+ }
+ 
+ /* ---------- Worker (browser tab) ---------- */
+diff --git a/src/server.js b/src/server.js
+index a05592f..ad497e4 100644
+--- a/src/server.js
++++ b/src/server.js
+@@ -785,6 +785,7 @@ app.get("/api/problems", async (req, res) => {
+       minRating,
+       maxRating,
+       tag,
++      topic,
+       status,
+       search,
+       sort,
+@@ -792,6 +793,11 @@ app.get("/api/problems", async (req, res) => {
+       limit,
+       offset,
+     } = req.query;
++    // Topics: ?topic=dp,graphs (all must match), and in the search box
++    // `topic:dp` or a topic's whole name ("dynamic programming").
++    const topicMod = require("./topics");
++    const asked = topicMod.topicsInQuery(search ? String(search) : "");
++    const topicIds = [...new Set([...String(topic || "").split(",").map((t) => topicMod.findTopic(t, true)).filter(Boolean), ...asked.ids])];
+     // Clamp both: LIMIT -1 means "no limit" to SQLite, and NaN binds as NULL.
+     const lim = Math.min(Math.max(Math.trunc(+limit) || 50, 1), 200);
+     const off = Math.max(Math.trunc(+offset) || 0, 0);
+@@ -803,8 +809,10 @@ app.get("/api/problems", async (req, res) => {
+       minRating: minRating ? +minRating : null,
+       maxRating: maxRating ? +maxRating : null,
+       tag: tag ? String(tag) : "",
+-      search: search ? String(search) : "",
++      search: asked.rest,
+       exclude: await require("./sources").disabledPlatforms(),
++      topics: topicIds,
++      searchTopic: asked.orTopic,
+     };
+     const matched = filterIndices(catalog, filters);
+     const st = status && status !== "all" ? String(status) : "";
+@@ -832,13 +840,14 @@ app.get("/api/problems", async (req, res) => {
+       const pr = progress.get(p.id);
+       return {
+         ...p,
++        topics: topicList(p.topics),
+         solve_status: pr?.status ?? "unsolved",
+         attempts: pr ? pr.attempts : null,
+         xp_earned: pr ? pr.xp_earned : null,
+         solved_at: pr ? pr.solved_at : null,
+       };
+     });
+-    res.json({ ok: true, total: indices.length, problems, limit: lim, offset: off });
++    res.json({ ok: true, total: indices.length, problems, limit: lim, offset: off, ...(topicIds.length ? { topics: topicIds } : {}) });
+   } catch (e) {
+     res.status(500).json({ ok: false, error: errMessage(e) });
+   }
+@@ -866,8 +875,9 @@ async function userProgressMap(ids) {
+ app.get("/api/problems/:id", async (req, res) => {
+   try {
+     const problem = await get(
+-      `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status, pr.attempts, pr.xp_earned, pr.notes
+-      FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE p.id=?`,
++      `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status, pr.attempts, pr.xp_earned, pr.notes, pt.ids AS topics
++      FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
++      LEFT JOIN problem_topics pt ON pt.problem_rowid=p.id WHERE p.id=?`,
+       [req.params.id],
+     );
+     if (!problem || (problem.category === "__hidden" && !can(req, "problems.manage")))
+@@ -925,12 +935,24 @@ app.get("/api/problems/:id", async (req, res) => {
+         bestMs: summary.bestMs,
+       };
+     }
++    problem.topics = topicList(problem.topics);
+     res.json({ ok: true, problem, testcases, submissions, analysis });
+   } catch (e) {
+     res.status(500).json({ ok: false, error: errMessage(e) });
+   }
+ });
+ 
++/** A catalog row's topic ids as a list (stored as a JSON string). */
++function topicList(raw) {
++  if (Array.isArray(raw)) return raw;
++  try {
++    const a = JSON.parse(raw || "[]");
++    return Array.isArray(a) ? a : [];
++  } catch {
++    return [];
++  }
++}
++
+ /* ========== Save scraped statement helper ========== */
+ async function _saveStatement(problemId, data) {
+   await run(
+@@ -955,6 +977,9 @@ async function _saveStatement(problemId, data) {
+   const row = await get("SELECT platform FROM problems WHERE id=?", [problemId]).catch(() => null);
+   const { normalizeStatementHtml } = require("./statement-media");
+   keepStatementMedia(normalizeStatementHtml([data.statement, data.inputSpec, data.outputSpec, data.note].join("\n"), { platform: row?.platform }));
++  // The statement makes the topics surer (its words count too): reclassify,
++  // in the background (it never delays the page).
++  require("./topics").classifyProblem(problemId).catch((e) => console.warn("[topics]", e.message));
+ }
+ // Admin re-imports (src/sources/audit.js) save through the same path.
+ require("./sources/audit").useSaver((id, data) => _saveStatement(id, data), (html) => keepStatementMedia(html));
+@@ -1446,6 +1471,8 @@ app.get("/api/activity/:date", async (req, res) => {
+ app.use(createAiAssistRouter({ get, all, run, aiLimiter }));
+ app.use(require("./routes/coding").createCodingRouter({ get, me, aiLimiter, judgeLimiter }));
+ app.use(require("./routes/sources").createSourcesRouter({ can, me, invalidateCatalog: () => require("./problem-catalog").invalidateCatalog() }));
++// Topics of every problem: the list, each problem's topics, staff corrections, the backfill (src/topics.js).
++app.use(require("./routes/topics").createTopicsRouter({ can, me }));
+ // Staff: "Add a coding problem" (official NexoraGuru problems).
+ app.use(
+   require("./routes/authoring").createAuthoringRouter({
+@@ -3468,8 +3495,8 @@ app.post("/api/custom-problems", async (req, res) => {
+     const creator = me();
+     if (!creator) return res.status(401).json({ ok: false, error: "Please sign in first" });
+     const r = await run(
+-      `INSERT INTO custom_problems(creator,title,statement,input_spec,output_spec,difficulty,tags,samples,testcases,time_limit,memory_limit,created_at,editorial)
+-      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
++      `INSERT INTO custom_problems(creator,title,statement,input_spec,output_spec,difficulty,tags,samples,testcases,time_limit,memory_limit,created_at,editorial,topics)
++      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+       [
+         creator,
+         title,
+@@ -3484,6 +3511,8 @@ app.post("/api/custom-problems", async (req, res) => {
+         memory_limit || "256 MB",
+         new Date().toISOString(),
+         String(editorial || "").slice(0, 50000),
++        // Its topics, found from its title, tags and statement (src/topics.js).
++        JSON.stringify(require("./topics").customTopics({ title, tags, statement, input_spec, output_spec })),
+       ],
+     );
+     res.json({ ok: true, id: r.lastID });
+@@ -3508,7 +3537,7 @@ app.put("/api/custom-problems/:id", async (req, res) => {
+     } = req.body;
+     await run(
+       `UPDATE custom_problems SET title=?,statement=?,input_spec=?,output_spec=?,difficulty=?,
+-      tags=?,samples=?,testcases=?,time_limit=?,memory_limit=?,updated_at=?,editorial=? WHERE id=?`,
++      tags=?,samples=?,testcases=?,time_limit=?,memory_limit=?,updated_at=?,editorial=?,topics=? WHERE id=?`,
+       [
+         title,
+         statement || "",
+@@ -3522,6 +3551,7 @@ app.put("/api/custom-problems/:id", async (req, res) => {
+         memory_limit || "256 MB",
+         new Date().toISOString(),
+         String(editorial || "").slice(0, 50000),
++        JSON.stringify(require("./topics").customTopics({ title, tags, statement, input_spec, output_spec })),
+         req.params.id,
+       ],
+     );
+@@ -6634,6 +6664,12 @@ io.on("connection", (socket) => {
+     if (process.env.NODE_ENV !== "test") {
+       getCatalog().catch((e) => console.warn("[catalog] warm-up failed:", e.message));
+     }
++    // A minute after start, problems with no topics yet get theirs (src/topics.js):
++    // 200 at a time with a pause, so it never crowds out real requests.
++    // TOPICS_STARTUP=0 turns it off.
++    if (process.env.TOPICS_STARTUP !== "0") {
++      setTimeout(() => require("./topics").classifyNew({ by: "startup" }), 60_000).unref();
++    }
+   });
+ 
+   /* ── Graceful shutdown ── */
+diff --git a/src/sources/index.js b/src/sources/index.js
+index efdb336..950c9c0 100644
+--- a/src/sources/index.js
++++ b/src/sources/index.js
+@@ -191,6 +191,12 @@ async function upsert(platform, rawRows) {
+       ]),
+     );
+   }
++  // A changed title or tags can mean other topics: classify those again.
++  const retopic = updates.filter((r) => {
++    const old = existing.get(r.problem_id);
++    return old.title !== r.title || String(old.tags ?? "") !== r.tags || String(old.category ?? "") !== r.category;
++  });
++  if (retopic.length) await require("../topics").forget(platform, retopic.map((r) => r.problem_id)).catch((e) => console.warn("[topics]", e.message));
+   return { total: rows.length, added: inserts.length, updated: updates.length };
+ }
+ 
+@@ -213,6 +219,8 @@ async function syncSource(id, { by = null } = {}) {
+       disabledCache = null;
+     }
+     stmtCounts = null;
++    // New and changed problems get their topics (src/topics.js), in the background.
++    if (r.added || r.updated) require("../topics").classifyNew({ by: "sync" });
+     return r;
+   } catch (e) {
+     await run("UPDATE problem_sources SET last_error=? WHERE id=?", [String(e.message || e).slice(0, 400), id]).catch(() => {});
+diff --git a/src/topics.js b/src/topics.js
+new file mode 100644
+index 0000000..fcc088f
+--- /dev/null
++++ b/src/topics.js
+@@ -0,0 +1,682 @@
++// Topics: which kind of problem each question is (Arrays, Graphs, DP…), shown
++// on every problem, filterable on the Problems page and searchable there and in
++// the contest maker.
++//
++// One fixed list (TOPICS). A problem's topics come from, in order of trust:
++//   1. staff     — a correction made in Admin; kept for good, never overwritten;
++//   2. tags      — the judge's own tags (Codeforces, LeetCode, CodeChef, CSES
++//                  sections, DMOJ types, SPOJ…), mapped through TAG_MAP;
++//   3. text      — phrases in the title and, once fetched, the statement
++//                  (TEXT_RULES, weighted);
++//   4. ai        — only when 2 and 3 are unsure, and only when an admin asks for
++//                  it (Admin → Problem sources → Topics), with the site's own
++//                  AI model; statements are public text, nothing about any user
++//                  is sent.
++// Stored in problem_topics: per problem the topic ids (`ids`, read into the
++// in-memory catalog when it is rebuilt, so filtering costs no reads per
++// request), each topic with its confidence and where it came from (`detail`),
++// whether staff locked it, and when. Writing here does not touch `problems`,
++// so a backfill of the whole catalog bumps the catalog version once, not once
++// per row. Custom (Workshop) problems keep their own custom_problems.topics.
++const { all, get, run, runBatch } = require("./db");
++
++/* ── the list ── */
++const TOPICS = [
++  { id: "arrays", label: "Arrays", group: "Basics" },
++  { id: "strings", label: "Strings", group: "Basics" },
++  { id: "implementation", label: "Implementation", group: "Basics" },
++  { id: "simulation", label: "Simulation", group: "Basics" },
++  { id: "math", label: "Math", group: "Math" },
++  { id: "number-theory", label: "Number theory", group: "Math" },
++  { id: "combinatorics", label: "Combinatorics", group: "Math" },
++  { id: "probability", label: "Probability", group: "Math" },
++  { id: "geometry", label: "Geometry", group: "Math" },
++  { id: "game-theory", label: "Game theory", group: "Math" },
++  { id: "matrices", label: "Matrices", group: "Math" },
++  { id: "bit-manipulation", label: "Bit manipulation", group: "Math" },
++  { id: "hashing", label: "Hashing", group: "Techniques" },
++  { id: "two-pointers", label: "Two pointers", group: "Techniques" },
++  { id: "sliding-window", label: "Sliding window", group: "Techniques" },
++  { id: "prefix-sums", label: "Prefix sums", group: "Techniques" },
++  { id: "sorting", label: "Sorting", group: "Techniques" },
++  { id: "binary-search", label: "Binary search", group: "Techniques" },
++  { id: "greedy", label: "Greedy", group: "Techniques" },
++  { id: "recursion", label: "Recursion", group: "Techniques" },
++  { id: "backtracking", label: "Backtracking", group: "Techniques" },
++  { id: "divide-and-conquer", label: "Divide and conquer", group: "Techniques" },
++  { id: "brute-force", label: "Brute force", group: "Techniques" },
++  { id: "constructive", label: "Constructive", group: "Techniques" },
++  { id: "interactive", label: "Interactive", group: "Techniques" },
++  { id: "stack", label: "Stack", group: "Data structures" },
++  { id: "queue", label: "Queue / deque", group: "Data structures" },
++  { id: "linked-list", label: "Linked list", group: "Data structures" },
++  { id: "heap", label: "Heap", group: "Data structures" },
++  { id: "trees", label: "Trees", group: "Data structures" },
++  { id: "bst", label: "Binary search tree", group: "Data structures" },
++  { id: "trie", label: "Trie", group: "Data structures" },
++  { id: "segment-tree", label: "Segment tree / Fenwick", group: "Data structures" },
++  { id: "union-find", label: "Union-find", group: "Data structures" },
++  { id: "data-structures", label: "Data structures", group: "Data structures" },
++  { id: "graphs", label: "Graphs", group: "Graphs" },
++  { id: "bfs-dfs", label: "BFS / DFS", group: "Graphs" },
++  { id: "shortest-paths", label: "Shortest paths", group: "Graphs" },
++  { id: "mst", label: "Minimum spanning tree", group: "Graphs" },
++  { id: "topological-sort", label: "Topological sort", group: "Graphs" },
++  { id: "flows", label: "Flows and matching", group: "Graphs" },
++  { id: "dp", label: "Dynamic programming", group: "Dynamic programming" },
++  { id: "dp-bitmask", label: "Bitmask DP", group: "Dynamic programming" },
++  { id: "dp-trees", label: "DP on trees", group: "Dynamic programming" },
++  { id: "dp-digits", label: "Digit DP", group: "Dynamic programming" },
++  { id: "string-algorithms", label: "String algorithms", group: "Advanced" },
++  { id: "fft", label: "FFT", group: "Advanced" },
++  { id: "database", label: "Database (SQL)", group: "Other" },
++];
++const BY_ID = new Map(TOPICS.map((t) => [t.id, t]));
++
++/* ── the judges' own tags → topics ── (keys are lower case, trimmed) */
++const TAG_MAP = {
++  // Codeforces
++  "implementation": ["implementation"],
++  "math": ["math"],
++  "greedy": ["greedy"],
++  "dp": ["dp"],
++  "data structures": ["data-structures"],
++  "brute force": ["brute-force"],
++  "constructive algorithms": ["constructive"],
++  "graphs": ["graphs"],
++  "sortings": ["sorting"],
++  "binary search": ["binary-search"],
++  "dfs and similar": ["bfs-dfs", "graphs"],
++  "trees": ["trees"],
++  "strings": ["strings"],
++  "number theory": ["number-theory", "math"],
++  "combinatorics": ["combinatorics", "math"],
++  "two pointers": ["two-pointers"],
++  "bitmasks": ["bit-manipulation"],
++  "geometry": ["geometry"],
++  "dsu": ["union-find"],
++  "shortest paths": ["shortest-paths", "graphs"],
++  "probabilities": ["probability", "math"],
++  "divide and conquer": ["divide-and-conquer"],
++  "hashing": ["hashing"],
++  "games": ["game-theory"],
++  "interactive": ["interactive"],
++  "flows": ["flows", "graphs"],
++  "graph matchings": ["flows", "graphs"],
++  "matrices": ["matrices"],
++  "string suffix structures": ["string-algorithms", "strings"],
++  "ternary search": ["binary-search"],
++  "fft": ["fft", "math"],
++  "meet-in-the-middle": ["brute-force"],
++  "expression parsing": ["strings", "implementation"],
++  "2-sat": ["graphs"],
++  "chinese remainder theorem": ["number-theory", "math"],
++  "schedules": ["greedy"],
++  // LeetCode (topicTags)
++  "array": ["arrays"],
++  "string": ["strings"],
++  "hash table": ["hashing"],
++  "dynamic programming": ["dp"],
++  "sorting": ["sorting"],
++  "depth-first search": ["bfs-dfs"],
++  "breadth-first search": ["bfs-dfs"],
++  "database": ["database"],
++  "tree": ["trees"],
++  "binary tree": ["trees"],
++  "matrix": ["matrices", "arrays"],
++  "bit manipulation": ["bit-manipulation"],
++  "heap (priority queue)": ["heap"],
++  "stack": ["stack"],
++  "monotonic stack": ["stack"],
++  "prefix sum": ["prefix-sums"],
++  "simulation": ["simulation"],
++  "graph": ["graphs"],
++  "counting": ["hashing"],
++  "sliding window": ["sliding-window"],
++  "backtracking": ["backtracking"],
++  "union find": ["union-find"],
++  "linked list": ["linked-list"],
++  "doubly-linked list": ["linked-list"],
++  "ordered set": ["data-structures"],
++  "trie": ["trie"],
++  "segment tree": ["segment-tree"],
++  "binary indexed tree": ["segment-tree"],
++  "queue": ["queue"],
++  "monotonic queue": ["queue"],
++  "recursion": ["recursion"],
++  "memoization": ["dp"],
++  "topological sort": ["topological-sort", "graphs"],
++  "binary search tree": ["bst", "trees"],
++  "shortest path": ["shortest-paths", "graphs"],
++  "game theory": ["game-theory"],
++  "number theory": ["number-theory"],
++  "data stream": ["data-structures"],
++  "bitmask": ["dp-bitmask", "bit-manipulation"],
++  "rolling hash": ["hashing", "string-algorithms"],
++  "hash function": ["hashing"],
++  "string matching": ["string-algorithms", "strings"],
++  "suffix array": ["string-algorithms"],
++  "probability and statistics": ["probability"],
++  "minimum spanning tree": ["mst", "graphs"],
++  "strongly connected component": ["graphs"],
++  "biconnected component": ["graphs"],
++  "eulerian circuit": ["graphs"],
++  "merge sort": ["sorting", "divide-and-conquer"],
++  "bucket sort": ["sorting"],
++  "counting sort": ["sorting"],
++  "radix sort": ["sorting"],
++  "quickselect": ["sorting"],
++  "line sweep": ["sorting"],
++  "enumeration": ["brute-force"],
++  "brainteaser": ["math"],
++  "design": ["data-structures"],
++  // CSES sections (stored lower-case)
++  "introductory problems": ["implementation"],
++  "sorting and searching": ["sorting", "binary-search"],
++  "graph algorithms": ["graphs"],
++  "range queries": ["segment-tree", "prefix-sums"],
++  "tree algorithms": ["trees"],
++  "mathematics": ["math"],
++  "string algorithms": ["string-algorithms", "strings"],
++  "advanced techniques": ["data-structures"],
++  "sliding window problems": ["sliding-window"],
++  "interactive problems": ["interactive"],
++  "bitwise operations": ["bit-manipulation"],
++  // DMOJ types / CodeChef / SPOJ / common words
++  "graph theory": ["graphs"],
++  "simple math": ["math"],
++  "advanced math": ["math"],
++  "ad hoc": ["implementation"],
++  "greedy algorithms": ["greedy"],
++  "dynamic-programming": ["dp"],
++  "segment-tree": ["segment-tree"],
++  "segment trees": ["segment-tree"],
++  "fenwick tree": ["segment-tree"],
++  "bit": ["segment-tree"],
++  "binary-search": ["binary-search"],
++  "prefix sums": ["prefix-sums"],
++  "prefix-sum": ["prefix-sums"],
++  "bfs": ["bfs-dfs", "graphs"],
++  "dfs": ["bfs-dfs", "graphs"],
++  "dijkstra": ["shortest-paths", "graphs"],
++  "disjoint set union": ["union-find"],
++  "sieve": ["number-theory"],
++  "gcd": ["number-theory"],
++  "modular arithmetic": ["number-theory"],
++  "primes": ["number-theory"],
++  "bitwise": ["bit-manipulation"],
++  "xor": ["bit-manipulation"],
++  "heap": ["heap"],
++  "priority queue": ["heap"],
++  "deque": ["queue"],
++  "kmp": ["string-algorithms"],
++  "z-function": ["string-algorithms"],
++  "dp on trees": ["dp-trees", "dp", "trees"],
++  "tree dp": ["dp-trees", "dp", "trees"],
++  "bitmask dp": ["dp-bitmask", "dp"],
++  "digit dp": ["dp-digits", "dp"],
++  "basic programming": ["implementation"],
++  "basic math": ["math"],
++  "sorting algorithms": ["sorting"],
++  "arrays": ["arrays"],
++  "string manipulation": ["strings"],
++  "maths": ["math"],
++};
++
++/* ── words in the title and statement → topics (pattern, topics, weight) ── */
++const TEXT_RULES = [
++  [/\bshortest (path|route|distance)s?\b|\bdijkstra\b|\bbellman[- ]ford\b|\bfloyd\b/i, ["shortest-paths", "graphs"], 3],
++  [/\bspanning tree\b|\bkruskal\b|\bprim'?s\b/i, ["mst", "graphs"], 3],
++  [/\btopological(ly)? (order|sort)/i, ["topological-sort", "graphs"], 3],
++  [/\b(undirected|directed|weighted) graph\b|\bvertices\b|\bedges?\b.*\bvert(ex|ices)\b|\bgraph\b/i, ["graphs"], 2],
++  [/\bbfs\b|\bdfs\b|\bbreadth[- ]first\b|\bdepth[- ]first\b|\bconnected components?\b|\bgrid\b.*\b(reach|path|island|maze)\b|\bmaze\b|\bislands?\b/i, ["bfs-dfs"], 2],
++  [/\brooted tree\b|\btree with \w+ (nodes|vertices)\b|\bsubtree\b|\blowest common ancestor\b|\bLCA\b|\bbinary tree\b/i, ["trees"], 3],
++  [/\bbinary search tree\b|\bBST\b/, ["bst", "trees"], 3],
++  [/\btrie\b|\bprefix tree\b/i, ["trie"], 3],
++  [/\blinked list\b|\bnext pointer\b|\blist node\b/i, ["linked-list"], 3],
++  [/\bstack\b|\bparenthes[ie]s\b|\bbracket sequence\b|\bnext greater\b/i, ["stack"], 2],
++  [/\bqueue\b|\bdeque\b/i, ["queue"], 2],
++  [/\bpriority queue\b|\bheap\b|\bk-?th (largest|smallest)\b|\bmedian of\b/i, ["heap"], 2],
++  [/\b(range|interval) (sum|minimum|maximum|query|update)\b|\bsegment tree\b|\bfenwick\b|\bupdate .{0,30}\bquer(y|ies)\b/i, ["segment-tree"], 2],
++  [/\bunion[- ]find\b|\bdisjoint set\b|\bmerge (the )?groups?\b/i, ["union-find"], 3],
++  [/\bmaximum flow\b|\bmax[- ]flow\b|\bbipartite matching\b|\bmin(imum)? cut\b/i, ["flows", "graphs"], 3],
++  [/\bsubarrays?\b|\barray\b|\bsequence of \w+ integers\b|\bn integers\b/i, ["arrays"], 1],
++  [/\bsubstrings?\b|\bpalindrom\w*\b|\banagram\w*\b|\bcharacters?\b|\bstring\b|\blowercase (latin |english )?letters\b/i, ["strings"], 1],
++  [/\bsubsequences?\b.*\b(longest|maximum|count|number of ways)\b|\bnumber of ways\b|\bminimum (number of )?(cost|operations|steps) to\b|\bknapsack\b|\bcoin change\b|\bdynamic programming\b/i, ["dp"], 2],
++  [/\bmodulo\s*(10\^?9|1e9|998244353|1000000007|10\s*\^\s*9)\b|\bprime\w*\b|\bgcd\b|\blcm\b|\bdivisors?\b|\bdivisible\b|\bfactori[sz]\w*\b/i, ["number-theory", "math"], 1],
++  [/\bbinomial\b|\bpermutations? of\b|\bcombinations?\b|\bchoose\b.*\bways\b|\bcount the number of (permutations|arrays|sequences|strings)\b/i, ["combinatorics", "math"], 2],
++  [/\bprobabilit\w*\b|\bexpected (value|number)\b/i, ["probability", "math"], 3],
++  [/\bpoints? on (a|the) plane\b|\bpolygon\b|\bcircle\b|\bconvex hull\b|\bcoordinates? \(x, ?y\)/i, ["geometry"], 2],
++  [/\b(alice|bob)\b.*\b(turn|move)s?\b.*\b(win|lose|optimal(ly)?)\b|\bplays? optimally\b|\bwinning strategy\b/i, ["game-theory"], 3],
++  [/\bbitwise\b|\bxor\b|\bbinary representation\b|\bAND\b.*\bOR\b/i, ["bit-manipulation"], 2],
++  [/\bsorted (array|order|in non-decreasing)\b|\bsort the\b|\bin sorted order\b/i, ["sorting"], 1],
++  [/\bbinary search\b|\bminimi[sz]e the maximum\b|\bmaximi[sz]e the minimum\b|\bsmallest (possible )?value .* such that\b/i, ["binary-search"], 2],
++  [/\btwo pointers?\b|\bpair(s)? with (sum|difference)\b/i, ["two-pointers"], 2],
++  [/\bsliding window\b|\b(every|each) (contiguous )?window of (size|length)\b|\bconsecutive \w+ of length k\b/i, ["sliding-window"], 3],
++  [/\bprefix sums?\b|\bcumulative sum\b|\bsum of (the )?(elements|numbers) (from|between) .* to\b/i, ["prefix-sums"], 2],
++  [/\bgenerate all\b|\ball (possible )?(subsets|permutations|combinations)\b|\bn-?queens\b|\bsudoku\b/i, ["backtracking"], 3],
++  [/\brecursion\b|\brecursive(ly)?\b/i, ["recursion"], 2],
++  [/\binteractive\b|\bflush the output\b|\byou can ask (at most )?\w* quer(y|ies)\b/i, ["interactive"], 3],
++  [/\bsimulate\b|\bsimulation\b|\bstep by step\b/i, ["simulation"], 1],
++  [/\bconstruct\b|\bprint any (valid|such)\b|\bif there are (several|multiple) (answers|solutions), print any\b/i, ["constructive"], 2],
++  [/\bgreedy\b|\bmaximum number of (tasks|events|meetings|intervals)\b|\bschedul\w*\b/i, ["greedy"], 1],
++  [/\bmatrix\b|\bmatrices\b/i, ["matrices"], 1],
++  [/\bSELECT\b.*\bFROM\b|\bSQL\b|\btable [`"]?\w+[`"]?\b.*\bcolumns?\b/, ["database"], 3],
++];
++
++/** Normalise a tag for TAG_MAP: lower case, trimmed, single spaces. */
++const norm = (t) => String(t || "").toLowerCase().replace(/^\*|[#]/g, "").replace(/\s+/g, " ").trim();
++
++function parseTags(tags) {
++  if (Array.isArray(tags)) return tags.map(String);
++  try {
++    const a = JSON.parse(tags || "[]");
++    return Array.isArray(a) ? a.map(String) : [];
++  } catch {
++    return [];
++  }
++}
++
++const plain = (html) =>
++  String(html || "")
++    .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ")
++    .replace(/<[^>]+>/g, " ")
++    .replace(/&[a-z]+;|&#\d+;/gi, " ")
++    .replace(/\$+[^$]{0,200}\$+/g, " ")
++    .replace(/\s+/g, " ")
++    .trim();
++
++/** Topics for one tag (exact, then known spellings). */
++function topicsOfTag(tag) {
++  const n = norm(tag);
++  if (!n) return [];
++  if (TAG_MAP[n]) return TAG_MAP[n];
++  if (BY_ID.has(n.replace(/\s+/g, "-"))) return [n.replace(/\s+/g, "-")];
++  return [];
++}
++
++const MAX_TOPICS = 5;
++const SURE = 0.6;
++
++/**
++ * Classify one problem. Returns { topics: [{ id, conf, from }], sure } — at
++ * most five topics, highest confidence first. `sure` is false when nothing
++ * reached SURE (then the AI step may help, when an admin runs it).
++ */
++function classify({ title = "", tags = [], category = "", statement = "", input_spec = "", output_spec = "", note = "" } = {}) {
++  const score = new Map(); // id -> { conf, from }
++  const bump = (id, conf, from) => {
++    if (!BY_ID.has(id)) return;
++    const was = score.get(id);
++    if (!was || conf > was.conf) score.set(id, { conf, from: was && was.conf >= conf ? was.from : from });
++  };
++  // 1. The judge's own tags: trusted.
++  for (const t of [...parseTags(tags), ...(category && category !== "__hidden" ? [category] : [])]) {
++    const ids = topicsOfTag(t);
++    ids.forEach((id, i) => bump(id, i === 0 ? 0.92 : 0.8, "tags"));
++  }
++  // 2. Words in the title (strong) and the statement (fetched or written).
++  const text = `${plain(title)}\n${plain(statement)}\n${plain(input_spec)}\n${plain(output_spec)}\n${plain(note)}`.slice(0, 20000);
++  const titleText = plain(title);
++  const sums = new Map();
++  for (const [re, ids, w] of TEXT_RULES) {
++    const inTitle = re.test(titleText);
++    const inText = inTitle || re.test(text);
++    if (!inText) continue;
++    for (const id of ids) sums.set(id, (sums.get(id) || 0) + w * (inTitle ? 2 : 1));
++  }
++  // When the judge's tags already say what it is, a word alone adds a topic
++  // only on strong evidence ("Coin Combinations" is DP, not combinatorics).
++  const tagged = score.size > 0;
++  for (const [id, s] of sums) {
++    const conf = Math.min(0.85, 0.25 + s * 0.1);
++    if (!tagged || conf >= 0.75 || score.has(id)) bump(id, conf, "text");
++  }
++  // A specific kind implies its family (bitmask DP is DP; a BST is a tree).
++  for (const [id, { conf, from }] of [...score]) {
++    if (id.startsWith("dp-")) bump("dp", conf * 0.95, from);
++    if (["shortest-paths", "mst", "topological-sort", "flows", "bfs-dfs"].includes(id) && conf >= SURE) bump("graphs", conf * 0.9, from);
++    if (id === "bst") bump("trees", conf * 0.95, from);
++  }
++  const topics = [...score]
++    .map(([id, v]) => ({ id, conf: Math.round(v.conf * 100) / 100, from: v.from }))
++    .filter((t) => t.conf >= 0.45)
++    .sort((a, b) => b.conf - a.conf || TOPICS.findIndex((x) => x.id === a.id) - TOPICS.findIndex((x) => x.id === b.id))
++    .slice(0, MAX_TOPICS);
++  return { topics, sure: topics.some((t) => t.conf >= SURE) };
++}
++
++/* ── storage ── */
++let ready = null;
++function init() {
++  if (!ready) {
++    ready = (async () => {
++      try {
++        await run("ALTER TABLE custom_problems ADD COLUMN topics TEXT DEFAULT '[]'");
++      } catch {
++        /* already there */
++      }
++      await run(`CREATE TABLE IF NOT EXISTS problem_topics (
++        problem_rowid INTEGER PRIMARY KEY,
++        ids TEXT NOT NULL DEFAULT '[]',
++        detail TEXT NOT NULL DEFAULT '[]',
++        locked INTEGER NOT NULL DEFAULT 0,
++        sure INTEGER NOT NULL DEFAULT 0,
++        has_text INTEGER NOT NULL DEFAULT 0,
++        updated_by TEXT,
++        updated_at INTEGER NOT NULL
++      )`);
++      await run("CREATE INDEX IF NOT EXISTS idx_problem_topics_unsure ON problem_topics(sure, locked)");
++    })().catch((e) => {
++      ready = null;
++      throw e;
++    });
++  }
++  return ready;
++}
++
++const catalog = () => require("./problem-catalog");
++
++const idsOf = (topics) => JSON.stringify(topics.map((t) => t.id));
++
++/** The statement fields of a problem, when fetched. */
++async function statementOf(rowid) {
++  try {
++    return (await get("SELECT statement, input_spec, output_spec, note FROM problem_statements WHERE problem_rowid=?", [rowid])) || {};
++  } catch {
++    return {};
++  }
++}
++
++/**
++ * Classify and store one catalog problem, unless staff locked its topics.
++ * `known` may pass the problem row and/or statement to save reads. Returns the
++ * stored { topics, sure, locked }.
++ */
++async function classifyProblem(rowid, known = {}) {
++  await init();
++  const meta = await get("SELECT ids, detail, locked FROM problem_topics WHERE problem_rowid=?", [rowid]);
++  if (meta && meta.locked) return { topics: JSON.parse(meta.detail || "[]"), sure: true, locked: true };
++  const p = known.problem || (await get("SELECT id, title, tags, category FROM problems WHERE id=?", [rowid]));
++  if (!p) return null;
++  const st = known.statement || (await statementOf(rowid));
++  const r = classify({ title: p.title, tags: p.tags, category: p.category, ...st });
++  const hasText = !!(st && st.statement);
++  await run(
++    `INSERT INTO problem_topics(problem_rowid, ids, detail, locked, sure, has_text, updated_by, updated_at) VALUES(?,?,?,0,?,?,NULL,?)
++     ON CONFLICT(problem_rowid) DO UPDATE SET ids=excluded.ids, detail=excluded.detail, sure=excluded.sure, has_text=excluded.has_text, updated_at=excluded.updated_at
++     WHERE problem_topics.locked=0`,
++    [rowid, idsOf(r.topics), JSON.stringify(r.topics), r.sure ? 1 : 0, hasText ? 1 : 0, Date.now()],
++  );
++  // Only a real change makes the catalog reload.
++  if (!meta || meta.ids !== idsOf(r.topics)) await catalog().bumpVersion();
++  return { ...r, locked: false };
++}
++
++/** A staff correction: these topics, kept for good (the pipeline never changes them). */
++async function setTopics(rowid, ids, by) {
++  await init();
++  const clean = [...new Set((ids || []).map(String).filter((id) => BY_ID.has(id)))].slice(0, MAX_TOPICS);
++  const detail = clean.map((id) => ({ id, conf: 1, from: "staff" }));
++  await run(
++    `INSERT INTO problem_topics(problem_rowid, ids, detail, locked, sure, has_text, updated_by, updated_at) VALUES(?,?,?,1,1,0,?,?)
++     ON CONFLICT(problem_rowid) DO UPDATE SET ids=excluded.ids, detail=excluded.detail, locked=1, sure=1, updated_by=excluded.updated_by, updated_at=excluded.updated_at`,
++    [rowid, JSON.stringify(clean), JSON.stringify(detail), by || null, Date.now()],
++  );
++  await catalog().bumpVersion();
++  return detail;
++}
++
++/** Undo a staff correction: back to what the pipeline finds. */
++async function unlock(rowid) {
++  await init();
++  await run("UPDATE problem_topics SET locked=0 WHERE problem_rowid=?", [rowid]);
++  return classifyProblem(rowid);
++}
++
++/** What is stored for a problem (for the problem page and Admin). */
++async function topicsFor(rowid) {
++  await init();
++  const meta = await get("SELECT detail, locked, sure, has_text, updated_by, updated_at FROM problem_topics WHERE problem_rowid=?", [rowid]);
++  if (!meta) return { topics: [], locked: false, sure: false, classified: false };
++  return {
++    topics: JSON.parse(meta.detail || "[]"),
++    locked: !!meta.locked,
++    sure: !!meta.sure,
++    hasText: !!meta.has_text,
++    updatedBy: meta.updated_by || null,
++    updatedAt: meta.updated_at,
++    classified: true,
++  };
++}
++
++/** Topic ids for a custom (Workshop) problem, from its own title, tags and statement. */
++function customTopics(p) {
++  return classify({ title: p.title, tags: p.tags, statement: p.statement, input_spec: p.input_spec, output_spec: p.output_spec }).topics.map((t) => t.id);
++}
++
++/* ── the backfill: every problem, in small steps, resumable ── */
++const job = { running: false, stop: false, done: 0, total: 0, sure: 0, unsure: 0, startedAt: 0, finishedAt: 0, by: null, error: null, ai: { asked: 0, helped: 0, error: null } };
++
++function status() {
++  return { ...job, ai: { ...job.ai } };
++}
++
++/**
++ * Classify every problem with no topics yet (or all of them with `all`),
++ * 200 at a time with a short pause, so a big catalog never floods the
++ * database. Safe to run again: locked problems are never touched, and a
++ * restarted run picks up where the last one stopped.
++ */
++async function backfill({ all: everything = false, by = null, pauseMs = 300, batch = 200, ai = null } = {}) {
++  if (job.running) return status();
++  await init();
++  Object.assign(job, { running: true, stop: false, done: 0, sure: 0, unsure: 0, startedAt: Date.now(), finishedAt: 0, by, error: null, ai: { asked: 0, helped: 0, error: null } });
++  const where = everything ? "" : "WHERE t.problem_rowid IS NULL";
++  try {
++    const n = await get(`SELECT COUNT(*) AS n FROM problems p LEFT JOIN problem_topics t ON t.problem_rowid=p.id ${where}`);
++    job.total = Number(n?.n || 0);
++    let after = 0;
++    for (;;) {
++      if (job.stop) break;
++      const rows = await all(
++        `SELECT p.id, p.title, p.tags, p.category, s.statement, s.input_spec, s.output_spec, s.note
++           FROM problems p LEFT JOIN problem_topics t ON t.problem_rowid=p.id LEFT JOIN problem_statements s ON s.problem_rowid=p.id
++          WHERE p.id > ? ${everything ? "AND COALESCE(t.locked,0)=0" : "AND t.problem_rowid IS NULL"} ORDER BY p.id LIMIT ?`,
++        [after, batch],
++      );
++      if (!rows.length) break;
++      const stmts = [];
++      const now = Date.now();
++      for (const p of rows) {
++        after = p.id;
++        const r = classify(p);
++        job.done++;
++        if (r.sure) job.sure++;
++        else job.unsure++;
++        stmts.push([
++          `INSERT INTO problem_topics(problem_rowid, ids, detail, locked, sure, has_text, updated_by, updated_at) VALUES(?,?,?,0,?,?,NULL,?)
++           ON CONFLICT(problem_rowid) DO UPDATE SET ids=excluded.ids, detail=excluded.detail, sure=excluded.sure, has_text=excluded.has_text, updated_at=excluded.updated_at
++           WHERE problem_topics.locked=0`,
++          [p.id, idsOf(r.topics), JSON.stringify(r.topics), r.sure ? 1 : 0, p.statement ? 1 : 0, now],
++        ]);
++      }
++      await runBatch(stmts);
++      if (pauseMs) await new Promise((res) => setTimeout(res, pauseMs));
++    }
++    if (ai && !job.stop) await aiPass(ai);
++    // One catalog reload for the whole run (not one per row).
++    if (job.done || job.ai.helped) await catalog().bumpVersion();
++  } catch (e) {
++    job.error = String(e.message || e).slice(0, 300);
++  } finally {
++    job.running = false;
++    job.finishedAt = Date.now();
++  }
++  return status();
++}
++
++/**
++ * Problems whose title or tags changed in a source sync: drop their
++ * pipeline topics (never a staff correction) so the next run finds them again.
++ */
++async function forget(platform, problemIds) {
++  if (!problemIds || !problemIds.length) return 0;
++  await init();
++  let n = 0;
++  for (let i = 0; i < problemIds.length; i += 200) {
++    const part = problemIds.slice(i, i + 200);
++    const r = await run(
++      `DELETE FROM problem_topics WHERE locked=0 AND problem_rowid IN (SELECT id FROM problems WHERE platform=? AND problem_id IN (${part.map(() => "?").join(",")}))`,
++      [platform, ...part],
++    );
++    n += Number(r?.changes || 0);
++  }
++  return n;
++}
++
++/** Automatic runs (startup, after a sync) are off in tests unless TOPICS_AUTO=1. */
++const AUTO = process.env.NODE_ENV !== "test" || process.env.TOPICS_AUTO === "1";
++
++/** Give every problem with no topics yet its topics, in the background. */
++function classifyNew({ by = "auto", pauseMs } = {}) {
++  if (!AUTO || job.running) return false;
++  backfill({ by, ...(pauseMs != null ? { pauseMs } : {}) }).catch((e) => console.warn("[topics] backfill failed:", e.message));
++  return true;
++}
++
++function stopBackfill() {
++  job.stop = true;
++  return status();
++}
++
++/**
++ * The AI step: for unsure problems whose statement we have, ask the site's
++ * AI model which of our topics fit (public statement text only). At most
++ * `limit` problems per run, counted against the admin's own AI budget.
++ */
++async function aiPass({ user, limit = 30, ask }) {
++  const rows = await all(
++    `SELECT p.id, p.title, s.statement FROM problem_topics t JOIN problems p ON p.id=t.problem_rowid JOIN problem_statements s ON s.problem_rowid=p.id
++      WHERE t.sure=0 AND t.locked=0 AND t.has_text=1 ORDER BY p.id LIMIT ?`,
++    [Math.max(1, Math.min(100, limit))],
++  );
++  for (const p of rows) {
++    if (job.stop) break;
++    job.ai.asked++;
++    let ids;
++    try {
++      ids = await ask({ title: p.title, statement: plain(p.statement).slice(0, 4000), topics: TOPICS.map((t) => `${t.id}: ${t.label}`) }, user);
++    } catch (e) {
++      job.ai.error = String(e.message || e).slice(0, 200);
++      break;
++    }
++    const good = [...new Set((Array.isArray(ids) ? ids : []).map(String).filter((id) => BY_ID.has(id)))].slice(0, 3);
++    if (!good.length) continue;
++    const have = (await topicsFor(p.id)).topics;
++    const merged = [...have.filter((t) => !good.includes(t.id)), ...good.map((id) => ({ id, conf: 0.7, from: "ai" }))]
++      .sort((a, b) => b.conf - a.conf)
++      .slice(0, MAX_TOPICS);
++    await run("UPDATE problem_topics SET ids=?, detail=?, sure=1, updated_at=? WHERE problem_rowid=? AND locked=0", [idsOf(merged), JSON.stringify(merged), Date.now(), p.id]);
++    job.ai.helped++;
++  }
++}
++
++/** Counts for Admin: how many problems have topics, how many are unsure, locked. */
++async function summary() {
++  await init();
++  const row = await get(
++    `SELECT COUNT(*) AS classified, SUM(sure) AS sure, SUM(CASE WHEN sure=0 THEN 1 ELSE 0 END) AS unsure, SUM(locked) AS locked, SUM(has_text) AS with_text FROM problem_topics`,
++  );
++  const total = await get("SELECT COUNT(*) AS n FROM problems");
++  return {
++    total: Number(total?.n || 0),
++    classified: Number(row?.classified || 0),
++    sure: Number(row?.sure || 0),
++    unsure: Number(row?.unsure || 0),
++    locked: Number(row?.locked || 0),
++    withText: Number(row?.with_text || 0),
++  };
++}
++
++/**
++ * The topic ids a search text asks for: `topic:dp` or `topic:"binary search"`
++ * (a filter), or the whole text being a topic name ("dynamic programming",
++ * "graphs"): then `orTopic` is that id, and the search finds problems whose
++ * title matches OR that have the topic (a problem called "Stack" still shows).
++ * Returns { ids, rest, orTopic } — rest is the search without the topic part.
++ */
++function topicsInQuery(q) {
++  const ids = [];
++  let rest = String(q || "").replace(/\btopic:\s*("([^"]+)"|([\w-]+))/gi, (_m, _all, quoted, bare) => {
++    const id = findTopic(quoted || bare);
++    if (id) ids.push(id);
++    return " ";
++  });
++  rest = rest.replace(/\s+/g, " ").trim();
++  if (!ids.length && rest) {
++    const id = findTopic(rest, true);
++    if (id) return { ids: [], rest, orTopic: id };
++  }
++  return { ids: [...new Set(ids)], rest, orTopic: null };
++}
++
++const ALIASES = {
++  dp: "dp", "dynamic programming": "dp", graph: "graphs", graphs: "graphs", tree: "trees", trees: "trees", bfs: "bfs-dfs", dfs: "bfs-dfs",
++  "bfs/dfs": "bfs-dfs", dsu: "union-find", "union find": "union-find", "disjoint set": "union-find", "segment tree": "segment-tree", fenwick: "segment-tree",
++  bit: "bit-manipulation", bits: "bit-manipulation", bitmask: "bit-manipulation", "bitmask dp": "dp-bitmask", "digit dp": "dp-digits", "tree dp": "dp-trees",
++  "dp on trees": "dp-trees", hash: "hashing", hashmap: "hashing", "hash map": "hashing", "binary search": "binary-search", "two pointers": "two-pointers",
++  "two pointer": "two-pointers", "sliding window": "sliding-window", "prefix sum": "prefix-sums", "prefix sums": "prefix-sums", heap: "heap",
++  "priority queue": "heap", sort: "sorting", sorting: "sorting", greedy: "greedy", math: "math", maths: "math", "number theory": "number-theory",
++  combinatorics: "combinatorics", geometry: "geometry", strings: "strings", string: "strings", arrays: "arrays", array: "arrays", stack: "stack", queue: "queue",
++  deque: "queue", "linked list": "linked-list", trie: "trie", bst: "bst", "shortest path": "shortest-paths", "shortest paths": "shortest-paths",
++  dijkstra: "shortest-paths", mst: "mst", "topological sort": "topological-sort", toposort: "topological-sort", flow: "flows", flows: "flows",
++  matching: "flows", backtracking: "backtracking", recursion: "recursion", "game theory": "game-theory", games: "game-theory", probability: "probability",
++  fft: "fft", sql: "database", database: "database", implementation: "implementation", simulation: "simulation", constructive: "constructive",
++  interactive: "interactive", "brute force": "brute-force", "divide and conquer": "divide-and-conquer", matrix: "matrices", matrices: "matrices",
++  kmp: "string-algorithms", "string algorithms": "string-algorithms",
++};
++
++/** A topic id from a name, id or alias; `exact` needs the whole text to be one. */
++function findTopic(text, exact = false) {
++  const n = norm(text).replace(/_/g, " ");
++  if (!n) return null;
++  if (BY_ID.has(n)) return n;
++  if (BY_ID.has(n.replace(/\s+/g, "-"))) return n.replace(/\s+/g, "-");
++  if (ALIASES[n]) return ALIASES[n];
++  const byLabel = TOPICS.find((t) => t.label.toLowerCase() === n);
++  if (byLabel) return byLabel.id;
++  if (exact) return null;
++  const starts = TOPICS.find((t) => t.label.toLowerCase().startsWith(n) || t.id.startsWith(n));
++  return starts ? starts.id : null;
++}
++
++/** Does a catalog row have every one of these topic ids? */
++function rowHasTopics(row, ids) {
++  if (!ids || !ids.length) return true;
++  const have = row.topics;
++  if (!have || have === "[]") return false;
++  return ids.every((id) => have.includes(`"${id}"`));
++}
++
++module.exports = {
++  TOPICS,
++  TAG_MAP,
++  TEXT_RULES,
++  classify,
++  classifyProblem,
++  setTopics,
++  unlock,
++  topicsFor,
++  customTopics,
++  backfill,
++  classifyNew,
++  forget,
++  stopBackfill,
++  status,
++  summary,
++  topicsInQuery,
++  findTopic,
++  rowHasTopics,
++  init,
++};
