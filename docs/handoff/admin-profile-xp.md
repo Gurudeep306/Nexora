@@ -112,6 +112,38 @@ file current as each part lands; each part is its own pull request.
   sideways scroll on `/welcome` and the Edit profile form, light, dark and
   phone.
 
+## Extra (owner's ask during the work): new profile covers
+
+The owner found the old covers boring (blurred colour blobs, which the house
+rules forbid anyway, and Field Journal hid the cover entirely). A first try,
+covers that each played an algorithm, was turned down ("boring, I want
+something pattern type or animated type, import from internet").
+
+- **What is there now** (`client/src/components/profile/covers.tsx`,
+  `covers.css`): 12 patterns that drift slowly (Topography, Circuit, Bubbles,
+  Jigsaw, Temple, Stars, Circles, Clouds, Wiggle, Autumn, Kiwi, Lines) and two
+  live ones: **Waves** (four bands sliding at their own speeds) and **Life**
+  (Conway's Game of Life; newly born cells in full colour; seeded by the
+  username, `coverFrames.ts`). All in the profile's accent on paper tinted
+  with it, so every theme, light and dark, gets its own look.
+- **Where the patterns come from:** Hero Patterns by Steve Schoger
+  (heropatterns.com), **CC BY 4.0**, taken from the `hero-patterns` npm
+  package (its code is MIT; the drawings are CC BY). Stored as
+  `client/public/covers/<id>.svg` and used as a CSS mask. The licence needs
+  credit: Edit profile shows "Patterns from Hero Patterns by Steve Schoger
+  (CC BY 4.0)" under the covers (`CoverCredit`). Keep that line.
+- **Motion:** a cover only moves while on screen and the tab is visible;
+  reduced motion and the small swatches stay still.
+- **Field Journal:** the profile now shows a chosen cover (a hairline frame
+  above the portrait); "Plain" stays hidden as before (`theme/styles.css`).
+- **Saved choices:** `COVER_PRESETS` in `src/routes/social.js` takes the new
+  ids; the old ids (aurora, nebula, …) stay valid and show the closest new
+  cover (`LEGACY` in covers.tsx).
+- Tests: `tests/cover-frames.test.js` (Life rules, same board per username),
+  `tests/social.test.js` (new and old cover ids accepted, unknown refused).
+- Checked: axe 0 and no sideways scroll on the profile with each cover and on
+  Edit profile, light, dark and phone.
+
 ## Plan for parts 3–4 (written before the work; 2 and 5 are done above)
 
 **Part 2 + 5 (avatar inside Edit profile; optional step after sign-up)**

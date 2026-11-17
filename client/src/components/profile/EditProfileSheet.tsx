@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 import { errorText, uploadImage } from '@/components/social/feed/lib'
 import { RichText } from '@/components/social/feed/RichText'
 import type { AccentKey, ProfileLink, PublicProfile } from '@/components/social/feed/types'
-import { ACCENTS, COVERS, COVER_IDS, CoverArt } from './covers'
+import { ACCENTS, COVERS, COVER_IDS, CoverArt, CoverCredit, coverId } from './covers'
 import { AvatarChooser, type Picture } from '@/components/account/AvatarChooser'
 import { formatAvatar, resolveAvatarId } from '@/lib/avatar'
 import { useAuth } from '@/context/AuthContext'
@@ -24,7 +24,7 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
     location: profile.location,
     website: profile.website,
     links: profile.links.length ? profile.links : [],
-    cover: profile.cover,
+    cover: profile.cover?.startsWith('/uploads/') ? profile.cover : coverId(profile.cover ?? 'plain'),
     accent: profile.accent,
     visibility: profile.visibility,
   })
@@ -81,7 +81,7 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
           </Group>
 
           <Group title="Cover">
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
               {COVER_IDS.map((id) => (
                 <button
                   key={id}
@@ -91,16 +91,19 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
                   aria-label={`${COVERS[id].label} cover`}
                   className={cn('relative h-14 cursor-pointer overflow-hidden rounded-lg border-2 transition-transform hover:scale-[1.03]', d.cover === id ? 'border-accent-brand' : 'border-transparent')}
                 >
-                  <CoverArt cover={id} className="!absolute inset-0" still />
-                  <span className="absolute bottom-1 left-1.5 text-[10px] font-semibold text-text-primary drop-shadow">{COVERS[id].label}</span>
-                  {d.cover === id && <Check className="absolute top-1 right-1 size-3.5 text-text-primary" />}
+                  <CoverArt cover={id} seed={profile.username} accent={d.accent} className="!absolute inset-0" still />
+                  <span className="absolute bottom-1 left-1 rounded-[3px] border border-border bg-bg-surface px-1 text-[10px] leading-4 font-semibold text-text-primary">{COVERS[id].label}</span>
+                  {d.cover === id && <Check className="absolute top-1 right-1 size-4 rounded-full bg-bg-surface p-0.5 text-text-primary" />}
                 </button>
               ))}
             </div>
             <input ref={file} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={(e) => void upload(e.target.files?.[0]).then(() => (e.target.value = ''))} />
-            <Button variant="subtle" size="sm" className="mt-2" onClick={() => file.current?.click()} disabled={uploading}>
-              {uploading ? <Loader2 className="animate-spin" /> : <ImagePlus />} Upload your own
-            </Button>
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+              <Button variant="subtle" size="sm" onClick={() => file.current?.click()} disabled={uploading}>
+                {uploading ? <Loader2 className="animate-spin" /> : <ImagePlus />} Upload your own
+              </Button>
+              <CoverCredit />
+            </div>
           </Group>
 
           <Group title="Accent">
@@ -190,7 +193,7 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
         <div className="order-1 lg:order-2">
           <p className="mb-2 text-[11px] font-semibold tracking-wider text-text-muted uppercase">Live preview</p>
           <div className="sticky top-0 overflow-hidden rounded-2xl border border-border bg-bg-surface">
-            <CoverArt cover={d.cover} className="h-24" />
+            <CoverArt cover={d.cover} seed={profile.username} accent={d.accent} className="h-24" />
             <div className="px-4 pb-4">
               <div className="-mt-8 inline-flex rounded-full p-[3px]" style={{ background: accent }}>
                 <Avatar seed={profile.username} avatar={formatAvatar(pic.avatar)} src={pic.photo} name={name} size="xl" ring={false} className="rounded-full ring-2 ring-bg-surface" />

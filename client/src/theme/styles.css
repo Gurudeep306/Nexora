@@ -1397,8 +1397,15 @@
   background: transparent;
   box-shadow: 0 0 #0000;
 }
-[data-kit='journal'] .pf-cover {
+/* Plain paper stays off; a chosen plate (covers.tsx) is mounted like a
+   print: a hairline frame above the portrait. */
+[data-kit='journal'] .pf-cover[data-cover='plain'] {
   display: none;
+}
+[data-kit='journal'] .pf-cover {
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
 }
 [data-kit='journal'] .pf-hero-body {
   padding-inline: 0;
