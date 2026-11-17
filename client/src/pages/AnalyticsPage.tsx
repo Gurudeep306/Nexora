@@ -19,6 +19,7 @@ import {
   RatingClimbChart,
   SolveSpeedChart,
   VerdictDonut,
+  VerdictTrendChart,
   WeeklyProgressChart,
 } from '@/components/analytics/Charts'
 import { WeaknessPanel } from '@/components/analytics/WeaknessPanel'
@@ -129,6 +130,12 @@ export default function AnalyticsPage() {
         <VerdictDonut data={perf.verdicts} c={c} />
         <LangUsageChart data={perf.langUsage} c={c} />
       </div>
+
+      {perf.verdictTrend && (
+        <div className="mb-4">
+          <VerdictTrendChart data={perf.verdictTrend} c={c} />
+        </div>
+      )}
 
       <div className="mb-4 grid gap-4 xl:grid-cols-2">
         <HourDistChart data={perf.hourDist} c={c} />

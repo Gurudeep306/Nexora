@@ -12,7 +12,7 @@ import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { sourceLabel } from '@/lib/sources'
 import { cn, timeAgo } from '@/lib/utils'
 import { parseTags } from '@/components/problems/types'
-import type { SolveProblem, StatementResponse, SubmissionRow } from './types'
+import type { ProblemAnalysis, SolveProblem, StatementResponse, SubmissionRow } from './types'
 import './statement.css'
 
 interface Props {
@@ -21,6 +21,8 @@ interface Props {
   statementLoading: boolean
   statementError: string | null
   submissions: SubmissionRow[]
+  /** Your record on this problem (attempts, first Accepted, best time). */
+  analysis?: ProblemAnalysis | null
   onImportSample: (index: number) => void
   onImportAllSamples: () => void
   importedSampleCount: number
@@ -95,12 +97,48 @@ function Notice({ icon, children }: { icon: React.ReactNode; children: React.Rea
   )
 }
 
+/** Your record on one problem: how it went, in plain numbers. */
+function ProblemRecord({ a }: { a: ProblemAnalysis }) {
+  const solvedLine =
+    a.firstAcAt && a.triesToAccept
+      ? `Accepted on try ${a.triesToAccept}${a.minutesToAccept !== null ? `, ${spanText(a.minutesToAccept)} after the first try` : ''}.`
+      : `Not accepted yet after ${a.attempts} ${a.attempts === 1 ? 'try' : 'tries'}.`
+  const cells: [string, string][] = [
+    ['Tries', String(a.attempts)],
+    ['Accepted', String(a.accepted)],
+    ['Languages', String(a.languages)],
+    ['Fastest', a.bestMs !== null ? `${a.bestMs} ms` : '—'],
+  ]
+  return (
+    <section aria-label="Your record on this problem" className="mb-3 rounded-lg border border-border px-3 py-2.5">
+      <p className="m-0 text-[13px] text-foreground">{solvedLine}</p>
+      <dl className="m-0 mt-2 grid grid-cols-4 gap-2">
+        {cells.map(([k, v]) => (
+          <div key={k}>
+            <dt className="text-[11px] text-foreground-faint">{k}</dt>
+            <dd className="m-0 font-mono text-[13px] text-foreground tabular-nums">{v}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  )
+}
+
+function spanText(min: number): string {
+  if (min < 1) return 'within a minute'
+  if (min < 60) return `${min} min`
+  const h = Math.round(min / 60)
+  if (h < 48) return `${h} h`
+  return `${Math.round(h / 24)} days`
+}
+
 export function ProblemPanel({
   problem,
   statement,
   statementLoading,
   statementError,
   submissions,
+  analysis,
   onImportSample,
   onImportAllSamples,
   importedSampleCount,
@@ -152,8 +190,8 @@ export function ProblemPanel({
             </>
           )}
           {problem.url && (
-            <a href={problem.url} target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Open on ${sourceName}`}>
-              Original <ExternalLink className="size-3" />
+            <a href={problem.url} target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-surface-2 hover:text-foreground" aria-label={`Original, on ${sourceName} (opens in a new tab)`}>
+              Original <ExternalLink className="size-3" aria-hidden="true" />
             </a>
           )}
         </p>
@@ -202,7 +240,8 @@ export function ProblemPanel({
         />
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-8">
+      {/* Focusable so the keyboard can scroll it, whatever the tab holds. */}
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-8" tabIndex={0} role="region" aria-label="Problem">
         {tab === 'statement' && (
           <>
             {statementLoading && <LoadingBlock rows={6} />}
@@ -386,15 +425,24 @@ export function ProblemPanel({
           (submissions.length === 0 ? (
             <p className="py-10 text-center text-[13px] text-foreground-faint">No submissions yet. Your first submit lands here.</p>
           ) : (
-            <ul className="divide-y divide-border/60">
-              {submissions.map((s) => (
-                <li key={s.id} className="flex items-center gap-3 py-2.5">
-                  <VerdictBadge verdict={s.verdict} className="w-28 justify-center" />
-                  <span className="font-mono text-[12px] text-foreground-dim tabular-nums">{s.exec_time_ms} ms</span>
-                  <span className="ml-auto text-[12px] text-foreground-faint">{timeAgo(s.submitted_at)}</span>
-                </li>
-              ))}
-            </ul>
+            <>
+              {analysis && <ProblemRecord a={analysis} />}
+              <ul className="divide-y divide-border/60">
+                {submissions.map((s) => (
+                  <li key={s.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5">
+                    <VerdictBadge verdict={s.verdict} className="w-28 justify-center" />
+                    {s.total ? (
+                      <span className="font-mono text-[12px] text-foreground-dim tabular-nums" title="Tests passed">
+                        {s.passed}/{s.total}
+                      </span>
+                    ) : null}
+                    <span className="font-mono text-[12px] text-foreground-dim tabular-nums">{s.exec_time_ms} ms</span>
+                    {s.language && <span className="text-[12px] text-foreground-faint">{s.language}</span>}
+                    <span className="ml-auto text-[12px] text-foreground-faint">{timeAgo(s.submitted_at)}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
           ))}
       </div>
 

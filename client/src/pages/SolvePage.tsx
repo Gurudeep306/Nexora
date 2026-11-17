@@ -909,6 +909,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     statementLoading={statementApi.loading}
     statementError={statementApi.error}
     submissions={submissions}
+    analysis={problemApi.data?.analysis ?? null}
     onImportSample={(i) => void importSamples([i])}
     onImportAllSamples={() => void importSamples(samples.map((_, i) => i))}
     importedSampleCount={importedSampleCount}
