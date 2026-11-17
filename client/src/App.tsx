@@ -15,6 +15,11 @@ const SubjectPage = lazy(pageLoaders.SubjectPage)
 const ProblemsPage = lazy(pageLoaders.ProblemsPage)
 const SolvePage = lazy(pageLoaders.SolvePage)
 const ContestsPage = lazy(pageLoaders.ContestsPage)
+const HostedBuilderPage = lazy(pageLoaders.HostedBuilderPage)
+const NewContestPage = lazy(() => pageLoaders.HostedBuilderPage().then((m) => ({ default: m.NewContestPage })))
+const HostedContestPage = lazy(pageLoaders.HostedContestPage)
+const HostedPaperPage = lazy(pageLoaders.HostedPaperPage)
+const HostedResultsPage = lazy(pageLoaders.HostedResultsPage)
 const WorkshopPage = lazy(pageLoaders.WorkshopPage)
 const NexusPage = lazy(pageLoaders.NexusPage)
 const AnalyticsPage = lazy(pageLoaders.AnalyticsPage)
@@ -104,6 +109,11 @@ export default function App() {
             <Route path="/solve/learn/:id" element={<SolvePage learn />} />
             <Route path="/solve/:id" element={<SolvePage />} />
             <Route path="/contests" element={<ContestsPage />} />
+            <Route path="/contests/new" element={<NewContestPage />} />
+            <Route path="/contests/c/:code" element={<HostedContestPage />} />
+            <Route path="/contests/:id/edit" element={<HostedBuilderPage />} />
+            <Route path="/contests/:id/paper" element={<HostedPaperPage />} />
+            <Route path="/contests/:id/results" element={<HostedResultsPage />} />
             <Route path="/workshop" element={<WorkshopPage />} />
             <Route path="/nexus" element={<NexusPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />

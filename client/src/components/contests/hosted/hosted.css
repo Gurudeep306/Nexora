@@ -1,0 +1,582 @@
+/* Hosted contests (pages/contests/*): builder, contest page, paper, results. Tokens only. */
+
+.hc {
+  min-width: 0;
+  padding-bottom: 4rem;
+}
+.hc-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin: 12px 0 20px;
+}
+.hc-head h1 {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+.hc-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin: 8px 0 0;
+  font-size: 13.5px;
+  color: var(--color-text-secondary);
+}
+.hc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 8px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--color-text-primary);
+}
+.hc-chip[data-tone='live']::before,
+.hc-chip[data-tone='success']::before,
+.hc-chip[data-tone='warning']::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-state-success);
+}
+.hc-chip[data-tone='warning']::before {
+  background: var(--color-state-warning);
+}
+.hc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* A plain surface box with a hairline. */
+.hc-box {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-surface);
+}
+.hc-box + .hc-box {
+  margin-top: 16px;
+}
+.hc-box h2 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.hc-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.hc-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-state-warning);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-surface-2);
+  font-size: 13.5px;
+  color: var(--color-text-primary);
+}
+.hc-banner[data-tone='info'] {
+  border-left-color: var(--color-state-info);
+}
+.hc-banner[data-tone='success'] {
+  border-left-color: var(--color-state-success);
+}
+
+/* ── the list of questions ── */
+.hc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+.hc-item {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--color-border);
+}
+.hc-num {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.hc-title {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+a.hc-title:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.hc-sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.hc-side {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.hc-marks-in {
+  width: 4.5rem;
+  height: 2rem;
+  padding: 0 6px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  background: var(--color-bg-surface);
+  font: inherit;
+  font-size: 13px;
+  text-align: right;
+  color: var(--color-text-primary);
+}
+.hc-marks-in:focus-visible {
+  outline: 2px solid var(--color-text-primary);
+  outline-offset: 1px;
+}
+.hc-icon-btn {
+  display: inline-grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 6px;
+  color: var(--color-text-secondary);
+}
+.hc-icon-btn:hover:not(:disabled) {
+  background: var(--color-bg-surface-3);
+  color: var(--color-text-primary);
+}
+.hc-icon-btn:disabled {
+  opacity: 0.35;
+}
+.hc-icon-btn:focus-visible {
+  outline: 2px solid var(--color-text-primary);
+  outline-offset: 1px;
+}
+.hc-icon-btn svg {
+  width: 16px;
+  height: 16px;
+}
+.hc-state {
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+}
+.hc-state[data-tone='success'] {
+  color: var(--color-state-success);
+}
+.hc-state[data-tone='error'] {
+  color: var(--color-state-error);
+}
+@media (max-width: 560px) {
+  .hc-item {
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+  }
+  .hc-side {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+  .hc-title {
+    white-space: normal;
+  }
+}
+
+/* The "add" row under the list. */
+.hc-add {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+}
+.hc-add-btn {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-card);
+  text-align: left;
+  color: var(--color-text-primary);
+  transition: background-color 200ms ease;
+}
+.hc-add-btn:hover:not(:disabled) {
+  background: var(--color-bg-surface-2);
+}
+.hc-add-btn:focus-visible {
+  outline: 2px solid var(--color-text-primary);
+  outline-offset: 2px;
+}
+.hc-add-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--color-text-secondary);
+}
+.hc-add-btn strong {
+  display: block;
+  font-size: 14px;
+}
+.hc-add-btn span {
+  display: block;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+
+/* ── forms ── */
+.hc-form {
+  display: grid;
+  gap: 16px;
+}
+.hc-grid2 {
+  display: grid;
+  gap: 16px;
+}
+@media (min-width: 720px) {
+  .hc-grid2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.hc-choice {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.hc-choice legend {
+  margin-bottom: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.hc-radio {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  cursor: pointer;
+}
+.hc-radio:has(input:checked) {
+  border-color: var(--color-text-primary);
+}
+.hc-radio input {
+  margin-top: 3px;
+  accent-color: var(--color-text-primary);
+}
+.hc-radio strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.hc-radio span {
+  display: block;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.hc-radio input:focus-visible {
+  outline: 2px solid var(--color-text-primary);
+  outline-offset: 2px;
+}
+.hc-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+.hc-check input {
+  accent-color: var(--color-text-primary);
+}
+
+/* The question editor. */
+.hc-q {
+  display: grid;
+  gap: 14px;
+  margin-top: 10px;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-surface-2);
+}
+.hc-opt {
+  display: grid;
+  grid-template-columns: auto 1.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+.hc-opt-l {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.hc-figs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.hc-fig {
+  position: relative;
+  width: 7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-surface);
+}
+.hc-fig img {
+  display: block;
+  width: 100%;
+  height: 5rem;
+  object-fit: contain;
+}
+.hc-fig button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+.hc-preview {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-surface);
+}
+
+/* ── share ── */
+.hc-link {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.hc-link code {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-surface-2);
+  font-size: 13px;
+}
+.hc-todo {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.hc-todo li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+.hc-todo svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ── the clock ── */
+.hc-clock {
+  font-family: var(--font-mono);
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.hc-clock-l {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+/* ── tables ── */
+.hc-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+.hc-table-wrap:focus-visible {
+  outline: 2px solid var(--color-text-primary);
+  outline-offset: 2px;
+}
+.hc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.hc-table th,
+.hc-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  white-space: nowrap;
+  color: var(--color-text-primary);
+}
+.hc-table th {
+  position: sticky;
+  top: 0;
+  background: var(--color-bg-surface-2);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+.hc-table tr:last-child td {
+  border-bottom: 0;
+}
+.hc-table td.num,
+.hc-table th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.hc-table tr[data-me] td {
+  background: var(--color-bg-surface-2);
+  font-weight: 600;
+}
+.hc-cell-ok {
+  color: var(--color-state-success);
+  font-weight: 600;
+}
+.hc-cell-bad {
+  color: var(--color-state-error);
+  font-weight: 600;
+}
+.hc-cell-none {
+  color: var(--color-text-secondary);
+}
+
+/* A share bar (how many got it right). */
+.hc-bar {
+  position: relative;
+  width: 6rem;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+.hc-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-text-primary);
+}
+
+/* Over time: right and wrong per slice. */
+.hc-chart {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  align-items: end;
+  gap: 4px;
+  height: 10rem;
+  padding: 8px 0 0;
+  border-bottom: 1px solid var(--color-border-strong);
+}
+.hc-chart-col {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.hc-chart-col span {
+  display: block;
+  min-height: 0;
+}
+.hc-chart-col .r {
+  background: var(--color-state-success);
+}
+.hc-chart-col .w {
+  background: var(--color-state-error);
+}
+.hc-chart-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+.hc-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.hc-legend i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+  border-radius: 2px;
+  vertical-align: -1px;
+}
+
+/* Review of the paper after the contest. */
+.hc-review {
+  display: grid;
+  gap: 16px;
+}
+.hc-review-q {
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-surface);
+}
+.hc-review-q[data-tone='success'] {
+  border-left-color: var(--color-state-success);
+}
+.hc-review-q[data-tone='error'] {
+  border-left-color: var(--color-state-error);
+}
+.hc-review-q figure img {
+  max-width: 100%;
+  height: auto;
+}
+.hc-ans {
+  display: grid;
+  gap: 4px;
+  margin-top: 10px;
+  font-size: 13.5px;
+  color: var(--color-text-primary);
+}

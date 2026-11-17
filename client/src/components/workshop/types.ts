@@ -26,6 +26,10 @@ export interface CustomProblem {
   memory_limit?: string
   created_at?: string
   updated_at?: string
+  /** How to solve it (Markdown); shown after a contest ends. */
+  editorial?: string
+  /** Written only for contests: hidden from the Workshop list. */
+  contest_only?: number
 }
 
 export interface CustomProblemForm {
@@ -39,6 +43,7 @@ export interface CustomProblemForm {
   testcases: Testcase[]
   time_limit: string
   memory_limit: string
+  editorial: string
 }
 
 export interface CustomContestRow {
@@ -79,6 +84,7 @@ export function emptyProblemForm(): CustomProblemForm {
     testcases: [{ input: '', expected_output: '' }],
     time_limit: '2 seconds',
     memory_limit: '256 MB',
+    editorial: '',
   }
 }
 
@@ -98,6 +104,7 @@ export function problemToForm(p: CustomProblem): CustomProblemForm {
       : [{ input: '', expected_output: '' }],
     time_limit: p.time_limit ?? '2 seconds',
     memory_limit: p.memory_limit ?? '256 MB',
+    editorial: p.editorial ?? '',
   }
 }
 
