@@ -3,6 +3,17 @@ const { errMessage } = require("../http-error");
 const fs = require('fs');
 const path = require('path');
 const { me } = require('../context');
+const sitemap = require('../sitemap');
+const { peekSettings } = require('../authz/site-settings');
+const { hasAnyAdminPerm, mayUseHive } = require('../authz/permissions');
+
+/** May this visitor see this DSA chapter (Admin → Site map, learn.dsa.<topic>)? */
+function chapterOpen(req, topic) {
+  const part = sitemap.BY_ID.get(`learn.dsa.${topic}`);
+  if (!part) return true;
+  const mode = sitemap.effectiveModes(peekSettings())[part.id];
+  return sitemap.allowed(mode, { owner: req.access?.role === 'owner', staff: hasAnyAdminPerm(req), hive: mayUseHive(req) }, part);
+}
 
 /*
  * NexoraGuru Learn — the coding questions of the course and each learner's
@@ -85,7 +96,8 @@ function createLearnRouter({ get, all, run }) {
     } catch (e) {
       return res.status(500).json({ ok: false, error: errMessage(e) });
     }
-    if (!p) return res.status(404).json({ ok: false, error: 'Unknown problem' });
+    // A chapter the Site map hides takes its problems with it.
+    if (!p || !chapterOpen(req, p.topic)) return res.status(404).json({ ok: false, error: 'Unknown problem' });
     res.json({
       ok: true,
       problem: {
@@ -112,9 +124,9 @@ function createLearnRouter({ get, all, run }) {
   });
 
   /* Titles and difficulty of every coding problem (for the question bank). */
-  router.get('/api/learn/problems', (_req, res) => {
+  router.get('/api/learn/problems', (req, res) => {
     try {
-      res.json({ ok: true, problems: [...problemIndex().values()] });
+      res.json({ ok: true, problems: [...problemIndex().values()].filter((p) => chapterOpen(req, p.topic)) });
     } catch (e) {
       res.status(500).json({ ok: false, error: errMessage(e) });
     }

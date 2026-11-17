@@ -28,8 +28,13 @@ const BY_ID = new Map(SECTIONS.map((s) => [s.id, s]));
 const LEVELS = ["none", "view", "edit"];
 const RANK = { none: 0, view: 1, edit: 2 };
 
+// Express matches routes ignoring case, repeated and trailing slashes, so the
+// section rule reads the path the same way ("/api/ADMIN//reports/" is Moderation).
+const canonPath = (p) => (String(p || "/").replace(/\/{2,}/g, "/").replace(/\/+$/, "") || "/").toLowerCase();
+
 function sectionForPath(path) {
-  for (const s of SECTIONS) if (s.paths.some((re) => re.test(path))) return s;
+  const p = canonPath(path);
+  for (const s of SECTIONS) if (s.paths.some((re) => re.test(p))) return s;
   return null;
 }
 
