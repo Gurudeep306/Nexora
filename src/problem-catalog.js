@@ -93,6 +93,9 @@ async function readSnapshot(version) {
     if (!parts.length || parts.some((p) => Number(p.version) !== version)) return null;
     const json = zlib.gunzipSync(Buffer.from(parts.map((p) => p.data).join(""), "base64")).toString("utf8");
     const { columns, data } = JSON.parse(json);
+    // A snapshot from before topics (or any older column set) is rebuilt from
+    // the database, so topic filters never see rows without their topics.
+    if (!Array.isArray(columns) || SNAP_COLUMNS.some((c) => !columns.includes(c))) return null;
     return data.map((vals) => {
       const o = {};
       columns.forEach((c, i) => {
