@@ -205,6 +205,7 @@ export function ProblemPanel({
           {statement?.timeLimit && <span className="tabular-nums">{statement.timeLimit}</span>}
           {statement?.memLimit && <span className="tabular-nums">{statement.memLimit}</span>}
           {problem.solve_status === 'solved' && <VerdictBadge verdict="AC" />}
+          {problem.solve_status === 'examples' && <span className="text-text-secondary" title="The judge's full tests aren't here, so it counts as solved after a full check">Passed the examples</span>}
           {problem.solve_status === 'attempted' && <span className="text-state-warning">Attempted</span>}
           {tags.length > 0 && (
             <button type="button" onClick={() => setShowTopics((v) => !v)} className="cursor-pointer text-foreground-faint underline-offset-2 hover:text-foreground hover:underline" aria-expanded={showTopics}>

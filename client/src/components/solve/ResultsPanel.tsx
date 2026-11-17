@@ -155,10 +155,14 @@ export function RunOutput({ result, expected, caseLabel }: { result: RunResult; 
 
 /** What an Accepted earned: "+25 XP" and how far the next level is. */
 export function XpGain({ x }: { x: XpReport }) {
-  if (!x.firstSolve) {
+  if (!x.gainedXp) {
     return (
       <p className="m-0 rounded-lg border border-border px-3 py-2 text-xs text-foreground-dim" role="status">
-        Accepted again. XP counts once per problem, so this one adds none.
+        {x.firstSolve
+          ? 'Solved: a full check passed. Its XP was already counted when it passed the examples.'
+          : x.examplesOnly
+            ? 'Passed the examples again. XP counts once per problem, so this one adds none.'
+            : 'Accepted again. XP counts once per problem, so this one adds none.'}
       </p>
     )
   }
@@ -182,6 +186,9 @@ export function XpGain({ x }: { x: XpReport }) {
             : `Level ${a.level} ${a.name}${needs ? ` · ${needs} to level ${a.level + 1}` : ''}`}
         </span>
       </p>
+      {x.examplesOnly && (
+        <p className="m-0 mt-1 text-xs text-foreground-dim">The XP counts now. The problem counts as solved once a full check passes.</p>
+      )}
       <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
         {bars.map(([label, n, d, text]) => (
           <div key={label}>

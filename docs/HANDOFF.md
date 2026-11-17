@@ -57,7 +57,10 @@ Contents:
 
 ## 3. Where it stands (2026-11-17, session 9)
 
-- **Session 9 — student walk-through, coding first (this PR, branch `claude/fervent-curie-vjgcd8`):**
+- **Session 10 (owner, 2026-11-17): XP rule, avatar in Edit profile, staff
+  permissions, site map.** Tracked in its own file:
+  [`docs/handoff/admin-profile-xp.md`](handoff/admin-profile-xp.md).
+- **Session 9 — student walk-through, coding first — merged (#148):**
   Walked the site as a new student on the demo with 38,631 real problems
   imported (Codeforces, CSES, AtCoder, Kattis, CodeChef, LeetCode, DMOJ,
   Euler, Timus): search → open → run → submit (wrong, compile error, right)
@@ -858,12 +861,8 @@ here". Every picture is named after the student's variable: the list is
 
 Each item is one finished, tested PR. Report to the owner after each.
 
-**Waiting for the owner (session 9):** passing only the examples (every judge
-but Codeforces keeps its tests private) still gives XP and marks the problem
-solved; the page now says "Passed the examples, not <judge>' full tests".
-Should it still count? Options: keep as is; give XP but mark it "passed the
-examples" instead of solved; or give XP only for a full check (NexoraGuru,
-Workshop, Learn and Codeforces problems with the dataset's tests).
+**Decided (owner, session 10):** passing only the examples gives XP once but
+shows "Passed the examples", not solved (see `docs/handoff/admin-profile-xp.md`).
 
 ### 1. Check the live site after #129 deploys
 

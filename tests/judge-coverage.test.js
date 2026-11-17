@@ -89,3 +89,59 @@ test('practice runs with no stored problem carry no coverage', async () => {
   assert.equal(r.body.verdict, 'AC');
   assert.equal(r.body.coverage, undefined);
 });
+
+// Owner's rule (session 9): the examples alone earn the XP once, but not "solved".
+const RIGHT = "const w=+require('fs').readFileSync(0,'utf8');console.log(w>2&&w%2===0?'YES':'NO')";
+const statusOf = async (id) => (await call('GET', `/api/problems/${id}`)).body.problem.solve_status;
+const solvedCount = async () => (await call('GET', '/api/stats')).body.solved;
+
+test('passing only the examples: XP once, "Passed the examples", not solved; later wrong answers keep it', async () => {
+  const id = addProblem('atcoder', `abc${stamp}_b`, [{ input: '8', output: 'YES' }]);
+  const before = await solvedCount();
+  const first = await call('POST', '/api/judge', { problem_id: id, language: 'javascript', code: RIGHT });
+  assert.equal(first.body.verdict, 'AC');
+  assert.ok(first.body.xp.gainedXp > 0, 'XP is earned');
+  assert.equal(first.body.xp.examplesOnly, true);
+  assert.equal(first.body.xp.firstSolve, false, 'not solved yet');
+  assert.equal(await statusOf(id), 'examples');
+  assert.equal(await solvedCount(), before, 'the solved count does not move');
+  const again = await call('POST', '/api/judge', { problem_id: id, language: 'javascript', code: RIGHT });
+  assert.equal(again.body.xp.gainedXp, 0, 'XP counts once per problem');
+  await call('POST', '/api/judge', { problem_id: id, language: 'javascript', code: "console.log('NO')" });
+  assert.equal(await statusOf(id), 'examples', 'a later wrong answer keeps it');
+  const listed = await call('GET', '/api/problems?status=examples&limit=50');
+  assert.ok(listed.body.problems.some((p) => p.id === id), 'the status filter finds it');
+});
+
+test('a full check later makes it solved, without giving the XP twice', async () => {
+  const id = addProblem('codeforces', '9994A', [{ input: '8', output: 'YES' }]);
+  const first = await call('POST', '/api/judge', { problem_id: id, language: 'javascript', code: RIGHT });
+  assert.equal(first.body.coverage.full, false);
+  const xp = first.body.xp.gainedXp;
+  assert.ok(xp > 0);
+  assert.equal(await statusOf(id), 'examples');
+  withDb((db) => {
+    db.exec('CREATE TABLE IF NOT EXISTS cf_dataset_tests (id TEXT PRIMARY KEY, tests TEXT NOT NULL, exact INTEGER NOT NULL, fetched_at INTEGER NOT NULL)');
+    db.prepare('INSERT OR REPLACE INTO cf_dataset_tests(id, tests, exact, fetched_at) VALUES(?,?,1,?)').run('9994/A', JSON.stringify([{ input: '2', output: 'NO' }, { input: '6', output: 'YES' }]), Date.now());
+  });
+  const before = await solvedCount();
+  const full = await call('POST', '/api/judge', { problem_id: id, language: 'javascript', code: RIGHT });
+  assert.equal(full.body.coverage.full, true);
+  assert.equal(full.body.verdict, 'AC');
+  assert.equal(full.body.xp.firstSolve, true, 'now solved');
+  assert.equal(full.body.xp.gainedXp, 0, 'the XP was already counted');
+  assert.equal(await statusOf(id), 'solved');
+  assert.equal(await solvedCount(), before + 1);
+});
+
+test('an official test that equals an example runs once and still counts toward a full check', async () => {
+  const id = addProblem('codeforces', '9995A', [{ input: '8', output: 'YES' }]);
+  withDb((db) => {
+    db.exec('CREATE TABLE IF NOT EXISTS cf_dataset_tests (id TEXT PRIMARY KEY, tests TEXT NOT NULL, exact INTEGER NOT NULL, fetched_at INTEGER NOT NULL)');
+    db.prepare('INSERT OR REPLACE INTO cf_dataset_tests(id, tests, exact, fetched_at) VALUES(?,?,1,?)').run('9995/A', JSON.stringify([{ input: '8', output: 'YES' }, { input: '4', output: 'YES' }]), Date.now());
+  });
+  const r = await call('POST', '/api/judge', { problem_id: id, language: 'javascript', code: RIGHT });
+  assert.equal(r.body.results.length, 2, 'the shared case runs once');
+  assert.deepEqual({ full: r.body.coverage.full, official: r.body.coverage.official }, { full: true, official: 2 });
+  assert.equal(await statusOf(id), 'solved');
+});

@@ -806,7 +806,7 @@ app.get("/api/problems", async (req, res) => {
     };
     const matched = filterIndices(catalog, filters);
     const st = status && status !== "all" ? String(status) : "";
-    const statusFilter = st === "solved" || st === "attempted" || st === "unsolved";
+    const statusFilter = st === "solved" || st === "attempted" || st === "unsolved" || st === "examples";
     let progress = null; // problem id -> progress row
     let indices = matched;
     if (statusFilter) {
@@ -1675,11 +1675,27 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
         cases = await problemTestcases(prob.id);
         // Official tests are only known for Codeforces (an open dataset); every
         // other judge keeps its tests private, so the examples are all there is.
-        const official = cases.filter((c) => c.hidden).length;
-        coverage = { full: official > 0, official, judge: prob.platform, url: prob.url || null };
-        if (!official && prob.platform === "codeforces") {
+        let official = cases.filter((c) => c.hidden).length;
+        let full = official > 0;
+        let cached = null;
+        if (prob.platform === "codeforces") {
           const ds = require("./sources/cf-dataset");
-          const cached = await ds.cachedTests(prob.problem_id).catch(() => null);
+          cached = await ds.cachedTests(prob.problem_id).catch(() => null);
+          // Full = every official test ran (one that equals an example or the
+          // student's own test runs once, under that name; one cut by the
+          // judge's size limits did not run).
+          if (cached && cached.length) {
+            const ran = new Set(cases.map((c) => tcKey(c.input, c.expected_output)));
+            official = cached.length;
+            full = cached.every((t) => {
+              const c = toCase({ input: t.input, output: t.output });
+              return ran.has(tcKey(c.input, c.expected_output));
+            });
+          }
+        }
+        coverage = { full, official, judge: prob.platform, url: prob.url || null };
+        if (!full && prob.platform === "codeforces" && !(cached && cached.length)) {
+          const ds = require("./sources/cf-dataset");
           // "Being fetched" only while a download really runs; a failed one says so.
           if (cached == null) {
             if (ds.testsState(prob.problem_id) === "failed") coverage.failed = true;
@@ -1743,15 +1759,24 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
         "SELECT * FROM progress WHERE username=? AND problem_rowid=?",
         [me(), problem_id],
       );
-      const firstSolve = result.verdict === "AC" && existing?.status !== "solved";
-      const gainedXp = firstSolve ? await calcXp(problem_id) : 0;
+      // Owner's rule (session 9): passing only the examples (the judge's own
+      // tests aren't here) earns the XP but not "solved" — the problem shows
+      // "Passed the examples" and counts as solved only after a full check.
+      // XP is earned once per problem, whichever came first.
+      const accepted = result.verdict === "AC";
+      const examplesOnly = accepted && !!coverage && !coverage.full;
+      const fullPass = accepted && !examplesOnly;
+      const firstSolve = fullPass && existing?.status !== "solved";
+      const xpBefore = Number(existing?.xp_earned) || 0;
+      const gainedXp = accepted && !xpBefore && existing?.status !== "solved" ? await calcXp(problem_id) : 0;
       // What this submit did to the level: the same calcLevel the Profile shows.
-      if (result.verdict === "AC") {
+      if (accepted) {
         const before = await myTotals();
         const after = { xp: before.xp + gainedXp, solved: before.solved + (firstSolve ? 1 : 0) };
         xpReport = {
           gainedXp,
           firstSolve,
+          examplesOnly,
           before: calcLevel(before.xp, before.solved),
           after: calcLevel(after.xp, after.solved),
           solved: after.solved,
@@ -1763,25 +1788,22 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
           [
             me(),
             problem_id,
-            result.verdict === "AC" ? "solved" : "attempted",
+            fullPass ? "solved" : examplesOnly ? "examples" : "attempted",
             1,
-            result.verdict === "AC" ? new Date().toISOString() : null,
+            fullPass ? new Date().toISOString() : null,
             gainedXp,
           ],
         );
       } else {
-        const newStatus =
-          result.verdict === "AC"
-            ? "solved"
-            : existing.status === "solved"
-              ? "solved"
-              : "attempted";
-        const xp = firstSolve ? gainedXp : existing.xp_earned;
+        // Solved stays solved; "examples" rises to solved on a full check and
+        // never falls back to "attempted" on a later wrong answer.
+        const newStatus = existing.status === "solved" || fullPass ? "solved" : examplesOnly || existing.status === "examples" ? "examples" : "attempted";
+        const xp = gainedXp ? gainedXp : existing.xp_earned;
         await run(
           `UPDATE progress SET status=?, attempts=attempts+1, solved_at=COALESCE(solved_at,?), xp_earned=? WHERE username=? AND problem_rowid=?`,
           [
             newStatus,
-            result.verdict === "AC" ? new Date().toISOString() : null,
+            fullPass ? new Date().toISOString() : null,
             xp,
             me(),
             problem_id,
@@ -1808,7 +1830,8 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
       );
 
       // Check achievements
-      await checkAchievements(problem_id, result.verdict);
+      // Achievements are for solved problems: a full check, not the examples alone.
+      await checkAchievements(problem_id, fullPass ? "AC" : result.verdict === "AC" ? "EX" : result.verdict);
       invalidateCache();
     }
 
