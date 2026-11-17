@@ -81,6 +81,8 @@ function build(raw) {
     private_mode: { enabled: !!pm.enabled, message: String(pm.message || DEFAULT_PRIVATE_MESSAGE) },
     registrations: { open: objectAt(raw, "registrations").open !== false },
     feature_flags: flags,
+    // Admin → Site map: { partId: 'visible' | 'staff' | 'soon' | 'hidden' } (src/sitemap.js).
+    site_parts: objectAt(raw, "site_parts"),
     maintenance: { enabled: !!maint.enabled, message: String(maint.message || "") },
     // The design style new visitors see until they pick their own (Admin → Site).
     default_style: typeof raw.default_style === "string" && /^[a-z-]{2,40}$/.test(raw.default_style) ? raw.default_style : null,

@@ -3,7 +3,6 @@ import { prefetchHandlers } from '@/routes'
 import { motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 import { useSite } from '@/context/SiteContext'
-import { featureForPath } from '@/lib/site'
 import { Icon } from '@/components/icon/Icon'
 import { dockIconName } from './dockIcons'
 import { openCommandPalette } from './CommandPalette'
@@ -15,13 +14,13 @@ import { tStandard } from '@/lib/motion'
 export function MobileTabBar() {
   const { pathname } = useLocation()
   const dock = useDock()
-  const { featureOn, isStaff } = useSite()
+  const { pathOn, isStaff, mayHive } = useSite()
 
   if (isDockFocusRoute(pathname)) return null
 
   const pages = dock.pinned
     .map((id) => DOCK_BY_ID.get(id))
-    .filter((i): i is DockItem => !!i && !!i.to && !i.external && !i.action && !i.to.includes('?') && (!i.staffOnly || isStaff) && featureOn(featureForPath(i.to)))
+    .filter((i): i is DockItem => !!i && !!i.to && !i.external && !i.action && !i.to.includes('?') && (!i.staffOnly || isStaff) && (!i.hiveOnly || mayHive) && pathOn(i.to))
     .slice(0, 4)
   const tabs: (DockItem | 'search')[] = [...pages.slice(0, 2), 'search', ...pages.slice(2, 4)]
 

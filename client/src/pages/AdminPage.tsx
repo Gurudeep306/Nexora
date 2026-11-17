@@ -22,11 +22,13 @@ import { AuthoredSection } from '@/components/admin/AuthoredSection'
 import { AiSection } from '@/components/admin/AiSection'
 import { RunnersSection } from '@/components/admin/RunnersSection'
 import { DefaultStylePanel } from '@/components/admin/DefaultStylePanel'
+import { StaffAccessSection } from '@/components/admin/StaffAccessSection'
+import { SiteMapSection } from '@/components/admin/SiteMapSection'
 import '@/components/admin/ai.css'
 import NotFoundPage from '@/pages/NotFoundPage'
 import type { AdminMe } from '@/components/admin/types'
 
-type SectionId = 'overview' | 'users' | 'moderation' | 'site' | 'ai' | 'runners' | 'sources' | 'authored' | 'announcements' | 'audit'
+type SectionId = 'overview' | 'users' | 'staff' | 'moderation' | 'site' | 'sitemap' | 'ai' | 'runners' | 'sources' | 'authored' | 'announcements' | 'audit'
 
 const GROUPS: { label: string; items: { id: SectionId; label: string; icon: IconName; perm: string; title: string; blurb: string }[] }[] = [
   {
@@ -37,6 +39,7 @@ const GROUPS: { label: string; items: { id: SectionId; label: string; icon: Icon
     label: 'People',
     items: [
       { id: 'users', label: 'Users', icon: 'users', perm: 'users.view', title: 'Users', blurb: 'Search accounts, change roles and permissions, ban and verify.' },
+      { id: 'staff', label: 'Staff access', icon: 'key', perm: 'staff.access', title: 'Staff access', blurb: 'Who on the team can see or change each part of Admin.' },
       { id: 'moderation', label: 'Moderation', icon: 'flag', perm: 'content.moderate', title: 'Moderation', blurb: 'Reports from the community — remove, restore, resolve.' },
     ],
   },
@@ -44,10 +47,11 @@ const GROUPS: { label: string; items: { id: SectionId; label: string; icon: Icon
     label: 'Platform',
     items: [
       { id: 'site', label: 'Site', icon: 'globe', perm: 'site.settings', title: 'Site', blurb: 'Private mode, early access, sign-ups, feature flags and maintenance.' },
-      { id: 'ai', label: 'AI models', icon: 'sparkles', perm: 'site.settings', title: 'AI models', blurb: 'Which AI the site uses: providers, keys, a model for each feature, and the daily budget.' },
-      { id: 'runners', label: 'Code runners', icon: 'server', perm: 'site.settings', title: 'Code runners', blurb: 'Our own servers that run code first, each backing up the others, with the free public runners behind them.' },
+      { id: 'sitemap', label: 'Site map', icon: 'map', perm: 'site.settings', title: 'Site map', blurb: 'Every part of the site: who sees it, and where its code lives.' },
+      { id: 'ai', label: 'AI models', icon: 'sparkles', perm: 'ai.manage', title: 'AI models', blurb: 'Which AI the site uses: providers, keys, a model for each feature, and the daily budget.' },
+      { id: 'runners', label: 'Code runners', icon: 'server', perm: 'runners.manage', title: 'Code runners', blurb: 'Our own servers that run code first, each backing up the others, with the free public runners behind them.' },
       { id: 'sources', label: 'Problem sources', icon: 'database', perm: 'problems.manage', title: 'Problem sources', blurb: 'Which judges problems come from, kept in sync and tested live.' },
-      { id: 'authored', label: 'Add a problem', icon: 'code', perm: 'problems.manage', title: 'Add a problem', blurb: 'Coding problems we write ourselves: statement, tests, checker, editorial and a solution in five languages.' },
+      { id: 'authored', label: 'Add a problem', icon: 'code', perm: 'problems.author', title: 'Add a problem', blurb: 'Coding problems we write ourselves: statement, tests, checker, editorial and a solution in five languages.' },
       { id: 'announcements', label: 'Announcements', icon: 'bell', perm: 'announcements.post', title: 'Announcements', blurb: 'The bar above every page, and notifications to everyone.' },
       { id: 'audit', label: 'Audit log', icon: 'list', perm: 'audit.view', title: 'Audit log', blurb: 'Every admin action — who, what, when, from where.' },
     ],
@@ -77,7 +81,10 @@ export default function AdminPage() {
   if (error || !me) return <Failed message={error ?? 'Could not load the admin panel'} onRetry={refetch} />
 
   const can = (p: string) => me.isOwner || me.permissions.includes(p)
-  const visible = ALL.filter((s) => can(s.perm))
+  // Each section's level comes from the server (role, permissions and Staff access).
+  const levelOf = (id: SectionId) => (id === 'staff' ? (me.canStaff ? 'edit' : 'none') : (me.sections?.[id] ?? (can(ALL.find((s) => s.id === id)!.perm) ? 'edit' : 'none')))
+  const shown = (s: { id: SectionId }) => levelOf(s.id) !== 'none'
+  const visible = ALL.filter(shown)
   const requested = params.get('section') as SectionId | null
   const current = visible.find((s) => s.id === requested) ?? visible[0]
   const openUser = params.get('user')
@@ -89,7 +96,7 @@ export default function AdminPage() {
     window.scrollTo({ top: 0 })
   }
   const setUser = (u: string | null) => {
-    if (!can('users.view')) return
+    if (levelOf('users') === 'none') return
     const next = new URLSearchParams(params)
     if (u) next.set('user', u)
     else next.delete('user')
@@ -158,7 +165,7 @@ export default function AdminPage() {
             <div className="desk-toc-book">
               <p className="ed-label desk-toc-label">Contents</p>
               {GROUPS.map((g) => {
-                const items = g.items.filter((s) => can(s.perm))
+                const items = g.items.filter(shown)
                 if (!items.length) return null
                 return (
                   <div key={g.label} className="desk-toc-group">
@@ -186,7 +193,7 @@ export default function AdminPage() {
                   </div>
                 )
               })}
-              {me.isOwner && <p className="desk-toc-note">As the owner you can&rsquo;t be banned or demoted, you see every section, and only you make admins or grant site settings.</p>}
+              {me.isOwner && <p className="desk-toc-note">As the owner you can&rsquo;t be banned or demoted, you see every section, and only you make admins or grant the owner-only permissions.</p>}
             </div>
           </nav>
 
@@ -197,16 +204,23 @@ export default function AdminPage() {
                 <p className="ed-label">Section {numberOf(current.id)}</p>
                 <h2 className="ed-h2 desk-section-title">{current.title}</h2>
                 <p className="ed-body-sm desk-section-blurb">{current.blurb}</p>
+                {levelOf(current.id) === 'view' && (
+                  <p className="desk-readonly" role="note">
+                    <Icon name="eye" /> You can see this section but not change it. Changes you try here are refused.
+                  </p>
+                )}
               </div>
             )}
             {current?.id === 'overview' && <OverviewSection key={revision} onOpenUser={setUser} />}
             {current?.id === 'users' && <UsersSection onOpenUser={setUser} revision={revision} />}
+            {current?.id === 'staff' && <StaffAccessSection />}
             {current?.id === 'site' && (
               <div className="space-y-6">
                 <SiteSettingsPanel />
                 <DefaultStylePanel />
               </div>
             )}
+            {current?.id === 'sitemap' && <SiteMapSection />}
             {current?.id === 'ai' && <AiSection />}
             {current?.id === 'runners' && <RunnersSection />}
             {current?.id === 'sources' && <SourcesSection />}
@@ -218,7 +232,7 @@ export default function AdminPage() {
         </div>
       )}
 
-      {can('users.view') && <UserDrawer username={openUser} me={me} onClose={() => setUser(null)} onChanged={changed} />}
+      {levelOf('users') !== 'none' && <UserDrawer username={openUser} me={me} onClose={() => setUser(null)} onChanged={changed} />}
     </div>
   )
 }

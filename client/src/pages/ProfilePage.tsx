@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { Ban, CalendarDays, Flag, Link2, Lock, MapPin, MessageSquare, MoreHorizontal, PenLine, QrCode, VolumeX } from 'lucide-react'
 import { Avatar, Button, Card, ConfirmDialog, EmptyState, ErrorState, Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger, Modal, RankBadge, RankGlyph, Skeleton, useToast } from '@/components/ui'
@@ -9,7 +9,7 @@ import { useAgentPageContext } from '@/context/AgentContext'
 import { api } from '@/lib/api'
 import { cn, formatDate } from '@/lib/utils'
 import { ActivityHeatmap } from '@/components/profile/ActivityHeatmap'
-import { ACCENTS, CoverArt } from '@/components/profile/covers'
+import { ACCENTS, CoverArt, coverId } from '@/components/profile/covers'
 import { BadgeCard, LevelBar, Timeline } from '@/components/profile/Showcase'
 import { LevelRules } from '@/components/profile/LevelRules'
 import { Bridge, Colophon, DifficultyMultiples, Folio, LanguageList, RankSeal, Seal, Shelf, TopicBars } from '@/components/profile/Notebook'
@@ -170,7 +170,17 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
   const toast = useToast()
   const navigate = useNavigate()
   const { socialOn } = useSocialPerms()
-  const [editing, setEditing] = useState(false)
+  // /u/<you>?edit=1 (Settings → "Edit profile") opens the form straight away.
+  const [params, setParams] = useSearchParams()
+  const [editing, setEditingState] = useState(() => isSelf && params.get('edit') === '1')
+  const setEditing = (open: boolean) => {
+    setEditingState(open)
+    if (!open && params.has('edit')) {
+      const next = new URLSearchParams(params)
+      next.delete('edit')
+      setParams(next, { replace: true })
+    }
+  }
   const [sharing, setSharing] = useState(false)
   const [people, setPeople] = useState<null | 'followers' | 'following'>(null)
   const [reporting, setReporting] = useState(false)
@@ -178,6 +188,9 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
   const name = p.display_name || p.username
   const accent = ACCENTS[p.accent]?.color ?? ACCENTS.brand.color
   const journal = isJournalKit(useTheme().shown.style)
+  // A chosen cover becomes the stage: actions and the note card sit on it,
+  // and the portrait overlaps its lower edge. Plain keeps the quiet layout.
+  const hasCover = p.cover?.startsWith('/uploads/') || coverId(p.cover ?? 'plain') !== 'plain'
 
   const relate = async (kind: 'mute' | 'block', on: boolean) => {
     try {
@@ -191,77 +204,190 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
     setConfirmBlock(false)
   }
 
+  const portrait = (
+    <>
+      {journal && stats ? (
+        <PortraitMedal handle={p.username} level={stats.level.level} name={stats.level.name} progress={stats.level.xpForNext ? stats.level.xpInLevel / stats.level.xpForNext : 1}>
+          <Avatar seed={p.username} avatar={p.avatar} src={p.avatar_url} name={name} size="3xl" ring={false} className="[&_img]:size-[124px]" online={p.status === 'online'} />
+        </PortraitMedal>
+      ) : (
+        <div className="pf-portrait relative -mt-14 sm:-mt-16">
+          <div className="pf-portrait-ring ng-ring rounded-full p-[3px]" style={{ '--ng-ring-a': accent, '--ng-ring-b': 'var(--color-state-info)', '--ng-ring-c': 'var(--color-state-success)' } as React.CSSProperties}>
+            <div className="rounded-full bg-bg-surface p-[3px]">
+              <Avatar seed={p.username} avatar={p.avatar} src={p.avatar_url} name={name} size="3xl" ring={false} className="[&_img]:size-24 sm:[&_img]:size-28" online={p.status === 'online'} />
+            </div>
+          </div>
+          {stats && <RankGlyph level={stats.level.level} size={38} className="pf-rank-corner absolute -right-1 -bottom-1" />}
+        </div>
+      )}
+    </>
+  )
+
   return (
     <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }} className="pf-hero card overflow-hidden" aria-label={`${name}'s profile`}>
-      <CoverArt cover={p.cover} className="pf-cover h-36 sm:h-52" />
+      {hasCover && (
+        <div className="pf-stage">
+          <CoverArt cover={p.cover} seed={p.username} accent={p.accent} className="pf-stage-art" />
+          <div className="pf-stage-top">
+              <div className="pf-actions flex flex-wrap items-center gap-2 pt-3">
+                {isSelf ? (
+                  <>
+                    <Button variant="subtle" size="sm" className="rounded-full" onClick={() => setSharing(true)}>
+                      <QrCode /> Share
+                    </Button>
+                    <Button size="sm" className="rounded-full" onClick={() => setEditing(true)}>
+                      <PenLine /> Edit profile
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="subtle" size="icon-sm" className="rounded-full" aria-label="Share profile" onClick={() => setSharing(true)}>
+                      <QrCode />
+                    </Button>
+                    {!relation.blockedByMe && !relation.blocksMe && (
+                      <Button variant="subtle" size="icon-sm" className="rounded-full" aria-label={`Message ${name}`} onClick={() => navigate(`/social?tab=messages&peer=${encodeURIComponent(p.username)}`)}>
+                        <MessageSquare />
+                      </Button>
+                    )}
+                    <Menu>
+                      <MenuTrigger asChild>
+                        <Button variant="subtle" size="icon-sm" className="rounded-full" aria-label="More options">
+                          <MoreHorizontal />
+                        </Button>
+                      </MenuTrigger>
+                      <MenuContent>
+                        <MenuItem icon={<Link2 />} onSelect={() => void navigator.clipboard?.writeText(`${window.location.origin}/u/${p.username}`).then(() => toast.success('Link copied'))}>
+                          Copy profile link
+                        </MenuItem>
+                        <MenuSeparator />
+                        <MenuItem icon={<VolumeX />} onSelect={() => void relate('mute', !relation.muted)}>
+                          {relation.muted ? 'Unmute' : 'Mute'} @{p.username}
+                        </MenuItem>
+                        <MenuItem icon={<Ban />} onSelect={() => (relation.blockedByMe ? void relate('block', false) : setConfirmBlock(true))}>
+                          {relation.blockedByMe ? 'Unblock' : 'Block'} @{p.username}
+                        </MenuItem>
+                        <MenuItem icon={<Flag />} danger onSelect={() => setReporting(true)}>
+                          Report profile
+                        </MenuItem>
+                      </MenuContent>
+                    </Menu>
+                    {socialOn && !relation.blockedByMe && !relation.blocksMe && <FollowButton username={p.username} state={relation.following} onChange={onChanged} size="md" />}
+                  </>
+                )}
+              </div>
+          </div>
+          <div className="pf-stage-row">
+            <div className="pf-stage-pic">{portrait}</div>
+          <div className="pf-stage-note">
+            {p.bio ? (
+              <RichText text={p.bio} className="pf-bio mt-3 max-w-2xl space-y-1 text-[15px] leading-relaxed text-text-primary" />
+            ) : (
+              isSelf && (
+                <button type="button" onClick={() => setEditing(true)} className="pf-bio-empty mt-3 cursor-pointer text-sm text-text-muted italic hover:text-text-primary hover:underline">
+                  Add a bio — tell people what you're learning.
+                </button>
+              )
+            )}
+            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-text-secondary">
+              {p.location && (
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin className="size-4 text-text-muted" /> {p.location}
+                </span>
+              )}
+              {p.website && (
+                <a href={p.website} target="_blank" rel="noopener noreferrer nofollow ugc" className="inline-flex items-center gap-1.5 hover:underline" style={{ color: accent }}>
+                  <Link2 className="size-4" /> {p.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
+                </a>
+              )}
+              {p.links.map((l) => (
+                <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer nofollow ugc" className="inline-flex items-center gap-1.5 hover:underline" style={{ color: accent }}>
+                  {l.label || l.url.replace(/^https?:\/\//, '')}
+                </a>
+              ))}
+              <span className="pf-joined inline-flex items-center gap-1.5">
+                <CalendarDays className="size-4 text-text-muted" /> Joined {formatDate(p.created_at)}
+              </span>
+            </div>
+            <div className="pf-counts pf-stage-counts mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
+              {socialOn && (
+                <>
+                  <button type="button" onClick={() => setPeople('following')} className="cursor-pointer hover:underline" disabled={data.locked}>
+                    <strong className="font-semibold text-text-primary tabular-nums">{p.counts.following}</strong> <span className="text-text-secondary">Following</span>
+                  </button>
+                  <button type="button" onClick={() => setPeople('followers')} className="cursor-pointer hover:underline" disabled={data.locked}>
+                    <strong className="font-semibold text-text-primary tabular-nums">{p.counts.followers}</strong> <span className="text-text-secondary">{p.counts.followers === 1 ? 'Follower' : 'Followers'}</span>
+                  </button>
+                  <span>
+                    <strong className="font-semibold text-text-primary tabular-nums">{p.counts.posts}</strong> <span className="text-text-secondary">Posts</span>
+                  </span>
+                </>
+              )}
+              <span>
+                <strong className="font-semibold text-text-primary tabular-nums">{p.counts.friends}</strong> <span className="text-text-secondary">Friends</span>
+              </span>
+            </div>
+          </div>
+          </div>
+        </div>
+      )}
       <div className="pf-hero-body relative px-4 pb-5 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          {journal && stats ? (
-            <PortraitMedal handle={p.username} level={stats.level.level} name={stats.level.name} progress={stats.level.xpForNext ? stats.level.xpInLevel / stats.level.xpForNext : 1}>
-              <Avatar seed={p.username} avatar={p.avatar} src={p.avatar_url} name={name} size="3xl" ring={false} className="[&_img]:size-[124px]" online={p.status === 'online'} />
-            </PortraitMedal>
-          ) : (
-            <div className="pf-portrait relative -mt-14 sm:-mt-16">
-              <div className="pf-portrait-ring ng-ring rounded-full p-[3px]" style={{ '--ng-ring-a': accent, '--ng-ring-b': 'var(--color-state-info)', '--ng-ring-c': 'var(--color-state-success)' } as React.CSSProperties}>
-                <div className="rounded-full bg-bg-surface p-[3px]">
-                  <Avatar seed={p.username} avatar={p.avatar} src={p.avatar_url} name={name} size="3xl" ring={false} className="[&_img]:size-24 sm:[&_img]:size-28" online={p.status === 'online'} />
-                </div>
-              </div>
-              {stats && <RankGlyph level={stats.level.level} size={38} className="pf-rank-corner absolute -right-1 -bottom-1" />}
+          {!hasCover && portrait}
+          {!hasCover && (
+            <div className="pf-actions flex flex-wrap items-center gap-2 pt-3">
+              {isSelf ? (
+                <>
+                  <Button variant="subtle" size="sm" className="rounded-full" onClick={() => setSharing(true)}>
+                    <QrCode /> Share
+                  </Button>
+                  <Button size="sm" className="rounded-full" onClick={() => setEditing(true)}>
+                    <PenLine /> Edit profile
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="subtle" size="icon-sm" className="rounded-full" aria-label="Share profile" onClick={() => setSharing(true)}>
+                    <QrCode />
+                  </Button>
+                  {!relation.blockedByMe && !relation.blocksMe && (
+                    <Button variant="subtle" size="icon-sm" className="rounded-full" aria-label={`Message ${name}`} onClick={() => navigate(`/social?tab=messages&peer=${encodeURIComponent(p.username)}`)}>
+                      <MessageSquare />
+                    </Button>
+                  )}
+                  <Menu>
+                    <MenuTrigger asChild>
+                      <Button variant="subtle" size="icon-sm" className="rounded-full" aria-label="More options">
+                        <MoreHorizontal />
+                      </Button>
+                    </MenuTrigger>
+                    <MenuContent>
+                      <MenuItem icon={<Link2 />} onSelect={() => void navigator.clipboard?.writeText(`${window.location.origin}/u/${p.username}`).then(() => toast.success('Link copied'))}>
+                        Copy profile link
+                      </MenuItem>
+                      <MenuSeparator />
+                      <MenuItem icon={<VolumeX />} onSelect={() => void relate('mute', !relation.muted)}>
+                        {relation.muted ? 'Unmute' : 'Mute'} @{p.username}
+                      </MenuItem>
+                      <MenuItem icon={<Ban />} onSelect={() => (relation.blockedByMe ? void relate('block', false) : setConfirmBlock(true))}>
+                        {relation.blockedByMe ? 'Unblock' : 'Block'} @{p.username}
+                      </MenuItem>
+                      <MenuItem icon={<Flag />} danger onSelect={() => setReporting(true)}>
+                        Report profile
+                      </MenuItem>
+                    </MenuContent>
+                  </Menu>
+                  {socialOn && !relation.blockedByMe && !relation.blocksMe && <FollowButton username={p.username} state={relation.following} onChange={onChanged} size="md" />}
+                </>
+              )}
             </div>
           )}
-          <div className="pf-actions flex flex-wrap items-center gap-2 pt-3">
-            {isSelf ? (
-              <>
-                <Button variant="subtle" size="sm" className="rounded-full" onClick={() => setSharing(true)}>
-                  <QrCode /> Share
-                </Button>
-                <Button size="sm" className="rounded-full" onClick={() => setEditing(true)}>
-                  <PenLine /> Edit profile
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button variant="subtle" size="icon-sm" className="rounded-full" aria-label="Share profile" onClick={() => setSharing(true)}>
-                  <QrCode />
-                </Button>
-                {!relation.blockedByMe && !relation.blocksMe && (
-                  <Button variant="subtle" size="icon-sm" className="rounded-full" aria-label={`Message ${name}`} onClick={() => navigate(`/social?tab=messages&peer=${encodeURIComponent(p.username)}`)}>
-                    <MessageSquare />
-                  </Button>
-                )}
-                <Menu>
-                  <MenuTrigger asChild>
-                    <Button variant="subtle" size="icon-sm" className="rounded-full" aria-label="More options">
-                      <MoreHorizontal />
-                    </Button>
-                  </MenuTrigger>
-                  <MenuContent>
-                    <MenuItem icon={<Link2 />} onSelect={() => void navigator.clipboard?.writeText(`${window.location.origin}/u/${p.username}`).then(() => toast.success('Link copied'))}>
-                      Copy profile link
-                    </MenuItem>
-                    <MenuSeparator />
-                    <MenuItem icon={<VolumeX />} onSelect={() => void relate('mute', !relation.muted)}>
-                      {relation.muted ? 'Unmute' : 'Mute'} @{p.username}
-                    </MenuItem>
-                    <MenuItem icon={<Ban />} onSelect={() => (relation.blockedByMe ? void relate('block', false) : setConfirmBlock(true))}>
-                      {relation.blockedByMe ? 'Unblock' : 'Block'} @{p.username}
-                    </MenuItem>
-                    <MenuItem icon={<Flag />} danger onSelect={() => setReporting(true)}>
-                      Report profile
-                    </MenuItem>
-                  </MenuContent>
-                </Menu>
-                {socialOn && !relation.blockedByMe && !relation.blocksMe && <FollowButton username={p.username} state={relation.following} onChange={onChanged} size="md" />}
-              </>
-            )}
-          </div>
         </div>
 
         <div className="mt-3">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="pf-name font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-[28px]">{name}</h1>
             <UserBadges username={p.username} role={p.role} verified={p.verified} variant="full" />
+            {p.team_title && <span className="pf-team">{p.team_title}</span>}
           </div>
           {stats && !journal && (
             <div className="pf-seal-line mt-2">
@@ -279,53 +405,59 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
               </span>
             )}
           </p>
-          {p.bio ? (
-            <RichText text={p.bio} className="pf-bio mt-3 max-w-2xl space-y-1 text-[15px] leading-relaxed text-text-primary" />
-          ) : (
-            isSelf && (
-              <button type="button" onClick={() => setEditing(true)} className="pf-bio-empty mt-3 cursor-pointer text-sm text-text-muted italic hover:text-text-primary hover:underline">
-                Add a bio — tell people what you're learning.
-              </button>
-            )
-          )}
-          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-text-secondary">
-            {p.location && (
-              <span className="inline-flex items-center gap-1.5">
-                <MapPin className="size-4 text-text-muted" /> {p.location}
-              </span>
-            )}
-            {p.website && (
-              <a href={p.website} target="_blank" rel="noopener noreferrer nofollow ugc" className="inline-flex items-center gap-1.5 hover:underline" style={{ color: accent }}>
-                <Link2 className="size-4" /> {p.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
-              </a>
-            )}
-            {p.links.map((l) => (
-              <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer nofollow ugc" className="inline-flex items-center gap-1.5 hover:underline" style={{ color: accent }}>
-                {l.label || l.url.replace(/^https?:\/\//, '')}
-              </a>
-            ))}
-            <span className="pf-joined inline-flex items-center gap-1.5">
-              <CalendarDays className="size-4 text-text-muted" /> Joined {formatDate(p.created_at)}
-            </span>
-          </div>
-          <div className="pf-counts mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
-            {socialOn && (
-              <>
-                <button type="button" onClick={() => setPeople('following')} className="cursor-pointer hover:underline" disabled={data.locked}>
-                  <strong className="font-semibold text-text-primary tabular-nums">{p.counts.following}</strong> <span className="text-text-secondary">Following</span>
-                </button>
-                <button type="button" onClick={() => setPeople('followers')} className="cursor-pointer hover:underline" disabled={data.locked}>
-                  <strong className="font-semibold text-text-primary tabular-nums">{p.counts.followers}</strong> <span className="text-text-secondary">{p.counts.followers === 1 ? 'Follower' : 'Followers'}</span>
-                </button>
-                <span>
-                  <strong className="font-semibold text-text-primary tabular-nums">{p.counts.posts}</strong> <span className="text-text-secondary">Posts</span>
+          {!hasCover && (
+            <>
+              {p.bio ? (
+                <RichText text={p.bio} className="pf-bio mt-3 max-w-2xl space-y-1 text-[15px] leading-relaxed text-text-primary" />
+              ) : (
+                isSelf && (
+                  <button type="button" onClick={() => setEditing(true)} className="pf-bio-empty mt-3 cursor-pointer text-sm text-text-muted italic hover:text-text-primary hover:underline">
+                    Add a bio — tell people what you're learning.
+                  </button>
+                )
+              )}
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-text-secondary">
+                {p.location && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin className="size-4 text-text-muted" /> {p.location}
+                  </span>
+                )}
+                {p.website && (
+                  <a href={p.website} target="_blank" rel="noopener noreferrer nofollow ugc" className="inline-flex items-center gap-1.5 hover:underline" style={{ color: accent }}>
+                    <Link2 className="size-4" /> {p.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
+                  </a>
+                )}
+                {p.links.map((l) => (
+                  <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer nofollow ugc" className="inline-flex items-center gap-1.5 hover:underline" style={{ color: accent }}>
+                    {l.label || l.url.replace(/^https?:\/\//, '')}
+                  </a>
+                ))}
+                <span className="pf-joined inline-flex items-center gap-1.5">
+                  <CalendarDays className="size-4 text-text-muted" /> Joined {formatDate(p.created_at)}
                 </span>
-              </>
-            )}
-            <span>
-              <strong className="font-semibold text-text-primary tabular-nums">{p.counts.friends}</strong> <span className="text-text-secondary">Friends</span>
-            </span>
-          </div>
+              </div>
+            </>
+          )}
+          {!hasCover && (
+            <div className="pf-counts mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
+              {socialOn && (
+                <>
+                  <button type="button" onClick={() => setPeople('following')} className="cursor-pointer hover:underline" disabled={data.locked}>
+                    <strong className="font-semibold text-text-primary tabular-nums">{p.counts.following}</strong> <span className="text-text-secondary">Following</span>
+                  </button>
+                  <button type="button" onClick={() => setPeople('followers')} className="cursor-pointer hover:underline" disabled={data.locked}>
+                    <strong className="font-semibold text-text-primary tabular-nums">{p.counts.followers}</strong> <span className="text-text-secondary">{p.counts.followers === 1 ? 'Follower' : 'Followers'}</span>
+                  </button>
+                  <span>
+                    <strong className="font-semibold text-text-primary tabular-nums">{p.counts.posts}</strong> <span className="text-text-secondary">Posts</span>
+                  </span>
+                </>
+              )}
+              <span>
+                <strong className="font-semibold text-text-primary tabular-nums">{p.counts.friends}</strong> <span className="text-text-secondary">Friends</span>
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

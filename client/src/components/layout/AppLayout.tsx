@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils'
 import { useSite } from '@/context/SiteContext'
 import { featureForPath } from '@/lib/site'
 import { SiteBanners } from '@/components/site/SiteBanners'
-import { SectionOff } from '@/components/site/SectionOff'
+import { PartOff, SectionOff } from '@/components/site/SectionOff'
 import { DUR, EASE_EMPHASIZED } from '@/lib/motion'
 
 export function AppLayout() {
@@ -26,9 +26,12 @@ export function AppLayout() {
   // Solving and reading use the whole window.
   const wide = location.pathname.startsWith('/solve') || isReaderRoute(location.pathname)
   // Sections an admin switched off (feature flags) render a notice instead.
-  const { featureOn } = useSite()
+  const { featureOn, blockedPart } = useSite()
+  // Admin → Site map: parts hidden, staff only or coming soon for this viewer
+  // (it says which); the older flag notice only when no part is known.
+  const partOff = blockedPart(location.pathname + location.search)
   const flag = featureForPath(location.pathname)
-  const sectionOff = flag && !featureOn(flag) ? flag : null
+  const sectionOff = !partOff && flag && !featureOn(flag) ? flag : null
 
   // Start every page at the top.
   useEffect(() => {
@@ -75,7 +78,7 @@ export function AppLayout() {
                 transition={{ duration: DUR.slow, ease: EASE_EMPHASIZED }}
               >
                 <PageErrorBoundary key={location.pathname}>
-                  {sectionOff ? <SectionOff flag={sectionOff} /> : <Outlet />}
+                  {sectionOff ? <SectionOff flag={sectionOff} /> : partOff ? <PartOff part={partOff} /> : <Outlet />}
                 </PageErrorBoundary>
               </motion.div>
             </AnimatePresence>

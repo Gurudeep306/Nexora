@@ -13,6 +13,10 @@ export interface AdminMe {
   role: SiteRole
   isOwner: boolean
   permissions: string[]
+  /** What this person gets in each Admin section (Admin → Staff access). */
+  sections: Record<string, 'none' | 'view' | 'edit'>
+  /** May open Admin → Staff access (the owner, or an admin the owner allows). */
+  canStaff: boolean
   catalog: PermissionDef[]
   roles: SiteRole[]
   roleDefaults: Record<string, string[]>

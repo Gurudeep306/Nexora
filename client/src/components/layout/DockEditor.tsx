@@ -49,10 +49,10 @@ function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boolean) =
  */
 export function DockEditor({ open, onClose }: { open: boolean; onClose: () => void }) {
   const dock = useDock()
-  const { isStaff } = useSite()
+  const { isStaff, mayHive } = useSite()
   const reduce = useReducedMotion()
   const mono = dock.iconStyle === 'mono'
-  const available = DOCK_ITEMS.filter((i) => !dock.pinned.includes(i.id) && (!i.staffOnly || isStaff))
+  const available = DOCK_ITEMS.filter((i) => !dock.pinned.includes(i.id) && (!i.staffOnly || isStaff) && (!i.hiveOnly || mayHive))
   const full = dock.pinned.length >= MAX_PINNED
 
   return (

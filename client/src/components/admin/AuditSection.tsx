@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { Empty, Failed, RolePill, Skeleton } from './kit'
 import { ago, when } from './format'
 import type { AdminMe, AuditEntry } from './types'
+import { auditLabel } from './auditLabels'
 
 const ACTIONS = [
   ['all', 'All actions'],
@@ -14,7 +15,11 @@ const ACTIONS = [
   ['user.permissions', 'Permissions'],
   ['user.ban', 'Bans'],
   ['user.suspend', 'Suspensions'],
+  ['staff.', 'Staff access'],
   ['site.', 'Site settings'],
+  ['ai.', 'AI models'],
+  ['runner.', 'Code runners'],
+  ['compilers.', 'Compilers'],
   ['announcement.', 'Announcements'],
   ['report.', 'Reports'],
   ['content.', 'Content'],
@@ -126,8 +131,8 @@ export function AuditSection({ me }: { me: AdminMe }) {
                   >
                     <span className="flex min-w-0 items-center gap-2">
                       <span className="size-1.5 shrink-0 rounded-full" style={{ background: tone }} />
-                      <span className="truncate font-mono text-[12px] font-semibold" style={{ color: tone }}>
-                        {e.action}
+                      <span className="truncate text-[13px] font-medium text-text-primary" title={e.action}>
+                        {auditLabel(e.action)}
                       </span>
                     </span>
                     <span className="truncate text-text-primary max-md:col-start-1">{e.target ? (e.target_type === 'user' ? `@${e.target}` : e.target) : '—'}</span>

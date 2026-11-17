@@ -3,7 +3,7 @@ import { api, SITE_ACCESS_EVENT } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 import { useSocket } from '@/lib/socket'
 import { useToast } from '@/components/ui'
-import { ALL_ON, type Announcement, type FeatureFlag, type SiteStatus } from '@/lib/site'
+import { ALL_ON, featureForPath, type Announcement, type BlockedPart, type FeatureFlag, type SiteStatus } from '@/lib/site'
 
 /**
  * Site-wide state from the owner / admin system (GET /api/site/status):
@@ -24,8 +24,14 @@ interface SiteValue {
   isOwner: boolean
   /** Holds any admin-panel permission (false while previewing as a member). */
   isStaff: boolean
+  /** Admins and the owner (not previewing): may see and open Hive. Nobody else ever sees it. */
+  mayHive: boolean
   can: (perm: string) => boolean
   featureOn: (flag: FeatureFlag | null) => boolean
+  /** The Site map part this page belongs to, when this viewer can't use it. */
+  blockedPart: (path: string) => BlockedPart | null
+  /** May this viewer open this page? (feature flags and the Site map) */
+  pathOn: (path: string) => boolean
   previewAsMember: boolean
   setPreviewAsMember: (on: boolean) => void
   dismissed: Set<string>
@@ -148,6 +154,16 @@ export function SiteProvider({ children }: { children: ReactNode }) {
     const preview = previewAsMember && isOwner
     const perms = new Set(preview ? [] : (me?.permissions ?? []))
     const flags = status?.flags ?? ALL_ON
+    // Most specific first: a part inside another (GATE notes in GATE) wins.
+    const blocked = (status?.parts ?? [])
+      .filter((p) => p.pages)
+      .map((p) => ({ part: p, re: new RegExp(p.pages as string, 'i') }))
+      .sort((a, b) => b.part.id.split('.').length - a.part.id.split('.').length)
+    // A part may name a tab in the address (/social?tab=messages); the rest match the path alone.
+    const blockedFor = (path: string) => {
+      const bare = path.split('?')[0]
+      return blocked.find((b) => b.re.test(path) || b.re.test(bare))?.part ?? null
+    }
     return {
       status,
       loading,
@@ -155,9 +171,15 @@ export function SiteProvider({ children }: { children: ReactNode }) {
       blocked: !!status && status.private && !status.allowed,
       isOwner,
       isStaff: !preview && !!me?.isStaff,
+      mayHive: !preview && !!me?.mayHive,
       can: (perm) => isOwner && !preview ? true : perms.has(perm),
       // The owner sees every section regardless of flags (unless previewing).
       featureOn: (flag) => !flag || flags[flag] !== false || (isOwner && !preview),
+      blockedPart: (path) => blockedFor(path),
+      pathOn: (path) => {
+        const flag = featureForPath(path.split('?')[0])
+        return (!flag || flags[flag] !== false || (isOwner && !preview)) && !blockedFor(path)
+      },
       previewAsMember: preview,
       setPreviewAsMember,
       dismissed,
