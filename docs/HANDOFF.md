@@ -308,7 +308,7 @@ Contents:
     (host and student), the paper (console instructions, the exam, the
     review), results (4 tabs), the Solve page with the contest bar, and
     "Add to a contest" from a problem and a GATE question.
-- **Dry-run polish (section 6, item 4) — PR opened (session 8), merged once CI is green.**
+- **Dry-run polish (section 6, item 4) — merged (#143).**
   - **JavaScript sort comparators** (`src/dryrun/js.js`, `comparator`): the
     function given to `sort` / `toSorted`, `(a, b) => a - b` included, is a
     short call "compare" with its two values and its answer ("compare returns
@@ -338,20 +338,57 @@ Contents:
     dry runs (C two pointers, Python linked list) axe 0 in light, dark and
     phone. `client/scripts/check-dryrun.cjs` now clicks the visible Dry run
     button (on a phone it is in the bottom bar).
-- **F, linked platforms — not started: this session's network allows only
-  package registries** (Codeforces, AtCoder, LeetCode and GitHub are
-  refused by the environment's network policy). Building new sites without
-  checking their real answers would be guesswork. The owner can allow the
-  hosts (environment settings → Network access) or start a session with
-  open network; then build F as planned in section 6.
+- **F, linked platforms — PR opened (session 8), merged once CI is green.**
+  The owner allowed the network: a personal environment "Nexora" (this
+  repo) can reach the judges, GitHub and the code runners. Node's own
+  `fetch` needs `NODE_USE_ENV_PROXY=1 NODE_EXTRA_CA_CERTS=/root/.ccr/ca-bundle.crt`
+  to use the proxy (the demo's preload only patches `https`).
+  - **Checked live first** (2026-11-17), so only sites that publish what is
+    needed were added:
+    - **DMOJ** — official API v2 (`/api/v2/user/<name>`): the
+      Self-description (`about`) holds the one-time code; every solved
+      problem code is imported and matched to the catalog (`dmoj` ids are
+      problem codes). Its `rank` is a site role (admin), not shown.
+    - **CodeChef** — no public API; the public profile page has the name,
+      rating, highest rating, stars and "Total Problems Solved", not the
+      list (`codechefProfile` in `src/accounts.js`). Proof: the code added
+      to the profile Name for a moment (CodeChef has no bio). Import: the
+      exact count and rating (nothing is marked solved here).
+    - **GitHub** — real OAuth (`/auth/github/link` →
+      `/auth/github/callback/link`, a sub-path of the sign-in app's callback,
+      which GitHub allows; same `GITHUB_CLIENT_ID/SECRET`). One-time state in
+      the session, tied to the account, 10 minutes. We read login, public
+      repos, followers and contributions in the last year (GraphQL), then
+      revoke the token (`DELETE /applications/{id}/token`); nothing that could
+      act for the person is stored. Refresh reads the public numbers again.
+      If the env vars are missing, the row says it is not set up.
+    - Left out, honestly: HackerRank (undocumented endpoint, terms forbid
+      automated access), SPOJ (bot check), yukicoder and CSES (no profile
+      field to prove ownership), Kattis (no public profile API).
+  - **Badges**: CodeChef 4★ (1800), On GitHub, Builder (10 public repos),
+    Contributor (100 contributions in a year). GitHub has no solve tiers and
+    does not count toward Multi-judge.
+  - **Client**: `components/account/LinkedAccounts.tsx` — DMOJ and CodeChef
+    rows (handle → code → Check → Import), a GitHub row (Connect with GitHub,
+    Refresh, Disconnect; repos / followers / contributions), a toast when
+    you come back from GitHub (`?linked=github` / `?link_error=`).
+  - **Checked**: `tests/accounts.test.js` (+3, with trimmed real answers in
+    `tests/fixtures/accounts/`), `tests/accounts-github-routes.test.js` (3:
+    state, single use, cancel); `npm test` 682 passed. On the demo, linking
+    started against the real DMOJ and CodeChef (rating 2039 / 3355, 7★), and
+    Check correctly says "not yet" (the code isn't on those real profiles).
+    Settings → Platforms axe 0 and no sideways scroll in light, dark, phone.
+  - **Not checkable here**: a full GitHub connect needs the live site's OAuth
+    app (it is covered by the route and unit tests with GitHub's documented
+    answers).
 - **Owner asked (2026-11-17) where "How it runs" went**: since the Solve
   redesign it is Dry run tab → "Under the hood". Offered: its own tab again,
   or a top-bar button. Waiting for the owner's choice.
 - **Lost work, rebuilt from the plan:** session 6 built B (problem pipeline)
   and A3 (coding analysis + XP) in helper worktrees on its own machine and
   never pushed them. They are not recoverable here and are rebuilt next.
-- **Next, in order:** F (linked platforms, needs network). Item 4 is done
-  except the "first k of N" label on a capped vector.
+- **Next:** the "first k of N" label on a capped vector (item 4); the
+  owner's answer on where "How it runs" goes.
 - **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and
   functional languages is **later**; the ideas in section 6, item 7 are
   **no for now**.
@@ -934,7 +971,7 @@ by analyzing what to place where to make it look the best and show case best
 - Teacher GATE contests: marks list, analysis per question, per student and
   per time, CSV export.
 
-**F. Linked platforms** (`src/accounts.js`)
+**F. Linked platforms** (`src/accounts.js`) — DONE (session 8, see section 3)
 
 - More sites.
 - Proof of ownership by a one-time code the user puts on their profile there.

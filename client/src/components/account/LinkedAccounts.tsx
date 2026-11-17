@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { BadgeCheck, Check, Copy, Download, ExternalLink, Link2, RefreshCw, Unlink } from 'lucide-react'
 import { Button, Card, CardContent, Input, useToast } from '@/components/ui'
 import { api } from '@/lib/api'
@@ -6,9 +7,11 @@ import { cn } from '@/lib/utils'
 import { SettingsSection } from './SettingsPrimitives'
 
 /**
- * Linked judge accounts: link a Codeforces / AtCoder / LeetCode handle, prove
- * it's yours, then import what you solved there (problems get marked solved
- * here and count toward badges). Only verified accounts can import.
+ * Linked accounts: link a Codeforces / AtCoder / LeetCode / DMOJ / CodeChef
+ * handle and prove it's yours with a one-time code, then import what you
+ * solved there (problems get marked solved here and count toward badges).
+ * GitHub connects through GitHub's own sign-in (OAuth). Only verified
+ * accounts can import.
  */
 
 interface Account {
@@ -24,16 +27,24 @@ interface Account {
   imported: number | null
   lastImport: number | null
   lastError: string | null
-  stats: { complete?: boolean; byDifficulty?: Record<string, number> | null }
+  stats: { complete?: boolean; byDifficulty?: Record<string, number> | null; repos?: number; followers?: number; contributions?: number | null; contributionsAt?: number | null }
   pending: { token: string; expiresAt: number; howTo: string } | null
 }
-type Judge = { id: string; name: string }
+type Judge = { id: string; name: string; oauth?: boolean; configured?: boolean }
 
-const PLACEHOLDER: Record<string, string> = { codeforces: 'e.g. tourist', atcoder: 'e.g. chokudai', leetcode: 'e.g. neal_wu' }
+const PLACEHOLDER: Record<string, string> = { codeforces: 'e.g. tourist', atcoder: 'e.g. chokudai', leetcode: 'e.g. neal_wu', dmoj: 'e.g. Xyene', codechef: 'e.g. gennady.korotkevich' }
 const NOTE: Record<string, string> = {
   codeforces: 'Imports every problem you solved.',
   atcoder: 'Imports every problem you solved.',
   leetcode: 'LeetCode shares your solved counts and your last 20 solves, so counts are exact and the list fills in over time.',
+  dmoj: 'Imports every problem you solved.',
+  codechef: 'CodeChef shows only how many problems you solved and your rating, so those come across, not the list.',
+  github: 'Your public repositories, followers and contributions in the last year. Nothing is posted, and no access is kept.',
+}
+const LINK_ERROR: Record<string, string> = {
+  github_not_configured: 'GitHub sign-in is not set up on this site yet.',
+  denied: 'GitHub was not connected: the request was cancelled.',
+  expired: 'That took too long or came from another tab. Try Connect again.',
 }
 
 function ago(ms: number | null) {
@@ -61,13 +72,27 @@ export function LinkedAccounts() {
     load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  // Back from GitHub: say how it went once, then tidy the address.
+  const [params, setParams] = useSearchParams()
+  useEffect(() => {
+    const ok = params.get('linked')
+    const bad = params.get('link_error')
+    if (!ok && !bad) return
+    if (ok === 'github') toast.success('GitHub connected')
+    else if (bad) toast.error('GitHub not connected', LINK_ERROR[bad] ?? bad)
+    const next = new URLSearchParams(params)
+    next.delete('linked')
+    next.delete('link_error')
+    setParams(next, { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Card>
       <CardContent className="py-5">
         <SettingsSection
-          title="Linked judge accounts"
-          description="Prove an account is yours once, then import what you solved there. Your code stays on the judge — only which problems you solved, your counts and your rating come across."
+          title="Linked accounts"
+          description="Prove an account is yours once, then import what you solved there. Your code stays on the judge: only which problems you solved, your counts and your rating come across."
           icon={<Link2 />}
         >
           <div className="divide-y divide-border rounded-lg border border-border">
@@ -79,9 +104,13 @@ export function LinkedAccounts() {
                 </div>
               ))}
             {accounts &&
-              judges.map((j) => (
-                <JudgeRow key={j.id} judge={j} account={accounts.find((a) => a.platform === j.id) ?? null} onChange={load} />
-              ))}
+              judges.map((j) =>
+                j.oauth ? (
+                  <OAuthRow key={j.id} judge={j} account={accounts.find((a) => a.platform === j.id) ?? null} onChange={load} />
+                ) : (
+                  <JudgeRow key={j.id} judge={j} account={accounts.find((a) => a.platform === j.id) ?? null} onChange={load} />
+                ),
+              )}
           </div>
         </SettingsSection>
       </CardContent>
@@ -199,6 +228,71 @@ function JudgeRow({ judge, account, onChange }: { judge: Judge; account: Account
             </span>
           </div>
         </div>
+      )}
+    </div>
+  )
+}
+
+/** GitHub: connect through GitHub itself (OAuth), refresh, disconnect. */
+function OAuthRow({ judge, account, onChange }: { judge: Judge; account: Account | null; onChange: () => void }) {
+  const toast = useToast()
+  const [busy, setBusy] = useState<'' | 'refresh' | 'unlink'>('')
+  const act = async (kind: typeof busy, fn: () => Promise<void>) => {
+    setBusy(kind)
+    try {
+      await fn()
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Something went wrong')
+    } finally {
+      setBusy('')
+    }
+  }
+  const linked = !!account?.verified
+  const st = account?.stats ?? {}
+  return (
+    <div className="space-y-3 p-4">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <div className="min-w-[7rem] flex-1">
+          <p className="mb-0 text-sm font-semibold text-text-primary">{judge.name}</p>
+          <p className="mb-0 text-[12px] text-text-muted">{NOTE[judge.id]}</p>
+        </div>
+        {linked && account ? (
+          <div className="ml-auto flex flex-wrap items-center gap-2">
+            <a href={account.profileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm font-medium text-text-primary hover:underline">
+              <BadgeCheck className="size-4 text-state-success" aria-label="Verified" />
+              {account.handle}
+              <ExternalLink className="size-3 text-text-muted" aria-hidden="true" />
+            </a>
+            <Button size="sm" variant="secondary" loading={busy === 'refresh'} disabled={!!busy} onClick={() => act('refresh', async () => {
+              await api.post(`/api/accounts/${judge.id}/import`, {}, { timeoutMs: 60000 })
+              toast.success('GitHub numbers updated')
+              onChange()
+            })}>
+              {busy !== 'refresh' && <RefreshCw aria-hidden="true" />} Refresh
+            </Button>
+            <Button size="sm" variant="ghost" loading={busy === 'unlink'} disabled={!!busy} aria-label={`Disconnect ${judge.name}`} onClick={() => act('unlink', async () => {
+              await api.delete(`/api/accounts/${judge.id}`)
+              onChange()
+            })}>
+              {busy !== 'unlink' && <Unlink aria-hidden="true" />}
+            </Button>
+          </div>
+        ) : judge.configured ? (
+          <a href="/auth/github/link" className="ml-auto inline-flex h-8 items-center gap-1.5 rounded-[var(--kit-btn-radius,8px)] bg-accent-brand px-3 text-sm font-medium text-on-accent-brand hover:bg-accent-brand-hover">
+            <Link2 className="size-3.5" aria-hidden="true" /> Connect with GitHub
+          </a>
+        ) : (
+          <p className="mb-0 ml-auto text-[12.5px] text-text-secondary">Not set up on this site yet: the owner adds a GitHub OAuth app first.</p>
+        )}
+      </div>
+      {linked && (
+        <dl className="grid grid-cols-2 gap-x-6 gap-y-1 text-[12.5px] sm:grid-cols-4">
+          <Stat label="Public repos" value={st.repos != null ? String(st.repos) : '—'} />
+          <Stat label="Followers" value={st.followers != null ? String(st.followers) : '—'} />
+          <Stat label="Contributions, last year" value={st.contributions != null ? String(st.contributions) : '—'} />
+          <Stat label="Updated" value={ago(account?.lastImport ?? null)} />
+          {st.contributionsAt ? <p className="col-span-full mb-0 text-text-muted">Contributions are read when you connect; connect again to update them.</p> : null}
+        </dl>
       )}
     </div>
   )

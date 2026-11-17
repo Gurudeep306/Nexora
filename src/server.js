@@ -587,6 +587,43 @@ app.get(
   (req, res, next) => finishOAuth(req, res, next, "github"),
 );
 
+/* ── Connect GitHub to a signed-in account (Settings → Platforms) ──
+   The same OAuth app as GitHub sign-in; its callback is a sub-path of the
+   registered one, which GitHub allows. The state ties the answer to this
+   session and this account. src/accounts.js reads the account, revokes the
+   token and stores only public numbers. */
+const GH_LINK_BACK = (q) => publicRedirect(DEPLOY, `/settings?tab=platform&${q}`);
+app.get("/auth/github/link", authLimiter, (req, res) => {
+  if (!me()) return res.redirect(publicRedirect(DEPLOY, "/?auth_error=signin_first"));
+  if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) return res.redirect(GH_LINK_BACK("link_error=github_not_configured"));
+  const state = crypto.randomBytes(16).toString("hex");
+  req.session.ghLink = { state, user: me(), at: Date.now() };
+  req.session.save(() =>
+    res.redirect(require("./accounts").githubAuthorizeUrl({ clientId: process.env.GITHUB_CLIENT_ID, redirectUri: `${DEPLOY.apiUrl}/auth/github/callback/link`, state })),
+  );
+});
+app.get("/auth/github/callback/link", authLimiter, async (req, res) => {
+  const pending = req.session.ghLink;
+  delete req.session.ghLink;
+  const fresh = pending && Date.now() - pending.at < 10 * 60_000;
+  if (!fresh || !pending.user || pending.user !== me() || typeof req.query.state !== "string" || req.query.state !== pending.state) {
+    return req.session.save(() => res.redirect(GH_LINK_BACK("link_error=expired")));
+  }
+  if (req.query.error || typeof req.query.code !== "string") return req.session.save(() => res.redirect(GH_LINK_BACK("link_error=denied")));
+  try {
+    await require("./accounts").githubLink(me(), {
+      code: req.query.code,
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      redirectUri: `${DEPLOY.apiUrl}/auth/github/callback/link`,
+    });
+    await awardPlatformBadges().catch(() => {});
+    req.session.save(() => res.redirect(GH_LINK_BACK("linked=github")));
+  } catch (e) {
+    req.session.save(() => res.redirect(GH_LINK_BACK(`link_error=${encodeURIComponent(String(e.message || "failed").slice(0, 160))}`)));
+  }
+});
+
 app.get("/auth/google", authLimiter, (req, res, next) => {
   if (!process.env.GOOGLE_CLIENT_ID)
     return res.redirect(publicRedirect(DEPLOY, "/?auth_error=google_not_configured"));
@@ -2241,7 +2278,11 @@ async function awardPlatformBadges() {
   app.get("/api/accounts", async (_req, res) => {
     if (needUser(res)) return;
     try {
-      res.json({ ok: true, accounts: await accounts.list(me()), judges: Object.values(accounts.PLATFORMS).map((p) => ({ id: p.id, name: p.name })) });
+      res.json({
+        ok: true,
+        accounts: await accounts.list(me()),
+        judges: Object.values(accounts.PLATFORMS).map((p) => ({ id: p.id, name: p.name, ...(p.oauth ? { oauth: true, configured: !!(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) } : {}) })),
+      });
     } catch (e) {
       fail(res, e);
     }
