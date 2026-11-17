@@ -186,7 +186,7 @@ function normalizeStatementHtml(html, problem) {
 
 /* How each platform writes formulas (see src/sources/math.js). Applied when a
    statement is served, so statements cached before this existed are fixed too. */
-const PLATFORM_MATH = { atcoder: "var", codechef: "dollar", euler: "dollar", kattis: "dollar", cses: "paren", timus: "paren", dmoj: "tilde" };
+const PLATFORM_MATH = { nexora: "dollar", atcoder: "var", codechef: "dollar", euler: "dollar", kattis: "dollar", cses: "paren", timus: "paren", dmoj: "tilde" };
 
 /** CodeChef statements cached by the old scraper are raw markdown: render them. */
 function codechefHtml(s) {

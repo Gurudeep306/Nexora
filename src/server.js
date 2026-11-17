@@ -382,6 +382,8 @@ app.use(
 /* ── Body parsing ── */
 // Social image uploads carry a 2 MB image as base64 (~2.7 MB of JSON).
 app.use("/api/social/upload", express.json({ limit: "3mb" }));
+// A coding problem's tests can be large (src/authoring.js caps them at 8 MB in all).
+app.use("/api/authoring", express.json({ limit: "12mb" }));
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: false, limit: "2mb" }));
 
@@ -828,7 +830,7 @@ app.get("/api/problems/:id", async (req, res) => {
       FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE p.id=?`,
       [req.params.id],
     );
-    if (!problem)
+    if (!problem || (problem.category === "__hidden" && !can(req, "problems.manage")))
       return res.status(404).json({ ok: false, error: "Not found" });
     // Only this account's testcases: a custom case one user adds must never
     // show up in anyone else's deck.
@@ -1156,7 +1158,8 @@ app.get("/api/problem-statement/:id", async (req, res) => {
     const problem = await get("SELECT * FROM problems WHERE id=?", [
       req.params.id,
     ]);
-    if (!problem)
+    // An unpublished NexoraGuru problem is staff-only, even by direct link.
+    if (!problem || (problem.category === "__hidden" && !can(req, "problems.manage")))
       return res.status(404).json({ ok: false, error: "Not found" });
     // Someone is reading a Codeforces problem: get its official tests ready
     // for their first submission (background, once per problem).
@@ -1403,6 +1406,19 @@ app.get("/api/activity/:date", async (req, res) => {
 app.use(createAiAssistRouter({ get, all, run, aiLimiter }));
 app.use(require("./routes/coding").createCodingRouter({ get, me, aiLimiter, judgeLimiter }));
 app.use(require("./routes/sources").createSourcesRouter({ can, me, invalidateCatalog: () => require("./problem-catalog").invalidateCatalog() }));
+// Staff: "Add a coding problem" (official NexoraGuru problems).
+app.use(
+  require("./routes/authoring").createAuthoringRouter({
+    can,
+    me,
+    invalidateCatalog: () => require("./problem-catalog").invalidateCatalog(),
+    audit: (req, action, { targetType = null, target = null, before, after } = {}) =>
+      run(
+        "INSERT INTO audit_log(actor, actor_role, action, target_type, target, before, after, ip, created_at) VALUES(?,?,?,?,?,?,?,?,?)",
+        [me() || "?", req.access?.role || null, action, targetType, target, before ? JSON.stringify(before) : null, after ? JSON.stringify(after) : null, req.ip || null, Date.now()],
+      ),
+  }),
+);
 
 /* ========== TESTCASES ========== */
 
@@ -1604,10 +1620,18 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
     let cases;
     let recordFor = null; // platform problem whose progress this verdict may update
     let redactHidden = false;
+    let checker = null;
     if (problem_id) {
-      const prob = await get("SELECT id FROM problems WHERE id=?", [problem_id]);
-      if (!prob) return res.status(404).json({ ok: false, error: "Problem not found" });
-      cases = await problemTestcases(prob.id);
+      const prob = await get("SELECT id, platform, category FROM problems WHERE id=?", [problem_id]);
+      if (!prob || (prob.category === "__hidden" && !can(req, "problems.manage"))) return res.status(404).json({ ok: false, error: "Problem not found" });
+      if (prob.platform === "nexora") {
+        // An official NexoraGuru problem: its own tests (hidden ones are the
+        // answer key: only staff see them) and its checker.
+        const official = await require("./authoring").officialTests(prob.id);
+        cases = official.cases;
+        checker = official.checker;
+        redactHidden = !can(req, "problems.manage");
+      } else cases = await problemTestcases(prob.id);
       // With nothing stored there is nothing to check, so nothing to record.
       if (cases.length) recordFor = prob.id;
     } else if (custom_problem_id) {
@@ -1628,7 +1652,8 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
     const capError = testcaseCapError(cases);
     if (capError) return res.status(400).json({ ok: false, error: capError });
 
-    const result = await judge(code, cases, lang);
+    let result = await judge(code, cases, lang);
+    if (checker) result = await require("./authoring").applyChecker(result, cases, checker, quickRun);
     if (redactHidden) {
       result.results = result.results.map((r, i) =>
         cases[i]?.hidden

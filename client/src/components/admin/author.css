@@ -1,0 +1,240 @@
+/* Staff: write a coding problem (pages/AuthorProblemPage.tsx). Tokens only. */
+.author-head {
+  margin: 12px 0 16px;
+}
+.author-title {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.author-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 8px 0 0;
+}
+.author-save {
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+.author-job {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface-2);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.author-body {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.author-body:disabled {
+  opacity: 0.7;
+}
+.author-area {
+  width: 100%;
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: 13.5px;
+  font-weight: 400;
+  line-height: 1.5;
+  resize: vertical;
+}
+.author-area.font-mono {
+  font-size: 12.5px;
+  white-space: pre;
+  overflow-x: auto;
+}
+.author-area:focus-visible {
+  outline: none;
+  border-color: color-mix(in oklab, var(--color-text-primary) 45%, var(--color-border));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+}
+.author-hint {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+.author-hint code,
+.author-hint + code {
+  font-size: 11.5px;
+}
+.author-split {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+@media (min-width: 1100px) {
+  .author-split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+  .author-preview {
+    position: sticky;
+    top: 16px;
+  }
+}
+.author-preview {
+  min-width: 0;
+}
+.author-preview-label {
+  margin: 0 0 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+.author-preview-frame {
+  height: min(78vh, 52rem);
+  min-height: 20rem;
+  overflow: auto;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+}
+.author-code {
+  min-height: 12rem;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+}
+.author-warn {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-control);
+  border: 1px solid color-mix(in oklab, var(--color-state-warning) 40%, var(--color-border));
+  background: color-mix(in oklab, var(--color-state-warning) 8%, var(--color-bg-surface));
+  font-size: 13px;
+  color: var(--color-text-primary);
+}
+.author-tests {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.author-test {
+  min-width: 0;
+  padding: 12px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+}
+.author-test-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.author-test-io {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+@media (min-width: 720px) {
+  .author-test-io {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+.author-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.author-grid {
+  display: grid;
+  gap: 14px;
+}
+@media (min-width: 720px) {
+  .author-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.author-modes {
+  display: grid;
+  gap: 8px;
+}
+@media (min-width: 720px) {
+  .author-modes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.author-mode {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--color-border);
+  font-size: 13.5px;
+  cursor: pointer;
+}
+.author-mode input {
+  margin-top: 3px;
+}
+.author-mode.is-on {
+  border-color: var(--color-accent-brand);
+}
+.author-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+}
+.author-lang.is-on {
+  border-color: var(--color-text-primary);
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+.author-lang:focus-visible,
+.author-mode:focus-within {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.author-checklist {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13.5px;
+  color: var(--color-text-secondary);
+}
+.author-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.author-checklist li.is-ok {
+  color: var(--color-text-primary);
+}
+/* On the page's paper (not a panel) the light theme's green needs more ink to read. */
+.author-sub .nx-chip[data-tone='success'] {
+  color: color-mix(in oklab, var(--color-state-success) 72%, var(--color-text-primary));
+}

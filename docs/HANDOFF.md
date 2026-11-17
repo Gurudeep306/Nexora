@@ -132,7 +132,7 @@ Contents:
     ones blocked); every Euler and Kattis figure stored and served by us.
   - Tests: `tests/sources-audit.test.js`; `tests/statement-media.test.js`
     now checks that judge media is served by us (it checked hot-linking).
-- **A2, the editor — this PR** (branch `claude/fervent-curie-vjgcd8`):
+- **A2, the editor — merged (#139):**
   - **Live syntax check while typing** (`client/src/lib/syntaxCheck.ts`,
     amber squiggles + "Ln 4: Brackets" in the status bar, click to jump):
     unclosed / extra / mismatched brackets and unclosed strings in 31
@@ -158,15 +158,54 @@ Contents:
     Format, cheat sheet — all pass in 14 languages.
   - Accessibility: Monaco's touch-screen "show the keyboard" field is named.
   - Tests: `tests/syntax-check.test.js`, `tests/cheatsheets.test.js`.
+- **C, "Add a coding problem" for staff — this PR** (branch `claude/fervent-curie-vjgcd8`):
+  - **Where**: Admin → Add a problem (`components/admin/AuthoredSection.tsx`,
+    permission `problems.manage`) lists drafts and published problems;
+    "New problem" opens the editor at `/admin/problems/:id`
+    (`pages/AuthorProblemPage.tsx`, 404 to non-staff like `/admin`).
+  - **Editor tabs**: Statement (title, statement, input, output, note in
+    Markdown + `$maths$`, "Add a picture"; a live preview beside it, made by
+    the server the same way publishing makes it, in the real `ProblemPanel`),
+    Tests (add, upload files paired by name `1.in`/`1.out`,
+    `input1.txt`/`output1.txt`; "shown as an example" per test; "Make
+    outputs" from a chosen solution; a generator program that makes hidden
+    tests, reading the test number on its input), Limits & checker (time,
+    memory, difficulty, topics; checker: same lines, same words, numbers
+    within a difference, lines in any order, any letter case, or a checker
+    program that reads `{"input","expected","output"}` JSON and prints OK),
+    Solutions (C++, Java, Python, JavaScript, C; "Start from a template"),
+    Editorial (Intuition / Approach / Complexity, live preview), Check &
+    publish (runs every solution on every test; checklist; Publish /
+    Publish changes / Unpublish / Delete draft).
+  - **Rules** (`src/authoring.js`, `src/routes/authoring.js`): saves as you
+    type (one save at a time; editing pauses while a job runs). Publishing
+    needs a title, a statement, an example, two tests, every output, and all
+    five solutions passing a check that is still current (a change to tests,
+    checker, solutions or time limit makes it stale). Tests: at most 100, 1 MB
+    each, 8 MB in all (refused with a clear message, `413`). Pictures: PNG,
+    JPEG, GIF, WebP up to 2 MB, checked by their bytes (no SVG).
+  - **For students**: a published problem is platform `nexora` (`NX<id>`),
+    judged on all its tests with its checker (`/api/judge`); hidden tests'
+    input and expected output are blanked for anyone without
+    `problems.manage`. The Solve page shows its editorial and five solutions
+    in the Solution tab (behind "Give it a real try first"). An unpublished
+    problem leaves the catalog and answers 404 to students on
+    `/api/problems/:id`, `/api/problem-statement/:id` and `/api/judge`.
+    No "open on another site" link (the problem lives here).
+  - **Checked** on the demo with the real judges: made outputs from C++,
+    all five languages passed (Java 118 ms, JS 216 ms slowest), published,
+    the Solve page shows Description / Solution. Axe 0 and no sideways scroll
+    on the list and all six tabs, light, dark and phone.
+  - Tests: `tests/authoring.test.js` (4), `tests/authoring-routes.test.js` (5).
 - **Owner asked (2026-11-17) where "How it runs" went**: since the Solve
   redesign it is Dry run tab → "Under the hood". Offered: its own tab again,
   or a top-bar button. Waiting for the owner's choice.
 - **Lost work, rebuilt from the plan:** session 6 built B (problem pipeline)
   and A3 (coding analysis + XP) in helper worktrees on its own machine and
   never pushed them. They are not recoverable here and are rebuilt next.
-- **Next, in order:** C, D, E, F (then the rest of item 4). Done before: A2 (editor: live syntax check, Format,
-  cheat sheet, Playwright), C, D, E, F, the rest of item 4 (JS async/sort
-  tracing, C pointers into arrays, linked-list pointer lanes).
+- **Next, in order:** D (social), E (contests), F (linked platforms), then
+  the rest of item 4 (JS async/sort tracing, C pointers into arrays,
+  linked-list pointer lanes).
 - **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and
   functional languages is **later**; the ideas in section 6, item 7 are
   **no for now**.
@@ -724,7 +763,7 @@ by analyzing what to place where to make it look the best and show case best
 - Never bypass bot protection. Use official APIs and open datasets
   (`src/sources/cf-dataset.js`).
 
-**C. Staff-only "Add a coding problem" editor** (`src/authz`)
+**C. Staff-only "Add a coding problem" editor** (`src/authz`) — DONE (session 7, see section 3)
 
 - Statement with maths and images.
 - Samples + hidden tests (paste, upload or generate).

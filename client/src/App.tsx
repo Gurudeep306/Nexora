@@ -6,7 +6,7 @@ import { MarkLoader } from '@/components/brand/Logo'
 import { useAuth } from '@/context/AuthContext'
 import { idlePrefetchCommonRoutes, pageLoaders } from '@/routes'
 import { SiteGate } from '@/components/site/SiteGate'
-import { AdminRoute, HiveRoute } from '@/components/admin/AdminRoute'
+import { AdminRoute, AuthorRoute, HiveRoute } from '@/components/admin/AdminRoute'
 
 const AuthPage = lazy(pageLoaders.AuthPage)
 const LandingPage = lazy(pageLoaders.LandingPage)
@@ -150,6 +150,7 @@ export default function App() {
             <Route path="/settings" element={<SettingsRoute />} />
             <Route path="/theme" element={<ThemeCentrePage />} />
             <Route path="/admin" element={<AdminRoute />} />
+            <Route path="/admin/problems/:id" element={<AuthorRoute />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
