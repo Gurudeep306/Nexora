@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { Check, Globe2, ImagePlus, Loader2, Lock, MapPin, Plus, X } from 'lucide-react'
 import { Avatar, Button, Input, Modal, Textarea, useToast } from '@/components/ui'
 import { UserBadges } from '@/components/shared/UserBadges'
@@ -8,7 +7,10 @@ import { cn } from '@/lib/utils'
 import { errorText, uploadImage } from '@/components/social/feed/lib'
 import { RichText } from '@/components/social/feed/RichText'
 import type { AccentKey, ProfileLink, PublicProfile } from '@/components/social/feed/types'
-import { ACCENTS, COVERS, COVER_IDS, CoverArt } from './covers'
+import { ACCENTS, COVERS, COVER_IDS, CoverArt, CoverCredit, coverId } from './covers'
+import { AvatarChooser, type Picture } from '@/components/account/AvatarChooser'
+import { formatAvatar, resolveAvatarId } from '@/lib/avatar'
+import { useAuth } from '@/context/AuthContext'
 
 type Draft = Pick<PublicProfile, 'display_name' | 'bio' | 'pronouns' | 'location' | 'website' | 'links' | 'cover' | 'accent' | 'visibility'>
 
@@ -22,10 +24,15 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
     location: profile.location,
     website: profile.website,
     links: profile.links.length ? profile.links : [],
-    cover: profile.cover,
+    cover: profile.cover?.startsWith('/uploads/') ? profile.cover : coverId(profile.cover ?? 'plain'),
     accent: profile.accent,
     visibility: profile.visibility,
   })
+  const { refresh } = useAuth()
+  const startPicture: Picture = { avatar: resolveAvatarId(profile.avatar, profile.username), photo: profile.avatar_url || null }
+  const [pic, setPic] = useState<Picture>(startPicture)
+  const [picBusy, setPicBusy] = useState(false)
+  const picChanged = pic.avatar !== startPicture.avatar || pic.photo !== startPicture.photo
   const [busy, setBusy] = useState(false)
   const [uploading, setUploading] = useState(false)
   const file = useRef<HTMLInputElement>(null)
@@ -34,7 +41,13 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
   const save = async () => {
     setBusy(true)
     try {
-      await api.put('/api/profiles/me', { ...d, links: d.links.filter((l) => l.url.trim()) })
+      await api.put('/api/profiles/me', {
+        ...d,
+        links: d.links.filter((l) => l.url.trim()),
+        ...(picChanged ? { avatar: formatAvatar(pic.avatar), avatar_url: pic.photo ?? '' } : {}),
+      })
+      // The top bar and menus show the new picture straight away.
+      if (picChanged) await refresh()
       toast.success('Profile updated')
       onSaved()
       onClose()
@@ -63,8 +76,12 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         {/* Form */}
         <div className="order-2 space-y-5 lg:order-1">
+          <Group title="Picture">
+            <AvatarChooser username={profile.username} value={pic} onChange={setPic} onBusy={setPicBusy} />
+          </Group>
+
           <Group title="Cover">
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
               {COVER_IDS.map((id) => (
                 <button
                   key={id}
@@ -74,16 +91,19 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
                   aria-label={`${COVERS[id].label} cover`}
                   className={cn('relative h-14 cursor-pointer overflow-hidden rounded-lg border-2 transition-transform hover:scale-[1.03]', d.cover === id ? 'border-accent-brand' : 'border-transparent')}
                 >
-                  <CoverArt cover={id} className="!absolute inset-0" still />
-                  <span className="absolute bottom-1 left-1.5 text-[10px] font-semibold text-text-primary drop-shadow">{COVERS[id].label}</span>
-                  {d.cover === id && <Check className="absolute top-1 right-1 size-3.5 text-text-primary" />}
+                  <CoverArt cover={id} seed={profile.username} accent={d.accent} className="!absolute inset-0" still />
+                  <span className="absolute bottom-1 left-1 rounded-[3px] border border-border bg-bg-surface px-1 text-[10px] leading-4 font-semibold text-text-primary">{COVERS[id].label}</span>
+                  {d.cover === id && <Check className="absolute top-1 right-1 size-4 rounded-full bg-bg-surface p-0.5 text-text-primary" />}
                 </button>
               ))}
             </div>
             <input ref={file} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={(e) => void upload(e.target.files?.[0]).then(() => (e.target.value = ''))} />
-            <Button variant="subtle" size="sm" className="mt-2" onClick={() => file.current?.click()} disabled={uploading}>
-              {uploading ? <Loader2 className="animate-spin" /> : <ImagePlus />} Upload your own
-            </Button>
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+              <Button variant="subtle" size="sm" onClick={() => file.current?.click()} disabled={uploading}>
+                {uploading ? <Loader2 className="animate-spin" /> : <ImagePlus />} Upload your own
+              </Button>
+              <CoverCredit />
+            </div>
           </Group>
 
           <Group title="Accent">
@@ -167,23 +187,16 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
               ))}
             </div>
           </Group>
-          <p className="text-xs text-text-muted">
-            Change your photo or avatar in{' '}
-            <Link to="/settings" className="text-accent-brand underline decoration-accent-brand/40 underline-offset-2 hover:decoration-accent-brand" onClick={onClose}>
-              Settings
-            </Link>
-            .
-          </p>
         </div>
 
         {/* Live preview */}
         <div className="order-1 lg:order-2">
           <p className="mb-2 text-[11px] font-semibold tracking-wider text-text-muted uppercase">Live preview</p>
           <div className="sticky top-0 overflow-hidden rounded-2xl border border-border bg-bg-surface">
-            <CoverArt cover={d.cover} className="h-24" />
+            <CoverArt cover={d.cover} seed={profile.username} accent={d.accent} className="h-24" />
             <div className="px-4 pb-4">
               <div className="-mt-8 inline-flex rounded-full p-[3px]" style={{ background: accent }}>
-                <Avatar seed={profile.username} avatar={profile.avatar} src={profile.avatar_url} name={name} size="xl" ring={false} className="rounded-full ring-2 ring-bg-surface" />
+                <Avatar seed={profile.username} avatar={formatAvatar(pic.avatar)} src={pic.photo} name={name} size="xl" ring={false} className="rounded-full ring-2 ring-bg-surface" />
               </div>
               <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                 <span className="font-display text-base font-semibold text-text-primary">{name}</span>
@@ -213,7 +226,7 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
         <Button variant="ghost" onClick={onClose}>
           Cancel
         </Button>
-        <Button onClick={() => void save()} loading={busy}>
+        <Button onClick={() => void save()} loading={busy} disabled={picBusy}>
           Save profile
         </Button>
       </div>

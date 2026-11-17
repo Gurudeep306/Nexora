@@ -464,7 +464,9 @@ function createAuthRouter(deps) {
     requireSelfOrAdmin((req) => req.body.username),
     async (req, res) => {
       try {
-        const { username, image } = req.body;
+        // stage: store the photo and return its address without using it yet
+        // (Edit profile and "Make it yours" save it with the rest of the form).
+        const { username, image, stage } = req.body;
         if (!username || !image) {
           return res
             .status(400)
@@ -501,6 +503,7 @@ function createAuthRouter(deps) {
 
         const avatarUrl = `/uploads/${filename}`;
         await persistUpload(avatarUrl, path.join(uploadDir, filename));
+        if (stage === true) return res.json({ ok: true, avatar_url: avatarUrl, staged: true });
         await run("UPDATE users SET avatar_url=? WHERE username=?", [
           avatarUrl,
           username,

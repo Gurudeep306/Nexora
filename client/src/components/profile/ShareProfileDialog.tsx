@@ -60,7 +60,7 @@ export default function ShareProfileDialog({ open, onClose, profile, stats, days
             </div>
           ) : (
             <div className="overflow-hidden rounded-2xl border border-border bg-bg-surface" aria-label="Share card preview">
-              <CoverArt cover={profile.cover} className="h-24" />
+              <CoverArt cover={profile.cover} seed={profile.username} accent={profile.accent} className="h-24" still />
               <div className="relative px-4 pb-4">
                 <div className="-mt-9 flex items-end justify-between">
                   <Avatar seed={profile.username} avatar={profile.avatar} src={profile.avatar_url} name={name} size="2xl" className="rounded-full ring-4 ring-bg-surface" />
