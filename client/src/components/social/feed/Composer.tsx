@@ -396,13 +396,13 @@ function SharePicker({ onPick, active }: { onPick: (s: ShareRef) => void; active
   const [open, setOpen] = useState(false)
   const [data, setData] = useState<Shareables | null>(null)
   useEffect(() => {
-    if (open && !data) api.get<Shareables>('/api/social/shareables').then(setData).catch(() => setData({ solved: [], tests: [], lessons: [], achievements: [], streak: { current: 0, best: 0 } }))
+    if (open && !data) api.get<Shareables>('/api/social/shareables').then(setData).catch(() => setData({ solved: [], tests: [], lessons: [], achievements: [], solutions: [], streak: { current: 0, best: 0 } }))
   }, [open, data])
   const pick = (s: ShareRef) => {
     onPick(s)
     setOpen(false)
   }
-  const empty = data && !data.solved.length && !data.tests.length && !data.lessons.length && !data.achievements.length && !data.streak.current
+  const empty = data && !data.solved.length && !data.solutions?.length && !data.tests.length && !data.lessons.length && !data.achievements.length && !data.streak.current
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -443,6 +443,15 @@ function SharePicker({ onPick, active }: { onPick: (s: ShareRef) => void; active
                 title={p.title}
                 sub={`Solved · ${p.platform}${p.rating ? ` · ${p.rating}` : ''}`}
                 onClick={() => pick({ type: 'solved', id: p.id, preview: { type: 'solved', title: p.title, subtitle: `${p.platform}${p.rating ? ` · ${p.rating}` : ''}`, stat: 'Solved' } })}
+              />
+            ))}
+            {(data.solutions ?? []).map((sol) => (
+              <PickRow
+                key={`c${sol.id}`}
+                emoji="code"
+                title={sol.title}
+                sub={`Solution · ${sol.language}${sol.time_ms ? ` · ${sol.time_ms} ms` : ''} · hidden from anyone who hasn't solved it`}
+                onClick={() => pick({ type: 'submission', id: sol.id, preview: { type: 'submission', title: sol.title, subtitle: `${sol.platform} · ${sol.language}`, stat: 'Accepted', language: sol.language } })}
               />
             ))}
             {data.tests.map((t) => (

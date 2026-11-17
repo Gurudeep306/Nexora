@@ -1012,3 +1012,51 @@
     transition: none;
   }
 }
+
+/* invite to solve: who has solved it, with real times */
+.chat-invite-people {
+  display: grid;
+  gap: 4px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.chat-invite-person {
+  display: grid;
+  grid-template-columns: 1.4em auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.chat-invite-place {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+.chat-invite-name {
+  overflow: hidden;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.chat-invite-status {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+.chat-invite-person[data-done] .chat-invite-status {
+  /* Solved: the main ink (the success green is too faint at this size on cards). */
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+@media (max-width: 420px) {
+  .chat-invite-person {
+    grid-template-columns: 1.4em auto minmax(0, 1fr);
+  }
+  .chat-invite-status {
+    grid-column: 3;
+    text-align: left;
+  }
+}

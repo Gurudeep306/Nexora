@@ -1257,6 +1257,9 @@ async function initSocialTables() {
       updated_at INTEGER
     )`],
   ]);
+  // What a notification points at when it isn't a post (an "invite to solve"):
+  // JSON { link, title }, a path on this site and the problem's name.
+  await run("ALTER TABLE social_notifications ADD COLUMN ref TEXT").catch(() => {});
 }
 
 /* ===== Owner / admin system (src/authz/*, src/routes/admin.js) =====

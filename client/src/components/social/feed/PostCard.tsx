@@ -331,7 +331,7 @@ function PostCardImpl({ post, repostedBy, onChange, onRemove, onCreated, onHideA
             {post.code && <CodeBlock lang={post.code.lang} source={post.code.source} maxLines={expanded ? 200 : 14} />}
             {post.images.length > 0 && <ImageGrid images={post.images} onOpen={setLightbox} />}
             {post.poll && <PollView poll={post.poll} onVote={(i) => void vote(i)} />}
-            {post.share && <ShareCardView card={post.share} />}
+            {post.share && <ShareCardView card={post.share} postId={post.id} />}
             {post.quote && <QuotedPost quote={post.quote} />}
           </div>
 
@@ -451,7 +451,7 @@ const Action = forwardRef<
       ref={ref}
       type="button"
       {...rest}
-      aria-label={count ? `${label} (${count})` : label}
+      aria-label={count ? `${label}, ${count}` : label}
       aria-pressed={rest['aria-haspopup'] ? undefined : active}
       onClick={(e) => {
         e.stopPropagation()
@@ -461,7 +461,8 @@ const Action = forwardRef<
       className={cn('so-act group/act inline-flex h-9 min-w-9 cursor-pointer items-center gap-1 rounded-full px-2 text-[13px] text-text-muted transition-colors [&_svg]:size-[18px]', TONES[tone], active && ACTIVE[tone], className)}
     >
       {children}
-      {count != null && count > 0 && <span className="tabular-nums">{compact(count)}</span>}
+      {/* The label already says the number; the digits are for the eye. */}
+      {count != null && count > 0 && <span aria-hidden="true" className="tabular-nums">{compact(count)}</span>}
     </button>
   )
 })

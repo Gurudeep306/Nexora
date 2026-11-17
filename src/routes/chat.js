@@ -36,8 +36,19 @@ function kindOf(buf, name) {
 function createChatRouter({ realtime, isTrustedOrigin, catalog, gate }) {
   const router = express.Router();
   const me = (req) => getSessionUser(req)?.username || null;
+  // A shared solution's code is a spoiler, so anything carrying messages is
+  // shaped for each person who gets it (chat.viewMany hides code they haven't earned).
+  const personal = async (viewer, payload) => {
+    if (payload?.message) return { ...payload, message: await chat.viewFor(viewer, payload.message) };
+    if (Array.isArray(payload?.messages)) return { ...payload, messages: await chat.viewMany(viewer, payload.messages) };
+    return payload;
+  };
   const emit = (names, event, payload) => {
-    for (const n of names) realtime?.emitToUser?.(n, event, payload);
+    if (!payload?.message && !payload?.messages) {
+      for (const n of names) realtime?.emitToUser?.(n, event, payload);
+      return Promise.resolve();
+    }
+    return Promise.all(names.map(async (n) => realtime?.emitToUser?.(n, event, await personal(n, payload)))).catch((e) => console.error("[chat] emit", e.message));
   };
   const toMembers = async (convId, event, payload) => emit(await chat.memberNames(convId), event, payload);
   const h = (fn) => async (req, res) => {
@@ -76,6 +87,7 @@ function createChatRouter({ realtime, isTrustedOrigin, catalog, gate }) {
   const sendLimiter = limiter("send", 40, 60, "You're sending a lot of messages. Wait a moment and try again.");
   const uploadLimiter = limiter("upload", 20, 600, "Too many files. Try again in a few minutes.");
   const groupLimiter = limiter("group", 10, 3600, "Too many new groups. Try again later.");
+  const inviteLimiter = limiter("invite", 15, 600, "That's a lot of invites. Try again in a few minutes.");
 
   /* ── share cards, built from the server's own data ── */
 
@@ -89,12 +101,26 @@ function createChatRouter({ realtime, isTrustedOrigin, catalog, gate }) {
     }
     if (type === "submission") {
       const r = await get(
-        `SELECT s.id, s.language, s.verdict, s.exec_time_ms, s.code, s.submitted_at, p.id AS pid, p.title, p.platform FROM submissions s
+        `SELECT s.id, s.language, s.verdict, s.exec_time_ms, s.memory_kb, s.code, s.submitted_at, p.id AS pid, p.title, p.platform FROM submissions s
          JOIN problems p ON p.id = s.problem_rowid WHERE s.id=? AND s.username=?`,
         [Number(s.id) || 0, user],
       );
       if (!r) throw new chat.ChatError(404, "You can only share your own solutions");
-      return { type, id: r.id, title: r.title, platform: r.platform, language: r.language, verdict: r.verdict, timeMs: r.exec_time_ms || 0, code: String(r.code || "").slice(0, 6000), at: r.submitted_at, link: `/solve/${r.pid}` };
+      return {
+        type,
+        id: r.id,
+        by: user,
+        problemId: r.pid,
+        title: r.title,
+        platform: r.platform,
+        language: r.language,
+        verdict: r.verdict,
+        timeMs: r.exec_time_ms || 0,
+        memoryKb: r.memory_kb || 0,
+        code: String(r.code || "").slice(0, 6000),
+        at: r.submitted_at,
+        link: `/solve/${r.pid}`,
+      };
     }
     if (type === "contest") {
       const c = await get("SELECT id, title, type, start_time, duration_mins, problems, contest_code FROM custom_contests WHERE id=?", [Number(s.id) || 0]);
@@ -120,6 +146,7 @@ function createChatRouter({ realtime, isTrustedOrigin, catalog, gate }) {
       if (!r || r.status !== "open") throw new chat.ChatError(404, "That room is closed");
       return { type, id: r.id, title: r.name, problem: r.ptitle || null, problemId: r.pid || null, link: `/social?tab=rooms&room=${encodeURIComponent(r.id)}` };
     }
+    // "invite" cards are made only by /api/chat/invite-solve.
     throw new chat.ChatError(400, "Unknown share card");
   }
 
@@ -188,7 +215,7 @@ function createChatRouter({ realtime, isTrustedOrigin, catalog, gate }) {
   router.get("/api/chat/conversations/:id/messages", h(async (req, res) => {
     const { before, after, around, limit } = req.query;
     const page = await chat.messages(me(req), req.params.id, { before, after, around, limit });
-    res.json({ ok: true, ...page, saved: await chat.savedIds(me(req), page.messages.map((m) => m.id)) });
+    res.json({ ok: true, ...(await personal(me(req), page)), saved: await chat.savedIds(me(req), page.messages.map((m) => m.id)) });
   }));
 
   router.post("/api/chat/conversations/:id/messages", sendLimiter, h(async (req, res) => {
@@ -198,7 +225,7 @@ function createChatRouter({ realtime, isTrustedOrigin, catalog, gate }) {
     emit(members, "chat:message", { message });
     // @mentions reach people even in a muted conversation.
     emit(message.mentions.filter((n) => n !== message.username && members.includes(n)), "chat:mention", { conversationId: message.conversationId, messageId: message.id, from: message.username });
-    res.json({ ok: true, message });
+    res.json({ ok: true, ...(await personal(me(req), { message })) });
   }));
 
   router.put("/api/chat/conversations/:id/read", h(async (req, res) => {
@@ -229,11 +256,11 @@ function createChatRouter({ realtime, isTrustedOrigin, catalog, gate }) {
   }));
   router.put("/api/chat/conversations/:id/mute", h(async (req, res) => res.json({ ok: true, muted: await chat.mute(me(req), req.params.id, !!req.body?.muted) })));
   router.put("/api/chat/conversations/:id/invite", h(async (req, res) => res.json({ ok: true, inviteToken: await chat.setInvite(me(req), req.params.id, !!req.body?.on) })));
-  router.get("/api/chat/conversations/:id/pins", h(async (req, res) => res.json({ ok: true, messages: await chat.pins(me(req), req.params.id) })));
+  router.get("/api/chat/conversations/:id/pins", h(async (req, res) => res.json({ ok: true, ...(await personal(me(req), { messages: await chat.pins(me(req), req.params.id) })) })));
   router.post("/api/chat/conversations/:id/polls", sendLimiter, h(async (req, res) => {
     const message = await chat.createPoll(me(req), req.params.id, req.body || {});
     await toMembers(message.conversationId, "chat:message", { message });
-    res.json({ ok: true, message });
+    res.json({ ok: true, ...(await personal(me(req), { message })) });
   }));
 
   // Invite links: see a group before joining, then join.
@@ -247,7 +274,7 @@ function createChatRouter({ realtime, isTrustedOrigin, catalog, gate }) {
   // Who may message me, and my saved messages.
   router.get("/api/chat/settings", h(async (req, res) => res.json({ ok: true, settings: await chat.settingsFor(me(req)) })));
   router.put("/api/chat/settings", h(async (req, res) => res.json({ ok: true, settings: await chat.setSettings(me(req), { who: String(req.body?.who || "") }) })));
-  router.get("/api/chat/saved", h(async (req, res) => res.json({ ok: true, messages: await chat.saved(me(req)) })));
+  router.get("/api/chat/saved", h(async (req, res) => res.json({ ok: true, ...(await personal(me(req), { messages: await chat.saved(me(req)) })) })));
   router.post("/api/chat/conversations/:id/members", groupChange(async (req) => ({ added: await chat.addMembers(me(req), req.params.id, req.body?.usernames) })));
   router.delete("/api/chat/conversations/:id/members/:username", groupChange((req) => chat.removeMember(me(req), req.params.id, req.params.username)));
   router.put("/api/chat/conversations/:id/members/:username", groupChange((req) => chat.setRole(me(req), req.params.id, req.params.username, String(req.body?.role || ""))));
@@ -258,17 +285,17 @@ function createChatRouter({ realtime, isTrustedOrigin, catalog, gate }) {
   router.patch("/api/chat/messages/:id", h(async (req, res) => {
     const message = await chat.edit(me(req), req.params.id, req.body?.body);
     await toMembers(message.conversationId, "chat:update", { message });
-    res.json({ ok: true, message });
+    res.json({ ok: true, ...(await personal(me(req), { message })) });
   }));
   router.delete("/api/chat/messages/:id", h(async (req, res) => {
     const message = await chat.remove(me(req), req.params.id);
     await toMembers(message.conversationId, "chat:update", { message });
-    res.json({ ok: true, message });
+    res.json({ ok: true, ...(await personal(me(req), { message })) });
   }));
   const update = (fn) => h(async (req, res) => {
     const message = await fn(req);
     await toMembers(message.conversationId, "chat:update", { message });
-    res.json({ ok: true, message });
+    res.json({ ok: true, ...(await personal(me(req), { message })) });
   });
   router.post("/api/chat/messages/:id/pin", update((req) => chat.pin(me(req), req.params.id)));
   router.post("/api/chat/messages/:id/vote", update((req) => chat.vote(me(req), req.params.id, req.body?.options)));
@@ -279,6 +306,60 @@ function createChatRouter({ realtime, isTrustedOrigin, catalog, gate }) {
     for (const message of sent) await toMembers(message.conversationId, "chat:message", { message });
     res.json({ ok: true, count: sent.length });
   }));
+  // "Reveal": show a hidden solution to a member who chose to see it.
+  router.post("/api/chat/messages/:id/reveal", h(async (req, res) => res.json({ ok: true, ...(await chat.revealCode(me(req), req.params.id)) })));
+
+  /* ── invite to solve ── */
+
+  // Ask friends (each in your direct chat) and groups to solve a problem.
+  // Each gets a card with the problem, a Solve button and who has solved it.
+  router.post("/api/chat/invite-solve", inviteLimiter, h(async (req, res) => {
+    const u = me(req);
+    const { get } = require("../db");
+    const invites = require("../solve-invites");
+    const b = req.body || {};
+    const p = await get("SELECT id, title, platform, rating, category FROM problems WHERE id=?", [Number(b.problemId) || 0]);
+    if (!p || p.category === "__hidden") throw new chat.ChatError(404, "That problem isn't available");
+    const usernames = [...new Set((Array.isArray(b.usernames) ? b.usernames : []).map((x) => String(x || "").slice(0, 40)).filter((x) => x && x !== u))].slice(0, 20);
+    const groupIds = [...new Set((Array.isArray(b.conversationIds) ? b.conversationIds : []).map(Number).filter(Boolean))].slice(0, 5);
+    if (!usernames.length && !groupIds.length) throw new chat.ChatError(400, "Choose someone to invite");
+
+    // Where the cards go: each friend's direct chat (blocks and "who can message
+    // me" apply as for any message), and groups you're in.
+    const targets = [];
+    const skipped = [];
+    for (const name of usernames) {
+      try {
+        targets.push({ id: await chat.openDm(u, name), people: [name] });
+      } catch (e) {
+        if (!(e instanceof chat.ChatError)) throw e;
+        skipped.push({ username: name, reason: e.message });
+      }
+    }
+    for (const id of groupIds) {
+      const m = await chat.membership(id, u);
+      if (m.kind !== "group") throw new chat.ChatError(400, "Pick a group, or choose people");
+      targets.push({ id, people: (await chat.memberNames(id)).filter((n) => n !== u) });
+    }
+    if (!targets.length) throw new chat.ChatError(403, skipped[0]?.reason || "No one could be invited");
+
+    const people = [...new Set(targets.flatMap((t) => t.people))].slice(0, invites.MAX_PEOPLE);
+    const inviteId = await invites.create(u, p.id, people, { race: !!b.race });
+    const card = { type: "invite", inviteId, problemId: p.id, title: p.title, platform: p.platform, rating: p.rating || null, link: `/solve/${p.id}` };
+    const note = String(b.note || "").trim().slice(0, 200);
+    const sent = [];
+    for (const t of targets) {
+      // The card is built here, never taken from the request (see chat.send).
+      const message = await chat.send(u, t.id, { body: note, forwardedShare: card }, buildShare);
+      await invites.linkMessage(inviteId, message.id);
+      await toMembers(message.conversationId, "chat:message", { message });
+      sent.push(message);
+    }
+    const linkFor = new Map(targets.flatMap((t) => t.people.map((n) => [n, `/social?tab=messages&c=${t.id}`])));
+    for (const n of people) await invites.notify(realtime, n, u, "invite_solve", { link: linkFor.get(n), title: p.title });
+    res.json({ ok: true, inviteId, sent: sent.length, conversationIds: targets.map((t) => t.id), skipped });
+  }));
+
   router.post("/api/chat/messages/:id/report", h(async (req, res) => res.json({ ok: true, ...(await chat.report(me(req), req.params.id, req.body || {})) })));
   router.post("/api/chat/messages/:id/react", h(async (req, res) => {
     const out = await chat.react(me(req), req.params.id, req.body?.emoji);
