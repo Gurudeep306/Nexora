@@ -677,7 +677,7 @@ export function CodeEditor({
         startColumn: d.column,
         endLineNumber: d.line,
         endColumn: Math.min(model.getLineMaxColumn(d.line), d.column + 40),
-        message: d.message,
+        message: d.hint ? `${d.message}\n\nWhat it means: ${d.hint.text}` : d.message,
       })),
     )
     const lensEntries: { cls: string; message: string; severity: Diag['severity'] }[] = []
@@ -693,7 +693,7 @@ export function CodeEditor({
           },
         }
         const cls = `nx-lens-${i}`
-        lensEntries.push({ cls, message: d.message, severity: d.severity })
+        lensEntries.push({ cls, message: d.hint ? `${d.hint.label} · ${d.message}` : d.message, severity: d.severity })
         const lens = {
           range: new monaco.Range(d.line, endCol, d.line, endCol),
           options: { afterContentClassName: cls },
@@ -1131,8 +1131,14 @@ export function CodeEditor({
           </div>
         )}
         {diagnostics.length > 0 && (
-          <button type="button" onClick={onIssuesClick} className="cursor-pointer text-state-error underline-offset-2 hover:underline" title="Show the issues">
+          <button
+            type="button"
+            onClick={onIssuesClick}
+            className="min-w-0 cursor-pointer truncate text-state-error underline-offset-2 hover:underline"
+            title={diagnostics[0].hint ? `Line ${diagnostics[0].line}: ${diagnostics[0].hint.text}` : 'Show the issues'}
+          >
             {diagnostics.length} issue{diagnostics.length > 1 ? 's' : ''}
+            {diagnostics[0].hint && <span className="text-foreground-dim"> · Ln {diagnostics[0].line}: {diagnostics[0].hint.label}</span>}
           </button>
         )}
         <span className={cn('ml-auto flex items-center gap-1', saveState === 'saving' ? 'text-foreground-dim' : 'text-foreground-faint')}>

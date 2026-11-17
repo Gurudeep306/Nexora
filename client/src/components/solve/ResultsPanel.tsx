@@ -130,7 +130,7 @@ export function RunOutput({ result, expected, caseLabel }: { result: RunResult; 
         </span>
       </div>
       {result.error && (
-        <pre className="max-h-48 overflow-auto rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 font-mono text-xs whitespace-pre-wrap text-state-error">
+        <pre className="max-h-48 overflow-auto rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 font-mono text-xs whitespace-pre-wrap text-foreground">
           {result.error}
         </pre>
       )}
