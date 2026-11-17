@@ -81,8 +81,9 @@ const APP_URL =
 const DEPLOY = deployConfig();
 
 /* ========== Lightweight HTTP Scrapers (fast, no browser) ========== */
-const SCRAPE_UA =
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+// The browser fallback says who it is, like every other request we make to a
+// judge (src/sources/common.js) — never a desktop-browser disguise.
+const SCRAPE_UA = require("./sources/common").UA;
 
 /* Statement media (URL rewriting + the image-proxy allowlist) and the
    per-platform math rewrite live in ./statement-media; fetching statements
@@ -107,7 +108,6 @@ async function getBrowser() {
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
-        "--disable-blink-features=AutomationControlled",
         "--disable-gpu",
         "--disable-dev-shm-usage",
       ],
@@ -847,25 +847,10 @@ app.get("/api/problems/:id", async (req, res) => {
 });
 
 /* ========== Save scraped statement helper ========== */
+// Saving stores the statement's images and fills the problem's missing tags
+// and rating from it (src/problem-import.js).
 async function _saveStatement(problemId, data) {
-  await run(
-    `INSERT OR REPLACE INTO problem_statements
-    (problem_rowid, statement, input_spec, output_spec, note, time_limit, memory_limit, samples, scraped_at, extra)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [
-      problemId,
-      data.statement || "",
-      data.inputSpec || "",
-      data.outputSpec || "",
-      data.note || "",
-      data.timeLimit || "",
-      data.memLimit || "",
-      JSON.stringify(data.samples || []),
-      new Date().toISOString(),
-      JSON.stringify(data.extra || {}),
-    ],
-  );
-  keepStatementMedia([data.statement, data.inputSpec, data.outputSpec, data.note].join("\n"));
+  await require("./problem-import").saveStatement(problemId, data);
 }
 
 /* ========== IMAGE PROXY (statement images) ==========
@@ -877,7 +862,6 @@ async function _saveStatement(problemId, data) {
    ETag, so only the very first viewer ever waits on the upstream fetch. */
 const IMG_CACHE_MAX_BYTES = 64 * 1024 * 1024;
 const IMG_CACHE_TTL = 7 * 24 * 60 * 60 * 1000;
-const IMG_MAX_BYTES = 8 * 1024 * 1024;
 const imgCache = new Map(); // url -> { buf, ctype, etag, at }
 let imgCacheBytes = 0;
 /** url -> Promise, so a burst of requests for one image does one upstream fetch. */
@@ -909,77 +893,11 @@ function imgCacheGet(url) {
 }
 
 // Host/bucket allowlist and the raster-image/video/audio type allowlist (no SVG).
-const { isProxyableUrl, isProxyableMediaType } = require("./statement-media");
+// Storing a saved statement's images ahead of time is src/problem-import.js.
+const { isProxyableUrl } = require("./statement-media");
 
-/** Drop an unread response body so its socket is released (node-fetch stream or web stream). */
-function discardBody(upstream) {
-  const body = upstream && upstream.body;
-  if (!body) return;
-  try {
-    if (typeof body.destroy === "function") body.destroy();
-    else if (typeof body.cancel === "function") body.cancel().catch(() => {});
-  } catch {}
-}
-
-/** Read a fetch body into a Buffer, aborting as soon as it passes `max` bytes. */
-async function readBodyCapped(upstream, max) {
-  const declared = Number(upstream.headers.get("content-length"));
-  if (Number.isFinite(declared) && declared > max) {
-    discardBody(upstream);
-    throw new Error("media too large");
-  }
-  if (!upstream.body) return Buffer.alloc(0);
-  const parts = [];
-  let total = 0;
-  // node-fetch bodies are Node streams and web bodies are ReadableStreams;
-  // both are async-iterable, and returning early from the loop destroys/cancels them.
-  for await (const chunk of upstream.body) {
-    const b = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-    total += b.length;
-    if (total > max) {
-      discardBody(upstream);
-      throw new Error("media too large");
-    }
-    parts.push(b);
-  }
-  return Buffer.concat(parts, total);
-}
-
-async function fetchProxiedMedia(startUrl) {
-  let target = startUrl;
-  let upstream = await fetch(target, {
-    headers: { "User-Agent": SCRAPE_UA, Accept: "image/avif,image/webp,image/*,video/*,audio/*,*/*;q=0.8" },
-    redirect: "manual",
-    signal: AbortSignal.timeout(15000),
-  });
-  // Follow at most three redirects, staying inside the allowlist.
-  for (let hops = 0; hops < 3 && [301, 302, 303, 307, 308].includes(upstream.status); hops++) {
-    const loc = upstream.headers.get("location");
-    if (!loc) break;
-    const next = new URL(loc, target);
-    if (!isProxyableUrl(next)) break;
-    discardBody(upstream);
-    target = next;
-    upstream = await fetch(target, {
-      headers: { "User-Agent": SCRAPE_UA, Accept: "image/*,video/*,audio/*,*/*;q=0.8" },
-      redirect: "manual",
-      signal: AbortSignal.timeout(15000),
-    });
-  }
-  const ctype = (upstream.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
-  if (!upstream.ok || !isProxyableMediaType(ctype)) {
-    discardBody(upstream);
-    throw new Error(`upstream ${upstream.status} ${ctype || "unknown type"}`);
-  }
-  const buf = await readBodyCapped(upstream, IMG_MAX_BYTES);
-  if (!buf.length) throw new Error("media empty");
-  return {
-    buf,
-    ctype,
-    etag: '"' + crypto.createHash("sha1").update(buf).digest("hex").slice(0, 24) + '"',
-    at: Date.now(),
-  };
-}
+// Fetching one media file (allowlist, size cap, honest User-Agent): src/media-fetch.js.
+const { fetchMedia: fetchProxiedMedia } = require("./media-fetch");
 
 /** Saved copy, else fetch and save. Throws when neither has it. */
 async function loadStatementMedia(url) {
@@ -989,28 +907,6 @@ async function loadStatementMedia(url) {
   const entry = await fetchProxiedMedia(url);
   store.save(url.toString(), entry); // background; never blocks the response
   return entry;
-}
-
-/**
- * When a statement is saved, fetch and keep its images at once (a few at a
- * time, in the background), so the figures are already safe the first time
- * anyone opens the problem — even if the judge blocks us later.
- */
-function keepStatementMedia(html) {
-  const store = require("./media-store");
-  const urls = store.mediaUrls(html).filter((u) => isProxyableUrl(u)).slice(0, 24);
-  if (!urls.length) return;
-  (async () => {
-    for (const u of urls) {
-      const key = new URL(u).toString();
-      if (imgCacheGet(key)) continue;
-      try {
-        imgCachePut(key, await loadStatementMedia(new URL(u)));
-      } catch {
-        /* the browser still tries the judge directly, then the proxy again */
-      }
-    }
-  })().catch(() => {});
 }
 
 app.get("/api/imgproxy", async (req, res) => {

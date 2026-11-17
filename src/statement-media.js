@@ -127,15 +127,33 @@ function proxyUrlFor(abs) {
   return `/api/imgproxy?url=${encodeURIComponent(abs)}`;
 }
 
+/** The judge's own URL behind a `src`: our proxy URLs are unwrapped, so the rewrite is idempotent. */
+function originalOf(src, origin) {
+  const raw = String(src || "").replace(/&amp;/g, "&");
+  if (raw.startsWith("/api/imgproxy?")) {
+    try {
+      return new URL(raw, "https://x").searchParams.get("url") || "";
+    } catch {
+      return "";
+    }
+  }
+  return absolutizeUrl(raw, origin);
+}
+
+const escAttr = (u) => String(u).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+
 /**
- * Rewrite the media in a scraped statement so it actually renders for us.
+ * Rewrite the media in a scraped statement so it renders from our copy.
  *
- * Images and videos are pointed at the source CDN with `referrerpolicy=
- * no-referrer` — the Referer header is exactly what hotlink checks key on, and
- * a direct CDN hit is far faster than routing bytes through our box. Every
- * element also carries `data-proxy`, the URL the client retries through when
- * the direct load fails; the client remembers which hosts need that and skips
- * the wasted attempt on later statements.
+ * Every image, video and audio file on a judge's host loads from our own
+ * route (/api/imgproxy), which serves the copy stored in our database
+ * (src/media-store.js; fetched once, when the statement is saved) — never
+ * straight from the judge. A judge that moves, deletes or blocks a file can't
+ * break a problem, and readers' browsers never contact the judge.
+ * `data-origin` keeps the judge's URL; `data-via-proxy` tells the client this
+ * is already the final URL. Media on any other host can't be stored (the
+ * proxy only fetches from the judges): it stays where it is, with no referrer,
+ * and the admin audit lists it.
  */
 function normalizeStatementHtml(html, problem) {
   if (!html) return html;
@@ -143,41 +161,34 @@ function normalizeStatementHtml(html, problem) {
 
   let out = html.replace(/<img\b[^>]*>/gi, (tag) => {
     const m = tag.match(/\ssrc\s*=\s*(["'])([^"']*)\1/i) || tag.match(/\ssrc\s*=\s*([^\s>"']+)/i);
-    const raw = m ? (m[2] ?? m[1]) : "";
-    const abs = absolutizeUrl(raw.replace(/&amp;/g, "&"), origin);
+    const kept = tag.match(/\sdata-origin\s*=\s*(["'])([^"']*)\1/i);
+    const abs = kept ? kept[2].replace(/&amp;/g, "&") : originalOf(m ? (m[2] ?? m[1]) : "", origin);
     if (!abs) return tag;
     // srcset goes: its candidates are relative to the source page, not to us.
     const t = tag
-      .replace(/\s(src|srcset|referrerpolicy|loading|decoding|data-proxy|crossorigin)\s*=\s*(["'])[^"']*\2/gi, "")
+      .replace(/\s(src|srcset|referrerpolicy|loading|decoding|data-proxy|data-origin|data-via-proxy|crossorigin)\s*=\s*(["'])[^"']*\2/gi, "")
       .replace(/\ssrc\s*=\s*[^\s>"']+/gi, "");
-    const attrs = [
-      `src="${abs.replace(/"/g, "&quot;")}"`,
-      'referrerpolicy="no-referrer"',
-      'loading="lazy"',
-      'decoding="async"',
-    ];
-    const proxy = proxyUrlFor(abs);
-    if (proxy) attrs.push(`data-proxy="${proxy}"`);
+    const proxy = isProxyableUrl(abs) ? proxyUrlFor(abs) : "";
+    const attrs = proxy
+      ? [`src="${escAttr(proxy)}"`, `data-origin="${escAttr(abs)}"`, 'data-via-proxy="1"', 'loading="lazy"', 'decoding="async"']
+      : [`src="${escAttr(abs)}"`, 'referrerpolicy="no-referrer"', 'loading="lazy"', 'decoding="async"'];
     return t.replace(/^<img\b/i, `<img ${attrs.join(" ")}`);
   });
 
-  // <video> / <audio> / <source>: absolutize src and poster, and give each one
-  // the same proxy fallback so blocked media is recoverable too.
+  // <video> / <audio> / <source>: every src and poster from our copy as well.
   out = out.replace(/<(video|audio|source)\b[^>]*>/gi, (tag, tagName) => {
-    let firstSrc = "";
-    let changed = tag.replace(
-      /(\s(?:src|poster)\s*=\s*)(["'])([^"']*)\2/gi,
-      (_m, pre, q, src) => {
-        const abs = absolutizeUrl(src.replace(/&amp;/g, "&"), origin);
-        if (/\ssrc\s*=\s*$/i.test(pre) && !firstSrc) firstSrc = abs;
-        return `${pre}${q}${abs.replace(/"/g, "&quot;")}${q}`;
-      },
-    );
-    const proxy = proxyUrlFor(firstSrc);
-    if (proxy && !/\sdata-proxy\s*=/i.test(changed)) {
-      changed = changed.replace(new RegExp(`^<${tagName}\\b`, "i"), `<${tagName} data-proxy="${proxy}"`);
-    }
-    if (tagName.toLowerCase() !== "source" && !/\sreferrerpolicy\s*=/i.test(changed)) {
+    let viaUs = false;
+    let changed = tag.replace(/(\s(?:src|poster)\s*=\s*)(["'])([^"']*)\2/gi, (_m, pre, q, src) => {
+      const abs = originalOf(src, origin);
+      const proxy = abs && isProxyableUrl(abs) ? proxyUrlFor(abs) : "";
+      if (proxy) viaUs = true;
+      return `${pre}${q}${escAttr(proxy || abs)}${q}`;
+    });
+    changed = changed.replace(/\sdata-proxy\s*=\s*(["'])[^"']*\1/gi, "");
+    if (viaUs) {
+      changed = changed.replace(/\sreferrerpolicy\s*=\s*(["'])[^"']*\1/gi, "");
+      if (!/\sdata-via-proxy\s*=/i.test(changed)) changed = changed.replace(new RegExp(`^<${tagName}\\b`, "i"), `<${tagName} data-via-proxy="1"`);
+    } else if (tagName.toLowerCase() !== "source" && !/\sreferrerpolicy\s*=/i.test(changed)) {
       changed = changed.replace(new RegExp(`^<${tagName}\\b`, "i"), `<${tagName} referrerpolicy="no-referrer"`);
     }
     return changed;
