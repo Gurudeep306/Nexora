@@ -117,7 +117,9 @@ async function load() {
   const version = await dbVersion();
   let rows = await readSnapshot(version);
   if (!rows) {
-    rows = await all(`SELECT ${COLUMNS.join(", ")} FROM problems ORDER BY id`);
+    // An unpublished NexoraGuru problem keeps its row (submissions point at it) but leaves the catalog.
+    // (Filtered here, not in SQL: this one full read stays the plain query tests/db-usage.test.js allows.)
+    rows = (await all(`SELECT ${COLUMNS.join(", ")} FROM problems ORDER BY id`)).filter((r) => r.category !== "__hidden");
     // Best effort: the next cold start (any process) reads ~5 rows instead.
     writeSnapshot(rows, version).catch((e) => console.warn("[catalog] snapshot write failed:", e.message));
   }

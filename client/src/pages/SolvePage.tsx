@@ -936,7 +936,9 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     learnSolution={
       learn && customApi.data?.problem.learn
         ? { slug: String(customApi.data.problem.id), editorial: customApi.data.problem.learn.editorial ?? null, solutions: customApi.data.problem.learn.solutions ?? {} }
-        : undefined
+        : problem?.platform === 'nexora' && statementApi.data?.extra?.solution
+          ? { slug: `nx-${problem.id}`, editorial: statementApi.data.extra.solution.editorial ?? null, solutions: statementApi.data.extra.solution.solutions ?? {} }
+          : undefined
     }
   />
 )

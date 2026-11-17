@@ -16,6 +16,7 @@ const FALLBACK_LABELS: Record<string, string> = {
   timus: 'Timus',
   kattis: 'Kattis',
   uva: 'UVa',
+  nexora: 'NexoraGuru',
 }
 const FALLBACK: SiteSource[] = PLATFORM_OPTIONS.map((id) => ({ id, label: FALLBACK_LABELS[id] ?? id, kind: id === 'leetcode' ? 'function' : id === 'euler' ? 'answer' : 'stdin', problems: 0 }))
 
