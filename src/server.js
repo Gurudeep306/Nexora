@@ -30,7 +30,7 @@ const { isSetAvatar, normalizeAvatar } = require("./avatar-set");
 const { restoreUploads } = require("./upload-store");
 const { authz } = require("./middleware/authz");
 const { createAccessControl, initAdminSystem, socketAccess } = require("./authz/access");
-const { can, hasAnyAdminPerm } = require("./authz/permissions");
+const { can, hasAnyAdminPerm, mayUseHive } = require("./authz/permissions");
 const { createAdminRouter } = require("./routes/admin");
 const { createSocialRouter } = require("./routes/social");
 const {
@@ -3719,6 +3719,8 @@ function nexusSubjectRank(reg, sid, nodes) {
 app.get("/api/nexus", async (req, res) => {
   try {
     const want = typeof req.query.subject === "string" && req.query.subject ? req.query.subject : "dsa";
+    const blocked = nexusBlocked(req);
+    if (blocked.has(want)) return res.status(404).json({ ok: false, error: "Unknown subject" });
     const { reg, dsa, computed, webPlayer } = await nexusState(req, req.query.fresh === "1");
     const view = want === "dsa" ? dsa : computed.get(want);
     if (!view) return res.status(404).json({ ok: false, error: "Unknown subject" });
@@ -3731,7 +3733,7 @@ app.get("/api/nexus", async (req, res) => {
       webPlayer,
       riftLevels: RIFT_LEVELS,
       subject: nexusSubjects.subjectMeta(reg, want),
-      subjects: nexusSubjects.subjectSummaries(reg, dsa, computed),
+      subjects: nexusSubjects.subjectSummaries(reg, dsa, computed).filter((x) => !blocked.has(x.id)),
       subjectRank: nexusSubjectRank(reg, want, view.nodes),
     });
   } catch (e) {
@@ -3747,13 +3749,50 @@ function nexusStructure() {
 }
 
 /**
+ * Learn subjects this visitor may not see (Admin → Site map, learn.<id>:
+ * staff only, coming soon or hidden). Their own pages and API are shut by the
+ * Site map gate; the shared lists (/api/nexus, /structure, /web, the subject
+ * leaderboard) drop them here, so nothing of a hidden subject reaches members.
+ */
+function nexusBlocked(req) {
+  const sitemap = require("./sitemap");
+  const modes = sitemap.effectiveModes(require("./authz/site-settings").peekSettings());
+  const who = { owner: req.access?.role === "owner", staff: hasAnyAdminPerm(req), hive: mayUseHive(req) };
+  const out = new Set();
+  for (const p of sitemap.PARTS) {
+    const m = /^learn\.([a-z0-9-]+)$/.exec(p.id);
+    if (m && m[1] !== "dsa" && !sitemap.allowed(modes[p.id], who, p)) out.add(m[1]);
+  }
+  return out;
+}
+/** The structure version this visitor sees: the plain one, or one that names what is hidden. */
+const nexusViewVersion = (version, blocked) =>
+  blocked.size ? `${version}-${require("node:crypto").createHash("sha1").update([...blocked].sort().join(",")).digest("hex").slice(0, 8)}` : version;
+/** The structure without the subjects this visitor may not see. */
+function nexusStructureFor(req) {
+  const st = nexusStructure();
+  const blocked = nexusBlocked(req);
+  if (!blocked.size) return st;
+  const hiddenNode = (ref) => typeof ref === "string" && ref.includes(":") && blocked.has(ref.split(":")[0]);
+  return {
+    ...st,
+    version: nexusViewVersion(st.version, blocked),
+    clusters: st.clusters
+      .filter((c) => !blocked.has(c.id))
+      .map((c) => ({ ...c, nodes: c.nodes.map((n) => (Array.isArray(n.req) && n.req.some(hiddenNode) ? { ...n, req: n.req.filter((r) => !hiddenNode(r)) } : n)) })),
+    routes: (st.routes || []).map((r) => ({ ...r, subjects: (r.subjects || []).filter((x) => !blocked.has(x)) })).filter((r) => r.subjects.length),
+    ...(st.hubs ? { hubs: JSON.parse(JSON.stringify(st.hubs, (k, v) => (k === "nexus" && blocked.has(v) ? undefined : v))) } : {}),
+  };
+}
+
+/**
  * GET /api/nexus/structure[?v=<version>] — the web's structure. With the
  * current version in ?v= it is immutable and cached for a year; the client
  * keeps it on the device too, so the web paints before any request.
  */
 app.get("/api/nexus/structure", (req, res) => {
   try {
-    const st = nexusStructure();
+    const st = nexusStructureFor(req);
     res.set("ETag", `"nx-${st.version}"`);
     res.set("Cache-Control", req.query.v === st.version ? "private, max-age=31536000, immutable" : "private, max-age=60");
     if (String(req.headers["if-none-match"] || "").includes(`"nx-${st.version}"`)) return res.status(304).end();
@@ -4245,8 +4284,11 @@ async function nexusWebFor(req, fresh = false) {
 app.get("/api/nexus/web", async (req, res) => {
   try {
     const body = await nexusWebFor(req, req.query.fresh === "1");
+    const blocked = nexusBlocked(req);
     res.set("Cache-Control", "private, no-cache");
-    res.json({ ok: true, ...body });
+    if (!blocked.size) return res.json({ ok: true, ...body });
+    const keep = (o) => Object.fromEntries(Object.entries(o || {}).filter(([k]) => !blocked.has(k)));
+    res.json({ ok: true, ...body, state: { ...body.state, version: nexusViewVersion(body.state.version, blocked), subjects: keep(body.state.subjects) }, ranks: keep(body.ranks) });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
@@ -4262,7 +4304,7 @@ app.get("/api/nexus/leaderboard", async (req, res) => {
     const scope = ["all", "week", "friends", "subject"].includes(req.query.scope) ? req.query.scope : "all";
     const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
     const subject = scope === "subject" ? String(req.query.subject || "") : null;
-    if (scope === "subject" && !reg.subjects.has(subject)) return res.status(404).json({ ok: false, error: "Unknown subject" });
+    if (scope === "subject" && (!reg.subjects.has(subject) || nexusBlocked(req).has(subject))) return res.status(404).json({ ok: false, error: "Unknown subject" });
     const viewer = me();
     const key = `${scope}|${subject || ""}|${scope === "friends" ? viewer : ""}`;
     const hit = nexusBoardCache.get(key);
@@ -6151,14 +6193,24 @@ io.use(async (socket, next) => {
 
 // Hive's realtime namespace: same session, origin, ban and private-mode checks
 // as the default namespace; admins and the owner only (src/hive/hub.js).
+/** Hive's live connection: admins and the owner, unless Admin → Site map keeps Hive to the owner. */
+async function mayJoinHive(username) {
+  const verdict = await socketAccess(username);
+  if (!verdict.ok) return false;
+  const P = require("./authz/permissions");
+  const sitemap = require("./sitemap");
+  const a = verdict.access;
+  const mode = sitemap.effectiveModes(await require("./authz/site-settings").getSettings())["hive"];
+  return sitemap.allowed(mode, { owner: a.role === "owner", staff: P.hasAnyAdminPerm(a), hive: P.mayUseHive(a) }, sitemap.BY_ID.get("hive"));
+}
+app.locals.mayJoinHive = mayJoinHive;
+
 attachHive(io, {
   authorize: async (socket) => {
     if (!isAllowedSocketOrigin(socket.request)) return null;
     const user = getSessionUser(socket.request);
     if (!user?.username) return null;
-    const verdict = await socketAccess(user.username);
-    if (!verdict.ok || !require("./authz/permissions").mayUseHive(verdict.access)) return null;
-    return user.username;
+    return (await mayJoinHive(user.username)) ? user.username : null;
   },
   // Hive is one shared staff workspace: every staff member can follow every chat.
   canSeeConvo: async (id) => !!(await get("SELECT id FROM hive_convos WHERE id=?", [id])),
@@ -6204,10 +6256,44 @@ realtime.disconnectUser = (username) => {
   for (const sid of userSockets[username] || []) io.sockets.sockets.get(sid)?.disconnect(true);
 };
 
+/**
+ * Live events that belong to a Site map part (Admin → Site map). The part's
+ * API is shut by the Site map gate; these events would skip it, so each is
+ * checked here too: a member can't send a direct message while Messages is
+ * switched off, or join a solve room while Rooms is.
+ */
+const SOCKET_PARTS = {
+  "direct-message": "social.messages",
+  "typing-start": "social.messages",
+  "typing-stop": "social.messages",
+  "chat:typing": "social.messages",
+  "mark-messages-read": "social.messages",
+  "join-solve-room": "social.rooms",
+  "room-chat": "social.rooms",
+  "room-code-change": "social.rooms",
+};
+async function socketPartOpen(username, partId) {
+  const sitemap = require("./sitemap");
+  const part = sitemap.BY_ID.get(partId);
+  if (!part) return true;
+  const verdict = await socketAccess(username);
+  if (!verdict.ok) return false;
+  const a = verdict.access;
+  const mode = sitemap.effectiveModes(await require("./authz/site-settings").getSettings())[partId];
+  return sitemap.allowed(mode, { owner: a.role === "owner", staff: hasAnyAdminPerm(a), hive: mayUseHive(a) }, part);
+}
+
 io.on("connection", (socket) => {
   // Set by the io.use() auth middleware from the session — the only identity
   // any handler below trusts.
   const me = socket.data.username;
+  socket.use(([event], next) => {
+    const partId = SOCKET_PARTS[event];
+    if (!partId) return next();
+    socketPartOpen(me, partId)
+      .then((open) => (open ? next() : socket.emit("social-error", { error: "This section is switched off right now" })))
+      .catch(() => socket.emit("social-error", { error: "This section is switched off right now" }));
+  });
 
   /* ===== User registration & presence ===== */
   const registerPresence = async () => {
