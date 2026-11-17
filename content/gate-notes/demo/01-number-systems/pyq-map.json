@@ -1,8 +1,0 @@
-[
-  { "id": "cse-1995-a-37", "lesson": "place-value", "tests": ["expansion", "binary-to-decimal"] },
-  { "id": "cse-2009-cs-5", "lesson": "place-value", "tests": ["octal-to-decimal"] },
-  { "id": "cse-2014-1-cs-8", "lesson": "place-value", "tests": ["find-base", "digit-limit"] },
-  { "id": "cse-2014-2-cs-8", "lesson": "place-value", "tests": ["find-base", "digit-limit"] },
-  { "id": "cse-2015-3-cs-35", "lesson": "place-value", "tests": ["find-base", "digit-limit"] },
-  { "id": "cse-2004-cs-19", "lesson": "place-value", "tests": ["find-base"] }
-]
