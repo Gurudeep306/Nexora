@@ -61,7 +61,8 @@
     border-style: dashed;
     border-color: var(--color-border);
     background: transparent;
-    color: var(--ed-muted);
+    /* Secondary ink, not muted: 11 px text must still read (4.5:1). */
+    color: var(--color-text-secondary);
   }
   /* The middle being compared: the theme's clay. */
   .nf-cell[data-state='mid'] {

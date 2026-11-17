@@ -57,7 +57,55 @@ Contents:
 
 ## 3. Where it stands (2026-11-17, session 9)
 
-- **Session 9 — "first k of N" (this PR, branch `claude/fervent-curie-vjgcd8`):**
+- **Session 9 — student walk-through, coding first (this PR, branch `claude/fervent-curie-vjgcd8`):**
+  Walked the site as a new student on the demo with 38,631 real problems
+  imported (Codeforces, CSES, AtCoder, Kattis, CodeChef, LeetCode, DMOJ,
+  Euler, Timus): search → open → run → submit (wrong, compile error, right)
+  → XP → Dry run → How it runs → Submissions; then Learn, GATE, Contests,
+  Messages, Profile, Settings, Nexus (axe + sideways scroll + console +
+  failed requests, light/dark/phone). Found and fixed:
+  - **"Accepted" on the examples only** (the big one): every judge but
+    Codeforces keeps its tests private, and Codeforces' come from the open
+    dataset only after a first fetch, so a wrong idea (Watermelon without
+    the w = 2 case) showed "Accepted +10 XP". `POST /api/judge` now returns
+    `coverage` (`full`, `official`, `judge`, `url`, `pending`, `failed`);
+    the Result tab, banner and toast say **"Passed the examples, not
+    <judge>' full tests"** with why (being fetched now / could not be
+    fetched / not available here) and a link to submit on the judge. No
+    confetti for it. With the official tests cached, the same wrong code
+    gets WA 19/20 (checked live). `cf-dataset.testsState` (fetching /
+    failed lately) keeps "being fetched" true; a problem missing from the
+    dataset is remembered. **XP is still given for passing the examples:
+    owner's decision** (see section 6).
+  - **Statement maths left raw**: CSES now ships pandoc spans
+    (`<span class="math math-inline">`); AtCoder writes every input format
+    as `<pre><var>N \ K</var></pre>` (converted inside `<pre>` too; the old
+    test "math inside <pre> is left alone" now asserts the new rule and
+    that other `<pre>` text stays data); Kattis wraps `$…$` over lines;
+    Euler's `$\operatorname{OP}$s`, `$k$th`. And on the client, TeX with
+    `<`, `>`, `&` was escaped twice (`&lt;` reached KaTeX) on every judge:
+    `client/src/lib/mathHtml.ts` (testable, no KaTeX) decodes first.
+    Checked in the browser: 3 problems per judge, no raw TeX left
+    (DMOJ shows "Read on DMOJ": its pages block servers, as before).
+  - **Learn problem tests were labelled "Hidden"** while shown: they are
+    open practice (solutions are public too), so "Test 1, 2 …"; Workshop
+    hidden tests still reach only their author.
+  - **Problems page**: said "six judges" (now Codeforces, CodeChef,
+    AtCoder, LeetCode, CSES and more); an empty catalog said "Try
+    widening your filters" with no filter set ("No problems yet").
+  - **404 page**: the binary-search cells it discards were 11 px muted ink
+    below 4.5:1; now the secondary ink (the dashed edge still marks them).
+  - Checked and fine: compile errors explained on the exact line ("Missing
+    ;" with "What it means"), Dry run and How it runs on C++, Submissions,
+    Messages on phone, GATE practice, Contests (71 live/upcoming/past),
+    every page axe 0 in light/dark/phone (Nexus once flagged a row mid
+    fade-in; 0 after it settles).
+  - Tests: `tests/judge-coverage.test.js` (4: private judge → examples
+    only; Codeforces pending; Codeforces with official tests catches the
+    wrong idea; practice runs carry nothing), `tests/cf-dataset.test.js`
+    (+1, failed download), `tests/sources.test.js` (+2), and
+    `tests/statement-math.test.js` (2). `npm test`: 708 passed.
+- **Session 9 — "first k of N" — merged (#147):**
   - One note for anything the dry run draws in part (`capNote` in
     `client/src/components/solve/dryrun/toFrames.ts`): arrays "first 40 of
     100", stacks "top 40 of 60" (a stack shows its top), queues "first 40 of
@@ -809,6 +857,13 @@ here". Every picture is named after the student's variable: the list is
 ## 6. What is left, in order (the end-to-end plan)
 
 Each item is one finished, tested PR. Report to the owner after each.
+
+**Waiting for the owner (session 9):** passing only the examples (every judge
+but Codeforces keeps its tests private) still gives XP and marks the problem
+solved; the page now says "Passed the examples, not <judge>' full tests".
+Should it still count? Options: keep as is; give XP but mark it "passed the
+examples" instead of solved; or give XP only for a full check (NexoraGuru,
+Workshop, Learn and Codeforces problems with the dataset's tests).
 
 ### 1. Check the live site after #129 deploys
 

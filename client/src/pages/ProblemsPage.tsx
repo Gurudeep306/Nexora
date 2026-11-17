@@ -257,7 +257,7 @@ export default function ProblemsPage() {
         icon="problems"
         eyebrow="The Workshop"
         title="Problems"
-        subtitle="Problems from six judges in one place. Filter, bookmark and solve them here."
+        subtitle="Problems from Codeforces, CodeChef, AtCoder, LeetCode, CSES and more, in one place. Filter, bookmark and solve them here."
         actions={
           <Button variant="ghost" size="sm" loading={rolling} onClick={() => void surpriseMe()}>
             {!rolling && <Dices aria-hidden="true" />} Surprise me
@@ -293,15 +293,16 @@ export default function ProblemsPage() {
               <ErrorState message={problemsApi.error} onRetry={problemsApi.refetch} />
             ) : problems.length === 0 ? (
               <div className="card-neon pt-empty">
-                <EmptyState
-                  icon="search"
-                  title="No problems match"
-                  description={
-                    qParam
-                      ? `Nothing found for "${qParam}". Try different keywords or clear the filters.`
-                      : 'Try widening your filters.'
-                  }
-                />
+                {/* With no filter set, an empty list means nothing has been imported yet. */}
+                {!qParam && platform === 'all' && band === DIFFICULTY_BANDS[0] && !tag && status === 'all' ? (
+                  <EmptyState icon="problems" title="No problems yet" description="Problems appear here once they are imported from the judges. Try again in a little while." />
+                ) : (
+                  <EmptyState
+                    icon="search"
+                    title="No problems match"
+                    description={qParam ? `Nothing found for "${qParam}". Try different keywords or clear the filters.` : 'Try widening your filters.'}
+                  />
+                )}
               </div>
             ) : (
               <>
