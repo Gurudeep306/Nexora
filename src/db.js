@@ -1262,7 +1262,19 @@ async function initSocialTables() {
  * Idempotent: CREATE … IF NOT EXISTS + guarded ALTERs, one batch on Turso. */
 async function initAdminTables() {
   await run("ALTER TABLE users ADD COLUMN verified INTEGER DEFAULT 0").catch(() => {});
+  // A team member's job title ("Head of GATE content"), set in Admin → Staff access.
+  await run("ALTER TABLE users ADD COLUMN team_title TEXT").catch(() => {});
   await runBatch([
+    // Staff access per Admin section (src/authz/sections.js): level is
+    // 'none' | 'view' | 'edit'; no row = follow role and permissions.
+    [`CREATE TABLE IF NOT EXISTS staff_section_access (
+      username TEXT NOT NULL,
+      section TEXT NOT NULL,
+      level TEXT NOT NULL,
+      updated_by TEXT,
+      updated_at INTEGER NOT NULL,
+      PRIMARY KEY (username, section)
+    )`],
     // Per-user permission overrides: granted=1 adds a permission on top of
     // the role's defaults, granted=0 takes one away.
     [`CREATE TABLE IF NOT EXISTS user_permissions (
@@ -1374,6 +1386,22 @@ async function initAdminTables() {
       PRIMARY KEY (day, username)
     )`],
   ]);
+  // Finer permissions (2026-11): AI models and Code runners were part of
+  // "site.settings", writing problems part of "problems.manage", verifying
+  // part of "users.manage". Anyone given (or denied) the broad one keeps the
+  // same access through the new one. Runs once (marker in site_settings), so
+  // a later "reset to role default" is never undone at the next boot.
+  const done = await get("SELECT 1 AS d FROM site_settings WHERE key = 'perm_split_2026_11'").catch(() => null);
+  if (!done) {
+    for (const [from, to] of [["site.settings", "ai.manage"], ["site.settings", "runners.manage"], ["problems.manage", "problems.author"], ["users.manage", "users.verify"]]) {
+      await run(
+        `INSERT OR IGNORE INTO user_permissions(username, perm, granted, granted_by, created_at)
+         SELECT username, ?, granted, 'system:split', created_at FROM user_permissions WHERE perm = ?`,
+        [to, from],
+      );
+    }
+    await run("INSERT OR IGNORE INTO site_settings(key, value, updated_by, updated_at) VALUES('perm_split_2026_11', 'true', 'system', ?)", [Date.now()]);
+  }
 }
 
 /* ===== GATE learning platform (src/routes/gate-me.js) =====

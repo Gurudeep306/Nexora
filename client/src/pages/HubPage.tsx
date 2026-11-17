@@ -13,6 +13,8 @@ import { alsoInProgress, findContinue, nextSteps, until } from '@/components/tod
 import { Bookshelf } from '@/components/today/Bookshelf'
 import { ForYou, type TodayPicks } from '@/components/today/ForYou'
 import { useNotesProgress } from '@/gate/notes/progress'
+import { discoverPool } from '@/lib/discover'
+import { subjectHref } from '@/components/nexus/course'
 
 /*
  * Home — "Today". The front page of a field journal on the day you open it:
@@ -75,6 +77,8 @@ export default function HubPage() {
   const updatedAt = stats?.fetchedAt ?? null
 
   const cont = useMemo(() => findContinue(items, clusters), [items, clusters])
+  // Every real part of the site the "Something to explore" box can pick from.
+  const pool = useMemo(() => discoverPool({ dsa: DSA_TOPICS, clusters: clusters ?? [], links: { subject: subjectHref } }), [clusters])
   const also = useMemo(() => alsoInProgress(items, clusters, cont), [items, clusters, cont])
   const reviewDue = reviewApi.data?.dueCount ?? 0
   const steps = useMemo(() => nextSteps({ cont, stats: stats ?? null, reviewDue, gateDaily: dailyApi.data ?? null }), [cont, stats, reviewDue, dailyApi.data])
@@ -222,7 +226,7 @@ export default function HubPage() {
           void refresh()
         }}
       />
-      <Spread cont={cont} rows={rows} also={also} />
+      <Spread cont={cont} rows={rows} also={also} pool={pool} />
       <ForYou
         picks={picksApi.data ?? null}
         items={items}

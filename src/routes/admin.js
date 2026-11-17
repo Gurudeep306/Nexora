@@ -11,6 +11,10 @@ const rateLimit = require("express-rate-limit");
 const { errMessage } = require("../http-error");
 const { getSessionUser } = require("../middleware/auth");
 const P = require("../authz/permissions");
+const S = require("../authz/sections");
+const sitemap = require("../sitemap");
+const fs = require("fs");
+const path = require("path");
 const { errorCount } = require("../authz/access");
 const content = require("../authz/content");
 const dbStats = require("../db-stats");
@@ -244,7 +248,11 @@ function createAdminRouter(deps) {
         privateMessage: priv ? s.private_mode.message : "",
         allowed: !priv || P.mayEnterPrivateSite(req),
         registrationsOpen: s.registrations.open && !priv,
-        flags: s.feature_flags,
+        // The old section flags and the Site map's blocked parts, for this viewer.
+        ...(() => {
+          const v = sitemap.viewerParts(s, { owner: a?.role === "owner", staff: !!a && P.hasAnyAdminPerm(a), hive: !!a && P.mayUseHive(a) });
+          return { flags: v.flags, parts: v.blocked };
+        })(),
         maintenance: s.maintenance.enabled ? { message: s.maintenance.message } : null,
         defaultStyle: s.default_style,
         banners: announcements.filter((x) => x.kind === "banner").slice(0, 3),
@@ -258,6 +266,8 @@ function createAdminRouter(deps) {
               permissions: [...a.perms],
               isOwner: a.role === "owner",
               isStaff: P.hasAnyAdminPerm(a),
+              // Hive is for admins and the owner only.
+              mayHive: P.mayUseHive(a),
               verified: a.verified,
             }
           : null,
@@ -333,6 +343,18 @@ function createAdminRouter(deps) {
         role: a.role,
         isOwner: a.role === "owner",
         permissions: [...a.perms],
+        // What this person gets in each Admin section (Staff access), with
+        // any section the owner keeps to themselves (Site map) closed.
+        ...(await (async () => {
+          const levels = S.levelsFor(a);
+          let canStaff = a.role === "owner" || a.perms.has("staff.access");
+          if (a.role !== "owner") {
+            const eff = sitemap.effectiveModes(await getSettings());
+            for (const id of Object.keys(levels)) if (eff[`admin.${id}`] === "hidden") levels[id] = "none";
+            if (eff["admin.staff"] === "hidden") canStaff = false;
+          }
+          return { sections: levels, canStaff };
+        })()),
         catalog: P.PERMISSIONS,
         roles: P.ASSIGNABLE_ROLES,
         roleDefaults: P.ROLE_DEFAULTS,
@@ -340,6 +362,218 @@ function createAdminRouter(deps) {
         contentTypes: content.contentTypes(),
         flags: FEATURE_FLAGS,
       });
+    }),
+  );
+
+  /* ═════════════ Site map (src/sitemap.js) ═════════════ */
+
+  const REPO = "https://github.com/Gurudeep306/Nexora";
+  const ROOT = path.join(__dirname, "..", "..");
+  function countFiles(dir, limit = 5000) {
+    let n = 0;
+    const walk = (d) => {
+      for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+        if (n >= limit) return;
+        if (e.isDirectory()) walk(path.join(d, e.name));
+        else n++;
+      }
+    };
+    try {
+      walk(dir);
+    } catch {
+      /* unreadable: counted as 0 */
+    }
+    return n;
+  }
+  function fileInfo(rel) {
+    const abs = path.join(ROOT, rel);
+    let stat = null;
+    try {
+      stat = fs.statSync(abs);
+    } catch {
+      /* missing on this server */
+    }
+    const dir = rel.endsWith("/");
+    return {
+      path: rel,
+      kind: dir ? "folder" : "file",
+      exists: !!stat,
+      files: dir && stat ? countFiles(abs) : undefined,
+      url: `${REPO}/${dir ? "tree" : "blob"}/main/${rel.replace(/\/$/, "")}`,
+    };
+  }
+
+  router.get(
+    "/api/admin/sitemap",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const s = await getSettings();
+      const chosen = sitemap.chosenModes(s);
+      // Hive isn't even listed for someone who can't use it.
+      const seesHive = P.mayUseHive(req);
+      const effective = sitemap.effectiveModes(s);
+      res.json({
+        ok: true,
+        modes: sitemap.MODES,
+        parts: sitemap.PARTS.filter((p) => seesHive || !sitemap.isHive(p)).map((p) => ({
+          id: p.id,
+          label: p.label,
+          parent: p.parent || null,
+          core: !!p.core,
+          adminSection: !!p.adminSection,
+          hiveSection: sitemap.isHive(p),
+          pages: p.pages || null,
+          api: p.api || null,
+          mode: chosen[p.id],
+          effective: effective[p.id],
+          files: p.files.map(fileInfo),
+        })),
+      });
+    }),
+  );
+
+  router.put(
+    "/api/admin/sitemap/:id",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const part = sitemap.BY_ID.get(String(req.params.id));
+      if (!part || (sitemap.isHive(part) && !P.mayUseHive(req))) return res.status(404).json({ ok: false, error: "Unknown part" });
+      if (part.core) bad(`${part.label} is always on`);
+      const mode = str(req.body?.mode, { max: 10, field: "mode" });
+      if (!sitemap.MODES.includes(mode)) bad("Mode must be visible, staff, soon or hidden");
+      const s = await getSettings();
+      const before = sitemap.chosenModes(s)[part.id];
+      await setSetting("site_parts", { ...s.site_parts, [part.id]: mode }, req.access.username);
+      // Keep the older on/off flag in step for parts that carry one.
+      if (part.flag) await setSetting("feature_flags", { ...s.feature_flags, [part.flag]: mode !== "hidden" }, req.access.username);
+      await audit(req, "site.part", { targetType: "part", target: part.id, before: { mode: before }, after: { mode } });
+      siteChanged();
+      const next = await getSettings();
+      res.json({ ok: true, effective: sitemap.effectiveModes(next), chosen: sitemap.chosenModes(next) });
+    }),
+  );
+
+  /* ═════════════ Staff access (src/authz/sections.js) ═════════════ */
+
+  // Only the owner, and admins the owner allows ("staff.access"), may open it.
+  const requireStaffAccess = (req, res, next) => {
+    if (req.access?.role === "owner" || req.access?.perms.has("staff.access")) return next();
+    return res.status(403).json({ ok: false, code: "forbidden", error: "Only the owner, and admins the owner allows, can change staff access" });
+  };
+  const STAFF_SQL = `SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.team_title, ${P.ACCESS_COLUMNS}
+    FROM users u
+    WHERE u.role IN ('admin', 'moderator', 'owner')
+       OR EXISTS (SELECT 1 FROM user_permissions p WHERE p.username = u.username AND p.granted = 1 AND p.perm <> 'early_access')
+       OR EXISTS (SELECT 1 FROM staff_section_access s WHERE s.username = u.username)
+    ORDER BY CASE u.role WHEN 'owner' THEN 0 WHEN 'admin' THEN 1 WHEN 'moderator' THEN 2 ELSE 3 END, u.username COLLATE NOCASE`;
+
+  function staffRow(req, row) {
+    const a = P.buildAccess(row.username, row);
+    return {
+      username: row.username,
+      display_name: row.display_name || null,
+      avatar: row.avatar || defaultAvatar(row.username),
+      avatar_url: row.avatar_url || null,
+      role: a.role,
+      title: row.team_title || null,
+      chosen: a.sections,
+      effective: S.levelsFor(a),
+      managesStaff: a.role === "owner" || a.perms.has("staff.access"),
+      // You can't change the owner, yourself, or anyone at or above your role.
+      editable: a.role !== "owner" && !sameUser(req, row.username) && P.canActOn(req, row.username, a.role),
+      // The owner may title themselves too ("Founder").
+      titleEditable: (a.role !== "owner" && !sameUser(req, row.username) && P.canActOn(req, row.username, a.role)) || (req.access.role === "owner" && a.role === "owner"),
+    };
+  }
+  const sameUser = (req, u) => String(req.access?.username || "").toLowerCase() === String(u).toLowerCase();
+
+  router.get(
+    "/api/admin/staff-access",
+    requireStaffAccess,
+    h(async (req, res) => {
+      const rows = await all(STAFF_SQL);
+      res.json({
+        ok: true,
+        sections: S.SECTIONS.map(({ id, label, group, perms }) => ({ id, label, group, perms })),
+        people: rows.map((r) => staffRow(req, r)),
+        isOwner: req.access.role === "owner",
+      });
+    }),
+  );
+
+  router.put(
+    "/api/admin/staff-access/:username",
+    requireStaffAccess,
+    h(async (req, res) => {
+      const t = await loadTarget(req, res);
+      if (!t) return;
+      if (sameUser(req, t.username)) bad("You can't change your own access");
+      if (!guardTarget(req, res, t)) return;
+      const section = str(req.body?.section, { max: 40, field: "section" });
+      if (!S.SECTION_IDS.includes(section)) bad("Unknown section");
+      const level = str(req.body?.level, { max: 10, field: "level" });
+      if (level !== "default" && !S.LEVELS.includes(level)) bad("Level must be default, none, view or edit");
+      // You can hand out only what you have yourself.
+      if (req.access.role !== "owner" && level !== "default" && S.RANK[level] > S.RANK[S.levelFor(req.access, section)]) {
+        bad("You can't give more access than you have yourself");
+      }
+      const before = (await get("SELECT level FROM staff_section_access WHERE username = ? AND section = ?", [t.username, section]))?.level || "default";
+      if (level === "default") await run("DELETE FROM staff_section_access WHERE username = ? AND section = ?", [t.username, section]);
+      else
+        await run(
+          `INSERT INTO staff_section_access(username, section, level, updated_by, updated_at) VALUES(?,?,?,?,?)
+           ON CONFLICT(username, section) DO UPDATE SET level = excluded.level, updated_by = excluded.updated_by, updated_at = excluded.updated_at`,
+          [t.username, section, level, req.access.username, Date.now()],
+        );
+      await audit(req, "staff.section", { targetType: "user", target: t.username, before: { section, level: before }, after: { section, level } });
+      const row = await get(`SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.team_title, ${P.ACCESS_COLUMNS} FROM users u WHERE u.username = ?`, [t.username]);
+      res.json({ ok: true, person: staffRow(req, row) });
+    }),
+  );
+
+  // A team member's job title, shown on their profile and in Admin.
+  router.put(
+    "/api/admin/staff-access/:username/title",
+    requireStaffAccess,
+    h(async (req, res) => {
+      const t = await loadTarget(req, res);
+      if (!t) return;
+      if (!(req.access.role === "owner" && t.role === "owner")) {
+        if (sameUser(req, t.username)) bad("You can't change your own title");
+        if (!guardTarget(req, res, t)) return;
+      }
+      const raw = typeof req.body?.title === "string" ? req.body.title : "";
+      const title = raw.replace(/\s+/g, " ").trim();
+      if (title.length > 40) bad("Keep the title to 40 characters");
+      if (/[<>]/.test(title)) bad("Titles can't contain < or >");
+      const before = (await get("SELECT team_title FROM users WHERE username = ?", [t.username]))?.team_title || null;
+      await run("UPDATE users SET team_title = ? WHERE username = ?", [title || null, t.username]);
+      await audit(req, "staff.title", { targetType: "user", target: t.username, before: { title: before }, after: { title: title || null } });
+      const row = await get(`SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.team_title, ${P.ACCESS_COLUMNS} FROM users u WHERE u.username = ?`, [t.username]);
+      res.json({ ok: true, person: staffRow(req, row) });
+    }),
+  );
+
+  // Let an admin open Staff access too (for people below them). The owner only.
+  router.put(
+    "/api/admin/staff-access/:username/top",
+    requireOwner,
+    h(async (req, res) => {
+      const t = await loadTarget(req, res);
+      if (!t) return;
+      if (t.role === "owner") bad("The owner already has every permission");
+      const on = bool(req.body?.on, "on");
+      if (on && t.role !== "admin") bad("Only admins can be allowed to manage staff access");
+      if (on) {
+        await run(
+          `INSERT INTO user_permissions(username, perm, granted, granted_by, created_at) VALUES(?, 'staff.access', 1, ?, ?)
+           ON CONFLICT(username, perm) DO UPDATE SET granted = 1, granted_by = excluded.granted_by, created_at = excluded.created_at`,
+          [t.username, req.access.username, Date.now()],
+        );
+      } else await run("DELETE FROM user_permissions WHERE username = ? AND perm = 'staff.access'", [t.username]);
+      await audit(req, on ? "staff.manage.grant" : "staff.manage.revoke", { targetType: "user", target: t.username });
+      const row = await get(`SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.team_title, ${P.ACCESS_COLUMNS} FROM users u WHERE u.username = ?`, [t.username]);
+      res.json({ ok: true, person: staffRow(req, row) });
     }),
   );
 
@@ -730,7 +964,7 @@ function createAdminRouter(deps) {
 
   router.post(
     "/api/admin/users/:username/verify",
-    requirePerm("users.manage"),
+    requirePerm("users.verify"),
     h(async (req, res) => {
       const t = await loadTarget(req, res);
       if (!t) return;
@@ -750,7 +984,7 @@ function createAdminRouter(deps) {
 
   router.post(
     "/api/admin/users/:username/early-access",
-    requirePerm("users.manage"),
+    requirePerm("users.verify"),
     h(async (req, res) => {
       const t = await loadTarget(req, res);
       if (!t) return;
@@ -804,6 +1038,7 @@ function createAdminRouter(deps) {
       await runBatch(
         [
           "user_permissions",
+          "staff_section_access",
           "user_warnings",
           "bookmarks",
           "ai_user_chats",
@@ -891,6 +1126,11 @@ function createAdminRouter(deps) {
       }
       if (!touched) bad(`send at least one of ${FEATURE_FLAGS.join(", ")}`);
       await setSetting("feature_flags", after, req.access.username);
+      // The Site map is the same switch: an on/off here sets the part too.
+      const s0 = await getSettings();
+      const parts = { ...s0.site_parts };
+      for (const p of sitemap.PARTS) if (p.flag && b[p.flag] !== undefined) parts[p.id] = after[p.flag] ? "visible" : "hidden";
+      await setSetting("site_parts", parts, req.access.username);
       await audit(req, "site.feature_flags", { targetType: "site", target: "feature_flags", before, after });
       siteChanged();
       res.json({ ok: true, feature_flags: after });
@@ -997,13 +1237,13 @@ function createAdminRouter(deps) {
 
   router.get(
     "/api/admin/ai",
-    requirePerm("site.settings"),
+    requirePerm("ai.manage"),
     h(async (_req, res) => res.json({ ok: true, ...(await aiView()) })),
   );
 
   router.post(
     "/api/admin/ai/providers",
-    requirePerm("site.settings"),
+    requirePerm("ai.manage"),
     h(async (req, res) => {
       const b = req.body || {};
       const kind = str(b.kind, { max: 20, field: "kind" });
@@ -1026,7 +1266,7 @@ function createAdminRouter(deps) {
 
   router.put(
     "/api/admin/ai/providers/:id",
-    requirePerm("site.settings"),
+    requirePerm("ai.manage"),
     h(async (req, res) => {
       const c = await ai.loadConfig();
       const p = { ...findProvider(c, req.params.id) };
@@ -1053,7 +1293,7 @@ function createAdminRouter(deps) {
 
   router.delete(
     "/api/admin/ai/providers/:id",
-    requirePerm("site.settings"),
+    requirePerm("ai.manage"),
     h(async (req, res) => {
       const c = await ai.loadConfig();
       const p = findProvider(c, req.params.id);
@@ -1066,7 +1306,7 @@ function createAdminRouter(deps) {
 
   router.post(
     "/api/admin/ai/providers/:id/test",
-    requirePerm("site.settings"),
+    requirePerm("ai.manage"),
     h(async (req, res) => {
       const c = await ai.loadConfig();
       const p = { ...findProvider(c, req.params.id) };
@@ -1080,7 +1320,7 @@ function createAdminRouter(deps) {
 
   router.post(
     "/api/admin/ai/providers/:id/try",
-    requirePerm("site.settings"),
+    requirePerm("ai.manage"),
     h(async (req, res) => {
       const c = await ai.loadConfig();
       const p = findProvider(c, req.params.id);
@@ -1091,7 +1331,7 @@ function createAdminRouter(deps) {
 
   router.put(
     "/api/admin/ai/assignments",
-    requirePerm("site.settings"),
+    requirePerm("ai.manage"),
     h(async (req, res) => {
       const c = await ai.loadConfig();
       const b = req.body || {};
@@ -1148,13 +1388,13 @@ function createAdminRouter(deps) {
 
   router.get(
     "/api/admin/runners",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (_req, res) => res.json({ ok: true, ...(await runnerView()) })),
   );
 
   router.post(
     "/api/admin/runners",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const b = req.body || {};
       const url = runners.cleanUrl(str(b.url, { max: 300, field: "url" }));
@@ -1177,7 +1417,7 @@ function createAdminRouter(deps) {
 
   router.put(
     "/api/admin/runners/:id",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const list = await runners.loadRunners();
       const r = { ...findRunner(list, req.params.id) };
@@ -1205,7 +1445,7 @@ function createAdminRouter(deps) {
 
   router.post(
     "/api/admin/runners/:id/move",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const list = [...(await runners.loadRunners())];
       const i = list.findIndex((x) => x.id === req.params.id);
@@ -1219,7 +1459,7 @@ function createAdminRouter(deps) {
 
   router.delete(
     "/api/admin/runners/:id",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const list = await runners.loadRunners();
       const r = findRunner(list, req.params.id);
@@ -1231,7 +1471,7 @@ function createAdminRouter(deps) {
 
   router.post(
     "/api/admin/runners/:id/test",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const list = await runners.loadRunners();
       const r = { ...findRunner(list, req.params.id) };
@@ -1261,13 +1501,13 @@ function createAdminRouter(deps) {
 
   router.get(
     "/api/admin/compilers",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (_req, res) => res.json({ ok: true, ...(await compilers.view()) })),
   );
 
   router.put(
     "/api/admin/compilers/services/:id",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const id = req.params.id;
       if (!compilers.SERVICES.some((x) => x.id === id)) bad("No such service");
@@ -1281,7 +1521,7 @@ function createAdminRouter(deps) {
   // Keep the version in use (it will not be updated), or let the updater choose again.
   router.put(
     "/api/admin/compilers/pin",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const b = req.body || {};
       const engine = engineOf(b);
@@ -1298,7 +1538,7 @@ function createAdminRouter(deps) {
 
   router.post(
     "/api/admin/compilers/reset",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       const b = req.body || {};
       const engine = engineOf(b);
@@ -1313,7 +1553,7 @@ function createAdminRouter(deps) {
   // the page asks again until it is done.
   router.post(
     "/api/admin/compilers/sync",
-    requirePerm("site.settings"),
+    requirePerm("runners.manage"),
     h(async (req, res) => {
       if (!compilers.isSyncing()) {
         compilers.sync({ by: req.access.username }).catch(() => {});

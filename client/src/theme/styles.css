@@ -1397,9 +1397,6 @@
   background: transparent;
   box-shadow: 0 0 #0000;
 }
-[data-kit='journal'] .pf-cover {
-  display: none;
-}
 [data-kit='journal'] .pf-hero-body {
   padding-inline: 0;
   padding-top: 0.5rem;

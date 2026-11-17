@@ -1,26 +1,14 @@
+import { Link } from 'react-router-dom'
 import { useState, type CSSProperties } from 'react'
 import { Avatar, Select, useToast } from '@/components/ui'
 import { Icon, type IconName } from '@/components/icon/Icon'
 import { useApi } from '@/hooks/useApi'
 import { api, ApiError } from '@/lib/api'
-import { FEATURE_LABELS, type FeatureFlag } from '@/lib/site'
 import { useSite } from '@/context/SiteContext'
 import { cn } from '@/lib/utils'
 import { Chip, Confirm, Empty, Failed, Panel, Skeleton, Toggle } from './kit'
 import { ago } from './format'
 import type { AdminAnnouncement, AdminMe, SiteAdmin } from './types'
-
-const FLAG_META: Record<FeatureFlag, { hint: string; icon: IconName }> = {
-  gate: { hint: 'GATE practice, tests, planner and leaderboard', icon: 'gate' },
-  contests: { hint: 'Contests and live classes', icon: 'contests' },
-  social: { hint: 'Friends, messages, rooms and the feed', icon: 'social' },
-  ai_tutor: { hint: 'The AI assistant and AI features', icon: 'sparkles' },
-  practice: { hint: 'The problem set and the solver', icon: 'problems' },
-  learn: { hint: 'Learn, subject trees and the DSA course', icon: 'learn' },
-  nexus: { hint: 'The Nexus skill web page', icon: 'nexus' },
-  notes: { hint: 'GATE notes (GATE practice stays on)', icon: 'book' },
-  workshop: { hint: 'The workshop and custom problems', icon: 'workshop' },
-}
 
 const COLORS = [
   { id: 'brand', label: 'Brand', css: 'var(--nx-b1)' },
@@ -207,31 +195,17 @@ export function SiteSettingsPanel() {
         </ul>
       </Panel>
 
-      {/* ── feature flags ── */}
-      <Panel icon="sliders" title="Feature flags" description="Switch whole sections off. You still see everything — preview as a member to check.">
-        <ul className="-my-1 divide-y divide-[color:var(--nx-hair)]">
-          {(Object.keys(FEATURE_LABELS) as FeatureFlag[]).map((f) => (
-            <li key={f} className="flex items-center gap-3 py-2.5">
-              <span className="desk-glyph desk-glyph-sm" data-on={s.feature_flags[f] || undefined}>
-                <Icon name={FLAG_META[f].icon} className="size-4" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="flex items-center gap-2 text-[13.5px] font-medium text-text-primary">
-                  {FEATURE_LABELS[f]}
-                  {!s.feature_flags[f] && <Chip tone="warning">off</Chip>}
-                </span>
-                <span className="block text-xs text-text-muted">{FLAG_META[f].hint}</span>
-              </span>
-              <Toggle
-                label={FEATURE_LABELS[f]}
-                checked={s.feature_flags[f]}
-                disabled={busy === `flag:${f}`}
-                onChange={(v) => act(`flag:${f}`, () => api.put('/api/admin/site/flags', { [f]: v }), `${FEATURE_LABELS[f]} ${v ? 'on' : 'off'}`, refetch)}
-              />
-            </li>
-          ))}
-        </ul>
-      </Panel>
+      {/* ── sections: now in Admin → Site map ── */}
+      <Panel
+        icon="map"
+        title="Sections"
+        description="Show or hide each part of the site (or make it staff only, or coming soon) in the Site map."
+        actions={
+          <Link to="/admin?section=sitemap" className="nx-btn" data-size="sm">
+            Open the Site map
+          </Link>
+        }
+      />
 
       {/* ── registrations + maintenance ── */}
       <Panel

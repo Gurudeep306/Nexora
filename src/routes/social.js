@@ -29,6 +29,7 @@ const { getSessionUser } = require("../middleware/auth");
 const { can } = require("../authz/permissions");
 const content = require("../authz/content");
 const { persistUpload } = require("../upload-store");
+const { isSetAvatar } = require("../avatar-set");
 const { getCatalog, byId: catalogById } = require("../problem-catalog");
 const { sharedCache } = require("../shared-cache");
 
@@ -55,7 +56,13 @@ const IMAGE_MAX_BYTES = 2 * 1024 * 1024; // same as avatars (src/routes/auth.js)
 const PAGE = 15;
 const DAY = 86400000;
 const CODE_LANGS = new Set(["cpp", "c", "python", "java", "javascript", "typescript", "go", "rust", "kotlin", "sql", "bash", "text"]);
-const COVER_PRESETS = new Set(["plain", "aurora", "nebula", "ember", "lagoon", "orchid", "graphite", "dawn", "matrix"]);
+// Profile covers (client/src/components/profile/covers.tsx). The old ids stay
+// valid: covers saved before show the closest new one.
+const COVER_PRESETS = new Set([
+  "plain", "topography", "circuit-board", "waves", "life", "bubbles", "jigsaw", "temple", "four-point-stars",
+  "overlapping-circles", "endless-clouds", "wiggle", "autumn", "kiwi", "lines-in-motion",
+  "aurora", "nebula", "ember", "lagoon", "orchid", "graphite", "matrix", "dawn",
+]);
 const ACCENTS = new Set(["brand", "info", "success", "warning", "danger"]);
 const NAME_RE = /^[A-Za-z0-9_]{1,40}$/;
 const TAG_RE = /(^|[^\w&/#])#([A-Za-z][A-Za-z0-9_]{1,39})/g;
@@ -1325,7 +1332,7 @@ function createSocialRouter(deps) {
 
   async function profileCard(req, username) {
     const row = await get(
-      `SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.bio, u.status, u.role, u.verified, u.created_at, u.last_seen,
+      `SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.bio, u.status, u.role, u.verified, u.team_title, u.created_at, u.last_seen,
          sp.cover, sp.accent, sp.location, sp.pronouns, sp.website, sp.links, sp.visibility, sp.pinned,
          (SELECT COUNT(*) FROM social_follows f WHERE f.followee = u.username AND f.status = 'accepted') AS followers,
          (SELECT COUNT(*) FROM social_follows f WHERE f.follower = u.username AND f.status = 'accepted') AS following,
@@ -1358,6 +1365,8 @@ function createSocialRouter(deps) {
           status: row.status,
           role: row.role || "member",
           verified: !!row.verified,
+          // Staff only: the job title the owner gave them (Admin → Staff access).
+          team_title: (row.role && row.role !== "member") || row.team_title ? row.team_title || null : null,
           created_at: row.created_at,
           last_seen: visible ? row.last_seen : null,
           cover: row.cover || "plain",
@@ -1603,6 +1612,26 @@ function createSocialRouter(deps) {
       }
       if (b.bio !== undefined) {
         await run("UPDATE users SET bio = ? WHERE username = ?", [cleanText(b.bio, 280, "Bio"), u]);
+      }
+      // The picture: one of the avatar set, and/or a photo. A photo must be one
+      // this account uploaded (POST /api/user/avatar names files <username>_<time>);
+      // "" removes the photo so the avatar shows.
+      if (b.avatar !== undefined || b.avatar_url !== undefined) {
+        const row = await get("SELECT avatar, avatar_url FROM users WHERE username = ?", [u]);
+        let avatar = row?.avatar ?? null;
+        let photo = row?.avatar_url ?? null;
+        if (b.avatar !== undefined) {
+          if (!isSetAvatar(b.avatar)) bad("Pick one of the avatars");
+          avatar = b.avatar;
+        }
+        if (b.avatar_url !== undefined) {
+          const url = String(b.avatar_url || "");
+          const esc = u.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          if (url && url !== row?.avatar_url && !new RegExp(`^/uploads/${esc}_\\d+\\.(png|jpg|webp)$`).test(url)) bad("Upload the photo first");
+          photo = url || null;
+        }
+        await run("UPDATE users SET avatar = ?, avatar_url = ? WHERE username = ?", [avatar, photo, u]);
+        if (req.session?.user) req.session.user = { ...req.session.user, avatar, avatar_url: photo };
       }
       await run(
         `INSERT INTO social_profiles(username, cover, accent, location, pronouns, website, links, visibility, pinned, updated_at)

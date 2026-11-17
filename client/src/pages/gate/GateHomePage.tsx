@@ -34,6 +34,8 @@ import { QuestionRow } from '@/gate/insights/QuestionRow'
 import { OutcomeDot, TestLine } from '@/gate/insights/TestLine'
 import { useNexusWeb } from '@/components/nexus/SubjectsHub'
 import { subjectHref } from '@/components/nexus/course'
+import { Discover } from '@/components/today/Discover'
+import { discoverPool } from '@/lib/discover'
 
 const QUESTIONS_PER_HOUR = 6
 
@@ -222,6 +224,21 @@ function TodayPlan({ summary }: { summary: GateSummary | null }) {
   const [exam] = useGateExam()
   const { plan } = useStudyPlan()
   const inputs = usePlanInputs(exam)
+  const subjects = useSubjects(exam)
+  const web = useNexusWeb()
+  const examSubjects = useMemo(() => new Set((web.structure?.hubs?.gate?.[exam === 'DA' ? 'DA' : 'CSE'] ?? []).map((h) => h.nexus)), [web.structure, exam])
+  // With no plan for today: picks from every GATE subject, topic and set of
+  // notes, changing every few hours (and on Shuffle).
+  const pool = useMemo(
+    () =>
+      discoverPool({
+        // Only this exam's subjects (Machine Learning is GATE DA, not CSE).
+        clusters: (web.clusters ?? []).filter((c) => examSubjects.has(c.id) && (c.gate?.pyq || c.gate?.notes)),
+        gate: subjects.list,
+        links: { subject: subjectHref, practice: ({ subject, topic }) => practiceLink({ exam, subject, topic }) },
+      }),
+    [web.clusters, subjects.list, exam, examSubjects],
+  )
 
   const today = useMemo(() => {
     if (!plan || !inputs.subjects.length) return null
@@ -237,7 +254,7 @@ function TodayPlan({ summary }: { summary: GateSummary | null }) {
     return g.days.find((d) => d.date >= key) ?? null
   }, [plan, inputs, summary])
 
-  const when = today && today.date !== dayKey() ? `Next study day: ${new Date(`${today.date}T00:00:00`).toLocaleDateString(undefined, { weekday: 'long' })}` : 'From your study plan'
+  const when = !plan ? 'Picks for now' : today && today.date !== dayKey() ? `Next study day: ${new Date(`${today.date}T00:00:00`).toLocaleDateString(undefined, { weekday: 'long' })}` : 'From your study plan'
   return (
     <div className="gh-plan-body">
       <div className="gh-plan-head">
@@ -249,16 +266,20 @@ function TodayPlan({ summary }: { summary: GateSummary | null }) {
       </div>
       {!plan ? (
         <div className="gh-plan-empty">
-          <p className="ed-serif text-[20px] text-text-primary">No study plan yet.</p>
-          <p className="mt-1 max-w-md text-[13.5px] text-text-secondary">
-            Tell the planner your exam date and hours, and it splits the syllabus by weightage and your weak spots.{' '}
+          <p className="max-w-md text-[13.5px] text-text-secondary">
+            No study plan yet: here are a few picks for now.{' '}
             <Link to={GATE_ROUTES.planner} className="gp-link font-semibold text-text-primary">
               Build my plan
-            </Link>
+            </Link>{' '}
+            and the planner splits the syllabus by weightage and your weak spots.
           </p>
+          <Discover pool={pool} scope={`gate:${exam}`} label="Try today" className="mt-4" />
         </div>
       ) : !today ? (
-        <p className="gh-plan-empty text-[13.5px] text-text-secondary">Nothing scheduled. Enjoy the break, or add study days in the planner.</p>
+        <div className="gh-plan-empty">
+          <p className="text-[13.5px] text-text-secondary">Nothing scheduled today. Enjoy the break, or try one of these.</p>
+          <Discover pool={pool} scope={`gate:${exam}`} label="Try today" className="mt-4" />
+        </div>
       ) : (
         <ol className="gh-tasks">
           {today.tasks.map((t, i) => (

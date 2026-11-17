@@ -10,6 +10,7 @@ import { Icon } from '@/components/icon/Icon'
 import { Modal } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { GATE_NAV, activeNavId } from './nav'
+import { useSite } from '@/context/SiteContext'
 
 function Badge({ n, active }: { n: number; active?: boolean }) {
   if (!n) return null
@@ -27,6 +28,8 @@ function Badge({ n, active }: { n: number; active?: boolean }) {
 
 export function GateNav({ reviewDue = 0 }: { reviewDue?: number }) {
   const { pathname } = useLocation()
+  // Parts closed in Admin → Site map (e.g. Notes) leave the tabs.
+  const { pathOn } = useSite()
   const active = activeNavId(pathname)
   const scroller = useRef<HTMLUListElement>(null)
   const [edges, setEdges] = useState({ left: false, right: false })
@@ -73,7 +76,7 @@ export function GateNav({ reviewDue = 0 }: { reviewDue?: number }) {
             onKeyDown={onKey}
             className="flex items-center gap-0.5 overflow-x-auto overscroll-x-contain scroll-smooth py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
-            {GATE_NAV.map((item) => {
+            {GATE_NAV.filter((item) => pathOn(item.to)).map((item) => {
               const on = item.id === active
               return (
                 <li key={item.id} className="shrink-0">
@@ -120,7 +123,7 @@ export function GateNav({ reviewDue = 0 }: { reviewDue?: number }) {
 
       <Modal open={sheet} onClose={() => setSheet(false)} title="GATE sections" size="md">
         <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {GATE_NAV.map((item) => {
+          {GATE_NAV.filter((item) => pathOn(item.to)).map((item) => {
             const on = item.id === active
             return (
               <li key={item.id}>
