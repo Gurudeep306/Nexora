@@ -313,7 +313,7 @@ export function StaffSetDialog({ onClose, kind: initial = 'series' }: { onClose:
           </Select>
         </Field>
         <Field label="Name">
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={100} placeholder={kind === 'series' ? 'A well-known sheet' : 'Asked at the company'} required />
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={100} placeholder={kind === 'series' ? 'A well-known sheet' : 'The company, e.g. Google'} required />
         </Field>
         {kind === 'company' && (
           <Field label="Company">
