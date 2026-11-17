@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Building2, Heart, Lock, Plus } from 'lucide-react'
-import { BackButton, Button, Card, CardContent, EmptyState, ErrorState, Input, LoadingBlock, Modal, PageHeader, Progress, SearchInput, Tabs, Textarea, useToast } from '@/components/ui'
-import { ToggleRow } from '@/components/account/SettingsPrimitives'
+import { BackButton, Button, Card, CardContent, EmptyState, ErrorState, LoadingBlock, PageHeader, Progress, SearchInput, Tabs } from '@/components/ui'
+import { NewSetDialog, StaffSetDialog } from '@/components/problems/sets/SetDialogs'
+import { useSite } from '@/context/SiteContext'
 import { useAuth } from '@/context/AuthContext'
 import { useApi } from '@/hooks/useApi'
-import { ApiError, api } from '@/lib/api'
+import { api } from '@/lib/api'
 import { setPath, type SetCard, type SetList, type SetTab } from '@/lib/problemSets'
 import { cn } from '@/lib/utils'
 
@@ -27,6 +28,10 @@ export default function ProblemSetsPage() {
   const tab = (TABS.find((t) => t.id === params.get('tab'))?.id ?? 'public') as SetTab
   const [q, setQ] = useState('')
   const [creating, setCreating] = useState(false)
+  const [staffAdding, setStaffAdding] = useState(false)
+  const { can } = useSite()
+  const staff = !!user && can('problems.manage')
+  const staffTab = tab === 'series' || tab === 'company'
   const query = q.trim()
   const list = useApi(
     () => api.get<SetList>('/api/problem-sets', { query: { tab, q: query || undefined } }),
@@ -55,9 +60,15 @@ export default function ProblemSetsPage() {
         subtitle="Lists of problems to work through, one at a time. Make your own, or follow one."
         actions={
           user ? (
-            <Button size="sm" onClick={() => setCreating(true)}>
-              <Plus aria-hidden="true" /> New set
-            </Button>
+            staff && staffTab ? (
+              <Button size="sm" onClick={() => setStaffAdding(true)}>
+                <Plus aria-hidden="true" /> {tab === 'series' ? 'Add a series' : 'Add a company list'}
+              </Button>
+            ) : (
+              <Button size="sm" onClick={() => setCreating(true)}>
+                <Plus aria-hidden="true" /> New set
+              </Button>
+            )
           ) : undefined
         }
       />
@@ -121,6 +132,7 @@ export default function ProblemSetsPage() {
         </>
       )}
       {creating && <NewSetDialog onClose={() => setCreating(false)} />}
+      {staffAdding && <StaffSetDialog kind={tab === 'company' ? 'company' : 'series'} onClose={() => setStaffAdding(false)} />}
     </div>
   )
 }
@@ -153,59 +165,5 @@ function SetCardView({ s }: { s: SetCard }) {
         </CardContent>
       </Card>
     </Link>
-  )
-}
-
-/** Make a set: a name, a line about it, private or shared. */
-export function NewSetDialog({ onClose, problemId }: { onClose: () => void; problemId?: number }) {
-  const toast = useToast()
-  const navigate = useNavigate()
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [shared, setShared] = useState(false)
-  const [busy, setBusy] = useState(false)
-  const save = async () => {
-    setBusy(true)
-    try {
-      const r = await api.post<{ id: string }>('/api/problem-sets', { title, description, visibility: shared ? 'public' : 'private', problemIds: problemId ? [problemId] : [] })
-      toast.success('Set made', problemId ? 'This problem is in it.' : 'Add problems from Problems or the Solve page.')
-      onClose()
-      if (!problemId) navigate(setPath(r.id))
-    } catch (e) {
-      toast.error("Couldn't make the set", e instanceof ApiError ? e.message : undefined)
-    } finally {
-      setBusy(false)
-    }
-  }
-  return (
-    <Modal open onClose={onClose} title="New problem set" size="md">
-      <form
-        className="space-y-4"
-        onSubmit={(e) => {
-          e.preventDefault()
-          void save()
-        }}
-      >
-        <label className="block">
-          <span className="mb-1.5 block text-sm font-medium text-text-primary">Name</span>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={100} placeholder="Graphs before the contest" required />
-        </label>
-        <label className="block">
-          <span className="mb-1.5 flex items-baseline justify-between text-sm font-medium text-text-primary">
-            About it <span className="text-xs font-normal text-text-muted">Optional</span>
-          </span>
-          <Textarea value={description} onChange={(e) => setDescription(e.target.value)} maxLength={500} rows={2} placeholder="What it's for, how to use it" />
-        </label>
-        <ToggleRow label="Share it" hint="Anyone can see and like it. You can change this later." checked={shared} onChange={setShared} />
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="ghost" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button type="submit" loading={busy} disabled={title.trim().length < 2}>
-            Make the set
-          </Button>
-        </div>
-      </form>
-    </Modal>
   )
 }
