@@ -82,7 +82,7 @@ function useIsDesktop() {
   }, [])
   return v
 }
-import { parseDiagnostics } from '@/lib/diagnostics'
+import { explainError, parseDiagnostics, type Diag } from '@/lib/diagnostics'
 
 /* Workshop statements are "plain text or HTML" — render both safely */
 function richText(raw: string | undefined): string {
@@ -533,12 +533,18 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
 
   /* Line-accurate markers for the editor gutter (compile errors + runtime crashes) */
   const diagnostics = useMemo(() => {
-    if (judgeResult?.compileError) return parseDiagnostics(judgeResult.compileError)
+    if (judgeResult?.compileError) return parseDiagnostics(judgeResult.compileError, language)
     if (runResult && runResult.verdict !== 'OK') {
-      return parseDiagnostics([runResult.error, runResult.stderr].filter(Boolean).join('\n'))
+      return parseDiagnostics([runResult.error, runResult.stderr].filter(Boolean).join('\n'), language)
     }
     return []
-  }, [judgeResult, runResult])
+  }, [judgeResult, runResult, language])
+  /* An error the runner gave no line for (a C++ exception, a crash): still say what it means. */
+  const errorHint = useMemo(() => {
+    if (diagnostics.some((d) => d.hint)) return null
+    const text = judgeResult?.compileError || (runResult && runResult.verdict !== 'OK' ? [runResult.error, runResult.stderr].filter(Boolean).join('\n') : '')
+    return text ? explainError(text, language) : null
+  }, [diagnostics, judgeResult, runResult, language])
 
   const handleAiFix = useCallback(async () => {
     if (fixing || !code.trim()) return
@@ -604,7 +610,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     statement: coachStatement,
     template: DEFAULT_CODE(language),
   })
-  const allDiagnostics = useMemo(() => {
+  const allDiagnostics = useMemo((): Diag[] => {
     const ai = (coach.insight?.issues ?? [])
       .filter((i) => i.line && i.line > 0 && i.severity !== 'info')
       .map((i) => ({ line: i.line as number, column: 1, message: `Coach: ${i.message}`, severity: i.severity === 'error' ? ('error' as const) : ('warning' as const) }))
@@ -988,7 +994,11 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
           >
             <span className={cn('mt-1 size-1.5 shrink-0 rounded-full', d.severity === 'error' ? 'bg-destructive' : 'bg-warning')} aria-hidden="true" />
             <span className="shrink-0 font-mono text-foreground-faint tabular-nums">Ln {d.line}</span>
-            <span className="min-w-0 text-foreground-dim">{d.message}</span>
+            <span className="min-w-0 text-foreground-dim">
+              {d.hint && <span className="font-semibold text-foreground">{d.hint.label} · </span>}
+              {d.message}
+              {d.hint && <span className="mt-0.5 block text-foreground-faint">What it means: {d.hint.text}</span>}
+            </span>
           </button>
         </li>
       ))}
@@ -1105,6 +1115,12 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       </div>
     ) : (
       <div className="space-y-3">
+        {errorHint && !running && !submitting && (
+          <div className="mx-3 mt-3 rounded-lg border border-hairline/[0.05] bg-bg-field px-3 py-2 text-xs" role="note">
+            <p className="m-0 font-semibold text-foreground">What it means: {errorHint.label}</p>
+            <p className="m-0 mt-0.5 text-foreground-dim">{errorHint.text}</p>
+          </div>
+        )}
         {allDiagnostics.length > 0 && (
           <div className="px-3 pt-3">
             <p className="mb-1.5 text-[12px] font-semibold text-foreground-faint">

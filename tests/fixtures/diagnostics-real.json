@@ -1,0 +1,226 @@
+{
+ "cpp": {
+  "compile": {
+   "engine": "wandbox",
+   "verdict": "CE",
+   "stderr": "prog.cc: In function 'int main()':\nprog.cc:4:3: error: expected ',' or ';' before 'std'\n    4 |   std::cout << b;\n      |   ^~~",
+   "code": "#include <iostream>\nint main(){\n  int a = 1\n  std::cout << b;\n}"
+  },
+  "runtime": {
+   "engine": "wandbox",
+   "verdict": "RE",
+   "stderr": "terminate called after throwing an instance of 'std::out_of_range'\n  what():  vector::_M_range_check: __n (which is 5) >= this->size() (which is 3)",
+   "code": "#include <vector>\n#include <iostream>\nint main(){\n  std::vector<int> v(3);\n  std::cout << v.at(5);\n}"
+  }
+ },
+ "c": {
+  "compile": {
+   "engine": "wandbox",
+   "verdict": "CE",
+   "stderr": "prog.c: In function 'main':\nprog.c:3:16: error: 'x' undeclared (first use in this function)\n    3 |   printf(\"%d\", x);\n      |                ^\nprog.c:3:16: note: each undeclared identifier is reported only once for each function it appears in",
+   "code": "#include <stdio.h>\nint main(){\n  printf(\"%d\", x);\n}"
+  },
+  "runtime": {
+   "engine": "wandbox",
+   "verdict": "RE",
+   "stderr": "",
+   "code": "#include <stdio.h>\nint main(){\n  int z=0;\n  printf(\"%d\", 5/z);\n}"
+  }
+ },
+ "java": {
+  "compile": {
+   "engine": "wandbox",
+   "verdict": "CE",
+   "stderr": "prog.java:3: error: incompatible types: String cannot be converted to int\n    int x = \"s\";\n            ^\n1 error",
+   "code": "public class Main{\n  public static void main(String[] a){\n    int x = \"s\";\n  }\n}"
+  },
+  "runtime": {
+   "engine": "wandbox",
+   "verdict": "RE",
+   "stderr": "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 2\n\tat Main.main(prog.java:4)",
+   "code": "public class Main{\n  public static void main(String[] a){\n    int[] v=new int[2];\n    System.out.println(v[3]);\n  }\n}"
+  }
+ },
+ "python": {
+  "compile": {
+   "engine": "godbolt",
+   "verdict": "RE",
+   "stderr": "File \"<source>\", line 1\n    def f(:\n          ^\nSyntaxError: invalid syntax",
+   "code": "def f(:\n  pass\n"
+  },
+  "runtime": {
+   "engine": "godbolt",
+   "verdict": "RE",
+   "stderr": "Traceback (most recent call last):\n  File \"<source>\", line 2, in <module>\n    print(a[3])\n          ~^^^\nIndexError: list index out of range",
+   "code": "a=[1]\nprint(a[3])\n"
+  }
+ },
+ "javascript": {
+  "compile": {
+   "engine": "paiza",
+   "verdict": "RE",
+   "stderr": "/workspace/Main.js:1\nlet a = ;\n        ^\n\nSyntaxError: Unexpected token ';'\n    at Object.compileFunction (node:vm:360:18)\n    at wrapSafe (node:internal/modules/cjs/loader:1055:15)\n    at Module._compile (node:internal/modules/cjs/loader:1090:27)\n    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1180:10)\n    at Module.load (node:internal/modules/cjs/loader:1004:32)\n    at Function.Module._load (node:internal/modules/cjs/loader:839:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)\n    at node:internal/main/run_main_module:17:47",
+   "code": "let a = ;\n"
+  },
+  "runtime": {
+   "engine": "paiza",
+   "verdict": "RE",
+   "stderr": "/workspace/Main.js:2\nconsole.log(a.x);\n              ^\n\nTypeError: Cannot read properties of null (reading 'x')\n    at Object.<anonymous> (/workspace/Main.js:2:15)\n    at Module._compile (node:internal/modules/cjs/loader:1126:14)\n    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1180:10)\n    at Module.load (node:internal/modules/cjs/loader:1004:32)\n    at Function.Module._load (node:internal/modules/cjs/loader:839:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)\n    at node:internal/main/run_main_module:17:47",
+   "code": "const a=null;\nconsole.log(a.x);\n"
+  }
+ },
+ "typescript": {
+  "compile": {
+   "engine": "paiza",
+   "verdict": "CE",
+   "stderr": "Main.ts(1,5): error TS2322: Type 'string' is not assignable to type 'number'.",
+   "code": "let a: number = \"s\";\nconsole.log(a);\n"
+  },
+  "runtime": {
+   "engine": "paiza",
+   "verdict": "RE",
+   "stderr": "/workspace/Main.ts:2\nconsole.log(a.x);\n              ^\n\nTypeError: Cannot read properties of null (reading 'x')\n    at Object.<anonymous> (/workspace/Main.ts:2:15)\n    at Module._compile (node:internal/modules/cjs/loader:1126:14)\n    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1180:10)\n    at Module.load (node:internal/modules/cjs/loader:1004:32)\n    at Function.Module._load (node:internal/modules/cjs/loader:839:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)\n    at node:internal/main/run_main_module:17:47",
+   "code": "const a: any = null;\nconsole.log(a.x);\n"
+  }
+ },
+ "go": {
+  "compile": {
+   "engine": "godbolt",
+   "verdict": "CE",
+   "stderr": "# command-line-arguments\n./example.go:4:15: undefined: x",
+   "code": "package main\nimport \"fmt\"\nfunc main(){\n  fmt.Println(x)\n}"
+  },
+  "runtime": {
+   "engine": "godbolt",
+   "verdict": "RE",
+   "stderr": "panic: runtime error: index out of range [3] with length 1\n\ngoroutine 1 [running]:\nmain.main()\n\t./example.go:6 +0x17",
+   "code": "package main\nimport \"fmt\"\nfunc main(){\n  v:=[]int{1}\n  i:=3\n  fmt.Println(v[i])\n}"
+  }
+ },
+ "rust": {
+  "compile": {
+   "engine": "wandbox",
+   "verdict": "CE",
+   "stderr": "error[E0308]: mismatched types\n --> prog.rs:2:16\n  |\n2 |   let a: i32 = \"s\";\n  |          ---   ^^^ expected `i32`, found `&str`\n  |          |\n  |          expected due to this\n\nerror: aborting due to 1 previous error\n\nFor more information about this error, try `rustc --explain E0308`.",
+   "code": "fn main(){\n  let a: i32 = \"s\";\n}"
+  },
+  "runtime": {
+   "engine": "godbolt",
+   "verdict": "RE",
+   "stderr": "thread 'main' panicked at /app/example.rs:4:18:\nindex out of bounds: the len is 1 but the index is 3\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+   "code": "fn main(){\n  let v=vec![1];\n  let i=std::env::args().count()+2;\n  println!(\"{}\",v[i]);\n}"
+  }
+ },
+ "csharp": {
+  "compile": {
+   "engine": "godbolt",
+   "verdict": "CE",
+   "stderr": "<source>(2,11): error CS0029: Cannot implicitly convert type 'string' to 'int'",
+   "code": "class P{static void Main(){\n  int a = \"s\";\n}}"
+  },
+  "runtime": {
+   "engine": "godbolt",
+   "verdict": "RE",
+   "stderr": "Unhandled exception. System.IndexOutOfRangeException: Index was outside the bounds of the array.\n   at P.Main() in /app/example.cs:line 2\nProgram terminated with signal SIGABRT (6)",
+   "code": "class P{static void Main(){\n  int[] v=new int[1];\n  System.Console.WriteLine(v[3]);\n}}"
+  }
+ },
+ "kotlin": {
+  "compile": {
+   "engine": "kotlin",
+   "verdict": "CE",
+   "stderr": "File.kt:2:14: error: Initializer type mismatch: expected 'Int', actual 'String'.",
+   "code": "fun main(){\n  val a: Int = \"s\"\n}"
+  },
+  "runtime": {
+   "engine": "kotlin",
+   "verdict": "RE",
+   "stderr": "java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 1\n    at FileKt.main(File.kt:3)",
+   "code": "fun main(){\n  val v=IntArray(1)\n  println(v[3])\n}"
+  }
+ },
+ "swift": {
+  "compile": {
+   "engine": "godbolt",
+   "verdict": "CE",
+   "stderr": "error: emit-module command failed with exit code 1 (use -v to see invocation)\n<source>:1:14: error: cannot convert value of type 'String' to specified type 'Int'\n1 | let a: Int = \"s\"\n  |              `- error: cannot convert value of type 'String' to specified type 'Int'\n2 | print(a)\n3 |",
+   "code": "let a: Int = \"s\"\nprint(a)\n"
+  },
+  "runtime": {
+   "engine": "godbolt",
+   "verdict": "RE",
+   "stderr": "*** Signal 4: Backtracing from 0x60f0c223ae00... done ***\n\n*** Program crashed: Illegal instruction at 0x000060f0c223ae00 ***\n\nPlatform: x86_64 Linux (Ubuntu 24.04.5 LTS)\n\nThread 0 \"output.s\" crashed:\n\n  0 [inlined] [system] 0x000060f0c223ae00 specialized Array.subscript.getter in output.s at //<compiler-generated>\n  1                    0x000060f0c223ae00 main + 176 in output.s at /app/example.swift:3:8\n  2 [ra]               0x0000714ba502a28b <unknown> in libc.so.6\n...\n\n\nRegisters:\n\nrax 0x0000714ba5bc2698  00 02 00 00 00 00 00 00 f4 b7 c0 a5 4b 71 00 00  ········ô·À¥Kq··\nrdx 0x000060f0c223d058  68 93 bc a5 4b 71 00 00 ff ff ff ff 04 00 00 80  h·¼¥Kq··ÿÿÿÿ····\nrcx 0x0000000000000001  1\nrbx 0x000060f0c8020010  03 00 02 00 02 00 01 00 01 00 01 00 00 00 01 00  ················\nrsi 0x0000000000000013  19\nrdi 0x000060f0c8032fa0  32 80 0c 0f 06 00 00 00 d6 ba 8e 87 75 28 f5 b1  2·······Öº··u(õ±\nrbp 0x00007fffb8d15ab0  10 5b d1 b8 ff 7f 00 00 8b a2 02 a5 4b 71 00 00  ·[Ñ¸ÿ····¢·¥Kq··\nrsp 0x00007fffb8d15a00  50 ad 23 c2 f0 60 00 00 38 5b d1 b8 ff 7f 00 00  P­#Âð`··8[Ñ¸ÿ···\n r8 0x0000000000000002  2\n r9 0x000000001eb19678  514954872\nr10 0x0000714ba5623fd8  6e d3 08 00 12 03 0c 00 c0 fc 46 00 00 00 00 00  nÓ······ÀüF·····\nr11 0x0000714ba5a57cc0  55 48 89 e5 53 50 48 89 fb 48 8b 05 78 8d 18 00  UH·åSPH·ûH··x···\nr12 0x0000000000000001  1\nr13 0x0000000000000000  0\nr14 0x000060f0c8032ff0  08 8b bc a5 4b 71 00 00 03 00 00 00 00 00 00 00  ··¼¥Kq··········\nr15 0x0000714ba5d3f000  e0 02 d4 a",
+   "code": "let v=[1]\nlet i=Int(\"3\")!\nprint(v[i])\n"
+  }
+ },
+ "ruby": {
+  "compile": {
+   "engine": "godbolt",
+   "verdict": "RE",
+   "stderr": "<source>: --> <source>\n\nUnmatched `(', missing `)' ?\n\n> 1  def f(\n> 3  end\n\n<source>:2: syntax error found (SyntaxError)\n  1 | def f(\n> 2 |   1\n    |   ^ unexpected integer; expected a `)` to close the parameters\n  3 | end",
+   "code": "def f(\n  1\nend\n"
+  },
+  "runtime": {
+   "engine": "godbolt",
+   "verdict": "RE",
+   "stderr": "<source>:2:in '<main>': undefined method 'upcase' for nil (NoMethodError)\n\nputs a.upcase\n      ^^^^^^^",
+   "code": "a=nil\nputs a.upcase\n"
+  }
+ },
+ "php": {
+  "compile": {
+   "engine": "paiza",
+   "verdict": "RE",
+   "stderr": "PHP Parse error:  syntax error, unexpected token \";\" in /workspace/Main.php on line 2",
+   "code": "<?php\n$a = ;\n"
+  },
+  "runtime": {
+   "engine": "wandbox",
+   "verdict": "RE",
+   "stderr": "",
+   "code": "<?php\nfunction f(){ throw new Exception(\"boom\"); }\nf();\n"
+  }
+ },
+ "perl": {
+  "compile": {
+   "engine": "godbolt",
+   "verdict": "RE",
+   "stderr": "syntax error at <source> line 1, near \"= ;\"\nExecution of <source> aborted due to compilation errors.",
+   "code": "my $a = ;\n"
+  },
+  "runtime": {
+   "engine": "godbolt",
+   "verdict": "RE",
+   "stderr": "Illegal division by zero at <source> line 2.",
+   "code": "my $z=0;\nprint 5/$z;\n"
+  }
+ },
+ "lua": {
+  "compile": {
+   "engine": "godbolt",
+   "verdict": "RE",
+   "stderr": "/opt/compiler-explorer/lua-5.4.7/bin/lua: <source>:2: unexpected symbol near <eof>",
+   "code": "local a = \n"
+  },
+  "runtime": {
+   "engine": "godbolt",
+   "verdict": "RE",
+   "stderr": "/opt/compiler-explorer/lua-5.4.7/bin/lua: <source>:2: attempt to index a nil value (local 't')\nstack traceback:\n\t<source>:2: in main chunk\n\t[C]: in ?",
+   "code": "local t=nil\nprint(t.x)\n"
+  }
+ },
+ "haskell": {
+  "compile": {
+   "engine": "godbolt",
+   "verdict": "CE",
+   "stderr": "<source>:1:18: error: [GHC-39999]\n    * No instance for `Num String' arising from the literal `1'\n    * In the first argument of `(+)', namely `1'\n      In the first argument of `putStrLn', namely `(1 + \"a\")'\n      In the expression: putStrLn (1 + \"a\")\n  |\n1 | main = putStrLn (1 + \"a\")\n  |                  ^",
+   "code": "main = putStrLn (1 + \"a\")\n"
+  },
+  "runtime": {
+   "engine": "godbolt",
+   "verdict": "RE",
+   "stderr": "output.s: Prelude.head: empty list\nCallStack (from HasCallStack):\n  error, called at libraries/ghc-internal/src/GHC/Internal/List.hs:2030:3 in ghc-internal:GHC.Internal.List\n  errorEmptyList, called at libraries/ghc-internal/src/GHC/Internal/List.hs:96:11 in ghc-internal:GHC.Internal.List\n  badHead, called at libraries/ghc-internal/src/GHC/Internal/List.hs:90:28 in ghc-internal:GHC.Internal.List\n  head, called at /app/example.hs:1:15 in main:Main\nHasCallStack backtrace:\n  collectBacktraces, called at libraries/ghc-internal/src/GHC/Internal/Exception.hs:169:13 in ghc-internal:GHC.Internal.Exception\n  toExceptionWithBacktrace, called at libraries/ghc-internal/src/GHC/Internal/Exception.hs:204:5 in ghc-internal:GHC.Internal.Exception\n  error, called at libraries/ghc-internal/src/GHC/Internal/List.hs:2030:3 in ghc-internal:GHC.Internal.List\n  errorEmptyList, called at libraries/ghc-internal/src/GHC/Internal/List.hs:96:11 in ghc-internal:GHC.Internal.List\n  badHead, called at libraries/ghc-internal/src/GHC/Internal/List.hs:90:28 in ghc-internal:GHC.Internal.List\n  head, called at /app/example.hs:1:15 in main:Main",
+   "code": "main = print (head ([] :: [Int]))\n"
+  }
+ }
+}
