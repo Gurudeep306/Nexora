@@ -134,7 +134,11 @@ test("AtCoder: English section, MiB limits, numbered samples and <var> math", ()
   assert.match(s.note, /1\+2\+3 = 6/);
   const norm = normalizeStatement(s, { platform: "atcoder" });
   assert.match(norm.statement, /\$\$\$1 \\leq N \\leq 100\$\$\$/);
-  assert.match(norm.inputSpec, /<pre><var>N<\/var><\/pre>/, "math inside <pre> is left alone");
+  // The input format is <pre><var>N \ K</var></pre> on AtCoder: <var> is always maths
+  // (samples never use it), so it is rendered there too, never shown as raw TeX.
+  assert.match(norm.inputSpec, /<pre>\$\$\$N\$\$\$<\/pre>/, "<var> inside the input-format <pre> becomes a formula");
+  const fmt = normalizeStatement({ statement: '', inputSpec: '<pre><var>A_1 \\ A_2 \\ \\dots</var>\n1 $x$ 2</pre>', outputSpec: '', note: '' }, { platform: "atcoder" });
+  assert.equal(fmt.inputSpec, '<pre>$$$A_1 \\ A_2 \\ \\dots$$$\n1 $x$ 2</pre>', "only <var> changes: other text in <pre> is data");
 });
 
 test("AtCoder: difficulty uses AtCoder Problems' display formula, no invented tags", () => {
@@ -303,4 +307,21 @@ test('a bot-check page is reported as a block, not a bare HTTP error', async () 
   const plain = await httpError(res(404, 'not here'), 'https://cses.fi/x');
   assert.equal(plain.blocked, false);
   assert.equal(plain.message, 'HTTP 404 from cses.fi');
+});
+
+test("CSES's pandoc maths spans become formulas (they showed as raw TeX)", () => {
+  const { mathify } = require("../src/sources/math");
+  const html = '<p>For <span class="math math-inline">n=3</span>:</p><span class="math math-display"> 3 \\rightarrow 10 </span><ul><li><span class="math math-inline">1 \\le n \\le 10^6</span></li></ul><pre>$ not maths</pre>';
+  assert.equal(
+    mathify(html, "paren"),
+    '<p>For $$$n=3$$$:</p>$$$$$$3 \\rightarrow 10$$$$$$<ul><li>$$$1 \\le n \\le 10^6$$$</li></ul><pre>$ not maths</pre>',
+  );
+});
+
+test("Kattis formulas wrapped over lines and Euler's \"$\\operatorname{OP}$s\" render; prices stay text", () => {
+  const { mathify } = require("../src/sources/math");
+  assert.equal(mathify('<span class="tex2jax_process">$(x_i,\n    y_i)$</span>', "dollar"), '<span class="tex2jax_process">$$$(x_i, y_i)$$$</span>');
+  assert.equal(mathify("the $\\operatorname{OP}$s and the $k$th term", "dollar"), "the $$$\\operatorname{OP}$$$s and the $$$k$$$th term");
+  assert.equal(mathify("<p>It costs $5 and $10.</p>", "dollar"), "<p>It costs $5 and $10.</p>");
+  assert.equal(mathify("<p>$5-$10</p>", "dollar"), "<p>$5-$10</p>");
 });

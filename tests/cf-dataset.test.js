@@ -31,3 +31,22 @@ test("the attribution names the dataset and its licence", () => {
   assert.equal(ds.ATTRIBUTION.license, "CC BY 4.0");
   assert.match(ds.ATTRIBUTION.url, /huggingface\.co\/datasets\/open-r1\/codeforces$/);
 });
+
+test('a failed test download is remembered, so the page never says "being fetched" for ever', async () => {
+  process.env.NODE_ENV = 'test';
+  process.env.DB_PATH = process.env.DB_PATH || ':memory:';
+  const db = require('../src/db');
+  await db.initDb();
+  ds.setFetch(async () => { throw new Error('network down'); });
+  try {
+    assert.equal(ds.testsState('9993A'), null, 'nothing known yet');
+    const p = ds.fetchTests('9993A');
+    assert.equal(ds.testsState('9993A'), 'fetching', 'a download is running');
+    assert.equal(await p, null);
+    assert.equal(ds.testsState('9993A'), 'failed', 'it failed lately: no "being fetched now"');
+    assert.equal(await ds.fetchTests('9993A'), null, 'not tried again at once');
+    assert.equal(ds.testsState('9993A'), 'failed');
+  } finally {
+    ds.setFetch(null);
+  }
+});

@@ -1659,8 +1659,10 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
     let recordFor = null; // platform problem whose progress this verdict may update
     let redactHidden = false;
     let checker = null;
+    // What the verdict rests on: a judge's own full tests, or only the examples.
+    let coverage = null;
     if (problem_id) {
-      const prob = await get("SELECT id, platform, category FROM problems WHERE id=?", [problem_id]);
+      const prob = await get("SELECT id, platform, problem_id, category, url FROM problems WHERE id=?", [problem_id]);
       if (!prob || (prob.category === "__hidden" && !can(req, "problems.manage"))) return res.status(404).json({ ok: false, error: "Problem not found" });
       if (prob.platform === "nexora") {
         // An official NexoraGuru problem: its own tests (hidden ones are the
@@ -1669,7 +1671,22 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
         cases = official.cases;
         checker = official.checker;
         redactHidden = !can(req, "problems.manage");
-      } else cases = await problemTestcases(prob.id);
+      } else {
+        cases = await problemTestcases(prob.id);
+        // Official tests are only known for Codeforces (an open dataset); every
+        // other judge keeps its tests private, so the examples are all there is.
+        const official = cases.filter((c) => c.hidden).length;
+        coverage = { full: official > 0, official, judge: prob.platform, url: prob.url || null };
+        if (!official && prob.platform === "codeforces") {
+          const ds = require("./sources/cf-dataset");
+          const cached = await ds.cachedTests(prob.problem_id).catch(() => null);
+          // "Being fetched" only while a download really runs; a failed one says so.
+          if (cached == null) {
+            if (ds.testsState(prob.problem_id) === "failed") coverage.failed = true;
+            else coverage.pending = true;
+          }
+        }
+      }
       // With nothing stored there is nothing to check, so nothing to record.
       if (cases.length) recordFor = prob.id;
     } else if (custom_problem_id) {
@@ -1815,6 +1832,7 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
       ...result,
       ...(contest ? { contest } : {}),
       recorded: !!recordFor,
+      ...(coverage ? { coverage } : {}),
       ...(xpReport ? { xp: xpReport } : {}),
       ...(problem_id && !recordFor
         ? { message: "This problem has no testcases yet — import the samples or add one, then submit." }

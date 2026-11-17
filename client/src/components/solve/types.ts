@@ -148,6 +148,13 @@ export interface JudgeResponse {
   message?: string
   /** On Accepted: the XP this solve earned and the level before and after. */
   xp?: XpReport
+  /**
+   * Platform problems: what the verdict rests on. `full` = the judge's own
+   * tests ran (only Codeforces publishes them, via an open dataset); otherwise
+   * only the examples and your own tests did. `pending` = those tests are
+   * being fetched now (submit again shortly).
+   */
+  coverage?: { full: boolean; official: number; judge: string; url: string | null; pending?: boolean; failed?: boolean }
   /** Sent with contest_id: whether this run counted in that hosted contest. */
   contest?: { counted: boolean; reason?: string; contestId?: number; item?: number }
 }
