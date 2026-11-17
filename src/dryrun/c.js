@@ -143,6 +143,14 @@ async function instrumentC(source) {
     return `__NX_SC(${E})`;
   }
   const siteMk = (f) => `&(__nx_ty){${f}}`;
+  /**
+   * A pointer to numbers that the program never subscripts (p++, *p, *(p + 1))
+   * walks along an array: it is drawn as a pointer under that array's cell,
+   * not as an array of its own. One the program writes p[i] with stays an array.
+   */
+  const subscripted = new Set([...code.matchAll(/\b([A-Za-z_]\w*)\s*\[/g)].map((m) => m[1]));
+  const walker = (v) => v.p === 1 && v.d === 0 && !v.base.struct && !v.base.char && !v.base.void && !v.base.other && !subscripted.has(v.n);
+  const walkerDesc = (v) => siteMk(`.k=__NX_PAT,.esz=sizeof(${v.n}),.elem=__NX_SC(*(${v.n}))`);
 
   for (const s of defs) {
     const decls = [];
@@ -207,7 +215,7 @@ async function instrumentC(source) {
     const seen = new Set();
     const list = [];
     for (let i = scope.length - 1; i >= 0; i--) if (!seen.has(scope[i].n)) seen.add(scope[i].n) && list.unshift(scope[i]);
-    return list.map((v) => ` __nx_v("${v.n}", &${v.n}, ${desc(v.n, v, v.base, siteMk)})${sep}`).join('');
+    return list.map((v) => ` __nx_v("${v.n}", &${v.n}, ${walker(v) ? walkerDesc(v) : desc(v.n, v, v.base, siteMk)})${sep}`).join('');
   }
   const flushStmt = (scope) => `if (__nx_go(&__nx_f)) {${collect(scope)} __nx_send(&__nx_f); }`;
   const stepText = (line, scope) => `${flushStmt(scope)} __nx_f.pend = ${line}; `;

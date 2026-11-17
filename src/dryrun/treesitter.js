@@ -17,9 +17,13 @@ async function parserFor(name) {
   return p;
 }
 
-/** Apply edits ({ at, text }) to `src`; edits at the same place keep their order. */
+/**
+ * Insert text at positions in `src`. Inserts at the same position keep the
+ * order they were added in, unless one has a lower `o` (order key, default 0):
+ * that one comes first (an inner closing bracket before an outer one).
+ */
 function applyEdits(src, edits) {
-  const sorted = edits.map((e, i) => ({ ...e, i })).sort((a, b) => b.at - a.at || b.i - a.i);
+  const sorted = edits.map((e, i) => ({ ...e, i })).sort((a, b) => b.at - a.at || (b.o || 0) - (a.o || 0) || b.i - a.i);
   let out = src;
   for (const e of sorted) out = out.slice(0, e.at) + e.text + out.slice(e.at);
   return out;

@@ -39,6 +39,13 @@ const IO_NAMES = /^(next|nextInt|nextLong|nextNum|nextNumber|nextLine|nextToken|
 /** Callbacks that run the program's own logic, named after the method they are passed to. */
 const CALLBACK_METHODS = new Set(['forEach', 'map', 'filter', 'reduce', 'reduceRight', 'some', 'every', 'find', 'findIndex', 'flatMap']);
 
+/** Sorting methods whose comparator is drawn (the first comparisons of each sort). */
+const SORTS = new Set(['sort', 'toSorted']);
+const COMPARISONS = 40;
+const FN_EXPR = new Set(['arrow_function', 'function_expression', 'function']);
+/** Nodes that start a new function: their awaits are their own. */
+const FN_TYPES = new Set(['function_declaration', 'function_expression', 'function', 'arrow_function', 'method_definition', 'generator_function_declaration', 'generator_function', 'class_declaration', 'class']);
+
 /** Names a binding pattern introduces (`a`, `{a, b: c}`, `[x, ...rest]`, `a = 1`, TS `a: number`). */
 function patternNames(p) {
   if (!p) return [];
@@ -270,6 +277,10 @@ async function instrumentJs(code, { typescript = false } = {}) {
       const method = prop ? prop.text : null;
       const list = named(args);
       for (const a of list) {
+        if (method && SORTS.has(method) && FN_EXPR.has(a.type)) {
+          comparator(a, scope);
+          continue;
+        }
         if (!isBlockFn(a)) continue;
         if (method && CALLBACK_METHODS.has(method)) frameFor(a, `${method} callback`, scope, []);
         else if (method === 'on' && list[0] && /^['"`](close|end)['"`]$/.test(list[0].text)) frameFor(a, `on(${list[0].text})`, scope, []);
@@ -278,9 +289,34 @@ async function instrumentJs(code, { typescript = false } = {}) {
     for (const c of named(n)) if (!isBlockFn(c) && c.type !== 'class' && c.type !== 'function_expression') scanCallbacks(c, scope);
   }
 
-  function frameFor(fn, name, outer, members) {
+  /** The awaits that belong to this function (not to functions inside it). */
+  function ownAwaits(n, out = []) {
+    for (const c of named(n)) {
+      if (FN_TYPES.has(c.type)) continue;
+      if (c.type === 'await_expression') out.push(c);
+      ownAwaits(c, out);
+    }
+    return out;
+  }
+  /**
+   * An async function is a frame too. At each await it steps off the call
+   * stack (other code runs meanwhile) and steps back on when it resumes:
+   * `await x` becomes `__nx_f.resume(await __nx_f.pause(x))`.
+   */
+  function awaitsIn(b) {
+    for (const a of ownAwaits(b)) {
+      const arg = named(a).find((c) => c.type !== 'comment');
+      if (!arg) continue;
+      add(a.startIndex, '__nx_f.resume(');
+      add(arg.startIndex, '__nx_f.pause(');
+      edits.push({ at: endOf(arg), text: '))', o: -1 });
+    }
+  }
+
+  function frameFor(fn, name, outer, members, limit = 0) {
     if (IO_NAMES.test(name)) return;
-    if (fn.text.startsWith('async') || /^function\s*\*/.test(fn.text) || fn.type === 'generator_function_declaration') return;
+    // Generators and `for await` hand control back and forth in ways a call stack can't show.
+    if (/^(async\s+)?function\s*\*/.test(fn.text) || fn.type === 'generator_function_declaration' || /\bfor\s+await\b/.test(fn.text)) return;
     const b = field(fn, 'body');
     if (!b || b.type !== 'statement_block') return;
     const params = paramNames(field(fn, 'parameters') || field(fn, 'parameter'));
@@ -294,9 +330,30 @@ async function instrumentJs(code, { typescript = false } = {}) {
     const scope = [...outer.filter((n) => used.has(n)), ...members, ...params];
     const start = b.startIndex + 1;
     // The call shows its parameters (the arguments it was given); the rest appears from its first step.
-    add(start, ` const __nx_f = __nx.call(${JSON.stringify(name)}, ${lineOf(fn)}, ${getters(params)}); try {`);
+    add(start, ` const __nx_f = __nx.call(${JSON.stringify(name)}, ${lineOf(fn)}, ${getters(params)}${limit ? `, ${limit}` : ''}); try {`);
     block(named(b), scope);
+    if (/^async\b/.test(fn.text)) awaitsIn(b);
     add(b.endIndex - 1, ' } catch (__nx_e) { __nx_f.exc(__nx_e); throw __nx_e; } finally { __nx_f.exit(); } ');
+  }
+
+  /**
+   * A sort's comparator, `(a, b) => a - b` included: each comparison is a
+   * short call that shows the two values and what it answered. Only the
+   * first COMPARISONS of each sort are drawn, so a big sort can't use up
+   * the steps.
+   */
+  function comparator(fn, scope) {
+    const b = field(fn, 'body');
+    if (!b) return;
+    if (b.type === 'statement_block') return frameFor(fn, 'compare', scope, [], COMPARISONS);
+    const params = paramNames(field(fn, 'parameters') || field(fn, 'parameter'));
+    if (fn.type === 'arrow_function' && !field(fn, 'parameters')) {
+      const p = field(fn, 'parameter');
+      if (p) params.push(...patternNames(p));
+    }
+    const g = getters(params);
+    add(b.startIndex, `{ const __nx_f = __nx.call("compare", ${lineOf(fn)}, ${g}, ${COMPARISONS}); try { __nx_f.at(${lineOf(b)}, ${g}); return __nx_f.ret((`);
+    edits.push({ at: endOf(b), text: `), ${g}); } catch (__nx_e) { __nx_f.exc(__nx_e); throw __nx_e; } finally { __nx_f.exit(); } }`, o: 1 });
   }
 
   /** Class methods: each a frame; non-static methods see the fields set on `this`. */

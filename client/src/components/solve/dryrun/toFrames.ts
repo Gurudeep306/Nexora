@@ -49,7 +49,7 @@ const isDict = (v: TV | undefined): v is DictTV => isObj(v as TV) && (v as DictT
 const isRef = (v: TV | undefined): v is { t: 'ref'; id: number } => isObj(v as TV) && (v as { t: string }).t === 'ref'
 /** A value record without identity (a Swift or C# struct): its class and fields, inline. */
 const isRec = (v: TV | undefined): v is { t: 'rec'; c: string; f: Record<string, TV> } => isObj(v as TV) && (v as { t: string }).t === 'rec'
-const isScalarTV = (v: TV) => !isObj(v) || ['big', 'num', 'str'].includes((v as { t: string }).t)
+const isScalarTV = (v: TV) => !isObj(v) || ['big', 'num', 'str', 'at'].includes((v as { t: string }).t)
 
 /**
  * "Infinity" as programs write it (float('inf'), 10**9, 1e18, INT_MAX…) is
@@ -228,6 +228,8 @@ interface Ctx {
   heap: Map<number, HeapObj>
   line: string
   ints: Map<string, number>
+  /** Pointers walked along an array (C's p++), by the array's name: pointer name → cell. */
+  at: Map<string, Record<string, number>>
 }
 
 /** Pointers under an array: index variables that are in range right now. */
@@ -237,6 +239,8 @@ function pointersFor(name: string, len: number, ctx: Ctx): Record<string, number
     const at = evalIndex(e, ctx.ints)
     if (at !== null && at >= 0 && at < len && Object.keys(out).length < 4) out[e] = at
   }
+  // Pointers into it: each rides its own cell, named as in the code.
+  for (const [p, at] of Object.entries(ctx.at.get(name) ?? {})) if (at >= 0 && at < len && Object.keys(out).length < 6) out[p] = at
   return out
 }
 
@@ -264,6 +268,9 @@ function arrayOf(key: string, name: string, v: ListTV, ctx: Ctx, label?: string)
   const rl: Record<number, Role> = Object.fromEntries(roles)
   const looked = hasCompare(ctx.line) ? 'compare' : 'active'
   for (const at of touched(name, ctx.line, ctx.ints)) if (at >= 0 && at < cells.length && !rl[at]) rl[at] = looked
+  // `*p = …` or `… *p …`: the cell a pointer reads or writes.
+  for (const [p, at] of Object.entries(ctx.at.get(name) ?? {}))
+    if (at >= 0 && at < cells.length && !rl[at] && new RegExp(String.raw`\*\s*\(?\s*${esc(p)}\b(?!\s*[-+]\s*\d)`).test(ctx.line)) rl[at] = looked
   const total = v.n
   const tag = v.t === 'set' ? 'set' : v.t === 'tuple' ? 'tuple' : null
   const pointers = v.t === 'set' ? {} : pointersFor(name, cells.length, ctx)
@@ -775,7 +782,9 @@ export function toFrames(snaps: Snapshot[], src: string, stdout: string): DryFra
     const lineText = facts.lines[s.line - 1] ?? ''
     const ints = new Map<string, number>()
     for (const [n, v] of top.vars) if (typeof v === 'number' && Number.isInteger(v)) ints.set(n, v)
-    const ctx: Ctx = { facts, unset, ids, heap: s.heap, line: lineText, ints }
+    const at = new Map<string, Record<string, number>>()
+    for (const [n, v] of top.vars) if (isObj(v) && v.t === 'at') at.set(v.a, { ...(at.get(v.a) ?? {}), [n]: v.i })
+    const ctx: Ctx = { facts, unset, ids, heap: s.heap, line: lineText, ints, at }
     const stage: Structure[] = []
     const cards: Record<string, Scalar> = {}
 

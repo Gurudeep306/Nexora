@@ -268,6 +268,21 @@ const __nx = (() => {
       /* The line that failed has been told; it is not sent again as a finished step. */
       this.pend = -1;
     }
+    /* An await: the call steps off the stack while other code runs. */
+    pause(v) {
+      if (st.top === this) st.top = this.up;
+      st.depth--;
+      return v;
+    }
+    /* Back from an await: on top of whatever is running now. */
+    resume(v) {
+      /* What was running has finished its turn (the event loop only resumes an await when nothing else runs): its last line is done. */
+      if (st.on && st.top && st.top !== this && st.top.pend >= 0) st.top.flush(st.top.lastGet, true);
+      this.up = st.top;
+      st.top = this;
+      st.depth++;
+      return v;
+    }
     exit() {
       st.depth--;
       st.top = this.up;
@@ -280,7 +295,22 @@ const __nx = (() => {
     }
   }
 
-  const api = { call: (fn, line, get) => new Frame(fn, line, get), main: null, classes: new Set(), crashed: false };
+  /* A call that is not drawn (past the limit of a comparator): every step is a no-op. */
+  const QUIET = { at() {}, head() {}, tail() { return true; }, end() {}, ret(v) { return v; }, exc() {}, exit() {}, pause(v) { return v; }, resume(v) { return v; } };
+  const counts = new Map();
+  const api = {
+    call: (fn, line, get, limit) => {
+      if (limit) {
+        const n = (counts.get(line) || 0) + 1;
+        counts.set(line, n);
+        if (n > limit) return QUIET;
+      }
+      return new Frame(fn, line, get);
+    },
+    main: null,
+    classes: new Set(),
+    crashed: false,
+  };
   api.main = new Frame('main', 1, null);
   process.on('exit', () => {
     if (st.top === api.main && !api.crashed) api.main.exit();
