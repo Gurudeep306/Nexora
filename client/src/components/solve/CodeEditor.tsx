@@ -512,6 +512,7 @@ export function CodeEditor({
   headerExtra,
   onAiInlineChange,
   onIssuesClick,
+  savedLabel = 'Saved on this device',
 }: {
   value: string
   language: string
@@ -539,6 +540,8 @@ export function CodeEditor({
   onAiInlineChange?: (on: boolean) => void
   /** The issue count in the status bar was clicked. */
   onIssuesClick?: () => void
+  /** Where the code is kept, for the file badge's hint. */
+  savedLabel?: string
 }) {
   const { data } = useApi(() => api.get<{ settings: Record<string, string> }>('/api/settings'), [])
   const settings = data?.settings ?? {}
@@ -993,7 +996,7 @@ export function CodeEditor({
             Everything else lives in "Editor settings". ── */}
       {!minimal && (
         <div className="flex shrink-0 items-center gap-1.5 border-b border-border bg-surface px-2 py-1.5">
-          <span className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1 font-mono text-[11.5px] text-foreground-dim" title={saveState === 'saving' ? 'Saving…' : 'Saved on this device'}>
+          <span className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1 font-mono text-[11.5px] text-foreground-dim" title={saveState === 'saving' ? 'Saving…' : savedLabel}>
             <span className={cn('size-1.5 shrink-0 rounded-full', saveState === 'saving' ? 'bg-warning' : 'bg-state-success')} aria-hidden="true" />
             <span className="truncate">{language === 'java' ? 'Main.java' : `main.${LANG_EXT[language] ?? language}`}</span>
           </span>
