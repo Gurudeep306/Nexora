@@ -1,0 +1,39 @@
+{
+ "api_version": "2.0",
+ "method": "get",
+ "fetched": "2026-11-17T11:15:56.442093+00:00",
+ "data": {
+  "object": {
+   "id": 2,
+   "username": "Xyene",
+   "about": "Hi! I'm Tudor, one of the administrators of this site. You can get in touch with me on [the DMOJ Discord](https://discordapp.com/invite/EgJVpxz), or send me an email &mdash; it's my username @dmoj.ca.\r\n\r\nYou might also be interested in [some of the stuff I've written about programming](https://tbrindus.ca/), some of which is tangential to the development and maintenance of this site.\r\n\r\n[#]: ![](http://i.imgur.com/9x7lC9k.png)",
+   "points": 5948.36,
+   "performance_points": 673.6508249306639,
+   "problem_count": 993,
+   "solved_problems": [
+    "aplusb",
+    "fibonacci",
+    "geometry1",
+    "ecoo13r1p1",
+    "ecoo13r1p2",
+    "ecoo13r1p3"
+   ],
+   "rank": "admin",
+   "rating": 2039,
+   "organizations": [
+    62,
+    1
+   ],
+   "contests": [
+    {
+     "key": "gfssoc1j",
+     "score": 500.0,
+     "cumulative_time": 43694,
+     "rating": 1755,
+     "raw_rating": 1907.9694821672597,
+     "performance": 2000.0
+    }
+   ]
+  }
+ }
+}
