@@ -60,6 +60,47 @@ function createSourcesRouter({ can, me, invalidateCatalog }) {
     }
   });
 
+  /* ── What is missing: per source and per problem, and a polite re-import ── */
+  const audit = require("../sources/audit");
+
+  router.get("/api/problem-sources/audit", guard, async (_req, res) => {
+    try {
+      res.json({ ok: true, sources: await audit.audit(), reimport: audit.reimportStatus(), batch: audit.MAX_BATCH });
+    } catch (e) {
+      fail(res, e);
+    }
+  });
+
+  router.get("/api/problem-sources/:id/gaps", guard, async (req, res) => {
+    try {
+      res.json({ ok: true, ...(await audit.gaps(req.params.id, String(req.query.field || ""), { offset: req.query.offset, limit: req.query.limit })) });
+    } catch (e) {
+      fail(res, e);
+    }
+  });
+
+  router.get("/api/problem-sources/reimport", guard, (_req, res) => res.json({ ok: true, reimport: audit.reimportStatus() }));
+
+  // Fetch these problems' statements again (up to 25, a few seconds apart).
+  router.post("/api/problem-sources/reimport", guard, (req, res) => {
+    try {
+      const ids = Array.isArray(req.body?.ids) ? req.body.ids : [];
+      res.status(202).json({ ok: true, reimport: audit.reimport(ids, { by: me() }) });
+    } catch (e) {
+      fail(res, e);
+    }
+  });
+
+  // Store the images of statements we already have.
+  router.post("/api/problem-sources/keep-images", guard, async (req, res) => {
+    try {
+      const ids = Array.isArray(req.body?.ids) ? req.body.ids : [];
+      res.json({ ok: true, ...(await audit.keepImages(ids)) });
+    } catch (e) {
+      fail(res, e);
+    }
+  });
+
   return router;
 }
 

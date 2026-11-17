@@ -7,7 +7,8 @@ const { getJson, getText, load, preText, normalizeTime, normalizeMemory, blank }
 const ORIGIN = "https://codeforces.com";
 
 async function list() {
-  const data = await getJson(`${ORIGIN}/api/problemset.problems`, { timeoutMs: 45000 });
+  // lang=en: without it the API can answer in Russian (seen on a live sync).
+  const data = await getJson(`${ORIGIN}/api/problemset.problems?lang=en`, { timeoutMs: 45000 });
   if (data.status !== "OK" || !Array.isArray(data.result?.problems)) throw new Error(`Codeforces API: ${data.comment || "unexpected answer"}`);
   const solved = new Map((data.result.problemStatistics || []).map((s) => [`${s.contestId}${s.index}`, s.solvedCount]));
   return data.result.problems
