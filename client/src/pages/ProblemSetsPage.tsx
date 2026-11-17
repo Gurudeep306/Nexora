@@ -25,7 +25,8 @@ const TABS: { id: SetTab; label: string; hint: string }[] = [
 export default function ProblemSetsPage() {
   const [params, setParams] = useSearchParams()
   const { user } = useAuth()
-  const tab = (TABS.find((t) => t.id === params.get('tab'))?.id ?? 'public') as SetTab
+  const DEFAULT_TAB: SetTab = 'series'
+  const tab = (TABS.find((t) => t.id === params.get('tab'))?.id ?? DEFAULT_TAB) as SetTab
   const [q, setQ] = useState('')
   const [creating, setCreating] = useState(false)
   const [staffAdding, setStaffAdding] = useState(false)
@@ -42,7 +43,7 @@ export default function ProblemSetsPage() {
     setParams(
       (prev) => {
         const n = new URLSearchParams(prev)
-        if (id === 'public') n.delete('tab')
+        if (id === DEFAULT_TAB) n.delete('tab')
         else n.set('tab', id)
         return n
       },
@@ -107,6 +108,15 @@ export default function ProblemSetsPage() {
                 }
               />
             )
+          )}
+          {tab === 'public' && !query && list.data.sets.length === 0 && (
+            <p className="m-0 text-center text-[13px] text-text-secondary">
+              Nothing shared yet —{' '}
+              <Link to="/problems/sets?tab=series" className="font-medium text-text-primary underline underline-offset-[3px]">
+                browse the famous series
+              </Link>{' '}
+              or make your own set.
+            </p>
           )}
           {tab === 'company' && (list.data.reported?.length ?? 0) > 0 && (
             <section aria-labelledby="reported-h" className="space-y-2 pt-2">
