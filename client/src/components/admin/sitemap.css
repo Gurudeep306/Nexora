@@ -1,0 +1,120 @@
+/* Admin → Site map (SiteMapSection.tsx). A tree of hairline rows. */
+.sm-tree,
+.sm-kids,
+.sm-files {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sm-tree {
+  border-top: 1px solid var(--color-border);
+}
+.sm-tree > .sm-node {
+  border-bottom: 1px solid var(--color-border);
+}
+.sm-kids {
+  margin: 0 0 8px 14px;
+  padding-left: 14px;
+  border-left: 1px solid var(--color-border);
+}
+.sm-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 10px 2px;
+}
+.sm-name {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 16rem;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.sm-twist {
+  width: 1rem;
+  flex-shrink: 0;
+  font-size: 1.125rem;
+  line-height: 1.25rem;
+  color: var(--color-text-secondary);
+}
+.sm-name:hover .sm-twist {
+  color: var(--color-text-primary);
+}
+.sm-modes {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.sm-modes:disabled {
+  opacity: 0.7;
+}
+.sm-note {
+  margin: -4px 0 8px 26px;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+.sm-detail {
+  margin: 0 0 12px 26px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-surface);
+}
+.sm-label {
+  margin: 0 0 6px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+.sm-files li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  min-width: 0;
+}
+.sm-files li + li {
+  border-top: 1px solid var(--color-border);
+}
+.sm-gh {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.sm-legend {
+  display: grid;
+  gap: 8px 20px;
+  margin: 0;
+}
+@media (min-width: 640px) {
+  .sm-legend {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.sm-legend dt {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.sm-legend dd {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
