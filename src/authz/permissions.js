@@ -1,4 +1,5 @@
 // Roles and permissions — the single source of truth for "may this user do X".
+// Per-section staff access (Admin → Staff access) sits on top: see ./sections.js.
 //
 //   owner      exactly one, named by OWNER_USERNAME (or the CLI). Every
 //              permission, always; cannot be demoted, banned or granted.
@@ -11,6 +12,7 @@
 // signed-in user's effective permissions once per request; can() reads them.
 const { getSessionUser } = require("../middleware/auth");
 const { peekSettings } = require("./site-settings");
+const { parseSections } = require("./sections");
 
 const PERMISSIONS = [
   { key: "users.view", label: "View users", group: "Users", description: "Search users and open their admin profile." },
@@ -26,12 +28,13 @@ const PERMISSIONS = [
   { key: "problems.manage", label: "Problems", group: "Platform", description: "Problem sync, Creator Studio, the judge self-test, any Workshop problem." },
   { key: "gate.manage", label: "GATE", group: "Platform", description: "Manage GATE content." },
   { key: "early_access", label: "Early access", group: "Access", description: "May use the site while it is private." },
+  { key: "staff.access", label: "Staff access", group: "Site", description: "Open Admin → Staff access: set team titles and choose which Admin sections each person below them can see or change. Owner grants only." },
 ];
 const PERMISSION_KEYS = PERMISSIONS.map((p) => p.key);
 const PERMISSION_SET = new Set(PERMISSION_KEYS);
 
 /** Only the owner may grant these. */
-const OWNER_GRANT_ONLY = new Set(["site.settings"]);
+const OWNER_GRANT_ONLY = new Set(["site.settings", "staff.access"]);
 
 const ROLES = ["member", "moderator", "admin", "owner"];
 /** Roles that can be assigned through the API (the owner comes from env/CLI). */
@@ -42,7 +45,7 @@ const ROLE_DEFAULTS = {
   member: [],
   teacher: [],
   moderator: ["users.view", "users.ban", "content.moderate"],
-  admin: PERMISSION_KEYS.filter((k) => k !== "site.settings"),
+  admin: PERMISSION_KEYS.filter((k) => !OWNER_GRANT_ONLY.has(k)),
   owner: PERMISSION_KEYS,
 };
 
@@ -104,6 +107,7 @@ function buildAccess(username, row) {
     role,
     overrides,
     perms: permissionsFor(role, overrides),
+    sections: role === "owner" ? {} : parseSections(row?.sections),
     verified: !!row?.verified,
     ban,
   };
@@ -112,6 +116,7 @@ function buildAccess(username, row) {
 /** SQL columns (for a `users` row aliased `u`) that buildAccess() reads. */
 const ACCESS_COLUMNS = `u.role AS role, u.verified AS verified,
   (SELECT group_concat(p.perm || '=' || p.granted) FROM user_permissions p WHERE p.username = u.username) AS perms,
+  (SELECT group_concat(s.section || '=' || s.level) FROM staff_section_access s WHERE s.username = u.username) AS sections,
   (SELECT json_object('kind', b.kind, 'reason', b.reason, 'expires_at', b.expires_at)
      FROM user_bans b
     WHERE b.username = u.username AND b.lifted_at IS NULL
@@ -144,6 +149,10 @@ function accessOf(subject) {
 
 /** May this request / user do `perm`? */
 function can(subject, perm) {
+  // Inside an Admin section the person was given (view/edit; sectionGate
+  // already refused writes to a view-only one), that section's permissions
+  // count for this request only.
+  if (subject?.sectionGrant?.perms?.has(perm)) return true;
   const a = accessOf(subject);
   if (!a) return false;
   if (a.role === "owner") return true;
@@ -156,6 +165,8 @@ function hasAnyAdminPerm(subject) {
   if (!a) return false;
   if (a.role === "owner") return true;
   for (const p of a.perms) if (p !== "early_access") return true;
+  // Someone given a section in Admin → Staff access opens the panel too.
+  for (const level of Object.values(a.sections || {})) if (level !== "none") return true;
   return false;
 }
 

@@ -1332,7 +1332,7 @@ function createSocialRouter(deps) {
 
   async function profileCard(req, username) {
     const row = await get(
-      `SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.bio, u.status, u.role, u.verified, u.created_at, u.last_seen,
+      `SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.bio, u.status, u.role, u.verified, u.team_title, u.created_at, u.last_seen,
          sp.cover, sp.accent, sp.location, sp.pronouns, sp.website, sp.links, sp.visibility, sp.pinned,
          (SELECT COUNT(*) FROM social_follows f WHERE f.followee = u.username AND f.status = 'accepted') AS followers,
          (SELECT COUNT(*) FROM social_follows f WHERE f.follower = u.username AND f.status = 'accepted') AS following,
@@ -1365,6 +1365,8 @@ function createSocialRouter(deps) {
           status: row.status,
           role: row.role || "member",
           verified: !!row.verified,
+          // Staff only: the job title the owner gave them (Admin → Staff access).
+          team_title: (row.role && row.role !== "member") || row.team_title ? row.team_title || null : null,
           created_at: row.created_at,
           last_seen: visible ? row.last_seen : null,
           cover: row.cover || "plain",
