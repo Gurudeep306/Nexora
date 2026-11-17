@@ -73,6 +73,8 @@ module.exports = {
   origin: ORIGIN,
   math: "dollar3",
   kind: "stdin",
+  // The statements are PDFs: no samples or limits to read from them.
+  publishes: { samples: false, limits: false },
   description: "The UVa Online Judge archive via uHunt, rated by how many people solved each problem.",
   list,
   statement,

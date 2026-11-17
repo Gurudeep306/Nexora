@@ -6,10 +6,10 @@ import { ExternalLink, X } from 'lucide-react'
 /**
  * Keeps the images and videos inside a scraped problem statement working.
  *
- * The server points every `<img>` / `<video>` / `<source>` straight at the
- * source CDN (fastest path, and `referrerpolicy=no-referrer` gets past most
- * hotlink checks) and attaches `data-proxy`, the URL to retry through when the
- * direct load fails.
+ * The server serves the judges' images and videos from our own stored copy
+ * (`/api/imgproxy`), so nothing is hot-linked. An element that still carries
+ * `data-proxy` (a statement saved by an older version) retries through it when
+ * the direct load fails.
  *
  * Three things happen here:
  *
