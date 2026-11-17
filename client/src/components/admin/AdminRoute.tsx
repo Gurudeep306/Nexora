@@ -5,6 +5,7 @@ import { useTheme } from '@/context/ThemeContext'
 import { pageLoaders } from '@/routes'
 
 const AdminPage = lazy(pageLoaders.AdminPage)
+const AuthorProblemPage = lazy(pageLoaders.AuthorProblemPage)
 const HivePage = lazy(pageLoaders.HivePage)
 const NotFoundPage = lazy(pageLoaders.NotFoundPage)
 
@@ -25,6 +26,20 @@ export function AdminRoute() {
   }
   if (!isStaff) return <NotFoundPage />
   return <AdminPage />
+}
+
+/** /admin/problems/:id — write a coding problem. Same rule as /admin (the API asks for the Problems permission). */
+export function AuthorRoute() {
+  const { status, loading, isStaff } = useSite()
+  if (loading && !status) {
+    return (
+      <div className="py-8" aria-busy="true">
+        <LoadingBlock rows={6} />
+      </div>
+    )
+  }
+  if (!isStaff) return <NotFoundPage />
+  return <AuthorProblemPage />
 }
 
 /**

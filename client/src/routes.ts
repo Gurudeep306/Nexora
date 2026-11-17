@@ -53,6 +53,7 @@ export const pageLoaders = {
   ThemeCentrePage: () => import('@/pages/ThemeCentrePage'),
   NotFoundPage: () => import('@/pages/NotFoundPage'),
   AdminPage: () => import('@/pages/AdminPage'),
+  AuthorProblemPage: () => import('@/pages/AuthorProblemPage'),
   HivePage: () => import('@/hive/HivePage'),
 } satisfies Record<string, Loader>
 

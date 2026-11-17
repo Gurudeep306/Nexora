@@ -77,6 +77,8 @@ export interface StatementResponse {
 }
 
 export interface StatementExtra {
+  /** NexoraGuru's own problems: the written solution (shown after "give it a real try"). */
+  solution?: { editorial: string | null; solutions: Partial<Record<'cpp' | 'java' | 'python' | 'javascript' | 'c', string>> } | null
   /** 'function' (LeetCode: write a method), 'answer' (Project Euler: one number) — default stdin. */
   kind?: 'stdin' | 'function' | 'answer'
   interactive?: boolean

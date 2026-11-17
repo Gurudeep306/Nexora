@@ -18,6 +18,7 @@ import { AnnouncementsPanel, SiteSettingsPanel } from '@/components/admin/SiteSe
 import { ModerationSection } from '@/components/admin/ModerationSection'
 import { AuditSection } from '@/components/admin/AuditSection'
 import { SourcesSection } from '@/components/admin/SourcesSection'
+import { AuthoredSection } from '@/components/admin/AuthoredSection'
 import { AiSection } from '@/components/admin/AiSection'
 import { RunnersSection } from '@/components/admin/RunnersSection'
 import { DefaultStylePanel } from '@/components/admin/DefaultStylePanel'
@@ -25,7 +26,7 @@ import '@/components/admin/ai.css'
 import NotFoundPage from '@/pages/NotFoundPage'
 import type { AdminMe } from '@/components/admin/types'
 
-type SectionId = 'overview' | 'users' | 'moderation' | 'site' | 'ai' | 'runners' | 'sources' | 'announcements' | 'audit'
+type SectionId = 'overview' | 'users' | 'moderation' | 'site' | 'ai' | 'runners' | 'sources' | 'authored' | 'announcements' | 'audit'
 
 const GROUPS: { label: string; items: { id: SectionId; label: string; icon: IconName; perm: string; title: string; blurb: string }[] }[] = [
   {
@@ -46,6 +47,7 @@ const GROUPS: { label: string; items: { id: SectionId; label: string; icon: Icon
       { id: 'ai', label: 'AI models', icon: 'sparkles', perm: 'site.settings', title: 'AI models', blurb: 'Which AI the site uses: providers, keys, a model for each feature, and the daily budget.' },
       { id: 'runners', label: 'Code runners', icon: 'server', perm: 'site.settings', title: 'Code runners', blurb: 'Our own servers that run code first, each backing up the others, with the free public runners behind them.' },
       { id: 'sources', label: 'Problem sources', icon: 'database', perm: 'problems.manage', title: 'Problem sources', blurb: 'Which judges problems come from, kept in sync and tested live.' },
+      { id: 'authored', label: 'Add a problem', icon: 'code', perm: 'problems.manage', title: 'Add a problem', blurb: 'Coding problems we write ourselves: statement, tests, checker, editorial and a solution in five languages.' },
       { id: 'announcements', label: 'Announcements', icon: 'bell', perm: 'announcements.post', title: 'Announcements', blurb: 'The bar above every page, and notifications to everyone.' },
       { id: 'audit', label: 'Audit log', icon: 'list', perm: 'audit.view', title: 'Audit log', blurb: 'Every admin action — who, what, when, from where.' },
     ],
@@ -208,6 +210,7 @@ export default function AdminPage() {
             {current?.id === 'ai' && <AiSection />}
             {current?.id === 'runners' && <RunnersSection />}
             {current?.id === 'sources' && <SourcesSection />}
+            {current?.id === 'authored' && <AuthoredSection />}
             {current?.id === 'announcements' && <AnnouncementsPanel me={me} />}
             {current?.id === 'moderation' && <ModerationSection me={me} onOpenUser={setUser} onChanged={refetch} />}
             {current?.id === 'audit' && <AuditSection me={me} />}
