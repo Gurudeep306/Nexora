@@ -81,8 +81,9 @@ const APP_URL =
 const DEPLOY = deployConfig();
 
 /* ========== Lightweight HTTP Scrapers (fast, no browser) ========== */
-const SCRAPE_UA =
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+// The same honest User-Agent the problem sources use: it says who we are. We
+// never dress up as a desktop browser to get past a judge's bot check.
+const SCRAPE_UA = require("./sources/common").UA;
 
 /* Statement media (URL rewriting + the image-proxy allowlist) and the
    per-platform math rewrite live in ./statement-media; fetching statements
@@ -107,7 +108,6 @@ async function getBrowser() {
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
-        "--disable-blink-features=AutomationControlled",
         "--disable-gpu",
         "--disable-dev-shm-usage",
       ],
@@ -908,8 +908,14 @@ async function _saveStatement(problemId, data) {
       JSON.stringify(data.extra || {}),
     ],
   );
-  keepStatementMedia([data.statement, data.inputSpec, data.outputSpec, data.note].join("\n"));
+  // Store the statement's media now, from absolute URLs (judges often write
+  // relative ones), so the figures are ours before anyone opens the problem.
+  const row = await get("SELECT platform FROM problems WHERE id=?", [problemId]).catch(() => null);
+  const { normalizeStatementHtml } = require("./statement-media");
+  keepStatementMedia(normalizeStatementHtml([data.statement, data.inputSpec, data.outputSpec, data.note].join("\n"), { platform: row?.platform }));
 }
+// Admin re-imports (src/sources/audit.js) save through the same path.
+require("./sources/audit").useSaver((id, data) => _saveStatement(id, data), (html) => keepStatementMedia(html));
 
 /* ========== IMAGE PROXY (statement images) ==========
 
