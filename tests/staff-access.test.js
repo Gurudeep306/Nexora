@@ -193,3 +193,43 @@ test('team titles: set by the owner (or an allowed admin for people below them),
   ok(await title(OWNER, MOD, ''), 'cleared');
   assert.equal((await call('GET', `/api/profiles/${MOD}`, c[ZED])).body.profile.team_title, null);
 });
+
+test('finer permissions: AI models, code runners and writing problems have their own, owner-granted where sensitive', async () => {
+  // Admins write problems and verify accounts by default, but AI and runners stay with the owner.
+  ok(await call('GET', '/api/authoring', c[BEA]), 'admins write problems');
+  assert.equal((await call('GET', '/api/admin/ai', c[BEA])).status, 403);
+  assert.equal((await call('GET', '/api/admin/runners', c[BEA])).status, 403);
+  const me = await call('GET', '/api/admin/me', c[BEA]);
+  assert.ok(me.body.permissions.includes('problems.author'));
+  assert.ok(me.body.permissions.includes('users.verify'));
+  assert.ok(!me.body.permissions.includes('ai.manage'));
+  assert.equal(me.body.sections.ai, 'none');
+
+  // Only the owner hands out AI models; then that section alone opens.
+  assert.equal((await call('PUT', `/api/admin/users/${BEA}/permissions`, c[ADA], { grants: { 'ai.manage': true } })).status, 403, 'not an admin');
+  ok(await call('PUT', `/api/admin/users/${BEA}/permissions`, c[OWNER], { grants: { 'ai.manage': true } }));
+  ok(await call('GET', '/api/admin/ai', c[BEA]));
+  assert.equal((await call('GET', '/api/admin/runners', c[BEA])).status, 403, 'runners are separate');
+  assert.equal((await call('GET', '/api/admin/site', c[BEA])).status, 403, 'and so are site settings');
+
+  // Moderators keep what they had: no problem writing.
+  assert.equal((await call('GET', '/api/authoring', c[MOD])).status, 403);
+});
+
+test('people given the broad permission before the split keep the same access, once', async () => {
+  sql("INSERT INTO user_permissions(username, perm, granted, granted_by, created_at) VALUES(?, 'site.settings', 1, ?, ?)", ZED, OWNER, Date.now());
+  sql("INSERT INTO user_permissions(username, perm, granted, granted_by, created_at) VALUES(?, 'problems.manage', 1, ?, ?)", ZED, OWNER, Date.now());
+  sql("DELETE FROM site_settings WHERE key = 'perm_split_2026_11'");
+  await stopServer();
+  await startServer();
+  const r = await login(ZED);
+  const me = await call('GET', '/api/admin/me', r.cookie);
+  ok(me);
+  for (const p of ['site.settings', 'ai.manage', 'runners.manage', 'problems.manage', 'problems.author']) assert.ok(me.body.permissions.includes(p), p);
+  // Reset one to its default: the copy does not come back at the next start.
+  sql("DELETE FROM user_permissions WHERE username = ? AND perm = 'ai.manage'", ZED);
+  await stopServer();
+  await startServer();
+  const again = await call('GET', '/api/admin/me', (await login(ZED)).cookie);
+  assert.ok(!again.body.permissions.includes('ai.manage'), 'runs only once');
+});

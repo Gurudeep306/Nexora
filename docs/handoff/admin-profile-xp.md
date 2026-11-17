@@ -30,9 +30,9 @@ file current as each part lands; each part is its own pull request.
 |---|---|---|
 | 1. XP rule ("Passed the examples") | Done, merged to main | https://github.com/Gurudeep306/Nexora/pull/149 |
 | 2. Avatar inside Edit profile | Done, merged to main (with part 5 and the new covers) | https://github.com/Gurudeep306/Nexora/pull/151 |
-| 3. Staff permissions per Admin part | Done (Admin → Staff access) | see section 3 |
+| 3. Staff permissions per Admin part | Done, merged to main | https://github.com/Gurudeep306/Nexora/pull/152 |
 | 4. Site map tree (show/hide, GitHub links) | Next | — |
-| Extra: Admin clean-up and finer permissions (owner's ask) | Next, after part 3 | — |
+| Extra: Admin clean-up and finer permissions (owner's ask) | Done (see below) | — |
 | 5. Register: optional avatar, bio, … step | Done, merged to main (with part 2) | https://github.com/Gurudeep306/Nexora/pull/151 |
 
 ## 1. XP rule — how it works
@@ -195,6 +195,31 @@ something pattern type or animated type, import from internet").
   rows).
 - Checked: axe 0 and no sideways scroll on Admin → Staff access (a person
   opened) in light, dark and phone, and on a see-only section as a moderator.
+
+## Extra: Admin clean-up and finer permissions
+
+- **New permissions** (`src/authz/permissions.js`), each with its own Admin
+  section or control:
+  - `ai.manage`: AI models (was part of Site settings). Owner grants only.
+  - `runners.manage`: Code runners and compiler choices (was part of Site
+    settings). Owner grants only.
+  - `problems.author`: Add a problem (was part of Problems). Admins have it
+    by default; moderators don't.
+  - `users.verify`: the verified badge and early access (was part of Manage
+    users). Admins have it by default.
+- **Nobody loses access:** a one-time copy at start-up gives everyone who had
+  (or was denied) the broad permission the same choice on the new one. A
+  marker in `site_settings` (`perm_split_2026_11`) stops it from running
+  again, so a later "reset to role default" sticks.
+- **Audit log in plain words** (`components/admin/auditLabels.ts`): "Changed
+  a role", "Verified an account", "Changed section access"…; codes it doesn't
+  know (Hive) become words too. More filters: Staff access, AI models, Code
+  runners, Compilers.
+- **User drawer:** the Access tab shows for Manage users or Verify; the
+  permission switches need Manage users, the badge and early access need
+  Verify, profile resets need Manage users.
+- Tests: `tests/staff-access.test.js` (+2: new permissions and their
+  defaults, owner-only grants, the one-time copy and that it runs once).
 
 ## Plan for parts 3–4 (written before the work; 2 and 5 are done above)
 
