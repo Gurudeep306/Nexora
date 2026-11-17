@@ -31,7 +31,7 @@ file current as each part lands; each part is its own pull request.
 | 1. XP rule ("Passed the examples") | Done, merged to main | https://github.com/Gurudeep306/Nexora/pull/149 |
 | 2. Avatar inside Edit profile | Done, merged to main (with part 5 and the new covers) | https://github.com/Gurudeep306/Nexora/pull/151 |
 | 3. Staff permissions per Admin part | Done, merged to main | https://github.com/Gurudeep306/Nexora/pull/152 |
-| 4. Site map tree (show/hide, GitHub links) | Done (see section 4) | — |
+| 4. Site map tree (show/hide, GitHub links) | Done, merged to main (with Hive for admins only) | https://github.com/Gurudeep306/Nexora/pull/154 |
 | Extra: Admin clean-up and finer permissions (owner's ask) | Done, merged to main | https://github.com/Gurudeep306/Nexora/pull/153 |
 | 5. Register: optional avatar, bio, … step | Done, merged to main (with part 2) | https://github.com/Gurudeep306/Nexora/pull/151 |
 
