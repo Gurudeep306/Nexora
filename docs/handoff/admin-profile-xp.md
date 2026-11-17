@@ -28,8 +28,8 @@ file current as each part lands; each part is its own pull request.
 
 | Part | Status | Pull request |
 |---|---|---|
-| 1. XP rule ("Passed the examples") | Built, tested; PR open | #149 (see below) |
-| 2. Avatar inside Edit profile | Not started | — |
+| 1. XP rule ("Passed the examples") | Built, tested; PR open, waiting for CI to merge | https://github.com/Gurudeep306/Nexora/pull/149 |
+| 2. Avatar inside Edit profile | Next — plan below, no code yet | — |
 | 3. Staff permissions per Admin part | Not started | — |
 | 4. Site map tree (show/hide, GitHub links) | Not started | — |
 | 5. Register: optional avatar, bio, … step | Not started (built with part 2) | — |
@@ -71,6 +71,41 @@ file current as each part lands; each part is its own pull request.
   so every count it checks is unchanged). Nothing was skipped or removed.
 - Checked in the browser (demo, CSES): XP card text, the Problems filter and
   icon, axe 0 in light, dark and phone.
+
+## Plan for parts 2–5 (not started; written when work stopped)
+
+**Part 2 + 5 (avatar inside Edit profile; optional step after sign-up)**
+- Today: `client/src/components/account/AvatarCard.tsx` (in Settings) holds
+  the photo upload and the avatar grid. It uses a conic-gradient glow, which
+  the rules forbid. Upload: `POST /api/user/avatar {username, image}` (data
+  URL). Save a set avatar: `PUT /api/user/profile {currentUsername, avatar:
+  formatAvatar(id), avatarUrl: ''}`. The grid is
+  `components/account/AvatarPicker.tsx` (`AVATAR_SET` in `lib/avatar`).
+- `components/profile/EditProfileSheet.tsx` (Modal, saves `PUT
+  /api/profiles/me`) ends with "Change your photo or avatar in Settings" —
+  replace that with a shared `AvatarChooser` (no glow; photo upload + the
+  grid) as a "Picture" group at the top of the form, and make the live
+  preview show the chosen picture. Settings then links to Edit profile
+  instead of having its own card.
+- Register: `pages/AuthPage.tsx` `handleSubmit` calls `register(...)` then
+  navigates to `from` after ~1.1 s. Add a short optional "Make it yours" step
+  after the account is made (picture via `AvatarChooser`, bio, maybe
+  pronouns/what you're learning), Field Journal look, "Skip" always visible,
+  reduced motion respected; then continue to `from`. Don't send it for
+  sign-in, only new accounts (OAuth new accounts too).
+
+**Part 3 (staff permissions per Admin part)** — start by reading
+`src/authz/permissions.js` and the Admin Users section (`UsersSection`,
+`UserDrawer`). Only the owner and top admins can open it; they tick, per
+staff member, which Admin sections they may see/edit. Server must enforce it
+(not just hide tabs), with tests.
+
+**Part 4 (site map tree)** — an Admin section listing every part of the site
+as a tree (from the router + Nexus/Learn/GATE areas). Per part: show/hide for
+users (and options like "staff only", "coming soon"), enforced on the server
+and client routes; each part lists its source files with "Open on GitHub"
+links (`https://github.com/Gurudeep306/Nexora/blob/main/<path>`). Tests for
+the hide rule.
 
 ## Notes for whoever continues
 
