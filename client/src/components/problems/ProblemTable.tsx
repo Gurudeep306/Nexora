@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { Bookmark, BookmarkCheck, CheckCircle2, ExternalLink, XCircle } from 'lucide-react'
+import { Bookmark, BookmarkCheck, CheckCircle2, CircleDot, ExternalLink, XCircle } from 'lucide-react'
 import { Badge, Table, TBody, TD, TH, THead, TR, Tooltip } from '@/components/ui'
 import { DifficultyBadge } from '@/components/ui'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
@@ -19,6 +19,13 @@ function StatusCell({ problem }: { problem: Problem }) {
     return (
       <Tooltip label={`Solved${problem.xp_earned ? ` · +${problem.xp_earned} XP` : ''}`}>
         <CheckCircle2 className="size-4.5 text-success" aria-label="Solved" />
+      </Tooltip>
+    )
+  }
+  if (problem.solve_status === 'examples') {
+    return (
+      <Tooltip label={`Passed the examples (not the judge's full tests)${problem.xp_earned ? ` · +${problem.xp_earned} XP` : ''}`}>
+        <CircleDot className="size-4.5 text-success" aria-label="Passed the examples" />
       </Tooltip>
     )
   }

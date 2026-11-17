@@ -61,6 +61,9 @@ test.before(async () => {
   const db = new DatabaseSync(DB, { timeout: 10000 }); // wait for the server's write lock instead of failing
   db.exec("INSERT INTO problems(platform, problem_id, title, url, rating, tags) VALUES('codeforces','9999Z','Double it','https://x',900,'[\"math\"]')");
   pid = Number(db.prepare("SELECT id FROM problems WHERE problem_id='9999Z'").get().id);
+  // Codeforces' official tests (as the open dataset supplies them): only a full check counts as solved (owner's rule, session 10).
+  db.exec('CREATE TABLE IF NOT EXISTS cf_dataset_tests (id TEXT PRIMARY KEY, tests TEXT NOT NULL, exact INTEGER NOT NULL, fetched_at INTEGER NOT NULL)');
+  db.prepare('INSERT OR REPLACE INTO cf_dataset_tests(id, tests, exact, fetched_at) VALUES(?,?,1,?)').run('9999/Z', JSON.stringify([{ input: '21', output: '42' }]), Date.now());
   db.close();
   alice = await signup(`al${stamp}`);
   bob = await signup(`bo${stamp}`);
