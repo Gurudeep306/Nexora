@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { TopicChips } from '@/components/topics/TopicChips'
 import { Check, Copy, ExternalLink, FileDown, FileText, Languages, Loader2, Plug, Sigma, ImageOff, Play, Footprints } from 'lucide-react'
 import { LoadingBlock, Tabs } from '@/components/ui'
 import { sanitizeHtml } from '@/lib/sanitize'
@@ -196,6 +197,8 @@ export function ProblemPanel({
           )}
         </p>
         <h1 className="sp-title mt-1.5 text-[20px] leading-tight font-semibold tracking-[-0.01em] text-foreground">{problem.title}</h1>
+        {/* Which kind of problem this is (src/topics.js), always shown. */}
+        <TopicChips topics={problem.topics} link className="mt-2" />
         <div className="sp-meta mt-2.5 flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-[12.5px] text-foreground-dim">
           <span className="inline-flex items-center gap-1.5">
             <span className={cn('size-2 rounded-full', b.tone)} aria-hidden="true" />
@@ -209,7 +212,7 @@ export function ProblemPanel({
           {problem.solve_status === 'attempted' && <span className="text-state-warning">Attempted</span>}
           {tags.length > 0 && (
             <button type="button" onClick={() => setShowTopics((v) => !v)} className="cursor-pointer text-foreground-faint underline-offset-2 hover:text-foreground hover:underline" aria-expanded={showTopics}>
-              {showTopics ? 'Hide topics' : `Topics (${tags.length})`}
+              {showTopics ? 'Hide tags' : `Tags (${tags.length})`}
             </button>
           )}
           {!custom && statement && !statementLoading && (

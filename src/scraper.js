@@ -254,6 +254,8 @@ async function saveStatement(problemId, data) {
     JSON.stringify(data.samples || []),
     new Date().toISOString()
   ]);
+  // The statement's words make the topics surer (src/topics.js).
+  require('./topics').classifyProblem(problemId).catch((e) => console.warn('[topics]', e.message));
 }
 
 /* ---------- Worker (browser tab) ---------- */

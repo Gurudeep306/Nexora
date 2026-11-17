@@ -1073,6 +1073,8 @@ async function initDb() {
   // Catalog version (triggers) + snapshot — src/problem-catalog.js.
   // eslint-disable-next-line global-require
   await require("./problem-catalog").initCatalogTables();
+  // Topics of every problem (src/topics.js).
+  await require("./topics").init();
 }
 
 /* ===== Per-user totals for the leaderboard =====

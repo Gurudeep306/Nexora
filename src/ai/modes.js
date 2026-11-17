@@ -440,6 +440,28 @@ An empty list beats a weak entry.`,
     ],
     post: (raw) => String(raw).trim(),
   },
+
+  /* Topics of one problem (src/topics.js), only when the tags and the text
+     leave it unsure. Public statement text only — nothing about any user. */
+  topic_classify: {
+    model: "main",
+    json: true,
+    maxTokens: 120,
+    temperature: 0,
+    cache: true,
+    build: (i) => [
+      {
+        role: "system",
+        content: `${P.DATA_RULE}\nYou label competitive-programming problems by topic. Choose 1 to 3 topics from this list only, the ones a strong solver would use to solve it (not words that merely appear in the story). Answer JSON only: {"topics":["id", …]} using the ids exactly as listed.\n${(i.topics || []).slice(0, 80).join("\n")}`,
+      },
+      { role: "user", content: problemBlock(i, 4000) },
+    ],
+    post: (raw) => {
+      const j = parseJson(raw);
+      const list = Array.isArray(j) ? j : j && Array.isArray(j.topics) ? j.topics : [];
+      return list.map(String).slice(0, 3);
+    },
+  },
 };
 
 module.exports = { MODES, parseJson, stripFences };
