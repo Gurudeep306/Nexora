@@ -6,12 +6,16 @@ import { DifficultyBadge } from '@/components/ui'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
 import { parseTags, type Problem } from './types'
+import { TopicChips } from '@/components/topics/TopicChips'
+import { topicIds } from '@/lib/topics'
 
 interface Props {
   problems: Problem[]
   bookmarkedIds: Set<number>
   onToggleBookmark: (problem: Problem) => void
   busyBookmarkId: number | null
+  /** Filter by a topic (a click on a row's topic chip). */
+  onPickTopic?: (id: string) => void
 }
 
 function StatusCell({ problem }: { problem: Problem }) {
@@ -43,7 +47,7 @@ function StatusCell({ problem }: { problem: Problem }) {
   )
 }
 
-export function ProblemTable({ problems, bookmarkedIds, onToggleBookmark, busyBookmarkId }: Props) {
+export function ProblemTable({ problems, bookmarkedIds, onToggleBookmark, busyBookmarkId, onPickTopic }: Props) {
   const navigate = useNavigate()
 
   return (
@@ -66,7 +70,9 @@ export function ProblemTable({ problems, bookmarkedIds, onToggleBookmark, busyBo
         <TBody>
           {problems.map((p, i) => {
             const bookmarked = bookmarkedIds.has(p.id)
-            const tags = parseTags(p.tags).slice(0, 3)
+            // Topics when the pipeline found some; the judge's raw tags otherwise.
+            const hasTopics = topicIds(p.topics).length > 0
+            const tags = hasTopics ? [] : parseTags(p.tags).slice(0, 3)
             return (
               <motion.tr
                 key={p.id}
@@ -124,6 +130,8 @@ export function ProblemTable({ problems, bookmarkedIds, onToggleBookmark, busyBo
                           </Badge>
                         ))}
                       </span>
+                      {/* Topics on their own line, as the theme's own badges (not the row's plain meta words). */}
+                      {hasTopics && <TopicChips topics={p.topics} onPick={onPickTopic} className="pt-topics mt-1.5" />}
                     </span>
                   </span>
                 </TD>

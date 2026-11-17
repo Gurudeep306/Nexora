@@ -191,6 +191,12 @@ async function upsert(platform, rawRows) {
       ]),
     );
   }
+  // A changed title or tags can mean other topics: classify those again.
+  const retopic = updates.filter((r) => {
+    const old = existing.get(r.problem_id);
+    return old.title !== r.title || String(old.tags ?? "") !== r.tags || String(old.category ?? "") !== r.category;
+  });
+  if (retopic.length) await require("../topics").forget(platform, retopic.map((r) => r.problem_id)).catch((e) => console.warn("[topics]", e.message));
   return { total: rows.length, added: inserts.length, updated: updates.length };
 }
 
@@ -213,6 +219,8 @@ async function syncSource(id, { by = null } = {}) {
       disabledCache = null;
     }
     stmtCounts = null;
+    // New and changed problems get their topics (src/topics.js), in the background.
+    if (r.added || r.updated) require("../topics").classifyNew({ by: "sync" });
     return r;
   } catch (e) {
     await run("UPDATE problem_sources SET last_error=? WHERE id=?", [String(e.message || e).slice(0, 400), id]).catch(() => {});

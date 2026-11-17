@@ -1,0 +1,144 @@
+/* Topics (TopicChips.tsx): quiet chips, the filter pill and the chooser. Tokens only. */
+.tp-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.tp-chip {
+  /* The look comes from the theme's badge ([data-ui='badge']); only size here. */
+  max-width: 12rem;
+  overflow: hidden;
+  padding: 1px 8px;
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-decoration: none;
+}
+.tp-more {
+  color: var(--color-text-muted);
+}
+.tp-chip-btn {
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard);
+}
+.tp-chip-btn:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tp-chip-btn {
+    transition: none;
+  }
+}
+.tp-chip-btn:focus-visible,
+.tp-pill:focus-visible,
+.tp-option:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* The filter pill: the same size as the other filter pills. */
+.tp-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  max-width: 14rem;
+  height: 2rem;
+  padding: 0 1.75rem 0 0.75rem;
+  font-size: 13px;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.tp-pill-chev {
+  position: absolute;
+  right: 0.5rem;
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* The chooser */
+.tp-groups {
+  display: grid;
+  gap: 14px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.tp-group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.tp-legend {
+  margin-bottom: 6px;
+  padding: 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.tp-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tp-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  padding: 0 11px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--kit-btn-radius, 999px);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    background-color var(--dur-fast) var(--ease-standard);
+}
+.tp-option svg {
+  width: 14px;
+  height: 14px;
+}
+.tp-option:hover {
+  border-color: var(--color-border-strong);
+}
+.tp-option[aria-pressed='true'] {
+  border-color: var(--color-text-primary);
+  background: var(--color-bg-surface-2);
+  font-weight: 550;
+}
+.tp-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tp-chip-btn,
+  .tp-option {
+    transition: none;
+  }
+}
+
+/* How many problems have the topic: quiet, after the name. */
+.tp-count {
+  margin-left: 2px;
+  color: var(--color-text-muted);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+/* A topic no problem has yet: still choosable, but quieter. */
+.tp-option[data-empty] {
+  color: var(--color-text-muted);
+  border-style: dashed;
+}

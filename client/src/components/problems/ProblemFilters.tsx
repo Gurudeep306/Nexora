@@ -7,6 +7,8 @@ import { useProblemSuggestions } from '@/hooks/useProblemSuggestions'
 import './filters.css'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
+import { topicLabel } from '@/lib/topics'
+import { TopicFilterButton } from '@/components/topics/TopicChips'
 import {
   DIFFICULTY_BANDS,
   type DifficultyBandId,
@@ -22,6 +24,8 @@ export interface ProblemFilterState {
   difficulty: DifficultyBandId
   status: StatusFilter
   tag: string
+  /** Topic ids (src/topics.js); a problem must have all of them. */
+  topics: string[]
   sort: SortKey
   order: SortOrder
 }
@@ -113,6 +117,8 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
   if (filters.status !== 'all')
     chips.push({ label: filters.status, remove: () => onChange({ status: 'all' }) })
   if (filters.tag) chips.push({ label: `#${filters.tag}`, remove: () => onChange({ tag: '' }) })
+  for (const id of filters.topics)
+    chips.push({ label: topicLabel(id), remove: () => onChange({ topics: filters.topics.filter((x) => x !== id) }) })
 
   return (
     <div className="pf-bar relative z-20">
@@ -123,7 +129,7 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
           onValueChange={onSearchInput}
           items={suggestionItems}
           loading={loading}
-          placeholder={onAsk ? 'Search or describe a problem' : 'Search problems'}
+          placeholder={onAsk ? 'Search, a topic, or describe a problem' : 'Search by name or topic'}
           emptyText="No title matches. Try Ask AI."
           aria-label="Search problems"
           containerClassName="flex-1"
@@ -166,6 +172,7 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
           <option value="attempted">Attempted</option>
           <option value="unsolved">Unsolved</option>
         </PillSelect>
+        <TopicFilterButton value={filters.topics} onChange={(ids) => onChange({ topics: ids })} />
         <PillSelect label="Tag" value={filters.tag} onChange={(v) => onChange({ tag: v })}>
           <option value="">All tags</option>
           {tags.map((t) => (
@@ -219,7 +226,7 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
           {chips.map((c) => (
             <FilterChip key={c.label} label={c.label} onRemove={c.remove} />
           ))}
-          <button onClick={() => onChange({ platform: 'all', difficulty: 'all', status: 'all', tag: '' })} className="ml-1 inline-flex cursor-pointer items-center gap-1 text-[12.5px] text-text-secondary transition-colors hover:text-text-primary">
+          <button onClick={() => onChange({ platform: 'all', difficulty: 'all', status: 'all', tag: '', topics: [] })} className="ml-1 inline-flex cursor-pointer items-center gap-1 text-[12.5px] text-text-secondary transition-colors hover:text-text-primary">
             <X className="size-3" aria-hidden="true" /> Clear
           </button>
         </div>

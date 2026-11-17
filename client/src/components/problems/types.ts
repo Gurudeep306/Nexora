@@ -9,6 +9,8 @@ export interface Problem {
   rating: number
   tags: string // JSON string, e.g. '["dp","math"]'
   category: string
+  /** Topic ids (src/topics.js), e.g. ['dp', 'graphs']. */
+  topics?: string[]
   solve_status: 'solved' | 'examples' | 'attempted' | 'unsolved' | string
   attempts: number | null
   xp_earned: number | null
