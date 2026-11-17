@@ -308,7 +308,7 @@ test('heaps, union-find and edge lists drawn in part say so', () => {
   assert.match(heap.label, /first 31 of 50 items/);
   const uf = framesOf('parent = list(range(40))\nparent[3] = 1\nprint(1)\n').at(-1).structures.find((s) => s.kind === 'tree');
   assert.match(uf.label, /first 30 of 40 items/);
-  const g = framesOf('edges = [(i, j) for i in range(12) for j in range(i + 1, 12)]\nprint(len(edges))\n').at(-1).structures.find((s) => s.kind === 'graph');
+  const g = framesOf('import itertools\nedges = list(itertools.combinations(range(12), 2))\nprint(len(edges))\n').at(-1).structures.find((s) => s.kind === 'graph');
   assert.equal(g.edges.length, 60);
   assert.match(g.label, /first 60 of 66 edges/);
 });
@@ -316,4 +316,30 @@ test('heaps, union-find and edge lists drawn in part say so', () => {
 test('nothing that fits whole carries a "first k of N" note', () => {
   const f = framesOf('a = list(range(10))\nstack = [1, 2]\ngrid = [[1, 2], [3, 4]]\nprint(a)\n').at(-1);
   for (const s of f.structures) assert.doesNotMatch(s.label ?? '', /first|top \d+ of/, `${s.kind} ${s.label}`);
+});
+
+test('tracing never changes what a program computes (a module-level comprehension on every Python here)', () => {
+  // CPython 3.12: reading f_locals at module level inside an inlined
+  // comprehension set its loop variables to None. The tracer reads the
+  // module's globals instead; this runs on each Python found.
+  const code = 'edges = [(i, j) for i in range(4) for j in range(i + 1, 4)]\nprint(edges)\n';
+  const want = '[(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]';
+  let tried = 0;
+  for (const py of ['python3', 'python3.11', 'python3.12', 'python3.13']) {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nx-py-'));
+    try {
+      fs.writeFileSync(path.join(dir, 'main.py'), wrapPython(code));
+      const r = spawnSync(py, [path.join(dir, 'main.py')], { encoding: 'utf8' });
+      if (r.error) continue; // not installed
+      tried++;
+      assert.equal(r.stdout.trim(), want, `${py}: the traced program prints the same`);
+      assert.doesNotMatch(r.stderr, /RuntimeWarning/, `${py}: no "assigning None" warning`);
+      const frames = toFrames(replay(parseTrace(r.stderr).events), code, r.stdout);
+      const g = frames.at(-1).structures.find((s) => s.kind === 'graph');
+      assert.ok(g && /edge list/.test(g.label), `${py}: drawn as an edge list`);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  }
+  assert.ok(tried > 0, 'at least one Python ran');
 });
