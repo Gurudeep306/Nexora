@@ -2,7 +2,11 @@
    ink wipe from the button, its strips fanning out one after another. */
 
 .lp-sheet {
-  overflow: hidden;
+  /* Clip sideways for the opening wipe, but scroll when the screen is short
+     (the sheet is taller than a small laptop or phone screen). */
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   transform-origin: var(--radix-popover-content-transform-origin);
 }
 .lp-sheet[data-state='open'] {
