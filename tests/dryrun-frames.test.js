@@ -43,7 +43,7 @@ test('bubble sort: the array, its index pointers, compares and gliding swaps', (
   assert.deepEqual(after.cells.map((c) => c.v), [1, 3, 2]);
   assert.equal(after.roles[0], 'swap');
   assert.equal(after.cells[1].id, arr.cells[0].id, 'the 3 keeps its id, so it glides');
-  assert.match(swap.note, /two values swap/);
+  assert.match(swap.note, /a\[0\] ↔ a\[1\]/, "the note names the two boxes that swapped");
   const last = frames[frames.length - 1];
   assert.deepEqual(find(last, 'output').lines, ['[1, 2, 3]']);
 });
@@ -249,4 +249,25 @@ test('an "infinity" the code uses is drawn as ∞; a weight w is not a node poin
   // Without an infinity in the code, a big number stays a number.
   const plain = framesOf('a = [1000000000, 2]\nx = 0\n');
   assert.equal(find(plain[plain.length - 1], 'array', 'a').cells[0].v, 1000000000);
+});
+
+test('a plain object (no links) draws its lists as themselves, named obj.field; a union-find p becomes a forest', () => {
+  const code = 'class UF:\n    def __init__(self, n):\n        self.p = list(range(n))\n        self.count = n\n    def find(self, x):\n        return x if self.p[x] == x else self.find(self.p[x])\nuf = UF(4)\nuf.p[0] = 1\nuf.count -= 1\nprint(uf.find(0))\n';
+  const frames = framesOf(code);
+  const last = frames.filter((f) => f.line === 10)[0] ?? frames[frames.length - 1];
+  const arr = last.structures.find((s) => s.kind === 'array' && s.label === 'uf.p');
+  assert.ok(arr, 'uf.p is an array');
+  assert.deepEqual(arr.cells.map((c) => c.v), [1, 1, 2, 3]);
+  assert.ok(last.structures.some((s) => s.kind === 'tree' && /^uf\.p as sets/.test(s.label)), 'and a forest of sets');
+  assert.equal(find(last, 'vars').vars['uf.count'], 3, 'its number is a card named uf.count');
+});
+
+test('the step note says exactly what changed in a list or a map', () => {
+  const frames = framesOf('a = [4, 5]\na[1] = 9\na.append(7)\na.pop(0)\ncnt = {}\ncnt["x"] = 1\ncnt["x"] += 1\n');
+  const note = (line) => frames.find((f) => f.line === line).note;
+  assert.match(note(2), /a\[1\]: 5 → 9/);
+  assert.match(note(3), /a gets 7/);
+  assert.match(note(4), /a loses 4 from the front/);
+  assert.match(note(6), /cnt\["x"\] = 1/);
+  assert.match(note(7), /cnt\["x"\]: 1 → 2/);
 });

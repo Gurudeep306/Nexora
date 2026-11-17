@@ -14,6 +14,8 @@ export type TV =
   | { t: 'list' | 'tuple' | 'set' | 'deque'; n: number; i: TV[] }
   | { t: 'dict'; n: number; k: [TV, TV][] }
   | { t: 'ref'; id: number }
+  /** A value without identity (a Swift or C# struct): drawn like an object, compared by value. */
+  | { t: 'rec'; c: string; f: Record<string, TV> }
   | { t: 'big' | 'num' | 'str'; s: string }
   | { t: 'more' }
 
@@ -99,6 +101,10 @@ export function show(v: TV, heap?: Map<number, HeapObj>, depth = 0): string {
     }
     case 'dict':
       return `{${v.k.slice(0, 5).map(([a, b]) => `${show(a, heap, depth + 1)}: ${show(b, heap, depth + 1)}`).join(', ')}${v.n > 5 ? ', …' : ''}}`
+    case 'rec': {
+      const entries = Object.entries(v.f)
+      return `${v.c}(${entries.slice(0, 4).map(([k, x]) => `${k}=${show(x, heap, depth + 1)}`).join(', ')}${entries.length > 4 ? ', …' : ''})`
+    }
     case 'ref': {
       const o = heap?.get(v.id)
       if (!o) return 'object'

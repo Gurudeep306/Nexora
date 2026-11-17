@@ -85,6 +85,47 @@ function parseTrace(stderr) {
  * Resolves to { ok, supported, events, stdout, stderr, verdict, timeMs,
  * engine, capped, error }. Never throws.
  */
+/**
+ * Each runner keeps only so much of what a program writes to stderr; past
+ * that it cuts the trace and may drop the program's own output too
+ * (measured 2026-11-16: Wandbox ~128 KB, Kotlin Playground ~128 KB of all
+ * output, Compiler Explorer 32 KB, Paiza 10 KB; our own Piston runners 4 MB).
+ * The trace on each runner stays safely under its limit; a shorter trace
+ * shows fewer steps ("the first … steps"), never a broken run.
+ */
+// Judge0's limit is not published and depends on how a server is set up: kept low.
+const TRACE_BYTES = { wandbox: 110_000, kotlin: 95_000, godbolt: 28_000, paiza: 8_500, judge0: 60_000 };
+const FULL_TRACE_BYTES = 1_500_000;
+
+/** Where each runtime sets its byte budget (the line is the runtime's own, never the student's). */
+const BUDGET_LINE = {
+  python: /(_MAXEV, _MAXB = \d+, )1500000/,
+  cpp: /(MAXEV = 3000, MAXB = )1500000(, MAXOBJ)/,
+  c: /(#define __NX_MAXB )1500000/,
+  java: /(static final long MAXEV = 3000, MAXB = )1500000/,
+  javascript: /(const MAXB = )1500000/,
+  typescript: /(const MAXB = )1500000/,
+  go: /(const __nxMaxB = )1500000/,
+  rust: /(const MAXB: u64 = )1_500_000/,
+  csharp: /(const long MAXEV = 3000, MAXB = )1500000/,
+  kotlin: /(private const val MAXB = )1500000(L)/,
+  swift: /(static let MAXB = )1500000/,
+};
+
+/** The traced program with its byte budget set to `bytes`. */
+function withBudget(lang, wrapped, bytes) {
+  const re = BUDGET_LINE[lang];
+  if (!re || bytes >= FULL_TRACE_BYTES) return wrapped;
+  // Only real capture groups: with one group, the next argument is the match's offset.
+  return wrapped.replace(re, (_, a, b) => `${a}${bytes}${typeof b === 'string' ? b : ''}`);
+}
+
+/** The traced copy for a runner (null = a local run or our own runners: full size). */
+function forRunner(lang, wrapped) {
+  // judge02, judge03… are more Judge0 runners; piston2… are ours (full size).
+  return (engine) => withBudget(lang, wrapped, (engine && TRACE_BYTES[String(engine).replace(/^(judge0|piston)\d*$/, '$1')]) || FULL_TRACE_BYTES);
+}
+
 async function dryRun(code, lang, input, run) {
   const t = TRACERS[lang];
   if (!t) return { ok: false, supported: false, events: [], error: null };
@@ -94,7 +135,7 @@ async function dryRun(code, lang, input, run) {
   } catch (e) {
     return { ok: false, supported: true, events: [], stdout: '', stderr: '', verdict: 'OK', error: `The dry run could not read this program (${e.message}).` };
   }
-  const res = await run(wrapped, input, t.runAs);
+  const res = await run(forRunner(lang, wrapped), input, t.runAs);
   if (t.compiled && res.verdict === 'CE') {
     // Is it the student's code that does not compile, or our copy of it?
     const plain = await run(code, input, t.runAs);
@@ -138,4 +179,4 @@ async function dryRun(code, lang, input, run) {
   };
 }
 
-module.exports = { TRACERS, supported, parseTrace, dryRun };
+module.exports = { TRACERS, supported, parseTrace, dryRun, withBudget, forRunner, TRACE_BYTES, BUDGET_LINE };

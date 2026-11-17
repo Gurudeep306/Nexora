@@ -24,7 +24,8 @@ final class __Nx {
       public void write(byte[] b, int o, int n) { for (int i = o; i < o + n; i++) if ((b[i] & 0xC0) != 0x80) outn++; out.write(b, o, n); }
       public void flush() { out.flush(); }
     }, false));
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> System.out.flush()));
+    // No shutdown-hook thread: some sandboxes cannot start threads, and Java
+    // prints a warning into the output. The outermost call flushes on exit.
   }
 
   /* ── JSON ── */
@@ -296,6 +297,7 @@ final class __Nx {
     void exit() {
       depth--;
       top = up;
+      if (up == null) System.out.flush();
       if (!on) return;
       int l = pend >= 0 ? pend : line;
       flush(null, false);

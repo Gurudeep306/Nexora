@@ -1119,17 +1119,22 @@ function createAdminRouter(deps) {
     const list = await runners.loadRunners();
     const piston = require("../piston");
     const remote = require("../remote-exec");
+    const judge0 = require("../judge0");
     const envCount = piston.pistonServers(process.env).length - runners.judgeServers().length;
     const health = remote.sandboxHealth();
     let slot = envCount;
+    let j0 = 0;
     return {
       hosts: runners.HOSTS,
+      kinds: runners.KINDS,
+      keyed: runners.KEYED_SERVICES,
       max: runners.MAX_RUNNERS,
       envRunners: Math.max(0, envCount),
       runners: list.map((r) => {
         const pub = runners.publicRunner(r);
         // The judge's name for it, to show whether it is resting after failures.
-        const engine = pub.enabled ? piston.pistonEngineName(slot++) : null;
+        const usable = pub.kind === "judge0" ? pub.enabled && r.test && r.test.ok && r.test.map : pub.enabled;
+        const engine = !usable ? null : pub.kind === "judge0" ? judge0.engineName(j0++) : piston.pistonEngineName(slot++);
         const h = engine && health[engine];
         return { ...pub, resting: !!(h && h.restingFor > 0), restingFor: h ? h.restingFor || 0 : 0 };
       }),
@@ -1155,13 +1160,15 @@ function createAdminRouter(deps) {
       const url = runners.cleanUrl(str(b.url, { max: 300, field: "url" }));
       if (!runners.urlOk(url)) bad("The address must start with https://");
       const token = str(b.token ?? "", { max: 400, field: "token" });
-      const r = runners.newRunner({ name: str(b.name ?? "", { max: 60, field: "name" }), host: str(b.host ?? "other", { max: 20, field: "host" }), url, token });
+      const kind = str(b.kind ?? "piston", { max: 10, field: "kind" });
+      if (!runners.KINDS.includes(kind)) bad("Unknown kind of runner");
+      const r = runners.newRunner({ kind, name: str(b.name ?? "", { max: 60, field: "name" }), host: str(b.host ?? "other", { max: 20, field: "host" }), url, token });
       const list = await runners.loadRunners();
       if (list.length >= runners.MAX_RUNNERS) bad(`Up to ${runners.MAX_RUNNERS} runners`);
       if (list.some((x) => x.url === r.url)) bad("That runner is already added");
       // Test straight away: the admin sees at once whether it works.
       const t = await runners.testRunner(r);
-      r.test = { ok: t.ok, at: Date.now(), ms: t.ms, error: t.error, languages: t.languages, runtimes: t.runtimes || 0 };
+      r.test = { ok: t.ok, at: Date.now(), ms: t.ms, error: t.error, languages: t.languages, runtimes: t.runtimes || 0, ...(t.map ? { map: t.map } : {}) };
       await runners.saveRunners([...list, r], req.access.username);
       await audit(req, "runner.add", { targetType: "runner", target: r.id, after: { name: r.name, host: r.host, url: r.url, last4: r.last4 } });
       res.json({ ok: true, runner: runners.publicRunner(r), ...(await runnerView()) });
@@ -1185,7 +1192,7 @@ function createAdminRouter(deps) {
         r.test = null;
       }
       if (b.token) {
-        const fresh = runners.newRunner({ url: r.url, token: str(b.token, { max: 400, field: "token" }) });
+        const fresh = runners.newRunner({ kind: r.kind, url: r.url, token: str(b.token, { max: 400, field: "token" }) });
         r.token = fresh.token;
         r.last4 = fresh.last4;
         r.test = null;
@@ -1229,7 +1236,7 @@ function createAdminRouter(deps) {
       const list = await runners.loadRunners();
       const r = { ...findRunner(list, req.params.id) };
       const t = await runners.testRunner(r);
-      r.test = { ok: t.ok, at: Date.now(), ms: t.ms, error: t.error, languages: t.languages, runtimes: t.runtimes || 0 };
+      r.test = { ok: t.ok, at: Date.now(), ms: t.ms, error: t.error, languages: t.languages, runtimes: t.runtimes || 0, ...(t.map ? { map: t.map } : {}) };
       await runners.saveRunners(list.map((x) => (x.id === r.id ? r : x)), req.access.username);
       // A runner that works again should not sit out its rest.
       if (t.ok) require("../remote-exec").resetHealth();

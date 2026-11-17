@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowDown, ArrowUp, Check, Copy, Loader2, Plus, RefreshCw, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, Check, Copy, ExternalLink, Loader2, Plus, RefreshCw, Trash2 } from 'lucide-react'
 import { useToast, Select } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api, ApiError } from '@/lib/api'
@@ -9,14 +9,19 @@ import { ago } from './format'
 import { CompilersPanels } from './CompilersPanels'
 
 /*
-  Admin → Code runners. Our own Piston servers: each one is tried first, in
-  this order, and each backs up the others; the free public sandboxes stay
-  behind them all. Passwords are write-only, like AI keys.
+  Admin → Code runners. Our own runners — Piston servers, and Judge0 (our own
+  server or a Judge0 Cloud key) — are tried first, in this order, and each
+  backs up the others; the free public sandboxes stay behind them all.
+  Passwords and keys are write-only, like AI keys. Services whose terms do not
+  allow use like ours are listed with the reason, and cannot be added.
 */
 
 type Host = { id: string; name: string }
+type Kind = 'piston' | 'judge0'
+type Keyed = { id: string; name: string; allowed: boolean; why: string; how?: string; terms: string }
 type Runner = {
   id: string
+  kind: Kind
   name: string
   host: string
   url: string
@@ -27,7 +32,7 @@ type Runner = {
   restingFor: number
   test: { ok: boolean; at: number; ms: number; error: string | null; languages: string[]; runtimes?: number } | null
 }
-type RunnersState = { hosts: Host[]; max: number; envRunners: number; runners: Runner[] }
+type RunnersState = { hosts: Host[]; keyed: Keyed[]; max: number; envRunners: number; runners: Runner[] }
 
 const SETUP = [
   'curl -fsSL https://raw.githubusercontent.com/Gurudeep306/Nexora/main/deploy/runner/setup.sh -o setup.sh',
@@ -70,7 +75,7 @@ export function RunnersSection() {
   const { data, loading, error, refetch, setData } = useApi(() => api.get<RunnersState>('/api/admin/runners'), [])
   const [busy, setBusy] = useState<string | null>(null)
   const [adding, setAdding] = useState(false)
-  const [form, setForm] = useState({ host: 'oracle', name: '', url: '', token: '' })
+  const [form, setForm] = useState({ kind: 'piston' as Kind, host: 'oracle', name: '', url: '', token: '' })
 
   if (loading && !data) return <Skeleton className="h-96" />
   if (error || !data) return <Failed message={error ?? 'Could not load code runners'} onRetry={refetch} />
@@ -96,7 +101,7 @@ export function RunnersSection() {
     if (added?.test?.ok) toast.success(`${added.name} is working`, 'Code now runs there first.')
     else toast.error(`${added?.name ?? 'Runner'} saved, but the test failed`, added?.test?.error ?? undefined)
     setAdding(false)
-    setForm({ host: 'oracle', name: '', url: '', token: '' })
+    setForm({ kind: 'piston', host: 'oracle', name: '', url: '', token: '' })
   }
 
   const working = data.runners.filter((r) => r.enabled && r.test?.ok).length + data.envRunners
@@ -108,7 +113,7 @@ export function RunnersSection() {
         description={
           working
             ? `${working === 1 ? 'One runner of our own runs' : `${working} runners of our own run`} code first${working === 1 ? '' : ', each backing up the others'}. If ${working === 1 ? 'it is' : 'all of them are'} busy or down, the free public runners take over.`
-            : 'Code runs on free public runners only (Wandbox, Compiler Explorer, Paiza.io, the Kotlin Playground). Add a runner of our own for speed and for Clojure, PowerShell, Groovy and Nim.'
+            : 'Code runs on free public runners only (Wandbox, Compiler Explorer, Paiza.io, the Kotlin Playground). Add a runner of our own (Piston, or Judge0) for speed and for Clojure, PowerShell, Groovy and Nim.'
         }
         icon="server"
         actions={<Chip tone={working ? 'success' : 'warning'}>{working ? `${working} own` : 'Public only'}</Chip>}
@@ -129,6 +134,20 @@ export function RunnersSection() {
         {adding && (
           <div className="ai-form">
             <div className="grid gap-3 sm:grid-cols-2">
+              <label className="ai-field sm:col-span-2">
+                <span>Kind</span>
+                <Select
+                  className="ai-select"
+                  value={form.kind}
+                  onChange={(e) => {
+                    const kind = e.target.value as Kind
+                    setForm({ ...form, kind, host: kind === 'judge0' ? 'judge0cloud' : 'oracle' })
+                  }}
+                >
+                  <option value="piston">Piston — our own server (setup script below)</option>
+                  <option value="judge0">Judge0 — our own Judge0 server, or a Judge0 Cloud / RapidAPI key</option>
+                </Select>
+              </label>
               <label className="ai-field">
                 <span>Where it runs</span>
                 <Select className="ai-select" value={form.host} onChange={(e) => setForm({ ...form, host: e.target.value })}>
@@ -144,16 +163,30 @@ export function RunnersSection() {
                 <input className="ai-input" value={form.name} placeholder="e.g. Oracle Mumbai" onChange={(e) => setForm({ ...form, name: e.target.value })} />
               </label>
               <label className="ai-field sm:col-span-2">
-                <span>Address (PISTON_URL from the setup script)</span>
-                <input className="ai-input font-mono" value={form.url} placeholder="https://1-2-3-4.sslip.io" onChange={(e) => setForm({ ...form, url: e.target.value })} />
+                <span>{form.kind === 'judge0' ? 'Address (your Judge0 server, or the API address on RapidAPI)' : 'Address (PISTON_URL from the setup script)'}</span>
+                <input
+                  className="ai-input font-mono"
+                  value={form.url}
+                  placeholder={form.kind === 'judge0' ? 'https://judge0-ce.p.rapidapi.com' : 'https://1-2-3-4.sslip.io'}
+                  onChange={(e) => setForm({ ...form, url: e.target.value })}
+                />
               </label>
               <label className="ai-field sm:col-span-2">
-                <span>Password (PISTON_TOKEN from the setup script)</span>
+                <span>
+                  {form.kind === 'judge0'
+                    ? 'Key (your RapidAPI key, or the X-Auth-Token your Judge0 server is set up with; empty if it has none)'
+                    : 'Password (PISTON_TOKEN from the setup script)'}
+                </span>
                 <input className="ai-input font-mono" type="password" autoComplete="off" value={form.token} onChange={(e) => setForm({ ...form, token: e.target.value })} />
               </label>
             </div>
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button type="button" className="ai-btn ai-btn--main" disabled={busy === 'add' || !form.url.trim() || !form.token.trim()} onClick={() => void add()}>
+              <button
+                type="button"
+                className="ai-btn ai-btn--main"
+                disabled={busy === 'add' || !form.url.trim() || (form.kind === 'piston' && !form.token.trim())}
+                onClick={() => void add()}
+              >
                 {busy === 'add' && <Loader2 className="size-3.5 animate-spin" />} Connect and test
               </button>
               <button type="button" className="ai-btn" onClick={() => setAdding(false)}>
@@ -181,10 +214,12 @@ export function RunnersSection() {
                     <p className="m-0 flex flex-wrap items-center gap-2 text-[14px] font-semibold text-text-primary">
                       <span className="font-mono text-[12px] text-text-muted tabular-nums">{i + 1}.</span>
                       {r.name}
+                      <Chip>{r.kind === 'judge0' ? 'Judge0' : 'Piston'}</Chip>
                       <Chip tone={s.tone}>{s.text}</Chip>
                     </p>
                     <p className="m-0 mt-0.5 truncate font-mono text-[12px] text-text-muted">
-                      {r.url} · password ····{r.last4}
+                      {r.url}
+                      {r.hasToken ? ` · ${r.kind === 'judge0' ? 'key' : 'password'} ····${r.last4}` : ' · no key'}
                       {r.test && ` · tested ${ago(r.test.at)}`}
                       {r.test?.ok && ` · ${(r.test.ms / 1000).toFixed(1)} s`}
                     </p>
@@ -231,6 +266,30 @@ export function RunnersSection() {
       </Panel>
 
       <CompilersPanels />
+
+      <Panel
+        title="Services that need a key"
+        description="Read from each service's own terms (16 Nov 2026). Only the ones that allow a site like ours to run students' code can be added."
+        icon="shield"
+      >
+        <ul className="ai-list">
+          {data.keyed.map((k) => (
+            <li key={k.id} className="ai-row">
+              <div className="min-w-0 flex-1">
+                <p className="m-0 flex flex-wrap items-center gap-2 text-[14px] font-semibold text-text-primary">
+                  {k.name}
+                  <Chip tone={k.allowed ? 'success' : 'danger'}>{k.allowed ? 'Allowed' : 'Not allowed'}</Chip>
+                </p>
+                <p className="m-0 mt-1 text-[13px] text-text-secondary">{k.why}</p>
+                {k.how && <p className="m-0 mt-1 text-[13px] text-text-secondary">{k.how}</p>}
+              </div>
+              <a className="ai-btn shrink-0" href={k.terms} target="_blank" rel="noreferrer noopener">
+                <ExternalLink className="size-3.5" /> Their site
+              </a>
+            </li>
+          ))}
+        </ul>
+      </Panel>
 
       <Panel title="Set up a runner" description="Any Ubuntu 24.04 machine with ports 80 and 443 open. Takes 10–30 minutes." icon="code">
         <ol className={cn('m-0 list-decimal space-y-3 pl-5 text-[13.5px] text-text-secondary')}>

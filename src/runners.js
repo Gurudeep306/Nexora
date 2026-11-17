@@ -1,8 +1,10 @@
-// Our own code runners (Piston servers), added in Admin → Code runners.
+// Our own code runners, added in Admin → Code runners: Piston servers, and
+// Judge0 (self-hosted, or a Judge0 Cloud / RapidAPI key; see src/judge0.js).
 //
 // Stored as one JSON row ('judge_runners') in site_settings:
-//   runners: [{ id, name, host, url, token (sealed), last4, enabled, test }]
-//   test:    { ok, at, ms, error, languages[], runtimes }  (names + aliases; how many languages)
+//   runners: [{ id, kind, name, host, url, token (sealed), last4, enabled, test }]
+//   kind:    'piston' (default) | 'judge0'
+//   test:    { ok, at, ms, error, languages[], runtimes, map? }  (map: Judge0's language ids)
 //
 // Enabled runners go first in every language's chain, after any set with
 // PISTON_URL in the environment, and each one backs up the others; the free
@@ -13,12 +15,53 @@
 const crypto = require("crypto");
 const { all, run, onWrite } = require("./db");
 const { seal, open, last4 } = require("./hive/vault");
+const judge0 = require("./judge0");
+
+const KINDS = ["piston", "judge0"];
+
+/**
+ * Code-running services that want a key, and whether their terms allow a
+ * site like ours to send students' code to them (read 2026-11-16; never
+ * guessed). Shown on Admin → Code runners.
+ */
+const KEYED_SERVICES = [
+  {
+    id: "judge0",
+    name: "Judge0",
+    allowed: true,
+    how: "Add it in \u201cOur runners\u201d above as a Judge0 runner: your own Judge0 server, or a Judge0 Cloud / RapidAPI key.",
+    why: "Judge0 is open-source (GPL-3.0), so running it on our own server is allowed. Its cloud API is sold for competitive programming and e-learning platforms — use it within the plan you buy.",
+    terms: "https://judge0.com",
+  },
+  {
+    id: "jdoodle",
+    name: "JDoodle Compiler API",
+    allowed: false,
+    why: "Its terms give a licence only \"for your own use or for your internal business purposes\"; any other use needs JDoodle's written consent (hello@jdoodle.com). Running our students' code is neither.",
+    terms: "https://www.jdoodle.com/terms",
+  },
+  {
+    id: "glot",
+    name: "glot.io",
+    allowed: false,
+    why: "glot.io publishes no terms of service for its hosted API, so there is no permission to build on it. Its runner code is open-source (MIT) and could be self-hosted — our Piston runners already do that job.",
+    terms: "https://glot.io",
+  },
+  {
+    id: "coliru",
+    name: "Coliru",
+    allowed: false,
+    why: "Coliru publishes no terms and no API; it is one person's free server run on donations. Not without its owner's permission.",
+    terms: "https://coliru.stacked-crooked.com",
+  },
+];
 
 /** Where a runner lives — only a label for the admin list. */
 const HOSTS = [
   { id: "oracle", name: "Oracle Cloud (Always Free)" },
   { id: "hetzner", name: "Hetzner" },
   { id: "aws", name: "AWS" },
+  { id: "judge0cloud", name: "Judge0 Cloud (key)" },
   { id: "other", name: "Other server" },
 ];
 const HOST_IDS = new Set(HOSTS.map((h) => h.id));
@@ -82,10 +125,11 @@ function urlOk(u) {
   }
 }
 
-function newRunner({ name, host, url, token }) {
+function newRunner({ name, host, url, token, kind }) {
   const h = HOST_IDS.has(host) ? host : "other";
   return {
     id: `r_${crypto.randomBytes(6).toString("hex")}`,
+    kind: KINDS.includes(kind) ? kind : "piston",
     name: String(name || "").trim().slice(0, 60) || HOSTS.find((x) => x.id === h).name,
     host: h,
     url: cleanUrl(url),
@@ -108,6 +152,7 @@ function runnerToken(r) {
 function publicRunner(r) {
   return {
     id: r.id,
+    kind: r.kind || "piston",
     name: r.name,
     host: r.host,
     url: r.url,
@@ -124,6 +169,10 @@ function publicRunner(r) {
  */
 async function testRunner(r, { fetchImpl = globalThis.fetch, timeoutMs = 20000 } = {}) {
   const token = runnerToken(r);
+  if (r.kind === "judge0") {
+    const t = await judge0.testJudge0(r.url, token, { fetchImpl, timeoutMs });
+    return { ...t, runtimes: t.languages.length };
+  }
   const headers = { "Content-Type": "application/json", Accept: "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) };
   const started = Date.now();
   const why = (e) => (e?.name === "TimeoutError" ? "Timed out" : "Could not reach the runner");
@@ -172,13 +221,20 @@ async function testRunner(r, { fetchImpl = globalThis.fetch, timeoutMs = 20000 }
  */
 function judgeServers() {
   return peekRunners()
-    .filter((r) => r.enabled !== false && r.url)
+    .filter((r) => r.enabled !== false && r.url && (r.kind || "piston") === "piston")
     .map((r) => ({
       url: r.url,
       token: runnerToken(r),
       name: r.name,
       languages: r.test && r.test.ok && Array.isArray(r.test.languages) && r.test.languages.length ? r.test.languages : null,
     }));
+}
+
+/** The Judge0 runners the judge uses (src/judge0.js): enabled, tested, with their language ids. */
+function judge0Servers() {
+  return peekRunners()
+    .filter((r) => r.enabled !== false && r.url && r.kind === "judge0" && r.test && r.test.ok && r.test.map)
+    .map((r) => ({ url: r.url, token: runnerToken(r), name: r.name, map: r.test.map }));
 }
 
 function startRefresh() {
@@ -189,6 +245,9 @@ function startRefresh() {
 
 module.exports = {
   HOSTS,
+  KINDS,
+  KEYED_SERVICES,
+  judge0Servers,
   MAX_RUNNERS,
   loadRunners,
   peekRunners,

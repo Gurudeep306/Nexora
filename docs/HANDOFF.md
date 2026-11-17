@@ -55,75 +55,63 @@ Contents:
 - `git add -A` also picks up helper worktrees under `.claude/worktrees/`.
   Add that folder to `.git/info/exclude` first.
 
-## 3. Where it stands (2026-11-16, session 5)
+## 3. Where it stands (2026-11-16, session 6)
 
-- **Merged and live:** #127, #128, #129 (dry run: Python, C++, C, Java,
-  JavaScript, TypeScript), **#130** (Solve page redesign + dry run for Go,
-  Rust, C#; C# runs on .NET 9 first), **#131** (dry run for Kotlin and Swift;
-  Kotlin stderr no longer cut short). The dry run works in 11 languages.
-- **Admin → Compilers (section 6, item 5) — MERGED**, first on branch
-  `claude/fervent-curie-vjgcd8` (#132). Session 5 checked it and continued on
-  `claude/clever-keller-vgi9vo` (the same work plus a phone fix: admin
-  `Panel` headers now wrap their button under the text, so the description
-  is no longer squeezed into a thin column at 360px). **Merged as #133**
-  (the owner said "merge", 2026-11-16); #132 was closed in its favour.
-  What it does:
-  - `src/compilers.js`: the free public runners (Wandbox, Compiler Explorer,
-    Kotlin Playground, Paiza.io) can be turned off; each one's compiler
-    version per language is chosen by an updater that runs every 6 hours
-    (and from "Check for new versions"): it reads each service's own list
-    (`/api/list.json`, `/api/compilers`, `/versions`), takes the newest
-    stable version **in the same family** (gcc stays gcc, C stays C), runs
-    the language's self-test (`src/judge-selftest.js`) and uses it only if it
-    prints 15. Big jumps in languages that break old programs (Scala 2→3,
-    Ruby 3→4, Zig 0.x, Haskell 9.x, Python/PHP/Perl majors…, the `CAREFUL`
-    table) wait for an admin. A kept (pinned) version never changes; "Use
-    built-in" goes back to the version in `src/remote-exec.js`.
-  - `src/remote-exec.js`: `useCompilerChoices` hook, `compilerFor(engine,
-    lang)`, `runOn(...)` (one exact compiler, no cache/failover),
-    `publicChain` skips services turned off.
-  - Admin → Code runners shows two new panels (`CompilersPanels.tsx`):
-    Public runners (status, list read, on/off, last check: updated / waiting
-    / failed with details) and Languages (searchable; each language's chain
-    and the version each runner uses; Keep this version / Let it update /
-    Use built-in).
-  - Routes in `src/routes/admin.js` (`/api/admin/compilers*`, perm
-    `site.settings`, audited). Tests: `tests/compilers.test.js` (no network).
-  - **Real check, 2026-11-16:** 21 newer versions passed and would be used
-    (GCC 16.2, Rust 1.99, Java 27, Python 3.14/3.15, Go 1.26, .NET 10, Swift
-    6.4.2, Kotlin 2.4.21…); 5 held (Ruby 4, Scala 3, Zig 0.17, Haskell
-    9.12); Objective-C on GCC 16 failed (a header is gone) and stays old.
-- **Not done in this PR (do next, in this order):**
-  1. **After merge, check the dry run on the new versions.** The updater
-     only runs the self-test. Run the scratch suites of all 11 traced
-     languages against the versions the live updater picked (or pin the old
-     version for a language whose tracer breaks, and fix the tracer).
-  2. **Key-based services** (handoff item 5): check each one's terms first
-     (self-hosted Judge0, JDoodle free tier, Glot.io, Coliru), then add only
-     the allowed ones, with keys sealed like AI keys
-     (`src/hive/vault.js`). Say plainly in the admin page which are not
-     allowed and why.
-     **Session 5 findings:** Judge0 is GPL-3.0 (github.com/judge0/judge0
-     LICENSE); running it on our own server is allowed ("run … covered
-     works that you do not convey, without conditions"; network use is not
-     conveying). Judge0's hosted cloud is through RapidAPI or a paid plan;
-     their terms were not read. JDoodle, glot.io and Coliru could **not** be
-     read: this cloud environment's network blocks jdoodle.com, glot.io
-     and coliru.stacked-crooked.com. Read their terms from a machine that can
-     reach them (or allow those hosts) before adding any of them. Do not
-     guess.
-  3. ~~Screenshots and axe~~ **DONE (session 5):** axe 0 and no sideways
-     scroll in light, dark and phone; Admin → AI models and Site also
-     re-checked after the shared `Panel` change.
-- **Dry-run test programs are in the repo now:** `scripts/dryrun-suites/<lang>/`
-  (Go 10, Rust 11, C# 7, Kotlin 5, Swift 6; `<name>.in` is the input) and
-  `scripts/dryrun-suites/run.js <lang> [engine]` runs them plain and traced
-  on the public runners (needs the proxy preload, section 7).
-- **Owner decisions (2026-11-16):** the dry run for Ruby, PHP, Lua, Perl and
-  for functional languages is **later**, not now. The ideas in section 6,
-  item 7 are **no for now**.
-- **Item 1 (live check) needs the owner**: the site is private, so only the
-  owner can sign in and press Dry run on the live site in each language.
+- **Merged and live:** #127–#131, #133 (Admin → Compilers). Live check,
+  2026-11-16: `https://nexoraguru.in/api/health` answers OK on commit
+  `42d29e1` (#133); the private "coming soon" page shows. Signing in and
+  pressing Dry run on the live site needs the owner (the site is private).
+- **On branch `claude/clever-babbage-km37j9` (pushed, PR not opened yet):
+  finishing Admin → Compilers.**
+  - **Judge0** (`src/judge0.js`): add it in Admin → Code runners as a second
+    kind of runner next to Piston — our own Judge0 server (GPL-3.0, allowed)
+    or a Judge0 Cloud / RapidAPI key (Judge0 sells it for programming and
+    e-learning platforms). Key sealed with `src/hive/vault.js`, tested on
+    save (reads `/languages`, maps our languages to the newest matching
+    Judge0 id, runs `print(6*7)`), on/off, order, health. Runs before the
+    public runners for the languages it has. Tests: `tests/judge0.test.js`.
+  - **Key-based services, terms read 2026-11-16** (the network is open now):
+    JDoodle — not allowed (licence only "for your own use or for your
+    internal business purposes"; other use needs written consent,
+    hello@jdoodle.com). glot.io — not allowed (no terms published; its
+    runner code is MIT and could be self-hosted, which Piston already
+    covers). Coliru — not allowed (no terms, no API, one person's donated
+    server). Shown on the admin page with each reason (`KEYED_SERVICES` in
+    `src/runners.js`).
+  - **Dry-run traces sized to each runner** (`TRACE_BYTES`, `withBudget`,
+    `forRunner` in `src/dryrun/index.js`): measured stderr limits —
+    Wandbox ~128 KB, Kotlin Playground ~128 KB of all output, Compiler
+    Explorer 32 KB, Paiza 10 KB, our Piston 4 MB (`PISTON_OUTPUT_MAX_SIZE`).
+    Before, a long trace was cut and could take the program's own output with
+    it. `remoteRun`/`runChain` accept code as a function of the runner.
+  - **Java tracer**: no shutdown-hook thread any more (Compiler Explorer
+    cannot start threads; Java printed a warning into the output).
+  - **New compiler versions** (`scripts/dryrun-suites/newest.js`, runs what
+    the updater would pick), all passing traced and plain: Python 3.14 /
+    3.15, GCC 16.2 (C++ and C), Java 27, Go 1.26, Rust 1.99, .NET 10, Swift
+    6.4.2, Kotlin 2.4.21 (Kotlin Playground). No version needs pinning.
+  - **Kotlin on Compiler Explorer** cannot read input on any version (its JVM
+    overflows its own class loader). `jvmSandboxFault` in
+    `src/remote-exec.js` now calls that the runner's fault, so the chain moves
+    on to Paiza instead of blaming the student.
+  - **Dry-run polish (item 4), done here:** Swift and C# structs come as
+    records (`{t:'rec'}`), and any plain object (no links) in any language
+    draws its lists/maps as `uf.p` and numbers as `uf.count`; `p` with a
+    `find(` is a union-find forest; the step note names the exact change
+    (`a[1]: 5 → 9`, `a[0] ↔ a[1]`, `st gets 7`, `cnt["x"]: 1 → 2`).
+- **Built by helpers, waiting to be integrated as their own PRs** (worktrees
+  under `.claude/worktrees/`, not committed): **B** problem pipeline
+  (`agent-a66b67d0…`: 9 of 11 sources full, images stored in the database,
+  audit script, Admin "What is missing" panel, re-import; SPOJ and DMOJ are
+  bot-checked and stay missing), **A3** coding analysis + real XP / level
+  progress + Profile "How your level is earned" (`agent-ac32da41…`).
+  **A1** error explanations still running (`agent-a029dae8…`).
+- **Next:** integrate B, A3, A1 (one PR each, after this PR merges), then A2
+  (after A1: both touch the editor), C, D, E, F, and the rest of item 4
+  (JS async/sort tracing, C pointers into arrays, linked-list pointer lanes).
+- **Owner decisions (2026-11-16):** dry run for Ruby, PHP, Lua, Perl and
+  functional languages is **later**; the ideas in section 6, item 7 are
+  **no for now**.
 
 ## 4. What is done (all sessions)
 
