@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { ChevronLeft, ChevronRight, FileText, LayoutGrid, Maximize, Minimize, Send, User, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -71,6 +71,8 @@ export interface CbtConsoleProps {
   onSubmit: (responses: Record<string, CbtResponse>, timeSpent: Record<string, number>) => Promise<void>
   /** Extra lines at the top of the instructions. */
   intro?: ReactNode
+  /** A fixed end (ms since 1970), e.g. a contest's: the clock never runs past it, reloads included. */
+  deadline?: number
 }
 
 export function CbtConsole({
@@ -86,6 +88,7 @@ export function CbtConsole({
   exitLabel = 'Back',
   onSubmit,
   intro,
+  deadline,
 }: CbtConsoleProps) {
   const { user } = useAuth()
   const [phase, setPhase] = useState<'instructions' | 'exam' | 'done'>('instructions')
@@ -97,6 +100,7 @@ export function CbtConsole({
   const [draft, setDraft] = useState<CbtResponse | undefined>(undefined)
   const [statusMap, setStatusMap] = useState<Record<string, QuestionStatus>>({})
   const [timeRemaining, setTimeRemaining] = useState(durationMinutes * 60)
+  const capped = useCallback((secs: number) => (deadline ? Math.max(0, Math.min(secs, Math.floor((deadline - Date.now()) / 1000))) : secs), [deadline])
   const [timeSpent, setTimeSpent] = useState<Record<string, number>>({})
 
   const [showCalc, setShowCalc] = useState(false)
@@ -139,7 +143,7 @@ export function CbtConsole({
       const at = Math.min(from.currentIndex, questions.length - 1)
       setResponses(from.responses)
       setStatusMap({ ...initial, ...from.statusMap })
-      setTimeRemaining(from.timeRemaining)
+      setTimeRemaining(capped(from.timeRemaining))
       setTimeSpent(from.timeSpent)
       setCurrentIndex(at)
       setDraft(from.responses[questions[at]?.id])
@@ -149,7 +153,7 @@ export function CbtConsole({
       setTimeSpent({})
       setCurrentIndex(0)
       setDraft(undefined)
-      setTimeRemaining(durationMinutes * 60)
+      setTimeRemaining(capped(durationMinutes * 60))
     }
     setPhase('exam')
   }
@@ -159,12 +163,12 @@ export function CbtConsole({
   useEffect(() => {
     if (!running || timeUp) return
     const t = setInterval(() => {
-      setTimeRemaining((p) => Math.max(0, p - 1))
+      setTimeRemaining((p) => capped(Math.max(0, p - 1)))
       const id = currentQIdRef.current
       if (id) setTimeSpent((ts) => ({ ...ts, [id]: (ts[id] || 0) + 1 }))
     }, 1000)
     return () => clearInterval(t)
-  }, [running, timeUp])
+  }, [running, timeUp, capped])
 
   // Keep the attempt across an accidental reload.
   useEffect(() => {
@@ -307,8 +311,8 @@ export function CbtConsole({
 
   if (phase === 'instructions') {
     return createPortal(
-      <div className="fixed inset-0 z-[100] flex flex-col bg-bg-app text-text-primary">
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-bg-surface px-4 sm:px-6">
+      <div role="dialog" aria-modal="true" aria-label={title} className="fixed inset-0 z-[100] flex flex-col bg-bg-app text-text-primary">
+        <div className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-bg-surface px-4 sm:px-6">
           <button type="button" onClick={onExit} className="rounded-lg p-1.5 text-text-muted hover:bg-bg-surface-2 hover:text-text-primary" aria-label={exitLabel}>
             <ChevronLeft className="size-5" />
           </button>
@@ -319,7 +323,7 @@ export function CbtConsole({
             </span>
             <span className="hidden sm:inline">{candidate}</span>
           </span>
-        </header>
+        </div>
         <div className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-3xl space-y-5 px-4 py-6 sm:px-6">
             <div>
@@ -427,9 +431,9 @@ export function CbtConsole({
   const toolBtn = 'inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-bg-surface px-2.5 text-[12.5px] text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary'
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex flex-col bg-bg-app text-text-primary">
+    <div role="dialog" aria-modal="true" aria-label={title} className="fixed inset-0 z-[100] flex flex-col bg-bg-app text-text-primary">
       {/* Header */}
-      <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border bg-bg-surface px-2 sm:px-4">
+      <div className="flex h-14 shrink-0 items-center gap-2 border-b border-border bg-bg-surface px-2 sm:px-4">
         <button type="button" onClick={() => setShowExit(true)} className="rounded-lg p-1.5 text-text-muted hover:bg-bg-surface-2 hover:text-text-primary" aria-label="Leave" title="Leave">
           <Icon name="logout" className="size-4.5 -scale-x-100" />
         </button>
@@ -466,7 +470,7 @@ export function CbtConsole({
             <LayoutGrid className="size-4" />
           </button>
         </div>
-      </header>
+      </div>
 
       {/* Sections */}
       <nav className="flex h-11 shrink-0 items-center gap-1 overflow-x-auto border-b border-border bg-bg-surface px-2 sm:px-4" aria-label="Sections">
@@ -489,7 +493,7 @@ export function CbtConsole({
               )}
             >
               {sec.title}
-              <span className="font-mono text-[11.5px] text-text-muted">
+              <span className="font-mono text-[11.5px] text-text-secondary">
                 {done}/{sec.count}
               </span>
             </button>
@@ -499,7 +503,7 @@ export function CbtConsole({
 
       <div className="flex min-h-0 flex-1">
         {/* Question pane */}
-        <main className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-w-0 flex-1 flex-col">
           {currentQuestion && (
             <>
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-2 sm:px-6">
@@ -590,7 +594,7 @@ export function CbtConsole({
               </footer>
             </>
           )}
-        </main>
+        </div>
 
         {/* Palette: side column on wide screens, drawer on small ones */}
         <aside className="hidden w-72 shrink-0 border-l border-border bg-bg-surface lg:block xl:w-80">{palette}</aside>

@@ -1,7 +1,9 @@
 import { Suspense, lazy, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Link } from 'react-router-dom'
-import { AlertTriangle, ExternalLink, Link2 } from 'lucide-react'
+import { AlertTriangle, ExternalLink, Link2, Trophy } from 'lucide-react'
+import { useAuth } from '@/context/AuthContext'
+import { AddToContest } from '@/components/contests/hosted/Pickers'
 import { cn } from '@/lib/utils'
 import { useAgentPageContext } from '@/context/AgentContext'
 import { Markdown } from '@/learn/md'
@@ -113,6 +115,10 @@ export function QuestionView({
   const [conf, setConf] = useState<1 | 2 | 3 | null>(null)
   const [myTime, setMyTime] = useState<number | null>(null)
   const progress = useQuestionProgress(q.id)
+  const { user } = useAuth()
+  const [toContest, setToContest] = useState(false)
+  // A past-paper question with a checked answer can go into a contest you host.
+  const contestable = !!user && mode === 'practice' && ['MCQ', 'MSQ', 'NAT'].includes(q.type) && q.answer != null && q.answer !== ''
   const [reviewBefore] = useState(() => progress.review)
   const note = useRef<NoteEditorHandle>(null)
 
@@ -298,6 +304,12 @@ export function QuestionView({
           <>
             <OutcomeDot outcome={progress.outcome} className="mr-1" />
             <BookmarkButton questionId={q.id} />
+            {contestable && (
+              <button type="button" onClick={() => setToContest(true)} className="ed-icon-btn" title="Add to a contest" aria-label="Add to a contest">
+                <Trophy className="size-4" />
+              </button>
+            )}
+            {contestable && toContest && <AddToContest open onClose={() => setToContest(false)} kind="gate" refId={q.id} title={`${paperLabel(q)}, ${qLabel(q)}`} />}
             {onOpen && (
               <button type="button" onClick={onOpen} className="ed-icon-btn" title="Open in practice" aria-label="Open in practice">
                 <Link2 className="size-4" />

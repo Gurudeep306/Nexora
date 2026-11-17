@@ -17,7 +17,7 @@ import { useApi } from '@/hooks/useApi'
 import { useAuth } from '@/context/AuthContext'
 import { PlatformContestCard } from '@/components/contests/PlatformContestCard'
 import { contestBucket } from '@/components/contests/contestUtils'
-import { CustomContestsSection } from '@/components/contests/CustomContestsSection'
+import { HostedSection } from '@/components/contests/hosted/HostedSection'
 import type { PlatformContest } from '@/components/contests/types'
 import { Icon } from '@/components/icon/Icon'
 import { isJournalKit } from '@/theme/styles'
@@ -55,7 +55,7 @@ export default function ContestsPage() {
         icon="contests"
         eyebrow="The Workshop"
         title="Contests"
-        subtitle="Upcoming rounds on Codeforces and CodeChef, and private contests made on NexoraGuru."
+        subtitle="Upcoming rounds on Codeforces and CodeChef, and contests made on NexoraGuru."
         actions={
           <Button variant="outline" size="sm" onClick={contestsApi.refetch} aria-label="Refresh contests">
             <RefreshCw /> Refresh
@@ -92,7 +92,7 @@ export default function ContestsPage() {
           <EmptyState
             icon="trophy"
             title={q.trim() ? `No contests match “${q.trim()}”` : bucket === 'all' ? 'No contests found' : `No ${bucket} contests`}
-            description={q.trim() ? 'Check the spelling, or clear the search.' : 'Check back soon — or host your own contest below.'}
+            description={q.trim() ? 'Check the spelling, or clear the search.' : 'Check back soon, or host your own contest below.'}
           />
         </Card>
       ) : (
@@ -112,14 +112,14 @@ export default function ContestsPage() {
       )}
 
       {user?.username ? (
-        <CustomContestsSection me={user.username} />
+        <HostedSection />
       ) : (
         <section className="mt-8">
           <Card>
             <EmptyState
               icon="trophy"
-              title="Custom contests need an identity"
-              description="Sign in to join NexoraGuru-hosted contests with a code and password."
+              title="Sign in to host or join"
+              description="Sign in to make a contest, or to join one with its code."
             />
           </Card>
         </section>
