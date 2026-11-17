@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
-import { Link } from 'react-router-dom'
-import { Hammer, Plus, Pencil, Trash2, Copy, Trophy, Users, Clock, CalendarClock, Play } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Hammer, Plus, Pencil, Trash2, Trophy, Play } from 'lucide-react'
 import {
   Badge,
   Button,
@@ -18,28 +18,25 @@ import {
 import { api, ApiError } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { useAuth } from '@/context/AuthContext'
-import { cn, timeAgo } from '@/lib/utils'
+import { timeAgo } from '@/lib/utils'
 import { ProblemFormModal } from '@/components/workshop/ProblemFormModal'
-import { ContestFormModal, contestProblemIds } from '@/components/workshop/ContestFormModal'
+import { HostedSection } from '@/components/contests/hosted/HostedSection'
 import type { CustomContestRow, CustomProblem } from '@/components/workshop/types'
 import { difficultyLabel, parseJson } from '@/components/workshop/types'
 
 type Tab = 'problems' | 'contests'
 
 export default function WorkshopPage() {
-  // When the page opened: contests are sorted into upcoming / live / ended against it.
-  const [now] = useState(() => Date.now())
   const { user } = useAuth()
   const me = user?.username ?? ''
   const toast = useToast()
+  const navigate = useNavigate()
   const [tab, setTab] = useState<Tab>('problems')
   const [problemModal, setProblemModal] = useState<{ open: boolean; editing: CustomProblem | null }>({
     open: false,
     editing: null,
   })
-  const [contestModal, setContestModal] = useState(false)
   const [deleteProblem, setDeleteProblem] = useState<CustomProblem | null>(null)
-  const [deleteContest, setDeleteContest] = useState<CustomContestRow | null>(null)
   const [busy, setBusy] = useState(false)
 
   const problemsApi = useApi<{ problems: CustomProblem[] }>(() => api.get('/api/custom-problems'), [])
@@ -56,7 +53,6 @@ export default function WorkshopPage() {
 
   const allProblems = problemsApi.data?.problems ?? []
   const myContests = contestsApi.data?.contests ?? []
-  const problemsById = new Map(allProblems.map((p) => [p.id, p]))
 
   async function removeProblem() {
     if (!deleteProblem) return
@@ -74,53 +70,20 @@ export default function WorkshopPage() {
     }
   }
 
-  async function removeContest() {
-    if (!deleteContest) return
-    setBusy(true)
-    try {
-      await api.delete(`/api/contests/${deleteContest.id}`, { body: { username: me } })
-      toast.success('Contest deleted', `“${deleteContest.title}” and its participants were removed.`)
-      setDeleteContest(null)
-      contestsApi.refetch()
-      statsApi.refetch()
-    } catch (err) {
-      toast.error('Delete failed', err instanceof ApiError ? err.message : 'Unknown error')
-    } finally {
-      setBusy(false)
-    }
-  }
-
-  async function copyCode(code: string) {
-    try {
-      await navigator.clipboard.writeText(code)
-      toast.info('Copied', `Contest code ${code} copied.`)
-    } catch {
-      toast.warning('Copy failed', code)
-    }
-  }
-
-  function phaseOf(c: CustomContestRow): 'upcoming' | 'live' | 'ended' {
-    const start = new Date(c.start_time).getTime()
-    const end = start + (c.duration_mins ?? 60) * 60_000
-    if (now < start) return 'upcoming'
-    if (now <= end) return 'live'
-    return 'ended'
-  }
-
   return (
     <div>
       <PageHeader
         icon="workshop"
         eyebrow="The Workshop"
         title="Workshop"
-        subtitle="Write your own problems and host private contests with a password."
+        subtitle="Write your own problems and host contests with them."
         actions={
           tab === 'problems' ? (
             <Button variant="accent" size="sm" onClick={() => setProblemModal({ open: true, editing: null })}>
               <Plus /> New Problem
             </Button>
           ) : (
-            <Button variant="accent" size="sm" onClick={() => setContestModal(true)}>
+            <Button variant="accent" size="sm" onClick={() => navigate('/contests/new')}>
               <Trophy /> New Contest
             </Button>
           )
@@ -133,8 +96,8 @@ export default function WorkshopPage() {
         <StatCard icon="trophy" label="My contests" value={statsApi.data?.totalContests ?? myContests.length} accent="gold" />
         <StatCard
           icon="problems"
-          label="Selected for contests"
-          value={myContests.reduce((s, c) => s + contestProblemIds(c).length, 0)}
+          label="Written for contests"
+          value={allProblems.filter((p) => p.creator === me && p.contest_only).length}
           accent="cyan"
         />
       </div>
@@ -230,100 +193,8 @@ export default function WorkshopPage() {
             })}
           </div>
         )
-      ) : contestsApi.loading ? (
-        <LoadingBlock rows={4} />
-      ) : contestsApi.error ? (
-        <Card>
-          <ErrorState message={contestsApi.error} onRetry={contestsApi.refetch} />
-        </Card>
-      ) : myContests.length === 0 ? (
-        <Card>
-          <EmptyState
-            icon="trophy"
-            title="No contests hosted"
-            description="Pick your custom problems, set a password and start time — players join with the NX-code on the Contests page."
-            action={
-              <Button variant="accent" size="sm" onClick={() => setContestModal(true)}>
-                <Plus /> Host a contest
-              </Button>
-            }
-          />
-        </Card>
       ) : (
-        <div className="space-y-3">
-          {myContests.map((c, i) => {
-            const phase = phaseOf(c)
-            const ids = contestProblemIds(c)
-            const start = new Date(c.start_time)
-            return (
-              <motion.div
-                key={c.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2, delay: Math.min(i * 0.04, 0.28) }}
-              >
-                <Card glow={phase === 'live'} className={cn('p-4', phase === 'live' && 'border-accent/60 glow-box-accent')}>
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        {phase === 'live' ? (
-                          <Badge variant="accent" className="animate-pulse-glow">Live</Badge>
-                        ) : phase === 'upcoming' ? (
-                          <Badge variant="cyan">Upcoming</Badge>
-                        ) : (
-                          <Badge variant="default">Ended</Badge>
-                        )}
-                        {c.type && <Badge variant="primary">{c.type}</Badge>}
-                        <h3 className="truncate font-display text-sm tracking-wide text-foreground">{c.title}</h3>
-                      </div>
-                      {c.description && <p className="mt-1 line-clamp-1 text-xs text-foreground-dim">{c.description}</p>}
-                      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-foreground-dim">
-                        <span className="inline-flex items-center gap-1.5">
-                          <CalendarClock className="size-3.5 text-foreground-faint" />
-                          {start.toLocaleString()}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5">
-                          <Clock className="size-3.5 text-foreground-faint" />
-                          {c.duration_mins ?? 60} min
-                        </span>
-                        <span className="inline-flex items-center gap-1.5">
-                          <Users className="size-3.5 text-foreground-faint" />
-                          <span className="font-mono tabular-nums">
-                            {c.participant_count ?? 0}/{c.max_participants ?? 50}
-                          </span>
-                        </span>
-                      </div>
-                      {ids.length > 0 && (
-                        <div className="mt-2 flex flex-wrap gap-1.5">
-                          {ids.map((id) => (
-                            <span key={id} className="rounded-md border border-border bg-surface-2 px-1.5 py-0.5 text-[10px] text-foreground-faint">
-                              {problemsById.get(id)?.title ?? `Problem #${id}`}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex shrink-0 flex-col items-end gap-2">
-                      <button
-                        onClick={() => void copyCode(c.contest_code)}
-                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-2.5 py-1.5 font-mono text-xs text-primary-bright tabular-nums transition-colors duration-200 hover:border-primary hover:glow-box"
-                        aria-label={`Copy contest code ${c.contest_code}`}
-                      >
-                        {c.contest_code} <Copy className="size-3" />
-                      </button>
-                      <p className="text-[10px] tracking-wider text-foreground-faint uppercase">
-                        created {c.created_at ? timeAgo(c.created_at) : ''}
-                      </p>
-                      <Button size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={() => setDeleteContest(c)}>
-                        <Trash2 /> Delete
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            )
-          })}
-        </div>
+        <HostedSection />
       )}
 
       <ProblemFormModal
@@ -337,33 +208,12 @@ export default function WorkshopPage() {
         }}
       />
 
-      <ContestFormModal
-        open={contestModal}
-        me={me}
-        problems={allProblems}
-        onClose={() => setContestModal(false)}
-        onCreated={() => {
-          contestsApi.refetch()
-          statsApi.refetch()
-        }}
-      />
-
       <ConfirmDialog
         open={deleteProblem != null}
         onClose={() => setDeleteProblem(null)}
         onConfirm={() => void removeProblem()}
         title="Delete problem?"
         message={<>“{deleteProblem?.title}” will be permanently deleted. Contests referencing it keep a dangling id.</>}
-        confirmLabel="Delete"
-        danger
-        loading={busy}
-      />
-      <ConfirmDialog
-        open={deleteContest != null}
-        onClose={() => setDeleteContest(null)}
-        onConfirm={() => void removeContest()}
-        title="Delete contest?"
-        message={<>“{deleteContest?.title}” ({deleteContest?.contest_code}) and its participant list will be permanently deleted.</>}
         confirmLabel="Delete"
         danger
         loading={busy}

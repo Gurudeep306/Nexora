@@ -77,6 +77,7 @@ export function ProblemFormModal({ open, me, editing, onClose, onSaved }: Props)
       testcases: form.testcases.filter((t) => t.input.trim() || t.expected_output.trim()),
       time_limit: form.time_limit,
       memory_limit: form.memory_limit,
+      editorial: form.editorial,
     }
     try {
       if (editing) {
@@ -267,6 +268,10 @@ export function ProblemFormModal({ open, me, editing, onClose, onSaved }: Props)
             </Button>
           </div>
         </fieldset>
+
+        <Field label="Editorial" hint="How to solve it. In a contest it shows after the contest ends.">
+          <Textarea value={form.editorial} onChange={(e) => patch({ editorial: e.target.value })} rows={4} placeholder="The idea, the steps, and how fast it runs" />
+        </Field>
 
         <div className="flex justify-end gap-2 border-t border-border pt-4">
           <Button variant="ghost" onClick={onClose}>

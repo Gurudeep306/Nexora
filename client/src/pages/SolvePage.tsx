@@ -1,6 +1,8 @@
 import { codeKey, mark as markLearn } from '@/learn/progress'
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
+import { ContestBar } from '@/components/contests/hosted/ContestBar'
+import { AddToContest } from '@/components/contests/hosted/Pickers'
 import { motion } from 'motion/react'
 import {
   Bot,
@@ -67,7 +69,7 @@ import { AnalysisPanel } from '@/components/solve/AnalysisPanel'
 import { JourneyPanel } from '@/components/solve/journey/JourneyPanel'
 import { DryRunPanel } from '@/components/solve/dryrun/DryRunPanel'
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from '@/components/ui'
-import { ListChecks } from 'lucide-react'
+import { ListChecks, Trophy } from 'lucide-react'
 
 type BottomTab = 'tests' | 'output' | 'dryrun' | 'aitests' | 'analysis' | 'journey' | 'coach' | 'issues'
 
@@ -170,6 +172,10 @@ const sampleKey = (input: string, expected: string) =>
 export default function SolvePage({ custom: customProp = false, learn = false }: { custom?: boolean; learn?: boolean }) {
   const custom = customProp || learn
   const { id = '' } = useParams()
+  const [searchParams] = useSearchParams()
+  // Opened from a hosted contest: submits also count there (src/routes/hosted-contests.js).
+  const contestId = learn ? null : Number(searchParams.get('contest')) || null
+  const [addToContest, setAddToContest] = useState(false)
   const { refresh } = useAuth()
   const toast = useToast()
 
@@ -460,6 +466,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
           // Workshop problems are judged against their stored tests (hidden
           // ones included) server-side; our list only adds extra cases.
           custom_problem_id: custom && !learn ? Number(id) : undefined,
+          contest_id: contestId ?? undefined,
           code,
           language,
           testcases: testcases.map((t) => ({
@@ -472,6 +479,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         { timeoutMs: 180000 },
       )
       setJudgeResult(res)
+      if (contestId && res.contest && !res.contest.counted) toast.info('Not counted in the contest', res.contest.reason)
       if (!custom) void saveReplay(code)
       const xp = res.verdict === 'AC' && !alreadySolved && !custom ? XP_BY_RATING(problem?.rating ?? 0) : null
       setBanner({ verdict: res.verdict, xp, id: Date.now() })
@@ -494,7 +502,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     } finally {
       setSubmitting(false)
     }
-  }, [running, submitting, code, id, language, testcases, problem, toast, refresh, problemApi, custom, learn, storageId, saveReplay])
+  }, [running, submitting, code, id, language, testcases, problem, toast, refresh, problemApi, custom, learn, storageId, saveReplay, contestId])
 
   /* Drive the animated browser-tab favicon: fast pulse while judging. */
   useEffect(() => {
@@ -857,6 +865,11 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
             <MenuItem icon={<Expand />} onSelect={openArena} shortcut="Alt+4">
               Full-screen arena
             </MenuItem>
+            {!learn && (
+              <MenuItem icon={<Trophy />} onSelect={() => setAddToContest(true)}>
+                Add to a contest
+              </MenuItem>
+            )}
             {isDesktop && (
               <>
                 <MenuSeparator />
@@ -1209,7 +1222,9 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       transition={{ duration: 0.2 }}
       className="flex h-[calc(100dvh-8rem)] min-h-[560px] flex-col gap-3"
     >
+      {contestId && <ContestBar id={contestId} />}
       {toolbar}
+      {!learn && <AddToContest open={addToContest} onClose={() => setAddToContest(false)} kind={custom ? 'workshop' : 'problem'} refId={id} title={problem?.title || 'This problem'} />}
 
       {arena ? (
         <>
