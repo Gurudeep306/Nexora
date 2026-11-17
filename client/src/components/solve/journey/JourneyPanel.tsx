@@ -176,7 +176,7 @@ function Journey({ code, language, input, inputLabel, onJumpToLine, expanded, on
     <div className={expanded ? 'jr mx-auto max-w-6xl space-y-5 p-4 sm:p-6' : 'jr space-y-4 p-3'}>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
-          <h3 className="m-0 text-[15px] font-semibold">How your {name} code runs</h3>
+          <h2 className="m-0 text-[15px] font-semibold">How your {name} code runs</h2>
           <p className="m-0 text-[12.5px] text-text-muted">
             {plan ? `${name} → ${plan.target ?? kindWord} → ${plan.runner}` : 'Asking the compiler…'}
             {tr?.compiler && ` · real output from Compiler Explorer (${tr.compiler}${tr.args ? ` ${tr.args}` : ''})`}
