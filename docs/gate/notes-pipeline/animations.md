@@ -54,14 +54,18 @@ Two tools:
 ## 2. What the existing engine can draw
 
 `client/src/viz/schema.ts`: `box`, `circle`, `node`, `text`, `arrow` (snaps to
-element ids, can curve), `line` (polyline), `table` (header, highlighted
-cells), `grid`, `bits` (bit strings with labels), `arc` (rings and sectors),
-`gate` (logic-gate symbols). Steps patch any property (`tone`, `fill`,
-`hidden`, `label`, `text`, `rows`, `x`/`y`…). **Today only opacity, fill and
-stroke fade between steps (`viz.css`); position and size changes jump.** `arrow`
-ends given as element ids are re-snapped every frame, so edges stay attached to
-moving vertices. Smooth motion (gliding, morphing) is the engine job "motion"
-below, and `dm.md` job E1.
+element ids, can curve; parallel edges use `curve` ±0.18/±0.36 and their
+labels sit beside the curve, never on it), `line` (polyline), `table` (header,
+highlighted cells), `grid`, `bits` (bit strings with labels), `arc` (rings and
+sectors), `gate` (logic-gate symbols), `loop` (a self-loop on a node at `angle`,
+optional `head` for digraphs). Steps patch any property (`tone`, `fill`,
+`hidden`, `label`, `text`, `rows`, `x`/`y`…). Between steps every numeric
+geometry property **glides** over 450 ms with `--ease-standard` (`tween.ts`,
+rAF-driven; dm.md job E1), while opacity, fill and stroke fade via CSS
+(`viz.css`). `arrow` ends given as element ids are re-snapped every frame and
+every tween tick, so edges stay attached to moving vertices; a `loop` follows
+its node the same way. Reduced motion, `mode="static"` and print show the
+final frame at once with no tween.
 
 ## 3. Engine upgrades to build first (one PR each, before the chapters that need them)
 
@@ -73,14 +77,14 @@ geometry), drawing in `VizScene.tsx` (+ `geometry.ts` for anchor points so
 `tests/` that validates a sample scene and rejects bad ones, and a sample in
 the dev gallery if one exists. Keep old scenes valid (no breaking changes).
 
-**First, motion:** tween every numeric geometry property between frames (450 ms,
-`requestAnimationFrame`, arrows recomputed per tick, none under reduced motion or
-print). Full spec: `dm.md` job E1.
+**Motion is built** (dm.md job E1, merged): every numeric geometry property tweens
+between frames over 450 ms via `requestAnimationFrame`; arrows recompute per tick; no
+tween under reduced motion or print.
 
 | Element | Needed by | What it draws | Key props |
 |---|---|---|---|
-| `state` | toc, cd (LR automata, lexers), coa (control FSM), dm (graphs optional) | An automaton state: circle with label, optional **double ring** for accepting, optional **start arrow**; arrows snap to its edge; self-loops supported | `cx, cy, r, label, accept?: boolean, start?: boolean` |
-| `loop` | toc, cd | A self-loop arrow on a `state`, with a label, at an angle | `on: <state id>, angle, label` |
+| `loop` (**built**, dm.md job E2) | toc, cd, dm graphs | A self-loop arc on a node at an angle, with optional label and arrowhead for digraphs; follows its node when it moves | `on: <node id>, angle?, size?, label?, head?: "end"` |
+| `state` | toc, cd (LR automata, lexers), coa (control FSM), dm (graphs optional) | An automaton state: circle with label, optional **double ring** for accepting, optional **start arrow**; arrows snap to its edge; self-loops supported (`loop`) | `cx, cy, r, label, accept?: boolean, start?: boolean` |
 | `tape` | toc (TM, input string), cd (input buffer, lexeme pointers) | A row of cells with a **head** marker that moves (animated) and optional second pointer (`lexemeBegin`/`forward`) | `x, y, cell, cells: string[], head: number, head2?: number, headLabel?` |
 | `stack` | toc (PDA), cd (parser stack, activation records), coa (call stack) | A vertical stack; pushes/pops animate; top marker | `x, y, w, cellH, items: string[], label?` |
 | `wave` | coa (pipelines, bus/DMA timing, clocks) | Digital waveform rows (clock, signals) with time ticks; segments 0/1/X/data | `x, y, w, rowH, tick, rows: [{name, values: string}]` |
