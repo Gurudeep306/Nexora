@@ -1211,7 +1211,7 @@
       "concepts": [
         "Null quantification",
         "Validity",
-        "Wide-scope reading of $\\forall x, \\varphi \\to \\psi$"
+        "Wide-scope ∀x, φ→ψ reading"
       ],
       "given": "$\\alpha(x)$ has x free; $\\beta$ has no free variable. Which of A–D is logically valid?",
       "steps": [

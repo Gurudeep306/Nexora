@@ -164,7 +164,7 @@ SOLUTIONS["it-2007-cs-21"] = {
 
 SOLUTIONS["it-2008-it-21"] = {
     "approach": "Concept tested: **null quantification — moving a quantifier past a formula that does not contain the variable**. With x not free in $\\beta$: $((\\exists x\\,\\alpha) \\to \\beta) \\equiv \\forall x(\\alpha \\to \\beta)$, which is exactly C.",
-    "concepts": ["Null quantification", "Validity", "Wide-scope reading of $\\forall x, \\varphi \\to \\psi$"],
+    "concepts": ["Null quantification", "Validity", "Wide-scope ∀x, φ→ψ reading"],
     "given": "$\\alpha(x)$ has x free; $\\beta$ has no free variable. Which of A–D is logically valid?",
     "steps": [
         {"title": "C is valid", "body": "$[(\\exists x\\alpha) \\to \\beta] \\to [\\forall x(\\alpha \\to \\beta)]$: if some x makes $\\alpha$ true and $\\beta$ holds, then for every x, $\\alpha(x) \\to \\beta$ holds (either $\\alpha(x)$ is false, or $\\beta$ is true). Since x is not free in $\\beta$, the quantifier slides past it — no counter-model exists."},
