@@ -1,8 +1,9 @@
-import { lazy, useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { LoadingBlock } from '@/components/ui'
 import { useSite } from '@/context/SiteContext'
 import { useTheme } from '@/context/ThemeContext'
 import { pageLoaders } from '@/routes'
+import { BootScreen } from '@/hive/HiveBoot'
 
 const AdminPage = lazy(pageLoaders.AdminPage)
 const AuthorProblemPage = lazy(pageLoaders.AuthorProblemPage)
@@ -49,7 +50,7 @@ export function AuthorRoute() {
  */
 export function HiveRoute() {
   const { status, loading, isStaff, previewAsMember } = useSite()
-  // Hive keeps the look it had before Field Journal (theme/look.ts hiveLook).
+  // Hive wears the person's own look (theme/look.ts hiveLook).
   const { setHiveScope } = useTheme()
   useEffect(() => {
     setHiveScope(true)
@@ -64,5 +65,11 @@ export function HiveRoute() {
   }
   // Admins and the owner only (the server answers 404 to anyone else too).
   if (!isStaff || previewAsMember || !status?.me?.mayHive) return <NotFoundPage />
-  return <HivePage />
+  // One loading screen from the click until Hive is ready (only once we know
+  // the person may use Hive, so members never see that it exists).
+  return (
+    <Suspense fallback={<BootScreen />}>
+      <HivePage />
+    </Suspense>
+  )
 }
