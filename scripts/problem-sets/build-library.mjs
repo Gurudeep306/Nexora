@@ -30,7 +30,7 @@ const OUT = path.join(ROOT, "content", "problem-sets", "library.json");
 const UA = { "User-Agent": "NexoraGuru problem-set builder" };
 
 async function getJson(url, init = {}) {
-  const r = await fetch(url, { ...init, headers: { ...UA, ...(init.headers || {}) } });
+  const r = await fetch(url, { ...init, headers: { ...UA, ...init.headers } });
   if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
   return r.json();
 }
