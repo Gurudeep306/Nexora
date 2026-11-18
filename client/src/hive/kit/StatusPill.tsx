@@ -74,7 +74,7 @@ export function StatusPill({ status, label, size = 'md', className }: { status: 
   const m = META[st]
   return (
     <span
-      className={cn('inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[var(--hv-r-chip)] font-medium text-[var(--hv-text-2)] ring-1 ring-inset ring-[var(--hv-border)]', size === 'sm' ? 'h-5 px-1.5 text-[11px]' : 'h-6 px-2 text-[12px]', className)}
+      className={cn('inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-[var(--hv-fill)] font-medium text-[var(--hv-text-2)]', size === 'sm' ? 'h-5 px-1.5 text-[11px]' : 'h-6 px-2 text-[12px]', className)}
     >
       {m.Icon ? <m.Icon className={size === 'sm' ? 'size-3' : 'size-3.5'} strokeWidth={2.2} style={{ color: m.color }} aria-hidden /> : <span className="hv-live size-1.5 rounded-full" style={{ background: m.color }} aria-hidden />}
       {label ?? m.label}

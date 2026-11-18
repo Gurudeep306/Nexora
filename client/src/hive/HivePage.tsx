@@ -16,7 +16,6 @@ import {
   Brain,
   Check,
   ChevronDown,
-  ChevronRight,
   Command,
   CornerDownLeft,
   FolderGit2,
@@ -24,9 +23,7 @@ import {
   Inbox as InboxIcon,
   KeyRound,
   Lightbulb,
-  Menu as MenuIcon,
   MessageSquare,
-  PanelLeftClose,
   PanelLeftOpen,
   Plus,
   Puzzle,
@@ -34,7 +31,6 @@ import {
   Search,
   Server,
   ShieldAlert,
-  Terminal,
   TriangleAlert,
   Upload,
   Users,
@@ -47,10 +43,10 @@ import { cn } from '@/lib/utils'
 import { hiveApi } from './api'
 import { TeamChat } from './TeamChat'
 import { InboxBell } from './Inbox'
-import { Skeleton, transitionTo, useDensity, useMedia, useNavFade } from './kit'
+import { Skeleton, transitionTo, useDensity, useNavFade } from './kit'
 import type { LaunchGroup } from './Launcher'
 import { CopilotDock } from './Copilot'
-import { HiveLockup, HiveLogo } from './HiveLogo'
+import { HiveLogo } from './HiveLogo'
 import { BootScreen } from './HiveBoot'
 import { projectColor } from './projectColor'
 import { ModelsAtWork, ProjectSwitcher } from './Showcase'
@@ -136,7 +132,6 @@ function Shell() {
   const [team, setTeam] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
-  const { pathname } = location
   // Route swaps cross-fade through the native View Transitions API where
   // available; reduced-motion users and older browsers get an instant swap.
   const [displayLocation, setDisplayLocation] = useState(location)
@@ -150,27 +145,7 @@ function Shell() {
       return () => window.clearTimeout(t)
     }
   }, [location, displayLocation])
-  // Sessions need the width: the workspace sidebar has its own (default hidden) setting there.
-  const inSession = /^\/hive\/p\/[^/]+\/t\//.test(pathname)
-  const sideKey = inSession ? 'hive:sideSession' : 'hive:side'
-  const [sides, setSides] = useState(() => ({ 'hive:side': store.get('hive:side', '1') === '1', 'hive:sideSession': store.get('hive:sideSession', '0') === '1' }))
-  const side = sides[sideKey]
-  const lgUp = useMedia('(min-width: 1024px)')
-  const [sideW, setSideWState] = useState(() => Math.min(420, Math.max(220, Number(store.get('hive:sideW', '272')) || 272)))
-  const setSideW = useCallback((w: number) => {
-    const v = Math.round(Math.min(420, Math.max(220, w)))
-    setSideWState(v)
-    store.set('hive:sideW', String(v))
-  }, [])
-  const setSide = (f: (s: boolean) => boolean) =>
-    setSides((all) => {
-      const v = f(all[sideKey])
-      store.set(sideKey, v ? '1' : '0')
-      return { ...all, [sideKey]: v }
-    })
-  const [mobileNav, setMobileNav] = useState(false)
 
-  useEffect(() => setMobileNav(false), [pathname])
   // Answers stream as soon as you ask: fetch the markdown engine in the
   // background once Hive is open, so the first reply is never shown as raw text.
   useEffect(() => {
@@ -227,17 +202,17 @@ function Shell() {
     }
   }, [])
   const toggleRef = useRef(() => {})
-  toggleRef.current = () => setSide((s) => !s)
+  // No sidebar any more: the Hive tabs are always visible.
+  toggleRef.current = () => {}
 
   if (loading && !boot) return <BootScreen />
   if (error || !boot) return <BootScreen failed={error ?? 'Hive is unavailable right now.'} />
 
-  const toggleSide = () => setSide((s) => !s)
 
   const mainCol = (
     <div className="flex h-full min-w-0 flex-1 flex-col">
-    <TopBar side={side} onToggleSide={toggleSide} onMobileNav={() => setMobileNav(true)} onPalette={() => setPalette(true)} onTeam={() => setTeam(true)} />
-    <main className="hive-main hive-scroll relative min-h-0 flex-1 overflow-y-auto">
+    <HiveBar onPalette={() => setPalette(true)} onTeam={() => setTeam(true)} />
+    <main id="main-content" tabIndex={-1} className="hive-main hive-scroll relative min-h-0 flex-1 overflow-y-auto outline-none" data-hive-scroll>
       <Suspense fallback={<PageSkeleton />}>
         <Routes location={displayLocation}>
           <Route index element={<HomePage />} />
@@ -279,28 +254,18 @@ function Shell() {
         </Routes>
       </Suspense>
     </main>
-    <MobileTabs />
     </div>
   )
 
   return (
-    <div className="hive-root flex h-dvh overflow-hidden text-text-primary" data-density={density}>
-      <ActivityBar onTeam={() => setTeam(true)} onPalette={() => setPalette(true)} withSidebar={side} />
-      {side && lgUp ? (
-        <>
-          <div className="shrink-0" style={{ width: sideW }}>
-            <Sidebar resizable={{ width: sideW, onWidth: setSideW }} />
-          </div>
-          <div className="flex min-w-0 flex-1">{mainCol}</div>
-        </>
-      ) : (
-        mainCol
-      )}
+    // Hive is its own full-window page: one Hive bar (name, tabs, tools) on
+    // top, then the page. Colours and fonts are the person's site theme.
+    <div className="hive-root hive-frame flex overflow-hidden text-text-primary" data-density={density}>
+      {mainCol}
       <ApprovalsTray />
       <CopilotDock />
       <TeamDrawer open={team} onClose={() => setTeam(false)} />
       <Palette open={palette} onClose={() => setPalette(false)} />
-      <MobileNav open={mobileNav} onClose={() => setMobileNav(false)} />
       <ShortcutSheet open={sheet} onClose={() => setSheet(false)} />
     </div>
   )
@@ -381,92 +346,7 @@ function useNav(): { main: NavItem[]; config: NavItem[]; rail: NavItem[]; groups
   }
 }
 
-function ActivityBar({ onTeam, onPalette, withSidebar }: { onTeam: () => void; onPalette: () => void; withSidebar: boolean }) {
-  const { online, live } = useHive()
-  const { rail } = useNav()
-  // Collapsed: hovering the rail opens the full labelled sidebar as an overlay.
-  const [peek, setPeek] = useState(false)
-  const timer = useRef<number | undefined>(undefined)
-  const enter = () => {
-    window.clearTimeout(timer.current)
-    timer.current = window.setTimeout(() => setPeek(true), 180)
-  }
-  const leave = () => {
-    window.clearTimeout(timer.current)
-    setPeek(false)
-  }
-  return (
-    <>
-      <nav onMouseEnter={enter} onMouseLeave={leave} className={cn('hive-rail hidden w-[60px] shrink-0 flex-col items-center border-r hive-line py-3 md:flex', withSidebar && 'lg:hidden')} aria-label="Hive">
-        <Link to="/hive" className="mb-4 grid size-10 place-items-center" aria-label="Hive home">
-          <HiveLogo size={26} live={live.length > 0} />
-        </Link>
-        <button type="button" onClick={onPalette} className="hv-rail-btn mb-2" aria-label="Search or run a command (⌘K)">
-          <Search className="size-[17px]" strokeWidth={1.7} />
-        </button>
-        <span className="mb-2 h-px w-6 bg-[var(--hv-border)]" aria-hidden="true" />
-        <div className="hive-scroll flex min-h-0 flex-1 flex-col items-center gap-1 overflow-y-auto">
-          {rail.map((it) => (
-            <RailLink key={it.label} it={it} />
-          ))}
-        </div>
-        <Tooltip label={`Team · ${online.length} online`} side="right">
-          <button type="button" onClick={onTeam} className="hv-rail-btn mb-1" aria-label={`Team · ${online.length} online`}>
-            <Users className="size-[17px]" strokeWidth={1.7} />
-            {online.length > 0 && <span className="absolute right-1 top-1 size-1.5 rounded-full bg-[var(--hv-success)]" aria-hidden="true" />}
-          </button>
-        </Tooltip>
-        <Tooltip label="Back to NexoraGuru" side="right">
-          <Link to="/hub" className="hv-rail-btn" aria-label="Back to NexoraGuru">
-            <LogoMark size={20} />
-          </Link>
-        </Tooltip>
-      </nav>
-      {peek && (
-        <div onMouseEnter={() => window.clearTimeout(timer.current)} onMouseLeave={leave} className="hv-peek hv-float fixed bottom-0 left-0 top-0 z-[850] hidden md:block">
-          <div className="h-full w-[272px]">
-            <Sidebar />
-          </div>
-        </div>
-      )}
-    </>
-  )
-}
 
-function RailLink({ it }: { it: NavItem }) {
-  const navFade = useNavFade()
-  const { pathname } = useLocation()
-  const forced = it.match ? it.match.test(pathname) : undefined
-  return (
-    <Tooltip
-      side="right"
-      label={
-        <span>
-          <span className="font-medium">{it.label}</span>
-          {it.hint && <span className="block text-[11px] opacity-70">{it.hint}</span>}
-        </span>
-      }
-    >
-      <NavLink to={it.to} end={it.end} aria-label={it.label} onClick={(e) => navFade(e, it.to)} className="relative">
-        {({ isActive }) => {
-          const on = forced ?? isActive
-          return (
-            <span className="hv-rail-btn" data-on={on}>
-              <it.icon className="relative size-[18px]" strokeWidth={on ? 1.9 : 1.7} />
-              {it.badge ? (
-                <span className="absolute -right-0.5 -top-0.5 grid min-w-4 place-items-center rounded-full px-1 text-[9px] font-bold text-[var(--hv-bg-app)]" style={{ background: it.tone }}>
-                  {it.badge}
-                </span>
-              ) : it.tone ? (
-                <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full" style={{ background: it.tone }} />
-              ) : null}
-            </span>
-          )
-        }}
-      </NavLink>
-    </Tooltip>
-  )
-}
 
 /* ── Sidebar: projects (with their sessions) and chats ─────────────────── */
 /**
@@ -474,309 +354,10 @@ function RailLink({ it }: { it: NavItem }) {
  * change the width (220–420 px, remembered). It sits inside the sidebar's own
  * landmark, so nothing on the page lives outside one.
  */
-function SideResizer({ width, onWidth }: { width: number; onWidth: (w: number) => void }) {
-  const start = useRef<{ x: number; w: number } | null>(null)
-  return (
-    <div
-      role="separator"
-      aria-orientation="vertical"
-      aria-label="Resize sidebar"
-      aria-valuemin={220}
-      aria-valuemax={420}
-      aria-valuenow={width}
-      tabIndex={0}
-      onPointerDown={(e) => {
-        start.current = { x: e.clientX, w: width }
-        ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
-      }}
-      onPointerMove={(e) => start.current && onWidth(start.current.w + e.clientX - start.current.x)}
-      onPointerUp={() => (start.current = null)}
-      onKeyDown={(e) => {
-        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
-        e.preventDefault()
-        onWidth(width + (e.key === 'ArrowLeft' ? -16 : 16))
-      }}
-      className="group absolute inset-y-0 -right-[5px] z-10 w-[9px] cursor-col-resize touch-none outline-none"
-    >
-      <span className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-transparent transition-colors duration-150 group-hover:bg-[var(--hv-text-3)] group-focus-visible:bg-[var(--hv-focus-ring)]" />
-    </div>
-  )
-}
 
-function Sidebar({ resizable }: { resizable?: { width: number; onWidth: (w: number) => void } } = {}) {
-  const { boot, taskIndex, live, projectId, taskId, convosVersion } = useHive()
-  const navigate = useNavigate()
-  const { pathname } = useLocation()
-  const [convos, setConvos] = useState<Convo[]>([])
-  const [q, setQ] = useState('')
-  const [open, setOpen] = useState<Record<string, boolean>>(() => {
-    try {
-      return JSON.parse(store.get('hive:sideOpen', '{}'))
-    } catch {
-      return {}
-    }
-  })
-  useEffect(() => {
-    hiveApi
-      .convos()
-      .then((r) => setConvos(r.convos))
-      .catch(() => {})
-  }, [convosVersion, pathname])
 
-  const s = q.trim().toLowerCase()
-  const projects = boot?.projects ?? []
-  const tasksBy = useMemo(() => {
-    const m = new Map<string, (typeof taskIndex)[string][]>()
-    for (const t of Object.values(taskIndex)) if (!t.archived) (m.get(t.project_id) ?? m.set(t.project_id, []).get(t.project_id)!).push(t)
-    for (const l of m.values()) l.sort((a, b) => b.updated_at - a.updated_at)
-    return m
-  }, [taskIndex])
-  const convoId = /^\/hive\/chat\/([^/]+)/.exec(pathname)?.[1]
-  const toggle = (id: string) =>
-    setOpen((o) => {
-      const n = { ...o, [id]: !(o[id] ?? id === projectId) }
-      store.set('hive:sideOpen', JSON.stringify(n))
-      return n
-    })
 
-  return (
-    <aside className="hive-side relative flex h-full w-full flex-col border-r hive-line" aria-label="Hive menu">
-      {resizable && <SideResizer width={resizable.width} onWidth={resizable.onWidth} />}
-      <div className="flex items-center gap-2 px-4 pb-3 pt-4">
-        <Link to="/hive" className="flex items-center" title="Hive home">
-          <HiveLockup size={26} live={live.length > 0} />
-        </Link>
-        <span className="ml-auto">
-          <NewMenu />
-        </span>
-      </div>
-      <div className="px-3 pb-2">
-        <ProjectSwitcher />
-      </div>
-      <div className="px-4 pb-1">
-        <label className="flex h-8 items-center gap-2 border-b border-[var(--hv-border)] text-[var(--hv-text-3)] transition-colors focus-within:border-[var(--hv-text-1)]">
-          <Search className="size-3.5 shrink-0" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Filter the menu" placeholder="Filter pages, projects, chats" className="hv-serif min-w-0 flex-1 bg-transparent text-[13.5px] italic text-[var(--hv-text-1)] outline-none placeholder:text-[var(--hv-text-3)]" />
-        </label>
-      </div>
-      <nav className="hive-scroll min-h-0 flex-1 overflow-y-auto px-2 pb-4">
-        {s ? <NavSections filter={s} /> : <PrimaryNav />}
-        <SideHeading action={<SideAdd to="/hive/p/new" label="New project" />}>Projects</SideHeading>
-        {projects
-          .filter((p) => !s || p.name.toLowerCase().includes(s) || (tasksBy.get(p.id) ?? []).some((t) => t.title.toLowerCase().includes(s)))
-          .map((p) => {
-            const tasks = (tasksBy.get(p.id) ?? []).filter((t) => !s || t.title.toLowerCase().includes(s) || p.name.toLowerCase().includes(s))
-            const isOpen = open[p.id] ?? p.id === projectId
-            const working = live.filter((a) => a.projectId === p.id).length
-            return (
-              <div key={p.id} className="mb-0.5">
-                <div className={cn('group flex items-center rounded-[var(--hv-r-btn)] pr-1 hover:bg-[var(--hv-surface-2)]', p.id === projectId && !taskId && 'bg-[var(--hv-surface-2)]')}>
-                  <button type="button" onClick={() => toggle(p.id)} className="grid size-6 shrink-0 place-items-center text-text-muted" aria-label={isOpen ? 'Collapse' : 'Expand'}>
-                    <ChevronRight className={cn('size-3.5 transition-transform', isOpen && 'rotate-90')} />
-                  </button>
-                  <button type="button" onClick={() => navigate(`/hive/p/${p.id}`)} className="flex min-w-0 flex-1 items-center gap-2 py-1.5 text-left">
-                    <span className="hive-hex size-3 shrink-0" style={{ background: projectColor(p.color) }} />
-                    <span className={cn('truncate text-[13px] text-[var(--hv-text-1)]', p.id === projectId && 'font-semibold')}>{p.name}</span>
-                    {p.machine_id && <Terminal className="size-3 shrink-0 text-text-muted" aria-label="On a machine" />}
-                  </button>
-                  {working > 0 && (
-                    <span className="hv-num mr-1 inline-flex items-center gap-1 text-[11px] text-[var(--hv-text-2)]" title={`${working} agent${working === 1 ? '' : 's'} working`}>
-                      <span className="hive-dot-run size-1.5 rounded-full bg-[var(--hv-accent)]" />
-                      {working}
-                    </span>
-                  )}
-                  <Tooltip label="New session">
-                    <button type="button" onClick={() => navigate(`/hive/p/${p.id}`)} className="grid size-6 place-items-center rounded-md text-text-muted opacity-0 hover:bg-text-primary/10 hover:text-text-primary group-hover:opacity-100" aria-label="New session">
-                      <Plus className="size-3.5" />
-                    </button>
-                  </Tooltip>
-                </div>
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.18 }} className="overflow-hidden">
-                      <div className="ml-[11px] border-l hive-line pl-2">
-                        {tasks.slice(0, 8).map((t) => (
-                          <button key={t.id} type="button" onClick={() => navigate(`/hive/p/${p.id}/t/${t.id}`)} className={cn('flex w-full items-center gap-2 rounded-[var(--hv-r-btn)] px-2 py-1 text-left', t.id === taskId ? 'bg-[var(--hv-surface-2)] font-medium text-[var(--hv-text-1)]' : 'text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]')}>
-                            <StatusDot status={t.status} className="size-1.5" />
-                            <span className="min-w-0 flex-1 truncate text-[12.5px]">{t.title}</span>
-                            <span className="hv-num shrink-0 text-[10.5px] text-text-muted">{timeAgo(t.updated_at)}</span>
-                          </button>
-                        ))}
-                        {!tasks.length && <div className="px-2 py-1 text-[11.5px] text-text-muted">No sessions yet</div>}
-                        {tasks.length > 8 && (
-                          <button type="button" onClick={() => navigate(`/hive/p/${p.id}`)} className="px-2 py-1 text-[11.5px] text-text-muted hover:text-text-primary">
-                            All {tasks.length} sessions →
-                          </button>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )
-          })}
-        {!projects.length && (
-          <Link to="/hive/projects/guide" className="mx-1 mt-1 flex items-center gap-2 rounded-[var(--hv-r-btn)] border border-dashed hive-line px-3 py-2 text-[12px] text-text-muted hover:text-text-primary">
-            <Plus className="size-3.5" /> Set up your first project
-          </Link>
-        )}
 
-        {!s && <ToolGrid />}
-        <SideHeading action={<SideAdd to="/hive/chat" label="New chat" />}>Recent chats</SideHeading>
-        {convos
-          .filter((c) => !s || c.title.toLowerCase().includes(s))
-          .slice(0, 40)
-          .map((c) => (
-            <button key={c.id} type="button" onClick={() => navigate(`/hive/chat/${c.id}`)} className={cn('flex w-full items-center gap-2 rounded-[var(--hv-r-btn)] px-3 py-1.5 text-left', c.id === convoId ? 'bg-[var(--hv-surface-2)] font-medium text-[var(--hv-text-1)]' : 'text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]')}>
-              <span className="min-w-0 flex-1 truncate text-[12.5px]">{c.title}</span>
-              {!!c.shared && <Users className="size-3 shrink-0 text-text-muted" />}
-              <span className="hv-num shrink-0 text-[10.5px] text-text-muted">{timeAgo(c.updated_at)}</span>
-            </button>
-          ))}
-        {!convos.length && <div className="px-2.5 py-1 text-[11.5px] text-text-muted">Your chats appear here.</div>}
-      </nav>
-      <SideFooter />
-    </aside>
-  )
-}
-
-/** Every part of Hive, grouped and always visible in the sidebar. Groups fold; the choice is remembered. */
-function NavSections({ filter = '' }: { filter?: string }) {
-  const navFade = useNavFade()
-  const { sections } = useNav()
-  const { pathname } = useLocation()
-  const [closed, setClosed] = useState<Record<string, boolean>>(() => {
-    try {
-      return JSON.parse(store.get('hive:navClosed', '{}'))
-    } catch {
-      return {}
-    }
-  })
-  const flip = (t: string) =>
-    setClosed((c) => {
-      const n = { ...c, [t]: !c[t] }
-      store.set('hive:navClosed', JSON.stringify(n))
-      return n
-    })
-  return (
-    <div className="pt-1">
-      {sections.map((g) => {
-        const items = g.items.filter((it) => !filter || `${it.label} ${it.hint ?? ''}`.toLowerCase().includes(filter))
-        if (!items.length) return null
-        const shut = !filter && !!g.title && closed[g.title]
-        return (
-          <div key={g.title || 'top'} className="mb-1">
-            {g.title && (
-              <button type="button" onClick={() => flip(g.title)} className="group mb-1 mt-3 flex min-h-6 w-full items-center px-3 text-left" aria-expanded={!shut}>
-                <span className="hv-eyebrow flex-1 group-hover:text-[var(--hv-text-2)]">{g.title}</span>
-                <ChevronRight className={cn('size-3 text-text-muted transition-transform', !shut && 'rotate-90')} />
-              </button>
-            )}
-            {!shut &&
-              items.map((it) => {
-                const forced = it.match ? it.match.test(pathname) : undefined
-                return (
-                  <NavLink key={it.label} to={it.to} end={it.end} title={it.hint} onClick={(e) => navFade(e, it.to)} className="block">
-                    {({ isActive }) => {
-                      const on = forced ?? isActive
-                      return (
-                        <span className="hv-nav" data-on={on}>
-                          <it.icon className="size-4 shrink-0" strokeWidth={on ? 1.9 : 1.7} />
-                          <span className="min-w-0 flex-1 truncate">{it.label}</span>
-                          {it.badge ? (
-                            <span className="hv-num grid min-w-4 place-items-center rounded-full px-1 text-[10px] font-bold text-[var(--hv-bg-app)]" style={{ background: it.tone }}>
-                              {it.badge}
-                            </span>
-                          ) : it.tone ? (
-                            <span className="size-1.5 rounded-full" style={{ background: it.tone }} />
-                          ) : null}
-                        </span>
-                      )
-                    }}
-                  </NavLink>
-                )
-              })}
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-/** The four places people go most, as larger rows. */
-function PrimaryNav() {
-  const navFade = useNavFade()
-  const { sections } = useNav()
-  const { pathname } = useLocation()
-  const all = sections.flatMap((g) => g.items)
-  const pick = ['Home', 'Inbox', 'Copilot', 'Chat'].map((l) => all.find((it) => it.label === l)).filter((x): x is NavItem => !!x)
-  return (
-    <div className="space-y-0.5 pt-1" role="list" aria-label="Main">
-      {pick.map((it) => {
-        const forced = it.match ? it.match.test(pathname) : undefined
-        return (
-          <div role="listitem" key={it.label}>
-            <NavLink to={it.to} end={it.end} title={it.hint} onClick={(e) => navFade(e, it.to)} className="block">
-              {({ isActive }) => (
-                <span className="hv-nav min-h-[34px] text-[14px]" data-on={forced ?? isActive}>
-                  <it.icon className="size-[17px] shrink-0" strokeWidth={(forced ?? isActive) ? 1.9 : 1.7} />
-                  <span className="min-w-0 flex-1 truncate">{it.label}</span>
-                  {it.badge ? (
-                    <span className="hv-num grid min-w-4 place-items-center rounded-full px-1 text-[10px] font-bold text-[var(--hv-bg-app)]" style={{ background: it.tone }}>
-                      {it.badge}
-                    </span>
-                  ) : null}
-                </span>
-              )}
-            </NavLink>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-/** Everything else in Hive, as a compact grid of labelled tiles. */
-function ToolGrid() {
-  const navFade = useNavFade()
-  const { sections } = useNav()
-  const { pathname } = useLocation()
-  const all = sections.flatMap((g) => g.items)
-  const tiles = ['Projects', 'Pipelines', 'Machines', 'Drive', 'Models', 'Keys & limits', 'Extensions', 'Spend'].map((l) => all.find((it) => it.label === l)).filter((x): x is NavItem => !!x)
-  return (
-    <>
-      <SideHeading>Workspace</SideHeading>
-      <ul className="m-0 grid list-none grid-cols-2 gap-1 p-0 px-1" aria-label="Workspace">
-        {tiles.map((it) => {
-          const forced = it.match ? it.match.test(pathname) : undefined
-          return (
-            <li key={it.label}>
-              <NavLink to={it.to} end={it.end} title={it.hint} onClick={(e) => navFade(e, it.to)} className="block">
-                {({ isActive }) => {
-                  const on = forced ?? isActive
-                  return (
-                    <span className={cn('relative flex h-[50px] flex-col justify-between overflow-hidden rounded-[var(--hv-r-btn)] border px-2.5 py-1.5 transition-colors', on ? 'border-[var(--hv-border-strong)] bg-[var(--hv-surface-1)]' : 'border-[var(--hv-border-subtle)] hover:border-[var(--hv-border)] hover:bg-[var(--hv-surface-1)]')}>
-                      {on && <span className="absolute inset-x-0 top-0 h-[2px] bg-[var(--hv-accent)]" aria-hidden />}
-                      <span className="flex items-center justify-between">
-                        <it.icon className={cn('size-4', on ? 'text-[var(--hv-text-1)]' : 'text-[var(--hv-text-3)]')} strokeWidth={1.7} />
-                        {it.badge ? (
-                          <span className="hv-num grid min-w-4 place-items-center rounded-full px-1 text-[9.5px] font-bold text-[var(--hv-bg-app)]" style={{ background: it.tone }}>
-                            {it.badge}
-                          </span>
-                        ) : null}
-                      </span>
-                      <span className={cn('truncate text-[12px]', on ? 'font-semibold text-[var(--hv-text-1)]' : 'text-[var(--hv-text-2)]')}>{it.label}</span>
-                    </span>
-                  )
-                }}
-              </NavLink>
-            </li>
-          )
-        })}
-      </ul>
-    </>
-  )
-}
 
 /** The one strong button in the sidebar: everything you can start. */
 function NewMenu() {
@@ -810,173 +391,109 @@ function NewMenu() {
 }
 
 /** Plain-words system status (replaces the unlabelled dot), team, and the way back to the site. */
-/** Phones: the five places people go most, always one tap away. */
-function MobileTabs() {
+
+
+
+
+/* ── Top bar: breadcrumbs + live state ─────────────────────────────────── */
+
+/* ── The Hive bar: one row under the site's top bar ───────────────────────
+   Hive's name, its sections as tabs (they scroll sideways on a narrow
+   screen), and on the right the project in focus, models at work, the team,
+   the Copilot panel and Hive's own search (⌘K). */
+function HiveBar({ onPalette, onTeam }: { onPalette: () => void; onTeam: () => void }) {
+  const { online, approvals, live } = useHive()
+  const { sections } = useNav()
   const { pathname } = useLocation()
-  const tabs = [
-    { to: '/hive', label: 'Home', icon: Home, on: pathname === '/hive' || pathname === '/hive/' },
-    { to: '/hive/inbox', label: 'Inbox', icon: InboxIcon, on: pathname.startsWith('/hive/inbox') },
-    { to: '/hive/copilot', label: 'Copilot', icon: Bot, on: pathname.startsWith('/hive/copilot') },
-    { to: '/hive/chat', label: 'Chat', icon: MessageSquare, on: pathname.startsWith('/hive/chat') },
-    { to: '/hive/projects', label: 'Projects', icon: FolderGit2, on: /^\/hive\/(projects|p\/)/.test(pathname) },
-  ]
+  const navigate = useNavigate()
+  const navFade = useNavFade()
+  const items = sections.flatMap((g) => g.items)
+  const tabsRef = useRef<HTMLElement>(null)
+  // Keep the current tab in view on narrow screens.
+  useEffect(() => {
+    tabsRef.current?.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+  }, [pathname])
   return (
-    <nav aria-label="Main" className="flex shrink-0 border-t border-[var(--hv-border)] bg-[var(--hv-bg-app)] pb-[env(safe-area-inset-bottom)] sm:hidden">
-      {tabs.map((t) => (
-        <Link key={t.to} to={t.to} aria-current={t.on ? 'page' : undefined} className={cn('relative flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[11px]', t.on ? 'font-semibold text-[var(--hv-text-1)]' : 'text-[var(--hv-text-3)]')}>
-          {t.on && <span className="absolute inset-x-5 top-0 h-[2px] rounded-b bg-[var(--hv-accent)]" aria-hidden="true" />}
-          <t.icon className="size-5" strokeWidth={t.on ? 1.9 : 1.6} />
-          {t.label}
+    <header className="hive-bar shrink-0 border-b hive-line">
+      <div className="flex items-center gap-2 px-4 pt-3 sm:px-6">
+        <Tooltip label="Back to NexoraGuru">
+          <Link to="/hub" className="hv-icon-btn -ml-1.5" aria-label="Back to NexoraGuru">
+            <LogoMark size={18} />
+          </Link>
+        </Tooltip>
+        <span className="h-5 w-px bg-[var(--hv-border-strong)]" aria-hidden="true" />
+        <Link to="/hive" className="flex shrink-0 items-center gap-2" title="Hive home">
+          <HiveLogo size={22} live={live.length > 0} />
+          <span className="hv-serif text-[20px] leading-none text-[var(--hv-text-1)]">Hive</span>
         </Link>
-      ))}
-    </nav>
+        <span className="hidden text-[12px] text-[var(--hv-text-3)] md:inline">· the team's AI workspace</span>
+        <span className="ml-auto" />
+        <SystemStatus />
+        <NewMenu />
+        {approvals.length > 0 && (
+          <button type="button" onClick={() => navigate('/hive/machines')} className="hidden h-8 items-center gap-1.5 rounded-[var(--hv-r-btn)] bg-[var(--hv-fill)] px-2.5 text-[12px] font-medium text-[var(--hv-text-1)] sm:inline-flex">
+            <ShieldAlert className="size-3.5 text-[var(--hv-warning)]" /> {approvals.length} waiting
+          </button>
+        )}
+        <div className="hidden sm:block">
+          <ProjectSwitcher />
+        </div>
+        <ModelsAtWork />
+        <InboxBell />
+        <button type="button" onClick={onTeam} className="hv-icon-btn relative" title={`Team · ${online.length} online`}>
+          <Users className="size-4" aria-hidden="true" />
+          <span className="sr-only">Team · {online.length} online</span>
+          {online.length > 0 && <span className="absolute right-1 top-1 size-1.5 rounded-full bg-[var(--hv-success)]" aria-hidden="true" />}
+        </button>
+        <Tooltip label={<span className="inline-flex items-center gap-2">Copilot panel <span className="hive-kbd">⌘I</span></span>}>
+          <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('hive:copilot-panel'))} className="hv-icon-btn" aria-label="Open the Copilot panel (⌘I)">
+            <Bot className="size-4" />
+          </button>
+        </Tooltip>
+        <Tooltip label="Settings">
+          <Link to="/hive/settings" className="hv-icon-btn" aria-label="Hive settings">
+            <Settings2 className="size-4" />
+          </Link>
+        </Tooltip>
+        <button type="button" onClick={onPalette} className="hv-search-pill ml-1 hidden w-[220px] lg:inline-flex">
+          <Search className="size-3.5 shrink-0 not-italic" /> <span className="min-w-0 flex-1 truncate text-left">Search Hive</span> <span className="hive-kbd not-italic">⌘K</span>
+        </button>
+        <button type="button" onClick={onPalette} className="hv-icon-btn lg:hidden" aria-label="Search Hive (⌘K)">
+          <Search className="size-4" />
+        </button>
+      </div>
+      <nav ref={tabsRef} aria-label="Hive" className="hive-scroll mt-1 flex gap-1 overflow-x-auto px-3 sm:px-5">
+        {items.map((it) => {
+          const on = it.match ? it.match.test(pathname) : it.end ? pathname === it.to || pathname === `${it.to}/` : pathname.startsWith(it.to)
+          return (
+            <NavLink key={it.label} to={it.to} end={it.end} title={it.hint} onClick={(e) => navFade(e, it.to)} aria-current={on ? 'page' : undefined} className="hive-tab" data-on={on}>
+              <it.icon className="size-4 shrink-0" strokeWidth={on ? 1.9 : 1.7} aria-hidden="true" />
+              {it.label}
+              {it.badge ? (
+                <span className="hv-num grid min-w-4 place-items-center rounded-full px-1 text-[10px] font-bold text-[var(--hv-bg-app)]" style={{ background: it.tone }}>
+                  {it.badge}
+                </span>
+              ) : null}
+            </NavLink>
+          )
+        })}
+      </nav>
+    </header>
   )
 }
 
-function SideFooter() {
-  const { boot, connected, online, live, machines } = useHive()
+/** Plain-words system state, linking to model health. */
+function SystemStatus() {
+  const { boot, connected } = useHive()
   const now = Date.now()
   const limited = (boot?.keys ?? []).filter((k) => !k.disabled && ((k.limitUntil ?? 0) > now || k.status === 'invalid')).length
   const ok = connected && !limited
   const text = !connected ? 'Reconnecting…' : limited ? `${limited} connection${limited === 1 ? '' : 's'} limited` : 'All systems ok'
   return (
-    <div className="border-t hive-line px-2 py-2">
-      <Link to="/hive/models/health" className="block rounded-[var(--hv-r-btn)] px-3 py-2 hover:bg-[var(--hv-surface-2)]" title="Open model health">
-        <span className="flex items-center gap-2 text-[12px] text-[var(--hv-text-2)]">
-          <span className={cn('size-1.5 shrink-0 rounded-full', !connected && 'hv-live')} style={{ background: ok ? 'var(--hv-success)' : 'var(--hv-warning)' }} aria-hidden />
-          <span className="flex-1 truncate">{text}</span>
-        </span>
-        <span className="hv-num mt-1.5 grid grid-cols-3 gap-1 text-[11px] text-[var(--hv-text-3)]">
-          <span>
-            <b className="block text-[13px] font-semibold text-[var(--hv-text-1)]">{live.length}</b> working
-          </span>
-          <span>
-            <b className="block text-[13px] font-semibold text-[var(--hv-text-1)]">
-              {machines.filter((m) => m.online).length}/{machines.length}
-            </b>{' '}
-            machines
-          </span>
-          <span>
-            <b className="block text-[13px] font-semibold text-[var(--hv-text-1)]">
-              {(boot?.keys ?? []).filter((k) => k.status === 'ok' && !k.disabled).length}/{(boot?.keys ?? []).length}
-            </b>{' '}
-            keys ok
-          </span>
-        </span>
-      </Link>
-      <div className="flex items-center gap-1 px-1 pt-1">
-        <Link to="/hub" className="flex min-w-0 flex-1 items-center gap-2 rounded-[var(--hv-r-btn)] px-2 py-1 text-[12px] text-[var(--hv-text-2)] hover:text-[var(--hv-text-1)]">
-          <LogoMark size={16} /> <span className="truncate">Back to NexoraGuru</span>
-        </Link>
-        <Tooltip label="Settings">
-          <Link to="/hive/settings" className="grid size-7 place-items-center rounded-[var(--hv-r-btn)] text-[var(--hv-text-3)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]" aria-label="Settings">
-            <Settings2 className="size-3.5" />
-          </Link>
-        </Tooltip>
-        <span className="flex -space-x-1.5" title={`${online.length} online`}>
-          {online.slice(0, 3).map((o) => (
-            <UserDot key={o.username} username={o.username} size={5} ring />
-          ))}
-        </span>
-      </div>
-    </div>
-  )
-}
-
-function SideHeading({ children, action }: { children: ReactNode; action?: ReactNode }) {
-  return (
-    <div className="group mb-1 mt-3 flex items-center px-3">
-      <span className="hv-eyebrow flex-1">{children}</span>
-      {action}
-    </div>
-  )
-}
-
-function SideAdd({ to, label }: { to: string; label: string }) {
-  const navigate = useNavigate()
-  return (
-    <Tooltip label={label}>
-      <button type="button" onClick={() => navigate(to)} className="grid size-5 place-items-center rounded text-text-muted opacity-0 hover:bg-text-primary/10 hover:text-text-primary group-hover:opacity-100" aria-label={label}>
-        <Plus className="size-3.5" />
-      </button>
-    </Tooltip>
-  )
-}
-
-/* ── Top bar: breadcrumbs + live state ─────────────────────────────────── */
-function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: boolean; onToggleSide: () => void; onMobileNav: () => void; onPalette: () => void; onTeam: () => void }) {
-  const { project, detail, online, approvals } = useHive()
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
-  const section = useMemo(() => {
-    const m = /^\/hive\/([^/]+)/.exec(pathname)?.[1]
-    return { inbox: 'Inbox', settings: 'Settings', chat: 'Chat', copilot: 'Copilot', projects: 'Projects', pipelines: 'Pipelines', machines: 'Machines', drive: 'Drive', models: 'Models', keys: 'Keys & limits', extensions: 'Extensions', spend: 'Spend' }[m ?? ''] ?? null
-  }, [pathname])
-  return (
-    <header className="flex h-[52px] shrink-0 items-center gap-1.5 border-b hive-line px-2 sm:px-4">
-      <button type="button" onClick={onMobileNav} className="hv-icon-btn md:hidden" aria-label="Menu">
-        <MenuIcon className="size-4" />
-      </button>
-      <Tooltip label={`${side ? 'Hide' : 'Show'} sidebar · ⌘B`}>
-        <button type="button" onClick={onToggleSide} className="hv-icon-btn hidden lg:inline-grid" aria-label="Toggle sidebar">
-          {side ? <PanelLeftClose className="size-4" /> : <PanelLeftOpen className="size-4" />}
-        </button>
-      </Tooltip>
-      {!side && (
-        <div className="hidden sm:block">
-          <ProjectSwitcher />
-        </div>
-      )}
-      <nav className="flex min-w-0 flex-1 items-center gap-1 text-[13px]" aria-label="Breadcrumb">
-        <Link to="/hive" className="flex shrink-0 items-center gap-1.5 rounded-[var(--hv-r-btn)] px-1.5 py-1 text-[var(--hv-text-2)] hover:text-[var(--hv-text-1)]">
-          <HiveLogo size={16} /> <span className="hv-serif text-[15px]">Hive</span>
-        </Link>
-        {section && (
-          <>
-            <span className="shrink-0 text-[var(--hv-text-3)]" aria-hidden="true">/</span>
-            <span className="truncate px-1.5 font-medium text-[var(--hv-text-1)]" aria-current="page">{section}</span>
-          </>
-        )}
-        {project && (
-          <span className="contents sm:hidden">
-            <span className="shrink-0 text-[var(--hv-text-3)]" aria-hidden="true">/</span>
-            <button type="button" onClick={() => navigate(`/hive/p/${project.id}`)} className={cn('flex min-w-0 items-center gap-1.5 rounded-md px-1.5 py-1 hover:bg-text-primary/[0.05]', detail ? 'text-text-secondary' : 'font-medium text-text-primary')}>
-              <span className="hive-hex size-2.5 shrink-0" style={{ background: projectColor(project.color) }} />
-              <span className="truncate">{project.name}</span>
-            </button>
-          </span>
-        )}
-        {detail && project && (
-          <>
-            <span className="shrink-0 text-[var(--hv-text-3)]" aria-hidden="true">/</span>
-            <span className="flex min-w-0 items-center gap-1.5 px-1.5 font-medium text-text-primary">
-              <StatusDot status={detail.task.status} className="size-1.5" />
-              <span className="truncate">{detail.task.title}</span>
-            </span>
-          </>
-        )}
-      </nav>
-      {approvals.length > 0 && (
-        <button type="button" onClick={() => navigate('/hive/machines')} className="hidden h-7 items-center gap-1.5 rounded-[var(--hv-r-btn)] px-2.5 text-[12px] font-medium text-[var(--hv-text-1)] ring-1 ring-inset ring-[color-mix(in_oklab,var(--hv-warning)_55%,transparent)] sm:inline-flex">
-          <ShieldAlert className="size-3.5" /> {approvals.length} waiting
-        </button>
-      )}
-      <ModelsAtWork />
-      <InboxBell />
-      <button type="button" onClick={onTeam} className="flex items-center -space-x-1.5 px-1" aria-label={`Team · ${online.length} online`} title={`Team · ${online.length} online`}>
-        {online.slice(0, 4).map((o) => (
-          <UserDot key={o.username} username={o.username} size={6} ring />
-        ))}
-      </button>
-      <Tooltip label={<span className="inline-flex items-center gap-2">Copilot <span className="hive-kbd">⌘I</span></span>}>
-        <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('hive:copilot-panel'))} className="hv-icon-btn" aria-label="Open the Copilot panel (⌘I)">
-          <Bot className="size-4" />
-        </button>
-      </Tooltip>
-      <button type="button" onClick={onPalette} className="hv-search-pill ml-1.5 hidden w-[260px] sm:inline-flex">
-        <Search className="size-3.5 shrink-0 not-italic" /> <span className="min-w-0 flex-1 truncate text-left">Search or run a command</span> <span className="hive-kbd not-italic">⌘K</span>
-      </button>
-    </header>
+    <Link to="/hive/models/health" className="hidden h-8 items-center gap-1.5 rounded-[var(--hv-r-btn)] px-2 text-[12px] text-[var(--hv-text-2)] hover:bg-[var(--hv-fill)] hover:text-[var(--hv-text-1)] md:inline-flex" title="Open model health">
+      <span className={cn('size-1.5 rounded-full', !connected && 'hv-live')} style={{ background: ok ? 'var(--hv-success)' : 'var(--hv-warning)' }} aria-hidden />
+      {text}
+    </Link>
   )
 }
 
@@ -1280,38 +797,3 @@ function fuzzy(text: string, q: string): number {
 }
 
 /* ── Mobile navigation ──────────────────────────────────────────────────── */
-function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { main, config } = useNav()
-  return (
-    <AnimatePresence>
-      {open && (
-        <div className="fixed inset-0 z-[900] md:hidden">
-          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} type="button" className="absolute inset-0 bg-[color-mix(in_oklab,var(--hv-text-1)_18%,transparent)]" onClick={onClose} aria-label="Close" />
-          <motion.div initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -40, opacity: 0 }} className="relative flex h-full w-[86vw] max-w-[340px] flex-col border-r hive-line bg-[var(--hv-bg-app)]">
-            <div className="flex items-center gap-2 p-4">
-              <HiveLockup size={26} />
-              <button type="button" onClick={onClose} className="hv-icon-btn ml-auto" aria-label="Close">
-                <X className="size-4" />
-              </button>
-            </div>
-            <div className="space-y-0.5 px-2">
-              {[...main, ...config.filter((c) => !main.includes(c))].map((it) => (
-                <NavLink key={it.label} to={it.to} end={it.end} className="block">
-                  {({ isActive }) => (
-                    <span className="hv-nav min-h-10 text-[14px]" data-on={isActive}>
-                      <it.icon className="size-4" /> <span className="flex-1">{it.label}</span>
-                      {it.badge ? <span className="rounded-full bg-state-warning px-1.5 text-[11px] text-[var(--hv-bg-app)]">{it.badge}</span> : null}
-                    </span>
-                  )}
-                </NavLink>
-              ))}
-            </div>
-            <div className="mt-2 min-h-0 flex-1 border-t hive-line">
-              <Sidebar />
-            </div>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
-  )
-}

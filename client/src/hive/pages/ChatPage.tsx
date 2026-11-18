@@ -15,6 +15,8 @@ import {
   ImageIcon,
   Paperclip,
   Plus,
+  Search,
+  Users,
   RotateCcw,
   Gavel,
   Globe,
@@ -229,7 +231,9 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
+    <div className="flex h-full min-h-0">
+    <ChatHistory activeId={convo?.id ?? null} />
+    <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
       {convo && (
         <div className="flex items-center gap-2 border-b hive-line px-4 py-2 sm:px-6">
           <h1 className="sr-only">{convo.title}</h1>
@@ -330,6 +334,7 @@ export default function ChatPage() {
         danger
       />
     </div>
+    </div>
   )
 }
 
@@ -420,7 +425,7 @@ function EmptyChat({ boot, project, onPick }: { boot: Bootstrap; project?: Proje
       <p className="hv-lead mt-2 mb-0 max-w-lg">Chat with any model you’ve connected. Drop in PDFs, images or code, pull files from a repo, make images — or ask several models at once and compare.</p>
       <div className="mt-8 grid w-full gap-2 text-left sm:grid-cols-2">
         {STARTERS.map((s) => (
-          <button key={s.title} type="button" onClick={() => onPick(s.text)} className="flex items-start gap-3 rounded-[var(--hv-r-card)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-4 text-left transition-colors duration-[var(--hv-d-fast)] hover:border-[var(--hv-border-strong)]">
+          <button key={s.title} type="button" onClick={() => onPick(s.text)} className="flex items-start gap-3 rounded-[var(--hv-r-card)] bg-[var(--hv-fill)] p-4 text-left transition-colors duration-[var(--hv-d-fast)] hover:bg-[var(--hv-fill-hover)]">
             <s.icon className="mt-0.5 size-4 shrink-0 text-[var(--hv-text-2)]" />
             <span className="min-w-0">
               <span className="block text-[13.5px] font-medium text-[var(--hv-text-1)]">{s.title}</span>
@@ -430,6 +435,53 @@ function EmptyChat({ boot, project, onPick }: { boot: Bootstrap; project?: Proje
         ))}
       </div>
     </div>
+  )
+}
+
+/* ── chat history: every conversation, newest first (like Claude/ChatGPT) ── */
+function ChatHistory({ activeId }: { activeId: string | null }) {
+  const { convosVersion } = useHive()
+  const navigate = useNavigate()
+  const [list, setList] = useState<Convo[] | null>(null)
+  const [q, setQ] = useState('')
+  useEffect(() => {
+    hiveApi
+      .convos()
+      .then((r) => setList(r.convos))
+      .catch(() => setList([]))
+  }, [convosVersion, activeId])
+  const s = q.trim().toLowerCase()
+  const shown = (list ?? []).filter((c) => !s || c.title.toLowerCase().includes(s))
+  return (
+    <aside className="hidden w-[260px] shrink-0 flex-col border-r hive-line lg:flex" aria-label="Your chats">
+      <div className="flex items-center gap-2 px-3 pb-2 pt-3">
+        <button type="button" onClick={() => navigate('/hive/chat')} className="inline-flex h-8 flex-1 items-center gap-2 rounded-[var(--hv-r-btn)] bg-[var(--hv-fill)] px-2.5 text-[13px] font-medium text-[var(--hv-text-1)] hover:bg-[var(--hv-fill-hover)]">
+          <Plus className="size-4" aria-hidden="true" /> New chat
+        </button>
+      </div>
+      <label className="mx-3 mb-2 flex h-8 items-center gap-2 border-b hive-line text-[var(--hv-text-3)] focus-within:border-[var(--hv-text-1)]">
+        <Search className="size-3.5 shrink-0" aria-hidden="true" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search your chats" placeholder="Search chats" className="min-w-0 flex-1 bg-transparent text-[13px] text-[var(--hv-text-1)] outline-none placeholder:text-[var(--hv-text-3)]" />
+      </label>
+      <nav className="hive-scroll min-h-0 flex-1 overflow-y-auto px-2 pb-3">
+        {!list ? (
+          <div className="space-y-2 px-1 pt-1">
+            <div className="hive-shimmer h-6 rounded" />
+            <div className="hive-shimmer h-6 rounded" />
+          </div>
+        ) : !shown.length ? (
+          <p className="px-2 py-2 text-[12.5px] text-[var(--hv-text-3)]">{s ? 'No chat matches.' : 'Your chats appear here.'}</p>
+        ) : (
+          shown.map((c) => (
+            <button key={c.id} type="button" onClick={() => navigate(`/hive/chat/${c.id}`)} aria-current={c.id === activeId ? 'page' : undefined} className={cn('flex w-full items-center gap-2 rounded-[var(--hv-r-btn)] px-2.5 py-1.5 text-left', c.id === activeId ? 'bg-[var(--hv-fill-hover)] font-medium text-[var(--hv-text-1)]' : 'text-[var(--hv-text-2)] hover:bg-[var(--hv-fill)] hover:text-[var(--hv-text-1)]')}>
+              <span className="min-w-0 flex-1 truncate text-[13px]">{c.title}</span>
+              {!!c.shared && <Users className="size-3 shrink-0 text-[var(--hv-text-3)]" aria-label="Shared" />}
+              <span className="hv-num shrink-0 text-[10.5px] text-[var(--hv-text-3)]">{timeAgo(c.updated_at)}</span>
+            </button>
+          ))
+        )}
+      </nav>
+    </aside>
   )
 }
 
