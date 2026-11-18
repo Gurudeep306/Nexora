@@ -63,3 +63,6 @@ gate_notes/
 Gate_Notes/
 # Internal per-author digests (summaries of the reference notes); kept on disk only.
 content/gate-notes/_digest/
+
+# AI courses: paywalled and downloaded papers stay private (never committed)
+docs/ai-courses/private/

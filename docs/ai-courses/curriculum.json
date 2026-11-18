@@ -1,0 +1,2649 @@
+{
+ "about": "The AI courses in teaching order. Each topic may only need topics listed before it. Checked by node scripts/ai-courses/check-curriculum.mjs.",
+ "courses": [
+  {
+   "id": "foundations",
+   "title": "Foundations",
+   "nexus": "calc",
+   "blurb": "School maths and Python, up to exactly what the rest needs. Nobody is assumed to know anything.",
+   "chapters": [
+    {
+     "title": "Numbers and functions",
+     "topics": [
+      {
+       "id": "f-numbers",
+       "title": "Numbers, sets and intervals",
+       "needs": [],
+       "papers": []
+      },
+      {
+       "id": "f-functions",
+       "title": "Functions and their graphs",
+       "needs": [
+        "f-numbers"
+       ],
+       "papers": [],
+       "visual": "Drag x and watch f(x) trace the graph"
+      },
+      {
+       "id": "f-exp-log",
+       "title": "Exponents, logarithms and e",
+       "needs": [
+        "f-functions"
+       ],
+       "papers": [],
+       "visual": "e^x and ln x as mirror images; why log turns products into sums"
+      },
+      {
+       "id": "f-sums",
+       "title": "Sums, products and their notation",
+       "needs": [
+        "f-numbers"
+       ],
+       "papers": [],
+       "visual": "Σ unrolled term by term"
+      }
+     ]
+    },
+    {
+     "title": "Python and NumPy",
+     "topics": [
+      {
+       "id": "f-python",
+       "title": "Python for maths",
+       "needs": [
+        "f-functions"
+       ],
+       "papers": [],
+       "visual": "Run each line and see the variables change"
+      },
+      {
+       "id": "f-numpy",
+       "title": "NumPy arrays, shapes and broadcasting",
+       "needs": [
+        "f-python",
+        "f-sums"
+       ],
+       "papers": [],
+       "visual": "Arrays as grids; broadcasting stretching a row over a matrix"
+      }
+     ]
+    },
+    {
+     "title": "First look at learning",
+     "topics": [
+      {
+       "id": "f-data",
+       "title": "Data: examples, features and labels",
+       "needs": [
+        "f-numpy"
+       ],
+       "papers": [],
+       "visual": "A table becomes points on a plot"
+      },
+      {
+       "id": "f-what-is-learning",
+       "title": "What does it mean to learn from data?",
+       "needs": [
+        "f-data"
+       ],
+       "papers": [],
+       "visual": "Fit a line by hand; the error shrinks as you drag"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "math-for-ai",
+   "title": "Math for AI",
+   "nexus": "prob",
+   "blurb": "Linear algebra, calculus, probability, statistics, information theory and optimisation, each built from the one before.",
+   "chapters": [
+    {
+     "title": "Vectors and matrices",
+     "topics": [
+      {
+       "id": "m-vectors",
+       "title": "Vectors: arrows and lists",
+       "needs": [
+        "f-numpy"
+       ],
+       "papers": [],
+       "visual": "Arrows add tip to tail in 2D and 3D",
+       "gateDA": true
+      },
+      {
+       "id": "m-dot",
+       "title": "Dot product, length, angle and projection",
+       "needs": [
+        "m-vectors"
+       ],
+       "papers": [],
+       "visual": "Projection of one arrow on another, the shadow length = dot product",
+       "gateDA": true
+      },
+      {
+       "id": "m-norms",
+       "title": "Norms and distances",
+       "needs": [
+        "m-dot"
+       ],
+       "papers": [],
+       "visual": "L1, L2, L∞ unit balls in 2D and 3D",
+       "gateDA": true
+      },
+      {
+       "id": "m-matrices",
+       "title": "Matrices: tables and maps",
+       "needs": [
+        "m-dot"
+       ],
+       "papers": [],
+       "visual": "A matrix bending a grid of space (3D)",
+       "gateDA": true
+      },
+      {
+       "id": "m-matmul",
+       "title": "Matrix multiplication, step by step",
+       "needs": [
+        "m-matrices"
+       ],
+       "papers": [],
+       "visual": "Row × column cell by cell; then as composing two maps",
+       "gateDA": true
+      },
+      {
+       "id": "m-systems",
+       "title": "Linear systems and Gaussian elimination",
+       "needs": [
+        "m-matmul"
+       ],
+       "papers": [],
+       "visual": "Row operations one at a time; planes meeting at a point (3D)",
+       "gateDA": true
+      },
+      {
+       "id": "m-rank",
+       "title": "Span, independence, basis and rank",
+       "needs": [
+        "m-systems"
+       ],
+       "papers": [],
+       "visual": "Vectors spanning a line, a plane, all of space (3D)",
+       "gateDA": true
+      },
+      {
+       "id": "m-inverse-det",
+       "title": "Inverse and determinant",
+       "needs": [
+        "m-rank"
+       ],
+       "papers": [],
+       "visual": "Determinant as the area/volume a map scales by (3D)",
+       "gateDA": true
+      },
+      {
+       "id": "m-orthogonality",
+       "title": "Orthogonality, Gram–Schmidt and projections",
+       "needs": [
+        "m-rank"
+       ],
+       "papers": [],
+       "visual": "Gram–Schmidt straightening vectors one by one",
+       "gateDA": true
+      },
+      {
+       "id": "m-eigen",
+       "title": "Eigenvalues and eigenvectors",
+       "needs": [
+        "m-inverse-det"
+       ],
+       "papers": [],
+       "visual": "Vectors that stay on their line while the grid bends",
+       "gateDA": true
+      },
+      {
+       "id": "m-symmetric",
+       "title": "Symmetric matrices, quadratic forms, positive definite",
+       "needs": [
+        "m-eigen",
+        "m-orthogonality"
+       ],
+       "papers": [],
+       "visual": "A quadratic form as a 3D bowl or saddle; its axes = eigenvectors",
+       "gateDA": true
+      },
+      {
+       "id": "m-svd",
+       "title": "Singular value decomposition",
+       "needs": [
+        "m-symmetric"
+       ],
+       "papers": [],
+       "visual": "Rotate, stretch, rotate: a circle becomes an ellipse; image compression by rank",
+       "gateDA": true
+      }
+     ]
+    },
+    {
+     "title": "Calculus",
+     "topics": [
+      {
+       "id": "m-limits",
+       "title": "Limits and continuity",
+       "needs": [
+        "f-functions"
+       ],
+       "papers": [],
+       "visual": "Zooming in on a point until the curve looks straight",
+       "gateDA": true
+      },
+      {
+       "id": "m-derivative",
+       "title": "The derivative",
+       "needs": [
+        "m-limits"
+       ],
+       "papers": [],
+       "visual": "Secant turning into the tangent as h → 0",
+       "gateDA": true
+      },
+      {
+       "id": "m-derivative-rules",
+       "title": "Rules: sum, product, quotient, chain",
+       "needs": [
+        "m-derivative",
+        "f-exp-log"
+       ],
+       "papers": [],
+       "visual": "The chain rule as gears turning at different speeds",
+       "gateDA": true
+      },
+      {
+       "id": "m-taylor",
+       "title": "Taylor series and approximations",
+       "needs": [
+        "m-derivative-rules"
+       ],
+       "papers": [],
+       "visual": "Polynomials hugging a curve, one term at a time",
+       "gateDA": true
+      },
+      {
+       "id": "m-integrals",
+       "title": "Integrals and area",
+       "needs": [
+        "m-derivative"
+       ],
+       "papers": [],
+       "visual": "Rectangles filling the area as they get thinner",
+       "gateDA": true
+      },
+      {
+       "id": "m-partial",
+       "title": "Partial derivatives and the gradient",
+       "needs": [
+        "m-derivative-rules",
+        "m-vectors"
+       ],
+       "papers": [],
+       "visual": "A 3D surface sliced along x and along y",
+       "gateDA": true
+      },
+      {
+       "id": "m-directional",
+       "title": "Directional derivatives and steepest ascent",
+       "needs": [
+        "m-partial",
+        "m-dot"
+       ],
+       "papers": [],
+       "visual": "The gradient arrow on a 3D hill, always pointing uphill",
+       "gateDA": true
+      },
+      {
+       "id": "m-jacobian",
+       "title": "The Jacobian",
+       "needs": [
+        "m-partial",
+        "m-matmul"
+       ],
+       "papers": [],
+       "visual": "A small square mapped to a parallelogram; the Jacobian is that map"
+      },
+      {
+       "id": "m-hessian",
+       "title": "The Hessian and curvature",
+       "needs": [
+        "m-jacobian",
+        "m-symmetric"
+       ],
+       "papers": [],
+       "visual": "Bowl, ridge and saddle from the Hessian's eigenvalues (3D)"
+      },
+      {
+       "id": "m-matrix-calculus",
+       "title": "Matrix calculus: derivatives by vectors and matrices",
+       "needs": [
+        "m-jacobian"
+       ],
+       "papers": [],
+       "visual": "Shapes check: every derivative's shape drawn before it is computed"
+      },
+      {
+       "id": "m-multivariate-chain",
+       "title": "The chain rule in many variables and computational graphs",
+       "needs": [
+        "m-matrix-calculus"
+       ],
+       "papers": [
+        "baydin-2015"
+       ],
+       "visual": "A graph of operations, values forward, derivatives back"
+      }
+     ]
+    },
+    {
+     "title": "Probability",
+     "topics": [
+      {
+       "id": "m-prob-basics",
+       "title": "Probability: events and axioms",
+       "needs": [
+        "f-sums"
+       ],
+       "papers": [],
+       "visual": "Sample space as a grid of outcomes; events shaded",
+       "gateDA": true
+      },
+      {
+       "id": "m-conditional",
+       "title": "Conditional probability and Bayes' rule",
+       "needs": [
+        "m-prob-basics"
+       ],
+       "papers": [],
+       "visual": "A population split twice; Bayes as reading the tree backwards",
+       "gateDA": true
+      },
+      {
+       "id": "m-random-variables",
+       "title": "Random variables and distributions",
+       "needs": [
+        "m-conditional"
+       ],
+       "papers": [],
+       "visual": "Outcomes mapped to numbers; the histogram builds as you sample",
+       "gateDA": true
+      },
+      {
+       "id": "m-expectation",
+       "title": "Expectation and variance",
+       "needs": [
+        "m-random-variables",
+        "m-integrals"
+       ],
+       "papers": [],
+       "visual": "The balance point of a distribution; spread as the moment of inertia",
+       "gateDA": true
+      },
+      {
+       "id": "m-distributions",
+       "title": "Common distributions",
+       "needs": [
+        "m-expectation"
+       ],
+       "papers": [],
+       "visual": "Bernoulli to binomial to Gaussian as n grows",
+       "gateDA": true
+      },
+      {
+       "id": "m-joint",
+       "title": "Joint, marginal, independence, covariance",
+       "needs": [
+        "m-expectation"
+       ],
+       "papers": [],
+       "visual": "A 3D joint density with its two shadows (the marginals)",
+       "gateDA": true
+      },
+      {
+       "id": "m-multivariate-gaussian",
+       "title": "The multivariate Gaussian",
+       "needs": [
+        "m-joint",
+        "m-symmetric"
+       ],
+       "papers": [],
+       "visual": "Covariance as an ellipse; eigenvectors as its axes (3D bell)",
+       "gateDA": true
+      },
+      {
+       "id": "m-lln-clt",
+       "title": "Law of large numbers and the central limit theorem",
+       "needs": [
+        "m-distributions"
+       ],
+       "papers": [],
+       "visual": "Averages of dice settling, and their histogram turning Gaussian",
+       "gateDA": true
+      }
+     ]
+    },
+    {
+     "title": "Statistics",
+     "topics": [
+      {
+       "id": "m-estimation",
+       "title": "Estimation and maximum likelihood",
+       "needs": [
+        "m-distributions",
+        "m-derivative-rules"
+       ],
+       "papers": [],
+       "visual": "The likelihood curve peaking at the estimate as data arrives",
+       "gateDA": true
+      },
+      {
+       "id": "m-map-bayesian",
+       "title": "Priors, posteriors and MAP",
+       "needs": [
+        "m-estimation",
+        "m-conditional"
+       ],
+       "papers": [],
+       "visual": "Prior × likelihood = posterior, updated point by point",
+       "gateDA": true
+      },
+      {
+       "id": "m-hypothesis",
+       "title": "Confidence intervals and hypothesis tests",
+       "needs": [
+        "m-lln-clt"
+       ],
+       "papers": [],
+       "visual": "Intervals from repeated samples; how many cover the truth",
+       "gateDA": true
+      },
+      {
+       "id": "m-sampling-mc",
+       "title": "Monte Carlo and MCMC",
+       "needs": [
+        "m-lln-clt",
+        "m-conditional"
+       ],
+       "papers": [
+        "metropolis-1953",
+        "hastings-1970"
+       ],
+       "visual": "A Metropolis walker exploring a 2D density"
+      }
+     ]
+    },
+    {
+     "title": "Information theory",
+     "topics": [
+      {
+       "id": "m-entropy",
+       "title": "Entropy",
+       "needs": [
+        "m-expectation",
+        "f-exp-log"
+       ],
+       "papers": [
+        "shannon-1948"
+       ],
+       "visual": "Coding a message: surprise in bits per symbol"
+      },
+      {
+       "id": "m-cross-entropy-kl",
+       "title": "Cross-entropy and KL divergence",
+       "needs": [
+        "m-entropy"
+       ],
+       "papers": [
+        "kullback-1951"
+       ],
+       "visual": "Two distributions and the area of their mismatch"
+      },
+      {
+       "id": "m-mutual-information",
+       "title": "Mutual information",
+       "needs": [
+        "m-cross-entropy-kl",
+        "m-joint"
+       ],
+       "papers": [],
+       "visual": "Venn of H(X), H(Y) and what they share"
+      }
+     ]
+    },
+    {
+     "title": "Optimisation",
+     "topics": [
+      {
+       "id": "m-opt-basics",
+       "title": "Minima, critical points and convexity in one variable",
+       "needs": [
+        "m-derivative-rules",
+        "m-taylor"
+       ],
+       "papers": [],
+       "visual": "Rolling a ball into a valley; local vs global",
+       "gateDA": true
+      },
+      {
+       "id": "m-convexity",
+       "title": "Convex sets and functions",
+       "needs": [
+        "m-opt-basics",
+        "m-hessian"
+       ],
+       "papers": [],
+       "visual": "Chords above the curve; convex vs non-convex surfaces (3D)"
+      },
+      {
+       "id": "m-gradient-descent",
+       "title": "Gradient descent",
+       "needs": [
+        "m-directional",
+        "m-opt-basics"
+       ],
+       "papers": [],
+       "visual": "A ball stepping down a 3D loss surface, each step's numbers shown",
+       "gateDA": true
+      },
+      {
+       "id": "m-gd-convergence",
+       "title": "Why gradient descent converges, and step sizes",
+       "needs": [
+        "m-gradient-descent",
+        "m-convexity",
+        "m-eigen"
+       ],
+       "papers": [],
+       "visual": "Too small, right, too large: three paths on an elongated bowl"
+      },
+      {
+       "id": "m-newton",
+       "title": "Newton's method",
+       "needs": [
+        "m-hessian",
+        "m-gradient-descent"
+       ],
+       "papers": [],
+       "visual": "Each step jumps to the bottom of the local parabola"
+      },
+      {
+       "id": "m-constrained",
+       "title": "Lagrange multipliers, KKT and duality",
+       "needs": [
+        "m-convexity"
+       ],
+       "papers": [],
+       "visual": "Level curves touching the constraint; gradients lining up"
+      },
+      {
+       "id": "m-sgd",
+       "title": "Stochastic gradient descent",
+       "needs": [
+        "m-gradient-descent",
+        "m-expectation"
+       ],
+       "papers": [
+        "robbins-1951"
+       ],
+       "visual": "Noisy steps from mini-batches vs full-batch steps"
+      },
+      {
+       "id": "m-momentum",
+       "title": "Momentum",
+       "needs": [
+        "m-sgd"
+       ],
+       "papers": [
+        "polyak-1964"
+       ],
+       "visual": "A heavy ball vs a light one in a narrow valley (3D)"
+      },
+      {
+       "id": "m-adaptive",
+       "title": "AdaGrad, RMSProp, Adam and AdamW",
+       "needs": [
+        "m-momentum"
+       ],
+       "papers": [
+        "duchi-2011",
+        "kingma-2014",
+        "loshchilov-2017"
+       ],
+       "visual": "Four optimisers racing on the same 3D surface"
+      },
+      {
+       "id": "m-lr-schedules",
+       "title": "Learning-rate schedules and warm-up",
+       "needs": [
+        "m-adaptive"
+       ],
+       "papers": [
+        "loshchilov-2016"
+       ],
+       "visual": "Loss curves under each schedule"
+      },
+      {
+       "id": "m-variational",
+       "title": "Variational inference and the ELBO",
+       "needs": [
+        "m-cross-entropy-kl",
+        "m-map-bayesian"
+       ],
+       "papers": [
+        "blei-2016"
+       ],
+       "visual": "A simple distribution stretching to fit a complex one"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "machine-learning",
+   "title": "Machine Learning",
+   "nexus": "ml",
+   "blurb": "From fitting a line to ensembles, kernels, unsupervised learning and learning theory.",
+   "chapters": [
+    {
+     "title": "Learning from data",
+     "topics": [
+      {
+       "id": "ml-what-is-ml",
+       "title": "Supervised and unsupervised learning; training and test data",
+       "needs": [
+        "f-what-is-learning",
+        "m-estimation"
+       ],
+       "papers": [],
+       "visual": "Data split into train and test, and what each is for",
+       "gateDA": true
+      },
+      {
+       "id": "ml-loss-risk",
+       "title": "Loss functions and empirical risk",
+       "needs": [
+        "ml-what-is-ml",
+        "m-expectation"
+       ],
+       "papers": [],
+       "visual": "Each point's loss as a bar; the risk is their average",
+       "gateDA": true
+      }
+     ]
+    },
+    {
+     "title": "Linear regression",
+     "topics": [
+      {
+       "id": "ml-linreg-1d",
+       "title": "Fitting a line: least squares by calculus",
+       "needs": [
+        "ml-loss-risk",
+        "m-derivative-rules"
+       ],
+       "papers": [],
+       "visual": "Residuals as squares whose total area shrinks",
+       "gateDA": true
+      },
+      {
+       "id": "ml-linreg-normal",
+       "title": "Many features: the normal equations and their geometry",
+       "needs": [
+        "ml-linreg-1d",
+        "m-orthogonality",
+        "m-matrix-calculus"
+       ],
+       "papers": [],
+       "visual": "y projected onto the column space (3D)",
+       "gateDA": true
+      },
+      {
+       "id": "ml-linreg-gd",
+       "title": "Linear regression by gradient descent",
+       "needs": [
+        "ml-linreg-normal",
+        "m-gradient-descent"
+       ],
+       "papers": [],
+       "visual": "The line moving as the ball moves on the loss surface (3D)",
+       "gateDA": true
+      },
+      {
+       "id": "ml-linreg-prob",
+       "title": "The probabilistic view: Gaussian noise and MLE",
+       "needs": [
+        "ml-linreg-normal",
+        "m-estimation"
+       ],
+       "papers": [],
+       "visual": "Each point with its Gaussian bump around the line",
+       "gateDA": true
+      },
+      {
+       "id": "ml-features",
+       "title": "Features: polynomials, basis functions and scaling",
+       "needs": [
+        "ml-linreg-gd"
+       ],
+       "papers": [],
+       "visual": "The same data fitted with degree 1, 3, 9",
+       "gateDA": true
+      }
+     ]
+    },
+    {
+     "title": "Generalisation",
+     "topics": [
+      {
+       "id": "ml-overfitting",
+       "title": "Overfitting, validation and cross-validation",
+       "needs": [
+        "ml-features"
+       ],
+       "papers": [],
+       "visual": "Train and test error curves crossing; k folds rotating",
+       "gateDA": true
+      },
+      {
+       "id": "ml-bias-variance",
+       "title": "The bias–variance trade-off",
+       "needs": [
+        "ml-overfitting",
+        "m-expectation"
+       ],
+       "papers": [
+        "geman-1992",
+        "belkin-2019"
+       ],
+       "visual": "Many fits from many samples: spread vs offset",
+       "gateDA": true
+      },
+      {
+       "id": "ml-regularization",
+       "title": "Ridge, lasso and elastic net",
+       "needs": [
+        "ml-bias-variance",
+        "m-map-bayesian",
+        "m-constrained"
+       ],
+       "papers": [
+        "hoerl-1970",
+        "tibshirani-1996",
+        "zou-2005"
+       ],
+       "visual": "Loss contours meeting the L2 circle vs the L1 diamond",
+       "gateDA": true
+      }
+     ]
+    },
+    {
+     "title": "Classification",
+     "topics": [
+      {
+       "id": "ml-classification-intro",
+       "title": "Classification and decision boundaries",
+       "needs": [
+        "ml-overfitting"
+       ],
+       "papers": [],
+       "visual": "Points of two colours and a line between them",
+       "gateDA": true
+      },
+      {
+       "id": "ml-logistic",
+       "title": "Logistic regression, derived",
+       "needs": [
+        "ml-classification-intro",
+        "m-cross-entropy-kl",
+        "m-gradient-descent"
+       ],
+       "papers": [
+        "cox-1958"
+       ],
+       "visual": "The sigmoid surface over the plane (3D); the boundary at 0.5",
+       "gateDA": true
+      },
+      {
+       "id": "ml-softmax-regression",
+       "title": "Many classes: softmax regression",
+       "needs": [
+        "ml-logistic",
+        "m-jacobian"
+       ],
+       "papers": [],
+       "visual": "Scores to probabilities, row by row"
+      },
+      {
+       "id": "ml-metrics",
+       "title": "Accuracy, precision, recall, ROC and calibration",
+       "needs": [
+        "ml-classification-intro"
+       ],
+       "papers": [],
+       "visual": "Moving the threshold and the ROC point moving with it",
+       "gateDA": true
+      },
+      {
+       "id": "ml-knn",
+       "title": "k-nearest neighbours",
+       "needs": [
+        "ml-classification-intro",
+        "m-norms"
+       ],
+       "papers": [
+        "cover-1967"
+       ],
+       "visual": "Regions changing as k changes",
+       "gateDA": true
+      },
+      {
+       "id": "ml-naive-bayes",
+       "title": "Naive Bayes",
+       "needs": [
+        "ml-classification-intro",
+        "m-conditional"
+       ],
+       "papers": [],
+       "visual": "Word counts turning into a spam probability",
+       "gateDA": true
+      },
+      {
+       "id": "ml-lda-qda",
+       "title": "Gaussian discriminant analysis (LDA and QDA)",
+       "needs": [
+        "ml-naive-bayes",
+        "m-multivariate-gaussian"
+       ],
+       "papers": [],
+       "visual": "Two Gaussian ellipses and the boundary between them",
+       "gateDA": true
+      },
+      {
+       "id": "ml-glm",
+       "title": "Exponential families and generalised linear models",
+       "needs": [
+        "ml-logistic",
+        "ml-linreg-prob"
+       ],
+       "papers": [],
+       "visual": "One recipe producing linear, logistic and Poisson regression"
+      }
+     ]
+    },
+    {
+     "title": "Trees and ensembles",
+     "topics": [
+      {
+       "id": "ml-decision-trees",
+       "title": "Decision trees: impurity, entropy and splits",
+       "needs": [
+        "ml-classification-intro",
+        "m-entropy"
+       ],
+       "papers": [
+        "quinlan-1986"
+       ],
+       "visual": "The plane cut into boxes, split by split, with the tree growing beside it",
+       "gateDA": true
+      },
+      {
+       "id": "ml-bagging-rf",
+       "title": "Bagging and random forests",
+       "needs": [
+        "ml-decision-trees",
+        "ml-bias-variance"
+       ],
+       "papers": [
+        "breiman-1996",
+        "breiman-2001"
+       ],
+       "visual": "Many trees voting; the vote map smoothing out"
+      },
+      {
+       "id": "ml-adaboost",
+       "title": "Boosting and AdaBoost",
+       "needs": [
+        "ml-decision-trees"
+       ],
+       "papers": [
+        "freund-1997"
+       ],
+       "visual": "Misclassified points growing in weight each round"
+      },
+      {
+       "id": "ml-gradient-boosting",
+       "title": "Gradient boosting, XGBoost, LightGBM and CatBoost",
+       "needs": [
+        "ml-adaboost",
+        "m-gradient-descent",
+        "m-taylor"
+       ],
+       "papers": [
+        "friedman-2001",
+        "chen-2016",
+        "ke-2017",
+        "prokhorenkova-2017"
+       ],
+       "visual": "Each new tree fitting the residuals left by the last"
+      }
+     ]
+    },
+    {
+     "title": "Kernels and SVMs",
+     "topics": [
+      {
+       "id": "ml-svm-hard",
+       "title": "Maximum-margin classifiers",
+       "needs": [
+        "ml-logistic",
+        "m-constrained"
+       ],
+       "papers": [
+        "boser-1992"
+       ],
+       "visual": "The widest street between two classes; support vectors lit",
+       "gateDA": true
+      },
+      {
+       "id": "ml-svm-soft",
+       "title": "Soft margins and the hinge loss",
+       "needs": [
+        "ml-svm-hard"
+       ],
+       "papers": [
+        "cortes-1995"
+       ],
+       "visual": "C slider trading margin for mistakes",
+       "gateDA": true
+      },
+      {
+       "id": "ml-kernels",
+       "title": "The kernel trick",
+       "needs": [
+        "ml-svm-soft",
+        "m-symmetric"
+       ],
+       "papers": [],
+       "visual": "Points lifted into 3D where a plane separates them"
+      },
+      {
+       "id": "ml-gaussian-processes",
+       "title": "Gaussian processes",
+       "needs": [
+        "ml-kernels",
+        "m-multivariate-gaussian"
+       ],
+       "papers": [],
+       "visual": "Functions drawn from a prior, then pinned by data"
+      }
+     ]
+    },
+    {
+     "title": "Unsupervised learning",
+     "topics": [
+      {
+       "id": "ml-kmeans",
+       "title": "k-means clustering",
+       "needs": [
+        "ml-what-is-ml",
+        "m-norms"
+       ],
+       "papers": [
+        "lloyd-1982"
+       ],
+       "visual": "Centres moving and points re-colouring, step by step",
+       "gateDA": true
+      },
+      {
+       "id": "ml-gmm-em",
+       "title": "Gaussian mixtures and the EM algorithm",
+       "needs": [
+        "ml-kmeans",
+        "m-multivariate-gaussian",
+        "m-estimation"
+       ],
+       "papers": [
+        "dempster-1977"
+       ],
+       "visual": "Soft ellipses fitting the clusters, E and M steps"
+      },
+      {
+       "id": "ml-pca",
+       "title": "Principal component analysis",
+       "needs": [
+        "m-svd",
+        "m-multivariate-gaussian"
+       ],
+       "papers": [
+        "pearson-1901",
+        "hotelling-1933"
+       ],
+       "visual": "A 3D cloud and the plane that keeps the most variance",
+       "gateDA": true
+      },
+      {
+       "id": "ml-ica",
+       "title": "Independent component analysis",
+       "needs": [
+        "ml-pca"
+       ],
+       "papers": [
+        "hyvarinen-2000"
+       ],
+       "visual": "Two mixed signals pulled apart"
+      },
+      {
+       "id": "ml-tsne-umap",
+       "title": "t-SNE and UMAP",
+       "needs": [
+        "ml-pca",
+        "m-cross-entropy-kl"
+       ],
+       "papers": [
+        "vandermaaten-2008",
+        "mcinnes-2018"
+       ],
+       "visual": "A high-dimensional dataset settling into a 2D map"
+      },
+      {
+       "id": "ml-density-spectral",
+       "title": "Density-based and spectral clustering",
+       "needs": [
+        "ml-kmeans",
+        "m-eigen"
+       ],
+       "papers": [
+        "ester-1996",
+        "vonluxburg-2007"
+       ],
+       "visual": "Rings that k-means splits wrong and spectral clustering gets right"
+      },
+      {
+       "id": "ml-hmm",
+       "title": "Hidden Markov models",
+       "needs": [
+        "ml-gmm-em",
+        "m-conditional"
+       ],
+       "papers": [
+        "rabiner-1989"
+       ],
+       "visual": "The trellis: forward probabilities filling column by column"
+      },
+      {
+       "id": "ml-topic-models",
+       "title": "Topic models (LDA)",
+       "needs": [
+        "ml-gmm-em",
+        "m-variational"
+       ],
+       "papers": [
+        "blei-2003"
+       ],
+       "visual": "Documents as mixtures of topics, words coloured by topic"
+      }
+     ]
+    },
+    {
+     "title": "Learning theory",
+     "topics": [
+      {
+       "id": "ml-pac",
+       "title": "PAC learning",
+       "needs": [
+        "ml-overfitting",
+        "m-prob-basics"
+       ],
+       "papers": [
+        "valiant-1984"
+       ],
+       "visual": "How many samples until the error is small with high probability"
+      },
+      {
+       "id": "ml-vc",
+       "title": "VC dimension and uniform convergence",
+       "needs": [
+        "ml-pac"
+       ],
+       "papers": [
+        "vapnik-1971"
+       ],
+       "visual": "Shattering 3 points with a line, failing on 4"
+      }
+     ]
+    },
+    {
+     "title": "In practice",
+     "topics": [
+      {
+       "id": "ml-interpretability",
+       "title": "Explaining models: importance, LIME and SHAP",
+       "needs": [
+        "ml-gradient-boosting"
+       ],
+       "papers": [
+        "ribeiro-2016",
+        "lundberg-2017"
+       ],
+       "visual": "SHAP values as forces pushing one prediction"
+      },
+      {
+       "id": "ml-fairness",
+       "title": "Fairness and its measures",
+       "needs": [
+        "ml-metrics"
+       ],
+       "papers": [
+        "hardt-2016"
+       ],
+       "visual": "Two groups' ROC curves and the thresholds that equalise them"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "deep-learning",
+   "title": "Deep Learning",
+   "nexus": "deep",
+   "blurb": "From one neuron to the transformer, with every gradient derived.",
+   "chapters": [
+    {
+     "title": "One neuron",
+     "topics": [
+      {
+       "id": "dl-neuron",
+       "title": "The artificial neuron",
+       "needs": [
+        "ml-logistic"
+       ],
+       "papers": [
+        "mcculloch-1943"
+       ],
+       "visual": "Inputs × weights + bias → activation, every number shown",
+       "gateDA": true
+      },
+      {
+       "id": "dl-perceptron",
+       "title": "The perceptron and its learning rule",
+       "needs": [
+        "dl-neuron"
+       ],
+       "papers": [
+        "rosenblatt-1958"
+       ],
+       "visual": "The boundary rotating with each mistake; the convergence proof step by step",
+       "gateDA": true
+      },
+      {
+       "id": "dl-perceptron-limits",
+       "title": "What one neuron can't do: XOR",
+       "needs": [
+        "dl-perceptron"
+       ],
+       "papers": [],
+       "visual": "XOR points no line can separate"
+      }
+     ]
+    },
+    {
+     "title": "Networks",
+     "topics": [
+      {
+       "id": "dl-mlp",
+       "title": "Layers: the multilayer perceptron",
+       "needs": [
+        "dl-perceptron-limits",
+        "m-matmul"
+       ],
+       "papers": [],
+       "visual": "A 2-layer net in 3D bending the plane until XOR separates",
+       "gateDA": true
+      },
+      {
+       "id": "dl-activations",
+       "title": "Activation functions",
+       "needs": [
+        "dl-mlp"
+       ],
+       "papers": [
+        "hendrycks-2016"
+       ],
+       "visual": "Sigmoid, tanh, ReLU, GELU and their derivatives side by side",
+       "gateDA": true
+      },
+      {
+       "id": "dl-universal-approx",
+       "title": "Universal approximation",
+       "needs": [
+        "dl-activations"
+       ],
+       "papers": [
+        "cybenko-1989",
+        "hornik-1989"
+       ],
+       "visual": "Bumps of ReLUs adding up to any curve"
+      },
+      {
+       "id": "dl-losses",
+       "title": "Loss functions as likelihoods",
+       "needs": [
+        "dl-mlp",
+        "ml-softmax-regression"
+       ],
+       "papers": [],
+       "visual": "MSE and cross-entropy surfaces for one output"
+      }
+     ]
+    },
+    {
+     "title": "Backpropagation",
+     "topics": [
+      {
+       "id": "dl-computational-graph",
+       "title": "Computational graphs",
+       "needs": [
+        "m-multivariate-chain",
+        "dl-mlp"
+       ],
+       "papers": [
+        "baydin-2015"
+       ],
+       "visual": "The net as a graph of operations, values flowing forward"
+      },
+      {
+       "id": "dl-backprop",
+       "title": "Backpropagation, derived in full",
+       "needs": [
+        "dl-computational-graph",
+        "dl-losses"
+       ],
+       "papers": [
+        "rumelhart-1986"
+       ],
+       "visual": "Gradients flowing back node by node, every number shown (2D and 3D)",
+       "gateDA": true
+      },
+      {
+       "id": "dl-autograd",
+       "title": "Build an autograd engine",
+       "needs": [
+        "dl-backprop"
+       ],
+       "papers": [],
+       "visual": "Your own engine's tape replayed step by step"
+      },
+      {
+       "id": "dl-gradient-check",
+       "title": "Checking gradients numerically",
+       "needs": [
+        "dl-backprop"
+       ],
+       "papers": [],
+       "visual": "Finite differences next to backprop, digit by digit"
+      }
+     ]
+    },
+    {
+     "title": "Training",
+     "topics": [
+      {
+       "id": "dl-training-loop",
+       "title": "The training loop: mini-batches and epochs",
+       "needs": [
+        "dl-backprop",
+        "m-sgd"
+       ],
+       "papers": [],
+       "visual": "The loss curve and the decision boundary moving together"
+      },
+      {
+       "id": "dl-optimizers",
+       "title": "Optimisers in practice",
+       "needs": [
+        "dl-training-loop",
+        "m-adaptive"
+       ],
+       "papers": [
+        "kingma-2014",
+        "loshchilov-2017"
+       ],
+       "visual": "The same net trained with SGD, momentum and Adam"
+      },
+      {
+       "id": "dl-init",
+       "title": "Weight initialisation: Xavier and He, derived",
+       "needs": [
+        "dl-training-loop",
+        "m-expectation"
+       ],
+       "papers": [
+        "glorot-2010",
+        "he-2015"
+       ],
+       "visual": "Activation histograms layer by layer for bad vs good init"
+      },
+      {
+       "id": "dl-vanishing",
+       "title": "Vanishing and exploding gradients",
+       "needs": [
+        "dl-init"
+       ],
+       "papers": [
+        "bengio-1994",
+        "pascanu-2013"
+       ],
+       "visual": "Gradient size per layer shrinking or blowing up"
+      },
+      {
+       "id": "dl-normalization",
+       "title": "Batch normalisation and layer normalisation",
+       "needs": [
+        "dl-vanishing"
+       ],
+       "papers": [
+        "ioffe-2015",
+        "ba-2016"
+       ],
+       "visual": "Which axis each one averages over, drawn on the tensor"
+      },
+      {
+       "id": "dl-regularization",
+       "title": "Weight decay, dropout, early stopping, augmentation",
+       "needs": [
+        "dl-training-loop",
+        "ml-regularization"
+       ],
+       "papers": [
+        "hinton-2012",
+        "srivastava-2014"
+       ],
+       "visual": "Dropout masks changing each step; the ensemble it implies"
+      },
+      {
+       "id": "dl-modern-generalization",
+       "title": "Double descent and the lottery ticket",
+       "needs": [
+        "dl-regularization",
+        "ml-bias-variance"
+       ],
+       "papers": [
+        "belkin-2019",
+        "frankle-2018"
+       ],
+       "visual": "Test error rising then falling again as width grows"
+      }
+     ]
+    },
+    {
+     "title": "Convolutional networks",
+     "topics": [
+      {
+       "id": "dl-convolution",
+       "title": "Convolution, from scratch",
+       "needs": [
+        "dl-mlp"
+       ],
+       "papers": [
+        "fukushima-1980"
+       ],
+       "visual": "A kernel sliding over an image, each output computed in view",
+       "gateDA": true
+      },
+      {
+       "id": "dl-cnn",
+       "title": "Convolutional networks and pooling; backprop through a convolution",
+       "needs": [
+        "dl-convolution",
+        "dl-backprop"
+       ],
+       "papers": [
+        "lecun-1998"
+       ],
+       "visual": "Feature maps as stacked slabs (3D); draw a digit and watch"
+      },
+      {
+       "id": "dl-cnn-architectures",
+       "title": "AlexNet, VGG and Inception",
+       "needs": [
+        "dl-cnn",
+        "dl-normalization"
+       ],
+       "papers": [
+        "krizhevsky-2012",
+        "deng-2009",
+        "simonyan-2014",
+        "szegedy-2014",
+        "zeiler-2014"
+       ],
+       "visual": "The architectures to scale in 3D; what each layer sees"
+      },
+      {
+       "id": "dl-resnet",
+       "title": "Residual networks",
+       "needs": [
+        "dl-cnn-architectures",
+        "dl-vanishing"
+       ],
+       "papers": [
+        "he-2016",
+        "he-2016b",
+        "huang-2017"
+       ],
+       "visual": "Gradient paths with and without the skip connection"
+      },
+      {
+       "id": "dl-efficient-cnns",
+       "title": "Efficient CNNs: depthwise convolutions and scaling",
+       "needs": [
+        "dl-resnet"
+       ],
+       "papers": [
+        "howard-2017",
+        "tan-2019"
+       ],
+       "visual": "Cost of a normal vs a depthwise convolution, counted"
+      }
+     ]
+    },
+    {
+     "title": "Sequence models",
+     "topics": [
+      {
+       "id": "dl-rnn",
+       "title": "Recurrent networks and backprop through time",
+       "needs": [
+        "dl-backprop",
+        "dl-vanishing"
+       ],
+       "papers": [],
+       "visual": "The network unrolled over time, gradients flowing back"
+      },
+      {
+       "id": "dl-lstm-gru",
+       "title": "LSTM and GRU",
+       "needs": [
+        "dl-rnn"
+       ],
+       "papers": [
+        "hochreiter-1997",
+        "cho-2014"
+       ],
+       "visual": "The cell's gates opening and closing on a sequence"
+      },
+      {
+       "id": "dl-seq2seq",
+       "title": "Sequence to sequence",
+       "needs": [
+        "dl-lstm-gru"
+       ],
+       "papers": [
+        "sutskever-2014"
+       ],
+       "visual": "Encoder squeezing a sentence; decoder unfolding it"
+      },
+      {
+       "id": "dl-attention",
+       "title": "Attention",
+       "needs": [
+        "dl-seq2seq",
+        "ml-softmax-regression"
+       ],
+       "papers": [
+        "bahdanau-2014",
+        "luong-2015"
+       ],
+       "visual": "The alignment matrix filling as each word is translated"
+      }
+     ]
+    },
+    {
+     "title": "Transformers",
+     "topics": [
+      {
+       "id": "dl-self-attention",
+       "title": "Self-attention, and why we divide by √d",
+       "needs": [
+        "dl-attention"
+       ],
+       "papers": [],
+       "visual": "Q·K scores, softmax, weighted sum of V, every number"
+      },
+      {
+       "id": "dl-multihead",
+       "title": "Multi-head attention",
+       "needs": [
+        "dl-self-attention"
+       ],
+       "papers": [],
+       "visual": "Each head's attention pattern on the same sentence"
+      },
+      {
+       "id": "dl-positional",
+       "title": "Positional encodings",
+       "needs": [
+        "dl-multihead"
+       ],
+       "papers": [],
+       "visual": "Sine waves of position as a heat map; dot products by distance"
+      },
+      {
+       "id": "dl-transformer-block",
+       "title": "The transformer block: residuals, layer norm, feed-forward",
+       "needs": [
+        "dl-multihead",
+        "dl-normalization",
+        "dl-resnet"
+       ],
+       "papers": [
+        "vaswani-2017",
+        "xiong-2020"
+       ],
+       "visual": "A token's vector through one block, piece by piece (3D)"
+      },
+      {
+       "id": "dl-transformer",
+       "title": "The full transformer: encoder, decoder, masking, training",
+       "needs": [
+        "dl-transformer-block",
+        "dl-positional"
+       ],
+       "papers": [
+        "vaswani-2017"
+       ],
+       "visual": "Masked attention, then the decoder generating word by word"
+      }
+     ]
+    },
+    {
+     "title": "More architectures",
+     "topics": [
+      {
+       "id": "dl-autoencoders",
+       "title": "Autoencoders and denoising autoencoders",
+       "needs": [
+        "dl-training-loop",
+        "ml-pca"
+       ],
+       "papers": [
+        "hinton-2006b",
+        "vincent-2008"
+       ],
+       "visual": "A 3D bottleneck space of digits"
+      },
+      {
+       "id": "dl-gnn",
+       "title": "Graph neural networks: message passing, GCN, GAT",
+       "needs": [
+        "dl-mlp",
+        "m-eigen"
+       ],
+       "papers": [
+        "kipf-2016",
+        "hamilton-2017",
+        "velickovic-2017",
+        "gilmer-2017",
+        "xu-2018"
+       ],
+       "visual": "Messages passing along edges, round by round"
+      },
+      {
+       "id": "dl-neural-ode",
+       "title": "Neural ODEs",
+       "needs": [
+        "dl-resnet"
+       ],
+       "papers": [
+        "chen-2018"
+       ],
+       "visual": "A ResNet's steps shrinking into a smooth flow"
+      }
+     ]
+    },
+    {
+     "title": "Robust and explainable",
+     "topics": [
+      {
+       "id": "dl-adversarial",
+       "title": "Adversarial examples and robust training",
+       "needs": [
+        "dl-backprop"
+       ],
+       "papers": [
+        "szegedy-2013",
+        "goodfellow-2014b",
+        "madry-2017"
+       ],
+       "visual": "A tiny pixel change flipping the prediction, the gradient that made it"
+      },
+      {
+       "id": "dl-interpretability",
+       "title": "Saliency, Grad-CAM and integrated gradients",
+       "needs": [
+        "dl-cnn"
+       ],
+       "papers": [
+        "selvaraju-2016",
+        "sundararajan-2017"
+       ],
+       "visual": "Heat maps of what the network looked at"
+      },
+      {
+       "id": "dl-compression",
+       "title": "Distillation and pruning",
+       "needs": [
+        "dl-training-loop"
+       ],
+       "papers": [
+        "hinton-2015",
+        "frankle-2018"
+       ],
+       "visual": "Soft targets vs hard labels; weights removed and accuracy kept"
+      }
+     ]
+    },
+    {
+     "title": "Looking back",
+     "topics": [
+      {
+       "id": "dl-history",
+       "title": "How deep learning happened",
+       "needs": [
+        "dl-transformer"
+       ],
+       "papers": [
+        "lecun-2015",
+        "schmidhuber-2015",
+        "hopfield-1982",
+        "hinton-2006"
+       ],
+       "visual": "The paper map as a timeline"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "computer-vision",
+   "title": "Computer Vision",
+   "nexus": "computer-vision",
+   "blurb": "Images, detection, segmentation, vision transformers, self-supervised learning, 3D scenes.",
+   "chapters": [
+    {
+     "title": "Images",
+     "topics": [
+      {
+       "id": "cv-images",
+       "title": "Images as tensors; classical filters",
+       "needs": [
+        "dl-convolution"
+       ],
+       "papers": [],
+       "visual": "An image's channels pulled apart in 3D; edges from filters"
+      },
+      {
+       "id": "cv-transfer-learning",
+       "title": "Transfer learning and fine-tuning",
+       "needs": [
+        "dl-resnet"
+       ],
+       "papers": [],
+       "visual": "Frozen layers and the new head training"
+      }
+     ]
+    },
+    {
+     "title": "Detection",
+     "topics": [
+      {
+       "id": "cv-detection-two-stage",
+       "title": "Object detection: R-CNN to Faster R-CNN",
+       "needs": [
+        "cv-transfer-learning"
+       ],
+       "papers": [
+        "girshick-2013",
+        "girshick-2015",
+        "ren-2015"
+       ],
+       "visual": "Proposals, then boxes refined; IoU computed"
+      },
+      {
+       "id": "cv-detection-one-stage",
+       "title": "One-stage detection: YOLO, SSD, FPN, focal loss",
+       "needs": [
+        "cv-detection-two-stage"
+       ],
+       "papers": [
+        "redmon-2015",
+        "liu-2015",
+        "lin-2016",
+        "lin-2017"
+       ],
+       "visual": "The grid predicting boxes; focal loss down-weighting easy ones"
+      }
+     ]
+    },
+    {
+     "title": "Segmentation",
+     "topics": [
+      {
+       "id": "cv-segmentation",
+       "title": "Segmentation: FCN, U-Net, Mask R-CNN",
+       "needs": [
+        "cv-detection-two-stage"
+       ],
+       "papers": [
+        "long-2014",
+        "ronneberger-2015",
+        "he-2017"
+       ],
+       "visual": "U-Net's skip connections carrying detail across"
+      }
+     ]
+    },
+    {
+     "title": "Transformers for vision",
+     "topics": [
+      {
+       "id": "cv-vit",
+       "title": "Vision transformers and Swin",
+       "needs": [
+        "dl-transformer",
+        "cv-transfer-learning"
+       ],
+       "papers": [
+        "dosovitskiy-2020",
+        "liu-2021"
+       ],
+       "visual": "An image cut into patches, each a token"
+      },
+      {
+       "id": "cv-detr",
+       "title": "DETR: detection as set prediction",
+       "needs": [
+        "cv-vit",
+        "cv-detection-one-stage"
+       ],
+       "papers": [
+        "carion-2020"
+       ],
+       "visual": "Object queries matched to boxes (Hungarian matching)"
+      }
+     ]
+    },
+    {
+     "title": "Learning without labels",
+     "topics": [
+      {
+       "id": "cv-self-supervised",
+       "title": "Self-supervised learning: SimCLR, MoCo, BYOL, DINO, MAE",
+       "needs": [
+        "cv-vit",
+        "m-cross-entropy-kl"
+       ],
+       "papers": [
+        "chen-2020",
+        "he-2019",
+        "grill-2020",
+        "caron-2021",
+        "he-2021"
+       ],
+       "visual": "Two views of one image pulled together in embedding space (3D)"
+      },
+      {
+       "id": "cv-clip",
+       "title": "CLIP: images and text in one space",
+       "needs": [
+        "cv-self-supervised"
+       ],
+       "papers": [
+        "radford-2021"
+       ],
+       "visual": "The image–text similarity matrix and its diagonal"
+      }
+     ]
+    },
+    {
+     "title": "Foundation models",
+     "topics": [
+      {
+       "id": "cv-sam",
+       "title": "Segment Anything",
+       "needs": [
+        "cv-vit",
+        "cv-segmentation"
+       ],
+       "papers": [
+        "kirillov-2023"
+       ],
+       "visual": "A click becoming a mask"
+      }
+     ]
+    },
+    {
+     "title": "3D",
+     "topics": [
+      {
+       "id": "cv-nerf",
+       "title": "Neural radiance fields",
+       "needs": [
+        "dl-mlp",
+        "cv-images"
+       ],
+       "papers": [
+        "mildenhall-2020"
+       ],
+       "visual": "Rays through a 3D scene, colour integrated along each"
+      },
+      {
+       "id": "cv-gaussian-splatting",
+       "title": "3D Gaussian splatting",
+       "needs": [
+        "cv-nerf"
+       ],
+       "papers": [
+        "kerbl-2023"
+       ],
+       "visual": "Gaussians in 3D projected and blended into a view"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "nlp",
+   "title": "Natural Language Processing",
+   "nexus": "nlp",
+   "blurb": "Text to tokens to word vectors to BERT and GPT.",
+   "chapters": [
+    {
+     "title": "Text",
+     "topics": [
+      {
+       "id": "nlp-text-basics",
+       "title": "Text as data: tokens, bag of words, TF-IDF",
+       "needs": [
+        "ml-naive-bayes",
+        "m-prob-basics"
+       ],
+       "papers": [],
+       "visual": "A sentence becoming a count vector"
+      },
+      {
+       "id": "nlp-ngram",
+       "title": "n-gram language models and perplexity",
+       "needs": [
+        "nlp-text-basics",
+        "m-entropy"
+       ],
+       "papers": [],
+       "visual": "Next-word probabilities from counts; perplexity as surprise"
+      },
+      {
+       "id": "nlp-subwords",
+       "title": "Subword tokenisation: BPE and SentencePiece",
+       "needs": [
+        "nlp-text-basics"
+       ],
+       "papers": [
+        "sennrich-2015",
+        "kudo-2018"
+       ],
+       "visual": "BPE merging the most common pair, merge by merge"
+      }
+     ]
+    },
+    {
+     "title": "Word vectors",
+     "topics": [
+      {
+       "id": "nlp-word2vec",
+       "title": "word2vec",
+       "needs": [
+        "nlp-text-basics",
+        "dl-training-loop"
+       ],
+       "papers": [
+        "mikolov-2013",
+        "mikolov-2013b"
+       ],
+       "visual": "Words moving in 3D as training pulls neighbours together"
+      },
+      {
+       "id": "nlp-glove",
+       "title": "GloVe",
+       "needs": [
+        "nlp-word2vec"
+       ],
+       "papers": [
+        "pennington-2014"
+       ],
+       "visual": "The co-occurrence matrix and its log-bilinear fit"
+      }
+     ]
+    },
+    {
+     "title": "Neural language models",
+     "topics": [
+      {
+       "id": "nlp-rnn-lm",
+       "title": "Recurrent language models",
+       "needs": [
+        "nlp-ngram",
+        "dl-lstm-gru"
+       ],
+       "papers": [],
+       "visual": "The hidden state carrying the sentence, word by word"
+      },
+      {
+       "id": "nlp-elmo",
+       "title": "Contextual word vectors (ELMo)",
+       "needs": [
+        "nlp-rnn-lm",
+        "nlp-word2vec"
+       ],
+       "papers": [
+        "peters-2018"
+       ],
+       "visual": "\"bank\" by a river vs \"bank\" for money, two vectors"
+      }
+     ]
+    },
+    {
+     "title": "Pre-trained transformers",
+     "topics": [
+      {
+       "id": "nlp-bert",
+       "title": "BERT and masked language modelling",
+       "needs": [
+        "dl-transformer",
+        "nlp-subwords",
+        "nlp-elmo"
+       ],
+       "papers": [
+        "devlin-2018",
+        "liu-2019"
+       ],
+       "visual": "Masked words predicted from both sides"
+      },
+      {
+       "id": "nlp-gpt",
+       "title": "GPT: decoder-only language models",
+       "needs": [
+        "dl-transformer",
+        "nlp-subwords"
+       ],
+       "papers": [
+        "radford-2018",
+        "radford-2019"
+       ],
+       "visual": "Causal mask; one token at a time with its probabilities"
+      },
+      {
+       "id": "nlp-t5",
+       "title": "Text-to-text: T5",
+       "needs": [
+        "nlp-bert",
+        "nlp-gpt"
+       ],
+       "papers": [
+        "raffel-2019"
+       ],
+       "visual": "Every task as input text → output text"
+      },
+      {
+       "id": "nlp-decoding",
+       "title": "Decoding: greedy, beam, top-k, nucleus, temperature",
+       "needs": [
+        "nlp-gpt"
+       ],
+       "papers": [
+        "holtzman-2019"
+       ],
+       "visual": "The same distribution cut and reshaped by each method"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "generative-models",
+   "title": "Generative Models",
+   "nexus": "genai-llms",
+   "blurb": "Autoregressive models, VAEs, GANs, flows and diffusion, each likelihood derived.",
+   "chapters": [
+    {
+     "title": "Basics",
+     "topics": [
+      {
+       "id": "gen-intro",
+       "title": "What a generative model is: likelihood and sampling",
+       "needs": [
+        "m-variational",
+        "dl-autoencoders"
+       ],
+       "papers": [],
+       "visual": "Data density in 2D and samples drawn from a model"
+      },
+      {
+       "id": "gen-autoregressive",
+       "title": "Autoregressive models",
+       "needs": [
+        "gen-intro",
+        "dl-lstm-gru"
+       ],
+       "papers": [
+        "oord-2016"
+       ],
+       "visual": "A picture drawn pixel by pixel from conditional probabilities"
+      }
+     ]
+    },
+    {
+     "title": "Latent variable models",
+     "topics": [
+      {
+       "id": "gen-vae",
+       "title": "Variational autoencoders: the ELBO and the reparameterisation trick, derived",
+       "needs": [
+        "gen-intro",
+        "m-variational"
+       ],
+       "papers": [
+        "kingma-2013",
+        "rezende-2014"
+       ],
+       "visual": "The latent space in 3D, decoded as you move"
+      },
+      {
+       "id": "gen-vqvae",
+       "title": "Discrete latents: VQ-VAE",
+       "needs": [
+        "gen-vae"
+       ],
+       "papers": [
+        "oord-2017"
+       ],
+       "visual": "Vectors snapping to the nearest codebook entry"
+      }
+     ]
+    },
+    {
+     "title": "Adversarial",
+     "topics": [
+      {
+       "id": "gen-gan",
+       "title": "Generative adversarial networks: the minimax game, derived",
+       "needs": [
+        "gen-intro",
+        "dl-cnn"
+       ],
+       "papers": [
+        "goodfellow-2014",
+        "mirza-2014",
+        "radford-2015"
+       ],
+       "visual": "Generator's samples and the discriminator's map, round by round"
+      },
+      {
+       "id": "gen-wgan",
+       "title": "Wasserstein GANs",
+       "needs": [
+        "gen-gan"
+       ],
+       "papers": [
+        "arjovsky-2017",
+        "gulrajani-2017"
+       ],
+       "visual": "Earth mover's distance as moving piles of sand"
+      },
+      {
+       "id": "gen-gan-applications",
+       "title": "Image-to-image and style: pix2pix, CycleGAN, StyleGAN",
+       "needs": [
+        "gen-wgan"
+       ],
+       "papers": [
+        "isola-2016",
+        "zhu-2017",
+        "karras-2018"
+       ],
+       "visual": "Style mixing across layers"
+      }
+     ]
+    },
+    {
+     "title": "Flows",
+     "topics": [
+      {
+       "id": "gen-flows",
+       "title": "Normalising flows: change of variables",
+       "needs": [
+        "gen-intro",
+        "m-jacobian"
+       ],
+       "papers": [
+        "rezende-2015",
+        "dinh-2016",
+        "kingma-2018"
+       ],
+       "visual": "A Gaussian bent into a complex shape, layer by layer, the Jacobian volume shown"
+      }
+     ]
+    },
+    {
+     "title": "Diffusion",
+     "topics": [
+      {
+       "id": "gen-score",
+       "title": "Score matching and Langevin sampling",
+       "needs": [
+        "gen-intro",
+        "m-sampling-mc"
+       ],
+       "papers": [
+        "song-2019"
+       ],
+       "visual": "Score arrows over 2D data; samples sliding along them"
+      },
+      {
+       "id": "gen-ddpm",
+       "title": "Denoising diffusion: the forward process, the ELBO and noise prediction, derived",
+       "needs": [
+        "gen-vae",
+        "gen-score"
+       ],
+       "papers": [
+        "sohl-dickstein-2015",
+        "ho-2020",
+        "nichol-2021"
+       ],
+       "visual": "2D points noised to a Gaussian and denoised back, every step"
+      },
+      {
+       "id": "gen-ddim",
+       "title": "Faster sampling: DDIM",
+       "needs": [
+        "gen-ddpm"
+       ],
+       "papers": [
+        "song-2020"
+       ],
+       "visual": "Fewer, larger steps along the same path"
+      },
+      {
+       "id": "gen-sde",
+       "title": "Diffusion as stochastic differential equations",
+       "needs": [
+        "gen-ddim"
+       ],
+       "papers": [
+        "song-2020b"
+       ],
+       "visual": "Forward and reverse SDE paths, and the ODE between them"
+      },
+      {
+       "id": "gen-guidance",
+       "title": "Guidance: classifier and classifier-free",
+       "needs": [
+        "gen-ddpm"
+       ],
+       "papers": [
+        "dhariwal-2021",
+        "ho-2022"
+       ],
+       "visual": "The guidance scale pushing samples towards a class"
+      },
+      {
+       "id": "gen-latent-diffusion",
+       "title": "Latent diffusion and text-to-image",
+       "needs": [
+        "gen-guidance",
+        "gen-vae",
+        "dl-transformer"
+       ],
+       "papers": [
+        "rombach-2021",
+        "ramesh-2022",
+        "saharia-2022",
+        "peebles-2022"
+       ],
+       "visual": "Denoising in the latent space, cross-attention to the prompt"
+      },
+      {
+       "id": "gen-flow-matching",
+       "title": "Flow matching, rectified flow and consistency models",
+       "needs": [
+        "gen-sde",
+        "gen-flows"
+       ],
+       "papers": [
+        "lipman-2022",
+        "liu-2022",
+        "song-2023"
+       ],
+       "visual": "Curved paths straightened into lines"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "reinforcement-learning",
+   "title": "Reinforcement Learning",
+   "nexus": "reinforcement-learning",
+   "blurb": "Bandits and MDPs to DQN, PPO and AlphaZero.",
+   "chapters": [
+    {
+     "title": "The problem",
+     "topics": [
+      {
+       "id": "rl-intro",
+       "title": "Agents, environments, rewards and returns",
+       "needs": [
+        "m-expectation",
+        "ml-what-is-ml"
+       ],
+       "papers": [],
+       "visual": "A grid world: the agent moves, rewards add up with discount"
+      },
+      {
+       "id": "rl-bandits",
+       "title": "Multi-armed bandits: explore vs exploit",
+       "needs": [
+        "rl-intro"
+       ],
+       "papers": [],
+       "visual": "ε-greedy and UCB pulling arms; regret growing"
+      },
+      {
+       "id": "rl-mdp",
+       "title": "Markov decision processes",
+       "needs": [
+        "rl-intro",
+        "m-conditional"
+       ],
+       "papers": [],
+       "visual": "States, actions and transition probabilities as a graph"
+      },
+      {
+       "id": "rl-bellman",
+       "title": "Value functions and Bellman equations",
+       "needs": [
+        "rl-mdp"
+       ],
+       "papers": [],
+       "visual": "Values spreading over the grid world"
+      }
+     ]
+    },
+    {
+     "title": "Planning with a model",
+     "topics": [
+      {
+       "id": "rl-dp",
+       "title": "Policy and value iteration, and why they converge",
+       "needs": [
+        "rl-bellman"
+       ],
+       "papers": [],
+       "visual": "Value iteration sweep by sweep; the contraction shrinking errors"
+      }
+     ]
+    },
+    {
+     "title": "Learning from experience",
+     "topics": [
+      {
+       "id": "rl-monte-carlo",
+       "title": "Monte Carlo methods",
+       "needs": [
+        "rl-dp",
+        "m-lln-clt"
+       ],
+       "papers": [],
+       "visual": "Whole episodes averaged into values"
+      },
+      {
+       "id": "rl-td",
+       "title": "Temporal-difference learning",
+       "needs": [
+        "rl-monte-carlo"
+       ],
+       "papers": [
+        "sutton-1988"
+       ],
+       "visual": "One-step updates rippling back along a path"
+      },
+      {
+       "id": "rl-q-learning",
+       "title": "Q-learning and SARSA",
+       "needs": [
+        "rl-td"
+       ],
+       "papers": [
+        "watkins-1992"
+       ],
+       "visual": "The Q-table filling; the cliff walk with both methods"
+      }
+     ]
+    },
+    {
+     "title": "Deep RL",
+     "topics": [
+      {
+       "id": "rl-function-approx",
+       "title": "Function approximation",
+       "needs": [
+        "rl-q-learning",
+        "dl-training-loop"
+       ],
+       "papers": [],
+       "visual": "A table replaced by a network; the deadly triad"
+      },
+      {
+       "id": "rl-dqn",
+       "title": "Deep Q-networks and their fixes",
+       "needs": [
+        "rl-function-approx"
+       ],
+       "papers": [
+        "mnih-2013",
+        "mnih-2015",
+        "vanhasselt-2015",
+        "wang-2015",
+        "schaul-2015"
+       ],
+       "visual": "Replay buffer and target network, step by step"
+      }
+     ]
+    },
+    {
+     "title": "Policy methods",
+     "topics": [
+      {
+       "id": "rl-policy-gradient",
+       "title": "Policy gradients: REINFORCE and the policy gradient theorem, derived",
+       "needs": [
+        "rl-function-approx"
+       ],
+       "papers": [
+        "williams-1992",
+        "sutton-1999"
+       ],
+       "visual": "Action probabilities nudged by returns"
+      },
+      {
+       "id": "rl-actor-critic",
+       "title": "Actor-critic and advantage estimation",
+       "needs": [
+        "rl-policy-gradient"
+       ],
+       "papers": [
+        "mnih-2016",
+        "schulman-2015b"
+       ],
+       "visual": "The critic's value line and the actor's updates together"
+      },
+      {
+       "id": "rl-trpo-ppo",
+       "title": "Trust regions: TRPO and PPO",
+       "needs": [
+        "rl-actor-critic",
+        "m-cross-entropy-kl",
+        "m-constrained"
+       ],
+       "papers": [
+        "schulman-2015",
+        "schulman-2017"
+       ],
+       "visual": "The clipped objective as a plot; updates kept inside the region"
+      },
+      {
+       "id": "rl-continuous",
+       "title": "Continuous control: DDPG, TD3 and SAC",
+       "needs": [
+        "rl-actor-critic",
+        "rl-dqn"
+       ],
+       "papers": [
+        "lillicrap-2015",
+        "fujimoto-2018",
+        "haarnoja-2018"
+       ],
+       "visual": "A policy over a continuous action; entropy keeping it wide"
+      }
+     ]
+    },
+    {
+     "title": "Planning and games",
+     "topics": [
+      {
+       "id": "rl-planning",
+       "title": "Tree search and self-play: AlphaGo, AlphaZero, MuZero",
+       "needs": [
+        "rl-dqn",
+        "rl-policy-gradient"
+       ],
+       "papers": [
+        "silver-2016",
+        "silver-2017",
+        "silver-2017b",
+        "schrittwieser-2019"
+       ],
+       "visual": "MCTS growing its tree, visit counts as size"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "llms",
+   "title": "Large Language Models",
+   "nexus": "genai-llms",
+   "blurb": "Scaling, modern architectures, efficient inference, fine-tuning, RLHF and DPO, reasoning and RAG.",
+   "chapters": [
+    {
+     "title": "Scale",
+     "topics": [
+      {
+       "id": "llm-icl",
+       "title": "In-context learning and GPT-3",
+       "needs": [
+        "nlp-gpt",
+        "nlp-decoding"
+       ],
+       "papers": [
+        "brown-2020"
+       ],
+       "visual": "The same model answering better with more examples in the prompt"
+      },
+      {
+       "id": "llm-scaling",
+       "title": "Scaling laws and compute-optimal training",
+       "needs": [
+        "llm-icl"
+       ],
+       "papers": [
+        "kaplan-2020",
+        "hoffmann-2022"
+       ],
+       "visual": "Loss vs compute on log axes; the Chinchilla line"
+      }
+     ]
+    },
+    {
+     "title": "Modern architecture",
+     "topics": [
+      {
+       "id": "llm-architecture",
+       "title": "Modern LLM architecture: RoPE, SwiGLU, RMSNorm, GQA",
+       "needs": [
+        "llm-scaling",
+        "dl-positional"
+       ],
+       "papers": [
+        "su-2021",
+        "shazeer-2020",
+        "shazeer-2019",
+        "ainslie-2023",
+        "touvron-2023",
+        "touvron-2023b",
+        "jiang-2023"
+       ],
+       "visual": "RoPE rotating query and key vectors in 2D pairs (3D)"
+      },
+      {
+       "id": "llm-moe",
+       "title": "Mixture of experts",
+       "needs": [
+        "llm-architecture"
+       ],
+       "papers": [
+        "shazeer-2017",
+        "fedus-2021"
+       ],
+       "visual": "Tokens routed to experts; load per expert"
+      },
+      {
+       "id": "llm-ssm",
+       "title": "State-space models: S4 and Mamba",
+       "needs": [
+        "llm-architecture",
+        "dl-rnn"
+       ],
+       "papers": [
+        "gu-2021",
+        "gu-2023"
+       ],
+       "visual": "A recurrence and a convolution computing the same output"
+      }
+     ]
+    },
+    {
+     "title": "Efficiency",
+     "topics": [
+      {
+       "id": "llm-efficient-attention",
+       "title": "FlashAttention, the KV cache and serving",
+       "needs": [
+        "llm-architecture"
+       ],
+       "papers": [
+        "dao-2022",
+        "kwon-2023"
+       ],
+       "visual": "Tiles moving between slow and fast memory; the cache growing per token"
+      },
+      {
+       "id": "llm-quantization",
+       "title": "Quantisation",
+       "needs": [
+        "llm-efficient-attention"
+       ],
+       "papers": [
+        "dettmers-2022",
+        "frantar-2022"
+       ],
+       "visual": "A weight matrix rounded to 8 and 4 bits, the error shown"
+      }
+     ]
+    },
+    {
+     "title": "Adapting models",
+     "topics": [
+      {
+       "id": "llm-lora",
+       "title": "Fine-tuning and LoRA",
+       "needs": [
+        "llm-architecture",
+        "m-svd"
+       ],
+       "papers": [
+        "hu-2021",
+        "dettmers-2023"
+       ],
+       "visual": "A big frozen matrix plus a thin low-rank update"
+      },
+      {
+       "id": "llm-rlhf",
+       "title": "RLHF: reward models and PPO with a KL penalty",
+       "needs": [
+        "llm-lora",
+        "rl-trpo-ppo"
+       ],
+       "papers": [
+        "christiano-2017",
+        "ouyang-2022",
+        "bai-2022"
+       ],
+       "visual": "Pairwise preferences becoming a reward; the policy staying near the start"
+      },
+      {
+       "id": "llm-dpo",
+       "title": "Direct preference optimisation, derived",
+       "needs": [
+        "llm-rlhf"
+       ],
+       "papers": [
+        "rafailov-2023"
+       ],
+       "visual": "The RLHF objective solved in closed form, step by step"
+      }
+     ]
+    },
+    {
+     "title": "Using models",
+     "topics": [
+      {
+       "id": "llm-reasoning",
+       "title": "Prompting and reasoning: chain of thought, self-consistency",
+       "needs": [
+        "llm-icl"
+       ],
+       "papers": [
+        "wei-2022",
+        "wang-2022"
+       ],
+       "visual": "Several reasoning paths voting on one answer"
+      },
+      {
+       "id": "llm-rag",
+       "title": "Retrieval-augmented generation",
+       "needs": [
+        "llm-icl",
+        "nlp-bert"
+       ],
+       "papers": [
+        "lewis-2020"
+       ],
+       "visual": "A question's embedding finding passages in 3D, then the answer citing them"
+      },
+      {
+       "id": "llm-agents",
+       "title": "Tools and agents",
+       "needs": [
+        "llm-reasoning"
+       ],
+       "papers": [
+        "yao-2022",
+        "schick-2023"
+       ],
+       "visual": "Thought → action → observation, loop by loop"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
