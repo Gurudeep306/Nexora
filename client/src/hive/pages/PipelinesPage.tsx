@@ -4,7 +4,7 @@
    to the Architect, start from a template, or build it stage by stage.
    Runs show live as a progress rail of their stages.
    ──────────────────────────────────────────────────────────────────────── */
-import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react'
+import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
@@ -47,7 +47,8 @@ import { hiveApi } from '../api'
 import { ImproveButton, errMsg } from '../Improve'
 import { useHive } from '../store'
 import type { ArchitectReply, Pipeline, PipelineRun, PipelineStage, PipelineTemplate, Project, StageAgent, TaskKind } from '../types'
-import { PageTitle, Toggle, duration, timeAgo, vendorName } from '../ui'
+import { Toggle, duration, timeAgo, vendorName } from '../ui'
+import { PageHeader } from '../kit'
 
 const EASE = [0.2, 0.8, 0.2, 1] as const
 
@@ -244,7 +245,7 @@ export default function PipelinesPage() {
   if (!projects.length)
     return (
       <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-        <PageTitle icon={<Workflow />} title="Pipelines" sub="Chains of agents that turn a request into shipped work." />
+        <PageHeader className="mb-8" title="Pipelines" sub="Relay teams of agents that turn a request into shipped work." />
         <div className="hive-card p-8 text-center">
           <Workflow className="mx-auto size-6 text-text-muted" />
           <div className="mt-2 text-[14px] font-medium">Create a project first</div>
@@ -257,23 +258,28 @@ export default function PipelinesPage() {
     )
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 pb-24 sm:px-6 lg:px-8">
-      <PageTitle icon={<Workflow />} title="Pipelines" sub="Chains of AI agents that take one request all the way to a pull request — planning, building, testing, reviewing and shipping.">
-        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
-          <Select aria-label="Project" value={projectId ?? ''} onValueChange={(v) => setParams({ project: v })} className="h-9 min-w-[180px] flex-1 sm:flex-none">
-            {projects.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </Select>
-          {!editing && (
-            <Button onClick={() => openEditor(blankDraft())}>
-              <Plus /> New pipeline
-            </Button>
-          )}
-        </div>
-      </PageTitle>
+    <div className="mx-auto max-w-6xl px-4 pt-8 pb-24 sm:px-6 lg:px-8">
+      <PageHeader
+        className="mb-8"
+        title="Pipelines"
+        sub="Relay teams of AI agents that take one request all the way to a pull request: planning, building, testing, reviewing and shipping."
+        actions={
+          <>
+            <Select aria-label="Project" value={projectId ?? ''} onValueChange={(v) => setParams({ project: v })} className="h-9 w-full sm:w-[200px]">
+              {projects.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </Select>
+            {!editing && (
+              <Button onClick={() => openEditor(blankDraft())}>
+                <Plus /> New pipeline
+              </Button>
+            )}
+          </>
+        }
+      />
 
       <AnimatePresence mode="wait" initial={false}>
         {editing ? (
@@ -293,19 +299,19 @@ export default function PipelinesPage() {
           <motion.div key="overview" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.22, ease: EASE }} className="space-y-10">
             {/* Pipelines */}
             <section>
-              <SectionHead icon={Workflow} title="This project’s pipelines" count={loading ? undefined : pipelines.length} />
+              <SectionHead title={project ? `${project.name}’s pipelines` : 'Pipelines'} count={loading ? undefined : pipelines.length} />
               {loading ? (
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="hv-ledger border-y border-[var(--hv-border)]">
                   {[0, 1].map((i) => (
-                    <div key={i} className="hive-card h-[170px] p-5">
-                      <div className="hive-shimmer h-4 w-40 rounded" />
-                      <div className="hive-shimmer mt-2 h-3 w-64 max-w-full rounded" />
-                      <div className="hive-shimmer mt-6 h-7 w-full rounded-full" />
+                    <div key={i} className="py-5">
+                      <div className="hive-shimmer h-5 w-48 rounded" />
+                      <div className="hive-shimmer mt-2 h-3 w-80 max-w-full rounded" />
+                      <div className="hive-shimmer mt-4 h-7 w-[420px] max-w-full rounded" />
                     </div>
                   ))}
                 </div>
               ) : pipelines.length ? (
-                <motion.div layout className="grid gap-4 md:grid-cols-2">
+                <motion.div layout className="hv-ledger border-y border-[var(--hv-border)]">
                   <AnimatePresence initial={false}>
                     {pipelines.map((p, i) => (
                       <motion.div key={p.id} layout initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0, transition: { delay: Math.min(i, 6) * 0.04, duration: 0.22, ease: EASE } }} exit={{ opacity: 0, scale: 0.98 }}>
@@ -333,7 +339,7 @@ export default function PipelinesPage() {
 
             {/* Runs */}
             <section ref={runsRef} className="scroll-mt-6">
-              <SectionHead icon={Play} title="Runs" count={loading ? undefined : runs.length} />
+              <SectionHead title="Runs" count={loading ? undefined : runs.length} hint="Every run, live: which stage is working, what it is doing, and where it sent work back." />
               {loading ? (
                 <div className="hive-card h-[120px] p-5">
                   <div className="hive-shimmer h-4 w-56 rounded" />
@@ -350,17 +356,17 @@ export default function PipelinesPage() {
                   </AnimatePresence>
                 </motion.div>
               ) : (
-                <div className="hive-card border-dashed p-6 text-center text-[13px] text-text-muted">No runs yet. Press <b className="text-text-secondary">Run</b> on a pipeline and give it a request — you’ll watch every stage light up here.</div>
+                <p className="m-0 border-y border-[var(--hv-border)] py-5 text-[13px] text-text-muted">No runs yet. Press <b className="text-text-secondary">Run</b> on a pipeline and give it a request — you’ll watch each stage work here.</p>
               )}
             </section>
 
             {/* Templates */}
             <section ref={templatesRef} className="scroll-mt-6">
-              <SectionHead icon={Layers} title="Templates" hint="Proven shapes. Use one and it’s copied into this project for you to tweak." />
+              <SectionHead title="Templates" hint="Proven shapes. Use one and it’s copied into this project for you to tweak." />
               {loading ? (
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {[0, 1, 2].map((i) => (
-                    <div key={i} className="hive-shimmer h-[150px] rounded-2xl" />
+                    <div key={i} className="hive-shimmer h-[150px] rounded-[var(--hv-r-card)]" />
                   ))}
                 </div>
               ) : templates.length ? (
@@ -420,59 +426,66 @@ function PageSkeleton() {
   )
 }
 
-function SectionHead({ icon: Icon, title, count, hint }: { icon: LucideIcon; title: string; count?: number; hint?: string }) {
+function SectionHead({ title, count, hint, action }: { icon?: LucideIcon; title: string; count?: number; hint?: string; action?: ReactNode }) {
   return (
-    <div className="mb-3">
-      <h2 className="flex items-center gap-2 text-[14px] font-semibold text-text-primary">
-        <Icon className="size-4 text-text-muted" /> {title}
-        {count != null && count > 0 && <span className="text-[12px] font-normal tabular-nums text-text-muted">{count}</span>}
-      </h2>
-      {hint && <p className="mt-0.5 text-[12.5px] text-text-muted">{hint}</p>}
+    <div className="mb-4 flex flex-wrap items-end gap-x-3 gap-y-1">
+      <div className="min-w-0 flex-1">
+        <h2 className="hv-h2 m-0 flex items-baseline gap-2">
+          {title}
+          {count != null && count > 0 && <span className="hv-num font-[var(--hv-sans)] text-[12px] text-text-muted">{count}</span>}
+        </h2>
+        {hint && <p className="mt-1 mb-0 text-[13px] text-text-muted">{hint}</p>}
+      </div>
+      {action}
     </div>
   )
 }
 
-/* ── Stage strip (cards, previews, templates) ─────────────────────────── */
-function StageStrip({ stages, states, loops = 0, size = 'sm', className }: { stages: PipelineStage[]; states?: StageState[]; loops?: number; size?: 'sm' | 'md'; className?: string }) {
+/* ── Stage strip (rows, previews, templates) ──────────────────────────── */
+/** The stages in order: a numbered hairline label each, joined by arrows.
+ * A gate shows where it sends work back; a run colours only the icon. */
+function StageStrip({ stages, states, loops = 0, size = 'sm', wrap = false, className }: { stages: PipelineStage[]; states?: StageState[]; loops?: number; size?: 'sm' | 'md'; wrap?: boolean; className?: string }) {
   return (
-    <div className={cn('hive-scroll -mx-1 overflow-x-auto px-1 py-1.5', className)} tabIndex={0} role="group" aria-label="Stages">
-      <ol className="flex w-max items-center">
+    <div className={cn(wrap ? 'py-1' : 'hive-scroll -mx-1 overflow-x-auto px-1 py-1', className)} tabIndex={wrap ? undefined : 0} role="group" aria-label="Stages">
+      <ol className={cn('m-0 flex list-none items-center p-0', wrap ? 'flex-wrap gap-y-1.5' : 'w-max')}>
         {stages.map((s, i) => {
           const look = stageLook(s)
           const st = states?.[i]
-          const color = st && st !== 'pending' ? STATE[st].color : look.color
           const active = st === 'running'
           const Icon = st === 'failed' ? X : st === 'done' || st === 'passed' ? Check : st === 'skipped' ? SkipForward : look.icon
-          const prevDone = states && i > 0 && states[i - 1] !== 'pending' && states[i - 1] !== 'running'
+          const iconColor = st && st !== 'pending' ? STATE[st].color : 'var(--hv-text-3)'
           return (
             <Fragment key={`${s.name}-${i}`}>
               {i > 0 && (
-                <li aria-hidden className={cn('relative h-px shrink-0', size === 'md' ? 'w-6' : 'w-4')}>
-                  <svg className="absolute inset-0 h-px w-full overflow-visible" preserveAspectRatio="none">
-                    <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke={prevDone ? 'var(--color-state-success)' : 'var(--hive-line-strong)'} strokeWidth="1.5" className={cn(active && 'hive-wire')} style={active ? { stroke: 'var(--color-accent-brand)' } : undefined} />
+                <li aria-hidden className={cn('flex shrink-0 items-center text-[var(--hv-text-3)]', size === 'md' ? 'px-1.5' : 'px-1')}>
+                  <svg width={size === 'md' ? 18 : 14} height="8" viewBox="0 0 18 8" fill="none" className="overflow-visible">
+                    <path d="M0 4H16M12.5 1L16 4L12.5 7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </li>
               )}
               <li
                 data-state={active ? 'active' : undefined}
-                title={`${s.name}${st ? ` — ${STATE[st].label}` : ''}`}
+                title={`${i + 1}. ${s.name}${st ? ` — ${STATE[st].label}` : ''}`}
                 className={cn(
-                  'hive-stage-chip relative inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full font-medium transition-shadow',
-                  size === 'md' ? 'h-8 px-3 text-[12.5px]' : 'h-7 px-2.5 text-[11.5px]',
-                  s.optional && 'border border-dashed',
-                  s.onlyOnGate && 'opacity-75',
-                  st === 'pending' && 'opacity-60',
+                  'hive-stage-chip relative inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[var(--hv-r-btn)] ring-1 ring-inset ring-[var(--hv-border)]',
+                  size === 'md' ? 'h-8 px-2.5 text-[12.5px]' : 'h-7 px-2 text-[12px]',
+                  s.optional && 'ring-dashed',
+                  (s.onlyOnGate || st === 'pending' || st === 'skipped') && 'opacity-70',
                 )}
-                style={{ color, background: `color-mix(in oklab, ${color} 13%, var(--color-bg-surface))`, borderColor: `color-mix(in oklab, ${color} 45%, transparent)` }}
               >
-                {active ? <span className="hive-dot-run size-1.5 rounded-full" style={{ background: color }} /> : <Icon className="size-3.5" />}
-                <span className="text-text-primary">{s.name}</span>
-                {s.race && <Tooltip label="Race: several agents compete, the Judge keeps the best"><Sparkles className="size-3 opacity-80" /></Tooltip>}
+                <span className="hv-num text-[10.5px] text-[var(--hv-text-3)]">{i + 1}</span>
+                {active ? <span className="hive-dot-run size-1.5 rounded-full bg-[var(--hv-accent)]" aria-hidden /> : <Icon className="size-3.5" style={{ color: iconColor }} aria-hidden />}
+                <span className="font-medium text-[var(--hv-text-1)]">{s.name}</span>
+                {s.race && (
+                  <Tooltip label="Race: several agents compete, the Judge keeps the best">
+                    <Sparkles className="size-3 text-[var(--hv-text-3)]" />
+                  </Tooltip>
+                )}
                 {s.gate && (
                   <Tooltip label={`Gate: sends work back to “${s.gate.fixStage}” — up to ${s.gate.maxLoops}×`}>
-                    <span className="inline-flex items-center gap-0.5">
+                    <span className="inline-flex items-center gap-0.5 text-[var(--hv-text-3)]">
                       <RotateCcw className="size-3" />
-                      {loops > 0 && <span className="text-[10px] tabular-nums">{loops}</span>}
+                      <span className="hv-num text-[10px]">{loops > 0 ? `${loops}/${s.gate.maxLoops}` : `×${s.gate.maxLoops}`}</span>
                     </span>
                   </Tooltip>
                 )}
@@ -485,32 +498,30 @@ function StageStrip({ stages, states, loops = 0, size = 'sm', className }: { sta
   )
 }
 
-/* ── Pipeline card ────────────────────────────────────────────────────── */
+/* ── Pipeline row ─────────────────────────────────────────────────────── */
 function PipelineCard({ p, last, onRun, onEdit, onDuplicate, onDelete }: { p: Pipeline; last: PipelineRun | null; onRun: () => void; onEdit: () => void; onDuplicate: () => void; onDelete: () => void }) {
   const rs = last ? RUN_STATUS[last.status] : null
   return (
-    <div className="hive-card hive-card-hover flex h-full flex-col p-5">
-      <div className="flex items-start gap-3">
-        <span className="hive-tile size-10 shrink-0" style={{ ['--tile' as string]: 'oklch(68% 0.14 285)' }}>
-          <Workflow className="size-4.5" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-[15px] font-semibold">{p.name}</div>
-          <div className="mt-0.5 line-clamp-2 text-[12.5px] text-text-muted">{p.description || `${p.stages.length} stages`}</div>
+    <article className="grid gap-4 py-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h3 className="hv-serif m-0 text-[19px] leading-tight text-[var(--hv-text-1)]">{p.name}</h3>
+          <span className="hv-num text-[12px] text-text-muted">{p.stages.length} stages</span>
+          <span className="inline-flex items-center gap-1.5 text-[12px] text-text-muted">
+            {last && rs ? (
+              <>
+                <span className={cn('size-1.5 rounded-full', last.status === 'running' && 'hive-dot-run')} style={{ background: rs.color }} aria-hidden />
+                <span className="text-[var(--hv-text-2)]">{rs.label}</span> · {timeAgo(last.createdAt) === 'now' ? 'just now' : `${timeAgo(last.createdAt)} ago`}
+              </>
+            ) : (
+              'Never run'
+            )}
+          </span>
         </div>
+        {p.description && <p className="mt-1 mb-0 line-clamp-2 max-w-3xl text-[13px] text-[var(--hv-text-2)]">{p.description}</p>}
+        <StageStrip stages={p.stages} className="mt-3" />
       </div>
-      <StageStrip stages={p.stages} className="mt-3" />
-      <div className="mt-auto flex flex-wrap items-center gap-2 pt-3">
-        <div className="min-w-0 flex-1 text-[11.5px] text-text-muted">
-          {last && rs ? (
-            <span className="inline-flex items-center gap-1.5">
-              <span className={cn('size-1.5 rounded-full', last.status === 'running' && 'hive-dot-run')} style={{ background: rs.color }} />
-              <span style={{ color: rs.color }}>{rs.label}</span> · {timeAgo(last.createdAt) === 'now' ? 'just now' : `${timeAgo(last.createdAt)} ago`}
-            </span>
-          ) : (
-            'Never run'
-          )}
-        </div>
+      <div className="flex items-center gap-1">
         <Tooltip label="Edit">
           <Button size="icon-sm" variant="ghost" onClick={onEdit} aria-label={`Edit ${p.name}`}>
             <Pencil />
@@ -526,23 +537,23 @@ function PipelineCard({ p, last, onRun, onEdit, onDuplicate, onDelete }: { p: Pi
             <Trash2 />
           </Button>
         </Tooltip>
-        <Button size="sm" onClick={onRun}>
+        <Button size="sm" variant="secondary" onClick={onRun} className="ml-1">
           <Play /> Run
         </Button>
       </div>
-    </div>
+    </article>
   )
 }
 
 function TemplateCard({ t, onUse }: { t: PipelineTemplate; onUse: () => Promise<unknown> }) {
   const [busy, setBusy] = useState(false)
   return (
-    <div className="hive-card hive-card-hover flex h-full flex-col p-4">
-      <div className="text-[13.5px] font-semibold">{t.name}</div>
-      <div className="mt-0.5 line-clamp-2 text-[12px] text-text-muted">{t.description}</div>
-      <StageStrip stages={t.stages} className="mt-2" />
-      <div className="mt-auto flex items-center justify-between pt-3">
-        <span className="text-[11.5px] tabular-nums text-text-muted">{t.stages.length} stages</span>
+    <div className="hive-card hive-card-hover flex h-full flex-col p-5">
+      <h3 className="hv-serif m-0 text-[17px] leading-tight">{t.name}</h3>
+      <p className="mt-1 mb-0 line-clamp-2 text-[12.5px] text-text-muted">{t.description}</p>
+      <StageStrip stages={t.stages} wrap className="mt-3" />
+      <div className="mt-auto flex items-center justify-between pt-4">
+        <span className="hv-num text-[12px] text-text-muted">{t.stages.length} stages</span>
         <Button
           size="sm"
           variant="secondary"
@@ -560,63 +571,80 @@ function TemplateCard({ t, onUse }: { t: PipelineTemplate; onUse: () => Promise<
   )
 }
 
-/* ── Empty state with a tiny animated diagram ─────────────────────────── */
+/* ── How a pipeline works: a diagram that explains it ─────────────────── */
+/**
+ * Four stations on a line. A request (the accent dot) travels Plan → Build →
+ * Review; the first time, Review sends it back to Build along the loop
+ * underneath (that is what a gate does), then it passes and goes on to Ship.
+ * Still under prefers-reduced-motion: the dot rests at Ship.
+ */
+function RelayDiagram() {
+  const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  const xs = [56, 196, 336, 476]
+  const names = ['Plan', 'Build', 'Review', 'Ship']
+  const route = `M${xs[0]} 56 H${xs[2]} V72 C${xs[2] - 8} 124 ${xs[1] + 8} 124 ${xs[1]} 72 V56 H${xs[3]}`
+  return (
+    <figure className="m-0">
+      <svg viewBox="0 0 532 140" className="block h-auto w-full max-w-[560px] text-[var(--hv-text-1)]" role="img" aria-label="A request goes from Plan to Build to Review; if the review fails it goes back to Build, then on to Ship.">
+        <line x1={xs[0]} y1="56" x2={xs[3]} y2="56" stroke="var(--hv-border-strong)" strokeWidth="1.2" />
+        <path d={`M${xs[2]} 74 C${xs[2] - 8} 124 ${xs[1] + 8} 124 ${xs[1]} 74`} fill="none" stroke="var(--hv-text-3)" strokeWidth="1.2" strokeDasharray="3 4" />
+        <path d={`M${xs[1] + 4} 82 L${xs[1]} 74 L${xs[1] - 4} 82`} fill="none" stroke="var(--hv-text-3)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+        <text x={(xs[1] + xs[2]) / 2} y="134" textAnchor="middle" className="fill-[var(--hv-text-3)] text-[11px] italic" style={{ fontFamily: 'var(--hv-prose)' }}>
+          not right yet? back to Build
+        </text>
+        {xs.map((x, i) => (
+          <g key={x}>
+            <circle cx={x} cy="56" r="17" fill="var(--hv-bg-app)" stroke="currentColor" strokeWidth="1.4" />
+            <text x={x} y="61" textAnchor="middle" className="fill-current text-[14px]" style={{ fontFamily: 'var(--hv-serif)' }}>
+              {['i', 'ii', 'iii', 'iv'][i]}
+            </text>
+            <text x={x} y="24" textAnchor="middle" className="fill-[var(--hv-text-2)] text-[12px] font-medium" style={{ fontFamily: 'var(--hv-sans)' }}>
+              {names[i]}
+            </text>
+          </g>
+        ))}
+        <circle r="5" fill="var(--hv-accent)" cx={reduce ? xs[3] + 24 : 0} cy={reduce ? 56 : 0}>
+          {!reduce && <animateMotion dur="7s" repeatCount="indefinite" path={route} keyPoints="0;1" keyTimes="0;1" calcMode="linear" />}
+        </circle>
+      </svg>
+      <figcaption className="mt-2 text-[12px] text-text-muted">The dot is one request moving through a four-stage pipeline with a review gate.</figcaption>
+    </figure>
+  )
+}
+
 function EmptyPipelines({ onArchitect, onTemplates, onBlank }: { onArchitect: () => void; onTemplates: () => void; onBlank: () => void }) {
-  const nodes = [
-    { label: 'Plan', icon: ListChecks, hue: 220 },
-    { label: 'Build', icon: Code2, hue: 285 },
-    { label: 'Review', icon: ScanEye, hue: 55 },
-    { label: 'Ship', icon: Rocket, hue: SHIP_HUE },
+  const ways = [
+    { n: 'i', title: 'Design with the Architect', line: 'Tell the strongest model what the work is. It asks a few questions and drafts a pipeline you can edit.', icon: Sparkles, go: onArchitect },
+    { n: 'ii', title: 'Start from a template', line: 'Proven shapes — plan, build, test, review, ship — copied into this project for you to tweak.', icon: Layers, go: onTemplates },
+    { n: 'iii', title: 'Build from scratch', line: 'Add stages one by one: what each does, which model, and where the work goes back.', icon: Plus, go: onBlank },
   ]
   return (
-    <div className="hive-card relative overflow-hidden p-6 sm:p-8">
-      <div className="relative grid items-center gap-6 md:grid-cols-[1.1fr_1fr]">
-        <div>
-          <h3 className="text-[17px] font-semibold tracking-[-0.01em]">Your request in, a pull request out</h3>
-          <p className="mt-2 text-[13.5px] leading-relaxed text-text-secondary">
-            A pipeline is a relay team of AI agents. You describe what you want once; one agent plans it, another builds it, a third tests and reviews it — sending it back to be fixed if it isn’t right — and the last one opens a pull request. Each stage can use the best model for its job, free models only, or a specific one you trust.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Button variant="secondary" onClick={onArchitect}>
-              <Sparkles /> Design with the Architect
-            </Button>
-            <Button variant="secondary" onClick={onTemplates}>
-              <Layers /> Start from a template
-            </Button>
-            <Button variant="ghost" onClick={onBlank}>
-              <Plus /> Build from scratch
-            </Button>
-          </div>
-        </div>
-        <div className="relative mx-auto flex w-full max-w-[360px] items-center justify-between" aria-hidden>
-          <svg className="absolute left-5 right-5 top-1/2 h-px w-[calc(100%-40px)] overflow-visible">
-            <line x1="0" y1="0" x2="100%" y2="0" stroke="var(--hive-line-strong)" strokeWidth="1.5" className="hive-wire" />
-          </svg>
-          <motion.span
-            className="absolute top-1/2 size-2 -translate-y-1/2 rounded-full bg-accent-brand"
-            initial={{ left: '8%' }}
-            animate={{ left: ['8%', '90%'] }}
-            transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          <svg className="absolute -top-7 left-[54%] h-7 w-[26%] overflow-visible text-state-warning" viewBox="0 0 100 28" preserveAspectRatio="none">
-            <path d="M95 26 C 90 2, 10 2, 5 26" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 5" className="hive-wire" vectorEffect="non-scaling-stroke" />
-          </svg>
-          {nodes.map((n, i) => (
-            <motion.span
-              key={n.label}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.1 + i * 0.08, duration: 0.24, ease: EASE }}
-              className="relative z-[1] flex flex-col items-center gap-1.5"
-            >
-              <span className="hive-tile size-10 bg-bg-surface" style={{ ['--tile' as string]: `oklch(68% 0.13 ${n.hue})` }}>
-                <n.icon className="size-4" />
-              </span>
-              <span className="text-[11px] font-medium text-text-muted">{n.label}</span>
-            </motion.span>
-          ))}
+    <div className="grid gap-10 border-y border-[var(--hv-border)] py-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center">
+      <div>
+        <h3 className="hv-serif m-0 text-[24px] leading-tight">Your request in, a pull request out.</h3>
+        <p className="hv-lead mt-2 mb-0">
+          A pipeline is a relay team of AI agents. You describe the work once: one agent plans it, another builds it, a third reviews it and sends it back if it isn’t right, and the last opens a pull request. Each stage can use the best model for its job, free models only, or one you trust.
+        </p>
+        <div className="mt-6">
+          <RelayDiagram />
         </div>
       </div>
+      <ol className="hv-ledger m-0 list-none border-y border-[var(--hv-border)] p-0">
+        {ways.map((w) => (
+          <li key={w.n}>
+            <button type="button" onClick={w.go} className="group flex w-full items-start gap-4 py-4 text-left">
+              <span className="hv-serif w-8 shrink-0 pt-0.5 text-[20px] italic text-[var(--hv-text-3)]">{w.n}</span>
+              <span className="min-w-0 flex-1">
+                <span className="flex items-center gap-2 text-[14.5px] font-semibold text-[var(--hv-text-1)]">
+                  <w.icon className="size-4 text-[var(--hv-text-3)]" aria-hidden /> {w.title}
+                </span>
+                <span className="mt-1 block text-[13px] text-[var(--hv-text-2)]">{w.line}</span>
+              </span>
+              <ChevronDown className="mt-1 size-4 -rotate-90 text-[var(--hv-text-3)] transition-transform group-hover:translate-x-0.5" aria-hidden />
+            </button>
+          </li>
+        ))}
+      </ol>
     </div>
   )
 }
@@ -650,30 +678,30 @@ function RunCard({ run, pipeline }: { run: PipelineRun; pipeline: Pipeline | nul
     }
   }
   return (
-    <div className={cn('hive-card overflow-hidden', run.status === 'running' && 'ring-1 ring-accent-brand/25')}>
+    <div className={cn('hive-card overflow-hidden', run.status === 'running' && 'hive-working')}>
       <div className="flex flex-wrap items-start gap-3 p-4 sm:p-5">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span className="inline-flex items-center gap-1.5 text-[12px] font-medium" style={{ color: rs.color }}>
-              <span className={cn('size-1.5 rounded-full', live && 'hive-dot-run')} style={{ background: rs.color }} />
+            <span className="hv-serif text-[17px] leading-tight">{pipeline?.name ?? 'Deleted pipeline'}</span>
+            <span className="inline-flex h-6 items-center gap-1.5 rounded-[var(--hv-r-chip)] px-2 text-[12px] font-medium text-[var(--hv-text-2)] ring-1 ring-inset ring-[var(--hv-border)]">
+              <span className={cn('size-1.5 rounded-full', live && 'hive-dot-run')} style={{ background: rs.color }} aria-hidden />
               {rs.label}
             </span>
-            <span className="text-[13.5px] font-semibold">{pipeline?.name ?? 'Deleted pipeline'}</span>
             {run.loops > 0 && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-state-warning/12 px-2 py-0.5 text-[11px] font-medium text-state-warning">
-                <RotateCcw className="size-3" /> Round {run.loops + 1}
+              <span className="inline-flex h-6 items-center gap-1 rounded-[var(--hv-r-chip)] px-2 text-[11.5px] font-medium text-[var(--hv-text-2)] ring-1 ring-inset ring-[color-mix(in_oklab,var(--hv-warning)_55%,transparent)]">
+                <RotateCcw className="size-3 text-[var(--hv-warning)]" aria-hidden /> Round {run.loops + 1}
               </span>
             )}
           </div>
-          <p className="mt-1 line-clamp-2 text-[12.5px] text-text-secondary">{run.request}</p>
-          <div className="mt-1 text-[11.5px] tabular-nums text-text-muted">
+          <p className="hv-lead mt-1.5 mb-0 line-clamp-2 text-[14px]">“{run.request}”</p>
+          <div className="hv-num mt-1.5 text-[12px] text-text-muted">
             @{run.startedBy} · {timeAgo(run.createdAt) === 'now' ? 'just now' : `${timeAgo(run.createdAt)} ago`} · {duration(run.createdAt, live ? null : run.updatedAt)} · {done}/{stages.length} stages
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {pr && (
-            <a href={pr.url} target="_blank" rel="noreferrer" className="hive-chip h-8 text-state-success">
-              <GitPullRequest className="size-3.5" /> PR #{pr.number}
+            <a href={pr.url} target="_blank" rel="noreferrer" className="hive-chip h-8">
+              <GitPullRequest className="size-3.5 text-[var(--hv-success)]" aria-hidden /> PR #{pr.number}
             </a>
           )}
           {run.taskId && (
@@ -690,12 +718,16 @@ function RunCard({ run, pipeline }: { run: PipelineRun; pipeline: Pipeline | nul
       </div>
       <div className="px-4 pb-3 sm:px-5">
         <RunRail stages={stages} states={states} loops={run.loops} />
-        {run.status === 'failed' && run.error && <div className="mt-2 rounded-xl bg-state-error/[0.08] px-3 py-2 text-[12.5px] text-state-error">{run.error}</div>}
-        {live && latest?.message && <div className="hive-thinking-text mt-2 truncate text-[12px]">{latest.message}</div>}
+        {run.status === 'failed' && run.error && <div className="mt-3 border-l-2 border-state-error py-0.5 pl-3 text-[12.5px] text-[var(--hv-text-1)]">{run.error}</div>}
+        {live && latest?.message && (
+          <div className="mt-3 flex items-center gap-2 truncate text-[12.5px] text-[var(--hv-text-2)]">
+            <span className="hive-dot-run size-1.5 shrink-0 rounded-full bg-[var(--hv-accent)]" aria-hidden /> {latest.message}
+          </div>
+        )}
       </div>
       {run.log.length > 0 && (
         <>
-          <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="flex w-full items-center gap-1.5 border-t hive-line px-4 py-2 text-[12px] text-text-muted hover:text-text-primary sm:px-5">
+          <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="flex w-full items-center gap-1.5 border-t hive-line px-4 py-2.5 text-[12.5px] text-text-muted hover:text-text-primary sm:px-5">
             <ChevronDown className={cn('size-3.5 transition-transform', open && 'rotate-180')} /> {open ? 'Hide' : 'Show'} step-by-step log
           </button>
           <AnimatePresence initial={false}>
@@ -707,7 +739,7 @@ function RunCard({ run, pipeline }: { run: PipelineRun; pipeline: Pipeline | nul
                     return (
                       <li key={i} className="flex gap-2 text-[12px]">
                         <span className="mt-1.5 size-1.5 shrink-0 rounded-full" style={{ background: STATE[st].color }} />
-                        <span className="w-12 shrink-0 tabular-nums text-text-muted">{new Date(e.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        <span className="hv-mono w-12 shrink-0 text-text-muted">{new Date(e.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                         <span className="min-w-0">
                           <b className="font-medium text-text-primary">{e.stage}</b> <span style={{ color: STATE[st].color }}>{STATE[st]?.label ?? e.status}</span>
                           {e.message && <span className="text-text-muted"> — {e.message}</span>}
@@ -736,37 +768,41 @@ function uniqueStagesFromLog(run: PipelineRun): PipelineStage[] {
   return out
 }
 
-/** A progress rail: stages as nodes on a line, the active one breathing. */
+/** A progress rail: numbered stations on a line. Finished stations fill with
+ * ink, the working one wears the accent ring, a gate shows its rounds. */
 function RunRail({ stages, states, loops }: { stages: PipelineStage[]; states: StageState[]; loops: number }) {
   return (
-    <div className="hive-scroll -mx-1 overflow-x-auto px-1 pb-1 pt-2" tabIndex={0} role="region" aria-label="Progress">
-      <ol className="flex min-w-full w-max items-start">
+    <div className="hive-scroll -mx-1 overflow-x-auto px-1 pb-1 pt-3" tabIndex={0} role="group" aria-label="Progress">
+      <ol className="m-0 flex w-max min-w-full list-none items-start p-0">
         {stages.map((s, i) => {
           const st = states[i] ?? 'pending'
-          const look = stageLook(s)
-          const color = st === 'pending' ? 'var(--color-text-muted)' : STATE[st].color
-          const Icon = st === 'done' || st === 'passed' ? Check : st === 'failed' ? X : st === 'skipped' ? SkipForward : st === 'changes' ? RotateCcw : look.icon
           const active = st === 'running'
-          const filled = st !== 'pending' && st !== 'running'
+          const filled = st === 'done' || st === 'passed'
+          const bad = st === 'failed'
+          const Icon = filled ? Check : bad ? X : st === 'skipped' ? SkipForward : st === 'changes' ? RotateCcw : null
+          const lineDone = (k: number) => {
+            const x = states[k]
+            return x === 'done' || x === 'passed' || x === 'changes'
+          }
           return (
-            <li key={`${s.name}-${i}`} className="flex min-w-[84px] flex-1 flex-col items-center">
+            <li key={`${s.name}-${i}`} className="flex min-w-[96px] flex-1 flex-col items-center">
               <div className="relative flex w-full items-center">
-                <span className={cn('h-0.5 flex-1 rounded-full', i === 0 && 'invisible')} style={{ background: filled || active ? `color-mix(in oklab, ${color} 55%, transparent)` : 'var(--hive-line)' }} />
-                <span className="relative grid size-8 shrink-0 place-items-center rounded-full" style={{ color, background: `color-mix(in oklab, ${color} ${st === 'pending' ? 8 : 16}%, var(--color-bg-surface))`, boxShadow: `inset 0 0 0 1.5px color-mix(in oklab, ${color} ${st === 'pending' ? 25 : 55}%, transparent)` }}>
-                  {active && <motion.span className="absolute inset-0 rounded-full" style={{ boxShadow: `0 0 0 2px ${color}` }} animate={{ scale: [1, 1.35], opacity: [0.6, 0] }} transition={{ duration: 1.4, repeat: Infinity, ease: 'easeOut' }} />}
-                  {active ? <span className="hive-dot-run size-2 rounded-full" style={{ background: color }} /> : <Icon className="size-3.5" />}
+                <span className={cn('h-px flex-1', i === 0 && 'invisible')} style={{ background: i > 0 && lineDone(i - 1) ? 'var(--hv-text-1)' : 'var(--hv-border-strong)' }} />
+                <span
+                  className={cn('relative grid size-8 shrink-0 place-items-center rounded-full text-[13px]', filled ? 'bg-[var(--hv-text-1)] text-[var(--hv-bg-app)]' : 'bg-[var(--hv-bg-app)] text-[var(--hv-text-1)] ring-1 ring-inset', active ? 'ring-2 ring-[var(--hv-accent)]' : bad ? 'ring-[var(--hv-danger)]' : st === 'changes' ? 'ring-[var(--hv-warning)]' : 'ring-[var(--hv-border-strong)]')}
+                  title={`${s.name} — ${STATE[st].label}`}
+                >
+                  {active ? <span className="hive-dot-run size-2 rounded-full bg-[var(--hv-accent)]" aria-hidden /> : Icon ? <Icon className="size-3.5" style={{ color: bad ? 'var(--hv-danger)' : st === 'changes' ? 'var(--hv-warning)' : undefined }} aria-hidden /> : <span className="hv-serif">{i + 1}</span>}
                   {s.gate && loops > 0 && (
-                    <span className="absolute -right-1.5 -top-1.5 grid size-4 place-items-center rounded-full bg-state-warning text-[9px] font-bold tabular-nums text-bg-app" title={`Sent back ${loops}×`}>
+                    <span className="hv-num absolute -right-2 -top-2 grid h-4 min-w-4 place-items-center rounded-full bg-[var(--hv-bg-app)] px-1 text-[9.5px] font-semibold text-[var(--hv-text-1)] ring-1 ring-[var(--hv-warning)]" title={`Sent back ${loops}×`}>
                       {loops}
                     </span>
                   )}
                 </span>
-                <span className={cn('h-0.5 flex-1 rounded-full', i === stages.length - 1 && 'invisible')} style={{ background: filled ? `color-mix(in oklab, ${color} 55%, transparent)` : 'var(--hive-line)' }} />
+                <span className={cn('h-px flex-1', i === stages.length - 1 && 'invisible')} style={{ background: lineDone(i) ? 'var(--hv-text-1)' : 'var(--hv-border-strong)' }} />
               </div>
-              <div className="mt-1.5 max-w-[110px] truncate px-1 text-center text-[11.5px] font-medium text-text-primary">{s.name}</div>
-              <div className={cn('text-[10.5px]', active && 'hive-thinking-text')} style={active ? undefined : { color }}>
-                {STATE[st].label}
-              </div>
+              <div className="mt-2 max-w-[120px] truncate px-1 text-center text-[12px] font-medium text-[var(--hv-text-1)]">{s.name}</div>
+              <div className="text-[11px] text-[var(--hv-text-3)]">{STATE[st].label}</div>
             </li>
           )
         })}
@@ -968,95 +1004,46 @@ function Editor({ draft, kinds, project, onCancel, onSaved }: { draft: Draft; ki
   }
 
   return (
-    <div className="space-y-5">
-      <div className="hive-card p-4 sm:p-5">
-        <div className="flex flex-wrap items-start gap-3">
-          <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
-            <Input value={d.name} onChange={(e) => setD({ ...d, name: e.target.value })} placeholder="Pipeline name" aria-label="Pipeline name" className="text-[15px] font-semibold" />
-            <Input value={d.description} onChange={(e) => setD({ ...d, description: e.target.value })} placeholder="What it’s for, in one line (optional)" aria-label="Description" />
-          </div>
-          <div className="flex gap-2">
-            <Button variant="ghost" onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button onClick={save} loading={busy}>
-              <Check /> Save
-            </Button>
-          </div>
+    <div className="space-y-8">
+      {/* Name and what it is for, written like a title */}
+      <div className="flex flex-wrap items-start gap-4 border-b border-[var(--hv-border)] pb-5">
+        <div className="min-w-0 flex-1">
+          <div className="hv-eyebrow">{d.id ? 'Editing a pipeline' : 'A new pipeline'}</div>
+          <input
+            value={d.name}
+            onChange={(e) => setD({ ...d, name: e.target.value })}
+            placeholder="Name this pipeline"
+            aria-label="Pipeline name"
+            className="hv-serif mt-2 block w-full border-0 border-b border-transparent bg-transparent p-0 pb-1 text-[28px] leading-tight text-[var(--hv-text-1)] outline-none transition-colors placeholder:text-[var(--hv-text-3)] focus:border-[var(--hv-text-1)]"
+          />
+          <input
+            value={d.description}
+            onChange={(e) => setD({ ...d, description: e.target.value })}
+            placeholder="What it’s for, in one line (optional)"
+            aria-label="Description"
+            className="mt-2 block w-full border-0 border-b border-transparent bg-transparent p-0 pb-1 text-[15px] text-[var(--hv-text-2)] outline-none transition-colors placeholder:italic placeholder:text-[var(--hv-text-3)] focus:border-[var(--hv-text-2)]"
+            style={{ fontFamily: 'var(--hv-prose)' }}
+          />
+          {problems.length > 0 && (
+            <p className="mt-3 mb-0 flex items-center gap-2 text-[12.5px] text-[var(--hv-text-2)]" role="status">
+              <span className="size-1.5 rounded-full bg-[var(--hv-warning)]" aria-hidden /> {problems[0]}
+            </p>
+          )}
         </div>
-        {problems.length > 0 && <div className="mt-3 text-[12px] text-state-warning">{problems[0]}</div>}
-      </div>
-
-      {/* Flow */}
-      <div className="hive-card hive-sunken relative overflow-hidden p-4 sm:p-6">
-        <div className="relative mb-3 flex items-center justify-between text-[12px] text-text-muted">
-          <span>Work flows from stage to stage. Select one to change it; drag or use the arrows to reorder.</span>
-        </div>
-        <div className="hive-scroll relative overflow-x-auto pb-2">
-          <ol className="flex flex-col items-stretch sm:w-max sm:flex-row sm:items-center">
-            {d.stages.map((s, i) => {
-              const look = stageLook(s)
-              const Icon = look.icon
-              const on = i === sel
-              return (
-                <Fragment key={keysRef.current[i]}>
-                  {i > 0 && <Connector onAdd={() => add(i)} />}
-                  <motion.li
-                    layout
-                    transition={{ duration: 0.22, ease: EASE }}
-                    draggable
-                    onDragStart={() => setDragFrom(i)}
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={() => {
-                      if (dragFrom != null) move(dragFrom, i)
-                      setDragFrom(null)
-                    }}
-                    onDragEnd={() => setDragFrom(null)}
-                    className="sm:w-[176px]"
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setSel(i)}
-                      aria-pressed={on}
-                      className={cn('relative w-full rounded-2xl border bg-bg-surface p-3 text-left transition-[box-shadow,border-color,transform] duration-200 hover:-translate-y-px', on ? 'shadow-[var(--elev-2)]' : 'hive-line', dragFrom === i && 'opacity-50', s.optional && 'border-dashed')}
-                      style={on ? { borderColor: look.color, boxShadow: `0 0 0 3px color-mix(in oklab, ${look.color} 18%, transparent)` } : undefined}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="hive-tile size-8 shrink-0" style={{ ['--tile' as string]: look.color }}>
-                          <Icon className="size-4" />
-                        </span>
-                        <div className="min-w-0 flex-1">
-                          <div className="truncate text-[13px] font-semibold">{s.name || 'Untitled'}</div>
-                          <div className="truncate text-[11px] text-text-muted">{kinds[s.kind]?.label ?? s.kind}</div>
-                        </div>
-                        <span className="text-[10.5px] tabular-nums text-text-muted">{i + 1}</span>
-                      </div>
-                      <div className="mt-2 flex flex-wrap gap-1">
-                        <MiniTag>{agentSummary(s.agents)}</MiniTag>
-                        {s.readOnly && <MiniTag>Read-only</MiniTag>}
-                        {s.race && <MiniTag tone="oklch(68% 0.14 300)">Race</MiniTag>}
-                        {s.crossVendor && <MiniTag>Cross-lab</MiniTag>}
-                        {s.gate && (
-                          <MiniTag tone="var(--color-state-warning)">
-                            <RotateCcw className="size-2.5" /> {s.gate.fixStage} ×{s.gate.maxLoops}
-                          </MiniTag>
-                        )}
-                        {s.onlyOnGate && <MiniTag>On send-back</MiniTag>}
-                        {s.optional && <MiniTag>Optional</MiniTag>}
-                        {s.machineOnly && <MiniTag>Machine</MiniTag>}
-                        {s.ship && <MiniTag tone={`oklch(68% 0.14 ${SHIP_HUE})`}>Commit + PR</MiniTag>}
-                      </div>
-                    </button>
-                  </motion.li>
-                </Fragment>
-              )
-            })}
-            <Connector onAdd={() => add(d.stages.length)} last />
-          </ol>
+        <div className="flex gap-2 pt-6">
+          <Button variant="ghost" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button onClick={save} loading={busy}>
+            <Check /> Save
+          </Button>
         </div>
       </div>
 
-      {/* Side panel (below the flow; two columns on wide screens) */}
+      {/* The flow */}
+      <FlowTrack d={d} sel={sel} kinds={kinds} keys={keysRef.current} dragFrom={dragFrom} setDragFrom={setDragFrom} onSelect={setSel} onMove={move} onAdd={add} />
+
+      {/* The chosen stage */}
       {stage && (
         <div ref={panelRef} className="scroll-mt-6">
           <StagePanel
@@ -1077,16 +1064,173 @@ function Editor({ draft, kinds, project, onCancel, onSaved }: { draft: Draft; ki
   )
 }
 
+/**
+ * The stages as a track: numbered cards joined by arrows (a + appears on an
+ * arrow to add a stage there), and each review gate's send-back drawn as a
+ * loop under the track to the stage it returns to. The loops are measured
+ * from the cards, so they follow every add, move and rename.
+ */
+function FlowTrack({ d, sel, kinds, keys, dragFrom, setDragFrom, onSelect, onMove, onAdd }: { d: Draft; sel: number; kinds: KindMap; keys: string[]; dragFrom: number | null; setDragFrom: (i: number | null) => void; onSelect: (i: number) => void; onMove: (from: number, to: number) => void; onAdd: (at: number) => void }) {
+  const wrap = useRef<HTMLDivElement>(null)
+  const cards = useRef<(HTMLLIElement | null)[]>([])
+  const [loops, setLoops] = useState<{ d: string; label: string; x: number; y: number }[]>([])
+  const wide = useMediaQuery('(min-width: 640px)')
+  const gates = d.stages.map((s, i) => ({ i, to: s.gate ? d.stages.findIndex((x) => x.name === s.gate!.fixStage) : -1, n: s.gate?.maxLoops ?? 0 })).filter((g) => g.to >= 0 && g.to !== g.i)
+  const sig = JSON.stringify(gates) + d.stages.length + String(wide)
+  useLayoutEffect(() => {
+    const el = wrap.current
+    if (!el || !wide) return setLoops([])
+    const measure = () => {
+      const box = el.getBoundingClientRect()
+      const out: { d: string; label: string; x: number; y: number }[] = []
+      gates.forEach((g, k) => {
+        const a = cards.current[g.i]?.getBoundingClientRect()
+        const b = cards.current[g.to]?.getBoundingClientRect()
+        if (!a || !b) return
+        const x1 = a.left - box.left + el.scrollLeft + a.width / 2
+        const x2 = b.left - box.left + el.scrollLeft + b.width / 2
+        const y = Math.max(a.bottom, b.bottom) - box.top + 6
+        const depth = 26 + k * 14
+        out.push({ d: `M${x1} ${y} C${x1} ${y + depth} ${x2} ${y + depth} ${x2} ${y}`, label: `back to ${d.stages[g.to].name} · up to ${g.n}×`, x: (x1 + x2) / 2, y: y + depth * 0.75 + 12 })
+      })
+      setLoops(out)
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sig])
+  const deepest = loops.length ? 26 + (loops.length - 1) * 14 : 0
+  return (
+    <section aria-label="The flow">
+      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="hv-h2 m-0">The flow</h2>
+        <span className="text-[12.5px] text-text-muted">Select a stage to change it. Drag, or use the arrows below, to reorder.</span>
+      </div>
+      <div ref={wrap} className="hive-scroll relative overflow-x-auto border-y border-[var(--hv-border)] py-6" style={wide && loops.length ? { paddingBottom: 24 + deepest + 22 } : undefined}>
+        <ol className="m-0 flex list-none flex-col items-stretch p-0 sm:w-max sm:flex-row sm:items-start">
+          {d.stages.map((s, i) => {
+            const look = stageLook(s)
+            const Icon = look.icon
+            const on = i === sel
+            return (
+              <Fragment key={keys[i]}>
+                {i > 0 && <Connector onAdd={() => onAdd(i)} />}
+                <motion.li
+                  ref={(el: HTMLLIElement | null) => {
+                    cards.current[i] = el
+                  }}
+                  layout
+                  transition={{ duration: 0.22, ease: EASE }}
+                  draggable
+                  onDragStart={() => setDragFrom(i)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={() => {
+                    if (dragFrom != null) onMove(dragFrom, i)
+                    setDragFrom(null)
+                  }}
+                  onDragEnd={() => setDragFrom(null)}
+                  className="sm:w-[184px]"
+                >
+                  <button
+                    type="button"
+                    onClick={() => onSelect(i)}
+                    aria-pressed={on}
+                    className={cn(
+                      'relative w-full overflow-hidden rounded-[var(--hv-r-card)] border bg-[var(--hv-surface-1)] p-3.5 text-left transition-colors duration-150',
+                      on ? 'border-[var(--hv-text-1)]' : 'border-[var(--hv-border)] hover:border-[var(--hv-border-strong)]',
+                      dragFrom === i && 'opacity-50',
+                      s.optional && 'border-dashed',
+                    )}
+                  >
+                    {on && <span className="absolute inset-x-0 top-0 h-[2px] bg-[var(--hv-accent)]" aria-hidden />}
+                    <div className="flex items-start gap-2.5">
+                      <span className="hv-serif w-5 shrink-0 pt-px text-[18px] leading-none text-[var(--hv-text-3)]">{i + 1}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-[13.5px] font-semibold text-[var(--hv-text-1)]">{s.name || 'Untitled'}</div>
+                        <div className="mt-0.5 flex items-center gap-1 truncate text-[11.5px] text-text-muted">
+                          <Icon className="size-3 shrink-0" aria-hidden /> {kinds[s.kind]?.label ?? s.kind}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-2.5 flex flex-wrap gap-1">
+                      <MiniTag>{agentSummary(s.agents)}</MiniTag>
+                      {s.readOnly && <MiniTag>Read-only</MiniTag>}
+                      {s.race && <MiniTag>Race</MiniTag>}
+                      {s.crossVendor && <MiniTag>Cross-lab</MiniTag>}
+                      {s.gate && (
+                        <MiniTag tone="var(--hv-warning)">
+                          <RotateCcw className="size-2.5" /> {s.gate.fixStage} ×{s.gate.maxLoops}
+                        </MiniTag>
+                      )}
+                      {s.onlyOnGate && <MiniTag>On send-back</MiniTag>}
+                      {s.optional && <MiniTag>Optional</MiniTag>}
+                      {s.machineOnly && <MiniTag>Machine</MiniTag>}
+                      {s.ship && <MiniTag tone="var(--hv-success)">Commit + PR</MiniTag>}
+                    </div>
+                  </button>
+                </motion.li>
+              </Fragment>
+            )
+          })}
+          <Connector onAdd={() => onAdd(d.stages.length)} last />
+        </ol>
+        {loops.length > 0 && (
+          <svg className="pointer-events-none absolute left-0 top-0 h-full overflow-visible" style={{ width: wrap.current?.scrollWidth ?? '100%' }} aria-hidden>
+            {loops.map((l) => (
+              <g key={l.d}>
+                <path d={l.d} fill="none" stroke="var(--hv-text-3)" strokeWidth="1.2" strokeDasharray="3 4" />
+                <text x={l.x} y={l.y} textAnchor="middle" className="fill-[var(--hv-text-2)] text-[11.5px] italic" style={{ fontFamily: 'var(--hv-prose)' }}>
+                  {l.label}
+                </text>
+              </g>
+            ))}
+            {loops.map((l) => {
+              const m = /C\S+ \S+ \S+ \S+ (\S+) (\S+)$/.exec(l.d)
+              if (!m) return null
+              const x = Number(m[1])
+              const y = Number(m[2])
+              return <path key={`h${l.d}`} d={`M${x - 4} ${y + 8} L${x} ${y} L${x + 4} ${y + 8}`} fill="none" stroke="var(--hv-text-3)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+            })}
+          </svg>
+        )}
+      </div>
+      {gates.length > 0 && !wide && (
+        <ul className="m-0 mt-3 list-none space-y-1 p-0 text-[12.5px] text-[var(--hv-text-2)]">
+          {gates.map((g) => (
+            <li key={g.i} className="flex items-center gap-1.5">
+              <RotateCcw className="size-3 text-[var(--hv-text-3)]" aria-hidden /> {d.stages[g.i].name} sends work back to {d.stages[g.to].name}, up to {g.n}×
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}
+
+function useMediaQuery(q: string) {
+  const [on, setOn] = useState(() => typeof window !== 'undefined' && !!window.matchMedia?.(q).matches)
+  useEffect(() => {
+    const mq = window.matchMedia?.(q)
+    if (!mq) return
+    const f = () => setOn(mq.matches)
+    mq.addEventListener('change', f)
+    return () => mq.removeEventListener('change', f)
+  }, [q])
+  return on
+}
+
 function Connector({ onAdd, last }: { onAdd: () => void; last?: boolean }) {
   return (
-    <li className={cn('group/conn relative flex items-center justify-center', 'h-10 sm:h-auto sm:w-12', last && 'sm:ml-1 sm:w-auto')}>
+    <li className={cn('group/conn relative flex items-center justify-center', 'h-10 sm:h-auto sm:min-h-[96px] sm:w-12', last && 'sm:ml-2 sm:w-auto')}>
       {!last && (
         <>
-          <svg className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 overflow-visible sm:hidden" aria-hidden>
-            <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="var(--color-accent-brand)" strokeOpacity="0.55" strokeWidth="1.5" className="hive-wire" />
+          <svg className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 overflow-visible text-[var(--hv-text-3)] sm:hidden" aria-hidden>
+            <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeWidth="1.2" />
           </svg>
-          <svg className="absolute left-0 top-1/2 hidden h-px w-full -translate-y-1/2 overflow-visible sm:block" aria-hidden>
-            <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="var(--color-accent-brand)" strokeOpacity="0.55" strokeWidth="1.5" className="hive-wire" />
+          <svg className="absolute left-1 right-1 top-1/2 hidden h-2 -translate-y-1/2 overflow-visible text-[var(--hv-text-3)] sm:block" width="40" height="8" viewBox="0 0 40 8" preserveAspectRatio="none" aria-hidden>
+            <path d="M0 4H38M34.5 1L38 4L34.5 7" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
           </svg>
         </>
       )}
@@ -1094,10 +1238,10 @@ function Connector({ onAdd, last }: { onAdd: () => void; last?: boolean }) {
         <button
           type="button"
           onClick={onAdd}
-          aria-label="Add a stage here"
+          aria-label={last ? undefined : 'Add a stage here'}
           className={cn(
-            'relative z-[1] grid place-items-center rounded-full border hive-line-strong bg-bg-surface text-text-muted transition-all hover:border-accent-brand hover:text-accent-brand',
-            last ? 'h-10 w-full gap-1 rounded-2xl border-dashed px-4 text-[12.5px] sm:h-[88px] sm:w-[120px]' : 'size-7 opacity-100 sm:opacity-0 sm:group-hover/conn:opacity-100 sm:focus-visible:opacity-100',
+            'relative z-[1] grid place-items-center border bg-[var(--hv-bg-app)] text-text-muted transition-colors hover:border-[var(--hv-text-2)] hover:text-text-primary',
+            last ? 'h-10 w-full rounded-[var(--hv-r-card)] border-dashed border-[var(--hv-border-strong)] px-4 text-[12.5px] sm:h-[96px] sm:w-[124px]' : 'size-7 rounded-full border-[var(--hv-border-strong)] opacity-100 sm:opacity-0 sm:group-hover/conn:opacity-100 sm:focus-visible:opacity-100',
           )}
         >
           {last ? (
@@ -1115,7 +1259,7 @@ function Connector({ onAdd, last }: { onAdd: () => void; last?: boolean }) {
 
 function MiniTag({ children, tone }: { children: ReactNode; tone?: string }) {
   return (
-    <span className="inline-flex h-5 items-center gap-1 rounded-full px-1.5 text-[10.5px] font-medium" style={{ color: tone ?? 'var(--color-text-secondary)', background: tone ? `color-mix(in oklab, ${tone} 13%, transparent)` : 'color-mix(in oklab, var(--color-text-primary) 6%, transparent)' }}>
+    <span className="inline-flex h-5 items-center gap-1 rounded-[var(--hv-r-chip)] px-1.5 text-[10.5px] font-medium text-[var(--hv-text-2)] ring-1 ring-inset" style={{ ['--tw-ring-color' as string]: tone ? `color-mix(in oklab, ${tone} 55%, transparent)` : 'var(--hv-border)' }}>
       {children}
     </span>
   )
@@ -1160,8 +1304,8 @@ function StagePanel({
           <look.icon className="size-4" />
         </span>
         <div className="min-w-0 flex-1">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-text-muted">Stage {index + 1} of {count}</div>
-          <div className="truncate text-[15px] font-semibold">{stage.name || 'Untitled'}</div>
+          <div className="hv-eyebrow">Stage {index + 1} of {count}</div>
+          <div className="hv-serif mt-1 truncate text-[20px] leading-tight">{stage.name || 'Untitled'}</div>
         </div>
         <div className="flex gap-1">
           <Tooltip label="Move earlier">
@@ -1475,14 +1619,12 @@ function Architect({ projectId, kinds, onSave, onOpen }: { projectId: string | n
   return (
     <section className="hive-card relative overflow-hidden" aria-labelledby="architect-title">
       <div className="relative flex flex-wrap items-start gap-4 p-5 sm:p-6">
-        <span className="hive-tile size-11" style={{ ['--tile' as string]: 'oklch(68% 0.15 300)' }}>
-          <Sparkles className="size-5" />
-        </span>
         <div className="min-w-0 flex-1">
-          <h2 id="architect-title" className="text-[18px] font-semibold tracking-[-0.01em]">
-            Design with the Architect
+          <div className="hv-eyebrow">The Architect</div>
+          <h2 id="architect-title" className="hv-h2 mt-1.5 mb-0 text-[21px]">
+            Design a pipeline by describing the work
           </h2>
-          <p className="mt-0.5 max-w-2xl text-[13px] text-text-muted">Tell the strongest model what you want your agents to handle. It asks a few questions, then drafts a pipeline you can save or fine-tune.</p>
+          <p className="mt-1 mb-0 max-w-2xl text-[13.5px] text-text-muted">Tell the strongest model what you want your agents to handle. It asks a few questions, then drafts a pipeline you can save or fine-tune.</p>
         </div>
         {msgs.length > 0 && (
           <Button variant="ghost" size="sm" onClick={reset} disabled={busy}>
@@ -1512,7 +1654,7 @@ function Architect({ projectId, kinds, onSave, onOpen }: { projectId: string | n
             <AnimatePresence initial={false}>
               {msgs.map((m, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, ease: EASE }} className={cn('flex', m.role === 'user' ? 'justify-end' : 'justify-start')}>
-                  <div className={cn('max-w-[88%] rounded-2xl px-3.5 py-2.5 text-[13.5px] leading-relaxed', m.role === 'user' ? 'rounded-br-md bg-accent-brand/12 text-text-primary' : 'rounded-bl-md border hive-line bg-bg-surface')}>
+                  <div className={cn('max-w-[88%] text-[13.5px] leading-relaxed', m.role === 'user' ? 'hv-user-msg px-3.5 py-2.5' : 'border-l border-[var(--hv-border-strong)] py-0.5 pl-3.5 text-text-primary')}>
                     {m.role === 'assistant' ? <MarkdownLite text={m.text} /> : <span className="whitespace-pre-wrap">{m.text}</span>}
                     {m.role === 'assistant' && m.questions && m.questions.length > 0 && (
                       <div className="mt-2.5 flex flex-wrap gap-1.5">
@@ -1529,11 +1671,13 @@ function Architect({ projectId, kinds, onSave, onOpen }: { projectId: string | n
               ))}
             </AnimatePresence>
             {busy && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 px-1 text-[13px]">
-                <Sparkles className="size-3.5 animate-pulse text-accent-brand" />
-                <span className="hive-thinking-text">{elapsed < 20 ? 'Thinking about your workflow…' : elapsed < 50 ? 'Choosing the right models for each stage…' : 'Putting the pipeline together…'}</span>
-                <span className="text-[11px] tabular-nums text-text-muted">{elapsed}s</span>
-              </motion.div>
+              <div className="px-1" role="status">
+                <span className="inline-flex items-center gap-3 text-[13px] text-[var(--hv-text-2)]">
+                  <span className="hv-wait-rule" aria-hidden />
+                  The Architect is working on it
+                  <span className="hv-num text-[var(--hv-text-3)]">{elapsed}s</span>
+                </span>
+              </div>
             )}
           </div>
           <div className="border-t hive-line p-3 sm:p-4">
@@ -1565,18 +1709,18 @@ function Architect({ projectId, kinds, onSave, onOpen }: { projectId: string | n
 
         {/* Preview */}
         <div className="min-w-0 border-t hive-line p-4 sm:p-5 lg:border-t-0">
-          <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-text-muted">Proposed pipeline</div>
+          <div className="hv-eyebrow mb-2">Proposed pipeline</div>
           <AnimatePresence mode="wait" initial={false}>
             {draft ? (
               <motion.div key={JSON.stringify(draft.stages.map((s) => s.name))} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.22, ease: EASE }}>
-                <div className="text-[15px] font-semibold">{draft.name}</div>
+                <div className="hv-serif text-[19px] leading-tight">{draft.name}</div>
                 {draft.description && <p className="mt-0.5 text-[12.5px] text-text-muted">{draft.description}</p>}
                 <StageStrip stages={draft.stages} size="md" className="mt-2" />
                 <ol className="mt-3 space-y-2">
                   {draft.stages.map((s, i) => {
                     const look = stageLook(s)
                     return (
-                      <li key={`${s.name}-${i}`} className="flex gap-2.5 rounded-xl bg-text-primary/[0.03] p-2.5">
+                      <li key={`${s.name}-${i}`} className="flex gap-2.5 border-b border-[var(--hv-border)] py-2.5 last:border-b-0">
                         <span className="hive-tile size-7 shrink-0" style={{ ['--tile' as string]: look.color }}>
                           <look.icon className="size-3.5" />
                         </span>
@@ -1618,7 +1762,7 @@ function Architect({ projectId, kinds, onSave, onOpen }: { projectId: string | n
                           <span key={i} className="hive-shimmer h-7 w-16 rounded-full" />
                         ))}
                       </div>
-                      <div className="hive-thinking-text text-[12.5px]">Sketching stages…</div>
+                      <div className="text-[12.5px] text-[var(--hv-text-3)]">The stages appear here when the Architect sends them.</div>
                     </div>
                   ) : (
                     <>

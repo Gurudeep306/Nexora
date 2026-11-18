@@ -21,11 +21,12 @@ import {
   type IconShapeId,
 } from '@/theme/iconCatalog'
 import { LUCIDE_PACK, loadIconPack, packKey, useIconChoice, useIconPack } from './iconStore'
-import type { IconName } from './names'
+import type { IconName, IconOrBrand } from './names'
+import { HiveGlyph } from '@/components/brand/hiveMark'
 import type { Glyph } from './packs/types'
 import './icon.css'
 
-export type { IconName } from './names'
+export type { IconName, IconOrBrand } from './names'
 export { ICON_GROUPS, ICON_NAMES } from './names'
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name' | 'ref' | 'style' | 'children'> {
@@ -64,7 +65,17 @@ function lucideStyleFor(style: string): string {
   return 'regular'
 }
 
-export function Icon({ name, set, style, size, className, label, title, 'aria-label': ariaLabel, ...rest }: IconProps) {
+export function Icon(props: Omit<IconProps, 'name'> & { name: IconOrBrand }) {
+  // Brand marks are drawn the same whatever the icon set.
+  if (props.name === 'hive') {
+    const { size, className, label, title, 'aria-label': ariaLabel } = props
+    const a11yName = label ?? title ?? ariaLabel
+    return <HiveGlyph size={size ?? 24} weight={2.55} className={cn('nx-icon shrink-0', className)} aria-hidden={a11yName ? undefined : true} role={a11yName ? 'img' : undefined} aria-label={a11yName} />
+  }
+  return <PackIcon {...(props as IconProps)} />
+}
+
+function PackIcon({ name, set, style, size, className, label, title, 'aria-label': ariaLabel, ...rest }: IconProps) {
   const choice = useIconChoice()
   const info = findIconSet(set ?? choice.set)
   // An explicit set without a style uses that set's default (unless it is the user's set).
@@ -138,7 +149,9 @@ export function IconFrame({ boxClassName, className, box = 'md', tone = 'accent'
   )
 }
 
-export interface IconBadgeProps extends IconProps, BadgeFrameOptions {}
+export interface IconBadgeProps extends Omit<IconProps, 'name'>, BadgeFrameOptions {
+  name: IconOrBrand
+}
 
 export function IconBadge({ boxClassName, box, tone, color, onColor, container, shape, ...icon }: IconBadgeProps) {
   return (
