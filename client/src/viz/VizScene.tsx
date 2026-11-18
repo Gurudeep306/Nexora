@@ -9,7 +9,7 @@ import { memo, useMemo, type ReactNode } from 'react'
 import type { VizArrow, VizElement, VizLayout, VizSpec, VizTone } from './schema'
 import { canvasSize, type VizFrame } from './frames'
 import { strokePaths, type Sketcher } from './sketch'
-import { arcLabelPoint, arcPath, gateShape } from './geometry'
+import { arcLabelPoint, arcPath, gateShape, loopGeom } from './geometry'
 
 const TONE: Record<VizTone, string> = {
   ink: 'var(--color-text-primary)',
@@ -34,8 +34,17 @@ interface Box {
   h: number
 }
 
-/** Outline box of an element (for arrow snapping). */
-function bounds(el: VizElement): Box | { cx: number; cy: number; r: number } | null {
+/** Outline box of an element (for arrow snapping). A `loop` resolves through its target. */
+function bounds(el: VizElement, byId?: Map<string, VizElement>): Box | { cx: number; cy: number; r: number } | null {
+  if (el.type === 'loop' && byId) {
+    const t = byId.get(el.on)
+    if (!t) return null
+    const tb = bounds(t, byId)
+    if (!tb || !('r' in tb)) return null
+    const size = el.size ?? 0.9 * tb.r
+    const g = loopGeom(tb.cx, tb.cy, tb.r, el.angle ?? 0, size)
+    return { cx: g.anchor[0], cy: g.anchor[1], r: Math.max(4, size * 0.45) }
+  }
   switch (el.type) {
     case 'box':
     case 'gate':
@@ -85,7 +94,7 @@ function arrowGeometry(a: VizArrow, byId: Map<string, VizElement>) {
   const endPoint = (end: VizArrow['from']): { p: [number, number]; b: ReturnType<typeof bounds> } => {
     if (Array.isArray(end)) return { p: end, b: null }
     const el = byId.get(end)
-    const b = el ? bounds(el) : null
+    const b = el ? bounds(el, byId) : null
     return { p: b ? center(b) : [0, 0], b }
   }
   const f = endPoint(a.from)
@@ -114,7 +123,14 @@ function arrowGeometry(a: VizArrow, byId: Map<string, VizElement>) {
   const mode = a.head ?? 'end'
   if (mode === 'end' || mode === 'both') heads.push(head(p2, curve ? ctrl : p1))
   if (mode === 'both') heads.push(head(p1, curve ? ctrl : p2))
-  const label: [number, number] = curve ? [(mx + cx) / 2, (my + cy) / 2] : [mx, my]
+  // The label sits beside the edge, never on it: at the curve's true midpoint
+  // (quadratic Bézier midpoint when bent) pushed 14 units perpendicular,
+  // to the outer side of the bulge so parallel edges (curve ±) get labels on
+  // opposite sides.
+  const n: [number, number] = [-(p2[1] - p1[1]) / len, (p2[0] - p1[0]) / len]
+  const side = curve !== 0 ? Math.sign(curve) : 1
+  const bm: [number, number] = curve ? [(p1[0] + 2 * cx + p2[0]) / 4, (p1[1] + 2 * cy + p2[1]) / 4] : [mx, my]
+  const label: [number, number] = [bm[0] + n[0] * 14 * side, bm[1] + n[1] * 14 * side]
   return { d, p1, p2, heads, label }
 }
 
@@ -238,7 +254,7 @@ const Element = memo(function Element({ el, byId, sketch }: { el: VizElement; by
               stroke={stroke}
             />
           ))}
-          {el.label && <Label x={g.label[0]} y={g.label[1] - 10} text={el.label} size={13} color={stroke} />}
+          {el.label && <Label x={g.label[0]} y={g.label[1]} text={el.label} size={13} color={stroke} />}
         </>
       )
     }
@@ -294,6 +310,27 @@ const Element = memo(function Element({ el, byId, sketch }: { el: VizElement; by
           )
         }
       return <>{cells}</>
+    }
+    case 'loop': {
+      const target = byId.get(el.on)
+      const tb = target ? bounds(target, byId) : null
+      if (!tb || !('r' in tb)) return null
+      const size = el.size ?? 0.9 * tb.r
+      const g = loopGeom(tb.cx, tb.cy, tb.r, el.angle ?? 0, size, el.head ?? 'none')
+      const labelSize = Math.max(11, Math.min(15, size * 0.62))
+      return (
+        <>
+          <Stroke paths={sk('path', g.d)} fallback={<path d={g.d} fill="none" stroke={stroke} strokeWidth={1.6} strokeDasharray={dash} strokeLinecap="round" />} stroke={stroke} dashed={dashed} />
+          {g.head && (
+            <Stroke
+              paths={sk('poly', g.head)}
+              fallback={<polyline points={g.head.map((p) => p.join(',')).join(' ')} fill="none" stroke={stroke} strokeWidth={1.6} strokeLinejoin="round" strokeLinecap="round" />}
+              stroke={stroke}
+            />
+          )}
+          {el.label && <Label x={g.anchor[0]} y={g.anchor[1]} text={el.label} mono={el.mono} size={labelSize} color={stroke} />}
+        </>
+      )
     }
     case 'bits': {
       const c = el.cell ?? 40
@@ -351,7 +388,7 @@ export function VizScene({
           style={{ opacity: el.hidden ? 0 : (el.opacity ?? 1) }}
           aria-hidden="true"
         >
-          <Element el={el} byId={el.type === 'arrow' ? byId : NO_ELEMENTS} sketch={sketch} />
+          <Element el={el} byId={el.type === 'arrow' || el.type === 'loop' ? byId : NO_ELEMENTS} sketch={sketch} />
         </g>
       ))}
     </svg>
