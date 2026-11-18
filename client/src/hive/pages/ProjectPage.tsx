@@ -506,7 +506,7 @@ function SessionComposer({ project, repos }: { project: Project; repos: LinkedRe
         </label>
         <SegmentedControl size="sm" label="How the agents work" value={mode} onChange={(m) => setMode(m as Mode)} options={(Object.keys(MODE_INFO) as Mode[]).map((m) => ({ value: m, label: MODE_INFO[m].label, hint: MODE_INFO[m].hint }))} />
         {agents.map((s, i) => (
-          <AgentChip key={i} boot={boot} spec={s} label={mode === 'team' && i === 0 ? 'Lead' : undefined} compact={agents.length > 2} onChange={(n) => setAgents((l) => l.map((x, j) => (j === i ? n : x)))} onRemove={agents.length > 1 ? () => setAgents((l) => l.filter((_, j) => j !== i)) : undefined} />
+          <AgentChip key={i} boot={boot} spec={s} label={mode === 'team' ? (i === 0 ? 'Lead' : 'Worker') : undefined} compact={agents.length > 2} onChange={(n) => setAgents((l) => l.map((x, j) => (j === i ? n : x)))} onRemove={agents.length > 1 ? () => setAgents((l) => l.filter((_, j) => j !== i)) : undefined} />
         ))}
         {agents.length < 8 && (
           <Tooltip label="Add an agent (different models work great together)">
@@ -546,6 +546,10 @@ function SessionComposer({ project, repos }: { project: Project; repos: LinkedRe
           {busy ? <Loader2 className="size-4 animate-spin" /> : <ArrowUp className="size-4" strokeWidth={2.4} />} Start session
         </button>
       </div>
+      <p className="m-0 px-2 pt-2 text-[12px] text-[var(--hv-text-3)]">
+        {MODE_INFO[mode]?.hint}
+        {mode === 'team' && agents.length < 2 && ' Add a Worker with + — with one agent the Lead does every part itself.'}
+      </p>
     </div>
   )
 }
