@@ -2322,6 +2322,425 @@
     "muzero"
    ],
    "arxiv": "1911.08265"
+  },
+  {
+   "id": "nickolls-2008",
+   "title": "Scalable Parallel Programming with CUDA",
+   "authors": "Nickolls et al.",
+   "year": 2008,
+   "course": "ai-systems",
+   "topics": [
+    "gpu",
+    "cuda"
+   ],
+   "doi": "10.1145/1365490.1365500"
+  },
+  {
+   "id": "jouppi-2017",
+   "title": "In-Datacenter Performance Analysis of a Tensor Processing Unit",
+   "authors": "Jouppi et al.",
+   "year": 2017,
+   "course": "ai-systems",
+   "topics": [
+    "tpu"
+   ],
+   "arxiv": "1704.04760"
+  },
+  {
+   "id": "williams-2009",
+   "title": "Roofline: an insightful visual performance model for multicore architectures",
+   "authors": "Williams, Waterman, Patterson",
+   "year": 2009,
+   "course": "ai-systems",
+   "topics": [
+    "roofline"
+   ],
+   "doi": "10.1145/1498765.1498785"
+  },
+  {
+   "id": "micikevicius-2017",
+   "title": "Mixed Precision Training",
+   "authors": "Micikevicius et al.",
+   "year": 2017,
+   "course": "ai-systems",
+   "topics": [
+    "mixed-precision"
+   ],
+   "arxiv": "1710.03740"
+  },
+  {
+   "id": "chen-2016b",
+   "title": "Training Deep Nets with Sublinear Memory Cost",
+   "authors": "Chen et al.",
+   "year": 2016,
+   "course": "ai-systems",
+   "topics": [
+    "checkpointing"
+   ],
+   "arxiv": "1604.06174"
+  },
+  {
+   "id": "korthikanti-2022",
+   "title": "Reducing Activation Recomputation in Large Transformer Models",
+   "authors": "Korthikanti et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "checkpointing"
+   ],
+   "arxiv": "2205.05198"
+  },
+  {
+   "id": "patarasuk-2009",
+   "title": "Bandwidth optimal all-reduce algorithms for clusters of workstations",
+   "authors": "Patarasuk, Yuan",
+   "year": 2009,
+   "course": "ai-systems",
+   "topics": [
+    "all-reduce"
+   ],
+   "doi": "10.1016/j.jpdc.2008.09.002"
+  },
+  {
+   "id": "rajbhandari-2019",
+   "title": "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models",
+   "authors": "Rajbhandari et al.",
+   "year": 2019,
+   "course": "ai-systems",
+   "topics": [
+    "zero"
+   ],
+   "arxiv": "1910.02054"
+  },
+  {
+   "id": "zhao-2023",
+   "title": "PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel",
+   "authors": "Zhao et al.",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "fsdp"
+   ],
+   "arxiv": "2304.11277"
+  },
+  {
+   "id": "shoeybi-2019",
+   "title": "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism",
+   "authors": "Shoeybi et al.",
+   "year": 2019,
+   "course": "ai-systems",
+   "topics": [
+    "tensor-parallel"
+   ],
+   "arxiv": "1909.08053"
+  },
+  {
+   "id": "huang-2018",
+   "title": "GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism",
+   "authors": "Huang et al.",
+   "year": 2018,
+   "course": "ai-systems",
+   "topics": [
+    "pipeline-parallel"
+   ],
+   "arxiv": "1811.06965"
+  },
+  {
+   "id": "narayanan-2021",
+   "title": "Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM",
+   "authors": "Narayanan et al.",
+   "year": 2021,
+   "course": "ai-systems",
+   "topics": [
+    "3d-parallel"
+   ],
+   "arxiv": "2104.04473"
+  },
+  {
+   "id": "lepikhin-2020",
+   "title": "GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding",
+   "authors": "Lepikhin et al.",
+   "year": 2020,
+   "course": "ai-systems",
+   "topics": [
+    "expert-parallel"
+   ],
+   "arxiv": "2006.16668"
+  },
+  {
+   "id": "liu-2023",
+   "title": "Ring Attention with Blockwise Transformers for Near-Infinite Context",
+   "authors": "Liu, Zaharia, Abbeel",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "sequence-parallel"
+   ],
+   "arxiv": "2310.01889"
+  },
+  {
+   "id": "dao-2023",
+   "title": "FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning",
+   "authors": "Dao",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "flash-attention"
+   ],
+   "arxiv": "2307.08691"
+  },
+  {
+   "id": "gao-2020",
+   "title": "The Pile: An 800GB Dataset of Diverse Text for Language Modeling",
+   "authors": "Gao et al.",
+   "year": 2020,
+   "course": "ai-systems",
+   "topics": [
+    "data"
+   ],
+   "arxiv": "2101.00027"
+  },
+  {
+   "id": "penedo-2023",
+   "title": "The RefinedWeb Dataset for Falcon LLM: Outperforming Curated Corpora with Web Data, and Web Data Only",
+   "authors": "Penedo et al.",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "data"
+   ],
+   "arxiv": "2306.01116"
+  },
+  {
+   "id": "penedo-2024",
+   "title": "The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale",
+   "authors": "Penedo et al.",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "data"
+   ],
+   "arxiv": "2406.17557"
+  },
+  {
+   "id": "openai-2023",
+   "title": "GPT-4 Technical Report",
+   "authors": "OpenAI",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "frontier-report"
+   ],
+   "arxiv": "2303.08774"
+  },
+  {
+   "id": "grattafiori-2024",
+   "title": "The Llama 3 Herd of Models",
+   "authors": "Grattafiori et al. (Llama Team)",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "frontier-report"
+   ],
+   "arxiv": "2407.21783"
+  },
+  {
+   "id": "deepseek-2024",
+   "title": "DeepSeek-V3 Technical Report",
+   "authors": "DeepSeek-AI",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "frontier-report"
+   ],
+   "arxiv": "2412.19437"
+  },
+  {
+   "id": "wei-2021",
+   "title": "Finetuned Language Models Are Zero-Shot Learners",
+   "authors": "Wei et al.",
+   "year": 2021,
+   "course": "ai-systems",
+   "topics": [
+    "instruction-tuning"
+   ],
+   "arxiv": "2109.01652"
+  },
+  {
+   "id": "chung-2022",
+   "title": "Scaling Instruction-Finetuned Language Models",
+   "authors": "Chung et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "instruction-tuning"
+   ],
+   "arxiv": "2210.11416"
+  },
+  {
+   "id": "bai-2022a",
+   "title": "Training a Helpful and Harmless Assistant with Reinforcement Learning from Human Feedback",
+   "authors": "Bai et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "rlhf"
+   ],
+   "arxiv": "2204.05862"
+  },
+  {
+   "id": "shao-2024",
+   "title": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
+   "authors": "Shao et al.",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "grpo"
+   ],
+   "arxiv": "2402.03300"
+  },
+  {
+   "id": "lightman-2023",
+   "title": "Let's Verify Step by Step",
+   "authors": "Lightman et al.",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "process-reward"
+   ],
+   "arxiv": "2305.20050"
+  },
+  {
+   "id": "deepseek-2025",
+   "title": "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+   "authors": "DeepSeek-AI",
+   "year": 2025,
+   "course": "ai-systems",
+   "topics": [
+    "reasoning-rl"
+   ],
+   "arxiv": "2501.12948"
+  },
+  {
+   "id": "snell-2024",
+   "title": "Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters",
+   "authors": "Snell et al.",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "test-time-compute"
+   ],
+   "arxiv": "2408.03314"
+  },
+  {
+   "id": "hendrycks-2020",
+   "title": "Measuring Massive Multitask Language Understanding",
+   "authors": "Hendrycks et al.",
+   "year": 2020,
+   "course": "ai-systems",
+   "topics": [
+    "evaluation"
+   ],
+   "arxiv": "2009.03300"
+  },
+  {
+   "id": "liang-2022",
+   "title": "Holistic Evaluation of Language Models",
+   "authors": "Liang et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "evaluation"
+   ],
+   "arxiv": "2211.09110"
+  },
+  {
+   "id": "pope-2022",
+   "title": "Efficiently Scaling Transformer Inference",
+   "authors": "Pope et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "inference"
+   ],
+   "arxiv": "2211.05102"
+  },
+  {
+   "id": "leviathan-2022",
+   "title": "Fast Inference from Transformers via Speculative Decoding",
+   "authors": "Leviathan, Kalman, Matias",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "speculative-decoding"
+   ],
+   "arxiv": "2211.17192"
+  },
+  {
+   "id": "elhage-2021",
+   "title": "A Mathematical Framework for Transformer Circuits",
+   "authors": "Elhage et al.",
+   "year": 2021,
+   "course": "ai-systems",
+   "topics": [
+    "circuits"
+   ],
+   "url": "https://transformer-circuits.pub/2021/framework/index.html"
+  },
+  {
+   "id": "olsson-2022",
+   "title": "In-context Learning and Induction Heads",
+   "authors": "Olsson et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "induction-heads"
+   ],
+   "arxiv": "2209.11895"
+  },
+  {
+   "id": "elhage-2022",
+   "title": "Toy Models of Superposition",
+   "authors": "Elhage et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "superposition"
+   ],
+   "arxiv": "2209.10652"
+  },
+  {
+   "id": "bricken-2023",
+   "title": "Towards Monosemanticity: Decomposing Language Models With Dictionary Learning",
+   "authors": "Bricken et al.",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "sparse-autoencoders"
+   ],
+   "url": "https://transformer-circuits.pub/2023/monosemantic-features/index.html"
+  },
+  {
+   "id": "templeton-2024",
+   "title": "Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet",
+   "authors": "Templeton et al.",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "sparse-autoencoders"
+   ],
+   "url": "https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html"
+  },
+  {
+   "id": "zhang-2019",
+   "title": "Root Mean Square Layer Normalization",
+   "authors": "Zhang, Sennrich",
+   "year": 2019,
+   "course": "llms",
+   "topics": [
+    "rmsnorm"
+   ],
+   "arxiv": "1910.07467"
   }
  ]
 }

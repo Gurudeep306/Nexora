@@ -1,10 +1,17 @@
 #!/usr/bin/env node
-// The ladder check for the AI courses (docs/ai-courses/curriculum.json):
+// The web of AI courses (docs/ai-courses/curriculum.json + sources/*.json).
+//
+// Checks (fails on any):
 //   - every topic id is unique;
-//   - everything a topic needs is taught BEFORE it (earlier in the same course,
-//     or in an earlier course), so no lesson ever uses an idea not yet taught;
-//   - every paper id exists in sources/papers.json.
-// Then writes docs/ai-courses/CURRICULUM.md from the same data (never edit that file by hand).
+//   - the ladder: everything a topic `needs` is taught BEFORE it (earlier in the
+//     same course or in an earlier course), so no lesson uses an idea not yet taught;
+//   - every `related` id, paper id and reading id exists;
+//   - every model in sources/models.json points to real papers and topics.
+// Builds:
+//   - docs/ai-courses/web.json: one node per topic with needs, all prerequisites
+//     (the "stuck? go back here" chain), used by, related (two-way), papers,
+//     and models; edges for the course-web map.
+//   - docs/ai-courses/CURRICULUM.md and docs/ai-courses/MODELS.md (never edit by hand).
 //
 //   node scripts/ai-courses/check-curriculum.mjs          check and write
 //   node scripts/ai-courses/check-curriculum.mjs --check  check only (CI)
@@ -13,71 +20,149 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const DIR = join(dirname(fileURLToPath(import.meta.url)), '../../docs/ai-courses')
-const cur = JSON.parse(readFileSync(join(DIR, 'curriculum.json'), 'utf8'))
-const papers = new Map(JSON.parse(readFileSync(join(DIR, 'sources/papers.json'), 'utf8')).papers.map((p) => [p.id, p]))
+const read = (f) => JSON.parse(readFileSync(join(DIR, f), 'utf8'))
+const cur = read('curriculum.json')
+const papers = new Map(read('sources/papers.json').papers.map((p) => [p.id, p]))
+const books = new Map(read('sources/books.json').books.map((b) => [b.id, b]))
+const models = read('sources/models.json').models
 
 const errors = []
-const order = new Map() // topic id -> position in teaching order
-const where = new Map() // topic id -> course title
+const topics = new Map() // id -> { ...topic, course, chapter, pos }
 let n = 0
 for (const c of cur.courses)
   for (const ch of c.chapters)
     for (const t of ch.topics) {
-      if (order.has(t.id)) errors.push(`${t.id}: used twice`)
-      order.set(t.id, n++)
-      where.set(t.id, c.title)
+      if (topics.has(t.id)) errors.push(`${t.id}: used twice`)
+      topics.set(t.id, { ...t, related: t.related || [], course: c.id, courseTitle: c.title, chapter: ch.title, pos: n++ })
     }
-const used = new Set()
-for (const c of cur.courses)
-  for (const ch of c.chapters)
-    for (const t of ch.topics) {
-      if (!t.needs.length && order.get(t.id) > 0 && c.id !== 'foundations') errors.push(`${t.id}: needs nothing — every topic after Foundations builds on something`)
-      for (const p of t.needs) {
-        if (!order.has(p)) errors.push(`${t.id}: needs "${p}", which doesn't exist`)
-        else if (order.get(p) >= order.get(t.id)) errors.push(`${t.id}: needs "${p}", which is taught later (${where.get(p)}) — move one of them`)
-      }
-      for (const p of t.papers) {
-        if (!papers.has(p)) errors.push(`${t.id}: paper "${p}" is not in sources/papers.json`)
-        used.add(p)
-      }
-    }
+for (const c of cur.courses) for (const b of c.reading || []) if (!books.has(b)) errors.push(`${c.id}: reading "${b}" is not in sources/books.json`)
 
-const unused = [...papers.keys()].filter((p) => !used.has(p))
+const usedPapers = new Set()
+for (const t of topics.values()) {
+  if (!t.needs.length && t.course !== 'foundations') errors.push(`${t.id}: needs nothing — every topic after Foundations builds on something`)
+  for (const p of t.needs) {
+    const q = topics.get(p)
+    if (!q) errors.push(`${t.id}: needs "${p}", which doesn't exist`)
+    else if (q.pos >= t.pos) errors.push(`${t.id}: needs "${p}", which is taught later (${q.courseTitle}) — move one of them`)
+  }
+  for (const r of t.related) if (!topics.has(r)) errors.push(`${t.id}: related "${r}" doesn't exist`)
+  for (const p of t.papers) {
+    if (!papers.has(p)) errors.push(`${t.id}: paper "${p}" is not in sources/papers.json`)
+    usedPapers.add(p)
+  }
+}
+for (const m of models) {
+  for (const p of m.papers) if (!papers.has(p)) errors.push(`model ${m.id}: paper "${p}" is not in sources/papers.json`)
+  for (const t of m.topics) if (!topics.has(t)) errors.push(`model ${m.id}: topic "${t}" doesn't exist`)
+}
 if (errors.length) {
-  console.error(`The ladder is broken (${errors.length}):\n- ` + errors.join('\n- '))
+  console.error(`The course web is broken (${errors.length}):\n- ` + errors.join('\n- '))
   process.exit(1)
 }
-console.log(`Ladder OK: ${n} topics in ${cur.courses.length} courses; every prerequisite comes first. Papers used: ${used.size} of ${papers.size}.`)
-if (unused.length) console.log(`Papers in the registry no topic cites yet: ${unused.join(', ')}`)
+
+// ── the web ──
+const usedBy = new Map([...topics.keys()].map((k) => [k, []]))
+const related = new Map([...topics.keys()].map((k) => [k, new Set()]))
+for (const t of topics.values()) {
+  for (const p of t.needs) usedBy.get(p).push(t.id)
+  for (const r of t.related) {
+    related.get(t.id).add(r)
+    related.get(r).add(t.id)
+  }
+}
+const allNeeds = new Map()
+const closure = (id) => {
+  if (allNeeds.has(id)) return allNeeds.get(id)
+  const s = new Set()
+  for (const p of topics.get(id).needs) {
+    s.add(p)
+    for (const q of closure(p)) s.add(q)
+  }
+  allNeeds.set(id, s)
+  return s
+}
+const modelsOf = new Map()
+for (const m of models) for (const t of m.topics) modelsOf.set(t, [...(modelsOf.get(t) || []), m.id])
+const byPos = (a, b) => topics.get(a).pos - topics.get(b).pos
+
+const web = {
+  about: 'Generated by scripts/ai-courses/check-curriculum.mjs from curriculum.json. The site reads this to draw the course web and the "stuck? go back to" links.',
+  nodes: [...topics.values()].map((t) => ({
+    id: t.id,
+    title: t.title,
+    course: t.course,
+    chapter: t.chapter,
+    order: t.pos,
+    needs: t.needs,
+    allNeeds: [...closure(t.id)].sort(byPos),
+    usedBy: usedBy.get(t.id).sort(byPos),
+    related: [...related.get(t.id)].sort(byPos),
+    papers: t.papers,
+    models: modelsOf.get(t.id) || [],
+    gateDA: !!t.gateDA,
+  })),
+  edges: [
+    ...[...topics.values()].flatMap((t) => t.needs.map((p) => ({ from: p, to: t.id, kind: 'needs' }))),
+    ...[...topics.values()].flatMap((t) => t.related.map((r) => ({ from: t.id, to: r, kind: 'related' }))),
+  ],
+}
+const crossCourse = web.edges.filter((e) => topics.get(e.from).course !== topics.get(e.to).course).length
+console.log(`Course web OK: ${n} topics in ${cur.courses.length} courses, ${web.edges.length} links (${crossCourse} between courses); every prerequisite comes first. Papers used: ${usedPapers.size} of ${papers.size}. Models: ${models.length}.`)
+const unused = [...papers.keys()].filter((p) => !usedPapers.has(p))
+if (unused.length) console.log(`Papers no topic cites yet: ${unused.join(', ')}`)
 if (process.argv.includes('--check')) process.exit(0)
 
+writeFileSync(join(DIR, 'web.json'), JSON.stringify(web, null, 1) + '\n')
+
 // ── CURRICULUM.md ──
-const title = new Map()
-for (const c of cur.courses) for (const ch of c.chapters) for (const t of ch.topics) title.set(t.id, t.title)
+const T = (id) => topics.get(id).title
+const P = (id) => {
+  const x = papers.get(id)
+  return `${x.authors} ${x.year}, *${x.title}*`
+}
 const L = [
-  '# Curriculum',
+  '# Curriculum — the web of AI courses',
   '',
   'Generated from `curriculum.json` by `node scripts/ai-courses/check-curriculum.mjs`. Edit the JSON, not this file.',
   '',
-  'The courses are in teaching order. Every topic builds only on topics above it ("Builds on"), so a student can start at the first line knowing nothing and reach the last. Topics marked **GATE DA** are in the GATE Data Science & AI syllabus.',
+  'Courses are in teaching order and every topic builds only on topics above it, so a student can start at the first line knowing nothing. The courses are also one web: each topic links to what it **builds on**, what **uses it** (in any course), and **related** ideas elsewhere, so a student with a doubt can jump straight to where that idea is taught. **GATE DA** marks topics in the GATE Data Science & AI syllabus.',
   '',
-  `${n} topics · ${cur.courses.length} courses · ${used.size} papers`,
+  `${n} topics · ${cur.courses.length} courses · ${web.edges.length} links (${crossCourse} between courses) · ${usedPapers.size} papers · ${models.length} models in the timeline ([MODELS.md](MODELS.md))`,
   '',
 ]
-for (const [ci, c] of cur.courses.entries()) L.push(`- [${ci}. ${c.title}](#${ci}-${c.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')})`)
+const anchor = (ci, c) => `${ci}-${c.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+for (const [ci, c] of cur.courses.entries()) L.push(`- [${ci}. ${c.title}](#${anchor(ci, c)})`)
 L.push('')
 for (const [ci, c] of cur.courses.entries()) {
-  L.push(`## ${ci}. ${c.title}`, '', c.blurb, '', `Nexus subject: \`${c.nexus}\``, '')
+  L.push(`## ${ci}. ${c.title}`, '', c.blurb, '', `**The story:** ${c.story}`, '', `**Running example:** ${c.runningExample}`, '')
+  L.push(`**Read alongside:** ${(c.reading || []).map((b) => `${books.get(b).authors}, *${books.get(b).title}*`).join('; ')}`, '', `Nexus subject: \`${c.nexus}\``, '')
   for (const [hi, ch] of c.chapters.entries()) {
     L.push(`### ${ci}.${hi + 1} ${ch.title}`, '')
-    for (const t of ch.topics) {
+    for (const t0 of ch.topics) {
+      const t = topics.get(t0.id)
       L.push(`- **${t.title}** \`${t.id}\`${t.gateDA ? ' · GATE DA' : ''}`)
-      if (t.needs.length) L.push(`  - Builds on: ${t.needs.map((p) => title.get(p)).join('; ')}`)
+      if (t.needs.length) L.push(`  - Builds on: ${t.needs.map(T).join('; ')}`)
+      const ub = usedBy.get(t.id).filter((u) => topics.get(u).course !== t.course)
+      if (ub.length) L.push(`  - Used in other courses by: ${ub.map(T).join('; ')}`)
+      if (related.get(t.id).size) L.push(`  - Related: ${[...related.get(t.id)].sort(byPos).map(T).join('; ')}`)
       if (t.visual) L.push(`  - See it: ${t.visual}`)
-      if (t.papers.length) L.push(`  - Papers: ${t.papers.map((p) => { const x = papers.get(p); return `${x.authors} ${x.year}, *${x.title}*` }).join('; ')}`)
+      if (t.papers.length) L.push(`  - Papers: ${t.papers.map(P).join('; ')}`)
+      if (modelsOf.get(t.id)) L.push(`  - In models: ${modelsOf.get(t.id).map((m) => models.find((x) => x.id === m).name).join('; ')}`)
     }
     L.push('')
   }
 }
 writeFileSync(join(DIR, 'CURRICULUM.md'), L.join('\n'))
-console.log('Wrote docs/ai-courses/CURRICULUM.md')
+
+// ── MODELS.md ──
+const M = [
+  '# Models timeline',
+  '',
+  'Generated from `sources/models.json` by `node scripts/ai-courses/check-curriculum.mjs`. Each model links to the papers that describe it and the topics that explain its parts. "Published" says honestly how much the makers disclosed. To add a new model, see [UPDATING.md](UPDATING.md).',
+  '',
+  '| Year | Model | Made by | Published | What was new | Learn it in | Papers |',
+  '|---|---|---|---|---|---|---|',
+]
+for (const m of [...models].sort((a, b) => a.year - b.year)) M.push(`| ${m.year} | ${m.name} | ${m.org} | ${m.published} | ${m.whatsNew} | ${m.topics.map(T).join('; ')} | ${m.papers.map((p) => papers.get(p).authors + ' ' + papers.get(p).year).join('; ')} |`)
+writeFileSync(join(DIR, 'MODELS.md'), M.join('\n') + '\n')
+console.log('Wrote web.json, CURRICULUM.md and MODELS.md')

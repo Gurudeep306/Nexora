@@ -287,6 +287,18 @@
    "courses": [
     "computer-vision"
    ]
+  },
+  {
+   "id": "pmpp",
+   "title": "Programming Massively Parallel Processors (4th ed.)",
+   "authors": "Hwu, Kirk, El Hajj",
+   "year": 2022,
+   "url": "https://www.sciencedirect.com/book/9780323912310/programming-massively-parallel-processors",
+   "use": "The GPU programming textbook: threads, memory, tiling, reductions, convolution kernels.",
+   "licence": "Paid book (owner's Elsevier access): read and cite only.",
+   "courses": [
+    "ai-systems"
+   ]
   }
  ]
 }

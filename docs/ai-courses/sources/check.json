@@ -1,5 +1,5 @@
 {
- "checkedAt": "2026-11-18T19:59:01.996Z",
+ "checkedAt": "2026-11-18T20:18:25.953Z",
  "papers": [
   {
    "id": "shannon-1948",
@@ -4202,6 +4202,764 @@
     "access": "open",
     "read": "https://arxiv.org/abs/1911.08265"
    }
+  },
+  {
+   "id": "nickolls-2008",
+   "title": "Scalable Parallel Programming with CUDA",
+   "authors": "Nickolls et al.",
+   "year": 2008,
+   "course": "ai-systems",
+   "topics": [
+    "gpu",
+    "cuda"
+   ],
+   "doi": "10.1145/1365490.1365500",
+   "check": {
+    "id": "nickolls-2008",
+    "ok": true,
+    "found": "Scalable Parallel Programming with CUDA",
+    "foundYear": 2008,
+    "why": "",
+    "access": "open",
+    "read": "https://dl.acm.org/doi/pdf/10.1145/1365490.1365500"
+   }
+  },
+  {
+   "id": "jouppi-2017",
+   "title": "In-Datacenter Performance Analysis of a Tensor Processing Unit",
+   "authors": "Jouppi et al.",
+   "year": 2017,
+   "course": "ai-systems",
+   "topics": [
+    "tpu"
+   ],
+   "arxiv": "1704.04760",
+   "check": {
+    "id": "jouppi-2017",
+    "ok": true,
+    "found": "In-Datacenter Performance Analysis of a Tensor Processing Unit",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1704.04760"
+   }
+  },
+  {
+   "id": "williams-2009",
+   "title": "Roofline: an insightful visual performance model for multicore architectures",
+   "authors": "Williams, Waterman, Patterson",
+   "year": 2009,
+   "course": "ai-systems",
+   "topics": [
+    "roofline"
+   ],
+   "doi": "10.1145/1498765.1498785",
+   "check": {
+    "id": "williams-2009",
+    "ok": true,
+    "found": "Roofline",
+    "foundYear": 2009,
+    "why": "",
+    "access": "open",
+    "read": "https://www.osti.gov/servlets/purl/1407073"
+   }
+  },
+  {
+   "id": "micikevicius-2017",
+   "title": "Mixed Precision Training",
+   "authors": "Micikevicius et al.",
+   "year": 2017,
+   "course": "ai-systems",
+   "topics": [
+    "mixed-precision"
+   ],
+   "arxiv": "1710.03740",
+   "check": {
+    "id": "micikevicius-2017",
+    "ok": true,
+    "found": "Mixed Precision Training",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1710.03740"
+   }
+  },
+  {
+   "id": "chen-2016b",
+   "title": "Training Deep Nets with Sublinear Memory Cost",
+   "authors": "Chen et al.",
+   "year": 2016,
+   "course": "ai-systems",
+   "topics": [
+    "checkpointing"
+   ],
+   "arxiv": "1604.06174",
+   "check": {
+    "id": "chen-2016b",
+    "ok": true,
+    "found": "Training Deep Nets with Sublinear Memory Cost",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1604.06174"
+   }
+  },
+  {
+   "id": "korthikanti-2022",
+   "title": "Reducing Activation Recomputation in Large Transformer Models",
+   "authors": "Korthikanti et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "checkpointing"
+   ],
+   "arxiv": "2205.05198",
+   "check": {
+    "id": "korthikanti-2022",
+    "ok": true,
+    "found": "Reducing Activation Recomputation in Large Transformer Models",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2205.05198"
+   }
+  },
+  {
+   "id": "patarasuk-2009",
+   "title": "Bandwidth optimal all-reduce algorithms for clusters of workstations",
+   "authors": "Patarasuk, Yuan",
+   "year": 2009,
+   "course": "ai-systems",
+   "topics": [
+    "all-reduce"
+   ],
+   "doi": "10.1016/j.jpdc.2008.09.002",
+   "check": {
+    "id": "patarasuk-2009",
+    "ok": true,
+    "found": "Bandwidth optimal all-reduce algorithms for clusters of workstations",
+    "foundYear": 2009,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1016/j.jpdc.2008.09.002"
+   }
+  },
+  {
+   "id": "rajbhandari-2019",
+   "title": "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models",
+   "authors": "Rajbhandari et al.",
+   "year": 2019,
+   "course": "ai-systems",
+   "topics": [
+    "zero"
+   ],
+   "arxiv": "1910.02054",
+   "check": {
+    "id": "rajbhandari-2019",
+    "ok": true,
+    "found": "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models",
+    "foundYear": 2019,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1910.02054"
+   }
+  },
+  {
+   "id": "zhao-2023",
+   "title": "PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel",
+   "authors": "Zhao et al.",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "fsdp"
+   ],
+   "arxiv": "2304.11277",
+   "check": {
+    "id": "zhao-2023",
+    "ok": true,
+    "found": "PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2304.11277"
+   }
+  },
+  {
+   "id": "shoeybi-2019",
+   "title": "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism",
+   "authors": "Shoeybi et al.",
+   "year": 2019,
+   "course": "ai-systems",
+   "topics": [
+    "tensor-parallel"
+   ],
+   "arxiv": "1909.08053",
+   "check": {
+    "id": "shoeybi-2019",
+    "ok": true,
+    "found": "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism",
+    "foundYear": 2019,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1909.08053"
+   }
+  },
+  {
+   "id": "huang-2018",
+   "title": "GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism",
+   "authors": "Huang et al.",
+   "year": 2018,
+   "course": "ai-systems",
+   "topics": [
+    "pipeline-parallel"
+   ],
+   "arxiv": "1811.06965",
+   "check": {
+    "id": "huang-2018",
+    "ok": true,
+    "found": "GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism",
+    "foundYear": 2018,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1811.06965"
+   }
+  },
+  {
+   "id": "narayanan-2021",
+   "title": "Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM",
+   "authors": "Narayanan et al.",
+   "year": 2021,
+   "course": "ai-systems",
+   "topics": [
+    "3d-parallel"
+   ],
+   "arxiv": "2104.04473",
+   "check": {
+    "id": "narayanan-2021",
+    "ok": true,
+    "found": "Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2104.04473"
+   }
+  },
+  {
+   "id": "lepikhin-2020",
+   "title": "GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding",
+   "authors": "Lepikhin et al.",
+   "year": 2020,
+   "course": "ai-systems",
+   "topics": [
+    "expert-parallel"
+   ],
+   "arxiv": "2006.16668",
+   "check": {
+    "id": "lepikhin-2020",
+    "ok": true,
+    "found": "GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2006.16668"
+   }
+  },
+  {
+   "id": "liu-2023",
+   "title": "Ring Attention with Blockwise Transformers for Near-Infinite Context",
+   "authors": "Liu, Zaharia, Abbeel",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "sequence-parallel"
+   ],
+   "arxiv": "2310.01889",
+   "check": {
+    "id": "liu-2023",
+    "ok": true,
+    "found": "Ring Attention with Blockwise Transformers for Near-Infinite Context",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2310.01889"
+   }
+  },
+  {
+   "id": "dao-2023",
+   "title": "FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning",
+   "authors": "Dao",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "flash-attention"
+   ],
+   "arxiv": "2307.08691",
+   "check": {
+    "id": "dao-2023",
+    "ok": true,
+    "found": "FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2307.08691"
+   }
+  },
+  {
+   "id": "gao-2020",
+   "title": "The Pile: An 800GB Dataset of Diverse Text for Language Modeling",
+   "authors": "Gao et al.",
+   "year": 2020,
+   "course": "ai-systems",
+   "topics": [
+    "data"
+   ],
+   "arxiv": "2101.00027",
+   "check": {
+    "id": "gao-2020",
+    "ok": true,
+    "found": "The Pile: An 800GB Dataset of Diverse Text for Language Modeling",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2101.00027"
+   }
+  },
+  {
+   "id": "penedo-2023",
+   "title": "The RefinedWeb Dataset for Falcon LLM: Outperforming Curated Corpora with Web Data, and Web Data Only",
+   "authors": "Penedo et al.",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "data"
+   ],
+   "arxiv": "2306.01116",
+   "check": {
+    "id": "penedo-2023",
+    "ok": true,
+    "found": "The RefinedWeb Dataset for Falcon LLM: Outperforming Curated Corpora with Web Data, and Web Data Only",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2306.01116"
+   }
+  },
+  {
+   "id": "penedo-2024",
+   "title": "The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale",
+   "authors": "Penedo et al.",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "data"
+   ],
+   "arxiv": "2406.17557",
+   "check": {
+    "id": "penedo-2024",
+    "ok": true,
+    "found": "The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale",
+    "foundYear": 2024,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2406.17557"
+   }
+  },
+  {
+   "id": "openai-2023",
+   "title": "GPT-4 Technical Report",
+   "authors": "OpenAI",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "frontier-report"
+   ],
+   "arxiv": "2303.08774",
+   "check": {
+    "id": "openai-2023",
+    "ok": true,
+    "found": "GPT-4 Technical Report",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2303.08774"
+   }
+  },
+  {
+   "id": "grattafiori-2024",
+   "title": "The Llama 3 Herd of Models",
+   "authors": "Grattafiori et al. (Llama Team)",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "frontier-report"
+   ],
+   "arxiv": "2407.21783",
+   "check": {
+    "id": "grattafiori-2024",
+    "ok": true,
+    "found": "The Llama 3 Herd of Models",
+    "foundYear": 2024,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2407.21783"
+   }
+  },
+  {
+   "id": "deepseek-2024",
+   "title": "DeepSeek-V3 Technical Report",
+   "authors": "DeepSeek-AI",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "frontier-report"
+   ],
+   "arxiv": "2412.19437",
+   "check": {
+    "id": "deepseek-2024",
+    "ok": true,
+    "found": "DeepSeek-V3 Technical Report",
+    "foundYear": 2024,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2412.19437"
+   }
+  },
+  {
+   "id": "wei-2021",
+   "title": "Finetuned Language Models Are Zero-Shot Learners",
+   "authors": "Wei et al.",
+   "year": 2021,
+   "course": "ai-systems",
+   "topics": [
+    "instruction-tuning"
+   ],
+   "arxiv": "2109.01652",
+   "check": {
+    "id": "wei-2021",
+    "ok": true,
+    "found": "Finetuned Language Models Are Zero-Shot Learners",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2109.01652"
+   }
+  },
+  {
+   "id": "chung-2022",
+   "title": "Scaling Instruction-Finetuned Language Models",
+   "authors": "Chung et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "instruction-tuning"
+   ],
+   "arxiv": "2210.11416",
+   "check": {
+    "id": "chung-2022",
+    "ok": true,
+    "found": "Scaling Instruction-Finetuned Language Models",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2210.11416"
+   }
+  },
+  {
+   "id": "bai-2022a",
+   "title": "Training a Helpful and Harmless Assistant with Reinforcement Learning from Human Feedback",
+   "authors": "Bai et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "rlhf"
+   ],
+   "arxiv": "2204.05862",
+   "check": {
+    "id": "bai-2022a",
+    "ok": true,
+    "found": "Training a Helpful and Harmless Assistant with Reinforcement Learning from Human Feedback",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2204.05862"
+   }
+  },
+  {
+   "id": "shao-2024",
+   "title": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
+   "authors": "Shao et al.",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "grpo"
+   ],
+   "arxiv": "2402.03300",
+   "check": {
+    "id": "shao-2024",
+    "ok": true,
+    "found": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
+    "foundYear": 2024,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2402.03300"
+   }
+  },
+  {
+   "id": "lightman-2023",
+   "title": "Let's Verify Step by Step",
+   "authors": "Lightman et al.",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "process-reward"
+   ],
+   "arxiv": "2305.20050",
+   "check": {
+    "id": "lightman-2023",
+    "ok": true,
+    "found": "Let's Verify Step by Step",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2305.20050"
+   }
+  },
+  {
+   "id": "deepseek-2025",
+   "title": "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+   "authors": "DeepSeek-AI",
+   "year": 2025,
+   "course": "ai-systems",
+   "topics": [
+    "reasoning-rl"
+   ],
+   "arxiv": "2501.12948",
+   "check": {
+    "id": "deepseek-2025",
+    "ok": true,
+    "found": "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+    "foundYear": 2025,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2501.12948"
+   }
+  },
+  {
+   "id": "snell-2024",
+   "title": "Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters",
+   "authors": "Snell et al.",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "test-time-compute"
+   ],
+   "arxiv": "2408.03314",
+   "check": {
+    "id": "snell-2024",
+    "ok": true,
+    "found": "Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters",
+    "foundYear": 2024,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2408.03314"
+   }
+  },
+  {
+   "id": "hendrycks-2020",
+   "title": "Measuring Massive Multitask Language Understanding",
+   "authors": "Hendrycks et al.",
+   "year": 2020,
+   "course": "ai-systems",
+   "topics": [
+    "evaluation"
+   ],
+   "arxiv": "2009.03300",
+   "check": {
+    "id": "hendrycks-2020",
+    "ok": true,
+    "found": "Measuring Massive Multitask Language Understanding",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2009.03300"
+   }
+  },
+  {
+   "id": "liang-2022",
+   "title": "Holistic Evaluation of Language Models",
+   "authors": "Liang et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "evaluation"
+   ],
+   "arxiv": "2211.09110",
+   "check": {
+    "id": "liang-2022",
+    "ok": true,
+    "found": "Holistic Evaluation of Language Models",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2211.09110"
+   }
+  },
+  {
+   "id": "pope-2022",
+   "title": "Efficiently Scaling Transformer Inference",
+   "authors": "Pope et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "inference"
+   ],
+   "arxiv": "2211.05102",
+   "check": {
+    "id": "pope-2022",
+    "ok": true,
+    "found": "Efficiently Scaling Transformer Inference",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2211.05102"
+   }
+  },
+  {
+   "id": "leviathan-2022",
+   "title": "Fast Inference from Transformers via Speculative Decoding",
+   "authors": "Leviathan, Kalman, Matias",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "speculative-decoding"
+   ],
+   "arxiv": "2211.17192",
+   "check": {
+    "id": "leviathan-2022",
+    "ok": true,
+    "found": "Fast Inference from Transformers via Speculative Decoding",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2211.17192"
+   }
+  },
+  {
+   "id": "elhage-2021",
+   "title": "A Mathematical Framework for Transformer Circuits",
+   "authors": "Elhage et al.",
+   "year": 2021,
+   "course": "ai-systems",
+   "topics": [
+    "circuits"
+   ],
+   "url": "https://transformer-circuits.pub/2021/framework/index.html",
+   "check": {
+    "id": "elhage-2021",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://transformer-circuits.pub/2021/framework/index.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "olsson-2022",
+   "title": "In-context Learning and Induction Heads",
+   "authors": "Olsson et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "induction-heads"
+   ],
+   "arxiv": "2209.11895",
+   "check": {
+    "id": "olsson-2022",
+    "ok": true,
+    "found": "In-context Learning and Induction Heads",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2209.11895"
+   }
+  },
+  {
+   "id": "elhage-2022",
+   "title": "Toy Models of Superposition",
+   "authors": "Elhage et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "superposition"
+   ],
+   "arxiv": "2209.10652",
+   "check": {
+    "id": "elhage-2022",
+    "ok": true,
+    "found": "Toy Models of Superposition",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2209.10652"
+   }
+  },
+  {
+   "id": "bricken-2023",
+   "title": "Towards Monosemanticity: Decomposing Language Models With Dictionary Learning",
+   "authors": "Bricken et al.",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "sparse-autoencoders"
+   ],
+   "url": "https://transformer-circuits.pub/2023/monosemantic-features/index.html",
+   "check": {
+    "id": "bricken-2023",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://transformer-circuits.pub/2023/monosemantic-features/index.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "templeton-2024",
+   "title": "Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet",
+   "authors": "Templeton et al.",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "sparse-autoencoders"
+   ],
+   "url": "https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html",
+   "check": {
+    "id": "templeton-2024",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "zhang-2019",
+   "title": "Root Mean Square Layer Normalization",
+   "authors": "Zhang, Sennrich",
+   "year": 2019,
+   "course": "llms",
+   "topics": [
+    "rmsnorm"
+   ],
+   "arxiv": "1910.07467",
+   "check": {
+    "id": "zhang-2019",
+    "ok": true,
+    "found": "Root Mean Square Layer Normalization",
+    "foundYear": 2019,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1910.07467"
+   }
   }
  ],
  "books": [
@@ -4680,6 +5438,27 @@
     "read": "https://www.robots.ox.ac.uk/~vgg/hzbook/",
     "manual": true
    }
+  },
+  {
+   "id": "pmpp",
+   "title": "Programming Massively Parallel Processors (4th ed.)",
+   "authors": "Hwu, Kirk, El Hajj",
+   "year": 2022,
+   "url": "https://www.sciencedirect.com/book/9780323912310/programming-massively-parallel-processors",
+   "use": "The GPU programming textbook: threads, memory, tiling, reductions, convolution kernels.",
+   "licence": "Paid book (owner's Elsevier access): read and cite only.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "pmpp",
+    "ok": true,
+    "unreachable": true,
+    "why": "refused an automated check (403)",
+    "access": "open",
+    "read": "https://www.sciencedirect.com/book/9780323912310/programming-massively-parallel-processors",
+    "manual": true
+   }
   }
  ],
  "courses": [
@@ -4975,6 +5754,165 @@
     "why": "",
     "access": "open",
     "read": "https://arxiv.org/list/cs.LG/recent",
+    "manual": true
+   }
+  },
+  {
+   "id": "cs336",
+   "title": "Stanford CS336: Language Modeling from Scratch",
+   "url": "https://stanford-cs336.github.io/",
+   "use": "Build an LLM end to end: tokenizer, transformer, GPU kernels, parallelism, data, alignment. The model for our systems course.",
+   "courses": [
+    "ai-systems",
+    "llms"
+   ],
+   "check": {
+    "id": "cs336",
+    "ok": true,
+    "unreachable": true,
+    "why": "could not reach from here (fetch failed)",
+    "access": "open",
+    "read": "https://stanford-cs336.github.io/",
+    "manual": true
+   }
+  },
+  {
+   "id": "ultrascale",
+   "title": "Hugging Face: The Ultra-Scale Playbook",
+   "url": "https://huggingface.co/spaces/nanotron/ultrascale-playbook",
+   "use": "Training on many GPUs, measured: data, tensor, pipeline, context and expert parallelism, ZeRO.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "ultrascale",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://huggingface.co/spaces/nanotron/ultrascale-playbook",
+    "manual": true
+   }
+  },
+  {
+   "id": "scaling-book",
+   "title": "How to Scale Your Model (Google DeepMind)",
+   "url": "https://jax-ml.github.io/scaling-book/",
+   "use": "Rooflines, sharding and the arithmetic of training and serving big transformers on TPUs and GPUs.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "scaling-book",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://jax-ml.github.io/scaling-book/",
+    "manual": true
+   }
+  },
+  {
+   "id": "cuda-guide",
+   "title": "NVIDIA CUDA C++ Programming Guide",
+   "url": "https://docs.nvidia.com/cuda/cuda-programming-guide/",
+   "use": "The official description of threads, blocks, warps, memory spaces and tensor cores.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "cuda-guide",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://docs.nvidia.com/cuda/cuda-programming-guide/",
+    "manual": true
+   }
+  },
+  {
+   "id": "gpu-mode",
+   "title": "GPU MODE lectures",
+   "url": "https://github.com/gpu-mode/lectures",
+   "use": "Free lectures on writing GPU kernels (CUDA, Triton) for deep learning.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "gpu-mode",
+    "ok": true,
+    "unreachable": true,
+    "why": "refused an automated check (403)",
+    "access": "open",
+    "read": "https://github.com/gpu-mode/lectures",
+    "manual": true
+   }
+  },
+  {
+   "id": "nanogpt",
+   "title": "nanoGPT (Karpathy)",
+   "url": "https://github.com/karpathy/nanoGPT",
+   "use": "The smallest clear GPT training code (MIT licence): the reference for our build-a-GPT capstone.",
+   "courses": [
+    "ai-systems",
+    "llms"
+   ],
+   "check": {
+    "id": "nanogpt",
+    "ok": true,
+    "unreachable": true,
+    "why": "refused an automated check (403)",
+    "access": "open",
+    "read": "https://github.com/karpathy/nanoGPT",
+    "manual": true
+   }
+  },
+  {
+   "id": "llm-c",
+   "title": "llm.c (Karpathy)",
+   "url": "https://github.com/karpathy/llm.c",
+   "use": "GPT-2 training in plain C and CUDA (MIT licence): every kernel visible.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "llm-c",
+    "ok": true,
+    "unreachable": true,
+    "why": "refused an automated check (403)",
+    "access": "open",
+    "read": "https://github.com/karpathy/llm.c",
+    "manual": true
+   }
+  },
+  {
+   "id": "transformer-circuits",
+   "title": "Transformer Circuits Thread (Anthropic)",
+   "url": "https://transformer-circuits.pub/",
+   "use": "Anthropic's published interpretability research: circuits, superposition, features.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "transformer-circuits",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://transformer-circuits.pub/",
+    "manual": true
+   }
+  },
+  {
+   "id": "llm-viz",
+   "title": "LLM Visualization (Bycroft)",
+   "url": "https://bbycroft.net/llm",
+   "use": "A 3D walk through a GPT's forward pass. Inspiration for our 3D model explorer only; we build our own.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "llm-viz",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://bbycroft.net/llm",
     "manual": true
    }
   }

@@ -1,7 +1,7 @@
 # Rules for every agent building the AI courses
 
-Give this file, with [PIPELINE.md](PIPELINE.md), [TOPIC_TEMPLATE.md](TOPIC_TEMPLATE.md),
-[NOTATION.md](NOTATION.md) and the repo's `AGENTS.md`, to any agent working on
+Give this file, with [PIPELINE.md](PIPELINE.md), [STYLE.md](STYLE.md),
+[TOPIC_TEMPLATE.md](TOPIC_TEMPLATE.md), [NOTATION.md](NOTATION.md) and the repo's `AGENTS.md`, to any agent working on
 an AI topic. These rules are not optional.
 
 ## A. Teach from scratch, step by step
@@ -21,6 +21,16 @@ an AI topic. These rules are not optional.
    numbers, a real picture), then names the idea, then gives the symbols.
 5. **Say why before how.** Each method opens with the problem it solves, and
    why the previous method wasn't enough.
+5a. **Tell it as a story** ([STYLE.md](STYLE.md)): problem → failed attempt →
+   key idea → watch it work → full math → what it unlocked. Build code up
+   version by version; never dump it. Anyone who followed the order must be
+   able to understand every sentence.
+5b. **Use the web.** Link every earlier idea you use to the topic that teaches
+   it; fill "What you need", "Stuck?" and "Where this goes next" from
+   `web.json`. Never hard-code a link the web can generate.
+5c. **Read the books first.** Read the matching chapters of the course's
+   `reading` books before writing, then explain it better in our own words, and
+   name the chapters in "Read more".
 
 ## B. Every piece of math, in full
 

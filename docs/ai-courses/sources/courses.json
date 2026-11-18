@@ -158,6 +158,89 @@
    "courses": [
     "llms"
    ]
+  },
+  {
+   "id": "cs336",
+   "title": "Stanford CS336: Language Modeling from Scratch",
+   "url": "https://stanford-cs336.github.io/",
+   "use": "Build an LLM end to end: tokenizer, transformer, GPU kernels, parallelism, data, alignment. The model for our systems course.",
+   "courses": [
+    "ai-systems",
+    "llms"
+   ]
+  },
+  {
+   "id": "ultrascale",
+   "title": "Hugging Face: The Ultra-Scale Playbook",
+   "url": "https://huggingface.co/spaces/nanotron/ultrascale-playbook",
+   "use": "Training on many GPUs, measured: data, tensor, pipeline, context and expert parallelism, ZeRO.",
+   "courses": [
+    "ai-systems"
+   ]
+  },
+  {
+   "id": "scaling-book",
+   "title": "How to Scale Your Model (Google DeepMind)",
+   "url": "https://jax-ml.github.io/scaling-book/",
+   "use": "Rooflines, sharding and the arithmetic of training and serving big transformers on TPUs and GPUs.",
+   "courses": [
+    "ai-systems"
+   ]
+  },
+  {
+   "id": "cuda-guide",
+   "title": "NVIDIA CUDA C++ Programming Guide",
+   "url": "https://docs.nvidia.com/cuda/cuda-programming-guide/",
+   "use": "The official description of threads, blocks, warps, memory spaces and tensor cores.",
+   "courses": [
+    "ai-systems"
+   ]
+  },
+  {
+   "id": "gpu-mode",
+   "title": "GPU MODE lectures",
+   "url": "https://github.com/gpu-mode/lectures",
+   "use": "Free lectures on writing GPU kernels (CUDA, Triton) for deep learning.",
+   "courses": [
+    "ai-systems"
+   ]
+  },
+  {
+   "id": "nanogpt",
+   "title": "nanoGPT (Karpathy)",
+   "url": "https://github.com/karpathy/nanoGPT",
+   "use": "The smallest clear GPT training code (MIT licence): the reference for our build-a-GPT capstone.",
+   "courses": [
+    "ai-systems",
+    "llms"
+   ]
+  },
+  {
+   "id": "llm-c",
+   "title": "llm.c (Karpathy)",
+   "url": "https://github.com/karpathy/llm.c",
+   "use": "GPT-2 training in plain C and CUDA (MIT licence): every kernel visible.",
+   "courses": [
+    "ai-systems"
+   ]
+  },
+  {
+   "id": "transformer-circuits",
+   "title": "Transformer Circuits Thread (Anthropic)",
+   "url": "https://transformer-circuits.pub/",
+   "use": "Anthropic's published interpretability research: circuits, superposition, features.",
+   "courses": [
+    "ai-systems"
+   ]
+  },
+  {
+   "id": "llm-viz",
+   "title": "LLM Visualization (Bycroft)",
+   "url": "https://bbycroft.net/llm",
+   "use": "A 3D walk through a GPT's forward pass. Inspiration for our 3D model explorer only; we build our own.",
+   "courses": [
+    "ai-systems"
+   ]
   }
  ]
 }
