@@ -219,11 +219,10 @@ function Shell() {
       <div className="hive-root grid h-dvh place-items-center" role="status" aria-label="Loading Hive">
         <div className="flex flex-col items-center gap-5">
           <HiveLogo size={40} draw />
-          <span className="hive-boot-word text-[13px] font-medium tracking-[0.18em] text-text-secondary uppercase">Hive</span>
+          <span className="hive-boot-word font-serif text-[15px] italic text-text-muted">Waking the hive…</span>
           <span className="hive-boot-bar" aria-hidden="true">
             <span />
           </span>
-          <span className="sr-only">Waking the hive…</span>
         </div>
       </div>
     )

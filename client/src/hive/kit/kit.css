@@ -11,7 +11,7 @@
   /* Surfaces: the sidebar sits one step dimmer than the page; cards, hover
      and menus one step brighter each. Elevation = lighter surface + hairline. */
   --hv-bg-app: var(--color-bg-app);
-  --hv-bg-sidebar: color-mix(in oklab, var(--color-bg-app) 88%, black);
+  --hv-bg-sidebar: var(--hv-bg-app);
   --hv-surface-1: color-mix(in oklab, var(--color-bg-surface) 70%, var(--color-bg-app));
   --hv-surface-2: color-mix(in oklab, var(--color-bg-surface-2) 85%, var(--color-bg-app));
   --hv-surface-3: var(--color-bg-surface-3);
@@ -40,12 +40,13 @@
   --hv-info: var(--color-state-info);
   --hv-focus-ring: var(--color-focus, var(--color-accent-brand));
 
-  /* Shape and rhythm (4px grid). Sharp edges: tight corners are the premium
-     Hive look — 2px chips, 3px buttons, 4px cards, 6px dialogs. */
-  --hv-r-chip: 2px;
-  --hv-r-btn: 3px;
-  --hv-r-card: 4px;
-  --hv-r-dialog: 6px;
+  /* Shape and rhythm. Corners follow the site's own radius vars
+     ([data-radius] / [data-corners] rescale --radius-*), so Hive matches
+     whatever corner choice the rest of NexoraGuru is using. */
+  --hv-r-chip: var(--radius-xs, 2px);
+  --hv-r-btn: var(--radius-control);
+  --hv-r-card: var(--radius-card);
+  --hv-r-dialog: var(--radius-sheet);
   --hv-row-h: 40px;
 
   /* Type scale (px): meta 12 · body-sm 12.5 · body 13.5 · emphasis 14 · section 17 · page 26. */
@@ -289,7 +290,7 @@
 .hv-user-msg {
   background: var(--hv-surface-2);
   border: 1px solid var(--hv-border-subtle);
-  border-radius: 12px 12px 4px 12px;
+  border-radius: var(--radius-card) var(--radius-card) var(--radius-xs) var(--radius-card);
   color: var(--hv-text-1);
 }
 .hv-jump {
