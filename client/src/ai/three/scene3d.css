@@ -124,3 +124,53 @@
   outline: 2px solid var(--color-accent-brand);
   outline-offset: -2px;
 }
+.ai3d-tex {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.1rem 0;
+  color: var(--color-text-primary);
+  font-size: 14px;
+  min-height: 2.4rem;
+}
+.ai3d-tex .katex-display {
+  margin: 0.2rem 0;
+  text-align: left;
+}
+.ai3d-tex:focus-visible {
+  outline: 2px solid var(--color-accent-brand);
+  outline-offset: 2px;
+}
+/* Full screen: the view takes the space the steps and controls leave. */
+.ai3d:fullscreen {
+  background: var(--color-bg-app);
+  padding: 1rem;
+  grid-template-rows: 1fr auto auto auto;
+  align-content: stretch;
+}
+.ai3d:fullscreen .ai3d-view {
+  height: auto;
+  min-height: 0;
+}
+/* The value under the pointer. */
+.ai3d-tip {
+  position: absolute;
+  z-index: 20;
+  max-width: 260px;
+  padding: 3px 8px;
+  font-size: 12px;
+  line-height: 1.35;
+  white-space: pre-line;
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+.ai3d-cam button[aria-pressed='true'] {
+  color: var(--color-text-primary);
+  background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+}
+.ai3d-cam button[aria-pressed='false'] {
+  color: var(--color-text-muted);
+}

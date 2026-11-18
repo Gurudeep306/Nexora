@@ -62,6 +62,24 @@ values rising as columns, a policy as arrows).
 - The step note is read to screen readers when it changes while paused
   (`aria-live` is off while playing, so it isn't noisy).
 
+## 3b. What we learnt from the best (research, 2026-11)
+
+Studied in the library's code (`private/library/repos/`) and on the web:
+Bycroft's 3D LLM visualisation (MIT), the Georgia Tech Transformer, CNN
+and Diffusion Explainers (MIT), TensorFlow Playground (Apache-2.0), the
+telesens loss-landscape viewer, TensorSpace.js, MathBox and Manim.
+What they do, and what our frame now does too:
+
+| They do | Our `Scene3D` |
+|---|---|
+| A timeline of events with durations and waits; narration in sync (LLM-viz `afterTime`, `commentary`) | Steps with their own `ms`, a note and a live formula with the step's real numbers (`tex`) |
+| Reading breaks: playback stops at the end of an idea (LLM-viz `breakAfter`) | `pause: true` on a step: autoplay stops there; the button says Continue |
+| The camera flies to each part as the story reaches it (LLM-viz `moveCameraTo`) | `view` per step, glided with camera-controls; dragging hands the camera to you; "Follow the tour" hands it back |
+| Everything else dims while one part is explained | `focus` per step and `dim(id)` |
+| Hover anything to read its exact value (telesens, Playground) | `tip()` from any object: surfaces, points, cells, neurons |
+| Operations shown physically: a dot product's cells fly together and merge (LLM-viz) | The convolution's nine products fly into their output cell |
+| You can change the input and watch (Playground, Explainers) | Click the loss surface to start there; learning-rate slider; choose the network's example |
+
 ## 4. Rules every scene follows
 
 1. **Teach one idea.** If a scene shows two ideas, split it. No decoration.
