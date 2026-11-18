@@ -1,0 +1,157 @@
+{
+  "_comment": "Built-in company cards on /problems/sets (Companies). Each cites a verified public page about that company's interviews (checked 2026-11-17). Problems appear only from community 'asked at' reports (2+); nothing is invented and no premium/leaked lists are used.",
+  "companies": [
+    {
+      "company": "Google",
+      "sourceUrl": "https://www.geeksforgeeks.org/google-interview-questions/"
+    },
+    {
+      "company": "Amazon",
+      "sourceUrl": "https://www.geeksforgeeks.org/amazon-interview-questions/"
+    },
+    {
+      "company": "Microsoft",
+      "sourceUrl": "https://www.geeksforgeeks.org/microsoft-interview-experience/"
+    },
+    {
+      "company": "Meta",
+      "sourceUrl": "https://www.geeksforgeeks.org/facebook-interview-questions/"
+    },
+    {
+      "company": "Apple",
+      "sourceUrl": "https://www.geeksforgeeks.org/apple-interview-experience/"
+    },
+    {
+      "company": "Netflix",
+      "sourceUrl": "https://www.geeksforgeeks.org/netflix-interview-experience/"
+    },
+    {
+      "company": "Adobe",
+      "sourceUrl": "https://www.geeksforgeeks.org/adobe-interview-experience/"
+    },
+    {
+      "company": "Uber",
+      "sourceUrl": "https://www.geeksforgeeks.org/uber-interview-experience/"
+    },
+    {
+      "company": "Samsung",
+      "sourceUrl": "https://www.geeksforgeeks.org/samsung-interview-experience/"
+    },
+    {
+      "company": "Goldman Sachs",
+      "sourceUrl": "https://www.geeksforgeeks.org/goldman-sachs-interview-experience/"
+    },
+    {
+      "company": "Salesforce",
+      "sourceUrl": "https://www.geeksforgeeks.org/salesforce-interview-experience/"
+    },
+    {
+      "company": "Oracle",
+      "sourceUrl": "https://www.geeksforgeeks.org/oracle-interview-experience/"
+    },
+    {
+      "company": "IBM",
+      "sourceUrl": "https://www.geeksforgeeks.org/ibm-interview-experience/"
+    },
+    {
+      "company": "PayPal",
+      "sourceUrl": "https://www.geeksforgeeks.org/paypal-interview-experience/"
+    },
+    {
+      "company": "Swiggy",
+      "sourceUrl": "https://www.geeksforgeeks.org/interview-experiences/company-interview-corner/"
+    },
+    {
+      "company": "Zomato",
+      "sourceUrl": "https://www.geeksforgeeks.org/zomato-interview-experience/"
+    },
+    {
+      "company": "Paytm",
+      "sourceUrl": "https://www.geeksforgeeks.org/paytm-interview-experience/"
+    },
+    {
+      "company": "Infosys",
+      "sourceUrl": "https://www.geeksforgeeks.org/infosys-interview-experience/"
+    },
+    {
+      "company": "Wipro",
+      "sourceUrl": "https://www.geeksforgeeks.org/wipro-interview-experience/"
+    },
+    {
+      "company": "Cisco",
+      "sourceUrl": "https://www.geeksforgeeks.org/cisco-interview-experience/"
+    },
+    {
+      "company": "Intel",
+      "sourceUrl": "https://www.geeksforgeeks.org/intel-interview-experience/"
+    },
+    {
+      "company": "NVIDIA",
+      "sourceUrl": "https://www.geeksforgeeks.org/interview-experiences/company-interview-corner/"
+    },
+    {
+      "company": "Walmart",
+      "sourceUrl": "https://www.geeksforgeeks.org/walmart-interview-experience/"
+    },
+    {
+      "company": "Spotify",
+      "sourceUrl": "https://www.geeksforgeeks.org/interview-experiences/company-interview-corner/"
+    },
+    {
+      "company": "LinkedIn",
+      "sourceUrl": "https://www.geeksforgeeks.org/interview-experiences/company-interview-corner/"
+    },
+    {
+      "company": "Airbnb",
+      "sourceUrl": "https://www.geeksforgeeks.org/interview-experiences/company-interview-corner/"
+    },
+    {
+      "company": "Flipkart",
+      "sourceUrl": "https://www.geeksforgeeks.org/flipkart-interview-questions/"
+    },
+    {
+      "company": "TCS",
+      "sourceUrl": "https://www.geeksforgeeks.org/tcs-interview-questions/"
+    },
+    {
+      "company": "Accenture",
+      "sourceUrl": "https://www.geeksforgeeks.org/accenture-interview-questions/"
+    },
+    {
+      "company": "Atlassian",
+      "sourceUrl": "https://www.geeksforgeeks.org/atlassian-interview-experience/"
+    },
+    {
+      "company": "Stripe",
+      "sourceUrl": "https://www.geeksforgeeks.org/interview-experiences/company-interview-corner/"
+    },
+    {
+      "company": "Visa",
+      "sourceUrl": "https://www.geeksforgeeks.org/visa-interview-experience/"
+    },
+    {
+      "company": "PhonePe",
+      "sourceUrl": "https://www.geeksforgeeks.org/phonepe-interview-questions/"
+    },
+    {
+      "company": "Razorpay",
+      "sourceUrl": "https://www.geeksforgeeks.org/razorpay-interview-experience/"
+    },
+    {
+      "company": "Ola",
+      "sourceUrl": "https://www.geeksforgeeks.org/ola-interview-experience/"
+    },
+    {
+      "company": "JPMorgan",
+      "sourceUrl": "https://www.geeksforgeeks.org/jpmorgan-interview-experience/"
+    },
+    {
+      "company": "SAP",
+      "sourceUrl": "https://www.geeksforgeeks.org/sap-interview-experience/"
+    },
+    {
+      "company": "Deloitte",
+      "sourceUrl": "https://www.geeksforgeeks.org/deloitte-interview-experience/"
+    }
+  ]
+}

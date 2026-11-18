@@ -32,7 +32,7 @@
 export const VIZ_TONES = ['ink', 'muted', 'accent', 'subject', 'success', 'warning', 'danger', 'info'] as const
 export type VizTone = (typeof VIZ_TONES)[number]
 
-export const VIZ_ELEMENT_TYPES = ['box', 'circle', 'node', 'text', 'arrow', 'line', 'table', 'grid', 'bits', 'arc', 'gate'] as const
+export const VIZ_ELEMENT_TYPES = ['box', 'circle', 'node', 'text', 'arrow', 'line', 'table', 'grid', 'bits', 'arc', 'gate', 'loop'] as const
 export type VizElementType = (typeof VIZ_ELEMENT_TYPES)[number]
 /** Logic-gate symbols (the `gate` element). */
 export const VIZ_GATE_KINDS = ['and', 'or', 'not', 'buf', 'nand', 'nor', 'xor', 'xnor'] as const
@@ -43,7 +43,7 @@ export type VizLayout = (typeof VIZ_LAYOUTS)[number]
 /** Default width (CSS px) below which a scene with a `narrow` canvas switches to it. */
 export const VIZ_NARROW_BELOW = 560
 /** Properties an element's `narrow` override may change: geometry and text size only, never content. */
-export const VIZ_LAYOUT_KEYS = ['x', 'y', 'w', 'h', 'cx', 'cy', 'r', 'r0', 'start', 'end', 'cell', 'cellW', 'cellH', 'size', 'points', 'from', 'to', 'curve', 'anchor'] as const
+export const VIZ_LAYOUT_KEYS = ['x', 'y', 'w', 'h', 'cx', 'cy', 'r', 'r0', 'start', 'end', 'cell', 'cellW', 'cellH', 'size', 'points', 'from', 'to', 'curve', 'anchor', 'angle'] as const
 
 export type VizPoint = [number, number]
 /** An arrow end: a point, or the id of an element (snaps to its outline). */
@@ -195,7 +195,26 @@ export interface VizGate extends Common {
   size?: number
 }
 
-export type VizElement = VizBox | VizCircle | VizText | VizArrow | VizLine | VizTable | VizGrid | VizBits | VizArc | VizGate
+/**
+ * A self-loop on the outline of another element (a node in a graph). `angle`
+ * is degrees clockwise from 12 o'clock where the loop attaches; `size` is the
+ * loop's radius (default 0.9 × the node's radius). `head: "end"` draws an
+ * arrowhead (digraphs). The loop follows its node when the node moves (E1).
+ */
+export interface VizLoop extends Common {
+  type: 'loop'
+  /** Id of the element the loop is drawn on (a node/circle/box…). */
+  on: string
+  /** Where the loop attaches, degrees clockwise from 12 o'clock (default 0 = up). */
+  angle?: number
+  /** Loop radius (default 0.9 × the target's radius). */
+  size?: number
+  label?: string
+  mono?: boolean
+  head?: 'end' | 'none'
+}
+
+export type VizElement = VizBox | VizCircle | VizText | VizArrow | VizLine | VizTable | VizGrid | VizBits | VizArc | VizGate | VizLoop
 
 export interface VizPatch {
   id: string
@@ -341,6 +360,10 @@ const FIELDS: Record<VizElementType, { required: string[]; props: Record<string,
       highlight: (v) => (Array.isArray(v) && v.length <= 64 && v.every((n) => Number.isInteger(n) && n >= 0) ? null : 'must be a list of cell indexes'),
     },
   },
+  loop: {
+    required: ['on'],
+    props: { on: end, angle: num(-720, 720), size: num(2, 200), label: str(80), mono: bool, head: oneOf(['end', 'none']) },
+  },
 }
 
 /** Problems with one element, as "path: message" strings. */
@@ -443,21 +466,33 @@ export function validateVizSpec(spec: unknown): string[] {
     for (const k of ['from', 'to']) {
       const v = el[k]
       if (typeof v === 'string' && !byId.has(v)) errs.push(`${where}.${k}: no element with id "${v}"`)
-      if (typeof v === 'string' && byId.get(v)?.type === 'arrow') errs.push(`${where}.${k}: cannot attach to another arrow`)
+      if (typeof v === 'string' && (byId.get(v)?.type === 'arrow' || byId.get(v)?.type === 'loop')) errs.push(`${where}.${k}: cannot attach to another arrow or loop`)
     }
   }
-  spec.elements.forEach((el, i) => isObj(el) && checkEnds(el, `elements[${i}]`))
+  const checkLoop = (el: Record<string, unknown>, where: string) => {
+    if (el.type !== 'loop') return
+    const v = el.on
+    if (typeof v === 'string' && !byId.has(v)) errs.push(`${where}.on: no element with id "${v}"`)
+    if (typeof v === 'string' && (byId.get(v)?.type === 'arrow' || byId.get(v)?.type === 'loop')) errs.push(`${where}.on: a loop must be drawn on a shape, not an arrow or loop`)
+  }
+  spec.elements.forEach((el, i) => isObj(el) && (checkEnds(el, `elements[${i}]`), checkLoop(el, `elements[${i}]`)))
   // Layouts: per-element layout data needs the second canvas, and an arrow must find its ends in every layout it is drawn in.
   const inLayout = (el: Record<string, unknown> | undefined, layout: VizLayout) => !!el && (el.only === undefined || el.only === layout)
   spec.elements.forEach((el, i) => {
     if (!isObj(el)) return
     if ((el.only !== undefined || el.narrow !== undefined) && !isObj(spec.narrow)) errs.push(`elements[${i}]: "only" and "narrow" need a top-level narrow canvas`)
-    if (el.type !== 'arrow') return
-    for (const layout of VIZ_LAYOUTS) {
-      if (!inLayout(el, layout)) continue
-      for (const k of ['from', 'to']) {
-        const v = el[k]
-        if (typeof v === 'string' && byId.has(v) && !inLayout(byId.get(v), layout)) errs.push(`elements[${i}].${k}: "${v}" is not drawn in the ${layout} layout`)
+    if (el.type === 'arrow') {
+      for (const layout of VIZ_LAYOUTS) {
+        if (!inLayout(el, layout)) continue
+        for (const k of ['from', 'to']) {
+          const v = el[k]
+          if (typeof v === 'string' && byId.has(v) && !inLayout(byId.get(v), layout)) errs.push(`elements[${i}].${k}: "${v}" is not drawn in the ${layout} layout`)
+        }
+      }
+    }
+    if (el.type === 'loop' && typeof el.on === 'string' && byId.has(el.on)) {
+      for (const layout of VIZ_LAYOUTS) {
+        if (inLayout(el, layout) && !inLayout(byId.get(el.on), layout)) errs.push(`elements[${i}].on: "${el.on}" is not drawn in the ${layout} layout`)
       }
     }
   })
@@ -485,6 +520,7 @@ export function validateVizSpec(spec: unknown): string[] {
       const next = { ...cur, ...p.set }
       for (const e of checkElement(next, `${pw}.set`)) errs.push(e)
       checkEnds(next, `${pw}.set`)
+      checkLoop(next, `${pw}.set`)
       state.set(p.id, next)
     })
   })
