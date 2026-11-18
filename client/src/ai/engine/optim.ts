@@ -63,8 +63,8 @@ export const OPTIMIZERS: OptimizerSpec[] = [
 ]
 
 /** Run an optimiser for `n` steps from the surface's start. Every point is a real iterate. */
-export function run(s: Surface2, opt: OptimizerSpec['id'], n: number, lr: number): Step[] {
-  let [x, y] = s.start
+export function run(s: Surface2, opt: OptimizerSpec['id'], n: number, lr: number, start: [number, number] = s.start): Step[] {
+  let [x, y] = start
   const out: Step[] = []
   let vx = 0
   let vy = 0

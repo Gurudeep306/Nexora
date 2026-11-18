@@ -1,98 +1,132 @@
 import { useCallback, useEffect, useId, useRef, useState, type ComponentRef, type ReactNode } from 'react'
-import { Canvas, useThree } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
-import { Spherical, Vector3 } from 'three'
-import { ChevronLeft, ChevronRight, Minus, Pause, Play, Plus, RotateCcw } from 'lucide-react'
+import { Canvas, useThree, type ThreeEvent } from '@react-three/fiber'
+import { CameraControls } from '@react-three/drei'
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
+import { ChevronLeft, ChevronRight, Maximize2, Minimize2, Minus, Pause, Play, Plus, RotateCcw, Video } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hasWebGL, usePalette3D, useReducedMotion, type Palette3D } from './theme3d'
+import type { V3 } from './coords'
 import './scene3d.css'
+
+/*
+ * The frame for every 3D scene in the AI courses, built on what the best
+ * explorable explanations do (Bycroft's LLM visualisation, the Georgia Tech
+ * explainers, TensorFlow Playground):
+ *   - a timeline of steps with their own durations, reading breaks where
+ *     autoplay waits ("Continue"), a scrubber and speeds;
+ *   - a camera that glides to each step's view (camera-controls), until you
+ *     take over by dragging; "Follow the tour" hands it back;
+ *   - focus: what the step is about stays bright, the rest dims;
+ *   - hover to read exact values; live formulas with the step's numbers;
+ *   - keys, full screen, the theme's colours, reduced motion, a text
+ *     description and a 2D fallback.
+ */
+
+export interface SceneView {
+  camera: V3
+  target: V3
+}
 
 export interface SceneStep {
   /** Short name of the step ("Step 12", "Forward: hidden layer"). */
   label: string
   /** What is happening now, in plain words (read out to screen readers). */
   note?: ReactNode
+  /** The step's formula with its real numbers filled in (KaTeX). */
+  tex?: string
+  /** Where the camera goes for this step (kept until a later step sets another). */
+  view?: SceneView
+  /** Ids of the parts this step is about; everything else dims. */
+  focus?: string[]
+  /** Autoplay stops here so the student can read; Play continues. */
+  pause?: boolean
+  /** How long the move from this step to the next takes, in ms (default: the scene's stepMs). */
+  ms?: number
 }
 
 export interface SceneCtx {
   /** The current step (0 when the scene has no steps). */
   step: number
-  /** Continuous time in steps, 0 … steps − 1: step + how far it is towards the next (for smooth motion). */
+  /** Continuous time in steps, 0 … steps − 1 (for smooth motion). */
   t: number
   /** How far into the current step, 0 … 1, eased. */
   frac: number
   p: Palette3D
   reduced: boolean
+  /** Opacity for a part: 1 when the step is about it (or about everything), dimmed otherwise. */
+  dim: (id: string) => number
+  /** Show a value under the pointer (call from onPointerMove); `null` hides it. */
+  tip: (e: ThreeEvent<PointerEvent> | null, text?: string) => void
 }
 
-type Controls = ComponentRef<typeof OrbitControls>
-interface CamApi {
-  zoom: (f: number) => void
-  turn: (dAz: number, dPol: number) => void
+type Controls = ComponentRef<typeof CameraControls>
+
+function StepTex({ src }: { src: string }) {
+  return <div className="ai3d-tex" tabIndex={0} role="group" aria-label="Formula for this step" dangerouslySetInnerHTML={{ __html: katex.renderToString(src, { displayMode: true, throwOnError: false, strict: false }) }} />
 }
 
-/** Inside the canvas: gives the toolbar and keys a way to move the camera. */
-function CameraRig({ onApi, controls }: { onApi: (api: CamApi) => void; controls: React.RefObject<Controls | null> }) {
-  const { camera, invalidate, size } = useThree()
-  const fitted = useRef(false)
-  // On a narrow (phone) view the scene needs more room: back the camera off once, and make that the "Reset view" framing.
-  useEffect(() => {
-    if (fitted.current || !size.width || !size.height) return
-    fitted.current = true
-    const c = controls.current
-    const target = c ? (c.target as Vector3) : new Vector3()
-    const aspect = size.width / size.height
-    const k = Math.min(2.2, Math.max(1, 1.25 / aspect))
-    if (k > 1) camera.position.copy(target.clone().add(camera.position.clone().sub(target).multiplyScalar(k)))
-    c?.update()
-    c?.saveState()
-    invalidate()
-  }, [size.width, size.height, camera, controls, invalidate])
-  useEffect(() => {
-    onApi({
-      zoom: (f) => {
-        const c = controls.current
-        const target = c ? (c.target as Vector3) : new Vector3()
-        const d = camera.position.clone().sub(target).multiplyScalar(f)
-        if (d.length() < 0.8 || d.length() > 60) return
-        camera.position.copy(target.clone().add(d))
-        c?.update()
-        invalidate()
-      },
-      turn: (dAz, dPol) => {
-        const c = controls.current
-        const target = c ? (c.target as Vector3) : new Vector3()
-        const s = new Spherical().setFromVector3(camera.position.clone().sub(target))
-        s.theta += dAz
-        s.phi = Math.max(0.05, Math.min(Math.PI - 0.05, s.phi + dPol))
-        camera.position.copy(target.clone().add(new Vector3().setFromSpherical(s)))
-        camera.lookAt(target)
-        c?.update()
-        invalidate()
-      },
-    })
-  }, [onApi, camera, controls, invalidate])
-  return null
+type TipState = { x: number; y: number; text: string } | null
+
+/** Connects the scene's pointer events to the readout, without re-rendering the scene on every move. */
+class HoverBus {
+  private el: HTMLElement | null = null
+  private set: ((t: TipState) => void) | null = null
+  attach(el: HTMLElement | null) {
+    this.el = el
+  }
+  bind(set: (t: TipState) => void) {
+    this.set = set
+  }
+  show(clientX: number, clientY: number, text: string) {
+    const r = this.el?.getBoundingClientRect()
+    this.set?.({ x: clientX - (r?.left ?? 0), y: clientY - (r?.top ?? 0), text })
+  }
+  hide() {
+    this.set?.(null)
+  }
+}
+
+/** The value under the pointer. Its own state, so moving the mouse never re-renders the scene. */
+function Tip({ bind }: { bind: (set: (t: TipState) => void) => void }) {
+  const [t, setT] = useState<TipState>(null)
+  useEffect(() => bind(setT), [bind])
+  if (!t) return null
+  return (
+    <div className="ai3d-tip" style={{ left: t.x + 14, top: t.y + 12 }} role="status">
+      {t.text}
+    </div>
+  )
 }
 
 /** Soft light from above and behind, brighter in light mode; no shadows (the house style has none). */
 function Lights({ p }: { p: Palette3D }) {
   return (
     <>
-      <ambientLight intensity={p.dark ? 0.9 : 1.1} />
-      <directionalLight position={[5, 9, 6]} intensity={p.dark ? 1.4 : 1.6} />
-      <directionalLight position={[-6, 4, -5]} intensity={0.45} />
+      <hemisphereLight args={['#ffffff', p.dark ? '#202020' : '#bdb6a6', p.dark ? 0.7 : 0.9]} />
+      <directionalLight position={[5, 9, 6]} intensity={p.dark ? 1.3 : 1.5} />
+      <directionalLight position={[-6, 4, -5]} intensity={0.4} />
     </>
   )
 }
 
-/**
- * The frame for every 3D scene in the AI courses: a WebGL view you can drag
- * to turn, scroll or pinch to zoom, right-drag to pan; a step-by-step
- * timeline; keyboard control; the theme's colours; a text description for
- * screen readers; and a 2D fallback when WebGL is missing.
- */
+/** Inside the canvas: frames the first view (backing off on narrow screens) and saves it for "Reset view". */
+function Framing({ controls, camera, target }: { controls: React.RefObject<Controls | null>; camera: V3; target: V3 }) {
+  const { size } = useThree()
+  const done = useRef(false)
+  useEffect(() => {
+    const c = controls.current
+    if (done.current || !c || !size.width || !size.height) return
+    done.current = true
+    const k = Math.min(2.2, Math.max(1, 1.25 / (size.width / size.height)))
+    const pos = camera.map((v, i) => target[i] + (v - target[i]) * k)
+    void c.setLookAt(pos[0], pos[1], pos[2], target[0], target[1], target[2], false)
+    c.saveState()
+  }, [controls, camera, target, size.width, size.height])
+  return null
+}
+
 export function Scene3D({
   title,
   description,
@@ -102,17 +136,20 @@ export function Scene3D({
   stepMs = 700,
   fallback,
   className,
+  resetKey,
   children,
 }: {
   title: string
   /** What the scene shows, in words, for screen readers and as the WebGL fallback. */
   description: string
   steps?: SceneStep[]
-  camera?: [number, number, number]
-  target?: [number, number, number]
+  camera?: V3
+  target?: V3
   stepMs?: number
   fallback?: ReactNode
   className?: string
+  /** Change it (a new start point, a new input) to replay the scene from the start. */
+  resetKey?: string | number
   children: (ctx: SceneCtx) => ReactNode
 }) {
   const p = usePalette3D()
@@ -121,17 +158,17 @@ export function Scene3D({
   const [time, setTime] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(1)
+  const [follow, setFollow] = useState(true)
+  const [full, setFull] = useState(false)
   const root = useRef<HTMLElement>(null)
-  const started = useRef(false)
   const controls = useRef<Controls | null>(null)
-  const cam = useRef<CamApi | null>(null)
+  const started = useRef(false)
+  const [hover] = useState(() => new HoverBus())
   const descId = useId()
-  const setCam = useCallback((a: CamApi) => {
-    cam.current = a
-  }, [])
   const n = steps?.length ?? 0
+  const hasViews = !!steps?.some((s) => s.view)
 
-  // The clock: continuous time while playing (smooth motion), whole steps with reduced motion.
+  // The clock. Continuous while playing; whole steps with reduced motion; stops at reading breaks.
   useEffect(() => {
     if (!playing || n < 2) return
     let raf = 0
@@ -141,15 +178,23 @@ export function Scene3D({
       const dt = now - last
       last = now
       setTime((t0) => {
+        const k = Math.floor(t0 + 1e-9)
+        const dur = steps?.[k]?.ms ?? stepMs
         if (reduced) {
           held += dt * speed
-          if (held < Math.max(stepMs, 900)) return t0
+          if (held < Math.max(dur, 900)) return t0
           held = 0
-          const nx = Math.min(n - 1, Math.floor(t0) + 1)
-          if (nx >= n - 1) setPlaying(false)
+          const nx = Math.min(n - 1, k + 1)
+          if (nx >= n - 1 || steps?.[nx]?.pause) setPlaying(false)
           return nx
         }
-        const nx = Math.min(n - 1, t0 + (dt * speed) / stepMs)
+        let nx = Math.min(n - 1, t0 + (dt * speed) / dur)
+        // Crossing into a step with a reading break: stop exactly on it.
+        const kn = Math.floor(nx + 1e-9)
+        if (kn > k && steps?.[kn]?.pause) {
+          nx = kn
+          setPlaying(false)
+        }
         if (nx >= n - 1) setPlaying(false)
         return nx
       })
@@ -157,7 +202,7 @@ export function Scene3D({
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [playing, n, stepMs, reduced, speed])
+  }, [playing, n, stepMs, reduced, speed, steps])
 
   // Autoplay once, the first time most of the scene scrolls into view (never with reduced motion).
   useEffect(() => {
@@ -177,28 +222,94 @@ export function Scene3D({
     return () => io.disconnect()
   }, [n, reduced])
 
+  // A new setting (start point, input, learning rate): play again from the start.
+  const firstKey = useRef(resetKey)
+  useEffect(() => {
+    if (resetKey === firstKey.current) return
+    firstKey.current = resetKey
+    started.current = true
+    setTime(0)
+    setPlaying(!reduced && n > 1)
+  }, [resetKey, reduced, n])
+
   const step = Math.floor(time + 1e-9)
   const raw = time - step
   const frac = raw < 0.5 ? 2 * raw * raw : 1 - (-2 * raw + 2) ** 2 / 2
-  const go = useCallback(
-    (d: number) => {
-      started.current = true
-      setPlaying(false)
-      setTime((t0) => Math.max(0, Math.min(n - 1, (d > 0 ? Math.floor(t0 + 1e-9) : Math.ceil(t0 - 1e-9)) + d)))
+  const cur = steps?.[step]
+
+  // The guided camera: glide to the view of the current step (the last one set at or before it).
+  let viewIdx = -1
+  if (steps) for (let k = step; k >= 0; k--) if (steps[k].view) {
+    viewIdx = k
+    break
+  }
+  useEffect(() => {
+    const c = controls.current
+    if (!c || !follow || viewIdx < 0 || !steps) return
+    const v = steps[viewIdx].view!
+    void c.setLookAt(v.camera[0], v.camera[1], v.camera[2], v.target[0], v.target[1], v.target[2], !reduced)
+  }, [viewIdx, follow, reduced, steps])
+
+  // Taking the camera (dragging, pinching) stops the tour from moving it.
+  useEffect(() => {
+    const c = controls.current
+    if (!c || !hasViews) return
+    const take = () => setFollow(false)
+    c.addEventListener('controlstart', take)
+    return () => c.removeEventListener('controlstart', take)
+  }, [hasViews, webgl])
+
+  useEffect(() => {
+    const on = () => setFull(document.fullscreenElement === root.current)
+    document.addEventListener('fullscreenchange', on)
+    return () => document.removeEventListener('fullscreenchange', on)
+  }, [])
+
+  const focus = cur?.focus
+  const dim = useCallback((id: string) => (!focus || focus.includes(id) ? 1 : 0.22), [focus])
+  const tip = useCallback(
+    (e: ThreeEvent<PointerEvent> | null, text?: string) => {
+      if (!e || !text) hover.hide()
+      else hover.show(e.nativeEvent.clientX, e.nativeEvent.clientY, text)
     },
-    [n],
+    [hover],
   )
+  const bindTip = useCallback(
+    (set: (t: TipState) => void) => hover.bind(set),
+    [hover],
+  )
+
+  const go = (d: number) => {
+    started.current = true
+    setPlaying(false)
+    setTime((t0) => Math.max(0, Math.min(n - 1, (d > 0 ? Math.floor(t0 + 1e-9) : Math.ceil(t0 - 1e-9)) + d)))
+  }
+  const toggle = () => {
+    started.current = true
+    if (!playing && time >= n - 1) setTime(0)
+    setPlaying((x) => !x)
+  }
   const reset = () => {
-    controls.current?.reset()
+    setFollow(true)
+    void controls.current?.reset(!reduced)
+  }
+  const zoom = (d: number) => void controls.current?.dolly(d, !reduced)
+  const turn = (az: number, pol: number) => {
+    if (hasViews) setFollow(false)
+    void controls.current?.rotate(az, pol, !reduced)
+  }
+  const toggleFull = () => {
+    if (document.fullscreenElement) void document.exitFullscreen()
+    else void root.current?.requestFullscreen?.()
   }
   const onKey = (e: React.KeyboardEvent) => {
     const k = e.key
-    if (k === 'ArrowLeft') cam.current?.turn(-0.15, 0)
-    else if (k === 'ArrowRight') cam.current?.turn(0.15, 0)
-    else if (k === 'ArrowUp') cam.current?.turn(0, -0.12)
-    else if (k === 'ArrowDown') cam.current?.turn(0, 0.12)
-    else if (k === '+' || k === '=') cam.current?.zoom(0.85)
-    else if (k === '-' || k === '_') cam.current?.zoom(1.18)
+    if (k === 'ArrowLeft') turn(-0.15, 0)
+    else if (k === 'ArrowRight') turn(0.15, 0)
+    else if (k === 'ArrowUp') turn(0, -0.12)
+    else if (k === 'ArrowDown') turn(0, 0.12)
+    else if (k === '+' || k === '=') zoom(1)
+    else if (k === '-' || k === '_') zoom(-1)
     else if (k === '0') reset()
     else if (n && k === '.') go(1)
     else if (n && k === ',') go(-1)
@@ -207,16 +318,12 @@ export function Scene3D({
     e.preventDefault()
   }
 
-  const cur = steps?.[step]
-  const toggle = () => {
-    started.current = true
-    if (!playing && time >= n - 1) setTime(0)
-    setPlaying((x) => !x)
-  }
+  const atBreak = !playing && n > 1 && time > 0 && time < n - 1 && !!cur?.pause
 
   return (
     <figure ref={root} className={cn('ai3d', className)}>
       <div
+        ref={(el) => hover.attach(el)}
         className="ai3d-view"
         tabIndex={0}
         role="group"
@@ -224,17 +331,19 @@ export function Scene3D({
         aria-label={`${title}. Drag to turn, scroll to zoom; or use the arrow keys, plus and minus.`}
         aria-describedby={descId}
         onKeyDown={onKey}
+        onPointerLeave={() => hover.hide()}
       >
         {webgl ? (
           <Canvas frameloop="demand" dpr={[1, 2]} camera={{ position: camera, fov: 40, near: 0.1, far: 200 }} gl={{ antialias: true, alpha: true }}>
             <Lights p={p} />
-            <OrbitControls ref={controls} makeDefault target={target} enableDamping={!reduced} dampingFactor={0.12} minDistance={1} maxDistance={60} />
-            <CameraRig onApi={setCam} controls={controls} />
-            {children({ step, t: time, frac, p, reduced })}
+            <CameraControls ref={controls} makeDefault smoothTime={reduced ? 0 : 0.45} draggingSmoothTime={reduced ? 0 : 0.12} minDistance={1} maxDistance={60} />
+            <Framing controls={controls} camera={camera} target={target} />
+            {children({ step, t: time, frac, p, reduced, dim, tip })}
           </Canvas>
         ) : (
           <div className="ai3d-fallback">{fallback ?? <p>{description}</p>}</div>
         )}
+        <Tip bind={bindTip} />
         <p className="ai3d-hint" aria-hidden="true">
           Drag to turn · scroll or pinch to zoom · right-drag to pan
         </p>
@@ -250,6 +359,7 @@ export function Scene3D({
           {cur?.note && <span className="ai3d-text">{cur.note}</span>}
         </div>
       )}
+      {cur?.tex && <StepTex src={cur.tex} />}
       <div className="ai3d-bar">
         {n > 0 && (
           <span className="ai3d-group">
@@ -257,7 +367,7 @@ export function Scene3D({
               <ChevronLeft aria-hidden="true" />
             </Button>
             <Button variant="outline" size="sm" onClick={toggle}>
-              {playing ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />} {playing ? 'Pause' : time >= n - 1 ? 'Replay' : 'Play'}
+              {playing ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />} {playing ? 'Pause' : time >= n - 1 ? 'Replay' : atBreak ? 'Continue' : 'Play'}
             </Button>
             <Button variant="ghost" size="icon-sm" aria-label="Next step" onClick={() => go(1)} disabled={time >= n - 1}>
               <ChevronRight aria-hidden="true" />
@@ -287,15 +397,25 @@ export function Scene3D({
           </span>
         )}
         <span className="ai3d-group ai3d-cam">
-          <Button variant="ghost" size="icon-sm" aria-label="Zoom out" onClick={() => cam.current?.zoom(1.18)} disabled={!webgl}>
+          {hasViews && (
+            <Button variant="ghost" size="sm" aria-pressed={follow} onClick={() => setFollow((f) => !f)} disabled={!webgl}>
+              <Video aria-hidden="true" /> Follow the tour
+            </Button>
+          )}
+          <Button variant="ghost" size="icon-sm" aria-label="Zoom out" onClick={() => zoom(-1)} disabled={!webgl}>
             <Minus aria-hidden="true" />
           </Button>
-          <Button variant="ghost" size="icon-sm" aria-label="Zoom in" onClick={() => cam.current?.zoom(0.85)} disabled={!webgl}>
+          <Button variant="ghost" size="icon-sm" aria-label="Zoom in" onClick={() => zoom(1)} disabled={!webgl}>
             <Plus aria-hidden="true" />
           </Button>
           <Button variant="ghost" size="sm" onClick={reset} disabled={!webgl}>
             <RotateCcw aria-hidden="true" /> Reset view
           </Button>
+          {typeof document !== 'undefined' && document.fullscreenEnabled && (
+            <Button variant="ghost" size="icon-sm" aria-label={full ? 'Exit full screen' : 'Full screen'} onClick={toggleFull}>
+              {full ? <Minimize2 aria-hidden="true" /> : <Maximize2 aria-hidden="true" />}
+            </Button>
+          )}
         </span>
       </div>
     </figure>
