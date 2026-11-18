@@ -278,17 +278,11 @@ function Hero({ schedules, loaded, onNew }: { schedules: Schedule[]; loaded: boo
   const next = schedules.filter((s) => s.enabled && s.nextRun).sort((a, b) => (a.nextRun ?? 0) - (b.nextRun ?? 0))[0]
   const active = schedules.filter((s) => s.enabled).length
   return (
-    <div className="hive-card relative mb-6 overflow-hidden p-6 sm:p-7">
-      <div className="relative flex flex-wrap items-start gap-5">
-        <span className="hive-tile size-12" style={{ ['--tile' as string]: 'oklch(66% 0.15 270)' }}>
-          <CalendarClock className="size-5" />
-        </span>
+    <div className="mb-8">
         <PageHeader
-          className="min-w-0 flex-1 sm:items-center"
-          title="Automations"
+          title="Schedules"
           titleClassName="text-[26px] tracking-[-0.02em]"
-          sub="Hive keeps working while you sleep."
-          subClassName="text-[14px] text-text-muted"
+          sub="Jobs Hive starts on its own — test fixes, dependency updates, docs — while you sleep."
           meta={
             <div className="mt-3 min-h-7">
             {!loaded ? (
@@ -316,11 +310,10 @@ function Hero({ schedules, loaded, onNew }: { schedules: Schedule[]; loaded: boo
           }
           actions={
             <Button onClick={onNew}>
-              <Plus /> New automation
+              <Plus /> New schedule
             </Button>
           }
         />
-      </div>
     </div>
   )
 }
@@ -490,8 +483,8 @@ function EmptyAutomations({ noProjects, onNew }: { noProjects: boolean; onNew: (
       <span className="hive-tile mx-auto size-12" style={{ ['--tile' as string]: 'oklch(66% 0.15 270)' }}>
         <Timer className="size-5" />
       </span>
-      <h2 className="mt-3 text-[17px] font-semibold text-text-primary">No automations yet</h2>
-      <p className="mx-auto mt-1 max-w-lg text-[13px] text-text-muted">An automation is a job Hive starts on its own, on a schedule — so tests get fixed, dependencies get updated and docs stay fresh without anyone asking.</p>
+      <h2 className="mt-3 text-[17px] font-semibold text-text-primary">No schedules yet</h2>
+      <p className="mx-auto mt-1 max-w-lg text-[13px] text-text-muted">A schedule is a job Hive starts on its own, on a schedule — so tests get fixed, dependencies get updated and docs stay fresh without anyone asking.</p>
       <div className="mx-auto mt-6 grid max-w-3xl gap-3 text-left sm:grid-cols-3">
         {steps.map((x, i) => (
           <motion.div key={x.t} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.22, delay: i * 0.05, ease: EASE }} className="rounded-2xl border hive-line bg-bg-app/40 p-3.5">
@@ -510,8 +503,8 @@ function EmptyAutomations({ noProjects, onNew }: { noProjects: boolean; onNew: (
           .
         </p>
       ) : (
-        <Button className="mt-6" onClick={onNew}>
-          <Plus /> New automation
+        <Button className="mt-6" variant="secondary" onClick={onNew}>
+          <Plus /> Write the first one
         </Button>
       )}
     </div>
