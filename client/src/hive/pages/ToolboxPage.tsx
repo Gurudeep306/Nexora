@@ -304,7 +304,7 @@ function ToolCard({ t, i, catLabel, onConnect }: { t: EcoTool; i: number; catLab
           {t.name.replace(/[^A-Za-z0-9]/g, '').slice(0, 2) || '·'}
         </span>
         <div className="min-w-0 flex-1">
-          <h3 className="truncate text-[14px] font-semibold text-text-primary">{t.name}</h3>
+          <h2 className="truncate text-[14px] font-semibold text-text-primary">{t.name}</h2>
           <div className="truncate text-[11.5px] text-text-muted">{catLabel}</div>
         </div>
         <HowBadge how={t.use.how} />

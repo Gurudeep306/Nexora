@@ -23,15 +23,12 @@ export function Skeleton({ className, style }: { className?: string; style?: CSS
   return <div aria-hidden="true" className={cn('hv-skeleton', className)} style={style} />
 }
 
-const THINK_WORDS = ['Thinking', 'Planning', 'Searching', 'Writing']
-
 /**
- * The pre-first-token placeholder in chat/agent streams: a small arc spinner,
- * a phase word that changes every couple of seconds (a long wait reads as
- * work, not a hang) and the seconds so far. No bouncing dots, no fake
- * progress. role="status"; static under reduced motion.
+ * A small honest "working" line for agent streams: a spinner, one word for
+ * what is really happening (the caller knows: "Writing code", "Typing"…)
+ * and the seconds so far. It never cycles through invented phases.
  */
-export function ThinkingIndicator({ words = THINK_WORDS, className }: { words?: string[]; className?: string }) {
+export function ThinkingIndicator({ words = ['Working'], className }: { words?: string[]; className?: string }) {
   const [t0] = useState(() => Date.now())
   const [, tick] = useState(0)
   useEffect(() => {
@@ -39,13 +36,11 @@ export function ThinkingIndicator({ words = THINK_WORDS, className }: { words?: 
     return () => clearInterval(t)
   }, [])
   const secs = Math.floor((Date.now() - t0) / 1000)
-  const word = words[Math.floor(secs / 2.4) % words.length]
+  const word = words[0] ?? 'Working'
   return (
     <span role="status" className={cn('inline-flex items-center gap-2 text-[13px] text-[var(--hv-text-2)]', className)}>
       <Spinner size={13} label={word} />
-      <span key={word} className="hive-word-swap font-medium">
-        {word}
-      </span>
+      <span className="font-medium">{word}</span>
       {secs >= 3 && <span className="tabular-nums text-[var(--hv-text-3)]">{secs}s</span>}
     </span>
   )

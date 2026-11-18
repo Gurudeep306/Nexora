@@ -99,7 +99,7 @@ function NewIdea({ onCreated }: { onCreated: (i: Idea) => void }) {
         <textarea value={pitch} onChange={(e) => setPitch(e.target.value)} rows={6} autoFocus disabled={busy} placeholder="I want to build…" className="block w-full resize-y bg-transparent px-2 py-1.5 text-[15.5px] leading-relaxed outline-none placeholder:text-text-muted" />
         <div className="flex items-center gap-2 px-1 pt-1">
           {spec && <AgentChip boot={boot} spec={spec} onChange={setSpec} need="chat" label="Planner" />}
-          <button type="button" onClick={go} disabled={pitch.trim().length < 10 || busy} className="ml-auto inline-flex h-9 items-center gap-1.5 rounded-full bg-accent-brand px-4 text-[13px] font-medium text-on-accent-brand disabled:opacity-40">
+          <button type="button" onClick={go} disabled={pitch.trim().length < 10 || busy} className="ml-auto inline-flex h-9 items-center gap-1.5 rounded-[var(--hv-r-btn)] bg-accent-brand px-4 text-[13px] font-medium text-on-accent-brand disabled:opacity-40">
             {busy ? <Loader2 className="size-4 animate-spin" /> : <Wand2 className="size-4" />} Draft the plan
           </button>
         </div>
@@ -281,7 +281,7 @@ function IdeaView({ idea, onChanged }: { idea: Idea; onChanged: () => void }) {
           <div className="flex items-end gap-2">
             <Sparkles className="mb-2.5 ml-1 size-4 shrink-0 text-accent-brand" />
             <textarea value={feedback} onChange={(e) => setFeedback(e.target.value)} rows={1} placeholder="Refine it — “use Postgres”, “add payments”, “make milestone 1 smaller”…" className="max-h-40 min-h-[38px] flex-1 resize-y bg-transparent py-2 text-[14px] outline-none placeholder:text-text-muted" onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), refine())} />
-            <button type="button" onClick={refine} disabled={!feedback.trim() || refining} className="mb-0.5 grid size-9 shrink-0 place-items-center rounded-full bg-accent-brand text-on-accent-brand disabled:opacity-40" aria-label="Refine">
+            <button type="button" onClick={refine} disabled={!feedback.trim() || refining} className="mb-0.5 grid size-9 shrink-0 place-items-center rounded-[var(--hv-r-btn)] bg-accent-brand text-on-accent-brand disabled:opacity-40" aria-label="Refine">
               {refining ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
             </button>
           </div>

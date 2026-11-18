@@ -1,38 +1,44 @@
 import type { ReactNode } from 'react'
+import { useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
+import { hiveArea } from './area'
 
 /**
- * The one page header: title, one-line sub, meta line, actions right-aligned
- * on desktop and wrapped below on phones. Every Hive page uses this so the
- * top of every screen reads the same. `titleClassName` / `subClassName` keep
- * a page's existing display size and sub style when they differ from the
- * standard 22px / 13px.
+ * The one page header, a masthead like the site's: the area in small
+ * capitals, the title in the display face, one plain line under it, and the
+ * page's single primary action on the right (secondary actions before it).
+ * A hairline closes it. Stacks on phones so the title never squeezes.
+ * `titleClassName` / `subClassName` are kept for older callers; sizes come
+ * from the header itself so every page reads the same.
  */
 export function PageHeader({
   title,
   sub,
   meta,
   actions,
+  eyebrow,
   className,
-  titleClassName,
-  subClassName,
 }: {
   title: ReactNode
   sub?: ReactNode
   meta?: ReactNode
   actions?: ReactNode
+  /** The small label above the title; defaults to the part of Hive. */
+  eyebrow?: ReactNode
   className?: string
   titleClassName?: string
   subClassName?: string
 }) {
+  const { pathname } = useLocation()
   return (
-    <div className={cn('flex flex-col items-start gap-3 sm:flex-row sm:items-end', className)}>
+    <header className={cn('flex flex-col items-start gap-4 border-b border-[var(--hv-border)] pb-5 sm:flex-row sm:items-end', className)}>
       <div className="min-w-0 flex-1">
-        <h1 className={cn('text-[22px] font-semibold tracking-[-0.015em] text-[var(--hv-text-1)]', titleClassName)}>{title}</h1>
-        {sub && <p className={cn('mt-1 max-w-2xl text-[13px] leading-relaxed text-[var(--hv-text-3)]', subClassName)}>{sub}</p>}
+        <div className="hv-eyebrow">{eyebrow ?? hiveArea(pathname)}</div>
+        <h1 className="hv-title mt-2.5 mb-0">{title}</h1>
+        {sub && <p className="hv-lead mt-2 mb-0 max-w-2xl">{sub}</p>}
         {meta}
       </div>
-      {actions && <div className="flex flex-wrap gap-1.5">{actions}</div>}
-    </div>
+      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+    </header>
   )
 }

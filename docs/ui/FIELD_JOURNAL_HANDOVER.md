@@ -42,8 +42,9 @@ The owner is the founder. They often work from a phone. They want:
 - No model names or model ids in commit messages, PR titles, PR bodies or code
   comments.
 - Never skip, weaken, disable or delete a test to get CI green. Fix the cause.
-- **Hive is untouched**: do not change `client/src/hive/**`, the `--hv-*`
-  tokens or the Hive kit. `/hive` must look exactly as it did before.
+- **Hive** (updated 2026-11): the owner asked for Hive to match the site. It
+  now wears the person's own theme as "the desk" — see `docs/ui/hive-desk.md`
+  before changing `client/src/hive/**`, the `--hv-*` tokens or the Hive kit.
 - Tokens only: no raw colours in components (colour values live only in the
   palette `client/src/theme/palettes.ts` and the style CSS).
 - Light and dark both work; `prefers-reduced-motion` is respected; no

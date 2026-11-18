@@ -38,7 +38,7 @@ import { Session } from '../Session'
 import { ProjectAvatar } from '../Showcase'
 import { AgentMark } from '../agents'
 import { useHive } from '../store'
-import type { AgentSpec, GithubReport, LinkedRepo, Mode, Project, ProjectActivity, Task } from '../types'
+import type { AgentSpec, GithubReport, LinkedRepo, LiveAgent, Mode, Project, ProjectActivity, Task } from '../types'
 import { MODE_INFO, ProviderGlyph, StatusPill, fmtTokens, timeAgo } from '../ui'
 import { Empty, PageHeader, Row, RowList, SectionLabel, SegmentedControl, canTransition } from '../kit'
 
@@ -126,11 +126,11 @@ function ProjectHome({ project }: { project: Project }) {
               {working.length > 0 && (
                 <>
                   {[...new Map(working.map((a) => [`${a.provider}|${a.model}`, a])).values()].slice(0, 6).map((a) => (
-                    <span key={`${a.provider}|${a.model}`} className="inline-flex items-center gap-1.5 rounded-full bg-text-primary/[0.05] py-0.5 pl-0.5 pr-2 text-[11.5px] ring-1 ring-[var(--hive-line)]">
+                    <span key={`${a.provider}|${a.model}`} className="hv-mono inline-flex items-center gap-1.5 rounded-[var(--hv-r-chip)] py-0.5 pl-0.5 pr-2 text-[11px] ring-1 ring-inset ring-[var(--hive-line)]">
                       <AgentMark provider={a.provider} model={a.model} size={18} /> {a.model}
                     </span>
                   ))}
-                  <span className="text-[11.5px] text-accent-brand">{working.length} working now</span>
+                  <span className="text-[11.5px] font-medium text-[var(--hv-text-1)]">{working.length} working now</span>
                 </>
               )}
               {project.repo_owner && (
@@ -164,6 +164,7 @@ function ProjectHome({ project }: { project: Project }) {
               )}
               <Button
                 size="sm"
+                variant="secondary"
                 onClick={() =>
                   hiveApi
                     .projectChat(project.id)
@@ -187,9 +188,12 @@ function ProjectHome({ project }: { project: Project }) {
       {/* Pulse */}
       <Pulse project={project} activity={activity} working={working.length} />
 
+      {/* Who is working on what, right now */}
+      <AtWork working={working} tasks={tasks} onOpen={openSession} />
+
       {/* Repositories & where agents can work */}
-      <div className="hive-card mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 px-3.5 py-2.5">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text-muted">Repositories</span>
+      <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 border-y border-[var(--hv-border)] py-3">
+        <span className="hv-eyebrow">Repositories</span>
         {!project.repo_owner && !repos.length && <span className="text-[12.5px] text-text-muted">Lives in a folder on a machine — link a GitHub repo to open PRs from Hive.</span>}
         {project.repo_owner && (
           <span className="inline-flex items-center gap-1.5 text-[12.5px]">
@@ -220,7 +224,7 @@ function ProjectHome({ project }: { project: Project }) {
 
       {/* Sessions */}
       <div className="mt-10 flex flex-wrap items-center gap-2">
-        <h2 className="mr-1 text-[15px] font-semibold text-[var(--hv-text-1)]">Sessions</h2>
+        <h2 className="hv-h2 m-0 mr-2">Sessions</h2>
         <SegmentedControl
           size="sm"
           label="Show sessions"
@@ -228,9 +232,9 @@ function ProjectHome({ project }: { project: Project }) {
           onChange={setShow}
           options={[{ value: 'all', label: `All ${tasks.length}` }, ...GROUPS.map((g) => ({ value: g.id, label: `${g.label} ${tasks.filter(g.match).length}` }))]}
         />
-        <label className="ml-auto flex h-8 w-full items-center gap-2 rounded-[var(--hv-r-btn)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] px-2.5 focus-within:ring-2 focus-within:ring-[var(--hv-accent)] sm:w-56">
+        <label className="ml-auto flex h-8 w-full items-center gap-2 border-b border-[var(--hv-border)] px-0.5 transition-colors focus-within:border-[var(--hv-text-1)] sm:w-56">
           <Search className="size-3.5 text-[var(--hv-text-3)]" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search sessions" placeholder="Search sessions" className="min-w-0 flex-1 bg-transparent text-[12.5px] outline-none placeholder:text-[var(--hv-text-3)]" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search sessions" placeholder="Search sessions" className="hv-serif min-w-0 flex-1 bg-transparent text-[13.5px] italic outline-none placeholder:text-[var(--hv-text-3)]" />
         </label>
       </div>
       {GROUPS.filter((g) => show === 'all' || g.id === show).map((g) => {
@@ -239,7 +243,7 @@ function ProjectHome({ project }: { project: Project }) {
         return (
           <section key={g.id} className="mt-5" aria-label={g.label}>
             {show === 'all' && <SectionLabel>{`${g.label} · ${list.length}`}</SectionLabel>}
-            <RowList label={g.label} className="hive-card p-1">
+            <RowList label={g.label} className="hive-card p-1.5">
               {list.map((t) => {
                 const tok = (t.agents ?? []).reduce((n, a) => n + a.input_tokens + a.output_tokens, 0)
                 return (
@@ -275,7 +279,7 @@ function ProjectHome({ project }: { project: Project }) {
         )
       })}
       {!tasks.length ? (
-        <Empty icon={<Sparkles />} title="No sessions yet" action={<Button size="sm" onClick={newSession}><Plus /> New session</Button>}>
+        <Empty icon={<Sparkles />} title="No sessions yet" action={<Button size="sm" variant="secondary" onClick={newSession}><Plus /> Write the first one</Button>}>
           Describe what you want in the box above, and agents start on it.
         </Empty>
       ) : !GROUPS.some((g) => (show === 'all' || g.id === show) && searched.some(g.match)) ? (
@@ -328,20 +332,26 @@ function Pulse({ project, activity, working }: { project: Project; activity: Pro
     },
   ]
   return (
-    <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-      {cards.map((c) => (
-        <a key={c.label} href={c.href} target={c.href ? '_blank' : undefined} rel="noreferrer" className={cn('hive-card block p-4', c.href && 'hive-card-hover')}>
-          <div className="flex items-center gap-2 text-[11.5px] font-medium text-text-muted">
-            <c.icon className="size-3.5" style={{ color: c.tone }} /> {c.label}
-          </div>
-          <div className="mt-1.5 text-[19px] font-semibold capitalize tracking-[-0.01em]" style={{ color: c.tone === 'var(--color-text-muted)' ? undefined : c.tone }}>
-            {c.value}
-          </div>
-          <div className="truncate text-[11.5px] text-text-muted">{c.sub}</div>
-        </a>
-      ))}
+    <div className="mt-7">
+      <div className="grid grid-cols-2 border-t border-[var(--hv-text-1)] lg:grid-cols-4">
+        {cards.map((c, i) => (
+          <a
+            key={c.label}
+            href={c.href}
+            target={c.href ? '_blank' : undefined}
+            rel="noreferrer"
+            className={cn('block min-w-0 border-b border-[var(--hv-border)] py-4 pr-4', i % 2 === 1 && 'border-l pl-4', i >= 1 && 'lg:border-l lg:pl-4', c.href && 'hover:bg-[var(--hv-surface-2)]')}
+          >
+            <div className="hv-eyebrow flex items-center gap-1.5">
+              <c.icon className="size-3.5" style={{ color: c.tone }} aria-hidden="true" /> {c.label}
+            </div>
+            <div className="hv-figure mt-2.5 text-[24px] capitalize">{c.value}</div>
+            <div className="mt-1.5 truncate text-[12px] text-text-muted">{c.sub}</div>
+          </a>
+        ))}
+      </div>
       {project.repo_owner && (
-        <div className="col-span-2 flex items-center gap-2 text-[12px] text-text-muted lg:col-span-4">
+        <div className="mt-3 flex items-center gap-2 text-[12px] text-text-muted">
           <Globe className="size-3.5" />
           {siteEdit ? (
             <form
@@ -360,13 +370,71 @@ function Pulse({ project, activity, working }: { project: Project; activity: Pro
               </Button>
             </form>
           ) : (
-            <button type="button" onClick={() => setSiteEdit(true)} className="hover:text-text-primary">
+            <button type="button" onClick={() => setSiteEdit(true)} className="hv-link text-[var(--hv-text-2)]">
               {project.site_url ? `Live site: ${project.site_url} — change` : 'Add the live site URL to watch its health after deploys'}
             </button>
           )}
         </div>
       )}
     </div>
+  )
+}
+
+/* ── At work: who is working on what in this project, live ─────────────── */
+function AtWork({ working, tasks, onOpen }: { working: LiveAgent[]; tasks: Task[]; onOpen: (taskId: string) => void }) {
+  if (!working.length) return null
+  const bySession = new Map<string, LiveAgent[]>()
+  for (const a of working) (bySession.get(a.taskId) ?? bySession.set(a.taskId, []).get(a.taskId)!).push(a)
+  return (
+    <section className="mt-10" aria-label="At work now">
+      <div className="mb-3 flex items-baseline gap-2">
+        <h2 className="hv-h2 m-0">At work now</h2>
+        <span className="hv-num text-[12px] text-[var(--hv-text-3)]">
+          {working.length} agent{working.length === 1 ? '' : 's'} · {bySession.size} session{bySession.size === 1 ? '' : 's'}
+        </span>
+      </div>
+      <div className="hv-ledger border-y border-[var(--hv-border)]">
+        {[...bySession.entries()].map(([taskId, agents]) => {
+          const t = tasks.find((x) => x.id === taskId)
+          return (
+            <div key={taskId} className="grid gap-3 py-4 md:grid-cols-[minmax(0,240px)_minmax(0,1fr)]">
+              <button type="button" onClick={() => onOpen(taskId)} className="min-w-0 text-left">
+                <span className="hv-eyebrow block">Session</span>
+                <span className="mt-1 block truncate text-[14px] font-medium text-[var(--hv-text-1)] hover:underline">{t?.title ?? agents[0].taskTitle}</span>
+                {t && <span className="mt-0.5 block text-[12px] text-[var(--hv-text-3)]">{MODE_INFO[t.mode]?.label ?? t.mode}</span>}
+              </button>
+              <ul className="m-0 min-w-0 list-none space-y-3 p-0">
+                {agents.map((a) => (
+                  <li key={a.id} className="flex min-w-0 items-start gap-3">
+                    <AgentMark provider={a.provider} model={a.model} size={26} />
+                    <span className="min-w-0 flex-1">
+                      <span className="flex min-w-0 flex-wrap items-baseline gap-x-2">
+                        <span className="text-[13px] font-semibold text-[var(--hv-text-1)]">{a.name}</span>
+                        <span className="hv-mono truncate text-[11px] text-[var(--hv-text-3)]">{a.model}</span>
+                        <span className="inline-flex items-center gap-1 text-[11.5px] text-[var(--hv-text-2)]">
+                          <span className="hive-dot-run size-1.5 rounded-full bg-[var(--hv-accent)]" aria-hidden="true" /> {a.status || 'working'}
+                        </span>
+                      </span>
+                      {a.doing && <span className="mt-0.5 block truncate text-[12.5px] text-[var(--hv-text-2)]">{a.doing}</span>}
+                      {a.files.length > 0 && (
+                        <span className="mt-1.5 flex flex-wrap gap-1">
+                          {a.files.slice(0, 4).map((f) => (
+                            <span key={f} className="hv-mono max-w-[220px] truncate rounded-[var(--hv-r-chip)] px-1.5 py-0.5 text-[10.5px] text-[var(--hv-text-2)] ring-1 ring-inset ring-[var(--hv-border)]">
+                              {f}
+                            </span>
+                          ))}
+                          {a.files.length > 4 && <span className="text-[11px] text-[var(--hv-text-3)]">+{a.files.length - 4} more</span>}
+                        </span>
+                      )}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        })}
+      </div>
+    </section>
   )
 }
 
@@ -473,8 +541,8 @@ function SessionComposer({ project, repos }: { project: Project; repos: LinkedRe
             </option>
           ))}
         </select>
-        <input value={budget} onChange={(e) => setBudget(e.target.value.replace(/\D/g, ''))} placeholder="budget k" title="Token budget for this session, in thousands (optional)" className="h-7 w-20 rounded-full bg-text-primary/[0.06] px-2.5 text-[12px] outline-none placeholder:text-text-muted" />
-        <button type="button" onClick={submit} disabled={!prompt.trim() || busy || up.busy} className="ml-auto inline-flex h-9 items-center gap-1.5 rounded-full bg-accent-brand px-4 text-[13px] font-medium text-on-accent-brand shadow-sm transition-all enabled:hover:brightness-110 disabled:opacity-40">
+        <input value={budget} onChange={(e) => setBudget(e.target.value.replace(/\D/g, ''))} placeholder="budget k" aria-label="Token budget, in thousands (optional)" title="Token budget for this session, in thousands (optional)" className="h-7 w-20 rounded-full bg-text-primary/[0.06] px-2.5 text-[12px] outline-none placeholder:text-text-muted" />
+        <button type="button" onClick={submit} disabled={!prompt.trim() || busy || up.busy} className="ml-auto inline-flex h-9 items-center gap-1.5 rounded-[var(--hv-r-btn)] bg-accent-brand px-4 text-[13px] font-medium text-on-accent-brand shadow-sm transition-all enabled:hover:brightness-110 disabled:opacity-40">
           {busy ? <Loader2 className="size-4 animate-spin" /> : <ArrowUp className="size-4" strokeWidth={2.4} />} Start session
         </button>
       </div>

@@ -64,15 +64,15 @@ export function ProjectAvatar({ project, size = 28, live = 0 }: { project: Pick<
   return (
     <span className="relative inline-grid shrink-0 place-items-center" style={{ width: size, height: size }}>
       <span
-        className="grid size-full place-items-center rounded-lg font-semibold text-white"
-        style={{ background: `color-mix(in oklab, ${c} 62%, black)`, fontSize: Math.round(size * 0.38), letterSpacing: '-0.02em' }}
+        className="hv-serif grid size-full place-items-center rounded-[var(--hv-r-card)] text-[var(--hv-text-1)] ring-1 ring-inset ring-[color-mix(in_oklab,var(--hv-text-1)_14%,transparent)]"
+        style={{ background: `color-mix(in oklab, ${c} 22%, var(--hv-surface-1))`, fontSize: Math.round(size * 0.42), letterSpacing: '-0.02em' }}
       >
         {initials(project.name)}
       </span>
       {project.repo_owner && img && size >= 22 && (
         <img src={`https://github.com/${encodeURIComponent(project.repo_owner)}.png?size=40`} alt="" onError={() => setImg(false)} className="absolute -bottom-1 -right-1 rounded-full ring-2 ring-[var(--color-bg-app)]" style={{ width: Math.round(size * 0.48), height: Math.round(size * 0.48) }} />
       )}
-      {live > 0 && <span className="hive-dot-run absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-accent-brand ring-2 ring-[var(--color-bg-app)]" />}
+      {live > 0 && <span className="hive-dot-run absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-[var(--hv-accent)] ring-2 ring-[var(--hv-bg-app)]" aria-hidden="true" />}
     </span>
   )
 }
@@ -110,7 +110,8 @@ export function ProjectSwitcher() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button type="button" className={cn('group flex h-9 min-w-0 max-w-[300px] items-center gap-2 rounded-xl border px-1.5 pr-2.5 text-left transition-colors', project ? 'hive-line bg-bg-surface hover:border-accent-brand/40' : 'border-dashed hive-line text-text-muted hover:text-text-primary')} aria-label="Switch project">
+        <button type="button" className={cn('group flex h-9 min-w-0 max-w-[300px] items-center gap-2 rounded-[var(--hv-r-btn)] border px-1.5 pr-2.5 text-left transition-colors', project ? 'hive-line hover:border-[var(--hv-border-strong)]' : 'hive-line text-text-muted hover:border-[var(--hv-border-strong)] hover:text-text-primary')} title="Switch project">
+          <span className="sr-only">Switch project: </span>
           {project ? (
             <ProjectAvatar project={project} size={24} live={n} />
           ) : (
@@ -196,7 +197,7 @@ export function ModelsAtWork() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button type="button" className="hidden h-9 items-center gap-2 rounded-xl border hive-line bg-bg-surface px-2 hover:border-accent-brand/40 md:flex" aria-label="Models working now">
+        <button type="button" className="hidden h-8 items-center gap-2 rounded-[var(--hv-r-btn)] border hive-line px-2 hover:border-[var(--hv-border-strong)] md:flex" title="Models working now">
           <span className="flex -space-x-1.5">
             {models.slice(0, 4).map((m) => (
               <span key={`${m.provider}|${m.model}`} className="rounded-lg ring-2 ring-[var(--color-bg-surface)]">

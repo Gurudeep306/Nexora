@@ -435,7 +435,7 @@ function SectionHead({ icon: Icon, title, count, hint }: { icon: LucideIcon; tit
 /* ── Stage strip (cards, previews, templates) ─────────────────────────── */
 function StageStrip({ stages, states, loops = 0, size = 'sm', className }: { stages: PipelineStage[]; states?: StageState[]; loops?: number; size?: 'sm' | 'md'; className?: string }) {
   return (
-    <div className={cn('hive-scroll -mx-1 overflow-x-auto px-1 py-1.5', className)} tabIndex={0} role="region" aria-label="Stages">
+    <div className={cn('hive-scroll -mx-1 overflow-x-auto px-1 py-1.5', className)} tabIndex={0} role="group" aria-label="Stages">
       <ol className="flex w-max items-center">
         {stages.map((s, i) => {
           const look = stageLook(s)
@@ -537,7 +537,7 @@ function PipelineCard({ p, last, onRun, onEdit, onDuplicate, onDelete }: { p: Pi
 function TemplateCard({ t, onUse }: { t: PipelineTemplate; onUse: () => Promise<unknown> }) {
   const [busy, setBusy] = useState(false)
   return (
-    <div className="hive-card hive-card-hover hive-lift flex h-full flex-col p-4">
+    <div className="hive-card hive-card-hover flex h-full flex-col p-4">
       <div className="text-[13.5px] font-semibold">{t.name}</div>
       <div className="mt-0.5 line-clamp-2 text-[12px] text-text-muted">{t.description}</div>
       <StageStrip stages={t.stages} className="mt-2" />
@@ -593,7 +593,7 @@ function EmptyPipelines({ onArchitect, onTemplates, onBlank }: { onArchitect: ()
             <line x1="0" y1="0" x2="100%" y2="0" stroke="var(--hive-line-strong)" strokeWidth="1.5" className="hive-wire" />
           </svg>
           <motion.span
-            className="absolute top-1/2 size-2 -translate-y-1/2 rounded-full bg-accent-brand shadow-[0_0_12px_var(--color-accent-brand)]"
+            className="absolute top-1/2 size-2 -translate-y-1/2 rounded-full bg-accent-brand"
             initial={{ left: '8%' }}
             animate={{ left: ['8%', '90%'] }}
             transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}

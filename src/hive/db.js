@@ -518,6 +518,11 @@ const COLUMNS = [
   ["hive_projects", "isolate INTEGER NOT NULL DEFAULT 1"],
   ["hive_convo_msgs", "rating INTEGER"],
   ["hive_convo_msgs", "tools_json TEXT"],
+  // The model's own reasoning (when it shares it) and how long it took, so a
+  // finished answer can show "Thought for 12s" and open to the real text.
+  ["hive_convo_msgs", "thinking TEXT"],
+  ["hive_convo_msgs", "think_ms INTEGER"],
+  ["hive_convo_msgs", "took_ms INTEGER"],
   ["hive_convos", "tools INTEGER NOT NULL DEFAULT 1"],
   ["hive_convos", "summary_json TEXT"],
   ["hive_keys", "blocked_models TEXT"],

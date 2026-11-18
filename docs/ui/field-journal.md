@@ -76,11 +76,10 @@ The Dock and the phone tab bar use these classes:
 
 ## Hive
 
-Hive keeps the look it had before Field Journal. While a `/hive` page is open,
-a look on the journal style is shown as the old default, Studio on Midnight
-(`hiveLook` in `theme/look.ts`, applied by `ThemeProvider` and by the
-first-paint script in `client/index.html`). Every other style looks the same
-in Hive as before. Nothing under `client/src/hive/` changed.
+Since 2026-11 Hive wears the person's own look like every other page, dressed
+as "the desk" for a work tool. `hiveLook` in `theme/look.ts` now returns the
+look unchanged, and the first-paint script in `client/index.html` no longer
+swaps it. See `docs/ui/hive-desk.md`.
 
 ## Checks
 
