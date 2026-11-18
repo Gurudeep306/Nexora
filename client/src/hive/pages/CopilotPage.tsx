@@ -4,8 +4,6 @@
    Dispatcher, still at /hive/dispatch via redirect). */
 import { lazy, Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import {  } from 'lucide-react'
-import { CopilotMark as Bot } from '../marks'
 import { CopilotThread } from '../Copilot'
 import { SegmentedControl } from '../kit'
 
@@ -31,14 +29,9 @@ export default function CopilotPage() {
     )
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-[var(--hv-border)] px-4 py-2.5 sm:px-6">
-        <span className="grid size-8 place-items-center rounded-[var(--hv-r-btn)] bg-[var(--hv-accent-soft)] text-[var(--hv-accent)]">
-          <Bot className="size-4" aria-hidden />
-        </span>
-        <div className="min-w-0">
-          <h1 className="text-[15px] font-semibold leading-tight">Copilot</h1>
-          <p className="truncate text-[12px] text-[var(--hv-text-3)]">{HELP[mode]}</p>
-        </div>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 pt-3 sm:px-6">
+        <h1 className="sr-only">Copilot</h1>
+        <p className="m-0 min-w-0 flex-1 truncate text-[13px] text-[var(--hv-text-2)]">{HELP[mode]}</p>
         <SegmentedControl
           className="ml-auto"
           size="sm"

@@ -18,9 +18,12 @@
   --hv-surface-2: color-mix(in oklab, var(--ed-ink, var(--color-text-primary)) 4%, var(--hv-surface-1));
   --hv-surface-3: color-mix(in oklab, var(--ed-ink, var(--color-text-primary)) 8%, var(--hv-surface-1));
 
-  --hv-border-subtle: color-mix(in oklab, var(--ed-line, var(--color-border)) 55%, transparent);
-  --hv-border: var(--ed-line, var(--color-border));
-  --hv-border-strong: var(--ed-line-strong, var(--color-border-strong));
+  /* Quiet studio: edges are faint; fills separate things. */
+  --hv-border-subtle: color-mix(in oklab, var(--ed-line, var(--color-border)) 40%, transparent);
+  --hv-border: color-mix(in oklab, var(--ed-line, var(--color-border)) 70%, transparent);
+  --hv-border-strong: var(--ed-line, var(--color-border));
+  --hv-fill: color-mix(in oklab, var(--ed-ink, var(--color-text-primary)) 5%, transparent);
+  --hv-fill-hover: color-mix(in oklab, var(--ed-ink, var(--color-text-primary)) 9%, transparent);
 
   --hv-text-1: var(--ed-ink, var(--color-text-primary));
   --hv-text-2: var(--ed-ink-2, var(--color-text-secondary));
@@ -45,6 +48,7 @@
 
   /* Faces: headings and big figures in the theme's display face, controls
      in its interface face, data in its code face. */
+  /* The person's theme's own faces, exactly as on the rest of the site. */
   --hv-serif: var(--ed-serif, var(--font-display));
   --hv-prose: var(--ed-prose, var(--hv-serif));
   --hv-sans: var(--ed-sans, var(--font-body));
