@@ -1540,9 +1540,9 @@
      "loc": "p. 279"
     },
     {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 98"
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 247"
     }
    ],
    "course": [
@@ -2415,9 +2415,9 @@
      "loc": "p. 10"
     },
     {
-     "source": "geman-1992",
-     "file": "geman-1992.pdf",
-     "loc": "p. 5"
+     "source": "cox-1958",
+     "file": "cox-1958.pdf",
+     "loc": "p. 17"
     }
    ],
    "book": [
@@ -3619,7 +3619,7 @@
     {
      "source": "hamilton-2017",
      "file": "hamilton-2017.pdf",
-     "loc": "p. 2"
+     "loc": "p. 8"
     }
    ],
    "book": [
@@ -6172,7 +6172,13 @@
   },
   "dl-perceptron-limits": {
    "paper": [],
-   "book": [],
+   "book": [
+    {
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 440"
+    }
+   ],
    "course": [
     {
      "source": "fastai",
@@ -10034,14 +10040,14 @@
      "loc": "line 1"
     },
     {
-     "source": "gpu-mode",
-     "file": "lecture_072/StreamingLLM.pdf",
-     "loc": "p. 22"
-    },
-    {
      "source": "cs229",
      "file": "main_notes.pdf",
      "loc": "p. 272"
+    },
+    {
+     "source": "gpu-mode",
+     "file": "lecture_072/StreamingLLM.pdf",
+     "loc": "p. 22"
     }
    ],
    "site": [
@@ -11407,7 +11413,7 @@
     {
      "source": "sutton-barto",
      "file": "sutton-barto.pdf",
-     "loc": "p. 95"
+     "loc": "p. 388"
     },
     {
      "source": "fml",
@@ -11458,7 +11464,7 @@
     {
      "source": "sutton-barto",
      "file": "sutton-barto.pdf",
-     "loc": "p. 46"
+     "loc": "p. 48"
     }
    ],
    "course": [
@@ -11508,14 +11514,14 @@
      "loc": "p. 392"
     },
     {
-     "source": "sutton-barto",
-     "file": "sutton-barto.pdf",
-     "loc": "p. 102"
-    },
-    {
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 822"
+    },
+    {
+     "source": "fml",
+     "file": "fml.pdf",
+     "loc": "p. 397"
     }
    ],
    "course": [
@@ -11577,12 +11583,7 @@
     {
      "source": "sutton-barto",
      "file": "sutton-barto.pdf",
-     "loc": "p. 90"
-    },
-    {
-     "source": "fml",
-     "file": "fml.pdf",
-     "loc": "p. 402"
+     "loc": "p. 278"
     }
    ],
    "course": [
@@ -11639,7 +11640,7 @@
     {
      "source": "sutton-barto",
      "file": "sutton-barto.pdf",
-     "loc": "p. 111"
+     "loc": "p. 105"
     },
     {
      "source": "fml",
@@ -11716,7 +11717,7 @@
     {
      "source": "sutton-barto",
      "file": "sutton-barto.pdf",
-     "loc": "p. 157"
+     "loc": "p. 141"
     },
     {
      "source": "mackay-itila",
@@ -11786,14 +11787,19 @@
    ],
    "book": [
     {
-     "source": "sutton-barto",
-     "file": "sutton-barto.pdf",
-     "loc": "p. 38"
+     "source": "fml",
+     "file": "fml.pdf",
+     "loc": "p. 490"
     },
     {
      "source": "udl",
      "file": "udl.pdf",
-     "loc": "p. 399"
+     "loc": "p. 411"
+    },
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 873"
     }
    ],
    "course": [
@@ -11853,14 +11859,14 @@
    ],
    "book": [
     {
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 152"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 411"
-    },
-    {
-     "source": "sutton-barto",
-     "file": "sutton-barto.pdf",
-     "loc": "p. 172"
     },
     {
      "source": "fml",
@@ -11927,7 +11933,7 @@
     {
      "source": "sutton-barto",
      "file": "sutton-barto.pdf",
-     "loc": "p. 266"
+     "loc": "p. 222"
     },
     {
      "source": "boyd-cvx",
@@ -12096,17 +12102,12 @@
     {
      "source": "sutton-barto",
      "file": "sutton-barto.pdf",
-     "loc": "p. 9"
+     "loc": "p. 348"
     },
     {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 412"
-    },
-    {
-     "source": "fml",
-     "file": "fml.pdf",
-     "loc": "p. 407"
     }
    ],
    "course": [
@@ -12173,7 +12174,7 @@
     {
      "source": "sutton-barto",
      "file": "sutton-barto.pdf",
-     "loc": "p. 273"
+     "loc": "p. 353"
     },
     {
      "source": "udl",
@@ -12340,19 +12341,14 @@
    ],
    "book": [
     {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 66"
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 469"
     },
     {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 413"
-    },
-    {
-     "source": "kochenderfer-opt",
-     "file": "kochenderfer-opt.pdf",
-     "loc": "p. 24"
     }
    ],
    "course": [
@@ -13047,7 +13043,7 @@
     {
      "source": "sutton-barto",
      "file": "sutton-barto.pdf",
-     "loc": "p. 120"
+     "loc": "p. 476"
     }
    ],
    "course": [
@@ -13274,6 +13270,11 @@
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 58"
+    },
+    {
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 391"
     }
    ],
    "course": [
@@ -13400,14 +13401,14 @@
      "loc": "p. 313"
     },
     {
-     "source": "szeliski",
-     "file": "szeliski.pdf",
-     "loc": "p. 200"
-    },
-    {
      "source": "dlbook",
      "file": "contents_applications.html",
      "loc": "part 6"
+    },
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 200"
     }
    ],
    "course": [
@@ -14388,7 +14389,7 @@
     {
      "source": "sutton-barto",
      "file": "sutton-barto.pdf",
-     "loc": "p. 166"
+     "loc": "p. 431"
     },
     {
      "source": "d2l",
