@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { StatusPill as KitStatusPill } from './kit/StatusPill'
 import { cn } from '@/lib/utils'
+import { PageHeader } from './kit/PageHeader'
 import type { AgentRow, HiveKey, ProviderId, TaskStatus } from './types'
 
 /* ── Vendors ──────────────────────────────────────────────────────────── */
@@ -265,16 +266,9 @@ export function Toggle({ on, onChange, label, disabled }: { on: boolean; onChang
  * line and the page's actions. The icon tile of the old header is gone — the
  * sidebar already shows where you are.
  */
+/** Older pages' header: now the same masthead as every Hive page (kit/PageHeader). */
 export function PageTitle({ title, sub, children }: { title: ReactNode; sub?: ReactNode; icon?: ReactNode; children?: ReactNode }) {
-  return (
-    <div className="mb-8 flex flex-col items-start gap-3 sm:flex-row sm:items-end">
-      <div className="min-w-0 flex-1">
-        <h1 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-[var(--hv-text-1)]">{title}</h1>
-        {sub && <p className="mt-1 max-w-2xl text-[13.5px] text-[var(--hv-text-3)] text-pretty">{sub}</p>}
-      </div>
-      {children && <div className="flex flex-wrap items-center gap-1.5">{children}</div>}
-    </div>
-  )
+  return <PageHeader className="mb-8" title={title} sub={sub} actions={children} />
 }
 
 export function Section({ title, action, children, className }: { title: ReactNode; action?: ReactNode; children: ReactNode; className?: string }) {

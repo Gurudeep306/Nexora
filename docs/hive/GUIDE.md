@@ -92,6 +92,7 @@ curl -fsSL -H "Authorization: Bearer hvm_…" https://nexoraguru.in/api/hive-bri
 - **Folders:** agents can only reach folders under `--root`. Repeat `--root` to allow more than one.
 - **Permissions, set per machine:**
   - **Ask me** (default): every command waits for a staff member's approval.
+  - **Run safe ones:** tests, builds, linters and read-only commands (`npm test`, `npx tsc`, `git status`, `ls`, `grep`…) run on their own; anything else waits for approval. A command with pipes, redirects, `;`, `$`, `rm`, `sudo`, `curl` or `wget` is never treated as safe (`src/hive/commandPolicy.js`). Claude Code, Codex and Vibe keep their own prompts.
   - **Autonomous:** commands run without asking. Only use this on a throwaway VM.
   - **Read-only:** agents can read files but not write or run anything.
 - **Running it 24/7:** run the bridge on a free always-on VM (for example Oracle's free ARM VM) under `pm2` or a systemd service. Agents then keep working when your laptop is off, and you approve commands from your phone.

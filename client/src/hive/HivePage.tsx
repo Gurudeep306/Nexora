@@ -24,7 +24,6 @@ import {
   KeyRound,
   Lightbulb,
   MessageSquare,
-  PanelLeftOpen,
   Plus,
   Puzzle,
   Radar,
@@ -66,7 +65,6 @@ const ProjectPage = lazy(() => import('./pages/ProjectPage'))
 const ChatPage = lazy(() => import('./pages/ChatPage'))
 const PluginsPage = lazy(() => import('./pages/PluginsPage'))
 const KeysPage = lazy(() => import('./pages/KeysPage'))
-const UsagePage = lazy(() => import('./pages/UsagePage'))
 const MemoryPage = lazy(() => import('./pages/MemoryPage'))
 const LaunchpadPage = lazy(() => import('./pages/LaunchpadPage'))
 const MachinesPage = lazy(() => import('./pages/MachinesPage'))
@@ -162,7 +160,7 @@ function Shell() {
       .catch(() => {})
   }, [noteTasks])
 
-  // Keyboard: ⌘K palette · ⌘B sidebar · ⌘J new chat · ⌘⇧I new idea
+  // Keyboard: ⌘K palette · ⌘J new chat · ⌘⇧I new idea
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const mod = e.metaKey || e.ctrlKey
@@ -174,9 +172,6 @@ function Shell() {
       } else if (k === '.') {
         e.preventDefault()
         setPalette((p) => !p)
-      } else if (k === 'b') {
-        e.preventDefault()
-        toggleRef.current()
       } else if (k === 'j') {
         e.preventDefault()
         navigate('/hive/chat')
@@ -190,20 +185,12 @@ function Shell() {
   }, [navigate])
   // Single-key shortcuts (never while typing; can be switched off in the shortcut sheet).
   const [sheet, setSheet] = useState(false)
-  useShortcuts({ onPalette: () => setPalette(true), onSheet: () => setSheet((v) => !v), onToggleSide: () => toggleRef.current() })
+  useShortcuts({ onPalette: () => setPalette(true), onSheet: () => setSheet((v) => !v) })
   useEffect(() => {
-    const side = () => toggleRef.current()
     const keys = () => setSheet(true)
-    window.addEventListener('hive:toggle-side', side)
     window.addEventListener('hive:shortcuts', keys)
-    return () => {
-      window.removeEventListener('hive:toggle-side', side)
-      window.removeEventListener('hive:shortcuts', keys)
-    }
+    return () => window.removeEventListener('hive:shortcuts', keys)
   }, [])
-  const toggleRef = useRef(() => {})
-  // No sidebar any more: the Hive tabs are always visible.
-  toggleRef.current = () => {}
 
   if (loading && !boot) return <BootScreen />
   if (error || !boot) return <BootScreen failed={error ?? 'Hive is unavailable right now.'} />
@@ -234,7 +221,9 @@ function Shell() {
           <Route path="keys" element={<KeysPage />} />
           <Route path="extensions/*" element={<Sectioned base="extensions" label="Extensions" tabs={[{ id: 'toolbox', label: 'Toolbox', element: <ToolboxPage /> }, { id: 'plugins', label: 'Plugins', element: <PluginsPage /> }, { id: 'memory', label: 'Memory', element: <MemoryPage /> }]} />} />
           {/* Spend */}
-          <Route path="spend/*" element={<Sectioned base="spend" label="Spend" tabs={[{ id: 'overview', label: 'Overview', element: <UsagePage /> }, { id: 'budgets', label: 'Budgets', element: <BudgetsPage /> }, { id: 'savings', label: 'Savings', element: <StewardPage /> }]} />} />
+          {/* Spend's old "Budgets" tab is now its Overview. */}
+          <Route path="spend/budgets" element={<Go to="/hive/spend" />} />
+          <Route path="spend/*" element={<Sectioned base="spend" label="Spend" tabs={[{ id: 'overview', label: 'Overview', element: <BudgetsPage /> }, { id: 'savings', label: 'Savings', element: <StewardPage /> }]} />} />
           {/* Old addresses → their new homes (query and hash kept) */}
           <Route path="repos" element={<Go to="/hive/projects" />} />
           <Route path="launchpad/:ideaId" element={<Go to="/hive/projects/ideas/:ideaId" />} />
@@ -247,7 +236,7 @@ function Shell() {
           <Route path="plugins" element={<Go to="/hive/extensions/plugins" />} />
           <Route path="memory" element={<Go to="/hive/extensions/memory" />} />
           <Route path="usage" element={<Go to="/hive/spend" />} />
-          <Route path="budgets" element={<Go to="/hive/spend/budgets" />} />
+          <Route path="budgets" element={<Go to="/hive/spend" />} />
           <Route path="steward" element={<Go to="/hive/spend/savings" />} />
           {DevUiPage && <Route path="dev/ui" element={<DevUiPage />} />}
           <Route path="*" element={<HomePage />} />
@@ -348,18 +337,7 @@ function useNav(): { main: NavItem[]; config: NavItem[]; rail: NavItem[]; groups
 
 
 
-/* ── Sidebar: projects (with their sessions) and chats ─────────────────── */
-/**
- * The sidebar's right edge: drag it, or focus it and use the arrow keys, to
- * change the width (220–420 px, remembered). It sits inside the sidebar's own
- * landmark, so nothing on the page lives outside one.
- */
-
-
-
-
-
-/** The one strong button in the sidebar: everything you can start. */
+/** Everything you can start, in one menu in the Hive bar. */
 function NewMenu() {
   const navigate = useNavigate()
   return (
@@ -664,10 +642,9 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
       { id: 'n:plugins', group: 'Go to', label: 'Extensions › Plugins', icon: <Puzzle className="size-4" />, run: go('/hive/extensions/plugins') },
       { id: 'n:memory', group: 'Go to', label: 'Extensions › Memory', kw: 'what agents know', icon: <Brain className="size-4" />, run: go('/hive/extensions/memory') },
       { id: 'n:spend', group: 'Go to', label: 'Spend', hint: 'Spend', kw: 'usage tokens cost money', icon: <BarChart3 className="size-4" />, run: go('/hive/spend') },
-      { id: 'n:budgets', group: 'Go to', label: 'Spend › Budgets', kw: 'caps alerts', icon: <Wallet className="size-4" />, run: go('/hive/spend/budgets') },
+      { id: 'n:budgets', group: 'Go to', label: 'Spend › Budgets', kw: 'caps alerts limits', icon: <Wallet className="size-4" />, run: go('/hive/spend') },
       { id: 'n:savings', group: 'Go to', label: 'Spend › Savings', kw: 'token steward', icon: <PiggyBank className="size-4" />, run: go('/hive/spend/savings') },
       // Commands
-      { id: 'x:sidebar', group: 'Commands', label: 'Show or hide the sidebar', icon: <PanelLeftOpen className="size-4" />, run: () => window.dispatchEvent(new CustomEvent('hive:toggle-side')), keys: '⌘B', cmd: true },
       { id: 'x:copilot', group: 'Commands', label: 'Open the Copilot panel', icon: <Bot className="size-4" />, run: () => window.dispatchEvent(new CustomEvent('hive:copilot-panel')), keys: '⌘I', cmd: true },
       { id: 'x:shortcuts', group: 'Commands', label: 'Keyboard shortcuts', icon: <Command className="size-4" />, run: () => window.dispatchEvent(new CustomEvent('hive:shortcuts')), keys: '?', cmd: true },
       { id: 'x:test', group: 'Commands', label: 'Test every model', kw: 'verify check health', icon: <HeartPulse className="size-4" />, run: go('/hive/models/health'), cmd: true },

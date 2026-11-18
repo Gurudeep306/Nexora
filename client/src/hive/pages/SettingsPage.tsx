@@ -53,13 +53,13 @@ export default function SettingsPage() {
       </Section>
 
       <Section title="Keyboard">
-        <Setting label="Single-key shortcuts" hint="C for a new task, G then a letter to go somewhere, / to search, [ to fold the sidebar, ? for the list.">
+        <Setting label="Single-key shortcuts" hint="C for a new task, G then a letter to go somewhere, / to search, ? for the list.">
           <label className="inline-flex items-center gap-2 text-[13px] text-[var(--hv-text-1)]">
             <input type="checkbox" checked={keys} onChange={toggleKeys} className="size-4 accent-[var(--hv-accent)]" />
             {keys ? 'On' : 'Off'}
           </label>
         </Setting>
-        <Setting label="All shortcuts" hint="⌘K search · ⌘I Copilot · ⌘J new chat · ⌘B sidebar">
+        <Setting label="All shortcuts" hint="⌘K search · ⌘I Copilot panel · ⌘J new chat">
           <Button size="sm" variant="secondary" onClick={() => window.dispatchEvent(new Event('hive:shortcuts'))}>
             Show the list
           </Button>

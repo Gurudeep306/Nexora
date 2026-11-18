@@ -16,6 +16,7 @@ const serverUrl = () => (API_BASE || window.location.origin).replace(/\/+$/, '')
 
 const POLICY = {
   ask: { icon: ShieldAlert, label: 'Ask me', hint: 'Agents can edit files; every command waits for a staff member to approve it.', tone: 'var(--color-state-warning)' },
+  safe: { icon: ShieldCheck, label: 'Run safe ones', hint: 'Tests, builds, linters and read-only commands (git status, ls…) run on their own; anything else waits for approval. Claude Code, Codex and Vibe keep their own prompts.', tone: 'var(--color-state-info)' },
   auto: { icon: Zap, label: 'Autonomous', hint: 'Agents run commands without asking. Use on a throwaway VM or container.', tone: 'var(--color-state-success)' },
   read: { icon: ShieldOff, label: 'Read-only', hint: 'Agents can only read files. No writes, no commands.', tone: 'var(--color-text-muted)' },
 } as const

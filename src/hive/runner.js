@@ -20,6 +20,7 @@ const router = require("./router");
 const perf = require("./perf");
 const cliMod = require("./providers/cli");
 const { cardFor, quality: qualityFor } = require("./catalog");
+const { safeCommand } = require("./commandPolicy");
 const caps = require("./caps");
 const defaultModelOf = (key, vendor) => key.default_model || pickDefault(json(key.models_json, []), vendor.suggested);
 
@@ -403,6 +404,12 @@ async function runAgentInner(agentId, { team = [], delegateFn = null, readOnly =
     const m = await get("SELECT policy, name FROM hive_machines WHERE id=?", [ctx.machine.id]);
     if (!m || m.policy === "read") return { approved: false, reason: "This machine is read-only" };
     if (m.policy === "auto") return { approved: true };
+    // "Run safe commands": plain tests, builds and read-only commands go ahead;
+    // everything else waits for a person, as under "ask".
+    if (m.policy === "safe" && kind !== "server" && safeCommand(command)) {
+      await event(task.id, agentId, "system", { message: `Ran without asking (a safe command on ${m.name}): ${String(command).slice(0, 160)}` });
+      return { approved: true, by: "safe-policy" };
+    }
     await event(task.id, agentId, "approval", { command, kind, machine: m.name });
     const r = await machines.requestApproval({ taskId: task.id, agentId, agent: agent.name, projectId: project.id, command, kind, machine: m.name, folder: ws.folder || ctx.machine.folder });
     await event(task.id, agentId, "approval_result", { command, approved: r.approved, by: r.by || null, reason: r.reason || null });
@@ -493,7 +500,8 @@ async function runAgentInner(agentId, { team = [], delegateFn = null, readOnly =
     if (!ctx.machine) throw new Error(`${v.label} works in a folder on a connected machine — start this session on a machine`);
     if (keyRow.machine_id && keyRow.machine_id !== ctx.machine.id) throw new Error(`${v.label} is connected on another machine — start the session there`);
     const mrow = await get("SELECT policy FROM hive_machines WHERE id=?", [ctx.machine.id]);
-    const policy = readOnly ? "read" : mrow?.policy || "ask";
+    // CLI agents keep their own approval prompts under "safe" (it acts as "ask").
+    const policy = readOnly ? "read" : mrow?.policy === "safe" ? "ask" : mrow?.policy || "ask";
     let session = agent.cli_session || null;
     let prompt = agent.instructions;
     let steps = 0;
@@ -1104,9 +1112,32 @@ async function startTask(task, { mode, specs, lead, username }) {
               `\nOther sub-tasks running in parallel: ${subtasks.filter((_, j) => j !== i).map((x) => x.title).join("; ") || "none"}.`,
             ].join("\n");
             const w = await createAgent(task, { role: "worker", spec: p.spec, instructions, parentId: leadAgent.id, startedBy: username, title: st.title });
-            return { st, w };
+            return { st, w, instructions };
           }),
         );
+        // One part: its worker, and if that worker fails (not for a budget or a
+        // stop), the part goes once to a stronger model as a new worker, told
+        // what went wrong — so a cheap first try never costs the team its part.
+        const runPart = async ({ st, w, instructions }) => {
+          const r = await runAgent(w.id, { team, title: st.title }).catch((e) => ({ ...w, status: "failed", error: e.message }));
+          if (r.status !== "failed" || !plugins.escalation?.enabled || /budget|cap reached|Stopped/i.test(r.error || "")) return r;
+          const fromModel = r.model || w.model;
+          const fromProvider = r.provider || w.provider;
+          const next = await router
+            .escalate({ kind: task.kind || null, from: { provider: fromProvider, model: fromModel, quality: qualityFor(cardFor(fromModel, fromProvider), task.kind || null) }, machineId: task.machine_id || null })
+            .catch(() => null);
+          if (!next) return r;
+          await event(task.id, w.id, "handoff", { reason: `${w.name} couldn't finish “${st.title}” — a stronger model takes this part`, from: { provider: fromProvider, model: fromModel }, to: { provider: next.provider, model: next.model }, note: `${next.name} · fit ${next.quality}/100` });
+          const w2 = await createAgent(task, {
+            role: "worker",
+            spec: { provider: next.provider, keyId: next.keyId, model: next.model },
+            instructions: `${instructions}\n\nA previous attempt at this part (${fromModel}) failed with: ${String(r.error || "unknown error").slice(0, 1200)}\nIts partial edits, if any, are in the working copy — check view_changes first.`,
+            parentId: leadAgent.id,
+            startedBy: username,
+            title: st.title,
+          });
+          return runAgent(w2.id, { team, title: st.title }).catch((e) => ({ ...w2, status: "failed", error: e.message }));
+        };
         // Parts that own the same file never run at once (they share one working
         // copy and would overwrite each other): they queue in one lane, one
         // after another; every other part still runs in parallel.
@@ -1119,10 +1150,7 @@ async function startTask(task, { mode, specs, lead, username }) {
         const done = new Array(workers.length);
         await Promise.all(
           lanes.map(async (lane) => {
-            for (const i of lane) {
-              const { st, w } = workers[i];
-              done[i] = await runAgent(w.id, { team, title: st.title }).catch((e) => ({ ...w, status: "failed", error: e.message }));
-            }
+            for (const i of lane) done[i] = await runPart(workers[i]);
           }),
         );
         const parts = [];
