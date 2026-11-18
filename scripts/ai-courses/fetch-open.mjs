@@ -20,7 +20,18 @@ import { pathOf } from './library.mjs'
 const DOCS = join(dirname(fileURLToPath(import.meta.url)), '../../docs/ai-courses')
 const want = new Set(process.argv.slice(2))
 const check = JSON.parse(readFileSync(join(DOCS, 'sources/check.json'), 'utf8'))
+const papersById = new Map(JSON.parse(readFileSync(join(DOCS, 'sources/papers.json'), 'utf8')).papers.map((x) => [x.id, x]))
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+
+/** Articles that exist only as web pages. */
+const WEB_ONLY = /transformer-circuits\.pub/
+async function grab(url) {
+  const r = await fetch(url, { headers: { 'user-agent': 'NexoraGuru-source-fetch/1.0' }, redirect: 'follow', signal: AbortSignal.timeout(60000) })
+  const buf = Buffer.from(await r.arrayBuffer())
+  if (!r.ok) return { status: r.status }
+  if (buf.subarray(0, 5).toString() === '%PDF-') return { pdf: buf, url: r.url }
+  return { html: buf.toString('utf8'), url: r.url }
+}
 
 let got = 0
 let skipped = 0
@@ -29,17 +40,29 @@ for (const p of check.papers) {
   if (want.size && !want.has(p.id)) continue
   const file = pathOf(p)
   mkdirSync(dirname(file), { recursive: true })
-  if (existsSync(file)) {
+  if (existsSync(file) || existsSync(file.replace(/\.pdf$/, '.html'))) {
     skipped++
     continue
   }
-  const url = p.arxiv ? `https://arxiv.org/pdf/${p.arxiv}` : p.check?.access === 'open' ? p.check.read : null
+  // A direct PDF address in papers.json (`pdf`) wins; then arXiv; then the open copy the check found.
+  const src = papersById.get(p.id) || p
+  const url = src.pdf || (p.arxiv ? `https://arxiv.org/pdf/${p.arxiv}` : p.check?.access === 'open' ? p.check.read : null)
   if (!url) continue // paywalled: the owner downloads it
   try {
-    const r = await fetch(url, { headers: { 'user-agent': 'NexoraGuru-source-fetch/1.0' }, redirect: 'follow', signal: AbortSignal.timeout(60000) })
-    const buf = Buffer.from(await r.arrayBuffer())
-    if (!r.ok || buf.subarray(0, 5).toString() !== '%PDF-') throw new Error(r.ok ? 'not a PDF (a landing page: open it by hand)' : `HTTP ${r.status}`)
-    writeFileSync(file, buf)
+    let r = await grab(url)
+    if (!r.pdf && r.html) {
+      // A landing page: journals name the PDF in <meta name="citation_pdf_url">; else take a link to a .pdf.
+      const meta = r.html.match(/<meta[^>]+name=["']citation_pdf_url["'][^>]+content=["']([^"']+)["']/i) || r.html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+name=["']citation_pdf_url["']/i)
+      const link = meta?.[1] || [...r.html.matchAll(/href=["']([^"']+\.pdf)["']/gi)].map((m) => m[1])[0]
+      if (link) r = await grab(new URL(link, r.url).href)
+      else if (WEB_ONLY.test(url)) {
+        writeFileSync(file.replace(/\.pdf$/, '.html'), r.html) // published only as a web article
+        got++
+        continue
+      }
+    }
+    if (!r.pdf) throw new Error(r.status ? `HTTP ${r.status}` : 'no PDF found on its page (open it by hand)')
+    writeFileSync(file, r.pdf)
     got++
   } catch (e) {
     failed.push(`${p.id}: ${e.message} (${url})`)
