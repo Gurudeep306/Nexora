@@ -13,6 +13,7 @@ import { Icon } from '@/components/icon/Icon'
 import { cn } from '@/lib/utils'
 import type { VizSpec } from './schema'
 import { buildFrames } from './frames'
+import { TWEEN_MS, interpolateFrames } from './tween'
 import { useVizLayout } from './useVizLayout'
 import { VizScene } from './VizScene'
 import { useSketcher } from './sketch'
@@ -58,6 +59,41 @@ export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onClean
   const sketch = useSketcher(!cleanLines)
   const uid = useId()
   const frame = frames[isStatic ? last : i]!
+
+  // The frame actually drawn. When the step changes (and motion is allowed),
+  // it glides from the previous frame to the target over TWEEN_MS via rAF;
+  // arrows re-snap on every tick, so edges follow their vertices. Static /
+  // reduced-motion / print show the target frame directly.
+  const [shown, setShown] = useState(frame)
+  const shownRef = useRef(frame)
+  const rafRef = useRef(0)
+  useEffect(() => {
+    cancelAnimationFrame(rafRef.current)
+    const from = shownRef.current
+    if (isStatic || from === frame) {
+      // No motion (static / reduced motion / print) or nothing to animate:
+      // land on the target frame on the next animation frame.
+      rafRef.current = requestAnimationFrame(() => {
+        shownRef.current = frame
+        setShown(frame)
+      })
+      return () => cancelAnimationFrame(rafRef.current)
+    }
+    const start = performance.now()
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / TWEEN_MS)
+      const f = interpolateFrames(from, frame, t)
+      shownRef.current = f
+      setShown(f)
+      if (t < 1) rafRef.current = requestAnimationFrame(tick)
+      else {
+        shownRef.current = frame
+        setShown(frame)
+      }
+    }
+    rafRef.current = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafRef.current)
+  }, [frame, isStatic])
 
   // Playing stops by itself on the last frame.
   const running = playing && i < last && !isStatic && !(hold && !touched)
@@ -118,7 +154,7 @@ export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onClean
       onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && setHold(false)}
     >
       <div className="nxv-stage">
-        <VizScene spec={spec} layout={layout} frame={frame} sketch={sketch} titleId={`${uid}-t`} descId={`${uid}-d`} />
+        <VizScene spec={spec} layout={layout} frame={shown} sketch={sketch} titleId={`${uid}-t`} descId={`${uid}-d`} />
       </div>
 
       {!isStatic && (
