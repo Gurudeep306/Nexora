@@ -127,9 +127,14 @@ export function InboxBell() {
   const n = needs.count + unread
   const label = n ? `Inbox — ${needs.count ? `${needs.count} need${needs.count === 1 ? 's' : ''} you` : ''}${needs.count && unread ? ', ' : ''}${unread ? `${unread} new alert${unread === 1 ? '' : 's'}` : ''}` : 'Inbox'
   return (
-    <button type="button" onClick={() => navigate('/hive/inbox')} title={label} aria-label={label} className="relative grid size-8 place-items-center rounded-lg text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]">
-      <Bell className="size-4" />
-      {n > 0 && <span className="hv-num absolute right-0.5 top-0.5 grid min-w-3.5 place-items-center rounded-full bg-[var(--hv-accent)] px-1 text-[9px] font-bold leading-[14px] text-[var(--hv-accent-fg)]">{n > 9 ? '9+' : n}</span>}
+    <button type="button" onClick={() => navigate('/hive/inbox')} title={label} className="hv-icon-btn relative">
+      <Bell className="size-4" aria-hidden="true" />
+      <span className="sr-only">{label}</span>
+      {n > 0 && (
+        <span className="hv-num absolute right-0.5 top-0.5 grid min-w-3.5 place-items-center rounded-full bg-[var(--hv-accent)] px-1 text-[9px] font-bold leading-[14px] text-[var(--hv-accent-fg)]" aria-hidden="true">
+          {n > 9 ? '9+' : n}
+        </span>
+      )}
     </button>
   )
 }
