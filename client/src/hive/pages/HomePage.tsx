@@ -242,14 +242,14 @@ export default function HomePage() {
           </Block>
 
           <Block title="Today">
-            <dl className="m-0 grid grid-cols-2 border-t border-[var(--hv-text-1)]">
+            <div className="grid grid-cols-2 border-t border-[var(--hv-text-1)]">
               <Figure label="Tokens" value={fmtTokens(today?.tokens ?? 0)} />
               <Figure label="Calls" value={String(today?.requests ?? 0)} />
               <Figure label="Spent" value={fmtCost(today?.cost) ?? '$0'} to="/hive/spend" />
               <Figure label="Keys healthy" value={`${healthyKeys}/${boot.keys.length}`} to="/hive/keys" />
               <Figure label="Machines online" value={`${onlineMachines}/${machines.length}`} to="/hive/machines" />
               <Figure label="Projects" value={String(boot.projects.length)} to="/hive/projects" />
-            </dl>
+            </div>
           </Block>
         </aside>
       </div>
@@ -262,8 +262,8 @@ function Figure({ label, value, to }: { label: string; value: string; to?: strin
   const navigate = useNavigate()
   const body = (
     <>
-      <dt className="hv-eyebrow">{label}</dt>
-      <dd className="hv-figure m-0 mt-2 text-[26px]">{value}</dd>
+      <span className="hv-eyebrow block">{label}</span>
+      <span className="hv-figure mt-2 block text-[26px]">{value}</span>
     </>
   )
   const cls = 'block border-b border-[var(--hv-border)] py-3 pr-3 text-left odd:pr-3 even:border-l even:pl-4'

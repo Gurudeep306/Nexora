@@ -56,7 +56,8 @@ export function Thought({ text, live = false, answering = false, startedAt, ms, 
   const [userOpen, setUserOpen] = useState<boolean | null>(null)
   const open = userOpen ?? (live && !answering)
   const thinking = live && !answering
-  const secs = useSeconds(startedAt ?? Date.now(), thinking)
+  const [mounted] = useState(() => Date.now())
+  const secs = useSeconds(startedAt ?? mounted, thinking)
   const body = useRef<HTMLDivElement>(null)
   // While it streams, keep the newest line in view.
   useLayoutEffect(() => {

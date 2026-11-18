@@ -125,7 +125,9 @@ changed.
   `state-info`.
 - Light and dark themes must both work. Respect `prefers-reduced-motion`.
   Layouts must work at phone width with no horizontal scroll.
-- Hive screens are built from the Hive kit (`client/src/hive/kit/`):
+- Hive screens are built from the Hive kit (`client/src/hive/kit/`) on the
+  site's own theme ("the desk", `docs/ui/hive-desk.md`; mark and boot screen
+  in `hive/HiveLogo.tsx` and `hive/HiveBoot.tsx`):
   - `--hv-*` tokens
   - `StatusPill`, `Row`/`RowList`, `DataTable`, `SegmentedControl`,
     `Composer`, `StackedBars`/`Sparkline`, `Empty`
@@ -183,8 +185,8 @@ changed.
   and shell rules under `[data-kit='journal']` in `theme/styles.css` (every
   theme sets `data-kit="journal"`; to branch in code use `isJournalKit()`).
   Clay is never text; one clay action per screen; no shadows, glows or
-  gradients. Hive keeps its old look (`hiveLook` in `theme/look.ts`). See
-  `docs/ui/field-journal.md`. Every animation there is a real lesson (binary search, round-robin,
+  gradients. Hive wears the same look, dressed as "the desk" for a work tool
+  (`docs/ui/hive-desk.md`). See `docs/ui/field-journal.md`. Every animation there is a real lesson (binary search, round-robin,
   BFS) or shows real numbers. Copy stays true to the site: no invented stats.
 - **Notes and lessons** share one reader (`styles/reader.css`): a lesson list on
   the left and "On this page" on the right, each folding to a slim strip (the

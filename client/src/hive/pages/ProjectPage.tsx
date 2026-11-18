@@ -541,7 +541,7 @@ function SessionComposer({ project, repos }: { project: Project; repos: LinkedRe
             </option>
           ))}
         </select>
-        <input value={budget} onChange={(e) => setBudget(e.target.value.replace(/\D/g, ''))} placeholder="budget k" title="Token budget for this session, in thousands (optional)" className="h-7 w-20 rounded-full bg-text-primary/[0.06] px-2.5 text-[12px] outline-none placeholder:text-text-muted" />
+        <input value={budget} onChange={(e) => setBudget(e.target.value.replace(/\D/g, ''))} placeholder="budget k" aria-label="Token budget, in thousands (optional)" title="Token budget for this session, in thousands (optional)" className="h-7 w-20 rounded-full bg-text-primary/[0.06] px-2.5 text-[12px] outline-none placeholder:text-text-muted" />
         <button type="button" onClick={submit} disabled={!prompt.trim() || busy || up.busy} className="ml-auto inline-flex h-9 items-center gap-1.5 rounded-[var(--hv-r-btn)] bg-accent-brand px-4 text-[13px] font-medium text-on-accent-brand shadow-sm transition-all enabled:hover:brightness-110 disabled:opacity-40">
           {busy ? <Loader2 className="size-4 animate-spin" /> : <ArrowUp className="size-4" strokeWidth={2.4} />} Start session
         </button>

@@ -110,7 +110,8 @@ export function ProjectSwitcher() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button type="button" className={cn('group flex h-9 min-w-0 max-w-[300px] items-center gap-2 rounded-xl border px-1.5 pr-2.5 text-left transition-colors', project ? 'hive-line bg-bg-surface hover:border-accent-brand/40' : 'border-dashed hive-line text-text-muted hover:text-text-primary')} aria-label="Switch project">
+        <button type="button" className={cn('group flex h-9 min-w-0 max-w-[300px] items-center gap-2 rounded-[var(--hv-r-btn)] border px-1.5 pr-2.5 text-left transition-colors', project ? 'hive-line hover:border-[var(--hv-border-strong)]' : 'hive-line text-text-muted hover:border-[var(--hv-border-strong)] hover:text-text-primary')} title="Switch project">
+          <span className="sr-only">Switch project: </span>
           {project ? (
             <ProjectAvatar project={project} size={24} live={n} />
           ) : (
@@ -196,7 +197,7 @@ export function ModelsAtWork() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button type="button" className="hidden h-9 items-center gap-2 rounded-xl border hive-line bg-bg-surface px-2 hover:border-accent-brand/40 md:flex" aria-label="Models working now">
+        <button type="button" className="hidden h-8 items-center gap-2 rounded-[var(--hv-r-btn)] border hive-line px-2 hover:border-[var(--hv-border-strong)] md:flex" title="Models working now">
           <span className="flex -space-x-1.5">
             {models.slice(0, 4).map((m) => (
               <span key={`${m.provider}|${m.model}`} className="rounded-lg ring-2 ring-[var(--color-bg-surface)]">

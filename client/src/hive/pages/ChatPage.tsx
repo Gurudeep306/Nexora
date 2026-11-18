@@ -232,7 +232,9 @@ export default function ChatPage() {
     <div className="flex h-full min-h-0 flex-col">
       {convo && (
         <div className="flex items-center gap-2 border-b hive-line px-4 py-2 sm:px-6">
+          <h1 className="sr-only">{convo.title}</h1>
           <input
+            aria-label="Chat title"
             defaultValue={convo.title}
             key={convo.title}
             disabled={!canEditTitle}

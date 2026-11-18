@@ -327,6 +327,7 @@ export function Session() {
             <Button
               size="sm"
               variant="ghost"
+              aria-label="Checkpoint"
               onClick={() =>
                 hiveApi
                   .saveCheckpoint(task.id)

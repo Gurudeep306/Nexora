@@ -46,13 +46,7 @@
         } catch (e) { /* storage blocked or unreadable — defaults apply */ }
         var look = T.defaults;
         try { if (sanitize) look = sanitize(raw, T); } catch (e) {}
-        /* Hive keeps its pre-journal look (theme/look.ts hiveLook). */
-        if (T.kits && T.kits[look.style] && T.hive && /^\/hive(\/|$)/.test(location.pathname)) {
-          var h = {};
-          for (var k in look) h[k] = look[k];
-          for (var j in T.hive) h[j] = T.hive[j];
-          look = h;
-        }
+        /* Hive wears the person's own look too (theme/look.ts hiveLook). */
         var system = 'dark';
         try { if (matchMedia('(prefers-color-scheme: light)').matches) system = 'light'; } catch (e) {}
         var want = appearance === 'system' ? system : appearance;
