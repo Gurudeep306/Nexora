@@ -7,7 +7,6 @@ import {
   Copy,
   ExternalLink,
   FolderGit2,
-  Gauge,
   Loader2,
   MoreHorizontal,
   Pause,
@@ -17,7 +16,6 @@ import {
   Search,
   Settings2,
   ShieldCheck,
-  Sparkles,
   Trash2,
   TriangleAlert,
 } from 'lucide-react'
@@ -28,7 +26,7 @@ import { AddGithubDialog, EditKeyDialog, parseLimit } from '../dialogs'
 import { useHive } from '../store'
 import type { HiveKey, ProviderInfo } from '../types'
 import { ProviderGlyph, fmtCost, fmtTokens, keyShare, shareTone, vendorName, vendorStyle, LimitBar } from '../ui'
-import { Empty, PageHeader, Row, RowList, Sparkline, StatusPill } from '../kit'
+import { Empty, PageHeader, Row, RowList, StatusPill } from '../kit'
 
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Something went wrong')
 
@@ -284,8 +282,8 @@ function ProviderGroup({ vendor, keys, onAdd }: { vendor: string; keys: HiveKey[
           <Plus /> Add another
         </Button>
       </header>
-      {/* Pooled budget: one segment per account. */}
-      <div className="mx-5 mb-3 flex h-1.5 gap-0.5 overflow-hidden rounded-full bg-text-primary/[0.06]">
+      {/* Pooled budget: one segment per account (only when some account has a real limit). */}
+      {keys.some((k) => k.tokenLimit != null) && <div className="mx-5 mb-3 flex h-1 gap-0.5 overflow-hidden rounded-full bg-text-primary/[0.06]">
         {keys.map((k) => {
           const share = keyShare(k)
           // One equal segment per account: filled by its remaining budget (accounts without a budget show as open).
@@ -295,7 +293,7 @@ function ProviderGroup({ vendor, keys, onAdd }: { vendor: string; keys: HiveKey[
             </div>
           )
         })}
-      </div>
+      </div>}
       <div className="divide-y divide-[var(--hv-border-subtle)] border-t border-[var(--hv-border-subtle)]">
         {keys.map((k) => (
           <KeyRow key={k.id} k={k} />
@@ -305,22 +303,18 @@ function ProviderGroup({ vendor, keys, onAdd }: { vendor: string; keys: HiveKey[
   )
 }
 
-/** Remaining-budget ring (or a neutral ring when the key has no budget). */
-function BudgetRing({ k }: { k: HiveKey }) {
-  const share = keyShare(k)
-  const r = 19
-  const c = 2 * Math.PI * r
-  const tone = share == null ? 'var(--color-text-muted)' : shareTone(share)
+/** One dot for the account's state: working, limited, failing or paused. */
+function KeyDot({ k }: { k: HiveKey }) {
+  const [now] = useState(() => Date.now())
+  const limited = !!k.limitUntil && k.limitUntil > now
+  const bad = k.status === 'invalid' || k.status === 'error'
+  const tone = k.disabled ? 'var(--hv-text-3)' : bad ? 'var(--hv-danger)' : limited ? 'var(--hv-warning)' : k.status === 'ok' ? 'var(--hv-success)' : 'var(--hv-text-3)'
+  const word = k.disabled ? 'Paused' : bad ? (k.status === 'invalid' ? 'Rejected' : 'Error') : limited ? 'Limited' : k.status === 'ok' ? 'Working' : 'Not checked'
   return (
-    <div className="relative grid size-[52px] shrink-0 place-items-center">
-      <svg viewBox="0 0 48 48" className="absolute inset-0 -rotate-90">
-        <circle cx="24" cy="24" r={r} fill="none" stroke="color-mix(in oklab, var(--color-text-primary) 8%, transparent)" strokeWidth="4" />
-        {share != null && <circle cx="24" cy="24" r={r} fill="none" stroke={tone} strokeWidth="4" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c * (1 - share)} style={{ transition: 'stroke-dashoffset 900ms cubic-bezier(.2,.8,.2,1)' }} />}
-      </svg>
-      <span className="text-[11px] font-semibold tabular-nums" style={{ color: tone }}>
-        {share == null ? '∞' : `${Math.round(share * 100)}%`}
-      </span>
-    </div>
+    <span className="mt-1.5 grid size-3 shrink-0 place-items-center self-start" title={word}>
+      <span className={cn('size-2 rounded-full', k.active > 0 && 'hive-dot-run')} style={{ background: tone }} aria-hidden="true" />
+      <span className="sr-only">{word}</span>
+    </span>
   )
 }
 
@@ -341,20 +335,8 @@ function KeyRow({ k }: { k: HiveKey }) {
   const [busy, setBusy] = useState(false)
   const [editing, setEditing] = useState(false)
   const [confirm, setConfirm] = useState(false)
-  const [usage, setUsage] = useState<{ day: string; tokens: number; cached: number }[]>([])
   const canManage = !!boot && (boot.me.admin || boot.me.username === k.owner)
-  const color = vendorStyle(k.provider).color
 
-  useEffect(() => {
-    let live = true
-    hiveApi
-      .keyUsage(k.id)
-      .then((r) => live && setUsage(r.days.map((d) => ({ day: d.day.slice(5), tokens: d.input + d.output, cached: (d as { cached?: number }).cached ?? 0 }))))
-      .catch(() => {})
-    return () => {
-      live = false
-    }
-  }, [k.id, k.used])
 
   const act = async (fn: () => Promise<unknown>, ok?: string) => {
     setBusy(true)
@@ -370,8 +352,8 @@ function KeyRow({ k }: { k: HiveKey }) {
   }
 
   return (
-    <div className={cn('group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-4 gap-y-3 px-5 py-4 transition-colors hover:bg-text-primary/[0.02] lg:grid-cols-[auto_minmax(0,1.2fr)_minmax(0,1fr)_120px_auto]', k.disabled && 'opacity-55')}>
-      <BudgetRing k={k} />
+    <div className={cn('group grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-3.5 gap-y-3 px-5 py-4 transition-colors hover:bg-[var(--hv-fill)] lg:grid-cols-[auto_minmax(0,1.1fr)_minmax(0,1fr)_auto]', k.disabled && 'opacity-55')}>
+      <KeyDot k={k} />
       <div className="min-w-0">
         <div className="flex items-center gap-1.5">
           <span className="truncate text-[14px] font-medium text-text-primary">{k.label}</span>
@@ -382,8 +364,8 @@ function KeyRow({ k }: { k: HiveKey }) {
           )}
           {(k.status === 'invalid' || k.status === 'error') && (
             <Tooltip label={k.statusDetail || 'Check failed'}>
-              <span className="inline-flex items-center gap-1 rounded-full bg-state-error/12 px-1.5 py-0.5 text-[10.5px] font-medium text-state-error">
-                <TriangleAlert className="size-3" /> {k.status === 'invalid' ? 'Rejected' : 'Error'}
+              <span className="inline-flex items-center gap-1 text-[11.5px] font-medium text-[var(--hv-text-2)]">
+                <TriangleAlert className="size-3 text-[var(--hv-danger)]" aria-hidden /> {k.status === 'invalid' ? 'Rejected' : 'Error'}
               </span>
             </Tooltip>
           )}
@@ -400,50 +382,38 @@ function KeyRow({ k }: { k: HiveKey }) {
           {(k.priority ?? 0) !== 0 && <span>priority {k.priority! > 0 ? '+' : ''}{k.priority}</span>}
         </div>
         {k.defaultModel && (
-          <div className="mt-1 inline-flex max-w-full items-center gap-1 rounded-md bg-text-primary/[0.05] px-1.5 py-0.5 font-mono text-[11px] text-text-secondary">
-            <Sparkles className="size-3 shrink-0 text-accent-brand" />
-            <span className="truncate">{k.defaultModel}</span>
+          <div className="mt-0.5 truncate text-[12px] text-text-muted">
+            default <span className="hv-mono text-text-secondary">{k.defaultModel}</span>
           </div>
         )}
-        {k.status !== 'ok' && k.statusDetail && <p className="mt-1 line-clamp-2 text-[11.5px] text-state-error">{k.statusDetail}</p>}
+        {k.status !== 'ok' && k.statusDetail && <p className="m-0 mt-1.5 line-clamp-2 text-[12px] text-[var(--hv-text-2)]">{k.statusDetail}</p>}
       </div>
 
-      <div className="col-span-3 grid min-w-0 gap-2.5 lg:col-span-1">
-        <div>
-          <div className="mb-1 flex justify-between gap-2 text-[11.5px] tabular-nums text-text-muted">
-            <span className="inline-flex items-center gap-1">
-              <Gauge className="size-3" /> Budget
-            </span>
-            <span>
-              {k.tokenLimit == null ? (
-                <>
-                  {fmtTokens(k.used)} used · <span className="text-text-secondary">no limit</span>
-                </>
-              ) : (
-                <>
-                  <span className="text-text-primary">{fmtTokens(k.remaining)}</span> left of {fmtTokens(k.tokenLimit)} {k.limitPeriod === 'total' ? 'total' : `/ ${k.limitPeriod}`}
-                </>
-              )}
-            </span>
-          </div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-text-primary/[0.07]">
-            <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${k.tokenLimit ? Math.min(100, (k.used / Math.max(1, k.tokenLimit)) * 100) : 0}%`, background: shareTone(keyShare(k)) }} />
-          </div>
-          {k.tokenLimit != null && k.periodEnds && <div className="mt-1 text-[10.5px] text-text-muted">Resets in {countdown(k.periodEnds)}</div>}
+      <div className="col-span-3 grid min-w-0 gap-2 lg:col-span-1">
+        <div className="flex flex-wrap justify-between gap-x-3 gap-y-0.5 text-[12px] tabular-nums text-text-muted">
+          <span>
+            {k.tokenLimit == null ? (
+              <>
+                {fmtTokens(k.used)} used · no limit
+              </>
+            ) : (
+              <>
+                <span className="font-medium text-text-primary">{fmtTokens(k.remaining)}</span> left of {fmtTokens(k.tokenLimit)} {k.limitPeriod === 'total' ? 'total' : `/ ${k.limitPeriod}`}
+                {k.periodEnds && ` · resets in ${countdown(k.periodEnds)}`}
+              </>
+            )}
+          </span>
+          <span>
+            today {fmtTokens(k.todayTokens ?? 0)}
+            {fmtCost(k.periodCostMicros) ? ` · ${fmtCost(k.periodCostMicros)}` : ''}
+          </span>
         </div>
-        <LimitBar k={k} />
-      </div>
-
-      <div className="hidden h-14 lg:block" aria-hidden>
-        {usage.length > 1 ? (
-          <Sparkline label={`${k.label}: tokens per day`} points={usage.map((u) => u.tokens)} color={color} second={usage.map((u) => u.cached)} secondColor="var(--color-state-success)" />
-        ) : (
-          <div className="grid h-full place-items-center text-[11px] text-text-muted">no usage yet</div>
+        {k.tokenLimit != null && (
+          <div className="h-1 overflow-hidden rounded-full bg-[var(--hv-fill)]">
+            <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${Math.min(100, (k.used / Math.max(1, k.tokenLimit)) * 100)}%`, background: shareTone(keyShare(k)) }} />
+          </div>
         )}
-        <div className="mt-0.5 flex justify-between text-[10.5px] tabular-nums text-text-muted">
-          <span>today {fmtTokens(k.todayTokens ?? 0)}</span>
-          {fmtCost(k.periodCostMicros) && <span>{fmtCost(k.periodCostMicros)}</span>}
-        </div>
+        <LimitBar k={k} compact />
       </div>
 
       <div className="col-start-3 row-start-1 flex items-center gap-1 lg:col-start-auto lg:row-start-auto">

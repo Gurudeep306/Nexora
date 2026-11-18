@@ -1003,6 +1003,32 @@ async function finishTask(taskId) {
   }
 }
 
+/**
+ * Group a team's parts into lanes by the files they own: parts that share a
+ * file (directly or through another part) land in one lane and run in order;
+ * separate lanes run at the same time. Parts that name no files each get
+ * their own lane. Returns lanes of part indexes, in the lead's order.
+ */
+function laneParts(fileLists) {
+  const norm = (f) => String(f || "").trim().replace(/^\.\//, "").replace(/\\/g, "/").toLowerCase();
+  const parent = fileLists.map((_, i) => i);
+  const find = (i) => (parent[i] === i ? i : (parent[i] = find(parent[i])));
+  const owner = new Map();
+  fileLists.forEach((files, i) => {
+    for (const f of files.map(norm).filter(Boolean)) {
+      if (owner.has(f)) parent[find(i)] = find(owner.get(f));
+      else owner.set(f, i);
+    }
+  });
+  const lanes = new Map();
+  fileLists.forEach((_, i) => {
+    const r = find(i);
+    if (!lanes.has(r)) lanes.set(r, []);
+    lanes.get(r).push(i);
+  });
+  return [...lanes.values()];
+}
+
 /** The cheapest model among keys with budget (for reviewers / easy work). */
 async function cheapestSpec() {
   const rows = await all("SELECT * FROM hive_keys WHERE disabled=0 AND status<>'invalid'");
@@ -1074,14 +1100,31 @@ async function startTask(task, { mode, specs, lead, username }) {
               "",
               `Your sub-task: ${st.title}`,
               st.instructions,
-              st.files?.length ? `\nYou own: ${st.files.join(", ")}` : "",
+              st.files?.length ? `\nYou own: ${st.files.join(", ")}. Change only these files; if you truly must change another one, say which and why in your report.` : "\nKeep your changes to the files your sub-task needs, and list every file you changed in your report.",
               `\nOther sub-tasks running in parallel: ${subtasks.filter((_, j) => j !== i).map((x) => x.title).join("; ") || "none"}.`,
             ].join("\n");
             const w = await createAgent(task, { role: "worker", spec: p.spec, instructions, parentId: leadAgent.id, startedBy: username, title: st.title });
             return { st, w };
           }),
         );
-        const done = await Promise.all(workers.map(({ st, w }) => runAgent(w.id, { team, title: st.title }).catch((e) => ({ ...w, status: "failed", error: e.message }))));
+        // Parts that own the same file never run at once (they share one working
+        // copy and would overwrite each other): they queue in one lane, one
+        // after another; every other part still runs in parallel.
+        const lanes = laneParts(workers.map(({ st }) => st.files || []));
+        const queued = lanes.filter((l) => l.length > 1);
+        if (queued.length) {
+          const names = queued.map((l) => l.map((i) => `“${workers[i].st.title}”`).join(" then ")).join("; ");
+          await event(task.id, leadAgent.id, "system", { message: `These parts touch the same files, so they run one after another: ${names}` });
+        }
+        const done = new Array(workers.length);
+        await Promise.all(
+          lanes.map(async (lane) => {
+            for (const i of lane) {
+              const { st, w } = workers[i];
+              done[i] = await runAgent(w.id, { team, title: st.title }).catch((e) => ({ ...w, status: "failed", error: e.message }));
+            }
+          }),
+        );
         const parts = [];
         for (let i = 0; i < done.length; i++) {
           const a = done[i];
@@ -1257,7 +1300,8 @@ async function steer(agentId, username, message) {
 
 const runningCount = () => running.size;
 
-module.exports = { repoGuide,
+module.exports = {
+  laneParts, repoGuide,
   startTask,
   addAgent,
   spawnAndWait,
