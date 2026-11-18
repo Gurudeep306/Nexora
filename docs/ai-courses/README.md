@@ -42,8 +42,17 @@ that is in these files and passes the check.
 - **They are never committed and never published.** Publisher licences
   (IEEE, Elsevier, Springer, Wiley, Nature) allow personal and institutional
   reading, not redistribution.
-- Keep them in a private place: the owner's Google Drive folder "Nexora AI
-  papers", or locally in `docs/ai-courses/private/` (git-ignored).
+- **The paper library** is `docs/ai-courses/private/library/<NN>-<course>/<paper-id>.pdf`
+  (git-ignored), for example `03-deep-learning/rumelhart-1986.pdf`. What we hold
+  is listed in `sources/LIBRARY.md` (committed; no PDFs).
+  - Owner's papers: `node scripts/ai-courses/library.mjs import <folder>` reads
+    each PDF's text, recognises the paper and files it under its id.
+  - Free papers: `NODE_USE_ENV_PROXY=1 node scripts/ai-courses/fetch-open.mjs`.
+  - **Cloud sessions are temporary**, so the library disappears with the
+    machine. The free papers can be fetched again in about 15 minutes. The
+    owner's papers are kept as one zip, `Nexora-AI-papers-owner.zip` (made by
+    `library.mjs pack`), in the owner's Google Drive; a new session unzips it
+    and runs `library.mjs import` on it.
 - An agent reads them to write **our own** explanation and derivation, cites
   them (authors, year, DOI), and links to the publisher's page. No copied
   paragraphs, tables or figures. A quote is at most one sentence, in quotes,

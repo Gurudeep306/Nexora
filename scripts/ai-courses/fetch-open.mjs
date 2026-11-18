@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Downloads the freely available papers (arXiv and other legal open copies found
-// by verify-sources.mjs) into docs/ai-courses/private/papers/, for agents to read.
+// by verify-sources.mjs) into the paper library, docs/ai-courses/private/library/
+// <NN>-<course>/<paper-id>.pdf (see library.mjs), for agents to read.
 // That folder is git-ignored: PDFs are never committed or re-hosted (arXiv's
 // default licence doesn't allow re-hosting; publishers' licences don't either).
 //
@@ -8,14 +9,15 @@
 //   NODE_USE_ENV_PROXY=1 node scripts/ai-courses/fetch-open.mjs ho-2020 ...  only these ids
 //
 // Paywalled papers are not fetched: the owner downloads them with institutional
-// access into the same folder, named <id>.pdf (the list is in sources/CHECK.md).
+// access; `library.mjs import <folder>` files them (the list is in sources/DOWNLOAD.md).
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { pathOf } from './library.mjs'
+
 const DOCS = join(dirname(fileURLToPath(import.meta.url)), '../../docs/ai-courses')
-const OUT = join(DOCS, 'private/papers')
-mkdirSync(OUT, { recursive: true })
 const want = new Set(process.argv.slice(2))
 const check = JSON.parse(readFileSync(join(DOCS, 'sources/check.json'), 'utf8'))
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
@@ -25,7 +27,8 @@ let skipped = 0
 const failed = []
 for (const p of check.papers) {
   if (want.size && !want.has(p.id)) continue
-  const file = join(OUT, `${p.id}.pdf`)
+  const file = pathOf(p)
+  mkdirSync(dirname(file), { recursive: true })
   if (existsSync(file)) {
     skipped++
     continue
@@ -43,5 +46,6 @@ for (const p of check.papers) {
   }
   await sleep(p.arxiv ? 3100 : 800)
 }
-console.log(`Downloaded ${got}, already there ${skipped}, failed ${failed.length}. Folder: docs/ai-courses/private/papers (git-ignored).`)
+console.log(`Downloaded ${got}, already there ${skipped}, failed ${failed.length}. Library: docs/ai-courses/private/library (git-ignored).`)
+execFileSync(process.execPath, [join(dirname(fileURLToPath(import.meta.url)), 'library.mjs'), 'index'], { stdio: 'inherit' })
 if (failed.length) console.log('Open these by hand:\n- ' + failed.join('\n- '))
