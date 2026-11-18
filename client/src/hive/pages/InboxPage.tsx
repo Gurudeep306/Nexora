@@ -127,7 +127,7 @@ export default function InboxPage() {
                         }
                         onOpen={() => {
                           if (!a.read) void markReadOne(a.id)
-                          if (a.ref) navigate(a.ref.startsWith('/') ? a.ref : '/hive/spend/budgets')
+                          if (a.ref) navigate(a.ref.startsWith('/') ? a.ref : '/hive/spend')
                         }}
                       />
                     )

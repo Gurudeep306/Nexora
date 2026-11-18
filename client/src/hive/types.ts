@@ -109,7 +109,7 @@ export interface Machine {
   id: string
   name: string
   createdBy: string
-  policy: 'ask' | 'auto' | 'read'
+  policy: 'ask' | 'safe' | 'auto' | 'read'
   info: { hostname?: string; platform?: string; node?: string; roots?: string[]; user?: string; cpus?: number; memGb?: number; version?: string }
   lastSeen: number | null
   online: boolean

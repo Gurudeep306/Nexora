@@ -14,7 +14,7 @@ const { providerOf } = require("../hive/providers");
 const { pickDefault } = require("../hive/models");
 
 const BRIDGE_FILE = path.join(__dirname, "..", "..", "bridge", "hive-bridge.js");
-const POLICIES = new Set(["ask", "auto", "read"]);
+const POLICIES = new Set(["ask", "safe", "auto", "read"]);
 
 function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRow, BadInput, cleanSpec, COLORS, ready }) {
   /* ── bridge endpoints (machine token, not staff session) ───────────── */
@@ -70,7 +70,7 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     h(async (req, res) => {
       const m = await machineRow(req, { manage: true });
       const b = req.body || {};
-      if (b.policy !== undefined && !POLICIES.has(b.policy)) throw new BadInput("Policy must be ask, auto or read");
+      if (b.policy !== undefined && !POLICIES.has(b.policy)) throw new BadInput("Policy must be ask, safe, auto or read");
       await run("UPDATE hive_machines SET name=?, policy=? WHERE id=?", [str(b.name, "name", { max: 60, optional: true }) ?? m.name, b.policy ?? m.policy, m.id]);
       await audit(req, "hive.machine.update", m.id, { policy: b.policy });
       hub.emit("machines", { id: m.id });

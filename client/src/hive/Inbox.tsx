@@ -3,6 +3,7 @@
    list at the top; the bell in the top bar opens the full page.
    ──────────────────────────────────────────────────────────────────────── */
 import { useCallback, useEffect, useState } from 'react'
+import { useToast } from '@/components/ui'
 import { useNavigate } from 'react-router-dom'
 import { Bell, KeyRound, ShieldAlert } from 'lucide-react'
 import { Button } from '@/components/ui'
@@ -58,8 +59,31 @@ function untilText(ms: number) {
 /** The rows of "Needs you": approvals (with Run/Deny), work to review, failures, limits. */
 export function NeedsList({ needs }: { needs: ReturnType<typeof useNeeds> }) {
   const navigate = useNavigate()
+  const toast = useToast()
   const { answerApproval } = useHive()
+  const [retrying, setRetrying] = useState<string | null>(null)
   const open = (t: OverviewTask) => navigate(`/hive/p/${t.project_id}/t/${t.id}`)
+  // Try again: a fresh session on the same project, with the same request and
+  // the same place to work; Auto picks a healthy model this time.
+  const retry = async (t: OverviewTask) => {
+    setRetrying(t.id)
+    try {
+      const r = await hiveApi.createTask(t.project_id, {
+        prompt: t.prompt,
+        title: `Try again: ${t.title}`.slice(0, 120),
+        mode: 'solo',
+        agents: [{ provider: 'auto', keyId: 'auto', model: '' }],
+        machineId: t.machine_id ?? null,
+        folder: t.folder ?? null,
+        repoId: t.repo_id ?? null,
+      })
+      navigate(`/hive/p/${t.project_id}/t/${r.task.id}`)
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Couldn’t start it again')
+    } finally {
+      setRetrying(null)
+    }
+  }
   return (
     <RowList label="Needs you">
       {needs.approvals.map((a) => (
@@ -90,7 +114,20 @@ export function NeedsList({ needs }: { needs: ReturnType<typeof useNeeds> }) {
         <Row key={t.id} leading={<Dot color={t.project_color} />} title={t.title} meta={`${t.project_name} · finished ${timeAgo(t.updated_at)} — check it and ship`} trailing={<StatusPill size="sm" status="review" />} onOpen={() => open(t)} />
       ))}
       {needs.failed.map((t) => (
-        <Row key={t.id} leading={<Dot color={t.project_color} />} title={t.title} meta={`${t.project_name} · stopped with an error · ${timeAgo(t.updated_at)}`} trailing={<StatusPill size="sm" status="failed" />} onOpen={() => open(t)} />
+        <Row
+          key={t.id}
+          leading={<Dot color={t.project_color} />}
+          title={t.title}
+          meta={`${t.project_name} · stopped with an error · ${timeAgo(t.updated_at)}`}
+          trailing={<StatusPill size="sm" status="failed" />}
+          onOpen={() => open(t)}
+          actions={
+            <Button size="sm" variant="secondary" loading={retrying === t.id} onClick={() => retry(t)} title="Start it again with a healthy model, same request and place">
+              Try again
+            </Button>
+          }
+          className="[&_.hv-row-actions]:opacity-100"
+        />
       ))}
       {needs.limited.map((k: HiveKey) => (
         <Row key={k.id} leading={<KeyRound />} title={`${k.label || vendorName(k.provider)} reached its limit`} meta={k.limitNote || 'Other models take over until it frees up.'} trailing={<StatusPill size="sm" status="limited" label={`free in ${untilText(k.limitUntil!)}`} />} onOpen={() => navigate('/hive/keys')} />

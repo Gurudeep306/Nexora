@@ -80,7 +80,7 @@ const PARTS = [
   { id: "hive.models", parent: "hive", label: "Models and health", pages: "^/hive/models(/|$)", api: "^/api/hive/(models|health|catalog|bench|perf|route|agents)(/|$)", files: ["client/src/hive/pages/ModelsPage.tsx", "client/src/hive/pages/HealthPage.tsx", "src/hive/models.js", "src/hive/router.js", "src/hive/health.js"] },
   { id: "hive.keys", parent: "hive", label: "Keys and limits", pages: "^/hive/keys(/|$)", api: "^/api/hive/(keys|caps)(/|$)", files: ["client/src/hive/pages/KeysPage.tsx", "src/hive/keys.js", "src/hive/caps.js", "src/hive/vault.js"] },
   { id: "hive.extensions", parent: "hive", label: "Toolbox, plugins and memory", pages: "^/hive/extensions(/|$)", api: "^/api/hive/(toolbox|plugins|memory)(/|$)", files: ["client/src/hive/pages/ToolboxPage.tsx", "client/src/hive/pages/PluginsPage.tsx", "client/src/hive/pages/MemoryPage.tsx", "src/hive/toolbox.js", "src/hive/plugins.js"] },
-  { id: "hive.spend", parent: "hive", label: "Spend and budgets", pages: "^/hive/spend(/|$)", api: "^/api/hive/(spend|steward|stats|alerts)(/|$)", files: ["client/src/hive/pages/UsagePage.tsx", "client/src/hive/pages/BudgetsPage.tsx", "client/src/hive/pages/StewardPage.tsx", "src/hive/steward.js"] },
+  { id: "hive.spend", parent: "hive", label: "Spend and budgets", pages: "^/hive/spend(/|$)", api: "^/api/hive/(spend|steward|stats|alerts)(/|$)", files: ["client/src/hive/pages/BudgetsPage.tsx", "client/src/hive/pages/StewardPage.tsx", "src/hive/steward.js"] },
   { id: "hive.inbox", parent: "hive", label: "Inbox", pages: "^/hive/inbox(/|$)", files: ["client/src/hive/pages/InboxPage.tsx", "client/src/hive/Inbox.tsx"] },
 ];
 

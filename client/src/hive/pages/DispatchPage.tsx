@@ -1,5 +1,5 @@
 /* ────────────────────────────────────────────────────────────────────────
-   Dispatcher — describe the work; Hive splits it into parts, gives each part
+   Plan a team (the Dispatcher) — describe the work; Hive splits it into parts, gives each part
    the cheapest model that can really do it, and runs the team. The plan is a
    live graph: parts flow left → right by dependency, each with its model,
    kind of work and cost, compared with "one premium model does everything".
@@ -129,8 +129,8 @@ export default function DispatchPage() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <PageTitle
         icon={<Workflow />}
-        title="Dispatcher"
-        sub="Describe the work. Hive splits it into parts and gives each part the cheapest model that can really do it — then runs the whole team."
+        title="Plan a team"
+        sub="Describe the work. Hive splits it into parts, gives each part the cheapest model that can really do it, lets you check the plan, then runs the whole team."
       />
 
       {/* Composer */}

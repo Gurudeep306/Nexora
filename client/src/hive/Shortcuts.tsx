@@ -1,7 +1,7 @@
 /* ────────────────────────────────────────────────────────────────────────
    Single-key shortcuts for Hive: never while typing, never with ⌘/Ctrl/Alt,
    and switchable off (WCAG 2.1.4). "G then X" goes somewhere; "?" shows the
-   sheet. ⌘ shortcuts live with the shell (⌘K, ⌘I, ⌘J, ⌘B, ⌘.).
+   sheet. ⌘ shortcuts live with the shell (⌘K, ⌘I, ⌘J, ⌘.).
    ──────────────────────────────────────────────────────────────────────── */
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -35,12 +35,12 @@ const typing = (t: EventTarget | null) => {
   return !!el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) || !!el.closest('[role="dialog"] input, [contenteditable="true"]'))
 }
 
-export function useShortcuts({ onPalette, onSheet, onToggleSide }: { onPalette: () => void; onSheet: () => void; onToggleSide: () => void }) {
+export function useShortcuts({ onPalette, onSheet }: { onPalette: () => void; onSheet: () => void }) {
   const navigate = useNavigate()
   const pendingG = useRef(0)
   // Latest callbacks without re-binding the listener on every render.
-  const cb = useRef({ onPalette, onSheet, onToggleSide })
-  cb.current = { onPalette, onSheet, onToggleSide }
+  const cb = useRef({ onPalette, onSheet })
+  cb.current = { onPalette, onSheet }
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       // ⌘/ (Ctrl+/) opens the shortcut list from anywhere, even while typing.
@@ -68,9 +68,6 @@ export function useShortcuts({ onPalette, onSheet, onToggleSide }: { onPalette: 
       } else if (k === '/') {
         e.preventDefault()
         cb.current.onPalette()
-      } else if (k === '[') {
-        e.preventDefault()
-        cb.current.onToggleSide()
       } else if (k === 'c') {
         e.preventDefault()
         navigate('/hive/copilot')
@@ -89,7 +86,6 @@ const GROUPS: { title: string; rows: [string, string][] }[] = [
       ['⌘+I', 'Open or close the Copilot panel'],
       ['⌘+J', 'New chat'],
       ['C', 'New task (Copilot)'],
-      ['⌘+B  or  [', 'Show or hide the sidebar'],
       ['?  or  ⌘+/', 'This list'],
     ],
   },
