@@ -69,3 +69,33 @@ embedded, practice) · what is next · anything blocked and why.
   tests needing clang/javac, absent here and failing on main too).
 - Next job per dm.md §4: C2 (Chapter 2, first-order logic) — expand its plan,
   then lessons one per commit.
+
+## 2026-11-18 · DM job C2 — Chapter 2 predicate logic, both lessons (branch `notes/dm-ch02`)
+
+- `content/gate-notes/dm/02-predicate-logic/_plan.md` expanded to DL-plan depth
+  (teaching sequences with block ids, PYQ→tests maps, scene-by-scene plans, lab tabs,
+  practice themes for both lessons); `dmlib.check_lessons` gained floor params
+  (`min_viz/min_animated/min_examples/min_practice/min_labs/min_intuition`, defaults keep ch1
+  behaviour) and `lessons_ch2.py` now enforces the dm.md §3 bar:
+  `min_words=7000, min_viz=8, min_animated=7, min_examples=25, min_practice=10, min_labs=1`.
+- Lesson `01-predicates-quantifiers`: 7,446 words, 42 worked examples, 9 viz (9 animated),
+  1 lab (quantifier-lab/evaluate), 19 PYQs, 12 practice — status review.
+- Lesson `02-quantifier-laws-validity`: 7,430 words, 54 worked examples, 8 viz (8 animated),
+  1 lab (quantifier-lab/models), 16 PYQs, 12 practice — status review.
+- `predlib.py` (FOL parser/evaluator) + one tokenizer fix (ASCII `exists!`); `l2_01_predicates.py`
+  and `l2_02_validity.py` re-derive every example answer, all 35 ch2 PYQ keys (finite-domain
+  search + seeded sampling, seed 20261118) and all 24 practice answers; `_sol_ch2_l01.py` /
+  `_sol_ch2_l02.py` write 35 teacher-style v2 solutions; `_viz_ch2_l01.py` / `_viz_ch2_l02.py`
+  generate the 17 scenes (all animated; `viz_ch2.py` checks files == generator).
+- needsReview PYQs resolved with evidence, keys unchanged (logged in `_errata/dm.md` §3):
+  cse-2008-cs-30 (loose ∃y brackets in option A), cse-2003-cs-71 (B and D printed identically),
+  cse-2013-cs-47 (as printed A and D both non-equivalent; GATE 2013 marks-to-all; intended key D),
+  cse-2015-2-cs-55 (propositional vs FOL "tautology"; key C).
+- Nexus: `predicate-logic` node now lists both lessons with updated desc/summary/topics/tags.
+- Checks: `run_checks.py` 121/121; `build-gate-notes.js --drafts` 0 errors;
+  `nexus:check` OK (65 subjects); nexus tests 29/29; `npm test` 765/773 — the 6 known
+  clang/javac dry-run failures plus the 2 notes `--check` assertions, which fail only because
+  the two lessons are `status: review` (by design; they pass after the N7/N8 flip to
+  published). `notes:build`/`notes:check` production modes likewise expect published.
+- Next: independent review (`docs/handoff/review-dm-ch02.md`), then flip to published (N8),
+  rebuild, merge. After that the next job per dm.md §4 is relation-lab.

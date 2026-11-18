@@ -151,14 +151,15 @@
       "zone": 1,
       "name": "Predicate logic",
       "icon": "function",
-      "desc": "Predicates, universal and existential quantifiers, nested quantifiers, negation and translating English to first-order logic.",
-      "summary": "You will be able to translate English statements into first-order logic with quantifiers and negate quantified statements correctly.",
+      "desc": "Predicates, quantifiers and translating English to first-order logic; then the laws of quantifiers: validity, satisfiability, counter-models, prenex form and models.",
+      "summary": "You will be able to translate English into first-order logic and decide which quantified formulas are valid, using the quantifier laws and tiny counter-models.",
       "topics": [
         "Predicates and domains",
-        "Universal and existential quantifiers",
+        "Quantifiers and translating English",
         "Nested quantifiers and order",
-        "Negating quantified statements",
-        "Translating English to logic"
+        "Validity, satisfiability and counter-models",
+        "Quantifier laws, null quantification and prenex form",
+        "Models: infinite-only sentences, Bernays–Schönfinkel, Horn programs, induction as FOL"
       ],
       "kind": "lesson",
       "requires": [
@@ -168,14 +169,25 @@
         "dm/logic"
       ],
       "pyqTags": [
-        "first-order",
+        "Bernays",
         "first order",
-        "quantifier",
+        "first-order",
+        "horn",
+        "induction",
+        "model",
         "predicate",
+        "prenex",
+        "quantifier",
+        "satisfiable",
+        "tautology",
         "translation",
-        "Bernays"
+        "valid"
       ],
-      "xpReward": 60
+      "xpReward": 60,
+      "lessons": [
+        "predicates-quantifiers",
+        "quantifier-laws-validity"
+      ]
     },
     {
       "id": "proof-techniques",

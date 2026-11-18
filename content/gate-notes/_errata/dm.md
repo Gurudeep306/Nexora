@@ -29,6 +29,7 @@ Legend: **E** = error in one set · **X** = sets disagree · **B** = question-ba
 - **C 313:** any clause is called a "maxterm" and any conjunction a "minterm"; a maxterm/minterm must contain every variable once (C 323–325 correct).
 - **C 326:** the PCNF of (P∨Q∨¬R)(¬P∨Q∨R)(¬P∨¬Q∨R) is Π(1, 4, 6), not Π(1, 3, 6): a maxterm is numbered by the row that makes it false (¬P∨Q∨R is false at 100 = 4).
 - **D 677:** "I ⊨ F ⇔ F satisfiable ⇔ F valid" holds for closed quantified Boolean formulas, not for first-order sentences.
+- **D 681:** repeats the D 677 slip (QBF truth-table reasoning applied to a first-order sentence).
 - **E 783:** the step rewriting q → (p → q) as q ∧ ¬p is garbled; it equals ¬q ∨ ¬p ∨ q, a tautology (conclusion right).
 
 ### Sets, relations, functions
@@ -141,4 +142,27 @@ Legend: **E** = error in one set · **X** = sets disagree · **B** = question-ba
 ## 3. Question-bank notes (B)
 
 (Filled in as the chapters are written: any key that a script disagrees with is fixed through
-`src/gate/fixes/<paper>.json` and logged here.)
+`src/gate/fixes/<paper>.json` and logged here. Keys below were re-derived by script and kept unchanged.)
+
+### Chapter 2 (predicate logic) — resolved 2026-11-18
+
+- **B cse-2008-cs-30:** option A prints `$\exists y\,pda(y)\wedge equivalent(x,y)$` inside a `$\to$`, which
+  loosely brackets only `pda(y)`. The intended wide reading is
+  `$\forall x(fsa(x) \to \exists y(pda(y) \wedge equivalent(x,y)))$`. Finite-domain equivalence search
+  (`l2_01_predicates.py`): under the intended reading option A is equivalent to the universal closure of the
+  statement, so key A stands. Key unchanged.
+- **B cse-2003-cs-71:** options B and D are printed **identically** in the paper (both wrongly put `$\forall y$`
+  around the rule body `$B(x,y)\wedge C(y)$`). Equivalence search up to domain size 3 (`l2_02_validity.py`):
+  only option A (`$\forall x[(\exists y)(B(x,y)\wedge C(y)) \to A(x)] \wedge \neg\exists x B(x,x)$`) matches the
+  logic program. Key A unchanged.
+- **B cse-2013-cs-47:** as printed, **both A and D** are not equivalent to `$\neg\exists x(\forall y\,\alpha \wedge
+  \forall z\,\beta)$` — predlib finds counter-models for each on a 1-element domain with `$\alpha=\beta=$ true`
+  (A rewrites to `$\forall x(\forall z\beta \vee \forall y\alpha)$`, D to `$\forall x(\forall y\alpha \vee
+  \exists z\neg\beta)$`; the target is `$\forall x(\exists y\neg\alpha \vee \exists z\neg\beta)$`; B and C match
+  it). GATE 2013 awarded marks to all for this question. The intended key **D is kept** (never changed silently).
+  Evidence: `l2_02_validity.py`.
+- **B cse-2015-2-cs-55:** "tautology" here means **propositional** tautology. Option C is one: both sides are the
+  same formula up to `$P\to R \equiv \neg P\vee R$` under an unchanged quantifier prefix, so the skeleton is
+  `$X \leftrightarrow X$`. Option D (`$\forall x\forall y P(x,y) \to \forall x\forall y P(y,x)$`) is FOL-valid but
+  its truth-functional form is `$A \to B$`, not a propositional tautology; A and B have counter-models. Key C kept.
+  Evidence: `l2_02_validity.py`.
