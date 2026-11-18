@@ -1,7 +1,11 @@
 import { useRef } from 'react'
 import { cn } from '@/lib/utils'
 
-/** View toggles and options: a radio group, arrow keys to move. */
+/**
+ * View toggles and options: a radio group, arrow keys to move. Drawn like the
+ * site's tabs: words in a row, the chosen one in full ink with an accent rule
+ * under it (no filled pills).
+ */
 export function SegmentedControl<T extends string>({ value, onChange, options, label, size = 'md', className }: { value: T; onChange: (v: T) => void; options: { value: T; label: string; hint?: string }[]; label: string; size?: 'sm' | 'md'; className?: string }) {
   const refs = useRef<(HTMLButtonElement | null)[]>([])
   const idx = Math.max(0, options.findIndex((o) => o.value === value))
@@ -11,7 +15,7 @@ export function SegmentedControl<T extends string>({ value, onChange, options, l
     refs.current[n]?.focus()
   }
   return (
-    <div role="radiogroup" aria-label={label} className={cn('hive-scroll inline-flex max-w-full overflow-x-auto rounded-[var(--hv-r-btn)] bg-[var(--hv-surface-1)] p-0.5 ring-1 ring-[var(--hv-border)]', className)}>
+    <div role="radiogroup" aria-label={label} className={cn('hive-scroll inline-flex max-w-full gap-1 overflow-x-auto', className)}>
       {options.map((o, i) => {
         const on = o.value === value
         return (
@@ -36,9 +40,10 @@ export function SegmentedControl<T extends string>({ value, onChange, options, l
               }
             }}
             className={cn(
-              'shrink-0 whitespace-nowrap rounded-[var(--hv-r-chip)] font-medium transition-colors duration-[var(--hv-d-fast)]',
-              size === 'sm' ? 'h-6 px-2 text-[12px]' : 'h-7 px-3 text-[13px]',
-              on ? 'bg-[var(--hv-surface-3)] text-[var(--hv-text-1)] shadow-sm' : 'text-[var(--hv-text-2)] hover:text-[var(--hv-text-1)]',
+              'relative shrink-0 whitespace-nowrap rounded-[var(--hv-r-chip)] transition-colors duration-[var(--hv-d-fast)]',
+              "after:absolute after:inset-x-1.5 after:bottom-0 after:h-[2px] after:rounded-full after:content-['']",
+              size === 'sm' ? 'h-7 px-1.5 text-[12.5px]' : 'h-8 px-2 text-[13.5px]',
+              on ? 'font-semibold text-[var(--hv-text-1)] after:bg-[var(--hv-accent)]' : 'text-[var(--hv-text-2)] after:bg-transparent hover:text-[var(--hv-text-1)] hover:after:bg-[var(--hv-border-strong)]',
             )}
           >
             {o.label}

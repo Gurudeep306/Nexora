@@ -54,8 +54,8 @@ set, an original drawing behind the page and one beside page headers.
 On top of any theme a person can set the **text size**, the **code font** and
 the **handwriting for GATE solutions**. Everything else belongs to the theme.
 
-Hive keeps its own look (Studio on Midnight) whatever theme is on
-(`hiveLook` in `theme/look.ts`).
+Hive wears the person's own look too, dressed as "the desk"
+(`docs/ui/hive-desk.md`).
 
 ### How a theme is built
 

@@ -540,7 +540,7 @@ function Templates({ templates, onPick, compact }: { templates: ScheduleTemplate
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, delay: i * 0.04, ease: EASE }}
-            className={cn('hive-card hive-card-hover hive-lift group relative overflow-hidden text-left', compact ? 'p-3' : 'p-4')}
+            className={cn('hive-card hive-card-hover group relative overflow-hidden text-left', compact ? 'p-3' : 'p-4')}
           >
             <span className="relative flex items-start gap-3">
               <span className={cn('hive-tile', compact ? 'size-8' : 'size-9')} style={{ ['--tile' as string]: color }}>

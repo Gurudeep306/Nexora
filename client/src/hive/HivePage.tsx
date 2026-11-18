@@ -47,10 +47,11 @@ import { cn } from '@/lib/utils'
 import { hiveApi } from './api'
 import { TeamChat } from './TeamChat'
 import { InboxBell } from './Inbox'
-import { Panel, PanelGroup, PanelSeparator, Skeleton, transitionTo, useDensity, useMedia, useNavFade } from './kit'
+import { Skeleton, transitionTo, useDensity, useMedia, useNavFade } from './kit'
 import type { LaunchGroup } from './Launcher'
 import { CopilotDock } from './Copilot'
-import { HiveLogo } from './HiveLogo'
+import { HiveLockup, HiveLogo } from './HiveLogo'
+import { BootScreen } from './HiveBoot'
 import { projectColor } from './projectColor'
 import { ModelsAtWork, ProjectSwitcher } from './Showcase'
 import { Go, Sectioned } from './Sections'
@@ -155,7 +156,12 @@ function Shell() {
   const [sides, setSides] = useState(() => ({ 'hive:side': store.get('hive:side', '1') === '1', 'hive:sideSession': store.get('hive:sideSession', '0') === '1' }))
   const side = sides[sideKey]
   const lgUp = useMedia('(min-width: 1024px)')
-  const sideW = useMemo(() => Number(store.get('hive:sideW', '272')) || 272, [])
+  const [sideW, setSideWState] = useState(() => Math.min(420, Math.max(220, Number(store.get('hive:sideW', '272')) || 272)))
+  const setSideW = useCallback((w: number) => {
+    const v = Math.round(Math.min(420, Math.max(220, w)))
+    setSideWState(v)
+    store.set('hive:sideW', String(v))
+  }, [])
   const setSide = (f: (s: boolean) => boolean) =>
     setSides((all) => {
       const v = f(all[sideKey])
@@ -165,6 +171,15 @@ function Shell() {
   const [mobileNav, setMobileNav] = useState(false)
 
   useEffect(() => setMobileNav(false), [pathname])
+  // Answers stream as soon as you ask: fetch the markdown engine in the
+  // background once Hive is open, so the first reply is never shown as raw text.
+  useEffect(() => {
+    if (!boot) return
+    const idle = (window as Window & { requestIdleCallback?: (cb: () => void) => number }).requestIdleCallback
+    const load = () => void import('@/components/ai/AiMarkdownImpl')
+    if (idle) idle(load)
+    else window.setTimeout(load, 300)
+  }, [boot])
   useEffect(() => {
     hiveApi
       .overview()
@@ -214,32 +229,8 @@ function Shell() {
   const toggleRef = useRef(() => {})
   toggleRef.current = () => setSide((s) => !s)
 
-  if (loading && !boot) {
-    return (
-      <div className="hive-root grid h-dvh place-items-center" role="status" aria-label="Loading Hive">
-        <div className="flex flex-col items-center gap-5">
-          <HiveLogo size={40} draw />
-          <span className="hive-boot-word font-serif text-[15px] italic text-text-muted">Waking the hive…</span>
-          <span className="hive-boot-bar" aria-hidden="true">
-            <span />
-          </span>
-        </div>
-      </div>
-    )
-  }
-  if (error || !boot) {
-    return (
-      <div className="hive-root grid h-dvh place-items-center p-6 text-center">
-        <div>
-          <HiveLogo size={44} className="mx-auto mb-4 opacity-60" />
-          <p className="text-sm text-text-secondary">{error ?? 'Hive is unavailable'}</p>
-          <Link to="/hub" className="mt-3 inline-block text-sm text-accent-brand hover:underline">
-            Back to NexoraGuru
-          </Link>
-        </div>
-      </div>
-    )
-  }
+  if (loading && !boot) return <BootScreen />
+  if (error || !boot) return <BootScreen failed={error ?? 'Hive is unavailable right now.'} />
 
   const toggleSide = () => setSide((s) => !s)
 
@@ -296,15 +287,12 @@ function Shell() {
     <div className="hive-root flex h-dvh overflow-hidden text-text-primary" data-density={density}>
       <ActivityBar onTeam={() => setTeam(true)} onPalette={() => setPalette(true)} withSidebar={side} />
       {side && lgUp ? (
-        <PanelGroup key="hive-shell" id="hive-shell" panelIds={["side", "main"]}>
-          <Panel id="side" minSize={220} maxSize={420} defaultSize={sideW} className="min-w-0">
-            <Sidebar />
-          </Panel>
-          <PanelSeparator label="Resize sidebar" />
-          <Panel id="main" minSize="40%" className="min-w-0">
-            {mainCol}
-          </Panel>
-        </PanelGroup>
+        <>
+          <div className="shrink-0" style={{ width: sideW }}>
+            <Sidebar resizable={{ width: sideW, onWidth: setSideW }} />
+          </div>
+          <div className="flex min-w-0 flex-1">{mainCol}</div>
+        </>
       ) : (
         mainCol
       )}
@@ -409,32 +397,33 @@ function ActivityBar({ onTeam, onPalette, withSidebar }: { onTeam: () => void; o
   }
   return (
     <>
-      <nav onMouseEnter={enter} onMouseLeave={leave} className={cn('hive-rail hidden w-[56px] shrink-0 flex-col items-center border-r hive-line py-3 md:flex', withSidebar && 'lg:hidden')} aria-label="Hive">
-        <Link to="/hive" className="mb-3 grid size-10 place-items-center rounded-xl" aria-label="Hive home">
-          <HiveLogo size={28} live={live.length > 0} />
+      <nav onMouseEnter={enter} onMouseLeave={leave} className={cn('hive-rail hidden w-[60px] shrink-0 flex-col items-center border-r hive-line py-3 md:flex', withSidebar && 'lg:hidden')} aria-label="Hive">
+        <Link to="/hive" className="mb-4 grid size-10 place-items-center" aria-label="Hive home">
+          <HiveLogo size={26} live={live.length > 0} />
         </Link>
-        <button type="button" onClick={onPalette} className="mb-2 grid size-9 place-items-center rounded-[var(--hv-r-btn)] text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary" aria-label="Search or run a command (⌘K)">
-          <Search className="size-[17px]" strokeWidth={1.8} />
+        <button type="button" onClick={onPalette} className="hv-rail-btn mb-2" aria-label="Search or run a command (⌘K)">
+          <Search className="size-[17px]" strokeWidth={1.7} />
         </button>
+        <span className="mb-2 h-px w-6 bg-[var(--hv-border)]" aria-hidden="true" />
         <div className="hive-scroll flex min-h-0 flex-1 flex-col items-center gap-1 overflow-y-auto">
           {rail.map((it) => (
             <RailLink key={it.label} it={it} />
           ))}
         </div>
         <Tooltip label={`Team · ${online.length} online`} side="right">
-          <button type="button" onClick={onTeam} className="relative mb-1 grid size-9 place-items-center rounded-[var(--hv-r-btn)] text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary" aria-label="Team">
-            <Users className="size-[17px]" strokeWidth={1.8} />
-            {online.length > 0 && <span className="absolute right-0.5 top-0.5 grid min-w-4 place-items-center rounded-full bg-state-success px-1 text-[9px] font-semibold text-on-accent-brand">{online.length}</span>}
+          <button type="button" onClick={onTeam} className="hv-rail-btn mb-1" aria-label={`Team · ${online.length} online`}>
+            <Users className="size-[17px]" strokeWidth={1.7} />
+            {online.length > 0 && <span className="absolute right-1 top-1 size-1.5 rounded-full bg-[var(--hv-success)]" aria-hidden="true" />}
           </button>
         </Tooltip>
         <Tooltip label="Back to NexoraGuru" side="right">
-          <Link to="/hub" className="grid size-9 place-items-center rounded-[var(--hv-r-btn)] opacity-80 hover:bg-text-primary/[0.06] hover:opacity-100" aria-label="Back to NexoraGuru">
+          <Link to="/hub" className="hv-rail-btn" aria-label="Back to NexoraGuru">
             <LogoMark size={20} />
           </Link>
         </Tooltip>
       </nav>
       {peek && (
-        <div onMouseEnter={() => window.clearTimeout(timer.current)} onMouseLeave={leave} className="hv-peek fixed bottom-0 left-0 top-0 z-[850] hidden shadow-[12px_0_32px_-16px_oklch(0_0_0/0.5)] md:block">
+        <div onMouseEnter={() => window.clearTimeout(timer.current)} onMouseLeave={leave} className="hv-peek hv-float fixed bottom-0 left-0 top-0 z-[850] hidden md:block">
           <div className="h-full w-[272px]">
             <Sidebar />
           </div>
@@ -462,11 +451,10 @@ function RailLink({ it }: { it: NavItem }) {
         {({ isActive }) => {
           const on = forced ?? isActive
           return (
-            <span className={cn('relative grid size-9 place-items-center rounded-[var(--hv-r-btn)] transition-colors', on ? 'text-accent-brand' : 'text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary')}>
-              {on && <span className="absolute inset-0 rounded-[var(--hv-r-btn)] bg-accent-brand/12 ring-1 ring-accent-brand/25" />}
-              <it.icon className="relative size-[18px]" strokeWidth={1.8} />
+            <span className="hv-rail-btn" data-on={on}>
+              <it.icon className="relative size-[18px]" strokeWidth={on ? 1.9 : 1.7} />
               {it.badge ? (
-                <span className="absolute -right-0.5 -top-0.5 grid min-w-4 place-items-center rounded-full px-1 text-[9px] font-bold text-white" style={{ background: it.tone }}>
+                <span className="absolute -right-0.5 -top-0.5 grid min-w-4 place-items-center rounded-full px-1 text-[9px] font-bold text-[var(--hv-bg-app)]" style={{ background: it.tone }}>
                   {it.badge}
                 </span>
               ) : it.tone ? (
@@ -481,7 +469,41 @@ function RailLink({ it }: { it: NavItem }) {
 }
 
 /* ── Sidebar: projects (with their sessions) and chats ─────────────────── */
-function Sidebar() {
+/**
+ * The sidebar's right edge: drag it, or focus it and use the arrow keys, to
+ * change the width (220–420 px, remembered). It sits inside the sidebar's own
+ * landmark, so nothing on the page lives outside one.
+ */
+function SideResizer({ width, onWidth }: { width: number; onWidth: (w: number) => void }) {
+  const start = useRef<{ x: number; w: number } | null>(null)
+  return (
+    <div
+      role="separator"
+      aria-orientation="vertical"
+      aria-label="Resize sidebar"
+      aria-valuemin={220}
+      aria-valuemax={420}
+      aria-valuenow={width}
+      tabIndex={0}
+      onPointerDown={(e) => {
+        start.current = { x: e.clientX, w: width }
+        ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+      }}
+      onPointerMove={(e) => start.current && onWidth(start.current.w + e.clientX - start.current.x)}
+      onPointerUp={() => (start.current = null)}
+      onKeyDown={(e) => {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+        e.preventDefault()
+        onWidth(width + (e.key === 'ArrowLeft' ? -16 : 16))
+      }}
+      className="group absolute inset-y-0 -right-[5px] z-10 w-[9px] cursor-col-resize touch-none outline-none"
+    >
+      <span className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-transparent transition-colors duration-150 group-hover:bg-[var(--hv-text-3)] group-focus-visible:bg-[var(--hv-focus-ring)]" />
+    </div>
+  )
+}
+
+function Sidebar({ resizable }: { resizable?: { width: number; onWidth: (w: number) => void } } = {}) {
   const { boot, taskIndex, live, projectId, taskId, convosVersion } = useHive()
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -518,11 +540,11 @@ function Sidebar() {
     })
 
   return (
-    <aside className="hive-side flex h-full w-full flex-col border-r hive-line">
-      <div className="flex items-center gap-2 px-3 pb-2 pt-3">
-        <Link to="/hive" className="flex items-center gap-2" aria-label="Hive home">
-          <HiveLogo size={24} live={live.length > 0} />
-          <span className="text-[15px] font-semibold tracking-[-0.01em]">Hive</span>
+    <aside className="hive-side relative flex h-full w-full flex-col border-r hive-line" aria-label="Hive menu">
+      {resizable && <SideResizer width={resizable.width} onWidth={resizable.onWidth} />}
+      <div className="flex items-center gap-2 px-4 pb-3 pt-4">
+        <Link to="/hive" className="flex items-center" title="Hive home">
+          <HiveLockup size={26} live={live.length > 0} />
         </Link>
         <span className="ml-auto">
           <NewMenu />
@@ -531,15 +553,15 @@ function Sidebar() {
       <div className="px-3 pb-2">
         <ProjectSwitcher />
       </div>
-      <div className="px-3 pb-2">
-        <label className="flex h-8 items-center gap-2 rounded-lg bg-text-primary/[0.05] px-2.5 text-text-muted focus-within:bg-text-primary/[0.08] focus-within:ring-2 focus-within:ring-[var(--hv-focus-ring)]">
-          <Search className="size-3.5" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Filter the menu" placeholder="Filter" className="min-w-0 flex-1 bg-transparent text-[12.5px] outline-none placeholder:text-text-muted" />
+      <div className="px-4 pb-1">
+        <label className="flex h-8 items-center gap-2 border-b border-[var(--hv-border)] text-[var(--hv-text-3)] transition-colors focus-within:border-[var(--hv-text-1)]">
+          <Search className="size-3.5 shrink-0" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Filter the menu" placeholder="Filter pages, projects, chats" className="hv-serif min-w-0 flex-1 bg-transparent text-[13.5px] italic text-[var(--hv-text-1)] outline-none placeholder:text-[var(--hv-text-3)]" />
         </label>
       </div>
       <nav className="hive-scroll min-h-0 flex-1 overflow-y-auto px-2 pb-4">
         <NavSections filter={s} />
-        <div className="mx-2.5 my-3 h-px bg-[var(--hive-line)]" />
+        <div className="mx-3 my-3 h-px bg-[var(--hive-line)]" />
         <SideHeading action={<SideAdd to="/hive/p/new" label="New project" />}>Projects</SideHeading>
         {projects
           .filter((p) => !s || p.name.toLowerCase().includes(s) || (tasksBy.get(p.id) ?? []).some((t) => t.title.toLowerCase().includes(s)))
@@ -549,18 +571,18 @@ function Sidebar() {
             const working = live.filter((a) => a.projectId === p.id).length
             return (
               <div key={p.id} className="mb-0.5">
-                <div className={cn('group flex items-center rounded-lg pr-1', p.id === projectId && !taskId && 'bg-text-primary/[0.07]')}>
+                <div className={cn('group flex items-center rounded-[var(--hv-r-btn)] pr-1 hover:bg-[var(--hv-surface-2)]', p.id === projectId && !taskId && 'bg-[var(--hv-surface-2)]')}>
                   <button type="button" onClick={() => toggle(p.id)} className="grid size-6 shrink-0 place-items-center text-text-muted" aria-label={isOpen ? 'Collapse' : 'Expand'}>
                     <ChevronRight className={cn('size-3.5 transition-transform', isOpen && 'rotate-90')} />
                   </button>
                   <button type="button" onClick={() => navigate(`/hive/p/${p.id}`)} className="flex min-w-0 flex-1 items-center gap-2 py-1.5 text-left">
                     <span className="hive-hex size-3 shrink-0" style={{ background: projectColor(p.color) }} />
-                    <span className="truncate text-[13px] text-text-primary">{p.name}</span>
+                    <span className={cn('truncate text-[13px] text-[var(--hv-text-1)]', p.id === projectId && 'font-semibold')}>{p.name}</span>
                     {p.machine_id && <Terminal className="size-3 shrink-0 text-text-muted" aria-label="On a machine" />}
                   </button>
                   {working > 0 && (
-                    <span className="mr-1 inline-flex items-center gap-1 text-[10.5px] text-accent-brand">
-                      <span className="hive-dot-run size-1.5 rounded-full bg-accent-brand" />
+                    <span className="hv-num mr-1 inline-flex items-center gap-1 text-[11px] text-[var(--hv-text-2)]" title={`${working} agent${working === 1 ? '' : 's'} working`}>
+                      <span className="hive-dot-run size-1.5 rounded-full bg-[var(--hv-accent)]" />
                       {working}
                     </span>
                   )}
@@ -575,10 +597,10 @@ function Sidebar() {
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.18 }} className="overflow-hidden">
                       <div className="ml-[11px] border-l hive-line pl-2">
                         {tasks.slice(0, 8).map((t) => (
-                          <button key={t.id} type="button" onClick={() => navigate(`/hive/p/${p.id}/t/${t.id}`)} className={cn('flex w-full items-center gap-2 rounded-md px-2 py-1 text-left', t.id === taskId ? 'bg-accent-brand/10 text-text-primary' : 'text-text-secondary hover:bg-text-primary/[0.05]')}>
+                          <button key={t.id} type="button" onClick={() => navigate(`/hive/p/${p.id}/t/${t.id}`)} className={cn('flex w-full items-center gap-2 rounded-[var(--hv-r-btn)] px-2 py-1 text-left', t.id === taskId ? 'bg-[var(--hv-surface-2)] font-medium text-[var(--hv-text-1)]' : 'text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]')}>
                             <StatusDot status={t.status} className="size-1.5" />
                             <span className="min-w-0 flex-1 truncate text-[12.5px]">{t.title}</span>
-                            <span className="shrink-0 text-[10.5px] text-text-muted">{timeAgo(t.updated_at)}</span>
+                            <span className="hv-num shrink-0 text-[10.5px] text-text-muted">{timeAgo(t.updated_at)}</span>
                           </button>
                         ))}
                         {!tasks.length && <div className="px-2 py-1 text-[11.5px] text-text-muted">No sessions yet</div>}
@@ -595,7 +617,7 @@ function Sidebar() {
             )
           })}
         {!projects.length && (
-          <Link to="/hive/projects/guide" className="mx-1 mt-1 flex items-center gap-2 rounded-lg border border-dashed hive-line px-2.5 py-2 text-[12px] text-text-muted hover:text-text-primary">
+          <Link to="/hive/projects/guide" className="mx-1 mt-1 flex items-center gap-2 rounded-[var(--hv-r-btn)] border border-dashed hive-line px-3 py-2 text-[12px] text-text-muted hover:text-text-primary">
             <Plus className="size-3.5" /> Set up your first project
           </Link>
         )}
@@ -605,10 +627,10 @@ function Sidebar() {
           .filter((c) => !s || c.title.toLowerCase().includes(s))
           .slice(0, 40)
           .map((c) => (
-            <button key={c.id} type="button" onClick={() => navigate(`/hive/chat/${c.id}`)} className={cn('flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left', c.id === convoId ? 'bg-text-primary/[0.08] text-text-primary' : 'text-text-secondary hover:bg-text-primary/[0.05]')}>
+            <button key={c.id} type="button" onClick={() => navigate(`/hive/chat/${c.id}`)} className={cn('flex w-full items-center gap-2 rounded-[var(--hv-r-btn)] px-3 py-1.5 text-left', c.id === convoId ? 'bg-[var(--hv-surface-2)] font-medium text-[var(--hv-text-1)]' : 'text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]')}>
               <span className="min-w-0 flex-1 truncate text-[12.5px]">{c.title}</span>
               {!!c.shared && <Users className="size-3 shrink-0 text-text-muted" />}
-              <span className="shrink-0 text-[10.5px] text-text-muted">{timeAgo(c.updated_at)}</span>
+              <span className="hv-num shrink-0 text-[10.5px] text-text-muted">{timeAgo(c.updated_at)}</span>
             </button>
           ))}
         {!convos.length && <div className="px-2.5 py-1 text-[11.5px] text-text-muted">Your chats appear here.</div>}
@@ -645,8 +667,8 @@ function NavSections({ filter = '' }: { filter?: string }) {
         return (
           <div key={g.title || 'top'} className="mb-1">
             {g.title && (
-              <button type="button" onClick={() => flip(g.title)} className="group mb-0.5 mt-1.5 flex min-h-6 w-full items-center px-2.5 text-left" aria-expanded={!shut}>
-                <span className="flex-1 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-muted group-hover:text-text-secondary">{g.title}</span>
+              <button type="button" onClick={() => flip(g.title)} className="group mb-1 mt-3 flex min-h-6 w-full items-center px-3 text-left" aria-expanded={!shut}>
+                <span className="hv-eyebrow flex-1 group-hover:text-[var(--hv-text-2)]">{g.title}</span>
                 <ChevronRight className={cn('size-3 text-text-muted transition-transform', !shut && 'rotate-90')} />
               </button>
             )}
@@ -658,11 +680,11 @@ function NavSections({ filter = '' }: { filter?: string }) {
                     {({ isActive }) => {
                       const on = forced ?? isActive
                       return (
-                        <span className={cn('flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] transition-colors', on ? 'bg-accent-brand/10 font-medium text-text-primary' : 'text-text-secondary hover:bg-text-primary/[0.05] hover:text-text-primary')}>
-                          <it.icon className={cn('size-4 shrink-0', on ? 'text-accent-brand' : 'text-text-muted')} strokeWidth={1.9} />
+                        <span className="hv-nav" data-on={on}>
+                          <it.icon className="size-4 shrink-0" strokeWidth={on ? 1.9 : 1.7} />
                           <span className="min-w-0 flex-1 truncate">{it.label}</span>
                           {it.badge ? (
-                            <span className="grid min-w-4 place-items-center rounded-full px-1 text-[10px] font-bold text-white" style={{ background: it.tone }}>
+                            <span className="hv-num grid min-w-4 place-items-center rounded-full px-1 text-[10px] font-bold text-[var(--hv-bg-app)]" style={{ background: it.tone }}>
                               {it.badge}
                             </span>
                           ) : it.tone ? (
@@ -687,7 +709,7 @@ function NewMenu() {
   return (
     <Menu>
       <MenuTrigger asChild>
-        <button type="button" className="inline-flex h-7 items-center gap-1 rounded-[var(--hv-r-btn)] bg-[var(--hv-surface-2)] px-2 text-[12.5px] font-medium text-[var(--hv-text-1)] ring-1 ring-[var(--hv-border)] hover:bg-[var(--hv-surface-3)]" aria-label="New">
+        <button type="button" className="inline-flex h-8 items-center gap-1 rounded-[var(--hv-r-btn)] px-2.5 text-[12.5px] font-medium text-[var(--hv-text-1)] ring-1 ring-inset ring-[var(--hv-border-strong)] transition-colors hover:bg-[var(--hv-surface-2)]" aria-label="New">
           <Plus className="size-3.5" /> New <ChevronDown className="size-3 text-[var(--hv-text-3)]" />
         </button>
       </MenuTrigger>
@@ -726,8 +748,9 @@ function MobileTabs() {
   return (
     <nav aria-label="Main" className="flex shrink-0 border-t border-[var(--hv-border)] bg-[var(--hv-bg-app)] pb-[env(safe-area-inset-bottom)] sm:hidden">
       {tabs.map((t) => (
-        <Link key={t.to} to={t.to} aria-current={t.on ? 'page' : undefined} className={cn('flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[10.5px]', t.on ? 'text-[var(--hv-accent)]' : 'text-[var(--hv-text-3)]')}>
-          <t.icon className="size-5" strokeWidth={t.on ? 2.2 : 1.8} />
+        <Link key={t.to} to={t.to} aria-current={t.on ? 'page' : undefined} className={cn('relative flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[11px]', t.on ? 'font-semibold text-[var(--hv-text-1)]' : 'text-[var(--hv-text-3)]')}>
+          {t.on && <span className="absolute inset-x-5 top-0 h-[2px] rounded-b bg-[var(--hv-accent)]" aria-hidden="true" />}
+          <t.icon className="size-5" strokeWidth={t.on ? 1.9 : 1.6} />
           {t.label}
         </Link>
       ))}
@@ -743,12 +766,12 @@ function SideFooter() {
   const text = !connected ? 'Reconnecting…' : limited ? `${limited} connection${limited === 1 ? '' : 's'} limited` : 'All systems ok'
   return (
     <div className="border-t hive-line px-2 py-2">
-      <Link to="/hive/models/health" className="flex items-center gap-2 rounded-[var(--hv-r-btn)] px-2.5 py-1.5 text-[12px] text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]" title="Open model health">
+      <Link to="/hive/models/health" className="flex items-center gap-2 rounded-[var(--hv-r-btn)] px-3 py-1.5 text-[12px] text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]" title="Open model health">
         <span className={cn('size-1.5 shrink-0 rounded-full', !connected && 'hv-live')} style={{ background: ok ? 'var(--hv-success)' : 'var(--hv-warning)' }} aria-hidden />
         <span className="flex-1 truncate">{text}</span>
       </Link>
       <div className="flex items-center gap-1 px-1 pt-1">
-        <Link to="/hub" className="flex min-w-0 flex-1 items-center gap-2 rounded-[var(--hv-r-btn)] px-1.5 py-1 text-[12px] text-[var(--hv-text-3)] hover:text-[var(--hv-text-1)]">
+        <Link to="/hub" className="flex min-w-0 flex-1 items-center gap-2 rounded-[var(--hv-r-btn)] px-2 py-1 text-[12px] text-[var(--hv-text-2)] hover:text-[var(--hv-text-1)]">
           <LogoMark size={16} /> <span className="truncate">Back to NexoraGuru</span>
         </Link>
         <Tooltip label="Settings">
@@ -768,8 +791,8 @@ function SideFooter() {
 
 function SideHeading({ children, action }: { children: ReactNode; action?: ReactNode }) {
   return (
-    <div className="group mb-1 mt-3 flex items-center px-2.5">
-      <span className="flex-1 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-muted">{children}</span>
+    <div className="group mb-1 mt-3 flex items-center px-3">
+      <span className="hv-eyebrow flex-1">{children}</span>
       {action}
     </div>
   )
@@ -796,12 +819,12 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
     return { inbox: 'Inbox', settings: 'Settings', chat: 'Chat', copilot: 'Copilot', projects: 'Projects', pipelines: 'Pipelines', machines: 'Machines', drive: 'Drive', models: 'Models', keys: 'Keys & limits', extensions: 'Extensions', spend: 'Spend' }[m ?? ''] ?? null
   }, [pathname])
   return (
-    <header className="flex h-12 shrink-0 items-center gap-2 border-b hive-line px-2 sm:px-3">
-      <button type="button" onClick={onMobileNav} className="grid size-8 place-items-center rounded-lg text-text-muted hover:bg-text-primary/[0.06] md:hidden" aria-label="Menu">
+    <header className="flex h-[52px] shrink-0 items-center gap-1.5 border-b hive-line px-2 sm:px-4">
+      <button type="button" onClick={onMobileNav} className="hv-icon-btn md:hidden" aria-label="Menu">
         <MenuIcon className="size-4" />
       </button>
       <Tooltip label={`${side ? 'Hide' : 'Show'} sidebar · ⌘B`}>
-        <button type="button" onClick={onToggleSide} className="hidden size-8 place-items-center rounded-lg text-text-muted hover:bg-text-primary/[0.06] hover:text-text-primary lg:grid" aria-label="Toggle sidebar">
+        <button type="button" onClick={onToggleSide} className="hv-icon-btn hidden lg:inline-grid" aria-label="Toggle sidebar">
           {side ? <PanelLeftClose className="size-4" /> : <PanelLeftOpen className="size-4" />}
         </button>
       </Tooltip>
@@ -811,27 +834,27 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
         </div>
       )}
       <nav className="flex min-w-0 flex-1 items-center gap-1 text-[13px]" aria-label="Breadcrumb">
-        <Link to="/hive" className="flex shrink-0 items-center gap-1.5 rounded-md px-1.5 py-1 font-medium text-text-secondary hover:text-text-primary">
-          <HiveLogo size={16} /> Hive
+        <Link to="/hive" className="flex shrink-0 items-center gap-1.5 rounded-[var(--hv-r-btn)] px-1.5 py-1 text-[var(--hv-text-2)] hover:text-[var(--hv-text-1)]">
+          <HiveLogo size={16} /> <span className="hv-serif text-[15px]">Hive</span>
         </Link>
         {section && (
           <>
-            <ChevronRight className="size-3.5 shrink-0 text-text-muted" />
-            <span className="truncate px-1.5 font-medium text-text-primary">{section}</span>
+            <span className="shrink-0 text-[var(--hv-text-3)]" aria-hidden="true">/</span>
+            <span className="truncate px-1.5 font-medium text-[var(--hv-text-1)]" aria-current="page">{section}</span>
           </>
         )}
         {project && (
           <span className="contents sm:hidden">
-            <ChevronRight className="size-3.5 shrink-0 text-text-muted" />
+            <span className="shrink-0 text-[var(--hv-text-3)]" aria-hidden="true">/</span>
             <button type="button" onClick={() => navigate(`/hive/p/${project.id}`)} className={cn('flex min-w-0 items-center gap-1.5 rounded-md px-1.5 py-1 hover:bg-text-primary/[0.05]', detail ? 'text-text-secondary' : 'font-medium text-text-primary')}>
-              <span className="rounded-full size-2.5 shrink-0" style={{ background: projectColor(project.color) }} />
+              <span className="hive-hex size-2.5 shrink-0" style={{ background: projectColor(project.color) }} />
               <span className="truncate">{project.name}</span>
             </button>
           </span>
         )}
         {detail && project && (
           <>
-            <ChevronRight className="size-3.5 shrink-0 text-text-muted" />
+            <span className="shrink-0 text-[var(--hv-text-3)]" aria-hidden="true">/</span>
             <span className="flex min-w-0 items-center gap-1.5 px-1.5 font-medium text-text-primary">
               <StatusDot status={detail.task.status} className="size-1.5" />
               <span className="truncate">{detail.task.title}</span>
@@ -840,7 +863,7 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
         )}
       </nav>
       {approvals.length > 0 && (
-        <button type="button" onClick={() => navigate('/hive/machines')} className="hidden items-center gap-1.5 rounded-full bg-state-warning/15 px-2.5 py-1 text-[12px] font-medium text-state-warning sm:inline-flex">
+        <button type="button" onClick={() => navigate('/hive/machines')} className="hidden h-7 items-center gap-1.5 rounded-[var(--hv-r-btn)] px-2.5 text-[12px] font-medium text-[var(--hv-text-1)] ring-1 ring-inset ring-[color-mix(in_oklab,var(--hv-warning)_55%,transparent)] sm:inline-flex">
           <ShieldAlert className="size-3.5" /> {approvals.length} waiting
         </button>
       )}
@@ -852,12 +875,12 @@ function TopBar({ side, onToggleSide, onMobileNav, onPalette, onTeam }: { side: 
         ))}
       </button>
       <Tooltip label={<span className="inline-flex items-center gap-2">Copilot <span className="hive-kbd">⌘I</span></span>}>
-        <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('hive:copilot-panel'))} className="grid size-8 place-items-center rounded-[var(--hv-r-btn)] text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]" aria-label="Open the Copilot panel (⌘I)">
+        <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('hive:copilot-panel'))} className="hv-icon-btn" aria-label="Open the Copilot panel (⌘I)">
           <Bot className="size-4" />
         </button>
       </Tooltip>
-      <button type="button" onClick={onPalette} className="ml-1 hidden h-8 items-center gap-2 rounded-lg border hive-line px-2.5 text-[12.5px] text-text-muted hover:bg-text-primary/[0.05] hover:text-text-primary sm:flex">
-        <Search className="size-3.5" /> Search or run a command <span className="hive-kbd">⌘K</span>
+      <button type="button" onClick={onPalette} className="hv-search-pill ml-1.5 hidden w-[260px] sm:inline-flex">
+        <Search className="size-3.5 shrink-0 not-italic" /> <span className="min-w-0 flex-1 truncate text-left">Search or run a command</span> <span className="hive-kbd not-italic">⌘K</span>
       </button>
     </header>
   )
@@ -875,14 +898,14 @@ function ApprovalsTray() {
   const projectName = (id?: string) => boot?.projects.find((p) => p.id === id)?.name
   if (min)
     return (
-      <motion.button initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} type="button" onClick={() => setMin(false)} className="fixed right-4 top-14 z-[950] inline-flex items-center gap-2 rounded-full bg-state-warning px-3.5 py-2 text-[12.5px] font-semibold text-white shadow-xl">
+      <motion.button initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} type="button" onClick={() => setMin(false)} className="fixed right-4 top-14 z-[950] inline-flex items-center gap-2 rounded-[var(--hv-r-btn)] border border-[var(--hv-warning)] bg-[var(--hv-surface-1)] px-3.5 py-2 text-[12.5px] font-semibold text-[var(--hv-text-1)]">
         <ShieldAlert className="size-4" /> {approvals.length} command{approvals.length === 1 ? '' : 's'} waiting
       </motion.button>
     )
   return (
     <div className="fixed right-4 top-14 z-[950] w-[min(400px,calc(100vw-32px))]">
       <AnimatePresence mode="popLayout">
-        <motion.div key={a.id} initial={{ opacity: 0, y: 16, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, x: 40 }} transition={{ type: 'spring', stiffness: 420, damping: 32 }} className="hive-card overflow-hidden shadow-2xl ring-1 ring-state-warning/30">
+        <motion.div key={a.id} initial={{ opacity: 0, y: 16, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, x: 40 }} transition={{ type: 'spring', stiffness: 420, damping: 32 }} className="hive-card overflow-hidden border-[color-mix(in_oklab,var(--hv-warning)_60%,var(--hv-border))]">
           <div className="flex items-center gap-2 border-b hive-line bg-state-warning/[0.08] px-3.5 py-2">
             <ShieldAlert className="size-4 text-state-warning" />
             <span className="min-w-0 flex-1 truncate text-[12.5px]">
@@ -904,10 +927,10 @@ function ApprovalsTray() {
               <Server className="size-3" /> {a.machine} · <span className="truncate font-mono">{a.folder}</span>
             </div>
             <div className="mt-3 flex items-center gap-2">
-              <button type="button" onClick={() => answerApproval(a.id, true)} className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-state-success text-[12.5px] font-medium text-on-accent-brand hover:brightness-110">
+              <button type="button" onClick={() => answerApproval(a.id, true)} className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-[var(--hv-r-btn)] bg-[var(--hv-accent)] text-[12.5px] font-medium text-[var(--hv-accent-fg)] hover:bg-[var(--hv-accent-hover)]">
                 <Check className="size-3.5" /> Run it
               </button>
-              <button type="button" onClick={() => answerApproval(a.id, false)} className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-text-primary/[0.07] text-[12.5px] font-medium hover:bg-state-error/15 hover:text-state-error">
+              <button type="button" onClick={() => answerApproval(a.id, false)} className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-[var(--hv-r-btn)] text-[12.5px] font-medium ring-1 ring-inset ring-[var(--hv-border-strong)] hover:bg-[var(--hv-surface-2)]">
                 <X className="size-3.5" /> Deny
               </button>
               {a.taskId && a.projectId && (
@@ -933,15 +956,18 @@ function TeamDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-[900] flex justify-end" role="dialog" aria-label="Team">
-          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} type="button" className="absolute inset-0 bg-bg-app/50 backdrop-blur-[2px]" onClick={onClose} aria-label="Close" />
-          <motion.aside initial={{ x: 40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 40, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 36 }} className="relative flex h-full w-full max-w-[420px] flex-col border-l hive-line bg-bg-surface shadow-2xl">
-            <div className="flex items-center justify-between px-5 py-4">
-              <h2 className="text-[15px] font-semibold">Team</h2>
+          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} type="button" className="absolute inset-0 bg-[color-mix(in_oklab,var(--hv-text-1)_18%,transparent)]" onClick={onClose} aria-label="Close" />
+          <motion.aside initial={{ x: 40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 40, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 36 }} className="relative flex h-full w-full max-w-[420px] flex-col border-l hive-line bg-[var(--hv-bg-app)]">
+            <div className="flex items-center justify-between border-b hive-line px-5 py-4">
+              <div>
+                <div className="hv-eyebrow">Staff</div>
+                <h2 className="hv-serif mt-1 text-[22px] leading-none">Team</h2>
+              </div>
               <button type="button" onClick={onClose} className="grid size-8 place-items-center rounded-lg text-text-muted hover:bg-text-primary/[0.06]" aria-label="Close">
                 <X className="size-4" />
               </button>
             </div>
-            <div className="space-y-0.5 px-3">
+            <div className="space-y-0.5 px-3 pt-2">
               {[...boot.members]
                 .sort((a, b) => Number(onlineSet.has(b.username)) - Number(onlineSet.has(a.username)))
                 .map((m) => {
@@ -1038,7 +1064,7 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
       { id: 'x:key', group: 'Commands', label: 'Add an AI key', icon: <KeyRound className="size-4" />, run: go('/hive/keys'), cmd: true },
       { id: 'x:mcp', group: 'Commands', label: 'Connect an MCP server or search engine', icon: <Boxes className="size-4" />, run: go('/hive/extensions?tab=connected'), cmd: true },
     ]
-    for (const p of boot?.projects ?? []) out.push({ id: `p:${p.id}`, group: 'Projects', label: p.name, hint: p.repo_owner ? `${p.repo_owner}/${p.repo_name}` : p.folder ?? '', icon: <span className="rounded-full size-3.5" style={{ background: projectColor(p.color) }} />, run: go(`/hive/p/${p.id}`) })
+    for (const p of boot?.projects ?? []) out.push({ id: `p:${p.id}`, group: 'Projects', label: p.name, hint: p.repo_owner ? `${p.repo_owner}/${p.repo_name}` : p.folder ?? '', icon: <span className="hive-hex size-3" style={{ background: projectColor(p.color) }} />, run: go(`/hive/p/${p.id}`) })
     for (const t of Object.values(taskIndex).sort((a, b) => b.updated_at - a.updated_at)) out.push({ id: `t:${t.id}`, group: 'Sessions', label: t.title, hint: t.project_name ?? t.status, icon: <StatusDot status={t.status} />, run: go(`/hive/p/${t.project_id}/t/${t.id}`) })
     for (const c of convos) out.push({ id: `c:${c.id}`, group: 'Chats', label: c.title, hint: c.model ?? '', icon: <MessageSquare className="size-3.5 text-text-muted" />, run: go(`/hive/chat/${c.id}`) })
     const raw = q.toLowerCase().trim()
@@ -1090,10 +1116,10 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-[1000] flex items-start justify-center px-4 pt-[12vh]" role="dialog" aria-label="Command palette">
-          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} type="button" className="absolute inset-0 bg-bg-app/60 backdrop-blur-[3px]" onClick={onClose} aria-label="Close" />
-          <motion.div initial={{ opacity: 0, y: -8, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.98 }} transition={{ duration: 0.16 }} className="hive-card relative w-full max-w-[640px] overflow-hidden shadow-2xl">
-            <label className="flex items-center gap-3 border-b hive-line px-4">
-              <Command className="size-4 text-text-muted" />
+          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} type="button" className="absolute inset-0 bg-[color-mix(in_oklab,var(--hv-text-1)_18%,transparent)]" onClick={onClose} aria-label="Close" />
+          <motion.div initial={{ opacity: 0, y: -8, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.98 }} transition={{ duration: 0.16 }} className="hive-card relative w-full max-w-[640px] overflow-hidden border-[var(--hv-border-strong)] bg-[var(--hv-bg-app)]">
+            <label className="flex items-center gap-3 border-b hive-line px-5">
+              <Search className="size-4 text-text-muted" />
               <input
                 autoFocus
                 value={q}
@@ -1107,8 +1133,8 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
                   else if (e.key === 'Enter' && items[i]) pick(items[i])
                   else if (e.key === 'Escape') onClose()
                 }}
-                placeholder="Search pages, projects, chats…  > for commands, @ for projects"
-                className="h-14 flex-1 bg-transparent text-[15px] outline-none placeholder:text-text-muted"
+                placeholder="Search pages, projects, chats…"
+                className="hv-serif h-16 flex-1 bg-transparent text-[18px] outline-none placeholder:italic placeholder:text-text-muted"
               />
               <span className="hive-kbd">esc</span>
             </label>
@@ -1117,8 +1143,9 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
                 const head = x.group !== lastGroup ? (lastGroup = x.group) : null
                 return (
                   <li key={x.id}>
-                    {head && <div className="px-2.5 pb-1 pt-2.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-muted">{head}</div>}
-                    <button type="button" data-i={j} onMouseMove={() => setI(j)} onClick={() => pick(x)} className={cn('flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left', j === i && 'bg-accent-brand/10')}>
+                    {head && <div className="hv-eyebrow px-3 pb-1.5 pt-3">{head}</div>}
+                    <button type="button" data-i={j} onMouseMove={() => setI(j)} onClick={() => pick(x)} className={cn('relative flex w-full items-center gap-3 rounded-[var(--hv-r-btn)] px-3 py-2 text-left', j === i && 'bg-[var(--hv-surface-2)]')}>
+                      {j === i && <span className="absolute bottom-2 left-0 top-2 w-[2px] rounded bg-[var(--hv-accent)]" aria-hidden="true" />}
                       <span className="grid size-6 shrink-0 place-items-center text-text-secondary">{x.icon}</span>
                       <span className="min-w-0 flex-1 truncate text-[13.5px] text-text-primary">{sq ? <Highlight text={x.label} query={sq} /> : x.label}</span>
                       {x.hint && <span className="max-w-[45%] shrink-0 truncate text-[11.5px] text-text-muted">{x.hint}</span>}
@@ -1165,20 +1192,23 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-[900] md:hidden">
-          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} type="button" className="absolute inset-0 bg-bg-app/60" onClick={onClose} aria-label="Close" />
-          <motion.div initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -40, opacity: 0 }} className="relative flex h-full w-[86vw] max-w-[340px] flex-col bg-bg-surface shadow-2xl">
+          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} type="button" className="absolute inset-0 bg-[color-mix(in_oklab,var(--hv-text-1)_18%,transparent)]" onClick={onClose} aria-label="Close" />
+          <motion.div initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -40, opacity: 0 }} className="relative flex h-full w-[86vw] max-w-[340px] flex-col border-r hive-line bg-[var(--hv-bg-app)]">
             <div className="flex items-center gap-2 p-4">
-              <HiveLogo size={28} />
-              <span className="text-[15px] font-semibold">Hive</span>
-              <button type="button" onClick={onClose} className="ml-auto grid size-8 place-items-center rounded-lg text-text-muted" aria-label="Close">
+              <HiveLockup size={26} />
+              <button type="button" onClick={onClose} className="hv-icon-btn ml-auto" aria-label="Close">
                 <X className="size-4" />
               </button>
             </div>
             <div className="space-y-0.5 px-2">
               {[...main, ...config.filter((c) => !main.includes(c))].map((it) => (
-                <NavLink key={it.label} to={it.to} end={it.end} className={({ isActive }) => cn('flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px]', isActive ? 'bg-accent-brand/12 text-accent-brand' : 'text-text-secondary')}>
-                  <it.icon className="size-4" /> {it.label}
-                  {it.badge ? <span className="ml-auto rounded-full bg-state-warning px-1.5 text-[11px] text-white">{it.badge}</span> : null}
+                <NavLink key={it.label} to={it.to} end={it.end} className="block">
+                  {({ isActive }) => (
+                    <span className="hv-nav min-h-10 text-[14px]" data-on={isActive}>
+                      <it.icon className="size-4" /> <span className="flex-1">{it.label}</span>
+                      {it.badge ? <span className="rounded-full bg-state-warning px-1.5 text-[11px] text-[var(--hv-bg-app)]">{it.badge}</span> : null}
+                    </span>
+                  )}
                 </NavLink>
               ))}
             </div>

@@ -161,7 +161,7 @@ export const STYLES: DesignStyle[] = [
     kit: 'journal',
   },
   {
-    // Hive's own look: never offered, never stored (see look.ts hiveLook).
+    // Hive's old look (before 2026-11): never offered, never stored. Kept so old saved looks still read.
     id: 'studio',
     name: 'Studio',
     tagline: 'Precise and quiet',

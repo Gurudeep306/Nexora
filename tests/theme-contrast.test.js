@@ -269,20 +269,17 @@ test('the first-paint script sets data-solution-font, and the theme CSS defines 
   assert.match(css, /\[data-solution-font="off"\]\{--font-solution:var\(--font-body\)/);
 });
 
-test('Hive keeps its own look (Studio on Midnight) whatever theme is on', async () => {
+test('Hive wears the person\'s own look, like the rest of the site', async () => {
   const { hiveLook, isHivePath, DEFAULT_LOOK, sanitizeLook } = await theme('look.ts');
   const { THEMES } = await theme('styles.ts');
   for (const t of THEMES) {
-    const shown = hiveLook(sanitizeLook({ v: 5, style: t.id, textSize: 'large' }));
-    assert.equal(shown.style, 'studio', `${t.id} shows as Studio in Hive`);
-    assert.equal(shown.theme, 'midnight');
-    assert.equal(shown.cardStyle, 'soft');
-    assert.equal(shown.textSize, 'large', 'personal settings stay');
+    const look = sanitizeLook({ v: 5, style: t.id, textSize: 'large' });
+    assert.deepEqual(hiveLook(look), look, `${t.id} stays ${t.id} in Hive`);
   }
-  // Personal colours, faces and corners don't reach Hive either.
-  const mine = hiveLook(sanitizeLook({ v: 6, style: 'sakura', accent: 'ocean', ink: 'warm', uiFont: 'lexend', headingFont: 'cormorant', readFont: 'literata', corners: 'sharp', drawings: 'off' }));
-  for (const k of ['accent', 'ink', 'uiFont', 'headingFont', 'readFont', 'corners', 'drawings']) assert.equal(mine[k], 'theme', `Hive ignores the personal ${k}`);
-  assert.equal(hiveLook(DEFAULT_LOOK).style, 'studio');
+  // Personal colours, faces and corners reach Hive too.
+  const mine = sanitizeLook({ v: 6, style: 'sakura', accent: 'ocean', ink: 'warm', uiFont: 'lexend', headingFont: 'cormorant', readFont: 'literata', corners: 'sharp', drawings: 'off' });
+  for (const k of ['accent', 'ink', 'uiFont', 'headingFont', 'readFont', 'corners', 'drawings']) assert.equal(hiveLook(mine)[k], mine[k], `Hive keeps the personal ${k}`);
+  assert.equal(hiveLook(DEFAULT_LOOK).style, DEFAULT_LOOK.style, 'the house style (Field Journal) by default');
   assert.ok(isHivePath('/hive') && isHivePath('/hive/projects/1'));
   assert.ok(!isHivePath('/hiveminds') && !isHivePath('/hub'));
 });

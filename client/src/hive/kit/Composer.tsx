@@ -86,10 +86,10 @@ export function Composer({
         e.preventDefault()
         if (canSend) onSubmit()
       }}
-      className={cn('hv-composer rounded-[var(--hv-r-card)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-2.5 transition-shadow duration-[var(--hv-d-fast)]', className)}
+      className={cn('hv-composer rounded-[var(--hv-r-card)] border border-[var(--hv-border-strong)] bg-[var(--hv-surface-1)] px-3 pb-2.5 pt-2 transition-colors duration-[var(--hv-d-fast)]', className)}
     >
       {intent && onIntent && intents.length > 1 && (
-        <div className="mb-1.5 flex flex-wrap items-center gap-2 px-1">
+        <div className="mb-1 flex flex-wrap items-center gap-2 border-b border-[var(--hv-border-subtle)] pb-1">
           <SegmentedControl size="sm" label="What should happen?" value={intent} onChange={onIntent} options={intents.map((i) => ({ value: i, label: INTENT_LABEL[i], hint: INTENT_HELP[i] }))} />
         </div>
       )}
@@ -108,29 +108,29 @@ export function Composer({
         aria-label={label}
         aria-describedby={intent ? helpId : undefined}
         placeholder={placeholder}
-        className={cn('hive-scroll block w-full resize-none bg-transparent px-2 py-1.5 leading-relaxed text-[var(--hv-text-1)] outline-none placeholder:text-[var(--hv-text-3)]', size === 'lg' ? 'min-h-14 text-[15px]' : 'min-h-9 text-[14px]')}
+        className={cn('hive-scroll block w-full resize-none bg-transparent px-1 py-2 leading-relaxed text-[var(--hv-text-1)] outline-none placeholder:text-[var(--hv-text-3)]', size === 'lg' ? 'min-h-16 text-[15.5px]' : 'min-h-9 text-[14px]')}
       />
-      <div className="flex flex-wrap items-center gap-1.5 px-1 pt-1">
+      <div className="flex flex-wrap items-center gap-1.5 pt-1">
         {chips}
         {options && (
-          <button type="button" onClick={toggleOpts} aria-expanded={showOpts} className="inline-flex h-7 items-center gap-1 rounded-full px-2 text-[12px] text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]">
+          <button type="button" onClick={toggleOpts} aria-expanded={showOpts} className="inline-flex h-7 items-center gap-1 rounded-[var(--hv-r-btn)] px-2 text-[12px] text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]">
             Options <ChevronDown className={cn('size-3 transition-transform', showOpts && 'rotate-180')} />
           </button>
         )}
         <span className="ml-auto" />
         {busy && onStop ? (
-          <button type="button" onClick={onStop} className="grid size-9 shrink-0 place-items-center rounded-full bg-[var(--hv-text-1)] text-[var(--hv-bg-app)]" aria-label="Stop" title="Stop after the current step. Nothing is merged.">
+          <button type="button" onClick={onStop} className="grid size-9 shrink-0 place-items-center rounded-[var(--hv-r-btn)] bg-[var(--hv-text-1)] text-[var(--hv-bg-app)]" aria-label="Stop" title="Stop after the current step. Nothing is merged.">
             <Square className="size-3.5 fill-current" />
           </button>
         ) : (
-          <button type="submit" disabled={!canSend} className="grid size-9 shrink-0 place-items-center rounded-full bg-[var(--hv-accent)] text-[var(--hv-accent-fg)] transition-transform duration-[var(--hv-d-fast)] enabled:hover:scale-105 disabled:opacity-35" aria-label={intent ? INTENT_LABEL[intent] : 'Send'}>
+          <button type="submit" disabled={!canSend} className="grid size-9 shrink-0 place-items-center rounded-[var(--hv-r-btn)] bg-[var(--hv-accent)] text-[var(--hv-accent-fg)] transition-colors duration-[var(--hv-d-fast)] enabled:hover:bg-[var(--hv-accent-hover)] disabled:bg-transparent disabled:text-[var(--hv-text-3)] disabled:ring-1 disabled:ring-inset disabled:ring-[var(--hv-border-strong)]" aria-label={intent ? INTENT_LABEL[intent] : 'Send'}>
             <ArrowUp className="size-4" strokeWidth={2.4} />
           </button>
         )}
       </div>
-      {options && showOpts && <div className="mt-1.5 flex flex-wrap items-center gap-2 border-t border-[var(--hv-border-subtle)] px-1 pt-2">{options}</div>}
+      {options && showOpts && <div className="mt-1.5 flex flex-wrap items-center gap-2 border-t border-[var(--hv-border-subtle)] pt-2">{options}</div>}
       {intent && (
-        <p id={helpId} className="px-2 pt-1.5 text-[11.5px] text-[var(--hv-text-3)]">
+        <p id={helpId} className="m-0 pt-1.5 text-[11.5px] text-[var(--hv-text-3)]">
           {INTENT_HELP[intent]}
         </p>
       )}
