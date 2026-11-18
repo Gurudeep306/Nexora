@@ -4170,28 +4170,25 @@
       "verification": "Both methods give 0.95."
     },
     "cse-2015-2-cs-55": {
-      "approach": "Use $P \\rightarrow R \\equiv \\neg P \\vee R$: the two sides of (C) are the same formula, so the biconditional is valid. Disprove A and B with small models.",
+      "approach": "Concept tested: **tautology in the propositional sense**. C's two sides differ only by $P\\to R$ vs $\\neg P \\lor R$ under the same quantifier prefix — the same formula — so the biconditional is a tautology.",
       "concepts": [
-        "First-order logic",
-        "Validity",
-        "Quantifier order"
+        "Tautology",
+        "Implication as disjunction",
+        "Validity vs tautology"
       ],
+      "given": "Which one of A–D is a tautology?",
       "steps": [
         {
-          "title": "Option C",
-          "body": "Since $P(x,y) \\rightarrow R(x,y) \\equiv \\neg P(x,y) \\vee R(x,y)$ for every $x,y$, both sides of the $\\leftrightarrow$ are logically equivalent, so (C) is valid."
+          "title": "C is a tautology",
+          "body": "$[\\forall x\\exists y(P(x,y)\\to R(x,y))] \\leftrightarrow [\\forall x\\exists y(\\neg P(x,y)\\lor R(x,y))]$: inside, $P\\to R \\equiv \\neg P \\lor R$ pointwise, and the quantifier prefix is unchanged, so both sides are the same formula — the $\\leftrightarrow$ is true in every interpretation (a tautology in GATE's propositional sense)."
         },
         {
-          "title": "Options A and B",
-          "body": "(A): over $\\{1,2\\}$ with $R = \\{(1,1),(2,2)\\}$, $\\forall x\\exists y R$ is true but $\\exists y \\forall x R$ is false.\n\n(B): with $R = S = \\emptyset$ the antecedent is true (every implication has a false premise) but $\\forall x\\exists y S(x,y)$ is false."
-        },
-        {
-          "title": "Answer",
-          "body": "Option (C) is the intended tautology. (D), which only renames bound variables, is also valid as printed — see the review note on this question."
+          "title": "A, B are not; D is valid but not a propositional tautology",
+          "body": "A is the $\\forall\\exists$ vs $\\exists\\forall$ order swap — refuted by the diagonal. B fails with $R=\\varnothing, S=\\varnothing$ on a 1-element domain. D, $\\forall x\\forall yP(x,y) \\to \\forall x\\forall yP(y,x)$, is FOL-valid (if P holds on all pairs it holds on swapped pairs) — but its truth-functional form is $A \\to B$, not a propositional tautology, and GATE's key means the propositional sense here."
         }
       ],
       "answer": {
-        "value": "Option C",
+        "value": "$[\\forall x \\exists y (P(x,y) \\rightarrow R(x,y))] \\leftrightarrow [\\forall x \\exists y (\\neg P(x,y) \\vee R(x,y))]$",
         "choice": [
           "C"
         ],
@@ -4201,28 +4198,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Swapping $\\forall\\exists$ to $\\exists\\forall$ is not valid (only $\\exists\\forall \\Rightarrow \\forall\\exists$ holds)."
+          "reason": "$\\forall x\\exists yR \\leftrightarrow \\exists y\\forall xR$: refuted by the diagonal relation on $\\{1,2\\}$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Countermodel: $R = S = \\emptyset$ makes the antecedent true and $\\forall x\\exists y S$ false."
+          "reason": "Refuted by $R=\\varnothing, S=\\varnothing$ on $\\{1\\}$: antecedent true, consequent false."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Both sides are equivalent by $P\\rightarrow R \\equiv \\neg P \\vee R$."
+          "reason": "Same formula on both sides up to $P\\to R \\equiv \\neg P\\lor R$ — tautology."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Intended as a distractor, but strictly it is also valid: both sides say $P$ holds for every ordered pair. The key is C."
+          "reason": "FOL-valid, but not a propositional tautology (form $A\\to B$); GATE's 'tautology' here is propositional — see errata."
         }
       ],
+      "shortcut": "Scan for an option that is $X \\leftrightarrow X$ up to a pointwise equivalence under a fixed quantifier prefix — only C.",
       "pitfalls": [
-        "Reading (D) as a symmetry claim — the variables are bound on both sides, so it is not about $P$ being symmetric."
+        "Counting D as a tautology because it is FOL-valid — GATE 2015-2-55 means propositional tautology (recorded in _errata/dm.md)."
       ],
-      "verification": "C checked by equivalence; A and B refuted by explicit models; D noted as also valid (record already flagged needsReview)."
+      "verification": "Full search up to size 3: A and B have counter-models; C is valid; D is also FOL-valid, which is exactly why the propositional reading matters."
     }
   }
 }

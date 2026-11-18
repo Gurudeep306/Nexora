@@ -1,0 +1,964 @@
+[
+ {
+  "id": "nx-dm-02-01-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Translate: **Every student loves some course.** ($student(x)$: $x$ is a student; $course(y)$: $y$ is a course; $loves(x,y)$: $x$ loves $y$.)",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\forall x\\,(student(x) \\wedge \\exists y\\,(course(y) \\wedge loves(x,y)))$"
+   },
+   {
+    "l": "B",
+    "t": "$\\forall x\\,(student(x) \\rightarrow \\exists y\\,(course(y) \\wedge loves(x,y)))$"
+   },
+   {
+    "l": "C",
+    "t": "$\\exists y\\,(course(y) \\wedge \\forall x\\,(student(x) \\rightarrow loves(x,y)))$"
+   },
+   {
+    "l": "D",
+    "t": "$\\forall x\\,\\forall y\\,((student(x) \\wedge course(y)) \\rightarrow loves(x,y))$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "“Every student” is a universal over students: ∀x(student(x) → …) — with →, because non-students satisfy it vacuously.",
+   "“… loves some course” is an existential inside: ∃y(course(y) ∧ loves(x,y)) — with ∧, because we need a course that is loved.",
+   "So the formula is ∀x(student(x) → ∃y(course(y) ∧ loves(x,y)))."
+  ],
+  "concept": "∀ takes → (restricted), ∃ takes ∧ (witness).",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "∀x(student(x) ∧ …) would claim every object is a student."
+   },
+   {
+    "answer": "C",
+    "why": "Puts the course outside the student scope: one course loved by all students."
+   },
+   {
+    "answer": "D",
+    "why": "∀y says every course, not some course."
+   }
+  ],
+  "blocks": [
+   "translation-table",
+   "trap-wrong-pairing"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q02",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Which formula says **“No A is B”**?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\exists x\\,(A(x) \\wedge B(x))$"
+   },
+   {
+    "l": "B",
+    "t": "$\\forall x\\,(A(x) \\wedge \\neg B(x))$"
+   },
+   {
+    "l": "C",
+    "t": "$\\exists x\\,(\\neg A(x) \\vee B(x))$"
+   },
+   {
+    "l": "D",
+    "t": "$\\neg \\exists x\\,(A(x) \\wedge B(x))$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "“No A is B” = there does not exist an x that is both A and B: ¬∃x(A(x) ∧ B(x)).",
+   "Equivalently ∀x(A(x) → ¬B(x)): every A is not B."
+  ],
+  "concept": "“No A is B” = ¬∃(A∧B) = ∀(A→¬B).",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That says some A is B — the opposite."
+   },
+   {
+    "answer": "B",
+    "why": "∀x(A∧¬B) claims every object is A and not B."
+   },
+   {
+    "answer": "C",
+    "why": "∃x(¬A∨B) is true whenever some object is not A or is B."
+   }
+  ],
+  "blocks": [
+   "translation-table"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q03",
+  "type": "NAT",
+  "marks": 1,
+  "text": "Domain $D = \\{a, b, c, d\\}$, relation $R = \\{(a,b), (b,a), (c,d)\\}$. How many ordered pairs $(x, y)$ satisfy $R(x, y) \\wedge x \\neq y$?",
+  "answer": 3,
+  "solution": [
+   "List the pairs of R: (a,b), (b,a), (c,d).",
+   "Each has x ≠ y (a≠b, b≠a, c≠d), so all 3 satisfy R(x,y) ∧ x≠y."
+  ],
+  "concept": "Counting pairs in a relation on a finite domain.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "That counts ordered pairs of the whole D×D with x≠y (4·3 = 12) or similar; only pairs in R count."
+   }
+  ],
+  "blocks": [
+   "predicate-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q04",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "The free variables of $\\forall x\\,(P(x) \\vee Q(x, y)) \\wedge R(y)$ are:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\{y\\}$"
+   },
+   {
+    "l": "B",
+    "t": "$\\{x, y\\}$"
+   },
+   {
+    "l": "C",
+    "t": "$\\{\\varnothing\\}$ (it is a sentence)"
+   },
+   {
+    "l": "D",
+    "t": "$\\{x\\}$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "∀x binds every x in its scope P(x)∨Q(x,y).",
+   "The y in Q(x,y) is inside the ∀x scope but not bound by it (different variable); the y in R(y) is outside all scopes. So y is free, x is bound."
+  ],
+  "concept": "Free vs bound; scope.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "x is bound by ∀x."
+   },
+   {
+    "answer": "C",
+    "why": "y is free, so it is not a sentence."
+   },
+   {
+    "answer": "D",
+    "why": "x is bound."
+   }
+  ],
+  "blocks": [
+   "free-bound-def",
+   "scope-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q05",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "Which of I–IV are logically equivalent to $\\neg \\exists x\\,(P(x) \\wedge Q(x))$?  I. $\\forall x\\,\\neg(P(x) \\wedge Q(x))$   II. $\\forall x\\,(P(x) \\rightarrow \\neg Q(x))$   III. $\\exists x\\,\\neg(P(x) \\wedge Q(x))$   IV. $\\forall x\\,(\\neg P(x) \\vee \\neg Q(x))$",
+  "options": [
+   {
+    "l": "A",
+    "t": "I, II and IV only"
+   },
+   {
+    "l": "B",
+    "t": "I only"
+   },
+   {
+    "l": "C",
+    "t": "II and III only"
+   },
+   {
+    "l": "D",
+    "t": "I, II and III"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "solution": [
+   "¬∃xφ ≡ ∀x¬φ (De Morgan for quantifiers): I is equivalent.",
+   "¬(P∧Q) ≡ P→¬Q ≡ ¬P∨¬Q, so II and IV are equivalent too. III keeps the ∃, so it is not."
+  ],
+  "concept": "¬∃ ≡ ∀¬; ¬(P∧Q) ≡ ¬P∨¬Q.",
+  "common_wrong": [
+   {
+    "answer": [
+     "C"
+    ],
+    "why": "III still has ∃ — ¬∃ is not ∃¬."
+   },
+   {
+    "answer": [
+     "D"
+    ],
+    "why": "III is not equivalent."
+   }
+  ],
+  "blocks": [
+   "negation-laws"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q06",
+  "type": "NAT",
+  "marks": 1,
+  "text": "Over the domain $\\{1, 2, \\dots, 8\\}$, let $prime(x)$ mean $x$ is prime and let $P(x)$ be $\\forall y\\,(y \\mid x \\rightarrow (y = 1 \\vee y = x)) \\wedge x > 1$. How many elements $x$ of the domain satisfy $P(x)$?",
+  "answer": 4,
+  "solution": [
+   "P(x) says: every divisor y of x is 1 or x, and x > 1 — exactly the definition of prime.",
+   "Primes in 1..8: 2, 3, 5, 7 → 4 elements."
+  ],
+  "concept": "prime(x) written in logic.",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "Forgetting 2 is prime, or counting 1 (but x>1 excludes 1)."
+   },
+   {
+    "answer": 5,
+    "why": "Counting 1 as prime; the x>1 clause excludes it."
+   }
+  ],
+  "blocks": [
+   "number-predicates"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q07",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Domain $\\{a, b\\}$, relation $R = \\{(a,b), (b,a)\\}$. Which statement is true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "Both $\\forall x\\exists y\\,R(x,y)$ and $\\exists y\\forall x\\,R(x,y)$ are true"
+   },
+   {
+    "l": "B",
+    "t": "Both are false"
+   },
+   {
+    "l": "C",
+    "t": "$\\forall x\\exists y\\,R(x,y)$ is true, $\\exists y\\forall x\\,R(x,y)$ is false"
+   },
+   {
+    "l": "D",
+    "t": "$\\exists y\\forall x\\,R(x,y)$ is true, $\\forall x\\exists y\\,R(x,y)$ is false"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "∀x∃yR(x,y): for x=a, y=b works; for x=b, y=a works → true.",
+   "∃y∀xR(x,y): y=a needs R(a,a) and R(b,a) — R(a,a) is absent → false; y=b needs R(a,b), R(b,b) — R(b,b) absent → false. So false."
+  ],
+  "concept": "Order of quantifiers on a small grid.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "No single y is related to both a and b."
+   },
+   {
+    "answer": "D",
+    "why": "The ∃∀ direction is the stronger one; it fails here."
+   }
+  ],
+  "blocks": [
+   "nested-def",
+   "trap-order-matters"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q08",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "The negation of $\\forall x\\,\\exists y\\,R(x,y)$ is:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\exists x\\,\\forall y\\,\\neg R(x,y)$"
+   },
+   {
+    "l": "B",
+    "t": "$\\forall x\\,\\exists y\\,\\neg R(x,y)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\exists x\\,\\exists y\\,\\neg R(x,y)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\forall x\\,\\forall y\\,\\neg R(x,y)$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "¬∀xφ ≡ ∃x¬φ, then ¬∃yψ ≡ ∀y¬ψ:  ¬∀x∃yR(x,y) ≡ ∃x∀y¬R(x,y)."
+  ],
+  "concept": "De Morgan for quantifiers.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Keeps the ∀ outside: ¬∀x∃y is not ∀x∃y¬."
+   },
+   {
+    "answer": "C",
+    "why": "∃∃ — both quantifiers must flip."
+   },
+   {
+    "answer": "D",
+    "why": "∀∀ — the outer ∀ must become ∃."
+   }
+  ],
+  "blocks": [
+   "negation-laws"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q09",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which formulas say **“at most two elements satisfy P”**?  I. $\\forall x\\forall y\\forall z\\,((P(x)\\wedge P(y)\\wedge P(z)) \\rightarrow (x=y \\vee y=z \\vee z=x))$   II. $\\neg\\exists x\\exists y\\exists z\\,(P(x)\\wedge P(y)\\wedge P(z)\\wedge x\\neq y \\wedge y\\neq z \\wedge z\\neq x)$   III. $\\exists x\\exists y\\,(P(x)\\wedge P(y)\\wedge x\\neq y)$   IV. $\\forall x\\forall y\\,((P(x)\\wedge P(y)) \\rightarrow x=y)$",
+  "options": [
+   {
+    "l": "A",
+    "t": "I and II only"
+   },
+   {
+    "l": "B",
+    "t": "I, II and IV"
+   },
+   {
+    "l": "C",
+    "t": "I only"
+   },
+   {
+    "l": "D",
+    "t": "II and III"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "solution": [
+   "“At most two P's”: any three P-elements must contain a repeat — that is I. Equivalently, it is NOT the case that three distinct P's exist — II.",
+   "III says at least two (wrong); IV says at most one (stronger, wrong)."
+  ],
+  "concept": "At most n = any n+1 elements contain a pair equal.",
+  "common_wrong": [
+   {
+    "answer": [
+     "B"
+    ],
+    "why": "IV is “at most one”, not “at most two”."
+   },
+   {
+    "answer": [
+     "D"
+    ],
+    "why": "III is “at least two”."
+   }
+  ],
+  "blocks": [
+   "counting-def",
+   "unique-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q10",
+  "type": "NAT",
+  "marks": 1,
+  "text": "Domain $\\{1, \\dots, 6\\}$, $P(x)$ = “$x$ is even”. How many elements are witnesses of $\\exists x\\,P(x)$ (i.e. satisfy $P$)?",
+  "answer": 3,
+  "solution": [
+   "Even numbers in 1..6: 2, 4, 6 → 3 witnesses."
+  ],
+  "concept": "∃ over a finite domain = big OR; witnesses.",
+  "common_wrong": [
+   {
+    "answer": 2,
+    "why": "Counting only 2 and 4 and forgetting 6."
+   }
+  ],
+  "blocks": [
+   "exists-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q11",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "“**Only** A are B” means:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\forall x\\,(A(x) \\rightarrow B(x))$"
+   },
+   {
+    "l": "B",
+    "t": "$\\forall x\\,(B(x) \\rightarrow A(x))$"
+   },
+   {
+    "l": "C",
+    "t": "$\\forall x\\,(A(x) \\leftrightarrow B(x))$"
+   },
+   {
+    "l": "D",
+    "t": "$\\exists x\\,(B(x) \\rightarrow A(x))$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "“Only A are B”: if something is B, it must be A — every B is an A: ∀x(B(x) → A(x)).",
+   "“All A are B” would be ∀x(A→B) — the other direction. “All and only” is the biconditional."
+  ],
+  "concept": "only = ∀(B→A).",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is “all A are B”, not “only A are B”."
+   },
+   {
+    "answer": "C",
+    "why": "↔ would also say every A is B."
+   },
+   {
+    "answer": "D",
+    "why": "∃ is far too weak."
+   }
+  ],
+  "blocks": [
+   "translation-table"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-01-q12",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Edge case: “**Not all** that glitters is gold” ($glitters(x)$, $gold(x)$) is:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\forall x\\,(glitters(x) \\rightarrow \\neg gold(x))$"
+   },
+   {
+    "l": "B",
+    "t": "$\\exists x\\,(gold(x) \\wedge \\neg glitters(x))$"
+   },
+   {
+    "l": "C",
+    "t": "$\\exists x\\,(glitters(x) \\wedge \\neg gold(x))$"
+   },
+   {
+    "l": "D",
+    "t": "$\\neg\\forall x\\,(glitters(x) \\rightarrow gold(x))$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "“Not all glitters are gold” = it is false that every glittering thing is gold = ¬∀x(glitters→gold) ≡ ∃x(glitters ∧ ¬gold).",
+   "A says every glittering thing is NOT gold; B is about gold non-glittering things; D is wrong because C is equivalent."
+  ],
+  "concept": "not all = ∃(A ∧ ¬B).",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "∀(A→¬B) means NO glittering thing is gold — stronger."
+   },
+   {
+    "answer": "D",
+    "why": "C is exactly equivalent to the negation."
+   }
+  ],
+  "blocks": [
+   "translation-table",
+   "negation-laws"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q01",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following are **valid** (true in every interpretation, non-empty domains)?  A. $\\forall x(P(x) \\vee Q(x)) \\to (\\forall x P(x)) \\vee (\\forall x Q(x))$   B. $(\\exists x (P(x) \\wedge Q(x))) \\to ((\\exists x P(x)) \\wedge (\\exists x Q(x)))$   C. $\\forall x\\exists y R(x,y) \\to \\exists y\\forall x R(x,y)$   D. $((\\forall x P(x)) \\vee (\\forall x Q(x))) \\to \\forall x (P(x) \\vee Q(x))$",
+  "options": [
+   {
+    "l": "A",
+    "t": "A only"
+   },
+   {
+    "l": "B",
+    "t": "B and D"
+   },
+   {
+    "l": "C",
+    "t": "B, C and D"
+   },
+   {
+    "l": "D",
+    "t": "D only"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "solution": [
+   "A is not valid: on U={1,2} with P={1}, Q={2}, LHS is T and RHS is F.",
+   "B is valid: a witness for P∧Q is a witness for P and for Q.",
+   "C is not valid: the diagonal grid has ∀x∃y true and ∃y∀x false.",
+   "D is valid: if all x satisfy P (or all satisfy Q), then all satisfy P∨Q."
+  ],
+  "concept": "One-way quantifier laws; counter-models on 2-element domains.",
+  "common_wrong": [
+   {
+    "answer": [
+     "D"
+    ],
+    "why": "A is the classic trap: ∀ over ∨ does not split."
+   }
+  ],
+  "blocks": [
+   "one-way-laws",
+   "not-law-forall-or"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q02",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Which assignment on $U = \\{1, 2\\}$ is a counter-model refuting $\\forall x(P(x) \\vee Q(x)) \\equiv (\\forall x P(x)) \\vee (\\forall x Q(x))$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$P = \\{1\\}$, $Q = \\{2\\}$"
+   },
+   {
+    "l": "B",
+    "t": "$P = \\{1, 2\\}$, $Q = \\varnothing$"
+   },
+   {
+    "l": "C",
+    "t": "$P = \\varnothing$, $Q = \\varnothing$"
+   },
+   {
+    "l": "D",
+    "t": "$P = \\{1\\}$, $Q = \\{1, 2\\}$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Need LHS = ∀x(P∨Q) true and RHS = ∀xP ∨ ∀xQ false.",
+   "A: x=1: T∨F=T; x=2: F∨T=T → LHS T. ∀xP fails at 2, ∀xQ fails at 1 → RHS F. Refutes ✓. B: ∀xP=T → RHS T. C: LHS F = RHS F. D: ∀xQ=T → RHS T."
+  ],
+  "concept": "Counter-model for ∀ over ∨.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "∀xP is true there, so the right side is true — no refutation."
+   }
+  ],
+  "blocks": [
+   "not-law-forall-or",
+   "countermodel-search"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q03",
+  "type": "NAT",
+  "marks": 1,
+  "text": "How many different interpretations are there for a single unary predicate $P$ over a 2-element domain?",
+  "answer": 4,
+  "solution": [
+   "Each of the 2 elements may be in P or not: 2² = 4 interpretations."
+  ],
+  "concept": "Counting interpretations.",
+  "common_wrong": [
+   {
+    "answer": 2,
+    "why": "That counts assignments of a truth value to P as a whole, not its extension."
+   }
+  ],
+  "blocks": [
+   "interpretation-def",
+   "countermodel-search"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q04",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "If $x$ is not free in $A$, then $\\forall x\\,(P(x) \\to A)$ is equivalent to:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$(\\forall x P(x)) \\to A$"
+   },
+   {
+    "l": "B",
+    "t": "$(\\exists x P(x)) \\wedge A$"
+   },
+   {
+    "l": "C",
+    "t": "$(\\exists x P(x)) \\to A$"
+   },
+   {
+    "l": "D",
+    "t": "$(\\forall x P(x)) \\vee A$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "∀x(P→A) ≡ (∃xP) → A when x is not free in A: if some x has P, then A must hold; if none does, vacuously true."
+  ],
+  "concept": "Null quantification, → forms.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "∀x(P→A) is NOT (∀xP)→A: with P true somewhere and A false, LHS is false but RHS is true."
+   }
+  ],
+  "blocks": [
+   "null-quantification"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q05",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Which of these is **NOT** valid?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\forall x(P(x) \\wedge Q(x)) \\equiv (\\forall x P(x)) \\wedge (\\forall x Q(x))$"
+   },
+   {
+    "l": "B",
+    "t": "$\\exists x(P(x) \\vee Q(x)) \\equiv (\\exists x P(x)) \\vee (\\exists x Q(x))$"
+   },
+   {
+    "l": "C",
+    "t": "$\\forall x(P(x) \\to Q(x)) \\to ((\\forall x P(x)) \\to (\\forall x Q(x)))$"
+   },
+   {
+    "l": "D",
+    "t": "$\\exists x(P(x) \\wedge Q(x)) \\equiv (\\exists x P(x)) \\wedge (\\exists x Q(x))$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "A, B, C are laws (checked on all domains ≤ 3).",
+   "D fails: P true only at 1, Q only at 2 on {1,2}: LHS false, RHS true."
+  ],
+  "concept": "∃ does not distribute over ∧.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "∀ DOES distribute over ∧."
+   }
+  ],
+  "blocks": [
+   "not-law-exists-and",
+   "law-forall-and",
+   "law-exists-or"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q06",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of I–IV are equivalent to $\\forall x\\,(P(x) \\to Q(x))$?  I. $\\forall x\\,(\\neg P(x) \\vee Q(x))$   II. $\\neg\\exists x\\,(P(x) \\wedge \\neg Q(x))$   III. $\\exists x\\,(\\neg P(x) \\vee Q(x))$   IV. $\\forall x\\,(\\neg Q(x) \\to \\neg P(x))$",
+  "options": [
+   {
+    "l": "A",
+    "t": "I, II and IV"
+   },
+   {
+    "l": "B",
+    "t": "I only"
+   },
+   {
+    "l": "C",
+    "t": "I and III"
+   },
+   {
+    "l": "D",
+    "t": "II and IV only"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "solution": [
+   "P→Q ≡ ¬P∨Q, so I ✓. ¬∃x(P∧¬Q) ≡ ∀x¬(P∧¬Q) ≡ ∀x(P→Q), so II ✓. III keeps ∃ — ✗. IV is the contrapositive ¬Q→¬P ≡ P→Q — ✓."
+  ],
+  "concept": "Implication as disjunction; negated existential.",
+  "common_wrong": [
+   {
+    "answer": [
+     "C"
+    ],
+    "why": "III has ∃ — an existential is not equivalent to a universal here."
+   }
+  ],
+  "blocks": [
+   "negation-laws",
+   "law-equivalence-inside-quantifiers"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q07",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A sentence is **satisfiable but not valid** iff:",
+  "options": [
+   {
+    "l": "A",
+    "t": "true in every interpretation"
+   },
+   {
+    "l": "B",
+    "t": "false in every interpretation"
+   },
+   {
+    "l": "C",
+    "t": "true in at least one interpretation and false in at least one"
+   },
+   {
+    "l": "D",
+    "t": "true in no interpretation"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Valid = true in all; satisfiable = true in some; satisfiable-but-not-valid = true in some, false in some."
+  ],
+  "concept": "Validity vs satisfiability.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is 'valid', not 'satisfiable but not valid'."
+   }
+  ],
+  "blocks": [
+   "satisfiable-valid-unsat"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q08",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "If $\\exists s\\exists t\\exists u\\forall v\\forall w\\forall x\\forall y\\,\\psi$ (ψ quantifier-free) has a model with 7 elements, then necessarily:",
+  "options": [
+   {
+    "l": "A",
+    "t": "it has no model with ≤ 3 elements"
+   },
+   {
+    "l": "B",
+    "t": "it has no model with > 7 elements"
+   },
+   {
+    "l": "C",
+    "t": "every model has exactly 7 elements"
+   },
+   {
+    "l": "D",
+    "t": "it has at least one model with ≤ 3 elements"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "∃*∀* quantifier-free sentences have the small-model property (Bernays–Schönfinkel): if a model of size 7 exists, choose one witness per existential; the remaining ∀ part only needs those ≤ 3 elements."
+  ],
+  "concept": "Bernays–Schönfinkel small-model property.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "The 7-element model need not be minimal; a smaller one exists."
+   }
+  ],
+  "blocks": [
+   "bs-class"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q09",
+  "type": "NAT",
+  "marks": 1,
+  "text": "How many different interpretations are there for a single binary predicate $R$ over a 2-element domain?",
+  "answer": 16,
+  "solution": [
+   "R is a subset of D×D with 4 pairs; each pair in or out: 2⁴ = 16."
+  ],
+  "concept": "Counting interpretations of a binary predicate.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "That counts pairs, not subsets of pairs."
+   }
+  ],
+  "blocks": [
+   "interpretation-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q10",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Over the domain of natural numbers, which ONE is valid?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$(P(0) \\wedge \\forall x[P(x) \\Rightarrow P(x+1)]) \\Rightarrow \\forall x P(x)$"
+   },
+   {
+    "l": "B",
+    "t": "$(P(0) \\wedge \\forall x[P(x) \\Rightarrow P(x-1)]) \\Rightarrow \\forall x P(x)$"
+   },
+   {
+    "l": "C",
+    "t": "$(P(1000) \\wedge \\forall x[P(x) \\Rightarrow P(x-1)]) \\Rightarrow \\forall x P(x)$"
+   },
+   {
+    "l": "D",
+    "t": "$(P(1000) \\wedge \\forall x[P(x) \\Rightarrow P(x+1)]) \\Rightarrow \\forall x P(x)$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "A is induction over ℕ: base P(0), step upward → all naturals. Valid.",
+   "B: the step goes down from 0 — over ℕ the premise is false at x=0 unless P(0) forces…; invalid in general (counter-model P = {0} on ℤ-like readings).",
+   "C: base at 1000 with a downward step covers only x ≤ 1000 — not ∀x.",
+   "D: base at 1000 with an upward step covers only x ≥ 1000 — not ∀x."
+  ],
+  "concept": "Induction as a first-order axiom; direction matters.",
+  "common_wrong": [
+   {
+    "answer": "D",
+    "why": "From P(1000) upward you only get x ≥ 1000."
+   }
+  ],
+  "blocks": [
+   "induction-axiom"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q11",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "The logic-program clause  A(x) ← B(x, y), C(y)  as a first-order sentence is:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\forall x\\,((\\forall y\\,(B(x,y) \\wedge C(y))) \\to A(x))$"
+   },
+   {
+    "l": "B",
+    "t": "$\\forall x\\,\\big((\\exists y\\,(B(x,y) \\wedge C(y))) \\to A(x)\\big)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\forall x\\exists y\\,(B(x,y) \\wedge C(y) \\wedge A(x))$"
+   },
+   {
+    "l": "D",
+    "t": "$\\exists x\\forall y\\,((B(x,y) \\wedge C(y)) \\to A(x))$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "The head A(x) fires when SOME y satisfies the body: ∀x((∃y(B(x,y)∧C(y))) → A(x)).",
+   "A is wrong because ∀y in the body would demand all y's; C asserts A unconditionally; D has the wrong quantifier order."
+  ],
+  "concept": "Horn clauses as FOL sentences.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "∀y in the body is too strong: the rule fires for a single witness y."
+   }
+  ],
+  "blocks": [
+   "horn-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dm-02-02-q12",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "Which are prenex forms of $(\\forall x\\,P(x)) \\vee (\\exists y\\,Q(y))$?  A. $\\forall x\\exists y\\,(P(x) \\vee Q(y))$   B. $\\exists y\\forall x\\,(P(x) \\vee Q(y))$   C. $\\forall x\\forall y\\,(P(x) \\vee Q(y))$   D. $\\exists x\\exists y\\,(P(x) \\vee Q(y))$",
+  "options": [
+   {
+    "l": "A",
+    "t": "A and B"
+   },
+   {
+    "l": "B",
+    "t": "A only"
+   },
+   {
+    "l": "C",
+    "t": "B and D"
+   },
+   {
+    "l": "D",
+    "t": "C and D"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "solution": [
+   "Pull the quantifiers out (no shared variables): (∀xP) ∨ (∃yQ) ≡ ∀x∃y(P(x)∨Q(y)) ≡ ∃y∀x(P(x)∨Q(y)) — the two statements A and B are both equivalent prenex forms.",
+   "So the correct option is the one reading 'A and B'. C and D are wrong: pulling both quantifiers out as ∀∀ or ∃∃ changes the meaning, since the two parts share no variable and ∨ distributes over the quantifiers in either order."
+  ],
+  "concept": "Prenex conversion.",
+  "common_wrong": [
+   {
+    "answer": [
+     "B"
+    ],
+    "why": "B (the formula ∃y∀x…) is also equivalent — the option 'A only' is wrong because both orders work when the parts share no variable."
+   }
+  ],
+  "blocks": [
+   "prenex-def"
+  ],
+  "source": "nexora"
+ }
+]

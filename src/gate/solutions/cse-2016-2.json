@@ -1643,24 +1643,25 @@
       "verification": "Re-checked each link of the counterexample numerically."
     },
     "cse-2016-2-cs-27": {
-      "approach": "Test each formula with the standard quantifier laws; a two-element domain where $p$ and $q$ split the elements kills (D).",
+      "approach": "Concept tested: **finding the NOT-valid formula**. A, B, C are laws; D is the classic not-law $\\forall x(p\\lor q) \\to (\\forall x p) \\lor (\\forall x q)$.",
       "concepts": [
-        "Predicate logic",
-        "Quantifier distribution",
-        "Validity"
+        "Validity",
+        "Not-laws",
+        "Counter-models"
       ],
+      "given": "Which one of A–D is NOT valid?",
       "steps": [
         {
           "title": "A, B, C are valid",
-          "body": "- (A) $\\forall x\\,p\\Rightarrow\\forall x\\,q\\equiv\\neg\\forall x\\,p\\vee\\forall x\\,q\\equiv\\exists x\\,\\neg p\\vee\\forall x\\,q$ — an implication between equivalent formulas: valid.\n- (B) $\\exists x\\,p\\vee\\exists x\\,q\\equiv\\exists x(p\\vee q)$: valid.\n- (C) A witness of $p\\wedge q$ is a witness for each: valid."
+          "body": "A: both sides equal $\\forall p \\to \\forall q$ after rewriting $\\exists x\\neg p \\equiv \\neg\\forall x p$ — an instance of $X\\to X$. B: $\\exists$ distributes over $\\lor$. C: $\\exists x(p\\land q)$ implies both existentials."
         },
         {
           "title": "D fails",
-          "body": "Domain $\\{1,2\\}$, $p=\\{1\\}$, $q=\\{2\\}$: $\\forall x(p\\vee q)$ is true, but $\\forall x\\,p$ and $\\forall x\\,q$ are both false. So (D) is **not valid** → option **(D)**."
+          "body": "On $\\{1,2\\}$ with $p=\\{1\\}, q=\\{2\\}$: $\\forall x(p\\lor q)$ is true, but $\\forall xp$ and $\\forall xq$ are both false — D is false. NOT valid."
         }
       ],
       "answer": {
-        "value": "Option (D) is not valid",
+        "value": "$\\forall x(p(x) \\vee q(x)) \\Rightarrow (\\forall x p(x) \\vee \\forall x q(x))$",
         "choice": [
           "D"
         ],
@@ -1670,25 +1671,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Valid: the consequent is just a rewriting of the antecedent."
+          "reason": "Valid: the consequent $\\exists x\\neg p \\lor \\forall xq$ is exactly $\\neg\\forall xp \\lor \\forall xq$, i.e. the antecedent itself."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Valid: $\\exists$ distributes over $\\vee$."
+          "reason": "Valid: $\\exists$ over $\\lor$ distributes."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Valid: one witness satisfies both conjuncts."
+          "reason": "Valid: a shared witness for $p\\land q$ witnesses both existentials."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$\\forall$ does not distribute over $\\vee$ — counterexample above."
+          "reason": "NOT valid — the counter-model $p=\\{1\\}, q=\\{2\\}$ on $\\{1,2\\}$."
         }
       ],
-      "verification": "The counter-model makes the antecedent of D true and its consequent false."
+      "shortcut": "The only distribution that fails for $\\forall$ is over $\\lor$ — that is D.",
+      "pitfalls": [
+        "Thinking A's $\\exists x\\neg p(x)$ is unrelated to $\\forall xp(x)$ — it is its negation."
+      ],
+      "verification": "Full search up to size 3: A, B, C valid; D has the 2-element counter-model."
     },
     "cse-2016-2-cs-28": {
       "approach": "Model compounds as vertices and reactions as edges; the handshake lemma forces the degree sum in $U\\setminus S$ to be odd.",

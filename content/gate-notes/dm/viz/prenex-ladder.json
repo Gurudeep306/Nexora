@@ -1,0 +1,164 @@
+{
+ "version": 1,
+ "title": "Prenex conversion step by step",
+ "width": 640,
+ "height": 340,
+ "narrow": {
+  "width": 360,
+  "height": 336
+ },
+ "intro": "When the quantified parts share no variables, quantifiers pull to the front: (∀xP) ∨ (∃yQ) ≡ ∃y∀x(P(x) ∨ Q(y)). Rename first if a variable would be captured.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Prenex conversion: pull the quantifiers to the front",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Prenex form",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "l0",
+   "type": "box",
+   "x": 50,
+   "y": 100,
+   "w": 540,
+   "h": 48,
+   "size": 15,
+   "mono": true,
+   "hidden": false,
+   "narrow": {
+    "x": 12,
+    "y": 96,
+    "w": 336,
+    "h": 44,
+    "size": 12
+   },
+   "label": "(∀xP) ∨ (∃yQ)"
+  },
+  {
+   "id": "l1",
+   "type": "box",
+   "x": 50,
+   "y": 164,
+   "w": 540,
+   "h": 48,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 12,
+    "y": 160,
+    "w": 336,
+    "h": 44,
+    "size": 12
+   },
+   "label": "∃y((∀xP)∨Q)"
+  },
+  {
+   "id": "l2",
+   "type": "box",
+   "x": 50,
+   "y": 228,
+   "w": 540,
+   "h": 48,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 12,
+    "y": 224,
+    "w": 336,
+    "h": 44,
+    "size": 12
+   },
+   "label": "∃y∀x(P∨Q)"
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 320,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 316,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start: (∀x P(x)) ∨ (∃y Q(y)). The two quantified parts share no variables.",
+   "patches": [
+    {
+     "id": "l0",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "y is not free in (∀x P(x)), so ∃y can move out over the ∨: ∃y ((∀xP) ∨ Q(y)).",
+   "patches": [
+    {
+     "id": "l1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "l0",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "x is not free in Q(y), so ∀x moves inside: ∃y ∀x (P(x) ∨ Q(y)) — all quantifiers in front = prenex form. Equivalence verified on all domains ≤ 3.",
+   "patches": [
+    {
+     "id": "l2",
+     "set": {
+      "hidden": false,
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "l1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "verdict",
+     "set": {
+      "text": "prenex: ∃y∀x (P(x) ∨ Q(y))",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,179 @@
+{
+ "version": 1,
+ "title": "A counter-model for a would-be law",
+ "width": 640,
+ "height": 330,
+ "narrow": {
+  "width": 360,
+  "height": 330
+ },
+ "intro": "∀x(P∨Q) is not equivalent to ∀xP ∨ ∀xQ: on U={1,2} with P={1}, Q={2} the left side is T and the right side is F.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "NOT a law: ∀x(P∨Q) vs ∀xP ∨ ∀xQ — counter-model on U = {1, 2}",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "One-way law counter-model",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 60,
+   "y": 100,
+   "cellW": 110,
+   "cellH": 40,
+   "rows": [
+    [
+     "x",
+     "P(x)",
+     "Q(x)",
+     "P∨Q"
+    ],
+    [
+     "1",
+     "T",
+     "F",
+     "T"
+    ],
+    [
+     "2",
+     "F",
+     "T",
+     "T"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 14,
+    "y": 96,
+    "cellW": 66,
+    "cellH": 36
+   }
+  },
+  {
+   "id": "lhs",
+   "type": "box",
+   "x": 400,
+   "y": 100,
+   "w": 210,
+   "h": 44,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 230,
+    "y": 96,
+    "w": 118,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∀x(P∨Q) = ?"
+  },
+  {
+   "id": "rhs",
+   "type": "box",
+   "x": 400,
+   "y": 160,
+   "w": 210,
+   "h": 44,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 230,
+    "y": 148,
+    "w": 118,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∀xP ∨ ∀xQ = ?"
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 300,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 296,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Counter-model: P = {1}, Q = {2} on U = {1,2}. So P(1)=T, P(2)=F, Q(1)=F, Q(2)=T.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Left side: ∀x(P∨Q): x=1: T∨F = T; x=2: F∨T = T → T.",
+   "patches": [
+    {
+     "id": "lhs",
+     "set": {
+      "label": "∀x(P∨Q) = T",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Right side: ∀xP = F (x=2 fails), ∀xQ = F (x=1 fails), so ∀xP ∨ ∀xQ = F.",
+   "patches": [
+    {
+     "id": "rhs",
+     "set": {
+      "label": "∀xP ∨ ∀xQ = F",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "T ≠ F: the two sides differ on this interpretation, so ∀(P∨Q) ≡ ∀P∨∀Q is NOT a law. What IS true is the one-way (∀xP ∨ ∀xQ) → ∀x(P∨Q).",
+   "patches": [
+    {
+     "id": "verdict",
+     "set": {
+      "text": "not equivalent — counter-model found; only → holds",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

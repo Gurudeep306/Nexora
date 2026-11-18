@@ -1,0 +1,209 @@
+{
+ "version": 1,
+ "title": "The one-way order law on the grid",
+ "width": 640,
+ "height": 330,
+ "narrow": {
+  "width": 360,
+  "height": 330
+ },
+ "intro": "∃y∀x R(x,y) implies ∀x∃y R(x,y) (one full column makes every row marked); the converse fails on a diagonal grid.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "∃y∀x ⇒ ∀x∃y on the grid — and the converse fails",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "One full column ⇒ every row",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "g1",
+   "type": "table",
+   "x": 60,
+   "y": 100,
+   "cellW": 44,
+   "cellH": 34,
+   "rows": [
+    [
+     "x\\y",
+     "m",
+     "n",
+     "p"
+    ],
+    [
+     "a",
+     "R",
+     "·",
+     "·"
+    ],
+    [
+     "b",
+     "R",
+     "·",
+     "·"
+    ],
+    [
+     "c",
+     "R",
+     "·",
+     "·"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 14,
+    "y": 92,
+    "cellW": 40,
+    "cellH": 30
+   }
+  },
+  {
+   "id": "g2",
+   "type": "table",
+   "x": 300,
+   "y": 100,
+   "cellW": 44,
+   "cellH": 34,
+   "rows": [
+    [
+     "x\\y",
+     "m",
+     "n",
+     "p"
+    ],
+    [
+     "a",
+     "R",
+     "·",
+     "·"
+    ],
+    [
+     "b",
+     "·",
+     "R",
+     "·"
+    ],
+    [
+     "c",
+     "·",
+     "·",
+     "R"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 200,
+    "y": 92,
+    "cellW": 40,
+    "cellH": 30
+   }
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 300,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 296,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Grid 1: column m is full. Then ∃y∀x R(x,y) is true (y = m), and therefore ∀x∃y R(x,y) is true too — every row gets the same witness m.",
+   "patches": [
+    {
+     "id": "g1",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        3,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "verdict",
+     "set": {
+      "text": "grid 1: ∃y∀x = T ⇒ ∀x∃y = T",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Grid 2: the diagonal. Every row has a mark, so ∀x∃y = T; but no column is full, so ∃y∀x = F.",
+   "patches": [
+    {
+     "id": "g2",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "verdict",
+     "set": {
+      "text": "grid 2: ∀x∃y = T but ∃y∀x = F",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So ∃y∀x ⇒ ∀x∃y always (full column implies every row), and grid 2 is the counter-model for the converse. The implication is one-way.",
+   "patches": [
+    {
+     "id": "verdict",
+     "set": {
+      "text": "∃y∀x → ∀x∃y valid; converse fails (grid 2)",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,343 @@
+{
+ "version": 1,
+ "title": "A law checked on a 3-element world",
+ "width": 640,
+ "height": 330,
+ "narrow": {
+  "width": 360,
+  "height": 330
+ },
+ "intro": "∀x(P(x)∧Q(x)) and ∀xP(x) ∧ ∀xQ(x) have the same value on every interpretation: the law ∀(P∧Q) ≡ ∀P∧∀Q holds.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Law: ∀x(P∧Q) ≡ ∀xP ∧ ∀xQ, checked on D = {a,b,c}",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∀ distributes over ∧",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 60,
+   "y": 100,
+   "cellW": 100,
+   "cellH": 36,
+   "rows": [
+    [
+     "x",
+     "P(x)",
+     "Q(x)",
+     "P∧Q"
+    ],
+    [
+     "a",
+     "T",
+     "T",
+     ""
+    ],
+    [
+     "b",
+     "T",
+     "T",
+     ""
+    ],
+    [
+     "c",
+     "F",
+     "T",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 14,
+    "y": 96,
+    "cellW": 62,
+    "cellH": 34
+   }
+  },
+  {
+   "id": "lhs",
+   "type": "box",
+   "x": 420,
+   "y": 100,
+   "w": 190,
+   "h": 44,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 240,
+    "y": 96,
+    "w": 108,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∀x(P∧Q) = ?"
+  },
+  {
+   "id": "rhs",
+   "type": "box",
+   "x": 420,
+   "y": 160,
+   "w": 190,
+   "h": 44,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 240,
+    "y": 148,
+    "w": 108,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∀xP ∧ ∀xQ = ?"
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 300,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 296,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "World: P = {a,b}, Q = {a,b,c}. Fill the P and Q columns.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "P(x)",
+        "Q(x)",
+        "P∧Q"
+       ],
+       [
+        "a",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "b",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "c",
+        "F",
+        "T",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Element a: P∧Q = T ∧ T = T.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "P(x)",
+        "Q(x)",
+        "P∧Q"
+       ],
+       [
+        "a",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "b",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "c",
+        "F",
+        "T",
+        "F"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Element b: P∧Q = T ∧ T = T.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "P(x)",
+        "Q(x)",
+        "P∧Q"
+       ],
+       [
+        "a",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "b",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "c",
+        "F",
+        "T",
+        "F"
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Element c: P∧Q = F ∧ T = F.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "P(x)",
+        "Q(x)",
+        "P∧Q"
+       ],
+       [
+        "a",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "b",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "c",
+        "F",
+        "T",
+        "F"
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∀x(P∧Q): all three values must be T; c gives F → ∀x(P∧Q) = F.  ∀xP = F (c fails P), ∀xQ = T. So ∀xP ∧ ∀xQ = F — equal to the left side: the law holds on this world (and on every world up to size 3, checked by machine).",
+   "patches": [
+    {
+     "id": "lhs",
+     "set": {
+      "label": "∀x(P∧Q) = F",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "rhs",
+     "set": {
+      "label": "∀xP ∧ ∀xQ = F",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "verdict",
+     "set": {
+      "text": "∀x(P∧Q) ≡ ∀xP ∧ ∀xQ  ✓",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}
