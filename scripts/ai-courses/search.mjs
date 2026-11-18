@@ -12,7 +12,7 @@
 // TOPIC-MAP.md / topic-map.json are committed: they hold only pointers (source,
 // file, page or line), never the text, so they survive when the machine is gone.
 import { execFileSync } from 'node:child_process'
-import { existsSync, readdirSync, readFileSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { DatabaseSync } from 'node:sqlite'
@@ -27,6 +27,9 @@ const opt = (k) => {
 }
 
 const CODE = /\.(py|ipynb|md|markdown|rst|tex|txt|c|h|cu|cuh|cpp|hpp|js|ts|jsx|tsx|jl)$/i
+/** Not worth indexing: site code bundles, minified files, translations, tag and listing pages. */
+const JUNK = /(\.min\.js|bundle\.js|template\.v\d\.js|\/dist\/[^/]*\.js|\/assets\/js\/|\/translations?\/|(^|[_/])tags?[_/]|[_/]page[_/]\d|[_/]categories[_/]|node_modules|\.lock$|package-lock)/i
+const OCR = join(DOCS, 'private/ocr')
 const MAX_FILE = 4e6
 
 /** Kind and source id from a library path: <NN-course>/<paper>.pdf, or books|courses|sites|repos/<id>/... */
@@ -59,6 +62,36 @@ const stripHtml = (h) =>
     .replace(/\s+/g, ' ')
 
 /** Chunks of a file: [location, text]. PDFs by page, code by ~60 lines, HTML by ~1500 characters. */
+/** Text of a scanned PDF by OCR (tesseract), cached in private/ocr so it runs once. */
+function ocr(path) {
+  const cache = join(OCR, relative(LIB, path).replace(/[/\\]/g, '__') + '.txt')
+  if (existsSync(cache)) return readFileSync(cache, 'utf8')
+  let has = true
+  try {
+    execFileSync('tesseract', ['--version'], { stdio: 'ignore' })
+  } catch {
+    has = false
+  }
+  if (!has) return ''
+  mkdirSync(OCR, { recursive: true })
+  const tmp = join(OCR, 'tmp')
+  rmSync(tmp, { recursive: true, force: true })
+  mkdirSync(tmp)
+  execFileSync('pdftoppm', ['-r', '200', '-gray', '-png', path, join(tmp, 'p')], { stdio: 'ignore' })
+  const pages = readdirSync(tmp).filter((f) => f.endsWith('.png')).sort()
+  const text = pages.map((f) => {
+    try {
+      return execFileSync('tesseract', [join(tmp, f), '-', '--psm', '1'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
+    } catch {
+      return ''
+    }
+  }).join('\f')
+  rmSync(tmp, { recursive: true, force: true })
+  writeFileSync(cache, text)
+  console.log(`  OCR: ${relative(LIB, path)} (${pages.length} pages)`)
+  return text
+}
+
 function chunks(path) {
   if (/\.pdf$/i.test(path)) {
     let t = ''
@@ -67,6 +100,8 @@ function chunks(path) {
     } catch {
       return []
     }
+    // A scan has (almost) no text layer: read it with OCR instead.
+    if (t.replace(/\s+/g, '').length < 500 && statSync(path).size > 100000) t = ocr(path)
     return t.split('\f').map((p, i) => [`p. ${i + 1}`, p.replace(/\s+/g, ' ')]).filter(([, p]) => p.length > 40)
   }
   if (/\.html?$/i.test(path)) {
@@ -103,7 +138,7 @@ function build() {
   for (const [p, size] of walk(LIB)) {
     if (size > MAX_FILE * 25 || (!/\.pdf$/i.test(p) && size > MAX_FILE)) continue
     const w = where(p)
-    if (!w) continue
+    if (!w || JUNK.test(p) || (/\.(js|ts|jsx|tsx)$/i.test(p) && w.kind !== 'repo')) continue
     const cs = chunks(p)
     if (!cs.length) continue
     files++
@@ -124,10 +159,22 @@ const terms = (q) =>
     .split(' ')
     .filter((w) => w.length > 2 && !STOP.has(w))
 
-function search(db, q, { kind, source, limit = 10, mode = 'OR' } = {}) {
+/** One word as an FTS group, with its American spelling too (optimiser → optimizer). */
+const group = (w) => {
+  const us = w.replace(/is(e|ed|es|er|ers|ing|ation|ations)$/, 'iz$1').replace(/our$/, 'or')
+  return us !== w ? `("${w}" OR "${us}")` : `"${w}"`
+}
+const usPhrase = (t) => t.map((w) => w.replace(/is(e|ed|es|er|ers|ing|ation|ations)$/, 'iz$1')).join(' ')
+
+function search(db, q, { kind, source, limit = 10, mode = 'OR', also } = {}) {
   const t = terms(q)
   if (!t.length) return []
-  const match = t.map((w) => `"${w}"`).join(` ${mode} `)
+  // PHRASE: the words next to each other; AND: all of them; OR: any.
+  // also: extra title words, at least one of which must appear too (stops a common tag like "zero" matching anything).
+  let match =
+    mode === 'PHRASE' ? (usPhrase(t) !== t.join(' ') ? `("${t.join(' ')}" OR "${usPhrase(t)}")` : `"${t.join(' ')}"`) : t.map(group).join(` ${mode} `)
+  const extra = also ? terms(also).filter((w) => !t.includes(w)) : []
+  if (extra.length) match = `(${match}) AND (${extra.map(group).join(' OR ')})`
   const where = ['doc MATCH ?']
   const params = [match]
   if (kind) where.push('kind = ?'), params.push(kind)
@@ -141,23 +188,35 @@ function map() {
   const db = new DatabaseSync(DB, { readOnly: true })
   const cur = JSON.parse(readFileSync(join(DOCS, 'curriculum.json'), 'utf8'))
   const KINDS = ['paper', 'book', 'course', 'site', 'repo']
+  const papersById = new Map(JSON.parse(readFileSync(join(DOCS, 'sources/papers.json'), 'utf8')).papers.map((p) => [p.id, p]))
   const out = { about: 'Where each topic is covered in the library (pointers only, no text). Generated by search.mjs --map; check by hand before citing.', topics: {} }
   const L = ['# Topic map: where each topic is covered', '', 'Generated by `node scripts/ai-courses/search.mjs --map` from the private library index. Pointers only (source, file, page or line), found by keyword search: **a starting point for the writer, not a citation**. Check each one before using it.', '']
   for (const c of cur.courses) {
     L.push(`## ${c.title}`, '')
     for (const ch of c.chapters)
       for (const t of ch.topics) {
-        const q = t.title.replace(/\(.*?\)/g, ' ')
+        // The words that name the idea: the title (without "derived", "in full"…) plus the topic's paper tags.
+        const q = t.title.replace(/\(.*?\)/g, ' ').replace(/\b(derived|in full|from scratch|step by step|and why[^:]*|in practice|introduction)\b/gi, ' ')
+        const tags = [...new Set(t.papers.flatMap((p) => papersById.get(p)?.topics || []).map((x) => x.replace(/-/g, ' ')))]
         const best = {}
         for (const k of KINDS) {
-          // All words first (precise); fall back to any word.
-          let r = search(db, q, { kind: k, limit: 12, mode: 'AND' })
-          if (r.length < 2) r = search(db, q, { kind: k, limit: 12 })
           const seen = new Set()
-          best[k] = r
-            .filter((x) => !seen.has(x.source) && seen.add(x.source))
-            .slice(0, 3)
-            .map((x) => ({ source: x.source, file: x.file, loc: x.loc }))
+          const take = (rows) => rows.filter((x) => !seen.has(x.source) && seen.add(x.source))
+          let picked = []
+          // The topic's own papers first: its best page in each.
+          if (k === 'paper')
+            for (const pid of t.papers) {
+              const hit = take(search(db, q, { kind: k, source: pid, limit: 1 }).concat(search(db, `${q} ${tags.join(' ')}`, { kind: k, source: pid, limit: 1 })))
+              // Its own paper is always listed, even when the old wording doesn't match ("back-propagating").
+              picked.push(...(hit.length ? hit : seen.has(pid) ? [] : (seen.add(pid), [{ source: pid, file: `${pid}.pdf`, loc: 'whole paper' }])))
+            }
+          // Then the exact phrase, then all words, then all words of a tag, then any word.
+          // No "any word" fallback: a wrong pointer is worse than "nothing found".
+          for (const [query, mode, also] of [[q, 'PHRASE'], [q, 'AND'], ...tags.map((g) => [g, 'PHRASE', q])]) {
+            if (picked.length >= 3) break
+            picked.push(...take(search(db, query, { kind: k, limit: 12, mode, also })))
+          }
+          best[k] = picked.slice(0, k === 'paper' ? Math.max(3, t.papers.length) : 3).map((x) => ({ source: x.source, file: x.file, loc: x.loc }))
         }
         out.topics[t.id] = best
         const line = KINDS.filter((k) => best[k].length)

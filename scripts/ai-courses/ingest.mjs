@@ -75,7 +75,13 @@ const safeName = (url) => new URL(url).pathname.replace(/^\/+/, '').replace(/[^a
 async function savePdf(url, dir) {
   const r = await get(url, { binary: true })
   if (r.body.subarray(0, 5).toString() !== '%PDF-') throw new Error(`not a PDF: ${url}`)
-  const name = safeName(r.url).replace(/(\.pdf)?$/i, '.pdf')
+  // Readable names: a storage-service name (long, or a release asset) becomes <item-id>[-n].pdf.
+  let name = safeName(r.url).split('_').pop().replace(/(\.pdf)?$/i, '.pdf')
+  if (name.length > 60 || /release-asset|^[0-9a-f-]{20,}/i.test(safeName(r.url))) {
+    const id = dirname(join(dir, 'x')).split('/').pop()
+    const n = readdirSync(dir).length
+    name = `${id}${n ? `-${n + 1}` : ''}.pdf`
+  }
   writeFileSync(join(dir, name), r.body)
   return 1
 }
