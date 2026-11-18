@@ -88,7 +88,7 @@ that is in these files and passes the check.
   - The owner's papers are kept as `Nexora-AI-papers-owner.zip`, and seven
     books are in the owner's Drive folder "Books" (Boyd; Elements of
     Statistical Learning; Kochenderfer, 2nd ed.; Nielsen; Jurafsky & Martin;
-    Sutton & Barto, a 2014–15 draft of the 2nd edition; Szeliski, 2nd ed.). A
+    Sutton & Barto, final 2nd edition, 2018; Szeliski, 2nd ed.). A
     new session downloads that folder by its share link, then runs
     `library.mjs import` on the zip.
 - **Next (P1):** build the AI Lab engine (PIPELINE.md section 4.1, 4.2, 4.4 and
