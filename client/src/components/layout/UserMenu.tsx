@@ -45,7 +45,7 @@ export function UserMenu({ children, side = 'top', align = 'start' }: { children
               Admin
             </MenuItem>
             {mayHive && (
-              <MenuItem icon={<Icon name="bot" />} onSelect={() => navigate('/hive')} {...prefetchHandlers('/hive')}>
+              <MenuItem icon={<Icon name="hive" />} onSelect={() => navigate('/hive')} {...prefetchHandlers('/hive')}>
                 Hive · AI workspace
               </MenuItem>
             )}

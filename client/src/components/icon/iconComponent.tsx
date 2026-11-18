@@ -1,15 +1,15 @@
 import type { ComponentType } from 'react'
 import { Icon, type IconProps } from './Icon'
-import type { IconName } from './names'
+import type { IconOrBrand } from './names'
 
 type BoundIcon = ComponentType<Omit<IconProps, 'name'>>
-const bound = new Map<IconName, BoundIcon>()
+const bound = new Map<IconOrBrand, BoundIcon>()
 
 /**
  * A stable component for one semantic icon — for APIs that take an icon
  * component (combobox items, menus): `icon: iconComponent('problems')`.
  */
-export function iconComponent(name: IconName): BoundIcon {
+export function iconComponent(name: IconOrBrand): BoundIcon {
   let C = bound.get(name)
   if (!C) {
     C = (props) => <Icon name={name} {...props} />

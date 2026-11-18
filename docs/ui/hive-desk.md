@@ -36,7 +36,7 @@ keep every feature.
 |---|---|
 | Tokens (`--hv-*` mapped onto the site's `--ed-*`) | `client/src/hive/kit/kit.css` |
 | The desk layer (type, ledgers, nav, buttons, thinking) | `client/src/hive/hive.css` (component rules in `@layer components`) |
-| The mark: an H whose bar runs on into the clay full stop | `client/src/hive/HiveLogo.tsx` (`draw`, `loop`, `live`) |
+| The mark: an H whose bar runs on into the clay full stop | geometry `components/brand/hiveGeometry.ts`; animated `hive/HiveLogo.tsx` (`draw`, `loop`, `live`); everywhere else on the site `<Icon name="hive" />` (`components/brand/hiveMark.tsx`): the Dock, its More menu, the phone tab bar, the user menu, ⌘K search |
 | Boot screen (also the chunk-loading fallback) | `client/src/hive/HiveBoot.tsx`, `client/src/hive/boot.css` |
 | Page masthead (area label, title, one line, actions) | `kit/PageHeader.tsx` (`hiveArea()` picks the label) |
 | Tabs-style choices | `kit/SegmentedControl.tsx` |

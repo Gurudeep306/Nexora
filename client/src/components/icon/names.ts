@@ -12,3 +12,6 @@ export const ICON_GROUPS = {
 export type IconName = (typeof ICON_GROUPS)[keyof typeof ICON_GROUPS][number]
 
 export const ICON_NAMES: readonly IconName[] = Object.values(ICON_GROUPS).flat()
+
+/** A pack icon, or a brand mark drawn the same in every icon set (see <Icon>). */
+export type IconOrBrand = IconName | 'hive'
