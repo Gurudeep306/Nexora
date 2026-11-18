@@ -88,10 +88,33 @@ that is in these files and passes the check.
   the golden tests), then the pilot (P2): Foundations and Deep Learning
   chapter 1, for the owner to approve before anything else is written.
 
+## The library: collect once, search forever
+
+Everything is collected once into a private library and made searchable, so
+no session ever has to hunt for material again.
+
+| What | Where | Command |
+|---|---|---|
+| Papers (248) | `private/library/<NN>-<course>/<id>.pdf` | `fetch-open.mjs` (free) and `library.mjs import <folder>` (owner's) |
+| Books, courses, sites, code repos (68, in `sources/library.json`) | `private/library/{books,courses,sites,repos}/<id>/` | `NODE_USE_ENV_PROXY=1 node scripts/ai-courses/ingest.mjs` |
+| Full-text search over all of it, to the page or line | `private/index.sqlite` | `node scripts/ai-courses/search.mjs --build`, then `search.mjs "words"` |
+| Where each of the 225 topics is covered (pointers only, committed) | `sources/TOPIC-MAP.md`, `topic-map.json` | `search.mjs --map` |
+| What the library holds (committed, no content) | `sources/LIBRARY.md`, `sources/INGEST.md` | written by the commands above |
+
+Everything under `private/` is git-ignored: the material is for our own
+reading, never published. A new session rebuilds it with the commands below
+(about 30–40 minutes), plus the owner's zip for the paywalled papers. To add a
+source, add it to `sources/library.json` (books, courses, sites, repos) or
+`sources/papers.json`, then run the commands.
+
 ## Commands
 
 ```bash
 node scripts/ai-courses/check-curriculum.mjs                         # ladder check + regenerate CURRICULUM.md
 NODE_USE_ENV_PROXY=1 node scripts/ai-courses/verify-sources.mjs       # check every paper, book and course
-NODE_USE_ENV_PROXY=1 node scripts/ai-courses/fetch-open.mjs           # download open papers (private folder)
+NODE_USE_ENV_PROXY=1 node scripts/ai-courses/fetch-open.mjs           # download free papers into the library
+node scripts/ai-courses/library.mjs import <folder>                   # file the owner's papers (from the zip)
+NODE_USE_ENV_PROXY=1 node scripts/ai-courses/ingest.mjs               # books, courses, sites and code repos
+node scripts/ai-courses/search.mjs --build && node scripts/ai-courses/search.mjs --map   # search index + topic map
+node scripts/ai-courses/search.mjs "lstm forget gate derivation" --kind book            # find it, to the page
 ```

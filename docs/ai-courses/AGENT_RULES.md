@@ -28,7 +28,12 @@ an AI topic. These rules are not optional.
 5b. **Use the web.** Link every earlier idea you use to the topic that teaches
    it; fill "What you need", "Stuck?" and "Where this goes next" from
    `web.json`. Never hard-code a link the web can generate.
-5c. **Read the books first.** Read the matching chapters of the course's
+5c. **Search the library before writing.** Open the topic's entry in
+   `sources/TOPIC-MAP.md`, then `node scripts/ai-courses/search.mjs "<words>"`
+   for anything else. Read what the best sources say (papers, books, course
+   notes, code repos) before writing a word. If the library is empty (a new
+   session), rebuild it first (README, "The library").
+5d. **Read the books first.** Read the matching chapters of the course's
    `reading` books before writing, then explain it better in our own words, and
    name the chapters in "Read more".
 

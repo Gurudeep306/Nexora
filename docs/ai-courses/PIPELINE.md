@@ -229,7 +229,7 @@ Each stage has an owner (role) and a gate. A topic is one PR.
 | Stage | Role | Output | Gate (must pass) |
 |---|---|---|---|
 | S0 Scope | Planner | Topic entry in `curriculum.json`: id, prerequisites, the one main idea, pages, papers, signature visual | `check-curriculum.mjs` passes; owner/lead approves the scope |
-| S1 Sources | Librarian | Each paper and book section the topic uses is in `sources/*.json`; paywalled ones requested from the owner | `verify-sources.mjs` passes; open copies read |
+| S1 Sources | Librarian | Each paper and book section the topic uses is in `sources/*.json`; paywalled ones requested from the owner; the topic's `TOPIC-MAP.md` entry checked and the right pages found with `search.mjs` | `verify-sources.mjs` passes; every source read in the library |
 | S1b Story and reading | Writer | The topic's story beat (problem → failed attempt → idea → what it unlocked) per [STYLE.md](STYLE.md); the matching chapters of the course's `reading` books read | Reviewer confirms the story and the "Read more" chapters |
 | S2 Math | Math writer | Every definition and derivation, step by step, in our notation | Every derived result checked numerically (`golden/` test); a second reviewer redoes each step |
 | S3 Worked numbers | Math writer | The tiny example, every number | Numbers produced by the tensor engine and matched by NumPy |
