@@ -291,7 +291,7 @@ export function Section({ title, action, children, className }: { title: ReactNo
 
 export const MODE_INFO = {
   solo: { label: 'Solo', hint: 'One agent — or several sharing the same work — on one working copy.' },
-  team: { label: 'Team', hint: 'A lead plans and hands sub-tasks to agents that run in parallel on one working copy.' },
+  team: { label: 'Team', hint: 'The Lead plans the work and hands parts to the Workers. Parts run at the same time; parts that touch the same files take turns.' },
   compare: { label: 'Race', hint: 'The same task goes to every agent, each on its own copy. Keep the best result.' },
   review: { label: 'Review', hint: 'Read-only agents audit the code and report findings.' },
   pipeline: { label: 'Pipeline', hint: 'Stages of agents run one after another — build, test, review, fix, ship.' },
@@ -356,9 +356,6 @@ export function LimitBar({ k, compact = false }: { k: HiveKey; compact?: boolean
           <span className="text-text-secondary">
             {claude && !runs ? 'not measured yet' : `${fmtTokens(runs)} run${runs === 1 ? '' : 's'}${toks ? ` · ${fmtTokens(toks)} tokens` : ''}`}
           </span>
-        </div>
-        <div className="h-1.5 overflow-hidden rounded-full bg-text-primary/[0.07]">
-          {runs > 0 && <div className="h-full rounded-full bg-state-success/70" style={{ width: `${Math.min(100, 8 + runs * 4)}%` }} />}
         </div>
         <div className="mt-1 text-[10.5px]">
           {claude

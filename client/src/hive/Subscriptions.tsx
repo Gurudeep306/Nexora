@@ -67,7 +67,7 @@ export function SubscriptionsPanel({ onConnect }: { onConnect: (s: Sub) => void 
                   <div className="text-[15px] font-semibold">{INFO[s].name}</div>
                   <div className="text-[12px] text-text-muted">{INFO[s].plan} · runs on a machine</div>
                 </div>
-                <Button size="sm" variant={list.length ? 'ghost' : 'primary'} onClick={() => onConnect(s)}>
+                <Button size="sm" variant={list.length ? 'ghost' : 'secondary'} onClick={() => onConnect(s)}>
                   <Plus /> {list.length ? 'Another' : 'Connect'}
                 </Button>
               </div>
