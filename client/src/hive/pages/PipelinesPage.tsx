@@ -435,7 +435,7 @@ function SectionHead({ icon: Icon, title, count, hint }: { icon: LucideIcon; tit
 /* ── Stage strip (cards, previews, templates) ─────────────────────────── */
 function StageStrip({ stages, states, loops = 0, size = 'sm', className }: { stages: PipelineStage[]; states?: StageState[]; loops?: number; size?: 'sm' | 'md'; className?: string }) {
   return (
-    <div className={cn('hive-scroll -mx-1 overflow-x-auto px-1 py-1.5', className)} tabIndex={0} role="region" aria-label="Stages">
+    <div className={cn('hive-scroll -mx-1 overflow-x-auto px-1 py-1.5', className)} tabIndex={0} role="group" aria-label="Stages">
       <ol className="flex w-max items-center">
         {stages.map((s, i) => {
           const look = stageLook(s)

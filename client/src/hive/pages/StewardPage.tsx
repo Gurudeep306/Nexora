@@ -192,7 +192,8 @@ function Tips({ rep, reload }: { rep: StewardReport; reload: () => void }) {
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="text-[14px] font-semibold text-text-primary">{t.title}</h3>
-                    <span className="rounded-full px-2 py-0.5 text-[10.5px] font-medium" style={{ color: IMPACT[t.impact].tone, background: `color-mix(in oklab, ${IMPACT[t.impact].tone} 12%, transparent)` }}>
+                    <span className="inline-flex items-center gap-1 rounded-[var(--hv-r-chip)] px-2 py-0.5 text-[11px] font-medium text-[var(--hv-text-2)] ring-1 ring-inset ring-[var(--hv-border)]">
+                      <span className="size-1.5 rounded-full" style={{ background: IMPACT[t.impact].tone }} aria-hidden="true" />
                       {IMPACT[t.impact].label}
                     </span>
                   </div>

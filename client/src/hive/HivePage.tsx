@@ -47,7 +47,7 @@ import { cn } from '@/lib/utils'
 import { hiveApi } from './api'
 import { TeamChat } from './TeamChat'
 import { InboxBell } from './Inbox'
-import { Panel, PanelGroup, PanelSeparator, Skeleton, transitionTo, useDensity, useMedia, useNavFade } from './kit'
+import { Skeleton, transitionTo, useDensity, useMedia, useNavFade } from './kit'
 import type { LaunchGroup } from './Launcher'
 import { CopilotDock } from './Copilot'
 import { HiveLockup, HiveLogo } from './HiveLogo'
@@ -156,7 +156,12 @@ function Shell() {
   const [sides, setSides] = useState(() => ({ 'hive:side': store.get('hive:side', '1') === '1', 'hive:sideSession': store.get('hive:sideSession', '0') === '1' }))
   const side = sides[sideKey]
   const lgUp = useMedia('(min-width: 1024px)')
-  const sideW = useMemo(() => Number(store.get('hive:sideW', '272')) || 272, [])
+  const [sideW, setSideWState] = useState(() => Math.min(420, Math.max(220, Number(store.get('hive:sideW', '272')) || 272)))
+  const setSideW = useCallback((w: number) => {
+    const v = Math.round(Math.min(420, Math.max(220, w)))
+    setSideWState(v)
+    store.set('hive:sideW', String(v))
+  }, [])
   const setSide = (f: (s: boolean) => boolean) =>
     setSides((all) => {
       const v = f(all[sideKey])
@@ -282,15 +287,12 @@ function Shell() {
     <div className="hive-root flex h-dvh overflow-hidden text-text-primary" data-density={density}>
       <ActivityBar onTeam={() => setTeam(true)} onPalette={() => setPalette(true)} withSidebar={side} />
       {side && lgUp ? (
-        <PanelGroup key="hive-shell" id="hive-shell" panelIds={["side", "main"]}>
-          <Panel id="side" minSize={220} maxSize={420} defaultSize={sideW} className="min-w-0">
-            <Sidebar />
-          </Panel>
-          <PanelSeparator label="Resize sidebar" />
-          <Panel id="main" minSize="40%" className="min-w-0">
-            {mainCol}
-          </Panel>
-        </PanelGroup>
+        <>
+          <div className="shrink-0" style={{ width: sideW }}>
+            <Sidebar resizable={{ width: sideW, onWidth: setSideW }} />
+          </div>
+          <div className="flex min-w-0 flex-1">{mainCol}</div>
+        </>
       ) : (
         mainCol
       )}
@@ -467,7 +469,41 @@ function RailLink({ it }: { it: NavItem }) {
 }
 
 /* ── Sidebar: projects (with their sessions) and chats ─────────────────── */
-function Sidebar() {
+/**
+ * The sidebar's right edge: drag it, or focus it and use the arrow keys, to
+ * change the width (220–420 px, remembered). It sits inside the sidebar's own
+ * landmark, so nothing on the page lives outside one.
+ */
+function SideResizer({ width, onWidth }: { width: number; onWidth: (w: number) => void }) {
+  const start = useRef<{ x: number; w: number } | null>(null)
+  return (
+    <div
+      role="separator"
+      aria-orientation="vertical"
+      aria-label="Resize sidebar"
+      aria-valuemin={220}
+      aria-valuemax={420}
+      aria-valuenow={width}
+      tabIndex={0}
+      onPointerDown={(e) => {
+        start.current = { x: e.clientX, w: width }
+        ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+      }}
+      onPointerMove={(e) => start.current && onWidth(start.current.w + e.clientX - start.current.x)}
+      onPointerUp={() => (start.current = null)}
+      onKeyDown={(e) => {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+        e.preventDefault()
+        onWidth(width + (e.key === 'ArrowLeft' ? -16 : 16))
+      }}
+      className="group absolute inset-y-0 -right-[5px] z-10 w-[9px] cursor-col-resize touch-none outline-none"
+    >
+      <span className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-transparent transition-colors duration-150 group-hover:bg-[var(--hv-text-3)] group-focus-visible:bg-[var(--hv-focus-ring)]" />
+    </div>
+  )
+}
+
+function Sidebar({ resizable }: { resizable?: { width: number; onWidth: (w: number) => void } } = {}) {
   const { boot, taskIndex, live, projectId, taskId, convosVersion } = useHive()
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -504,9 +540,10 @@ function Sidebar() {
     })
 
   return (
-    <aside className="hive-side flex h-full w-full flex-col border-r hive-line">
+    <aside className="hive-side relative flex h-full w-full flex-col border-r hive-line" aria-label="Hive menu">
+      {resizable && <SideResizer width={resizable.width} onWidth={resizable.onWidth} />}
       <div className="flex items-center gap-2 px-4 pb-3 pt-4">
-        <Link to="/hive" className="flex items-center" aria-label="Hive home">
+        <Link to="/hive" className="flex items-center" title="Hive home">
           <HiveLockup size={26} live={live.length > 0} />
         </Link>
         <span className="ml-auto">

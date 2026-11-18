@@ -498,6 +498,12 @@ button.hive-chip:hover { color: var(--hv-text-1); box-shadow: inset 0 0 0 1px va
 
 }
 
+/* Phones: code in answers wraps instead of scrolling sideways. */
+@media (max-width: 640px) {
+  .hive-root .ai-code pre,
+  .hive-root .ai-code pre code { white-space: pre-wrap; overflow-wrap: anywhere; }
+}
+
 /* These must beat utilities (and the kit's focus ring), so they stay outside the layer. */
 /* Older screens tint small tags and selected rows with the accent. Inside
    Hive those read as hairline labels: the accent stays for fills that mean
