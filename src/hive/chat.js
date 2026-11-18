@@ -238,6 +238,12 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
   let primary = null; // the first error from the model the person picked — shown even if a handoff also fails
   let finished = false;
   let error = null;
+  // The reasoning the model shares (kept, capped) and when it started and
+  // stopped, for "Thought for 12s" on the finished answer.
+  const t0 = Date.now();
+  let reasoning = "";
+  let thinkFrom = 0;
+  let thinkTo = 0;
   let usage = { input: 0, output: 0 };
   let served = { provider: spec.provider, model: spec.model };
   try {
@@ -317,6 +323,10 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
         let flushTimer = null;
         let buf = "";
         let think = "";
+        // A new attempt (another model after a failure) starts its reasoning afresh.
+        reasoning = "";
+        thinkFrom = 0;
+        thinkTo = 0;
         const flush = () => {
           flushTimer = null;
           if (buf) out("delta", { id: reply.id, text: buf }), (buf = "");
@@ -357,7 +367,14 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
               signal: stepCtl.signal,
               cache: plugins.builtins.prompt_cache?.enabled !== false,
               onText: (d) => ((heard = true), (buf += d), (flushTimer ||= setTimeout(flush, 40))),
-              onThinking: (d) => ((heard = true), (think += d), (flushTimer ||= setTimeout(flush, 40))),
+              onThinking: (d) => {
+                heard = true;
+                think += d;
+                if (reasoning.length < 20000) reasoning += d;
+                thinkFrom ||= Date.now();
+                thinkTo = Date.now();
+                flushTimer ||= setTimeout(flush, 40);
+              },
             });
           } catch (err) {
             if (stalled && !controller.signal.aborted) {
@@ -472,11 +489,14 @@ async function generate(convo, reply, { spec: spec0, mode, prompt, username, sin
     set.delete(controller);
     if (!set.size) active.delete(convo.id);
   }
+  const thinking = reasoning.trim() ? reasoning.slice(0, 20000) : null;
+  const thinkMs = thinking && thinkFrom ? Math.max(0, thinkTo - thinkFrom) : null;
+  const tookMs = Date.now() - t0;
   await run(
-    "INSERT INTO hive_convo_msgs(id, convo_id, role, content, attachments_json, provider, model, input_tokens, output_tokens, error, created_at, group_id, tools_json) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
-    [reply.id, convo.id, "assistant", reply.content, JSON.stringify(reply.attachments), served.provider, served.model, usage.input, usage.output, error, reply.created_at, reply.group_id || null, reply.tools?.length ? JSON.stringify(reply.tools) : null],
+    "INSERT INTO hive_convo_msgs(id, convo_id, role, content, attachments_json, provider, model, input_tokens, output_tokens, error, created_at, group_id, tools_json, thinking, think_ms, took_ms) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    [reply.id, convo.id, "assistant", reply.content, JSON.stringify(reply.attachments), served.provider, served.model, usage.input, usage.output, error, reply.created_at, reply.group_id || null, reply.tools?.length ? JSON.stringify(reply.tools) : null, thinking, thinkMs, tookMs],
   );
-  out("done", { ...reply, provider: served.provider, model: served.model, input_tokens: usage.input, output_tokens: usage.output, error });
+  out("done", { ...reply, provider: served.provider, model: served.model, input_tokens: usage.input, output_tokens: usage.output, error, thinking, think_ms: thinkMs, took_ms: tookMs });
 }
 
 const HINTS = {

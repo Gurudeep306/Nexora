@@ -411,6 +411,10 @@ export interface ConvoMsg {
   group_id?: string | null
   preferred?: number
   rating?: number | null
+  /** The model's own reasoning, when it shared it, and how long it thought / answered (ms). */
+  thinking?: string | null
+  think_ms?: number | null
+  took_ms?: number | null
   tools?: ChatToolStep[]
 }
 

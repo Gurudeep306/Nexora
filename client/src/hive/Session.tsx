@@ -1086,7 +1086,7 @@ function LiveTurn({ agent, text, think, events }: { agent: AgentRow; text: strin
       <span className="absolute left-0 top-1.5 size-[11px] animate-pulse rounded-full ring-4 ring-[var(--color-bg-app)]" style={{ background: agentHue(agent) }} />
       <div className="mb-1.5 flex items-center gap-2">
         <AgentBadge agent={agent} />
-        <ThinkingIndicator className="text-[11.5px]" words={writing ? ['Writing code'] : text ? ['Typing'] : ['Thinking', 'Planning', 'Reading']} />
+        <ThinkingIndicator className="text-[11.5px]" words={writing ? ['Writing code'] : text ? ['Typing'] : ['Working']} />
       </div>
       {think && !text && (
         <div className="mb-2 flex items-start gap-2 rounded-xl bg-text-primary/[0.04] px-3 py-2">
@@ -1285,7 +1285,7 @@ function CommandBar({ taskId, agents, focus, hasMachine, onOpen }: { taskId: str
             <span className="hive-kbd">/</span> commands
           </span>
           {sessionTokens > 0 && <ContextRing used={sessionTokens} label="Tokens used this session" />}
-          <button type="button" onClick={run} disabled={!text.trim() || busy} className="ml-auto grid size-8 place-items-center rounded-full bg-accent-brand text-on-accent-brand transition-transform enabled:hover:scale-105 disabled:opacity-35" aria-label="Send">
+          <button type="button" onClick={run} disabled={!text.trim() || busy} className="ml-auto grid size-8 place-items-center rounded-[var(--hv-r-btn)] bg-accent-brand text-on-accent-brand transition-transform disabled:opacity-35" aria-label="Send">
             {busy ? <Loader2 className="size-4 animate-spin" /> : <ArrowUp className="size-4" strokeWidth={2.4} />}
           </button>
         </div>

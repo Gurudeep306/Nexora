@@ -166,6 +166,15 @@ function Shell() {
   const [mobileNav, setMobileNav] = useState(false)
 
   useEffect(() => setMobileNav(false), [pathname])
+  // Answers stream as soon as you ask: fetch the markdown engine in the
+  // background once Hive is open, so the first reply is never shown as raw text.
+  useEffect(() => {
+    if (!boot) return
+    const idle = (window as Window & { requestIdleCallback?: (cb: () => void) => number }).requestIdleCallback
+    const load = () => void import('@/components/ai/AiMarkdownImpl')
+    if (idle) idle(load)
+    else window.setTimeout(load, 300)
+  }, [boot])
   useEffect(() => {
     hiveApi
       .overview()
